@@ -42,4 +42,49 @@ struct NetworkClientLiveTests {
             _ = try await client.send(request)
         }
     }
+
+    @Test("edge case: a 429 rate-limit response is surfaced as a plain HTTPURLResponse, not thrown")
+    func rateLimitedIsNotThrown() async throws {
+        StubURLProtocol.stub = .init(statusCode: 429, headers: [:], body: Data())
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/auth/login")!)
+        let (_, response) = try await client.send(request)
+
+        #expect(response.statusCode == 429)
+    }
+
+    @Test("edge case: a 500 server error is surfaced as a plain HTTPURLResponse, not thrown")
+    func serverErrorIsNotThrown() async throws {
+        StubURLProtocol.stub = .init(statusCode: 500, headers: [:], body: Data())
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
+        let (_, response) = try await client.send(request)
+
+        #expect(response.statusCode == 500)
+    }
+
+    @Test("edge case: an empty response body on success round-trips as empty Data, not an error")
+    func emptyBodyIsNotAnError() async throws {
+        StubURLProtocol.stub = .init(statusCode: 204, headers: [:], body: Data())
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/auth/logout")!)
+        let (data, response) = try await client.send(request)
+
+        #expect(data.isEmpty)
+        #expect(response.statusCode == 204)
+    }
+
+    @Test("error path: a stub that fails to construct a valid response wraps as NetworkError.transport")
+    func malformedURLProtocolFailureIsWrapped() async {
+        StubURLProtocol.failure = URLError(.badServerResponse)
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
+        await #expect(throws: NetworkError.self) {
+            _ = try await client.send(request)
+        }
+    }
 }
