@@ -1,0 +1,68 @@
+# Xcode
+## User settings — machine-local, never shared
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad/
+
+## Xcode 8 and earlier
+*.xcscmblueprint
+*.xccheckout
+
+## Compatibility with Xcode 3 and earlier
+build/
+DerivedData/
+*.moved-aside
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+
+## Obj-C/Swift specific
+*.hmap
+
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Playgrounds
+timeline.xctimeline
+playground.xcworkspace
+
+## Code injection
+iOSInjectionProject/
+
+# Swift Package Manager
+.build/
+.swiftpm/
+Packages/**/.build/
+Packages/**/.swiftpm/
+
+# CocoaPods / Carthage (unused now, ignore defensively)
+Pods/
+Carthage/Build/
+
+# macOS
+.DS_Store
+
+# Secrets / local config — never commit
+*.env
+.env.*
+*.pem
+*.p12
+*.mobileprovision
+*.cer
+*secrets*.swift
+*Secrets*.swift
+Config.local.xcconfig
+GoogleService-Info.plist
+
+# Simulator/device logs
+*.crash
+
+# Claude working-context notes — not project documentation, stays local
+CLAUDE.md
