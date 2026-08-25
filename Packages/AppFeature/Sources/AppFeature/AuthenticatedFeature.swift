@@ -1,5 +1,7 @@
 import AuthClient
 import ComposableArchitecture
+import CoreModels
+import FilesFeature
 import Foundation
 
 @Reducer
@@ -7,17 +9,18 @@ public struct AuthenticatedFeature {
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
-        public var username: String
-        public var isSigningOut = false
+        public var user: User
+        public var mainTab: MainTabFeature.State
 
-        public init(serverURL: URL, username: String) {
+        public init(serverURL: URL, user: User) {
             self.serverURL = serverURL
-            self.username = username
+            self.user = user
+            self.mainTab = MainTabFeature.State(serverURL: serverURL, user: user)
         }
     }
 
     public enum Action: Sendable {
-        case signOutButtonTapped
+        case mainTab(MainTabFeature.Action)
         case signOutResponse
         case delegate(Delegate)
 
@@ -31,10 +34,13 @@ public struct AuthenticatedFeature {
     public init() {}
 
     public var body: some ReducerOf<Self> {
+        Scope(state: \.mainTab, action: \.mainTab) {
+            MainTabFeature()
+        }
         Reduce { state, action in
             switch action {
-            case .signOutButtonTapped:
-                state.isSigningOut = true
+            case .mainTab(.delegate(.signOutButtonTapped)):
+                state.mainTab.settings.isSigningOut = true
                 let serverURL = state.serverURL
                 let authClient = self.authClient
                 return .run { send in
@@ -44,10 +50,10 @@ public struct AuthenticatedFeature {
                 }
 
             case .signOutResponse:
-                state.isSigningOut = false
+                state.mainTab.settings.isSigningOut = false
                 return .send(.delegate(.loggedOut))
 
-            case .delegate:
+            case .mainTab, .delegate:
                 return .none
             }
         }

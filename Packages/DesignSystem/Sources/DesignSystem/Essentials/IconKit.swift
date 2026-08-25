@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Central catalog of the app's SF Symbols — one name per icon, spelled once, so call
+/// Central catalog of the app's SF Symbols: one name per icon, spelled once, so call
 /// sites never type a raw `Image(systemName:)` string.
 public enum IconKit {
     public static let checkmark = Image(systemName: "checkmark")
@@ -13,4 +13,32 @@ public enum IconKit {
     public static let key = Image(systemName: "key")
     public static let person = Image(systemName: "person")
     public static let logo = Image("logo", bundle: .module)
+
+    // Main screen (browse / favorites / settings)
+    public static let folder = Image(systemName: "folder")
+    public static let folderFill = Image(systemName: "folder.fill")
+    public static let document = Image(systemName: "doc")
+    public static let magnifyingGlass = Image(systemName: "magnifyingglass")
+    public static let star = Image(systemName: "star")
+    public static let starFill = Image(systemName: "star.fill")
+    public static let gearshape = Image(systemName: "gearshape")
+    public static let chevronRight = Image(systemName: "chevron.right")
+    public static let exclamationmarkTriangle = Image(systemName: "exclamationmark.triangle")
+    public static let arrowClockwise = Image(systemName: "arrow.clockwise")
+    public static let internalDrive = Image(systemName: "internaldrive")
+    public static let trayFull = Image(systemName: "tray.full")
+    public static let moonFill = Image(systemName: "moon.fill")
+    public static let signOut = Image(systemName: "rectangle.portrait.and.arrow.right")
+    public static let photo = Image(systemName: "photo")
+    public static let globe = Image(systemName: "globe")
+    public static let listBullet = Image(systemName: "list.bullet")
+    public static let squareGrid = Image(systemName: "square.grid.2x2")
+    public static let arrowUpArrowDown = Image(systemName: "arrow.up.arrow.down")
+    public static let arrowUp = Image(systemName: "arrow.up")
+    public static let arrowDown = Image(systemName: "arrow.down")
+    public static let textformat = Image(systemName: "textformat")
+    public static let calendar = Image(systemName: "calendar")
+    public static let house = Image(systemName: "house")
+    public static let radioUnselected = Image(systemName: "circle")
+    public static let radioSelected = Image(systemName: "largecircle.fill.circle")
 }
