@@ -45,7 +45,7 @@ public struct DSFieldContainer<Content: View>: View {
             .frame(height: .size56)
             .background(
                 RoundedRectangle(cornerRadius: .radiusControl)
-                    .stroke(isInvalid ? Color.negative : Color.borderPrimary, lineWidth: isInvalid ? FieldConstants.invalidBorderWidth : 1)
+                    .stroke(isInvalid ? Color.negative : Color.borderPrimary, lineWidth: isInvalid ? FieldConstants.invalidBorderWidth : .borderWidthHairline)
             )
             .animation(.easeInOut(duration: FieldConstants.borderFadeDuration), value: isInvalid)
             .shake(trigger: shakeTrigger)

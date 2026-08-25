@@ -42,4 +42,7 @@ public extension CGFloat {
     static let size72: CGFloat = 72.0
     /// 96dp
     static let size96: CGFloat = 96.0
+
+    /// 1pt — the standard hairline stroke width for control borders (buttons, fields).
+    static let borderWidthHairline: CGFloat = 1.0
 }

@@ -25,7 +25,7 @@ public enum DSButtonStyle: CaseIterable, Hashable {
         case .tertiary: .clear
         case .success: .positive
         case .failure: .negative
-        case .inverted: Color(white: 0.15)
+        case .inverted: Color(white: Constants.invertedFillWhite)
         }
     }
 
@@ -68,6 +68,8 @@ private enum Constants {
     /// Every button shares the same discreet lift — softer than the design system's default
     /// elevation alpha, since a full-width filled CTA reads as "raised" even with a faint shadow.
     static let buttonElevationAlpha: Double = 0.16
+    /// Fixed dark charcoal fill for `.inverted`, deliberately not theme-adaptive.
+    static let invertedFillWhite: Double = 0.15
 }
 
 /// The app's standard rectangular button — corners match the web client's `rounded-xl`
@@ -119,7 +121,7 @@ public struct DSButton: View {
             .background(RoundedRectangle(cornerRadius: .radiusControl).fill(style.backgroundColor))
             .overlay(
                 RoundedRectangle(cornerRadius: .radiusControl)
-                    .stroke(style.borderColor, lineWidth: style == .secondary ? 1 : 0)
+                    .stroke(style.borderColor, lineWidth: style == .secondary ? .borderWidthHairline : 0)
             )
             .elevation(.level1, alpha: Constants.buttonElevationAlpha)
         }
@@ -213,6 +215,6 @@ private struct MorphingButtonChrome: Animatable, ViewModifier {
         content
             .frame(width: width, height: height)
             .background(RoundedRectangle(cornerRadius: radius).fill(fillColor))
-            .overlay(RoundedRectangle(cornerRadius: radius).stroke(borderColor, lineWidth: 1))
+            .overlay(RoundedRectangle(cornerRadius: radius).stroke(borderColor, lineWidth: .borderWidthHairline))
     }
 }
