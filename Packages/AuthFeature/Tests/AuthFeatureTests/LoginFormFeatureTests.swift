@@ -326,6 +326,113 @@ struct LoginFormFeatureTests {
         }
     }
 
+    @Test("unexpected error: rate limiting (429, or a lockout the server reports as 429) surfaces a readable message")
+    func rateLimitedLoginSurfacesMessage() async {
+        let store = TestStore(
+            initialState: LoginFormFeature.State(
+                host: "nextexplorer.example.com",
+                identifier: "phillip@example.com",
+                password: "hunter2",
+                authStatus: AuthStatus(localEnabled: true, oidcEnabled: false)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient.login = { _, _, _ in throw AuthClientError.rateLimited }
+            $0.continuousClock = ImmediateClock()
+        }
+
+        await store.send(.continueButtonTapped) {
+            $0.isSubmitting = true
+        }
+        await store.receive(\.submitFailed) {
+            $0.isSubmitting = false
+            $0.errorMessage = "Too many attempts. Please wait a few minutes and try again."
+            // A rate limit says nothing about which field was wrong — unlike
+            // `.invalidCredentials`, it must not red-border the fields.
+            $0.invalidFieldsScope = nil
+        }
+        await store.receive(\.clearErrorMessage) {
+            $0.errorMessage = nil
+        }
+    }
+
+    @Test("edge case: whitespace-only password is rejected by the disabled Continue button, but the reducer itself has no client-side password check — a blank/whitespace password still reaches the server, which is the sole source of truth on password validity")
+    func whitespaceOnlyPasswordStillReachesServer() async {
+        let store = TestStore(
+            initialState: LoginFormFeature.State(
+                host: "nextexplorer.example.com",
+                identifier: "phillip@example.com",
+                password: "   ",
+                authStatus: AuthStatus(localEnabled: true, oidcEnabled: false)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient.login = { [user] _, _, password in
+                #expect(password == "   ")
+                return user
+            }
+        }
+
+        await store.send(.continueButtonTapped) {
+            $0.isSubmitting = true
+        }
+        await store.receive(\.submitSucceeded) {
+            $0.isSubmitting = false
+        }
+        await store.receive(\.delegate)
+    }
+
+    @Test("edge case: rapid double-submit cancels the first in-flight login instead of firing two network calls")
+    func doubleSubmitCancelsFirstInFlightLogin() async {
+        let clock = TestClock()
+        // Each `authClient.login` invocation records its own call index into `completedCalls`
+        // only if it runs to completion — a cancelled invocation never appends. Two flat booleans
+        // would be indistinguishable between the first and second call since both share this one
+        // mock closure.
+        let nextCallIndex = LockIsolated(0)
+        let completedCalls = LockIsolated<[Int]>([])
+        let store = TestStore(
+            initialState: LoginFormFeature.State(
+                host: "nextexplorer.example.com",
+                identifier: "phillip@example.com",
+                password: "hunter2",
+                authStatus: AuthStatus(localEnabled: true, oidcEnabled: false)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient.login = { [user] _, _, _ in
+                let callIndex = nextCallIndex.withValue { count -> Int in
+                    defer { count += 1 }
+                    return count
+                }
+                try await clock.sleep(for: .seconds(5))
+                completedCalls.withValue { $0.append(callIndex) }
+                return user
+            }
+        }
+
+        await store.send(.continueButtonTapped) {
+            $0.isSubmitting = true
+        }
+        await clock.advance(by: .seconds(1))
+
+        // Second tap before the first call resolves cancels it in favor of a fresh attempt.
+        await store.send(.continueButtonTapped)
+
+        await clock.advance(by: .seconds(10))
+        await store.receive(\.submitSucceeded) {
+            $0.isSubmitting = false
+        }
+        await store.receive(\.delegate)
+
+        // Only the second call (index 1) ever reaches completion — the first was cancelled
+        // mid-sleep and never appends.
+        #expect(completedCalls.value == [1])
+    }
+
     @Test("regression: sessionCookieMissing does not auto-dismiss — it signals a real failure, not a typo to retry")
     func sessionCookieMissingDoesNotAutoDismiss() async {
         let clock = TestClock()

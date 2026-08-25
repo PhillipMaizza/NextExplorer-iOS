@@ -47,4 +47,24 @@ struct KeychainClientTests {
         let client = makeClient()
         try client.delete("never-saved")
     }
+
+    @Test("edge case: empty data round-trips")
+    func emptyDataRoundTrips() throws {
+        let client = makeClient()
+        try client.save("session", Data())
+        let loaded = try client.load("session")
+        #expect(loaded == Data())
+    }
+
+    @Test("edge case: keys are scoped per service — the same account key in a different service does not collide")
+    func keysAreScopedPerService() throws {
+        let serviceA = KeychainConfiguration(service: "app.nextplorer.tests.\(UUID().uuidString)")
+        let serviceB = KeychainConfiguration(service: "app.nextplorer.tests.\(UUID().uuidString)")
+        let clientA = KeychainClient.live(configuration: serviceA)
+        let clientB = KeychainClient.live(configuration: serviceB)
+
+        try clientA.save("session", Data("a".utf8))
+        let loadedFromB = try clientB.load("session")
+        #expect(loadedFromB == nil)
+    }
 }
