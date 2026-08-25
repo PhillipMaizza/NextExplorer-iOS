@@ -44,9 +44,15 @@ public enum Elevation: CaseIterable {
     fileprivate static let shadowColor = Color(red: 0, green: 15.0 / 255.0, blue: 31.0 / 255.0)
 }
 
+public extension Elevation {
+    /// Default shadow opacity for `.elevation(_:alpha:)` when the call site doesn't need a
+    /// more discreet or more pronounced lift.
+    static let defaultAlpha: Double = 0.25
+}
+
 public extension View {
     /// Applies the design system's two-layer elevation shadow.
-    func elevation(_ level: Elevation, alpha: Double = 0.25) -> some View {
+    func elevation(_ level: Elevation, alpha: Double = Elevation.defaultAlpha) -> some View {
         self
             .shadow(color: Elevation.shadowColor.opacity(alpha), radius: level.firstShadow.blur / 2, x: 0, y: level.firstShadow.y)
             .shadow(color: Elevation.shadowColor.opacity(alpha), radius: level.secondShadow.blur / 2, x: 0, y: level.secondShadow.y)

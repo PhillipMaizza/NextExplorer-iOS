@@ -10,7 +10,7 @@ private struct RoundedFieldModifier: ViewModifier {
             .frame(height: height)
             .background(
                 RoundedRectangle(cornerRadius: .radiusControl)
-                    .stroke(Color.borderPrimary, lineWidth: 1)
+                    .stroke(Color.borderPrimary, lineWidth: .borderWidthHairline)
             )
     }
 }
