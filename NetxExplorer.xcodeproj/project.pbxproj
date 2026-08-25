@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		29D14D1B303DE5AF00D1E227 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 29D14D1A303DE5AF00D1E227 /* LaunchScreen.storyboard */; };
 		3041B78D4C15A8966B3D2460 /* AppFeature in Frameworks */ = {isa = PBXBuildFile; productRef = A67BD154B7CFF0B05EB44CD5 /* AppFeature */; };
 		76A2406B6FE3D8A7E9E0FB17 /* DesignSystem in Frameworks */ = {isa = PBXBuildFile; productRef = EFD970C42E1F1E6EDE43FC98 /* DesignSystem */; };
 /* End PBXBuildFile section */
@@ -32,6 +33,7 @@
 		292E4698303C3E8F003CDCA4 /* NetxExplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetxExplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		292E46A5303C3E91003CDCA4 /* NetxExplorerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetxExplorerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		292E46AF303C3E91003CDCA4 /* NetxExplorerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetxExplorerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		29D14D1A303DE5AF00D1E227 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -95,6 +97,7 @@
 		292E468F303C3E8F003CDCA4 = {
 			isa = PBXGroup;
 			children = (
+				29D14D1A303DE5AF00D1E227 /* LaunchScreen.storyboard */,
 				292E469A303C3E8F003CDCA4 /* NetxExplorer */,
 				292E46A8303C3E91003CDCA4 /* NetxExplorerTests */,
 				292E46B2303C3E91003CDCA4 /* NetxExplorerUITests */,
@@ -239,6 +242,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				29D14D1B303DE5AF00D1E227 /* LaunchScreen.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -421,7 +425,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = QPF699J5LK;
@@ -451,7 +455,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = QPF699J5LK;

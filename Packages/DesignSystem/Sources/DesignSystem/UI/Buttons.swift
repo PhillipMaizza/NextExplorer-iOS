@@ -112,7 +112,7 @@ public struct DSButton: View {
                     Text(title)
                 }
             }
-            .type(.button)
+            .type(.label3)
             .foregroundStyle(style.foregroundColor)
             .frame(maxWidth: .infinity)
             .frame(height: size.height)

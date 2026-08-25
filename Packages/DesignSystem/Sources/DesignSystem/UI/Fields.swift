@@ -32,7 +32,8 @@ public struct DSFieldContainer<Content: View>: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: .space8) {
-            Text(label).type(.body2, style: .primary)
+            Text(label)
+                .type(.body2(.semibold), style: .primary(for: .label))
 
             HStack(spacing: .space8) {
                 icon
@@ -66,7 +67,7 @@ public struct DSPlaceholderText: View {
 
     public var body: some View {
         Text(verbatim: text)
-            .type(.body1)
+            .type(.body1(.regular))
             .foregroundStyle(Color.secondaryDS)
             .allowsHitTesting(false)
     }

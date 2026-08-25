@@ -24,13 +24,13 @@ private enum Constants {
     static let credentialsLogoSize: CGFloat = .size56
     static let maskedPasswordPlaceholder = "••••••••"
     /// Focusing `identifierField` the instant the credentials page appears races the page-slide
-    /// transition — the field becomes first responder before its final on-screen position/frame
+    /// transition: the field becomes first responder before its final on-screen position/frame
     /// settles, and a keyboard AutoFill invocation made against that not-yet-settled state
     /// silently fails (the very next AutoFill attempt, against the by-then-settled field, works).
     /// Deferring focus past the transition's duration avoids that race.
     static let identifierAutoFocusDelay: Duration = .seconds(pageTransitionSpringResponse)
     /// Tapping "Test connection" resigns the host field's focus in the same beat it starts the
-    /// button's collapse-to-circle morph — the keyboard-dismiss animation and the morph then
+    /// button's collapse-to-circle morph. The keyboard-dismiss animation and the morph then
     /// fight for the same frame, and the layout reflow from the keyboard closing swallows the
     /// spinner almost entirely. Letting the keyboard-dismiss animation finish first (this is
     /// UIKit's own keyboard animation duration) before starting the morph gives each its own
@@ -51,18 +51,18 @@ public struct LoginFormView: View {
     @State private var passwordShakeTrigger: CGFloat = 0
     /// Mirrors `store.errorMessage`, delayed on the way in and immediate on the way out.
     @State private var displayedErrorMessage: String?
-    /// Red-borders the email/password fields for a couple seconds after a login failure — which
+    /// Red-borders the email/password fields for a couple seconds after a login failure; which
     /// field(s) light up follows `store.invalidFieldsScope`.
     @State private var isIdentifierFieldInvalid = false
     @State private var isPasswordFieldInvalid = false
     @FocusState private var focusedField: Field?
-    /// Scroll container height, used only to give the centered content a `minHeight` floor —
+    /// Scroll container height, used only to give the centered content a `minHeight` floor,
     /// read via `.onGeometryChange` rather than wrapping the fields in a `GeometryReader`.
     /// A `GeometryReader` ancestor over `identifierField`/`passwordField` is the prime suspect
     /// for third-party Password AutoFill (Bitwarden) silently filling neither field: it delays
     /// giving its subtree a concrete size until layout settles, which can leave AutoFill unable
     /// to resolve a usable target rect for text insertion. Unverified on-device (no UI
-    /// automation access in this environment) — re-test AutoFill after this change.
+    /// automation access in this environment); re-test AutoFill after this change.
     @State private var serverScrollHeight: CGFloat = 0
     @State private var credentialsScrollHeight: CGFloat = 0
 
@@ -74,7 +74,7 @@ public struct LoginFormView: View {
         !store.identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !store.password.isEmpty
     }
 
-    /// Resigns the host field and fires `testConnectionButtonTapped` — if a keyboard was up,
+    /// Resigns the host field and fires `testConnectionButtonTapped`. If a keyboard was up,
     /// waits out its dismiss animation first so it doesn't fight the button's collapse-to-circle
     /// morph for the same beat (see `Constants.keyboardDismissDuration`).
     private func submitTestConnection() {
@@ -98,7 +98,7 @@ public struct LoginFormView: View {
         }
     }
 
-    /// HTTP homelab servers are rarely on port 80 — nudge the user to include one
+    /// HTTP homelab servers are rarely on port 80. Nudge the user to include one
     /// rather than let the request silently go to the wrong port. Only shown once the
     /// user has stepped away from the field, so it doesn't flash on every keystroke
     /// before they've had a chance to type the port.
@@ -108,7 +108,7 @@ public struct LoginFormView: View {
         guard !trimmed.isEmpty else { return nil }
         let hostOnly = trimmed.split(separator: "/", maxSplits: 1).first.map(String.init) ?? trimmed
         guard !hostOnly.contains(":") else { return nil }
-        return "Add a port (e.g. :3000) — most homelab servers don't listen on plain port 80."
+        return "Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80."
     }
 
     public var body: some View {
@@ -184,7 +184,7 @@ public struct LoginFormView: View {
                         .resizable()
                         .frame(width: Constants.logoSize, height: Constants.logoSize)
                     Text("Where's your instance of NextExplorer?")
-                        .type(.headline1, style: .primary)
+                        .type(.headline3, style: .primary(for: .label))
                         .multilineTextAlignment(.center)
                 }
                 .padding(.horizontal, .space16)
@@ -203,7 +203,7 @@ public struct LoginFormView: View {
                         EmptyView()
                     }
                     .roundedFieldStyle(height: .size56)
-                    .type(.body1)
+                    .type(.body1(.regular))
                     .tint(Color.accent)
                     .autocorrectionDisabled()
                     #if os(iOS)
@@ -220,14 +220,14 @@ public struct LoginFormView: View {
 
                 if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
                     Text(errorMessage)
-                        .type(.body1, style: .negative)
+                        .type(.body1(.semibold), style: .error)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, .space24)
                         .transition(.opacity)
                 } else if let warning = missingPortWarning {
                     Text(warning)
-                        .type(.body1, style: .warning)
+                        .type(.body1(.semibold), style: .warning)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, .space24)
@@ -247,7 +247,7 @@ public struct LoginFormView: View {
         }
         .onGeometryChange(for: CGFloat.self, of: \.size.height) { serverScrollHeight = $0 }
         // `.interactively` swallows the first tap on `testConnectionButton` while the
-        // keyboard is up — that tap only starts the interactive dismiss gesture instead of
+        // keyboard is up: that tap only starts the interactive dismiss gesture instead of
         // reaching the button, so the user has to tap twice. `.immediately` dismisses on
         // first touch instead, so the same tap reaches the button underneath.
         .scrollDismissesKeyboard(.immediately)
@@ -274,7 +274,7 @@ public struct LoginFormView: View {
                 switch store.connectionPhase {
                 case .idle:
                     Text("Test connection")
-                        .type(.button)
+                        .type(.label3)
                         .foregroundStyle(.white)
                 case .testing:
                     ProgressView().tint(.white)
@@ -301,7 +301,7 @@ public struct LoginFormView: View {
         VStack(spacing: 0) {
             ZStack {
                 Text(store.host)
-                    .type(.body2, style: .primary)
+                    .type(.body1(.semibold), style: .primary(for: .label))
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .padding(.horizontal, Constants.navBarTitleHorizontalPadding)
@@ -311,7 +311,9 @@ public struct LoginFormView: View {
                         store.send(.backButtonTapped)
                     } label: {
                         IconKit.chevronLeft
-                            .font(.system(size: Constants.backChevronSize, weight: Constants.backChevronWeight))
+                            .resizable()
+                            .frame(width: Constants.backChevronSize, height: Constants.backChevronSize)
+                            .fontWeight(Constants.backChevronWeight)
                             .foregroundStyle(Color.primaryDS)
                     }
                     .buttonStyle(.plain)
@@ -332,7 +334,7 @@ public struct LoginFormView: View {
 
                         if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
                             Text(errorMessage)
-                                .type(.body1, style: .negative)
+                                .type(.body2(.semibold), style: .error)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .transition(.opacity)
                         }
@@ -361,7 +363,7 @@ public struct LoginFormView: View {
                     EmptyView()
                 }
                 .textFieldStyle(.plain)
-                .type(.body1)
+                .type(.body1(.regular))
                 .tint(Color.accent)
                 .textContentType(.username)
                 .autocorrectionDisabled()
@@ -381,7 +383,7 @@ public struct LoginFormView: View {
     private var passwordField: some View {
         DSFieldContainer(label: "Password", icon: IconKit.lock, shakeTrigger: passwordShakeTrigger, isInvalid: isPasswordFieldInvalid) {
             HStack(spacing: .space8) {
-                // Both fields stay mounted at all times — swapping SecureField/TextField in and
+                // Both fields stay mounted at all times: swapping SecureField/TextField in and
                 // out via `if/else` tears down and rebuilds the underlying text input on every
                 // reveal toggle, which drops the AutoFill session iOS (and Bitwarden, 1Password,
                 // etc.) had going for it. Toggling opacity/hit-testing instead keeps one stable
@@ -396,7 +398,7 @@ public struct LoginFormView: View {
                     .opacity(store.isPasswordVisible ? 0 : 1)
                     .allowsHitTesting(!store.isPasswordVisible)
                     .accessibilityHidden(store.isPasswordVisible)
-                    // Only the field currently on-screen may claim `.password` — both fields
+                    // Only the field currently on-screen may claim `.password`; both fields
                     // staying mounted with the same content type makes AutoFill's
                     // username/password pairing ambiguous and it silently declines to fill
                     // either (this is what broke Bitwarden autofill).
@@ -414,7 +416,7 @@ public struct LoginFormView: View {
                     .textContentType(store.isPasswordVisible ? .password : nil)
                 }
                 .textFieldStyle(.plain)
-                .type(.body1)
+                .type(.body1(.regular))
                 .tint(Color.accent)
                 .autocorrectionDisabled()
                 #if os(iOS)

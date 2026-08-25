@@ -3,8 +3,8 @@ import SwiftUI
 struct TokenPreviewView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: .space12) {
-            Text("Headline").type(.headline1, style: .primary)
-            Text("Body").type(.body1, style: .primary)
+            Text("Headline").type(.headline1, style: .primary(for: .label))
+            Text("Body").type(.body1(.semibold), style: .primary(for: .label))
             Text("Label").type(.label1, style: .secondary)
 
             let swatches: [Color] = [.accent, .positive, .attention, .negative]
@@ -28,9 +28,9 @@ struct TokenPreviewView: View {
 private struct TypographyPreviewView: View {
     private let rows: [(name: String, type: Typography.TextType)] = [
         ("headline1", .headline1),
-        ("body1", .body1),
-        ("body2", .body2),
-        ("button", .button),
+        ("body1", .body1(.bold)),
+        ("body2", .body2(.bold)),
+        ("button", .label1),
         ("label1", .label1)
     ]
 
@@ -39,7 +39,7 @@ private struct TypographyPreviewView: View {
             ForEach(rows, id: \.name) { row in
                 VStack(alignment: .leading, spacing: .space4) {
                     Text("The quick brown fox — 0123456789")
-                        .type(row.type, style: .primary)
+                        .type(row.type, style: .primary(for: .label))
                     Text("\(row.name)  \(Int(row.type.size))pt  \(String(describing: row.type.weight))")
                         .type(.label1, style: .secondary)
                 }
@@ -54,7 +54,7 @@ private struct TypographyPreviewView: View {
     TypographyPreviewView()
 }
 
-/// Every `DSButtonStyle`, in every `DSButtonSize`, both loading/disabled — so a radius or
+/// Every `DSButtonStyle`, in every `DSButtonSize`, both loading/disabled, so a radius or
 /// color change is visible at a glance in the canvas.
 private struct ButtonPreviewView: View {
     var body: some View {
@@ -71,7 +71,7 @@ private struct ButtonPreviewView: View {
             }
 
             DSAnimatedButton(phase: 0, isCollapsed: false, style: .inverted) {} content: {
-                Text("Test Connection").type(.button).foregroundStyle(Color.backgroundPrimary)
+                Text("Test Connection").type(.label2).foregroundStyle(Color.backgroundPrimary)
             }
             DSAnimatedButton(phase: 1, isCollapsed: true, style: .inverted) {} content: {
                 ProgressView().tint(Color.backgroundPrimary)
@@ -90,4 +90,53 @@ private struct ButtonPreviewView: View {
 
 #Preview("Buttons") {
     ButtonPreviewView()
+}
+
+/// `DSFieldContainer` empty, filled, and `isInvalid`, plus a standalone `DSPlaceholderText`.
+private struct FieldsPreviewView: View {
+    @State private var text = ""
+
+    var body: some View {
+        VStack(spacing: .space16) {
+            DSFieldContainer(label: "Empty", icon: IconKit.envelope) {
+                DSPlaceholderText("name@company.com")
+            }
+            DSFieldContainer(label: "Filled", icon: IconKit.envelope) {
+                Text("jane.doe@example.com").type(.body1(.regular))
+            }
+            DSFieldContainer(label: "Invalid", icon: IconKit.lock, isInvalid: true) {
+                Text("wrong-password").type(.body1(.regular))
+            }
+        }
+        .padding(.space16)
+        .background(Color.backgroundPrimary)
+    }
+}
+
+#Preview("Fields") {
+    FieldsPreviewView()
+}
+
+/// `DSSegmentedControl` with each option selected in turn.
+private struct SegmentedControlPreviewView: View {
+    private enum Option: Hashable, CaseIterable { case first, second, third }
+    @State private var selection: Option = .first
+
+    var body: some View {
+        VStack(spacing: .space16) {
+            ForEach(Array(Option.allCases), id: \.self) { option in
+                DSSegmentedControl(
+                    options: Array(Option.allCases),
+                    selection: .constant(option),
+                    label: { "\($0)".capitalized }
+                )
+            }
+        }
+        .padding(.space16)
+        .background(Color.backgroundPrimary)
+    }
+}
+
+#Preview("SegmentedControl") {
+    SegmentedControlPreviewView()
 }
