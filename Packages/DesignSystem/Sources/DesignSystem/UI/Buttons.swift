@@ -1,0 +1,218 @@
+import SwiftUI
+
+/// Shared style/size vocabulary for every button in the design system —
+/// `DSButton` and `DSAnimatedButton` both key off these.
+public enum DSButtonStyle: CaseIterable, Hashable {
+    /// Filled accent background — primary call to action.
+    case primary
+    /// Filled surface background — secondary action.
+    case secondary
+    /// Transparent background, accent text — low-emphasis inline action.
+    case tertiary
+    /// Filled positive background — confirms a completed action.
+    case success
+    /// Filled negative background — flags a failed action.
+    case failure
+    /// Fixed dark charcoal fill, white text — SSO/secondary CTAs that should read as a
+    /// distinct, high-contrast brand element in both light and dark mode, rather than
+    /// flipping to whichever color currently contrasts with the background.
+    case inverted
+
+    var backgroundColor: Color {
+        switch self {
+        case .primary: .accent
+        case .secondary: .backgroundSecondary
+        case .tertiary: .clear
+        case .success: .positive
+        case .failure: .negative
+        case .inverted: Color(white: 0.15)
+        }
+    }
+
+    var foregroundColor: Color {
+        switch self {
+        // `.accent` is a pale gold — white text on it fails contrast in both appearances,
+        // so its label stays fixed-dark rather than following the semantic on-fill color.
+        case .primary: .black
+        case .success, .failure, .inverted: .white
+        case .secondary: .primaryDS
+        case .tertiary: .accent
+        }
+    }
+
+    var borderColor: Color {
+        self == .secondary ? .borderPrimary : .clear
+    }
+}
+
+public enum DSButtonSize: CaseIterable, Hashable {
+    case large
+    case medium
+    case small
+
+    var height: CGFloat {
+        switch self {
+        case .large: .size56
+        case .medium: .size48
+        case .small: .size40
+        }
+    }
+}
+
+private enum Constants {
+    static let loadingOpacity: Double = 0.7
+    static let disabledOpacity: Double = 0.4
+    static let contentFadeDuration: Double = 0.15
+    static let morphSpringResponse: Double = 0.35
+    static let morphSpringDamping: Double = 0.8
+    /// Every button shares the same discreet lift — softer than the design system's default
+    /// elevation alpha, since a full-width filled CTA reads as "raised" even with a faint shadow.
+    static let buttonElevationAlpha: Double = 0.16
+}
+
+/// The app's standard rectangular button — corners match the web client's `rounded-xl`
+/// inputs/buttons (`.radiusControl`, 12pt). Use this for any plain tap action; reach for
+/// `DSAnimatedButton` instead when the action is async and should show a spinner/success
+/// state in place.
+public struct DSButton: View {
+    @Environment(\.isEnabled) private var isEnabled
+
+    private let title: String
+    private let icon: Image?
+    private let style: DSButtonStyle
+    private let size: DSButtonSize
+    private let isLoading: Bool
+    private let action: () -> Void
+
+    public init(
+        _ title: String,
+        icon: Image? = nil,
+        style: DSButtonStyle = .primary,
+        size: DSButtonSize = .medium,
+        isLoading: Bool = false,
+        action: @escaping () -> Void
+    ) {
+        self.title = title
+        self.icon = icon
+        self.style = style
+        self.size = size
+        self.isLoading = isLoading
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            HStack(spacing: .space8) {
+                if isLoading {
+                    ProgressView().tint(style.foregroundColor)
+                } else {
+                    if let icon {
+                        icon
+                    }
+                    Text(title)
+                }
+            }
+            .type(.button)
+            .foregroundStyle(style.foregroundColor)
+            .frame(maxWidth: .infinity)
+            .frame(height: size.height)
+            .background(RoundedRectangle(cornerRadius: .radiusControl).fill(style.backgroundColor))
+            .overlay(
+                RoundedRectangle(cornerRadius: .radiusControl)
+                    .stroke(style.borderColor, lineWidth: style == .secondary ? 1 : 0)
+            )
+            .elevation(.level1, alpha: Constants.buttonElevationAlpha)
+        }
+        .buttonStyle(.plain)
+        .allowsHitTesting(isEnabled && !isLoading)
+        .opacity(!isEnabled ? Constants.disabledOpacity : isLoading ? Constants.loadingOpacity : 1)
+        .animation(.easeOut(duration: Constants.contentFadeDuration), value: isLoading)
+    }
+}
+
+/// A CTA button that morphs between a full-width `.radiusControl`-cornered rectangle (matching
+/// `DSButton`) and a `size`-wide circle — for async actions that show a spinner while in
+/// flight and a distinct end state (e.g. a checkmark or an X) in place, like "Test Connection".
+public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
+    private let phase: Phase
+    private let isCollapsed: Bool
+    private let style: DSButtonStyle
+    private let size: DSButtonSize
+    private let isHitEnabled: Bool
+    private let action: () -> Void
+    private let content: Content
+
+    public init(
+        phase: Phase,
+        isCollapsed: Bool,
+        style: DSButtonStyle = .primary,
+        size: DSButtonSize = .medium,
+        isHitEnabled: Bool = true,
+        action: @escaping () -> Void,
+        @ViewBuilder content: () -> Content
+    ) {
+        self.phase = phase
+        self.isCollapsed = isCollapsed
+        self.style = style
+        self.size = size
+        self.isHitEnabled = isHitEnabled
+        self.action = action
+        self.content = content()
+    }
+
+    public var body: some View {
+        GeometryReader { proxy in
+            Button(action: action) {
+                content
+                    .animation(.easeOut(duration: Constants.contentFadeDuration), value: phase)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    // Without this, only the pixels the label actually draws (the text glyphs)
+                    // register taps — the rest of the expanded frame is transparent, so most of
+                    // the pill was visually a button but not actually tappable.
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .allowsHitTesting(isHitEnabled)
+            .modifier(
+                MorphingButtonChrome(
+                    progress: isCollapsed ? 1 : 0,
+                    expandedWidth: proxy.size.width,
+                    height: size.height,
+                    fillColor: style.backgroundColor,
+                    borderColor: style.borderColor
+                )
+            )
+            .elevation(.level1, alpha: Constants.buttonElevationAlpha)
+            .frame(maxWidth: .infinity)
+            .animation(
+                .spring(response: Constants.morphSpringResponse, dampingFraction: Constants.morphSpringDamping),
+                value: isCollapsed
+            )
+        }
+        .frame(height: size.height)
+    }
+}
+
+/// Derives frame width and corner radius from one interpolated `progress` (0 = expanded
+/// `.radiusControl` rectangle, 1 = collapsed `height`-wide circle) so they animate in lockstep.
+private struct MorphingButtonChrome: Animatable, ViewModifier {
+    var progress: CGFloat
+    let expandedWidth: CGFloat
+    let height: CGFloat
+    let fillColor: Color
+    let borderColor: Color
+
+    nonisolated var animatableData: CGFloat {
+        get { progress }
+        set { progress = newValue }
+    }
+
+    func body(content: Content) -> some View {
+        let width = expandedWidth + (height - expandedWidth) * progress
+        let radius = CGFloat.radiusControl + (height / 2 - .radiusControl) * progress
+        content
+            .frame(width: width, height: height)
+            .background(RoundedRectangle(cornerRadius: radius).fill(fillColor))
+            .overlay(RoundedRectangle(cornerRadius: radius).stroke(borderColor, lineWidth: 1))
+    }
+}
