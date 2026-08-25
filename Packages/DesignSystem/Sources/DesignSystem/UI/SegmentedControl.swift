@@ -5,7 +5,7 @@ private enum SegmentedControlConstants {
     static let fadeDuration: Double = 0.2
 }
 
-/// A pill-shaped segmented control — accent-filled selected segment on a `backgroundSecondary`
+/// A pill-shaped segmented control: accent-filled selected segment on a `backgroundSecondary`
 /// track. Generic over any `Hashable` option set (e.g. an enum of modes).
 public struct DSSegmentedControl<Option: Hashable>: View {
     private let options: [Option]
@@ -26,8 +26,8 @@ public struct DSSegmentedControl<Option: Hashable>: View {
                     selection = option
                 } label: {
                     Text(label(option))
-                        .type(.body2)
-                        .foregroundStyle(isSelected ? .white : Color.primaryDS)
+                        .type(.body2(isSelected ? .bold : .regular))
+                        .foregroundStyle(Color.primaryDS)
                         .frame(maxWidth: .infinity)
                         .frame(height: SegmentedControlConstants.height)
                         .background(
