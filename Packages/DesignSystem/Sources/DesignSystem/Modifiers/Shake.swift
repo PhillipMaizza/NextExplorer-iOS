@@ -4,11 +4,14 @@ import SwiftUI
 /// damped sine wave, so incrementing a `@State` counter under `withAnimation` triggers exactly
 /// one shake burst. Use via `.shake(trigger:)` below rather than the raw modifier.
 public struct ShakeEffect: GeometryEffect {
+    /// Default number of shake oscillations for one burst.
+    public static let defaultShakeCount: CGFloat = 3
+
     public var travelDistance: CGFloat
     public var numberOfShakes: CGFloat
     public var animatableData: CGFloat
 
-    public init(travelDistance: CGFloat = .size16, numberOfShakes: CGFloat = 3, animatableData: CGFloat) {
+    public init(travelDistance: CGFloat = .size16, numberOfShakes: CGFloat = ShakeEffect.defaultShakeCount, animatableData: CGFloat) {
         self.travelDistance = travelDistance
         self.numberOfShakes = numberOfShakes
         self.animatableData = animatableData
