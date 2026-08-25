@@ -1,5 +1,9 @@
 import SwiftUI
 
+private enum Constants {
+    static let tertiaryOpacity: Double = 0.6
+}
+
 /// Semantic color tokens, extended directly on `Color` rather than wrapped in a
 /// namespace type. Light/dark comes from the asset catalog's appearance variants.
 public extension Color {
@@ -9,6 +13,9 @@ public extension Color {
     static let primaryDS = Color("TextPrimary", bundle: .module)
     /// Secondary text, placeholders, subtitles.
     static let secondaryDS = Color("TextSecondary", bundle: .module)
+    /// Tertiary text, dimmer than `secondaryDS`, no asset of its own so it stays a
+    /// derived tone rather than a third hand-tuned light/dark pair to maintain.
+    static let tertiaryDS = Color.secondaryDS.opacity(Constants.tertiaryOpacity)
     /// Positive/success feedback.
     static let positive = Color("Success", bundle: .module)
     /// Warning/attention feedback.
@@ -21,11 +28,13 @@ public extension Color {
     static let backgroundSecondary = Color("Surface", bundle: .module)
     /// Default element divider/border (input fields, dividers).
     static let borderPrimary = Color("Border", bundle: .module)
+    static let primaryInverted = Color("TextPrimaryInverted", bundle: .module)
+    static let secondaryInverted = Color("TextSecondaryInverted", bundle: .module)
 }
 
 /// Full tonal ramp mixed from `Color.accent` (toward white for tints, toward black for
 /// shades) and from `Color.backgroundPrimary` (toward black), for cases the nine semantic
-/// roles above don't cover — chart series, hover/pressed states, elevation layers, etc.
+/// roles above don't cover: chart series, hover/pressed states, elevation layers, etc.
 /// Reach for a semantic role first; drop to a raw step only when nothing semantic fits.
 public extension Color {
     static let accent50 = Color("Accent50", bundle: .module)
@@ -33,7 +42,7 @@ public extension Color {
     static let accent200 = Color("Accent200", bundle: .module)
     static let accent300 = Color("Accent300", bundle: .module)
     static let accent400 = Color("Accent400", bundle: .module)
-    /// Same value as `Color.accent` — included so the 50–900 ramp reads as one continuous scale.
+    /// Same value as `Color.accent`, included so the 50–900 ramp reads as one continuous scale.
     static let accent500 = Color("Accent", bundle: .module)
     static let accent600 = Color("Accent600", bundle: .module)
     static let accent700 = Color("Accent700", bundle: .module)

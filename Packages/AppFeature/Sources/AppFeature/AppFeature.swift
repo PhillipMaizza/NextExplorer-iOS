@@ -3,11 +3,13 @@ import AuthFeature
 import ComposableArchitecture
 import CoreModels
 import Foundation
+import SwiftUI
 
 @Reducer
 public struct AppFeature {
     @Reducer
     public enum Destination {
+        case loading
         case unauthenticated(LoginFormFeature)
         case authenticated(AuthenticatedFeature)
     }
@@ -16,7 +18,7 @@ public struct AppFeature {
     public struct State: Equatable {
         public var destination: Destination.State
 
-        public init(destination: Destination.State = .unauthenticated(.init())) {
+        public init(destination: Destination.State = .loading) {
             self.destination = destination
         }
     }
@@ -34,14 +36,9 @@ public struct AppFeature {
 
     public var body: some ReducerOf<Self> {
         Scope(state: \.destination, action: \.destination) {
-            EmptyReducer()
-                .ifCaseLet(\.unauthenticated, action: \.unauthenticated) {
-                    LoginFormFeature()
-                }
-                .ifCaseLet(\.authenticated, action: \.authenticated) {
-                    AuthenticatedFeature()
-                }
+            Destination.body
         }
+
         Reduce { state, action in
             switch action {
             case .onAppear:
@@ -53,10 +50,12 @@ public struct AppFeature {
 
             case let .sessionRestoreResponse(credentials):
                 guard let credentials else {
-                    state.destination = .unauthenticated(.init())
+                    withAnimation {
+                        state.destination = .unauthenticated(.init())
+                    }
                     return .none
                 }
-                
+
                 let authClient = self.authClient
                 return .run { send in
                     do {
@@ -69,13 +68,17 @@ public struct AppFeature {
                 }
 
             case let .sessionValidationResponse(.success(user), credentials):
-                state.destination = .authenticated(
-                    AuthenticatedFeature.State(serverURL: credentials.serverBaseURL, username: user.username)
-                )
+                withAnimation {
+                    state.destination = .authenticated(
+                        AuthenticatedFeature.State(serverURL: credentials.serverBaseURL, user: user)
+                    )
+                }
                 return .none
 
             case .sessionValidationResponse(.failure, _):
-                state.destination = .unauthenticated(.init())
+                withAnimation {
+                    state.destination = .unauthenticated(.init())
+                }
                 let authClient = self.authClient
                 return .run { _ in
                     await authClient.clearSession()
@@ -83,7 +86,7 @@ public struct AppFeature {
 
             case let .destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))):
                 state.destination = .authenticated(
-                    AuthenticatedFeature.State(serverURL: serverURL, username: user.username)
+                    AuthenticatedFeature.State(serverURL: serverURL, user: user)
                 )
                 return .none
 
