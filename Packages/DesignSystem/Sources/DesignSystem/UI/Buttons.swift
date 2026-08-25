@@ -197,7 +197,7 @@ public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
 
 /// Derives frame width and corner radius from one interpolated `progress` (0 = expanded
 /// `.radiusControl` rectangle, 1 = collapsed `height`-wide circle) so they animate in lockstep.
-private struct MorphingButtonChrome: Animatable, ViewModifier {
+struct MorphingButtonChrome: Animatable, ViewModifier {
     var progress: CGFloat
     let expandedWidth: CGFloat
     let height: CGFloat
@@ -209,9 +209,20 @@ private struct MorphingButtonChrome: Animatable, ViewModifier {
         set { progress = newValue }
     }
 
+    /// Pure width/radius interpolation, split out from `body(content:)` so it's testable
+    /// without rendering a `View`. `nonisolated` because `ViewModifier` conformance would
+    /// otherwise infer these onto `MainActor`, even though the math touches no UI state.
+    nonisolated static func width(progress: CGFloat, expandedWidth: CGFloat, height: CGFloat) -> CGFloat {
+        expandedWidth + (height - expandedWidth) * progress
+    }
+
+    nonisolated static func radius(progress: CGFloat, height: CGFloat) -> CGFloat {
+        .radiusControl + (height / 2 - .radiusControl) * progress
+    }
+
     func body(content: Content) -> some View {
-        let width = expandedWidth + (height - expandedWidth) * progress
-        let radius = CGFloat.radiusControl + (height / 2 - .radiusControl) * progress
+        let width = Self.width(progress: progress, expandedWidth: expandedWidth, height: height)
+        let radius = Self.radius(progress: progress, height: height)
         content
             .frame(width: width, height: height)
             .background(RoundedRectangle(cornerRadius: radius).fill(fillColor))

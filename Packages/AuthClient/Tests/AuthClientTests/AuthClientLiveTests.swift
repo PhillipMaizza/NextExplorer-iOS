@@ -186,6 +186,39 @@ struct AuthClientLiveTests {
         }
     }
 
+    @Test("login error path: a keychain write failure surfaces as AuthClientError.keychain")
+    func loginKeychainWriteFailureSurfaces() async throws {
+        struct StubKeychainError: Error {}
+        let cookieStorage = makeCookieStorage()
+        let failingKeychainClient = KeychainClient(
+            save: { _, _ in throw StubKeychainError() },
+            load: { _ in nil },
+            delete: { _ in }
+        )
+
+        let client = makeClient(cookieStorage: cookieStorage, keychainClient: failingKeychainClient) { request in
+            let url = try #require(request.url)
+            if let host = url.host {
+                let cookie = try #require(HTTPCookie(properties: [
+                    .name: AuthClientConfiguration.CookieName.local,
+                    .value: "abc123",
+                    .domain: host,
+                    .path: "/"
+                ]))
+                cookieStorage.setCookie(cookie)
+            }
+            let body = Data(#"{"user":{"id":"1","username":"phillip","roles":[]}}"#.utf8)
+            return (body, try self.response(statusCode: 200, url: url))
+        }
+
+        do {
+            _ = try await client.login(serverURL, "phillip", "hunter2")
+            Issue.record("expected login to throw")
+        } catch AuthClientError.keychain {
+            // expected
+        }
+    }
+
     // MARK: - me
 
     @Test("me happy path returns the decoded user")
