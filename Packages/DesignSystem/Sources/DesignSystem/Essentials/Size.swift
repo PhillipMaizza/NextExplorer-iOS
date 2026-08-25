@@ -1,6 +1,8 @@
 import CoreGraphics
 
 public extension CGFloat {
+    /// 12dp
+    static let iconXSmall: CGFloat = 12.0
     /// 16dp
     static let iconSmall: CGFloat = 16.0
     /// 24dp

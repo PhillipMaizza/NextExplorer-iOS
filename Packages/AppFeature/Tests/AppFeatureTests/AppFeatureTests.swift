@@ -35,7 +35,7 @@ struct AppFeatureTests {
         await store.send(.onAppear)
         await store.receive(\.sessionRestoreResponse)
         await store.receive(\.sessionValidationResponse) {
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, username: "phillip"))
+            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, user: user))
         }
     }
 
@@ -63,8 +63,9 @@ struct AppFeatureTests {
 
         await store.send(.onAppear)
         await store.receive(\.sessionRestoreResponse)
-        await store.receive(\.sessionValidationResponse)
-        #expect(store.state.destination == .unauthenticated(.init()))
+        await store.receive(\.sessionValidationResponse) {
+            $0.destination = .unauthenticated(.init())
+        }
         #expect(clearSessionCalled.value)
     }
 
@@ -77,29 +78,35 @@ struct AppFeatureTests {
         }
 
         await store.send(.onAppear)
-        // Initial state is already `.unauthenticated(.init())`, so this is a no-op
-        // reassignment — no trailing closure since there's no observable state change.
-        await store.receive(\.sessionRestoreResponse)
-        #expect(store.state.destination == .unauthenticated(.init()))
+        // Initial state is `.loading`, so a nil credentials result is a real transition
+        // to `.unauthenticated(.init())`, not a no-op.
+        await store.receive(\.sessionRestoreResponse) {
+            $0.destination = .unauthenticated(.init())
+        }
     }
 
     @Test("happy path: authenticating from the login flow switches to the authenticated destination")
     func authenticatingSwitchesDestination() async {
-        let store = TestStore(initialState: AppFeature.State()) {
+        // This action is only ever sent while `.unauthenticated` is showing (the login
+        // form itself emits it), so the store has to start there rather than at the
+        // default `.loading`: TCA raises an error if a scoped action arrives while the
+        // destination is a different case.
+        let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
             AppFeature()
         }
         let user = User(id: "1", username: "phillip", email: nil, roles: [])
 
         await store.send(.destination(.unauthenticated(.delegate(.authenticated(user, serverURL))))) {
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, username: "phillip"))
+            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, user: user))
         }
     }
 
     @Test("happy path: signing out switches back to the unauthenticated flow")
     func signOutSwitchesDestination() async {
+        let user = User(id: "1", username: "phillip", email: nil, roles: [])
         let store = TestStore(
             initialState: AppFeature.State(
-                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, username: "phillip"))
+                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
             )
         ) {
             AppFeature()
