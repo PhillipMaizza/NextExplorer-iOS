@@ -4,10 +4,14 @@ public enum KeychainAccessibility: Sendable {
     case afterFirstUnlock
     case whenUnlocked
 
+    /// `ThisDeviceOnly` variants are used for both cases: without it, an item is eligible
+    /// for iCloud Keychain sync/backup, so a session cookie restored onto a different
+    /// device would hand that device a live, pre-authenticated session with no re-login.
+    /// Session credentials must never leave the device they were issued on.
     var cfString: CFString {
         switch self {
-        case .afterFirstUnlock: kSecAttrAccessibleAfterFirstUnlock
-        case .whenUnlocked: kSecAttrAccessibleWhenUnlocked
+        case .afterFirstUnlock: kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        case .whenUnlocked: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
         }
     }
 }
