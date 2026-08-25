@@ -1,5 +1,7 @@
 import Foundation
 
+/// Safe only because every test suite that mutates `stub`/`failure` is declared
+/// `@Suite(.serialized)` — tests never run concurrently against this shared static state.
 final class StubURLProtocol: URLProtocol {
     struct Stub {
         let statusCode: Int

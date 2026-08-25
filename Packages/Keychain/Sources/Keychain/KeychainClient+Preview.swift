@@ -13,6 +13,8 @@ extension KeychainClient {
     public static let previewValue: KeychainClient = .inMemory()
 }
 
+/// `@unchecked Sendable` is safe here: every access to `storage` is behind `lock`, so the
+/// compiler just can't see the synchronization NSLock actually provides.
 private final class LockedStorage: @unchecked Sendable {
     private let lock = NSLock()
     private var storage: [String: Data] = [:]
