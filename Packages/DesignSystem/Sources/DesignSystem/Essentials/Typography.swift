@@ -1,46 +1,83 @@
 import SwiftUI
 
 public enum Typography {
+    public enum Trait {
+        case bold
+        case semibold
+        case regular
+
+        var weight: Font.Weight {
+            switch self {
+            case .bold: .bold
+            case .semibold: .semibold
+            case .regular: .regular
+            }
+        }
+    }
     /// Font size/weight tiers. Separate from `TextStyle` (color) so either can vary independently.
     ///
-    /// Backed by the Figtree variable font (registered lazily on first use — see
+    /// Backed by the Figtree variable font (registered lazily on first use, see
     /// `TextType.fontsRegistered` below). Its default instance is Light, so every tier
-    /// applies an explicit weight — never rely on the font's own default.
+    /// applies an explicit weight; never rely on the font's own default.
     public enum TextType {
-        /// Bold, 28pt
+        case display
         case headline1
-        /// Regular, 17pt
-        case body1
-        /// Semibold, 17pt — button labels
-        case body2
-        /// Semibold, 19pt — primary CTA button labels
-        case button
-        /// Regular, 12pt — section labels, captions
+        case headline2
+        case headline3
+        case headline4
+        case subtitle1
+        case subtitle2
+        case body1(Trait)
+        case body2(Trait)
+        case body3(Trait)
+        case caption(Trait)
         case label1
+        case label2
+        case label3
+        case label4
 
         private static let familyName = "Figtree"
 
-        /// Lazily registers the font on first access — previews never run `NetxExplorerApp.init()`,
+        /// Lazily registers the font on first access. Previews never run `NetxExplorerApp.init()`,
         /// and `Font.custom` silently falls back to the system font if "Figtree" isn't registered.
         private static let fontsRegistered: Void = DesignSystemFonts.registerAll()
 
         public var size: CGFloat {
             switch self {
-            case .headline1: 28
-            case .body1: 17
-            case .body2: 17
-            case .button: 19
-            case .label1: 12
+            case .display: 64
+            case .headline1: 48
+            case .headline2: 32
+            case .headline3: 24
+            case .headline4: 20
+            case .subtitle1: 20
+            case .subtitle2: 16
+            case .body1: 18
+            case .body2: 16
+            case .body3: 14
+            case .caption: 12
+            case .label1: 24
+            case .label2: 20
+            case .label3: 16
+            case .label4: 14
             }
         }
 
         public var weight: Font.Weight {
             switch self {
+            case .display: .bold
             case .headline1: .bold
-            case .body1: .regular
-            case .body2: .semibold
-            case .button: .semibold
-            case .label1: .regular
+            case .headline2: .semibold
+            case .headline3: .semibold
+            case .headline4: .semibold
+            case .subtitle1: .regular
+            case .subtitle2: .regular
+            case .body1(let trait), .body2(let trait),
+                    .body3(let trait), .caption(let trait):
+                trait.weight
+            case .label1: .semibold
+            case .label2: .semibold
+            case .label3: .semibold
+            case .label4: .semibold
             }
         }
 
@@ -52,21 +89,37 @@ public enum Typography {
 
     /// Text color roles.
     public enum TextStyle {
-        case primary
+        public enum Target {
+            case label
+            case button
+        }
+
+        case primary(for: Target)
         case secondary
-        case positive
-        case negative
+        case tertiary
+        case disabled
+        case inverted
+        case invertedSecondary
+        case success
+        case link
+        case error
         case warning
-        case accent
+        case custom(Color)
 
         public var color: Color {
             switch self {
-            case .primary: .primaryDS
+            case .primary(let target):
+                target == .button ? .primaryInverted : .primaryDS
             case .secondary: .secondaryDS
-            case .positive: .positive
-            case .negative: .negative
+            case .tertiary: .tertiaryDS
+            case .disabled: .tertiaryDS
+            case .inverted: .primaryInverted
+            case .invertedSecondary: .secondaryInverted
+            case .success: .positive
+            case .link: .accent
+            case .error: .negative
             case .warning: .attention
-            case .accent: .accent
+            case .custom(let color): color
             }
         }
     }
@@ -90,7 +143,7 @@ public extension Text {
 }
 
 public extension View {
-    /// Applies a Design System text type (font + weight) to any view — chiefly for
+    /// Applies a Design System text type (font + weight) to any view, chiefly for
     /// `TextField`/`SecureField`, which aren't `Text` and so can't use `Text.type(_:)`.
     func type(_ type: Typography.TextType) -> some View {
         font(type.font()).fontWeight(type.weight)
