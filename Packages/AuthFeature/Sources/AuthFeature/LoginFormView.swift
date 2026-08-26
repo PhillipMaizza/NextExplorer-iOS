@@ -132,6 +132,7 @@ public struct LoginFormView: View {
             value: store.currentPage
         )
         .backgroundGradient()
+        .modifier(LoginHapticsModifier(errorMessage: store.errorMessage, connectionPhase: store.connectionPhase))
         .onChange(of: store.errorMessage) { _, newValue in
             guard newValue != nil else { return }
             withAnimation(.default) {
@@ -314,7 +315,7 @@ public struct LoginFormView: View {
                             .fontWeight(Constants.backChevronWeight)
                             .foregroundStyle(Color.primaryDS)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(DSHapticButtonStyle())
                     Spacer()
                 }
             }
@@ -425,7 +426,7 @@ public struct LoginFormView: View {
                         (store.isPasswordVisible ? IconKit.eyeSlash : IconKit.eye)
                             .foregroundStyle(Color.secondaryDS)
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(DSHapticButtonStyle())
                     .transition(.opacity)
                 }
             }
@@ -444,6 +445,31 @@ public struct LoginFormView: View {
         }
         .disabled(!isSubmitLocalEnabled && !store.isSubmitting)
         .animation(.easeInOut(duration: Constants.contentFadeDuration), value: isSubmitLocalEnabled)
+    }
+}
+
+/// Split out of `LoginFormView.body` — inlining these three `.hapticFeedback` calls alongside
+/// everything else already chained onto the root `ZStack` pushed the compiler's type-checker
+/// past a reasonable time budget.
+private struct LoginHapticsModifier: ViewModifier {
+    let errorMessage: String?
+    let connectionPhase: LoginFormFeature.ConnectionPhase
+
+    func body(content: Content) -> some View {
+        let withErrorFeedback = content.hapticFeedback(.error, trigger: errorMessage) { _, newValue in
+            newValue != nil
+        }
+        return withErrorFeedback.modifier(ConnectionPhaseHapticsModifier(connectionPhase: connectionPhase))
+    }
+}
+
+private struct ConnectionPhaseHapticsModifier: ViewModifier {
+    let connectionPhase: LoginFormFeature.ConnectionPhase
+
+    func body(content: Content) -> some View {
+        content
+            .hapticFeedback(.success, trigger: connectionPhase) { _, newValue in newValue == .success }
+            .hapticFeedback(.error, trigger: connectionPhase) { _, newValue in newValue == .failure }
     }
 }
 
