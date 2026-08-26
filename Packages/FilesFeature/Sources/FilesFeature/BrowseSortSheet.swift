@@ -52,6 +52,7 @@ struct BrowseSortSheet: View {
                         .padding(Constants.closeButtonPadding)
                         .background(Circle().fill(Color.backgroundSecondary))
                 }
+                .buttonStyle(DSHapticButtonStyle())
             }
 
             Text("Sort By").type(.headline3, style: .primary(for: .label))
@@ -77,6 +78,8 @@ struct BrowseSortSheet: View {
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.top, Constants.topPadding)
         .padding(.bottom, Constants.bottomPadding)
+        .hapticFeedback(.selection, trigger: sortOption)
+        .hapticFeedback(.selection, trigger: sortDirection)
     }
 
     private func radioRow(icon: Image?, title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
@@ -111,7 +114,7 @@ struct BrowseSortSheet: View {
             .padding(.vertical, Constants.rowVerticalPadding)
             .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(DSHapticButtonStyle())
         .padding(.vertical, .space8)
         .animation(.easeInOut(duration: Constants.selectionAnimationDuration), value: isSelected)
     }

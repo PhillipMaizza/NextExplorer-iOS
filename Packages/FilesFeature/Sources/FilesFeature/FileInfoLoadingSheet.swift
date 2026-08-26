@@ -49,6 +49,7 @@ struct FileInfoLoadingSheet: View {
                         .padding(Constants.closeButtonPadding)
                         .background(Circle().fill(Color.backgroundSecondary))
                 }
+                .buttonStyle(DSHapticButtonStyle())
             }
 
             Text(item.name).type(.headline3, style: .primary(for: .label)).lineLimit(2)

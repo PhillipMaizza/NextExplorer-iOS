@@ -72,6 +72,21 @@ private enum Constants {
     static let invertedFillWhite: Double = 0.15
 }
 
+/// Adds a light tap haptic on press-down without any of `.plain`'s visual side effects — any
+/// plain tappable row/icon/button in the app should feel tactile, not just visually respond.
+/// `configuration.isPressed` flips true on press-down and false on release/cancel; the
+/// `condition` closure fires the feedback only on the true transition, not the release.
+public struct DSHapticButtonStyle: ButtonStyle {
+    public init() {}
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .hapticFeedback(.impact(weight: .light), trigger: configuration.isPressed) { _, isPressed in
+                isPressed
+            }
+    }
+}
+
 /// The app's standard rectangular button — corners match the web client's `rounded-xl`
 /// inputs/buttons (`.radiusControl`, 12pt). Use this for any plain tap action; reach for
 /// `DSAnimatedButton` instead when the action is async and should show a spinner/success
@@ -125,7 +140,7 @@ public struct DSButton: View {
             )
             .elevation(.level1, alpha: Constants.buttonElevationAlpha)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(DSHapticButtonStyle())
         .allowsHitTesting(isEnabled && !isLoading)
         .opacity(!isEnabled ? Constants.disabledOpacity : isLoading ? Constants.loadingOpacity : 1)
         .animation(.easeOut(duration: Constants.contentFadeDuration), value: isLoading)
@@ -173,7 +188,7 @@ public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
                     // the pill was visually a button but not actually tappable.
                     .contentShape(Rectangle())
             }
-            .buttonStyle(.plain)
+            .buttonStyle(DSHapticButtonStyle())
             .allowsHitTesting(isHitEnabled)
             .modifier(
                 MorphingButtonChrome(
