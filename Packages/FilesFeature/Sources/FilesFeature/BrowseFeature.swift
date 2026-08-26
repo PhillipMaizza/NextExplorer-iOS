@@ -37,13 +37,14 @@ public struct BrowseFeature {
     /// How `displayedItems` orders a folder's contents. Folders always sort before files
     /// regardless of option; this only decides the order within each of those two groups.
     public enum SortOption: String, Hashable, Sendable, CaseIterable {
-        case name, size, dateModified
+        case name, size, dateModified, kind
 
         var title: String {
             switch self {
             case .name: "Name"
             case .size: "Size"
             case .dateModified: "Date Modified"
+            case .kind: "Kind"
             }
         }
 
@@ -52,6 +53,7 @@ public struct BrowseFeature {
             case .name: IconKit.textformat
             case .size: IconKit.internalDrive
             case .dateModified: IconKit.calendar
+            case .kind: IconKit.tag
             }
         }
     }
@@ -76,6 +78,20 @@ public struct BrowseFeature {
         }
     }
 
+    public struct FavoriteToggleResult: Equatable, Sendable {
+        public let path: String
+        public let isFavorite: Bool
+    }
+
+    public struct RenameResult: Equatable, Sendable {
+        public let originalID: String
+        public let renamed: FileItem
+    }
+
+    public struct DeleteResult: Equatable, Sendable {
+        public let itemID: String
+    }
+
     @ObservableState
     public struct State: Equatable, Sendable {
         public var serverURL: URL
@@ -96,6 +112,40 @@ public struct BrowseFeature {
         /// "Show Hidden Files" is reflected here immediately, even in an already-open folder,
         /// with no manual refresh needed.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
+        /// Item currently being renamed via the native rename alert. The in-progress text
+        /// itself lives in `BrowseContentView`'s own `@State`, not here — a `.alert`'s
+        /// `TextField` bound through a TCA `.sending` binding didn't reliably propagate
+        /// keystrokes back out, so `renameConfirmed` is sent the final text directly instead.
+        public var renameSheetItem: FileItem?
+        /// Item awaiting a destructive confirmation before `deleteConfirmed` actually deletes it.
+        public var deleteConfirmationItem: FileItem?
+        public var isPerformingFileAction = false
+        public var fileActionErrorMessage: String?
+        /// Drives a persistent progress toast — `nil` when no extract/compress is running.
+        /// Rename/delete don't set this: they're fast enough, and already have their own
+        /// alert-driven confirm flow, that a progress indicator would just flicker.
+        public var fileActionProgressMessage: String?
+        /// Item the "Get Info" sheet is showing, alongside its fetched metadata (or the
+        /// still-loading/error state while `GET /api/metadata/*` is in flight).
+        public var infoItem: FileItem?
+        public var infoMetadata: FileMetadata?
+        public var isLoadingInfoMetadata = false
+        public var infoErrorMessage: String?
+        /// Item being downloaded for the QuickLook viewer (tapping a file), alongside the
+        /// local temp file `previewFile` produces once `GET /api/preview` finishes. Only
+        /// used for PDFs — images/RAW load themselves per-page in the gallery view, and
+        /// video/audio stream directly, neither going through this at all.
+        public var previewItem: FileItem?
+        public var previewFileURL: URL?
+        public var isLoadingPreview = false
+        public var previewErrorMessage: String?
+        /// Text content for `previewItem` when it's neither previewable-via-download nor
+        /// streamable (anything `GET /api/preview` 415s on) — fetched/saved via the real
+        /// `/api/editor` endpoint, the server's actual text view+edit path.
+        public var textContent: String?
+        public var isLoadingTextContent = false
+        public var isSavingTextContent = false
+        public var textEditorErrorMessage: String?
 
         public var isSearching: Bool { !searchQuery.isEmpty }
 
@@ -131,12 +181,34 @@ public struct BrowseFeature {
         case searchResultsResponse(Result<[SearchResultItem], FilesClientError>)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
-        case breadcrumbTapped(path: String, title: String)
+        case renameTapped(FileItem)
+        case deleteTapped(FileItem)
+        case favoriteToggleButtonTapped(FileItem)
+        case favoriteToggleResponse(Result<FavoriteToggleResult, FilesClientError>)
+        case renameCancelled
+        case renameConfirmed(String)
+        case renameResponse(Result<RenameResult, FilesClientError>)
+        case deleteCancelled
+        case deleteConfirmed
+        case deleteResponse(Result<DeleteResult, FilesClientError>)
+        case extractZipTapped(FileItem)
+        case extractZipResponse(Result<FileItem, FilesClientError>)
+        case compressTapped(FileItem)
+        case compressResponse(Result<FileItem, FilesClientError>)
+        case infoTapped(FileItem)
+        case infoDismissed
+        case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
+        case previewDismissed
+        case previewFileResponse(Result<URL, FilesClientError>)
+        case textContentResponse(Result<String, FilesClientError>)
+        case textSaveTapped(String)
+        case textSaveResponse(Result<String, FilesClientError>)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
             case openFolder(FileItem)
             case openPath(path: String, title: String)
+            case favoritesChanged
         }
     }
 
@@ -173,7 +245,31 @@ public struct BrowseFeature {
                 return .none
 
             case let .rowTapped(item):
-                guard item.isDirectory else { return .none }
+                guard item.isDirectory else {
+                    // Archives, known binary formats (`.exe`, `.dmg`, fonts, ...), and video
+                    // containers `AVFoundation` can't decode (e.g. `.webm`) have nothing to
+                    // preview — bail before touching any preview state, rather than opening a
+                    // full-screen cover just to show an error. (The view layer pre-filters
+                    // these with a toast before ever sending `rowTapped`; this guard is a
+                    // defensive backstop, not the primary gate — it has to use the exact same
+                    // `isUnsupportedForPreview` check, not a hand-rolled approximation of it,
+                    // or the two can drift and this "backstop" stops backstopping anything.)
+                    guard !item.isUnsupportedForPreview else { return .none }
+                    // Sets `previewItem` unconditionally so the viewer presents immediately.
+                    // - Streamable media (video/audio) plays live from `FilesClient.previewURL`.
+                    // - Images/RAW load themselves per-page in the gallery view.
+                    // - Browsable archives (.zip/.rar) list themselves in `ArchiveBrowserView`.
+                    // None of these download anything here — only PDFs (the one other
+                    // download-previewable kind) and plain-text files need a fetch.
+                    state.previewItem = item
+                    if item.isBrowsableArchive || item.isStreamableMedia || ((item.isImage || item.isRawImage) && !item.isSVG) {
+                        return .none
+                    } else if item.isPreviewableViaDownload {
+                        return loadPreview(&state, item: item)
+                    } else {
+                        return loadTextContent(&state, item: item)
+                    }
+                }
                 return .send(.delegate(.openFolder(item)))
 
             case let .searchQueryChanged(query):
@@ -206,8 +302,186 @@ public struct BrowseFeature {
                 state.sortDirection = direction
                 return .none
 
-            case let .breadcrumbTapped(path, title):
-                return .send(.delegate(.openPath(path: path, title: title)))
+            case let .renameTapped(item):
+                state.renameSheetItem = item
+                return .none
+
+            case let .deleteTapped(item):
+                state.deleteConfirmationItem = item
+                return .none
+
+            case let .favoriteToggleButtonTapped(item):
+                // Mirrors the real server: `favoritesService.validatePath` 400s on anything
+                // that isn't a directory, so files never get a favorites entry point.
+                guard item.isDirectory else { return .none }
+                return toggleFavorite(&state, item: item)
+
+            case let .favoriteToggleResponse(.success(result)):
+                if result.isFavorite {
+                    state.favoritePaths.insert(result.path)
+                } else {
+                    state.favoritePaths.remove(result.path)
+                }
+                return .send(.delegate(.favoritesChanged))
+
+            case let .favoriteToggleResponse(.failure(error)):
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case .renameCancelled:
+                state.renameSheetItem = nil
+                return .none
+
+            case let .renameConfirmed(newName):
+                return confirmRename(&state, newName: newName)
+
+            case let .renameResponse(.success(result)):
+                state.isPerformingFileAction = false
+                state.renameSheetItem = nil
+                if let index = state.items.index(id: result.originalID) {
+                    state.items.remove(at: index)
+                    state.items.insert(result.renamed, at: index)
+                }
+                return .none
+
+            case let .renameResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case .deleteCancelled:
+                state.deleteConfirmationItem = nil
+                return .none
+
+            case .deleteConfirmed:
+                return confirmDelete(&state)
+
+            case let .deleteResponse(.success(result)):
+                state.isPerformingFileAction = false
+                state.items.remove(id: result.itemID)
+                let wasFavorited = state.favoritePaths.remove(result.itemID) != nil
+                return wasFavorited ? .send(.delegate(.favoritesChanged)) : .none
+
+            case let .deleteResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case let .extractZipTapped(item):
+                state.isPerformingFileAction = true
+                state.fileActionProgressMessage = "Extracting…"
+                let serverURL = state.serverURL
+                let filesClient = self.filesClient
+                return .run { send in
+                    do {
+                        let extracted = try await filesClient.extractZip(serverURL, item)
+                        await send(.extractZipResponse(.success(extracted)))
+                    } catch {
+                        await send(.extractZipResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+                    }
+                }
+
+            case let .extractZipResponse(.success(extracted)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.items.append(extracted)
+                return .none
+
+            case let .extractZipResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case let .compressTapped(item):
+                state.isPerformingFileAction = true
+                state.fileActionProgressMessage = "Compressing…"
+                let serverURL = state.serverURL
+                let filesClient = self.filesClient
+                return .run { send in
+                    do {
+                        let compressed = try await filesClient.compressItem(serverURL, item)
+                        await send(.compressResponse(.success(compressed)))
+                    } catch {
+                        await send(.compressResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+                    }
+                }
+
+            case let .compressResponse(.success(compressed)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.items.append(compressed)
+                return .none
+
+            case let .compressResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case let .infoTapped(item):
+                return loadInfo(&state, item: item)
+
+            case .infoDismissed:
+                state.infoItem = nil
+                state.infoMetadata = nil
+                state.infoErrorMessage = nil
+                state.isLoadingInfoMetadata = false
+                return .none
+
+            case let .infoMetadataResponse(.success(metadata)):
+                state.isLoadingInfoMetadata = false
+                state.infoMetadata = metadata
+                return .none
+
+            case let .infoMetadataResponse(.failure(error)):
+                state.isLoadingInfoMetadata = false
+                state.infoErrorMessage = error.userMessage
+                return .none
+
+            case .previewDismissed:
+                state.previewItem = nil
+                state.previewFileURL = nil
+                state.isLoadingPreview = false
+                state.previewErrorMessage = nil
+                state.textContent = nil
+                state.isLoadingTextContent = false
+                state.isSavingTextContent = false
+                state.textEditorErrorMessage = nil
+                return .none
+
+            case let .previewFileResponse(.success(fileURL)):
+                state.isLoadingPreview = false
+                state.previewFileURL = fileURL
+                return .none
+
+            case let .previewFileResponse(.failure(error)):
+                state.isLoadingPreview = false
+                state.previewErrorMessage = error.userMessage
+                return .none
+
+            case let .textContentResponse(.success(content)):
+                state.isLoadingTextContent = false
+                state.textContent = content
+                return .none
+
+            case let .textContentResponse(.failure(error)):
+                state.isLoadingTextContent = false
+                state.textEditorErrorMessage = error.userMessage
+                return .none
+
+            case let .textSaveTapped(newContent):
+                return confirmTextSave(&state, newContent: newContent)
+
+            case let .textSaveResponse(.success(savedContent)):
+                state.isSavingTextContent = false
+                state.textContent = savedContent
+                return .none
+
+            case let .textSaveResponse(.failure(error)):
+                state.isSavingTextContent = false
+                state.textEditorErrorMessage = error.userMessage
+                return .none
 
             case .delegate:
                 return .none
@@ -266,6 +540,140 @@ public struct BrowseFeature {
         .cancellable(id: CancelID.search, cancelInFlight: true)
     }
 
+    private func toggleFavorite(_ state: inout State, item: FileItem) -> Effect<Action> {
+        let serverURL = state.serverURL
+        let path = item.id
+        let isCurrentlyFavorite = state.favoritePaths.contains(path)
+        let filesClient = self.filesClient
+        return .run { send in
+            do {
+                if isCurrentlyFavorite {
+                    try await filesClient.removeFavorite(serverURL, path)
+                    await send(.favoriteToggleResponse(.success(FavoriteToggleResult(path: path, isFavorite: false))))
+                } else {
+                    _ = try await filesClient.addFavorite(serverURL, path)
+                    await send(.favoriteToggleResponse(.success(FavoriteToggleResult(path: path, isFavorite: true))))
+                }
+            } catch {
+                await send(.favoriteToggleResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func confirmRename(_ state: inout State, newName: String) -> Effect<Action> {
+        guard let item = state.renameSheetItem else { return .none }
+        let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty, trimmedName != item.name else {
+            state.renameSheetItem = nil
+            return .none
+        }
+        state.isPerformingFileAction = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let originalID = item.id
+        return .run { send in
+            do {
+                let renamed = try await filesClient.renameItem(serverURL, item, trimmedName)
+                await send(.renameResponse(.success(RenameResult(originalID: originalID, renamed: renamed))))
+            } catch {
+                await send(.renameResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func confirmDelete(_ state: inout State) -> Effect<Action> {
+        guard let item = state.deleteConfirmationItem else { return .none }
+        state.deleteConfirmationItem = nil
+        state.isPerformingFileAction = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let itemID = item.id
+        return .run { send in
+            do {
+                try await filesClient.deleteItems(serverURL, [item])
+                // Animated so the row visibly slides out of the list rather than popping,
+                // since removal happens on the server round-trip, not the confirm tap itself.
+                await send(.deleteResponse(.success(DeleteResult(itemID: itemID))), animation: .default)
+            } catch {
+                await send(.deleteResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func loadInfo(_ state: inout State, item: FileItem) -> Effect<Action> {
+        state.infoItem = item
+        state.infoMetadata = nil
+        state.infoErrorMessage = nil
+        state.isLoadingInfoMetadata = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let path = item.id
+        return .run { send in
+            do {
+                let metadata = try await filesClient.fetchMetadata(serverURL, path)
+                await send(.infoMetadataResponse(.success(metadata)))
+            } catch {
+                await send(.infoMetadataResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    /// Only reached for non-streamable items — `rowTapped` already set `state.previewItem`
+    /// and skipped this for video/audio, which play live instead of downloading.
+    private func loadPreview(_ state: inout State, item: FileItem) -> Effect<Action> {
+        state.previewFileURL = nil
+        state.previewErrorMessage = nil
+        state.isLoadingPreview = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        return .run { send in
+            do {
+                // Word docs aren't in `PREVIEWABLE_EXTENSIONS` — `GET /api/preview` 415s them,
+                // so they come down via the unrestricted download endpoint instead.
+                let fileURL = item.isOfficeDocument
+                    ? try await filesClient.downloadRawFile(serverURL, item)
+                    : try await filesClient.previewFile(serverURL, item)
+                await send(.previewFileResponse(.success(fileURL)))
+            } catch {
+                await send(.previewFileResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func loadTextContent(_ state: inout State, item: FileItem) -> Effect<Action> {
+        state.textContent = nil
+        state.textEditorErrorMessage = nil
+        state.isLoadingTextContent = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let path = item.id
+        return .run { send in
+            do {
+                let content = try await filesClient.fetchTextContent(serverURL, path)
+                await send(.textContentResponse(.success(content)))
+            } catch {
+                await send(.textContentResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func confirmTextSave(_ state: inout State, newContent: String) -> Effect<Action> {
+        guard let item = state.previewItem else { return .none }
+        state.isSavingTextContent = true
+        state.textEditorErrorMessage = nil
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let path = item.id
+        return .run { send in
+            do {
+                try await filesClient.saveTextContent(serverURL, path, newContent)
+                await send(.textSaveResponse(.success(newContent)))
+            } catch {
+                await send(.textSaveResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
     private func load(_ state: inout State) -> Effect<Action> {
         state.isLoading = true
         state.errorMessage = nil
@@ -316,6 +724,10 @@ public struct BrowseFeature {
             case .dateModified:
                 guard lhs.dateModified != rhs.dateModified else { return false }
                 isAscending = lhs.dateModified < rhs.dateModified
+            case .kind:
+                let order = lhs.kind.localizedCaseInsensitiveCompare(rhs.kind)
+                guard order != .orderedSame else { return false }
+                isAscending = order == .orderedAscending
             }
             return direction == .ascending ? isAscending : !isAscending
         }
