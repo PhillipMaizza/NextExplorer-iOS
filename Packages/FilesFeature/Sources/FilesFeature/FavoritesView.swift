@@ -29,20 +29,18 @@ struct FavoritesView: View {
                     }
                     .buttonStyle(.plain)
                     .listRowBackground(Color.clear)
+                    .listRowSeparator(favorite.id == displayedFavorites.first?.id ? .hidden : .visible, edges: .top)
+                    .listRowSeparator(favorite.id == displayedFavorites.last?.id ? .hidden : .visible, edges: .bottom)
                 }
             }
             .listStyle(.plain)
             .scrollContentBackground(.hidden)
             .background(Color.backgroundPrimary)
-            #if os(iOS)
             .searchable(
                 text: $searchQuery,
                 placement: .navigationBarDrawer(displayMode: .always),
                 prompt: "Search"
             )
-            #else
-            .searchable(text: $searchQuery, prompt: "Search")
-            #endif
             .refreshable {
                 store.send(.refreshButtonTapped)
             }
