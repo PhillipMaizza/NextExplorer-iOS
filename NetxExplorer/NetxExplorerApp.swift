@@ -2,9 +2,21 @@ import AppFeature
 import ComposableArchitecture
 import DesignSystem
 import SwiftUI
+import UIKit
+
+/// Every screen but the image/video viewers is portrait-only — `OrientationLock` is the only
+/// way to plumb that per-screen override through, since `UIApplicationDelegate` (not the
+/// SwiftUI `App`/`WindowGroup`) is what UIKit actually consults on every rotation attempt.
+final class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+        OrientationLock.shared.mask
+    }
+}
 
 @main
 struct NetxExplorerApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+
     static let store = Store(initialState: AppFeature.State()) {
         AppFeature()
     }
