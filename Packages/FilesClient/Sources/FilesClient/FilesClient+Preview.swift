@@ -12,9 +12,28 @@ extension FilesClient {
         },
         search: { _, _, _, _ in [] },
         favorites: { _ in Favorite.previewFavorites },
+        addFavorite: { _, path in
+            Favorite(id: UUID().uuidString, path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+        },
+        removeFavorite: { _, _ in },
         volumes: { _ in Volume.previewVolumes },
         fetchPreferences: { _ in UserPreferences() },
-        updatePreference: { _, _, _ in }
+        updatePreference: { _, _, _ in },
+        renameItem: { _, item, newName in
+            FileItem(name: newName, path: item.path, dateModified: item.dateModified, size: item.size, kind: item.kind, supportsThumbnail: item.supportsThumbnail)
+        },
+        deleteItems: { _, _ in },
+        fetchMetadata: { _, path in
+            FileMetadata(
+                path: path,
+                name: (path as NSString).lastPathComponent,
+                kind: "directory",
+                size: 4_096,
+                dateModified: Date(),
+                dateCreated: Date(),
+                directory: FileMetadata.DirectorySummary(totalSize: 10_485_760, fileCount: 42, dirCount: 3, truncated: false)
+            )
+        }
     )
 }
 

@@ -12,8 +12,13 @@ private enum Constants {
 struct FileRowView: View {
     let name: String
     let isDirectory: Bool
-    let subtitle: String?
+    let dateModified: Date?
+    let size: Int64?
+    let customSubtitle: String?
     let isFavorite: Bool
+    /// Read live so an already-visible row updates immediately when the user changes the
+    /// date format in Settings, rather than only on the next fetch.
+    @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
 
     private static let byteFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()
@@ -21,25 +26,32 @@ struct FileRowView: View {
         return formatter
     }()
 
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter
-    }()
-
     init(name: String, isDirectory: Bool, subtitle: String? = nil, isFavorite: Bool = false) {
         self.name = name
         self.isDirectory = isDirectory
-        self.subtitle = subtitle
+        self.dateModified = nil
+        self.size = nil
+        self.customSubtitle = subtitle
         self.isFavorite = isFavorite
     }
 
     init(item: FileItem, isFavorite: Bool = false) {
         self.name = item.name
         self.isDirectory = item.isDirectory
-        self.subtitle = item.isDirectory ? nil : "\(Self.byteFormatter.string(fromByteCount: item.size)) • \(Self.dateFormatter.string(from: item.dateModified))"
+        self.dateModified = item.dateModified
+        self.size = item.isDirectory ? nil : item.size
+        self.customSubtitle = nil
         self.isFavorite = isFavorite
+    }
+
+    private var dateFormat: DateDisplayFormat { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system }
+
+    private var subtitle: String? {
+        if let customSubtitle { return customSubtitle }
+        guard let dateModified else { return nil }
+        let dateText = dateFormat.string(from: dateModified)
+        guard let size else { return dateText }
+        return "\(Self.byteFormatter.string(fromByteCount: size)) • \(dateText)"
     }
 
     private var isHidden: Bool { isHiddenFileName(name) }
@@ -98,9 +110,12 @@ func isHiddenFileName(_ name: String) -> Bool {
         FileRowView(name: "Folder",
                     isDirectory: true,
                     subtitle: nil)
+        FileRowView(name: "Folder",
+                    isDirectory: true,
+                    subtitle: "Aug 20, 2026")
         FileRowView(name: "Favorite Folder",
                     isDirectory: true,
-                    subtitle: nil,
+                    subtitle: "Aug 20, 2026",
                     isFavorite: true)
         FileRowView(name: ".hidden",
                     isDirectory: true,
