@@ -13,6 +13,7 @@ private enum Constants {
     static let tagVerticalPadding: CGFloat = .space4
     static let tagBackgroundOpacity: Double = 0.2
     static let footerTopPadding: CGFloat = .space8
+    static let signOutFadeDuration: Double = 0.15
 }
 
 struct SettingsView: View {
@@ -27,6 +28,7 @@ struct SettingsView: View {
     @AppStorage("thumbnailSize") private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage("renderHTMLPages") private var renderHTMLPages = false
     @AppStorage("renderMarkdownPages") private var renderMarkdownPages = false
+    @AppStorage("hapticsEnabled") private var hapticsEnabled = true
     @Environment(\.colorScheme) private var systemColorScheme
 
     private var isDarkModeOn: Binding<Bool> {
@@ -134,6 +136,11 @@ struct SettingsView: View {
                         icon: IconKit.textformat,
                         isOn: $renderMarkdownPages
                     )
+                    DSToggleRow(
+                        title: "Haptics",
+                        icon: IconKit.waveform,
+                        isOn: $hapticsEnabled
+                    )
                 }
                 .listRowBackground(Color.backgroundSecondary)
 
@@ -214,6 +221,8 @@ struct SettingsView: View {
                     }
                     .foregroundStyle(Color.negative)
                     .disabled(store.isSigningOut)
+                    .animation(.easeInOut(duration: Constants.signOutFadeDuration), value: store.isSigningOut)
+                    .buttonStyle(DSHapticButtonStyle())
                 } footer: {
                     Text(appVersionText)
                         .type(.label4, style: .tertiary)

@@ -24,6 +24,7 @@ public struct DSCloseButton: View {
                 .padding(Constants.padding)
                 .background(Circle().fill(.ultraThinMaterial))
         }
+        .buttonStyle(DSHapticButtonStyle())
         .accessibilityLabel("Close")
     }
 }

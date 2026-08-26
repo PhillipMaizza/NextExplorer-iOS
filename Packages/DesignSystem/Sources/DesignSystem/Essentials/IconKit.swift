@@ -47,5 +47,6 @@ public enum IconKit {
     public static let clock = Image(systemName: "clock")
     public static let pencil = Image(systemName: "pencil")
     public static let squareAndPencil = Image(systemName: "square.and.pencil")
+    public static let waveform = Image(systemName: "waveform")
 
 }

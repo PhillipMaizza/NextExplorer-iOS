@@ -12,6 +12,9 @@ private enum Constants {
     static let emptyStateSpacing: CGFloat = .space8
     static let emptyStateIconSize: CGFloat = .superIcon
     static let gridSpacing: CGFloat = .space16
+    static let listDiffSpringResponse: Double = 0.35
+    static let listDiffSpringDamping: Double = 0.8
+    static let overlayCrossfadeDuration: Double = 0.2
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -29,6 +32,9 @@ struct BrowseContentView: View {
     /// the alert is presented; `renameConfirmed` is sent this value directly.
     @State private var renameDraft = ""
     @State private var toastMessage: DSToastMessage?
+    /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
+    /// value itself is meaningless, only the fact that it just changed matters.
+    @State private var didFinishRefreshing = false
 
     private var viewMode: BrowseViewMode {
         BrowseViewMode(rawValue: viewModeRaw) ?? .list
@@ -102,11 +108,15 @@ struct BrowseContentView: View {
             }
         }
         .refreshable {
-            store.send(.refreshButtonTapped)
+            await store.send(.refreshButtonTapped).finish()
+            didFinishRefreshing.toggle()
         }
+        .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
+        .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
         .overlay {
             overlayStateContent
         }
+        .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button {
@@ -114,15 +124,21 @@ struct BrowseContentView: View {
                 } label: {
                     IconKit.arrowUpArrowDown
                 }
+                .buttonStyle(DSHapticButtonStyle())
             }
             ToolbarItem(placement: .primaryAction) {
                 Button {
-                    viewModeRaw = (viewMode == .list ? BrowseViewMode.grid : .list).rawValue
+                    withAnimation {
+                        viewModeRaw = (viewMode == .list ? BrowseViewMode.grid : .list).rawValue
+                    }
                 } label: {
-                    viewMode == .list ? IconKit.squareGrid : IconKit.listBullet
+                    (viewMode == .list ? IconKit.squareGrid : IconKit.listBullet)
+                        .contentTransition(.symbolEffect(.replace))
                 }
+                .buttonStyle(DSHapticButtonStyle())
             }
         }
+        .hapticFeedback(.selection, trigger: viewModeRaw)
         .sheet(isPresented: $isSortSheetPresented) {
             BrowseSortSheet(
                 sortOption: store.sortOption,
@@ -156,6 +172,7 @@ struct BrowseContentView: View {
         } message: {
             Text("This can't be undone.")
         }
+        .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
     }
 
     private var previewItemBinding: Binding<FileItem?> {
@@ -339,18 +356,47 @@ struct BrowseContentView: View {
         }
     }
 
+    /// Which branch of `overlayStateContent` is currently showing — a plain discriminant so
+    /// the overlay can cross-fade between states instead of hard-cutting between them.
+    private enum OverlayState: Equatable {
+        case none, loading, error, empty, searchingEverywhere, noResults
+    }
+
+    private var overlayState: OverlayState {
+        if store.isLoading && store.items.isEmpty {
+            .loading
+        } else if store.errorMessage != nil {
+            .error
+        } else if !store.isSearching && store.displayedItems.isEmpty {
+            .empty
+        } else if store.isSearching && store.searchScope == .everywhere && store.isSearchingEverywhere {
+            .searchingEverywhere
+        } else if store.isSearching, let results = store.displayedSearchResults, results.isEmpty {
+            .noResults
+        } else {
+            .none
+        }
+    }
+
     @ViewBuilder
     private var overlayStateContent: some View {
-        if store.isLoading && store.items.isEmpty {
+        switch overlayState {
+        case .loading, .searchingEverywhere:
             ProgressView()
-        } else if let errorMessage = store.errorMessage {
-            EmptyStateView(icon: IconKit.exclamationmarkTriangle, message: errorMessage)
-        } else if !store.isSearching && store.displayedItems.isEmpty {
+                .transition(.opacity)
+        case .error:
+            if let errorMessage = store.errorMessage {
+                EmptyStateView(icon: IconKit.exclamationmarkTriangle, message: errorMessage)
+                    .transition(.opacity)
+            }
+        case .empty:
             EmptyStateView(icon: IconKit.folder, message: "This folder is empty.")
-        } else if store.isSearching && store.searchScope == .everywhere && store.isSearchingEverywhere {
-            ProgressView()
-        } else if store.isSearching, let results = store.displayedSearchResults, results.isEmpty {
+                .transition(.opacity)
+        case .noResults:
             noResultsState
+                .transition(.opacity)
+        case .none:
+            EmptyView()
         }
     }
 
@@ -366,6 +412,14 @@ struct BrowseContentView: View {
         .scrollContentBackground(.hidden)
         .background(Color.backgroundPrimary)
         .safeAreaPadding(.bottom, breadcrumbBarClearance)
+        .animation(
+            .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+            value: store.displayedItems
+        )
+        .animation(
+            .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+            value: store.displayedSearchResults
+        )
     }
 
     private var gridContent: some View {
@@ -378,7 +432,7 @@ struct BrowseContentView: View {
                         } label: {
                             GridCellView(name: result.name, isDirectory: result.isDirectory, isFavorite: store.favoritePaths.contains(result.id), kind: result.kind)
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(DSHapticButtonStyle())
                         .disabled(!result.isDirectory)
                     }
                 } else {
@@ -394,7 +448,7 @@ struct BrowseContentView: View {
                                 iconSize: thumbnailSize.iconSize
                             )
                         }
-                        .buttonStyle(.plain)
+                        .buttonStyle(DSHapticButtonStyle())
                         .contextMenu {
                             fileActionsContextMenu(for: item)
                         }
@@ -402,6 +456,14 @@ struct BrowseContentView: View {
                 }
             }
             .padding(Constants.gridSpacing)
+            .animation(
+                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+                value: store.displayedItems
+            )
+            .animation(
+                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+                value: store.displayedSearchResults
+            )
         }
         .background(Color.backgroundPrimary)
         .safeAreaPadding(.bottom, breadcrumbBarClearance)
@@ -428,7 +490,7 @@ struct BrowseContentView: View {
                     showThumbnails: store.preferences.showThumbnails
                 )
             }
-            .buttonStyle(.plain)
+            .buttonStyle(DSHapticButtonStyle())
             .contextMenu {
                 fileActionsContextMenu(for: item)
             }
@@ -474,7 +536,7 @@ struct BrowseContentView: View {
             } label: {
                 FileRowView(name: result.name, isDirectory: result.isDirectory, subtitle: result.matchLine, isFavorite: store.favoritePaths.contains(result.id), kind: result.kind)
             }
-            .buttonStyle(.plain)
+            .buttonStyle(DSHapticButtonStyle())
             .disabled(!result.isDirectory)
             .listRowBackground(Color.clear)
             .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
