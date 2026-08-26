@@ -31,6 +31,7 @@ public enum IconKit {
     public static let signOut = Image(systemName: "rectangle.portrait.and.arrow.right")
     public static let photo = Image(systemName: "photo")
     public static let globe = Image(systemName: "globe")
+    public static let server = Image(systemName: "macpro.gen3.server")
     public static let listBullet = Image(systemName: "list.bullet")
     public static let squareGrid = Image(systemName: "square.grid.2x2")
     public static let arrowUpArrowDown = Image(systemName: "arrow.up.arrow.down")
@@ -41,4 +42,10 @@ public enum IconKit {
     public static let house = Image(systemName: "house")
     public static let radioUnselected = Image(systemName: "circle")
     public static let radioSelected = Image(systemName: "largecircle.fill.circle")
+    public static let tag = Image(systemName: "tag")
+    public static let trash = Image(systemName: "trash")
+    public static let clock = Image(systemName: "clock")
+    public static let pencil = Image(systemName: "pencil")
+    public static let squareAndPencil = Image(systemName: "square.and.pencil")
+
 }

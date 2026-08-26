@@ -20,6 +20,11 @@ public struct BrowseTabFeature {
         case root(BrowseFeature.Action)
         case path(StackActionOf<BrowseFeature>)
         case navigateToDirectory(path: String, title: String)
+        case delegate(Delegate)
+
+        public enum Delegate: Equatable, Sendable {
+            case favoritesChanged
+        }
     }
 
     public init() {}
@@ -37,6 +42,9 @@ public struct BrowseTabFeature {
             case let .root(.delegate(.openPath(path, title))):
                 return .send(.navigateToDirectory(path: path, title: title))
 
+            case .root(.delegate(.favoritesChanged)):
+                return .send(.delegate(.favoritesChanged))
+
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
                 state.path.append(BrowseFeature.State(serverURL: state.root.serverURL, directoryPath: item.id, title: item.name))
                 return .none
@@ -44,13 +52,16 @@ public struct BrowseTabFeature {
             case let .path(.element(id: _, action: .delegate(.openPath(path, title)))):
                 return .send(.navigateToDirectory(path: path, title: title))
 
+            case .path(.element(id: _, action: .delegate(.favoritesChanged))):
+                return .send(.delegate(.favoritesChanged))
+
             case let .navigateToDirectory(path, title):
                 state.path.removeAll()
                 guard !path.isEmpty else { return .none }
                 state.path.append(BrowseFeature.State(serverURL: state.root.serverURL, directoryPath: path, title: title))
                 return .none
 
-            case .root, .path:
+            case .root, .path, .delegate:
                 return .none
             }
         }

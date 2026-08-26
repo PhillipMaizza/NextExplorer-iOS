@@ -1,0 +1,134 @@
+import SwiftUI
+import WebKit
+
+/// Renders HTML as a real compiled page — the "Rendered" side of the Settings "HTML Files"
+/// toggle. `loadHTMLString(_:baseURL:)` alone can't resolve relative `<link href>`/`<script
+/// src>` references (there's no real base URL, the content is a fetched string, not a local
+/// file) — so `resolveAsset` fetches same-folder assets first (from the server or, for
+/// archive-internal HTML, from the same open archive — see the two call sites), writes
+/// everything into one local directory, and loads via `loadFileURL` instead, which does
+/// resolve relative paths against its neighbors on disk.
+struct HTMLRenderedView: View {
+    let cacheKey: String
+    let html: String
+    let resolveAsset: (String) async -> URL?
+
+    @State private var localHTMLURL: URL?
+
+    var body: some View {
+        Group {
+            if let localHTMLURL {
+                HTMLWebView(fileURL: localHTMLURL, readAccessURL: localHTMLURL.deletingLastPathComponent())
+            } else {
+                ProgressView()
+            }
+        }
+        .task(id: html) {
+            await prepare()
+        }
+    }
+
+    private func prepare() async {
+        let directory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("HTMLPreview", isDirectory: true)
+            .appendingPathComponent(cacheKey.replacingOccurrences(of: "/", with: "_"), isDirectory: true)
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        // Always `.html`, never `fileName`'s real extension: `loadFileURL` has WebKit infer
+        // MIME type from the file's own extension, and the content written here is always
+        // HTML — including for Markdown, converted upstream. Writing it out as e.g.
+        // `README.md` made WebKit render the (correctly-converted) HTML *source* as plain
+        // text instead of interpreting it as markup — looked like "just shown as code."
+        let mainFileURL = directory.appendingPathComponent("index.html")
+        guard (try? html.write(to: mainFileURL, atomically: true, encoding: .utf8)) != nil else { return }
+
+        for relativePath in Self.relativeAssetPaths(in: html) {
+            guard let downloadedURL = await resolveAsset(relativePath) else { continue }
+            // Root-absolute references (`/assets/app.js`) are resolved by `resolveAsset`
+            // relative to the file's own folder too (there's no real site root to anchor
+            // them to) — strip the leading slash to place them the same way on disk.
+            let localRelativePath = relativePath.hasPrefix("/") ? String(relativePath.dropFirst()) : relativePath
+            let destinationURL = directory.appendingPathComponent(localRelativePath)
+            try? FileManager.default.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try? FileManager.default.removeItem(at: destinationURL)
+            try? FileManager.default.copyItem(at: downloadedURL, to: destinationURL)
+        }
+
+        localHTMLURL = mainFileURL
+    }
+
+    /// Every `href="..."`/`src="..."` value that isn't already absolute (`http(s)://`,
+    /// protocol-relative `//`, `data:`, `mailto:`) or an in-page anchor (`#section`) — the
+    /// same-folder assets a fetched HTML string alone has no way to reach.
+    private static func relativeAssetPaths(in html: String) -> [String] {
+        guard let regex = try? NSRegularExpression(pattern: #"(?:href|src)\s*=\s*["']([^"'#][^"']*)["']"#, options: [.caseInsensitive]) else {
+            return []
+        }
+        let range = NSRange(html.startIndex..., in: html)
+        return regex.matches(in: html, range: range).compactMap { match in
+            guard let valueRange = Range(match.range(at: 1), in: html) else { return nil }
+            let value = String(html[valueRange])
+            let isAbsolute = value.hasPrefix("http://") || value.hasPrefix("https://") || value.hasPrefix("//")
+                || value.hasPrefix("data:") || value.hasPrefix("mailto:")
+            return isAbsolute ? nil : value
+        }
+    }
+}
+
+/// Resolves a relative (or root-absolute) asset reference against a file's own containing
+/// folder — shared by the server-backed and archive-backed `resolveAsset` closures so the
+/// same path-joining logic (and the same root-absolute-becomes-folder-relative heuristic)
+/// isn't duplicated between them.
+enum RelativeAssetPath {
+    /// - Parameters:
+    ///   - relativePath: e.g. `"style.css"`, `"../shared/app.js"`, or `"/assets/app.js"`.
+    ///   - directory: the referencing file's own parent directory (server path, or archive
+    ///     folder path — same string shape either way: no leading slash, `""` for the root).
+    /// - Returns: `(parent, name)` split of the resolved path, or `nil` if it resolves to
+    ///   nothing sensible (e.g. an empty reference).
+    static func resolve(_ relativePath: String, relativeTo directory: String) -> (parent: String, name: String)? {
+        // Root-absolute references have no real site root to anchor to here — treat them as
+        // relative to the file's own folder, the same heuristic a typical single-folder
+        // static site upload effectively already assumes.
+        let cleanedReference = relativePath.hasPrefix("/") ? String(relativePath.dropFirst()) : relativePath
+        // `URL(fileURLWithPath:)` treats an empty path as the process's current working
+        // directory, not "no base" — an empty `directory` (files at the volume root) needs an
+        // explicit "/" base instead, or sibling paths silently resolve against the app's cwd.
+        let baseURL = URL(fileURLWithPath: directory.isEmpty ? "/" : directory, isDirectory: true)
+        let resolvedPath = URL(fileURLWithPath: cleanedReference, relativeTo: baseURL).standardizedFileURL.path
+        let cleanPath = resolvedPath.hasPrefix("/") ? String(resolvedPath.dropFirst()) : resolvedPath
+        guard !cleanPath.isEmpty else { return nil }
+        let parent = (cleanPath as NSString).deletingLastPathComponent
+        let name = (cleanPath as NSString).lastPathComponent
+        guard !name.isEmpty else { return nil }
+        return (parent, name)
+    }
+}
+
+private struct HTMLWebView: UIViewRepresentable {
+    let fileURL: URL
+    let readAccessURL: URL
+
+    func makeUIView(context: Context) -> WKWebView {
+        let webView = WKWebView()
+        webView.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)
+        return webView
+    }
+
+    func updateUIView(_ uiView: WKWebView, context: Context) {
+        guard context.coordinator.lastLoadedURL != fileURL else { return }
+        context.coordinator.lastLoadedURL = fileURL
+        uiView.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)
+    }
+
+    func makeCoordinator() -> Coordinator {
+        Coordinator(lastLoadedURL: fileURL)
+    }
+
+    final class Coordinator {
+        var lastLoadedURL: URL
+
+        init(lastLoadedURL: URL) {
+            self.lastLoadedURL = lastLoadedURL
+        }
+    }
+}

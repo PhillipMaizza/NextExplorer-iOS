@@ -12,8 +12,19 @@ private enum Constants {
 struct FileRowView: View {
     let name: String
     let isDirectory: Bool
-    let subtitle: String?
+    let dateModified: Date?
+    let size: Int64?
+    let customSubtitle: String?
     let isFavorite: Bool
+    let itemID: String?
+    let kind: String?
+    let supportsThumbnail: Bool
+    let serverURL: URL?
+    let showThumbnails: Bool
+    /// Read live so an already-visible row updates immediately when the user changes the
+    /// date format in Settings, rather than only on the next fetch.
+    @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
+    @AppStorage("includeTimeInDates") private var includeTime = false
 
     private static let byteFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()
@@ -21,35 +32,53 @@ struct FileRowView: View {
         return formatter
     }()
 
-    private static let dateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .none
-        return formatter
-    }()
-
-    init(name: String, isDirectory: Bool, subtitle: String? = nil, isFavorite: Bool = false) {
+    init(name: String, isDirectory: Bool, subtitle: String? = nil, isFavorite: Bool = false, kind: String? = nil) {
         self.name = name
         self.isDirectory = isDirectory
-        self.subtitle = subtitle
+        self.dateModified = nil
+        self.size = nil
+        self.customSubtitle = subtitle
         self.isFavorite = isFavorite
+        self.itemID = nil
+        self.kind = kind
+        self.supportsThumbnail = false
+        self.serverURL = nil
+        self.showThumbnails = false
     }
 
-    init(item: FileItem, isFavorite: Bool = false) {
+    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false) {
         self.name = item.name
         self.isDirectory = item.isDirectory
-        self.subtitle = item.isDirectory ? nil : "\(Self.byteFormatter.string(fromByteCount: item.size)) • \(Self.dateFormatter.string(from: item.dateModified))"
+        self.dateModified = item.dateModified
+        self.size = item.isDirectory ? nil : item.size
+        self.customSubtitle = nil
         self.isFavorite = isFavorite
+        self.itemID = item.id
+        self.kind = item.kind
+        self.supportsThumbnail = item.supportsThumbnail
+        self.serverURL = serverURL
+        self.showThumbnails = showThumbnails
+    }
+
+    private var dateFormat: DateDisplayFormat { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system }
+
+    private var subtitle: String? {
+        if let customSubtitle { return customSubtitle }
+        guard let dateModified else { return nil }
+        let dateText = dateFormat.string(from: dateModified, includeTime: includeTime)
+        guard let size else { return dateText }
+        return "\(Self.byteFormatter.string(fromByteCount: size)) • \(dateText)"
     }
 
     private var isHidden: Bool { isHiddenFileName(name) }
 
+    private var isEligibleForThumbnail: Bool {
+        !isDirectory && supportsThumbnail && showThumbnails && serverURL != nil && itemID != nil
+    }
+
     var body: some View {
         HStack(spacing: .space12) {
-            (isDirectory ? IconKit.folderFill : IconKit.document)
-                .resizable()
-                .foregroundStyle(isDirectory ? Color.accent : Color.secondaryDS)
-                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+            leadingIcon
                 .opacity(isHidden ? Constants.halfOpacity : Constants.fullOpacity)
 
             VStack(alignment: .leading, spacing: .space2) {
@@ -68,6 +97,7 @@ struct FileRowView: View {
             if isFavorite {
                 IconKit.starFill
                     .resizable()
+                    .scaledToFit()
                     .foregroundStyle(Color.accent)
                     .frame(width: .iconSmall, height: .iconSmall)
             }
@@ -82,6 +112,24 @@ struct FileRowView: View {
         }
         .padding(.vertical, .space4)
         .contentShape(Rectangle())
+    }
+
+    @ViewBuilder
+    private var leadingIcon: some View {
+        if isEligibleForThumbnail, let serverURL, let itemID {
+            ThumbnailImage(serverURL: serverURL, path: itemID, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
+                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+                .clipShape(RoundedRectangle(cornerRadius: .radiusControl))
+        } else if isDirectory {
+            IconKit.folderFill
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(Color.accent)
+                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+        } else {
+            FileTypeIcon(kind: kind ?? "")
+                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+        }
     }
 }
 
@@ -98,9 +146,12 @@ func isHiddenFileName(_ name: String) -> Bool {
         FileRowView(name: "Folder",
                     isDirectory: true,
                     subtitle: nil)
+        FileRowView(name: "Folder",
+                    isDirectory: true,
+                    subtitle: "Aug 20, 2026")
         FileRowView(name: "Favorite Folder",
                     isDirectory: true,
-                    subtitle: nil,
+                    subtitle: "Aug 20, 2026",
                     isFavorite: true)
         FileRowView(name: ".hidden",
                     isDirectory: true,
@@ -123,5 +174,26 @@ func isHiddenFileName(_ name: String) -> Bool {
                     subtitle: "18kb")
 
     }
+    .padding(.space16)
+}
+
+#Preview("Thumbnails on") {
+    // `.previewValue`'s `thumbnailURL` always resolves to `nil`, so this renders the same
+    // fallback icon as any other file — it documents/exercises the code path rather than
+    // showing an actual image.
+    FileRowView(
+        item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+        serverURL: URL(string: "https://nextexplorer.example.com"),
+        showThumbnails: true
+    )
+    .padding(.space16)
+}
+
+#Preview("Thumbnails off (falls back to the plain icon even though the file supports one)") {
+    FileRowView(
+        item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+        serverURL: URL(string: "https://nextexplorer.example.com"),
+        showThumbnails: false
+    )
     .padding(.space16)
 }

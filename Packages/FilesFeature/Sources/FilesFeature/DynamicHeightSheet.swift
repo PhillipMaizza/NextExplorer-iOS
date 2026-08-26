@@ -7,7 +7,7 @@ import SwiftUI
 /// reliably resize it, so the outer container always accepts whatever size the sheet proposes
 /// while `content` measures its own true, unconstrained size from the first frame.
 ///
-/// Every self-sizing sheet in this app (sign-out confirmation, browse sort) is built on this,
+/// Every self-sizing sheet in this app (currently just browse sort) is built on this,
 /// rather than each re-implementing its own `GeometryReader`/`detentHeight` plumbing.
 struct DynamicHeightSheet<Content: View>: View {
     @State private var detentHeight: CGFloat = 0
