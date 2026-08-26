@@ -11,6 +11,8 @@ private enum Constants {
     static let favoriteBadgeShadowRadius: CGFloat = 0.5
     static let fullOpacity: Double = 1.0
     static let halfOpacity: Double = 0.5
+    static let favoriteSpringResponse: Double = 0.3
+    static let favoriteSpringDamping: Double = 0.7
 }
 
 /// One tile of `BrowseContentView`'s grid display mode: icon (dimmed if hidden, badged if
@@ -73,8 +75,13 @@ struct GridCellView: View {
                                     .fill(Color.backgroundPrimary)
                                     .frame(width: Constants.favoriteBadgeBackgroundSize, height: Constants.favoriteBadgeBackgroundSize)
                                     .shadow(radius: Constants.favoriteBadgeShadowRadius))
+                            .symbolEffect(.bounce, value: isFavorite)
+                            .transition(.scale.combined(with: .opacity))
                     }
                 }
+                .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)
+                // Only favoriting buzzes — un-favoriting isn't a "win" worth celebrating the same way.
+                .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
             Text(name)
                 .type(.body2(.semibold), style: isHidden ? .tertiary : .primary(for: .label))
                 .lineLimit(2)

@@ -86,6 +86,11 @@ private struct DSToastModifier: ViewModifier {
             }
         }
         .animation(.spring(duration: Constants.animationDuration), value: message)
+        // Persistent progress toasts (e.g. "Extracting\u{2026}") aren't errors — only the
+        // auto-dismissing warning style should buzz.
+        .hapticFeedback(.warning, trigger: message?.id) { _, newValue in
+            newValue != nil && message?.isPersistent == false
+        }
     }
 }
 

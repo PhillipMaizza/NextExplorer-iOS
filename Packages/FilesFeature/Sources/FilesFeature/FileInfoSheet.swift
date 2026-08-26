@@ -88,6 +88,7 @@ struct FileInfoSheet: View {
                     .padding(Constants.closeButtonPadding)
                     .background(Circle().fill(Color.backgroundSecondary))
             }
+            .buttonStyle(DSHapticButtonStyle())
         }
     }
 
