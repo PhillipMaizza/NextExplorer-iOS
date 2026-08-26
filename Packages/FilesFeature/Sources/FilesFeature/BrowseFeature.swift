@@ -121,12 +121,31 @@ public struct BrowseFeature {
         public var deleteConfirmationItem: FileItem?
         public var isPerformingFileAction = false
         public var fileActionErrorMessage: String?
+        /// Drives a persistent progress toast — `nil` when no extract/compress is running.
+        /// Rename/delete don't set this: they're fast enough, and already have their own
+        /// alert-driven confirm flow, that a progress indicator would just flicker.
+        public var fileActionProgressMessage: String?
         /// Item the "Get Info" sheet is showing, alongside its fetched metadata (or the
         /// still-loading/error state while `GET /api/metadata/*` is in flight).
         public var infoItem: FileItem?
         public var infoMetadata: FileMetadata?
         public var isLoadingInfoMetadata = false
         public var infoErrorMessage: String?
+        /// Item being downloaded for the QuickLook viewer (tapping a file), alongside the
+        /// local temp file `previewFile` produces once `GET /api/preview` finishes. Only
+        /// used for PDFs — images/RAW load themselves per-page in the gallery view, and
+        /// video/audio stream directly, neither going through this at all.
+        public var previewItem: FileItem?
+        public var previewFileURL: URL?
+        public var isLoadingPreview = false
+        public var previewErrorMessage: String?
+        /// Text content for `previewItem` when it's neither previewable-via-download nor
+        /// streamable (anything `GET /api/preview` 415s on) — fetched/saved via the real
+        /// `/api/editor` endpoint, the server's actual text view+edit path.
+        public var textContent: String?
+        public var isLoadingTextContent = false
+        public var isSavingTextContent = false
+        public var textEditorErrorMessage: String?
 
         public var isSearching: Bool { !searchQuery.isEmpty }
 
@@ -162,7 +181,6 @@ public struct BrowseFeature {
         case searchResultsResponse(Result<[SearchResultItem], FilesClientError>)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
-        case breadcrumbTapped(path: String, title: String)
         case renameTapped(FileItem)
         case deleteTapped(FileItem)
         case favoriteToggleButtonTapped(FileItem)
@@ -173,9 +191,18 @@ public struct BrowseFeature {
         case deleteCancelled
         case deleteConfirmed
         case deleteResponse(Result<DeleteResult, FilesClientError>)
+        case extractZipTapped(FileItem)
+        case extractZipResponse(Result<FileItem, FilesClientError>)
+        case compressTapped(FileItem)
+        case compressResponse(Result<FileItem, FilesClientError>)
         case infoTapped(FileItem)
         case infoDismissed
         case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
+        case previewDismissed
+        case previewFileResponse(Result<URL, FilesClientError>)
+        case textContentResponse(Result<String, FilesClientError>)
+        case textSaveTapped(String)
+        case textSaveResponse(Result<String, FilesClientError>)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -218,7 +245,31 @@ public struct BrowseFeature {
                 return .none
 
             case let .rowTapped(item):
-                guard item.isDirectory else { return .none }
+                guard item.isDirectory else {
+                    // Archives, known binary formats (`.exe`, `.dmg`, fonts, ...), and video
+                    // containers `AVFoundation` can't decode (e.g. `.webm`) have nothing to
+                    // preview — bail before touching any preview state, rather than opening a
+                    // full-screen cover just to show an error. (The view layer pre-filters
+                    // these with a toast before ever sending `rowTapped`; this guard is a
+                    // defensive backstop, not the primary gate — it has to use the exact same
+                    // `isUnsupportedForPreview` check, not a hand-rolled approximation of it,
+                    // or the two can drift and this "backstop" stops backstopping anything.)
+                    guard !item.isUnsupportedForPreview else { return .none }
+                    // Sets `previewItem` unconditionally so the viewer presents immediately.
+                    // - Streamable media (video/audio) plays live from `FilesClient.previewURL`.
+                    // - Images/RAW load themselves per-page in the gallery view.
+                    // - Browsable archives (.zip/.rar) list themselves in `ArchiveBrowserView`.
+                    // None of these download anything here — only PDFs (the one other
+                    // download-previewable kind) and plain-text files need a fetch.
+                    state.previewItem = item
+                    if item.isBrowsableArchive || item.isStreamableMedia || ((item.isImage || item.isRawImage) && !item.isSVG) {
+                        return .none
+                    } else if item.isPreviewableViaDownload {
+                        return loadPreview(&state, item: item)
+                    } else {
+                        return loadTextContent(&state, item: item)
+                    }
+                }
                 return .send(.delegate(.openFolder(item)))
 
             case let .searchQueryChanged(query):
@@ -250,9 +301,6 @@ public struct BrowseFeature {
             case let .sortDirectionChanged(direction):
                 state.sortDirection = direction
                 return .none
-
-            case let .breadcrumbTapped(path, title):
-                return .send(.delegate(.openPath(path: path, title: title)))
 
             case let .renameTapped(item):
                 state.renameSheetItem = item
@@ -319,6 +367,58 @@ public struct BrowseFeature {
                 state.fileActionErrorMessage = error.userMessage
                 return .none
 
+            case let .extractZipTapped(item):
+                state.isPerformingFileAction = true
+                state.fileActionProgressMessage = "Extracting…"
+                let serverURL = state.serverURL
+                let filesClient = self.filesClient
+                return .run { send in
+                    do {
+                        let extracted = try await filesClient.extractZip(serverURL, item)
+                        await send(.extractZipResponse(.success(extracted)))
+                    } catch {
+                        await send(.extractZipResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+                    }
+                }
+
+            case let .extractZipResponse(.success(extracted)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.items.append(extracted)
+                return .none
+
+            case let .extractZipResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case let .compressTapped(item):
+                state.isPerformingFileAction = true
+                state.fileActionProgressMessage = "Compressing…"
+                let serverURL = state.serverURL
+                let filesClient = self.filesClient
+                return .run { send in
+                    do {
+                        let compressed = try await filesClient.compressItem(serverURL, item)
+                        await send(.compressResponse(.success(compressed)))
+                    } catch {
+                        await send(.compressResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+                    }
+                }
+
+            case let .compressResponse(.success(compressed)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.items.append(compressed)
+                return .none
+
+            case let .compressResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
             case let .infoTapped(item):
                 return loadInfo(&state, item: item)
 
@@ -337,6 +437,50 @@ public struct BrowseFeature {
             case let .infoMetadataResponse(.failure(error)):
                 state.isLoadingInfoMetadata = false
                 state.infoErrorMessage = error.userMessage
+                return .none
+
+            case .previewDismissed:
+                state.previewItem = nil
+                state.previewFileURL = nil
+                state.isLoadingPreview = false
+                state.previewErrorMessage = nil
+                state.textContent = nil
+                state.isLoadingTextContent = false
+                state.isSavingTextContent = false
+                state.textEditorErrorMessage = nil
+                return .none
+
+            case let .previewFileResponse(.success(fileURL)):
+                state.isLoadingPreview = false
+                state.previewFileURL = fileURL
+                return .none
+
+            case let .previewFileResponse(.failure(error)):
+                state.isLoadingPreview = false
+                state.previewErrorMessage = error.userMessage
+                return .none
+
+            case let .textContentResponse(.success(content)):
+                state.isLoadingTextContent = false
+                state.textContent = content
+                return .none
+
+            case let .textContentResponse(.failure(error)):
+                state.isLoadingTextContent = false
+                state.textEditorErrorMessage = error.userMessage
+                return .none
+
+            case let .textSaveTapped(newContent):
+                return confirmTextSave(&state, newContent: newContent)
+
+            case let .textSaveResponse(.success(savedContent)):
+                state.isSavingTextContent = false
+                state.textContent = savedContent
+                return .none
+
+            case let .textSaveResponse(.failure(error)):
+                state.isSavingTextContent = false
+                state.textEditorErrorMessage = error.userMessage
                 return .none
 
             case .delegate:
@@ -470,6 +614,62 @@ public struct BrowseFeature {
                 await send(.infoMetadataResponse(.success(metadata)))
             } catch {
                 await send(.infoMetadataResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    /// Only reached for non-streamable items — `rowTapped` already set `state.previewItem`
+    /// and skipped this for video/audio, which play live instead of downloading.
+    private func loadPreview(_ state: inout State, item: FileItem) -> Effect<Action> {
+        state.previewFileURL = nil
+        state.previewErrorMessage = nil
+        state.isLoadingPreview = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        return .run { send in
+            do {
+                // Word docs aren't in `PREVIEWABLE_EXTENSIONS` — `GET /api/preview` 415s them,
+                // so they come down via the unrestricted download endpoint instead.
+                let fileURL = item.isOfficeDocument
+                    ? try await filesClient.downloadRawFile(serverURL, item)
+                    : try await filesClient.previewFile(serverURL, item)
+                await send(.previewFileResponse(.success(fileURL)))
+            } catch {
+                await send(.previewFileResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func loadTextContent(_ state: inout State, item: FileItem) -> Effect<Action> {
+        state.textContent = nil
+        state.textEditorErrorMessage = nil
+        state.isLoadingTextContent = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let path = item.id
+        return .run { send in
+            do {
+                let content = try await filesClient.fetchTextContent(serverURL, path)
+                await send(.textContentResponse(.success(content)))
+            } catch {
+                await send(.textContentResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func confirmTextSave(_ state: inout State, newContent: String) -> Effect<Action> {
+        guard let item = state.previewItem else { return .none }
+        state.isSavingTextContent = true
+        state.textEditorErrorMessage = nil
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let path = item.id
+        return .run { send in
+            do {
+                try await filesClient.saveTextContent(serverURL, path, newContent)
+                await send(.textSaveResponse(.success(newContent)))
+            } catch {
+                await send(.textSaveResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
             }
         }
     }

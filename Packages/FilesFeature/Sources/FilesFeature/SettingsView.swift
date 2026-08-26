@@ -7,7 +7,7 @@ import SwiftUI
 private enum Constants {
     static let avatarSize: CGFloat = .size48
     static let profileRowSpacing: CGFloat = .space12
-    static let rowIconSize: CGFloat = .iconXSmall
+    static let rowIconSize: CGFloat = .iconSmall
     static let rowIconSpacing: CGFloat = .space8
     static let tagHorizontalPadding: CGFloat = .space8
     static let tagVerticalPadding: CGFloat = .space4
@@ -24,6 +24,9 @@ struct SettingsView: View {
     @AppStorage("hasSetAppearanceOverride") private var hasAppearanceOverride = false
     @AppStorage("prefersDarkMode") private var prefersDarkModeOverride = false
     @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
+    @AppStorage("thumbnailSize") private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
+    @AppStorage("renderHTMLPages") private var renderHTMLPages = false
+    @AppStorage("renderMarkdownPages") private var renderMarkdownPages = false
     @Environment(\.colorScheme) private var systemColorScheme
 
     private var isDarkModeOn: Binding<Bool> {
@@ -40,6 +43,13 @@ struct SettingsView: View {
         Binding(
             get: { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system },
             set: { dateFormatRaw = $0.rawValue }
+        )
+    }
+
+    private var thumbnailSize: Binding<ThumbnailSize> {
+        Binding(
+            get: { ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium },
+            set: { thumbnailSizeRaw = $0.rawValue }
         )
     }
 
@@ -83,7 +93,7 @@ struct SettingsView: View {
 
                     if let host = store.serverURL.host {
                         HStack(spacing: Constants.rowIconSpacing) {
-                            IconKit.globe
+                            IconKit.server
                                 .resizable()
                                 .scaledToFit()
                                 .foregroundStyle(Color.primaryDS)
@@ -114,6 +124,32 @@ struct SettingsView: View {
                         icon: IconKit.photo,
                         isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
                     )
+                    DSToggleRow(
+                        title: "Render HTML Pages",
+                        icon: IconKit.globe,
+                        isOn: $renderHTMLPages
+                    )
+                    DSToggleRow(
+                        title: "Render Markdown Files",
+                        icon: IconKit.textformat,
+                        isOn: $renderMarkdownPages
+                    )
+                }
+                .listRowBackground(Color.backgroundSecondary)
+
+                Section {
+                    VStack(alignment: .leading, spacing: .space12) {
+                        Label {
+                            Text("Thumbnail Size").type(.body2(.regular), style: .primary(for: .label))
+                        } icon: {
+                            IconKit.squareGrid
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.primaryDS)
+                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                        DSSegmentedControl(options: ThumbnailSize.allCases, selection: thumbnailSize) { $0.title }
+                    }
                 }
                 .listRowBackground(Color.backgroundSecondary)
 
@@ -129,6 +165,23 @@ struct SettingsView: View {
                             }
                         } icon: {
                             IconKit.calendar
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.primaryDS)
+                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                    }
+                }
+                .listRowBackground(Color.backgroundSecondary)
+
+                Section {
+                    NavigationLink {
+                        LicensesView()
+                    } label: {
+                        Label {
+                            Text("Open Source Licenses").type(.body2(.regular), style: .primary(for: .label))
+                        } icon: {
+                            IconKit.document
                                 .resizable()
                                 .scaledToFit()
                                 .foregroundStyle(Color.primaryDS)

@@ -206,10 +206,8 @@ public struct LoginFormView: View {
                     .type(.body1(.regular))
                     .tint(Color.accent)
                     .autocorrectionDisabled()
-                    #if os(iOS)
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
-                    #endif
                     .submitLabel(.go)
                     .onSubmit(submitTestConnection)
                     .shake(trigger: shakeTrigger)
@@ -367,9 +365,7 @@ public struct LoginFormView: View {
                 .tint(Color.accent)
                 .textContentType(.username)
                 .autocorrectionDisabled()
-                #if os(iOS)
                 .textInputAutocapitalization(.never)
-                #endif
                 .focused($focusedField, equals: .identifier)
                 .task {
                     try? await Task.sleep(for: Constants.identifierAutoFocusDelay)
@@ -419,9 +415,7 @@ public struct LoginFormView: View {
                 .type(.body1(.regular))
                 .tint(Color.accent)
                 .autocorrectionDisabled()
-                #if os(iOS)
                 .textInputAutocapitalization(.never)
-                #endif
                 .focused($focusedField, equals: .password)
 
                 if focusedField == .password {

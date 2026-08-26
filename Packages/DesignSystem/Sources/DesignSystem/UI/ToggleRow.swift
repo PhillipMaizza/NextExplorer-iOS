@@ -1,7 +1,7 @@
 import SwiftUI
 
 private enum Constants {
-    static let iconSize: CGFloat = .iconXSmall
+    static let iconSize: CGFloat = .iconSmall
 }
 
 /// A labeled `Toggle` with a leading icon, the shape every settings-style switch row in

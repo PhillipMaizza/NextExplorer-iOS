@@ -32,8 +32,8 @@ public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
 
     /// Today, rendered in this format — shown as a subtitle in the picker so the user sees
     /// what the abbreviated pattern actually looks like before picking it.
-    public var example: String {
-        string(from: Date())
+    public func example(includeTime: Bool = false) -> String {
+        string(from: Date(), includeTime: includeTime)
     }
 
     /// Every case but `.system` is a fixed literal pattern by design — the whole point of
@@ -43,7 +43,7 @@ public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
     /// callers (Swift Testing runs tests in parallel by default; two tests reconfiguring the
     /// same formatter at once produced garbled results). This is called at most once per
     /// visible row, not a hot loop, so the construction cost is a non-issue either way.
-    public func string(from date: Date) -> String {
+    public func string(from date: Date, includeTime: Bool = false) -> String {
         let formatter = DateFormatter()
         switch self {
         case .system:
@@ -67,6 +67,12 @@ public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
         case .dayAbbreviatedMonthYear:
             formatter.dateFormat = "d MMM yyyy"
         }
-        return formatter.string(from: date)
+        let dateText = formatter.string(from: date)
+        guard includeTime else { return dateText }
+
+        let timeFormatter = DateFormatter()
+        timeFormatter.dateStyle = .none
+        timeFormatter.timeStyle = .short
+        return "\(dateText), \(timeFormatter.string(from: date))"
     }
 }
