@@ -29,6 +29,7 @@ public struct MainTabView: View {
                 .tag(MainTabFeature.Tab.settings)
         }
         .tint(Color.accent)
+        .hapticFeedback(.selection, trigger: store.selectedTab)
     }
 }
 

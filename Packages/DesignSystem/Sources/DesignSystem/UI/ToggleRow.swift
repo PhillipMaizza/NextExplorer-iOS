@@ -30,6 +30,7 @@ public struct DSToggleRow: View {
             }
         }
         .tint(Color.accent)
+        .hapticFeedback(.selection, trigger: isOn)
     }
 }
 

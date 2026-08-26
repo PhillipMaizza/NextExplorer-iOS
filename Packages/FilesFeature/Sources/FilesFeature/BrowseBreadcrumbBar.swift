@@ -72,6 +72,7 @@ struct BrowseBreadcrumbBar: View {
                     proxy.scrollTo(Self.trailingAnchorID, anchor: .trailing)
                 }
             }
+            .hapticFeedback(.selection, trigger: directoryPath)
         }
     }
 
