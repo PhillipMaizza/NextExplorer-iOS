@@ -4,6 +4,8 @@ import SwiftUI
 private enum Constants {
     static let rowSpacing: CGFloat = .space2
     static let checkmarkSize: CGFloat = .iconSmall
+    static let checkmarkSpringResponse: Double = 0.3
+    static let checkmarkSpringDamping: Double = 0.7
 }
 
 /// Pushed from Settings' "Date Format" row: every `DateDisplayFormat`, each showing today's
@@ -37,11 +39,13 @@ struct DateFormatPickerView: View {
                                     .scaledToFit()
                                     .foregroundStyle(Color.accent)
                                     .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
+                                    .transition(.scale.combined(with: .opacity))
                             }
                         }
                         .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
+                    .animation(.spring(response: Constants.checkmarkSpringResponse, dampingFraction: Constants.checkmarkSpringDamping), value: selection)
                 }
             }
             .listRowBackground(Color.backgroundSecondary)
@@ -50,6 +54,7 @@ struct DateFormatPickerView: View {
         .background(Color.backgroundPrimary)
         .navigationTitle("Date Format")
         .navigationBarTitleDisplayMode(.inline)
+        .hapticFeedback(.selection, trigger: selection)
     }
 }
 
