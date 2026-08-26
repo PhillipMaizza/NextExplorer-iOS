@@ -8,24 +8,28 @@ private enum Constants {
     static let closeButtonPadding: CGFloat = .space8
     static let contentSpacing: CGFloat = .space16
     static let rowVerticalPadding: CGFloat = .space8
+    static let rowMinimumGap: CGFloat = .space32
     static let horizontalPadding: CGFloat = .space24
     static let topPadding: CGFloat = .space24
     static let bottomPadding: CGFloat = .space24
-    static let loadingVerticalPadding: CGFloat = .space24
 }
 
 /// "Get Info" sheet for a single file/folder: everything `GET /api/metadata/*` actually
 /// returns (`backend/src/routes/metadata.js`) — there's no owner/group/permissions data
 /// anywhere in that response, so this deliberately doesn't show fields the real server
 /// can't back up.
+///
+/// Deliberately presented only once the fetch has actually resolved (success or failure) —
+/// see `BrowseContentView.InfoSheetPhase` and `FileInfoLoadingSheet`, which is shown instead
+/// while the fetch is still in flight.
 struct FileInfoSheet: View {
     let item: FileItem
     let metadata: FileMetadata?
-    let isLoading: Bool
     let errorMessage: String?
     let onDismiss: () -> Void
 
     @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
+    @AppStorage("includeTimeInDates") private var includeTime = false
 
     private var dateFormat: DateDisplayFormat { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system }
 
@@ -44,10 +48,7 @@ struct FileInfoSheet: View {
     }()
 
     var body: some View {
-        // Re-measures once loading finishes: unlike this app's other sheets, this one's
-        // content genuinely changes shape (a small spinner, then the full metadata layout),
-        // so the height can't just lock on the first (loading) measurement.
-        DynamicHeightSheet(resetKey: isLoading) {
+        DynamicHeightSheet {
             content
         }
     }
@@ -58,11 +59,7 @@ struct FileInfoSheet: View {
 
             Text(item.name).type(.headline3, style: .primary(for: .label)).lineLimit(2)
 
-            if isLoading {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, Constants.loadingVerticalPadding)
-            } else if let errorMessage {
+            if let errorMessage {
                 Text(errorMessage).type(.body2(.regular), style: .error)
             } else if let metadata {
                 metadataSections(for: metadata)
@@ -77,6 +74,7 @@ struct FileInfoSheet: View {
         HStack {
             (item.isDirectory ? IconKit.folderFill : IconKit.document)
                 .resizable()
+                .scaledToFit()
                 .foregroundStyle(item.isDirectory ? Color.accent : Color.secondaryDS)
                 .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
 
@@ -99,8 +97,8 @@ struct FileInfoSheet: View {
             row("Kind", kindTitle(for: metadata))
             row("Size", Self.byteFormatter.string(fromByteCount: metadata.size))
             row("Location", metadata.path)
-            row("Date Modified", dateFormat.string(from: metadata.dateModified))
-            row("Date Created", dateFormat.string(from: metadata.dateCreated))
+            row("Date Modified", dateFormat.string(from: metadata.dateModified, includeTime: includeTime))
+            row("Date Created", dateFormat.string(from: metadata.dateCreated, includeTime: includeTime))
         }
 
         if let directory = metadata.directory {
@@ -132,7 +130,7 @@ struct FileInfoSheet: View {
                     row("Lens", lensModel)
                 }
                 if let dateTaken = image.dateTaken {
-                    row("Date Taken", dateFormat.string(from: dateTaken))
+                    row("Date Taken", dateFormat.string(from: dateTaken, includeTime: includeTime))
                 }
                 if let gps = image.gps {
                     row("Location", String(format: "%.4f, %.4f", gps.lat, gps.lon))
@@ -158,9 +156,11 @@ struct FileInfoSheet: View {
     }
 
     private func row(_ label: String, _ value: String) -> some View {
-        HStack {
-            Text(label).type(.body2(.regular), style: .secondary)
-            Spacer()
+        HStack(spacing: Constants.rowMinimumGap) {
+            Text(label)
+                .type(.body2(.regular), style: .secondary)
+                .fixedSize(horizontal: true, vertical: false)
+            Spacer(minLength: Constants.rowMinimumGap)
             Text(value)
                 .type(.body2(.regular), style: .primary(for: .label))
                 .multilineTextAlignment(.trailing)
@@ -184,7 +184,6 @@ struct FileInfoSheet: View {
                     dateCreated: Date().addingTimeInterval(-86_400 * 30),
                     directory: FileMetadata.DirectorySummary(totalSize: 10_485_760, fileCount: 42, dirCount: 3, truncated: false)
                 ),
-                isLoading: false,
                 errorMessage: nil,
                 onDismiss: {}
             )
@@ -208,7 +207,6 @@ struct FileInfoSheet: View {
                         dateTaken: Date(), gps: FileMetadata.ImageMetadata.GPSCoordinate(lat: 37.3349, lon: -122.0090)
                     )
                 ),
-                isLoading: false,
                 errorMessage: nil,
                 onDismiss: {}
             )
@@ -229,7 +227,6 @@ struct FileInfoSheet: View {
                     dateCreated: Date(),
                     video: FileMetadata.VideoMetadata(width: 1920, height: 1080, duration: 125)
                 ),
-                isLoading: false,
                 errorMessage: nil,
                 onDismiss: {}
             )
@@ -242,20 +239,6 @@ struct FileInfoSheet: View {
             FileInfoSheet(
                 item: FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 128, kind: "txt"),
                 metadata: FileMetadata(path: "notes.txt", name: "notes.txt", kind: "txt", size: 128, dateModified: Date(), dateCreated: Date()),
-                isLoading: false,
-                errorMessage: nil,
-                onDismiss: {}
-            )
-        }
-}
-
-#Preview("Loading") {
-    Color.clear
-        .sheet(isPresented: .constant(true)) {
-            FileInfoSheet(
-                item: FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 128, kind: "txt"),
-                metadata: nil,
-                isLoading: true,
                 errorMessage: nil,
                 onDismiss: {}
             )
@@ -268,7 +251,6 @@ struct FileInfoSheet: View {
             FileInfoSheet(
                 item: FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 128, kind: "txt"),
                 metadata: nil,
-                isLoading: false,
                 errorMessage: "Couldn't reach the server.",
                 onDismiss: {}
             )

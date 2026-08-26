@@ -76,7 +76,25 @@ struct DateDisplayFormatTests {
 
     @Test
     func exampleIsNonEmptyForEveryCase() {
-        #expect(DateDisplayFormat.allCases.allSatisfy { !$0.example.isEmpty })
+        #expect(DateDisplayFormat.allCases.allSatisfy { !$0.example().isEmpty })
+    }
+
+    @Test
+    func includeTimeAppendsATimeSuffixAfterTheDate() {
+        let dateOnly = DateDisplayFormat.dashYearMonthDay.string(from: date)
+        let withTime = DateDisplayFormat.dashYearMonthDay.string(from: date, includeTime: true)
+        #expect(withTime.hasPrefix(dateOnly))
+        #expect(withTime != dateOnly)
+    }
+
+    @Test
+    func includeTimeDefaultsToFalseWhenOmitted() {
+        #expect(DateDisplayFormat.dashYearMonthDay.string(from: date) == DateDisplayFormat.dashYearMonthDay.string(from: date, includeTime: false))
+    }
+
+    @Test
+    func exampleWithIncludeTimeIsNonEmptyForEveryCase() {
+        #expect(DateDisplayFormat.allCases.allSatisfy { !$0.example(includeTime: true).isEmpty })
     }
 
     @Test

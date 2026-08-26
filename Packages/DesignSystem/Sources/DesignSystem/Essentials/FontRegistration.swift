@@ -1,8 +1,6 @@
 import CoreText
 import Foundation
-#if canImport(UIKit)
 import UIKit
-#endif
 
 private enum Constants {
     static let navTitleSize: CGFloat = 17
@@ -46,7 +44,6 @@ public enum DesignSystemFonts {
         CTFontManagerRegisterFontsForURL(url as CFURL, .process, &error)
     }()
 
-    #if canImport(UIKit)
     /// Applies Figtree to the UIKit-rendered chrome SwiftUI's `.font()` modifier can't
     /// reach (navigation bar titles and tab bar item labels) via the shared appearance
     /// proxies. Call once at launch, after `registerAll()`. Only text attributes are set;
@@ -93,7 +90,4 @@ public enum DesignSystemFonts {
         let ctFont = CTFontCreateWithFontDescriptor(descriptor, size, nil)
         return ctFont as UIFont
     }
-    #else
-    public static func applyGlobalAppearance() {}
-    #endif
 }

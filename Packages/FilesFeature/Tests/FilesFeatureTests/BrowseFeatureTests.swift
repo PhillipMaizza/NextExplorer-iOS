@@ -145,17 +145,277 @@ struct BrowseFeatureTests {
     }
 
     @Test
-    func rowTappedOnAFileEmitsNoDelegate() async {
+    func rowTappedOnAKnownBinaryFormatDoesNothing() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+        let file = FileItem(name: "installer.exe", path: "", dateModified: Date(), size: 10, kind: "exe")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
         }
 
-        // A file row's tap is a no-op at the reducer level: the app has no file viewer yet,
-        // so this only guards against ever emitting `.openFolder` for a non-directory.
+        // No `previewFile`/`fetchTextContent` override: a call to either would crash with
+        // "Unimplemented," proving nothing is fetched for a format there's nothing to show.
         await store.send(.rowTapped(file))
+    }
+
+    @Test
+    func rowTappedOnAnUnplayableStreamableContainerDoesNothing() async {
+        let serverURL = URL(string: "https://example.com")!
+        // `.webm` is `isStreamableMedia` (a video kind) but not `isNativelyPlayable`
+        // (AVFoundation can't decode VP8/VP9) — regression test for a bug where `rowTapped`
+        // guarded on `isPreviewable || isBrowsableArchive` instead of
+        // `!isUnsupportedForPreview`, letting this slip through to `StreamingPreviewView`
+        // with a URL it can't actually play.
+        let file = FileItem(name: "clip.webm", path: "", dateModified: Date(), size: 10, kind: "webm")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+
+        await store.send(.rowTapped(file))
+    }
+
+    @Test
+    func rowTappedOnANonBrowsableArchiveDoesNothing() async {
+        let serverURL = URL(string: "https://example.com")!
+        // `.zip`/`.rar` are `isBrowsableArchive` (see the dedicated test for those) — this
+        // covers an archive kind neither `ZIPFoundation` nor `Unrar.swift` can list.
+        let file = FileItem(name: "bundle.7z", path: "", dateModified: Date(), size: 10, kind: "7z")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+
+        await store.send(.rowTapped(file))
+    }
+
+    @Test
+    func rowTappedOnATextFileFetchesItsContentAndEmitsNoDelegate() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.fetchTextContent = { _, _ in "hello world" }
+        }
+
+        // Never emits `.openFolder` for a non-directory; sets `previewItem` immediately so
+        // the viewer presents right away, and fetches text (not streamed, not downloaded via
+        // `previewFile` — `.txt` isn't `isStreamableMedia` or `isPreviewableViaDownload`) in
+        // the background.
+        await store.send(.rowTapped(file)) {
+            $0.previewItem = file
+            $0.isLoadingTextContent = true
+        }
+        await store.receive(\.textContentResponse.success) {
+            $0.isLoadingTextContent = false
+            $0.textContent = "hello world"
+        }
+    }
+
+    @Test
+    func rowTappedOnAStreamableMediaFileSetsPreviewItemWithoutDownloading() async {
+        let serverURL = URL(string: "https://example.com")!
+        let video = FileItem(name: "clip.mp4", path: "", dateModified: Date(), size: 0, kind: "mp4")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+
+        // No `filesClient.previewFile` override: a call here would crash with
+        // "Unimplemented," proving streamable media never downloads.
+        await store.send(.rowTapped(video)) {
+            $0.previewItem = video
+        }
+    }
+
+    @Test
+    func rowTappedOnABrowsableArchiveSetsPreviewItemWithoutDownloading() async {
+        let serverURL = URL(string: "https://example.com")!
+        let archive = FileItem(name: "bundle.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+
+        // No `filesClient.downloadRawFile`/`previewFile` override: a call here would crash
+        // with "Unimplemented" — `ArchiveBrowserView` downloads and parses the archive itself.
+        await store.send(.rowTapped(archive)) {
+            $0.previewItem = archive
+        }
+    }
+
+    @Test
+    func rowTappedOnAnSVGDownloadsItForPreviewUnlikeOtherImages() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "logo.svg", path: "", dateModified: Date(), size: 0, kind: "svg")
+        let fileURL = URL(fileURLWithPath: "/tmp/logo.svg")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.previewFile = { _, _ in fileURL }
+        }
+
+        // Unlike raster images (which set `previewItem` and load themselves in the gallery,
+        // no reducer-driven fetch), SVGs go through the same download+QuickLook path as PDFs
+        // — `UIImage`/`AsyncImage` can't rasterize them.
+        await store.send(.rowTapped(file)) {
+            $0.previewItem = file
+            $0.isLoadingPreview = true
+        }
+        await store.receive(\.previewFileResponse.success) {
+            $0.isLoadingPreview = false
+            $0.previewFileURL = fileURL
+        }
+    }
+
+    @Test
+    func rowTappedOnATextFileFailingToFetchSurfacesAReadableErrorMessage() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.fetchTextContent = { _, _ in throw FilesClientError.server(statusCode: 500) }
+        }
+
+        await store.send(.rowTapped(file)) {
+            $0.previewItem = file
+            $0.isLoadingTextContent = true
+        }
+        await store.receive(\.textContentResponse.failure) {
+            $0.isLoadingTextContent = false
+            $0.textEditorErrorMessage = FilesClientError.server(statusCode: 500).userMessage
+        }
+    }
+
+    @Test
+    func rowTappedOnAPDFDownloadsItForPreviewAndEmitsNoDelegate() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 10, kind: "pdf")
+        let fileURL = URL(fileURLWithPath: "/tmp/report.pdf")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.previewFile = { _, _ in fileURL }
+        }
+
+        // PDFs are `isPreviewableViaDownload` (QuickLook), not text and not streamable.
+        await store.send(.rowTapped(file)) {
+            $0.previewItem = file
+            $0.isLoadingPreview = true
+        }
+        await store.receive(\.previewFileResponse.success) {
+            $0.isLoadingPreview = false
+            $0.previewFileURL = fileURL
+        }
+    }
+
+    @Test
+    func rowTappedOnAWordDocumentDownloadsViaTheUnrestrictedDownloadEndpoint() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "report.docx", path: "", dateModified: Date(), size: 10, kind: "docx")
+        let fileURL = URL(fileURLWithPath: "/tmp/report.docx")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.downloadRawFile = { _, _ in fileURL }
+        }
+
+        // No `filesClient.previewFile` override: a call here would crash with "Unimplemented"
+        // — `.docx` isn't in `PREVIEWABLE_EXTENSIONS`, so it must go through
+        // `downloadRawFile` (`POST /api/files/download`), not `GET /api/preview`.
+        await store.send(.rowTapped(file)) {
+            $0.previewItem = file
+            $0.isLoadingPreview = true
+        }
+        await store.receive(\.previewFileResponse.success) {
+            $0.isLoadingPreview = false
+            $0.previewFileURL = fileURL
+        }
+    }
+
+    @Test
+    func textSaveTappedSavesContentAndUpdatesState() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.previewItem = file
+        state.textContent = "hello"
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.saveTextContent = { _, _, _ in }
+        }
+
+        await store.send(.textSaveTapped("hello world")) {
+            $0.isSavingTextContent = true
+        }
+        await store.receive(\.textSaveResponse.success) {
+            $0.isSavingTextContent = false
+            $0.textContent = "hello world"
+        }
+    }
+
+    @Test
+    func textSaveTappedFailureSurfacesAReadableErrorMessage() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.previewItem = file
+        state.textContent = "hello"
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.saveTextContent = { _, _, _ in throw FilesClientError.server(statusCode: 500) }
+        }
+
+        await store.send(.textSaveTapped("hello world")) {
+            $0.isSavingTextContent = true
+        }
+        await store.receive(\.textSaveResponse.failure) {
+            $0.isSavingTextContent = false
+            $0.textEditorErrorMessage = FilesClientError.server(statusCode: 500).userMessage
+        }
+    }
+
+    @Test
+    func textSaveTappedWithNoPreviewItemDoesNothing() async {
+        let serverURL = URL(string: "https://example.com")!
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+
+        await store.send(.textSaveTapped("orphaned content"))
+    }
+
+    @Test
+    func previewDismissedClearsAllPreviewState() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.previewItem = file
+        state.previewFileURL = URL(fileURLWithPath: "/tmp/notes.txt")
+        state.previewErrorMessage = "some error"
+        state.isLoadingPreview = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.previewDismissed) {
+            $0.previewItem = nil
+            $0.previewFileURL = nil
+            $0.isLoadingPreview = false
+            $0.previewErrorMessage = nil
+        }
     }
 
     @Test
@@ -239,34 +499,6 @@ struct BrowseFeatureTests {
         await store.send(.sortDirectionChanged(.descending)) {
             $0.sortDirection = .descending
         }
-    }
-
-    @Test
-    func breadcrumbTappedEmitsOpenPathDelegateWithTheTappedSegment() async {
-        let serverURL = URL(string: "https://example.com")!
-
-        let store = TestStore(
-            initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Documents", title: "Documents")
-        ) {
-            BrowseFeature()
-        }
-
-        await store.send(.breadcrumbTapped(path: "Photos", title: "Photos"))
-        await store.receive(.delegate(.openPath(path: "Photos", title: "Photos")))
-    }
-
-    @Test
-    func breadcrumbTappedOnHomeEmitsOpenPathDelegateWithAnEmptyPath() async {
-        let serverURL = URL(string: "https://example.com")!
-
-        let store = TestStore(
-            initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
-        ) {
-            BrowseFeature()
-        }
-
-        await store.send(.breadcrumbTapped(path: "", title: "Home"))
-        await store.receive(.delegate(.openPath(path: "", title: "Home")))
     }
 
     // MARK: - Search: "This Folder" scope (client-side fuzzy match, no network)
@@ -456,21 +688,6 @@ struct BrowseFeatureTests {
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
         await store.receive(\.favoritesResponse)
-    }
-
-    @Test
-    func breadcrumbTappedOnADeeplyNestedPathEmitsTheFullPath() async {
-        let serverURL = URL(string: "https://example.com")!
-        let deepPath = "A/B/C/D/E/F/G"
-
-        let store = TestStore(
-            initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: deepPath, title: "G")
-        ) {
-            BrowseFeature()
-        }
-
-        await store.send(.breadcrumbTapped(path: deepPath, title: "G"))
-        await store.receive(.delegate(.openPath(path: deepPath, title: "G")))
     }
 
     @Test
@@ -790,6 +1007,102 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.deleteResponse.failure) {
             $0.isPerformingFileAction = false
+            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
+        }
+    }
+
+    // MARK: File actions — extract/compress
+
+    @Test
+    func extractZipTappedAddsTheExtractedFolderOnSuccess() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "bundle.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
+        let extracted = FileItem(name: "bundle", path: "", dateModified: Date(), size: 0, kind: "directory")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [item]
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.extractZip = { _, _ in extracted }
+        }
+
+        await store.send(.extractZipTapped(item)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Extracting…"
+        }
+        await store.receive(\.extractZipResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.items = [item, extracted]
+        }
+    }
+
+    @Test
+    func extractZipTappedFailureSurfacesAReadableErrorMessage() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "bundle.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.extractZip = { _, _ in throw FilesClientError.server(statusCode: 415) }
+        }
+
+        await store.send(.extractZipTapped(item)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Extracting…"
+        }
+        await store.receive(\.extractZipResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 415).userMessage
+        }
+    }
+
+    @Test
+    func compressTappedAddsTheNewArchiveOnSuccess() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let compressed = FileItem(name: "Documents.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [item]
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.compressItem = { _, _ in compressed }
+        }
+
+        await store.send(.compressTapped(item)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Compressing…"
+        }
+        await store.receive(\.compressResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.items = [item, compressed]
+        }
+    }
+
+    @Test
+    func compressTappedFailureSurfacesAReadableErrorMessage() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.compressItem = { _, _ in throw FilesClientError.server(statusCode: 403) }
+        }
+
+        await store.send(.compressTapped(item)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = "Compressing…"
+        }
+        await store.receive(\.compressResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
             $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
         }
     }

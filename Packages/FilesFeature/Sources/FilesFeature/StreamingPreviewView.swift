@@ -1,0 +1,75 @@
+import AVKit
+import ComposableArchitecture
+import CoreModels
+import DesignSystem
+import SwiftUI
+
+private enum Constants {
+    static let closeButtonInset: CGFloat = .space16
+}
+
+/// Full-screen video/audio player for `FileItem.isStreamableMedia` files: plays directly
+/// from `FilesClient.previewURL` (the same `GET /api/preview` the server's own web client
+/// scrubs with, via HTTP Range requests) rather than downloading the whole file first.
+struct StreamingPreviewView: View {
+    let item: FileItem
+    let url: URL
+    let serverURL: URL
+    let onDismiss: () -> Void
+
+    @State private var player: AVPlayer
+    @State private var hasStartedPlaying = false
+
+    init(item: FileItem, url: URL, serverURL: URL, onDismiss: @escaping () -> Void) {
+        self.item = item
+        self.url = url
+        self.serverURL = serverURL
+        self.onDismiss = onDismiss
+        self._player = State(initialValue: AVPlayer(url: url))
+    }
+
+    var body: some View {
+        ZStack(alignment: .topTrailing) {
+            VideoPlayer(player: player)
+                .ignoresSafeArea()
+
+            // A poster frame before playback starts — matching the web client's `<video
+            // poster>` — rather than a blank black rectangle while the stream buffers.
+            // Keyed on "has playback ever started," not "is playing right now": the latter
+            // would bring the poster back over the paused frame every time the user pauses.
+            if item.isVideo, item.supportsThumbnail, !hasStartedPlaying {
+                ThumbnailImage(serverURL: serverURL, path: item.id, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
+                    .aspectRatio(contentMode: .fit)
+                    .background(Color.black)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+            }
+
+            DSCloseButton(action: onDismiss)
+                .padding(Constants.closeButtonInset)
+        }
+        .background(Color.black)
+        .onReceive(player.publisher(for: \.rate)) { rate in
+            if rate != 0 { hasStartedPlaying = true }
+        }
+        .onAppear {
+            // Only video gets free rotation — an audio-only stream has nothing worth
+            // rotating for, so it stays locked to portrait like every non-media screen.
+            if item.isVideo { OrientationLock.shared.unlock() }
+            // `setCategory` can block — AVFoundation warns against calling it synchronously
+            // on the main thread while a session may already be active. `play()` itself must
+            // stay on the main actor for `VideoPlayer` to observe it.
+            Task.detached(priority: .userInitiated) {
+                try? AVAudioSession.sharedInstance().setCategory(.playback)
+            }
+            player.play()
+        }
+        .onDisappear {
+            if item.isVideo { OrientationLock.shared.lock() }
+            player.pause()
+            Task.detached(priority: .userInitiated) {
+                try? AVAudioSession.sharedInstance().setCategory(.ambient)
+            }
+        }
+    }
+}

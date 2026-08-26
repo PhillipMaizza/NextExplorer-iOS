@@ -33,6 +33,29 @@ extension FilesClient {
                 dateCreated: Date(),
                 directory: FileMetadata.DirectorySummary(totalSize: 10_485_760, fileCount: 42, dirCount: 3, truncated: false)
             )
+        },
+        thumbnailURL: { _, _ in nil },
+        previewFile: { _, item in
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Previews-Preview", isDirectory: true)
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            let fileURL = directory.appendingPathComponent(item.name)
+            try? Data().write(to: fileURL)
+            return fileURL
+        },
+        fetchTextContent: { _, _ in "" },
+        saveTextContent: { _, _, _ in },
+        extractZip: { _, item in
+            FileItem(name: item.name.replacingOccurrences(of: ".zip", with: ""), path: item.path, dateModified: Date(), size: 0, kind: "directory")
+        },
+        downloadRawFile: { _, item in
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Downloads-Preview", isDirectory: true)
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            let fileURL = directory.appendingPathComponent(item.name)
+            try? Data().write(to: fileURL)
+            return fileURL
+        },
+        compressItem: { _, item in
+            FileItem(name: "\(item.name).zip", path: item.path, dateModified: Date(), size: 0, kind: "zip")
         }
     )
 }

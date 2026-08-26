@@ -11,40 +11,45 @@ private enum Constants {
 /// at a glance rather than requiring the user to decode it themselves.
 struct DateFormatPickerView: View {
     @Binding var selection: DateDisplayFormat
+    @AppStorage("includeTimeInDates") private var includeTime = false
 
     var body: some View {
         List {
-            ForEach(DateDisplayFormat.allCases) { format in
-                Button {
-                    selection = format
-                } label: {
-                    HStack {
-                        VStack(alignment: .leading, spacing: Constants.rowSpacing) {
-                            Text(format.title).type(.body1(.regular), style: .primary(for: .label))
-                            Text(format.example).type(.body3(.regular), style: .secondary)
-                        }
-                        Spacer()
-                        if format == selection {
-                            IconKit.checkmark
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.accent)
-                                .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
-                        }
-                    }
-                    .contentShape(Rectangle())
-                }
-                .buttonStyle(.plain)
-                .listRowBackground(Color.clear)
+            Section {
+                DSToggleRow(title: "Show Time", icon: IconKit.clock, isOn: $includeTime)
             }
+            .listRowBackground(Color.backgroundSecondary)
+
+            Section {
+                ForEach(DateDisplayFormat.allCases) { format in
+                    Button {
+                        selection = format
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: Constants.rowSpacing) {
+                                Text(format.title).type(.body1(.regular), style: .primary(for: .label))
+                                Text(format.example(includeTime: includeTime)).type(.body3(.regular), style: .secondary)
+                            }
+                            Spacer()
+                            if format == selection {
+                                IconKit.checkmark
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundStyle(Color.accent)
+                                    .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
+                            }
+                        }
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .listRowBackground(Color.backgroundSecondary)
         }
-        .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .backgroundGradient()
+        .background(Color.backgroundPrimary)
         .navigationTitle("Date Format")
-        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
-        #endif
     }
 }
 

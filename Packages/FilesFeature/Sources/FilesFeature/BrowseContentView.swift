@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import FilesClient
 import SwiftUI
 
 private enum BrowseViewMode: String {
@@ -10,8 +11,6 @@ private enum BrowseViewMode: String {
 private enum Constants {
     static let emptyStateSpacing: CGFloat = .space8
     static let emptyStateIconSize: CGFloat = .superIcon
-    static let gridItemMinWidth: CGFloat = 100
-    static let gridColumns = [GridItem(.adaptive(minimum: gridItemMinWidth), spacing: .space16)]
     static let gridSpacing: CGFloat = .space16
 }
 
@@ -22,18 +21,68 @@ private enum Constants {
 struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
     @AppStorage("browseViewMode") private var viewModeRaw = BrowseViewMode.list.rawValue
+    @AppStorage("thumbnailSize") private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @State private var isSortSheetPresented = false
     /// The rename alert's in-progress text: kept as plain view state rather than routed
     /// through the store, since a `.alert` `TextField` bound via a TCA `.sending` binding
     /// didn't reliably propagate keystrokes back out. Seeded from `renameSheetItem` when
     /// the alert is presented; `renameConfirmed` is sent this value directly.
     @State private var renameDraft = ""
+    @State private var toastMessage: DSToastMessage?
 
     private var viewMode: BrowseViewMode {
         BrowseViewMode(rawValue: viewModeRaw) ?? .list
     }
 
+    private var thumbnailSize: ThumbnailSize {
+        ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium
+    }
+
+    private var gridColumns: [GridItem] {
+        [GridItem(.adaptive(minimum: thumbnailSize.gridItemMinWidth), spacing: Constants.gridSpacing)]
+    }
+
+    /// Pre-filters kinds `rowTapped` would just silently no-op on (or, for unsupported video
+    /// containers, previously opened a full-screen "can't play this" view for) — a toast reads
+    /// better than either a dead tap or interrupting with a whole screen.
+    private func handleTap(_ item: FileItem) {
+        guard !item.isDirectory else {
+            store.send(.rowTapped(item))
+            return
+        }
+        guard !item.isUnsupportedForPreview else {
+            toastMessage = DSToastMessage(icon: IconKit.exclamationmarkTriangle, text: "Unsupported file type")
+            return
+        }
+        store.send(.rowTapped(item))
+    }
+
     var body: some View {
+        browsingContent
+            .sheet(item: infoPhaseBinding) { phase in
+                infoSheetContent(for: phase)
+            }
+            .fullScreenCover(item: previewItemBinding) { item in
+                previewContent(for: item)
+            }
+            .dsToast($toastMessage)
+            .dsToast(progressToastBinding)
+            // `fileActionErrorMessage` (rename/delete/extract/compress failures) was set on
+            // `State` but never actually read by any view — silently swallowed. Mirrored into
+            // the same toast the unsupported-file-type warning uses.
+            .onChange(of: store.fileActionErrorMessage) { _, newValue in
+                guard let newValue else { return }
+                toastMessage = DSToastMessage(icon: IconKit.exclamationmarkTriangle, text: newValue)
+            }
+            .task {
+                store.send(.onAppear)
+            }
+    }
+
+    /// Split out of `body`: with every modifier below chained directly onto the file-action
+    /// sheets/covers added above, the compiler couldn't type-check the whole expression in
+    /// reasonable time.
+    private var browsingContent: some View {
         Group {
             if viewMode == .list {
                 listContent
@@ -42,18 +91,11 @@ struct BrowseContentView: View {
             }
         }
         .tint(Color.accent)
-        #if os(iOS)
         .searchable(
             text: $store.searchQuery.sending(\.searchQueryChanged),
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: "Search"
         )
-        #else
-        .searchable(
-            text: $store.searchQuery.sending(\.searchQueryChanged),
-            prompt: "Search"
-        )
-        #endif
         .searchScopes($store.searchScope.sending(\.searchScopeChanged)) {
             ForEach(BrowseFeature.SearchScope.allCases, id: \.self) { scope in
                 Text(scope.title).tag(scope)
@@ -64,13 +106,6 @@ struct BrowseContentView: View {
         }
         .overlay {
             overlayStateContent
-        }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            if !store.directoryPath.isEmpty {
-                BrowseBreadcrumbBar(directoryPath: store.directoryPath) { path, title in
-                    store.send(.breadcrumbTapped(path: path, title: title))
-                }
-            }
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
@@ -121,25 +156,107 @@ struct BrowseContentView: View {
         } message: {
             Text("This can't be undone.")
         }
-        .sheet(item: infoItemBinding) { item in
+    }
+
+    private var previewItemBinding: Binding<FileItem?> {
+        Binding(
+            get: { store.previewItem },
+            set: { if $0 == nil { store.send(.previewDismissed) } }
+        )
+    }
+
+    /// Read-only from the store's perspective: `fileActionProgressMessage` clears itself once
+    /// the extract/compress effect resolves, so there's nothing for the view to write back —
+    /// the toast has no auto-dismiss timer to fire early either (`DSToastMessage.progress`
+    /// sets `isPersistent`), so the setter is genuinely never called in practice.
+    private var progressToastBinding: Binding<DSToastMessage?> {
+        Binding(
+            get: { store.fileActionProgressMessage.map { DSToastMessage.progress($0) } },
+            set: { _ in }
+        )
+    }
+
+    @ViewBuilder
+    private func previewContent(for item: FileItem) -> some View {
+        if item.isStreamableMedia, let url = FilesClient.previewURL(serverURL: store.serverURL, item: item) {
+            // Guaranteed `isNativelyPlayable` by this point — unsupported containers/codecs
+            // are caught by the toast in `handleTap`, before `rowTapped` is ever sent.
+            StreamingPreviewView(item: item, url: url, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
+        } else if item.isBrowsableArchive {
+            ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
+        } else if (item.isImage || item.isRawImage) && !item.isSVG {
+            ImageGalleryView(
+                items: store.displayedItems.filter { ($0.isImage || $0.isRawImage) && !$0.isSVG },
+                initialItem: item,
+                serverURL: store.serverURL,
+                onDismiss: { store.send(.previewDismissed) }
+            )
+        } else if item.isPreviewableViaDownload {
+            FilePreviewContainerView(
+                fileURL: store.previewFileURL,
+                errorMessage: store.previewErrorMessage,
+                onDismiss: { store.send(.previewDismissed) }
+            )
+        } else {
+            TextFilePreviewView(
+                item: item,
+                serverURL: store.serverURL,
+                fileName: item.name,
+                kind: item.kind,
+                content: store.textContent,
+                errorMessage: store.textEditorErrorMessage,
+                isLoading: store.isLoadingTextContent,
+                isSaving: store.isSavingTextContent,
+                onSave: { store.send(.textSaveTapped($0)) },
+                onDismiss: { store.send(.previewDismissed) }
+            )
+        }
+    }
+
+    /// Distinct identities for "still loading" vs. "have a result", so swapping between the
+    /// two (once the fetch resolves) is a genuinely fresh sheet presentation rather than an
+    /// in-place content change — see `FileInfoLoadingSheet`'s doc comment for why that
+    /// matters for getting the right height.
+    private enum InfoSheetPhase: Identifiable, Equatable {
+        case loading(FileItem)
+        case result(FileItem)
+
+        var id: String {
+            switch self {
+            case let .loading(item): "loading-\(item.id)"
+            case let .result(item): "result-\(item.id)"
+            }
+        }
+    }
+
+    private var infoPhase: InfoSheetPhase? {
+        guard let item = store.infoItem else { return nil }
+        guard store.infoMetadata != nil || store.infoErrorMessage != nil else {
+            return .loading(item)
+        }
+        return .result(item)
+    }
+
+    private var infoPhaseBinding: Binding<InfoSheetPhase?> {
+        Binding(
+            get: { infoPhase },
+            set: { if $0 == nil { store.send(.infoDismissed) } }
+        )
+    }
+
+    @ViewBuilder
+    private func infoSheetContent(for phase: InfoSheetPhase) -> some View {
+        switch phase {
+        case let .loading(item):
+            FileInfoLoadingSheet(item: item, onDismiss: { store.send(.infoDismissed) })
+        case let .result(item):
             FileInfoSheet(
                 item: item,
                 metadata: store.infoMetadata,
-                isLoading: store.isLoadingInfoMetadata,
                 errorMessage: store.infoErrorMessage,
                 onDismiss: { store.send(.infoDismissed) }
             )
         }
-        .task {
-            store.send(.onAppear)
-        }
-    }
-
-    private var infoItemBinding: Binding<FileItem?> {
-        Binding(
-            get: { store.infoItem },
-            set: { if $0 == nil { store.send(.infoDismissed) } }
-        )
     }
 
     private var isRenamingBinding: Binding<Bool> {
@@ -177,6 +294,25 @@ struct BrowseContentView: View {
                 store.send(.renameTapped(item))
             } label: {
                 Label("Rename", systemImage: "square.and.pencil")
+            }
+            .tint(.primaryDS)
+        }
+        if store.access?.canWrite ?? false {
+            // Extract only offers `.zip` — the server's own extract route 415s anything else
+            // ("Only .zip archives are supported"), `.rar` included despite this app being
+            // able to browse rar contents client-side.
+            if item.kind.lowercased() == "zip" {
+                Button {
+                    store.send(.extractZipTapped(item))
+                } label: {
+                    Label("Extract", systemImage: "archivebox")
+                }
+                .tint(.primaryDS)
+            }
+            Button {
+                store.send(.compressTapped(item))
+            } label: {
+                Label("Compress", systemImage: "doc.zipper")
             }
             .tint(.primaryDS)
         }
@@ -229,17 +365,18 @@ struct BrowseContentView: View {
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color.backgroundPrimary)
+        .safeAreaPadding(.bottom, breadcrumbBarClearance)
     }
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: Constants.gridColumns, spacing: Constants.gridSpacing) {
+            LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
                 if store.isSearching {
                     ForEach(store.displayedSearchResults ?? []) { result in
                         Button {
                             store.send(.searchResultTapped(result))
                         } label: {
-                            GridCellView(name: result.name, isDirectory: result.isDirectory, isFavorite: store.favoritePaths.contains(result.id))
+                            GridCellView(name: result.name, isDirectory: result.isDirectory, isFavorite: store.favoritePaths.contains(result.id), kind: result.kind)
                         }
                         .buttonStyle(.plain)
                         .disabled(!result.isDirectory)
@@ -247,9 +384,15 @@ struct BrowseContentView: View {
                 } else {
                     ForEach(store.displayedItems) { item in
                         Button {
-                            store.send(.rowTapped(item))
+                            handleTap(item)
                         } label: {
-                            GridCellView(name: item.name, isDirectory: item.isDirectory, isFavorite: store.favoritePaths.contains(item.id))
+                            GridCellView(
+                                item: item,
+                                isFavorite: store.favoritePaths.contains(item.id),
+                                serverURL: store.serverURL,
+                                showThumbnails: store.preferences.showThumbnails,
+                                iconSize: thumbnailSize.iconSize
+                            )
                         }
                         .buttonStyle(.plain)
                         .contextMenu {
@@ -261,15 +404,29 @@ struct BrowseContentView: View {
             .padding(Constants.gridSpacing)
         }
         .background(Color.backgroundPrimary)
+        .safeAreaPadding(.bottom, breadcrumbBarClearance)
+    }
+
+    /// The breadcrumb bar is only ever visible on a pushed screen — the root's
+    /// `directoryPath` is always empty — so this view can tell whether it needs to reserve
+    /// clearance for it purely from its own state, without threading the bar's visibility
+    /// down from `BrowseTabView`.
+    private var breadcrumbBarClearance: CGFloat {
+        store.directoryPath.isEmpty ? 0 : BrowseBreadcrumbBarMetrics.height
     }
 
     @ViewBuilder
     private var folderItemRows: some View {
         ForEach(store.displayedItems) { item in
             Button {
-                store.send(.rowTapped(item))
+                handleTap(item)
             } label: {
-                FileRowView(item: item, isFavorite: store.favoritePaths.contains(item.id))
+                FileRowView(
+                    item: item,
+                    isFavorite: store.favoritePaths.contains(item.id),
+                    serverURL: store.serverURL,
+                    showThumbnails: store.preferences.showThumbnails
+                )
             }
             .buttonStyle(.plain)
             .contextMenu {
@@ -303,20 +460,25 @@ struct BrowseContentView: View {
                     .tint(.positive)
                 }
             }
+            .listRowSeparator(item.id == store.displayedItems.first?.id ? .hidden : .visible, edges: .top)
+            .listRowSeparator(item.id == store.displayedItems.last?.id ? .hidden : .visible, edges: .bottom)
         }
     }
 
     @ViewBuilder
     private var searchResultRows: some View {
-        ForEach(store.displayedSearchResults ?? []) { result in
+        let results = store.displayedSearchResults ?? []
+        ForEach(results) { result in
             Button {
                 store.send(.searchResultTapped(result))
             } label: {
-                FileRowView(name: result.name, isDirectory: result.isDirectory, subtitle: result.matchLine, isFavorite: store.favoritePaths.contains(result.id))
+                FileRowView(name: result.name, isDirectory: result.isDirectory, subtitle: result.matchLine, isFavorite: store.favoritePaths.contains(result.id), kind: result.kind)
             }
             .buttonStyle(.plain)
             .disabled(!result.isDirectory)
             .listRowBackground(Color.clear)
+            .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
+            .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)
         }
     }
 

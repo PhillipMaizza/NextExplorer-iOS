@@ -17,6 +17,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "292E4697303C3E8F003CDCA4"
                BuildableName = "NetxExplorer.app"
+               BlueprintName = "NetxExplorer"
                ReferencedContainer = "container:NetxExplorer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -36,6 +37,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "292E46A4303C3E91003CDCA4"
                BuildableName = "NetxExplorerTests.xctest"
+               BlueprintName = "NetxExplorerTests"
                ReferencedContainer = "container:NetxExplorer.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -46,6 +48,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "292E46AE303C3E91003CDCA4"
                BuildableName = "NetxExplorerUITests.xctest"
+               BlueprintName = "NetxExplorerUITests"
                ReferencedContainer = "container:NetxExplorer.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -68,6 +71,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "292E4697303C3E8F003CDCA4"
             BuildableName = "NetxExplorer.app"
+            BlueprintName = "NetxExplorer"
             ReferencedContainer = "container:NetxExplorer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -84,6 +88,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "292E4697303C3E8F003CDCA4"
             BuildableName = "NetxExplorer.app"
+            BlueprintName = "NetxExplorer"
             ReferencedContainer = "container:NetxExplorer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

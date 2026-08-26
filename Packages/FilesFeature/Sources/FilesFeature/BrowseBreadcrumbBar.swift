@@ -8,6 +8,18 @@ private enum Constants {
     static let fullOpacity: Double = 1.0
 }
 
+/// `BrowseBreadcrumbBar`'s total rendered height, shared with `BrowseContentView` so its
+/// list/grid can explicitly reserve the same amount of bottom scroll-content inset. The bar is
+/// placed via `BrowseTabView`'s `.safeAreaInset` on the *ancestor* `NavigationStack`, but a
+/// `List` inside a pushed `navigationDestination` (which is every screen the bar is actually
+/// visible on — the root screen's `directoryPath` is always empty) doesn't reliably extend its
+/// own scroll extent to respect that ancestor inset, letting the last row scroll out from
+/// behind the bar. `BrowseContentView` reserves this same height directly on its own
+/// scrollable content instead of trusting that propagation.
+enum BrowseBreadcrumbBarMetrics {
+    static let height: CGFloat = .size48
+}
+
 /// Mirrors the web client's own path breadcrumb ("Location"): tapping any earlier segment
 /// jumps straight there via the same `openPath` delegate search results use, rather than
 /// popping the navigation stack one folder at a time.
@@ -23,23 +35,44 @@ struct BrowseBreadcrumbBar: View {
         pathSegments[0...index].joined(separator: "/")
     }
 
+    /// A fixed id for the trailing edge of the bar (rather than tagging the last real
+    /// segment) — `ScrollViewReader` needs some anchor to scroll to, and this way there's
+    /// always exactly one, even at the root with no path segments at all.
+    private static let trailingAnchorID = "trailing"
+
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: Constants.segmentSpacing) {
-                segment(title: "Home", path: "", icon: IconKit.house)
-                ForEach(pathSegments.indices, id: \.self) { index in
-                    IconKit.chevronRight
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.secondaryDS)
-                        .frame(width: Constants.chevronSize, height: Constants.chevronSize)
-                    segment(title: pathSegments[index], path: cumulativePath(through: index), icon: nil)
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: Constants.segmentSpacing) {
+                    segment(title: "Home", path: "", icon: IconKit.house)
+                    ForEach(pathSegments.indices, id: \.self) { index in
+                        IconKit.chevronRight
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(Color.secondaryDS)
+                            .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                        segment(title: pathSegments[index], path: cumulativePath(through: index), icon: nil)
+                    }
+                    // Zero width: an invisible trailing anchor, not a visible element — the
+                    // current/rightmost segment should be what's readable at the scrolled
+                    // position, not scrolled fully past it.
+                    Color.clear.frame(width: 0, height: 1).id(Self.trailingAnchorID)
+                }
+                .padding(.horizontal, .space16)
+                .padding(.vertical, Constants.verticalPadding)
+            }
+            .frame(height: BrowseBreadcrumbBarMetrics.height)
+            .background(Color.backgroundSecondary)
+            // The path is always visible at the trailing edge — deep breadcrumbs otherwise
+            // stay scrolled to "Home" after navigating into a new folder, hiding exactly the
+            // segment that just changed.
+            .onAppear { proxy.scrollTo(Self.trailingAnchorID, anchor: .trailing) }
+            .onChange(of: directoryPath) { _, _ in
+                withAnimation {
+                    proxy.scrollTo(Self.trailingAnchorID, anchor: .trailing)
                 }
             }
-            .padding(.horizontal, .space16)
-            .padding(.vertical, Constants.verticalPadding)
         }
-        .background(Color.backgroundSecondary)
     }
 
     private func segment(title: String, path: String, icon: Image?) -> some View {
