@@ -15,6 +15,12 @@ extension FilesClient {
             favorites: { serverURL in
                 try await service.favorites(serverURL: serverURL)
             },
+            addFavorite: { serverURL, path in
+                try await service.addFavorite(serverURL: serverURL, path: path)
+            },
+            removeFavorite: { serverURL, path in
+                try await service.removeFavorite(serverURL: serverURL, path: path)
+            },
             volumes: { serverURL in
                 try await service.volumes(serverURL: serverURL)
             },
@@ -23,6 +29,15 @@ extension FilesClient {
             },
             updatePreference: { serverURL, key, value in
                 try await service.updatePreference(serverURL: serverURL, key: key, value: value)
+            },
+            renameItem: { serverURL, item, newName in
+                try await service.renameItem(serverURL: serverURL, item: item, newName: newName)
+            },
+            deleteItems: { serverURL, items in
+                try await service.deleteItems(serverURL: serverURL, items: items)
+            },
+            fetchMetadata: { serverURL, path in
+                try await service.fetchMetadata(serverURL: serverURL, path: path)
             }
         )
     }

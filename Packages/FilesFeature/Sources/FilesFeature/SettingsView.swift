@@ -13,7 +13,6 @@ private enum Constants {
     static let tagVerticalPadding: CGFloat = .space4
     static let tagBackgroundOpacity: Double = 0.2
     static let footerTopPadding: CGFloat = .space8
-    static let sheetBackdropFadeDuration: Double = 0.2
 }
 
 struct SettingsView: View {
@@ -24,6 +23,7 @@ struct SettingsView: View {
     /// once, rather than carrying its own separate "system" state.
     @AppStorage("hasSetAppearanceOverride") private var hasAppearanceOverride = false
     @AppStorage("prefersDarkMode") private var prefersDarkModeOverride = false
+    @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
     @Environment(\.colorScheme) private var systemColorScheme
 
     private var isDarkModeOn: Binding<Bool> {
@@ -33,6 +33,13 @@ struct SettingsView: View {
                 hasAppearanceOverride = true
                 prefersDarkModeOverride = newValue
             }
+        )
+    }
+
+    private var dateFormat: Binding<DateDisplayFormat> {
+        Binding(
+            get: { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system },
+            set: { dateFormatRaw = $0.rawValue }
         )
     }
 
@@ -111,6 +118,27 @@ struct SettingsView: View {
                 .listRowBackground(Color.backgroundSecondary)
 
                 Section {
+                    NavigationLink {
+                        DateFormatPickerView(selection: dateFormat)
+                    } label: {
+                        Label {
+                            HStack {
+                                Text("Date Format").type(.body2(.regular), style: .primary(for: .label))
+                                Spacer()
+                                Text(dateFormat.wrappedValue.title).type(.body2(.regular), style: .secondary)
+                            }
+                        } icon: {
+                            IconKit.calendar
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.primaryDS)
+                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                    }
+                }
+                .listRowBackground(Color.backgroundSecondary)
+
+                Section {
                     Button(role: .destructive) {
                         store.send(.signOutButtonTapped)
                     } label: {
@@ -144,24 +172,16 @@ struct SettingsView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color.backgroundPrimary)
-            .overlay {
-                // The sign-out sheet uses a custom `.height()` detent rather than `.medium`/
-                // `.large`, so iOS doesn't dim/blur what's behind it the way it would for a
-                // standard-sized sheet, added by hand here to match.
-                if store.isConfirmingSignOut {
-                    Rectangle()
-                        .fill(.ultraThinMaterial)
-                        .ignoresSafeArea()
-                        .transition(.opacity)
-                }
-            }
-            .animation(.easeInOut(duration: Constants.sheetBackdropFadeDuration), value: store.isConfirmingSignOut)
             .navigationTitle("Settings")
-            .sheet(isPresented: isConfirmingSignOut) {
-                SignOutConfirmationView(
-                    onCancel: { store.send(.cancelSignOutTapped) },
-                    onConfirm: { store.send(.confirmSignOutTapped) }
-                )
+            // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a
+            // popover anchored to some ambient source view on the `.pad` idiom (this app
+            // also targets iPad) rather than a full-width bottom sheet. `.alert` is always
+            // a centered modal regardless of idiom, so there's no anchor to get wrong.
+            .alert("Sign Out?", isPresented: isConfirmingSignOut) {
+                Button("Log Out", role: .destructive) { store.send(.confirmSignOutTapped) }
+                Button("Cancel", role: .cancel) { store.send(.cancelSignOutTapped) }
+            } message: {
+                Text("You'll need to sign in again to access your files.")
             }
             .task {
                 store.send(.onAppear)

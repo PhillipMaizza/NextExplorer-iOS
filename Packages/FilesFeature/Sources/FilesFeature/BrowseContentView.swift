@@ -23,6 +23,11 @@ struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
     @AppStorage("browseViewMode") private var viewModeRaw = BrowseViewMode.list.rawValue
     @State private var isSortSheetPresented = false
+    /// The rename alert's in-progress text: kept as plain view state rather than routed
+    /// through the store, since a `.alert` `TextField` bound via a TCA `.sending` binding
+    /// didn't reliably propagate keystrokes back out. Seeded from `renameSheetItem` when
+    /// the alert is presented; `renameConfirmed` is sent this value directly.
+    @State private var renameDraft = ""
 
     private var viewMode: BrowseViewMode {
         BrowseViewMode(rawValue: viewModeRaw) ?? .list
@@ -92,8 +97,109 @@ struct BrowseContentView: View {
                 onDismiss: { isSortSheetPresented = false }
             )
         }
+        .alert("Rename", isPresented: isRenamingBinding) {
+            TextField("Name", text: $renameDraft)
+                .autocorrectionDisabled()
+            // A plain, non-accent color for Cancel: `.tint(nil)` doesn't reset an alert
+            // button back to the system default (it still inherits the ambient accent), so
+            // an explicit concrete color is needed to actually look different from Save.
+            Button("Cancel", role: .cancel) { store.send(.renameCancelled) }
+                .tint(.primaryDS)
+            Button("Save") { store.send(.renameConfirmed(renameDraft)) }
+        }
+        .onChange(of: store.renameSheetItem) { _, item in
+            if let item { renameDraft = item.name }
+        }
+        // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a popover
+        // anchored to some ambient source view on the `.pad` idiom (this app also targets
+        // iPad) rather than a full-width bottom sheet, and picked an unrelated anchor point
+        // instead of the actual long-pressed row. `.alert` is always a centered modal
+        // regardless of idiom, so there's no anchor to get wrong.
+        .alert(deleteConfirmationTitle, isPresented: isDeletingBinding) {
+            Button("Delete", role: .destructive) { store.send(.deleteConfirmed) }
+            Button("Cancel", role: .cancel) { store.send(.deleteCancelled) }
+        } message: {
+            Text("This can't be undone.")
+        }
+        .sheet(item: infoItemBinding) { item in
+            FileInfoSheet(
+                item: item,
+                metadata: store.infoMetadata,
+                isLoading: store.isLoadingInfoMetadata,
+                errorMessage: store.infoErrorMessage,
+                onDismiss: { store.send(.infoDismissed) }
+            )
+        }
         .task {
             store.send(.onAppear)
+        }
+    }
+
+    private var infoItemBinding: Binding<FileItem?> {
+        Binding(
+            get: { store.infoItem },
+            set: { if $0 == nil { store.send(.infoDismissed) } }
+        )
+    }
+
+    private var isRenamingBinding: Binding<Bool> {
+        Binding(
+            get: { store.renameSheetItem != nil },
+            set: { if !$0 { store.send(.renameCancelled) } }
+        )
+    }
+
+    private var isDeletingBinding: Binding<Bool> {
+        Binding(
+            get: { store.deleteConfirmationItem != nil },
+            set: { if !$0 { store.send(.deleteCancelled) } }
+        )
+    }
+
+    private var deleteConfirmationTitle: String {
+        guard let item = store.deleteConfirmationItem else { return "Delete?" }
+        return "Delete \u{201C}\(item.name)\u{201D}?"
+    }
+
+    @ViewBuilder
+    private func fileActionsContextMenu(for item: FileItem) -> some View {
+        // Explicit `.tint`: this whole view is under `.tint(Color.accent)`, which would
+        // otherwise cascade into the menu and color every icon/label gold instead of the
+        // system's normal label color — only Delete should stand out, in red.
+        Button {
+            store.send(.infoTapped(item))
+        } label: {
+            Label("Get Info", systemImage: "info.circle")
+        }
+        .tint(.primaryDS)
+        if store.access?.canWrite ?? false {
+            Button {
+                store.send(.renameTapped(item))
+            } label: {
+                Label("Rename", systemImage: "square.and.pencil")
+            }
+            .tint(.primaryDS)
+        }
+        // Only folders can be favorited — the server 400s on anything else.
+        if item.isDirectory {
+            Button {
+                store.send(.favoriteToggleButtonTapped(item))
+            } label: {
+                if store.favoritePaths.contains(item.id) {
+                    Label("Remove from Favorites", systemImage: "star.fill")
+                } else {
+                    Label("Add to Favorites", systemImage: "star")
+                }
+            }
+            .tint(.primaryDS)
+        }
+        if store.access?.canDelete ?? false {
+            Button(role: .destructive) {
+                store.send(.deleteTapped(item))
+            } label: {
+                Label("Delete", systemImage: "trash")
+            }
+            .tint(.negative)
         }
     }
 
@@ -146,6 +252,9 @@ struct BrowseContentView: View {
                             GridCellView(name: item.name, isDirectory: item.isDirectory, isFavorite: store.favoritePaths.contains(item.id))
                         }
                         .buttonStyle(.plain)
+                        .contextMenu {
+                            fileActionsContextMenu(for: item)
+                        }
                     }
                 }
             }
@@ -163,7 +272,37 @@ struct BrowseContentView: View {
                 FileRowView(item: item, isFavorite: store.favoritePaths.contains(item.id))
             }
             .buttonStyle(.plain)
+            .contextMenu {
+                fileActionsContextMenu(for: item)
+            }
             .listRowBackground(Color.clear)
+            .swipeActions(edge: .trailing) {
+                if store.access?.canDelete ?? false {
+                    Button {
+                        store.send(.deleteTapped(item))
+                    } label: {
+                        IconKit.trash
+                    }
+                    .tint(.negative)
+                }
+                // Only folders can be favorited — the server 400s on anything else.
+                if item.isDirectory {
+                    Button {
+                        store.send(.favoriteToggleButtonTapped(item))
+                    } label: {
+                        store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
+                    }
+                    .tint(.accent)
+                }
+                if store.access?.canWrite ?? false {
+                    Button {
+                        store.send(.renameTapped(item))
+                    } label: {
+                        IconKit.squareAndPencil
+                    }
+                    .tint(.positive)
+                }
+            }
         }
     }
 

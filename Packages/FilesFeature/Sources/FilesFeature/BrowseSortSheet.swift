@@ -19,7 +19,7 @@ private enum Constants {
 }
 
 /// "Sort by" sheet for Browse: pick which field orders the listing and which direction,
-/// self-sized the same way `SignOutConfirmationView` is (see `DynamicHeightSheet`).
+/// self-sized via `DynamicHeightSheet`.
 struct BrowseSortSheet: View {
     let sortOption: BrowseFeature.SortOption
     let sortDirection: BrowseFeature.SortDirection

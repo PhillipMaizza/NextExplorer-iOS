@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import FilesClient
 import Foundation
 import Testing
 
@@ -75,5 +76,25 @@ struct MainTabFeatureTests {
     func initialStateDefaultsToTheBrowseTab() {
         let state = MainTabFeature.State(serverURL: serverURL, user: user)
         #expect(state.selectedTab == .browse)
+    }
+
+    @Test
+    func favoritesChangedFromBrowseRefreshesTheFavoritesTab() async {
+        let favorite = Favorite(id: "1", path: "Photos", label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.favorites = { _ in [favorite] }
+        }
+
+        await store.send(.browse(.delegate(.favoritesChanged)))
+        await store.receive(\.favorites.refreshButtonTapped) {
+            $0.favorites.isLoading = true
+        }
+        await store.receive(\.favorites.favoritesResponse.success) {
+            $0.favorites.isLoading = false
+            $0.favorites.favorites = [favorite]
+        }
     }
 }

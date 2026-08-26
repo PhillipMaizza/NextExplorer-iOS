@@ -39,6 +39,77 @@ struct FilesService: Sendable {
         return try await send(request, decoding: [Favorite].self)
     }
 
+    func addFavorite(serverURL: URL, path: String) async throws -> Favorite {
+        let url = serverURL.appendingPathComponent("api/favorites")
+        var request = Self.makeRequest(url: url, method: "POST")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            request.httpBody = try JSONEncoder().encode(FavoritePathBody(path: path))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        return try await send(request, decoding: Favorite.self)
+    }
+
+    func removeFavorite(serverURL: URL, path: String) async throws {
+        let url = serverURL.appendingPathComponent("api/favorites")
+        var request = Self.makeRequest(url: url, method: "DELETE")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            request.httpBody = try JSONEncoder().encode(FavoritePathBody(path: path))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let (_, response) = try await performSend(request)
+        try Self.validate(response)
+    }
+
+    /// `POST /api/files/rename`, confirmed against `backend/src/routes/files/rename.js`:
+    /// `path` is the item's *parent* directory, `name` its current name — matching `FileItem`'s
+    /// own `path`/`name` fields exactly, so the whole item can be forwarded unchanged.
+    func renameItem(serverURL: URL, item: FileItem, newName: String) async throws -> FileItem {
+        let url = serverURL.appendingPathComponent("api/files/rename")
+        var request = Self.makeRequest(url: url, method: "POST")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            request.httpBody = try JSONEncoder().encode(RenameItemBody(path: item.path, name: item.name, newName: newName))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let envelope = try await send(request, decoding: RenameItemEnvelope.self)
+        return envelope.item
+    }
+
+    /// `GET /api/metadata/*`, confirmed against `backend/src/routes/metadata.js`: a single
+    /// wildcard path segment covering the item's full logical path (parent + name), same
+    /// percent-encoding-per-segment approach as `browseURL`.
+    func fetchMetadata(serverURL: URL, path: String) async throws -> FileMetadata {
+        var url = serverURL.appendingPathComponent("api/metadata")
+        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
+        for segment in segments {
+            url = url.appendingPathComponent(String(segment))
+        }
+        let request = Self.makeRequest(url: url, method: "GET")
+        return try await send(request, decoding: FileMetadata.self)
+    }
+
+    /// `DELETE /api/files`, confirmed against `backend/src/routes/files/delete.js` and
+    /// `fileTransferService.resolveDeleteTargets`: each item is `{path, name}` — again exactly
+    /// `FileItem`'s own fields, `kind` included as the server's fallback for already-missing items.
+    func deleteItems(serverURL: URL, items: [FileItem]) async throws {
+        let url = serverURL.appendingPathComponent("api/files")
+        var request = Self.makeRequest(url: url, method: "DELETE")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(path: $0.path, name: $0.name, kind: $0.kind) })
+            request.httpBody = try JSONEncoder().encode(body)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let (_, response) = try await performSend(request)
+        try Self.validate(response)
+    }
+
     func volumes(serverURL: URL) async throws -> [Volume] {
         let url = serverURL.appendingPathComponent("api/volumes")
         let request = Self.makeRequest(url: url, method: "GET")
@@ -77,6 +148,30 @@ struct FilesService: Sendable {
 
     private struct PatchPreferencesBody: Encodable {
         let user: [String: Bool]
+    }
+
+    private struct FavoritePathBody: Encodable {
+        let path: String
+    }
+
+    private struct RenameItemBody: Encodable {
+        let path: String
+        let name: String
+        let newName: String
+    }
+
+    private struct RenameItemEnvelope: Decodable {
+        let item: FileItem
+    }
+
+    private struct DeleteItemsBody: Encodable {
+        struct Item: Encodable {
+            let path: String
+            let name: String
+            let kind: String
+        }
+
+        let items: [Item]
     }
 
     /// `GET /api/browse/*`. An empty path browses the root and must still end in a

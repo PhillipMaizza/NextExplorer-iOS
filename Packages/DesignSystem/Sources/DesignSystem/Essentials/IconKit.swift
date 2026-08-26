@@ -41,4 +41,9 @@ public enum IconKit {
     public static let house = Image(systemName: "house")
     public static let radioUnselected = Image(systemName: "circle")
     public static let radioSelected = Image(systemName: "largecircle.fill.circle")
+    public static let tag = Image(systemName: "tag")
+    public static let trash = Image(systemName: "trash")
+    public static let pencil = Image(systemName: "pencil")
+    public static let squareAndPencil = Image(systemName: "square.and.pencil")
+
 }
