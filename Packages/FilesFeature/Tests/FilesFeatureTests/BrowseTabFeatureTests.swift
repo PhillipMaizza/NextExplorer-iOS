@@ -121,4 +121,29 @@ struct BrowseTabFeatureTests {
             $0.path = StackState([BrowseFeature.State(serverURL: self.serverURL, directoryPath: "Photos", title: "Photos")])
         }
     }
+
+    // MARK: Favorites-changed delegate bubbling
+
+    @Test
+    func favoritesChangedFromTheRootBubblesUpAsADelegate() async {
+        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
+            BrowseTabFeature()
+        }
+
+        await store.send(.root(.delegate(.favoritesChanged)))
+        await store.receive(.delegate(.favoritesChanged))
+    }
+
+    @Test
+    func favoritesChangedFromAPushedScreenAlsoBubblesUpAsADelegate() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
+
+        let store = TestStore(initialState: state) {
+            BrowseTabFeature()
+        }
+
+        await store.send(.path(.element(id: 0, action: .delegate(.favoritesChanged))))
+        await store.receive(.delegate(.favoritesChanged))
+    }
 }

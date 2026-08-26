@@ -37,13 +37,14 @@ public struct BrowseFeature {
     /// How `displayedItems` orders a folder's contents. Folders always sort before files
     /// regardless of option; this only decides the order within each of those two groups.
     public enum SortOption: String, Hashable, Sendable, CaseIterable {
-        case name, size, dateModified
+        case name, size, dateModified, kind
 
         var title: String {
             switch self {
             case .name: "Name"
             case .size: "Size"
             case .dateModified: "Date Modified"
+            case .kind: "Kind"
             }
         }
 
@@ -52,6 +53,7 @@ public struct BrowseFeature {
             case .name: IconKit.textformat
             case .size: IconKit.internalDrive
             case .dateModified: IconKit.calendar
+            case .kind: IconKit.tag
             }
         }
     }
@@ -76,6 +78,20 @@ public struct BrowseFeature {
         }
     }
 
+    public struct FavoriteToggleResult: Equatable, Sendable {
+        public let path: String
+        public let isFavorite: Bool
+    }
+
+    public struct RenameResult: Equatable, Sendable {
+        public let originalID: String
+        public let renamed: FileItem
+    }
+
+    public struct DeleteResult: Equatable, Sendable {
+        public let itemID: String
+    }
+
     @ObservableState
     public struct State: Equatable, Sendable {
         public var serverURL: URL
@@ -96,6 +112,21 @@ public struct BrowseFeature {
         /// "Show Hidden Files" is reflected here immediately, even in an already-open folder,
         /// with no manual refresh needed.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
+        /// Item currently being renamed via the native rename alert. The in-progress text
+        /// itself lives in `BrowseContentView`'s own `@State`, not here — a `.alert`'s
+        /// `TextField` bound through a TCA `.sending` binding didn't reliably propagate
+        /// keystrokes back out, so `renameConfirmed` is sent the final text directly instead.
+        public var renameSheetItem: FileItem?
+        /// Item awaiting a destructive confirmation before `deleteConfirmed` actually deletes it.
+        public var deleteConfirmationItem: FileItem?
+        public var isPerformingFileAction = false
+        public var fileActionErrorMessage: String?
+        /// Item the "Get Info" sheet is showing, alongside its fetched metadata (or the
+        /// still-loading/error state while `GET /api/metadata/*` is in flight).
+        public var infoItem: FileItem?
+        public var infoMetadata: FileMetadata?
+        public var isLoadingInfoMetadata = false
+        public var infoErrorMessage: String?
 
         public var isSearching: Bool { !searchQuery.isEmpty }
 
@@ -132,11 +163,25 @@ public struct BrowseFeature {
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
         case breadcrumbTapped(path: String, title: String)
+        case renameTapped(FileItem)
+        case deleteTapped(FileItem)
+        case favoriteToggleButtonTapped(FileItem)
+        case favoriteToggleResponse(Result<FavoriteToggleResult, FilesClientError>)
+        case renameCancelled
+        case renameConfirmed(String)
+        case renameResponse(Result<RenameResult, FilesClientError>)
+        case deleteCancelled
+        case deleteConfirmed
+        case deleteResponse(Result<DeleteResult, FilesClientError>)
+        case infoTapped(FileItem)
+        case infoDismissed
+        case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
             case openFolder(FileItem)
             case openPath(path: String, title: String)
+            case favoritesChanged
         }
     }
 
@@ -209,6 +254,91 @@ public struct BrowseFeature {
             case let .breadcrumbTapped(path, title):
                 return .send(.delegate(.openPath(path: path, title: title)))
 
+            case let .renameTapped(item):
+                state.renameSheetItem = item
+                return .none
+
+            case let .deleteTapped(item):
+                state.deleteConfirmationItem = item
+                return .none
+
+            case let .favoriteToggleButtonTapped(item):
+                // Mirrors the real server: `favoritesService.validatePath` 400s on anything
+                // that isn't a directory, so files never get a favorites entry point.
+                guard item.isDirectory else { return .none }
+                return toggleFavorite(&state, item: item)
+
+            case let .favoriteToggleResponse(.success(result)):
+                if result.isFavorite {
+                    state.favoritePaths.insert(result.path)
+                } else {
+                    state.favoritePaths.remove(result.path)
+                }
+                return .send(.delegate(.favoritesChanged))
+
+            case let .favoriteToggleResponse(.failure(error)):
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case .renameCancelled:
+                state.renameSheetItem = nil
+                return .none
+
+            case let .renameConfirmed(newName):
+                return confirmRename(&state, newName: newName)
+
+            case let .renameResponse(.success(result)):
+                state.isPerformingFileAction = false
+                state.renameSheetItem = nil
+                if let index = state.items.index(id: result.originalID) {
+                    state.items.remove(at: index)
+                    state.items.insert(result.renamed, at: index)
+                }
+                return .none
+
+            case let .renameResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case .deleteCancelled:
+                state.deleteConfirmationItem = nil
+                return .none
+
+            case .deleteConfirmed:
+                return confirmDelete(&state)
+
+            case let .deleteResponse(.success(result)):
+                state.isPerformingFileAction = false
+                state.items.remove(id: result.itemID)
+                let wasFavorited = state.favoritePaths.remove(result.itemID) != nil
+                return wasFavorited ? .send(.delegate(.favoritesChanged)) : .none
+
+            case let .deleteResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case let .infoTapped(item):
+                return loadInfo(&state, item: item)
+
+            case .infoDismissed:
+                state.infoItem = nil
+                state.infoMetadata = nil
+                state.infoErrorMessage = nil
+                state.isLoadingInfoMetadata = false
+                return .none
+
+            case let .infoMetadataResponse(.success(metadata)):
+                state.isLoadingInfoMetadata = false
+                state.infoMetadata = metadata
+                return .none
+
+            case let .infoMetadataResponse(.failure(error)):
+                state.isLoadingInfoMetadata = false
+                state.infoErrorMessage = error.userMessage
+                return .none
+
             case .delegate:
                 return .none
             }
@@ -266,6 +396,84 @@ public struct BrowseFeature {
         .cancellable(id: CancelID.search, cancelInFlight: true)
     }
 
+    private func toggleFavorite(_ state: inout State, item: FileItem) -> Effect<Action> {
+        let serverURL = state.serverURL
+        let path = item.id
+        let isCurrentlyFavorite = state.favoritePaths.contains(path)
+        let filesClient = self.filesClient
+        return .run { send in
+            do {
+                if isCurrentlyFavorite {
+                    try await filesClient.removeFavorite(serverURL, path)
+                    await send(.favoriteToggleResponse(.success(FavoriteToggleResult(path: path, isFavorite: false))))
+                } else {
+                    _ = try await filesClient.addFavorite(serverURL, path)
+                    await send(.favoriteToggleResponse(.success(FavoriteToggleResult(path: path, isFavorite: true))))
+                }
+            } catch {
+                await send(.favoriteToggleResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func confirmRename(_ state: inout State, newName: String) -> Effect<Action> {
+        guard let item = state.renameSheetItem else { return .none }
+        let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty, trimmedName != item.name else {
+            state.renameSheetItem = nil
+            return .none
+        }
+        state.isPerformingFileAction = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let originalID = item.id
+        return .run { send in
+            do {
+                let renamed = try await filesClient.renameItem(serverURL, item, trimmedName)
+                await send(.renameResponse(.success(RenameResult(originalID: originalID, renamed: renamed))))
+            } catch {
+                await send(.renameResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func confirmDelete(_ state: inout State) -> Effect<Action> {
+        guard let item = state.deleteConfirmationItem else { return .none }
+        state.deleteConfirmationItem = nil
+        state.isPerformingFileAction = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let itemID = item.id
+        return .run { send in
+            do {
+                try await filesClient.deleteItems(serverURL, [item])
+                // Animated so the row visibly slides out of the list rather than popping,
+                // since removal happens on the server round-trip, not the confirm tap itself.
+                await send(.deleteResponse(.success(DeleteResult(itemID: itemID))), animation: .default)
+            } catch {
+                await send(.deleteResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func loadInfo(_ state: inout State, item: FileItem) -> Effect<Action> {
+        state.infoItem = item
+        state.infoMetadata = nil
+        state.infoErrorMessage = nil
+        state.isLoadingInfoMetadata = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let path = item.id
+        return .run { send in
+            do {
+                let metadata = try await filesClient.fetchMetadata(serverURL, path)
+                await send(.infoMetadataResponse(.success(metadata)))
+            } catch {
+                await send(.infoMetadataResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
     private func load(_ state: inout State) -> Effect<Action> {
         state.isLoading = true
         state.errorMessage = nil
@@ -316,6 +524,10 @@ public struct BrowseFeature {
             case .dateModified:
                 guard lhs.dateModified != rhs.dateModified else { return false }
                 isAscending = lhs.dateModified < rhs.dateModified
+            case .kind:
+                let order = lhs.kind.localizedCaseInsensitiveCompare(rhs.kind)
+                guard order != .orderedSame else { return false }
+                isAscending = order == .orderedAscending
             }
             return direction == .ascending ? isAscending : !isAscending
         }

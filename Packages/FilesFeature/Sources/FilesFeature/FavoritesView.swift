@@ -7,14 +7,15 @@ struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
     @State private var searchQuery = ""
 
-    /// Purely a client-side filter over the already-loaded list, no reducer round trip
-    /// needed. Reordering to alphabetical only kicks in while actively searching; the
-    /// unfiltered list keeps the user's own drag-to-reorder `position`.
+    /// Purely a client-side filter/sort over the already-loaded list, no reducer round trip
+    /// needed. Always alphabetical: the server returns favorites in insertion order
+    /// (`position ASC, created_at ASC`), which would otherwise put a newly-added favorite
+    /// at the end of the list instead of where it belongs alphabetically.
     private var displayedFavorites: [Favorite] {
-        guard !searchQuery.isEmpty else { return Array(store.favorites) }
-        return store.favorites
-            .filter { FuzzyMatch.matches(query: searchQuery, in: $0.displayName) }
-            .sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
+        let matches = searchQuery.isEmpty
+            ? Array(store.favorites)
+            : store.favorites.filter { FuzzyMatch.matches(query: searchQuery, in: $0.displayName) }
+        return matches.sorted { $0.displayName.localizedCaseInsensitiveCompare($1.displayName) == .orderedAscending }
     }
 
     var body: some View {

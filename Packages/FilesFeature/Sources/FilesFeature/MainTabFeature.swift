@@ -56,6 +56,9 @@ public struct MainTabFeature {
                 state.selectedTab = .browse
                 return .send(.browse(.navigateToDirectory(path: path, title: title)))
 
+            case .browse(.delegate(.favoritesChanged)):
+                return .send(.favorites(.refreshButtonTapped))
+
             case .settings(.delegate(.signOutButtonTapped)):
                 return .send(.delegate(.signOutButtonTapped))
 

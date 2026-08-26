@@ -498,6 +498,406 @@ struct BrowseFeatureTests {
         await store.send(.searchResultTapped(result))
         await store.receive(.delegate(.openPath(path: "Docs", title: "Docs")))
     }
+
+    // MARK: File actions — context menu routing
+
+    @Test
+    func renameTappedSetsTheRenameSheetItem() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+
+        await store.send(.renameTapped(item)) {
+            $0.renameSheetItem = item
+        }
+    }
+
+    @Test
+    func deleteTappedSetsTheDeleteConfirmationItem() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+
+        await store.send(.deleteTapped(item)) {
+            $0.deleteConfirmationItem = item
+        }
+    }
+
+    // MARK: File actions — favorite toggle
+
+    @Test
+    func favoriteToggleOnAFileIsANoOpBecauseOnlyFoldersCanBeFavorited() async {
+        // The real server 400s (`favoritesService.validatePath`) on anything that isn't a
+        // directory — this mirrors that restriction client-side rather than round-tripping
+        // to discover it.
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+
+        await store.send(.favoriteToggleButtonTapped(file))
+    }
+
+    @Test
+    func favoriteToggleAddsAFavoriteWhenNotAlreadyFavorited() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.addFavorite = { _, path in
+                Favorite(id: "1", path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+            }
+        }
+
+        await store.send(.favoriteToggleButtonTapped(item))
+        await store.receive(\.favoriteToggleResponse.success) {
+            $0.favoritePaths = ["Vacation"]
+        }
+        await store.receive(.delegate(.favoritesChanged))
+    }
+
+    @Test
+    func favoriteToggleRemovesAnExistingFavorite() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.favoritePaths = ["Vacation"]
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.removeFavorite = { _, _ in }
+        }
+
+        await store.send(.favoriteToggleButtonTapped(item))
+        await store.receive(\.favoriteToggleResponse.success) {
+            $0.favoritePaths = []
+        }
+        await store.receive(.delegate(.favoritesChanged))
+    }
+
+    @Test
+    func favoriteToggleFailureSurfacesAReadableErrorMessage() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.addFavorite = { _, _ in throw FilesClientError.server(statusCode: 500) }
+        }
+
+        await store.send(.favoriteToggleButtonTapped(item))
+        await store.receive(\.favoriteToggleResponse.failure) {
+            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 500).userMessage
+        }
+    }
+
+    // MARK: File actions — rename
+
+    @Test
+    func renameCancelledClearsTheRenameSheetItem() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.renameSheetItem = item
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.renameCancelled) {
+            $0.renameSheetItem = nil
+        }
+    }
+
+    @Test
+    func renameConfirmedWithAnEmptyNameClearsTheSheetWithoutCallingTheServer() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.renameSheetItem = item
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.renameConfirmed("   ")) {
+            $0.renameSheetItem = nil
+        }
+    }
+
+    @Test
+    func renameConfirmedWithTheUnchangedNameClearsTheSheetWithoutCallingTheServer() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.renameSheetItem = item
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.renameConfirmed("vacation.jpg")) {
+            $0.renameSheetItem = nil
+        }
+    }
+
+    @Test
+    func renameConfirmedReplacesTheRenamedItemInPlace() async {
+        let serverURL = URL(string: "https://example.com")!
+        let original = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let renamed = FileItem(name: "beach.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [original]
+        state.renameSheetItem = original
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.renameItem = { _, _, _ in renamed }
+        }
+
+        await store.send(.renameConfirmed("beach.jpg")) {
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.renameResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.renameSheetItem = nil
+            $0.items = [renamed]
+        }
+    }
+
+    @Test
+    func renameConfirmedFailureSurfacesAReadableErrorMessageAndLeavesTheItemUnchanged() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [item]
+        state.renameSheetItem = item
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.renameItem = { _, _, _ in throw FilesClientError.server(statusCode: 409) }
+        }
+
+        await store.send(.renameConfirmed("taken.jpg")) {
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.renameResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 409).userMessage
+        }
+    }
+
+    // MARK: File actions — delete
+
+    @Test
+    func deleteCancelledClearsTheDeleteConfirmationItem() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.deleteConfirmationItem = item
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.deleteCancelled) {
+            $0.deleteConfirmationItem = nil
+        }
+    }
+
+    @Test
+    func deleteConfirmedRemovesTheItemAndItsFavoriteOnSuccess() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [item]
+        state.favoritePaths = [item.id]
+        state.deleteConfirmationItem = item
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteItems = { _, _ in }
+        }
+
+        await store.send(.deleteConfirmed) {
+            $0.deleteConfirmationItem = nil
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.deleteResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.items = []
+            $0.favoritePaths = []
+        }
+        await store.receive(.delegate(.favoritesChanged))
+    }
+
+    @Test
+    func deleteConfirmedOfANonFavoritedItemDoesNotSignalTheFavoritesTabToRefresh() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [item]
+        state.deleteConfirmationItem = item
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteItems = { _, _ in }
+        }
+
+        await store.send(.deleteConfirmed) {
+            $0.deleteConfirmationItem = nil
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.deleteResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.items = []
+        }
+    }
+
+    @Test
+    func deleteConfirmedFailureSurfacesAReadableErrorMessageAndKeepsTheItem() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "readonly.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [item]
+        state.deleteConfirmationItem = item
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteItems = { _, _ in throw FilesClientError.server(statusCode: 403) }
+        }
+
+        await store.send(.deleteConfirmed) {
+            $0.deleteConfirmationItem = nil
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.deleteResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
+        }
+    }
+
+    // MARK: File actions — get info
+
+    @Test
+    func infoTappedFetchesMetadataAndShowsIt() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let metadata = FileMetadata(
+            path: "Photos",
+            name: "Photos",
+            kind: "directory",
+            size: 4_096,
+            dateModified: Date(timeIntervalSince1970: 1_800_000_000),
+            dateCreated: Date(timeIntervalSince1970: 1_700_000_000),
+            directory: FileMetadata.DirectorySummary(totalSize: 1_024, fileCount: 3, dirCount: 1, truncated: false)
+        )
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.fetchMetadata = { _, _ in metadata }
+        }
+
+        await store.send(.infoTapped(item)) {
+            $0.infoItem = item
+            $0.isLoadingInfoMetadata = true
+        }
+        await store.receive(\.infoMetadataResponse.success) {
+            $0.isLoadingInfoMetadata = false
+            $0.infoMetadata = metadata
+        }
+    }
+
+    @Test
+    func infoTappedFailureSurfacesAReadableErrorMessage() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.fetchMetadata = { _, _ in throw FilesClientError.server(statusCode: 403) }
+        }
+
+        await store.send(.infoTapped(item)) {
+            $0.infoItem = item
+            $0.isLoadingInfoMetadata = true
+        }
+        await store.receive(\.infoMetadataResponse.failure) {
+            $0.isLoadingInfoMetadata = false
+            $0.infoErrorMessage = FilesClientError.server(statusCode: 403).userMessage
+        }
+    }
+
+    @Test
+    func infoTappedOnADifferentItemWhileOneIsAlreadyShowingReplacesIt() async {
+        let serverURL = URL(string: "https://example.com")!
+        let first = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let second = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let fixedDate = Date(timeIntervalSince1970: 1_800_000_000)
+        let secondMetadata = FileMetadata(path: "Documents", name: "Documents", kind: "directory", size: 0, dateModified: fixedDate, dateCreated: fixedDate)
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.infoItem = first
+        state.infoMetadata = FileMetadata(path: "Photos", name: "Photos", kind: "directory", size: 0, dateModified: fixedDate, dateCreated: fixedDate)
+        state.infoErrorMessage = "stale error"
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.fetchMetadata = { _, _ in secondMetadata }
+        }
+
+        await store.send(.infoTapped(second)) {
+            $0.infoItem = second
+            $0.infoMetadata = nil
+            $0.infoErrorMessage = nil
+            $0.isLoadingInfoMetadata = true
+        }
+        await store.receive(\.infoMetadataResponse.success) {
+            $0.isLoadingInfoMetadata = false
+            $0.infoMetadata = secondMetadata
+        }
+    }
+
+    @Test
+    func infoDismissedClearsAllInfoState() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.infoItem = item
+        state.infoMetadata = FileMetadata(path: "Photos", name: "Photos", kind: "directory", size: 0, dateModified: Date(), dateCreated: Date())
+        state.infoErrorMessage = "some error"
+        state.isLoadingInfoMetadata = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.infoDismissed) {
+            $0.infoItem = nil
+            $0.infoMetadata = nil
+            $0.infoErrorMessage = nil
+            $0.isLoadingInfoMetadata = false
+        }
+    }
 }
 
 // MARK: - `BrowseFeature.State` display logic
@@ -602,6 +1002,37 @@ struct BrowseFeatureDisplayedItemsTests {
         state.items = [older, newer]
 
         #expect(state.displayedItems.map(\.name) == ["newer.txt", "older.txt"])
+    }
+
+    @Test
+    func kindSortAscendingOrdersAlphabeticallyByExtensionWithinEachGroup() {
+        let jpg = FileItem(name: "photo.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let txt = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        var state = makeState(showHiddenFiles: true, sortOption: .kind, sortDirection: .ascending)
+        state.items = [txt, jpg]
+
+        #expect(state.displayedItems.map(\.name) == ["photo.jpg", "notes.txt"])
+    }
+
+    @Test
+    func kindSortDescendingOrdersReverseAlphabeticallyByExtensionWithinEachGroup() {
+        let jpg = FileItem(name: "photo.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let txt = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        var state = makeState(showHiddenFiles: true, sortOption: .kind, sortDirection: .descending)
+        state.items = [jpg, txt]
+
+        #expect(state.displayedItems.map(\.name) == ["notes.txt", "photo.jpg"])
+    }
+
+    @Test
+    func equalKindsDoNotCrashOrReorderUnpredictablyWhenDescending() {
+        let first = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let second = FileItem(name: "b.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        var state = makeState(showHiddenFiles: true, sortOption: .kind, sortDirection: .descending)
+        state.items = [first, second]
+
+        #expect(Set(state.displayedItems.map(\.name)) == ["a.txt", "b.txt"])
+        #expect(state.displayedItems.count == 2)
     }
 
     @Test

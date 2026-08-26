@@ -7,13 +7,24 @@ import SwiftUI
 /// reliably resize it, so the outer container always accepts whatever size the sheet proposes
 /// while `content` measures its own true, unconstrained size from the first frame.
 ///
-/// Every self-sizing sheet in this app (sign-out confirmation, browse sort) is built on this,
+/// Every self-sizing sheet in this app (currently just browse sort) is built on this,
 /// rather than each re-implementing its own `GeometryReader`/`detentHeight` plumbing.
 struct DynamicHeightSheet<Content: View>: View {
     @State private var detentHeight: CGFloat = 0
     private let content: Content
+    private let resetKey: AnyHashable?
 
     init(@ViewBuilder content: () -> Content) {
+        self.resetKey = nil
+        self.content = content()
+    }
+
+    /// - Parameter resetKey: pass a value that changes exactly when the content's *shape*
+    ///   genuinely changes (e.g. a loading flag flipping once data arrives) to re-measure and
+    ///   re-lock the detent. Omit it (the other initializer) for sheets whose row count never
+    ///   changes after presentation — see `lockHeight` for why locking-once is the default.
+    init<Key: Hashable>(resetKey: Key, @ViewBuilder content: () -> Content) {
+        self.resetKey = AnyHashable(resetKey)
         self.content = content()
     }
 
@@ -36,6 +47,9 @@ struct DynamicHeightSheet<Content: View>: View {
         .background(Color.backgroundPrimary)
         .presentationDetents(detentHeight > 0 ? [.height(detentHeight)] : [.medium])
         .presentationDragIndicator(.hidden)
+        .onChange(of: resetKey) { _, _ in
+            detentHeight = 0
+        }
     }
 
     /// Sets `detentHeight` exactly once, on the first non-zero measurement, then ignores
