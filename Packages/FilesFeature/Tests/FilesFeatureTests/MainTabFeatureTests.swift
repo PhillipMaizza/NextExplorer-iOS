@@ -26,24 +26,6 @@ struct MainTabFeatureTests {
     }
 
     @Test
-    func selectingADirectoryFromFavoritesSwitchesToBrowseAndNavigatesThere() async {
-        // Exhaustivity off: the freshly-pushed `BrowseFeature.State` gets a `StackElementID`
-        // that isn't reproducible from inside a `receive`-triggered assertion closure (`send`
-        // gets special generator snapshotting from TCA, `receive` doesn't) — asserting the
-        // resulting path's content is what actually matters here.
-        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
-            MainTabFeature()
-        }
-        store.exhaustivity = .off
-
-        await store.send(.favorites(.delegate(.didSelectDirectory(path: "Photos", title: "Photos"))))
-        await store.receive(\.browse.navigateToDirectory)
-
-        #expect(store.state.selectedTab == .browse)
-        #expect(store.state.browse.path.map(\.directoryPath) == ["Photos"])
-    }
-
-    @Test
     func signOutDelegateFromSettingsIsForwardedUpward() async {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
@@ -56,26 +38,28 @@ struct MainTabFeatureTests {
     // MARK: Edge cases
 
     @Test
-    func selectingTheHomeDirectoryFromFavoritesClearsAnyExistingBrowseStack() async {
-        var state = MainTabFeature.State(serverURL: serverURL, user: user)
-        state.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Old", title: "Old"))
-
-        let store = TestStore(initialState: state) {
-            MainTabFeature()
-        }
-        store.exhaustivity = .off
-
-        await store.send(.favorites(.delegate(.didSelectDirectory(path: "", title: "Home"))))
-        await store.receive(\.browse.navigateToDirectory)
-
-        #expect(store.state.selectedTab == .browse)
-        #expect(store.state.browse.path.isEmpty)
-    }
-
-    @Test
     func initialStateDefaultsToTheBrowseTab() {
         let state = MainTabFeature.State(serverURL: serverURL, user: user)
         #expect(state.selectedTab == .browse)
+    }
+
+    @Test
+    func appBecameActiveSyncsTheBrowseTabsPathStack() async {
+        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
+            }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.appBecameActive)
+        await store.receive(\.browse.root.refreshButtonTapped) {
+            $0.browse.root.isLoading = true
+        }
     }
 
     @Test
@@ -95,6 +79,73 @@ struct MainTabFeatureTests {
         await store.receive(\.favorites.favoritesResponse.success) {
             $0.favorites.isLoading = false
             $0.favorites.favorites = [favorite]
+        }
+    }
+
+    @Test
+    func openDownloadsTappedFromBrowseSwitchesToTheDownloadsTabAndRefreshesIt() async {
+        let download = LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: "report.pdf", location: .documents, size: 10, modifiedDate: Date())
+
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.localDownloadStore.list = { [download] }
+        }
+
+        await store.send(.browse(.delegate(.openDownloadsTapped))) {
+            $0.selectedTab = .downloads
+        }
+        await store.receive(\.downloads.refreshButtonTapped) {
+            $0.downloads.isLoading = true
+        }
+        await store.receive(\.downloads.downloadsResponse.success) {
+            $0.downloads.isLoading = false
+            $0.downloads.downloads = [download]
+        }
+    }
+
+    @Test
+    func favoritesChangedFromFavoritesRefreshesTheFavoritesTab() async {
+        // A favorite toggled from a pushed browse screen *inside* the Favorites tab bubbles
+        // up through `FavoritesFeature`'s own delegate — this refreshes the same tab's root
+        // list, not Browse's.
+        let favorite = Favorite(id: "1", path: "Photos", label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.favorites = { _ in [favorite] }
+        }
+
+        await store.send(.favorites(.delegate(.favoritesChanged)))
+        await store.receive(\.favorites.refreshButtonTapped) {
+            $0.favorites.isLoading = true
+        }
+        await store.receive(\.favorites.favoritesResponse.success) {
+            $0.favorites.isLoading = false
+            $0.favorites.favorites = [favorite]
+        }
+    }
+
+    @Test
+    func openDownloadsTappedFromFavoritesSwitchesToTheDownloadsTabAndRefreshesIt() async {
+        let download = LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: "report.pdf", location: .documents, size: 10, modifiedDate: Date())
+
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.localDownloadStore.list = { [download] }
+        }
+
+        await store.send(.favorites(.delegate(.openDownloadsTapped))) {
+            $0.selectedTab = .downloads
+        }
+        await store.receive(\.downloads.refreshButtonTapped) {
+            $0.downloads.isLoading = true
+        }
+        await store.receive(\.downloads.downloadsResponse.success) {
+            $0.downloads.isLoading = false
+            $0.downloads.downloads = [download]
         }
     }
 }

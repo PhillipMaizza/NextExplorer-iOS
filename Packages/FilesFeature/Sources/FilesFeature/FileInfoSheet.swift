@@ -57,7 +57,7 @@ struct FileInfoSheet: View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             header
 
-            Text(item.name).type(.headline3, style: .primary(for: .label)).lineLimit(2)
+            Text(item.name).type(.headline3, style: .link).lineLimit(2)
 
             if let errorMessage {
                 Text(errorMessage).type(.body2(.regular), style: .error)
@@ -75,13 +75,13 @@ struct FileInfoSheet: View {
             (item.isDirectory ? IconKit.folderFill : IconKit.document)
                 .resizable()
                 .scaledToFit()
-                .foregroundStyle(item.isDirectory ? Color.accent : Color.secondaryDS)
+                .foregroundStyle(Color.accent)
                 .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
 
             Spacer()
 
             Button(action: onDismiss) {
-                IconKit.xmark
+                IconKit.close
                     .resizable()
                     .foregroundStyle(Color.primaryDS)
                     .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)

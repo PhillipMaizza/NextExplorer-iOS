@@ -5,8 +5,8 @@ private enum Constants {
     static let verticalPadding: CGFloat = .space12
     static let spacing: CGFloat = .space8
     static let iconSize: CGFloat = .iconSmall
-    static let bottomInset: CGFloat = .space48
-    static let autoDismissDelay: Duration = .seconds(2.5)
+    static let bottomInset: CGFloat = .space16
+    static let autoDismissDelay: Duration = .seconds(4.5)
     static let animationDuration: Double = 0.3
 }
 
@@ -19,6 +19,13 @@ public struct DSToastMessage: Equatable, Identifiable {
     public let text: String
     public let backgroundColor: Color
     public let isPersistent: Bool
+    /// Distinguishes a success confirmation from a warning — both are brief and
+    /// auto-dismissing, but only one should play a success haptic instead of a warning one.
+    fileprivate let isSuccess: Bool
+    /// An optional trailing action button (e.g. "Open"). Not part of `Equatable` — the
+    /// custom `==` below only compares `id`, so a closure here doesn't need to conform.
+    public let actionTitle: String?
+    public let action: (() -> Void)?
 
     /// A brief, auto-dismissing warning-style toast.
     public init(icon: Image, text: String) {
@@ -32,6 +39,9 @@ public struct DSToastMessage: Equatable, Identifiable {
         self.text = text
         self.backgroundColor = .negative
         self.isPersistent = false
+        self.isSuccess = false
+        self.actionTitle = nil
+        self.action = nil
     }
 
     /// A persistent progress toast — no auto-dismiss timer at all, since there's no fixed
@@ -41,12 +51,32 @@ public struct DSToastMessage: Equatable, Identifiable {
         DSToastMessage(progressText: text)
     }
 
+    /// A brief, auto-dismissing success confirmation (e.g. "Saved to Documents"). `actionTitle`/
+    /// `action` add a trailing button (e.g. "Open") — omit both for a plain confirmation.
+    public static func success(_ text: String, actionTitle: String? = nil, action: (() -> Void)? = nil) -> DSToastMessage {
+        DSToastMessage(successText: text, actionTitle: actionTitle, action: action)
+    }
+
     private init(progressText: String) {
         self.id = UUID().uuidString
         self.icon = nil
         self.text = progressText
         self.backgroundColor = .secondaryDS
         self.isPersistent = true
+        self.isSuccess = false
+        self.actionTitle = nil
+        self.action = nil
+    }
+
+    private init(successText: String, actionTitle: String?, action: (() -> Void)?) {
+        self.id = UUID().uuidString
+        self.icon = IconKit.checkmark
+        self.text = successText
+        self.backgroundColor = .positive
+        self.isPersistent = false
+        self.isSuccess = true
+        self.actionTitle = actionTitle
+        self.action = action
     }
 
     public static func == (lhs: DSToastMessage, rhs: DSToastMessage) -> Bool {
@@ -56,6 +86,10 @@ public struct DSToastMessage: Equatable, Identifiable {
 
 private struct DSToastModifier: ViewModifier {
     @Binding var message: DSToastMessage?
+    /// Extra clearance above the base inset — for screens that reserve their own chrome
+    /// (e.g. a breadcrumb bar) at the bottom via `safeAreaInset`, which this overlay would
+    /// otherwise sit on top of rather than above.
+    var extraBottomInset: CGFloat = 0
 
     func body(content: Content) -> some View {
         content.overlay(alignment: .bottom) {
@@ -71,12 +105,18 @@ private struct DSToastModifier: ViewModifier {
                             .tint(Color.primaryInverted)
                     }
                     Text(message.text).type(.body2(.semibold))
+                    if let actionTitle = message.actionTitle, let action = message.action {
+                        Button(actionTitle, action: action)
+                            .buttonStyle(DSHapticButtonStyle())
+                            .type(.body2(.bold))
+                            .underline()
+                    }
                 }
                 .foregroundStyle(Color.primaryInverted)
                 .padding(.horizontal, Constants.horizontalPadding)
                 .padding(.vertical, Constants.verticalPadding)
                 .background(Capsule().fill(message.backgroundColor))
-                .padding(.bottom, Constants.bottomInset)
+                .padding(.bottom, Constants.bottomInset + extraBottomInset)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
                 .task(id: message.id) {
                     guard !message.isPersistent else { return }
@@ -87,24 +127,29 @@ private struct DSToastModifier: ViewModifier {
         }
         .animation(.spring(duration: Constants.animationDuration), value: message)
         // Persistent progress toasts (e.g. "Extracting\u{2026}") aren't errors — only the
-        // auto-dismissing warning style should buzz.
+        // auto-dismissing warning/success styles should buzz, each with its own feedback kind.
         .hapticFeedback(.warning, trigger: message?.id) { _, newValue in
-            newValue != nil && message?.isPersistent == false
+            newValue != nil && message?.isPersistent == false && message?.isSuccess == false
+        }
+        .hapticFeedback(.success, trigger: message?.id) { _, newValue in
+            newValue != nil && message?.isSuccess == true
         }
     }
 }
 
 public extension View {
     /// Shows `message` as a bottom toast while non-`nil`, auto-clearing the binding after a
-    /// few seconds. Set `message` to `nil` yourself to dismiss early.
-    func dsToast(_ message: Binding<DSToastMessage?>) -> some View {
-        modifier(DSToastModifier(message: message))
+    /// few seconds. Set `message` to `nil` yourself to dismiss early. `extraBottomInset` lifts
+    /// the toast above any of the screen's own bottom chrome (e.g. a breadcrumb bar) that a
+    /// plain overlay wouldn't otherwise know to clear.
+    func dsToast(_ message: Binding<DSToastMessage?>, extraBottomInset: CGFloat = 0) -> some View {
+        modifier(DSToastModifier(message: message, extraBottomInset: extraBottomInset))
     }
 }
 
 #Preview("Warning") {
     @Previewable @State var message: DSToastMessage? = DSToastMessage(
-        icon: IconKit.exclamationmarkTriangle,
+        icon: IconKit.warning,
         text: "Unsupported file type"
     )
 
@@ -115,6 +160,14 @@ public extension View {
 
 #Preview("Progress") {
     @Previewable @State var message: DSToastMessage? = .progress("Extracting…")
+
+    Color.backgroundPrimary
+        .ignoresSafeArea()
+        .dsToast($message)
+}
+
+#Preview("Success") {
+    @Previewable @State var message: DSToastMessage? = .success("Saved to Documents")
 
     Color.backgroundPrimary
         .ignoresSafeArea()
