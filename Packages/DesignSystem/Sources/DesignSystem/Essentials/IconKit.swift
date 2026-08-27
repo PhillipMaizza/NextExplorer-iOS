@@ -13,6 +13,7 @@ public enum IconKit {
     public static let back = Image(systemName: "chevron.left")
     public static let envelope = Image(systemName: "envelope")
     public static let lock = Image(systemName: "lock")
+    public static let lockOpen = Image(systemName: "lock.open")
     public static let eye = Image(systemName: "eye")
     public static let eyeSlash = Image(systemName: "eye.slash")
     public static let person = Image(systemName: "person")
@@ -27,6 +28,8 @@ public enum IconKit {
     public static let tabBrowseFill = Image("tabBrowseFill", bundle: .module).renderingMode(.template)
     public static let tabFavorites = Image("tabFavorites", bundle: .module).renderingMode(.template)
     public static let tabFavoritesFill = Image("tabFavoritesFill", bundle: .module).renderingMode(.template)
+    public static let tabShare = Image("tabShare", bundle: .module).renderingMode(.template)
+    public static let tabShareFill = Image("tabShareFill", bundle: .module).renderingMode(.template)
     public static let tabDownloads = Image("tabDownloads", bundle: .module).renderingMode(.template)
     public static let tabDownloadsFill = Image("tabDownloadsFill", bundle: .module).renderingMode(.template)
     public static let tabSettings = Image("tabSettings", bundle: .module).renderingMode(.template)
@@ -67,6 +70,12 @@ public enum IconKit {
     public static let moreOptions = Image(systemName: "ellipsis.circle")
     public static let selectAll = Image(systemName: "checklist")
     public static let share = Image(systemName: "square.and.arrow.up")
+    /// The "share link" nodes glyph — matches the web client's share-dialog header icon,
+    /// distinct from `share` (the iOS system share-sheet action).
+    public static let shareLink = Image(systemName: "point.3.connected.trianglepath.dotted")
+    public static let link = Image(systemName: "link")
+    public static let people = Image(systemName: "person.2")
+    public static let copy = Image(systemName: "doc.on.doc")
     /// "zipper.page" — a page/sheet with a zipper across it. Easy to mix up with
     /// `archiveDocument` (`doc.zipper`) below, a *different* archive-themed symbol — kept as
     /// distinct English names precisely so call sites don't get them confused.

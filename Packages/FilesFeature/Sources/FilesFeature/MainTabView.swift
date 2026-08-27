@@ -37,6 +37,13 @@ public struct MainTabView: View {
                 tabIcon(store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites)
             }
 
+            Tab(value: MainTabFeature.Tab.shared) {
+                SharedView(store: store.scope(state: \.shared, action: \.shared))
+            } label: {
+//                Text("Shared")
+                tabIcon(store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare)
+            }
+
             Tab(value: MainTabFeature.Tab.downloads) {
                 DownloadsView(store: store.scope(state: \.downloads, action: \.downloads))
             } label: {

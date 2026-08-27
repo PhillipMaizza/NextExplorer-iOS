@@ -33,6 +33,10 @@ struct BrowseContentView: View {
     /// the alert is presented; `renameConfirmed` is sent this value directly.
     @State private var renameDraft = ""
     @State private var toastMessage: DSToastMessage?
+    /// The item whose "Create Share Link" sheet is open (from the context menu or the
+    /// selection toolbar). Local view state, not routed through `BrowseFeature` — the sheet
+    /// owns its own ad-hoc `CreateShareLinkFeature` store.
+    @State private var shareTarget: FileItem?
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
@@ -71,6 +75,20 @@ struct BrowseContentView: View {
             }
             .fullScreenCover(item: previewItemBinding) { item in
                 previewContent(for: item)
+            }
+            .sheet(item: $shareTarget) { item in
+                CreateShareLinkSheet(
+                    store: Store(
+                        initialState: CreateShareLinkFeature.State(
+                            serverURL: store.serverURL,
+                            itemName: item.name,
+                            itemPath: item.path,
+                            isDirectory: item.isDirectory
+                        )
+                    ) {
+                        CreateShareLinkFeature()
+                    }
+                )
             }
             .dsToast($toastMessage, extraBottomInset: breadcrumbBarClearance)
             .dsToast(progressToastBinding, extraBottomInset: breadcrumbBarClearance)
@@ -163,6 +181,17 @@ struct BrowseContentView: View {
                             store.send(.renameTapped(singleSelectedItem))
                         } label: {
                             IconKit.rename
+                        }
+                        .buttonStyle(DSHapticButtonStyle())
+                        .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                if let singleSelectedItem, store.access?.canShare ?? false {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button {
+                            shareTarget = singleSelectedItem
+                        } label: {
+                            IconKit.shareLink
                         }
                         .buttonStyle(DSHapticButtonStyle())
                         .transition(.scale.combined(with: .opacity))
@@ -273,7 +302,24 @@ struct BrowseContentView: View {
         if item.isStreamableMedia, let url = FilesClient.previewURL(serverURL: store.serverURL, item: item) {
             // Guaranteed `isNativelyPlayable` by this point — unsupported containers/codecs
             // are caught by the toast in `handleTap`, before `rowTapped` is ever sent.
-            StreamingPreviewView(item: item, url: url, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
+            StreamingPreviewView(
+                item: item,
+                url: url,
+                serverURL: store.serverURL,
+                onDismiss: { store.send(.previewDismissed) },
+                onShare: (store.access?.canShare ?? false) ? {
+                    store.send(.previewDismissed)
+                    shareTarget = item
+                } : nil,
+                onDownload: (store.access?.canDownload ?? false) ? {
+                    store.send(.previewDismissed)
+                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                } : nil,
+                onDelete: (store.access?.canDelete ?? false) ? {
+                    store.send(.previewDismissed)
+                    store.send(.deleteTapped(item))
+                } : nil
+            )
         } else if item.isBrowsableArchive {
             ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
         } else if (item.isImage || item.isRawImage) && !item.isSVG {
@@ -281,13 +327,37 @@ struct BrowseContentView: View {
                 items: store.displayedItems.filter { ($0.isImage || $0.isRawImage) && !$0.isSVG },
                 initialItem: item,
                 serverURL: store.serverURL,
-                onDismiss: { store.send(.previewDismissed) }
+                onDismiss: { store.send(.previewDismissed) },
+                onShare: (store.access?.canShare ?? false) ? { current in
+                    store.send(.previewDismissed)
+                    shareTarget = current
+                } : nil,
+                onDownload: (store.access?.canDownload ?? false) ? { current in
+                    store.send(.previewDismissed)
+                    store.send(.downloadTapped(current, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                } : nil,
+                onDelete: (store.access?.canDelete ?? false) ? { current in
+                    store.send(.previewDismissed)
+                    store.send(.deleteTapped(current))
+                } : nil
             )
         } else if item.isPreviewableViaDownload {
             FilePreviewContainerView(
                 fileURL: store.previewFileURL,
                 errorMessage: store.previewErrorMessage,
-                onDismiss: { store.send(.previewDismissed) }
+                onDismiss: { store.send(.previewDismissed) },
+                onShareLink: (store.access?.canShare ?? false) ? {
+                    store.send(.previewDismissed)
+                    shareTarget = item
+                } : nil,
+                onDownload: (store.access?.canDownload ?? false) ? {
+                    store.send(.previewDismissed)
+                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                } : nil,
+                onDelete: (store.access?.canDelete ?? false) ? {
+                    store.send(.previewDismissed)
+                    store.send(.deleteTapped(item))
+                } : nil
             )
         } else {
             TextFilePreviewView(
@@ -471,6 +541,14 @@ struct BrowseContentView: View {
                 } else {
                     Label { Text("Add to Favorites") } icon: { IconKit.star }
                 }
+            }
+            .tint(.primaryDS)
+        }
+        if store.access?.canShare ?? false {
+            Button {
+                shareTarget = item
+            } label: {
+                Label { Text("Share") } icon: { IconKit.shareLink }
             }
             .tint(.primaryDS)
         }
