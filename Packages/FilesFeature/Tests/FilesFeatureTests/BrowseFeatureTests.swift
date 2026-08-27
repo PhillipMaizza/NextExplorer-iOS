@@ -632,6 +632,7 @@ struct BrowseFeatureTests {
         await store.receive(\.searchResultsResponse.failure) {
             $0.isSearchingEverywhere = false
             $0.searchResults = []
+            $0.fileActionErrorMessage = "Couldn't search. Check your connection and try again."
         }
     }
 

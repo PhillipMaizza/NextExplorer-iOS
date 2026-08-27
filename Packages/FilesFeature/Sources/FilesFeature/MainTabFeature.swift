@@ -73,17 +73,10 @@ public struct MainTabFeature {
                     .send(.favorites(.syncPathStack))
                 )
 
-            case .browse(.delegate(.favoritesChanged)):
+            case .browse(.delegate(.favoritesChanged)), .favorites(.delegate(.favoritesChanged)):
                 return .send(.favorites(.refreshButtonTapped))
 
-            case .favorites(.delegate(.favoritesChanged)):
-                return .send(.favorites(.refreshButtonTapped))
-
-            case .browse(.delegate(.openDownloadsTapped)):
-                state.selectedTab = .downloads
-                return .send(.downloads(.refreshButtonTapped))
-
-            case .favorites(.delegate(.openDownloadsTapped)):
+            case .browse(.delegate(.openDownloadsTapped)), .favorites(.delegate(.openDownloadsTapped)):
                 state.selectedTab = .downloads
                 return .send(.downloads(.refreshButtonTapped))
 
