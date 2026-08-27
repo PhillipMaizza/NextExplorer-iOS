@@ -116,7 +116,7 @@ private struct ImageGalleryPage: View {
 
     private func statusContent(message: String) -> some View {
         VStack(spacing: Constants.statusSpacing) {
-            IconKit.exclamationmarkTriangle
+            IconKit.warning
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(Color.negative)

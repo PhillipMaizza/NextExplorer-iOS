@@ -6,6 +6,7 @@ import SwiftUI
 
 private enum Constants {
     static let breadcrumbContentSpacing: CGFloat = .space8
+    static let breadcrumbVisibilityAnimationDuration: Double = 0.25
 }
 
 struct BrowseTabView: View {
@@ -20,21 +21,30 @@ struct BrowseTabView: View {
         store.path.last?.directoryPath ?? store.root.directoryPath
     }
 
+    /// Whether the topmost pushed screen (or root, if nothing's pushed) is in select mode —
+    /// used to hide the breadcrumb bar the same way the tab bar is hidden, since both are
+    /// chrome around a list that select mode's bottom toolbar already replaces.
+    private var isTopScreenSelecting: Bool {
+        store.path.last?.isSelecting ?? store.root.isSelecting
+    }
+
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             BrowseContentView(store: store.scope(state: \.root, action: \.root))
-                .navigationTitle(store.root.title)
+                .navigationTitle(store.root.isSelecting ? "\(store.root.selectedItemIDs.count) Selected" : store.root.title)
         } destination: { store in
             BrowseContentView(store: store)
-                .navigationTitle(store.title)
+                .navigationTitle(store.isSelecting ? "\(store.selectedItemIDs.count) Selected" : store.title)
         }
         .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
-            if !currentDirectoryPath.isEmpty {
+            if !currentDirectoryPath.isEmpty && !isTopScreenSelecting {
                 BrowseBreadcrumbBar(directoryPath: currentDirectoryPath) { path, title in
                     store.send(.navigateToDirectory(path: path, title: title))
                 }
+                .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
+        .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
         .tint(Color.accent)
     }
 }

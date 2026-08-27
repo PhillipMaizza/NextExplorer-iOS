@@ -11,9 +11,11 @@ private enum Constants {
     static let rowIconSpacing: CGFloat = .space8
     static let tagHorizontalPadding: CGFloat = .space8
     static let tagVerticalPadding: CGFloat = .space4
-    static let tagBackgroundOpacity: Double = 0.2
+    static let tagBorderWidth: CGFloat = 1
     static let footerTopPadding: CGFloat = .space8
     static let signOutFadeDuration: Double = 0.15
+    static let fullOpacity: Double = 1.0
+    static let disabledOpacity: Double = 0.5
 }
 
 struct SettingsView: View {
@@ -29,6 +31,8 @@ struct SettingsView: View {
     @AppStorage("renderHTMLPages") private var renderHTMLPages = false
     @AppStorage("renderMarkdownPages") private var renderMarkdownPages = false
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
+    @AppStorage("showFilenameExtensions") private var showFilenameExtensions = true
+    @AppStorage("removeArchiveAfterDownload") private var removeArchiveAfterDownload = false
     @Environment(\.colorScheme) private var systemColorScheme
 
     private var isDarkModeOn: Binding<Bool> {
@@ -64,6 +68,30 @@ struct SettingsView: View {
         )
     }
 
+    private var isConfirmingRemoveAllDownloads: Binding<Bool> {
+        Binding(
+            get: { store.removeAllDownloadsConfirmationIsPresented },
+            set: { isPresented in
+                if !isPresented { store.send(.removeAllDownloadsCancelled) }
+            }
+        )
+    }
+
+    private static let byteFormatter: ByteCountFormatter = {
+        let formatter = ByteCountFormatter()
+        formatter.countStyle = .file
+        return formatter
+    }()
+
+    private var isConfirmingClearCache: Binding<Bool> {
+        Binding(
+            get: { store.clearCacheConfirmationIsPresented },
+            set: { isPresented in
+                if !isPresented { store.send(.clearCacheCancelled) }
+            }
+        )
+    }
+
     private var appVersionText: String {
         let info = Bundle.main.infoDictionary
         let version = info?["CFBundleShortVersionString"] as? String ?? "-"
@@ -92,13 +120,14 @@ struct SettingsView: View {
                             roleTag
                         }
                     }
+                    .listRowSeparator(.hidden, edges: .bottom)
 
                     if let host = store.serverURL.host {
                         HStack(spacing: Constants.rowIconSpacing) {
                             IconKit.server
                                 .resizable()
                                 .scaledToFit()
-                                .foregroundStyle(Color.primaryDS)
+                                .foregroundStyle(Color.secondaryDS)
                                 .frame(width: .iconSmall, height: .iconSmall)
                                 .padding(.leading, .space4)
                             Text("Server").type(.body2(.regular), style: .primary(for: .label))
@@ -106,12 +135,45 @@ struct SettingsView: View {
                             Spacer()
                             Text(host).type(.body2(.regular), style: .secondary)
                         }
+                        .listRowSeparator(.hidden, edges: .top)
                     }
+
+                    signOutRow
                 }
                 .listRowBackground(Color.backgroundSecondary)
 
                 Section {
-                    DSToggleRow(title: "Dark Mode", icon: IconKit.moonFill, isOn: isDarkModeOn)
+                    DSToggleRow(title: "Dark Mode", icon: IconKit.darkMode, isOn: isDarkModeOn)
+                    DSToggleRow(
+                        title: "Show Thumbnails",
+                        icon: IconKit.photo,
+                        isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
+                    )
+                    Picker(selection: thumbnailSize) {
+                        ForEach(ThumbnailSize.allCases) { size in
+                            Text(size.title).tag(size)
+                        }
+                    } label: {
+                        Label {
+                            Text("Thumbnail Size").type(.body2(.regular), style: .primary(for: .label))
+                        } icon: {
+                            IconKit.squareGrid
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.secondaryDS)
+                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(Color.secondaryDS)
+                    .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
+                    DSToggleRow(
+                        title: "Show Filename Extensions",
+                        icon: IconKit.tag,
+                        isOn: $showFilenameExtensions
+                    )
+                } header: {
+                    sectionHeader("Display")
                 }
                 .listRowBackground(Color.backgroundSecondary)
 
@@ -122,13 +184,8 @@ struct SettingsView: View {
                         isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles)
                     )
                     DSToggleRow(
-                        title: "Show Thumbnails",
-                        icon: IconKit.photo,
-                        isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
-                    )
-                    DSToggleRow(
                         title: "Render HTML Pages",
-                        icon: IconKit.globe,
+                        icon: IconKit.web,
                         isOn: $renderHTMLPages
                     )
                     DSToggleRow(
@@ -136,31 +193,6 @@ struct SettingsView: View {
                         icon: IconKit.textformat,
                         isOn: $renderMarkdownPages
                     )
-                    DSToggleRow(
-                        title: "Haptics",
-                        icon: IconKit.waveform,
-                        isOn: $hapticsEnabled
-                    )
-                }
-                .listRowBackground(Color.backgroundSecondary)
-
-                Section {
-                    VStack(alignment: .leading, spacing: .space12) {
-                        Label {
-                            Text("Thumbnail Size").type(.body2(.regular), style: .primary(for: .label))
-                        } icon: {
-                            IconKit.squareGrid
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.primaryDS)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                        }
-                        DSSegmentedControl(options: ThumbnailSize.allCases, selection: thumbnailSize) { $0.title }
-                    }
-                }
-                .listRowBackground(Color.backgroundSecondary)
-
-                Section {
                     NavigationLink {
                         DateFormatPickerView(selection: dateFormat)
                     } label: {
@@ -174,10 +206,69 @@ struct SettingsView: View {
                             IconKit.calendar
                                 .resizable()
                                 .scaledToFit()
-                                .foregroundStyle(Color.primaryDS)
+                                .foregroundStyle(Color.secondaryDS)
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
                     }
+                    DSToggleRow(
+                        title: "Haptics",
+                        icon: IconKit.haptics,
+                        isOn: $hapticsEnabled
+                    )
+                } header: {
+                    sectionHeader("General")
+                }
+                .listRowBackground(Color.backgroundSecondary)
+
+                Section {
+                    DSToggleRow(
+                        title: "Remove Archives After Download",
+                        icon: IconKit.archivePage,
+                        isOn: $removeArchiveAfterDownload
+                    )
+                    Button(role: .destructive) {
+                        store.send(.removeAllDownloadsTapped)
+                    } label: {
+                        Label {
+                            HStack {
+                                Text("Remove All Downloads").type(.body2(.regular), style: .link)
+                                Spacer()
+                                Text(Self.byteFormatter.string(fromByteCount: store.downloadsSize)).type(.body2(.regular), style: .secondary)
+                            }
+                        } icon: {
+                            IconKit.delete
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.accent)
+                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                    }
+                    .buttonStyle(DSHapticButtonStyle())
+                    .disabled(store.isRemovingAllDownloads || !store.hasDownloads)
+                    Button(role: .destructive) {
+                        store.send(.clearCacheTapped)
+                    } label: {
+                        Label {
+                            HStack {
+                                Text("Clear Cache").type(.body2(.regular), style: .link)
+                                Spacer()
+                                Text(Self.byteFormatter.string(fromByteCount: store.cacheSize)).type(.body2(.regular), style: .secondary)
+                            }
+                        } icon: {
+                            IconKit.delete
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.accent)
+                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                    }
+                    .buttonStyle(DSHapticButtonStyle())
+                    .disabled(store.isClearingCache || store.cacheSize == 0)
+                } header: {
+                    sectionHeader("Storage")
+                } footer: {
+                    Text("Downloading a folder zips it on the server first. Turn on the toggle above to delete that archive from the server once it's saved to your device. Removing downloads or clearing the cache only affects this device; nothing on the server is touched.")
+                        .type(.body3(.regular), style: .tertiary)
                 }
                 .listRowBackground(Color.backgroundSecondary)
 
@@ -191,38 +282,12 @@ struct SettingsView: View {
                             IconKit.document
                                 .resizable()
                                 .scaledToFit()
-                                .foregroundStyle(Color.primaryDS)
+                                .foregroundStyle(Color.secondaryDS)
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
                     }
-                }
-                .listRowBackground(Color.backgroundSecondary)
-
-                Section {
-                    Button(role: .destructive) {
-                        store.send(.signOutButtonTapped)
-                    } label: {
-                        if store.isSigningOut {
-                            Label {
-                                Text("Signing Out\u{2026}").type(.body2(.semibold), style: .error).fontWeight(.bold)
-                            } icon: {
-                                ProgressView().tint(Color.primaryDS)
-                            }
-                        } else {
-                            Label {
-                                Text("Sign Out").type(.body2(.semibold), style: .error)
-                            } icon: {
-                                IconKit.signOut
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                            }
-                        }
-                    }
-                    .foregroundStyle(Color.negative)
-                    .disabled(store.isSigningOut)
-                    .animation(.easeInOut(duration: Constants.signOutFadeDuration), value: store.isSigningOut)
-                    .buttonStyle(DSHapticButtonStyle())
+                } header: {
+                    sectionHeader("Licenses")
                 } footer: {
                     Text(appVersionText)
                         .type(.label4, style: .tertiary)
@@ -245,6 +310,20 @@ struct SettingsView: View {
             } message: {
                 Text("You'll need to sign in again to access your files.")
             }
+            .alert("Remove All Downloads?", isPresented: isConfirmingRemoveAllDownloads) {
+                Button("Remove All", role: .destructive) { store.send(.removeAllDownloadsConfirmed) }
+                Button("Cancel", role: .cancel) { store.send(.removeAllDownloadsCancelled) }
+            } message: {
+                Text("This deletes every downloaded file from this device. They stay on the server.")
+            }
+            .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
+            .alert("Clear Cache?", isPresented: isConfirmingClearCache) {
+                Button("Clear", role: .destructive) { store.send(.clearCacheConfirmed) }
+                Button("Cancel", role: .cancel) { store.send(.clearCacheCancelled) }
+            } message: {
+                Text("This clears cached previews and thumbnails. Nothing on the server is affected.")
+            }
+            .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
             .task {
                 store.send(.onAppear)
             }
@@ -252,11 +331,37 @@ struct SettingsView: View {
         .tint(Color.accent)
     }
 
+    private func sectionHeader(_ title: String) -> some View {
+        Text(title).type(.body3(.semibold), style: .secondary).textCase(.uppercase)
+    }
+
+    /// Plain, centered, icon-less.
+    private var signOutRow: some View {
+        Button(role: .destructive) {
+            store.send(.signOutButtonTapped)
+        } label: {
+            HStack(spacing: Constants.rowIconSpacing) {
+                if store.isSigningOut {
+                    ProgressView().tint(Color.negative)
+                }
+                Text(store.isSigningOut ? "Signing Out\u{2026}" : "Sign Out")
+                    .type(.body2(.semibold), style: .error)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .disabled(store.isSigningOut)
+        .animation(.easeInOut(duration: Constants.signOutFadeDuration), value: store.isSigningOut)
+        .buttonStyle(DSHapticButtonStyle())
+    }
+
     private var roleTag: some View {
         Text("Admin".uppercased())
-            .type(.caption(.semibold), style: .tertiary)
+            .type(.caption(.semibold), style: .link)
             .padding(.horizontal, Constants.tagHorizontalPadding)
             .padding(.vertical, Constants.tagVerticalPadding)
+            .overlay(
+                RoundedRectangle(cornerRadius: .radiusSmall, ).strokeBorder(Color.accent, lineWidth: Constants.tagBorderWidth)
+            )
     }
 }
 

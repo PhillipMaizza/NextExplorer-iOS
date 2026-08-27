@@ -103,7 +103,7 @@ struct TextFilePreviewView: View {
             ProgressView()
         } else if content != nil {
             Button(action: toggleEditing) {
-                (isEditing ? IconKit.checkmark : IconKit.squareAndPencil)
+                (isEditing ? IconKit.checkmark : IconKit.rename)
                     .resizable()
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .foregroundStyle(Color.primaryDS)
@@ -122,7 +122,7 @@ struct TextFilePreviewView: View {
     @ViewBuilder
     private var editorBody: some View {
         if let errorMessage {
-            statusContent(icon: IconKit.exclamationmarkTriangle, message: errorMessage, tint: .negative)
+            statusContent(icon: IconKit.warning, message: errorMessage, tint: .negative)
         } else if isLoading {
             statusContent(icon: nil, message: nil, tint: .primaryDS)
         } else if isHTML, renderHTMLPages, !isEditing {

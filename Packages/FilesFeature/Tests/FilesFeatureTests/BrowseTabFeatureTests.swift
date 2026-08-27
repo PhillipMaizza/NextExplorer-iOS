@@ -122,6 +122,57 @@ struct BrowseTabFeatureTests {
         }
     }
 
+    // MARK: Sync on app open
+
+    @Test
+    func syncPathStackRefreshesOnlyTheRootWhenNoFolderIsPushed() async {
+        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
+            BrowseTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
+            }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.syncPathStack)
+        await store.receive(\.root.refreshButtonTapped) {
+            $0.root.isLoading = true
+        }
+    }
+
+    @Test
+    func syncPathStackRefreshesTheRootAndEveryPushedSubfolder() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Old", title: "Old"))
+        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+
+        let store = TestStore(initialState: state) {
+            BrowseTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
+            }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        store.exhaustivity = .off
+        let pathIDs = state.path.ids
+
+        await store.send(.syncPathStack)
+        await store.receive(\.root.refreshButtonTapped) {
+            $0.root.isLoading = true
+        }
+        await store.receive(\.path[id: pathIDs[0]].refreshButtonTapped) {
+            $0.path[id: pathIDs[0]]?.isLoading = true
+        }
+        await store.receive(\.path[id: pathIDs[1]].refreshButtonTapped) {
+            $0.path[id: pathIDs[1]]?.isLoading = true
+        }
+    }
+
     // MARK: Favorites-changed delegate bubbling
 
     @Test
@@ -145,5 +196,30 @@ struct BrowseTabFeatureTests {
 
         await store.send(.path(.element(id: 0, action: .delegate(.favoritesChanged))))
         await store.receive(.delegate(.favoritesChanged))
+    }
+
+    // MARK: Open-downloads delegate bubbling
+
+    @Test
+    func openDownloadsTappedFromTheRootBubblesUpAsADelegate() async {
+        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
+            BrowseTabFeature()
+        }
+
+        await store.send(.root(.delegate(.openDownloadsTapped)))
+        await store.receive(.delegate(.openDownloadsTapped))
+    }
+
+    @Test
+    func openDownloadsTappedFromAPushedScreenAlsoBubblesUpAsADelegate() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
+
+        let store = TestStore(initialState: state) {
+            BrowseTabFeature()
+        }
+
+        await store.send(.path(.element(id: 0, action: .delegate(.openDownloadsTapped))))
+        await store.receive(.delegate(.openDownloadsTapped))
     }
 }
