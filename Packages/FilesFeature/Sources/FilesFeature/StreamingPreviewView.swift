@@ -35,6 +35,9 @@ struct StreamingPreviewView: View {
     let url: URL
     let serverURL: URL
     let onDismiss: () -> Void
+    private let onShare: (() -> Void)?
+    private let onDownload: (() -> Void)?
+    private let onDelete: (() -> Void)?
 
     @State private var player: AVPlayer
     @State private var hasStartedPlaying = false
@@ -45,11 +48,22 @@ struct StreamingPreviewView: View {
     /// it flies off, so the fullScreenCover's own slide-out is never seen.
     @State private var isDismissing = false
 
-    init(item: FileItem, url: URL, serverURL: URL, onDismiss: @escaping () -> Void) {
+    init(
+        item: FileItem,
+        url: URL,
+        serverURL: URL,
+        onDismiss: @escaping () -> Void,
+        onShare: (() -> Void)? = nil,
+        onDownload: (() -> Void)? = nil,
+        onDelete: (() -> Void)? = nil
+    ) {
         self.item = item
         self.url = url
         self.serverURL = serverURL
         self.onDismiss = onDismiss
+        self.onShare = onShare
+        self.onDownload = onDownload
+        self.onDelete = onDelete
         self._player = State(initialValue: AVPlayer(url: url))
     }
 
@@ -93,8 +107,15 @@ struct StreamingPreviewView: View {
                         .allowsHitTesting(false)
                 }
 
-                DSCloseButton(action: onDismiss)
-                    .padding(Constants.closeButtonInset)
+                HStack(spacing: Constants.closeButtonInset) {
+                    DSCloseButton(action: onDismiss)
+                    Spacer()
+                    if let onShare { mediaToolbarButton(IconKit.shareLink, action: onShare) }
+                    if let onDownload { mediaToolbarButton(IconKit.download, action: onDownload) }
+                    if let onDelete { mediaToolbarButton(IconKit.delete, tint: Color.negative, action: onDelete) }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(Constants.closeButtonInset)
             }
             .scaleEffect(dragScale)
             .offset(y: dragOffset)
@@ -123,6 +144,19 @@ struct StreamingPreviewView: View {
                 try? AVAudioSession.sharedInstance().setCategory(.ambient)
             }
         }
+    }
+
+    private func mediaToolbarButton(_ icon: Image, tint: Color = .white, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            icon
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(tint)
+                .frame(width: .iconXSmall, height: .iconXSmall)
+                .padding(.space8)
+                .background(Circle().fill(.ultraThinMaterial))
+        }
+        .buttonStyle(DSHapticButtonStyle())
     }
 
     /// Vertical swipe (either direction) to dismiss, like the iOS Photos viewer — runs
