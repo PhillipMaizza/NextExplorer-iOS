@@ -1,8 +1,7 @@
 import Foundation
 
-/// Body for `POST /api/users` (admin). `username`/`displayName` are optional — the server
-/// derives them from the email local-part when omitted. `isAdmin` maps to `roles: ["admin"]`
-/// vs `roles: []`, matching the web create-user form.
+/// Body for `POST /api/users` (admin). The server derives `username` and `displayName` from
+/// the email when omitted. `isAdmin` maps to `roles: ["admin"]` or `roles: []`.
 public struct CreateUserRequest: Equatable, Sendable {
     public var email: String
     public var username: String?
@@ -25,8 +24,8 @@ public struct CreateUserRequest: Equatable, Sendable {
     }
 }
 
-/// Body for `PATCH /api/users/:id` (admin). Every field is optional; only the non-nil ones are
-/// sent. `roles` and the profile fields can be updated in the same call.
+/// Body for `PATCH /api/users/:id` (admin). Only the non nil fields are sent. `roles` and the
+/// profile fields can be updated in the same call.
 public struct UpdateUserRequest: Equatable, Sendable {
     public var email: String?
     public var username: String?
@@ -41,7 +40,7 @@ public struct UpdateUserRequest: Equatable, Sendable {
     }
 }
 
-/// Body for `POST /api/users/:id/volumes` (admin, `USER_VOLUMES` only).
+/// Body for `POST /api/users/:id/volumes` (admin, `USER_VOLUMES` feature only).
 public struct AddUserVolumeRequest: Equatable, Sendable {
     public var label: String
     public var path: String

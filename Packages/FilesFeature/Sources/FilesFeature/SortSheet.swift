@@ -18,9 +18,9 @@ private enum Constants {
     static let zeroOpacity: Double = 0.0
 }
 
-/// Generic "Sort by" sheet shared by Favorites and Downloads — same shape as the
-/// Browse-specific `BrowseSortSheet`, generalized over whatever option/direction enum each
-/// screen sorts by, so the two don't need their own near-identical copy of this UI.
+/// Generic "Sort by" sheet: a field picker and a direction picker as radio lists in a
+/// `DynamicHeightSheet`. Shared by Browse, Favorites, Downloads, Shared and User Management,
+/// generalized over whatever option and direction enum each screen sorts by.
 struct SortSheet<Option: Hashable, Direction: Hashable>: View {
     let options: [Option]
     let directions: [Direction]

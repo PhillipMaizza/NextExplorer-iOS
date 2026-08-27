@@ -34,35 +34,35 @@ public struct FilesClient: Sendable {
     public var mySharedLinks: @Sendable (_ serverURL: URL) async throws -> [Share]
     public var sharedWithMeLinks: @Sendable (_ serverURL: URL) async throws -> [Share]
     public var deleteShareLink: @Sendable (_ serverURL: URL, _ shareID: String) async throws -> Void
-    /// `GET /api/users/shareable` — every user except the caller, for a user-specific share.
+    /// `GET /api/users/shareable`: every user except the caller, for a user specific share.
     public var shareableUsers: @Sendable (_ serverURL: URL) async throws -> [User]
 
-    /// `POST /api/auth/password` — the signed-in user changes their own local password.
-    /// Needs the current password; rate-limited server-side.
+    /// `POST /api/auth/password`: the signed in user changes their own local password. Needs
+    /// the current password; rate limited server side.
     public var changeOwnPassword: @Sendable (
         _ serverURL: URL, _ currentPassword: String, _ newPassword: String
     ) async throws -> Void
 
-    // MARK: Admin — user management (all require the caller to have the `admin` role)
+    // MARK: Admin user management (all require the caller to have the `admin` role)
 
-    /// `GET /api/features` — the server's feature flags (currently just user volumes).
+    /// `GET /api/features`: the server's feature flags (currently just user volumes).
     public var serverFeatures: @Sendable (_ serverURL: URL) async throws -> ServerFeatures
-    /// `GET /api/users` — every user with roles + auth methods.
+    /// `GET /api/users`: every user with roles and auth methods.
     public var listUsers: @Sendable (_ serverURL: URL) async throws -> [User]
-    /// `POST /api/users` — create a local-password user.
+    /// `POST /api/users`: create a user with a local password.
     public var createUser: @Sendable (_ serverURL: URL, _ request: CreateUserRequest) async throws -> User
-    /// `PATCH /api/users/:id` — update profile fields and/or roles.
+    /// `PATCH /api/users/:id`: update profile fields and roles.
     public var updateUser: @Sendable (
         _ serverURL: URL, _ userID: String, _ request: UpdateUserRequest
     ) async throws -> User
-    /// `POST /api/users/:id/password` — set a user's local password (no current password needed).
+    /// `POST /api/users/:id/password`: set a user's local password (no current password needed).
     public var setUserPassword: @Sendable (
         _ serverURL: URL, _ userID: String, _ newPassword: String
     ) async throws -> Void
-    /// `DELETE /api/users/:id` — remove a user. The server rejects deleting yourself or the last admin.
+    /// `DELETE /api/users/:id`: remove a user. The server rejects deleting yourself or the last admin.
     public var deleteUser: @Sendable (_ serverURL: URL, _ userID: String) async throws -> Void
 
-    // MARK: Admin — per-user volumes (also require the `USER_VOLUMES` feature)
+    // MARK: Admin per user volumes (also require the `USER_VOLUMES` feature)
 
     /// `GET /api/users/:id/volumes`.
     public var userVolumes: @Sendable (_ serverURL: URL, _ userID: String) async throws -> [UserVolume]
@@ -70,7 +70,7 @@ public struct FilesClient: Sendable {
     public var addUserVolume: @Sendable (
         _ serverURL: URL, _ userID: String, _ request: AddUserVolumeRequest
     ) async throws -> UserVolume
-    /// `PATCH /api/users/:id/volumes/:volumeID` — label and/or access mode.
+    /// `PATCH /api/users/:id/volumes/:volumeID`: label and access mode.
     public var updateUserVolume: @Sendable (
         _ serverURL: URL, _ userID: String, _ volumeID: String, _ label: String?, _ accessMode: ShareAccessMode
     ) async throws -> UserVolume
@@ -78,7 +78,7 @@ public struct FilesClient: Sendable {
     public var removeUserVolume: @Sendable (
         _ serverURL: URL, _ userID: String, _ volumeID: String
     ) async throws -> Void
-    /// `GET /api/admin/browse-directories?path=` — directory picker for assigning a volume.
+    /// `GET /api/admin/browse-directories?path=`: directory picker for assigning a volume.
     public var browseAdminDirectories: @Sendable (
         _ serverURL: URL, _ path: String?
     ) async throws -> AdminDirectoryListing

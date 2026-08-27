@@ -283,7 +283,9 @@ struct DownloadsView: View {
                             .transition(.opacity)
                     case .error:
                         if let errorMessage = store.errorMessage {
-                            EmptyStateView(icon: IconKit.warning, message: errorMessage)
+                            EmptyStateView(icon: IconKit.warning, message: errorMessage) {
+                                store.send(.refreshButtonTapped)
+                            }
                                 .transition(.opacity)
                         }
                     case .empty:
@@ -300,6 +302,7 @@ struct DownloadsView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
+            .featureToast(error: store.actionErrorMessage)
             .toolbar {
                 selectSortToolbar(
                     isSelecting: store.isSelecting,

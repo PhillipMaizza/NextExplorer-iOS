@@ -332,9 +332,12 @@ public struct BrowseFeature {
                 state.searchResults = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(results))
                 return .none
 
-            case .searchResultsResponse(.failure):
+            case let .searchResultsResponse(.failure(error)):
                 state.isSearchingEverywhere = false
                 state.searchResults = []
+                // Surface it, otherwise a network blip during an "Everywhere" search is
+                // indistinguishable from a genuine empty result.
+                state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : "Couldn't search. Check your connection and try again."
                 return .none
 
             case let .sortOptionChanged(option):
@@ -416,12 +419,7 @@ public struct BrowseFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    do {
-                        let extracted = try await filesClient.extractZip(serverURL, item)
-                        await send(.extractZipResponse(.success(extracted)))
-                    } catch {
-                        await send(.extractZipResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-                    }
+                    await send(.extractZipResponse(await apiResult { try await filesClient.extractZip(serverURL, item) }))
                 }
 
             case let .extractZipResponse(.success(extracted)):
@@ -442,12 +440,7 @@ public struct BrowseFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    do {
-                        let compressed = try await filesClient.compressItem(serverURL, item)
-                        await send(.compressResponse(.success(compressed)))
-                    } catch {
-                        await send(.compressResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-                    }
+                    await send(.compressResponse(await apiResult { try await filesClient.compressItem(serverURL, item) }))
                 }
 
             case let .compressResponse(.success(compressed)):
@@ -673,12 +666,9 @@ public struct BrowseFeature {
 
         return .run { send in
             try await clock.sleep(for: Constants.searchDebounce)
-            do {
-                let results = try await filesClient.search(serverURL, "", query, Constants.searchLimit)
-                await send(.searchResultsResponse(.success(results)))
-            } catch {
-                await send(.searchResultsResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+            await send(.searchResultsResponse(await apiResult {
+                try await filesClient.search(serverURL, "", query, Constants.searchLimit)
+            }))
         }
         .cancellable(id: CancelID.search, cancelInFlight: true)
     }
@@ -689,17 +679,14 @@ public struct BrowseFeature {
         let isCurrentlyFavorite = state.favoritePaths.contains(path)
         let filesClient = self.filesClient
         return .run { send in
-            do {
+            await send(.favoriteToggleResponse(await apiResult {
                 if isCurrentlyFavorite {
                     try await filesClient.removeFavorite(serverURL, path)
-                    await send(.favoriteToggleResponse(.success(FavoriteToggleResult(path: path, isFavorite: false))))
                 } else {
                     _ = try await filesClient.addFavorite(serverURL, path)
-                    await send(.favoriteToggleResponse(.success(FavoriteToggleResult(path: path, isFavorite: true))))
                 }
-            } catch {
-                await send(.favoriteToggleResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+                return FavoriteToggleResult(path: path, isFavorite: !isCurrentlyFavorite)
+            }))
         }
     }
 
@@ -715,12 +702,9 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let originalID = item.id
         return .run { send in
-            do {
-                let renamed = try await filesClient.renameItem(serverURL, item, trimmedName)
-                await send(.renameResponse(.success(RenameResult(originalID: originalID, renamed: renamed))))
-            } catch {
-                await send(.renameResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+            await send(.renameResponse(await apiResult {
+                RenameResult(originalID: originalID, renamed: try await filesClient.renameItem(serverURL, item, trimmedName))
+            }))
         }
     }
 
@@ -732,14 +716,12 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let itemID = item.id
         return .run { send in
-            do {
+            // Animated so the row visibly slides out of the list rather than popping,
+            // since removal happens on the server round trip, not the confirm tap itself.
+            await send(.deleteResponse(await apiResult {
                 try await filesClient.deleteItems(serverURL, [item])
-                // Animated so the row visibly slides out of the list rather than popping,
-                // since removal happens on the server round-trip, not the confirm tap itself.
-                await send(.deleteResponse(.success(DeleteResult(itemID: itemID))), animation: .default)
-            } catch {
-                await send(.deleteResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+                return DeleteResult(itemID: itemID)
+            }), animation: .default)
         }
     }
 
@@ -754,7 +736,7 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let localDownloadStore = self.localDownloadStore
         return .run { send in
-            do {
+            await send(.downloadResponse(await apiResult {
                 var compressedArchive: FileItem?
                 let fileToDownload: FileItem
                 if item.isDirectory {
@@ -772,10 +754,8 @@ public struct BrowseFeature {
                 if removeArchiveAfterDownload, let compressedArchive {
                     try? await filesClient.deleteItems(serverURL, [compressedArchive])
                 }
-                await send(.downloadResponse(.success(DownloadResult(destinationURL: destinationURL, location: location))))
-            } catch {
-                await send(.downloadResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+                return DownloadResult(destinationURL: destinationURL, location: location)
+            }))
         }
     }
 
@@ -788,14 +768,12 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let itemIDs = itemsToDelete.map(\.id)
         return .run { send in
-            do {
+            // Animated so the rows visibly slide out of the list rather than popping,
+            // since removal happens on the server round trip, not the confirm tap itself.
+            await send(.bulkDeleteResponse(await apiResult {
                 try await filesClient.deleteItems(serverURL, itemsToDelete)
-                // Animated so the rows visibly slide out of the list rather than popping,
-                // since removal happens on the server round-trip, not the confirm tap itself.
-                await send(.bulkDeleteResponse(.success(BulkDeleteResult(itemIDs: itemIDs))), animation: .default)
-            } catch {
-                await send(.bulkDeleteResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+                return BulkDeleteResult(itemIDs: itemIDs)
+            }), animation: .default)
         }
     }
 
@@ -882,12 +860,7 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let path = item.id
         return .run { send in
-            do {
-                let metadata = try await filesClient.fetchMetadata(serverURL, path)
-                await send(.infoMetadataResponse(.success(metadata)))
-            } catch {
-                await send(.infoMetadataResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+            await send(.infoMetadataResponse(await apiResult { try await filesClient.fetchMetadata(serverURL, path) }))
         }
     }
 
@@ -900,16 +873,13 @@ public struct BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            do {
+            await send(.previewFileResponse(await apiResult {
                 // Word docs aren't in `PREVIEWABLE_EXTENSIONS` — `GET /api/preview` 415s them,
                 // so they come down via the unrestricted download endpoint instead.
-                let fileURL = item.isOfficeDocument
+                item.isOfficeDocument
                     ? try await filesClient.downloadRawFile(serverURL, item)
                     : try await filesClient.previewFile(serverURL, item)
-                await send(.previewFileResponse(.success(fileURL)))
-            } catch {
-                await send(.previewFileResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+            }))
         }
     }
 
@@ -921,12 +891,7 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let path = item.id
         return .run { send in
-            do {
-                let content = try await filesClient.fetchTextContent(serverURL, path)
-                await send(.textContentResponse(.success(content)))
-            } catch {
-                await send(.textContentResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+            await send(.textContentResponse(await apiResult { try await filesClient.fetchTextContent(serverURL, path) }))
         }
     }
 
@@ -938,12 +903,10 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let path = item.id
         return .run { send in
-            do {
+            await send(.textSaveResponse(await apiResult {
                 try await filesClient.saveTextContent(serverURL, path, newContent)
-                await send(.textSaveResponse(.success(newContent)))
-            } catch {
-                await send(.textSaveResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+                return newContent
+            }))
         }
     }
 
@@ -955,12 +918,7 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         return .concatenate(
             .run { send in
-                do {
-                    let result = try await filesClient.browse(serverURL, directoryPath)
-                    await send(.itemsResponse(.success(result)))
-                } catch {
-                    await send(.itemsResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-                }
+                await send(.itemsResponse(await apiResult { try await filesClient.browse(serverURL, directoryPath) }))
             },
             .run { send in
                 let favorites = try? await filesClient.favorites(serverURL)
@@ -970,8 +928,9 @@ public struct BrowseFeature {
     }
 
     /// Folders before files, each group alphabetical, matching the web client's own
-    /// directory listing order.
-    private static func sortedAlphabetically(_ items: [FileItem]) -> [FileItem] {
+    /// directory listing order. Used for both `FileItem` listings and `SearchResultItem`
+    /// result sets.
+    static func sortedAlphabetically<T: DirectoryFirstSortable>(_ items: [T]) -> [T] {
         items.sorted { lhs, rhs in
             guard lhs.isDirectory == rhs.isDirectory else { return lhs.isDirectory }
             return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
@@ -1006,10 +965,13 @@ public struct BrowseFeature {
         }
     }
 
-    private static func sortedAlphabetically(_ items: [SearchResultItem]) -> [SearchResultItem] {
-        items.sorted { lhs, rhs in
-            guard lhs.isDirectory == rhs.isDirectory else { return lhs.isDirectory }
-            return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
-        }
-    }
 }
+
+/// An item that sorts folders first then by name: `FileItem` and `SearchResultItem`.
+protocol DirectoryFirstSortable {
+    var name: String { get }
+    var isDirectory: Bool { get }
+}
+
+extension FileItem: DirectoryFirstSortable {}
+extension SearchResultItem: DirectoryFirstSortable {}

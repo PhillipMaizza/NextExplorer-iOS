@@ -3,12 +3,11 @@ import CoreModels
 import FilesClient
 import Foundation
 
-/// The signed-in user changing their own local password — `POST /api/auth/password`, mirroring
-/// the web client's `SettingsPassword.vue`. Reached from a row next to Sign Out in Settings.
+/// The signed in user changing their own local password via `POST /api/auth/password`,
+/// mirroring the web client's `SettingsPassword.vue`. Reached from a row next to Sign Out.
 ///
-/// There is deliberately no display-name / profile editing here: the backend has no
-/// self-service profile endpoint (`PATCH /api/users/:id` is admin-only), so the web app
-/// doesn't offer it either. Display name is changed by an admin from User Management.
+/// No profile editing here: the backend has no self service profile endpoint
+/// (`PATCH /api/users/:id` is admin only), so display name changes go through User Management.
 @Reducer
 public struct ChangePasswordFeature {
     @ObservableState
@@ -25,7 +24,7 @@ public struct ChangePasswordFeature {
             self.serverURL = serverURL
         }
 
-        /// Shown once the field has content — an empty field is "not filled in yet", not wrong.
+        /// Shown once the field has content. An empty field is "not filled in yet", not wrong.
         var newPasswordError: String? {
             newPassword.isEmpty || CredentialRules.isPasswordLongEnough(newPassword)
                 ? nil
@@ -51,6 +50,8 @@ public struct ChangePasswordFeature {
     }
 
     @Dependency(\.filesClient) var filesClient
+
+    private enum CancelID { case submit }
 
     public init() {}
 
@@ -82,13 +83,12 @@ public struct ChangePasswordFeature {
                 let new = state.newPassword
                 let filesClient = self.filesClient
                 return .run { send in
-                    do {
+                    await send(.response(await apiResult {
                         try await filesClient.changeOwnPassword(serverURL, current, new)
-                        await send(.response(.success(true)))
-                    } catch {
-                        await send(.response(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-                    }
+                        return true
+                    }))
                 }
+                .cancellable(id: CancelID.submit, cancelInFlight: true)
 
             case .response(.success):
                 state.isSubmitting = false

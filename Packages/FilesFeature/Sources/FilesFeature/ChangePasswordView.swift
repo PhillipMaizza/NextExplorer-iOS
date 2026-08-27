@@ -10,7 +10,7 @@ private enum Metrics {
     static let rowIconSize: CGFloat = .iconSmall
 }
 
-/// Self-service password change, pushed from the Settings sign-out row. Mirrors the web
+/// Self service password change, pushed from the Settings sign out row. Mirrors the web
 /// client's `SettingsPassword.vue`.
 struct ChangePasswordView: View {
     @Bindable var store: StoreOf<ChangePasswordFeature>

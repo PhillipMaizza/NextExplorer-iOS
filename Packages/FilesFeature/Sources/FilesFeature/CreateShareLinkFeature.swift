@@ -107,11 +107,9 @@ public struct CreateShareLinkFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    do {
-                        await send(.shareableUsersResponse(.success(try await filesClient.shareableUsers(serverURL))))
-                    } catch {
-                        await send(.shareableUsersResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-                    }
+                    await send(.shareableUsersResponse(await apiResult {
+                        try await filesClient.shareableUsers(serverURL)
+                    }))
                 }
 
             case let .shareableUsersResponse(.success(users)):
@@ -175,12 +173,9 @@ public struct CreateShareLinkFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    do {
-                        let created = try await filesClient.createShareLink(serverURL, request)
-                        await send(.createResponse(.success(created)), animation: .default)
-                    } catch {
-                        await send(.createResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-                    }
+                    await send(.createResponse(await apiResult {
+                        try await filesClient.createShareLink(serverURL, request)
+                    }), animation: .default)
                 }
 
             case let .createResponse(.success(created)):

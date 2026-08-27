@@ -73,6 +73,7 @@ public enum IconKit {
     public static let selectAll = Image(systemName: "checklist")
     public static let share = Image(systemName: "square.and.arrow.up")
     public static let drive = Image(systemName: "externaldrive.fill")
+    /// Connected nodes glyph for the share link concept, distinct from `share` (the system share sheet action).
     public static let shareLink = Image(systemName: "point.3.connected.trianglepath.dotted")
     public static let link = Image(systemName: "link")
     public static let people = Image(systemName: "person.2")
@@ -81,11 +82,13 @@ public enum IconKit {
     public static let key = Image(systemName: "key")
     public static let cloud = Image(systemName: "cloud")
     public static let plus = Image(systemName: "plus")
+    /// `zipper.page`. Not to be confused with `archiveDocument` (`doc.zipper`) below.
     public static let archivePage = Image(systemName: "zipper.page")
     public static let select = Image(systemName: "checkmark.circle")
     public static let unfavorite = Image(systemName: "star.slash")
     public static let info = Image(systemName: "info.circle")
     public static let extract = Image(systemName: "archivebox")
+    /// `doc.zipper`. See `archivePage` above.
     public static let archiveDocument = Image(systemName: "doc.zipper")
     public static let size = Image(systemName: "internaldrive")
 }

@@ -2,6 +2,7 @@ import AuthClient
 import AuthFeature
 import ComposableArchitecture
 import CoreModels
+import FilesFeature
 import Foundation
 import SwiftUI
 
@@ -17,6 +18,9 @@ public struct AppFeature {
     @ObservableState
     public struct State: Equatable {
         public var destination: Destination.State
+        /// Tripped by `apiResult` (in FilesFeature) the moment any authenticated request
+        /// answers 401. Watched by `AppView`, which sends `sessionExpiryDetected`.
+        @Shared(.inMemory(SessionExpiry.sharedKey)) public var sessionDidExpire = false
 
         public init(destination: Destination.State = .loading) {
             self.destination = destination
@@ -27,6 +31,7 @@ public struct AppFeature {
         case onAppear
         case sessionRestoreResponse(SessionCredentials?)
         case sessionValidationResponse(Result<User, AuthClientError>, SessionCredentials)
+        case sessionExpiryDetected
         case destination(Destination.Action)
     }
 
@@ -68,6 +73,7 @@ public struct AppFeature {
                 }
 
             case let .sessionValidationResponse(.success(user), credentials):
+                if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
                 withAnimation {
                     state.destination = .authenticated(
                         AuthenticatedFeature.State(serverURL: credentials.serverBaseURL, user: user)
@@ -84,7 +90,17 @@ public struct AppFeature {
                     await authClient.clearSession()
                 }
 
+            case .sessionExpiryDetected:
+                if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                guard case .authenticated = state.destination else { return .none }
+                withAnimation {
+                    state.destination = .unauthenticated(.init())
+                }
+                let authClient = self.authClient
+                return .run { _ in await authClient.clearSession() }
+
             case let .destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))):
+                if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
                 )
