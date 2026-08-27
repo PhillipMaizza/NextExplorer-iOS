@@ -206,7 +206,7 @@ struct SharedFeatureTests {
         }
         await store.receive(\.deleteResponse) {
             $0.deletingIDs = []
-            $0.errorMessage = FilesClientError.server(statusCode: 500).userMessage
+            $0.actionErrorMessage = FilesClientError.server(statusCode: 500).userMessage
         }
         #expect(store.state.byMe == [share])
     }

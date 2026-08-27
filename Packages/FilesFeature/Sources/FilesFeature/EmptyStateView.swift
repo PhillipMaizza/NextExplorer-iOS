@@ -4,15 +4,17 @@ import SwiftUI
 private enum Constants {
     static let spacing: CGFloat = .space8
     static let iconSize: CGFloat = .superIcon
+    static let retryTopPadding: CGFloat = .space8
 }
 
-/// The icon-plus-message placeholder shown by `BrowseContentView` and `FavoritesView` for
-/// their loading-error/no-items/no-search-results states. `BrowseContentView`'s "no search
-/// results" state additionally offers a "Search everywhere" action, so it composes this
-/// view with its own trailing content rather than being expressed by it.
+/// The icon and message placeholder shown across the app for load error, empty and no
+/// search results states. Pass `retry` for the error case, since an empty error list often
+/// can't be pulled to refresh and needs its own button. `BrowseContentView`'s no search
+/// results state composes this with its own trailing "Search everywhere" content instead.
 struct EmptyStateView: View {
     let icon: Image
     let message: String
+    var retry: (() -> Void)?
 
     var body: some View {
         VStack(spacing: Constants.spacing) {
@@ -22,6 +24,11 @@ struct EmptyStateView: View {
                 .foregroundStyle(Color.secondaryDS)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
             Text(message).type(.body1(.regular), style: .secondary)
+            if let retry {
+                DSButton("Try Again", style: .secondary) { retry() }
+                    .fixedSize()
+                    .padding(.top, Constants.retryTopPadding)
+            }
         }
         .padding(.space16)
         .multilineTextAlignment(.center)

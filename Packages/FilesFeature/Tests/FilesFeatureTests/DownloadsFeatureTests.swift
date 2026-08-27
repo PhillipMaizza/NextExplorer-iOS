@@ -135,7 +135,7 @@ struct DownloadsFeatureTests {
             $0.deleteConfirmationItem = nil
         }
         await store.receive(\.deleteResponse.failure) {
-            $0.errorMessage = FilesClientError.network("permission denied").userMessage
+            $0.actionErrorMessage = FilesClientError.network("permission denied").userMessage
         }
 
         #expect(store.state.downloads == [download])

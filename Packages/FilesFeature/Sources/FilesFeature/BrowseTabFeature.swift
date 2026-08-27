@@ -40,7 +40,7 @@ public struct BrowseTabFeature {
         Reduce { state, action in
             switch action {
             case let .root(.delegate(.openFolder(item))):
-                state.path.append(BrowseFeature.State(serverURL: state.root.serverURL, directoryPath: item.id, title: item.name))
+                state.path.append(BrowseNavigation.screen(for: item, serverURL: state.root.serverURL))
                 return .none
 
             case let .root(.delegate(.openPath(path, title))):
@@ -53,7 +53,7 @@ public struct BrowseTabFeature {
                 return .send(.delegate(.openDownloadsTapped))
 
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
-                state.path.append(BrowseFeature.State(serverURL: state.root.serverURL, directoryPath: item.id, title: item.name))
+                state.path.append(BrowseNavigation.screen(for: item, serverURL: state.root.serverURL))
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.openPath(path, title)))):
@@ -66,9 +66,7 @@ public struct BrowseTabFeature {
                 return .send(.delegate(.openDownloadsTapped))
 
             case let .navigateToDirectory(path, title):
-                state.path.removeAll()
-                guard !path.isEmpty else { return .none }
-                state.path.append(BrowseFeature.State(serverURL: state.root.serverURL, directoryPath: path, title: title))
+                BrowseNavigation.jump(to: path, title: title, serverURL: state.root.serverURL, stack: &state.path)
                 return .none
 
             case .syncPathStack:
