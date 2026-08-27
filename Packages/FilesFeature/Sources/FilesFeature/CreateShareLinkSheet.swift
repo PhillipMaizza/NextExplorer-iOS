@@ -19,6 +19,7 @@ private enum Constants {
     static let copyButtonWidth: CGFloat = .size48
     static let copyIconSize: CGFloat = .iconSmall
     static let summaryColumnSpacing: CGFloat = .space16
+    static let userAvatarSize: CGFloat = .size32
     static let copyFeedbackSeconds: Double = 2
 }
 
@@ -49,8 +50,8 @@ struct CreateShareLinkSheet: View {
             }
         }
         .background(Color.backgroundPrimary)
-        .presentationDetents([.large])
-        .presentationDragIndicator(.hidden)
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
     }
 
     // MARK: Header
@@ -120,9 +121,8 @@ struct CreateShareLinkSheet: View {
                     selection: $store.target.sending(\.targetChanged),
                     label: { $0.title }
                 )
-                if !store.isTargetSupported {
-                    Text("Sharing with specific people isn't available in the app yet.")
-                        .type(.body3(.regular), style: .secondary)
+                if store.target == .users {
+                    userPicker
                 }
             }
 
@@ -163,6 +163,51 @@ struct CreateShareLinkSheet: View {
                 .disabled(!store.isCreateEnabled)
             }
             .padding(.top, .space4)
+        }
+    }
+
+    @ViewBuilder
+    private var userPicker: some View {
+        if store.isLoadingUsers {
+            HStack(spacing: .space8) {
+                ProgressView()
+                Text("Loading users\u{2026}").type(.body3(.regular), style: .secondary)
+            }
+            .padding(.vertical, .space8)
+        } else if store.shareableUsers.isEmpty {
+            Text("No other users to share with.")
+                .type(.body3(.regular), style: .secondary)
+                .padding(.vertical, .space8)
+        } else {
+            VStack(spacing: 0) {
+                ForEach(store.shareableUsers) { user in
+                    let isSelected = store.selectedUserIDs.contains(user.id)
+                    Button {
+                        store.send(.userToggled(user.id))
+                    } label: {
+                        HStack(spacing: .space12) {
+                            AvatarView(displayName: user.displayName ?? user.username, size: Constants.userAvatarSize)
+                            VStack(alignment: .leading, spacing: .space2) {
+                                Text(user.displayName ?? user.username)
+                                    .type(.body3(.semibold), style: .primary(for: .label))
+                                    .lineLimit(1)
+                                if let email = user.email {
+                                    Text(email).type(.caption(.regular), style: .secondary).lineLimit(1)
+                                }
+                            }
+                            Spacer(minLength: 0)
+                            (isSelected ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
+                                .resizable().scaledToFit()
+                                .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
+                                .frame(width: Constants.copyIconSize, height: Constants.copyIconSize)
+                        }
+                        .padding(.vertical, .space8)
+                        .contentShape(Rectangle())
+                    }
+                    .buttonStyle(DSHapticButtonStyle())
+                    .hapticFeedback(.selection, trigger: isSelected)
+                }
+            }
         }
     }
 

@@ -52,7 +52,11 @@ struct SharedView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
+            shareList
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.backgroundPrimary)
+            .navigationTitle("Shared")
+            .safeAreaInset(edge: .top, spacing: 0) {
                 DSSegmentedControl(
                     options: SharedFeature.Segment.allCases,
                     selection: segment,
@@ -61,12 +65,8 @@ struct SharedView: View {
                 .padding(.horizontal, Constants.segmentedControlHorizontalPadding)
                 .padding(.top, Constants.segmentedControlTopPadding)
                 .padding(.bottom, Constants.segmentedControlBottomPadding)
-
-                shareList
+                .background(Color.backgroundPrimary)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.backgroundPrimary)
-            .navigationTitle("Shared")
             .overlay {
                 Group {
                     switch overlayState {
@@ -84,8 +84,11 @@ struct SharedView: View {
                 }
                 .id(overlayState)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                // Scoped to the overlay only — an implicit `.animation` on the whole view
+                // caught the segmented-control pill mid-tap and animated it with the wrong
+                // curve.
+                .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
             }
-            .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
             .alert("Delete Share Link?", isPresented: deleteConfirmationBinding) {
                 Button("Delete", role: .destructive) { store.send(.deleteConfirmed) }
                 Button("Cancel", role: .cancel) { store.send(.deleteCancelled) }
@@ -153,11 +156,16 @@ private struct SharedLinkCard: View {
     private enum Metrics {
         static let cornerRadius: CGFloat = .radiusMedium
         static let padding: CGFloat = .space12
-        static let sectionSpacing: CGFloat = .space12
+        static let metaSpacing: CGFloat = .space12
         static let iconSize: CGFloat = .iconMedium
         static let metaIconSize: CGFloat = .iconXSmall
         static let chevronSize: CGFloat = .iconXSmall
         static let actionIconSize: CGFloat = .iconSmall
+        static let actionVerticalPadding: CGFloat = .space8
+        static let expiredBadgeHorizontalPadding: CGFloat = .space8
+        static let expiredBadgeVerticalPadding: CGFloat = .space2
+        static let deletingOpacity: Double = 0.4
+        static let expiredOpacity: Double = 0.6
         static let expandAnimationDuration: Double = 0.2
     }
 
@@ -165,17 +173,24 @@ private struct SharedLinkCard: View {
         VStack(spacing: 0) {
             header
             if isExpanded {
-                VStack(alignment: .leading, spacing: Metrics.sectionSpacing) {
-                    metaRow(IconKit.people, "Shared with", share.sharingType.title)
-                    metaRow(IconKit.lock, "Access", share.accessMode.title)
-                    metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: share.isExpired)
+                VStack(alignment: .leading, spacing: 0) {
+                    VStack(alignment: .leading, spacing: Metrics.metaSpacing) {
+                        metaRow(IconKit.people, "Shared with", share.sharingType.title)
+                        metaRow(IconKit.lock, "Access", share.accessMode.title)
+                        metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: share.isExpired)
+                    }
+                    .padding(.bottom, Metrics.actionVerticalPadding)
 
                     Divider()
 
-                    actionRow(IconKit.link, "Copy file link") { copy(directLinkString, label: "File link copied") }
+                    actionRow(IconKit.link, share.isDirectory ? "Copy folder ZIP link" : "Copy direct file link") {
+                        copy(directLinkString, label: share.isDirectory ? "Folder ZIP link copied" : "Direct file link copied")
+                    }
+                    .disabled(share.isExpired)
                     actionRow(IconKit.copy, "Copy share link") { copy(shareLinkString, label: "Share link copied") }
+                        .disabled(share.isExpired)
 
-                    HStack {
+                    HStack(spacing: .space8) {
                         IconKit.shareLink
                             .resizable().scaledToFit()
                             .foregroundStyle(Color.secondaryDS)
@@ -187,9 +202,12 @@ private struct SharedLinkCard: View {
                                 Text(mode.title).tag(mode)
                             }
                         }
+                        .labelsHidden()
                         .pickerStyle(.menu)
                         .tint(Color.secondaryDS)
                     }
+                    .padding(.vertical, Metrics.actionVerticalPadding)
+                    .disabled(share.isExpired)
 
                     if isByMe {
                         actionRow(IconKit.delete, "Delete", isDestructive: true, action: onDelete)
@@ -200,7 +218,7 @@ private struct SharedLinkCard: View {
             }
         }
         .background(RoundedRectangle(cornerRadius: Metrics.cornerRadius).fill(Color.backgroundSecondary))
-        .opacity(isDeleting ? 0.4 : 1)
+        .opacity(isDeleting ? Metrics.deletingOpacity : (share.isExpired ? Metrics.expiredOpacity : 1))
         .disabled(isDeleting)
         .animation(.easeInOut(duration: Metrics.expandAnimationDuration), value: isExpanded)
     }
@@ -216,9 +234,18 @@ private struct SharedLinkCard: View {
                     .frame(width: Metrics.iconSize, height: Metrics.iconSize)
 
                 VStack(alignment: .leading, spacing: .space2) {
-                    Text(share.displayName)
-                        .type(.body2(.semibold), style: .primary(for: .label))
-                        .lineLimit(1)
+                    HStack(spacing: .space8) {
+                        Text(share.displayName)
+                            .type(.body2(.semibold), style: .primary(for: .label))
+                            .lineLimit(1)
+                        if share.isExpired {
+                            Text("EXPIRED")
+                                .type(.caption(.semibold), style: .error)
+                                .padding(.horizontal, Metrics.expiredBadgeHorizontalPadding)
+                                .padding(.vertical, Metrics.expiredBadgeVerticalPadding)
+                                .background(Capsule().fill(Color.negative.opacity(0.15)))
+                        }
+                    }
                     if isByMe, let path = share.sourcePath, !path.isEmpty {
                         Text(path)
                             .type(.body3(.regular), style: .secondary)
@@ -263,6 +290,7 @@ private struct SharedLinkCard: View {
                 Spacer()
             }
             .foregroundStyle(isDestructive ? Color.negative : Color.accent)
+            .padding(.vertical, Metrics.actionVerticalPadding)
             .contentShape(Rectangle())
         }
         .buttonStyle(DSHapticButtonStyle())
@@ -298,7 +326,7 @@ private struct SharedLinkCard: View {
     private static let expiryFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateStyle = .medium
-        formatter.timeStyle = .none
+        formatter.timeStyle = .short
         return formatter
     }()
 }
