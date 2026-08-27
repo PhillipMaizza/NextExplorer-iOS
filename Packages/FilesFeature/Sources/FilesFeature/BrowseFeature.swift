@@ -335,8 +335,8 @@ public struct BrowseFeature {
             case let .searchResultsResponse(.failure(error)):
                 state.isSearchingEverywhere = false
                 state.searchResults = []
-                // Surface it — otherwise a network blip during an "Everywhere" search is
-                // indistinguishable from a genuine no-results.
+                // Surface it, otherwise a network blip during an "Everywhere" search is
+                // indistinguishable from a genuine empty result.
                 state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : "Couldn't search. Check your connection and try again."
                 return .none
 
@@ -717,7 +717,7 @@ public struct BrowseFeature {
         let itemID = item.id
         return .run { send in
             // Animated so the row visibly slides out of the list rather than popping,
-            // since removal happens on the server round-trip, not the confirm tap itself.
+            // since removal happens on the server round trip, not the confirm tap itself.
             await send(.deleteResponse(await apiResult {
                 try await filesClient.deleteItems(serverURL, [item])
                 return DeleteResult(itemID: itemID)
@@ -769,7 +769,7 @@ public struct BrowseFeature {
         let itemIDs = itemsToDelete.map(\.id)
         return .run { send in
             // Animated so the rows visibly slide out of the list rather than popping,
-            // since removal happens on the server round-trip, not the confirm tap itself.
+            // since removal happens on the server round trip, not the confirm tap itself.
             await send(.bulkDeleteResponse(await apiResult {
                 try await filesClient.deleteItems(serverURL, itemsToDelete)
                 return BulkDeleteResult(itemIDs: itemIDs)
@@ -967,7 +967,7 @@ public struct BrowseFeature {
 
 }
 
-/// An item that sorts folders-first then by name — `FileItem` and `SearchResultItem`.
+/// An item that sorts folders first then by name: `FileItem` and `SearchResultItem`.
 protocol DirectoryFirstSortable {
     var name: String { get }
     var isDirectory: Bool { get }

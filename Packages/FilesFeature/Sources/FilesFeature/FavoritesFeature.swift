@@ -31,7 +31,7 @@ public struct FavoritesFeature {
         public var favorites: IdentifiedArrayOf<Favorite> = []
         public var isLoading = false
         public var errorMessage: String?
-        /// A failed remove (single or bulk) — surfaced as a toast rather than the list-level
+        /// A failed remove, single or bulk, surfaced as a toast rather than the list level
         /// `errorMessage`, which is only shown when the list is empty.
         public var actionErrorMessage: String?
         public var searchQuery = ""

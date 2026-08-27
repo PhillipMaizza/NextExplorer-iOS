@@ -5,24 +5,28 @@ import FilesClient
 import Foundation
 import SwiftUI
 
-/// Admin-only user management, reachable from Settings when the signed-in user has the
-/// `admin` role. Mirrors the web client's `AdminUsers` / `UserList` / `UserDetail` screens:
-/// a list of every user, then a detail screen with Profile, Security and (when the server's
-/// `USER_VOLUMES` feature is on) Volumes tabs.
+/// Admin only user management, reachable from Settings for a signed in admin. Mirrors the web
+/// client's `AdminUsers` / `UserList` / `UserDetail` screens: a list of every user, then a
+/// detail screen with Profile, Security and (with the `USER_VOLUMES` feature) Volumes tabs.
 ///
-/// Backed by the admin endpoints under `/api/users` — verified against
+/// Backed by the admin endpoints under `/api/users`, verified against
 /// `backend/src/routes/users.js` and `backend/src/routes/userVolumes.js`. The server rejects
-/// demoting an admin (`PATCH` with `admin` removed → 400 unconditionally), so there is no
-/// "revoke admin" path here at all — only granting.
+/// demoting an admin (a `PATCH` dropping `admin` always 400s), so this screen only grants.
 @Reducer
 public struct UserManagementFeature {
     private enum CancelID: Hashable {
-        /// The user list / feature-flag load — a new load cancels any in-flight one so a slow
-        /// earlier response can't overwrite a fresher list.
+        /// User list and feature flag load. A new load supersedes any in flight one.
         case load
-        /// Per-user volume loads — keyed by user id so switching users mid-fetch can't land
-        /// the previous user's volumes on the one now on screen.
+        /// Per user volume loads, so switching users mid fetch can't land stale volumes.
         case volumes
+        /// Profile save, grant admin and delete for the open detail user, cancelled with the detail.
+        case userMutation
+        /// Volume assign, update and remove for the open detail user, cancelled with the detail.
+        case volumeMutation
+        /// Create user sheet submission.
+        case createUser
+        /// Set password sheet submission.
+        case setPassword
     }
 
     public enum SortOption: String, Hashable, Sendable, CaseIterable {
@@ -70,7 +74,7 @@ public struct UserManagementFeature {
         public var isSubmitting = false
         public var errorMessage: String?
 
-        /// Inline field errors, shown only once the user has typed something — an empty field
+        /// Inline field errors, shown only once the user has typed something. An empty field
         /// is "not yet filled in", not "wrong".
         var emailError: String? {
             email.trimmed.isEmpty || CredentialRules.isEmailShaped(email) ? nil : "Enter a valid email address."
@@ -87,7 +91,7 @@ public struct UserManagementFeature {
         }
     }
 
-    /// Local state for the "Set / Reset Password" sheet.
+    /// Local state for the set or reset password sheet.
     public struct PasswordSheetState: Equatable, Sendable {
         public var userID: String
         public var userLabel: String
@@ -104,7 +108,7 @@ public struct UserManagementFeature {
         var isSubmitEnabled: Bool { CredentialRules.isPasswordLongEnough(password) && !isSubmitting }
     }
 
-    /// Local state for the "Assign / Edit Volume" sheet. `editingVolumeID == nil` means add.
+    /// Local state for the Assign or Edit Volume sheet. `editingVolumeID == nil` means add.
     public struct VolumeSheetState: Equatable, Sendable {
         public var userID: String
         public var editingVolumeID: String?
@@ -132,16 +136,16 @@ public struct UserManagementFeature {
         public var sortOption: SortOption = .type
         public var sortDirection: BrowseFeature.SortDirection = .ascending
         public var isUserVolumesEnabled = false
-        /// Whether `GET /api/features` has answered at least once. The flag load is best-effort
-        /// (a blip during the initial load shouldn't block the user list), so this drives a
-        /// one-shot retry when a detail screen is opened.
+        /// Whether `GET /api/features` has answered at least once. The flag load is best effort
+        /// and shouldn't block the user list, so a failed one is retried once when a detail
+        /// screen opens.
         public var hasLoadedFeatures = false
 
         public var detailUserID: User.ID?
         public var detailTab: DetailTab = .profile
         public var detailErrorMessage: String?
 
-        // Profile form (seeded from the selected user each time detail opens).
+        // Profile form, seeded from the selected user each time detail opens.
         public var editDisplayName = ""
         public var editUsername = ""
         public var editEmail = ""
@@ -151,12 +155,12 @@ public struct UserManagementFeature {
         // Volumes tab.
         public var volumes: IdentifiedArrayOf<UserVolume> = []
         public var isLoadingVolumes = false
-        /// Whether the current detail user's volumes have been fetched — stops a user with
-        /// genuinely zero volumes from re-hitting the endpoint on every tab switch.
+        /// Whether the current detail user's volumes have been fetched. Stops a user with
+        /// genuinely zero volumes from hitting the endpoint again on every tab switch.
         public var hasLoadedVolumesForDetail = false
         public var volumeToRemove: UserVolume?
 
-        // Confirmations / sheets.
+        // Confirmations and sheets.
         public var userToDelete: User?
         public var createSheet: CreateUserState?
         public var passwordSheet: PasswordSheetState?
@@ -178,8 +182,8 @@ public struct UserManagementFeature {
             detailUserID == currentUserID
         }
 
-        /// Substring filter on display name / username / email, then sorted per the sort
-        /// sheet. `.type` puts admins first (then by name); the direction flips the whole list.
+        /// Substring filter on display name, username and email, then sorted per the sort
+        /// sheet. `.type` puts admins first, then by name; the direction flips the whole list.
         public var displayedUsers: [User] {
             let query = searchQuery.trimmed.lowercased()
             let base = query.isEmpty ? Array(users) : users.filter { user in
@@ -215,15 +219,15 @@ public struct UserManagementFeature {
                 || editEmail != (user.email ?? "")
         }
 
-        /// Inline error for the Profile email field. The server requires a non-empty email and
-        /// 409s on a duplicate; shape is a client-only nicety.
+        /// Inline error for the Profile email field. The server requires a non empty email and
+        /// 409s on a duplicate; the shape check is a client side nicety.
         public var profileEmailError: String? {
             if editEmail.trimmed.isEmpty { return "Email is required." }
             return CredentialRules.isEmailShaped(editEmail) ? nil : "Enter a valid email address."
         }
 
-        /// The server stores a blank username as `null`, which then can't be decoded back — so
-        /// the form refuses to submit an empty one.
+        /// The server stores a blank username as `null`, which can't decode back, so the form
+        /// refuses to submit an empty one.
         public var profileUsernameError: String? {
             editUsername.trimmed.isEmpty ? "Username is required." : nil
         }
@@ -311,13 +315,13 @@ public struct UserManagementFeature {
                 state.errorMessage = nil
                 state.users = IdentifiedArray(uniqueElements: users)
                 if let user = state.detailUser {
-                    // Don't stomp edits the admin has typed but not saved (a background
-                    // reload — e.g. right after setting a password — would otherwise wipe them).
+                    // Don't stomp edits the admin has typed but not saved; a background reload
+                    // (e.g. right after setting a password) would otherwise wipe them.
                     if !state.isProfileDirty {
                         seedProfileForm(&state, from: user)
                     }
                 } else if state.detailUserID != nil {
-                    // The open user was removed elsewhere — close the detail.
+                    // The open user was removed elsewhere, so close the detail.
                     state.detailUserID = nil
                 }
                 return .none
@@ -353,7 +357,7 @@ public struct UserManagementFeature {
                 state.hasLoadedVolumesForDetail = false
                 seedProfileForm(&state, from: user)
                 var effects: [Effect<Action>] = []
-                // Recover from a failed initial feature-flag load: retry once here so the
+                // Recover from a failed initial feature flag load: retry once here so the
                 // Volumes tab can still turn up on a detail screen.
                 if !state.hasLoadedFeatures {
                     let serverURL = state.serverURL
@@ -372,7 +376,14 @@ public struct UserManagementFeature {
             case .detailDismissed:
                 state.detailUserID = nil
                 state.detailErrorMessage = nil
-                return .none
+                state.isSavingProfile = false
+                state.isUpdatingRoles = false
+                state.isLoadingVolumes = false
+                return .merge(
+                    .cancel(id: CancelID.userMutation),
+                    .cancel(id: CancelID.volumeMutation),
+                    .cancel(id: CancelID.volumes)
+                )
 
             case let .detailTabChanged(tab):
                 state.detailTab = tab
@@ -421,6 +432,7 @@ public struct UserManagementFeature {
                         try await filesClient.updateUser(serverURL, id, request)
                     }))
                 }
+                .cancellable(id: CancelID.userMutation, cancelInFlight: true)
 
             case let .profileResponse(.success(user)):
                 state.isSavingProfile = false
@@ -447,6 +459,7 @@ public struct UserManagementFeature {
                         try await filesClient.updateUser(serverURL, id, request)
                     }))
                 }
+                .cancellable(id: CancelID.userMutation, cancelInFlight: true)
 
             case let .rolesResponse(.success(user)):
                 state.isUpdatingRoles = false
@@ -478,6 +491,7 @@ public struct UserManagementFeature {
                         return true
                     }))
                 }
+                .cancellable(id: CancelID.userMutation, cancelInFlight: true)
 
             case let .deleteUserResponse(id, .success):
                 state.users.remove(id: id)
@@ -487,7 +501,7 @@ public struct UserManagementFeature {
 
             case let .deleteUserResponse(_, .failure(error)):
                 // Delete is only reachable from the detail screen's danger zone, so surface it
-                // there; the list-level `errorMessage` is for load failures.
+                // there; the list level `errorMessage` is for load failures.
                 state.detailErrorMessage = error.userMessage
                 return .none
 
@@ -532,6 +546,7 @@ public struct UserManagementFeature {
                         try await filesClient.createUser(serverURL, request)
                     }))
                 }
+                .cancellable(id: CancelID.createUser, cancelInFlight: true)
 
             case let .createResponse(.success(user)):
                 state.createSheet = nil
@@ -575,6 +590,7 @@ public struct UserManagementFeature {
                         return true
                     }))
                 }
+                .cancellable(id: CancelID.setPassword, cancelInFlight: true)
 
             case .passwordResponse(.success):
                 state.passwordSheet = nil
@@ -641,6 +657,7 @@ public struct UserManagementFeature {
                         )
                     }))
                 }
+                .cancellable(id: CancelID.volumeMutation, cancelInFlight: true)
 
             case let .volumeResponse(.success(volume)):
                 state.volumeSheet = nil
@@ -672,6 +689,7 @@ public struct UserManagementFeature {
                         return true
                     }))
                 }
+                .cancellable(id: CancelID.volumeMutation, cancelInFlight: true)
 
             case let .removeVolumeResponse(id, .success):
                 state.volumes.remove(id: id)
@@ -689,15 +707,15 @@ public struct UserManagementFeature {
         }
     }
 
-    // MARK: - Effects
+    // MARK: Effects
 
     private func loadEverything(_ state: inout State) -> Effect<Action> {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         state.isLoading = state.users.isEmpty
         state.errorMessage = nil
-        // Sequential, not `.merge` — the users list is the payload; the feature flag is a
-        // best-effort nicety that only gates a tab. Ordering also keeps the tests deterministic.
+        // Sequential, not `.merge`: the users list is the payload, the feature flag is a best
+        // effort nicety that only gates a tab. Ordering also keeps the tests deterministic.
         return .run { send in
             await send(.usersResponse(await apiResult {
                 try await filesClient.listUsers(serverURL)
@@ -743,8 +761,8 @@ private extension String {
     var trimmed: String { trimmingCharacters(in: .whitespacesAndNewlines) }
 }
 
-/// The name the list sorts and groups by — the display name if the server has one, else the
-/// username (which is always present).
+/// The name the list sorts and groups by: the display name if the server has one, else the
+/// username, which is always present.
 private func sortName(_ user: User) -> String {
     user.displayName ?? user.username
 }

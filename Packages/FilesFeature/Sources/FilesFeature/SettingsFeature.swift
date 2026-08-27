@@ -17,8 +17,8 @@ public struct SettingsFeature {
         public var isSigningOut = false
         public var isConfirmingSignOut = false
         /// Held by the feature, not created inline in the view: a `Store` built in a
-        /// `NavigationLink`'s destination builder is torn down and rebuilt (empty) on any
-        /// parent re-render — e.g. returning from the background — which is what left the
+        /// `NavigationLink`'s destination builder is torn down and rebuilt empty on any
+        /// parent re render, such as returning from the background, which is what left the
         /// user list blank.
         @Presents public var userManagement: UserManagementFeature.State?
         @Presents public var changePassword: ChangePasswordFeature.State?
