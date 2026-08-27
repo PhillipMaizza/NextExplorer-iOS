@@ -1,8 +1,8 @@
+import CoreModels
 import DesignSystem
 import SwiftUI
 
 private enum Constants {
-    static let closeButtonInset: CGFloat = .space16
     static let contentSpacing: CGFloat = .space16
 }
 
@@ -20,28 +20,18 @@ struct FilePreviewContainerView: View {
     var onDelete: (() -> Void)?
 
     var body: some View {
-        content
-            .background(Color.backgroundPrimary.ignoresSafeArea())
-            .overlay(alignment: .topTrailing) {
-                DSCloseButton(action: onDismiss)
-                    .padding(Constants.closeButtonInset)
-            }
-            .overlay(alignment: .bottomTrailing) {
-                PreviewActionBar {
-                    // order: system share | create link | download | delete
-                    SystemShareButton(localFileURL: fileURL)
-                    if let onShareLink {
-                        PreviewChipButton(icon: IconKit.shareLink, action: onShareLink)
-                    }
-                    if let onDownload {
-                        PreviewChipButton(icon: IconKit.download, action: onDownload)
-                    }
-                    if let onDelete {
-                        PreviewChipButton(icon: IconKit.delete, tint: .negative, action: onDelete)
-                    }
-                }
-                .padding(Constants.closeButtonInset)
-            }
+        NavigationStack {
+            content
+                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .previewChrome(
+                    title: fileURL?.lastPathComponent,
+                    systemShare: .local(fileURL),
+                    onShareLink: onShareLink,
+                    onDownload: onDownload,
+                    onDelete: onDelete,
+                    onClose: onDismiss
+                )
+        }
     }
 
     @ViewBuilder
