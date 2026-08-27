@@ -23,7 +23,7 @@ struct SettingsView: View {
 
     /// One toast host for the whole Settings navigation stack. User Management raises success
     /// messages from two levels down (the list and the pushed user detail); hosting the toast
-    /// here — above every `.navigationDestination` — is the only spot a bottom overlay isn't
+    /// here, above every `.navigationDestination`, is the only spot a bottom overlay isn't
     /// occluded by a pushed screen, so those two views don't each need their own.
     @State private var userManagementToast: DSToastMessage?
 
@@ -407,8 +407,8 @@ struct SettingsView: View {
         .listRowBackground(Color.backgroundSecondary)
     }
 
-    /// Self-service password change (`POST /api/auth/password`). No display-name editing —
-    /// the backend has no self-service profile endpoint, so an admin changes it from User
+    /// Self service password change (`POST /api/auth/password`). No profile editing here: the
+    /// backend has no self service profile endpoint, so an admin changes that from User
     /// Management instead.
     private var changePasswordRow: some View {
         Button {
@@ -436,7 +436,7 @@ struct SettingsView: View {
         .disabled(store.isSigningOut)
     }
 
-    /// Full-width row, leading-aligned like the rest of the card, error-red.
+    /// Full width row, leading aligned like the rest of the card, in error red.
     private var signOutRow: some View {
         Button(role: .destructive) {
             store.send(.signOutButtonTapped)

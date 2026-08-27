@@ -7,10 +7,10 @@ private enum Constants {
     static let retryTopPadding: CGFloat = .space8
 }
 
-/// The icon-plus-message placeholder shown across the app for loading-error / no-items /
-/// no-search-results states. Pass `retry` for the error case — an empty error list often
-/// can't be pulled to refresh, so it needs its own button. `BrowseContentView`'s "no search
-/// results" state composes this with its own trailing "Search everywhere" content instead.
+/// The icon and message placeholder shown across the app for load error, empty and no
+/// search results states. Pass `retry` for the error case, since an empty error list often
+/// can't be pulled to refresh and needs its own button. `BrowseContentView`'s no search
+/// results state composes this with its own trailing "Search everywhere" content instead.
 struct EmptyStateView: View {
     let icon: Image
     let message: String

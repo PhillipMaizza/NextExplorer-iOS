@@ -1,8 +1,8 @@
 import Foundation
 
 /// The subset of `GET /api/features` this app consumes. Every flag defaults to `false`, so a
-/// server that predates a flag — or omits its section — reads as "feature off". Confirmed
-/// against `backend/src/routes/features.js`, where each flag is a `{ enabled: Bool }` object.
+/// server that omits a section reads as "feature off". Verified against
+/// `backend/src/routes/features.js`, where each flag is a `{ enabled: Bool }` object.
 public struct ServerFeatures: Equatable, Sendable, Decodable {
     public let isUserVolumesEnabled: Bool
 

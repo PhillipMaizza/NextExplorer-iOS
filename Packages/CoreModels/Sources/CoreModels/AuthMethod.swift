@@ -1,8 +1,8 @@
 import Foundation
 
-/// One way a user can authenticate, as returned inside the admin `GET /api/users` list
-/// (`authMethods: [{ method, provider }]`) — confirmed against
-/// `backend/src/services/users/management.js`'s `listUsers`.
+/// How a user can authenticate, from the admin `GET /api/users` list
+/// (`authMethods: [{ method, provider }]`). Verified against
+/// `backend/src/services/users/management.js` `listUsers`.
 public struct AuthMethod: Codable, Equatable, Sendable, Hashable {
     public let method: String
     public let provider: String?

@@ -57,7 +57,7 @@ public struct SharedFeature {
         public var withMe: IdentifiedArrayOf<Share> = []
         public var isLoading = false
         public var errorMessage: String?
-        /// A failed delete — shown as a toast, not the list-level `errorMessage`.
+        /// A failed delete, shown as a toast, not the list level `errorMessage`.
         public var actionErrorMessage: String?
         /// Each segment loads once on first view; switching back doesn't re-hit the server
         /// unless the user pulls to refresh.
@@ -71,9 +71,9 @@ public struct SharedFeature {
         /// user-specific share can name its recipients instead of just "Specific users".
         public var userNames: [String: String] = [:]
         /// Ticked on a timer (`expiryTick`) so a link that expires while the tab is open
-        /// slides into the "Expired" section on its own. Starts at `.distantPast` — nothing
+        /// slides into the "Expired" section on its own. Starts at `.distantPast`, so nothing
         /// reads as expired until the view's `TimelineView` sends the first real `now`, which
-        /// it does immediately on appear. A non-`Date()` default keeps `State()` deterministic.
+        /// it does immediately on appear. A non `Date()` default keeps `State()` deterministic.
         public var now: Date = .distantPast
         @Shared(.inMemory(SharedFeature.revisionKey)) public var externalRevision = 0
 
