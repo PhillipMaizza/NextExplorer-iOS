@@ -6,9 +6,6 @@ import SwiftUI
 
 private enum Constants {
     static let statusSpacing: CGFloat = .space16
-    static let toolbarSpacing: CGFloat = .space16
-    static let toolbarHorizontalPadding: CGFloat = .space16
-    static let toolbarVerticalPadding: CGFloat = .space12
     /// Vertical drag distance past which releasing dismisses the gallery.
     static let dismissDistanceThreshold: CGFloat = 120
     /// Projected fling distance that dismisses even on a short, fast flick.
@@ -40,6 +37,11 @@ struct ImageGalleryView: View {
     let items: [FileItem]
     let serverURL: URL
     let onDismiss: () -> Void
+    /// Toolbar actions on the current image — routed back to `BrowseFeature` by the caller.
+    /// `nil` hides the button (e.g. no delete permission).
+    private let onShare: ((FileItem) -> Void)?
+    private let onDownload: ((FileItem) -> Void)?
+    private let onDelete: ((FileItem) -> Void)?
 
     @State private var selection: String
     /// Live vertical translation of an in-progress dismiss drag (0 when idle). Drives the
@@ -49,15 +51,30 @@ struct ImageGalleryView: View {
     /// it flies off, so the fullScreenCover's own slide-out is never seen.
     @State private var isDismissing = false
 
-    init(items: [FileItem], initialItem: FileItem, serverURL: URL, onDismiss: @escaping () -> Void) {
+    init(
+        items: [FileItem],
+        initialItem: FileItem,
+        serverURL: URL,
+        onDismiss: @escaping () -> Void,
+        onShare: ((FileItem) -> Void)? = nil,
+        onDownload: ((FileItem) -> Void)? = nil,
+        onDelete: ((FileItem) -> Void)? = nil
+    ) {
         self.items = items
         self.serverURL = serverURL
         self.onDismiss = onDismiss
+        self.onShare = onShare
+        self.onDownload = onDownload
+        self.onDelete = onDelete
         self._selection = State(initialValue: initialItem.id)
     }
 
+    private var currentItem: FileItem? {
+        items.first { $0.id == selection }
+    }
+
     private var currentName: String {
-        items.first { $0.id == selection }?.name ?? ""
+        currentItem?.name ?? ""
     }
 
     private var dragProgress: CGFloat {
@@ -79,13 +96,15 @@ struct ImageGalleryView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.black
-                .opacity(backgroundOpacity)
-                .ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                Color.black
+                    .opacity(backgroundOpacity)
+                    .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                galleryToolbar
+                // Bleeds under the status bar / transparent nav bar at the top, but keeps its
+                // bottom inset so the page dots ride above the toolbar instead of tucking
+                // behind it.
                 TabView(selection: $selection) {
                     ForEach(items) { item in
                         ImageGalleryPage(item: item, serverURL: serverURL)
@@ -93,14 +112,30 @@ struct ImageGalleryView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: items.count > 1 ? .always : .never))
+                .ignoresSafeArea(.container, edges: .top)
+                .scaleEffect(dragScale)
+                .offset(y: dragOffset)
+                .opacity(contentOpacity)
             }
-            .scaleEffect(dragScale)
-            .offset(y: dragOffset)
-            .opacity(contentOpacity)
+            .simultaneousGesture(dismissDrag)
+            .previewChrome(
+                title: currentName,
+                systemShare: currentItem.map { .remote($0, serverURL: serverURL) } ?? .unavailable,
+                onShareLink: currentItemAction(onShare),
+                onDownload: currentItemAction(onDownload),
+                onDelete: currentItemAction(onDelete),
+                onClose: onDismiss
+            )
         }
-        .simultaneousGesture(dismissDrag)
         .onAppear { OrientationLock.shared.unlock() }
         .onDisappear { OrientationLock.shared.lock() }
+    }
+
+    /// Binds one of the caller's `(FileItem) -> Void` toolbar callbacks to whichever image is
+    /// currently on screen, or `nil` when the caller didn't supply that action.
+    private func currentItemAction(_ action: ((FileItem) -> Void)?) -> (() -> Void)? {
+        guard let action else { return nil }
+        return { currentItem.map(action) }
     }
 
     /// Vertical swipe (either direction) to dismiss, like the iOS Photos viewer — runs
@@ -143,25 +178,6 @@ struct ImageGalleryView: View {
             }
     }
 
-    private var galleryToolbar: some View {
-        HStack(spacing: Constants.toolbarSpacing) {
-            DSCloseButton(action: onDismiss)
-
-            // Fixed white, not `Color.primaryDS` — unlike the close button (which gets a
-            // frosted material chip that adapts on its own), this label sits directly on the
-            // always-black gallery background, so a theme-adaptive color would go
-            // near-invisible in light mode.
-            Text(currentName)
-                .type(.body1(.semibold))
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .truncationMode(.middle)
-
-            Spacer()
-        }
-        .padding(.horizontal, Constants.toolbarHorizontalPadding)
-        .padding(.vertical, Constants.toolbarVerticalPadding)
-    }
 }
 
 private struct ImageGalleryPage: View {
