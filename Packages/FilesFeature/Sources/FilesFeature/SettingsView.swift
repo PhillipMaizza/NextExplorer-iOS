@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -284,11 +285,11 @@ struct SettingsView: View {
             // popover anchored to some ambient source view on the `.pad` idiom (this app
             // also targets iPad) rather than a full-width bottom sheet. `.alert` is always
             // a centered modal regardless of idiom, so there's no anchor to get wrong.
-            .alert("Sign Out?", isPresented: isConfirmingSignOut) {
-                Button("Log Out", role: .destructive) { store.send(.confirmSignOutTapped) }
-                Button("Cancel", role: .cancel) { store.send(.cancelSignOutTapped) }
+            .alert(L10n.Settings.SignOut.alertTitle, isPresented: isConfirmingSignOut) {
+                Button(L10n.Common.logOut, role: .destructive) { store.send(.confirmSignOutTapped) }
+                Button(L10n.Common.cancel, role: .cancel) { store.send(.cancelSignOutTapped) }
             } message: {
-                Text("You'll need to sign in again to access your files.")
+                Text(L10n.Settings.SignOut.message)
             }
             .alert("Remove All Downloads?", isPresented: isConfirmingRemoveAllDownloads) {
                 Button("Remove All", role: .destructive) { store.send(.removeAllDownloadsConfirmed) }
