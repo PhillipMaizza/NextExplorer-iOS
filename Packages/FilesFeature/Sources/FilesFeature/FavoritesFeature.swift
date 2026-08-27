@@ -205,7 +205,7 @@ public struct FavoritesFeature {
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
-                state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: item.id, title: item.name))
+                state.path.append(BrowseNavigation.screen(for: item, serverURL: state.serverURL))
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.openPath(path, title)))):
@@ -218,9 +218,7 @@ public struct FavoritesFeature {
                 return .send(.delegate(.openDownloadsTapped))
 
             case let .navigateToDirectory(path, title):
-                state.path.removeAll()
-                guard !path.isEmpty else { return .none }
-                state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: path, title: title))
+                BrowseNavigation.jump(to: path, title: title, serverURL: state.serverURL, stack: &state.path)
                 return .none
 
             case .syncPathStack:
