@@ -91,7 +91,7 @@ struct StreamingPreviewView: View {
                 .opacity(backgroundOpacity)
                 .ignoresSafeArea()
 
-            ZStack(alignment: .topTrailing) {
+            ZStack {
                 VideoPlayer(player: player)
                     .ignoresSafeArea()
 
@@ -106,15 +106,18 @@ struct StreamingPreviewView: View {
                         .ignoresSafeArea()
                         .allowsHitTesting(false)
                 }
-
+            }
+            .overlay(alignment: .topLeading) {
+                DSCloseButton(action: onDismiss)
+                    .padding(Constants.closeButtonInset)
+            }
+            .overlay(alignment: .bottomTrailing) {
                 HStack(spacing: Constants.closeButtonInset) {
-                    DSCloseButton(action: onDismiss)
-                    Spacer()
-                    if let onShare { mediaToolbarButton(IconKit.shareLink, action: onShare) }
-                    if let onDownload { mediaToolbarButton(IconKit.download, action: onDownload) }
-                    if let onDelete { mediaToolbarButton(IconKit.delete, tint: Color.negative, action: onDelete) }
+                    SystemShareButton(item: item, serverURL: serverURL)
+                    if let onShare { PreviewChipButton(icon: IconKit.shareLink, action: onShare) }
+                    if let onDownload { PreviewChipButton(icon: IconKit.download, action: onDownload) }
+                    if let onDelete { PreviewChipButton(icon: IconKit.delete, tint: .negative, action: onDelete) }
                 }
-                .frame(maxWidth: .infinity)
                 .padding(Constants.closeButtonInset)
             }
             .scaleEffect(dragScale)
@@ -144,19 +147,6 @@ struct StreamingPreviewView: View {
                 try? AVAudioSession.sharedInstance().setCategory(.ambient)
             }
         }
-    }
-
-    private func mediaToolbarButton(_ icon: Image, tint: Color = .white, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            icon
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(tint)
-                .frame(width: .iconXSmall, height: .iconXSmall)
-                .padding(.space8)
-                .background(Circle().fill(.ultraThinMaterial))
-        }
-        .buttonStyle(DSHapticButtonStyle())
     }
 
     /// Vertical swipe (either direction) to dismiss, like the iOS Photos viewer — runs

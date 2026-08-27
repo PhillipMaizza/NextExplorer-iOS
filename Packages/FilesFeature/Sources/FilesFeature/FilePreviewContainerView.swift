@@ -3,6 +3,7 @@ import SwiftUI
 
 private enum Constants {
     static let closeButtonInset: CGFloat = .space16
+    static let actionSpacing: CGFloat = .space16
     static let contentSpacing: CGFloat = .space16
 }
 
@@ -15,37 +16,33 @@ struct FilePreviewContainerView: View {
     let fileURL: URL?
     let errorMessage: String?
     let onDismiss: () -> Void
-    var onShare: (() -> Void)?
+    var onShareLink: (() -> Void)?
     var onDownload: (() -> Void)?
     var onDelete: (() -> Void)?
 
     var body: some View {
-        ZStack(alignment: .top) {
-            content
-
-            HStack(spacing: Constants.closeButtonInset) {
+        content
+            .background(Color.backgroundPrimary.ignoresSafeArea())
+            .overlay(alignment: .topLeading) {
                 DSCloseButton(action: onDismiss)
-                Spacer()
-                if let onShare { previewToolbarButton(IconKit.shareLink, action: onShare) }
-                if let onDownload { previewToolbarButton(IconKit.download, action: onDownload) }
-                if let onDelete { previewToolbarButton(IconKit.delete, tint: Color.negative, action: onDelete) }
+                    .padding(Constants.closeButtonInset)
             }
-            .padding(Constants.closeButtonInset)
-        }
-        .background(Color.backgroundPrimary.ignoresSafeArea())
-    }
-
-    private func previewToolbarButton(_ icon: Image, tint: Color = .primaryDS, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            icon
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(tint)
-                .frame(width: .iconXSmall, height: .iconXSmall)
-                .padding(.space8)
-                .background(Circle().fill(.ultraThinMaterial))
-        }
-        .buttonStyle(DSHapticButtonStyle())
+            .overlay(alignment: .bottomTrailing) {
+                HStack(spacing: Constants.actionSpacing) {
+                    SystemShareButton(localFileURL: fileURL, tint: .primaryDS)
+                    if let onShareLink {
+                        PreviewChipButton(icon: IconKit.shareLink, tint: .primaryDS, action: onShareLink)
+                    }
+                    // order: system share | create link | download | delete
+                    if let onDownload {
+                        PreviewChipButton(icon: IconKit.download, tint: .primaryDS, action: onDownload)
+                    }
+                    if let onDelete {
+                        PreviewChipButton(icon: IconKit.delete, tint: .negative, action: onDelete)
+                    }
+                }
+                .padding(Constants.closeButtonInset)
+            }
     }
 
     @ViewBuilder
