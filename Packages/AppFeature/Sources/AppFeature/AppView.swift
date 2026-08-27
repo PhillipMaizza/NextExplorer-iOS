@@ -40,6 +40,10 @@ public struct AppView: View {
         .task {
             store.send(.onAppear)
         }
+        .onChange(of: store.sessionDidExpire) { _, didExpire in
+            guard didExpire else { return }
+            store.send(.sessionExpiryDetected)
+        }
     }
 }
 #Preview {
