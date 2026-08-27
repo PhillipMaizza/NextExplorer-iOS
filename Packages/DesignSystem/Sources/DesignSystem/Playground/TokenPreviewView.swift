@@ -80,7 +80,7 @@ private struct ButtonPreviewView: View {
                 IconKit.checkmark.foregroundStyle(.white)
             }
             DSAnimatedButton(phase: 3, isCollapsed: true, style: .failure) {} content: {
-                IconKit.xmark.foregroundStyle(.white)
+                IconKit.close.foregroundStyle(.white)
             }
         }
         .padding(.space16)

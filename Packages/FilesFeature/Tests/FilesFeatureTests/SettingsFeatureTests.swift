@@ -26,15 +26,22 @@ struct SettingsFeatureTests {
             SettingsFeature()
         } withDependencies: {
             $0.filesClient.fetchPreferences = { _ in UserPreferences(showHiddenFiles: true, showThumbnails: false) }
+            $0.localDownloadStore.list = { [] }
+            $0.previewCacheStore.size = { 0 }
         }
+        // `onAppear` merges three independent effects (preferences fetch, downloads check,
+        // cache-size check) — their completion order isn't guaranteed, so this asserts final
+        // state rather than a specific receive order.
+        store.exhaustivity = .off
 
         await store.send(.onAppear) {
             $0.isLoadingPreferences = true
         }
-        await store.receive(\.preferencesResponse.success) { state in
-            state.isLoadingPreferences = false
-            state.$preferences.withLock { prefs in prefs = UserPreferences(showHiddenFiles: true, showThumbnails: false) }
-        }
+        await store.skipReceivedActions()
+
+        #expect(store.state.isLoadingPreferences == false)
+        #expect(store.state.hasDownloads == false)
+        #expect(store.state.preferences == UserPreferences(showHiddenFiles: true, showThumbnails: false))
     }
 
     @Test
@@ -43,14 +50,18 @@ struct SettingsFeatureTests {
             SettingsFeature()
         } withDependencies: {
             $0.filesClient.fetchPreferences = { _ in throw FilesClientError.sessionExpired }
+            $0.localDownloadStore.list = { [] }
+            $0.previewCacheStore.size = { 0 }
         }
+        store.exhaustivity = .off
 
         await store.send(.onAppear) {
             $0.isLoadingPreferences = true
         }
-        await store.receive(\.preferencesResponse.failure) {
-            $0.isLoadingPreferences = false
-        }
+        await store.skipReceivedActions()
+
+        #expect(store.state.isLoadingPreferences == false)
+        #expect(store.state.hasDownloads == false)
     }
 
     @Test
@@ -60,11 +71,21 @@ struct SettingsFeatureTests {
 
         let store = TestStore(initialState: state) {
             SettingsFeature()
+        } withDependencies: {
+            $0.localDownloadStore.list = { [] }
+            $0.previewCacheStore.size = { 0 }
         }
-
         // No `filesClient` dependency overridden: a network call here would crash with
-        // "Unimplemented", proving the guard really does skip a concurrent fetch.
+        // "Unimplemented", proving the guard really does skip a concurrent preferences fetch
+        // (the downloads/cache checks aren't guarded the same way, since they're cheap and
+        // local — their receive order isn't guaranteed, so assert final state instead).
+        store.exhaustivity = .off
+
         await store.send(.onAppear)
+        await store.skipReceivedActions()
+
+        #expect(store.state.hasDownloads == false)
+        #expect(store.state.cacheSize == 0)
     }
 
     @Test
@@ -167,5 +188,197 @@ struct SettingsFeatureTests {
             $0.isConfirmingSignOut = false
         }
         await store.receive(\.delegate)
+    }
+
+    @Test
+    func removeAllDownloadsTappedShowsTheConfirmationAlert() async {
+        let store = TestStore(initialState: makeState()) {
+            SettingsFeature()
+        }
+
+        await store.send(.removeAllDownloadsTapped) {
+            $0.removeAllDownloadsConfirmationIsPresented = true
+        }
+    }
+
+    @Test
+    func removeAllDownloadsCancelledHidesTheConfirmationAlert() async {
+        var state = makeState()
+        state.removeAllDownloadsConfirmationIsPresented = true
+
+        let store = TestStore(initialState: state) {
+            SettingsFeature()
+        }
+
+        await store.send(.removeAllDownloadsCancelled) {
+            $0.removeAllDownloadsConfirmationIsPresented = false
+        }
+    }
+
+    @Test
+    func removeAllDownloadsConfirmedDeletesEveryDownloadAndDelegatesUpward() async {
+        var state = makeState()
+        state.removeAllDownloadsConfirmationIsPresented = true
+        state.downloadsSize = 30
+        let downloads = [
+            LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/a.pdf"), fileName: "a.pdf", location: .documents, size: 10, modifiedDate: Date()),
+            LocalDownload(url: URL(fileURLWithPath: "/tmp/Caches/Downloads/b.jpg"), fileName: "b.jpg", location: .cache, size: 20, modifiedDate: Date()),
+        ]
+
+        let deletedURLs = LockIsolated<[URL]>([])
+        let store = TestStore(initialState: state) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.localDownloadStore.list = { downloads }
+            $0.localDownloadStore.delete = { url in deletedURLs.withValue { $0.append(url) } }
+        }
+
+        await store.send(.removeAllDownloadsConfirmed) {
+            $0.removeAllDownloadsConfirmationIsPresented = false
+            $0.isRemovingAllDownloads = true
+        }
+        await store.receive(\.removeAllDownloadsResponse) {
+            $0.isRemovingAllDownloads = false
+            $0.hasDownloads = false
+            $0.downloadsSize = 0
+        }
+        await store.receive(\.delegate)
+
+        #expect(deletedURLs.value == downloads.map(\.url))
+    }
+
+    @Test
+    func removeAllDownloadsConfirmedIsBestEffortWhenOneFileFailsToDelete() async {
+        var state = makeState()
+        state.removeAllDownloadsConfirmationIsPresented = true
+        let downloads = [
+            LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/a.pdf"), fileName: "a.pdf", location: .documents, size: 10, modifiedDate: Date()),
+        ]
+
+        let store = TestStore(initialState: state) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.localDownloadStore.list = { downloads }
+            $0.localDownloadStore.delete = { _ in throw FilesClientError.network("permission denied") }
+        }
+
+        await store.send(.removeAllDownloadsConfirmed) {
+            $0.removeAllDownloadsConfirmationIsPresented = false
+            $0.isRemovingAllDownloads = true
+        }
+        await store.receive(\.removeAllDownloadsResponse) {
+            $0.isRemovingAllDownloads = false
+            $0.hasDownloads = false
+            $0.downloadsSize = 0
+        }
+        await store.receive(\.delegate)
+    }
+
+    @Test
+    func hasDownloadsResponseUpdatesWhetherRemoveAllIsAvailable() async {
+        let store = TestStore(initialState: makeState()) {
+            SettingsFeature()
+        }
+
+        await store.send(.hasDownloadsResponse(true)) {
+            $0.hasDownloads = true
+        }
+        await store.send(.hasDownloadsResponse(false)) {
+            $0.hasDownloads = false
+        }
+    }
+
+    @Test
+    func downloadsSizeResponseUpdatesTheDisplayedSize() async {
+        let store = TestStore(initialState: makeState()) {
+            SettingsFeature()
+        }
+
+        await store.send(.downloadsSizeResponse(2_048)) {
+            $0.downloadsSize = 2_048
+        }
+    }
+
+    @Test
+    func cacheSizeResponseUpdatesTheDisplayedSize() async {
+        let store = TestStore(initialState: makeState()) {
+            SettingsFeature()
+        }
+
+        await store.send(.cacheSizeResponse(4_096)) {
+            $0.cacheSize = 4_096
+        }
+    }
+
+    @Test
+    func clearCacheTappedShowsTheConfirmationAlert() async {
+        let store = TestStore(initialState: makeState()) {
+            SettingsFeature()
+        }
+
+        await store.send(.clearCacheTapped) {
+            $0.clearCacheConfirmationIsPresented = true
+        }
+    }
+
+    @Test
+    func clearCacheCancelledHidesTheConfirmationAlert() async {
+        var state = makeState()
+        state.clearCacheConfirmationIsPresented = true
+
+        let store = TestStore(initialState: state) {
+            SettingsFeature()
+        }
+
+        await store.send(.clearCacheCancelled) {
+            $0.clearCacheConfirmationIsPresented = false
+        }
+    }
+
+    @Test
+    func clearCacheConfirmedClearsTheCacheAndResetsTheSize() async {
+        var state = makeState()
+        state.clearCacheConfirmationIsPresented = true
+        state.cacheSize = 4_096
+
+        let didClear = LockIsolated(false)
+        let store = TestStore(initialState: state) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.previewCacheStore.clear = { didClear.setValue(true) }
+        }
+
+        await store.send(.clearCacheConfirmed) {
+            $0.clearCacheConfirmationIsPresented = false
+            $0.isClearingCache = true
+        }
+        await store.receive(\.clearCacheResponse) {
+            $0.isClearingCache = false
+            $0.cacheSize = 0
+        }
+
+        #expect(didClear.value)
+    }
+
+    @Test
+    func clearCacheConfirmedStillSucceedsWhenClearingFails() async {
+        var state = makeState()
+        state.clearCacheConfirmationIsPresented = true
+        state.cacheSize = 4_096
+
+        let store = TestStore(initialState: state) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.previewCacheStore.clear = { throw FilesClientError.network("permission denied") }
+        }
+
+        await store.send(.clearCacheConfirmed) {
+            $0.clearCacheConfirmationIsPresented = false
+            $0.isClearingCache = true
+        }
+        await store.receive(\.clearCacheResponse) {
+            $0.isClearingCache = false
+            $0.cacheSize = 0
+        }
     }
 }

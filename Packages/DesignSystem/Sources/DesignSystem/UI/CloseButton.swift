@@ -17,7 +17,7 @@ public struct DSCloseButton: View {
 
     public var body: some View {
         Button(action: action) {
-            IconKit.xmark
+            IconKit.close
                 .resizable()
                 .foregroundStyle(Color.primaryDS)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)

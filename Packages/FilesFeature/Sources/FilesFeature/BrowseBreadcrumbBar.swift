@@ -1,11 +1,15 @@
 import DesignSystem
+import Foundation
 import SwiftUI
 
 private enum Constants {
     static let segmentSpacing: CGFloat = .space4
-    static let verticalPadding: CGFloat = .space8
+    static let verticalPadding: CGFloat = .space16
     static let chevronSize: CGFloat = .iconXSmall
     static let fullOpacity: Double = 1.0
+    /// Empty width after the last segment (also the scroll anchor) — keeps the current
+    /// folder's name off the very edge when the bar is scrolled to its trailing end.
+    static let trailingInset: CGFloat = .space16
 }
 
 /// `BrowseBreadcrumbBar`'s total rendered height, shared with `BrowseContentView` so its
@@ -23,16 +27,36 @@ enum BrowseBreadcrumbBarMetrics {
 /// Mirrors the web client's own path breadcrumb ("Location"): tapping any earlier segment
 /// jumps straight there via the same `openPath` delegate search results use, rather than
 /// popping the navigation stack one folder at a time.
+///
+/// `rootPath`/`rootTitle`/`rootIcon` default to true server root ("Home") for Browse, but
+/// Favorites overrides them to the favorited folder itself — browsing there is scoped to
+/// that subtree, so the leftmost crumb should anchor on the favorite, not imply a tap on it
+/// would leave the tab (server-root "Home" isn't reachable from inside Favorites at all).
+///
+/// `containerCrumb` prepends one more crumb *before* the root — Favorites uses it for the
+/// tab's own list screen ("Favorites", `path` ""), so there's always a crumb that leaves the
+/// favorited folder entirely instead of the leftmost tap just re-opening that same folder.
 struct BrowseBreadcrumbBar: View {
     let directoryPath: String
+    var rootTitle: String = "Home"
+    var rootPath: String = ""
+    var rootIcon: Image? = IconKit.home
+    var containerCrumb: (title: String, path: String, icon: Image?)?
     let onSegmentTapped: (_ path: String, _ title: String) -> Void
 
+    /// `directoryPath` with `rootPath` stripped off the front — segments are only ever
+    /// rendered/tapped relative to the configured root.
+    private var relativeDirectoryPath: String {
+        guard !rootPath.isEmpty, directoryPath.hasPrefix(rootPath) else { return directoryPath }
+        return String(directoryPath.dropFirst(rootPath.count)).trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+    }
+
     private var pathSegments: [String] {
-        directoryPath.split(separator: "/", omittingEmptySubsequences: true).map(String.init)
+        relativeDirectoryPath.split(separator: "/", omittingEmptySubsequences: true).map(String.init)
     }
 
     private func cumulativePath(through index: Int) -> String {
-        pathSegments[0...index].joined(separator: "/")
+        ([rootPath] + pathSegments[0...index]).filter { !$0.isEmpty }.joined(separator: "/")
     }
 
     /// A fixed id for the trailing edge of the bar (rather than tagging the last real
@@ -44,19 +68,20 @@ struct BrowseBreadcrumbBar: View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: Constants.segmentSpacing) {
-                    segment(title: "Home", path: "", icon: IconKit.house)
+                    if let containerCrumb {
+                        segment(title: containerCrumb.title, path: containerCrumb.path, icon: containerCrumb.icon)
+                        chevron
+                    }
+                    segment(title: rootTitle, path: rootPath, icon: rootIcon)
                     ForEach(pathSegments.indices, id: \.self) { index in
-                        IconKit.chevronRight
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(Color.secondaryDS)
-                            .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                        chevron
                         segment(title: pathSegments[index], path: cumulativePath(through: index), icon: nil)
                     }
-                    // Zero width: an invisible trailing anchor, not a visible element — the
-                    // current/rightmost segment should be what's readable at the scrolled
-                    // position, not scrolled fully past it.
-                    Color.clear.frame(width: 0, height: 1).id(Self.trailingAnchorID)
+                    // Trailing spacer doubling as the scroll anchor: keeps the rightmost
+                    // segment readable (not flush against the edge) when scrolled to the end,
+                    // and gives `ScrollViewReader` a stable target even at the root with no
+                    // path segments at all.
+                    Color.clear.frame(width: Constants.trailingInset, height: 1).id(Self.trailingAnchorID)
                 }
                 .padding(.horizontal, .space16)
                 .padding(.vertical, Constants.verticalPadding)
@@ -76,6 +101,14 @@ struct BrowseBreadcrumbBar: View {
         }
     }
 
+    private var chevron: some View {
+        IconKit.chevronRight
+            .resizable()
+            .scaledToFit()
+            .foregroundStyle(Color.secondaryDS)
+            .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+    }
+
     private func segment(title: String, path: String, icon: Image?) -> some View {
         let isCurrent = path == directoryPath
         let trait: Typography.Trait = isCurrent ? .bold : .regular
@@ -91,6 +124,7 @@ struct BrowseBreadcrumbBar: View {
                     icon
                         .resizable()
                         .scaledToFit()
+                        .foregroundStyle(Color.accent)
                         .frame(width: Constants.chevronSize, height: Constants.chevronSize)
                 }
                 Text(title)
@@ -115,4 +149,14 @@ struct BrowseBreadcrumbBar: View {
 
 #Preview("Deeply nested") {
     BrowseBreadcrumbBar(directoryPath: "Photos/Vacation/2024/Summer/Beach") { _, _ in }
+}
+
+#Preview("Favorites — container crumb") {
+    BrowseBreadcrumbBar(
+        directoryPath: "Media/Photos/Vacation/2024",
+        rootTitle: "Photos",
+        rootPath: "Media/Photos",
+        rootIcon: IconKit.folderFill,
+        containerCrumb: ("Favorites", "", IconKit.starFill)
+    ) { _, _ in }
 }

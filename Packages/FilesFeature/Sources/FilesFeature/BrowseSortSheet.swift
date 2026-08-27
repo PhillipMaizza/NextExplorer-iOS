@@ -36,16 +36,16 @@ struct BrowseSortSheet: View {
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             HStack {
-                IconKit.arrowUpArrowDown
+                IconKit.sort
                     .resizable()
-                    .foregroundStyle(Color.secondaryDS)
+                    .foregroundStyle(Color.accent)
                     .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
                     .padding(.bottom, .space8)
 
                 Spacer()
 
                 Button(action: onDismiss) {
-                    IconKit.xmark
+                    IconKit.close
                         .resizable()
                         .foregroundStyle(Color.primaryDS)
                         .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
@@ -55,7 +55,7 @@ struct BrowseSortSheet: View {
                 .buttonStyle(DSHapticButtonStyle())
             }
 
-            Text("Sort By").type(.headline3, style: .primary(for: .label))
+            Text("Sort By").type(.headline3, style: .link)
 
             VStack(spacing: 0) {
                 ForEach(BrowseFeature.SortOption.allCases, id: \.self) { option in
