@@ -31,6 +31,12 @@ public struct CreateShareLinkFeature {
         public var createdShare: CreatedShare?
         public var directLinkMode: DirectLinkMode = .auto
 
+        /// Shareable-users list, loaded the first time "Specific users" is chosen.
+        public var shareableUsers: IdentifiedArrayOf<User> = []
+        public var selectedUserIDs: Set<User.ID> = []
+        public var isLoadingUsers = false
+        public var hasLoadedUsers = false
+
         public init(serverURL: URL, itemName: String, itemPath: String, isDirectory: Bool, now: Date = Date()) {
             self.serverURL = serverURL
             self.itemName = itemName
@@ -46,13 +52,12 @@ public struct CreateShareLinkFeature {
             itemPath.isEmpty ? itemName : "\(itemPath)/\(itemName)"
         }
 
-        /// "Specific users" has no picker yet, so it can't be submitted.
-        public var isTargetSupported: Bool {
-            target == .anyone
-        }
-
         public var isCreateEnabled: Bool {
-            !isCreating && isTargetSupported
+            guard !isCreating else { return false }
+            if target == .users {
+                return !selectedUserIDs.isEmpty
+            }
+            return true
         }
 
         public var directLink: URL? {
@@ -69,6 +74,8 @@ public struct CreateShareLinkFeature {
         case expiryEnabledChanged(Bool)
         case expiresAtChanged(Date)
         case directLinkModeChanged(DirectLinkMode)
+        case userToggled(User.ID)
+        case shareableUsersResponse(Result<[User], FilesClientError>)
         case createTapped
         case createResponse(Result<CreatedShare, FilesClientError>)
     }
@@ -93,6 +100,35 @@ public struct CreateShareLinkFeature {
             case let .targetChanged(target):
                 state.target = target
                 state.errorMessage = nil
+                guard target == .users, !state.hasLoadedUsers, !state.isLoadingUsers else { return .none }
+                state.isLoadingUsers = true
+                let serverURL = state.serverURL
+                let filesClient = self.filesClient
+                return .run { send in
+                    do {
+                        await send(.shareableUsersResponse(.success(try await filesClient.shareableUsers(serverURL))))
+                    } catch {
+                        await send(.shareableUsersResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+                    }
+                }
+
+            case let .shareableUsersResponse(.success(users)):
+                state.isLoadingUsers = false
+                state.hasLoadedUsers = true
+                state.shareableUsers = IdentifiedArray(uniqueElements: users)
+                return .none
+
+            case let .shareableUsersResponse(.failure(error)):
+                state.isLoadingUsers = false
+                state.errorMessage = error.userMessage
+                return .none
+
+            case let .userToggled(id):
+                if state.selectedUserIDs.contains(id) {
+                    state.selectedUserIDs.remove(id)
+                } else {
+                    state.selectedUserIDs.insert(id)
+                }
                 return .none
 
             case let .passwordEnabledChanged(isEnabled):
@@ -131,7 +167,7 @@ public struct CreateShareLinkFeature {
                     accessMode: state.accessMode,
                     target: state.target,
                     password: state.isPasswordEnabled && !state.password.isEmpty ? state.password : nil,
-                    userIds: [],
+                    userIds: state.target == .users ? Array(state.selectedUserIDs) : [],
                     expiresAt: state.isExpiryEnabled ? state.expiresAt : nil
                 )
                 let serverURL = state.serverURL

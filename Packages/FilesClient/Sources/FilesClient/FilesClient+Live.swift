@@ -71,6 +71,9 @@ extension FilesClient {
             },
             deleteShareLink: { serverURL, shareID in
                 try await service.deleteShareLink(serverURL: serverURL, shareID: shareID)
+            },
+            shareableUsers: { serverURL in
+                try await service.shareableUsers(serverURL: serverURL)
             }
         )
     }

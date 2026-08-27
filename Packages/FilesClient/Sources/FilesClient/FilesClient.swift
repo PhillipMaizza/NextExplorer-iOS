@@ -34,6 +34,8 @@ public struct FilesClient: Sendable {
     public var mySharedLinks: @Sendable (_ serverURL: URL) async throws -> [Share]
     public var sharedWithMeLinks: @Sendable (_ serverURL: URL) async throws -> [Share]
     public var deleteShareLink: @Sendable (_ serverURL: URL, _ shareID: String) async throws -> Void
+    /// `GET /api/users/shareable` — every user except the caller, for a user-specific share.
+    public var shareableUsers: @Sendable (_ serverURL: URL) async throws -> [User]
 }
 
 extension FilesClient {

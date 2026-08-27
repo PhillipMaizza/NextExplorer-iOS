@@ -81,7 +81,13 @@ extension FilesClient {
         },
         mySharedLinks: { _ in Share.previewSharedByMe },
         sharedWithMeLinks: { _ in Share.previewSharedWithMe },
-        deleteShareLink: { _, _ in }
+        deleteShareLink: { _, _ in },
+        shareableUsers: { _ in
+            [
+                User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie Rivera"),
+                User(id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor")
+            ]
+        }
     )
 }
 
