@@ -2,6 +2,7 @@ import AuthClient
 import ComposableArchitecture
 import CoreModels
 import Foundation
+import Localization
 
 private enum Constants {
     /// A real homelab call can resolve near-instantly on a warm connection — hold the
@@ -172,7 +173,7 @@ public struct LoginFormFeature {
             case .testConnectionButtonTapped:
                 guard let url = Self.normalizedURL(scheme: state.scheme, host: state.host) else {
                     state.connectionPhase = .failure
-                    state.errorMessage = "Enter a valid server address."
+                    state.errorMessage = L10n.Login.errorInvalidServer
                     return .merge(Self.scheduleRevertToIdle(self.clock), Self.scheduleErrorDismiss(self.clock))
                 }
                 state.connectionPhase = .testing
@@ -230,7 +231,7 @@ public struct LoginFormFeature {
                 }
                 let identifier = state.identifier.trimmingCharacters(in: .whitespacesAndNewlines)
                 guard Self.isValidEmail(identifier) else {
-                    state.errorMessage = "Enter a valid email address."
+                    state.errorMessage = L10n.Login.errorInvalidEmail
                     state.invalidFieldsScope = .identifier
                     return Self.scheduleErrorDismiss(self.clock)
                 }
@@ -344,24 +345,15 @@ public struct LoginFormFeature {
 
     static func message(for error: AuthClientError) -> String {
         switch error {
-        case .invalidCredentials:
-            "Incorrect username or password."
-        case .sessionExpired:
-            "Your session expired. Please sign in again."
-        case .sessionCookieMissing:
-            "Sign-in didn't complete. Please try again."
-        case .network:
-            "Could not reach that server. Check the address and try again."
-        case .decoding:
-            "Unexpected response from server."
-        case .keychain:
-            "Could not save your session on this device."
-        case .server:
-            "Server responded unexpectedly. Check the address and try again."
-        case .noAuthMethodsEnabled:
-            "This server doesn't have username/password sign-in enabled."
-        case .rateLimited:
-            "Too many attempts. Please wait a few minutes and try again."
+        case .invalidCredentials: L10n.Login.errorInvalidCredentials
+        case .sessionExpired: L10n.Login.errorSessionExpired
+        case .sessionCookieMissing: L10n.Login.errorIncomplete
+        case .network: L10n.Login.errorUnreachable
+        case .decoding: L10n.Login.errorUnexpectedResponse
+        case .keychain: L10n.Login.errorKeychain
+        case .server: L10n.Login.errorDecoding
+        case .noAuthMethodsEnabled: L10n.Login.errorNoLocalAuth
+        case .rateLimited: L10n.Login.errorRateLimited
         }
     }
 }

@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 
 private enum BrowseViewMode: String {
@@ -62,7 +63,7 @@ struct BrowseContentView: View {
             return
         }
         guard !item.isUnsupportedForPreview else {
-            toastMessage = DSToastMessage(icon: IconKit.warning, text: "Unsupported file type")
+            toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Browse.unsupportedFileType)
             return
         }
         store.send(.rowTapped(item))
@@ -101,7 +102,7 @@ struct BrowseContentView: View {
             }
             .onChange(of: store.downloadSuccessMessage) { _, newValue in
                 guard let newValue else { return }
-                toastMessage = .success(newValue, actionTitle: "Open") {
+                toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
                     store.send(.delegate(.openDownloadsTapped))
                 }
             }
@@ -126,7 +127,7 @@ struct BrowseContentView: View {
         .searchable(
             text: $store.searchQuery.sending(\.searchQueryChanged),
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Search"
+            prompt: L10n.Common.search
         )
         .searchScopes($store.searchScope.sending(\.searchScopeChanged)) {
             ForEach(BrowseFeature.SearchScope.allCases, id: \.self) { scope in
@@ -163,7 +164,7 @@ struct BrowseContentView: View {
                 Button {
                     isSortSheetPresented = true
                 } label: {
-                    Label { Text("Sort") } icon: { IconKit.sort }
+                    Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                 }
             }
         }
@@ -237,10 +238,10 @@ struct BrowseContentView: View {
             value: store.selectedItemIDs
         )
         .alert(bulkDeleteConfirmationTitle, isPresented: bulkDeleteConfirmationBinding) {
-            Button("Delete", role: .destructive) { store.send(.bulkDeleteConfirmed) }
-            Button("Cancel", role: .cancel) { store.send(.bulkDeleteCancelled) }
+            Button(L10n.Common.delete, role: .destructive) { store.send(.bulkDeleteConfirmed) }
+            Button(L10n.Common.cancel, role: .cancel) { store.send(.bulkDeleteCancelled) }
         } message: {
-            Text("This can't be undone.")
+            Text(L10n.Browse.deleteMessage)
         }
         .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
         .sheet(isPresented: $isSortSheetPresented) {
@@ -258,15 +259,15 @@ struct BrowseContentView: View {
                 onDismiss: { isSortSheetPresented = false }
             )
         }
-        .alert("Rename", isPresented: isRenamingBinding) {
-            TextField("Name", text: $renameDraft)
+        .alert(L10n.Browse.renameTitle, isPresented: isRenamingBinding) {
+            TextField(L10n.Browse.renameNamePlaceholder, text: $renameDraft)
                 .autocorrectionDisabled()
             // A plain, non-accent color for Cancel: `.tint(nil)` doesn't reset an alert
             // button back to the system default (it still inherits the ambient accent), so
             // an explicit concrete color is needed to actually look different from Save.
-            Button("Cancel", role: .cancel) { store.send(.renameCancelled) }
+            Button(L10n.Common.cancel, role: .cancel) { store.send(.renameCancelled) }
                 .tint(.primaryDS)
-            Button("Save") { store.send(.renameConfirmed(renameDraft)) }
+            Button(L10n.Common.save) { store.send(.renameConfirmed(renameDraft)) }
         }
         .onChange(of: store.renameSheetItem) { _, item in
             if let item { renameDraft = item.name }
@@ -277,10 +278,10 @@ struct BrowseContentView: View {
         // instead of the actual long-pressed row. `.alert` is always a centered modal
         // regardless of idiom, so there's no anchor to get wrong.
         .alert(deleteConfirmationTitle, isPresented: isDeletingBinding) {
-            Button("Delete", role: .destructive) { store.send(.deleteConfirmed) }
-            Button("Cancel", role: .cancel) { store.send(.deleteCancelled) }
+            Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
+            Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteCancelled) }
         } message: {
-            Text("This can't be undone.")
+            Text(L10n.Browse.deleteMessage)
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
     }
@@ -442,8 +443,8 @@ struct BrowseContentView: View {
     }
 
     private var deleteConfirmationTitle: String {
-        guard let item = store.deleteConfirmationItem else { return "Delete?" }
-        return "Delete \u{201C}\(item.name)\u{201D}?"
+        guard let item = store.deleteConfirmationItem else { return L10n.Browse.deleteConfirmTitle }
+        return L10n.Browse.deleteConfirmOne(item.name)
     }
 
     private var isAllSelected: Bool {
@@ -488,7 +489,7 @@ struct BrowseContentView: View {
     }
 
     private var bulkDeleteConfirmationTitle: String {
-        "Delete \(store.selectedItemIDs.count) item\(store.selectedItemIDs.count == 1 ? "" : "s")?"
+        L10n.Browse.deleteConfirmMany(store.selectedItemIDs.count)
     }
 
     @ViewBuilder
@@ -499,14 +500,14 @@ struct BrowseContentView: View {
         Button {
             store.send(.infoTapped(item))
         } label: {
-            Label { Text("Get Info") } icon: { IconKit.info }
+            Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
         }
         .tint(.primaryDS)
         if store.access?.canWrite ?? false {
             Button {
                 store.send(.renameTapped(item))
             } label: {
-                Label { Text("Rename") } icon: { IconKit.rename }
+                Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
             }
             .tint(.primaryDS)
         }
@@ -518,14 +519,14 @@ struct BrowseContentView: View {
                 Button {
                     store.send(.extractZipTapped(item))
                 } label: {
-                    Label { Text("Extract") } icon: { IconKit.extract }
+                    Label { Text(L10n.Browse.actionExtract) } icon: { IconKit.extract }
                 }
                 .tint(.primaryDS)
             }
             Button {
                 store.send(.compressTapped(item))
             } label: {
-                Label { Text("Compress") } icon: { IconKit.archiveDocument }
+                Label { Text(L10n.Browse.actionCompress) } icon: { IconKit.archiveDocument }
             }
             .tint(.primaryDS)
         }
@@ -533,7 +534,7 @@ struct BrowseContentView: View {
             Button {
                 store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
             } label: {
-                Label { Text("Download") } icon: { IconKit.download }
+                Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
             }
             .tint(.primaryDS)
         }
@@ -543,9 +544,9 @@ struct BrowseContentView: View {
                 store.send(.favoriteToggleButtonTapped(item))
             } label: {
                 if store.favoritePaths.contains(item.id) {
-                    Label { Text("Remove from Favorites") } icon: { IconKit.starFill }
+                    Label { Text(L10n.Browse.actionRemoveFromFavorites) } icon: { IconKit.starFill }
                 } else {
-                    Label { Text("Add to Favorites") } icon: { IconKit.star }
+                    Label { Text(L10n.Browse.actionAddToFavorites) } icon: { IconKit.star }
                 }
             }
             .tint(.primaryDS)
@@ -554,7 +555,7 @@ struct BrowseContentView: View {
             Button {
                 shareTarget = item
             } label: {
-                Label { Text("Share") } icon: { IconKit.shareLink }
+                Label { Text(L10n.Browse.actionShare) } icon: { IconKit.shareLink }
             }
             .tint(.primaryDS)
         }
@@ -562,7 +563,7 @@ struct BrowseContentView: View {
             Button(role: .destructive) {
                 store.send(.deleteTapped(item))
             } label: {
-                Label { Text("Delete") } icon: { IconKit.delete }
+                Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
             }
             .tint(.negative)
         }
@@ -604,7 +605,7 @@ struct BrowseContentView: View {
                     .transition(.opacity)
             }
         case .empty:
-            EmptyStateView(icon: IconKit.folder, message: "This folder is empty.")
+            EmptyStateView(icon: IconKit.folder, message: L10n.EmptyState.folderEmpty)
                 .transition(.opacity)
         case .noResults:
             noResultsState
@@ -802,10 +803,10 @@ struct BrowseContentView: View {
                 .scaledToFit()
                 .foregroundStyle(Color.secondaryDS)
                 .frame(width: Constants.emptyStateIconSize, height: Constants.emptyStateIconSize)
-            Text("No matches for \u{201C}\(store.searchQuery)\u{201D}.")
+            Text(L10n.Browse.searchNoMatchesInFolder(store.searchQuery))
                 .type(.body1(.semibold), style: .secondary)
             if store.searchScope == .thisFolder {
-                DSButton("Search everywhere",
+                DSButton(L10n.Browse.searchEverywhere,
                          icon: IconKit.search,
                          style: .secondary,
                          size: .small,
@@ -827,7 +828,7 @@ struct BrowseContentView: View {
                 initialState: BrowseFeature.State(
                     serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
                     directoryPath: "",
-                    title: "Browse"
+                    title: L10n.Browse.navigationTitle
                 )
             ) {
                 BrowseFeature()
@@ -835,7 +836,7 @@ struct BrowseContentView: View {
                 $0.filesClient = .previewValue
             }
         )
-        .navigationTitle("Browse")
+        .navigationTitle(L10n.Browse.navigationTitle)
     }
 }
 

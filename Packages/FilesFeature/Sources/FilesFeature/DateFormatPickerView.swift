@@ -1,4 +1,5 @@
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -18,7 +19,7 @@ struct DateFormatPickerView: View {
     var body: some View {
         List {
             Section {
-                DSToggleRow(title: "Show Time", icon: IconKit.time, isOn: $includeTime)
+                DSToggleRow(title: L10n.Settings.dateFormatShowTime, icon: IconKit.time, isOn: $includeTime)
             }
             .listRowBackground(Color.backgroundSecondary)
 
@@ -52,7 +53,7 @@ struct DateFormatPickerView: View {
         }
         .scrollContentBackground(.hidden)
         .background(Color.backgroundPrimary)
-        .navigationTitle("Date Format")
+        .navigationTitle(L10n.Settings.dateFormatNavigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .hapticFeedback(.selection, trigger: selection)
     }

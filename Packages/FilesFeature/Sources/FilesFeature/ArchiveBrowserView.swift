@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 import Unrar
 import ZIPFoundation
@@ -209,7 +210,7 @@ struct ArchiveBrowserView: View {
     private var toolbar: some View {
         HStack(spacing: Constants.toolbarSpacing) {
             if currentPath.isEmpty {
-                DSCloseButton(action: onDismiss)
+                DSCloseButton(action: onDismiss, accessibilityLabel: L10n.Common.close)
             } else {
                 Button {
                     currentPath.removeLast()
@@ -240,7 +241,7 @@ struct ArchiveBrowserView: View {
         } else if isLoading {
             statusContent(icon: nil, message: nil, tint: .primaryDS)
         } else if visibleRows.isEmpty {
-            statusContent(icon: IconKit.folderFill, message: "This folder is empty.", tint: .secondaryDS)
+            statusContent(icon: IconKit.folderFill, message: L10n.Archive.emptyFolder, tint: .secondaryDS)
         } else {
             List(visibleRows) { row in
                 Button {
@@ -314,7 +315,7 @@ struct ArchiveBrowserView: View {
             kind: (row.name as NSString).pathExtension
         )
         guard !entryItem.isUnsupportedForPreview else {
-            toastMessage = DSToastMessage(icon: IconKit.warning, text: "Unsupported file type")
+            toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.unsupportedFileType)
             return
         }
         guard let source else { return }
@@ -326,7 +327,7 @@ struct ArchiveBrowserView: View {
             previewFileURL = destination
             previewingItem = entryItem
         } catch {
-            toastMessage = DSToastMessage(icon: IconKit.warning, text: "Couldn't open this file")
+            toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.openFailed)
         }
     }
 
@@ -350,7 +351,7 @@ struct ArchiveBrowserView: View {
             entries = try ArchiveReader.entries(from: opened)
             isLoading = false
         } catch {
-            errorMessage = (error as? FilesClientError)?.userMessage ?? "Couldn't open this archive."
+            errorMessage = (error as? FilesClientError)?.userMessage ?? L10n.Archive.openArchiveFailed
             isLoading = false
         }
     }
@@ -433,13 +434,13 @@ private struct ArchiveTextEntryPreviewView: View {
                 // SwiftUI re-render while in rendered mode.
                 renderedMarkdownHTML = MarkdownRenderer.html(from: content)
             }
-            if content == nil { loadErrorMessage = "Couldn't open this file." }
+            if content == nil { loadErrorMessage = L10n.Archive.openFailed }
         }
     }
 
     private var toolbar: some View {
         HStack(spacing: .space16) {
-            DSCloseButton(action: onDismiss)
+            DSCloseButton(action: onDismiss, accessibilityLabel: L10n.Common.close)
             Text(item.name)
                 .type(.body1(.semibold), style: .primary(for: .label))
                 .lineLimit(1)

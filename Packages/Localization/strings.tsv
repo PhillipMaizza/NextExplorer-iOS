@@ -381,3 +381,15 @@ changePassword.submitButton	Update Password
 changePassword.success	Your password has been updated.
 changePassword.errorMinLength	Use at least %lld characters.
 changePassword.errorMismatch	Passwords don't match.
+login.portHint	Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80.
+login.errorInvalidServer	Enter a valid server address.
+login.errorInvalidEmail	Enter a valid email address.
+login.errorInvalidCredentials	Incorrect username or password.
+login.errorSessionExpired	Your session expired. Please sign in again.
+login.errorIncomplete	Sign-in didn't complete. Please try again.
+login.errorUnreachable	Could not reach that server. Check the address and try again.
+login.errorUnexpectedResponse	Unexpected response from server.
+login.errorKeychain	Could not save your session on this device.
+login.errorDecoding	Server responded unexpectedly. Check the address and try again.
+login.errorNoLocalAuth	This server doesn't have username/password sign-in enabled.
+login.errorRateLimited	Too many attempts. Please wait a few minutes and try again.

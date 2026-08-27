@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 
 public struct MainTabView: View {
@@ -26,36 +27,36 @@ public struct MainTabView: View {
             Tab(value: MainTabFeature.Tab.browse) {
                 BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
             } label: {
-//                Text("Browse")
                 tabIcon(store.selectedTab == .browse ? IconKit.tabBrowseFill : IconKit.tabBrowse)
+                    .accessibilityLabel(L10n.Tab.browse)
             }
 
             Tab(value: MainTabFeature.Tab.favorites) {
                 FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
             } label: {
-//                Text("Favorites")
                 tabIcon(store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites)
+                    .accessibilityLabel(L10n.Tab.favorites)
             }
 
             Tab(value: MainTabFeature.Tab.shared) {
                 SharedView(store: store.scope(state: \.shared, action: \.shared))
             } label: {
-//                Text("Shared")
                 tabIcon(store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare)
+                    .accessibilityLabel(L10n.Tab.shared)
             }
 
             Tab(value: MainTabFeature.Tab.downloads) {
                 DownloadsView(store: store.scope(state: \.downloads, action: \.downloads))
             } label: {
-//                Text("Downloads")
                 tabIcon(store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads)
+                    .accessibilityLabel(L10n.Tab.downloads)
             }
 
             Tab(value: MainTabFeature.Tab.settings) {
                 SettingsView(store: store.scope(state: \.settings, action: \.settings))
             } label: {
-//                Text("Settings")
                 tabIcon(store.selectedTab == .settings ? IconKit.tabSettingsFill : IconKit.tabSettings)
+                    .accessibilityLabel(L10n.Tab.settings)
             }
         }
         .tint(Color.accent)

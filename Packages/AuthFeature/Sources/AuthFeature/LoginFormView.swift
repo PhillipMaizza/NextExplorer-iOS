@@ -2,6 +2,7 @@ import AuthClient
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -108,7 +109,7 @@ public struct LoginFormView: View {
         guard !trimmed.isEmpty else { return nil }
         let hostOnly = trimmed.split(separator: "/", maxSplits: 1).first.map(String.init) ?? trimmed
         guard !hostOnly.contains(":") else { return nil }
-        return "Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80."
+        return L10n.Login.portHint
     }
 
     public var body: some View {
@@ -184,7 +185,7 @@ public struct LoginFormView: View {
                     IconKit.logo
                         .resizable()
                         .frame(width: Constants.logoSize, height: Constants.logoSize)
-                    Text("Where's your instance of NextExplorer?")
+                    Text(L10n.Login.serverQuestion)
                         .type(.headline3, style: .primary(for: .label))
                         .multilineTextAlignment(.center)
                 }
@@ -272,7 +273,7 @@ public struct LoginFormView: View {
             ZStack {
                 switch store.connectionPhase {
                 case .idle:
-                    Text("Test connection")
+                    Text(L10n.Login.testConnection)
                         .type(.label3)
                         .foregroundStyle(.white)
                 case .testing:
@@ -352,7 +353,7 @@ public struct LoginFormView: View {
     }
 
     private var identifierField: some View {
-        DSFieldContainer(label: "Email", icon: IconKit.person, shakeTrigger: identifierShakeTrigger, isInvalid: isIdentifierFieldInvalid) {
+        DSFieldContainer(label: L10n.Login.emailField, icon: IconKit.person, shakeTrigger: identifierShakeTrigger, isInvalid: isIdentifierFieldInvalid) {
             ZStack(alignment: .leading) {
                 if store.identifier.isEmpty {
                     DSPlaceholderText("name@company.com")
@@ -378,7 +379,7 @@ public struct LoginFormView: View {
     }
 
     private var passwordField: some View {
-        DSFieldContainer(label: "Password", icon: IconKit.lock, shakeTrigger: passwordShakeTrigger, isInvalid: isPasswordFieldInvalid) {
+        DSFieldContainer(label: L10n.Login.passwordField, icon: IconKit.lock, shakeTrigger: passwordShakeTrigger, isInvalid: isPasswordFieldInvalid) {
             HStack(spacing: .space8) {
                 // Both fields stay mounted at all times: swapping SecureField/TextField in and
                 // out via `if/else` tears down and rebuilds the underlying text input on every
@@ -436,7 +437,7 @@ public struct LoginFormView: View {
 
     private var continueButton: some View {
         DSButton(
-            "Log In",
+            L10n.Login.submit,
             style: .primary,
             size: .medium,
             isLoading: store.isSubmitting

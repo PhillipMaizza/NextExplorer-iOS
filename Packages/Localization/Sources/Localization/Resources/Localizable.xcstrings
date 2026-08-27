@@ -1629,6 +1629,127 @@
         }
       }
     },
+    "login.errorDecoding": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server responded unexpectedly. Check the address and try again."
+          }
+        }
+      }
+    },
+    "login.errorIncomplete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign-in didn't complete. Please try again."
+          }
+        }
+      }
+    },
+    "login.errorInvalidCredentials": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Incorrect username or password."
+          }
+        }
+      }
+    },
+    "login.errorInvalidEmail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid email address."
+          }
+        }
+      }
+    },
+    "login.errorInvalidServer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a valid server address."
+          }
+        }
+      }
+    },
+    "login.errorKeychain": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not save your session on this device."
+          }
+        }
+      }
+    },
+    "login.errorNoLocalAuth": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This server doesn't have username/password sign-in enabled."
+          }
+        }
+      }
+    },
+    "login.errorRateLimited": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too many attempts. Please wait a few minutes and try again."
+          }
+        }
+      }
+    },
+    "login.errorSessionExpired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Your session expired. Please sign in again."
+          }
+        }
+      }
+    },
+    "login.errorUnexpectedResponse": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unexpected response from server."
+          }
+        }
+      }
+    },
+    "login.errorUnreachable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not reach that server. Check the address and try again."
+          }
+        }
+      }
+    },
     "login.passwordField": {
       "extractionState": "manual",
       "localizations": {
@@ -1636,6 +1757,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Password"
+          }
+        }
+      }
+    },
+    "login.portHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80."
           }
         }
       }

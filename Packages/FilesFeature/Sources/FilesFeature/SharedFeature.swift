@@ -3,6 +3,7 @@ import CoreModels
 import DesignSystem
 import FilesClient
 import Foundation
+import Localization
 import SwiftUI
 
 /// The "Shared" tab: a segmented view over share links the user created ("By me") and
@@ -17,8 +18,8 @@ public struct SharedFeature {
 
         var title: String {
             switch self {
-            case .byMe: "By me"
-            case .withMe: "With me"
+            case .byMe: L10n.Shared.segmentByMe
+            case .withMe: L10n.Shared.segmentWithMe
             }
         }
     }
@@ -30,9 +31,9 @@ public struct SharedFeature {
 
         var title: String {
             switch self {
-            case .dateShared: "Date Shared"
-            case .name: "Name"
-            case .expiration: "Expiration"
+            case .dateShared: L10n.Sort.dateShared
+            case .name: L10n.Sort.name
+            case .expiration: L10n.Sort.expiration
             }
         }
 
@@ -149,7 +150,7 @@ public struct SharedFeature {
         /// Owner display name for a "With me" share — the recipient payload only carries
         /// `ownerId`, resolved against the shareable-users list.
         public func sharedByLabel(for share: Share) -> String {
-            userNames[share.ownerId] ?? "Someone"
+            userNames[share.ownerId] ?? L10n.Shared.sharedByUnknown
         }
     }
 

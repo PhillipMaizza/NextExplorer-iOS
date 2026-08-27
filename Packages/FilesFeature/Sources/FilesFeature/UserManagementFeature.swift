@@ -3,6 +3,7 @@ import CoreModels
 import DesignSystem
 import FilesClient
 import Foundation
+import Localization
 import SwiftUI
 
 /// Admin only user management, reachable from Settings for a signed in admin. Mirrors the web
@@ -36,9 +37,9 @@ public struct UserManagementFeature {
 
         var title: String {
             switch self {
-            case .type: "Type"
-            case .name: "Name"
-            case .email: "Email"
+            case .type: L10n.UserManagement.sortType
+            case .name: L10n.UserManagement.sortName
+            case .email: L10n.UserManagement.sortEmail
             }
         }
 
@@ -58,9 +59,9 @@ public struct UserManagementFeature {
 
         var title: String {
             switch self {
-            case .profile: "Profile"
-            case .security: "Security"
-            case .volumes: "Volumes"
+            case .profile: L10n.UserManagement.tabProfile
+            case .security: L10n.UserManagement.tabSecurity
+            case .volumes: L10n.UserManagement.tabVolumes
             }
         }
     }
@@ -77,12 +78,12 @@ public struct UserManagementFeature {
         /// Inline field errors, shown only once the user has typed something. An empty field
         /// is "not yet filled in", not "wrong".
         var emailError: String? {
-            email.trimmed.isEmpty || CredentialRules.isEmailShaped(email) ? nil : "Enter a valid email address."
+            email.trimmed.isEmpty || CredentialRules.isEmailShaped(email) ? nil : L10n.UserManagement.errorEmailInvalid
         }
         var passwordError: String? {
             password.isEmpty || CredentialRules.isPasswordLongEnough(password)
                 ? nil
-                : "Use at least \(CredentialRules.minimumPasswordLength) characters."
+                : L10n.UserManagement.errorPasswordTooShort(CredentialRules.minimumPasswordLength)
         }
         var isSubmitEnabled: Bool {
             CredentialRules.isEmailShaped(email)
@@ -103,7 +104,7 @@ public struct UserManagementFeature {
         var passwordError: String? {
             password.isEmpty || CredentialRules.isPasswordLongEnough(password)
                 ? nil
-                : "Use at least \(CredentialRules.minimumPasswordLength) characters."
+                : L10n.UserManagement.errorPasswordTooShort(CredentialRules.minimumPasswordLength)
         }
         var isSubmitEnabled: Bool { CredentialRules.isPasswordLongEnough(password) && !isSubmitting }
     }
@@ -222,14 +223,14 @@ public struct UserManagementFeature {
         /// Inline error for the Profile email field. The server requires a non empty email and
         /// 409s on a duplicate; the shape check is a client side nicety.
         public var profileEmailError: String? {
-            if editEmail.trimmed.isEmpty { return "Email is required." }
-            return CredentialRules.isEmailShaped(editEmail) ? nil : "Enter a valid email address."
+            if editEmail.trimmed.isEmpty { return L10n.UserManagement.errorEmailRequired }
+            return CredentialRules.isEmailShaped(editEmail) ? nil : L10n.UserManagement.errorEmailInvalid
         }
 
         /// The server stores a blank username as `null`, which can't decode back, so the form
         /// refuses to submit an empty one.
         public var profileUsernameError: String? {
-            editUsername.trimmed.isEmpty ? "Username is required." : nil
+            editUsername.trimmed.isEmpty ? L10n.UserManagement.errorUsernameRequired : nil
         }
 
         public var isProfileSaveEnabled: Bool {
@@ -438,7 +439,7 @@ public struct UserManagementFeature {
                 state.isSavingProfile = false
                 state.users[id: user.id] = user
                 seedProfileForm(&state, from: user)
-                state.toast = "Profile updated"
+                state.toast = L10n.UserManagement.toastProfileUpdated
                 return .none
 
             case let .profileResponse(.failure(error)):
@@ -464,7 +465,7 @@ public struct UserManagementFeature {
             case let .rolesResponse(.success(user)):
                 state.isUpdatingRoles = false
                 state.users[id: user.id] = user
-                state.toast = "Admin granted"
+                state.toast = L10n.UserManagement.toastAdminGranted
                 return .none
 
             case let .rolesResponse(.failure(error)):
@@ -496,7 +497,7 @@ public struct UserManagementFeature {
             case let .deleteUserResponse(id, .success):
                 state.users.remove(id: id)
                 if state.detailUserID == id { state.detailUserID = nil }
-                state.toast = "User removed"
+                state.toast = L10n.UserManagement.toastUserRemoved
                 return .none
 
             case let .deleteUserResponse(_, .failure(error)):
@@ -551,7 +552,7 @@ public struct UserManagementFeature {
             case let .createResponse(.success(user)):
                 state.createSheet = nil
                 state.users.append(user)
-                state.toast = "User created"
+                state.toast = L10n.UserManagement.toastUserCreated
                 return .none
 
             case let .createResponse(.failure(error)):
@@ -594,7 +595,7 @@ public struct UserManagementFeature {
 
             case .passwordResponse(.success):
                 state.passwordSheet = nil
-                state.toast = "Password updated"
+                state.toast = L10n.UserManagement.toastPasswordUpdated
                 return reloadUsers(&state)
 
             case let .passwordResponse(.failure(error)):
@@ -662,7 +663,7 @@ public struct UserManagementFeature {
             case let .volumeResponse(.success(volume)):
                 state.volumeSheet = nil
                 state.volumes[id: volume.id] = volume
-                state.toast = "Volume saved"
+                state.toast = L10n.UserManagement.toastVolumeSaved
                 return .none
 
             case let .volumeResponse(.failure(error)):
@@ -693,7 +694,7 @@ public struct UserManagementFeature {
 
             case let .removeVolumeResponse(id, .success):
                 state.volumes.remove(id: id)
-                state.toast = "Volume removed"
+                state.toast = L10n.UserManagement.toastVolumeRemoved
                 return .none
 
             case let .removeVolumeResponse(_, .failure(error)):

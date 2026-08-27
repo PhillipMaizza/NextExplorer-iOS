@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import FilesClient
 import Foundation
+import Localization
 import Testing
 
 @testable import FilesFeature
@@ -120,7 +121,7 @@ struct UserManagementFeatureTests {
         await store.receive(\.profileResponse) {
             $0.isSavingProfile = false
             $0.users[id: "2"] = updated
-            $0.toast = "Profile updated"
+            $0.toast = L10n.UserManagement.toastProfileUpdated
         }
     }
 
@@ -154,7 +155,7 @@ struct UserManagementFeatureTests {
         await store.receive(\.rolesResponse) {
             $0.isUpdatingRoles = false
             $0.users[id: "2"] = promoted
-            $0.toast = "Admin granted"
+            $0.toast = L10n.UserManagement.toastAdminGranted
         }
     }
 
@@ -195,7 +196,7 @@ struct UserManagementFeatureTests {
         await store.send(.deleteUserConfirmed) { $0.userToDelete = nil }
         await store.receive(\.deleteUserResponse) {
             $0.users.remove(id: "2")
-            $0.toast = "User removed"
+            $0.toast = L10n.UserManagement.toastUserRemoved
         }
     }
 
@@ -230,7 +231,7 @@ struct UserManagementFeatureTests {
         await store.receive(\.createResponse) {
             $0.createSheet = nil
             $0.users.append(created)
-            $0.toast = "User created"
+            $0.toast = L10n.UserManagement.toastUserCreated
         }
     }
 
@@ -251,7 +252,7 @@ struct UserManagementFeatureTests {
         await store.send(.createUserTapped)
         await store.send(.createEmailChanged("not-an-email"))
         await store.send(.createPasswordChanged("longenough"))
-        #expect(store.state.createSheet?.emailError == "Enter a valid email address.")
+        #expect(store.state.createSheet?.emailError == L10n.UserManagement.errorEmailInvalid)
         #expect(store.state.createSheet?.isSubmitEnabled == false)
         await store.send(.createEmailChanged("real@example.com"))
         #expect(store.state.createSheet?.emailError == nil)
@@ -282,7 +283,7 @@ struct UserManagementFeatureTests {
         await store.send(.userTapped("2"))
         await store.send(.setPasswordTapped)
         await store.send(.passwordFieldChanged("12345"))
-        #expect(store.state.passwordSheet?.passwordError == "Use at least 6 characters.")
+        #expect(store.state.passwordSheet?.passwordError == L10n.UserManagement.errorPasswordTooShort(6))
         #expect(store.state.passwordSheet?.isSubmitEnabled == false)
         await store.send(.passwordFieldChanged("123456"))
         #expect(store.state.passwordSheet?.passwordError == nil)
@@ -296,7 +297,7 @@ struct UserManagementFeatureTests {
         }
         await store.send(.userTapped("2"))
         await store.send(.editUsernameChanged("   "))
-        #expect(store.state.profileUsernameError == "Username is required.")
+        #expect(store.state.profileUsernameError == L10n.UserManagement.errorUsernameRequired)
         #expect(store.state.isProfileSaveEnabled == false)
         await store.send(.saveProfileTapped)  // guarded, no effect
         await store.send(.editUsernameChanged("renamed"))
@@ -311,12 +312,12 @@ struct UserManagementFeatureTests {
         }
         await store.send(.userTapped("2"))
         await store.send(.editEmailChanged(""))
-        #expect(store.state.profileEmailError == "Email is required.")
+        #expect(store.state.profileEmailError == L10n.UserManagement.errorEmailRequired)
         #expect(store.state.isProfileSaveEnabled == false)
         await store.send(.saveProfileTapped)  // guarded, no effect
 
         await store.send(.editEmailChanged("broken@"))
-        #expect(store.state.profileEmailError == "Enter a valid email address.")
+        #expect(store.state.profileEmailError == L10n.UserManagement.errorEmailInvalid)
         await store.send(.editEmailChanged("fixed@example.com"))
         #expect(store.state.profileEmailError == nil)
         #expect(store.state.isProfileSaveEnabled == true)
@@ -341,7 +342,7 @@ struct UserManagementFeatureTests {
         await store.send(.passwordSubmitTapped) { $0.passwordSheet?.isSubmitting = true }
         await store.receive(\.passwordResponse) {
             $0.passwordSheet = nil
-            $0.toast = "Password updated"
+            $0.toast = L10n.UserManagement.toastPasswordUpdated
         }
         await store.receive(\.usersResponse) {
             $0.users = IdentifiedArray(uniqueElements: refreshed)
@@ -371,7 +372,7 @@ struct UserManagementFeatureTests {
         await store.receive(\.volumeResponse) {
             $0.volumeSheet = nil
             $0.volumes[id: "v9"] = created
-            $0.toast = "Volume saved"
+            $0.toast = L10n.UserManagement.toastVolumeSaved
         }
     }
 
@@ -389,7 +390,7 @@ struct UserManagementFeatureTests {
         await store.send(.removeVolumeConfirmed) { $0.volumeToRemove = nil }
         await store.receive(\.removeVolumeResponse) {
             $0.volumes.remove(id: "v1")
-            $0.toast = "Volume removed"
+            $0.toast = L10n.UserManagement.toastVolumeRemoved
         }
     }
 
@@ -417,7 +418,7 @@ struct UserManagementFeatureTests {
         await store.receive(\.volumeResponse) {
             $0.volumeSheet = nil
             $0.volumes[id: "v1"] = saved
-            $0.toast = "Volume saved"
+            $0.toast = L10n.UserManagement.toastVolumeSaved
         }
     }
 

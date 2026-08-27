@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum DownloadsViewMode: String {
@@ -100,8 +101,8 @@ struct DownloadsView: View {
     }
 
     private var deleteConfirmationTitle: String {
-        guard let item = store.deleteConfirmationItem else { return "Delete?" }
-        return "Delete \u{201C}\(item.fileName)\u{201D}?"
+        guard let item = store.deleteConfirmationItem else { return L10n.Downloads.deleteConfirmTitle }
+        return L10n.Downloads.deleteConfirmOne(item.fileName)
     }
 
     private var bulkDeleteConfirmationBinding: Binding<Bool> {
@@ -112,7 +113,7 @@ struct DownloadsView: View {
     }
 
     private var bulkDeleteConfirmationTitle: String {
-        "Delete \(store.selectedDownloadIDs.count) File\(store.selectedDownloadIDs.count == 1 ? "" : "s")?"
+        L10n.Downloads.deleteConfirmMany(store.selectedDownloadIDs.count)
     }
 
     private func handleTap(_ download: LocalDownload) {
@@ -139,19 +140,19 @@ struct DownloadsView: View {
             Button {
                 openURL(filesAppURL)
             } label: {
-                Label { Text("Open in Files") } icon: { IconKit.folder }
+                Label { Text(L10n.Downloads.actionOpenInFiles) } icon: { IconKit.folder }
             }
             .tint(.primaryDS)
             Divider()
         }
         ShareLink(item: download.url) {
-            Label { Text("Share") } icon: { IconKit.share }
+            Label { Text(L10n.Common.share) } icon: { IconKit.share }
         }
         .tint(.primaryDS)
         Button(role: .destructive) {
             store.send(.deleteTapped(download))
         } label: {
-            Label { Text("Delete") } icon: { IconKit.delete }
+            Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
         }
         .tint(.negative)
     }
@@ -264,7 +265,7 @@ struct DownloadsView: View {
             .searchable(
                 text: $store.searchQuery.sending(\.searchQueryChanged),
                 placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Search"
+                prompt: L10n.Common.search
             )
             .refreshable {
                 await store.send(.refreshButtonTapped).finish()
@@ -289,10 +290,10 @@ struct DownloadsView: View {
                                 .transition(.opacity)
                         }
                     case .empty:
-                        EmptyStateView(icon: IconKit.download, message: "Files you download from Browse show up here.")
+                        EmptyStateView(icon: IconKit.download, message: L10n.Downloads.emptyList)
                             .transition(.opacity)
                     case .noResults:
-                        EmptyStateView(icon: IconKit.search, message: "No matches for \u{201C}\(store.searchQuery)\u{201D}.")
+                        EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
                             .transition(.opacity)
                     case .none:
                         EmptyView()
@@ -322,13 +323,13 @@ struct DownloadsView: View {
                         Button {
                             openURL(documentsDownloadsFolderURL)
                         } label: {
-                            Label { Text("Open in Files") } icon: { IconKit.folder }
+                            Label { Text(L10n.Downloads.actionOpenInFiles) } icon: { IconKit.folder }
                         }
                     }
                     Button {
                         isSortSheetPresented = true
                     } label: {
-                        Label { Text("Sort") } icon: { IconKit.sort }
+                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                     }
                 }
             }
@@ -373,19 +374,19 @@ struct DownloadsView: View {
                 )
             }
             .alert(deleteConfirmationTitle, isPresented: deleteConfirmationBinding) {
-                Button("Delete", role: .destructive) { store.send(.deleteConfirmed) }
-                Button("Cancel", role: .cancel) { store.send(.deleteCancelled) }
+                Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
+                Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteCancelled) }
             } message: {
                 // Distinguishes this from every other delete confirmation in the app, which
                 // deletes on the server — this one only ever touches the local copy.
-                Text("This only removes the local copy. The file stays on the server.")
+                Text(L10n.Downloads.deleteSingleMessage)
             }
             .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
             .alert(bulkDeleteConfirmationTitle, isPresented: bulkDeleteConfirmationBinding) {
-                Button("Delete", role: .destructive) { store.send(.bulkDeleteConfirmed) }
-                Button("Cancel", role: .cancel) { store.send(.bulkDeleteCancelled) }
+                Button(L10n.Common.delete, role: .destructive) { store.send(.bulkDeleteConfirmed) }
+                Button(L10n.Common.cancel, role: .cancel) { store.send(.bulkDeleteCancelled) }
             } message: {
-                Text("This only removes the local copies. The files stay on the server.")
+                Text(L10n.Downloads.deleteBulkMessage)
             }
             .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
             .fullScreenCover(item: $previewedDownload) { download in
@@ -399,7 +400,7 @@ struct DownloadsView: View {
                     }
                 )
             }
-            .navigationTitle(store.isSelecting ? "\(store.selectedDownloadIDs.count) Selected" : "Downloads")
+            .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedDownloadIDs.count) : L10n.Downloads.navigationTitle)
             .task {
                 store.send(.onAppear)
             }

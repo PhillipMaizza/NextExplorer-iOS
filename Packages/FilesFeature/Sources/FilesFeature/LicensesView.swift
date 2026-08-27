@@ -1,4 +1,5 @@
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -189,7 +190,7 @@ struct LicensesView: View {
         }
         .scrollContentBackground(.hidden)
         .background(Color.backgroundPrimary)
-        .navigationTitle("Open Source Licenses")
+        .navigationTitle(L10n.Licenses.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
     }
 }

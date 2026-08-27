@@ -2,6 +2,7 @@ import AuthClient
 import ComposableArchitecture
 import CoreModels
 import Foundation
+import Localization
 import Testing
 @testable import AuthFeature
 
@@ -135,7 +136,7 @@ struct LoginFormFeatureTests {
 
         await store.send(.testConnectionButtonTapped) {
             $0.connectionPhase = .failure
-            $0.errorMessage = "Enter a valid server address."
+            $0.errorMessage = L10n.Login.errorInvalidServer
         }
         await store.receive(\.revertToIdle) {
             $0.connectionPhase = .idle
@@ -158,7 +159,7 @@ struct LoginFormFeatureTests {
         await store.receive(\.testConnectionResponse.success) {
             $0.connectionPhase = .failure
             $0.authStatus = AuthStatus(localEnabled: false, oidcEnabled: true)
-            $0.errorMessage = "This server doesn't have username/password sign-in enabled."
+            $0.errorMessage = L10n.Login.errorNoLocalAuth
         }
         await store.receive(\.revertToIdle) {
             $0.connectionPhase = .idle
@@ -180,7 +181,7 @@ struct LoginFormFeatureTests {
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
         await store.receive(\.testConnectionResponse.failure) {
             $0.connectionPhase = .failure
-            $0.errorMessage = "Could not reach that server. Check the address and try again."
+            $0.errorMessage = L10n.Login.errorUnreachable
         }
         await store.receive(\.revertToIdle) {
             $0.connectionPhase = .idle
@@ -204,7 +205,7 @@ struct LoginFormFeatureTests {
         await clock.advance(by: .seconds(0.3))
         await store.receive(\.testConnectionResponse.failure) {
             $0.connectionPhase = .failure
-            $0.errorMessage = "Could not reach that server. Check the address and try again."
+            $0.errorMessage = L10n.Login.errorUnreachable
         }
         await clock.advance(by: .seconds(1))
         await store.receive(\.revertToIdle) {
@@ -287,7 +288,7 @@ struct LoginFormFeatureTests {
         }
 
         await store.send(.continueButtonTapped) {
-            $0.errorMessage = "Enter a valid email address."
+            $0.errorMessage = L10n.Login.errorInvalidEmail
             $0.invalidFieldsScope = .identifier
         }
         await store.receive(\.clearErrorMessage) {
@@ -317,7 +318,7 @@ struct LoginFormFeatureTests {
         }
         await store.receive(\.submitFailed) {
             $0.isSubmitting = false
-            $0.errorMessage = "Incorrect username or password."
+            $0.errorMessage = L10n.Login.errorInvalidCredentials
             $0.invalidFieldsScope = .identifierAndPassword
         }
         await store.receive(\.clearErrorMessage) {
@@ -347,7 +348,7 @@ struct LoginFormFeatureTests {
         }
         await store.receive(\.submitFailed) {
             $0.isSubmitting = false
-            $0.errorMessage = "Too many attempts. Please wait a few minutes and try again."
+            $0.errorMessage = L10n.Login.errorRateLimited
             // A rate limit says nothing about which field was wrong — unlike
             // `.invalidCredentials`, it must not red-border the fields.
             $0.invalidFieldsScope = nil
@@ -455,11 +456,11 @@ struct LoginFormFeatureTests {
         }
         await store.receive(\.submitFailed) {
             $0.isSubmitting = false
-            $0.errorMessage = "Sign-in didn't complete. Please try again."
+            $0.errorMessage = L10n.Login.errorIncomplete
         }
 
         // Well past the usual 4-second auto-dismiss — the message must still be showing.
         await clock.advance(by: .seconds(30))
-        #expect(store.state.errorMessage == "Sign-in didn't complete. Please try again.")
+        #expect(store.state.errorMessage == L10n.Login.errorIncomplete)
     }
 }
