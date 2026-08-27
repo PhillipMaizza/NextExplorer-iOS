@@ -59,6 +59,18 @@ extension FilesClient {
             },
             compressItem: { serverURL, item in
                 try await service.compressItem(serverURL: serverURL, item: item)
+            },
+            createShareLink: { serverURL, request in
+                try await service.createShareLink(serverURL: serverURL, request: request)
+            },
+            mySharedLinks: { serverURL in
+                try await service.shareLinks(serverURL: serverURL, sharedWithMe: false)
+            },
+            sharedWithMeLinks: { serverURL in
+                try await service.shareLinks(serverURL: serverURL, sharedWithMe: true)
+            },
+            deleteShareLink: { serverURL, shareID in
+                try await service.deleteShareLink(serverURL: serverURL, shareID: shareID)
             }
         )
     }

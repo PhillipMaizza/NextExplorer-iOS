@@ -5,7 +5,7 @@ import Foundation
 @Reducer
 public struct MainTabFeature {
     public enum Tab: Equatable, Sendable {
-        case browse, favorites, downloads, settings
+        case browse, favorites, shared, downloads, settings
     }
 
     @ObservableState
@@ -13,12 +13,14 @@ public struct MainTabFeature {
         public var selectedTab: Tab = .browse
         public var browse: BrowseTabFeature.State
         public var favorites: FavoritesFeature.State
+        public var shared: SharedFeature.State
         public var downloads = DownloadsFeature.State()
         public var settings: SettingsFeature.State
 
         public init(serverURL: URL, user: User) {
             self.browse = BrowseTabFeature.State(serverURL: serverURL)
             self.favorites = FavoritesFeature.State(serverURL: serverURL)
+            self.shared = SharedFeature.State(serverURL: serverURL)
             self.settings = SettingsFeature.State(serverURL: serverURL, user: user)
         }
     }
@@ -31,6 +33,7 @@ public struct MainTabFeature {
         case appBecameActive
         case browse(BrowseTabFeature.Action)
         case favorites(FavoritesFeature.Action)
+        case shared(SharedFeature.Action)
         case downloads(DownloadsFeature.Action)
         case settings(SettingsFeature.Action)
         case delegate(Delegate)
@@ -48,6 +51,9 @@ public struct MainTabFeature {
         }
         Scope(state: \.favorites, action: \.favorites) {
             FavoritesFeature()
+        }
+        Scope(state: \.shared, action: \.shared) {
+            SharedFeature()
         }
         Scope(state: \.downloads, action: \.downloads) {
             DownloadsFeature()
@@ -88,7 +94,7 @@ public struct MainTabFeature {
                 state.downloads.downloads = []
                 return .none
 
-            case .browse, .favorites, .downloads, .settings, .delegate:
+            case .browse, .favorites, .shared, .downloads, .settings, .delegate:
                 return .none
             }
         }

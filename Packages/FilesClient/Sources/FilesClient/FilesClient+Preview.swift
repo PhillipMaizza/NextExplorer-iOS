@@ -56,8 +56,62 @@ extension FilesClient {
         },
         compressItem: { _, item in
             FileItem(name: "\(item.name).zip", path: item.path, dateModified: Date(), size: 0, kind: "zip")
-        }
+        },
+        createShareLink: { _, request in
+            let token = "PREVIEW1234"
+            let share = Share(
+                id: UUID().uuidString,
+                shareToken: token,
+                ownerId: "preview-user",
+                sourcePath: request.sourcePath,
+                isDirectory: false,
+                accessMode: request.accessMode,
+                sharingType: request.target,
+                hasPassword: request.password?.isEmpty == false,
+                expiresAt: request.expiresAt,
+                label: request.label,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
+            return CreatedShare(
+                share: share,
+                shareUrl: URL(string: "https://cloud.example.com/share/\(token)")!,
+                directFileUrl: URL(string: "https://cloud.example.com/api/share/\(token)/file")!
+            )
+        },
+        mySharedLinks: { _ in Share.previewSharedByMe },
+        sharedWithMeLinks: { _ in Share.previewSharedWithMe },
+        deleteShareLink: { _, _ in }
     )
+}
+
+extension Share {
+    static let previewSharedByMe: [Share] = [
+        Share(
+            id: "s1", shareToken: "UrkLIGIHMF", ownerId: "preview-user",
+            sourcePath: "Documents/Bills/Electricity", isDirectory: true,
+            accessMode: .readonly, sharingType: .anyone, hasPassword: false,
+            expiresAt: nil, label: "Electricity", downloadCount: 3,
+            lastAccessedAt: Date(), createdAt: Date(), updatedAt: Date()
+        ),
+        Share(
+            id: "s2", shareToken: "9fKq2Lm0xP", ownerId: "preview-user",
+            sourcePath: "Photos/2024/passport.pdf", isDirectory: false,
+            accessMode: .readonly, sharingType: .users, hasPassword: true,
+            expiresAt: Date().addingTimeInterval(86_400 * 7), label: nil,
+            downloadCount: 0, lastAccessedAt: nil, createdAt: Date(), updatedAt: Date()
+        )
+    ]
+
+    static let previewSharedWithMe: [Share] = [
+        Share(
+            id: "s3", shareToken: "abc123XYZ0", ownerId: "someone-else",
+            sourceName: "Team Roadmap", isDirectory: true,
+            accessMode: .readwrite, sharingType: .users, hasPassword: false,
+            expiresAt: nil, label: "Team Roadmap", downloadCount: 0,
+            lastAccessedAt: nil, createdAt: Date(), updatedAt: Date()
+        )
+    ]
 }
 
 extension FileItem {
