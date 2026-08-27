@@ -244,9 +244,15 @@ struct BrowseContentView: View {
         }
         .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
         .sheet(isPresented: $isSortSheetPresented) {
-            BrowseSortSheet(
+            SortSheet(
+                options: BrowseFeature.SortOption.allCases,
+                directions: BrowseFeature.SortDirection.allCases,
                 sortOption: store.sortOption,
                 sortDirection: store.sortDirection,
+                optionIcon: { $0.icon },
+                optionTitle: { $0.title },
+                directionIcon: { $0.icon },
+                directionTitle: { $0.title },
                 onSelectOption: { store.send(.sortOptionChanged($0)) },
                 onSelectDirection: { store.send(.sortDirectionChanged($0)) },
                 onDismiss: { isSortSheetPresented = false }
@@ -592,7 +598,9 @@ struct BrowseContentView: View {
                 .transition(.opacity)
         case .error:
             if let errorMessage = store.errorMessage {
-                EmptyStateView(icon: IconKit.warning, message: errorMessage)
+                EmptyStateView(icon: IconKit.warning, message: errorMessage) {
+                    store.send(.refreshButtonTapped)
+                }
                     .transition(.opacity)
             }
         case .empty:

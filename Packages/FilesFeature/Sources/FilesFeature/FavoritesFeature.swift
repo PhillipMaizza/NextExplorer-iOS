@@ -31,6 +31,9 @@ public struct FavoritesFeature {
         public var favorites: IdentifiedArrayOf<Favorite> = []
         public var isLoading = false
         public var errorMessage: String?
+        /// A failed remove (single or bulk) — surfaced as a toast rather than the list-level
+        /// `errorMessage`, which is only shown when the list is empty.
+        public var actionErrorMessage: String?
         public var searchQuery = ""
         public var sortOption: SortOption = .name
         public var sortDirection: BrowseFeature.SortDirection = .ascending
@@ -70,7 +73,7 @@ public struct FavoritesFeature {
         case favoritesResponse(Result<[Favorite], FilesClientError>)
         case rowTapped(Favorite)
         case removeTapped(Favorite)
-        case removeResponse(String)
+        case removeResponse(Favorite.ID, Result<Bool, FilesClientError>)
         case searchQueryChanged(String)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(BrowseFeature.SortDirection)
@@ -125,16 +128,22 @@ public struct FavoritesFeature {
                 return .none
 
             case let .removeTapped(favorite):
+                state.actionErrorMessage = nil
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    if (try? await filesClient.removeFavorite(serverURL, favorite.path)) != nil {
-                        await send(.removeResponse(favorite.path), animation: .default)
-                    }
+                    await send(.removeResponse(favorite.id, await apiResult {
+                        try await filesClient.removeFavorite(serverURL, favorite.path)
+                        return true
+                    }), animation: .default)
                 }
 
-            case let .removeResponse(path):
-                state.favorites.removeAll { $0.path == path }
+            case let .removeResponse(id, .success):
+                state.favorites.remove(id: id)
+                return .none
+
+            case let .removeResponse(_, .failure(error)):
+                state.actionErrorMessage = error.userMessage
                 return .none
 
             case let .searchQueryChanged(query):
@@ -180,10 +189,17 @@ public struct FavoritesFeature {
                 return .none
 
             case .bulkRemoveConfirmed:
+                state.actionErrorMessage = nil
                 return confirmBulkRemove(&state)
 
             case let .bulkRemoveResponse(removedPaths):
+                let attempted = state.selectedFavoriteIDs.count
                 state.favorites.removeAll { removedPaths.contains($0.path) }
+                if removedPaths.isEmpty, attempted > 0 {
+                    state.actionErrorMessage = "Couldn't remove \(attempted == 1 ? "that favorite" : "those favorites")."
+                } else if removedPaths.count < attempted {
+                    state.actionErrorMessage = "Removed \(removedPaths.count) of \(attempted)."
+                }
                 state.isSelecting = false
                 state.selectedFavoriteIDs = []
                 return .none

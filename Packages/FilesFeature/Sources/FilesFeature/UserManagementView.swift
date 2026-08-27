@@ -118,7 +118,9 @@ struct UserManagementView: View {
         if store.isLoading && store.users.isEmpty {
             ProgressView()
         } else if let error = store.errorMessage, store.users.isEmpty {
-            EmptyStateView(icon: IconKit.warning, message: error)
+            EmptyStateView(icon: IconKit.warning, message: error) {
+                store.send(.refreshRequested)
+            }
         } else if store.users.isEmpty {
             EmptyStateView(icon: IconKit.people, message: "No users yet.")
         } else if store.isSearchWithoutResults {

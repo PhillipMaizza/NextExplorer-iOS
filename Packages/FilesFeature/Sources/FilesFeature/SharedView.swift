@@ -88,7 +88,10 @@ struct SharedView: View {
                         ProgressView().transition(.opacity)
                     case .error:
                         if let errorMessage = store.errorMessage {
-                            EmptyStateView(icon: IconKit.warning, message: errorMessage).transition(.opacity)
+                            EmptyStateView(icon: IconKit.warning, message: errorMessage) {
+                                store.send(.refreshRequested)
+                            }
+                            .transition(.opacity)
                         }
                     case .empty:
                         EmptyStateView(icon: IconKit.shareLink, message: emptyMessage).transition(.opacity)
@@ -129,6 +132,9 @@ struct SharedView: View {
             .dsToast($toastMessage)
             .task { store.send(.onAppear) }
             .onChange(of: store.externalRevision) { _, _ in store.send(.externalRevisionChanged) }
+            .onChange(of: store.actionErrorMessage) { _, newValue in
+                if let newValue { toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue) }
+            }
         }
         .tint(Color.accent)
     }

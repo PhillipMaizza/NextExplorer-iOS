@@ -34,6 +34,9 @@ public struct DownloadsFeature {
         public var downloads: IdentifiedArrayOf<LocalDownload> = []
         public var isLoading = false
         public var errorMessage: String?
+        /// A failed delete — surfaced as a toast, not the list-level `errorMessage` (only
+        /// shown when the list is empty).
+        public var actionErrorMessage: String?
         public var deleteConfirmationItem: LocalDownload?
         public var searchQuery = ""
         public var sortOption: SortOption = .name
@@ -126,7 +129,7 @@ public struct DownloadsFeature {
                 return .none
 
             case let .deleteResponse(.failure(error)):
-                state.errorMessage = error.userMessage
+                state.actionErrorMessage = error.userMessage
                 return .none
 
             case let .searchQueryChanged(query):
