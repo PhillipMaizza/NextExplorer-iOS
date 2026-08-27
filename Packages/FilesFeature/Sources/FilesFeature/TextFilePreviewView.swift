@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -74,7 +75,7 @@ struct TextFilePreviewView: View {
         }
         .onChange(of: isSaving) { wasSaving, nowSaving in
             if wasSaving, !nowSaving, errorMessage == nil {
-                savedToast = .success("Saved")
+                savedToast = .success(L10n.TextPreview.saved)
                 isEditing = false
             }
         }
@@ -90,7 +91,7 @@ struct TextFilePreviewView: View {
 
     private var toolbar: some View {
         HStack(spacing: Constants.toolbarSpacing) {
-            DSCloseButton(action: onDismiss)
+            DSCloseButton(action: onDismiss, accessibilityLabel: L10n.Common.close)
 
             Text(fileName)
                 .type(.body1(.semibold), style: .primary(for: .label))
@@ -218,7 +219,7 @@ struct TextFilePreviewView: View {
         fileName: "notes.txt",
         kind: "txt",
         content: nil,
-        errorMessage: "Couldn't load this file. Check your connection and try again.",
+        errorMessage: L10n.TextPreview.loadFailed,
         isLoading: false,
         isSaving: false,
         onSave: { _ in },

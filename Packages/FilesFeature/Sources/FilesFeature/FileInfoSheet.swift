@@ -1,5 +1,6 @@
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -95,21 +96,21 @@ struct FileInfoSheet: View {
     @ViewBuilder
     private func metadataSections(for metadata: FileMetadata) -> some View {
         VStack(spacing: 0) {
-            row("Kind", kindTitle(for: metadata))
-            row("Size", Self.byteFormatter.string(fromByteCount: metadata.size))
-            row("Location", metadata.path)
-            row("Date Modified", dateFormat.string(from: metadata.dateModified, includeTime: includeTime))
-            row("Date Created", dateFormat.string(from: metadata.dateCreated, includeTime: includeTime))
+            row(L10n.FileInfo.rowKind, kindTitle(for: metadata))
+            row(L10n.FileInfo.rowSize, Self.byteFormatter.string(fromByteCount: metadata.size))
+            row(L10n.FileInfo.rowLocation, metadata.path)
+            row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: includeTime))
+            row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: includeTime))
         }
 
         if let directory = metadata.directory {
             Divider()
             VStack(spacing: 0) {
-                row("Files", "\(directory.fileCount)")
-                row("Folders", "\(directory.dirCount)")
-                row("Total Size", Self.byteFormatter.string(fromByteCount: directory.totalSize))
+                row(L10n.FileInfo.rowFiles, "\(directory.fileCount)")
+                row(L10n.FileInfo.rowFolders, "\(directory.dirCount)")
+                row(L10n.FileInfo.rowTotalSize, Self.byteFormatter.string(fromByteCount: directory.totalSize))
                 if directory.truncated {
-                    Text("Counted a partial scan — this folder is very large.")
+                    Text(L10n.FileInfo.partialScan)
                         .type(.body3(.regular), style: .tertiary)
                         .padding(.top, .space4)
                 }
@@ -120,21 +121,21 @@ struct FileInfoSheet: View {
             Divider()
             VStack(spacing: 0) {
                 if let width = image.width, let height = image.height {
-                    row("Dimensions", "\(width) × \(height)")
+                    row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
                 }
                 if let make = image.cameraMake, let model = image.cameraModel {
-                    row("Camera", "\(make) \(model)")
+                    row(L10n.FileInfo.rowCamera, "\(make) \(model)")
                 } else if let model = image.cameraModel {
-                    row("Camera", model)
+                    row(L10n.FileInfo.rowCamera, model)
                 }
                 if let lensModel = image.lensModel {
-                    row("Lens", lensModel)
+                    row(L10n.FileInfo.rowLens, lensModel)
                 }
                 if let dateTaken = image.dateTaken {
-                    row("Date Taken", dateFormat.string(from: dateTaken, includeTime: includeTime))
+                    row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: includeTime))
                 }
                 if let gps = image.gps {
-                    row("Location", String(format: "%.4f, %.4f", gps.lat, gps.lon))
+                    row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
                 }
             }
         }
@@ -143,17 +144,17 @@ struct FileInfoSheet: View {
             Divider()
             VStack(spacing: 0) {
                 if let width = video.width, let height = video.height {
-                    row("Dimensions", "\(width) × \(height)")
+                    row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
                 }
                 if let duration = video.duration {
-                    row("Duration", Self.durationFormatter.string(from: duration) ?? "-")
+                    row(L10n.FileInfo.rowDuration, Self.durationFormatter.string(from: duration) ?? "-")
                 }
             }
         }
     }
 
     private func kindTitle(for metadata: FileMetadata) -> String {
-        metadata.isDirectory ? "Folder" : metadata.kind.uppercased()
+        metadata.isDirectory ? L10n.FileInfo.navigationTitleFolder : metadata.kind.uppercased()
     }
 
     private func row(_ label: String, _ value: String) -> some View {

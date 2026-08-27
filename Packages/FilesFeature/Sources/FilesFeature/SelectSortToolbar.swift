@@ -1,4 +1,5 @@
 import DesignSystem
+import Localization
 import SwiftUI
 
 /// The "Select / Sort / Grid-List" toolbar chrome shared by Browse, Favorites, and Downloads:
@@ -25,10 +26,10 @@ func selectSortToolbar<SortMenu: View>(
                 IconKit.selectAll
             }
             .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel(isAllSelected ? "Deselect All" : "Select All")
+            .accessibilityLabel(isAllSelected ? L10n.Select.deselectAll : L10n.Select.selectAll)
         }
         ToolbarItem(placement: .primaryAction) {
-            Button("Cancel", action: onCancel)
+            Button(L10n.Common.cancel, action: onCancel)
                 .buttonStyle(DSHapticButtonStyle())
         }
     } else {
@@ -36,13 +37,13 @@ func selectSortToolbar<SortMenu: View>(
             Menu {
                 if isSelectAvailable {
                     Button(action: onSelectModeToggled) {
-                        Label { Text("Select") } icon: { IconKit.select }
+                        Label { Text(L10n.Common.select) } icon: { IconKit.select }
                     }
                 }
                 sortMenu()
                 Button(action: onToggleViewMode) {
                     Label {
-                        Text(isGridView ? "List View" : "Grid View")
+                        Text(isGridView ? L10n.Select.listView : L10n.Select.gridView)
                     } icon: {
                         isGridView ? IconKit.listBullet : IconKit.squareGrid
                     }

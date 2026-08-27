@@ -1,8 +1,9 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import Foundation
-import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -28,8 +29,8 @@ public struct BrowseFeature {
 
         var title: String {
             switch self {
-            case .thisFolder: "This Folder"
-            case .everywhere: "Everywhere"
+            case .thisFolder: L10n.Browse.scopeThisFolder
+            case .everywhere: L10n.Browse.scopeEverywhere
             }
         }
     }
@@ -41,10 +42,10 @@ public struct BrowseFeature {
 
         var title: String {
             switch self {
-            case .name: "Name"
-            case .size: "Size"
-            case .dateModified: "Date Modified"
-            case .kind: "Kind"
+            case .name: L10n.Sort.name
+            case .size: L10n.Sort.size
+            case .dateModified: L10n.Sort.dateModified
+            case .kind: L10n.Sort.kind
             }
         }
 
@@ -65,8 +66,8 @@ public struct BrowseFeature {
 
         var title: String {
             switch self {
-            case .ascending: "Ascending"
-            case .descending: "Descending"
+            case .ascending: L10n.Sort.ascending
+            case .descending: L10n.Sort.descending
             }
         }
 
@@ -337,7 +338,7 @@ public struct BrowseFeature {
                 state.searchResults = []
                 // Surface it, otherwise a network blip during an "Everywhere" search is
                 // indistinguishable from a genuine empty result.
-                state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : "Couldn't search. Check your connection and try again."
+                state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : L10n.Browse.searchFailed
                 return .none
 
             case let .sortOptionChanged(option):
@@ -415,7 +416,7 @@ public struct BrowseFeature {
 
             case let .extractZipTapped(item):
                 state.isPerformingFileAction = true
-                state.fileActionProgressMessage = "Extracting…"
+                state.fileActionProgressMessage = L10n.Browse.progressExtracting
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
@@ -436,7 +437,7 @@ public struct BrowseFeature {
 
             case let .compressTapped(item):
                 state.isPerformingFileAction = true
-                state.fileActionProgressMessage = "Compressing…"
+                state.fileActionProgressMessage = L10n.Browse.progressCompressing
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
@@ -465,7 +466,7 @@ public struct BrowseFeature {
             case let .downloadResponse(.success(result)):
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
-                state.downloadSuccessMessage = "Saved to \(result.location.title)"
+                state.downloadSuccessMessage = L10n.Browse.downloadSavedTo(result.location.title)
                 return .none
 
             case let .downloadResponse(.failure(error)):
@@ -547,11 +548,11 @@ public struct BrowseFeature {
                 state.isSelecting = false
                 state.selectedItemIDs = []
                 if savedCount == total {
-                    state.downloadSuccessMessage = "Saved \(savedCount) item\(savedCount == 1 ? "" : "s") to \(location.title)"
+                    state.downloadSuccessMessage = L10n.Browse.downloadSavedAllTo(savedCount, location.title)
                 } else if savedCount > 0 {
-                    state.downloadSuccessMessage = "Saved \(savedCount) of \(total) items to \(location.title)"
+                    state.downloadSuccessMessage = L10n.Browse.downloadSavedCountTo(savedCount, total, location.title)
                 } else {
-                    state.fileActionErrorMessage = "Couldn't save these items to your device."
+                    state.fileActionErrorMessage = L10n.Browse.downloadBulkFailed
                 }
                 return .none
 
@@ -731,7 +732,7 @@ public struct BrowseFeature {
     /// effect "Compress" already has) and the resulting archive is downloaded like any file.
     private func startDownload(_ state: inout State, item: FileItem, location: DownloadLocation, removeArchiveAfterDownload: Bool) -> Effect<Action> {
         state.isPerformingFileAction = true
-        state.fileActionProgressMessage = item.isDirectory ? "Compressing…" : "Downloading…"
+        state.fileActionProgressMessage = item.isDirectory ? L10n.Browse.progressCompressing : L10n.Browse.progressDownloading
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         let localDownloadStore = self.localDownloadStore
@@ -743,7 +744,7 @@ public struct BrowseFeature {
                     let archive = try await filesClient.compressItem(serverURL, item)
                     compressedArchive = archive
                     fileToDownload = archive
-                    await send(.downloadProgressUpdated("Downloading…"))
+                    await send(.downloadProgressUpdated(L10n.Browse.progressDownloading))
                 } else {
                     fileToDownload = item
                 }
@@ -817,7 +818,7 @@ public struct BrowseFeature {
         let targets = state.selectedItemIDs.compactMap { state.items[id: $0] }
         guard !targets.isEmpty else { return .none }
         state.isBulkActionInFlight = true
-        state.fileActionProgressMessage = "Downloading 1 of \(targets.count)…"
+        state.fileActionProgressMessage = L10n.Browse.progressDownloadingIndexed(1, targets.count)
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         let localDownloadStore = self.localDownloadStore
@@ -825,7 +826,7 @@ public struct BrowseFeature {
             var savedCount = 0
             for (index, item) in targets.enumerated() {
                 if index > 0 {
-                    await send(.downloadProgressUpdated("Downloading \(index + 1) of \(targets.count)…"))
+                    await send(.downloadProgressUpdated(L10n.Browse.progressDownloadingIndexed(index + 1, targets.count)))
                 }
                 do {
                     var compressedArchive: FileItem?

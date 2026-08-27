@@ -1,0 +1,395 @@
+# NetxExplorer user-facing copy. key<TAB>English. `#` comments, `\n` for newline.
+# Regenerate: python3 Scripts/gen-l10n.py
+
+# ---- common ----
+common.cancel	Cancel
+common.save	Save
+common.retry	Try Again
+common.delete	Delete
+common.remove	Remove
+common.done	Done
+common.ok	OK
+common.logOut	Log Out
+common.close	Close
+common.share	Share
+common.download	Download
+common.sort	Sort
+common.select	Select
+common.search	Search
+common.password	Password
+common.never	Never
+common.selectedCount	%lld Selected
+
+# ---- tabs ----
+tab.browse	Browse
+tab.favorites	Favorites
+tab.shared	Shared
+tab.downloads	Downloads
+tab.settings	Settings
+
+# ---- sort ----
+sort.sheetTitle	Sort By
+sort.name	Name
+sort.size	Size
+sort.kind	Kind
+sort.dateModified	Date Modified
+sort.dateAdded	Date Added
+sort.dateShared	Date Shared
+sort.expiration	Expiration
+sort.email	Email
+sort.type	Type
+sort.ascending	Ascending
+sort.descending	Descending
+
+# ---- multi-select toolbar ----
+select.selectAll	Select All
+select.deselectAll	Deselect All
+select.listView	List View
+select.gridView	Grid View
+
+# ---- empty states ----
+emptyState.folderEmpty	This folder is empty.
+emptyState.loadFailed	Couldn't reach the server.
+emptyState.noSearchMatches	No matches for “%@”.
+
+# ---- enums: access mode / share target / direct link / thumbnail size / download location ----
+accessMode.readonly	Read Only
+accessMode.readwrite	Read & Write
+shareTarget.anyone	Anyone with link
+shareTarget.users	Specific users
+directLinkMode.auto	Auto
+directLinkMode.inline	View
+directLinkMode.raw	Raw
+directLinkMode.download	Download
+thumbnailSize.small	Small
+thumbnailSize.medium	Medium
+thumbnailSize.large	Large
+downloadLocation.documents	Documents
+downloadLocation.cache	Cache
+dateFormat.automatic	Automatic
+
+# ---- browse ----
+browse.navigationTitle	Browse
+browse.scopeThisFolder	This Folder
+browse.scopeEverywhere	Everywhere
+browse.searchScopeInFolder	This Folder
+browse.searchScopeEverywhere	Everywhere
+browse.locations	Locations
+browse.open	Open
+browse.unsupportedFileType	Unsupported file type
+browse.actionGetInfo	Get Info
+browse.actionRename	Rename
+browse.actionExtract	Extract
+browse.actionCompress	Compress
+browse.actionDownload	Download
+browse.actionAddToFavorites	Add to Favorites
+browse.actionRemoveFromFavorites	Remove from Favorites
+browse.actionShare	Share
+browse.actionDelete	Delete
+browse.renameTitle	Rename
+browse.renameNamePlaceholder	Name
+browse.deleteConfirmTitle	Delete?
+browse.deleteConfirmOne	Delete “%@”?
+browse.deleteConfirmMany	Delete %lld items?
+browse.deleteMessage	This can't be undone.
+browse.searchNoMatchesInFolder	No matches for “%@”.
+browse.searchEverywhere	Search everywhere
+browse.searchFailed	Couldn't search. Check your connection and try again.
+browse.progressExtracting	Extracting…
+browse.progressCompressing	Compressing…
+browse.progressDownloading	Downloading…
+browse.progressDownloadingIndexed	Downloading %1$lld of %2$lld…
+browse.downloadSavedTo	Saved to %@
+browse.downloadSavedCountTo	Saved %1$lld of %2$lld items to %3$@
+browse.downloadSavedAllTo	Saved %1$lld items to %2$@
+browse.downloadBulkFailed	Couldn't save these items to your device.
+
+# ---- favorites ----
+favorites.navigationTitle	Favorites
+favorites.emptyList	Star folders in Browse to see them here.
+favorites.actionRemoveFromFavorites	Remove from Favorites
+favorites.removeConfirm	Remove %lld Favorites?
+favorites.removeMessage	This only removes them from Favorites.
+favorites.removeFailedOne	Couldn't remove that favorite.
+favorites.removeFailedMany	Couldn't remove those favorites.
+favorites.removePartial	Removed %1$lld of %2$lld.
+
+# ---- downloads ----
+downloads.navigationTitle	Downloads
+downloads.actionOpenInFiles	Open in Files
+downloads.emptyList	Files you download from Browse show up here.
+downloads.deleteConfirmTitle	Delete?
+downloads.deleteConfirmOne	Delete “%@”?
+downloads.deleteConfirmMany	Delete %lld files?
+downloads.deleteSingleMessage	This only removes the local copy. The file stays on the server.
+downloads.deleteBulkMessage	This only removes the local copies. The files stay on the server.
+
+# ---- shared ----
+shared.navigationTitle	Shared
+shared.segmentByMe	By me
+shared.segmentWithMe	With me
+shared.sectionExpired	Expired
+shared.badgeExpired	expired
+shared.emptyByMe	Share a file or folder to see its link here.
+shared.emptyWithMe	Links other people share with you show up here.
+shared.noSearchMatches	No shares match “%@”.
+shared.deleteTitle	Delete Share Link?
+shared.deleteMessage	The link stops working immediately. The file or folder itself isn't touched.
+shared.sharedByUnknown	Someone
+shared.metaAccess	Access
+shared.metaExpiration	Expiration
+shared.metaSharedBy	Shared by
+shared.metaSharedWith	Shared with
+shared.anyoneWithLink	Anyone with link
+shared.linkMode	Link mode
+shared.actionShareLink	Share link
+shared.actionFolderLink	Folder link
+shared.actionFileLink	File link
+shared.moreRecipients	+%lld
+shared.copiedShareLink	Share link copied
+shared.copiedFolderZip	Folder ZIP link copied
+shared.copiedDirectFile	Direct file link copied
+
+# ---- create share ----
+createShare.title	Create Share Link
+createShare.titleCreated	Share Created
+createShare.sectionLabel	Label
+createShare.sectionAccessMode	Access Mode
+createShare.sectionWhoCanAccess	Who can access
+createShare.sectionShareLink	Share Link
+createShare.fieldPassword	Password
+createShare.togglePasswordProtect	Password protect
+createShare.toggleSetExpiration	Set expiration date
+createShare.fieldExpires	Expires
+createShare.submit	Create Share Link
+createShare.loadingUsers	Loading users…
+createShare.noOtherUsers	No other users to share with.
+createShare.sharingPrefix	Sharing:
+createShare.createdBanner	Share link created successfully!
+createShare.directLinkMode	Direct link mode
+createShare.directFolderLink	Direct folder ZIP link
+createShare.directFileLink	Direct file link
+createShare.summaryAccess	Access
+createShare.summarySharedWith	Shared with
+createShare.summaryPassword	Password
+createShare.summaryPasswordProtected	Protected
+createShare.summaryExpires	Expires
+createShare.summarySpecificPeople	Specific people
+createShare.errorPastExpiration	Pick an expiration date in the future.
+
+# ---- settings ----
+settings.navigationTitle	Settings
+settings.appVersion	Version %1$@ (%2$@)
+settings.sectionGeneral	General
+settings.sectionDisplay	Display
+settings.sectionStorage	Storage
+settings.sectionLicenses	Licenses
+settings.sectionUsers	Users
+settings.sectionAdmin	Admin
+settings.toggleShowHiddenFiles	Show Hidden Files
+settings.toggleRenderHTML	Render HTML Pages
+settings.toggleRenderMarkdown	Render Markdown Files
+settings.toggleHaptics	Haptics
+settings.toggleDarkMode	Dark Mode
+settings.toggleShowThumbnails	Show Thumbnails
+settings.toggleShowExtensions	Show Filename Extensions
+settings.toggleRemoveArchives	Remove Archives After Download
+settings.rowDateFormat	Date Format
+settings.rowThumbnailSize	Thumbnail Size
+settings.rowRemoveAllDownloads	Remove All Downloads
+settings.rowClearCache	Clear Cache
+settings.rowOpenSourceLicenses	Open Source Licenses
+settings.rowUserManagement	User Management
+settings.rowServer	Server
+settings.rowChangePassword	Change Password
+settings.storageFootnote	Downloading a folder zips it on the server first. Turn on the toggle above to delete that archive from the server once it's saved to your device. Removing downloads or clearing the cache only affects this device; nothing on the server is touched.
+settings.removeAllDownloadsTitle	Remove All Downloads?
+settings.removeAllDownloadsConfirm	Remove All
+settings.removeAllDownloadsMessage	This deletes every downloaded file from this device. They stay on the server.
+settings.clearCacheTitle	Clear Cache?
+settings.clearCacheConfirm	Clear
+settings.clearCacheMessage	This clears cached previews and thumbnails. Nothing on the server is affected.
+settings.signOutAlertTitle	Sign Out?
+settings.signOutMessage	You'll need to sign in again to access your files.
+settings.signOutButton	Sign Out
+settings.signingOut	Signing Out…
+settings.dateFormatNavigationTitle	Date Format
+settings.dateFormatShowTime	Show Time
+
+# ---- licenses ----
+licenses.navigationTitle	Open Source Licenses
+licenses.sectionSoftware	Software
+licenses.sectionFontSoftware	Font Software
+licenses.labelAuthor	Author
+licenses.labelOriginalVersion	Original Version
+licenses.labelModifiedVersion	Modified Version
+licenses.labelReservedFontName	Reserved Font Name
+
+# ---- file info ----
+fileInfo.navigationTitleFolder	Folder
+fileInfo.rowKind	Kind
+fileInfo.rowSize	Size
+fileInfo.rowLocation	Location
+fileInfo.rowDateModified	Date Modified
+fileInfo.rowDateCreated	Date Created
+fileInfo.rowFiles	Files
+fileInfo.rowFolders	Folders
+fileInfo.rowTotalSize	Total Size
+fileInfo.rowDimensions	Dimensions
+fileInfo.rowCamera	Camera
+fileInfo.rowLens	Lens
+fileInfo.rowDateTaken	Date Taken
+fileInfo.rowDuration	Duration
+fileInfo.partialScan	Counted a partial scan — this folder is very large.
+
+# ---- archive browser ----
+archive.emptyFolder	This folder is empty.
+archive.unsupportedFileType	Unsupported file type
+archive.openFailed	Couldn't open this file.
+archive.openArchiveFailed	Couldn't open this archive.
+
+# ---- image gallery / text preview ----
+gallery.loadFailed	Couldn't load this image.
+textPreview.saved	Saved
+textPreview.loadFailed	Couldn't load this file. Check your connection and try again.
+
+# ---- user management ----
+userManagement.navigationTitle	User Management
+userManagement.searchPrompt	Search users
+userManagement.createUser	Create User
+userManagement.badgeAdmin	Admin
+userManagement.emptyList	No users yet.
+userManagement.noSearchMatches	No users match “%@”.
+userManagement.loadFailed	Couldn't reach the server.
+userManagement.sortType	Type
+userManagement.sortName	Name
+userManagement.sortEmail	Email
+userManagement.tabProfile	Profile
+userManagement.tabSecurity	Security
+userManagement.tabVolumes	Volumes
+userManagement.createNavigationTitle	Create User
+userManagement.createEmailField	Email
+userManagement.createEmailPlaceholder	name@example.com
+userManagement.createUsernameField	Username (optional)
+userManagement.createUsernamePlaceholder	Derived from email
+userManagement.createPasswordField	Password
+userManagement.createPasswordPlaceholder	At least %lld characters
+userManagement.createGrantAdminToggle	Grant admin access
+userManagement.createGrantAdminSubtitle	Full control over files, shares and users.
+userManagement.createSubmit	Create User
+userManagement.setPasswordNavigationTitle	Password
+userManagement.setPasswordNewField	New password
+userManagement.setPasswordPlaceholder	At least %lld characters
+userManagement.setPasswordResetTitle	Reset Password
+userManagement.setPasswordSetTitle	Set Password
+userManagement.setPasswordResetIntro	Set a new local password for %@. Their current password stops working.
+userManagement.setPasswordSetIntro	Give %@ a local password so they can sign in without SSO.
+userManagement.toastProfileUpdated	Profile updated
+userManagement.toastAdminGranted	Admin granted
+userManagement.toastUserRemoved	User removed
+userManagement.toastUserCreated	User created
+userManagement.toastPasswordUpdated	Password updated
+userManagement.toastVolumeSaved	Volume saved
+userManagement.toastVolumeRemoved	Volume removed
+userManagement.errorEmailRequired	Email is required.
+userManagement.errorEmailInvalid	Enter a valid email address.
+userManagement.errorUsernameRequired	Username is required.
+userManagement.errorEmailInUse	Email already in use.
+userManagement.errorPasswordTooShort	Use at least %lld characters.
+
+# ---- user detail ----
+userDetail.fallbackName	User
+userDetail.sectionGeneralInfo	General Info
+userDetail.sectionRoles	Roles & Permissions
+userDetail.sectionLocalPassword	Local Password
+userDetail.sectionSSO	Single Sign-On
+userDetail.sectionAssignedVolumes	Assigned Volumes
+userDetail.profileDisplayNameField	Display Name
+userDetail.profileDisplayNamePlaceholder	Display name
+userDetail.profileUsernameField	Username
+userDetail.profileUsernamePlaceholder	Username
+userDetail.profileEmailField	Email
+userDetail.profileEmailPlaceholder	name@example.com
+userDetail.profileSave	Save Changes
+userDetail.roleAdmin	Administrator
+userDetail.roleAdminSubtitle	Full control over files, shares and users.
+userDetail.roleAdminLocked	Administrators can't be demoted from the app.
+userDetail.roleGrantAdmin	Grant Admin
+userDetail.passwordHasLocal	This user signs in with an email and password.
+userDetail.passwordSSOOnly	This user has no local password — SSO only.
+userDetail.passwordReset	Reset Password
+userDetail.passwordSet	Set Password
+userDetail.ssoNone	No linked SSO providers.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Linked
+userDetail.dangerZoneTitle	Danger Zone
+userDetail.dangerZoneSubtitle	Removing a user revokes their access immediately. Files they own on the server are not deleted.
+userDetail.dangerZoneRemoveUser	Remove User
+userDetail.volumesNone	No volumes assigned.
+userDetail.volumesNoneSubtitle	This user only sees the default shared space.
+userDetail.volumesAssign	Assign Volume
+userDetail.volumesFootnote	Volumes give a user access to a directory outside the default shared space. Removing a volume never deletes files.
+userDetail.volumeEditAccessibility	Edit %@
+userDetail.volumeRemoveAccessibility	Remove %@
+userDetail.removeVolumeTitle	Remove Volume?
+userDetail.removeVolumeMessage	%@ is unassigned from this user. The directory itself is untouched.
+userDetail.removeUserTitle	Remove User?
+userDetail.removeUserMessage	%@ loses access immediately. Their files on the server are not deleted.
+userDetail.volumeSheetLabelField	Label
+userDetail.volumeSheetLabelPlaceholder	Volume label
+userDetail.volumeSheetAccessMode	Access Mode
+userDetail.volumeSheetDirectory	Directory
+userDetail.volumeSheetSaveEdit	Save Volume
+userDetail.volumeSheetSaveNew	Assign Volume
+userDetail.volumeSheetTitleEdit	Edit Volume
+userDetail.volumeSheetTitleNew	Assign Volume
+userDetail.directoryPickerGoUp	Go up one directory
+userDetail.directoryPickerUseThis	Use this directory
+userDetail.directoryPickerOpen	Open %@
+userDetail.directoryPickerFailed	Couldn't list directories.
+
+# ---- preview toolbar ----
+previewToolbar.close	Close
+previewToolbar.createShareLink	Create share link
+previewToolbar.download	Download
+previewToolbar.delete	Delete
+previewToolbar.share	Share
+
+# ---- login ----
+login.serverQuestion	Where's your instance of NextExplorer?
+login.testConnection	Test connection
+login.emailField	Email
+login.passwordField	Password
+login.submit	Log In
+
+# ---- errors (FilesClientError.userMessage) ----
+error.sessionExpired	Your session expired. Sign in again.
+error.rateLimited	Too many requests. Try again shortly.
+error.network	Couldn't reach the server.
+error.decoding	Server responded unexpectedly.
+error.server	Server error (%lld).
+
+# ---- change password ----
+changePassword.navigationTitle	Change Password
+changePassword.intro	Change the password you use to sign in with your email address. You'll stay signed in on this device.
+changePassword.fieldCurrentPassword	Current password
+changePassword.fieldNewPasswordLabel	New password
+changePassword.fieldConfirmPasswordLabel	Confirm new password
+changePassword.fieldConfirmPassword	Re-enter new password
+changePassword.fieldNewPasswordPrompt	At least %lld characters
+changePassword.submitButton	Update Password
+changePassword.success	Your password has been updated.
+changePassword.errorMinLength	Use at least %lld characters.
+changePassword.errorMismatch	Passwords don't match.
+login.portHint	Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80.
+login.errorInvalidServer	Enter a valid server address.
+login.errorInvalidEmail	Enter a valid email address.
+login.errorInvalidCredentials	Incorrect username or password.
+login.errorSessionExpired	Your session expired. Please sign in again.
+login.errorIncomplete	Sign-in didn't complete. Please try again.
+login.errorUnreachable	Could not reach that server. Check the address and try again.
+login.errorUnexpectedResponse	Unexpected response from server.
+login.errorKeychain	Could not save your session on this device.
+login.errorDecoding	Server responded unexpectedly. Check the address and try again.
+login.errorNoLocalAuth	This server doesn't have username/password sign-in enabled.
+login.errorRateLimited	Too many attempts. Please wait a few minutes and try again.

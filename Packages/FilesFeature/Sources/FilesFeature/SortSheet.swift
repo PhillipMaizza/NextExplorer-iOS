@@ -1,4 +1,5 @@
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -62,7 +63,7 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
                 .buttonStyle(DSHapticButtonStyle())
             }
 
-            Text("Sort By").type(.headline3, style: .link)
+            Text(L10n.Sort.sheetTitle).type(.headline3, style: .link)
 
             VStack(spacing: 0) {
                 ForEach(options, id: \.self) { option in

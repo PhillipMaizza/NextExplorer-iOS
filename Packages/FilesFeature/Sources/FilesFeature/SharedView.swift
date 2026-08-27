@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 import UIKit
 
@@ -62,19 +63,19 @@ struct SharedView: View {
                 shareList
                     .task(id: context.date) { store.send(.expiryTick(context.date)) }
             }
-            .navigationTitle("Shared")
+            .navigationTitle(L10n.Shared.navigationTitle)
             .navigationBarTitleDisplayMode(.large)
             .searchable(
                 text: $store.searchQuery.sending(\.searchQueryChanged),
                 placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Search"
+                prompt: L10n.Common.search
             )
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         isSortSheetPresented = true
                     } label: {
-                        Label { Text("Sort") } icon: { IconKit.sort.foregroundStyle(Color.accent) }
+                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort.foregroundStyle(Color.accent) }
                     }
                     .tint(.accent)
                     .buttonStyle(DSHapticButtonStyle())
@@ -96,7 +97,7 @@ struct SharedView: View {
                     case .empty:
                         EmptyStateView(icon: IconKit.shareLink, message: emptyMessage).transition(.opacity)
                     case .noResults:
-                        EmptyStateView(icon: IconKit.search, message: "No shares match \u{201C}\(store.searchQuery)\u{201D}.").transition(.opacity)
+                        EmptyStateView(icon: IconKit.search, message: L10n.Shared.noSearchMatches(store.searchQuery)).transition(.opacity)
                     case .none:
                         EmptyView()
                     }
@@ -122,11 +123,11 @@ struct SharedView: View {
                     onDismiss: { isSortSheetPresented = false }
                 )
             }
-            .alert("Delete Share Link?", isPresented: deleteConfirmationBinding) {
-                Button("Delete", role: .destructive) { store.send(.deleteConfirmed) }
-                Button("Cancel", role: .cancel) { store.send(.deleteCancelled) }
+            .alert(L10n.Shared.deleteTitle, isPresented: deleteConfirmationBinding) {
+                Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
+                Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteCancelled) }
             } message: {
-                Text("The link stops working immediately. The file or folder itself isn't touched.")
+                Text(L10n.Shared.deleteMessage)
             }
             .hapticFeedback(.warning, trigger: store.deleteConfirmationShare != nil)
             .dsToast($toastMessage)
@@ -141,8 +142,8 @@ struct SharedView: View {
 
     private var emptyMessage: String {
         store.segment == .byMe
-            ? "Share a file or folder to see its link here."
-            : "Links other people share with you show up here."
+            ? L10n.Shared.emptyByMe
+            : L10n.Shared.emptyWithMe
     }
 
     private var shareList: some View {
@@ -160,7 +161,7 @@ struct SharedView: View {
 
             section(for: store.activeShares, header: nil)
             if !store.expiredShares.isEmpty {
-                section(for: store.expiredShares, header: "Expired")
+                section(for: store.expiredShares, header: L10n.Shared.sectionExpired)
             }
         }
         .listStyle(.plain)
@@ -296,25 +297,25 @@ private struct SharedLinkCard: View {
     private var ownerBody: some View {
         VStack(alignment: .leading, spacing: .space8) {
             sharedWithRow
-            metaRow(accessIcon, "Access", share.accessMode.title)
-            metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
+            metaRow(accessIcon, L10n.Shared.metaAccess, share.accessMode.title)
+            metaRow(IconKit.calendar, L10n.Shared.metaExpiration, expiresText, isWarning: isExpired)
             linkModeRow
 
             HStack(spacing: Metrics.actionRowSpacing) {
-                pillAction(IconKit.link, "Share link", tint: .accent, isEnabled: true) {
-                    copy(shareLinkString, label: "Share link copied")
+                pillAction(IconKit.link, L10n.Shared.actionShareLink, tint: .accent, isEnabled: true) {
+                    copy(shareLinkString, label: L10n.Shared.copiedShareLink)
                 }
                 pillAction(
                     IconKit.copy,
-                    share.isDirectory ? "Folder link" : "File link",
+                    share.isDirectory ? L10n.Shared.actionFolderLink : L10n.Shared.actionFileLink,
                     tint: .accent,
                     isEnabled: true
                 ) {
-                    copy(directLinkString, label: share.isDirectory ? "Folder ZIP link copied" : "Direct file link copied")
+                    copy(directLinkString, label: share.isDirectory ? L10n.Shared.copiedFolderZip : L10n.Shared.copiedDirectFile)
                 }
             }
 
-            pillAction(IconKit.delete, "Delete", tint: .negative, isEnabled: true, action: onDelete)
+            pillAction(IconKit.delete, L10n.Common.delete, tint: .negative, isEnabled: true, action: onDelete)
                 .padding(.top, Metrics.actionRowSpacing)
         }
         .padding(Metrics.padding)
@@ -324,9 +325,9 @@ private struct SharedLinkCard: View {
     /// `SharedWithMeView`. Just who shared it, the access level, and the expiry.
     private var recipientBody: some View {
         VStack(alignment: .leading, spacing: .space8) {
-            metaRow(IconKit.person, "Shared by", sharedByText)
-            metaRow(accessIcon, "Access", share.accessMode.title)
-            metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
+            metaRow(IconKit.person, L10n.Shared.metaSharedBy, sharedByText)
+            metaRow(accessIcon, L10n.Shared.metaAccess, share.accessMode.title)
+            metaRow(IconKit.calendar, L10n.Shared.metaExpiration, expiresText, isWarning: isExpired)
         }
         .opacity(isExpired ? Metrics.expiredInfoOpacity : 1)
         .padding(Metrics.padding)
@@ -344,10 +345,10 @@ private struct SharedLinkCard: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Metrics.metaIconSize, height: Metrics.metaIconSize)
                     .padding(.top, .space2)
-                Text("Shared with").type(.body2(.regular), style: .primary(for: .label))
+                Text(L10n.Shared.metaSharedWith).type(.body2(.regular), style: .primary(for: .label))
                 Spacer(minLength: .space8)
                 if audienceIsAnyone {
-                    Text("Anyone with link").type(.body2(.regular), style: .secondary)
+                    Text(L10n.Shared.anyoneWithLink).type(.body2(.regular), style: .secondary)
                 }
             }
             if case let .users(names, unnamed) = audience {
@@ -373,7 +374,7 @@ private struct SharedLinkCard: View {
                     .background(Capsule().fill(Color.categorical(for: name).opacity(Metrics.chipFillOpacity)))
             }
             if unnamed > 0 {
-                Text("+\(unnamed)")
+                Text(L10n.Shared.moreRecipients(unnamed))
                     .type(.caption(.semibold), style: .secondary)
                     .padding(.horizontal, .space8)
                     .padding(.vertical, Metrics.badgeVerticalPadding)
@@ -404,7 +405,7 @@ private struct SharedLinkCard: View {
                             .type(.body2(.semibold), style: .primary(for: .label))
                             .lineLimit(1)
                         if isExpired {
-                            Text("expired".uppercased())
+                            Text(L10n.Shared.badgeExpired.uppercased())
                                 .type(.caption(.semibold), style: .error)
                                 .padding(.horizontal, Metrics.badgeHorizontalPadding)
                                 .padding(.vertical, Metrics.badgeVerticalPadding)
@@ -439,9 +440,9 @@ private struct SharedLinkCard: View {
                 .resizable().scaledToFit()
                 .foregroundStyle(Color.secondaryDS)
                 .frame(width: Metrics.metaIconSize, height: Metrics.metaIconSize)
-            Text("Link mode").type(.body2(.regular), style: .primary(for: .label))
+            Text(L10n.Shared.linkMode).type(.body2(.regular), style: .primary(for: .label))
             Spacer()
-            Picker("Link mode", selection: $directLinkMode) {
+            Picker(L10n.Shared.linkMode, selection: $directLinkMode) {
                 ForEach(DirectLinkMode.allCases) { mode in
                     Text(mode.title).tag(mode)
                 }
@@ -492,7 +493,7 @@ private struct SharedLinkCard: View {
     }
 
     private var expiresText: String {
-        guard let expiresAt = share.expiresAt else { return "Never" }
+        guard let expiresAt = share.expiresAt else { return L10n.Common.never }
         return Self.expiryFormatter.string(from: expiresAt)
     }
 

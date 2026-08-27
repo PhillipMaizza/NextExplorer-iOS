@@ -1,5 +1,7 @@
 import ComposableArchitecture
+import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Metrics {
@@ -24,31 +26,31 @@ struct ChangePasswordView: View {
                         .foregroundStyle(Color.secondaryDS)
                         .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                         .padding(.top, .space2)
-                    Text("Change the password you use to sign in with your email address. You'll stay signed in on this device.")
+                    Text(L10n.ChangePassword.intro)
                         .type(.body3(.regular), style: .secondary)
                 }
 
                 if let error = store.errorMessage {
                     ErrorBanner(text: error)
                 }
-                if let success = store.successMessage {
-                    successBanner(success)
+                if store.didSucceed {
+                    successBanner(L10n.ChangePassword.success)
                 }
 
-                LabeledField("Current password") {
-                    SecureField("Current password", text: $store.currentPassword.sending(\.currentPasswordChanged))
+                LabeledField(L10n.ChangePassword.fieldCurrentPassword) {
+                    SecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
                         .textContentType(.password)
                 }
-                LabeledField("New password", error: store.newPasswordError) {
-                    SecureField("At least 6 characters", text: $store.newPassword.sending(\.newPasswordChanged))
+                LabeledField(L10n.ChangePassword.fieldNewPasswordLabel, error: newPasswordErrorText) {
+                    SecureField(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength), text: $store.newPassword.sending(\.newPasswordChanged))
                         .textContentType(.newPassword)
                 }
-                LabeledField("Confirm new password", error: store.confirmError) {
-                    SecureField("Re-enter new password", text: $store.confirmPassword.sending(\.confirmPasswordChanged))
+                LabeledField(L10n.ChangePassword.fieldConfirmPasswordLabel, error: confirmErrorText) {
+                    SecureField(L10n.ChangePassword.fieldConfirmPassword, text: $store.confirmPassword.sending(\.confirmPasswordChanged))
                         .textContentType(.newPassword)
                 }
 
-                DSButton("Update Password", style: .primary, isLoading: store.isSubmitting) {
+                DSButton(L10n.ChangePassword.submitButton, style: .primary, isLoading: store.isSubmitting) {
                     store.send(.submitTapped)
                 }
                 .disabled(!store.isSubmitEnabled)
@@ -58,9 +60,23 @@ struct ChangePasswordView: View {
             .padding(.vertical, Metrics.contentSpacing)
         }
         .background(Color.backgroundPrimary)
-        .navigationTitle("Change Password")
+        .navigationTitle(L10n.ChangePassword.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
+    }
+
+    private var newPasswordErrorText: String? {
+        guard let error = store.newPasswordError else { return nil }
+        switch error {
+        case let .tooShort(minimum): return L10n.ChangePassword.errorMinLength(minimum)
+        }
+    }
+
+    private var confirmErrorText: String? {
+        guard let error = store.confirmError else { return nil }
+        switch error {
+        case .mismatch: return L10n.ChangePassword.errorMismatch
+        }
     }
 
     private func successBanner(_ text: String) -> some View {
@@ -106,7 +122,7 @@ struct ChangePasswordView: View {
         ChangePasswordView(
             store: Store(initialState: {
                 var state = ChangePasswordFeature.State(serverURL: URL(string: "https://x.example.com")!)
-                state.successMessage = "Your password has been updated."
+                state.didSucceed = true
                 return state
             }()) {
                 ChangePasswordFeature()

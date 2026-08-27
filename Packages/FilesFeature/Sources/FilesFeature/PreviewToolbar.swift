@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 import UIKit
 
@@ -63,7 +64,7 @@ private struct PreviewChrome: ViewModifier {
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { onClose() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
-                        .accessibilityLabel("Close")
+                        .accessibilityLabel(L10n.PreviewToolbar.close)
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     if hasSystemShare {
@@ -71,18 +72,18 @@ private struct PreviewChrome: ViewModifier {
                     }
                     if let onShareLink {
                         Button { onShareLink() } label: { IconKit.shareLink.foregroundStyle(Color.primaryDS) }
-                            .accessibilityLabel("Create share link")
+                            .accessibilityLabel(L10n.PreviewToolbar.createShareLink)
                     }
                     if let onDownload {
                         Button { onDownload() } label: { IconKit.download.foregroundStyle(Color.primaryDS) }
-                            .accessibilityLabel("Download")
+                            .accessibilityLabel(L10n.PreviewToolbar.download)
                     }
                     if onDelete != nil {
                         Spacer()
                     }
                     if let onDelete {
                         Button { onDelete() } label: { IconKit.delete.foregroundStyle(Color.negative) }
-                            .accessibilityLabel("Delete")
+                            .accessibilityLabel(L10n.PreviewToolbar.delete)
                     }
                 }
             }
@@ -114,7 +115,7 @@ struct SystemShareButton: View {
                 IconKit.share.foregroundStyle(didFail ? Color.negative : Color.primaryDS)
             }
         }
-        .accessibilityLabel("Share")
+        .accessibilityLabel(L10n.PreviewToolbar.share)
         .disabled(isDisabled)
         .sheet(item: $shareURL) { wrapped in
             ActivityShareSheet(items: [wrapped.url])

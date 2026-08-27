@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 
 private enum Metrics {
@@ -61,30 +62,30 @@ struct UserDetailView: View {
             }
         }
         .background(Color.backgroundPrimary)
-        .navigationTitle(store.detailUser?.displayName ?? store.detailUser?.username ?? "User")
+        .navigationTitle(store.detailUser?.displayName ?? store.detailUser?.username ?? L10n.UserDetail.fallbackName)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: volumeSheetPresented) {
             VolumeAssignSheet(store: store)
         }
         .alert(
-            "Remove Volume?",
+            L10n.UserDetail.removeVolumeTitle,
             isPresented: removeVolumeAlertPresented,
             presenting: store.volumeToRemove
         ) { _ in
-            Button("Remove", role: .destructive) { store.send(.removeVolumeConfirmed) }
-            Button("Cancel", role: .cancel) { store.send(.removeVolumeCancelled) }
+            Button(L10n.Common.remove, role: .destructive) { store.send(.removeVolumeConfirmed) }
+            Button(L10n.Common.cancel, role: .cancel) { store.send(.removeVolumeCancelled) }
         } message: { volume in
-            Text("\(volume.label) is unassigned from this user. The directory itself is untouched.")
+            Text(L10n.UserDetail.removeVolumeMessage(volume.label))
         }
         .alert(
-            "Remove User?",
+            L10n.UserDetail.removeUserTitle,
             isPresented: deleteAlertPresented,
             presenting: store.userToDelete
         ) { _ in
-            Button("Remove", role: .destructive) { store.send(.deleteUserConfirmed) }
-            Button("Cancel", role: .cancel) { store.send(.deleteUserCancelled) }
+            Button(L10n.Common.remove, role: .destructive) { store.send(.deleteUserConfirmed) }
+            Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteUserCancelled) }
         } message: { user in
-            Text("\(user.displayName ?? user.username) loses access immediately. Their files on the server are not deleted.")
+            Text(L10n.UserDetail.removeUserMessage(user.displayName ?? user.username))
         }
     }
 
@@ -112,30 +113,30 @@ struct UserDetailView: View {
 
     @ViewBuilder
     private func profileTab(_ user: User) -> some View {
-        Card("General Info") {
-            LabeledField("Display Name") {
-                TextField("Display name", text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged))
+        Card(L10n.UserDetail.sectionGeneralInfo) {
+            LabeledField(L10n.UserDetail.profileDisplayNameField) {
+                TextField(L10n.UserDetail.profileDisplayNamePlaceholder, text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged))
                     .autocorrectionDisabled()
             }
-            LabeledField("Username", error: store.isProfileDirty ? store.profileUsernameError : nil) {
-                TextField("Username", text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged))
+            LabeledField(L10n.UserDetail.profileUsernameField, error: store.isProfileDirty ? store.profileUsernameError : nil) {
+                TextField(L10n.UserDetail.profileUsernamePlaceholder, text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged))
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             }
-            LabeledField("Email", error: store.isProfileDirty ? store.profileEmailError : nil) {
-                TextField("name@example.com", text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged))
+            LabeledField(L10n.UserDetail.profileEmailField, error: store.isProfileDirty ? store.profileEmailError : nil) {
+                TextField(L10n.UserDetail.profileEmailPlaceholder, text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged))
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             }
-            DSButton("Save Changes", style: .primary, isLoading: store.isSavingProfile) {
+            DSButton(L10n.UserDetail.profileSave, style: .primary, isLoading: store.isSavingProfile) {
                 store.send(.saveProfileTapped)
             }
             .disabled(!store.isProfileSaveEnabled)
             .padding(.top, .space4)
         }
 
-        Card("Roles & Permissions") {
+        Card(L10n.UserDetail.sectionRoles) {
             HStack(alignment: .top, spacing: .space8) {
                 IconKit.shield
                     .resizable().scaledToFit()
@@ -143,8 +144,8 @@ struct UserDetailView: View {
                     .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                     .padding(.top, .space2)
                 VStack(alignment: .leading, spacing: .space2) {
-                    Text("Administrator").type(.body2(.semibold), style: .primary(for: .label))
-                    Text("Full control over files, shares and users.")
+                    Text(L10n.UserDetail.roleAdmin).type(.body2(.semibold), style: .primary(for: .label))
+                    Text(L10n.UserDetail.roleAdminSubtitle)
                         .type(.body3(.regular), style: .secondary)
                 }
                 Spacer(minLength: .space8)
@@ -155,10 +156,10 @@ struct UserDetailView: View {
                 // No "Revoke Admin": the backend refuses to demote any administrator
                 // (`PATCH /api/users/:id` 400s with "Demotion of admin is not allowed."), so
                 // offering the action would only ever produce an error.
-                Text("Administrators can't be demoted from the app.")
+                Text(L10n.UserDetail.roleAdminLocked)
                     .type(.caption(.regular), style: .tertiary)
             } else {
-                DSButton("Grant Admin", style: .secondary) { store.send(.grantAdminTapped) }
+                DSButton(L10n.UserDetail.roleGrantAdmin, style: .secondary) { store.send(.grantAdminTapped) }
             }
         }
 
@@ -169,10 +170,10 @@ struct UserDetailView: View {
 
     private func dangerZone(_ user: User) -> some View {
         VStack(alignment: .leading, spacing: Metrics.cardSpacing) {
-            Text("Danger Zone").type(.body2(.semibold), style: .error)
-            Text("Removing a user revokes their access immediately. Files they own on the server are not deleted.")
+            Text(L10n.UserDetail.dangerZoneTitle).type(.body2(.semibold), style: .error)
+            Text(L10n.UserDetail.dangerZoneSubtitle)
                 .type(.body3(.regular), style: .secondary)
-            DSButton("Remove User", icon: IconKit.delete, style: .failure) {
+            DSButton(L10n.UserDetail.dangerZoneRemoveUser, icon: IconKit.delete, style: .failure) {
                 store.send(.deleteUserTapped(user))
             }
         }
@@ -189,7 +190,7 @@ struct UserDetailView: View {
 
     @ViewBuilder
     private func securityTab(_ user: User) -> some View {
-        Card("Local Password") {
+        Card(L10n.UserDetail.sectionLocalPassword) {
             HStack(alignment: .top, spacing: .space8) {
                 IconKit.key
                     .resizable().scaledToFit()
@@ -197,24 +198,24 @@ struct UserDetailView: View {
                     .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                     .padding(.top, .space2)
                 Text(user.hasLocalPassword
-                    ? "This user signs in with an email and password."
-                    : "This user has no local password — SSO only.")
+                    ? L10n.UserDetail.passwordHasLocal
+                    : L10n.UserDetail.passwordSSOOnly)
                     .type(.body3(.regular), style: .secondary)
                 Spacer(minLength: .space8)
             }
-            DSButton(user.hasLocalPassword ? "Reset Password" : "Set Password", style: .secondary) {
+            DSButton(user.hasLocalPassword ? L10n.UserDetail.passwordReset : L10n.UserDetail.passwordSet, style: .secondary) {
                 store.send(.setPasswordTapped)
             }
         }
 
-        Card("Single Sign-On") {
+        Card(L10n.UserDetail.sectionSSO) {
             if user.oidcMethods.isEmpty {
                 HStack(spacing: .space8) {
                     IconKit.cloud
                         .resizable().scaledToFit()
                         .foregroundStyle(Color.tertiaryDS)
                         .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                    Text("No linked SSO providers.").type(.body3(.regular), style: .secondary)
+                    Text(L10n.UserDetail.ssoNone).type(.body3(.regular), style: .secondary)
                 }
             } else {
                 ForEach(Array(user.oidcMethods.enumerated()), id: \.offset) { _, method in
@@ -223,9 +224,9 @@ struct UserDetailView: View {
                             .resizable().scaledToFit()
                             .foregroundStyle(Color.secondaryDS)
                             .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                        Text(method.provider ?? "SSO").type(.body2(.regular), style: .primary(for: .label))
+                        Text(method.provider ?? L10n.UserDetail.ssoBadge).type(.body2(.regular), style: .primary(for: .label))
                         Spacer()
-                        Text("Linked").type(.caption(.semibold), style: .success)
+                        Text(L10n.UserDetail.ssoLinked).type(.caption(.semibold), style: .success)
                     }
                 }
             }
@@ -236,13 +237,13 @@ struct UserDetailView: View {
 
     @ViewBuilder
     private var volumesTab: some View {
-        Card("Assigned Volumes") {
+        Card(L10n.UserDetail.sectionAssignedVolumes) {
             if store.isLoadingVolumes {
                 ProgressView().frame(maxWidth: .infinity, alignment: .center).padding(.vertical, .space8)
             } else if store.volumes.isEmpty {
                 VStack(spacing: .space4) {
-                    Text("No volumes assigned.").type(.body3(.regular), style: .secondary)
-                    Text("This user only sees the default shared space.").type(.caption(.regular), style: .tertiary)
+                    Text(L10n.UserDetail.volumesNone).type(.body3(.regular), style: .secondary)
+                    Text(L10n.UserDetail.volumesNoneSubtitle).type(.caption(.regular), style: .tertiary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, .space8)
@@ -251,13 +252,13 @@ struct UserDetailView: View {
                     volumeRow(volume)
                 }
             }
-            DSButton("Assign Volume", icon: IconKit.plus, style: .secondary) {
+            DSButton(L10n.UserDetail.volumesAssign, icon: IconKit.plus, style: .secondary) {
                 store.send(.addVolumeTapped)
             }
             .padding(.top, .space4)
         }
 
-        Text("Volumes give a user access to a directory outside the default shared space. Removing a volume never deletes files.")
+        Text(L10n.UserDetail.volumesFootnote)
             .type(.body3(.regular), style: .secondary)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(Metrics.cardPadding)
@@ -282,14 +283,14 @@ struct UserDetailView: View {
                     .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
             }
             .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel("Edit \(volume.label)")
+            .accessibilityLabel(L10n.UserDetail.volumeEditAccessibility(volume.label))
             Button { store.send(.removeVolumeTapped(volume)) } label: {
                 IconKit.delete.resizable().scaledToFit()
                     .foregroundStyle(Color.negative)
                     .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
             }
             .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel("Remove \(volume.label)")
+            .accessibilityLabel(L10n.UserDetail.volumeRemoveAccessibility(volume.label))
         }
         .padding(.vertical, .space8)
     }
@@ -348,7 +349,7 @@ struct AccessModeBadge: View {
     private var tint: Color { mode == .readonly ? .attention : .positive }
 
     var body: some View {
-        Text(mode == .readonly ? "Read Only" : "Read & Write")
+        Text(mode == .readonly ? L10n.AccessMode.readonly : L10n.AccessMode.readwrite)
             .type(.caption(.semibold))
             .foregroundStyle(tint)
             .padding(.horizontal, Metrics.badgeHorizontalPadding)
@@ -383,8 +384,8 @@ private struct VolumeAssignSheet: View {
                             ErrorBanner(text: error)
                         }
 
-                        LabeledField("Label") {
-                            TextField("Volume label", text: Binding(
+                        LabeledField(L10n.UserDetail.volumeSheetLabelField) {
+                            TextField(L10n.UserDetail.volumeSheetLabelPlaceholder, text: Binding(
                                 get: { store.volumeSheet?.label ?? "" },
                                 set: { store.send(.volumeLabelChanged($0)) }
                             ))
@@ -392,7 +393,7 @@ private struct VolumeAssignSheet: View {
                         }
 
                         VStack(alignment: .leading, spacing: .space4) {
-                            Text("Access Mode").type(.body3(.semibold), style: .secondary)
+                            Text(L10n.UserDetail.volumeSheetAccessMode).type(.body3(.semibold), style: .secondary)
                             DSSegmentedControl(
                                 options: ShareAccessMode.allCases,
                                 selection: Binding(
@@ -404,7 +405,7 @@ private struct VolumeAssignSheet: View {
                         }
 
                         VStack(alignment: .leading, spacing: .space4) {
-                            Text("Directory").type(.body3(.semibold), style: .secondary)
+                            Text(L10n.UserDetail.volumeSheetDirectory).type(.body3(.semibold), style: .secondary)
                             if sheet.isEditing {
                                 FieldBox { Text(sheet.selectedPath).lineLimit(1).truncationMode(.middle) }
                             } else {
@@ -413,7 +414,7 @@ private struct VolumeAssignSheet: View {
                         }
 
                         DSButton(
-                            sheet.isEditing ? "Save Volume" : "Assign Volume",
+                            sheet.isEditing ? L10n.UserDetail.volumeSheetSaveEdit : L10n.UserDetail.volumeSheetSaveNew,
                             style: .primary,
                             isLoading: sheet.isSubmitting
                         ) {
@@ -427,7 +428,7 @@ private struct VolumeAssignSheet: View {
                 .padding(.vertical, Metrics.contentSpacing)
             }
             .background(Color.backgroundPrimary)
-            .navigationTitle(sheet?.isEditing == true ? "Edit Volume" : "Assign Volume")
+            .navigationTitle(sheet?.isEditing == true ? L10n.UserDetail.volumeSheetTitleEdit : L10n.UserDetail.volumeSheetTitleNew)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -459,13 +460,13 @@ private struct VolumeAssignSheet: View {
                                 .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                         }
                         .buttonStyle(DSHapticButtonStyle())
-                        .accessibilityLabel("Go up one directory")
+                        .accessibilityLabel(L10n.UserDetail.directoryPickerGoUp)
                     }
                 }
                 Button {
                     store.send(.volumePathSelected(listing.current))
                 } label: {
-                    rowLabel("Use this directory", isSelected: selectedPath == listing.current, icon: IconKit.checkmark)
+                    rowLabel(L10n.UserDetail.directoryPickerUseThis, isSelected: selectedPath == listing.current, icon: IconKit.checkmark)
                 }
                 .buttonStyle(DSHapticButtonStyle())
 
@@ -486,7 +487,7 @@ private struct VolumeAssignSheet: View {
                                 .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                         }
                         .buttonStyle(DSHapticButtonStyle())
-                        .accessibilityLabel("Open \(directory.name)")
+                        .accessibilityLabel(L10n.UserDetail.directoryPickerOpen(directory.name))
                     }
                 }
             } else if isBrowsing {
@@ -522,7 +523,7 @@ private struct VolumeAssignSheet: View {
             listing = next
         } catch {
             guard !Task.isCancelled else { return }
-            browseError = (error as? FilesClientError)?.userMessage ?? "Couldn't list directories."
+            browseError = (error as? FilesClientError)?.userMessage ?? L10n.UserDetail.directoryPickerFailed
         }
     }
 }
