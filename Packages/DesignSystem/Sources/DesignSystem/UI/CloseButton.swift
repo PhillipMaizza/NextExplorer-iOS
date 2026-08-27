@@ -10,9 +10,13 @@ private enum Constants {
 /// without needing a theme-adaptive tint.
 public struct DSCloseButton: View {
     private let action: () -> Void
+    private let accessibilityLabel: String
 
-    public init(action: @escaping () -> Void) {
+    /// `accessibilityLabel` defaults to the English "Close"; localized call sites pass their
+    /// own `L10n` string so this component stays free of an app copy dependency.
+    public init(action: @escaping () -> Void, accessibilityLabel: String = "Close") {
         self.action = action
+        self.accessibilityLabel = accessibilityLabel
     }
 
     public var body: some View {
@@ -25,7 +29,7 @@ public struct DSCloseButton: View {
                 .dsGlass(interactive: true, in: Circle())
         }
         .buttonStyle(DSHapticButtonStyle())
-        .accessibilityLabel("Close")
+        .accessibilityLabel(accessibilityLabel)
     }
 }
 

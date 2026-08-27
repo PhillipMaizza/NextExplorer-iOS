@@ -29,12 +29,12 @@ struct ChangePasswordFeatureTests {
 
         await store.send(.currentPasswordChanged("old-pass"))
         await store.send(.newPasswordChanged("short"))
-        #expect(store.state.newPasswordError == "Use at least 6 characters.")
+        #expect(store.state.newPasswordError == .tooShort(minimum: 6))
         #expect(store.state.isSubmitEnabled == false)
 
         await store.send(.newPasswordChanged("brand-new"))
         await store.send(.confirmPasswordChanged("brand-neW"))
-        #expect(store.state.confirmError == "Passwords don't match.")
+        #expect(store.state.confirmError == .mismatch)
         #expect(store.state.isSubmitEnabled == false)
 
         await store.send(.confirmPasswordChanged("brand-new"))
@@ -70,7 +70,7 @@ struct ChangePasswordFeatureTests {
             $0.currentPassword = ""
             $0.newPassword = ""
             $0.confirmPassword = ""
-            $0.successMessage = "Your password has been updated."
+            $0.didSucceed = true
         }
     }
 
@@ -84,9 +84,9 @@ struct ChangePasswordFeatureTests {
         await store.send(.confirmPasswordChanged("the-new-one"))
         await store.send(.submitTapped)
         await store.receive(\.response.success)
-        #expect(store.state.successMessage != nil)
+        #expect(store.state.didSucceed)
 
-        await store.send(.currentPasswordChanged("x")) { $0.successMessage = nil }
+        await store.send(.currentPasswordChanged("x")) { $0.didSucceed = false }
     }
 
     // MARK: Error paths

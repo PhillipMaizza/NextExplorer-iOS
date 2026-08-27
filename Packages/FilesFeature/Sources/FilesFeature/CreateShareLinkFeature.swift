@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import FilesClient
 import Foundation
+import Localization
 
 /// Drives the "Create Share Link" sheet (`CreateShareLinkSheet`) — mirrors the web client's
 /// `ShareDialog.vue`. Two phases in one state: the form, then the created-link confirmation
@@ -154,7 +155,7 @@ public struct CreateShareLinkFeature {
             case .createTapped:
                 guard state.isCreateEnabled else { return .none }
                 if state.isExpiryEnabled, state.expiresAt <= date.now {
-                    state.errorMessage = "Pick an expiration date in the future."
+                    state.errorMessage = L10n.CreateShare.errorPastExpiration
                     return .none
                 }
                 state.isCreating = true

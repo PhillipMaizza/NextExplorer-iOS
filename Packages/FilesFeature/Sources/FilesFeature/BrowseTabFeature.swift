@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import Foundation
+import Localization
 
 /// Root of the Browse tab: the root folder listing plus a flat push stack of every
 /// subfolder drilled into (all `BrowseFeature` instances, same type at every depth).
@@ -12,7 +13,7 @@ public struct BrowseTabFeature {
         public var path = StackState<BrowseFeature.State>()
 
         public init(serverURL: URL) {
-            self.root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+            self.root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
         }
     }
 

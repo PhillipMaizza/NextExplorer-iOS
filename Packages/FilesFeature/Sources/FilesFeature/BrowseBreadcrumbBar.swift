@@ -1,5 +1,6 @@
 import DesignSystem
 import Foundation
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -38,7 +39,7 @@ enum BrowseBreadcrumbBarMetrics {
 /// favorited folder entirely instead of the leftmost tap just re-opening that same folder.
 struct BrowseBreadcrumbBar: View {
     let directoryPath: String
-    var rootTitle: String = "Locations"
+    var rootTitle: String = L10n.Browse.locations
     var rootPath: String = ""
     var rootIcon: Image? = IconKit.drive
     var containerCrumb: (title: String, path: String, icon: Image?)?

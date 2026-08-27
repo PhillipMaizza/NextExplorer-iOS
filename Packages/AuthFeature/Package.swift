@@ -11,6 +11,7 @@ let package = Package(
         .package(path: "../CoreModels"),
         .package(path: "../AuthClient"),
         .package(path: "../DesignSystem"),
+        .package(path: "../Localization"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0")
     ],
     targets: [
@@ -20,6 +21,7 @@ let package = Package(
                 "CoreModels",
                 "AuthClient",
                 "DesignSystem",
+                "Localization",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]

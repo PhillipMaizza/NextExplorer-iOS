@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum FavoritesViewMode: String {
@@ -64,7 +65,7 @@ struct FavoritesView: View {
     }
 
     private var bulkRemoveConfirmationTitle: String {
-        "Remove \(store.selectedFavoriteIDs.count) Favorite\(store.selectedFavoriteIDs.count == 1 ? "" : "s")?"
+        L10n.Favorites.removeConfirm(store.selectedFavoriteIDs.count)
     }
 
     /// The topmost pushed screen's path — mirrors `BrowseTabView`'s persistent breadcrumb
@@ -95,7 +96,7 @@ struct FavoritesView: View {
             rootContent
         } destination: { store in
             BrowseContentView(store: store)
-                .navigationTitle(store.isSelecting ? "\(store.selectedItemIDs.count) Selected" : store.title)
+                .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title)
         }
         .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
             if !currentDirectoryPath.isEmpty && !isTopScreenSelecting {
@@ -104,7 +105,7 @@ struct FavoritesView: View {
                     rootTitle: rootTitle,
                     rootPath: rootDirectoryPath,
                     rootIcon: IconKit.folderFill,
-                    containerCrumb: ("Favorites", "", IconKit.starFill)
+                    containerCrumb: (L10n.Favorites.navigationTitle, "", IconKit.starFill)
                 ) { path, title in
                     store.send(.navigateToDirectory(path: path, title: title))
                 }
@@ -127,7 +128,7 @@ struct FavoritesView: View {
             .searchable(
                 text: $store.searchQuery.sending(\.searchQueryChanged),
                 placement: .navigationBarDrawer(displayMode: .always),
-                prompt: "Search"
+                prompt: L10n.Common.search
             )
             .refreshable {
                 await store.send(.refreshButtonTapped).finish()
@@ -149,10 +150,10 @@ struct FavoritesView: View {
                                 .transition(.opacity)
                         }
                     case .empty:
-                        EmptyStateView(icon: IconKit.star, message: "Star folders in Browse to see them here.")
+                        EmptyStateView(icon: IconKit.star, message: L10n.Favorites.emptyList)
                             .transition(.opacity)
                     case .noResults:
-                        EmptyStateView(icon: IconKit.search, message: "No matches for \u{201C}\(store.searchQuery)\u{201D}.")
+                        EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
                             .transition(.opacity)
                     case .none:
                         EmptyView()
@@ -182,7 +183,7 @@ struct FavoritesView: View {
                     Button {
                         isSortSheetPresented = true
                     } label: {
-                        Label { Text("Sort") } icon: { IconKit.sort }
+                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                     }
                 }
             }
@@ -224,13 +225,13 @@ struct FavoritesView: View {
                 }
             }
             .alert(bulkRemoveConfirmationTitle, isPresented: bulkRemoveConfirmationBinding) {
-                Button("Remove", role: .destructive) { store.send(.bulkRemoveConfirmed) }
-                Button("Cancel", role: .cancel) { store.send(.bulkRemoveCancelled) }
+                Button(L10n.Common.remove, role: .destructive) { store.send(.bulkRemoveConfirmed) }
+                Button(L10n.Common.cancel, role: .cancel) { store.send(.bulkRemoveCancelled) }
             } message: {
-                Text("This only removes them from Favorites.")
+                Text(L10n.Favorites.removeMessage)
             }
             .hapticFeedback(.warning, trigger: store.bulkRemoveConfirmationIsPresented)
-            .navigationTitle(store.isSelecting ? "\(store.selectedFavoriteIDs.count) Selected" : "Favorites")
+            .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle)
             .task {
                 store.send(.onAppear)
             }
@@ -249,7 +250,7 @@ struct FavoritesView: View {
         Button(role: .destructive) {
             store.send(.removeTapped(favorite))
         } label: {
-            Label { Text("Remove from Favorites") } icon: { IconKit.unfavorite }
+            Label { Text(L10n.Favorites.actionRemoveFromFavorites) } icon: { IconKit.unfavorite }
         }
         .tint(.negative)
     }
