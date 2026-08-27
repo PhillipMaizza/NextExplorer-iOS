@@ -28,6 +28,12 @@ public struct FilesClient: Sendable {
     public var extractZip: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
     public var downloadRawFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     public var compressItem: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
+    public var createShareLink: @Sendable (
+        _ serverURL: URL, _ request: CreateShareLinkRequest
+    ) async throws -> CreatedShare
+    public var mySharedLinks: @Sendable (_ serverURL: URL) async throws -> [Share]
+    public var sharedWithMeLinks: @Sendable (_ serverURL: URL) async throws -> [Share]
+    public var deleteShareLink: @Sendable (_ serverURL: URL, _ shareID: String) async throws -> Void
 }
 
 extension FilesClient {

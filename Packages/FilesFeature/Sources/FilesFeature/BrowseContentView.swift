@@ -33,6 +33,10 @@ struct BrowseContentView: View {
     /// the alert is presented; `renameConfirmed` is sent this value directly.
     @State private var renameDraft = ""
     @State private var toastMessage: DSToastMessage?
+    /// The item whose "Create Share Link" sheet is open (from the context menu or the
+    /// selection toolbar). Local view state, not routed through `BrowseFeature` — the sheet
+    /// owns its own ad-hoc `CreateShareLinkFeature` store.
+    @State private var shareTarget: FileItem?
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
@@ -71,6 +75,20 @@ struct BrowseContentView: View {
             }
             .fullScreenCover(item: previewItemBinding) { item in
                 previewContent(for: item)
+            }
+            .sheet(item: $shareTarget) { item in
+                CreateShareLinkSheet(
+                    store: Store(
+                        initialState: CreateShareLinkFeature.State(
+                            serverURL: store.serverURL,
+                            itemName: item.name,
+                            itemPath: item.path,
+                            isDirectory: item.isDirectory
+                        )
+                    ) {
+                        CreateShareLinkFeature()
+                    }
+                )
             }
             .dsToast($toastMessage, extraBottomInset: breadcrumbBarClearance)
             .dsToast(progressToastBinding, extraBottomInset: breadcrumbBarClearance)
@@ -163,6 +181,17 @@ struct BrowseContentView: View {
                             store.send(.renameTapped(singleSelectedItem))
                         } label: {
                             IconKit.rename
+                        }
+                        .buttonStyle(DSHapticButtonStyle())
+                        .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                if let singleSelectedItem, store.access?.canShare ?? false {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button {
+                            shareTarget = singleSelectedItem
+                        } label: {
+                            IconKit.shareLink
                         }
                         .buttonStyle(DSHapticButtonStyle())
                         .transition(.scale.combined(with: .opacity))
@@ -471,6 +500,14 @@ struct BrowseContentView: View {
                 } else {
                     Label { Text("Add to Favorites") } icon: { IconKit.star }
                 }
+            }
+            .tint(.primaryDS)
+        }
+        if store.access?.canShare ?? false {
+            Button {
+                shareTarget = item
+            } label: {
+                Label { Text("Share") } icon: { IconKit.shareLink }
             }
             .tint(.primaryDS)
         }
