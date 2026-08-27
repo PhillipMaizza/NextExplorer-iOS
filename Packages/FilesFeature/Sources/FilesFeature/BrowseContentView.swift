@@ -25,6 +25,7 @@ struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
     @AppStorage("browseViewMode") private var viewModeRaw = BrowseViewMode.list.rawValue
     @AppStorage("thumbnailSize") private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
+    @AppStorage("removeArchiveAfterDownload") private var removeArchiveAfterDownload = false
     @State private var isSortSheetPresented = false
     /// The rename alert's in-progress text: kept as plain view state rather than routed
     /// through the store, since a `.alert` `TextField` bound via a TCA `.sending` binding
@@ -57,7 +58,7 @@ struct BrowseContentView: View {
             return
         }
         guard !item.isUnsupportedForPreview else {
-            toastMessage = DSToastMessage(icon: IconKit.exclamationmarkTriangle, text: "Unsupported file type")
+            toastMessage = DSToastMessage(icon: IconKit.warning, text: "Unsupported file type")
             return
         }
         store.send(.rowTapped(item))
@@ -71,14 +72,20 @@ struct BrowseContentView: View {
             .fullScreenCover(item: previewItemBinding) { item in
                 previewContent(for: item)
             }
-            .dsToast($toastMessage)
-            .dsToast(progressToastBinding)
+            .dsToast($toastMessage, extraBottomInset: breadcrumbBarClearance)
+            .dsToast(progressToastBinding, extraBottomInset: breadcrumbBarClearance)
             // `fileActionErrorMessage` (rename/delete/extract/compress failures) was set on
             // `State` but never actually read by any view — silently swallowed. Mirrored into
             // the same toast the unsupported-file-type warning uses.
             .onChange(of: store.fileActionErrorMessage) { _, newValue in
                 guard let newValue else { return }
-                toastMessage = DSToastMessage(icon: IconKit.exclamationmarkTriangle, text: newValue)
+                toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue)
+            }
+            .onChange(of: store.downloadSuccessMessage) { _, newValue in
+                guard let newValue else { return }
+                toastMessage = .success(newValue, actionTitle: "Open") {
+                    store.send(.delegate(.openDownloadsTapped))
+                }
             }
             .task {
                 store.send(.onAppear)
@@ -96,6 +103,7 @@ struct BrowseContentView: View {
                 gridContent
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .tint(Color.accent)
         .searchable(
             text: $store.searchQuery.sending(\.searchQueryChanged),
@@ -115,30 +123,97 @@ struct BrowseContentView: View {
         .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
         .overlay {
             overlayStateContent
+                .id(overlayState)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    isSortSheetPresented = true
-                } label: {
-                    IconKit.arrowUpArrowDown
-                }
-                .buttonStyle(DSHapticButtonStyle())
-            }
-            ToolbarItem(placement: .primaryAction) {
-                Button {
+            selectSortToolbar(
+                isSelecting: store.isSelecting,
+                isAllSelected: isAllSelected,
+                isSelectAvailable: !store.isSearching && !store.displayedItems.isEmpty,
+                isGridView: viewMode == .grid,
+                onSelectModeToggled: { store.send(.selectModeToggled) },
+                onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
+                onCancel: { store.send(.selectModeToggled) },
+                onToggleViewMode: {
                     withAnimation {
                         viewModeRaw = (viewMode == .list ? BrowseViewMode.grid : .list).rawValue
                     }
-                } label: {
-                    (viewMode == .list ? IconKit.squareGrid : IconKit.listBullet)
-                        .contentTransition(.symbolEffect(.replace))
                 }
-                .buttonStyle(DSHapticButtonStyle())
+            ) {
+                Button {
+                    isSortSheetPresented = true
+                } label: {
+                    Label { Text("Sort") } icon: { IconKit.sort }
+                }
             }
         }
         .hapticFeedback(.selection, trigger: viewModeRaw)
+        .hapticFeedback(.selection, trigger: store.isSelecting)
+        .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
+        .toolbar {
+            if store.isSelecting {
+                ToolbarItem(placement: .bottomBar) {
+                    Spacer()
+                }
+                if let singleSelectedItem, store.access?.canWrite ?? false {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button {
+                            store.send(.renameTapped(singleSelectedItem))
+                        } label: {
+                            IconKit.rename
+                        }
+                        .buttonStyle(DSHapticButtonStyle())
+                        .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                if isFavoriteActionVisible {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button {
+                            store.send(.bulkFavoriteTapped)
+                        } label: {
+                            isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star
+                        }
+                        .buttonStyle(DSHapticButtonStyle())
+                        .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                if isDownloadActionVisible {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button {
+                            store.send(.bulkDownloadTapped(.documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                        } label: {
+                            IconKit.download
+                        }
+                        .buttonStyle(DSHapticButtonStyle())
+                        .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                if isDeleteActionVisible {
+                    ToolbarItem(placement: .bottomBar) {
+                        Button(role: .destructive) {
+                            store.send(.bulkDeleteTapped)
+                        } label: {
+                            IconKit.delete.foregroundStyle(Color.negative)
+                        }
+                        .buttonStyle(DSHapticButtonStyle())
+                        .transition(.scale.combined(with: .opacity))
+                    }
+                }
+            }
+        }
+        .animation(
+            .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+            value: store.selectedItemIDs
+        )
+        .alert(bulkDeleteConfirmationTitle, isPresented: bulkDeleteConfirmationBinding) {
+            Button("Delete", role: .destructive) { store.send(.bulkDeleteConfirmed) }
+            Button("Cancel", role: .cancel) { store.send(.bulkDeleteCancelled) }
+        } message: {
+            Text("This can't be undone.")
+        }
+        .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
         .sheet(isPresented: $isSortSheetPresented) {
             BrowseSortSheet(
                 sortOption: store.sortOption,
@@ -295,6 +370,51 @@ struct BrowseContentView: View {
         return "Delete \u{201C}\(item.name)\u{201D}?"
     }
 
+    private var isAllSelected: Bool {
+        !store.displayedItems.isEmpty && store.selectedItemIDs.count == store.displayedItems.count
+    }
+
+    /// Rename only makes sense for a single target — `nil` (hiding the toolbar icon) for
+    /// zero or multiple selected items.
+    private var singleSelectedItem: FileItem? {
+        guard store.selectedItemIDs.count == 1, let id = store.selectedItemIDs.first else { return nil }
+        return store.items[id: id]
+    }
+
+    /// Only directories can be favorited, so a selection mixing a file in with a folder has
+    /// no well-defined bulk target — the icon disappears entirely rather than silently
+    /// ignoring the file, which a merely-disabled icon would leave ambiguous.
+    private var isFavoriteActionVisible: Bool {
+        !store.selectedItemIDs.isEmpty && store.selectedItemIDs.allSatisfy { id in
+            store.items[id: id]?.isDirectory ?? false
+        }
+    }
+
+    /// Filled when tapping the toolbar star would unfavorite the whole selection, matching
+    /// the single-item context-menu icon's own filled/outline convention.
+    private var isEntireSelectionAlreadyFavorited: Bool {
+        !store.selectedItemIDs.isEmpty && store.selectedItemIDs.allSatisfy(store.favoritePaths.contains)
+    }
+
+    private var isDownloadActionVisible: Bool {
+        !store.selectedItemIDs.isEmpty && (store.access?.canDownload ?? false)
+    }
+
+    private var isDeleteActionVisible: Bool {
+        !store.selectedItemIDs.isEmpty && (store.access?.canDelete ?? false)
+    }
+
+    private var bulkDeleteConfirmationBinding: Binding<Bool> {
+        Binding(
+            get: { store.bulkDeleteConfirmationIsPresented },
+            set: { if !$0 { store.send(.bulkDeleteCancelled) } }
+        )
+    }
+
+    private var bulkDeleteConfirmationTitle: String {
+        "Delete \(store.selectedItemIDs.count) item\(store.selectedItemIDs.count == 1 ? "" : "s")?"
+    }
+
     @ViewBuilder
     private func fileActionsContextMenu(for item: FileItem) -> some View {
         // Explicit `.tint`: this whole view is under `.tint(Color.accent)`, which would
@@ -303,14 +423,14 @@ struct BrowseContentView: View {
         Button {
             store.send(.infoTapped(item))
         } label: {
-            Label("Get Info", systemImage: "info.circle")
+            Label { Text("Get Info") } icon: { IconKit.info }
         }
         .tint(.primaryDS)
         if store.access?.canWrite ?? false {
             Button {
                 store.send(.renameTapped(item))
             } label: {
-                Label("Rename", systemImage: "square.and.pencil")
+                Label { Text("Rename") } icon: { IconKit.rename }
             }
             .tint(.primaryDS)
         }
@@ -322,14 +442,22 @@ struct BrowseContentView: View {
                 Button {
                     store.send(.extractZipTapped(item))
                 } label: {
-                    Label("Extract", systemImage: "archivebox")
+                    Label { Text("Extract") } icon: { IconKit.extract }
                 }
                 .tint(.primaryDS)
             }
             Button {
                 store.send(.compressTapped(item))
             } label: {
-                Label("Compress", systemImage: "doc.zipper")
+                Label { Text("Compress") } icon: { IconKit.archiveDocument }
+            }
+            .tint(.primaryDS)
+        }
+        if store.access?.canDownload ?? false {
+            Button {
+                store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+            } label: {
+                Label { Text("Download") } icon: { IconKit.download }
             }
             .tint(.primaryDS)
         }
@@ -339,9 +467,9 @@ struct BrowseContentView: View {
                 store.send(.favoriteToggleButtonTapped(item))
             } label: {
                 if store.favoritePaths.contains(item.id) {
-                    Label("Remove from Favorites", systemImage: "star.fill")
+                    Label { Text("Remove from Favorites") } icon: { IconKit.starFill }
                 } else {
-                    Label("Add to Favorites", systemImage: "star")
+                    Label { Text("Add to Favorites") } icon: { IconKit.star }
                 }
             }
             .tint(.primaryDS)
@@ -350,7 +478,7 @@ struct BrowseContentView: View {
             Button(role: .destructive) {
                 store.send(.deleteTapped(item))
             } label: {
-                Label("Delete", systemImage: "trash")
+                Label { Text("Delete") } icon: { IconKit.delete }
             }
             .tint(.negative)
         }
@@ -358,7 +486,7 @@ struct BrowseContentView: View {
 
     /// Which branch of `overlayStateContent` is currently showing — a plain discriminant so
     /// the overlay can cross-fade between states instead of hard-cutting between them.
-    private enum OverlayState: Equatable {
+    private enum OverlayState: Hashable {
         case none, loading, error, empty, searchingEverywhere, noResults
     }
 
@@ -386,7 +514,7 @@ struct BrowseContentView: View {
                 .transition(.opacity)
         case .error:
             if let errorMessage = store.errorMessage {
-                EmptyStateView(icon: IconKit.exclamationmarkTriangle, message: errorMessage)
+                EmptyStateView(icon: IconKit.warning, message: errorMessage)
                     .transition(.opacity)
             }
         case .empty:
@@ -438,7 +566,11 @@ struct BrowseContentView: View {
                 } else {
                     ForEach(store.displayedItems) { item in
                         Button {
-                            handleTap(item)
+                            if store.isSelecting {
+                                store.send(.itemSelectionToggled(item.id))
+                            } else {
+                                handleTap(item)
+                            }
                         } label: {
                             GridCellView(
                                 item: item,
@@ -447,10 +579,18 @@ struct BrowseContentView: View {
                                 showThumbnails: store.preferences.showThumbnails,
                                 iconSize: thumbnailSize.iconSize
                             )
+                            .overlay(alignment: .topLeading) {
+                                if store.isSelecting {
+                                    selectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                                }
+                            }
                         }
                         .buttonStyle(DSHapticButtonStyle())
+                        .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
                         .contextMenu {
-                            fileActionsContextMenu(for: item)
+                            if !store.isSelecting {
+                                fileActionsContextMenu(for: item)
+                            }
                         }
                     }
                 }
@@ -481,50 +621,74 @@ struct BrowseContentView: View {
     private var folderItemRows: some View {
         ForEach(store.displayedItems) { item in
             Button {
-                handleTap(item)
+                if store.isSelecting {
+                    store.send(.itemSelectionToggled(item.id))
+                } else {
+                    handleTap(item)
+                }
             } label: {
-                FileRowView(
-                    item: item,
-                    isFavorite: store.favoritePaths.contains(item.id),
-                    serverURL: store.serverURL,
-                    showThumbnails: store.preferences.showThumbnails
-                )
+                HStack(spacing: .space12) {
+                    if store.isSelecting {
+                        selectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                    }
+                    FileRowView(
+                        item: item,
+                        isFavorite: store.favoritePaths.contains(item.id),
+                        serverURL: store.serverURL,
+                        showThumbnails: store.preferences.showThumbnails
+                    )
+                }
             }
             .buttonStyle(DSHapticButtonStyle())
+            .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
             .contextMenu {
-                fileActionsContextMenu(for: item)
+                if !store.isSelecting {
+                    fileActionsContextMenu(for: item)
+                }
             }
             .listRowBackground(Color.clear)
             .swipeActions(edge: .trailing) {
-                if store.access?.canDelete ?? false {
-                    Button {
-                        store.send(.deleteTapped(item))
-                    } label: {
-                        IconKit.trash
+                if !store.isSelecting {
+                    if store.access?.canDelete ?? false {
+                        Button {
+                            store.send(.deleteTapped(item))
+                        } label: {
+                            IconKit.delete
+                        }
+                        .tint(.negative)
                     }
-                    .tint(.negative)
-                }
-                // Only folders can be favorited — the server 400s on anything else.
-                if item.isDirectory {
-                    Button {
-                        store.send(.favoriteToggleButtonTapped(item))
-                    } label: {
-                        store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
+                    // Only folders can be favorited — the server 400s on anything else.
+                    if item.isDirectory {
+                        Button {
+                            store.send(.favoriteToggleButtonTapped(item))
+                        } label: {
+                            store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
+                        }
+                        .tint(.accent)
                     }
-                    .tint(.accent)
-                }
-                if store.access?.canWrite ?? false {
-                    Button {
-                        store.send(.renameTapped(item))
-                    } label: {
-                        IconKit.squareAndPencil
+                    if store.access?.canWrite ?? false {
+                        Button {
+                            store.send(.renameTapped(item))
+                        } label: {
+                            IconKit.rename
+                        }
+                        .tint(.positive)
                     }
-                    .tint(.positive)
                 }
             }
             .listRowSeparator(item.id == store.displayedItems.first?.id ? .hidden : .visible, edges: .top)
             .listRowSeparator(item.id == store.displayedItems.last?.id ? .hidden : .visible, edges: .bottom)
         }
+    }
+
+    private func selectionIndicator(isSelected: Bool) -> some View {
+        (isSelected ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
+            .resizable()
+            .scaledToFit()
+            .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
+            .frame(width: .iconMedium, height: .iconMedium)
+            .symbolEffect(.bounce, value: isSelected)
+            .transition(.scale.combined(with: .opacity))
     }
 
     @ViewBuilder
@@ -547,7 +711,7 @@ struct BrowseContentView: View {
     @ViewBuilder
     private var noResultsState: some View {
         VStack(spacing: Constants.emptyStateSpacing) {
-            IconKit.magnifyingGlass
+            IconKit.search
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(Color.secondaryDS)
@@ -556,7 +720,7 @@ struct BrowseContentView: View {
                 .type(.body1(.semibold), style: .secondary)
             if store.searchScope == .thisFolder {
                 DSButton("Search everywhere",
-                         icon: IconKit.magnifyingGlass,
+                         icon: IconKit.search,
                          style: .secondary,
                          size: .small,
                          isLoading: false, action: {

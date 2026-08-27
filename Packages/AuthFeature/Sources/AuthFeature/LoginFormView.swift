@@ -284,7 +284,7 @@ public struct LoginFormView: View {
                         .foregroundStyle(.white)
                         .bold()
                 case .failure:
-                    IconKit.xmark
+                    IconKit.close
                         .resizable()
                         .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
                         .foregroundStyle(.white)
@@ -309,7 +309,7 @@ public struct LoginFormView: View {
                     Button {
                         store.send(.backButtonTapped)
                     } label: {
-                        IconKit.chevronLeft
+                        IconKit.back
                             .resizable()
                             .frame(width: Constants.backChevronSize, height: Constants.backChevronSize)
                             .fontWeight(Constants.backChevronWeight)

@@ -214,7 +214,7 @@ struct ArchiveBrowserView: View {
                 Button {
                     currentPath.removeLast()
                 } label: {
-                    IconKit.chevronLeft
+                    IconKit.back
                         .resizable()
                         .scaledToFit()
                         .foregroundStyle(Color.primaryDS)
@@ -236,7 +236,7 @@ struct ArchiveBrowserView: View {
     @ViewBuilder
     private var content: some View {
         if let errorMessage {
-            statusContent(icon: IconKit.exclamationmarkTriangle, message: errorMessage, tint: .negative)
+            statusContent(icon: IconKit.warning, message: errorMessage, tint: .negative)
         } else if isLoading {
             statusContent(icon: nil, message: nil, tint: .primaryDS)
         } else if visibleRows.isEmpty {
@@ -314,7 +314,7 @@ struct ArchiveBrowserView: View {
             kind: (row.name as NSString).pathExtension
         )
         guard !entryItem.isUnsupportedForPreview else {
-            toastMessage = DSToastMessage(icon: IconKit.exclamationmarkTriangle, text: "Unsupported file type")
+            toastMessage = DSToastMessage(icon: IconKit.warning, text: "Unsupported file type")
             return
         }
         guard let source else { return }
@@ -326,7 +326,7 @@ struct ArchiveBrowserView: View {
             previewFileURL = destination
             previewingItem = entryItem
         } catch {
-            toastMessage = DSToastMessage(icon: IconKit.exclamationmarkTriangle, text: "Couldn't open this file")
+            toastMessage = DSToastMessage(icon: IconKit.warning, text: "Couldn't open this file")
         }
     }
 
@@ -454,7 +454,7 @@ private struct ArchiveTextEntryPreviewView: View {
     private var body_: some View {
         if let loadErrorMessage {
             VStack(spacing: .space16) {
-                IconKit.exclamationmarkTriangle
+                IconKit.warning
                     .resizable()
                     .scaledToFit()
                     .foregroundStyle(Color.negative)
