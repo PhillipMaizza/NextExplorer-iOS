@@ -32,6 +32,7 @@ struct TextFilePreviewView: View {
     @State private var draft = ""
     @State private var renderedMarkdownHTML = ""
     @State private var isEditing = false
+    @State private var savedToast: DSToastMessage?
     @AppStorage("renderHTMLPages") private var renderHTMLPages = false
     @AppStorage("renderMarkdownPages") private var renderMarkdownPages = false
     @Dependency(\.filesClient) private var filesClient
@@ -62,6 +63,7 @@ struct TextFilePreviewView: View {
             editorBody
         }
         .background(Color.backgroundPrimary.ignoresSafeArea())
+        .dsToast($savedToast)
         .onAppear {
             draft = content ?? ""
             refreshRenderedMarkdown()
@@ -69,6 +71,12 @@ struct TextFilePreviewView: View {
         .onChange(of: content) { _, newValue in
             draft = newValue ?? ""
             refreshRenderedMarkdown()
+        }
+        .onChange(of: isSaving) { wasSaving, nowSaving in
+            if wasSaving, !nowSaving, errorMessage == nil {
+                savedToast = .success("Saved")
+                isEditing = false
+            }
         }
     }
 
