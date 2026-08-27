@@ -173,6 +173,67 @@ struct FilesService: Sendable {
         return envelope.item
     }
 
+    /// `POST /api/shares`, confirmed against `backend/src/routes/shares.js` +
+    /// `sharesService.js`. `userIds` is only meaningful when `sharingType == "users"` (the
+    /// server ignores it otherwise); `expiresAt` must be a future ISO date or the server 400s.
+    /// The 201 body is the share row flattened together with `shareUrl` / `directFileUrl`.
+    func createShareLink(serverURL: URL, request: CreateShareLinkRequest) async throws -> CreatedShare {
+        let url = serverURL.appendingPathComponent("api/shares")
+        var httpRequest = Self.makeRequest(url: url, method: "POST")
+        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let body = CreateShareBody(
+            sourcePath: request.sourcePath,
+            label: request.label,
+            accessMode: request.accessMode.rawValue,
+            sharingType: request.target.rawValue,
+            password: request.password,
+            userIds: request.target == .users ? request.userIds : [],
+            expiresAt: request.expiresAt.map(Self.formatShareExpiry)
+        )
+        do {
+            httpRequest.httpBody = try JSONEncoder().encode(body)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        return try await send(httpRequest, decoding: CreatedShare.self)
+    }
+
+    /// `GET /api/shares` (owner) and `GET /api/shares/shared-with-me` (recipient), both
+    /// wrapped `{ shares: [...] }`. The recipient variant omits `sourcePath`/`sourceSpace`
+    /// and adds `sourceName`.
+    func shareLinks(serverURL: URL, sharedWithMe: Bool) async throws -> [Share] {
+        let url = sharedWithMe
+            ? serverURL.appendingPathComponent("api/shares/shared-with-me")
+            : serverURL.appendingPathComponent("api/shares")
+        let request = Self.makeRequest(url: url, method: "GET")
+        return try await send(request, decoding: ShareLinksEnvelope.self).shares
+    }
+
+    /// `GET /api/users/shareable`, confirmed against `backend/src/routes/users.js` +
+    /// `services/users/management.js`: every user but the caller as
+    /// `{id, email, username, displayName}` (no `roles`), wrapped `{ users: [...] }`.
+    func shareableUsers(serverURL: URL) async throws -> [User] {
+        let url = serverURL.appendingPathComponent("api/users/shareable")
+        let request = Self.makeRequest(url: url, method: "GET")
+        return try await send(request, decoding: ShareableUsersEnvelope.self).users
+    }
+
+    /// `DELETE /api/shares/:id` → 204, owner only.
+    func deleteShareLink(serverURL: URL, shareID: String) async throws {
+        let url = serverURL.appendingPathComponent("api/shares").appendingPathComponent(shareID)
+        let request = Self.makeRequest(url: url, method: "DELETE")
+        let (_, response) = try await performSend(request)
+        try Self.validate(response)
+    }
+
+    /// A fresh formatter per call — `ISO8601DateFormatter` isn't `Sendable`, and this
+    /// `struct` is, so it can't be held as a stored static.
+    private static func formatShareExpiry(_ date: Date) -> String {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter.string(from: date)
+    }
+
     func previewFile(serverURL: URL, item: FileItem) async throws -> URL {
         let directory = Self.previewCacheDirectory(for: item, namespace: "preview")
         // RAW formats always come back as a JPEG stream (`rawPreviewService`), regardless of
@@ -390,6 +451,24 @@ struct FilesService: Sendable {
 
     private struct DownloadRawFileBody: Encodable {
         let path: String
+    }
+
+    private struct CreateShareBody: Encodable {
+        let sourcePath: String
+        let label: String?
+        let accessMode: String
+        let sharingType: String
+        let password: String?
+        let userIds: [String]
+        let expiresAt: String?
+    }
+
+    private struct ShareLinksEnvelope: Decodable {
+        let shares: [Share]
+    }
+
+    private struct ShareableUsersEnvelope: Decodable {
+        let users: [User]
     }
 
     private struct DeleteItemsBody: Encodable {

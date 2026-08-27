@@ -5,7 +5,6 @@ import DesignSystem
 import SwiftUI
 
 private enum Constants {
-    static let closeButtonInset: CGFloat = .space16
     /// Vertical drag distance past which releasing dismisses the player.
     static let dismissDistanceThreshold: CGFloat = 120
     /// Projected fling distance that dismisses even on a short, fast flick.
@@ -35,6 +34,9 @@ struct StreamingPreviewView: View {
     let url: URL
     let serverURL: URL
     let onDismiss: () -> Void
+    private let onShare: (() -> Void)?
+    private let onDownload: (() -> Void)?
+    private let onDelete: (() -> Void)?
 
     @State private var player: AVPlayer
     @State private var hasStartedPlaying = false
@@ -45,11 +47,22 @@ struct StreamingPreviewView: View {
     /// it flies off, so the fullScreenCover's own slide-out is never seen.
     @State private var isDismissing = false
 
-    init(item: FileItem, url: URL, serverURL: URL, onDismiss: @escaping () -> Void) {
+    init(
+        item: FileItem,
+        url: URL,
+        serverURL: URL,
+        onDismiss: @escaping () -> Void,
+        onShare: (() -> Void)? = nil,
+        onDownload: (() -> Void)? = nil,
+        onDelete: (() -> Void)? = nil
+    ) {
         self.item = item
         self.url = url
         self.serverURL = serverURL
         self.onDismiss = onDismiss
+        self.onShare = onShare
+        self.onDownload = onDownload
+        self.onDelete = onDelete
         self._player = State(initialValue: AVPlayer(url: url))
     }
 
@@ -72,35 +85,43 @@ struct StreamingPreviewView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.black
-                .opacity(backgroundOpacity)
-                .ignoresSafeArea()
-
-            ZStack(alignment: .topTrailing) {
-                VideoPlayer(player: player)
+        NavigationStack {
+            ZStack {
+                Color.black
+                    .opacity(backgroundOpacity)
                     .ignoresSafeArea()
 
-                // A poster frame before playback starts — matching the web client's `<video
-                // poster>` — rather than a blank black rectangle while the stream buffers.
-                // Keyed on "has playback ever started," not "is playing right now": the latter
-                // would bring the poster back over the paused frame every time the user pauses.
-                if item.isVideo, item.supportsThumbnail, !hasStartedPlaying {
-                    ThumbnailImage(serverURL: serverURL, path: item.id, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
-                        .aspectRatio(contentMode: .fit)
-                        .background(Color.black)
+                ZStack {
+                    VideoPlayer(player: player)
                         .ignoresSafeArea()
-                        .allowsHitTesting(false)
-                }
 
-                DSCloseButton(action: onDismiss)
-                    .padding(Constants.closeButtonInset)
+                    // A poster frame before playback starts — matching the web client's `<video
+                    // poster>` — rather than a blank black rectangle while the stream buffers.
+                    // Keyed on "has playback ever started," not "is playing right now": the latter
+                    // would bring the poster back over the paused frame every time the user pauses.
+                    if item.isVideo, item.supportsThumbnail, !hasStartedPlaying {
+                        ThumbnailImage(serverURL: serverURL, path: item.id, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
+                            .aspectRatio(contentMode: .fit)
+                            .background(Color.black)
+                            .ignoresSafeArea()
+                            .allowsHitTesting(false)
+                    }
+                }
+                .scaleEffect(dragScale)
+                .offset(y: dragOffset)
+                .opacity(contentOpacity)
             }
-            .scaleEffect(dragScale)
-            .offset(y: dragOffset)
-            .opacity(contentOpacity)
+            .ignoresSafeArea()
+            .simultaneousGesture(dismissDrag)
+            .previewChrome(
+                title: item.name,
+                systemShare: .remote(item, serverURL: serverURL),
+                onShareLink: onShare,
+                onDownload: onDownload,
+                onDelete: onDelete,
+                onClose: onDismiss
+            )
         }
-        .simultaneousGesture(dismissDrag)
         .onReceive(player.publisher(for: \.rate)) { rate in
             if rate != 0 { hasStartedPlaying = true }
         }

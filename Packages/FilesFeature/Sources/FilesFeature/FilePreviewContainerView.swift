@@ -1,8 +1,8 @@
+import CoreModels
 import DesignSystem
 import SwiftUI
 
 private enum Constants {
-    static let closeButtonInset: CGFloat = .space16
     static let contentSpacing: CGFloat = .space16
 }
 
@@ -15,15 +15,23 @@ struct FilePreviewContainerView: View {
     let fileURL: URL?
     let errorMessage: String?
     let onDismiss: () -> Void
+    var onShareLink: (() -> Void)?
+    var onDownload: (() -> Void)?
+    var onDelete: (() -> Void)?
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        NavigationStack {
             content
-
-            DSCloseButton(action: onDismiss)
-                .padding(Constants.closeButtonInset)
+                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .previewChrome(
+                    title: fileURL?.lastPathComponent,
+                    systemShare: .local(fileURL),
+                    onShareLink: onShareLink,
+                    onDownload: onDownload,
+                    onDelete: onDelete,
+                    onClose: onDismiss
+                )
         }
-        .background(Color.backgroundPrimary.ignoresSafeArea())
     }
 
     @ViewBuilder
