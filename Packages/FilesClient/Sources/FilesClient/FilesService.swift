@@ -234,10 +234,10 @@ struct FilesService: Sendable {
         return formatter.string(from: date)
     }
 
-    /// `POST /api/auth/password`, confirmed against `backend/src/routes/auth.js` +
-    /// `services/users/localAuth.js`'s `changeLocalPassword`: `{ currentPassword, newPassword }`
-    /// → 204. The route is rate-limited (429) and rejects a wrong current password (401
-    /// "Current password is incorrect.") or a too-short new one (400) with a message.
+    /// `POST /api/auth/password`, verified against `backend/src/routes/auth.js` and
+    /// `services/users/localAuth.js` `changeLocalPassword`: `{ currentPassword, newPassword }`
+    /// returns 204. The route is rate limited (429) and rejects a wrong current password (401
+    /// "Current password is incorrect.") or a password below the minimum length (400).
     func changeOwnPassword(serverURL: URL, currentPassword: String, newPassword: String) async throws {
         let url = serverURL.appendingPathComponent("api/auth/password")
         var request = Self.makeRequest(url: url, method: "POST")
@@ -247,7 +247,7 @@ struct FilesService: Sendable {
         ))
         let (data, response) = try await performSend(request)
         // Unlike every other call, a 401 here is "current password is incorrect", not a dead
-        // session — so it must reach the user as its message, not as `.sessionExpired`.
+        // session, so it must reach the user as its message, not as `.sessionExpired`.
         switch response.statusCode {
         case 200..<300:
             return
@@ -261,9 +261,9 @@ struct FilesService: Sendable {
         }
     }
 
-    // MARK: - Admin: user management
+    // MARK: Admin user management
 
-    /// `GET /api/features` — every flag section is a `{ enabled: Bool }` object; `ServerFeatures`
+    /// `GET /api/features`. Every flag section is a `{ enabled: Bool }` object; `ServerFeatures`
     /// only pulls the ones this app acts on.
     func serverFeatures(serverURL: URL) async throws -> ServerFeatures {
         let url = serverURL.appendingPathComponent("api/features")
@@ -271,7 +271,7 @@ struct FilesService: Sendable {
         return try await send(request, decoding: ServerFeatures.self)
     }
 
-    /// `GET /api/users` (admin) — wrapped `{ users: [...] }`, each with `roles` and `authMethods`.
+    /// `GET /api/users` (admin), wrapped `{ users: [...] }`, each with `roles` and `authMethods`.
     func listUsers(serverURL: URL) async throws -> [User] {
         let url = serverURL.appendingPathComponent("api/users")
         let request = Self.makeRequest(url: url, method: "GET")
@@ -293,8 +293,8 @@ struct FilesService: Sendable {
         return try await sendReportingMessage(httpRequest, decoding: UserEnvelope.self).user
     }
 
-    /// `PATCH /api/users/:id` (admin) → `{ user }`. Only the non-nil fields of `request` are sent,
-    /// matching the server's "update just what's present" behaviour.
+    /// `PATCH /api/users/:id` (admin) returns `{ user }`. Only the non nil fields of `request`
+    /// are sent, matching the server's "update just what's present" behaviour.
     func updateUser(serverURL: URL, userID: String, request: UpdateUserRequest) async throws -> User {
         let url = serverURL.appendingPathComponent("api/users").appendingPathComponent(userID)
         var httpRequest = Self.makeRequest(url: url, method: "PATCH")
@@ -318,8 +318,8 @@ struct FilesService: Sendable {
         try Self.validateReportingMessage(data, response)
     }
 
-    /// `DELETE /api/users/:id` (admin) → 204. Server rejects self-delete and last-admin delete
-    /// with a message this surfaces verbatim.
+    /// `DELETE /api/users/:id` (admin) returns 204. The server rejects deleting yourself or the
+    /// last admin, with a message this surfaces verbatim.
     func deleteUser(serverURL: URL, userID: String) async throws {
         let url = serverURL.appendingPathComponent("api/users").appendingPathComponent(userID)
         let request = Self.makeRequest(url: url, method: "DELETE")
@@ -327,9 +327,9 @@ struct FilesService: Sendable {
         try Self.validateReportingMessage(data, response)
     }
 
-    // MARK: - Admin: per-user volumes
+    // MARK: Admin per user volumes
 
-    /// `GET /api/users/:id/volumes` (admin + `USER_VOLUMES`).
+    /// `GET /api/users/:id/volumes` (admin, `USER_VOLUMES` feature).
     func userVolumes(serverURL: URL, userID: String) async throws -> [UserVolume] {
         let url = Self.userVolumesURL(serverURL: serverURL, userID: userID)
         let request = Self.makeRequest(url: url, method: "GET")
@@ -349,8 +349,8 @@ struct FilesService: Sendable {
         return try await sendReportingMessage(httpRequest, decoding: UserVolumeEnvelope.self).volume
     }
 
-    /// `PATCH /api/users/:id/volumes/:volumeID` — the server accepts label and/or access mode
-    /// (the path itself is immutable once assigned).
+    /// `PATCH /api/users/:id/volumes/:volumeID`. The server accepts label and access mode; the
+    /// path itself is immutable once assigned.
     func updateUserVolume(
         serverURL: URL, userID: String, volumeID: String, label: String?, accessMode: ShareAccessMode
     ) async throws -> UserVolume {
@@ -369,7 +369,7 @@ struct FilesService: Sendable {
         try Self.validateReportingMessage(data, response)
     }
 
-    /// `GET /api/admin/browse-directories?path=` — omit `path` to start at the server's
+    /// `GET /api/admin/browse-directories?path=`. Omit `path` to start at the server's
     /// configured volume root.
     func browseAdminDirectories(serverURL: URL, path: String?) async throws -> AdminDirectoryListing {
         var components = URLComponents(
@@ -699,8 +699,8 @@ struct FilesService: Sendable {
         return request
     }
 
-    /// Like `send`, but a non-2xx response whose body carries a message becomes
-    /// `.serverMessage` rather than a bare `.server(statusCode:)` — the admin user-management
+    /// Like `send`, but a non 2xx response whose body carries a message becomes
+    /// `.serverMessage` rather than a bare `.server(statusCode:)`. The admin user management
     /// endpoints return meaningful validation text ("Email already in use.", etc.).
     private func sendReportingMessage<Response: Decodable>(
         _ request: URLRequest, decoding type: Response.Type

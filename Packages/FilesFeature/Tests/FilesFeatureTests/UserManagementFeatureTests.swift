@@ -31,7 +31,7 @@ struct UserManagementFeatureTests {
     }
 
     /// Every test drives `onAppear` first; the two loads (`listUsers`, `serverFeatures`) race,
-    /// so the suite runs non-exhaustive and asserts the mutations it cares about explicitly.
+    /// so the suite runs non exhaustive and asserts the mutations it cares about explicitly.
     private func bootedStore(
         users: [User],
         volumesEnabled: Bool = false,
@@ -164,7 +164,7 @@ struct UserManagementFeatureTests {
             $0.filesClient.updateUser = { _, _, _ in Issue.record("must not call the server"); throw FilesClientError.network("x") }
         }
         await store.send(.userTapped("2"))
-        await store.send(.grantAdminTapped)  // guarded — user is already an admin
+        await store.send(.grantAdminTapped)  // guarded, user is already an admin
         #expect(store.state.isUpdatingRoles == false)
     }
 
@@ -298,7 +298,7 @@ struct UserManagementFeatureTests {
         await store.send(.editUsernameChanged("   "))
         #expect(store.state.profileUsernameError == "Username is required.")
         #expect(store.state.isProfileSaveEnabled == false)
-        await store.send(.saveProfileTapped)  // guarded — no effect
+        await store.send(.saveProfileTapped)  // guarded, no effect
         await store.send(.editUsernameChanged("renamed"))
         #expect(store.state.profileUsernameError == nil)
         #expect(store.state.isProfileSaveEnabled == true)
@@ -313,7 +313,7 @@ struct UserManagementFeatureTests {
         await store.send(.editEmailChanged(""))
         #expect(store.state.profileEmailError == "Email is required.")
         #expect(store.state.isProfileSaveEnabled == false)
-        await store.send(.saveProfileTapped)  // guarded — no effect
+        await store.send(.saveProfileTapped)  // guarded, no effect
 
         await store.send(.editEmailChanged("broken@"))
         #expect(store.state.profileEmailError == "Enter a valid email address.")
@@ -465,7 +465,7 @@ struct UserManagementFeatureTests {
         }
         await store.send(.userTapped("2"))
         await store.receive(\.volumesResponse) { $0.volumes = [volume] }
-        // Server list is now empty; switching tabs re-fetches only when nothing is loaded.
+        // Server list is now empty; switching tabs refetches only when nothing is loaded.
         store.dependencies.filesClient.userVolumes = { _, _ in [] }
         await store.send(.detailTabChanged(.security))
         await store.send(.detailTabChanged(.volumes))  // volumes already loaded → no refetch
@@ -554,7 +554,7 @@ struct UserManagementFeatureTests {
         ]
         let store = await bootedStore(users: users)
 
-        // Default: .type ascending — admin (Mia) first, then non-admins by name.
+        // Default: .type ascending, admin (Mia) first, then non admins by name.
         #expect(store.state.displayedUsers.map(\.id) == ["2", "1", "3"])
 
         await store.send(.sortOptionChanged(.name))

@@ -17,8 +17,8 @@ public struct SettingsFeature {
         public var isSigningOut = false
         public var isConfirmingSignOut = false
         /// Held by the feature, not created inline in the view: a `Store` built in a
-        /// `NavigationLink`'s destination builder is torn down and rebuilt (empty) on any
-        /// parent re-render — e.g. returning from the background — which is what left the
+        /// `NavigationLink`'s destination builder is torn down and rebuilt empty on any
+        /// parent re render, such as returning from the background, which is what left the
         /// user list blank.
         @Presents public var userManagement: UserManagementFeature.State?
         @Presents public var changePassword: ChangePasswordFeature.State?
@@ -125,12 +125,9 @@ public struct SettingsFeature {
                     checkDownloads,
                     checkCacheSize,
                     .run { send in
-                        do {
-                            let preferences = try await filesClient.fetchPreferences(serverURL)
-                            await send(.preferencesResponse(.success(preferences)))
-                        } catch {
-                            await send(.preferencesResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-                        }
+                        await send(.preferencesResponse(await apiResult {
+                            try await filesClient.fetchPreferences(serverURL)
+                        }))
                     }
                 )
 
@@ -246,12 +243,9 @@ public struct SettingsFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            do {
+            await send(.updatePreferenceResponse(await apiResult {
                 try await filesClient.updatePreference(serverURL, key, value)
-                await send(.updatePreferenceResponse(.success(())))
-            } catch {
-                await send(.updatePreferenceResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+            }))
         }
     }
 }

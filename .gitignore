@@ -66,3 +66,4 @@ GoogleService-Info.plist
 
 # Claude working-context notes — not project documentation, stays local
 CLAUDE.md
+.claude/

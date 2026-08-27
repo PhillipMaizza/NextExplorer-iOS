@@ -38,9 +38,9 @@ enum BrowseBreadcrumbBarMetrics {
 /// favorited folder entirely instead of the leftmost tap just re-opening that same folder.
 struct BrowseBreadcrumbBar: View {
     let directoryPath: String
-    var rootTitle: String = "Home"
+    var rootTitle: String = "Locations"
     var rootPath: String = ""
-    var rootIcon: Image? = IconKit.home
+    var rootIcon: Image? = IconKit.drive
     var containerCrumb: (title: String, path: String, icon: Image?)?
     let onSegmentTapped: (_ path: String, _ title: String) -> Void
 
