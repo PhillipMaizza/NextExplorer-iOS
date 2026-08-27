@@ -6,9 +6,9 @@ import SwiftUI
 import UIKit
 
 private enum ToolbarMetrics {
-    static let iconSize: CGFloat = .iconXSmall
+    static let iconSize: CGFloat = .iconMedium
     static let itemPadding: CGFloat = .space12
-    static let capsuleVerticalPadding: CGFloat = .space2
+    static let capsuleVerticalPadding: CGFloat = .space4
     static let capsuleHorizontalPadding: CGFloat = .space4
 }
 
@@ -24,7 +24,7 @@ struct PreviewActionBar<Content: View>: View {
         }
         .padding(.horizontal, ToolbarMetrics.capsuleHorizontalPadding)
         .padding(.vertical, ToolbarMetrics.capsuleVerticalPadding)
-        .background(Capsule().fill(.ultraThinMaterial))
+        .dsGlass()
     }
 }
 

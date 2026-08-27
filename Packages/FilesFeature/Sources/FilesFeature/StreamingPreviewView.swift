@@ -107,7 +107,7 @@ struct StreamingPreviewView: View {
                         .allowsHitTesting(false)
                 }
             }
-            .overlay(alignment: .topLeading) {
+            .overlay(alignment: .topTrailing) {
                 DSCloseButton(action: onDismiss)
                     .padding(Constants.closeButtonInset)
             }

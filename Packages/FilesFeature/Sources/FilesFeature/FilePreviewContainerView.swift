@@ -22,7 +22,7 @@ struct FilePreviewContainerView: View {
     var body: some View {
         content
             .background(Color.backgroundPrimary.ignoresSafeArea())
-            .overlay(alignment: .topLeading) {
+            .overlay(alignment: .topTrailing) {
                 DSCloseButton(action: onDismiss)
                     .padding(Constants.closeButtonInset)
             }
