@@ -20,8 +20,8 @@ private enum Metrics {
     static let closeIconSize: CGFloat = .iconXSmall
 }
 
-/// The trailing `xmark` every management sheet dismisses with — replaces a bare "Cancel"
-/// text button so the sheets read as dismissable panels, not commit/cancel forms.
+/// The trailing `xmark` every management sheet dismisses with, so the sheets read as
+/// dismissable panels rather than commit or cancel forms.
 struct SheetCloseButton: View {
     let action: () -> Void
 
@@ -37,7 +37,7 @@ struct SheetCloseButton: View {
     }
 }
 
-/// The admin user list (web `UserList`). Pushed from Settings; taps push `UserDetailView`
+/// The admin user list (web `UserList`). Pushed from Settings; a tap pushes `UserDetailView`
 /// onto the same navigation stack.
 struct UserManagementView: View {
     @Bindable var store: StoreOf<UserManagementFeature>
@@ -143,7 +143,7 @@ struct UserManagementView: View {
     }
 }
 
-// MARK: - Row
+// MARK: Row
 
 private struct UserRow: View {
     let user: User
@@ -180,7 +180,7 @@ private struct UserRow: View {
     }
 }
 
-/// The accent-outlined "ADMIN" pill, matching the one on the Settings profile card.
+/// The accent outlined "ADMIN" pill, matching the one on the Settings profile card.
 struct AdminTag: View {
     var body: some View {
         Text("Admin".uppercased())
@@ -194,8 +194,8 @@ struct AdminTag: View {
     }
 }
 
-/// Overlapping circular chips, one per sign-in method — key for a local password, cloud for
-/// SSO. Mirrors the web list's login-type cluster.
+/// Overlapping circular chips, one per sign in method: key for a local password, cloud for
+/// SSO. Mirrors the web list's login type cluster.
 struct AuthMethodChips: View {
     let methods: [AuthMethod]
 
@@ -214,7 +214,7 @@ struct AuthMethodChips: View {
     }
 }
 
-// MARK: - Create User sheet
+// MARK: Create User sheet
 
 private struct CreateUserSheet: View {
     @Bindable var store: StoreOf<UserManagementFeature>
@@ -285,7 +285,7 @@ private struct CreateUserSheet: View {
     }
 }
 
-// MARK: - Set password sheet
+// MARK: Set password sheet
 
 private struct SetPasswordSheet: View {
     @Bindable var store: StoreOf<UserManagementFeature>
@@ -339,10 +339,10 @@ private struct SetPasswordSheet: View {
     }
 }
 
-// MARK: - Shared sheet chrome
+// MARK: Shared sheet chrome
 
-/// Label + `FieldBox` + optional inline error — the repeating form row shared by the
-/// user-management sheets and the detail Profile tab.
+/// Label, `FieldBox` and optional inline error: the repeating form row shared by the user
+/// management sheets and the detail Profile tab.
 struct LabeledField<Content: View>: View {
     let title: String
     var error: String?
@@ -365,7 +365,7 @@ struct LabeledField<Content: View>: View {
     }
 }
 
-/// Rounded outlined container for a single-line text field inside a sheet form.
+/// Rounded outlined container for a single line text field inside a sheet form.
 struct FieldBox<Content: View>: View {
     @ViewBuilder let content: Content
 

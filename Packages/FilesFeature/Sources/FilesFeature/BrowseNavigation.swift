@@ -2,18 +2,17 @@ import ComposableArchitecture
 import CoreModels
 import Foundation
 
-/// Shared helpers for the folder-drill-in navigation stack that both `BrowseTabFeature` and
-/// `FavoritesFeature` host (a flat `StackState<BrowseFeature.State>`, one entry per pushed
-/// subfolder). Centralises how a pushed browse screen is constructed so the two features
-/// don't each spell it out.
+/// Shared helpers for the folder drill in navigation stack that `BrowseTabFeature` and
+/// `FavoritesFeature` both host (a flat `StackState<BrowseFeature.State>`, one entry per
+/// pushed subfolder). Centralises how a pushed browse screen is built.
 enum BrowseNavigation {
     /// A pushed screen for drilling into `item`.
     static func screen(for item: FileItem, serverURL: URL) -> BrowseFeature.State {
         BrowseFeature.State(serverURL: serverURL, directoryPath: item.id, title: item.name)
     }
 
-    /// Reset the stack and jump straight to an arbitrary path (e.g. a search result deep in
-    /// a tree). An empty path just clears back to the root.
+    /// Reset the stack and jump straight to an arbitrary path (e.g. a deep search result).
+    /// An empty path just clears back to the root.
     static func jump(
         to path: String,
         title: String,

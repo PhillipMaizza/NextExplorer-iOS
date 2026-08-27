@@ -34,8 +34,8 @@ public struct DownloadsFeature {
         public var downloads: IdentifiedArrayOf<LocalDownload> = []
         public var isLoading = false
         public var errorMessage: String?
-        /// A failed delete — surfaced as a toast, not the list-level `errorMessage` (only
-        /// shown when the list is empty).
+        /// A failed delete, surfaced as a toast, not the list level `errorMessage`, which is
+        /// only shown when the list is empty.
         public var actionErrorMessage: String?
         public var deleteConfirmationItem: LocalDownload?
         public var searchQuery = ""

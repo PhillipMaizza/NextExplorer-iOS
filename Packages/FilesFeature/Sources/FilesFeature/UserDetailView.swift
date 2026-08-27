@@ -19,8 +19,8 @@ private enum Metrics {
 }
 
 /// The admin user detail screen (web `UserDetail`). Pushed onto the Settings navigation
-/// stack by `UserManagementView`. Profile / Security / Volumes tabs, the last only when the
-/// server's `USER_VOLUMES` feature is on.
+/// stack by `UserManagementView`. Profile, Security and Volumes tabs, the last only with the
+/// `USER_VOLUMES` feature.
 struct UserDetailView: View {
     @Bindable var store: StoreOf<UserManagementFeature>
 
@@ -153,7 +153,7 @@ struct UserDetailView: View {
                 ProgressView().frame(maxWidth: .infinity, alignment: .leading)
             } else if user.isAdmin {
                 // No "Revoke Admin": the backend refuses to demote any administrator
-                // (`PATCH /api/users/:id` → 400 "Demotion of admin is not allowed."), so
+                // (`PATCH /api/users/:id` 400s with "Demotion of admin is not allowed."), so
                 // offering the action would only ever produce an error.
                 Text("Administrators can't be demoted from the app.")
                     .type(.caption(.regular), style: .tertiary)
@@ -312,16 +312,16 @@ struct UserDetailView: View {
     }
 
     /// Lives here, not on the list view: the "Remove User" button is in this screen's Danger
-    /// Zone, so the confirmation must present over the detail page — attached to the list it
+    /// Zone, so the confirmation must present over the detail page. Attached to the list it
     /// surfaced one navigation level below, behind the pushed detail.
     private var deleteAlertPresented: Binding<Bool> {
         Binding(get: { store.userToDelete != nil }, set: { if !$0 { store.send(.deleteUserCancelled) } })
     }
 }
 
-// MARK: - Small pieces
+// MARK: Small pieces
 
-/// Titled rounded card — the repeating container on every detail tab.
+/// Titled rounded card, the repeating container on every detail tab.
 struct Card<Content: View>: View {
     let title: String
     @ViewBuilder let content: Content
@@ -357,7 +357,7 @@ struct AccessModeBadge: View {
     }
 }
 
-// MARK: - Volume assign sheet
+// MARK: Volume assign sheet
 
 private struct VolumeAssignSheet: View {
     @Bindable var store: StoreOf<UserManagementFeature>
@@ -367,9 +367,9 @@ private struct VolumeAssignSheet: View {
     @State private var listing: AdminDirectoryListing?
     @State private var isBrowsing = false
     @State private var browseError: String?
-    /// The directory currently being listed — `nil` is the server's volume root. Bound to a
-    /// `.task(id:)` so drilling in/out cancels any in-flight listing before starting the next
-    /// (rapid taps otherwise race, and the slower one wins).
+    /// The directory currently being listed; `nil` is the server's volume root. Bound to a
+    /// `.task(id:)` so drilling in or out cancels any in flight listing before the next one,
+    /// since rapid taps otherwise race and the slower one wins.
     @State private var browsePath: String?
 
     private var sheet: UserManagementFeature.VolumeSheetState? { store.volumeSheet }

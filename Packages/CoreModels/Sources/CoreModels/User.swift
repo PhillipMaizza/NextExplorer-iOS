@@ -12,11 +12,11 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
     public let emailVerified: Bool
     public let createdAt: Date?
     public let updatedAt: Date?
-    /// Only populated by the admin `GET /api/users` list — empty for `/api/auth/me`.
+    /// Only populated by the admin `GET /api/users` list; empty for `/api/auth/me`.
     public let authMethods: [AuthMethod]
 
     public var isAdmin: Bool { roles.contains("admin") }
-    /// Whether this user can sign in with a local email/password (vs. SSO only).
+    /// Whether this user can sign in with a local email and password, rather than SSO only.
     public var hasLocalPassword: Bool { authMethods.contains { $0.isPassword } }
     public var oidcMethods: [AuthMethod] { authMethods.filter { $0.isOIDC } }
 
@@ -51,7 +51,7 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         id = try Self.decodeIDAsString(container, forKey: .id)
         // The server column is nullable, and the admin "edit user" form can blank it out
         // (`values.push(trimmed || null)`), so a later `/api/users` response could carry
-        // `username: null` — that must not fail the decode of the whole list.
+        // `username: null`. That must not fail the decode of the whole list.
         username = (try? container.decodeIfPresent(String.self, forKey: .username)) ?? ""
         email = try container.decodeIfPresent(String.self, forKey: .email)
         displayName = try container.decodeIfPresent(String.self, forKey: .displayName)
@@ -75,11 +75,11 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
         try container.encode(authMethods, forKey: .authMethods)
     }
 
-    /// `createdAt` / `updatedAt` are metadata the admin user list shows and nothing else
-    /// depends on — a missing, non-ISO, or type-mismatched timestamp must never fail a
-    /// `User` decode (the login and `/api/auth/me` responses go through a plain `JSONDecoder`
-    /// with no date strategy, so a date *string* there would otherwise throw). Tolerate every
-    /// shape; give up to `nil` rather than propagate.
+    /// `createdAt` and `updatedAt` are metadata the admin user list shows and nothing else
+    /// depends on, so a missing or unparseable timestamp must never fail a `User` decode. The
+    /// login and `/api/auth/me` responses go through a plain `JSONDecoder` with no date
+    /// strategy, so a date string there would otherwise throw. Tolerate every shape and fall
+    /// back to `nil`.
     private static func decodeTimestamp(_ container: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) -> Date? {
         if let date = try? container.decodeIfPresent(Date.self, forKey: key) {
             return date
