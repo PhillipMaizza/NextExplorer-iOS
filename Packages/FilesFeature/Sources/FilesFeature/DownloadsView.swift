@@ -386,7 +386,15 @@ struct DownloadsView: View {
             }
             .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
             .fullScreenCover(item: $previewedDownload) { download in
-                FilePreviewContainerView(fileURL: download.url, errorMessage: nil, onDismiss: { previewedDownload = nil })
+                FilePreviewContainerView(
+                    fileURL: download.url,
+                    errorMessage: nil,
+                    onDismiss: { previewedDownload = nil },
+                    onDelete: {
+                        previewedDownload = nil
+                        store.send(.deleteTapped(download))
+                    }
+                )
             }
             .navigationTitle(store.isSelecting ? "\(store.selectedDownloadIDs.count) Selected" : "Downloads")
             .task {

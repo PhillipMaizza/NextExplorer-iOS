@@ -29,6 +29,9 @@ private enum Constants {
     /// Content opacity at full drag progress (before release) — a slight fade under the
     /// finger on top of the shrink.
     static let draggingContentOpacityFloor: Double = 0.6
+    /// Lifts the `TabView` page dots clear of the bottom-trailing action bar — without it the
+    /// dots sit in the same band as the toolbar and collide.
+    static let pageIndicatorBottomInset: CGFloat = 52
 }
 
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
@@ -113,6 +116,7 @@ struct ImageGalleryView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: items.count > 1 ? .always : .never))
+                .padding(.bottom, items.count > 1 ? Constants.pageIndicatorBottomInset : 0)
             }
             .scaleEffect(dragScale)
             .offset(y: dragOffset)
@@ -170,8 +174,6 @@ struct ImageGalleryView: View {
 
     private var topBar: some View {
         HStack(spacing: Constants.toolbarSpacing) {
-            DSCloseButton(action: onDismiss)
-
             // Fixed white, not `Color.primaryDS` — unlike the close button (which gets a
             // frosted material chip that adapts on its own), this label sits directly on the
             // always-black gallery background, so a theme-adaptive color would go
@@ -183,6 +185,8 @@ struct ImageGalleryView: View {
                 .truncationMode(.middle)
 
             Spacer()
+
+            DSCloseButton(action: onDismiss)
         }
         .padding(.horizontal, Constants.toolbarHorizontalPadding)
         .padding(.vertical, Constants.toolbarVerticalPadding)
