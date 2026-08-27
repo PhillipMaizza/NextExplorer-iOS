@@ -27,6 +27,7 @@ struct FileRowView: View {
     /// date format in Settings, rather than only on the next fetch.
     @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
     @AppStorage("includeTimeInDates") private var includeTime = false
+    @AppStorage("showFilenameExtensions") private var showFilenameExtensions = true
 
     private static let byteFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()
@@ -74,6 +75,10 @@ struct FileRowView: View {
 
     private var isHidden: Bool { isHiddenFileName(name) }
 
+    private var displayName: String {
+        displayFileName(name, isDirectory: isDirectory, showExtension: showFilenameExtensions)
+    }
+
     private var isEligibleForThumbnail: Bool {
         !isDirectory && supportsThumbnail && showThumbnails && serverURL != nil && itemID != nil
     }
@@ -84,7 +89,7 @@ struct FileRowView: View {
                 .opacity(isHidden ? Constants.halfOpacity : Constants.fullOpacity)
 
             VStack(alignment: .leading, spacing: .space2) {
-                Text(name)
+                Text(displayName)
                     .type(.body2(.semibold), style: isHidden ? .tertiary : .primary(for: .label))
                     .lineLimit(1)
                 if let subtitle {
@@ -145,6 +150,15 @@ struct FileRowView: View {
 /// an admin adds extra `HIDDEN_FILE_PATTERNS`, which this client has no way to know about.
 func isHiddenFileName(_ name: String) -> Bool {
     name.hasPrefix(".")
+}
+
+/// Strips the extension from a file's display name when the "Show Filename Extensions"
+/// setting is off. Directories never have a meaningful extension to strip, and
+/// `NSString.deletingPathExtension` already leaves a bare dotfile like `.hidden` untouched
+/// (Foundation doesn't treat the leading dot itself as an extension separator).
+func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> String {
+    guard !isDirectory, !showExtension else { return name }
+    return (name as NSString).deletingPathExtension
 }
 
 

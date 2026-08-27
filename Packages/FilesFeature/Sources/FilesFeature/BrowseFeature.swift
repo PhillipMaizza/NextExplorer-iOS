@@ -51,7 +51,7 @@ public struct BrowseFeature {
         var icon: Image {
             switch self {
             case .name: IconKit.textformat
-            case .size: IconKit.internalDrive
+            case .size: IconKit.size
             case .dateModified: IconKit.calendar
             case .kind: IconKit.tag
             }
@@ -72,8 +72,8 @@ public struct BrowseFeature {
 
         var icon: Image {
             switch self {
-            case .ascending: IconKit.arrowUp
-            case .descending: IconKit.arrowDown
+            case .ascending: IconKit.sortAscending
+            case .descending: IconKit.sortDescending
             }
         }
     }
@@ -90,6 +90,20 @@ public struct BrowseFeature {
 
     public struct DeleteResult: Equatable, Sendable {
         public let itemID: String
+    }
+
+    public struct DownloadResult: Equatable, Sendable {
+        public let destinationURL: URL
+        public let location: DownloadLocation
+    }
+
+    public struct BulkDeleteResult: Equatable, Sendable {
+        public let itemIDs: [String]
+    }
+
+    public struct BulkFavoriteToggleResult: Equatable, Sendable {
+        public let added: [String]
+        public let removed: [String]
     }
 
     @ObservableState
@@ -121,10 +135,20 @@ public struct BrowseFeature {
         public var deleteConfirmationItem: FileItem?
         public var isPerformingFileAction = false
         public var fileActionErrorMessage: String?
-        /// Drives a persistent progress toast — `nil` when no extract/compress is running.
-        /// Rename/delete don't set this: they're fast enough, and already have their own
-        /// alert-driven confirm flow, that a progress indicator would just flicker.
+        /// Whether the list/grid is in multi-select mode — toggled from the toolbar, not tied
+        /// to any particular item. `selectedItemIDs` is always cleared when this flips off.
+        public var isSelecting = false
+        public var selectedItemIDs: Set<FileItem.ID> = []
+        public var isBulkActionInFlight = false
+        public var bulkDeleteConfirmationIsPresented = false
+        /// Drives a persistent progress toast — `nil` when no extract/compress/download is
+        /// running. Rename/delete don't set this: they're fast enough, and already have their
+        /// own alert-driven confirm flow, that a progress indicator would just flicker.
         public var fileActionProgressMessage: String?
+        /// Set once a download finishes; `BrowseContentView` turns this into a success toast.
+        /// Mirrors `fileActionErrorMessage`'s lifecycle — it's never explicitly cleared back to
+        /// `nil` by the reducer, only ever overwritten by the next download's message.
+        public var downloadSuccessMessage: String?
         /// Item the "Get Info" sheet is showing, alongside its fetched metadata (or the
         /// still-loading/error state while `GET /api/metadata/*` is in flight).
         public var infoItem: FileItem?
@@ -195,6 +219,21 @@ public struct BrowseFeature {
         case extractZipResponse(Result<FileItem, FilesClientError>)
         case compressTapped(FileItem)
         case compressResponse(Result<FileItem, FilesClientError>)
+        case downloadTapped(FileItem, DownloadLocation, removeArchiveAfterDownload: Bool)
+        case downloadProgressUpdated(String)
+        case downloadResponse(Result<DownloadResult, FilesClientError>)
+        case selectModeToggled
+        case itemSelectionToggled(FileItem.ID)
+        case selectAllTapped
+        case deselectAllTapped
+        case bulkDeleteTapped
+        case bulkDeleteCancelled
+        case bulkDeleteConfirmed
+        case bulkDeleteResponse(Result<BulkDeleteResult, FilesClientError>)
+        case bulkFavoriteTapped
+        case bulkFavoriteResponse(BulkFavoriteToggleResult)
+        case bulkDownloadTapped(DownloadLocation, removeArchiveAfterDownload: Bool)
+        case bulkDownloadResponse(savedCount: Int, total: Int, location: DownloadLocation)
         case infoTapped(FileItem)
         case infoDismissed
         case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
@@ -209,11 +248,15 @@ public struct BrowseFeature {
             case openFolder(FileItem)
             case openPath(path: String, title: String)
             case favoritesChanged
+            /// The "Open" button on the download-success toast — switches to the Downloads
+            /// tab so the user can see where the file landed.
+            case openDownloadsTapped
         }
     }
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.localDownloadStore) var localDownloadStore
     private enum CancelID { case search }
 
     public init() {}
@@ -419,6 +462,106 @@ public struct BrowseFeature {
                 state.fileActionErrorMessage = error.userMessage
                 return .none
 
+            case let .downloadTapped(item, location, removeArchiveAfterDownload):
+                return startDownload(&state, item: item, location: location, removeArchiveAfterDownload: removeArchiveAfterDownload)
+
+            case let .downloadProgressUpdated(message):
+                state.fileActionProgressMessage = message
+                return .none
+
+            case let .downloadResponse(.success(result)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.downloadSuccessMessage = "Saved to \(result.location.title)"
+                return .none
+
+            case let .downloadResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case .selectModeToggled:
+                state.isSelecting.toggle()
+                if !state.isSelecting {
+                    state.selectedItemIDs = []
+                }
+                return .none
+
+            case let .itemSelectionToggled(id):
+                if state.selectedItemIDs.contains(id) {
+                    state.selectedItemIDs.remove(id)
+                } else {
+                    state.selectedItemIDs.insert(id)
+                }
+                return .none
+
+            case .selectAllTapped:
+                state.selectedItemIDs = Set(state.displayedItems.map(\.id))
+                return .none
+
+            case .deselectAllTapped:
+                state.selectedItemIDs = []
+                return .none
+
+            case .bulkDeleteTapped:
+                guard !state.selectedItemIDs.isEmpty else { return .none }
+                state.bulkDeleteConfirmationIsPresented = true
+                return .none
+
+            case .bulkDeleteCancelled:
+                state.bulkDeleteConfirmationIsPresented = false
+                return .none
+
+            case .bulkDeleteConfirmed:
+                return confirmBulkDelete(&state)
+
+            case let .bulkDeleteResponse(.success(result)):
+                state.isBulkActionInFlight = false
+                for itemID in result.itemIDs {
+                    state.items.remove(id: itemID)
+                }
+                let hadFavorited = result.itemIDs.reduce(into: false) { hadFavorited, itemID in
+                    if state.favoritePaths.remove(itemID) != nil { hadFavorited = true }
+                }
+                state.isSelecting = false
+                state.selectedItemIDs = []
+                return hadFavorited ? .send(.delegate(.favoritesChanged)) : .none
+
+            case let .bulkDeleteResponse(.failure(error)):
+                state.isBulkActionInFlight = false
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case .bulkFavoriteTapped:
+                return startBulkFavorite(&state)
+
+            case let .bulkFavoriteResponse(result):
+                state.isBulkActionInFlight = false
+                state.favoritePaths.formUnion(result.added)
+                state.favoritePaths.subtract(result.removed)
+                state.isSelecting = false
+                state.selectedItemIDs = []
+                let didChangeAnything = !result.added.isEmpty || !result.removed.isEmpty
+                return didChangeAnything ? .send(.delegate(.favoritesChanged)) : .none
+
+            case let .bulkDownloadTapped(location, removeArchiveAfterDownload):
+                return startBulkDownload(&state, location: location, removeArchiveAfterDownload: removeArchiveAfterDownload)
+
+            case let .bulkDownloadResponse(savedCount, total, location):
+                state.isBulkActionInFlight = false
+                state.fileActionProgressMessage = nil
+                state.isSelecting = false
+                state.selectedItemIDs = []
+                if savedCount == total {
+                    state.downloadSuccessMessage = "Saved \(savedCount) item\(savedCount == 1 ? "" : "s") to \(location.title)"
+                } else if savedCount > 0 {
+                    state.downloadSuccessMessage = "Saved \(savedCount) of \(total) items to \(location.title)"
+                } else {
+                    state.fileActionErrorMessage = "Couldn't save these items to your device."
+                }
+                return .none
+
             case let .infoTapped(item):
                 return loadInfo(&state, item: item)
 
@@ -597,6 +740,136 @@ public struct BrowseFeature {
             } catch {
                 await send(.deleteResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
             }
+        }
+    }
+
+    /// Folders have no dedicated "zip and stream" endpoint, so they're compressed server-side
+    /// first (the same `compressItem` the context menu's own "Compress" action uses — this
+    /// leaves the resulting `.zip` sitting alongside the folder on the server, same side
+    /// effect "Compress" already has) and the resulting archive is downloaded like any file.
+    private func startDownload(_ state: inout State, item: FileItem, location: DownloadLocation, removeArchiveAfterDownload: Bool) -> Effect<Action> {
+        state.isPerformingFileAction = true
+        state.fileActionProgressMessage = item.isDirectory ? "Compressing…" : "Downloading…"
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let localDownloadStore = self.localDownloadStore
+        return .run { send in
+            do {
+                var compressedArchive: FileItem?
+                let fileToDownload: FileItem
+                if item.isDirectory {
+                    let archive = try await filesClient.compressItem(serverURL, item)
+                    compressedArchive = archive
+                    fileToDownload = archive
+                    await send(.downloadProgressUpdated("Downloading…"))
+                } else {
+                    fileToDownload = item
+                }
+                let cachedURL = try await filesClient.downloadRawFile(serverURL, fileToDownload)
+                let destinationURL = try localDownloadStore.save(cachedURL, fileToDownload.name, location)
+                // Best-effort, and after the fact — the download already succeeded, so a
+                // cleanup failure here shouldn't surface as an error to the user.
+                if removeArchiveAfterDownload, let compressedArchive {
+                    try? await filesClient.deleteItems(serverURL, [compressedArchive])
+                }
+                await send(.downloadResponse(.success(DownloadResult(destinationURL: destinationURL, location: location))))
+            } catch {
+                await send(.downloadResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    private func confirmBulkDelete(_ state: inout State) -> Effect<Action> {
+        state.bulkDeleteConfirmationIsPresented = false
+        let itemsToDelete = state.selectedItemIDs.compactMap { state.items[id: $0] }
+        guard !itemsToDelete.isEmpty else { return .none }
+        state.isBulkActionInFlight = true
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let itemIDs = itemsToDelete.map(\.id)
+        return .run { send in
+            do {
+                try await filesClient.deleteItems(serverURL, itemsToDelete)
+                // Animated so the rows visibly slide out of the list rather than popping,
+                // since removal happens on the server round-trip, not the confirm tap itself.
+                await send(.bulkDeleteResponse(.success(BulkDeleteResult(itemIDs: itemIDs))), animation: .default)
+            } catch {
+                await send(.bulkDeleteResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    /// Every selected directory is toggled, mirroring the single-item context-menu action:
+    /// already-favorited directories are removed, the rest are added. Best-effort per item,
+    /// matching the same philosophy the sign-out flow already uses elsewhere: one failure
+    /// shouldn't block toggling the rest.
+    private func startBulkFavorite(_ state: inout State) -> Effect<Action> {
+        let targets = state.selectedItemIDs
+            .compactMap { state.items[id: $0] }
+            .filter(\.isDirectory)
+        guard !targets.isEmpty else { return .none }
+        state.isBulkActionInFlight = true
+        let serverURL = state.serverURL
+        let favoritePaths = state.favoritePaths
+        let filesClient = self.filesClient
+        return .run { send in
+            var added: [String] = []
+            var removed: [String] = []
+            for item in targets {
+                let isCurrentlyFavorite = favoritePaths.contains(item.id)
+                if isCurrentlyFavorite {
+                    if (try? await filesClient.removeFavorite(serverURL, item.id)) != nil {
+                        removed.append(item.id)
+                    }
+                } else {
+                    if (try? await filesClient.addFavorite(serverURL, item.id)) != nil {
+                        added.append(item.id)
+                    }
+                }
+            }
+            await send(.bulkFavoriteResponse(BulkFavoriteToggleResult(added: added, removed: removed)))
+        }
+    }
+
+    /// Sequential, not concurrent: reuses the same compress-then-download chain
+    /// `startDownload` uses for a single folder, one selected item at a time, so the
+    /// progress toast can report "N of M" as it goes. Best-effort — one item's failure
+    /// doesn't stop the rest of the batch.
+    private func startBulkDownload(_ state: inout State, location: DownloadLocation, removeArchiveAfterDownload: Bool) -> Effect<Action> {
+        let targets = state.selectedItemIDs.compactMap { state.items[id: $0] }
+        guard !targets.isEmpty else { return .none }
+        state.isBulkActionInFlight = true
+        state.fileActionProgressMessage = "Downloading 1 of \(targets.count)…"
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let localDownloadStore = self.localDownloadStore
+        return .run { send in
+            var savedCount = 0
+            for (index, item) in targets.enumerated() {
+                if index > 0 {
+                    await send(.downloadProgressUpdated("Downloading \(index + 1) of \(targets.count)…"))
+                }
+                do {
+                    var compressedArchive: FileItem?
+                    let fileToDownload: FileItem
+                    if item.isDirectory {
+                        let archive = try await filesClient.compressItem(serverURL, item)
+                        compressedArchive = archive
+                        fileToDownload = archive
+                    } else {
+                        fileToDownload = item
+                    }
+                    let cachedURL = try await filesClient.downloadRawFile(serverURL, fileToDownload)
+                    _ = try localDownloadStore.save(cachedURL, fileToDownload.name, location)
+                    if removeArchiveAfterDownload, let compressedArchive {
+                        try? await filesClient.deleteItems(serverURL, [compressedArchive])
+                    }
+                    savedCount += 1
+                } catch {
+                    continue
+                }
+            }
+            await send(.bulkDownloadResponse(savedCount: savedCount, total: targets.count, location: location))
         }
     }
 

@@ -9,34 +9,37 @@ import FilesClient
 /// legitimately returns `{ thumbnail: "" }` for e.g. PDFs or when thumbnails are disabled
 /// server-side). One request per instance — the API has no bulk/listing variant, matching
 /// how the real web client also loads these per-file.
+///
+/// Loads through `ThumbnailCache` rather than `AsyncImage(url:)` directly, so a thumbnail
+/// already seen this session (or a prior one) is read from disk instead of re-hitting the
+/// server every time the row scrolls back into view.
 struct ThumbnailImage: View {
     let serverURL: URL
     let path: String
     let fallbackIcon: Image
     let iconTint: Color
 
-    @State private var thumbnailURL: URL?
+    @State private var uiImage: UIImage?
     @State private var didResolve = false
     @Dependency(\.filesClient) private var filesClient
+    @Dependency(\.thumbnailCache) private var thumbnailCache
 
     var body: some View {
         Group {
-            if let thumbnailURL {
-                AsyncImage(url: thumbnailURL) { phase in
-                    if case let .success(image) = phase {
-                        image.resizable().scaledToFill()
-                    } else {
-                        fallbackImage
-                    }
-                }
+            if let uiImage {
+                Image(uiImage: uiImage)
+                    .resizable()
+                    .scaledToFill()
             } else {
                 fallbackImage
             }
         }
         .task(id: path) {
             guard !didResolve else { return }
-            thumbnailURL = try? await filesClient.thumbnailURL(serverURL, path)
-            didResolve = true
+            defer { didResolve = true }
+            guard let thumbnailURL = try? await filesClient.thumbnailURL(serverURL, path) else { return }
+            guard let data = try? await thumbnailCache.data(thumbnailURL) else { return }
+            uiImage = UIImage(data: data)
         }
     }
 

@@ -20,10 +20,14 @@ public struct BrowseTabFeature {
         case root(BrowseFeature.Action)
         case path(StackActionOf<BrowseFeature>)
         case navigateToDirectory(path: String, title: String)
+        /// Re-fetches the root folder and every pushed subfolder currently on the live
+        /// navigation stack — sent when the app becomes active again after being backgrounded.
+        case syncPathStack
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
             case favoritesChanged
+            case openDownloadsTapped
         }
     }
 
@@ -45,6 +49,9 @@ public struct BrowseTabFeature {
             case .root(.delegate(.favoritesChanged)):
                 return .send(.delegate(.favoritesChanged))
 
+            case .root(.delegate(.openDownloadsTapped)):
+                return .send(.delegate(.openDownloadsTapped))
+
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
                 state.path.append(BrowseFeature.State(serverURL: state.root.serverURL, directoryPath: item.id, title: item.name))
                 return .none
@@ -55,11 +62,20 @@ public struct BrowseTabFeature {
             case .path(.element(id: _, action: .delegate(.favoritesChanged))):
                 return .send(.delegate(.favoritesChanged))
 
+            case .path(.element(id: _, action: .delegate(.openDownloadsTapped))):
+                return .send(.delegate(.openDownloadsTapped))
+
             case let .navigateToDirectory(path, title):
                 state.path.removeAll()
                 guard !path.isEmpty else { return .none }
                 state.path.append(BrowseFeature.State(serverURL: state.root.serverURL, directoryPath: path, title: title))
                 return .none
+
+            case .syncPathStack:
+                return .merge(
+                    [.send(.root(.refreshButtonTapped))]
+                        + state.path.ids.map { .send(.path(.element(id: $0, action: .refreshButtonTapped))) }
+                )
 
             case .root, .path, .delegate:
                 return .none

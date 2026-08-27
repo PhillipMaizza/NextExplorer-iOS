@@ -39,7 +39,7 @@ struct FilePreviewContainerView: View {
     private var statusContent: some View {
         VStack(spacing: Constants.contentSpacing) {
             if let errorMessage {
-                IconKit.exclamationmarkTriangle
+                IconKit.warning
                     .resizable()
                     .scaledToFit()
                     .foregroundStyle(Color.negative)

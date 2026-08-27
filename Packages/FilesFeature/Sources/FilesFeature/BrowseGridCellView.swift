@@ -27,6 +27,7 @@ struct GridCellView: View {
     let serverURL: URL?
     let showThumbnails: Bool
     let iconSize: CGFloat
+    @AppStorage("showFilenameExtensions") private var showFilenameExtensions = true
 
     init(name: String, isDirectory: Bool, isFavorite: Bool = false, kind: String? = nil) {
         self.name = name
@@ -53,6 +54,10 @@ struct GridCellView: View {
     }
 
     private var isHidden: Bool { isHiddenFileName(name) }
+
+    private var displayName: String {
+        displayFileName(name, isDirectory: isDirectory, showExtension: showFilenameExtensions)
+    }
 
     private var isEligibleForThumbnail: Bool {
         !isDirectory && supportsThumbnail && showThumbnails && serverURL != nil && itemID != nil
@@ -82,7 +87,7 @@ struct GridCellView: View {
                 .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)
                 // Only favoriting buzzes — un-favoriting isn't a "win" worth celebrating the same way.
                 .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
-            Text(name)
+            Text(displayName)
                 .type(.body2(.semibold), style: isHidden ? .tertiary : .primary(for: .label))
                 .lineLimit(2)
                 .multilineTextAlignment(.center)

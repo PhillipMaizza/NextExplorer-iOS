@@ -29,7 +29,7 @@ struct EmptyStateView: View {
 }
 
 #Preview("Error") {
-    EmptyStateView(icon: IconKit.exclamationmarkTriangle, message: "Couldn't reach the server.")
+    EmptyStateView(icon: IconKit.warning, message: "Couldn't reach the server.")
 }
 
 #Preview("No items") {
@@ -37,7 +37,7 @@ struct EmptyStateView: View {
 }
 
 #Preview("No search results") {
-    EmptyStateView(icon: IconKit.magnifyingGlass, message: "No matches for \u{201C}vacation\u{201D}.")
+    EmptyStateView(icon: IconKit.search, message: "No matches for \u{201C}vacation\u{201D}.")
 }
 
 #Preview("Long message wraps and centers") {
