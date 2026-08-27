@@ -55,6 +55,8 @@ public enum IconKit {
     public static let sort = Image(systemName: "arrow.up.arrow.down")
     public static let sortAscending = Image(systemName: "arrow.up")
     public static let sortDescending = Image(systemName: "arrow.down")
+    /// "Go up one level" in a hierarchy (e.g. the admin volume directory picker).
+    public static let levelUp = Image(systemName: "arrow.up.left")
     public static let textformat = Image(systemName: "textformat")
     public static let calendar = Image(systemName: "calendar")
     public static let home = Image(systemName: "house")
@@ -70,21 +72,20 @@ public enum IconKit {
     public static let moreOptions = Image(systemName: "ellipsis.circle")
     public static let selectAll = Image(systemName: "checklist")
     public static let share = Image(systemName: "square.and.arrow.up")
-    /// The "share link" nodes glyph — matches the web client's share-dialog header icon,
-    /// distinct from `share` (the iOS system share-sheet action).
+    public static let drive = Image(systemName: "externaldrive.fill")
     public static let shareLink = Image(systemName: "point.3.connected.trianglepath.dotted")
     public static let link = Image(systemName: "link")
     public static let people = Image(systemName: "person.2")
     public static let copy = Image(systemName: "doc.on.doc")
-    /// "zipper.page" — a page/sheet with a zipper across it. Easy to mix up with
-    /// `archiveDocument` (`doc.zipper`) below, a *different* archive-themed symbol — kept as
-    /// distinct English names precisely so call sites don't get them confused.
+    public static let shield = Image(systemName: "checkmark.shield")
+    public static let key = Image(systemName: "key")
+    public static let cloud = Image(systemName: "cloud")
+    public static let plus = Image(systemName: "plus")
     public static let archivePage = Image(systemName: "zipper.page")
     public static let select = Image(systemName: "checkmark.circle")
     public static let unfavorite = Image(systemName: "star.slash")
     public static let info = Image(systemName: "info.circle")
     public static let extract = Image(systemName: "archivebox")
-    /// "doc.zipper" — a document with a zipper across it. See `archivePage` above.
     public static let archiveDocument = Image(systemName: "doc.zipper")
     public static let size = Image(systemName: "internaldrive")
 }

@@ -16,6 +16,12 @@ public struct SettingsFeature {
         public var user: User
         public var isSigningOut = false
         public var isConfirmingSignOut = false
+        /// Held by the feature, not created inline in the view: a `Store` built in a
+        /// `NavigationLink`'s destination builder is torn down and rebuilt (empty) on any
+        /// parent re-render — e.g. returning from the background — which is what left the
+        /// user list blank.
+        @Presents public var userManagement: UserManagementFeature.State?
+        @Presents public var changePassword: ChangePasswordFeature.State?
         /// Shared with `BrowseFeature` under the same in-memory key, so toggling
         /// "Show Hidden Files" here is reflected immediately in an already-open folder.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
@@ -41,6 +47,10 @@ public struct SettingsFeature {
 
     public enum Action: Sendable {
         case onAppear
+        case userManagementButtonTapped
+        case userManagement(PresentationAction<UserManagementFeature.Action>)
+        case changePasswordButtonTapped
+        case changePassword(PresentationAction<ChangePasswordFeature.Action>)
         case preferencesResponse(Result<UserPreferences, FilesClientError>)
         case setShowHiddenFiles(Bool)
         case setShowThumbnails(Bool)
@@ -78,6 +88,23 @@ public struct SettingsFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .userManagementButtonTapped:
+                state.userManagement = UserManagementFeature.State(
+                    serverURL: state.serverURL,
+                    currentUserID: state.user.id
+                )
+                return .none
+
+            case .userManagement:
+                return .none
+
+            case .changePasswordButtonTapped:
+                state.changePassword = ChangePasswordFeature.State(serverURL: state.serverURL)
+                return .none
+
+            case .changePassword:
+                return .none
+
             case .onAppear:
                 let localDownloadStore = self.localDownloadStore
                 let previewCacheStore = self.previewCacheStore
@@ -204,6 +231,12 @@ public struct SettingsFeature {
             case .delegate:
                 return .none
             }
+        }
+        .ifLet(\.$userManagement, action: \.userManagement) {
+            UserManagementFeature()
+        }
+        .ifLet(\.$changePassword, action: \.changePassword) {
+            ChangePasswordFeature()
         }
     }
 
