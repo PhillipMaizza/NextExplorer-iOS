@@ -40,6 +40,11 @@ struct ImageGalleryView: View {
     let items: [FileItem]
     let serverURL: URL
     let onDismiss: () -> Void
+    /// Toolbar actions on the current image — routed back to `BrowseFeature` by the caller.
+    /// `nil` hides the button (e.g. no delete permission).
+    private let onShare: ((FileItem) -> Void)?
+    private let onDownload: ((FileItem) -> Void)?
+    private let onDelete: ((FileItem) -> Void)?
 
     @State private var selection: String
     /// Live vertical translation of an in-progress dismiss drag (0 when idle). Drives the
@@ -49,15 +54,30 @@ struct ImageGalleryView: View {
     /// it flies off, so the fullScreenCover's own slide-out is never seen.
     @State private var isDismissing = false
 
-    init(items: [FileItem], initialItem: FileItem, serverURL: URL, onDismiss: @escaping () -> Void) {
+    init(
+        items: [FileItem],
+        initialItem: FileItem,
+        serverURL: URL,
+        onDismiss: @escaping () -> Void,
+        onShare: ((FileItem) -> Void)? = nil,
+        onDownload: ((FileItem) -> Void)? = nil,
+        onDelete: ((FileItem) -> Void)? = nil
+    ) {
         self.items = items
         self.serverURL = serverURL
         self.onDismiss = onDismiss
+        self.onShare = onShare
+        self.onDownload = onDownload
+        self.onDelete = onDelete
         self._selection = State(initialValue: initialItem.id)
     }
 
+    private var currentItem: FileItem? {
+        items.first { $0.id == selection }
+    }
+
     private var currentName: String {
-        items.first { $0.id == selection }?.name ?? ""
+        currentItem?.name ?? ""
     }
 
     private var dragProgress: CGFloat {
@@ -158,9 +178,32 @@ struct ImageGalleryView: View {
                 .truncationMode(.middle)
 
             Spacer()
+
+            if let onShare {
+                toolbarButton(IconKit.shareLink) { currentItem.map(onShare) }
+            }
+            if let onDownload {
+                toolbarButton(IconKit.download) { currentItem.map(onDownload) }
+            }
+            if let onDelete {
+                toolbarButton(IconKit.delete, tint: Color.negative) { currentItem.map(onDelete) }
+            }
         }
         .padding(.horizontal, Constants.toolbarHorizontalPadding)
         .padding(.vertical, Constants.toolbarVerticalPadding)
+    }
+
+    private func toolbarButton(_ icon: Image, tint: Color = .white, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            icon
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(tint)
+                .frame(width: .iconXSmall, height: .iconXSmall)
+                .padding(.space8)
+                .background(Circle().fill(.ultraThinMaterial))
+        }
+        .buttonStyle(DSHapticButtonStyle())
     }
 }
 

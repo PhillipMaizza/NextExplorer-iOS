@@ -13,6 +13,8 @@ private enum Constants {
     static let overlayCrossfadeDuration: Double = 0.2
     static let listDiffSpringResponse: Double = 0.35
     static let listDiffSpringDamping: Double = 0.8
+    /// How often the view re-checks whether an open link has crossed its expiry.
+    static let expiryCheckInterval: TimeInterval = 30
 }
 
 struct SharedView: View {
@@ -56,8 +58,12 @@ struct SharedView: View {
 
     var body: some View {
         NavigationStack {
-            shareList
+            TimelineView(.periodic(from: .now, by: Constants.expiryCheckInterval)) { context in
+                shareList
+                    .task(id: context.date) { store.send(.expiryTick(context.date)) }
+            }
             .navigationTitle("Shared")
+            .navigationBarTitleDisplayMode(.large)
             .searchable(
                 text: $store.searchQuery.sending(\.searchQueryChanged),
                 placement: .navigationBarDrawer(displayMode: .always),
@@ -174,6 +180,7 @@ struct SharedView: View {
                     share: share,
                     serverURL: store.serverURL,
                     isByMe: store.segment == .byMe,
+                    isExpired: store.state.isExpired(share),
                     sharedWithText: store.state.sharedWithLabel(for: share),
                     isDeleting: store.deletingIDs.contains(share.id),
                     onDelete: { store.send(.deleteTapped(share)) },
@@ -205,6 +212,7 @@ private struct SharedLinkCard: View {
     let share: Share
     let serverURL: URL
     let isByMe: Bool
+    let isExpired: Bool
     let sharedWithText: String
     let isDeleting: Bool
     let onDelete: () -> Void
@@ -217,6 +225,7 @@ private struct SharedLinkCard: View {
         share: Share,
         serverURL: URL,
         isByMe: Bool,
+        isExpired: Bool,
         sharedWithText: String,
         isDeleting: Bool,
         startExpanded: Bool = false,
@@ -226,6 +235,7 @@ private struct SharedLinkCard: View {
         self.share = share
         self.serverURL = serverURL
         self.isByMe = isByMe
+        self.isExpired = isExpired
         self.sharedWithText = sharedWithText
         self.isDeleting = isDeleting
         self.onDelete = onDelete
@@ -249,7 +259,6 @@ private struct SharedLinkCard: View {
         static let deletingOpacity: Double = 0.4
         static let expiredCardOpacity: Double = 0.6
         static let disabledActionOpacity: Double = 0.4
-        static let expandAnimationDuration: Double = 0.25
     }
 
     var body: some View {
@@ -259,21 +268,21 @@ private struct SharedLinkCard: View {
                 VStack(alignment: .leading, spacing: 0) {
                     metaRow(IconKit.people, "Shared with", sharedWithText)
                     metaRow(IconKit.lock, "Access", share.accessMode.title)
-                    metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: share.isExpired)
+                    metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
                     linkModeRow
 
                     Divider()
                         .padding(.vertical, Metrics.rowVerticalPadding)
 
                     HStack(spacing: Metrics.actionRowSpacing) {
-                        pillAction(IconKit.link, "Share link", tint: .accent, isEnabled: !share.isExpired) {
+                        pillAction(IconKit.link, "Share link", tint: .accent, isEnabled: !isExpired) {
                             copy(shareLinkString, label: "Share link copied")
                         }
                         pillAction(
                             IconKit.copy,
                             share.isDirectory ? "Folder link" : "File link",
                             tint: .accent,
-                            isEnabled: !share.isExpired
+                            isEnabled: !isExpired
                         ) {
                             copy(directLinkString, label: share.isDirectory ? "Folder ZIP link copied" : "Direct file link copied")
                         }
@@ -285,20 +294,16 @@ private struct SharedLinkCard: View {
                     }
                 }
                 .padding(Metrics.padding)
-                .transition(.opacity)
             }
         }
         .background(RoundedRectangle(cornerRadius: Metrics.cornerRadius).fill(Color.backgroundSecondary))
-        .opacity(isDeleting ? Metrics.deletingOpacity : (share.isExpired ? Metrics.expiredCardOpacity : 1))
+        .opacity(isDeleting ? Metrics.deletingOpacity : (isExpired ? Metrics.expiredCardOpacity : 1))
         .disabled(isDeleting)
-        .animation(.easeInOut(duration: Metrics.expandAnimationDuration), value: isExpanded)
     }
 
     private var header: some View {
         Button {
-            withAnimation(.easeInOut(duration: Metrics.expandAnimationDuration)) {
-                isExpanded.toggle()
-            }
+            isExpanded.toggle()
         } label: {
             HStack(spacing: .space12) {
                 (share.isDirectory ? IconKit.folderFill : IconKit.document)
@@ -311,7 +316,7 @@ private struct SharedLinkCard: View {
                         Text(share.displayName)
                             .type(.body2(.semibold), style: .primary(for: .label))
                             .lineLimit(1)
-                        if share.isExpired {
+                        if isExpired {
                             Text("EXPIRED")
                                 .type(.caption(.semibold), style: .error)
                                 .padding(.horizontal, Metrics.badgeHorizontalPadding)
@@ -359,8 +364,8 @@ private struct SharedLinkCard: View {
             .tint(Color.secondaryDS)
         }
         .padding(.vertical, Metrics.rowVerticalPadding)
-        .opacity(share.isExpired ? Metrics.disabledActionOpacity : 1)
-        .allowsHitTesting(!share.isExpired)
+        .opacity(isExpired ? Metrics.disabledActionOpacity : 1)
+        .allowsHitTesting(!isExpired)
     }
 
     /// Same font/padding as `linkModeRow` so the whole expanded block reads as one list.
@@ -424,7 +429,7 @@ private struct SharedLinkCard: View {
     }
 
     private func copy(_ string: String, label: String) {
-        guard !share.isExpired else { return }
+        guard !isExpired else { return }
         UIPasteboard.general.string = string
         onCopied(label)
     }
@@ -488,8 +493,8 @@ private extension Share {
     let url = URL(string: "https://cloud.phillipmaizza.com")!
     return ScrollView {
         VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(isDirectory: true), serverURL: url, isByMe: true, sharedWithText: "Anyone with link", isDeleting: false, onDelete: {}, onCopied: { _ in })
-            SharedLinkCard(share: .previewCard(), serverURL: url, isByMe: true, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(isDirectory: true), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Anyone with link", isDeleting: false, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
         }
         .padding(.space16)
     }
@@ -500,8 +505,8 @@ private extension Share {
     let url = URL(string: "https://cloud.phillipmaizza.com")!
     return ScrollView {
         VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(target: .users, hasPassword: true), serverURL: url, isByMe: true, sharedWithText: "Jamie Rivera, Sam Okafor", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
-            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(86_400 * 3)), serverURL: url, isByMe: true, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(target: .users, hasPassword: true), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Jamie Rivera, Sam Okafor", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(86_400 * 3)), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
         }
         .padding(.space16)
     }
@@ -512,8 +517,8 @@ private extension Share {
     let url = URL(string: "https://cloud.phillipmaizza.com")!
     return ScrollView {
         VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(-3600)), serverURL: url, isByMe: true, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
-            SharedLinkCard(share: .previewCard(sourcePath: nil), serverURL: url, isByMe: false, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(-3600)), serverURL: url, isByMe: true, isExpired: true, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(sourcePath: nil), serverURL: url, isByMe: false, isExpired: false, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
         }
         .padding(.space16)
     }
