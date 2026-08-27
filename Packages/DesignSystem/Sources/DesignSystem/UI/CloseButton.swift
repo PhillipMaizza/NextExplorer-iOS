@@ -22,7 +22,7 @@ public struct DSCloseButton: View {
                 .foregroundStyle(Color.primaryDS)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
                 .padding(Constants.padding)
-                .background(Circle().fill(.ultraThinMaterial))
+                .dsGlass(interactive: true, in: Circle())
         }
         .buttonStyle(DSHapticButtonStyle())
         .accessibilityLabel("Close")

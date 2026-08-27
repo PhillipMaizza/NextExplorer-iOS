@@ -9,6 +9,9 @@ public enum DSButtonStyle: CaseIterable, Hashable {
     case secondary
     /// Transparent background, accent text — low-emphasis inline action.
     case tertiary
+    /// Transparent, no border, no lift, neutral text — a dismiss ("Cancel") that shouldn't
+    /// compete with the primary CTA beside it. Unlike `.tertiary` the label isn't accent.
+    case ghost
     /// Filled positive background — confirms a completed action.
     case success
     /// Filled negative background — flags a failed action.
@@ -22,7 +25,7 @@ public enum DSButtonStyle: CaseIterable, Hashable {
         switch self {
         case .primary: .accent
         case .secondary: .backgroundSecondary
-        case .tertiary: .clear
+        case .tertiary, .ghost: .clear
         case .success: .positive
         case .failure: .negative
         case .inverted: Color(white: Constants.invertedFillWhite)
@@ -36,6 +39,7 @@ public enum DSButtonStyle: CaseIterable, Hashable {
         case .primary: .black
         case .success, .failure, .inverted: .white
         case .secondary: .primaryDS
+        case .ghost: .secondaryDS
         case .tertiary: .accent
         }
     }
@@ -138,7 +142,7 @@ public struct DSButton: View {
                 RoundedRectangle(cornerRadius: .radiusControl)
                     .stroke(style.borderColor, lineWidth: style == .secondary ? .borderWidthHairline : 0)
             )
-            .elevation(.level1, alpha: Constants.buttonElevationAlpha)
+            .elevation(.level1, alpha: style == .ghost ? 0 : Constants.buttonElevationAlpha)
         }
         .buttonStyle(DSHapticButtonStyle())
         .allowsHitTesting(isEnabled && !isLoading)

@@ -155,7 +155,7 @@ struct CreateShareLinkSheet: View {
             }
 
             HStack(spacing: .space12) {
-                DSButton("Cancel", style: .secondary) { dismiss() }
+                DSButton("Cancel", style: .ghost) { dismiss() }
                 DSButton("Create Share Link", style: .primary, isLoading: store.isCreating) {
                     store.send(.createTapped)
                 }

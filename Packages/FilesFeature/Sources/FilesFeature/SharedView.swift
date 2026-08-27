@@ -260,6 +260,8 @@ private struct SharedLinkCard: View {
         static let actionIconSize: CGFloat = .iconSmall
         static let badgeHorizontalPadding: CGFloat = .space8
         static let badgeVerticalPadding: CGFloat = .space2
+        /// Chip tint strength — the recipient's categorical color at low alpha behind its name.
+        static let chipFillOpacity: Double = 0.16
         static let deletingOpacity: Double = 0.4
         /// Expired links mute the info rows — but never the actions, which stay usable
         /// (delete) or at least fully legible.
@@ -324,48 +326,55 @@ private struct SharedLinkCard: View {
         .padding(Metrics.padding)
     }
 
-    /// "Shared with" — a globe + label for `anyone`, or wrapping name chips (`+N` for any
-    /// recipients whose name isn't resolved yet).
+    /// "Shared with" — a globe + label for `anyone`; for specific users, the label row plus a
+    /// full-width wrapping strip showing every recipient as its own colored chip (a `+N` chip
+    /// covers any recipients whose name hasn't resolved yet).
     @ViewBuilder
     private var sharedWithRow: some View {
-        HStack(alignment: .top, spacing: .space8) {
-            (audienceIsAnyone ? IconKit.web : IconKit.people)
-                .resizable().scaledToFit()
-                .foregroundStyle(Color.secondaryDS)
-                .frame(width: Metrics.metaIconSize, height: Metrics.metaIconSize)
-                .padding(.top, .space2)
-            Text("Shared with").type(.body2(.regular), style: .primary(for: .label))
-            Spacer(minLength: .space8)
-            switch audience {
-            case .anyone:
-                Text("Anyone with link").type(.body2(.regular), style: .secondary)
-            case let .users(names, unnamed):
+        VStack(alignment: .leading, spacing: .space8) {
+            HStack(alignment: .top, spacing: .space8) {
+                (audienceIsAnyone ? IconKit.web : IconKit.people)
+                    .resizable().scaledToFit()
+                    .foregroundStyle(Color.secondaryDS)
+                    .frame(width: Metrics.metaIconSize, height: Metrics.metaIconSize)
+                    .padding(.top, .space2)
+                Text("Shared with").type(.body2(.regular), style: .primary(for: .label))
+                Spacer(minLength: .space8)
+                if audienceIsAnyone {
+                    Text("Anyone with link").type(.body2(.regular), style: .secondary)
+                }
+            }
+            if case let .users(names, unnamed) = audience {
                 recipientChips(names: names, unnamed: unnamed)
             }
         }
         .padding(.vertical, Metrics.rowVerticalPadding)
     }
 
-    /// First 3 recipient names as chips; everything past that (plus any unresolved names)
-    /// collapses into a `+N`. Mirrors the web `SharedByMeView`.
+    /// Every recipient as its own chip, each in a stable per-name color, wrapping onto as many
+    /// rows as it takes. Any recipients whose display name hasn't loaded collapse into a
+    /// trailing neutral `+N`.
     @ViewBuilder
     private func recipientChips(names: [String], unnamed: Int) -> some View {
-        let shown = Array(names.prefix(3))
-        let overflow = max(0, names.count - shown.count) + unnamed
-        HStack(spacing: .space4) {
-            ForEach(shown, id: \.self) { name in
+        FlowLayout(horizontalSpacing: .space4, verticalSpacing: .space4) {
+            ForEach(names, id: \.self) { name in
                 Text(name)
-                    .type(.caption(.semibold), style: .link)
+                    .type(.caption(.semibold))
+                    .foregroundStyle(Color.categorical(for: name))
                     .lineLimit(1)
                     .padding(.horizontal, .space8)
                     .padding(.vertical, Metrics.badgeVerticalPadding)
-                    .background(Capsule().fill(Color.accent.opacity(0.14)))
+                    .background(Capsule().fill(Color.categorical(for: name).opacity(Metrics.chipFillOpacity)))
             }
-            if overflow > 0 || shown.isEmpty {
-                Text(shown.isEmpty ? "Specific people" : "+\(overflow)")
+            if unnamed > 0 {
+                Text("+\(unnamed)")
                     .type(.caption(.semibold), style: .secondary)
+                    .padding(.horizontal, .space8)
+                    .padding(.vertical, Metrics.badgeVerticalPadding)
+                    .background(Capsule().fill(Color.secondaryDS.opacity(Metrics.chipFillOpacity)))
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var audienceIsAnyone: Bool {
