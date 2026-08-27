@@ -98,17 +98,58 @@ struct CreateShareLinkFeatureTests {
     }
 
     @Test
-    func choosingSpecificUsersBlocksCreation() async {
+    func choosingSpecificUsersLoadsUsersAndBlocksCreationUntilOneIsPicked() async {
+        let jamie = User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")
         let store = TestStore(initialState: makeState()) {
             CreateShareLinkFeature()
         } withDependencies: {
             $0.date = .constant(now)
+            $0.filesClient.shareableUsers = { _ in [jamie] }
         }
 
-        await store.send(.targetChanged(.users)) { $0.target = .users }
+        await store.send(.targetChanged(.users)) {
+            $0.target = .users
+            $0.isLoadingUsers = true
+        }
+        await store.receive(\.shareableUsersResponse.success) {
+            $0.isLoadingUsers = false
+            $0.hasLoadedUsers = true
+            $0.shareableUsers = [jamie]
+        }
         #expect(store.state.isCreateEnabled == false)
-        // No effect, no state change.
+        // No effect, no state change while nothing is selected.
         await store.send(.createTapped)
+
+        await store.send(.userToggled(jamie.id)) { $0.selectedUserIDs = [jamie.id] }
+        #expect(store.state.isCreateEnabled == true)
+    }
+
+    @Test
+    func specificUsersAreSentInTheCreateRequest() async {
+        let jamie = User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")
+        let created = makeCreated(target: .users)
+        var state = makeState()
+        state.target = .users
+        state.hasLoadedUsers = true
+        state.shareableUsers = [jamie]
+        state.selectedUserIDs = [jamie.id]
+
+        let store = TestStore(initialState: state) {
+            CreateShareLinkFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.filesClient.createShareLink = { _, request in
+                #expect(request.target == .users)
+                #expect(request.userIds == ["u2"])
+                return created
+            }
+        }
+
+        await store.send(.createTapped) { $0.isCreating = true }
+        await store.receive(\.createResponse.success) {
+            $0.isCreating = false
+            $0.createdShare = created
+        }
     }
 
     @Test

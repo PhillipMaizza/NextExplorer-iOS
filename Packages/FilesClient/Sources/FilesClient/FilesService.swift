@@ -209,6 +209,15 @@ struct FilesService: Sendable {
         return try await send(request, decoding: ShareLinksEnvelope.self).shares
     }
 
+    /// `GET /api/users/shareable`, confirmed against `backend/src/routes/users.js` +
+    /// `services/users/management.js`: every user but the caller as
+    /// `{id, email, username, displayName}` (no `roles`), wrapped `{ users: [...] }`.
+    func shareableUsers(serverURL: URL) async throws -> [User] {
+        let url = serverURL.appendingPathComponent("api/users/shareable")
+        let request = Self.makeRequest(url: url, method: "GET")
+        return try await send(request, decoding: ShareableUsersEnvelope.self).users
+    }
+
     /// `DELETE /api/shares/:id` → 204, owner only.
     func deleteShareLink(serverURL: URL, shareID: String) async throws {
         let url = serverURL.appendingPathComponent("api/shares").appendingPathComponent(shareID)
@@ -456,6 +465,10 @@ struct FilesService: Sendable {
 
     private struct ShareLinksEnvelope: Decodable {
         let shares: [Share]
+    }
+
+    private struct ShareableUsersEnvelope: Decodable {
+        let users: [User]
     }
 
     private struct DeleteItemsBody: Encodable {
