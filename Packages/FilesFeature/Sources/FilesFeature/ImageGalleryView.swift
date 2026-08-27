@@ -105,7 +105,7 @@ struct ImageGalleryView: View {
                 .ignoresSafeArea()
 
             VStack(spacing: 0) {
-                galleryToolbar
+                topBar
                 TabView(selection: $selection) {
                     ForEach(items) { item in
                         ImageGalleryPage(item: item, serverURL: serverURL)
@@ -117,6 +117,11 @@ struct ImageGalleryView: View {
             .scaleEffect(dragScale)
             .offset(y: dragOffset)
             .opacity(contentOpacity)
+            .overlay(alignment: .bottomTrailing) {
+                actionBar
+                    .padding(.horizontal, Constants.toolbarHorizontalPadding)
+                    .padding(.bottom, Constants.toolbarHorizontalPadding)
+            }
         }
         .simultaneousGesture(dismissDrag)
         .onAppear { OrientationLock.shared.unlock() }
@@ -163,7 +168,7 @@ struct ImageGalleryView: View {
             }
     }
 
-    private var galleryToolbar: some View {
+    private var topBar: some View {
         HStack(spacing: Constants.toolbarSpacing) {
             DSCloseButton(action: onDismiss)
 
@@ -178,32 +183,27 @@ struct ImageGalleryView: View {
                 .truncationMode(.middle)
 
             Spacer()
-
-            if let onShare {
-                toolbarButton(IconKit.shareLink) { currentItem.map(onShare) }
-            }
-            if let onDownload {
-                toolbarButton(IconKit.download) { currentItem.map(onDownload) }
-            }
-            if let onDelete {
-                toolbarButton(IconKit.delete, tint: Color.negative) { currentItem.map(onDelete) }
-            }
         }
         .padding(.horizontal, Constants.toolbarHorizontalPadding)
         .padding(.vertical, Constants.toolbarVerticalPadding)
     }
 
-    private func toolbarButton(_ icon: Image, tint: Color = .white, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            icon
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(tint)
-                .frame(width: .iconXSmall, height: .iconXSmall)
-                .padding(.space8)
-                .background(Circle().fill(.ultraThinMaterial))
+    @ViewBuilder
+    private var actionBar: some View {
+        HStack(spacing: Constants.toolbarSpacing) {
+            if let currentItem {
+                SystemShareButton(item: currentItem, serverURL: serverURL)
+            }
+            if let onShare {
+                PreviewChipButton(icon: IconKit.shareLink) { currentItem.map(onShare) }
+            }
+            if let onDownload {
+                PreviewChipButton(icon: IconKit.download) { currentItem.map(onDownload) }
+            }
+            if let onDelete {
+                PreviewChipButton(icon: IconKit.delete, tint: .negative) { currentItem.map(onDelete) }
+            }
         }
-        .buttonStyle(DSHapticButtonStyle())
     }
 }
 

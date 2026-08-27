@@ -246,7 +246,7 @@ private struct SharedLinkCard: View {
     private enum Metrics {
         static let cornerRadius: CGFloat = .radiusMedium
         static let padding: CGFloat = .space16
-        static let actionRowSpacing: CGFloat = .space12
+        static let actionRowSpacing: CGFloat = .space8
         /// One value for both the meta rows and the link-mode row so they read as one list.
         static let rowVerticalPadding: CGFloat = .space8
         static let actionVerticalPadding: CGFloat = .space12
@@ -266,7 +266,7 @@ private struct SharedLinkCard: View {
         VStack(spacing: 0) {
             header
             if isExpanded {
-                VStack(alignment: .leading, spacing: 0) {
+                VStack(alignment: .leading, spacing: .space8) {
                     Group {
                         metaRow(IconKit.people, "Shared with", sharedWithText)
                         metaRow(IconKit.lock, "Access", share.accessMode.title)
@@ -274,9 +274,6 @@ private struct SharedLinkCard: View {
                         linkModeRow
                     }
                     .opacity(isExpired ? Metrics.expiredInfoOpacity : 1)
-
-                    Divider()
-                        .padding(.vertical, Metrics.rowVerticalPadding)
 
                     HStack(spacing: Metrics.actionRowSpacing) {
                         pillAction(IconKit.link, "Share link", tint: .accent, isEnabled: !isExpired) {
@@ -382,7 +379,7 @@ private struct SharedLinkCard: View {
             Spacer()
             Text(value)
                 .type(.body2(.regular), style: isWarning ? .error : .secondary)
-                .lineLimit(1)
+                .multilineTextAlignment(.trailing)
                 .truncationMode(.tail)
         }
         .padding(.vertical, Metrics.rowVerticalPadding)
@@ -508,7 +505,7 @@ private extension Share {
     let url = URL(string: "https://cloud.phillipmaizza.com")!
     return ScrollView {
         VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(target: .users, hasPassword: true), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Jamie Rivera, Sam Okafor", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(target: .users, hasPassword: true), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Jamie Rivera, Sam Okafor, Jeremy Brown", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
             SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(86_400 * 3)), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
         }
         .padding(.space16)

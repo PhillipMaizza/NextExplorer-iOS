@@ -344,7 +344,7 @@ struct BrowseContentView: View {
                 fileURL: store.previewFileURL,
                 errorMessage: store.previewErrorMessage,
                 onDismiss: { store.send(.previewDismissed) },
-                onShare: (store.access?.canShare ?? false) ? {
+                onShareLink: (store.access?.canShare ?? false) ? {
                     store.send(.previewDismissed)
                     shareTarget = item
                 } : nil,
