@@ -257,8 +257,9 @@ private struct SharedLinkCard: View {
         static let badgeHorizontalPadding: CGFloat = .space8
         static let badgeVerticalPadding: CGFloat = .space2
         static let deletingOpacity: Double = 0.4
-        static let expiredCardOpacity: Double = 0.6
-        static let disabledActionOpacity: Double = 0.4
+        /// Expired links mute the info rows — but never the actions, which stay usable
+        /// (delete) or at least fully legible.
+        static let expiredInfoOpacity: Double = 0.55
     }
 
     var body: some View {
@@ -266,10 +267,13 @@ private struct SharedLinkCard: View {
             header
             if isExpanded {
                 VStack(alignment: .leading, spacing: 0) {
-                    metaRow(IconKit.people, "Shared with", sharedWithText)
-                    metaRow(IconKit.lock, "Access", share.accessMode.title)
-                    metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
-                    linkModeRow
+                    Group {
+                        metaRow(IconKit.people, "Shared with", sharedWithText)
+                        metaRow(IconKit.lock, "Access", share.accessMode.title)
+                        metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
+                        linkModeRow
+                    }
+                    .opacity(isExpired ? Metrics.expiredInfoOpacity : 1)
 
                     Divider()
                         .padding(.vertical, Metrics.rowVerticalPadding)
@@ -297,7 +301,7 @@ private struct SharedLinkCard: View {
             }
         }
         .background(RoundedRectangle(cornerRadius: Metrics.cornerRadius).fill(Color.backgroundSecondary))
-        .opacity(isDeleting ? Metrics.deletingOpacity : (isExpired ? Metrics.expiredCardOpacity : 1))
+        .opacity(isDeleting ? Metrics.deletingOpacity : 1)
         .disabled(isDeleting)
     }
 
@@ -364,7 +368,6 @@ private struct SharedLinkCard: View {
             .tint(Color.secondaryDS)
         }
         .padding(.vertical, Metrics.rowVerticalPadding)
-        .opacity(isExpired ? Metrics.disabledActionOpacity : 1)
         .allowsHitTesting(!isExpired)
     }
 
@@ -385,8 +388,9 @@ private struct SharedLinkCard: View {
         .padding(.vertical, Metrics.rowVerticalPadding)
     }
 
-    /// Filled pill matching the copy actions. `tint` is `.accent` or `.negative`; disabled
-    /// (an expired link) dims and blocks the tap without changing layout.
+    /// Filled pill for the copy/delete actions. `tint` is `.accent` or `.negative`. Stays
+    /// full opacity even when disabled (an expired link's copy buttons) — it just stops
+    /// responding; `copy()` guards the action too.
     private func pillAction(_ icon: Image, _ title: String, tint: Color, isEnabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             HStack(spacing: .space8) {
@@ -402,7 +406,6 @@ private struct SharedLinkCard: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(DSHapticButtonStyle())
-        .opacity(isEnabled ? 1 : Metrics.disabledActionOpacity)
         .allowsHitTesting(isEnabled)
     }
 
