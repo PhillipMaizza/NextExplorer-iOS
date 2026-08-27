@@ -1,7 +1,9 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import Foundation
+import SwiftUI
 
 /// The "Shared" tab: a segmented view over share links the user created ("By me") and
 /// links others granted them ("With me"). Backed by `GET /api/shares` and
@@ -21,6 +23,32 @@ public struct SharedFeature {
         }
     }
 
+    public enum SortOption: String, Hashable, Sendable, CaseIterable {
+        case dateShared
+        case name
+        case expiration
+
+        var title: String {
+            switch self {
+            case .dateShared: "Date Shared"
+            case .name: "Name"
+            case .expiration: "Expiration"
+            }
+        }
+
+        var icon: Image {
+            switch self {
+            case .dateShared: IconKit.calendar
+            case .name: IconKit.textformat
+            case .expiration: IconKit.time
+            }
+        }
+    }
+
+    /// Bumped by `CreateShareLinkFeature` whenever a link is created, so the Shared tab
+    /// reloads without a manual pull-to-refresh.
+    public static let revisionKey = "shareLinksRevision"
+
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
@@ -34,25 +62,67 @@ public struct SharedFeature {
         public var loadedSegments: Set<Segment> = []
         public var deleteConfirmationShare: Share?
         public var deletingIDs: Set<Share.ID> = []
+        public var sortOption: SortOption = .dateShared
+        public var sortDirection: BrowseFeature.SortDirection = .descending
+        /// `userId -> display name`, resolved from `GET /api/users/shareable` so a
+        /// user-specific share can name its recipients instead of just "Specific users".
+        public var userNames: [String: String] = [:]
+        @Shared(.inMemory(SharedFeature.revisionKey)) public var externalRevision = 0
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
         }
 
         public var displayedShares: IdentifiedArrayOf<Share> {
-            segment == .byMe ? byMe : withMe
+            let base = segment == .byMe ? byMe : withMe
+            let sorted = base.sorted { lhs, rhs in
+                switch sortOption {
+                case .name:
+                    return lhs.displayName.localizedCaseInsensitiveCompare(rhs.displayName) == .orderedAscending
+                case .dateShared:
+                    return lhs.createdAt < rhs.createdAt
+                case .expiration:
+                    // No expiry sorts after any real date.
+                    return (lhs.expiresAt ?? .distantFuture) < (rhs.expiresAt ?? .distantFuture)
+                }
+            }
+            return IdentifiedArray(uniqueElements: sortDirection == .ascending ? sorted : sorted.reversed())
+        }
+
+        public var activeShares: IdentifiedArrayOf<Share> {
+            IdentifiedArray(uniqueElements: displayedShares.filter { !$0.isExpired })
+        }
+
+        public var expiredShares: IdentifiedArrayOf<Share> {
+            IdentifiedArray(uniqueElements: displayedShares.filter(\.isExpired))
         }
 
         public var isCurrentSegmentEmpty: Bool {
             displayedShares.isEmpty
         }
+
+        /// What to print in a share's "Shared with" row.
+        public func sharedWithLabel(for share: Share) -> String {
+            guard share.sharingType == .users else { return "Anyone with link" }
+            let ids = share.permittedUserIds ?? []
+            let names = ids.compactMap { userNames[$0] }
+            if names.isEmpty {
+                return ids.isEmpty ? "Specific people" : "\(ids.count) \(ids.count == 1 ? "person" : "people")"
+            }
+            if names.count <= 2 { return names.joined(separator: ", ") }
+            return "\(names[0]), \(names[1]) +\(names.count - 2)"
+        }
     }
 
     public enum Action: Equatable, Sendable {
         case onAppear
+        case externalRevisionChanged
         case segmentChanged(Segment)
         case refreshRequested
+        case sortOptionChanged(SortOption)
+        case sortDirectionChanged(BrowseFeature.SortDirection)
         case sharesResponse(Segment, Result<[Share], FilesClientError>)
+        case usersResponse([User])
         case deleteTapped(Share)
         case deleteConfirmed
         case deleteCancelled
@@ -68,6 +138,10 @@ public struct SharedFeature {
             switch action {
             case .onAppear:
                 guard !state.loadedSegments.contains(state.segment) else { return .none }
+                return .merge(load(&state, segment: state.segment), loadUsers(state))
+
+            case .externalRevisionChanged:
+                state.loadedSegments = []
                 return load(&state, segment: state.segment)
 
             case let .segmentChanged(segment):
@@ -77,7 +151,16 @@ public struct SharedFeature {
                 return load(&state, segment: segment)
 
             case .refreshRequested:
-                return load(&state, segment: state.segment)
+                state.loadedSegments = []
+                return .merge(load(&state, segment: state.segment), loadUsers(state))
+
+            case let .sortOptionChanged(option):
+                state.sortOption = option
+                return .none
+
+            case let .sortDirectionChanged(direction):
+                state.sortDirection = direction
+                return .none
 
             case let .sharesResponse(segment, .success(shares)):
                 state.isLoading = false
@@ -90,6 +173,13 @@ public struct SharedFeature {
             case let .sharesResponse(_, .failure(error)):
                 state.isLoading = false
                 state.errorMessage = error.userMessage
+                return .none
+
+            case let .usersResponse(users):
+                state.userNames = Dictionary(
+                    users.map { ($0.id, $0.displayName ?? $0.username) },
+                    uniquingKeysWith: { first, _ in first }
+                )
                 return .none
 
             case let .deleteTapped(share):
@@ -141,6 +231,17 @@ public struct SharedFeature {
                 await send(.sharesResponse(segment, .success(shares)))
             } catch {
                 await send(.sharesResponse(segment, .failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+            }
+        }
+    }
+
+    /// Best-effort — recipient names are a nicety, not worth surfacing an error for.
+    private func loadUsers(_ state: State) -> Effect<Action> {
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        return .run { send in
+            if let users = try? await filesClient.shareableUsers(serverURL) {
+                await send(.usersResponse(users))
             }
         }
     }

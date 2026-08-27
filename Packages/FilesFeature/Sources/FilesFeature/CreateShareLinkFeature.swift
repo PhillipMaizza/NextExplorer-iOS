@@ -36,6 +36,8 @@ public struct CreateShareLinkFeature {
         public var selectedUserIDs: Set<User.ID> = []
         public var isLoadingUsers = false
         public var hasLoadedUsers = false
+        /// Shared with `SharedFeature` — bumping it makes the Shared tab reload.
+        @Shared(.inMemory(SharedFeature.revisionKey)) var shareLinksRevision = 0
 
         public init(serverURL: URL, itemName: String, itemPath: String, isDirectory: Bool, now: Date = Date()) {
             self.serverURL = serverURL
@@ -184,6 +186,7 @@ public struct CreateShareLinkFeature {
             case let .createResponse(.success(created)):
                 state.isCreating = false
                 state.createdShare = created
+                state.$shareLinksRevision.withLock { $0 += 1 }
                 return .none
 
             case let .createResponse(.failure(error)):

@@ -63,6 +63,7 @@ struct CreateShareLinkFeatureTests {
         await store.receive(\.createResponse.success) {
             $0.isCreating = false
             $0.createdShare = created
+            $0.$shareLinksRevision.withLock { $0 += 1 }
         }
     }
 
@@ -149,6 +150,7 @@ struct CreateShareLinkFeatureTests {
         await store.receive(\.createResponse.success) {
             $0.isCreating = false
             $0.createdShare = created
+            $0.$shareLinksRevision.withLock { $0 += 1 }
         }
     }
 

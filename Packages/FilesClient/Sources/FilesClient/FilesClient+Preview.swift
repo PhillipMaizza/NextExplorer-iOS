@@ -105,7 +105,15 @@ extension Share {
             sourcePath: "Photos/2024/passport.pdf", isDirectory: false,
             accessMode: .readonly, sharingType: .users, hasPassword: true,
             expiresAt: Date().addingTimeInterval(86_400 * 7), label: nil,
-            downloadCount: 0, lastAccessedAt: nil, createdAt: Date(), updatedAt: Date()
+            downloadCount: 0, lastAccessedAt: nil,
+            permittedUserIds: ["u2", "u3"], createdAt: Date(), updatedAt: Date()
+        ),
+        Share(
+            id: "s4", shareToken: "eXp1r3dTok", ownerId: "preview-user",
+            sourcePath: "Old/invoice.pdf", isDirectory: false,
+            accessMode: .readonly, sharingType: .anyone, hasPassword: false,
+            expiresAt: Date().addingTimeInterval(-86_400), label: "invoice.pdf",
+            downloadCount: 12, lastAccessedAt: nil, createdAt: Date(), updatedAt: Date()
         )
     ]
 
