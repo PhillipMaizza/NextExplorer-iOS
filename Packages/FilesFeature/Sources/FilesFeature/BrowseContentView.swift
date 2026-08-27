@@ -312,6 +312,7 @@ struct BrowseContentView: View {
                     shareTarget = item
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? {
+                    store.send(.previewDismissed)
                     store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? {
@@ -332,6 +333,7 @@ struct BrowseContentView: View {
                     shareTarget = current
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? { current in
+                    store.send(.previewDismissed)
                     store.send(.downloadTapped(current, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? { current in
@@ -349,6 +351,7 @@ struct BrowseContentView: View {
                     shareTarget = item
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? {
+                    store.send(.previewDismissed)
                     store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? {
