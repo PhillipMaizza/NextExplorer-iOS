@@ -116,4 +116,43 @@ struct AppFeatureTests {
             $0.destination = .unauthenticated(.init())
         }
     }
+
+    @Test("edge case: a mid-session 401 drops to the login flow and clears the session")
+    func midSessionExpiryDropsToLogin() async {
+        let user = User(id: "1", username: "phillip", email: nil, roles: [])
+        let cleared = LockIsolated(false)
+        let store = TestStore(
+            initialState: AppFeature.State(
+                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
+            )
+        ) {
+            AppFeature()
+        } withDependencies: {
+            $0.authClient.clearSession = { cleared.setValue(true) }
+        }
+        store.exhaustivity = .off
+
+        // apiResult would set this from any feature's effect; simulate that here.
+        store.state.$sessionDidExpire.withLock { $0 = true }
+
+        await store.send(.sessionExpiryDetected) {
+            $0.sessionDidExpire = false
+            $0.destination = .unauthenticated(.init())
+        }
+        await store.finish()
+        #expect(cleared.value)
+    }
+
+    @Test("edge case: sessionExpiryDetected while already unauthenticated is a no-op")
+    func expiryWhileUnauthenticatedIsANoOp() async {
+        let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
+            AppFeature()
+        }
+        store.exhaustivity = .off
+        store.state.$sessionDidExpire.withLock { $0 = true }
+
+        await store.send(.sessionExpiryDetected) {
+            $0.sessionDidExpire = false
+        }
+    }
 }
