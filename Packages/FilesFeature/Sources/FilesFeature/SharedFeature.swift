@@ -175,7 +175,7 @@ public struct SharedFeature {
             switch action {
             case .onAppear:
                 guard !state.loadedSegments.contains(state.segment) else { return .none }
-                return .merge(load(&state, segment: state.segment), loadUsers(state))
+                return .concatenate(load(&state, segment: state.segment), loadUsers(state))
 
             case let .expiryTick(now):
                 state.now = now
@@ -197,7 +197,7 @@ public struct SharedFeature {
 
             case .refreshRequested:
                 state.loadedSegments = []
-                return .merge(load(&state, segment: state.segment), loadUsers(state))
+                return .concatenate(load(&state, segment: state.segment), loadUsers(state))
 
             case let .sortOptionChanged(option):
                 state.sortOption = option
@@ -242,12 +242,10 @@ public struct SharedFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    do {
+                    await send(.deleteResponse(share.id, await apiResult {
                         try await filesClient.deleteShareLink(serverURL, share.id)
-                        await send(.deleteResponse(share.id, .success(true)), animation: .default)
-                    } catch {
-                        await send(.deleteResponse(share.id, .failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-                    }
+                        return true
+                    }), animation: .default)
                 }
 
             case let .deleteResponse(id, .success):
@@ -269,14 +267,11 @@ public struct SharedFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            do {
-                let shares = try segment == .byMe
+            await send(.sharesResponse(segment, await apiResult {
+                try segment == .byMe
                     ? await filesClient.mySharedLinks(serverURL)
                     : await filesClient.sharedWithMeLinks(serverURL)
-                await send(.sharesResponse(segment, .success(shares)))
-            } catch {
-                await send(.sharesResponse(segment, .failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+            }))
         }
     }
 

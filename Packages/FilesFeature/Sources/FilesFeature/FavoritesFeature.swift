@@ -225,12 +225,7 @@ public struct FavoritesFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            do {
-                let favorites = try await filesClient.favorites(serverURL)
-                await send(.favoritesResponse(.success(favorites)))
-            } catch {
-                await send(.favoritesResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+            await send(.favoritesResponse(await apiResult { try await filesClient.favorites(serverURL) }))
         }
     }
 
