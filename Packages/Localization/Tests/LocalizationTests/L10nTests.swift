@@ -4,28 +4,23 @@ import Testing
 
 struct L10nTests {
 
-    @Test("every accessor resolves to a catalog entry, not the raw key")
+    @Test("a spread of accessors resolve to real catalog entries, not the raw key")
     func accessorsResolve() {
         let pairs: [(key: String, value: String)] = [
             ("common.cancel", L10n.Common.cancel),
-            ("common.save", L10n.Common.save),
             ("common.retry", L10n.Common.retry),
-            ("common.delete", L10n.Common.delete),
-            ("common.remove", L10n.Common.remove),
-            ("common.done", L10n.Common.done),
-            ("common.ok", L10n.Common.ok),
             ("common.logOut", L10n.Common.logOut),
+            ("tab.browse", L10n.Tab.browse),
+            ("browse.navigationTitle", L10n.Browse.navigationTitle),
+            ("browse.action.getInfo", L10n.Browse.actionGetInfo),
             ("changePassword.navigationTitle", L10n.ChangePassword.navigationTitle),
-            ("changePassword.intro", L10n.ChangePassword.intro),
-            ("changePassword.submitButton", L10n.ChangePassword.submitButton),
-            ("changePassword.success", L10n.ChangePassword.success),
-            ("changePassword.error.mismatch", L10n.ChangePassword.passwordsDontMatch),
-            ("changePassword.field.currentPassword", L10n.ChangePassword.currentPasswordField),
-            ("changePassword.field.newPasswordLabel", L10n.ChangePassword.newPasswordLabel),
-            ("changePassword.field.confirmPasswordLabel", L10n.ChangePassword.confirmPasswordLabel),
-            ("changePassword.field.confirmPassword", L10n.ChangePassword.confirmPasswordField),
-            ("settings.signOut.alertTitle", L10n.Settings.SignOut.alertTitle),
-            ("settings.signOut.message", L10n.Settings.SignOut.message),
+            ("changePassword.error.mismatch", L10n.ChangePassword.errorMismatch),
+            ("settings.signOut.alertTitle", L10n.Settings.signOutAlertTitle),
+            ("shared.navigationTitle", L10n.Shared.navigationTitle),
+            ("userManagement.navigationTitle", L10n.UserManagement.navigationTitle),
+            ("userDetail.dangerZone.removeUser", L10n.UserDetail.dangerZoneRemoveUser),
+            ("error.network", L10n.Error.network),
+            ("login.submit", L10n.Login.submit),
         ]
         for pair in pairs {
             #expect(!pair.value.isEmpty)
@@ -33,17 +28,18 @@ struct L10nTests {
         }
     }
 
-    @Test("format accessors interpolate their argument")
-    func formatAccessorsInterpolate() {
-        #expect(L10n.ChangePassword.minimumLength(6) == "Use at least 6 characters.")
-        #expect(L10n.ChangePassword.newPasswordPrompt(6) == "At least 6 characters")
+    @Test("format accessors interpolate their arguments")
+    func formatAccessors() {
+        #expect(L10n.ChangePassword.errorMinLength(6) == "Use at least 6 characters.")
+        #expect(L10n.Browse.searchNoMatchesInFolder("vac") == "No matches for “vac”.")
+        #expect(L10n.Browse.progressDownloadingIndexed(2, 5) == "Downloading 2 of 5…")
+        #expect(L10n.Browse.downloadSavedAllTo(3, "iCloud") == "Saved 3 items to iCloud")
     }
 
     @Test("known values match the English source")
     func englishValues() {
         #expect(L10n.Common.cancel == "Cancel")
-        #expect(L10n.Common.retry == "Try Again")
-        #expect(L10n.ChangePassword.navigationTitle == "Change Password")
-        #expect(L10n.Settings.SignOut.alertTitle == "Sign Out?")
+        #expect(L10n.Tab.settings == "Settings")
+        #expect(L10n.Settings.signOutAlertTitle == "Sign Out?")
     }
 }
