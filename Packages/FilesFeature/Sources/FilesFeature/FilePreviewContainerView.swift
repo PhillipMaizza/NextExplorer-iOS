@@ -15,15 +15,37 @@ struct FilePreviewContainerView: View {
     let fileURL: URL?
     let errorMessage: String?
     let onDismiss: () -> Void
+    var onShare: (() -> Void)?
+    var onDownload: (() -> Void)?
+    var onDelete: (() -> Void)?
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack(alignment: .top) {
             content
 
-            DSCloseButton(action: onDismiss)
-                .padding(Constants.closeButtonInset)
+            HStack(spacing: Constants.closeButtonInset) {
+                DSCloseButton(action: onDismiss)
+                Spacer()
+                if let onShare { previewToolbarButton(IconKit.shareLink, action: onShare) }
+                if let onDownload { previewToolbarButton(IconKit.download, action: onDownload) }
+                if let onDelete { previewToolbarButton(IconKit.delete, tint: Color.negative, action: onDelete) }
+            }
+            .padding(Constants.closeButtonInset)
         }
         .background(Color.backgroundPrimary.ignoresSafeArea())
+    }
+
+    private func previewToolbarButton(_ icon: Image, tint: Color = .primaryDS, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            icon
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(tint)
+                .frame(width: .iconXSmall, height: .iconXSmall)
+                .padding(.space8)
+                .background(Circle().fill(.ultraThinMaterial))
+        }
+        .buttonStyle(DSHapticButtonStyle())
     }
 
     @ViewBuilder

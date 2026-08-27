@@ -18,7 +18,6 @@ private enum Constants {
     static let fieldHorizontalPadding: CGFloat = .space12
     static let copyButtonWidth: CGFloat = .size48
     static let copyIconSize: CGFloat = .iconSmall
-    static let summaryColumnSpacing: CGFloat = .space16
     static let userAvatarSize: CGFloat = .size32
     static let copyFeedbackSeconds: Double = 2
 }
@@ -246,20 +245,26 @@ struct CreateShareLinkSheet: View {
                     }
                 }
 
-                section(created.share.isDirectory ? "Direct folder ZIP link" : "Direct file link") {
-                    Picker("Direct link mode", selection: $store.directLinkMode.sending(\.directLinkModeChanged)) {
-                        ForEach(DirectLinkMode.allCases) { mode in
-                            Text(mode.title).tag(mode)
+                VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
+                    HStack(spacing: .space8) {
+                        Text(created.share.isDirectory ? "Direct folder ZIP link" : "Direct file link")
+                            .type(.body2(.semibold), style: .primary(for: .label))
+                        Spacer()
+                        Picker("Direct link mode", selection: $store.directLinkMode.sending(\.directLinkModeChanged)) {
+                            ForEach(DirectLinkMode.allCases) { mode in
+                                Text(mode.title).tag(mode)
+                            }
                         }
+                        .labelsHidden()
+                        .pickerStyle(.menu)
+                        .tint(Color.secondaryDS)
                     }
-                    .pickerStyle(.menu)
-                    .tint(Color.secondaryDS)
                     copyRow(value: (store.directLink ?? created.directFileUrl).absoluteString, field: .directLink) {
                         copy((store.directLink ?? created.directFileUrl).absoluteString, as: .directLink)
                     }
                 }
 
-                summaryGrid(for: created)
+                summaryRows(for: created)
 
                 DSButton("Done", style: .primary) { dismiss() }
                     .padding(.top, .space4)
@@ -267,27 +272,43 @@ struct CreateShareLinkSheet: View {
         }
     }
 
-    private func summaryGrid(for created: CreatedShare) -> some View {
-        VStack(alignment: .leading, spacing: .space8) {
-            HStack(spacing: Constants.summaryColumnSpacing) {
-                summaryItem("Access Mode", created.share.accessMode.title)
-                summaryItem("Target", created.share.sharingType.title)
-            }
+    private var recipientNames: String {
+        let names = store.shareableUsers
+            .filter { store.selectedUserIDs.contains($0.id) }
+            .map { $0.displayName ?? $0.username }
+        return names.isEmpty ? "Specific people" : names.joined(separator: ", ")
+    }
+
+    private func summaryRows(for created: CreatedShare) -> some View {
+        VStack(alignment: .leading, spacing: .space12) {
+            summaryRow(IconKit.lock, "Access", created.share.accessMode.title)
+            summaryRow(
+                created.share.sharingType == .anyone ? IconKit.web : IconKit.people,
+                "Shared with",
+                created.share.sharingType == .anyone ? "Anyone with link" : recipientNames
+            )
             if created.share.hasPassword {
-                summaryItem("Password", "Protected")
+                summaryRow(IconKit.lock, "Password", "Protected")
             }
             if let expiresAt = created.share.expiresAt {
-                summaryItem("Expires", Self.summaryDateFormatter.string(from: expiresAt))
+                summaryRow(IconKit.calendar, "Expires", Self.summaryDateFormatter.string(from: expiresAt))
             }
         }
     }
 
-    private func summaryItem(_ label: String, _ value: String) -> some View {
+    private func summaryRow(_ icon: Image, _ label: String, _ value: String) -> some View {
         HStack(spacing: .space8) {
-            Text(label).type(.body3(.regular), style: .secondary)
-            Text(value).type(.body3(.semibold), style: .primary(for: .label))
+            icon
+                .resizable().scaledToFit()
+                .foregroundStyle(Color.secondaryDS)
+                .frame(width: Constants.copyIconSize, height: Constants.copyIconSize)
+            Text(label).type(.body2(.regular), style: .secondary)
+            Spacer()
+            Text(value)
+                .type(.body2(.semibold), style: .primary(for: .label))
+                .lineLimit(1)
+                .truncationMode(.tail)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     // MARK: Shared pieces

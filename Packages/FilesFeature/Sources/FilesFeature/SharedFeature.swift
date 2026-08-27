@@ -68,10 +68,18 @@ public struct SharedFeature {
         /// `userId -> display name`, resolved from `GET /api/users/shareable` so a
         /// user-specific share can name its recipients instead of just "Specific users".
         public var userNames: [String: String] = [:]
+        /// Ticked on a timer so a link that expires while the tab is open slides into the
+        /// "Expired" section on its own.
+        public var now: Date = .init()
         @Shared(.inMemory(SharedFeature.revisionKey)) public var externalRevision = 0
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
+        }
+
+        func isExpired(_ share: Share) -> Bool {
+            guard let expiresAt = share.expiresAt else { return false }
+            return expiresAt <= now
         }
 
         /// The current segment's raw (unfiltered, unsorted) list.
@@ -103,11 +111,11 @@ public struct SharedFeature {
         }
 
         public var activeShares: IdentifiedArrayOf<Share> {
-            IdentifiedArray(uniqueElements: displayedShares.filter { !$0.isExpired })
+            IdentifiedArray(uniqueElements: displayedShares.filter { !isExpired($0) })
         }
 
         public var expiredShares: IdentifiedArrayOf<Share> {
-            IdentifiedArray(uniqueElements: displayedShares.filter(\.isExpired))
+            IdentifiedArray(uniqueElements: displayedShares.filter(isExpired))
         }
 
         /// No shares in this segment at all (before search) — drives the empty state.
@@ -135,6 +143,7 @@ public struct SharedFeature {
 
     public enum Action: Equatable, Sendable {
         case onAppear
+        case expiryTick(Date)
         case externalRevisionChanged
         case segmentChanged(Segment)
         case searchQueryChanged(String)
@@ -159,6 +168,10 @@ public struct SharedFeature {
             case .onAppear:
                 guard !state.loadedSegments.contains(state.segment) else { return .none }
                 return .merge(load(&state, segment: state.segment), loadUsers(state))
+
+            case let .expiryTick(now):
+                state.now = now
+                return .none
 
             case .externalRevisionChanged:
                 state.loadedSegments = []

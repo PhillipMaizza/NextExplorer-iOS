@@ -302,7 +302,23 @@ struct BrowseContentView: View {
         if item.isStreamableMedia, let url = FilesClient.previewURL(serverURL: store.serverURL, item: item) {
             // Guaranteed `isNativelyPlayable` by this point — unsupported containers/codecs
             // are caught by the toast in `handleTap`, before `rowTapped` is ever sent.
-            StreamingPreviewView(item: item, url: url, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
+            StreamingPreviewView(
+                item: item,
+                url: url,
+                serverURL: store.serverURL,
+                onDismiss: { store.send(.previewDismissed) },
+                onShare: (store.access?.canShare ?? false) ? {
+                    store.send(.previewDismissed)
+                    shareTarget = item
+                } : nil,
+                onDownload: (store.access?.canDownload ?? false) ? {
+                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                } : nil,
+                onDelete: (store.access?.canDelete ?? false) ? {
+                    store.send(.previewDismissed)
+                    store.send(.deleteTapped(item))
+                } : nil
+            )
         } else if item.isBrowsableArchive {
             ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
         } else if (item.isImage || item.isRawImage) && !item.isSVG {
@@ -310,13 +326,35 @@ struct BrowseContentView: View {
                 items: store.displayedItems.filter { ($0.isImage || $0.isRawImage) && !$0.isSVG },
                 initialItem: item,
                 serverURL: store.serverURL,
-                onDismiss: { store.send(.previewDismissed) }
+                onDismiss: { store.send(.previewDismissed) },
+                onShare: (store.access?.canShare ?? false) ? { current in
+                    store.send(.previewDismissed)
+                    shareTarget = current
+                } : nil,
+                onDownload: (store.access?.canDownload ?? false) ? { current in
+                    store.send(.downloadTapped(current, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                } : nil,
+                onDelete: (store.access?.canDelete ?? false) ? { current in
+                    store.send(.previewDismissed)
+                    store.send(.deleteTapped(current))
+                } : nil
             )
         } else if item.isPreviewableViaDownload {
             FilePreviewContainerView(
                 fileURL: store.previewFileURL,
                 errorMessage: store.previewErrorMessage,
-                onDismiss: { store.send(.previewDismissed) }
+                onDismiss: { store.send(.previewDismissed) },
+                onShare: (store.access?.canShare ?? false) ? {
+                    store.send(.previewDismissed)
+                    shareTarget = item
+                } : nil,
+                onDownload: (store.access?.canDownload ?? false) ? {
+                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                } : nil,
+                onDelete: (store.access?.canDelete ?? false) ? {
+                    store.send(.previewDismissed)
+                    store.send(.deleteTapped(item))
+                } : nil
             )
         } else {
             TextFilePreviewView(
