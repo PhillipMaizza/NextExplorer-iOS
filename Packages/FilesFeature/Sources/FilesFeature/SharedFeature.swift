@@ -62,6 +62,7 @@ public struct SharedFeature {
         public var loadedSegments: Set<Segment> = []
         public var deleteConfirmationShare: Share?
         public var deletingIDs: Set<Share.ID> = []
+        public var searchQuery = ""
         public var sortOption: SortOption = .dateShared
         public var sortDirection: BrowseFeature.SortDirection = .descending
         /// `userId -> display name`, resolved from `GET /api/users/shareable` so a
@@ -73,8 +74,20 @@ public struct SharedFeature {
             self.serverURL = serverURL
         }
 
+        /// The current segment's raw (unfiltered, unsorted) list.
+        public var segmentShares: IdentifiedArrayOf<Share> {
+            segment == .byMe ? byMe : withMe
+        }
+
+        public var isSearching: Bool { !searchQuery.isEmpty }
+
         public var displayedShares: IdentifiedArrayOf<Share> {
-            let base = segment == .byMe ? byMe : withMe
+            let base = isSearching
+                ? segmentShares.filter {
+                    FuzzyMatch.matches(query: searchQuery, in: $0.displayName)
+                        || FuzzyMatch.matches(query: searchQuery, in: $0.sourcePath ?? "")
+                }
+                : segmentShares
             let sorted = base.sorted { lhs, rhs in
                 switch sortOption {
                 case .name:
@@ -97,8 +110,14 @@ public struct SharedFeature {
             IdentifiedArray(uniqueElements: displayedShares.filter(\.isExpired))
         }
 
+        /// No shares in this segment at all (before search) — drives the empty state.
         public var isCurrentSegmentEmpty: Bool {
-            displayedShares.isEmpty
+            segmentShares.isEmpty
+        }
+
+        /// A search that filtered everything out.
+        public var isSearchWithoutResults: Bool {
+            isSearching && !segmentShares.isEmpty && displayedShares.isEmpty
         }
 
         /// What to print in a share's "Shared with" row.
@@ -118,6 +137,7 @@ public struct SharedFeature {
         case onAppear
         case externalRevisionChanged
         case segmentChanged(Segment)
+        case searchQueryChanged(String)
         case refreshRequested
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(BrowseFeature.SortDirection)
@@ -149,6 +169,10 @@ public struct SharedFeature {
                 state.errorMessage = nil
                 guard !state.loadedSegments.contains(segment) else { return .none }
                 return load(&state, segment: segment)
+
+            case let .searchQueryChanged(query):
+                state.searchQuery = query
+                return .none
 
             case .refreshRequested:
                 state.loadedSegments = []
