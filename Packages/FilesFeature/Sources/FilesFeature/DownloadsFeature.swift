@@ -190,12 +190,7 @@ public struct DownloadsFeature {
         state.errorMessage = nil
         let localDownloadStore = self.localDownloadStore
         return .run { send in
-            do {
-                let downloads = try localDownloadStore.list()
-                await send(.downloadsResponse(.success(downloads)))
-            } catch {
-                await send(.downloadsResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+            await send(.downloadsResponse(await apiResult { try localDownloadStore.list() }))
         }
     }
 
@@ -204,12 +199,10 @@ public struct DownloadsFeature {
         state.deleteConfirmationItem = nil
         let localDownloadStore = self.localDownloadStore
         return .run { send in
-            do {
+            await send(.deleteResponse(await apiResult {
                 try localDownloadStore.delete(download.url)
-                await send(.deleteResponse(.success(download.id)))
-            } catch {
-                await send(.deleteResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
-            }
+                return download.id
+            }))
         }
     }
 

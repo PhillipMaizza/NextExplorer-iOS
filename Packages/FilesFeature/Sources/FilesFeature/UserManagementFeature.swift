@@ -417,7 +417,7 @@ public struct UserManagementFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.profileResponse(await result {
+                    await send(.profileResponse(await apiResult {
                         try await filesClient.updateUser(serverURL, id, request)
                     }))
                 }
@@ -443,7 +443,7 @@ public struct UserManagementFeature {
                 let filesClient = self.filesClient
                 let id = user.id
                 return .run { send in
-                    await send(.rolesResponse(await result {
+                    await send(.rolesResponse(await apiResult {
                         try await filesClient.updateUser(serverURL, id, request)
                     }))
                 }
@@ -473,7 +473,7 @@ public struct UserManagementFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.deleteUserResponse(user.id, await result {
+                    await send(.deleteUserResponse(user.id, await apiResult {
                         try await filesClient.deleteUser(serverURL, user.id)
                         return true
                     }))
@@ -528,7 +528,7 @@ public struct UserManagementFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.createResponse(await result {
+                    await send(.createResponse(await apiResult {
                         try await filesClient.createUser(serverURL, request)
                     }))
                 }
@@ -570,7 +570,7 @@ public struct UserManagementFeature {
                 let userID = sheet.userID
                 let password = sheet.password
                 return .run { send in
-                    await send(.passwordResponse(await result {
+                    await send(.passwordResponse(await apiResult {
                         try await filesClient.setUserPassword(serverURL, userID, password)
                         return true
                     }))
@@ -632,7 +632,7 @@ public struct UserManagementFeature {
                 let mode = sheet.accessMode
                 let editingID = sheet.editingVolumeID
                 return .run { send in
-                    await send(.volumeResponse(await result {
+                    await send(.volumeResponse(await apiResult {
                         if let editingID {
                             return try await filesClient.updateUserVolume(serverURL, userID, editingID, label, mode)
                         }
@@ -667,7 +667,7 @@ public struct UserManagementFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.removeVolumeResponse(volume.id, await result {
+                    await send(.removeVolumeResponse(volume.id, await apiResult {
                         try await filesClient.removeUserVolume(serverURL, volume.userId, volume.id)
                         return true
                     }))
@@ -699,7 +699,7 @@ public struct UserManagementFeature {
         // Sequential, not `.merge` — the users list is the payload; the feature flag is a
         // best-effort nicety that only gates a tab. Ordering also keeps the tests deterministic.
         return .run { send in
-            await send(.usersResponse(await result {
+            await send(.usersResponse(await apiResult {
                 try await filesClient.listUsers(serverURL)
             }))
             if let features = try? await filesClient.serverFeatures(serverURL) {
@@ -713,7 +713,7 @@ public struct UserManagementFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            await send(.usersResponse(await result {
+            await send(.usersResponse(await apiResult {
                 try await filesClient.listUsers(serverURL)
             }))
         }
@@ -725,7 +725,7 @@ public struct UserManagementFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            await send(.volumesResponse(await result {
+            await send(.volumesResponse(await apiResult {
                 try await filesClient.userVolumes(serverURL, userID)
             }))
         }
@@ -736,16 +736,6 @@ public struct UserManagementFeature {
         state.editDisplayName = user.displayName ?? ""
         state.editUsername = user.username
         state.editEmail = user.email ?? ""
-    }
-}
-
-/// Runs an async throwing call and boxes the outcome. Every call site here only throws
-/// `FilesClientError`; anything else is wrapped as `.network` rather than lost.
-private func result<T>(_ operation: () async throws -> T) async -> Result<T, FilesClientError> {
-    do {
-        return .success(try await operation())
-    } catch {
-        return .failure((error as? FilesClientError) ?? .network(String(describing: error)))
     }
 }
 
