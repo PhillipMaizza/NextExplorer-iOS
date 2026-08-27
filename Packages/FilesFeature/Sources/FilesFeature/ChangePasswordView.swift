@@ -37,16 +37,16 @@ struct ChangePasswordView: View {
                     successBanner(L10n.ChangePassword.success)
                 }
 
-                LabeledField(L10n.ChangePassword.currentPasswordField) {
-                    SecureField(L10n.ChangePassword.currentPasswordField, text: $store.currentPassword.sending(\.currentPasswordChanged))
+                LabeledField(L10n.ChangePassword.fieldCurrentPassword) {
+                    SecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
                         .textContentType(.password)
                 }
-                LabeledField(L10n.ChangePassword.newPasswordLabel, error: newPasswordErrorText) {
-                    SecureField(L10n.ChangePassword.newPasswordPrompt(CredentialRules.minimumPasswordLength), text: $store.newPassword.sending(\.newPasswordChanged))
+                LabeledField(L10n.ChangePassword.fieldNewPasswordLabel, error: newPasswordErrorText) {
+                    SecureField(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength), text: $store.newPassword.sending(\.newPasswordChanged))
                         .textContentType(.newPassword)
                 }
-                LabeledField(L10n.ChangePassword.confirmPasswordLabel, error: confirmErrorText) {
-                    SecureField(L10n.ChangePassword.confirmPasswordField, text: $store.confirmPassword.sending(\.confirmPasswordChanged))
+                LabeledField(L10n.ChangePassword.fieldConfirmPasswordLabel, error: confirmErrorText) {
+                    SecureField(L10n.ChangePassword.fieldConfirmPassword, text: $store.confirmPassword.sending(\.confirmPasswordChanged))
                         .textContentType(.newPassword)
                 }
 
@@ -68,14 +68,14 @@ struct ChangePasswordView: View {
     private var newPasswordErrorText: String? {
         guard let error = store.newPasswordError else { return nil }
         switch error {
-        case let .tooShort(minimum): return L10n.ChangePassword.minimumLength(minimum)
+        case let .tooShort(minimum): return L10n.ChangePassword.errorMinLength(minimum)
         }
     }
 
     private var confirmErrorText: String? {
         guard let error = store.confirmError else { return nil }
         switch error {
-        case .mismatch: return L10n.ChangePassword.passwordsDontMatch
+        case .mismatch: return L10n.ChangePassword.errorMismatch
         }
     }
 

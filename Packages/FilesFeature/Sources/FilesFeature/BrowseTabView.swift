@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -31,10 +32,10 @@ struct BrowseTabView: View {
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             BrowseContentView(store: store.scope(state: \.root, action: \.root))
-                .navigationTitle(store.root.isSelecting ? "\(store.root.selectedItemIDs.count) Selected" : store.root.title)
+                .navigationTitle(store.root.isSelecting ? L10n.Common.selectedCount(store.root.selectedItemIDs.count) : store.root.title)
         } destination: { store in
             BrowseContentView(store: store)
-                .navigationTitle(store.isSelecting ? "\(store.selectedItemIDs.count) Selected" : store.title)
+                .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title)
         }
         .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
             if !currentDirectoryPath.isEmpty && !isTopScreenSelecting {

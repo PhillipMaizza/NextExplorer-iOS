@@ -103,7 +103,7 @@ struct SettingsView: View {
         let info = Bundle.main.infoDictionary
         let version = info?["CFBundleShortVersionString"] as? String ?? "-"
         let build = info?["CFBundleVersion"] as? String ?? "-"
-        return "Version \(version) (\(build))"
+        return L10n.Settings.appVersion(version, build)
     }
 
     var body: some View {
@@ -113,17 +113,17 @@ struct SettingsView: View {
 
                 Section {
                     DSToggleRow(
-                        title: "Show Hidden Files",
+                        title: L10n.Settings.toggleShowHiddenFiles,
                         icon: IconKit.eye,
                         isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles)
                     )
                     DSToggleRow(
-                        title: "Render HTML Pages",
+                        title: L10n.Settings.toggleRenderHTML,
                         icon: IconKit.web,
                         isOn: $renderHTMLPages
                     )
                     DSToggleRow(
-                        title: "Render Markdown Files",
+                        title: L10n.Settings.toggleRenderMarkdown,
                         icon: IconKit.textformat,
                         isOn: $renderMarkdownPages
                     )
@@ -132,7 +132,7 @@ struct SettingsView: View {
                     } label: {
                         Label {
                             HStack {
-                                Text("Date Format").type(.body2(.regular), style: .primary(for: .label))
+                                Text(L10n.Settings.rowDateFormat).type(.body2(.regular), style: .primary(for: .label))
                                 Spacer()
                                 Text(dateFormat.wrappedValue.title).type(.body2(.regular), style: .secondary)
                             }
@@ -145,19 +145,19 @@ struct SettingsView: View {
                         }
                     }
                     DSToggleRow(
-                        title: "Haptics",
+                        title: L10n.Settings.toggleHaptics,
                         icon: IconKit.haptics,
                         isOn: $hapticsEnabled
                     )
                 } header: {
-                    sectionHeader("General")
+                    sectionHeader(L10n.Settings.sectionGeneral)
                 }
                 .listRowBackground(Color.backgroundSecondary)
 
                 Section {
-                    DSToggleRow(title: "Dark Mode", icon: IconKit.darkMode, isOn: isDarkModeOn)
+                    DSToggleRow(title: L10n.Settings.toggleDarkMode, icon: IconKit.darkMode, isOn: isDarkModeOn)
                     DSToggleRow(
-                        title: "Show Thumbnails",
+                        title: L10n.Settings.toggleShowThumbnails,
                         icon: IconKit.photo,
                         isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
                     )
@@ -167,7 +167,7 @@ struct SettingsView: View {
                         }
                     } label: {
                         Label {
-                            Text("Thumbnail Size").type(.body2(.regular), style: .primary(for: .label))
+                            Text(L10n.Settings.rowThumbnailSize).type(.body2(.regular), style: .primary(for: .label))
                         } icon: {
                             IconKit.squareGrid
                                 .resizable()
@@ -180,12 +180,12 @@ struct SettingsView: View {
                     .tint(Color.secondaryDS)
                     .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
                     DSToggleRow(
-                        title: "Show Filename Extensions",
+                        title: L10n.Settings.toggleShowExtensions,
                         icon: IconKit.tag,
                         isOn: $showFilenameExtensions
                     )
                 } header: {
-                    sectionHeader("Display")
+                    sectionHeader(L10n.Settings.sectionDisplay)
                 }
                 .listRowBackground(Color.backgroundSecondary)
 
@@ -193,7 +193,7 @@ struct SettingsView: View {
 
                 Section {
                     DSToggleRow(
-                        title: "Remove Archives After Download",
+                        title: L10n.Settings.toggleRemoveArchives,
                         icon: IconKit.archivePage,
                         isOn: $removeArchiveAfterDownload
                     )
@@ -202,7 +202,7 @@ struct SettingsView: View {
                     } label: {
                         Label {
                             HStack {
-                                Text("Remove All Downloads").type(.body2(.regular), style: .link)
+                                Text(L10n.Settings.rowRemoveAllDownloads).type(.body2(.regular), style: .link)
                                 Spacer()
                                 Text(Self.byteFormatter.string(fromByteCount: store.downloadsSize)).type(.body2(.regular), style: .secondary)
                             }
@@ -221,7 +221,7 @@ struct SettingsView: View {
                     } label: {
                         Label {
                             HStack {
-                                Text("Clear Cache").type(.body2(.regular), style: .link)
+                                Text(L10n.Settings.rowClearCache).type(.body2(.regular), style: .link)
                                 Spacer()
                                 Text(Self.byteFormatter.string(fromByteCount: store.cacheSize)).type(.body2(.regular), style: .secondary)
                             }
@@ -236,9 +236,9 @@ struct SettingsView: View {
                     .buttonStyle(DSHapticButtonStyle())
                     .disabled(store.isClearingCache || store.cacheSize == 0)
                 } header: {
-                    sectionHeader("Storage")
+                    sectionHeader(L10n.Settings.sectionStorage)
                 } footer: {
-                    Text("Downloading a folder zips it on the server first. Turn on the toggle above to delete that archive from the server once it's saved to your device. Removing downloads or clearing the cache only affects this device; nothing on the server is touched.")
+                    Text(L10n.Settings.storageFootnote)
                         .type(.body3(.regular), style: .tertiary)
                 }
                 .listRowBackground(Color.backgroundSecondary)
@@ -248,7 +248,7 @@ struct SettingsView: View {
                         LicensesView()
                     } label: {
                         Label {
-                            Text("Open Source Licenses").type(.body2(.regular), style: .primary(for: .label))
+                            Text(L10n.Settings.rowOpenSourceLicenses).type(.body2(.regular), style: .primary(for: .label))
                         } icon: {
                             IconKit.document
                                 .resizable()
@@ -258,7 +258,7 @@ struct SettingsView: View {
                         }
                     }
                 } header: {
-                    sectionHeader("Licenses")
+                    sectionHeader(L10n.Settings.sectionLicenses)
                 } footer: {
                     Text(appVersionText)
                         .type(.label4, style: .tertiary)
@@ -280,29 +280,29 @@ struct SettingsView: View {
             ) { changePasswordStore in
                 ChangePasswordView(store: changePasswordStore)
             }
-            .navigationTitle("Settings")
+            .navigationTitle(L10n.Settings.navigationTitle)
             // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a
             // popover anchored to some ambient source view on the `.pad` idiom (this app
             // also targets iPad) rather than a full-width bottom sheet. `.alert` is always
             // a centered modal regardless of idiom, so there's no anchor to get wrong.
-            .alert(L10n.Settings.SignOut.alertTitle, isPresented: isConfirmingSignOut) {
+            .alert(L10n.Settings.signOutAlertTitle, isPresented: isConfirmingSignOut) {
                 Button(L10n.Common.logOut, role: .destructive) { store.send(.confirmSignOutTapped) }
                 Button(L10n.Common.cancel, role: .cancel) { store.send(.cancelSignOutTapped) }
             } message: {
-                Text(L10n.Settings.SignOut.message)
+                Text(L10n.Settings.signOutMessage)
             }
-            .alert("Remove All Downloads?", isPresented: isConfirmingRemoveAllDownloads) {
-                Button("Remove All", role: .destructive) { store.send(.removeAllDownloadsConfirmed) }
-                Button("Cancel", role: .cancel) { store.send(.removeAllDownloadsCancelled) }
+            .alert(L10n.Settings.removeAllDownloadsTitle, isPresented: isConfirmingRemoveAllDownloads) {
+                Button(L10n.Settings.removeAllDownloadsConfirm, role: .destructive) { store.send(.removeAllDownloadsConfirmed) }
+                Button(L10n.Common.cancel, role: .cancel) { store.send(.removeAllDownloadsCancelled) }
             } message: {
-                Text("This deletes every downloaded file from this device. They stay on the server.")
+                Text(L10n.Settings.removeAllDownloadsMessage)
             }
             .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
-            .alert("Clear Cache?", isPresented: isConfirmingClearCache) {
-                Button("Clear", role: .destructive) { store.send(.clearCacheConfirmed) }
-                Button("Cancel", role: .cancel) { store.send(.clearCacheCancelled) }
+            .alert(L10n.Settings.clearCacheTitle, isPresented: isConfirmingClearCache) {
+                Button(L10n.Settings.clearCacheConfirm, role: .destructive) { store.send(.clearCacheConfirmed) }
+                Button(L10n.Common.cancel, role: .cancel) { store.send(.clearCacheCancelled) }
             } message: {
-                Text("This clears cached previews and thumbnails. Nothing on the server is affected.")
+                Text(L10n.Settings.clearCacheMessage)
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
             .task {
@@ -340,7 +340,7 @@ struct SettingsView: View {
                 } label: {
                     Label {
                         HStack {
-                            Text("User Management").type(.body2(.regular), style: .primary(for: .label))
+                            Text(L10n.Settings.rowUserManagement).type(.body2(.regular), style: .primary(for: .label))
                             Spacer()
                             IconKit.chevronRight
                                 .resizable()
@@ -358,7 +358,7 @@ struct SettingsView: View {
                 }
                 .buttonStyle(DSHapticButtonStyle())
             } header: {
-                sectionHeader("Users")
+                sectionHeader(L10n.Settings.sectionUsers)
             }
             .listRowBackground(Color.backgroundSecondary)
         }
@@ -394,7 +394,7 @@ struct SettingsView: View {
                         .foregroundStyle(Color.secondaryDS)
                         .frame(width: .iconSmall, height: .iconSmall)
                         .padding(.leading, .space4)
-                    Text("Server").type(.body2(.regular), style: .primary(for: .label))
+                    Text(L10n.Settings.rowServer).type(.body2(.regular), style: .primary(for: .label))
                         .padding(.leading, .space8)
                     Spacer()
                     Text(host).type(.body2(.regular), style: .secondary)
@@ -417,7 +417,7 @@ struct SettingsView: View {
         } label: {
             Label {
                 HStack {
-                    Text("Change Password").type(.body2(.regular), style: .primary(for: .label))
+                    Text(L10n.Settings.rowChangePassword).type(.body2(.regular), style: .primary(for: .label))
                     Spacer()
                     IconKit.chevronRight
                         .resizable()
@@ -443,7 +443,7 @@ struct SettingsView: View {
             store.send(.signOutButtonTapped)
         } label: {
             Label {
-                Text(store.isSigningOut ? "Signing Out\u{2026}" : "Sign Out")
+                Text(store.isSigningOut ? L10n.Settings.signingOut : L10n.Settings.signOutButton)
                     .type(.body2(.semibold), style: .error)
                     .frame(maxWidth: .infinity, alignment: .leading)
             } icon: {
@@ -464,7 +464,7 @@ struct SettingsView: View {
     }
 
     private var roleTag: some View {
-        Text("Admin".uppercased())
+        Text(L10n.Settings.sectionAdmin.uppercased())
             .type(.caption(.semibold), style: .link)
             .padding(.horizontal, Constants.tagHorizontalPadding)
             .padding(.vertical, Constants.tagVerticalPadding)

@@ -1,5 +1,6 @@
 import DesignSystem
 import Foundation
+import Localization
 
 /// User-facing grid thumbnail size, persisted locally (`@AppStorage("thumbnailSize")`) — a
 /// purely client display preference the real server has no concept of, same as
@@ -13,9 +14,9 @@ public enum ThumbnailSize: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
-        case .small: "Small"
-        case .medium: "Medium"
-        case .large: "Large"
+        case .small: L10n.ThumbnailSize.small
+        case .medium: L10n.ThumbnailSize.medium
+        case .large: L10n.ThumbnailSize.large
         }
     }
 

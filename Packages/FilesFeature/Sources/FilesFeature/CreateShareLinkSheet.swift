@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 import UIKit
 
@@ -63,7 +64,7 @@ struct CreateShareLinkSheet: View {
                     .scaledToFit()
                     .foregroundStyle(Color.accent)
                     .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
-                Text(store.createdShare != nil ? "Share Created" : "Create Share Link")
+                Text(store.createdShare != nil ? L10n.CreateShare.titleCreated : L10n.CreateShare.title)
                     .type(.headline3, style: .primary(for: .label))
             }
             Spacer()
@@ -97,16 +98,16 @@ struct CreateShareLinkSheet: View {
 
             sourceCard
 
-            section("Label") {
+            section(L10n.CreateShare.sectionLabel) {
                 fieldBox {
-                    TextField("Label", text: $store.label.sending(\.labelChanged), prompt: Text(verbatim: store.itemName))
+                    TextField(L10n.CreateShare.sectionLabel, text: $store.label.sending(\.labelChanged), prompt: Text(verbatim: store.itemName))
                         .type(.body2(.regular))
                         .foregroundStyle(Color.primaryDS)
                         .autocorrectionDisabled()
                 }
             }
 
-            section("Access Mode") {
+            section(L10n.CreateShare.sectionAccessMode) {
                 DSSegmentedControl(
                     options: ShareAccessMode.allCases,
                     selection: $store.accessMode.sending(\.accessModeChanged),
@@ -114,7 +115,7 @@ struct CreateShareLinkSheet: View {
                 )
             }
 
-            section("Who can access") {
+            section(L10n.CreateShare.sectionWhoCanAccess) {
                 DSSegmentedControl(
                     options: ShareTarget.allCases,
                     selection: $store.target.sending(\.targetChanged),
@@ -126,26 +127,26 @@ struct CreateShareLinkSheet: View {
             }
 
             DSToggleRow(
-                title: "Password protect",
+                title: L10n.CreateShare.togglePasswordProtect,
                 icon: IconKit.lock,
                 isOn: $store.isPasswordEnabled.sending(\.passwordEnabledChanged)
             )
             if store.isPasswordEnabled {
                 fieldBox {
-                    SecureField("Password", text: $store.password.sending(\.passwordChanged), prompt: Text(verbatim: "Password"))
+                    SecureField(L10n.Common.password, text: $store.password.sending(\.passwordChanged), prompt: Text(L10n.Common.password))
                         .type(.body2(.regular))
                         .foregroundStyle(Color.primaryDS)
                 }
             }
 
             DSToggleRow(
-                title: "Set expiration date",
+                title: L10n.CreateShare.toggleSetExpiration,
                 icon: IconKit.calendar,
                 isOn: $store.isExpiryEnabled.sending(\.expiryEnabledChanged)
             )
             if store.isExpiryEnabled {
                 DatePicker(
-                    "Expires",
+                    L10n.CreateShare.fieldExpires,
                     selection: $store.expiresAt.sending(\.expiresAtChanged),
                     in: Date()...,
                     displayedComponents: [.date, .hourAndMinute]
@@ -155,8 +156,8 @@ struct CreateShareLinkSheet: View {
             }
 
             HStack(spacing: .space12) {
-                DSButton("Cancel", style: .ghost) { dismiss() }
-                DSButton("Create Share Link", style: .primary, isLoading: store.isCreating) {
+                DSButton(L10n.Common.cancel, style: .ghost) { dismiss() }
+                DSButton(L10n.CreateShare.submit, style: .primary, isLoading: store.isCreating) {
                     store.send(.createTapped)
                 }
                 .disabled(!store.isCreateEnabled)
@@ -170,11 +171,11 @@ struct CreateShareLinkSheet: View {
         if store.isLoadingUsers {
             HStack(spacing: .space8) {
                 ProgressView()
-                Text("Loading users\u{2026}").type(.body3(.regular), style: .secondary)
+                Text(L10n.CreateShare.loadingUsers).type(.body3(.regular), style: .secondary)
             }
             .padding(.vertical, .space8)
         } else if store.shareableUsers.isEmpty {
-            Text("No other users to share with.")
+            Text(L10n.CreateShare.noOtherUsers)
                 .type(.body3(.regular), style: .secondary)
                 .padding(.vertical, .space8)
         } else {
@@ -212,7 +213,7 @@ struct CreateShareLinkSheet: View {
 
     private var sourceCard: some View {
         VStack(alignment: .leading, spacing: .space2) {
-            Text("Sharing:").type(.body3(.regular), style: .secondary)
+            Text(L10n.CreateShare.sharingPrefix).type(.body3(.regular), style: .secondary)
             Text(store.itemName).type(.body2(.bold), style: .primary(for: .label)).lineLimit(1)
             Text(store.sourcePath).type(.caption(.regular), style: .tertiary).lineLimit(1).truncationMode(.middle)
         }
@@ -233,13 +234,13 @@ struct CreateShareLinkSheet: View {
                         .scaledToFit()
                         .foregroundStyle(Color.positive)
                         .frame(width: Constants.copyIconSize, height: Constants.copyIconSize)
-                    Text("Share link created successfully!").type(.body2(.semibold), style: .success)
+                    Text(L10n.CreateShare.createdBanner).type(.body2(.semibold), style: .success)
                     Spacer(minLength: 0)
                 }
                 .padding(Constants.cardPadding)
                 .background(RoundedRectangle(cornerRadius: Constants.cardCornerRadius).fill(Color.positive.opacity(0.12)))
 
-                section("Share Link") {
+                section(L10n.CreateShare.sectionShareLink) {
                     copyRow(value: created.shareUrl.absoluteString, field: .shareLink) {
                         copy(created.shareUrl.absoluteString, as: .shareLink)
                     }
@@ -247,10 +248,10 @@ struct CreateShareLinkSheet: View {
 
                 VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
                     HStack(spacing: .space8) {
-                        Text(created.share.isDirectory ? "Direct folder ZIP link" : "Direct file link")
+                        Text(created.share.isDirectory ? L10n.CreateShare.directFolderLink : L10n.CreateShare.directFileLink)
                             .type(.body2(.semibold), style: .primary(for: .label))
                         Spacer()
-                        Picker("Direct link mode", selection: $store.directLinkMode.sending(\.directLinkModeChanged)) {
+                        Picker(L10n.CreateShare.directLinkMode, selection: $store.directLinkMode.sending(\.directLinkModeChanged)) {
                             ForEach(DirectLinkMode.allCases) { mode in
                                 Text(mode.title).tag(mode)
                             }
@@ -266,7 +267,7 @@ struct CreateShareLinkSheet: View {
 
                 summaryRows(for: created)
 
-                DSButton("Done", style: .primary) { dismiss() }
+                DSButton(L10n.Common.done, style: .primary) { dismiss() }
                     .padding(.top, .space4)
             }
         }
@@ -276,22 +277,22 @@ struct CreateShareLinkSheet: View {
         let names = store.shareableUsers
             .filter { store.selectedUserIDs.contains($0.id) }
             .map { $0.displayName ?? $0.username }
-        return names.isEmpty ? "Specific people" : names.joined(separator: ", ")
+        return names.isEmpty ? L10n.CreateShare.summarySpecificPeople : names.joined(separator: ", ")
     }
 
     private func summaryRows(for created: CreatedShare) -> some View {
         VStack(alignment: .leading, spacing: .space12) {
-            summaryRow(IconKit.lock, "Access", created.share.accessMode.title)
+            summaryRow(IconKit.lock, L10n.CreateShare.summaryAccess, created.share.accessMode.title)
             summaryRow(
                 created.share.sharingType == .anyone ? IconKit.web : IconKit.people,
-                "Shared with",
-                created.share.sharingType == .anyone ? "Anyone with link" : recipientNames
+                L10n.CreateShare.summarySharedWith,
+                created.share.sharingType == .anyone ? L10n.Shared.anyoneWithLink : recipientNames
             )
             if created.share.hasPassword {
-                summaryRow(IconKit.lock, "Password", "Protected")
+                summaryRow(IconKit.lock, L10n.Common.password, L10n.CreateShare.summaryPasswordProtected)
             }
             if let expiresAt = created.share.expiresAt {
-                summaryRow(IconKit.calendar, "Expires", Self.summaryDateFormatter.string(from: expiresAt))
+                summaryRow(IconKit.calendar, L10n.CreateShare.summaryExpires, Self.summaryDateFormatter.string(from: expiresAt))
             }
         }
     }
