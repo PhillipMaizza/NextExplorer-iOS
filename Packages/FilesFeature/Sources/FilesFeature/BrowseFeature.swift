@@ -332,9 +332,12 @@ public struct BrowseFeature {
                 state.searchResults = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(results))
                 return .none
 
-            case .searchResultsResponse(.failure):
+            case let .searchResultsResponse(.failure(error)):
                 state.isSearchingEverywhere = false
                 state.searchResults = []
+                // Surface it — otherwise a network blip during an "Everywhere" search is
+                // indistinguishable from a genuine no-results.
+                state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : "Couldn't search. Check your connection and try again."
                 return .none
 
             case let .sortOptionChanged(option):
@@ -925,8 +928,9 @@ public struct BrowseFeature {
     }
 
     /// Folders before files, each group alphabetical, matching the web client's own
-    /// directory listing order.
-    private static func sortedAlphabetically(_ items: [FileItem]) -> [FileItem] {
+    /// directory listing order. Used for both `FileItem` listings and `SearchResultItem`
+    /// result sets.
+    static func sortedAlphabetically<T: DirectoryFirstSortable>(_ items: [T]) -> [T] {
         items.sorted { lhs, rhs in
             guard lhs.isDirectory == rhs.isDirectory else { return lhs.isDirectory }
             return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
@@ -961,10 +965,13 @@ public struct BrowseFeature {
         }
     }
 
-    private static func sortedAlphabetically(_ items: [SearchResultItem]) -> [SearchResultItem] {
-        items.sorted { lhs, rhs in
-            guard lhs.isDirectory == rhs.isDirectory else { return lhs.isDirectory }
-            return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
-        }
-    }
 }
+
+/// An item that sorts folders-first then by name — `FileItem` and `SearchResultItem`.
+protocol DirectoryFirstSortable {
+    var name: String { get }
+    var isDirectory: Bool { get }
+}
+
+extension FileItem: DirectoryFirstSortable {}
+extension SearchResultItem: DirectoryFirstSortable {}
