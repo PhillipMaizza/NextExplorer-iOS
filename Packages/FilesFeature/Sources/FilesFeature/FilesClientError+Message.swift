@@ -8,6 +8,7 @@ extension FilesClientError {
         case .network: "Couldn't reach the server."
         case .decoding: "Server responded unexpectedly."
         case let .server(statusCode): "Server error (\(statusCode))."
+        case let .serverMessage(_, message): message
         }
     }
 }

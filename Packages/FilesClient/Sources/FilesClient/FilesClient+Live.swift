@@ -74,6 +74,46 @@ extension FilesClient {
             },
             shareableUsers: { serverURL in
                 try await service.shareableUsers(serverURL: serverURL)
+            },
+            changeOwnPassword: { serverURL, currentPassword, newPassword in
+                try await service.changeOwnPassword(
+                    serverURL: serverURL, currentPassword: currentPassword, newPassword: newPassword
+                )
+            },
+            serverFeatures: { serverURL in
+                try await service.serverFeatures(serverURL: serverURL)
+            },
+            listUsers: { serverURL in
+                try await service.listUsers(serverURL: serverURL)
+            },
+            createUser: { serverURL, request in
+                try await service.createUser(serverURL: serverURL, request: request)
+            },
+            updateUser: { serverURL, userID, request in
+                try await service.updateUser(serverURL: serverURL, userID: userID, request: request)
+            },
+            setUserPassword: { serverURL, userID, newPassword in
+                try await service.setUserPassword(serverURL: serverURL, userID: userID, newPassword: newPassword)
+            },
+            deleteUser: { serverURL, userID in
+                try await service.deleteUser(serverURL: serverURL, userID: userID)
+            },
+            userVolumes: { serverURL, userID in
+                try await service.userVolumes(serverURL: serverURL, userID: userID)
+            },
+            addUserVolume: { serverURL, userID, request in
+                try await service.addUserVolume(serverURL: serverURL, userID: userID, request: request)
+            },
+            updateUserVolume: { serverURL, userID, volumeID, label, accessMode in
+                try await service.updateUserVolume(
+                    serverURL: serverURL, userID: userID, volumeID: volumeID, label: label, accessMode: accessMode
+                )
+            },
+            removeUserVolume: { serverURL, userID, volumeID in
+                try await service.removeUserVolume(serverURL: serverURL, userID: userID, volumeID: volumeID)
+            },
+            browseAdminDirectories: { serverURL, path in
+                try await service.browseAdminDirectories(serverURL: serverURL, path: path)
             }
         )
     }
