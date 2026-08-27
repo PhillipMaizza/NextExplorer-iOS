@@ -266,40 +266,55 @@ private struct SharedLinkCard: View {
         VStack(spacing: 0) {
             header
             if isExpanded {
-                VStack(alignment: .leading, spacing: .space8) {
-                    Group {
-                        metaRow(IconKit.people, "Shared with", sharedWithText)
-                        metaRow(IconKit.lock, "Access", share.accessMode.title)
-                        metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
-                        linkModeRow
-                    }
-                    .opacity(isExpired ? Metrics.expiredInfoOpacity : 1)
-
-                    HStack(spacing: Metrics.actionRowSpacing) {
-                        pillAction(IconKit.link, "Share link", tint: .accent, isEnabled: !isExpired) {
-                            copy(shareLinkString, label: "Share link copied")
-                        }
-                        pillAction(
-                            IconKit.copy,
-                            share.isDirectory ? "Folder link" : "File link",
-                            tint: .accent,
-                            isEnabled: !isExpired
-                        ) {
-                            copy(directLinkString, label: share.isDirectory ? "Folder ZIP link copied" : "Direct file link copied")
-                        }
-                    }
-
-                    if isByMe {
-                        pillAction(IconKit.delete, "Delete", tint: .negative, isEnabled: true, action: onDelete)
-                            .padding(.top, Metrics.actionRowSpacing)
-                    }
-                }
-                .padding(Metrics.padding)
+                if isByMe { ownerBody } else { recipientBody }
             }
         }
         .background(RoundedRectangle(cornerRadius: Metrics.cornerRadius).fill(Color.backgroundSecondary))
         .opacity(isDeleting ? Metrics.deletingOpacity : 1)
         .disabled(isDeleting)
+    }
+
+    /// "By me": full metadata + the direct-link mode picker + copy/delete actions.
+    private var ownerBody: some View {
+        VStack(alignment: .leading, spacing: .space8) {
+            Group {
+                metaRow(IconKit.people, "Shared with", sharedWithText)
+                metaRow(IconKit.lock, "Access", share.accessMode.title)
+                metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
+                linkModeRow
+            }
+            .opacity(isExpired ? Metrics.expiredInfoOpacity : 1)
+
+            HStack(spacing: Metrics.actionRowSpacing) {
+                pillAction(IconKit.link, "Share link", tint: .accent, isEnabled: !isExpired) {
+                    copy(shareLinkString, label: "Share link copied")
+                }
+                pillAction(
+                    IconKit.copy,
+                    share.isDirectory ? "Folder link" : "File link",
+                    tint: .accent,
+                    isEnabled: !isExpired
+                ) {
+                    copy(directLinkString, label: share.isDirectory ? "Folder ZIP link copied" : "Direct file link copied")
+                }
+            }
+
+            pillAction(IconKit.delete, "Delete", tint: .negative, isEnabled: true, action: onDelete)
+                .padding(.top, Metrics.actionRowSpacing)
+        }
+        .padding(Metrics.padding)
+    }
+
+    /// "With me": read-only — no link, no mode picker, no delete. Just the access level and
+    /// the expiry, matching the web `SharedWithMeView` (which exposes no per-row actions to
+    /// recipients). The recipient payload carries no owner identity to show.
+    private var recipientBody: some View {
+        VStack(alignment: .leading, spacing: .space8) {
+            metaRow(IconKit.lock, "Access", share.accessMode.title)
+            metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
+        }
+        .opacity(isExpired ? Metrics.expiredInfoOpacity : 1)
+        .padding(Metrics.padding)
     }
 
     private var header: some View {
@@ -318,11 +333,11 @@ private struct SharedLinkCard: View {
                             .type(.body2(.semibold), style: .primary(for: .label))
                             .lineLimit(1)
                         if isExpired {
-                            Text("EXPIRED")
+                            Text("expired".uppercased())
                                 .type(.caption(.semibold), style: .error)
                                 .padding(.horizontal, Metrics.badgeHorizontalPadding)
                                 .padding(.vertical, Metrics.badgeVerticalPadding)
-                                .background(Capsule().fill(Color.negative.opacity(0.15)))
+                                .background(RoundedRectangle(cornerRadius: .radiusXSmall).fill(Color.negative.opacity(0.15)))
                         }
                     }
                     if isByMe, let path = share.sourcePath, !path.isEmpty {
@@ -403,7 +418,7 @@ private struct SharedLinkCard: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(DSHapticButtonStyle())
-        .allowsHitTesting(isEnabled)
+//        .allowsHitTesting(isEnabled)
     }
 
     private var expiresText: String {
