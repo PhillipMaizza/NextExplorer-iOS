@@ -20,6 +20,16 @@ public struct SettingsFeature {
         /// "Show Hidden Files" here is reflected immediately in an already-open folder.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
         public var isLoadingPreferences = false
+        public var removeAllDownloadsConfirmationIsPresented = false
+        public var isRemovingAllDownloads = false
+        /// Checked independently of the Downloads tab's own state (which may never have
+        /// loaded, if the user hasn't visited that tab this session) — this is what actually
+        /// disables "Remove All Downloads" until there's proof there's nothing to remove.
+        public var hasDownloads = true
+        public var downloadsSize: Int64 = 0
+        public var cacheSize: Int64 = 0
+        public var isClearingCache = false
+        public var clearCacheConfirmationIsPresented = false
 
         public var displayName: String { user.displayName ?? user.username }
 
@@ -38,14 +48,30 @@ public struct SettingsFeature {
         case signOutButtonTapped
         case cancelSignOutTapped
         case confirmSignOutTapped
+        case removeAllDownloadsTapped
+        case removeAllDownloadsCancelled
+        case removeAllDownloadsConfirmed
+        case removeAllDownloadsResponse
+        case hasDownloadsResponse(Bool)
+        case downloadsSizeResponse(Int64)
+        case cacheSizeResponse(Int64)
+        case clearCacheTapped
+        case clearCacheCancelled
+        case clearCacheConfirmed
+        case clearCacheResponse
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
             case signOutButtonTapped
+            /// Every local download was just deleted — `MainTabFeature` clears the
+            /// Downloads tab's list without waiting for it to re-scan the (now empty) disk.
+            case allDownloadsRemoved
         }
     }
 
     @Dependency(\.filesClient) var filesClient
+    @Dependency(\.localDownloadStore) var localDownloadStore
+    @Dependency(\.previewCacheStore) var previewCacheStore
 
     public init() {}
 
@@ -53,18 +79,33 @@ public struct SettingsFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard !state.isLoadingPreferences else { return .none }
+                let localDownloadStore = self.localDownloadStore
+                let previewCacheStore = self.previewCacheStore
+                let checkDownloads = Effect<Action>.run { send in
+                    let downloads = (try? localDownloadStore.list()) ?? []
+                    await send(.hasDownloadsResponse(!downloads.isEmpty))
+                    await send(.downloadsSizeResponse(downloads.reduce(0) { $0 + $1.size }))
+                }
+                let checkCacheSize = Effect<Action>.run { send in
+                    let size = (try? previewCacheStore.size()) ?? 0
+                    await send(.cacheSizeResponse(size))
+                }
+                guard !state.isLoadingPreferences else { return .merge(checkDownloads, checkCacheSize) }
                 state.isLoadingPreferences = true
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
-                return .run { send in
-                    do {
-                        let preferences = try await filesClient.fetchPreferences(serverURL)
-                        await send(.preferencesResponse(.success(preferences)))
-                    } catch {
-                        await send(.preferencesResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+                return .merge(
+                    checkDownloads,
+                    checkCacheSize,
+                    .run { send in
+                        do {
+                            let preferences = try await filesClient.fetchPreferences(serverURL)
+                            await send(.preferencesResponse(.success(preferences)))
+                        } catch {
+                            await send(.preferencesResponse(.failure((error as? FilesClientError) ?? .network(String(describing: error)))))
+                        }
                     }
-                }
+                )
 
             case let .preferencesResponse(.success(preferences)):
                 state.isLoadingPreferences = false
@@ -97,6 +138,68 @@ public struct SettingsFeature {
             case .confirmSignOutTapped:
                 state.isConfirmingSignOut = false
                 return .send(.delegate(.signOutButtonTapped))
+
+            case .removeAllDownloadsTapped:
+                state.removeAllDownloadsConfirmationIsPresented = true
+                return .none
+
+            case .removeAllDownloadsCancelled:
+                state.removeAllDownloadsConfirmationIsPresented = false
+                return .none
+
+            case .removeAllDownloadsConfirmed:
+                state.removeAllDownloadsConfirmationIsPresented = false
+                state.isRemovingAllDownloads = true
+                let localDownloadStore = self.localDownloadStore
+                return .run { send in
+                    // Best-effort, matching the sign-out flow's philosophy: one file
+                    // refusing to delete shouldn't block clearing the rest.
+                    let downloads = (try? localDownloadStore.list()) ?? []
+                    for download in downloads {
+                        try? localDownloadStore.delete(download.url)
+                    }
+                    await send(.removeAllDownloadsResponse)
+                }
+
+            case .removeAllDownloadsResponse:
+                state.isRemovingAllDownloads = false
+                state.hasDownloads = false
+                state.downloadsSize = 0
+                return .send(.delegate(.allDownloadsRemoved))
+
+            case let .hasDownloadsResponse(hasDownloads):
+                state.hasDownloads = hasDownloads
+                return .none
+
+            case let .downloadsSizeResponse(size):
+                state.downloadsSize = size
+                return .none
+
+            case let .cacheSizeResponse(size):
+                state.cacheSize = size
+                return .none
+
+            case .clearCacheTapped:
+                state.clearCacheConfirmationIsPresented = true
+                return .none
+
+            case .clearCacheCancelled:
+                state.clearCacheConfirmationIsPresented = false
+                return .none
+
+            case .clearCacheConfirmed:
+                state.clearCacheConfirmationIsPresented = false
+                state.isClearingCache = true
+                let previewCacheStore = self.previewCacheStore
+                return .run { send in
+                    try? previewCacheStore.clear()
+                    await send(.clearCacheResponse)
+                }
+
+            case .clearCacheResponse:
+                state.isClearingCache = false
+                state.cacheSize = 0
+                return .none
 
             case .delegate:
                 return .none

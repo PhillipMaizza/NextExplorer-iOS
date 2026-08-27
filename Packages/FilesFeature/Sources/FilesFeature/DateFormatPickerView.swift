@@ -18,7 +18,7 @@ struct DateFormatPickerView: View {
     var body: some View {
         List {
             Section {
-                DSToggleRow(title: "Show Time", icon: IconKit.clock, isOn: $includeTime)
+                DSToggleRow(title: "Show Time", icon: IconKit.time, isOn: $includeTime)
             }
             .listRowBackground(Color.backgroundSecondary)
 

@@ -9,6 +9,26 @@ private enum Constants {
     static let toolbarSpacing: CGFloat = .space16
     static let toolbarHorizontalPadding: CGFloat = .space16
     static let toolbarVerticalPadding: CGFloat = .space12
+    /// Vertical drag distance past which releasing dismisses the gallery.
+    static let dismissDistanceThreshold: CGFloat = 120
+    /// Projected fling distance that dismisses even on a short, fast flick.
+    static let dismissPredictedThreshold: CGFloat = 360
+    /// Only start tracking a drag as a dismiss once it's clearly more vertical than
+    /// horizontal — horizontal drags belong to the `TabView`'s own paging.
+    static let dragMinimumDistance: CGFloat = 12
+    /// Floor for how far the content dims/shrinks while dragging.
+    static let minBackgroundOpacity: Double = 0.35
+    static let dragScaleFloor: CGFloat = 0.88
+    static let dragScaleDivisor: CGFloat = 1400
+    static let dragResetSpringResponse: Double = 0.3
+    static let dragResetSpringDamping: Double = 0.85
+    /// Fade the frozen content + dimmed backdrop to nothing on release-to-dismiss, then pull
+    /// the cover with animations off — so the exit is a clean crossfade, not our motion
+    /// fighting the fullScreenCover's own slide-from-bottom.
+    static let dismissFadeDuration: Double = 0.2
+    /// Content opacity at full drag progress (before release) — a slight fade under the
+    /// finger on top of the shrink.
+    static let draggingContentOpacityFloor: Double = 0.6
 }
 
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
@@ -22,6 +42,12 @@ struct ImageGalleryView: View {
     let onDismiss: () -> Void
 
     @State private var selection: String
+    /// Live vertical translation of an in-progress dismiss drag (0 when idle). Drives the
+    /// content offset plus the background dim/shrink, matching the iOS Photos swipe-to-close.
+    @State private var dragOffset: CGFloat = 0
+    /// Set once a drag crosses the dismiss threshold: fades content + background to 0 while
+    /// it flies off, so the fullScreenCover's own slide-out is never seen.
+    @State private var isDismissing = false
 
     init(items: [FileItem], initialItem: FileItem, serverURL: URL, onDismiss: @escaping () -> Void) {
         self.items = items
@@ -34,20 +60,87 @@ struct ImageGalleryView: View {
         items.first { $0.id == selection }?.name ?? ""
     }
 
+    private var dragProgress: CGFloat {
+        min(1, abs(dragOffset) / Constants.dismissDistanceThreshold)
+    }
+
+    private var backgroundOpacity: Double {
+        if isDismissing { return 0 }
+        return 1 - (1 - Constants.minBackgroundOpacity) * Double(dragProgress)
+    }
+
+    private var contentOpacity: Double {
+        if isDismissing { return 0 }
+        return 1 - (1 - Constants.draggingContentOpacityFloor) * Double(dragProgress)
+    }
+
+    private var dragScale: CGFloat {
+        max(Constants.dragScaleFloor, 1 - abs(dragOffset) / Constants.dragScaleDivisor)
+    }
+
     var body: some View {
-        VStack(spacing: 0) {
-            galleryToolbar
-            TabView(selection: $selection) {
-                ForEach(items) { item in
-                    ImageGalleryPage(item: item, serverURL: serverURL)
-                        .tag(item.id)
+        ZStack {
+            Color.black
+                .opacity(backgroundOpacity)
+                .ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                galleryToolbar
+                TabView(selection: $selection) {
+                    ForEach(items) { item in
+                        ImageGalleryPage(item: item, serverURL: serverURL)
+                            .tag(item.id)
+                    }
                 }
+                .tabViewStyle(.page(indexDisplayMode: items.count > 1 ? .always : .never))
             }
-            .tabViewStyle(.page(indexDisplayMode: items.count > 1 ? .always : .never))
+            .scaleEffect(dragScale)
+            .offset(y: dragOffset)
+            .opacity(contentOpacity)
         }
-        .background(Color.black)
+        .simultaneousGesture(dismissDrag)
         .onAppear { OrientationLock.shared.unlock() }
         .onDisappear { OrientationLock.shared.lock() }
+    }
+
+    /// Vertical swipe (either direction) to dismiss, like the iOS Photos viewer — runs
+    /// alongside the `TabView`'s horizontal paging, which keeps its own horizontal drags.
+    private var dismissDrag: some Gesture {
+        DragGesture(minimumDistance: Constants.dragMinimumDistance)
+            .onChanged { value in
+                guard !isDismissing, abs(value.translation.height) > abs(value.translation.width) else {
+                    dragOffset = 0
+                    return
+                }
+                dragOffset = value.translation.height
+            }
+            .onEnded { value in
+                guard abs(value.translation.height) > abs(value.translation.width) else {
+                    dragOffset = 0
+                    return
+                }
+                let passedDistance = abs(value.translation.height) > Constants.dismissDistanceThreshold
+                let passedFlick = abs(value.predictedEndTranslation.height) > Constants.dismissPredictedThreshold
+                if passedDistance || passedFlick {
+                    // Freeze the content where the finger left it and crossfade it out, then
+                    // remove the cover with animations off — no fly-out to collide with the
+                    // fullScreenCover's own slide.
+                    withAnimation(.easeOut(duration: Constants.dismissFadeDuration)) {
+                        isDismissing = true
+                    } completion: {
+                        var transaction = Transaction()
+                        transaction.disablesAnimations = true
+                        withTransaction(transaction) { onDismiss() }
+                    }
+                } else {
+                    withAnimation(.spring(
+                        response: Constants.dragResetSpringResponse,
+                        dampingFraction: Constants.dragResetSpringDamping
+                    )) {
+                        dragOffset = 0
+                    }
+                }
+            }
     }
 
     private var galleryToolbar: some View {
@@ -116,7 +209,7 @@ private struct ImageGalleryPage: View {
 
     private func statusContent(message: String) -> some View {
         VStack(spacing: Constants.statusSpacing) {
-            IconKit.exclamationmarkTriangle
+            IconKit.warning
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(Color.negative)
