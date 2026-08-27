@@ -5,11 +5,33 @@ import FilesClient
 import SwiftUI
 import UIKit
 
-/// A frosted circular icon button, the vocabulary the full-screen previews (image gallery,
-/// video player, QuickLook) use for their bottom-trailing action bar.
+private enum ToolbarMetrics {
+    static let iconSize: CGFloat = .iconXSmall
+    static let itemPadding: CGFloat = .space12
+    static let capsuleVerticalPadding: CGFloat = .space2
+    static let capsuleHorizontalPadding: CGFloat = .space4
+}
+
+/// The single frosted capsule that holds a full-screen preview's actions (system share,
+/// create-share-link, download, delete) — iOS Photos / Files style, one control rather than
+/// a row of separate buttons.
+struct PreviewActionBar<Content: View>: View {
+    @ViewBuilder let content: Content
+
+    var body: some View {
+        HStack(spacing: 0) {
+            content
+        }
+        .padding(.horizontal, ToolbarMetrics.capsuleHorizontalPadding)
+        .padding(.vertical, ToolbarMetrics.capsuleVerticalPadding)
+        .background(Capsule().fill(.ultraThinMaterial))
+    }
+}
+
+/// One icon action inside a `PreviewActionBar`. Background lives on the bar, not the button.
 struct PreviewChipButton: View {
     let icon: Image
-    var tint: Color = .white
+    var tint: Color = .primaryDS
     let action: () -> Void
 
     var body: some View {
@@ -18,16 +40,16 @@ struct PreviewChipButton: View {
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(tint)
-                .frame(width: .iconXSmall, height: .iconXSmall)
-                .padding(.space8)
-                .background(Circle().fill(.ultraThinMaterial))
+                .frame(width: ToolbarMetrics.iconSize, height: ToolbarMetrics.iconSize)
+                .padding(ToolbarMetrics.itemPadding)
+                .contentShape(Rectangle())
         }
         .buttonStyle(DSHapticButtonStyle())
     }
 }
 
-/// Hands the file to the system share sheet (`UIActivityViewController`) — "share the
-/// actual file", distinct from the app's own "create a share link" action. Either shares an
+/// Hands the file to the system share sheet (`UIActivityViewController`) — "share the actual
+/// file", distinct from the app's "create a share link" action. Either shares an
 /// already-local file directly, or downloads a server file to the cache first.
 struct SystemShareButton: View {
     private enum Source {
@@ -39,13 +61,13 @@ struct SystemShareButton: View {
     private let tint: Color
 
     /// Share an already-downloaded local file. `nil` disables the button.
-    init(localFileURL: URL?, tint: Color = .white) {
+    init(localFileURL: URL?, tint: Color = .primaryDS) {
         self.source = .local(localFileURL)
         self.tint = tint
     }
 
     /// Download `item` from the server to the cache, then share it.
-    init(item: FileItem, serverURL: URL, tint: Color = .white) {
+    init(item: FileItem, serverURL: URL, tint: Color = .primaryDS) {
         self.source = .remote(item: item, serverURL: serverURL)
         self.tint = tint
     }
@@ -87,9 +109,9 @@ struct SystemShareButton: View {
                 }
             }
             .foregroundStyle(didFail ? Color.negative : tint)
-            .frame(width: .iconXSmall, height: .iconXSmall)
-            .padding(.space8)
-            .background(Circle().fill(.ultraThinMaterial))
+            .frame(width: ToolbarMetrics.iconSize, height: ToolbarMetrics.iconSize)
+            .padding(ToolbarMetrics.itemPadding)
+            .contentShape(Rectangle())
             .opacity(isDisabled ? 0.4 : 1)
         }
         .buttonStyle(DSHapticButtonStyle())

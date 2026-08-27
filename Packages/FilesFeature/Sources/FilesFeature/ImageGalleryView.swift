@@ -190,15 +190,15 @@ struct ImageGalleryView: View {
 
     @ViewBuilder
     private var actionBar: some View {
-        HStack(spacing: Constants.toolbarSpacing) {
+        PreviewActionBar {
             if let currentItem {
-                SystemShareButton(item: currentItem, serverURL: serverURL)
+                SystemShareButton(item: currentItem, serverURL: serverURL, tint: .white)
             }
             if let onShare {
-                PreviewChipButton(icon: IconKit.shareLink) { currentItem.map(onShare) }
+                PreviewChipButton(icon: IconKit.shareLink, tint: .white) { currentItem.map(onShare) }
             }
             if let onDownload {
-                PreviewChipButton(icon: IconKit.download) { currentItem.map(onDownload) }
+                PreviewChipButton(icon: IconKit.download, tint: .white) { currentItem.map(onDownload) }
             }
             if let onDelete {
                 PreviewChipButton(icon: IconKit.delete, tint: .negative) { currentItem.map(onDelete) }
