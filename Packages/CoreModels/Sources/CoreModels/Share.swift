@@ -67,6 +67,9 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
     public let label: String?
     public let downloadCount: Int
     public let lastAccessedAt: Date?
+    /// The users a `.users` share is granted to — the owner-side lists (`GET /api/shares`,
+    /// `GET /api/shares/:id`) add this; nil for `.anyone` shares and the recipient list.
+    public let permittedUserIds: [String]?
     public let createdAt: Date
     public let updatedAt: Date
 
@@ -84,6 +87,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         label: String? = nil,
         downloadCount: Int = 0,
         lastAccessedAt: Date? = nil,
+        permittedUserIds: [String]? = nil,
         createdAt: Date,
         updatedAt: Date
     ) {
@@ -100,6 +104,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         self.label = label
         self.downloadCount = downloadCount
         self.lastAccessedAt = lastAccessedAt
+        self.permittedUserIds = permittedUserIds
         self.createdAt = createdAt
         self.updatedAt = updatedAt
     }
@@ -107,7 +112,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case id, shareToken, ownerId, sourcePath, sourceName, isDirectory, accessMode
         case sharingType, hasPassword, expiresAt, label, downloadCount, lastAccessedAt
-        case createdAt, updatedAt
+        case permittedUserIds, createdAt, updatedAt
     }
 
     public init(from decoder: Decoder) throws {
@@ -125,6 +130,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
         label = try container.decodeIfPresent(String.self, forKey: .label)
         downloadCount = try container.decodeIfPresent(Int.self, forKey: .downloadCount) ?? 0
         lastAccessedAt = try container.decodeIfPresent(Date.self, forKey: .lastAccessedAt)
+        permittedUserIds = try container.decodeIfPresent([String].self, forKey: .permittedUserIds)
         createdAt = try container.decode(Date.self, forKey: .createdAt)
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
     }

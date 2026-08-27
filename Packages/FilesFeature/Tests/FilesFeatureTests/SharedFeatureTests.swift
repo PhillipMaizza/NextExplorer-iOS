@@ -36,6 +36,7 @@ struct SharedFeatureTests {
             SharedFeature()
         } withDependencies: {
             $0.filesClient.mySharedLinks = { _ in [share] }
+            $0.filesClient.shareableUsers = { _ in [] }
         }
 
         await store.send(.onAppear) { $0.isLoading = true }
@@ -44,6 +45,7 @@ struct SharedFeatureTests {
             $0.byMe = [share]
             $0.loadedSegments = [.byMe]
         }
+        await store.receive(\.usersResponse)
     }
 
     @Test
@@ -55,6 +57,7 @@ struct SharedFeatureTests {
         } withDependencies: {
             $0.filesClient.mySharedLinks = { _ in [byMeShare] }
             $0.filesClient.sharedWithMeLinks = { _ in [withMeShare] }
+            $0.filesClient.shareableUsers = { _ in [] }
         }
 
         await store.send(.onAppear) { $0.isLoading = true }
@@ -63,6 +66,7 @@ struct SharedFeatureTests {
             $0.byMe = [byMeShare]
             $0.loadedSegments = [.byMe]
         }
+        await store.receive(\.usersResponse)
 
         await store.send(.segmentChanged(.withMe)) {
             $0.segment = .withMe
@@ -102,6 +106,56 @@ struct SharedFeatureTests {
         }
     }
 
+    @Test
+    func aBumpedRevisionReloadsTheCurrentSegment() async {
+        let first = makeShare(id: "1")
+        let second = makeShare(id: "2")
+        var state = SharedFeature.State(serverURL: serverURL)
+        state.byMe = [first]
+        state.loadedSegments = [.byMe]
+
+        let store = TestStore(initialState: state) {
+            SharedFeature()
+        } withDependencies: {
+            $0.filesClient.mySharedLinks = { _ in [first, second] }
+        }
+
+        await store.send(.externalRevisionChanged) {
+            $0.loadedSegments = []
+            $0.isLoading = true
+        }
+        await store.receive(\.sharesResponse) {
+            $0.isLoading = false
+            $0.byMe = [first, second]
+            $0.loadedSegments = [.byMe]
+        }
+    }
+
+    @Test
+    func sortOptionAndDirectionReorderTheList() async {
+        let alpha = Share(
+            id: "a", shareToken: "a", ownerId: "me", sourcePath: "Alpha", sourceName: nil,
+            isDirectory: true, accessMode: .readonly, sharingType: .anyone, hasPassword: false,
+            label: "Alpha", createdAt: Date(timeIntervalSince1970: 100), updatedAt: Date()
+        )
+        let zulu = Share(
+            id: "z", shareToken: "z", ownerId: "me", sourcePath: "Zulu", sourceName: nil,
+            isDirectory: true, accessMode: .readonly, sharingType: .anyone, hasPassword: false,
+            label: "Zulu", createdAt: Date(timeIntervalSince1970: 200), updatedAt: Date()
+        )
+        var state = SharedFeature.State(serverURL: serverURL)
+        state.byMe = [alpha, zulu]
+
+        let store = TestStore(initialState: state) { SharedFeature() }
+
+        await store.send(.sortOptionChanged(.name)) { $0.sortOption = .name }
+        await store.send(.sortDirectionChanged(.ascending)) { $0.sortDirection = .ascending }
+        #expect(store.state.displayedShares.map(\.id) == ["a", "z"])
+
+        await store.send(.sortDirectionChanged(.descending)) { $0.sortDirection = .descending }
+        #expect(store.state.displayedShares.map(\.id) == ["z", "a"])
+    }
+
     // MARK: Error paths
 
     @Test
@@ -110,6 +164,7 @@ struct SharedFeatureTests {
             SharedFeature()
         } withDependencies: {
             $0.filesClient.mySharedLinks = { _ in throw FilesClientError.sessionExpired }
+            $0.filesClient.shareableUsers = { _ in [] }
         }
 
         await store.send(.onAppear) { $0.isLoading = true }
@@ -117,6 +172,7 @@ struct SharedFeatureTests {
             $0.isLoading = false
             $0.errorMessage = FilesClientError.sessionExpired.userMessage
         }
+        await store.receive(\.usersResponse)
     }
 
     @Test
