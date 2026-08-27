@@ -5,72 +5,95 @@ import FilesClient
 import SwiftUI
 import UIKit
 
-private enum ToolbarMetrics {
-    static let iconSize: CGFloat = .iconMedium
-    static let itemPadding: CGFloat = .space12
-    static let capsuleVerticalPadding: CGFloat = .space4
-    static let capsuleHorizontalPadding: CGFloat = .space4
+/// What the system-share button hands to `UIActivityViewController`: a file already on disk,
+/// or one that has to be downloaded from the server first. `.unavailable` omits the button.
+enum SystemShareSource {
+    case remote(FileItem, serverURL: URL)
+    case local(URL?)
+    case unavailable
 }
 
-/// The single frosted capsule that holds a full-screen preview's actions (system share,
-/// create-share-link, download, delete) — iOS Photos / Files style, one control rather than
-/// a row of separate buttons.
-struct PreviewActionBar<Content: View>: View {
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        HStack(spacing: 0) {
-            content
-        }
-        .padding(.horizontal, ToolbarMetrics.capsuleHorizontalPadding)
-        .padding(.vertical, ToolbarMetrics.capsuleVerticalPadding)
-        .dsGlass()
+/// The chrome every full-screen media preview shares: an inline title, a top-trailing close,
+/// and a bottom action bar (system share, create-share-link, download, delete). These are
+/// plain `.toolbar` items inside the caller's `NavigationStack`, so the OS gives them Liquid
+/// Glass, correct sizing/spacing, safe-area insets and accessibility for free — the preview
+/// only supplies the actions.
+extension View {
+    func previewChrome(
+        title: String? = nil,
+        systemShare: SystemShareSource = .unavailable,
+        onShareLink: (() -> Void)? = nil,
+        onDownload: (() -> Void)? = nil,
+        onDelete: (() -> Void)? = nil,
+        onClose: @escaping () -> Void
+    ) -> some View {
+        modifier(PreviewChrome(
+            title: title,
+            systemShare: systemShare,
+            onShareLink: onShareLink,
+            onDownload: onDownload,
+            onDelete: onDelete,
+            onClose: onClose
+        ))
     }
 }
 
-/// One icon action inside a `PreviewActionBar`. Background lives on the bar, not the button.
-struct PreviewChipButton: View {
-    let icon: Image
-    var tint: Color = .primaryDS
-    let action: () -> Void
+private struct PreviewChrome: ViewModifier {
+    let title: String?
+    let systemShare: SystemShareSource
+    let onShareLink: (() -> Void)?
+    let onDownload: (() -> Void)?
+    let onDelete: (() -> Void)?
+    let onClose: () -> Void
 
-    var body: some View {
-        Button(action: action) {
-            icon
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(tint)
-                .frame(width: ToolbarMetrics.iconSize, height: ToolbarMetrics.iconSize)
-                .padding(ToolbarMetrics.itemPadding)
-                .contentShape(Rectangle())
-        }
-        .buttonStyle(DSHapticButtonStyle())
+    private var hasSystemShare: Bool {
+        if case .unavailable = systemShare { return false }
+        return true
+    }
+
+    func body(content: Content) -> some View {
+        content
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar {
+                if let title {
+                    ToolbarItem(placement: .principal) {
+                        Text(title).lineLimit(1).truncationMode(.middle)
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { onClose() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
+                        .accessibilityLabel("Close")
+                }
+                ToolbarItemGroup(placement: .bottomBar) {
+                    if hasSystemShare {
+                        SystemShareButton(source: systemShare)
+                    }
+                    if let onShareLink {
+                        Button { onShareLink() } label: { IconKit.shareLink.foregroundStyle(Color.primaryDS) }
+                            .accessibilityLabel("Create share link")
+                    }
+                    if let onDownload {
+                        Button { onDownload() } label: { IconKit.download.foregroundStyle(Color.primaryDS) }
+                            .accessibilityLabel("Download")
+                    }
+                    if onDelete != nil {
+                        Spacer()
+                    }
+                    if let onDelete {
+                        Button { onDelete() } label: { IconKit.delete.foregroundStyle(Color.negative) }
+                            .accessibilityLabel("Delete")
+                    }
+                }
+            }
     }
 }
 
 /// Hands the file to the system share sheet (`UIActivityViewController`) — "share the actual
-/// file", distinct from the app's "create a share link" action. Either shares an
-/// already-local file directly, or downloads a server file to the cache first.
+/// file", distinct from "create a share link". Shares an already-local file directly, or
+/// downloads a server file to the cache first, showing a spinner while it does.
 struct SystemShareButton: View {
-    private enum Source {
-        case local(URL?)
-        case remote(item: FileItem, serverURL: URL)
-    }
-
-    private let source: Source
-    private let tint: Color
-
-    /// Share an already-downloaded local file. `nil` disables the button.
-    init(localFileURL: URL?, tint: Color = .primaryDS) {
-        self.source = .local(localFileURL)
-        self.tint = tint
-    }
-
-    /// Download `item` from the server to the cache, then share it.
-    init(item: FileItem, serverURL: URL, tint: Color = .primaryDS) {
-        self.source = .remote(item: item, serverURL: serverURL)
-        self.tint = tint
-    }
+    let source: SystemShareSource
 
     @Dependency(\.filesClient) private var filesClient
     @State private var shareURL: IdentifiedURL?
@@ -79,45 +102,43 @@ struct SystemShareButton: View {
 
     private var isDisabled: Bool {
         if case .local(nil) = source { return true }
+        if case .unavailable = source { return true }
         return isPreparing
     }
 
     var body: some View {
-        Button {
-            switch source {
-            case let .local(url):
-                if let url { shareURL = IdentifiedURL(url: url) }
-            case let .remote(item, serverURL):
-                guard !isPreparing else { return }
-                isPreparing = true
-                didFail = false
-                Task {
-                    defer { isPreparing = false }
-                    if let url = try? await filesClient.downloadRawFile(serverURL, item) {
-                        shareURL = IdentifiedURL(url: url)
-                    } else {
-                        didFail = true
-                    }
-                }
+        Button(action: prepare) {
+            if isPreparing {
+                ProgressView()
+            } else {
+                IconKit.share.foregroundStyle(didFail ? Color.negative : Color.primaryDS)
             }
-        } label: {
-            Group {
-                if isPreparing {
-                    ProgressView().tint(tint)
-                } else {
-                    IconKit.share.resizable().scaledToFit()
-                }
-            }
-            .foregroundStyle(didFail ? Color.negative : tint)
-            .frame(width: ToolbarMetrics.iconSize, height: ToolbarMetrics.iconSize)
-            .padding(ToolbarMetrics.itemPadding)
-            .contentShape(Rectangle())
-            .opacity(isDisabled ? 0.4 : 1)
         }
-        .buttonStyle(DSHapticButtonStyle())
-        .allowsHitTesting(!isDisabled)
+        .accessibilityLabel("Share")
+        .disabled(isDisabled)
         .sheet(item: $shareURL) { wrapped in
             ActivityShareSheet(items: [wrapped.url])
+        }
+    }
+
+    private func prepare() {
+        switch source {
+        case .unavailable:
+            break
+        case let .local(url):
+            if let url { shareURL = IdentifiedURL(url: url) }
+        case let .remote(item, serverURL):
+            guard !isPreparing else { return }
+            isPreparing = true
+            didFail = false
+            Task {
+                defer { isPreparing = false }
+                if let url = try? await filesClient.downloadRawFile(serverURL, item) {
+                    shareURL = IdentifiedURL(url: url)
+                } else {
+                    didFail = true
+                }
+            }
         }
     }
 }

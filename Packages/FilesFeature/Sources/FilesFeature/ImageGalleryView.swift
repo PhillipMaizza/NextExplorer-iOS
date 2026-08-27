@@ -6,9 +6,6 @@ import SwiftUI
 
 private enum Constants {
     static let statusSpacing: CGFloat = .space16
-    static let toolbarSpacing: CGFloat = .space16
-    static let toolbarHorizontalPadding: CGFloat = .space16
-    static let toolbarVerticalPadding: CGFloat = .space12
     /// Vertical drag distance past which releasing dismisses the gallery.
     static let dismissDistanceThreshold: CGFloat = 120
     /// Projected fling distance that dismisses even on a short, fast flick.
@@ -29,9 +26,6 @@ private enum Constants {
     /// Content opacity at full drag progress (before release) — a slight fade under the
     /// finger on top of the shrink.
     static let draggingContentOpacityFloor: Double = 0.6
-    /// Lifts the `TabView` page dots clear of the bottom-trailing action bar — without it the
-    /// dots sit in the same band as the toolbar and collide.
-    static let pageIndicatorBottomInset: CGFloat = 52
 }
 
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
@@ -102,13 +96,15 @@ struct ImageGalleryView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.black
-                .opacity(backgroundOpacity)
-                .ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                Color.black
+                    .opacity(backgroundOpacity)
+                    .ignoresSafeArea()
 
-            VStack(spacing: 0) {
-                topBar
+                // Bleeds under the status bar / transparent nav bar at the top, but keeps its
+                // bottom inset so the page dots ride above the toolbar instead of tucking
+                // behind it.
                 TabView(selection: $selection) {
                     ForEach(items) { item in
                         ImageGalleryPage(item: item, serverURL: serverURL)
@@ -116,20 +112,30 @@ struct ImageGalleryView: View {
                     }
                 }
                 .tabViewStyle(.page(indexDisplayMode: items.count > 1 ? .always : .never))
-                .padding(.bottom, items.count > 1 ? Constants.pageIndicatorBottomInset : 0)
+                .ignoresSafeArea(.container, edges: .top)
+                .scaleEffect(dragScale)
+                .offset(y: dragOffset)
+                .opacity(contentOpacity)
             }
-            .scaleEffect(dragScale)
-            .offset(y: dragOffset)
-            .opacity(contentOpacity)
-            .overlay(alignment: .bottomTrailing) {
-                actionBar
-                    .padding(.horizontal, Constants.toolbarHorizontalPadding)
-                    .padding(.bottom, Constants.toolbarHorizontalPadding)
-            }
+            .simultaneousGesture(dismissDrag)
+            .previewChrome(
+                title: currentName,
+                systemShare: currentItem.map { .remote($0, serverURL: serverURL) } ?? .unavailable,
+                onShareLink: currentItemAction(onShare),
+                onDownload: currentItemAction(onDownload),
+                onDelete: currentItemAction(onDelete),
+                onClose: onDismiss
+            )
         }
-        .simultaneousGesture(dismissDrag)
         .onAppear { OrientationLock.shared.unlock() }
         .onDisappear { OrientationLock.shared.lock() }
+    }
+
+    /// Binds one of the caller's `(FileItem) -> Void` toolbar callbacks to whichever image is
+    /// currently on screen, or `nil` when the caller didn't supply that action.
+    private func currentItemAction(_ action: ((FileItem) -> Void)?) -> (() -> Void)? {
+        guard let action else { return nil }
+        return { currentItem.map(action) }
     }
 
     /// Vertical swipe (either direction) to dismiss, like the iOS Photos viewer — runs
@@ -172,43 +178,6 @@ struct ImageGalleryView: View {
             }
     }
 
-    private var topBar: some View {
-        HStack(spacing: Constants.toolbarSpacing) {
-            // Fixed white, not `Color.primaryDS` — unlike the close button (which gets a
-            // frosted material chip that adapts on its own), this label sits directly on the
-            // always-black gallery background, so a theme-adaptive color would go
-            // near-invisible in light mode.
-            Text(currentName)
-                .type(.body1(.semibold))
-                .foregroundStyle(.white)
-                .lineLimit(1)
-                .truncationMode(.middle)
-
-            Spacer()
-
-            DSCloseButton(action: onDismiss)
-        }
-        .padding(.horizontal, Constants.toolbarHorizontalPadding)
-        .padding(.vertical, Constants.toolbarVerticalPadding)
-    }
-
-    @ViewBuilder
-    private var actionBar: some View {
-        PreviewActionBar {
-            if let currentItem {
-                SystemShareButton(item: currentItem, serverURL: serverURL, tint: .white)
-            }
-            if let onShare {
-                PreviewChipButton(icon: IconKit.shareLink, tint: .white) { currentItem.map(onShare) }
-            }
-            if let onDownload {
-                PreviewChipButton(icon: IconKit.download, tint: .white) { currentItem.map(onDownload) }
-            }
-            if let onDelete {
-                PreviewChipButton(icon: IconKit.delete, tint: .negative) { currentItem.map(onDelete) }
-            }
-        }
-    }
 }
 
 private struct ImageGalleryPage: View {

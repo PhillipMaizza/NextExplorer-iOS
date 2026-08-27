@@ -5,7 +5,6 @@ import DesignSystem
 import SwiftUI
 
 private enum Constants {
-    static let closeButtonInset: CGFloat = .space16
     /// Vertical drag distance past which releasing dismisses the player.
     static let dismissDistanceThreshold: CGFloat = 120
     /// Projected fling distance that dismisses even on a short, fast flick.
@@ -86,45 +85,43 @@ struct StreamingPreviewView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.black
-                .opacity(backgroundOpacity)
-                .ignoresSafeArea()
-
+        NavigationStack {
             ZStack {
-                VideoPlayer(player: player)
+                Color.black
+                    .opacity(backgroundOpacity)
                     .ignoresSafeArea()
 
-                // A poster frame before playback starts — matching the web client's `<video
-                // poster>` — rather than a blank black rectangle while the stream buffers.
-                // Keyed on "has playback ever started," not "is playing right now": the latter
-                // would bring the poster back over the paused frame every time the user pauses.
-                if item.isVideo, item.supportsThumbnail, !hasStartedPlaying {
-                    ThumbnailImage(serverURL: serverURL, path: item.id, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
-                        .aspectRatio(contentMode: .fit)
-                        .background(Color.black)
+                ZStack {
+                    VideoPlayer(player: player)
                         .ignoresSafeArea()
-                        .allowsHitTesting(false)
+
+                    // A poster frame before playback starts — matching the web client's `<video
+                    // poster>` — rather than a blank black rectangle while the stream buffers.
+                    // Keyed on "has playback ever started," not "is playing right now": the latter
+                    // would bring the poster back over the paused frame every time the user pauses.
+                    if item.isVideo, item.supportsThumbnail, !hasStartedPlaying {
+                        ThumbnailImage(serverURL: serverURL, path: item.id, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
+                            .aspectRatio(contentMode: .fit)
+                            .background(Color.black)
+                            .ignoresSafeArea()
+                            .allowsHitTesting(false)
+                    }
                 }
+                .scaleEffect(dragScale)
+                .offset(y: dragOffset)
+                .opacity(contentOpacity)
             }
-            .overlay(alignment: .topTrailing) {
-                DSCloseButton(action: onDismiss)
-                    .padding(Constants.closeButtonInset)
-            }
-            .overlay(alignment: .bottomTrailing) {
-                PreviewActionBar {
-                    SystemShareButton(item: item, serverURL: serverURL, tint: .white)
-                    if let onShare { PreviewChipButton(icon: IconKit.shareLink, tint: .white, action: onShare) }
-                    if let onDownload { PreviewChipButton(icon: IconKit.download, tint: .white, action: onDownload) }
-                    if let onDelete { PreviewChipButton(icon: IconKit.delete, tint: .negative, action: onDelete) }
-                }
-                .padding(Constants.closeButtonInset)
-            }
-            .scaleEffect(dragScale)
-            .offset(y: dragOffset)
-            .opacity(contentOpacity)
+            .ignoresSafeArea()
+            .simultaneousGesture(dismissDrag)
+            .previewChrome(
+                title: item.name,
+                systemShare: .remote(item, serverURL: serverURL),
+                onShareLink: onShare,
+                onDownload: onDownload,
+                onDelete: onDelete,
+                onClose: onDismiss
+            )
         }
-        .simultaneousGesture(dismissDrag)
         .onReceive(player.publisher(for: \.rate)) { rate in
             if rate != 0 { hasStartedPlaying = true }
         }
