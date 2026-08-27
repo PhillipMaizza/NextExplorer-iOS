@@ -234,6 +234,171 @@ struct FilesService: Sendable {
         return formatter.string(from: date)
     }
 
+    /// `POST /api/auth/password`, confirmed against `backend/src/routes/auth.js` +
+    /// `services/users/localAuth.js`'s `changeLocalPassword`: `{ currentPassword, newPassword }`
+    /// → 204. The route is rate-limited (429) and rejects a wrong current password (401
+    /// "Current password is incorrect.") or a too-short new one (400) with a message.
+    func changeOwnPassword(serverURL: URL, currentPassword: String, newPassword: String) async throws {
+        let url = serverURL.appendingPathComponent("api/auth/password")
+        var request = Self.makeRequest(url: url, method: "POST")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try Self.encode(ChangeOwnPasswordBody(
+            currentPassword: currentPassword, newPassword: newPassword
+        ))
+        let (data, response) = try await performSend(request)
+        // Unlike every other call, a 401 here is "current password is incorrect", not a dead
+        // session — so it must reach the user as its message, not as `.sessionExpired`.
+        switch response.statusCode {
+        case 200..<300:
+            return
+        case 429:
+            throw FilesClientError.rateLimited
+        default:
+            if let message = Self.errorMessage(from: data) {
+                throw FilesClientError.serverMessage(statusCode: response.statusCode, message: message)
+            }
+            throw FilesClientError.server(statusCode: response.statusCode)
+        }
+    }
+
+    // MARK: - Admin: user management
+
+    /// `GET /api/features` — every flag section is a `{ enabled: Bool }` object; `ServerFeatures`
+    /// only pulls the ones this app acts on.
+    func serverFeatures(serverURL: URL) async throws -> ServerFeatures {
+        let url = serverURL.appendingPathComponent("api/features")
+        let request = Self.makeRequest(url: url, method: "GET")
+        return try await send(request, decoding: ServerFeatures.self)
+    }
+
+    /// `GET /api/users` (admin) — wrapped `{ users: [...] }`, each with `roles` and `authMethods`.
+    func listUsers(serverURL: URL) async throws -> [User] {
+        let url = serverURL.appendingPathComponent("api/users")
+        let request = Self.makeRequest(url: url, method: "GET")
+        return try await sendReportingMessage(request, decoding: UsersEnvelope.self).users
+    }
+
+    /// `POST /api/users` (admin) → 201 `{ user }`.
+    func createUser(serverURL: URL, request: CreateUserRequest) async throws -> User {
+        let url = serverURL.appendingPathComponent("api/users")
+        var httpRequest = Self.makeRequest(url: url, method: "POST")
+        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        httpRequest.httpBody = try Self.encode(CreateUserBody(
+            email: request.email,
+            username: request.username,
+            password: request.password,
+            displayName: request.displayName,
+            roles: request.isAdmin ? ["admin"] : []
+        ))
+        return try await sendReportingMessage(httpRequest, decoding: UserEnvelope.self).user
+    }
+
+    /// `PATCH /api/users/:id` (admin) → `{ user }`. Only the non-nil fields of `request` are sent,
+    /// matching the server's "update just what's present" behaviour.
+    func updateUser(serverURL: URL, userID: String, request: UpdateUserRequest) async throws -> User {
+        let url = serverURL.appendingPathComponent("api/users").appendingPathComponent(userID)
+        var httpRequest = Self.makeRequest(url: url, method: "PATCH")
+        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        httpRequest.httpBody = try Self.encode(UpdateUserBody(
+            email: request.email,
+            username: request.username,
+            displayName: request.displayName,
+            roles: request.roles
+        ))
+        return try await sendReportingMessage(httpRequest, decoding: UserEnvelope.self).user
+    }
+
+    /// `POST /api/users/:id/password` (admin) → 204.
+    func setUserPassword(serverURL: URL, userID: String, newPassword: String) async throws {
+        let url = serverURL.appendingPathComponent("api/users").appendingPathComponent(userID).appendingPathComponent("password")
+        var httpRequest = Self.makeRequest(url: url, method: "POST")
+        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        httpRequest.httpBody = try Self.encode(NewPasswordBody(newPassword: newPassword))
+        let (data, response) = try await performSend(httpRequest)
+        try Self.validateReportingMessage(data, response)
+    }
+
+    /// `DELETE /api/users/:id` (admin) → 204. Server rejects self-delete and last-admin delete
+    /// with a message this surfaces verbatim.
+    func deleteUser(serverURL: URL, userID: String) async throws {
+        let url = serverURL.appendingPathComponent("api/users").appendingPathComponent(userID)
+        let request = Self.makeRequest(url: url, method: "DELETE")
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
+    }
+
+    // MARK: - Admin: per-user volumes
+
+    /// `GET /api/users/:id/volumes` (admin + `USER_VOLUMES`).
+    func userVolumes(serverURL: URL, userID: String) async throws -> [UserVolume] {
+        let url = Self.userVolumesURL(serverURL: serverURL, userID: userID)
+        let request = Self.makeRequest(url: url, method: "GET")
+        return try await sendReportingMessage(request, decoding: UserVolumesEnvelope.self).volumes
+    }
+
+    /// `POST /api/users/:id/volumes` → 201 `{ volume }`.
+    func addUserVolume(serverURL: URL, userID: String, request: AddUserVolumeRequest) async throws -> UserVolume {
+        let url = Self.userVolumesURL(serverURL: serverURL, userID: userID)
+        var httpRequest = Self.makeRequest(url: url, method: "POST")
+        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        httpRequest.httpBody = try Self.encode(AddUserVolumeBody(
+            label: request.label,
+            path: request.path,
+            accessMode: request.accessMode.rawValue
+        ))
+        return try await sendReportingMessage(httpRequest, decoding: UserVolumeEnvelope.self).volume
+    }
+
+    /// `PATCH /api/users/:id/volumes/:volumeID` — the server accepts label and/or access mode
+    /// (the path itself is immutable once assigned).
+    func updateUserVolume(
+        serverURL: URL, userID: String, volumeID: String, label: String?, accessMode: ShareAccessMode
+    ) async throws -> UserVolume {
+        let url = Self.userVolumesURL(serverURL: serverURL, userID: userID).appendingPathComponent(volumeID)
+        var httpRequest = Self.makeRequest(url: url, method: "PATCH")
+        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        httpRequest.httpBody = try Self.encode(UpdateUserVolumeBody(label: label, accessMode: accessMode.rawValue))
+        return try await sendReportingMessage(httpRequest, decoding: UserVolumeEnvelope.self).volume
+    }
+
+    /// `DELETE /api/users/:id/volumes/:volumeID` → 204.
+    func removeUserVolume(serverURL: URL, userID: String, volumeID: String) async throws {
+        let url = Self.userVolumesURL(serverURL: serverURL, userID: userID).appendingPathComponent(volumeID)
+        let request = Self.makeRequest(url: url, method: "DELETE")
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
+    }
+
+    /// `GET /api/admin/browse-directories?path=` — omit `path` to start at the server's
+    /// configured volume root.
+    func browseAdminDirectories(serverURL: URL, path: String?) async throws -> AdminDirectoryListing {
+        var components = URLComponents(
+            url: serverURL.appendingPathComponent("api/admin/browse-directories"),
+            resolvingAgainstBaseURL: false
+        )
+        if let path, !path.isEmpty {
+            components?.queryItems = [URLQueryItem(name: "path", value: path)]
+        }
+        guard let url = components?.url else { throw FilesClientError.network("Bad URL") }
+        let request = Self.makeRequest(url: url, method: "GET")
+        return try await sendReportingMessage(request, decoding: AdminDirectoryListing.self)
+    }
+
+    private static func userVolumesURL(serverURL: URL, userID: String) -> URL {
+        serverURL
+            .appendingPathComponent("api/users")
+            .appendingPathComponent(userID)
+            .appendingPathComponent("volumes")
+    }
+
+    private static func encode<Body: Encodable>(_ body: Body) throws -> Data {
+        do {
+            return try JSONEncoder().encode(body)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+    }
+
     func previewFile(serverURL: URL, item: FileItem) async throws -> URL {
         let directory = Self.previewCacheDirectory(for: item, namespace: "preview")
         // RAW formats always come back as a JPEG stream (`rawPreviewService`), regardless of
@@ -532,6 +697,96 @@ struct FilesService: Sendable {
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         return request
+    }
+
+    /// Like `send`, but a non-2xx response whose body carries a message becomes
+    /// `.serverMessage` rather than a bare `.server(statusCode:)` — the admin user-management
+    /// endpoints return meaningful validation text ("Email already in use.", etc.).
+    private func sendReportingMessage<Response: Decodable>(
+        _ request: URLRequest, decoding type: Response.Type
+    ) async throws -> Response {
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
+        do {
+            return try Self.makeDecoder().decode(Response.self, from: data)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+    }
+
+    private static func validateReportingMessage(_ data: Data, _ response: HTTPURLResponse) throws {
+        switch response.statusCode {
+        case 200..<300:
+            return
+        case 401:
+            throw FilesClientError.sessionExpired
+        case 429:
+            throw FilesClientError.rateLimited
+        default:
+            if let message = errorMessage(from: data) {
+                throw FilesClientError.serverMessage(statusCode: response.statusCode, message: message)
+            }
+            throw FilesClientError.server(statusCode: response.statusCode)
+        }
+    }
+
+    /// NextExplorer's error handler wraps operational errors as `{ error: { message } }`; the
+    /// auth middleware uses a bare `{ error: "..." }` string; a few legacy routes use
+    /// `{ message }`. Accept all three.
+    private static func errorMessage(from data: Data) -> String? {
+        guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
+        if let error = object["error"] as? [String: Any], let message = error["message"] as? String {
+            return message
+        }
+        if let error = object["error"] as? String {
+            return error
+        }
+        if let message = object["message"] as? String {
+            return message
+        }
+        return nil
+    }
+
+    // MARK: Admin request/response wire types
+
+    private struct UsersEnvelope: Decodable { let users: [User] }
+    private struct UserEnvelope: Decodable { let user: User }
+    private struct UserVolumesEnvelope: Decodable { let volumes: [UserVolume] }
+    private struct UserVolumeEnvelope: Decodable { let volume: UserVolume }
+
+    private struct CreateUserBody: Encodable {
+        let email: String
+        let username: String?
+        let password: String
+        let displayName: String?
+        let roles: [String]
+    }
+
+    private struct UpdateUserBody: Encodable {
+        let email: String?
+        let username: String?
+        let displayName: String?
+        let roles: [String]?
+    }
+
+    private struct NewPasswordBody: Encodable {
+        let newPassword: String
+    }
+
+    private struct ChangeOwnPasswordBody: Encodable {
+        let currentPassword: String
+        let newPassword: String
+    }
+
+    private struct AddUserVolumeBody: Encodable {
+        let label: String
+        let path: String
+        let accessMode: String
+    }
+
+    private struct UpdateUserVolumeBody: Encodable {
+        let label: String?
+        let accessMode: String
     }
 
     /// `dateModified`/`createdAt`/`updatedAt` cross the wire as `Date.toISOString()`

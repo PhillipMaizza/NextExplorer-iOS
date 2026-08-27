@@ -21,6 +21,12 @@ private enum Constants {
 struct SettingsView: View {
     @Bindable var store: StoreOf<SettingsFeature>
 
+    /// One toast host for the whole Settings navigation stack. User Management raises success
+    /// messages from two levels down (the list and the pushed user detail); hosting the toast
+    /// here — above every `.navigationDestination` — is the only spot a bottom overlay isn't
+    /// occluded by a pushed screen, so those two views don't each need their own.
+    @State private var userManagementToast: DSToastMessage?
+
     /// Falls back to whatever the system currently resolves to until the user has
     /// explicitly overridden it, so the toggle starts in sync with the system, exactly
     /// once, rather than carrying its own separate "system" state.
@@ -102,80 +108,7 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    HStack(spacing: Constants.profileRowSpacing) {
-                        AvatarView(displayName: store.displayName, size: Constants.avatarSize)
-
-                        VStack(alignment: .leading, spacing: .space2) {
-                            Text(store.displayName).type(.body2(.bold), style: .primary(for: .label))
-                            if let email = store.user.email {
-                                Text(email).type(.body3(.regular), style: .secondary).lineLimit(1).truncationMode(.tail)
-                            }
-                        }
-
-                        Spacer()
-                    }
-                    .overlay(alignment: .topTrailing) {
-                        if store.user.isAdmin {
-                            roleTag
-                        }
-                    }
-                    .listRowSeparator(.hidden, edges: .bottom)
-
-                    if let host = store.serverURL.host {
-                        HStack(spacing: Constants.rowIconSpacing) {
-                            IconKit.server
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.secondaryDS)
-                                .frame(width: .iconSmall, height: .iconSmall)
-                                .padding(.leading, .space4)
-                            Text("Server").type(.body2(.regular), style: .primary(for: .label))
-                                .padding(.leading, .space8)
-                            Spacer()
-                            Text(host).type(.body2(.regular), style: .secondary)
-                        }
-                        .listRowSeparator(.hidden, edges: .top)
-                    }
-
-                    signOutRow
-                }
-                .listRowBackground(Color.backgroundSecondary)
-
-                Section {
-                    DSToggleRow(title: "Dark Mode", icon: IconKit.darkMode, isOn: isDarkModeOn)
-                    DSToggleRow(
-                        title: "Show Thumbnails",
-                        icon: IconKit.photo,
-                        isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
-                    )
-                    Picker(selection: thumbnailSize) {
-                        ForEach(ThumbnailSize.allCases) { size in
-                            Text(size.title).tag(size)
-                        }
-                    } label: {
-                        Label {
-                            Text("Thumbnail Size").type(.body2(.regular), style: .primary(for: .label))
-                        } icon: {
-                            IconKit.squareGrid
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.secondaryDS)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .tint(Color.secondaryDS)
-                    .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
-                    DSToggleRow(
-                        title: "Show Filename Extensions",
-                        icon: IconKit.tag,
-                        isOn: $showFilenameExtensions
-                    )
-                } header: {
-                    sectionHeader("Display")
-                }
-                .listRowBackground(Color.backgroundSecondary)
+                profileSection
 
                 Section {
                     DSToggleRow(
@@ -219,6 +152,43 @@ struct SettingsView: View {
                     sectionHeader("General")
                 }
                 .listRowBackground(Color.backgroundSecondary)
+
+                Section {
+                    DSToggleRow(title: "Dark Mode", icon: IconKit.darkMode, isOn: isDarkModeOn)
+                    DSToggleRow(
+                        title: "Show Thumbnails",
+                        icon: IconKit.photo,
+                        isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
+                    )
+                    Picker(selection: thumbnailSize) {
+                        ForEach(ThumbnailSize.allCases) { size in
+                            Text(size.title).tag(size)
+                        }
+                    } label: {
+                        Label {
+                            Text("Thumbnail Size").type(.body2(.regular), style: .primary(for: .label))
+                        } icon: {
+                            IconKit.squareGrid
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.secondaryDS)
+                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(Color.secondaryDS)
+                    .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
+                    DSToggleRow(
+                        title: "Show Filename Extensions",
+                        icon: IconKit.tag,
+                        isOn: $showFilenameExtensions
+                    )
+                } header: {
+                    sectionHeader("Display")
+                }
+                .listRowBackground(Color.backgroundSecondary)
+
+                usersSection
 
                 Section {
                     DSToggleRow(
@@ -299,6 +269,16 @@ struct SettingsView: View {
             }
             .scrollContentBackground(.hidden)
             .background(Color.backgroundPrimary)
+            .navigationDestination(
+                item: $store.scope(state: \.userManagement, action: \.userManagement)
+            ) { userManagementStore in
+                UserManagementView(store: userManagementStore)
+            }
+            .navigationDestination(
+                item: $store.scope(state: \.changePassword, action: \.changePassword)
+            ) { changePasswordStore in
+                ChangePasswordView(store: changePasswordStore)
+            }
             .navigationTitle("Settings")
             // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a
             // popover anchored to some ambient source view on the `.pad` idiom (this app
@@ -329,25 +309,153 @@ struct SettingsView: View {
             }
         }
         .tint(Color.accent)
+        .dsToast(userManagementToastBinding)
+        .onChange(of: store.userManagement?.toast) { _, toast in
+            guard let toast else { return }
+            userManagementToast = .success(toast)
+        }
+    }
+
+    private var userManagementToastBinding: Binding<DSToastMessage?> {
+        Binding(
+            get: { userManagementToast },
+            set: { newValue in
+                userManagementToast = newValue
+                if newValue == nil { store.send(.userManagement(.presented(.toastDismissed))) }
+            }
+        )
     }
 
     private func sectionHeader(_ title: String) -> some View {
         Text(title).type(.body3(.semibold), style: .secondary).textCase(.uppercase)
     }
 
-    /// Plain, centered, icon-less.
+    @ViewBuilder
+    private var usersSection: some View {
+        if store.user.isAdmin {
+            Section {
+                Button {
+                    store.send(.userManagementButtonTapped)
+                } label: {
+                    Label {
+                        HStack {
+                            Text("User Management").type(.body2(.regular), style: .primary(for: .label))
+                            Spacer()
+                            IconKit.chevronRight
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.tertiaryDS)
+                                .frame(width: .iconXSmall, height: .iconXSmall)
+                        }
+                    } icon: {
+                        IconKit.people
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(Color.secondaryDS)
+                            .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                    }
+                }
+                .buttonStyle(DSHapticButtonStyle())
+            } header: {
+                sectionHeader("Users")
+            }
+            .listRowBackground(Color.backgroundSecondary)
+        }
+    }
+
+    @ViewBuilder
+    private var profileSection: some View {
+        Section {
+            HStack(spacing: Constants.profileRowSpacing) {
+                AvatarView(displayName: store.displayName, size: Constants.avatarSize)
+
+                VStack(alignment: .leading, spacing: .space2) {
+                    Text(store.displayName).type(.body2(.bold), style: .primary(for: .label))
+                    if let email = store.user.email {
+                        Text(email).type(.body3(.regular), style: .secondary).lineLimit(1).truncationMode(.tail)
+                    }
+                }
+
+                Spacer()
+            }
+            .overlay(alignment: .topTrailing) {
+                if store.user.isAdmin {
+                    roleTag
+                }
+            }
+            .listRowSeparator(.hidden, edges: .bottom)
+
+            if let host = store.serverURL.host {
+                HStack(spacing: Constants.rowIconSpacing) {
+                    IconKit.server
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(Color.secondaryDS)
+                        .frame(width: .iconSmall, height: .iconSmall)
+                        .padding(.leading, .space4)
+                    Text("Server").type(.body2(.regular), style: .primary(for: .label))
+                        .padding(.leading, .space8)
+                    Spacer()
+                    Text(host).type(.body2(.regular), style: .secondary)
+                }
+                .listRowSeparator(.hidden, edges: .top)
+            }
+
+            changePasswordRow
+            signOutRow
+        }
+        .listRowBackground(Color.backgroundSecondary)
+    }
+
+    /// Self-service password change (`POST /api/auth/password`). No display-name editing —
+    /// the backend has no self-service profile endpoint, so an admin changes it from User
+    /// Management instead.
+    private var changePasswordRow: some View {
+        Button {
+            store.send(.changePasswordButtonTapped)
+        } label: {
+            Label {
+                HStack {
+                    Text("Change Password").type(.body2(.regular), style: .primary(for: .label))
+                    Spacer()
+                    IconKit.chevronRight
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(Color.tertiaryDS)
+                        .frame(width: .iconXSmall, height: .iconXSmall)
+                }
+            } icon: {
+                IconKit.key
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(Color.secondaryDS)
+                    .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+            }
+        }
+        .buttonStyle(DSHapticButtonStyle())
+        .disabled(store.isSigningOut)
+    }
+
+    /// Full-width row, leading-aligned like the rest of the card, error-red.
     private var signOutRow: some View {
         Button(role: .destructive) {
             store.send(.signOutButtonTapped)
         } label: {
-            HStack(spacing: Constants.rowIconSpacing) {
-                if store.isSigningOut {
-                    ProgressView().tint(Color.negative)
-                }
+            Label {
                 Text(store.isSigningOut ? "Signing Out\u{2026}" : "Sign Out")
                     .type(.body2(.semibold), style: .error)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } icon: {
+                if store.isSigningOut {
+                    ProgressView().tint(Color.negative)
+                } else {
+                    IconKit.signOut
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(Color.negative)
+                        .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                }
             }
-            .frame(maxWidth: .infinity)
         }
         .disabled(store.isSigningOut)
         .animation(.easeInOut(duration: Constants.signOutFadeDuration), value: store.isSigningOut)
