@@ -128,16 +128,24 @@ public struct SharedFeature {
             isSearching && !segmentShares.isEmpty && displayedShares.isEmpty
         }
 
-        /// What to print in a share's "Shared with" row.
-        public func sharedWithLabel(for share: Share) -> String {
-            guard share.sharingType == .users else { return "Anyone with link" }
+        /// How a share's audience renders in the "Shared with" row.
+        public enum Audience: Equatable, Sendable {
+            case anyone
+            /// Resolved recipient names plus a count of any that couldn't be named yet.
+            case users(names: [String], unnamed: Int)
+        }
+
+        public func audience(for share: Share) -> Audience {
+            guard share.sharingType == .users else { return .anyone }
             let ids = share.permittedUserIds ?? []
             let names = ids.compactMap { userNames[$0] }
-            if names.isEmpty {
-                return ids.isEmpty ? "Specific people" : "\(ids.count) \(ids.count == 1 ? "person" : "people")"
-            }
-            if names.count <= 2 { return names.joined(separator: ", ") }
-            return "\(names[0]), \(names[1]) +\(names.count - 2)"
+            return .users(names: names, unnamed: ids.count - names.count)
+        }
+
+        /// Owner display name for a "With me" share — the recipient payload only carries
+        /// `ownerId`, resolved against the shareable-users list.
+        public func sharedByLabel(for share: Share) -> String {
+            userNames[share.ownerId] ?? "Someone"
         }
     }
 

@@ -181,7 +181,8 @@ struct SharedView: View {
                     serverURL: store.serverURL,
                     isByMe: store.segment == .byMe,
                     isExpired: store.state.isExpired(share),
-                    sharedWithText: store.state.sharedWithLabel(for: share),
+                    audience: store.state.audience(for: share),
+                    sharedByText: store.state.sharedByLabel(for: share),
                     isDeleting: store.deletingIDs.contains(share.id),
                     onDelete: { store.send(.deleteTapped(share)) },
                     onCopied: { toastMessage = .success($0) }
@@ -213,7 +214,8 @@ private struct SharedLinkCard: View {
     let serverURL: URL
     let isByMe: Bool
     let isExpired: Bool
-    let sharedWithText: String
+    let audience: SharedFeature.State.Audience
+    let sharedByText: String
     let isDeleting: Bool
     let onDelete: () -> Void
     let onCopied: (String) -> Void
@@ -226,7 +228,8 @@ private struct SharedLinkCard: View {
         serverURL: URL,
         isByMe: Bool,
         isExpired: Bool,
-        sharedWithText: String,
+        audience: SharedFeature.State.Audience = .anyone,
+        sharedByText: String = "",
         isDeleting: Bool,
         startExpanded: Bool = false,
         onDelete: @escaping () -> Void,
@@ -236,7 +239,8 @@ private struct SharedLinkCard: View {
         self.serverURL = serverURL
         self.isByMe = isByMe
         self.isExpired = isExpired
-        self.sharedWithText = sharedWithText
+        self.audience = audience
+        self.sharedByText = sharedByText
         self.isDeleting = isDeleting
         self.onDelete = onDelete
         self.onCopied = onCopied
@@ -274,26 +278,29 @@ private struct SharedLinkCard: View {
         .disabled(isDeleting)
     }
 
-    /// "By me": full metadata + the direct-link mode picker + copy/delete actions.
+    private var accessIcon: Image {
+        share.accessMode == .readonly ? IconKit.lock : IconKit.lockOpen
+    }
+
+    /// "By me": full metadata + the direct-link mode picker + copy/delete actions. Web keeps
+    /// expired shares fully usable for the owner (the link just stops working server-side),
+    /// so nothing here dims or disables on expiry — the header badge is the only signal.
     private var ownerBody: some View {
         VStack(alignment: .leading, spacing: .space8) {
-            Group {
-                metaRow(IconKit.people, "Shared with", sharedWithText)
-                metaRow(IconKit.lock, "Access", share.accessMode.title)
-                metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
-                linkModeRow
-            }
-            .opacity(isExpired ? Metrics.expiredInfoOpacity : 1)
+            sharedWithRow
+            metaRow(accessIcon, "Access", share.accessMode.title)
+            metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
+            linkModeRow
 
             HStack(spacing: Metrics.actionRowSpacing) {
-                pillAction(IconKit.link, "Share link", tint: .accent, isEnabled: !isExpired) {
+                pillAction(IconKit.link, "Share link", tint: .accent, isEnabled: true) {
                     copy(shareLinkString, label: "Share link copied")
                 }
                 pillAction(
                     IconKit.copy,
                     share.isDirectory ? "Folder link" : "File link",
                     tint: .accent,
-                    isEnabled: !isExpired
+                    isEnabled: true
                 ) {
                     copy(directLinkString, label: share.isDirectory ? "Folder ZIP link copied" : "Direct file link copied")
                 }
@@ -305,16 +312,65 @@ private struct SharedLinkCard: View {
         .padding(Metrics.padding)
     }
 
-    /// "With me": read-only — no link, no mode picker, no delete. Just the access level and
-    /// the expiry, matching the web `SharedWithMeView` (which exposes no per-row actions to
-    /// recipients). The recipient payload carries no owner identity to show.
+    /// "With me": read-only — no link, no mode picker, no delete, matching the web
+    /// `SharedWithMeView`. Just who shared it, the access level, and the expiry.
     private var recipientBody: some View {
         VStack(alignment: .leading, spacing: .space8) {
-            metaRow(IconKit.lock, "Access", share.accessMode.title)
+            metaRow(IconKit.person, "Shared by", sharedByText)
+            metaRow(accessIcon, "Access", share.accessMode.title)
             metaRow(IconKit.calendar, "Expiration", expiresText, isWarning: isExpired)
         }
         .opacity(isExpired ? Metrics.expiredInfoOpacity : 1)
         .padding(Metrics.padding)
+    }
+
+    /// "Shared with" — a globe + label for `anyone`, or wrapping name chips (`+N` for any
+    /// recipients whose name isn't resolved yet).
+    @ViewBuilder
+    private var sharedWithRow: some View {
+        HStack(alignment: .top, spacing: .space8) {
+            (audienceIsAnyone ? IconKit.web : IconKit.people)
+                .resizable().scaledToFit()
+                .foregroundStyle(Color.secondaryDS)
+                .frame(width: Metrics.metaIconSize, height: Metrics.metaIconSize)
+                .padding(.top, .space2)
+            Text("Shared with").type(.body2(.regular), style: .primary(for: .label))
+            Spacer(minLength: .space8)
+            switch audience {
+            case .anyone:
+                Text("Anyone with link").type(.body2(.regular), style: .secondary)
+            case let .users(names, unnamed):
+                recipientChips(names: names, unnamed: unnamed)
+            }
+        }
+        .padding(.vertical, Metrics.rowVerticalPadding)
+    }
+
+    /// First 3 recipient names as chips; everything past that (plus any unresolved names)
+    /// collapses into a `+N`. Mirrors the web `SharedByMeView`.
+    @ViewBuilder
+    private func recipientChips(names: [String], unnamed: Int) -> some View {
+        let shown = Array(names.prefix(3))
+        let overflow = max(0, names.count - shown.count) + unnamed
+        HStack(spacing: .space4) {
+            ForEach(shown, id: \.self) { name in
+                Text(name)
+                    .type(.caption(.semibold), style: .link)
+                    .lineLimit(1)
+                    .padding(.horizontal, .space8)
+                    .padding(.vertical, Metrics.badgeVerticalPadding)
+                    .background(Capsule().fill(Color.accent.opacity(0.14)))
+            }
+            if overflow > 0 || shown.isEmpty {
+                Text(shown.isEmpty ? "Specific people" : "+\(overflow)")
+                    .type(.caption(.semibold), style: .secondary)
+            }
+        }
+    }
+
+    private var audienceIsAnyone: Bool {
+        if case .anyone = audience { return true }
+        return false
     }
 
     private var header: some View {
@@ -380,7 +436,6 @@ private struct SharedLinkCard: View {
             .tint(Color.secondaryDS)
         }
         .padding(.vertical, Metrics.rowVerticalPadding)
-        .allowsHitTesting(!isExpired)
     }
 
     /// Same font/padding as `linkModeRow` so the whole expanded block reads as one list.
@@ -418,7 +473,7 @@ private struct SharedLinkCard: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(DSHapticButtonStyle())
-//        .allowsHitTesting(isEnabled)
+        .allowsHitTesting(isEnabled)
     }
 
     private var expiresText: String {
@@ -444,7 +499,6 @@ private struct SharedLinkCard: View {
     }
 
     private func copy(_ string: String, label: String) {
-        guard !isExpired else { return }
         UIPasteboard.general.string = string
         onCopied(label)
     }
@@ -508,8 +562,8 @@ private extension Share {
     let url = URL(string: "https://cloud.phillipmaizza.com")!
     return ScrollView {
         VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(isDirectory: true), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Anyone with link", isDeleting: false, onDelete: {}, onCopied: { _ in })
-            SharedLinkCard(share: .previewCard(), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(isDirectory: true), serverURL: url, isByMe: true, isExpired: false, isDeleting: false, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(), serverURL: url, isByMe: true, isExpired: false, isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
         }
         .padding(.space16)
     }
@@ -520,8 +574,8 @@ private extension Share {
     let url = URL(string: "https://cloud.phillipmaizza.com")!
     return ScrollView {
         VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(target: .users, hasPassword: true), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Jamie Rivera, Sam Okafor, Jeremy Brown", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
-            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(86_400 * 3)), serverURL: url, isByMe: true, isExpired: false, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(target: .users, hasPassword: true), serverURL: url, isByMe: true, isExpired: false, audience: .users(names: ["Jamie Rivera", "Sam Okafor", "Jeremy Brown", "Dana Lee"], unnamed: 1), isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(86_400 * 3)), serverURL: url, isByMe: true, isExpired: false, isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
         }
         .padding(.space16)
     }
@@ -532,8 +586,8 @@ private extension Share {
     let url = URL(string: "https://cloud.phillipmaizza.com")!
     return ScrollView {
         VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(-3600)), serverURL: url, isByMe: true, isExpired: true, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
-            SharedLinkCard(share: .previewCard(sourcePath: nil), serverURL: url, isByMe: false, isExpired: false, sharedWithText: "Anyone with link", isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(-3600)), serverURL: url, isByMe: true, isExpired: true, isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
+            SharedLinkCard(share: .previewCard(sourcePath: nil), serverURL: url, isByMe: false, isExpired: false, isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
         }
         .padding(.space16)
     }
