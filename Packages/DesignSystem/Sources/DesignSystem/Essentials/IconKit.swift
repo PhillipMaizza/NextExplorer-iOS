@@ -13,6 +13,7 @@ public enum IconKit {
     public static let back = Image(systemName: "chevron.left")
     public static let envelope = Image(systemName: "envelope")
     public static let lock = Image(systemName: "lock")
+    public static let lockOpen = Image(systemName: "lock.open")
     public static let eye = Image(systemName: "eye")
     public static let eyeSlash = Image(systemName: "eye.slash")
     public static let person = Image(systemName: "person")
