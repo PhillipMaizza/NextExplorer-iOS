@@ -21,6 +21,36 @@ struct SettingsFeatureTests {
     }
 
     @Test
+    func tappingUserManagementPresentsItSeededFromTheSession() async {
+        var state = SettingsFeature.State(serverURL: serverURL, user: User(
+            id: "admin-1", username: "boss", email: "boss@example.com", roles: ["admin"]
+        ))
+        state.$preferences.withLock { $0 = UserPreferences() }
+        let store = TestStore(initialState: state) { SettingsFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.userManagementButtonTapped) {
+            $0.userManagement = UserManagementFeature.State(serverURL: self.serverURL, currentUserID: "admin-1")
+        }
+        await store.send(.userManagement(.dismiss)) {
+            $0.userManagement = nil
+        }
+    }
+
+    @Test
+    func tappingChangePasswordPresentsIt() async {
+        let store = TestStore(initialState: makeState()) { SettingsFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.changePasswordButtonTapped) {
+            $0.changePassword = ChangePasswordFeature.State(serverURL: self.serverURL)
+        }
+        await store.send(.changePassword(.dismiss)) {
+            $0.changePassword = nil
+        }
+    }
+
+    @Test
     func onAppearFetchesPreferencesSuccessfully() async {
         let store = TestStore(initialState: makeState()) {
             SettingsFeature()

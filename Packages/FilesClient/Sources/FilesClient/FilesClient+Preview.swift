@@ -87,8 +87,104 @@ extension FilesClient {
                 User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie Rivera"),
                 User(id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor")
             ]
+        },
+        changeOwnPassword: { _, _, _ in },
+        serverFeatures: { _ in ServerFeatures(isUserVolumesEnabled: true) },
+        listUsers: { _ in User.previewManagedUsers },
+        createUser: { _, request in
+            User(
+                id: UUID().uuidString,
+                username: request.username ?? request.email.components(separatedBy: "@").first ?? request.email,
+                email: request.email,
+                displayName: request.displayName,
+                roles: request.isAdmin ? ["admin"] : [],
+                createdAt: Date(),
+                updatedAt: Date(),
+                authMethods: [AuthMethod(method: "local_password")]
+            )
+        },
+        updateUser: { _, userID, request in
+            let base = User.previewManagedUsers.first { $0.id == userID } ?? User.previewManagedUsers[0]
+            return User(
+                id: base.id,
+                username: request.username ?? base.username,
+                email: request.email ?? base.email,
+                displayName: request.displayName ?? base.displayName,
+                roles: request.roles ?? base.roles,
+                emailVerified: base.emailVerified,
+                createdAt: base.createdAt,
+                updatedAt: Date(),
+                authMethods: base.authMethods
+            )
+        },
+        setUserPassword: { _, _, _ in },
+        deleteUser: { _, _ in },
+        userVolumes: { _, userID in UserVolume.previewVolumes(userID: userID) },
+        addUserVolume: { _, userID, request in
+            UserVolume(
+                id: UUID().uuidString,
+                userId: userID,
+                label: request.label,
+                path: request.path,
+                accessMode: request.accessMode,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
+        },
+        updateUserVolume: { _, userID, volumeID, label, accessMode in
+            UserVolume(
+                id: volumeID,
+                userId: userID,
+                label: label ?? "Volume",
+                path: "/srv/volumes/\(label ?? "volume")",
+                accessMode: accessMode,
+                createdAt: Date(),
+                updatedAt: Date()
+            )
+        },
+        removeUserVolume: { _, _, _ in },
+        browseAdminDirectories: { _, path in
+            let base = path ?? "/srv/volumes"
+            return AdminDirectoryListing(
+                current: base,
+                parent: base == "/srv/volumes" ? nil : "/srv/volumes",
+                directories: [
+                    AdminDirectory(name: "projects", path: base + "/projects"),
+                    AdminDirectory(name: "media", path: base + "/media"),
+                    AdminDirectory(name: "backups", path: base + "/backups")
+                ]
+            )
         }
     )
+}
+
+extension User {
+    public static let previewManagedUsers: [User] = [
+        User(
+            id: "u1", username: "admin", email: "admin@example.com", displayName: "Site Admin",
+            roles: ["admin"], emailVerified: true, createdAt: Date(timeIntervalSinceNow: -86_400 * 90),
+            updatedAt: Date(), authMethods: [AuthMethod(method: "local_password")]
+        ),
+        User(
+            id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie Rivera",
+            roles: [], emailVerified: true, createdAt: Date(timeIntervalSinceNow: -86_400 * 30),
+            updatedAt: Date(), authMethods: [AuthMethod(method: "local_password"), AuthMethod(method: "oidc", provider: "Authentik")]
+        ),
+        User(
+            id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor",
+            roles: [], emailVerified: false, createdAt: Date(timeIntervalSinceNow: -86_400 * 5),
+            updatedAt: Date(), authMethods: [AuthMethod(method: "oidc", provider: "Google")]
+        )
+    ]
+}
+
+extension UserVolume {
+    public static func previewVolumes(userID: String) -> [UserVolume] {
+        [
+            UserVolume(id: "v1", userId: userID, label: "Projects", path: "/srv/volumes/projects", accessMode: .readwrite, createdAt: Date(), updatedAt: Date()),
+            UserVolume(id: "v2", userId: userID, label: "Archive", path: "/srv/volumes/archive", accessMode: .readonly, createdAt: Date(), updatedAt: Date())
+        ]
+    }
 }
 
 extension Share {
