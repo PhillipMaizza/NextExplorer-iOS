@@ -112,10 +112,10 @@ struct StreamingPreviewView: View {
                     .padding(Constants.closeButtonInset)
             }
             .overlay(alignment: .bottomTrailing) {
-                HStack(spacing: Constants.closeButtonInset) {
-                    SystemShareButton(item: item, serverURL: serverURL)
-                    if let onShare { PreviewChipButton(icon: IconKit.shareLink, action: onShare) }
-                    if let onDownload { PreviewChipButton(icon: IconKit.download, action: onDownload) }
+                PreviewActionBar {
+                    SystemShareButton(item: item, serverURL: serverURL, tint: .white)
+                    if let onShare { PreviewChipButton(icon: IconKit.shareLink, tint: .white, action: onShare) }
+                    if let onDownload { PreviewChipButton(icon: IconKit.download, tint: .white, action: onDownload) }
                     if let onDelete { PreviewChipButton(icon: IconKit.delete, tint: .negative, action: onDelete) }
                 }
                 .padding(Constants.closeButtonInset)

@@ -3,7 +3,6 @@ import SwiftUI
 
 private enum Constants {
     static let closeButtonInset: CGFloat = .space16
-    static let actionSpacing: CGFloat = .space16
     static let contentSpacing: CGFloat = .space16
 }
 
@@ -28,14 +27,14 @@ struct FilePreviewContainerView: View {
                     .padding(Constants.closeButtonInset)
             }
             .overlay(alignment: .bottomTrailing) {
-                HStack(spacing: Constants.actionSpacing) {
-                    SystemShareButton(localFileURL: fileURL, tint: .primaryDS)
-                    if let onShareLink {
-                        PreviewChipButton(icon: IconKit.shareLink, tint: .primaryDS, action: onShareLink)
-                    }
+                PreviewActionBar {
                     // order: system share | create link | download | delete
+                    SystemShareButton(localFileURL: fileURL)
+                    if let onShareLink {
+                        PreviewChipButton(icon: IconKit.shareLink, action: onShareLink)
+                    }
                     if let onDownload {
-                        PreviewChipButton(icon: IconKit.download, tint: .primaryDS, action: onDownload)
+                        PreviewChipButton(icon: IconKit.download, action: onDownload)
                     }
                     if let onDelete {
                         PreviewChipButton(icon: IconKit.delete, tint: .negative, action: onDelete)
