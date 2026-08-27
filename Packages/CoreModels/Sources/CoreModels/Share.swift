@@ -5,26 +5,12 @@ import Foundation
 public enum ShareAccessMode: String, Codable, Sendable, CaseIterable, Hashable {
     case readonly
     case readwrite
-
-    public var title: String {
-        switch self {
-        case .readonly: "Read Only"
-        case .readwrite: "Read & Write"
-        }
-    }
 }
 
 /// Who a share is for. Mirrors the server's `sharing_type` (`['anyone', 'users']`).
 public enum ShareTarget: String, Codable, Sendable, CaseIterable, Hashable {
     case anyone
     case users
-
-    public var title: String {
-        switch self {
-        case .anyone: "Anyone with link"
-        case .users: "Specific users"
-        }
-    }
 }
 
 /// Presentation mode for a share's direct link (`?mode=`). A file streams; a folder comes
@@ -37,15 +23,6 @@ public enum DirectLinkMode: String, Codable, Sendable, CaseIterable, Hashable, I
     case download
 
     public var id: String { rawValue }
-
-    public var title: String {
-        switch self {
-        case .auto: "Auto"
-        case .inline: "View"
-        case .raw: "Raw"
-        case .download: "Download"
-        }
-    }
 }
 
 /// One row from `GET /api/shares` (shared by me) or `GET /api/shares/shared-with-me`

@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Metrics {
@@ -33,7 +34,7 @@ struct SheetCloseButton: View {
                 .frame(width: Metrics.closeIconSize, height: Metrics.closeIconSize)
         }
         .buttonStyle(DSHapticButtonStyle())
-        .accessibilityLabel("Close")
+        .accessibilityLabel(L10n.Common.close)
     }
 }
 
@@ -60,17 +61,17 @@ struct UserManagementView: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .background(Color.backgroundPrimary)
-        .navigationTitle("User Management")
+        .navigationTitle(L10n.UserManagement.navigationTitle)
         .navigationBarTitleDisplayMode(.large)
         .searchable(
             text: $store.searchQuery.sending(\.searchQueryChanged),
             placement: .navigationBarDrawer(displayMode: .always),
-            prompt: "Search users"
+            prompt: L10n.UserManagement.searchPrompt
         )
         .toolbar {
             ToolbarItem(placement: .primaryAction) {
                 Button { isSortSheetPresented = true } label: {
-                    Label { Text("Sort") } icon: { IconKit.sort.foregroundStyle(Color.accent) }
+                    Label { Text(L10n.Common.sort) } icon: { IconKit.sort.foregroundStyle(Color.accent) }
                 }
                 .tint(.accent)
                 .buttonStyle(DSHapticButtonStyle())
@@ -78,7 +79,7 @@ struct UserManagementView: View {
             }
             ToolbarItem(placement: .primaryAction) {
                 Button { store.send(.createUserTapped) } label: {
-                    Label { Text("Create User") } icon: { IconKit.plus.foregroundStyle(Color.accent) }
+                    Label { Text(L10n.UserManagement.createUser) } icon: { IconKit.plus.foregroundStyle(Color.accent) }
                 }
                 .tint(.accent)
                 .buttonStyle(DSHapticButtonStyle())
@@ -122,9 +123,9 @@ struct UserManagementView: View {
                 store.send(.refreshRequested)
             }
         } else if store.users.isEmpty {
-            EmptyStateView(icon: IconKit.people, message: "No users yet.")
+            EmptyStateView(icon: IconKit.people, message: L10n.UserManagement.emptyList)
         } else if store.isSearchWithoutResults {
-            EmptyStateView(icon: IconKit.search, message: "No users match \u{201C}\(store.searchQuery)\u{201D}.")
+            EmptyStateView(icon: IconKit.search, message: L10n.UserManagement.noSearchMatches(store.searchQuery))
         }
     }
 
@@ -183,7 +184,7 @@ private struct UserRow: View {
 /// The accent outlined "ADMIN" pill, matching the one on the Settings profile card.
 struct AdminTag: View {
     var body: some View {
-        Text("Admin".uppercased())
+        Text(L10n.UserManagement.badgeAdmin.uppercased())
             .type(.caption(.semibold), style: .link)
             .padding(.horizontal, Metrics.tagHorizontalPadding)
             .padding(.vertical, Metrics.tagVerticalPadding)
@@ -228,30 +229,30 @@ private struct CreateUserSheet: View {
                         if let error = sheet.errorMessage {
                             ErrorBanner(text: error)
                         }
-                        LabeledField("Email", error: sheet.emailError) {
-                            TextField("name@example.com", text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged))
+                        LabeledField(L10n.UserManagement.createEmailField, error: sheet.emailError) {
+                            TextField(L10n.UserManagement.createEmailPlaceholder, text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged))
                                 .keyboardType(.emailAddress)
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
                         }
-                        LabeledField("Username (optional)") {
-                            TextField("Derived from email", text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged))
+                        LabeledField(L10n.UserManagement.createUsernameField) {
+                            TextField(L10n.UserManagement.createUsernamePlaceholder, text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged))
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
                         }
-                        LabeledField("Password", error: sheet.passwordError) {
-                            SecureField("At least 6 characters", text: fieldBinding(\.password, UserManagementFeature.Action.createPasswordChanged))
+                        LabeledField(L10n.Common.password, error: sheet.passwordError) {
+                            SecureField(L10n.UserManagement.createPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: fieldBinding(\.password, UserManagementFeature.Action.createPasswordChanged))
                         }
                         DSToggleRow(
-                            title: "Grant admin access",
-                            subtitle: "Full control over files, shares and users.",
+                            title: L10n.UserManagement.createGrantAdminToggle,
+                            subtitle: L10n.UserManagement.createGrantAdminSubtitle,
                             icon: IconKit.shield,
                             isOn: Binding(
                                 get: { store.createSheet?.isAdmin ?? false },
                                 set: { store.send(.createIsAdminChanged($0)) }
                             )
                         )
-                        DSButton("Create User", style: .primary, isLoading: sheet.isSubmitting) {
+                        DSButton(L10n.UserManagement.createSubmit, style: .primary, isLoading: sheet.isSubmitting) {
                             store.send(.createSubmitTapped)
                         }
                         .disabled(!sheet.isSubmitEnabled)
@@ -262,7 +263,7 @@ private struct CreateUserSheet: View {
                 .padding(.vertical, Metrics.sheetContentSpacing)
             }
             .background(Color.backgroundPrimary)
-            .navigationTitle("Create User")
+            .navigationTitle(L10n.UserManagement.createNavigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -300,19 +301,19 @@ private struct SetPasswordSheet: View {
                             ErrorBanner(text: error)
                         }
                         Text(sheet.hasExistingPassword
-                            ? "Set a new local password for \(sheet.userLabel). Their current password stops working."
-                            : "Give \(sheet.userLabel) a local password so they can sign in without SSO.")
+                            ? L10n.UserManagement.setPasswordResetIntro(sheet.userLabel)
+                            : L10n.UserManagement.setPasswordSetIntro(sheet.userLabel))
                             .type(.body3(.regular), style: .secondary)
 
-                        LabeledField("New password", error: sheet.passwordError) {
-                            SecureField("At least 6 characters", text: Binding(
+                        LabeledField(L10n.UserManagement.setPasswordNewField, error: sheet.passwordError) {
+                            SecureField(L10n.UserManagement.setPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: Binding(
                                 get: { store.passwordSheet?.password ?? "" },
                                 set: { store.send(.passwordFieldChanged($0)) }
                             ))
                         }
 
                         DSButton(
-                            sheet.hasExistingPassword ? "Reset Password" : "Set Password",
+                            sheet.hasExistingPassword ? L10n.UserManagement.setPasswordResetTitle : L10n.UserManagement.setPasswordSetTitle,
                             style: .primary,
                             isLoading: sheet.isSubmitting
                         ) {
@@ -326,7 +327,7 @@ private struct SetPasswordSheet: View {
                 .padding(.vertical, Metrics.sheetContentSpacing)
             }
             .background(Color.backgroundPrimary)
-            .navigationTitle("Password")
+            .navigationTitle(L10n.UserManagement.setPasswordNavigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {

@@ -3,6 +3,7 @@ import CoreModels
 import DesignSystem
 import FilesClient
 import Foundation
+import Localization
 import SwiftUI
 
 @Reducer
@@ -12,8 +13,8 @@ public struct FavoritesFeature {
 
         var title: String {
             switch self {
-            case .name: "Name"
-            case .dateAdded: "Date Added"
+            case .name: L10n.Sort.name
+            case .dateAdded: L10n.Sort.dateAdded
             }
         }
 
@@ -196,9 +197,9 @@ public struct FavoritesFeature {
                 let attempted = state.selectedFavoriteIDs.count
                 state.favorites.removeAll { removedPaths.contains($0.path) }
                 if removedPaths.isEmpty, attempted > 0 {
-                    state.actionErrorMessage = "Couldn't remove \(attempted == 1 ? "that favorite" : "those favorites")."
+                    state.actionErrorMessage = attempted == 1 ? L10n.Favorites.removeFailedOne : L10n.Favorites.removeFailedMany
                 } else if removedPaths.count < attempted {
-                    state.actionErrorMessage = "Removed \(removedPaths.count) of \(attempted)."
+                    state.actionErrorMessage = L10n.Favorites.removePartial(removedPaths.count, attempted)
                 }
                 state.isSelecting = false
                 state.selectedFavoriteIDs = []

@@ -1,13 +1,14 @@
 import FilesClient
+import Localization
 
 extension FilesClientError {
     var userMessage: String {
         switch self {
-        case .sessionExpired: "Your session expired. Sign in again."
-        case .rateLimited: "Too many requests. Try again shortly."
-        case .network: "Couldn't reach the server."
-        case .decoding: "Server responded unexpectedly."
-        case let .server(statusCode): "Server error (\(statusCode))."
+        case .sessionExpired: L10n.Error.sessionExpired
+        case .rateLimited: L10n.Error.rateLimited
+        case .network: L10n.Error.network
+        case .decoding: L10n.Error.decoding
+        case let .server(statusCode): L10n.Error.server(statusCode)
         case let .serverMessage(_, message): message
         }
     }

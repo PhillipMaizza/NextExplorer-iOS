@@ -184,7 +184,19 @@ public enum L10n {
     }
     public enum Login {
         public static var emailField: String { tr("login.emailField") }  // "Email"
+        public static var errorDecoding: String { tr("login.errorDecoding") }
+        public static var errorIncomplete: String { tr("login.errorIncomplete") }  // "Sign-in didn't complete. Please try again."
+        public static var errorInvalidCredentials: String { tr("login.errorInvalidCredentials") }  // "Incorrect username or password."
+        public static var errorInvalidEmail: String { tr("login.errorInvalidEmail") }  // "Enter a valid email address."
+        public static var errorInvalidServer: String { tr("login.errorInvalidServer") }  // "Enter a valid server address."
+        public static var errorKeychain: String { tr("login.errorKeychain") }  // "Could not save your session on this device."
+        public static var errorNoLocalAuth: String { tr("login.errorNoLocalAuth") }  // "This server doesn't have username/password sign-in enabled."
+        public static var errorRateLimited: String { tr("login.errorRateLimited") }  // "Too many attempts. Please wait a few minutes and try again."
+        public static var errorSessionExpired: String { tr("login.errorSessionExpired") }  // "Your session expired. Please sign in again."
+        public static var errorUnexpectedResponse: String { tr("login.errorUnexpectedResponse") }  // "Unexpected response from server."
+        public static var errorUnreachable: String { tr("login.errorUnreachable") }
         public static var passwordField: String { tr("login.passwordField") }  // "Password"
+        public static var portHint: String { tr("login.portHint") }
         public static var serverQuestion: String { tr("login.serverQuestion") }  // "Where's your instance of NextExplorer?"
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"

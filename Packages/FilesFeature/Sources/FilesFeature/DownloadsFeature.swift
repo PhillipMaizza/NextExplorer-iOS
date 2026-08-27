@@ -2,6 +2,7 @@ import ComposableArchitecture
 import DesignSystem
 import FilesClient
 import Foundation
+import Localization
 import SwiftUI
 
 /// The "Downloads" tab: everything `LocalDownloadStore` has saved into
@@ -14,9 +15,9 @@ public struct DownloadsFeature {
 
         var title: String {
             switch self {
-            case .name: "Name"
-            case .size: "Size"
-            case .dateAdded: "Date Added"
+            case .name: L10n.Sort.name
+            case .size: L10n.Sort.size
+            case .dateAdded: L10n.Sort.dateAdded
             }
         }
 

@@ -1,4 +1,5 @@
 import Foundation
+import Localization
 
 /// User-facing date formatting choice, persisted locally (`@AppStorage("dateDisplayFormat")`)
 /// rather than through `UserPreferences`/`GET|PATCH /api/settings` — purely a client display
@@ -18,7 +19,7 @@ public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
 
     public var title: String {
         switch self {
-        case .system: "Automatic"
+        case .system: L10n.DateFormat.automatic
         case .slashMonthDayYear: "MM/DD/YYYY"
         case .slashDayMonthYear: "DD/MM/YYYY"
         case .dashYearMonthDay: "YYYY-MM-DD"
