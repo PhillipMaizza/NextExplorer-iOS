@@ -1,4 +1,5 @@
 import Foundation
+import Localization
 
 /// Where a downloaded file/folder gets saved — the user's own choice, surfaced as a
 /// Settings row. `.documents` is visible/manageable from the iOS Files app;
@@ -10,8 +11,8 @@ public enum DownloadLocation: String, CaseIterable, Identifiable, Equatable, Sen
 
     public var title: String {
         switch self {
-        case .documents: "Documents"
-        case .cache: "Cache"
+        case .documents: L10n.DownloadLocation.documents
+        case .cache: L10n.DownloadLocation.cache
         }
     }
 }

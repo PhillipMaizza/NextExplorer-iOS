@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import FilesClient
 import Foundation
+import Localization
 import Testing
 
 @testable import FilesFeature
@@ -94,7 +95,7 @@ struct CreateShareLinkFeatureTests {
         }
 
         await store.send(.createTapped) {
-            $0.errorMessage = "Pick an expiration date in the future."
+            $0.errorMessage = L10n.CreateShare.errorPastExpiration
         }
     }
 

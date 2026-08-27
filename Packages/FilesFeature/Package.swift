@@ -11,6 +11,7 @@ let package = Package(
         .package(path: "../CoreModels"),
         .package(path: "../FilesClient"),
         .package(path: "../DesignSystem"),
+        .package(path: "../Localization"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
         .package(url: "https://github.com/simonbs/TreeSitterLanguages", from: "0.1.10"),
         .package(url: "https://github.com/weichsel/ZIPFoundation", from: "0.9.19"),
@@ -27,6 +28,7 @@ let package = Package(
                 "CoreModels",
                 "FilesClient",
                 "DesignSystem",
+                "Localization",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 // Client-side archive listing (`ArchiveBrowserView`) — the server has no
                 // listing-only endpoint (`POST /api/files/zip/extract` fully unpacks to disk),

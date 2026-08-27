@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -201,7 +202,7 @@ private struct ImageGalleryPage: View {
                         case let .success(image):
                             image.resizable().scaledToFit()
                         case .failure:
-                            statusContent(message: "Couldn't load this image.")
+                            statusContent(message: L10n.Gallery.loadFailed)
                         default:
                             ProgressView()
                         }
@@ -218,7 +219,7 @@ private struct ImageGalleryPage: View {
             do {
                 fileURL = try await filesClient.previewFile(serverURL, item)
             } catch {
-                errorMessage = (error as? FilesClientError)?.userMessage ?? "Couldn't load this image."
+                errorMessage = (error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed
             }
         }
     }

@@ -1,4 +1,5 @@
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -25,7 +26,7 @@ struct EmptyStateView: View {
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
             Text(message).type(.body1(.regular), style: .secondary)
             if let retry {
-                DSButton("Try Again", style: .secondary) { retry() }
+                DSButton(L10n.Common.retry, style: .secondary) { retry() }
                     .fixedSize()
                     .padding(.top, Constants.retryTopPadding)
             }
