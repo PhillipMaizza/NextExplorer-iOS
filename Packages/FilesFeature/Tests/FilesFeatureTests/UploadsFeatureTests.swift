@@ -247,6 +247,26 @@ struct UploadsFeatureTests {
     }
 
     @Test
+    func aSessionExpiredUploadFailsTheJobAndTripsTheAppWideExpiryFlag() async {
+        @Shared(.inMemory(SessionExpiry.sharedKey)) var sessionDidExpire = false
+        $sessionDidExpire.withLock { $0 = false }
+
+        let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(self.now)
+            $0.filesClient.uploadFile = { _, _, _, _, _ in throw FilesClientError.sessionExpired }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.enqueue([pending("a.txt", id: UUID(0))]))
+        await store.receive(\.uploadResponse) {
+            $0.jobs[id: UUID(0)]?.status = .failed(FilesClientError.sessionExpired.userMessage)
+        }
+        #expect(sessionDidExpire == true)
+    }
+
+    @Test
     func clearRemovesFinishedJobs() async {
         var state = UploadsFeature.State(serverURL: serverURL)
         state.jobs = [
