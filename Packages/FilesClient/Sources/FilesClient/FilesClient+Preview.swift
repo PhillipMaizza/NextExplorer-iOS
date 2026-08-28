@@ -23,6 +23,12 @@ extension FilesClient {
             FileItem(name: newName, path: item.path, dateModified: item.dateModified, size: item.size, kind: item.kind, supportsThumbnail: item.supportsThumbnail)
         },
         deleteItems: { _, _ in },
+        transferItems: { _, items, destination, _ in
+            TransferResult(
+                destination: destination,
+                items: items.map { TransferResult.Entry(from: $0.id, to: "\(destination)/\($0.name)") }
+            )
+        },
         fetchMetadata: { _, path in
             FileMetadata(
                 path: path,

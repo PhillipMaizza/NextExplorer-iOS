@@ -1,3 +1,4 @@
+import DesignSystem
 import Markdown
 
 /// Converts Markdown to HTML for the "Render Markdown Files" setting — `swift-markdown` only
@@ -11,8 +12,44 @@ import Markdown
 /// every instance method has). A plain type-switch sidesteps that entirely.
 enum MarkdownRenderer {
     static func html(from markdown: String) -> String {
-        render(Document(parsing: markdown))
+        """
+        <!DOCTYPE html>
+        <html>
+        <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
+        <style>\(documentCSS)</style>
+        </head>
+        <body>
+        \(render(Document(parsing: markdown)))
+        </body>
+        </html>
+        """
     }
+
+    /// Without an explicit charset WebKit guesses Latin-1 for a bare fragment and mangles every
+    /// non-ASCII byte (em dashes turn into "\u{00E2}\u{20AC}\u{201D}"). The rest is just enough
+    /// to make the page readable in the app's own font (Figtree, pulled from Google Fonts by
+    /// the `<link>` in the head — falls back to the system stack offline), with sane width and
+    /// visible table borders. `body`'s `font-family` is the lowest-specificity rule in the
+    /// document, so a `<style>` block inside the Markdown source still wins the cascade.
+    private static let documentCSS = """
+    :root { color-scheme: light dark; }
+    body {
+      font-family: "\(DesignSystemFonts.familyName)", -apple-system, system-ui, sans-serif;
+      font-size: 17px; line-height: 1.5; margin: 16px; overflow-wrap: break-word;
+    }
+    pre { overflow-x: auto; padding: 12px; background: rgba(127,127,127,0.15); border-radius: 6px; }
+    code { font-family: ui-monospace, monospace; }
+    pre code { background: none; }
+    table { border-collapse: collapse; display: block; overflow-x: auto; }
+    th, td { border: 1px solid rgba(127,127,127,0.4); padding: 6px 10px; text-align: left; }
+    blockquote { margin: 0; padding-left: 12px; border-left: 3px solid rgba(127,127,127,0.4); }
+    img { max-width: 100%; height: auto; }
+    """
 
     private static func render(_ markup: Markup) -> String {
         switch markup {
@@ -42,11 +79,11 @@ enum MarkdownRenderer {
         case let node as ListItem: return "<li>\(renderChildren(node))</li>\n"
         case let node as Table: return "<table>\n\(renderChildren(node))</table>\n"
         case let node as Table.Head:
-            let cells = node.cells.map { "<th>\(render($0))</th>" }.joined()
+            let cells = Array(node.cells).map { "<th>\(render($0))</th>" }.joined()
             return "<thead><tr>\(cells)</tr></thead>\n"
         case let node as Table.Body: return "<tbody>\n\(renderChildren(node))</tbody>\n"
         case let node as Table.Row:
-            let cells = node.cells.map { "<td>\(render($0))</td>" }.joined()
+            let cells = Array(node.cells).map { "<td>\(render($0))</td>" }.joined()
             return "<tr>\(cells)</tr>\n"
         case let node as HTMLBlock: return node.rawHTML
         case let node as InlineHTML: return node.rawHTML

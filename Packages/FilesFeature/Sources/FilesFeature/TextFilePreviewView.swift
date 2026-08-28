@@ -6,11 +6,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let iconSize: CGFloat = .size20
-    static let toolbarHorizontalPadding: CGFloat = .space16
-    static let toolbarVerticalPadding: CGFloat = .space12
-    static let toolbarSpacing: CGFloat = .space16
-    static let editorPadding: CGFloat = .space16
     static let statusSpacing: CGFloat = .space16
 }
 
@@ -36,6 +31,7 @@ struct TextFilePreviewView: View {
     @State private var savedToast: DSToastMessage?
     @AppStorage("renderHTMLPages") private var renderHTMLPages = false
     @AppStorage("renderMarkdownPages") private var renderMarkdownPages = false
+    @Environment(\.openURL) private var openURL
     @Dependency(\.filesClient) private var filesClient
 
     private var isHTML: Bool {
@@ -58,12 +54,23 @@ struct TextFilePreviewView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            toolbar
-            Divider()
+        NavigationStack {
             editorBody
+                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .navigationTitle(fileName)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) { editToggleButton }
+                    if isHTML {
+                        ToolbarItem(placement: .topBarTrailing) { openInBrowserButton }
+                    }
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
+                            .accessibilityLabel(L10n.Common.close)
+                    }
+                }
         }
-        .background(Color.backgroundPrimary.ignoresSafeArea())
         .dsToast($savedToast)
         .onAppear {
             draft = content ?? ""
@@ -89,23 +96,8 @@ struct TextFilePreviewView: View {
         renderedMarkdownHTML = MarkdownRenderer.html(from: draft)
     }
 
-    private var toolbar: some View {
-        HStack(spacing: Constants.toolbarSpacing) {
-            DSCloseButton(action: onDismiss, accessibilityLabel: L10n.Common.close)
-
-            Text(fileName)
-                .type(.body1(.semibold), style: .primary(for: .label))
-                .lineLimit(1)
-                .truncationMode(.middle)
-
-            Spacer()
-
-            editToggleButton
-        }
-        .padding(.horizontal, Constants.toolbarHorizontalPadding)
-        .padding(.vertical, Constants.toolbarVerticalPadding)
-    }
-
+    /// Leading nav-bar item: toggles the Runestone editor between read-only and editable; the
+    /// checkmark state saves on tap. Hidden until there's content to edit.
     @ViewBuilder
     private var editToggleButton: some View {
         if isSaving {
@@ -113,10 +105,24 @@ struct TextFilePreviewView: View {
         } else if content != nil {
             Button(action: toggleEditing) {
                 (isEditing ? IconKit.checkmark : IconKit.rename)
-                    .resizable()
-                    .frame(width: Constants.iconSize, height: Constants.iconSize)
                     .foregroundStyle(Color.primaryDS)
             }
+            .accessibilityLabel(isEditing ? L10n.Common.save : L10n.Common.edit)
+        }
+    }
+
+    /// Trailing nav-bar item for `.html` files: hands the file's `/api/raw` URL to Safari.
+    /// The server has no rendered-HTML endpoint, so Safari shows the source (and a login page
+    /// first if the server requires auth).
+    @ViewBuilder
+    private var openInBrowserButton: some View {
+        if let url = FilesClient.rawFileURL(serverURL: serverURL, item: item) {
+            Button {
+                openURL(url)
+            } label: {
+                IconKit.web.foregroundStyle(Color.primaryDS)
+            }
+            .accessibilityLabel(L10n.Browse.actionOpenInBrowser)
         }
     }
 

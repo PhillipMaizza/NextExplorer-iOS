@@ -34,15 +34,20 @@ public struct LocalDownloadStore: Sendable {
     /// otherwise silently disappear from the Downloads tab.
     public var list: @Sendable () throws -> [LocalDownload]
     public var delete: @Sendable (_ url: URL) throws -> Void
+    /// Renames the local copy in place (same folder), returning its new URL. Local only, like
+    /// `delete` — the server file is never touched.
+    public var rename: @Sendable (_ url: URL, _ newName: String) throws -> URL
 
     public init(
         save: @escaping @Sendable (_ sourceURL: URL, _ fileName: String, _ location: DownloadLocation) throws -> URL,
         list: @escaping @Sendable () throws -> [LocalDownload],
-        delete: @escaping @Sendable (_ url: URL) throws -> Void
+        delete: @escaping @Sendable (_ url: URL) throws -> Void,
+        rename: @escaping @Sendable (_ url: URL, _ newName: String) throws -> URL
     ) {
         self.save = save
         self.list = list
         self.delete = delete
+        self.rename = rename
     }
 }
 
@@ -94,13 +99,24 @@ extension LocalDownloadStore: DependencyKey {
         },
         delete: { url in
             try FileManager.default.removeItem(at: url)
+        },
+        rename: { url, newName in
+            let fileManager = FileManager.default
+            let destination = url.deletingLastPathComponent().appendingPathComponent(newName)
+            guard destination != url else { return url }
+            if fileManager.fileExists(atPath: destination.path) {
+                throw CocoaError(.fileWriteFileExists)
+            }
+            try fileManager.moveItem(at: url, to: destination)
+            return destination
         }
     )
 
     public static let testValue = LocalDownloadStore(
         save: { _, _, _ in throw Unimplemented() },
         list: { throw Unimplemented() },
-        delete: { _ in throw Unimplemented() }
+        delete: { _ in throw Unimplemented() },
+        rename: { _, _ in throw Unimplemented() }
     )
 
     private struct Unimplemented: Error {}

@@ -27,6 +27,9 @@ private enum Constants {
     /// Content opacity at full drag progress (before release) — a slight fade under the
     /// finger on top of the shrink.
     static let draggingContentOpacityFloor: Double = 0.6
+    /// Chrome (nav bar + bottom bar + status bar + page dots) crossfade on tap. Short, to
+    /// match the Photos viewer.
+    static let controlsFadeDuration: Double = 0.22
 }
 
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
@@ -41,6 +44,7 @@ struct ImageGalleryView: View {
     /// Toolbar actions on the current image — routed back to `BrowseFeature` by the caller.
     /// `nil` hides the button (e.g. no delete permission).
     private let onShare: ((FileItem) -> Void)?
+    private let onRename: ((FileItem) -> Void)?
     private let onDownload: ((FileItem) -> Void)?
     private let onDelete: ((FileItem) -> Void)?
 
@@ -51,6 +55,12 @@ struct ImageGalleryView: View {
     /// Set once a drag crosses the dismiss threshold: fades content + background to 0 while
     /// it flies off, so the fullScreenCover's own slide-out is never seen.
     @State private var isDismissing = false
+    /// Single-tap toggles the nav bar + bottom action bar + system overlays, like the Photos
+    /// app's full-screen viewer.
+    @State private var areControlsHidden = false
+    /// True while the current page's image is magnified — suspends swipe-to-dismiss so
+    /// panning a zoomed image doesn't close the gallery. Reset on every page change.
+    @State private var isZoomed = false
 
     init(
         items: [FileItem],
@@ -58,6 +68,7 @@ struct ImageGalleryView: View {
         serverURL: URL,
         onDismiss: @escaping () -> Void,
         onShare: ((FileItem) -> Void)? = nil,
+        onRename: ((FileItem) -> Void)? = nil,
         onDownload: ((FileItem) -> Void)? = nil,
         onDelete: ((FileItem) -> Void)? = nil
     ) {
@@ -65,6 +76,7 @@ struct ImageGalleryView: View {
         self.serverURL = serverURL
         self.onDismiss = onDismiss
         self.onShare = onShare
+        self.onRename = onRename
         self.onDownload = onDownload
         self.onDelete = onDelete
         self._selection = State(initialValue: initialItem.id)
@@ -103,30 +115,44 @@ struct ImageGalleryView: View {
                     .opacity(backgroundOpacity)
                     .ignoresSafeArea()
 
-                // Bleeds under the status bar / transparent nav bar at the top, but keeps its
-                // bottom inset so the page dots ride above the toolbar instead of tucking
-                // behind it.
+                // Full-bleed on every edge: the bars float over the image, so toggling them
+                // never resizes or reflows the content — the image stays perfectly still
+                // while the chrome fades, matching the Photos viewer.
                 TabView(selection: $selection) {
                     ForEach(items) { item in
-                        ImageGalleryPage(item: item, serverURL: serverURL)
+                        ImageGalleryPage(item: item, serverURL: serverURL, onZoomChange: { isZoomed = $0 })
                             .tag(item.id)
                     }
                 }
-                .tabViewStyle(.page(indexDisplayMode: items.count > 1 ? .always : .never))
-                .ignoresSafeArea(.container, edges: .top)
+                .tabViewStyle(.page(indexDisplayMode: items.count > 1 && !areControlsHidden ? .always : .never))
+                .ignoresSafeArea()
                 .scaleEffect(dragScale)
                 .offset(y: dragOffset)
                 .opacity(contentOpacity)
+            }
+            .onChange(of: selection) { _, _ in isZoomed = false }
+            .contentShape(Rectangle())
+            // A short fade, nothing more. The earlier lag was this animation fighting the
+            // content reflow when the bars resized the image — now that the image is
+            // full-bleed and never moves, only the chrome itself crossfades.
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: Constants.controlsFadeDuration)) {
+                    areControlsHidden.toggle()
+                }
             }
             .simultaneousGesture(dismissDrag)
             .previewChrome(
                 title: currentName,
                 systemShare: currentItem.map { .remote($0, serverURL: serverURL) } ?? .unavailable,
                 onShareLink: currentItemAction(onShare),
+                onRename: currentItemAction(onRename),
                 onDownload: currentItemAction(onDownload),
                 onDelete: currentItemAction(onDelete),
                 onClose: onDismiss
             )
+            .toolbar(areControlsHidden ? .hidden : .visible, for: .navigationBar)
+            .toolbar(areControlsHidden ? .hidden : .visible, for: .bottomBar)
+            .statusBarHidden(areControlsHidden)
         }
         .onAppear { OrientationLock.shared.unlock() }
         .onDisappear { OrientationLock.shared.lock() }
@@ -144,14 +170,14 @@ struct ImageGalleryView: View {
     private var dismissDrag: some Gesture {
         DragGesture(minimumDistance: Constants.dragMinimumDistance)
             .onChanged { value in
-                guard !isDismissing, abs(value.translation.height) > abs(value.translation.width) else {
+                guard !isZoomed, !isDismissing, abs(value.translation.height) > abs(value.translation.width) else {
                     dragOffset = 0
                     return
                 }
                 dragOffset = value.translation.height
             }
             .onEnded { value in
-                guard abs(value.translation.height) > abs(value.translation.width) else {
+                guard !isZoomed, abs(value.translation.height) > abs(value.translation.width) else {
                     dragOffset = 0
                     return
                 }
@@ -184,6 +210,7 @@ struct ImageGalleryView: View {
 private struct ImageGalleryPage: View {
     let item: FileItem
     let serverURL: URL
+    var onZoomChange: (Bool) -> Void = { _ in }
 
     @State private var fileURL: URL?
     @State private var errorMessage: String?
@@ -195,12 +222,12 @@ private struct ImageGalleryPage: View {
                 // GIFs play their real animation via `AnimatedImageView` — `AsyncImage` only
                 // ever shows a GIF's first frame, no animation at all.
                 if item.kind.lowercased() == "gif" {
-                    AnimatedImageView(fileURL: fileURL)
+                    ZoomableScrollView(onZoomChange: onZoomChange) { AnimatedImageView(fileURL: fileURL) }
                 } else {
                     AsyncImage(url: fileURL) { phase in
                         switch phase {
                         case let .success(image):
-                            image.resizable().scaledToFit()
+                            ZoomableScrollView(onZoomChange: onZoomChange) { image.resizable().scaledToFit() }
                         case .failure:
                             statusContent(message: L10n.Gallery.loadFailed)
                         default:

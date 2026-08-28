@@ -4,13 +4,16 @@
 # ---- common ----
 common.cancel	Cancel
 common.save	Save
+common.edit	Edit
 common.retry	Try Again
 common.delete	Delete
 common.remove	Remove
+common.clear	Clear
 common.done	Done
 common.ok	OK
 common.logOut	Log Out
 common.close	Close
+common.back	Back
 common.share	Share
 common.download	Download
 common.sort	Sort
@@ -104,6 +107,33 @@ browse.downloadSavedCountTo	Saved %1$lld of %2$lld items to %3$@
 browse.downloadSavedAllTo	Saved %1$lld items to %2$@
 browse.downloadBulkFailed	Couldn't save these items to your device.
 
+browse.actionCopy	Copy
+browse.destinationPickerMoveTitle	Move to…
+browse.destinationPickerConfirmMove	Move Here
+browse.destinationPickerNoFolders	No folders here
+browse.destinationPickerLoadFailed	Couldn't load folders.
+browse.actionMove	Move
+browse.actionPaste	Paste
+browse.actionPasteCount	Paste %lld items
+browse.actionPasteHere	Paste here
+browse.actionClearClipboard	Clear clipboard
+browse.clipboardMoveCount	%lld to move
+browse.clipboardCopyCount	%lld to copy
+browse.clipboardCopiedOne	%@ copied
+browse.clipboardCopiedMany	%lld items copied
+browse.progressMoving	Moving…
+browse.progressCopying	Copying…
+browse.transferMoved	Moved %lld items
+browse.transferCopied	Copied %lld items
+browse.transferMovedWithSkipped	Moved %1$lld items, skipped %2$lld
+browse.transferCopiedWithSkipped	Copied %1$lld items, skipped %2$lld
+browse.transferConflictTitle	Replace items?
+browse.transferConflictMessageOne	"%@" already exists in this folder.
+browse.transferConflictMessageMany	%lld items already exist in this folder.
+browse.transferConflictReplace	Replace
+browse.transferConflictKeepBoth	Keep Both
+browse.actionOpenInBrowser	Open in Browser
+
 # ---- favorites ----
 favorites.navigationTitle	Favorites
 favorites.emptyList	Star folders in Browse to see them here.
@@ -194,6 +224,8 @@ settings.toggleDarkMode	Dark Mode
 settings.toggleShowThumbnails	Show Thumbnails
 settings.toggleShowExtensions	Show Filename Extensions
 settings.toggleRemoveArchives	Remove Archives After Download
+settings.toggleKeepClipboard	Keep Items After Paste
+settings.toggleKeepClipboardSubtitle	Copied items stay ready to paste into another folder. Moved items always clear.
 settings.rowDateFormat	Date Format
 settings.rowThumbnailSize	Thumbnail Size
 settings.rowRemoveAllDownloads	Remove All Downloads
@@ -354,6 +386,7 @@ previewToolbar.createShareLink	Create share link
 previewToolbar.download	Download
 previewToolbar.delete	Delete
 previewToolbar.share	Share
+previewToolbar.rename	Rename
 
 # ---- login ----
 login.serverQuestion	Where's your instance of NextExplorer?

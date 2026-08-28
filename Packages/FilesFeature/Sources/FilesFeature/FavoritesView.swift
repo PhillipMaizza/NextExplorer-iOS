@@ -287,12 +287,14 @@ struct FavoritesView: View {
                 }
                 .swipeActions(edge: .trailing) {
                     if !store.isSelecting {
-                        Button(role: .destructive) {
+                        // Unfavoriting doesn't touch the folder itself, so the swipe reads in
+                        // accent rather than destructive red.
+                        Button {
                             store.send(.removeTapped(favorite))
                         } label: {
                             IconKit.unfavorite
                         }
-                        .tint(.negative)
+                        .tint(.accent)
                     }
                 }
                 .listRowSeparator(favorite.id == store.displayedFavorites.first?.id ? .hidden : .visible, edges: .top)

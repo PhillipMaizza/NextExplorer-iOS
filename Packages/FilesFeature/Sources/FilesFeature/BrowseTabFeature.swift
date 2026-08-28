@@ -50,6 +50,10 @@ public struct BrowseTabFeature {
             case .root(.delegate(.favoritesChanged)):
                 return .send(.delegate(.favoritesChanged))
 
+            case .root(.delegate(.directoryContentsChanged)),
+                 .path(.element(id: _, action: .delegate(.directoryContentsChanged))):
+                return .send(.syncPathStack)
+
             case .root(.delegate(.openDownloadsTapped)):
                 return .send(.delegate(.openDownloadsTapped))
 
