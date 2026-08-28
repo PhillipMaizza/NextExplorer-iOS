@@ -398,7 +398,7 @@ private struct VolumeAssignSheet: View {
                         }
 
                         VStack(alignment: .leading, spacing: .space4) {
-                            Text(L10n.UserDetail.volumeSheetAccessMode).type(.body3(.semibold), style: .secondary)
+                            DSFieldLabel(L10n.UserDetail.volumeSheetAccessMode)
                             DSSegmentedControl(
                                 options: ShareAccessMode.allCases,
                                 selection: Binding(
@@ -410,7 +410,7 @@ private struct VolumeAssignSheet: View {
                         }
 
                         VStack(alignment: .leading, spacing: .space4) {
-                            Text(L10n.UserDetail.volumeSheetDirectory).type(.body3(.semibold), style: .secondary)
+                            DSFieldLabel(L10n.UserDetail.volumeSheetDirectory)
                             if sheet.isEditing {
                                 Text(sheet.selectedPath)
                                     .type(.body2(.regular))

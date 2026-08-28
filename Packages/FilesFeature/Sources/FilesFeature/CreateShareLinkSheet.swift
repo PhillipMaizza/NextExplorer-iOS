@@ -308,7 +308,7 @@ struct CreateShareLinkSheet: View {
 
     private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-            Text(title).type(.body2(.semibold), style: .primary(for: .label))
+            DSFieldLabel(title)
             content()
         }
     }

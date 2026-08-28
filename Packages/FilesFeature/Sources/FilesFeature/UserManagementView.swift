@@ -355,9 +355,7 @@ struct LabeledField<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: .space4) {
-            Text(title)
-                .type(.body3(.semibold), style: .secondary)
-                .textCase(.uppercase)
+            DSFieldLabel(title)
             content
             if let error {
                 Text(error).type(.caption(.regular), style: .error)

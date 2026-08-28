@@ -54,6 +54,23 @@ public struct DSFieldContainer<Content: View>: View {
     }
 }
 
+/// The label above a form field — small, semibold, uppercase, `secondaryDS` — so every
+/// labelled field across the app reads the same. `DSFieldContainer` on the login screen keeps
+/// its own larger label by design.
+public struct DSFieldLabel: View {
+    private let text: String
+
+    public init(_ text: String) {
+        self.text = text
+    }
+
+    public var body: some View {
+        Text(text)
+            .type(.body3(.semibold), style: .secondary)
+            .textCase(.uppercase)
+    }
+}
+
 /// The standard single line text field: `.body2` text in `primaryDS` inside the shared
 /// `roundedFieldStyle()` box (border, `.radiusControl`, 48pt). Keyboard type,
 /// autocapitalization, submit label, content type and the rest still propagate from the call
@@ -125,18 +142,23 @@ public struct DSSecureField: View {
 
         var body: some View {
             VStack(alignment: .leading, spacing: .space16) {
-                Text("Empty").type(.body3(.semibold), style: .secondary)
-                DSTextField("Folder name", text: $name)
-
-                Text("Filled").type(.body3(.semibold), style: .secondary)
-                DSTextField("Label", text: $filled)
-
-                Text("Focused").type(.body3(.semibold), style: .secondary)
-                DSTextField("Search", text: $name, focused: $isFocused)
-                    .task { isFocused = true }
-
-                Text("Secure").type(.body3(.semibold), style: .secondary)
-                DSSecureField("Password", text: $secret)
+                VStack(alignment: .leading, spacing: .space4) {
+                    DSFieldLabel("Folder name")
+                    DSTextField("Folder name", text: $name)
+                }
+                VStack(alignment: .leading, spacing: .space4) {
+                    DSFieldLabel("Label")
+                    DSTextField("Label", text: $filled)
+                }
+                VStack(alignment: .leading, spacing: .space4) {
+                    DSFieldLabel("Search")
+                    DSTextField("Search", text: $name, focused: $isFocused)
+                        .task { isFocused = true }
+                }
+                VStack(alignment: .leading, spacing: .space4) {
+                    DSFieldLabel("Password")
+                    DSSecureField("Password", text: $secret)
+                }
             }
             .padding(.space24)
         }
