@@ -28,7 +28,8 @@ struct UploadReviewFeatureTests {
             },
             stagePhotos: { _ in AsyncStream<PickedFile> { $0.finish() } },
             stageCameraCapture: { _ in nil },
-            discard: { urls in discarded.withValue { $0.append(contentsOf: urls) } }
+            discard: { urls in discarded.withValue { $0.append(contentsOf: urls) } },
+            sweepStale: {}
         )
     }
 

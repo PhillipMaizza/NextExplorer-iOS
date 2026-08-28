@@ -29,17 +29,22 @@ public struct UploadStagingClient: Sendable {
     public var stagePhotos: @Sendable (_ items: [PhotosPickerItem]) -> AsyncStream<PickedFile>
     public var stageCameraCapture: @Sendable (_ url: URL) async -> PickedFile?
     public var discard: @Sendable (_ urls: [URL]) async -> Void
+    /// Deletes staged files old enough that no queue or review sheet can still need them —
+    /// the catch all for a temp file orphaned by a staging run cancelled mid copy.
+    public var sweepStale: @Sendable () async -> Void
 
     public init(
         stageDocuments: @escaping @Sendable (_ urls: [URL]) -> AsyncStream<PickedFile>,
         stagePhotos: @escaping @Sendable (_ items: [PhotosPickerItem]) -> AsyncStream<PickedFile>,
         stageCameraCapture: @escaping @Sendable (_ url: URL) async -> PickedFile?,
-        discard: @escaping @Sendable (_ urls: [URL]) async -> Void
+        discard: @escaping @Sendable (_ urls: [URL]) async -> Void,
+        sweepStale: @escaping @Sendable () async -> Void
     ) {
         self.stageDocuments = stageDocuments
         self.stagePhotos = stagePhotos
         self.stageCameraCapture = stageCameraCapture
         self.discard = discard
+        self.sweepStale = sweepStale
     }
 }
 
@@ -104,17 +109,35 @@ extension UploadStagingClient: DependencyKey {
             for url in urls {
                 try? FileManager.default.removeItem(at: url)
             }
+        },
+        sweepStale: {
+            let cutoff = Date().addingTimeInterval(-staleStagingAge)
+            let directory = UploadStagingLocation.directory
+            let entries = (try? FileManager.default.contentsOfDirectory(
+                at: directory, includingPropertiesForKeys: [.contentModificationDateKey], options: []
+            )) ?? []
+            for url in entries {
+                let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+                if let modified, modified < cutoff {
+                    try? FileManager.default.removeItem(at: url)
+                }
+            }
         }
     )
 
-    /// Benign no op default: staging yields nothing, `discard` is a no op. Suites that exercise
-    /// staging behaviour override `stageDocuments` / `stagePhotos` with a stub that yields
-    /// known `PickedFile`s.
+    /// Files older than this in `UploadStagingLocation` cannot belong to a live upload or an
+    /// open review sheet, so `sweepStale` deletes them.
+    private static let staleStagingAge: TimeInterval = 24 * 60 * 60
+
+    /// Benign no op default: staging yields nothing, `discard` / `sweepStale` are no ops.
+    /// Suites that exercise staging behaviour override `stageDocuments` / `stagePhotos` with a
+    /// stub that yields known `PickedFile`s.
     public static let testValue = UploadStagingClient(
         stageDocuments: { _ in AsyncStream<PickedFile> { $0.finish() } },
         stagePhotos: { _ in AsyncStream<PickedFile> { $0.finish() } },
         stageCameraCapture: { _ in nil },
-        discard: { _ in }
+        discard: { _ in },
+        sweepStale: {}
     )
 
     public static let previewValue = testValue
