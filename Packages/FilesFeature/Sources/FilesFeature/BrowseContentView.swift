@@ -1135,21 +1135,70 @@ struct BrowseContentView: View {
     }
 }
 
-#Preview("BrowseContentView") {
-    NavigationStack {
-        BrowseContentView(
-            store: Store(
-                initialState: BrowseFeature.State(
-                    serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-                    directoryPath: "",
-                    title: L10n.Browse.navigationTitle
-                )
-            ) {
-                BrowseFeature()
-            } withDependencies: {
-                $0.filesClient = .previewValue
-            }
-        )
-        .navigationTitle(L10n.Browse.navigationTitle)
+private func browsePreview(
+    directoryPath: String = "Documents",
+    configureClient: (inout FilesClient) -> Void = { _ in },
+    mutateState: (inout BrowseFeature.State) -> Void = { _ in }
+) -> some View {
+    var state = BrowseFeature.State(
+        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+        directoryPath: directoryPath,
+        title: L10n.Browse.navigationTitle
+    )
+    mutateState(&state)
+    var client = FilesClient.previewValue
+    configureClient(&client)
+    let store = Store(initialState: state) {
+        BrowseFeature()
+    } withDependencies: {
+        $0.filesClient = client
     }
+    return NavigationStack {
+        BrowseContentView(store: store)
+            .navigationTitle(L10n.Browse.navigationTitle)
+    }
+}
+
+private let browsePreviewItems: [FileItem] = [
+    FileItem(name: "Projects", path: "Documents", dateModified: Date(), size: 0, kind: "directory"),
+    FileItem(name: "budget.xlsx", path: "Documents", dateModified: Date(), size: 44_000, kind: "xlsx"),
+    FileItem(name: "notes.txt", path: "Documents", dateModified: Date(), size: 1_200, kind: "txt"),
+    FileItem(name: "cover.jpg", path: "Documents", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+]
+
+private let browsePreviewEmptyAccess = FileAccess(
+    canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true
+)
+
+#Preview("Browse — content") {
+    browsePreview(mutateState: { $0.items = IdentifiedArray(uniqueElements: browsePreviewItems) })
+}
+
+#Preview("Browse — loading") {
+    browsePreview(mutateState: { $0.isLoading = true })
+}
+
+#Preview("Browse — empty folder") {
+    browsePreview(
+        configureClient: { $0.browse = { _, path in BrowseResult(items: [], access: browsePreviewEmptyAccess, path: path) } }
+    )
+}
+
+#Preview("Browse — error") {
+    browsePreview(mutateState: { $0.errorMessage = L10n.EmptyState.loadFailed })
+}
+
+#Preview("Browse — no search results") {
+    browsePreview(mutateState: {
+        $0.searchQuery = "vacation"
+        $0.searchResults = []
+    })
+}
+
+#Preview("Browse — searching everywhere") {
+    browsePreview(mutateState: {
+        $0.searchQuery = "vacation"
+        $0.searchScope = .everywhere
+        $0.isSearchingEverywhere = true
+    })
 }
