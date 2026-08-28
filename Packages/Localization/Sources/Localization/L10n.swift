@@ -346,6 +346,7 @@ public enum L10n {
         public static var small: String { tr("thumbnailSize.small") }  // "Small"
     }
     public enum Uploads {
+        public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo"
         public static var actionUploadFromFiles: String { tr("uploads.actionUploadFromFiles") }  // "Upload from Files"
         public static var actionUploadFromPhotos: String { tr("uploads.actionUploadFromPhotos") }  // "Upload from Photos"
         public static func barTitleMany(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.barTitleMany", a0, a1) }
@@ -355,6 +356,8 @@ public enum L10n {
         public static var complete: String { tr("uploads.complete") }  // "Upload complete"
         public static func completeMany(_ a0: CVarArg) -> String { tr("uploads.completeMany", a0) }
         public static func completeWithFailures(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.completeWithFailures", a0, a1) }
+        public static var destinationConfirm: String { tr("uploads.destinationConfirm") }  // "Upload here"
+        public static var destinationTitle: String { tr("uploads.destinationTitle") }  // "Upload to…"
         public static var emptyList: String { tr("uploads.emptyList") }  // "No uploads yet."
         public static var failedGeneric: String { tr("uploads.failedGeneric") }  // "Couldn't upload this file."
         public static var menuTitle: String { tr("uploads.menuTitle") }  // "Upload"

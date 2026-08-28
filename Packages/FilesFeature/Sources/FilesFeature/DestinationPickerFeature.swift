@@ -4,10 +4,10 @@ import FilesClient
 import Foundation
 import Localization
 
-/// The modal folder chooser presented for "Move". Navigates the same `GET /api/browse` tree
-/// `BrowseFeature` uses, folders only, in place. It never performs the move itself:
-/// confirming hands the chosen path back to `BrowseFeature` via
-/// `delegate(.confirmed(destination:))`, which owns the transfer effect.
+/// The modal folder chooser presented for "Move" and "Upload". Navigates the same
+/// `GET /api/browse` tree `BrowseFeature` uses, folders only, in place. It never performs the
+/// action itself: confirming hands the chosen path back to `BrowseFeature` via
+/// `delegate(.confirmed(destination:))`, which owns the transfer / upload effect.
 @Reducer
 public struct DestinationPickerFeature {
     private enum Constants {
@@ -15,15 +15,20 @@ public struct DestinationPickerFeature {
         static let searchLimit = 50
     }
 
+    public enum Purpose: Equatable, Sendable { case move, upload }
+
     @ObservableState
     public struct State: Equatable, Sendable {
         public var serverURL: URL
-        /// The items being moved. Held so their current parents / own paths can be ruled out
-        /// as destinations.
+        public var purpose: Purpose
+        /// The items being moved (empty for `.upload`). Held so their current parents / own
+        /// paths can be ruled out as move destinations.
         public var items: [FileItem]
         /// The folder currently shown. `""` is the root location list.
         public var directoryPath: String
         public var folders: IdentifiedArrayOf<FileItem> = []
+        /// Access of the folder currently shown — gates "Upload here".
+        public var currentAccess: FileAccess?
         public var isLoading = false
         public var errorMessage: String?
         /// Searches folders recursively under `directoryPath` (`/api/search`, directories
@@ -36,6 +41,7 @@ public struct DestinationPickerFeature {
 
         public init(serverURL: URL, items: [FileItem]) {
             self.serverURL = serverURL
+            self.purpose = .move
             self.items = items
             // Start in the folder the items already sit in, so the common case (moving into a
             // sibling or a nearby folder) opens right where the user is, with the breadcrumb
@@ -43,11 +49,23 @@ public struct DestinationPickerFeature {
             self.directoryPath = items.first?.path ?? ""
         }
 
-        /// Whether "Move Here" is allowed for the folder currently shown — the same rule the
-        /// Paste action uses (`FileClipboard.canPaste`): never the root, a folder the items
-        /// already sit in, or a folder equal to / nested inside a staged item.
+        public init(serverURL: URL, uploadStartingAt startPath: String) {
+            self.serverURL = serverURL
+            self.purpose = .upload
+            self.items = []
+            self.directoryPath = startPath
+        }
+
+        /// Whether the trailing confirm button is enabled for the folder currently shown.
+        /// Move: `FileClipboard.canPaste` rules (never root, never the item's own parent or a
+        /// folder nested in a staged item). Upload: any non-root folder the user can upload to.
         public var canConfirm: Bool {
-            FileClipboard(items: items, operation: .move).canPaste(into: directoryPath, canWrite: true)
+            switch purpose {
+            case .move:
+                return FileClipboard(items: items, operation: .move).canPaste(into: directoryPath, canWrite: true)
+            case .upload:
+                return !directoryPath.isEmpty && (currentAccess?.canUpload ?? true)
+            }
         }
     }
 
@@ -91,6 +109,7 @@ public struct DestinationPickerFeature {
             case let .foldersResponse(.success(result)):
                 state.isLoading = false
                 state.errorMessage = nil
+                state.currentAccess = result.access
                 state.folders = IdentifiedArray(
                     uniqueElements: BrowseFeature.sortedAlphabetically(result.items.filter(\.isDirectory))
                 )
