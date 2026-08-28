@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import FilesClient
 import Foundation
+import Localization
 import Testing
 
 @testable import FilesFeature
@@ -212,6 +213,77 @@ struct BrowseFeatureTests {
             $0.isLoadingTextContent = false
             $0.textContent = "hello world"
         }
+    }
+
+    @Test
+    func rowTappedOnAGoogleDriveStubOpensItsLinkInsteadOfPreviewing() async {
+        let serverURL = URL(string: "https://example.com")!
+        let stub = FileItem(name: "Budget.gsheet", path: "", dateModified: Date(), size: 120, kind: "gsheet")
+        let opened = LockIsolated<URL?>(nil)
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.fetchTextContent = { _, _ in
+                #"{"url": "https://docs.google.com/spreadsheets/d/ABC/edit"}"#
+            }
+            $0.openURL = .init { url in opened.setValue(url); return true }
+        }
+
+        await store.send(.rowTapped(stub))
+        await store.receive(\.googleDocsPointerResponse)
+
+        #expect(store.state.previewItem == nil)
+        #expect(opened.value?.absoluteString == "https://docs.google.com/spreadsheets/d/ABC/edit")
+    }
+
+    @Test
+    func rowTappedOnAnUnreadableGoogleDriveStubFallsBackToTheTextViewer() async {
+        let serverURL = URL(string: "https://example.com")!
+        let stub = FileItem(name: "broken.gdoc", path: "", dateModified: Date(), size: 5, kind: "gdoc")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.fetchTextContent = { _, _ in "not json" }
+            $0.openURL = .init { _ in true }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.rowTapped(stub))
+        await store.receive(\.googleDocsPointerResponse) {
+            $0.previewItem = stub
+            $0.isLoadingTextContent = true
+        }
+        await store.receive(\.textContentResponse.success)
+    }
+
+    @Test
+    func openInBrowserHandsTheRawFileURLToSafari() async {
+        let serverURL = URL(string: "https://example.com")!
+        let page = FileItem(name: "index.html", path: "site", dateModified: Date(), size: 40, kind: "html")
+        let opened = LockIsolated<URL?>(nil)
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "site", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.openURL = .init { url in opened.setValue(url); return true }
+        }
+
+        await store.send(.openInBrowserTapped(page))
+        #expect(opened.value == URL(string: "https://example.com/api/raw?path=site/index.html"))
+        #expect(store.state.previewItem == nil)
+    }
+
+    @Test
+    func openInBrowserIsIgnoredForNonHTMLFiles() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 4, kind: "txt")
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+
+        await store.send(.openInBrowserTapped(file))
     }
 
     @Test
@@ -1902,5 +1974,435 @@ struct BrowseFeatureDisplayedItemsTests {
         state.searchResults = []
 
         #expect(state.displayedSearchResults?.isEmpty == true)
+    }
+}
+
+// MARK: - Copy / Move / Paste
+
+@MainActor
+@Suite
+struct BrowseFeatureTransferTests {
+    private let serverURL = URL(string: "https://example.com")!
+
+    private nonisolated func writableAccess() -> FileAccess {
+        FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
+    }
+
+    private func makeState(directoryPath: String = "Documents", access: FileAccess? = nil) -> BrowseFeature.State {
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: directoryPath, title: "Docs")
+        state.access = access ?? writableAccess()
+        state.$clipboard.withLock { $0 = nil }
+        return state
+    }
+
+    private nonisolated func item(_ name: String, path: String = "Inbox") -> FileItem {
+        FileItem(name: name, path: path, dateModified: Date(timeIntervalSince1970: 1), size: 0, kind: "txt")
+    }
+
+    private nonisolated func result(destination: String, moved: Int, skipped: Int = 0) -> TransferResult {
+        var entries: [TransferResult.Entry] = []
+        for i in 0..<moved { entries.append(.init(from: "Inbox/f\(i)", to: "\(destination)/f\(i)")) }
+        for i in 0..<skipped { entries.append(.init(from: "Inbox/s\(i)", to: "Inbox/s\(i)", skipped: true)) }
+        return TransferResult(destination: destination, items: entries)
+    }
+
+    @Test
+    func copyTappedStagesTheItemAndConfirmsWithAToast() async {
+        let file = item("a.txt")
+        let store = TestStore(initialState: makeState()) { BrowseFeature() }
+
+        await store.send(.copyTapped(file)) {
+            $0.$clipboard.withLock { $0 = FileClipboard(items: [file], operation: .copy) }
+            $0.clipboardStagedMessage = L10n.Browse.clipboardCopiedOne("a.txt")
+        }
+    }
+
+    @Test
+    func moveTappedPresentsTheDestinationPicker() async {
+        let file = item("a.txt")
+        let store = TestStore(initialState: makeState()) { BrowseFeature() }
+
+        await store.send(.moveTapped(file)) {
+            $0.destinationPicker = DestinationPickerFeature.State(serverURL: self.serverURL, items: [file])
+        }
+    }
+
+    @Test
+    func bulkCopyStagesTheSelectionWithACountToastAndExitsSelectMode() async {
+        let a = item("a.txt", path: "Documents")
+        let b = item("b.txt", path: "Documents")
+        var state = makeState()
+        state.items = [a, b]
+        state.isSelecting = true
+        state.selectedItemIDs = [a.id, b.id]
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.bulkCopyTapped) {
+            $0.$clipboard.withLock { $0 = FileClipboard(items: [a, b], operation: .copy) }
+            $0.clipboardStagedMessage = L10n.Browse.clipboardCopiedMany(2)
+            $0.isSelecting = false
+            $0.selectedItemIDs = []
+        }
+    }
+
+    @Test
+    func bulkMovePresentsThePickerWithTheSelectionAndExitsSelectMode() async {
+        let a = item("a.txt", path: "Documents")
+        let b = item("b.txt", path: "Documents")
+        var state = makeState()
+        state.items = [a, b]
+        state.isSelecting = true
+        state.selectedItemIDs = [a.id, b.id]
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.bulkMoveTapped) {
+            $0.destinationPicker = DestinationPickerFeature.State(serverURL: self.serverURL, items: [a, b])
+            $0.isSelecting = false
+            $0.selectedItemIDs = []
+        }
+    }
+
+    @Test
+    func destinationPickerConfirmRunsAMoveTransfer() async {
+        let file = item("a.txt")
+        var state = makeState()
+        state.$clipboard.withLock { $0 = FileClipboard(items: [item("copied.txt")], operation: .copy) }
+        state.destinationPicker = DestinationPickerFeature.State(serverURL: serverURL, items: [file])
+        let captured = LockIsolated<(destination: String, operation: TransferOperation)?>(nil)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, _, destination, operation in
+                captured.setValue((destination, operation))
+                return self.result(destination: destination, moved: 1)
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: "Archive"))))) {
+            $0.destinationPicker = nil
+        }
+        await store.receive(\.transferResponse.success)
+        await store.receive(.delegate(.directoryContentsChanged))
+
+        #expect(captured.value?.destination == "Archive")
+        #expect(captured.value?.operation == .move)
+        // The unrelated copy clipboard is untouched by a picker move.
+        #expect(store.state.clipboard == FileClipboard(items: [item("copied.txt")], operation: .copy))
+    }
+
+    @Test
+    func destinationPickerCancelDismissesWithoutTransferring() async {
+        var state = makeState()
+        state.destinationPicker = DestinationPickerFeature.State(serverURL: serverURL, items: [item("a.txt")])
+        // No `transferItems` override: a call would crash with "Unimplemented".
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.destinationPicker(.presented(.delegate(.cancelled)))) {
+            $0.destinationPicker = nil
+        }
+    }
+
+    @Test
+    func clipboardClearedEmptiesTheClipboard() async {
+        var state = makeState()
+        state.$clipboard.withLock { $0 = FileClipboard(items: [item("a.txt")], operation: .copy) }
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.clipboardCleared) {
+            $0.$clipboard.withLock { $0 = nil }
+        }
+    }
+
+    @Test
+    func pasteCopiesIntoTheCurrentFolderAndClearsTheClipboardWhenKeepIsOff() async {
+        let file = item("a.txt")
+        var state = makeState(directoryPath: "Documents")
+        state.$clipboard.withLock { $0 = FileClipboard(items: [file], operation: .copy) }
+        let captured = LockIsolated<(items: [FileItem], destination: String, operation: TransferOperation)?>(nil)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, items, destination, operation in
+                captured.setValue((items, destination, operation))
+                return self.result(destination: destination, moved: 1)
+            }
+        }
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
+            $0.isPerformingFileAction = true
+            $0.fileActionProgressMessage = L10n.Browse.progressCopying
+            $0.pendingTransferRetry = BrowseFeature.TransferRetry(
+                items: [file], destination: "Documents", operation: .copy, clearClipboard: true, resolution: .keepBoth
+            )
+        }
+        await store.receive(\.transferResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.pendingTransferRetry = nil
+            $0.$clipboard.withLock { $0 = nil }
+            $0.transferSuccessMessage = L10n.Browse.transferCopied(1)
+        }
+        await store.receive(.delegate(.directoryContentsChanged))
+
+        #expect(captured.value?.items == [file])
+        #expect(captured.value?.destination == "Documents")
+        #expect(captured.value?.operation == .copy)
+    }
+
+    @Test
+    func pasteKeepsTheClipboardWhenKeepItemsAfterCopyIsOn() async {
+        let file = item("a.txt")
+        var state = makeState()
+        state.$clipboard.withLock { $0 = FileClipboard(items: [file], operation: .copy) }
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 1) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: true))
+        await store.receive(\.transferResponse.success) {
+            $0.transferSuccessMessage = L10n.Browse.transferCopied(1)
+        }
+        #expect(store.state.clipboard == FileClipboard(items: [file], operation: .copy))
+    }
+
+    @Test
+    func pasteFailureKeepsTheClipboardAndSurfacesAReadableError() async {
+        let file = item("a.txt")
+        var state = makeState()
+        state.$clipboard.withLock { $0 = FileClipboard(items: [file], operation: .copy) }
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, _, _, _ in throw FilesClientError.serverMessage(statusCode: 500, message: "Nope.") }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false))
+        await store.receive(\.transferResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.fileActionProgressMessage = nil
+            $0.transferErrorMessage = "Nope."
+        }
+        #expect(store.state.clipboard == FileClipboard(items: [file], operation: .copy))
+        #expect(store.state.pendingTransferRetry?.operation == .copy)
+    }
+
+    @Test
+    func retryTransferReRunsTheFailedTransferAndClearsTheClipboardOnSuccess() async {
+        let file = item("a.txt")
+        var state = makeState()
+        state.$clipboard.withLock { $0 = FileClipboard(items: [file], operation: .copy) }
+        let attempts = LockIsolated(0)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, _, destination, _ in
+                attempts.withValue { $0 += 1 }
+                if attempts.value == 1 { throw FilesClientError.serverMessage(statusCode: 500, message: "Nope.") }
+                return self.result(destination: destination, moved: 1)
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false))
+        await store.receive(\.transferResponse.failure) {
+            $0.transferErrorMessage = "Nope."
+        }
+        await store.send(.retryTransferTapped)
+        await store.receive(\.transferResponse.success) {
+            $0.transferErrorMessage = nil
+            $0.pendingTransferRetry = nil
+        }
+        #expect(attempts.value == 2)
+        #expect(store.state.clipboard == nil)
+    }
+
+    @Test
+    func pasteIsANoOpAtTheVolumeRoot() async {
+        var state = makeState(directoryPath: "")
+        state.$clipboard.withLock { $0 = FileClipboard(items: [item("a.txt")], operation: .copy) }
+        // No `transferItems` override: a call would crash with "Unimplemented".
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false))
+    }
+
+    @Test
+    func pasteIsANoOpWhenTheFolderIsNotWritable() async {
+        var state = makeState(access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true))
+        state.$clipboard.withLock { $0 = FileClipboard(items: [item("a.txt")], operation: .copy) }
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false))
+    }
+
+    @Test
+    func pasteIsANoOpWhenCopyingAFolderIntoASubdirectoryOfItself() async {
+        // Server fails this with EINVAL ("Cannot copy to a subdirectory of self"); the
+        // reducer must not fire the doomed request.
+        let folder = FileItem(name: "Photos", path: "Media", dateModified: Date(timeIntervalSince1970: 1), size: 0, kind: "directory")
+        var state = makeState(directoryPath: "Media/Photos/2024")
+        state.$clipboard.withLock { $0 = FileClipboard(items: [folder], operation: .copy) }
+        // No `transferItems` override: a call would crash with "Unimplemented".
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false))
+    }
+
+    @Test
+    func pasteSuccessMessageReportsSkippedCopies() async {
+        var state = makeState()
+        state.$clipboard.withLock { $0 = FileClipboard(items: [item("a.txt")], operation: .copy) }
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 2, skipped: 1) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false))
+        await store.receive(\.transferResponse.success) {
+            $0.transferSuccessMessage = L10n.Browse.transferCopiedWithSkipped(2, 1)
+        }
+    }
+
+    @Test
+    func moveViaPickerSuccessMessageReportsSkippedItems() async {
+        var state = makeState()
+        state.destinationPicker = DestinationPickerFeature.State(serverURL: serverURL, items: [item("a.txt")])
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 2, skipped: 1) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.destinationPicker(.presented(.delegate(.confirmed(destination: "Archive")))))
+        await store.receive(\.transferResponse.success) {
+            $0.transferSuccessMessage = L10n.Browse.transferMovedWithSkipped(2, 1)
+        }
+    }
+
+    // MARK: Name collisions
+
+    @Test
+    func pastePromptsWhenTheCurrentFolderAlreadyHasASameNamedItem() async {
+        let incoming = item("a.txt", path: "Inbox")
+        let existing = item("a.txt", path: "Documents")
+        var state = makeState(directoryPath: "Documents")
+        state.items = [existing]
+        state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false)) {
+            $0.pendingTransferRetry = BrowseFeature.TransferRetry(
+                items: [incoming], destination: "Documents", operation: .copy, clearClipboard: true
+            )
+            $0.transferConflict = BrowseFeature.TransferConflict(
+                retry: BrowseFeature.TransferRetry(
+                    items: [incoming], destination: "Documents", operation: .copy, clearClipboard: true
+                ),
+                collidingItems: [existing]
+            )
+        }
+    }
+
+    @Test
+    func replaceDeletesTheClashingItemThenTransfers() async {
+        let incoming = item("a.txt", path: "Inbox")
+        let existing = item("a.txt", path: "Documents")
+        var state = makeState(directoryPath: "Documents")
+        state.items = [existing]
+        state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
+        let deleted = LockIsolated<[FileItem]?>(nil)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteItems = { _, items in deleted.setValue(items) }
+            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 1) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false))
+        await store.send(.transferConflictResolved(.replace))
+        await store.receive(\.transferResponse.success)
+
+        #expect(deleted.value == [existing])
+    }
+
+    @Test
+    func keepBothTransfersWithoutDeletingAnything() async {
+        let incoming = item("a.txt", path: "Inbox")
+        let existing = item("a.txt", path: "Documents")
+        var state = makeState(directoryPath: "Documents")
+        state.items = [existing]
+        state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
+        let deleteCalled = LockIsolated(false)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteItems = { _, _ in deleteCalled.setValue(true) }
+            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 1) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false))
+        await store.send(.transferConflictResolved(.keepBoth))
+        await store.receive(\.transferResponse.success)
+
+        #expect(deleteCalled.value == false)
+    }
+
+    @Test
+    func cancellingTheCollisionPromptKeepsTheClipboardAndTransfersNothing() async {
+        let incoming = item("a.txt", path: "Inbox")
+        let existing = item("a.txt", path: "Documents")
+        var state = makeState(directoryPath: "Documents")
+        state.items = [existing]
+        state.$clipboard.withLock { $0 = FileClipboard(items: [incoming], operation: .copy) }
+        // No transferItems override: a call would flag "Unimplemented".
+        let store = TestStore(initialState: state) { BrowseFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: false))
+        await store.send(.transferConflictResolved(nil)) {
+            $0.transferConflict = nil
+            $0.pendingTransferRetry = nil
+        }
+
+        #expect(store.state.clipboard == FileClipboard(items: [incoming], operation: .copy))
+    }
+
+    @Test
+    func pastingAFileBackIntoItsOwnFolderIsNotTreatedAsACollision() async {
+        let file = item("a.txt", path: "Documents")
+        var state = makeState(directoryPath: "Documents")
+        state.items = [file]
+        state.$clipboard.withLock { $0 = FileClipboard(items: [file], operation: .copy) }
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 1) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.pasteTapped(keepItemsAfterCopy: true))
+        await store.receive(\.transferResponse.success)
+
+        #expect(store.state.transferConflict == nil)
     }
 }

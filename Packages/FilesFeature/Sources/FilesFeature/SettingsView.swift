@@ -40,6 +40,7 @@ struct SettingsView: View {
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
     @AppStorage("showFilenameExtensions") private var showFilenameExtensions = true
     @AppStorage("removeArchiveAfterDownload") private var removeArchiveAfterDownload = false
+    @AppStorage("keepClipboardAfterCopy") private var keepClipboardAfterCopy = false
     @Environment(\.colorScheme) private var systemColorScheme
 
     private var isDarkModeOn: Binding<Bool> {
@@ -196,6 +197,12 @@ struct SettingsView: View {
                         title: L10n.Settings.toggleRemoveArchives,
                         icon: IconKit.archivePage,
                         isOn: $removeArchiveAfterDownload
+                    )
+                    DSToggleRow(
+                        title: L10n.Settings.toggleKeepClipboard,
+                        subtitle: L10n.Settings.toggleKeepClipboardSubtitle,
+                        icon: IconKit.paste,
+                        isOn: $keepClipboardAfterCopy
                     )
                     Button(role: .destructive) {
                         store.send(.removeAllDownloadsTapped)

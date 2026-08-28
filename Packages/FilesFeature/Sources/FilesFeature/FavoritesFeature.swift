@@ -215,6 +215,9 @@ public struct FavoritesFeature {
             case .path(.element(id: _, action: .delegate(.favoritesChanged))):
                 return .send(.delegate(.favoritesChanged))
 
+            case .path(.element(id: _, action: .delegate(.directoryContentsChanged))):
+                return .send(.syncPathStack)
+
             case .path(.element(id: _, action: .delegate(.openDownloadsTapped))):
                 return .send(.delegate(.openDownloadsTapped))
 

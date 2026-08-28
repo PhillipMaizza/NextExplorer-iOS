@@ -78,6 +78,17 @@
         }
       }
     },
+    "browse.actionClearClipboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear clipboard"
+          }
+        }
+      }
+    },
     "browse.actionCompress": {
       "extractionState": "manual",
       "localizations": {
@@ -85,6 +96,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Compress"
+          }
+        }
+      }
+    },
+    "browse.actionCopy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy"
           }
         }
       }
@@ -133,6 +155,61 @@
         }
       }
     },
+    "browse.actionMove": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move"
+          }
+        }
+      }
+    },
+    "browse.actionOpenInBrowser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open in Browser"
+          }
+        }
+      }
+    },
+    "browse.actionPaste": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste"
+          }
+        }
+      }
+    },
+    "browse.actionPasteCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste %lld items"
+          }
+        }
+      }
+    },
+    "browse.actionPasteHere": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste here"
+          }
+        }
+      }
+    },
     "browse.actionRemoveFromFavorites": {
       "extractionState": "manual",
       "localizations": {
@@ -162,6 +239,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "Share"
+          }
+        }
+      }
+    },
+    "browse.clipboardCopiedMany": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld items copied"
+          }
+        }
+      }
+    },
+    "browse.clipboardCopiedOne": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ copied"
+          }
+        }
+      }
+    },
+    "browse.clipboardCopyCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld to copy"
+          }
+        }
+      }
+    },
+    "browse.clipboardMoveCount": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld to move"
           }
         }
       }
@@ -206,6 +327,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "This can't be undone."
+          }
+        }
+      }
+    },
+    "browse.destinationPickerConfirmMove": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move Here"
+          }
+        }
+      }
+    },
+    "browse.destinationPickerLoadFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't load folders."
+          }
+        }
+      }
+    },
+    "browse.destinationPickerMoveTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Move to…"
+          }
+        }
+      }
+    },
+    "browse.destinationPickerNoFolders": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No folders here"
           }
         }
       }
@@ -298,6 +463,17 @@
         }
       }
     },
+    "browse.progressCopying": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copying…"
+          }
+        }
+      }
+    },
     "browse.progressDownloading": {
       "extractionState": "manual",
       "localizations": {
@@ -327,6 +503,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Extracting…"
+          }
+        }
+      }
+    },
+    "browse.progressMoving": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moving…"
           }
         }
       }
@@ -426,6 +613,105 @@
           "stringUnit": {
             "state": "translated",
             "value": "This Folder"
+          }
+        }
+      }
+    },
+    "browse.transferConflictKeepBoth": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep Both"
+          }
+        }
+      }
+    },
+    "browse.transferConflictMessageMany": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld items already exist in this folder."
+          }
+        }
+      }
+    },
+    "browse.transferConflictMessageOne": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"%@\" already exists in this folder."
+          }
+        }
+      }
+    },
+    "browse.transferConflictReplace": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace"
+          }
+        }
+      }
+    },
+    "browse.transferConflictTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Replace items?"
+          }
+        }
+      }
+    },
+    "browse.transferCopied": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copied %lld items"
+          }
+        }
+      }
+    },
+    "browse.transferCopiedWithSkipped": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copied %1$lld items, skipped %2$lld"
+          }
+        }
+      }
+    },
+    "browse.transferMoved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moved %lld items"
+          }
+        }
+      }
+    },
+    "browse.transferMovedWithSkipped": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Moved %1$lld items, skipped %2$lld"
           }
         }
       }
@@ -562,6 +848,17 @@
         }
       }
     },
+    "common.back": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Back"
+          }
+        }
+      }
+    },
     "common.cancel": {
       "extractionState": "manual",
       "localizations": {
@@ -569,6 +866,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cancel"
+          }
+        }
+      }
+    },
+    "common.clear": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
           }
         }
       }
@@ -613,6 +921,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Download"
+          }
+        }
+      }
+    },
+    "common.edit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
           }
         }
       }
@@ -1849,6 +2168,17 @@
         }
       }
     },
+    "previewToolbar.rename": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rename"
+          }
+        }
+      }
+    },
     "previewToolbar.share": {
       "extractionState": "manual",
       "localizations": {
@@ -2241,6 +2571,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Haptics"
+          }
+        }
+      }
+    },
+    "settings.toggleKeepClipboard": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep Items After Paste"
+          }
+        }
+      }
+    },
+    "settings.toggleKeepClipboardSubtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copied items stay ready to paste into another folder. Moved items always clear."
           }
         }
       }
