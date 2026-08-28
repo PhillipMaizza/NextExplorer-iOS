@@ -18,19 +18,41 @@ extension NetworkClient {
         let delegate = URLSessionAuthDelegate(trustEvaluator: trustEvaluator)
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
 
-        return NetworkClient { request in
-            let data: Data
-            let response: URLResponse
-            do {
-                (data, response) = try await session.data(for: request)
-            } catch {
-                throw NetworkError.transport(error.localizedDescription)
+        return NetworkClient(
+            send: { request in
+                let data: Data
+                let response: URLResponse
+                do {
+                    (data, response) = try await session.data(for: request)
+                } catch {
+                    throw NetworkError.transport(error.localizedDescription)
+                }
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    throw NetworkError.invalidResponse
+                }
+                return (data, httpResponse)
+            },
+            upload: { request, bodyFileURL, onProgress in
+                let data: Data
+                let response: URLResponse
+                do {
+                    // A per-task delegate for progress only. It doesn't implement the
+                    // auth-challenge method, so server-trust evaluation falls back to the
+                    // session-level `URLSessionAuthDelegate`.
+                    (data, response) = try await session.upload(
+                        for: request,
+                        fromFile: bodyFileURL,
+                        delegate: UploadProgressDelegate(onProgress: onProgress)
+                    )
+                } catch {
+                    throw NetworkError.transport(error.localizedDescription)
+                }
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    throw NetworkError.invalidResponse
+                }
+                return (data, httpResponse)
             }
-            guard let httpResponse = response as? HTTPURLResponse else {
-                throw NetworkError.invalidResponse
-            }
-            return (data, httpResponse)
-        }
+        )
     }
 }
 

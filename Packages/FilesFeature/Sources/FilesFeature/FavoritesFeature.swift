@@ -96,6 +96,7 @@ public struct FavoritesFeature {
         public enum Delegate: Equatable, Sendable {
             case favoritesChanged
             case openDownloadsTapped
+            case uploadRequested([PendingUpload])
         }
     }
 
@@ -220,6 +221,9 @@ public struct FavoritesFeature {
 
             case .path(.element(id: _, action: .delegate(.openDownloadsTapped))):
                 return .send(.delegate(.openDownloadsTapped))
+
+            case let .path(.element(id: _, action: .delegate(.uploadRequested(files)))):
+                return .send(.delegate(.uploadRequested(files)))
 
             case let .navigateToDirectory(path, title):
                 BrowseNavigation.jump(to: path, title: title, serverURL: state.serverURL, stack: &state.path)

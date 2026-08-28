@@ -3,7 +3,9 @@ import CoreModels
 import DesignSystem
 import FilesClient
 import Localization
+import PhotosUI
 import SwiftUI
+import UniformTypeIdentifiers
 
 private enum BrowseViewMode: String {
     case list, grid
@@ -22,6 +24,7 @@ private enum Constants {
     static let selectionToolbarIconSize: CGFloat = .iconMedium
     /// Height of the invisible long-press paste target past the last row.
     static let pasteTargetMinHeight: CGFloat = 260
+    static let maxPhotoUploads = 20
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -48,6 +51,9 @@ struct BrowseContentView: View {
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
+    @State private var isFilesPickerPresented = false
+    @State private var isPhotosPickerPresented = false
+    @State private var photosSelection: [PhotosPickerItem] = []
 
     private var viewMode: BrowseViewMode {
         BrowseViewMode(rawValue: viewModeRaw) ?? .list
@@ -208,6 +214,46 @@ struct BrowseContentView: View {
                     Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                 }
             }
+        }
+        .toolbar {
+            if isUploadAvailable {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button {
+                            isFilesPickerPresented = true
+                        } label: {
+                            Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.folder }
+                        }
+                        Button {
+                            isPhotosPickerPresented = true
+                        } label: {
+                            Label { Text(L10n.Uploads.actionUploadFromPhotos) } icon: { IconKit.photo }
+                        }
+                    } label: {
+                        IconKit.plus.foregroundStyle(Color.primaryDS)
+                    }
+                    .accessibilityLabel(L10n.Uploads.menuTitle)
+                }
+            }
+        }
+        .fileImporter(
+            isPresented: $isFilesPickerPresented,
+            allowedContentTypes: [.item],
+            allowsMultipleSelection: true
+        ) { result in
+            guard case let .success(urls) = result else { return }
+            let picked = makePendingUploads(fromPickedFiles: urls)
+            if !picked.isEmpty { store.send(.uploadFilesPicked(picked)) }
+        }
+        .photosPicker(
+            isPresented: $isPhotosPickerPresented,
+            selection: $photosSelection,
+            maxSelectionCount: Constants.maxPhotoUploads,
+            matching: .any(of: [.images, .videos])
+        )
+        .onChange(of: photosSelection) { _, items in
+            guard !items.isEmpty else { return }
+            Task { await handlePickedPhotos(items) }
         }
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
@@ -873,6 +919,46 @@ struct BrowseContentView: View {
     /// copied or moved to, and can't be left absent, so the transfer actions are hidden.
     private func isSoleRootLocation(_ item: FileItem) -> Bool {
         store.directoryPath.isEmpty && item.path.isEmpty && store.items.count <= 1
+    }
+
+    /// The `+` upload menu shows only in a writable, non-root folder — the server rejects an
+    /// upload to the volume root, and `canUpload` gates it per folder.
+    private var isUploadAvailable: Bool {
+        !store.isSelecting && !store.directoryPath.isEmpty && (store.access?.canUpload ?? false)
+    }
+
+    /// Security-scoped document-picker URLs don't outlive this callback, so each file is copied
+    /// into an app-owned temp folder before it's handed to the upload queue.
+    private func makePendingUploads(fromPickedFiles urls: [URL]) -> [PendingUpload] {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("PendingUploads", isDirectory: true)
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let destination = store.directoryPath
+        return urls.compactMap { url in
+            let didAccess = url.startAccessingSecurityScopedResource()
+            defer { if didAccess { url.stopAccessingSecurityScopedResource() } }
+            let name = url.lastPathComponent
+            let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(name)")
+            try? FileManager.default.removeItem(at: temp)
+            guard (try? FileManager.default.copyItem(at: url, to: temp)) != nil else { return nil }
+            return PendingUpload(fileURL: temp, fileName: name, destination: destination)
+        }
+    }
+
+    private func handlePickedPhotos(_ items: [PhotosPickerItem]) async {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("PendingUploads", isDirectory: true)
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        let destination = store.directoryPath
+        var pending: [PendingUpload] = []
+        for (index, item) in items.enumerated() {
+            guard let data = try? await item.loadTransferable(type: Data.self) else { continue }
+            let ext = item.supportedContentTypes.first?.preferredFilenameExtension ?? "dat"
+            let name = "IMG_\(Int(Date().timeIntervalSince1970))_\(index + 1).\(ext)"
+            let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(name)")
+            guard (try? data.write(to: temp)) != nil else { continue }
+            pending.append(PendingUpload(fileURL: temp, fileName: name, destination: destination))
+        }
+        photosSelection = []
+        if !pending.isEmpty { store.send(.uploadFilesPicked(pending)) }
     }
 
     /// Whether the current folder is a legitimate paste target for the staged clipboard —

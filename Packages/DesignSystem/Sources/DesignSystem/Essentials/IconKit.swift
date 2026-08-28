@@ -68,6 +68,8 @@ public enum IconKit {
     public static let rename = Image(systemName: "square.and.pencil")
     public static let haptics = Image(systemName: "waveform")
     public static let download = Image(systemName: "arrow.down.circle")
+    public static let upload = Image(systemName: "arrow.up.circle")
+    public static let retry = Image(systemName: "arrow.clockwise")
     public static let checkmarkCircleFill = Image(systemName: "checkmark.circle.fill")
     public static let moreOptions = Image(systemName: "ellipsis.circle")
     public static let selectAll = Image(systemName: "checklist")
