@@ -60,6 +60,28 @@ public struct MainTabView: View {
             }
         }
         .tint(Color.accent)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if store.uploads.isActive {
+                UploadProgressBar(
+                    title: uploadBarTitle,
+                    progress: store.uploads.currentJob?.progress ?? 0,
+                    onTap: { store.send(.uploads(.barTapped)) },
+                    onCancelAll: { store.send(.uploads(.cancelAllTapped), animation: .default) }
+                )
+                .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: 0.2), value: store.uploads.isActive)
+        .sheet(isPresented: Binding(
+            get: { store.uploads.isSheetPresented },
+            set: { store.send(.uploads(.sheetPresented($0))) }
+        )) {
+            UploadsView(store: store.scope(state: \.uploads, action: \.uploads))
+        }
+        .dsToast(Binding(
+            get: { uploadToastMessage },
+            set: { if $0 == nil { store.send(.dismissUploadToast) } }
+        ))
         .hapticFeedback(.selection, trigger: store.selectedTab)
         .onChange(of: scenePhase) { _, newPhase in
             guard newPhase == .active else { return }
@@ -75,6 +97,24 @@ public struct MainTabView: View {
         image
             .resizable()
             .scaledToFit()
+    }
+
+    private var uploadBarTitle: String {
+        let uploads = store.uploads
+        if uploads.batchTotal <= 1, let name = uploads.currentJob?.fileName {
+            return L10n.Uploads.barTitleOne(name)
+        }
+        return L10n.Uploads.barTitleMany(uploads.batchPosition, uploads.batchTotal)
+    }
+
+    private var uploadToastMessage: DSToastMessage? {
+        guard let toast = store.uploadToast else { return nil }
+        if let destination = toast.openDestination {
+            return .success(toast.message, actionTitle: L10n.Browse.open) {
+                store.send(.openUploadedLocation(destination))
+            }
+        }
+        return .success(toast.message)
     }
 }
 

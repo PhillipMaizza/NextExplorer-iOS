@@ -60,6 +60,10 @@ extension FilesClient {
             try? Data().write(to: fileURL)
             return fileURL
         },
+        uploadFile: { _, _, fileName, destination, onProgress in
+            onProgress(1)
+            return FileItem(name: fileName, path: destination, dateModified: Date(), size: 0, kind: (fileName as NSString).pathExtension.lowercased())
+        },
         compressItem: { _, item in
             FileItem(name: "\(item.name).zip", path: item.path, dateModified: Date(), size: 0, kind: "zip")
         },
