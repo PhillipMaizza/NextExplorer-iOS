@@ -26,6 +26,10 @@ private enum Constants {
     /// The upload `+` is the folder's primary action, so it carries the accent tint and a
     /// heavier glyph than the neutral options menu beside it.
     static let uploadButtonWeight: Font.Weight = .bold
+    /// Gap between the empty folder message and its upload call to action.
+    static let emptyUploadButtonTopSpacing: CGFloat = .space24
+    static let emptyUploadButtonHeight: CGFloat = .size48
+    static let emptyUploadButtonHPadding: CGFloat = .space24
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -39,11 +43,6 @@ struct BrowseContentView: View {
     @AppStorage("removeArchiveAfterDownload") private var removeArchiveAfterDownload = false
     @AppStorage("keepClipboardAfterCopy") private var keepClipboardAfterCopy = false
     @State private var isSortSheetPresented = false
-    /// The rename alert's in-progress text: kept as plain view state rather than routed
-    /// through the store, since a `.alert` `TextField` bound via a TCA `.sending` binding
-    /// didn't reliably propagate keystrokes back out. Seeded from `renameSheetItem` when
-    /// the alert is presented; `renameConfirmed` is sent this value directly.
-    @State private var renameDraft = ""
     @State private var toastMessage: DSToastMessage?
     /// The item whose "Create Share Link" sheet is open (from the context menu or the
     /// selection toolbar). Local view state, not routed through `BrowseFeature` — the sheet
@@ -233,6 +232,13 @@ struct BrowseContentView: View {
                                 .fontWeight(Constants.uploadButtonWeight)
                                 .foregroundStyle(Color.accent)
                         },
+                        leadingActions: {
+                            if !store.directoryPath.isEmpty {
+                                Button { store.send(.newFolderTapped) } label: {
+                                    Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                                }
+                            }
+                        },
                         isFilesPickerPresented: $isFilesPickerPresented,
                         isPhotosPickerPresented: $isPhotosPickerPresented,
                         isCameraPresented: $isCameraPresented,
@@ -346,18 +352,28 @@ struct BrowseContentView: View {
                 onDismiss: { isSortSheetPresented = false }
             )
         }
-        .alert(L10n.Browse.renameTitle, isPresented: isRenamingBinding) {
-            TextField(L10n.Browse.renameNamePlaceholder, text: $renameDraft)
-                .autocorrectionDisabled()
-            // A plain, non-accent color for Cancel: `.tint(nil)` doesn't reset an alert
-            // button back to the system default (it still inherits the ambient accent), so
-            // an explicit concrete color is needed to actually look different from Save.
-            Button(L10n.Common.cancel, role: .cancel) { store.send(.renameCancelled) }
-                .tint(.primaryDS)
-            Button(L10n.Common.save) { store.send(.renameConfirmed(renameDraft)) }
+        .sheet(item: renameItemBinding) { item in
+            NameInputSheet(
+                icon: IconKit.rename,
+                title: L10n.Browse.renameTitle,
+                placeholder: L10n.Browse.renameNamePlaceholder,
+                confirmTitle: L10n.Common.save,
+                initialName: item.name,
+                isBusy: store.isPerformingFileAction,
+                onConfirm: { store.send(.renameConfirmed($0)) },
+                onCancel: { store.send(.renameCancelled) }
+            )
         }
-        .onChange(of: store.renameSheetItem) { _, item in
-            if let item { renameDraft = item.name }
+        .sheet(isPresented: newFolderSheetBinding) {
+            NameInputSheet(
+                icon: IconKit.folder,
+                title: L10n.Browse.newFolderTitle,
+                placeholder: L10n.Browse.newFolderPlaceholder,
+                confirmTitle: L10n.Browse.newFolderConfirm,
+                isBusy: store.isPerformingFileAction,
+                onConfirm: { store.send(.newFolderConfirmed($0)) },
+                onCancel: { store.send(.newFolderCancelled) }
+            )
         }
         // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a popover
         // anchored to some ambient source view on the `.pad` idiom (this app also targets
@@ -543,10 +559,19 @@ struct BrowseContentView: View {
         }
     }
 
-    private var isRenamingBinding: Binding<Bool> {
+    /// Drives the rename `NameInputSheet`; a swipe down dismiss routes back through the reducer
+    /// so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
+    private var renameItemBinding: Binding<FileItem?> {
         Binding(
-            get: { store.renameSheetItem != nil },
-            set: { if !$0 { store.send(.renameCancelled) } }
+            get: { store.renameSheetItem },
+            set: { if $0 == nil { store.send(.renameCancelled) } }
+        )
+    }
+
+    private var newFolderSheetBinding: Binding<Bool> {
+        Binding(
+            get: { store.isNewFolderSheetPresented },
+            set: { if !$0 { store.send(.newFolderCancelled) } }
         )
     }
 
@@ -792,8 +817,13 @@ struct BrowseContentView: View {
                     .transition(.opacity)
             }
         case .empty:
-            EmptyStateView(icon: IconKit.folder, message: L10n.EmptyState.folderEmpty)
-                .transition(.opacity)
+            VStack(spacing: Constants.emptyUploadButtonTopSpacing) {
+                EmptyStateView(icon: IconKit.folder, message: L10n.EmptyState.folderEmpty)
+                if !store.isSelecting && canUploadHere {
+                    emptyStateUploadButton
+                }
+            }
+            .transition(.opacity)
         case .noResults:
             noResultsState
                 .transition(.opacity)
@@ -932,6 +962,29 @@ struct BrowseContentView: View {
     /// allowed while access is still loading — the first browse response fills it in.
     private var canUploadHere: Bool {
         store.access?.canUpload ?? true
+    }
+
+    /// The empty folder's call to action: the same camera / Photos / Files menu as the `+`,
+    /// behind an accent pill so a first time user has somewhere obvious to start.
+    private var emptyStateUploadButton: some View {
+        UploadSourceMenu(
+            label: {
+                HStack(spacing: .space8) {
+                    IconKit.upload
+                    Text(L10n.Uploads.menuTitle)
+                }
+                .type(.label3)
+                .foregroundStyle(Color.black)
+                .frame(height: Constants.emptyUploadButtonHeight)
+                .padding(.horizontal, Constants.emptyUploadButtonHPadding)
+                .background(Capsule().fill(Color.accent))
+            },
+            isFilesPickerPresented: $isFilesPickerPresented,
+            isPhotosPickerPresented: $isPhotosPickerPresented,
+            isCameraPresented: $isCameraPresented,
+            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
+        )
+        .accessibilityLabel(L10n.Uploads.menuTitle)
     }
 
     /// Whether the current folder is a legitimate paste target for the staged clipboard —

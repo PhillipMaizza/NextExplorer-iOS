@@ -202,6 +202,9 @@ public struct BrowseFeature {
         /// `TextField` bound through a TCA `.sending` binding didn't reliably propagate
         /// keystrokes back out, so `renameConfirmed` is sent the final text directly instead.
         public var renameSheetItem: FileItem?
+        /// Whether the "New folder" name sheet is open. Like rename, the draft text lives in
+        /// `BrowseContentView`'s own `@State`; `newFolderConfirmed` carries the final name.
+        public var isNewFolderSheetPresented = false
         /// Item awaiting a destructive confirmation before `deleteConfirmed` actually deletes it.
         public var deleteConfirmationItem: FileItem?
         public var isPerformingFileAction = false
@@ -283,6 +286,10 @@ public struct BrowseFeature {
         case renameCancelled
         case renameConfirmed(String)
         case renameResponse(Result<RenameResult, FilesClientError>)
+        case newFolderTapped
+        case newFolderCancelled
+        case newFolderConfirmed(String)
+        case newFolderResponse(Result<FileItem, FilesClientError>)
         case deleteCancelled
         case deleteConfirmed
         case deleteResponse(Result<DeleteResult, FilesClientError>)
@@ -492,6 +499,29 @@ public struct BrowseFeature {
 
             case let .renameResponse(.failure(error)):
                 state.isPerformingFileAction = false
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case .newFolderTapped:
+                state.isNewFolderSheetPresented = true
+                return .none
+
+            case .newFolderCancelled:
+                state.isNewFolderSheetPresented = false
+                return .none
+
+            case let .newFolderConfirmed(name):
+                return confirmNewFolder(&state, name: name)
+
+            case let .newFolderResponse(.success(folder)):
+                state.isPerformingFileAction = false
+                state.isNewFolderSheetPresented = false
+                state.items.append(folder)
+                return .none
+
+            case let .newFolderResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.isNewFolderSheetPresented = false
                 state.fileActionErrorMessage = error.userMessage
                 return .none
 
@@ -1044,6 +1074,23 @@ public struct BrowseFeature {
         return .run { send in
             await send(.renameResponse(await apiResult {
                 RenameResult(originalID: originalID, renamed: try await filesClient.renameItem(serverURL, item, trimmedName))
+            }))
+        }
+    }
+
+    private func confirmNewFolder(_ state: inout State, name: String) -> Effect<Action> {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
+            state.isNewFolderSheetPresented = false
+            return .none
+        }
+        state.isPerformingFileAction = true
+        let serverURL = state.serverURL
+        let directoryPath = state.directoryPath
+        let filesClient = self.filesClient
+        return .run { send in
+            await send(.newFolderResponse(await apiResult {
+                try await filesClient.createFolder(serverURL, directoryPath, trimmedName)
             }))
         }
     }

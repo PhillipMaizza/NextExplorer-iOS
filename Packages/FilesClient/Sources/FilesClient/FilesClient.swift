@@ -19,6 +19,13 @@ public struct FilesClient: Sendable {
     public var renameItem: @Sendable (
         _ serverURL: URL, _ item: FileItem, _ newName: String
     ) async throws -> FileItem
+    /// `POST /api/files/folder` (`backend/src/routes/files/folder.js`): creates a subfolder in
+    /// `path`, the parent directory's relative path — the server rejects an empty one ("Cannot
+    /// create folders in the root path"). A blank `name` becomes "Untitled Folder" server side
+    /// and a name collision is auto suffixed rather than erroring. Returns the created folder.
+    public var createFolder: @Sendable (
+        _ serverURL: URL, _ path: String, _ name: String
+    ) async throws -> FileItem
     public var deleteItems: @Sendable (_ serverURL: URL, _ items: [FileItem]) async throws -> Void
     /// `POST /api/files/copy` or `/api/files/move` depending on `operation`. `destination` is
     /// the target directory's relative path; the server rejects an empty one ("Cannot copy or

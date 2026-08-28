@@ -92,6 +92,10 @@ browse.actionShare	Share
 browse.actionDelete	Delete
 browse.renameTitle	Rename
 browse.renameNamePlaceholder	Name
+browse.actionNewFolder	Create Folder
+browse.newFolderTitle	New folder
+browse.newFolderPlaceholder	Folder name
+browse.newFolderConfirm	Create
 browse.deleteConfirmTitle	Delete?
 browse.deleteConfirmOne	Delete “%@”?
 browse.deleteConfirmMany	Delete %lld items?

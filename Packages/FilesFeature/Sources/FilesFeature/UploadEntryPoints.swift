@@ -81,17 +81,37 @@ struct UploadPickers: ViewModifier {
 
 /// Take Photo or Video / Upload from Gallery / Upload from Files — the shared menu behind both
 /// the browse `+` and the review sheet's "Add more files" row.
-struct UploadSourceMenu<MenuLabel: View>: View {
-    @ViewBuilder let label: () -> MenuLabel
-    @Binding var isFilesPickerPresented: Bool
-    @Binding var isPhotosPickerPresented: Bool
-    @Binding var isCameraPresented: Bool
-    @Binding var isCameraDeniedAlertPresented: Bool
+struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
+    private let label: () -> MenuLabel
+    /// Extra items above the upload sources — the browse `+` slots "Create Folder" here; the
+    /// review sheet's "Add more" leaves it empty.
+    private let leadingActions: () -> LeadingActions
+    @Binding private var isFilesPickerPresented: Bool
+    @Binding private var isPhotosPickerPresented: Bool
+    @Binding private var isCameraPresented: Bool
+    @Binding private var isCameraDeniedAlertPresented: Bool
+
+    init(
+        @ViewBuilder label: @escaping () -> MenuLabel,
+        @ViewBuilder leadingActions: @escaping () -> LeadingActions,
+        isFilesPickerPresented: Binding<Bool>,
+        isPhotosPickerPresented: Binding<Bool>,
+        isCameraPresented: Binding<Bool>,
+        isCameraDeniedAlertPresented: Binding<Bool>
+    ) {
+        self.label = label
+        self.leadingActions = leadingActions
+        self._isFilesPickerPresented = isFilesPickerPresented
+        self._isPhotosPickerPresented = isPhotosPickerPresented
+        self._isCameraPresented = isCameraPresented
+        self._isCameraDeniedAlertPresented = isCameraDeniedAlertPresented
+    }
 
     var body: some View {
         // `.menuOrder(.fixed)`: keep Take Photo first even from the review sheet's "Add more"
         // button, where the menu opens upward and the default order would flip.
         Menu {
+            leadingActions()
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 Button {
                     Task {
@@ -119,5 +139,24 @@ struct UploadSourceMenu<MenuLabel: View>: View {
             label()
         }
         .menuOrder(.fixed)
+    }
+}
+
+extension UploadSourceMenu where LeadingActions == EmptyView {
+    init(
+        @ViewBuilder label: @escaping () -> MenuLabel,
+        isFilesPickerPresented: Binding<Bool>,
+        isPhotosPickerPresented: Binding<Bool>,
+        isCameraPresented: Binding<Bool>,
+        isCameraDeniedAlertPresented: Binding<Bool>
+    ) {
+        self.init(
+            label: label,
+            leadingActions: { EmptyView() },
+            isFilesPickerPresented: isFilesPickerPresented,
+            isPhotosPickerPresented: isPhotosPickerPresented,
+            isCameraPresented: isCameraPresented,
+            isCameraDeniedAlertPresented: isCameraDeniedAlertPresented
+        )
     }
 }
