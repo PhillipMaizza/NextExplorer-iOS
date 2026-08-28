@@ -172,6 +172,7 @@ uploads.reviewSectionPath	Path
 uploads.reviewSectionSize	Total size
 uploads.reviewChooseFolder	Choose a folder
 uploads.reviewUploadButton	Upload
+uploads.reviewPreparing	Preparing %lld…
 uploads.statusWaiting	Waiting
 uploads.statusFailed	Upload failed
 uploads.barTitleOne	Uploading %@

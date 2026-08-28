@@ -5,29 +5,41 @@ import Localization
 /// The sheet shown after files are picked, before they're queued: the file list, the
 /// destination folder (tap to push the folder picker), the total size, and the Upload button.
 /// It never uploads — confirming hands `(files, destination)` up to `BrowseFeature`.
+///
+/// The sheet is presented *immediately* on pick and fills in as files are materialized
+/// (copied out of the picker, photos read into memory) — heavy items would otherwise stall it
+/// behind the copy.
 @Reducer
 public struct UploadReviewFeature {
     @ObservableState
     public struct State: Equatable, Sendable {
         public var serverURL: URL
         public var files: IdentifiedArrayOf<PickedFile>
+        /// Files still being copied out of the picker. `files` grows as each lands.
+        public var preparingCount: Int
         /// `""` means no folder chosen yet (the pick started at the root) — Upload stays
         /// disabled until the user picks one.
         public var destination: String
         @Presents public var folderPicker: DestinationPickerFeature.State?
 
-        public init(serverURL: URL, files: [PickedFile], startingDestination: String) {
+        public init(serverURL: URL, files: [PickedFile] = [], startingDestination: String, preparingCount: Int = 0) {
             self.serverURL = serverURL
             self.files = IdentifiedArray(uniqueElements: files)
             self.destination = startingDestination
+            self.preparingCount = preparingCount
         }
 
+        public var isPreparing: Bool { preparingCount > 0 }
+        /// Total files the sheet is about, including ones still being prepared.
+        public var totalCount: Int { files.count + preparingCount }
         public var totalSize: Int64 { files.reduce(0) { $0 + $1.size } }
-        public var canUpload: Bool { !files.isEmpty && !destination.isEmpty }
+        public var canUpload: Bool { !isPreparing && !files.isEmpty && !destination.isEmpty }
         public var hasDestination: Bool { !destination.isEmpty }
     }
 
     public enum Action: Equatable, Sendable {
+        case filePrepared(PickedFile)
+        case preparationFinished
         case pathTapped
         case folderPicker(PresentationAction<DestinationPickerFeature.Action>)
         case removeFileTapped(id: PickedFile.ID)
@@ -46,6 +58,15 @@ public struct UploadReviewFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case let .filePrepared(file):
+                state.files.append(file)
+                state.preparingCount = max(0, state.preparingCount - 1)
+                return .none
+
+            case .preparationFinished:
+                state.preparingCount = 0
+                return state.files.isEmpty ? .send(.delegate(.cancelled)) : .none
+
             case .pathTapped:
                 state.folderPicker = DestinationPickerFeature.State(
                     serverURL: state.serverURL, uploadStartingAt: state.destination
@@ -66,7 +87,7 @@ public struct UploadReviewFeature {
 
             case let .removeFileTapped(id):
                 state.files.remove(id: id)
-                return state.files.isEmpty ? .send(.delegate(.cancelled)) : .none
+                return state.files.isEmpty && !state.isPreparing ? .send(.delegate(.cancelled)) : .none
 
             case .uploadTapped:
                 guard state.canUpload else { return .none }
