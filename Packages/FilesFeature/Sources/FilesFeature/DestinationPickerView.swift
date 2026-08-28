@@ -47,16 +47,32 @@ struct DestinationPickerView: View {
                         }
                         .accessibilityLabel(L10n.Common.close)
                     }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { store.send(.confirmTapped) } label: {
-                            IconKit.checkmark
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.accent)
-                                .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                    if store.purpose != .upload {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button { store.send(.confirmTapped) } label: {
+                                IconKit.checkmark
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundStyle(Color.accent)
+                                    .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                            }
+                            .disabled(!store.canConfirm)
+                            .accessibilityLabel(confirmLabel)
                         }
-                        .disabled(!store.canConfirm)
-                        .accessibilityLabel(confirmLabel)
+                    }
+                }
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    if store.purpose == .upload {
+                        VStack(spacing: 0) {
+                            DSButton(confirmLabel, icon: IconKit.upload, style: .primary) {
+                                store.send(.confirmTapped)
+                            }
+                            .disabled(!store.canConfirm)
+                            .padding(.horizontal, .space16)
+                            .padding(.vertical, .space12)
+                            Divider()
+                        }
+                        .background(Color.backgroundPrimary)
                     }
                 }
                 .searchable(
