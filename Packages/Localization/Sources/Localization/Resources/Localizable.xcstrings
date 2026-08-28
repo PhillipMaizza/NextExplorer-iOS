@@ -969,6 +969,17 @@
         }
       }
     },
+    "common.openSettings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings"
+          }
+        }
+      }
+    },
     "common.password": {
       "extractionState": "manual",
       "localizations": {
@@ -3242,6 +3253,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Uploading %@"
+          }
+        }
+      }
+    },
+    "uploads.cameraDeniedMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Allow camera access in Settings to take a photo."
+          }
+        }
+      }
+    },
+    "uploads.cameraDeniedTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera access needed"
           }
         }
       }
