@@ -26,6 +26,10 @@ public struct DestinationPickerFeature {
         public var items: [FileItem]
         /// The folder currently shown. `""` is the root location list.
         public var directoryPath: String
+        /// Folders drilled through to reach `directoryPath`, oldest first. Non empty once the
+        /// user has stepped into a child, which is when the leading toolbar button turns from
+        /// a close button into a back button.
+        public var navigationHistory: [String] = []
         public var folders: IdentifiedArrayOf<FileItem> = []
         /// Access of the folder currently shown — gates "Upload here".
         public var currentAccess: FileAccess?
@@ -56,6 +60,10 @@ public struct DestinationPickerFeature {
             self.directoryPath = startPath
         }
 
+        /// The leading toolbar button steps back up the drill path while there is one,
+        /// otherwise it dismisses the sheet.
+        public var canNavigateBack: Bool { !navigationHistory.isEmpty }
+
         /// Whether the trailing confirm button is enabled for the folder currently shown.
         /// Move: `FileClipboard.canPaste` rules (never root, never the item's own parent or a
         /// folder nested in a staged item). Upload: any non-root folder the user can upload to.
@@ -81,6 +89,8 @@ public struct DestinationPickerFeature {
         /// A breadcrumb segment tap — jump straight to `path` (same behavior as the bottom
         /// `BrowseBreadcrumbBar`).
         case breadcrumbTapped(path: String)
+        /// Leading toolbar button while `canNavigateBack` — pops one level off the drill path.
+        case backTapped
         case retryTapped
         case confirmTapped
         case cancelTapped
@@ -139,6 +149,7 @@ public struct DestinationPickerFeature {
                 return .none
 
             case let .searchResultTapped(result):
+                state.navigationHistory.append(state.directoryPath)
                 state.directoryPath = result.id
                 state.searchQuery = ""
                 state.searchResults = nil
@@ -146,6 +157,7 @@ public struct DestinationPickerFeature {
 
             case let .folderTapped(folder):
                 guard folder.isDirectory else { return .none }
+                state.navigationHistory.append(state.directoryPath)
                 state.directoryPath = folder.id
                 state.searchQuery = ""
                 state.searchResults = nil
@@ -153,7 +165,15 @@ public struct DestinationPickerFeature {
 
             case let .breadcrumbTapped(path):
                 guard path != state.directoryPath else { return .none }
+                truncateHistory(&state, to: path)
                 state.directoryPath = path
+                state.searchQuery = ""
+                state.searchResults = nil
+                return load(&state)
+
+            case .backTapped:
+                guard let previous = state.navigationHistory.popLast() else { return .none }
+                state.directoryPath = previous
                 state.searchQuery = ""
                 state.searchResults = nil
                 return load(&state)
@@ -168,6 +188,14 @@ public struct DestinationPickerFeature {
             case .delegate:
                 return .none
             }
+        }
+    }
+
+    /// A breadcrumb jump lands on an ancestor of the current folder, so the drill path is
+    /// trimmed to the folders that still sit above the tapped one.
+    private func truncateHistory(_ state: inout State, to path: String) {
+        state.navigationHistory = state.navigationHistory.filter { entry in
+            entry.isEmpty ? !path.isEmpty : path.hasPrefix(entry + "/")
         }
     }
 
