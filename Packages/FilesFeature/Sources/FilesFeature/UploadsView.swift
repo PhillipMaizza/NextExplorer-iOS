@@ -29,7 +29,7 @@ struct UploadsView: View {
                         .accessibilityLabel(L10n.Common.close)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(L10n.Uploads.clear) { store.send(.clearCompletedTapped, animation: .default) }
+                        Button(L10n.Uploads.clear) { store.send(.clearFinishedTapped, animation: .default) }
                             .disabled(!store.hasClearableJobs)
                     }
                 }

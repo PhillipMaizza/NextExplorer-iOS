@@ -3263,7 +3263,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Uploading %1$lld of %2$lld"
+            "value": "Uploading %lld files"
           }
         }
       }
@@ -3528,6 +3528,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Upload"
+          }
+        }
+      }
+    },
+    "uploads.stagingFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't add those files. Try again."
           }
         }
       }

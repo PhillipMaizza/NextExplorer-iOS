@@ -25,9 +25,6 @@ private enum Constants {
 /// The review sheet: what's about to upload, where to, how big, and the Upload button.
 struct UploadReviewView: View {
     @Bindable var store: StoreOf<UploadReviewFeature>
-    let onAddDocuments: ([URL]) -> Void
-    let onAddPhotos: ([PhotosPickerItem]) -> Void
-    let onAddPhotoCaptured: (URL) -> Void
 
     @State private var isFilesPickerPresented = false
     @State private var isPhotosPickerPresented = false
@@ -231,6 +228,10 @@ struct UploadReviewView: View {
                         .type(.body3(.regular), style: .secondary)
                 }
             }
+            if store.stagingFailed, store.files.isEmpty {
+                Text(L10n.Uploads.stagingFailed)
+                    .type(.body3(.regular), style: .secondary)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -252,19 +253,69 @@ struct UploadReviewView: View {
             photosSelection: $photosSelection,
             onDocumentsPicked: { urls in
                 guard !urls.isEmpty else { return }
-                store.send(.addMoreRequested(count: urls.count))
-                onAddDocuments(urls)
+                store.send(.stage(.documents(urls)))
             },
             onPhotosPicked: { items in
                 guard !items.isEmpty else { return }
-                store.send(.addMoreRequested(count: items.count))
-                onAddPhotos(items)
+                store.send(.stage(.photos(items)))
                 photosSelection = []
             },
             onPhotoCaptured: { url in
-                store.send(.addMoreRequested(count: 1))
-                onAddPhotoCaptured(url)
+                store.send(.stage(.camera(url)))
             }
         ))
+    }
+}
+
+private func previewFile(_ name: String, size: Int64) -> PickedFile {
+    PickedFile(fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: size)
+}
+
+#Preview("Ready") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        UploadReviewView(
+            store: Store(
+                initialState: UploadReviewFeature.State(
+                    serverURL: URL(string: "https://example.com")!,
+                    files: [
+                        previewFile("beach.jpg", size: 2_400_000),
+                        previewFile("itinerary.pdf", size: 180_000),
+                        previewFile("notes.txt", size: 1_200),
+                    ],
+                    startingDestination: "Documents/Trips"
+                )
+            ) { UploadReviewFeature() }
+        )
+    }
+}
+
+#Preview("Preparing") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        UploadReviewView(
+            store: Store(
+                initialState: UploadReviewFeature.State(
+                    serverURL: URL(string: "https://example.com")!,
+                    startingDestination: "",
+                    preparingCount: 3
+                )
+            ) { UploadReviewFeature() }
+        )
+    }
+}
+
+#Preview("All failed") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        UploadReviewView(
+            store: Store(
+                initialState: {
+                    var state = UploadReviewFeature.State(
+                        serverURL: URL(string: "https://example.com")!,
+                        startingDestination: "Documents"
+                    )
+                    state.stagingFailed = true
+                    return state
+                }()
+            ) { UploadReviewFeature() }
+        )
     }
 }

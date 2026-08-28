@@ -28,6 +28,9 @@ public struct MainTabView: View {
     @State private var hasBecomeActiveBefore = false
     /// Mirrors `store.uploads.isActive` so list screens can reserve bottom inset for the bar.
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
+    /// The bar's real rendered height, measured below and read by list screens instead of a
+    /// guessed constant so the clearance stays right under Dynamic Type.
+    @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
 
     public init(store: StoreOf<MainTabFeature>) {
         self.store = store
@@ -38,6 +41,13 @@ public struct MainTabView: View {
             .overlay(alignment: .bottom) {
                 if store.uploads.isBarVisible {
                     uploadStatusBar
+                        .background(
+                            GeometryReader { proxy in
+                                Color.clear
+                                    .onAppear { setUploadBarHeight(proxy.size.height) }
+                                    .onChange(of: proxy.size.height) { _, height in setUploadBarHeight(height) }
+                            }
+                        )
                         .padding(.horizontal, .space16)
                         .padding(.bottom, Constants.barBottomClearance + breadcrumbClearance)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -70,6 +80,11 @@ public struct MainTabView: View {
             }
     }
 
+    private func setUploadBarHeight(_ height: CGFloat) {
+        guard height > 0, abs(height - uploadBarHeight) >= 1 else { return }
+        $uploadBarHeight.withLock { $0 = height }
+    }
+
     @ViewBuilder
     private var uploadStatusBar: some View {
         if store.uploads.isActive {
@@ -83,7 +98,7 @@ public struct MainTabView: View {
             UploadFailedBar(
                 count: store.uploads.failedCount,
                 onRetry: { store.send(.uploads(.retryAllFailedTapped), animation: .default) },
-                onDismiss: { store.send(.uploads(.clearCompletedTapped), animation: .default) },
+                onDismiss: { store.send(.uploads(.clearFinishedTapped), animation: .default) },
                 onTap: { store.send(.uploads(.barTapped)) }
             )
         }
@@ -157,10 +172,10 @@ public struct MainTabView: View {
 
     private var uploadBarTitle: String {
         let uploads = store.uploads
-        if uploads.batchTotal <= 1, let name = uploads.currentJob?.fileName {
+        if uploads.remainingCount <= 1, let name = uploads.currentJob?.fileName {
             return L10n.Uploads.barTitleOne(name)
         }
-        return L10n.Uploads.barTitleMany(uploads.batchPosition, uploads.batchTotal)
+        return L10n.Uploads.barTitleMany(uploads.remainingCount)
     }
 
     private var uploadToastMessage: DSToastMessage? {

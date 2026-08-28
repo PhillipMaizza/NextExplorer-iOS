@@ -14,11 +14,16 @@ private enum Constants {
 /// Shared flags/metrics so screens deep in the tree can reserve bottom scroll clearance for
 /// the app-level upload bar without plumbing `MainTabFeature`'s state down to them.
 enum UploadBarChrome {
-    /// `@Shared(.inMemory)` key: `true` while `UploadProgressBar` is on screen. Written by
-    /// `MainTabView`, read by list screens for their bottom inset.
+    /// `@Shared(.inMemory)` key: `true` while a bar is on screen. Written by `MainTabView`,
+    /// read by list screens for their bottom inset.
     static let visibilityKey = "uploadBarVisible"
-    /// Rendered height (content + padding) plus a gap — what a list adds to its bottom inset.
-    static let clearance: CGFloat = 88
+    /// `@Shared(.inMemory)` key: the bar's live rendered height (content + padding), written by
+    /// `MainTabView` from a `GeometryReader`. `fallbackHeight` is only the first frame stand in
+    /// before that measurement lands, and the ceiling if measurement ever reads zero.
+    static let heightKey = "uploadBarHeight"
+    static let fallbackHeight: CGFloat = 72
+    /// Gap a list leaves between its last row and the floating bar.
+    static let gap: CGFloat = .space16
 }
 
 /// The persistent pill shown above the tab bar while an upload is running. Tapping it opens
@@ -60,6 +65,12 @@ struct UploadProgressBar: View {
         .elevation(.level4)
         .contentShape(RoundedRectangle(cornerRadius: .radiusControl))
         .onTapGesture(perform: onTap)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(Text(progress.formatted(.percent.precision(.fractionLength(0)))))
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction(.default, onTap)
+        .accessibilityAction(named: Text(L10n.Uploads.cancelAll), onCancelAll)
     }
 }
 
@@ -71,6 +82,10 @@ struct UploadFailedBar: View {
     let onDismiss: () -> Void
     let onTap: () -> Void
 
+    private var label: String {
+        count == 1 ? L10n.Uploads.barFailedOne : L10n.Uploads.barFailedMany(count)
+    }
+
     var body: some View {
         HStack(spacing: Constants.contentSpacing) {
             IconKit.warning
@@ -78,7 +93,7 @@ struct UploadFailedBar: View {
                 .scaledToFit()
                 .foregroundStyle(Color.negative)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
-            Text(count == 1 ? L10n.Uploads.barFailedOne : L10n.Uploads.barFailedMany(count))
+            Text(label)
                 .type(.body3(.semibold), style: .primary(for: .label))
                 .lineLimit(1)
             Spacer(minLength: Constants.contentSpacing)
@@ -103,12 +118,18 @@ struct UploadFailedBar: View {
         .elevation(.level4)
         .contentShape(RoundedRectangle(cornerRadius: .radiusControl))
         .onTapGesture(perform: onTap)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(label)
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction(.default, onTap)
+        .accessibilityAction(named: Text(L10n.Common.retry), onRetry)
+        .accessibilityAction(named: Text(L10n.Common.close), onDismiss)
     }
 }
 
 #Preview {
     VStack {
-        UploadProgressBar(title: "Uploading 2 of 5", progress: 0.4, onTap: {}, onCancelAll: {})
+        UploadProgressBar(title: "Uploading 3 files", progress: 0.4, onTap: {}, onCancelAll: {})
         UploadFailedBar(count: 3, onRetry: {}, onDismiss: {}, onTap: {})
     }
     .padding()

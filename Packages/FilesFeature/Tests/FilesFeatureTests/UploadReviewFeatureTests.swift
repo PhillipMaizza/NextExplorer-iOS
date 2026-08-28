@@ -14,6 +14,24 @@ struct UploadReviewFeatureTests {
         PickedFile(id: id, fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: size)
     }
 
+    /// A staging client whose `stageDocuments` streams `files` back and records what it was
+    /// asked to `discard`.
+    private nonisolated func staging(
+        yielding files: [PickedFile], discarded: LockIsolated<[URL]> = LockIsolated([])
+    ) -> UploadStagingClient {
+        UploadStagingClient(
+            stageDocuments: { _ in
+                AsyncStream<PickedFile> { continuation in
+                    for file in files { continuation.yield(file) }
+                    continuation.finish()
+                }
+            },
+            stagePhotos: { _ in AsyncStream<PickedFile> { $0.finish() } },
+            stageCameraCapture: { _ in nil },
+            discard: { urls in discarded.withValue { $0.append(contentsOf: urls) } }
+        )
+    }
+
     @Test
     func totalsAndUploadGate() {
         var state = UploadReviewFeature.State(
@@ -60,94 +78,97 @@ struct UploadReviewFeatureTests {
     }
 
     @Test
-    func filesStreamInWhilePreparingAndUploadUnlocksWhenDone() async {
+    func stagingStreamsFilesInAndUnlocksUploadWhenDone() async {
+        let a = file("a.jpg", id: UUID(0), size: 10)
+        let b = file("b.txt", id: UUID(1), size: 5)
         let store = TestStore(
-            initialState: UploadReviewFeature.State(
-                serverURL: serverURL, startingDestination: "Inbox", preparingCount: 2
-            )
+            initialState: UploadReviewFeature.State(serverURL: serverURL, startingDestination: "Inbox")
         ) {
             UploadReviewFeature()
+        } withDependencies: {
+            $0.uploadStaging = staging(yielding: [a, b])
         }
-        #expect(store.state.isPreparing == true)
-        #expect(store.state.canUpload == false)
+        store.exhaustivity = .off
 
-        await store.send(.filePrepared(file("a.jpg", id: UUID(0), size: 10))) {
-            $0.files.append(self.file("a.jpg", id: UUID(0), size: 10))
-            $0.preparingCount = 1
+        await store.send(.stage(.documents([URL(fileURLWithPath: "/tmp/a.jpg"), URL(fileURLWithPath: "/tmp/b.txt")]))) {
+            $0.preparingCount = 2
         }
         #expect(store.state.canUpload == false) // still preparing
 
-        await store.send(.filePrepared(file("b.txt", id: UUID(1), size: 5))) {
-            $0.files.append(self.file("b.txt", id: UUID(1), size: 5))
-            $0.preparingCount = 0
-        }
-        await store.send(.preparationFinished)
+        await store.receive(\.filePrepared) { $0.files.append(a); $0.preparingCount = 1 }
+        await store.receive(\.filePrepared) { $0.files.append(b); $0.preparingCount = 0 }
+        await store.receive(\.stagingBatchFinished)
         #expect(store.state.canUpload == true)
         #expect(store.state.totalSize == 15)
     }
 
     @Test
-    func addMoreRequestedReopensPreparingAndNewFilesStreamIn() async {
+    func addingMoreWhilePreparingAccumulates() async {
+        let a = file("a.jpg", id: UUID(0), size: 10)
         let store = TestStore(
             initialState: UploadReviewFeature.State(
-                serverURL: serverURL,
-                files: [file("a.jpg", id: UUID(0), size: 10)],
-                startingDestination: "Inbox"
+                serverURL: serverURL, files: [a], startingDestination: "Inbox"
             )
         ) {
             UploadReviewFeature()
+        } withDependencies: {
+            $0.uploadStaging = staging(yielding: [file("b.txt", id: UUID(1), size: 5)])
         }
         store.exhaustivity = .off
         #expect(store.state.canUpload == true)
 
-        await store.send(.addMoreRequested(count: 2)) {
-            $0.preparingCount = 2
-        }
-        #expect(store.state.canUpload == false) // locked while the new pick materializes
-        #expect(store.state.totalCount == 3)
-
-        await store.send(.filePrepared(file("b.txt", id: UUID(1), size: 5))) {
-            $0.files.append(self.file("b.txt", id: UUID(1), size: 5))
+        await store.send(.stage(.documents([URL(fileURLWithPath: "/tmp/b.txt")]))) {
             $0.preparingCount = 1
         }
-        await store.send(.filePrepared(file("c.txt", id: UUID(2), size: 5))) {
-            $0.files.append(self.file("c.txt", id: UUID(2), size: 5))
-            $0.preparingCount = 0
-        }
-        await store.send(.preparationFinished)
+        #expect(store.state.canUpload == false) // locked while the new pick materializes
+
+        await store.receive(\.filePrepared)
+        await store.receive(\.stagingBatchFinished)
         #expect(store.state.canUpload == true)
-        #expect(store.state.totalSize == 20)
+        #expect(store.state.totalSize == 15)
     }
 
     @Test
-    func preparationFinishingWithNoFilesCancels() async {
+    func stagingProducingNothingWithNoFilesKeepsTheSheetWithAnError() async {
         let store = TestStore(
-            initialState: UploadReviewFeature.State(
-                serverURL: serverURL, startingDestination: "Inbox", preparingCount: 1
-            )
+            initialState: UploadReviewFeature.State(serverURL: serverURL, startingDestination: "Inbox")
         ) {
             UploadReviewFeature()
+        } withDependencies: {
+            $0.uploadStaging = staging(yielding: [])
         }
+        store.exhaustivity = .off
 
-        await store.send(.preparationFinished) {
+        await store.send(.stage(.documents([URL(fileURLWithPath: "/tmp/a.jpg")]))) {
+            $0.preparingCount = 1
+        }
+        await store.receive(\.stagingBatchFinished) {
             $0.preparingCount = 0
+            $0.stagingFailed = true
         }
-        await store.receive(.delegate(.cancelled))
+        #expect(store.state.canUpload == false)
     }
 
     @Test
-    func removingTheLastFileCancels() async {
+    func removingTheLastFileCancelsAndDiscardsIt() async {
+        let discarded = LockIsolated<[URL]>([])
+        let a = file("a.jpg", id: UUID(0), size: 1)
         let store = TestStore(
             initialState: UploadReviewFeature.State(
-                serverURL: serverURL, files: [file("a.jpg", id: UUID(0), size: 1)], startingDestination: "Inbox"
+                serverURL: serverURL, files: [a], startingDestination: "Inbox"
             )
         ) {
             UploadReviewFeature()
+        } withDependencies: {
+            $0.uploadStaging = staging(yielding: [], discarded: discarded)
         }
+        store.exhaustivity = .off
 
         await store.send(.removeFileTapped(id: UUID(0))) {
             $0.files.remove(id: UUID(0))
         }
         await store.receive(.delegate(.cancelled))
+        await store.finish()
+        #expect(discarded.value == [a.fileURL])
     }
 }
