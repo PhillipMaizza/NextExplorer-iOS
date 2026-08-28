@@ -10,6 +10,9 @@ private enum Constants {
     /// Clearance so the floating upload bar rides above the tab bar rather than replacing it
     /// (a bottom `safeAreaInset` / `tabViewBottomAccessory` hides the Liquid Glass tab bar).
     static let barBottomClearance: CGFloat = 68
+    /// Extra lift when a breadcrumb bar is also on screen (its height + `.safeAreaInset`
+    /// spacing) so the upload bar rides above it, not over it.
+    static let breadcrumbClearance: CGFloat = BrowseBreadcrumbBarMetrics.height + .space8
     /// Lifts the "upload complete" toast clear of the tab bar.
     static let toastTabBarClearance: CGFloat = 56
 }
@@ -23,6 +26,8 @@ public struct MainTabView: View {
     /// stomp on whatever `onAppear` just loaded. This tracks past the first activation so only
     /// a genuine later background→active resume triggers a sync.
     @State private var hasBecomeActiveBefore = false
+    /// Mirrors `store.uploads.isActive` so list screens can reserve bottom inset for the bar.
+    @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
 
     public init(store: StoreOf<MainTabFeature>) {
         self.store = store
@@ -34,11 +39,15 @@ public struct MainTabView: View {
                 if store.uploads.isActive {
                     uploadBar
                         .padding(.horizontal, .space16)
-                        .padding(.bottom, Constants.barBottomClearance)
+                        .padding(.bottom, Constants.barBottomClearance + breadcrumbClearance)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isActive)
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: breadcrumbClearance)
+            .onChange(of: store.uploads.isActive) { _, active in
+                $isUploadBarVisible.withLock { $0 = active }
+            }
             .sheet(isPresented: Binding(
                 get: { store.uploads.isSheetPresented },
                 set: { store.send(.uploads(.sheetPresented($0))) }
@@ -116,6 +125,23 @@ public struct MainTabView: View {
         image
             .resizable()
             .scaledToFit()
+    }
+
+    /// Whether the current tab is showing a `BrowseBreadcrumbBar` right now — the upload bar
+    /// has to sit above it. Mirrors `BrowseTabView` / `FavoritesView`'s own visibility rule.
+    private var breadcrumbClearance: CGFloat {
+        switch store.selectedTab {
+        case .browse:
+            let dir = store.browse.path.last?.directoryPath ?? store.browse.root.directoryPath
+            let selecting = store.browse.path.last?.isSelecting ?? store.browse.root.isSelecting
+            return (!dir.isEmpty && !selecting) ? Constants.breadcrumbClearance : 0
+        case .favorites:
+            let dir = store.favorites.path.last?.directoryPath ?? ""
+            let selecting = store.favorites.path.last?.isSelecting ?? false
+            return (!dir.isEmpty && !selecting) ? Constants.breadcrumbClearance : 0
+        default:
+            return 0
+        }
     }
 
     private var uploadBarTitle: String {
