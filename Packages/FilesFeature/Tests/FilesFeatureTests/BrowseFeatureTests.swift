@@ -2046,7 +2046,8 @@ struct BrowseFeatureTransferTests {
                 },
                 stagePhotos: { _ in AsyncStream<PickedFile> { $0.finish() } },
                 stageCameraCapture: { _ in nil },
-                discard: { _ in }
+                discard: { _ in },
+                sweepStale: {}
             )
         }
         store.exhaustivity = .off

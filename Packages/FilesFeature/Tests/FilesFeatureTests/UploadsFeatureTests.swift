@@ -11,6 +11,7 @@ import Testing
 @Suite
 struct UploadsFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
+    private let now = Date(timeIntervalSince1970: 1_000_000)
 
     private nonisolated func pending(_ name: String, id: UUID, destination: String = "Inbox") -> PendingUpload {
         PendingUpload(id: id, fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, destination: destination)
@@ -45,6 +46,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
+            $0.date = .constant(self.now)
             $0.filesClient.uploadFile = { _, _, name, _, _ in self.uploaded(name) }
         }
         store.exhaustivity = .off
@@ -79,6 +81,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
+            $0.date = .constant(self.now)
             $0.filesClient.uploadFile = { _, _, name, _, _ in
                 let n = attempts.withValue { value -> Int in value += 1; return value }
                 if n == 1 { throw FilesClientError.server(statusCode: 500) }
@@ -112,6 +115,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
+            $0.date = .constant(self.now)
             $0.filesClient.uploadFile = { _, _, _, _, _ in
                 try await Task.never()
             }
@@ -137,6 +141,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
+            $0.date = .constant(self.now)
             $0.filesClient.uploadFile = { _, _, name, _, _ in
                 let n = attempts.withValue { value -> Int in value += 1; return value }
                 if n <= 2 { throw FilesClientError.server(statusCode: 500) }
@@ -174,6 +179,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
+            $0.date = .constant(self.now)
             $0.filesClient.uploadFile = { _, _, name, dest, _ in self.uploaded(name, destination: dest) }
         }
         store.exhaustivity = .off
@@ -200,6 +206,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: state) {
             UploadsFeature()
         } withDependencies: {
+            $0.date = .constant(self.now)
             $0.filesClient.uploadFile = { _, _, _, _, _ in try await Task.never() }
         }
         store.exhaustivity = .off
@@ -213,6 +220,30 @@ struct UploadsFeatureTests {
         #expect(store.state.jobs[id: UUID(2)]?.status == .completed)
         #expect(store.state.jobs[id: UUID(3)]?.status == .queued)
         await store.receive(\.startNextIfIdle)
+    }
+
+    @Test
+    func appResumedRestartsAnUploadThatWedgedWellPastAPlausibleTransferTime() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        var wedged = job("a.txt", id: UUID(0), status: .uploading)
+        wedged.startedAt = now.addingTimeInterval(-600) // 10 minutes ago
+        state.jobs = [wedged, job("b.txt", id: UUID(1), status: .queued)]
+        let store = TestStore(initialState: state) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(self.now)
+            $0.filesClient.uploadFile = { _, _, _, _, _ in try await Task.never() }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.appResumed) {
+            $0.jobs[id: UUID(0)]?.status = .queued
+            $0.jobs[id: UUID(0)]?.progress = 0
+        }
+        await store.receive(\.startNextIfIdle) {
+            $0.jobs[id: UUID(0)]?.status = .uploading
+            $0.jobs[id: UUID(0)]?.startedAt = self.now
+        }
     }
 
     @Test

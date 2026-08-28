@@ -11,6 +11,7 @@ import Testing
 @Suite
 struct MainTabFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
+    private let testDate = Date(timeIntervalSince1970: 1_000_000)
     private let user = User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
 
     // MARK: Happy path
@@ -50,6 +51,7 @@ struct MainTabFeatureTests {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
         } withDependencies: {
+            $0.date = .constant(self.testDate)
             $0.filesClient.browse = { _, _ in
                 BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
             }
@@ -136,6 +138,7 @@ struct MainTabFeatureTests {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
         } withDependencies: {
+            $0.date = .constant(self.testDate)
             $0.filesClient.uploadFile = { _, _, name, dest, _ in
                 FileItem(name: name, path: dest, dateModified: Date(timeIntervalSince1970: 1), size: 1, kind: "txt")
             }
