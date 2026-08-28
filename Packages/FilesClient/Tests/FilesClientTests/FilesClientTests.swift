@@ -735,6 +735,23 @@ struct FilesClientLiveTests {
     }
 
     @Test
+    func uploadFileSanitizesQuotesAndNewlinesOutOfTheHeaderFilename() async throws {
+        let responseJSON = #"[{"name": "weird.txt", "path": "Inbox", "dateModified": "2024-01-01T00:00:00.000Z", "size": 1, "kind": "txt"}]"#
+        stub(statusCode: 200, body: responseJSON.data(using: .utf8)!)
+        StubURLProtocol.capturedRequest = nil
+        let fileURL = try makeTempFile("weird.txt", contents: "x")
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        _ = try await makeClient().uploadFile(serverURL, fileURL, "we\"ir\nd.txt", "Inbox") { _ in }
+
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        let bodyString = try #require(String(data: body, encoding: .utf8))
+        #expect(bodyString.contains("filename=\"we'ir d.txt\""))
+        // The unescaped name still rides the `relativePath` field verbatim for the server.
+        #expect(bodyString.contains("name=\"relativePath\"\r\n\r\nwe\"ir\nd.txt\r\n"))
+    }
+
+    @Test
     func uploadFileSurfacesTheServerMessageOnRejection() async throws {
         let errorJSON = #"{"error": {"message": "Cannot upload files to this path."}}"#
         stub(statusCode: 403, body: errorJSON.data(using: .utf8)!)
