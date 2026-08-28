@@ -3400,6 +3400,83 @@
         }
       }
     },
+    "uploads.reviewChooseFolder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a folder"
+          }
+        }
+      }
+    },
+    "uploads.reviewSectionFiles": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Files"
+          }
+        }
+      }
+    },
+    "uploads.reviewSectionPath": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Path"
+          }
+        }
+      }
+    },
+    "uploads.reviewSectionSize": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total size"
+          }
+        }
+      }
+    },
+    "uploads.reviewTitleMany": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload %lld files"
+          }
+        }
+      }
+    },
+    "uploads.reviewTitleOne": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload 1 file"
+          }
+        }
+      }
+    },
+    "uploads.reviewUploadButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload"
+          }
+        }
+      }
+    },
     "uploads.statusFailed": {
       "extractionState": "manual",
       "localizations": {
