@@ -504,18 +504,6 @@ struct BrowseFeatureTests {
     }
 
     @Test
-    func searchResultTappedOnAFileEmitsNoDelegate() async {
-        let serverURL = URL(string: "https://example.com")!
-        let result = SearchResultItem(name: "notes.txt", path: "", kind: "txt")
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
-            BrowseFeature()
-        }
-
-        await store.send(.searchResultTapped(result))
-    }
-
-    @Test
     func favoritesResponseCollectsFavoritePaths() async {
         let serverURL = URL(string: "https://example.com")!
         let favorite = Favorite(
@@ -989,6 +977,25 @@ struct BrowseFeatureTests {
             $0.isPerformingFileAction = false
             $0.fileActionErrorMessage = FilesClientError.server(statusCode: 409).userMessage
         }
+    }
+
+    @Test
+    func searchResultTappedOnAFileOpensThePreviewViaRowTapped() async {
+        let serverURL = URL(string: "https://example.com")!
+        let store = TestStore(
+            initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        ) {
+            BrowseFeature()
+        }
+        // `searchResultTapped` stamps `Date()` into the synthesized `FileItem`, so match on
+        // the fields it actually derives rather than the whole value.
+        store.exhaustivity = .off
+
+        await store.send(.searchResultTapped(SearchResultItem(name: "clip.mp4", path: "Media", kind: "file")))
+        await store.receive(\.rowTapped)
+        #expect(store.state.previewItem?.name == "clip.mp4")
+        #expect(store.state.previewItem?.path == "Media")
+        #expect(store.state.previewItem?.kind == "mp4")
     }
 
     // MARK: File actions — new folder
