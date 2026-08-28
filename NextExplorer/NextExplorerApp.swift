@@ -14,7 +14,7 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 }
 
 @main
-struct NetxExplorerApp: App {
+struct NextExplorerApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
 
     static let store = Store(initialState: AppFeature.State()) {
