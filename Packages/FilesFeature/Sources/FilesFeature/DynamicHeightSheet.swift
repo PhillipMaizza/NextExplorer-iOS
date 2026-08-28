@@ -79,7 +79,12 @@ struct DynamicHeightSheet<Content: View, Footer: View>: View {
         return maxHeightFraction == nil ? [.height(resolvedHeight)] : [.height(resolvedHeight), .large]
     }
 
-    var body: some View {
+    /// A bare `GeometryReader` in the bottom `safeAreaInset` reports the whole inset region
+    /// rather than a zero height when there's nothing to measure, which then inflates the
+    /// detent toward full screen. Skip the footer plumbing entirely when no footer was given.
+    private var hasFooter: Bool { Footer.self != EmptyView.self }
+
+    private var measuredContent: some View {
         ScrollView {
             content.background(
                 GeometryReader { proxy in
@@ -90,14 +95,23 @@ struct DynamicHeightSheet<Content: View, Footer: View>: View {
             )
         }
         .scrollDisabled(!isOverflowing)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            footer.background(
-                GeometryReader { proxy in
-                    Color.clear
-                        .onAppear { footerHeight = proxy.size.height }
-                        .onChange(of: proxy.size.height) { _, newValue in footerHeight = newValue }
+    }
+
+    var body: some View {
+        Group {
+            if hasFooter {
+                measuredContent.safeAreaInset(edge: .bottom, spacing: 0) {
+                    footer.background(
+                        GeometryReader { proxy in
+                            Color.clear
+                                .onAppear { footerHeight = proxy.size.height }
+                                .onChange(of: proxy.size.height) { _, newValue in footerHeight = newValue }
+                        }
+                    )
                 }
-            )
+            } else {
+                measuredContent
+            }
         }
         .background(Color.backgroundPrimary)
         .presentationDetents(detents)

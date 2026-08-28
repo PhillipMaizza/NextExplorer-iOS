@@ -166,6 +166,17 @@
         }
       }
     },
+    "browse.actionNewFolder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create Folder"
+          }
+        }
+      }
+    },
     "browse.actionOpenInBrowser": {
       "extractionState": "manual",
       "localizations": {
@@ -437,6 +448,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Browse"
+          }
+        }
+      }
+    },
+    "browse.newFolderConfirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Create"
+          }
+        }
+      }
+    },
+    "browse.newFolderPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder name"
+          }
+        }
+      }
+    },
+    "browse.newFolderTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New folder"
           }
         }
       }

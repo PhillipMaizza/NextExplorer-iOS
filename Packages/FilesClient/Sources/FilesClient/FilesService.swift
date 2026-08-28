@@ -80,6 +80,23 @@ struct FilesService: Sendable {
         return envelope.item
     }
 
+    /// `POST /api/files/folder`, confirmed against `backend/src/routes/files/folder.js`: `path`
+    /// is the parent directory's relative path (the server 400s an empty one), `name` the new
+    /// folder's name. Responds 201 `{ item }` with the created folder, its name possibly
+    /// suffixed on a collision.
+    func createFolder(serverURL: URL, path: String, name: String) async throws -> FileItem {
+        let url = serverURL.appendingPathComponent("api/files/folder")
+        var request = Self.makeRequest(url: url, method: "POST")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            request.httpBody = try JSONEncoder().encode(CreateFolderBody(path: path, name: name))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let envelope = try await send(request, decoding: CreateFolderEnvelope.self)
+        return envelope.item
+    }
+
     /// `GET /api/thumbnails/*`, confirmed against `backend/src/routes/thumbnails.js`: returns
     /// `{ thumbnail: "" }` when thumbnails are disabled server-side or the file's type isn't
     /// thumbnailable, `{ thumbnail: "/static/thumbnails/<hash>.webp" }` once generated (cached
@@ -701,6 +718,15 @@ struct FilesService: Sendable {
     }
 
     private struct RenameItemEnvelope: Decodable {
+        let item: FileItem
+    }
+
+    private struct CreateFolderBody: Encodable {
+        let path: String
+        let name: String
+    }
+
+    private struct CreateFolderEnvelope: Decodable {
         let item: FileItem
     }
 

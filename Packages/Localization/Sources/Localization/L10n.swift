@@ -23,6 +23,7 @@ public enum L10n {
         public static var actionExtract: String { tr("browse.actionExtract") }  // "Extract"
         public static var actionGetInfo: String { tr("browse.actionGetInfo") }  // "Get Info"
         public static var actionMove: String { tr("browse.actionMove") }  // "Move"
+        public static var actionNewFolder: String { tr("browse.actionNewFolder") }  // "Create Folder"
         public static var actionOpenInBrowser: String { tr("browse.actionOpenInBrowser") }  // "Open in Browser"
         public static var actionPaste: String { tr("browse.actionPaste") }  // "Paste"
         public static func actionPasteCount(_ a0: CVarArg) -> String { tr("browse.actionPasteCount", a0) }
@@ -48,6 +49,9 @@ public enum L10n {
         public static func downloadSavedTo(_ a0: CVarArg) -> String { tr("browse.downloadSavedTo", a0) }
         public static var locations: String { tr("browse.locations") }  // "Locations"
         public static var navigationTitle: String { tr("browse.navigationTitle") }  // "Browse"
+        public static var newFolderConfirm: String { tr("browse.newFolderConfirm") }  // "Create"
+        public static var newFolderPlaceholder: String { tr("browse.newFolderPlaceholder") }  // "Folder name"
+        public static var newFolderTitle: String { tr("browse.newFolderTitle") }  // "New folder"
         public static var open: String { tr("browse.open") }  // "Open"
         public static var progressCompressing: String { tr("browse.progressCompressing") }  // "Compressing…"
         public static var progressCopying: String { tr("browse.progressCopying") }  // "Copying…"

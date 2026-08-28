@@ -991,6 +991,87 @@ struct BrowseFeatureTests {
         }
     }
 
+    // MARK: File actions — new folder
+
+    @Test
+    func newFolderTappedOpensTheSheetAndCancelledClosesIt() async {
+        let serverURL = URL(string: "https://example.com")!
+        let store = TestStore(
+            initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        ) {
+            BrowseFeature()
+        }
+
+        await store.send(.newFolderTapped) {
+            $0.isNewFolderSheetPresented = true
+        }
+        await store.send(.newFolderCancelled) {
+            $0.isNewFolderSheetPresented = false
+        }
+    }
+
+    @Test
+    func newFolderConfirmedWithABlankNameClosesTheSheetWithoutCallingTheServer() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.isNewFolderSheetPresented = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.newFolderConfirmed("   ")) {
+            $0.isNewFolderSheetPresented = false
+        }
+    }
+
+    @Test
+    func newFolderConfirmedAppendsTheCreatedFolderOnSuccess() async {
+        let serverURL = URL(string: "https://example.com")!
+        let existing = FileItem(name: "old.txt", path: "Docs", dateModified: Date(), size: 0, kind: "txt")
+        let created = FileItem(name: "Reports", path: "Docs", dateModified: Date(), size: 0, kind: "directory")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.items = [existing]
+        state.isNewFolderSheetPresented = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.createFolder = { _, _, _ in created }
+        }
+
+        await store.send(.newFolderConfirmed("Reports")) {
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.newFolderResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.isNewFolderSheetPresented = false
+            $0.items = [existing, created]
+        }
+    }
+
+    @Test
+    func newFolderConfirmedFailureSurfacesAReadableErrorMessage() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.isNewFolderSheetPresented = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.createFolder = { _, _, _ in throw FilesClientError.server(statusCode: 403) }
+        }
+
+        await store.send(.newFolderConfirmed("Reports")) {
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.newFolderResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.isNewFolderSheetPresented = false
+            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
+        }
+    }
+
     // MARK: File actions — delete
 
     @Test

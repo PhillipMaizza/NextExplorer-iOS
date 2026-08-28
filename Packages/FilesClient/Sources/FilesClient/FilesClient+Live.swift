@@ -33,6 +33,9 @@ extension FilesClient {
             renameItem: { serverURL, item, newName in
                 try await service.renameItem(serverURL: serverURL, item: item, newName: newName)
             },
+            createFolder: { serverURL, path, name in
+                try await service.createFolder(serverURL: serverURL, path: path, name: name)
+            },
             deleteItems: { serverURL, items in
                 try await service.deleteItems(serverURL: serverURL, items: items)
             },
