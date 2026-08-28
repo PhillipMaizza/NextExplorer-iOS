@@ -63,6 +63,53 @@ struct UploadProgressBar: View {
     }
 }
 
+/// Same pill, shown once the queue drains with failures still in it: a warning, the count,
+/// and a Retry action. `onDismiss` clears the failed jobs.
+struct UploadFailedBar: View {
+    let count: Int
+    let onRetry: () -> Void
+    let onDismiss: () -> Void
+    let onTap: () -> Void
+
+    var body: some View {
+        HStack(spacing: Constants.contentSpacing) {
+            IconKit.warning
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(Color.negative)
+                .frame(width: Constants.iconSize, height: Constants.iconSize)
+            Text(count == 1 ? L10n.Uploads.barFailedOne : L10n.Uploads.barFailedMany(count))
+                .type(.body3(.semibold), style: .primary(for: .label))
+                .lineLimit(1)
+            Spacer(minLength: Constants.contentSpacing)
+            Button(action: onRetry) {
+                Text(L10n.Common.retry)
+                    .type(.body3(.semibold), style: .link)
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            Button(action: onDismiss) {
+                IconKit.closeCircle
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(Color.secondaryDS)
+                    .frame(width: Constants.cancelSize, height: Constants.cancelSize)
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .accessibilityLabel(L10n.Common.close)
+        }
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.vertical, Constants.verticalPadding)
+        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusControl))
+        .elevation(.level4)
+        .contentShape(RoundedRectangle(cornerRadius: .radiusControl))
+        .onTapGesture(perform: onTap)
+    }
+}
+
 #Preview {
-    UploadProgressBar(title: "Uploading 2 of 5", progress: 0.4, onTap: {}, onCancelAll: {})
+    VStack {
+        UploadProgressBar(title: "Uploading 2 of 5", progress: 0.4, onTap: {}, onCancelAll: {})
+        UploadFailedBar(count: 3, onRetry: {}, onDismiss: {}, onTap: {})
+    }
+    .padding()
 }
