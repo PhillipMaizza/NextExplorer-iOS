@@ -18,8 +18,14 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>CFBundleDisplayName</key>
+	<string>NextExplorer</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSCameraUsageDescription</key>
-	<string>Take a photo to upload it to your files.</string>
+	<string>NextExplorer uses the camera so you can take a photo and upload it to your server.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>NextExplorer connects to the NextExplorer server you enter, which is usually on your local network.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
