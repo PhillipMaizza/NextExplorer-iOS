@@ -38,15 +38,15 @@ struct ChangePasswordView: View {
                 }
 
                 LabeledField(L10n.ChangePassword.fieldCurrentPassword) {
-                    SecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
+                    DSSecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
                         .textContentType(.password)
                 }
                 LabeledField(L10n.ChangePassword.fieldNewPasswordLabel, error: newPasswordErrorText) {
-                    SecureField(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength), text: $store.newPassword.sending(\.newPasswordChanged))
+                    DSSecureField(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength), text: $store.newPassword.sending(\.newPasswordChanged))
                         .textContentType(.newPassword)
                 }
                 LabeledField(L10n.ChangePassword.fieldConfirmPasswordLabel, error: confirmErrorText) {
-                    SecureField(L10n.ChangePassword.fieldConfirmPassword, text: $store.confirmPassword.sending(\.confirmPasswordChanged))
+                    DSSecureField(L10n.ChangePassword.fieldConfirmPassword, text: $store.confirmPassword.sending(\.confirmPasswordChanged))
                         .textContentType(.newPassword)
                 }
 
