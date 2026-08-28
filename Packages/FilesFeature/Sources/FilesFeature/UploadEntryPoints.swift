@@ -1,3 +1,4 @@
+import AVFoundation
 import DesignSystem
 import Localization
 import PhotosUI
@@ -21,12 +22,24 @@ struct UploadEntryPoints: ViewModifier {
     let onPhotosPicked: ([PhotosPickerItem]) -> Void
     let onPhotoCaptured: (URL) -> Void
 
+    @State private var isCameraDeniedAlertPresented = false
+
     func body(content: Content) -> some View {
         content
             .toolbar {
                 if !isSelecting {
                     ToolbarItem(placement: .topBarTrailing) { menu }
                 }
+            }
+            .alert(L10n.Uploads.cameraDeniedTitle, isPresented: $isCameraDeniedAlertPresented) {
+                Button(L10n.Common.openSettings) {
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                Button(L10n.Common.cancel, role: .cancel) {}
+            } message: {
+                Text(L10n.Uploads.cameraDeniedMessage)
             }
             .fileImporter(
                 isPresented: $isFilesPickerPresented,
@@ -58,7 +71,7 @@ struct UploadEntryPoints: ViewModifier {
         Menu {
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 Button {
-                    isCameraPresented = true
+                    Task { await presentCamera() }
                 } label: {
                     Label { Text(L10n.Uploads.actionTakePhoto) } icon: { IconKit.camera }
                 }
@@ -77,5 +90,21 @@ struct UploadEntryPoints: ViewModifier {
             IconKit.plus.foregroundStyle(Color.primaryDS)
         }
         .accessibilityLabel(L10n.Uploads.menuTitle)
+    }
+
+    /// Resolve camera permission *before* presenting `UIImagePickerController` — presenting it
+    /// first shows the system prompt mid-transition and the camera stalls behind it.
+    @MainActor
+    private func presentCamera() async {
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .authorized:
+            isCameraPresented = true
+        case .notDetermined:
+            if await AVCaptureDevice.requestAccess(for: .video) {
+                isCameraPresented = true
+            }
+        default:
+            isCameraDeniedAlertPresented = true
+        }
     }
 }
