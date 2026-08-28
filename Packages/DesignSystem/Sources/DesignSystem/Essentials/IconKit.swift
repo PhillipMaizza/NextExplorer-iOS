@@ -10,6 +10,7 @@ import SwiftUI
 public enum IconKit {
     public static let checkmark = Image(systemName: "checkmark")
     public static let close = Image(systemName: "xmark")
+    public static let closeCircle = Image(systemName: "xmark.circle.fill")
     public static let back = Image(systemName: "chevron.left")
     public static let envelope = Image(systemName: "envelope")
     public static let lock = Image(systemName: "lock")
