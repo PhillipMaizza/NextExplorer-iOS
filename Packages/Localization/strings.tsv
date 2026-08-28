@@ -165,6 +165,13 @@ uploads.cameraDeniedTitle	Camera access needed
 uploads.cameraDeniedMessage	Allow camera access in Settings to take a photo.
 uploads.destinationTitle	Upload to…
 uploads.destinationConfirm	Upload here
+uploads.reviewTitleOne	Upload 1 file
+uploads.reviewTitleMany	Upload %lld files
+uploads.reviewSectionFiles	Files
+uploads.reviewSectionPath	Path
+uploads.reviewSectionSize	Total size
+uploads.reviewChooseFolder	Choose a folder
+uploads.reviewUploadButton	Upload
 uploads.statusWaiting	Waiting
 uploads.statusFailed	Upload failed
 uploads.barTitleOne	Uploading %@

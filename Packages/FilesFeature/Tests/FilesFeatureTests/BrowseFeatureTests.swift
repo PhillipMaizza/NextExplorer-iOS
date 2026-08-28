@@ -2027,23 +2027,24 @@ struct BrowseFeatureTransferTests {
         }
     }
 
+    private nonisolated func picked(_ name: String, id: UUID, size: Int64 = 10) -> PickedFile {
+        PickedFile(id: id, fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: size)
+    }
+
     @Test
-    func pickingUploadFilesOpensTheDestinationPickerThenEnqueuesOnConfirm() async {
+    func pickingUploadFilesOpensTheReviewSheetThenEnqueuesOnConfirm() async {
         let store = TestStore(initialState: makeState(directoryPath: "Documents")) { BrowseFeature() }
         store.exhaustivity = .off
-        let picked = [
-            PickedFile(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg"),
-            PickedFile(id: UUID(1), fileURL: URL(fileURLWithPath: "/tmp/b.txt"), fileName: "b.txt"),
-        ]
+        let files = [picked("a.jpg", id: UUID(0)), picked("b.txt", id: UUID(1))]
 
-        await store.send(.uploadFilesPicked(picked)) {
-            $0.pendingUploadFiles = picked
-            $0.uploadDestination = DestinationPickerFeature.State(serverURL: self.serverURL, uploadStartingAt: "Documents")
+        await store.send(.uploadFilesPicked(files)) {
+            $0.uploadReview = UploadReviewFeature.State(
+                serverURL: self.serverURL, files: files, startingDestination: "Documents"
+            )
         }
 
-        await store.send(.uploadDestination(.presented(.delegate(.confirmed(destination: "Documents/Trips"))))) {
-            $0.pendingUploadFiles = []
-            $0.uploadDestination = nil
+        await store.send(.uploadReview(.presented(.delegate(.confirmed(files: files, destination: "Documents/Trips"))))) {
+            $0.uploadReview = nil
         }
         await store.receive(.delegate(.uploadRequested([
             PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg", destination: "Documents/Trips"),
@@ -2052,15 +2053,13 @@ struct BrowseFeatureTransferTests {
     }
 
     @Test
-    func cancellingTheUploadDestinationPickerDropsThePickedFiles() async {
+    func cancellingTheUploadReviewSheetDropsThePickedFiles() async {
         let store = TestStore(initialState: makeState()) { BrowseFeature() }
         store.exhaustivity = .off
-        let picked = [PickedFile(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg")]
 
-        await store.send(.uploadFilesPicked(picked))
-        await store.send(.uploadDestination(.presented(.delegate(.cancelled)))) {
-            $0.pendingUploadFiles = []
-            $0.uploadDestination = nil
+        await store.send(.uploadFilesPicked([picked("a.jpg", id: UUID(0))]))
+        await store.send(.uploadReview(.presented(.delegate(.cancelled)))) {
+            $0.uploadReview = nil
         }
     }
 
