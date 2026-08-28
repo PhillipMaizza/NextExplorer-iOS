@@ -76,7 +76,7 @@ struct UploadsView: View {
             Text(L10n.Uploads.statusWaiting).type(.body3(.regular), style: .secondary)
         case .uploading:
             ProgressView(value: job.progress)
-                .tint(Color.accent)
+                .tint(Color.positive)
                 .frame(width: Constants.progressWidth)
         case .completed:
             Text(destinationLabel(job.destination)).type(.body3(.regular), style: .secondary).lineLimit(1)
@@ -90,7 +90,7 @@ struct UploadsView: View {
         switch job.status {
         case .queued, .uploading:
             Button { store.send(.cancelJobTapped(id: job.id), animation: .default) } label: {
-                IconKit.close
+                IconKit.closeCircle
                     .resizable().scaledToFit()
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.controlSize, height: Constants.controlSize)
@@ -100,8 +100,8 @@ struct UploadsView: View {
         case .completed:
             IconKit.checkmarkCircleFill
                 .resizable().scaledToFit()
-                .foregroundStyle(Color.accent)
-                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                .foregroundStyle(Color.positive)
+                .frame(width: Constants.controlSize, height: Constants.controlSize)
         case .failed:
             Button { store.send(.retryTapped(id: job.id), animation: .default) } label: {
                 IconKit.retry
