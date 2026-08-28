@@ -17,9 +17,18 @@ struct DestinationPickerView: View {
     @Bindable var store: StoreOf<DestinationPickerFeature>
 
     private var navigationTitle: String {
-        store.directoryPath.isEmpty
-            ? L10n.Browse.destinationPickerMoveTitle
-            : (store.directoryPath as NSString).lastPathComponent
+        guard store.directoryPath.isEmpty else {
+            return (store.directoryPath as NSString).lastPathComponent
+        }
+        return store.purpose == .upload
+            ? L10n.Uploads.destinationTitle
+            : L10n.Browse.destinationPickerMoveTitle
+    }
+
+    private var confirmLabel: String {
+        store.purpose == .upload
+            ? L10n.Uploads.destinationConfirm
+            : L10n.Browse.destinationPickerConfirmMove
     }
 
     var body: some View {
@@ -47,7 +56,7 @@ struct DestinationPickerView: View {
                                 .frame(width: Constants.chevronSize, height: Constants.chevronSize)
                         }
                         .disabled(!store.canConfirm)
-                        .accessibilityLabel(L10n.Browse.destinationPickerConfirmMove)
+                        .accessibilityLabel(confirmLabel)
                     }
                 }
                 .searchable(
