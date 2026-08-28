@@ -16,7 +16,9 @@ private enum Constants {
 }
 
 public enum DesignSystemFonts {
-    private static let familyName = "Figtree"
+    /// The registered family name — also the `font-family` to name in any CSS that wants to
+    /// match the app (see `MarkdownRenderer`).
+    public static let familyName = "Figtree"
 
     /// Registers the Figtree variable font from this package's resource bundle with the
     /// system font manager. Call once at app launch, before any `Font.custom("Figtree", ...)`

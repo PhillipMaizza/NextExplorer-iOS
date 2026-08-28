@@ -8,12 +8,23 @@ import Unrar
 import ZIPFoundation
 
 private enum Constants {
-    static let toolbarSpacing: CGFloat = .space16
-    static let toolbarHorizontalPadding: CGFloat = .space16
-    static let toolbarVerticalPadding: CGFloat = .space12
+    static let rowSpacing: CGFloat = .space16
     static let backIconSize: CGFloat = .iconSmall
     static let rowIconSize: CGFloat = .iconMedium
     static let statusSpacing: CGFloat = .space16
+    /// Chrome crossfade when tapping a full-screen archive image, matching `ImageGalleryView`.
+    static let chromeFadeDuration: Double = 0.22
+    /// Swipe-to-dismiss on the full-screen archive image — same values as `ImageGalleryView`.
+    static let dismissDistanceThreshold: CGFloat = 120
+    static let dismissPredictedThreshold: CGFloat = 360
+    static let dragMinimumDistance: CGFloat = 12
+    static let minBackgroundOpacity: Double = 0.35
+    static let dragScaleFloor: CGFloat = 0.88
+    static let dragScaleDivisor: CGFloat = 1400
+    static let dragResetSpringResponse: Double = 0.3
+    static let dragResetSpringDamping: Double = 0.85
+    static let dismissFadeDuration: Double = 0.2
+    static let draggingContentOpacityFloor: Double = 0.6
 }
 
 /// One entry inside a `.zip`/`.rar`, normalized across both underlying libraries' own
@@ -172,12 +183,34 @@ struct ArchiveBrowserView: View {
 
     var body: some View {
         ZStack {
-            VStack(spacing: 0) {
-                toolbar
-                Divider()
+            NavigationStack {
                 content
+                    .background(Color.backgroundPrimary.ignoresSafeArea())
+                    .navigationTitle(title)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        if !currentPath.isEmpty {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button {
+                                    currentPath.removeLast()
+                                } label: {
+                                    IconKit.back
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundStyle(Color.primaryDS)
+                                        .frame(width: Constants.backIconSize, height: Constants.backIconSize)
+                                }
+                                .accessibilityLabel(L10n.Common.back)
+                            }
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button { onDismiss() } label: {
+                                IconKit.close.foregroundStyle(Color.primaryDS)
+                            }
+                            .accessibilityLabel(L10n.Common.close)
+                        }
+                    }
             }
-            .background(Color.backgroundPrimary.ignoresSafeArea())
 
             // An overlay, not a second `.fullScreenCover` — `ArchiveBrowserView` is itself
             // already presented via `BrowseContentView`'s `.fullScreenCover`, and stacking a
@@ -207,33 +240,6 @@ struct ArchiveBrowserView: View {
         }
     }
 
-    private var toolbar: some View {
-        HStack(spacing: Constants.toolbarSpacing) {
-            if currentPath.isEmpty {
-                DSCloseButton(action: onDismiss, accessibilityLabel: L10n.Common.close)
-            } else {
-                Button {
-                    currentPath.removeLast()
-                } label: {
-                    IconKit.back
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.primaryDS)
-                        .frame(width: Constants.backIconSize, height: Constants.backIconSize)
-                }
-            }
-
-            Text(title)
-                .type(.body1(.semibold), style: .primary(for: .label))
-                .lineLimit(1)
-                .truncationMode(.middle)
-
-            Spacer()
-        }
-        .padding(.horizontal, Constants.toolbarHorizontalPadding)
-        .padding(.vertical, Constants.toolbarVerticalPadding)
-    }
-
     @ViewBuilder
     private var content: some View {
         if let errorMessage {
@@ -251,13 +257,13 @@ struct ArchiveBrowserView: View {
                 }
                 .listRowBackground(Color.backgroundSecondary)
             }
-            .listStyle(.plain)
+            .listStyle(.insetGrouped)
             .scrollContentBackground(.hidden)
         }
     }
 
     private func rowContent(_ row: ArchiveRow) -> some View {
-        HStack(spacing: Constants.toolbarSpacing) {
+        HStack(spacing: Constants.rowSpacing) {
             if row.isDirectory {
                 IconKit.folderFill
                     .resizable()
@@ -381,7 +387,14 @@ private struct ArchiveEntryPreviewView: View {
     let onDismiss: () -> Void
 
     var body: some View {
-        if item.isPreviewableViaDownload {
+        if (item.isImage || item.isRawImage) && !item.isSVG {
+            ArchiveImagePreviewView(
+                fileName: item.name,
+                fileURL: fileURL,
+                isGIF: item.kind.lowercased() == "gif",
+                onDismiss: onDismiss
+            )
+        } else if item.isPreviewableViaDownload {
             FilePreviewContainerView(fileURL: fileURL, errorMessage: nil, onDismiss: onDismiss)
         } else if item.isStreamableMedia {
             // `item.supportsThumbnail` is always `false` for archive entries (no server
@@ -391,6 +404,134 @@ private struct ArchiveEntryPreviewView: View {
         } else {
             ArchiveTextEntryPreviewView(item: item, fileURL: fileURL, resolveAsset: resolveAsset, onDismiss: onDismiss)
         }
+    }
+}
+
+/// Full-screen image viewer for an archive entry — mirrors `ImageGalleryView`'s single-page
+/// behavior (`ZoomableScrollView`, full-bleed, tap toggles the chrome) but reads straight
+/// from the already-extracted local file rather than the server.
+private struct ArchiveImagePreviewView: View {
+    let fileName: String
+    let fileURL: URL
+    let isGIF: Bool
+    let onDismiss: () -> Void
+
+    @State private var areControlsHidden = false
+    /// Live vertical translation of an in-progress dismiss drag (0 when idle).
+    @State private var dragOffset: CGFloat = 0
+    /// Set once a drag crosses the dismiss threshold: fades content + backdrop to 0 as it goes.
+    @State private var isDismissing = false
+    /// True while the image is magnified — suspends swipe-to-dismiss so panning the zoomed
+    /// image doesn't close the viewer.
+    @State private var isZoomed = false
+
+    private var dragProgress: CGFloat {
+        min(1, abs(dragOffset) / Constants.dismissDistanceThreshold)
+    }
+
+    private var backgroundOpacity: Double {
+        if isDismissing { return 0 }
+        return 1 - (1 - Constants.minBackgroundOpacity) * Double(dragProgress)
+    }
+
+    private var contentOpacity: Double {
+        if isDismissing { return 0 }
+        return 1 - (1 - Constants.draggingContentOpacityFloor) * Double(dragProgress)
+    }
+
+    private var dragScale: CGFloat {
+        max(Constants.dragScaleFloor, 1 - abs(dragOffset) / Constants.dragScaleDivisor)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ZStack {
+                Color.black.opacity(backgroundOpacity).ignoresSafeArea()
+                imageContent
+                    .ignoresSafeArea()
+                    .scaleEffect(dragScale)
+                    .offset(y: dragOffset)
+                    .opacity(contentOpacity)
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                withAnimation(.easeInOut(duration: Constants.chromeFadeDuration)) {
+                    areControlsHidden.toggle()
+                }
+            }
+            .simultaneousGesture(dismissDrag)
+            .navigationTitle(fileName)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
+                        .accessibilityLabel(L10n.Common.close)
+                }
+            }
+            .toolbar(areControlsHidden ? .hidden : .visible, for: .navigationBar)
+            .statusBarHidden(areControlsHidden)
+        }
+    }
+
+    @ViewBuilder
+    private var imageContent: some View {
+        if isGIF {
+            ZoomableScrollView(onZoomChange: { isZoomed = $0 }) { AnimatedImageView(fileURL: fileURL) }
+        } else {
+            AsyncImage(url: fileURL) { phase in
+                switch phase {
+                case let .success(image):
+                    ZoomableScrollView(onZoomChange: { isZoomed = $0 }) { image.resizable().scaledToFit() }
+                case .failure:
+                    VStack(spacing: Constants.statusSpacing) {
+                        IconKit.warning
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(Color.negative)
+                            .frame(width: .iconMedium, height: .iconMedium)
+                        Text(L10n.Gallery.loadFailed).type(.body1(.regular), style: .secondary)
+                    }
+                default:
+                    ProgressView()
+                }
+            }
+        }
+    }
+
+    /// Vertical swipe (either direction) to dismiss, like the Photos viewer — runs alongside
+    /// the zoom scroll view's own pan, which keeps its gestures once zoomed in.
+    private var dismissDrag: some Gesture {
+        DragGesture(minimumDistance: Constants.dragMinimumDistance)
+            .onChanged { value in
+                guard !isZoomed, !isDismissing, abs(value.translation.height) > abs(value.translation.width) else {
+                    dragOffset = 0
+                    return
+                }
+                dragOffset = value.translation.height
+            }
+            .onEnded { value in
+                guard !isZoomed, abs(value.translation.height) > abs(value.translation.width) else {
+                    dragOffset = 0
+                    return
+                }
+                let passedDistance = abs(value.translation.height) > Constants.dismissDistanceThreshold
+                let passedFlick = abs(value.predictedEndTranslation.height) > Constants.dismissPredictedThreshold
+                if passedDistance || passedFlick {
+                    withAnimation(.easeOut(duration: Constants.dismissFadeDuration)) {
+                        isDismissing = true
+                    } completion: {
+                        onDismiss()
+                    }
+                } else {
+                    withAnimation(.spring(
+                        response: Constants.dragResetSpringResponse,
+                        dampingFraction: Constants.dragResetSpringDamping
+                    )) {
+                        dragOffset = 0
+                    }
+                }
+            }
     }
 }
 
@@ -420,12 +561,19 @@ private struct ArchiveTextEntryPreviewView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            toolbar
-            Divider()
+        NavigationStack {
             body_
+                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .navigationTitle(item.name)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
+                            .accessibilityLabel(L10n.Common.close)
+                    }
+                }
         }
-        .background(Color.backgroundPrimary.ignoresSafeArea())
         .task {
             content = try? String(contentsOf: fileURL, encoding: .utf8)
             if let content, isMarkdown {
@@ -436,19 +584,6 @@ private struct ArchiveTextEntryPreviewView: View {
             }
             if content == nil { loadErrorMessage = L10n.Archive.openFailed }
         }
-    }
-
-    private var toolbar: some View {
-        HStack(spacing: .space16) {
-            DSCloseButton(action: onDismiss, accessibilityLabel: L10n.Common.close)
-            Text(item.name)
-                .type(.body1(.semibold), style: .primary(for: .label))
-                .lineLimit(1)
-                .truncationMode(.middle)
-            Spacer()
-        }
-        .padding(.horizontal, .space16)
-        .padding(.vertical, .space12)
     }
 
     @ViewBuilder

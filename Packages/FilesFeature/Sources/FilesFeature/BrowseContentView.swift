@@ -16,6 +16,12 @@ private enum Constants {
     static let listDiffSpringResponse: Double = 0.35
     static let listDiffSpringDamping: Double = 0.8
     static let overlayCrossfadeDuration: Double = 0.2
+    /// One size for every glyph in the multi-select bottom toolbar — SF Symbols have
+    /// different intrinsic aspect ratios, so without an explicit frame `trash` and `star`
+    /// render visibly different heights.
+    static let selectionToolbarIconSize: CGFloat = .iconMedium
+    /// Height of the invisible long-press paste target past the last row.
+    static let pasteTargetMinHeight: CGFloat = 260
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -27,6 +33,7 @@ struct BrowseContentView: View {
     @AppStorage("browseViewMode") private var viewModeRaw = BrowseViewMode.list.rawValue
     @AppStorage("thumbnailSize") private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage("removeArchiveAfterDownload") private var removeArchiveAfterDownload = false
+    @AppStorage("keepClipboardAfterCopy") private var keepClipboardAfterCopy = false
     @State private var isSortSheetPresented = false
     /// The rename alert's in-progress text: kept as plain view state rather than routed
     /// through the store, since a `.alert` `TextField` bound via a TCA `.sending` binding
@@ -71,6 +78,9 @@ struct BrowseContentView: View {
 
     var body: some View {
         browsingContent
+            .sheet(item: $store.scope(state: \.destinationPicker, action: \.destinationPicker)) { pickerStore in
+                DestinationPickerView(store: pickerStore)
+            }
             .sheet(item: infoPhaseBinding) { phase in
                 infoSheetContent(for: phase)
             }
@@ -91,8 +101,8 @@ struct BrowseContentView: View {
                     }
                 )
             }
-            .dsToast($toastMessage, extraBottomInset: breadcrumbBarClearance)
-            .dsToast(progressToastBinding, extraBottomInset: breadcrumbBarClearance)
+            .dsToast($toastMessage, extraBottomInset: bottomChromeClearance)
+            .dsToast(progressToastBinding, extraBottomInset: bottomChromeClearance)
             // `fileActionErrorMessage` (rename/delete/extract/compress failures) was set on
             // `State` but never actually read by any view — silently swallowed. Mirrored into
             // the same toast the unsupported-file-type warning uses.
@@ -104,6 +114,20 @@ struct BrowseContentView: View {
                 guard let newValue else { return }
                 toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
                     store.send(.delegate(.openDownloadsTapped))
+                }
+            }
+            .onChange(of: store.transferSuccessMessage) { _, newValue in
+                guard let newValue else { return }
+                toastMessage = .success(newValue)
+            }
+            .onChange(of: store.clipboardStagedMessage) { _, newValue in
+                guard let newValue else { return }
+                toastMessage = .success(newValue)
+            }
+            .onChange(of: store.transferErrorMessage) { _, newValue in
+                guard let newValue else { return }
+                toastMessage = .failure(newValue, actionTitle: L10n.Common.retry) {
+                    store.send(.retryTransferTapped, animation: .default)
                 }
             }
             .task {
@@ -159,6 +183,23 @@ struct BrowseContentView: View {
                     withAnimation {
                         viewModeRaw = (viewMode == .list ? BrowseViewMode.grid : .list).rawValue
                     }
+                },
+                clipboardMenu: {
+                    if store.clipboard != nil && !store.directoryPath.isEmpty {
+                        Section {
+                            Button {
+                                store.send(.pasteTapped(keepItemsAfterCopy: keepClipboardAfterCopy), animation: .default)
+                            } label: {
+                                Label { Text(pasteActionTitle) } icon: { IconKit.paste }
+                            }
+                            .disabled(!canPasteIntoCurrentFolder)
+                            Button {
+                                store.send(.clipboardCleared, animation: .default)
+                            } label: {
+                                Label { Text(L10n.Browse.actionClearClipboard) } icon: { IconKit.close }
+                            }
+                        }
+                    }
                 }
             ) {
                 Button {
@@ -178,57 +219,51 @@ struct BrowseContentView: View {
                 }
                 if let singleSelectedItem, store.access?.canWrite ?? false {
                     ToolbarItem(placement: .bottomBar) {
-                        Button {
+                        selectionToolbarButton(icon: IconKit.rename) {
                             store.send(.renameTapped(singleSelectedItem))
-                        } label: {
-                            IconKit.rename
                         }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .transition(.scale.combined(with: .opacity))
                     }
                 }
                 if let singleSelectedItem, store.access?.canShare ?? false {
                     ToolbarItem(placement: .bottomBar) {
-                        Button {
+                        selectionToolbarButton(icon: IconKit.shareLink) {
                             shareTarget = singleSelectedItem
-                        } label: {
-                            IconKit.shareLink
                         }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .transition(.scale.combined(with: .opacity))
                     }
                 }
                 if isFavoriteActionVisible {
                     ToolbarItem(placement: .bottomBar) {
-                        Button {
+                        selectionToolbarButton(icon: isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star) {
                             store.send(.bulkFavoriteTapped)
-                        } label: {
-                            isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star
                         }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                if isTransferActionVisible {
+                    ToolbarItem(placement: .bottomBar) {
+                        selectionToolbarButton(icon: IconKit.copy) {
+                            store.send(.bulkCopyTapped, animation: .default)
+                        }
+                    }
+                }
+                if isTransferActionVisible && (store.access?.canWrite ?? false) && (store.access?.canDelete ?? false) {
+                    ToolbarItem(placement: .bottomBar) {
+                        selectionToolbarButton(icon: IconKit.move) {
+                            store.send(.bulkMoveTapped, animation: .default)
+                        }
                     }
                 }
                 if isDownloadActionVisible {
                     ToolbarItem(placement: .bottomBar) {
-                        Button {
+                        selectionToolbarButton(icon: IconKit.download) {
                             store.send(.bulkDownloadTapped(.documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
-                        } label: {
-                            IconKit.download
                         }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .transition(.scale.combined(with: .opacity))
                     }
                 }
                 if isDeleteActionVisible {
                     ToolbarItem(placement: .bottomBar) {
-                        Button(role: .destructive) {
+                        selectionToolbarButton(icon: IconKit.delete, role: .destructive, tint: .negative) {
                             store.send(.bulkDeleteTapped)
-                        } label: {
-                            IconKit.delete.foregroundStyle(Color.negative)
                         }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .transition(.scale.combined(with: .opacity))
                     }
                 }
             }
@@ -284,6 +319,22 @@ struct BrowseContentView: View {
             Text(L10n.Browse.deleteMessage)
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
+        .alert(L10n.Browse.transferConflictTitle, isPresented: transferConflictBinding) {
+            Button(L10n.Browse.transferConflictReplace, role: .destructive) {
+                store.send(.transferConflictResolved(.replace), animation: .default)
+            }
+            Button(L10n.Browse.transferConflictKeepBoth) {
+                store.send(.transferConflictResolved(.keepBoth), animation: .default)
+            }
+            .tint(.primaryDS)
+            Button(L10n.Common.cancel, role: .cancel) {
+                store.send(.transferConflictResolved(nil))
+            }
+            .tint(.primaryDS)
+        } message: {
+            Text(transferConflictMessage)
+        }
+        .hapticFeedback(.warning, trigger: store.transferConflict)
     }
 
     private var previewItemBinding: Binding<FileItem?> {
@@ -318,6 +369,10 @@ struct BrowseContentView: View {
                     store.send(.previewDismissed)
                     shareTarget = item
                 } : nil,
+                onRename: (store.access?.canWrite ?? false) ? {
+                    store.send(.previewDismissed)
+                    store.send(.renameTapped(item))
+                } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? {
                     store.send(.previewDismissed)
                     store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
@@ -339,6 +394,10 @@ struct BrowseContentView: View {
                     store.send(.previewDismissed)
                     shareTarget = current
                 } : nil,
+                onRename: (store.access?.canWrite ?? false) ? { current in
+                    store.send(.previewDismissed)
+                    store.send(.renameTapped(current))
+                } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? { current in
                     store.send(.previewDismissed)
                     store.send(.downloadTapped(current, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
@@ -356,6 +415,10 @@ struct BrowseContentView: View {
                 onShareLink: (store.access?.canShare ?? false) ? {
                     store.send(.previewDismissed)
                     shareTarget = item
+                } : nil,
+                onRename: (store.access?.canWrite ?? false) ? {
+                    store.send(.previewDismissed)
+                    store.send(.renameTapped(item))
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? {
                     store.send(.previewDismissed)
@@ -447,6 +510,22 @@ struct BrowseContentView: View {
         return L10n.Browse.deleteConfirmOne(item.name)
     }
 
+    /// The button closures own dismissal (they clear `transferConflict`); this only needs to
+    /// forward a swipe/tap-outside as a Cancel.
+    private var transferConflictBinding: Binding<Bool> {
+        Binding(
+            get: { store.transferConflict != nil },
+            set: { if !$0 { store.send(.transferConflictResolved(nil)) } }
+        )
+    }
+
+    private var transferConflictMessage: String {
+        guard let conflict = store.transferConflict else { return "" }
+        return conflict.count == 1
+            ? L10n.Browse.transferConflictMessageOne(conflict.firstName)
+            : L10n.Browse.transferConflictMessageMany(conflict.count)
+    }
+
     private var isAllSelected: Bool {
         !store.displayedItems.isEmpty && store.selectedItemIDs.count == store.displayedItems.count
     }
@@ -481,6 +560,34 @@ struct BrowseContentView: View {
         !store.selectedItemIDs.isEmpty && (store.access?.canDelete ?? false)
     }
 
+    /// Copy/Move from the selection toolbar — available whenever anything is selected, except
+    /// for a lone root location (same rule the single-item context menu enforces via
+    /// `isSoleRootLocation`). Copy needs no permission; the Move button adds a
+    /// `canWrite && canDelete` gate at its site.
+    private var isTransferActionVisible: Bool {
+        !store.selectedItemIDs.isEmpty && !(store.directoryPath.isEmpty && store.items.count <= 1)
+    }
+
+    /// A multi-select bottom-toolbar button, every glyph pinned to the same square so the
+    /// row reads as uniform regardless of each symbol's intrinsic aspect ratio. Defaults to
+    /// `primaryDS`; only Delete passes an explicit `.negative` tint.
+    private func selectionToolbarButton(
+        icon: Image,
+        role: ButtonRole? = nil,
+        tint: Color? = nil,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(role: role, action: action) {
+            icon
+                .resizable()
+                .scaledToFit()
+                .frame(width: Constants.selectionToolbarIconSize, height: Constants.selectionToolbarIconSize)
+                .foregroundStyle(tint ?? Color.primaryDS)
+        }
+        .buttonStyle(DSHapticButtonStyle())
+        .transition(.scale.combined(with: .opacity))
+    }
+
     private var bulkDeleteConfirmationBinding: Binding<Bool> {
         Binding(
             get: { store.bulkDeleteConfirmationIsPresented },
@@ -503,6 +610,14 @@ struct BrowseContentView: View {
             Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
         }
         .tint(.primaryDS)
+        if item.isHTML {
+            Button {
+                store.send(.openInBrowserTapped(item))
+            } label: {
+                Label { Text(L10n.Browse.actionOpenInBrowser) } icon: { IconKit.web }
+            }
+            .tint(.primaryDS)
+        }
         if store.access?.canWrite ?? false {
             Button {
                 store.send(.renameTapped(item))
@@ -529,6 +644,26 @@ struct BrowseContentView: View {
                 Label { Text(L10n.Browse.actionCompress) } icon: { IconKit.archiveDocument }
             }
             .tint(.primaryDS)
+        }
+        // Copy needs no permission on this folder (the server checks the destination on
+        // paste); move has to delete the original, so it mirrors the web client's
+        // `canWrite && canDelete` gate. A lone root location has nowhere to go and can't be
+        // left absent, so neither is offered for it.
+        if !isSoleRootLocation(item) {
+            Button {
+                store.send(.copyTapped(item), animation: .default)
+            } label: {
+                Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
+            }
+            .tint(.primaryDS)
+            if (store.access?.canWrite ?? false) && (store.access?.canDelete ?? false) {
+                Button {
+                    store.send(.moveTapped(item), animation: .default)
+                } label: {
+                    Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
+                }
+                .tint(.primaryDS)
+            }
         }
         if store.access?.canDownload ?? false {
             Button {
@@ -622,11 +757,12 @@ struct BrowseContentView: View {
             } else {
                 folderItemRows
             }
+            pasteTargetRow
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
         .background(Color.backgroundPrimary)
-        .safeAreaPadding(.bottom, breadcrumbBarClearance)
+        .safeAreaPadding(.bottom, bottomChromeClearance)
         .animation(
             .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
             value: store.displayedItems
@@ -691,17 +827,83 @@ struct BrowseContentView: View {
                 .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
                 value: store.displayedSearchResults
             )
+            pasteTargetArea
         }
         .background(Color.backgroundPrimary)
-        .safeAreaPadding(.bottom, breadcrumbBarClearance)
+        .safeAreaPadding(.bottom, bottomChromeClearance)
     }
 
-    /// The breadcrumb bar is only ever visible on a pushed screen — the root's
-    /// `directoryPath` is always empty — so this view can tell whether it needs to reserve
-    /// clearance for it purely from its own state, without threading the bar's visibility
-    /// down from `BrowseTabView`.
-    private var breadcrumbBarClearance: CGFloat {
+    /// Invisible long-press target filling the space past the last row — a plain
+    /// `.contextMenu` on the whole list/scroll container lifts a snapshot of the entire list
+    /// on long-press, which reads as the list jumping. Scoping it to this transparent trailing
+    /// area keeps the list itself still. Present only while something is staged, so an empty
+    /// menu never opens.
+    @ViewBuilder
+    private var pasteTargetRow: some View {
+        if store.clipboard != nil && !store.directoryPath.isEmpty {
+            Color.clear
+                .frame(maxWidth: .infinity, minHeight: Constants.pasteTargetMinHeight)
+                .contentShape(Rectangle())
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
+                .contextMenu { pasteEmptySpaceMenu }
+        }
+    }
+
+    @ViewBuilder
+    private var pasteTargetArea: some View {
+        if store.clipboard != nil && !store.directoryPath.isEmpty {
+            Color.clear
+                .frame(maxWidth: .infinity, minHeight: Constants.pasteTargetMinHeight)
+                .contentShape(Rectangle())
+                .contextMenu { pasteEmptySpaceMenu }
+        }
+    }
+
+    /// Bottom scroll clearance for the breadcrumb bar `BrowseTabView`/`FavoritesView` stack
+    /// under this list — only on a pushed screen, the root's `directoryPath` is always empty.
+    /// It's placed via an ancestor `.safeAreaInset`, which a `List` inside a pushed
+    /// `navigationDestination` doesn't reliably extend its own scroll extent to respect.
+    private var bottomChromeClearance: CGFloat {
         store.directoryPath.isEmpty ? 0 : BrowseBreadcrumbBarMetrics.height
+    }
+
+    /// A top-level location (root screen) that is the only one there: it has nowhere to be
+    /// copied or moved to, and can't be left absent, so the transfer actions are hidden.
+    private func isSoleRootLocation(_ item: FileItem) -> Bool {
+        store.directoryPath.isEmpty && item.path.isEmpty && store.items.count <= 1
+    }
+
+    /// Whether the current folder is a legitimate paste target for the staged clipboard —
+    /// gates the "Paste" action in the `…` menu.
+    private var canPasteIntoCurrentFolder: Bool {
+        store.clipboard?.canPaste(into: store.directoryPath, canWrite: store.access?.canWrite ?? false) ?? false
+    }
+
+    /// "Paste" for a single staged item, "Paste N items" past that.
+    private var pasteActionTitle: String {
+        let count = store.clipboard?.items.count ?? 0
+        return count <= 1 ? L10n.Browse.actionPaste : L10n.Browse.actionPasteCount(count)
+    }
+
+    /// Long-press menu for the empty space in the list/grid — only present while something is
+    /// staged, so an empty menu never opens. Mirrors the `…` menu's paste/clear pair.
+    @ViewBuilder
+    private var pasteEmptySpaceMenu: some View {
+        if store.clipboard != nil && !store.directoryPath.isEmpty {
+            Button {
+                store.send(.pasteTapped(keepItemsAfterCopy: keepClipboardAfterCopy), animation: .default)
+            } label: {
+                Label { Text(L10n.Browse.actionPasteHere) } icon: { IconKit.paste }
+            }
+            .disabled(!canPasteIntoCurrentFolder)
+            Button {
+                store.send(.clipboardCleared, animation: .default)
+            } label: {
+                Label { Text(L10n.Browse.actionClearClipboard) } icon: { IconKit.close }
+            }
+        }
     }
 
     @ViewBuilder

@@ -306,6 +306,60 @@ struct FilesClientLiveTests {
         #expect(json["items"]?.isEmpty == true)
     }
 
+    // MARK: transferItems
+
+    @Test
+    func transferItemsCopyPostsToCopyEndpointWithItemsAndDestination() async throws {
+        let json = #"""
+        {"success": true, "destination": "Documents", "items": [{"from": "Inbox/a.txt", "to": "Documents/a.txt"}]}
+        """#.data(using: .utf8)!
+        stub(statusCode: 200, body: json)
+        StubURLProtocol.capturedRequest = nil
+        let item = FileItem(name: "a.txt", path: "Inbox", dateModified: Date(), size: 0, kind: "txt")
+        let result = try await makeClient().transferItems(serverURL, [item], "Documents", .copy)
+        #expect(result.destination == "Documents")
+        #expect(result.movedCount == 1)
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.httpMethod == "POST")
+        #expect(request.url?.path == "/api/files/copy")
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        let object = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
+        #expect(object["destination"] as? String == "Documents")
+        let items = try #require(object["items"] as? [[String: String]])
+        #expect(items.first?["path"] == "Inbox")
+        #expect(items.first?["name"] == "a.txt")
+    }
+
+    @Test
+    func transferItemsMovePostsToMoveEndpoint() async throws {
+        stub(statusCode: 200, body: #"{"success": true, "destination": "Archive", "items": []}"#.data(using: .utf8)!)
+        StubURLProtocol.capturedRequest = nil
+        let item = FileItem(name: "old", path: "", dateModified: Date(), size: 0, kind: "directory")
+        _ = try await makeClient().transferItems(serverURL, [item], "Archive", .move)
+        #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/files/move")
+    }
+
+    @Test
+    func transferItemsSurfacesAValidationMessageFromTheServer() async throws {
+        stub(
+            statusCode: 500,
+            body: #"{"success": false, "error": {"message": "Cannot copy or move items to the root path."}}"#.data(using: .utf8)!
+        )
+        let item = FileItem(name: "a.txt", path: "Inbox", dateModified: Date(), size: 0, kind: "txt")
+        await #expect(throws: FilesClientError.serverMessage(statusCode: 500, message: "Cannot copy or move items to the root path.")) {
+            _ = try await makeClient().transferItems(serverURL, [item], "", .move)
+        }
+    }
+
+    @Test
+    func transferItemsMapsA401ToSessionExpired() async throws {
+        stub(statusCode: 401, body: Data())
+        let item = FileItem(name: "a.txt", path: "Inbox", dateModified: Date(), size: 0, kind: "txt")
+        await #expect(throws: FilesClientError.sessionExpired) {
+            _ = try await makeClient().transferItems(serverURL, [item], "Documents", .copy)
+        }
+    }
+
     // MARK: fetchMetadata
 
     @Test

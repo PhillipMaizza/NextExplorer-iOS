@@ -57,6 +57,12 @@ public struct DSToastMessage: Equatable, Identifiable {
         DSToastMessage(successText: text, actionTitle: actionTitle, action: action)
     }
 
+    /// A brief, auto-dismissing failure toast (warning icon, `.negative` background) with an
+    /// optional trailing action — e.g. "Retry" on a copy/move that didn't go through.
+    public static func failure(_ text: String, actionTitle: String? = nil, action: (() -> Void)? = nil) -> DSToastMessage {
+        DSToastMessage(failureText: text, actionTitle: actionTitle, action: action)
+    }
+
     private init(progressText: String) {
         self.id = UUID().uuidString
         self.icon = nil
@@ -75,6 +81,17 @@ public struct DSToastMessage: Equatable, Identifiable {
         self.backgroundColor = .positive
         self.isPersistent = false
         self.isSuccess = true
+        self.actionTitle = actionTitle
+        self.action = action
+    }
+
+    private init(failureText: String, actionTitle: String?, action: (() -> Void)?) {
+        self.id = UUID().uuidString
+        self.icon = IconKit.warning
+        self.text = failureText
+        self.backgroundColor = .negative
+        self.isPersistent = false
+        self.isSuccess = false
         self.actionTitle = actionTitle
         self.action = action
     }
