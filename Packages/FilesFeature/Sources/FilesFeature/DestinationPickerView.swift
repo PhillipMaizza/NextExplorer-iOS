@@ -9,14 +9,12 @@ private enum Constants {
     static let chevronSize: CGFloat = .iconSmall
 }
 
-/// The folder chooser for "Move" (a modal sheet) and "Upload" (pushed inside the upload
-/// review sheet). Drills the same folder tree as Browse (folders only), hands the chosen path
-/// back on confirm. Grouped list, checkmark to confirm, the same breadcrumb bar Browse uses.
+/// The folder chooser for "Move" and "Upload" — a modal sheet either way (for Upload it sits
+/// over the review sheet). Drills the same folder tree as Browse (folders only), hands the
+/// chosen path back on confirm. Grouped list, checkmark to confirm, the same breadcrumb bar
+/// Browse uses.
 struct DestinationPickerView: View {
     @Bindable var store: StoreOf<DestinationPickerFeature>
-    /// `true` when pushed onto an existing `NavigationStack` (the upload flow): no wrapper
-    /// stack, no close button — the parent's back button and bar own those.
-    var isPushed = false
 
     private var navigationTitle: String {
         guard store.directoryPath.isEmpty else {
@@ -34,11 +32,7 @@ struct DestinationPickerView: View {
     }
 
     var body: some View {
-        if isPushed {
-            pickerBody
-        } else {
-            NavigationStack { pickerBody }
-        }
+        NavigationStack { pickerBody }
     }
 
     private var pickerBody: some View {
@@ -46,17 +40,15 @@ struct DestinationPickerView: View {
             .navigationTitle(navigationTitle)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                if !isPushed {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button { store.send(.cancelTapped) } label: {
-                            IconKit.close
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.primaryDS)
-                                .frame(width: Constants.chevronSize, height: Constants.chevronSize)
-                        }
-                        .accessibilityLabel(L10n.Common.close)
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { store.send(.cancelTapped) } label: {
+                        IconKit.close
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(Color.primaryDS)
+                            .frame(width: Constants.chevronSize, height: Constants.chevronSize)
                     }
+                    .accessibilityLabel(L10n.Common.close)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { store.send(.confirmTapped) } label: {
