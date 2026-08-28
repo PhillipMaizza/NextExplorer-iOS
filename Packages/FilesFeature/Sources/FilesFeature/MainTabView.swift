@@ -36,17 +36,18 @@ public struct MainTabView: View {
     public var body: some View {
         tabs
             .overlay(alignment: .bottom) {
-                if store.uploads.isActive {
-                    uploadBar
+                if store.uploads.isBarVisible {
+                    uploadStatusBar
                         .padding(.horizontal, .space16)
                         .padding(.bottom, Constants.barBottomClearance + breadcrumbClearance)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isBarVisible)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isActive)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: breadcrumbClearance)
-            .onChange(of: store.uploads.isActive) { _, active in
-                $isUploadBarVisible.withLock { $0 = active }
+            .onChange(of: store.uploads.isBarVisible) { _, visible in
+                $isUploadBarVisible.withLock { $0 = visible }
             }
             .sheet(isPresented: Binding(
                 get: { store.uploads.isSheetPresented },
@@ -69,13 +70,23 @@ public struct MainTabView: View {
             }
     }
 
-    private var uploadBar: some View {
-        UploadProgressBar(
-            title: uploadBarTitle,
-            progress: store.uploads.currentJob?.progress ?? 0,
-            onTap: { store.send(.uploads(.barTapped)) },
-            onCancelAll: { store.send(.uploads(.cancelAllTapped), animation: .default) }
-        )
+    @ViewBuilder
+    private var uploadStatusBar: some View {
+        if store.uploads.isActive {
+            UploadProgressBar(
+                title: uploadBarTitle,
+                progress: store.uploads.currentJob?.progress ?? 0,
+                onTap: { store.send(.uploads(.barTapped)) },
+                onCancelAll: { store.send(.uploads(.cancelAllTapped), animation: .default) }
+            )
+        } else {
+            UploadFailedBar(
+                count: store.uploads.failedCount,
+                onRetry: { store.send(.uploads(.retryAllFailedTapped), animation: .default) },
+                onDismiss: { store.send(.uploads(.clearCompletedTapped), animation: .default) },
+                onTap: { store.send(.uploads(.barTapped)) }
+            )
+        }
     }
 
     private var tabs: some View {
