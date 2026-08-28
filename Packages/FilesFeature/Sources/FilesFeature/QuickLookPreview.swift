@@ -10,9 +10,9 @@ import SwiftUI
 struct QuickLookPreview: UIViewControllerRepresentable {
     let urls: [URL]
     let initialIndex: Int
-    var onIndexChange: ((Int) -> Void)?
+    var onIndexChange: (@MainActor (Int) -> Void)?
 
-    init(urls: [URL], initialIndex: Int = 0, onIndexChange: ((Int) -> Void)? = nil) {
+    init(urls: [URL], initialIndex: Int = 0, onIndexChange: (@MainActor (Int) -> Void)? = nil) {
         self.urls = urls
         self.initialIndex = initialIndex
         self.onIndexChange = onIndexChange
@@ -28,12 +28,13 @@ struct QuickLookPreview: UIViewControllerRepresentable {
         if urls.indices.contains(initialIndex) {
             controller.currentPreviewItemIndex = initialIndex
         }
-        context.coordinator.startObserving(controller)
+        if let onIndexChange {
+            context.coordinator.indexObserver = QLIndexObserver(observing: controller, onChange: onIndexChange)
+        }
         return controller
     }
 
     func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {
-        context.coordinator.onIndexChange = onIndexChange
         // Guard against reloading on every SwiftUI re-render (an unrelated state change
         // elsewhere in the hosting view would otherwise reset QuickLook's scroll/zoom state).
         guard context.coordinator.urls != urls else { return }
@@ -42,41 +43,15 @@ struct QuickLookPreview: UIViewControllerRepresentable {
     }
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(urls: urls, onIndexChange: onIndexChange)
+        Coordinator(urls: urls)
     }
 
     final class Coordinator: NSObject, QLPreviewControllerDataSource {
         var urls: [URL]
-        var onIndexChange: ((Int) -> Void)?
+        var indexObserver: QLIndexObserver?
 
-        private static let indexKeyPath = "currentPreviewItemIndex"
-        private weak var observed: QLPreviewController?
-
-        init(urls: [URL], onIndexChange: ((Int) -> Void)?) {
+        init(urls: [URL]) {
             self.urls = urls
-            self.onIndexChange = onIndexChange
-        }
-
-        /// KVO the built in controller's `currentPreviewItemIndex`: it bumps this as the user
-        /// swipes across the batch, which is the only signal it gives that the page changed.
-        func startObserving(_ controller: QLPreviewController) {
-            observed = controller
-            controller.addObserver(self, forKeyPath: Self.indexKeyPath, options: [.new], context: nil)
-        }
-
-        deinit {
-            observed?.removeObserver(self, forKeyPath: Self.indexKeyPath)
-        }
-
-        override func observeValue(
-            forKeyPath keyPath: String?,
-            of object: Any?,
-            change: [NSKeyValueChangeKey: Any]?,
-            context: UnsafeMutableRawPointer?
-        ) {
-            guard keyPath == Self.indexKeyPath, let index = change?[.newKey] as? Int else { return }
-            let notify = onIndexChange
-            DispatchQueue.main.async { notify?(index) }
         }
 
         func numberOfPreviewItems(in controller: QLPreviewController) -> Int { urls.count }
@@ -84,5 +59,39 @@ struct QuickLookPreview: UIViewControllerRepresentable {
         func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
             urls[index] as NSURL
         }
+    }
+}
+
+/// KVO on `QLPreviewController.currentPreviewItemIndex` — the only signal the built in
+/// controller gives that the user swiped to another page. Kept as its own plain `NSObject`,
+/// deliberately not the `@MainActor` `QLPreviewControllerDataSource` coordinator, so the
+/// nonisolated `observeValue` override can touch this object's own state without an unchecked
+/// escape. The callback is hopped onto the main actor before it runs, whatever thread KVO
+/// delivered the change on.
+final class QLIndexObserver: NSObject {
+    private static let keyPath = "currentPreviewItemIndex"
+    private weak var controller: QLPreviewController?
+    private let onChange: @MainActor (Int) -> Void
+
+    init(observing controller: QLPreviewController, onChange: @escaping @MainActor (Int) -> Void) {
+        self.controller = controller
+        self.onChange = onChange
+        super.init()
+        controller.addObserver(self, forKeyPath: Self.keyPath, options: [.new], context: nil)
+    }
+
+    deinit {
+        controller?.removeObserver(self, forKeyPath: Self.keyPath)
+    }
+
+    override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey: Any]?,
+        context: UnsafeMutableRawPointer?
+    ) {
+        guard keyPath == Self.keyPath, let index = change?[.newKey] as? Int else { return }
+        let onChange = self.onChange
+        Task { @MainActor in onChange(index) }
     }
 }
