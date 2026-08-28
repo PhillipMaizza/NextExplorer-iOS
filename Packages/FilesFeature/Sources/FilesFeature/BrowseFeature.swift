@@ -107,6 +107,51 @@ public struct BrowseFeature {
         public let removed: [String]
     }
 
+    /// The result of a `copy`/`move` transfer, plus whether this transfer should empty the
+    /// shared clipboard once it succeeds: `move` always clears, `copy` clears unless the
+    /// "Keep Items After Paste" setting is on.
+    public struct TransferOutcome: Equatable, Sendable {
+        public let result: TransferResult
+        public let operation: TransferOperation
+        public let clearClipboard: Bool
+    }
+
+    /// Everything needed to re-run a failed transfer from the "Retry" action on its toast, and
+    /// to remember how a name-collision prompt was answered so a retry doesn't ask again.
+    public struct TransferRetry: Equatable, Sendable {
+        /// How a name collision at the destination should be handled. `.ask` means the check
+        /// hasn't run yet; `.keepBoth` lets the server auto-rename (`file (1).txt`); `.replace`
+        /// deletes `itemsToReplace` first, then transfers onto the freed names.
+        public enum Resolution: Equatable, Sendable { case ask, keepBoth, replace }
+
+        public let items: [FileItem]
+        public let destination: String
+        public let operation: TransferOperation
+        public let clearClipboard: Bool
+        public var resolution: Resolution = .ask
+        public var itemsToReplace: [FileItem] = []
+
+        func resolved(_ resolution: Resolution, replacing itemsToReplace: [FileItem] = []) -> TransferRetry {
+            TransferRetry(
+                items: items, destination: destination, operation: operation,
+                clearClipboard: clearClipboard, resolution: resolution, itemsToReplace: itemsToReplace
+            )
+        }
+    }
+
+    /// A pending transfer that's blocked on the user answering a name-collision prompt.
+    public struct TransferConflict: Equatable, Sendable {
+        public let retry: TransferRetry
+        /// The destination items that share a name with something being transferred — deleted
+        /// first if the user picks "Replace".
+        public let collidingItems: [FileItem]
+        public var count: Int { collidingItems.count }
+        public var firstName: String { collidingItems.first?.name ?? "" }
+    }
+
+    /// The answer to a name-collision prompt. `nil` (in the action payload) is "Cancel".
+    public enum TransferConflictChoice: Equatable, Sendable { case replace, keepBoth }
+
     @ObservableState
     public struct State: Equatable, Sendable {
         public var serverURL: URL
@@ -127,6 +172,27 @@ public struct BrowseFeature {
         /// "Show Hidden Files" is reflected here immediately, even in an already-open folder,
         /// with no manual refresh needed.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
+        /// App wide "Copy" staging, shared under `FileClipboard.sharedKey` so the Paste
+        /// action follows the user across every folder. `nil` when nothing is staged. Only
+        /// ever holds copies — "Move" goes through `destinationPicker`, not the clipboard.
+        @Shared(.inMemory(FileClipboard.sharedKey)) public var clipboard: FileClipboard?
+        /// The "Move" destination chooser, presented for a single item or a multi selection.
+        @Presents public var destinationPicker: DestinationPickerFeature.State?
+        /// Set once a transfer finishes; `BrowseContentView` turns this into a success toast,
+        /// mirroring `downloadSuccessMessage`'s lifecycle.
+        public var transferSuccessMessage: String?
+        /// Set on a failed transfer alongside `pendingTransferRetry`; `BrowseContentView`
+        /// turns this into a failure toast with a "Retry" action.
+        public var transferErrorMessage: String?
+        /// The params to re-run when the user taps "Retry" on a failed transfer's toast. The
+        /// staged clipboard is never emptied while this is non nil, so a retry always has
+        /// something to act on.
+        public var pendingTransferRetry: TransferRetry?
+        /// Non nil while a transfer is waiting on the user's answer to a name-collision prompt.
+        public var transferConflict: TransferConflict?
+        /// Set when an item is staged with "Copy"; `BrowseContentView` turns it into a brief
+        /// "<name> copied" toast.
+        public var clipboardStagedMessage: String?
         /// Item currently being renamed via the native rename alert. The in-progress text
         /// itself lives in `BrowseContentView`'s own `@State`, not here — a `.alert`'s
         /// `TextField` bound through a TCA `.sending` binding didn't reliably propagate
@@ -235,12 +301,25 @@ public struct BrowseFeature {
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped(DownloadLocation, removeArchiveAfterDownload: Bool)
         case bulkDownloadResponse(savedCount: Int, total: Int, location: DownloadLocation)
+        case copyTapped(FileItem)
+        case moveTapped(FileItem)
+        case bulkCopyTapped
+        case bulkMoveTapped
+        case clipboardCleared
+        case pasteTapped(keepItemsAfterCopy: Bool)
+        case retryTransferTapped
+        case transferConflictCheckResponse(Result<[FileItem], FilesClientError>)
+        case transferConflictResolved(TransferConflictChoice?)
+        case transferResponse(Result<TransferOutcome, FilesClientError>)
+        case destinationPicker(PresentationAction<DestinationPickerFeature.Action>)
         case infoTapped(FileItem)
         case infoDismissed
         case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
         case previewDismissed
         case previewFileResponse(Result<URL, FilesClientError>)
         case textContentResponse(Result<String, FilesClientError>)
+        case openInBrowserTapped(FileItem)
+        case googleDocsPointerResponse(item: FileItem, Result<URL, FilesClientError>)
         case textSaveTapped(String)
         case textSaveResponse(Result<String, FilesClientError>)
         case delegate(Delegate)
@@ -249,6 +328,10 @@ public struct BrowseFeature {
             case openFolder(FileItem)
             case openPath(path: String, title: String)
             case favoritesChanged
+            /// A copy/move just changed what's on the server. `BrowseTabFeature` re-fetches
+            /// the whole live navigation stack so both the source and destination listings
+            /// reflect the new state.
+            case directoryContentsChanged
             /// The "Open" button on the download-success toast — switches to the Downloads
             /// tab so the user can see where the file landed.
             case openDownloadsTapped
@@ -258,7 +341,8 @@ public struct BrowseFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.continuousClock) var clock
     @Dependency(\.localDownloadStore) var localDownloadStore
-    private enum CancelID { case search }
+    @Dependency(\.openURL) var openURL
+    private enum CancelID { case search, transfer, googleDocsPointer }
 
     public init() {}
 
@@ -299,6 +383,11 @@ public struct BrowseFeature {
                     // `isUnsupportedForPreview` check, not a hand-rolled approximation of it,
                     // or the two can drift and this "backstop" stops backstopping anything.)
                     guard !item.isUnsupportedForPreview else { return .none }
+                    // Google Drive stub files (`.gsheet`, `.gdoc`, …) link out to a real
+                    // Google document — open that, don't show the JSON stub.
+                    if item.isGoogleDocsPointer {
+                        return openGoogleDocsPointer(serverURL: state.serverURL, item: item)
+                    }
                     // Sets `previewItem` unconditionally so the viewer presents immediately.
                     // - Streamable media (video/audio) plays live from `FilesClient.previewURL`.
                     // - Images/RAW load themselves per-page in the gallery view.
@@ -556,6 +645,99 @@ public struct BrowseFeature {
                 }
                 return .none
 
+            case let .copyTapped(item):
+                state.$clipboard.withLock { $0 = FileClipboard(items: [item], operation: .copy) }
+                state.clipboardStagedMessage = L10n.Browse.clipboardCopiedOne(item.name)
+                return .none
+
+            case let .moveTapped(item):
+                state.destinationPicker = DestinationPickerFeature.State(serverURL: state.serverURL, items: [item])
+                return .none
+
+            case .bulkCopyTapped:
+                let items = Array(state.items.filter { state.selectedItemIDs.contains($0.id) })
+                guard !items.isEmpty else { return .none }
+                state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .copy) }
+                state.clipboardStagedMessage = L10n.Browse.clipboardCopiedMany(items.count)
+                state.isSelecting = false
+                state.selectedItemIDs = []
+                return .none
+
+            case .bulkMoveTapped:
+                let items = Array(state.items.filter { state.selectedItemIDs.contains($0.id) })
+                guard !items.isEmpty else { return .none }
+                state.destinationPicker = DestinationPickerFeature.State(serverURL: state.serverURL, items: items)
+                state.isSelecting = false
+                state.selectedItemIDs = []
+                return .none
+
+            case .clipboardCleared:
+                state.$clipboard.withLock { $0 = nil }
+                return .none
+
+            case let .pasteTapped(keepItemsAfterCopy):
+                return paste(&state, keepItemsAfterCopy: keepItemsAfterCopy)
+
+            case let .destinationPicker(.presented(.delegate(.confirmed(destination)))):
+                guard let picker = state.destinationPicker else { return .none }
+                let items = picker.items
+                state.destinationPicker = nil
+                return runTransfer(&state, retry: TransferRetry(
+                    items: items, destination: destination, operation: .move, clearClipboard: false
+                ))
+
+            case .destinationPicker(.presented(.delegate(.cancelled))):
+                state.destinationPicker = nil
+                return .none
+
+            case .destinationPicker:
+                return .none
+
+            case .retryTransferTapped:
+                guard let retry = state.pendingTransferRetry else { return .none }
+                return runTransfer(&state, retry: retry)
+
+            case let .transferConflictCheckResponse(result):
+                guard let retry = state.pendingTransferRetry else { return .none }
+                switch result {
+                case let .success(destinationItems):
+                    return resolveTransfer(&state, retry: retry, colliding: Self.collidingItems(for: retry, in: destinationItems))
+                case .failure:
+                    // The listing failed — fall back to the server's safe auto-rename rather
+                    // than blocking the transfer on a check we couldn't run.
+                    return performTransfer(&state, retry: retry.resolved(.keepBoth))
+                }
+
+            case let .transferConflictResolved(choice):
+                guard let conflict = state.transferConflict else { return .none }
+                state.transferConflict = nil
+                switch choice {
+                case .replace:
+                    return performTransfer(&state, retry: conflict.retry.resolved(.replace, replacing: conflict.collidingItems))
+                case .keepBoth:
+                    return performTransfer(&state, retry: conflict.retry.resolved(.keepBoth))
+                case .none:
+                    state.pendingTransferRetry = nil
+                    return .none
+                }
+
+            case let .transferResponse(.success(outcome)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.pendingTransferRetry = nil
+                state.transferErrorMessage = nil
+                if outcome.clearClipboard {
+                    state.$clipboard.withLock { $0 = nil }
+                }
+                state.transferSuccessMessage = Self.transferSuccessMessage(for: outcome)
+                return .send(.delegate(.directoryContentsChanged))
+
+            case let .transferResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.transferErrorMessage = error.userMessage
+                return .none
+
             case let .infoTapped(item):
                 return loadInfo(&state, item: item)
 
@@ -607,6 +789,21 @@ public struct BrowseFeature {
                 state.textEditorErrorMessage = error.userMessage
                 return .none
 
+            case let .openInBrowserTapped(item):
+                guard item.isHTML, let url = FilesClient.rawFileURL(serverURL: state.serverURL, item: item) else { return .none }
+                return .run { [openURL] _ in await openURL(url) }
+
+            case let .googleDocsPointerResponse(item, result):
+                switch result {
+                case let .success(url):
+                    return .run { [openURL] _ in await openURL(url) }
+                case .failure:
+                    // Couldn't read the stub or it had no usable link — fall back to showing
+                    // it in the text viewer rather than leaving the tap dead.
+                    state.previewItem = item
+                    return loadTextContent(&state, item: item)
+                }
+
             case let .textSaveTapped(newContent):
                 return confirmTextSave(&state, newContent: newContent)
 
@@ -623,6 +820,109 @@ public struct BrowseFeature {
             case .delegate:
                 return .none
             }
+        }
+        .ifLet(\.$destinationPicker, action: \.destinationPicker) {
+            DestinationPickerFeature()
+        }
+    }
+
+    private func paste(_ state: inout State, keepItemsAfterCopy: Bool) -> Effect<Action> {
+        guard let clipboard = state.clipboard,
+              clipboard.canPaste(into: state.directoryPath, canWrite: state.access?.canWrite ?? false)
+        else { return .none }
+        let clearClipboard = clipboard.operation == .move || !keepItemsAfterCopy
+        return runTransfer(&state, retry: TransferRetry(
+            items: clipboard.items,
+            destination: state.directoryPath,
+            operation: clipboard.operation,
+            clearClipboard: clearClipboard
+        ))
+    }
+
+    /// Entry point for every copy/move. Runs the name-collision check first (unless the retry
+    /// already carries an answer), then either prompts or hands off to `performTransfer`.
+    private func runTransfer(_ state: inout State, retry: TransferRetry) -> Effect<Action> {
+        guard !retry.items.isEmpty, !state.isPerformingFileAction else { return .none }
+        guard retry.resolution == .ask else { return performTransfer(&state, retry: retry) }
+
+        // Paste always targets the folder that's already on screen, so its listing is right
+        // here in `state.items` — no round trip. A picker move can land anywhere else, so
+        // that case asks the server for the destination listing.
+        if retry.destination == state.directoryPath {
+            return resolveTransfer(&state, retry: retry, colliding: Self.collidingItems(for: retry, in: Array(state.items)))
+        }
+
+        state.isPerformingFileAction = true
+        state.fileActionProgressMessage = retry.operation == .move ? L10n.Browse.progressMoving : L10n.Browse.progressCopying
+        state.transferErrorMessage = nil
+        state.pendingTransferRetry = retry
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        return .run { send in
+            await send(.transferConflictCheckResponse(await apiResult {
+                try await filesClient.browse(serverURL, retry.destination).items
+            }))
+        }
+        .cancellable(id: CancelID.transfer)
+    }
+
+    /// No collisions → straight through (server auto-rename is a no-op when nothing clashes).
+    /// Otherwise stash the pending transfer and let `BrowseContentView` raise the prompt.
+    private func resolveTransfer(_ state: inout State, retry: TransferRetry, colliding: [FileItem]) -> Effect<Action> {
+        guard !colliding.isEmpty else { return performTransfer(&state, retry: retry.resolved(.keepBoth)) }
+        state.isPerformingFileAction = false
+        state.fileActionProgressMessage = nil
+        state.pendingTransferRetry = retry
+        state.transferConflict = TransferConflict(retry: retry, collidingItems: colliding)
+        return .none
+    }
+
+    /// Actually moves the bytes: for `.replace`, deletes the clashing destination items first,
+    /// then transfers. The staged clipboard is never emptied until this confirms success.
+    private func performTransfer(_ state: inout State, retry: TransferRetry) -> Effect<Action> {
+        guard !retry.items.isEmpty else { return .none }
+        state.isPerformingFileAction = true
+        state.fileActionProgressMessage = retry.operation == .move ? L10n.Browse.progressMoving : L10n.Browse.progressCopying
+        state.transferErrorMessage = nil
+        state.transferConflict = nil
+        // Kept until the transfer confirms success, so the "Retry" action on a failure toast
+        // always has the exact params to re-run.
+        state.pendingTransferRetry = retry
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        return .run { send in
+            await send(.transferResponse(await apiResult {
+                if retry.resolution == .replace, !retry.itemsToReplace.isEmpty {
+                    try await filesClient.deleteItems(serverURL, retry.itemsToReplace)
+                }
+                let result = try await filesClient.transferItems(serverURL, retry.items, retry.destination, retry.operation)
+                return TransferOutcome(result: result, operation: retry.operation, clearClipboard: retry.clearClipboard)
+            }), animation: .default)
+        }
+        .cancellable(id: CancelID.transfer)
+    }
+
+    /// Destination items that share a name with something inbound — minus any that *are* the
+    /// inbound item (copying a file into its own folder isn't a real collision; the server
+    /// just makes a numbered duplicate).
+    private static func collidingItems(for retry: TransferRetry, in destinationItems: [FileItem]) -> [FileItem] {
+        let incomingNames = Set(retry.items.map(\.name))
+        let sourceIDs = Set(retry.items.map(\.id))
+        return destinationItems.filter { incomingNames.contains($0.name) && !sourceIDs.contains($0.id) }
+    }
+
+    private static func transferSuccessMessage(for outcome: TransferOutcome) -> String {
+        let moved = outcome.result.movedCount
+        let skipped = outcome.result.skippedCount
+        switch outcome.operation {
+        case .move:
+            return skipped > 0
+                ? L10n.Browse.transferMovedWithSkipped(moved, skipped)
+                : L10n.Browse.transferMoved(moved)
+        case .copy:
+            return skipped > 0
+                ? L10n.Browse.transferCopiedWithSkipped(moved, skipped)
+                : L10n.Browse.transferCopied(moved)
         }
     }
 
@@ -894,6 +1194,24 @@ public struct BrowseFeature {
         return .run { send in
             await send(.textContentResponse(await apiResult { try await filesClient.fetchTextContent(serverURL, path) }))
         }
+    }
+
+    /// Fetches a Google Drive stub file, reads the link out of its JSON, and hands it to the
+    /// system to open (the Google app or the browser). No preview state is touched unless the
+    /// fetch fails, in which case `googleDocsPointerResponse` falls back to the text viewer.
+    private func openGoogleDocsPointer(serverURL: URL, item: FileItem) -> Effect<Action> {
+        let filesClient = self.filesClient
+        let path = item.id
+        return .run { send in
+            await send(.googleDocsPointerResponse(item: item, await apiResult {
+                let contents = try await filesClient.fetchTextContent(serverURL, path)
+                guard let url = GoogleDocsPointer.targetURL(fromContents: contents) else {
+                    throw FilesClientError.decoding("Google Drive stub has no link")
+                }
+                return url
+            }))
+        }
+        .cancellable(id: CancelID.googleDocsPointer, cancelInFlight: true)
     }
 
     private func confirmTextSave(_ state: inout State, newContent: String) -> Effect<Action> {

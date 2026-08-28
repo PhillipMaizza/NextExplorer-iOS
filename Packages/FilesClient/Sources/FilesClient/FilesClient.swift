@@ -20,6 +20,12 @@ public struct FilesClient: Sendable {
         _ serverURL: URL, _ item: FileItem, _ newName: String
     ) async throws -> FileItem
     public var deleteItems: @Sendable (_ serverURL: URL, _ items: [FileItem]) async throws -> Void
+    /// `POST /api/files/copy` or `/api/files/move` depending on `operation`. `destination` is
+    /// the target directory's relative path; the server rejects an empty one ("Cannot copy or
+    /// move items to the root path").
+    public var transferItems: @Sendable (
+        _ serverURL: URL, _ items: [FileItem], _ destination: String, _ operation: TransferOperation
+    ) async throws -> TransferResult
     public var fetchMetadata: @Sendable (_ serverURL: URL, _ path: String) async throws -> FileMetadata
     public var thumbnailURL: @Sendable (_ serverURL: URL, _ path: String) async throws -> URL?
     public var previewFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
@@ -91,6 +97,15 @@ extension FilesClient {
     /// whole file into memory first the way a full download would.
     public static func previewURL(serverURL: URL, item: FileItem) -> URL? {
         var components = URLComponents(url: serverURL.appendingPathComponent("api/preview"), resolvingAgainstBaseURL: false)
+        components?.queryItems = [URLQueryItem(name: "path", value: item.id)]
+        return components?.url
+    }
+
+    /// `GET /api/raw?path=...` — the file served verbatim (`text/plain`, `nosniff`). Handed to
+    /// Safari for "Open in Browser": the server has no rendered-HTML endpoint, and cookie auth
+    /// means Safari may hit a login page first (or 401 if the server requires auth).
+    public static func rawFileURL(serverURL: URL, item: FileItem) -> URL? {
+        var components = URLComponents(url: serverURL.appendingPathComponent("api/raw"), resolvingAgainstBaseURL: false)
         components?.queryItems = [URLQueryItem(name: "path", value: item.id)]
         return components?.url
     }

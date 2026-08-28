@@ -76,6 +76,13 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// pattern-matching the backend's own `routes/files/download.js` filename, but that file
     /// is mounted at plain `/api` in `routes/index.js`. Got this wrong once already.
     public var isOfficeDocument: Bool { lowercaseKind == "doc" || lowercaseKind == "docx" }
+    /// A web page — offered an "Open in Browser" action that renders it in a `WKWebView`
+    /// (the server has no URL an external browser could open; auth is a private cookie).
+    public var isHTML: Bool { lowercaseKind == "html" || lowercaseKind == "htm" }
+    /// A Google Drive stub file (`.gsheet`, `.gdoc`, …) — tapping it opens the linked Google
+    /// document externally rather than showing the JSON stub in the text viewer. See
+    /// `GoogleDocsPointer`.
+    public var isGoogleDocsPointer: Bool { GoogleDocsPointer.isPointerKind(kind) }
 
     public static func isImageKind(_ kind: String) -> Bool { imageExtensions.contains(kind.lowercased()) }
     public static func isRawImageKind(_ kind: String) -> Bool { rawImageExtensions.contains(kind.lowercased()) }
