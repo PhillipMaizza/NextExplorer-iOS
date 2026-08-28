@@ -374,6 +374,7 @@ public enum L10n {
         public static var reviewAddMore: String { tr("uploads.reviewAddMore") }  // "Add more files"
         public static var reviewChooseFolder: String { tr("uploads.reviewChooseFolder") }  // "Choose a folder"
         public static func reviewPreparing(_ a0: CVarArg) -> String { tr("uploads.reviewPreparing", a0) }
+        public static func reviewPreviewFile(_ a0: CVarArg) -> String { tr("uploads.reviewPreviewFile", a0) }
         public static var reviewSectionFiles: String { tr("uploads.reviewSectionFiles") }  // "Files"
         public static var reviewSectionPath: String { tr("uploads.reviewSectionPath") }  // "Path"
         public static var reviewSectionSize: String { tr("uploads.reviewSectionSize") }  // "Total size"
