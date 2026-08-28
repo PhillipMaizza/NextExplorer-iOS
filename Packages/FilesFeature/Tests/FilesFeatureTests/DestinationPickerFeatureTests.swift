@@ -45,13 +45,16 @@ struct DestinationPickerFeatureTests {
     }
 
     @Test
-    func uploadModeStartsAtTheGivenPathAndConfirmsAnyNonRootFolder() {
+    func uploadModeConfirmStaysDisabledUntilTheFolderReportsUploadAccess() {
         let atRoot = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "")
         #expect(atRoot.purpose == .upload)
         #expect(atRoot.canConfirm == false)
 
         var inFolder = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "Documents")
         #expect(inFolder.directoryPath == "Documents")
+        #expect(inFolder.canConfirm == false) // access not loaded yet
+
+        inFolder.currentAccess = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
         #expect(inFolder.canConfirm == true)
 
         inFolder.currentAccess = FileAccess(canRead: true, canWrite: true, canUpload: false, canDelete: true, canShare: false, canDownload: true)
@@ -62,6 +65,7 @@ struct DestinationPickerFeatureTests {
     func uploadModeConfirmEmitsTheChosenDestination() async {
         var state = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "Documents")
         state.directoryPath = "Documents/Reports"
+        state.currentAccess = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true)
 
         let store = TestStore(initialState: state) { DestinationPickerFeature() }
 

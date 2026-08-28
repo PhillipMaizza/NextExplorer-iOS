@@ -25,7 +25,7 @@ public enum DesignSystemFonts {
     /// is used: package-bundled fonts aren't picked up by Info.plist `UIAppFonts`, which
     /// only sees fonts in the main app bundle, so this has to happen at runtime instead.
     ///
-    /// `NetxExplorerApp.init()` calls this eagerly, and `Typography.TextType.fontsRegistered`
+    /// `NextExplorerApp.init()` calls this eagerly, and `Typography.TextType.fontsRegistered`
     /// also calls it lazily on first use (for Xcode previews, which never run `init()`) — in a
     /// real app run both fire, possibly concurrently. Backed by a `static let` rather than a
     /// hand-rolled bool guard so the once-only registration is the compiler-guaranteed atomic

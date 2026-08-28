@@ -352,7 +352,7 @@ public enum L10n {
         public static var actionUploadFromPhotos: String { tr("uploads.actionUploadFromPhotos") }  // "Upload from Photos"
         public static func barFailedMany(_ a0: CVarArg) -> String { tr("uploads.barFailedMany", a0) }
         public static var barFailedOne: String { tr("uploads.barFailedOne") }  // "1 upload failed"
-        public static func barTitleMany(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.barTitleMany", a0, a1) }
+        public static func barTitleMany(_ a0: CVarArg) -> String { tr("uploads.barTitleMany", a0) }
         public static func barTitleOne(_ a0: CVarArg) -> String { tr("uploads.barTitleOne", a0) }
         public static var cameraDeniedMessage: String { tr("uploads.cameraDeniedMessage") }  // "Allow camera access in Settings to take a photo."
         public static var cameraDeniedTitle: String { tr("uploads.cameraDeniedTitle") }  // "Camera access needed"
@@ -377,6 +377,7 @@ public enum L10n {
         public static func reviewTitleMany(_ a0: CVarArg) -> String { tr("uploads.reviewTitleMany", a0) }
         public static var reviewTitleOne: String { tr("uploads.reviewTitleOne") }  // "Upload 1 file"
         public static var reviewUploadButton: String { tr("uploads.reviewUploadButton") }  // "Upload"
+        public static var stagingFailed: String { tr("uploads.stagingFailed") }  // "Couldn't add those files. Try again."
         public static var statusFailed: String { tr("uploads.statusFailed") }  // "Upload failed"
         public static var statusWaiting: String { tr("uploads.statusWaiting") }  // "Waiting"
     }

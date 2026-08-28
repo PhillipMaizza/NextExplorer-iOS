@@ -1,14 +1,14 @@
 //
-//  NetxExplorerTests.swift
-//  NetxExplorerTests
+//  NextExplorerTests.swift
+//  NextExplorerTests
 //
 //  Created by Phillip Maizza on 24/08/2026.
 //
 
 import Testing
-@testable import NetxExplorer
+@testable import NextExplorer
 
-struct NetxExplorerTests {
+struct NextExplorerTests {
 
     @Test func example() async throws {
         // Write your test here and use APIs like `#expect(...)` to check expected conditions.

@@ -11,6 +11,7 @@ import Testing
 @Suite
 struct MainTabFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
+    private let testDate = Date(timeIntervalSince1970: 1_000_000)
     private let user = User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
 
     // MARK: Happy path
@@ -50,6 +51,7 @@ struct MainTabFeatureTests {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
         } withDependencies: {
+            $0.date = .constant(self.testDate)
             $0.filesClient.browse = { _, _ in
                 BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
             }
@@ -136,6 +138,7 @@ struct MainTabFeatureTests {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
         } withDependencies: {
+            $0.date = .constant(self.testDate)
             $0.filesClient.uploadFile = { _, _, name, dest, _ in
                 FileItem(name: name, path: dest, dateModified: Date(timeIntervalSince1970: 1), size: 1, kind: "txt")
             }
@@ -154,7 +157,10 @@ struct MainTabFeatureTests {
         let store = TestStore(initialState: state) { MainTabFeature() }
         store.exhaustivity = .off
 
-        let summary = UploadsFeature.FinishSummary(uploadedCount: 2, failedCount: 0, lastDestination: "Documents/Reports")
+        let summary = UploadsFeature.FinishSummary(
+            uploadedCount: 2, failedCount: 0, lastDestination: "Documents/Reports",
+            changedPaths: ["Documents/Reports"]
+        )
         await store.send(.uploads(.delegate(.queueFinished(summary)))) {
             $0.uploadToast = MainTabFeature.UploadToast(
                 message: L10n.Uploads.completeMany(2),
@@ -174,12 +180,47 @@ struct MainTabFeatureTests {
         var state = MainTabFeature.State(serverURL: serverURL, user: user)
         state.selectedTab = .browse
         state.browse.root = BrowseFeature.State(serverURL: serverURL, directoryPath: "Inbox", title: "Inbox")
-        let store = TestStore(initialState: state) { MainTabFeature() }
+        let store = TestStore(initialState: state) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [], access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true), path: "Inbox")
+            }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        store.exhaustivity = .off
 
-        let summary = UploadsFeature.FinishSummary(uploadedCount: 1, failedCount: 0, lastDestination: "Inbox")
+        let summary = UploadsFeature.FinishSummary(
+            uploadedCount: 1, failedCount: 0, lastDestination: "Inbox", changedPaths: ["Inbox"]
+        )
         await store.send(.uploads(.delegate(.queueFinished(summary)))) {
             $0.uploadToast = MainTabFeature.UploadToast(message: L10n.Uploads.complete, openDestination: nil)
         }
+        // The folder on screen is the one that changed, so it refetches.
+        await store.receive(\.browse.root.refreshButtonTapped)
+    }
+
+    @Test
+    func queueFinishedRefreshesOnlyTheChangedFolderThatIsOnScreen() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .browse
+        state.browse.root = BrowseFeature.State(serverURL: serverURL, directoryPath: "Inbox", title: "Inbox")
+        let store = TestStore(initialState: state) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true), path: "") }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        // Upload landed in a folder nobody is looking at — nothing refetches.
+        let summary = UploadsFeature.FinishSummary(
+            uploadedCount: 1, failedCount: 0, lastDestination: "Archive/2026", changedPaths: ["Archive/2026"]
+        )
+        await store.send(.uploads(.delegate(.queueFinished(summary))))
+        await store.receive(\.browse.refreshDirectory)
+        await store.receive(\.favorites.refreshDirectory)
+        #expect(store.state.browse.root.isLoading == false)
     }
 
     @Test
