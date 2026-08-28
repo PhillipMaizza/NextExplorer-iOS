@@ -29,6 +29,7 @@ public struct BrowseTabFeature {
         public enum Delegate: Equatable, Sendable {
             case favoritesChanged
             case openDownloadsTapped
+            case uploadRequested([PendingUpload])
         }
     }
 
@@ -56,6 +57,10 @@ public struct BrowseTabFeature {
 
             case .root(.delegate(.openDownloadsTapped)):
                 return .send(.delegate(.openDownloadsTapped))
+
+            case let .root(.delegate(.uploadRequested(files))),
+                 let .path(.element(id: _, action: .delegate(.uploadRequested(files)))):
+                return .send(.delegate(.uploadRequested(files)))
 
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
                 state.path.append(BrowseNavigation.screen(for: item, serverURL: state.root.serverURL))

@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import FilesClient
 import Foundation
+import Localization
 import Testing
 
 @testable import FilesFeature
@@ -124,6 +125,60 @@ struct MainTabFeatureTests {
         await store.receive(\.favorites.favoritesResponse.success) {
             $0.favorites.isLoading = false
             $0.favorites.favorites = [favorite]
+        }
+    }
+
+    // MARK: Uploads
+
+    @Test
+    func uploadRequestedFromBrowseEnqueuesIntoTheAppWideQueue() async {
+        let file = PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.txt"), fileName: "a.txt", destination: "Inbox")
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.uploadFile = { _, _, name, dest, _ in
+                FileItem(name: name, path: dest, dateModified: Date(timeIntervalSince1970: 1), size: 1, kind: "txt")
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.browse(.delegate(.uploadRequested([file]))))
+        await store.receive(\.uploads.enqueue)
+        #expect(store.state.uploads.jobs.count == 1)
+    }
+
+    @Test
+    func queueFinishedShowsTheCompletionToastWithAnOpenActionForAnotherFolder() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .browse
+        let store = TestStore(initialState: state) { MainTabFeature() }
+        store.exhaustivity = .off
+
+        let summary = UploadsFeature.FinishSummary(uploadedCount: 2, failedCount: 0, lastDestination: "Documents/Reports")
+        await store.send(.uploads(.delegate(.queueFinished(summary)))) {
+            $0.uploadToast = MainTabFeature.UploadToast(
+                message: L10n.Uploads.completeMany(2),
+                openDestination: "Documents/Reports"
+            )
+        }
+
+        await store.send(.openUploadedLocation("Documents/Reports")) {
+            $0.uploadToast = nil
+            $0.selectedTab = .browse
+        }
+        await store.receive(\.browse.navigateToDirectory)
+    }
+
+    @Test
+    func queueFinishedHidesTheOpenActionWhenAlreadyViewingThatFolder() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .browse
+        state.browse.root = BrowseFeature.State(serverURL: serverURL, directoryPath: "Inbox", title: "Inbox")
+        let store = TestStore(initialState: state) { MainTabFeature() }
+
+        let summary = UploadsFeature.FinishSummary(uploadedCount: 1, failedCount: 0, lastDestination: "Inbox")
+        await store.send(.uploads(.delegate(.queueFinished(summary)))) {
+            $0.uploadToast = MainTabFeature.UploadToast(message: L10n.Uploads.complete, openDestination: nil)
         }
     }
 

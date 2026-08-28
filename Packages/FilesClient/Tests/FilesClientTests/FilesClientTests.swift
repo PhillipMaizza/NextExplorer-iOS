@@ -695,4 +695,54 @@ struct FilesClientLiveTests {
             _ = try await makeClient().compressItem(serverURL, item)
         }
     }
+
+    // MARK: uploadFile
+
+    private func makeTempFile(_ name: String, contents: String) throws -> URL {
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString)-\(name)")
+        try Data(contents.utf8).write(to: url)
+        return url
+    }
+
+    @Test
+    func uploadFilePostsAMultipartEnvelopeToTheUploadEndpointAndDecodesTheStoredFile() async throws {
+        let responseJSON = #"[{"name": "notes (1).txt", "path": "Inbox", "dateModified": "2024-01-01T00:00:00.000Z", "size": 12, "kind": "txt"}]"#
+        stub(statusCode: 200, body: responseJSON.data(using: .utf8)!)
+        StubURLProtocol.capturedRequest = nil
+        let fileURL = try makeTempFile("notes.txt", contents: "hello upload")
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        let stored = try await makeClient().uploadFile(serverURL, fileURL, "notes.txt", "Inbox") { _ in }
+
+        #expect(stored.name == "notes (1).txt")
+        #expect(stored.path == "Inbox")
+
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.httpMethod == "POST")
+        #expect(request.url?.path == "/api/upload")
+        let contentType = try #require(request.value(forHTTPHeaderField: "Content-Type"))
+        #expect(contentType.hasPrefix("multipart/form-data; boundary="))
+
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        let bodyString = try #require(String(data: body, encoding: .utf8))
+        // Text fields must precede the file part, and the file bytes are included verbatim.
+        let uploadToRange = try #require(bodyString.range(of: "name=\"uploadTo\""))
+        let fileDataRange = try #require(bodyString.range(of: "name=\"filedata\"; filename=\"notes.txt\""))
+        #expect(uploadToRange.lowerBound < fileDataRange.lowerBound)
+        #expect(bodyString.contains("\r\n\r\nInbox\r\n"))
+        #expect(bodyString.contains("\r\n\r\nnotes.txt\r\n"))
+        #expect(bodyString.contains("hello upload"))
+    }
+
+    @Test
+    func uploadFileSurfacesTheServerMessageOnRejection() async throws {
+        let errorJSON = #"{"error": {"message": "Cannot upload files to this path."}}"#
+        stub(statusCode: 403, body: errorJSON.data(using: .utf8)!)
+        let fileURL = try makeTempFile("notes.txt", contents: "x")
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        await #expect(throws: FilesClientError.serverMessage(statusCode: 403, message: "Cannot upload files to this path.")) {
+            _ = try await makeClient().uploadFile(serverURL, fileURL, "notes.txt", "Inbox") { _ in }
+        }
+    }
 }

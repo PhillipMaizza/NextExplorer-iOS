@@ -154,6 +154,23 @@ downloads.deleteConfirmMany	Delete %lld files?
 downloads.deleteSingleMessage	This only removes the local copy. The file stays on the server.
 downloads.deleteBulkMessage	This only removes the local copies. The files stay on the server.
 
+# ---- uploads ----
+uploads.navigationTitle	Uploads
+uploads.menuTitle	Upload
+uploads.actionUploadFromFiles	Upload from Files
+uploads.actionUploadFromPhotos	Upload from Photos
+uploads.statusWaiting	Waiting
+uploads.statusFailed	Upload failed
+uploads.barTitleOne	Uploading %@
+uploads.barTitleMany	Uploading %1$lld of %2$lld
+uploads.complete	Upload complete
+uploads.completeMany	%lld files uploaded
+uploads.completeWithFailures	%1$lld uploaded, %2$lld failed
+uploads.failedGeneric	Couldn't upload this file.
+uploads.clear	Clear
+uploads.emptyList	No uploads yet.
+uploads.cancelAll	Cancel all uploads
+
 # ---- shared ----
 shared.navigationTitle	Shared
 shared.segmentByMe	By me

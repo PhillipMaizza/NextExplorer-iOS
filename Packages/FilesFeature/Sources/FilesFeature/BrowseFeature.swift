@@ -301,6 +301,7 @@ public struct BrowseFeature {
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped(DownloadLocation, removeArchiveAfterDownload: Bool)
         case bulkDownloadResponse(savedCount: Int, total: Int, location: DownloadLocation)
+        case uploadFilesPicked([PendingUpload])
         case copyTapped(FileItem)
         case moveTapped(FileItem)
         case bulkCopyTapped
@@ -328,6 +329,9 @@ public struct BrowseFeature {
             case openFolder(FileItem)
             case openPath(path: String, title: String)
             case favoritesChanged
+            /// Files the user picked from the `+` menu, each already carrying its destination
+            /// folder — bubbled up to `MainTabFeature`'s app-wide upload queue.
+            case uploadRequested([PendingUpload])
             /// A copy/move just changed what's on the server. `BrowseTabFeature` re-fetches
             /// the whole live navigation stack so both the source and destination listings
             /// reflect the new state.
@@ -644,6 +648,10 @@ public struct BrowseFeature {
                     state.fileActionErrorMessage = L10n.Browse.downloadBulkFailed
                 }
                 return .none
+
+            case let .uploadFilesPicked(files):
+                guard !files.isEmpty else { return .none }
+                return .send(.delegate(.uploadRequested(files)))
 
             case let .copyTapped(item):
                 state.$clipboard.withLock { $0 = FileClipboard(items: [item], operation: .copy) }

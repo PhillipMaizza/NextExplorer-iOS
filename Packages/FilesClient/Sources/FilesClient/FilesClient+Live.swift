@@ -62,6 +62,12 @@ extension FilesClient {
             downloadRawFile: { serverURL, item in
                 try await service.downloadRawFile(serverURL: serverURL, item: item)
             },
+            uploadFile: { serverURL, fileURL, fileName, destination, onProgress in
+                try await service.uploadFile(
+                    serverURL: serverURL, fileURL: fileURL, fileName: fileName,
+                    destination: destination, onProgress: onProgress
+                )
+            },
             compressItem: { serverURL, item in
                 try await service.compressItem(serverURL: serverURL, item: item)
             },
