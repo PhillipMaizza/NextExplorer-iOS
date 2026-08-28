@@ -227,7 +227,7 @@ public enum L10n {
         public static var errorUnreachable: String { tr("login.errorUnreachable") }
         public static var passwordField: String { tr("login.passwordField") }  // "Password"
         public static var portHint: String { tr("login.portHint") }
-        public static var serverQuestion: String { tr("login.serverQuestion") }  // "Where's your instance of NextExplorer?"
+        public static var serverQuestion: String { tr("login.serverQuestion") }  // "Where's your instance of NEXTExplorer?"
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }

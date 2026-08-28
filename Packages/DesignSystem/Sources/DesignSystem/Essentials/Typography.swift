@@ -38,7 +38,7 @@ public enum Typography {
 
         private static let familyName = "Figtree"
 
-        /// Lazily registers the font on first access. Previews never run `NetxExplorerApp.init()`,
+        /// Lazily registers the font on first access. Previews never run `NEXTExplorerApp.init()`,
         /// and `Font.custom` silently falls back to the system font if "Figtree" isn't registered.
         private static let fontsRegistered: Void = DesignSystemFonts.registerAll()
 

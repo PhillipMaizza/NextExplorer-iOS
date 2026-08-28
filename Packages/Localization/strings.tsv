@@ -1,4 +1,4 @@
-# NetxExplorer user-facing copy. key<TAB>English. `#` comments, `\n` for newline.
+# NEXTExplorer user-facing copy. key<TAB>English. `#` comments, `\n` for newline.
 # Regenerate: python3 Scripts/gen-l10n.py
 
 # ---- common ----
@@ -425,7 +425,7 @@ previewToolbar.share	Share
 previewToolbar.rename	Rename
 
 # ---- login ----
-login.serverQuestion	Where's your instance of NextExplorer?
+login.serverQuestion	Where's your instance of NEXTExplorer?
 login.testConnection	Test connection
 login.emailField	Email
 login.passwordField	Password
