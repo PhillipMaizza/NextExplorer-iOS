@@ -87,8 +87,8 @@ struct BrowseContentView: View {
             .sheet(item: $store.scope(state: \.destinationPicker, action: \.destinationPicker)) { pickerStore in
                 DestinationPickerView(store: pickerStore)
             }
-            .sheet(item: $store.scope(state: \.uploadDestination, action: \.uploadDestination)) { pickerStore in
-                DestinationPickerView(store: pickerStore)
+            .sheet(item: $store.scope(state: \.uploadReview, action: \.uploadReview)) { reviewStore in
+                UploadReviewView(store: reviewStore)
             }
             .sheet(item: infoPhaseBinding) { phase in
                 infoSheetContent(for: phase)
@@ -227,7 +227,9 @@ struct BrowseContentView: View {
             onDocumentsPicked: { store.send(.uploadFilesPicked(makePickedFiles(fromDocumentURLs: $0))) },
             onPhotosPicked: { items in Task { await handlePickedPhotos(items) } },
             onPhotoCaptured: { url in
-                store.send(.uploadFilesPicked([PickedFile(fileURL: url, fileName: url.lastPathComponent)]))
+                store.send(.uploadFilesPicked([PickedFile(
+                    fileURL: url, fileName: url.lastPathComponent, size: Self.fileSize(at: url)
+                )]))
             }
         ))
         .hapticFeedback(.selection, trigger: viewModeRaw)
@@ -902,6 +904,10 @@ struct BrowseContentView: View {
         return directory
     }
 
+    private static func fileSize(at url: URL) -> Int64 {
+        Int64((try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0)
+    }
+
     /// Security-scoped document-picker URLs don't outlive this callback, so each file is copied
     /// into an app-owned temp folder before it's handed on.
     private func makePickedFiles(fromDocumentURLs urls: [URL]) -> [PickedFile] {
@@ -913,20 +919,31 @@ struct BrowseContentView: View {
             let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(name)")
             try? FileManager.default.removeItem(at: temp)
             guard (try? FileManager.default.copyItem(at: url, to: temp)) != nil else { return nil }
-            return PickedFile(fileURL: temp, fileName: name)
+            return PickedFile(fileURL: temp, fileName: name, size: Self.fileSize(at: temp))
         }
     }
 
+    /// Loads all picked photos concurrently — sequentially, N full-res images stalled the
+    /// review sheet for seconds.
     private func handlePickedPhotos(_ items: [PhotosPickerItem]) async {
         let directory = Self.pendingUploadsDirectory
-        var picked: [PickedFile] = []
-        for (index, item) in items.enumerated() {
-            guard let data = try? await item.loadTransferable(type: Data.self) else { continue }
-            let ext = item.supportedContentTypes.first?.preferredFilenameExtension ?? "dat"
-            let name = "IMG_\(Int(Date().timeIntervalSince1970))_\(index + 1).\(ext)"
-            let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(name)")
-            guard (try? data.write(to: temp)) != nil else { continue }
-            picked.append(PickedFile(fileURL: temp, fileName: name))
+        let stamp = Int(Date().timeIntervalSince1970)
+        let picked = await withTaskGroup(of: PickedFile?.self) { group in
+            for (index, item) in items.enumerated() {
+                group.addTask {
+                    guard let data = try? await item.loadTransferable(type: Data.self) else { return nil }
+                    let ext = item.supportedContentTypes.first?.preferredFilenameExtension ?? "dat"
+                    let name = "IMG_\(stamp)_\(index + 1).\(ext)"
+                    let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(name)")
+                    guard (try? data.write(to: temp)) != nil else { return nil }
+                    return PickedFile(fileURL: temp, fileName: name, size: Int64(data.count))
+                }
+            }
+            var results: [PickedFile] = []
+            for await file in group {
+                if let file { results.append(file) }
+            }
+            return results
         }
         photosSelection = []
         if !picked.isEmpty { store.send(.uploadFilesPicked(picked)) }

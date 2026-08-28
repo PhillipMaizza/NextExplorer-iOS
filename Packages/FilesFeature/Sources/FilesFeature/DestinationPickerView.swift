@@ -9,12 +9,14 @@ private enum Constants {
     static let chevronSize: CGFloat = .iconSmall
 }
 
-/// The modal folder chooser presented for "Move". Drills the same folder tree as Browse
-/// (folders only) and hands the chosen path back to `BrowseFeature` on confirm. A grouped
-/// list in a `NavigationStack`: close on the left of the bar, a checkmark on the right, and
-/// the same breadcrumb bar Browse uses along the bottom.
+/// The folder chooser for "Move" (a modal sheet) and "Upload" (pushed inside the upload
+/// review sheet). Drills the same folder tree as Browse (folders only), hands the chosen path
+/// back on confirm. Grouped list, checkmark to confirm, the same breadcrumb bar Browse uses.
 struct DestinationPickerView: View {
     @Bindable var store: StoreOf<DestinationPickerFeature>
+    /// `true` when pushed onto an existing `NavigationStack` (the upload flow): no wrapper
+    /// stack, no close button — the parent's back button and bar own those.
+    var isPushed = false
 
     private var navigationTitle: String {
         guard store.directoryPath.isEmpty else {
@@ -32,11 +34,19 @@ struct DestinationPickerView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle(navigationTitle)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
+        if isPushed {
+            pickerBody
+        } else {
+            NavigationStack { pickerBody }
+        }
+    }
+
+    private var pickerBody: some View {
+        content
+            .navigationTitle(navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                if !isPushed {
                     ToolbarItem(placement: .topBarLeading) {
                         Button { store.send(.cancelTapped) } label: {
                             IconKit.close
@@ -47,32 +57,32 @@ struct DestinationPickerView: View {
                         }
                         .accessibilityLabel(L10n.Common.close)
                     }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { store.send(.confirmTapped) } label: {
-                            IconKit.checkmark
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.accent)
-                                .frame(width: Constants.chevronSize, height: Constants.chevronSize)
-                        }
-                        .disabled(!store.canConfirm)
-                        .accessibilityLabel(confirmLabel)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { store.send(.confirmTapped) } label: {
+                        IconKit.checkmark
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(Color.accent)
+                            .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                    }
+                    .disabled(!store.canConfirm)
+                    .accessibilityLabel(confirmLabel)
+                }
+            }
+            .searchable(
+                text: $store.searchQuery.sending(\.searchQueryChanged),
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: L10n.Common.search
+            )
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if !store.directoryPath.isEmpty {
+                    BrowseBreadcrumbBar(directoryPath: store.directoryPath) { path, _ in
+                        store.send(.breadcrumbTapped(path: path))
                     }
                 }
-                .searchable(
-                    text: $store.searchQuery.sending(\.searchQueryChanged),
-                    placement: .navigationBarDrawer(displayMode: .always),
-                    prompt: L10n.Common.search
-                )
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    if !store.directoryPath.isEmpty {
-                        BrowseBreadcrumbBar(directoryPath: store.directoryPath) { path, _ in
-                            store.send(.breadcrumbTapped(path: path))
-                        }
-                    }
-                }
-                .task { store.send(.onAppear) }
-        }
+            }
+            .task { store.send(.onAppear) }
     }
 
     @ViewBuilder

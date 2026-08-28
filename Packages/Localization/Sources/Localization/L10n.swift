@@ -365,6 +365,13 @@ public enum L10n {
         public static var failedGeneric: String { tr("uploads.failedGeneric") }  // "Couldn't upload this file."
         public static var menuTitle: String { tr("uploads.menuTitle") }  // "Upload"
         public static var navigationTitle: String { tr("uploads.navigationTitle") }  // "Uploads"
+        public static var reviewChooseFolder: String { tr("uploads.reviewChooseFolder") }  // "Choose a folder"
+        public static var reviewSectionFiles: String { tr("uploads.reviewSectionFiles") }  // "Files"
+        public static var reviewSectionPath: String { tr("uploads.reviewSectionPath") }  // "Path"
+        public static var reviewSectionSize: String { tr("uploads.reviewSectionSize") }  // "Total size"
+        public static func reviewTitleMany(_ a0: CVarArg) -> String { tr("uploads.reviewTitleMany", a0) }
+        public static var reviewTitleOne: String { tr("uploads.reviewTitleOne") }  // "Upload 1 file"
+        public static var reviewUploadButton: String { tr("uploads.reviewUploadButton") }  // "Upload"
         public static var statusFailed: String { tr("uploads.statusFailed") }  // "Upload failed"
         public static var statusWaiting: String { tr("uploads.statusWaiting") }  // "Waiting"
     }

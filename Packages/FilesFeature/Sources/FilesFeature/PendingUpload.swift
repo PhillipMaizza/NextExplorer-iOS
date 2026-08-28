@@ -7,11 +7,13 @@ public struct PickedFile: Equatable, Sendable, Identifiable {
     public let id: UUID
     public let fileURL: URL
     public let fileName: String
+    public let size: Int64
 
-    public init(id: UUID = UUID(), fileURL: URL, fileName: String) {
+    public init(id: UUID = UUID(), fileURL: URL, fileName: String, size: Int64) {
         self.id = id
         self.fileURL = fileURL
         self.fileName = fileName
+        self.size = size
     }
 }
 

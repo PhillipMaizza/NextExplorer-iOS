@@ -178,11 +178,10 @@ public struct BrowseFeature {
         @Shared(.inMemory(FileClipboard.sharedKey)) public var clipboard: FileClipboard?
         /// The "Move" destination chooser, presented for a single item or a multi selection.
         @Presents public var destinationPicker: DestinationPickerFeature.State?
-        /// The "Upload to…" destination chooser, shown after files are picked from the `+`
-        /// menu. On confirm, `pendingUploadFiles` are turned into `PendingUpload`s and handed
-        /// up to the app wide queue.
-        @Presents public var uploadDestination: DestinationPickerFeature.State?
-        public var pendingUploadFiles: [PickedFile] = []
+        /// The review sheet shown after files are picked from the `+` menu — file list,
+        /// destination folder, total size, Upload button. On confirm its files become
+        /// `PendingUpload`s handed up to the app wide queue.
+        @Presents public var uploadReview: UploadReviewFeature.State?
         /// Set once a transfer finishes; `BrowseContentView` turns this into a success toast,
         /// mirroring `downloadSuccessMessage`'s lifecycle.
         public var transferSuccessMessage: String?
@@ -307,7 +306,7 @@ public struct BrowseFeature {
         case bulkDownloadTapped(DownloadLocation, removeArchiveAfterDownload: Bool)
         case bulkDownloadResponse(savedCount: Int, total: Int, location: DownloadLocation)
         case uploadFilesPicked([PickedFile])
-        case uploadDestination(PresentationAction<DestinationPickerFeature.Action>)
+        case uploadReview(PresentationAction<UploadReviewFeature.Action>)
         case copyTapped(FileItem)
         case moveTapped(FileItem)
         case bulkCopyTapped
@@ -657,27 +656,23 @@ public struct BrowseFeature {
 
             case let .uploadFilesPicked(files):
                 guard !files.isEmpty else { return .none }
-                state.pendingUploadFiles = files
-                state.uploadDestination = DestinationPickerFeature.State(
-                    serverURL: state.serverURL, uploadStartingAt: state.directoryPath
+                state.uploadReview = UploadReviewFeature.State(
+                    serverURL: state.serverURL, files: files, startingDestination: state.directoryPath
                 )
                 return .none
 
-            case let .uploadDestination(.presented(.delegate(.confirmed(destination)))):
-                let files = state.pendingUploadFiles
-                state.pendingUploadFiles = []
-                state.uploadDestination = nil
-                guard !files.isEmpty else { return .none }
+            case let .uploadReview(.presented(.delegate(.confirmed(files, destination)))):
+                state.uploadReview = nil
+                guard !files.isEmpty, !destination.isEmpty else { return .none }
                 return .send(.delegate(.uploadRequested(files.map {
                     PendingUpload(id: $0.id, fileURL: $0.fileURL, fileName: $0.fileName, destination: destination)
                 })))
 
-            case .uploadDestination(.presented(.delegate(.cancelled))):
-                state.pendingUploadFiles = []
-                state.uploadDestination = nil
+            case .uploadReview(.presented(.delegate(.cancelled))):
+                state.uploadReview = nil
                 return .none
 
-            case .uploadDestination:
+            case .uploadReview:
                 return .none
 
             case let .copyTapped(item):
@@ -859,8 +854,8 @@ public struct BrowseFeature {
         .ifLet(\.$destinationPicker, action: \.destinationPicker) {
             DestinationPickerFeature()
         }
-        .ifLet(\.$uploadDestination, action: \.uploadDestination) {
-            DestinationPickerFeature()
+        .ifLet(\.$uploadReview, action: \.uploadReview) {
+            UploadReviewFeature()
         }
     }
 
