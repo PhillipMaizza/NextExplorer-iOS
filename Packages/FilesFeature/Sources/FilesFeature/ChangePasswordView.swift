@@ -7,7 +7,7 @@ import SwiftUI
 private enum Metrics {
     static let contentSpacing: CGFloat = .space16
     static let horizontalPadding: CGFloat = .space16
-    static let cardCornerRadius: CGFloat = .radiusMedium
+    static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
     static let rowIconSize: CGFloat = .iconSmall
 }

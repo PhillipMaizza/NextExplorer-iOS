@@ -13,7 +13,7 @@ private enum Constants {
     static let sectionSpacing: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space16
     static let verticalPadding: CGFloat = .space16
-    static let cardCornerRadius: CGFloat = .radiusMedium
+    static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
     static let fieldHeight: CGFloat = .size48
     static let fieldHorizontalPadding: CGFloat = .space12
