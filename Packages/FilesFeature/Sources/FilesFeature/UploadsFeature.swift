@@ -32,6 +32,9 @@ public struct UploadsFeature {
         public let destination: String
         public var progress: Double
         public var status: Status
+        /// When the job last entered `.uploading`. Used only to spot a job that has been
+        /// "uploading" implausibly long across a background/resume so it can be restarted.
+        public var startedAt: Date? = nil
     }
 
     /// Reported to the parent when the queue drains: what to toast, and which folders to
@@ -87,12 +90,13 @@ public struct UploadsFeature {
 
     public enum Action: Equatable, Sendable {
         case enqueue([PendingUpload])
-        /// The app returned to the foreground. A default `URLSession` upload that lost its
-        /// connection while the app was suspended has already surfaced as `.failed`; those are
-        /// requeued. Jobs still genuinely `.uploading` are left alone to resume or time out on
-        /// their own — restarting them from zero would nuke healthy transfers and, on an
-        /// ambiguous completion, duplicate the file on the server (the backend has no
-        /// idempotency key to lean on).
+        /// The app returned to the foreground. Jobs that already surfaced as `.failed` (the
+        /// connection dropped while suspended) are requeued, as is any job still `.uploading`
+        /// well past a plausible transfer time, which means it wedged on a half open
+        /// connection. A job that is `.uploading` and recent is left alone to finish or fail
+        /// on its own — restarting a healthy transfer from zero risks duplicating the file on
+        /// the server, which the backend has no idempotency key to prevent. Also sweeps stale
+        /// staging temp files.
         case appResumed
         case startNextIfIdle
         case progress(id: UUID, Double)
@@ -113,7 +117,15 @@ public struct UploadsFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.uploadStaging) var uploadStaging
+    @Dependency(\.date) var date
     private enum CancelID: Hashable { case job(UUID) }
+
+    private enum Constants {
+        /// A job still `.uploading` after this long across a background/resume is treated as
+        /// wedged (a half open connection that never surfaced an error) and restarted. Well
+        /// past any realistic single file transfer that a foreground `URLSession` would keep.
+        static let wedgedUploadAge: TimeInterval = 300
+    }
 
     public init() {}
 
@@ -135,13 +147,24 @@ public struct UploadsFeature {
                 return .send(.startNextIfIdle)
 
             case .appResumed:
-                let stalled = state.jobs.filter { $0.status.isFailed }
-                guard !stalled.isEmpty else { return .none }
+                // Sweep any temp files a cancelled or crashed staging run left behind.
+                let sweep: Effect<Action> = .run { [uploadStaging] _ in await uploadStaging.sweepStale() }
+                // A failed job (connection dropped while suspended) is requeued; so is a job
+                // still "uploading" long past any real transfer, which means it wedged.
+                let cutoff = date.now.addingTimeInterval(-Constants.wedgedUploadAge)
+                let stalled = state.jobs.filter { job in
+                    job.status.isFailed
+                        || (job.status == .uploading && (job.startedAt ?? date.now) < cutoff)
+                }
+                guard !stalled.isEmpty else { return sweep }
+                var effects: [Effect<Action>] = [sweep]
                 for job in stalled {
                     state.jobs[id: job.id]?.status = .queued
                     state.jobs[id: job.id]?.progress = 0
+                    effects.append(.cancel(id: CancelID.job(job.id)))
                 }
-                return .send(.startNextIfIdle)
+                effects.append(.send(.startNextIfIdle))
+                return .merge(effects)
 
             case .startNextIfIdle:
                 guard state.currentJob == nil,
@@ -149,6 +172,7 @@ public struct UploadsFeature {
                 else { return .none }
                 state.jobs[id: next.id]?.status = .uploading
                 state.jobs[id: next.id]?.progress = 0
+                state.jobs[id: next.id]?.startedAt = date.now
                 return upload(next, serverURL: state.serverURL)
 
             case let .progress(id, value):

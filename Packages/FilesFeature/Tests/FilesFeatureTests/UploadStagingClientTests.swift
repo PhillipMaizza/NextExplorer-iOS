@@ -18,6 +18,24 @@ struct UploadStagingClientTests {
     }
 
     @Test
+    func sweepStaleDeletesOldStagedFilesButKeepsRecentOnes() async throws {
+        let directory = UploadStagingLocation.directory
+        let old = directory.appendingPathComponent("\(UUID().uuidString)-old.txt")
+        let fresh = directory.appendingPathComponent("\(UUID().uuidString)-fresh.txt")
+        try Data("x".utf8).write(to: old)
+        try Data("x".utf8).write(to: fresh)
+        try FileManager.default.setAttributes(
+            [.modificationDate: Date(timeIntervalSinceNow: -48 * 60 * 60)], ofItemAtPath: old.path
+        )
+        defer { try? FileManager.default.removeItem(at: fresh) }
+
+        await UploadStagingClient.liveValue.sweepStale()
+
+        #expect(FileManager.default.fileExists(atPath: old.path) == false)
+        #expect(FileManager.default.fileExists(atPath: fresh.path) == true)
+    }
+
+    @Test
     func stageCameraCaptureWrapsAnAlreadyWrittenFileWithItsSize() async throws {
         let directory = UploadStagingLocation.directory
         let url = directory.appendingPathComponent("\(UUID().uuidString)-Photo.jpg")
