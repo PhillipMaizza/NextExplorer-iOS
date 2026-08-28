@@ -321,21 +321,23 @@ struct UserDetailView: View {
 
 // MARK: Small pieces
 
-/// A section: an uppercase header over a rounded `backgroundSecondary` box. The header sits
-/// outside the box so the tabs read as a list of labelled sections rather than nested titled
-/// cards.
+/// A section: an optional uppercase header over a rounded `backgroundSecondary` box. The
+/// header sits outside the box so the tabs read as a list of labelled sections rather than
+/// nested titled cards. Pass no title for a plain card (an intro blurb, a single note).
 struct Card<Content: View>: View {
-    let title: String
+    let title: String?
     @ViewBuilder let content: Content
 
-    init(_ title: String, @ViewBuilder content: () -> Content) {
+    init(_ title: String? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Metrics.cardTitleSpacing) {
-            DSFieldLabel(title)
+            if let title {
+                DSFieldLabel(title)
+            }
             VStack(alignment: .leading, spacing: Metrics.cardSpacing) {
                 content
             }
