@@ -1139,6 +1139,7 @@ struct BrowseContentView: View {
     }
 }
 
+@MainActor
 private func browsePreview(
     directoryPath: String = "Documents",
     configureClient: (inout FilesClient) -> Void = { _ in },
