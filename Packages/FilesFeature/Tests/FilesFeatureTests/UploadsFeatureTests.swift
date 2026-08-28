@@ -125,6 +125,44 @@ struct UploadsFeatureTests {
     }
 
     @Test
+    func failuresKeepTheBarUpAndRetryAllRequeuesThem() async {
+        let attempts = LockIsolated(0)
+        let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.filesClient.uploadFile = { _, _, name, _, _ in
+                let n = attempts.withValue { value -> Int in value += 1; return value }
+                if n <= 2 { throw FilesClientError.server(statusCode: 500) }
+                return self.uploaded(name)
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.enqueue([pending("a.txt", id: UUID(0)), pending("b.txt", id: UUID(1))]))
+        // Both fail on the first pass.
+        await store.receive(.delegate(.queueFinished(
+            UploadsFeature.FinishSummary(uploadedCount: 0, failedCount: 2, lastDestination: nil)
+        )))
+        #expect(store.state.isActive == false)
+        #expect(store.state.failedCount == 2)
+        #expect(store.state.isBarVisible == true)
+
+        await store.send(.retryAllFailedTapped) {
+            $0.jobs[id: UUID(0)]?.status = .queued
+            $0.jobs[id: UUID(1)]?.status = .queued
+        }
+        await store.receive(\.startNextIfIdle) {
+            $0.jobs[id: UUID(0)]?.status = .uploading
+        }
+        // Second pass succeeds.
+        await store.receive(.delegate(.queueFinished(
+            UploadsFeature.FinishSummary(uploadedCount: 2, failedCount: 0, lastDestination: "Inbox")
+        )))
+        #expect(store.state.failedCount == 0)
+        #expect(store.state.isBarVisible == false)
+    }
+
+    @Test
     func appResumedRestartsStalledUploads() async {
         var state = UploadsFeature.State(serverURL: serverURL)
         state.jobs = [

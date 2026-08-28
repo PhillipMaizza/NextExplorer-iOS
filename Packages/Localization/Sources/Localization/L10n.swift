@@ -350,6 +350,8 @@ public enum L10n {
         public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo"
         public static var actionUploadFromFiles: String { tr("uploads.actionUploadFromFiles") }  // "Upload from Files"
         public static var actionUploadFromPhotos: String { tr("uploads.actionUploadFromPhotos") }  // "Upload from Photos"
+        public static func barFailedMany(_ a0: CVarArg) -> String { tr("uploads.barFailedMany", a0) }
+        public static var barFailedOne: String { tr("uploads.barFailedOne") }  // "1 upload failed"
         public static func barTitleMany(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.barTitleMany", a0, a1) }
         public static func barTitleOne(_ a0: CVarArg) -> String { tr("uploads.barTitleOne", a0) }
         public static var cameraDeniedMessage: String { tr("uploads.cameraDeniedMessage") }  // "Allow camera access in Settings to take a photo."
@@ -365,6 +367,7 @@ public enum L10n {
         public static var failedGeneric: String { tr("uploads.failedGeneric") }  // "Couldn't upload this file."
         public static var menuTitle: String { tr("uploads.menuTitle") }  // "Upload"
         public static var navigationTitle: String { tr("uploads.navigationTitle") }  // "Uploads"
+        public static var retryAll: String { tr("uploads.retryAll") }  // "Retry all"
         public static var reviewChooseFolder: String { tr("uploads.reviewChooseFolder") }  // "Choose a folder"
         public static func reviewPreparing(_ a0: CVarArg) -> String { tr("uploads.reviewPreparing", a0) }
         public static var reviewSectionFiles: String { tr("uploads.reviewSectionFiles") }  // "Files"

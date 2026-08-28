@@ -20,6 +20,10 @@ public struct UploadsFeature {
                 case .queued, .uploading: false
                 }
             }
+
+            var isFailed: Bool {
+                if case .failed = self { true } else { false }
+            }
         }
 
         public let id: UUID
@@ -46,10 +50,18 @@ public struct UploadsFeature {
             self.serverURL = serverURL
         }
 
-        /// Anything still queued or uploading — drives the persistent progress bar's visibility.
+        /// Anything still queued or uploading.
         public var isActive: Bool {
             jobs.contains { !$0.status.isTerminal }
         }
+
+        public var failedCount: Int {
+            jobs.filter { $0.status.isFailed }.count
+        }
+
+        /// The bar stays up while uploads run *and* while failures are waiting to be retried
+        /// or dismissed.
+        public var isBarVisible: Bool { isActive || failedCount > 0 }
 
         var currentJob: UploadJob? {
             jobs.first { $0.status == .uploading }
@@ -82,6 +94,7 @@ public struct UploadsFeature {
         case cancelJobTapped(id: UUID)
         case cancelAllTapped
         case retryTapped(id: UUID)
+        case retryAllFailedTapped
         case clearCompletedTapped
         case sheetPresented(Bool)
         case barTapped
@@ -116,10 +129,7 @@ public struct UploadsFeature {
                 return .send(.startNextIfIdle)
 
             case .appResumed:
-                let stalled = state.jobs.filter { job in
-                    if case .failed = job.status { return true }
-                    return job.status == .uploading
-                }
+                let stalled = state.jobs.filter { $0.status.isFailed || $0.status == .uploading }
                 guard !stalled.isEmpty else { return .none }
                 var effects: [Effect<Action>] = []
                 for job in stalled {
@@ -183,6 +193,15 @@ public struct UploadsFeature {
                 state.jobs[id: id]?.progress = 0
                 return .send(.startNextIfIdle)
 
+            case .retryAllFailedTapped:
+                let failed = state.jobs.filter { $0.status.isFailed }
+                guard !failed.isEmpty else { return .none }
+                for job in failed {
+                    state.jobs[id: job.id]?.status = .queued
+                    state.jobs[id: job.id]?.progress = 0
+                }
+                return .send(.startNextIfIdle)
+
             case .clearCompletedTapped:
                 state.jobs.removeAll { $0.status.isTerminal }
                 if state.jobs.isEmpty { state.isSheetPresented = false }
@@ -238,7 +257,7 @@ private extension UploadsFeature.State {
     var finishSummary: UploadsFeature.FinishSummary {
         UploadsFeature.FinishSummary(
             uploadedCount: jobs.filter { $0.status == .completed }.count,
-            failedCount: jobs.filter { if case .failed = $0.status { true } else { false } }.count,
+            failedCount: jobs.filter { $0.status.isFailed }.count,
             lastDestination: jobs.last { $0.status == .completed }?.destination
         )
     }

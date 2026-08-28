@@ -105,22 +105,17 @@ public struct MainTabFeature {
                 )
 
             case let .uploads(.delegate(.queueFinished(summary))):
-                guard summary.uploadedCount > 0 || summary.failedCount > 0 else { return .none }
-                let message: String
-                if summary.failedCount == 0 {
-                    message = summary.uploadedCount == 1
-                        ? L10n.Uploads.complete
-                        : L10n.Uploads.completeMany(summary.uploadedCount)
-                } else if summary.uploadedCount == 0 {
-                    message = L10n.Uploads.statusFailed
-                } else {
-                    message = L10n.Uploads.completeWithFailures(summary.uploadedCount, summary.failedCount)
-                }
+                // Failures are surfaced by the persistent failed bar (with its own Retry), so
+                // the toast is only the all-succeeded confirmation.
+                guard summary.failedCount == 0, summary.uploadedCount > 0 else { return .none }
+                let message = summary.uploadedCount == 1
+                    ? L10n.Uploads.complete
+                    : L10n.Uploads.completeMany(summary.uploadedCount)
                 let alreadyThere = state.selectedTab == .browse
                     && summary.lastDestination == state.currentBrowseDirectory
                 state.uploadToast = UploadToast(
                     message: message,
-                    openDestination: (summary.uploadedCount > 0 && !alreadyThere) ? summary.lastDestination : nil
+                    openDestination: alreadyThere ? nil : summary.lastDestination
                 )
                 return .none
 

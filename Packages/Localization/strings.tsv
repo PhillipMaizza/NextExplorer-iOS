@@ -177,6 +177,9 @@ uploads.statusWaiting	Waiting
 uploads.statusFailed	Upload failed
 uploads.barTitleOne	Uploading %@
 uploads.barTitleMany	Uploading %1$lld of %2$lld
+uploads.barFailedOne	1 upload failed
+uploads.barFailedMany	%lld uploads failed
+uploads.retryAll	Retry all
 uploads.complete	Upload complete
 uploads.completeMany	%lld files uploaded
 uploads.completeWithFailures	%1$lld uploaded, %2$lld failed
