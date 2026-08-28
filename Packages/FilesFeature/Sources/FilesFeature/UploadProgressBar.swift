@@ -32,10 +32,10 @@ struct UploadProgressBar: View {
                     .lineLimit(1)
                     .truncationMode(.middle)
                 ProgressView(value: progress)
-                    .tint(Color.accent)
+                    .tint(Color.positive)
             }
             Button(action: onCancelAll) {
-                IconKit.close
+                IconKit.closeCircle
                     .resizable()
                     .scaledToFit()
                     .foregroundStyle(Color.secondaryDS)
@@ -46,8 +46,9 @@ struct UploadProgressBar: View {
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
-        .background(Color.backgroundSecondary)
-        .contentShape(Rectangle())
+        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusControl))
+        .elevation(.level4)
+        .contentShape(RoundedRectangle(cornerRadius: .radiusControl))
         .onTapGesture(perform: onTap)
     }
 }

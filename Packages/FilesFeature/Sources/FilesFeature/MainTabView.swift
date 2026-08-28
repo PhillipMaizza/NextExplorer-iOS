@@ -5,6 +5,15 @@ import FilesClient
 import Localization
 import SwiftUI
 
+private enum Constants {
+    static let barAnimationDuration: Double = 0.2
+    /// Clearance so the floating upload bar rides above the tab bar rather than replacing it
+    /// (a bottom `safeAreaInset` / `tabViewBottomAccessory` hides the Liquid Glass tab bar).
+    static let barBottomClearance: CGFloat = 68
+    /// Lifts the "upload complete" toast clear of the tab bar.
+    static let toastTabBarClearance: CGFloat = 56
+}
+
 public struct MainTabView: View {
     @Bindable var store: StoreOf<MainTabFeature>
     @Environment(\.scenePhase) private var scenePhase
@@ -20,6 +29,47 @@ public struct MainTabView: View {
     }
 
     public var body: some View {
+        tabs
+            .overlay(alignment: .bottom) {
+                if store.uploads.isActive {
+                    uploadBar
+                        .padding(.horizontal, .space16)
+                        .padding(.bottom, Constants.barBottomClearance)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isActive)
+            .sheet(isPresented: Binding(
+                get: { store.uploads.isSheetPresented },
+                set: { store.send(.uploads(.sheetPresented($0))) }
+            )) {
+                UploadsView(store: store.scope(state: \.uploads, action: \.uploads))
+            }
+            .dsToast(Binding(
+                get: { uploadToastMessage },
+                set: { if $0 == nil { store.send(.dismissUploadToast) } }
+            ), extraBottomInset: Constants.toastTabBarClearance)
+            .hapticFeedback(.selection, trigger: store.selectedTab)
+            .onChange(of: scenePhase) { _, newPhase in
+                guard newPhase == .active else { return }
+                guard hasBecomeActiveBefore else {
+                    hasBecomeActiveBefore = true
+                    return
+                }
+                store.send(.appBecameActive)
+            }
+    }
+
+    private var uploadBar: some View {
+        UploadProgressBar(
+            title: uploadBarTitle,
+            progress: store.uploads.currentJob?.progress ?? 0,
+            onTap: { store.send(.uploads(.barTapped)) },
+            onCancelAll: { store.send(.uploads(.cancelAllTapped), animation: .default) }
+        )
+    }
+
+    private var tabs: some View {
         TabView(selection: Binding(
             get: { store.selectedTab },
             set: { store.send(.tabSelected($0)) }
@@ -60,37 +110,6 @@ public struct MainTabView: View {
             }
         }
         .tint(Color.accent)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            if store.uploads.isActive {
-                UploadProgressBar(
-                    title: uploadBarTitle,
-                    progress: store.uploads.currentJob?.progress ?? 0,
-                    onTap: { store.send(.uploads(.barTapped)) },
-                    onCancelAll: { store.send(.uploads(.cancelAllTapped), animation: .default) }
-                )
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-            }
-        }
-        .animation(.easeInOut(duration: 0.2), value: store.uploads.isActive)
-        .sheet(isPresented: Binding(
-            get: { store.uploads.isSheetPresented },
-            set: { store.send(.uploads(.sheetPresented($0))) }
-        )) {
-            UploadsView(store: store.scope(state: \.uploads, action: \.uploads))
-        }
-        .dsToast(Binding(
-            get: { uploadToastMessage },
-            set: { if $0 == nil { store.send(.dismissUploadToast) } }
-        ))
-        .hapticFeedback(.selection, trigger: store.selectedTab)
-        .onChange(of: scenePhase) { _, newPhase in
-            guard newPhase == .active else { return }
-            guard hasBecomeActiveBefore else {
-                hasBecomeActiveBefore = true
-                return
-            }
-            store.send(.appBecameActive)
-        }
     }
 
     private func tabIcon(_ image: Image) -> some View {
