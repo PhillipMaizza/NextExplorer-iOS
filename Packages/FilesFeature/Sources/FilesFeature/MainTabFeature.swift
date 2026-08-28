@@ -95,29 +95,28 @@ public struct MainTabFeature {
                  let .favorites(.delegate(.uploadRequested(files))):
                 return .send(.uploads(.enqueue(files)))
 
-            case let .uploads(.delegate(.folderContentsChanged(path))):
-                // Re-fetch wherever the upload landed — cheap, and the folder may be on screen
-                // in either the Browse or Favorites stack.
-                _ = path
-                return .merge(
-                    .send(.browse(.syncPathStack)),
-                    .send(.favorites(.syncPathStack))
-                )
-
             case let .uploads(.delegate(.queueFinished(summary))):
+                // Refetch only the folders an upload actually landed in, and only where they
+                // are on screen — `refreshDirectory` does nothing for a path nothing is showing.
+                var effects: [Effect<Action>] = []
+                for path in summary.changedPaths {
+                    effects.append(.send(.browse(.refreshDirectory(path: path))))
+                    effects.append(.send(.favorites(.refreshDirectory(path: path))))
+                }
                 // Failures are surfaced by the persistent failed bar (with its own Retry), so
                 // the toast is only the all-succeeded confirmation.
-                guard summary.failedCount == 0, summary.uploadedCount > 0 else { return .none }
-                let message = summary.uploadedCount == 1
-                    ? L10n.Uploads.complete
-                    : L10n.Uploads.completeMany(summary.uploadedCount)
-                let alreadyThere = state.selectedTab == .browse
-                    && summary.lastDestination == state.currentBrowseDirectory
-                state.uploadToast = UploadToast(
-                    message: message,
-                    openDestination: alreadyThere ? nil : summary.lastDestination
-                )
-                return .none
+                if summary.failedCount == 0, summary.uploadedCount > 0 {
+                    let message = summary.uploadedCount == 1
+                        ? L10n.Uploads.complete
+                        : L10n.Uploads.completeMany(summary.uploadedCount)
+                    let alreadyThere = state.selectedTab == .browse
+                        && summary.lastDestination == state.currentBrowseDirectory
+                    state.uploadToast = UploadToast(
+                        message: message,
+                        openDestination: alreadyThere ? nil : summary.lastDestination
+                    )
+                }
+                return .merge(effects)
 
             case let .openUploadedLocation(destination):
                 state.uploadToast = nil

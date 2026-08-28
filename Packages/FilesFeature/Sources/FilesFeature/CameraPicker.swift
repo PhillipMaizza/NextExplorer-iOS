@@ -37,9 +37,8 @@ struct CameraPicker: UIViewControllerRepresentable {
                 onCapture(nil)
                 return
             }
-            let directory = FileManager.default.temporaryDirectory.appendingPathComponent("PendingUploads", isDirectory: true)
-            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            let url = directory.appendingPathComponent("Photo_\(Int(Date().timeIntervalSince1970)).jpg")
+            let url = UploadStagingLocation.directory
+                .appendingPathComponent("Photo_\(Int(Date().timeIntervalSince1970)).jpg")
             onCapture((try? data.write(to: url)) != nil ? url : nil)
         }
 

@@ -84,6 +84,9 @@ struct UploadPickers: ViewModifier {
 /// back files the caller turns into `PickedFile`s; the destination is chosen afterwards.
 struct UploadEntryPoints: ViewModifier {
     let isSelecting: Bool
+    /// Gates the `+` on the folder's own `FileAccess.canUpload` — a read only folder never
+    /// shows it, so a pick can't run headlong into a guaranteed 403.
+    let canUpload: Bool
     @Binding var isFilesPickerPresented: Bool
     @Binding var isPhotosPickerPresented: Bool
     @Binding var isCameraPresented: Bool
@@ -97,7 +100,7 @@ struct UploadEntryPoints: ViewModifier {
     func body(content: Content) -> some View {
         content
             .toolbar {
-                if !isSelecting {
+                if !isSelecting && canUpload {
                     ToolbarItem(placement: .topBarTrailing) {
                         UploadSourceMenu(
                             label: { IconKit.plus.foregroundStyle(Color.primaryDS) },

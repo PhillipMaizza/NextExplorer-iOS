@@ -40,8 +40,22 @@ struct DynamicHeightSheet<Content: View, Footer: View>: View {
         self.footer = footer()
     }
 
+    /// Height of the screen the app is actually on. `UIScreen.main` is deprecated on iOS 18
+    /// and wrong under multitasking; the active window scene's own screen is the current one.
+    @MainActor
+    private static var screenHeight: CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first(where: { $0.activationState == .foregroundActive })?
+            .screen.bounds.height
+            ?? UIApplication.shared.connectedScenes
+                .compactMap { ($0 as? UIWindowScene)?.screen.bounds.height }
+                .first
+            ?? 800
+    }
+
     private var capHeight: CGFloat? {
-        maxHeightFraction.map { UIScreen.main.bounds.height * $0 }
+        maxHeightFraction.map { Self.screenHeight * $0 }
     }
 
     /// How tall the scrolling content may be before it has to scroll — the cap less the
