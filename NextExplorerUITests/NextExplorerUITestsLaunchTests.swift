@@ -1,13 +1,13 @@
 //
-//  NetxExplorerUITestsLaunchTests.swift
-//  NetxExplorerUITests
+//  NextExplorerUITestsLaunchTests.swift
+//  NextExplorerUITests
 //
 //  Created by Phillip Maizza on 24/08/2026.
 //
 
 import XCTest
 
-final class NetxExplorerUITestsLaunchTests: XCTestCase {
+final class NextExplorerUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

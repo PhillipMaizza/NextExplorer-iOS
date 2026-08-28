@@ -194,7 +194,7 @@ struct TextFilePreviewView: View {
         serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
         fileName: "README.md",
         kind: "md",
-        content: "# NEXTplorer\n\nA native iOS client for NextExplorer.",
+        content: "# NextExplorer\n\nA native iOS client for NextExplorer.",
         errorMessage: nil,
         isLoading: false,
         isSaving: false,

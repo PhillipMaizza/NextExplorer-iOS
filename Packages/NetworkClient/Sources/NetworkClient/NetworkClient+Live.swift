@@ -36,9 +36,9 @@ extension NetworkClient {
                 let data: Data
                 let response: URLResponse
                 do {
-                    // A per-task delegate for progress only. It doesn't implement the
-                    // auth-challenge method, so server-trust evaluation falls back to the
-                    // session-level `URLSessionAuthDelegate`.
+                    // A dedicated delegate for progress only. It carries no challenge method,
+                    // so connection level challenges (server trust) are handled by
+                    // `URLSessionAuthDelegate`'s session level callback.
                     (data, response) = try await session.upload(
                         for: request,
                         fromFile: bodyFileURL,

@@ -1,4 +1,4 @@
-# NetxExplorer user-facing copy. key<TAB>English. `#` comments, `\n` for newline.
+# NextExplorer user-facing copy. key<TAB>English. `#` comments, `\n` for newline.
 # Regenerate: python3 Scripts/gen-l10n.py
 
 # ---- common ----
@@ -174,10 +174,11 @@ uploads.reviewChooseFolder	Choose a folder
 uploads.reviewUploadButton	Upload
 uploads.reviewPreparing	Preparing %lld…
 uploads.reviewAddMore	Add more files
+uploads.stagingFailed	Couldn't add those files. Try again.
 uploads.statusWaiting	Waiting
 uploads.statusFailed	Upload failed
 uploads.barTitleOne	Uploading %@
-uploads.barTitleMany	Uploading %1$lld of %2$lld
+uploads.barTitleMany	Uploading %lld files
 uploads.barFailedOne	1 upload failed
 uploads.barFailedMany	%lld uploads failed
 uploads.retryAll	Retry all

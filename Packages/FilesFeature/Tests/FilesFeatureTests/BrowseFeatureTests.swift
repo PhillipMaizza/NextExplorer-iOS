@@ -2032,15 +2032,38 @@ struct BrowseFeatureTransferTests {
     }
 
     @Test
-    func beginningUploadOpensTheReviewSheetInAPreparingState() async {
-        let store = TestStore(initialState: makeState(directoryPath: "Documents")) { BrowseFeature() }
-
-        await store.send(.beginUploadReview(fileCount: 2)) {
-            $0.uploadReview = UploadReviewFeature.State(
-                serverURL: self.serverURL, startingDestination: "Documents", preparingCount: 2
+    func beginningUploadOpensTheReviewSheetAndStartsStaging() async {
+        let store = TestStore(initialState: makeState(directoryPath: "Documents")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.uploadStaging = UploadStagingClient(
+                stageDocuments: { _ in
+                    AsyncStream<PickedFile> { continuation in
+                        continuation.yield(self.picked("a.jpg", id: UUID(0)))
+                        continuation.yield(self.picked("b.jpg", id: UUID(1)))
+                        continuation.finish()
+                    }
+                },
+                stagePhotos: { _ in AsyncStream<PickedFile> { $0.finish() } },
+                stageCameraCapture: { _ in nil },
+                discard: { _ in },
+                sweepStale: {}
             )
         }
-        #expect(store.state.uploadReview?.isPreparing == true)
+        store.exhaustivity = .off
+
+        await store.send(.beginUpload(.documents([
+            URL(fileURLWithPath: "/tmp/a.jpg"), URL(fileURLWithPath: "/tmp/b.jpg"),
+        ])))
+        #expect(store.state.uploadReview != nil)
+        #expect(store.state.uploadReview?.destination == "Documents")
+
+        await store.receive(\.uploadReview.presented.stage) {
+            $0.uploadReview?.preparingCount = 2
+        }
+        await store.receive(\.uploadReview.presented.filePrepared)
+        await store.receive(\.uploadReview.presented.filePrepared)
+        await store.receive(\.uploadReview.presented.stagingBatchFinished)
         #expect(store.state.uploadReview?.totalCount == 2)
     }
 

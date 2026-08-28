@@ -18,51 +18,51 @@
 			containerPortal = 292E4690303C3E8F003CDCA4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 292E4697303C3E8F003CDCA4;
-			remoteInfo = NetxExplorer;
+			remoteInfo = NextExplorer;
 		};
 		292E46B0303C3E91003CDCA4 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 292E4690303C3E8F003CDCA4 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 292E4697303C3E8F003CDCA4;
-			remoteInfo = NetxExplorer;
+			remoteInfo = NextExplorer;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		292E4698303C3E8F003CDCA4 /* NetxExplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NetxExplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		292E46A5303C3E91003CDCA4 /* NetxExplorerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetxExplorerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		292E46AF303C3E91003CDCA4 /* NetxExplorerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NetxExplorerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		292E4698303C3E8F003CDCA4 /* NextExplorer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NextExplorer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		292E46A5303C3E91003CDCA4 /* NextExplorerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NextExplorerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		292E46AF303C3E91003CDCA4 /* NextExplorerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NextExplorerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		29D14D1A303DE5AF00D1E227 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		50AB93F3F4871331BFEBC085 /* Exceptions for "NetxExplorer" folder in "NetxExplorer" target */ = {
+		50AB93F3F4871331BFEBC085 /* Exceptions for "NextExplorer" folder in "NextExplorer" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 292E4697303C3E8F003CDCA4 /* NetxExplorer */;
+			target = 292E4697303C3E8F003CDCA4 /* NextExplorer */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		292E469A303C3E8F003CDCA4 /* NetxExplorer */ = {
+		292E469A303C3E8F003CDCA4 /* NextExplorer */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				50AB93F3F4871331BFEBC085 /* Exceptions for "NetxExplorer" folder in "NetxExplorer" target */,
+				50AB93F3F4871331BFEBC085 /* Exceptions for "NextExplorer" folder in "NextExplorer" target */,
 			);
-			path = NetxExplorer;
+			path = NextExplorer;
 			sourceTree = "<group>";
 		};
-		292E46A8303C3E91003CDCA4 /* NetxExplorerTests */ = {
+		292E46A8303C3E91003CDCA4 /* NextExplorerTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = NetxExplorerTests;
+			path = NextExplorerTests;
 			sourceTree = "<group>";
 		};
-		292E46B2303C3E91003CDCA4 /* NetxExplorerUITests */ = {
+		292E46B2303C3E91003CDCA4 /* NextExplorerUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			path = NetxExplorerUITests;
+			path = NextExplorerUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -98,9 +98,9 @@
 			isa = PBXGroup;
 			children = (
 				29D14D1A303DE5AF00D1E227 /* LaunchScreen.storyboard */,
-				292E469A303C3E8F003CDCA4 /* NetxExplorer */,
-				292E46A8303C3E91003CDCA4 /* NetxExplorerTests */,
-				292E46B2303C3E91003CDCA4 /* NetxExplorerUITests */,
+				292E469A303C3E8F003CDCA4 /* NextExplorer */,
+				292E46A8303C3E91003CDCA4 /* NextExplorerTests */,
+				292E46B2303C3E91003CDCA4 /* NextExplorerUITests */,
 				292E4699303C3E8F003CDCA4 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -108,9 +108,9 @@
 		292E4699303C3E8F003CDCA4 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				292E4698303C3E8F003CDCA4 /* NetxExplorer.app */,
-				292E46A5303C3E91003CDCA4 /* NetxExplorerTests.xctest */,
-				292E46AF303C3E91003CDCA4 /* NetxExplorerUITests.xctest */,
+				292E4698303C3E8F003CDCA4 /* NextExplorer.app */,
+				292E46A5303C3E91003CDCA4 /* NextExplorerTests.xctest */,
+				292E46AF303C3E91003CDCA4 /* NextExplorerUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -118,9 +118,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		292E4697303C3E8F003CDCA4 /* NetxExplorer */ = {
+		292E4697303C3E8F003CDCA4 /* NextExplorer */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 292E46B9303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NetxExplorer" */;
+			buildConfigurationList = 292E46B9303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NextExplorer" */;
 			buildPhases = (
 				292E4694303C3E8F003CDCA4 /* Sources */,
 				292E4695303C3E8F003CDCA4 /* Frameworks */,
@@ -131,20 +131,20 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				292E469A303C3E8F003CDCA4 /* NetxExplorer */,
+				292E469A303C3E8F003CDCA4 /* NextExplorer */,
 			);
-			name = NetxExplorer;
+			name = NextExplorer;
 			packageProductDependencies = (
 				A67BD154B7CFF0B05EB44CD5 /* AppFeature */,
 				EFD970C42E1F1E6EDE43FC98 /* DesignSystem */,
 			);
-			productName = NetxExplorer;
-			productReference = 292E4698303C3E8F003CDCA4 /* NetxExplorer.app */;
+			productName = NextExplorer;
+			productReference = 292E4698303C3E8F003CDCA4 /* NextExplorer.app */;
 			productType = "com.apple.product-type.application";
 		};
-		292E46A4303C3E91003CDCA4 /* NetxExplorerTests */ = {
+		292E46A4303C3E91003CDCA4 /* NextExplorerTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 292E46BC303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NetxExplorerTests" */;
+			buildConfigurationList = 292E46BC303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NextExplorerTests" */;
 			buildPhases = (
 				292E46A1303C3E91003CDCA4 /* Sources */,
 				292E46A2303C3E91003CDCA4 /* Frameworks */,
@@ -156,16 +156,16 @@
 				292E46A7303C3E91003CDCA4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				292E46A8303C3E91003CDCA4 /* NetxExplorerTests */,
+				292E46A8303C3E91003CDCA4 /* NextExplorerTests */,
 			);
-			name = NetxExplorerTests;
-			productName = NetxExplorerTests;
-			productReference = 292E46A5303C3E91003CDCA4 /* NetxExplorerTests.xctest */;
+			name = NextExplorerTests;
+			productName = NextExplorerTests;
+			productReference = 292E46A5303C3E91003CDCA4 /* NextExplorerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		292E46AE303C3E91003CDCA4 /* NetxExplorerUITests */ = {
+		292E46AE303C3E91003CDCA4 /* NextExplorerUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 292E46BF303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NetxExplorerUITests" */;
+			buildConfigurationList = 292E46BF303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NextExplorerUITests" */;
 			buildPhases = (
 				292E46AB303C3E91003CDCA4 /* Sources */,
 				292E46AC303C3E91003CDCA4 /* Frameworks */,
@@ -177,11 +177,11 @@
 				292E46B1303C3E91003CDCA4 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				292E46B2303C3E91003CDCA4 /* NetxExplorerUITests */,
+				292E46B2303C3E91003CDCA4 /* NextExplorerUITests */,
 			);
-			name = NetxExplorerUITests;
-			productName = NetxExplorerUITests;
-			productReference = 292E46AF303C3E91003CDCA4 /* NetxExplorerUITests.xctest */;
+			name = NextExplorerUITests;
+			productName = NextExplorerUITests;
+			productReference = 292E46AF303C3E91003CDCA4 /* NextExplorerUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -207,7 +207,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 292E4693303C3E8F003CDCA4 /* Build configuration list for PBXProject "NetxExplorer" */;
+			buildConfigurationList = 292E4693303C3E8F003CDCA4 /* Build configuration list for PBXProject "NextExplorer" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -230,9 +230,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				292E4697303C3E8F003CDCA4 /* NetxExplorer */,
-				292E46A4303C3E91003CDCA4 /* NetxExplorerTests */,
-				292E46AE303C3E91003CDCA4 /* NetxExplorerUITests */,
+				292E4697303C3E8F003CDCA4 /* NextExplorer */,
+				292E46A4303C3E91003CDCA4 /* NextExplorerTests */,
+				292E46AE303C3E91003CDCA4 /* NextExplorerUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -289,12 +289,12 @@
 /* Begin PBXTargetDependency section */
 		292E46A7303C3E91003CDCA4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 292E4697303C3E8F003CDCA4 /* NetxExplorer */;
+			target = 292E4697303C3E8F003CDCA4 /* NextExplorer */;
 			targetProxy = 292E46A6303C3E91003CDCA4 /* PBXContainerItemProxy */;
 		};
 		292E46B1303C3E91003CDCA4 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 292E4697303C3E8F003CDCA4 /* NetxExplorer */;
+			target = 292E4697303C3E8F003CDCA4 /* NextExplorer */;
 			targetProxy = 292E46B0303C3E91003CDCA4 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -430,13 +430,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = QPF699J5LK;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = NetxExplorer/Info.plist;
+				INFOPLIST_FILE = NextExplorer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.phillipmaizza.NetxExplorer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nextexplorer.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -461,13 +461,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = QPF699J5LK;
 				ENABLE_PREVIEWS = YES;
-				INFOPLIST_FILE = NetxExplorer/Info.plist;
+				INFOPLIST_FILE = NextExplorer/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.phillipmaizza.NetxExplorer;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nextexplorer.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -493,7 +493,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.phillipmaizza.NetxExplorerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nextexplorer.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -501,7 +501,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NetxExplorer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NetxExplorer";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NextExplorer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NextExplorer";
 			};
 			name = Debug;
 		};
@@ -515,7 +515,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.phillipmaizza.NetxExplorerTests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nextexplorer.app.tests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -523,7 +523,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NetxExplorer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NetxExplorer";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NextExplorer.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NextExplorer";
 			};
 			name = Release;
 		};
@@ -535,7 +535,7 @@
 				DEVELOPMENT_TEAM = QPF699J5LK;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.phillipmaizza.NetxExplorerUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nextexplorer.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -543,7 +543,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = NetxExplorer;
+				TEST_TARGET_NAME = NextExplorer;
 			};
 			name = Debug;
 		};
@@ -555,7 +555,7 @@
 				DEVELOPMENT_TEAM = QPF699J5LK;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.phillipmaizza.NetxExplorerUITests;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nextexplorer.app.uitests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
@@ -563,14 +563,14 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-				TEST_TARGET_NAME = NetxExplorer;
+				TEST_TARGET_NAME = NextExplorer;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		292E4693303C3E8F003CDCA4 /* Build configuration list for PBXProject "NetxExplorer" */ = {
+		292E4693303C3E8F003CDCA4 /* Build configuration list for PBXProject "NextExplorer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				292E46B7303C3E92003CDCA4 /* Debug */,
@@ -579,7 +579,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		292E46B9303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NetxExplorer" */ = {
+		292E46B9303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NextExplorer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				292E46BA303C3E92003CDCA4 /* Debug */,
@@ -588,7 +588,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		292E46BC303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NetxExplorerTests" */ = {
+		292E46BC303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NextExplorerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				292E46BD303C3E92003CDCA4 /* Debug */,
@@ -597,7 +597,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		292E46BF303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NetxExplorerUITests" */ = {
+		292E46BF303C3E92003CDCA4 /* Build configuration list for PBXNativeTarget "NextExplorerUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				292E46C0303C3E92003CDCA4 /* Debug */,

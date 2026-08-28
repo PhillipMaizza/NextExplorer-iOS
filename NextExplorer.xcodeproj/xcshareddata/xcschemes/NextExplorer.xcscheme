@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "292E4697303C3E8F003CDCA4"
-               BuildableName = "NetxExplorer.app"
-               BlueprintName = "NetxExplorer"
-               ReferencedContainer = "container:NetxExplorer.xcodeproj">
+               BuildableName = "NextExplorer.app"
+               BlueprintName = "NextExplorer"
+               ReferencedContainer = "container:NextExplorer.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "292E46A4303C3E91003CDCA4"
-               BuildableName = "NetxExplorerTests.xctest"
-               BlueprintName = "NetxExplorerTests"
-               ReferencedContainer = "container:NetxExplorer.xcodeproj">
+               BuildableName = "NextExplorerTests.xctest"
+               BlueprintName = "NextExplorerTests"
+               ReferencedContainer = "container:NextExplorer.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "292E46AE303C3E91003CDCA4"
-               BuildableName = "NetxExplorerUITests.xctest"
-               BlueprintName = "NetxExplorerUITests"
-               ReferencedContainer = "container:NetxExplorer.xcodeproj">
+               BuildableName = "NextExplorerUITests.xctest"
+               BlueprintName = "NextExplorerUITests"
+               ReferencedContainer = "container:NextExplorer.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -70,9 +70,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "292E4697303C3E8F003CDCA4"
-            BuildableName = "NetxExplorer.app"
-            BlueprintName = "NetxExplorer"
-            ReferencedContainer = "container:NetxExplorer.xcodeproj">
+            BuildableName = "NextExplorer.app"
+            BlueprintName = "NextExplorer"
+            ReferencedContainer = "container:NextExplorer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -87,9 +87,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "292E4697303C3E8F003CDCA4"
-            BuildableName = "NetxExplorer.app"
-            BlueprintName = "NetxExplorer"
-            ReferencedContainer = "container:NetxExplorer.xcodeproj">
+            BuildableName = "NextExplorer.app"
+            BlueprintName = "NextExplorer"
+            ReferencedContainer = "container:NextExplorer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

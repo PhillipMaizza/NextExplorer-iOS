@@ -477,8 +477,10 @@ struct FilesService: Sendable {
     /// `services/uploadService.js`. One `multipart/form-data` request per file: the text
     /// fields (`uploadTo`, `relativePath`) MUST precede the `filedata` part — multer's custom
     /// storage reads `req.body` inside `_handleFile`, so a file part that arrives first sees an
-    /// empty body. The envelope is streamed from a temp file so a large upload never sits in
-    /// memory. Response is a one-element array of the stored file (auto-renamed on collision).
+    /// empty body. The whole request is first written to a temporary multipart envelope on
+    /// disk (one extra copy of the payload), then streamed from that file, so the upload never
+    /// sits in memory even for large files. Response is a one-element array of the stored file
+    /// (auto-renamed on collision).
     func uploadFile(
         serverURL: URL,
         fileURL: URL,
@@ -539,7 +541,13 @@ struct FilesService: Sendable {
         try writeField("uploadTo", destination)
         try writeField("relativePath", fileName)
 
-        let header = "--\(boundary)\r\nContent-Disposition: form-data; name=\"filedata\"; filename=\"\(fileName)\"\r\nContent-Type: application/octet-stream\r\n\r\n"
+        // The server takes the stored name from the `relativePath` field, not this header, but
+        // a raw `"` or CR/LF here would still break the multipart framing.
+        let headerFileName = fileName
+            .replacingOccurrences(of: "\"", with: "'")
+            .replacingOccurrences(of: "\r", with: " ")
+            .replacingOccurrences(of: "\n", with: " ")
+        let header = "--\(boundary)\r\nContent-Disposition: form-data; name=\"filedata\"; filename=\"\(headerFileName)\"\r\nContent-Type: application/octet-stream\r\n\r\n"
         try handle.write(contentsOf: Data(header.utf8))
 
         let input = try FileHandle(forReadingFrom: fileURL)

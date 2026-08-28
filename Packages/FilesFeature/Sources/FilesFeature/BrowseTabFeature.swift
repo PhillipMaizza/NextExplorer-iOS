@@ -24,6 +24,9 @@ public struct BrowseTabFeature {
         /// Re-fetches the root folder and every pushed subfolder currently on the live
         /// navigation stack — sent when the app becomes active again after being backgrounded.
         case syncPathStack
+        /// Refetches only the screens (root or pushed) whose `directoryPath` equals `path`.
+        /// Sent after an upload finishes so just the affected folder reloads.
+        case refreshDirectory(path: String)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -84,6 +87,16 @@ public struct BrowseTabFeature {
                     [.send(.root(.refreshButtonTapped))]
                         + state.path.ids.map { .send(.path(.element(id: $0, action: .refreshButtonTapped))) }
                 )
+
+            case let .refreshDirectory(path):
+                var effects: [Effect<Action>] = []
+                if state.root.directoryPath == path {
+                    effects.append(.send(.root(.refreshButtonTapped)))
+                }
+                for id in state.path.ids where state.path[id: id]?.directoryPath == path {
+                    effects.append(.send(.path(.element(id: id, action: .refreshButtonTapped))))
+                }
+                return .merge(effects)
 
             case .root, .path, .delegate:
                 return .none
