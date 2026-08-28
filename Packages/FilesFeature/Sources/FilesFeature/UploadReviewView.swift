@@ -38,6 +38,13 @@ struct UploadReviewView: View {
     @State private var isCameraPresented = false
     @State private var isCameraDeniedAlertPresented = false
     @State private var photosSelection: [PhotosPickerItem] = []
+    @State private var previewSelection: PreviewSelection?
+
+    /// The staged file whose full screen QuickLook preview is open; `id` is the row's
+    /// `PickedFile.ID` so the preview can open on it and still swipe across the whole list.
+    private struct PreviewSelection: Identifiable, Equatable {
+        let id: PickedFile.ID
+    }
 
     private static let byteFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()
@@ -55,7 +62,13 @@ struct UploadReviewView: View {
 
     private func fileRow(_ file: PickedFile) -> some View {
         HStack(spacing: Constants.rowSpacing) {
-            thumbnail(for: file)
+            Button {
+                previewSelection = PreviewSelection(id: file.id)
+            } label: {
+                thumbnail(for: file)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L10n.Uploads.reviewPreviewFile(file.fileName))
             VStack(alignment: .leading, spacing: Constants.rowTextSpacing) {
                 Text(file.fileName)
                     .type(.body2(.regular), style: .primary(for: .label))
@@ -85,10 +98,13 @@ struct UploadReviewView: View {
         let kind = (file.fileName as NSString).pathExtension.lowercased()
         if FileItem.isImageKind(kind), kind != "svg" {
             AsyncImage(url: file.fileURL) { phase in
-                if case let .success(image) = phase {
+                switch phase {
+                case let .success(image):
                     image.resizable().scaledToFill()
-                } else {
-                    Color.backgroundSecondary
+                case .failure:
+                    FileTypeIcon(kind: kind)
+                default:
+                    ThumbnailLoadingPlaceholder()
                 }
             }
             .frame(width: Constants.thumbnailSize, height: Constants.thumbnailSize)
@@ -138,17 +154,11 @@ struct UploadReviewView: View {
     }
 
     private var isConfirmingCancel: Binding<Bool> {
-        Binding(
-            get: { store.isConfirmingCancel },
-            set: { isPresented in
-                // Confirming already flips this flag off (and tears the sheet down), so only a
-                // real dismissal of the alert still has the flag set — sending unconditionally
-                // would fire into an absent presentation state.
-                if !isPresented, store.isConfirmingCancel {
-                    store.send(.cancelConfirmationDismissed)
-                }
-            }
-        )
+        // Alerts have no tap outside dismissal, so this alert only ever closes through one of
+        // its own buttons, and each button resets the flag through the reducer. A no op setter
+        // keeps SwiftUI from firing a second dismiss action into an already torn down
+        // presentation once "Discard" nils the whole feature.
+        Binding(get: { store.isConfirmingCancel }, set: { _ in })
     }
 
     private var title: String {
@@ -299,12 +309,20 @@ struct UploadReviewView: View {
         .interactiveDismissDisabled(!store.files.isEmpty || store.isPreparing)
         .alert(L10n.Uploads.discardTitle, isPresented: isConfirmingCancel) {
             Button(L10n.Uploads.discardConfirm, role: .destructive) { store.send(.confirmCancelTapped) }
-            Button(L10n.Common.cancel, role: .cancel) {}
+            Button(L10n.Common.cancel, role: .cancel) { store.send(.cancelConfirmationDismissed) }
         } message: {
             Text(L10n.Uploads.discardMessage)
         }
         .sheet(item: $store.scope(state: \.folderPicker, action: \.folderPicker)) { pickerStore in
             DestinationPickerView(store: pickerStore)
+        }
+        .fullScreenCover(item: $previewSelection) { selection in
+            PickedFilePreview(
+                urls: store.files.map(\.fileURL),
+                names: store.files.map(\.fileName),
+                initialIndex: store.files.firstIndex(where: { $0.id == selection.id }) ?? 0,
+                onClose: { previewSelection = nil }
+            )
         }
         .modifier(UploadPickers(
             isFilesPickerPresented: $isFilesPickerPresented,
@@ -325,6 +343,40 @@ struct UploadReviewView: View {
                 store.send(.stage(.camera(url)))
             }
         ))
+    }
+}
+
+/// Full screen preview for a staged file, opened from its row thumbnail. Goes through
+/// `QuickLook`, which swipes across the whole batch starting on the tapped file. Wrapped in a
+/// `NavigationStack` so `previewChrome` can hang a close button off it — `QLPreviewController`
+/// only draws its own Done bar when UIKit presents it directly, not through a representable.
+private struct PickedFilePreview: View {
+    let urls: [URL]
+    let names: [String]
+    let initialIndex: Int
+    let onClose: () -> Void
+
+    @State private var currentIndex: Int
+
+    init(urls: [URL], names: [String], initialIndex: Int, onClose: @escaping () -> Void) {
+        self.urls = urls
+        self.names = names
+        self.initialIndex = initialIndex
+        self.onClose = onClose
+        self._currentIndex = State(initialValue: initialIndex)
+    }
+
+    private var title: String? {
+        names.indices.contains(currentIndex) ? names[currentIndex] : nil
+    }
+
+    var body: some View {
+        NavigationStack {
+            QuickLookPreview(urls: urls, initialIndex: initialIndex) { currentIndex = $0 }
+                .ignoresSafeArea()
+                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .previewChrome(title: title, onClose: onClose)
+        }
     }
 }
 

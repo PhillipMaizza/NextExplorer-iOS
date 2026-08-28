@@ -3499,6 +3499,17 @@
         }
       }
     },
+    "uploads.reviewPreviewFile": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview %@"
+          }
+        }
+      }
+    },
     "uploads.reviewSectionFiles": {
       "extractionState": "manual",
       "localizations": {

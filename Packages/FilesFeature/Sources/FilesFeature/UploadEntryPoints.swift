@@ -79,53 +79,6 @@ struct UploadPickers: ViewModifier {
     }
 }
 
-/// The `+` toolbar button and its picker menu (camera / Photos / Files). Extracted from
-/// `BrowseContentView` so its `body` stays inside the type checker's budget. Each picker hands
-/// back files the caller turns into `PickedFile`s; the destination is chosen afterwards.
-struct UploadEntryPoints: ViewModifier {
-    let isSelecting: Bool
-    /// Gates the `+` on the folder's own `FileAccess.canUpload` — a read only folder never
-    /// shows it, so a pick can't run headlong into a guaranteed 403.
-    let canUpload: Bool
-    @Binding var isFilesPickerPresented: Bool
-    @Binding var isPhotosPickerPresented: Bool
-    @Binding var isCameraPresented: Bool
-    @Binding var photosSelection: [PhotosPickerItem]
-    let onDocumentsPicked: ([URL]) -> Void
-    let onPhotosPicked: ([PhotosPickerItem]) -> Void
-    let onCameraCaptured: (URL) -> Void
-
-    @State private var isCameraDeniedAlertPresented = false
-
-    func body(content: Content) -> some View {
-        content
-            .toolbar {
-                if !isSelecting && canUpload {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        UploadSourceMenu(
-                            label: { IconKit.plus.foregroundStyle(Color.primaryDS) },
-                            isFilesPickerPresented: $isFilesPickerPresented,
-                            isPhotosPickerPresented: $isPhotosPickerPresented,
-                            isCameraPresented: $isCameraPresented,
-                            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
-                        )
-                        .accessibilityLabel(L10n.Uploads.menuTitle)
-                    }
-                }
-            }
-            .modifier(UploadPickers(
-                isFilesPickerPresented: $isFilesPickerPresented,
-                isPhotosPickerPresented: $isPhotosPickerPresented,
-                isCameraPresented: $isCameraPresented,
-                isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented,
-                photosSelection: $photosSelection,
-                onDocumentsPicked: onDocumentsPicked,
-                onPhotosPicked: onPhotosPicked,
-                onCameraCaptured: onCameraCaptured
-            ))
-    }
-}
-
 /// Take Photo or Video / Upload from Gallery / Upload from Files — the shared menu behind both
 /// the browse `+` and the review sheet's "Add more files" row.
 struct UploadSourceMenu<MenuLabel: View>: View {

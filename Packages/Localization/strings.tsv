@@ -174,6 +174,7 @@ uploads.reviewChooseFolder	Choose a folder
 uploads.reviewUploadButton	Upload
 uploads.reviewPreparing	Preparing %lld…
 uploads.reviewAddMore	Add more files
+uploads.reviewPreviewFile	Preview %@
 uploads.stagingFailed	Couldn't add those files. Try again.
 uploads.discardTitle	Discard upload?
 uploads.discardMessage	The files you added won't be uploaded.

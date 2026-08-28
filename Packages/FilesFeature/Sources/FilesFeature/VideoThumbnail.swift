@@ -21,6 +21,7 @@ struct VideoThumbnailView: View {
     let size: CGFloat
 
     @State private var frame: UIImage?
+    @State private var didFail = false
 
     var body: some View {
         ZStack {
@@ -28,8 +29,10 @@ struct VideoThumbnailView: View {
                 Image(uiImage: frame)
                     .resizable()
                     .scaledToFill()
+            } else if didFail {
+                FileTypeIcon(kind: url.pathExtension)
             } else {
-                Color.backgroundSecondary
+                ThumbnailLoadingPlaceholder()
             }
             IconKit.playCircle
                 .resizable()
@@ -42,7 +45,11 @@ struct VideoThumbnailView: View {
         .frame(width: size, height: size)
         .clipShape(RoundedRectangle(cornerRadius: .radiusSmall))
         .task(id: url) {
-            frame = await Self.firstFrame(of: url, maxPixelSize: size * Constants.renderScale)
+            if let image = await Self.firstFrame(of: url, maxPixelSize: size * Constants.renderScale) {
+                frame = image
+            } else {
+                didFail = true
+            }
         }
     }
 

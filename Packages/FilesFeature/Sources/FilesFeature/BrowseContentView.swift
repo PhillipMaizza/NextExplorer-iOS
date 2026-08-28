@@ -23,6 +23,9 @@ private enum Constants {
     static let selectionToolbarIconSize: CGFloat = .iconMedium
     /// Height of the invisible long-press paste target past the last row.
     static let pasteTargetMinHeight: CGFloat = 260
+    /// The upload `+` is the folder's primary action, so it carries the accent tint and a
+    /// heavier glyph than the neutral options menu beside it.
+    static let uploadButtonWeight: Font.Weight = .bold
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -52,6 +55,7 @@ struct BrowseContentView: View {
     @State private var isFilesPickerPresented = false
     @State private var isPhotosPickerPresented = false
     @State private var isCameraPresented = false
+    @State private var isCameraDeniedAlertPresented = false
     @State private var photosSelection: [PhotosPickerItem] = []
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
@@ -218,13 +222,31 @@ struct BrowseContentView: View {
                     Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                 }
             }
+            if !store.isSelecting && canUploadHere {
+                if #available(iOS 26.0, *) {
+                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    UploadSourceMenu(
+                        label: {
+                            IconKit.plus
+                                .fontWeight(Constants.uploadButtonWeight)
+                                .foregroundStyle(Color.accent)
+                        },
+                        isFilesPickerPresented: $isFilesPickerPresented,
+                        isPhotosPickerPresented: $isPhotosPickerPresented,
+                        isCameraPresented: $isCameraPresented,
+                        isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
+                    )
+                    .accessibilityLabel(L10n.Uploads.menuTitle)
+                }
+            }
         }
-        .modifier(UploadEntryPoints(
-            isSelecting: store.isSelecting,
-            canUpload: canUploadHere,
+        .modifier(UploadPickers(
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,
+            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented,
             photosSelection: $photosSelection,
             onDocumentsPicked: { urls in
                 guard !urls.isEmpty else { return }
@@ -1078,4 +1100,3 @@ struct BrowseContentView: View {
         .navigationTitle(L10n.Browse.navigationTitle)
     }
 }
-
