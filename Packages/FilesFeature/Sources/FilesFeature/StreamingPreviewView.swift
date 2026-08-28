@@ -35,6 +35,7 @@ struct StreamingPreviewView: View {
     let serverURL: URL
     let onDismiss: () -> Void
     private let onShare: (() -> Void)?
+    private let onRename: (() -> Void)?
     private let onDownload: (() -> Void)?
     private let onDelete: (() -> Void)?
 
@@ -53,6 +54,7 @@ struct StreamingPreviewView: View {
         serverURL: URL,
         onDismiss: @escaping () -> Void,
         onShare: (() -> Void)? = nil,
+        onRename: (() -> Void)? = nil,
         onDownload: (() -> Void)? = nil,
         onDelete: (() -> Void)? = nil
     ) {
@@ -61,6 +63,7 @@ struct StreamingPreviewView: View {
         self.serverURL = serverURL
         self.onDismiss = onDismiss
         self.onShare = onShare
+        self.onRename = onRename
         self.onDownload = onDownload
         self.onDelete = onDelete
         self._player = State(initialValue: AVPlayer(url: url))
@@ -106,6 +109,14 @@ struct StreamingPreviewView: View {
                             .ignoresSafeArea()
                             .allowsHitTesting(false)
                     }
+
+                    // Audio (and video with no poster) shows nothing but a black rectangle
+                    // while the stream buffers — a spinner until the first frame plays.
+                    if !hasStartedPlaying, !(item.isVideo && item.supportsThumbnail) {
+                        ProgressView()
+                            .tint(Color.white)
+                            .allowsHitTesting(false)
+                    }
                 }
                 .scaleEffect(dragScale)
                 .offset(y: dragOffset)
@@ -117,6 +128,7 @@ struct StreamingPreviewView: View {
                 title: item.name,
                 systemShare: .remote(item, serverURL: serverURL),
                 onShareLink: onShare,
+                onRename: onRename,
                 onDownload: onDownload,
                 onDelete: onDelete,
                 onClose: onDismiss

@@ -522,6 +522,31 @@ struct FilesService: Sendable {
         try Self.validate(response)
     }
 
+    /// `POST /api/files/copy` and `POST /api/files/move`, confirmed against
+    /// `backend/src/routes/files/transfer.js` and `services/fileTransferService.js`:
+    /// `{ items: [{ path, name }], destination }` — `path`/`name` are `FileItem`'s own fields,
+    /// same as rename/delete. Name collisions in the destination are resolved server side
+    /// (`findAvailableName`). A validation failure (empty destination, source missing, a
+    /// folder moved into itself) comes back with a message worth surfacing verbatim.
+    func transferItems(
+        serverURL: URL, items: [FileItem], destination: String, operation: TransferOperation
+    ) async throws -> TransferResult {
+        let endpoint = operation == .copy ? "api/files/copy" : "api/files/move"
+        let url = serverURL.appendingPathComponent(endpoint)
+        var request = Self.makeRequest(url: url, method: "POST")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            let body = TransferItemsBody(
+                items: items.map { TransferItemsBody.Item(path: $0.path, name: $0.name) },
+                destination: destination
+            )
+            request.httpBody = try JSONEncoder().encode(body)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        return try await sendReportingMessage(request, decoding: TransferResult.self)
+    }
+
     func volumes(serverURL: URL) async throws -> [Volume] {
         let url = serverURL.appendingPathComponent("api/volumes")
         let request = Self.makeRequest(url: url, method: "GET")
@@ -634,6 +659,16 @@ struct FilesService: Sendable {
 
     private struct ShareableUsersEnvelope: Decodable {
         let users: [User]
+    }
+
+    private struct TransferItemsBody: Encodable {
+        struct Item: Encodable {
+            let path: String
+            let name: String
+        }
+
+        let items: [Item]
+        let destination: String
     }
 
     private struct DeleteItemsBody: Encodable {

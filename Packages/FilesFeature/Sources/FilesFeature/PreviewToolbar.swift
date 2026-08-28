@@ -24,6 +24,7 @@ extension View {
         title: String? = nil,
         systemShare: SystemShareSource = .unavailable,
         onShareLink: (() -> Void)? = nil,
+        onRename: (() -> Void)? = nil,
         onDownload: (() -> Void)? = nil,
         onDelete: (() -> Void)? = nil,
         onClose: @escaping () -> Void
@@ -32,6 +33,7 @@ extension View {
             title: title,
             systemShare: systemShare,
             onShareLink: onShareLink,
+            onRename: onRename,
             onDownload: onDownload,
             onDelete: onDelete,
             onClose: onClose
@@ -43,6 +45,7 @@ private struct PreviewChrome: ViewModifier {
     let title: String?
     let systemShare: SystemShareSource
     let onShareLink: (() -> Void)?
+    let onRename: (() -> Void)?
     let onDownload: (() -> Void)?
     let onDelete: (() -> Void)?
     let onClose: () -> Void
@@ -73,6 +76,10 @@ private struct PreviewChrome: ViewModifier {
                     if let onShareLink {
                         Button { onShareLink() } label: { IconKit.shareLink.foregroundStyle(Color.primaryDS) }
                             .accessibilityLabel(L10n.PreviewToolbar.createShareLink)
+                    }
+                    if let onRename {
+                        Button { onRename() } label: { IconKit.rename.foregroundStyle(Color.primaryDS) }
+                            .accessibilityLabel(L10n.PreviewToolbar.rename)
                     }
                     if let onDownload {
                         Button { onDownload() } label: { IconKit.download.foregroundStyle(Color.primaryDS) }

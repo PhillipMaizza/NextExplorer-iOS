@@ -39,6 +39,7 @@ public struct DownloadsFeature {
         /// only shown when the list is empty.
         public var actionErrorMessage: String?
         public var deleteConfirmationItem: LocalDownload?
+        public var renameItem: LocalDownload?
         public var searchQuery = ""
         public var sortOption: SortOption = .name
         public var sortDirection: BrowseFeature.SortDirection = .ascending
@@ -76,6 +77,10 @@ public struct DownloadsFeature {
         case deleteCancelled
         case deleteConfirmed
         case deleteResponse(Result<String, FilesClientError>)
+        case renameTapped(LocalDownload)
+        case renameCancelled
+        case renameConfirmed(String)
+        case renameResponse(Result<[LocalDownload], FilesClientError>)
         case searchQueryChanged(String)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(BrowseFeature.SortDirection)
@@ -130,6 +135,27 @@ public struct DownloadsFeature {
                 return .none
 
             case let .deleteResponse(.failure(error)):
+                state.actionErrorMessage = error.userMessage
+                return .none
+
+            case let .renameTapped(download):
+                state.renameItem = download
+                return .none
+
+            case .renameCancelled:
+                state.renameItem = nil
+                return .none
+
+            case let .renameConfirmed(newName):
+                return confirmRename(&state, newName: newName)
+
+            case let .renameResponse(.success(downloads)):
+                state.renameItem = nil
+                state.downloads = IdentifiedArray(uniqueElements: downloads)
+                return .none
+
+            case let .renameResponse(.failure(error)):
+                state.renameItem = nil
                 state.actionErrorMessage = error.userMessage
                 return .none
 
@@ -206,6 +232,22 @@ public struct DownloadsFeature {
             await send(.deleteResponse(await apiResult {
                 try localDownloadStore.delete(download.url)
                 return download.id
+            }))
+        }
+    }
+
+    private func confirmRename(_ state: inout State, newName: String) -> Effect<Action> {
+        guard let download = state.renameItem else { return .none }
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, trimmed != download.fileName else {
+            state.renameItem = nil
+            return .none
+        }
+        let localDownloadStore = self.localDownloadStore
+        return .run { send in
+            await send(.renameResponse(await apiResult {
+                _ = try localDownloadStore.rename(download.url, trimmed)
+                return try localDownloadStore.list()
             }))
         }
     }
