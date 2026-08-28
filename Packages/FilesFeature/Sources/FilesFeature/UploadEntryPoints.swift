@@ -38,7 +38,7 @@ struct UploadPickers: ViewModifier {
     @Binding var photosSelection: [PhotosPickerItem]
     let onDocumentsPicked: ([URL]) -> Void
     let onPhotosPicked: ([PhotosPickerItem]) -> Void
-    let onPhotoCaptured: (URL) -> Void
+    let onCameraCaptured: (URL) -> Void
 
     func body(content: Content) -> some View {
         content
@@ -72,7 +72,7 @@ struct UploadPickers: ViewModifier {
             .fullScreenCover(isPresented: $isCameraPresented) {
                 CameraPicker { url in
                     isCameraPresented = false
-                    if let url { onPhotoCaptured(url) }
+                    if let url { onCameraCaptured(url) }
                 }
                 .ignoresSafeArea()
             }
@@ -93,7 +93,7 @@ struct UploadEntryPoints: ViewModifier {
     @Binding var photosSelection: [PhotosPickerItem]
     let onDocumentsPicked: ([URL]) -> Void
     let onPhotosPicked: ([PhotosPickerItem]) -> Void
-    let onPhotoCaptured: (URL) -> Void
+    let onCameraCaptured: (URL) -> Void
 
     @State private var isCameraDeniedAlertPresented = false
 
@@ -121,13 +121,13 @@ struct UploadEntryPoints: ViewModifier {
                 photosSelection: $photosSelection,
                 onDocumentsPicked: onDocumentsPicked,
                 onPhotosPicked: onPhotosPicked,
-                onPhotoCaptured: onPhotoCaptured
+                onCameraCaptured: onCameraCaptured
             ))
     }
 }
 
-/// Take Photo / Upload from Photos / Upload from Files — the shared menu behind both the
-/// browse `+` and the review sheet's "Add more files" row.
+/// Take Photo or Video / Upload from Gallery / Upload from Files — the shared menu behind both
+/// the browse `+` and the review sheet's "Add more files" row.
 struct UploadSourceMenu<MenuLabel: View>: View {
     @ViewBuilder let label: () -> MenuLabel
     @Binding var isFilesPickerPresented: Bool

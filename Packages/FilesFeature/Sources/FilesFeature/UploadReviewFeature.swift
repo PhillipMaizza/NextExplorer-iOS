@@ -41,6 +41,9 @@ public struct UploadReviewFeature {
         /// `""` means no folder chosen yet (the pick started at the root) — Upload stays
         /// disabled until the user picks one.
         public var destination: String
+        /// Drives the "Discard upload?" confirmation — raised when the user tries to close the
+        /// sheet while it still holds staged files.
+        public var isConfirmingCancel = false
         @Presents public var folderPicker: DestinationPickerFeature.State?
 
         public init(serverURL: URL, files: [PickedFile] = [], startingDestination: String, preparingCount: Int = 0) {
@@ -70,6 +73,8 @@ public struct UploadReviewFeature {
         case removeFileTapped(id: PickedFile.ID)
         case uploadTapped
         case cancelTapped
+        case confirmCancelTapped
+        case cancelConfirmationDismissed
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -166,7 +171,19 @@ public struct UploadReviewFeature {
                 return .send(.delegate(.confirmed(files: Array(state.files), destination: state.destination)))
 
             case .cancelTapped:
+                guard state.files.isEmpty, !state.isPreparing else {
+                    state.isConfirmingCancel = true
+                    return .none
+                }
                 return .send(.delegate(.cancelled))
+
+            case .confirmCancelTapped:
+                state.isConfirmingCancel = false
+                return .send(.delegate(.cancelled))
+
+            case .cancelConfirmationDismissed:
+                state.isConfirmingCancel = false
+                return .none
 
             case .delegate:
                 return .none

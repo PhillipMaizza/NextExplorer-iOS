@@ -23,7 +23,9 @@
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>NSCameraUsageDescription</key>
-	<string>NextExplorer uses the camera so you can take a photo and upload it to your server.</string>
+	<string>NextExplorer uses the camera so you can take a photo or video and upload it to your server.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>NextExplorer uses the microphone to record sound when you capture a video to upload.</string>
 	<key>NSLocalNetworkUsageDescription</key>
 	<string>NextExplorer connects to the NextExplorer server you enter, which is usually on your local network.</string>
 	<key>NSAppTransportSecurity</key>

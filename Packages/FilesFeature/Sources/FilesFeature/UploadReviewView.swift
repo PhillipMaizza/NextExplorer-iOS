@@ -93,6 +93,8 @@ struct UploadReviewView: View {
             }
             .frame(width: Constants.thumbnailSize, height: Constants.thumbnailSize)
             .clipShape(RoundedRectangle(cornerRadius: .radiusSmall))
+        } else if FileItem.isVideoKind(kind) {
+            VideoThumbnailView(url: file.fileURL, size: Constants.thumbnailSize)
         } else {
             FileTypeIcon(kind: kind)
                 .frame(width: Constants.thumbnailSize, height: Constants.thumbnailSize)
@@ -133,6 +135,20 @@ struct UploadReviewView: View {
         .tint(.primaryDS)
         .disabled(store.isPreparing)
         .opacity(store.isPreparing ? Constants.disabledOpacity : Constants.enabledOpacity)
+    }
+
+    private var isConfirmingCancel: Binding<Bool> {
+        Binding(
+            get: { store.isConfirmingCancel },
+            set: { isPresented in
+                // Confirming already flips this flag off (and tears the sheet down), so only a
+                // real dismissal of the alert still has the flag set — sending unconditionally
+                // would fire into an absent presentation state.
+                if !isPresented, store.isConfirmingCancel {
+                    store.send(.cancelConfirmationDismissed)
+                }
+            }
+        )
     }
 
     private var title: String {
@@ -280,6 +296,13 @@ struct UploadReviewView: View {
         } footer: {
             footer
         }
+        .interactiveDismissDisabled(!store.files.isEmpty || store.isPreparing)
+        .alert(L10n.Uploads.discardTitle, isPresented: isConfirmingCancel) {
+            Button(L10n.Uploads.discardConfirm, role: .destructive) { store.send(.confirmCancelTapped) }
+            Button(L10n.Common.cancel, role: .cancel) {}
+        } message: {
+            Text(L10n.Uploads.discardMessage)
+        }
         .sheet(item: $store.scope(state: \.folderPicker, action: \.folderPicker)) { pickerStore in
             DestinationPickerView(store: pickerStore)
         }
@@ -298,7 +321,7 @@ struct UploadReviewView: View {
                 store.send(.stage(.photos(items)))
                 photosSelection = []
             },
-            onPhotoCaptured: { url in
+            onCameraCaptured: { url in
                 store.send(.stage(.camera(url)))
             }
         ))

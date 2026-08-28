@@ -235,7 +235,7 @@ struct BrowseContentView: View {
                 store.send(.beginUpload(.photos(items)))
                 photosSelection = []
             },
-            onPhotoCaptured: { url in
+            onCameraCaptured: { url in
                 store.send(.beginUpload(.camera(url)))
             }
         ))

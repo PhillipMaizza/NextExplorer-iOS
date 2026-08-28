@@ -66,7 +66,7 @@ struct DestinationPickerView: View {
                         IconKit.checkmark
                             .resizable()
                             .scaledToFit()
-                            .foregroundStyle(Color.accent)
+                            .foregroundStyle(store.canConfirm ? Color.accent : Color.tertiaryDS)
                             .frame(width: Constants.chevronSize, height: Constants.chevronSize)
                     }
                     .disabled(!store.canConfirm)
