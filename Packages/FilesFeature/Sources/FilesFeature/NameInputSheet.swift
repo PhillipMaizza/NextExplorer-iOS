@@ -7,8 +7,6 @@ private enum Constants {
     static let closeIconSize: CGFloat = .iconXSmall
     static let closeButtonPadding: CGFloat = .space8
     static let contentSpacing: CGFloat = .space24
-    static let fieldVerticalPadding: CGFloat = .space16
-    static let fieldHorizontalPadding: CGFloat = .space16
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
 }
@@ -59,15 +57,11 @@ struct NameInputSheet: View {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 header
                 Text(title).type(.headline3, style: .link)
-                TextField(placeholder, text: $name)
+                DSTextField(placeholder, text: $name, focused: $isFieldFocused)
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled()
                     .submitLabel(.done)
-                    .focused($isFieldFocused)
                     .onSubmit(submit)
-                    .padding(.vertical, Constants.fieldVerticalPadding)
-                    .padding(.horizontal, Constants.fieldHorizontalPadding)
-                    .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusLarge))
                 DSButton(confirmTitle, style: .primary, isLoading: isBusy, action: submit)
                     .disabled(trimmedName.isEmpty)
             }

@@ -99,12 +99,8 @@ struct CreateShareLinkSheet: View {
             sourceCard
 
             section(L10n.CreateShare.sectionLabel) {
-                fieldBox {
-                    TextField(L10n.CreateShare.sectionLabel, text: $store.label.sending(\.labelChanged), prompt: Text(verbatim: store.itemName))
-                        .type(.body2(.regular))
-                        .foregroundStyle(Color.primaryDS)
-                        .autocorrectionDisabled()
-                }
+                DSTextField(L10n.CreateShare.sectionLabel, text: $store.label.sending(\.labelChanged), prompt: Text(verbatim: store.itemName))
+                    .autocorrectionDisabled()
             }
 
             section(L10n.CreateShare.sectionAccessMode) {
@@ -132,11 +128,7 @@ struct CreateShareLinkSheet: View {
                 isOn: $store.isPasswordEnabled.sending(\.passwordEnabledChanged)
             )
             if store.isPasswordEnabled {
-                fieldBox {
-                    SecureField(L10n.Common.password, text: $store.password.sending(\.passwordChanged), prompt: Text(L10n.Common.password))
-                        .type(.body2(.regular))
-                        .foregroundStyle(Color.primaryDS)
-                }
+                DSSecureField(L10n.Common.password, text: $store.password.sending(\.passwordChanged), prompt: Text(L10n.Common.password))
             }
 
             DSToggleRow(
@@ -319,16 +311,6 @@ struct CreateShareLinkSheet: View {
             Text(title).type(.body2(.semibold), style: .primary(for: .label))
             content()
         }
-    }
-
-    private func fieldBox(@ViewBuilder content: () -> some View) -> some View {
-        content()
-            .padding(.horizontal, Constants.fieldHorizontalPadding)
-            .frame(height: Constants.fieldHeight)
-            .background(
-                RoundedRectangle(cornerRadius: .radiusControl)
-                    .stroke(Color.borderPrimary, lineWidth: .borderWidthHairline)
-            )
     }
 
     private func copyRow(value: String, field: CopiedField, action: @escaping () -> Void) -> some View {

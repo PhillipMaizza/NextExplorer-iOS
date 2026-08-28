@@ -13,8 +13,6 @@ private enum Metrics {
     static let cardCornerRadius: CGFloat = .radiusMedium
     static let horizontalPadding: CGFloat = .space16
     static let rowIconSize: CGFloat = .iconSmall
-    static let fieldHeight: CGFloat = .size48
-    static let fieldHorizontalPadding: CGFloat = .space12
     static let badgeHorizontalPadding: CGFloat = .space8
     static let badgeVerticalPadding: CGFloat = .space2
 }
@@ -115,16 +113,16 @@ struct UserDetailView: View {
     private func profileTab(_ user: User) -> some View {
         Card(L10n.UserDetail.sectionGeneralInfo) {
             LabeledField(L10n.UserDetail.profileDisplayNameField) {
-                TextField(L10n.UserDetail.profileDisplayNamePlaceholder, text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged))
+                DSTextField(L10n.UserDetail.profileDisplayNamePlaceholder, text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged))
                     .autocorrectionDisabled()
             }
             LabeledField(L10n.UserDetail.profileUsernameField, error: store.isProfileDirty ? store.profileUsernameError : nil) {
-                TextField(L10n.UserDetail.profileUsernamePlaceholder, text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged))
+                DSTextField(L10n.UserDetail.profileUsernamePlaceholder, text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged))
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             }
             LabeledField(L10n.UserDetail.profileEmailField, error: store.isProfileDirty ? store.profileEmailError : nil) {
-                TextField(L10n.UserDetail.profileEmailPlaceholder, text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged))
+                DSTextField(L10n.UserDetail.profileEmailPlaceholder, text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged))
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
@@ -385,7 +383,7 @@ private struct VolumeAssignSheet: View {
                         }
 
                         LabeledField(L10n.UserDetail.volumeSheetLabelField) {
-                            TextField(L10n.UserDetail.volumeSheetLabelPlaceholder, text: Binding(
+                            DSTextField(L10n.UserDetail.volumeSheetLabelPlaceholder, text: Binding(
                                 get: { store.volumeSheet?.label ?? "" },
                                 set: { store.send(.volumeLabelChanged($0)) }
                             ))
@@ -407,7 +405,13 @@ private struct VolumeAssignSheet: View {
                         VStack(alignment: .leading, spacing: .space4) {
                             Text(L10n.UserDetail.volumeSheetDirectory).type(.body3(.semibold), style: .secondary)
                             if sheet.isEditing {
-                                FieldBox { Text(sheet.selectedPath).lineLimit(1).truncationMode(.middle) }
+                                Text(sheet.selectedPath)
+                                    .type(.body2(.regular))
+                                    .foregroundStyle(Color.secondaryDS)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .roundedFieldStyle()
                             } else {
                                 directoryBrowser(selectedPath: sheet.selectedPath)
                             }

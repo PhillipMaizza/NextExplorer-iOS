@@ -54,6 +54,96 @@ public struct DSFieldContainer<Content: View>: View {
     }
 }
 
+/// The standard single line text field: `.body2` text in `primaryDS` inside the shared
+/// `roundedFieldStyle()` box (border, `.radiusControl`, 48pt). Keyboard type,
+/// autocapitalization, submit label, content type and the rest still propagate from the call
+/// site through the environment; pass `focused:` for a focus binding, which has to reach the
+/// field directly.
+public struct DSTextField: View {
+    private let title: String
+    @Binding private var text: String
+    private let prompt: Text?
+    private let focus: FocusState<Bool>.Binding?
+
+    public init(
+        _ title: String,
+        text: Binding<String>,
+        prompt: Text? = nil,
+        focused focus: FocusState<Bool>.Binding? = nil
+    ) {
+        self.title = title
+        self._text = text
+        self.prompt = prompt
+        self.focus = focus
+    }
+
+    public var body: some View {
+        field
+            .type(.body2(.regular))
+            .foregroundStyle(Color.primaryDS)
+            .tint(Color.accent)
+            .roundedFieldStyle()
+    }
+
+    @ViewBuilder
+    private var field: some View {
+        if let focus {
+            TextField(title, text: $text, prompt: prompt).focused(focus)
+        } else {
+            TextField(title, text: $text, prompt: prompt)
+        }
+    }
+}
+
+/// `DSTextField` for secret entry — same box and text treatment over a `SecureField`.
+public struct DSSecureField: View {
+    private let title: String
+    @Binding private var text: String
+    private let prompt: Text?
+
+    public init(_ title: String, text: Binding<String>, prompt: Text? = nil) {
+        self.title = title
+        self._text = text
+        self.prompt = prompt
+    }
+
+    public var body: some View {
+        SecureField(title, text: $text, prompt: prompt)
+            .type(.body2(.regular))
+            .foregroundStyle(Color.primaryDS)
+            .tint(Color.accent)
+            .roundedFieldStyle()
+    }
+}
+
+#Preview("DSTextField / DSSecureField") {
+    struct Demo: View {
+        @State private var name = ""
+        @State private var filled = "Marketing budget"
+        @State private var secret = "hunter2"
+        @FocusState private var isFocused: Bool
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: .space16) {
+                Text("Empty").type(.body3(.semibold), style: .secondary)
+                DSTextField("Folder name", text: $name)
+
+                Text("Filled").type(.body3(.semibold), style: .secondary)
+                DSTextField("Label", text: $filled)
+
+                Text("Focused").type(.body3(.semibold), style: .secondary)
+                DSTextField("Search", text: $name, focused: $isFocused)
+                    .task { isFocused = true }
+
+                Text("Secure").type(.body3(.semibold), style: .secondary)
+                DSSecureField("Password", text: $secret)
+            }
+            .padding(.space24)
+        }
+    }
+    return Demo()
+}
+
 /// A placeholder `Text` that's guaranteed to render in `Color.secondaryDS` regardless of its
 /// content — `Text("literal")` resolves to the `LocalizedStringKey` initializer, which
 /// auto-detects and linkifies email/URL-shaped literals (blue, underlined) no matter what
