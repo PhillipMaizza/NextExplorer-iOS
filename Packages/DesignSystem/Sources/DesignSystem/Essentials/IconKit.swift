@@ -49,6 +49,7 @@ public enum IconKit {
     public static let darkMode = Image(systemName: "moon.fill")
     public static let signOut = Image(systemName: "rectangle.portrait.and.arrow.right")
     public static let photo = Image(systemName: "photo")
+    public static let camera = Image(systemName: "camera")
     public static let web = Image(systemName: "globe")
     public static let server = Image(systemName: "macpro.gen3.server")
     public static let listBullet = Image(systemName: "list.bullet")

@@ -2028,6 +2028,43 @@ struct BrowseFeatureTransferTests {
     }
 
     @Test
+    func pickingUploadFilesOpensTheDestinationPickerThenEnqueuesOnConfirm() async {
+        let store = TestStore(initialState: makeState(directoryPath: "Documents")) { BrowseFeature() }
+        store.exhaustivity = .off
+        let picked = [
+            PickedFile(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg"),
+            PickedFile(id: UUID(1), fileURL: URL(fileURLWithPath: "/tmp/b.txt"), fileName: "b.txt"),
+        ]
+
+        await store.send(.uploadFilesPicked(picked)) {
+            $0.pendingUploadFiles = picked
+            $0.uploadDestination = DestinationPickerFeature.State(serverURL: self.serverURL, uploadStartingAt: "Documents")
+        }
+
+        await store.send(.uploadDestination(.presented(.delegate(.confirmed(destination: "Documents/Trips"))))) {
+            $0.pendingUploadFiles = []
+            $0.uploadDestination = nil
+        }
+        await store.receive(.delegate(.uploadRequested([
+            PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg", destination: "Documents/Trips"),
+            PendingUpload(id: UUID(1), fileURL: URL(fileURLWithPath: "/tmp/b.txt"), fileName: "b.txt", destination: "Documents/Trips"),
+        ])))
+    }
+
+    @Test
+    func cancellingTheUploadDestinationPickerDropsThePickedFiles() async {
+        let store = TestStore(initialState: makeState()) { BrowseFeature() }
+        store.exhaustivity = .off
+        let picked = [PickedFile(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg")]
+
+        await store.send(.uploadFilesPicked(picked))
+        await store.send(.uploadDestination(.presented(.delegate(.cancelled)))) {
+            $0.pendingUploadFiles = []
+            $0.uploadDestination = nil
+        }
+    }
+
+    @Test
     func bulkCopyStagesTheSelectionWithACountToastAndExitsSelectMode() async {
         let a = item("a.txt", path: "Documents")
         let b = item("b.txt", path: "Documents")

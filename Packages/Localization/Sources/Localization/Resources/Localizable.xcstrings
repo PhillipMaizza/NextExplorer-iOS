@@ -3191,6 +3191,17 @@
         }
       }
     },
+    "uploads.actionTakePhoto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take Photo"
+          }
+        }
+      }
+    },
     "uploads.actionUploadFromFiles": {
       "extractionState": "manual",
       "localizations": {
@@ -3286,6 +3297,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$lld uploaded, %2$lld failed"
+          }
+        }
+      }
+    },
+    "uploads.destinationConfirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload here"
+          }
+        }
+      }
+    },
+    "uploads.destinationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload to…"
           }
         }
       }

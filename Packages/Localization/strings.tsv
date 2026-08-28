@@ -159,6 +159,9 @@ uploads.navigationTitle	Uploads
 uploads.menuTitle	Upload
 uploads.actionUploadFromFiles	Upload from Files
 uploads.actionUploadFromPhotos	Upload from Photos
+uploads.actionTakePhoto	Take Photo
+uploads.destinationTitle	Upload to…
+uploads.destinationConfirm	Upload here
 uploads.statusWaiting	Waiting
 uploads.statusFailed	Upload failed
 uploads.barTitleOne	Uploading %@
