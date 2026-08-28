@@ -21,6 +21,9 @@ public struct AppFeature {
         /// Tripped by `apiResult` (in FilesFeature) the moment any authenticated request
         /// answers 401. Watched by `AppView`, which sends `sessionExpiryDetected`.
         @Shared(.inMemory(SessionExpiry.sharedKey)) public var sessionDidExpire = false
+        /// Cleared on every sign out so a staged copy/move never carries across into a
+        /// different account's session.
+        @Shared(.inMemory(FileClipboard.sharedKey)) public var fileClipboard: FileClipboard?
 
         public init(destination: Destination.State = .loading) {
             self.destination = destination
@@ -92,6 +95,7 @@ public struct AppFeature {
 
             case .sessionExpiryDetected:
                 if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                state.$fileClipboard.withLock { $0 = nil }
                 guard case .authenticated = state.destination else { return .none }
                 withAnimation {
                     state.destination = .unauthenticated(.init())
@@ -107,6 +111,7 @@ public struct AppFeature {
                 return .none
 
             case .destination(.authenticated(.delegate(.loggedOut))):
+                state.$fileClipboard.withLock { $0 = nil }
                 state.destination = .unauthenticated(.init())
                 return .none
 

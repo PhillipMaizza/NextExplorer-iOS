@@ -36,6 +36,11 @@ extension FilesClient {
             deleteItems: { serverURL, items in
                 try await service.deleteItems(serverURL: serverURL, items: items)
             },
+            transferItems: { serverURL, items, destination, operation in
+                try await service.transferItems(
+                    serverURL: serverURL, items: items, destination: destination, operation: operation
+                )
+            },
             fetchMetadata: { serverURL, path in
                 try await service.fetchMetadata(serverURL: serverURL, path: path)
             },

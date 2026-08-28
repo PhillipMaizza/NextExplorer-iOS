@@ -173,6 +173,29 @@ struct BrowseTabFeatureTests {
         }
     }
 
+    @Test
+    func directoryContentsChangedFromAPushedScreenReSyncsTheWholeStack() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
+        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+
+        let store = TestStore(initialState: state) {
+            BrowseTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true), path: "")
+            }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        store.exhaustivity = .off
+        let pathIDs = state.path.ids
+
+        await store.send(.path(.element(id: pathIDs[0], action: .delegate(.directoryContentsChanged))))
+        await store.receive(\.syncPathStack)
+        await store.receive(\.root.refreshButtonTapped)
+        await store.receive(\.path[id: pathIDs[0]].refreshButtonTapped)
+    }
+
     // MARK: Favorites-changed delegate bubbling
 
     @Test

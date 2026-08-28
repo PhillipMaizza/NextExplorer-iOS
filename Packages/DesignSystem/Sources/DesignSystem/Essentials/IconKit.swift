@@ -78,6 +78,10 @@ public enum IconKit {
     public static let link = Image(systemName: "link")
     public static let people = Image(systemName: "person.2")
     public static let copy = Image(systemName: "doc.on.doc")
+    /// Stage an item on the clipboard to move (the "Move" file action, paired with "Copy").
+    public static let move = Image(systemName: "arrow.turn.up.right")
+    /// Drop the clipboard's staged items into the current folder.
+    public static let paste = Image(systemName: "doc.on.clipboard")
     public static let shield = Image(systemName: "checkmark.shield")
     public static let key = Image(systemName: "key")
     public static let cloud = Image(systemName: "cloud")

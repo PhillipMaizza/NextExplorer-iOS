@@ -15,18 +15,33 @@ public enum L10n {
     }
     public enum Browse {
         public static var actionAddToFavorites: String { tr("browse.actionAddToFavorites") }  // "Add to Favorites"
+        public static var actionClearClipboard: String { tr("browse.actionClearClipboard") }  // "Clear clipboard"
         public static var actionCompress: String { tr("browse.actionCompress") }  // "Compress"
+        public static var actionCopy: String { tr("browse.actionCopy") }  // "Copy"
         public static var actionDelete: String { tr("browse.actionDelete") }  // "Delete"
         public static var actionDownload: String { tr("browse.actionDownload") }  // "Download"
         public static var actionExtract: String { tr("browse.actionExtract") }  // "Extract"
         public static var actionGetInfo: String { tr("browse.actionGetInfo") }  // "Get Info"
+        public static var actionMove: String { tr("browse.actionMove") }  // "Move"
+        public static var actionOpenInBrowser: String { tr("browse.actionOpenInBrowser") }  // "Open in Browser"
+        public static var actionPaste: String { tr("browse.actionPaste") }  // "Paste"
+        public static func actionPasteCount(_ a0: CVarArg) -> String { tr("browse.actionPasteCount", a0) }
+        public static var actionPasteHere: String { tr("browse.actionPasteHere") }  // "Paste here"
         public static var actionRemoveFromFavorites: String { tr("browse.actionRemoveFromFavorites") }  // "Remove from Favorites"
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
         public static var actionShare: String { tr("browse.actionShare") }  // "Share"
+        public static func clipboardCopiedMany(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedMany", a0) }
+        public static func clipboardCopiedOne(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedOne", a0) }
+        public static func clipboardCopyCount(_ a0: CVarArg) -> String { tr("browse.clipboardCopyCount", a0) }
+        public static func clipboardMoveCount(_ a0: CVarArg) -> String { tr("browse.clipboardMoveCount", a0) }
         public static func deleteConfirmMany(_ a0: CVarArg) -> String { tr("browse.deleteConfirmMany", a0) }
         public static func deleteConfirmOne(_ a0: CVarArg) -> String { tr("browse.deleteConfirmOne", a0) }
         public static var deleteConfirmTitle: String { tr("browse.deleteConfirmTitle") }  // "Delete?"
         public static var deleteMessage: String { tr("browse.deleteMessage") }  // "This can't be undone."
+        public static var destinationPickerConfirmMove: String { tr("browse.destinationPickerConfirmMove") }  // "Move Here"
+        public static var destinationPickerLoadFailed: String { tr("browse.destinationPickerLoadFailed") }  // "Couldn't load folders."
+        public static var destinationPickerMoveTitle: String { tr("browse.destinationPickerMoveTitle") }  // "Move to…"
+        public static var destinationPickerNoFolders: String { tr("browse.destinationPickerNoFolders") }  // "No folders here"
         public static var downloadBulkFailed: String { tr("browse.downloadBulkFailed") }  // "Couldn't save these items to your device."
         public static func downloadSavedAllTo(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.downloadSavedAllTo", a0, a1) }
         public static func downloadSavedCountTo(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("browse.downloadSavedCountTo", a0, a1, a2) }
@@ -35,9 +50,11 @@ public enum L10n {
         public static var navigationTitle: String { tr("browse.navigationTitle") }  // "Browse"
         public static var open: String { tr("browse.open") }  // "Open"
         public static var progressCompressing: String { tr("browse.progressCompressing") }  // "Compressing…"
+        public static var progressCopying: String { tr("browse.progressCopying") }  // "Copying…"
         public static var progressDownloading: String { tr("browse.progressDownloading") }  // "Downloading…"
         public static func progressDownloadingIndexed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.progressDownloadingIndexed", a0, a1) }
         public static var progressExtracting: String { tr("browse.progressExtracting") }  // "Extracting…"
+        public static var progressMoving: String { tr("browse.progressMoving") }  // "Moving…"
         public static var renameNamePlaceholder: String { tr("browse.renameNamePlaceholder") }  // "Name"
         public static var renameTitle: String { tr("browse.renameTitle") }  // "Rename"
         public static var scopeEverywhere: String { tr("browse.scopeEverywhere") }  // "Everywhere"
@@ -47,6 +64,15 @@ public enum L10n {
         public static func searchNoMatchesInFolder(_ a0: CVarArg) -> String { tr("browse.searchNoMatchesInFolder", a0) }
         public static var searchScopeEverywhere: String { tr("browse.searchScopeEverywhere") }  // "Everywhere"
         public static var searchScopeInFolder: String { tr("browse.searchScopeInFolder") }  // "This Folder"
+        public static var transferConflictKeepBoth: String { tr("browse.transferConflictKeepBoth") }  // "Keep Both"
+        public static func transferConflictMessageMany(_ a0: CVarArg) -> String { tr("browse.transferConflictMessageMany", a0) }
+        public static func transferConflictMessageOne(_ a0: CVarArg) -> String { tr("browse.transferConflictMessageOne", a0) }
+        public static var transferConflictReplace: String { tr("browse.transferConflictReplace") }  // "Replace"
+        public static var transferConflictTitle: String { tr("browse.transferConflictTitle") }  // "Replace items?"
+        public static func transferCopied(_ a0: CVarArg) -> String { tr("browse.transferCopied", a0) }
+        public static func transferCopiedWithSkipped(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.transferCopiedWithSkipped", a0, a1) }
+        public static func transferMoved(_ a0: CVarArg) -> String { tr("browse.transferMoved", a0) }
+        public static func transferMovedWithSkipped(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.transferMovedWithSkipped", a0, a1) }
         public static var unsupportedFileType: String { tr("browse.unsupportedFileType") }  // "Unsupported file type"
     }
     public enum ChangePassword {
@@ -63,11 +89,14 @@ public enum L10n {
         public static var success: String { tr("changePassword.success") }  // "Your password has been updated."
     }
     public enum Common {
+        public static var back: String { tr("common.back") }  // "Back"
         public static var cancel: String { tr("common.cancel") }  // "Cancel"
+        public static var clear: String { tr("common.clear") }  // "Clear"
         public static var close: String { tr("common.close") }  // "Close"
         public static var delete: String { tr("common.delete") }  // "Delete"
         public static var done: String { tr("common.done") }  // "Done"
         public static var download: String { tr("common.download") }  // "Download"
+        public static var edit: String { tr("common.edit") }  // "Edit"
         public static var logOut: String { tr("common.logOut") }  // "Log Out"
         public static var never: String { tr("common.never") }  // "Never"
         public static var ok: String { tr("common.ok") }  // "OK"
@@ -206,6 +235,7 @@ public enum L10n {
         public static var createShareLink: String { tr("previewToolbar.createShareLink") }  // "Create share link"
         public static var delete: String { tr("previewToolbar.delete") }  // "Delete"
         public static var download: String { tr("previewToolbar.download") }  // "Download"
+        public static var rename: String { tr("previewToolbar.rename") }  // "Rename"
         public static var share: String { tr("previewToolbar.share") }  // "Share"
     }
     public enum Select {
@@ -246,6 +276,8 @@ public enum L10n {
         public static var storageFootnote: String { tr("settings.storageFootnote") }
         public static var toggleDarkMode: String { tr("settings.toggleDarkMode") }  // "Dark Mode"
         public static var toggleHaptics: String { tr("settings.toggleHaptics") }  // "Haptics"
+        public static var toggleKeepClipboard: String { tr("settings.toggleKeepClipboard") }  // "Keep Items After Paste"
+        public static var toggleKeepClipboardSubtitle: String { tr("settings.toggleKeepClipboardSubtitle") }
         public static var toggleRemoveArchives: String { tr("settings.toggleRemoveArchives") }  // "Remove Archives After Download"
         public static var toggleRenderHTML: String { tr("settings.toggleRenderHTML") }  // "Render HTML Pages"
         public static var toggleRenderMarkdown: String { tr("settings.toggleRenderMarkdown") }  // "Render Markdown Files"

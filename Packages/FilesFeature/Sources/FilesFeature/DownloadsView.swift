@@ -20,6 +20,10 @@ struct DownloadsView: View {
     @AppStorage("downloadsViewMode") private var viewModeRaw = DownloadsViewMode.list.rawValue
     @State private var previewedDownload: LocalDownload?
     @State private var isSortSheetPresented = false
+    /// The rename alert's in-progress text — kept as plain view state, mirroring
+    /// `BrowseContentView`'s rename alert (a `.alert` `TextField` bound through a TCA
+    /// `.sending` binding doesn't reliably propagate keystrokes).
+    @State private var renameDraft = ""
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
@@ -116,6 +120,13 @@ struct DownloadsView: View {
         L10n.Downloads.deleteConfirmMany(store.selectedDownloadIDs.count)
     }
 
+    private var isRenamingBinding: Binding<Bool> {
+        Binding(
+            get: { store.renameItem != nil },
+            set: { if !$0 { store.send(.renameCancelled) } }
+        )
+    }
+
     private func handleTap(_ download: LocalDownload) {
         if store.isSelecting {
             store.send(.itemSelectionToggled(download.id))
@@ -149,6 +160,12 @@ struct DownloadsView: View {
             Label { Text(L10n.Common.share) } icon: { IconKit.share }
         }
         .tint(.primaryDS)
+        Button {
+            store.send(.renameTapped(download))
+        } label: {
+            Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
+        }
+        .tint(.primaryDS)
         Button(role: .destructive) {
             store.send(.deleteTapped(download))
         } label: {
@@ -174,19 +191,24 @@ struct DownloadsView: View {
             .listRowBackground(Color.clear)
             .swipeActions(edge: .trailing) {
                 if !store.isSelecting {
-                    Button(role: .destructive) {
+                    // No `role: .destructive` — a destructive-role swipe button makes `List`
+                    // collapse the row itself the moment it's tapped, before the confirmation
+                    // alert is answered. On Cancel the row is already gone, and the next data
+                    // update crashes the collection view with a section-count mismatch.
+                    Button {
                         store.send(.deleteTapped(download))
                     } label: {
                         IconKit.delete
                     }
                     .tint(.negative)
-                }
-            }
-            .swipeActions(edge: .leading) {
-                if !store.isSelecting {
+                    Button {
+                        store.send(.renameTapped(download))
+                    } label: {
+                        IconKit.rename
+                    }
+                    .tint(.positive)
                     // The plain system share sheet — local downloads have no server-side
-                    // sharing semantics to worry about, unlike Browse's items (which will
-                    // get their own dedicated share sheet later).
+                    // sharing semantics to worry about, unlike Browse's items.
                     ShareLink(item: download.url) {
                         IconKit.share
                     }
@@ -389,11 +411,25 @@ struct DownloadsView: View {
                 Text(L10n.Downloads.deleteBulkMessage)
             }
             .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
+            .alert(L10n.Browse.renameTitle, isPresented: isRenamingBinding) {
+                TextField(L10n.Browse.renameNamePlaceholder, text: $renameDraft)
+                    .autocorrectionDisabled()
+                Button(L10n.Common.cancel, role: .cancel) { store.send(.renameCancelled) }
+                    .tint(.primaryDS)
+                Button(L10n.Common.save) { store.send(.renameConfirmed(renameDraft)) }
+            }
+            .onChange(of: store.renameItem) { _, item in
+                if let item { renameDraft = item.fileName }
+            }
             .fullScreenCover(item: $previewedDownload) { download in
                 FilePreviewContainerView(
                     fileURL: download.url,
                     errorMessage: nil,
                     onDismiss: { previewedDownload = nil },
+                    onRename: {
+                        previewedDownload = nil
+                        store.send(.renameTapped(download))
+                    },
                     onDelete: {
                         previewedDownload = nil
                         store.send(.deleteTapped(download))
