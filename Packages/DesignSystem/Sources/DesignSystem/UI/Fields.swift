@@ -54,20 +54,23 @@ public struct DSFieldContainer<Content: View>: View {
     }
 }
 
-/// The label above a form field — small, semibold, uppercase, `secondaryDS` — so every
-/// labelled field across the app reads the same. `DSFieldContainer` on the login screen keeps
-/// its own larger label by design.
+/// The label above a form field or section — small, semibold, `secondaryDS` — so every
+/// labelled field and section across the app reads the same. Uppercased by default for
+/// section headers; pass `uppercased: false` for a form whose labels would otherwise shout.
+/// `DSFieldContainer` on the login screen keeps its own larger label by design.
 public struct DSFieldLabel: View {
     private let text: String
+    private let isUppercased: Bool
 
-    public init(_ text: String) {
+    public init(_ text: String, uppercased: Bool = true) {
         self.text = text
+        self.isUppercased = uppercased
     }
 
     public var body: some View {
         Text(text)
             .type(.body3(.semibold), style: .secondary)
-            .textCase(.uppercase)
+            .textCase(isUppercased ? .uppercase : nil)
     }
 }
 

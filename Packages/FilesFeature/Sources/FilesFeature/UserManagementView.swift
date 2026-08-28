@@ -345,17 +345,19 @@ private struct SetPasswordSheet: View {
 struct LabeledField<Content: View>: View {
     let title: String
     var error: String?
+    var isUppercased = true
     @ViewBuilder let content: Content
 
-    init(_ title: String, error: String? = nil, @ViewBuilder content: () -> Content) {
+    init(_ title: String, error: String? = nil, uppercased: Bool = true, @ViewBuilder content: () -> Content) {
         self.title = title
         self.error = error
+        self.isUppercased = uppercased
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: .space4) {
-            DSFieldLabel(title)
+            DSFieldLabel(title, uppercased: isUppercased)
             content
             if let error {
                 Text(error).type(.caption(.regular), style: .error)
