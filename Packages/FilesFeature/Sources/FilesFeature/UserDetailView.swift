@@ -335,9 +335,7 @@ struct Card<Content: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Metrics.cardTitleSpacing) {
-            Text(title)
-                .type(.body3(.semibold), style: .tertiary)
-                .textCase(.uppercase)
+            DSFieldLabel(title)
             VStack(alignment: .leading, spacing: Metrics.cardSpacing) {
                 content
             }

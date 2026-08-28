@@ -205,9 +205,7 @@ struct SharedView: View {
             }
         } header: {
             if let header {
-                Text(header)
-                    .type(.body3(.semibold), style: .secondary)
-                    .textCase(.uppercase)
+                DSFieldLabel(header)
             }
         }
     }

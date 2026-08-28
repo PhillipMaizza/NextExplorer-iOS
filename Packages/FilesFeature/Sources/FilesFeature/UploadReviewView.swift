@@ -267,9 +267,7 @@ struct UploadReviewView: View {
 
     private var filesSection: some View {
         VStack(alignment: .leading, spacing: Constants.rowSpacing) {
-            Text(L10n.Uploads.reviewSectionFiles)
-                .type(.body3(.semibold), style: .tertiary)
-                .textCase(.uppercase)
+            DSFieldLabel(L10n.Uploads.reviewSectionFiles)
             ForEach(Array(store.files.enumerated()), id: \.element.id) { index, file in
                 fileRow(file)
                 if index < store.files.count - 1 {
