@@ -7,10 +7,11 @@ import SwiftUI
 
 private enum Metrics {
     static let avatarSize: CGFloat = .size56
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let cardSpacing: CGFloat = .space12
+    static let cardTitleSpacing: CGFloat = .space8
     static let cardPadding: CGFloat = .space16
-    static let cardCornerRadius: CGFloat = .radiusMedium
+    static let cardCornerRadius: CGFloat = .radiusCard
     static let horizontalPadding: CGFloat = .space16
     static let rowIconSize: CGFloat = .iconSmall
     static let badgeHorizontalPadding: CGFloat = .space8
@@ -138,7 +139,7 @@ struct UserDetailView: View {
             HStack(alignment: .top, spacing: .space8) {
                 IconKit.shield
                     .resizable().scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
+                    .foregroundStyle(Color.accent)
                     .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                     .padding(.top, .space2)
                 VStack(alignment: .leading, spacing: .space2) {
@@ -320,7 +321,9 @@ struct UserDetailView: View {
 
 // MARK: Small pieces
 
-/// Titled rounded card, the repeating container on every detail tab.
+/// A section: an uppercase header over a rounded `backgroundSecondary` box. The header sits
+/// outside the box so the tabs read as a list of labelled sections rather than nested titled
+/// cards.
 struct Card<Content: View>: View {
     let title: String
     @ViewBuilder let content: Content
@@ -331,13 +334,17 @@ struct Card<Content: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Metrics.cardSpacing) {
-            Text(title).type(.body2(.semibold), style: .primary(for: .label))
-            content
+        VStack(alignment: .leading, spacing: Metrics.cardTitleSpacing) {
+            Text(title)
+                .type(.body3(.semibold), style: .tertiary)
+                .textCase(.uppercase)
+            VStack(alignment: .leading, spacing: Metrics.cardSpacing) {
+                content
+            }
+            .padding(Metrics.cardPadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.backgroundSecondary))
         }
-        .padding(Metrics.cardPadding)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.backgroundSecondary))
     }
 }
 

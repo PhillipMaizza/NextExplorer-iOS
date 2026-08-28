@@ -255,7 +255,7 @@ private struct SharedLinkCard: View {
     }
 
     private enum Metrics {
-        static let cornerRadius: CGFloat = .radiusMedium
+        static let cornerRadius: CGFloat = .radiusCard
         static let padding: CGFloat = .space16
         static let actionRowSpacing: CGFloat = .space8
         /// One value for both the meta rows and the link-mode row so they read as one list.

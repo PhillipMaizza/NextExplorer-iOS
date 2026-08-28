@@ -262,7 +262,7 @@ struct UploadReviewView: View {
         .padding(.vertical, Constants.cellVerticalPadding)
         .padding(.horizontal, Constants.cellHorizontalPadding)
         .frame(maxWidth: .infinity)
-        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusLarge))
+        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusCard))
     }
 
     private var filesSection: some View {
