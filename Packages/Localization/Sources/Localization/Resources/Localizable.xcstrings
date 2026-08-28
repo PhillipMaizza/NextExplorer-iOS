@@ -3208,7 +3208,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Take Photo"
+            "value": "Take Photo or Video"
           }
         }
       }
@@ -3230,7 +3230,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Upload from Photos"
+            "value": "Upload from Gallery"
           }
         }
       }
@@ -3285,7 +3285,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Allow camera access in Settings to take a photo."
+            "value": "Allow camera access in Settings to take a photo or video."
           }
         }
       }
@@ -3374,6 +3374,39 @@
           "stringUnit": {
             "state": "translated",
             "value": "Upload to…"
+          }
+        }
+      }
+    },
+    "uploads.discardConfirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        }
+      }
+    },
+    "uploads.discardMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The files you added won't be uploaded."
+          }
+        }
+      }
+    },
+    "uploads.discardTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard upload?"
           }
         }
       }

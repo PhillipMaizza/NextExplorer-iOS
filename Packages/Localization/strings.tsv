@@ -159,10 +159,10 @@ downloads.deleteBulkMessage	This only removes the local copies. The files stay o
 uploads.navigationTitle	Uploads
 uploads.menuTitle	Upload
 uploads.actionUploadFromFiles	Upload from Files
-uploads.actionUploadFromPhotos	Upload from Photos
-uploads.actionTakePhoto	Take Photo
+uploads.actionUploadFromPhotos	Upload from Gallery
+uploads.actionTakePhoto	Take Photo or Video
 uploads.cameraDeniedTitle	Camera access needed
-uploads.cameraDeniedMessage	Allow camera access in Settings to take a photo.
+uploads.cameraDeniedMessage	Allow camera access in Settings to take a photo or video.
 uploads.destinationTitle	Upload to…
 uploads.destinationConfirm	Upload here
 uploads.reviewTitleOne	Upload 1 file
@@ -175,6 +175,9 @@ uploads.reviewUploadButton	Upload
 uploads.reviewPreparing	Preparing %lld…
 uploads.reviewAddMore	Add more files
 uploads.stagingFailed	Couldn't add those files. Try again.
+uploads.discardTitle	Discard upload?
+uploads.discardMessage	The files you added won't be uploaded.
+uploads.discardConfirm	Discard
 uploads.statusWaiting	Waiting
 uploads.statusFailed	Upload failed
 uploads.barTitleOne	Uploading %@

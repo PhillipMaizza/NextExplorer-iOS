@@ -347,14 +347,14 @@ public enum L10n {
         public static var small: String { tr("thumbnailSize.small") }  // "Small"
     }
     public enum Uploads {
-        public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo"
+        public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo or Video"
         public static var actionUploadFromFiles: String { tr("uploads.actionUploadFromFiles") }  // "Upload from Files"
-        public static var actionUploadFromPhotos: String { tr("uploads.actionUploadFromPhotos") }  // "Upload from Photos"
+        public static var actionUploadFromPhotos: String { tr("uploads.actionUploadFromPhotos") }  // "Upload from Gallery"
         public static func barFailedMany(_ a0: CVarArg) -> String { tr("uploads.barFailedMany", a0) }
         public static var barFailedOne: String { tr("uploads.barFailedOne") }  // "1 upload failed"
         public static func barTitleMany(_ a0: CVarArg) -> String { tr("uploads.barTitleMany", a0) }
         public static func barTitleOne(_ a0: CVarArg) -> String { tr("uploads.barTitleOne", a0) }
-        public static var cameraDeniedMessage: String { tr("uploads.cameraDeniedMessage") }  // "Allow camera access in Settings to take a photo."
+        public static var cameraDeniedMessage: String { tr("uploads.cameraDeniedMessage") }  // "Allow camera access in Settings to take a photo or video."
         public static var cameraDeniedTitle: String { tr("uploads.cameraDeniedTitle") }  // "Camera access needed"
         public static var cancelAll: String { tr("uploads.cancelAll") }  // "Cancel all uploads"
         public static var clear: String { tr("uploads.clear") }  // "Clear"
@@ -363,6 +363,9 @@ public enum L10n {
         public static func completeWithFailures(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.completeWithFailures", a0, a1) }
         public static var destinationConfirm: String { tr("uploads.destinationConfirm") }  // "Upload here"
         public static var destinationTitle: String { tr("uploads.destinationTitle") }  // "Upload to…"
+        public static var discardConfirm: String { tr("uploads.discardConfirm") }  // "Discard"
+        public static var discardMessage: String { tr("uploads.discardMessage") }  // "The files you added won't be uploaded."
+        public static var discardTitle: String { tr("uploads.discardTitle") }  // "Discard upload?"
         public static var emptyList: String { tr("uploads.emptyList") }  // "No uploads yet."
         public static var failedGeneric: String { tr("uploads.failedGeneric") }  // "Couldn't upload this file."
         public static var menuTitle: String { tr("uploads.menuTitle") }  // "Upload"
