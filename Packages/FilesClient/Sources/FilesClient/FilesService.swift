@@ -473,6 +473,84 @@ struct FilesService: Sendable {
         }
     }
 
+    /// `POST /api/upload`, confirmed against `backend/src/routes/upload.js` +
+    /// `services/uploadService.js`. One `multipart/form-data` request per file: the text
+    /// fields (`uploadTo`, `relativePath`) MUST precede the `filedata` part — multer's custom
+    /// storage reads `req.body` inside `_handleFile`, so a file part that arrives first sees an
+    /// empty body. The envelope is streamed from a temp file so a large upload never sits in
+    /// memory. Response is a one-element array of the stored file (auto-renamed on collision).
+    func uploadFile(
+        serverURL: URL,
+        fileURL: URL,
+        fileName: String,
+        destination: String,
+        onProgress: @Sendable @escaping (Double) -> Void
+    ) async throws -> FileItem {
+        let boundary = "Boundary-\(UUID().uuidString)"
+        let envelopeURL = FileManager.default.temporaryDirectory
+            .appendingPathComponent("upload-\(UUID().uuidString).multipart")
+        defer { try? FileManager.default.removeItem(at: envelopeURL) }
+
+        do {
+            try Self.writeMultipartEnvelope(
+                to: envelopeURL, boundary: boundary, fileURL: fileURL,
+                fileName: fileName, destination: destination
+            )
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+
+        var request = Self.makeRequest(url: serverURL.appendingPathComponent("api/upload"), method: "POST")
+        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+        let data: Data
+        let response: HTTPURLResponse
+        do {
+            (data, response) = try await networkClient.upload(request, envelopeURL, onProgress)
+        } catch {
+            throw FilesClientError.network(String(describing: error))
+        }
+        try Self.validateReportingMessage(data, response)
+
+        let uploaded: [FileItem]
+        do {
+            uploaded = try Self.makeDecoder().decode([FileItem].self, from: data)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        guard let file = uploaded.first else {
+            throw FilesClientError.decoding("Upload response was empty.")
+        }
+        return file
+    }
+
+    private static func writeMultipartEnvelope(
+        to url: URL, boundary: String, fileURL: URL, fileName: String, destination: String
+    ) throws {
+        FileManager.default.createFile(atPath: url.path, contents: nil)
+        let handle = try FileHandle(forWritingTo: url)
+        defer { try? handle.close() }
+
+        func writeField(_ name: String, _ value: String) throws {
+            let part = "--\(boundary)\r\nContent-Disposition: form-data; name=\"\(name)\"\r\n\r\n\(value)\r\n"
+            try handle.write(contentsOf: Data(part.utf8))
+        }
+
+        try writeField("uploadTo", destination)
+        try writeField("relativePath", fileName)
+
+        let header = "--\(boundary)\r\nContent-Disposition: form-data; name=\"filedata\"; filename=\"\(fileName)\"\r\nContent-Type: application/octet-stream\r\n\r\n"
+        try handle.write(contentsOf: Data(header.utf8))
+
+        let input = try FileHandle(forReadingFrom: fileURL)
+        defer { try? input.close() }
+        while case let chunk = input.readData(ofLength: 1_048_576), !chunk.isEmpty {
+            try handle.write(contentsOf: chunk)
+        }
+
+        try handle.write(contentsOf: Data("\r\n--\(boundary)--\r\n".utf8))
+    }
+
     /// One subdirectory per item path (slashes swapped out so it's a single valid path
     /// component) — distinct files that happen to share a name never collide, since they
     /// have distinct full paths. `namespace` keeps `previewFile` (`GET /api/preview`) and

@@ -75,7 +75,7 @@ struct SharedView: View {
                     Button {
                         isSortSheetPresented = true
                     } label: {
-                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort.foregroundStyle(Color.accent) }
+                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort.foregroundStyle(Color.primaryDS) }
                     }
                     .tint(.accent)
                     .buttonStyle(DSHapticButtonStyle())

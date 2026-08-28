@@ -100,6 +100,7 @@ public enum L10n {
         public static var logOut: String { tr("common.logOut") }  // "Log Out"
         public static var never: String { tr("common.never") }  // "Never"
         public static var ok: String { tr("common.ok") }  // "OK"
+        public static var openSettings: String { tr("common.openSettings") }  // "Open Settings"
         public static var password: String { tr("common.password") }  // "Password"
         public static var remove: String { tr("common.remove") }  // "Remove"
         public static var retry: String { tr("common.retry") }  // "Try Again"
@@ -344,6 +345,40 @@ public enum L10n {
         public static var large: String { tr("thumbnailSize.large") }  // "Large"
         public static var medium: String { tr("thumbnailSize.medium") }  // "Medium"
         public static var small: String { tr("thumbnailSize.small") }  // "Small"
+    }
+    public enum Uploads {
+        public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo"
+        public static var actionUploadFromFiles: String { tr("uploads.actionUploadFromFiles") }  // "Upload from Files"
+        public static var actionUploadFromPhotos: String { tr("uploads.actionUploadFromPhotos") }  // "Upload from Photos"
+        public static func barFailedMany(_ a0: CVarArg) -> String { tr("uploads.barFailedMany", a0) }
+        public static var barFailedOne: String { tr("uploads.barFailedOne") }  // "1 upload failed"
+        public static func barTitleMany(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.barTitleMany", a0, a1) }
+        public static func barTitleOne(_ a0: CVarArg) -> String { tr("uploads.barTitleOne", a0) }
+        public static var cameraDeniedMessage: String { tr("uploads.cameraDeniedMessage") }  // "Allow camera access in Settings to take a photo."
+        public static var cameraDeniedTitle: String { tr("uploads.cameraDeniedTitle") }  // "Camera access needed"
+        public static var cancelAll: String { tr("uploads.cancelAll") }  // "Cancel all uploads"
+        public static var clear: String { tr("uploads.clear") }  // "Clear"
+        public static var complete: String { tr("uploads.complete") }  // "Upload complete"
+        public static func completeMany(_ a0: CVarArg) -> String { tr("uploads.completeMany", a0) }
+        public static func completeWithFailures(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.completeWithFailures", a0, a1) }
+        public static var destinationConfirm: String { tr("uploads.destinationConfirm") }  // "Upload here"
+        public static var destinationTitle: String { tr("uploads.destinationTitle") }  // "Upload to…"
+        public static var emptyList: String { tr("uploads.emptyList") }  // "No uploads yet."
+        public static var failedGeneric: String { tr("uploads.failedGeneric") }  // "Couldn't upload this file."
+        public static var menuTitle: String { tr("uploads.menuTitle") }  // "Upload"
+        public static var navigationTitle: String { tr("uploads.navigationTitle") }  // "Uploads"
+        public static var retryAll: String { tr("uploads.retryAll") }  // "Retry all"
+        public static var reviewAddMore: String { tr("uploads.reviewAddMore") }  // "Add more files"
+        public static var reviewChooseFolder: String { tr("uploads.reviewChooseFolder") }  // "Choose a folder"
+        public static func reviewPreparing(_ a0: CVarArg) -> String { tr("uploads.reviewPreparing", a0) }
+        public static var reviewSectionFiles: String { tr("uploads.reviewSectionFiles") }  // "Files"
+        public static var reviewSectionPath: String { tr("uploads.reviewSectionPath") }  // "Path"
+        public static var reviewSectionSize: String { tr("uploads.reviewSectionSize") }  // "Total size"
+        public static func reviewTitleMany(_ a0: CVarArg) -> String { tr("uploads.reviewTitleMany", a0) }
+        public static var reviewTitleOne: String { tr("uploads.reviewTitleOne") }  // "Upload 1 file"
+        public static var reviewUploadButton: String { tr("uploads.reviewUploadButton") }  // "Upload"
+        public static var statusFailed: String { tr("uploads.statusFailed") }  // "Upload failed"
+        public static var statusWaiting: String { tr("uploads.statusWaiting") }  // "Waiting"
     }
     public enum UserDetail {
         public static var dangerZoneRemoveUser: String { tr("userDetail.dangerZoneRemoveUser") }  // "Remove User"

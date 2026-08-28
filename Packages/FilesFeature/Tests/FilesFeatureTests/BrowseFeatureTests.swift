@@ -2027,6 +2027,56 @@ struct BrowseFeatureTransferTests {
         }
     }
 
+    private nonisolated func picked(_ name: String, id: UUID, size: Int64 = 10) -> PickedFile {
+        PickedFile(id: id, fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: size)
+    }
+
+    @Test
+    func beginningUploadOpensTheReviewSheetInAPreparingState() async {
+        let store = TestStore(initialState: makeState(directoryPath: "Documents")) { BrowseFeature() }
+
+        await store.send(.beginUploadReview(fileCount: 2)) {
+            $0.uploadReview = UploadReviewFeature.State(
+                serverURL: self.serverURL, startingDestination: "Documents", preparingCount: 2
+            )
+        }
+        #expect(store.state.uploadReview?.isPreparing == true)
+        #expect(store.state.uploadReview?.totalCount == 2)
+    }
+
+    @Test
+    func confirmingTheReviewSheetEnqueuesWithTheChosenDestination() async {
+        var state = makeState(directoryPath: "Documents")
+        let files = [picked("a.jpg", id: UUID(0)), picked("b.txt", id: UUID(1))]
+        state.uploadReview = UploadReviewFeature.State(
+            serverURL: serverURL, files: files, startingDestination: "Documents"
+        )
+        let store = TestStore(initialState: state) { BrowseFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.uploadReview(.presented(.delegate(.confirmed(files: files, destination: "Documents/Trips"))))) {
+            $0.uploadReview = nil
+        }
+        await store.receive(.delegate(.uploadRequested([
+            PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg", destination: "Documents/Trips"),
+            PendingUpload(id: UUID(1), fileURL: URL(fileURLWithPath: "/tmp/b.txt"), fileName: "b.txt", destination: "Documents/Trips"),
+        ])))
+    }
+
+    @Test
+    func cancellingTheUploadReviewSheetClosesIt() async {
+        var state = makeState()
+        state.uploadReview = UploadReviewFeature.State(
+            serverURL: serverURL, startingDestination: "Documents", preparingCount: 1
+        )
+        let store = TestStore(initialState: state) { BrowseFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.uploadReview(.presented(.delegate(.cancelled)))) {
+            $0.uploadReview = nil
+        }
+    }
+
     @Test
     func bulkCopyStagesTheSelectionWithACountToastAndExitsSelectMode() async {
         let a = item("a.txt", path: "Documents")

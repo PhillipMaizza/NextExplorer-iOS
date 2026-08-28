@@ -33,6 +33,18 @@ public struct FilesClient: Sendable {
     public var saveTextContent: @Sendable (_ serverURL: URL, _ path: String, _ content: String) async throws -> Void
     public var extractZip: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
     public var downloadRawFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
+    /// `POST /api/upload` (`backend/src/routes/upload.js`): one `multipart/form-data` request
+    /// per file — `uploadTo` = destination directory, `relativePath` = `fileName`, `filedata` =
+    /// the file at `fileURL`. `destination` must not be empty (the server rejects the root).
+    /// Reports fractional progress (0...1); returns the server's echo of the stored file,
+    /// which may carry an auto-renamed `name` on a collision.
+    public var uploadFile: @Sendable (
+        _ serverURL: URL,
+        _ fileURL: URL,
+        _ fileName: String,
+        _ destination: String,
+        _ onProgress: @Sendable @escaping (Double) -> Void
+    ) async throws -> FileItem
     public var compressItem: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
     public var createShareLink: @Sendable (
         _ serverURL: URL, _ request: CreateShareLinkRequest
