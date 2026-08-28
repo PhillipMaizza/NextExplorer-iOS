@@ -136,6 +136,8 @@ struct UploadSourceMenu<MenuLabel: View>: View {
     @Binding var isCameraDeniedAlertPresented: Bool
 
     var body: some View {
+        // `.menuOrder(.fixed)`: keep Take Photo first even from the review sheet's "Add more"
+        // button, where the menu opens upward and the default order would flip.
         Menu {
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 Button {
@@ -163,5 +165,6 @@ struct UploadSourceMenu<MenuLabel: View>: View {
         } label: {
             label()
         }
+        .menuOrder(.fixed)
     }
 }

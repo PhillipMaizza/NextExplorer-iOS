@@ -9,14 +9,21 @@ import SwiftUI
 private enum Constants {
     static let thumbnailSize: CGFloat = .iconLarge
     static let removeButtonSize: CGFloat = .iconSmall
-    static let contentSpacing: CGFloat = .space16
+    static let headerIconSize: CGFloat = .iconMedium
+    static let contentSpacing: CGFloat = .space24
+    static let titleToCellsSpacing: CGFloat = .space24
+    static let sectionRowSpacing: CGFloat = .space16
+    static let cellVerticalPadding: CGFloat = .space16
+    static let cellHorizontalPadding: CGFloat = .space16
     static let rowSpacing: CGFloat = .space12
     static let rowTextSpacing: CGFloat = .space2
-    static let horizontalPadding: CGFloat = .space16
+    static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
     static let closeButtonPadding: CGFloat = .space8
     static let addMoreDash: CGFloat = 4
     static let addMoreBorderWidth: CGFloat = 1
+    static let enabledOpacity: Double = 1
+    static let disabledOpacity: Double = 0.35
     /// The sheet fits its content but never exceeds this fraction of the screen — past that
     /// the file list scrolls and `.large` is a drag away.
     static let maxHeightFraction: CGFloat = 0.9
@@ -70,6 +77,7 @@ struct UploadReviewView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(L10n.Common.remove)
         }
+        .padding(.vertical, .space4)
     }
 
     @ViewBuilder
@@ -124,6 +132,7 @@ struct UploadReviewView: View {
         )
         .tint(.primaryDS)
         .disabled(store.isPreparing)
+        .opacity(store.isPreparing ? Constants.disabledOpacity : Constants.enabledOpacity)
     }
 
     private var title: String {
@@ -138,8 +147,10 @@ struct UploadReviewView: View {
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             header
-            pathAndSizeSection
-            Divider()
+            VStack(alignment: .leading, spacing: Constants.titleToCellsSpacing) {
+                Text(title).type(.headline3, style: .link)
+                pathAndSizeSection
+            }
             filesSection
         }
         .padding(.horizontal, Constants.horizontalPadding)
@@ -164,7 +175,11 @@ struct UploadReviewView: View {
 
     private var header: some View {
         HStack {
-            Text(title).type(.headline3, style: .link)
+            IconKit.upload
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(Color.accent)
+                .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
             Spacer()
             Button { store.send(.cancelTapped) } label: {
                 IconKit.close
@@ -180,10 +195,15 @@ struct UploadReviewView: View {
         }
     }
 
+    private func infoRow<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        HStack(spacing: Constants.rowSpacing, content: content)
+            .contentShape(Rectangle())
+    }
+
     private var pathAndSizeSection: some View {
-        VStack(spacing: Constants.rowSpacing) {
+        VStack(spacing: Constants.sectionRowSpacing) {
             Button { store.send(.pathTapped) } label: {
-                HStack(spacing: Constants.rowSpacing) {
+                infoRow {
                     rowIcon(IconKit.folder)
                     Text(L10n.Uploads.reviewSectionPath)
                         .type(.body2(.regular), style: .primary(for: .label))
@@ -198,12 +218,13 @@ struct UploadReviewView: View {
                         .foregroundStyle(Color.secondaryDS)
                         .frame(width: .iconXSmall, height: .iconXSmall)
                 }
-                .contentShape(Rectangle())
             }
             .buttonStyle(DSHapticButtonStyle())
             .tint(.primaryDS)
 
-            HStack(spacing: Constants.rowSpacing) {
+            Divider()
+
+            infoRow {
                 rowIcon(IconKit.size)
                 Text(L10n.Uploads.reviewSectionSize)
                     .type(.body2(.regular), style: .primary(for: .label))
@@ -212,14 +233,22 @@ struct UploadReviewView: View {
                     .type(.body2(.regular), style: .secondary)
             }
         }
+        .padding(.vertical, Constants.cellVerticalPadding)
+        .padding(.horizontal, Constants.cellHorizontalPadding)
+        .frame(maxWidth: .infinity)
+        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusLarge))
     }
 
     private var filesSection: some View {
         VStack(alignment: .leading, spacing: Constants.rowSpacing) {
             Text(L10n.Uploads.reviewSectionFiles)
-                .type(.body3(.semibold), style: .secondary)
-            ForEach(store.files) { file in
+                .type(.body3(.semibold), style: .tertiary)
+                .textCase(.uppercase)
+            ForEach(Array(store.files.enumerated()), id: \.element.id) { index, file in
                 fileRow(file)
+                if index < store.files.count - 1 {
+                    Divider()
+                }
             }
             if store.isPreparing {
                 HStack(spacing: Constants.rowSpacing) {
@@ -227,12 +256,21 @@ struct UploadReviewView: View {
                     Text(L10n.Uploads.reviewPreparing(store.preparingCount))
                         .type(.body3(.regular), style: .secondary)
                 }
+                .padding(.vertical, .space4)
             }
             if store.stagingFailed, store.files.isEmpty {
-                Text(L10n.Uploads.stagingFailed)
-                    .type(.body3(.regular), style: .secondary)
+                HStack(spacing: Constants.rowTextSpacing * 2) {
+                    IconKit.warning
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(Color.negative)
+                        .frame(width: .iconXSmall, height: .iconXSmall)
+                    Text(L10n.Uploads.stagingFailed)
+                        .type(.body3(.semibold), style: .error)
+                }
             }
         }
+        .padding(.top, .space8)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 

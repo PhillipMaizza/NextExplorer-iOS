@@ -100,6 +100,68 @@ struct DestinationPickerFeatureTests {
     }
 
     @Test
+    func drillingInTurnsCloseIntoBackAndBackStepsUpOneLevel() async {
+        let store = TestStore(
+            initialState: DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "")
+        ) {
+            DestinationPickerFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, path in
+                BrowseResult(items: [self.folder("Child", path: path)], access: self.access(), path: path)
+            }
+        }
+        store.exhaustivity = .off
+
+        #expect(store.state.canNavigateBack == false)
+
+        await store.send(.folderTapped(folder("Documents"))) {
+            $0.directoryPath = "Documents"
+            $0.navigationHistory = [""]
+        }
+        await store.receive(\.foldersResponse.success)
+        #expect(store.state.canNavigateBack == true)
+
+        await store.send(.folderTapped(folder("Reports", path: "Documents"))) {
+            $0.directoryPath = "Documents/Reports"
+            $0.navigationHistory = ["", "Documents"]
+        }
+        await store.receive(\.foldersResponse.success)
+
+        await store.send(.backTapped) {
+            $0.directoryPath = "Documents"
+            $0.navigationHistory = [""]
+        }
+        await store.receive(\.foldersResponse.success)
+
+        await store.send(.backTapped) {
+            $0.directoryPath = ""
+            $0.navigationHistory = []
+        }
+        await store.receive(\.foldersResponse.success)
+        #expect(store.state.canNavigateBack == false)
+    }
+
+    @Test
+    func breadcrumbJumpTrimsTheBackTrailToThatFolder() async {
+        var state = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "")
+        state.directoryPath = "A/B/C"
+        state.navigationHistory = ["", "A", "A/B"]
+
+        let store = TestStore(initialState: state) {
+            DestinationPickerFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: self.access(), path: "") }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.breadcrumbTapped(path: "A")) {
+            $0.directoryPath = "A"
+            $0.navigationHistory = [""]
+        }
+        await store.receive(\.foldersResponse.success)
+    }
+
+    @Test
     func breadcrumbTappedJumpsStraightToThatPath() async {
         var state = DestinationPickerFeature.State(serverURL: serverURL, items: [file("a.txt", path: "Inbox")])
         state.directoryPath = "Documents/Work"
