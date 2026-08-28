@@ -36,8 +36,10 @@ public struct FilesClient: Sendable {
     /// `POST /api/upload` (`backend/src/routes/upload.js`): one `multipart/form-data` request
     /// per file — `uploadTo` = destination directory, `relativePath` = `fileName`, `filedata` =
     /// the file at `fileURL`. `destination` must not be empty (the server rejects the root).
-    /// Reports fractional progress (0...1); returns the server's echo of the stored file,
-    /// which may carry an auto-renamed `name` on a collision.
+    /// The request is first assembled into a temporary multipart envelope on disk (one extra
+    /// copy of the payload), then streamed from that file, so nothing buffers the whole file
+    /// in memory. Reports fractional progress (0...1); returns the server's echo of the stored
+    /// file, which may carry an auto-renamed `name` on a collision.
     public var uploadFile: @Sendable (
         _ serverURL: URL,
         _ fileURL: URL,
