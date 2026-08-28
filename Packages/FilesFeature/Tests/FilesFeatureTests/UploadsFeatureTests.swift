@@ -125,6 +125,33 @@ struct UploadsFeatureTests {
     }
 
     @Test
+    func appResumedRestartsStalledUploads() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        state.jobs = [
+            job("a.txt", id: UUID(0), status: .uploading),
+            job("b.txt", id: UUID(1), status: .failed("connection lost")),
+            job("c.txt", id: UUID(2), status: .completed),
+            job("d.txt", id: UUID(3), status: .queued),
+        ]
+        let store = TestStore(initialState: state) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.filesClient.uploadFile = { _, _, name, _, _ in self.uploaded(name) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.appResumed) {
+            $0.jobs[id: UUID(0)]?.status = .queued
+            $0.jobs[id: UUID(1)]?.status = .queued
+        }
+        // Completed stays, and the first now-queued job starts uploading.
+        #expect(store.state.jobs[id: UUID(2)]?.status == .completed)
+        await store.receive(\.startNextIfIdle) {
+            $0.jobs[id: UUID(0)]?.status = .uploading
+        }
+    }
+
+    @Test
     func clearRemovesFinishedJobs() async {
         var state = UploadsFeature.State(serverURL: serverURL)
         state.jobs = [
