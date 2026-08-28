@@ -91,6 +91,9 @@ public struct FavoritesFeature {
         /// Re-fetches every pushed subfolder currently on the live navigation stack — sent
         /// when the app becomes active again after being backgrounded.
         case syncPathStack
+        /// Refetches only the pushed screens whose `directoryPath` equals `path`. Sent after
+        /// an upload finishes so just the affected folder reloads.
+        case refreshDirectory(path: String)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -231,6 +234,12 @@ public struct FavoritesFeature {
 
             case .syncPathStack:
                 return .merge(state.path.ids.map { .send(.path(.element(id: $0, action: .refreshButtonTapped))) })
+
+            case let .refreshDirectory(path):
+                let effects = state.path.ids
+                    .filter { state.path[id: $0]?.directoryPath == path }
+                    .map { Effect<Action>.send(.path(.element(id: $0, action: .refreshButtonTapped))) }
+                return .merge(effects)
 
             case .path, .delegate:
                 return .none

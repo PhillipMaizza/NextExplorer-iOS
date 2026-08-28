@@ -64,7 +64,9 @@ public struct DestinationPickerFeature {
             case .move:
                 return FileClipboard(items: items, operation: .move).canPaste(into: directoryPath, canWrite: true)
             case .upload:
-                return !directoryPath.isEmpty && (currentAccess?.canUpload ?? true)
+                // `nil` while the folder's listing is still loading — confirm stays disabled
+                // until the server says uploads are allowed here.
+                return !directoryPath.isEmpty && (currentAccess?.canUpload ?? false)
             }
         }
     }
@@ -173,6 +175,8 @@ public struct DestinationPickerFeature {
         state.isLoading = true
         state.errorMessage = nil
         state.isSearching = false
+        // Drop the previous folder's access so an upload confirm can't fire against stale info.
+        state.currentAccess = nil
         let serverURL = state.serverURL
         let directoryPath = state.directoryPath
         let filesClient = self.filesClient

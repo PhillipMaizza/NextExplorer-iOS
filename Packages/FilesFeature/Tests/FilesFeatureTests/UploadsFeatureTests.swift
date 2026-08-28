@@ -29,6 +29,15 @@ struct UploadsFeatureTests {
         )
     }
 
+    private nonisolated func summary(
+        uploaded: Int, failed: Int, lastDestination: String?, changedPaths: Set<String>
+    ) -> UploadsFeature.FinishSummary {
+        UploadsFeature.FinishSummary(
+            uploadedCount: uploaded, failedCount: failed,
+            lastDestination: lastDestination, changedPaths: changedPaths
+        )
+    }
+
     @Test
     func filesUploadOneAtATimeAndTheQueueFinishes() async {
         let a = UUID(0)
@@ -50,7 +59,6 @@ struct UploadsFeatureTests {
             $0.jobs[id: a]?.status = .completed
             $0.jobs[id: a]?.progress = 1
         }
-        await store.receive(.delegate(.folderContentsChanged(path: "Inbox")))
         await store.receive(\.startNextIfIdle) {
             $0.jobs[id: b]?.status = .uploading
         }
@@ -58,15 +66,14 @@ struct UploadsFeatureTests {
             $0.jobs[id: b]?.status = .completed
             $0.jobs[id: b]?.progress = 1
         }
-        await store.receive(.delegate(.folderContentsChanged(path: "Inbox")))
         await store.receive(.delegate(.queueFinished(
-            UploadsFeature.FinishSummary(uploadedCount: 2, failedCount: 0, lastDestination: "Inbox")
+            summary(uploaded: 2, failed: 0, lastDestination: "Inbox", changedPaths: ["Inbox"])
         )))
         #expect(store.state.isActive == false)
     }
 
     @Test
-    func aFailedUploadDoesNotRefreshTheFolderAndCanBeRetried() async {
+    func aFailedUploadReportsNoChangedPathsAndCanBeRetried() async {
         let a = UUID(0)
         let attempts = LockIsolated(0)
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
@@ -85,7 +92,7 @@ struct UploadsFeatureTests {
             $0.jobs[id: a]?.status = .failed(L10n.Uploads.failedGeneric)
         }
         await store.receive(.delegate(.queueFinished(
-            UploadsFeature.FinishSummary(uploadedCount: 0, failedCount: 1, lastDestination: nil)
+            summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: [])
         )))
 
         await store.send(.retryTapped(id: a)) {
@@ -105,7 +112,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
-            $0.filesClient.uploadFile = { _, _, name, _, _ in
+            $0.filesClient.uploadFile = { _, _, _, _, _ in
                 try await Task.never()
             }
         }
@@ -141,7 +148,7 @@ struct UploadsFeatureTests {
         await store.send(.enqueue([pending("a.txt", id: UUID(0)), pending("b.txt", id: UUID(1))]))
         // Both fail on the first pass.
         await store.receive(.delegate(.queueFinished(
-            UploadsFeature.FinishSummary(uploadedCount: 0, failedCount: 2, lastDestination: nil)
+            summary(uploaded: 0, failed: 2, lastDestination: nil, changedPaths: [])
         )))
         #expect(store.state.isActive == false)
         #expect(store.state.failedCount == 2)
@@ -156,14 +163,33 @@ struct UploadsFeatureTests {
         }
         // Second pass succeeds.
         await store.receive(.delegate(.queueFinished(
-            UploadsFeature.FinishSummary(uploadedCount: 2, failedCount: 0, lastDestination: "Inbox")
+            summary(uploaded: 2, failed: 0, lastDestination: "Inbox", changedPaths: ["Inbox"])
         )))
         #expect(store.state.failedCount == 0)
         #expect(store.state.isBarVisible == false)
     }
 
     @Test
-    func appResumedRestartsStalledUploads() async {
+    func batchFinishedReportsEveryDistinctDestinationThatSucceeded() async {
+        let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.filesClient.uploadFile = { _, _, name, dest, _ in self.uploaded(name, destination: dest) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.enqueue([
+            pending("a.txt", id: UUID(0), destination: "Inbox"),
+            pending("b.txt", id: UUID(1), destination: "Inbox"),
+            pending("c.txt", id: UUID(2), destination: "Archive"),
+        ]))
+        await store.receive(.delegate(.queueFinished(
+            summary(uploaded: 3, failed: 0, lastDestination: "Archive", changedPaths: ["Inbox", "Archive"])
+        )))
+    }
+
+    @Test
+    func appResumedRequeuesFailedJobsAndLeavesActiveUploadsAlone() async {
         var state = UploadsFeature.State(serverURL: serverURL)
         state.jobs = [
             job("a.txt", id: UUID(0), status: .uploading),
@@ -174,19 +200,19 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: state) {
             UploadsFeature()
         } withDependencies: {
-            $0.filesClient.uploadFile = { _, _, name, _, _ in self.uploaded(name) }
+            $0.filesClient.uploadFile = { _, _, _, _, _ in try await Task.never() }
         }
         store.exhaustivity = .off
 
         await store.send(.appResumed) {
-            $0.jobs[id: UUID(0)]?.status = .queued
             $0.jobs[id: UUID(1)]?.status = .queued
         }
-        // Completed stays, and the first now-queued job starts uploading.
+        // The genuinely uploading job is untouched; the completed one stays; the failed one
+        // is requeued but the active upload still holds the slot.
+        #expect(store.state.jobs[id: UUID(0)]?.status == .uploading)
         #expect(store.state.jobs[id: UUID(2)]?.status == .completed)
-        await store.receive(\.startNextIfIdle) {
-            $0.jobs[id: UUID(0)]?.status = .uploading
-        }
+        #expect(store.state.jobs[id: UUID(3)]?.status == .queued)
+        await store.receive(\.startNextIfIdle)
     }
 
     @Test
@@ -197,8 +223,9 @@ struct UploadsFeatureTests {
             job("b.txt", id: UUID(1), status: .failed("nope")),
         ]
         let store = TestStore(initialState: state) { UploadsFeature() }
+        store.exhaustivity = .off
 
-        await store.send(.clearCompletedTapped) {
+        await store.send(.clearFinishedTapped) {
             $0.jobs.removeAll()
             $0.isSheetPresented = false
         }

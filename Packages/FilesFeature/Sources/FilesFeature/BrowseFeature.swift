@@ -305,7 +305,7 @@ public struct BrowseFeature {
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped(DownloadLocation, removeArchiveAfterDownload: Bool)
         case bulkDownloadResponse(savedCount: Int, total: Int, location: DownloadLocation)
-        case beginUploadReview(fileCount: Int)
+        case beginUpload(UploadReviewFeature.PickSource)
         case uploadReview(PresentationAction<UploadReviewFeature.Action>)
         case copyTapped(FileItem)
         case moveTapped(FileItem)
@@ -350,6 +350,7 @@ public struct BrowseFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.continuousClock) var clock
     @Dependency(\.localDownloadStore) var localDownloadStore
+    @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.openURL) var openURL
     private enum CancelID { case search, transfer, googleDocsPointer }
 
@@ -654,14 +655,13 @@ public struct BrowseFeature {
                 }
                 return .none
 
-            case let .beginUploadReview(fileCount):
-                guard fileCount > 0 else { return .none }
+            case let .beginUpload(source):
+                guard source.count > 0 else { return .none }
                 state.uploadReview = UploadReviewFeature.State(
                     serverURL: state.serverURL,
-                    startingDestination: state.directoryPath,
-                    preparingCount: fileCount
+                    startingDestination: state.directoryPath
                 )
-                return .none
+                return .send(.uploadReview(.presented(.stage(source))))
 
             case let .uploadReview(.presented(.delegate(.confirmed(files, destination)))):
                 state.uploadReview = nil
@@ -671,8 +671,12 @@ public struct BrowseFeature {
                 })))
 
             case .uploadReview(.presented(.delegate(.cancelled))):
+                // Discard whatever staging already copied — those files are never uploaded now.
+                let staged = state.uploadReview?.files.map(\.fileURL) ?? []
                 state.uploadReview = nil
-                return .none
+                guard !staged.isEmpty else { return .none }
+                let uploadStaging = self.uploadStaging
+                return .run { _ in await uploadStaging.discard(staged) }
 
             case .uploadReview:
                 return .none
