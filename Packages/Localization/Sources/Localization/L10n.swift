@@ -100,6 +100,7 @@ public enum L10n {
         public static var logOut: String { tr("common.logOut") }  // "Log Out"
         public static var never: String { tr("common.never") }  // "Never"
         public static var ok: String { tr("common.ok") }  // "OK"
+        public static var openSettings: String { tr("common.openSettings") }  // "Open Settings"
         public static var password: String { tr("common.password") }  // "Password"
         public static var remove: String { tr("common.remove") }  // "Remove"
         public static var retry: String { tr("common.retry") }  // "Try Again"
@@ -351,6 +352,8 @@ public enum L10n {
         public static var actionUploadFromPhotos: String { tr("uploads.actionUploadFromPhotos") }  // "Upload from Photos"
         public static func barTitleMany(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.barTitleMany", a0, a1) }
         public static func barTitleOne(_ a0: CVarArg) -> String { tr("uploads.barTitleOne", a0) }
+        public static var cameraDeniedMessage: String { tr("uploads.cameraDeniedMessage") }  // "Allow camera access in Settings to take a photo."
+        public static var cameraDeniedTitle: String { tr("uploads.cameraDeniedTitle") }  // "Camera access needed"
         public static var cancelAll: String { tr("uploads.cancelAll") }  // "Cancel all uploads"
         public static var clear: String { tr("uploads.clear") }  // "Clear"
         public static var complete: String { tr("uploads.complete") }  // "Upload complete"

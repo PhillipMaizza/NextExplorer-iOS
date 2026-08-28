@@ -11,6 +11,7 @@ common.remove	Remove
 common.clear	Clear
 common.done	Done
 common.ok	OK
+common.openSettings	Open Settings
 common.logOut	Log Out
 common.close	Close
 common.back	Back
@@ -160,6 +161,8 @@ uploads.menuTitle	Upload
 uploads.actionUploadFromFiles	Upload from Files
 uploads.actionUploadFromPhotos	Upload from Photos
 uploads.actionTakePhoto	Take Photo
+uploads.cameraDeniedTitle	Camera access needed
+uploads.cameraDeniedMessage	Allow camera access in Settings to take a photo.
 uploads.destinationTitle	Upload to…
 uploads.destinationConfirm	Upload here
 uploads.statusWaiting	Waiting
