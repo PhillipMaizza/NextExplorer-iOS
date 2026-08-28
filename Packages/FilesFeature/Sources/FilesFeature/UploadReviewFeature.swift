@@ -40,6 +40,9 @@ public struct UploadReviewFeature {
     public enum Action: Equatable, Sendable {
         case filePrepared(PickedFile)
         case preparationFinished
+        /// "Add more files" from inside the sheet — a fresh pick of `count` items is now being
+        /// materialized on top of what's already staged.
+        case addMoreRequested(count: Int)
         case pathTapped
         case folderPicker(PresentationAction<DestinationPickerFeature.Action>)
         case removeFileTapped(id: PickedFile.ID)
@@ -66,6 +69,10 @@ public struct UploadReviewFeature {
             case .preparationFinished:
                 state.preparingCount = 0
                 return state.files.isEmpty ? .send(.delegate(.cancelled)) : .none
+
+            case let .addMoreRequested(count):
+                state.preparingCount += max(0, count)
+                return .none
 
             case .pathTapped:
                 state.folderPicker = DestinationPickerFeature.State(

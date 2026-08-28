@@ -1,28 +1,39 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import Foundation
 import Localization
+import PhotosUI
 import SwiftUI
-import UIKit
 
 private enum Constants {
     static let thumbnailSize: CGFloat = .iconLarge
     static let removeButtonSize: CGFloat = .iconSmall
+    static let contentSpacing: CGFloat = .space16
     static let rowSpacing: CGFloat = .space12
     static let rowTextSpacing: CGFloat = .space2
-    static let buttonPadding: CGFloat = .space16
-    /// Rough per-piece heights, summed to pick a fitted `presentationDetent` (capped below
-    /// `screenFraction` of the screen, past which it behaves like `.large` and the list scrolls).
-    static let chromeHeight: CGFloat = 56 + 96
-    static let fixedSectionHeight: CGFloat = 150
-    static let fileRowHeight: CGFloat = 52
-    static let filesHeaderHeight: CGFloat = 44
-    static let screenFraction: CGFloat = 0.88
+    static let horizontalPadding: CGFloat = .space16
+    static let verticalPadding: CGFloat = .space24
+    static let closeButtonPadding: CGFloat = .space8
+    static let addMoreDash: CGFloat = 4
+    static let addMoreBorderWidth: CGFloat = 1
+    /// The sheet fits its content but never exceeds this fraction of the screen — past that
+    /// the file list scrolls and `.large` is a drag away.
+    static let maxHeightFraction: CGFloat = 0.9
 }
 
 /// The review sheet: what's about to upload, where to, how big, and the Upload button.
 struct UploadReviewView: View {
     @Bindable var store: StoreOf<UploadReviewFeature>
+    let onAddDocuments: ([URL]) -> Void
+    let onAddPhotos: ([PhotosPickerItem]) -> Void
+    let onAddPhotoCaptured: (URL) -> Void
+
+    @State private var isFilesPickerPresented = false
+    @State private var isPhotosPickerPresented = false
+    @State private var isCameraPresented = false
+    @State private var isCameraDeniedAlertPresented = false
+    @State private var photosSelection: [PhotosPickerItem] = []
 
     private static let byteFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()
@@ -83,95 +94,177 @@ struct UploadReviewView: View {
         }
     }
 
+    /// "Add more files" — opens the same camera / Photos / Files menu the browse `+` uses,
+    /// streaming the new pick into this same sheet. A clear, dashed outline button that sits
+    /// in the bottom bar above Upload (not a list cell, which would clip its border). Disabled
+    /// mid preparation so two picks can't overlap.
+    private var addMoreButton: some View {
+        UploadSourceMenu(
+            label: {
+                HStack(spacing: Constants.rowTextSpacing * 2) {
+                    IconKit.plus
+                        .resizable().scaledToFit()
+                        .frame(width: .iconSmall, height: .iconSmall)
+                    Text(L10n.Uploads.reviewAddMore)
+                        .type(.body2(.regular), style: .secondary)
+                }
+                .foregroundStyle(Color.secondaryDS)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, Constants.rowSpacing)
+                .overlay(
+                    RoundedRectangle(cornerRadius: .radiusControl)
+                        .stroke(
+                            Color.secondaryDS,
+                            style: StrokeStyle(lineWidth: Constants.addMoreBorderWidth, dash: [Constants.addMoreDash])
+                        )
+                )
+                .contentShape(Rectangle())
+            },
+            isFilesPickerPresented: $isFilesPickerPresented,
+            isPhotosPickerPresented: $isPhotosPickerPresented,
+            isCameraPresented: $isCameraPresented,
+            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
+        )
+        .tint(.primaryDS)
+        .disabled(store.isPreparing)
+    }
+
     private var title: String {
         store.totalCount == 1
             ? L10n.Uploads.reviewTitleOne
             : L10n.Uploads.reviewTitleMany(store.totalCount)
     }
 
-    /// Fits the sheet to its content, capping below full height (past which the list scrolls).
-    private var detents: Set<PresentationDetent> {
-        let estimated = Constants.chromeHeight + Constants.fixedSectionHeight
-            + Constants.filesHeaderHeight + CGFloat(store.totalCount) * Constants.fileRowHeight
-        let cap = UIScreen.main.bounds.height * Constants.screenFraction
-        return [.height(min(estimated, cap)), .large]
+    /// The whole sheet as one measured stack (header, the destination + size rows, the file
+    /// list, then the two buttons) so `DynamicHeightSheet` sizes to exactly this — no
+    /// per-piece height guesses.
+    private var content: some View {
+        VStack(alignment: .leading, spacing: Constants.contentSpacing) {
+            header
+            pathAndSizeSection
+            Divider()
+            filesSection
+        }
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.top, Constants.verticalPadding)
+        .padding(.bottom, Constants.contentSpacing)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Pinned below the scrolling list so Upload is always reachable, however many files.
+    private var footer: some View {
+        VStack(spacing: Constants.rowSpacing) {
+            addMoreButton
+            DSButton(L10n.Uploads.reviewUploadButton, icon: IconKit.upload, style: .primary, isLoading: store.isPreparing) {
+                store.send(.uploadTapped)
+            }
+            .disabled(!store.canUpload)
+        }
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.bottom, Constants.verticalPadding)
+        .background(Color.backgroundPrimary)
+    }
+
+    private var header: some View {
+        HStack {
+            Text(title).type(.headline3, style: .link)
+            Spacer()
+            Button { store.send(.cancelTapped) } label: {
+                IconKit.close
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(Color.primaryDS)
+                    .frame(width: .iconXSmall, height: .iconXSmall)
+                    .padding(Constants.closeButtonPadding)
+                    .background(Circle().fill(Color.backgroundSecondary))
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .accessibilityLabel(L10n.Common.close)
+        }
+    }
+
+    private var pathAndSizeSection: some View {
+        VStack(spacing: Constants.rowSpacing) {
+            Button { store.send(.pathTapped) } label: {
+                HStack(spacing: Constants.rowSpacing) {
+                    rowIcon(IconKit.folder)
+                    Text(L10n.Uploads.reviewSectionPath)
+                        .type(.body2(.regular), style: .primary(for: .label))
+                    Spacer()
+                    Text(store.hasDestination
+                        ? (store.destination as NSString).lastPathComponent
+                        : L10n.Uploads.reviewChooseFolder)
+                        .type(.body2(.regular), style: .secondary)
+                        .lineLimit(1)
+                    IconKit.chevronRight
+                        .resizable().scaledToFit()
+                        .foregroundStyle(Color.secondaryDS)
+                        .frame(width: .iconXSmall, height: .iconXSmall)
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .tint(.primaryDS)
+
+            HStack(spacing: Constants.rowSpacing) {
+                rowIcon(IconKit.size)
+                Text(L10n.Uploads.reviewSectionSize)
+                    .type(.body2(.regular), style: .primary(for: .label))
+                Spacer()
+                Text(Self.byteFormatter.string(fromByteCount: store.totalSize))
+                    .type(.body2(.regular), style: .secondary)
+            }
+        }
+    }
+
+    private var filesSection: some View {
+        VStack(alignment: .leading, spacing: Constants.rowSpacing) {
+            Text(L10n.Uploads.reviewSectionFiles)
+                .type(.body3(.semibold), style: .secondary)
+            ForEach(store.files) { file in
+                fileRow(file)
+            }
+            if store.isPreparing {
+                HStack(spacing: Constants.rowSpacing) {
+                    ProgressView()
+                    Text(L10n.Uploads.reviewPreparing(store.preparingCount))
+                        .type(.body3(.regular), style: .secondary)
+                }
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     var body: some View {
-        NavigationStack {
-            List {
-                Section {
-                    Button { store.send(.pathTapped) } label: {
-                        HStack(spacing: Constants.rowSpacing) {
-                            rowIcon(IconKit.folder)
-                            Text(L10n.Uploads.reviewSectionPath)
-                                .type(.body2(.regular), style: .primary(for: .label))
-                            Spacer()
-                            Text(store.hasDestination
-                                ? (store.destination as NSString).lastPathComponent
-                                : L10n.Uploads.reviewChooseFolder)
-                                .type(.body2(.regular), style: .secondary)
-                                .lineLimit(1)
-                            IconKit.chevronRight
-                                .resizable().scaledToFit()
-                                .foregroundStyle(Color.secondaryDS)
-                                .frame(width: .iconXSmall, height: .iconXSmall)
-                        }
-                        .contentShape(Rectangle())
-                    }
-                    .tint(.primaryDS)
-
-                    HStack(spacing: Constants.rowSpacing) {
-                        rowIcon(IconKit.size)
-                        Text(L10n.Uploads.reviewSectionSize)
-                            .type(.body2(.regular), style: .primary(for: .label))
-                        Spacer()
-                        Text(Self.byteFormatter.string(fromByteCount: store.totalSize))
-                            .type(.body2(.regular), style: .secondary)
-                    }
-                }
-
-                Section(L10n.Uploads.reviewSectionFiles) {
-                    ForEach(store.files) { file in
-                        fileRow(file)
-                    }
-                    if store.isPreparing {
-                        HStack(spacing: Constants.rowSpacing) {
-                            ProgressView()
-                            Text(L10n.Uploads.reviewPreparing(store.preparingCount))
-                                .type(.body3(.regular), style: .secondary)
-                        }
-                    }
-                }
-            }
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
-            .background(Color.backgroundPrimary)
-            .navigationTitle(title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { store.send(.cancelTapped) } label: {
-                        IconKit.close.foregroundStyle(Color.primaryDS)
-                    }
-                    .accessibilityLabel(L10n.Common.close)
-                }
-            }
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                DSButton(L10n.Uploads.reviewUploadButton, icon: IconKit.upload, style: .primary, isLoading: store.isPreparing) {
-                    store.send(.uploadTapped)
-                }
-                .disabled(!store.canUpload)
-                .padding(Constants.buttonPadding)
-                .background(Color.backgroundPrimary)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.folderPicker, action: \.folderPicker)
-            ) { pickerStore in
-                DestinationPickerView(store: pickerStore, isPushed: true)
-            }
+        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+            content
+        } footer: {
+            footer
         }
-        .presentationDetents(detents)
-        .presentationDragIndicator(.visible)
+        .sheet(item: $store.scope(state: \.folderPicker, action: \.folderPicker)) { pickerStore in
+            DestinationPickerView(store: pickerStore)
+        }
+        .modifier(UploadPickers(
+            isFilesPickerPresented: $isFilesPickerPresented,
+            isPhotosPickerPresented: $isPhotosPickerPresented,
+            isCameraPresented: $isCameraPresented,
+            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented,
+            photosSelection: $photosSelection,
+            onDocumentsPicked: { urls in
+                guard !urls.isEmpty else { return }
+                store.send(.addMoreRequested(count: urls.count))
+                onAddDocuments(urls)
+            },
+            onPhotosPicked: { items in
+                guard !items.isEmpty else { return }
+                store.send(.addMoreRequested(count: items.count))
+                onAddPhotos(items)
+                photosSelection = []
+            },
+            onPhotoCaptured: { url in
+                store.send(.addMoreRequested(count: 1))
+                onAddPhotoCaptured(url)
+            }
+        ))
     }
 }

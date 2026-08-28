@@ -3433,6 +3433,17 @@
         }
       }
     },
+    "uploads.reviewAddMore": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add more files"
+          }
+        }
+      }
+    },
     "uploads.reviewChooseFolder": {
       "extractionState": "manual",
       "localizations": {

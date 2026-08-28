@@ -89,7 +89,17 @@ struct BrowseContentView: View {
                 DestinationPickerView(store: pickerStore)
             }
             .sheet(item: $store.scope(state: \.uploadReview, action: \.uploadReview)) { reviewStore in
-                UploadReviewView(store: reviewStore)
+                UploadReviewView(
+                    store: reviewStore,
+                    onAddDocuments: { urls in Task { await materializeDocuments(urls) } },
+                    onAddPhotos: { items in Task { await materializePhotos(items) } },
+                    onAddPhotoCaptured: { url in
+                        store.send(.uploadReview(.presented(.filePrepared(PickedFile(
+                            fileURL: url, fileName: url.lastPathComponent, size: Self.fileSize(at: url)
+                        )))))
+                        store.send(.uploadReview(.presented(.preparationFinished)))
+                    }
+                )
             }
             .sheet(item: infoPhaseBinding) { phase in
                 infoSheetContent(for: phase)

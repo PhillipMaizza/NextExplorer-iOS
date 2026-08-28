@@ -2,13 +2,15 @@ import SwiftUI
 import UIKit
 
 /// Thin `UIImagePickerController` wrapper pinned to the camera — SwiftUI has no native camera
-/// capture. Hands back a JPEG written to a temp file (nil if the user cancels).
+/// capture. `allowsEditing` gives the built in crop/scale step after the shot. Hands back a
+/// JPEG written to a temp file (nil if the user cancels).
 struct CameraPicker: UIViewControllerRepresentable {
     let onCapture: (URL?) -> Void
 
     func makeUIViewController(context: Context) -> UIImagePickerController {
         let controller = UIImagePickerController()
         controller.sourceType = .camera
+        controller.allowsEditing = true
         controller.delegate = context.coordinator
         return controller
     }
@@ -30,8 +32,8 @@ struct CameraPicker: UIViewControllerRepresentable {
             _ picker: UIImagePickerController,
             didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
         ) {
-            guard let image = info[.originalImage] as? UIImage,
-                  let data = image.jpegData(compressionQuality: 0.9) else {
+            let image = info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage
+            guard let image, let data = image.jpegData(compressionQuality: 0.9) else {
                 onCapture(nil)
                 return
             }
