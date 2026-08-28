@@ -86,6 +86,12 @@ struct BrowseContentView: View {
         store.send(.rowTapped(item))
     }
 
+    /// Search results only report `dir`/`file` for kind, so derive a real extension from the
+    /// file name for the row icon — the same thing `searchResultTapped` hands the preview.
+    private func searchResultKind(_ result: SearchResultItem) -> String {
+        result.isDirectory ? result.kind : (result.name as NSString).pathExtension.lowercased()
+    }
+
     var body: some View {
         browsingContent
             .sheet(item: $store.scope(state: \.destinationPicker, action: \.destinationPicker)) { pickerStore in
@@ -863,10 +869,9 @@ struct BrowseContentView: View {
                         Button {
                             store.send(.searchResultTapped(result))
                         } label: {
-                            GridCellView(name: result.name, isDirectory: result.isDirectory, isFavorite: store.favoritePaths.contains(result.id), kind: result.kind)
+                            GridCellView(name: result.name, isDirectory: result.isDirectory, isFavorite: store.favoritePaths.contains(result.id), kind: searchResultKind(result))
                         }
                         .buttonStyle(DSHapticButtonStyle())
-                        .disabled(!result.isDirectory)
                     }
                 } else {
                     ForEach(store.displayedItems) { item in
@@ -1099,10 +1104,9 @@ struct BrowseContentView: View {
             Button {
                 store.send(.searchResultTapped(result))
             } label: {
-                FileRowView(name: result.name, isDirectory: result.isDirectory, subtitle: result.matchLine, isFavorite: store.favoritePaths.contains(result.id), kind: result.kind)
+                FileRowView(name: result.name, isDirectory: result.isDirectory, subtitle: result.matchLine, isFavorite: store.favoritePaths.contains(result.id), kind: searchResultKind(result))
             }
             .buttonStyle(DSHapticButtonStyle())
-            .disabled(!result.isDirectory)
             .listRowBackground(Color.clear)
             .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
             .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)
