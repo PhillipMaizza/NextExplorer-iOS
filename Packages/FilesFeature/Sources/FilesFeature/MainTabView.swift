@@ -5,6 +5,18 @@ import FilesClient
 import Localization
 import SwiftUI
 
+private enum Constants {
+    static let barAnimationDuration: Double = 0.2
+    /// Clearance so the floating upload bar rides above the tab bar rather than replacing it
+    /// (a bottom `safeAreaInset` / `tabViewBottomAccessory` hides the Liquid Glass tab bar).
+    static let barBottomClearance: CGFloat = 68
+    /// Extra lift when a breadcrumb bar is also on screen (its height + `.safeAreaInset`
+    /// spacing) so the upload bar rides above it, not over it.
+    static let breadcrumbClearance: CGFloat = BrowseBreadcrumbBarMetrics.height + .space8
+    /// Lifts the "upload complete" toast clear of the tab bar.
+    static let toastTabBarClearance: CGFloat = 56
+}
+
 public struct MainTabView: View {
     @Bindable var store: StoreOf<MainTabFeature>
     @Environment(\.scenePhase) private var scenePhase
@@ -14,12 +26,70 @@ public struct MainTabView: View {
     /// stomp on whatever `onAppear` just loaded. This tracks past the first activation so only
     /// a genuine later background→active resume triggers a sync.
     @State private var hasBecomeActiveBefore = false
+    /// Mirrors `store.uploads.isActive` so list screens can reserve bottom inset for the bar.
+    @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
 
     public init(store: StoreOf<MainTabFeature>) {
         self.store = store
     }
 
     public var body: some View {
+        tabs
+            .overlay(alignment: .bottom) {
+                if store.uploads.isBarVisible {
+                    uploadStatusBar
+                        .padding(.horizontal, .space16)
+                        .padding(.bottom, Constants.barBottomClearance + breadcrumbClearance)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isBarVisible)
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isActive)
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: breadcrumbClearance)
+            .onChange(of: store.uploads.isBarVisible) { _, visible in
+                $isUploadBarVisible.withLock { $0 = visible }
+            }
+            .sheet(isPresented: Binding(
+                get: { store.uploads.isSheetPresented },
+                set: { store.send(.uploads(.sheetPresented($0))) }
+            )) {
+                UploadsView(store: store.scope(state: \.uploads, action: \.uploads))
+            }
+            .dsToast(Binding(
+                get: { uploadToastMessage },
+                set: { if $0 == nil { store.send(.dismissUploadToast) } }
+            ), extraBottomInset: Constants.toastTabBarClearance)
+            .hapticFeedback(.selection, trigger: store.selectedTab)
+            .onChange(of: scenePhase) { _, newPhase in
+                guard newPhase == .active else { return }
+                guard hasBecomeActiveBefore else {
+                    hasBecomeActiveBefore = true
+                    return
+                }
+                store.send(.appBecameActive)
+            }
+    }
+
+    @ViewBuilder
+    private var uploadStatusBar: some View {
+        if store.uploads.isActive {
+            UploadProgressBar(
+                title: uploadBarTitle,
+                progress: store.uploads.currentJob?.progress ?? 0,
+                onTap: { store.send(.uploads(.barTapped)) },
+                onCancelAll: { store.send(.uploads(.cancelAllTapped), animation: .default) }
+            )
+        } else {
+            UploadFailedBar(
+                count: store.uploads.failedCount,
+                onRetry: { store.send(.uploads(.retryAllFailedTapped), animation: .default) },
+                onDismiss: { store.send(.uploads(.clearCompletedTapped), animation: .default) },
+                onTap: { store.send(.uploads(.barTapped)) }
+            )
+        }
+    }
+
+    private var tabs: some View {
         TabView(selection: Binding(
             get: { store.selectedTab },
             set: { store.send(.tabSelected($0)) }
@@ -60,21 +130,47 @@ public struct MainTabView: View {
             }
         }
         .tint(Color.accent)
-        .hapticFeedback(.selection, trigger: store.selectedTab)
-        .onChange(of: scenePhase) { _, newPhase in
-            guard newPhase == .active else { return }
-            guard hasBecomeActiveBefore else {
-                hasBecomeActiveBefore = true
-                return
-            }
-            store.send(.appBecameActive)
-        }
     }
 
     private func tabIcon(_ image: Image) -> some View {
         image
             .resizable()
             .scaledToFit()
+    }
+
+    /// Whether the current tab is showing a `BrowseBreadcrumbBar` right now — the upload bar
+    /// has to sit above it. Mirrors `BrowseTabView` / `FavoritesView`'s own visibility rule.
+    private var breadcrumbClearance: CGFloat {
+        switch store.selectedTab {
+        case .browse:
+            let dir = store.browse.path.last?.directoryPath ?? store.browse.root.directoryPath
+            let selecting = store.browse.path.last?.isSelecting ?? store.browse.root.isSelecting
+            return (!dir.isEmpty && !selecting) ? Constants.breadcrumbClearance : 0
+        case .favorites:
+            let dir = store.favorites.path.last?.directoryPath ?? ""
+            let selecting = store.favorites.path.last?.isSelecting ?? false
+            return (!dir.isEmpty && !selecting) ? Constants.breadcrumbClearance : 0
+        default:
+            return 0
+        }
+    }
+
+    private var uploadBarTitle: String {
+        let uploads = store.uploads
+        if uploads.batchTotal <= 1, let name = uploads.currentJob?.fileName {
+            return L10n.Uploads.barTitleOne(name)
+        }
+        return L10n.Uploads.barTitleMany(uploads.batchPosition, uploads.batchTotal)
+    }
+
+    private var uploadToastMessage: DSToastMessage? {
+        guard let toast = store.uploadToast else { return nil }
+        if let destination = toast.openDestination {
+            return .success(toast.message, actionTitle: L10n.Browse.open) {
+                store.send(.openUploadedLocation(destination))
+            }
+        }
+        return .success(toast.message)
     }
 }
 

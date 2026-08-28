@@ -3,7 +3,9 @@ import CoreModels
 import DesignSystem
 import FilesClient
 import Localization
+import PhotosUI
 import SwiftUI
+import UniformTypeIdentifiers
 
 private enum BrowseViewMode: String {
     case list, grid
@@ -48,6 +50,11 @@ struct BrowseContentView: View {
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
+    @State private var isFilesPickerPresented = false
+    @State private var isPhotosPickerPresented = false
+    @State private var isCameraPresented = false
+    @State private var photosSelection: [PhotosPickerItem] = []
+    @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
 
     private var viewMode: BrowseViewMode {
         BrowseViewMode(rawValue: viewModeRaw) ?? .list
@@ -80,6 +87,19 @@ struct BrowseContentView: View {
         browsingContent
             .sheet(item: $store.scope(state: \.destinationPicker, action: \.destinationPicker)) { pickerStore in
                 DestinationPickerView(store: pickerStore)
+            }
+            .sheet(item: $store.scope(state: \.uploadReview, action: \.uploadReview)) { reviewStore in
+                UploadReviewView(
+                    store: reviewStore,
+                    onAddDocuments: { urls in Task { await materializeDocuments(urls) } },
+                    onAddPhotos: { items in Task { await materializePhotos(items) } },
+                    onAddPhotoCaptured: { url in
+                        store.send(.uploadReview(.presented(.filePrepared(PickedFile(
+                            fileURL: url, fileName: url.lastPathComponent, size: Self.fileSize(at: url)
+                        )))))
+                        store.send(.uploadReview(.presented(.preparationFinished)))
+                    }
+                )
             }
             .sheet(item: infoPhaseBinding) { phase in
                 infoSheetContent(for: phase)
@@ -209,6 +229,30 @@ struct BrowseContentView: View {
                 }
             }
         }
+        .modifier(UploadEntryPoints(
+            isSelecting: store.isSelecting,
+            isFilesPickerPresented: $isFilesPickerPresented,
+            isPhotosPickerPresented: $isPhotosPickerPresented,
+            isCameraPresented: $isCameraPresented,
+            photosSelection: $photosSelection,
+            onDocumentsPicked: { urls in
+                guard !urls.isEmpty else { return }
+                store.send(.beginUploadReview(fileCount: urls.count))
+                Task { await materializeDocuments(urls) }
+            },
+            onPhotosPicked: { items in
+                guard !items.isEmpty else { return }
+                store.send(.beginUploadReview(fileCount: items.count))
+                Task { await materializePhotos(items) }
+            },
+            onPhotoCaptured: { url in
+                store.send(.beginUploadReview(fileCount: 1))
+                store.send(.uploadReview(.presented(.filePrepared(PickedFile(
+                    fileURL: url, fileName: url.lastPathComponent, size: Self.fileSize(at: url)
+                )))))
+                store.send(.uploadReview(.presented(.preparationFinished)))
+            }
+        ))
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
         .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
@@ -861,18 +905,78 @@ struct BrowseContentView: View {
         }
     }
 
-    /// Bottom scroll clearance for the breadcrumb bar `BrowseTabView`/`FavoritesView` stack
-    /// under this list — only on a pushed screen, the root's `directoryPath` is always empty.
-    /// It's placed via an ancestor `.safeAreaInset`, which a `List` inside a pushed
-    /// `navigationDestination` doesn't reliably extend its own scroll extent to respect.
+    /// Bottom scroll clearance for the chrome floating under this list: the breadcrumb bar
+    /// (`BrowseTabView`/`FavoritesView`, pushed screens only — the root's `directoryPath` is
+    /// always empty) and the app-level upload progress bar while it's showing. Both are placed
+    /// by ancestors a `List` inside a pushed `navigationDestination` doesn't reliably respect.
     private var bottomChromeClearance: CGFloat {
-        store.directoryPath.isEmpty ? 0 : BrowseBreadcrumbBarMetrics.height
+        (store.directoryPath.isEmpty ? 0 : BrowseBreadcrumbBarMetrics.height)
+            + (isUploadBarVisible ? UploadBarChrome.clearance : 0)
     }
 
     /// A top-level location (root screen) that is the only one there: it has nowhere to be
     /// copied or moved to, and can't be left absent, so the transfer actions are hidden.
     private func isSoleRootLocation(_ item: FileItem) -> Bool {
         store.directoryPath.isEmpty && item.path.isEmpty && store.items.count <= 1
+    }
+
+    private static var pendingUploadsDirectory: URL {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("PendingUploads", isDirectory: true)
+        try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        return directory
+    }
+
+    private static func fileSize(at url: URL) -> Int64 {
+        Int64((try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0)
+    }
+
+    /// Copies each picked document into an app-owned temp folder (security-scoped picker URLs
+    /// don't outlive the callback) concurrently, feeding each into the already-open review
+    /// sheet as it lands so a heavy pick doesn't stall the sheet behind the copy.
+    private func materializeDocuments(_ urls: [URL]) async {
+        let directory = Self.pendingUploadsDirectory
+        await withTaskGroup(of: PickedFile?.self) { group in
+            for url in urls {
+                group.addTask {
+                    let didAccess = url.startAccessingSecurityScopedResource()
+                    defer { if didAccess { url.stopAccessingSecurityScopedResource() } }
+                    let name = url.lastPathComponent
+                    let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(name)")
+                    try? FileManager.default.removeItem(at: temp)
+                    guard (try? FileManager.default.copyItem(at: url, to: temp)) != nil else { return nil }
+                    let size = Int64((try? temp.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0)
+                    return PickedFile(fileURL: temp, fileName: name, size: size)
+                }
+            }
+            for await file in group where file != nil {
+                store.send(.uploadReview(.presented(.filePrepared(file!))), animation: .default)
+            }
+        }
+        store.send(.uploadReview(.presented(.preparationFinished)))
+    }
+
+    /// Same as `materializeDocuments` but reading each photo/video into memory
+    /// (`loadTransferable`) — the slow part for heavy items, now concurrent and streamed.
+    private func materializePhotos(_ items: [PhotosPickerItem]) async {
+        let directory = Self.pendingUploadsDirectory
+        let stamp = Int(Date().timeIntervalSince1970)
+        await withTaskGroup(of: PickedFile?.self) { group in
+            for (index, item) in items.enumerated() {
+                group.addTask {
+                    guard let data = try? await item.loadTransferable(type: Data.self) else { return nil }
+                    let ext = item.supportedContentTypes.first?.preferredFilenameExtension ?? "dat"
+                    let name = "IMG_\(stamp)_\(index + 1).\(ext)"
+                    let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(name)")
+                    guard (try? data.write(to: temp)) != nil else { return nil }
+                    return PickedFile(fileURL: temp, fileName: name, size: Int64(data.count))
+                }
+            }
+            for await file in group where file != nil {
+                store.send(.uploadReview(.presented(.filePrepared(file!))), animation: .default)
+            }
+        }
+        store.send(.uploadReview(.presented(.preparationFinished)))
+        photosSelection = []
     }
 
     /// Whether the current folder is a legitimate paste target for the staged clipboard —

@@ -9,61 +9,72 @@ private enum Constants {
     static let chevronSize: CGFloat = .iconSmall
 }
 
-/// The modal folder chooser presented for "Move". Drills the same folder tree as Browse
-/// (folders only) and hands the chosen path back to `BrowseFeature` on confirm. A grouped
-/// list in a `NavigationStack`: close on the left of the bar, a checkmark on the right, and
-/// the same breadcrumb bar Browse uses along the bottom.
+/// The folder chooser for "Move" and "Upload" — a modal sheet either way (for Upload it sits
+/// over the review sheet). Drills the same folder tree as Browse (folders only), hands the
+/// chosen path back on confirm. Grouped list, checkmark to confirm, the same breadcrumb bar
+/// Browse uses.
 struct DestinationPickerView: View {
     @Bindable var store: StoreOf<DestinationPickerFeature>
 
     private var navigationTitle: String {
-        store.directoryPath.isEmpty
-            ? L10n.Browse.destinationPickerMoveTitle
-            : (store.directoryPath as NSString).lastPathComponent
+        guard store.directoryPath.isEmpty else {
+            return (store.directoryPath as NSString).lastPathComponent
+        }
+        return store.purpose == .upload
+            ? L10n.Uploads.destinationTitle
+            : L10n.Browse.destinationPickerMoveTitle
+    }
+
+    private var confirmLabel: String {
+        store.purpose == .upload
+            ? L10n.Uploads.destinationConfirm
+            : L10n.Browse.destinationPickerConfirmMove
     }
 
     var body: some View {
-        NavigationStack {
-            content
-                .navigationTitle(navigationTitle)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button { store.send(.cancelTapped) } label: {
-                            IconKit.close
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.primaryDS)
-                                .frame(width: Constants.chevronSize, height: Constants.chevronSize)
-                        }
-                        .accessibilityLabel(L10n.Common.close)
+        NavigationStack { pickerBody }
+    }
+
+    private var pickerBody: some View {
+        content
+            .navigationTitle(navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button { store.send(.cancelTapped) } label: {
+                        IconKit.close
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(Color.primaryDS)
+                            .frame(width: Constants.chevronSize, height: Constants.chevronSize)
                     }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { store.send(.confirmTapped) } label: {
-                            IconKit.checkmark
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.accent)
-                                .frame(width: Constants.chevronSize, height: Constants.chevronSize)
-                        }
-                        .disabled(!store.canConfirm)
-                        .accessibilityLabel(L10n.Browse.destinationPickerConfirmMove)
+                    .accessibilityLabel(L10n.Common.close)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button { store.send(.confirmTapped) } label: {
+                        IconKit.checkmark
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(Color.accent)
+                            .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                    }
+                    .disabled(!store.canConfirm)
+                    .accessibilityLabel(confirmLabel)
+                }
+            }
+            .searchable(
+                text: $store.searchQuery.sending(\.searchQueryChanged),
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: L10n.Common.search
+            )
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if !store.directoryPath.isEmpty {
+                    BrowseBreadcrumbBar(directoryPath: store.directoryPath) { path, _ in
+                        store.send(.breadcrumbTapped(path: path))
                     }
                 }
-                .searchable(
-                    text: $store.searchQuery.sending(\.searchQueryChanged),
-                    placement: .navigationBarDrawer(displayMode: .always),
-                    prompt: L10n.Common.search
-                )
-                .safeAreaInset(edge: .bottom, spacing: 0) {
-                    if !store.directoryPath.isEmpty {
-                        BrowseBreadcrumbBar(directoryPath: store.directoryPath) { path, _ in
-                            store.send(.breadcrumbTapped(path: path))
-                        }
-                    }
-                }
-                .task { store.send(.onAppear) }
-        }
+            }
+            .task { store.send(.onAppear) }
     }
 
     @ViewBuilder

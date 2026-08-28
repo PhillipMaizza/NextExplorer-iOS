@@ -1,7 +1,17 @@
 import Foundation
 
 extension NetworkClient {
-    public static let previewValue: NetworkClient = NetworkClient { request in
+    public static let previewValue: NetworkClient = NetworkClient(
+        send: { request in
+            try Self.cannedResponse(for: request)
+        },
+        upload: { request, _, onProgress in
+            onProgress(1)
+            return try Self.cannedResponse(for: request)
+        }
+    )
+
+    private static func cannedResponse(for request: URLRequest) throws -> (Data, HTTPURLResponse) {
         guard
             let url = request.url ?? URL(string: "https://preview.invalid"),
             let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)
