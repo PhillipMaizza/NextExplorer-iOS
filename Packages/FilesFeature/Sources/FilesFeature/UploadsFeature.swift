@@ -73,6 +73,9 @@ public struct UploadsFeature {
 
     public enum Action: Equatable, Sendable {
         case enqueue([PendingUpload])
+        /// The app returned to the foreground — a default `URLSession` upload can't run while
+        /// the app is suspended, so anything still `.uploading` or `.failed` is restarted.
+        case appResumed
         case startNextIfIdle
         case progress(id: UUID, Double)
         case uploadResponse(id: UUID, Result<FileItem, FilesClientError>)
@@ -111,6 +114,21 @@ public struct UploadsFeature {
                     ))
                 }
                 return .send(.startNextIfIdle)
+
+            case .appResumed:
+                let stalled = state.jobs.filter { job in
+                    if case .failed = job.status { return true }
+                    return job.status == .uploading
+                }
+                guard !stalled.isEmpty else { return .none }
+                var effects: [Effect<Action>] = []
+                for job in stalled {
+                    state.jobs[id: job.id]?.status = .queued
+                    state.jobs[id: job.id]?.progress = 0
+                    effects.append(.cancel(id: CancelID.job(job.id)))
+                }
+                effects.append(.send(.startNextIfIdle))
+                return .merge(effects)
 
             case .startNextIfIdle:
                 guard state.currentJob == nil,

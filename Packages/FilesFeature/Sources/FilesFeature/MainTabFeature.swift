@@ -139,7 +139,8 @@ public struct MainTabFeature {
             case .appBecameActive:
                 return .merge(
                     .send(.browse(.syncPathStack)),
-                    .send(.favorites(.syncPathStack))
+                    .send(.favorites(.syncPathStack)),
+                    .send(.uploads(.appResumed))
                 )
 
             case .browse(.delegate(.favoritesChanged)), .favorites(.delegate(.favoritesChanged)):
