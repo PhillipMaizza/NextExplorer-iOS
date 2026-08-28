@@ -87,6 +87,39 @@ struct UploadReviewFeatureTests {
     }
 
     @Test
+    func addMoreRequestedReopensPreparingAndNewFilesStreamIn() async {
+        let store = TestStore(
+            initialState: UploadReviewFeature.State(
+                serverURL: serverURL,
+                files: [file("a.jpg", id: UUID(0), size: 10)],
+                startingDestination: "Inbox"
+            )
+        ) {
+            UploadReviewFeature()
+        }
+        store.exhaustivity = .off
+        #expect(store.state.canUpload == true)
+
+        await store.send(.addMoreRequested(count: 2)) {
+            $0.preparingCount = 2
+        }
+        #expect(store.state.canUpload == false) // locked while the new pick materializes
+        #expect(store.state.totalCount == 3)
+
+        await store.send(.filePrepared(file("b.txt", id: UUID(1), size: 5))) {
+            $0.files.append(self.file("b.txt", id: UUID(1), size: 5))
+            $0.preparingCount = 1
+        }
+        await store.send(.filePrepared(file("c.txt", id: UUID(2), size: 5))) {
+            $0.files.append(self.file("c.txt", id: UUID(2), size: 5))
+            $0.preparingCount = 0
+        }
+        await store.send(.preparationFinished)
+        #expect(store.state.canUpload == true)
+        #expect(store.state.totalSize == 20)
+    }
+
+    @Test
     func preparationFinishingWithNoFilesCancels() async {
         let store = TestStore(
             initialState: UploadReviewFeature.State(
