@@ -3411,6 +3411,17 @@
         }
       }
     },
+    "uploads.reviewPreparing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing %lld…"
+          }
+        }
+      }
+    },
     "uploads.reviewSectionFiles": {
       "extractionState": "manual",
       "localizations": {

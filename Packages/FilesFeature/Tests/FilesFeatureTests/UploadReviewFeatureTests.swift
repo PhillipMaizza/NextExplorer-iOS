@@ -60,6 +60,49 @@ struct UploadReviewFeatureTests {
     }
 
     @Test
+    func filesStreamInWhilePreparingAndUploadUnlocksWhenDone() async {
+        let store = TestStore(
+            initialState: UploadReviewFeature.State(
+                serverURL: serverURL, startingDestination: "Inbox", preparingCount: 2
+            )
+        ) {
+            UploadReviewFeature()
+        }
+        #expect(store.state.isPreparing == true)
+        #expect(store.state.canUpload == false)
+
+        await store.send(.filePrepared(file("a.jpg", id: UUID(0), size: 10))) {
+            $0.files.append(self.file("a.jpg", id: UUID(0), size: 10))
+            $0.preparingCount = 1
+        }
+        #expect(store.state.canUpload == false) // still preparing
+
+        await store.send(.filePrepared(file("b.txt", id: UUID(1), size: 5))) {
+            $0.files.append(self.file("b.txt", id: UUID(1), size: 5))
+            $0.preparingCount = 0
+        }
+        await store.send(.preparationFinished)
+        #expect(store.state.canUpload == true)
+        #expect(store.state.totalSize == 15)
+    }
+
+    @Test
+    func preparationFinishingWithNoFilesCancels() async {
+        let store = TestStore(
+            initialState: UploadReviewFeature.State(
+                serverURL: serverURL, startingDestination: "Inbox", preparingCount: 1
+            )
+        ) {
+            UploadReviewFeature()
+        }
+
+        await store.send(.preparationFinished) {
+            $0.preparingCount = 0
+        }
+        await store.receive(.delegate(.cancelled))
+    }
+
+    @Test
     func removingTheLastFileCancels() async {
         let store = TestStore(
             initialState: UploadReviewFeature.State(

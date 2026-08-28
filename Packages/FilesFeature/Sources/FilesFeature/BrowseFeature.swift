@@ -305,7 +305,7 @@ public struct BrowseFeature {
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped(DownloadLocation, removeArchiveAfterDownload: Bool)
         case bulkDownloadResponse(savedCount: Int, total: Int, location: DownloadLocation)
-        case uploadFilesPicked([PickedFile])
+        case beginUploadReview(fileCount: Int)
         case uploadReview(PresentationAction<UploadReviewFeature.Action>)
         case copyTapped(FileItem)
         case moveTapped(FileItem)
@@ -654,10 +654,12 @@ public struct BrowseFeature {
                 }
                 return .none
 
-            case let .uploadFilesPicked(files):
-                guard !files.isEmpty else { return .none }
+            case let .beginUploadReview(fileCount):
+                guard fileCount > 0 else { return .none }
                 state.uploadReview = UploadReviewFeature.State(
-                    serverURL: state.serverURL, files: files, startingDestination: state.directoryPath
+                    serverURL: state.serverURL,
+                    startingDestination: state.directoryPath,
+                    preparingCount: fileCount
                 )
                 return .none
 

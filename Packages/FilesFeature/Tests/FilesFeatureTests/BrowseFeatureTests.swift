@@ -2032,16 +2032,27 @@ struct BrowseFeatureTransferTests {
     }
 
     @Test
-    func pickingUploadFilesOpensTheReviewSheetThenEnqueuesOnConfirm() async {
+    func beginningUploadOpensTheReviewSheetInAPreparingState() async {
         let store = TestStore(initialState: makeState(directoryPath: "Documents")) { BrowseFeature() }
-        store.exhaustivity = .off
-        let files = [picked("a.jpg", id: UUID(0)), picked("b.txt", id: UUID(1))]
 
-        await store.send(.uploadFilesPicked(files)) {
+        await store.send(.beginUploadReview(fileCount: 2)) {
             $0.uploadReview = UploadReviewFeature.State(
-                serverURL: self.serverURL, files: files, startingDestination: "Documents"
+                serverURL: self.serverURL, startingDestination: "Documents", preparingCount: 2
             )
         }
+        #expect(store.state.uploadReview?.isPreparing == true)
+        #expect(store.state.uploadReview?.totalCount == 2)
+    }
+
+    @Test
+    func confirmingTheReviewSheetEnqueuesWithTheChosenDestination() async {
+        var state = makeState(directoryPath: "Documents")
+        let files = [picked("a.jpg", id: UUID(0)), picked("b.txt", id: UUID(1))]
+        state.uploadReview = UploadReviewFeature.State(
+            serverURL: serverURL, files: files, startingDestination: "Documents"
+        )
+        let store = TestStore(initialState: state) { BrowseFeature() }
+        store.exhaustivity = .off
 
         await store.send(.uploadReview(.presented(.delegate(.confirmed(files: files, destination: "Documents/Trips"))))) {
             $0.uploadReview = nil
@@ -2053,11 +2064,14 @@ struct BrowseFeatureTransferTests {
     }
 
     @Test
-    func cancellingTheUploadReviewSheetDropsThePickedFiles() async {
-        let store = TestStore(initialState: makeState()) { BrowseFeature() }
+    func cancellingTheUploadReviewSheetClosesIt() async {
+        var state = makeState()
+        state.uploadReview = UploadReviewFeature.State(
+            serverURL: serverURL, startingDestination: "Documents", preparingCount: 1
+        )
+        let store = TestStore(initialState: state) { BrowseFeature() }
         store.exhaustivity = .off
 
-        await store.send(.uploadFilesPicked([picked("a.jpg", id: UUID(0))]))
         await store.send(.uploadReview(.presented(.delegate(.cancelled)))) {
             $0.uploadReview = nil
         }
