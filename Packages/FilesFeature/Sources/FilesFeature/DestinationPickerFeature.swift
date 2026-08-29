@@ -211,7 +211,7 @@ public struct DestinationPickerFeature {
         return .merge(
             .cancel(id: CancelID.search),
             .run { send in
-                await send(.foldersResponse(await apiResult { try await filesClient.browse(serverURL, directoryPath) }))
+                await send(.foldersResponse(try await apiResult { try await filesClient.browse(serverURL, directoryPath) }))
             }
             .cancellable(id: CancelID.load, cancelInFlight: true)
         )
@@ -232,7 +232,7 @@ public struct DestinationPickerFeature {
         let clock = self.clock
         return .run { send in
             try await clock.sleep(for: Constants.searchDebounce)
-            await send(.searchResultsResponse(await apiResult {
+            await send(.searchResultsResponse(try await apiResult {
                 try await filesClient.search(serverURL, scope, query, Constants.searchLimit)
             }))
         }

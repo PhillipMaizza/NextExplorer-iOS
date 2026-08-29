@@ -86,7 +86,7 @@ public struct ServerDetailsFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.brandingResponse(await apiResult { try await filesClient.fetchBranding(serverURL) }))
+                    await send(.brandingResponse(try await apiResult { try await filesClient.fetchBranding(serverURL) }))
                 }
                 .cancellable(id: CancelID.load, cancelInFlight: true)
 
@@ -126,7 +126,7 @@ public struct ServerDetailsFeature {
                 let pendingLogo = state.pendingLogoData
                 let currentLogoPath = state.branding.appLogoUrl
                 return .run { send in
-                    await send(.saveResponse(await apiResult {
+                    await send(.saveResponse(try await apiResult {
                         let logoPath: String
                         if let pendingLogo {
                             logoPath = try await filesClient.uploadServerLogo(serverURL, pendingLogo)

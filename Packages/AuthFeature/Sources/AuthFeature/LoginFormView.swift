@@ -328,6 +328,11 @@ public struct LoginFormView: View {
                 VStack(spacing: .space24) {
                     Spacer(minLength: .space48)
                     VStack(alignment: .leading, spacing: .space24) {
+                        if store.scheme == .http {
+                            Text(L10n.Login.plaintextWarning)
+                                .type(.body2(.semibold), style: .warning)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
                         identifierField
                         passwordField
                         continueButton

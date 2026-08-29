@@ -18,9 +18,6 @@ enum MarkdownRenderer {
         <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Figtree:ital,wght@0,300..900;1,300..900&display=swap" rel="stylesheet">
         <style>\(documentCSS)</style>
         </head>
         <body>
@@ -85,14 +82,35 @@ enum MarkdownRenderer {
         case let node as Table.Row:
             let cells = Array(node.cells).map { "<td>\(render($0))</td>" }.joined()
             return "<tr>\(cells)</tr>\n"
-        case let node as HTMLBlock: return node.rawHTML
-        case let node as InlineHTML: return node.rawHTML
+        case let node as HTMLBlock: return sanitizedHTML(node.rawHTML)
+        case let node as InlineHTML: return sanitizedHTML(node.rawHTML)
         default: return renderChildren(markup)
         }
     }
 
     private static func renderChildren(_ markup: Markup) -> String {
         markup.children.map { render($0) }.joined()
+    }
+
+    /// Markdown may embed raw HTML. The rendered page already runs with JavaScript disabled
+    /// (`HTMLWebView`), but strip the executable/embedding elements and inline event handlers
+    /// anyway so a hostile `.md` can't smuggle active content through the render path.
+    private static func sanitizedHTML(_ raw: String) -> String {
+        var result = raw
+        for pattern in [
+            #"(?is)<script\b[^>]*>.*?</script\s*>"#,
+            #"(?is)<style\b[^>]*>.*?</style\s*>"#,
+            #"(?is)<(script|style|iframe|object|embed|link|meta|base|form)\b[^>]*/?>"#,
+            #"(?is)</\s*(iframe|object|embed|form)\s*>"#,
+            #"(?i)\son\w+\s*=\s*"[^"]*""#,
+            #"(?i)\son\w+\s*=\s*'[^']*'"#,
+            #"(?i)\son\w+\s*=\s*[^\s>]+"#,
+            #"(?i)(href|src)\s*=\s*"\s*javascript:[^"]*""#,
+            #"(?i)(href|src)\s*=\s*'\s*javascript:[^']*'"#
+        ] {
+            result = result.replacingOccurrences(of: pattern, with: "", options: .regularExpression)
+        }
+        return result
     }
 
     private static func escaped(_ string: String) -> String {

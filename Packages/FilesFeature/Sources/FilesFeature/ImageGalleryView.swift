@@ -4,33 +4,17 @@ import DesignSystem
 import FilesClient
 import Localization
 import SwiftUI
+import UIKit
 
 private enum Constants {
     static let statusSpacing: CGFloat = .space16
-    /// Vertical drag distance past which releasing dismisses the gallery.
-    static let dismissDistanceThreshold: CGFloat = 120
-    /// Projected fling distance that dismisses even on a short, fast flick.
-    static let dismissPredictedThreshold: CGFloat = 360
-    /// Only start tracking a drag as a dismiss once it's clearly more vertical than
-    /// horizontal — horizontal drags belong to the `TabView`'s own paging.
-    static let dragMinimumDistance: CGFloat = 12
-    /// Floor for how far the content dims/shrinks while dragging.
-    static let minBackgroundOpacity: Double = 0.35
-    static let dragScaleFloor: CGFloat = 0.88
-    static let dragScaleDivisor: CGFloat = 1400
-    static let dragResetSpringResponse: Double = 0.3
-    static let dragResetSpringDamping: Double = 0.85
-    /// Fade the frozen content + dimmed backdrop to nothing on release-to-dismiss, then pull
-    /// the cover with animations off — so the exit is a clean crossfade, not our motion
-    /// fighting the fullScreenCover's own slide-from-bottom.
-    static let dismissFadeDuration: Double = 0.2
-    /// Content opacity at full drag progress (before release) — a slight fade under the
-    /// finger on top of the shrink.
-    static let draggingContentOpacityFloor: Double = 0.6
     /// Chrome (nav bar + bottom bar + status bar + page dots) crossfade on tap. Short, to
     /// match the Photos viewer.
     static let controlsFadeDuration: Double = 0.22
 }
+
+/// Swipe-to-dismiss thresholds + offset math, shared with the other full-screen viewers.
+private typealias DismissMetrics = SwipeToDismissMetrics
 
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
 /// one tapped — mirrors browsing a real photo gallery instead of dismissing back to the list
@@ -90,22 +74,16 @@ struct ImageGalleryView: View {
         currentItem?.name ?? ""
     }
 
-    private var dragProgress: CGFloat {
-        min(1, abs(dragOffset) / Constants.dismissDistanceThreshold)
-    }
-
     private var backgroundOpacity: Double {
-        if isDismissing { return 0 }
-        return 1 - (1 - Constants.minBackgroundOpacity) * Double(dragProgress)
+        DismissMetrics.backgroundOpacity(forOffset: dragOffset, isDismissing: isDismissing)
     }
 
     private var contentOpacity: Double {
-        if isDismissing { return 0 }
-        return 1 - (1 - Constants.draggingContentOpacityFloor) * Double(dragProgress)
+        DismissMetrics.contentOpacity(forOffset: dragOffset, isDismissing: isDismissing)
     }
 
     private var dragScale: CGFloat {
-        max(Constants.dragScaleFloor, 1 - abs(dragOffset) / Constants.dragScaleDivisor)
+        DismissMetrics.scale(forOffset: dragOffset)
     }
 
     var body: some View {
@@ -168,7 +146,7 @@ struct ImageGalleryView: View {
     /// Vertical swipe (either direction) to dismiss, like the iOS Photos viewer — runs
     /// alongside the `TabView`'s horizontal paging, which keeps its own horizontal drags.
     private var dismissDrag: some Gesture {
-        DragGesture(minimumDistance: Constants.dragMinimumDistance)
+        DragGesture(minimumDistance: DismissMetrics.minimumDragDistance)
             .onChanged { value in
                 guard !isZoomed, !isDismissing, abs(value.translation.height) > abs(value.translation.width) else {
                     dragOffset = 0
@@ -181,13 +159,14 @@ struct ImageGalleryView: View {
                     dragOffset = 0
                     return
                 }
-                let passedDistance = abs(value.translation.height) > Constants.dismissDistanceThreshold
-                let passedFlick = abs(value.predictedEndTranslation.height) > Constants.dismissPredictedThreshold
-                if passedDistance || passedFlick {
+                if DismissMetrics.shouldDismiss(
+                    translationHeight: value.translation.height,
+                    predictedHeight: value.predictedEndTranslation.height
+                ) {
                     // Freeze the content where the finger left it and crossfade it out, then
                     // remove the cover with animations off — no fly-out to collide with the
                     // fullScreenCover's own slide.
-                    withAnimation(.easeOut(duration: Constants.dismissFadeDuration)) {
+                    withAnimation(.easeOut(duration: DismissMetrics.dismissFadeDuration)) {
                         isDismissing = true
                     } completion: {
                         var transaction = Transaction()
@@ -196,8 +175,8 @@ struct ImageGalleryView: View {
                     }
                 } else {
                     withAnimation(.spring(
-                        response: Constants.dragResetSpringResponse,
-                        dampingFraction: Constants.dragResetSpringDamping
+                        response: DismissMetrics.resetSpringResponse,
+                        dampingFraction: DismissMetrics.resetSpringDamping
                     )) {
                         dragOffset = 0
                     }
@@ -212,28 +191,28 @@ private struct ImageGalleryPage: View {
     let serverURL: URL
     var onZoomChange: (Bool) -> Void = { _ in }
 
-    @State private var fileURL: URL?
+    @State private var gifURL: URL?
+    @State private var image: UIImage?
     @State private var errorMessage: String?
     @Dependency(\.filesClient) private var filesClient
 
+    /// Decode ceiling for a still image. Generous enough that `ZoomableScrollView`'s 4x zoom
+    /// still looks sharp, without ever holding a full 48MP bitmap resident. Read from
+    /// `UIScreen` on the main actor inside `.task`, not a nonisolated static.
+    @MainActor private var maxPixelDimension: CGFloat {
+        let screen = UIScreen.main.bounds
+        return max(screen.width, screen.height) * UIScreen.main.scale * 2
+    }
+
     var body: some View {
         ZStack {
-            if let fileURL {
-                // GIFs play their real animation via `AnimatedImageView` — `AsyncImage` only
-                // ever shows a GIF's first frame, no animation at all.
-                if item.kind.lowercased() == "gif" {
-                    ZoomableScrollView(onZoomChange: onZoomChange) { AnimatedImageView(fileURL: fileURL) }
-                } else {
-                    AsyncImage(url: fileURL) { phase in
-                        switch phase {
-                        case let .success(image):
-                            ZoomableScrollView(onZoomChange: onZoomChange) { image.resizable().scaledToFit() }
-                        case .failure:
-                            statusContent(message: L10n.Gallery.loadFailed)
-                        default:
-                            ProgressView()
-                        }
-                    }
+            if let gifURL {
+                // GIFs play their real animation via `AnimatedImageView` — a decoded still
+                // would only ever show the first frame.
+                ZoomableScrollView(onZoomChange: onZoomChange) { AnimatedImageView(fileURL: gifURL) }
+            } else if let image {
+                ZoomableScrollView(onZoomChange: onZoomChange) {
+                    Image(uiImage: image).resizable().scaledToFit()
                 }
             } else if let errorMessage {
                 statusContent(message: errorMessage)
@@ -244,7 +223,20 @@ private struct ImageGalleryPage: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .task(id: item.id) {
             do {
-                fileURL = try await filesClient.previewFile(serverURL, item)
+                let fileURL = try await filesClient.previewFile(serverURL, item)
+                if item.kind.lowercased() == "gif" {
+                    gifURL = fileURL
+                } else {
+                    let target = maxPixelDimension
+                    let decoded = await Task.detached(priority: .userInitiated) {
+                        ImageDownsampling.image(from: fileURL, maxPixelDimension: target)
+                    }.value
+                    guard let decoded else {
+                        errorMessage = L10n.Gallery.loadFailed
+                        return
+                    }
+                    image = decoded
+                }
             } catch {
                 errorMessage = (error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed
             }

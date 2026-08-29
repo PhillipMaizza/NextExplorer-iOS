@@ -265,27 +265,34 @@ public struct UploadsFeature {
             let lastReported = LockIsolated(0.0)
 
             let result = await withTaskGroup(
-                of: Void.self, returning: Result<FileItem, FilesClientError>.self
+                of: Void.self, returning: Result<FileItem, FilesClientError>?.self
             ) { group in
                 group.addTask {
                     for await fraction in progress {
                         await send(.progress(id: job.id, fraction))
                     }
                 }
-                let result = await apiResult {
-                    try await filesClient.uploadFile(serverURL, job.fileURL, job.fileName, job.destination) { fraction in
-                        let shouldForward = lastReported.withValue { last -> Bool in
-                            guard fraction >= 1 || fraction - last >= 0.02 else { return false }
-                            last = fraction
-                            return true
+                let result: Result<FileItem, FilesClientError>?
+                do {
+                    result = try await apiResult {
+                        try await filesClient.uploadFile(serverURL, job.fileURL, job.fileName, job.destination) { fraction in
+                            let shouldForward = lastReported.withValue { last -> Bool in
+                                guard fraction >= 1 || fraction - last >= 0.02 else { return false }
+                                last = fraction
+                                return true
+                            }
+                            if shouldForward { continuation.yield(fraction) }
                         }
-                        if shouldForward { continuation.yield(fraction) }
                     }
+                } catch {
+                    // Cancelled (`apiResult` rethrows cancellation) — send no response.
+                    result = nil
                 }
                 continuation.finish()
                 await group.waitForAll()
                 return result
             }
+            guard let result else { return }
             await send(.uploadResponse(id: job.id, result))
         }
         .cancellable(id: CancelID.job(job.id))

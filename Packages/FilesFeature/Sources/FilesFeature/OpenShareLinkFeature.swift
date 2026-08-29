@@ -70,7 +70,7 @@ public struct OpenShareLinkFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.infoResponse(await apiResult {
+                    await send(.infoResponse(try await apiResult {
                         try await filesClient.resolveShareLink(serverURL, token)
                     }))
                 }

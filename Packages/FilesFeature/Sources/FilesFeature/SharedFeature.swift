@@ -260,7 +260,7 @@ public struct SharedFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.deleteResponse(share.id, await apiResult {
+                    await send(.deleteResponse(share.id, try await apiResult {
                         try await filesClient.deleteShareLink(serverURL, share.id)
                         return true
                     }), animation: .default)
@@ -317,7 +317,7 @@ public struct SharedFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            await send(.sharesResponse(segment, await apiResult {
+            await send(.sharesResponse(segment, try await apiResult {
                 try segment == .byMe
                     ? await filesClient.mySharedLinks(serverURL)
                     : await filesClient.sharedWithMeLinks(serverURL)

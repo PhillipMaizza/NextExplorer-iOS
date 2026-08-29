@@ -10,10 +10,19 @@ struct MarkdownRendererTests {
         #expect(html.contains("<h1>Title</h1>"))
     }
 
-    @Test func pullsTheAppFontFromGoogleFontsAndNamesItFirst() {
+    @Test func namesTheAppFontFirstWithoutAnyRemoteFontFetch() {
         let html = MarkdownRenderer.html(from: "# Title")
-        #expect(html.contains("fonts.googleapis.com/css2?family=Figtree"))
         #expect(html.contains("font-family: \"Figtree\", -apple-system"))
+        // The render path must not phone home: no remote stylesheet, no preconnect.
+        #expect(!html.contains("fonts.googleapis.com"))
+        #expect(!html.contains("fonts.gstatic.com"))
+        #expect(!html.contains("<link"))
+    }
+
+    @Test func stripsActiveContentFromEmbeddedRawHTML() {
+        let html = MarkdownRenderer.html(from: "<script>alert(1)</script><p onclick=\"x()\">hi</p>")
+        #expect(!html.contains("<script"))
+        #expect(!html.contains("onclick"))
     }
 
     @Test func nonASCIIRoundTripsIntactRatherThanMojibake() {

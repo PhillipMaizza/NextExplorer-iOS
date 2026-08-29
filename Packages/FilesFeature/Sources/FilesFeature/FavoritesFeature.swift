@@ -113,7 +113,7 @@ public struct FavoritesFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.removeResponse(favorite.id, await apiResult {
+                    await send(.removeResponse(favorite.id, try await apiResult {
                         try await filesClient.removeFavorite(serverURL, favorite.path)
                         return true
                     }), animation: .default)
@@ -149,7 +149,7 @@ public struct FavoritesFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.reorderResponse(await apiResult {
+                    await send(.reorderResponse(try await apiResult {
                         try await filesClient.reorderFavorites(serverURL, orderedIDs)
                     }))
                 }
@@ -265,7 +265,7 @@ public struct FavoritesFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            await send(.favoritesResponse(await apiResult { try await filesClient.favorites(serverURL) }))
+            await send(.favoritesResponse(try await apiResult { try await filesClient.favorites(serverURL) }))
         }
     }
 

@@ -61,7 +61,7 @@ public struct ThumbnailSettingsFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.settingsResponse(await apiResult {
+                    await send(.settingsResponse(try await apiResult {
                         try await filesClient.fetchSystemSettings(serverURL)
                     }))
                 }
@@ -111,7 +111,7 @@ public struct ThumbnailSettingsFeature {
                 let draft = state.draft
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.saveResponse(await apiResult {
+                    await send(.saveResponse(try await apiResult {
                         try await filesClient.updateThumbnailSettings(serverURL, draft)
                     }))
                 }

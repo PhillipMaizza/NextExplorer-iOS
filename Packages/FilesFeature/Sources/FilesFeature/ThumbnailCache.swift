@@ -11,21 +11,47 @@ import Foundation
 /// in Settings covers thumbnails too.
 public struct ThumbnailCache: Sendable {
     public var data: @Sendable (_ url: URL) async throws -> Data
+    /// Resolves and remembers a file's thumbnail URL, so re-opening a folder doesn't re-hit
+    /// `GET /api/thumbnails/*` once per file. The server bakes the file's content hash into
+    /// the URL it returns, so a remembered mapping is valid only while the file is unchanged:
+    /// `signature` (`FileItem.cacheSignature`) keys that. `resolve` runs only on a cache miss
+    /// or a changed signature; a `nil` result is remembered too, so an un-thumbnailable file
+    /// isn't asked about again on every scroll.
+    public var resolvedURL: @Sendable (
+        _ path: String, _ signature: String, _ resolve: @Sendable () async -> URL?
+    ) async -> URL?
 
-    public init(data: @escaping @Sendable (_ url: URL) async throws -> Data) {
+    public init(
+        data: @escaping @Sendable (_ url: URL) async throws -> Data,
+        resolvedURL: @escaping @Sendable (
+            _ path: String, _ signature: String, _ resolve: @Sendable () async -> URL?
+        ) async -> URL?
+    ) {
         self.data = data
+        self.resolvedURL = resolvedURL
     }
 }
 
 extension ThumbnailCache: DependencyKey {
-    private static func cacheFileURL(for url: URL) throws -> URL {
-        let cachesDirectory = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let directory = cachesDirectory.appendingPathComponent("PreviewCache", isDirectory: true)
-            .appendingPathComponent("thumbnails", isDirectory: true)
-        let digest = SHA256.hash(data: Data(url.absoluteString.utf8))
-        let key = digest.map { String(format: "%02x", $0) }.joined()
-        return directory.appendingPathComponent(key)
+    private static func hexDigest(of string: String) -> String {
+        SHA256.hash(data: Data(string.utf8)).map { String(format: "%02x", $0) }.joined()
     }
+
+    private static func previewCacheSubdirectory(_ name: String) throws -> URL {
+        let cachesDirectory = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        return cachesDirectory.appendingPathComponent("PreviewCache", isDirectory: true)
+            .appendingPathComponent(name, isDirectory: true)
+    }
+
+    private static func cacheFileURL(for url: URL) throws -> URL {
+        try previewCacheSubdirectory("thumbnails").appendingPathComponent(hexDigest(of: url.absoluteString))
+    }
+
+    private static func resolutionRecordURL(for path: String) throws -> URL {
+        try previewCacheSubdirectory("thumbnail-urls").appendingPathComponent(hexDigest(of: path))
+    }
+
+    private static let resolutionRecordSeparator = "\u{0}"
 
     public static let liveValue = ThumbnailCache(
         data: { url in
@@ -40,10 +66,30 @@ extension ThumbnailCache: DependencyKey {
             try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
             try data.write(to: fileURL, options: .atomic)
             return data
+        },
+        resolvedURL: { path, signature, resolve in
+            let recordURL = try? resolutionRecordURL(for: path)
+            if let recordURL,
+               let record = try? String(contentsOf: recordURL, encoding: .utf8) {
+                let parts = record.components(separatedBy: resolutionRecordSeparator)
+                if parts.count == 2, parts[0] == signature {
+                    return parts[1].isEmpty ? nil : URL(string: parts[1])
+                }
+            }
+            let resolved = await resolve()
+            if let recordURL {
+                try? FileManager.default.createDirectory(at: recordURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try? "\(signature)\(resolutionRecordSeparator)\(resolved?.absoluteString ?? "")"
+                    .write(to: recordURL, atomically: true, encoding: .utf8)
+            }
+            return resolved
         }
     )
 
-    public static let testValue = ThumbnailCache(data: { _ in throw Unimplemented() })
+    public static let testValue = ThumbnailCache(
+        data: { _ in throw Unimplemented() },
+        resolvedURL: { _, _, resolve in await resolve() }
+    )
 
     private struct Unimplemented: Error {}
 }

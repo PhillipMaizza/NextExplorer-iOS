@@ -21,6 +21,7 @@ struct FileRowView: View {
     let itemID: String?
     let kind: String?
     let supportsThumbnail: Bool
+    let thumbnailSignature: String
     let serverURL: URL?
     let showThumbnails: Bool
     /// When set, replaces the folder/file-type glyph — used by the Favorites list to show a
@@ -59,6 +60,7 @@ struct FileRowView: View {
         self.itemID = nil
         self.kind = kind
         self.supportsThumbnail = false
+        self.thumbnailSignature = ""
         self.serverURL = nil
         self.showThumbnails = false
         self.customIcon = customIcon
@@ -76,6 +78,7 @@ struct FileRowView: View {
         self.itemID = item.id
         self.kind = item.kind
         self.supportsThumbnail = item.supportsThumbnail
+        self.thumbnailSignature = item.cacheSignature
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
         self.customIcon = nil
@@ -156,7 +159,7 @@ struct FileRowView: View {
                 .foregroundStyle(customIconTint ?? Color.accent)
                 .frame(width: Constants.iconFrame, height: Constants.iconFrame)
         } else if isEligibleForThumbnail, let serverURL, let itemID {
-            ThumbnailImage(serverURL: serverURL, path: itemID, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
+            ThumbnailImage(serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
                 .frame(width: Constants.iconFrame, height: Constants.iconFrame)
                 .clipShape(RoundedRectangle(cornerRadius: .radiusControl))
         } else if isDirectory {

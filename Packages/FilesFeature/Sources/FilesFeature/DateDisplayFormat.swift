@@ -38,42 +38,55 @@ public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
     }
 
     /// Every case but `.system` is a fixed literal pattern by design — the whole point of
-    /// picking one is to *not* follow the device's locale. A fresh `DateFormatter` per call
-    /// rather than one cached instance per case (nine long-lived formatters is wasteful) —
-    /// but also rather than one *shared* cached instance, which would race under concurrent
-    /// callers (Swift Testing runs tests in parallel by default; two tests reconfiguring the
-    /// same formatter at once produced garbled results). This is called at most once per
-    /// visible row, not a hot loop, so the construction cost is a non-issue either way.
+    /// picking one is to *not* follow the device's locale. `string(from:)` runs once per
+    /// visible row, so the formatters are built once and cached (behind a lock, since Swift
+    /// Testing runs cases in parallel) rather than reallocated on every call.
     public func string(from date: Date, includeTime: Bool = false) -> String {
-        let formatter = DateFormatter()
-        switch self {
-        case .system:
-            formatter.dateFormat = nil
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .none
-        case .slashMonthDayYear:
-            formatter.dateFormat = "MM/dd/yyyy"
-        case .slashDayMonthYear:
-            formatter.dateFormat = "dd/MM/yyyy"
-        case .dashYearMonthDay:
-            formatter.dateFormat = "yyyy-MM-dd"
-        case .dashDayMonthYear:
-            formatter.dateFormat = "dd-MM-yyyy"
-        case .dashMonthDayYear:
-            formatter.dateFormat = "MM-dd-yyyy"
-        case .dotDayMonthYear:
-            formatter.dateFormat = "dd.MM.yyyy"
-        case .abbreviatedMonthDayYear:
-            formatter.dateFormat = "MMM d, yyyy"
-        case .dayAbbreviatedMonthYear:
-            formatter.dateFormat = "d MMM yyyy"
-        }
-        let dateText = formatter.string(from: date)
+        let dateText = Self.cache.dateFormatter(for: self).string(from: date)
         guard includeTime else { return dateText }
+        return "\(dateText), \(Self.cache.timeFormatter.string(from: date))"
+    }
 
-        let timeFormatter = DateFormatter()
-        timeFormatter.dateStyle = .none
-        timeFormatter.timeStyle = .short
-        return "\(dateText), \(timeFormatter.string(from: date))"
+    private var dateFormatPattern: String? {
+        switch self {
+        case .system: nil
+        case .slashMonthDayYear: "MM/dd/yyyy"
+        case .slashDayMonthYear: "dd/MM/yyyy"
+        case .dashYearMonthDay: "yyyy-MM-dd"
+        case .dashDayMonthYear: "dd-MM-yyyy"
+        case .dashMonthDayYear: "MM-dd-yyyy"
+        case .dotDayMonthYear: "dd.MM.yyyy"
+        case .abbreviatedMonthDayYear: "MMM d, yyyy"
+        case .dayAbbreviatedMonthYear: "d MMM yyyy"
+        }
+    }
+
+    private static let cache = FormatterCache()
+
+    private final class FormatterCache: @unchecked Sendable {
+        private let lock = NSLock()
+        private var formatters: [DateDisplayFormat: DateFormatter] = [:]
+
+        let timeFormatter: DateFormatter = {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .none
+            formatter.timeStyle = .short
+            return formatter
+        }()
+
+        func dateFormatter(for format: DateDisplayFormat) -> DateFormatter {
+            lock.lock()
+            defer { lock.unlock() }
+            if let existing = formatters[format] { return existing }
+            let formatter = DateFormatter()
+            if let pattern = format.dateFormatPattern {
+                formatter.dateFormat = pattern
+            } else {
+                formatter.dateStyle = .medium
+                formatter.timeStyle = .none
+            }
+            formatters[format] = formatter
+            return formatter
+        }
     }
 }

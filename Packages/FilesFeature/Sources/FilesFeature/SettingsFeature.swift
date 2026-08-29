@@ -189,7 +189,7 @@ public struct SettingsFeature {
                     .run { send in
                         await send(.serverUsageResponse(
                             path: volume.path,
-                            await apiResult { try await filesClient.fetchUsage(serverURL, volume.path) }
+                            try await apiResult { try await filesClient.fetchUsage(serverURL, volume.path) }
                         ))
                     }
                 })
@@ -224,14 +224,14 @@ public struct SettingsFeature {
                     checkDownloads,
                     checkCacheSize,
                     .run { send in
-                        await send(.brandingResponse(await apiResult { try await filesClient.fetchBranding(serverURL) }))
+                        await send(.brandingResponse(try await apiResult { try await filesClient.fetchBranding(serverURL) }))
                     },
                     .run { send in
                         guard let features = try? await filesClient.serverFeatures(serverURL) else { return }
                         await send(.serverFeaturesResponse(features))
                     },
                     .run { send in
-                        await send(.preferencesResponse(await apiResult {
+                        await send(.preferencesResponse(try await apiResult {
                             try await filesClient.fetchPreferences(serverURL)
                         }))
                     }
@@ -358,7 +358,7 @@ public struct SettingsFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            await send(.updatePreferenceResponse(await apiResult {
+            await send(.updatePreferenceResponse(try await apiResult {
                 try await filesClient.updatePreference(serverURL, key, value)
             }))
         }

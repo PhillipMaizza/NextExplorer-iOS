@@ -14,18 +14,10 @@ private enum Constants {
     static let statusSpacing: CGFloat = .space16
     /// Chrome crossfade when tapping a full-screen archive image, matching `ImageGalleryView`.
     static let chromeFadeDuration: Double = 0.22
-    /// Swipe-to-dismiss on the full-screen archive image — same values as `ImageGalleryView`.
-    static let dismissDistanceThreshold: CGFloat = 120
-    static let dismissPredictedThreshold: CGFloat = 360
-    static let dragMinimumDistance: CGFloat = 12
-    static let minBackgroundOpacity: Double = 0.35
-    static let dragScaleFloor: CGFloat = 0.88
-    static let dragScaleDivisor: CGFloat = 1400
-    static let dragResetSpringResponse: Double = 0.3
-    static let dragResetSpringDamping: Double = 0.85
-    static let dismissFadeDuration: Double = 0.2
-    static let draggingContentOpacityFloor: Double = 0.6
 }
+
+/// Swipe-to-dismiss thresholds + offset math, shared with the other full-screen viewers.
+private typealias DismissMetrics = SwipeToDismissMetrics
 
 /// One entry inside a `.zip`/`.rar`, normalized across both underlying libraries' own
 /// `Entry` types — `path` is the entry's full path within the archive (e.g. `"a/b/c.txt"`),
@@ -325,8 +317,11 @@ struct ArchiveBrowserView: View {
             return
         }
         guard let source else { return }
+        guard let destination = SafeDestination.within(Self.temporaryDirectory(for: item), row.name) else {
+            toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.openFailed)
+            return
+        }
         do {
-            let destination = Self.temporaryDirectory(for: item).appendingPathComponent(row.name)
             try? FileManager.default.removeItem(at: destination)
             try FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
             try ArchiveReader.extract(fullPath, from: source, to: destination)
@@ -343,7 +338,8 @@ struct ArchiveBrowserView: View {
     private func resolveAsset(_ relativePath: String, relativeTo directory: String) async -> URL? {
         guard let source, let resolved = RelativeAssetPath.resolve(relativePath, relativeTo: directory) else { return nil }
         let entryPath = resolved.parent.isEmpty ? resolved.name : "\(resolved.parent)/\(resolved.name)"
-        let destination = Self.temporaryDirectory(for: item).appendingPathComponent("assets").appendingPathComponent(entryPath)
+        let assetsBase = Self.temporaryDirectory(for: item).appendingPathComponent("assets", isDirectory: true)
+        guard let destination = SafeDestination.within(assetsBase, entryPath) else { return nil }
         try? FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
         try? FileManager.default.removeItem(at: destination)
         return (try? ArchiveReader.extract(entryPath, from: source, to: destination)) != nil ? destination : nil
@@ -425,22 +421,16 @@ private struct ArchiveImagePreviewView: View {
     /// image doesn't close the viewer.
     @State private var isZoomed = false
 
-    private var dragProgress: CGFloat {
-        min(1, abs(dragOffset) / Constants.dismissDistanceThreshold)
-    }
-
     private var backgroundOpacity: Double {
-        if isDismissing { return 0 }
-        return 1 - (1 - Constants.minBackgroundOpacity) * Double(dragProgress)
+        DismissMetrics.backgroundOpacity(forOffset: dragOffset, isDismissing: isDismissing)
     }
 
     private var contentOpacity: Double {
-        if isDismissing { return 0 }
-        return 1 - (1 - Constants.draggingContentOpacityFloor) * Double(dragProgress)
+        DismissMetrics.contentOpacity(forOffset: dragOffset, isDismissing: isDismissing)
     }
 
     private var dragScale: CGFloat {
-        max(Constants.dragScaleFloor, 1 - abs(dragOffset) / Constants.dragScaleDivisor)
+        DismissMetrics.scale(forOffset: dragOffset)
     }
 
     var body: some View {
@@ -502,7 +492,7 @@ private struct ArchiveImagePreviewView: View {
     /// Vertical swipe (either direction) to dismiss, like the Photos viewer — runs alongside
     /// the zoom scroll view's own pan, which keeps its gestures once zoomed in.
     private var dismissDrag: some Gesture {
-        DragGesture(minimumDistance: Constants.dragMinimumDistance)
+        DragGesture(minimumDistance: DismissMetrics.minimumDragDistance)
             .onChanged { value in
                 guard !isZoomed, !isDismissing, abs(value.translation.height) > abs(value.translation.width) else {
                     dragOffset = 0
@@ -515,18 +505,19 @@ private struct ArchiveImagePreviewView: View {
                     dragOffset = 0
                     return
                 }
-                let passedDistance = abs(value.translation.height) > Constants.dismissDistanceThreshold
-                let passedFlick = abs(value.predictedEndTranslation.height) > Constants.dismissPredictedThreshold
-                if passedDistance || passedFlick {
-                    withAnimation(.easeOut(duration: Constants.dismissFadeDuration)) {
+                if DismissMetrics.shouldDismiss(
+                    translationHeight: value.translation.height,
+                    predictedHeight: value.predictedEndTranslation.height
+                ) {
+                    withAnimation(.easeOut(duration: DismissMetrics.dismissFadeDuration)) {
                         isDismissing = true
                     } completion: {
                         onDismiss()
                     }
                 } else {
                     withAnimation(.spring(
-                        response: Constants.dragResetSpringResponse,
-                        dampingFraction: Constants.dragResetSpringDamping
+                        response: DismissMetrics.resetSpringResponse,
+                        dampingFraction: DismissMetrics.resetSpringDamping
                     )) {
                         dragOffset = 0
                     }
@@ -575,14 +566,20 @@ private struct ArchiveTextEntryPreviewView: View {
                 }
         }
         .task {
-            content = try? String(contentsOf: fileURL, encoding: .utf8)
-            if let content, isMarkdown {
-                // Memoized once here rather than called inline from `body_`, which would
-                // otherwise re-parse the whole document synchronously on every unrelated
-                // SwiftUI re-render while in rendered mode.
-                renderedMarkdownHTML = MarkdownRenderer.html(from: content)
+            // Read + (for Markdown) render off the main actor — a multi-megabyte entry would
+            // otherwise block the UI while it decodes and parses. Memoized once here rather
+            // than inline from `body_`, which would re-parse on every unrelated re-render.
+            let shouldRenderMarkdown = isMarkdown
+            let loaded: (text: String, markdownHTML: String)? = await Task.detached(priority: .userInitiated) {
+                guard let text = try? String(contentsOf: fileURL, encoding: .utf8) else { return nil }
+                return (text, shouldRenderMarkdown ? MarkdownRenderer.html(from: text) : "")
+            }.value
+            guard let loaded else {
+                loadErrorMessage = L10n.Archive.openFailed
+                return
             }
-            if content == nil { loadErrorMessage = L10n.Archive.openFailed }
+            content = loaded.text
+            renderedMarkdownHTML = loaded.markdownHTML
         }
     }
 

@@ -545,6 +545,7 @@ login.testConnection	Test connection
 login.emailField	Email
 login.passwordField	Password
 login.submit	Log In
+login.plaintextWarning	This connection isn't encrypted. Your password and session are sent in the clear over the local network.
 
 # ---- errors (FilesClientError.userMessage) ----
 error.sessionExpired	Your session expired. Sign in again.
@@ -552,6 +553,7 @@ error.rateLimited	Too many requests. Try again shortly.
 error.network	Couldn't reach the server.
 error.decoding	Server responded unexpectedly.
 error.server	Server error (%lld).
+error.forbidden	You don't have permission to do that.
 
 # ---- change password ----
 changePassword.navigationTitle	Change Password

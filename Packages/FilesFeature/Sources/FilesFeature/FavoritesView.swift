@@ -263,8 +263,12 @@ struct FavoritesView: View {
     }
 
     private var listContent: some View {
-        List {
-            ForEach(store.displayedFavorites) { favorite in
+        // Bound once — the separator checks below would otherwise re-filter the list per row.
+        let favorites = store.displayedFavorites
+        let firstID = favorites.first?.id
+        let lastID = favorites.last?.id
+        return List {
+            ForEach(favorites) { favorite in
                 Button {
                     handleTap(favorite)
                 } label: {

@@ -24,6 +24,7 @@ struct GridCellView: View {
     let itemID: String?
     let kind: String?
     let supportsThumbnail: Bool
+    let thumbnailSignature: String
     let serverURL: URL?
     let showThumbnails: Bool
     let iconSize: CGFloat
@@ -48,6 +49,7 @@ struct GridCellView: View {
         self.itemID = nil
         self.kind = kind
         self.supportsThumbnail = false
+        self.thumbnailSignature = ""
         self.serverURL = nil
         self.showThumbnails = false
         self.iconSize = Constants.defaultIconSize
@@ -63,6 +65,7 @@ struct GridCellView: View {
         self.itemID = item.id
         self.kind = item.kind
         self.supportsThumbnail = item.supportsThumbnail
+        self.thumbnailSignature = item.cacheSignature
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
         self.iconSize = iconSize
@@ -123,7 +126,7 @@ struct GridCellView: View {
                 .foregroundStyle(customIconTint ?? Color.accent)
                 .frame(width: iconSize, height: iconSize)
         } else if isEligibleForThumbnail, let serverURL, let itemID {
-            ThumbnailImage(serverURL: serverURL, path: itemID, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
+            ThumbnailImage(serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
                 .frame(width: iconSize, height: iconSize)
                 .clipShape(RoundedRectangle(cornerRadius: .radiusControl))
         } else if isDirectory {
