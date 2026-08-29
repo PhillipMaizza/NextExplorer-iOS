@@ -70,7 +70,6 @@ public enum IconKit {
     public static let delete = Image(systemName: "trash")
     public static let time = Image(systemName: "clock")
     public static let rename = Image(systemName: "square.and.pencil")
-    public static let edit = Image(systemName: "pencil")
     public static let haptics = Image(systemName: "waveform")
     public static let download = Image(systemName: "arrow.down.circle")
     public static let upload = Image(systemName: "arrow.up.circle")

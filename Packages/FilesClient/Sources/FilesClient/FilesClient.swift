@@ -113,18 +113,6 @@ public struct FilesClient: Sendable {
     /// Unauthenticated; a bad token 404s.
     public var resolveShareLink: @Sendable (_ serverURL: URL, _ token: String) async throws -> ShareInfo
 
-    /// `POST /api/onlyoffice/config`: a launch payload for an ONLYOFFICE editing session on
-    /// the file at `path`. Server 400s with a message when `PUBLIC_URL` / `ONLYOFFICE_URL`
-    /// are unset.
-    public var fetchOnlyOfficeConfig: @Sendable (
-        _ serverURL: URL, _ path: String, _ mode: OfficeEditorMode
-    ) async throws -> OnlyOfficeLaunch
-    /// `POST /api/collabora/config`: a ready-to-load Collabora Online iframe URL for the file
-    /// at `path`. Server 400s with a message when the Collabora env vars are unset.
-    public var fetchCollaboraConfig: @Sendable (
-        _ serverURL: URL, _ path: String, _ mode: OfficeEditorMode
-    ) async throws -> CollaboraLaunch
-
     /// `POST /api/auth/password`: the signed in user changes their own local password. Needs
     /// the current password; rate limited server side.
     public var changeOwnPassword: @Sendable (
@@ -133,7 +121,7 @@ public struct FilesClient: Sendable {
 
     // MARK: Admin user management (all require the caller to have the `admin` role)
 
-    /// `GET /api/features`: the server's feature flags (user volumes, volume usage, office editors).
+    /// `GET /api/features`: the server's feature flags (currently just user volumes).
     public var serverFeatures: @Sendable (_ serverURL: URL) async throws -> ServerFeatures
 
     /// `GET /api/settings`: the admin-only `thumbnails` + `access.rules` slice. Both are
