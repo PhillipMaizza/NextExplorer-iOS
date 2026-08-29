@@ -762,4 +762,60 @@ struct FilesClientLiveTests {
             _ = try await makeClient().uploadFile(serverURL, fileURL, "notes.txt", "Inbox") { _ in }
         }
     }
+
+    // MARK: updateShareLink
+
+    private static let shareJSON = #"""
+    {"id": "s1", "shareToken": "AbC123xyz0", "ownerId": "u1", "sourcePath": "Docs/Report",
+     "isDirectory": true, "accessMode": "readwrite", "sharingType": "anyone", "hasPassword": false,
+     "expiresAt": null, "label": "Report", "downloadCount": 0, "lastAccessedAt": null,
+     "createdAt": "2027-01-15T10:00:00.000Z", "updatedAt": "2027-01-16T10:00:00.000Z"}
+    """#
+
+    private func updateBody(_ request: UpdateShareRequest) async throws -> [String: Any] {
+        stub(statusCode: 200, body: Self.shareJSON.data(using: .utf8)!)
+        StubURLProtocol.capturedRequest = nil
+        _ = try await makeClient().updateShareLink(serverURL, "s1", request)
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.httpMethod == "PUT")
+        #expect(request.url?.absoluteString == "https://example.com/api/shares/s1")
+        let data = try #require(StubURLProtocol.capturedRequestBody)
+        return try #require(try JSONSerialization.jsonObject(with: data) as? [String: Any])
+    }
+
+    @Test
+    func updateShareLinkOmitsThePasswordKeyWhenKeeping() async throws {
+        let body = try await updateBody(UpdateShareRequest(label: "New", accessMode: .readonly, target: .anyone, password: .keep))
+        #expect(body["password"] == nil)
+        #expect(body["label"] as? String == "New")
+        #expect(body["accessMode"] as? String == "readonly")
+        #expect(body["userIds"] == nil) // not a users share
+    }
+
+    @Test
+    func updateShareLinkSendsNullToRemoveThePassword() async throws {
+        let body = try await updateBody(UpdateShareRequest(password: .remove))
+        #expect(body["password"] is NSNull)
+    }
+
+    @Test
+    func updateShareLinkSendsTheStringToChangeThePassword() async throws {
+        let body = try await updateBody(UpdateShareRequest(password: .set("hunter2")))
+        #expect(body["password"] as? String == "hunter2")
+    }
+
+    @Test
+    func updateShareLinkIncludesUserIdsOnlyForAUsersShare() async throws {
+        let body = try await updateBody(UpdateShareRequest(target: .users, userIds: ["u2", "u3"], password: .keep))
+        #expect(body["userIds"] as? [String] == ["u2", "u3"])
+        #expect(body["sharingType"] as? String == "users")
+    }
+
+    @Test
+    func updateShareLinkMapsAForbiddenResponseToAServerError() async throws {
+        stub(statusCode: 403, body: Data())
+        await #expect(throws: FilesClientError.server(statusCode: 403)) {
+            _ = try await makeClient().updateShareLink(serverURL, "s1", UpdateShareRequest())
+        }
+    }
 }
