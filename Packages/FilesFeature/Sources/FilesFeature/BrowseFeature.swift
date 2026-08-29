@@ -197,6 +197,8 @@ public struct BrowseFeature {
         /// destination folder, total size, Upload button. On confirm its files become
         /// `PendingUpload`s handed up to the app wide queue.
         @Presents public var uploadReview: UploadReviewFeature.State?
+        /// The "Permissions" sheet for a single item — view/chmod/chown via `/api/permissions`.
+        @Presents public var permissions: PermissionsFeature.State?
         /// Set once a transfer finishes; `BrowseContentView` turns this into a success toast,
         /// mirroring `downloadSuccessMessage`'s lifecycle.
         public var transferSuccessMessage: String?
@@ -349,6 +351,8 @@ public struct BrowseFeature {
         case transferResponse(Result<TransferOutcome, FilesClientError>)
         case destinationPicker(PresentationAction<DestinationPickerFeature.Action>)
         case infoTapped(FileItem)
+        case permissionsTapped(FileItem)
+        case permissions(PresentationAction<PermissionsFeature.Action>)
         case infoDismissed
         case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
         case infoUsageResponse(Result<StorageUsage, FilesClientError>)
@@ -861,6 +865,13 @@ public struct BrowseFeature {
             case let .infoTapped(item):
                 return loadInfo(&state, item: item)
 
+            case let .permissionsTapped(item):
+                state.permissions = PermissionsFeature.State(serverURL: state.serverURL, item: item)
+                return .none
+
+            case .permissions:
+                return .none
+
             case .infoDismissed:
                 state.infoItem = nil
                 state.infoMetadata = nil
@@ -956,6 +967,9 @@ public struct BrowseFeature {
         }
         .ifLet(\.$uploadReview, action: \.uploadReview) {
             UploadReviewFeature()
+        }
+        .ifLet(\.$permissions, action: \.permissions) {
+            PermissionsFeature()
         }
     }
 

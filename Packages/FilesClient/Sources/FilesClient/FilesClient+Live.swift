@@ -68,6 +68,15 @@ extension FilesClient {
             fetchUsage: { serverURL, path in
                 try await service.fetchUsage(serverURL: serverURL, path: path)
             },
+            fetchPermissions: { serverURL, path in
+                try await service.fetchPermissions(serverURL: serverURL, path: path)
+            },
+            changePermissions: { serverURL, path, mode, recursive in
+                try await service.changePermissions(serverURL: serverURL, path: path, mode: mode, recursive: recursive)
+            },
+            changeOwnership: { serverURL, path, owner, group in
+                try await service.changeOwnership(serverURL: serverURL, path: path, owner: owner, group: group)
+            },
             thumbnailURL: { serverURL, path in
                 try await service.thumbnailURL(serverURL: serverURL, path: path)
             },

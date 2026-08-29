@@ -60,6 +60,19 @@ extension FilesClient {
                 ? StorageUsage(path: path, size: 188_000_000_000, free: 12_000_000_000, total: 200_000_000_000)
                 : StorageUsage(path: path, size: 42_000_000_000, free: 58_000_000_000, total: 100_000_000_000)
         },
+        fetchPermissions: { _, path in
+            FilePermissions(
+                path: path,
+                mode: 0o100_644,
+                owner: "phillip",
+                group: "staff",
+                uid: 501,
+                gid: 20,
+                isDirectory: false
+            )
+        },
+        changePermissions: { _, _, _, _ in },
+        changeOwnership: { _, _, _, _ in },
         thumbnailURL: { _, _ in nil },
         previewFile: { _, item in
             let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Previews-Preview", isDirectory: true)
