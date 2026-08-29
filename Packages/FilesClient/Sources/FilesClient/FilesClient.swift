@@ -16,6 +16,17 @@ public struct FilesClient: Sendable {
     public var updatePreference: @Sendable (
         _ serverURL: URL, _ key: UserPreferenceKey, _ value: Bool
     ) async throws -> Void
+    /// `GET /api/branding` — the server's app name + logo, unauthenticated.
+    public var fetchBranding: @Sendable (_ serverURL: URL) async throws -> Branding
+    /// `PATCH /api/settings` with `{ branding: {...} }` (admin only; the server 403s a
+    /// non-admin). Returns the branding as the server stored it.
+    public var updateBranding: @Sendable (
+        _ serverURL: URL, _ appName: String, _ appLogoUrl: String
+    ) async throws -> Branding
+    /// `POST /api/settings/upload-logo` (admin) — one JPEG in a `logo` multipart field,
+    /// ≤2 MB. Returns the server-relative URL of the stored logo, to be persisted via
+    /// `updateBranding`.
+    public var uploadServerLogo: @Sendable (_ serverURL: URL, _ jpegData: Data) async throws -> String
     public var renameItem: @Sendable (
         _ serverURL: URL, _ item: FileItem, _ newName: String
     ) async throws -> FileItem
