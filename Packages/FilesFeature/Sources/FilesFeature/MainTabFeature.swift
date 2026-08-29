@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import FilesClient
 import Foundation
 import Localization
 
@@ -27,6 +28,9 @@ public struct MainTabFeature {
         public var settings: SettingsFeature.State
         public var uploads: UploadsFeature.State
         public var uploadToast: UploadToast?
+        /// One-shot server feature flags, fetched on launch and read app-wide (currently by
+        /// the Browse tab, to decide whether a document opens in a web office editor).
+        @Shared(.inMemory(ServerFeatures.sharedKey)) public var serverFeatures = ServerFeatures()
 
         public init(serverURL: URL, user: User) {
             self.browse = BrowseTabFeature.State(serverURL: serverURL)
@@ -44,6 +48,8 @@ public struct MainTabFeature {
     }
 
     public enum Action: Sendable {
+        case task
+        case serverFeaturesResponse(ServerFeatures)
         case tabSelected(Tab)
         /// Sent when the scene becomes active again after being backgrounded — `BrowseTabFeature`
         /// re-fetches the current folder and every pushed subfolder, since `BrowseFeature.onAppear`
@@ -63,6 +69,8 @@ public struct MainTabFeature {
             case signOutButtonTapped
         }
     }
+
+    @Dependency(\.filesClient) var filesClient
 
     public init() {}
 
@@ -87,6 +95,18 @@ public struct MainTabFeature {
         }
         Reduce { state, action in
             switch action {
+            case .task:
+                let serverURL = state.browse.root.serverURL
+                let filesClient = self.filesClient
+                return .run { send in
+                    guard let features = try? await filesClient.serverFeatures(serverURL) else { return }
+                    await send(.serverFeaturesResponse(features))
+                }
+
+            case let .serverFeaturesResponse(features):
+                state.$serverFeatures.withLock { $0 = features }
+                return .none
+
             case let .tabSelected(tab):
                 state.selectedTab = tab
                 return .none

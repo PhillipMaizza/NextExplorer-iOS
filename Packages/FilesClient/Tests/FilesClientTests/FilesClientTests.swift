@@ -845,4 +845,53 @@ struct FilesClientLiveTests {
             _ = try await makeClient().resolveShareLink(serverURL, "nope00")
         }
     }
+
+    // MARK: office editors
+
+    @Test
+    func onlyOfficeConfigPostsThePathAndModeAndKeepsTheSignedConfig() async throws {
+        stub(statusCode: 200, body: #"""
+        {"documentServerUrl":"https://office.example.com","config":{"documentType":"word","token":"signed.jwt","document":{"key":"abc"}}}
+        """#.data(using: .utf8)!)
+        StubURLProtocol.capturedRequest = nil
+
+        let launch = try await makeClient().fetchOnlyOfficeConfig(serverURL, "Docs/Report.docx", .edit)
+
+        #expect(launch.documentServerURL.absoluteString == "https://office.example.com")
+        let config = try #require(try JSONSerialization.jsonObject(with: launch.configJSON) as? [String: Any])
+        #expect(config["token"] as? String == "signed.jwt")
+
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.url?.path == "/api/onlyoffice/config")
+        #expect(request.httpMethod == "POST")
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
+        #expect(json["path"] == "Docs/Report.docx")
+        #expect(json["mode"] == "edit")
+    }
+
+    @Test
+    func collaboraConfigDecodesTheIframeURL() async throws {
+        stub(statusCode: 200, body: #"""
+        {"urlSrc":"https://collabora.example.com/browser/x/cool.html?WOPISrc=https%3A%2F%2Ff.example.com%2Fwopi&access_token=abc","fileId":"x","accessToken":"abc","accessTokenTtl":123}
+        """#.data(using: .utf8)!)
+        StubURLProtocol.capturedRequest = nil
+
+        let launch = try await makeClient().fetchCollaboraConfig(serverURL, "Docs/Sheet.xlsx", .view)
+
+        #expect(launch.url.host == "collabora.example.com")
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.url?.path == "/api/collabora/config")
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
+        #expect(json["mode"] == "view")
+    }
+
+    @Test
+    func anOnlyOfficeConfigErrorMessageSurfaces() async throws {
+        stub(statusCode: 400, body: #"{"error":{"message":"PUBLIC_URL is required on the server."}}"#.data(using: .utf8)!)
+        await #expect(throws: FilesClientError.serverMessage(statusCode: 400, message: "PUBLIC_URL is required on the server.")) {
+            _ = try await makeClient().fetchOnlyOfficeConfig(serverURL, "a/b.docx", .edit)
+        }
+    }
 }

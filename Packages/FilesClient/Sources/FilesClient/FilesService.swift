@@ -274,6 +274,57 @@ struct FilesService: Sendable {
         return try await send(request, decoding: ShareInfo.self)
     }
 
+    /// `POST /api/onlyoffice/config`, confirmed against `backend/src/routes/onlyoffice.js`:
+    /// returns `{ documentServerUrl, config }` where `config` is a server-signed object handed
+    /// straight to `DocsAPI.DocEditor`. Kept as raw JSON so the signed `token` inside it is
+    /// never reshaped.
+    func fetchOnlyOfficeConfig(serverURL: URL, path: String, mode: OfficeEditorMode) async throws -> OnlyOfficeLaunch {
+        let url = serverURL.appendingPathComponent(APIPath.onlyOfficeConfig)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(OfficeConfigBody(path: path, mode: mode.rawValue))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
+        guard
+            let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let documentServerString = object["documentServerUrl"] as? String,
+            let documentServerURL = URL(string: documentServerString),
+            let config = object["config"] as? [String: Any],
+            let configJSON = try? JSONSerialization.data(withJSONObject: config)
+        else {
+            throw FilesClientError.decoding("Malformed ONLYOFFICE config response.")
+        }
+        return OnlyOfficeLaunch(documentServerURL: documentServerURL, configJSON: configJSON)
+    }
+
+    /// `POST /api/collabora/config`, confirmed against `backend/src/routes/collabora.js`:
+    /// returns `{ urlSrc, fileId, accessToken, accessTokenTtl }`. `urlSrc` already carries the
+    /// `WOPISrc` and `access_token` query items, ready to load in a web view.
+    func fetchCollaboraConfig(serverURL: URL, path: String, mode: OfficeEditorMode) async throws -> CollaboraLaunch {
+        let url = serverURL.appendingPathComponent(APIPath.collaboraConfig)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(OfficeConfigBody(path: path, mode: mode.rawValue))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
+        guard
+            let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let urlString = object["urlSrc"] as? String,
+            let iframeURL = URL(string: urlString)
+        else {
+            throw FilesClientError.decoding("Malformed Collabora config response.")
+        }
+        return CollaboraLaunch(url: iframeURL)
+    }
+
     /// `PUT /api/shares/:id`, confirmed against `backend/src/routes/shares.js` +
     /// `sharesService.updateShare`: owner-only, `'key' in body` semantics, returns the
     /// updated share unwrapped.
@@ -1041,6 +1092,11 @@ struct FilesService: Sendable {
         let path: String
         let mode: String
         let recursive: Bool
+    }
+
+    private struct OfficeConfigBody: Encodable {
+        let path: String
+        let mode: String
     }
 
     /// A nil `owner`/`group` is left out by the synthesized encoder (`encodeIfPresent`), which

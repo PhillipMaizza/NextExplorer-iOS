@@ -287,6 +287,10 @@ openShareLink.errorInvalidLink	That doesn't look like a share link.
 openShareLink.errorNotFound	No share found for that link. It may have been removed.
 openShareLink.errorExpired	This share link has expired.
 
+# ---- office editor ----
+officeEditor.editAction	Edit
+officeEditor.loadFailed	Couldn't open the editor for this document.
+
 # ---- settings ----
 settings.navigationTitle	Settings
 settings.appVersion	Version %1$@ (%2$@)
@@ -504,6 +508,7 @@ previewToolbar.download	Download
 previewToolbar.delete	Delete
 previewToolbar.share	Share
 previewToolbar.rename	Rename
+previewToolbar.edit	Edit
 
 # ---- login ----
 login.serverQuestion	Where's your instance of NextExplorer?
