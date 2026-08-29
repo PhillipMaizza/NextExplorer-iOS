@@ -176,6 +176,35 @@ struct MainTabFeatureTests {
     }
 
     @Test
+    func taskLoadsServerFeaturesIntoTheSharedValue() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.serverFeatures = { _ in
+                ServerFeatures(office: ServerFeatures.OfficeEditors(isOnlyOfficeEnabled: true, onlyOfficeExtensions: ["docx"]))
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.task)
+        await store.receive(\.serverFeaturesResponse)
+        #expect(store.state.serverFeatures.office.isOnlyOfficeEnabled)
+    }
+
+    @Test
+    func taskSwallowsAServerFeaturesFailure() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.serverFeatures = { _ in throw FilesClientError.network("offline") }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.task)
+        #expect(!store.state.serverFeatures.office.isOnlyOfficeEnabled)
+    }
+
+    @Test
     func openingASharedLinkFromTheSharedTabSwitchesToBrowseAndNavigates() async {
         var state = MainTabFeature.State(serverURL: serverURL, user: user)
         state.selectedTab = .shared

@@ -26,6 +26,11 @@ enum APIPath {
     static let editor = "api/editor"
     static let changeOwnPassword = "api/auth/password"
 
+    /// Web-based office editors (`backend/src/routes/onlyoffice.js`, `collabora.js`), each
+    /// gated on server config. `POST` a `{ path, mode }` body to get a launch payload.
+    static let onlyOfficeConfig = "api/onlyoffice/config"
+    static let collaboraConfig = "api/collabora/config"
+
     static let shares = "api/shares"
     static let sharesSharedWithMe = "api/shares/shared-with-me"
     /// Guest-facing share routes (`backend/src/routes/shares.js`, also mounted at `/api/share`).
