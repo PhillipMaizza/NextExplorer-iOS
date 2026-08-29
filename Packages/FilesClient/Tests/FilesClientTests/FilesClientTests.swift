@@ -894,4 +894,70 @@ struct FilesClientLiveTests {
             _ = try await makeClient().fetchOnlyOfficeConfig(serverURL, "a/b.docx", .edit)
         }
     }
+
+    // MARK: system settings (admin)
+
+    @Test
+    func fetchSystemSettingsExtractsThumbnailsAndAccessRules() async throws {
+        stub(statusCode: 200, body: #"""
+        {"branding":{"appName":"X"},"user":{},"thumbnails":{"enabled":true,"size":300,"quality":80,"concurrency":6},"access":{"rules":[{"id":"r1","path":"Docs","recursive":true,"permissions":"ro"}]}}
+        """#.data(using: .utf8)!)
+
+        let settings = try await makeClient().fetchSystemSettings(serverURL)
+
+        #expect(settings.thumbnails?.size == 300)
+        #expect(settings.thumbnails?.quality == 80)
+        #expect(settings.accessRules.count == 1)
+        #expect(settings.accessRules[0].permission == .readOnly)
+        #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/settings")
+    }
+
+    @Test
+    func updateThumbnailSettingsPatchesTheThumbnailsObjectAndDecodesTheEcho() async throws {
+        stub(statusCode: 200, body: #"""
+        {"branding":{"appName":"X"},"thumbnails":{"enabled":false,"size":128,"quality":50,"concurrency":2}}
+        """#.data(using: .utf8)!)
+        StubURLProtocol.capturedRequest = nil
+
+        let echoed = try await makeClient().updateThumbnailSettings(
+            serverURL, ThumbnailSettings(isEnabled: false, size: 128, quality: 50, concurrency: 2)
+        )
+
+        #expect(echoed.isEnabled == false)
+        #expect(echoed.size == 128)
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.httpMethod == "PATCH")
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: [String: Int]])
+        #expect(json["thumbnails"]?["size"] == 128)
+        #expect(json["thumbnails"]?["quality"] == 50)
+    }
+
+    @Test
+    func updateAccessRulesSendsTheWholeArrayUnderAccessRules() async throws {
+        stub(statusCode: 200, body: #"""
+        {"branding":{"appName":"X"},"access":{"rules":[{"id":"srv1","path":"Docs","recursive":false,"permissions":"hidden"}]}}
+        """#.data(using: .utf8)!)
+        StubURLProtocol.capturedRequest = nil
+
+        let rules = [AccessRule(id: "local1", path: "Docs", isRecursive: false, permission: .hidden)]
+        let echoed = try await makeClient().updateAccessRules(serverURL, rules)
+
+        #expect(echoed == [AccessRule(id: "srv1", path: "Docs", isRecursive: false, permission: .hidden)])
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        let json = try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
+        let access = try #require(json["access"] as? [String: Any])
+        let sent = try #require(access["rules"] as? [[String: Any]])
+        #expect(sent.count == 1)
+        #expect(sent[0]["permissions"] as? String == "hidden")
+        #expect(sent[0]["recursive"] as? Bool == false)
+    }
+
+    @Test
+    func aNonAdminSettingsPatchSurfacesThe403Message() async throws {
+        stub(statusCode: 403, body: #"{"error":"Admin access required for system settings."}"#.data(using: .utf8)!)
+        await #expect(throws: FilesClientError.serverMessage(statusCode: 403, message: "Admin access required for system settings.")) {
+            _ = try await makeClient().updateAccessRules(serverURL, [])
+        }
+    }
 }

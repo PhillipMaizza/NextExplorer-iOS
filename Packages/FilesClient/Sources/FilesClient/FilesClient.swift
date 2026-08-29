@@ -135,6 +135,20 @@ public struct FilesClient: Sendable {
 
     /// `GET /api/features`: the server's feature flags (user volumes, volume usage, office editors).
     public var serverFeatures: @Sendable (_ serverURL: URL) async throws -> ServerFeatures
+
+    /// `GET /api/settings`: the admin-only `thumbnails` + `access.rules` slice. Both are
+    /// absent for non-admins (nil / empty).
+    public var fetchSystemSettings: @Sendable (_ serverURL: URL) async throws -> SystemSettings
+    /// `PATCH /api/settings` with `{ thumbnails: {...} }` (admin only). Returns the merged
+    /// thumbnail settings from the echo. A non-admin caller gets a 403 message.
+    public var updateThumbnailSettings: @Sendable (
+        _ serverURL: URL, _ settings: ThumbnailSettings
+    ) async throws -> ThumbnailSettings
+    /// `PATCH /api/settings` with `{ access: { rules: [...] } }` (admin only). The array
+    /// replaces the stored rules wholesale; the echo carries the server-normalised result.
+    public var updateAccessRules: @Sendable (
+        _ serverURL: URL, _ rules: [AccessRule]
+    ) async throws -> [AccessRule]
     /// `GET /api/users`: every user with roles and auth methods.
     public var listUsers: @Sendable (_ serverURL: URL) async throws -> [User]
     /// `POST /api/users`: create a user with a local password.

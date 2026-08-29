@@ -291,6 +291,40 @@ openShareLink.errorExpired	This share link has expired.
 officeEditor.editAction	Edit
 officeEditor.loadFailed	Couldn't open the editor for this document.
 
+# ---- admin: thumbnails ----
+thumbnailSettings.navigationTitle	Thumbnails
+thumbnailSettings.subtitle	Control how the server generates image thumbnails for every client.
+thumbnailSettings.enable	Generate thumbnails
+thumbnailSettings.enableHelp	Turn off to serve full images everywhere instead.
+thumbnailSettings.quality	Quality
+thumbnailSettings.qualityHelp	Higher looks better and uses more space.
+thumbnailSettings.maxDimension	Max dimension
+thumbnailSettings.maxDimensionHelp	Longest edge of a generated thumbnail, in pixels.
+thumbnailSettings.concurrency	Concurrency
+thumbnailSettings.concurrencyHelp	How many thumbnails the server builds at once.
+thumbnailSettings.unavailable	Thumbnail settings are only available to administrators.
+thumbnailSettings.saveButton	Save Changes
+
+# ---- admin: access rules ----
+accessRules.navigationTitle	Folder Access Rules
+accessRules.subtitle	Override read and write access for specific paths.
+accessRules.addRule	Add Rule
+accessRules.empty	No access rules configured.
+accessRules.emptyHint	Add a rule to override access for a path.
+accessRules.pathLabel	Path
+accessRules.pathPlaceholder	Documents/Reports
+accessRules.recursive	Apply to subfolders
+accessRules.permissionReadWrite	Read & write
+accessRules.permissionReadOnly	Read only
+accessRules.permissionHidden	Hidden
+accessRules.remove	Remove
+accessRules.unavailable	Access rules are only available to administrators.
+accessRules.saveButton	Save Changes
+
+# ---- settings rows ----
+settings.rowThumbnails	Thumbnails
+settings.rowAccessRules	Folder Access Rules
+
 # ---- settings ----
 settings.navigationTitle	Settings
 settings.appVersion	Version %1$@ (%2$@)
