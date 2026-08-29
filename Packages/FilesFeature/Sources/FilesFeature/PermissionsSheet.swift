@@ -1,0 +1,293 @@
+import ComposableArchitecture
+import CoreModels
+import DesignSystem
+import FilesClient
+import Localization
+import SwiftUI
+
+private enum Constants {
+    static let headerIconSize: CGFloat = .iconMedium
+    static let closeIconSize: CGFloat = .iconXSmall
+    static let closeButtonPadding: CGFloat = .space8
+    static let contentSpacing: CGFloat = .space16
+    static let sectionSpacing: CGFloat = .space8
+    static let horizontalPadding: CGFloat = .space16
+    static let verticalPadding: CGFloat = .space16
+    static let cardCornerRadius: CGFloat = .radiusCard
+    static let cardPadding: CGFloat = .space12
+    static let checkboxSize: CGFloat = .iconSmall
+}
+
+/// The "Permissions" sheet — `GET /api/permissions/*` to view, `POST /api/permissions/chmod`
+/// and `/chown` to change. A 3×3 read/write/execute grid maps to the octal mode; owner and
+/// group are free-text (chown usually needs root, so a failure is shown, not hidden).
+struct PermissionsSheet: View {
+    @Bindable var store: StoreOf<PermissionsFeature>
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            header
+            Divider()
+            ScrollView {
+                content
+                    .padding(.horizontal, Constants.horizontalPadding)
+                    .padding(.vertical, Constants.verticalPadding)
+            }
+            if store.permissions != nil {
+                footer
+            }
+        }
+        .background(Color.backgroundPrimary)
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+        .task { store.send(.onAppear) }
+    }
+
+    private var header: some View {
+        HStack {
+            HStack(spacing: .space8) {
+                IconKit.lock
+                    .resizable().scaledToFit()
+                    .foregroundStyle(Color.accent)
+                    .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
+                Text(L10n.Permissions.title).type(.headline3, style: .primary(for: .label))
+            }
+            Spacer()
+            Button { dismiss() } label: {
+                IconKit.close
+                    .resizable()
+                    .foregroundStyle(Color.primaryDS)
+                    .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
+                    .padding(Constants.closeButtonPadding)
+                    .background(Circle().fill(Color.backgroundSecondary))
+            }
+            .buttonStyle(DSHapticButtonStyle())
+        }
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.vertical, .space16)
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        VStack(alignment: .leading, spacing: Constants.contentSpacing) {
+            Text(store.item.name).type(.headline3, style: .link).lineLimit(2)
+
+            if let loadError = store.loadError {
+                DSErrorCard(loadError)
+            }
+            if let actionError = store.actionError {
+                DSErrorCard(actionError)
+            }
+
+            if store.isLoading && store.permissions == nil {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                    Spacer()
+                }
+                .padding(.vertical, .space24)
+            } else if store.permissions != nil {
+                ownershipSection
+                modeSection
+            }
+        }
+    }
+
+    // MARK: Footer
+
+    private var footer: some View {
+        VStack(spacing: .space8) {
+            Divider()
+            VStack(spacing: .space8) {
+                DSButton(L10n.Permissions.applyOwnership, style: .secondary, isLoading: store.isSavingOwnership) {
+                    store.send(.applyOwnershipTapped)
+                }
+                .disabled(!store.isOwnershipDirty)
+
+                DSButton(L10n.Permissions.applyPermissions, style: .primary, isLoading: store.isSavingMode) {
+                    store.send(.applyModeTapped)
+                }
+                .disabled(!store.isModeDirty)
+            }
+            .padding(.horizontal, Constants.horizontalPadding)
+            .padding(.bottom, Constants.verticalPadding)
+        }
+        .background(Color.backgroundPrimary)
+    }
+
+    // MARK: Mode
+
+    private var modeSection: some View {
+        VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
+            DSFieldLabel(L10n.Permissions.sectionMode)
+
+            VStack(alignment: .leading, spacing: .space12) {
+                grid
+                Divider()
+                HStack {
+                    Text(L10n.Permissions.numericLabel).type(.body3(.regular), style: .secondary)
+                    Spacer()
+                    Text(store.octalString)
+                        .type(.body2(.bold), style: .primary(for: .label))
+                        .monospaced()
+                }
+                if store.item.isDirectory {
+                    DSToggleRow(
+                        title: L10n.Permissions.applyToEnclosed,
+                        icon: IconKit.folderFill,
+                        isOn: $store.recursive.sending(\.recursiveChanged)
+                    )
+                }
+            }
+            .padding(Constants.cardPadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: Constants.cardCornerRadius).fill(Color.backgroundSecondary))
+        }
+    }
+
+    private var grid: some View {
+        Grid(alignment: .center, horizontalSpacing: .space8, verticalSpacing: .space16) {
+            GridRow {
+                Color.clear.frame(width: 0, height: 0).gridCellUnsizedAxes([.horizontal, .vertical])
+                ForEach(Self.rights, id: \.0) { _, title in
+                    Text(title)
+                        .type(.caption(.semibold), style: .secondary)
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            ForEach(Self.scopes, id: \.0) { scope, title in
+                GridRow {
+                    Text(title)
+                        .type(.body3(.regular), style: .primary(for: .label))
+                        .gridColumnAlignment(.leading)
+                    ForEach(Self.rights, id: \.0) { right, _ in
+                        checkbox(scope, right)
+                            .frame(maxWidth: .infinity)
+                    }
+                }
+            }
+        }
+        .frame(maxWidth: .infinity)
+    }
+
+    private func checkbox(_ scope: PermissionScope, _ right: PermissionRight) -> some View {
+        let isOn = store.grid[scope]?.contains(right) ?? false
+        return Button {
+            store.send(.toggle(scope, right))
+        } label: {
+            (isOn ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
+                .resizable().scaledToFit()
+                .foregroundStyle(isOn ? Color.accent : Color.secondaryDS)
+                .frame(width: Constants.checkboxSize, height: Constants.checkboxSize)
+                .contentShape(Rectangle())
+        }
+        .buttonStyle(DSHapticButtonStyle())
+        .hapticFeedback(.selection, trigger: isOn)
+    }
+
+    // MARK: Ownership
+
+    private var ownershipSection: some View {
+        VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
+            DSFieldLabel(L10n.Permissions.sectionOwnership)
+
+            VStack(alignment: .leading, spacing: .space4) {
+                DSFieldLabel(L10n.Permissions.fieldOwner, uppercased: false)
+                DSTextField(
+                    L10n.Permissions.fieldOwner,
+                    text: $store.ownerDraft.sending(\.ownerDraftChanged)
+                )
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+            }
+
+            VStack(alignment: .leading, spacing: .space4) {
+                DSFieldLabel(L10n.Permissions.fieldGroup, uppercased: false)
+                DSTextField(
+                    L10n.Permissions.fieldGroup,
+                    text: $store.groupDraft.sending(\.groupDraftChanged)
+                )
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+            }
+
+            Text(L10n.Permissions.ownershipNote).type(.body3(.regular), style: .tertiary)
+        }
+    }
+
+    // MARK: Column/row labels
+
+    private static var scopes: [(PermissionScope, String)] {
+        [
+            (.owner, L10n.Permissions.scopeOwner),
+            (.group, L10n.Permissions.scopeGroup),
+            (.others, L10n.Permissions.scopeOthers),
+        ]
+    }
+
+    private static var rights: [(PermissionRight, String)] {
+        [
+            (.read, L10n.Permissions.rightRead),
+            (.write, L10n.Permissions.rightWrite),
+            (.execute, L10n.Permissions.rightExecute),
+        ]
+    }
+}
+
+// MARK: - Previews
+
+@MainActor
+private func permissionsPreview(
+    item: FileItem,
+    configureClient: @Sendable (inout FilesClient) -> Void = { _ in }
+) -> some View {
+    var client = FilesClient.previewValue
+    configureClient(&client)
+    return Color.clear.sheet(isPresented: .constant(true)) {
+        PermissionsSheet(
+            store: Store(
+                initialState: PermissionsFeature.State(
+                    serverURL: URL(string: "https://cloud.example.com")!,
+                    item: item
+                )
+            ) {
+                PermissionsFeature()
+            } withDependencies: {
+                $0.filesClient = client
+            }
+        )
+    }
+}
+
+private let previewFile = FileItem(name: "report.pdf", path: "Documents", dateModified: Date(), size: 1_024, kind: "pdf")
+private let previewFolder = FileItem(name: "Projects", path: "", dateModified: Date(), size: 0, kind: "directory")
+
+#Preview("File") {
+    permissionsPreview(item: previewFile)
+}
+
+#Preview("Directory") {
+    permissionsPreview(item: previewFolder) {
+        $0.fetchPermissions = { _, path in
+            FilePermissions(path: path, mode: 0o40_755, owner: "phillip", group: "staff", uid: 501, gid: 20, isDirectory: true)
+        }
+    }
+}
+
+#Preview("Load error") {
+    permissionsPreview(item: previewFile) {
+        $0.fetchPermissions = { _, _ in throw FilesClientError.server(statusCode: 403) }
+    }
+}
+
+#Preview("Ownership denied") {
+    permissionsPreview(item: previewFile) {
+        $0.changeOwnership = { _, _, _, _ in
+            throw FilesClientError.serverMessage(
+                statusCode: 403,
+                message: "Permission denied. Changing ownership typically requires root/admin privileges."
+            )
+        }
+    }
+}

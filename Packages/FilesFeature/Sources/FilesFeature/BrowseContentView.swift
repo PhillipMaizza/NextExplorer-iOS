@@ -103,6 +103,9 @@ struct BrowseContentView: View {
             .sheet(item: infoPhaseBinding) { phase in
                 infoSheetContent(for: phase)
             }
+            .sheet(item: $store.scope(state: \.permissions, action: \.permissions)) { permissionsStore in
+                PermissionsSheet(store: permissionsStore)
+            }
             .fullScreenCover(item: previewItemBinding) { item in
                 previewContent(for: item)
             }
@@ -717,6 +720,12 @@ struct BrowseContentView: View {
             store.send(.infoTapped(item))
         } label: {
             Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
+        }
+        .tint(.primaryDS)
+        Button {
+            store.send(.permissionsTapped(item))
+        } label: {
+            Label { Text(L10n.Browse.actionPermissions) } icon: { IconKit.lock }
         }
         .tint(.primaryDS)
         if item.isHTML {

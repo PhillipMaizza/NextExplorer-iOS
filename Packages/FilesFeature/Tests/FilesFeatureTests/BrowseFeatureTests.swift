@@ -1967,6 +1967,25 @@ struct BrowseFeatureTests {
             $0.isLoadingInfoMetadata = false
         }
     }
+
+    @Test
+    func permissionsTappedPresentsTheSheetSeededFromTheItemAndDismissClearsIt() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "report.pdf", path: "Documents", dateModified: Date(), size: 10, kind: "pdf")
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        }
+        store.exhaustivity = .off
+
+        await store.send(.permissionsTapped(item)) {
+            $0.permissions = PermissionsFeature.State(serverURL: serverURL, item: item)
+        }
+        #expect(store.state.permissions?.item == item)
+
+        await store.send(.permissions(.dismiss)) {
+            $0.permissions = nil
+        }
+    }
 }
 
 // MARK: - `BrowseFeature.State` display logic

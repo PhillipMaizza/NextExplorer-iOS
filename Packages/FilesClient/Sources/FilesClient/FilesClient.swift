@@ -62,6 +62,19 @@ public struct FilesClient: Sendable {
     /// `GET /api/usage/<path>` (`backend/src/routes/usage.js`): the folder's recursive size
     /// plus the free/total of the filesystem it's on. A denied path comes back all zeros.
     public var fetchUsage: @Sendable (_ serverURL: URL, _ path: String) async throws -> StorageUsage
+    /// `GET /api/permissions/<path>` (`backend/src/routes/permissions.js`): the file's raw
+    /// `stat` mode plus resolved owner/group. Needs read access to the path.
+    public var fetchPermissions: @Sendable (_ serverURL: URL, _ path: String) async throws -> FilePermissions
+    /// `POST /api/permissions/chmod`: `mode` is a 3-digit octal string ("755"); `recursive`
+    /// applies `chmod -R` when the path is a directory. Guests and non-writers get a 403.
+    public var changePermissions: @Sendable (
+        _ serverURL: URL, _ path: String, _ mode: String, _ recursive: Bool
+    ) async throws -> Void
+    /// `POST /api/permissions/chown`: at least one of `owner`/`group`. Usually needs root on
+    /// the server, so a 403 "requires root/admin" is the common outcome for a non-root server.
+    public var changeOwnership: @Sendable (
+        _ serverURL: URL, _ path: String, _ owner: String?, _ group: String?
+    ) async throws -> Void
     public var thumbnailURL: @Sendable (_ serverURL: URL, _ path: String) async throws -> URL?
     public var previewFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     public var fetchTextContent: @Sendable (_ serverURL: URL, _ path: String) async throws -> String
