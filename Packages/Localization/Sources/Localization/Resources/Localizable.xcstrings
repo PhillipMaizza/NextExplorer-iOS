@@ -331,6 +331,39 @@
         }
       }
     },
+    "browse.deleteLinkedSharesMany": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This also removes %lld share links that point here."
+          }
+        }
+      }
+    },
+    "browse.deleteLinkedSharesOne": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This also removes 1 share link that points here."
+          }
+        }
+      }
+    },
+    "browse.deleteLinkedSharesUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't check for share links that point here. Any that exist will stop working."
+          }
+        }
+      }
+    },
     "browse.deleteMessage": {
       "extractionState": "manual",
       "localizations": {

@@ -608,6 +608,23 @@ struct FilesService: Sendable {
         return try await send(request, decoding: FileMetadata.self)
     }
 
+    /// `POST /api/files/delete-impact`, confirmed against `backend/src/routes/files/delete.js`
+    /// and `fileTransferService.getDeleteImpact`: same `{path, name, kind}` item shape as the
+    /// delete itself, answering with the count of share links that deleting those items would
+    /// break. Used to warn before the fact; the delete still enforces regardless.
+    func deleteImpact(serverURL: URL, items: [FileItem]) async throws -> DeleteImpact {
+        let url = serverURL.appendingPathComponent("api/files/delete-impact")
+        var request = Self.makeRequest(url: url, method: "POST")
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        do {
+            let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(path: $0.path, name: $0.name, kind: $0.kind) })
+            request.httpBody = try JSONEncoder().encode(body)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        return try await send(request, decoding: DeleteImpact.self)
+    }
+
     /// `DELETE /api/files`, confirmed against `backend/src/routes/files/delete.js` and
     /// `fileTransferService.resolveDeleteTargets`: each item is `{path, name}` — again exactly
     /// `FileItem`'s own fields, `kind` included as the server's fallback for already-missing items.

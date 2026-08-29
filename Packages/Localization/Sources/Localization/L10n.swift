@@ -38,6 +38,9 @@ public enum L10n {
         public static func deleteConfirmMany(_ a0: CVarArg) -> String { tr("browse.deleteConfirmMany", a0) }
         public static func deleteConfirmOne(_ a0: CVarArg) -> String { tr("browse.deleteConfirmOne", a0) }
         public static var deleteConfirmTitle: String { tr("browse.deleteConfirmTitle") }  // "Delete?"
+        public static func deleteLinkedSharesMany(_ a0: CVarArg) -> String { tr("browse.deleteLinkedSharesMany", a0) }
+        public static var deleteLinkedSharesOne: String { tr("browse.deleteLinkedSharesOne") }  // "This also removes 1 share link that points here."
+        public static var deleteLinkedSharesUnavailable: String { tr("browse.deleteLinkedSharesUnavailable") }
         public static var deleteMessage: String { tr("browse.deleteMessage") }  // "This can't be undone."
         public static var destinationPickerConfirmMove: String { tr("browse.destinationPickerConfirmMove") }  // "Move Here"
         public static var destinationPickerLoadFailed: String { tr("browse.destinationPickerLoadFailed") }  // "Couldn't load folders."

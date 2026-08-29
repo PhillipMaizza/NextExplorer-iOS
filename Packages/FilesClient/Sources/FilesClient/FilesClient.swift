@@ -26,6 +26,9 @@ public struct FilesClient: Sendable {
     public var createFolder: @Sendable (
         _ serverURL: URL, _ path: String, _ name: String
     ) async throws -> FileItem
+    /// `POST /api/files/delete-impact`: how many share links deleting `items` would break.
+    /// A warning source for the delete confirmation; the delete itself is never gated on it.
+    public var deleteImpact: @Sendable (_ serverURL: URL, _ items: [FileItem]) async throws -> DeleteImpact
     public var deleteItems: @Sendable (_ serverURL: URL, _ items: [FileItem]) async throws -> Void
     /// `POST /api/files/copy` or `/api/files/move` depending on `operation`. `destination` is
     /// the target directory's relative path; the server rejects an empty one ("Cannot copy or
