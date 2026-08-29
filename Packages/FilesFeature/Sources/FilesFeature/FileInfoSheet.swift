@@ -51,7 +51,7 @@ struct FileInfoSheet: View {
     }()
 
     var body: some View {
-        DynamicHeightSheet {
+        DSDynamicHeightSheet {
             content
         }
     }

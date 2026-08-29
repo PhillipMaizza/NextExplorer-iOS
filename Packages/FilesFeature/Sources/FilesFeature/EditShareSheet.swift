@@ -25,7 +25,7 @@ struct EditShareSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+        DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(
                     icon: IconKit.rename,

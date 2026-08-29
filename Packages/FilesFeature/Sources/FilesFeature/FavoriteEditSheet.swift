@@ -30,7 +30,7 @@ struct FavoriteEditSheet: View {
     private var tint: Color { FavoriteColor.resolve(store.colorDraft) ?? .accent }
 
     var body: some View {
-        DynamicHeightSheet(maxHeightFraction: Metrics.maxHeightFraction) {
+        DSDynamicHeightSheet(maxHeightFraction: Metrics.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
                 DSSheetHeader(
                     icon: FavoriteIcon.symbol(for: store.iconDraft),

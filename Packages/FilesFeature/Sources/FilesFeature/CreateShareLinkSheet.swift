@@ -32,7 +32,7 @@ struct CreateShareLinkSheet: View {
     private enum CopiedField: Equatable { case shareLink, directLink }
 
     var body: some View {
-        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+        DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(
                     icon: IconKit.shareLink,

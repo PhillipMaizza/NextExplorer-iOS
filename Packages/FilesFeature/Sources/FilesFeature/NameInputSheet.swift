@@ -8,7 +8,7 @@ private enum Constants {
     static let verticalPadding: CGFloat = .space24
 }
 
-/// A one field name entry sheet shared by "Create Folder" and "Rename": a `DynamicHeightSheet`
+/// A one field name entry sheet shared by "Create Folder" and "Rename": a `DSDynamicHeightSheet`
 /// with a single text field and a confirm button, sizing to its own content. The draft lives
 /// in this view's own `@State` rather than the store — a `TextField` bound through a TCA
 /// `.sending` binding dropped keystrokes. `onConfirm` gets the raw text; the reducer trims and
@@ -50,7 +50,7 @@ struct NameInputSheet: View {
     }
 
     var body: some View {
-        DynamicHeightSheet {
+        DSDynamicHeightSheet {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(icon: icon, title: title, closeAccessibilityLabel: L10n.Common.close, onClose: onCancel)
                 DSTextField(placeholder, text: $name, focused: $isFieldFocused)

@@ -17,7 +17,7 @@ private enum Constants {
 }
 
 /// Generic "Sort by" sheet: a field picker and a direction picker as radio lists in a
-/// `DynamicHeightSheet`. Shared by Browse, Favorites, Downloads, Shared and User Management,
+/// `DSDynamicHeightSheet`. Shared by Browse, Favorites, Downloads, Shared and User Management,
 /// generalized over whatever option and direction enum each screen sorts by.
 struct SortSheet<Option: Hashable, Direction: Hashable>: View {
     let options: [Option]
@@ -33,7 +33,7 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
     let onDismiss: () -> Void
 
     var body: some View {
-        DynamicHeightSheet {
+        DSDynamicHeightSheet {
             content
         }
     }

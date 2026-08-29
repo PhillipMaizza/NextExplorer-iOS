@@ -366,7 +366,7 @@ private struct SharedLinkCard: View {
     /// trailing neutral `+N`.
     @ViewBuilder
     private func recipientChips(names: [String], unnamed: Int) -> some View {
-        FlowLayout(horizontalSpacing: .space4, verticalSpacing: .space4) {
+        DSFlowLayout(horizontalSpacing: .space4, verticalSpacing: .space4) {
             ForEach(names, id: \.self) { name in
                 Text(name)
                     .type(.caption(.semibold))

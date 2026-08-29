@@ -7,7 +7,7 @@ private enum Constants {
 }
 
 /// The pinned action strip every presented card sheet shares: whatever buttons a sheet puts
-/// in `DynamicHeightSheet`'s `footer:` closure, wrapped with the one standard padding and an
+/// in `DSDynamicHeightSheet`'s `footer:` closure, wrapped with the one standard padding and an
 /// opaque `backgroundPrimary` fill so the strip stays legible over scrolling content.
 ///
 /// The opaque fill is the separation from the content above; there is deliberately no

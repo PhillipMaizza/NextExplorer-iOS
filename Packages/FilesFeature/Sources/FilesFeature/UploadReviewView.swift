@@ -165,7 +165,7 @@ struct UploadReviewView: View {
     }
 
     /// The whole sheet as one measured stack (header, the destination + size rows, the file
-    /// list, then the two buttons) so `DynamicHeightSheet` sizes to exactly this — no
+    /// list, then the two buttons) so `DSDynamicHeightSheet` sizes to exactly this — no
     /// per-piece height guesses.
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
@@ -275,7 +275,7 @@ struct UploadReviewView: View {
     }
 
     var body: some View {
-        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+        DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             content
         } footer: {
             footer
