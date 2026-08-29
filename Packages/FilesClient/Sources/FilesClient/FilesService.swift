@@ -676,6 +676,49 @@ struct FilesService: Sendable {
         return try await send(request, decoding: StorageUsage.self)
     }
 
+    /// `GET /api/permissions/*`, confirmed against `backend/src/routes/permissions.js`: one
+    /// wildcard path segment, same per-segment encoding as `fetchMetadata` / `fetchUsage`. A
+    /// denied path 403s with the server's denial reason, worth surfacing verbatim.
+    func fetchPermissions(serverURL: URL, path: String) async throws -> FilePermissions {
+        var url = serverURL.appendingPathComponent(APIPath.permissions)
+        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
+        for segment in segments {
+            url = url.appendingPathComponent(String(segment))
+        }
+        let request = Self.makeRequest(url: url, method: .get)
+        return try await sendReportingMessage(request, decoding: FilePermissions.self)
+    }
+
+    /// `POST /api/permissions/chmod`: `{ path, mode, recursive }`. The server enforces
+    /// `mode` matching `/^[0-7]{3}$/`; `recursive` only does anything on a directory.
+    func changePermissions(serverURL: URL, path: String, mode: String, recursive: Bool) async throws {
+        let url = serverURL.appendingPathComponent(APIPath.permissionsChmod)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(ChmodBody(path: path, mode: mode, recursive: recursive))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
+    }
+
+    /// `POST /api/permissions/chown`: `{ path, owner?, group? }` — a nil field is omitted, and
+    /// the server rejects a body carrying neither.
+    func changeOwnership(serverURL: URL, path: String, owner: String?, group: String?) async throws {
+        let url = serverURL.appendingPathComponent(APIPath.permissionsChown)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(ChownBody(path: path, owner: owner, group: group))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
+    }
+
     /// `POST /api/files/delete-impact`, confirmed against `backend/src/routes/files/delete.js`
     /// and `fileTransferService.getDeleteImpact`: same `{path, name, kind}` item shape as the
     /// delete itself, answering with the count of share links that deleting those items would
@@ -981,6 +1024,20 @@ struct FilesService: Sendable {
 
         let items: [Item]
         let destination: String
+    }
+
+    private struct ChmodBody: Encodable {
+        let path: String
+        let mode: String
+        let recursive: Bool
+    }
+
+    /// A nil `owner`/`group` is left out by the synthesized encoder (`encodeIfPresent`), which
+    /// is exactly what the server wants — it treats a missing key as "leave this unchanged".
+    private struct ChownBody: Encodable {
+        let path: String
+        let owner: String?
+        let group: String?
     }
 
     private struct DeleteItemsBody: Encodable {
