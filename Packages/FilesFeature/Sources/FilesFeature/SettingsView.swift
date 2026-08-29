@@ -335,7 +335,7 @@ struct SettingsView: View {
     }
 
     private func sectionHeader(_ title: String) -> some View {
-        Text(title).type(.body3(.semibold), style: .secondary).textCase(.uppercase)
+        DSFieldLabel(title)
     }
 
     @ViewBuilder
@@ -362,6 +362,7 @@ struct SettingsView: View {
                             .foregroundStyle(Color.secondaryDS)
                             .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                     }
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(DSHapticButtonStyle())
             } header: {

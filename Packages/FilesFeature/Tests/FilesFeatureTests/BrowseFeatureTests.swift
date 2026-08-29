@@ -33,6 +33,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.itemsResponse.success) {
             $0.isLoading = false
+            $0.hasLoaded = true
             $0.items = [item]
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
@@ -55,6 +56,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.itemsResponse.failure) {
             $0.isLoading = false
+            $0.hasLoaded = true
             $0.errorMessage = FilesClientError.sessionExpired.userMessage
         }
         await store.receive(\.favoritesResponse)
@@ -126,6 +128,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.itemsResponse.success) {
             $0.isLoading = false
+            $0.hasLoaded = true
             $0.items = [refreshed]
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
@@ -504,18 +507,6 @@ struct BrowseFeatureTests {
     }
 
     @Test
-    func searchResultTappedOnAFileEmitsNoDelegate() async {
-        let serverURL = URL(string: "https://example.com")!
-        let result = SearchResultItem(name: "notes.txt", path: "", kind: "txt")
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
-            BrowseFeature()
-        }
-
-        await store.send(.searchResultTapped(result))
-    }
-
-    @Test
     func favoritesResponseCollectsFavoritePaths() async {
         let serverURL = URL(string: "https://example.com")!
         let favorite = Favorite(
@@ -757,6 +748,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.itemsResponse.success) {
             $0.isLoading = false
+            $0.hasLoaded = true
             $0.items = []
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
@@ -806,16 +798,72 @@ struct BrowseFeatureTests {
     }
 
     @Test
-    func deleteTappedSetsTheDeleteConfirmationItem() async {
+    func deleteTappedSetsTheDeleteConfirmationItemAndChecksShareImpact() async {
         let serverURL = URL(string: "https://example.com")!
         let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteImpact = { _, items in
+                #expect(items.map(\.name) == ["vacation.jpg"])
+                return DeleteImpact(shareCount: 2)
+            }
         }
 
         await store.send(.deleteTapped(item)) {
             $0.deleteConfirmationItem = item
+            $0.deleteImpactCheck = .checking
+        }
+        await store.receive(\.deleteImpactResponse.success) {
+            $0.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 2))
+        }
+    }
+
+    @Test
+    func deleteTappedTreatsAFailedShareImpactCheckAsUnavailable() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteImpact = { _, _ in throw FilesClientError.network("offline") }
+        }
+
+        await store.send(.deleteTapped(item)) {
+            $0.deleteConfirmationItem = item
+            $0.deleteImpactCheck = .checking
+        }
+        await store.receive(\.deleteImpactResponse.failure) {
+            $0.deleteImpactCheck = .unavailable
+        }
+    }
+
+    @Test
+    func bulkDeleteTappedChecksShareImpactForEverySelectedItem() async {
+        let serverURL = URL(string: "https://example.com")!
+        let one = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let two = FileItem(name: "b.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [one, two]
+        state.selectedItemIDs = [one.id, two.id]
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteImpact = { _, items in
+                #expect(Set(items.map(\.name)) == ["a.txt", "b.txt"])
+                return DeleteImpact(shareCount: 3)
+            }
+        }
+
+        await store.send(.bulkDeleteTapped) {
+            $0.bulkDeleteConfirmationIsPresented = true
+            $0.deleteImpactCheck = .checking
+        }
+        await store.receive(\.deleteImpactResponse.success) {
+            $0.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 3))
         }
     }
 
@@ -991,14 +1039,115 @@ struct BrowseFeatureTests {
         }
     }
 
+    @Test
+    func searchResultTappedOnAFileOpensThePreviewViaRowTapped() async {
+        let serverURL = URL(string: "https://example.com")!
+        let store = TestStore(
+            initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        ) {
+            BrowseFeature()
+        }
+        // `searchResultTapped` stamps `Date()` into the synthesized `FileItem`, so match on
+        // the fields it actually derives rather than the whole value.
+        store.exhaustivity = .off
+
+        await store.send(.searchResultTapped(SearchResultItem(name: "clip.mp4", path: "Media", kind: "file")))
+        await store.receive(\.rowTapped)
+        #expect(store.state.previewItem?.name == "clip.mp4")
+        #expect(store.state.previewItem?.path == "Media")
+        #expect(store.state.previewItem?.kind == "mp4")
+    }
+
+    // MARK: File actions — new folder
+
+    @Test
+    func newFolderTappedOpensTheSheetAndCancelledClosesIt() async {
+        let serverURL = URL(string: "https://example.com")!
+        let store = TestStore(
+            initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        ) {
+            BrowseFeature()
+        }
+
+        await store.send(.newFolderTapped) {
+            $0.isNewFolderSheetPresented = true
+        }
+        await store.send(.newFolderCancelled) {
+            $0.isNewFolderSheetPresented = false
+        }
+    }
+
+    @Test
+    func newFolderConfirmedWithABlankNameClosesTheSheetWithoutCallingTheServer() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.isNewFolderSheetPresented = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.newFolderConfirmed("   ")) {
+            $0.isNewFolderSheetPresented = false
+        }
+    }
+
+    @Test
+    func newFolderConfirmedAppendsTheCreatedFolderOnSuccess() async {
+        let serverURL = URL(string: "https://example.com")!
+        let existing = FileItem(name: "old.txt", path: "Docs", dateModified: Date(), size: 0, kind: "txt")
+        let created = FileItem(name: "Reports", path: "Docs", dateModified: Date(), size: 0, kind: "directory")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.items = [existing]
+        state.isNewFolderSheetPresented = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.createFolder = { _, _, _ in created }
+        }
+
+        await store.send(.newFolderConfirmed("Reports")) {
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.newFolderResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.isNewFolderSheetPresented = false
+            $0.items = [existing, created]
+        }
+    }
+
+    @Test
+    func newFolderConfirmedFailureSurfacesAReadableErrorMessage() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.isNewFolderSheetPresented = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.createFolder = { _, _, _ in throw FilesClientError.server(statusCode: 403) }
+        }
+
+        await store.send(.newFolderConfirmed("Reports")) {
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.newFolderResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.isNewFolderSheetPresented = false
+            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
+        }
+    }
+
     // MARK: File actions — delete
 
     @Test
-    func deleteCancelledClearsTheDeleteConfirmationItem() async {
+    func deleteCancelledClearsTheDeleteConfirmationItemAndShareImpactCheck() async {
         let serverURL = URL(string: "https://example.com")!
         let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.deleteConfirmationItem = item
+        state.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 1))
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -1006,6 +1155,7 @@ struct BrowseFeatureTests {
 
         await store.send(.deleteCancelled) {
             $0.deleteConfirmationItem = nil
+            $0.deleteImpactCheck = .idle
         }
     }
 

@@ -38,7 +38,7 @@ struct UploadPickers: ViewModifier {
     @Binding var photosSelection: [PhotosPickerItem]
     let onDocumentsPicked: ([URL]) -> Void
     let onPhotosPicked: ([PhotosPickerItem]) -> Void
-    let onPhotoCaptured: (URL) -> Void
+    let onCameraCaptured: (URL) -> Void
 
     func body(content: Content) -> some View {
         content
@@ -72,71 +72,46 @@ struct UploadPickers: ViewModifier {
             .fullScreenCover(isPresented: $isCameraPresented) {
                 CameraPicker { url in
                     isCameraPresented = false
-                    if let url { onPhotoCaptured(url) }
+                    if let url { onCameraCaptured(url) }
                 }
                 .ignoresSafeArea()
             }
     }
 }
 
-/// The `+` toolbar button and its picker menu (camera / Photos / Files). Extracted from
-/// `BrowseContentView` so its `body` stays inside the type checker's budget. Each picker hands
-/// back files the caller turns into `PickedFile`s; the destination is chosen afterwards.
-struct UploadEntryPoints: ViewModifier {
-    let isSelecting: Bool
-    /// Gates the `+` on the folder's own `FileAccess.canUpload` — a read only folder never
-    /// shows it, so a pick can't run headlong into a guaranteed 403.
-    let canUpload: Bool
-    @Binding var isFilesPickerPresented: Bool
-    @Binding var isPhotosPickerPresented: Bool
-    @Binding var isCameraPresented: Bool
-    @Binding var photosSelection: [PhotosPickerItem]
-    let onDocumentsPicked: ([URL]) -> Void
-    let onPhotosPicked: ([PhotosPickerItem]) -> Void
-    let onPhotoCaptured: (URL) -> Void
+/// Take Photo or Video / Upload from Gallery / Upload from Files — the shared menu behind both
+/// the browse `+` and the review sheet's "Add more files" row.
+struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
+    private let label: () -> MenuLabel
+    /// Extra items above the upload sources — the browse `+` slots "Create Folder" here; the
+    /// review sheet's "Add more" leaves it empty.
+    private let leadingActions: () -> LeadingActions
+    @Binding private var isFilesPickerPresented: Bool
+    @Binding private var isPhotosPickerPresented: Bool
+    @Binding private var isCameraPresented: Bool
+    @Binding private var isCameraDeniedAlertPresented: Bool
 
-    @State private var isCameraDeniedAlertPresented = false
-
-    func body(content: Content) -> some View {
-        content
-            .toolbar {
-                if !isSelecting && canUpload {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        UploadSourceMenu(
-                            label: { IconKit.plus.foregroundStyle(Color.primaryDS) },
-                            isFilesPickerPresented: $isFilesPickerPresented,
-                            isPhotosPickerPresented: $isPhotosPickerPresented,
-                            isCameraPresented: $isCameraPresented,
-                            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
-                        )
-                        .accessibilityLabel(L10n.Uploads.menuTitle)
-                    }
-                }
-            }
-            .modifier(UploadPickers(
-                isFilesPickerPresented: $isFilesPickerPresented,
-                isPhotosPickerPresented: $isPhotosPickerPresented,
-                isCameraPresented: $isCameraPresented,
-                isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented,
-                photosSelection: $photosSelection,
-                onDocumentsPicked: onDocumentsPicked,
-                onPhotosPicked: onPhotosPicked,
-                onPhotoCaptured: onPhotoCaptured
-            ))
+    init(
+        @ViewBuilder label: @escaping () -> MenuLabel,
+        @ViewBuilder leadingActions: @escaping () -> LeadingActions,
+        isFilesPickerPresented: Binding<Bool>,
+        isPhotosPickerPresented: Binding<Bool>,
+        isCameraPresented: Binding<Bool>,
+        isCameraDeniedAlertPresented: Binding<Bool>
+    ) {
+        self.label = label
+        self.leadingActions = leadingActions
+        self._isFilesPickerPresented = isFilesPickerPresented
+        self._isPhotosPickerPresented = isPhotosPickerPresented
+        self._isCameraPresented = isCameraPresented
+        self._isCameraDeniedAlertPresented = isCameraDeniedAlertPresented
     }
-}
-
-/// Take Photo / Upload from Photos / Upload from Files — the shared menu behind both the
-/// browse `+` and the review sheet's "Add more files" row.
-struct UploadSourceMenu<MenuLabel: View>: View {
-    @ViewBuilder let label: () -> MenuLabel
-    @Binding var isFilesPickerPresented: Bool
-    @Binding var isPhotosPickerPresented: Bool
-    @Binding var isCameraPresented: Bool
-    @Binding var isCameraDeniedAlertPresented: Bool
 
     var body: some View {
+        // `.menuOrder(.fixed)`: keep Take Photo first even from the review sheet's "Add more"
+        // button, where the menu opens upward and the default order would flip.
         Menu {
+            leadingActions()
             if UIImagePickerController.isSourceTypeAvailable(.camera) {
                 Button {
                     Task {
@@ -163,5 +138,25 @@ struct UploadSourceMenu<MenuLabel: View>: View {
         } label: {
             label()
         }
+        .menuOrder(.fixed)
+    }
+}
+
+extension UploadSourceMenu where LeadingActions == EmptyView {
+    init(
+        @ViewBuilder label: @escaping () -> MenuLabel,
+        isFilesPickerPresented: Binding<Bool>,
+        isPhotosPickerPresented: Binding<Bool>,
+        isCameraPresented: Binding<Bool>,
+        isCameraDeniedAlertPresented: Binding<Bool>
+    ) {
+        self.init(
+            label: label,
+            leadingActions: { EmptyView() },
+            isFilesPickerPresented: isFilesPickerPresented,
+            isPhotosPickerPresented: isPhotosPickerPresented,
+            isCameraPresented: isCameraPresented,
+            isCameraDeniedAlertPresented: isCameraDeniedAlertPresented
+        )
     }
 }

@@ -23,6 +23,13 @@ private enum Constants {
     static let selectionToolbarIconSize: CGFloat = .iconMedium
     /// Height of the invisible long-press paste target past the last row.
     static let pasteTargetMinHeight: CGFloat = 260
+    /// The upload `+` is the folder's primary action, so it carries the accent tint and a
+    /// heavier glyph than the neutral options menu beside it.
+    static let uploadButtonWeight: Font.Weight = .bold
+    /// Gap between the empty folder message and its upload call to action.
+    static let emptyUploadButtonTopSpacing: CGFloat = .space24
+    static let emptyUploadButtonHeight: CGFloat = .size48
+    static let emptyUploadButtonHPadding: CGFloat = .space24
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -36,11 +43,6 @@ struct BrowseContentView: View {
     @AppStorage("removeArchiveAfterDownload") private var removeArchiveAfterDownload = false
     @AppStorage("keepClipboardAfterCopy") private var keepClipboardAfterCopy = false
     @State private var isSortSheetPresented = false
-    /// The rename alert's in-progress text: kept as plain view state rather than routed
-    /// through the store, since a `.alert` `TextField` bound via a TCA `.sending` binding
-    /// didn't reliably propagate keystrokes back out. Seeded from `renameSheetItem` when
-    /// the alert is presented; `renameConfirmed` is sent this value directly.
-    @State private var renameDraft = ""
     @State private var toastMessage: DSToastMessage?
     /// The item whose "Create Share Link" sheet is open (from the context menu or the
     /// selection toolbar). Local view state, not routed through `BrowseFeature` — the sheet
@@ -52,6 +54,7 @@ struct BrowseContentView: View {
     @State private var isFilesPickerPresented = false
     @State private var isPhotosPickerPresented = false
     @State private var isCameraPresented = false
+    @State private var isCameraDeniedAlertPresented = false
     @State private var photosSelection: [PhotosPickerItem] = []
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
@@ -81,6 +84,12 @@ struct BrowseContentView: View {
             return
         }
         store.send(.rowTapped(item))
+    }
+
+    /// Search results only report `dir`/`file` for kind, so derive a real extension from the
+    /// file name for the row icon — the same thing `searchResultTapped` hands the preview.
+    private func searchResultKind(_ result: SearchResultItem) -> String {
+        result.isDirectory ? result.kind : (result.name as NSString).pathExtension.lowercased()
     }
 
     var body: some View {
@@ -150,13 +159,21 @@ struct BrowseContentView: View {
     /// reasonable time.
     private var browsingContent: some View {
         Group {
-            if viewMode == .list {
+            if isInitialLoad {
+                BrowseSkeletonView(
+                    isGridView: viewMode == .grid,
+                    gridColumns: gridColumns,
+                    iconSize: thumbnailSize.iconSize
+                )
+                .transition(.opacity)
+            } else if viewMode == .list {
                 listContent
             } else {
                 gridContent
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: isInitialLoad)
         .tint(Color.accent)
         .searchable(
             text: $store.searchQuery.sending(\.searchQueryChanged),
@@ -218,13 +235,38 @@ struct BrowseContentView: View {
                     Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                 }
             }
+            if !store.isSelecting && canUploadHere {
+                if #available(iOS 26.0, *) {
+                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    UploadSourceMenu(
+                        label: {
+                            IconKit.plus
+                                .fontWeight(Constants.uploadButtonWeight)
+                                .foregroundStyle(Color.accent)
+                        },
+                        leadingActions: {
+                            if !store.directoryPath.isEmpty {
+                                Button { store.send(.newFolderTapped) } label: {
+                                    Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                                }
+                            }
+                        },
+                        isFilesPickerPresented: $isFilesPickerPresented,
+                        isPhotosPickerPresented: $isPhotosPickerPresented,
+                        isCameraPresented: $isCameraPresented,
+                        isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
+                    )
+                    .accessibilityLabel(L10n.Uploads.menuTitle)
+                }
+            }
         }
-        .modifier(UploadEntryPoints(
-            isSelecting: store.isSelecting,
-            canUpload: canUploadHere,
+        .modifier(UploadPickers(
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,
+            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented,
             photosSelection: $photosSelection,
             onDocumentsPicked: { urls in
                 guard !urls.isEmpty else { return }
@@ -235,7 +277,7 @@ struct BrowseContentView: View {
                 store.send(.beginUpload(.photos(items)))
                 photosSelection = []
             },
-            onPhotoCaptured: { url in
+            onCameraCaptured: { url in
                 store.send(.beginUpload(.camera(url)))
             }
         ))
@@ -306,7 +348,7 @@ struct BrowseContentView: View {
             Button(L10n.Common.delete, role: .destructive) { store.send(.bulkDeleteConfirmed) }
             Button(L10n.Common.cancel, role: .cancel) { store.send(.bulkDeleteCancelled) }
         } message: {
-            Text(L10n.Browse.deleteMessage)
+            Text(deleteConfirmationMessage)
         }
         .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
         .sheet(isPresented: $isSortSheetPresented) {
@@ -324,18 +366,28 @@ struct BrowseContentView: View {
                 onDismiss: { isSortSheetPresented = false }
             )
         }
-        .alert(L10n.Browse.renameTitle, isPresented: isRenamingBinding) {
-            TextField(L10n.Browse.renameNamePlaceholder, text: $renameDraft)
-                .autocorrectionDisabled()
-            // A plain, non-accent color for Cancel: `.tint(nil)` doesn't reset an alert
-            // button back to the system default (it still inherits the ambient accent), so
-            // an explicit concrete color is needed to actually look different from Save.
-            Button(L10n.Common.cancel, role: .cancel) { store.send(.renameCancelled) }
-                .tint(.primaryDS)
-            Button(L10n.Common.save) { store.send(.renameConfirmed(renameDraft)) }
+        .sheet(item: renameItemBinding) { item in
+            NameInputSheet(
+                icon: IconKit.rename,
+                title: L10n.Browse.renameTitle,
+                placeholder: L10n.Browse.renameNamePlaceholder,
+                confirmTitle: L10n.Common.save,
+                initialName: item.name,
+                isBusy: store.isPerformingFileAction,
+                onConfirm: { store.send(.renameConfirmed($0)) },
+                onCancel: { store.send(.renameCancelled) }
+            )
         }
-        .onChange(of: store.renameSheetItem) { _, item in
-            if let item { renameDraft = item.name }
+        .sheet(isPresented: newFolderSheetBinding) {
+            NameInputSheet(
+                icon: IconKit.folder,
+                title: L10n.Browse.newFolderTitle,
+                placeholder: L10n.Browse.newFolderPlaceholder,
+                confirmTitle: L10n.Browse.newFolderConfirm,
+                isBusy: store.isPerformingFileAction,
+                onConfirm: { store.send(.newFolderConfirmed($0)) },
+                onCancel: { store.send(.newFolderCancelled) }
+            )
         }
         // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a popover
         // anchored to some ambient source view on the `.pad` idiom (this app also targets
@@ -346,7 +398,7 @@ struct BrowseContentView: View {
             Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
             Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteCancelled) }
         } message: {
-            Text(L10n.Browse.deleteMessage)
+            Text(deleteConfirmationMessage)
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
         .alert(L10n.Browse.transferConflictTitle, isPresented: transferConflictBinding) {
@@ -521,10 +573,19 @@ struct BrowseContentView: View {
         }
     }
 
-    private var isRenamingBinding: Binding<Bool> {
+    /// Drives the rename `NameInputSheet`; a swipe down dismiss routes back through the reducer
+    /// so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
+    private var renameItemBinding: Binding<FileItem?> {
         Binding(
-            get: { store.renameSheetItem != nil },
-            set: { if !$0 { store.send(.renameCancelled) } }
+            get: { store.renameSheetItem },
+            set: { if $0 == nil { store.send(.renameCancelled) } }
+        )
+    }
+
+    private var newFolderSheetBinding: Binding<Bool> {
+        Binding(
+            get: { store.isNewFolderSheetPresented },
+            set: { if !$0 { store.send(.newFolderCancelled) } }
         )
     }
 
@@ -538,6 +599,23 @@ struct BrowseContentView: View {
     private var deleteConfirmationTitle: String {
         guard let item = store.deleteConfirmationItem else { return L10n.Browse.deleteConfirmTitle }
         return L10n.Browse.deleteConfirmOne(item.name)
+    }
+
+    /// `deleteMessage` plus, once `delete-impact` answers, a line about the share links the
+    /// delete would break. Shared by the single- and bulk-delete alerts since only one is
+    /// ever up. A still-running or failed check adds nothing / a soft note respectively.
+    private var deleteConfirmationMessage: String {
+        let base = L10n.Browse.deleteMessage
+        switch store.deleteImpactCheck {
+        case let .loaded(impact) where impact.shareCount == 1:
+            return base + "\n\n" + L10n.Browse.deleteLinkedSharesOne
+        case let .loaded(impact) where impact.shareCount > 1:
+            return base + "\n\n" + L10n.Browse.deleteLinkedSharesMany(impact.shareCount)
+        case .unavailable:
+            return base + "\n\n" + L10n.Browse.deleteLinkedSharesUnavailable
+        case .idle, .checking, .loaded:
+            return base
+        }
     }
 
     /// The button closures own dismissal (they clear `transferConflict`); this only needs to
@@ -737,15 +815,21 @@ struct BrowseContentView: View {
     /// Which branch of `overlayStateContent` is currently showing — a plain discriminant so
     /// the overlay can cross-fade between states instead of hard-cutting between them.
     private enum OverlayState: Hashable {
-        case none, loading, error, empty, searchingEverywhere, noResults
+        case none, error, empty, searchingEverywhere, noResults
+    }
+
+    /// A fetch with nothing yet to show: the first load of this folder (including the frame
+    /// before `onAppear` starts it) or a retry after a failed first load. Drives the loading
+    /// skeleton and suppresses the empty state so a fresh folder never flashes "folder is
+    /// empty" for a frame.
+    private var isInitialLoad: Bool {
+        (store.isLoading || !store.hasLoaded) && store.items.isEmpty && store.errorMessage == nil
     }
 
     private var overlayState: OverlayState {
-        if store.isLoading && store.items.isEmpty {
-            .loading
-        } else if store.errorMessage != nil {
+        if store.errorMessage != nil {
             .error
-        } else if !store.isSearching && store.displayedItems.isEmpty {
+        } else if store.hasLoaded && !store.isSearching && store.displayedItems.isEmpty {
             .empty
         } else if store.isSearching && store.searchScope == .everywhere && store.isSearchingEverywhere {
             .searchingEverywhere
@@ -759,7 +843,7 @@ struct BrowseContentView: View {
     @ViewBuilder
     private var overlayStateContent: some View {
         switch overlayState {
-        case .loading, .searchingEverywhere:
+        case .searchingEverywhere:
             ProgressView()
                 .transition(.opacity)
         case .error:
@@ -770,8 +854,13 @@ struct BrowseContentView: View {
                     .transition(.opacity)
             }
         case .empty:
-            EmptyStateView(icon: IconKit.folder, message: L10n.EmptyState.folderEmpty)
-                .transition(.opacity)
+            VStack(spacing: Constants.emptyUploadButtonTopSpacing) {
+                EmptyStateView(icon: IconKit.folder, message: L10n.EmptyState.folderEmpty)
+                if !store.isSelecting && canUploadHere {
+                    emptyStateUploadButton
+                }
+            }
+            .transition(.opacity)
         case .noResults:
             noResultsState
                 .transition(.opacity)
@@ -811,10 +900,9 @@ struct BrowseContentView: View {
                         Button {
                             store.send(.searchResultTapped(result))
                         } label: {
-                            GridCellView(name: result.name, isDirectory: result.isDirectory, isFavorite: store.favoritePaths.contains(result.id), kind: result.kind)
+                            GridCellView(name: result.name, isDirectory: result.isDirectory, isFavorite: store.favoritePaths.contains(result.id), kind: searchResultKind(result))
                         }
                         .buttonStyle(DSHapticButtonStyle())
-                        .disabled(!result.isDirectory)
                     }
                 } else {
                     ForEach(store.displayedItems) { item in
@@ -910,6 +998,29 @@ struct BrowseContentView: View {
     /// allowed while access is still loading — the first browse response fills it in.
     private var canUploadHere: Bool {
         store.access?.canUpload ?? true
+    }
+
+    /// The empty folder's call to action: the same camera / Photos / Files menu as the `+`,
+    /// behind an accent pill so a first time user has somewhere obvious to start.
+    private var emptyStateUploadButton: some View {
+        UploadSourceMenu(
+            label: {
+                HStack(spacing: .space8) {
+                    IconKit.upload
+                    Text(L10n.Uploads.menuTitle)
+                }
+                .type(.label3)
+                .foregroundStyle(Color.black)
+                .frame(height: Constants.emptyUploadButtonHeight)
+                .padding(.horizontal, Constants.emptyUploadButtonHPadding)
+                .background(Capsule().fill(Color.accent))
+            },
+            isFilesPickerPresented: $isFilesPickerPresented,
+            isPhotosPickerPresented: $isPhotosPickerPresented,
+            isCameraPresented: $isCameraPresented,
+            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
+        )
+        .accessibilityLabel(L10n.Uploads.menuTitle)
     }
 
     /// Whether the current folder is a legitimate paste target for the staged clipboard —
@@ -1024,10 +1135,9 @@ struct BrowseContentView: View {
             Button {
                 store.send(.searchResultTapped(result))
             } label: {
-                FileRowView(name: result.name, isDirectory: result.isDirectory, subtitle: result.matchLine, isFavorite: store.favoritePaths.contains(result.id), kind: result.kind)
+                FileRowView(name: result.name, isDirectory: result.isDirectory, subtitle: result.matchLine, isFavorite: store.favoritePaths.contains(result.id), kind: searchResultKind(result))
             }
             .buttonStyle(DSHapticButtonStyle())
-            .disabled(!result.isDirectory)
             .listRowBackground(Color.clear)
             .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
             .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)
@@ -1060,22 +1170,87 @@ struct BrowseContentView: View {
     }
 }
 
-#Preview("BrowseContentView") {
-    NavigationStack {
-        BrowseContentView(
-            store: Store(
-                initialState: BrowseFeature.State(
-                    serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-                    directoryPath: "",
-                    title: L10n.Browse.navigationTitle
-                )
-            ) {
-                BrowseFeature()
-            } withDependencies: {
-                $0.filesClient = .previewValue
-            }
-        )
-        .navigationTitle(L10n.Browse.navigationTitle)
+@MainActor
+private func browsePreview(
+    directoryPath: String = "Documents",
+    configureClient: (inout FilesClient) -> Void = { _ in },
+    mutateState: (inout BrowseFeature.State) -> Void = { _ in }
+) -> some View {
+    var state = BrowseFeature.State(
+        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+        directoryPath: directoryPath,
+        title: L10n.Browse.navigationTitle
+    )
+    mutateState(&state)
+    var client = FilesClient.previewValue
+    configureClient(&client)
+    let store = Store(initialState: state) {
+        BrowseFeature()
+    } withDependencies: {
+        $0.filesClient = client
+    }
+    return NavigationStack {
+        BrowseContentView(store: store)
+            .navigationTitle(L10n.Browse.navigationTitle)
     }
 }
 
+private let browsePreviewItems: [FileItem] = [
+    FileItem(name: "Projects", path: "Documents", dateModified: Date(), size: 0, kind: "directory"),
+    FileItem(name: "budget.xlsx", path: "Documents", dateModified: Date(), size: 44_000, kind: "xlsx"),
+    FileItem(name: "notes.txt", path: "Documents", dateModified: Date(), size: 1_200, kind: "txt"),
+    FileItem(name: "cover.jpg", path: "Documents", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
+]
+
+private let browsePreviewEmptyAccess = FileAccess(
+    canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true
+)
+
+#Preview("Browse — content") {
+    browsePreview(mutateState: { $0.items = IdentifiedArray(uniqueElements: browsePreviewItems) })
+}
+
+#Preview("Browse — loading") {
+    browsePreview(mutateState: { $0.isLoading = true })
+}
+
+#Preview("Browse — empty folder") {
+    browsePreview(
+        configureClient: { $0.browse = { _, path in BrowseResult(items: [], access: browsePreviewEmptyAccess, path: path) } }
+    )
+}
+
+#Preview("Browse — error") {
+    browsePreview(mutateState: { $0.errorMessage = L10n.EmptyState.loadFailed })
+}
+
+#Preview("Browse — no search results") {
+    browsePreview(mutateState: {
+        $0.searchQuery = "vacation"
+        $0.searchResults = []
+    })
+}
+
+#Preview("Browse — searching everywhere") {
+    browsePreview(mutateState: {
+        $0.searchQuery = "vacation"
+        $0.searchScope = .everywhere
+        $0.isSearchingEverywhere = true
+    })
+}
+
+#Preview("Browse — delete alert, linked shares") {
+    browsePreview(mutateState: {
+        $0.items = IdentifiedArray(uniqueElements: browsePreviewItems)
+        $0.deleteConfirmationItem = browsePreviewItems[1]
+        $0.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 2))
+    })
+}
+
+#Preview("Browse — delete alert, share check unavailable") {
+    browsePreview(mutateState: {
+        $0.items = IdentifiedArray(uniqueElements: browsePreviewItems)
+        $0.deleteConfirmationItem = browsePreviewItems[1]
+        $0.deleteImpactCheck = .unavailable
+    })
+}

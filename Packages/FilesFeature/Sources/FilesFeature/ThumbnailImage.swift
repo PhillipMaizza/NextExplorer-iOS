@@ -4,11 +4,11 @@ import DesignSystem
 import SwiftUI
 import FilesClient
 
-/// Lazily resolves and displays a thumbnail for one file, falling back to `fallbackIcon`
-/// while loading, on failure, or once resolved to no thumbnail (`GET /api/thumbnails/*`
-/// legitimately returns `{ thumbnail: "" }` for e.g. PDFs or when thumbnails are disabled
-/// server-side). One request per instance — the API has no bulk/listing variant, matching
-/// how the real web client also loads these per-file.
+/// Lazily resolves and displays a thumbnail for one file: a small spinner while the request
+/// is in flight, then either the image or `fallbackIcon` — on failure or once resolved to no
+/// thumbnail (`GET /api/thumbnails/*` legitimately returns `{ thumbnail: "" }` for e.g. PDFs
+/// or when thumbnails are disabled server-side). One request per instance — the API has no
+/// bulk/listing variant, matching how the real web client also loads these per-file.
 ///
 /// Loads through `ThumbnailCache` rather than `AsyncImage(url:)` directly, so a thumbnail
 /// already seen this session (or a prior one) is read from disk instead of re-hitting the
@@ -30,8 +30,10 @@ struct ThumbnailImage: View {
                 Image(uiImage: uiImage)
                     .resizable()
                     .scaledToFill()
-            } else {
+            } else if didResolve {
                 fallbackImage
+            } else {
+                ThumbnailLoadingPlaceholder()
             }
         }
         .task(id: path) {

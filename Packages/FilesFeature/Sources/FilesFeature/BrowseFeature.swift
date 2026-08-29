@@ -93,6 +93,17 @@ public struct BrowseFeature {
         public let itemID: String
     }
 
+    /// State of the `POST /api/files/delete-impact` lookup that runs while a delete
+    /// confirmation is on screen. `.unavailable` means the check itself failed — the delete
+    /// still proceeds, the server still removes any linked shares, the alert just can't say
+    /// how many.
+    public enum DeleteImpactCheck: Equatable, Sendable {
+        case idle
+        case checking
+        case loaded(DeleteImpact)
+        case unavailable
+    }
+
     public struct DownloadResult: Equatable, Sendable {
         public let destinationURL: URL
         public let location: DownloadLocation
@@ -161,6 +172,10 @@ public struct BrowseFeature {
         public var favoritePaths: Set<String> = []
         public var access: FileAccess?
         public var isLoading = false
+        /// Flips true the first time a browse response lands (success or failure). Until then
+        /// the view shows the loading skeleton rather than the empty state, so a fresh folder
+        /// never flashes "folder is empty" for the frame before `onAppear`'s fetch begins.
+        public var hasLoaded = false
         public var errorMessage: String?
         public var searchQuery = ""
         public var searchScope: SearchScope = .thisFolder
@@ -202,8 +217,15 @@ public struct BrowseFeature {
         /// `TextField` bound through a TCA `.sending` binding didn't reliably propagate
         /// keystrokes back out, so `renameConfirmed` is sent the final text directly instead.
         public var renameSheetItem: FileItem?
+        /// Whether the "New folder" name sheet is open. Like rename, the draft text lives in
+        /// `BrowseContentView`'s own `@State`; `newFolderConfirmed` carries the final name.
+        public var isNewFolderSheetPresented = false
         /// Item awaiting a destructive confirmation before `deleteConfirmed` actually deletes it.
         public var deleteConfirmationItem: FileItem?
+        /// Share-link fallout of the pending delete, single or bulk — only one confirmation is
+        /// ever on screen at once, so one field covers both. Filled in by `delete-impact` while
+        /// the alert is up; reset to `.idle` when the alert is dismissed.
+        public var deleteImpactCheck: DeleteImpactCheck = .idle
         public var isPerformingFileAction = false
         public var fileActionErrorMessage: String?
         /// Whether the list/grid is in multi-select mode — toggled from the toolbar, not tied
@@ -283,8 +305,13 @@ public struct BrowseFeature {
         case renameCancelled
         case renameConfirmed(String)
         case renameResponse(Result<RenameResult, FilesClientError>)
+        case newFolderTapped
+        case newFolderCancelled
+        case newFolderConfirmed(String)
+        case newFolderResponse(Result<FileItem, FilesClientError>)
         case deleteCancelled
         case deleteConfirmed
+        case deleteImpactResponse(Result<DeleteImpact, FilesClientError>)
         case deleteResponse(Result<DeleteResult, FilesClientError>)
         case extractZipTapped(FileItem)
         case extractZipResponse(Result<FileItem, FilesClientError>)
@@ -352,7 +379,7 @@ public struct BrowseFeature {
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.openURL) var openURL
-    private enum CancelID { case search, transfer, googleDocsPointer }
+    private enum CancelID { case search, transfer, googleDocsPointer, deleteImpact }
 
     public init() {}
 
@@ -368,6 +395,7 @@ public struct BrowseFeature {
 
             case let .itemsResponse(.success(result)):
                 state.isLoading = false
+                state.hasLoaded = true
                 state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(result.items))
                 state.access = result.access
                 state.errorMessage = nil
@@ -375,6 +403,7 @@ public struct BrowseFeature {
 
             case let .itemsResponse(.failure(error)):
                 state.isLoading = false
+                state.hasLoaded = true
                 state.errorMessage = error.userMessage
                 return .none
 
@@ -424,8 +453,23 @@ public struct BrowseFeature {
                 return search(&state)
 
             case let .searchResultTapped(result):
-                guard result.isDirectory else { return .none }
-                return .send(.delegate(.openPath(path: result.id, title: result.name)))
+                guard !result.isDirectory else {
+                    return .send(.delegate(.openPath(path: result.id, title: result.name)))
+                }
+                // Search results only carry `dir`/`file` for `kind`, so rebuild the extension
+                // from the name and hand a real `FileItem` to the same preview routing a
+                // browse row tap uses. `dateModified`/`size` are unknown here, so the preview
+                // cache treats it as fresh and re-fetches — fine for an occasional tap.
+                let ext = (result.name as NSString).pathExtension.lowercased()
+                let item = FileItem(
+                    name: result.name,
+                    path: result.path,
+                    dateModified: Date(),
+                    size: 0,
+                    kind: ext.isEmpty ? "unknown" : ext,
+                    supportsThumbnail: false
+                )
+                return .send(.rowTapped(item))
 
             case let .searchResultsResponse(.success(results)):
                 state.isSearchingEverywhere = false
@@ -454,7 +498,8 @@ public struct BrowseFeature {
 
             case let .deleteTapped(item):
                 state.deleteConfirmationItem = item
-                return .none
+                state.deleteImpactCheck = .checking
+                return checkDeleteImpact(&state, items: [item])
 
             case let .favoriteToggleButtonTapped(item):
                 // Mirrors the real server: `favoritesService.validatePath` 400s on anything
@@ -495,8 +540,40 @@ public struct BrowseFeature {
                 state.fileActionErrorMessage = error.userMessage
                 return .none
 
+            case .newFolderTapped:
+                state.isNewFolderSheetPresented = true
+                return .none
+
+            case .newFolderCancelled:
+                state.isNewFolderSheetPresented = false
+                return .none
+
+            case let .newFolderConfirmed(name):
+                return confirmNewFolder(&state, name: name)
+
+            case let .newFolderResponse(.success(folder)):
+                state.isPerformingFileAction = false
+                state.isNewFolderSheetPresented = false
+                state.items.append(folder)
+                return .none
+
+            case let .newFolderResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.isNewFolderSheetPresented = false
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
             case .deleteCancelled:
                 state.deleteConfirmationItem = nil
+                state.deleteImpactCheck = .idle
+                return .cancel(id: CancelID.deleteImpact)
+
+            case let .deleteImpactResponse(.success(impact)):
+                state.deleteImpactCheck = .loaded(impact)
+                return .none
+
+            case .deleteImpactResponse(.failure):
+                state.deleteImpactCheck = .unavailable
                 return .none
 
             case .deleteConfirmed:
@@ -600,11 +677,14 @@ public struct BrowseFeature {
             case .bulkDeleteTapped:
                 guard !state.selectedItemIDs.isEmpty else { return .none }
                 state.bulkDeleteConfirmationIsPresented = true
-                return .none
+                state.deleteImpactCheck = .checking
+                let selected = state.selectedItemIDs.compactMap { state.items[id: $0] }
+                return checkDeleteImpact(&state, items: selected)
 
             case .bulkDeleteCancelled:
                 state.bulkDeleteConfirmationIsPresented = false
-                return .none
+                state.deleteImpactCheck = .idle
+                return .cancel(id: CancelID.deleteImpact)
 
             case .bulkDeleteConfirmed:
                 return confirmBulkDelete(&state)
@@ -1048,9 +1128,39 @@ public struct BrowseFeature {
         }
     }
 
+    private func confirmNewFolder(_ state: inout State, name: String) -> Effect<Action> {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
+            state.isNewFolderSheetPresented = false
+            return .none
+        }
+        state.isPerformingFileAction = true
+        let serverURL = state.serverURL
+        let directoryPath = state.directoryPath
+        let filesClient = self.filesClient
+        return .run { send in
+            await send(.newFolderResponse(await apiResult {
+                try await filesClient.createFolder(serverURL, directoryPath, trimmedName)
+            }))
+        }
+    }
+
+    private func checkDeleteImpact(_ state: inout State, items: [FileItem]) -> Effect<Action> {
+        guard !items.isEmpty else { return .none }
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        return .run { send in
+            await send(.deleteImpactResponse(await apiResult {
+                try await filesClient.deleteImpact(serverURL, items)
+            }))
+        }
+        .cancellable(id: CancelID.deleteImpact, cancelInFlight: true)
+    }
+
     private func confirmDelete(_ state: inout State) -> Effect<Action> {
         guard let item = state.deleteConfirmationItem else { return .none }
         state.deleteConfirmationItem = nil
+        state.deleteImpactCheck = .idle
         state.isPerformingFileAction = true
         let serverURL = state.serverURL
         let filesClient = self.filesClient
@@ -1101,6 +1211,7 @@ public struct BrowseFeature {
 
     private func confirmBulkDelete(_ state: inout State) -> Effect<Action> {
         state.bulkDeleteConfirmationIsPresented = false
+        state.deleteImpactCheck = .idle
         let itemsToDelete = state.selectedItemIDs.compactMap { state.items[id: $0] }
         guard !itemsToDelete.isEmpty else { return .none }
         state.isBulkActionInFlight = true

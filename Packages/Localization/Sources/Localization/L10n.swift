@@ -23,13 +23,14 @@ public enum L10n {
         public static var actionExtract: String { tr("browse.actionExtract") }  // "Extract"
         public static var actionGetInfo: String { tr("browse.actionGetInfo") }  // "Get Info"
         public static var actionMove: String { tr("browse.actionMove") }  // "Move"
+        public static var actionNewFolder: String { tr("browse.actionNewFolder") }  // "Create Folder"
         public static var actionOpenInBrowser: String { tr("browse.actionOpenInBrowser") }  // "Open in Browser"
         public static var actionPaste: String { tr("browse.actionPaste") }  // "Paste"
         public static func actionPasteCount(_ a0: CVarArg) -> String { tr("browse.actionPasteCount", a0) }
         public static var actionPasteHere: String { tr("browse.actionPasteHere") }  // "Paste here"
         public static var actionRemoveFromFavorites: String { tr("browse.actionRemoveFromFavorites") }  // "Remove from Favorites"
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
-        public static var actionShare: String { tr("browse.actionShare") }  // "Share"
+        public static var actionShare: String { tr("browse.actionShare") }  // "Create share link"
         public static func clipboardCopiedMany(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedMany", a0) }
         public static func clipboardCopiedOne(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedOne", a0) }
         public static func clipboardCopyCount(_ a0: CVarArg) -> String { tr("browse.clipboardCopyCount", a0) }
@@ -37,6 +38,9 @@ public enum L10n {
         public static func deleteConfirmMany(_ a0: CVarArg) -> String { tr("browse.deleteConfirmMany", a0) }
         public static func deleteConfirmOne(_ a0: CVarArg) -> String { tr("browse.deleteConfirmOne", a0) }
         public static var deleteConfirmTitle: String { tr("browse.deleteConfirmTitle") }  // "Delete?"
+        public static func deleteLinkedSharesMany(_ a0: CVarArg) -> String { tr("browse.deleteLinkedSharesMany", a0) }
+        public static var deleteLinkedSharesOne: String { tr("browse.deleteLinkedSharesOne") }  // "This also removes 1 share link that points here."
+        public static var deleteLinkedSharesUnavailable: String { tr("browse.deleteLinkedSharesUnavailable") }
         public static var deleteMessage: String { tr("browse.deleteMessage") }  // "This can't be undone."
         public static var destinationPickerConfirmMove: String { tr("browse.destinationPickerConfirmMove") }  // "Move Here"
         public static var destinationPickerLoadFailed: String { tr("browse.destinationPickerLoadFailed") }  // "Couldn't load folders."
@@ -48,6 +52,9 @@ public enum L10n {
         public static func downloadSavedTo(_ a0: CVarArg) -> String { tr("browse.downloadSavedTo", a0) }
         public static var locations: String { tr("browse.locations") }  // "Locations"
         public static var navigationTitle: String { tr("browse.navigationTitle") }  // "Browse"
+        public static var newFolderConfirm: String { tr("browse.newFolderConfirm") }  // "Create"
+        public static var newFolderPlaceholder: String { tr("browse.newFolderPlaceholder") }  // "Folder name"
+        public static var newFolderTitle: String { tr("browse.newFolderTitle") }  // "New folder"
         public static var open: String { tr("browse.open") }  // "Open"
         public static var progressCompressing: String { tr("browse.progressCompressing") }  // "Compressing…"
         public static var progressCopying: String { tr("browse.progressCopying") }  // "Copying…"
@@ -347,14 +354,14 @@ public enum L10n {
         public static var small: String { tr("thumbnailSize.small") }  // "Small"
     }
     public enum Uploads {
-        public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo"
+        public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo or Video"
         public static var actionUploadFromFiles: String { tr("uploads.actionUploadFromFiles") }  // "Upload from Files"
-        public static var actionUploadFromPhotos: String { tr("uploads.actionUploadFromPhotos") }  // "Upload from Photos"
+        public static var actionUploadFromPhotos: String { tr("uploads.actionUploadFromPhotos") }  // "Upload from Gallery"
         public static func barFailedMany(_ a0: CVarArg) -> String { tr("uploads.barFailedMany", a0) }
         public static var barFailedOne: String { tr("uploads.barFailedOne") }  // "1 upload failed"
         public static func barTitleMany(_ a0: CVarArg) -> String { tr("uploads.barTitleMany", a0) }
         public static func barTitleOne(_ a0: CVarArg) -> String { tr("uploads.barTitleOne", a0) }
-        public static var cameraDeniedMessage: String { tr("uploads.cameraDeniedMessage") }  // "Allow camera access in Settings to take a photo."
+        public static var cameraDeniedMessage: String { tr("uploads.cameraDeniedMessage") }  // "Allow camera access in Settings to take a photo or video."
         public static var cameraDeniedTitle: String { tr("uploads.cameraDeniedTitle") }  // "Camera access needed"
         public static var cancelAll: String { tr("uploads.cancelAll") }  // "Cancel all uploads"
         public static var clear: String { tr("uploads.clear") }  // "Clear"
@@ -363,6 +370,9 @@ public enum L10n {
         public static func completeWithFailures(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("uploads.completeWithFailures", a0, a1) }
         public static var destinationConfirm: String { tr("uploads.destinationConfirm") }  // "Upload here"
         public static var destinationTitle: String { tr("uploads.destinationTitle") }  // "Upload to…"
+        public static var discardConfirm: String { tr("uploads.discardConfirm") }  // "Discard"
+        public static var discardMessage: String { tr("uploads.discardMessage") }  // "The files you added won't be uploaded."
+        public static var discardTitle: String { tr("uploads.discardTitle") }  // "Discard upload?"
         public static var emptyList: String { tr("uploads.emptyList") }  // "No uploads yet."
         public static var failedGeneric: String { tr("uploads.failedGeneric") }  // "Couldn't upload this file."
         public static var menuTitle: String { tr("uploads.menuTitle") }  // "Upload"
@@ -371,6 +381,7 @@ public enum L10n {
         public static var reviewAddMore: String { tr("uploads.reviewAddMore") }  // "Add more files"
         public static var reviewChooseFolder: String { tr("uploads.reviewChooseFolder") }  // "Choose a folder"
         public static func reviewPreparing(_ a0: CVarArg) -> String { tr("uploads.reviewPreparing", a0) }
+        public static func reviewPreviewFile(_ a0: CVarArg) -> String { tr("uploads.reviewPreviewFile", a0) }
         public static var reviewSectionFiles: String { tr("uploads.reviewSectionFiles") }  // "Files"
         public static var reviewSectionPath: String { tr("uploads.reviewSectionPath") }  // "Path"
         public static var reviewSectionSize: String { tr("uploads.reviewSectionSize") }  // "Total size"

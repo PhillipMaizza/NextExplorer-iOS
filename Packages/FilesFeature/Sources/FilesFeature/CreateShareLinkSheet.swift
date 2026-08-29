@@ -13,7 +13,7 @@ private enum Constants {
     static let sectionSpacing: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space16
     static let verticalPadding: CGFloat = .space16
-    static let cardCornerRadius: CGFloat = .radiusMedium
+    static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
     static let fieldHeight: CGFloat = .size48
     static let fieldHorizontalPadding: CGFloat = .space12
@@ -99,12 +99,8 @@ struct CreateShareLinkSheet: View {
             sourceCard
 
             section(L10n.CreateShare.sectionLabel) {
-                fieldBox {
-                    TextField(L10n.CreateShare.sectionLabel, text: $store.label.sending(\.labelChanged), prompt: Text(verbatim: store.itemName))
-                        .type(.body2(.regular))
-                        .foregroundStyle(Color.primaryDS)
-                        .autocorrectionDisabled()
-                }
+                DSTextField(L10n.CreateShare.sectionLabel, text: $store.label.sending(\.labelChanged), prompt: Text(verbatim: store.itemName))
+                    .autocorrectionDisabled()
             }
 
             section(L10n.CreateShare.sectionAccessMode) {
@@ -132,11 +128,7 @@ struct CreateShareLinkSheet: View {
                 isOn: $store.isPasswordEnabled.sending(\.passwordEnabledChanged)
             )
             if store.isPasswordEnabled {
-                fieldBox {
-                    SecureField(L10n.Common.password, text: $store.password.sending(\.passwordChanged), prompt: Text(L10n.Common.password))
-                        .type(.body2(.regular))
-                        .foregroundStyle(Color.primaryDS)
-                }
+                DSSecureField(L10n.Common.password, text: $store.password.sending(\.passwordChanged), prompt: Text(L10n.Common.password))
             }
 
             DSToggleRow(
@@ -316,19 +308,9 @@ struct CreateShareLinkSheet: View {
 
     private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-            Text(title).type(.body2(.semibold), style: .primary(for: .label))
+            DSFieldLabel(title)
             content()
         }
-    }
-
-    private func fieldBox(@ViewBuilder content: () -> some View) -> some View {
-        content()
-            .padding(.horizontal, Constants.fieldHorizontalPadding)
-            .frame(height: Constants.fieldHeight)
-            .background(
-                RoundedRectangle(cornerRadius: .radiusControl)
-                    .stroke(Color.borderPrimary, lineWidth: .borderWidthHairline)
-            )
     }
 
     private func copyRow(value: String, field: CopiedField, action: @escaping () -> Void) -> some View {

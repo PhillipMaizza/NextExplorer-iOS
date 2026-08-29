@@ -34,7 +34,7 @@ func selectSortToolbar<SortMenu: View, ClipboardMenu: View>(
                 .buttonStyle(DSHapticButtonStyle())
         }
     } else {
-        ToolbarItem(placement: .primaryAction) {
+        ToolbarItem(placement: .topBarTrailing) {
             Menu {
                 clipboardMenu()
                 if isSelectAvailable {
