@@ -111,6 +111,24 @@ extension FilesClient {
         },
         mySharedLinks: { _ in Share.previewSharedByMe },
         sharedWithMeLinks: { _ in Share.previewSharedWithMe },
+        updateShareLink: { _, shareID, request in
+            let base = Share.previewSharedByMe.first { $0.id == shareID } ?? Share.previewSharedByMe[0]
+            let hasPassword: Bool
+            switch request.password {
+            case .keep: hasPassword = base.hasPassword
+            case .remove: hasPassword = false
+            case .set: hasPassword = true
+            }
+            return Share(
+                id: base.id, shareToken: base.shareToken, ownerId: base.ownerId,
+                sourcePath: base.sourcePath, sourceName: base.sourceName, isDirectory: base.isDirectory,
+                accessMode: request.accessMode, sharingType: request.target, hasPassword: hasPassword,
+                expiresAt: request.expiresAt, label: request.label,
+                downloadCount: base.downloadCount, lastAccessedAt: base.lastAccessedAt,
+                permittedUserIds: request.target == .users ? request.userIds : nil,
+                createdAt: base.createdAt, updatedAt: Date()
+            )
+        },
         deleteShareLink: { _, _ in },
         shareableUsers: { _ in
             [

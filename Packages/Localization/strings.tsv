@@ -265,6 +265,12 @@ createShare.summaryExpires	Expires
 createShare.summarySpecificPeople	Specific people
 createShare.errorPastExpiration	Pick an expiration date in the future.
 
+# ---- edit share ----
+editShare.title	Edit Share Link
+editShare.save	Save Changes
+editShare.passwordKeepHint	Leave blank to keep the current password
+editShare.savedToast	Share link updated
+
 # ---- settings ----
 settings.navigationTitle	Settings
 settings.appVersion	Version %1$@ (%2$@)

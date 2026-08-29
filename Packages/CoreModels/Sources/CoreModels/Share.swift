@@ -195,3 +195,43 @@ public struct CreateShareLinkRequest: Equatable, Sendable {
         self.expiresAt = expiresAt
     }
 }
+
+/// Body for `PUT /api/shares/:id` (`backend/src/routes/shares.js` → `sharesService.updateShare`).
+/// The server applies each key that's present (`'key' in body`) and leaves the rest, so the
+/// only field that needs care is the password: sending a string sets a new one, `null` removes
+/// it, and *omitting the key* keeps whatever's already there — the current value can't be read
+/// back (only a hash exists server side).
+public struct UpdateShareRequest: Equatable, Sendable {
+    public var label: String?
+    public var accessMode: ShareAccessMode
+    public var target: ShareTarget
+    public var expiresAt: Date?
+    /// Only sent when `target == .users`; the server ignores it otherwise.
+    public var userIds: [String]
+    public var password: PasswordChange
+
+    public enum PasswordChange: Equatable, Sendable {
+        /// Don't touch the current password — the `password` key is left out entirely.
+        case keep
+        /// Clear the password — sends `password: null`.
+        case remove
+        /// Replace it — sends `password: "<value>"`.
+        case set(String)
+    }
+
+    public init(
+        label: String? = nil,
+        accessMode: ShareAccessMode = .readonly,
+        target: ShareTarget = .anyone,
+        expiresAt: Date? = nil,
+        userIds: [String] = [],
+        password: PasswordChange = .keep
+    ) {
+        self.label = label
+        self.accessMode = accessMode
+        self.target = target
+        self.expiresAt = expiresAt
+        self.userIds = userIds
+        self.password = password
+    }
+}
