@@ -7,6 +7,18 @@ import Foundation
 public enum OfficeEditor: String, Equatable, Sendable, CaseIterable {
     case onlyOffice
     case collabora
+
+    /// `UserDefaults` key for the client-local "which editor to prefer when both are
+    /// enabled" setting. The web client persists the same choice in local storage.
+    public static let preferenceStorageKey = "officeEditorPreference"
+    /// The default preference, matching the web client's default of ONLYOFFICE.
+    public static let defaultPreference: OfficeEditor = .onlyOffice
+
+    /// Resolve a stored raw preference string, falling back to the default for anything
+    /// unrecognised.
+    public static func preference(fromRawValue raw: String) -> OfficeEditor {
+        OfficeEditor(rawValue: raw) ?? defaultPreference
+    }
 }
 
 /// `edit` opens a writable session; `view` a read-only one. Sent as the `mode` field to the
@@ -28,12 +40,13 @@ public enum OfficeEditorSupport {
     ]
 
     /// The editor that should open `fileExtension`, or `nil` if neither applies. When both
-    /// editors are enabled ONLYOFFICE wins (matching the web default preference); when one
-    /// is enabled it is used only if the extension is in its advertised list, falling back
-    /// to the frontend default set when that list is empty.
+    /// editors support the extension `preference` breaks the tie (default ONLYOFFICE, matching
+    /// the web default); when only one is enabled it is used only if the extension is in its
+    /// advertised list, falling back to the frontend default set when that list is empty.
     public static func editor(
         for fileExtension: String,
-        features: ServerFeatures.OfficeEditors
+        features: ServerFeatures.OfficeEditors,
+        preference: OfficeEditor = .onlyOffice
     ) -> OfficeEditor? {
         let ext = fileExtension.lowercased()
 
@@ -42,6 +55,7 @@ public enum OfficeEditorSupport {
         let collaboraMatches = features.isCollaboraEnabled
             && matches(ext, advertised: features.collaboraExtensions, fallback: collaboraDefaultExtensions)
 
+        if onlyOfficeMatches && collaboraMatches { return preference }
         if onlyOfficeMatches { return .onlyOffice }
         if collaboraMatches { return .collabora }
         return nil
