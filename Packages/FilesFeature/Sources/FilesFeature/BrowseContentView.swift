@@ -932,7 +932,7 @@ struct BrowseContentView: View {
                             )
                             .overlay(alignment: .topLeading) {
                                 if store.isSelecting {
-                                    selectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                                    DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
                                 }
                             }
                         }
@@ -1081,7 +1081,7 @@ struct BrowseContentView: View {
             } label: {
                 HStack(spacing: .space12) {
                     if store.isSelecting {
-                        selectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                        DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
                     }
                     FileRowView(
                         item: item,
@@ -1131,16 +1131,6 @@ struct BrowseContentView: View {
             .listRowSeparator(item.id == firstItemID ? .hidden : .visible, edges: .top)
             .listRowSeparator(item.id == lastItemID ? .hidden : .visible, edges: .bottom)
         }
-    }
-
-    private func selectionIndicator(isSelected: Bool) -> some View {
-        (isSelected ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
-            .resizable()
-            .scaledToFit()
-            .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
-            .frame(width: .iconMedium, height: .iconMedium)
-            .symbolEffect(.bounce, value: isSelected)
-            .transition(.scale.combined(with: .opacity))
     }
 
     @ViewBuilder

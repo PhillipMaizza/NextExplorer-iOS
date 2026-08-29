@@ -36,13 +36,7 @@ struct FavoritesView: View {
         !store.displayedFavorites.isEmpty && store.selectedFavoriteIDs.count == store.displayedFavorites.count
     }
 
-    /// Which branch of the overlay is currently showing — lets the overlay cross-fade
-    /// between states instead of hard-cutting between them.
-    private enum OverlayState: Hashable {
-        case none, loading, error, empty, noResults
-    }
-
-    private var overlayState: OverlayState {
+    private var overlayPhase: ListStateOverlay.Phase {
         if store.isLoading && store.favorites.isEmpty {
             .loading
         } else if store.errorMessage != nil {
@@ -136,32 +130,16 @@ struct FavoritesView: View {
             .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
             .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
             .overlay {
-                Group {
-                    switch overlayState {
-                    case .loading:
-                        ProgressView()
-                            .transition(.opacity)
-                    case .error:
-                        if let errorMessage = store.errorMessage {
-                            EmptyStateView(icon: IconKit.warning, message: errorMessage) {
-                                store.send(.refreshButtonTapped)
-                            }
-                                .transition(.opacity)
-                        }
-                    case .empty:
-                        EmptyStateView(icon: IconKit.star, message: L10n.Favorites.emptyList)
-                            .transition(.opacity)
-                    case .noResults:
-                        EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
-                            .transition(.opacity)
-                    case .none:
-                        EmptyView()
-                    }
-                }
-                .id(overlayState)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ListStateOverlay(
+                    phase: overlayPhase,
+                    errorMessage: store.errorMessage,
+                    emptyIcon: IconKit.star,
+                    emptyMessage: L10n.Favorites.emptyList,
+                    noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
+                    onRetry: { store.send(.refreshButtonTapped) }
+                )
             }
-            .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
+            .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayPhase)
             .featureToast(error: store.actionErrorMessage)
             .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
             .toolbar {
@@ -252,16 +230,6 @@ struct FavoritesView: View {
         )
     }
 
-    private func selectionIndicator(isSelected: Bool) -> some View {
-        (isSelected ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
-            .resizable()
-            .scaledToFit()
-            .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
-            .frame(width: .iconMedium, height: .iconMedium)
-            .symbolEffect(.bounce, value: isSelected)
-            .transition(.scale.combined(with: .opacity))
-    }
-
     private var listContent: some View {
         // Bound once — the separator checks below would otherwise re-filter the list per row.
         let favorites = store.displayedFavorites
@@ -274,7 +242,7 @@ struct FavoritesView: View {
                 } label: {
                     HStack(spacing: .space12) {
                         if store.isSelecting {
-                            selectionIndicator(isSelected: store.selectedFavoriteIDs.contains(favorite.id))
+                            DSSelectionIndicator(isSelected: store.selectedFavoriteIDs.contains(favorite.id))
                         }
                         favoriteRowIcon(favorite)
                     }
@@ -308,8 +276,8 @@ struct FavoritesView: View {
                         .tint(.accent)
                     }
                 }
-                .listRowSeparator(favorite.id == store.displayedFavorites.first?.id ? .hidden : .visible, edges: .top)
-                .listRowSeparator(favorite.id == store.displayedFavorites.last?.id ? .hidden : .visible, edges: .bottom)
+                .listRowSeparator(favorite.id == firstID ? .hidden : .visible, edges: .top)
+                .listRowSeparator(favorite.id == lastID ? .hidden : .visible, edges: .bottom)
             }
             .onMove(perform: store.canReorder ? { store.send(.favoritesMoved($0, $1)) } : nil)
         }
@@ -338,7 +306,7 @@ struct FavoritesView: View {
                         )
                             .overlay(alignment: .topLeading) {
                                 if store.isSelecting {
-                                    selectionIndicator(isSelected: store.selectedFavoriteIDs.contains(favorite.id))
+                                    DSSelectionIndicator(isSelected: store.selectedFavoriteIDs.contains(favorite.id))
                                 }
                             }
                     }

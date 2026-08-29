@@ -6,10 +6,10 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let sectionSpacing: CGFloat = .space8
-    static let horizontalPadding: CGFloat = .space16
-    static let verticalPadding: CGFloat = .space16
+    static let horizontalPadding: CGFloat = .space24
+    static let verticalPadding: CGFloat = .space24
     static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
     static let checkboxSize: CGFloat = .iconSmall
@@ -71,8 +71,7 @@ struct PermissionsSheet: View {
     // MARK: Footer
 
     private var footer: some View {
-        VStack(spacing: .space8) {
-            Divider()
+        DSSheetFooter {
             VStack(spacing: .space8) {
                 if let actionError = store.actionError {
                     DSErrorCard(actionError)
@@ -87,10 +86,7 @@ struct PermissionsSheet: View {
                 }
                 .disabled(!store.isModeDirty)
             }
-            .padding(.horizontal, Constants.horizontalPadding)
-            .padding(.bottom, Constants.verticalPadding)
         }
-        .background(Color.backgroundPrimary)
     }
 
     // MARK: Mode
@@ -153,10 +149,7 @@ struct PermissionsSheet: View {
         return Button {
             store.send(.toggle(scope, right))
         } label: {
-            (isOn ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
-                .resizable().scaledToFit()
-                .foregroundStyle(isOn ? Color.accent : Color.secondaryDS)
-                .frame(width: Constants.checkboxSize, height: Constants.checkboxSize)
+            DSSelectionIndicator(isSelected: isOn, size: Constants.checkboxSize)
                 .contentShape(Rectangle())
         }
         .buttonStyle(DSHapticButtonStyle())

@@ -4,7 +4,7 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let cardSpacing: CGFloat = .space12
     static let cardPadding: CGFloat = .space16
     static let cardVerticalPadding: CGFloat = .space16
@@ -66,7 +66,7 @@ struct FileInfoSheet: View {
             )
 
             if let errorMessage {
-                Text(errorMessage).type(.body3(.semibold), style: .error)
+                DSErrorCard(errorMessage)
             } else if let metadata {
                 metadataSections(for: metadata)
             }

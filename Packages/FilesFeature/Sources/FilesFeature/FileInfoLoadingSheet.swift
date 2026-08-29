@@ -4,7 +4,7 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let horizontalPadding: CGFloat = .space24
     static let topPadding: CGFloat = .space24
     static let bottomPadding: CGFloat = .space24

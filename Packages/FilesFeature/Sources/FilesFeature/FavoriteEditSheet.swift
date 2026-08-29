@@ -67,15 +67,12 @@ struct FavoriteEditSheet: View {
             .padding(.horizontal, Metrics.horizontalPadding)
             .padding(.vertical, Metrics.verticalPadding)
         } footer: {
-            DSButton(L10n.Favorites.editSave, style: .primary, isLoading: store.isSaving) {
-                store.send(.saveTapped)
+            DSSheetFooter {
+                DSButton(L10n.Favorites.editSave, style: .primary, isLoading: store.isSaving) {
+                    store.send(.saveTapped)
+                }
+                .disabled(!store.isSaveEnabled)
             }
-            .disabled(!store.isSaveEnabled)
-            .padding(.horizontal, Metrics.horizontalPadding)
-            .padding(.top, Metrics.sectionSpacing)
-            .padding(.bottom, Metrics.verticalPadding)
-            .frame(maxWidth: .infinity)
-            .background(Color.backgroundPrimary)
         }
     }
 

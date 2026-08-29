@@ -186,16 +186,15 @@ struct UploadReviewView: View {
 
     /// Pinned below the scrolling list so Upload is always reachable, however many files.
     private var footer: some View {
-        VStack(spacing: Constants.rowSpacing) {
-            addMoreButton
-            DSButton(L10n.Uploads.reviewUploadButton, icon: IconKit.upload, style: .primary, isLoading: store.isPreparing) {
-                store.send(.uploadTapped)
+        DSSheetFooter {
+            VStack(spacing: Constants.rowSpacing) {
+                addMoreButton
+                DSButton(L10n.Uploads.reviewUploadButton, icon: IconKit.upload, style: .primary, isLoading: store.isPreparing) {
+                    store.send(.uploadTapped)
+                }
+                .disabled(!store.canUpload)
             }
-            .disabled(!store.canUpload)
         }
-        .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.bottom, Constants.verticalPadding)
-        .background(Color.backgroundPrimary)
     }
 
     private func infoRow<Content: View>(@ViewBuilder content: () -> Content) -> some View {
