@@ -51,6 +51,30 @@ extension NetworkClient {
                     throw NetworkError.invalidResponse
                 }
                 return (data, httpResponse)
+            },
+            download: { request in
+                let temporaryURL: URL
+                let response: URLResponse
+                do {
+                    (temporaryURL, response) = try await session.download(for: request)
+                } catch {
+                    throw NetworkError.transport(error.localizedDescription)
+                }
+                guard let httpResponse = response as? HTTPURLResponse else {
+                    try? FileManager.default.removeItem(at: temporaryURL)
+                    throw NetworkError.invalidResponse
+                }
+                // `session.download` deletes its temp file the moment this closure returns, so
+                // move it somewhere the caller controls before handing the URL back.
+                let stableURL = FileManager.default.temporaryDirectory
+                    .appendingPathComponent("download-\(UUID().uuidString)")
+                do {
+                    try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
+                } catch {
+                    try? FileManager.default.removeItem(at: temporaryURL)
+                    throw NetworkError.transport(error.localizedDescription)
+                }
+                return (stableURL, httpResponse)
             }
         )
     }

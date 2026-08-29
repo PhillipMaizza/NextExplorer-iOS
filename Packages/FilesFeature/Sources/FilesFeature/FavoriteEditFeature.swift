@@ -118,7 +118,7 @@ public struct FavoriteEditFeature {
                 let color = state.colorDraft
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.saveResponse(await apiResult {
+                    await send(.saveResponse(try await apiResult {
                         try await filesClient.updateFavorite(serverURL, id, label, icon, color)
                     }))
                 }

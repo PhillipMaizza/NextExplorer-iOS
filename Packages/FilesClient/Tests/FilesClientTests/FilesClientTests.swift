@@ -291,7 +291,7 @@ struct FilesClientLiveTests {
     func deleteItemsMapsAForbiddenResponseToAServerError() async throws {
         stub(statusCode: 403, body: Data())
         let item = FileItem(name: "readonly.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        await #expect(throws: FilesClientError.server(statusCode: 403)) {
+        await #expect(throws: FilesClientError.forbidden(message: nil)) {
             try await makeClient().deleteItems(serverURL, [item])
         }
     }
@@ -398,7 +398,7 @@ struct FilesClientLiveTests {
     @Test
     func fetchMetadataMapsForbiddenToAServerError() async throws {
         stub(statusCode: 403, body: Data())
-        await #expect(throws: FilesClientError.server(statusCode: 403)) {
+        await #expect(throws: FilesClientError.forbidden(message: nil)) {
             _ = try await makeClient().fetchMetadata(serverURL, "Private")
         }
     }
@@ -521,7 +521,7 @@ struct FilesClientLiveTests {
     func previewFileMapsForbiddenToAServerError() async throws {
         stub(statusCode: 403, body: Data())
         let item = uniquePreviewItem(name: "secret.txt")
-        await #expect(throws: FilesClientError.server(statusCode: 403)) {
+        await #expect(throws: FilesClientError.forbidden(message: nil)) {
             _ = try await makeClient().previewFile(serverURL, item)
         }
     }
@@ -585,7 +585,7 @@ struct FilesClientLiveTests {
     @Test
     func saveTextContentMapsReadOnlyPathToAServerError() async throws {
         stub(statusCode: 403, body: Data())
-        await #expect(throws: FilesClientError.server(statusCode: 403)) {
+        await #expect(throws: FilesClientError.forbidden(message: nil)) {
             try await makeClient().saveTextContent(serverURL, "readonly/notes.md", "content")
         }
     }
@@ -660,7 +660,7 @@ struct FilesClientLiveTests {
     func downloadRawFileMapsAccessDeniedToAServerError() async throws {
         stub(statusCode: 403, body: Data())
         let item = FileItem(name: "secret.docx", path: "", dateModified: Date(), size: 0, kind: "docx")
-        await #expect(throws: FilesClientError.server(statusCode: 403)) {
+        await #expect(throws: FilesClientError.forbidden(message: nil)) {
             _ = try await makeClient().downloadRawFile(serverURL, item)
         }
     }
@@ -691,7 +691,7 @@ struct FilesClientLiveTests {
     func compressItemMapsReadOnlyDestinationToAServerError() async throws {
         stub(statusCode: 403, body: Data())
         let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
-        await #expect(throws: FilesClientError.server(statusCode: 403)) {
+        await #expect(throws: FilesClientError.forbidden(message: nil)) {
             _ = try await makeClient().compressItem(serverURL, item)
         }
     }
@@ -758,7 +758,7 @@ struct FilesClientLiveTests {
         let fileURL = try makeTempFile("notes.txt", contents: "x")
         defer { try? FileManager.default.removeItem(at: fileURL) }
 
-        await #expect(throws: FilesClientError.serverMessage(statusCode: 403, message: "Cannot upload files to this path.")) {
+        await #expect(throws: FilesClientError.forbidden(message: "Cannot upload files to this path.")) {
             _ = try await makeClient().uploadFile(serverURL, fileURL, "notes.txt", "Inbox") { _ in }
         }
     }
@@ -814,7 +814,7 @@ struct FilesClientLiveTests {
     @Test
     func updateShareLinkMapsAForbiddenResponseToAServerError() async throws {
         stub(statusCode: 403, body: Data())
-        await #expect(throws: FilesClientError.server(statusCode: 403)) {
+        await #expect(throws: FilesClientError.forbidden(message: nil)) {
             _ = try await makeClient().updateShareLink(serverURL, "s1", UpdateShareRequest())
         }
     }
@@ -907,7 +907,7 @@ struct FilesClientLiveTests {
     @Test
     func aNonAdminSettingsPatchSurfacesThe403Message() async throws {
         stub(statusCode: 403, body: #"{"error":"Admin access required for system settings."}"#.data(using: .utf8)!)
-        await #expect(throws: FilesClientError.serverMessage(statusCode: 403, message: "Admin access required for system settings.")) {
+        await #expect(throws: FilesClientError.forbidden(message: "Admin access required for system settings.")) {
             _ = try await makeClient().updateAccessRules(serverURL, [])
         }
     }

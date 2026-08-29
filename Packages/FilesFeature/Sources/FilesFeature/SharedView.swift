@@ -409,14 +409,26 @@ private struct SharedLinkCard: View {
         return false
     }
 
+    /// Folder glyph for directory shares, otherwise a per-format `FileTypeIcon` keyed off the
+    /// shared item's own extension — same treatment the Browse list gives a file row. (A real
+    /// image thumbnail would need the source path, which shared-with-me links don't carry.)
+    @ViewBuilder
+    private var shareIcon: some View {
+        if share.isDirectory {
+            IconKit.folderFill
+                .resizable().scaledToFit()
+                .foregroundStyle(Color.accent)
+        } else {
+            FileTypeIcon(kind: (share.displayName as NSString).pathExtension)
+        }
+    }
+
     private var header: some View {
         Button {
             isExpanded.toggle()
         } label: {
             HStack(spacing: .space12) {
-                (share.isDirectory ? IconKit.folderFill : IconKit.document)
-                    .resizable().scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
+                shareIcon
                     .frame(width: Metrics.iconSize, height: Metrics.iconSize)
 
                 VStack(alignment: .leading, spacing: .space2) {

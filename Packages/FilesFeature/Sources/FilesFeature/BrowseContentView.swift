@@ -1066,7 +1066,12 @@ struct BrowseContentView: View {
 
     @ViewBuilder
     private var folderItemRows: some View {
-        ForEach(store.displayedItems) { item in
+        // `store.displayedItems` filters + sorts on every read — bind it once here rather than
+        // re-deriving it per row (the separator checks below alone made it O(n^2 log n)).
+        let items = store.displayedItems
+        let firstItemID = items.first?.id
+        let lastItemID = items.last?.id
+        ForEach(items) { item in
             Button {
                 if store.isSelecting {
                     store.send(.itemSelectionToggled(item.id))
@@ -1123,8 +1128,8 @@ struct BrowseContentView: View {
                     }
                 }
             }
-            .listRowSeparator(item.id == store.displayedItems.first?.id ? .hidden : .visible, edges: .top)
-            .listRowSeparator(item.id == store.displayedItems.last?.id ? .hidden : .visible, edges: .bottom)
+            .listRowSeparator(item.id == firstItemID ? .hidden : .visible, edges: .top)
+            .listRowSeparator(item.id == lastItemID ? .hidden : .visible, edges: .bottom)
         }
     }
 

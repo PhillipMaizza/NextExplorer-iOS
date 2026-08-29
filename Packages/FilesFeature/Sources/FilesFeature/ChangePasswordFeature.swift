@@ -91,7 +91,7 @@ public struct ChangePasswordFeature {
                 let new = state.newPassword
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.response(await apiResult {
+                    await send(.response(try await apiResult {
                         try await filesClient.changeOwnPassword(serverURL, current, new)
                         return true
                     }))

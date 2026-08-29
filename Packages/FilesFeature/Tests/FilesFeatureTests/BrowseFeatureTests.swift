@@ -68,6 +68,7 @@ struct BrowseFeatureTests {
         let item = FileItem(name: "Docs", path: "", dateModified: Date(), size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
+        state.hasLoaded = true
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -83,13 +84,14 @@ struct BrowseFeatureTests {
         let serverURL = URL(string: "https://example.com")!
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.errorMessage = "Something went wrong."
+        state.hasLoaded = true
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
         }
 
-        // Same guard, different branch: an existing error also blocks a redundant fetch
-        // until the user explicitly pulls to refresh.
+        // Same guard, different branch: a completed load (here, one that errored) blocks a
+        // redundant fetch until the user explicitly pulls to refresh.
         await store.send(.onAppear)
     }
 

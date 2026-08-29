@@ -1,6 +1,19 @@
 import SwiftUI
 import WebKit
 
+/// Joins an attacker influenceable relative path (archive entry name, HTML `src`/`href`
+/// value) under a trusted base directory and returns it only when the standardized result
+/// stays inside that base — blocks `..` traversal that would otherwise let a crafted archive
+/// or HTML file write outside its sandbox folder.
+enum SafeDestination {
+    static func within(_ baseDirectory: URL, _ relativePath: String) -> URL? {
+        let base = baseDirectory.standardizedFileURL
+        let candidate = base.appendingPathComponent(relativePath).standardizedFileURL
+        guard candidate.path == base.path || candidate.path.hasPrefix(base.path + "/") else { return nil }
+        return candidate
+    }
+}
+
 /// Renders HTML as a real compiled page — the "Rendered" side of the Settings "HTML Files"
 /// toggle. `loadHTMLString(_:baseURL:)` alone can't resolve relative `<link href>`/`<script
 /// src>` references (there's no real base URL, the content is a fetched string, not a local
@@ -47,7 +60,7 @@ struct HTMLRenderedView: View {
             // relative to the file's own folder too (there's no real site root to anchor
             // them to) — strip the leading slash to place them the same way on disk.
             let localRelativePath = relativePath.hasPrefix("/") ? String(relativePath.dropFirst()) : relativePath
-            let destinationURL = directory.appendingPathComponent(localRelativePath)
+            guard let destinationURL = SafeDestination.within(directory, localRelativePath) else { continue }
             try? FileManager.default.createDirectory(at: destinationURL.deletingLastPathComponent(), withIntermediateDirectories: true)
             try? FileManager.default.removeItem(at: destinationURL)
             try? FileManager.default.copyItem(at: downloadedURL, to: destinationURL)
@@ -109,7 +122,14 @@ private struct HTMLWebView: UIViewRepresentable {
     let readAccessURL: URL
 
     func makeUIView(context: Context) -> WKWebView {
-        let webView = WKWebView()
+        // The rendered content is an untrusted file from the user's server (or an archive).
+        // JavaScript is disabled so a hostile page can't read neighbouring files off disk or
+        // exfiltrate them; the navigation delegate pins navigation to the local file and
+        // blocks every outbound request.
+        let configuration = WKWebViewConfiguration()
+        configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+        let webView = WKWebView(frame: .zero, configuration: configuration)
+        webView.navigationDelegate = context.coordinator
         webView.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)
         return webView
     }
@@ -124,11 +144,18 @@ private struct HTMLWebView: UIViewRepresentable {
         Coordinator(lastLoadedURL: fileURL)
     }
 
-    final class Coordinator {
+    final class Coordinator: NSObject, WKNavigationDelegate {
         var lastLoadedURL: URL
 
         init(lastLoadedURL: URL) {
             self.lastLoadedURL = lastLoadedURL
+        }
+
+        func webView(
+            _ webView: WKWebView,
+            decidePolicyFor navigationAction: WKNavigationAction
+        ) async -> WKNavigationActionPolicy {
+            navigationAction.request.url?.isFileURL == true ? .allow : .cancel
         }
     }
 }

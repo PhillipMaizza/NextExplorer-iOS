@@ -1,12 +1,13 @@
+import ComposableArchitecture
 import Foundation
 import Testing
 
 @testable import FilesFeature
 
-/// `ThumbnailCache.liveValue` hits the real filesystem for its cache layer; the network leg
-/// (`URLSession.shared.data(from:)`) isn't mockable without a protocol seam, so these tests
-/// exercise only the disk-cache half directly reachable from a test: writing a fake cached
-/// entry and confirming `data(_:)` returns it without attempting a network call.
+/// `ThumbnailCache.liveValue` hits the real filesystem for its cache layer; its network leg
+/// (`URLSession.shared`) isn't mockable without a protocol seam. These tests exercise the
+/// disk half: a pre-seeded byte cache entry is returned without a fetch, and `resolvedURL`
+/// remembers a thumbnail-URL resolution across calls.
 @Suite
 struct ThumbnailCacheTests {
     private let store = ThumbnailCache.liveValue
@@ -50,6 +51,72 @@ struct ThumbnailCacheTests {
 
         #expect(keyA != keyB)
         #expect(directory.appendingPathComponent(keyA) != directory.appendingPathComponent(keyB))
+    }
+
+    // MARK: resolvedURL (remembers the `GET /api/thumbnails` resolution across app launches)
+
+    private func recordURL(forPath path: String) throws -> URL {
+        let cachesDirectory = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        return cachesDirectory
+            .appendingPathComponent("PreviewCache", isDirectory: true)
+            .appendingPathComponent("thumbnail-urls", isDirectory: true)
+            .appendingPathComponent(sha256Hex(of: path))
+    }
+
+    @Test
+    func resolvedURLCallsTheResolverOnAMissAndRemembersTheResultForNextTime() async throws {
+        let path = "Photos/\(UUID().uuidString).jpg"
+        defer { try? FileManager.default.removeItem(at: try! recordURL(forPath: path)) }
+        let resolved = URL(string: "https://example.com/static/thumbnails/abc.webp")!
+        let callCount = LockIsolated(0)
+
+        let first = await store.resolvedURL(path, "100.0|4096") {
+            callCount.withValue { $0 += 1 }
+            return resolved
+        }
+        #expect(first == resolved)
+        #expect(callCount.value == 1)
+
+        // Same path + signature: served from the record, resolver never runs again.
+        let second = await store.resolvedURL(path, "100.0|4096") {
+            callCount.withValue { $0 += 1 }
+            return resolved
+        }
+        #expect(second == resolved)
+        #expect(callCount.value == 1)
+    }
+
+    @Test
+    func resolvedURLReResolvesWhenTheFileSignatureChanges() async throws {
+        let path = "Photos/\(UUID().uuidString).jpg"
+        defer { try? FileManager.default.removeItem(at: try! recordURL(forPath: path)) }
+        let old = URL(string: "https://example.com/static/thumbnails/v1.webp")!
+        let new = URL(string: "https://example.com/static/thumbnails/v2.webp")!
+
+        _ = await store.resolvedURL(path, "1.0|10") { old }
+        let afterEdit = await store.resolvedURL(path, "2.0|20") { new }
+
+        #expect(afterEdit == new)
+    }
+
+    @Test
+    func resolvedURLRemembersANilResultSoAnUnthumbnailableFileIsNotReAsked() async throws {
+        let path = "Docs/\(UUID().uuidString).pdf"
+        defer { try? FileManager.default.removeItem(at: try! recordURL(forPath: path)) }
+        let callCount = LockIsolated(0)
+
+        let first = await store.resolvedURL(path, "5.0|1") {
+            callCount.withValue { $0 += 1 }
+            return nil
+        }
+        let second = await store.resolvedURL(path, "5.0|1") {
+            callCount.withValue { $0 += 1 }
+            return nil
+        }
+
+        #expect(first == nil)
+        #expect(second == nil)
+        #expect(callCount.value == 1)
     }
 }
 

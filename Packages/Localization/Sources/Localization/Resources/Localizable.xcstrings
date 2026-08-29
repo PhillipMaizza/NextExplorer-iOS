@@ -1849,6 +1849,17 @@
         }
       }
     },
+    "error.forbidden": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You don't have permission to do that."
+          }
+        }
+      }
+    },
     "error.network": {
       "extractionState": "manual",
       "localizations": {
@@ -2516,6 +2527,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Password"
+          }
+        }
+      }
+    },
+    "login.plaintextWarning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This connection isn't encrypted. Your password and session are sent in the clear over the local network."
           }
         }
       }

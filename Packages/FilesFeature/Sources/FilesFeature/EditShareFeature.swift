@@ -109,7 +109,7 @@ public struct EditShareFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.shareableUsersResponse(await apiResult {
+                    await send(.shareableUsersResponse(try await apiResult {
                         try await filesClient.shareableUsers(serverURL)
                     }))
                 }
@@ -170,7 +170,7 @@ public struct EditShareFeature {
                 let shareID = state.share.id
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.saveResponse(await apiResult {
+                    await send(.saveResponse(try await apiResult {
                         try await filesClient.updateShareLink(serverURL, shareID, request)
                     }))
                 }

@@ -13,4 +13,10 @@ public struct NetworkClient: Sendable {
         _ bodyFileURL: URL,
         _ onProgress: @Sendable @escaping (Double) -> Void
     ) async throws -> (Data, HTTPURLResponse)
+    /// Streams the response body straight to a temporary file on disk rather than buffering it
+    /// in memory, and hands back that file's URL. The caller owns the returned file: move it
+    /// where it belongs (or delete it) before the enclosing scope ends. Session/cookie
+    /// handling is the same as `send`. Use for large payloads (previews, downloads, archives)
+    /// where `send`'s in-memory `Data` would spike resident memory.
+    public var download: @Sendable (_ request: URLRequest) async throws -> (URL, HTTPURLResponse)
 }

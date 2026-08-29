@@ -43,11 +43,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.favorites)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(FavoritePathBody(path: path))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(FavoritePathBody(path: path))
         return try await send(request, decoding: Favorite.self)
     }
 
@@ -57,11 +53,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.favorites).appendingPathComponent(id)
         var request = Self.makeRequest(url: url, method: .patch)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(UpdateFavoriteBody(label: label, icon: icon, color: color))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(UpdateFavoriteBody(label: label, icon: icon, color: color))
         return try await sendReportingMessage(request, decoding: Favorite.self)
     }
 
@@ -71,11 +63,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.favoritesReorder)
         var request = Self.makeRequest(url: url, method: .patch)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(ReorderFavoritesBody(order: orderedIDs))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(ReorderFavoritesBody(order: orderedIDs))
         return try await sendReportingMessage(request, decoding: [Favorite].self)
     }
 
@@ -83,11 +71,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.favorites)
         var request = Self.makeRequest(url: url, method: .delete)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(FavoritePathBody(path: path))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(FavoritePathBody(path: path))
         let (_, response) = try await performSend(request)
         try Self.validate(response)
     }
@@ -99,11 +83,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.filesRename)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(RenameItemBody(path: item.path, name: item.name, newName: newName))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(RenameItemBody(path: item.path, name: item.name, newName: newName))
         let envelope = try await send(request, decoding: RenameItemEnvelope.self)
         return envelope.item
     }
@@ -116,11 +96,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.filesFolder)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(CreateFolderBody(path: path, name: name))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(CreateFolderBody(path: path, name: name))
         let envelope = try await send(request, decoding: CreateFolderEnvelope.self)
         return envelope.item
     }
@@ -132,11 +108,7 @@ struct FilesService: Sendable {
     /// images whose thumbnail generation failed. All three are server-relative, resolved
     /// against `serverURL`; an empty string means "no thumbnail," not an error.
     func thumbnailURL(serverURL: URL, path: String) async throws -> URL? {
-        var url = serverURL.appendingPathComponent(APIPath.thumbnails)
-        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
-        for segment in segments {
-            url = url.appendingPathComponent(String(segment))
-        }
+        let url = Self.appendingPathSegments(of: path, to: serverURL.appendingPathComponent(APIPath.thumbnails))
         let request = Self.makeRequest(url: url, method: .get)
         let envelope = try await send(request, decoding: ThumbnailEnvelope.self)
         guard !envelope.thumbnail.isEmpty else { return nil }
@@ -162,11 +134,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.editor)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(EditorPathBody(path: path))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(EditorPathBody(path: path))
         let envelope = try await send(request, decoding: EditorContentEnvelope.self)
         return envelope.content
     }
@@ -175,11 +143,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.editor)
         var request = Self.makeRequest(url: url, method: .put)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(EditorSaveBody(path: path, content: content))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(EditorSaveBody(path: path, content: content))
         let (_, response) = try await performSend(request)
         try Self.validate(response)
     }
@@ -192,11 +156,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.zipExtract)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(ExtractZipBody(path: item.id))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(ExtractZipBody(path: item.id))
         let envelope = try await send(request, decoding: ExtractZipEnvelope.self)
         return envelope.item
     }
@@ -235,11 +195,7 @@ struct FilesService: Sendable {
             userIds: request.target == .users ? request.userIds : [],
             expiresAt: request.expiresAt.map(Self.formatShareExpiry)
         )
-        do {
-            httpRequest.httpBody = try JSONEncoder().encode(body)
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        httpRequest.httpBody = try Self.encode(body)
         return try await send(httpRequest, decoding: CreatedShare.self)
     }
 
@@ -289,11 +245,7 @@ struct FilesService: Sendable {
             userIds: request.target == .users ? request.userIds : nil,
             password: request.password
         )
-        do {
-            httpRequest.httpBody = try JSONEncoder().encode(body)
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        httpRequest.httpBody = try Self.encode(body)
         return try await sendReportingMessage(httpRequest, decoding: Share.self)
     }
 
@@ -305,12 +257,16 @@ struct FilesService: Sendable {
         try Self.validate(response)
     }
 
-    /// A fresh formatter per call — `ISO8601DateFormatter` isn't `Sendable`, and this
-    /// `struct` is, so it can't be held as a stored static.
-    private static func formatShareExpiry(_ date: Date) -> String {
+    /// Share-expiry wire format is plain `withInternetDateTime` (no fractional seconds, unlike
+    /// the decode path). Cached like `iso8601Formatter` — safe to format from concurrently.
+    nonisolated(unsafe) private static let shareExpiryFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
-        return formatter.string(from: date)
+        return formatter
+    }()
+
+    private static func formatShareExpiry(_ date: Date) -> String {
+        shareExpiryFormatter.string(from: date)
     }
 
     /// `POST /api/auth/password`, verified against `backend/src/routes/auth.js` and
@@ -497,17 +453,7 @@ struct FilesService: Sendable {
             throw FilesClientError.decoding("Could not build preview URL.")
         }
         let request = Self.makeRequest(url: url, method: .get)
-        let (data, response) = try await performSend(request)
-        try Self.validate(response)
-
-        do {
-            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            try data.write(to: fileURL, options: .atomic)
-            try Self.cacheMetaValue(for: item).write(to: metaURL, atomically: true, encoding: .utf8)
-            return fileURL
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        return try await downloadToCache(request, directory: directory, fileURL: fileURL, metaURL: metaURL, item: item)
     }
 
     /// `POST /api/download`, confirmed against `backend/src/routes/files/download.js` mounted
@@ -534,17 +480,30 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.download)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
+        request.httpBody = try Self.encode(DownloadRawFileBody(path: item.id))
+        return try await downloadToCache(request, directory: directory, fileURL: fileURL, metaURL: metaURL, item: item)
+    }
+
+    /// Streams `request`'s response to disk (never buffering it in memory — previews,
+    /// downloads and whole archives can be very large) and lands it at `fileURL` with a
+    /// staleness sidecar, or returns the existing cache entry untouched.
+    private func downloadToCache(
+        _ request: URLRequest, directory: URL, fileURL: URL, metaURL: URL, item: FileItem
+    ) async throws -> URL {
+        let downloadedURL: URL
+        let response: HTTPURLResponse
         do {
-            request.httpBody = try JSONEncoder().encode(DownloadRawFileBody(path: item.id))
+            (downloadedURL, response) = try await networkClient.download(request)
         } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
+            throw FilesClientError.network(String(describing: error))
         }
-        let (data, response) = try await performSend(request)
+        defer { try? FileManager.default.removeItem(at: downloadedURL) }
         try Self.validate(response)
 
         do {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            try data.write(to: fileURL, options: .atomic)
+            try? FileManager.default.removeItem(at: fileURL)
+            try FileManager.default.moveItem(at: downloadedURL, to: fileURL)
             try Self.cacheMetaValue(for: item).write(to: metaURL, atomically: true, encoding: .utf8)
             return fileURL
         } catch {
@@ -631,7 +590,7 @@ struct FilesService: Sendable {
 
         let input = try FileHandle(forReadingFrom: fileURL)
         defer { try? input.close() }
-        while case let chunk = input.readData(ofLength: 1_048_576), !chunk.isEmpty {
+        while let chunk = try input.read(upToCount: 1_048_576), !chunk.isEmpty {
             try handle.write(contentsOf: chunk)
         }
 
@@ -661,11 +620,7 @@ struct FilesService: Sendable {
     /// wildcard path segment covering the item's full logical path (parent + name), same
     /// percent-encoding-per-segment approach as `browseURL`.
     func fetchMetadata(serverURL: URL, path: String) async throws -> FileMetadata {
-        var url = serverURL.appendingPathComponent(APIPath.metadata)
-        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
-        for segment in segments {
-            url = url.appendingPathComponent(String(segment))
-        }
+        let url = Self.appendingPathSegments(of: path, to: serverURL.appendingPathComponent(APIPath.metadata))
         let request = Self.makeRequest(url: url, method: .get)
         return try await send(request, decoding: FileMetadata.self)
     }
@@ -674,15 +629,7 @@ struct FilesService: Sendable {
     /// segment (empty = the root, needs the trailing slash), same per-segment encoding as
     /// `browseURL` / `fetchMetadata`.
     func fetchUsage(serverURL: URL, path: String) async throws -> StorageUsage {
-        var url = serverURL.appendingPathComponent(APIPath.usage)
-        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
-        if segments.isEmpty {
-            url = url.appendingPathComponent("")
-        } else {
-            for segment in segments {
-                url = url.appendingPathComponent(String(segment))
-            }
-        }
+        let url = Self.appendingPathSegments(of: path, to: serverURL.appendingPathComponent(APIPath.usage))
         let request = Self.makeRequest(url: url, method: .get)
         return try await send(request, decoding: StorageUsage.self)
     }
@@ -691,11 +638,7 @@ struct FilesService: Sendable {
     /// wildcard path segment, same per-segment encoding as `fetchMetadata` / `fetchUsage`. A
     /// denied path 403s with the server's denial reason, worth surfacing verbatim.
     func fetchPermissions(serverURL: URL, path: String) async throws -> FilePermissions {
-        var url = serverURL.appendingPathComponent(APIPath.permissions)
-        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
-        for segment in segments {
-            url = url.appendingPathComponent(String(segment))
-        }
+        let url = Self.appendingPathSegments(of: path, to: serverURL.appendingPathComponent(APIPath.permissions))
         let request = Self.makeRequest(url: url, method: .get)
         return try await sendReportingMessage(request, decoding: FilePermissions.self)
     }
@@ -706,11 +649,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.permissionsChmod)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(ChmodBody(path: path, mode: mode, recursive: recursive))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(ChmodBody(path: path, mode: mode, recursive: recursive))
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
     }
@@ -721,11 +660,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.permissionsChown)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(ChownBody(path: path, owner: owner, group: group))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(ChownBody(path: path, owner: owner, group: group))
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
     }
@@ -806,11 +741,7 @@ struct FilesService: Sendable {
         let url = serverURL.appendingPathComponent(APIPath.settings)
         var request = Self.makeRequest(url: url, method: .patch)
         request.setJSONContentType()
-        do {
-            request.httpBody = try JSONEncoder().encode(PatchPreferencesBody(user: [key.rawValue: value]))
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
+        request.httpBody = try Self.encode(PatchPreferencesBody(user: [key.rawValue: value]))
         let (_, response) = try await performSend(request)
         try Self.validate(response)
     }
@@ -1130,15 +1061,18 @@ struct FilesService: Sendable {
     /// trailing slash (`/api/browse/`); non-empty paths are split and each segment
     /// percent-encoded individually so names containing `/`-unsafe characters survive.
     private static func browseURL(serverURL: URL, path: String) -> URL {
-        var url = serverURL.appendingPathComponent(APIPath.browse)
+        appendingPathSegments(of: path, to: serverURL.appendingPathComponent(APIPath.browse))
+    }
+
+    /// Appends each `/`-separated segment of `path` to `base` as its own path component, so
+    /// each is percent-encoded individually and a name with `/`-unsafe characters survives.
+    /// An empty `path` yields `base` with a trailing slash — several wildcard routes
+    /// (`/api/browse/`, `/api/usage/`) need that to mean "the root". Shared by every
+    /// `/api/<route>/*` wildcard-path endpoint.
+    static func appendingPathSegments(of path: String, to base: URL) -> URL {
         let segments = path.split(separator: "/", omittingEmptySubsequences: true)
-        if segments.isEmpty {
-            return url.appendingPathComponent("")
-        }
-        for segment in segments {
-            url = url.appendingPathComponent(String(segment))
-        }
-        return url
+        guard !segments.isEmpty else { return base.appendingPathComponent("") }
+        return segments.reduce(base) { $0.appendingPathComponent(String($1)) }
     }
 
     private func send<Response: Decodable>(_ request: URLRequest, decoding type: Response.Type) async throws -> Response {
@@ -1165,6 +1099,8 @@ struct FilesService: Sendable {
             return
         case 401:
             throw FilesClientError.sessionExpired
+        case 403:
+            throw FilesClientError.forbidden(message: nil)
         case 429:
             throw FilesClientError.rateLimited
         default:
@@ -1199,6 +1135,8 @@ struct FilesService: Sendable {
             return
         case 401:
             throw FilesClientError.sessionExpired
+        case 403:
+            throw FilesClientError.forbidden(message: errorMessage(from: data))
         case 429:
             throw FilesClientError.rateLimited
         default:
@@ -1271,18 +1209,30 @@ struct FilesService: Sendable {
     /// `dateModified`/`createdAt`/`updatedAt` cross the wire as `Date.toISOString()`
     /// output (millisecond fractional seconds); the default `.iso8601` strategy's
     /// formatter rejects the fractional part, so fractional seconds must be opted in.
-    private static func makeDecoder() -> JSONDecoder {
+    ///
+    /// Both the formatter and the fully configured decoder are built once and shared. A big
+    /// browse listing carries a `dateModified` on every entry; allocating an
+    /// `ISO8601DateFormatter` (and a `JSONDecoder`) per field, or per request, was pure
+    /// overhead on large directories. `ISO8601DateFormatter` is documented as safe to use for
+    /// parsing from multiple threads even though it is not marked `Sendable`.
+    nonisolated(unsafe) private static let iso8601Formatter: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return formatter
+    }()
+
+    private static let sharedDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { keyedDecoder in
             let container = try keyedDecoder.singleValueContainer()
             let dateString = try container.decode(String.self)
-            let formatter = ISO8601DateFormatter()
-            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-            guard let date = formatter.date(from: dateString) else {
+            guard let date = iso8601Formatter.date(from: dateString) else {
                 throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid ISO8601 date: \(dateString)")
             }
             return date
         }
         return decoder
-    }
+    }()
+
+    private static func makeDecoder() -> JSONDecoder { sharedDecoder }
 }

@@ -17,10 +17,19 @@ public enum SessionExpiry {
 ///     return .run { send in
 ///         await send(.itemsResponse(await apiResult { try await filesClient.browse(url, path) }))
 ///     }
-func apiResult<T>(_ operation: () async throws -> T) async -> Result<T, FilesClientError> {
+func apiResult<T>(_ operation: () async throws -> T) async throws -> Result<T, FilesClientError> {
     do {
         return .success(try await operation())
     } catch {
+        // A cancelled effect (owning feature disappeared, request superseded) is not a
+        // failure to report. The lower layers flatten `CancellationError` into a
+        // `NetworkError`/`FilesClientError.network` string, so key off the task state
+        // instead: rethrow so the enclosing `.run` unwinds silently rather than sending a
+        // response action that would flash a spurious "network error" toast on a screen the
+        // user has already left.
+        if Task.isCancelled {
+            throw CancellationError()
+        }
         let filesError = (error as? FilesClientError) ?? .network(String(describing: error))
         if filesError == .sessionExpired {
             @Shared(.inMemory(SessionExpiry.sharedKey)) var sessionDidExpire = false

@@ -87,4 +87,46 @@ struct NetworkClientLiveTests {
             _ = try await client.send(request)
         }
     }
+
+    // MARK: download (streams the body to a file the caller owns)
+
+    @Test("download writes the response body to a file on disk and returns its URL plus the HTTPURLResponse")
+    func downloadStreamsBodyToAStableFile() async throws {
+        let payload = Data(repeating: 0xAB, count: 4096)
+        StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: payload)
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/preview?path=x.jpg")!)
+        let (fileURL, response) = try await client.download(request)
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        #expect(response.statusCode == 200)
+        #expect(fileURL.isFileURL)
+        // The file must outlive the call (URLSession deletes its own temp on return).
+        #expect(FileManager.default.fileExists(atPath: fileURL.path))
+        #expect(try Data(contentsOf: fileURL) == payload)
+    }
+
+    @Test("edge case: download surfaces a 404 as the HTTPURLResponse, not a thrown error, and still lands the (error) body on disk")
+    func downloadSurfacesNon2xxWithoutThrowing() async throws {
+        StubURLProtocol.stub = .init(statusCode: 404, headers: [:], body: Data("not found".utf8))
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/preview?path=missing")!)
+        let (fileURL, response) = try await client.download(request)
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        #expect(response.statusCode == 404)
+    }
+
+    @Test("error path: a transport failure during download wraps as NetworkError.transport")
+    func downloadTransportFailureIsWrapped() async {
+        StubURLProtocol.failure = URLError(.notConnectedToInternet)
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/preview?path=x")!)
+        await #expect(throws: NetworkError.self) {
+            _ = try await client.download(request)
+        }
+    }
 }
