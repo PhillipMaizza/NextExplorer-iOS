@@ -451,7 +451,7 @@ public struct UserManagementFeature {
                 guard let user = state.detailUser, !user.isAdmin, !state.isUpdatingRoles else { return .none }
                 state.isUpdatingRoles = true
                 state.detailErrorMessage = nil
-                let request = UpdateUserRequest(roles: (Set(user.roles).union(["admin"])).sorted())
+                let request = UpdateUserRequest(roles: (Set(user.roles).union([UserRole.admin])).sorted())
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 let id = user.id

@@ -487,7 +487,7 @@ struct SettingsView: View {
         store: Store(
             initialState: SettingsFeature.State(
                 serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-                user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: ["admin"])
+                user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [UserRole.admin])
             )
         ) {
             SettingsFeature()
