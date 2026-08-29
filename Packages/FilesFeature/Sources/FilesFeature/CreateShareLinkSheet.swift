@@ -51,6 +51,7 @@ struct CreateShareLinkSheet: View {
         } footer: {
             footerButtons
         }
+        .task { store.send(.onAppear) }
     }
 
     @ViewBuilder

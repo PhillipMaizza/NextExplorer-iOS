@@ -26,6 +26,9 @@ public struct CreateShareLinkFeature {
         public var password = ""
         public var isExpiryEnabled = false
         public var expiresAt: Date
+        /// Set once the user changes the expiry toggle or date, so a late-arriving
+        /// preferences fetch doesn't stomp on their choice.
+        var hasTouchedExpiry = false
 
         public var isCreating = false
         public var errorMessage: String?
@@ -69,6 +72,8 @@ public struct CreateShareLinkFeature {
     }
 
     public enum Action: Equatable, Sendable {
+        case onAppear
+        case preferencesResponse(UserPreferences)
         case labelChanged(String)
         case accessModeChanged(ShareAccessMode)
         case targetChanged(ShareTarget)
@@ -85,12 +90,33 @@ public struct CreateShareLinkFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.date) var date
+    @Dependency(\.calendar) var calendar
 
     public init() {}
 
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .onAppear:
+                let serverURL = state.serverURL
+                let filesClient = self.filesClient
+                return .run { send in
+                    guard let preferences = try? await filesClient.fetchPreferences(serverURL) else { return }
+                    await send(.preferencesResponse(preferences))
+                }
+
+            case let .preferencesResponse(preferences):
+                // Match the web client: a user with a default expiration set gets expiry
+                // switched on and pre dated when the sheet opens. Skipped once the user has
+                // already touched the expiry controls.
+                guard !state.hasTouchedExpiry,
+                      let expiration = preferences.defaultShareExpiration,
+                      let expiresAt = expiration.expirationDate(from: date.now, calendar: calendar)
+                else { return .none }
+                state.isExpiryEnabled = true
+                state.expiresAt = expiresAt
+                return .none
+
             case let .labelChanged(label):
                 state.label = label
                 return .none
@@ -142,10 +168,12 @@ public struct CreateShareLinkFeature {
 
             case let .expiryEnabledChanged(isEnabled):
                 state.isExpiryEnabled = isEnabled
+                state.hasTouchedExpiry = true
                 return .none
 
             case let .expiresAtChanged(date):
                 state.expiresAt = date
+                state.hasTouchedExpiry = true
                 return .none
 
             case let .directLinkModeChanged(mode):
