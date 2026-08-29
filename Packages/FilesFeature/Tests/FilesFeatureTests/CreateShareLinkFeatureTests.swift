@@ -76,7 +76,10 @@ struct CreateShareLinkFeatureTests {
         await store.send(.accessModeChanged(.readwrite)) { $0.accessMode = .readwrite }
         await store.send(.passwordEnabledChanged(true)) { $0.isPasswordEnabled = true }
         await store.send(.passwordChanged("hunter2")) { $0.password = "hunter2" }
-        await store.send(.expiryEnabledChanged(true)) { $0.isExpiryEnabled = true }
+        await store.send(.expiryEnabledChanged(true)) {
+            $0.isExpiryEnabled = true
+            $0.hasTouchedExpiry = true
+        }
         await store.send(.directLinkModeChanged(.raw)) { $0.directLinkMode = .raw }
     }
 
@@ -169,6 +172,64 @@ struct CreateShareLinkFeatureTests {
             $0.isCreating = false
             $0.errorMessage = FilesClientError.server(statusCode: 400).userMessage
         }
+    }
+
+    // MARK: Default expiration
+
+    @Test
+    func onAppearAppliesTheUsersDefaultShareExpiration() async {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(identifier: "UTC")!
+
+        let store = TestStore(initialState: makeState()) {
+            CreateShareLinkFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.calendar = calendar
+            $0.filesClient.fetchPreferences = { _ in
+                UserPreferences(defaultShareExpiration: .init(value: 2, unit: .weeks))
+            }
+        }
+
+        await store.send(.onAppear)
+        await store.receive(\.preferencesResponse) {
+            $0.isExpiryEnabled = true
+            $0.expiresAt = self.now.addingTimeInterval(14 * 86_400)
+        }
+    }
+
+    @Test
+    func onAppearLeavesExpiryOffWhenTheUserHasNoDefault() async {
+        let store = TestStore(initialState: makeState()) {
+            CreateShareLinkFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.filesClient.fetchPreferences = { _ in UserPreferences() }
+        }
+
+        await store.send(.onAppear)
+        await store.receive(\.preferencesResponse)
+        #expect(!store.state.isExpiryEnabled)
+    }
+
+    @Test
+    func aLateArrivingDefaultDoesNotOverrideAManualExpiryChoice() async {
+        let store = TestStore(initialState: makeState()) {
+            CreateShareLinkFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.filesClient.fetchPreferences = { _ in
+                UserPreferences(defaultShareExpiration: .init(value: 1, unit: .months))
+            }
+        }
+
+        await store.send(.expiryEnabledChanged(false)) {
+            $0.isExpiryEnabled = false
+            $0.hasTouchedExpiry = true
+        }
+        await store.send(.onAppear)
+        await store.receive(\.preferencesResponse)
+        #expect(!store.state.isExpiryEnabled)
     }
 
     @Test
