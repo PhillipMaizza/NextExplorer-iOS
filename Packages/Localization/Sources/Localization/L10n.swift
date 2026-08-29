@@ -198,6 +198,7 @@ public enum L10n {
     }
     public enum Error {
         public static var decoding: String { tr("error.decoding") }  // "Server responded unexpectedly."
+        public static var forbidden: String { tr("error.forbidden") }  // "You don't have permission to do that."
         public static var network: String { tr("error.network") }  // "Couldn't reach the server."
         public static var rateLimited: String { tr("error.rateLimited") }  // "Too many requests. Try again shortly."
         public static func server(_ a0: CVarArg) -> String { tr("error.server", a0) }
@@ -269,6 +270,7 @@ public enum L10n {
         public static var errorUnexpectedResponse: String { tr("login.errorUnexpectedResponse") }  // "Unexpected response from server."
         public static var errorUnreachable: String { tr("login.errorUnreachable") }
         public static var passwordField: String { tr("login.passwordField") }  // "Password"
+        public static var plaintextWarning: String { tr("login.plaintextWarning") }
         public static var portHint: String { tr("login.portHint") }
         public static var serverQuestion: String { tr("login.serverQuestion") }  // "Where's your instance of NextExplorer?"
         public static var submit: String { tr("login.submit") }  // "Log In"

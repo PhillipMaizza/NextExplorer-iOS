@@ -176,7 +176,12 @@ struct DownloadsView: View {
 
     @ViewBuilder
     private var downloadRows: some View {
-        ForEach(store.displayedDownloads) { download in
+        // Bound once — `displayedDownloads` filters + sorts on every read, and the separator
+        // checks below would otherwise re-derive it per row.
+        let downloads = store.displayedDownloads
+        let firstID = downloads.first?.id
+        let lastID = downloads.last?.id
+        ForEach(downloads) { download in
             Button {
                 handleTap(download)
             } label: {
@@ -220,8 +225,8 @@ struct DownloadsView: View {
                     rowContextMenu(for: download)
                 }
             }
-            .listRowSeparator(download.id == store.displayedDownloads.first?.id ? .hidden : .visible, edges: .top)
-            .listRowSeparator(download.id == store.displayedDownloads.last?.id ? .hidden : .visible, edges: .bottom)
+            .listRowSeparator(download.id == firstID ? .hidden : .visible, edges: .top)
+            .listRowSeparator(download.id == lastID ? .hidden : .visible, edges: .bottom)
         }
     }
 

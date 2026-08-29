@@ -81,7 +81,7 @@ public struct PermissionsFeature {
                 let path = state.item.id
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.permissionsResponse(await apiResult {
+                    await send(.permissionsResponse(try await apiResult {
                         try await filesClient.fetchPermissions(serverURL, path)
                     }))
                 }
@@ -132,7 +132,7 @@ public struct PermissionsFeature {
                 let recursive = state.recursive && state.item.isDirectory
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.modeResponse(await apiResult {
+                    await send(.modeResponse(try await apiResult {
                         try await filesClient.changePermissions(serverURL, path, mode, recursive)
                         return true
                     }))
@@ -161,7 +161,7 @@ public struct PermissionsFeature {
                 let path = state.item.id
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.ownershipResponse(await apiResult {
+                    await send(.ownershipResponse(try await apiResult {
                         try await filesClient.changeOwnership(serverURL, path, ownerArg, groupArg)
                         return true
                     }))

@@ -220,7 +220,7 @@ public struct DownloadsFeature {
         state.errorMessage = nil
         let localDownloadStore = self.localDownloadStore
         return .run { send in
-            await send(.downloadsResponse(await apiResult { try localDownloadStore.list() }))
+            await send(.downloadsResponse(try await apiResult { try localDownloadStore.list() }))
         }
     }
 
@@ -229,7 +229,7 @@ public struct DownloadsFeature {
         state.deleteConfirmationItem = nil
         let localDownloadStore = self.localDownloadStore
         return .run { send in
-            await send(.deleteResponse(await apiResult {
+            await send(.deleteResponse(try await apiResult {
                 try localDownloadStore.delete(download.url)
                 return download.id
             }))
@@ -245,7 +245,7 @@ public struct DownloadsFeature {
         }
         let localDownloadStore = self.localDownloadStore
         return .run { send in
-            await send(.renameResponse(await apiResult {
+            await send(.renameResponse(try await apiResult {
                 _ = try localDownloadStore.rename(download.url, trimmed)
                 return try localDownloadStore.list()
             }))

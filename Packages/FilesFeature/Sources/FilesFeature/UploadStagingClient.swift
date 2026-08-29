@@ -81,8 +81,13 @@ extension UploadStagingClient: DependencyKey {
                 let task = Task {
                     let directory = UploadStagingLocation.directory
                     let stamp = Int(Date().timeIntervalSince1970)
+                    // Each `loadTransferable(type: Data.self)` pulls a whole photo into memory.
+                    // Cap how many are in flight at once so picking a large batch of ProRAW /
+                    // HEIC shots doesn't hold all of them resident and trip a memory kill.
+                    let maxConcurrent = 3
                     await withTaskGroup(of: PickedFile?.self) { group in
-                        for (index, item) in items.enumerated() {
+                        func addTask(index: Int) {
+                            let item = items[index]
                             group.addTask {
                                 guard let data = try? await item.loadTransferable(type: Data.self) else { return nil }
                                 let ext = item.supportedContentTypes.first?.preferredFilenameExtension ?? "dat"
@@ -92,8 +97,18 @@ extension UploadStagingClient: DependencyKey {
                                 return PickedFile(fileURL: temp, fileName: name, size: Int64(data.count))
                             }
                         }
+
+                        var nextIndex = 0
+                        while nextIndex < min(maxConcurrent, items.count) {
+                            addTask(index: nextIndex)
+                            nextIndex += 1
+                        }
                         for await file in group {
                             if let file { continuation.yield(file) }
+                            if nextIndex < items.count {
+                                addTask(index: nextIndex)
+                                nextIndex += 1
+                            }
                         }
                     }
                     continuation.finish()

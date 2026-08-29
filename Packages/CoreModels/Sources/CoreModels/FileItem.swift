@@ -15,6 +15,13 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     public var isDirectory: Bool { kind == "directory" }
     public var id: String { path.isEmpty ? name : "\(path)/\(name)" }
 
+    /// A cheap content fingerprint (modified date + byte size) used to key on-disk caches of
+    /// derived data — the preview/download cache staleness sidecars, and the thumbnail URL
+    /// resolution cache. Two loads of an unchanged file produce the same value.
+    public var cacheSignature: String {
+        "\(dateModified.timeIntervalSince1970)|\(size)"
+    }
+
     // Mirrors `backend/src/config/constants.js` exactly — `GET /api/preview` 415s on
     // anything outside `PREVIEWABLE_EXTENSIONS` (images + rawImages + videos + audios +
     // `["pdf"]`), so guessing at this list wrong means files silently fail to preview.

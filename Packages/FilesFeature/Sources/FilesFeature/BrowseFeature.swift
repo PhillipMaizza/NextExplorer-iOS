@@ -387,7 +387,7 @@ public struct BrowseFeature {
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.openURL) var openURL
-    private enum CancelID { case search, transfer, googleDocsPointer, deleteImpact }
+    private enum CancelID { case search, transfer, googleDocsPointer, deleteImpact, load, preview, info }
 
     public init() {}
 
@@ -395,7 +395,9 @@ public struct BrowseFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.items.isEmpty, state.errorMessage == nil, !state.isLoading else { return .none }
+                // Guard on `hasLoaded`, not `items.isEmpty` — a folder that is genuinely empty
+                // would otherwise re-fetch on every return to it.
+                guard !state.hasLoaded, !state.isLoading else { return .none }
                 return load(&state)
 
             case .refreshButtonTapped:
@@ -604,7 +606,7 @@ public struct BrowseFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.extractZipResponse(await apiResult { try await filesClient.extractZip(serverURL, item) }))
+                    await send(.extractZipResponse(try await apiResult { try await filesClient.extractZip(serverURL, item) }))
                 }
 
             case let .extractZipResponse(.success(extracted)):
@@ -625,7 +627,7 @@ public struct BrowseFeature {
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
-                    await send(.compressResponse(await apiResult { try await filesClient.compressItem(serverURL, item) }))
+                    await send(.compressResponse(try await apiResult { try await filesClient.compressItem(serverURL, item) }))
                 }
 
             case let .compressResponse(.success(compressed)):
@@ -878,7 +880,7 @@ public struct BrowseFeature {
                 state.infoUsage = nil
                 state.infoErrorMessage = nil
                 state.isLoadingInfoMetadata = false
-                return .none
+                return .cancel(id: CancelID.info)
 
             case let .infoMetadataResponse(.success(metadata)):
                 state.isLoadingInfoMetadata = false
@@ -908,7 +910,7 @@ public struct BrowseFeature {
                 state.isLoadingTextContent = false
                 state.isSavingTextContent = false
                 state.textEditorErrorMessage = nil
-                return .none
+                return .merge(.cancel(id: CancelID.preview), .cancel(id: CancelID.googleDocsPointer))
 
             case let .previewFileResponse(.success(fileURL)):
                 state.isLoadingPreview = false
@@ -1006,7 +1008,7 @@ public struct BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            await send(.transferConflictCheckResponse(await apiResult {
+            await send(.transferConflictCheckResponse(try await apiResult {
                 try await filesClient.browse(serverURL, retry.destination).items
             }))
         }
@@ -1038,7 +1040,7 @@ public struct BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            await send(.transferResponse(await apiResult {
+            await send(.transferResponse(try await apiResult {
                 if retry.resolution == .replace, !retry.itemsToReplace.isEmpty {
                     try await filesClient.deleteItems(serverURL, retry.itemsToReplace)
                 }
@@ -1114,7 +1116,7 @@ public struct BrowseFeature {
 
         return .run { send in
             try await clock.sleep(for: Constants.searchDebounce)
-            await send(.searchResultsResponse(await apiResult {
+            await send(.searchResultsResponse(try await apiResult {
                 try await filesClient.search(serverURL, "", query, Constants.searchLimit)
             }))
         }
@@ -1127,7 +1129,7 @@ public struct BrowseFeature {
         let isCurrentlyFavorite = state.favoritePaths.contains(path)
         let filesClient = self.filesClient
         return .run { send in
-            await send(.favoriteToggleResponse(await apiResult {
+            await send(.favoriteToggleResponse(try await apiResult {
                 if isCurrentlyFavorite {
                     try await filesClient.removeFavorite(serverURL, path)
                 } else {
@@ -1150,7 +1152,7 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let originalID = item.id
         return .run { send in
-            await send(.renameResponse(await apiResult {
+            await send(.renameResponse(try await apiResult {
                 RenameResult(originalID: originalID, renamed: try await filesClient.renameItem(serverURL, item, trimmedName))
             }))
         }
@@ -1167,7 +1169,7 @@ public struct BrowseFeature {
         let directoryPath = state.directoryPath
         let filesClient = self.filesClient
         return .run { send in
-            await send(.newFolderResponse(await apiResult {
+            await send(.newFolderResponse(try await apiResult {
                 try await filesClient.createFolder(serverURL, directoryPath, trimmedName)
             }))
         }
@@ -1178,7 +1180,7 @@ public struct BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            await send(.deleteImpactResponse(await apiResult {
+            await send(.deleteImpactResponse(try await apiResult {
                 try await filesClient.deleteImpact(serverURL, items)
             }))
         }
@@ -1196,7 +1198,7 @@ public struct BrowseFeature {
         return .run { send in
             // Animated so the row visibly slides out of the list rather than popping,
             // since removal happens on the server round trip, not the confirm tap itself.
-            await send(.deleteResponse(await apiResult {
+            await send(.deleteResponse(try await apiResult {
                 try await filesClient.deleteItems(serverURL, [item])
                 return DeleteResult(itemID: itemID)
             }), animation: .default)
@@ -1214,7 +1216,7 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let localDownloadStore = self.localDownloadStore
         return .run { send in
-            await send(.downloadResponse(await apiResult {
+            await send(.downloadResponse(try await apiResult {
                 var compressedArchive: FileItem?
                 let fileToDownload: FileItem
                 if item.isDirectory {
@@ -1249,7 +1251,7 @@ public struct BrowseFeature {
         return .run { send in
             // Animated so the rows visibly slide out of the list rather than popping,
             // since removal happens on the server round trip, not the confirm tap itself.
-            await send(.bulkDeleteResponse(await apiResult {
+            await send(.bulkDeleteResponse(try await apiResult {
                 try await filesClient.deleteItems(serverURL, itemsToDelete)
                 return BulkDeleteResult(itemIDs: itemIDs)
             }), animation: .default)
@@ -1340,12 +1342,13 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let path = item.id
         let metadata = Effect<Action>.run { send in
-            await send(.infoMetadataResponse(await apiResult { try await filesClient.fetchMetadata(serverURL, path) }))
+            await send(.infoMetadataResponse(try await apiResult { try await filesClient.fetchMetadata(serverURL, path) }))
         }
-        guard item.isDirectory else { return metadata }
+        guard item.isDirectory else { return metadata.cancellable(id: CancelID.info, cancelInFlight: true) }
         return .merge(metadata, .run { send in
-            await send(.infoUsageResponse(await apiResult { try await filesClient.fetchUsage(serverURL, path) }))
+            await send(.infoUsageResponse(try await apiResult { try await filesClient.fetchUsage(serverURL, path) }))
         })
+        .cancellable(id: CancelID.info, cancelInFlight: true)
     }
 
     /// Only reached for non-streamable items — `rowTapped` already set `state.previewItem`
@@ -1357,7 +1360,7 @@ public struct BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
-            await send(.previewFileResponse(await apiResult {
+            await send(.previewFileResponse(try await apiResult {
                 // Word docs aren't in `PREVIEWABLE_EXTENSIONS` — `GET /api/preview` 415s them,
                 // so they come down via the unrestricted download endpoint instead.
                 item.isOfficeDocument
@@ -1365,6 +1368,7 @@ public struct BrowseFeature {
                     : try await filesClient.previewFile(serverURL, item)
             }))
         }
+        .cancellable(id: CancelID.preview, cancelInFlight: true)
     }
 
     private func loadTextContent(_ state: inout State, item: FileItem) -> Effect<Action> {
@@ -1375,8 +1379,9 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let path = item.id
         return .run { send in
-            await send(.textContentResponse(await apiResult { try await filesClient.fetchTextContent(serverURL, path) }))
+            await send(.textContentResponse(try await apiResult { try await filesClient.fetchTextContent(serverURL, path) }))
         }
+        .cancellable(id: CancelID.preview, cancelInFlight: true)
     }
 
     /// Fetches a Google Drive stub file, reads the link out of its JSON, and hands it to the
@@ -1386,7 +1391,7 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let path = item.id
         return .run { send in
-            await send(.googleDocsPointerResponse(item: item, await apiResult {
+            await send(.googleDocsPointerResponse(item: item, try await apiResult {
                 let contents = try await filesClient.fetchTextContent(serverURL, path)
                 guard let url = GoogleDocsPointer.targetURL(fromContents: contents) else {
                     throw FilesClientError.decoding("Google Drive stub has no link")
@@ -1405,7 +1410,7 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         let path = item.id
         return .run { send in
-            await send(.textSaveResponse(await apiResult {
+            await send(.textSaveResponse(try await apiResult {
                 try await filesClient.saveTextContent(serverURL, path, newContent)
                 return newContent
             }))
@@ -1420,13 +1425,14 @@ public struct BrowseFeature {
         let filesClient = self.filesClient
         return .concatenate(
             .run { send in
-                await send(.itemsResponse(await apiResult { try await filesClient.browse(serverURL, directoryPath) }))
+                await send(.itemsResponse(try await apiResult { try await filesClient.browse(serverURL, directoryPath) }))
             },
             .run { send in
                 let favorites = try? await filesClient.favorites(serverURL)
                 await send(.favoritesResponse(favorites ?? []))
             }
         )
+        .cancellable(id: CancelID.load, cancelInFlight: true)
     }
 
     /// Folders before files, each group alphabetical, matching the web client's own
