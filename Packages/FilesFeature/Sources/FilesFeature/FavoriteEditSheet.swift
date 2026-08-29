@@ -17,8 +17,8 @@ private enum Metrics {
     static let iconColumnMin: CGFloat = .size56
     static let swatch: CGFloat = .size32
     static let selectionLineWidth: CGFloat = 2.5
-    /// The contrast ring sits just inside the swatch edge so both it and the fill read.
-    static let swatchRingInset: CGFloat = 2
+    /// Gap between a swatch and its (outer) selection ring.
+    static let swatchRingGap: CGFloat = 2
     static let maxHeightFraction: CGFloat = 0.85
 }
 
@@ -165,15 +165,17 @@ struct FavoriteEditSheet: View {
         Button(action: action) {
             RoundedRectangle(cornerRadius: .radiusSmall)
                 .fill(fill)
-                .frame(width: Metrics.swatch, height: Metrics.swatch)
-                .overlay(
-                    RoundedRectangle(cornerRadius: .radiusSmall)
-                        .inset(by: Metrics.swatchRingInset)
-                        .strokeBorder(ring, lineWidth: isSelected ? Metrics.selectionLineWidth : 0)
-                )
                 .overlay(
                     RoundedRectangle(cornerRadius: .radiusSmall)
                         .strokeBorder(Color.borderPrimary.opacity(0.4), lineWidth: 1)
+                )
+                .frame(width: Metrics.swatch, height: Metrics.swatch)
+                // Selection ring drawn just outside the swatch — negative padding keeps it
+                // from affecting the row's layout.
+                .overlay(
+                    RoundedRectangle(cornerRadius: .radiusSmall + Metrics.swatchRingGap)
+                        .stroke(isSelected ? ring : .clear, lineWidth: Metrics.selectionLineWidth)
+                        .padding(-Metrics.swatchRingGap)
                 )
         }
         .buttonStyle(DSHapticButtonStyle())
