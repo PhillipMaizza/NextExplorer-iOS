@@ -6,10 +6,10 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let sectionSpacing: CGFloat = .space8
-    static let horizontalPadding: CGFloat = .space16
-    static let verticalPadding: CGFloat = .space16
+    static let horizontalPadding: CGFloat = .space24
+    static let verticalPadding: CGFloat = .space24
     static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
     static let userAvatarSize: CGFloat = .size32
@@ -25,7 +25,7 @@ struct EditShareSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+        DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(
                     icon: IconKit.rename,
@@ -43,18 +43,15 @@ struct EditShareSheet: View {
     }
 
     private var footerButtons: some View {
-        HStack(spacing: .space12) {
-            DSButton(L10n.Common.cancel, style: .ghost) { dismiss() }
-            DSButton(L10n.EditShare.save, style: .primary, isLoading: store.isSaving) {
-                store.send(.saveTapped)
+        DSSheetFooter {
+            HStack(spacing: .space12) {
+                DSButton(L10n.Common.cancel, style: .ghost) { dismiss() }
+                DSButton(L10n.EditShare.save, style: .primary, isLoading: store.isSaving) {
+                    store.send(.saveTapped)
+                }
+                .disabled(!store.isSaveEnabled)
             }
-            .disabled(!store.isSaveEnabled)
         }
-        .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.top, Constants.sectionSpacing)
-        .padding(.bottom, Constants.verticalPadding)
-        .frame(maxWidth: .infinity)
-        .background(Color.backgroundPrimary)
     }
 
     private var formContent: some View {
@@ -154,10 +151,7 @@ struct EditShareSheet: View {
                                 }
                             }
                             Spacer(minLength: 0)
-                            (isSelected ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
-                                .resizable().scaledToFit()
-                                .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
-                                .frame(width: Constants.selectionIconSize, height: Constants.selectionIconSize)
+                            DSSelectionIndicator(isSelected: isSelected, size: Constants.selectionIconSize)
                         }
                         .padding(.vertical, .space8)
                         .contentShape(Rectangle())
@@ -184,7 +178,7 @@ struct EditShareSheet: View {
 
     private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-            DSFieldLabel(title)
+            DSFieldLabel(title, uppercased: false)
             content()
         }
     }

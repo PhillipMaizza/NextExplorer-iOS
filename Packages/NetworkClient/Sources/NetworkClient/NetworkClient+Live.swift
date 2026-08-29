@@ -11,6 +11,9 @@ extension NetworkClient {
         configuration.httpCookieStorage = cookieStorage
         configuration.httpCookieAcceptPolicy = .always
         configuration.httpShouldSetCookies = true
+        // A dead or far-away server shouldn't hang a request for the URLSession default of
+        // 60s — the launch session check and every tap has to give up sooner than that.
+        configuration.timeoutIntervalForRequest = 15
         if !protocolClasses.isEmpty {
             configuration.protocolClasses = protocolClasses
         }

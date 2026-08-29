@@ -33,7 +33,15 @@ struct AppFeatureTests {
         }
 
         await store.send(.onAppear)
-        await store.receive(\.sessionRestoreResponse)
+        // Optimistic: the app shows immediately with a placeholder user from the credentials.
+        await store.receive(\.sessionRestoreResponse) {
+            $0.destination = .authenticated(
+                AuthenticatedFeature.State(
+                    serverURL: self.serverURL,
+                    user: User(id: "", username: "phillip", email: nil)
+                )
+            )
+        }
         await store.receive(\.sessionValidationResponse) {
             $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, user: user))
         }
@@ -62,11 +70,51 @@ struct AppFeatureTests {
         }
 
         await store.send(.onAppear)
-        await store.receive(\.sessionRestoreResponse)
+        await store.receive(\.sessionRestoreResponse) {
+            $0.destination = .authenticated(
+                AuthenticatedFeature.State(
+                    serverURL: self.serverURL,
+                    user: User(id: "", username: "phillip", email: nil)
+                )
+            )
+        }
         await store.receive(\.sessionValidationResponse) {
             $0.destination = .unauthenticated(.init())
         }
         #expect(clearSessionCalled.value)
+    }
+
+    @Test("edge case: a network hiccup validating a restored session keeps the optimistic session")
+    func networkFailureValidatingKeepsOptimisticSession() async {
+        let credentials = SessionCredentials(
+            serverBaseURL: serverURL,
+            authMode: .local,
+            cookieName: "connect.sid",
+            cookieValue: "abc",
+            cookieDomain: "nextexplorer.example.com",
+            cookiePath: "/",
+            cookieIsSecure: true,
+            expiresAt: nil,
+            username: "phillip"
+        )
+        let store = TestStore(initialState: AppFeature.State()) {
+            AppFeature()
+        } withDependencies: {
+            $0.authClient.restoreSession = { credentials }
+            $0.authClient.me = { _ in throw AuthClientError.network("offline") }
+        }
+
+        await store.send(.onAppear)
+        await store.receive(\.sessionRestoreResponse) {
+            $0.destination = .authenticated(
+                AuthenticatedFeature.State(
+                    serverURL: self.serverURL,
+                    user: User(id: "", username: "phillip", email: nil)
+                )
+            )
+        }
+        // Failure is a network error, not an auth rejection: destination is left as-is.
+        await store.receive(\.sessionValidationResponse)
     }
 
     @Test("edge case: no stored session stays on the unauthenticated flow")

@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -538,8 +539,8 @@ private struct ArchiveTextEntryPreviewView: View {
     @State private var content: String?
     @State private var renderedMarkdownHTML = ""
     @State private var loadErrorMessage: String?
-    @AppStorage("renderHTMLPages") private var renderHTMLPages = false
-    @AppStorage("renderMarkdownPages") private var renderMarkdownPages = false
+    @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
+    @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
 
     private var isHTML: Bool {
         let lowercaseKind = item.kind.lowercased()

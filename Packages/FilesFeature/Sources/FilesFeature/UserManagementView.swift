@@ -56,7 +56,7 @@ struct UserManagementView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .navigationTitle(L10n.UserManagement.navigationTitle)
         .navigationBarTitleDisplayMode(.large)
         .searchable(

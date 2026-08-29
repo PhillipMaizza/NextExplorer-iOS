@@ -44,7 +44,7 @@ struct ThumbnailSettingsView: View {
             .padding(.horizontal, Metrics.horizontalPadding)
             .padding(.vertical, Metrics.contentSpacing)
         }
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .navigationTitle(L10n.ThumbnailSettings.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .overlay {

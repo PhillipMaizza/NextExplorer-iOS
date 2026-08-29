@@ -7,7 +7,7 @@ import SwiftUI
 import UIKit
 
 private enum Constants {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let sectionSpacing: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
@@ -33,7 +33,7 @@ struct OpenShareLinkSheet: View {
     }()
 
     var body: some View {
-        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+        DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(
                     icon: IconKit.shareLink,
@@ -93,16 +93,13 @@ struct OpenShareLinkSheet: View {
     }
 
     private var footer: some View {
-        DSButton(L10n.OpenShareLink.open, style: .primary) {
-            store.send(.openTapped)
-            dismiss()
+        DSSheetFooter {
+            DSButton(L10n.OpenShareLink.open, style: .primary) {
+                store.send(.openTapped)
+                dismiss()
+            }
+            .disabled(!store.canOpen)
         }
-        .disabled(!store.canOpen)
-        .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.top, Constants.sectionSpacing)
-        .padding(.bottom, Constants.verticalPadding)
-        .frame(maxWidth: .infinity)
-        .background(Color.backgroundPrimary)
     }
 
     private func summaryCard(_ info: ShareInfo) -> some View {

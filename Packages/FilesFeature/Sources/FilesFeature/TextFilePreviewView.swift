@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -29,8 +30,8 @@ struct TextFilePreviewView: View {
     @State private var renderedMarkdownHTML = ""
     @State private var isEditing = false
     @State private var savedToast: DSToastMessage?
-    @AppStorage("renderHTMLPages") private var renderHTMLPages = false
-    @AppStorage("renderMarkdownPages") private var renderMarkdownPages = false
+    @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
+    @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
     @Environment(\.openURL) private var openURL
     @Dependency(\.filesClient) private var filesClient
 

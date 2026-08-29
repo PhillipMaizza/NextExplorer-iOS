@@ -1,3 +1,4 @@
+import AppStorageKeys
 import CoreModels
 import DesignSystem
 import SwiftUI
@@ -32,7 +33,7 @@ struct GridCellView: View {
     var customIcon: Image?
     var customIconTint: Color?
     var customIconFilled: Bool
-    @AppStorage("showFilenameExtensions") private var showFilenameExtensions = true
+    @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
 
     init(
         name: String,

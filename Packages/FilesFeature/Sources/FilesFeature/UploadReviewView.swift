@@ -165,7 +165,7 @@ struct UploadReviewView: View {
     }
 
     /// The whole sheet as one measured stack (header, the destination + size rows, the file
-    /// list, then the two buttons) so `DynamicHeightSheet` sizes to exactly this — no
+    /// list, then the two buttons) so `DSDynamicHeightSheet` sizes to exactly this — no
     /// per-piece height guesses.
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
@@ -186,16 +186,15 @@ struct UploadReviewView: View {
 
     /// Pinned below the scrolling list so Upload is always reachable, however many files.
     private var footer: some View {
-        VStack(spacing: Constants.rowSpacing) {
-            addMoreButton
-            DSButton(L10n.Uploads.reviewUploadButton, icon: IconKit.upload, style: .primary, isLoading: store.isPreparing) {
-                store.send(.uploadTapped)
+        DSSheetFooter {
+            VStack(spacing: Constants.rowSpacing) {
+                addMoreButton
+                DSButton(L10n.Uploads.reviewUploadButton, icon: IconKit.upload, style: .primary, isLoading: store.isPreparing) {
+                    store.send(.uploadTapped)
+                }
+                .disabled(!store.canUpload)
             }
-            .disabled(!store.canUpload)
         }
-        .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.bottom, Constants.verticalPadding)
-        .background(Color.backgroundPrimary)
     }
 
     private func infoRow<Content: View>(@ViewBuilder content: () -> Content) -> some View {
@@ -276,7 +275,7 @@ struct UploadReviewView: View {
     }
 
     var body: some View {
-        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+        DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             content
         } footer: {
             footer
