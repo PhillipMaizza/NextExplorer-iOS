@@ -9,9 +9,6 @@ private enum Metrics {
     static let sectionSpacing: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
-    static let headerIconSize: CGFloat = .iconMedium
-    static let closeIconSize: CGFloat = .iconXSmall
-    static let closeButtonPadding: CGFloat = .space8
     static let iconCell: CGFloat = .size56
     static let iconGlyph: CGFloat = .iconMedium
     static let iconColumnMin: CGFloat = .size56
@@ -35,8 +32,13 @@ struct FavoriteEditSheet: View {
     var body: some View {
         DynamicHeightSheet(maxHeightFraction: Metrics.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
-                header
-                Text(L10n.Favorites.editTitle).type(.headline3, style: .link)
+                DSSheetHeader(
+                    icon: FavoriteIcon.symbol(for: store.iconDraft),
+                    title: L10n.Favorites.editTitle,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onClose: onClose
+                )
+                .environment(\.symbolVariants, iconVariant)
 
                 if let error = store.errorMessage {
                     DSErrorCard(error)
@@ -90,27 +92,6 @@ struct FavoriteEditSheet: View {
         switch style {
         case .outline: return L10n.Favorites.editIconOutline
         case .solid: return L10n.Favorites.editIconSolid
-        }
-    }
-
-    private var header: some View {
-        HStack {
-            FavoriteIcon.symbol(for: store.iconDraft)
-                .resizable().scaledToFit()
-                .symbolVariant(iconVariant)
-                .foregroundStyle(Color.accent)
-                .frame(width: Metrics.headerIconSize, height: Metrics.headerIconSize)
-            Spacer()
-            Button(action: onClose) {
-                IconKit.close
-                    .resizable().scaledToFit()
-                    .foregroundStyle(Color.primaryDS)
-                    .frame(width: Metrics.closeIconSize, height: Metrics.closeIconSize)
-                    .padding(Metrics.closeButtonPadding)
-                    .background(Circle().fill(Color.backgroundSecondary))
-            }
-            .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel(L10n.Common.close)
         }
     }
 

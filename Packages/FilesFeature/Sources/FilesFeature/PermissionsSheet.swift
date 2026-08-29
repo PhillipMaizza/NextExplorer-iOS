@@ -6,9 +6,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let headerIconSize: CGFloat = .iconMedium
-    static let closeIconSize: CGFloat = .iconXSmall
-    static let closeButtonPadding: CGFloat = .space8
     static let contentSpacing: CGFloat = .space16
     static let sectionSpacing: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space16
@@ -16,6 +13,7 @@ private enum Constants {
     static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
     static let checkboxSize: CGFloat = .iconSmall
+    static let maxHeightFraction: CGFloat = 0.9
 }
 
 /// The "Permissions" sheet — `GET /api/permissions/*` to view, `POST /api/permissions/chmod`
@@ -26,53 +24,29 @@ struct PermissionsSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            ScrollView {
+        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+            VStack(alignment: .leading, spacing: Constants.contentSpacing) {
+                DSSheetHeader(
+                    icon: IconKit.lock,
+                    title: store.item.name,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onClose: { dismiss() }
+                )
                 content
-                    .padding(.horizontal, Constants.horizontalPadding)
-                    .padding(.vertical, Constants.verticalPadding)
             }
+            .padding(.horizontal, Constants.horizontalPadding)
+            .padding(.vertical, Constants.verticalPadding)
+        } footer: {
             if store.permissions != nil {
                 footer
             }
         }
-        .background(Color.backgroundPrimary)
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
         .task { store.send(.onAppear) }
-    }
-
-    private var header: some View {
-        HStack {
-            HStack(spacing: .space8) {
-                IconKit.lock
-                    .resizable().scaledToFit()
-                    .foregroundStyle(Color.accent)
-                    .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
-                Text(L10n.Permissions.title).type(.headline3, style: .primary(for: .label))
-            }
-            Spacer()
-            Button { dismiss() } label: {
-                IconKit.close
-                    .resizable()
-                    .foregroundStyle(Color.primaryDS)
-                    .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
-                    .padding(Constants.closeButtonPadding)
-                    .background(Circle().fill(Color.backgroundSecondary))
-            }
-            .buttonStyle(DSHapticButtonStyle())
-        }
-        .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.vertical, .space16)
     }
 
     @ViewBuilder
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
-            Text(store.item.name).type(.headline3, style: .link).lineLimit(2)
-
             if let loadError = store.loadError {
                 DSErrorCard(loadError)
                 DSButton(L10n.Common.retry, style: .secondary) {

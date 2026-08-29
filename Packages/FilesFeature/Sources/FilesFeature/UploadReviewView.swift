@@ -9,9 +9,7 @@ import SwiftUI
 private enum Constants {
     static let thumbnailSize: CGFloat = .iconLarge
     static let removeButtonSize: CGFloat = .iconSmall
-    static let headerIconSize: CGFloat = .iconMedium
     static let contentSpacing: CGFloat = .space24
-    static let titleToCellsSpacing: CGFloat = .space24
     static let sectionRowSpacing: CGFloat = .space16
     static let cellVerticalPadding: CGFloat = .space16
     static let cellHorizontalPadding: CGFloat = .space16
@@ -19,7 +17,6 @@ private enum Constants {
     static let rowTextSpacing: CGFloat = .space2
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
-    static let closeButtonPadding: CGFloat = .space8
     static let addMoreDash: CGFloat = 4
     static let addMoreBorderWidth: CGFloat = 1
     static let enabledOpacity: Double = 1
@@ -172,11 +169,13 @@ struct UploadReviewView: View {
     /// per-piece height guesses.
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
-            header
-            VStack(alignment: .leading, spacing: Constants.titleToCellsSpacing) {
-                Text(title).type(.headline3, style: .link)
-                pathAndSizeSection
-            }
+            DSSheetHeader(
+                icon: IconKit.upload,
+                title: title,
+                closeAccessibilityLabel: L10n.Common.close,
+                onClose: { store.send(.cancelTapped) }
+            )
+            pathAndSizeSection
             filesSection
         }
         .padding(.horizontal, Constants.horizontalPadding)
@@ -197,28 +196,6 @@ struct UploadReviewView: View {
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.bottom, Constants.verticalPadding)
         .background(Color.backgroundPrimary)
-    }
-
-    private var header: some View {
-        HStack {
-            IconKit.upload
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(Color.accent)
-                .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
-            Spacer()
-            Button { store.send(.cancelTapped) } label: {
-                IconKit.close
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color.primaryDS)
-                    .frame(width: .iconXSmall, height: .iconXSmall)
-                    .padding(Constants.closeButtonPadding)
-                    .background(Circle().fill(Color.backgroundSecondary))
-            }
-            .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel(L10n.Common.close)
-        }
     }
 
     private func infoRow<Content: View>(@ViewBuilder content: () -> Content) -> some View {

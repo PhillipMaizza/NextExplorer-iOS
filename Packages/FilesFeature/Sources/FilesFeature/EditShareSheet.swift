@@ -6,9 +6,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let headerIconSize: CGFloat = .iconMedium
-    static let closeIconSize: CGFloat = .iconXSmall
-    static let closeButtonPadding: CGFloat = .space8
     static let contentSpacing: CGFloat = .space16
     static let sectionSpacing: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space16
@@ -17,6 +14,7 @@ private enum Constants {
     static let cardPadding: CGFloat = .space12
     static let userAvatarSize: CGFloat = .size32
     static let selectionIconSize: CGFloat = .iconSmall
+    static let maxHeightFraction: CGFloat = 0.9
 }
 
 /// The "Edit Share Link" sheet — `PUT /api/shares/:id`. Mirrors `CreateShareLinkSheet`'s
@@ -27,42 +25,36 @@ struct EditShareSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            ScrollView {
+        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+            VStack(alignment: .leading, spacing: Constants.contentSpacing) {
+                DSSheetHeader(
+                    icon: IconKit.rename,
+                    title: L10n.EditShare.title,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onClose: { dismiss() }
+                )
                 formContent
-                    .padding(.horizontal, Constants.horizontalPadding)
-                    .padding(.vertical, Constants.verticalPadding)
             }
+            .padding(.horizontal, Constants.horizontalPadding)
+            .padding(.vertical, Constants.verticalPadding)
+        } footer: {
+            footerButtons
         }
-        .background(Color.backgroundPrimary)
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
     }
 
-    private var header: some View {
-        HStack {
-            HStack(spacing: .space8) {
-                IconKit.rename
-                    .resizable().scaledToFit()
-                    .foregroundStyle(Color.accent)
-                    .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
-                Text(L10n.EditShare.title).type(.headline3, style: .primary(for: .label))
+    private var footerButtons: some View {
+        HStack(spacing: .space12) {
+            DSButton(L10n.Common.cancel, style: .ghost) { dismiss() }
+            DSButton(L10n.EditShare.save, style: .primary, isLoading: store.isSaving) {
+                store.send(.saveTapped)
             }
-            Spacer()
-            Button { dismiss() } label: {
-                IconKit.close
-                    .resizable()
-                    .foregroundStyle(Color.primaryDS)
-                    .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
-                    .padding(Constants.closeButtonPadding)
-                    .background(Circle().fill(Color.backgroundSecondary))
-            }
-            .buttonStyle(DSHapticButtonStyle())
+            .disabled(!store.isSaveEnabled)
         }
         .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.vertical, .space16)
+        .padding(.top, Constants.sectionSpacing)
+        .padding(.bottom, Constants.verticalPadding)
+        .frame(maxWidth: .infinity)
+        .background(Color.backgroundPrimary)
     }
 
     private var formContent: some View {
@@ -129,15 +121,6 @@ struct EditShareSheet: View {
                 .datePickerStyle(.compact)
                 .tint(Color.accent)
             }
-
-            HStack(spacing: .space12) {
-                DSButton(L10n.Common.cancel, style: .ghost) { dismiss() }
-                DSButton(L10n.EditShare.save, style: .primary, isLoading: store.isSaving) {
-                    store.send(.saveTapped)
-                }
-                .disabled(!store.isSaveEnabled)
-            }
-            .padding(.top, .space4)
         }
     }
 
