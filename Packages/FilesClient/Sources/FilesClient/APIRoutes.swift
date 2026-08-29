@@ -28,6 +28,10 @@ enum APIPath {
 
     static let shares = "api/shares"
     static let sharesSharedWithMe = "api/shares/shared-with-me"
+    /// Guest-facing share routes (`backend/src/routes/shares.js`, also mounted at `/api/share`).
+    static let share = "api/share"
+    /// Trailing component of `api/share/<token>/info`.
+    static let shareInfoComponent = "info"
 
     static let users = "api/users"
     static let usersShareable = "api/users/shareable"

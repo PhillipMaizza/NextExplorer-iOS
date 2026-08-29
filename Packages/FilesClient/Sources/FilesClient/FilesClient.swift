@@ -109,6 +109,9 @@ public struct FilesClient: Sendable {
     public var deleteShareLink: @Sendable (_ serverURL: URL, _ shareID: String) async throws -> Void
     /// `GET /api/users/shareable`: every user except the caller, for a user specific share.
     public var shareableUsers: @Sendable (_ serverURL: URL) async throws -> [User]
+    /// `GET /api/share/<token>/info` — public metadata for a share link a recipient was sent.
+    /// Unauthenticated; a bad token 404s.
+    public var resolveShareLink: @Sendable (_ serverURL: URL, _ token: String) async throws -> ShareInfo
 
     /// `POST /api/auth/password`: the signed in user changes their own local password. Needs
     /// the current password; rate limited server side.

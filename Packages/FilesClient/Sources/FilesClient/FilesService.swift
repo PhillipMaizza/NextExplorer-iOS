@@ -263,6 +263,17 @@ struct FilesService: Sendable {
         return try await send(request, decoding: ShareableUsersEnvelope.self).users
     }
 
+    /// `GET /api/share/<token>/info`, confirmed against `backend/src/routes/shares.js`:
+    /// unauthenticated public metadata for a share link. The token is a single path segment.
+    func resolveShareLink(serverURL: URL, token: String) async throws -> ShareInfo {
+        let url = serverURL
+            .appendingPathComponent(APIPath.share)
+            .appendingPathComponent(token)
+            .appendingPathComponent(APIPath.shareInfoComponent)
+        let request = Self.makeRequest(url: url, method: .get)
+        return try await send(request, decoding: ShareInfo.self)
+    }
+
     /// `PUT /api/shares/:id`, confirmed against `backend/src/routes/shares.js` +
     /// `sharesService.updateShare`: owner-only, `'key' in body` semantics, returns the
     /// updated share unwrapped.

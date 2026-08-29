@@ -818,4 +818,31 @@ struct FilesClientLiveTests {
             _ = try await makeClient().updateShareLink(serverURL, "s1", UpdateShareRequest())
         }
     }
+
+    // MARK: resolveShareLink
+
+    @Test
+    func resolveShareLinkHitsTheInfoEndpointAndDecodes() async throws {
+        stub(statusCode: 200, body: #"""
+        {"shareToken":"AbC123xyz0","label":"Q3 Report","isDirectory":true,"hasPassword":false,"sharingType":"anyone","isExpired":false}
+        """#.data(using: .utf8)!)
+        StubURLProtocol.capturedRequest = nil
+
+        let info = try await makeClient().resolveShareLink(serverURL, "AbC123xyz0")
+
+        #expect(info.label == "Q3 Report")
+        #expect(info.isDirectory)
+        #expect(info.sharingType == .anyone)
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.url?.path == "/api/share/AbC123xyz0/info")
+        #expect(request.httpMethod == "GET")
+    }
+
+    @Test
+    func resolveShareLinkMapsA404ToAServerError() async throws {
+        stub(statusCode: 404, body: Data())
+        await #expect(throws: FilesClientError.server(statusCode: 404)) {
+            _ = try await makeClient().resolveShareLink(serverURL, "nope00")
+        }
+    }
 }

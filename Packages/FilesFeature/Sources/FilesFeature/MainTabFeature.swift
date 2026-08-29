@@ -140,6 +140,10 @@ public struct MainTabFeature {
             case .browse(.delegate(.favoritesChanged)), .favorites(.delegate(.favoritesChanged)):
                 return .send(.favorites(.refreshButtonTapped))
 
+            case let .shared(.delegate(.openSharedLink(path, title))):
+                state.selectedTab = .browse
+                return .send(.browse(.navigateToDirectory(path: path, title: title)))
+
             case .browse(.delegate(.openDownloadsTapped)), .favorites(.delegate(.openDownloadsTapped)):
                 state.selectedTab = .downloads
                 return .send(.downloads(.refreshButtonTapped))

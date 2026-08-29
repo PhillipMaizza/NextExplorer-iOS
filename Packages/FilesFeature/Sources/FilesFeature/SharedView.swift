@@ -71,6 +71,15 @@ struct SharedView: View {
                 prompt: L10n.Common.search
             )
             .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Button {
+                        store.send(.openLinkButtonTapped)
+                    } label: {
+                        Label { Text(L10n.OpenShareLink.title) } icon: { IconKit.link.foregroundStyle(Color.primaryDS) }
+                    }
+                    .tint(.accent)
+                    .buttonStyle(DSHapticButtonStyle())
+                }
                 ToolbarItem(placement: .primaryAction) {
                     Button {
                         isSortSheetPresented = true
@@ -125,6 +134,9 @@ struct SharedView: View {
             }
             .sheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
                 EditShareSheet(store: editStore)
+            }
+            .sheet(item: $store.scope(state: \.openLinkSheet, action: \.openLinkSheet)) { linkStore in
+                OpenShareLinkSheet(store: linkStore)
             }
             .alert(L10n.Shared.deleteTitle, isPresented: deleteConfirmationBinding) {
                 Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
