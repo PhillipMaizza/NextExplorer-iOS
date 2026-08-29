@@ -3,9 +3,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let headerIconSize: CGFloat = .iconMedium
-    static let closeIconSize: CGFloat = .iconXSmall
-    static let closeButtonPadding: CGFloat = .space8
     static let contentSpacing: CGFloat = .space24
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
@@ -55,8 +52,7 @@ struct NameInputSheet: View {
     var body: some View {
         DynamicHeightSheet {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
-                header
-                Text(title).type(.headline3, style: .link)
+                DSSheetHeader(icon: icon, title: title, closeAccessibilityLabel: L10n.Common.close, onClose: onCancel)
                 DSTextField(placeholder, text: $name, focused: $isFieldFocused)
                     .textInputAutocapitalization(.words)
                     .autocorrectionDisabled()
@@ -69,28 +65,6 @@ struct NameInputSheet: View {
             .padding(.vertical, Constants.verticalPadding)
         }
         .task { isFieldFocused = true }
-    }
-
-    private var header: some View {
-        HStack {
-            icon
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(Color.accent)
-                .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
-            Spacer()
-            Button(action: onCancel) {
-                IconKit.close
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color.primaryDS)
-                    .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
-                    .padding(Constants.closeButtonPadding)
-                    .background(Circle().fill(Color.backgroundSecondary))
-            }
-            .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel(L10n.Common.close)
-        }
     }
 
     private func submit() {

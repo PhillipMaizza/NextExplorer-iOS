@@ -4,9 +4,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let headerIconSize: CGFloat = .iconMedium
-    static let closeIconSize: CGFloat = .iconXSmall
-    static let closeButtonPadding: CGFloat = .space8
     static let contentSpacing: CGFloat = .space16
     static let cardSpacing: CGFloat = .space12
     static let cardPadding: CGFloat = .space16
@@ -61,9 +58,12 @@ struct FileInfoSheet: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
-            header
-
-            Text(item.name).type(.headline3, style: .link).lineLimit(2)
+            DSSheetHeader(
+                icon: item.isDirectory ? IconKit.folderFill : IconKit.document,
+                title: item.name,
+                closeAccessibilityLabel: L10n.Common.close,
+                onClose: onDismiss
+            )
 
             if let errorMessage {
                 Text(errorMessage).type(.body3(.semibold), style: .error)
@@ -74,28 +74,6 @@ struct FileInfoSheet: View {
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.top, Constants.topPadding)
         .padding(.bottom, Constants.bottomPadding)
-    }
-
-    private var header: some View {
-        HStack {
-            (item.isDirectory ? IconKit.folderFill : IconKit.document)
-                .resizable()
-                .scaledToFit()
-                .foregroundStyle(Color.accent)
-                .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
-
-            Spacer()
-
-            Button(action: onDismiss) {
-                IconKit.close
-                    .resizable()
-                    .foregroundStyle(Color.primaryDS)
-                    .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
-                    .padding(Constants.closeButtonPadding)
-                    .background(Circle().fill(Color.backgroundSecondary))
-            }
-            .buttonStyle(DSHapticButtonStyle())
-        }
     }
 
     @ViewBuilder
