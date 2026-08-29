@@ -55,6 +55,11 @@ extension FilesClient {
                 directory: FileMetadata.DirectorySummary(totalSize: 10_485_760, fileCount: 42, dirCount: 3, truncated: false)
             )
         },
+        fetchUsage: { _, path in
+            path == "home"
+                ? StorageUsage(path: path, size: 188_000_000_000, free: 12_000_000_000, total: 200_000_000_000)
+                : StorageUsage(path: path, size: 42_000_000_000, free: 58_000_000_000, total: 100_000_000_000)
+        },
         thumbnailURL: { _, _ in nil },
         previewFile: { _, item in
             let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Previews-Preview", isDirectory: true)
@@ -114,7 +119,7 @@ extension FilesClient {
             ]
         },
         changeOwnPassword: { _, _, _ in },
-        serverFeatures: { _ in ServerFeatures(isUserVolumesEnabled: true) },
+        serverFeatures: { _ in ServerFeatures(isUserVolumesEnabled: true, isVolumeUsageEnabled: true) },
         listUsers: { _ in User.previewManagedUsers },
         createUser: { _, request in
             User(

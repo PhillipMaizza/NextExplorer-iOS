@@ -41,12 +41,25 @@ public struct SettingsFeature {
         public var isClearingCache = false
         public var clearCacheConfirmationIsPresented = false
 
+        /// Server disk usage, one row per volume — the iOS take on the web client's volume
+        /// list. Only populated (and only shown) when `GET /api/features` reports
+        /// `volumeUsage.enabled`.
+        public var isVolumeUsageEnabled = false
+        public var serverUsage: IdentifiedArrayOf<VolumeUsage> = []
+
         public var displayName: String { user.displayName ?? user.username }
 
         public init(serverURL: URL, user: User) {
             self.serverURL = serverURL
             self.user = user
         }
+    }
+
+    public struct VolumeUsage: Equatable, Identifiable, Sendable {
+        public let volume: Volume
+        public var usage: StorageUsage?
+
+        public var id: String { volume.path }
     }
 
     public enum Action: Sendable {
@@ -58,6 +71,9 @@ public struct SettingsFeature {
         case serverDetailsButtonTapped
         case serverDetails(PresentationAction<ServerDetailsFeature.Action>)
         case brandingResponse(Result<Branding, FilesClientError>)
+        case serverFeaturesResponse(ServerFeatures)
+        case volumesResponse([Volume])
+        case serverUsageResponse(path: String, Result<StorageUsage, FilesClientError>)
         case preferencesResponse(Result<UserPreferences, FilesClientError>)
         case setShowHiddenFiles(Bool)
         case setShowThumbnails(Bool)
@@ -89,6 +105,8 @@ public struct SettingsFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.previewCacheStore) var previewCacheStore
+
+    private enum CancelID { case serverUsage }
 
     public init() {}
 
@@ -130,6 +148,38 @@ public struct SettingsFeature {
             case .brandingResponse(.failure):
                 return .none
 
+            case let .serverFeaturesResponse(features):
+                state.isVolumeUsageEnabled = features.isVolumeUsageEnabled
+                guard features.isVolumeUsageEnabled else { return .none }
+                let serverURL = state.serverURL
+                let filesClient = self.filesClient
+                return .run { send in
+                    guard let volumes = try? await filesClient.volumes(serverURL) else { return }
+                    await send(.volumesResponse(volumes))
+                }
+                .cancellable(id: CancelID.serverUsage, cancelInFlight: true)
+
+            case let .volumesResponse(volumes):
+                state.serverUsage = IdentifiedArray(uniqueElements: volumes.map { VolumeUsage(volume: $0, usage: nil) })
+                let serverURL = state.serverURL
+                let filesClient = self.filesClient
+                return .merge(volumes.map { volume in
+                    .run { send in
+                        await send(.serverUsageResponse(
+                            path: volume.path,
+                            await apiResult { try await filesClient.fetchUsage(serverURL, volume.path) }
+                        ))
+                    }
+                })
+                .cancellable(id: CancelID.serverUsage, cancelInFlight: false)
+
+            case let .serverUsageResponse(path, .success(usage)):
+                state.serverUsage[id: path]?.usage = usage
+                return .none
+
+            case .serverUsageResponse(_, .failure):
+                return .none
+
             case .onAppear:
                 let localDownloadStore = self.localDownloadStore
                 let previewCacheStore = self.previewCacheStore
@@ -153,6 +203,10 @@ public struct SettingsFeature {
                     checkCacheSize,
                     .run { send in
                         await send(.brandingResponse(await apiResult { try await filesClient.fetchBranding(serverURL) }))
+                    },
+                    .run { send in
+                        guard let features = try? await filesClient.serverFeatures(serverURL) else { return }
+                        await send(.serverFeaturesResponse(features))
                     },
                     .run { send in
                         await send(.preferencesResponse(await apiResult {

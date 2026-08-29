@@ -59,6 +59,9 @@ public struct FilesClient: Sendable {
         _ serverURL: URL, _ items: [FileItem], _ destination: String, _ operation: TransferOperation
     ) async throws -> TransferResult
     public var fetchMetadata: @Sendable (_ serverURL: URL, _ path: String) async throws -> FileMetadata
+    /// `GET /api/usage/<path>` (`backend/src/routes/usage.js`): the folder's recursive size
+    /// plus the free/total of the filesystem it's on. A denied path comes back all zeros.
+    public var fetchUsage: @Sendable (_ serverURL: URL, _ path: String) async throws -> StorageUsage
     public var thumbnailURL: @Sendable (_ serverURL: URL, _ path: String) async throws -> URL?
     public var previewFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     public var fetchTextContent: @Sendable (_ serverURL: URL, _ path: String) async throws -> String
