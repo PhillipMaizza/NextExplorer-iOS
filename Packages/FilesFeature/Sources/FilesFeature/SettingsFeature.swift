@@ -22,6 +22,10 @@ public struct SettingsFeature {
         /// user list blank.
         @Presents public var userManagement: UserManagementFeature.State?
         @Presents public var changePassword: ChangePasswordFeature.State?
+        @Presents public var serverDetails: ServerDetailsFeature.State?
+        /// Server branding, fetched on appear and shared with `ServerDetailsFeature` so an
+        /// admin's edit there is reflected in the server row the moment it saves.
+        @Shared(.inMemory(Branding.sharedKey)) public var branding = Branding()
         /// Shared with `BrowseFeature` under the same in-memory key, so toggling
         /// "Show Hidden Files" here is reflected immediately in an already-open folder.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
@@ -51,6 +55,9 @@ public struct SettingsFeature {
         case userManagement(PresentationAction<UserManagementFeature.Action>)
         case changePasswordButtonTapped
         case changePassword(PresentationAction<ChangePasswordFeature.Action>)
+        case serverDetailsButtonTapped
+        case serverDetails(PresentationAction<ServerDetailsFeature.Action>)
+        case brandingResponse(Result<Branding, FilesClientError>)
         case preferencesResponse(Result<UserPreferences, FilesClientError>)
         case setShowHiddenFiles(Bool)
         case setShowThumbnails(Bool)
@@ -105,6 +112,24 @@ public struct SettingsFeature {
             case .changePassword:
                 return .none
 
+            case .serverDetailsButtonTapped:
+                guard state.user.isAdmin else { return .none }
+                state.serverDetails = ServerDetailsFeature.State(
+                    serverURL: state.serverURL,
+                    branding: state.branding
+                )
+                return .none
+
+            case .serverDetails:
+                return .none
+
+            case let .brandingResponse(.success(branding)):
+                state.$branding.withLock { $0 = branding }
+                return .none
+
+            case .brandingResponse(.failure):
+                return .none
+
             case .onAppear:
                 let localDownloadStore = self.localDownloadStore
                 let previewCacheStore = self.previewCacheStore
@@ -117,13 +142,18 @@ public struct SettingsFeature {
                     let size = (try? previewCacheStore.size()) ?? 0
                     await send(.cacheSizeResponse(size))
                 }
-                guard !state.isLoadingPreferences else { return .merge(checkDownloads, checkCacheSize) }
+                guard !state.isLoadingPreferences else {
+                    return .merge(checkDownloads, checkCacheSize)
+                }
                 state.isLoadingPreferences = true
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .merge(
                     checkDownloads,
                     checkCacheSize,
+                    .run { send in
+                        await send(.brandingResponse(await apiResult { try await filesClient.fetchBranding(serverURL) }))
+                    },
                     .run { send in
                         await send(.preferencesResponse(await apiResult {
                             try await filesClient.fetchPreferences(serverURL)
@@ -234,6 +264,9 @@ public struct SettingsFeature {
         }
         .ifLet(\.$changePassword, action: \.changePassword) {
             ChangePasswordFeature()
+        }
+        .ifLet(\.$serverDetails, action: \.serverDetails) {
+            ServerDetailsFeature()
         }
     }
 

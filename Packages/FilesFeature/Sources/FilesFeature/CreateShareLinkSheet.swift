@@ -90,7 +90,7 @@ struct CreateShareLinkSheet: View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             if let errorMessage = store.errorMessage {
                 Text(errorMessage)
-                    .type(.body3(.regular), style: .error)
+                    .type(.body3(.semibold), style: .error)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(Constants.cardPadding)
                     .background(RoundedRectangle(cornerRadius: Constants.cardCornerRadius).fill(Color.negative.opacity(0.12)))

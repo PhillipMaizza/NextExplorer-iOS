@@ -252,6 +252,22 @@ public enum L10n {
         public static var listView: String { tr("select.listView") }  // "List View"
         public static var selectAll: String { tr("select.selectAll") }  // "Select All"
     }
+    public enum ServerDetails {
+        public static var cameraDeniedMessage: String { tr("serverDetails.cameraDeniedMessage") }  // "Turn on camera access in Settings to take a photo."
+        public static var cameraDeniedTitle: String { tr("serverDetails.cameraDeniedTitle") }  // "Camera Access Off"
+        public static var changeLogo: String { tr("serverDetails.changeLogo") }  // "Change Icon"
+        public static var chooseFromGallery: String { tr("serverDetails.chooseFromGallery") }  // "Upload from Gallery"
+        public static var logoErrorTooLarge: String { tr("serverDetails.logoErrorTooLarge") }  // "That image is too large. Pick one under 2 MB."
+        public static var nameErrorEmpty: String { tr("serverDetails.nameErrorEmpty") }  // "Server name can't be empty."
+        public static var nameLabel: String { tr("serverDetails.nameLabel") }  // "Server Name"
+        public static var namePlaceholder: String { tr("serverDetails.namePlaceholder") }  // "Explorer"
+        public static var navigationTitle: String { tr("serverDetails.navigationTitle") }  // "Server"
+        public static var savedMessage: String { tr("serverDetails.savedMessage") }  // "Server details updated."
+        public static var takePhoto: String { tr("serverDetails.takePhoto") }  // "Take Photo"
+        public static var updateButton: String { tr("serverDetails.updateButton") }  // "Update Server"
+        public static var urlFootnote: String { tr("serverDetails.urlFootnote") }
+        public static var urlLabel: String { tr("serverDetails.urlLabel") }  // "Server URL"
+    }
     public enum Settings {
         public static func appVersion(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.appVersion", a0, a1) }
         public static var clearCacheConfirm: String { tr("settings.clearCacheConfirm") }  // "Clear"
@@ -268,7 +284,6 @@ public enum L10n {
         public static var rowDateFormat: String { tr("settings.rowDateFormat") }  // "Date Format"
         public static var rowOpenSourceLicenses: String { tr("settings.rowOpenSourceLicenses") }  // "Open Source Licenses"
         public static var rowRemoveAllDownloads: String { tr("settings.rowRemoveAllDownloads") }  // "Remove All Downloads"
-        public static var rowServer: String { tr("settings.rowServer") }  // "Server"
         public static var rowThumbnailSize: String { tr("settings.rowThumbnailSize") }  // "Thumbnail Size"
         public static var rowUserManagement: String { tr("settings.rowUserManagement") }  // "User Management"
         public static var sectionAdmin: String { tr("settings.sectionAdmin") }  // "Admin"

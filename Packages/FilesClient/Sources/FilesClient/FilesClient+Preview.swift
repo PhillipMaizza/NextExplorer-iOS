@@ -19,6 +19,9 @@ extension FilesClient {
         volumes: { _ in Volume.previewVolumes },
         fetchPreferences: { _ in UserPreferences() },
         updatePreference: { _, _, _ in },
+        fetchBranding: { _ in Branding(appName: "Rivendell Cloud", appLogoUrl: "/static/logos/custom-logo.png") },
+        updateBranding: { _, appName, appLogoUrl in Branding(appName: appName, appLogoUrl: appLogoUrl) },
+        uploadServerLogo: { _, _ in "/static/logos/custom-logo.png" },
         renameItem: { _, item, newName in
             FileItem(name: newName, path: item.path, dateModified: item.dateModified, size: item.size, kind: item.kind, supportsThumbnail: item.supportsThumbnail)
         },

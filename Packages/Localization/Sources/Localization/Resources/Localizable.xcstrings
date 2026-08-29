@@ -2322,6 +2322,160 @@
         }
       }
     },
+    "serverDetails.cameraDeniedMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn on camera access in Settings to take a photo."
+          }
+        }
+      }
+    },
+    "serverDetails.cameraDeniedTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Camera Access Off"
+          }
+        }
+      }
+    },
+    "serverDetails.changeLogo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change Icon"
+          }
+        }
+      }
+    },
+    "serverDetails.chooseFromGallery": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload from Gallery"
+          }
+        }
+      }
+    },
+    "serverDetails.logoErrorTooLarge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That image is too large. Pick one under 2 MB."
+          }
+        }
+      }
+    },
+    "serverDetails.nameErrorEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server name can't be empty."
+          }
+        }
+      }
+    },
+    "serverDetails.nameLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server Name"
+          }
+        }
+      }
+    },
+    "serverDetails.namePlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Explorer"
+          }
+        }
+      }
+    },
+    "serverDetails.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server"
+          }
+        }
+      }
+    },
+    "serverDetails.savedMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server details updated."
+          }
+        }
+      }
+    },
+    "serverDetails.takePhoto": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Take Photo"
+          }
+        }
+      }
+    },
+    "serverDetails.updateButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Update Server"
+          }
+        }
+      }
+    },
+    "serverDetails.urlFootnote": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The address can't be changed here. Sign out and add the server again to switch."
+          }
+        }
+      }
+    },
+    "serverDetails.urlLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server URL"
+          }
+        }
+      }
+    },
     "settings.appVersion": {
       "extractionState": "manual",
       "localizations": {
@@ -2483,17 +2637,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Remove All Downloads"
-          }
-        }
-      }
-    },
-    "settings.rowServer": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Server"
           }
         }
       }

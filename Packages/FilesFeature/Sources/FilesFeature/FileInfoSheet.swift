@@ -61,7 +61,7 @@ struct FileInfoSheet: View {
             Text(item.name).type(.headline3, style: .link).lineLimit(2)
 
             if let errorMessage {
-                Text(errorMessage).type(.body2(.regular), style: .error)
+                Text(errorMessage).type(.body3(.semibold), style: .error)
             } else if let metadata {
                 metadataSections(for: metadata)
             }
