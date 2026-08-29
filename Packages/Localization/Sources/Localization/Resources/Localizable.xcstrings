@@ -3257,6 +3257,39 @@
         }
       }
     },
+    "settings.officeEditorCollabora": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Collabora"
+          }
+        }
+      }
+    },
+    "settings.officeEditorHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Which editor to use when the server offers both."
+          }
+        }
+      }
+    },
+    "settings.officeEditorOnlyOffice": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ONLYOFFICE"
+          }
+        }
+      }
+    },
     "settings.removeAllDownloadsConfirm": {
       "extractionState": "manual",
       "localizations": {
@@ -3330,6 +3363,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Date Format"
+          }
+        }
+      }
+    },
+    "settings.rowOfficeEditor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Office editor"
           }
         }
       }
@@ -3429,6 +3473,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Licenses"
+          }
+        }
+      }
+    },
+    "settings.sectionOfficeEditor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Documents"
           }
         }
       }

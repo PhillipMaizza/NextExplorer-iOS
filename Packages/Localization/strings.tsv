@@ -324,6 +324,11 @@ accessRules.saveButton	Save Changes
 # ---- settings rows ----
 settings.rowThumbnails	Thumbnails
 settings.rowAccessRules	Folder Access Rules
+settings.sectionOfficeEditor	Documents
+settings.rowOfficeEditor	Office editor
+settings.officeEditorHelp	Which editor to use when the server offers both.
+settings.officeEditorOnlyOffice	ONLYOFFICE
+settings.officeEditorCollabora	Collabora
 
 # ---- settings ----
 settings.navigationTitle	Settings
