@@ -24,13 +24,13 @@ struct LocalAuthService: Sendable {
     }
 
     func status(serverURL: URL) async throws -> AuthStatus {
-        let request = try Self.makeRequest(serverURL: serverURL, path: "api/auth/status", method: "GET")
+        let request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.status, method: .get)
         return try await send(request, decoding: AuthStatus.self)
     }
 
     func login(serverURL: URL, identifier: String, password: String) async throws -> User {
-        var request = try Self.makeRequest(serverURL: serverURL, path: "api/auth/login", method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        var request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.login, method: .post)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(LoginRequestBody(email: identifier, password: password))
         } catch {
@@ -44,7 +44,7 @@ struct LocalAuthService: Sendable {
     }
 
     func me(serverURL: URL) async throws -> User {
-        let request = try Self.makeRequest(serverURL: serverURL, path: "api/auth/me", method: "GET")
+        let request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.me, method: .get)
         let envelope = try await send(request, decoding: UserEnvelope.self, unauthorizedError: .sessionExpired)
         guard let user = envelope.user else {
             throw AuthClientError.sessionExpired
@@ -53,7 +53,7 @@ struct LocalAuthService: Sendable {
     }
 
     func logout(serverURL: URL) async throws {
-        let request = try Self.makeRequest(serverURL: serverURL, path: "api/auth/logout", method: "POST")
+        let request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.logout, method: .post)
         _ = try await sendIgnoringBody(request)
     }
 
@@ -98,11 +98,10 @@ struct LocalAuthService: Sendable {
         }
     }
 
-    private static func makeRequest(serverURL: URL, path: String, method: String) throws -> URLRequest {
+    private static func makeRequest(serverURL: URL, path: String, method: HTTPMethod) throws -> URLRequest {
         let url = serverURL.appendingPathComponent(path)
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+        var request = URLRequest(url: url, method: method)
+        request.setValue(MIMEType.json, forHTTPHeaderField: HTTPHeaderField.accept)
         return request
     }
 }

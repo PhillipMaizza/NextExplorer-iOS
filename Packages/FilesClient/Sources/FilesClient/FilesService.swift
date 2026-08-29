@@ -11,38 +11,38 @@ struct FilesService: Sendable {
 
     func browse(serverURL: URL, path: String) async throws -> BrowseResult {
         let url = Self.browseURL(serverURL: serverURL, path: path)
-        let request = Self.makeRequest(url: url, method: "GET")
+        let request = Self.makeRequest(url: url, method: .get)
         return try await send(request, decoding: BrowseResult.self)
     }
 
     func search(serverURL: URL, path: String, query: String, limit: Int?) async throws -> [SearchResultItem] {
-        var components = URLComponents(url: serverURL.appendingPathComponent("api/search"), resolvingAgainstBaseURL: false)
-        var queryItems = [URLQueryItem(name: "q", value: query)]
+        var components = URLComponents(url: serverURL.appendingPathComponent(APIPath.search), resolvingAgainstBaseURL: false)
+        var queryItems = [URLQueryItem(name: QueryKey.query, value: query)]
         if !path.isEmpty {
-            queryItems.append(URLQueryItem(name: "path", value: path))
+            queryItems.append(URLQueryItem(name: QueryKey.path, value: path))
         }
         if let limit {
-            queryItems.append(URLQueryItem(name: "limit", value: String(limit)))
+            queryItems.append(URLQueryItem(name: QueryKey.limit, value: String(limit)))
         }
         components?.queryItems = queryItems
         guard let url = components?.url else {
             throw FilesClientError.decoding("Could not build search URL.")
         }
-        let request = Self.makeRequest(url: url, method: "GET")
+        let request = Self.makeRequest(url: url, method: .get)
         let envelope = try await send(request, decoding: SearchEnvelope.self)
         return envelope.items
     }
 
     func favorites(serverURL: URL) async throws -> [Favorite] {
-        let url = serverURL.appendingPathComponent("api/favorites")
-        let request = Self.makeRequest(url: url, method: "GET")
+        let url = serverURL.appendingPathComponent(APIPath.favorites)
+        let request = Self.makeRequest(url: url, method: .get)
         return try await send(request, decoding: [Favorite].self)
     }
 
     func addFavorite(serverURL: URL, path: String) async throws -> Favorite {
-        let url = serverURL.appendingPathComponent("api/favorites")
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.favorites)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(FavoritePathBody(path: path))
         } catch {
@@ -52,9 +52,9 @@ struct FilesService: Sendable {
     }
 
     func removeFavorite(serverURL: URL, path: String) async throws {
-        let url = serverURL.appendingPathComponent("api/favorites")
-        var request = Self.makeRequest(url: url, method: "DELETE")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.favorites)
+        var request = Self.makeRequest(url: url, method: .delete)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(FavoritePathBody(path: path))
         } catch {
@@ -68,9 +68,9 @@ struct FilesService: Sendable {
     /// `path` is the item's *parent* directory, `name` its current name — matching `FileItem`'s
     /// own `path`/`name` fields exactly, so the whole item can be forwarded unchanged.
     func renameItem(serverURL: URL, item: FileItem, newName: String) async throws -> FileItem {
-        let url = serverURL.appendingPathComponent("api/files/rename")
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.filesRename)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(RenameItemBody(path: item.path, name: item.name, newName: newName))
         } catch {
@@ -85,9 +85,9 @@ struct FilesService: Sendable {
     /// folder's name. Responds 201 `{ item }` with the created folder, its name possibly
     /// suffixed on a collision.
     func createFolder(serverURL: URL, path: String, name: String) async throws -> FileItem {
-        let url = serverURL.appendingPathComponent("api/files/folder")
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.filesFolder)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(CreateFolderBody(path: path, name: name))
         } catch {
@@ -104,12 +104,12 @@ struct FilesService: Sendable {
     /// images whose thumbnail generation failed. All three are server-relative, resolved
     /// against `serverURL`; an empty string means "no thumbnail," not an error.
     func thumbnailURL(serverURL: URL, path: String) async throws -> URL? {
-        var url = serverURL.appendingPathComponent("api/thumbnails")
+        var url = serverURL.appendingPathComponent(APIPath.thumbnails)
         let segments = path.split(separator: "/", omittingEmptySubsequences: true)
         for segment in segments {
             url = url.appendingPathComponent(String(segment))
         }
-        let request = Self.makeRequest(url: url, method: "GET")
+        let request = Self.makeRequest(url: url, method: .get)
         let envelope = try await send(request, decoding: ThumbnailEnvelope.self)
         guard !envelope.thumbnail.isEmpty else { return nil }
         return URL(string: envelope.thumbnail, relativeTo: serverURL)?.absoluteURL
@@ -131,9 +131,9 @@ struct FilesService: Sendable {
     /// files. The server itself enforces a size cap (1MB default) and sniffs for binary
     /// content, surfacing either as a plain validation error this maps to `.server(statusCode:)`.
     func fetchTextContent(serverURL: URL, path: String) async throws -> String {
-        let url = serverURL.appendingPathComponent("api/editor")
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.editor)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(EditorPathBody(path: path))
         } catch {
@@ -144,9 +144,9 @@ struct FilesService: Sendable {
     }
 
     func saveTextContent(serverURL: URL, path: String, content: String) async throws {
-        let url = serverURL.appendingPathComponent("api/editor")
-        var request = Self.makeRequest(url: url, method: "PUT")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.editor)
+        var request = Self.makeRequest(url: url, method: .put)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(EditorSaveBody(path: path, content: content))
         } catch {
@@ -161,9 +161,9 @@ struct FilesService: Sendable {
     /// returns that folder as an item — there's no listing-only/peek-inside endpoint, and only
     /// `.zip` is supported server-side (`.rar`/`.7z`/etc. 415 with "Only .zip archives...").
     func extractZip(serverURL: URL, item: FileItem) async throws -> FileItem {
-        let url = serverURL.appendingPathComponent("api/files/zip/extract")
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.zipExtract)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(ExtractZipBody(path: item.id))
         } catch {
@@ -177,9 +177,9 @@ struct FilesService: Sendable {
     /// single item (file or directory) into a new sibling archive in its own parent folder,
     /// auto-naming it from the source (`defaultZipNameForItems`) when `name` is omitted.
     func compressItem(serverURL: URL, item: FileItem) async throws -> FileItem {
-        let url = serverURL.appendingPathComponent("api/files/zip/compress")
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.zipCompress)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         do {
             let body = CompressItemBody(items: [CompressItemBody.Item(name: item.name, path: item.path)], destination: item.path)
             request.httpBody = try JSONEncoder().encode(body)
@@ -195,9 +195,9 @@ struct FilesService: Sendable {
     /// server ignores it otherwise); `expiresAt` must be a future ISO date or the server 400s.
     /// The 201 body is the share row flattened together with `shareUrl` / `directFileUrl`.
     func createShareLink(serverURL: URL, request: CreateShareLinkRequest) async throws -> CreatedShare {
-        let url = serverURL.appendingPathComponent("api/shares")
-        var httpRequest = Self.makeRequest(url: url, method: "POST")
-        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.shares)
+        var httpRequest = Self.makeRequest(url: url, method: .post)
+        httpRequest.setJSONContentType()
         let body = CreateShareBody(
             sourcePath: request.sourcePath,
             label: request.label,
@@ -220,9 +220,9 @@ struct FilesService: Sendable {
     /// and adds `sourceName`.
     func shareLinks(serverURL: URL, sharedWithMe: Bool) async throws -> [Share] {
         let url = sharedWithMe
-            ? serverURL.appendingPathComponent("api/shares/shared-with-me")
-            : serverURL.appendingPathComponent("api/shares")
-        let request = Self.makeRequest(url: url, method: "GET")
+            ? serverURL.appendingPathComponent(APIPath.sharesSharedWithMe)
+            : serverURL.appendingPathComponent(APIPath.shares)
+        let request = Self.makeRequest(url: url, method: .get)
         return try await send(request, decoding: ShareLinksEnvelope.self).shares
     }
 
@@ -230,15 +230,15 @@ struct FilesService: Sendable {
     /// `services/users/management.js`: every user but the caller as
     /// `{id, email, username, displayName}` (no `roles`), wrapped `{ users: [...] }`.
     func shareableUsers(serverURL: URL) async throws -> [User] {
-        let url = serverURL.appendingPathComponent("api/users/shareable")
-        let request = Self.makeRequest(url: url, method: "GET")
+        let url = serverURL.appendingPathComponent(APIPath.usersShareable)
+        let request = Self.makeRequest(url: url, method: .get)
         return try await send(request, decoding: ShareableUsersEnvelope.self).users
     }
 
     /// `DELETE /api/shares/:id` → 204, owner only.
     func deleteShareLink(serverURL: URL, shareID: String) async throws {
-        let url = serverURL.appendingPathComponent("api/shares").appendingPathComponent(shareID)
-        let request = Self.makeRequest(url: url, method: "DELETE")
+        let url = serverURL.appendingPathComponent(APIPath.shares).appendingPathComponent(shareID)
+        let request = Self.makeRequest(url: url, method: .delete)
         let (_, response) = try await performSend(request)
         try Self.validate(response)
     }
@@ -256,9 +256,9 @@ struct FilesService: Sendable {
     /// returns 204. The route is rate limited (429) and rejects a wrong current password (401
     /// "Current password is incorrect.") or a password below the minimum length (400).
     func changeOwnPassword(serverURL: URL, currentPassword: String, newPassword: String) async throws {
-        let url = serverURL.appendingPathComponent("api/auth/password")
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.changeOwnPassword)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         request.httpBody = try Self.encode(ChangeOwnPasswordBody(
             currentPassword: currentPassword, newPassword: newPassword
         ))
@@ -283,29 +283,29 @@ struct FilesService: Sendable {
     /// `GET /api/features`. Every flag section is a `{ enabled: Bool }` object; `ServerFeatures`
     /// only pulls the ones this app acts on.
     func serverFeatures(serverURL: URL) async throws -> ServerFeatures {
-        let url = serverURL.appendingPathComponent("api/features")
-        let request = Self.makeRequest(url: url, method: "GET")
+        let url = serverURL.appendingPathComponent(APIPath.features)
+        let request = Self.makeRequest(url: url, method: .get)
         return try await send(request, decoding: ServerFeatures.self)
     }
 
     /// `GET /api/users` (admin), wrapped `{ users: [...] }`, each with `roles` and `authMethods`.
     func listUsers(serverURL: URL) async throws -> [User] {
-        let url = serverURL.appendingPathComponent("api/users")
-        let request = Self.makeRequest(url: url, method: "GET")
+        let url = serverURL.appendingPathComponent(APIPath.users)
+        let request = Self.makeRequest(url: url, method: .get)
         return try await sendReportingMessage(request, decoding: UsersEnvelope.self).users
     }
 
     /// `POST /api/users` (admin) → 201 `{ user }`.
     func createUser(serverURL: URL, request: CreateUserRequest) async throws -> User {
-        let url = serverURL.appendingPathComponent("api/users")
-        var httpRequest = Self.makeRequest(url: url, method: "POST")
-        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.users)
+        var httpRequest = Self.makeRequest(url: url, method: .post)
+        httpRequest.setJSONContentType()
         httpRequest.httpBody = try Self.encode(CreateUserBody(
             email: request.email,
             username: request.username,
             password: request.password,
             displayName: request.displayName,
-            roles: request.isAdmin ? ["admin"] : []
+            roles: request.isAdmin ? [UserRole.admin] : []
         ))
         return try await sendReportingMessage(httpRequest, decoding: UserEnvelope.self).user
     }
@@ -313,9 +313,9 @@ struct FilesService: Sendable {
     /// `PATCH /api/users/:id` (admin) returns `{ user }`. Only the non nil fields of `request`
     /// are sent, matching the server's "update just what's present" behaviour.
     func updateUser(serverURL: URL, userID: String, request: UpdateUserRequest) async throws -> User {
-        let url = serverURL.appendingPathComponent("api/users").appendingPathComponent(userID)
-        var httpRequest = Self.makeRequest(url: url, method: "PATCH")
-        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.users).appendingPathComponent(userID)
+        var httpRequest = Self.makeRequest(url: url, method: .patch)
+        httpRequest.setJSONContentType()
         httpRequest.httpBody = try Self.encode(UpdateUserBody(
             email: request.email,
             username: request.username,
@@ -327,9 +327,9 @@ struct FilesService: Sendable {
 
     /// `POST /api/users/:id/password` (admin) → 204.
     func setUserPassword(serverURL: URL, userID: String, newPassword: String) async throws {
-        let url = serverURL.appendingPathComponent("api/users").appendingPathComponent(userID).appendingPathComponent("password")
-        var httpRequest = Self.makeRequest(url: url, method: "POST")
-        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.users).appendingPathComponent(userID).appendingPathComponent(APIPath.Component.password)
+        var httpRequest = Self.makeRequest(url: url, method: .post)
+        httpRequest.setJSONContentType()
         httpRequest.httpBody = try Self.encode(NewPasswordBody(newPassword: newPassword))
         let (data, response) = try await performSend(httpRequest)
         try Self.validateReportingMessage(data, response)
@@ -338,8 +338,8 @@ struct FilesService: Sendable {
     /// `DELETE /api/users/:id` (admin) returns 204. The server rejects deleting yourself or the
     /// last admin, with a message this surfaces verbatim.
     func deleteUser(serverURL: URL, userID: String) async throws {
-        let url = serverURL.appendingPathComponent("api/users").appendingPathComponent(userID)
-        let request = Self.makeRequest(url: url, method: "DELETE")
+        let url = serverURL.appendingPathComponent(APIPath.users).appendingPathComponent(userID)
+        let request = Self.makeRequest(url: url, method: .delete)
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
     }
@@ -349,15 +349,15 @@ struct FilesService: Sendable {
     /// `GET /api/users/:id/volumes` (admin, `USER_VOLUMES` feature).
     func userVolumes(serverURL: URL, userID: String) async throws -> [UserVolume] {
         let url = Self.userVolumesURL(serverURL: serverURL, userID: userID)
-        let request = Self.makeRequest(url: url, method: "GET")
+        let request = Self.makeRequest(url: url, method: .get)
         return try await sendReportingMessage(request, decoding: UserVolumesEnvelope.self).volumes
     }
 
     /// `POST /api/users/:id/volumes` → 201 `{ volume }`.
     func addUserVolume(serverURL: URL, userID: String, request: AddUserVolumeRequest) async throws -> UserVolume {
         let url = Self.userVolumesURL(serverURL: serverURL, userID: userID)
-        var httpRequest = Self.makeRequest(url: url, method: "POST")
-        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        var httpRequest = Self.makeRequest(url: url, method: .post)
+        httpRequest.setJSONContentType()
         httpRequest.httpBody = try Self.encode(AddUserVolumeBody(
             label: request.label,
             path: request.path,
@@ -372,8 +372,8 @@ struct FilesService: Sendable {
         serverURL: URL, userID: String, volumeID: String, label: String?, accessMode: ShareAccessMode
     ) async throws -> UserVolume {
         let url = Self.userVolumesURL(serverURL: serverURL, userID: userID).appendingPathComponent(volumeID)
-        var httpRequest = Self.makeRequest(url: url, method: "PATCH")
-        httpRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        var httpRequest = Self.makeRequest(url: url, method: .patch)
+        httpRequest.setJSONContentType()
         httpRequest.httpBody = try Self.encode(UpdateUserVolumeBody(label: label, accessMode: accessMode.rawValue))
         return try await sendReportingMessage(httpRequest, decoding: UserVolumeEnvelope.self).volume
     }
@@ -381,7 +381,7 @@ struct FilesService: Sendable {
     /// `DELETE /api/users/:id/volumes/:volumeID` → 204.
     func removeUserVolume(serverURL: URL, userID: String, volumeID: String) async throws {
         let url = Self.userVolumesURL(serverURL: serverURL, userID: userID).appendingPathComponent(volumeID)
-        let request = Self.makeRequest(url: url, method: "DELETE")
+        let request = Self.makeRequest(url: url, method: .delete)
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
     }
@@ -390,22 +390,22 @@ struct FilesService: Sendable {
     /// configured volume root.
     func browseAdminDirectories(serverURL: URL, path: String?) async throws -> AdminDirectoryListing {
         var components = URLComponents(
-            url: serverURL.appendingPathComponent("api/admin/browse-directories"),
+            url: serverURL.appendingPathComponent(APIPath.adminBrowseDirectories),
             resolvingAgainstBaseURL: false
         )
         if let path, !path.isEmpty {
-            components?.queryItems = [URLQueryItem(name: "path", value: path)]
+            components?.queryItems = [URLQueryItem(name: QueryKey.path, value: path)]
         }
         guard let url = components?.url else { throw FilesClientError.network("Bad URL") }
-        let request = Self.makeRequest(url: url, method: "GET")
+        let request = Self.makeRequest(url: url, method: .get)
         return try await sendReportingMessage(request, decoding: AdminDirectoryListing.self)
     }
 
     private static func userVolumesURL(serverURL: URL, userID: String) -> URL {
         serverURL
-            .appendingPathComponent("api/users")
+            .appendingPathComponent(APIPath.users)
             .appendingPathComponent(userID)
-            .appendingPathComponent("volumes")
+            .appendingPathComponent(APIPath.Component.volumes)
     }
 
     private static func encode<Body: Encodable>(_ body: Body) throws -> Data {
@@ -434,7 +434,7 @@ struct FilesService: Sendable {
         guard let url = FilesClient.previewURL(serverURL: serverURL, item: item) else {
             throw FilesClientError.decoding("Could not build preview URL.")
         }
-        let request = Self.makeRequest(url: url, method: "GET")
+        let request = Self.makeRequest(url: url, method: .get)
         let (data, response) = try await performSend(request)
         try Self.validate(response)
 
@@ -469,9 +469,9 @@ struct FilesService: Sendable {
             return fileURL
         }
 
-        let url = serverURL.appendingPathComponent("api/download")
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.download)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(DownloadRawFileBody(path: item.id))
         } catch {
@@ -519,8 +519,8 @@ struct FilesService: Sendable {
             throw FilesClientError.decoding(error.localizedDescription)
         }
 
-        var request = Self.makeRequest(url: serverURL.appendingPathComponent("api/upload"), method: "POST")
-        request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+        var request = Self.makeRequest(url: serverURL.appendingPathComponent(APIPath.upload), method: .post)
+        request.setValue(MIMEType.multipartFormData(boundary: boundary), forHTTPHeaderField: HTTPHeaderField.contentType)
 
         let data: Data
         let response: HTTPURLResponse
@@ -555,8 +555,8 @@ struct FilesService: Sendable {
             try handle.write(contentsOf: Data(part.utf8))
         }
 
-        try writeField("uploadTo", destination)
-        try writeField("relativePath", fileName)
+        try writeField(MultipartField.uploadDestination, destination)
+        try writeField(MultipartField.relativePath, fileName)
 
         // The server takes the stored name from the `relativePath` field, not this header, but
         // a raw `"` or CR/LF here would still break the multipart framing.
@@ -564,7 +564,7 @@ struct FilesService: Sendable {
             .replacingOccurrences(of: "\"", with: "'")
             .replacingOccurrences(of: "\r", with: " ")
             .replacingOccurrences(of: "\n", with: " ")
-        let header = "--\(boundary)\r\nContent-Disposition: form-data; name=\"filedata\"; filename=\"\(headerFileName)\"\r\nContent-Type: application/octet-stream\r\n\r\n"
+        let header = "--\(boundary)\r\nContent-Disposition: form-data; name=\"\(MultipartField.fileData)\"; filename=\"\(headerFileName)\"\r\nContent-Type: \(MIMEType.octetStream)\r\n\r\n"
         try handle.write(contentsOf: Data(header.utf8))
 
         let input = try FileHandle(forReadingFrom: fileURL)
@@ -599,12 +599,12 @@ struct FilesService: Sendable {
     /// wildcard path segment covering the item's full logical path (parent + name), same
     /// percent-encoding-per-segment approach as `browseURL`.
     func fetchMetadata(serverURL: URL, path: String) async throws -> FileMetadata {
-        var url = serverURL.appendingPathComponent("api/metadata")
+        var url = serverURL.appendingPathComponent(APIPath.metadata)
         let segments = path.split(separator: "/", omittingEmptySubsequences: true)
         for segment in segments {
             url = url.appendingPathComponent(String(segment))
         }
-        let request = Self.makeRequest(url: url, method: "GET")
+        let request = Self.makeRequest(url: url, method: .get)
         return try await send(request, decoding: FileMetadata.self)
     }
 
@@ -613,9 +613,9 @@ struct FilesService: Sendable {
     /// delete itself, answering with the count of share links that deleting those items would
     /// break. Used to warn before the fact; the delete still enforces regardless.
     func deleteImpact(serverURL: URL, items: [FileItem]) async throws -> DeleteImpact {
-        let url = serverURL.appendingPathComponent("api/files/delete-impact")
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.filesDeleteImpact)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         do {
             let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(path: $0.path, name: $0.name, kind: $0.kind) })
             request.httpBody = try JSONEncoder().encode(body)
@@ -629,9 +629,9 @@ struct FilesService: Sendable {
     /// `fileTransferService.resolveDeleteTargets`: each item is `{path, name}` — again exactly
     /// `FileItem`'s own fields, `kind` included as the server's fallback for already-missing items.
     func deleteItems(serverURL: URL, items: [FileItem]) async throws {
-        let url = serverURL.appendingPathComponent("api/files")
-        var request = Self.makeRequest(url: url, method: "DELETE")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.files)
+        var request = Self.makeRequest(url: url, method: .delete)
+        request.setJSONContentType()
         do {
             let body = DeleteItemsBody(items: items.map { DeleteItemsBody.Item(path: $0.path, name: $0.name, kind: $0.kind) })
             request.httpBody = try JSONEncoder().encode(body)
@@ -653,8 +653,8 @@ struct FilesService: Sendable {
     ) async throws -> TransferResult {
         let endpoint = operation == .copy ? "api/files/copy" : "api/files/move"
         let url = serverURL.appendingPathComponent(endpoint)
-        var request = Self.makeRequest(url: url, method: "POST")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
         do {
             let body = TransferItemsBody(
                 items: items.map { TransferItemsBody.Item(path: $0.path, name: $0.name) },
@@ -668,22 +668,22 @@ struct FilesService: Sendable {
     }
 
     func volumes(serverURL: URL) async throws -> [Volume] {
-        let url = serverURL.appendingPathComponent("api/volumes")
-        let request = Self.makeRequest(url: url, method: "GET")
+        let url = serverURL.appendingPathComponent(APIPath.volumes)
+        let request = Self.makeRequest(url: url, method: .get)
         return try await send(request, decoding: [Volume].self)
     }
 
     func fetchPreferences(serverURL: URL) async throws -> UserPreferences {
-        let url = serverURL.appendingPathComponent("api/settings")
-        let request = Self.makeRequest(url: url, method: "GET")
+        let url = serverURL.appendingPathComponent(APIPath.settings)
+        let request = Self.makeRequest(url: url, method: .get)
         let envelope = try await send(request, decoding: SettingsEnvelope.self)
         return envelope.user ?? UserPreferences()
     }
 
     func updatePreference(serverURL: URL, key: UserPreferenceKey, value: Bool) async throws {
-        let url = serverURL.appendingPathComponent("api/settings")
-        var request = Self.makeRequest(url: url, method: "PATCH")
-        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        let url = serverURL.appendingPathComponent(APIPath.settings)
+        var request = Self.makeRequest(url: url, method: .patch)
+        request.setJSONContentType()
         do {
             request.httpBody = try JSONEncoder().encode(PatchPreferencesBody(user: [key.rawValue: value]))
         } catch {
@@ -814,7 +814,7 @@ struct FilesService: Sendable {
     /// trailing slash (`/api/browse/`); non-empty paths are split and each segment
     /// percent-encoded individually so names containing `/`-unsafe characters survive.
     private static func browseURL(serverURL: URL, path: String) -> URL {
-        var url = serverURL.appendingPathComponent("api/browse")
+        var url = serverURL.appendingPathComponent(APIPath.browse)
         let segments = path.split(separator: "/", omittingEmptySubsequences: true)
         if segments.isEmpty {
             return url.appendingPathComponent("")
@@ -856,10 +856,9 @@ struct FilesService: Sendable {
         }
     }
 
-    private static func makeRequest(url: URL, method: String) -> URLRequest {
-        var request = URLRequest(url: url)
-        request.httpMethod = method
-        request.setValue("application/json", forHTTPHeaderField: "Accept")
+    private static func makeRequest(url: URL, method: HTTPMethod) -> URLRequest {
+        var request = URLRequest(url: url, method: method)
+        request.setValue(MIMEType.json, forHTTPHeaderField: HTTPHeaderField.accept)
         return request
     }
 
@@ -899,13 +898,13 @@ struct FilesService: Sendable {
     /// `{ message }`. Accept all three.
     private static func errorMessage(from data: Data) -> String? {
         guard let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else { return nil }
-        if let error = object["error"] as? [String: Any], let message = error["message"] as? String {
+        if let error = object[ErrorBodyKey.error] as? [String: Any], let message = error[ErrorBodyKey.message] as? String {
             return message
         }
-        if let error = object["error"] as? String {
+        if let error = object[ErrorBodyKey.error] as? String {
             return error
         }
-        if let message = object["message"] as? String {
+        if let message = object[ErrorBodyKey.message] as? String {
             return message
         }
         return nil
