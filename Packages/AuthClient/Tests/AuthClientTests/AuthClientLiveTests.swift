@@ -20,8 +20,10 @@ struct AuthClientLiveTests {
         keychainClient: KeychainClient = .inMemory(),
         handler: @escaping @Sendable (URLRequest) async throws -> (Data, HTTPURLResponse)
     ) -> AuthClient {
-        .live(
-            networkClient: NetworkClient(send: handler),
+        var networkClient = NetworkClient()
+        networkClient.send = handler
+        return .live(
+            networkClient: networkClient,
             keychainClient: keychainClient,
             cookieStorage: cookieStorage
         )
