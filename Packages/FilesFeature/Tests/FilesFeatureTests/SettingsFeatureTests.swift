@@ -17,6 +17,7 @@ struct SettingsFeatureTests {
         // `.inMemory` shared state is a process-wide registry keyed by string, so every test
         // resets to a known value first rather than assuming a clean default.
         state.$preferences.withLock { $0 = UserPreferences() }
+        state.$branding.withLock { $0 = Branding() }
         return state
     }
 
@@ -56,6 +57,7 @@ struct SettingsFeatureTests {
             SettingsFeature()
         } withDependencies: {
             $0.filesClient.fetchPreferences = { _ in UserPreferences(showHiddenFiles: true, showThumbnails: false) }
+            $0.filesClient.fetchBranding = { _ in Branding() }
             $0.localDownloadStore.list = { [] }
             $0.previewCacheStore.size = { 0 }
         }
@@ -80,6 +82,7 @@ struct SettingsFeatureTests {
             SettingsFeature()
         } withDependencies: {
             $0.filesClient.fetchPreferences = { _ in throw FilesClientError.sessionExpired }
+            $0.filesClient.fetchBranding = { _ in Branding() }
             $0.localDownloadStore.list = { [] }
             $0.previewCacheStore.size = { 0 }
         }
@@ -116,6 +119,34 @@ struct SettingsFeatureTests {
 
         #expect(store.state.hasDownloads == false)
         #expect(store.state.cacheSize == 0)
+    }
+
+    @Test
+    func serverDetailsIsAdminOnly() async {
+        let store = TestStore(initialState: makeState()) { SettingsFeature() }
+        store.exhaustivity = .off
+
+        // Non-admin (the default `user`): the tap does nothing.
+        await store.send(.serverDetailsButtonTapped)
+        #expect(store.state.serverDetails == nil)
+    }
+
+    @Test
+    func serverDetailsOpensForAnAdminSeededFromTheSharedBranding() async {
+        var state = SettingsFeature.State(serverURL: serverURL, user: User(
+            id: "admin-1", username: "boss", email: "boss@example.com", roles: [UserRole.admin]
+        ))
+        state.$preferences.withLock { $0 = UserPreferences() }
+        state.$branding.withLock { $0 = Branding(appName: "Rivendell", appLogoUrl: Branding.defaultLogoPath) }
+        let store = TestStore(initialState: state) { SettingsFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.serverDetailsButtonTapped) {
+            $0.serverDetails = ServerDetailsFeature.State(
+                serverURL: self.serverURL,
+                branding: Branding(appName: "Rivendell", appLogoUrl: Branding.defaultLogoPath)
+            )
+        }
     }
 
     @Test

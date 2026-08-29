@@ -10,6 +10,7 @@ private enum Constants {
     static let profileRowSpacing: CGFloat = .space12
     static let rowIconSize: CGFloat = .iconSmall
     static let rowIconSpacing: CGFloat = .space8
+    static let serverLogoSize: CGFloat = .iconMedium
     static let tagHorizontalPadding: CGFloat = .space8
     static let tagVerticalPadding: CGFloat = .space4
     static let tagBorderWidth: CGFloat = 1
@@ -287,6 +288,11 @@ struct SettingsView: View {
             ) { changePasswordStore in
                 ChangePasswordView(store: changePasswordStore)
             }
+            .navigationDestination(
+                item: $store.scope(state: \.serverDetails, action: \.serverDetails)
+            ) { serverDetailsStore in
+                ServerDetailsView(store: serverDetailsStore)
+            }
             .navigationTitle(L10n.Settings.navigationTitle)
             // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a
             // popover anchored to some ambient source view on the `.pad` idiom (this app
@@ -394,26 +400,48 @@ struct SettingsView: View {
             }
             .listRowSeparator(.hidden, edges: .bottom)
 
-            if let host = store.serverURL.host {
-                HStack(spacing: Constants.rowIconSpacing) {
-                    IconKit.server
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.secondaryDS)
-                        .frame(width: .iconSmall, height: .iconSmall)
-                        .padding(.leading, .space4)
-                    Text(L10n.Settings.rowServer).type(.body2(.regular), style: .primary(for: .label))
-                        .padding(.leading, .space8)
-                    Spacer()
-                    Text(host).type(.body2(.regular), style: .secondary)
-                }
+            serverRow
                 .listRowSeparator(.hidden, edges: .top)
-            }
 
             changePasswordRow
             signOutRow
         }
         .listRowBackground(Color.backgroundSecondary)
+    }
+
+    /// The server the session is bound to: its branding logo + name, host beneath. Admins can
+    /// tap through to `ServerDetailsView` to edit the branding; for everyone else it's a plain
+    /// read-only row.
+    @ViewBuilder
+    private var serverRow: some View {
+        let content = HStack(spacing: Constants.rowIconSpacing) {
+            ServerLogoThumbnail(
+                branding: store.branding,
+                serverURL: store.serverURL,
+                size: Constants.serverLogoSize
+            )
+            VStack(alignment: .leading, spacing: .space2) {
+                Text(store.branding.appName).type(.body2(.regular), style: .primary(for: .label))
+                if let host = store.serverURL.host {
+                    Text(host).type(.body3(.regular), style: .secondary).lineLimit(1).truncationMode(.middle)
+                }
+            }
+            Spacer()
+            if store.user.isAdmin {
+                IconKit.chevronRight
+                    .resizable().scaledToFit()
+                    .foregroundStyle(Color.tertiaryDS)
+                    .frame(width: .iconXSmall, height: .iconXSmall)
+            }
+        }
+
+        if store.user.isAdmin {
+            Button { store.send(.serverDetailsButtonTapped) } label: { content }
+                .buttonStyle(DSHapticButtonStyle())
+                .disabled(store.isSigningOut)
+        } else {
+            content
+        }
     }
 
     /// Self service password change (`POST /api/auth/password`). No profile editing here: the

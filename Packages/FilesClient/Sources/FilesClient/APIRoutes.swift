@@ -9,6 +9,8 @@ enum APIPath {
     static let favorites = "api/favorites"
     static let volumes = "api/volumes"
     static let settings = "api/settings"
+    static let branding = "api/branding"
+    static let uploadLogo = "api/settings/upload-logo"
     static let features = "api/features"
     static let metadata = "api/metadata"
     static let thumbnails = "api/thumbnails"
@@ -54,6 +56,7 @@ enum MultipartField {
     static let uploadDestination = "uploadTo"
     static let relativePath = "relativePath"
     static let fileData = "filedata"
+    static let logo = "logo"
 }
 
 /// Keys read out of a raw JSON error body (`{ "error": { "message": "..." } }` or
