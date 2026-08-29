@@ -348,7 +348,7 @@ struct BrowseContentView: View {
             Button(L10n.Common.delete, role: .destructive) { store.send(.bulkDeleteConfirmed) }
             Button(L10n.Common.cancel, role: .cancel) { store.send(.bulkDeleteCancelled) }
         } message: {
-            Text(L10n.Browse.deleteMessage)
+            Text(deleteConfirmationMessage)
         }
         .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
         .sheet(isPresented: $isSortSheetPresented) {
@@ -398,7 +398,7 @@ struct BrowseContentView: View {
             Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
             Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteCancelled) }
         } message: {
-            Text(L10n.Browse.deleteMessage)
+            Text(deleteConfirmationMessage)
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
         .alert(L10n.Browse.transferConflictTitle, isPresented: transferConflictBinding) {
@@ -599,6 +599,23 @@ struct BrowseContentView: View {
     private var deleteConfirmationTitle: String {
         guard let item = store.deleteConfirmationItem else { return L10n.Browse.deleteConfirmTitle }
         return L10n.Browse.deleteConfirmOne(item.name)
+    }
+
+    /// `deleteMessage` plus, once `delete-impact` answers, a line about the share links the
+    /// delete would break. Shared by the single- and bulk-delete alerts since only one is
+    /// ever up. A still-running or failed check adds nothing / a soft note respectively.
+    private var deleteConfirmationMessage: String {
+        let base = L10n.Browse.deleteMessage
+        switch store.deleteImpactCheck {
+        case let .loaded(impact) where impact.shareCount == 1:
+            return base + "\n\n" + L10n.Browse.deleteLinkedSharesOne
+        case let .loaded(impact) where impact.shareCount > 1:
+            return base + "\n\n" + L10n.Browse.deleteLinkedSharesMany(impact.shareCount)
+        case .unavailable:
+            return base + "\n\n" + L10n.Browse.deleteLinkedSharesUnavailable
+        case .idle, .checking, .loaded:
+            return base
+        }
     }
 
     /// The button closures own dismissal (they clear `transferConflict`); this only needs to
@@ -1219,5 +1236,21 @@ private let browsePreviewEmptyAccess = FileAccess(
         $0.searchQuery = "vacation"
         $0.searchScope = .everywhere
         $0.isSearchingEverywhere = true
+    })
+}
+
+#Preview("Browse — delete alert, linked shares") {
+    browsePreview(mutateState: {
+        $0.items = IdentifiedArray(uniqueElements: browsePreviewItems)
+        $0.deleteConfirmationItem = browsePreviewItems[1]
+        $0.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 2))
+    })
+}
+
+#Preview("Browse — delete alert, share check unavailable") {
+    browsePreview(mutateState: {
+        $0.items = IdentifiedArray(uniqueElements: browsePreviewItems)
+        $0.deleteConfirmationItem = browsePreviewItems[1]
+        $0.deleteImpactCheck = .unavailable
     })
 }

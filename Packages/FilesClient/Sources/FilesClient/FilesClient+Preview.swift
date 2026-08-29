@@ -25,6 +25,7 @@ extension FilesClient {
         createFolder: { _, path, name in
             FileItem(name: name.isEmpty ? "Untitled Folder" : name, path: path, dateModified: Date(), size: 0, kind: "directory")
         },
+        deleteImpact: { _, _ in DeleteImpact(shareCount: 0) },
         deleteItems: { _, _ in },
         transferItems: { _, items, destination, _ in
             TransferResult(

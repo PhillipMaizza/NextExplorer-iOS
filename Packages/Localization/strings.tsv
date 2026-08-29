@@ -100,6 +100,9 @@ browse.deleteConfirmTitle	Delete?
 browse.deleteConfirmOne	Delete “%@”?
 browse.deleteConfirmMany	Delete %lld items?
 browse.deleteMessage	This can't be undone.
+browse.deleteLinkedSharesOne	This also removes 1 share link that points here.
+browse.deleteLinkedSharesMany	This also removes %lld share links that point here.
+browse.deleteLinkedSharesUnavailable	Couldn't check for share links that point here. Any that exist will stop working.
 browse.searchNoMatchesInFolder	No matches for “%@”.
 browse.searchEverywhere	Search everywhere
 browse.searchFailed	Couldn't search. Check your connection and try again.

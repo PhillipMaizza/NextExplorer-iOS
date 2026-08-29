@@ -798,16 +798,72 @@ struct BrowseFeatureTests {
     }
 
     @Test
-    func deleteTappedSetsTheDeleteConfirmationItem() async {
+    func deleteTappedSetsTheDeleteConfirmationItemAndChecksShareImpact() async {
         let serverURL = URL(string: "https://example.com")!
         let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteImpact = { _, items in
+                #expect(items.map(\.name) == ["vacation.jpg"])
+                return DeleteImpact(shareCount: 2)
+            }
         }
 
         await store.send(.deleteTapped(item)) {
             $0.deleteConfirmationItem = item
+            $0.deleteImpactCheck = .checking
+        }
+        await store.receive(\.deleteImpactResponse.success) {
+            $0.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 2))
+        }
+    }
+
+    @Test
+    func deleteTappedTreatsAFailedShareImpactCheckAsUnavailable() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteImpact = { _, _ in throw FilesClientError.network("offline") }
+        }
+
+        await store.send(.deleteTapped(item)) {
+            $0.deleteConfirmationItem = item
+            $0.deleteImpactCheck = .checking
+        }
+        await store.receive(\.deleteImpactResponse.failure) {
+            $0.deleteImpactCheck = .unavailable
+        }
+    }
+
+    @Test
+    func bulkDeleteTappedChecksShareImpactForEverySelectedItem() async {
+        let serverURL = URL(string: "https://example.com")!
+        let one = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let two = FileItem(name: "b.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [one, two]
+        state.selectedItemIDs = [one.id, two.id]
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.deleteImpact = { _, items in
+                #expect(Set(items.map(\.name)) == ["a.txt", "b.txt"])
+                return DeleteImpact(shareCount: 3)
+            }
+        }
+
+        await store.send(.bulkDeleteTapped) {
+            $0.bulkDeleteConfirmationIsPresented = true
+            $0.deleteImpactCheck = .checking
+        }
+        await store.receive(\.deleteImpactResponse.success) {
+            $0.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 3))
         }
     }
 
@@ -1086,11 +1142,12 @@ struct BrowseFeatureTests {
     // MARK: File actions — delete
 
     @Test
-    func deleteCancelledClearsTheDeleteConfirmationItem() async {
+    func deleteCancelledClearsTheDeleteConfirmationItemAndShareImpactCheck() async {
         let serverURL = URL(string: "https://example.com")!
         let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.deleteConfirmationItem = item
+        state.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 1))
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -1098,6 +1155,7 @@ struct BrowseFeatureTests {
 
         await store.send(.deleteCancelled) {
             $0.deleteConfirmationItem = nil
+            $0.deleteImpactCheck = .idle
         }
     }
 
