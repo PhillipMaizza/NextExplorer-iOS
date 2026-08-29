@@ -49,7 +49,7 @@ struct ServerDetailsView: View {
             .padding(.horizontal, Metrics.horizontalPadding)
             .padding(.vertical, Metrics.contentSpacing)
         }
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .navigationTitle(L10n.ServerDetails.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)

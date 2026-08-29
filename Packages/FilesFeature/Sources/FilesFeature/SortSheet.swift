@@ -17,7 +17,7 @@ private enum Constants {
 }
 
 /// Generic "Sort by" sheet: a field picker and a direction picker as radio lists in a
-/// `DynamicHeightSheet`. Shared by Browse, Favorites, Downloads, Shared and User Management,
+/// `DSDynamicHeightSheet`. Shared by Browse, Favorites, Downloads, Shared and User Management,
 /// generalized over whatever option and direction enum each screen sorts by.
 struct SortSheet<Option: Hashable, Direction: Hashable>: View {
     let options: [Option]
@@ -33,7 +33,7 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
     let onDismiss: () -> Void
 
     var body: some View {
-        DynamicHeightSheet {
+        DSDynamicHeightSheet {
             content
         }
     }
@@ -54,8 +54,7 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
                     }
                 }
             }
-
-            Divider()
+            .dsCard()
 
             VStack(spacing: 0) {
                 ForEach(directions, id: \.self) { direction in
@@ -64,6 +63,7 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
                     }
                 }
             }
+            .dsCard()
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.top, Constants.topPadding)
@@ -97,7 +97,6 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(DSHapticButtonStyle())
-        .padding(.vertical, .space8)
         .animation(.easeInOut(duration: Constants.selectionAnimationDuration), value: isSelected)
         .hapticFeedback(.selection, trigger: isSelected)
     }

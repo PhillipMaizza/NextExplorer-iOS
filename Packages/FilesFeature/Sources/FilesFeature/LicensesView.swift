@@ -189,7 +189,7 @@ struct LicensesView: View {
             .listRowBackground(Color.backgroundSecondary)
         }
         .scrollContentBackground(.hidden)
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .navigationTitle(L10n.Licenses.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
     }
@@ -211,7 +211,7 @@ private struct LicenseDetailView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(Constants.detailPadding)
         }
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .navigationTitle(license.name)
         .navigationBarTitleDisplayMode(.inline)
     }

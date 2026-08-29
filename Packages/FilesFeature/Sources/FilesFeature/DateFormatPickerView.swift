@@ -1,3 +1,4 @@
+import AppStorageKeys
 import DesignSystem
 import Localization
 import SwiftUI
@@ -14,7 +15,7 @@ private enum Constants {
 /// at a glance rather than requiring the user to decode it themselves.
 struct DateFormatPickerView: View {
     @Binding var selection: DateDisplayFormat
-    @AppStorage("includeTimeInDates") private var includeTime = false
+    @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
 
     var body: some View {
         List {
@@ -52,7 +53,7 @@ struct DateFormatPickerView: View {
             .listRowBackground(Color.backgroundSecondary)
         }
         .scrollContentBackground(.hidden)
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .navigationTitle(L10n.Settings.dateFormatNavigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .hapticFeedback(.selection, trigger: selection)

@@ -65,6 +65,9 @@ public struct LoginFormFeature {
         /// The host last typed for the *other* scheme — swapped back in on `schemeChanged`
         /// so toggling https/http doesn't lose what was typed on either side.
         var savedOtherSchemeHost: String = ""
+        /// Set once the user taps the scheme picker themselves, so typing doesn't then move it
+        /// back under them. Cleared when the host is emptied or an explicit `http(s)://` is typed.
+        var schemeWasSetByUser: Bool = false
         public var identifier: String
         public var password: String
         public var isPasswordVisible: Bool
@@ -146,11 +149,27 @@ public struct LoginFormFeature {
                 state.host = state.savedOtherSchemeHost
                 state.savedOtherSchemeHost = previousHost
                 state.scheme = scheme
+                state.schemeWasSetByUser = true
                 state.resetConnection()
                 return Self.cancelInFlightWork()
 
             case let .hostChanged(text):
                 state.host = text
+                let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
+                if trimmed.isEmpty {
+                    state.schemeWasSetByUser = false
+                } else if trimmed.hasPrefix("http://") {
+                    state.scheme = .http
+                    state.schemeWasSetByUser = false
+                } else if trimmed.hasPrefix("https://") {
+                    state.scheme = .https
+                    state.schemeWasSetByUser = false
+                } else if !state.schemeWasSetByUser, let first = trimmed.first {
+                    // A leading digit is an IP (a homelab box, so http); a hostname is a
+                    // public server (so https). A LAN hostname that needs http is the one
+                    // case the user fixes with the picker — and then it sticks.
+                    state.scheme = first.isNumber ? .http : .https
+                }
                 state.resetConnection()
                 return Self.cancelInFlightWork()
 
@@ -313,8 +332,8 @@ public struct LoginFormFeature {
         text.range(of: #"^[^\s@]+@[^\s@]+\.[^\s@]+$"#, options: .regularExpression) != nil
     }
 
-    /// Strips whitespace, a leading scheme the user may have pasted in by habit (the
-    /// picker already supplies one), and any trailing slashes before validating the host.
+    /// Strips whitespace, a leading scheme the user may have typed or pasted, and any trailing
+    /// slashes before validating the host.
     static func normalizedURL(scheme: URLScheme, host: String) -> URL? {
         var trimmedHost = host.trimmingCharacters(in: .whitespacesAndNewlines)
         for prefix in ["https://", "http://"] where trimmedHost.lowercased().hasPrefix(prefix) {

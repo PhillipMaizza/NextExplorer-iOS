@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -38,10 +39,10 @@ private enum Constants {
 /// directly here rather than threaded through `BrowseFeature.State`.
 struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
-    @AppStorage("browseViewMode") private var viewModeRaw = BrowseViewMode.list.rawValue
-    @AppStorage("thumbnailSize") private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
-    @AppStorage("removeArchiveAfterDownload") private var removeArchiveAfterDownload = false
-    @AppStorage("keepClipboardAfterCopy") private var keepClipboardAfterCopy = false
+    @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
+    @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
+    @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
+    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
     @State private var isSortSheetPresented = false
     @State private var toastMessage: DSToastMessage?
     /// The item whose "Create Share Link" sheet is open (from the context menu or the
@@ -890,7 +891,7 @@ struct BrowseContentView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .safeAreaPadding(.bottom, bottomChromeClearance)
         .animation(
             .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
@@ -932,7 +933,7 @@ struct BrowseContentView: View {
                             )
                             .overlay(alignment: .topLeading) {
                                 if store.isSelecting {
-                                    selectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                                    DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
                                 }
                             }
                         }
@@ -957,7 +958,7 @@ struct BrowseContentView: View {
             )
             pasteTargetArea
         }
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .safeAreaPadding(.bottom, bottomChromeClearance)
     }
 
@@ -1081,7 +1082,7 @@ struct BrowseContentView: View {
             } label: {
                 HStack(spacing: .space12) {
                     if store.isSelecting {
-                        selectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                        DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
                     }
                     FileRowView(
                         item: item,
@@ -1131,16 +1132,6 @@ struct BrowseContentView: View {
             .listRowSeparator(item.id == firstItemID ? .hidden : .visible, edges: .top)
             .listRowSeparator(item.id == lastItemID ? .hidden : .visible, edges: .bottom)
         }
-    }
-
-    private func selectionIndicator(isSelected: Bool) -> some View {
-        (isSelected ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
-            .resizable()
-            .scaledToFit()
-            .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
-            .frame(width: .iconMedium, height: .iconMedium)
-            .symbolEffect(.bounce, value: isSelected)
-            .transition(.scale.combined(with: .opacity))
     }
 
     @ViewBuilder

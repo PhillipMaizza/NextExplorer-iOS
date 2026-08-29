@@ -2,7 +2,7 @@ import DesignSystem
 import Foundation
 import Localization
 
-/// User-facing grid thumbnail size, persisted locally (`@AppStorage("thumbnailSize")`) — a
+/// User-facing grid thumbnail size, persisted locally (`AppStorageKeys.thumbnailSize`) — a
 /// purely client display preference the real server has no concept of, same as
 /// `DateDisplayFormat`/`browseViewMode`.
 public enum ThumbnailSize: String, CaseIterable, Identifiable, Sendable {

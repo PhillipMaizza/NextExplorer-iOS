@@ -1,10 +1,11 @@
+import AppStorageKeys
 import SwiftUI
 
 private struct HapticFeedbackModifier<T: Equatable>: ViewModifier {
     /// Mirrors the same key `SettingsView`'s "Haptics" toggle writes — read live here
     /// rather than threaded through the environment, so every call site stays a plain
     /// one-line modifier.
-    @AppStorage("hapticsEnabled") private var isHapticsEnabled = true
+    @AppStorage(AppStorageKeys.hapticsEnabled) private var isHapticsEnabled = true
 
     let feedback: SensoryFeedback
     let trigger: T

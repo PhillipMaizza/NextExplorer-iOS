@@ -7,9 +7,13 @@ let package = Package(
     products: [
         .library(name: "DesignSystem", targets: ["DesignSystem"])
     ],
+    dependencies: [
+        .package(path: "../AppStorageKeys")
+    ],
     targets: [
         .target(
             name: "DesignSystem",
+            dependencies: ["AppStorageKeys"],
             resources: [
                 .process("Resources/Colors.xcassets"),
                 .process("Resources/Images.xcassets"),

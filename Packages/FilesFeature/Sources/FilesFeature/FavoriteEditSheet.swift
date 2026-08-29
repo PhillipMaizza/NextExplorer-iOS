@@ -30,7 +30,7 @@ struct FavoriteEditSheet: View {
     private var tint: Color { FavoriteColor.resolve(store.colorDraft) ?? .accent }
 
     var body: some View {
-        DynamicHeightSheet(maxHeightFraction: Metrics.maxHeightFraction) {
+        DSDynamicHeightSheet(maxHeightFraction: Metrics.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
                 DSSheetHeader(
                     icon: FavoriteIcon.symbol(for: store.iconDraft),
@@ -67,15 +67,12 @@ struct FavoriteEditSheet: View {
             .padding(.horizontal, Metrics.horizontalPadding)
             .padding(.vertical, Metrics.verticalPadding)
         } footer: {
-            DSButton(L10n.Favorites.editSave, style: .primary, isLoading: store.isSaving) {
-                store.send(.saveTapped)
+            DSSheetFooter {
+                DSButton(L10n.Favorites.editSave, style: .primary, isLoading: store.isSaving) {
+                    store.send(.saveTapped)
+                }
+                .disabled(!store.isSaveEnabled)
             }
-            .disabled(!store.isSaveEnabled)
-            .padding(.horizontal, Metrics.horizontalPadding)
-            .padding(.top, Metrics.sectionSpacing)
-            .padding(.bottom, Metrics.verticalPadding)
-            .frame(maxWidth: .infinity)
-            .background(Color.backgroundPrimary)
         }
     }
 

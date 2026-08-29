@@ -57,6 +57,35 @@ struct LoginFormFeatureTests {
         }
     }
 
+    @Test("the scheme picker follows what's typed: digit ⇒ http, hostname ⇒ https, prefix wins")
+    func schemeFollowsHost() async {
+        let store = TestStore(initialState: LoginFormFeature.State()) { LoginFormFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.hostChanged("192.168.1.50:3000")) { $0.scheme = .http }
+        // Deleting the IP and typing a hostname flips it back.
+        await store.send(.hostChanged("nextexplorer.example.com")) { $0.scheme = .https }
+        await store.send(.hostChanged("http://box.local")) { $0.scheme = .http }
+        await store.send(.hostChanged("https://box.local")) { $0.scheme = .https }
+    }
+
+    @Test("a manual scheme pick sticks while typing, until the field is cleared")
+    func manualSchemePickSticks() async {
+        let store = TestStore(initialState: LoginFormFeature.State()) { LoginFormFeature() }
+        store.exhaustivity = .off
+
+        // User forces http for a LAN hostname.
+        await store.send(.schemeChanged(.http)) { $0.scheme = .http; $0.schemeWasSetByUser = true }
+        await store.send(.hostChanged("nas")) { $0.host = "nas" }
+        #expect(store.state.scheme == .http)
+        await store.send(.hostChanged("nas.local"))
+        #expect(store.state.scheme == .http)
+
+        // Clearing the field drops the override, inference takes over again.
+        await store.send(.hostChanged("")) { $0.schemeWasSetByUser = false }
+        await store.send(.hostChanged("example.com")) { $0.scheme = .https }
+    }
+
     @Test("edge case: changing the host after a successful test re-locks the form")
     func changingHostClearsAuthStatus() async {
         let store = TestStore(

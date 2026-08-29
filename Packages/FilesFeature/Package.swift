@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "FilesFeature", targets: ["FilesFeature"])
     ],
     dependencies: [
+        .package(path: "../AppStorageKeys"),
         .package(path: "../CoreModels"),
         .package(path: "../FilesClient"),
         .package(path: "../DesignSystem"),
@@ -25,6 +26,7 @@ let package = Package(
         .target(
             name: "FilesFeature",
             dependencies: [
+                "AppStorageKeys",
                 "CoreModels",
                 "FilesClient",
                 "DesignSystem",

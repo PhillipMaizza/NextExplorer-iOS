@@ -47,6 +47,9 @@ public struct LoginFormView: View {
     }
 
     @Bindable var store: StoreOf<LoginFormFeature>
+    /// `false` while the launch splash still covers the screen — auto-focusing the host field
+    /// then would slide the keyboard up over the splash.
+    private let autoFocus: Bool
     @State private var shakeTrigger: CGFloat = 0
     @State private var identifierShakeTrigger: CGFloat = 0
     @State private var passwordShakeTrigger: CGFloat = 0
@@ -57,18 +60,14 @@ public struct LoginFormView: View {
     @State private var isIdentifierFieldInvalid = false
     @State private var isPasswordFieldInvalid = false
     @FocusState private var focusedField: Field?
-    /// Scroll container height, used only to give the centered content a `minHeight` floor,
-    /// read via `.onGeometryChange` rather than wrapping the fields in a `GeometryReader`.
-    /// A `GeometryReader` ancestor over `identifierField`/`passwordField` is the prime suspect
-    /// for third-party Password AutoFill (Bitwarden) silently filling neither field: it delays
-    /// giving its subtree a concrete size until layout settles, which can leave AutoFill unable
-    /// to resolve a usable target rect for text insertion. Unverified on-device (no UI
-    /// automation access in this environment); re-test AutoFill after this change.
+    /// Server-page scroll height, only to floor the centered content's `minHeight`. The
+    /// credentials page deliberately has no such geometry read over its fields — an
+    /// `.onGeometryChange` / `GeometryReader` ancestor is a documented AutoFill hazard.
     @State private var serverScrollHeight: CGFloat = 0
-    @State private var credentialsScrollHeight: CGFloat = 0
 
-    public init(store: StoreOf<LoginFormFeature>) {
+    public init(store: StoreOf<LoginFormFeature>, autoFocus: Bool = true) {
         self.store = store
+        self.autoFocus = autoFocus
     }
 
     private var isSubmitLocalEnabled: Bool {
@@ -198,6 +197,8 @@ public struct LoginFormView: View {
                         label: \.displayName
                     )
 
+                    // The picker also moves on its own: typing a leading digit (an IP) or an
+                    // `http://` prefix flips it to http. See `LoginFormFeature.inferredScheme`.
                     TextField(
                         text: Binding(get: { store.host }, set: { store.send(.hostChanged($0)) }),
                         prompt: Text(hostPlaceholder).foregroundColor(Color.secondaryDS)
@@ -214,13 +215,14 @@ public struct LoginFormView: View {
                     .onSubmit(submitTestConnection)
                     .shake(trigger: shakeTrigger)
                     .focused($focusedField, equals: .host)
-                    .onAppear { focusedField = .host }
+                    .onAppear { if autoFocus { focusedField = .host } }
+                    .onChange(of: autoFocus) { _, ready in if ready { focusedField = .host } }
                 }
                 .padding(.horizontal, .space24)
 
                 if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
                     Text(errorMessage)
-                        .type(.body1(.semibold), style: .error)
+                        .type(.body2(.semibold), style: .error)
                         .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, .space24)
@@ -252,6 +254,9 @@ public struct LoginFormView: View {
         // first touch instead, so the same tap reaches the button underneath.
         .scrollDismissesKeyboard(.immediately)
         .animation(.easeInOut(duration: Constants.quickFadeDuration), value: store.host.isEmpty)
+        // Get the Local Network permission alert out of the way while the user is still
+        // typing the address, not the moment they hit "Test connection".
+        .onAppear { LocalNetworkPrimer.prime() }
     }
 
     private var testConnectionButton: some View {
@@ -325,33 +330,29 @@ public struct LoginFormView: View {
             .padding(.top, .space16)
 
             ScrollView {
-                VStack(spacing: .space24) {
-                    Spacer(minLength: .space48)
-                    VStack(alignment: .leading, spacing: .space24) {
-                        if store.scheme == .http {
-                            Text(L10n.Login.plaintextWarning)
-                                .type(.body2(.semibold), style: .warning)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-                        identifierField
-                        passwordField
-                        continueButton
+                VStack(alignment: .leading, spacing: .space24) {
+                    identifierField
+                    passwordField
 
-                        if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
-                            Text(errorMessage)
-                                .type(.body2(.semibold), style: .error)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .transition(.opacity)
-                        }
+                    // After the fields on purpose: a conditional sibling *above* them shifts
+                    // their position in the container and drops the keyboard's AutoFill session.
+                    if store.scheme == .http {
+                        DSInfoCard(L10n.Login.plaintextWarning)
                     }
-                    .padding(.horizontal, .space16)
 
-                    Spacer(minLength: .space48)
+                    continueButton
+
+                    if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
+                        Text(errorMessage)
+                            .type(.body2(.semibold), style: .error)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .transition(.opacity)
+                    }
                 }
-                .frame(minHeight: credentialsScrollHeight)
                 .frame(maxWidth: .infinity)
+                .padding(.horizontal, .space16)
+                .padding(.top, .space32)
             }
-            .onGeometryChange(for: CGFloat.self, of: \.size.height) { credentialsScrollHeight = $0 }
             .scrollDismissesKeyboard(.immediately)
         }
         .backgroundGradient()
@@ -359,26 +360,25 @@ public struct LoginFormView: View {
 
     private var identifierField: some View {
         DSFieldContainer(label: L10n.Login.emailField, icon: IconKit.person, shakeTrigger: identifierShakeTrigger, isInvalid: isIdentifierFieldInvalid) {
-            ZStack(alignment: .leading) {
-                if store.identifier.isEmpty {
-                    DSPlaceholderText("name@company.com")
-                }
-
-                TextField(text: Binding(get: { store.identifier }, set: { store.send(.identifierChanged($0)) })) {
-                    EmptyView()
-                }
-                .textFieldStyle(.plain)
-                .type(.body1(.regular))
-                .tint(Color.accent)
-                .textContentType(.username)
-                .autocorrectionDisabled()
-                .textInputAutocapitalization(.never)
-                .focused($focusedField, equals: .identifier)
-                .task {
-                    try? await Task.sleep(for: Constants.identifierAutoFocusDelay)
-                    guard !Task.isCancelled else { return }
-                    focusedField = .identifier
-                }
+            // Native `prompt:` rather than a ZStack placeholder overlay: a sibling view stacked
+            // on the field is a documented AutoFill target-resolution hazard.
+            TextField(
+                text: Binding(get: { store.identifier }, set: { store.send(.identifierChanged($0)) }),
+                prompt: Text("name@company.com").foregroundColor(Color.secondaryDS)
+            ) {
+                EmptyView()
+            }
+            .textFieldStyle(.plain)
+            .type(.body1(.regular))
+            .tint(Color.accent)
+            .textContentType(.username)
+            .autocorrectionDisabled()
+            .textInputAutocapitalization(.never)
+            .focused($focusedField, equals: .identifier)
+            .task {
+                try? await Task.sleep(for: Constants.identifierAutoFocusDelay)
+                guard !Task.isCancelled else { return }
+                focusedField = .identifier
             }
         }
     }

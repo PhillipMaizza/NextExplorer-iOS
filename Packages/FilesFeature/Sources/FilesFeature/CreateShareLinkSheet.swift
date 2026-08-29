@@ -6,10 +6,10 @@ import SwiftUI
 import UIKit
 
 private enum Constants {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let sectionSpacing: CGFloat = .space8
-    static let horizontalPadding: CGFloat = .space16
-    static let verticalPadding: CGFloat = .space16
+    static let horizontalPadding: CGFloat = .space24
+    static let verticalPadding: CGFloat = .space24
     static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
     static let fieldHeight: CGFloat = .size48
@@ -32,7 +32,7 @@ struct CreateShareLinkSheet: View {
     private enum CopiedField: Equatable { case shareLink, directLink }
 
     var body: some View {
-        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+        DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(
                     icon: IconKit.shareLink,
@@ -56,7 +56,7 @@ struct CreateShareLinkSheet: View {
 
     @ViewBuilder
     private var footerButtons: some View {
-        Group {
+        DSSheetFooter {
             if store.createdShare != nil {
                 DSButton(L10n.Common.done, style: .primary) { dismiss() }
             } else {
@@ -69,11 +69,6 @@ struct CreateShareLinkSheet: View {
                 }
             }
         }
-        .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.top, Constants.sectionSpacing)
-        .padding(.bottom, Constants.verticalPadding)
-        .frame(maxWidth: .infinity)
-        .background(Color.backgroundPrimary)
     }
 
     // MARK: Form
@@ -81,11 +76,7 @@ struct CreateShareLinkSheet: View {
     private var formContent: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             if let errorMessage = store.errorMessage {
-                Text(errorMessage)
-                    .type(.body3(.semibold), style: .error)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(Constants.cardPadding)
-                    .background(RoundedRectangle(cornerRadius: Constants.cardCornerRadius).fill(Color.negative.opacity(0.12)))
+                DSErrorCard(errorMessage)
             }
 
             sourceCard
@@ -171,10 +162,7 @@ struct CreateShareLinkSheet: View {
                                 }
                             }
                             Spacer(minLength: 0)
-                            (isSelected ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
-                                .resizable().scaledToFit()
-                                .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
-                                .frame(width: Constants.copyIconSize, height: Constants.copyIconSize)
+                            DSSelectionIndicator(isSelected: isSelected, size: Constants.copyIconSize)
                         }
                         .padding(.vertical, .space8)
                         .contentShape(Rectangle())
@@ -288,7 +276,7 @@ struct CreateShareLinkSheet: View {
 
     private func section(_ title: String, @ViewBuilder content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
-            DSFieldLabel(title)
+            DSFieldLabel(title, uppercased: false)
             content()
         }
     }
