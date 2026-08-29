@@ -172,6 +172,17 @@ extension FilesClient {
                 office: ServerFeatures.OfficeEditors(isOnlyOfficeEnabled: true)
             )
         },
+        fetchSystemSettings: { _ in
+            SystemSettings(
+                thumbnails: ThumbnailSettings(),
+                accessRules: [
+                    AccessRule(id: "r1", path: "Documents/Reports", isRecursive: true, permission: .readOnly),
+                    AccessRule(id: "r2", path: "Private", isRecursive: false, permission: .hidden)
+                ]
+            )
+        },
+        updateThumbnailSettings: { _, settings in settings },
+        updateAccessRules: { _, rules in rules },
         listUsers: { _ in User.previewManagedUsers },
         createUser: { _, request in
             User(

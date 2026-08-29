@@ -193,6 +193,8 @@ struct SettingsView: View {
 
                 usersSection
 
+                serverAdminSection
+
                 serverStorageSection
 
                 Section {
@@ -295,6 +297,16 @@ struct SettingsView: View {
             ) { serverDetailsStore in
                 ServerDetailsView(store: serverDetailsStore)
             }
+            .navigationDestination(
+                item: $store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings)
+            ) { thumbnailStore in
+                ThumbnailSettingsView(store: thumbnailStore)
+            }
+            .navigationDestination(
+                item: $store.scope(state: \.accessRules, action: \.accessRules)
+            ) { accessRulesStore in
+                AccessRulesView(store: accessRulesStore)
+            }
             .navigationTitle(L10n.Settings.navigationTitle)
             // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a
             // popover anchored to some ambient source view on the `.pad` idiom (this app
@@ -378,6 +390,49 @@ struct SettingsView: View {
             }
             .listRowBackground(Color.backgroundSecondary)
         }
+    }
+
+    /// Admin-only server config that isn't per-user: thumbnail generation and folder access
+    /// rules, each a pushed detail screen. Mirrors the web client's admin settings pages.
+    @ViewBuilder
+    private var serverAdminSection: some View {
+        if store.user.isAdmin {
+            Section {
+                adminRow(title: L10n.Settings.rowThumbnails, icon: IconKit.photo) {
+                    store.send(.thumbnailSettingsButtonTapped)
+                }
+                adminRow(title: L10n.Settings.rowAccessRules, icon: IconKit.shield) {
+                    store.send(.accessRulesButtonTapped)
+                }
+            } header: {
+                sectionHeader(L10n.Settings.sectionAdmin)
+            }
+            .listRowBackground(Color.backgroundSecondary)
+        }
+    }
+
+    private func adminRow(title: String, icon: Image, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Label {
+                HStack {
+                    Text(title).type(.body2(.regular), style: .primary(for: .label))
+                    Spacer()
+                    IconKit.chevronRight
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(Color.tertiaryDS)
+                        .frame(width: .iconXSmall, height: .iconXSmall)
+                }
+            } icon: {
+                icon
+                    .resizable()
+                    .scaledToFit()
+                    .foregroundStyle(Color.secondaryDS)
+                    .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(DSHapticButtonStyle())
     }
 
     /// One disk-usage bar per volume — iOS's take on the web client's volume list. Only

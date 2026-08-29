@@ -23,6 +23,8 @@ public struct SettingsFeature {
         @Presents public var userManagement: UserManagementFeature.State?
         @Presents public var changePassword: ChangePasswordFeature.State?
         @Presents public var serverDetails: ServerDetailsFeature.State?
+        @Presents public var thumbnailSettings: ThumbnailSettingsFeature.State?
+        @Presents public var accessRules: AccessRulesFeature.State?
         /// Server branding, fetched on appear and shared with `ServerDetailsFeature` so an
         /// admin's edit there is reflected in the server row the moment it saves.
         @Shared(.inMemory(Branding.sharedKey)) public var branding = Branding()
@@ -70,6 +72,10 @@ public struct SettingsFeature {
         case changePassword(PresentationAction<ChangePasswordFeature.Action>)
         case serverDetailsButtonTapped
         case serverDetails(PresentationAction<ServerDetailsFeature.Action>)
+        case thumbnailSettingsButtonTapped
+        case thumbnailSettings(PresentationAction<ThumbnailSettingsFeature.Action>)
+        case accessRulesButtonTapped
+        case accessRules(PresentationAction<AccessRulesFeature.Action>)
         case brandingResponse(Result<Branding, FilesClientError>)
         case serverFeaturesResponse(ServerFeatures)
         case volumesResponse([Volume])
@@ -139,6 +145,22 @@ public struct SettingsFeature {
                 return .none
 
             case .serverDetails:
+                return .none
+
+            case .thumbnailSettingsButtonTapped:
+                guard state.user.isAdmin else { return .none }
+                state.thumbnailSettings = ThumbnailSettingsFeature.State(serverURL: state.serverURL)
+                return .none
+
+            case .thumbnailSettings:
+                return .none
+
+            case .accessRulesButtonTapped:
+                guard state.user.isAdmin else { return .none }
+                state.accessRules = AccessRulesFeature.State(serverURL: state.serverURL)
+                return .none
+
+            case .accessRules:
                 return .none
 
             case let .brandingResponse(.success(branding)):
@@ -321,6 +343,12 @@ public struct SettingsFeature {
         }
         .ifLet(\.$serverDetails, action: \.serverDetails) {
             ServerDetailsFeature()
+        }
+        .ifLet(\.$thumbnailSettings, action: \.thumbnailSettings) {
+            ThumbnailSettingsFeature()
+        }
+        .ifLet(\.$accessRules, action: \.accessRules) {
+            AccessRulesFeature()
         }
     }
 
