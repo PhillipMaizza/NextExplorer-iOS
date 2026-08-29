@@ -194,6 +194,34 @@ struct SettingsFeatureTests {
     }
 
     @Test
+    func thumbnailAndAccessRuleScreensAreAdminOnly() async {
+        let store = TestStore(initialState: makeState()) { SettingsFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.thumbnailSettingsButtonTapped)
+        #expect(store.state.thumbnailSettings == nil)
+        await store.send(.accessRulesButtonTapped)
+        #expect(store.state.accessRules == nil)
+    }
+
+    @Test
+    func anAdminOpensTheThumbnailAndAccessRuleScreens() async {
+        var state = SettingsFeature.State(serverURL: serverURL, user: User(
+            id: "admin-1", username: "boss", email: "boss@example.com", roles: [UserRole.admin]
+        ))
+        state.$preferences.withLock { $0 = UserPreferences() }
+        let store = TestStore(initialState: state) { SettingsFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.thumbnailSettingsButtonTapped) {
+            $0.thumbnailSettings = ThumbnailSettingsFeature.State(serverURL: self.serverURL)
+        }
+        await store.send(.accessRulesButtonTapped) {
+            $0.accessRules = AccessRulesFeature.State(serverURL: self.serverURL)
+        }
+    }
+
+    @Test
     func setShowHiddenFilesUpdatesSharedPreferencesAndPersistsOptimistically() async {
         let recordedKey = LockIsolated<UserPreferenceKey?>(nil)
         let recordedValue = LockIsolated<Bool?>(nil)

@@ -139,6 +139,15 @@ extension FilesClient {
             serverFeatures: { serverURL in
                 try await service.serverFeatures(serverURL: serverURL)
             },
+            fetchSystemSettings: { serverURL in
+                try await service.fetchSystemSettings(serverURL: serverURL)
+            },
+            updateThumbnailSettings: { serverURL, settings in
+                try await service.updateThumbnailSettings(serverURL: serverURL, settings: settings)
+            },
+            updateAccessRules: { serverURL, rules in
+                try await service.updateAccessRules(serverURL: serverURL, rules: rules)
+            },
             listUsers: { serverURL in
                 try await service.listUsers(serverURL: serverURL)
             },
