@@ -75,9 +75,9 @@ struct PermissionsSheet: View {
 
             if let loadError = store.loadError {
                 DSErrorCard(loadError)
-            }
-            if let actionError = store.actionError {
-                DSErrorCard(actionError)
+                DSButton(L10n.Common.retry, style: .secondary) {
+                    store.send(.onAppear)
+                }
             }
 
             if store.isLoading && store.permissions == nil {
@@ -100,6 +100,9 @@ struct PermissionsSheet: View {
         VStack(spacing: .space8) {
             Divider()
             VStack(spacing: .space8) {
+                if let actionError = store.actionError {
+                    DSErrorCard(actionError)
+                }
                 DSButton(L10n.Permissions.applyOwnership, style: .secondary, isLoading: store.isSavingOwnership) {
                     store.send(.applyOwnershipTapped)
                 }
@@ -237,21 +240,18 @@ struct PermissionsSheet: View {
 
 // MARK: - Previews
 
+private let previewServerURL = URL(string: "https://cloud.example.com")!
+
 @MainActor
 private func permissionsPreview(
-    item: FileItem,
+    _ state: PermissionsFeature.State,
     configureClient: @Sendable (inout FilesClient) -> Void = { _ in }
 ) -> some View {
     var client = FilesClient.previewValue
     configureClient(&client)
     return Color.clear.sheet(isPresented: .constant(true)) {
         PermissionsSheet(
-            store: Store(
-                initialState: PermissionsFeature.State(
-                    serverURL: URL(string: "https://cloud.example.com")!,
-                    item: item
-                )
-            ) {
+            store: Store(initialState: state) {
                 PermissionsFeature()
             } withDependencies: {
                 $0.filesClient = client
@@ -263,26 +263,57 @@ private func permissionsPreview(
 private let previewFile = FileItem(name: "report.pdf", path: "Documents", dateModified: Date(), size: 1_024, kind: "pdf")
 private let previewFolder = FileItem(name: "Projects", path: "", dateModified: Date(), size: 0, kind: "directory")
 
+private func previewState(
+    item: FileItem = previewFile,
+    permissions: FilePermissions? = nil,
+    actionError: String? = nil
+) -> PermissionsFeature.State {
+    var state = PermissionsFeature.State(serverURL: previewServerURL, item: item)
+    if let permissions {
+        state.permissions = permissions
+        state.grid = permissions.grid
+        state.ownerDraft = permissions.owner
+        state.groupDraft = permissions.group
+    }
+    state.actionError = actionError
+    return state
+}
+
+private let filePermissions = FilePermissions(
+    path: "Documents/report.pdf", mode: 0o100_644, owner: "phillip", group: "staff", uid: 501, gid: 20, isDirectory: false
+)
+private let folderPermissions = FilePermissions(
+    path: "Projects", mode: 0o40_755, owner: "phillip", group: "staff", uid: 501, gid: 20, isDirectory: true
+)
+
 #Preview("File") {
-    permissionsPreview(item: previewFile)
+    permissionsPreview(previewState(permissions: filePermissions)) {
+        $0.fetchPermissions = { _, _ in filePermissions }
+    }
 }
 
 #Preview("Directory") {
-    permissionsPreview(item: previewFolder) {
-        $0.fetchPermissions = { _, path in
-            FilePermissions(path: path, mode: 0o40_755, owner: "phillip", group: "staff", uid: 501, gid: 20, isDirectory: true)
-        }
+    permissionsPreview(previewState(item: previewFolder, permissions: folderPermissions)) {
+        $0.fetchPermissions = { _, _ in folderPermissions }
     }
 }
 
 #Preview("Load error") {
-    permissionsPreview(item: previewFile) {
-        $0.fetchPermissions = { _, _ in throw FilesClientError.server(statusCode: 403) }
+    permissionsPreview(previewState()) {
+        $0.fetchPermissions = { _, _ in
+            throw FilesClientError.serverMessage(statusCode: 403, message: "You don't have access to this path.")
+        }
     }
 }
 
 #Preview("Ownership denied") {
-    permissionsPreview(item: previewFile) {
+    permissionsPreview(
+        previewState(
+            permissions: filePermissions,
+            actionError: "Permission denied. Changing ownership typically requires root/admin privileges."
+        )
+    ) {
+        $0.fetchPermissions = { _, _ in filePermissions }
         $0.changeOwnership = { _, _, _, _ in
             throw FilesClientError.serverMessage(
                 statusCode: 403,
