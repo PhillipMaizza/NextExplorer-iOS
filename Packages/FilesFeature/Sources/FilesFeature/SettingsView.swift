@@ -193,6 +193,8 @@ struct SettingsView: View {
 
                 usersSection
 
+                serverStorageSection
+
                 Section {
                     DSToggleRow(
                         title: L10n.Settings.toggleRemoveArchives,
@@ -378,6 +380,43 @@ struct SettingsView: View {
         }
     }
 
+    /// One disk-usage bar per volume — iOS's take on the web client's volume list. Only
+    /// present when the server reports `volumeUsage.enabled` and has returned volumes.
+    @ViewBuilder
+    private var serverStorageSection: some View {
+        if store.isVolumeUsageEnabled && !store.serverUsage.isEmpty {
+            Section {
+                ForEach(store.serverUsage) { row in
+                    VStack(alignment: .leading, spacing: .space8) {
+                        HStack {
+                            Text(row.volume.name).type(.body2(.regular), style: .primary(for: .label))
+                            Spacer()
+                            if let usage = row.usage, usage.isMeaningful {
+                                Text(usageCaption(usage)).type(.body3(.regular), style: .secondary)
+                            } else if row.usage == nil {
+                                ProgressView().controlSize(.small)
+                            }
+                        }
+                        if let usage = row.usage, usage.isMeaningful {
+                            DSUsageBar(fraction: usage.fraction)
+                        }
+                    }
+                    .padding(.vertical, .space4)
+                }
+            } header: {
+                sectionHeader(L10n.Settings.sectionServerStorage)
+            }
+            .listRowBackground(Color.backgroundSecondary)
+        }
+    }
+
+    private func usageCaption(_ usage: StorageUsage) -> String {
+        L10n.Settings.serverStorageUsed(
+            Self.byteFormatter.string(fromByteCount: usage.used),
+            Self.byteFormatter.string(fromByteCount: usage.capacity)
+        )
+    }
+
     @ViewBuilder
     private var profileSection: some View {
         Section {
@@ -510,17 +549,58 @@ struct SettingsView: View {
     }
 }
 
-#Preview {
-    SettingsView(
-        store: Store(
-            initialState: SettingsFeature.State(
-                serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
-                user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [UserRole.admin])
-            )
-        ) {
+@MainActor
+private func settingsPreview(
+    configureClient: @Sendable (inout FilesClient) -> Void = { _ in }
+) -> some View {
+    let state = SettingsFeature.State(
+        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"),
+        user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [UserRole.admin])
+    )
+    var client = FilesClient.previewValue
+    configureClient(&client)
+    return SettingsView(
+        store: Store(initialState: state) {
             SettingsFeature()
         } withDependencies: {
-            $0.filesClient = .previewValue
+            $0.filesClient = client
         }
     )
+}
+
+/// The default `.previewValue` reports `volumeUsage` enabled with two volumes, so the
+/// server-storage section fills in from `onAppear` like the real thing.
+#Preview {
+    settingsPreview()
+}
+
+#Preview("Server storage — off") {
+    settingsPreview {
+        $0.serverFeatures = { _ in ServerFeatures(isVolumeUsageEnabled: false) }
+    }
+}
+
+#Preview("Server storage — loading") {
+    settingsPreview {
+        $0.fetchUsage = { _, _ in
+            try? await Task.sleep(for: .seconds(30))
+            return StorageUsage()
+        }
+    }
+}
+
+#Preview("Server storage — filling up") {
+    settingsPreview {
+        $0.fetchUsage = { _, path in
+            StorageUsage(path: path, size: 78_000_000_000, free: 22_000_000_000, total: 100_000_000_000)
+        }
+    }
+}
+
+#Preview("Server storage — nearly full") {
+    settingsPreview {
+        $0.fetchUsage = { _, path in
+            StorageUsage(path: path, size: 96_000_000_000, free: 4_000_000_000, total: 100_000_000_000)
+        }
+    }
 }

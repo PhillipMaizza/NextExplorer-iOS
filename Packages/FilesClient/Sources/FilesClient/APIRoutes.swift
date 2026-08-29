@@ -14,6 +14,7 @@ enum APIPath {
     static let uploadLogo = "api/settings/upload-logo"
     static let features = "api/features"
     static let metadata = "api/metadata"
+    static let usage = "api/usage"
     static let thumbnails = "api/thumbnails"
     static let preview = "api/preview"
     static let raw = "api/raw"

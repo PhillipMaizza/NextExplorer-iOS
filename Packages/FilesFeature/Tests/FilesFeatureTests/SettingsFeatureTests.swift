@@ -58,6 +58,7 @@ struct SettingsFeatureTests {
         } withDependencies: {
             $0.filesClient.fetchPreferences = { _ in UserPreferences(showHiddenFiles: true, showThumbnails: false) }
             $0.filesClient.fetchBranding = { _ in Branding() }
+            $0.filesClient.serverFeatures = { _ in ServerFeatures() }
             $0.localDownloadStore.list = { [] }
             $0.previewCacheStore.size = { 0 }
         }
@@ -83,6 +84,7 @@ struct SettingsFeatureTests {
         } withDependencies: {
             $0.filesClient.fetchPreferences = { _ in throw FilesClientError.sessionExpired }
             $0.filesClient.fetchBranding = { _ in Branding() }
+            $0.filesClient.serverFeatures = { _ in ServerFeatures() }
             $0.localDownloadStore.list = { [] }
             $0.previewCacheStore.size = { 0 }
         }
@@ -119,6 +121,48 @@ struct SettingsFeatureTests {
 
         #expect(store.state.hasDownloads == false)
         #expect(store.state.cacheSize == 0)
+    }
+
+    @Test
+    func serverUsageStaysHiddenWhenTheFeatureIsOff() async {
+        let store = TestStore(initialState: makeState()) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.filesClient.volumes = { _ in
+                Issue.record("volumes should not be fetched when volumeUsage is disabled")
+                return []
+            }
+        }
+
+        await store.send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: false)))
+        #expect(store.state.isVolumeUsageEnabled == false)
+        #expect(store.state.serverUsage.isEmpty)
+    }
+
+    @Test
+    func serverUsageLoadsAVolumeListThenFillsInEachBar() async {
+        let store = TestStore(initialState: makeState()) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.filesClient.volumes = { _ in
+                [Volume(name: "media", path: "media"), Volume(name: "home", path: "home")]
+            }
+            $0.filesClient.fetchUsage = { _, path in
+                path == "media"
+                    ? StorageUsage(path: "media", size: 40, free: 60, total: 100)
+                    : StorageUsage(path: "home", size: 0, free: 0, total: 0)
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.serverFeaturesResponse(ServerFeatures(isVolumeUsageEnabled: true)))
+        await store.skipReceivedActions()
+
+        #expect(store.state.isVolumeUsageEnabled)
+        #expect(store.state.serverUsage.map(\.volume.path) == ["media", "home"])
+        #expect(store.state.serverUsage[id: "media"]?.usage?.used == 40)
+        // `home` came back all zeros — still stored, the view decides not to draw a bar.
+        #expect(store.state.serverUsage[id: "home"]?.usage?.isMeaningful == false)
     }
 
     @Test

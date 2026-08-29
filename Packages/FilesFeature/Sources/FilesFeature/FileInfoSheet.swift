@@ -8,6 +8,9 @@ private enum Constants {
     static let closeIconSize: CGFloat = .iconXSmall
     static let closeButtonPadding: CGFloat = .space8
     static let contentSpacing: CGFloat = .space16
+    static let cardSpacing: CGFloat = .space12
+    static let cardPadding: CGFloat = .space16
+    static let cardVerticalPadding: CGFloat = .space16
     static let rowVerticalPadding: CGFloat = .space8
     static let rowMinimumGap: CGFloat = .space32
     static let horizontalPadding: CGFloat = .space24
@@ -26,6 +29,8 @@ private enum Constants {
 struct FileInfoSheet: View {
     let item: FileItem
     let metadata: FileMetadata?
+    /// Server disk figures for a directory, when the server reported them.
+    var usage: StorageUsage? = nil
     let errorMessage: String?
     let onDismiss: () -> Void
 
@@ -95,62 +100,85 @@ struct FileInfoSheet: View {
 
     @ViewBuilder
     private func metadataSections(for metadata: FileMetadata) -> some View {
-        VStack(spacing: 0) {
-            row(L10n.FileInfo.rowKind, kindTitle(for: metadata))
-            row(L10n.FileInfo.rowSize, Self.byteFormatter.string(fromByteCount: metadata.size))
-            row(L10n.FileInfo.rowLocation, metadata.path)
-            row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: includeTime))
-            row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: includeTime))
-        }
+        VStack(alignment: .leading, spacing: Constants.cardSpacing) {
+            card {
+                row(L10n.FileInfo.rowKind, kindTitle(for: metadata))
+                row(L10n.FileInfo.rowSize, Self.byteFormatter.string(fromByteCount: metadata.size))
+                row(L10n.FileInfo.rowLocation, metadata.path)
+                row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: includeTime))
+                row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: includeTime))
+            }
 
-        if let directory = metadata.directory {
-            Divider()
-            VStack(spacing: 0) {
-                row(L10n.FileInfo.rowFiles, "\(directory.fileCount)")
-                row(L10n.FileInfo.rowFolders, "\(directory.dirCount)")
-                row(L10n.FileInfo.rowTotalSize, Self.byteFormatter.string(fromByteCount: directory.totalSize))
-                if directory.truncated {
-                    Text(L10n.FileInfo.partialScan)
-                        .type(.body3(.regular), style: .tertiary)
-                        .padding(.top, .space4)
+            if let directory = metadata.directory {
+                card {
+                    row(L10n.FileInfo.rowFiles, "\(directory.fileCount)")
+                    row(L10n.FileInfo.rowFolders, "\(directory.dirCount)")
+                    row(L10n.FileInfo.rowTotalSize, Self.byteFormatter.string(fromByteCount: directory.totalSize))
+                    if directory.truncated {
+                        Text(L10n.FileInfo.partialScan)
+                            .type(.body3(.regular), style: .tertiary)
+                            .padding(.top, .space4)
+                    }
+                }
+            }
+
+            if let usage, usage.isMeaningful {
+                card {
+                    DSFieldLabel(L10n.FileInfo.sectionServerDisk)
+                    DSUsageBar(fraction: usage.fraction)
+                        .padding(.vertical, .space4)
+                    Text(L10n.FileInfo.diskFreeOf(
+                        Self.byteFormatter.string(fromByteCount: usage.free),
+                        Self.byteFormatter.string(fromByteCount: usage.capacity)
+                    ))
+                    .type(.body3(.regular), style: .secondary)
+                }
+            }
+
+            if let image = metadata.image {
+                card {
+                    if let width = image.width, let height = image.height {
+                        row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
+                    }
+                    if let make = image.cameraMake, let model = image.cameraModel {
+                        row(L10n.FileInfo.rowCamera, "\(make) \(model)")
+                    } else if let model = image.cameraModel {
+                        row(L10n.FileInfo.rowCamera, model)
+                    }
+                    if let lensModel = image.lensModel {
+                        row(L10n.FileInfo.rowLens, lensModel)
+                    }
+                    if let dateTaken = image.dateTaken {
+                        row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: includeTime))
+                    }
+                    if let gps = image.gps {
+                        row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
+                    }
+                }
+            }
+
+            if let video = metadata.video {
+                card {
+                    if let width = video.width, let height = video.height {
+                        row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
+                    }
+                    if let duration = video.duration {
+                        row(L10n.FileInfo.rowDuration, Self.durationFormatter.string(from: duration) ?? "-")
+                    }
                 }
             }
         }
+    }
 
-        if let image = metadata.image {
-            Divider()
-            VStack(spacing: 0) {
-                if let width = image.width, let height = image.height {
-                    row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
-                }
-                if let make = image.cameraMake, let model = image.cameraModel {
-                    row(L10n.FileInfo.rowCamera, "\(make) \(model)")
-                } else if let model = image.cameraModel {
-                    row(L10n.FileInfo.rowCamera, model)
-                }
-                if let lensModel = image.lensModel {
-                    row(L10n.FileInfo.rowLens, lensModel)
-                }
-                if let dateTaken = image.dateTaken {
-                    row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: includeTime))
-                }
-                if let gps = image.gps {
-                    row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
-                }
-            }
+    @ViewBuilder
+    private func card<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: .space8) {
+            content()
         }
-
-        if let video = metadata.video {
-            Divider()
-            VStack(spacing: 0) {
-                if let width = video.width, let height = video.height {
-                    row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
-                }
-                if let duration = video.duration {
-                    row(L10n.FileInfo.rowDuration, Self.durationFormatter.string(from: duration) ?? "-")
-                }
-            }
-        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, Constants.cardPadding)
+        .padding(.vertical, Constants.cardVerticalPadding)
+        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusCard))
     }
 
     private func kindTitle(for metadata: FileMetadata) -> String {
@@ -186,6 +214,61 @@ struct FileInfoSheet: View {
                     dateCreated: Date().addingTimeInterval(-86_400 * 30),
                     directory: FileMetadata.DirectorySummary(totalSize: 10_485_760, fileCount: 42, dirCount: 3, truncated: false)
                 ),
+                errorMessage: nil,
+                onDismiss: {}
+            )
+        }
+}
+
+#Preview("Folder with server disk") {
+    Color.clear
+        .sheet(isPresented: .constant(true)) {
+            FileInfoSheet(
+                item: FileItem(name: "Media", path: "", dateModified: Date(), size: 0, kind: "directory"),
+                metadata: FileMetadata(
+                    path: "Media",
+                    name: "Media",
+                    kind: "directory",
+                    size: 4_096,
+                    dateModified: Date(),
+                    dateCreated: Date().addingTimeInterval(-86_400 * 120),
+                    directory: FileMetadata.DirectorySummary(totalSize: 41_000_000_000, fileCount: 1_200, dirCount: 60, truncated: false)
+                ),
+                usage: StorageUsage(path: "Media", size: 41_000_000_000, free: 59_000_000_000, total: 100_000_000_000),
+                errorMessage: nil,
+                onDismiss: {}
+            )
+        }
+}
+
+#Preview("Folder with server disk — filling up") {
+    Color.clear
+        .sheet(isPresented: .constant(true)) {
+            FileInfoSheet(
+                item: FileItem(name: "Projects", path: "", dateModified: Date(), size: 0, kind: "directory"),
+                metadata: FileMetadata(
+                    path: "Projects", name: "Projects", kind: "directory", size: 4_096,
+                    dateModified: Date(), dateCreated: Date(),
+                    directory: FileMetadata.DirectorySummary(totalSize: 78_000_000_000, fileCount: 320, dirCount: 40, truncated: false)
+                ),
+                usage: StorageUsage(path: "Projects", size: 78_000_000_000, free: 22_000_000_000, total: 100_000_000_000),
+                errorMessage: nil,
+                onDismiss: {}
+            )
+        }
+}
+
+#Preview("Folder with server disk — nearly full") {
+    Color.clear
+        .sheet(isPresented: .constant(true)) {
+            FileInfoSheet(
+                item: FileItem(name: "Backups", path: "", dateModified: Date(), size: 0, kind: "directory"),
+                metadata: FileMetadata(
+                    path: "Backups", name: "Backups", kind: "directory", size: 4_096,
+                    dateModified: Date(), dateCreated: Date(),
+                    directory: FileMetadata.DirectorySummary(totalSize: 94_000_000_000, fileCount: 8, dirCount: 0, truncated: false)
+                ),
+                usage: StorageUsage(path: "Backups", size: 94_000_000_000, free: 6_000_000_000, total: 100_000_000_000),
                 errorMessage: nil,
                 onDismiss: {}
             )

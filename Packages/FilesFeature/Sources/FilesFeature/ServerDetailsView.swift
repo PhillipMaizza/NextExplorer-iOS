@@ -213,7 +213,7 @@ struct ServerDetailsView: View {
 @MainActor
 private func previewStore(
     branding: Branding = Branding(appName: "Rivendell Cloud", appLogoUrl: Branding.defaultLogoPath),
-    _ mutate: (inout ServerDetailsFeature.State) -> Void = { _ in }
+    _ mutate: @Sendable (inout ServerDetailsFeature.State) -> Void = { _ in }
 ) -> StoreOf<ServerDetailsFeature> {
     var state = ServerDetailsFeature.State(
         serverURL: URL(string: "https://cloud.rivendell.example.com")!,
