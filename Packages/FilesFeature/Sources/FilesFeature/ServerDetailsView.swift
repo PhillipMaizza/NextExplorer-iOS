@@ -210,6 +210,7 @@ struct ServerDetailsView: View {
 
 // MARK: - Previews
 
+@MainActor
 private func previewStore(
     branding: Branding = Branding(appName: "Rivendell Cloud", appLogoUrl: Branding.defaultLogoPath),
     _ mutate: (inout ServerDetailsFeature.State) -> Void = { _ in }
