@@ -28,6 +28,7 @@ public enum L10n {
         public static var actionPaste: String { tr("browse.actionPaste") }  // "Paste"
         public static func actionPasteCount(_ a0: CVarArg) -> String { tr("browse.actionPasteCount", a0) }
         public static var actionPasteHere: String { tr("browse.actionPasteHere") }  // "Paste here"
+        public static var actionPermissions: String { tr("browse.actionPermissions") }  // "Permissions"
         public static var actionRemoveFromFavorites: String { tr("browse.actionRemoveFromFavorites") }  // "Remove from Favorites"
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
         public static var actionShare: String { tr("browse.actionShare") }  // "Create share link"
@@ -256,6 +257,24 @@ public enum L10n {
         public static var serverQuestion: String { tr("login.serverQuestion") }  // "Where's your instance of NextExplorer?"
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
+    }
+    public enum Permissions {
+        public static var applyOwnership: String { tr("permissions.applyOwnership") }  // "Apply Ownership"
+        public static var applyPermissions: String { tr("permissions.applyPermissions") }  // "Apply Permissions"
+        public static var applyToEnclosed: String { tr("permissions.applyToEnclosed") }  // "Apply to enclosed items"
+        public static var fieldGroup: String { tr("permissions.fieldGroup") }  // "Group"
+        public static var fieldOwner: String { tr("permissions.fieldOwner") }  // "Owner"
+        public static var numericLabel: String { tr("permissions.numericLabel") }  // "Numeric"
+        public static var ownershipNote: String { tr("permissions.ownershipNote") }
+        public static var rightExecute: String { tr("permissions.rightExecute") }  // "Execute"
+        public static var rightRead: String { tr("permissions.rightRead") }  // "Read"
+        public static var rightWrite: String { tr("permissions.rightWrite") }  // "Write"
+        public static var scopeGroup: String { tr("permissions.scopeGroup") }  // "Group"
+        public static var scopeOthers: String { tr("permissions.scopeOthers") }  // "Others"
+        public static var scopeOwner: String { tr("permissions.scopeOwner") }  // "Owner"
+        public static var sectionMode: String { tr("permissions.sectionMode") }  // "Mode"
+        public static var sectionOwnership: String { tr("permissions.sectionOwnership") }  // "Ownership"
+        public static var title: String { tr("permissions.title") }  // "Permissions"
     }
     public enum PreviewToolbar {
         public static var close: String { tr("previewToolbar.close") }  // "Close"

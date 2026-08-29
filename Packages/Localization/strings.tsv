@@ -82,6 +82,7 @@ browse.locations	Locations
 browse.open	Open
 browse.unsupportedFileType	Unsupported file type
 browse.actionGetInfo	Get Info
+browse.actionPermissions	Permissions
 browse.actionRename	Rename
 browse.actionExtract	Extract
 browse.actionCompress	Compress
@@ -356,6 +357,24 @@ fileInfo.rowLens	Lens
 fileInfo.rowDateTaken	Date Taken
 fileInfo.rowDuration	Duration
 fileInfo.partialScan	Counted a partial scan — this folder is very large.
+
+# ---- permissions ----
+permissions.title	Permissions
+permissions.sectionMode	Mode
+permissions.numericLabel	Numeric
+permissions.applyToEnclosed	Apply to enclosed items
+permissions.applyPermissions	Apply Permissions
+permissions.sectionOwnership	Ownership
+permissions.fieldOwner	Owner
+permissions.fieldGroup	Group
+permissions.ownershipNote	Changing ownership usually needs root or admin privileges on the server.
+permissions.applyOwnership	Apply Ownership
+permissions.scopeOwner	Owner
+permissions.scopeGroup	Group
+permissions.scopeOthers	Others
+permissions.rightRead	Read
+permissions.rightWrite	Write
+permissions.rightExecute	Execute
 
 # ---- archive browser ----
 archive.emptyFolder	This folder is empty.
