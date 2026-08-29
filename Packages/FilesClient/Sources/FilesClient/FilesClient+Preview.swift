@@ -149,6 +149,9 @@ extension FilesClient {
                 User(id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor")
             ]
         },
+        resolveShareLink: { _, token in
+            ShareInfo(shareToken: token, label: "Q3 Report", isDirectory: true, sharingType: .anyone)
+        },
         changeOwnPassword: { _, _, _ in },
         serverFeatures: { _ in ServerFeatures(isUserVolumesEnabled: true, isVolumeUsageEnabled: true) },
         listUsers: { _ in User.previewManagedUsers },
