@@ -49,16 +49,7 @@ public struct SettingsFeature {
         public var isVolumeUsageEnabled = false
         public var serverUsage: IdentifiedArrayOf<VolumeUsage> = []
 
-        /// Populated once per session by `MainTabFeature`. Only used here to decide whether to
-        /// offer the office-editor preference picker.
-        @Shared(.inMemory(ServerFeatures.sharedKey)) var serverFeatures = ServerFeatures()
-
         public var displayName: String { user.displayName ?? user.username }
-
-        /// The office-editor picker is only meaningful when the server runs both editors.
-        var showsOfficeEditorPicker: Bool {
-            serverFeatures.office.isOnlyOfficeEnabled && serverFeatures.office.isCollaboraEnabled
-        }
 
         public init(serverURL: URL, user: User) {
             self.serverURL = serverURL

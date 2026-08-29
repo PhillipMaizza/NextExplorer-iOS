@@ -125,12 +125,6 @@ extension FilesClient {
             resolveShareLink: { serverURL, token in
                 try await service.resolveShareLink(serverURL: serverURL, token: token)
             },
-            fetchOnlyOfficeConfig: { serverURL, path, mode in
-                try await service.fetchOnlyOfficeConfig(serverURL: serverURL, path: path, mode: mode)
-            },
-            fetchCollaboraConfig: { serverURL, path, mode in
-                try await service.fetchCollaboraConfig(serverURL: serverURL, path: path, mode: mode)
-            },
             changeOwnPassword: { serverURL, currentPassword, newPassword in
                 try await service.changeOwnPassword(
                     serverURL: serverURL, currentPassword: currentPassword, newPassword: newPassword
