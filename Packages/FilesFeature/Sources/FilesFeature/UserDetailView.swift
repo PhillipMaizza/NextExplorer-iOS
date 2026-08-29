@@ -35,7 +35,7 @@ struct UserDetailView: View {
                     header(user)
 
                     if let error = store.detailErrorMessage {
-                        ErrorBanner(text: error)
+                        DSErrorCard(error)
                     }
 
                     DSSegmentedControl(
@@ -386,7 +386,7 @@ private struct VolumeAssignSheet: View {
                 VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
                     if let sheet {
                         if let error = sheet.errorMessage {
-                            ErrorBanner(text: error)
+                            DSErrorCard(error)
                         }
 
                         LabeledField(L10n.UserDetail.volumeSheetLabelField) {
@@ -504,7 +504,7 @@ private struct VolumeAssignSheet: View {
             } else if isBrowsing {
                 ProgressView().frame(maxWidth: .infinity).padding(.vertical, .space8)
             } else if let browseError {
-                Text(browseError).type(.body3(.regular), style: .error)
+                Text(browseError).type(.body3(.semibold), style: .error)
             }
         }
         .padding(Metrics.cardPadding)

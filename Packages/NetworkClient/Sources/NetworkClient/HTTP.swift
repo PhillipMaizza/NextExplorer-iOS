@@ -20,6 +20,7 @@ public enum HTTPHeaderField {
 public enum MIMEType {
     public static let json = "application/json"
     public static let octetStream = "application/octet-stream"
+    public static let jpeg = "image/jpeg"
 
     public static func multipartFormData(boundary: String) -> String {
         "multipart/form-data; boundary=\(boundary)"

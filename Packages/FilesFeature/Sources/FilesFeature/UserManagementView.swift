@@ -14,8 +14,6 @@ private enum Metrics {
     static let tagBorderWidth: CGFloat = 1
     static let sheetContentSpacing: CGFloat = .space16
     static let sheetHorizontalPadding: CGFloat = .space16
-    static let cardCornerRadius: CGFloat = .radiusCard
-    static let cardPadding: CGFloat = .space12
     static let closeIconSize: CGFloat = .iconXSmall
 }
 
@@ -225,7 +223,7 @@ private struct CreateUserSheet: View {
                 VStack(alignment: .leading, spacing: Metrics.sheetContentSpacing) {
                     if let sheet = store.createSheet {
                         if let error = sheet.errorMessage {
-                            ErrorBanner(text: error)
+                            DSErrorCard(error)
                         }
                         LabeledField(L10n.UserManagement.createEmailField, error: sheet.emailError) {
                             DSTextField(L10n.UserManagement.createEmailPlaceholder, text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged))
@@ -296,7 +294,7 @@ private struct SetPasswordSheet: View {
                 VStack(alignment: .leading, spacing: Metrics.sheetContentSpacing) {
                     if let sheet = store.passwordSheet {
                         if let error = sheet.errorMessage {
-                            ErrorBanner(text: error)
+                            DSErrorCard(error)
                         }
                         Text(sheet.hasExistingPassword
                             ? L10n.UserManagement.setPasswordResetIntro(sheet.userLabel)
@@ -360,21 +358,9 @@ struct LabeledField<Content: View>: View {
             DSFieldLabel(title, uppercased: isUppercased)
             content
             if let error {
-                Text(error).type(.caption(.regular), style: .error)
+                Text(error).type(.body3(.semibold), style: .error)
             }
         }
-    }
-}
-
-struct ErrorBanner: View {
-    let text: String
-
-    var body: some View {
-        Text(text)
-            .type(.body3(.regular), style: .error)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(Metrics.cardPadding)
-            .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.negative.opacity(0.12)))
     }
 }
 

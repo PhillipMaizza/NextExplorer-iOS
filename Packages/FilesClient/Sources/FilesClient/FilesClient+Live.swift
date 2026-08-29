@@ -30,6 +30,15 @@ extension FilesClient {
             updatePreference: { serverURL, key, value in
                 try await service.updatePreference(serverURL: serverURL, key: key, value: value)
             },
+            fetchBranding: { serverURL in
+                try await service.fetchBranding(serverURL: serverURL)
+            },
+            updateBranding: { serverURL, appName, appLogoUrl in
+                try await service.updateBranding(serverURL: serverURL, appName: appName, appLogoUrl: appLogoUrl)
+            },
+            uploadServerLogo: { serverURL, jpegData in
+                try await service.uploadServerLogo(serverURL: serverURL, jpegData: jpegData)
+            },
             renameItem: { serverURL, item, newName in
                 try await service.renameItem(serverURL: serverURL, item: item, newName: newName)
             },

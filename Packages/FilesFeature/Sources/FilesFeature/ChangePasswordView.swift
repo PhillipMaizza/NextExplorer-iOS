@@ -36,7 +36,7 @@ struct ChangePasswordView: View {
                 }
 
                 if let error = store.errorMessage {
-                    ErrorBanner(text: error)
+                    DSErrorCard(error)
                 }
                 if store.didSucceed {
                     successBanner(L10n.ChangePassword.success)

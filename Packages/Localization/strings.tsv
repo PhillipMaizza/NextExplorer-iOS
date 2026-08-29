@@ -279,7 +279,6 @@ settings.rowRemoveAllDownloads	Remove All Downloads
 settings.rowClearCache	Clear Cache
 settings.rowOpenSourceLicenses	Open Source Licenses
 settings.rowUserManagement	User Management
-settings.rowServer	Server
 settings.rowChangePassword	Change Password
 settings.storageFootnote	Downloading a folder zips it on the server first. Turn on the toggle above to delete that archive from the server once it's saved to your device. Removing downloads or clearing the cache only affects this device; nothing on the server is touched.
 settings.removeAllDownloadsTitle	Remove All Downloads?
@@ -294,6 +293,22 @@ settings.signOutButton	Sign Out
 settings.signingOut	Signing Out…
 settings.dateFormatNavigationTitle	Date Format
 settings.dateFormatShowTime	Show Time
+
+# ---- server details ----
+serverDetails.navigationTitle	Server
+serverDetails.changeLogo	Change Icon
+serverDetails.takePhoto	Take Photo
+serverDetails.chooseFromGallery	Upload from Gallery
+serverDetails.nameLabel	Server Name
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	Server name can't be empty.
+serverDetails.urlLabel	Server URL
+serverDetails.urlFootnote	The address can't be changed here. Sign out and add the server again to switch.
+serverDetails.updateButton	Update Server
+serverDetails.savedMessage	Server details updated.
+serverDetails.logoErrorTooLarge	That image is too large. Pick one under 2 MB.
+serverDetails.cameraDeniedTitle	Camera Access Off
+serverDetails.cameraDeniedMessage	Turn on camera access in Settings to take a photo.
 
 # ---- licenses ----
 licenses.navigationTitle	Open Source Licenses
