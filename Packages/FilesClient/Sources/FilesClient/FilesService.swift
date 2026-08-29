@@ -51,6 +51,34 @@ struct FilesService: Sendable {
         return try await send(request, decoding: Favorite.self)
     }
 
+    /// `PATCH /api/favorites/:id`, confirmed against `backend/src/services/favoritesService.js`
+    /// `updateFavorite`: `{ label, icon, color }` (position left to the reorder endpoint).
+    func updateFavorite(serverURL: URL, id: String, label: String?, icon: String, color: String?) async throws -> Favorite {
+        let url = serverURL.appendingPathComponent(APIPath.favorites).appendingPathComponent(id)
+        var request = Self.makeRequest(url: url, method: .patch)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(UpdateFavoriteBody(label: label, icon: icon, color: color))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        return try await sendReportingMessage(request, decoding: Favorite.self)
+    }
+
+    /// `PATCH /api/favorites/reorder`: `{ order: [id, ...] }` — every id, once. Returns the
+    /// full list in the new order.
+    func reorderFavorites(serverURL: URL, orderedIDs: [String]) async throws -> [Favorite] {
+        let url = serverURL.appendingPathComponent(APIPath.favoritesReorder)
+        var request = Self.makeRequest(url: url, method: .patch)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(ReorderFavoritesBody(order: orderedIDs))
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        return try await sendReportingMessage(request, decoding: [Favorite].self)
+    }
+
     func removeFavorite(serverURL: URL, path: String) async throws {
         let url = serverURL.appendingPathComponent(APIPath.favorites)
         var request = Self.makeRequest(url: url, method: .delete)
@@ -787,6 +815,27 @@ struct FilesService: Sendable {
 
     private struct FavoritePathBody: Encodable {
         let path: String
+    }
+
+    /// All three keys are always written — `null` included — so the server (which skips
+    /// `undefined` keys) actually clears a removed label or colour rather than keeping the old one.
+    private struct UpdateFavoriteBody: Encodable {
+        let label: String?
+        let icon: String
+        let color: String?
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(label, forKey: .label)
+            try container.encode(icon, forKey: .icon)
+            try container.encode(color, forKey: .color)
+        }
+
+        enum CodingKeys: String, CodingKey { case label, icon, color }
+    }
+
+    private struct ReorderFavoritesBody: Encodable {
+        let order: [String]
     }
 
     private struct RenameItemBody: Encodable {

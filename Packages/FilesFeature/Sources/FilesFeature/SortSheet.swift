@@ -126,7 +126,7 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
     Color.clear
         .sheet(isPresented: .constant(true)) {
             SortSheet(
-                options: FavoritesFeature.SortOption.allCases,
+                options: BrowseFeature.SortOption.allCases,
                 directions: BrowseFeature.SortDirection.allCases,
                 sortOption: .name,
                 sortDirection: .ascending,
