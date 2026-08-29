@@ -4,6 +4,7 @@ import DesignSystem
 import FilesClient
 import Localization
 import SwiftUI
+import UIKit
 
 private enum Constants {
     static let contentSpacing: CGFloat = .space16
@@ -22,6 +23,7 @@ private enum Constants {
 struct OpenShareLinkSheet: View {
     @Bindable var store: StoreOf<OpenShareLinkFeature>
     @Environment(\.dismiss) private var dismiss
+    @State private var didCheckClipboard = false
 
     private static let expiryFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -73,6 +75,21 @@ struct OpenShareLinkSheet: View {
                 footer
             }
         }
+        .onAppear(perform: prefillFromClipboard)
+    }
+
+    /// The sheet's whole job is to paste a share link, so when it opens with an empty field
+    /// and the clipboard already holds something link shaped, drop it straight in. Guarded so
+    /// a deliberately cleared field isn't refilled on a re-appear.
+    private func prefillFromClipboard() {
+        guard !didCheckClipboard else { return }
+        didCheckClipboard = true
+        guard store.linkText.isEmpty,
+              UIPasteboard.general.hasStrings,
+              let pasted = UIPasteboard.general.string,
+              OpenShareLinkFeature.token(from: pasted) != nil
+        else { return }
+        store.send(.linkTextChanged(pasted))
     }
 
     private var footer: some View {
