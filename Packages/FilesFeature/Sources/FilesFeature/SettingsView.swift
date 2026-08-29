@@ -362,6 +362,7 @@ struct SettingsView: View {
                             .foregroundStyle(Color.secondaryDS)
                             .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                     }
+                    .contentShape(Rectangle())
                 }
                 .buttonStyle(DSHapticButtonStyle())
             } header: {

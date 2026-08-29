@@ -161,6 +161,10 @@ public struct BrowseFeature {
         public var favoritePaths: Set<String> = []
         public var access: FileAccess?
         public var isLoading = false
+        /// Flips true the first time a browse response lands (success or failure). Until then
+        /// the view shows the loading skeleton rather than the empty state, so a fresh folder
+        /// never flashes "folder is empty" for the frame before `onAppear`'s fetch begins.
+        public var hasLoaded = false
         public var errorMessage: String?
         public var searchQuery = ""
         public var searchScope: SearchScope = .thisFolder
@@ -375,6 +379,7 @@ public struct BrowseFeature {
 
             case let .itemsResponse(.success(result)):
                 state.isLoading = false
+                state.hasLoaded = true
                 state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(result.items))
                 state.access = result.access
                 state.errorMessage = nil
@@ -382,6 +387,7 @@ public struct BrowseFeature {
 
             case let .itemsResponse(.failure(error)):
                 state.isLoading = false
+                state.hasLoaded = true
                 state.errorMessage = error.userMessage
                 return .none
 

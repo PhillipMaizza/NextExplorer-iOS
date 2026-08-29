@@ -159,13 +159,21 @@ struct BrowseContentView: View {
     /// reasonable time.
     private var browsingContent: some View {
         Group {
-            if viewMode == .list {
+            if isInitialLoad {
+                BrowseSkeletonView(
+                    isGridView: viewMode == .grid,
+                    gridColumns: gridColumns,
+                    iconSize: thumbnailSize.iconSize
+                )
+                .transition(.opacity)
+            } else if viewMode == .list {
                 listContent
             } else {
                 gridContent
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: isInitialLoad)
         .tint(Color.accent)
         .searchable(
             text: $store.searchQuery.sending(\.searchQueryChanged),
@@ -790,15 +798,21 @@ struct BrowseContentView: View {
     /// Which branch of `overlayStateContent` is currently showing — a plain discriminant so
     /// the overlay can cross-fade between states instead of hard-cutting between them.
     private enum OverlayState: Hashable {
-        case none, loading, error, empty, searchingEverywhere, noResults
+        case none, error, empty, searchingEverywhere, noResults
+    }
+
+    /// A fetch with nothing yet to show: the first load of this folder (including the frame
+    /// before `onAppear` starts it) or a retry after a failed first load. Drives the loading
+    /// skeleton and suppresses the empty state so a fresh folder never flashes "folder is
+    /// empty" for a frame.
+    private var isInitialLoad: Bool {
+        (store.isLoading || !store.hasLoaded) && store.items.isEmpty && store.errorMessage == nil
     }
 
     private var overlayState: OverlayState {
-        if store.isLoading && store.items.isEmpty {
-            .loading
-        } else if store.errorMessage != nil {
+        if store.errorMessage != nil {
             .error
-        } else if !store.isSearching && store.displayedItems.isEmpty {
+        } else if store.hasLoaded && !store.isSearching && store.displayedItems.isEmpty {
             .empty
         } else if store.isSearching && store.searchScope == .everywhere && store.isSearchingEverywhere {
             .searchingEverywhere
@@ -812,7 +826,7 @@ struct BrowseContentView: View {
     @ViewBuilder
     private var overlayStateContent: some View {
         switch overlayState {
-        case .loading, .searchingEverywhere:
+        case .searchingEverywhere:
             ProgressView()
                 .transition(.opacity)
         case .error:
