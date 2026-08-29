@@ -263,6 +263,29 @@ struct FilesService: Sendable {
         return try await send(request, decoding: ShareableUsersEnvelope.self).users
     }
 
+    /// `PUT /api/shares/:id`, confirmed against `backend/src/routes/shares.js` +
+    /// `sharesService.updateShare`: owner-only, `'key' in body` semantics, returns the
+    /// updated share unwrapped.
+    func updateShareLink(serverURL: URL, shareID: String, request: UpdateShareRequest) async throws -> Share {
+        let url = serverURL.appendingPathComponent(APIPath.shares).appendingPathComponent(shareID)
+        var httpRequest = Self.makeRequest(url: url, method: .put)
+        httpRequest.setJSONContentType()
+        let body = UpdateShareBody(
+            label: request.label,
+            accessMode: request.accessMode.rawValue,
+            sharingType: request.target.rawValue,
+            expiresAt: request.expiresAt.map(Self.formatShareExpiry),
+            userIds: request.target == .users ? request.userIds : nil,
+            password: request.password
+        )
+        do {
+            httpRequest.httpBody = try JSONEncoder().encode(body)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        return try await sendReportingMessage(httpRequest, decoding: Share.self)
+    }
+
     /// `DELETE /api/shares/:id` → 204, owner only.
     func deleteShareLink(serverURL: URL, shareID: String) async throws {
         let url = serverURL.appendingPathComponent(APIPath.shares).appendingPathComponent(shareID)
@@ -907,6 +930,39 @@ struct FilesService: Sendable {
         let password: String?
         let userIds: [String]
         let expiresAt: String?
+    }
+
+    /// Body for `PUT /api/shares/:id`. `label` / `expiresAt` are always written (`null`
+    /// included — that's how the server clears them); `userIds` only when it's a users-share;
+    /// `password` only when the caller is actually changing or removing it.
+    private struct UpdateShareBody: Encodable {
+        let label: String?
+        let accessMode: String
+        let sharingType: String
+        let expiresAt: String?
+        let userIds: [String]?
+        let password: UpdateShareRequest.PasswordChange
+
+        enum CodingKeys: String, CodingKey {
+            case label, accessMode, sharingType, expiresAt, userIds, password
+        }
+
+        func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            try container.encode(label, forKey: .label)
+            try container.encode(accessMode, forKey: .accessMode)
+            try container.encode(sharingType, forKey: .sharingType)
+            try container.encode(expiresAt, forKey: .expiresAt)
+            try container.encodeIfPresent(userIds, forKey: .userIds)
+            switch password {
+            case .keep:
+                break
+            case .remove:
+                try container.encodeNil(forKey: .password)
+            case let .set(value):
+                try container.encode(value, forKey: .password)
+            }
+        }
     }
 
     private struct ShareLinksEnvelope: Decodable {

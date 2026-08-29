@@ -1596,6 +1596,50 @@
         }
       }
     },
+    "editShare.passwordKeepHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave blank to keep the current password"
+          }
+        }
+      }
+    },
+    "editShare.save": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "editShare.savedToast": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share link updated"
+          }
+        }
+      }
+    },
+    "editShare.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Share Link"
+          }
+        }
+      }
+    },
     "emptyState.folderEmpty": {
       "extractionState": "manual",
       "localizations": {

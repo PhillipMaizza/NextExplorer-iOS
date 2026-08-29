@@ -83,6 +83,29 @@ struct SharedFeatureTests {
     }
 
     @Test
+    func editTappedPresentsTheSheetSeededFromTheShareAndAnUpdateSwapsTheRow() async {
+        let share = makeShare(id: "s1")
+        var state = SharedFeature.State(serverURL: serverURL)
+        state.byMe = [share]
+        state.loadedSegments = [.byMe]
+        let store = TestStore(initialState: state) { SharedFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.editTapped(share))
+        #expect(store.state.editSheet?.share == share)
+
+        let updated = Share(
+            id: "s1", shareToken: share.shareToken, ownerId: "me",
+            sourcePath: "Documents/Report.pdf", isDirectory: false,
+            accessMode: .readwrite, sharingType: .anyone, hasPassword: true,
+            expiresAt: nil, label: "Q3 Report", createdAt: share.createdAt, updatedAt: Date()
+        )
+        await store.send(.editSheet(.presented(.delegate(.updated(updated)))))
+        #expect(store.state.byMe[id: "s1"] == updated)
+        #expect(store.state.editSheet == nil)
+    }
+
+    @Test
     func deleteFlowRemovesTheShareFromByMe() async {
         let share = makeShare()
         var state = SharedFeature.State(serverURL: serverURL)

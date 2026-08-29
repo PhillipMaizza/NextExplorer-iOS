@@ -168,6 +168,12 @@ public enum L10n {
         public static var emptyList: String { tr("downloads.emptyList") }  // "Files you download from Browse show up here."
         public static var navigationTitle: String { tr("downloads.navigationTitle") }  // "Downloads"
     }
+    public enum EditShare {
+        public static var passwordKeepHint: String { tr("editShare.passwordKeepHint") }  // "Leave blank to keep the current password"
+        public static var save: String { tr("editShare.save") }  // "Save Changes"
+        public static var savedToast: String { tr("editShare.savedToast") }  // "Share link updated"
+        public static var title: String { tr("editShare.title") }  // "Edit Share Link"
+    }
     public enum EmptyState {
         public static var folderEmpty: String { tr("emptyState.folderEmpty") }  // "This folder is empty."
         public static var loadFailed: String { tr("emptyState.loadFailed") }  // "Couldn't reach the server."
