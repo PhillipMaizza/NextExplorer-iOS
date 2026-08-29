@@ -2410,6 +2410,149 @@
         }
       }
     },
+    "openShareLink.errorExpired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This share link has expired."
+          }
+        }
+      }
+    },
+    "openShareLink.errorInvalidLink": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That doesn't look like a share link."
+          }
+        }
+      }
+    },
+    "openShareLink.errorNotFound": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No share found for that link. It may have been removed."
+          }
+        }
+      }
+    },
+    "openShareLink.expiresPrefix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expires %@"
+          }
+        }
+      }
+    },
+    "openShareLink.fieldLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share link"
+          }
+        }
+      }
+    },
+    "openShareLink.fieldPrompt": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Paste a link or code"
+          }
+        }
+      }
+    },
+    "openShareLink.lookUp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Look Up"
+          }
+        }
+      }
+    },
+    "openShareLink.open": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        }
+      }
+    },
+    "openShareLink.passwordProtected": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password protected"
+          }
+        }
+      }
+    },
+    "openShareLink.restrictedNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restricted to specific accounts. You can only open it if it was shared with yours."
+          }
+        }
+      }
+    },
+    "openShareLink.sharedFile": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared file"
+          }
+        }
+      }
+    },
+    "openShareLink.sharedFolder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shared folder"
+          }
+        }
+      }
+    },
+    "openShareLink.title": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open a Shared Link"
+          }
+        }
+      }
+    },
     "permissions.applyOwnership": {
       "extractionState": "manual",
       "localizations": {

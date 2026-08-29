@@ -258,6 +258,21 @@ public enum L10n {
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }
+    public enum OpenShareLink {
+        public static var errorExpired: String { tr("openShareLink.errorExpired") }  // "This share link has expired."
+        public static var errorInvalidLink: String { tr("openShareLink.errorInvalidLink") }  // "That doesn't look like a share link."
+        public static var errorNotFound: String { tr("openShareLink.errorNotFound") }  // "No share found for that link. It may have been removed."
+        public static func expiresPrefix(_ a0: CVarArg) -> String { tr("openShareLink.expiresPrefix", a0) }
+        public static var fieldLabel: String { tr("openShareLink.fieldLabel") }  // "Share link"
+        public static var fieldPrompt: String { tr("openShareLink.fieldPrompt") }  // "Paste a link or code"
+        public static var lookUp: String { tr("openShareLink.lookUp") }  // "Look Up"
+        public static var open: String { tr("openShareLink.open") }  // "Open"
+        public static var passwordProtected: String { tr("openShareLink.passwordProtected") }  // "Password protected"
+        public static var restrictedNote: String { tr("openShareLink.restrictedNote") }
+        public static var sharedFile: String { tr("openShareLink.sharedFile") }  // "Shared file"
+        public static var sharedFolder: String { tr("openShareLink.sharedFolder") }  // "Shared folder"
+        public static var title: String { tr("openShareLink.title") }  // "Open a Shared Link"
+    }
     public enum Permissions {
         public static var applyOwnership: String { tr("permissions.applyOwnership") }  // "Apply Ownership"
         public static var applyPermissions: String { tr("permissions.applyPermissions") }  // "Apply Permissions"

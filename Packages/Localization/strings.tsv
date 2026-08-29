@@ -272,6 +272,21 @@ editShare.save	Save Changes
 editShare.passwordKeepHint	Leave blank to keep the current password
 editShare.savedToast	Share link updated
 
+# ---- open share link ----
+openShareLink.title	Open a Shared Link
+openShareLink.fieldLabel	Share link
+openShareLink.fieldPrompt	Paste a link or code
+openShareLink.lookUp	Look Up
+openShareLink.open	Open
+openShareLink.sharedFolder	Shared folder
+openShareLink.sharedFile	Shared file
+openShareLink.passwordProtected	Password protected
+openShareLink.restrictedNote	Restricted to specific accounts. You can only open it if it was shared with yours.
+openShareLink.expiresPrefix	Expires %@
+openShareLink.errorInvalidLink	That doesn't look like a share link.
+openShareLink.errorNotFound	No share found for that link. It may have been removed.
+openShareLink.errorExpired	This share link has expired.
+
 # ---- settings ----
 settings.navigationTitle	Settings
 settings.appVersion	Version %1$@ (%2$@)
