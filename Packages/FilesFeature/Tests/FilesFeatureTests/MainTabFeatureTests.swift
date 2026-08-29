@@ -176,6 +176,19 @@ struct MainTabFeatureTests {
     }
 
     @Test
+    func openingASharedLinkFromTheSharedTabSwitchesToBrowseAndNavigates() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .shared
+        let store = TestStore(initialState: state) { MainTabFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.shared(.delegate(.openSharedLink(path: "share/AbC123xyz0", title: "Q3 Report")))) {
+            $0.selectedTab = .browse
+        }
+        await store.receive(\.browse.navigateToDirectory)
+    }
+
+    @Test
     func queueFinishedHidesTheOpenActionWhenAlreadyViewingThatFolder() async {
         var state = MainTabFeature.State(serverURL: serverURL, user: user)
         state.selectedTab = .browse

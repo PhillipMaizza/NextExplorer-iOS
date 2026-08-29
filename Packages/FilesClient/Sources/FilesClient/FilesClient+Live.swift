@@ -122,6 +122,9 @@ extension FilesClient {
             shareableUsers: { serverURL in
                 try await service.shareableUsers(serverURL: serverURL)
             },
+            resolveShareLink: { serverURL, token in
+                try await service.resolveShareLink(serverURL: serverURL, token: token)
+            },
             changeOwnPassword: { serverURL, currentPassword, newPassword in
                 try await service.changeOwnPassword(
                     serverURL: serverURL, currentPassword: currentPassword, newPassword: newPassword
