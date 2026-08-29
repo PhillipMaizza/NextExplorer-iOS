@@ -64,6 +64,19 @@ public struct AppFeature {
                     return .none
                 }
 
+                // Optimistic: trust the stored cookie and show the app straight away, with a
+                // placeholder user filled in from the confirmed `me` response. The splash
+                // covers this swap; a genuinely rejected session drops back to login through
+                // `sessionValidationResponse(.failure)`.
+                if case .authenticated = state.destination {} else {
+                    state.destination = .authenticated(
+                        AuthenticatedFeature.State(
+                            serverURL: credentials.serverBaseURL,
+                            user: User(id: "", username: credentials.username ?? "", email: nil)
+                        )
+                    )
+                }
+
                 let authClient = self.authClient
                 return .run { send in
                     do {
@@ -77,6 +90,9 @@ public struct AppFeature {
 
             case let .sessionValidationResponse(.success(user), credentials):
                 if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                if case let .authenticated(current) = state.destination, current.user == user {
+                    return .none
+                }
                 withAnimation {
                     state.destination = .authenticated(
                         AuthenticatedFeature.State(serverURL: credentials.serverBaseURL, user: user)
@@ -84,7 +100,16 @@ public struct AppFeature {
                 }
                 return .none
 
-            case .sessionValidationResponse(.failure, _):
+            case let .sessionValidationResponse(.failure(error), _):
+                // Only a real auth rejection tears down the optimistic session; a network
+                // hiccup or a non-auth server error leaves it in place for the next request
+                // to sort out.
+                switch error {
+                case .sessionExpired, .sessionCookieMissing, .invalidCredentials, .server(statusCode: 401):
+                    break
+                default:
+                    return .none
+                }
                 withAnimation {
                     state.destination = .unauthenticated(.init())
                 }

@@ -4,7 +4,7 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let horizontalPadding: CGFloat = .space24
     static let topPadding: CGFloat = .space24
     static let bottomPadding: CGFloat = .space24
@@ -14,7 +14,7 @@ private enum Constants {
 /// Shown the instant "Get Info" is tapped, while `GET /api/metadata/*` is still in flight —
 /// a separate, deliberately tiny sheet rather than a loading branch inside `FileInfoSheet`
 /// itself: iOS doesn't reliably honor a `presentationDetents` change on an already-presented
-/// sheet (see `DynamicHeightSheet`), so growing one sheet from "spinner" to "full metadata"
+/// sheet (see `DSDynamicHeightSheet`), so growing one sheet from "spinner" to "full metadata"
 /// gets stuck at the wrong height. Swapping to a *different* sheet identity once the fetch
 /// resolves (`BrowseContentView.infoPhaseBinding`) gets a fresh presentation — and a fresh,
 /// correctly-measured height — instead.
@@ -23,7 +23,7 @@ struct FileInfoLoadingSheet: View {
     let onDismiss: () -> Void
 
     var body: some View {
-        DynamicHeightSheet {
+        DSDynamicHeightSheet {
             content
         }
     }

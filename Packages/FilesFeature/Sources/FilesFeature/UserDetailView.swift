@@ -60,7 +60,7 @@ struct UserDetailView: View {
                 .padding(.vertical, Metrics.contentSpacing)
             }
         }
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .navigationTitle(store.detailUser?.displayName ?? store.detailUser?.username ?? L10n.UserDetail.fallbackName)
         .navigationBarTitleDisplayMode(.inline)
         .sheet(isPresented: volumeSheetPresented) {

@@ -1,3 +1,4 @@
+import AppStorageKeys
 import CoreModels
 import DesignSystem
 import SwiftUI
@@ -31,9 +32,9 @@ struct FileRowView: View {
     var customIconFilled: Bool
     /// Read live so an already-visible row updates immediately when the user changes the
     /// date format in Settings, rather than only on the next fetch.
-    @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
-    @AppStorage("includeTimeInDates") private var includeTime = false
-    @AppStorage("showFilenameExtensions") private var showFilenameExtensions = true
+    @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
+    @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
+    @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
 
     private static let byteFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()

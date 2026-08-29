@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -17,7 +18,7 @@ private enum Constants {
 
 struct DownloadsView: View {
     @Bindable var store: StoreOf<DownloadsFeature>
-    @AppStorage("downloadsViewMode") private var viewModeRaw = DownloadsViewMode.list.rawValue
+    @AppStorage(AppStorageKeys.downloadsViewMode) private var viewModeRaw = DownloadsViewMode.list.rawValue
     @State private var previewedDownload: LocalDownload?
     @State private var isSortSheetPresented = false
     /// The rename alert's in-progress text — kept as plain view state, mirroring
@@ -79,11 +80,7 @@ struct DownloadsView: View {
         "\(Self.byteFormatter.string(fromByteCount: download.size)) • \(download.location.title)"
     }
 
-    private enum OverlayState: Hashable {
-        case none, loading, error, empty, noResults
-    }
-
-    private var overlayState: OverlayState {
+    private var overlayPhase: ListStateOverlay.Phase {
         if store.isLoading && store.downloads.isEmpty {
             .loading
         } else if store.errorMessage != nil {
@@ -135,16 +132,6 @@ struct DownloadsView: View {
         }
     }
 
-    private func selectionIndicator(isSelected: Bool) -> some View {
-        (isSelected ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
-            .resizable()
-            .scaledToFit()
-            .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
-            .frame(width: .iconMedium, height: .iconMedium)
-            .symbolEffect(.bounce, value: isSelected)
-            .transition(.scale.combined(with: .opacity))
-    }
-
     @ViewBuilder
     private func rowContextMenu(for download: LocalDownload) -> some View {
         if let filesAppURL = filesAppURL(for: download) {
@@ -187,7 +174,7 @@ struct DownloadsView: View {
             } label: {
                 HStack(spacing: .space12) {
                     if store.isSelecting {
-                        selectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
+                        DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
                     }
                     FileRowView(name: download.fileName, isDirectory: false, subtitle: subtitle(for: download), kind: (download.fileName as NSString).pathExtension)
                 }
@@ -236,7 +223,7 @@ struct DownloadsView: View {
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .animation(
             .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
             value: store.displayedDownloads
@@ -253,7 +240,7 @@ struct DownloadsView: View {
                         GridCellView(name: download.fileName, isDirectory: false, kind: (download.fileName as NSString).pathExtension)
                             .overlay(alignment: .topLeading) {
                                 if store.isSelecting {
-                                    selectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
+                                    DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
                                 }
                             }
                     }
@@ -272,7 +259,7 @@ struct DownloadsView: View {
                 value: store.displayedDownloads
             )
         }
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
     }
 
     var body: some View {
@@ -301,35 +288,16 @@ struct DownloadsView: View {
             .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
             .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
             .overlay {
-                // `.id(overlayState)` + a stable full-bleed frame: without them, SwiftUI can
-                // interpret the swap between cases as the *same* view moving/resizing (it
-                // visibly slid in from the toolbar's corner) rather than a clean cross-fade.
-                Group {
-                    switch overlayState {
-                    case .loading:
-                        ProgressView()
-                            .transition(.opacity)
-                    case .error:
-                        if let errorMessage = store.errorMessage {
-                            EmptyStateView(icon: IconKit.warning, message: errorMessage) {
-                                store.send(.refreshButtonTapped)
-                            }
-                                .transition(.opacity)
-                        }
-                    case .empty:
-                        EmptyStateView(icon: IconKit.download, message: L10n.Downloads.emptyList)
-                            .transition(.opacity)
-                    case .noResults:
-                        EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
-                            .transition(.opacity)
-                    case .none:
-                        EmptyView()
-                    }
-                }
-                .id(overlayState)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ListStateOverlay(
+                    phase: overlayPhase,
+                    errorMessage: store.errorMessage,
+                    emptyIcon: IconKit.download,
+                    emptyMessage: L10n.Downloads.emptyList,
+                    noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
+                    onRetry: { store.send(.refreshButtonTapped) }
+                )
             }
-            .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
+            .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayPhase)
             .featureToast(error: store.actionErrorMessage)
             .toolbar {
                 selectSortToolbar(

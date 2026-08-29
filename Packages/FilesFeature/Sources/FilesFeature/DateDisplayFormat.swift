@@ -1,7 +1,7 @@
 import Foundation
 import Localization
 
-/// User-facing date formatting choice, persisted locally (`@AppStorage("dateDisplayFormat")`)
+/// User-facing date formatting choice, persisted locally (`AppStorageKeys.dateDisplayFormat`)
 /// rather than through `UserPreferences`/`GET|PATCH /api/settings` — purely a client display
 /// preference the real server has no concept of, same as `browseViewMode`.
 public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {

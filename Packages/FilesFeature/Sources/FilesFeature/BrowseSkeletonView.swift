@@ -40,10 +40,12 @@ struct BrowseSkeletonView: View {
     var body: some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-            .backgroundGradient()
             .clipped()
             .redacted(reason: .placeholder)
             .shimmering()
+            // Gradient last so it sits at full opacity behind the shimmer's dimmed content,
+            // rather than being dimmed to ~45% along with everything else.
+            .backgroundGradient()
             .allowsHitTesting(false)
             .accessibilityHidden(true)
     }

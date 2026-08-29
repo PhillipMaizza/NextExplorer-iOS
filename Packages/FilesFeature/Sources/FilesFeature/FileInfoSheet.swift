@@ -1,10 +1,11 @@
+import AppStorageKeys
 import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
 
 private enum Constants {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let cardSpacing: CGFloat = .space12
     static let cardPadding: CGFloat = .space16
     static let cardVerticalPadding: CGFloat = .space16
@@ -31,8 +32,8 @@ struct FileInfoSheet: View {
     let errorMessage: String?
     let onDismiss: () -> Void
 
-    @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
-    @AppStorage("includeTimeInDates") private var includeTime = false
+    @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
+    @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
 
     private var dateFormat: DateDisplayFormat { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system }
 
@@ -51,7 +52,7 @@ struct FileInfoSheet: View {
     }()
 
     var body: some View {
-        DynamicHeightSheet {
+        DSDynamicHeightSheet {
             content
         }
     }
@@ -66,7 +67,7 @@ struct FileInfoSheet: View {
             )
 
             if let errorMessage {
-                Text(errorMessage).type(.body3(.semibold), style: .error)
+                DSErrorCard(errorMessage)
             } else if let metadata {
                 metadataSections(for: metadata)
             }
@@ -102,7 +103,7 @@ struct FileInfoSheet: View {
 
             if let usage, usage.isMeaningful {
                 card {
-                    DSFieldLabel(L10n.FileInfo.sectionServerDisk)
+                    DSFieldLabel(L10n.FileInfo.sectionServerDisk, uppercased: false)
                     DSUsageBar(fraction: usage.fraction)
                         .padding(.vertical, .space4)
                     Text(L10n.FileInfo.diskFreeOf(

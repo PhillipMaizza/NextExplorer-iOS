@@ -1,4 +1,5 @@
 import AppFeature
+import AppStorageKeys
 import ComposableArchitecture
 import DesignSystem
 import SwiftUI
@@ -23,8 +24,8 @@ struct NextExplorerApp: App {
 
     /// Mirrors the same keys `SettingsView`'s Dark Mode toggle writes. Until the user
     /// overrides it, no override is applied here and the app just follows the system.
-    @AppStorage("hasSetAppearanceOverride") private var hasAppearanceOverride = false
-    @AppStorage("prefersDarkMode") private var prefersDarkModeOverride = false
+    @AppStorage(AppStorageKeys.appearanceOverrideSet) private var hasAppearanceOverride = false
+    @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
 
     init() {
         DesignSystemFonts.registerAll()

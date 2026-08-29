@@ -18,7 +18,7 @@ import UIKit
 ///
 /// Either way there are no per-piece pixel estimates — the rendered content (and footer) is
 /// the source of truth, so it stays correct under Dynamic Type and long labels.
-public struct DynamicHeightSheet<Content: View, Footer: View>: View {
+public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     /// Ignore capped-mode measurement changes smaller than this — sub-point relayout churn
     /// (an icon mid `.contentTransition`) shouldn't re-propose a detent.
     private static var changeThreshold: CGFloat { 1 }
@@ -132,7 +132,7 @@ public struct DynamicHeightSheet<Content: View, Footer: View>: View {
     }
 }
 
-extension DynamicHeightSheet where Footer == EmptyView {
+extension DSDynamicHeightSheet where Footer == EmptyView {
     public init(maxHeightFraction: CGFloat? = nil, @ViewBuilder content: () -> Content) {
         self.init(maxHeightFraction: maxHeightFraction, content: content, footer: { EmptyView() })
     }

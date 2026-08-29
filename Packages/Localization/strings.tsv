@@ -349,6 +349,7 @@ settings.rowClearCache	Clear Cache
 settings.rowOpenSourceLicenses	Open Source Licenses
 settings.rowUserManagement	User Management
 settings.rowChangePassword	Change Password
+settings.rowServer	Server
 settings.storageFootnote	Downloading a folder zips it on the server first. Turn on the toggle above to delete that archive from the server once it's saved to your device. Removing downloads or clearing the cache only affects this device; nothing on the server is touched.
 settings.removeAllDownloadsTitle	Remove All Downloads?
 settings.removeAllDownloadsConfirm	Remove All

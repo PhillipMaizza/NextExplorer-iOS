@@ -356,6 +356,7 @@ public enum L10n {
         public static var rowDateFormat: String { tr("settings.rowDateFormat") }  // "Date Format"
         public static var rowOpenSourceLicenses: String { tr("settings.rowOpenSourceLicenses") }  // "Open Source Licenses"
         public static var rowRemoveAllDownloads: String { tr("settings.rowRemoveAllDownloads") }  // "Remove All Downloads"
+        public static var rowServer: String { tr("settings.rowServer") }  // "Server"
         public static var rowThumbnailSize: String { tr("settings.rowThumbnailSize") }  // "Thumbnail Size"
         public static var rowThumbnails: String { tr("settings.rowThumbnails") }  // "Thumbnails"
         public static var rowUserManagement: String { tr("settings.rowUserManagement") }  // "User Management"

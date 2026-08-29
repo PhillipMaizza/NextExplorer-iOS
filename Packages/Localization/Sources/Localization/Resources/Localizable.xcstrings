@@ -3345,6 +3345,17 @@
         }
       }
     },
+    "settings.rowServer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server"
+          }
+        }
+      }
+    },
     "settings.rowThumbnailSize": {
       "extractionState": "manual",
       "localizations": {

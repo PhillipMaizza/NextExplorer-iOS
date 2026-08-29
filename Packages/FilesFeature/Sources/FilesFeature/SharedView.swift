@@ -39,11 +39,7 @@ struct SharedView: View {
         )
     }
 
-    private enum OverlayState: Hashable {
-        case none, loading, error, empty, noResults
-    }
-
-    private var overlayState: OverlayState {
+    private var overlayPhase: ListStateOverlay.Phase {
         if store.isLoading && store.isCurrentSegmentEmpty {
             .loading
         } else if store.errorMessage != nil {
@@ -92,30 +88,17 @@ struct SharedView: View {
                 }
             }
             .overlay {
-                Group {
-                    switch overlayState {
-                    case .loading:
-                        ProgressView().transition(.opacity)
-                    case .error:
-                        if let errorMessage = store.errorMessage {
-                            EmptyStateView(icon: IconKit.warning, message: errorMessage) {
-                                store.send(.refreshRequested)
-                            }
-                            .transition(.opacity)
-                        }
-                    case .empty:
-                        EmptyStateView(icon: IconKit.shareLink, message: emptyMessage).transition(.opacity)
-                    case .noResults:
-                        EmptyStateView(icon: IconKit.search, message: L10n.Shared.noSearchMatches(store.searchQuery)).transition(.opacity)
-                    case .none:
-                        EmptyView()
-                    }
-                }
-                .id(overlayState)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                ListStateOverlay(
+                    phase: overlayPhase,
+                    errorMessage: store.errorMessage,
+                    emptyIcon: IconKit.shareLink,
+                    emptyMessage: emptyMessage,
+                    noResultsMessage: L10n.Shared.noSearchMatches(store.searchQuery),
+                    onRetry: { store.send(.refreshRequested) }
+                )
                 // Scoped to the overlay only — an implicit `.animation` on the whole view
                 // caught the segmented-control pill mid-tap and animated it with the wrong curve.
-                .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
+                .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayPhase)
             }
             .sheet(isPresented: $isSortSheetPresented) {
                 SortSheet(
@@ -182,7 +165,7 @@ struct SharedView: View {
         .listStyle(.plain)
         .listSectionSpacing(Constants.cardListSpacing)
         .scrollContentBackground(.hidden)
-        .background(Color.backgroundPrimary)
+        .backgroundGradient()
         .refreshable {
             await store.send(.refreshRequested).finish()
             didFinishRefreshing.toggle()
@@ -383,7 +366,7 @@ private struct SharedLinkCard: View {
     /// trailing neutral `+N`.
     @ViewBuilder
     private func recipientChips(names: [String], unnamed: Int) -> some View {
-        FlowLayout(horizontalSpacing: .space4, verticalSpacing: .space4) {
+        DSFlowLayout(horizontalSpacing: .space4, verticalSpacing: .space4) {
             ForEach(names, id: \.self) { name in
                 Text(name)
                     .type(.caption(.semibold))

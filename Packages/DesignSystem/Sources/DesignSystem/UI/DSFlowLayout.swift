@@ -3,7 +3,7 @@ import SwiftUI
 /// Left-to-right wrapping layout — lays each subview after the previous one on the same row
 /// until it no longer fits the proposed width, then drops to the next row. For chip/tag
 /// groups whose count isn't known ahead of time.
-public struct FlowLayout: Layout {
+public struct DSFlowLayout: Layout {
     private let horizontalSpacing: CGFloat
     private let verticalSpacing: CGFloat
 
@@ -56,7 +56,7 @@ public struct FlowLayout: Layout {
 }
 
 #Preview {
-    FlowLayout(horizontalSpacing: 6, verticalSpacing: 6) {
+    DSFlowLayout(horizontalSpacing: 6, verticalSpacing: 6) {
         ForEach(["Swift", "SwiftUI", "Composable Architecture", "iOS", "Layout", "Chips", "Design System", "Figtree"], id: \.self) { tag in
             Text(tag)
                 .type(.caption(.semibold))

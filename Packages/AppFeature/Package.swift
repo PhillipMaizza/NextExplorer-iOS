@@ -11,6 +11,7 @@ let package = Package(
         .package(path: "../CoreModels"),
         .package(path: "../AuthClient"),
         .package(path: "../AuthFeature"),
+        .package(path: "../DesignSystem"),
         .package(path: "../FilesClient"),
         .package(path: "../FilesFeature"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0")
@@ -22,6 +23,7 @@ let package = Package(
                 "CoreModels",
                 "AuthClient",
                 "AuthFeature",
+                "DesignSystem",
                 "FilesClient",
                 "FilesFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
