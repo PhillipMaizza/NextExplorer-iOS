@@ -2046,6 +2046,24 @@ struct BrowseFeatureTests {
         #expect(store.state.officeEditor?.editor == .collabora)
         #expect(store.state.officeEditor?.mode == .view)
     }
+
+    @Test
+    func withBothEditorsEnabledThePreferenceDecidesWhichOpens() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "Report.docx", path: "Docs", dateModified: Date(), size: 10, kind: "docx")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.access = FileAccess(canRead: true, canWrite: true, canUpload: false, canDelete: false, canShare: false, canDownload: true)
+        state.$serverFeatures.withLock {
+            $0 = ServerFeatures(office: ServerFeatures.OfficeEditors(isOnlyOfficeEnabled: true, isCollaboraEnabled: true))
+        }
+        state.$officeEditorPreferenceRaw.withLock { $0 = OfficeEditor.collabora.rawValue }
+
+        let store = TestStore(initialState: state) { BrowseFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.editInOfficeTapped(item))
+        #expect(store.state.officeEditor?.editor == .collabora)
+    }
 }
 
 // MARK: - `BrowseFeature.State` display logic

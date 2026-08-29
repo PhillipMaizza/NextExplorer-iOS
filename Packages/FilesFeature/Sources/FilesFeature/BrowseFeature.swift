@@ -194,6 +194,9 @@ public struct BrowseFeature {
         /// The server's feature flags, fetched once per session by `MainTabFeature`. Read here
         /// to decide whether a document can open in a web office editor.
         @Shared(.inMemory(ServerFeatures.sharedKey)) public var serverFeatures = ServerFeatures()
+        /// Which office editor to prefer when a server has both enabled. Client-local, set in
+        /// Settings, persisted to `UserDefaults` (the web client stores it the same way).
+        @Shared(.appStorage(OfficeEditor.preferenceStorageKey)) var officeEditorPreferenceRaw = OfficeEditor.defaultPreference.rawValue
         /// The "Move" destination chooser, presented for a single item or a multi selection.
         @Presents public var destinationPicker: DestinationPickerFeature.State?
         /// The review sheet shown after files are picked from the `+` menu — file list,
@@ -300,7 +303,11 @@ public struct BrowseFeature {
         /// opens, just in view mode.
         public func availableOfficeEditor(for item: FileItem) -> OfficeEditor? {
             guard !item.isDirectory else { return nil }
-            return OfficeEditorSupport.editor(for: item.kind, features: serverFeatures.office)
+            return OfficeEditorSupport.editor(
+                for: item.kind,
+                features: serverFeatures.office,
+                preference: OfficeEditor.preference(fromRawValue: officeEditorPreferenceRaw)
+            )
         }
     }
 

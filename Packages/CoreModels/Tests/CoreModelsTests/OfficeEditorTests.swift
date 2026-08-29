@@ -24,9 +24,25 @@ struct OfficeEditorTests {
     }
 
     @Test
-    func bothEnabledPrefersOnlyOffice() {
+    func bothEnabledPrefersOnlyOfficeByDefault() {
         let result = OfficeEditorSupport.editor(for: "xlsx", features: editors(onlyOffice: true, collabora: true))
         #expect(result == .onlyOffice)
+    }
+
+    @Test
+    func bothEnabledHonoursTheStatedPreference() {
+        let both = editors(onlyOffice: true, collabora: true)
+        #expect(OfficeEditorSupport.editor(for: "xlsx", features: both, preference: .collabora) == .collabora)
+        #expect(OfficeEditorSupport.editor(for: "xlsx", features: both, preference: .onlyOffice) == .onlyOffice)
+    }
+
+    @Test
+    func thePreferenceIsIgnoredWhenOnlyOneEditorSupportsTheFile() {
+        // Collabora preferred, but only ONLYOFFICE is enabled.
+        #expect(OfficeEditorSupport.editor(for: "docx", features: editors(onlyOffice: true), preference: .collabora) == .onlyOffice)
+        // Both enabled but the ext is only in ONLYOFFICE's advertised list.
+        let features = editors(onlyOffice: true, onlyOfficeExtensions: ["docx"], collabora: true, collaboraExtensions: ["odt"])
+        #expect(OfficeEditorSupport.editor(for: "docx", features: features, preference: .collabora) == .onlyOffice)
     }
 
     @Test
