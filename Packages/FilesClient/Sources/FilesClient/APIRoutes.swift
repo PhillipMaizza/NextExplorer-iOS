@@ -7,6 +7,7 @@ enum APIPath {
     static let browse = "api/browse"
     static let search = "api/search"
     static let favorites = "api/favorites"
+    static let favoritesReorder = "api/favorites/reorder"
     static let volumes = "api/volumes"
     static let settings = "api/settings"
     static let branding = "api/branding"

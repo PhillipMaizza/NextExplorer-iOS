@@ -23,6 +23,11 @@ struct FileRowView: View {
     let supportsThumbnail: Bool
     let serverURL: URL?
     let showThumbnails: Bool
+    /// When set, replaces the folder/file-type glyph — used by the Favorites list to show a
+    /// favorite's custom icon, weight and colour.
+    var customIcon: Image?
+    var customIconTint: Color?
+    var customIconFilled: Bool
     /// Read live so an already-visible row updates immediately when the user changes the
     /// date format in Settings, rather than only on the next fetch.
     @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
@@ -35,7 +40,16 @@ struct FileRowView: View {
         return formatter
     }()
 
-    init(name: String, isDirectory: Bool, subtitle: String? = nil, isFavorite: Bool = false, kind: String? = nil) {
+    init(
+        name: String,
+        isDirectory: Bool,
+        subtitle: String? = nil,
+        isFavorite: Bool = false,
+        kind: String? = nil,
+        customIcon: Image? = nil,
+        customIconTint: Color? = nil,
+        customIconFilled: Bool = false
+    ) {
         self.name = name
         self.isDirectory = isDirectory
         self.dateModified = nil
@@ -47,6 +61,9 @@ struct FileRowView: View {
         self.supportsThumbnail = false
         self.serverURL = nil
         self.showThumbnails = false
+        self.customIcon = customIcon
+        self.customIconTint = customIconTint
+        self.customIconFilled = customIconFilled
     }
 
     init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false) {
@@ -61,6 +78,9 @@ struct FileRowView: View {
         self.supportsThumbnail = item.supportsThumbnail
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
+        self.customIcon = nil
+        self.customIconTint = nil
+        self.customIconFilled = false
     }
 
     private var dateFormat: DateDisplayFormat { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system }
@@ -128,7 +148,14 @@ struct FileRowView: View {
 
     @ViewBuilder
     private var leadingIcon: some View {
-        if isEligibleForThumbnail, let serverURL, let itemID {
+        if let customIcon {
+            customIcon
+                .resizable()
+                .scaledToFit()
+                .symbolVariant(customIconFilled ? .fill : .none)
+                .foregroundStyle(customIconTint ?? Color.accent)
+                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
+        } else if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(serverURL: serverURL, path: itemID, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
                 .frame(width: Constants.iconFrame, height: Constants.iconFrame)
                 .clipShape(RoundedRectangle(cornerRadius: .radiusControl))

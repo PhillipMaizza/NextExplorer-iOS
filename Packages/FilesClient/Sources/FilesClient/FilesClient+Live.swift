@@ -21,6 +21,12 @@ extension FilesClient {
             removeFavorite: { serverURL, path in
                 try await service.removeFavorite(serverURL: serverURL, path: path)
             },
+            updateFavorite: { serverURL, id, label, icon, color in
+                try await service.updateFavorite(serverURL: serverURL, id: id, label: label, icon: icon, color: color)
+            },
+            reorderFavorites: { serverURL, orderedIDs in
+                try await service.reorderFavorites(serverURL: serverURL, orderedIDs: orderedIDs)
+            },
             volumes: { serverURL in
                 try await service.volumes(serverURL: serverURL)
             },
