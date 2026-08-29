@@ -70,6 +70,7 @@ public struct MainTabView: View {
                 set: { if $0 == nil { store.send(.dismissUploadToast) } }
             ), extraBottomInset: Constants.toastTabBarClearance)
             .hapticFeedback(.selection, trigger: store.selectedTab)
+            .task { store.send(.task) }
             .onChange(of: scenePhase) { _, newPhase in
                 guard newPhase == .active else { return }
                 guard hasBecomeActiveBefore else {

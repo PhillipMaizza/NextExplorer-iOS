@@ -258,6 +258,10 @@ public enum L10n {
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }
+    public enum OfficeEditor {
+        public static var editAction: String { tr("officeEditor.editAction") }  // "Edit"
+        public static var loadFailed: String { tr("officeEditor.loadFailed") }  // "Couldn't open the editor for this document."
+    }
     public enum OpenShareLink {
         public static var errorExpired: String { tr("openShareLink.errorExpired") }  // "This share link has expired."
         public static var errorInvalidLink: String { tr("openShareLink.errorInvalidLink") }  // "That doesn't look like a share link."
@@ -296,6 +300,7 @@ public enum L10n {
         public static var createShareLink: String { tr("previewToolbar.createShareLink") }  // "Create share link"
         public static var delete: String { tr("previewToolbar.delete") }  // "Delete"
         public static var download: String { tr("previewToolbar.download") }  // "Download"
+        public static var edit: String { tr("previewToolbar.edit") }  // "Edit"
         public static var rename: String { tr("previewToolbar.rename") }  // "Rename"
         public static var share: String { tr("previewToolbar.share") }  // "Share"
     }

@@ -191,6 +191,9 @@ public struct BrowseFeature {
         /// action follows the user across every folder. `nil` when nothing is staged. Only
         /// ever holds copies — "Move" goes through `destinationPicker`, not the clipboard.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var clipboard: FileClipboard?
+        /// The server's feature flags, fetched once per session by `MainTabFeature`. Read here
+        /// to decide whether a document can open in a web office editor.
+        @Shared(.inMemory(ServerFeatures.sharedKey)) public var serverFeatures = ServerFeatures()
         /// The "Move" destination chooser, presented for a single item or a multi selection.
         @Presents public var destinationPicker: DestinationPickerFeature.State?
         /// The review sheet shown after files are picked from the `+` menu — file list,
@@ -199,6 +202,8 @@ public struct BrowseFeature {
         @Presents public var uploadReview: UploadReviewFeature.State?
         /// The "Permissions" sheet for a single item — view/chmod/chown via `/api/permissions`.
         @Presents public var permissions: PermissionsFeature.State?
+        /// The full-screen web office editor for a single document (ONLYOFFICE or Collabora).
+        @Presents public var officeEditor: OfficeEditorFeature.State?
         /// Set once a transfer finishes; `BrowseContentView` turns this into a success toast,
         /// mirroring `downloadSuccessMessage`'s lifecycle.
         public var transferSuccessMessage: String?
@@ -289,6 +294,14 @@ public struct BrowseFeature {
             self.directoryPath = directoryPath
             self.title = title
         }
+
+        /// The web office editor that should open `item`, if the server has one enabled and
+        /// the file type is supported. Independent of write access — a read-only file still
+        /// opens, just in view mode.
+        public func availableOfficeEditor(for item: FileItem) -> OfficeEditor? {
+            guard !item.isDirectory else { return nil }
+            return OfficeEditorSupport.editor(for: item.kind, features: serverFeatures.office)
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -353,6 +366,8 @@ public struct BrowseFeature {
         case infoTapped(FileItem)
         case permissionsTapped(FileItem)
         case permissions(PresentationAction<PermissionsFeature.Action>)
+        case editInOfficeTapped(FileItem)
+        case officeEditor(PresentationAction<OfficeEditorFeature.Action>)
         case infoDismissed
         case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
         case infoUsageResponse(Result<StorageUsage, FilesClientError>)
@@ -872,6 +887,21 @@ public struct BrowseFeature {
             case .permissions:
                 return .none
 
+            case let .editInOfficeTapped(item):
+                guard let editor = state.availableOfficeEditor(for: item) else { return .none }
+                let mode: OfficeEditorMode = (state.access?.canWrite ?? false) ? .edit : .view
+                state.officeEditor = OfficeEditorFeature.State(
+                    serverURL: state.serverURL, item: item, editor: editor, mode: mode
+                )
+                return .none
+
+            case let .officeEditor(.presented(.delegate(.closed(didEdit)))):
+                state.officeEditor = nil
+                return didEdit ? load(&state) : .none
+
+            case .officeEditor:
+                return .none
+
             case .infoDismissed:
                 state.infoItem = nil
                 state.infoMetadata = nil
@@ -970,6 +1000,9 @@ public struct BrowseFeature {
         }
         .ifLet(\.$permissions, action: \.permissions) {
             PermissionsFeature()
+        }
+        .ifLet(\.$officeEditor, action: \.officeEditor) {
+            OfficeEditorFeature()
         }
     }
 

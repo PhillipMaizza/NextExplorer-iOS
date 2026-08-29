@@ -16,6 +16,7 @@ struct FilePreviewContainerView: View {
     let errorMessage: String?
     let onDismiss: () -> Void
     var onShareLink: (() -> Void)?
+    var onEdit: (() -> Void)?
     var onRename: (() -> Void)?
     var onDownload: (() -> Void)?
     var onDelete: (() -> Void)?
@@ -28,6 +29,7 @@ struct FilePreviewContainerView: View {
                     title: fileURL?.lastPathComponent,
                     systemShare: .local(fileURL),
                     onShareLink: onShareLink,
+                    onEdit: onEdit,
                     onRename: onRename,
                     onDownload: onDownload,
                     onDelete: onDelete,
