@@ -7,6 +7,22 @@ public enum L10n {
         public static var readonly: String { tr("accessMode.readonly") }  // "Read Only"
         public static var readwrite: String { tr("accessMode.readwrite") }  // "Read & Write"
     }
+    public enum AccessRules {
+        public static var addRule: String { tr("accessRules.addRule") }  // "Add Rule"
+        public static var empty: String { tr("accessRules.empty") }  // "No access rules configured."
+        public static var emptyHint: String { tr("accessRules.emptyHint") }  // "Add a rule to override access for a path."
+        public static var navigationTitle: String { tr("accessRules.navigationTitle") }  // "Folder Access Rules"
+        public static var pathLabel: String { tr("accessRules.pathLabel") }  // "Path"
+        public static var pathPlaceholder: String { tr("accessRules.pathPlaceholder") }  // "Documents/Reports"
+        public static var permissionHidden: String { tr("accessRules.permissionHidden") }  // "Hidden"
+        public static var permissionReadOnly: String { tr("accessRules.permissionReadOnly") }  // "Read only"
+        public static var permissionReadWrite: String { tr("accessRules.permissionReadWrite") }  // "Read & write"
+        public static var recursive: String { tr("accessRules.recursive") }  // "Apply to subfolders"
+        public static var remove: String { tr("accessRules.remove") }  // "Remove"
+        public static var saveButton: String { tr("accessRules.saveButton") }  // "Save Changes"
+        public static var subtitle: String { tr("accessRules.subtitle") }  // "Override read and write access for specific paths."
+        public static var unavailable: String { tr("accessRules.unavailable") }  // "Access rules are only available to administrators."
+    }
     public enum Archive {
         public static var emptyFolder: String { tr("archive.emptyFolder") }  // "This folder is empty."
         public static var openArchiveFailed: String { tr("archive.openArchiveFailed") }  // "Couldn't open this archive."
@@ -337,12 +353,14 @@ public enum L10n {
         public static var removeAllDownloadsConfirm: String { tr("settings.removeAllDownloadsConfirm") }  // "Remove All"
         public static var removeAllDownloadsMessage: String { tr("settings.removeAllDownloadsMessage") }
         public static var removeAllDownloadsTitle: String { tr("settings.removeAllDownloadsTitle") }  // "Remove All Downloads?"
+        public static var rowAccessRules: String { tr("settings.rowAccessRules") }  // "Folder Access Rules"
         public static var rowChangePassword: String { tr("settings.rowChangePassword") }  // "Change Password"
         public static var rowClearCache: String { tr("settings.rowClearCache") }  // "Clear Cache"
         public static var rowDateFormat: String { tr("settings.rowDateFormat") }  // "Date Format"
         public static var rowOpenSourceLicenses: String { tr("settings.rowOpenSourceLicenses") }  // "Open Source Licenses"
         public static var rowRemoveAllDownloads: String { tr("settings.rowRemoveAllDownloads") }  // "Remove All Downloads"
         public static var rowThumbnailSize: String { tr("settings.rowThumbnailSize") }  // "Thumbnail Size"
+        public static var rowThumbnails: String { tr("settings.rowThumbnails") }  // "Thumbnails"
         public static var rowUserManagement: String { tr("settings.rowUserManagement") }  // "User Management"
         public static var sectionAdmin: String { tr("settings.sectionAdmin") }  // "Admin"
         public static var sectionDisplay: String { tr("settings.sectionDisplay") }  // "Display"
@@ -422,6 +440,20 @@ public enum L10n {
     public enum TextPreview {
         public static var loadFailed: String { tr("textPreview.loadFailed") }
         public static var saved: String { tr("textPreview.saved") }  // "Saved"
+    }
+    public enum ThumbnailSettings {
+        public static var concurrency: String { tr("thumbnailSettings.concurrency") }  // "Concurrency"
+        public static var concurrencyHelp: String { tr("thumbnailSettings.concurrencyHelp") }  // "How many thumbnails the server builds at once."
+        public static var enable: String { tr("thumbnailSettings.enable") }  // "Generate thumbnails"
+        public static var enableHelp: String { tr("thumbnailSettings.enableHelp") }  // "Turn off to serve full images everywhere instead."
+        public static var maxDimension: String { tr("thumbnailSettings.maxDimension") }  // "Max dimension"
+        public static var maxDimensionHelp: String { tr("thumbnailSettings.maxDimensionHelp") }  // "Longest edge of a generated thumbnail, in pixels."
+        public static var navigationTitle: String { tr("thumbnailSettings.navigationTitle") }  // "Thumbnails"
+        public static var quality: String { tr("thumbnailSettings.quality") }  // "Quality"
+        public static var qualityHelp: String { tr("thumbnailSettings.qualityHelp") }  // "Higher looks better and uses more space."
+        public static var saveButton: String { tr("thumbnailSettings.saveButton") }  // "Save Changes"
+        public static var subtitle: String { tr("thumbnailSettings.subtitle") }
+        public static var unavailable: String { tr("thumbnailSettings.unavailable") }  // "Thumbnail settings are only available to administrators."
     }
     public enum ThumbnailSize {
         public static var large: String { tr("thumbnailSize.large") }  // "Large"

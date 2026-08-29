@@ -23,6 +23,160 @@
         }
       }
     },
+    "accessRules.addRule": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Rule"
+          }
+        }
+      }
+    },
+    "accessRules.empty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No access rules configured."
+          }
+        }
+      }
+    },
+    "accessRules.emptyHint": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a rule to override access for a path."
+          }
+        }
+      }
+    },
+    "accessRules.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder Access Rules"
+          }
+        }
+      }
+    },
+    "accessRules.pathLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Path"
+          }
+        }
+      }
+    },
+    "accessRules.pathPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Documents/Reports"
+          }
+        }
+      }
+    },
+    "accessRules.permissionHidden": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hidden"
+          }
+        }
+      }
+    },
+    "accessRules.permissionReadOnly": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read only"
+          }
+        }
+      }
+    },
+    "accessRules.permissionReadWrite": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Read & write"
+          }
+        }
+      }
+    },
+    "accessRules.recursive": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Apply to subfolders"
+          }
+        }
+      }
+    },
+    "accessRules.remove": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remove"
+          }
+        }
+      }
+    },
+    "accessRules.saveButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "accessRules.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Override read and write access for specific paths."
+          }
+        }
+      }
+    },
+    "accessRules.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Access rules are only available to administrators."
+          }
+        }
+      }
+    },
     "archive.emptyFolder": {
       "extractionState": "manual",
       "localizations": {
@@ -3136,6 +3290,17 @@
         }
       }
     },
+    "settings.rowAccessRules": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder Access Rules"
+          }
+        }
+      }
+    },
     "settings.rowChangePassword": {
       "extractionState": "manual",
       "localizations": {
@@ -3198,6 +3363,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Thumbnail Size"
+          }
+        }
+      }
+    },
+    "settings.rowThumbnails": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thumbnails"
           }
         }
       }
@@ -3957,6 +4133,138 @@
           "stringUnit": {
             "state": "translated",
             "value": "Saved"
+          }
+        }
+      }
+    },
+    "thumbnailSettings.concurrency": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Concurrency"
+          }
+        }
+      }
+    },
+    "thumbnailSettings.concurrencyHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "How many thumbnails the server builds at once."
+          }
+        }
+      }
+    },
+    "thumbnailSettings.enable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Generate thumbnails"
+          }
+        }
+      }
+    },
+    "thumbnailSettings.enableHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn off to serve full images everywhere instead."
+          }
+        }
+      }
+    },
+    "thumbnailSettings.maxDimension": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Max dimension"
+          }
+        }
+      }
+    },
+    "thumbnailSettings.maxDimensionHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Longest edge of a generated thumbnail, in pixels."
+          }
+        }
+      }
+    },
+    "thumbnailSettings.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thumbnails"
+          }
+        }
+      }
+    },
+    "thumbnailSettings.quality": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quality"
+          }
+        }
+      }
+    },
+    "thumbnailSettings.qualityHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Higher looks better and uses more space."
+          }
+        }
+      }
+    },
+    "thumbnailSettings.saveButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "thumbnailSettings.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Control how the server generates image thumbnails for every client."
+          }
+        }
+      }
+    },
+    "thumbnailSettings.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Thumbnail settings are only available to administrators."
           }
         }
       }

@@ -866,6 +866,54 @@ struct FilesService: Sendable {
         try Self.validate(response)
     }
 
+    /// `GET /api/settings` — extracts the admin-only `thumbnails` + `access.rules`. A
+    /// non-admin session just gets no such keys, decoded as nil / empty.
+    func fetchSystemSettings(serverURL: URL) async throws -> SystemSettings {
+        let url = serverURL.appendingPathComponent(APIPath.settings)
+        let request = Self.makeRequest(url: url, method: .get)
+        return try await send(request, decoding: SystemSettings.self)
+    }
+
+    /// `PATCH /api/settings` with a full `{ thumbnails: {...} }` object; the server clamps
+    /// each field and echoes `getSettingsForUser`, out of which `thumbnails` is read.
+    func updateThumbnailSettings(serverURL: URL, settings: ThumbnailSettings) async throws -> ThumbnailSettings {
+        let url = serverURL.appendingPathComponent(APIPath.settings)
+        var request = Self.makeRequest(url: url, method: .patch)
+        request.setJSONContentType()
+        do {
+            let body = PatchThumbnailsBody(thumbnails: .init(
+                enabled: settings.isEnabled,
+                size: settings.size,
+                quality: settings.quality,
+                concurrency: settings.concurrency
+            ))
+            request.httpBody = try JSONEncoder().encode(body)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let echoed = try await sendReportingMessage(request, decoding: SystemSettings.self)
+        guard let thumbnails = echoed.thumbnails else {
+            throw FilesClientError.decoding("Settings response carried no thumbnails.")
+        }
+        return thumbnails
+    }
+
+    /// `PATCH /api/settings` with `{ access: { rules: [...] } }`; the whole array replaces the
+    /// stored rules. The echo's `access.rules` is the server-normalised result.
+    func updateAccessRules(serverURL: URL, rules: [AccessRule]) async throws -> [AccessRule] {
+        let url = serverURL.appendingPathComponent(APIPath.settings)
+        var request = Self.makeRequest(url: url, method: .patch)
+        request.setJSONContentType()
+        do {
+            let body = PatchAccessBody(access: .init(rules: rules))
+            request.httpBody = try JSONEncoder().encode(body)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        let echoed = try await sendReportingMessage(request, decoding: SystemSettings.self)
+        return echoed.accessRules
+    }
+
     /// `GET /api/branding` (`backend/src/routes/settings.js`) — unauthenticated, returns the
     /// branding object directly (not enveloped).
     func fetchBranding(serverURL: URL) async throws -> Branding {
@@ -952,6 +1000,23 @@ struct FilesService: Sendable {
             let appLogoUrl: String
         }
         let branding: Branding
+    }
+
+    private struct PatchThumbnailsBody: Encodable {
+        struct Thumbnails: Encodable {
+            let enabled: Bool
+            let size: Int
+            let quality: Int
+            let concurrency: Int
+        }
+        let thumbnails: Thumbnails
+    }
+
+    private struct PatchAccessBody: Encodable {
+        struct Access: Encodable {
+            let rules: [AccessRule]
+        }
+        let access: Access
     }
 
     private struct LogoUploadEnvelope: Decodable {
