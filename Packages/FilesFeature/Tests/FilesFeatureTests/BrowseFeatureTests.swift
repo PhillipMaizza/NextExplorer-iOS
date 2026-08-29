@@ -1814,7 +1814,7 @@ struct BrowseFeatureTests {
     // MARK: File actions — get info
 
     @Test
-    func infoTappedFetchesMetadataAndShowsIt() async {
+    func infoTappedOnAFolderFetchesMetadataAndServerDiskUsage() async {
         let serverURL = URL(string: "https://example.com")!
         let item = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
         let metadata = FileMetadata(
@@ -1826,11 +1826,46 @@ struct BrowseFeatureTests {
             dateCreated: Date(timeIntervalSince1970: 1_700_000_000),
             directory: FileMetadata.DirectorySummary(totalSize: 1_024, fileCount: 3, dirCount: 1, truncated: false)
         )
+        let usage = StorageUsage(path: "Photos", size: 30, free: 70, total: 100)
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.fetchMetadata = { _, _ in metadata }
+            $0.filesClient.fetchUsage = { _, path in
+                #expect(path == "Photos")
+                return usage
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.infoTapped(item)) {
+            $0.infoItem = item
+            $0.isLoadingInfoMetadata = true
+        }
+        await store.receive(\.infoMetadataResponse.success) {
+            $0.isLoadingInfoMetadata = false
+            $0.infoMetadata = metadata
+        }
+        await store.receive(\.infoUsageResponse.success) {
+            $0.infoUsage = usage
+        }
+    }
+
+    @Test
+    func infoTappedOnAFileSkipsTheUsageFetch() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 12, kind: "txt")
+        let metadata = FileMetadata(path: "notes.txt", name: "notes.txt", kind: "txt", size: 12, dateModified: Date(), dateCreated: Date())
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.fetchMetadata = { _, _ in metadata }
+            $0.filesClient.fetchUsage = { _, _ in
+                Issue.record("a file's Get Info should not fetch disk usage")
+                return StorageUsage()
+            }
         }
 
         await store.send(.infoTapped(item)) {
@@ -1840,6 +1875,18 @@ struct BrowseFeatureTests {
         await store.receive(\.infoMetadataResponse.success) {
             $0.isLoadingInfoMetadata = false
             $0.infoMetadata = metadata
+        }
+    }
+
+    @Test
+    func anAllZeroUsageResponseIsDropped() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.infoUsage = StorageUsage(path: "x", size: 1, free: 1, total: 2)
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.infoUsageResponse(.success(StorageUsage(path: "Photos", size: 0, free: 0, total: 0)))) {
+            $0.infoUsage = nil
         }
     }
 
@@ -1880,11 +1927,14 @@ struct BrowseFeatureTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.fetchMetadata = { _, _ in secondMetadata }
+            $0.filesClient.fetchUsage = { _, _ in StorageUsage() }
         }
+        store.exhaustivity = .off
 
         await store.send(.infoTapped(second)) {
             $0.infoItem = second
             $0.infoMetadata = nil
+            $0.infoUsage = nil
             $0.infoErrorMessage = nil
             $0.isLoadingInfoMetadata = true
         }
@@ -1901,6 +1951,7 @@ struct BrowseFeatureTests {
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.infoItem = item
         state.infoMetadata = FileMetadata(path: "Photos", name: "Photos", kind: "directory", size: 0, dateModified: Date(), dateCreated: Date())
+        state.infoUsage = StorageUsage(path: "Photos", size: 1, free: 1, total: 2)
         state.infoErrorMessage = "some error"
         state.isLoadingInfoMetadata = true
 
@@ -1911,6 +1962,7 @@ struct BrowseFeatureTests {
         await store.send(.infoDismissed) {
             $0.infoItem = nil
             $0.infoMetadata = nil
+            $0.infoUsage = nil
             $0.infoErrorMessage = nil
             $0.isLoadingInfoMetadata = false
         }

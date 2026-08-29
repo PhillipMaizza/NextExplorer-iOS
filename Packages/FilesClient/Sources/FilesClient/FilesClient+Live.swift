@@ -65,6 +65,9 @@ extension FilesClient {
             fetchMetadata: { serverURL, path in
                 try await service.fetchMetadata(serverURL: serverURL, path: path)
             },
+            fetchUsage: { serverURL, path in
+                try await service.fetchUsage(serverURL: serverURL, path: path)
+            },
             thumbnailURL: { serverURL, path in
                 try await service.thumbnailURL(serverURL: serverURL, path: path)
             },

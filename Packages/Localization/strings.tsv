@@ -271,6 +271,8 @@ settings.appVersion	Version %1$@ (%2$@)
 settings.sectionGeneral	General
 settings.sectionDisplay	Display
 settings.sectionStorage	Storage
+settings.sectionServerStorage	Server Storage
+settings.serverStorageUsed	%1$@ of %2$@
 settings.sectionLicenses	Licenses
 settings.sectionUsers	Users
 settings.sectionAdmin	Admin
@@ -340,6 +342,8 @@ fileInfo.rowDateCreated	Date Created
 fileInfo.rowFiles	Files
 fileInfo.rowFolders	Folders
 fileInfo.rowTotalSize	Total Size
+fileInfo.sectionServerDisk	Server Disk
+fileInfo.diskFreeOf	%1$@ free of %2$@
 fileInfo.rowDimensions	Dimensions
 fileInfo.rowCamera	Camera
 fileInfo.rowLens	Lens

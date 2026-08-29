@@ -1893,6 +1893,17 @@
         }
       }
     },
+    "fileInfo.diskFreeOf": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ free of %2$@"
+          }
+        }
+      }
+    },
     "fileInfo.navigationTitleFolder": {
       "extractionState": "manual",
       "localizations": {
@@ -2054,6 +2065,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Total Size"
+          }
+        }
+      }
+    },
+    "fileInfo.sectionServerDisk": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server Disk"
           }
         }
       }
@@ -2828,6 +2850,17 @@
         }
       }
     },
+    "settings.sectionServerStorage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server Storage"
+          }
+        }
+      }
+    },
     "settings.sectionStorage": {
       "extractionState": "manual",
       "localizations": {
@@ -2846,6 +2879,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Users"
+          }
+        }
+      }
+    },
+    "settings.serverStorageUsed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ of %2$@"
           }
         }
       }
