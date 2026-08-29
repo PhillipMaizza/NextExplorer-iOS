@@ -11,6 +11,17 @@ public struct FilesClient: Sendable {
     public var favorites: @Sendable (_ serverURL: URL) async throws -> [Favorite]
     public var addFavorite: @Sendable (_ serverURL: URL, _ path: String) async throws -> Favorite
     public var removeFavorite: @Sendable (_ serverURL: URL, _ path: String) async throws -> Void
+    /// `PATCH /api/favorites/:id` (`backend/src/routes/favorites.js`): updates a favorite's
+    /// label, icon and colour. An empty `label`/`color` clears it server side; a blank `icon`
+    /// falls back to the server default. Returns the single updated favorite.
+    public var updateFavorite: @Sendable (
+        _ serverURL: URL, _ id: String, _ label: String?, _ icon: String, _ color: String?
+    ) async throws -> Favorite
+    /// `PATCH /api/favorites/reorder`: `orderedIDs` must list every favorite exactly once or
+    /// the server 400s. Returns the full list in the new order (`position` = index).
+    public var reorderFavorites: @Sendable (
+        _ serverURL: URL, _ orderedIDs: [String]
+    ) async throws -> [Favorite]
     public var volumes: @Sendable (_ serverURL: URL) async throws -> [Volume]
     public var fetchPreferences: @Sendable (_ serverURL: URL) async throws -> UserPreferences
     public var updatePreference: @Sendable (
