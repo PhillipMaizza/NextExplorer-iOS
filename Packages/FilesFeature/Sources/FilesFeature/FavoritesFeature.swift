@@ -1,43 +1,22 @@
 import ComposableArchitecture
 import CoreModels
-import DesignSystem
 import FilesClient
 import Foundation
 import Localization
-import SwiftUI
 
 @Reducer
 public struct FavoritesFeature {
-    public enum SortOption: String, Hashable, Sendable, CaseIterable {
-        case name, dateAdded
-
-        var title: String {
-            switch self {
-            case .name: L10n.Sort.name
-            case .dateAdded: L10n.Sort.dateAdded
-            }
-        }
-
-        var icon: Image {
-            switch self {
-            case .name: IconKit.textformat
-            case .dateAdded: IconKit.calendar
-            }
-        }
-    }
-
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
         public var favorites: IdentifiedArrayOf<Favorite> = []
         public var isLoading = false
         public var errorMessage: String?
-        /// A failed remove, single or bulk, surfaced as a toast rather than the list level
+        /// A failed remove/reorder, surfaced as a toast rather than the list level
         /// `errorMessage`, which is only shown when the list is empty.
         public var actionErrorMessage: String?
         public var searchQuery = ""
-        public var sortOption: SortOption = .name
-        public var sortDirection: BrowseFeature.SortDirection = .ascending
+        @Presents public var editSheet: FavoriteEditFeature.State?
         public var isSelecting = false
         public var selectedFavoriteIDs: Set<Favorite.ID> = []
         public var bulkRemoveConfirmationIsPresented = false
@@ -49,23 +28,16 @@ public struct FavoritesFeature {
             self.serverURL = serverURL
         }
 
-        /// Client-side filter + sort over the already-loaded list — the server returns
-        /// favorites in insertion order (`position ASC, created_at ASC`), which isn't a
-        /// useful display order once sort/search are in play.
+        /// Favorites are shown in the user's own order (`position`, drag to reorder) — the
+        /// only transform here is the search filter. `favorites` is kept in `position` order
+        /// by `load` and every reorder response.
         public var displayedFavorites: [Favorite] {
-            let matches = searchQuery.isEmpty
-                ? Array(favorites)
-                : favorites.filter { FuzzyMatch.matches(query: searchQuery, in: $0.displayName) }
-            let sorted = matches.sorted { lhs, rhs in
-                switch sortOption {
-                case .name:
-                    lhs.displayName.localizedCaseInsensitiveCompare(rhs.displayName) == .orderedAscending
-                case .dateAdded:
-                    lhs.createdAt < rhs.createdAt
-                }
-            }
-            return sortDirection == .ascending ? sorted : sorted.reversed()
+            guard !searchQuery.isEmpty else { return Array(favorites) }
+            return favorites.filter { FuzzyMatch.matches(query: searchQuery, in: $0.displayName) }
         }
+
+        /// Drag reorder only makes sense over the full, unfiltered list.
+        public var canReorder: Bool { searchQuery.isEmpty && !isSelecting }
     }
 
     public enum Action: Equatable, Sendable {
@@ -75,9 +47,11 @@ public struct FavoritesFeature {
         case rowTapped(Favorite)
         case removeTapped(Favorite)
         case removeResponse(Favorite.ID, Result<Bool, FilesClientError>)
+        case editTapped(Favorite)
+        case editSheet(PresentationAction<FavoriteEditFeature.Action>)
+        case favoritesMoved(IndexSet, Int)
+        case reorderResponse(Result<[Favorite], FilesClientError>)
         case searchQueryChanged(String)
-        case sortOptionChanged(SortOption)
-        case sortDirectionChanged(BrowseFeature.SortDirection)
         case selectModeToggled
         case itemSelectionToggled(Favorite.ID)
         case selectAllTapped
@@ -105,6 +79,8 @@ public struct FavoritesFeature {
 
     @Dependency(\.filesClient) var filesClient
 
+    private enum CancelID { case reorder }
+
     public init() {}
 
     public var body: some ReducerOf<Self> {
@@ -119,7 +95,7 @@ public struct FavoritesFeature {
 
             case let .favoritesResponse(.success(favorites)):
                 state.isLoading = false
-                state.favorites = IdentifiedArray(uniqueElements: favorites)
+                state.favorites = IdentifiedArray(uniqueElements: favorites.sorted { $0.position < $1.position })
                 state.errorMessage = nil
                 return .none
 
@@ -151,16 +127,46 @@ public struct FavoritesFeature {
                 state.actionErrorMessage = error.userMessage
                 return .none
 
+            case let .editTapped(favorite):
+                state.editSheet = FavoriteEditFeature.State(serverURL: state.serverURL, favorite: favorite)
+                return .none
+
+            case let .editSheet(.presented(.delegate(.updated(favorite)))):
+                state.favorites[id: favorite.id] = favorite
+                state.editSheet = nil
+                return .send(.delegate(.favoritesChanged))
+
+            case .editSheet:
+                return .none
+
+            case let .favoritesMoved(source, destination):
+                guard state.canReorder else { return .none }
+                var items = Array(state.favorites)
+                items.move(fromOffsets: source, toOffset: destination)
+                state.favorites = IdentifiedArray(uniqueElements: items)
+                state.actionErrorMessage = nil
+                let orderedIDs = items.map(\.id)
+                let serverURL = state.serverURL
+                let filesClient = self.filesClient
+                return .run { send in
+                    await send(.reorderResponse(await apiResult {
+                        try await filesClient.reorderFavorites(serverURL, orderedIDs)
+                    }))
+                }
+                .cancellable(id: CancelID.reorder, cancelInFlight: true)
+
+            case let .reorderResponse(.success(favorites)):
+                state.favorites = IdentifiedArray(uniqueElements: favorites.sorted { $0.position < $1.position })
+                return .send(.delegate(.favoritesChanged))
+
+            case .reorderResponse(.failure):
+                state.actionErrorMessage = L10n.Favorites.reorderFailed
+                // The optimistic move may be out of sync with the server now — refetch the
+                // authoritative order.
+                return load(&state)
+
             case let .searchQueryChanged(query):
                 state.searchQuery = query
-                return .none
-
-            case let .sortOptionChanged(option):
-                state.sortOption = option
-                return .none
-
-            case let .sortDirectionChanged(direction):
-                state.sortDirection = direction
                 return .none
 
             case .selectModeToggled:
@@ -247,6 +253,9 @@ public struct FavoritesFeature {
         }
         .forEach(\.path, action: \.path) {
             BrowseFeature()
+        }
+        .ifLet(\.$editSheet, action: \.editSheet) {
+            FavoriteEditFeature()
         }
     }
 

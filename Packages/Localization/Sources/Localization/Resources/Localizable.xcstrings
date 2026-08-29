@@ -1684,6 +1684,17 @@
         }
       }
     },
+    "favorites.actionEdit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit"
+          }
+        }
+      }
+    },
     "favorites.actionRemoveFromFavorites": {
       "extractionState": "manual",
       "localizations": {
@@ -1691,6 +1702,105 @@
           "stringUnit": {
             "state": "translated",
             "value": "Remove from Favorites"
+          }
+        }
+      }
+    },
+    "favorites.editColorDefault": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Default"
+          }
+        }
+      }
+    },
+    "favorites.editColorLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Color"
+          }
+        }
+      }
+    },
+    "favorites.editIconLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Icon"
+          }
+        }
+      }
+    },
+    "favorites.editIconOutline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outline"
+          }
+        }
+      }
+    },
+    "favorites.editIconSolid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solid"
+          }
+        }
+      }
+    },
+    "favorites.editNameErrorEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name can't be empty."
+          }
+        }
+      }
+    },
+    "favorites.editNameLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name"
+          }
+        }
+      }
+    },
+    "favorites.editSave": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "favorites.editTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Edit Favorite"
           }
         }
       }
@@ -1768,6 +1878,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Removed %1$lld of %2$lld."
+          }
+        }
+      }
+    },
+    "favorites.reorderFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't save the new order."
           }
         }
       }

@@ -27,9 +27,21 @@ struct GridCellView: View {
     let serverURL: URL?
     let showThumbnails: Bool
     let iconSize: CGFloat
+    /// Favorites grid: a favorite's custom icon, weight + colour in place of the folder glyph.
+    var customIcon: Image?
+    var customIconTint: Color?
+    var customIconFilled: Bool
     @AppStorage("showFilenameExtensions") private var showFilenameExtensions = true
 
-    init(name: String, isDirectory: Bool, isFavorite: Bool = false, kind: String? = nil) {
+    init(
+        name: String,
+        isDirectory: Bool,
+        isFavorite: Bool = false,
+        kind: String? = nil,
+        customIcon: Image? = nil,
+        customIconTint: Color? = nil,
+        customIconFilled: Bool = false
+    ) {
         self.name = name
         self.isDirectory = isDirectory
         self.isFavorite = isFavorite
@@ -39,6 +51,9 @@ struct GridCellView: View {
         self.serverURL = nil
         self.showThumbnails = false
         self.iconSize = Constants.defaultIconSize
+        self.customIcon = customIcon
+        self.customIconTint = customIconTint
+        self.customIconFilled = customIconFilled
     }
 
     init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, iconSize: CGFloat = Constants.defaultIconSize) {
@@ -51,6 +66,9 @@ struct GridCellView: View {
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
         self.iconSize = iconSize
+        self.customIcon = nil
+        self.customIconTint = nil
+        self.customIconFilled = false
     }
 
     private var isHidden: Bool { isHiddenFileName(name) }
@@ -97,7 +115,14 @@ struct GridCellView: View {
 
     @ViewBuilder
     private var icon: some View {
-        if isEligibleForThumbnail, let serverURL, let itemID {
+        if let customIcon {
+            customIcon
+                .resizable()
+                .scaledToFit()
+                .symbolVariant(customIconFilled ? .fill : .none)
+                .foregroundStyle(customIconTint ?? Color.accent)
+                .frame(width: iconSize, height: iconSize)
+        } else if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(serverURL: serverURL, path: itemID, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
                 .frame(width: iconSize, height: iconSize)
                 .clipShape(RoundedRectangle(cornerRadius: .radiusControl))

@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import FilesClient
 import Foundation
+import Localization
 import Testing
 
 @testable import FilesFeature
@@ -11,8 +12,8 @@ import Testing
 struct FavoritesFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
 
-    private func makeFavorite(id: String = "1", path: String = "Documents", label: String? = nil) -> Favorite {
-        Favorite(id: id, path: path, label: label, icon: "folder", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+    private func makeFavorite(id: String = "1", path: String = "Documents", label: String? = nil, position: Int = 0) -> Favorite {
+        Favorite(id: id, path: path, label: label, icon: "folder", color: nil, position: position, createdAt: Date(), updatedAt: Date())
     }
 
     // MARK: Happy path
@@ -225,22 +226,108 @@ struct FavoritesFeatureTests {
     }
 
     @Test
-    func sortOptionAndDirectionChangeTheDisplayedOrder() async {
-        let alpha = makeFavorite(id: "1", path: "Alpha")
-        let beta = makeFavorite(id: "2", path: "Beta")
+    func loadOrdersFavoritesByPositionRegardlessOfResponseOrder() async {
+        let first = makeFavorite(id: "1", path: "Alpha", position: 0)
+        let second = makeFavorite(id: "2", path: "Beta", position: 1)
+        let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.filesClient.favorites = { _ in [second, first] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.onAppear)
+        await store.skipReceivedActions()
+
+        #expect(store.state.displayedFavorites == [first, second])
+    }
+
+    @Test
+    func movingAFavoriteReordersOptimisticallyAndPatchesTheFullOrder() async {
+        let a = makeFavorite(id: "a", path: "A", position: 0)
+        let b = makeFavorite(id: "b", path: "B", position: 1)
+        let c = makeFavorite(id: "c", path: "C", position: 2)
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.favorites = [beta, alpha]
+        state.favorites = [a, b, c]
+
+        let recorded = LockIsolated<[String]?>(nil)
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.filesClient.reorderFavorites = { _, ids in
+                recorded.setValue(ids)
+                return ids.enumerated().map { index, id in
+                    Favorite(id: id, path: id, label: nil, icon: "folder", color: nil, position: index, createdAt: Date(), updatedAt: Date())
+                }
+            }
+        }
+        store.exhaustivity = .off
+
+        // Move C to the front.
+        await store.send(.favoritesMoved(IndexSet(integer: 2), 0))
+        #expect(store.state.favorites.map(\.id) == ["c", "a", "b"])
+
+        await store.skipReceivedActions()
+        #expect(recorded.value == ["c", "a", "b"])
+        #expect(store.state.favorites.map(\.id) == ["c", "a", "b"])
+    }
+
+    @Test
+    func aFailedReorderShowsAToastAndRefetchesTheAuthoritativeOrder() async {
+        let a = makeFavorite(id: "a", path: "A", position: 0)
+        let b = makeFavorite(id: "b", path: "B", position: 1)
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [a, b]
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
+        } withDependencies: {
+            $0.filesClient.reorderFavorites = { _, _ in throw FilesClientError.network("offline") }
+            $0.filesClient.favorites = { _ in [a, b] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.favoritesMoved(IndexSet(integer: 1), 0))
+        await store.skipReceivedActions()
+
+        #expect(store.state.actionErrorMessage == L10n.Favorites.reorderFailed)
+        #expect(store.state.favorites.map(\.id) == ["a", "b"])
+    }
+
+    @Test
+    func reorderIsIgnoredWhileSearching() async {
+        let a = makeFavorite(id: "a", path: "A", position: 0)
+        let b = makeFavorite(id: "b", path: "B", position: 1)
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [a, b]
+        state.searchQuery = "a"
+
+        let store = TestStore(initialState: state) { FavoritesFeature() }
+
+        await store.send(.favoritesMoved(IndexSet(integer: 1), 0))
+    }
+
+    @Test
+    func editTappedPresentsTheSheetAndAnUpdateSwapsTheRow() async {
+        let favorite = makeFavorite(id: "f1", path: "Documents", label: "Docs")
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [favorite]
+
+        let store = TestStore(initialState: state) { FavoritesFeature() }
+
+        await store.send(.editTapped(favorite)) {
+            $0.editSheet = FavoriteEditFeature.State(serverURL: self.serverURL, favorite: favorite)
         }
 
-        #expect(store.state.displayedFavorites == [alpha, beta])
-
-        await store.send(.sortDirectionChanged(.descending)) {
-            $0.sortDirection = .descending
+        let updated = Favorite(
+            id: "f1", path: "Documents", label: "Projects", icon: "solid:BriefcaseIcon", color: "#009cff",
+            position: 0, createdAt: favorite.createdAt, updatedAt: Date()
+        )
+        await store.send(.editSheet(.presented(.delegate(.updated(updated))))) {
+            $0.favorites[id: "f1"] = updated
+            $0.editSheet = nil
         }
-        #expect(store.state.displayedFavorites == [beta, alpha])
+        await store.receive(.delegate(.favoritesChanged))
     }
 
     @Test

@@ -146,6 +146,17 @@ browse.actionOpenInBrowser	Open in Browser
 favorites.navigationTitle	Favorites
 favorites.emptyList	Star folders in Browse to see them here.
 favorites.actionRemoveFromFavorites	Remove from Favorites
+favorites.actionEdit	Edit
+favorites.editTitle	Edit Favorite
+favorites.editNameLabel	Name
+favorites.editNameErrorEmpty	Name can't be empty.
+favorites.editIconLabel	Icon
+favorites.editIconOutline	Outline
+favorites.editIconSolid	Solid
+favorites.editColorLabel	Color
+favorites.editColorDefault	Default
+favorites.editSave	Save
+favorites.reorderFailed	Couldn't save the new order.
 favorites.removeConfirm	Remove %lld Favorites?
 favorites.removeMessage	This only removes them from Favorites.
 favorites.removeFailedOne	Couldn't remove that favorite.

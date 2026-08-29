@@ -20,7 +20,6 @@ private enum Constants {
 struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
     @AppStorage("favoritesViewMode") private var viewModeRaw = FavoritesViewMode.list.rawValue
-    @State private var isSortSheetPresented = false
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
@@ -178,29 +177,12 @@ struct FavoritesView: View {
                         withAnimation {
                             viewModeRaw = (viewMode == .list ? FavoritesViewMode.grid : .list).rawValue
                         }
-                    }
-                ) {
-                    Button {
-                        isSortSheetPresented = true
-                    } label: {
-                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
-                    }
-                }
-            }
-            .sheet(isPresented: $isSortSheetPresented) {
-                SortSheet(
-                    options: FavoritesFeature.SortOption.allCases,
-                    directions: BrowseFeature.SortDirection.allCases,
-                    sortOption: store.sortOption,
-                    sortDirection: store.sortDirection,
-                    optionIcon: { $0.icon },
-                    optionTitle: { $0.title },
-                    directionIcon: { $0.icon },
-                    directionTitle: { $0.title },
-                    onSelectOption: { store.send(.sortOptionChanged($0)) },
-                    onSelectDirection: { store.send(.sortDirectionChanged($0)) },
-                    onDismiss: { isSortSheetPresented = false }
+                    },
+                    sortMenu: { EmptyView() }
                 )
+            }
+            .sheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
+                FavoriteEditSheet(store: editStore, onClose: { store.send(.editSheet(.dismiss)) })
             }
             .hapticFeedback(.selection, trigger: viewModeRaw)
             .hapticFeedback(.selection, trigger: store.isSelecting)
@@ -247,12 +229,27 @@ struct FavoritesView: View {
 
     @ViewBuilder
     private func rowContextMenu(for favorite: Favorite) -> some View {
+        Button {
+            store.send(.editTapped(favorite))
+        } label: {
+            Label { Text(L10n.Favorites.actionEdit) } icon: { IconKit.rename }
+        }
         Button(role: .destructive) {
             store.send(.removeTapped(favorite))
         } label: {
             Label { Text(L10n.Favorites.actionRemoveFromFavorites) } icon: { IconKit.unfavorite }
         }
         .tint(.negative)
+    }
+
+    private func favoriteRowIcon(_ favorite: Favorite) -> some View {
+        FileRowView(
+            name: favorite.displayName,
+            isDirectory: true,
+            customIcon: FavoriteIcon.symbol(for: favorite.icon),
+            customIconTint: FavoriteColor.resolve(favorite.color),
+            customIconFilled: FavoriteIcon.isFilled(favorite.icon)
+        )
     }
 
     private func selectionIndicator(isSelected: Bool) -> some View {
@@ -275,7 +272,7 @@ struct FavoritesView: View {
                         if store.isSelecting {
                             selectionIndicator(isSelected: store.selectedFavoriteIDs.contains(favorite.id))
                         }
-                        FileRowView(name: favorite.displayName, isDirectory: true)
+                        favoriteRowIcon(favorite)
                     }
                 }
                 .buttonStyle(DSHapticButtonStyle())
@@ -283,6 +280,16 @@ struct FavoritesView: View {
                 .contextMenu {
                     if !store.isSelecting {
                         rowContextMenu(for: favorite)
+                    }
+                }
+                .swipeActions(edge: .leading) {
+                    if !store.isSelecting {
+                        Button {
+                            store.send(.editTapped(favorite))
+                        } label: {
+                            IconKit.rename
+                        }
+                        .tint(.accent)
                     }
                 }
                 .swipeActions(edge: .trailing) {
@@ -300,6 +307,7 @@ struct FavoritesView: View {
                 .listRowSeparator(favorite.id == store.displayedFavorites.first?.id ? .hidden : .visible, edges: .top)
                 .listRowSeparator(favorite.id == store.displayedFavorites.last?.id ? .hidden : .visible, edges: .bottom)
             }
+            .onMove(perform: store.canReorder ? { store.send(.favoritesMoved($0, $1)) } : nil)
         }
         .listStyle(.plain)
         .scrollContentBackground(.hidden)
@@ -317,7 +325,13 @@ struct FavoritesView: View {
                     Button {
                         handleTap(favorite)
                     } label: {
-                        GridCellView(name: favorite.displayName, isDirectory: true)
+                        GridCellView(
+                            name: favorite.displayName,
+                            isDirectory: true,
+                            customIcon: FavoriteIcon.symbol(for: favorite.icon),
+                            customIconTint: FavoriteColor.resolve(favorite.color),
+                            customIconFilled: FavoriteIcon.isFilled(favorite.icon)
+                        )
                             .overlay(alignment: .topLeading) {
                                 if store.isSelecting {
                                     selectionIndicator(isSelected: store.selectedFavoriteIDs.contains(favorite.id))

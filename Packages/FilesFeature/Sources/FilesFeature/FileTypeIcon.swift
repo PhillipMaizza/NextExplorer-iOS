@@ -92,16 +92,6 @@ extension FileItem {
     }
 }
 
-private extension Color {
-    init(hex: UInt32) {
-        self.init(
-            red: Double((hex >> 16) & 0xFF) / 255,
-            green: Double((hex >> 8) & 0xFF) / 255,
-            blue: Double(hex & 0xFF) / 255
-        )
-    }
-}
-
 /// A page silhouette with a folded top-right corner — the same base shape the web app's
 /// `FileBadgeIcon.vue`/`txt-icon.vue`/etc. all share, just as a native `Shape` instead of a
 /// literal SVG path.

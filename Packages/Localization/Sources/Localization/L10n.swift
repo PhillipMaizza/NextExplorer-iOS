@@ -181,7 +181,17 @@ public enum L10n {
         public static var sessionExpired: String { tr("error.sessionExpired") }  // "Your session expired. Sign in again."
     }
     public enum Favorites {
+        public static var actionEdit: String { tr("favorites.actionEdit") }  // "Edit"
         public static var actionRemoveFromFavorites: String { tr("favorites.actionRemoveFromFavorites") }  // "Remove from Favorites"
+        public static var editColorDefault: String { tr("favorites.editColorDefault") }  // "Default"
+        public static var editColorLabel: String { tr("favorites.editColorLabel") }  // "Color"
+        public static var editIconLabel: String { tr("favorites.editIconLabel") }  // "Icon"
+        public static var editIconOutline: String { tr("favorites.editIconOutline") }  // "Outline"
+        public static var editIconSolid: String { tr("favorites.editIconSolid") }  // "Solid"
+        public static var editNameErrorEmpty: String { tr("favorites.editNameErrorEmpty") }  // "Name can't be empty."
+        public static var editNameLabel: String { tr("favorites.editNameLabel") }  // "Name"
+        public static var editSave: String { tr("favorites.editSave") }  // "Save"
+        public static var editTitle: String { tr("favorites.editTitle") }  // "Edit Favorite"
         public static var emptyList: String { tr("favorites.emptyList") }  // "Star folders in Browse to see them here."
         public static var navigationTitle: String { tr("favorites.navigationTitle") }  // "Favorites"
         public static func removeConfirm(_ a0: CVarArg) -> String { tr("favorites.removeConfirm", a0) }
@@ -189,6 +199,7 @@ public enum L10n {
         public static var removeFailedOne: String { tr("favorites.removeFailedOne") }  // "Couldn't remove that favorite."
         public static var removeMessage: String { tr("favorites.removeMessage") }  // "This only removes them from Favorites."
         public static func removePartial(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("favorites.removePartial", a0, a1) }
+        public static var reorderFailed: String { tr("favorites.reorderFailed") }  // "Couldn't save the new order."
     }
     public enum FileInfo {
         public static var navigationTitleFolder: String { tr("fileInfo.navigationTitleFolder") }  // "Folder"

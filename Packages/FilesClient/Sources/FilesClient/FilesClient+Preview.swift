@@ -16,6 +16,14 @@ extension FilesClient {
             Favorite(id: UUID().uuidString, path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
         },
         removeFavorite: { _, _ in },
+        updateFavorite: { _, id, label, icon, color in
+            Favorite(id: id, path: "Documents", label: label, icon: icon, color: color, position: 0, createdAt: Date(), updatedAt: Date())
+        },
+        reorderFavorites: { _, orderedIDs in
+            orderedIDs.enumerated().map { index, id in
+                Favorite(id: id, path: id, label: id, icon: "StarIcon", color: nil, position: index, createdAt: Date(), updatedAt: Date())
+            }
+        },
         volumes: { _ in Volume.previewVolumes },
         fetchPreferences: { _ in UserPreferences() },
         updatePreference: { _, _, _ in },
