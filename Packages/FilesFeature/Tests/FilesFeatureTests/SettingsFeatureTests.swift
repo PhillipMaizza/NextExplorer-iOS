@@ -194,23 +194,6 @@ struct SettingsFeatureTests {
     }
 
     @Test
-    func theOfficeEditorPickerShowsOnlyWhenBothEditorsAreEnabled() async {
-        var state = makeState()
-        state.$serverFeatures.withLock { $0 = ServerFeatures() }
-        #expect(!state.showsOfficeEditorPicker)
-
-        state.$serverFeatures.withLock {
-            $0 = ServerFeatures(office: ServerFeatures.OfficeEditors(isOnlyOfficeEnabled: true))
-        }
-        #expect(!state.showsOfficeEditorPicker)
-
-        state.$serverFeatures.withLock {
-            $0 = ServerFeatures(office: ServerFeatures.OfficeEditors(isOnlyOfficeEnabled: true, isCollaboraEnabled: true))
-        }
-        #expect(state.showsOfficeEditorPicker)
-    }
-
-    @Test
     func thumbnailAndAccessRuleScreensAreAdminOnly() async {
         let store = TestStore(initialState: makeState()) { SettingsFeature() }
         store.exhaustivity = .off

@@ -287,10 +287,6 @@ openShareLink.errorInvalidLink	That doesn't look like a share link.
 openShareLink.errorNotFound	No share found for that link. It may have been removed.
 openShareLink.errorExpired	This share link has expired.
 
-# ---- office editor ----
-officeEditor.editAction	Edit
-officeEditor.loadFailed	Couldn't open the editor for this document.
-
 # ---- admin: thumbnails ----
 thumbnailSettings.navigationTitle	Thumbnails
 thumbnailSettings.subtitle	Control how the server generates image thumbnails for every client.
@@ -324,11 +320,6 @@ accessRules.saveButton	Save Changes
 # ---- settings rows ----
 settings.rowThumbnails	Thumbnails
 settings.rowAccessRules	Folder Access Rules
-settings.sectionOfficeEditor	Documents
-settings.rowOfficeEditor	Office editor
-settings.officeEditorHelp	Which editor to use when the server offers both.
-settings.officeEditorOnlyOffice	ONLYOFFICE
-settings.officeEditorCollabora	Collabora
 
 # ---- settings ----
 settings.navigationTitle	Settings
@@ -547,7 +538,6 @@ previewToolbar.download	Download
 previewToolbar.delete	Delete
 previewToolbar.share	Share
 previewToolbar.rename	Rename
-previewToolbar.edit	Edit
 
 # ---- login ----
 login.serverQuestion	Where's your instance of NextExplorer?

@@ -109,9 +109,6 @@ struct BrowseContentView: View {
             .fullScreenCover(item: previewItemBinding) { item in
                 previewContent(for: item)
             }
-            .fullScreenCover(item: $store.scope(state: \.officeEditor, action: \.officeEditor)) { editorStore in
-                OfficeEditorView(store: editorStore)
-            }
             .sheet(item: $shareTarget) { item in
                 CreateShareLinkSheet(
                     store: Store(
@@ -504,10 +501,6 @@ struct BrowseContentView: View {
                     store.send(.previewDismissed)
                     shareTarget = item
                 } : nil,
-                onEdit: store.state.availableOfficeEditor(for: item) != nil ? {
-                    store.send(.previewDismissed)
-                    store.send(.editInOfficeTapped(item))
-                } : nil,
                 onRename: (store.access?.canWrite ?? false) ? {
                     store.send(.previewDismissed)
                     store.send(.renameTapped(item))
@@ -729,14 +722,6 @@ struct BrowseContentView: View {
             Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
         }
         .tint(.primaryDS)
-        if store.state.availableOfficeEditor(for: item) != nil {
-            Button {
-                store.send(.editInOfficeTapped(item))
-            } label: {
-                Label { Text(L10n.OfficeEditor.editAction) } icon: { IconKit.edit }
-            }
-            .tint(.primaryDS)
-        }
         Button {
             store.send(.permissionsTapped(item))
         } label: {

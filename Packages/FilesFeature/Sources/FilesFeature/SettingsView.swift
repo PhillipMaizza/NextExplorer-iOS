@@ -37,7 +37,6 @@ struct SettingsView: View {
     @AppStorage("dateDisplayFormat") private var dateFormatRaw = DateDisplayFormat.system.rawValue
     @AppStorage("thumbnailSize") private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage("renderHTMLPages") private var renderHTMLPages = false
-    @AppStorage(OfficeEditor.preferenceStorageKey) private var officeEditorPreferenceRaw = OfficeEditor.defaultPreference.rawValue
     @AppStorage("renderMarkdownPages") private var renderMarkdownPages = false
     @AppStorage("hapticsEnabled") private var hapticsEnabled = true
     @AppStorage("showFilenameExtensions") private var showFilenameExtensions = true
@@ -191,8 +190,6 @@ struct SettingsView: View {
                     sectionHeader(L10n.Settings.sectionDisplay)
                 }
                 .listRowBackground(Color.backgroundSecondary)
-
-                officeEditorSection
 
                 usersSection
 
@@ -393,45 +390,6 @@ struct SettingsView: View {
             }
             .listRowBackground(Color.backgroundSecondary)
         }
-    }
-
-    /// Only shown when the server runs both ONLYOFFICE and Collabora — otherwise there's
-    /// nothing to choose. Client-local, persisted to `UserDefaults` (the web client too).
-    @ViewBuilder
-    private var officeEditorSection: some View {
-        if store.showsOfficeEditorPicker {
-            Section {
-                Picker(selection: officeEditorPreference) {
-                    Text(L10n.Settings.officeEditorOnlyOffice).tag(OfficeEditor.onlyOffice)
-                    Text(L10n.Settings.officeEditorCollabora).tag(OfficeEditor.collabora)
-                } label: {
-                    Label {
-                        Text(L10n.Settings.rowOfficeEditor).type(.body2(.regular), style: .primary(for: .label))
-                    } icon: {
-                        IconKit.document
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(Color.secondaryDS)
-                            .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                    }
-                }
-                .pickerStyle(.menu)
-                .tint(Color.secondaryDS)
-                .hapticFeedback(.selection, trigger: officeEditorPreferenceRaw)
-            } header: {
-                sectionHeader(L10n.Settings.sectionOfficeEditor)
-            } footer: {
-                Text(L10n.Settings.officeEditorHelp).type(.body3(.regular), style: .tertiary)
-            }
-            .listRowBackground(Color.backgroundSecondary)
-        }
-    }
-
-    private var officeEditorPreference: Binding<OfficeEditor> {
-        Binding(
-            get: { OfficeEditor.preference(fromRawValue: officeEditorPreferenceRaw) },
-            set: { officeEditorPreferenceRaw = $0.rawValue }
-        )
     }
 
     /// Admin-only server config that isn't per-user: thumbnail generation and folder access
