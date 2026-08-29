@@ -7,14 +7,13 @@ import SwiftUI
 
 private enum Metrics {
     static let avatarSize: CGFloat = .size56
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let cardSpacing: CGFloat = .space12
+    static let cardTitleSpacing: CGFloat = .space8
     static let cardPadding: CGFloat = .space16
-    static let cardCornerRadius: CGFloat = .radiusMedium
+    static let cardCornerRadius: CGFloat = .radiusCard
     static let horizontalPadding: CGFloat = .space16
     static let rowIconSize: CGFloat = .iconSmall
-    static let fieldHeight: CGFloat = .size48
-    static let fieldHorizontalPadding: CGFloat = .space12
     static let badgeHorizontalPadding: CGFloat = .space8
     static let badgeVerticalPadding: CGFloat = .space2
 }
@@ -115,16 +114,16 @@ struct UserDetailView: View {
     private func profileTab(_ user: User) -> some View {
         Card(L10n.UserDetail.sectionGeneralInfo) {
             LabeledField(L10n.UserDetail.profileDisplayNameField) {
-                TextField(L10n.UserDetail.profileDisplayNamePlaceholder, text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged))
+                DSTextField(L10n.UserDetail.profileDisplayNamePlaceholder, text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged))
                     .autocorrectionDisabled()
             }
             LabeledField(L10n.UserDetail.profileUsernameField, error: store.isProfileDirty ? store.profileUsernameError : nil) {
-                TextField(L10n.UserDetail.profileUsernamePlaceholder, text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged))
+                DSTextField(L10n.UserDetail.profileUsernamePlaceholder, text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged))
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             }
             LabeledField(L10n.UserDetail.profileEmailField, error: store.isProfileDirty ? store.profileEmailError : nil) {
-                TextField(L10n.UserDetail.profileEmailPlaceholder, text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged))
+                DSTextField(L10n.UserDetail.profileEmailPlaceholder, text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged))
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
@@ -140,7 +139,7 @@ struct UserDetailView: View {
             HStack(alignment: .top, spacing: .space8) {
                 IconKit.shield
                     .resizable().scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
+                    .foregroundStyle(Color.accent)
                     .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                     .padding(.top, .space2)
                 VStack(alignment: .leading, spacing: .space2) {
@@ -322,24 +321,30 @@ struct UserDetailView: View {
 
 // MARK: Small pieces
 
-/// Titled rounded card, the repeating container on every detail tab.
+/// A section: an optional uppercase header over a rounded `backgroundSecondary` box. The
+/// header sits outside the box so the tabs read as a list of labelled sections rather than
+/// nested titled cards. Pass no title for a plain card (an intro blurb, a single note).
 struct Card<Content: View>: View {
-    let title: String
+    let title: String?
     @ViewBuilder let content: Content
 
-    init(_ title: String, @ViewBuilder content: () -> Content) {
+    init(_ title: String? = nil, @ViewBuilder content: () -> Content) {
         self.title = title
         self.content = content()
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Metrics.cardSpacing) {
-            Text(title).type(.body2(.semibold), style: .primary(for: .label))
-            content
+        VStack(alignment: .leading, spacing: Metrics.cardTitleSpacing) {
+            if let title {
+                DSFieldLabel(title)
+            }
+            VStack(alignment: .leading, spacing: Metrics.cardSpacing) {
+                content
+            }
+            .padding(Metrics.cardPadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.backgroundSecondary))
         }
-        .padding(Metrics.cardPadding)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.backgroundSecondary))
     }
 }
 
@@ -385,7 +390,7 @@ private struct VolumeAssignSheet: View {
                         }
 
                         LabeledField(L10n.UserDetail.volumeSheetLabelField) {
-                            TextField(L10n.UserDetail.volumeSheetLabelPlaceholder, text: Binding(
+                            DSTextField(L10n.UserDetail.volumeSheetLabelPlaceholder, text: Binding(
                                 get: { store.volumeSheet?.label ?? "" },
                                 set: { store.send(.volumeLabelChanged($0)) }
                             ))
@@ -393,7 +398,7 @@ private struct VolumeAssignSheet: View {
                         }
 
                         VStack(alignment: .leading, spacing: .space4) {
-                            Text(L10n.UserDetail.volumeSheetAccessMode).type(.body3(.semibold), style: .secondary)
+                            DSFieldLabel(L10n.UserDetail.volumeSheetAccessMode)
                             DSSegmentedControl(
                                 options: ShareAccessMode.allCases,
                                 selection: Binding(
@@ -405,9 +410,15 @@ private struct VolumeAssignSheet: View {
                         }
 
                         VStack(alignment: .leading, spacing: .space4) {
-                            Text(L10n.UserDetail.volumeSheetDirectory).type(.body3(.semibold), style: .secondary)
+                            DSFieldLabel(L10n.UserDetail.volumeSheetDirectory)
                             if sheet.isEditing {
-                                FieldBox { Text(sheet.selectedPath).lineLimit(1).truncationMode(.middle) }
+                                Text(sheet.selectedPath)
+                                    .type(.body2(.regular))
+                                    .foregroundStyle(Color.secondaryDS)
+                                    .lineLimit(1)
+                                    .truncationMode(.middle)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .roundedFieldStyle()
                             } else {
                                 directoryBrowser(selectedPath: sheet.selectedPath)
                             }

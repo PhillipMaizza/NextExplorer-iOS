@@ -14,9 +14,7 @@ private enum Metrics {
     static let tagBorderWidth: CGFloat = 1
     static let sheetContentSpacing: CGFloat = .space16
     static let sheetHorizontalPadding: CGFloat = .space16
-    static let fieldHeight: CGFloat = .size48
-    static let fieldHorizontalPadding: CGFloat = .space12
-    static let cardCornerRadius: CGFloat = .radiusMedium
+    static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
     static let closeIconSize: CGFloat = .iconXSmall
 }
@@ -230,18 +228,18 @@ private struct CreateUserSheet: View {
                             ErrorBanner(text: error)
                         }
                         LabeledField(L10n.UserManagement.createEmailField, error: sheet.emailError) {
-                            TextField(L10n.UserManagement.createEmailPlaceholder, text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged))
+                            DSTextField(L10n.UserManagement.createEmailPlaceholder, text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged))
                                 .keyboardType(.emailAddress)
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
                         }
                         LabeledField(L10n.UserManagement.createUsernameField) {
-                            TextField(L10n.UserManagement.createUsernamePlaceholder, text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged))
+                            DSTextField(L10n.UserManagement.createUsernamePlaceholder, text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged))
                                 .textInputAutocapitalization(.never)
                                 .autocorrectionDisabled()
                         }
                         LabeledField(L10n.Common.password, error: sheet.passwordError) {
-                            SecureField(L10n.UserManagement.createPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: fieldBinding(\.password, UserManagementFeature.Action.createPasswordChanged))
+                            DSSecureField(L10n.UserManagement.createPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: fieldBinding(\.password, UserManagementFeature.Action.createPasswordChanged))
                         }
                         DSToggleRow(
                             title: L10n.UserManagement.createGrantAdminToggle,
@@ -306,7 +304,7 @@ private struct SetPasswordSheet: View {
                             .type(.body3(.regular), style: .secondary)
 
                         LabeledField(L10n.UserManagement.setPasswordNewField, error: sheet.passwordError) {
-                            SecureField(L10n.UserManagement.setPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: Binding(
+                            DSSecureField(L10n.UserManagement.setPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: Binding(
                                 get: { store.passwordSheet?.password ?? "" },
                                 set: { store.send(.passwordFieldChanged($0)) }
                             ))
@@ -342,45 +340,29 @@ private struct SetPasswordSheet: View {
 
 // MARK: Shared sheet chrome
 
-/// Label, `FieldBox` and optional inline error: the repeating form row shared by the user
-/// management sheets and the detail Profile tab.
+/// A label, a `DSTextField`/`DSSecureField` and an optional inline error: the repeating form
+/// row shared by the user management sheets and the detail Profile tab.
 struct LabeledField<Content: View>: View {
     let title: String
     var error: String?
+    var isUppercased = true
     @ViewBuilder let content: Content
 
-    init(_ title: String, error: String? = nil, @ViewBuilder content: () -> Content) {
+    init(_ title: String, error: String? = nil, uppercased: Bool = true, @ViewBuilder content: () -> Content) {
         self.title = title
         self.error = error
+        self.isUppercased = uppercased
         self.content = content()
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: .space4) {
-            Text(title).type(.body3(.semibold), style: .secondary)
-            FieldBox { content }
+            DSFieldLabel(title, uppercased: isUppercased)
+            content
             if let error {
                 Text(error).type(.caption(.regular), style: .error)
             }
         }
-    }
-}
-
-/// Rounded outlined container for a single line text field inside a sheet form.
-struct FieldBox<Content: View>: View {
-    @ViewBuilder let content: Content
-
-    var body: some View {
-        content
-            .type(.body2(.regular))
-            .foregroundStyle(Color.primaryDS)
-            .frame(height: Metrics.fieldHeight)
-            .padding(.horizontal, Metrics.fieldHorizontalPadding)
-            .background(RoundedRectangle(cornerRadius: .radiusControl).fill(Color.backgroundSecondary))
-            .overlay(
-                RoundedRectangle(cornerRadius: .radiusControl)
-                    .strokeBorder(Color.borderPrimary, lineWidth: .borderWidthHairline)
-            )
     }
 }
 

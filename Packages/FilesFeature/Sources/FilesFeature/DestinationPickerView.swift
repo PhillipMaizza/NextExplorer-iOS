@@ -41,21 +41,32 @@ struct DestinationPickerView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    Button { store.send(.cancelTapped) } label: {
-                        IconKit.close
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(Color.primaryDS)
-                            .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                    if store.canNavigateBack {
+                        Button { store.send(.backTapped) } label: {
+                            IconKit.back
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.primaryDS)
+                                .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                        }
+                        .accessibilityLabel(L10n.Common.back)
+                    } else {
+                        Button { store.send(.cancelTapped) } label: {
+                            IconKit.close
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.primaryDS)
+                                .frame(width: Constants.chevronSize, height: Constants.chevronSize)
+                        }
+                        .accessibilityLabel(L10n.Common.close)
                     }
-                    .accessibilityLabel(L10n.Common.close)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { store.send(.confirmTapped) } label: {
                         IconKit.checkmark
                             .resizable()
                             .scaledToFit()
-                            .foregroundStyle(Color.accent)
+                            .foregroundStyle(store.canConfirm ? Color.accent : Color.tertiaryDS)
                             .frame(width: Constants.chevronSize, height: Constants.chevronSize)
                     }
                     .disabled(!store.canConfirm)

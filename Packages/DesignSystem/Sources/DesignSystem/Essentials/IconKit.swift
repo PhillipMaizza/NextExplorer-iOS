@@ -50,6 +50,8 @@ public enum IconKit {
     public static let signOut = Image(systemName: "rectangle.portrait.and.arrow.right")
     public static let photo = Image(systemName: "photo")
     public static let camera = Image(systemName: "camera")
+    /// Overlaid on a video's frame thumbnail to mark it as playable footage, not a still.
+    public static let playCircle = Image(systemName: "play.circle.fill")
     public static let web = Image(systemName: "globe")
     public static let server = Image(systemName: "macpro.gen3.server")
     public static let listBullet = Image(systemName: "list.bullet")

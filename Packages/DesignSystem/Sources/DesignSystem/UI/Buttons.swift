@@ -69,9 +69,6 @@ private enum Constants {
     static let contentFadeDuration: Double = 0.15
     static let morphSpringResponse: Double = 0.35
     static let morphSpringDamping: Double = 0.8
-    /// Every button shares the same discreet lift — softer than the design system's default
-    /// elevation alpha, since a full-width filled CTA reads as "raised" even with a faint shadow.
-    static let buttonElevationAlpha: Double = 0.16
     /// Fixed dark charcoal fill for `.inverted`, deliberately not theme-adaptive.
     static let invertedFillWhite: Double = 0.15
 }
@@ -142,7 +139,6 @@ public struct DSButton: View {
                 RoundedRectangle(cornerRadius: .radiusControl)
                     .stroke(style.borderColor, lineWidth: style == .secondary ? .borderWidthHairline : 0)
             )
-            .elevation(.level1, alpha: style == .ghost ? 0 : Constants.buttonElevationAlpha)
         }
         .buttonStyle(DSHapticButtonStyle())
         .allowsHitTesting(isEnabled && !isLoading)
@@ -203,7 +199,6 @@ public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
                     borderColor: style.borderColor
                 )
             )
-            .elevation(.level1, alpha: Constants.buttonElevationAlpha)
             .frame(maxWidth: .infinity)
             .animation(
                 .spring(response: Constants.morphSpringResponse, dampingFraction: Constants.morphSpringDamping),

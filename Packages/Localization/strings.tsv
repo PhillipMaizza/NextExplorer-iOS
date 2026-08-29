@@ -88,14 +88,21 @@ browse.actionCompress	Compress
 browse.actionDownload	Download
 browse.actionAddToFavorites	Add to Favorites
 browse.actionRemoveFromFavorites	Remove from Favorites
-browse.actionShare	Share
+browse.actionShare	Create share link
 browse.actionDelete	Delete
 browse.renameTitle	Rename
 browse.renameNamePlaceholder	Name
+browse.actionNewFolder	Create Folder
+browse.newFolderTitle	New folder
+browse.newFolderPlaceholder	Folder name
+browse.newFolderConfirm	Create
 browse.deleteConfirmTitle	Delete?
 browse.deleteConfirmOne	Delete “%@”?
 browse.deleteConfirmMany	Delete %lld items?
 browse.deleteMessage	This can't be undone.
+browse.deleteLinkedSharesOne	This also removes 1 share link that points here.
+browse.deleteLinkedSharesMany	This also removes %lld share links that point here.
+browse.deleteLinkedSharesUnavailable	Couldn't check for share links that point here. Any that exist will stop working.
 browse.searchNoMatchesInFolder	No matches for “%@”.
 browse.searchEverywhere	Search everywhere
 browse.searchFailed	Couldn't search. Check your connection and try again.
@@ -159,10 +166,10 @@ downloads.deleteBulkMessage	This only removes the local copies. The files stay o
 uploads.navigationTitle	Uploads
 uploads.menuTitle	Upload
 uploads.actionUploadFromFiles	Upload from Files
-uploads.actionUploadFromPhotos	Upload from Photos
-uploads.actionTakePhoto	Take Photo
+uploads.actionUploadFromPhotos	Upload from Gallery
+uploads.actionTakePhoto	Take Photo or Video
 uploads.cameraDeniedTitle	Camera access needed
-uploads.cameraDeniedMessage	Allow camera access in Settings to take a photo.
+uploads.cameraDeniedMessage	Allow camera access in Settings to take a photo or video.
 uploads.destinationTitle	Upload to…
 uploads.destinationConfirm	Upload here
 uploads.reviewTitleOne	Upload 1 file
@@ -174,7 +181,11 @@ uploads.reviewChooseFolder	Choose a folder
 uploads.reviewUploadButton	Upload
 uploads.reviewPreparing	Preparing %lld…
 uploads.reviewAddMore	Add more files
+uploads.reviewPreviewFile	Preview %@
 uploads.stagingFailed	Couldn't add those files. Try again.
+uploads.discardTitle	Discard upload?
+uploads.discardMessage	The files you added won't be uploaded.
+uploads.discardConfirm	Discard
 uploads.statusWaiting	Waiting
 uploads.statusFailed	Upload failed
 uploads.barTitleOne	Uploading %@

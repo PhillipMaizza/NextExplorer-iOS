@@ -151,6 +151,54 @@ struct UploadReviewFeatureTests {
     }
 
     @Test
+    func closingWithNoFilesCancelsImmediately() async {
+        let store = TestStore(
+            initialState: UploadReviewFeature.State(serverURL: serverURL, startingDestination: "Inbox")
+        ) { UploadReviewFeature() }
+
+        await store.send(.cancelTapped)
+        await store.receive(.delegate(.cancelled))
+    }
+
+    @Test
+    func closingWithStagedFilesRaisesTheDiscardConfirmationThenCancels() async {
+        let a = file("a.jpg", id: UUID(0), size: 1)
+        let store = TestStore(
+            initialState: UploadReviewFeature.State(
+                serverURL: serverURL, files: [a], startingDestination: "Inbox"
+            )
+        ) { UploadReviewFeature() }
+
+        await store.send(.cancelTapped) { $0.isConfirmingCancel = true }
+        await store.send(.confirmCancelTapped) { $0.isConfirmingCancel = false }
+        await store.receive(.delegate(.cancelled))
+    }
+
+    @Test
+    func dismissingTheDiscardConfirmationKeepsTheSheet() async {
+        let a = file("a.jpg", id: UUID(0), size: 1)
+        let store = TestStore(
+            initialState: UploadReviewFeature.State(
+                serverURL: serverURL, files: [a], startingDestination: "Inbox"
+            )
+        ) { UploadReviewFeature() }
+
+        await store.send(.cancelTapped) { $0.isConfirmingCancel = true }
+        await store.send(.cancelConfirmationDismissed) { $0.isConfirmingCancel = false }
+    }
+
+    @Test
+    func closingWhilePreparingWithNoFilesStillConfirms() async {
+        let store = TestStore(
+            initialState: UploadReviewFeature.State(
+                serverURL: serverURL, startingDestination: "Inbox", preparingCount: 2
+            )
+        ) { UploadReviewFeature() }
+
+        await store.send(.cancelTapped) { $0.isConfirmingCancel = true }
+    }
+
+    @Test
     func removingTheLastFileCancelsAndDiscardsIt() async {
         let discarded = LockIsolated<[URL]>([])
         let a = file("a.jpg", id: UUID(0), size: 1)

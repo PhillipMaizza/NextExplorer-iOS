@@ -6,8 +6,11 @@ import SwiftUI
 
 private enum Metrics {
     static let contentSpacing: CGFloat = .space16
+    /// Between the "verify it's you" field and the "pick a new one" pair, and around the
+    /// intro card, so the form reads as distinct groups rather than one long stack.
+    static let groupSpacing: CGFloat = .space32
     static let horizontalPadding: CGFloat = .space16
-    static let cardCornerRadius: CGFloat = .radiusMedium
+    static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
     static let rowIconSize: CGFloat = .iconSmall
 }
@@ -19,15 +22,17 @@ struct ChangePasswordView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
-                HStack(alignment: .top, spacing: .space8) {
-                    IconKit.key
-                        .resizable().scaledToFit()
-                        .foregroundStyle(Color.secondaryDS)
-                        .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                        .padding(.top, .space2)
-                    Text(L10n.ChangePassword.intro)
-                        .type(.body3(.regular), style: .secondary)
+            VStack(alignment: .leading, spacing: Metrics.groupSpacing) {
+                Card {
+                    HStack(alignment: .top, spacing: .space8) {
+                        IconKit.key
+                            .resizable().scaledToFit()
+                            .foregroundStyle(Color.secondaryDS)
+                            .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
+                            .padding(.top, .space2)
+                        Text(L10n.ChangePassword.intro)
+                            .type(.body3(.regular), style: .secondary)
+                    }
                 }
 
                 if let error = store.errorMessage {
@@ -37,17 +42,20 @@ struct ChangePasswordView: View {
                     successBanner(L10n.ChangePassword.success)
                 }
 
-                LabeledField(L10n.ChangePassword.fieldCurrentPassword) {
-                    SecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
+                LabeledField(L10n.ChangePassword.fieldCurrentPassword, uppercased: false) {
+                    DSSecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
                         .textContentType(.password)
                 }
-                LabeledField(L10n.ChangePassword.fieldNewPasswordLabel, error: newPasswordErrorText) {
-                    SecureField(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength), text: $store.newPassword.sending(\.newPasswordChanged))
-                        .textContentType(.newPassword)
-                }
-                LabeledField(L10n.ChangePassword.fieldConfirmPasswordLabel, error: confirmErrorText) {
-                    SecureField(L10n.ChangePassword.fieldConfirmPassword, text: $store.confirmPassword.sending(\.confirmPasswordChanged))
-                        .textContentType(.newPassword)
+
+                VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
+                    LabeledField(L10n.ChangePassword.fieldNewPasswordLabel, error: newPasswordErrorText, uppercased: false) {
+                        DSSecureField(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength), text: $store.newPassword.sending(\.newPasswordChanged))
+                            .textContentType(.newPassword)
+                    }
+                    LabeledField(L10n.ChangePassword.fieldConfirmPasswordLabel, error: confirmErrorText, uppercased: false) {
+                        DSSecureField(L10n.ChangePassword.fieldConfirmPassword, text: $store.confirmPassword.sending(\.confirmPasswordChanged))
+                            .textContentType(.newPassword)
+                    }
                 }
 
                 DSButton(L10n.ChangePassword.submitButton, style: .primary, isLoading: store.isSubmitting) {

@@ -6,7 +6,7 @@ private enum Constants {
     static let headerIconSize: CGFloat = .iconMedium
     static let closeIconSize: CGFloat = .iconXSmall
     static let closeButtonPadding: CGFloat = .space8
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = .space24
     static let rowSpacing: CGFloat = .space12
     static let rowVerticalPadding: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space24
@@ -46,15 +46,16 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
             HStack {
                 IconKit.sort
                     .resizable()
+                    .scaledToFit()
                     .foregroundStyle(Color.accent)
                     .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
-                    .padding(.bottom, .space8)
 
                 Spacer()
 
                 Button(action: onDismiss) {
                     IconKit.close
                         .resizable()
+                        .scaledToFit()
                         .foregroundStyle(Color.primaryDS)
                         .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
                         .padding(Constants.closeButtonPadding)

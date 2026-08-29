@@ -9,14 +9,21 @@ import SwiftUI
 private enum Constants {
     static let thumbnailSize: CGFloat = .iconLarge
     static let removeButtonSize: CGFloat = .iconSmall
-    static let contentSpacing: CGFloat = .space16
+    static let headerIconSize: CGFloat = .iconMedium
+    static let contentSpacing: CGFloat = .space24
+    static let titleToCellsSpacing: CGFloat = .space24
+    static let sectionRowSpacing: CGFloat = .space16
+    static let cellVerticalPadding: CGFloat = .space16
+    static let cellHorizontalPadding: CGFloat = .space16
     static let rowSpacing: CGFloat = .space12
     static let rowTextSpacing: CGFloat = .space2
-    static let horizontalPadding: CGFloat = .space16
+    static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
     static let closeButtonPadding: CGFloat = .space8
     static let addMoreDash: CGFloat = 4
     static let addMoreBorderWidth: CGFloat = 1
+    static let enabledOpacity: Double = 1
+    static let disabledOpacity: Double = 0.35
     /// The sheet fits its content but never exceeds this fraction of the screen — past that
     /// the file list scrolls and `.large` is a drag away.
     static let maxHeightFraction: CGFloat = 0.9
@@ -31,6 +38,13 @@ struct UploadReviewView: View {
     @State private var isCameraPresented = false
     @State private var isCameraDeniedAlertPresented = false
     @State private var photosSelection: [PhotosPickerItem] = []
+    @State private var previewSelection: PreviewSelection?
+
+    /// The staged file whose full screen QuickLook preview is open; `id` is the row's
+    /// `PickedFile.ID` so the preview can open on it and still swipe across the whole list.
+    private struct PreviewSelection: Identifiable, Equatable {
+        let id: PickedFile.ID
+    }
 
     private static let byteFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()
@@ -48,7 +62,13 @@ struct UploadReviewView: View {
 
     private func fileRow(_ file: PickedFile) -> some View {
         HStack(spacing: Constants.rowSpacing) {
-            thumbnail(for: file)
+            Button {
+                previewSelection = PreviewSelection(id: file.id)
+            } label: {
+                thumbnail(for: file)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(L10n.Uploads.reviewPreviewFile(file.fileName))
             VStack(alignment: .leading, spacing: Constants.rowTextSpacing) {
                 Text(file.fileName)
                     .type(.body2(.regular), style: .primary(for: .label))
@@ -70,6 +90,7 @@ struct UploadReviewView: View {
             .buttonStyle(.plain)
             .accessibilityLabel(L10n.Common.remove)
         }
+        .padding(.vertical, .space4)
     }
 
     @ViewBuilder
@@ -77,14 +98,19 @@ struct UploadReviewView: View {
         let kind = (file.fileName as NSString).pathExtension.lowercased()
         if FileItem.isImageKind(kind), kind != "svg" {
             AsyncImage(url: file.fileURL) { phase in
-                if case let .success(image) = phase {
+                switch phase {
+                case let .success(image):
                     image.resizable().scaledToFill()
-                } else {
-                    Color.backgroundSecondary
+                case .failure:
+                    FileTypeIcon(kind: kind)
+                default:
+                    ThumbnailLoadingPlaceholder()
                 }
             }
             .frame(width: Constants.thumbnailSize, height: Constants.thumbnailSize)
             .clipShape(RoundedRectangle(cornerRadius: .radiusSmall))
+        } else if FileItem.isVideoKind(kind) {
+            VideoThumbnailView(url: file.fileURL, size: Constants.thumbnailSize)
         } else {
             FileTypeIcon(kind: kind)
                 .frame(width: Constants.thumbnailSize, height: Constants.thumbnailSize)
@@ -124,6 +150,15 @@ struct UploadReviewView: View {
         )
         .tint(.primaryDS)
         .disabled(store.isPreparing)
+        .opacity(store.isPreparing ? Constants.disabledOpacity : Constants.enabledOpacity)
+    }
+
+    private var isConfirmingCancel: Binding<Bool> {
+        // Alerts have no tap outside dismissal, so this alert only ever closes through one of
+        // its own buttons, and each button resets the flag through the reducer. A no op setter
+        // keeps SwiftUI from firing a second dismiss action into an already torn down
+        // presentation once "Discard" nils the whole feature.
+        Binding(get: { store.isConfirmingCancel }, set: { _ in })
     }
 
     private var title: String {
@@ -138,8 +173,10 @@ struct UploadReviewView: View {
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             header
-            pathAndSizeSection
-            Divider()
+            VStack(alignment: .leading, spacing: Constants.titleToCellsSpacing) {
+                Text(title).type(.headline3, style: .link)
+                pathAndSizeSection
+            }
             filesSection
         }
         .padding(.horizontal, Constants.horizontalPadding)
@@ -164,7 +201,11 @@ struct UploadReviewView: View {
 
     private var header: some View {
         HStack {
-            Text(title).type(.headline3, style: .link)
+            IconKit.upload
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(Color.accent)
+                .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
             Spacer()
             Button { store.send(.cancelTapped) } label: {
                 IconKit.close
@@ -180,10 +221,15 @@ struct UploadReviewView: View {
         }
     }
 
+    private func infoRow<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+        HStack(spacing: Constants.rowSpacing, content: content)
+            .contentShape(Rectangle())
+    }
+
     private var pathAndSizeSection: some View {
-        VStack(spacing: Constants.rowSpacing) {
+        VStack(spacing: Constants.sectionRowSpacing) {
             Button { store.send(.pathTapped) } label: {
-                HStack(spacing: Constants.rowSpacing) {
+                infoRow {
                     rowIcon(IconKit.folder)
                     Text(L10n.Uploads.reviewSectionPath)
                         .type(.body2(.regular), style: .primary(for: .label))
@@ -198,12 +244,13 @@ struct UploadReviewView: View {
                         .foregroundStyle(Color.secondaryDS)
                         .frame(width: .iconXSmall, height: .iconXSmall)
                 }
-                .contentShape(Rectangle())
             }
             .buttonStyle(DSHapticButtonStyle())
             .tint(.primaryDS)
 
-            HStack(spacing: Constants.rowSpacing) {
+            Divider()
+
+            infoRow {
                 rowIcon(IconKit.size)
                 Text(L10n.Uploads.reviewSectionSize)
                     .type(.body2(.regular), style: .primary(for: .label))
@@ -212,14 +259,20 @@ struct UploadReviewView: View {
                     .type(.body2(.regular), style: .secondary)
             }
         }
+        .padding(.vertical, Constants.cellVerticalPadding)
+        .padding(.horizontal, Constants.cellHorizontalPadding)
+        .frame(maxWidth: .infinity)
+        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusCard))
     }
 
     private var filesSection: some View {
         VStack(alignment: .leading, spacing: Constants.rowSpacing) {
-            Text(L10n.Uploads.reviewSectionFiles)
-                .type(.body3(.semibold), style: .secondary)
-            ForEach(store.files) { file in
+            DSFieldLabel(L10n.Uploads.reviewSectionFiles)
+            ForEach(Array(store.files.enumerated()), id: \.element.id) { index, file in
                 fileRow(file)
+                if index < store.files.count - 1 {
+                    Divider()
+                }
             }
             if store.isPreparing {
                 HStack(spacing: Constants.rowSpacing) {
@@ -227,12 +280,21 @@ struct UploadReviewView: View {
                     Text(L10n.Uploads.reviewPreparing(store.preparingCount))
                         .type(.body3(.regular), style: .secondary)
                 }
+                .padding(.vertical, .space4)
             }
             if store.stagingFailed, store.files.isEmpty {
-                Text(L10n.Uploads.stagingFailed)
-                    .type(.body3(.regular), style: .secondary)
+                HStack(spacing: Constants.rowTextSpacing * 2) {
+                    IconKit.warning
+                        .resizable()
+                        .scaledToFit()
+                        .foregroundStyle(Color.negative)
+                        .frame(width: .iconXSmall, height: .iconXSmall)
+                    Text(L10n.Uploads.stagingFailed)
+                        .type(.body3(.semibold), style: .error)
+                }
             }
         }
+        .padding(.top, .space8)
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
@@ -242,8 +304,23 @@ struct UploadReviewView: View {
         } footer: {
             footer
         }
+        .interactiveDismissDisabled(!store.files.isEmpty || store.isPreparing)
+        .alert(L10n.Uploads.discardTitle, isPresented: isConfirmingCancel) {
+            Button(L10n.Uploads.discardConfirm, role: .destructive) { store.send(.confirmCancelTapped) }
+            Button(L10n.Common.cancel, role: .cancel) { store.send(.cancelConfirmationDismissed) }
+        } message: {
+            Text(L10n.Uploads.discardMessage)
+        }
         .sheet(item: $store.scope(state: \.folderPicker, action: \.folderPicker)) { pickerStore in
             DestinationPickerView(store: pickerStore)
+        }
+        .fullScreenCover(item: $previewSelection) { selection in
+            PickedFilePreview(
+                urls: store.files.map(\.fileURL),
+                names: store.files.map(\.fileName),
+                initialIndex: store.files.firstIndex(where: { $0.id == selection.id }) ?? 0,
+                onClose: { previewSelection = nil }
+            )
         }
         .modifier(UploadPickers(
             isFilesPickerPresented: $isFilesPickerPresented,
@@ -260,10 +337,44 @@ struct UploadReviewView: View {
                 store.send(.stage(.photos(items)))
                 photosSelection = []
             },
-            onPhotoCaptured: { url in
+            onCameraCaptured: { url in
                 store.send(.stage(.camera(url)))
             }
         ))
+    }
+}
+
+/// Full screen preview for a staged file, opened from its row thumbnail. Goes through
+/// `QuickLook`, which swipes across the whole batch starting on the tapped file. Wrapped in a
+/// `NavigationStack` so `previewChrome` can hang a close button off it — `QLPreviewController`
+/// only draws its own Done bar when UIKit presents it directly, not through a representable.
+private struct PickedFilePreview: View {
+    let urls: [URL]
+    let names: [String]
+    let initialIndex: Int
+    let onClose: () -> Void
+
+    @State private var currentIndex: Int
+
+    init(urls: [URL], names: [String], initialIndex: Int, onClose: @escaping () -> Void) {
+        self.urls = urls
+        self.names = names
+        self.initialIndex = initialIndex
+        self.onClose = onClose
+        self._currentIndex = State(initialValue: initialIndex)
+    }
+
+    private var title: String? {
+        names.indices.contains(currentIndex) ? names[currentIndex] : nil
+    }
+
+    var body: some View {
+        NavigationStack {
+            QuickLookPreview(urls: urls, initialIndex: initialIndex) { currentIndex = $0 }
+                .ignoresSafeArea()
+                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .previewChrome(title: title, onClose: onClose)
+        }
     }
 }
 
