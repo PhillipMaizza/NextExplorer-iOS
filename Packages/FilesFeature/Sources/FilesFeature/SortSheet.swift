@@ -54,8 +54,7 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
                     }
                 }
             }
-
-            Divider()
+            .dsCard()
 
             VStack(spacing: 0) {
                 ForEach(directions, id: \.self) { direction in
@@ -64,6 +63,7 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
                     }
                 }
             }
+            .dsCard()
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.top, Constants.topPadding)
@@ -97,7 +97,6 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(DSHapticButtonStyle())
-        .padding(.vertical, .space8)
         .animation(.easeInOut(duration: Constants.selectionAnimationDuration), value: isSelected)
         .hapticFeedback(.selection, trigger: isSelected)
     }

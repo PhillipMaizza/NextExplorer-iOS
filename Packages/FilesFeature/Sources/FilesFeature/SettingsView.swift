@@ -209,43 +209,23 @@ struct SettingsView: View {
                         icon: IconKit.paste,
                         isOn: $keepClipboardAfterCopy
                     )
-                    Button(role: .destructive) {
+                    DSNavigationRow(
+                        title: L10n.Settings.rowRemoveAllDownloads,
+                        icon: IconKit.delete,
+                        accessory: .detail(Self.byteFormatter.string(fromByteCount: store.downloadsSize)),
+                        role: .accent
+                    ) {
                         store.send(.removeAllDownloadsTapped)
-                    } label: {
-                        Label {
-                            HStack {
-                                Text(L10n.Settings.rowRemoveAllDownloads).type(.body2(.regular), style: .link)
-                                Spacer()
-                                Text(Self.byteFormatter.string(fromByteCount: store.downloadsSize)).type(.body2(.regular), style: .secondary)
-                            }
-                        } icon: {
-                            IconKit.delete
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.accent)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                        }
                     }
-                    .buttonStyle(DSHapticButtonStyle())
                     .disabled(store.isRemovingAllDownloads || !store.hasDownloads)
-                    Button(role: .destructive) {
+                    DSNavigationRow(
+                        title: L10n.Settings.rowClearCache,
+                        icon: IconKit.delete,
+                        accessory: .detail(Self.byteFormatter.string(fromByteCount: store.cacheSize)),
+                        role: .accent
+                    ) {
                         store.send(.clearCacheTapped)
-                    } label: {
-                        Label {
-                            HStack {
-                                Text(L10n.Settings.rowClearCache).type(.body2(.regular), style: .link)
-                                Spacer()
-                                Text(Self.byteFormatter.string(fromByteCount: store.cacheSize)).type(.body2(.regular), style: .secondary)
-                            }
-                        } icon: {
-                            IconKit.delete
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.accent)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                        }
                     }
-                    .buttonStyle(DSHapticButtonStyle())
                     .disabled(store.isClearingCache || store.cacheSize == 0)
                 } header: {
                     sectionHeader(L10n.Settings.sectionStorage)
@@ -362,29 +342,9 @@ struct SettingsView: View {
     private var usersSection: some View {
         if store.user.isAdmin {
             Section {
-                Button {
+                DSNavigationRow(title: L10n.Settings.rowUserManagement, icon: IconKit.people) {
                     store.send(.userManagementButtonTapped)
-                } label: {
-                    Label {
-                        HStack {
-                            Text(L10n.Settings.rowUserManagement).type(.body2(.regular), style: .primary(for: .label))
-                            Spacer()
-                            IconKit.chevronRight
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.tertiaryDS)
-                                .frame(width: .iconXSmall, height: .iconXSmall)
-                        }
-                    } icon: {
-                        IconKit.people
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(Color.secondaryDS)
-                            .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                    }
-                    .contentShape(Rectangle())
                 }
-                .buttonStyle(DSHapticButtonStyle())
             } header: {
                 sectionHeader(L10n.Settings.sectionUsers)
             }
@@ -398,10 +358,10 @@ struct SettingsView: View {
     private var serverAdminSection: some View {
         if store.user.isAdmin {
             Section {
-                adminRow(title: L10n.Settings.rowThumbnails, icon: IconKit.photo) {
+                DSNavigationRow(title: L10n.Settings.rowThumbnails, icon: IconKit.photo) {
                     store.send(.thumbnailSettingsButtonTapped)
                 }
-                adminRow(title: L10n.Settings.rowAccessRules, icon: IconKit.shield) {
+                DSNavigationRow(title: L10n.Settings.rowAccessRules, icon: IconKit.shield) {
                     store.send(.accessRulesButtonTapped)
                 }
             } header: {
@@ -409,30 +369,6 @@ struct SettingsView: View {
             }
             .listRowBackground(Color.backgroundSecondary)
         }
-    }
-
-    private func adminRow(title: String, icon: Image, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Label {
-                HStack {
-                    Text(title).type(.body2(.regular), style: .primary(for: .label))
-                    Spacer()
-                    IconKit.chevronRight
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.tertiaryDS)
-                        .frame(width: .iconXSmall, height: .iconXSmall)
-                }
-            } icon: {
-                icon
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
-                    .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-            }
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(DSHapticButtonStyle())
     }
 
     /// One disk-usage bar per volume — iOS's take on the web client's volume list. Only
@@ -528,6 +464,7 @@ struct SettingsView: View {
                     .frame(width: .iconXSmall, height: .iconXSmall)
             }
         }
+        .contentShape(Rectangle())
 
         if store.user.isAdmin {
             Button { store.send(.serverDetailsButtonTapped) } label: { content }
@@ -542,55 +479,24 @@ struct SettingsView: View {
     /// backend has no self service profile endpoint, so an admin changes that from User
     /// Management instead.
     private var changePasswordRow: some View {
-        Button {
+        DSNavigationRow(title: L10n.Settings.rowChangePassword, icon: IconKit.key) {
             store.send(.changePasswordButtonTapped)
-        } label: {
-            Label {
-                HStack {
-                    Text(L10n.Settings.rowChangePassword).type(.body2(.regular), style: .primary(for: .label))
-                    Spacer()
-                    IconKit.chevronRight
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.tertiaryDS)
-                        .frame(width: .iconXSmall, height: .iconXSmall)
-                }
-            } icon: {
-                IconKit.key
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
-                    .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-            }
         }
-        .buttonStyle(DSHapticButtonStyle())
         .disabled(store.isSigningOut)
     }
 
     /// Full width row, leading aligned like the rest of the card, in error red.
     private var signOutRow: some View {
-        Button(role: .destructive) {
+        DSNavigationRow(
+            title: store.isSigningOut ? L10n.Settings.signingOut : L10n.Settings.signOutButton,
+            icon: IconKit.signOut,
+            accessory: .none,
+            role: .destructive,
+            isLoading: store.isSigningOut
+        ) {
             store.send(.signOutButtonTapped)
-        } label: {
-            Label {
-                Text(store.isSigningOut ? L10n.Settings.signingOut : L10n.Settings.signOutButton)
-                    .type(.body2(.semibold), style: .error)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            } icon: {
-                if store.isSigningOut {
-                    ProgressView().tint(Color.negative)
-                } else {
-                    IconKit.signOut
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.negative)
-                        .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                }
-            }
         }
-        .disabled(store.isSigningOut)
         .animation(.easeInOut(duration: Constants.signOutFadeDuration), value: store.isSigningOut)
-        .buttonStyle(DSHapticButtonStyle())
     }
 
     private var roleTag: some View {
