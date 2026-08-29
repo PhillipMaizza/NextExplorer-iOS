@@ -30,7 +30,7 @@ public enum L10n {
         public static var actionPasteHere: String { tr("browse.actionPasteHere") }  // "Paste here"
         public static var actionRemoveFromFavorites: String { tr("browse.actionRemoveFromFavorites") }  // "Remove from Favorites"
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
-        public static var actionShare: String { tr("browse.actionShare") }  // "Share"
+        public static var actionShare: String { tr("browse.actionShare") }  // "Create share link"
         public static func clipboardCopiedMany(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedMany", a0) }
         public static func clipboardCopiedOne(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedOne", a0) }
         public static func clipboardCopyCount(_ a0: CVarArg) -> String { tr("browse.clipboardCopyCount", a0) }

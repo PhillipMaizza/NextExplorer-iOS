@@ -33,6 +33,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.itemsResponse.success) {
             $0.isLoading = false
+            $0.hasLoaded = true
             $0.items = [item]
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
@@ -55,6 +56,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.itemsResponse.failure) {
             $0.isLoading = false
+            $0.hasLoaded = true
             $0.errorMessage = FilesClientError.sessionExpired.userMessage
         }
         await store.receive(\.favoritesResponse)
@@ -126,6 +128,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.itemsResponse.success) {
             $0.isLoading = false
+            $0.hasLoaded = true
             $0.items = [refreshed]
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
@@ -745,6 +748,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.itemsResponse.success) {
             $0.isLoading = false
+            $0.hasLoaded = true
             $0.items = []
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }

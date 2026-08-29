@@ -8,7 +8,7 @@ private enum Metrics {
     static let contentSpacing: CGFloat = .space16
     /// Between the "verify it's you" field and the "pick a new one" pair, and around the
     /// intro card, so the form reads as distinct groups rather than one long stack.
-    static let groupSpacing: CGFloat = .space24
+    static let groupSpacing: CGFloat = .space32
     static let horizontalPadding: CGFloat = .space16
     static let cardCornerRadius: CGFloat = .radiusCard
     static let cardPadding: CGFloat = .space12
