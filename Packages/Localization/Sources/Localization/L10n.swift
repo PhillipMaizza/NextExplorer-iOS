@@ -202,6 +202,7 @@ public enum L10n {
         public static var reorderFailed: String { tr("favorites.reorderFailed") }  // "Couldn't save the new order."
     }
     public enum FileInfo {
+        public static func diskFreeOf(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("fileInfo.diskFreeOf", a0, a1) }
         public static var navigationTitleFolder: String { tr("fileInfo.navigationTitleFolder") }  // "Folder"
         public static var partialScan: String { tr("fileInfo.partialScan") }  // "Counted a partial scan — this folder is very large."
         public static var rowCamera: String { tr("fileInfo.rowCamera") }  // "Camera"
@@ -217,6 +218,7 @@ public enum L10n {
         public static var rowLocation: String { tr("fileInfo.rowLocation") }  // "Location"
         public static var rowSize: String { tr("fileInfo.rowSize") }  // "Size"
         public static var rowTotalSize: String { tr("fileInfo.rowTotalSize") }  // "Total Size"
+        public static var sectionServerDisk: String { tr("fileInfo.sectionServerDisk") }  // "Server Disk"
     }
     public enum Gallery {
         public static var loadFailed: String { tr("gallery.loadFailed") }  // "Couldn't load this image."
@@ -301,8 +303,10 @@ public enum L10n {
         public static var sectionDisplay: String { tr("settings.sectionDisplay") }  // "Display"
         public static var sectionGeneral: String { tr("settings.sectionGeneral") }  // "General"
         public static var sectionLicenses: String { tr("settings.sectionLicenses") }  // "Licenses"
+        public static var sectionServerStorage: String { tr("settings.sectionServerStorage") }  // "Server Storage"
         public static var sectionStorage: String { tr("settings.sectionStorage") }  // "Storage"
         public static var sectionUsers: String { tr("settings.sectionUsers") }  // "Users"
+        public static func serverStorageUsed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.serverStorageUsed", a0, a1) }
         public static var signOutAlertTitle: String { tr("settings.signOutAlertTitle") }  // "Sign Out?"
         public static var signOutButton: String { tr("settings.signOutButton") }  // "Sign Out"
         public static var signOutMessage: String { tr("settings.signOutMessage") }  // "You'll need to sign in again to access your files."

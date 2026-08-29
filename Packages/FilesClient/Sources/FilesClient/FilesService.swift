@@ -636,6 +636,23 @@ struct FilesService: Sendable {
         return try await send(request, decoding: FileMetadata.self)
     }
 
+    /// `GET /api/usage/*`, confirmed against `backend/src/routes/usage.js`: one wildcard path
+    /// segment (empty = the root, needs the trailing slash), same per-segment encoding as
+    /// `browseURL` / `fetchMetadata`.
+    func fetchUsage(serverURL: URL, path: String) async throws -> StorageUsage {
+        var url = serverURL.appendingPathComponent(APIPath.usage)
+        let segments = path.split(separator: "/", omittingEmptySubsequences: true)
+        if segments.isEmpty {
+            url = url.appendingPathComponent("")
+        } else {
+            for segment in segments {
+                url = url.appendingPathComponent(String(segment))
+            }
+        }
+        let request = Self.makeRequest(url: url, method: .get)
+        return try await send(request, decoding: StorageUsage.self)
+    }
+
     /// `POST /api/files/delete-impact`, confirmed against `backend/src/routes/files/delete.js`
     /// and `fileTransferService.getDeleteImpact`: same `{path, name, kind}` item shape as the
     /// delete itself, answering with the count of share links that deleting those items would

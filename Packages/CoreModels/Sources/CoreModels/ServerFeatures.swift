@@ -5,13 +5,16 @@ import Foundation
 /// `backend/src/routes/features.js`, where each flag is a `{ enabled: Bool }` object.
 public struct ServerFeatures: Equatable, Sendable, Decodable {
     public let isUserVolumesEnabled: Bool
+    public let isVolumeUsageEnabled: Bool
 
-    public init(isUserVolumesEnabled: Bool = false) {
+    public init(isUserVolumesEnabled: Bool = false, isVolumeUsageEnabled: Bool = false) {
         self.isUserVolumesEnabled = isUserVolumesEnabled
+        self.isVolumeUsageEnabled = isVolumeUsageEnabled
     }
 
     private enum CodingKeys: String, CodingKey {
         case userVolumes
+        case volumeUsage
     }
 
     private struct FlagSection: Decodable {
@@ -21,6 +24,8 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let userVolumes = try container.decodeIfPresent(FlagSection.self, forKey: .userVolumes)
+        let volumeUsage = try container.decodeIfPresent(FlagSection.self, forKey: .volumeUsage)
         isUserVolumesEnabled = userVolumes?.enabled ?? false
+        isVolumeUsageEnabled = volumeUsage?.enabled ?? false
     }
 }

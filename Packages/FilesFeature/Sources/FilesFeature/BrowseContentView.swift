@@ -567,6 +567,7 @@ struct BrowseContentView: View {
             FileInfoSheet(
                 item: item,
                 metadata: store.infoMetadata,
+                usage: store.infoUsage,
                 errorMessage: store.infoErrorMessage,
                 onDismiss: { store.send(.infoDismissed) }
             )

@@ -246,6 +246,9 @@ public struct BrowseFeature {
         /// still-loading/error state while `GET /api/metadata/*` is in flight).
         public var infoItem: FileItem?
         public var infoMetadata: FileMetadata?
+        /// Server disk usage for `infoItem` when it's a directory and the endpoint returned
+        /// real figures — drives the Get Info sheet's "Server disk" section.
+        public var infoUsage: StorageUsage?
         public var isLoadingInfoMetadata = false
         public var infoErrorMessage: String?
         /// Item being downloaded for the QuickLook viewer (tapping a file), alongside the
@@ -348,6 +351,7 @@ public struct BrowseFeature {
         case infoTapped(FileItem)
         case infoDismissed
         case infoMetadataResponse(Result<FileMetadata, FilesClientError>)
+        case infoUsageResponse(Result<StorageUsage, FilesClientError>)
         case previewDismissed
         case previewFileResponse(Result<URL, FilesClientError>)
         case textContentResponse(Result<String, FilesClientError>)
@@ -860,6 +864,7 @@ public struct BrowseFeature {
             case .infoDismissed:
                 state.infoItem = nil
                 state.infoMetadata = nil
+                state.infoUsage = nil
                 state.infoErrorMessage = nil
                 state.isLoadingInfoMetadata = false
                 return .none
@@ -872,6 +877,15 @@ public struct BrowseFeature {
             case let .infoMetadataResponse(.failure(error)):
                 state.isLoadingInfoMetadata = false
                 state.infoErrorMessage = error.userMessage
+                return .none
+
+            case let .infoUsageResponse(.success(usage)):
+                // Kept only when the server actually reported disk figures — a denied path
+                // answers all zeros, which the "Server disk" section shouldn't show.
+                state.infoUsage = usage.isMeaningful ? usage : nil
+                return .none
+
+            case .infoUsageResponse(.failure):
                 return .none
 
             case .previewDismissed:
@@ -1305,14 +1319,19 @@ public struct BrowseFeature {
     private func loadInfo(_ state: inout State, item: FileItem) -> Effect<Action> {
         state.infoItem = item
         state.infoMetadata = nil
+        state.infoUsage = nil
         state.infoErrorMessage = nil
         state.isLoadingInfoMetadata = true
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         let path = item.id
-        return .run { send in
+        let metadata = Effect<Action>.run { send in
             await send(.infoMetadataResponse(await apiResult { try await filesClient.fetchMetadata(serverURL, path) }))
         }
+        guard item.isDirectory else { return metadata }
+        return .merge(metadata, .run { send in
+            await send(.infoUsageResponse(await apiResult { try await filesClient.fetchUsage(serverURL, path) }))
+        })
     }
 
     /// Only reached for non-streamable items — `rowTapped` already set `state.previewItem`
