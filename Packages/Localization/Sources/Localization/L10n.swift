@@ -274,10 +274,6 @@ public enum L10n {
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }
-    public enum OfficeEditor {
-        public static var editAction: String { tr("officeEditor.editAction") }  // "Edit"
-        public static var loadFailed: String { tr("officeEditor.loadFailed") }  // "Couldn't open the editor for this document."
-    }
     public enum OpenShareLink {
         public static var errorExpired: String { tr("openShareLink.errorExpired") }  // "This share link has expired."
         public static var errorInvalidLink: String { tr("openShareLink.errorInvalidLink") }  // "That doesn't look like a share link."
@@ -316,7 +312,6 @@ public enum L10n {
         public static var createShareLink: String { tr("previewToolbar.createShareLink") }  // "Create share link"
         public static var delete: String { tr("previewToolbar.delete") }  // "Delete"
         public static var download: String { tr("previewToolbar.download") }  // "Download"
-        public static var edit: String { tr("previewToolbar.edit") }  // "Edit"
         public static var rename: String { tr("previewToolbar.rename") }  // "Rename"
         public static var share: String { tr("previewToolbar.share") }  // "Share"
     }
@@ -350,9 +345,6 @@ public enum L10n {
         public static var dateFormatNavigationTitle: String { tr("settings.dateFormatNavigationTitle") }  // "Date Format"
         public static var dateFormatShowTime: String { tr("settings.dateFormatShowTime") }  // "Show Time"
         public static var navigationTitle: String { tr("settings.navigationTitle") }  // "Settings"
-        public static var officeEditorCollabora: String { tr("settings.officeEditorCollabora") }  // "Collabora"
-        public static var officeEditorHelp: String { tr("settings.officeEditorHelp") }  // "Which editor to use when the server offers both."
-        public static var officeEditorOnlyOffice: String { tr("settings.officeEditorOnlyOffice") }  // "ONLYOFFICE"
         public static var removeAllDownloadsConfirm: String { tr("settings.removeAllDownloadsConfirm") }  // "Remove All"
         public static var removeAllDownloadsMessage: String { tr("settings.removeAllDownloadsMessage") }
         public static var removeAllDownloadsTitle: String { tr("settings.removeAllDownloadsTitle") }  // "Remove All Downloads?"
@@ -360,7 +352,6 @@ public enum L10n {
         public static var rowChangePassword: String { tr("settings.rowChangePassword") }  // "Change Password"
         public static var rowClearCache: String { tr("settings.rowClearCache") }  // "Clear Cache"
         public static var rowDateFormat: String { tr("settings.rowDateFormat") }  // "Date Format"
-        public static var rowOfficeEditor: String { tr("settings.rowOfficeEditor") }  // "Office editor"
         public static var rowOpenSourceLicenses: String { tr("settings.rowOpenSourceLicenses") }  // "Open Source Licenses"
         public static var rowRemoveAllDownloads: String { tr("settings.rowRemoveAllDownloads") }  // "Remove All Downloads"
         public static var rowThumbnailSize: String { tr("settings.rowThumbnailSize") }  // "Thumbnail Size"
@@ -370,7 +361,6 @@ public enum L10n {
         public static var sectionDisplay: String { tr("settings.sectionDisplay") }  // "Display"
         public static var sectionGeneral: String { tr("settings.sectionGeneral") }  // "General"
         public static var sectionLicenses: String { tr("settings.sectionLicenses") }  // "Licenses"
-        public static var sectionOfficeEditor: String { tr("settings.sectionOfficeEditor") }  // "Documents"
         public static var sectionServerStorage: String { tr("settings.sectionServerStorage") }  // "Server Storage"
         public static var sectionStorage: String { tr("settings.sectionStorage") }  // "Storage"
         public static var sectionUsers: String { tr("settings.sectionUsers") }  // "Users"

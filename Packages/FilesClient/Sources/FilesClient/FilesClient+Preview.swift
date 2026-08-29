@@ -152,26 +152,8 @@ extension FilesClient {
         resolveShareLink: { _, token in
             ShareInfo(shareToken: token, label: "Q3 Report", isDirectory: true, sharingType: .anyone)
         },
-        fetchOnlyOfficeConfig: { _, path, mode in
-            let config = """
-            {"document":{"fileType":"docx","key":"preview","title":"\(path)","url":"https://files.example.com/api/onlyoffice/file"},"editorConfig":{"mode":"\(mode.rawValue)"},"token":"preview.jwt.token"}
-            """
-            return OnlyOfficeLaunch(
-                documentServerURL: URL(string: "https://onlyoffice.example.com")!,
-                configJSON: Data(config.utf8)
-            )
-        },
-        fetchCollaboraConfig: { _, _, _ in
-            CollaboraLaunch(url: URL(string: "https://collabora.example.com/browser/abc/cool.html?WOPISrc=https%3A%2F%2Ffiles.example.com%2Fapi%2Fcollabora%2Fwopi%2Ffiles%2Fx&access_token=preview")!)
-        },
         changeOwnPassword: { _, _, _ in },
-        serverFeatures: { _ in
-            ServerFeatures(
-                isUserVolumesEnabled: true,
-                isVolumeUsageEnabled: true,
-                office: ServerFeatures.OfficeEditors(isOnlyOfficeEnabled: true)
-            )
-        },
+        serverFeatures: { _ in ServerFeatures(isUserVolumesEnabled: true, isVolumeUsageEnabled: true) },
         fetchSystemSettings: { _ in
             SystemSettings(
                 thumbnails: ThumbnailSettings(),
