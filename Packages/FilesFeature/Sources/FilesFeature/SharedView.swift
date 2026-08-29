@@ -123,6 +123,9 @@ struct SharedView: View {
                     onDismiss: { isSortSheetPresented = false }
                 )
             }
+            .sheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
+                EditShareSheet(store: editStore)
+            }
             .alert(L10n.Shared.deleteTitle, isPresented: deleteConfirmationBinding) {
                 Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
                 Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteCancelled) }
@@ -192,6 +195,7 @@ struct SharedView: View {
                     sharedByText: store.state.sharedByLabel(for: share),
                     isDeleting: store.deletingIDs.contains(share.id),
                     onDelete: { store.send(.deleteTapped(share)) },
+                    onEdit: { store.send(.editTapped(share)) },
                     onCopied: { toastMessage = .success($0) }
                 )
                 .listRowBackground(Color.clear)
@@ -223,6 +227,7 @@ private struct SharedLinkCard: View {
     let sharedByText: String
     let isDeleting: Bool
     let onDelete: () -> Void
+    let onEdit: () -> Void
     let onCopied: (String) -> Void
 
     @State private var isExpanded: Bool
@@ -238,6 +243,7 @@ private struct SharedLinkCard: View {
         isDeleting: Bool,
         startExpanded: Bool = false,
         onDelete: @escaping () -> Void,
+        onEdit: @escaping () -> Void = {},
         onCopied: @escaping (String) -> Void
     ) {
         self.share = share
@@ -248,6 +254,7 @@ private struct SharedLinkCard: View {
         self.sharedByText = sharedByText
         self.isDeleting = isDeleting
         self.onDelete = onDelete
+        self.onEdit = onEdit
         self.onCopied = onCopied
         self._isExpanded = State(initialValue: startExpanded)
     }
@@ -313,8 +320,11 @@ private struct SharedLinkCard: View {
                 }
             }
 
-            pillAction(IconKit.delete, L10n.Common.delete, tint: .negative, isEnabled: true, action: onDelete)
-                .padding(.top, Metrics.actionRowSpacing)
+            HStack(spacing: Metrics.actionRowSpacing) {
+                pillAction(IconKit.rename, L10n.Common.edit, tint: .accent, isEnabled: true, action: onEdit)
+                pillAction(IconKit.delete, L10n.Common.delete, tint: .negative, isEnabled: true, action: onDelete)
+            }
+            .padding(.top, Metrics.actionRowSpacing)
         }
         .padding(Metrics.padding)
     }

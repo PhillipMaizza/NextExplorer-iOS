@@ -104,6 +104,9 @@ extension FilesClient {
             sharedWithMeLinks: { serverURL in
                 try await service.shareLinks(serverURL: serverURL, sharedWithMe: true)
             },
+            updateShareLink: { serverURL, shareID, request in
+                try await service.updateShareLink(serverURL: serverURL, shareID: shareID, request: request)
+            },
             deleteShareLink: { serverURL, shareID in
                 try await service.deleteShareLink(serverURL: serverURL, shareID: shareID)
             },

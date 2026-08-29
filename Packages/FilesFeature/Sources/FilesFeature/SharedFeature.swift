@@ -65,6 +65,7 @@ public struct SharedFeature {
         public var loadedSegments: Set<Segment> = []
         public var deleteConfirmationShare: Share?
         public var deletingIDs: Set<Share.ID> = []
+        @Presents public var editSheet: EditShareFeature.State?
         public var searchQuery = ""
         public var sortOption: SortOption = .dateShared
         public var sortDirection: BrowseFeature.SortDirection = .descending
@@ -169,6 +170,8 @@ public struct SharedFeature {
         case deleteConfirmed
         case deleteCancelled
         case deleteResponse(Share.ID, Result<Bool, FilesClientError>)
+        case editTapped(Share)
+        case editSheet(PresentationAction<EditShareFeature.Action>)
     }
 
     @Dependency(\.filesClient) var filesClient
@@ -262,7 +265,22 @@ public struct SharedFeature {
                 state.deletingIDs.remove(id)
                 state.actionErrorMessage = error.userMessage
                 return .none
+
+            case let .editTapped(share):
+                state.editSheet = EditShareFeature.State(serverURL: state.serverURL, share: share)
+                return .none
+
+            case let .editSheet(.presented(.delegate(.updated(share)))):
+                state.byMe[id: share.id] = share
+                state.editSheet = nil
+                return .none
+
+            case .editSheet:
+                return .none
             }
+        }
+        .ifLet(\.$editSheet, action: \.editSheet) {
+            EditShareFeature()
         }
     }
 
