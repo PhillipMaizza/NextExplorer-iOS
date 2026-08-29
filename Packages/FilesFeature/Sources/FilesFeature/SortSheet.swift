@@ -3,9 +3,6 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let headerIconSize: CGFloat = .iconMedium
-    static let closeIconSize: CGFloat = .iconXSmall
-    static let closeButtonPadding: CGFloat = .space8
     static let contentSpacing: CGFloat = .space24
     static let rowSpacing: CGFloat = .space12
     static let rowVerticalPadding: CGFloat = .space8
@@ -43,28 +40,12 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
-            HStack {
-                IconKit.sort
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color.accent)
-                    .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
-
-                Spacer()
-
-                Button(action: onDismiss) {
-                    IconKit.close
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.primaryDS)
-                        .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
-                        .padding(Constants.closeButtonPadding)
-                        .background(Circle().fill(Color.backgroundSecondary))
-                }
-                .buttonStyle(DSHapticButtonStyle())
-            }
-
-            Text(L10n.Sort.sheetTitle).type(.headline3, style: .link)
+            DSSheetHeader(
+                icon: IconKit.sort,
+                title: L10n.Sort.sheetTitle,
+                closeAccessibilityLabel: L10n.Common.close,
+                onClose: onDismiss
+            )
 
             VStack(spacing: 0) {
                 ForEach(options, id: \.self) { option in
