@@ -6,9 +6,6 @@ import SwiftUI
 import UIKit
 
 private enum Constants {
-    static let headerIconSize: CGFloat = .iconMedium
-    static let closeIconSize: CGFloat = .iconXSmall
-    static let closeButtonPadding: CGFloat = .space8
     static let contentSpacing: CGFloat = .space16
     static let sectionSpacing: CGFloat = .space8
     static let horizontalPadding: CGFloat = .space16
@@ -21,6 +18,7 @@ private enum Constants {
     static let copyIconSize: CGFloat = .iconSmall
     static let userAvatarSize: CGFloat = .size32
     static let copyFeedbackSeconds: Double = 2
+    static let maxHeightFraction: CGFloat = 0.9
 }
 
 /// The "Create Share Link" sheet — mirrors the web client's `ShareDialog.vue`, in the app's
@@ -34,54 +32,47 @@ struct CreateShareLinkSheet: View {
     private enum CopiedField: Equatable { case shareLink, directLink }
 
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            Divider()
-            ScrollView {
-                Group {
-                    if store.createdShare != nil {
-                        createdContent
-                    } else {
-                        formContent
-                    }
+        DynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+            VStack(alignment: .leading, spacing: Constants.contentSpacing) {
+                DSSheetHeader(
+                    icon: IconKit.shareLink,
+                    title: store.createdShare != nil ? L10n.CreateShare.titleCreated : L10n.CreateShare.title,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onClose: { dismiss() }
+                )
+                if store.createdShare != nil {
+                    createdContent
+                } else {
+                    formContent
                 }
-                .padding(.horizontal, Constants.horizontalPadding)
-                .padding(.vertical, Constants.verticalPadding)
             }
+            .padding(.horizontal, Constants.horizontalPadding)
+            .padding(.vertical, Constants.verticalPadding)
+        } footer: {
+            footerButtons
         }
-        .background(Color.backgroundPrimary)
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
     }
 
-    // MARK: Header
-
-    private var header: some View {
-        HStack {
-            HStack(spacing: .space8) {
-                IconKit.shareLink
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color.accent)
-                    .frame(width: Constants.headerIconSize, height: Constants.headerIconSize)
-                Text(store.createdShare != nil ? L10n.CreateShare.titleCreated : L10n.CreateShare.title)
-                    .type(.headline3, style: .primary(for: .label))
+    @ViewBuilder
+    private var footerButtons: some View {
+        Group {
+            if store.createdShare != nil {
+                DSButton(L10n.Common.done, style: .primary) { dismiss() }
+            } else {
+                HStack(spacing: .space12) {
+                    DSButton(L10n.Common.cancel, style: .ghost) { dismiss() }
+                    DSButton(L10n.CreateShare.submit, style: .primary, isLoading: store.isCreating) {
+                        store.send(.createTapped)
+                    }
+                    .disabled(!store.isCreateEnabled)
+                }
             }
-            Spacer()
-            Button {
-                dismiss()
-            } label: {
-                IconKit.close
-                    .resizable()
-                    .foregroundStyle(Color.primaryDS)
-                    .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
-                    .padding(Constants.closeButtonPadding)
-                    .background(Circle().fill(Color.backgroundSecondary))
-            }
-            .buttonStyle(DSHapticButtonStyle())
         }
         .padding(.horizontal, Constants.horizontalPadding)
-        .padding(.vertical, .space16)
+        .padding(.top, Constants.sectionSpacing)
+        .padding(.bottom, Constants.verticalPadding)
+        .frame(maxWidth: .infinity)
+        .background(Color.backgroundPrimary)
     }
 
     // MARK: Form
@@ -146,15 +137,6 @@ struct CreateShareLinkSheet: View {
                 .datePickerStyle(.compact)
                 .tint(Color.accent)
             }
-
-            HStack(spacing: .space12) {
-                DSButton(L10n.Common.cancel, style: .ghost) { dismiss() }
-                DSButton(L10n.CreateShare.submit, style: .primary, isLoading: store.isCreating) {
-                    store.send(.createTapped)
-                }
-                .disabled(!store.isCreateEnabled)
-            }
-            .padding(.top, .space4)
         }
     }
 
@@ -258,9 +240,6 @@ struct CreateShareLinkSheet: View {
                 }
 
                 summaryRows(for: created)
-
-                DSButton(L10n.Common.done, style: .primary) { dismiss() }
-                    .padding(.top, .space4)
             }
         }
     }
