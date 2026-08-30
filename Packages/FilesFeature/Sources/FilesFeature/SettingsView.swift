@@ -67,22 +67,16 @@ struct SettingsView: View {
         )
     }
 
+    // No op setters: each confirmation sheet is dismiss disabled and only closes through one
+    // of `DSAlertSheet`'s own buttons, which drive the reducer directly. Sign out in
+    // particular tears down this whole authenticated scope on confirm, so a SwiftUI initiated
+    // dismiss action would land in a dead store.
     private var isConfirmingSignOut: Binding<Bool> {
-        Binding(
-            get: { store.isConfirmingSignOut },
-            set: { isPresented in
-                if !isPresented { store.send(.cancelSignOutTapped) }
-            }
-        )
+        Binding(get: { store.isConfirmingSignOut }, set: { _ in })
     }
 
     private var isConfirmingRemoveAllDownloads: Binding<Bool> {
-        Binding(
-            get: { store.removeAllDownloadsConfirmationIsPresented },
-            set: { isPresented in
-                if !isPresented { store.send(.removeAllDownloadsCancelled) }
-            }
-        )
+        Binding(get: { store.removeAllDownloadsConfirmationIsPresented }, set: { _ in })
     }
 
     private static let byteFormatter: ByteCountFormatter = {
@@ -92,12 +86,7 @@ struct SettingsView: View {
     }()
 
     private var isConfirmingClearCache: Binding<Bool> {
-        Binding(
-            get: { store.clearCacheConfirmationIsPresented },
-            set: { isPresented in
-                if !isPresented { store.send(.clearCacheCancelled) }
-            }
-        )
+        Binding(get: { store.clearCacheConfirmationIsPresented }, set: { _ in })
     }
 
     private var appVersionText: String {
@@ -287,28 +276,46 @@ struct SettingsView: View {
                 AccessRulesView(store: accessRulesStore)
             }
             .navigationTitle(L10n.Settings.navigationTitle)
-            // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a
-            // popover anchored to some ambient source view on the `.pad` idiom (this app
-            // also targets iPad) rather than a full-width bottom sheet. `.alert` is always
-            // a centered modal regardless of idiom, so there's no anchor to get wrong.
-            .alert(L10n.Settings.signOutAlertTitle, isPresented: isConfirmingSignOut) {
-                Button(L10n.Common.logOut, role: .destructive) { store.send(.confirmSignOutTapped) }
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.cancelSignOutTapped) }
-            } message: {
-                Text(L10n.Settings.signOutMessage)
+            .sheet(isPresented: isConfirmingSignOut) {
+                DSAlertSheet(
+                    icon: IconKit.signOut,
+                    title: L10n.Settings.signOutAlertTitle,
+                    message: L10n.Settings.signOutMessage,
+                    confirmTitle: L10n.Common.logOut,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    isConfirmLoading: store.isSigningOut,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.confirmSignOutTapped) },
+                    onDismiss: { store.send(.cancelSignOutTapped) }
+                )
             }
-            .alert(L10n.Settings.removeAllDownloadsTitle, isPresented: isConfirmingRemoveAllDownloads) {
-                Button(L10n.Settings.removeAllDownloadsConfirm, role: .destructive) { store.send(.removeAllDownloadsConfirmed) }
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.removeAllDownloadsCancelled) }
-            } message: {
-                Text(L10n.Settings.removeAllDownloadsMessage)
+            .sheet(isPresented: isConfirmingRemoveAllDownloads) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: L10n.Settings.removeAllDownloadsTitle,
+                    message: L10n.Settings.removeAllDownloadsMessage,
+                    confirmTitle: L10n.Settings.removeAllDownloadsConfirm,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.removeAllDownloadsConfirmed) },
+                    onDismiss: { store.send(.removeAllDownloadsCancelled) }
+                )
             }
             .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
-            .alert(L10n.Settings.clearCacheTitle, isPresented: isConfirmingClearCache) {
-                Button(L10n.Settings.clearCacheConfirm, role: .destructive) { store.send(.clearCacheConfirmed) }
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.clearCacheCancelled) }
-            } message: {
-                Text(L10n.Settings.clearCacheMessage)
+            .sheet(isPresented: isConfirmingClearCache) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: L10n.Settings.clearCacheTitle,
+                    message: L10n.Settings.clearCacheMessage,
+                    confirmTitle: L10n.Settings.clearCacheConfirm,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.clearCacheConfirmed) },
+                    onDismiss: { store.send(.clearCacheCancelled) }
+                )
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
             .task {

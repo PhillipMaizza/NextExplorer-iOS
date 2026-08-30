@@ -145,6 +145,7 @@ struct AppFeatureTests {
         let user = User(id: "1", username: "phillip", email: nil, roles: [])
 
         await store.send(.destination(.unauthenticated(.delegate(.authenticated(user, serverURL))))) {
+            $0.didAuthenticateFromLogin = true
             $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, user: user))
         }
     }

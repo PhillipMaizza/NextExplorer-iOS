@@ -66,13 +66,20 @@ struct ServerDetailsView: View {
             gallerySelection = nil
             Task { await loadGalleryImage(item) }
         }
-        .alert(L10n.ServerDetails.cameraDeniedTitle, isPresented: $isCameraDeniedAlertPresented) {
-            Button(L10n.Common.openSettings) {
-                if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
-            }
-            Button(L10n.Common.cancel, role: .cancel) {}
-        } message: {
-            Text(L10n.ServerDetails.cameraDeniedMessage)
+        .sheet(isPresented: $isCameraDeniedAlertPresented) {
+            DSAlertSheet(
+                icon: IconKit.camera,
+                title: L10n.ServerDetails.cameraDeniedTitle,
+                message: L10n.ServerDetails.cameraDeniedMessage,
+                confirmTitle: L10n.Common.openSettings,
+                dismissTitle: L10n.Common.cancel,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: {
+                    isCameraDeniedAlertPresented = false
+                    if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                },
+                onDismiss: { isCameraDeniedAlertPresented = false }
+            )
         }
         .onAppear { store.send(.onAppear) }
     }

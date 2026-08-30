@@ -151,6 +151,8 @@ public struct DSButton: View {
 /// `DSButton`) and a `size`-wide circle — for async actions that show a spinner while in
 /// flight and a distinct end state (e.g. a checkmark or an X) in place, like "Test Connection".
 public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
+    @Environment(\.isEnabled) private var isEnabled
+
     private let phase: Phase
     private let isCollapsed: Bool
     private let style: DSButtonStyle
@@ -189,7 +191,9 @@ public struct DSAnimatedButton<Content: View, Phase: Equatable>: View {
                     .contentShape(Rectangle())
             }
             .buttonStyle(DSHapticButtonStyle())
-            .allowsHitTesting(isHitEnabled)
+            .allowsHitTesting(isHitEnabled && isEnabled)
+            .opacity(isEnabled ? 1 : Constants.disabledOpacity)
+            .animation(.easeOut(duration: Constants.contentFadeDuration), value: isEnabled)
             .modifier(
                 MorphingButtonChrome(
                     progress: isCollapsed ? 1 : 0,
