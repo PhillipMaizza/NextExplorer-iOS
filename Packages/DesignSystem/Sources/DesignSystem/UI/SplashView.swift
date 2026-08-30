@@ -27,10 +27,20 @@ private enum Constants {
 /// maximum is `Constants.maxOnScreen`, after which it clears regardless.
 public struct SplashView: View {
     private let isReady: Bool
+    private let onExitStarted: () -> Void
     private let onFinished: () -> Void
 
-    public init(isReady: Bool, onFinished: @escaping () -> Void) {
+    /// `onExitStarted` fires the instant the splash commits to leaving, while it still fully
+    /// covers the screen — the moment for the caller to mount whatever is behind it, so the
+    /// wing-opening reveal uncovers real content rather than a blank frame. `onFinished`
+    /// fires once it has cleared.
+    public init(
+        isReady: Bool,
+        onExitStarted: @escaping () -> Void = {},
+        onFinished: @escaping () -> Void
+    ) {
         self.isReady = isReady
+        self.onExitStarted = onExitStarted
         self.onFinished = onFinished
     }
 
@@ -98,6 +108,7 @@ public struct SplashView: View {
     private func maybeExit() {
         guard didSettle, readyLatch, !isExiting else { return }
         isExiting = true
+        onExitStarted()
 
         Task { @MainActor in
             withAnimation(.easeInOut(duration: Constants.flapStep)) { flap = 0.8 }

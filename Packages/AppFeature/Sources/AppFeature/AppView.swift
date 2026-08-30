@@ -17,6 +17,10 @@ public struct AppView: View {
     /// animation has cleared — the reducer flips `destination` the moment auth resolves, the
     /// splash just holds the frame until then.
     @State private var isSplashPresented = true
+    /// Flipped the moment the splash commits to its exit, while it still covers the screen —
+    /// the authenticated tree mounts then (not after the splash is gone) so its wing-opening
+    /// reveal uncovers the real Browse screen with its skeleton, not a blank frame.
+    @State private var splashIsExiting = false
     /// Opacity of the full-screen accent layer that takes over from `LoginFormView`'s
     /// expanding button circle, then fades to reveal the authenticated app.
     @State private var authFillOpacity: Double = 0
@@ -39,7 +43,10 @@ public struct AppView: View {
             }
 
             if isSplashPresented {
-                SplashView(isReady: store.destination != .loading) {
+                SplashView(
+                    isReady: store.destination != .loading,
+                    onExitStarted: { splashIsExiting = true }
+                ) {
                     isSplashPresented = false
                 }
                 .transition(.identity)
@@ -84,7 +91,16 @@ public struct AppView: View {
                 }
 
             case .authenticated:
-                if let scopedStore = store.scope(state: \.destination.authenticated, action: \.destination.authenticated) {
+                // Hold the tab tree back until the splash begins its exit. Building the
+                // `NavigationStack` under a fully opaque splash over a zero-progress frame
+                // meant UIKit laid the nav bar out off screen and never revisited it (large
+                // title blank until a tab switch forced a relayout), and `BrowseContentView`'s
+                // `.task` — the only thing that kicks the initial folder fetch — was deferred
+                // the same way. Mounting as the splash starts to leave (still covering the
+                // screen) gives a normal on screen layout pass, and the wing-opening reveal
+                // uncovers the real skeleton instead of a blank frame.
+                if (!isSplashPresented || splashIsExiting),
+                   let scopedStore = store.scope(state: \.destination.authenticated, action: \.destination.authenticated) {
                     AuthenticatedView(store: scopedStore)
                         .transition(.opacity)
                 }

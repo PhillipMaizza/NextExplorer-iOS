@@ -106,12 +106,21 @@ struct AccessRulesView: View {
                 label: Self.permissionLabel
             )
 
-            Button(role: .destructive) {
-                store.send(.removeRule(id: rule.id), animation: .default)
-            } label: {
-                Text(L10n.AccessRules.remove).type(.body3(.semibold), style: .error)
+            HStack {
+                Spacer()
+                Button(role: .destructive) {
+                    store.send(.removeRule(id: rule.id), animation: .default)
+                } label: {
+                    HStack(spacing: .space4) {
+                        IconKit.delete
+                            .resizable().scaledToFit()
+                            .frame(width: .iconXSmall, height: .iconXSmall)
+                        Text(L10n.AccessRules.remove).type(.body2(.semibold))
+                    }
+                    .foregroundStyle(Color.negative)
+                }
+                .buttonStyle(DSHapticButtonStyle())
             }
-            .buttonStyle(DSHapticButtonStyle())
         }
         .padding(.space16)
         .frame(maxWidth: .infinity, alignment: .leading)

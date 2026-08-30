@@ -19,4 +19,9 @@ public struct NetworkClient: Sendable {
     /// handling is the same as `send`. Use for large payloads (previews, downloads, archives)
     /// where `send`'s in-memory `Data` would spike resident memory.
     public var download: @Sendable (_ request: URLRequest) async throws -> (URL, HTTPURLResponse)
+    /// Same as `download`, but served by a separate session with a small per host connection
+    /// cap, so a burst of these (PDF first page thumbnail fetches while browsing a folder)
+    /// can never take slots from the main session's interactive pool. Cookie jar and server
+    /// trust handling are shared with `download`.
+    public var lowPriorityDownload: @Sendable (_ request: URLRequest) async throws -> (URL, HTTPURLResponse)
 }

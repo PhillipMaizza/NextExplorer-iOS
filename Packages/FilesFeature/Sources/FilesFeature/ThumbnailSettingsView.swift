@@ -8,6 +8,8 @@ private enum Metrics {
     static let contentSpacing: CGFloat = .space16
     static let horizontalPadding: CGFloat = .space16
     static let rowSpacing: CGFloat = .space4
+    static let rowIconSpacing: CGFloat = .space8
+    static let rowIconSize: CGFloat = .iconSmall
     static let disabledOpacity: Double = 0.5
     static let sizeStep = 8
     static let qualityStep = 5
@@ -68,6 +70,7 @@ struct ThumbnailSettingsView: View {
                 numericRow(
                     title: L10n.ThumbnailSettings.quality,
                     help: L10n.ThumbnailSettings.qualityHelp,
+                    icon: IconKit.sparkle,
                     value: store.draft.quality,
                     unit: nil,
                     range: ThumbnailSettings.qualityRange,
@@ -77,6 +80,7 @@ struct ThumbnailSettingsView: View {
                 numericRow(
                     title: L10n.ThumbnailSettings.maxDimension,
                     help: L10n.ThumbnailSettings.maxDimensionHelp,
+                    icon: IconKit.resize,
                     value: store.draft.size,
                     unit: "px",
                     range: ThumbnailSettings.sizeRange,
@@ -86,6 +90,7 @@ struct ThumbnailSettingsView: View {
                 numericRow(
                     title: L10n.ThumbnailSettings.concurrency,
                     help: L10n.ThumbnailSettings.concurrencyHelp,
+                    icon: IconKit.speed,
                     value: store.draft.concurrency,
                     unit: nil,
                     range: ThumbnailSettings.concurrencyRange,
@@ -101,6 +106,7 @@ struct ThumbnailSettingsView: View {
     private func numericRow(
         title: String,
         help: String,
+        icon: Image,
         value: Int,
         unit: String?,
         range: ClosedRange<Int>,
@@ -113,11 +119,15 @@ struct ThumbnailSettingsView: View {
                 in: range,
                 step: step
             ) {
-                HStack {
+                HStack(spacing: Metrics.rowIconSpacing) {
+                    icon
+                        .resizable().scaledToFit()
+                        .foregroundStyle(Color.secondaryDS)
+                        .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                     Text(title).type(.body2(.regular), style: .primary(for: .label))
                     Spacer()
                     Text(unit.map { "\(value) \($0)" } ?? "\(value)")
-                        .type(.body2(.regular), style: .secondary)
+                        .type(.body2(.semibold), style: .primary(for: .label))
                         .monospacedDigit()
                 }
             }

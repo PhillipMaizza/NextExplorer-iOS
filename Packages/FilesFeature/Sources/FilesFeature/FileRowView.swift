@@ -25,6 +25,9 @@ struct FileRowView: View {
     let thumbnailSignature: String
     let serverURL: URL?
     let showThumbnails: Bool
+    /// The full item, when built from one — needed for the on device PDF first page render,
+    /// which fetches the file through `filesClient.previewFileLowPriority`.
+    private let file: FileItem?
     /// When set, replaces the folder/file-type glyph — used by the Favorites list to show a
     /// favorite's custom icon, weight and colour.
     var customIcon: Image?
@@ -64,6 +67,7 @@ struct FileRowView: View {
         self.thumbnailSignature = ""
         self.serverURL = nil
         self.showThumbnails = false
+        self.file = nil
         self.customIcon = customIcon
         self.customIconTint = customIconTint
         self.customIconFilled = customIconFilled
@@ -82,6 +86,7 @@ struct FileRowView: View {
         self.thumbnailSignature = item.cacheSignature
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
+        self.file = item
         self.customIcon = nil
         self.customIconTint = nil
         self.customIconFilled = false
@@ -105,6 +110,10 @@ struct FileRowView: View {
 
     private var isEligibleForThumbnail: Bool {
         !isDirectory && supportsThumbnail && showThumbnails && serverURL != nil && itemID != nil
+    }
+
+    private var isEligibleForPDFThumbnail: Bool {
+        showThumbnails && serverURL != nil && (file?.isPDF ?? false)
     }
 
     var body: some View {
@@ -162,7 +171,9 @@ struct FileRowView: View {
         } else if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
                 .frame(width: Constants.iconFrame, height: Constants.iconFrame)
-                .clipShape(RoundedRectangle(cornerRadius: .radiusControl))
+        } else if isEligibleForPDFThumbnail, let serverURL, let file {
+            PDFThumbnailImage(serverURL: serverURL, item: file)
+                .frame(width: Constants.iconFrame, height: Constants.iconFrame)
         } else if isDirectory {
             IconKit.folderFill
                 .resizable()

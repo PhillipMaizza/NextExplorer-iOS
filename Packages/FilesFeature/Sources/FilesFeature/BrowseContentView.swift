@@ -34,8 +34,9 @@ private enum Constants {
     static let uploadButtonWeight: Font.Weight = .bold
     /// Gap between the empty folder message and its upload call to action.
     static let emptyUploadButtonTopSpacing: CGFloat = .space24
-    static let emptyUploadButtonHeight: CGFloat = .size48
     static let emptyUploadButtonHPadding: CGFloat = .space24
+    /// Keeps the empty folder's dashed upload button from spanning an iPad's full width.
+    static let emptyUploadButtonMaxWidth: CGFloat = 360
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -1028,22 +1029,15 @@ struct BrowseContentView: View {
     /// behind an accent pill so a first time user has somewhere obvious to start.
     private var emptyStateUploadButton: some View {
         UploadSourceMenu(
-            label: {
-                HStack(spacing: .space8) {
-                    IconKit.upload
-                    Text(L10n.Uploads.menuTitle)
-                }
-                .type(.label3)
-                .foregroundStyle(Color.black)
-                .frame(height: Constants.emptyUploadButtonHeight)
-                .padding(.horizontal, Constants.emptyUploadButtonHPadding)
-                .background(Capsule().fill(Color.accent))
-            },
+            label: { UploadDashedLabel(title: L10n.Uploads.menuTitle) },
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,
             isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
         )
+        .tint(.primaryDS)
+        .frame(maxWidth: Constants.emptyUploadButtonMaxWidth)
+        .padding(.horizontal, Constants.emptyUploadButtonHPadding)
         .accessibilityLabel(L10n.Uploads.menuTitle)
     }
 

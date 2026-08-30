@@ -8,6 +8,10 @@ import NetworkClient
 /// every request via the shared `HTTPCookieStorage`.
 struct FilesService: Sendable {
     let networkClient: NetworkClient
+    /// De-duplicates concurrent downloads that target the same cache file — e.g. a PDF's
+    /// background thumbnail fetch and a tap-to-open of the same file. Without it both would
+    /// download the bytes and then race on the `moveItem` into the shared slot.
+    let downloadCoordinator = PreviewDownloadCoordinator()
 
     func browse(serverURL: URL, path: String) async throws -> BrowseResult {
         let url = Self.browseURL(serverURL: serverURL, path: path)
@@ -434,27 +438,59 @@ struct FilesService: Sendable {
         }
     }
 
-    func previewFile(serverURL: URL, item: FileItem) async throws -> URL {
-        let directory = Self.previewCacheDirectory(for: item, namespace: "preview")
-        // RAW formats always come back as a JPEG stream (`rawPreviewService`), regardless of
-        // the original extension — save with a matching extension or QuickLook's UTI
-        // detection (extension-based) tries to render JPEG bytes as e.g. `.nef` and fails.
+    /// The on disk cache slot for `item`'s downloaded preview: the directory, the file
+    /// itself, and its staleness sidecar. RAW formats always come back as a JPEG stream
+    /// (`rawPreviewService`) whatever the original extension, so they're stored with a
+    /// matching name or QuickLook's extension-based UTI detection tries to render JPEG bytes
+    /// as e.g. `.nef` and fails.
+    private func previewCacheSlot(for item: FileItem) -> (directory: URL, fileURL: URL, metaURL: URL) {
+        let directory = Self.previewCacheDirectory(for: item, namespace: Self.previewCacheNamespace)
         let safeName = SafeFileName.component(item.name)
-        let fileName = item.isRawImage ? "\(safeName).jpg" : safeName
-        let fileURL = directory.appendingPathComponent(fileName)
-        let metaURL = directory.appendingPathComponent(".meta")
+        let fileName = item.isRawImage ? "\(safeName).\(Self.rawPreviewFileExtension)" : safeName
+        return (
+            directory,
+            directory.appendingPathComponent(fileName),
+            directory.appendingPathComponent(Self.cacheMetaSidecarName)
+        )
+    }
 
-        if FileManager.default.fileExists(atPath: fileURL.path),
-           let cachedMeta = try? String(contentsOf: metaURL, encoding: .utf8),
-           cachedMeta == Self.cacheMetaValue(for: item) {
-            return fileURL
+    /// The already-downloaded preview file for `item`, or `nil` when it isn't cached (or the
+    /// cache entry is stale). Pure disk check, no network.
+    func cachedPreviewFileURL(item: FileItem) -> URL? {
+        let slot = previewCacheSlot(for: item)
+        guard FileManager.default.fileExists(atPath: slot.fileURL.path),
+              let cachedMeta = try? String(contentsOf: slot.metaURL, encoding: .utf8),
+              cachedMeta == Self.cacheMetaValue(for: item) else {
+            return nil
         }
+        return slot.fileURL
+    }
 
+    func previewFile(serverURL: URL, item: FileItem) async throws -> URL {
+        try await fetchPreviewFile(serverURL: serverURL, item: item, lowPriority: false)
+    }
+
+    /// `previewFile` served over the low priority session — for opportunistic fetches (PDF
+    /// first page thumbnails) that must not compete with interactive traffic. Same cache
+    /// slot, so a later tap-to-open reuses the download and a cache hit here returns with no
+    /// network.
+    func previewFileLowPriority(serverURL: URL, item: FileItem) async throws -> URL {
+        try await fetchPreviewFile(serverURL: serverURL, item: item, lowPriority: true)
+    }
+
+    private func fetchPreviewFile(serverURL: URL, item: FileItem, lowPriority: Bool) async throws -> URL {
+        if let cached = cachedPreviewFileURL(item: item) {
+            return cached
+        }
         guard let url = FilesClient.previewURL(serverURL: serverURL, item: item) else {
             throw FilesClientError.decoding("Could not build preview URL.")
         }
+        let slot = previewCacheSlot(for: item)
         let request = Self.makeRequest(url: url, method: .get)
-        return try await downloadToCache(request, directory: directory, fileURL: fileURL, metaURL: metaURL, item: item)
+        return try await downloadToCache(
+            request, directory: slot.directory, fileURL: slot.fileURL, metaURL: slot.metaURL,
+            item: item, lowPriority: lowPriority
+        )
     }
 
     /// `POST /api/download`, confirmed against `backend/src/routes/files/download.js` mounted
@@ -468,9 +504,9 @@ struct FilesService: Sendable {
     /// first. Reuses `previewFile`'s cache layout (same staleness key) but under its own
     /// `namespace`, so the two endpoints never share a cache slot for the same item.
     func downloadRawFile(serverURL: URL, item: FileItem) async throws -> URL {
-        let directory = Self.previewCacheDirectory(for: item, namespace: "download")
+        let directory = Self.previewCacheDirectory(for: item, namespace: Self.rawDownloadCacheNamespace)
         let fileURL = directory.appendingPathComponent(SafeFileName.component(item.name))
-        let metaURL = directory.appendingPathComponent(".meta")
+        let metaURL = directory.appendingPathComponent(Self.cacheMetaSidecarName)
 
         if FileManager.default.fileExists(atPath: fileURL.path),
            let cachedMeta = try? String(contentsOf: metaURL, encoding: .utf8),
@@ -487,28 +523,35 @@ struct FilesService: Sendable {
 
     /// Streams `request`'s response to disk (never buffering it in memory — previews,
     /// downloads and whole archives can be very large) and lands it at `fileURL` with a
-    /// staleness sidecar, or returns the existing cache entry untouched.
+    /// staleness sidecar, or returns the existing cache entry untouched. Concurrent calls for
+    /// the same `fileURL` share a single download via `downloadCoordinator`.
     private func downloadToCache(
-        _ request: URLRequest, directory: URL, fileURL: URL, metaURL: URL, item: FileItem
+        _ request: URLRequest, directory: URL, fileURL: URL, metaURL: URL, item: FileItem,
+        lowPriority: Bool = false
     ) async throws -> URL {
-        let downloadedURL: URL
-        let response: HTTPURLResponse
-        do {
-            (downloadedURL, response) = try await networkClient.download(request)
-        } catch {
-            throw FilesClientError.network(String(describing: error))
-        }
-        defer { try? FileManager.default.removeItem(at: downloadedURL) }
-        try Self.validate(response)
+        let networkClient = self.networkClient
+        return try await downloadCoordinator.run(forFileAt: fileURL) {
+            let downloadedURL: URL
+            let response: HTTPURLResponse
+            do {
+                (downloadedURL, response) = lowPriority
+                    ? try await networkClient.lowPriorityDownload(request)
+                    : try await networkClient.download(request)
+            } catch {
+                throw FilesClientError.network(String(describing: error))
+            }
+            defer { try? FileManager.default.removeItem(at: downloadedURL) }
+            try Self.validate(response)
 
-        do {
-            try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            try? FileManager.default.removeItem(at: fileURL)
-            try FileManager.default.moveItem(at: downloadedURL, to: fileURL)
-            try Self.cacheMetaValue(for: item).write(to: metaURL, atomically: true, encoding: .utf8)
-            return fileURL
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
+            do {
+                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+                try? FileManager.default.removeItem(at: fileURL)
+                try FileManager.default.moveItem(at: downloadedURL, to: fileURL)
+                try Self.cacheMetaValue(for: item).write(to: metaURL, atomically: true, encoding: .utf8)
+                return fileURL
+            } catch {
+                throw FilesClientError.decoding(error.localizedDescription)
+            }
         }
     }
 
@@ -598,12 +641,19 @@ struct FilesService: Sendable {
         try handle.write(contentsOf: Data("\r\n--\(boundary)--\r\n".utf8))
     }
 
+    static let previewCacheRootDirectory = "PreviewCache"
+    static let cacheMetaSidecarName = ".meta"
+    static let rawPreviewFileExtension = "jpg"
+    /// `previewCacheNamespace` / `rawDownloadCacheNamespace` keep `previewFile`
+    /// (`GET /api/preview`) and `downloadRawFile` (`POST /api/download`) from ever sharing a
+    /// cache entry for the same item — two different endpoints, nothing guarantees identical
+    /// bytes for every kind that uses both (RAW images already diverge one direction).
+    static let previewCacheNamespace = "preview"
+    static let rawDownloadCacheNamespace = "download"
+
     /// One subdirectory per item path (slashes swapped out so it's a single valid path
     /// component) — distinct files that happen to share a name never collide, since they
-    /// have distinct full paths. `namespace` keeps `previewFile` (`GET /api/preview`) and
-    /// `downloadRawFile` (`POST /api/download`) from ever sharing a cache entry for the same
-    /// item — two different endpoints, nothing guarantees they'll always serve identical bytes
-    /// for every kind that happens to use both (RAW images already diverge one direction).
+    /// have distinct full paths.
     private static func previewCacheDirectory(for item: FileItem, namespace: String) -> URL {
         let cachesDirectory = (try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
             ?? FileManager.default.temporaryDirectory
@@ -611,7 +661,7 @@ struct FilesService: Sendable {
         // Every slash is already gone, so the only strings left that would still traverse are
         // a bare "." / ".." (a server handing back `item.id == ".."`).
         let key = (flattened.isEmpty || flattened == "." || flattened == "..") ? "_" : flattened
-        return cachesDirectory.appendingPathComponent("PreviewCache", isDirectory: true)
+        return cachesDirectory.appendingPathComponent(Self.previewCacheRootDirectory, isDirectory: true)
             .appendingPathComponent(namespace, isDirectory: true)
             .appendingPathComponent(key, isDirectory: true)
     }

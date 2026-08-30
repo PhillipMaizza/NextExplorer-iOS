@@ -206,6 +206,7 @@ struct SettingsView: View {
                         store.send(.removeAllDownloadsTapped)
                     }
                     .disabled(store.isRemovingAllDownloads || !store.hasDownloads)
+                    .opacity(store.hasDownloads ? Constants.fullOpacity : Constants.disabledOpacity)
                     DSNavigationRow(
                         title: L10n.Settings.rowClearCache,
                         icon: IconKit.delete,
@@ -215,6 +216,7 @@ struct SettingsView: View {
                         store.send(.clearCacheTapped)
                     }
                     .disabled(store.isClearingCache || store.cacheSize == 0)
+                    .opacity(store.cacheSize > 0 ? Constants.fullOpacity : Constants.disabledOpacity)
                 } header: {
                     sectionHeader(L10n.Settings.sectionStorage)
                 } footer: {

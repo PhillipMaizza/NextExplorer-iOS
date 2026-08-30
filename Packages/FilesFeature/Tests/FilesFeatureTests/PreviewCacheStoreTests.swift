@@ -7,7 +7,9 @@ import Testing
 /// `LocalDownloadStoreTests` — the whole point is verifying actual on-disk behavior.
 /// `.serialized`: every test here shares one real directory (`size`/`clear` operate on the
 /// whole cache root, not a per-test-unique file), so running them concurrently races.
-@Suite(.serialized)
+/// `SerializedPreviewCacheAccess`: also keeps it from overlapping other suites that touch
+/// the same directory (`ThumbnailCacheTests`).
+@Suite(.serialized, SerializedPreviewCacheAccess())
 struct PreviewCacheStoreTests {
     private let store = PreviewCacheStore.liveValue
 
