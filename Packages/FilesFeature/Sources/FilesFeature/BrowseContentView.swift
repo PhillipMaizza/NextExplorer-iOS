@@ -63,6 +63,10 @@ struct BrowseContentView: View {
     @State private var isCameraPresented = false
     @State private var isCameraDeniedAlertPresented = false
     @State private var photosSelection: [PhotosPickerItem] = []
+    /// Pairs each file cell/row with the full-screen preview cover so it opens and
+    /// interactively swipes-to-dismiss with the native `.zoom` morph (Twitter/Photos style),
+    /// instead of a hand-rolled drag gesture.
+    @Namespace private var previewTransition
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
 
@@ -114,7 +118,9 @@ struct BrowseContentView: View {
                 PermissionsSheet(store: permissionsStore)
             }
             .fullScreenCover(item: previewItemBinding) { item in
-                previewContent(for: item)
+                PreviewZoomContainer(sourceID: item.id, namespace: previewTransition) {
+                    previewContent(for: item)
+                }
             }
             .sheet(item: $shareTarget) { item in
                 CreateShareLinkSheet(
@@ -952,6 +958,7 @@ struct BrowseContentView: View {
                             }
                         }
                         .buttonStyle(DSHapticButtonStyle())
+                        .matchedTransitionSource(id: item.id, in: previewTransition)
                         .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
                         .contextMenu {
                             if !store.isSelecting {
@@ -1100,6 +1107,7 @@ struct BrowseContentView: View {
                 }
             }
             .buttonStyle(DSHapticButtonStyle())
+            .matchedTransitionSource(id: item.id, in: previewTransition)
             .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
             .contextMenu {
                 if !store.isSelecting {

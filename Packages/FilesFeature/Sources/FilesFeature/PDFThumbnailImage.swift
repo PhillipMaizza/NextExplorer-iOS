@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import FilesClient
 import SwiftUI
 import UIKit
 
