@@ -194,6 +194,7 @@ uploads.reviewUploadButton	Upload
 uploads.reviewPreparing	Preparing %lld…
 uploads.reviewAddMore	Add more files
 uploads.reviewPreviewFile	Preview %@
+uploads.reviewInsecureNetworkNotice	Connected over http. If this server is only on your home network, uploads won't work while you're away from it.
 uploads.stagingFailed	Couldn't add those files. Try again.
 uploads.discardTitle	Discard upload?
 uploads.discardMessage	The files you added won't be uploaded.

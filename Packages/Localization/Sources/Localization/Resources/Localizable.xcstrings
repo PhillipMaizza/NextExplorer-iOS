@@ -4588,6 +4588,17 @@
         }
       }
     },
+    "uploads.reviewInsecureNetworkNotice": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected over http. If this server is only on your home network, uploads won't work while you're away from it."
+          }
+        }
+      }
+    },
     "uploads.reviewPreparing": {
       "extractionState": "manual",
       "localizations": {
