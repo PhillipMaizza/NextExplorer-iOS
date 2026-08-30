@@ -88,6 +88,30 @@ struct NetworkClientLiveTests {
         }
     }
 
+    @Test("security: send refuses a response body past the in-memory cap instead of buffering it")
+    func sendRejectsAnOversizedResponse() async {
+        StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: Data(repeating: 0x7A, count: 4096))
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self], maxInMemoryResponseBytes: 1024)
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/browse")!)
+        await #expect(throws: NetworkError.responseTooLarge) {
+            _ = try await client.send(request)
+        }
+    }
+
+    @Test("security: a response exactly at the cap still round-trips")
+    func sendAcceptsAResponseAtTheCap() async throws {
+        let payload = Data(repeating: 0x7A, count: 1024)
+        StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: payload)
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self], maxInMemoryResponseBytes: 1024)
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/browse")!)
+        let (data, response) = try await client.send(request)
+
+        #expect(data == payload)
+        #expect(response.statusCode == 200)
+    }
+
     // MARK: download (streams the body to a file the caller owns)
 
     @Test("download writes the response body to a file on disk and returns its URL plus the HTTPURLResponse")

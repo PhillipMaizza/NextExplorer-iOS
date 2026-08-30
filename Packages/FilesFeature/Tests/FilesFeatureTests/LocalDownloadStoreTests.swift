@@ -78,6 +78,55 @@ struct LocalDownloadStoreTests {
         }
     }
 
+    @Test
+    func saveKeepsATraversingServerNameInsideTheDownloadsFolder() throws {
+        let sourceName = "\(UUID().uuidString).txt"
+        let sourceURL = try makeSourceFile(named: sourceName)
+        defer { try? FileManager.default.removeItem(at: sourceURL) }
+
+        // A hostile directory listing hands back `name` with `../` segments.
+        let destinationURL = try store.save(sourceURL, "../../../../\(sourceName)", .documents)
+        defer { try? FileManager.default.removeItem(at: destinationURL) }
+
+        #expect(destinationURL.deletingLastPathComponent().lastPathComponent == "Downloads")
+        #expect(destinationURL.lastPathComponent == sourceName)
+        #expect(!destinationURL.standardizedFileURL.path.contains(".."))
+    }
+
+    // MARK: rename
+
+    @Test
+    func renameChangesTheFileNameInPlace() throws {
+        let original = "\(UUID().uuidString).txt"
+        let sourceURL = try makeSourceFile(named: original)
+        let saved = try store.save(sourceURL, original, .documents)
+        try? FileManager.default.removeItem(at: sourceURL)
+
+        let renamed = try store.rename(saved, "renamed-\(UUID().uuidString).txt")
+        defer { try? FileManager.default.removeItem(at: renamed) }
+
+        #expect(renamed.deletingLastPathComponent() == saved.deletingLastPathComponent())
+        #expect(!FileManager.default.fileExists(atPath: saved.path))
+        #expect(try String(contentsOf: renamed, encoding: .utf8) == "hello")
+    }
+
+    @Test
+    func renameRejectsATypedNameThatCarriesAPath() throws {
+        let original = "\(UUID().uuidString).txt"
+        let sourceURL = try makeSourceFile(named: original)
+        let saved = try store.save(sourceURL, original, .documents)
+        defer {
+            try? FileManager.default.removeItem(at: sourceURL)
+            try? FileManager.default.removeItem(at: saved)
+        }
+
+        #expect(throws: Error.self) {
+            try store.rename(saved, "../../../../escaped.txt")
+        }
+        // The original file is untouched.
+        #expect(FileManager.default.fileExists(atPath: saved.path))
+    }
+
     // MARK: list
 
     @Test
