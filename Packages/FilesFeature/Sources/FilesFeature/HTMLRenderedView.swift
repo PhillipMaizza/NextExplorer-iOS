@@ -128,6 +128,9 @@ private struct HTMLWebView: UIViewRepresentable {
         // blocks every outbound request.
         let configuration = WKWebViewConfiguration()
         configuration.defaultWebpagePreferences.allowsContentJavaScript = false
+        // No shared cookie/storage jar for untrusted server content — nothing to reach even if
+        // the JS-off + navigation-blocked guarantees were somehow bypassed.
+        configuration.websiteDataStore = .nonPersistent()
         let webView = WKWebView(frame: .zero, configuration: configuration)
         webView.navigationDelegate = context.coordinator
         webView.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)

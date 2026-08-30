@@ -66,25 +66,31 @@ struct UserDetailView: View {
         .sheet(isPresented: volumeSheetPresented) {
             VolumeAssignSheet(store: store)
         }
-        .alert(
-            L10n.UserDetail.removeVolumeTitle,
-            isPresented: removeVolumeAlertPresented,
-            presenting: store.volumeToRemove
-        ) { _ in
-            Button(L10n.Common.remove, role: .destructive) { store.send(.removeVolumeConfirmed) }
-            Button(L10n.Common.cancel, role: .cancel) { store.send(.removeVolumeCancelled) }
-        } message: { volume in
-            Text(L10n.UserDetail.removeVolumeMessage(volume.label))
+        .sheet(isPresented: removeVolumeAlertPresented) {
+            DSAlertSheet(
+                icon: IconKit.drive,
+                title: L10n.UserDetail.removeVolumeTitle,
+                message: store.volumeToRemove.map { L10n.UserDetail.removeVolumeMessage($0.label) },
+                confirmTitle: L10n.Common.remove,
+                dismissTitle: L10n.Common.cancel,
+                role: .destructive,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.removeVolumeConfirmed) },
+                onDismiss: { store.send(.removeVolumeCancelled) }
+            )
         }
-        .alert(
-            L10n.UserDetail.removeUserTitle,
-            isPresented: deleteAlertPresented,
-            presenting: store.userToDelete
-        ) { _ in
-            Button(L10n.Common.remove, role: .destructive) { store.send(.deleteUserConfirmed) }
-            Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteUserCancelled) }
-        } message: { user in
-            Text(L10n.UserDetail.removeUserMessage(user.displayName ?? user.username))
+        .sheet(isPresented: deleteAlertPresented) {
+            DSAlertSheet(
+                icon: IconKit.delete,
+                title: L10n.UserDetail.removeUserTitle,
+                message: store.userToDelete.map { L10n.UserDetail.removeUserMessage($0.displayName ?? $0.username) },
+                confirmTitle: L10n.Common.remove,
+                dismissTitle: L10n.Common.cancel,
+                role: .destructive,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.deleteUserConfirmed) },
+                onDismiss: { store.send(.deleteUserCancelled) }
+            )
         }
     }
 
@@ -307,15 +313,17 @@ struct UserDetailView: View {
         Binding(get: { store.volumeSheet != nil }, set: { if !$0 { store.send(.volumeSheetDismissed) } })
     }
 
+    // No op setters: both confirmation sheets are dismiss disabled and only close through one
+    // of `DSAlertSheet`'s own buttons, which drive the reducer directly.
     private var removeVolumeAlertPresented: Binding<Bool> {
-        Binding(get: { store.volumeToRemove != nil }, set: { if !$0 { store.send(.removeVolumeCancelled) } })
+        Binding(get: { store.volumeToRemove != nil }, set: { _ in })
     }
 
     /// Lives here, not on the list view: the "Remove User" button is in this screen's Danger
     /// Zone, so the confirmation must present over the detail page. Attached to the list it
     /// surfaced one navigation level below, behind the pushed detail.
     private var deleteAlertPresented: Binding<Bool> {
-        Binding(get: { store.userToDelete != nil }, set: { if !$0 { store.send(.deleteUserCancelled) } })
+        Binding(get: { store.userToDelete != nil }, set: { _ in })
     }
 }
 

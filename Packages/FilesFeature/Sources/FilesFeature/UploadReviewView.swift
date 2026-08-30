@@ -281,11 +281,18 @@ struct UploadReviewView: View {
             footer
         }
         .interactiveDismissDisabled(!store.files.isEmpty || store.isPreparing)
-        .alert(L10n.Uploads.discardTitle, isPresented: isConfirmingCancel) {
-            Button(L10n.Uploads.discardConfirm, role: .destructive) { store.send(.confirmCancelTapped) }
-            Button(L10n.Common.cancel, role: .cancel) { store.send(.cancelConfirmationDismissed) }
-        } message: {
-            Text(L10n.Uploads.discardMessage)
+        .sheet(isPresented: isConfirmingCancel) {
+            DSAlertSheet(
+                icon: IconKit.delete,
+                title: L10n.Uploads.discardTitle,
+                message: L10n.Uploads.discardMessage,
+                confirmTitle: L10n.Uploads.discardConfirm,
+                dismissTitle: L10n.Common.cancel,
+                role: .destructive,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.confirmCancelTapped) },
+                onDismiss: { store.send(.cancelConfirmationDismissed) }
+            )
         }
         .sheet(item: $store.scope(state: \.folderPicker, action: \.folderPicker)) { pickerStore in
             DestinationPickerView(store: pickerStore)

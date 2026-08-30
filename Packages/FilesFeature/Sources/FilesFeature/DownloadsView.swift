@@ -14,6 +14,9 @@ private enum Constants {
     static let listDiffSpringDamping: Double = 0.8
     static let overlayCrossfadeDuration: Double = 0.2
     static let gridSpacing: CGFloat = .space16
+    /// Inset between a grid tile's content and its `backgroundSecondary` card edge, matching
+    /// `BrowseContentView`.
+    static let gridCellPadding: CGFloat = .space12
 }
 
 struct DownloadsView: View {
@@ -21,10 +24,6 @@ struct DownloadsView: View {
     @AppStorage(AppStorageKeys.downloadsViewMode) private var viewModeRaw = DownloadsViewMode.list.rawValue
     @State private var previewedDownload: LocalDownload?
     @State private var isSortSheetPresented = false
-    /// The rename alert's in-progress text — kept as plain view state, mirroring
-    /// `BrowseContentView`'s rename alert (a `.alert` `TextField` bound through a TCA
-    /// `.sending` binding doesn't reliably propagate keystrokes).
-    @State private var renameDraft = ""
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
@@ -94,11 +93,10 @@ struct DownloadsView: View {
         }
     }
 
+    // No op setters: each confirmation sheet is dismiss disabled and only closes through one
+    // of `DSAlertSheet`'s own buttons, which drive the reducer directly.
     private var deleteConfirmationBinding: Binding<Bool> {
-        Binding(
-            get: { store.deleteConfirmationItem != nil },
-            set: { if !$0 { store.send(.deleteCancelled) } }
-        )
+        Binding(get: { store.deleteConfirmationItem != nil }, set: { _ in })
     }
 
     private var deleteConfirmationTitle: String {
@@ -107,21 +105,15 @@ struct DownloadsView: View {
     }
 
     private var bulkDeleteConfirmationBinding: Binding<Bool> {
-        Binding(
-            get: { store.bulkDeleteConfirmationIsPresented },
-            set: { if !$0 { store.send(.bulkDeleteCancelled) } }
-        )
+        Binding(get: { store.bulkDeleteConfirmationIsPresented }, set: { _ in })
     }
 
     private var bulkDeleteConfirmationTitle: String {
         L10n.Downloads.deleteConfirmMany(store.selectedDownloadIDs.count)
     }
 
-    private var isRenamingBinding: Binding<Bool> {
-        Binding(
-            get: { store.renameItem != nil },
-            set: { if !$0 { store.send(.renameCancelled) } }
-        )
+    private var renameItemBinding: Binding<LocalDownload?> {
+        Binding(get: { store.renameItem }, set: { if $0 == nil { store.send(.renameCancelled) } })
     }
 
     private func handleTap(_ download: LocalDownload) {
@@ -180,7 +172,7 @@ struct DownloadsView: View {
                 }
             }
             .buttonStyle(DSHapticButtonStyle())
-            .listRowBackground(Color.clear)
+            .listRowBackground(Color.backgroundSecondary)
             .swipeActions(edge: .trailing) {
                 if !store.isSelecting {
                     // No `role: .destructive` — a destructive-role swipe button makes `List`
@@ -221,7 +213,7 @@ struct DownloadsView: View {
         List {
             downloadRows
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .backgroundGradient()
         .animation(
@@ -238,6 +230,7 @@ struct DownloadsView: View {
                         handleTap(download)
                     } label: {
                         GridCellView(name: download.fileName, isDirectory: false, kind: (download.fileName as NSString).pathExtension)
+                            .dsCard(padding: Constants.gridCellPadding)
                             .overlay(alignment: .topLeading) {
                                 if store.isSelecting {
                                     DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
@@ -368,31 +361,47 @@ struct DownloadsView: View {
                     onDismiss: { isSortSheetPresented = false }
                 )
             }
-            .alert(deleteConfirmationTitle, isPresented: deleteConfirmationBinding) {
-                Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteCancelled) }
-            } message: {
-                // Distinguishes this from every other delete confirmation in the app, which
-                // deletes on the server — this one only ever touches the local copy.
-                Text(L10n.Downloads.deleteSingleMessage)
+            .sheet(isPresented: deleteConfirmationBinding) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: deleteConfirmationTitle,
+                    // Distinguishes this from every other delete confirmation in the app, which
+                    // deletes on the server — this one only ever touches the local copy.
+                    message: L10n.Downloads.deleteSingleMessage,
+                    confirmTitle: L10n.Common.delete,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.deleteConfirmed) },
+                    onDismiss: { store.send(.deleteCancelled) }
+                )
             }
             .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-            .alert(bulkDeleteConfirmationTitle, isPresented: bulkDeleteConfirmationBinding) {
-                Button(L10n.Common.delete, role: .destructive) { store.send(.bulkDeleteConfirmed) }
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.bulkDeleteCancelled) }
-            } message: {
-                Text(L10n.Downloads.deleteBulkMessage)
+            .sheet(isPresented: bulkDeleteConfirmationBinding) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: bulkDeleteConfirmationTitle,
+                    message: L10n.Downloads.deleteBulkMessage,
+                    confirmTitle: L10n.Common.delete,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.bulkDeleteConfirmed) },
+                    onDismiss: { store.send(.bulkDeleteCancelled) }
+                )
             }
             .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
-            .alert(L10n.Browse.renameTitle, isPresented: isRenamingBinding) {
-                TextField(L10n.Browse.renameNamePlaceholder, text: $renameDraft)
-                    .autocorrectionDisabled()
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.renameCancelled) }
-                    .tint(.primaryDS)
-                Button(L10n.Common.save) { store.send(.renameConfirmed(renameDraft)) }
-            }
-            .onChange(of: store.renameItem) { _, item in
-                if let item { renameDraft = item.fileName }
+            .sheet(item: renameItemBinding) { item in
+                NameInputSheet(
+                    icon: IconKit.rename,
+                    title: L10n.Browse.renameTitle,
+                    placeholder: L10n.Browse.renameNamePlaceholder,
+                    confirmTitle: L10n.Common.save,
+                    initialName: item.fileName,
+                    isBusy: false,
+                    onConfirm: { store.send(.renameConfirmed($0)) },
+                    onCancel: { store.send(.renameCancelled) }
+                )
             }
             .fullScreenCover(item: $previewedDownload) { download in
                 FilePreviewContainerView(

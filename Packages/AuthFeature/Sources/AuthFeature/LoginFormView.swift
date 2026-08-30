@@ -37,6 +37,14 @@ private enum Constants {
     /// UIKit's own keyboard animation duration) before starting the morph gives each its own
     /// beat, so the spinner is actually visible.
     static let keyboardDismissDuration: Duration = .seconds(0.25)
+    /// Named coordinate space the submit button's rect is measured in, so the flood circle
+    /// positions against the same origin regardless of scroll offset.
+    static let rootSpace = "loginRoot"
+    /// How long the collapsed submit button's accent circle takes to flood the screen.
+    static let submitFloodDuration: Double = 0.34
+    /// Scale that circle reaches — a `.size48` button circle blown up past the far corner of
+    /// any phone from wherever the button sits.
+    static let submitFloodScale: CGFloat = 34
 }
 
 public struct LoginFormView: View {
@@ -50,6 +58,11 @@ public struct LoginFormView: View {
     /// `false` while the launch splash still covers the screen — auto-focusing the host field
     /// then would slide the keyboard up over the splash.
     private let autoFocus: Bool
+    /// Submit button's rect in this view's own space — the seed for the sign-in circle that
+    /// floods the screen with accent (à la TKSubmitTransition, scaling the button itself).
+    @State private var submitButtonRect: CGRect = .zero
+    /// Scale of that flooding circle: 1 == exactly the collapsed button, grows to cover.
+    @State private var submitFloodScale: CGFloat = 1
     @State private var shakeTrigger: CGFloat = 0
     @State private var identifierShakeTrigger: CGFloat = 0
     @State private var passwordShakeTrigger: CGFloat = 0
@@ -88,6 +101,23 @@ public struct LoginFormView: View {
             try? await Task.sleep(for: Constants.keyboardDismissDuration)
             guard !Task.isCancelled else { return }
             store.send(.testConnectionButtonTapped)
+        }
+    }
+
+    /// Same beat-separation as `submitTestConnection`, for the credentials page: drop the
+    /// keyboard first so its dismiss reflow doesn't shift the submit button mid collapse (and
+    /// mid sign-in reveal), which reads as the circle starting off-center and stuttering.
+    private func submitCredentials() {
+        let wasKeyboardVisible = focusedField != nil
+        focusedField = nil
+        guard wasKeyboardVisible else {
+            store.send(.continueButtonTapped)
+            return
+        }
+        Task {
+            try? await Task.sleep(for: Constants.keyboardDismissDuration)
+            guard !Task.isCancelled else { return }
+            store.send(.continueButtonTapped)
         }
     }
 
@@ -132,6 +162,33 @@ public struct LoginFormView: View {
             value: store.currentPage
         )
         .backgroundGradient()
+        .coordinateSpace(.named(Constants.rootSpace))
+        .overlay {
+            if store.submitPhase == .success, submitButtonRect != .zero {
+                Circle()
+                    .fill(Color.accent)
+                    .frame(width: submitButtonRect.height, height: submitButtonRect.height)
+                    .scaleEffect(submitFloodScale, anchor: .center)
+                    // No `.ignoresSafeArea()`: `submitButtonRect` is measured in this view's
+                    // safe-area-inset `loginRoot` space, so `.position` must resolve in that
+                    // same space. Adding `.ignoresSafeArea()` here shifted the circle up by
+                    // the top inset, so the flood started above the button. `.scaleEffect`
+                    // alone blows it well past every screen edge.
+                    .position(x: submitButtonRect.midX, y: submitButtonRect.midY)
+                    .allowsHitTesting(false)
+            }
+        }
+        .onChange(of: store.submitPhase) { _, phase in
+            switch phase {
+            case .success:
+                submitFloodScale = 1
+                withAnimation(.timingCurve(0.9, 0.0, 1, 0.1, duration: Constants.submitFloodDuration)) {
+                    submitFloodScale = Constants.submitFloodScale
+                }
+            case .idle, .submitting, .failure:
+                submitFloodScale = 1
+            }
+        }
         .modifier(LoginHapticsModifier(errorMessage: store.errorMessage, connectionPhase: store.connectionPhase))
         .onChange(of: store.errorMessage) { _, newValue in
             guard newValue != nil else { return }
@@ -441,15 +498,45 @@ public struct LoginFormView: View {
     }
 
     private var continueButton: some View {
-        DSButton(
-            L10n.Login.submit,
-            style: .primary,
+        let phase = store.submitPhase
+        let isCollapsed = phase != .idle
+        return DSAnimatedButton(
+            phase: phase,
+            isCollapsed: isCollapsed,
+            // `.primary` (accent) through success too, so the circle `AppView` grows out of
+            // the collapsed button reads as the same object flooding the screen.
+            style: phase == .failure ? .failure : .primary,
             size: .medium,
-            isLoading: store.isSubmitting
+            isHitEnabled: !isCollapsed,
+            action: submitCredentials
         ) {
-            store.send(.continueButtonTapped)
+            ZStack {
+                switch phase {
+                case .idle:
+                    Text(L10n.Login.submit)
+                        .type(.label3)
+                        .foregroundStyle(Color.black)
+                case .submitting:
+                    ProgressView().tint(Color.black)
+                case .success:
+                    IconKit.checkmark
+                        .resizable()
+                        .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
+                        .foregroundStyle(Color.black)
+                        .bold()
+                case .failure:
+                    IconKit.close
+                        .resizable()
+                        .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
+                        .foregroundStyle(.white)
+                        .bold()
+                }
+            }
         }
-        .disabled(!isSubmitLocalEnabled && !store.isSubmitting)
+        .disabled(!isSubmitLocalEnabled && phase == .idle)
+        .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .named(Constants.rootSpace)) }) { newFrame in
+            if newFrame != .zero { submitButtonRect = newFrame }
+        }
         .animation(.easeInOut(duration: Constants.contentFadeDuration), value: isSubmitLocalEnabled)
     }
 }

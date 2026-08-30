@@ -15,9 +15,14 @@ private enum Constants {
     static let emptyStateSpacing: CGFloat = .space8
     static let emptyStateIconSize: CGFloat = .superIcon
     static let gridSpacing: CGFloat = .space16
+    /// Inset between a grid tile's content and its `backgroundSecondary` card edge.
+    static let gridCellPadding: CGFloat = .space12
     static let listDiffSpringResponse: Double = 0.35
     static let listDiffSpringDamping: Double = 0.8
     static let overlayCrossfadeDuration: Double = 0.2
+    /// Skeleton to loaded content crossfade — a touch longer than the overlay swap so the
+    /// placeholder visibly resolves into the real rows rather than blinking out.
+    static let contentRevealDuration: Double = 0.3
     /// One size for every glyph in the multi-select bottom toolbar — SF Symbols have
     /// different intrinsic aspect ratios, so without an explicit frame `trash` and `star`
     /// render visibly different heights.
@@ -172,12 +177,14 @@ struct BrowseContentView: View {
                 .transition(.opacity)
             } else if viewMode == .list {
                 listContent
+                    .transition(.opacity)
             } else {
                 gridContent
+                    .transition(.opacity)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: isInitialLoad)
+        .animation(.easeInOut(duration: Constants.contentRevealDuration), value: isInitialLoad)
         .tint(Color.accent)
         .searchable(
             text: $store.searchQuery.sending(\.searchQueryChanged),
@@ -348,11 +355,18 @@ struct BrowseContentView: View {
             .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
             value: store.selectedItemIDs
         )
-        .alert(bulkDeleteConfirmationTitle, isPresented: bulkDeleteConfirmationBinding) {
-            Button(L10n.Common.delete, role: .destructive) { store.send(.bulkDeleteConfirmed) }
-            Button(L10n.Common.cancel, role: .cancel) { store.send(.bulkDeleteCancelled) }
-        } message: {
-            Text(deleteConfirmationMessage)
+        .sheet(isPresented: bulkDeleteConfirmationBinding) {
+            DSAlertSheet(
+                icon: IconKit.delete,
+                title: bulkDeleteConfirmationTitle,
+                message: deleteConfirmationMessage,
+                confirmTitle: L10n.Common.delete,
+                dismissTitle: L10n.Common.cancel,
+                role: .destructive,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.bulkDeleteConfirmed) },
+                onDismiss: { store.send(.bulkDeleteCancelled) }
+            )
         }
         .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
         .sheet(isPresented: $isSortSheetPresented) {
@@ -393,32 +407,34 @@ struct BrowseContentView: View {
                 onCancel: { store.send(.newFolderCancelled) }
             )
         }
-        // `.alert`, not `.confirmationDialog`: a confirmationDialog presents as a popover
-        // anchored to some ambient source view on the `.pad` idiom (this app also targets
-        // iPad) rather than a full-width bottom sheet, and picked an unrelated anchor point
-        // instead of the actual long-pressed row. `.alert` is always a centered modal
-        // regardless of idiom, so there's no anchor to get wrong.
-        .alert(deleteConfirmationTitle, isPresented: isDeletingBinding) {
-            Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
-            Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteCancelled) }
-        } message: {
-            Text(deleteConfirmationMessage)
+        .sheet(isPresented: isDeletingBinding) {
+            DSAlertSheet(
+                icon: IconKit.delete,
+                title: deleteConfirmationTitle,
+                message: deleteConfirmationMessage,
+                confirmTitle: L10n.Common.delete,
+                dismissTitle: L10n.Common.cancel,
+                role: .destructive,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.deleteConfirmed) },
+                onDismiss: { store.send(.deleteCancelled) }
+            )
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-        .alert(L10n.Browse.transferConflictTitle, isPresented: transferConflictBinding) {
-            Button(L10n.Browse.transferConflictReplace, role: .destructive) {
-                store.send(.transferConflictResolved(.replace), animation: .default)
-            }
-            Button(L10n.Browse.transferConflictKeepBoth) {
-                store.send(.transferConflictResolved(.keepBoth), animation: .default)
-            }
-            .tint(.primaryDS)
-            Button(L10n.Common.cancel, role: .cancel) {
-                store.send(.transferConflictResolved(nil))
-            }
-            .tint(.primaryDS)
-        } message: {
-            Text(transferConflictMessage)
+        .sheet(isPresented: transferConflictBinding) {
+            DSAlertSheet(
+                icon: IconKit.warning,
+                title: L10n.Browse.transferConflictTitle,
+                message: transferConflictMessage,
+                confirmTitle: L10n.Browse.transferConflictReplace,
+                dismissTitle: L10n.Common.cancel,
+                neutralTitle: L10n.Browse.transferConflictKeepBoth,
+                role: .destructive,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.transferConflictResolved(.replace), animation: .default) },
+                onNeutral: { store.send(.transferConflictResolved(.keepBoth), animation: .default) },
+                onDismiss: { store.send(.transferConflictResolved(nil)) }
+            )
         }
         .hapticFeedback(.warning, trigger: store.transferConflict)
     }
@@ -594,11 +610,10 @@ struct BrowseContentView: View {
         )
     }
 
+    // No op setter: the sheet is dismiss disabled and only closes through one of
+    // `DSAlertSheet`'s own buttons, which drive the reducer directly.
     private var isDeletingBinding: Binding<Bool> {
-        Binding(
-            get: { store.deleteConfirmationItem != nil },
-            set: { if !$0 { store.send(.deleteCancelled) } }
-        )
+        Binding(get: { store.deleteConfirmationItem != nil }, set: { _ in })
     }
 
     private var deleteConfirmationTitle: String {
@@ -623,13 +638,10 @@ struct BrowseContentView: View {
         }
     }
 
-    /// The button closures own dismissal (they clear `transferConflict`); this only needs to
-    /// forward a swipe/tap-outside as a Cancel.
+    /// The button closures own dismissal (they clear `transferConflict`); the no op setter
+    /// keeps a SwiftUI initiated dismiss from firing a second resolve into a torn down sheet.
     private var transferConflictBinding: Binding<Bool> {
-        Binding(
-            get: { store.transferConflict != nil },
-            set: { if !$0 { store.send(.transferConflictResolved(nil)) } }
-        )
+        Binding(get: { store.transferConflict != nil }, set: { _ in })
     }
 
     private var transferConflictMessage: String {
@@ -702,10 +714,7 @@ struct BrowseContentView: View {
     }
 
     private var bulkDeleteConfirmationBinding: Binding<Bool> {
-        Binding(
-            get: { store.bulkDeleteConfirmationIsPresented },
-            set: { if !$0 { store.send(.bulkDeleteCancelled) } }
-        )
+        Binding(get: { store.bulkDeleteConfirmationIsPresented }, set: { _ in })
     }
 
     private var bulkDeleteConfirmationTitle: String {
@@ -882,14 +891,16 @@ struct BrowseContentView: View {
 
     private var listContent: some View {
         List {
-            if store.isSearching {
-                searchResultRows
-            } else {
-                folderItemRows
+            Section {
+                if store.isSearching {
+                    searchResultRows
+                } else {
+                    folderItemRows
+                }
             }
             pasteTargetRow
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .backgroundGradient()
         .safeAreaPadding(.bottom, bottomChromeClearance)
@@ -912,6 +923,7 @@ struct BrowseContentView: View {
                             store.send(.searchResultTapped(result))
                         } label: {
                             GridCellView(name: result.name, isDirectory: result.isDirectory, isFavorite: store.favoritePaths.contains(result.id), kind: searchResultKind(result))
+                                .dsCard(padding: Constants.gridCellPadding)
                         }
                         .buttonStyle(DSHapticButtonStyle())
                     }
@@ -931,6 +943,7 @@ struct BrowseContentView: View {
                                 showThumbnails: store.preferences.showThumbnails,
                                 iconSize: thumbnailSize.iconSize
                             )
+                            .dsCard(padding: Constants.gridCellPadding)
                             .overlay(alignment: .topLeading) {
                                 if store.isSelecting {
                                     DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
@@ -1099,7 +1112,7 @@ struct BrowseContentView: View {
                     fileActionsContextMenu(for: item)
                 }
             }
-            .listRowBackground(Color.clear)
+            .listRowBackground(Color.backgroundSecondary)
             .swipeActions(edge: .trailing) {
                 if !store.isSelecting {
                     if store.access?.canDelete ?? false {
@@ -1144,7 +1157,7 @@ struct BrowseContentView: View {
                 FileRowView(name: result.name, isDirectory: result.isDirectory, subtitle: result.matchLine, isFavorite: store.favoritePaths.contains(result.id), kind: searchResultKind(result))
             }
             .buttonStyle(DSHapticButtonStyle())
-            .listRowBackground(Color.clear)
+            .listRowBackground(Color.backgroundSecondary)
             .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
             .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)
         }

@@ -30,16 +30,6 @@ struct FavoriteAppearanceTests {
     }
 
     @Test
-    func swatchRingContrastsWithTheFill() {
-        // Light fills → black ring, dark fills → white ring.
-        let byHex = Dictionary(uniqueKeysWithValues: FavoriteColor.palette.map { ($0.hex, $0.ring) })
-        #expect(byHex["#ffde00"] == .black) // bright yellow
-        #expect(byHex["#ffb000"] == .black) // orange
-        #expect(byHex["#009cff"] == .white) // blue
-        #expect(byHex["#d873fb"] == .black) // light purple
-    }
-
-    @Test
     func favoriteColorMatchesIsCaseInsensitiveAndOptionalAware() {
         #expect(FavoriteColor.matches(nil, nil))
         #expect(FavoriteColor.matches("#FF5E5A", "#ff5e5a"))

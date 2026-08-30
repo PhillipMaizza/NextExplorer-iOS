@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import CoreModels
 import Foundation
 
 /// One file sitting in the user-visible `Documents/Downloads` or `Caches/Downloads` folder,
@@ -64,7 +65,9 @@ extension LocalDownloadStore: DependencyKey {
             let fileManager = FileManager.default
             let downloadsDirectory = try downloadsDirectory(for: location, create: true)
             try fileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: true)
-            let destination = downloadsDirectory.appendingPathComponent(fileName)
+            // `fileName` originates from the server's `FileItem.name` — keep a hostile `../`
+            // from landing the copy outside the Downloads folder.
+            let destination = downloadsDirectory.appendingPathComponent(SafeFileName.component(fileName))
             if fileManager.fileExists(atPath: destination.path) {
                 try fileManager.removeItem(at: destination)
             }
@@ -102,6 +105,11 @@ extension LocalDownloadStore: DependencyKey {
         },
         rename: { url, newName in
             let fileManager = FileManager.default
+            // A rename must stay a rename: reject a typed name that carries a path so it can't
+            // move the file out of the Downloads folder.
+            guard SafeFileName.isSafeComponent(newName) else {
+                throw CocoaError(.fileWriteInvalidFileName)
+            }
             let destination = url.deletingLastPathComponent().appendingPathComponent(newName)
             guard destination != url else { return url }
             if fileManager.fileExists(atPath: destination.path) {

@@ -270,13 +270,14 @@ struct LoginFormFeatureTests {
                 #expect(identifier == "phillip@example.com")
                 return user
             }
+            $0.continuousClock = ImmediateClock()
         }
 
         await store.send(.continueButtonTapped) {
-            $0.isSubmitting = true
+            $0.submitPhase = .submitting
         }
         await store.receive(\.submitSucceeded) {
-            $0.isSubmitting = false
+            $0.submitPhase = .success
         }
         await store.receive(\.delegate)
     }
@@ -343,12 +344,15 @@ struct LoginFormFeatureTests {
         }
 
         await store.send(.continueButtonTapped) {
-            $0.isSubmitting = true
+            $0.submitPhase = .submitting
         }
         await store.receive(\.submitFailed) {
-            $0.isSubmitting = false
+            $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorInvalidCredentials
             $0.invalidFieldsScope = .identifierAndPassword
+        }
+        await store.receive(\.revertSubmitToIdle) {
+            $0.submitPhase = .idle
         }
         await store.receive(\.clearErrorMessage) {
             $0.errorMessage = nil
@@ -373,14 +377,17 @@ struct LoginFormFeatureTests {
         }
 
         await store.send(.continueButtonTapped) {
-            $0.isSubmitting = true
+            $0.submitPhase = .submitting
         }
         await store.receive(\.submitFailed) {
-            $0.isSubmitting = false
+            $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorRateLimited
             // A rate limit says nothing about which field was wrong — unlike
             // `.invalidCredentials`, it must not red-border the fields.
             $0.invalidFieldsScope = nil
+        }
+        await store.receive(\.revertSubmitToIdle) {
+            $0.submitPhase = .idle
         }
         await store.receive(\.clearErrorMessage) {
             $0.errorMessage = nil
@@ -403,13 +410,14 @@ struct LoginFormFeatureTests {
                 #expect(password == "   ")
                 return user
             }
+            $0.continuousClock = ImmediateClock()
         }
 
         await store.send(.continueButtonTapped) {
-            $0.isSubmitting = true
+            $0.submitPhase = .submitting
         }
         await store.receive(\.submitSucceeded) {
-            $0.isSubmitting = false
+            $0.submitPhase = .success
         }
         await store.receive(\.delegate)
     }
@@ -442,10 +450,11 @@ struct LoginFormFeatureTests {
                 completedCalls.withValue { $0.append(callIndex) }
                 return user
             }
+            $0.continuousClock = clock
         }
 
         await store.send(.continueButtonTapped) {
-            $0.isSubmitting = true
+            $0.submitPhase = .submitting
         }
         await clock.advance(by: .seconds(1))
 
@@ -454,8 +463,9 @@ struct LoginFormFeatureTests {
 
         await clock.advance(by: .seconds(10))
         await store.receive(\.submitSucceeded) {
-            $0.isSubmitting = false
+            $0.submitPhase = .success
         }
+        await clock.advance(by: .seconds(1))
         await store.receive(\.delegate)
 
         // Only the second call (index 1) ever reaches completion — the first was cancelled
@@ -481,11 +491,17 @@ struct LoginFormFeatureTests {
         }
 
         await store.send(.continueButtonTapped) {
-            $0.isSubmitting = true
+            $0.submitPhase = .submitting
         }
+        await clock.advance(by: .seconds(0.25))
         await store.receive(\.submitFailed) {
-            $0.isSubmitting = false
+            $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorIncomplete
+        }
+        // The button still re-expands so the user can retry — only the message is sticky.
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.revertSubmitToIdle) {
+            $0.submitPhase = .idle
         }
 
         // Well past the usual 4-second auto-dismiss — the message must still be showing.
