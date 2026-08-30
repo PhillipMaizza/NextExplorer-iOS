@@ -14,6 +14,9 @@ private enum Constants {
     static let listDiffSpringDamping: Double = 0.8
     static let overlayCrossfadeDuration: Double = 0.2
     static let gridSpacing: CGFloat = .space16
+    /// Inset between a grid tile's content and its `backgroundSecondary` card edge, matching
+    /// `BrowseContentView`.
+    static let gridCellPadding: CGFloat = .space12
     static let breadcrumbContentSpacing: CGFloat = .space8
     static let breadcrumbVisibilityAnimationDuration: Double = 0.25
 }
@@ -52,10 +55,9 @@ struct FavoritesView: View {
     }
 
     private var bulkRemoveConfirmationBinding: Binding<Bool> {
-        Binding(
-            get: { store.bulkRemoveConfirmationIsPresented },
-            set: { if !$0 { store.send(.bulkRemoveCancelled) } }
-        )
+        // No op setter: the sheet is dismiss disabled and only closes through `DSAlertSheet`'s
+        // own buttons, each driving the reducer directly.
+        Binding(get: { store.bulkRemoveConfirmationIsPresented }, set: { _ in })
     }
 
     private var bulkRemoveConfirmationTitle: String {
@@ -185,11 +187,18 @@ struct FavoritesView: View {
                     }
                 }
             }
-            .alert(bulkRemoveConfirmationTitle, isPresented: bulkRemoveConfirmationBinding) {
-                Button(L10n.Common.remove, role: .destructive) { store.send(.bulkRemoveConfirmed) }
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.bulkRemoveCancelled) }
-            } message: {
-                Text(L10n.Favorites.removeMessage)
+            .sheet(isPresented: bulkRemoveConfirmationBinding) {
+                DSAlertSheet(
+                    icon: IconKit.unfavorite,
+                    title: bulkRemoveConfirmationTitle,
+                    message: L10n.Favorites.removeMessage,
+                    confirmTitle: L10n.Common.remove,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.bulkRemoveConfirmed) },
+                    onDismiss: { store.send(.bulkRemoveCancelled) }
+                )
             }
             .hapticFeedback(.warning, trigger: store.bulkRemoveConfirmationIsPresented)
             .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle)
@@ -249,7 +258,7 @@ struct FavoritesView: View {
                     }
                 }
                 .buttonStyle(DSHapticButtonStyle())
-                .listRowBackground(Color.clear)
+                .listRowBackground(Color.backgroundSecondary)
                 .contextMenu {
                     if !store.isSelecting {
                         rowContextMenu(for: favorite)
@@ -282,7 +291,7 @@ struct FavoritesView: View {
             }
             .onMove(perform: store.canReorder ? { store.send(.favoritesMoved($0, $1)) } : nil)
         }
-        .listStyle(.plain)
+        .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .backgroundGradient()
         .animation(
@@ -305,6 +314,7 @@ struct FavoritesView: View {
                             customIconTint: FavoriteColor.resolve(favorite.color),
                             customIconFilled: FavoriteIcon.isFilled(favorite.icon)
                         )
+                            .dsCard(padding: Constants.gridCellPadding)
                             .overlay(alignment: .topLeading) {
                                 if store.isSelecting {
                                     DSSelectionIndicator(isSelected: store.selectedFavoriteIDs.contains(favorite.id))

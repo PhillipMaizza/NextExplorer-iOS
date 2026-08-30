@@ -18,6 +18,11 @@ public struct AppFeature {
     @ObservableState
     public struct State: Equatable {
         public var destination: Destination.State
+        /// `true` only when the current authenticated session was reached by the user tapping
+        /// the login button this launch — drives `AppView`'s zoom-from-the-button presentation.
+        /// A restored/optimistic session (cold launch) leaves this `false` so the app just
+        /// cross-fades in behind the splash instead.
+        public var didAuthenticateFromLogin = false
         /// Tripped by `apiResult` (in FilesFeature) the moment any authenticated request
         /// answers 401. Watched by `AppView`, which sends `sessionExpiryDetected`.
         @Shared(.inMemory(SessionExpiry.sharedKey)) public var sessionDidExpire = false
@@ -27,6 +32,11 @@ public struct AppFeature {
 
         public init(destination: Destination.State = .loading) {
             self.destination = destination
+        }
+
+        public var isAuthenticated: Bool {
+            if case .authenticated = destination { return true }
+            return false
         }
     }
 
@@ -110,6 +120,7 @@ public struct AppFeature {
                 default:
                     return .none
                 }
+                state.didAuthenticateFromLogin = false
                 withAnimation {
                     state.destination = .unauthenticated(.init())
                 }
@@ -122,6 +133,7 @@ public struct AppFeature {
                 if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
                 state.$fileClipboard.withLock { $0 = nil }
                 guard case .authenticated = state.destination else { return .none }
+                state.didAuthenticateFromLogin = false
                 withAnimation {
                     state.destination = .unauthenticated(.init())
                 }
@@ -130,6 +142,7 @@ public struct AppFeature {
 
             case let .destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))):
                 if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                state.didAuthenticateFromLogin = true
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
                 )
@@ -137,6 +150,7 @@ public struct AppFeature {
 
             case .destination(.authenticated(.delegate(.loggedOut))):
                 state.$fileClipboard.withLock { $0 = nil }
+                state.didAuthenticateFromLogin = false
                 state.destination = .unauthenticated(.init())
                 return .none
 

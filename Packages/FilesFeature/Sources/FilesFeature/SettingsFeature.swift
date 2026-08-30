@@ -266,7 +266,9 @@ public struct SettingsFeature {
                 return .none
 
             case .confirmSignOutTapped:
-                state.isConfirmingSignOut = false
+                // Keep the confirmation sheet up: the parent flips `isSigningOut`, which drives
+                // the sheet's confirm spinner, and the whole authenticated scope (this sheet
+                // with it) is torn down once sign out finishes.
                 return .send(.delegate(.signOutButtonTapped))
 
             case .removeAllDownloadsTapped:

@@ -22,17 +22,20 @@ private enum Constants {
 public struct DSSheetHeader: View {
     private let icon: Image
     private let title: String?
+    private let tint: Color
     private let closeAccessibilityLabel: String
     private let onClose: () -> Void
 
     public init(
         icon: Image,
         title: String? = nil,
+        tint: Color = .accent,
         closeAccessibilityLabel: String = "Close",
         onClose: @escaping () -> Void
     ) {
         self.icon = icon
         self.title = title
+        self.tint = tint
         self.closeAccessibilityLabel = closeAccessibilityLabel
         self.onClose = onClose
     }
@@ -43,7 +46,7 @@ public struct DSSheetHeader: View {
                 icon
                     .resizable()
                     .scaledToFit()
-                    .foregroundStyle(Color.accent)
+                    .foregroundStyle(tint)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
 
                 Spacer(minLength: Constants.rowSpacing)
@@ -63,7 +66,8 @@ public struct DSSheetHeader: View {
 
             if let title {
                 Text(title)
-                    .type(.headline3, style: .link)
+                    .type(.headline3)
+                    .foregroundColor(tint)
                     .lineLimit(Constants.titleLineLimit)
             }
         }

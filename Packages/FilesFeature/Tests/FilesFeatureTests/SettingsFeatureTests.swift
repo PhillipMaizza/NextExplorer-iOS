@@ -309,7 +309,7 @@ struct SettingsFeatureTests {
     }
 
     @Test
-    func confirmSignOutTappedHidesTheSheetAndDelegatesTheActualSignOut() async {
+    func confirmSignOutTappedKeepsTheSheetUpAndDelegatesTheActualSignOut() async {
         var state = makeState()
         state.isConfirmingSignOut = true
 
@@ -317,9 +317,9 @@ struct SettingsFeatureTests {
             SettingsFeature()
         }
 
-        await store.send(.confirmSignOutTapped) {
-            $0.isConfirmingSignOut = false
-        }
+        // The sheet stays presented so its confirm button can show the spinner the parent
+        // drives via `isSigningOut`; the whole scope is torn down once sign out completes.
+        await store.send(.confirmSignOutTapped)
         await store.receive(\.delegate)
     }
 

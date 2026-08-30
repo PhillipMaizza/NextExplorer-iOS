@@ -10,15 +10,6 @@ enum FavoriteColor {
 
         var id: String { hex }
         var color: Color { Color(hex: fill) }
-
-        /// Black on a light swatch, white on a dark one — so the selection ring stays visible
-        /// whatever the fill. Perceptual luma (`0.299R 0.587G 0.114B`), threshold at mid grey.
-        var ring: Color {
-            let r = Double((fill >> 16) & 0xFF)
-            let g = Double((fill >> 8) & 0xFF)
-            let b = Double(fill & 0xFF)
-            return (0.299 * r + 0.587 * g + 0.114 * b) > 150 ? .black : .white
-        }
     }
 
     static let palette: [Swatch] = [

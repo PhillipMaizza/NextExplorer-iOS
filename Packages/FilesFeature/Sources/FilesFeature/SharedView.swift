@@ -33,10 +33,10 @@ struct SharedView: View {
     }
 
     private var deleteConfirmationBinding: Binding<Bool> {
-        Binding(
-            get: { store.deleteConfirmationShare != nil },
-            set: { if !$0 { store.send(.deleteCancelled) } }
-        )
+        // No op setter: the sheet is dismiss disabled and only ever closes through one of
+        // `DSAlertSheet`'s own buttons, each of which drives the reducer directly. This keeps
+        // SwiftUI from firing a stray dismiss action into a torn down presentation.
+        Binding(get: { store.deleteConfirmationShare != nil }, set: { _ in })
     }
 
     private var overlayPhase: ListStateOverlay.Phase {
@@ -121,11 +121,18 @@ struct SharedView: View {
             .sheet(item: $store.scope(state: \.openLinkSheet, action: \.openLinkSheet)) { linkStore in
                 OpenShareLinkSheet(store: linkStore)
             }
-            .alert(L10n.Shared.deleteTitle, isPresented: deleteConfirmationBinding) {
-                Button(L10n.Common.delete, role: .destructive) { store.send(.deleteConfirmed) }
-                Button(L10n.Common.cancel, role: .cancel) { store.send(.deleteCancelled) }
-            } message: {
-                Text(L10n.Shared.deleteMessage)
+            .sheet(isPresented: deleteConfirmationBinding) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: L10n.Shared.deleteTitle,
+                    message: L10n.Shared.deleteMessage,
+                    confirmTitle: L10n.Common.delete,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.deleteConfirmed) },
+                    onDismiss: { store.send(.deleteCancelled) }
+                )
             }
             .hapticFeedback(.warning, trigger: store.deleteConfirmationShare != nil)
             .dsToast($toastMessage)
@@ -392,18 +399,38 @@ private struct SharedLinkCard: View {
         return false
     }
 
-    /// Folder glyph for directory shares, otherwise a per-format `FileTypeIcon` keyed off the
-    /// shared item's own extension — same treatment the Browse list gives a file row. (A real
-    /// image thumbnail would need the source path, which shared-with-me links don't carry.)
+    /// Folder glyph for directory shares, a real thumbnail for a by-me image share, otherwise
+    /// a per-format `FileTypeIcon` keyed off the shared item's own extension — same treatment
+    /// the Browse list gives a file row.
     @ViewBuilder
     private var shareIcon: some View {
         if share.isDirectory {
             IconKit.folderFill
                 .resizable().scaledToFit()
                 .foregroundStyle(Color.accent)
+        } else if let thumbnailPath {
+            ThumbnailImage(
+                serverURL: serverURL,
+                path: thumbnailPath,
+                signature: "\(share.updatedAt.timeIntervalSince1970)",
+                fallbackIcon: IconKit.document,
+                iconTint: Color.secondaryDS
+            )
+            .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+            .clipShape(RoundedRectangle(cornerRadius: .radiusSmall))
         } else {
             FileTypeIcon(kind: (share.displayName as NSString).pathExtension)
         }
+    }
+
+    /// Full server path for a by-me image share — the only case a real thumbnail is
+    /// reachable: shared-with-me links carry only the leaf name, and non-image kinds have no
+    /// server thumbnail to fetch.
+    private var thumbnailPath: String? {
+        guard isByMe, let path = share.sourcePath, !path.isEmpty else { return nil }
+        let ext = (share.displayName as NSString).pathExtension
+        guard FileItem.isImageKind(ext) || FileItem.isRawImageKind(ext) else { return nil }
+        return path
     }
 
     private var header: some View {
