@@ -26,6 +26,7 @@ public struct LoginFormFeature {
         case failureRevert
         case errorDismiss
         case submit
+        case submitRevert
     }
 
     public enum URLScheme: String, CaseIterable, Equatable, Hashable, Sendable, Identifiable {
@@ -44,6 +45,17 @@ public struct LoginFormFeature {
     public enum ConnectionPhase: Equatable, Sendable {
         case idle
         case testing
+        case success
+        case failure
+    }
+
+    /// The credentials-page submit button's morph state — full pill (`idle`), collapsed
+    /// spinner (`submitting`), collapsed checkmark (`success`, held briefly so it reads before
+    /// the app zooms in), collapsed X (`failure`, then re-expands to `idle`). Mirrors
+    /// `ConnectionPhase`'s role for the server-page button.
+    public enum SubmitPhase: Equatable, Sendable {
+        case idle
+        case submitting
         case success
         case failure
     }
@@ -71,7 +83,7 @@ public struct LoginFormFeature {
         public var identifier: String
         public var password: String
         public var isPasswordVisible: Bool
-        public var isSubmitting: Bool
+        public var submitPhase: SubmitPhase
         public var errorMessage: String?
         public var invalidFieldsScope: InvalidFieldScope?
         public var authStatus: AuthStatus?
@@ -84,7 +96,7 @@ public struct LoginFormFeature {
             identifier: String = "",
             password: String = "",
             isPasswordVisible: Bool = false,
-            isSubmitting: Bool = false,
+            submitPhase: SubmitPhase = .idle,
             errorMessage: String? = nil,
             invalidFieldsScope: InvalidFieldScope? = nil,
             authStatus: AuthStatus? = nil
@@ -97,17 +109,20 @@ public struct LoginFormFeature {
             self.identifier = identifier
             self.password = password
             self.isPasswordVisible = isPasswordVisible
-            self.isSubmitting = isSubmitting
+            self.submitPhase = submitPhase
             self.errorMessage = errorMessage
             self.invalidFieldsScope = invalidFieldsScope
             self.authStatus = authStatus
         }
+
+        public var isSubmitting: Bool { submitPhase == .submitting }
 
         /// Any edit to the server URL, or pressing back, invalidates whatever the last
         /// Test Connection call found — the whole handshake starts over.
         mutating func resetConnection() {
             currentPage = .server
             connectionPhase = .idle
+            submitPhase = .idle
             authStatus = nil
             errorMessage = nil
             invalidFieldsScope = nil
@@ -124,6 +139,7 @@ public struct LoginFormFeature {
         case testConnectionResponse(Result<AuthStatus, AuthClientError>)
         case advanceToCredentials
         case revertToIdle
+        case revertSubmitToIdle
         case clearErrorMessage
         case backButtonTapped
         case continueButtonTapped
@@ -234,6 +250,10 @@ public struct LoginFormFeature {
                 state.connectionPhase = .idle
                 return .none
 
+            case .revertSubmitToIdle:
+                state.submitPhase = .idle
+                return .none
+
             case .clearErrorMessage:
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
@@ -254,35 +274,46 @@ public struct LoginFormFeature {
                     state.invalidFieldsScope = .identifier
                     return Self.scheduleErrorDismiss(self.clock)
                 }
-                state.isSubmitting = true
+                state.submitPhase = .submitting
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
                 let password = state.password
                 let authClient = self.authClient
+                let clock = self.clock
                 return .run { send in
-                    do {
-                        let user = try await authClient.login(url, identifier, password)
-                        await send(.submitSucceeded(user, url))
-                    } catch {
-                        await send(.submitFailed(Self.mapError(error)))
+                    async let result = Self.loginResult(authClient, url, identifier, password)
+                    // Hold the spinner up briefly so it reads even when the call resolves fast.
+                    try? await clock.sleep(for: Constants.minimumSpinnerDuration)
+                    switch await result {
+                    case let .success(user): await send(.submitSucceeded(user, url))
+                    case let .failure(error): await send(.submitFailed(error))
                     }
                 }
                 .cancellable(id: CancelID.submit, cancelInFlight: true)
 
             case let .submitSucceeded(user, url):
-                state.isSubmitting = false
-                return .send(.delegate(.authenticated(user, url)))
+                state.submitPhase = .success
+                let clock = self.clock
+                // Hold the checkmark a beat before handing off, so the button's success state
+                // registers ahead of the zoom into the app.
+                return .run { send in
+                    try await clock.sleep(for: Constants.successDisplayDuration)
+                    await send(.delegate(.authenticated(user, url)))
+                }
+                .cancellable(id: CancelID.successAdvance, cancelInFlight: true)
 
             case let .submitFailed(error):
-                state.isSubmitting = false
+                state.submitPhase = .failure
                 state.errorMessage = Self.message(for: error)
                 state.invalidFieldsScope = (error == .invalidCredentials) ? .identifierAndPassword : nil
                 // `.sessionCookieMissing` means the sign-in itself completed but the app
                 // couldn't pick up a session from it — not a typo the user can just retry past.
                 // It stays on screen until the next submit attempt or navigation reset clears
                 // it, instead of silently vanishing after a few seconds.
-                guard error != .sessionCookieMissing else { return .none }
-                return Self.scheduleErrorDismiss(self.clock)
+                guard error != .sessionCookieMissing else {
+                    return Self.scheduleSubmitRevert(self.clock)
+                }
+                return .merge(Self.scheduleSubmitRevert(self.clock), Self.scheduleErrorDismiss(self.clock))
 
             case .delegate:
                 return .none
@@ -301,7 +332,8 @@ public struct LoginFormFeature {
             .cancel(id: CancelID.successAdvance),
             .cancel(id: CancelID.failureRevert),
             .cancel(id: CancelID.errorDismiss),
-            .cancel(id: CancelID.submit)
+            .cancel(id: CancelID.submit),
+            .cancel(id: CancelID.submitRevert)
         )
     }
 
@@ -314,6 +346,16 @@ public struct LoginFormFeature {
             await send(.revertToIdle)
         }
         .cancellable(id: CancelID.failureRevert, cancelInFlight: true)
+    }
+
+    /// The credentials-page counterpart to `scheduleRevertToIdle`: after a failed login the
+    /// submit button holds a red X, then re-expands to the idle label so the user can retry.
+    static func scheduleSubmitRevert(_ clock: any Clock<Duration>) -> Effect<Action> {
+        .run { send in
+            try await clock.sleep(for: Constants.failureDisplayDuration)
+            await send(.revertSubmitToIdle)
+        }
+        .cancellable(id: CancelID.submitRevert, cancelInFlight: true)
     }
 
     /// Auto-dismisses whatever error message is currently showing after a few seconds, so the
@@ -353,6 +395,14 @@ public struct LoginFormFeature {
     static func fetchStatusResult(_ authClient: AuthClient, _ url: URL) async -> Result<AuthStatus, AuthClientError> {
         do {
             return .success(try await authClient.fetchStatus(url))
+        } catch {
+            return .failure(mapError(error))
+        }
+    }
+
+    static func loginResult(_ authClient: AuthClient, _ url: URL, _ identifier: String, _ password: String) async -> Result<User, AuthClientError> {
+        do {
+            return .success(try await authClient.login(url, identifier, password))
         } catch {
             return .failure(mapError(error))
         }

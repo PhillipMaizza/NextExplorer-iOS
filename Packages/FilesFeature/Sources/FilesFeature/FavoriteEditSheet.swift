@@ -14,8 +14,7 @@ private enum Metrics {
     static let iconColumnMin: CGFloat = .size56
     static let swatch: CGFloat = .size32
     static let selectionLineWidth: CGFloat = 2.5
-    /// Gap between a swatch and its (outer) selection ring.
-    static let swatchRingGap: CGFloat = 2
+    static let swatchIdleBorderWidth: CGFloat = 1
     static let maxHeightFraction: CGFloat = 0.85
 }
 
@@ -110,7 +109,7 @@ struct FavoriteEditSheet: View {
 
     private var colorRow: some View {
         HStack(spacing: .space12) {
-            swatchButton(fill: defaultSwatchFill, ring: Color.primaryDS, isSelected: store.colorDraft == nil) {
+            swatchButton(fill: defaultSwatchFill, isSelected: store.colorDraft == nil) {
                 store.send(.colorSelected(nil))
             }
             .accessibilityLabel(L10n.Favorites.editColorDefault)
@@ -118,7 +117,6 @@ struct FavoriteEditSheet: View {
             ForEach(FavoriteColor.palette) { swatch in
                 swatchButton(
                     fill: AnyShapeStyle(swatch.color),
-                    ring: swatch.ring,
                     isSelected: FavoriteColor.matches(store.colorDraft, swatch.hex)
                 ) {
                     store.send(.colorSelected(swatch.hex))
@@ -136,25 +134,23 @@ struct FavoriteEditSheet: View {
 
     private func swatchButton(
         fill: AnyShapeStyle,
-        ring: Color,
         isSelected: Bool,
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
             RoundedRectangle(cornerRadius: .radiusSmall)
                 .fill(fill)
+                // Selection is an inset `primaryInverted` border on the swatch itself — one
+                // colour that reads against every fill in both appearances, matching the icon
+                // grid's selected cell. Idle swatches keep the faint hairline.
                 .overlay(
                     RoundedRectangle(cornerRadius: .radiusSmall)
-                        .strokeBorder(Color.borderPrimary.opacity(0.4), lineWidth: 1)
+                        .strokeBorder(
+                            isSelected ? Color.primaryDS : Color.borderPrimary.opacity(0.4),
+                            lineWidth: isSelected ? Metrics.selectionLineWidth : Metrics.swatchIdleBorderWidth
+                        )
                 )
                 .frame(width: Metrics.swatch, height: Metrics.swatch)
-                // Selection ring drawn just outside the swatch — negative padding keeps it
-                // from affecting the row's layout.
-                .overlay(
-                    RoundedRectangle(cornerRadius: .radiusSmall + Metrics.swatchRingGap)
-                        .stroke(isSelected ? ring : .clear, lineWidth: Metrics.selectionLineWidth)
-                        .padding(-Metrics.swatchRingGap)
-                )
         }
         .buttonStyle(DSHapticButtonStyle())
     }

@@ -42,15 +42,22 @@ struct UploadPickers: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .alert(L10n.Uploads.cameraDeniedTitle, isPresented: $isCameraDeniedAlertPresented) {
-                Button(L10n.Common.openSettings) {
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
-                    }
-                }
-                Button(L10n.Common.cancel, role: .cancel) {}
-            } message: {
-                Text(L10n.Uploads.cameraDeniedMessage)
+            .sheet(isPresented: $isCameraDeniedAlertPresented) {
+                DSAlertSheet(
+                    icon: IconKit.camera,
+                    title: L10n.Uploads.cameraDeniedTitle,
+                    message: L10n.Uploads.cameraDeniedMessage,
+                    confirmTitle: L10n.Common.openSettings,
+                    dismissTitle: L10n.Common.cancel,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: {
+                        isCameraDeniedAlertPresented = false
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    },
+                    onDismiss: { isCameraDeniedAlertPresented = false }
+                )
             }
             .fileImporter(
                 isPresented: $isFilesPickerPresented,
