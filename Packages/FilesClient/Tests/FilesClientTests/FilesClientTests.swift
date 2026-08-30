@@ -526,6 +526,44 @@ struct FilesClientLiveTests {
         }
     }
 
+    @Test
+    func previewFileKeepsATraversingServerNameInsideThePreviewCache() async throws {
+        stub(statusCode: 200, body: Data("payload".utf8))
+        // A hostile directory listing returns a name that would climb out of the cache dir.
+        let item = FileItem(
+            name: "../../../../\(UUID().uuidString)-escape.txt",
+            path: "Docs/\(UUID().uuidString)", dateModified: Date(), size: 0, kind: "txt"
+        )
+
+        let fileURL = try await makeClient().previewFile(serverURL, item).standardizedFileURL
+        defer { try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent()) }
+
+        let cachesRoot = try FileManager.default
+            .url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .appendingPathComponent("PreviewCache", isDirectory: true).standardizedFileURL
+        #expect(fileURL.path.hasPrefix(cachesRoot.path + "/"))
+        #expect(!fileURL.pathComponents.contains(".."))
+        #expect(fileURL.lastPathComponent == "escape.txt" || fileURL.lastPathComponent.hasSuffix("-escape.txt"))
+    }
+
+    @Test
+    func downloadRawFileKeepsATraversingServerNameInsideThePreviewCache() async throws {
+        stub(statusCode: 200, body: Data("payload".utf8))
+        let item = FileItem(
+            name: "../../../../\(UUID().uuidString)-escape.bin",
+            path: "Docs/\(UUID().uuidString)", dateModified: Date(), size: 0, kind: "bin"
+        )
+
+        let fileURL = try await makeClient().downloadRawFile(serverURL, item).standardizedFileURL
+        defer { try? FileManager.default.removeItem(at: fileURL.deletingLastPathComponent()) }
+
+        let cachesRoot = try FileManager.default
+            .url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+            .appendingPathComponent("PreviewCache", isDirectory: true).standardizedFileURL
+        #expect(fileURL.path.hasPrefix(cachesRoot.path + "/"))
+        #expect(!fileURL.pathComponents.contains(".."))
+    }
+
     /// A distinct name per call (`UUID`-suffixed) keeps each test's cache slot
     /// (`Library/Caches/PreviewCache/<item.id>`) isolated from every other test and from any
     /// prior run — the cache is real, persistent disk state, not reset between test runs.

@@ -439,7 +439,8 @@ struct FilesService: Sendable {
         // RAW formats always come back as a JPEG stream (`rawPreviewService`), regardless of
         // the original extension — save with a matching extension or QuickLook's UTI
         // detection (extension-based) tries to render JPEG bytes as e.g. `.nef` and fails.
-        let fileName = item.isRawImage ? "\(item.name).jpg" : item.name
+        let safeName = SafeFileName.component(item.name)
+        let fileName = item.isRawImage ? "\(safeName).jpg" : safeName
         let fileURL = directory.appendingPathComponent(fileName)
         let metaURL = directory.appendingPathComponent(".meta")
 
@@ -468,7 +469,7 @@ struct FilesService: Sendable {
     /// `namespace`, so the two endpoints never share a cache slot for the same item.
     func downloadRawFile(serverURL: URL, item: FileItem) async throws -> URL {
         let directory = Self.previewCacheDirectory(for: item, namespace: "download")
-        let fileURL = directory.appendingPathComponent(item.name)
+        let fileURL = directory.appendingPathComponent(SafeFileName.component(item.name))
         let metaURL = directory.appendingPathComponent(".meta")
 
         if FileManager.default.fileExists(atPath: fileURL.path),
@@ -606,7 +607,10 @@ struct FilesService: Sendable {
     private static func previewCacheDirectory(for item: FileItem, namespace: String) -> URL {
         let cachesDirectory = (try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
             ?? FileManager.default.temporaryDirectory
-        let key = item.id.replacingOccurrences(of: "/", with: "_")
+        let flattened = item.id.replacingOccurrences(of: "/", with: "_")
+        // Every slash is already gone, so the only strings left that would still traverse are
+        // a bare "." / ".." (a server handing back `item.id == ".."`).
+        let key = (flattened.isEmpty || flattened == "." || flattened == "..") ? "_" : flattened
         return cachesDirectory.appendingPathComponent("PreviewCache", isDirectory: true)
             .appendingPathComponent(namespace, isDirectory: true)
             .appendingPathComponent(key, isDirectory: true)

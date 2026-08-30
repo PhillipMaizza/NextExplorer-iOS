@@ -15,6 +15,9 @@ private enum Constants {
     static let statusSpacing: CGFloat = .space16
     /// Chrome crossfade when tapping a full-screen archive image, matching `ImageGalleryView`.
     static let chromeFadeDuration: Double = 0.22
+    /// A text/markdown entry is only ever read this far in for preview — an archive can hold a
+    /// multi-gigabyte "text" file, and `String(contentsOf:)` would pull all of it into memory.
+    static let maxTextPreviewBytes = 5 * 1024 * 1024
 }
 
 /// Swipe-to-dismiss thresholds + offset math, shared with the other full-screen viewers.
@@ -572,7 +575,12 @@ private struct ArchiveTextEntryPreviewView: View {
             // than inline from `body_`, which would re-parse on every unrelated re-render.
             let shouldRenderMarkdown = isMarkdown
             let loaded: (text: String, markdownHTML: String)? = await Task.detached(priority: .userInitiated) {
-                guard let text = try? String(contentsOf: fileURL, encoding: .utf8) else { return nil }
+                guard let handle = try? FileHandle(forReadingFrom: fileURL) else { return nil }
+                defer { try? handle.close() }
+                let data = (try? handle.read(upToCount: Constants.maxTextPreviewBytes)) ?? Data()
+                // A prefix read can slice a multi-byte character; `String(decoding:as:)`
+                // substitutes U+FFFD rather than failing the whole preview.
+                let text = String(decoding: data, as: UTF8.self)
                 return (text, shouldRenderMarkdown ? MarkdownRenderer.html(from: text) : "")
             }.value
             guard let loaded else {
