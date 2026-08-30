@@ -29,6 +29,9 @@ struct GridCellView: View {
     let serverURL: URL?
     let showThumbnails: Bool
     let iconSize: CGFloat
+    /// The full item, when built from one — needed for the on device PDF first page render,
+    /// which fetches the file through `filesClient.previewFileLowPriority`.
+    private let file: FileItem?
     /// Favorites grid: a favorite's custom icon, weight + colour in place of the folder glyph.
     var customIcon: Image?
     var customIconTint: Color?
@@ -54,6 +57,7 @@ struct GridCellView: View {
         self.serverURL = nil
         self.showThumbnails = false
         self.iconSize = Constants.defaultIconSize
+        self.file = nil
         self.customIcon = customIcon
         self.customIconTint = customIconTint
         self.customIconFilled = customIconFilled
@@ -70,6 +74,7 @@ struct GridCellView: View {
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
         self.iconSize = iconSize
+        self.file = item
         self.customIcon = nil
         self.customIconTint = nil
         self.customIconFilled = false
@@ -83,6 +88,10 @@ struct GridCellView: View {
 
     private var isEligibleForThumbnail: Bool {
         !isDirectory && supportsThumbnail && showThumbnails && serverURL != nil && itemID != nil
+    }
+
+    private var isEligibleForPDFThumbnail: Bool {
+        showThumbnails && serverURL != nil && (file?.isPDF ?? false)
     }
 
     var body: some View {
@@ -128,6 +137,9 @@ struct GridCellView: View {
                 .frame(width: iconSize, height: iconSize)
         } else if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
+                .frame(width: iconSize, height: iconSize)
+        } else if isEligibleForPDFThumbnail, let serverURL, let file {
+            PDFThumbnailImage(serverURL: serverURL, item: file)
                 .frame(width: iconSize, height: iconSize)
         } else if isDirectory {
             IconKit.folderFill

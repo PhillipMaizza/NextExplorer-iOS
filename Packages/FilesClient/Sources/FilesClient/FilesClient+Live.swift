@@ -83,6 +83,9 @@ extension FilesClient {
             previewFile: { serverURL, item in
                 try await service.previewFile(serverURL: serverURL, item: item)
             },
+            previewFileLowPriority: { serverURL, item in
+                try await service.previewFileLowPriority(serverURL: serverURL, item: item)
+            },
             fetchTextContent: { serverURL, path in
                 try await service.fetchTextContent(serverURL: serverURL, path: path)
             },

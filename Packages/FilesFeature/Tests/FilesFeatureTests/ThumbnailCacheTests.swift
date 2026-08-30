@@ -8,7 +8,7 @@ import Testing
 /// (`URLSession.shared`) isn't mockable without a protocol seam. These tests exercise the
 /// disk half: a pre-seeded byte cache entry is returned without a fetch, and `resolvedURL`
 /// remembers a thumbnail-URL resolution across calls.
-@Suite
+@Suite(.serialized, SerializedPreviewCacheAccess())
 struct ThumbnailCacheTests {
     private let store = ThumbnailCache.liveValue
 

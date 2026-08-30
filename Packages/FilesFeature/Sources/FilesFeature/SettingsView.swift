@@ -216,6 +216,7 @@ struct SettingsView: View {
                         store.send(.clearCacheTapped)
                     }
                     .disabled(store.isClearingCache || store.cacheSize == 0)
+                    .opacity(store.cacheSize > 0 ? Constants.fullOpacity : Constants.disabledOpacity)
                 } header: {
                     sectionHeader(L10n.Settings.sectionStorage)
                 } footer: {
