@@ -13,9 +13,6 @@ private enum Constants {
     static let controlsFadeDuration: Double = 0.22
 }
 
-/// Swipe-to-dismiss thresholds + offset math, shared with the other full-screen viewers.
-private typealias DismissMetrics = SwipeToDismissMetrics
-
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
 /// one tapped — mirrors browsing a real photo gallery instead of dismissing back to the list
 /// between each image. Every page reuses `FilesClient.previewFile`'s on-disk cache (see
@@ -33,19 +30,9 @@ struct ImageGalleryView: View {
     private let onDelete: ((FileItem) -> Void)?
 
     @State private var selection: String
-    /// Live vertical translation of an in-progress dismiss drag (0 when idle). Drives the
-    /// content offset plus the background dim/shrink, matching the iOS Photos swipe-to-close.
-    @State private var dragOffset: CGFloat = 0
-    /// Set once a drag crosses the dismiss threshold: fades content + background to 0 while
-    /// it flies off, so the fullScreenCover's own slide-out is never seen.
-    @State private var isDismissing = false
     /// Single-tap toggles the nav bar + bottom action bar + system overlays, like the Photos
     /// app's full-screen viewer.
     @State private var areControlsHidden = false
-    /// True while the current page's image is magnified — suspends swipe-to-dismiss so
-    /// panning a zoomed image doesn't close the gallery. Reset on every page change.
-    @State private var isZoomed = false
-
     init(
         items: [FileItem],
         initialItem: FileItem,
@@ -74,41 +61,19 @@ struct ImageGalleryView: View {
         currentItem?.name ?? ""
     }
 
-    private var backgroundOpacity: Double {
-        DismissMetrics.backgroundOpacity(forOffset: dragOffset, isDismissing: isDismissing)
-    }
-
-    private var contentOpacity: Double {
-        DismissMetrics.contentOpacity(forOffset: dragOffset, isDismissing: isDismissing)
-    }
-
-    private var dragScale: CGFloat {
-        DismissMetrics.scale(forOffset: dragOffset)
-    }
-
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color.black
-                    .opacity(backgroundOpacity)
-                    .ignoresSafeArea()
-
-                // Full-bleed on every edge: the bars float over the image, so toggling them
-                // never resizes or reflows the content — the image stays perfectly still
-                // while the chrome fades, matching the Photos viewer.
-                TabView(selection: $selection) {
-                    ForEach(items) { item in
-                        ImageGalleryPage(item: item, serverURL: serverURL, onZoomChange: { isZoomed = $0 })
-                            .tag(item.id)
-                    }
+            // Full-bleed on every edge: the bars float over the image, so toggling them
+            // never resizes or reflows the content — the image stays perfectly still
+            // while the chrome fades, matching the Photos viewer.
+            TabView(selection: $selection) {
+                ForEach(items) { item in
+                    ImageGalleryPage(item: item, serverURL: serverURL)
+                        .tag(item.id)
                 }
-                .tabViewStyle(.page(indexDisplayMode: items.count > 1 && !areControlsHidden ? .always : .never))
-                .ignoresSafeArea()
-                .scaleEffect(dragScale)
-                .offset(y: dragOffset)
-                .opacity(contentOpacity)
             }
-            .onChange(of: selection) { _, _ in isZoomed = false }
+            .tabViewStyle(.page(indexDisplayMode: items.count > 1 && !areControlsHidden ? .always : .never))
+            .ignoresSafeArea()
             .contentShape(Rectangle())
             // A short fade, nothing more. The earlier lag was this animation fighting the
             // content reflow when the bars resized the image — now that the image is
@@ -118,7 +83,6 @@ struct ImageGalleryView: View {
                     areControlsHidden.toggle()
                 }
             }
-            .simultaneousGesture(dismissDrag)
             .previewChrome(
                 title: currentName,
                 systemShare: currentItem.map { .remote($0, serverURL: serverURL) } ?? .unavailable,
@@ -142,48 +106,6 @@ struct ImageGalleryView: View {
         guard let action else { return nil }
         return { currentItem.map(action) }
     }
-
-    /// Vertical swipe (either direction) to dismiss, like the iOS Photos viewer — runs
-    /// alongside the `TabView`'s horizontal paging, which keeps its own horizontal drags.
-    private var dismissDrag: some Gesture {
-        DragGesture(minimumDistance: DismissMetrics.minimumDragDistance)
-            .onChanged { value in
-                guard !isZoomed, !isDismissing, abs(value.translation.height) > abs(value.translation.width) else {
-                    dragOffset = 0
-                    return
-                }
-                dragOffset = value.translation.height
-            }
-            .onEnded { value in
-                guard !isZoomed, abs(value.translation.height) > abs(value.translation.width) else {
-                    dragOffset = 0
-                    return
-                }
-                if DismissMetrics.shouldDismiss(
-                    translationHeight: value.translation.height,
-                    predictedHeight: value.predictedEndTranslation.height
-                ) {
-                    // Freeze the content where the finger left it and crossfade it out, then
-                    // remove the cover with animations off — no fly-out to collide with the
-                    // fullScreenCover's own slide.
-                    withAnimation(.easeOut(duration: DismissMetrics.dismissFadeDuration)) {
-                        isDismissing = true
-                    } completion: {
-                        var transaction = Transaction()
-                        transaction.disablesAnimations = true
-                        withTransaction(transaction) { onDismiss() }
-                    }
-                } else {
-                    withAnimation(.spring(
-                        response: DismissMetrics.resetSpringResponse,
-                        dampingFraction: DismissMetrics.resetSpringDamping
-                    )) {
-                        dragOffset = 0
-                    }
-                }
-            }
-    }
-
 }
 
 private struct ImageGalleryPage: View {

@@ -23,6 +23,8 @@ struct DownloadsView: View {
     @Bindable var store: StoreOf<DownloadsFeature>
     @AppStorage(AppStorageKeys.downloadsViewMode) private var viewModeRaw = DownloadsViewMode.list.rawValue
     @State private var previewedDownload: LocalDownload?
+    /// Native `.zoom` open + swipe-to-dismiss morph between a download cell and its preview.
+    @Namespace private var previewTransition
     @State private var isSortSheetPresented = false
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
@@ -172,6 +174,7 @@ struct DownloadsView: View {
                 }
             }
             .buttonStyle(DSHapticButtonStyle())
+            .matchedTransitionSource(id: download.id, in: previewTransition)
             .listRowBackground(Color.backgroundSecondary)
             .swipeActions(edge: .trailing) {
                 if !store.isSelecting {
@@ -238,6 +241,7 @@ struct DownloadsView: View {
                             }
                     }
                     .buttonStyle(DSHapticButtonStyle())
+                    .matchedTransitionSource(id: download.id, in: previewTransition)
                     .hapticFeedback(.selection, trigger: store.selectedDownloadIDs.contains(download.id))
                     .contextMenu {
                         if !store.isSelecting {
@@ -404,19 +408,21 @@ struct DownloadsView: View {
                 )
             }
             .fullScreenCover(item: $previewedDownload) { download in
-                FilePreviewContainerView(
-                    fileURL: download.url,
-                    errorMessage: nil,
-                    onDismiss: { previewedDownload = nil },
-                    onRename: {
-                        previewedDownload = nil
-                        store.send(.renameTapped(download))
-                    },
-                    onDelete: {
-                        previewedDownload = nil
-                        store.send(.deleteTapped(download))
-                    }
-                )
+                PreviewZoomContainer(sourceID: download.id, namespace: previewTransition) {
+                    FilePreviewContainerView(
+                        fileURL: download.url,
+                        errorMessage: nil,
+                        onDismiss: { previewedDownload = nil },
+                        onRename: {
+                            previewedDownload = nil
+                            store.send(.renameTapped(download))
+                        },
+                        onDelete: {
+                            previewedDownload = nil
+                            store.send(.deleteTapped(download))
+                        }
+                    )
+                }
             }
             .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedDownloadIDs.count) : L10n.Downloads.navigationTitle)
             .task {

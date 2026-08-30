@@ -1,9 +1,11 @@
-import CoreGraphics
+import SwiftUI
 
-/// The Photos-style "drag the full-screen content vertically to dismiss" interaction is used
-/// by the image gallery, the streaming player and the in-archive image viewer. They each wire
-/// the gesture into their own view tree, but the thresholds and the offset → dim/shrink/fade
-/// math are identical — kept here once rather than as three copies of the same constants.
+/// Photos-style "drag the full-screen content vertically to dismiss". The browse-tab media
+/// previews get this natively from the `.zoom` navigation transition (see
+/// `BrowseContentView`'s `matchedTransitionSource` / `navigationTransition`). This manual
+/// version — `swipeToDismissContent` below, plus the offset → dim/shrink/fade math here — is
+/// the fallback for viewers presented without a `.zoom` source: the in-archive entry previews,
+/// which are an in-view overlay rather than a cover.
 enum SwipeToDismissMetrics {
     /// Vertical drag distance past which releasing dismisses.
     static let distanceThreshold: CGFloat = 120
@@ -42,5 +44,83 @@ enum SwipeToDismissMetrics {
     /// Whether a released drag should dismiss: far enough, or flicked hard enough.
     static func shouldDismiss(translationHeight: CGFloat, predictedHeight: CGFloat) -> Bool {
         abs(translationHeight) > distanceThreshold || abs(predictedHeight) > predictedThreshold
+    }
+}
+
+extension View {
+    /// Vertical drag-to-dismiss for a full-screen media cover: the whole viewer (chrome
+    /// included) follows the finger against a black backdrop as it is dragged either
+    /// direction, dimming and shrinking as it goes, then springs back if released short or
+    /// crossfades out and calls `onDismiss` once the drag passes the threshold. `isSuspended`
+    /// freezes the gesture while the content itself is panning (a magnified image), so panning
+    /// never closes the viewer.
+    func swipeToDismissContent(isSuspended: Bool = false, onDismiss: @escaping () -> Void) -> some View {
+        modifier(SwipeToDismissContent(isSuspended: isSuspended, onDismiss: onDismiss))
+    }
+}
+
+private struct SwipeToDismissContent: ViewModifier {
+    let isSuspended: Bool
+    let onDismiss: () -> Void
+
+    /// Live vertical translation of an in-progress dismiss drag (0 when idle).
+    @State private var dragOffset: CGFloat = 0
+    /// Set once a drag crosses the threshold: fades content + backdrop to 0 as the cover goes.
+    @State private var isDismissing = false
+
+    func body(content: Content) -> some View {
+        ZStack {
+            Color.black
+                .opacity(SwipeToDismissMetrics.backgroundOpacity(forOffset: dragOffset, isDismissing: isDismissing))
+                .ignoresSafeArea()
+
+            content
+                .scaleEffect(SwipeToDismissMetrics.scale(forOffset: dragOffset))
+                .offset(y: dragOffset)
+                .opacity(SwipeToDismissMetrics.contentOpacity(forOffset: dragOffset, isDismissing: isDismissing))
+        }
+        .simultaneousGesture(dismissDrag)
+    }
+
+    /// Vertical swipe (either direction) — runs alongside any horizontal paging/scrubber and
+    /// the zoom scroll view's own pan, which keep their gestures.
+    private var dismissDrag: some Gesture {
+        DragGesture(minimumDistance: SwipeToDismissMetrics.minimumDragDistance)
+            .onChanged { value in
+                guard !isSuspended, !isDismissing,
+                      abs(value.translation.height) > abs(value.translation.width) else {
+                    dragOffset = 0
+                    return
+                }
+                dragOffset = value.translation.height
+            }
+            .onEnded { value in
+                guard !isSuspended, abs(value.translation.height) > abs(value.translation.width) else {
+                    dragOffset = 0
+                    return
+                }
+                if SwipeToDismissMetrics.shouldDismiss(
+                    translationHeight: value.translation.height,
+                    predictedHeight: value.predictedEndTranslation.height
+                ) {
+                    // Freeze the content where the finger left it and crossfade it out, then
+                    // remove the cover with animations off — no fly-out to collide with the
+                    // fullScreenCover's own slide.
+                    withAnimation(.easeOut(duration: SwipeToDismissMetrics.dismissFadeDuration)) {
+                        isDismissing = true
+                    } completion: {
+                        var transaction = Transaction()
+                        transaction.disablesAnimations = true
+                        withTransaction(transaction) { onDismiss() }
+                    }
+                } else {
+                    withAnimation(.spring(
+                        response: SwipeToDismissMetrics.resetSpringResponse,
+                        dampingFraction: SwipeToDismissMetrics.resetSpringDamping
+                    )) {
+                        dragOffset = 0
+                    }
+                }
+            }
     }
 }

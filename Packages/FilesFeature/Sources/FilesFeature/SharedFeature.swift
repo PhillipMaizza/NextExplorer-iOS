@@ -66,8 +66,6 @@ public struct SharedFeature {
         public var deleteConfirmationShare: Share?
         public var deletingIDs: Set<Share.ID> = []
         @Presents public var editSheet: EditShareFeature.State?
-        /// "Open a shared link" — paste a link someone sent you and browse it read only.
-        @Presents public var openLinkSheet: OpenShareLinkFeature.State?
         public var searchQuery = ""
         public var sortOption: SortOption = .dateShared
         public var sortDirection: BrowseFeature.SortDirection = .descending
@@ -174,14 +172,6 @@ public struct SharedFeature {
         case deleteResponse(Share.ID, Result<Bool, FilesClientError>)
         case editTapped(Share)
         case editSheet(PresentationAction<EditShareFeature.Action>)
-        case openLinkButtonTapped
-        case openLinkSheet(PresentationAction<OpenShareLinkFeature.Action>)
-        case delegate(Delegate)
-
-        public enum Delegate: Equatable, Sendable {
-            /// Browse a share the user opened by link — the Browse tab jumps to this logical path.
-            case openSharedLink(path: String, title: String)
-        }
     }
 
     @Dependency(\.filesClient) var filesClient
@@ -287,27 +277,10 @@ public struct SharedFeature {
 
             case .editSheet:
                 return .none
-
-            case .openLinkButtonTapped:
-                state.openLinkSheet = OpenShareLinkFeature.State(serverURL: state.serverURL)
-                return .none
-
-            case let .openLinkSheet(.presented(.delegate(.open(path, title)))):
-                state.openLinkSheet = nil
-                return .send(.delegate(.openSharedLink(path: path, title: title)))
-
-            case .openLinkSheet:
-                return .none
-
-            case .delegate:
-                return .none
             }
         }
         .ifLet(\.$editSheet, action: \.editSheet) {
             EditShareFeature()
-        }
-        .ifLet(\.$openLinkSheet, action: \.openLinkSheet) {
-            OpenShareLinkFeature()
         }
     }
 
