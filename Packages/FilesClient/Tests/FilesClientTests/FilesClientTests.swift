@@ -72,6 +72,35 @@ struct FilesClientLiveTests {
     }
 
     @Test
+    func previewFileLowPriorityFetchesFromPreviewThenSharesTheCacheSlotWithPreviewFile() async throws {
+        let item = FileItem(
+            name: "\(UUID().uuidString).pdf", path: "Docs",
+            dateModified: Date(timeIntervalSince1970: 1), size: 3, kind: "pdf"
+        )
+        stub(statusCode: 200, body: Data("PDF".utf8))
+        let client = makeClient()
+
+        StubURLProtocol.capturedRequest = nil
+        let downloaded = try await client.previewFileLowPriority(serverURL, item)
+        let requestURL = try #require(StubURLProtocol.capturedRequest?.url)
+        #expect(requestURL.path.hasPrefix("/api/preview"))
+        #expect(FileManager.default.fileExists(atPath: downloaded.path))
+        defer { try? FileManager.default.removeItem(at: downloaded.deletingLastPathComponent()) }
+
+        // Second low priority call: cache hit, no request.
+        StubURLProtocol.capturedRequest = nil
+        let again = try await client.previewFileLowPriority(serverURL, item)
+        #expect(again == downloaded)
+        #expect(StubURLProtocol.capturedRequest == nil)
+
+        // The interactive path lands in the same slot, so tap-to-open reuses the download.
+        StubURLProtocol.capturedRequest = nil
+        let interactive = try await client.previewFile(serverURL, item)
+        #expect(interactive == downloaded)
+        #expect(StubURLProtocol.capturedRequest == nil)
+    }
+
+    @Test
     func fetchPreferencesFallsBackToDefaultsWhenUserKeyIsMissing() async throws {
         stub(statusCode: 200, body: #"{"branding": {}}"#.data(using: .utf8)!)
         let preferences = try await makeClient().fetchPreferences(serverURL)

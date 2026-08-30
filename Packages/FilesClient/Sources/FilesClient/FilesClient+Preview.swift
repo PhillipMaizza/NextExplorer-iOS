@@ -81,6 +81,13 @@ extension FilesClient {
             try? Data().write(to: fileURL)
             return fileURL
         },
+        previewFileLowPriority: { _, item in
+            let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Previews-Preview", isDirectory: true)
+            try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+            let fileURL = directory.appendingPathComponent(item.name)
+            try? Data().write(to: fileURL)
+            return fileURL
+        },
         fetchTextContent: { _, _ in "" },
         saveTextContent: { _, _, _ in },
         extractZip: { _, item in

@@ -101,4 +101,7 @@ public enum IconKit {
     /// `doc.zipper`. See `archivePage` above.
     public static let archiveDocument = Image(systemName: "doc.zipper")
     public static let size = Image(systemName: "internaldrive")
+    public static let sparkle = Image(systemName: "sparkles")
+    public static let resize = Image(systemName: "arrow.up.left.and.arrow.down.right")
+    public static let speed = Image(systemName: "speedometer")
 }

@@ -77,6 +77,11 @@ public struct FilesClient: Sendable {
     ) async throws -> Void
     public var thumbnailURL: @Sendable (_ serverURL: URL, _ path: String) async throws -> URL?
     public var previewFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
+    /// `previewFile` served over a low priority session with a capped connection pool, for
+    /// opportunistic fetches (PDF first page thumbnails while browsing) that must not compete
+    /// with interactive traffic. Same cache slot as `previewFile`: a hit returns with no
+    /// network, and a later tap-to-open reuses whatever this downloaded.
+    public var previewFileLowPriority: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     public var fetchTextContent: @Sendable (_ serverURL: URL, _ path: String) async throws -> String
     public var saveTextContent: @Sendable (_ serverURL: URL, _ path: String, _ content: String) async throws -> Void
     public var extractZip: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem

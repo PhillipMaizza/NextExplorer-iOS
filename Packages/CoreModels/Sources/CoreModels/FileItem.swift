@@ -83,6 +83,10 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// pattern-matching the backend's own `routes/files/download.js` filename, but that file
     /// is mounted at plain `/api` in `routes/index.js`. Got this wrong once already.
     public var isOfficeDocument: Bool { lowercaseKind == "doc" || lowercaseKind == "docx" }
+    /// A PDF. The server refuses to thumbnail these (`backend/src/routes/thumbnails.js`
+    /// rejects the `pdf` extension outright), so the client renders the first page itself
+    /// from the downloaded file, see `PDFThumbnailImage`.
+    public var isPDF: Bool { lowercaseKind == "pdf" }
     /// A web page — offered an "Open in Browser" action that renders it in a `WKWebView`
     /// (the server has no URL an external browser could open; auth is a private cookie).
     public var isHTML: Bool { lowercaseKind == "html" || lowercaseKind == "htm" }

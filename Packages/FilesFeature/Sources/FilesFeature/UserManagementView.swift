@@ -12,26 +12,9 @@ private enum Metrics {
     static let tagHorizontalPadding: CGFloat = .space8
     static let tagVerticalPadding: CGFloat = .space2
     static let tagBorderWidth: CGFloat = 1
-    static let sheetContentSpacing: CGFloat = .space16
-    static let sheetHorizontalPadding: CGFloat = .space16
-    static let closeIconSize: CGFloat = .iconXSmall
-}
-
-/// The trailing `xmark` every management sheet dismisses with, so the sheets read as
-/// dismissable panels rather than commit or cancel forms.
-struct SheetCloseButton: View {
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            IconKit.close
-                .resizable().scaledToFit()
-                .foregroundStyle(Color.primaryDS)
-                .frame(width: Metrics.closeIconSize, height: Metrics.closeIconSize)
-        }
-        .buttonStyle(DSHapticButtonStyle())
-        .accessibilityLabel(L10n.Common.close)
-    }
+    static let sheetContentSpacing: CGFloat = .space24
+    static let sheetHorizontalPadding: CGFloat = .space24
+    static let sheetMaxHeightFraction: CGFloat = 0.9
 }
 
 /// The admin user list (web `UserList`). Pushed from Settings; a tap pushes `UserDetailView`
@@ -65,20 +48,17 @@ struct UserManagementView: View {
             prompt: L10n.UserManagement.searchPrompt
         )
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button { isSortSheetPresented = true } label: {
-                    Label { Text(L10n.Common.sort) } icon: { IconKit.sort.foregroundStyle(Color.accent) }
-                }
-                .tint(.accent)
-                .buttonStyle(DSHapticButtonStyle())
-                .disabled(store.users.isEmpty)
+            ToolbarItem(placement: .topBarTrailing) {
+                SortToolbarButton(isDisabled: store.users.isEmpty) { isSortSheetPresented = true }
             }
-            ToolbarItem(placement: .primaryAction) {
+            if #available(iOS 26.0, *) {
+                ToolbarSpacer(.fixed, placement: .topBarTrailing)
+            }
+            ToolbarItem(placement: .topBarTrailing) {
                 Button { store.send(.createUserTapped) } label: {
-                    Label { Text(L10n.UserManagement.createUser) } icon: { IconKit.plus.foregroundStyle(Color.accent) }
+                    IconKit.plus.fontWeight(.bold).foregroundStyle(Color.accent)
                 }
-                .tint(.accent)
-                .buttonStyle(DSHapticButtonStyle())
+                .accessibilityLabel(L10n.UserManagement.createUser)
             }
         }
         .overlay { overlay }
@@ -218,57 +198,54 @@ private struct CreateUserSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Metrics.sheetContentSpacing) {
-                    if let sheet = store.createSheet {
-                        if let error = sheet.errorMessage {
-                            DSErrorCard(error)
-                        }
-                        LabeledField(L10n.UserManagement.createEmailField, error: sheet.emailError) {
-                            DSTextField(L10n.UserManagement.createEmailPlaceholder, text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged))
-                                .keyboardType(.emailAddress)
-                                .textInputAutocapitalization(.never)
-                                .autocorrectionDisabled()
-                        }
-                        LabeledField(L10n.UserManagement.createUsernameField) {
-                            DSTextField(L10n.UserManagement.createUsernamePlaceholder, text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged))
-                                .textInputAutocapitalization(.never)
-                                .autocorrectionDisabled()
-                        }
-                        LabeledField(L10n.Common.password, error: sheet.passwordError) {
-                            DSSecureField(L10n.UserManagement.createPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: fieldBinding(\.password, UserManagementFeature.Action.createPasswordChanged))
-                        }
-                        DSToggleRow(
-                            title: L10n.UserManagement.createGrantAdminToggle,
-                            subtitle: L10n.UserManagement.createGrantAdminSubtitle,
-                            icon: IconKit.shield,
-                            isOn: Binding(
-                                get: { store.createSheet?.isAdmin ?? false },
-                                set: { store.send(.createIsAdminChanged($0)) }
-                            )
-                        )
-                        DSButton(L10n.UserManagement.createSubmit, style: .primary, isLoading: sheet.isSubmitting) {
-                            store.send(.createSubmitTapped)
-                        }
-                        .disabled(!sheet.isSubmitEnabled)
-                        .padding(.top, .space4)
+        DSDynamicHeightSheet(maxHeightFraction: Metrics.sheetMaxHeightFraction) {
+            VStack(alignment: .leading, spacing: Metrics.sheetContentSpacing) {
+                DSSheetHeader(
+                    icon: IconKit.people,
+                    title: L10n.UserManagement.createNavigationTitle,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onClose: { dismiss() }
+                )
+
+                if let sheet = store.createSheet {
+                    if let error = sheet.errorMessage {
+                        DSErrorCard(error)
                     }
+                    LabeledField(L10n.UserManagement.createEmailField, error: sheet.emailError, uppercased: false) {
+                        DSTextField(L10n.UserManagement.createEmailPlaceholder, text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged))
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    }
+                    LabeledField(L10n.UserManagement.createUsernameField, uppercased: false) {
+                        DSTextField(L10n.UserManagement.createUsernamePlaceholder, text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged))
+                            .textInputAutocapitalization(.never)
+                            .autocorrectionDisabled()
+                    }
+                    LabeledField(L10n.Common.password, error: sheet.passwordError, uppercased: false) {
+                        DSSecureField(L10n.UserManagement.createPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: fieldBinding(\.password, UserManagementFeature.Action.createPasswordChanged))
+                    }
+                    DSToggleRow(
+                        title: L10n.UserManagement.createGrantAdminToggle,
+                        subtitle: L10n.UserManagement.createGrantAdminSubtitle,
+                        icon: IconKit.shield,
+                        isOn: Binding(
+                            get: { store.createSheet?.isAdmin ?? false },
+                            set: { store.send(.createIsAdminChanged($0)) }
+                        )
+                    )
                 }
-                .padding(.horizontal, Metrics.sheetHorizontalPadding)
-                .padding(.vertical, Metrics.sheetContentSpacing)
             }
-            .background(Color.backgroundPrimary)
-            .navigationTitle(L10n.UserManagement.createNavigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    SheetCloseButton { dismiss() }
+            .padding(.horizontal, Metrics.sheetHorizontalPadding)
+            .padding(.vertical, Metrics.sheetContentSpacing)
+        } footer: {
+            DSSheetFooter {
+                DSButton(L10n.UserManagement.createSubmit, style: .primary, isLoading: store.createSheet?.isSubmitting ?? false) {
+                    store.send(.createSubmitTapped)
                 }
+                .disabled(!(store.createSheet?.isSubmitEnabled ?? false))
             }
         }
-        .presentationDetents([.medium, .large])
-        .presentationDragIndicator(.visible)
     }
 
     private func fieldBinding(
@@ -289,50 +266,46 @@ private struct SetPasswordSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Metrics.sheetContentSpacing) {
-                    if let sheet = store.passwordSheet {
-                        if let error = sheet.errorMessage {
-                            DSErrorCard(error)
-                        }
-                        Text(sheet.hasExistingPassword
-                            ? L10n.UserManagement.setPasswordResetIntro(sheet.userLabel)
-                            : L10n.UserManagement.setPasswordSetIntro(sheet.userLabel))
-                            .type(.body3(.regular), style: .secondary)
+        DSDynamicHeightSheet(maxHeightFraction: Metrics.sheetMaxHeightFraction) {
+            VStack(alignment: .leading, spacing: Metrics.sheetContentSpacing) {
+                DSSheetHeader(
+                    icon: IconKit.key,
+                    title: L10n.UserManagement.setPasswordNavigationTitle,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onClose: { dismiss() }
+                )
 
-                        LabeledField(L10n.UserManagement.setPasswordNewField, error: sheet.passwordError) {
-                            DSSecureField(L10n.UserManagement.setPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: Binding(
-                                get: { store.passwordSheet?.password ?? "" },
-                                set: { store.send(.passwordFieldChanged($0)) }
-                            ))
-                        }
+                if let sheet = store.passwordSheet {
+                    if let error = sheet.errorMessage {
+                        DSErrorCard(error)
+                    }
+                    Text(sheet.hasExistingPassword
+                        ? L10n.UserManagement.setPasswordResetIntro(sheet.userLabel)
+                        : L10n.UserManagement.setPasswordSetIntro(sheet.userLabel))
+                        .type(.body3(.regular), style: .secondary)
 
-                        DSButton(
-                            sheet.hasExistingPassword ? L10n.UserManagement.setPasswordResetTitle : L10n.UserManagement.setPasswordSetTitle,
-                            style: .primary,
-                            isLoading: sheet.isSubmitting
-                        ) {
-                            store.send(.passwordSubmitTapped)
-                        }
-                        .disabled(!sheet.isSubmitEnabled)
-                        .padding(.top, .space4)
+                    LabeledField(L10n.UserManagement.setPasswordNewField, error: sheet.passwordError, uppercased: false) {
+                        DSSecureField(L10n.UserManagement.setPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: Binding(
+                            get: { store.passwordSheet?.password ?? "" },
+                            set: { store.send(.passwordFieldChanged($0)) }
+                        ))
                     }
                 }
-                .padding(.horizontal, Metrics.sheetHorizontalPadding)
-                .padding(.vertical, Metrics.sheetContentSpacing)
             }
-            .background(Color.backgroundPrimary)
-            .navigationTitle(L10n.UserManagement.setPasswordNavigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    SheetCloseButton { dismiss() }
+            .padding(.horizontal, Metrics.sheetHorizontalPadding)
+            .padding(.vertical, Metrics.sheetContentSpacing)
+        } footer: {
+            DSSheetFooter {
+                DSButton(
+                    (store.passwordSheet?.hasExistingPassword ?? false) ? L10n.UserManagement.setPasswordResetTitle : L10n.UserManagement.setPasswordSetTitle,
+                    style: .primary,
+                    isLoading: store.passwordSheet?.isSubmitting ?? false
+                ) {
+                    store.send(.passwordSubmitTapped)
                 }
+                .disabled(!(store.passwordSheet?.isSubmitEnabled ?? false))
             }
         }
-        .presentationDetents([.medium])
-        .presentationDragIndicator(.visible)
     }
 }
 

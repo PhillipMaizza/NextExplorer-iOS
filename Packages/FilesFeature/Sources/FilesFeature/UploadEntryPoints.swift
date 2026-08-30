@@ -149,6 +149,40 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     }
 }
 
+private enum DashedLabelConstants {
+    static let dash: CGFloat = 4
+    static let borderWidth: CGFloat = 1
+    static let iconTextSpacing: CGFloat = .space4
+    static let verticalPadding: CGFloat = .space12
+}
+
+/// Dashed outline "add / upload" label: a leading `+`, secondary text, a dashed
+/// `.radiusControl` border. Shared by the review sheet's "Add more files" row and the empty
+/// folder's upload call to action so the two read as the same control.
+struct UploadDashedLabel: View {
+    let title: String
+
+    var body: some View {
+        HStack(spacing: DashedLabelConstants.iconTextSpacing) {
+            IconKit.plus
+                .resizable().scaledToFit()
+                .frame(width: .iconSmall, height: .iconSmall)
+            Text(title).type(.body2(.regular), style: .secondary)
+        }
+        .foregroundStyle(Color.secondaryDS)
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, DashedLabelConstants.verticalPadding)
+        .overlay(
+            RoundedRectangle(cornerRadius: .radiusControl)
+                .stroke(
+                    Color.secondaryDS,
+                    style: StrokeStyle(lineWidth: DashedLabelConstants.borderWidth, dash: [DashedLabelConstants.dash])
+                )
+        )
+        .contentShape(Rectangle())
+    }
+}
+
 extension UploadSourceMenu where LeadingActions == EmptyView {
     init(
         @ViewBuilder label: @escaping () -> MenuLabel,

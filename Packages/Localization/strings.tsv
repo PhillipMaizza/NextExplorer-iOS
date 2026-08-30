@@ -194,6 +194,7 @@ uploads.reviewUploadButton	Upload
 uploads.reviewPreparing	Preparing %lld…
 uploads.reviewAddMore	Add more files
 uploads.reviewPreviewFile	Preview %@
+uploads.reviewInsecureNetworkNotice	Connected over http. If this server is only on your home network, uploads won't work while you're away from it.
 uploads.stagingFailed	Couldn't add those files. Try again.
 uploads.discardTitle	Discard upload?
 uploads.discardMessage	The files you added won't be uploaded.
@@ -373,7 +374,7 @@ serverDetails.nameLabel	Server Name
 serverDetails.namePlaceholder	Explorer
 serverDetails.nameErrorEmpty	Server name can't be empty.
 serverDetails.urlLabel	Server URL
-serverDetails.urlFootnote	The address can't be changed here. Sign out and add the server again to switch.
+serverDetails.urlFootnote	The address where your NextExplorer instance is installed — to change it, sign out and add the server again.
 serverDetails.updateButton	Update Server
 serverDetails.savedMessage	Server details updated.
 serverDetails.logoErrorTooLarge	That image is too large. Pick one under 2 MB.

@@ -5,7 +5,7 @@ import SwiftUI
 private enum Constants {
     static let contentSpacing: CGFloat = .space24
     static let rowSpacing: CGFloat = .space12
-    static let rowVerticalPadding: CGFloat = .space8
+    static let rowVerticalPadding: CGFloat = .space16
     static let horizontalPadding: CGFloat = .space24
     static let topPadding: CGFloat = .space24
     static let bottomPadding: CGFloat = .space24
@@ -14,6 +14,29 @@ private enum Constants {
     static let selectionAnimationDuration: Double = 0.2
     static let fullOpacity: Double = 1.0
     static let zeroOpacity: Double = 0.0
+    static let toolbarButtonWidth: CGFloat = .iconMedium
+    static let toolbarButtonHeight: CGFloat = .iconSmall
+}
+
+/// The single toolbar button that opens a screen's `SortSheet`. One look everywhere it
+/// appears (Shared, User Management): a `primaryDS` sort glyph, disabled when there's nothing
+/// to sort. Drop it inside a `ToolbarItem`.
+struct SortToolbarButton: View {
+    var isDisabled: Bool = false
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            IconKit.sort
+                .resizable()
+                .scaledToFit()
+                .frame(width: Constants.toolbarButtonWidth, height: Constants.toolbarButtonHeight)
+                .foregroundStyle(Color.primaryDS)
+        }
+        .buttonStyle(DSHapticButtonStyle())
+        .disabled(isDisabled)
+        .accessibilityLabel(L10n.Common.sort)
+    }
 }
 
 /// Generic "Sort by" sheet: a field picker and a direction picker as radio lists in a

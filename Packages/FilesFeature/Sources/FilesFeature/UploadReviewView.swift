@@ -17,8 +17,6 @@ private enum Constants {
     static let rowTextSpacing: CGFloat = .space2
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
-    static let addMoreDash: CGFloat = 4
-    static let addMoreBorderWidth: CGFloat = 1
     static let enabledOpacity: Double = 1
     static let disabledOpacity: Double = 0.35
     /// The sheet fits its content but never exceeds this fraction of the screen — past that
@@ -120,26 +118,7 @@ struct UploadReviewView: View {
     /// mid preparation so two picks can't overlap.
     private var addMoreButton: some View {
         UploadSourceMenu(
-            label: {
-                HStack(spacing: Constants.rowTextSpacing * 2) {
-                    IconKit.plus
-                        .resizable().scaledToFit()
-                        .frame(width: .iconSmall, height: .iconSmall)
-                    Text(L10n.Uploads.reviewAddMore)
-                        .type(.body2(.regular), style: .secondary)
-                }
-                .foregroundStyle(Color.secondaryDS)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Constants.rowSpacing)
-                .overlay(
-                    RoundedRectangle(cornerRadius: .radiusControl)
-                        .stroke(
-                            Color.secondaryDS,
-                            style: StrokeStyle(lineWidth: Constants.addMoreBorderWidth, dash: [Constants.addMoreDash])
-                        )
-                )
-                .contentShape(Rectangle())
-            },
+            label: { UploadDashedLabel(title: L10n.Uploads.reviewAddMore) },
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,
@@ -164,6 +143,13 @@ struct UploadReviewView: View {
             : L10n.Uploads.reviewTitleMany(store.totalCount)
     }
 
+    /// `http` server: reachable only where the box is (typically the user's LAN), so an
+    /// upload started away from that network just fails. The plaintext-security angle is
+    /// already covered on the login screen; this is the "won't work from the coffee shop" heads-up.
+    private var isServerConnectionInsecure: Bool {
+        store.serverURL.scheme?.lowercased() == "http"
+    }
+
     /// The whole sheet as one measured stack (header, the destination + size rows, the file
     /// list, then the two buttons) so `DSDynamicHeightSheet` sizes to exactly this — no
     /// per-piece height guesses.
@@ -175,6 +161,9 @@ struct UploadReviewView: View {
                 closeAccessibilityLabel: L10n.Common.close,
                 onClose: { store.send(.cancelTapped) }
             )
+            if isServerConnectionInsecure {
+                DSInfoCard(L10n.Uploads.reviewInsecureNetworkNotice)
+            }
             pathAndSizeSection
             filesSection
         }
@@ -409,6 +398,23 @@ private func previewFile(_ name: String, size: Int64) -> PickedFile {
                     state.stagingFailed = true
                     return state
                 }()
+            ) { UploadReviewFeature() }
+        )
+    }
+}
+
+#Preview("HTTP server notice") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        UploadReviewView(
+            store: Store(
+                initialState: UploadReviewFeature.State(
+                    serverURL: URL(string: "http://192.168.1.50:3000")!,
+                    files: [
+                        previewFile("beach.jpg", size: 2_400_000),
+                        previewFile("notes.txt", size: 1_200),
+                    ],
+                    startingDestination: "Documents/Trips"
+                )
             ) { UploadReviewFeature() }
         )
     }

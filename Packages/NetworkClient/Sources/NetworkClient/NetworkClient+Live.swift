@@ -1,6 +1,19 @@
 import Dependencies
 import Foundation
 
+private enum Constants {
+    /// A dead or far-away server shouldn't hang an interactive request for the URLSession
+    /// default of 60s — the launch session check and every tap has to give up sooner.
+    static let interactiveRequestTimeout: TimeInterval = 15
+    /// Opportunistic page fetches (PDF thumbnails) can be genuinely slow; let them run to
+    /// the URLSession default rather than sharing the interactive budget.
+    static let lowPriorityRequestTimeout: TimeInterval = 60
+    /// Connection cap for the low priority session — small, so however many fetches the UI
+    /// kicks off they never take slots from the main session's 6 per host interactive pool.
+    static let lowPriorityMaxConnectionsPerHost = 2
+    static let downloadTempFilePrefix = "download-"
+}
+
 extension NetworkClient {
     /// Ceiling on a response buffered by `send`. The `send` path exists only for JSON control
     /// responses (listings, share lists, editor content) — anything file-sized goes through
@@ -18,15 +31,58 @@ extension NetworkClient {
         configuration.httpCookieStorage = cookieStorage
         configuration.httpCookieAcceptPolicy = .always
         configuration.httpShouldSetCookies = true
-        // A dead or far-away server shouldn't hang a request for the URLSession default of
-        // 60s — the launch session check and every tap has to give up sooner than that.
-        configuration.timeoutIntervalForRequest = 15
+        configuration.timeoutIntervalForRequest = Constants.interactiveRequestTimeout
         if !protocolClasses.isEmpty {
             configuration.protocolClasses = protocolClasses
         }
 
         let delegate = URLSessionAuthDelegate(trustEvaluator: trustEvaluator)
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+
+        // A second session for opportunistic background fetches (PDF thumbnail page
+        // downloads). Its own connection pool, capped low, so however many the UI kicks off
+        // they can't take slots from the main session's interactive traffic. Deliberately
+        // NOT `networkServiceType = .background` — that lets the system defer requests
+        // indefinitely, even in the foreground, so thumbnails would just never appear.
+        let lowPriorityConfiguration = URLSessionConfiguration.default
+        lowPriorityConfiguration.httpCookieStorage = cookieStorage
+        lowPriorityConfiguration.httpCookieAcceptPolicy = .always
+        lowPriorityConfiguration.httpShouldSetCookies = true
+        lowPriorityConfiguration.httpMaximumConnectionsPerHost = Constants.lowPriorityMaxConnectionsPerHost
+        lowPriorityConfiguration.timeoutIntervalForRequest = Constants.lowPriorityRequestTimeout
+        if !protocolClasses.isEmpty {
+            lowPriorityConfiguration.protocolClasses = protocolClasses
+        }
+        let lowPrioritySession = URLSession(
+            configuration: lowPriorityConfiguration, delegate: delegate, delegateQueue: nil
+        )
+
+        @Sendable func streamToFile(
+            _ request: URLRequest, using downloadSession: URLSession
+        ) async throws -> (URL, HTTPURLResponse) {
+            let temporaryURL: URL
+            let response: URLResponse
+            do {
+                (temporaryURL, response) = try await downloadSession.download(for: request)
+            } catch {
+                throw NetworkError.transport(error.localizedDescription)
+            }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                try? FileManager.default.removeItem(at: temporaryURL)
+                throw NetworkError.invalidResponse
+            }
+            // `session.download` deletes its temp file the moment this closure returns, so
+            // move it somewhere the caller controls before handing the URL back.
+            let stableURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent("\(Constants.downloadTempFilePrefix)\(UUID().uuidString)")
+            do {
+                try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
+            } catch {
+                try? FileManager.default.removeItem(at: temporaryURL)
+                throw NetworkError.transport(error.localizedDescription)
+            }
+            return (stableURL, httpResponse)
+        }
 
         return NetworkClient(
             send: { request in
@@ -77,28 +133,10 @@ extension NetworkClient {
                 return (data, httpResponse)
             },
             download: { request in
-                let temporaryURL: URL
-                let response: URLResponse
-                do {
-                    (temporaryURL, response) = try await session.download(for: request)
-                } catch {
-                    throw NetworkError.transport(error.localizedDescription)
-                }
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    try? FileManager.default.removeItem(at: temporaryURL)
-                    throw NetworkError.invalidResponse
-                }
-                // `session.download` deletes its temp file the moment this closure returns, so
-                // move it somewhere the caller controls before handing the URL back.
-                let stableURL = FileManager.default.temporaryDirectory
-                    .appendingPathComponent("download-\(UUID().uuidString)")
-                do {
-                    try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
-                } catch {
-                    try? FileManager.default.removeItem(at: temporaryURL)
-                    throw NetworkError.transport(error.localizedDescription)
-                }
-                return (stableURL, httpResponse)
+                try await streamToFile(request, using: session)
+            },
+            lowPriorityDownload: { request in
+                try await streamToFile(request, using: lowPrioritySession)
             }
         )
     }
