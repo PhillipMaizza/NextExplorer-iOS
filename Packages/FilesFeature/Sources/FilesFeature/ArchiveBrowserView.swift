@@ -20,9 +20,6 @@ private enum Constants {
     static let maxTextPreviewBytes = 5 * 1024 * 1024
 }
 
-/// Swipe-to-dismiss thresholds + offset math, shared with the other full-screen viewers.
-private typealias DismissMetrics = SwipeToDismissMetrics
-
 /// One entry inside a `.zip`/`.rar`, normalized across both underlying libraries' own
 /// `Entry` types — `path` is the entry's full path within the archive (e.g. `"a/b/c.txt"`),
 /// same shape whether it came from `ZIPFoundation` or `Unrar.swift`.
@@ -395,12 +392,16 @@ private struct ArchiveEntryPreviewView: View {
                 onDismiss: onDismiss
             )
         } else if item.isPreviewableViaDownload {
+            // Presented as an in-view overlay (not a cover), so the native `.zoom` dismiss the
+            // browse-tab previews get isn't available here — the manual drag-to-dismiss stands in.
             FilePreviewContainerView(fileURL: fileURL, errorMessage: nil, onDismiss: onDismiss)
+                .swipeToDismissContent(onDismiss: onDismiss)
         } else if item.isStreamableMedia {
             // `item.supportsThumbnail` is always `false` for archive entries (no server
             // metadata to know otherwise), so `StreamingPreviewView`'s poster never renders
             // here — `serverURL` is otherwise unused for a local file URL.
             StreamingPreviewView(item: item, url: fileURL, serverURL: serverURL, onDismiss: onDismiss)
+                .swipeToDismissContent(onDismiss: onDismiss)
         } else {
             ArchiveTextEntryPreviewView(item: item, fileURL: fileURL, resolveAsset: resolveAsset, onDismiss: onDismiss)
         }
@@ -417,44 +418,21 @@ private struct ArchiveImagePreviewView: View {
     let onDismiss: () -> Void
 
     @State private var areControlsHidden = false
-    /// Live vertical translation of an in-progress dismiss drag (0 when idle).
-    @State private var dragOffset: CGFloat = 0
-    /// Set once a drag crosses the dismiss threshold: fades content + backdrop to 0 as it goes.
-    @State private var isDismissing = false
     /// True while the image is magnified — suspends swipe-to-dismiss so panning the zoomed
     /// image doesn't close the viewer.
     @State private var isZoomed = false
 
-    private var backgroundOpacity: Double {
-        DismissMetrics.backgroundOpacity(forOffset: dragOffset, isDismissing: isDismissing)
-    }
-
-    private var contentOpacity: Double {
-        DismissMetrics.contentOpacity(forOffset: dragOffset, isDismissing: isDismissing)
-    }
-
-    private var dragScale: CGFloat {
-        DismissMetrics.scale(forOffset: dragOffset)
-    }
-
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color.black.opacity(backgroundOpacity).ignoresSafeArea()
-                imageContent
-                    .ignoresSafeArea()
-                    .scaleEffect(dragScale)
-                    .offset(y: dragOffset)
-                    .opacity(contentOpacity)
-            }
-            .contentShape(Rectangle())
-            .onTapGesture {
-                withAnimation(.easeInOut(duration: Constants.chromeFadeDuration)) {
-                    areControlsHidden.toggle()
+            imageContent
+                .ignoresSafeArea()
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    withAnimation(.easeInOut(duration: Constants.chromeFadeDuration)) {
+                        areControlsHidden.toggle()
+                    }
                 }
-            }
-            .simultaneousGesture(dismissDrag)
-            .navigationTitle(fileName)
+                .navigationTitle(fileName)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarBackground(.hidden, for: .navigationBar)
             .toolbar {
@@ -466,6 +444,7 @@ private struct ArchiveImagePreviewView: View {
             .toolbar(areControlsHidden ? .hidden : .visible, for: .navigationBar)
             .statusBarHidden(areControlsHidden)
         }
+        .swipeToDismissContent(isSuspended: isZoomed, onDismiss: onDismiss)
     }
 
     @ViewBuilder
@@ -491,42 +470,6 @@ private struct ArchiveImagePreviewView: View {
                 }
             }
         }
-    }
-
-    /// Vertical swipe (either direction) to dismiss, like the Photos viewer — runs alongside
-    /// the zoom scroll view's own pan, which keeps its gestures once zoomed in.
-    private var dismissDrag: some Gesture {
-        DragGesture(minimumDistance: DismissMetrics.minimumDragDistance)
-            .onChanged { value in
-                guard !isZoomed, !isDismissing, abs(value.translation.height) > abs(value.translation.width) else {
-                    dragOffset = 0
-                    return
-                }
-                dragOffset = value.translation.height
-            }
-            .onEnded { value in
-                guard !isZoomed, abs(value.translation.height) > abs(value.translation.width) else {
-                    dragOffset = 0
-                    return
-                }
-                if DismissMetrics.shouldDismiss(
-                    translationHeight: value.translation.height,
-                    predictedHeight: value.predictedEndTranslation.height
-                ) {
-                    withAnimation(.easeOut(duration: DismissMetrics.dismissFadeDuration)) {
-                        isDismissing = true
-                    } completion: {
-                        onDismiss()
-                    }
-                } else {
-                    withAnimation(.spring(
-                        response: DismissMetrics.resetSpringResponse,
-                        dampingFraction: DismissMetrics.resetSpringDamping
-                    )) {
-                        dragOffset = 0
-                    }
-                }
-            }
     }
 }
 

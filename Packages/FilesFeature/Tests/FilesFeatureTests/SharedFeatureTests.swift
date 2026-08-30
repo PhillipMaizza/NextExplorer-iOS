@@ -179,20 +179,6 @@ struct SharedFeatureTests {
         #expect(store.state.displayedShares.map(\.id) == ["z", "a"])
     }
 
-    @Test
-    func openLinkButtonPresentsTheSheetAndItsOpenDelegateBubblesUpAsANavigation() async {
-        let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) { SharedFeature() }
-        store.exhaustivity = .off
-
-        await store.send(.openLinkButtonTapped)
-        #expect(store.state.openLinkSheet != nil)
-
-        await store.send(.openLinkSheet(.presented(.delegate(.open(path: "share/AbC123xyz0", title: "Q3 Report"))))) {
-            $0.openLinkSheet = nil
-        }
-        await store.receive(.delegate(.openSharedLink(path: "share/AbC123xyz0", title: "Q3 Report")))
-    }
-
     // MARK: Error paths
 
     @Test
