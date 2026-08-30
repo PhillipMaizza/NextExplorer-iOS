@@ -423,3 +423,20 @@ private func previewFile(_ name: String, size: Int64) -> PickedFile {
         )
     }
 }
+
+#Preview("HTTP server notice") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        UploadReviewView(
+            store: Store(
+                initialState: UploadReviewFeature.State(
+                    serverURL: URL(string: "http://192.168.1.50:3000")!,
+                    files: [
+                        previewFile("beach.jpg", size: 2_400_000),
+                        previewFile("notes.txt", size: 1_200),
+                    ],
+                    startingDestination: "Documents/Trips"
+                )
+            ) { UploadReviewFeature() }
+        )
+    }
+}
