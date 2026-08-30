@@ -14,6 +14,9 @@ private enum Metrics {
     static let cardCornerRadius: CGFloat = .radiusCard
     static let horizontalPadding: CGFloat = .space16
     static let rowIconSize: CGFloat = .iconSmall
+    static let lockedInfoIconSize: CGFloat = .iconXSmall
+    static let volumeSheetSpacing: CGFloat = .space24
+    static let volumeSheetMaxHeightFraction: CGFloat = 0.9
     static let badgeHorizontalPadding: CGFloat = .space8
     static let badgeVerticalPadding: CGFloat = .space2
 }
@@ -119,16 +122,16 @@ struct UserDetailView: View {
     @ViewBuilder
     private func profileTab(_ user: User) -> some View {
         Card(L10n.UserDetail.sectionGeneralInfo) {
-            LabeledField(L10n.UserDetail.profileDisplayNameField) {
+            LabeledField(L10n.UserDetail.profileDisplayNameField, uppercased: false) {
                 DSTextField(L10n.UserDetail.profileDisplayNamePlaceholder, text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged))
                     .autocorrectionDisabled()
             }
-            LabeledField(L10n.UserDetail.profileUsernameField, error: store.isProfileDirty ? store.profileUsernameError : nil) {
+            LabeledField(L10n.UserDetail.profileUsernameField, error: store.isProfileDirty ? store.profileUsernameError : nil, uppercased: false) {
                 DSTextField(L10n.UserDetail.profileUsernamePlaceholder, text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged))
                     .textInputAutocapitalization(.never)
                     .autocorrectionDisabled()
             }
-            LabeledField(L10n.UserDetail.profileEmailField, error: store.isProfileDirty ? store.profileEmailError : nil) {
+            LabeledField(L10n.UserDetail.profileEmailField, error: store.isProfileDirty ? store.profileEmailError : nil, uppercased: false) {
                 DSTextField(L10n.UserDetail.profileEmailPlaceholder, text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged))
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
@@ -161,8 +164,15 @@ struct UserDetailView: View {
                 // No "Revoke Admin": the backend refuses to demote any administrator
                 // (`PATCH /api/users/:id` 400s with "Demotion of admin is not allowed."), so
                 // offering the action would only ever produce an error.
-                Text(L10n.UserDetail.roleAdminLocked)
-                    .type(.caption(.regular), style: .tertiary)
+                HStack(alignment: .firstTextBaseline, spacing: .space4) {
+                    IconKit.info
+                        .resizable().scaledToFit()
+                        .foregroundStyle(Color.tertiaryDS)
+                        .frame(width: Metrics.lockedInfoIconSize, height: Metrics.lockedInfoIconSize)
+                    Text(L10n.UserDetail.roleAdminLocked)
+                        .type(.caption(.regular), style: .tertiary)
+                    Spacer(minLength: 0)
+                }
             } else {
                 DSButton(L10n.UserDetail.roleGrantAdmin, style: .secondary) { store.send(.grantAdminTapped) }
             }
@@ -389,74 +399,70 @@ private struct VolumeAssignSheet: View {
     private var sheet: UserManagementFeature.VolumeSheetState? { store.volumeSheet }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
-                    if let sheet {
-                        if let error = sheet.errorMessage {
-                            DSErrorCard(error)
-                        }
+        DSDynamicHeightSheet(maxHeightFraction: Metrics.volumeSheetMaxHeightFraction) {
+            VStack(alignment: .leading, spacing: Metrics.volumeSheetSpacing) {
+                DSSheetHeader(
+                    icon: IconKit.drive,
+                    title: sheet?.isEditing == true ? L10n.UserDetail.volumeSheetTitleEdit : L10n.UserDetail.volumeSheetTitleNew,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onClose: { dismiss() }
+                )
 
-                        LabeledField(L10n.UserDetail.volumeSheetLabelField) {
-                            DSTextField(L10n.UserDetail.volumeSheetLabelPlaceholder, text: Binding(
-                                get: { store.volumeSheet?.label ?? "" },
-                                set: { store.send(.volumeLabelChanged($0)) }
-                            ))
-                            .autocorrectionDisabled()
-                        }
+                if let sheet {
+                    if let error = sheet.errorMessage {
+                        DSErrorCard(error)
+                    }
 
-                        VStack(alignment: .leading, spacing: .space4) {
-                            DSFieldLabel(L10n.UserDetail.volumeSheetAccessMode)
-                            DSSegmentedControl(
-                                options: ShareAccessMode.allCases,
-                                selection: Binding(
-                                    get: { store.volumeSheet?.accessMode ?? .readwrite },
-                                    set: { store.send(.volumeAccessModeChanged($0)) }
-                                ),
-                                label: { $0.title }
-                            )
-                        }
+                    LabeledField(L10n.UserDetail.volumeSheetLabelField, uppercased: false) {
+                        DSTextField(L10n.UserDetail.volumeSheetLabelPlaceholder, text: Binding(
+                            get: { store.volumeSheet?.label ?? "" },
+                            set: { store.send(.volumeLabelChanged($0)) }
+                        ))
+                        .autocorrectionDisabled()
+                    }
 
-                        VStack(alignment: .leading, spacing: .space4) {
-                            DSFieldLabel(L10n.UserDetail.volumeSheetDirectory)
-                            if sheet.isEditing {
-                                Text(sheet.selectedPath)
-                                    .type(.body2(.regular))
-                                    .foregroundStyle(Color.secondaryDS)
-                                    .lineLimit(1)
-                                    .truncationMode(.middle)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .roundedFieldStyle()
-                            } else {
-                                directoryBrowser(selectedPath: sheet.selectedPath)
-                            }
-                        }
+                    VStack(alignment: .leading, spacing: .space4) {
+                        DSFieldLabel(L10n.UserDetail.volumeSheetAccessMode, uppercased: false)
+                        DSSegmentedControl(
+                            options: ShareAccessMode.allCases,
+                            selection: Binding(
+                                get: { store.volumeSheet?.accessMode ?? .readwrite },
+                                set: { store.send(.volumeAccessModeChanged($0)) }
+                            ),
+                            label: { $0.title }
+                        )
+                    }
 
-                        DSButton(
-                            sheet.isEditing ? L10n.UserDetail.volumeSheetSaveEdit : L10n.UserDetail.volumeSheetSaveNew,
-                            style: .primary,
-                            isLoading: sheet.isSubmitting
-                        ) {
-                            store.send(.volumeSubmitTapped)
+                    VStack(alignment: .leading, spacing: .space4) {
+                        DSFieldLabel(L10n.UserDetail.volumeSheetDirectory, uppercased: false)
+                        if sheet.isEditing {
+                            Text(sheet.selectedPath)
+                                .type(.body2(.regular))
+                                .foregroundStyle(Color.secondaryDS)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .roundedFieldStyle()
+                        } else {
+                            directoryBrowser(selectedPath: sheet.selectedPath)
                         }
-                        .disabled(!sheet.isSubmitEnabled)
-                        .padding(.top, .space4)
                     }
                 }
-                .padding(.horizontal, Metrics.horizontalPadding)
-                .padding(.vertical, Metrics.contentSpacing)
             }
-            .background(Color.backgroundPrimary)
-            .navigationTitle(sheet?.isEditing == true ? L10n.UserDetail.volumeSheetTitleEdit : L10n.UserDetail.volumeSheetTitleNew)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    SheetCloseButton { dismiss() }
+            .padding(.horizontal, Metrics.volumeSheetSpacing)
+            .padding(.vertical, Metrics.volumeSheetSpacing)
+        } footer: {
+            DSSheetFooter {
+                DSButton(
+                    (sheet?.isEditing ?? false) ? L10n.UserDetail.volumeSheetSaveEdit : L10n.UserDetail.volumeSheetSaveNew,
+                    style: .primary,
+                    isLoading: sheet?.isSubmitting ?? false
+                ) {
+                    store.send(.volumeSubmitTapped)
                 }
+                .disabled(!(sheet?.isSubmitEnabled ?? false))
             }
         }
-        .presentationDetents([.large])
-        .presentationDragIndicator(.visible)
         .task(id: browsePath) {
             guard sheet?.isEditing == false else { return }
             await loadDirectories(path: browsePath)

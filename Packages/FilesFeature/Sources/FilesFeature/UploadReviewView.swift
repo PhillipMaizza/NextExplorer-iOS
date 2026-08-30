@@ -17,8 +17,6 @@ private enum Constants {
     static let rowTextSpacing: CGFloat = .space2
     static let horizontalPadding: CGFloat = .space24
     static let verticalPadding: CGFloat = .space24
-    static let addMoreDash: CGFloat = 4
-    static let addMoreBorderWidth: CGFloat = 1
     static let enabledOpacity: Double = 1
     static let disabledOpacity: Double = 0.35
     /// The sheet fits its content but never exceeds this fraction of the screen — past that
@@ -120,26 +118,7 @@ struct UploadReviewView: View {
     /// mid preparation so two picks can't overlap.
     private var addMoreButton: some View {
         UploadSourceMenu(
-            label: {
-                HStack(spacing: Constants.rowTextSpacing * 2) {
-                    IconKit.plus
-                        .resizable().scaledToFit()
-                        .frame(width: .iconSmall, height: .iconSmall)
-                    Text(L10n.Uploads.reviewAddMore)
-                        .type(.body2(.regular), style: .secondary)
-                }
-                .foregroundStyle(Color.secondaryDS)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, Constants.rowSpacing)
-                .overlay(
-                    RoundedRectangle(cornerRadius: .radiusControl)
-                        .stroke(
-                            Color.secondaryDS,
-                            style: StrokeStyle(lineWidth: Constants.addMoreBorderWidth, dash: [Constants.addMoreDash])
-                        )
-                )
-                .contentShape(Rectangle())
-            },
+            label: { UploadDashedLabel(title: L10n.Uploads.reviewAddMore) },
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,

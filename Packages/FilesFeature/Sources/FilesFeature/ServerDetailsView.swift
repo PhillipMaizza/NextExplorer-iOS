@@ -47,7 +47,8 @@ struct ServerDetailsView: View {
                 .padding(.top, .space4)
             }
             .padding(.horizontal, Metrics.horizontalPadding)
-            .padding(.vertical, Metrics.contentSpacing)
+            .padding(.top, Metrics.logoSize / 2 + Metrics.contentSpacing)
+            .padding(.bottom, Metrics.contentSpacing)
         }
         .backgroundGradient()
         .navigationTitle(L10n.ServerDetails.navigationTitle)
@@ -89,9 +90,6 @@ struct ServerDetailsView: View {
     private var detailsCard: some View {
         Card {
             VStack(spacing: Metrics.sectionSpacing) {
-                logoPicker
-                    .frame(maxWidth: .infinity)
-
                 section(L10n.ServerDetails.nameLabel, error: nameErrorText) {
                     DSTextField(
                         L10n.ServerDetails.namePlaceholder,
@@ -109,7 +107,12 @@ struct ServerDetailsView: View {
                         .type(.body3(.regular), style: .tertiary)
                 }
             }
+            .padding(.top, Metrics.logoSize / 2)
             .padding(.vertical, .space8)
+        }
+        .overlay(alignment: .top) {
+            logoPicker
+                .alignmentGuide(.top) { dimension in dimension[VerticalAlignment.center] }
         }
     }
 

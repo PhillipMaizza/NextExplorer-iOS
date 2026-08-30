@@ -3153,7 +3153,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The address can't be changed here. Sign out and add the server again to switch."
+            "value": "The address where your NextExplorer instance is installed — to change it, sign out and add the server again."
           }
         }
       }

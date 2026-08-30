@@ -129,7 +129,6 @@ struct GridCellView: View {
         } else if isEligibleForThumbnail, let serverURL, let itemID {
             ThumbnailImage(serverURL: serverURL, path: itemID, signature: thumbnailSignature, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
                 .frame(width: iconSize, height: iconSize)
-                .clipShape(RoundedRectangle(cornerRadius: .radiusControl))
         } else if isDirectory {
             IconKit.folderFill
                 .resizable()

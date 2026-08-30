@@ -374,7 +374,7 @@ serverDetails.nameLabel	Server Name
 serverDetails.namePlaceholder	Explorer
 serverDetails.nameErrorEmpty	Server name can't be empty.
 serverDetails.urlLabel	Server URL
-serverDetails.urlFootnote	The address can't be changed here. Sign out and add the server again to switch.
+serverDetails.urlFootnote	The address where your NextExplorer instance is installed — to change it, sign out and add the server again.
 serverDetails.updateButton	Update Server
 serverDetails.savedMessage	Server details updated.
 serverDetails.logoErrorTooLarge	That image is too large. Pick one under 2 MB.

@@ -77,14 +77,7 @@ struct SharedView: View {
                     .buttonStyle(DSHapticButtonStyle())
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        isSortSheetPresented = true
-                    } label: {
-                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort.foregroundStyle(Color.primaryDS) }
-                    }
-                    .tint(.accent)
-                    .buttonStyle(DSHapticButtonStyle())
-                    .disabled(store.isCurrentSegmentEmpty)
+                    SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
                 }
             }
             .overlay {
@@ -417,7 +410,6 @@ private struct SharedLinkCard: View {
                 iconTint: Color.secondaryDS
             )
             .frame(width: Metrics.iconSize, height: Metrics.iconSize)
-            .clipShape(RoundedRectangle(cornerRadius: .radiusSmall))
         } else {
             FileTypeIcon(kind: (share.displayName as NSString).pathExtension)
         }

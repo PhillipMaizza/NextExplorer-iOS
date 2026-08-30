@@ -45,7 +45,7 @@ struct ThumbnailImage: View {
             if let uiImage {
                 Image(uiImage: uiImage)
                     .resizable()
-                    .scaledToFill()
+                    .scaledToFit()
             } else if didResolve {
                 fallbackImage
             } else {

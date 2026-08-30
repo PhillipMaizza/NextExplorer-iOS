@@ -206,6 +206,7 @@ struct SettingsView: View {
                         store.send(.removeAllDownloadsTapped)
                     }
                     .disabled(store.isRemovingAllDownloads || !store.hasDownloads)
+                    .opacity(store.hasDownloads ? Constants.fullOpacity : Constants.disabledOpacity)
                     DSNavigationRow(
                         title: L10n.Settings.rowClearCache,
                         icon: IconKit.delete,
