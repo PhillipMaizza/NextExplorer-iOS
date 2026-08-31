@@ -115,6 +115,8 @@ browse.downloadSavedTo	Saved to %@
 browse.downloadSavedCountTo	Saved %1$lld of %2$lld items to %3$@
 browse.downloadSavedAllTo	Saved %1$lld items to %2$@
 browse.downloadBulkFailed	Couldn't save these items to your device.
+browse.offlineBannerTitle	Offline
+browse.offlineBannerDetail	Showing a saved copy from %@
 
 browse.actionCopy	Copy
 browse.destinationPickerMoveTitle	Move to…
@@ -349,7 +351,7 @@ settings.removeAllDownloadsConfirm	Remove All
 settings.removeAllDownloadsMessage	This deletes every downloaded file from this device. They stay on the server.
 settings.clearCacheTitle	Clear Cache?
 settings.clearCacheConfirm	Clear
-settings.clearCacheMessage	This clears cached previews and thumbnails. Nothing on the server is affected.
+settings.clearCacheMessage	This clears cached previews, thumbnails, and saved folder listings used offline. Nothing on the server is affected.
 settings.signOutAlertTitle	Sign Out?
 settings.signOutMessage	You'll need to sign in again to access your files.
 settings.signOutButton	Sign Out
@@ -544,6 +546,7 @@ login.plaintextWarning	This connection isn't encrypted. Your password and sessio
 error.sessionExpired	Your session expired. Sign in again.
 error.rateLimited	Too many requests. Try again shortly.
 error.network	Couldn't reach the server.
+error.offline	You're offline. Connect to the internet and try again.
 error.decoding	Server responded unexpectedly.
 error.server	Server error (%lld).
 error.forbidden	You don't have permission to do that.

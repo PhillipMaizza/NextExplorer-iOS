@@ -61,12 +61,14 @@ struct AppFeatureTests {
             username: "phillip"
         )
         let clearSessionCalled = LockIsolated(false)
+        let cacheCleared = LockIsolated(false)
         let store = TestStore(initialState: AppFeature.State()) {
             AppFeature()
         } withDependencies: {
             $0.authClient.restoreSession = { credentials }
             $0.authClient.me = { _ in throw AuthClientError.sessionExpired }
             $0.authClient.clearSession = { clearSessionCalled.setValue(true) }
+            $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
         }
 
         await store.send(.onAppear)
@@ -81,7 +83,9 @@ struct AppFeatureTests {
         await store.receive(\.sessionValidationResponse) {
             $0.destination = .unauthenticated(.init())
         }
+        await store.finish()
         #expect(clearSessionCalled.value)
+        #expect(cacheCleared.value)
     }
 
     @Test("edge case: a network hiccup validating a restored session keeps the optimistic session")
@@ -139,8 +143,11 @@ struct AppFeatureTests {
         // form itself emits it), so the store has to start there rather than at the
         // default `.loading`: TCA raises an error if a scoped action arrives while the
         // destination is a different case.
+        let cacheCleared = LockIsolated(false)
         let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
             AppFeature()
+        } withDependencies: {
+            $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
         }
         let user = User(id: "1", username: "phillip", email: nil, roles: [])
 
@@ -148,6 +155,8 @@ struct AppFeatureTests {
             $0.didAuthenticateFromLogin = true
             $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, user: user))
         }
+        await store.finish()
+        #expect(cacheCleared.value)
     }
 
     @Test("happy path: signing out switches back to the unauthenticated flow")
@@ -170,6 +179,7 @@ struct AppFeatureTests {
     func midSessionExpiryDropsToLogin() async {
         let user = User(id: "1", username: "phillip", email: nil, roles: [])
         let cleared = LockIsolated(false)
+        let cacheCleared = LockIsolated(false)
         let store = TestStore(
             initialState: AppFeature.State(
                 destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
@@ -178,6 +188,7 @@ struct AppFeatureTests {
             AppFeature()
         } withDependencies: {
             $0.authClient.clearSession = { cleared.setValue(true) }
+            $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
         }
         store.exhaustivity = .off
 
@@ -190,6 +201,7 @@ struct AppFeatureTests {
         }
         await store.finish()
         #expect(cleared.value)
+        #expect(cacheCleared.value)
     }
 
     @Test("edge case: sessionExpiryDetected while already unauthenticated is a no-op")

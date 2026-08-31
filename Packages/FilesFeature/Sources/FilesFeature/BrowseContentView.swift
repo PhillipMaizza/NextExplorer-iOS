@@ -229,6 +229,16 @@ struct BrowseContentView: View {
                 // settling on first appear (same fix as `SharedView`).
                 .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
         }
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if case let .cached(fetchedAt) = store.dataSource {
+                DSInfoCard(L10n.Browse.offlineBannerDetail(Self.relativeTime(from: fetchedAt)))
+                    .padding(.horizontal, .space16)
+                    .padding(.vertical, .space8)
+                    .background(Color.backgroundPrimary)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: store.dataSource)
         .toolbar {
             selectSortToolbar(
                 isSelecting: store.isSelecting,
@@ -1020,6 +1030,16 @@ struct BrowseContentView: View {
     /// empty" for a frame.
     private var isInitialLoad: Bool {
         (store.isLoading || !store.hasLoaded) && store.items.isEmpty && store.errorMessage == nil
+    }
+
+    private static let offlineRelativeFormatter: RelativeDateTimeFormatter = {
+        let formatter = RelativeDateTimeFormatter()
+        formatter.unitsStyle = .full
+        return formatter
+    }()
+
+    private static func relativeTime(from date: Date) -> String {
+        offlineRelativeFormatter.localizedString(for: date, relativeTo: Date())
     }
 
     private var overlayState: OverlayState {

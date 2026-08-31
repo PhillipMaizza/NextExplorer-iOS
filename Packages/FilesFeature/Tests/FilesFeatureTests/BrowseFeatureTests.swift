@@ -518,11 +518,15 @@ struct BrowseFeatureTests {
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.prefetchDirectory = { _, _ in }
         }
+        store.exhaustivity = .off
 
         await store.send(.favoritesResponse([favorite])) {
             $0.favoritePaths = ["Documents"]
         }
+        await store.finish()
     }
 
     @Test
@@ -2804,5 +2808,150 @@ struct BrowseFeatureTransferTests {
         await store.receive(\.transferResponse.success)
 
         #expect(store.state.transferConflict == nil)
+    }
+
+    // MARK: Offline directory cache
+
+    private nonisolated static let offlineAccess = FileAccess(
+        canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true
+    )
+
+    @Test
+    func offlineBrowseFailureFallsBackToTheCachedListing() async {
+        let serverURL = URL(string: "https://example.com")!
+        let fetchedAt = Date(timeIntervalSince1970: 1_000)
+        let cachedItem = FileItem(name: "Saved", path: "docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "docs", title: "Docs")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
+            $0.filesClient.favorites = { _ in [] }
+            $0.directoryCacheStore.read = { _, _ in
+                CachedDirectory(path: "docs", items: [cachedItem], access: Self.offlineAccess, fetchedAt: fetchedAt)
+            }
+        }
+
+        await store.send(.onAppear) {
+            $0.isLoading = true
+            $0.items = [cachedItem]
+            $0.access = Self.offlineAccess
+        }
+        await store.receive(\.itemsResponse.failure) {
+            $0.isLoading = false
+            $0.hasLoaded = true
+            $0.dataSource = .cached(fetchedAt: fetchedAt)
+        }
+        await store.receive(\.favoritesResponse)
+
+        #expect(store.state.errorMessage == nil)
+    }
+
+    @Test
+    func offlineBrowseFailureWithNoCacheShowsTheErrorMessage() async {
+        let serverURL = URL(string: "https://example.com")!
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "docs", title: "Docs")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
+            $0.filesClient.favorites = { _ in [] }
+            $0.directoryCacheStore.read = { _, _ in nil }
+        }
+
+        await store.send(.onAppear) {
+            $0.isLoading = true
+        }
+        await store.receive(\.itemsResponse.failure) {
+            $0.isLoading = false
+            $0.hasLoaded = true
+            $0.errorMessage = FilesClientError.offline.userMessage
+        }
+        await store.receive(\.favoritesResponse)
+    }
+
+    @Test
+    func cacheFirstPaintShowsSavedItemsWithoutTheOfflineBannerThenFreshDataReplacesThem() async {
+        let serverURL = URL(string: "https://example.com")!
+        let fetchedAt = Date(timeIntervalSince1970: 1_000)
+        let cachedItem = FileItem(name: "Old", path: "docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")
+        let freshItem = FileItem(name: "New", path: "docs", dateModified: Date(timeIntervalSince1970: 0), size: 2, kind: "txt")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "docs", title: "Docs")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [freshItem], access: Self.offlineAccess, path: "docs")
+            }
+            $0.filesClient.favorites = { _ in [] }
+            $0.directoryCacheStore.read = { _, _ in
+                CachedDirectory(path: "docs", items: [cachedItem], access: Self.offlineAccess, fetchedAt: fetchedAt)
+            }
+        }
+
+        await store.send(.onAppear) {
+            $0.isLoading = true
+            $0.items = [cachedItem]
+            $0.access = Self.offlineAccess
+        }
+        #expect(store.state.dataSource == .live)
+
+        await store.receive(\.itemsResponse.success) {
+            $0.isLoading = false
+            $0.hasLoaded = true
+            $0.items = [freshItem]
+        }
+        await store.receive(\.favoritesResponse)
+
+        #expect(store.state.dataSource == .live)
+    }
+
+    @Test
+    func aSuccessfulBrowsePrefetchesImmediateSubfoldersOnly() async {
+        let serverURL = URL(string: "https://example.com")!
+        let folder = FileItem(name: "Photos", path: "docs", dateModified: Date(timeIntervalSince1970: 0), size: 0, kind: "directory")
+        let file = FileItem(name: "a.txt", path: "docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")
+        let prefetched = LockIsolated<[String]>([])
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "docs", title: "Docs")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in BrowseResult(items: [folder, file], access: Self.offlineAccess, path: "docs") }
+            $0.filesClient.favorites = { _ in [] }
+            $0.filesClient.prefetchDirectory = { _, path in prefetched.withValue { $0.append(path) } }
+            $0.directoryCacheStore.lastWrittenAt = { _, _ in nil }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.onAppear)
+        await store.receive(\.itemsResponse.success)
+        await store.receive(\.favoritesResponse)
+        await store.finish()
+
+        #expect(prefetched.value == ["docs/Photos"])
+    }
+
+    @Test
+    func favoritesResponsePrefetchesFavoritedFolders() async {
+        let serverURL = URL(string: "https://example.com")!
+        let prefetched = LockIsolated<[String]>([])
+        let favorites = ["Work", "Trips"].enumerated().map { index, path in
+            Favorite(id: "\(index)", path: path, label: nil, icon: "folder", color: nil, position: index, createdAt: Date(), updatedAt: Date())
+        }
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.prefetchDirectory = { _, path in prefetched.withValue { $0.append(path) } }
+            $0.directoryCacheStore.lastWrittenAt = { _, _ in nil }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.favoritesResponse(favorites)) {
+            $0.favoritePaths = ["Work", "Trips"]
+        }
+        await store.finish()
+
+        #expect(Set(prefetched.value) == ["Work", "Trips"])
     }
 }
