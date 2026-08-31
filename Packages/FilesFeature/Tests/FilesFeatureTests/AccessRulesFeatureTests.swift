@@ -26,9 +26,9 @@ struct AccessRulesFeatureTests {
             }
         }
 
-        await store.send(.onAppear) { $0.isLoading = true }
+        await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.settingsResponse.success) {
-            $0.isLoading = false
+            $0.phase = .loaded
             $0.loaded = rules
             $0.drafts = IdentifiedArray(uniqueElements: rules)
         }

@@ -139,7 +139,7 @@ struct BrowseTabFeatureTests {
 
         await store.send(.syncPathStack)
         await store.receive(\.root.refreshButtonTapped) {
-            $0.root.isLoading = true
+            $0.root.phase = .loading
         }
     }
 
@@ -163,13 +163,13 @@ struct BrowseTabFeatureTests {
 
         await store.send(.syncPathStack)
         await store.receive(\.root.refreshButtonTapped) {
-            $0.root.isLoading = true
+            $0.root.phase = .loading
         }
         await store.receive(\.path[id: pathIDs[0]].refreshButtonTapped) {
-            $0.path[id: pathIDs[0]]?.isLoading = true
+            $0.path[id: pathIDs[0]]?.phase = .loading
         }
         await store.receive(\.path[id: pathIDs[1]].refreshButtonTapped) {
-            $0.path[id: pathIDs[1]]?.isLoading = true
+            $0.path[id: pathIDs[1]]?.phase = .loading
         }
     }
 

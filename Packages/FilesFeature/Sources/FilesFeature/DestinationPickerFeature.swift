@@ -33,8 +33,7 @@ public struct DestinationPickerFeature {
         public var folders: IdentifiedArrayOf<FileItem> = []
         /// Access of the folder currently shown — gates "Upload here".
         public var currentAccess: FileAccess?
-        public var isLoading = false
-        public var errorMessage: String?
+        public var phase: DataPhase = .idle
         /// Searches folders recursively under `directoryPath` (`/api/search`, directories
         /// only) — cleared whenever the shown folder changes.
         public var searchQuery = ""
@@ -112,15 +111,14 @@ public struct DestinationPickerFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.folders.isEmpty, state.errorMessage == nil, !state.isLoading else { return .none }
+                guard state.folders.isEmpty, state.phase.errorMessage == nil, state.phase != .loading else { return .none }
                 return load(&state)
 
             case .retryTapped:
                 return load(&state)
 
             case let .foldersResponse(.success(result)):
-                state.isLoading = false
-                state.errorMessage = nil
+                state.phase = .loaded
                 state.currentAccess = result.access
                 state.folders = IdentifiedArray(
                     uniqueElements: BrowseFeature.sortedAlphabetically(result.items.filter(\.isDirectory))
@@ -128,8 +126,7 @@ public struct DestinationPickerFeature {
                 return .none
 
             case let .foldersResponse(.failure(error)):
-                state.isLoading = false
-                state.errorMessage = error == .sessionExpired ? error.userMessage : L10n.Browse.destinationPickerLoadFailed
+                state.phase = .failed(error == .sessionExpired ? error.userMessage : L10n.Browse.destinationPickerLoadFailed)
                 return .none
 
             case let .searchQueryChanged(query):
@@ -200,8 +197,7 @@ public struct DestinationPickerFeature {
     }
 
     private func load(_ state: inout State) -> Effect<Action> {
-        state.isLoading = true
-        state.errorMessage = nil
+        state.phase = .loading
         state.isSearching = false
         // Drop the previous folder's access so an upload confirm can't fire against stale info.
         state.currentAccess = nil

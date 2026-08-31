@@ -219,8 +219,8 @@ struct BrowseContentView: View {
             await store.send(.refreshButtonTapped).finish()
             didFinishRefreshing.toggle()
         }
-        .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
-        .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
+        .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.phase.errorMessage == nil }
+        .hapticFeedback(.error, trigger: store.phase.errorMessage) { _, newValue in newValue != nil }
         .overlay {
             overlayStateContent
                 .id(overlayState)
@@ -1029,7 +1029,7 @@ struct BrowseContentView: View {
     /// skeleton and suppresses the empty state so a fresh folder never flashes "folder is
     /// empty" for a frame.
     private var isInitialLoad: Bool {
-        (store.isLoading || !store.hasLoaded) && store.items.isEmpty && store.errorMessage == nil
+        !store.phase.hasLoaded && store.items.isEmpty && store.phase.errorMessage == nil
     }
 
     private static let offlineRelativeFormatter: RelativeDateTimeFormatter = {
@@ -1043,9 +1043,9 @@ struct BrowseContentView: View {
     }
 
     private var overlayState: OverlayState {
-        if store.errorMessage != nil {
+        if store.phase.errorMessage != nil {
             .error
-        } else if store.hasLoaded && !store.isSearching && store.displayedItems.isEmpty {
+        } else if store.phase.hasLoaded && !store.isSearching && store.displayedItems.isEmpty {
             .empty
         } else if store.isSearching && store.searchScope == .everywhere && store.isSearchingEverywhere {
             .searchingEverywhere
@@ -1063,7 +1063,7 @@ struct BrowseContentView: View {
             ProgressView()
                 .transition(.opacity)
         case .error:
-            if let errorMessage = store.errorMessage {
+            if let errorMessage = store.phase.errorMessage {
                 EmptyStateView(icon: IconKit.warning, message: errorMessage) {
                     store.send(.refreshButtonTapped)
                 }
@@ -1408,7 +1408,7 @@ private let browsePreviewEmptyAccess = FileAccess(
 }
 
 #Preview("Browse — loading") {
-    browsePreview(mutateState: { $0.isLoading = true })
+    browsePreview(mutateState: { $0.phase = .loading })
 }
 
 #Preview("Browse — empty folder") {
@@ -1418,7 +1418,7 @@ private let browsePreviewEmptyAccess = FileAccess(
 }
 
 #Preview("Browse — error") {
-    browsePreview(mutateState: { $0.errorMessage = L10n.EmptyState.loadFailed })
+    browsePreview(mutateState: { $0.phase = .failed(L10n.EmptyState.loadFailed) })
 }
 
 #Preview("Browse — no search results") {

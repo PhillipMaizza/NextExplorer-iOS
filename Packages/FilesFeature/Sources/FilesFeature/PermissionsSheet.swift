@@ -47,14 +47,14 @@ struct PermissionsSheet: View {
     @ViewBuilder
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
-            if let loadError = store.loadError {
+            if let loadError = store.phase.errorMessage {
                 DSErrorCard(loadError)
                 DSButton(L10n.Common.retry, style: .secondary) {
                     store.send(.onAppear)
                 }
             }
 
-            if store.isLoading && store.permissions == nil {
+            if store.phase == .loading && store.permissions == nil {
                 HStack {
                     Spacer()
                     ProgressView()

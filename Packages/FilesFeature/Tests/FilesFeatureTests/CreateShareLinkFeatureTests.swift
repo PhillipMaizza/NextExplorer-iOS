@@ -114,11 +114,10 @@ struct CreateShareLinkFeatureTests {
 
         await store.send(.targetChanged(.users)) {
             $0.target = .users
-            $0.isLoadingUsers = true
+            $0.usersPhase = .loading
         }
         await store.receive(\.shareableUsersResponse.success) {
-            $0.isLoadingUsers = false
-            $0.hasLoadedUsers = true
+            $0.usersPhase = .loaded
             $0.shareableUsers = [jamie]
         }
         #expect(store.state.isCreateEnabled == false)
@@ -135,7 +134,7 @@ struct CreateShareLinkFeatureTests {
         let created = makeCreated(target: .users)
         var state = makeState()
         state.target = .users
-        state.hasLoadedUsers = true
+        state.usersPhase = .loaded
         state.shareableUsers = [jamie]
         state.selectedUserIDs = [jamie.id]
 

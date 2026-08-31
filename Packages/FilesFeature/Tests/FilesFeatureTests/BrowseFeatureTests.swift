@@ -29,11 +29,10 @@ struct BrowseFeatureTests {
         }
 
         await store.send(.onAppear) {
-            $0.isLoading = true
+            $0.phase = .loading
         }
         await store.receive(\.itemsResponse.success) {
-            $0.isLoading = false
-            $0.hasLoaded = true
+            $0.phase = .loaded
             $0.items = [item]
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
@@ -52,12 +51,10 @@ struct BrowseFeatureTests {
         }
 
         await store.send(.onAppear) {
-            $0.isLoading = true
+            $0.phase = .loading
         }
         await store.receive(\.itemsResponse.failure) {
-            $0.isLoading = false
-            $0.hasLoaded = true
-            $0.errorMessage = FilesClientError.sessionExpired.userMessage
+            $0.phase = .failed(FilesClientError.sessionExpired.userMessage)
         }
         await store.receive(\.favoritesResponse)
     }
@@ -68,7 +65,7 @@ struct BrowseFeatureTests {
         let item = FileItem(name: "Docs", path: "", dateModified: Date(), size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
-        state.hasLoaded = true
+        state.phase = .loaded
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -83,8 +80,7 @@ struct BrowseFeatureTests {
     func onAppearIsANoOpWhenAnErrorIsAlreadyShowing() async {
         let serverURL = URL(string: "https://example.com")!
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
-        state.errorMessage = "Something went wrong."
-        state.hasLoaded = true
+        state.phase = .failed("Something went wrong.")
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -99,7 +95,7 @@ struct BrowseFeatureTests {
     func onAppearIsANoOpWhileAlreadyLoading() async {
         let serverURL = URL(string: "https://example.com")!
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
-        state.isLoading = true
+        state.phase = .loading
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -126,11 +122,10 @@ struct BrowseFeatureTests {
         }
 
         await store.send(.refreshButtonTapped) {
-            $0.isLoading = true
+            $0.phase = .loading
         }
         await store.receive(\.itemsResponse.success) {
-            $0.isLoading = false
-            $0.hasLoaded = true
+            $0.phase = .loaded
             $0.items = [refreshed]
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
@@ -750,11 +745,10 @@ struct BrowseFeatureTests {
         }
 
         await store.send(.onAppear) {
-            $0.isLoading = true
+            $0.phase = .loading
         }
         await store.receive(\.itemsResponse.success) {
-            $0.isLoading = false
-            $0.hasLoaded = true
+            $0.phase = .loaded
             $0.items = []
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
@@ -2833,18 +2827,17 @@ struct BrowseFeatureTransferTests {
         }
 
         await store.send(.onAppear) {
-            $0.isLoading = true
+            $0.phase = .loading
             $0.items = [cachedItem]
             $0.access = Self.offlineAccess
         }
         await store.receive(\.itemsResponse.failure) {
-            $0.isLoading = false
-            $0.hasLoaded = true
+            $0.phase = .loaded
             $0.dataSource = .cached(fetchedAt: fetchedAt)
         }
         await store.receive(\.favoritesResponse)
 
-        #expect(store.state.errorMessage == nil)
+        #expect(store.state.phase.errorMessage == nil)
     }
 
     @Test
@@ -2860,12 +2853,10 @@ struct BrowseFeatureTransferTests {
         }
 
         await store.send(.onAppear) {
-            $0.isLoading = true
+            $0.phase = .loading
         }
         await store.receive(\.itemsResponse.failure) {
-            $0.isLoading = false
-            $0.hasLoaded = true
-            $0.errorMessage = FilesClientError.offline.userMessage
+            $0.phase = .failed(FilesClientError.offline.userMessage)
         }
         await store.receive(\.favoritesResponse)
     }
@@ -2890,15 +2881,14 @@ struct BrowseFeatureTransferTests {
         }
 
         await store.send(.onAppear) {
-            $0.isLoading = true
+            $0.phase = .loading
             $0.items = [cachedItem]
             $0.access = Self.offlineAccess
         }
         #expect(store.state.dataSource == .live)
 
         await store.receive(\.itemsResponse.success) {
-            $0.isLoading = false
-            $0.hasLoaded = true
+            $0.phase = .loaded
             $0.items = [freshItem]
         }
         await store.receive(\.favoritesResponse)

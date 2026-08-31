@@ -64,7 +64,7 @@ struct UserManagementFeatureTests {
 
         #expect(store.state.users.elements == users)
         #expect(store.state.isUserVolumesEnabled)
-        #expect(!store.state.isLoading)
+        #expect(store.state.phase == .loaded)
     }
 
     @Test
@@ -72,8 +72,7 @@ struct UserManagementFeatureTests {
         let store = await bootedStore(users: []) {
             $0.filesClient.listUsers = { _ in throw FilesClientError.server(statusCode: 403) }
         }
-        #expect(store.state.errorMessage == FilesClientError.server(statusCode: 403).userMessage)
-        #expect(!store.state.isLoading)
+        #expect(store.state.phase == .failed(FilesClientError.server(statusCode: 403).userMessage))
     }
 
     // MARK: Detail
@@ -98,9 +97,9 @@ struct UserManagementFeatureTests {
             $0.filesClient.userVolumes = { _, _ in [volume] }
         }
 
-        await store.send(.userTapped("2")) { $0.isLoadingVolumes = true }
+        await store.send(.userTapped("2")) { $0.volumesPhase = .loading }
         await store.receive(\.volumesResponse) {
-            $0.isLoadingVolumes = false
+            $0.volumesPhase = .loaded
             $0.volumes = [volume]
         }
     }
@@ -213,7 +212,7 @@ struct UserManagementFeatureTests {
         await store.receive(\.deleteUserResponse) {
             $0.detailErrorMessage = "Cannot remove the last admin."
         }
-        #expect(store.state.errorMessage == nil)
+        #expect(store.state.phase.errorMessage == nil)
     }
 
     // MARK: Create

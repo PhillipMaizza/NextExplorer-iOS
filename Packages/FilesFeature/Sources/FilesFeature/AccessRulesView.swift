@@ -37,7 +37,7 @@ struct AccessRulesView: View {
                         store.send(.addRuleTapped, animation: .default)
                     }
 
-                    if let error = store.errorMessage {
+                    if let error = store.errorMessage ?? store.phase.errorMessage {
                         DSErrorCard(error)
                     }
 
@@ -56,7 +56,7 @@ struct AccessRulesView: View {
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
         .overlay {
-            if store.isLoading && store.loaded == nil && !store.isUnavailable {
+            if store.phase == .loading && store.loaded == nil && !store.isUnavailable {
                 ProgressView()
             }
         }
@@ -144,6 +144,7 @@ private extension AccessRulesFeature.State {
     ) -> Self {
         var state = AccessRulesFeature.State(serverURL: URL(string: "https://files.example.com")!)
         if loaded { state.loaded = rules }
+        state.phase = loaded ? .loaded : .idle
         state.drafts = IdentifiedArray(uniqueElements: rules)
         state.errorMessage = error
         return state
