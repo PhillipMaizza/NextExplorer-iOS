@@ -38,8 +38,7 @@ public struct CreateShareLinkFeature {
         /// Shareable-users list, loaded the first time "Specific users" is chosen.
         public var shareableUsers: IdentifiedArrayOf<User> = []
         public var selectedUserIDs: Set<User.ID> = []
-        public var isLoadingUsers = false
-        public var hasLoadedUsers = false
+        public var usersPhase: DataPhase = .idle
         /// Shared with `SharedFeature` — bumping it makes the Shared tab reload.
         @Shared(.inMemory(SharedFeature.revisionKey)) var shareLinksRevision = 0
 
@@ -129,8 +128,8 @@ public struct CreateShareLinkFeature {
             case let .targetChanged(target):
                 state.target = target
                 state.errorMessage = nil
-                guard target == .users, !state.hasLoadedUsers, !state.isLoadingUsers else { return .none }
-                state.isLoadingUsers = true
+                guard target == .users, state.usersPhase.shouldLoadOnAppear else { return .none }
+                state.usersPhase = .loading
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .run { send in
@@ -140,13 +139,12 @@ public struct CreateShareLinkFeature {
                 }
 
             case let .shareableUsersResponse(.success(users)):
-                state.isLoadingUsers = false
-                state.hasLoadedUsers = true
+                state.usersPhase = .loaded
                 state.shareableUsers = IdentifiedArray(uniqueElements: users)
                 return .none
 
             case let .shareableUsersResponse(.failure(error)):
-                state.isLoadingUsers = false
+                state.usersPhase = .failed(error.userMessage)
                 state.errorMessage = error.userMessage
                 return .none
 

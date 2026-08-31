@@ -93,7 +93,7 @@ struct CreateShareLinkSheet: View {
 
     private var formContent: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
-            if let errorMessage = store.errorMessage {
+            if let errorMessage = store.errorMessage ?? store.usersPhase.errorMessage {
                 DSErrorCard(errorMessage)
             }
 
@@ -156,7 +156,7 @@ struct CreateShareLinkSheet: View {
 
     @ViewBuilder
     private var userPicker: some View {
-        if store.isLoadingUsers {
+        if store.usersPhase == .loading {
             HStack(spacing: .space8) {
                 ProgressView()
                 Text(L10n.CreateShare.loadingUsers).type(.body3(.regular), style: .secondary)
