@@ -168,6 +168,13 @@ public struct BrowseFeature {
     /// The answer to a name-collision prompt. `nil` (in the action payload) is "Cancel".
     public enum TransferConflictChoice: Equatable, Sendable { case replace, keepBoth }
 
+    /// Where the currently displayed listing came from.
+    public enum DataSource: Equatable, Sendable {
+        case live
+        /// Served from the offline cache, stamped with when it was last fetched from the server.
+        case cached(fetchedAt: Date)
+    }
+
     @ObservableState
     public struct State: Equatable, Sendable {
         public var serverURL: URL
@@ -181,6 +188,9 @@ public struct BrowseFeature {
         /// the view shows the loading skeleton rather than the empty state, so a fresh folder
         /// never flashes "folder is empty" for the frame before `onAppear`'s fetch begins.
         public var hasLoaded = false
+        /// `.cached` while the listing on screen is an offline copy; back to `.live` as soon as
+        /// a fresh fetch lands. Drives the "showing saved copy" banner.
+        public var dataSource: DataSource = .live
         public var errorMessage: String?
         public var searchQuery = ""
         public var searchScope: SearchScope = .thisFolder
@@ -398,11 +408,15 @@ public struct BrowseFeature {
     }
 
     @Dependency(\.filesClient) var filesClient
+    @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.continuousClock) var clock
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.openURL) var openURL
-    private enum CancelID { case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction }
+    private enum CancelID {
+        case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
+        case prefetchChildren, prefetchFavorites
+    }
 
     public init() {}
 
@@ -421,20 +435,44 @@ public struct BrowseFeature {
             case let .itemsResponse(.success(result)):
                 state.isLoading = false
                 state.hasLoaded = true
+                state.dataSource = .live
                 state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(result.items))
                 state.access = result.access
                 state.errorMessage = nil
-                return search(&state)
+                return .merge(
+                    search(&state),
+                    prefetch(
+                        serverURL: state.serverURL,
+                        paths: result.items.filter(\.isDirectory).map(\.id),
+                        cancelID: CancelID.prefetchChildren
+                    )
+                )
 
             case let .itemsResponse(.failure(error)):
                 state.isLoading = false
                 state.hasLoaded = true
+                // Offline with a saved copy of this folder: show it under a banner rather than
+                // an error screen. Any other failure keeps the normal error path.
+                if error == .offline,
+                   let cached = directoryCacheStore.read(serverURL: state.serverURL, path: state.directoryPath) {
+                    state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))
+                    state.access = cached.access
+                    state.dataSource = .cached(fetchedAt: cached.fetchedAt)
+                    state.errorMessage = nil
+                    return search(&state)
+                }
                 state.errorMessage = error.userMessage
                 return .none
 
             case let .favoritesResponse(favorites):
                 state.favoritePaths = Set(favorites.map(\.path))
-                return .none
+                // Browse is the default tab, so its favorites load doubles as a launch time
+                // "keep the folders you care about ready offline" pass.
+                return prefetch(
+                    serverURL: state.serverURL,
+                    paths: favorites.map(\.path),
+                    cancelID: CancelID.prefetchFavorites
+                )
 
             case let .rowTapped(item):
                 guard item.isDirectory else {
@@ -1465,12 +1503,42 @@ public struct BrowseFeature {
         }
     }
 
+    /// Fires a background prefetch of `paths` into the offline cache (subfolders of the folder
+    /// just loaded, or favorited folders). Best effort and low priority; skips anything cached
+    /// recently. `cancelID` scopes it so a later prefetch of the same kind supersedes it while
+    /// a different kind runs alongside.
+    private func prefetch(serverURL: URL, paths: [String], cancelID: CancelID) -> Effect<Action> {
+        let paths = paths.filter { !$0.isEmpty }
+        guard !paths.isEmpty else { return .none }
+        let filesClient = self.filesClient
+        let directoryCacheStore = self.directoryCacheStore
+        return .run(priority: .background) { _ in
+            await DirectoryPrefetch.run(
+                paths: paths,
+                serverURL: serverURL,
+                filesClient: filesClient,
+                directoryCacheStore: directoryCacheStore
+            )
+        }
+        .cancellable(id: cancelID, cancelInFlight: true)
+    }
+
     private func load(_ state: inout State) -> Effect<Action> {
         state.isLoading = true
         state.errorMessage = nil
         let serverURL = state.serverURL
         let directoryPath = state.directoryPath
         let filesClient = self.filesClient
+        // Paint the last saved copy immediately on a first load so there's no skeleton flash
+        // while the fetch runs. This is stale-while-revalidate: a successful fetch silently
+        // replaces it, and only a failed one (offline) surfaces the "saved copy" banner. So
+        // `dataSource` stays `.live` here.
+        if !state.hasLoaded,
+           state.items.isEmpty,
+           let cached = directoryCacheStore.read(serverURL: serverURL, path: directoryPath) {
+            state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))
+            state.access = cached.access
+        }
         return .concatenate(
             .run { send in
                 await send(.itemsResponse(try await apiResult { try await filesClient.browse(serverURL, directoryPath) }))

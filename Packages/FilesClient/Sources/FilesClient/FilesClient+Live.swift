@@ -1,13 +1,56 @@
+import CoreModels
 import Dependencies
 import Foundation
 import NetworkClient
 
 extension FilesClient {
-    public static func live(networkClient: NetworkClient) -> FilesClient {
+    public static func live(
+        networkClient: NetworkClient,
+        directoryCacheStore: DirectoryCacheStore = .liveValue,
+        now: @escaping @Sendable () -> Date = { Date() }
+    ) -> FilesClient {
         let service = FilesService(networkClient: networkClient)
+
+        @Sendable func resolveBrowse(serverURL: URL, path: String, lowPriority: Bool) async throws -> BrowseResult {
+            let cached = directoryCacheStore.read(serverURL: serverURL, path: path)
+            let outcome = try await service.browse(
+                serverURL: serverURL, path: path, ifNoneMatch: cached?.etag, lowPriority: lowPriority
+            )
+            switch outcome {
+            case let .modified(result, etag):
+                directoryCacheStore.write(
+                    serverURL: serverURL, path: path, result: result, etag: etag, fetchedAt: now()
+                )
+                return result
+            case let .notModified(etag):
+                guard let cached else {
+                    // A 304 with no cached copy: the entry was evicted or cleared between the
+                    // read and the response. Re fetch unconditionally.
+                    let retry = try await service.browse(
+                        serverURL: serverURL, path: path, ifNoneMatch: nil, lowPriority: lowPriority
+                    )
+                    guard case let .modified(result, retryETag) = retry else {
+                        throw FilesClientError.decoding("Unexpected 304 for an unconditional browse request.")
+                    }
+                    directoryCacheStore.write(
+                        serverURL: serverURL, path: path, result: result, etag: retryETag, fetchedAt: now()
+                    )
+                    return result
+                }
+                let result = BrowseResult(items: cached.items, access: cached.access, path: cached.path)
+                directoryCacheStore.write(
+                    serverURL: serverURL, path: path, result: result, etag: etag ?? cached.etag, fetchedAt: now()
+                )
+                return result
+            }
+        }
+
         return FilesClient(
             browse: { serverURL, path in
-                try await service.browse(serverURL: serverURL, path: path)
+                try await resolveBrowse(serverURL: serverURL, path: path, lowPriority: false)
+            },
+            prefetchDirectory: { serverURL, path in
+                _ = try? await resolveBrowse(serverURL: serverURL, path: path, lowPriority: true)
             },
             search: { serverURL, path, query, limit in
                 try await service.search(serverURL: serverURL, path: path, query: query, limit: limit)
@@ -184,7 +227,8 @@ extension FilesClient {
 extension FilesClient: DependencyKey {
     public static var liveValue: FilesClient {
         @Dependency(\.networkClient) var networkClient
-        return .live(networkClient: networkClient)
+        @Dependency(\.directoryCacheStore) var directoryCacheStore
+        return .live(networkClient: networkClient, directoryCacheStore: directoryCacheStore)
     }
 }
 

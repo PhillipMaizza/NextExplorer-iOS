@@ -2,6 +2,7 @@ import AuthClient
 import AuthFeature
 import ComposableArchitecture
 import CoreModels
+import FilesClient
 import FilesFeature
 import Foundation
 import SwiftUI
@@ -49,6 +50,7 @@ public struct AppFeature {
     }
 
     @Dependency(\.authClient) var authClient
+    @Dependency(\.directoryCacheStore) var directoryCacheStore
 
     public init() {}
 
@@ -125,8 +127,10 @@ public struct AppFeature {
                     state.destination = .unauthenticated(.init())
                 }
                 let authClient = self.authClient
+                let directoryCacheStore = self.directoryCacheStore
                 return .run { _ in
                     await authClient.clearSession()
+                    directoryCacheStore.clearAll()
                 }
 
             case .sessionExpiryDetected:
@@ -138,10 +142,18 @@ public struct AppFeature {
                     state.destination = .unauthenticated(.init())
                 }
                 let authClient = self.authClient
-                return .run { _ in await authClient.clearSession() }
+                let directoryCacheStore = self.directoryCacheStore
+                return .run { _ in
+                    await authClient.clearSession()
+                    directoryCacheStore.clearAll()
+                }
 
             case let .destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))):
                 if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                // A fresh sign in must never expose the previous account's cached listings for
+                // the same server. Cleared synchronously before the authenticated destination
+                // mounts, so the new `BrowseFeature`'s first cache read can't race it.
+                directoryCacheStore.clearAll()
                 state.didAuthenticateFromLogin = true
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)

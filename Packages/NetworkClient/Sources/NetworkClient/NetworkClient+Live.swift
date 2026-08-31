@@ -65,7 +65,7 @@ extension NetworkClient {
             do {
                 (temporaryURL, response) = try await downloadSession.download(for: request)
             } catch {
-                throw NetworkError.transport(error.localizedDescription)
+                throw NetworkError.from(error)
             }
             guard let httpResponse = response as? HTTPURLResponse else {
                 try? FileManager.default.removeItem(at: temporaryURL)
@@ -84,34 +84,38 @@ extension NetworkClient {
             return (stableURL, httpResponse)
         }
 
+        // Stream to a temp file rather than `session.data(for:)` so response size is bounded
+        // by disk, not resident memory; then size-check before loading it in. This path only
+        // ever carries JSON control responses — file-sized payloads use `download` — so the
+        // extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
+        @Sendable func sendInMemory(
+            _ request: URLRequest, using inMemorySession: URLSession
+        ) async throws -> (Data, HTTPURLResponse) {
+            let temporaryURL: URL
+            let response: URLResponse
+            do {
+                (temporaryURL, response) = try await inMemorySession.download(for: request)
+            } catch {
+                throw NetworkError.from(error)
+            }
+            defer { try? FileManager.default.removeItem(at: temporaryURL) }
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw NetworkError.invalidResponse
+            }
+            let byteCount = (try? temporaryURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+            guard byteCount <= maxInMemoryResponseBytes else {
+                throw NetworkError.responseTooLarge
+            }
+            do {
+                return (try Data(contentsOf: temporaryURL), httpResponse)
+            } catch {
+                throw NetworkError.transport(error.localizedDescription)
+            }
+        }
+
         return NetworkClient(
-            send: { request in
-                // Stream to a temp file rather than `session.data(for:)` so response size is
-                // bounded by disk, not resident memory; then size-check before loading it in.
-                // `send` only ever carries JSON control responses — file-sized payloads use
-                // `download` — so the extra temp-file round-trip is a sub-millisecond cost on
-                // a KB-scale body.
-                let temporaryURL: URL
-                let response: URLResponse
-                do {
-                    (temporaryURL, response) = try await session.download(for: request)
-                } catch {
-                    throw NetworkError.transport(error.localizedDescription)
-                }
-                defer { try? FileManager.default.removeItem(at: temporaryURL) }
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    throw NetworkError.invalidResponse
-                }
-                let byteCount = (try? temporaryURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
-                guard byteCount <= maxInMemoryResponseBytes else {
-                    throw NetworkError.responseTooLarge
-                }
-                do {
-                    return (try Data(contentsOf: temporaryURL), httpResponse)
-                } catch {
-                    throw NetworkError.transport(error.localizedDescription)
-                }
-            },
+            send: { try await sendInMemory($0, using: session) },
+            lowPrioritySend: { try await sendInMemory($0, using: lowPrioritySession) },
             upload: { request, bodyFileURL, onProgress in
                 let data: Data
                 let response: URLResponse
@@ -125,7 +129,7 @@ extension NetworkClient {
                         delegate: UploadProgressDelegate(onProgress: onProgress)
                     )
                 } catch {
-                    throw NetworkError.transport(error.localizedDescription)
+                    throw NetworkError.from(error)
                 }
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NetworkError.invalidResponse

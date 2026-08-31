@@ -4,7 +4,16 @@ import Foundation
 
 @DependencyClient
 public struct FilesClient: Sendable {
+    /// `GET /api/browse/*`, revalidated with `If-None-Match` against the cached listing's
+    /// `ETag`: a `304` returns the cached copy without re transferring, a `200` replaces it.
+    /// Either way the on disk cache is refreshed. Throws `.offline` (etc.) on a transport
+    /// failure so the caller can fall back to the cache itself.
     public var browse: @Sendable (_ serverURL: URL, _ path: String) async throws -> BrowseResult
+    /// Best effort background refresh of `path` into the offline cache, over the low priority
+    /// session, revalidated with `If-None-Match`. Never throws: a failure just leaves the
+    /// existing cache entry (if any) untouched. Used for depth 1 prefetch of a folder's
+    /// subfolders and for refreshing favorited folders at launch.
+    public var prefetchDirectory: @Sendable (_ serverURL: URL, _ path: String) async -> Void
     public var search: @Sendable (
         _ serverURL: URL, _ path: String, _ query: String, _ limit: Int?
     ) async throws -> [SearchResultItem]

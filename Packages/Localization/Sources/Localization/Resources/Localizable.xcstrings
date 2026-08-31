@@ -672,6 +672,28 @@
         }
       }
     },
+    "browse.offlineBannerDetail": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Showing a saved copy from %@"
+          }
+        }
+      }
+    },
+    "browse.offlineBannerTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Offline"
+          }
+        }
+      }
+    },
     "browse.open": {
       "extractionState": "manual",
       "localizations": {
@@ -1871,6 +1893,17 @@
         }
       }
     },
+    "error.offline": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "You're offline. Connect to the internet and try again."
+          }
+        }
+      }
+    },
     "error.rateLimited": {
       "extractionState": "manual",
       "localizations": {
@@ -3054,7 +3087,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This clears cached previews and thumbnails. Nothing on the server is affected."
+            "value": "This clears cached previews, thumbnails, and saved folder listings used offline. Nothing on the server is affected."
           }
         }
       }

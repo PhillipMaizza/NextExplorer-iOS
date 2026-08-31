@@ -13,10 +13,34 @@ struct FilesService: Sendable {
     /// download the bytes and then race on the `moveItem` into the shared slot.
     let downloadCoordinator = PreviewDownloadCoordinator()
 
-    func browse(serverURL: URL, path: String) async throws -> BrowseResult {
+    /// A conditional `GET /api/browse/*`. `ifNoneMatch` is the `ETag` from a previously cached
+    /// listing; the server answers `304` (`.notModified`) when the directory is unchanged,
+    /// sparing the transfer and the decode. `lowPriority` routes the request through the
+    /// capped background session for prefetch. `.reloadIgnoringLocalCacheData` keeps
+    /// URLSession's own cache out of the way so the app's cache stays authoritative.
+    func browse(
+        serverURL: URL, path: String, ifNoneMatch: String?, lowPriority: Bool = false
+    ) async throws -> BrowseFetchOutcome {
         let url = Self.browseURL(serverURL: serverURL, path: path)
-        let request = Self.makeRequest(url: url, method: .get)
-        return try await send(request, decoding: BrowseResult.self)
+        var request = Self.makeRequest(url: url, method: .get)
+        request.cachePolicy = .reloadIgnoringLocalCacheData
+        if let ifNoneMatch, !ifNoneMatch.isEmpty {
+            request.setValue(ifNoneMatch, forHTTPHeaderField: HTTPHeaderField.ifNoneMatch)
+        }
+
+        let (data, response) = try await performSend(request, lowPriority: lowPriority)
+        let etag = response.value(forHTTPHeaderField: HTTPHeaderField.etag)
+
+        if response.statusCode == 304 {
+            return .notModified(etag: etag)
+        }
+        try Self.validate(response)
+        do {
+            let result = try Self.makeDecoder().decode(BrowseResult.self, from: data)
+            return .modified(result, etag: etag)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
     }
 
     func search(serverURL: URL, path: String, query: String, limit: Int?) async throws -> [SearchResultItem] {
@@ -538,7 +562,7 @@ struct FilesService: Sendable {
                     ? try await networkClient.lowPriorityDownload(request)
                     : try await networkClient.download(request)
             } catch {
-                throw FilesClientError.network(String(describing: error))
+                throw Self.mapTransportError(error)
             }
             defer { try? FileManager.default.removeItem(at: downloadedURL) }
             try Self.validate(response)
@@ -592,7 +616,7 @@ struct FilesService: Sendable {
         do {
             (data, response) = try await networkClient.upload(request, envelopeURL, onProgress)
         } catch {
-            throw FilesClientError.network(String(describing: error))
+            throw Self.mapTransportError(error)
         }
         try Self.validateReportingMessage(data, response)
 
@@ -1139,12 +1163,24 @@ struct FilesService: Sendable {
         }
     }
 
-    private func performSend(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
+    private func performSend(_ request: URLRequest, lowPriority: Bool = false) async throws -> (Data, HTTPURLResponse) {
         do {
-            return try await networkClient.send(request)
+            return lowPriority
+                ? try await networkClient.lowPrioritySend(request)
+                : try await networkClient.send(request)
         } catch {
-            throw FilesClientError.network(String(describing: error))
+            throw Self.mapTransportError(error)
         }
+    }
+
+    /// Maps a raw error from the transport layer to a `FilesClientError`, preserving the
+    /// `.offline` classification `NetworkClient` already made so callers can fall back to a
+    /// cached copy instead of showing a generic network failure.
+    static func mapTransportError(_ error: Error) -> FilesClientError {
+        if let networkError = error as? NetworkError, networkError == .offline {
+            return .offline
+        }
+        return .network(String(describing: error))
     }
 
     private static func validate(_ response: HTTPURLResponse) throws {
