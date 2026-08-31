@@ -29,11 +29,10 @@ struct DownloadsFeatureTests {
             $0.localDownloadStore.list = { [download] }
         }
 
+        // The initial scan is local and synchronous — `onAppear` fills the list inline, no
+        // async response.
         await store.send(.onAppear) {
-            $0.isLoading = true
-        }
-        await store.receive(\.downloadsResponse.success) {
-            $0.isLoading = false
+            $0.phase = .loaded
             $0.downloads = [download]
         }
     }
@@ -52,10 +51,10 @@ struct DownloadsFeatureTests {
         }
 
         await store.send(.refreshButtonTapped) {
-            $0.isLoading = true
+            $0.phase = .loading
         }
         await store.receive(\.downloadsResponse.success) {
-            $0.isLoading = false
+            $0.phase = .loaded
             $0.downloads = [refreshed]
         }
     }
@@ -110,11 +109,7 @@ struct DownloadsFeatureTests {
         }
 
         await store.send(.onAppear) {
-            $0.isLoading = true
-        }
-        await store.receive(\.downloadsResponse.failure) {
-            $0.isLoading = false
-            $0.errorMessage = FilesClientError.network("disk error").userMessage
+            $0.phase = .failed(FilesClientError.network("disk error").userMessage)
         }
     }
 
@@ -146,7 +141,7 @@ struct DownloadsFeatureTests {
     @Test
     func onAppearIsANoOpWhileAlreadyLoading() async {
         var state = DownloadsFeature.State()
-        state.isLoading = true
+        state.phase = .loading
         let store = TestStore(initialState: state) {
             DownloadsFeature()
         }
@@ -158,6 +153,7 @@ struct DownloadsFeatureTests {
     func onAppearIsANoOpWhenDownloadsAreAlreadyLoaded() async {
         var state = DownloadsFeature.State()
         state.downloads = [makeDownload()]
+        state.phase = .loaded
         let store = TestStore(initialState: state) {
             DownloadsFeature()
         }

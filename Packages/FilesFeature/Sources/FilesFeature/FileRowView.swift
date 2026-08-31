@@ -33,6 +33,12 @@ struct FileRowView: View {
     var customIcon: Image?
     var customIconTint: Color?
     var customIconFilled: Bool
+    /// When set, the leading thumbnail/icon is the source the preview cover's `.zoom`
+    /// transition grows from and shrinks back to.
+    var matchedSource: PreviewMatchedSource?
+    /// True while this file's content is downloading after a tap — the row shows a trailing
+    /// spinner and the full-screen preview holds off until it's ready.
+    var isOpening: Bool = false
     /// Read live so an already-visible row updates immediately when the user changes the
     /// date format in Settings, rather than only on the next fetch.
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
@@ -53,7 +59,9 @@ struct FileRowView: View {
         kind: String? = nil,
         customIcon: Image? = nil,
         customIconTint: Color? = nil,
-        customIconFilled: Bool = false
+        customIconFilled: Bool = false,
+        matchedSource: PreviewMatchedSource? = nil,
+        isOpening: Bool = false
     ) {
         self.name = name
         self.isDirectory = isDirectory
@@ -71,9 +79,11 @@ struct FileRowView: View {
         self.customIcon = customIcon
         self.customIconTint = customIconTint
         self.customIconFilled = customIconFilled
+        self.matchedSource = matchedSource
+        self.isOpening = isOpening
     }
 
-    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false) {
+    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false) {
         self.name = item.name
         self.isDirectory = item.isDirectory
         self.dateModified = item.dateModified
@@ -90,6 +100,8 @@ struct FileRowView: View {
         self.customIcon = nil
         self.customIconTint = nil
         self.customIconFilled = false
+        self.matchedSource = matchedSource
+        self.isOpening = isOpening
     }
 
     private var dateFormat: DateDisplayFormat { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system }
@@ -120,6 +132,7 @@ struct FileRowView: View {
         HStack(spacing: .space12) {
             leadingIcon
                 .opacity(isHidden ? Constants.halfOpacity : Constants.fullOpacity)
+                .previewMatchedSource(matchedSource)
 
             VStack(alignment: .leading, spacing: .space2) {
                 Text(displayName)
@@ -133,6 +146,11 @@ struct FileRowView: View {
             }
 
             Spacer()
+
+            if isOpening {
+                ProgressView()
+                    .controlSize(.small)
+            }
 
             if isFavorite {
                 IconKit.starFill

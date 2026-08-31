@@ -151,7 +151,7 @@ struct BrowseFeatureTests {
     }
 
     @Test
-    func rowTappedOnAKnownBinaryFormatDoesNothing() async {
+    func rowTappedOnAKnownBinaryFormatPresentsTheUnsupportedPreviewAndFetchesNothing() async {
         let serverURL = URL(string: "https://example.com")!
         let file = FileItem(name: "installer.exe", path: "", dateModified: Date(), size: 10, kind: "exe")
 
@@ -161,28 +161,28 @@ struct BrowseFeatureTests {
 
         // No `previewFile`/`fetchTextContent` override: a call to either would crash with
         // "Unimplemented," proving nothing is fetched for a format there's nothing to show.
-        await store.send(.rowTapped(file))
+        await store.send(.rowTapped(file)) { $0.previewItem = file }
     }
 
     @Test
-    func rowTappedOnAnUnplayableStreamableContainerDoesNothing() async {
+    func rowTappedOnAnUnplayableStreamableContainerPresentsTheUnsupportedPreview() async {
         let serverURL = URL(string: "https://example.com")!
         // `.webm` is `isStreamableMedia` (a video kind) but not `isNativelyPlayable`
         // (AVFoundation can't decode VP8/VP9) — regression test for a bug where `rowTapped`
         // guarded on `isPreviewable || isBrowsableArchive` instead of
         // `!isUnsupportedForPreview`, letting this slip through to `StreamingPreviewView`
-        // with a URL it can't actually play.
+        // with a URL it can't actually play. It now lands on `UnsupportedFilePreviewView`.
         let file = FileItem(name: "clip.webm", path: "", dateModified: Date(), size: 10, kind: "webm")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
         }
 
-        await store.send(.rowTapped(file))
+        await store.send(.rowTapped(file)) { $0.previewItem = file }
     }
 
     @Test
-    func rowTappedOnANonBrowsableArchiveDoesNothing() async {
+    func rowTappedOnANonBrowsableArchivePresentsTheUnsupportedPreview() async {
         let serverURL = URL(string: "https://example.com")!
         // `.zip`/`.rar` are `isBrowsableArchive` (see the dedicated test for those) — this
         // covers an archive kind neither `ZIPFoundation` nor `Unrar.swift` can list.
@@ -192,7 +192,7 @@ struct BrowseFeatureTests {
             BrowseFeature()
         }
 
-        await store.send(.rowTapped(file))
+        await store.send(.rowTapped(file)) { $0.previewItem = file }
     }
 
     @Test
@@ -1186,6 +1186,110 @@ struct BrowseFeatureTests {
             $0.favoritePaths = []
         }
         await store.receive(.delegate(.favoritesChanged))
+    }
+
+    @Test
+    func deleteConfirmedFromPreviewDismissesTheCoverThenDeletesAfterASettle() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [item]
+        state.previewItem = item
+        state.deleteConfirmationItem = item
+
+        let clock = TestClock()
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.deleteItems = { _, _ in }
+        }
+
+        await store.send(.deleteConfirmedFromPreview) {
+            $0.deleteConfirmationItem = nil
+            $0.isPerformingFileAction = true
+        }
+        // Cover closes right away; the request waits for the settle so the row animates out
+        // on the list, not mid transition.
+        await store.receive(.previewDismissed) {
+            $0.previewItem = nil
+        }
+        await clock.advance(by: .milliseconds(350))
+        await store.receive(\.deleteResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.items = []
+        }
+    }
+
+    @Test
+    func renameConfirmedWhilePreviewingRepointsTheCoverAtTheRenamedItemWithoutDismissing() async {
+        let serverURL = URL(string: "https://example.com")!
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let renamed = FileItem(name: "beach.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.items = [item]
+        state.previewItem = item
+        state.renameSheetItem = item
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.renameItem = { _, _, _ in renamed }
+        }
+
+        await store.send(.renameConfirmed("beach.jpg")) {
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.renameResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.renameSheetItem = nil
+            $0.items = [renamed]
+            $0.previewItem = renamed
+        }
+    }
+
+    @Test
+    func openDownloadsFromPreviewDismissesTheCoverThenSwitchesTabsAfterASettle() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "archive.bin", path: "", dateModified: Date(), size: 0, kind: "bin")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.previewItem = file
+
+        let clock = TestClock()
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+        }
+
+        await store.send(.openDownloadsFromPreview)
+        await store.receive(.previewDismissed) {
+            $0.previewItem = nil
+        }
+        await clock.advance(by: .milliseconds(350))
+        await store.receive(.delegate(.openDownloadsTapped))
+    }
+
+    @Test
+    func goToSharedTabFromPreviewDismissesTheCoverThenSwitchesTabsAfterASettle() async {
+        let serverURL = URL(string: "https://example.com")!
+        let file = FileItem(name: "photo.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.previewItem = file
+
+        let clock = TestClock()
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+        }
+
+        await store.send(.goToSharedTabFromPreview)
+        await store.receive(.previewDismissed) {
+            $0.previewItem = nil
+        }
+        await clock.advance(by: .milliseconds(350))
+        await store.receive(.delegate(.goToSharedTab))
     }
 
     @Test

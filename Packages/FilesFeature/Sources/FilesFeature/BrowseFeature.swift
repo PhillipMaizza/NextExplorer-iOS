@@ -12,6 +12,11 @@ private enum Constants {
     /// Not a network debounce (this-folder search has no round trip) — just a brief settle
     /// so a fast backspace/retype doesn't flash intermediate result sets.
     static let localSearchSettleDelay: Duration = .milliseconds(50)
+    /// An action taken from a full-screen preview that also dismisses the cover (delete,
+    /// "Open" on the download toast, "View in Shared") waits this long before it runs, so the
+    /// cover finishes dismissing first and the effect — a row sliding out, a tab switch —
+    /// plays on the list the user is now looking at, not mid transition.
+    static let previewActionSettleDelay: Duration = .milliseconds(350)
 }
 
 /// One directory listing. The root browse screen and every pushed subfolder are the
@@ -309,6 +314,11 @@ public struct BrowseFeature {
         case favoriteToggleResponse(Result<FavoriteToggleResult, FilesClientError>)
         case renameCancelled
         case renameConfirmed(String)
+        /// "Open" tapped on the download toast while a preview cover is up: dismiss the cover,
+        /// then jump to the Downloads tab once it's gone.
+        case openDownloadsFromPreview
+        /// "View in Shared" tapped on the created-share-link sheet while a preview cover is up.
+        case goToSharedTabFromPreview
         case renameResponse(Result<RenameResult, FilesClientError>)
         case newFolderTapped
         case newFolderCancelled
@@ -316,6 +326,9 @@ public struct BrowseFeature {
         case newFolderResponse(Result<FileItem, FilesClientError>)
         case deleteCancelled
         case deleteConfirmed
+        /// Confirm came from a full-screen preview: dismiss the cover, then delete after a
+        /// short settle so the list row animates out where the user can see it.
+        case deleteConfirmedFromPreview
         case deleteImpactResponse(Result<DeleteImpact, FilesClientError>)
         case deleteResponse(Result<DeleteResult, FilesClientError>)
         case extractZipTapped(FileItem)
@@ -379,6 +392,8 @@ public struct BrowseFeature {
             /// The "Open" button on the download-success toast — switches to the Downloads
             /// tab so the user can see where the file landed.
             case openDownloadsTapped
+            /// "View in Shared" on the created-share-link sheet — switches to the Shared tab.
+            case goToSharedTab
         }
     }
 
@@ -387,7 +402,7 @@ public struct BrowseFeature {
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.openURL) var openURL
-    private enum CancelID { case search, transfer, googleDocsPointer, deleteImpact, load, preview, info }
+    private enum CancelID { case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction }
 
     public init() {}
 
@@ -423,28 +438,24 @@ public struct BrowseFeature {
 
             case let .rowTapped(item):
                 guard item.isDirectory else {
-                    // Archives, known binary formats (`.exe`, `.dmg`, fonts, ...), and video
-                    // containers `AVFoundation` can't decode (e.g. `.webm`) have nothing to
-                    // preview — bail before touching any preview state, rather than opening a
-                    // full-screen cover just to show an error. (The view layer pre-filters
-                    // these with a toast before ever sending `rowTapped`; this guard is a
-                    // defensive backstop, not the primary gate — it has to use the exact same
-                    // `isUnsupportedForPreview` check, not a hand-rolled approximation of it,
-                    // or the two can drift and this "backstop" stops backstopping anything.)
-                    guard !item.isUnsupportedForPreview else { return .none }
                     // Google Drive stub files (`.gsheet`, `.gdoc`, …) link out to a real
                     // Google document — open that, don't show the JSON stub.
                     if item.isGoogleDocsPointer {
                         return openGoogleDocsPointer(serverURL: state.serverURL, item: item)
                     }
                     // Sets `previewItem` unconditionally so the viewer presents immediately.
+                    // - Files the app has no viewer for (archives it can't browse, known
+                    //   binaries, undecodable video) get `UnsupportedFilePreviewView` — the
+                    //   name/type/size + download/share actions, no fetch.
                     // - Streamable media (video/audio) plays live from `FilesClient.previewURL`.
                     // - Images/RAW load themselves per-page in the gallery view.
                     // - Browsable archives (.zip/.rar) list themselves in `ArchiveBrowserView`.
-                    // None of these download anything here — only PDFs (the one other
-                    // download-previewable kind) and plain-text files need a fetch.
+                    // Only PDFs and plain-text files need a fetch here.
                     state.previewItem = item
-                    if item.isBrowsableArchive || item.isStreamableMedia || ((item.isImage || item.isRawImage) && !item.isSVG) {
+                    if item.isUnsupportedForPreview
+                        || item.isBrowsableArchive
+                        || item.isStreamableMedia
+                        || ((item.isImage || item.isRawImage) && !item.isSVG) {
                         return .none
                     } else if item.isPreviewableViaDownload {
                         return loadPreview(&state, item: item)
@@ -536,12 +547,39 @@ public struct BrowseFeature {
             case let .renameConfirmed(newName):
                 return confirmRename(&state, newName: newName)
 
+            case .openDownloadsFromPreview:
+                let clock = self.clock
+                return .merge(
+                    .send(.previewDismissed),
+                    .run { send in
+                        try await clock.sleep(for: Constants.previewActionSettleDelay)
+                        await send(.delegate(.openDownloadsTapped))
+                    }
+                    .cancellable(id: CancelID.previewDeferredAction, cancelInFlight: true)
+                )
+
+            case .goToSharedTabFromPreview:
+                let clock = self.clock
+                return .merge(
+                    .send(.previewDismissed),
+                    .run { send in
+                        try await clock.sleep(for: Constants.previewActionSettleDelay)
+                        await send(.delegate(.goToSharedTab))
+                    }
+                    .cancellable(id: CancelID.previewDeferredAction, cancelInFlight: true)
+                )
+
             case let .renameResponse(.success(result)):
                 state.isPerformingFileAction = false
                 state.renameSheetItem = nil
                 if let index = state.items.index(id: result.originalID) {
                     state.items.remove(at: index)
                     state.items.insert(result.renamed, at: index)
+                }
+                // A rename from a preview keeps the cover up — repoint it at the renamed item
+                // so its title/actions follow.
+                if state.previewItem?.id == result.originalID {
+                    state.previewItem = result.renamed
                 }
                 return .none
 
@@ -588,6 +626,12 @@ public struct BrowseFeature {
 
             case .deleteConfirmed:
                 return confirmDelete(&state)
+
+            case .deleteConfirmedFromPreview:
+                return .merge(
+                    .send(.previewDismissed),
+                    confirmDelete(&state, deferred: true)
+                )
 
             case let .deleteResponse(.success(result)):
                 state.isPerformingFileAction = false
@@ -1187,15 +1231,19 @@ public struct BrowseFeature {
         .cancellable(id: CancelID.deleteImpact, cancelInFlight: true)
     }
 
-    private func confirmDelete(_ state: inout State) -> Effect<Action> {
+    private func confirmDelete(_ state: inout State, deferred: Bool = false) -> Effect<Action> {
         guard let item = state.deleteConfirmationItem else { return .none }
         state.deleteConfirmationItem = nil
         state.deleteImpactCheck = .idle
         state.isPerformingFileAction = true
         let serverURL = state.serverURL
         let filesClient = self.filesClient
+        let clock = self.clock
         let itemID = item.id
         return .run { send in
+            // `deferred`: let the preview cover finish dismissing first, so the row-removal
+            // animation plays on the list the user is now looking at.
+            if deferred { try await clock.sleep(for: Constants.previewActionSettleDelay) }
             // Animated so the row visibly slides out of the list rather than popping,
             // since removal happens on the server round trip, not the confirm tap itself.
             await send(.deleteResponse(try await apiResult {

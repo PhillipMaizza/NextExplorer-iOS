@@ -1,6 +1,27 @@
 import DesignSystem
 import SwiftUI
 
+/// Identifies the exact source view a full-screen preview's `.zoom` transition should grow
+/// from — the file's thumbnail/icon inside its row or grid cell, not the whole-width row.
+/// Threaded from `BrowseContentView` / `DownloadsView` into `FileRowView` / `GridCellView`.
+struct PreviewMatchedSource {
+    let id: AnyHashable
+    let namespace: Namespace.ID
+}
+
+extension View {
+    /// Marks this view as the `.zoom` transition source for `source`, or leaves it untouched
+    /// when there is none (a folder row, a screen with no preview cover).
+    @ViewBuilder
+    func previewMatchedSource(_ source: PreviewMatchedSource?) -> some View {
+        if let source {
+            matchedTransitionSource(id: source.id, in: source.namespace)
+        } else {
+            self
+        }
+    }
+}
+
 /// Wraps a full-screen file preview presented in a `.fullScreenCover` so its native `.zoom`
 /// open/dismiss morph (see `BrowseContentView` / `DownloadsView`) reads against the app
 /// background gradient rather than the cover's default black: the content is pinned full

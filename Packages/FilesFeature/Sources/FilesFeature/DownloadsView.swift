@@ -10,13 +10,19 @@ private enum DownloadsViewMode: String {
 }
 
 private enum Constants {
-    static let listDiffSpringResponse: Double = 0.35
-    static let listDiffSpringDamping: Double = 0.8
-    static let overlayCrossfadeDuration: Double = 0.2
     static let gridSpacing: CGFloat = .space16
     /// Inset between a grid tile's content and its `backgroundSecondary` card edge, matching
     /// `BrowseContentView`.
     static let gridCellPadding: CGFloat = .space12
+    /// Uneven redacted name / size / location widths so the skeleton doesn't line up as flat
+    /// columns. Each row is `(name, "size • location")`.
+    static let skeletonRows: [(name: String, subtitle: String)] = [
+        (8, 4, 7), (13, 5, 4), (6, 3, 9), (11, 4, 5), (16, 5, 6),
+        (7, 3, 8), (10, 4, 4), (5, 4, 10), (12, 5, 5), (9, 3, 7),
+    ].map { name, size, loc in
+        (String(repeating: "M", count: name),
+         "\(String(repeating: "M", count: size)) • \(String(repeating: "M", count: loc))")
+    }
 }
 
 struct DownloadsView: View {
@@ -29,6 +35,9 @@ struct DownloadsView: View {
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
+    /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
+    /// pull-to-refresh rubber-band instead of staying pinned.
+    @State private var pullOffset: CGFloat = 0
     @Environment(\.openURL) private var openURL
 
     private var viewMode: DownloadsViewMode {
@@ -81,18 +90,15 @@ struct DownloadsView: View {
         "\(Self.byteFormatter.string(fromByteCount: download.size)) • \(download.location.title)"
     }
 
-    private var overlayPhase: ListStateOverlay.Phase {
-        if store.isLoading && store.downloads.isEmpty {
-            .loading
-        } else if store.errorMessage != nil {
-            .error
-        } else if store.downloads.isEmpty {
-            .empty
-        } else if !store.searchQuery.isEmpty && store.displayedDownloads.isEmpty {
-            .noResults
-        } else {
-            .none
-        }
+    /// The one screen state, derived from the store — skeleton until the first response lands
+    /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
+    /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
+    private var listPhase: ListPhase {
+        if store.errorMessage != nil { return .error }
+        if !store.phase.hasLoaded && store.downloads.isEmpty { return .loading }
+        if store.downloads.isEmpty { return .empty }
+        if !store.searchQuery.isEmpty && store.displayedDownloads.isEmpty { return .noResults }
+        return .content
     }
 
     // No op setters: each confirmation sheet is dismiss disabled and only closes through one
@@ -170,11 +176,16 @@ struct DownloadsView: View {
                     if store.isSelecting {
                         DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
                     }
-                    FileRowView(name: download.fileName, isDirectory: false, subtitle: subtitle(for: download), kind: (download.fileName as NSString).pathExtension)
+                    FileRowView(
+                        name: download.fileName,
+                        isDirectory: false,
+                        subtitle: subtitle(for: download),
+                        kind: (download.fileName as NSString).pathExtension,
+                        matchedSource: PreviewMatchedSource(id: download.id, namespace: previewTransition)
+                    )
                 }
             }
             .buttonStyle(DSHapticButtonStyle())
-            .matchedTransitionSource(id: download.id, in: previewTransition)
             .listRowBackground(Color.backgroundSecondary)
             .swipeActions(edge: .trailing) {
                 if !store.isSelecting {
@@ -214,49 +225,87 @@ struct DownloadsView: View {
 
     private var listContent: some View {
         List {
-            downloadRows
+            if listPhase == .loading {
+                skeletonRows
+            } else {
+                downloadRows
+            }
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .backgroundGradient()
-        .animation(
-            .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-            value: store.displayedDownloads
-        )
+        .scrollPullOffset($pullOffset)
+        // Only spring row diffs once the list is the content — during the skeleton→content
+        // swap the outer `.animation(value: listPhase)` owns the cross-fade alone.
+        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
+    }
+
+    /// Redacted `FileRowView` stand-ins that sit in the *same* `List` as the real rows (never a
+    /// separate scroll container — that fights the nav bar's large-title tracking). The shine
+    /// is suppressed under Reduce Motion.
+    @ViewBuilder
+    private var skeletonRows: some View {
+        ForEach(Array(Constants.skeletonRows.enumerated()), id: \.offset) { _, row in
+            FileRowView(name: row.name, isDirectory: false, subtitle: row.subtitle, kind: "")
+                .redacted(reason: .placeholder)
+                .shimmering()
+                .listRowBackground(Color.backgroundSecondary)
+        }
+    }
+
+    @ViewBuilder
+    private var skeletonCells: some View {
+        ForEach(Array(Constants.skeletonRows.enumerated()), id: \.offset) { _, row in
+            GridCellView(name: row.name, isDirectory: false, kind: "")
+                .dsCard(padding: Constants.gridCellPadding)
+                .redacted(reason: .placeholder)
+                .shimmering()
+        }
     }
 
     private var gridContent: some View {
         ScrollView {
             LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
-                ForEach(store.displayedDownloads) { download in
+                if listPhase == .loading {
+                    skeletonCells
+                } else {
+                    downloadCells
+                }
+            }
+            .padding(Constants.gridSpacing)
+            .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
+        }
+        .backgroundGradient()
+        .scrollPullOffset($pullOffset)
+    }
+
+    @ViewBuilder
+    private var downloadCells: some View {
+        ForEach(store.displayedDownloads) { download in
                     Button {
                         handleTap(download)
                     } label: {
-                        GridCellView(name: download.fileName, isDirectory: false, kind: (download.fileName as NSString).pathExtension)
-                            .dsCard(padding: Constants.gridCellPadding)
-                            .overlay(alignment: .topLeading) {
-                                if store.isSelecting {
-                                    DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
-                                }
+                        GridCellView(
+                            name: download.fileName,
+                            isDirectory: false,
+                            kind: (download.fileName as NSString).pathExtension,
+                            matchedSource: PreviewMatchedSource(id: download.id, namespace: previewTransition)
+                        )
+                        .dsCard(padding: Constants.gridCellPadding)
+                        .overlay(alignment: .topLeading) {
+                            if store.isSelecting {
+                                DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
                             }
+                        }
                     }
                     .buttonStyle(DSHapticButtonStyle())
-                    .matchedTransitionSource(id: download.id, in: previewTransition)
                     .hapticFeedback(.selection, trigger: store.selectedDownloadIDs.contains(download.id))
                     .contextMenu {
                         if !store.isSelecting {
                             rowContextMenu(for: download)
                         }
                     }
-                }
-            }
-            .padding(Constants.gridSpacing)
-            .animation(
-                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-                value: store.displayedDownloads
-            )
         }
-        .backgroundGradient()
     }
 
     var body: some View {
@@ -284,17 +333,21 @@ struct DownloadsView: View {
             }
             .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
             .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
+            // Skeleton rows live inside the List/grid (see `listContent`/`gridContent`); the
+            // empty/error message is an overlay fed the list's pull-to-refresh drag so it
+            // rubber-bands with it. One animation cross-fades the whole state change.
             .overlay {
                 ListStateOverlay(
-                    phase: overlayPhase,
+                    phase: listPhase,
                     errorMessage: store.errorMessage,
                     emptyIcon: IconKit.download,
                     emptyMessage: L10n.Downloads.emptyList,
                     noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
+                    pullOffset: pullOffset,
                     onRetry: { store.send(.refreshButtonTapped) }
                 )
             }
-            .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayPhase)
+            .animation(DSMotion.contentReveal, value: listPhase)
             .featureToast(error: store.actionErrorMessage)
             .toolbar {
                 selectSortToolbar(
@@ -425,6 +478,10 @@ struct DownloadsView: View {
                 }
             }
             .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedDownloadIDs.count) : L10n.Downloads.navigationTitle)
+            // Force large — otherwise it can render inline on the first appear (the tab's nav
+            // stack lays out while the launch splash still covers it) and only fix itself on a
+            // later tab switch.
+            .navigationBarTitleDisplayMode(store.isSelecting ? .inline : .large)
             .task {
                 store.send(.onAppear)
             }

@@ -28,6 +28,10 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     private let footer: Footer
     @State private var contentHeight: CGFloat = 0
     @State private var footerHeight: CGFloat = 0
+    /// A focused text field can sit under the keyboard once it covers the lower part of the
+    /// sheet. While the keyboard is up, unlock scrolling (even if the content otherwise fits)
+    /// so SwiftUI's own keyboard inset can scroll the field back into view.
+    @State private var isKeyboardVisible = false
 
     public init(
         maxHeightFraction: CGFloat? = nil,
@@ -93,7 +97,14 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
                 }
             )
         }
-        .scrollDisabled(!isOverflowing)
+        .scrollDisabled(!isOverflowing && !isKeyboardVisible)
+        .scrollDismissesKeyboard(.interactively)
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            isKeyboardVisible = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            isKeyboardVisible = false
+        }
     }
 
     public var body: some View {

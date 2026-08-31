@@ -3,23 +3,25 @@ import DesignSystem
 import SwiftUI
 
 private enum Constants {
-    static let rowCount = 12
     static let gridSpacing: CGFloat = .space16
     /// Inset between a grid tile's content and its `backgroundSecondary` card edge, matching
     /// `BrowseContentView`.
     static let gridCellPadding: CGFloat = .space12
-    /// Varied name widths so the redacted title bars don't render as one flat column.
-    static let nameLengths = [7, 12, 5, 9, 15, 6, 11, 4, 13, 8, 10, 6]
+    /// Name width + byte size per placeholder row, deliberately uneven so the redacted title
+    /// and subtitle bars don't line up as two flat columns.
+    static let placeholderShapes: [(nameLength: Int, size: Int64)] = [
+        (6, 2_100), (13, 480_000), (4, 12), (9, 6_400), (16, 3_900_000), (7, 55_000),
+        (11, 780), (5, 240_000), (14, 9_100), (8, 1_600_000), (10, 33), (6, 128_000),
+    ]
     static let placeholderNameChar = "M"
     static let skeleton = "skeleton/"
 }
 
-/// Redacted `FileRowView` / `GridCellView` stand-ins shown while a folder's first page
-/// loads, so the shape of what's coming is already on screen instead of a bare spinner.
-/// Reuses the real `List`/`ScrollView` containers so margins, row height and the
-/// `backgroundSecondary` surface line up exactly with the content that replaces it, but with
-/// scrolling disabled so it never drives the nav bar. Non-interactive. The shine is
-/// suppressed under Reduce Motion by `.shimmering()`.
+/// Redacted `FileRowView` / `GridCellView` stand-ins shown while a folder's first page loads
+/// (`BrowseContentView` swaps it in for the list), so the shape of what's coming is already on
+/// screen instead of a bare spinner. Reuses the real `List`/`ScrollView` containers so
+/// margins, row height and the `backgroundSecondary` surface line up exactly, with scrolling
+/// disabled. Non-interactive; the shine is suppressed under Reduce Motion by `.shimmering()`.
 struct BrowseSkeletonView: View {
     let isGridView: Bool
     let gridColumns: [GridItem]
@@ -27,17 +29,16 @@ struct BrowseSkeletonView: View {
 
     /// All plain files — a redacted directory row keeps its accent tinted folder glyph and
     /// trailing chevron, which survive `.redacted` as gold blocks. Uniform file rows read as
-    /// a clean skeleton.
-    private var placeholderItems: [FileItem] {
-        Constants.nameLengths.prefix(Constants.rowCount).enumerated().map { index, length in
-            FileItem(
-                name: String(repeating: Constants.placeholderNameChar, count: length),
-                path: "\(Constants.skeleton)\(index)",
-                dateModified: .distantPast,
-                size: 1_024,
-                kind: ""
-            )
-        }
+    /// a clean skeleton. Built once — this view can stay mounted at zero opacity behind a
+    /// crossfade, so a per-render rebuild would be wasted work.
+    private static let placeholderItems: [FileItem] = Constants.placeholderShapes.enumerated().map { index, shape in
+        FileItem(
+            name: String(repeating: Constants.placeholderNameChar, count: shape.nameLength),
+            path: "\(Constants.skeleton)\(index)",
+            dateModified: Date(timeIntervalSince1970: 1_600_000_000 - Double(index) * 86_400 * 37),
+            size: shape.size,
+            kind: ""
+        )
     }
 
     var body: some View {
@@ -65,7 +66,7 @@ struct BrowseSkeletonView: View {
         if isGridView {
             ScrollView {
                 LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
-                    ForEach(placeholderItems) { item in
+                    ForEach(Self.placeholderItems) { item in
                         placeholderRow(
                             GridCellView(item: item, iconSize: iconSize)
                                 .dsCard(padding: Constants.gridCellPadding)
@@ -78,7 +79,7 @@ struct BrowseSkeletonView: View {
         } else {
             List {
                 Section {
-                    ForEach(placeholderItems) { item in
+                    ForEach(Self.placeholderItems) { item in
                         placeholderRow(FileRowView(item: item))
                             .listRowBackground(Color.backgroundSecondary)
                     }

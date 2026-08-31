@@ -26,6 +26,13 @@ public struct MainTabView: View {
     /// stomp on whatever `onAppear` just loaded. This tracks past the first activation so only
     /// a genuine later background→active resume triggers a sync.
     @State private var hasBecomeActiveBefore = false
+    /// Tabs whose content has actually been selected at least once. A non-Browse `Tab` builds
+    /// its `NavigationStack` off screen while the launch splash still covers the window, and
+    /// UIKit lays that nav bar out at the wrong size and never revisits it (large title stuck
+    /// inline until a manual tab switch forces a relayout — the NXTIOS-0018 bug class). Gating
+    /// each tab's body on first selection defers the first layout pass to when the tab is
+    /// actually on screen.
+    @State private var visitedTabs: Set<MainTabFeature.Tab> = [.browse]
     /// Mirrors `store.uploads.isActive` so list screens can reserve bottom inset for the bar.
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     /// The bar's real rendered height, measured below and read by list screens instead of a
@@ -70,6 +77,9 @@ public struct MainTabView: View {
                 set: { if $0 == nil { store.send(.dismissUploadToast) } }
             ), extraBottomInset: Constants.toastTabBarClearance)
             .hapticFeedback(.selection, trigger: store.selectedTab)
+            .onChange(of: store.selectedTab, initial: true) { _, tab in
+                visitedTabs.insert(tab)
+            }
             .onChange(of: scenePhase) { _, newPhase in
                 guard newPhase == .active else { return }
                 guard hasBecomeActiveBefore else {
@@ -117,28 +127,36 @@ public struct MainTabView: View {
             }
 
             Tab(value: MainTabFeature.Tab.favorites) {
-                FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
+                if visitedTabs.contains(.favorites) {
+                    FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
+                }
             } label: {
                 tabIcon(store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites)
                     .accessibilityLabel(L10n.Tab.favorites)
             }
 
             Tab(value: MainTabFeature.Tab.shared) {
-                SharedView(store: store.scope(state: \.shared, action: \.shared))
+                if visitedTabs.contains(.shared) {
+                    SharedView(store: store.scope(state: \.shared, action: \.shared))
+                }
             } label: {
                 tabIcon(store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare)
                     .accessibilityLabel(L10n.Tab.shared)
             }
 
             Tab(value: MainTabFeature.Tab.downloads) {
-                DownloadsView(store: store.scope(state: \.downloads, action: \.downloads))
+                if visitedTabs.contains(.downloads) {
+                    DownloadsView(store: store.scope(state: \.downloads, action: \.downloads))
+                }
             } label: {
                 tabIcon(store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads)
                     .accessibilityLabel(L10n.Tab.downloads)
             }
 
             Tab(value: MainTabFeature.Tab.settings) {
-                SettingsView(store: store.scope(state: \.settings, action: \.settings))
+                if visitedTabs.contains(.settings) {
+                    SettingsView(store: store.scope(state: \.settings, action: \.settings))
+                }
             } label: {
                 tabIcon(store.selectedTab == .settings ? IconKit.tabSettingsFill : IconKit.tabSettings)
                     .accessibilityLabel(L10n.Tab.settings)

@@ -41,7 +41,10 @@ enum ArchiveReaderError: Error {
 /// cache, not part of the "source" concept — `Unrar.Archive.entries()` fully re-parses the
 /// archive's header list on every call, so without this, previewing an HTML file with N
 /// sibling assets inside a `.rar` would re-parse the whole archive N+1 times.
-private final class ArchiveSource {
+/// `@unchecked Sendable`: `ZIPFoundation.Archive` / `Unrar.Archive` aren't thread-safe, but
+/// `ArchiveBrowserView` only hands this to one background extraction at a time (`extractingRow`
+/// gates taps) and `resolveAsset` runs its lookups sequentially — never concurrently.
+private final class ArchiveSource: @unchecked Sendable {
     let kind: Kind
     private var cachedRarEntries: [Unrar.Entry]?
 
@@ -125,6 +128,16 @@ private struct ArchiveRow: Identifiable {
     var id: String { name }
 }
 
+/// One in-archive file opened for preview, bundled with its extracted location and the row
+/// name it grew from (the `.zoom` transition source).
+private struct ArchiveEntryPreview: Identifiable, Equatable {
+    let item: FileItem
+    let fileURL: URL
+    let sourceID: String
+
+    var id: String { fileURL.path }
+}
+
 /// Full-screen client-side browser for `.zip`/`.rar` contents (`FileItem.isBrowsableArchive`)
 /// — downloads the archive once via `FilesClient.downloadRawFile`, then navigates its entry
 /// list like a real folder tree, entirely in memory. Google-Drive-style "open and see what's
@@ -140,9 +153,14 @@ struct ArchiveBrowserView: View {
     @State private var currentPath: [String] = []
     @State private var errorMessage: String?
     @State private var isLoading = true
-    @State private var previewingItem: FileItem?
-    @State private var previewFileURL: URL?
+    @State private var previewingEntry: ArchiveEntryPreview?
+    /// Name of the row whose entry is currently being extracted off the main thread — drives
+    /// its trailing spinner and blocks a second concurrent extraction.
+    @State private var extractingRow: String?
     @State private var toastMessage: DSToastMessage?
+    /// Pairs each file row with its full-screen preview cover so it opens and interactively
+    /// swipes-to-dismiss with the native `.zoom` morph, same as the browse tab.
+    @Namespace private var entryTransition
     @Dependency(\.filesClient) private var filesClient
 
     private var visibleRows: [ArchiveRow] {
@@ -175,62 +193,54 @@ struct ArchiveBrowserView: View {
     }
 
     var body: some View {
-        ZStack {
-            NavigationStack {
-                content
-                    .background(Color.backgroundPrimary.ignoresSafeArea())
-                    .navigationTitle(title)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        if !currentPath.isEmpty {
-                            ToolbarItem(placement: .topBarLeading) {
-                                Button {
-                                    currentPath.removeLast()
-                                } label: {
-                                    IconKit.back
-                                        .resizable()
-                                        .scaledToFit()
-                                        .foregroundStyle(Color.primaryDS)
-                                        .frame(width: Constants.backIconSize, height: Constants.backIconSize)
-                                }
-                                .accessibilityLabel(L10n.Common.back)
+        NavigationStack {
+            content
+                .backgroundGradient()
+                .navigationTitle(title)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    if !currentPath.isEmpty {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button {
+                                currentPath.removeLast()
+                            } label: {
+                                IconKit.back
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundStyle(Color.primaryDS)
+                                    .frame(width: Constants.backIconSize, height: Constants.backIconSize)
                             }
-                        }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button { onDismiss() } label: {
-                                IconKit.close.foregroundStyle(Color.primaryDS)
-                            }
-                            .accessibilityLabel(L10n.Common.close)
+                            .accessibilityLabel(L10n.Common.back)
                         }
                     }
-            }
-
-            // An overlay, not a second `.fullScreenCover` — `ArchiveBrowserView` is itself
-            // already presented via `BrowseContentView`'s `.fullScreenCover`, and stacking a
-            // second `fullScreenCover` on top of the first is a real, reproducible SwiftUI
-            // failure mode: the inner cover can render as a blank/black screen with no
-            // interactive content, and no dismiss gesture reaches it either. Layering within
-            // the same presentation avoids creating a second UIKit presentation controller.
-            if let previewingItem, let previewFileURL {
-                ArchiveEntryPreviewView(
-                    item: previewingItem,
-                    fileURL: previewFileURL,
-                    serverURL: serverURL,
-                    resolveAsset: { relativePath in await resolveAsset(relativePath, relativeTo: previewingItem.path) },
-                    onDismiss: {
-                        self.previewingItem = nil
-                        self.previewFileURL = nil
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { onDismiss() } label: {
+                            IconKit.close.foregroundStyle(Color.primaryDS)
+                        }
+                        .accessibilityLabel(L10n.Common.close)
                     }
-                )
-                .transition(.opacity)
-                .zIndex(1)
-            }
+                }
         }
         .dsToast($toastMessage)
-        .animation(.default, value: previewingItem?.id)
+        // A real cover, nested inside the archive's own `.fullScreenCover` — the entry
+        // preview morphs from its row and swipes back to it (`.zoom`), and dismissing it
+        // lands back in the archive listing rather than closing everything.
+        .fullScreenCover(item: $previewingEntry) { entry in
+            PreviewZoomContainer(sourceID: entry.sourceID, namespace: entryTransition) {
+                ArchiveEntryPreviewView(
+                    item: entry.item,
+                    fileURL: entry.fileURL,
+                    serverURL: serverURL,
+                    resolveAsset: { relativePath in await resolveAsset(relativePath, relativeTo: entry.item.path) },
+                    onDismiss: { previewingEntry = nil }
+                )
+            }
+        }
         .task {
             await load()
         }
+        // Navigating a folder abandons any in-flight extraction the user walked away from.
+        .onChange(of: currentPath) { _, _ in extractingRow = nil }
     }
 
     @ViewBuilder
@@ -266,10 +276,13 @@ struct ArchiveBrowserView: View {
             } else {
                 FileTypeIcon(kind: (row.name as NSString).pathExtension)
                     .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                    .matchedTransitionSource(id: row.name, in: entryTransition)
             }
-            Text(row.name).type(.body2(.regular), style: .primary(for: .label))
+            Text(row.name).type(.body2(.semibold), style: .primary(for: .label))
             Spacer()
-            if let size = row.size {
+            if extractingRow == row.name {
+                ProgressView().controlSize(.small)
+            } else if let size = row.size {
                 Text(Self.byteFormatter.string(fromByteCount: Int64(size)))
                     .type(.body3(.regular), style: .secondary)
             }
@@ -304,32 +317,43 @@ struct ArchiveBrowserView: View {
             currentPath.append(row.name)
             return
         }
-        let fullPath = currentPath.isEmpty ? row.name : currentPath.joined(separator: "/") + "/" + row.name
+        guard extractingRow == nil, let source else { return }
+        let rowName = row.name
+        let fullPath = currentPath.isEmpty ? rowName : currentPath.joined(separator: "/") + "/" + rowName
         let parent = (fullPath as NSString).deletingLastPathComponent
         let entryItem = FileItem(
-            name: row.name,
+            name: rowName,
             path: parent,
             dateModified: Date(timeIntervalSince1970: 0),
             size: Int64(row.size ?? 0),
-            kind: (row.name as NSString).pathExtension
+            kind: (rowName as NSString).pathExtension
         )
-        guard !entryItem.isUnsupportedForPreview else {
-            toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.unsupportedFileType)
-            return
-        }
-        guard let source else { return }
-        guard let destination = SafeDestination.within(Self.temporaryDirectory(for: item), row.name) else {
+        guard let destination = SafeDestination.within(Self.temporaryDirectory(for: item), rowName) else {
             toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.openFailed)
             return
         }
-        do {
-            try? FileManager.default.removeItem(at: destination)
-            try FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
-            try ArchiveReader.extract(fullPath, from: source, to: destination)
-            previewFileURL = destination
-            previewingItem = entryItem
-        } catch {
-            toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.openFailed)
+        extractingRow = rowName
+        Task {
+            // Off the main thread — a multi-gigabyte entry (a large video, or an unsupported
+            // binary opened just to be shared) would otherwise freeze the UI while it unpacks.
+            let extracted = await Task.detached(priority: .userInitiated) { () -> Bool in
+                try? FileManager.default.removeItem(at: destination)
+                try? FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
+                do {
+                    try ArchiveReader.extract(fullPath, from: source, to: destination)
+                    return true
+                } catch {
+                    return false
+                }
+            }.value
+            // Bail if the user navigated away or tapped another row meanwhile.
+            guard extractingRow == rowName else { return }
+            extractingRow = nil
+            if extracted {
+                previewingEntry = ArchiveEntryPreview(item: entryItem, fileURL: destination, sourceID: rowName)
+            } else {
+                toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.openFailed)
+            }
         }
     }
 
@@ -384,7 +408,11 @@ private struct ArchiveEntryPreviewView: View {
     let onDismiss: () -> Void
 
     var body: some View {
-        if (item.isImage || item.isRawImage) && !item.isSVG {
+        if item.isUnsupportedForPreview {
+            // Same Files-app style screen as the browse tab, minus the server actions — only
+            // system-sharing the already-extracted file applies to an archive entry.
+            UnsupportedFilePreviewView(item: item, systemShare: .local(fileURL), onDismiss: onDismiss)
+        } else if (item.isImage || item.isRawImage) && !item.isSVG {
             ArchiveImagePreviewView(
                 fileName: item.name,
                 fileURL: fileURL,
@@ -392,16 +420,12 @@ private struct ArchiveEntryPreviewView: View {
                 onDismiss: onDismiss
             )
         } else if item.isPreviewableViaDownload {
-            // Presented as an in-view overlay (not a cover), so the native `.zoom` dismiss the
-            // browse-tab previews get isn't available here — the manual drag-to-dismiss stands in.
             FilePreviewContainerView(fileURL: fileURL, errorMessage: nil, onDismiss: onDismiss)
-                .swipeToDismissContent(onDismiss: onDismiss)
         } else if item.isStreamableMedia {
             // `item.supportsThumbnail` is always `false` for archive entries (no server
             // metadata to know otherwise), so `StreamingPreviewView`'s poster never renders
             // here — `serverURL` is otherwise unused for a local file URL.
             StreamingPreviewView(item: item, url: fileURL, serverURL: serverURL, onDismiss: onDismiss)
-                .swipeToDismissContent(onDismiss: onDismiss)
         } else {
             ArchiveTextEntryPreviewView(item: item, fileURL: fileURL, resolveAsset: resolveAsset, onDismiss: onDismiss)
         }
@@ -418,9 +442,6 @@ private struct ArchiveImagePreviewView: View {
     let onDismiss: () -> Void
 
     @State private var areControlsHidden = false
-    /// True while the image is magnified — suspends swipe-to-dismiss so panning the zoomed
-    /// image doesn't close the viewer.
-    @State private var isZoomed = false
 
     var body: some View {
         NavigationStack {
@@ -433,29 +454,28 @@ private struct ArchiveImagePreviewView: View {
                     }
                 }
                 .navigationTitle(fileName)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
-                        .accessibilityLabel(L10n.Common.close)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
+                            .accessibilityLabel(L10n.Common.close)
+                    }
                 }
-            }
-            .toolbar(areControlsHidden ? .hidden : .visible, for: .navigationBar)
-            .statusBarHidden(areControlsHidden)
+                .toolbar(areControlsHidden ? .hidden : .visible, for: .navigationBar)
+                .statusBarHidden(areControlsHidden)
         }
-        .swipeToDismissContent(isSuspended: isZoomed, onDismiss: onDismiss)
     }
 
     @ViewBuilder
     private var imageContent: some View {
         if isGIF {
-            ZoomableScrollView(onZoomChange: { isZoomed = $0 }) { AnimatedImageView(fileURL: fileURL) }
+            ZoomableScrollView { AnimatedImageView(fileURL: fileURL) }
         } else {
             AsyncImage(url: fileURL) { phase in
                 switch phase {
                 case let .success(image):
-                    ZoomableScrollView(onZoomChange: { isZoomed = $0 }) { image.resizable().scaledToFit() }
+                    ZoomableScrollView { image.resizable().scaledToFit() }
                 case .failure:
                     VStack(spacing: Constants.statusSpacing) {
                         IconKit.warning
@@ -501,7 +521,7 @@ private struct ArchiveTextEntryPreviewView: View {
     var body: some View {
         NavigationStack {
             body_
-                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .backgroundGradient()
                 .navigationTitle(item.name)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.hidden, for: .navigationBar)
