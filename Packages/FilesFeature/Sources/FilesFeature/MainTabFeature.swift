@@ -144,6 +144,10 @@ public struct MainTabFeature {
                 state.selectedTab = .downloads
                 return .send(.downloads(.refreshButtonTapped))
 
+            case .browse(.delegate(.goToSharedTab)), .favorites(.delegate(.goToSharedTab)):
+                state.selectedTab = .shared
+                return .send(.shared(.refreshRequested))
+
             case .settings(.delegate(.signOutButtonTapped)):
                 return .send(.delegate(.signOutButtonTapped))
 

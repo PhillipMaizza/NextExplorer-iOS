@@ -10,11 +10,15 @@ public struct FavoritesFeature {
     public struct State: Equatable {
         public var serverURL: URL
         public var favorites: IdentifiedArrayOf<Favorite> = []
-        public var isLoading = false
-        public var errorMessage: String?
-        /// A failed remove/reorder, surfaced as a toast rather than the list level
-        /// `errorMessage`, which is only shown when the list is empty.
+        /// The load lifecycle: `.idle` → `.loading` → `.loaded` / `.failed`. Drives the
+        /// skeleton (`.loading` with no data) and the full screen error (`.failed`).
+        public var phase: DataPhase = .idle
+        /// A failed remove/reorder, or a refresh failure over an already populated list,
+        /// surfaced as a toast rather than the full screen `phase.errorMessage`.
         public var actionErrorMessage: String?
+
+        /// The first load's failure text, if it's still the current state.
+        public var errorMessage: String? { phase.errorMessage }
         public var searchQuery = ""
         @Presents public var editSheet: FavoriteEditFeature.State?
         public var isSelecting = false
@@ -73,13 +77,14 @@ public struct FavoritesFeature {
         public enum Delegate: Equatable, Sendable {
             case favoritesChanged
             case openDownloadsTapped
+            case goToSharedTab
             case uploadRequested([PendingUpload])
         }
     }
 
     @Dependency(\.filesClient) var filesClient
 
-    private enum CancelID { case reorder }
+    private enum CancelID { case reorder, load }
 
     public init() {}
 
@@ -87,21 +92,26 @@ public struct FavoritesFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.favorites.isEmpty, state.errorMessage == nil, !state.isLoading else { return .none }
+                guard state.phase.shouldLoadOnAppear else { return .none }
                 return load(&state)
 
             case .refreshButtonTapped:
                 return load(&state)
 
             case let .favoritesResponse(.success(favorites)):
-                state.isLoading = false
+                state.phase = .loaded
                 state.favorites = IdentifiedArray(uniqueElements: favorites.sorted { $0.position < $1.position })
-                state.errorMessage = nil
                 return .none
 
             case let .favoritesResponse(.failure(error)):
-                state.isLoading = false
-                state.errorMessage = error.userMessage
+                // A full screen error only when there's nothing to blank; a failure over an
+                // already populated list stays `.loaded` and toasts instead.
+                if state.favorites.isEmpty {
+                    state.phase = .failed(error.userMessage)
+                } else {
+                    state.phase = .loaded
+                    state.actionErrorMessage = error.userMessage
+                }
                 return .none
 
             case let .rowTapped(favorite):
@@ -231,6 +241,9 @@ public struct FavoritesFeature {
             case .path(.element(id: _, action: .delegate(.openDownloadsTapped))):
                 return .send(.delegate(.openDownloadsTapped))
 
+            case .path(.element(id: _, action: .delegate(.goToSharedTab))):
+                return .send(.delegate(.goToSharedTab))
+
             case let .path(.element(id: _, action: .delegate(.uploadRequested(files)))):
                 return .send(.delegate(.uploadRequested(files)))
 
@@ -260,13 +273,13 @@ public struct FavoritesFeature {
     }
 
     private func load(_ state: inout State) -> Effect<Action> {
-        state.isLoading = true
-        state.errorMessage = nil
+        state.phase = .loading
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in
             await send(.favoritesResponse(try await apiResult { try await filesClient.favorites(serverURL) }))
         }
+        .cancellable(id: CancelID.load, cancelInFlight: true)
     }
 
     /// Best-effort, matching the sign-out flow's philosophy: one failure shouldn't block

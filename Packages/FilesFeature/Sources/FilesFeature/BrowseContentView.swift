@@ -12,6 +12,8 @@ private enum BrowseViewMode: String {
 }
 
 private enum Constants {
+    /// Lifts a preview cover's toast clear of the `previewChrome` bottom action bar.
+    static let previewToolbarToastInset: CGFloat = .size56
     static let emptyStateSpacing: CGFloat = .space8
     static let emptyStateIconSize: CGFloat = .superIcon
     static let gridSpacing: CGFloat = .space16
@@ -82,16 +84,11 @@ struct BrowseContentView: View {
         [GridItem(.adaptive(minimum: thumbnailSize.gridItemMinWidth), spacing: Constants.gridSpacing)]
     }
 
-    /// Pre-filters kinds `rowTapped` would just silently no-op on (or, for unsupported video
-    /// containers, previously opened a full-screen "can't play this" view for) — a toast reads
-    /// better than either a dead tap or interrupting with a whole screen.
     private func handleTap(_ item: FileItem) {
-        guard !item.isDirectory else {
-            store.send(.rowTapped(item))
-            return
-        }
-        guard !item.isUnsupportedForPreview else {
-            toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Browse.unsupportedFileType)
+        // A second tap while the row spinner is up cancels the in-flight open (a slow fetch
+        // has no other way out — the cover isn't presented yet).
+        if isOpening(item) {
+            store.send(.previewDismissed)
             return
         }
         store.send(.rowTapped(item))
@@ -117,27 +114,35 @@ struct BrowseContentView: View {
             .sheet(item: $store.scope(state: \.permissions, action: \.permissions)) { permissionsStore in
                 PermissionsSheet(store: permissionsStore)
             }
-            .fullScreenCover(item: previewItemBinding) { item in
-                PreviewZoomContainer(sourceID: item.id, namespace: previewTransition) {
-                    previewContent(for: item)
+            .fullScreenCover(isPresented: previewPresentedBinding) {
+                // `isPresented`, not `item:` — so an in-place rename (which changes the item's
+                // id) updates the cover's content instead of dismissing and re-presenting it.
+                if let item = store.previewItem {
+                    PreviewZoomContainer(sourceID: item.id, namespace: previewTransition) {
+                        previewContent(for: item)
+                    }
+                    .sheet(isPresented: isDeletingFromPreviewBinding) {
+                        deleteConfirmationSheet(dismissingPreview: true)
+                    }
+                    .sheet(item: renameItemFromPreviewBinding) { renameTarget in
+                        renameSheet(renameTarget)
+                    }
+                    .sheet(item: shareTargetFromPreviewBinding) { shareItem in
+                        createShareLinkSheet(for: shareItem, fromPreview: true)
+                    }
+                    .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
+                    // The preview stays put through downloads and renames: their result
+                    // toasts surface over the cover, and "Open" on a download routes back
+                    // through the reducer so the cover dismisses before the tab switches.
+                    .dsToast(previewToastBinding, extraBottomInset: Constants.previewToolbarToastInset)
+                    .dsToast(previewProgressToastBinding, extraBottomInset: Constants.previewToolbarToastInset)
                 }
             }
-            .sheet(item: $shareTarget) { item in
-                CreateShareLinkSheet(
-                    store: Store(
-                        initialState: CreateShareLinkFeature.State(
-                            serverURL: store.serverURL,
-                            itemName: item.name,
-                            itemPath: item.path,
-                            isDirectory: item.isDirectory
-                        )
-                    ) {
-                        CreateShareLinkFeature()
-                    }
-                )
+            .sheet(item: shareTargetBinding) { item in
+                createShareLinkSheet(for: item, fromPreview: false)
             }
-            .dsToast($toastMessage, extraBottomInset: bottomChromeClearance)
-            .dsToast(progressToastBinding, extraBottomInset: bottomChromeClearance)
+            .dsToast(listToastBinding, extraBottomInset: bottomChromeClearance)
+            .dsToast(listProgressToastBinding, extraBottomInset: bottomChromeClearance)
             // `fileActionErrorMessage` (rename/delete/extract/compress failures) was set on
             // `State` but never actually read by any view — silently swallowed. Mirrored into
             // the same toast the unsupported-file-type warning uses.
@@ -147,8 +152,10 @@ struct BrowseContentView: View {
             }
             .onChange(of: store.downloadSuccessMessage) { _, newValue in
                 guard let newValue else { return }
+                let inPreview = store.previewItem != nil
                 toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
-                    store.send(.delegate(.openDownloadsTapped))
+                    // From a preview, close the cover first, then switch tabs after a settle.
+                    store.send(inPreview ? .openDownloadsFromPreview : .delegate(.openDownloadsTapped))
                 }
             }
             .onChange(of: store.transferSuccessMessage) { _, newValue in
@@ -164,6 +171,11 @@ struct BrowseContentView: View {
                 toastMessage = .failure(newValue, actionTitle: L10n.Common.retry) {
                     store.send(.retryTransferTapped, animation: .default)
                 }
+            }
+            // The share target is view-local state; clear it whenever the preview closes so a
+            // stale value can't auto-reopen the share sheet over the next preview.
+            .onChange(of: store.previewItem == nil) { _, previewClosed in
+                if previewClosed { shareTarget = nil }
             }
             .task {
                 store.send(.onAppear)
@@ -213,8 +225,10 @@ struct BrowseContentView: View {
             overlayStateContent
                 .id(overlayState)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                // Scoped to the overlay so an implicit animation can't catch sibling geometry
+                // settling on first appear (same fix as `SharedView`).
+                .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
         }
-        .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
         .toolbar {
             selectSortToolbar(
                 isSelecting: store.isSelecting,
@@ -392,16 +406,7 @@ struct BrowseContentView: View {
             )
         }
         .sheet(item: renameItemBinding) { item in
-            NameInputSheet(
-                icon: IconKit.rename,
-                title: L10n.Browse.renameTitle,
-                placeholder: L10n.Browse.renameNamePlaceholder,
-                confirmTitle: L10n.Common.save,
-                initialName: item.name,
-                isBusy: store.isPerformingFileAction,
-                onConfirm: { store.send(.renameConfirmed($0)) },
-                onCancel: { store.send(.renameCancelled) }
-            )
+            renameSheet(item)
         }
         .sheet(isPresented: newFolderSheetBinding) {
             NameInputSheet(
@@ -415,17 +420,7 @@ struct BrowseContentView: View {
             )
         }
         .sheet(isPresented: isDeletingBinding) {
-            DSAlertSheet(
-                icon: IconKit.delete,
-                title: deleteConfirmationTitle,
-                message: deleteConfirmationMessage,
-                confirmTitle: L10n.Common.delete,
-                dismissTitle: L10n.Common.cancel,
-                role: .destructive,
-                closeAccessibilityLabel: L10n.Common.close,
-                onConfirm: { store.send(.deleteConfirmed) },
-                onDismiss: { store.send(.deleteCancelled) }
-            )
+            deleteConfirmationSheet(dismissingPreview: false)
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
         .sheet(isPresented: transferConflictBinding) {
@@ -446,48 +441,175 @@ struct BrowseContentView: View {
         .hapticFeedback(.warning, trigger: store.transferConflict)
     }
 
-    private var previewItemBinding: Binding<FileItem?> {
+    private var previewPresentedBinding: Binding<Bool> {
         Binding(
-            get: { store.previewItem },
-            set: { if $0 == nil { store.send(.previewDismissed) } }
+            get: { store.previewItem != nil && isPreviewContentReady },
+            set: { if !$0 { store.send(.previewDismissed) } }
         )
+    }
+
+    /// Whether the tapped file has loaded enough to present its cover. The download/editor
+    /// previews (PDF, office docs, text) hold the cover — and show a row spinner — until their
+    /// fetch lands; gallery, streaming, archives and the unsupported screen are ready at once.
+    /// Branch order mirrors `previewContent(for:)`.
+    private var isPreviewContentReady: Bool {
+        guard let item = store.previewItem else { return false }
+        if item.isUnsupportedForPreview { return true }
+        if item.isStreamableMedia { return true }
+        if item.isBrowsableArchive { return true }
+        if (item.isImage || item.isRawImage) && !item.isSVG { return true }
+        if item.isPreviewableViaDownload {
+            return store.previewFileURL != nil || store.previewErrorMessage != nil
+        }
+        return store.textContent != nil || store.textEditorErrorMessage != nil
+    }
+
+    private func isOpening(_ item: FileItem) -> Bool { isOpeningID(item.id) }
+
+    private func isOpeningID(_ id: String) -> Bool {
+        store.previewItem?.id == id && !isPreviewContentReady
+    }
+
+    /// Search hits and browse rows share an `id` scheme (`path/name`), so `searchResultTapped`
+    /// builds a `FileItem` whose id matches the hit — the `.zoom` source and the opening
+    /// spinner can key off the same value.
+    private func searchResultCell(row: SearchResultItem, grid: Bool) -> some View {
+        Group {
+            if grid {
+                GridCellView(
+                    name: row.name, isDirectory: row.isDirectory,
+                    isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
+                    matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition),
+                    isOpening: isOpeningID(row.id)
+                )
+            } else {
+                FileRowView(
+                    name: row.name, isDirectory: row.isDirectory, subtitle: row.matchLine,
+                    isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
+                    matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition),
+                    isOpening: isOpeningID(row.id)
+                )
+            }
+        }
+    }
+
+    /// Extracted from the grid/list `ForEach` bodies — inlining the full cell (with the
+    /// `matchedSource` / `isOpening` args) tipped those already-large expressions past the
+    /// type-checker's budget.
+    private func gridCell(for item: FileItem) -> some View {
+        GridCellView(
+            item: item,
+            isFavorite: store.favoritePaths.contains(item.id),
+            serverURL: store.serverURL,
+            showThumbnails: store.preferences.showThumbnails,
+            iconSize: thumbnailSize.iconSize,
+            matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition),
+            isOpening: isOpening(item)
+        )
+    }
+
+    private func listRowCell(for item: FileItem) -> some View {
+        FileRowView(
+            item: item,
+            isFavorite: store.favoritePaths.contains(item.id),
+            serverURL: store.serverURL,
+            showThumbnails: store.preferences.showThumbnails,
+            matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition),
+            isOpening: isOpening(item)
+        )
+    }
+
+    /// Toasts split by surface: while a preview cover is up, its toasts render over the cover,
+    /// otherwise over the list. One `toastMessage`/`fileActionProgressMessage` still drives
+    /// both — only the visible one is bound.
+    private var listToastBinding: Binding<DSToastMessage?> {
+        Binding(get: { store.previewItem == nil ? toastMessage : nil }, set: { toastMessage = $0 })
+    }
+
+    private var previewToastBinding: Binding<DSToastMessage?> {
+        Binding(get: { store.previewItem != nil ? toastMessage : nil }, set: { toastMessage = $0 })
     }
 
     /// Read-only from the store's perspective: `fileActionProgressMessage` clears itself once
     /// the extract/compress effect resolves, so there's nothing for the view to write back —
     /// the toast has no auto-dismiss timer to fire early either (`DSToastMessage.progress`
     /// sets `isPersistent`), so the setter is genuinely never called in practice.
-    private var progressToastBinding: Binding<DSToastMessage?> {
+    private var listProgressToastBinding: Binding<DSToastMessage?> {
         Binding(
-            get: { store.fileActionProgressMessage.map { DSToastMessage.progress($0) } },
+            get: { store.previewItem == nil ? store.fileActionProgressMessage.map(DSToastMessage.progress) : nil },
             set: { _ in }
+        )
+    }
+
+    private var previewProgressToastBinding: Binding<DSToastMessage?> {
+        Binding(
+            get: { store.previewItem != nil ? store.fileActionProgressMessage.map(DSToastMessage.progress) : nil },
+            set: { _ in }
+        )
+    }
+
+    private var shareTargetBinding: Binding<FileItem?> {
+        Binding(get: { store.previewItem == nil ? shareTarget : nil }, set: { shareTarget = $0 })
+    }
+
+    private var shareTargetFromPreviewBinding: Binding<FileItem?> {
+        Binding(get: { store.previewItem != nil ? shareTarget : nil }, set: { shareTarget = $0 })
+    }
+
+    private func createShareLinkSheet(for item: FileItem, fromPreview: Bool) -> some View {
+        CreateShareLinkSheet(
+            store: Store(
+                initialState: CreateShareLinkFeature.State(
+                    serverURL: store.serverURL,
+                    itemName: item.name,
+                    itemPath: item.path,
+                    isDirectory: item.isDirectory
+                )
+            ) {
+                CreateShareLinkFeature()
+            },
+            onViewShares: { store.send(fromPreview ? .goToSharedTabFromPreview : .delegate(.goToSharedTab)) }
         )
     }
 
     @ViewBuilder
     private func previewContent(for item: FileItem) -> some View {
-        if item.isStreamableMedia, let url = FilesClient.previewURL(serverURL: store.serverURL, item: item) {
-            // Guaranteed `isNativelyPlayable` by this point — unsupported containers/codecs
-            // are caught by the toast in `handleTap`, before `rowTapped` is ever sent.
+        if item.isUnsupportedForPreview {
+            UnsupportedFilePreviewView(
+                item: item,
+                systemShare: .remote(item, serverURL: store.serverURL),
+                onDismiss: { store.send(.previewDismissed) },
+                onShareLink: (store.access?.canShare ?? false) ? {
+                    shareTarget = item
+                } : nil,
+                onRename: (store.access?.canWrite ?? false) ? {
+                    store.send(.renameTapped(item))
+                } : nil,
+                onDownload: (store.access?.canDownload ?? false) ? {
+                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                } : nil,
+                onDelete: (store.access?.canDelete ?? false) ? {
+                    store.send(.deleteTapped(item))
+                } : nil
+            )
+        } else if item.isStreamableMedia, let url = FilesClient.previewURL(serverURL: store.serverURL, item: item) {
+            // Guaranteed `isNativelyPlayable` here — undecodable containers/codecs are
+            // `isUnsupportedForPreview` and handled by the branch above.
             StreamingPreviewView(
                 item: item,
                 url: url,
                 serverURL: store.serverURL,
                 onDismiss: { store.send(.previewDismissed) },
                 onShare: (store.access?.canShare ?? false) ? {
-                    store.send(.previewDismissed)
                     shareTarget = item
                 } : nil,
                 onRename: (store.access?.canWrite ?? false) ? {
-                    store.send(.previewDismissed)
                     store.send(.renameTapped(item))
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.previewDismissed)
                     store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? {
-                    store.send(.previewDismissed)
                     store.send(.deleteTapped(item))
                 } : nil
             )
@@ -500,19 +622,15 @@ struct BrowseContentView: View {
                 serverURL: store.serverURL,
                 onDismiss: { store.send(.previewDismissed) },
                 onShare: (store.access?.canShare ?? false) ? { current in
-                    store.send(.previewDismissed)
                     shareTarget = current
                 } : nil,
                 onRename: (store.access?.canWrite ?? false) ? { current in
-                    store.send(.previewDismissed)
                     store.send(.renameTapped(current))
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? { current in
-                    store.send(.previewDismissed)
                     store.send(.downloadTapped(current, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? { current in
-                    store.send(.previewDismissed)
                     store.send(.deleteTapped(current))
                 } : nil
             )
@@ -522,19 +640,15 @@ struct BrowseContentView: View {
                 errorMessage: store.previewErrorMessage,
                 onDismiss: { store.send(.previewDismissed) },
                 onShareLink: (store.access?.canShare ?? false) ? {
-                    store.send(.previewDismissed)
                     shareTarget = item
                 } : nil,
                 onRename: (store.access?.canWrite ?? false) ? {
-                    store.send(.previewDismissed)
                     store.send(.renameTapped(item))
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.previewDismissed)
                     store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? {
-                    store.send(.previewDismissed)
                     store.send(.deleteTapped(item))
                 } : nil
             )
@@ -603,10 +717,31 @@ struct BrowseContentView: View {
 
     /// Drives the rename `NameInputSheet`; a swipe down dismiss routes back through the reducer
     /// so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
+    /// Split like the delete confirmation so it presents over whichever surface is frontmost.
     private var renameItemBinding: Binding<FileItem?> {
         Binding(
-            get: { store.renameSheetItem },
+            get: { store.previewItem == nil ? store.renameSheetItem : nil },
             set: { if $0 == nil { store.send(.renameCancelled) } }
+        )
+    }
+
+    private var renameItemFromPreviewBinding: Binding<FileItem?> {
+        Binding(
+            get: { store.previewItem != nil ? store.renameSheetItem : nil },
+            set: { if $0 == nil { store.send(.renameCancelled) } }
+        )
+    }
+
+    private func renameSheet(_ item: FileItem) -> some View {
+        NameInputSheet(
+            icon: IconKit.rename,
+            title: L10n.Browse.renameTitle,
+            placeholder: L10n.Browse.renameNamePlaceholder,
+            confirmTitle: L10n.Common.save,
+            initialName: item.name,
+            isBusy: store.isPerformingFileAction,
+            onConfirm: { store.send(.renameConfirmed($0)) },
+            onCancel: { store.send(.renameCancelled) }
         )
     }
 
@@ -618,9 +753,43 @@ struct BrowseContentView: View {
     }
 
     // No op setter: the sheet is dismiss disabled and only closes through one of
-    // `DSAlertSheet`'s own buttons, which drive the reducer directly.
+    // `DSAlertSheet`'s own buttons, which drive the reducer directly. Split in two so the
+    // confirmation presents over whichever surface is frontmost: the list, or a preview cover.
     private var isDeletingBinding: Binding<Bool> {
-        Binding(get: { store.deleteConfirmationItem != nil }, set: { _ in })
+        Binding(get: { store.deleteConfirmationItem != nil && store.previewItem == nil }, set: { _ in })
+    }
+
+    private var isDeletingFromPreviewBinding: Binding<Bool> {
+        Binding(get: { store.deleteConfirmationItem != nil && store.previewItem != nil }, set: { _ in })
+    }
+
+    /// The gallery holds many images, so deleting one drops it from the pager and stays open
+    /// (like Photos) rather than tearing the whole cover down.
+    private var isPreviewGallery: Bool {
+        store.previewItem.map { ($0.isImage || $0.isRawImage) && !$0.isSVG } ?? false
+    }
+
+    private func deleteConfirmationSheet(dismissingPreview: Bool) -> some View {
+        DSAlertSheet(
+            icon: IconKit.delete,
+            title: deleteConfirmationTitle,
+            message: deleteConfirmationMessage,
+            confirmTitle: L10n.Common.delete,
+            dismissTitle: L10n.Common.cancel,
+            role: .destructive,
+            closeAccessibilityLabel: L10n.Common.close,
+            onConfirm: {
+                // A single-item preview dismisses the cover and defers the delete so the row
+                // animates out on the list. The gallery (and the list) delete in place. Either
+                // way `deleteConfirmationItem` clears synchronously, so no binding flicker.
+                if dismissingPreview, !isPreviewGallery {
+                    store.send(.deleteConfirmedFromPreview)
+                } else {
+                    store.send(.deleteConfirmed)
+                }
+            },
+            onDismiss: { store.send(.deleteCancelled) }
+        )
     }
 
     private var deleteConfirmationTitle: String {
@@ -929,7 +1098,7 @@ struct BrowseContentView: View {
                         Button {
                             store.send(.searchResultTapped(result))
                         } label: {
-                            GridCellView(name: result.name, isDirectory: result.isDirectory, isFavorite: store.favoritePaths.contains(result.id), kind: searchResultKind(result))
+                            searchResultCell(row: result, grid: true)
                                 .dsCard(padding: Constants.gridCellPadding)
                         }
                         .buttonStyle(DSHapticButtonStyle())
@@ -943,13 +1112,7 @@ struct BrowseContentView: View {
                                 handleTap(item)
                             }
                         } label: {
-                            GridCellView(
-                                item: item,
-                                isFavorite: store.favoritePaths.contains(item.id),
-                                serverURL: store.serverURL,
-                                showThumbnails: store.preferences.showThumbnails,
-                                iconSize: thumbnailSize.iconSize
-                            )
+                            gridCell(for: item)
                             .dsCard(padding: Constants.gridCellPadding)
                             .overlay(alignment: .topLeading) {
                                 if store.isSelecting {
@@ -958,7 +1121,6 @@ struct BrowseContentView: View {
                             }
                         }
                         .buttonStyle(DSHapticButtonStyle())
-                        .matchedTransitionSource(id: item.id, in: previewTransition)
                         .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
                         .contextMenu {
                             if !store.isSelecting {
@@ -1098,16 +1260,10 @@ struct BrowseContentView: View {
                     if store.isSelecting {
                         DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
                     }
-                    FileRowView(
-                        item: item,
-                        isFavorite: store.favoritePaths.contains(item.id),
-                        serverURL: store.serverURL,
-                        showThumbnails: store.preferences.showThumbnails
-                    )
+                    listRowCell(for: item)
                 }
             }
             .buttonStyle(DSHapticButtonStyle())
-            .matchedTransitionSource(id: item.id, in: previewTransition)
             .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
             .contextMenu {
                 if !store.isSelecting {
@@ -1156,7 +1312,7 @@ struct BrowseContentView: View {
             Button {
                 store.send(.searchResultTapped(result))
             } label: {
-                FileRowView(name: result.name, isDirectory: result.isDirectory, subtitle: result.matchLine, isFavorite: store.favoritePaths.contains(result.id), kind: searchResultKind(result))
+                searchResultCell(row: result, grid: false)
             }
             .buttonStyle(DSHapticButtonStyle())
             .listRowBackground(Color.backgroundSecondary)

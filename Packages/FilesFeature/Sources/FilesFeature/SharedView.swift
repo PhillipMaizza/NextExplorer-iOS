@@ -9,19 +9,20 @@ private enum Constants {
     static let segmentedControlHorizontalPadding: CGFloat = .space16
     static let segmentedControlTopPadding: CGFloat = .space8
     static let segmentedControlBottomPadding: CGFloat = .space12
-    static let cardListInset: CGFloat = .space16
-    static let cardListSpacing: CGFloat = .space12
-    static let overlayCrossfadeDuration: Double = 0.2
-    static let listDiffSpringResponse: Double = 0.35
-    static let listDiffSpringDamping: Double = 0.8
     /// How often the view re-checks whether an open link has crossed its expiry.
     static let expiryCheckInterval: TimeInterval = 30
+    /// Redacted skeleton rows, keyed by the placeholder name length. Uneven so the skeleton
+    /// doesn't line up as flat columns.
+    static let skeletonNameLengths = [9, 14, 6, 11, 8, 13, 7, 10]
 }
 
 struct SharedView: View {
     @Bindable var store: StoreOf<SharedFeature>
     @State private var toastMessage: DSToastMessage?
     @State private var isSortSheetPresented = false
+    /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
+    /// pull-to-refresh rubber-band instead of staying pinned.
+    @State private var pullOffset: CGFloat = 0
     /// Flipped once a pull-to-refresh finishes, purely as a `.hapticFeedback` trigger.
     @State private var didFinishRefreshing = false
 
@@ -39,26 +40,19 @@ struct SharedView: View {
         Binding(get: { store.deleteConfirmationShare != nil }, set: { _ in })
     }
 
-    private var overlayPhase: ListStateOverlay.Phase {
-        if store.isLoading && store.isCurrentSegmentEmpty {
-            .loading
-        } else if store.errorMessage != nil {
-            .error
-        } else if store.isCurrentSegmentEmpty {
-            .empty
-        } else if store.isSearchWithoutResults {
-            .noResults
-        } else {
-            .none
-        }
+    /// The one screen state, derived from the store — the card skeleton until the current
+    /// segment has been fetched once (`store.phase`), then error / empty / no-results / list.
+    private var listPhase: ListPhase {
+        if store.errorMessage != nil { return .error }
+        if !store.phase.hasLoaded && store.isCurrentSegmentEmpty { return .loading }
+        if store.isCurrentSegmentEmpty { return .empty }
+        if store.isSearchWithoutResults { return .noResults }
+        return .content
     }
 
     var body: some View {
         NavigationStack {
-            TimelineView(.periodic(from: .now, by: Constants.expiryCheckInterval)) { context in
-                shareList
-                    .task(id: context.date) { store.send(.expiryTick(context.date)) }
-            }
+            shareList
             .navigationTitle(L10n.Shared.navigationTitle)
             .navigationBarTitleDisplayMode(.large)
             .searchable(
@@ -71,19 +65,21 @@ struct SharedView: View {
                     SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
                 }
             }
+            // Skeleton rows live inside the `List` (see `shareList`); the empty/error message
+            // is an overlay fed the list's pull-to-refresh drag so it rubber-bands with it.
+            // One animation cross-fades the whole state change.
             .overlay {
                 ListStateOverlay(
-                    phase: overlayPhase,
+                    phase: listPhase,
                     errorMessage: store.errorMessage,
                     emptyIcon: IconKit.shareLink,
                     emptyMessage: emptyMessage,
                     noResultsMessage: L10n.Shared.noSearchMatches(store.searchQuery),
+                    pullOffset: pullOffset,
                     onRetry: { store.send(.refreshRequested) }
                 )
-                // Scoped to the overlay only — an implicit `.animation` on the whole view
-                // caught the segmented-control pill mid-tap and animated it with the wrong curve.
-                .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayPhase)
             }
+            .animation(DSMotion.contentReveal, value: listPhase)
             .sheet(isPresented: $isSortSheetPresented) {
                 SortSheet(
                     options: SharedFeature.SortOption.allCases,
@@ -118,6 +114,14 @@ struct SharedView: View {
             .hapticFeedback(.warning, trigger: store.deleteConfirmationShare != nil)
             .dsToast($toastMessage)
             .task { store.send(.onAppear) }
+            // Was a `TimelineView(.periodic)` — that wrapper stopped the `List` from driving
+            // the nav bar's large title. A plain polling loop instead.
+            .task {
+                while !Task.isCancelled {
+                    store.send(.expiryTick(Date()))
+                    try? await Task.sleep(for: .seconds(Constants.expiryCheckInterval))
+                }
+            }
             .onChange(of: store.externalRevision) { _, _ in store.send(.externalRevisionChanged) }
             .onChange(of: store.actionErrorMessage) { _, newValue in
                 if let newValue { toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue) }
@@ -143,30 +147,64 @@ struct SharedView: View {
             .padding(.bottom, Constants.segmentedControlBottomPadding)
             .listRowBackground(Color.clear)
             .listRowSeparator(.hidden)
-            .listRowInsets(EdgeInsets(top: 0, leading: Constants.cardListInset, bottom: 0, trailing: Constants.cardListInset))
+            .listRowInsets(EdgeInsets(top: 0, leading: .space16, bottom: 0, trailing: .space16))
 
-            section(for: store.activeShares, header: nil)
-            if !store.expiredShares.isEmpty {
-                section(for: store.expiredShares, header: L10n.Shared.sectionExpired)
+            if listPhase == .loading {
+                skeletonRows
+            } else {
+                section(for: store.activeShares, header: nil)
+                if !store.expiredShares.isEmpty {
+                    section(for: store.expiredShares, header: L10n.Shared.sectionExpired)
+                }
             }
         }
-        .listStyle(.plain)
-        .listSectionSpacing(Constants.cardListSpacing)
+        .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .backgroundGradient()
+        .scrollPullOffset($pullOffset)
         .refreshable {
             await store.send(.refreshRequested).finish()
             didFinishRefreshing.toggle()
         }
         .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
-        .animation(
-            .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-            value: store.displayedShares
+        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedShares)
+    }
+
+    /// Redacted collapsed `SharedLinkCard` stand-ins that sit in the *same* grouped `List` as
+    /// the real rows — never a separate scroll container (that fights the nav bar's large
+    /// title). Shine suppressed under Reduce Motion.
+    private static let placeholderShares: [Share] = Constants.skeletonNameLengths.enumerated().map { index, length in
+        Share(
+            id: "skeleton/\(index)", shareToken: "MMMMMMMMMM", ownerId: "skeleton",
+            sourcePath: String(repeating: "M", count: length), isDirectory: index.isMultiple(of: 2),
+            accessMode: .readonly, sharingType: .anyone, hasPassword: false,
+            createdAt: .distantPast, updatedAt: .distantPast
         )
     }
 
     @ViewBuilder
+    private var skeletonRows: some View {
+        Section {
+            ForEach(Array(Self.placeholderShares.enumerated()), id: \.element.id) { index, share in
+                SharedLinkCard(
+                    share: share, serverURL: store.serverURL, isByMe: true, isExpired: false,
+                    isDeleting: false, onDelete: {}, onCopied: { _ in }
+                )
+                .redacted(reason: .placeholder)
+                .shimmering()
+                .allowsHitTesting(false)
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.backgroundSecondary)
+                .listRowSeparator(index == 0 ? .hidden : .visible, edges: .top)
+                .listRowSeparator(index == Self.placeholderShares.count - 1 ? .hidden : .visible, edges: .bottom)
+            }
+        }
+    }
+
+    @ViewBuilder
     private func section(for shares: IdentifiedArrayOf<Share>, header: String?) -> some View {
+        let firstID = shares.first?.id
+        let lastID = shares.last?.id
         Section {
             ForEach(shares) { share in
                 SharedLinkCard(
@@ -181,14 +219,10 @@ struct SharedView: View {
                     onEdit: { store.send(.editTapped(share)) },
                     onCopied: { toastMessage = .success($0) }
                 )
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
-                .listRowInsets(EdgeInsets(
-                    top: Constants.cardListSpacing / 2,
-                    leading: Constants.cardListInset,
-                    bottom: Constants.cardListSpacing / 2,
-                    trailing: Constants.cardListInset
-                ))
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.backgroundSecondary)
+                .listRowSeparator(share.id == firstID ? .hidden : .visible, edges: .top)
+                .listRowSeparator(share.id == lastID ? .hidden : .visible, edges: .bottom)
             }
         } header: {
             if let header {
@@ -243,8 +277,8 @@ private struct SharedLinkCard: View {
     }
 
     private enum Metrics {
-        static let cornerRadius: CGFloat = .radiusCard
         static let padding: CGFloat = .space16
+        static let headerVerticalPadding: CGFloat = .space12
         static let actionRowSpacing: CGFloat = .space8
         /// One value for both the meta rows and the link-mode row so they read as one list.
         static let rowVerticalPadding: CGFloat = .space8
@@ -267,10 +301,12 @@ private struct SharedLinkCard: View {
         VStack(spacing: 0) {
             header
             if isExpanded {
-                if isByMe { ownerBody } else { recipientBody }
+                Group {
+                    if isByMe { ownerBody } else { recipientBody }
+                }
+                .transition(.opacity)
             }
         }
-        .background(RoundedRectangle(cornerRadius: Metrics.cornerRadius).fill(Color.backgroundSecondary))
         .opacity(isDeleting ? Metrics.deletingOpacity : 1)
         .disabled(isDeleting)
     }
@@ -309,7 +345,8 @@ private struct SharedLinkCard: View {
             }
             .padding(.top, Metrics.actionRowSpacing)
         }
-        .padding(Metrics.padding)
+        .padding(.horizontal, Metrics.padding)
+        .padding(.bottom, Metrics.padding)
     }
 
     /// "With me": read-only — no link, no mode picker, no delete, matching the web
@@ -321,7 +358,8 @@ private struct SharedLinkCard: View {
             metaRow(IconKit.calendar, L10n.Shared.metaExpiration, expiresText, isWarning: isExpired)
         }
         .opacity(isExpired ? Metrics.expiredInfoOpacity : 1)
-        .padding(Metrics.padding)
+        .padding(.horizontal, Metrics.padding)
+        .padding(.bottom, Metrics.padding)
     }
 
     /// "Shared with" — a globe + label for `anyone`; for specific users, the label row plus a
@@ -415,7 +453,7 @@ private struct SharedLinkCard: View {
 
     private var header: some View {
         Button {
-            isExpanded.toggle()
+            withAnimation(DSMotion.disclosure) { isExpanded.toggle() }
         } label: {
             HStack(spacing: .space12) {
                 shareIcon
@@ -444,13 +482,15 @@ private struct SharedLinkCard: View {
 
                 Spacer(minLength: 0)
 
-                IconKit.chevronRight
+                // Points down when collapsed, flips up when expanded.
+                IconKit.chevronDown
                     .resizable().scaledToFit()
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Metrics.chevronSize, height: Metrics.chevronSize)
-                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                    .rotationEffect(.degrees(isExpanded ? 180 : 0))
             }
-            .padding(Metrics.padding)
+            .padding(.horizontal, Metrics.padding)
+            .padding(.vertical, Metrics.headerVerticalPadding)
             .contentShape(Rectangle())
         }
         .buttonStyle(DSHapticButtonStyle())

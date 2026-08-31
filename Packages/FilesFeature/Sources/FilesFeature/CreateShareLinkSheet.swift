@@ -19,6 +19,11 @@ private enum Constants {
     static let userAvatarSize: CGFloat = .size32
     static let copyFeedbackSeconds: Double = 2
     static let maxHeightFraction: CGFloat = 0.9
+    /// Password / expiration fields fade in and out under their toggle. Opacity only — a
+    /// height-interpolating transition (`.move`/`.scale`) makes the capped `DSDynamicHeightSheet`
+    /// re-measure and re-propose its detent every frame, which reads as lag.
+    static var fieldReveal: AnyTransition { .opacity }
+    static let fieldRevealAnimation: Animation = .easeInOut(duration: 0.2)
 }
 
 /// The "Create Share Link" sheet — mirrors the web client's `ShareDialog.vue`, in the app's
@@ -26,6 +31,9 @@ private enum Constants {
 /// created-link confirmation.
 struct CreateShareLinkSheet: View {
     @Bindable var store: StoreOf<CreateShareLinkFeature>
+    /// When set, the created-link state shows a "View in Shared" button that runs this
+    /// (the caller dismisses the preview / switches to the Shared tab).
+    var onViewShares: (() -> Void)?
     @Environment(\.dismiss) private var dismiss
     @State private var copiedField: CopiedField?
 
@@ -58,7 +66,17 @@ struct CreateShareLinkSheet: View {
     private var footerButtons: some View {
         DSSheetFooter {
             if store.createdShare != nil {
-                DSButton(L10n.Common.done, style: .primary) { dismiss() }
+                if let onViewShares {
+                    HStack(spacing: .space12) {
+                        DSButton(L10n.CreateShare.viewInShared, style: .ghost) {
+                            dismiss()
+                            onViewShares()
+                        }
+                        DSButton(L10n.Common.done, style: .primary) { dismiss() }
+                    }
+                } else {
+                    DSButton(L10n.Common.done, style: .primary) { dismiss() }
+                }
             } else {
                 HStack(spacing: .space12) {
                     DSButton(L10n.Common.cancel, style: .ghost) { dismiss() }
@@ -112,6 +130,7 @@ struct CreateShareLinkSheet: View {
             )
             if store.isPasswordEnabled {
                 DSSecureField(L10n.Common.password, text: $store.password.sending(\.passwordChanged), prompt: Text(L10n.Common.password))
+                    .transition(Constants.fieldReveal)
             }
 
             DSToggleRow(
@@ -128,8 +147,11 @@ struct CreateShareLinkSheet: View {
                 )
                 .datePickerStyle(.compact)
                 .tint(Color.accent)
+                .transition(Constants.fieldReveal)
             }
         }
+        .animation(Constants.fieldRevealAnimation, value: store.isPasswordEnabled)
+        .animation(Constants.fieldRevealAnimation, value: store.isExpiryEnabled)
     }
 
     @ViewBuilder

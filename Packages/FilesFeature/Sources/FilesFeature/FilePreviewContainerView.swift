@@ -23,7 +23,7 @@ struct FilePreviewContainerView: View {
     var body: some View {
         NavigationStack {
             content
-                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .backgroundGradient()
                 .previewChrome(
                     title: fileURL?.lastPathComponent,
                     systemShare: .local(fileURL),

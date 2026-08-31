@@ -28,10 +28,10 @@ struct FavoritesFeatureTests {
         }
 
         await store.send(.onAppear) {
-            $0.isLoading = true
+            $0.phase = .loading
         }
         await store.receive(\.favoritesResponse.success) {
-            $0.isLoading = false
+            $0.phase = .loaded
             $0.favorites = [favorite]
         }
     }
@@ -50,10 +50,10 @@ struct FavoritesFeatureTests {
         }
 
         await store.send(.refreshButtonTapped) {
-            $0.isLoading = true
+            $0.phase = .loading
         }
         await store.receive(\.favoritesResponse.success) {
-            $0.isLoading = false
+            $0.phase = .loaded
             $0.favorites = [refreshed]
         }
     }
@@ -141,6 +141,19 @@ struct FavoritesFeatureTests {
 
         await store.send(.path(.element(id: 0, action: .delegate(.openDownloadsTapped))))
         await store.receive(.delegate(.openDownloadsTapped))
+    }
+
+    @Test
+    func goToSharedTabFromAPushedScreenBubblesUpAsADelegate() async {
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
+
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        }
+
+        await store.send(.path(.element(id: 0, action: .delegate(.goToSharedTab))))
+        await store.receive(.delegate(.goToSharedTab))
     }
 
     @Test
@@ -462,18 +475,17 @@ struct FavoritesFeatureTests {
         }
 
         await store.send(.onAppear) {
-            $0.isLoading = true
+            $0.phase = .loading
         }
         await store.receive(\.favoritesResponse.failure) {
-            $0.isLoading = false
-            $0.errorMessage = FilesClientError.sessionExpired.userMessage
+            $0.phase = .failed(FilesClientError.sessionExpired.userMessage)
         }
     }
 
     @Test
     func refreshAfterAFailureClearsThePreviousErrorMessage() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.errorMessage = "Couldn't reach the server."
+        state.phase = .failed("Couldn't reach the server.")
         let favorite = makeFavorite()
 
         let store = TestStore(initialState: state) {
@@ -483,11 +495,10 @@ struct FavoritesFeatureTests {
         }
 
         await store.send(.refreshButtonTapped) {
-            $0.isLoading = true
-            $0.errorMessage = nil
+            $0.phase = .loading
         }
         await store.receive(\.favoritesResponse.success) {
-            $0.isLoading = false
+            $0.phase = .loaded
             $0.favorites = [favorite]
         }
     }
@@ -498,6 +509,7 @@ struct FavoritesFeatureTests {
     func onAppearIsANoOpWhenFavoritesAreAlreadyLoaded() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.favorites = [makeFavorite()]
+        state.phase = .loaded
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
@@ -509,21 +521,31 @@ struct FavoritesFeatureTests {
     }
 
     @Test
-    func onAppearIsANoOpWhenAnErrorIsAlreadyShowing() async {
+    func onAppearRetriesAfterAFailedLoad() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.errorMessage = "Something went wrong."
+        state.phase = .failed("Something went wrong.")
+        let favorite = makeFavorite()
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
+        } withDependencies: {
+            $0.filesClient.favorites = { _ in [favorite] }
         }
 
-        await store.send(.onAppear)
+        // A `.failed` phase is retryable — coming back to the tab kicks a fresh load.
+        await store.send(.onAppear) {
+            $0.phase = .loading
+        }
+        await store.receive(\.favoritesResponse.success) {
+            $0.phase = .loaded
+            $0.favorites = [favorite]
+        }
     }
 
     @Test
     func onAppearIsANoOpWhileAlreadyLoading() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
-        state.isLoading = true
+        state.phase = .loading
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
@@ -543,6 +565,7 @@ struct FavoritesFeatureTests {
 
         await store.send(.favoritesResponse(.success([]))) {
             $0.favorites = []
+            $0.phase = .loaded
         }
     }
 }

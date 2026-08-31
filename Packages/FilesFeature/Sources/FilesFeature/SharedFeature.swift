@@ -56,13 +56,13 @@ public struct SharedFeature {
         public var segment: Segment = .byMe
         public var byMe: IdentifiedArrayOf<Share> = []
         public var withMe: IdentifiedArrayOf<Share> = []
-        public var isLoading = false
-        public var errorMessage: String?
-        /// A failed delete, shown as a toast, not the list level `errorMessage`.
+        /// Per segment load lifecycle. Each segment loads once on first view (`.loaded`);
+        /// switching back doesn't re-hit the server unless the user pulls to refresh or the
+        /// last attempt `.failed`.
+        public var phases: [Segment: DataPhase] = [:]
+        /// A failed delete, or a refresh failure over an already populated segment, shown as a
+        /// toast rather than the full screen `errorMessage`.
         public var actionErrorMessage: String?
-        /// Each segment loads once on first view; switching back doesn't re-hit the server
-        /// unless the user pulls to refresh.
-        public var loadedSegments: Set<Segment> = []
         public var deleteConfirmationShare: Share?
         public var deletingIDs: Set<Share.ID> = []
         @Presents public var editSheet: EditShareFeature.State?
@@ -82,6 +82,12 @@ public struct SharedFeature {
         public init(serverURL: URL) {
             self.serverURL = serverURL
         }
+
+        /// The current segment's load state.
+        public var phase: DataPhase { phases[segment] ?? .idle }
+
+        /// The current segment's first load failure text, if that's still its state.
+        public var errorMessage: String? { phase.errorMessage }
 
         func isExpired(_ share: Share) -> Bool {
             guard let expiresAt = share.expiresAt else { return false }
@@ -182,7 +188,7 @@ public struct SharedFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard !state.loadedSegments.contains(state.segment) else { return .none }
+                guard state.phase.shouldLoadOnAppear else { return .none }
                 return .concatenate(load(&state, segment: state.segment), loadUsers(state))
 
             case let .expiryTick(now):
@@ -190,13 +196,12 @@ public struct SharedFeature {
                 return .none
 
             case .externalRevisionChanged:
-                state.loadedSegments = []
+                state.phases.removeAll()
                 return load(&state, segment: state.segment)
 
             case let .segmentChanged(segment):
                 state.segment = segment
-                state.errorMessage = nil
-                guard !state.loadedSegments.contains(segment) else { return .none }
+                guard (state.phases[segment] ?? .idle).shouldLoadOnAppear else { return .none }
                 return load(&state, segment: segment)
 
             case let .searchQueryChanged(query):
@@ -204,7 +209,7 @@ public struct SharedFeature {
                 return .none
 
             case .refreshRequested:
-                state.loadedSegments = []
+                state.phases.removeAll()
                 return .concatenate(load(&state, segment: state.segment), loadUsers(state))
 
             case let .sortOptionChanged(option):
@@ -216,16 +221,21 @@ public struct SharedFeature {
                 return .none
 
             case let .sharesResponse(segment, .success(shares)):
-                state.isLoading = false
-                state.errorMessage = nil
-                state.loadedSegments.insert(segment)
+                state.phases[segment] = .loaded
                 let identified = IdentifiedArray(uniqueElements: shares)
                 if segment == .byMe { state.byMe = identified } else { state.withMe = identified }
                 return .none
 
-            case let .sharesResponse(_, .failure(error)):
-                state.isLoading = false
-                state.errorMessage = error.userMessage
+            case let .sharesResponse(segment, .failure(error)):
+                // Full screen error only when that segment has nothing to blank; a refresh
+                // failure over a populated segment stays `.loaded` and toasts.
+                let segmentEmpty = (segment == .byMe ? state.byMe : state.withMe).isEmpty
+                if segmentEmpty {
+                    state.phases[segment] = .failed(error.userMessage)
+                } else {
+                    state.phases[segment] = .loaded
+                    state.actionErrorMessage = error.userMessage
+                }
                 return .none
 
             case let .usersResponse(users):
@@ -285,8 +295,7 @@ public struct SharedFeature {
     }
 
     private func load(_ state: inout State, segment: Segment) -> Effect<Action> {
-        state.isLoading = true
-        state.errorMessage = nil
+        state.phases[segment] = .loading
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in

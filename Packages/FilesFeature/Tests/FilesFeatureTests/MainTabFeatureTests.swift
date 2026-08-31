@@ -77,10 +77,10 @@ struct MainTabFeatureTests {
 
         await store.send(.browse(.delegate(.favoritesChanged)))
         await store.receive(\.favorites.refreshButtonTapped) {
-            $0.favorites.isLoading = true
+            $0.favorites.phase = .loading
         }
         await store.receive(\.favorites.favoritesResponse.success) {
-            $0.favorites.isLoading = false
+            $0.favorites.phase = .loaded
             $0.favorites.favorites = [favorite]
         }
     }
@@ -99,12 +99,46 @@ struct MainTabFeatureTests {
             $0.selectedTab = .downloads
         }
         await store.receive(\.downloads.refreshButtonTapped) {
-            $0.downloads.isLoading = true
+            $0.downloads.phase = .loading
         }
         await store.receive(\.downloads.downloadsResponse.success) {
-            $0.downloads.isLoading = false
+            $0.downloads.phase = .loaded
             $0.downloads.downloads = [download]
         }
+    }
+
+    @Test
+    func goToSharedTabFromBrowseSwitchesToTheSharedTab() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.mySharedLinks = { _ in [] }
+            $0.filesClient.sharedWithMeLinks = { _ in [] }
+            $0.filesClient.shareableUsers = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.browse(.delegate(.goToSharedTab))) {
+            $0.selectedTab = .shared
+        }
+        await store.receive(\.shared.refreshRequested)
+    }
+
+    @Test
+    func goToSharedTabFromTheFavoritesTabAlsoSwitchesTabs() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.mySharedLinks = { _ in [] }
+            $0.filesClient.sharedWithMeLinks = { _ in [] }
+            $0.filesClient.shareableUsers = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.favorites(.delegate(.goToSharedTab))) {
+            $0.selectedTab = .shared
+        }
+        await store.receive(\.shared.refreshRequested)
     }
 
     @Test
@@ -122,10 +156,10 @@ struct MainTabFeatureTests {
 
         await store.send(.favorites(.delegate(.favoritesChanged)))
         await store.receive(\.favorites.refreshButtonTapped) {
-            $0.favorites.isLoading = true
+            $0.favorites.phase = .loading
         }
         await store.receive(\.favorites.favoritesResponse.success) {
-            $0.favorites.isLoading = false
+            $0.favorites.phase = .loaded
             $0.favorites.favorites = [favorite]
         }
     }
@@ -237,10 +271,10 @@ struct MainTabFeatureTests {
             $0.selectedTab = .downloads
         }
         await store.receive(\.downloads.refreshButtonTapped) {
-            $0.downloads.isLoading = true
+            $0.downloads.phase = .loading
         }
         await store.receive(\.downloads.downloadsResponse.success) {
-            $0.downloads.isLoading = false
+            $0.downloads.phase = .loaded
             $0.downloads.downloads = [download]
         }
     }

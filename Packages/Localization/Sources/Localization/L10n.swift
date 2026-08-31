@@ -27,7 +27,6 @@ public enum L10n {
         public static var emptyFolder: String { tr("archive.emptyFolder") }  // "This folder is empty."
         public static var openArchiveFailed: String { tr("archive.openArchiveFailed") }  // "Couldn't open this archive."
         public static var openFailed: String { tr("archive.openFailed") }  // "Couldn't open this file."
-        public static var unsupportedFileType: String { tr("archive.unsupportedFileType") }  // "Unsupported file type"
     }
     public enum Browse {
         public static var actionAddToFavorites: String { tr("browse.actionAddToFavorites") }  // "Add to Favorites"
@@ -161,6 +160,7 @@ public enum L10n {
         public static var titleCreated: String { tr("createShare.titleCreated") }  // "Share Created"
         public static var togglePasswordProtect: String { tr("createShare.togglePasswordProtect") }  // "Password protect"
         public static var toggleSetExpiration: String { tr("createShare.toggleSetExpiration") }  // "Set expiration date"
+        public static var viewInShared: String { tr("createShare.viewInShared") }  // "View in Shared"
     }
     public enum DateFormat {
         public static var automatic: String { tr("dateFormat.automatic") }  // "Automatic"
@@ -442,6 +442,10 @@ public enum L10n {
         public static var large: String { tr("thumbnailSize.large") }  // "Large"
         public static var medium: String { tr("thumbnailSize.medium") }  // "Medium"
         public static var small: String { tr("thumbnailSize.small") }  // "Small"
+    }
+    public enum UnsupportedPreview {
+        public static var cannotOpen: String { tr("unsupportedPreview.cannotOpen") }  // "This app can't open this type of file."
+        public static var genericType: String { tr("unsupportedPreview.genericType") }  // "File"
     }
     public enum Uploads {
         public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo or Video"

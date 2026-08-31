@@ -210,17 +210,6 @@
         }
       }
     },
-    "archive.unsupportedFileType": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unsupported file type"
-          }
-        }
-      }
-    },
     "browse.actionAddToFavorites": {
       "extractionState": "manual",
       "localizations": {
@@ -1592,6 +1581,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Set expiration date"
+          }
+        }
+      }
+    },
+    "createShare.viewInShared": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "View in Shared"
           }
         }
       }
@@ -4155,6 +4155,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Small"
+          }
+        }
+      }
+    },
+    "unsupportedPreview.cannotOpen": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This app can't open this type of file."
+          }
+        }
+      }
+    },
+    "unsupportedPreview.genericType": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File"
           }
         }
       }

@@ -36,6 +36,12 @@ struct GridCellView: View {
     var customIcon: Image?
     var customIconTint: Color?
     var customIconFilled: Bool
+    /// When set, the icon/thumbnail is the source the preview cover's `.zoom` transition
+    /// grows from and shrinks back to.
+    var matchedSource: PreviewMatchedSource?
+    /// True while this file's content is downloading after a tap — a small spinner sits in the
+    /// cell's bottom-trailing corner (not over the icon) and the preview holds off until ready.
+    var isOpening: Bool = false
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
 
     init(
@@ -45,7 +51,9 @@ struct GridCellView: View {
         kind: String? = nil,
         customIcon: Image? = nil,
         customIconTint: Color? = nil,
-        customIconFilled: Bool = false
+        customIconFilled: Bool = false,
+        matchedSource: PreviewMatchedSource? = nil,
+        isOpening: Bool = false
     ) {
         self.name = name
         self.isDirectory = isDirectory
@@ -61,9 +69,11 @@ struct GridCellView: View {
         self.customIcon = customIcon
         self.customIconTint = customIconTint
         self.customIconFilled = customIconFilled
+        self.matchedSource = matchedSource
+        self.isOpening = isOpening
     }
 
-    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, iconSize: CGFloat = Constants.defaultIconSize) {
+    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, iconSize: CGFloat = Constants.defaultIconSize, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false) {
         self.name = item.name
         self.isDirectory = item.isDirectory
         self.isFavorite = isFavorite
@@ -78,6 +88,8 @@ struct GridCellView: View {
         self.customIcon = nil
         self.customIconTint = nil
         self.customIconFilled = false
+        self.matchedSource = matchedSource
+        self.isOpening = isOpening
     }
 
     private var isHidden: Bool { isHiddenFileName(name) }
@@ -98,6 +110,7 @@ struct GridCellView: View {
         VStack(spacing: Constants.cellSpacing) {
             icon
                 .opacity(isHidden ? Constants.halfOpacity : Constants.fullOpacity)
+                .previewMatchedSource(matchedSource)
                 .overlay(alignment: .topTrailing) {
                     if isFavorite {
                         IconKit.starFill
@@ -124,6 +137,14 @@ struct GridCellView: View {
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
+        .overlay(alignment: .bottomTrailing) {
+            if isOpening {
+                ProgressView()
+                    .controlSize(.small)
+                    .padding(Constants.favoriteBadgePadding)
+                    .background(Circle().fill(Color.backgroundPrimary).shadow(radius: Constants.favoriteBadgeShadowRadius))
+            }
+        }
     }
 
     @ViewBuilder

@@ -39,11 +39,10 @@ struct SharedFeatureTests {
             $0.filesClient.shareableUsers = { _ in [] }
         }
 
-        await store.send(.onAppear) { $0.isLoading = true }
+        await store.send(.onAppear) { $0.phases[.byMe] = .loading }
         await store.receive(\.sharesResponse) {
-            $0.isLoading = false
+            $0.phases[.byMe] = .loaded
             $0.byMe = [share]
-            $0.loadedSegments = [.byMe]
         }
         await store.receive(\.usersResponse)
     }
@@ -60,22 +59,20 @@ struct SharedFeatureTests {
             $0.filesClient.shareableUsers = { _ in [] }
         }
 
-        await store.send(.onAppear) { $0.isLoading = true }
+        await store.send(.onAppear) { $0.phases[.byMe] = .loading }
         await store.receive(\.sharesResponse) {
-            $0.isLoading = false
+            $0.phases[.byMe] = .loaded
             $0.byMe = [byMeShare]
-            $0.loadedSegments = [.byMe]
         }
         await store.receive(\.usersResponse)
 
         await store.send(.segmentChanged(.withMe)) {
             $0.segment = .withMe
-            $0.isLoading = true
+            $0.phases[.withMe] = .loading
         }
         await store.receive(\.sharesResponse) {
-            $0.isLoading = false
+            $0.phases[.withMe] = .loaded
             $0.withMe = [withMeShare]
-            $0.loadedSegments = [.byMe, .withMe]
         }
 
         // Already loaded — TestStore would flag any unexpected reload effect/action here.
@@ -87,7 +84,7 @@ struct SharedFeatureTests {
         let share = makeShare(id: "s1")
         var state = SharedFeature.State(serverURL: serverURL)
         state.byMe = [share]
-        state.loadedSegments = [.byMe]
+        state.phases[.byMe] = .loaded
         let store = TestStore(initialState: state) { SharedFeature() }
         store.exhaustivity = .off
 
@@ -110,7 +107,7 @@ struct SharedFeatureTests {
         let share = makeShare()
         var state = SharedFeature.State(serverURL: serverURL)
         state.byMe = [share]
-        state.loadedSegments = [.byMe]
+        state.phases[.byMe] = .loaded
 
         let store = TestStore(initialState: state) {
             SharedFeature()
@@ -135,7 +132,7 @@ struct SharedFeatureTests {
         let second = makeShare(id: "2")
         var state = SharedFeature.State(serverURL: serverURL)
         state.byMe = [first]
-        state.loadedSegments = [.byMe]
+        state.phases[.byMe] = .loaded
 
         let store = TestStore(initialState: state) {
             SharedFeature()
@@ -144,13 +141,11 @@ struct SharedFeatureTests {
         }
 
         await store.send(.externalRevisionChanged) {
-            $0.loadedSegments = []
-            $0.isLoading = true
+            $0.phases = [.byMe: .loading]
         }
         await store.receive(\.sharesResponse) {
-            $0.isLoading = false
+            $0.phases[.byMe] = .loaded
             $0.byMe = [first, second]
-            $0.loadedSegments = [.byMe]
         }
     }
 
@@ -190,10 +185,9 @@ struct SharedFeatureTests {
             $0.filesClient.shareableUsers = { _ in [] }
         }
 
-        await store.send(.onAppear) { $0.isLoading = true }
+        await store.send(.onAppear) { $0.phases[.byMe] = .loading }
         await store.receive(\.sharesResponse) {
-            $0.isLoading = false
-            $0.errorMessage = FilesClientError.sessionExpired.userMessage
+            $0.phases[.byMe] = .failed(FilesClientError.sessionExpired.userMessage)
         }
         await store.receive(\.usersResponse)
     }
