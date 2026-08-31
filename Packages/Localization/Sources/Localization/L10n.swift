@@ -71,6 +71,8 @@ public enum L10n {
         public static var newFolderConfirm: String { tr("browse.newFolderConfirm") }  // "Create"
         public static var newFolderPlaceholder: String { tr("browse.newFolderPlaceholder") }  // "Folder name"
         public static var newFolderTitle: String { tr("browse.newFolderTitle") }  // "New folder"
+        public static func offlineBannerDetail(_ a0: CVarArg) -> String { tr("browse.offlineBannerDetail", a0) }
+        public static var offlineBannerTitle: String { tr("browse.offlineBannerTitle") }  // "Offline"
         public static var open: String { tr("browse.open") }  // "Open"
         public static var progressCompressing: String { tr("browse.progressCompressing") }  // "Compressing…"
         public static var progressCopying: String { tr("browse.progressCopying") }  // "Copying…"
@@ -200,6 +202,7 @@ public enum L10n {
         public static var decoding: String { tr("error.decoding") }  // "Server responded unexpectedly."
         public static var forbidden: String { tr("error.forbidden") }  // "You don't have permission to do that."
         public static var network: String { tr("error.network") }  // "Couldn't reach the server."
+        public static var offline: String { tr("error.offline") }  // "You're offline. Connect to the internet and try again."
         public static var rateLimited: String { tr("error.rateLimited") }  // "Too many requests. Try again shortly."
         public static func server(_ a0: CVarArg) -> String { tr("error.server", a0) }
         public static var sessionExpired: String { tr("error.sessionExpired") }  // "Your session expired. Sign in again."

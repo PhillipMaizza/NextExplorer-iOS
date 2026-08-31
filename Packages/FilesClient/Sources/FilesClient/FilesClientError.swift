@@ -4,6 +4,9 @@ public enum FilesClientError: Error, Equatable, Sendable {
     /// no write access, access rule). Carries the server's reason when it sent one.
     case forbidden(message: String?)
     case network(String)
+    /// No usable connection to the server (offline, host unreachable, or timed out before any
+    /// response). Callers that hold a cached copy should serve it instead of surfacing this.
+    case offline
     case decoding(String)
     case server(statusCode: Int)
     /// A non 2xx response whose body carried a human readable message worth surfacing

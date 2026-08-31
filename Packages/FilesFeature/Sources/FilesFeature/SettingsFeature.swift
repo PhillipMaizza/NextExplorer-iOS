@@ -111,6 +111,7 @@ public struct SettingsFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.previewCacheStore) var previewCacheStore
+    @Dependency(\.directoryCacheStore) var directoryCacheStore
 
     private enum CancelID { case serverUsage }
 
@@ -210,9 +211,10 @@ public struct SettingsFeature {
                     await send(.hasDownloadsResponse(!downloads.isEmpty))
                     await send(.downloadsSizeResponse(downloads.reduce(0) { $0 + $1.size }))
                 }
+                let directoryCacheStore = self.directoryCacheStore
                 let checkCacheSize = Effect<Action>.run { send in
                     let size = (try? previewCacheStore.size()) ?? 0
-                    await send(.cacheSizeResponse(size))
+                    await send(.cacheSizeResponse(size + directoryCacheStore.totalSizeBytes()))
                 }
                 guard !state.isLoadingPreferences else {
                     return .merge(checkDownloads, checkCacheSize)
@@ -323,8 +325,10 @@ public struct SettingsFeature {
                 state.clearCacheConfirmationIsPresented = false
                 state.isClearingCache = true
                 let previewCacheStore = self.previewCacheStore
+                let directoryCacheStore = self.directoryCacheStore
                 return .run { send in
                     try? previewCacheStore.clear()
+                    directoryCacheStore.clearAll()
                     await send(.clearCacheResponse)
                 }
 

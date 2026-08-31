@@ -10,6 +10,7 @@ extension FilesClient {
                 path: path
             )
         },
+        prefetchDirectory: { _, _ in },
         search: { _, _, _, _ in [] },
         favorites: { _ in Favorite.previewFavorites },
         addFavorite: { _, path in

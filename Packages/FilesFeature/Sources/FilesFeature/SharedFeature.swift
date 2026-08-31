@@ -84,7 +84,9 @@ public struct SharedFeature {
         }
 
         /// The current segment's load state.
-        public var phase: DataPhase { phases[segment] ?? .idle }
+        public var phase: DataPhase { phase(for: segment) }
+
+        public func phase(for segment: Segment) -> DataPhase { phases[segment] ?? .idle }
 
         /// The current segment's first load failure text, if that's still its state.
         public var errorMessage: String? { phase.errorMessage }
@@ -95,19 +97,23 @@ public struct SharedFeature {
         }
 
         /// The current segment's raw (unfiltered, unsorted) list.
-        public var segmentShares: IdentifiedArrayOf<Share> {
+        public var segmentShares: IdentifiedArrayOf<Share> { shares(for: segment) }
+
+        public func shares(for segment: Segment) -> IdentifiedArrayOf<Share> {
             segment == .byMe ? byMe : withMe
         }
 
         public var isSearching: Bool { !searchQuery.isEmpty }
 
-        public var displayedShares: IdentifiedArrayOf<Share> {
+        public var displayedShares: IdentifiedArrayOf<Share> { displayedShares(for: segment) }
+
+        public func displayedShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
             let base = isSearching
-                ? segmentShares.filter {
+                ? shares(for: segment).filter {
                     FuzzyMatch.matches(query: searchQuery, in: $0.displayName)
                         || FuzzyMatch.matches(query: searchQuery, in: $0.sourcePath ?? "")
                 }
-                : segmentShares
+                : shares(for: segment)
             let sorted = base.sorted { lhs, rhs in
                 switch sortOption {
                 case .name:
@@ -122,22 +128,32 @@ public struct SharedFeature {
             return IdentifiedArray(uniqueElements: sortDirection == .ascending ? sorted : sorted.reversed())
         }
 
-        public var activeShares: IdentifiedArrayOf<Share> {
-            IdentifiedArray(uniqueElements: displayedShares.filter { !isExpired($0) })
+        public var activeShares: IdentifiedArrayOf<Share> { activeShares(for: segment) }
+
+        public func activeShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
+            IdentifiedArray(uniqueElements: displayedShares(for: segment).filter { !isExpired($0) })
         }
 
-        public var expiredShares: IdentifiedArrayOf<Share> {
-            IdentifiedArray(uniqueElements: displayedShares.filter(isExpired))
+        public var expiredShares: IdentifiedArrayOf<Share> { expiredShares(for: segment) }
+
+        public func expiredShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
+            IdentifiedArray(uniqueElements: displayedShares(for: segment).filter(isExpired))
         }
 
-        /// No shares in this segment at all (before search) — drives the empty state.
-        public var isCurrentSegmentEmpty: Bool {
-            segmentShares.isEmpty
-        }
+        /// No shares in the current segment at all (before search) — drives the empty state.
+        public var isCurrentSegmentEmpty: Bool { isEmpty(for: segment) }
+
+        public func isEmpty(for segment: Segment) -> Bool { shares(for: segment).isEmpty }
 
         /// A search that filtered everything out.
-        public var isSearchWithoutResults: Bool {
-            isSearching && !segmentShares.isEmpty && displayedShares.isEmpty
+        public var isSearchWithoutResults: Bool { isSearchWithoutResults(for: segment) }
+
+        public func isSearchWithoutResults(for segment: Segment) -> Bool {
+            isSearching && !shares(for: segment).isEmpty && displayedShares(for: segment).isEmpty
+        }
+
+        public func emptyMessage(for segment: Segment) -> String {
+            segment == .byMe ? L10n.Shared.emptyByMe : L10n.Shared.emptyWithMe
         }
 
         /// How a share's audience renders in the "Shared with" row.

@@ -1,6 +1,7 @@
 import AuthClient
 import ComposableArchitecture
 import CoreModels
+import FilesClient
 import FilesFeature
 import Foundation
 
@@ -30,6 +31,7 @@ public struct AuthenticatedFeature {
     }
 
     @Dependency(\.authClient) var authClient
+    @Dependency(\.directoryCacheStore) var directoryCacheStore
 
     public init() {}
 
@@ -43,9 +45,11 @@ public struct AuthenticatedFeature {
                 state.mainTab.settings.isSigningOut = true
                 let serverURL = state.serverURL
                 let authClient = self.authClient
+                let directoryCacheStore = self.directoryCacheStore
                 return .run { send in
                     try? await authClient.logout(serverURL)
                     await authClient.clearSession()
+                    directoryCacheStore.clearAll()
                     await send(.signOutResponse)
                 }
 

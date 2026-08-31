@@ -24,7 +24,10 @@ struct FilesClientLiveTests {
     private let serverURL = URL(string: "https://example.com")!
 
     private func makeClient() -> FilesClient {
-        .live(networkClient: .live(protocolClasses: [StubURLProtocol.self]))
+        .live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: .testValue
+        )
     }
 
     private func stub(statusCode: Int, body: Data) {
@@ -149,12 +152,142 @@ struct FilesClientLiveTests {
     }
 
     @Test
-    func browseMapsTransportFailureToANetworkError() async throws {
+    func browseMapsOfflineFailureToAnOfflineError() async throws {
         StubURLProtocol.stub = nil
         StubURLProtocol.failure = URLError(.notConnectedToInternet)
-        await #expect(throws: FilesClientError.self) {
+        await #expect(throws: FilesClientError.offline) {
             _ = try await makeClient().browse(serverURL, "")
         }
+    }
+
+    @Test
+    func browseMapsOtherTransportFailureToANetworkError() async throws {
+        StubURLProtocol.stub = nil
+        StubURLProtocol.failure = URLError(.badServerResponse)
+        let error = await #expect(throws: FilesClientError.self) {
+            _ = try await makeClient().browse(serverURL, "")
+        }
+        guard case .network = error else {
+            Issue.record("expected .network, got \(String(describing: error))")
+            return
+        }
+    }
+
+    @Test
+    func browseWritesResultThroughToTheDirectoryCache() async throws {
+        stub(statusCode: 200, body: browseResultJSON)
+        let store = DirectoryCacheStore.inMemory()
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: store,
+            now: { Date(timeIntervalSince1970: 42) }
+        )
+        let result = try await client.browse(serverURL, "docs")
+
+        let cached = store.read(serverURL: serverURL, path: "docs")
+        #expect(cached?.items.map(\.name) == result.items.map(\.name))
+        #expect(cached?.fetchedAt == Date(timeIntervalSince1970: 42))
+    }
+
+    @Test
+    func browseDoesNotWriteThroughOnFailure() async throws {
+        StubURLProtocol.stub = nil
+        StubURLProtocol.failure = URLError(.notConnectedToInternet)
+        let store = DirectoryCacheStore.inMemory()
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: store
+        )
+        _ = try? await client.browse(serverURL, "docs")
+        #expect(store.read(serverURL: serverURL, path: "docs") == nil)
+    }
+
+    // MARK: Conditional GET / ETag
+
+    private func stub(statusCode: Int, body: Data, headers: [String: String]) {
+        StubURLProtocol.failure = nil
+        StubURLProtocol.stub = .init(statusCode: statusCode, headers: headers, body: body)
+    }
+
+    @Test
+    func browseStoresTheServerETagAndSendsItAsIfNoneMatchOnTheNextFetch() async throws {
+        let store = DirectoryCacheStore.inMemory()
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: store,
+            now: { Date(timeIntervalSince1970: 1) }
+        )
+
+        stub(statusCode: 200, body: browseResultJSON, headers: ["Content-Type": "application/json", "ETag": "\"v1\""])
+        _ = try await client.browse(serverURL, "docs")
+        #expect(store.read(serverURL: serverURL, path: "docs")?.etag == "\"v1\"")
+
+        StubURLProtocol.capturedRequest = nil
+        stub(statusCode: 200, body: browseResultJSON, headers: ["Content-Type": "application/json", "ETag": "\"v2\""])
+        _ = try await client.browse(serverURL, "docs")
+        #expect(StubURLProtocol.capturedRequest?.value(forHTTPHeaderField: "If-None-Match") == "\"v1\"")
+        #expect(store.read(serverURL: serverURL, path: "docs")?.etag == "\"v2\"")
+    }
+
+    @Test
+    func browseReturnsTheCachedListingOnA304() async throws {
+        let store = DirectoryCacheStore.inMemory()
+        let cachedItem = FileItem(name: "Saved", path: "docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")
+        store.write(
+            serverURL: serverURL, path: "docs",
+            result: BrowseResult(
+                items: [cachedItem],
+                access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
+                path: "docs"
+            ),
+            etag: "\"v1\"",
+            fetchedAt: Date(timeIntervalSince1970: 0)
+        )
+
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: store,
+            now: { Date(timeIntervalSince1970: 500) }
+        )
+        stub(statusCode: 304, body: Data(), headers: ["ETag": "\"v1\""])
+
+        let result = try await client.browse(serverURL, "docs")
+        #expect(result.items.map(\.name) == ["Saved"])
+        // The 304 refreshes the entry's timestamp so a prefetch freshness check sees it as current.
+        #expect(store.read(serverURL: serverURL, path: "docs")?.fetchedAt == Date(timeIntervalSince1970: 500))
+        #expect(store.read(serverURL: serverURL, path: "docs")?.etag == "\"v1\"")
+    }
+
+    @Test
+    func prefetchDirectoryWritesThroughOverTheLowPrioritySession() async throws {
+        stub(statusCode: 200, body: browseResultJSON, headers: ["Content-Type": "application/json", "ETag": "\"pf\""])
+        let store = DirectoryCacheStore.inMemory()
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: store,
+            now: { Date(timeIntervalSince1970: 7) }
+        )
+
+        await client.prefetchDirectory(serverURL, "docs/sub")
+
+        let cached = store.read(serverURL: serverURL, path: "docs/sub")
+        #expect(cached?.items.map(\.name) == ["Docs"])
+        #expect(cached?.etag == "\"pf\"")
+        #expect(cached?.fetchedAt == Date(timeIntervalSince1970: 7))
+    }
+
+    @Test
+    func prefetchDirectorySwallowsFailures() async throws {
+        StubURLProtocol.stub = nil
+        StubURLProtocol.failure = URLError(.notConnectedToInternet)
+        let store = DirectoryCacheStore.inMemory()
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: store
+        )
+
+        await client.prefetchDirectory(serverURL, "docs/sub")
+        #expect(store.read(serverURL: serverURL, path: "docs/sub") == nil)
     }
 
     // MARK: Edge cases — request construction

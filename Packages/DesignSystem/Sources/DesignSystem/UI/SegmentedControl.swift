@@ -44,6 +44,8 @@ public struct DSSegmentedControl<Option: Hashable>: View {
                                     .matchedGeometryEffect(id: Self.pillID, in: pillNamespace)
                             }
                         }
+                        // Whole segment is the hit target, not just the glyph.
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
             }

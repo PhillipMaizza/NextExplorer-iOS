@@ -14,6 +14,8 @@ public enum HTTPMethod: String, Sendable {
 public enum HTTPHeaderField {
     public static let contentType = "Content-Type"
     public static let accept = "Accept"
+    public static let ifNoneMatch = "If-None-Match"
+    public static let etag = "ETag"
 }
 
 /// Media types sent or accepted by the client.

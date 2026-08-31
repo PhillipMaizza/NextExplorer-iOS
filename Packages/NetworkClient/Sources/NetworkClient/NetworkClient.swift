@@ -4,6 +4,11 @@ import Foundation
 @DependencyClient
 public struct NetworkClient: Sendable {
     public var send: @Sendable (_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
+    /// Same as `send` (in memory response), but served by the separate low priority session
+    /// with a small per host connection cap, so a burst of these (background directory
+    /// prefetch while browsing) can never take slots from the main session's interactive
+    /// pool. Cookie jar and server trust handling are shared with `send`.
+    public var lowPrioritySend: @Sendable (_ request: URLRequest) async throws -> (Data, HTTPURLResponse)
     /// Uploads `bodyFileURL` as the request body, reporting fractional progress (0...1) as the
     /// bytes go out. The body file is streamed from disk, so its size does not translate into
     /// resident memory (the caller is responsible for what that file contains, and for its
