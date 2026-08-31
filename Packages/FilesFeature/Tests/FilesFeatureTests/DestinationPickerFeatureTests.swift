@@ -36,9 +36,9 @@ struct DestinationPickerFeatureTests {
             }
         }
 
-        await store.send(.onAppear) { $0.isLoading = true }
+        await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.foldersResponse.success) {
-            $0.isLoading = false
+            $0.phase = .loaded
             $0.currentAccess = self.access()
             $0.folders = [self.folder("Documents")]
         }
@@ -192,10 +192,9 @@ struct DestinationPickerFeatureTests {
 
         await store.send(.onAppear)
         await store.receive(\.foldersResponse.failure) {
-            $0.isLoading = false
-            $0.errorMessage = L10n.Browse.destinationPickerLoadFailed
+            $0.phase = .failed(L10n.Browse.destinationPickerLoadFailed)
         }
-        await store.send(.retryTapped) { $0.isLoading = true }
+        await store.send(.retryTapped) { $0.phase = .loading }
         await store.receive(\.foldersResponse.failure)
     }
 

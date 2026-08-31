@@ -37,9 +37,9 @@ struct PermissionsFeatureTests {
             $0.filesClient.fetchPermissions = { _, _ in perms }
         }
 
-        await store.send(.onAppear) { $0.isLoading = true }
+        await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.permissionsResponse.success) {
-            $0.isLoading = false
+            $0.phase = .loaded
             $0.permissions = perms
             $0.grid = perms.grid
             $0.ownerDraft = "phillip"
@@ -189,10 +189,9 @@ struct PermissionsFeatureTests {
             $0.filesClient.fetchPermissions = { _, _ in throw FilesClientError.sessionExpired }
         }
 
-        await store.send(.onAppear) { $0.isLoading = true }
+        await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.permissionsResponse.failure) {
-            $0.isLoading = false
-            $0.loadError = FilesClientError.sessionExpired.userMessage
+            $0.phase = .failed(FilesClientError.sessionExpired.userMessage)
         }
     }
 }

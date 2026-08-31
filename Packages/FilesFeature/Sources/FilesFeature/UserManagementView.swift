@@ -92,9 +92,9 @@ struct UserManagementView: View {
 
     @ViewBuilder
     private var overlay: some View {
-        if store.isLoading && store.users.isEmpty {
+        if store.phase == .loading && store.users.isEmpty {
             ProgressView()
-        } else if let error = store.errorMessage, store.users.isEmpty {
+        } else if let error = store.phase.errorMessage, store.users.isEmpty {
             EmptyStateView(icon: IconKit.warning, message: error) {
                 store.send(.refreshRequested)
             }
@@ -386,7 +386,7 @@ private func previewListState(
 #Preview("Loading") {
     NavigationStack {
         UserManagementView(store: Store(
-            initialState: previewListState { $0.isLoading = true }
+            initialState: previewListState { $0.phase = .loading }
         ) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
     }
 }
@@ -394,7 +394,7 @@ private func previewListState(
 #Preview("Load error") {
     NavigationStack {
         UserManagementView(store: Store(
-            initialState: previewListState { $0.errorMessage = "Couldn't reach the server." }
+            initialState: previewListState { $0.phase = .failed("Couldn't reach the server.") }
         ) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
     }
 }

@@ -253,7 +253,7 @@ struct UserDetailView: View {
     @ViewBuilder
     private var volumesTab: some View {
         Card(L10n.UserDetail.sectionAssignedVolumes) {
-            if store.isLoadingVolumes {
+            if store.volumesPhase == .loading {
                 ProgressView().frame(maxWidth: .infinity, alignment: .center).padding(.vertical, .space8)
             } else if store.volumes.isEmpty {
                 VStack(spacing: .space4) {
@@ -596,7 +596,7 @@ private func previewDetailState(
     NavigationStack {
         UserDetailView(store: Store(initialState: previewDetailState(userID: "u2", tab: .volumes) {
             $0.volumes = IdentifiedArray(uniqueElements: UserVolume.previewVolumes(userID: "u2"))
-            $0.hasLoadedVolumesForDetail = true
+            $0.volumesPhase = .loaded
         }) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
     }
 }

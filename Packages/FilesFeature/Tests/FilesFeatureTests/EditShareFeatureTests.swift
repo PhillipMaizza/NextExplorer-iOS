@@ -80,11 +80,10 @@ struct EditShareFeatureTests {
 
         await store.send(.targetChanged(.users)) {
             $0.target = .users
-            $0.isLoadingUsers = true
+            $0.usersPhase = .loading
         }
         await store.receive(\.shareableUsersResponse.success) {
-            $0.isLoadingUsers = false
-            $0.hasLoadedUsers = true
+            $0.usersPhase = .loaded
             $0.shareableUsers = [User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")]
         }
 

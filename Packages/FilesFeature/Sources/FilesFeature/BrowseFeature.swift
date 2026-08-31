@@ -183,15 +183,13 @@ public struct BrowseFeature {
         public var items: IdentifiedArrayOf<FileItem> = []
         public var favoritePaths: Set<String> = []
         public var access: FileAccess?
-        public var isLoading = false
-        /// Flips true the first time a browse response lands (success or failure). Until then
-        /// the view shows the loading skeleton rather than the empty state, so a fresh folder
-        /// never flashes "folder is empty" for the frame before `onAppear`'s fetch begins.
-        public var hasLoaded = false
+        /// The folder listing load lifecycle. `phase.hasLoaded` flips true the first time a
+        /// browse response lands (success or failure), so the view shows the loading skeleton
+        /// rather than the empty state until then; `phase.errorMessage` carries a failed load.
+        public var phase: DataPhase = .idle
         /// `.cached` while the listing on screen is an offline copy; back to `.live` as soon as
         /// a fresh fetch lands. Drives the "showing saved copy" banner.
         public var dataSource: DataSource = .live
-        public var errorMessage: String?
         public var searchQuery = ""
         public var searchScope: SearchScope = .thisFolder
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
@@ -424,21 +422,20 @@ public struct BrowseFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                // Guard on `hasLoaded`, not `items.isEmpty` — a folder that is genuinely empty
-                // would otherwise re-fetch on every return to it.
-                guard !state.hasLoaded, !state.isLoading else { return .none }
+                // Guard on the phase, not `items.isEmpty` — a folder that is genuinely empty
+                // would otherwise re-fetch on every return to it. A failed load stays put too
+                // (retry is the refresh button), so only `.idle` triggers a fetch.
+                guard state.phase == .idle else { return .none }
                 return load(&state)
 
             case .refreshButtonTapped:
                 return load(&state)
 
             case let .itemsResponse(.success(result)):
-                state.isLoading = false
-                state.hasLoaded = true
+                state.phase = .loaded
                 state.dataSource = .live
                 state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(result.items))
                 state.access = result.access
-                state.errorMessage = nil
                 return .merge(
                     search(&state),
                     prefetch(
@@ -449,19 +446,17 @@ public struct BrowseFeature {
                 )
 
             case let .itemsResponse(.failure(error)):
-                state.isLoading = false
-                state.hasLoaded = true
                 // Offline with a saved copy of this folder: show it under a banner rather than
                 // an error screen. Any other failure keeps the normal error path.
                 if error == .offline,
                    let cached = directoryCacheStore.read(serverURL: state.serverURL, path: state.directoryPath) {
+                    state.phase = .loaded
                     state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))
                     state.access = cached.access
                     state.dataSource = .cached(fetchedAt: cached.fetchedAt)
-                    state.errorMessage = nil
                     return search(&state)
                 }
-                state.errorMessage = error.userMessage
+                state.phase = .failed(error.userMessage)
                 return .none
 
             case let .favoritesResponse(favorites):
@@ -1524,8 +1519,8 @@ public struct BrowseFeature {
     }
 
     private func load(_ state: inout State) -> Effect<Action> {
-        state.isLoading = true
-        state.errorMessage = nil
+        let hadLoaded = state.phase.hasLoaded
+        state.phase = .loading
         let serverURL = state.serverURL
         let directoryPath = state.directoryPath
         let filesClient = self.filesClient
@@ -1533,7 +1528,7 @@ public struct BrowseFeature {
         // while the fetch runs. This is stale-while-revalidate: a successful fetch silently
         // replaces it, and only a failed one (offline) surfaces the "saved copy" banner. So
         // `dataSource` stays `.live` here.
-        if !state.hasLoaded,
+        if !hadLoaded,
            state.items.isEmpty,
            let cached = directoryCacheStore.read(serverURL: serverURL, path: directoryPath) {
             state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))

@@ -131,8 +131,7 @@ public struct UserManagementFeature {
         public let currentUserID: String
 
         public var users: IdentifiedArrayOf<User> = []
-        public var isLoading = false
-        public var errorMessage: String?
+        public var phase: DataPhase = .idle
         public var searchQuery = ""
         public var sortOption: SortOption = .type
         public var sortDirection: BrowseFeature.SortDirection = .ascending
@@ -155,10 +154,9 @@ public struct UserManagementFeature {
 
         // Volumes tab.
         public var volumes: IdentifiedArrayOf<UserVolume> = []
-        public var isLoadingVolumes = false
-        /// Whether the current detail user's volumes have been fetched. Stops a user with
-        /// genuinely zero volumes from hitting the endpoint again on every tab switch.
-        public var hasLoadedVolumesForDetail = false
+        /// The current detail user's volumes load. `.loaded` stops a user with genuinely zero
+        /// volumes from hitting the endpoint again on every tab switch.
+        public var volumesPhase: DataPhase = .idle
         public var volumeToRemove: UserVolume?
 
         // Confirmations and sheets.
@@ -312,8 +310,7 @@ public struct UserManagementFeature {
                 return loadEverything(&state)
 
             case let .usersResponse(.success(users)):
-                state.isLoading = false
-                state.errorMessage = nil
+                state.phase = .loaded
                 state.users = IdentifiedArray(uniqueElements: users)
                 if let user = state.detailUser {
                     // Don't stomp edits the admin has typed but not saved; a background reload
@@ -328,8 +325,7 @@ public struct UserManagementFeature {
                 return .none
 
             case let .usersResponse(.failure(error)):
-                state.isLoading = false
-                state.errorMessage = error.userMessage
+                state.phase = .failed(error.userMessage)
                 return .none
 
             case let .featuresResponse(features):
@@ -355,7 +351,7 @@ public struct UserManagementFeature {
                 state.detailTab = .profile
                 state.detailErrorMessage = nil
                 state.volumes = []
-                state.hasLoadedVolumesForDetail = false
+                state.volumesPhase = .idle
                 seedProfileForm(&state, from: user)
                 var effects: [Effect<Action>] = []
                 // Recover from a failed initial feature flag load: retry once here so the
@@ -379,7 +375,7 @@ public struct UserManagementFeature {
                 state.detailErrorMessage = nil
                 state.isSavingProfile = false
                 state.isUpdatingRoles = false
-                state.isLoadingVolumes = false
+                if state.volumesPhase == .loading { state.volumesPhase = .idle }
                 return .merge(
                     .cancel(id: CancelID.userMutation),
                     .cancel(id: CancelID.volumeMutation),
@@ -388,20 +384,19 @@ public struct UserManagementFeature {
 
             case let .detailTabChanged(tab):
                 state.detailTab = tab
-                if tab == .volumes, state.isUserVolumesEnabled, !state.hasLoadedVolumesForDetail,
-                   !state.isLoadingVolumes, let id = state.detailUserID {
+                if tab == .volumes, state.isUserVolumesEnabled, state.volumesPhase.shouldLoadOnAppear,
+                   let id = state.detailUserID {
                     return loadVolumes(&state, userID: id)
                 }
                 return .none
 
             case let .volumesResponse(.success(volumes)):
-                state.isLoadingVolumes = false
-                state.hasLoadedVolumesForDetail = true
+                state.volumesPhase = .loaded
                 state.volumes = IdentifiedArray(uniqueElements: volumes)
                 return .none
 
             case let .volumesResponse(.failure(error)):
-                state.isLoadingVolumes = false
+                state.volumesPhase = .failed(error.userMessage)
                 state.detailErrorMessage = error.userMessage
                 return .none
 
@@ -713,8 +708,7 @@ public struct UserManagementFeature {
     private func loadEverything(_ state: inout State) -> Effect<Action> {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
-        state.isLoading = state.users.isEmpty
-        state.errorMessage = nil
+        if state.users.isEmpty { state.phase = .loading }
         // Sequential, not `.merge`: the users list is the payload, the feature flag is a best
         // effort nicety that only gates a tab. Ordering also keeps the tests deterministic.
         return .run { send in
@@ -740,7 +734,7 @@ public struct UserManagementFeature {
     }
 
     private func loadVolumes(_ state: inout State, userID: String) -> Effect<Action> {
-        state.isLoadingVolumes = true
+        state.volumesPhase = .loading
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         return .run { send in

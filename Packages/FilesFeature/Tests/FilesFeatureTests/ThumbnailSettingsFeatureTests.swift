@@ -20,9 +20,9 @@ struct ThumbnailSettingsFeatureTests {
             $0.filesClient.fetchSystemSettings = { _ in SystemSettings(thumbnails: loaded) }
         }
 
-        await store.send(.onAppear) { $0.isLoading = true }
+        await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.settingsResponse.success) {
-            $0.isLoading = false
+            $0.phase = .loaded
             $0.loaded = loaded
             $0.draft = loaded
         }

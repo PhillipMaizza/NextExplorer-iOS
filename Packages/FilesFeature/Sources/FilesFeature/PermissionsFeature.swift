@@ -15,8 +15,7 @@ public struct PermissionsFeature {
         public let item: FileItem
 
         public var permissions: FilePermissions?
-        public var isLoading = false
-        public var loadError: String?
+        public var phase: DataPhase = .idle
 
         /// Editable rights grid, seeded from `permissions` on each load.
         public var grid: [PermissionScope: Set<PermissionRight>] = [:]
@@ -75,8 +74,7 @@ public struct PermissionsFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                state.isLoading = true
-                state.loadError = nil
+                state.phase = .loading
                 let serverURL = state.serverURL
                 let path = state.item.id
                 let filesClient = self.filesClient
@@ -88,7 +86,7 @@ public struct PermissionsFeature {
                 .cancellable(id: CancelID.load, cancelInFlight: true)
 
             case let .permissionsResponse(.success(permissions)):
-                state.isLoading = false
+                state.phase = .loaded
                 state.permissions = permissions
                 state.grid = permissions.grid
                 state.recursive = false
@@ -97,8 +95,7 @@ public struct PermissionsFeature {
                 return .none
 
             case let .permissionsResponse(.failure(error)):
-                state.isLoading = false
-                state.loadError = error.userMessage
+                state.phase = .failed(error.userMessage)
                 return .none
 
             case let .toggle(scope, right):

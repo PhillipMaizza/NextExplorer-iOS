@@ -32,7 +32,7 @@ struct ThumbnailSettingsView: View {
                 } else {
                     formCard
 
-                    if let error = store.errorMessage {
+                    if let error = store.errorMessage ?? store.phase.errorMessage {
                         DSErrorCard(error)
                     }
 
@@ -50,7 +50,7 @@ struct ThumbnailSettingsView: View {
         .navigationTitle(L10n.ThumbnailSettings.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
-            if store.isLoading && store.loaded == nil && !store.isUnavailable {
+            if store.phase == .loading && store.loaded == nil && !store.isUnavailable {
                 ProgressView()
             }
         }
@@ -146,7 +146,7 @@ private extension ThumbnailSettingsFeature.State {
         var state = ThumbnailSettingsFeature.State(serverURL: URL(string: "https://files.example.com")!)
         state.loaded = loaded
         state.draft = loaded ?? ThumbnailSettings()
-        state.isLoading = isLoading
+        state.phase = isLoading ? .loading : (loaded != nil || unavailable ? .loaded : .idle)
         state.errorMessage = error
         state.isUnavailable = unavailable
         return state

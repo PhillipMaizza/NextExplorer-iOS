@@ -16,8 +16,9 @@ public struct ThumbnailSettingsFeature {
         /// first load succeeds (or stays nil if the session isn't actually an admin).
         public var loaded: ThumbnailSettings?
         public var draft = ThumbnailSettings()
-        public var isLoading = false
+        public var phase: DataPhase = .idle
         public var isSaving = false
+        /// Save failures only; a load failure lives in `phase`.
         public var errorMessage: String?
         /// Set when the load came back without a `thumbnails` object, i.e. not an admin.
         public var isUnavailable = false
@@ -56,7 +57,7 @@ public struct ThumbnailSettingsFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                state.isLoading = true
+                state.phase = .loading
                 state.errorMessage = nil
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
@@ -68,7 +69,7 @@ public struct ThumbnailSettingsFeature {
                 .cancellable(id: CancelID.load, cancelInFlight: true)
 
             case let .settingsResponse(.success(settings)):
-                state.isLoading = false
+                state.phase = .loaded
                 if let thumbnails = settings.thumbnails {
                     let untouched = !state.isDirty
                     state.loaded = thumbnails
@@ -79,8 +80,7 @@ public struct ThumbnailSettingsFeature {
                 return .none
 
             case let .settingsResponse(.failure(error)):
-                state.isLoading = false
-                state.errorMessage = error.userMessage
+                state.phase = .failed(error.userMessage)
                 return .none
 
             case let .enabledChanged(value):
