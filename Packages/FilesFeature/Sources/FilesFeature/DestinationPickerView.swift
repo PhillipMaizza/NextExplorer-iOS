@@ -99,10 +99,10 @@ struct DestinationPickerView: View {
 
     @ViewBuilder
     private var browseContent: some View {
-        if store.isLoading && store.folders.isEmpty {
+        if store.phase == .loading && store.folders.isEmpty {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let errorMessage = store.errorMessage {
+        } else if let errorMessage = store.phase.errorMessage {
             EmptyStateView(icon: IconKit.warning, message: errorMessage) {
                 store.send(.retryTapped)
             }

@@ -15,8 +15,9 @@ public struct AccessRulesFeature {
         /// the first load succeeds.
         public var loaded: [AccessRule]?
         public var drafts: IdentifiedArrayOf<AccessRule> = []
-        public var isLoading = false
+        public var phase: DataPhase = .idle
         public var isSaving = false
+        /// Save failures only; a load failure lives in `phase`.
         public var errorMessage: String?
         public var isUnavailable = false
 
@@ -60,7 +61,7 @@ public struct AccessRulesFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                state.isLoading = true
+                state.phase = .loading
                 state.errorMessage = nil
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
@@ -72,7 +73,7 @@ public struct AccessRulesFeature {
                 .cancellable(id: CancelID.load, cancelInFlight: true)
 
             case let .settingsResponse(.success(settings)):
-                state.isLoading = false
+                state.phase = .loaded
                 // `access.rules` is admin only; an empty array from a non-admin is
                 // indistinguishable from an admin with no rules, so treat a response that
                 // also lacks `thumbnails` as "not an admin".
@@ -89,8 +90,7 @@ public struct AccessRulesFeature {
                 return .none
 
             case let .settingsResponse(.failure(error)):
-                state.isLoading = false
-                state.errorMessage = error.userMessage
+                state.phase = .failed(error.userMessage)
                 return .none
 
             case .addRuleTapped:
