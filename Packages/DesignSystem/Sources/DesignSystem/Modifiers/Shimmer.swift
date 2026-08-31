@@ -3,8 +3,8 @@ import SwiftUI
 private enum Constants {
     static let sweepDuration: Double = 1.5
     static let bandWidthFraction: CGFloat = 0.7
-    static let ghostOpacity: Double = 0.5
-    static let shineOpacity: Double = 0.9
+    static let ghostOpacity: Double = 0.35
+    static let shineOpacity: Double = 0.75
 }
 
 public extension View {

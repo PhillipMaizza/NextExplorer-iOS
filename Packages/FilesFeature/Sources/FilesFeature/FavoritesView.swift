@@ -10,9 +10,6 @@ private enum FavoritesViewMode: String {
 }
 
 private enum Constants {
-    static let listDiffSpringResponse: Double = 0.35
-    static let listDiffSpringDamping: Double = 0.8
-    static let overlayCrossfadeDuration: Double = 0.2
     static let gridSpacing: CGFloat = .space16
     /// Inset between a grid tile's content and its `backgroundSecondary` card edge, matching
     /// `BrowseContentView`.
@@ -27,6 +24,9 @@ struct FavoritesView: View {
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
+    /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
+    /// pull-to-refresh rubber-band instead of staying pinned.
+    @State private var pullOffset: CGFloat = 0
 
     private var viewMode: FavoritesViewMode {
         FavoritesViewMode(rawValue: viewModeRaw) ?? .list
@@ -40,18 +40,15 @@ struct FavoritesView: View {
         !store.displayedFavorites.isEmpty && store.selectedFavoriteIDs.count == store.displayedFavorites.count
     }
 
-    private var overlayPhase: ListStateOverlay.Phase {
-        if store.isLoading && store.favorites.isEmpty {
-            .loading
-        } else if store.errorMessage != nil {
-            .error
-        } else if store.favorites.isEmpty {
-            .empty
-        } else if !store.searchQuery.isEmpty && store.displayedFavorites.isEmpty {
-            .noResults
-        } else {
-            .none
-        }
+    /// The one screen state, derived from the store — skeleton until the first response lands
+    /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
+    /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
+    private var listPhase: ListPhase {
+        if store.errorMessage != nil { return .error }
+        if !store.phase.hasLoaded && store.favorites.isEmpty { return .loading }
+        if store.favorites.isEmpty { return .empty }
+        if !store.searchQuery.isEmpty && store.displayedFavorites.isEmpty { return .noResults }
+        return .content
     }
 
     private var bulkRemoveConfirmationBinding: Binding<Bool> {
@@ -132,17 +129,21 @@ struct FavoritesView: View {
             }
             .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
             .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
+            // Skeleton rows live inside the List/grid (see `listContent`/`gridContent`); the
+            // empty/error message is an overlay fed the list's pull-to-refresh drag so it
+            // rubber-bands with it. One animation cross-fades the whole state change.
             .overlay {
                 ListStateOverlay(
-                    phase: overlayPhase,
+                    phase: listPhase,
                     errorMessage: store.errorMessage,
                     emptyIcon: IconKit.star,
                     emptyMessage: L10n.Favorites.emptyList,
                     noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
+                    pullOffset: pullOffset,
                     onRetry: { store.send(.refreshButtonTapped) }
                 )
             }
-            .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayPhase)
+            .animation(DSMotion.contentReveal, value: listPhase)
             .featureToast(error: store.actionErrorMessage)
             .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
             .toolbar {
@@ -202,6 +203,10 @@ struct FavoritesView: View {
             }
             .hapticFeedback(.warning, trigger: store.bulkRemoveConfirmationIsPresented)
             .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle)
+            // Force large — otherwise it can render inline on the first appear (the tab's nav
+            // stack lays out while the launch splash still covers it) and only fix itself on a
+            // later tab switch.
+            .navigationBarTitleDisplayMode(store.isSelecting ? .inline : .large)
             .task {
                 store.send(.onAppear)
             }
@@ -240,12 +245,40 @@ struct FavoritesView: View {
         )
     }
 
+    /// Redacted `FileRowView` / `GridCellView` stand-ins that sit in the *same* `List` / grid
+    /// as the real rows — never a separate scroll container (that fights the nav bar's large
+    /// title). Shine suppressed under Reduce Motion.
+    private static let skeletonNames = [6, 12, 4, 9, 15, 7, 11, 5, 13, 8].map { String(repeating: "M", count: $0) }
+
+    @ViewBuilder
+    private var skeletonRows: some View {
+        ForEach(Self.skeletonNames, id: \.self) { name in
+            FileRowView(name: name, isDirectory: true)
+                .redacted(reason: .placeholder)
+                .shimmering()
+                .listRowBackground(Color.backgroundSecondary)
+        }
+    }
+
+    @ViewBuilder
+    private var skeletonCells: some View {
+        ForEach(Self.skeletonNames, id: \.self) { name in
+            GridCellView(name: name, isDirectory: true)
+                .dsCard(padding: Constants.gridCellPadding)
+                .redacted(reason: .placeholder)
+                .shimmering()
+        }
+    }
+
     private var listContent: some View {
         // Bound once — the separator checks below would otherwise re-filter the list per row.
         let favorites = store.displayedFavorites
         let firstID = favorites.first?.id
         let lastID = favorites.last?.id
         return List {
+            if listPhase == .loading {
+                skeletonRows
+            } else {
             ForEach(favorites) { favorite in
                 Button {
                     handleTap(favorite)
@@ -290,20 +323,37 @@ struct FavoritesView: View {
                 .listRowSeparator(favorite.id == lastID ? .hidden : .visible, edges: .bottom)
             }
             .onMove(perform: store.canReorder ? { store.send(.favoritesMoved($0, $1)) } : nil)
+            }
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .backgroundGradient()
-        .animation(
-            .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-            value: store.displayedFavorites
-        )
+        .scrollPullOffset($pullOffset)
+        // Only spring row diffs once the list is the content — during the skeleton→content
+        // swap the outer `.animation(value: listPhase)` owns the cross-fade alone, so the two
+        // don't run the same transition twice.
+        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)
     }
 
     private var gridContent: some View {
         ScrollView {
             LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
-                ForEach(store.displayedFavorites) { favorite in
+                if listPhase == .loading {
+                    skeletonCells
+                } else {
+                    favoriteCells
+                }
+            }
+            .padding(Constants.gridSpacing)
+            .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)
+        }
+        .backgroundGradient()
+        .scrollPullOffset($pullOffset)
+    }
+
+    @ViewBuilder
+    private var favoriteCells: some View {
+        ForEach(store.displayedFavorites) { favorite in
                     Button {
                         handleTap(favorite)
                     } label: {
@@ -328,15 +378,7 @@ struct FavoritesView: View {
                             rowContextMenu(for: favorite)
                         }
                     }
-                }
-            }
-            .padding(Constants.gridSpacing)
-            .animation(
-                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-                value: store.displayedFavorites
-            )
         }
-        .backgroundGradient()
     }
 }
 

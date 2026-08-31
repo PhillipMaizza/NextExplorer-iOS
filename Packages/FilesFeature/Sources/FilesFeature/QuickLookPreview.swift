@@ -25,6 +25,9 @@ struct QuickLookPreview: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> QLPreviewController {
         let controller = QLPreviewController()
         controller.dataSource = context.coordinator
+        // Let the container's background gradient show through wherever QuickLook doesn't
+        // paint its own content (the letterbox margins around a PDF page, image backdrop).
+        controller.view.backgroundColor = .clear
         if urls.indices.contains(initialIndex) {
             controller.currentPreviewItemIndex = initialIndex
         }

@@ -45,6 +45,7 @@ public enum IconKit {
     public static let starFill = Image(systemName: "star.fill")
     public static let gearshape = Image(systemName: "gearshape")
     public static let chevronRight = Image(systemName: "chevron.right")
+    public static let chevronDown = Image(systemName: "chevron.down")
     public static let warning = Image(systemName: "exclamationmark.triangle")
     public static let darkMode = Image(systemName: "moon.fill")
     public static let signOut = Image(systemName: "rectangle.portrait.and.arrow.right")

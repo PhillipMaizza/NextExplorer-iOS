@@ -74,6 +74,15 @@ struct ImageGalleryView: View {
             }
             .tabViewStyle(.page(indexDisplayMode: items.count > 1 && !areControlsHidden ? .always : .never))
             .ignoresSafeArea()
+            // A rename changes the current image's id (it's path-derived); deleting one drops
+            // it. Close if that emptied the gallery, otherwise hold the same slot so a dangling
+            // `selection` lands on the neighbour.
+            .onChange(of: items) { oldItems, newItems in
+                if newItems.isEmpty { onDismiss(); return }
+                guard !newItems.contains(where: { $0.id == selection }) else { return }
+                let slot = oldItems.firstIndex { $0.id == selection } ?? 0
+                selection = (newItems.indices.contains(slot) ? newItems[slot] : newItems[newItems.count - 1]).id
+            }
             .contentShape(Rectangle())
             // A short fade, nothing more. The earlier lag was this animation fighting the
             // content reflow when the bars resized the image — now that the image is

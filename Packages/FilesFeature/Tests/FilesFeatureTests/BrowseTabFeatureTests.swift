@@ -245,4 +245,14 @@ struct BrowseTabFeatureTests {
         await store.send(.path(.element(id: 0, action: .delegate(.openDownloadsTapped))))
         await store.receive(.delegate(.openDownloadsTapped))
     }
+
+    @Test
+    func goToSharedTabBubblesUpAsADelegate() async {
+        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
+            BrowseTabFeature()
+        }
+
+        await store.send(.root(.delegate(.goToSharedTab)))
+        await store.receive(.delegate(.goToSharedTab))
+    }
 }

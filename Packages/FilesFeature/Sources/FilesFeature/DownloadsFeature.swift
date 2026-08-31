@@ -33,11 +33,15 @@ public struct DownloadsFeature {
     @ObservableState
     public struct State: Equatable {
         public var downloads: IdentifiedArrayOf<LocalDownload> = []
-        public var isLoading = false
-        public var errorMessage: String?
-        /// A failed delete, surfaced as a toast, not the list level `errorMessage`, which is
-        /// only shown when the list is empty.
+        /// The load lifecycle: `.idle` → `.loaded` / `.failed` (the initial scan is local and
+        /// synchronous, so `.loading` only ever shows during an explicit refresh).
+        public var phase: DataPhase = .idle
+        /// A failed delete, or a refresh failure over an already populated list, surfaced as a
+        /// toast rather than the full screen `phase.errorMessage`.
         public var actionErrorMessage: String?
+
+        /// The first load's failure text, if it's still the current state.
+        public var errorMessage: String? { phase.errorMessage }
         public var deleteConfirmationItem: LocalDownload?
         public var renameItem: LocalDownload?
         public var searchQuery = ""
@@ -96,27 +100,43 @@ public struct DownloadsFeature {
 
     @Dependency(\.localDownloadStore) var localDownloadStore
 
+    private enum CancelID { case load }
+
     public init() {}
 
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.downloads.isEmpty, state.errorMessage == nil, !state.isLoading else { return .none }
-                return load(&state)
+                guard state.phase.shouldLoadOnAppear else { return .none }
+                // The Downloads list is a local directory scan, cheap enough to read inline.
+                // Routing it through an async effect returned a frame later and flashed the
+                // loading skeleton on a tab whose data is effectively instant.
+                do {
+                    state.downloads = IdentifiedArray(uniqueElements: try localDownloadStore.list())
+                    state.phase = .loaded
+                } catch {
+                    state.phase = .failed(((error as? FilesClientError) ?? .network(String(describing: error))).userMessage)
+                }
+                return .none
 
             case .refreshButtonTapped:
                 return load(&state)
 
             case let .downloadsResponse(.success(downloads)):
-                state.isLoading = false
+                state.phase = .loaded
                 state.downloads = IdentifiedArray(uniqueElements: downloads)
-                state.errorMessage = nil
                 return .none
 
             case let .downloadsResponse(.failure(error)):
-                state.isLoading = false
-                state.errorMessage = error.userMessage
+                // Full screen error only when there's nothing to blank; a refresh failure
+                // over a populated list stays `.loaded` and toasts.
+                if state.downloads.isEmpty {
+                    state.phase = .failed(error.userMessage)
+                } else {
+                    state.phase = .loaded
+                    state.actionErrorMessage = error.userMessage
+                }
                 return .none
 
             case let .deleteTapped(download):
@@ -216,12 +236,12 @@ public struct DownloadsFeature {
     }
 
     private func load(_ state: inout State) -> Effect<Action> {
-        state.isLoading = true
-        state.errorMessage = nil
+        state.phase = .loading
         let localDownloadStore = self.localDownloadStore
         return .run { send in
             await send(.downloadsResponse(try await apiResult { try localDownloadStore.list() }))
         }
+        .cancellable(id: CancelID.load, cancelInFlight: true)
     }
 
     private func confirmDelete(_ state: inout State) -> Effect<Action> {

@@ -174,6 +174,10 @@ downloads.deleteConfirmMany	Delete %lld files?
 downloads.deleteSingleMessage	This only removes the local copy. The file stays on the server.
 downloads.deleteBulkMessage	This only removes the local copies. The files stay on the server.
 
+# ---- unsupported file preview ----
+unsupportedPreview.genericType	File
+unsupportedPreview.cannotOpen	This app can't open this type of file.
+
 # ---- uploads ----
 uploads.navigationTitle	Uploads
 uploads.menuTitle	Upload
@@ -256,6 +260,7 @@ createShare.loadingUsers	Loading users…
 createShare.noOtherUsers	No other users to share with.
 createShare.sharingPrefix	Sharing:
 createShare.createdBanner	Share link created successfully!
+createShare.viewInShared	View in Shared
 createShare.directLinkMode	Direct link mode
 createShare.directFolderLink	Direct folder ZIP link
 createShare.directFileLink	Direct file link
@@ -416,7 +421,6 @@ permissions.rightExecute	Execute
 
 # ---- archive browser ----
 archive.emptyFolder	This folder is empty.
-archive.unsupportedFileType	Unsupported file type
 archive.openFailed	Couldn't open this file.
 archive.openArchiveFailed	Couldn't open this archive.
 
