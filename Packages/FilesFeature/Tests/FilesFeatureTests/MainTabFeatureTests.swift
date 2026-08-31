@@ -61,7 +61,7 @@ struct MainTabFeatureTests {
 
         await store.send(.appBecameActive)
         await store.receive(\.browse.root.refreshButtonTapped) {
-            $0.browse.root.isLoading = true
+            $0.browse.root.phase = .loading
         }
     }
 
@@ -254,7 +254,7 @@ struct MainTabFeatureTests {
         await store.send(.uploads(.delegate(.queueFinished(summary))))
         await store.receive(\.browse.refreshDirectory)
         await store.receive(\.favorites.refreshDirectory)
-        #expect(store.state.browse.root.isLoading == false)
+        #expect(store.state.browse.root.phase != .loading)
     }
 
     @Test
