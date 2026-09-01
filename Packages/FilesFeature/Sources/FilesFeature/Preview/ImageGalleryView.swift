@@ -193,7 +193,11 @@ private struct ImageGalleryPage: View {
                     image = decoded
                 }
             } catch {
-                errorMessage = (error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed
+                // Swiping away mid load cancels this task; that is not a load failure, so leave
+                // the spinner rather than flashing an error screen the user already left.
+                if !Task.isCancelled {
+                    errorMessage = (error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed
+                }
             }
         }
     }

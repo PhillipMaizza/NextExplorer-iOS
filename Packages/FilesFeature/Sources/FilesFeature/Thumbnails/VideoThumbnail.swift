@@ -47,7 +47,9 @@ struct VideoThumbnailView: View {
         .task(id: url) {
             if let image = await Self.firstFrame(of: url, maxPixelSize: size * Constants.renderScale) {
                 frame = image
-            } else {
+            } else if !Task.isCancelled {
+                // A cancelled generate (row scrolled away) is not a failure; leave the
+                // placeholder so re-appearing retries instead of dropping to the generic icon.
                 didFail = true
             }
         }

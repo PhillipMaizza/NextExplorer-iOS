@@ -91,17 +91,18 @@ public struct AppView: View {
                 }
 
             case .authenticated:
-                // Hold the tab tree back until the splash begins its exit. Building the
-                // `NavigationStack` under a fully opaque splash over a zero-progress frame
-                // meant UIKit laid the nav bar out off screen and never revisited it (large
-                // title blank until a tab switch forced a relayout), and `BrowseContentView`'s
-                // `.task` — the only thing that kicks the initial folder fetch — was deferred
-                // the same way. Mounting as the splash starts to leave (still covering the
-                // screen) gives a normal on screen layout pass, and the wing-opening reveal
-                // uncovers the real skeleton instead of a blank frame.
+                // Mount as the splash starts to leave (still covering the screen) so the
+                // wing-opening reveal uncovers the real Browse skeleton, not a blank frame.
+                // But a `NavigationStack` that does its first layout under the splash has its
+                // large titles sized collapsed by UIKit and never revisited (every tab stuck
+                // inline until a manual tab switch). `.id(isSplashPresented)` re-establishes
+                // each nav bar's layout on screen the moment the splash is gone; the TCA store
+                // state survives the identity change, so the content stays put and only the
+                // nav bars relayout, no reload flash.
                 if (!isSplashPresented || splashIsExiting),
                    let scopedStore = store.scope(state: \.destination.authenticated, action: \.destination.authenticated) {
                     AuthenticatedView(store: scopedStore)
+                        .id(isSplashPresented)
                         .transition(.opacity)
                 }
             }

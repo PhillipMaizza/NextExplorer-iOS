@@ -462,6 +462,9 @@ struct ArchiveBrowserView: View {
             entries = try ArchiveReader.entries(from: opened)
             isLoading = false
         } catch {
+            // Backing out mid download cancels this; not an open failure, so don't flash the
+            // "couldn't open archive" screen on the way out.
+            guard !Task.isCancelled else { return }
             errorMessage = (error as? FilesClientError)?.userMessage ?? L10n.Archive.openArchiveFailed
             isLoading = false
         }

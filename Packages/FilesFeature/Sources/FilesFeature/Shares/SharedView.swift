@@ -64,7 +64,7 @@ struct SharedView: View {
             }
             .backgroundGradient()
             .navigationTitle(L10n.Shared.navigationTitle)
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
             .searchable(
                 text: $store.searchQuery.sending(\.searchQueryChanged),
                 placement: .navigationBarDrawer(displayMode: .always),
