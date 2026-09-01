@@ -328,6 +328,7 @@ struct FavoritesView: View {
         .scrollContentBackground(.hidden)
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
         // Only spring row diffs once the list is the content — during the skeleton→content
         // swap the outer `.animation(value: listPhase)` owns the cross-fade alone, so the two
         // don't run the same transition twice.
@@ -348,6 +349,7 @@ struct FavoritesView: View {
         }
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
     }
 
     @ViewBuilder

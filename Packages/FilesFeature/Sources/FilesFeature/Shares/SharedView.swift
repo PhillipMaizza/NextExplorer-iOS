@@ -172,6 +172,7 @@ private struct SharedSegmentList: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
         .refreshable {
             await store.send(.refreshRequested).finish()
             didFinishRefreshing.toggle()

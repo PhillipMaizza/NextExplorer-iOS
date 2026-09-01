@@ -235,6 +235,7 @@ struct DownloadsView: View {
         .scrollContentBackground(.hidden)
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
         // Only spring row diffs once the list is the content — during the skeleton→content
         // swap the outer `.animation(value: listPhase)` owns the cross-fade alone.
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
@@ -277,6 +278,7 @@ struct DownloadsView: View {
         }
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
     }
 
     @ViewBuilder

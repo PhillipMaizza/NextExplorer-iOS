@@ -313,6 +313,7 @@ struct SettingsView: View {
             }
             .scrollContentBackground(.hidden)
             .backgroundGradient()
+            .dismissKeyboardOnTap()
             .safeAreaInset(edge: .top, spacing: 0) {
                 PinnedTitleSearchHeader(
                     title: L10n.Settings.navigationTitle,

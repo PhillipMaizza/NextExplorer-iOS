@@ -1171,6 +1171,7 @@ struct BrowseContentView: View {
         }
         .backgroundGradient()
         .safeAreaPadding(.bottom, bottomChromeClearance)
+        .dismissKeyboardOnTap()
     }
 
     /// Invisible long-press target filling the space past the last row — a plain
