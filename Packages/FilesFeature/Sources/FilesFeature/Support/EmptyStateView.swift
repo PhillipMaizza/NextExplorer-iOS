@@ -3,9 +3,12 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let spacing: CGFloat = .space8
+    static let spacing: CGFloat = .space16
     static let iconSize: CGFloat = .superIcon
     static let retryTopPadding: CGFloat = .space8
+    static let retryInnerVerticalPadding: CGFloat = .space12
+    static let retryInnerHorizontalPadding: CGFloat = .space24
+    static let retryCornerRadius: CGFloat = .radiusControl
 }
 
 /// The icon and message placeholder shown across the app for load error, empty and no
@@ -22,22 +25,31 @@ struct EmptyStateView: View {
             icon
                 .resizable()
                 .scaledToFit()
-                .foregroundStyle(Color.secondaryDS)
+                .foregroundColor(.secondaryDS)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
             Text(message).type(.body1(.regular), style: .secondary)
             if let retry {
-                DSButton(L10n.Common.retry, style: .secondary) { retry() }
-                    .fixedSize()
+                Button(action: retry, label: {
+                    Text(L10n.Common.retry)
+                        .type(.label3, style: .link)
+                        .padding(.vertical, Constants.retryInnerVerticalPadding)
+                        .padding(.horizontal, Constants.retryInnerVerticalPadding)
+                })
+                .overlay(
+                    RoundedRectangle(cornerRadius: Constants.retryCornerRadius)
+                        .strokeBorder(Color.accent, lineWidth: .borderWidthFocused)
+                )
+
                     .padding(.top, Constants.retryTopPadding)
             }
         }
-        .padding(.space16)
+        .padding(.horizontal, .space16)
         .multilineTextAlignment(.center)
     }
 }
 
 #Preview("Error") {
-    EmptyStateView(icon: IconKit.warning, message: "Couldn't reach the server.")
+    EmptyStateView(icon: IconKit.warning, message: "Couldn't reach the server.", retry: { })
 }
 
 #Preview("No items") {

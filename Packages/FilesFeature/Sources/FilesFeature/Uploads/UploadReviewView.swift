@@ -7,8 +7,6 @@ import PhotosUI
 import SwiftUI
 
 private enum Constants {
-    static let thumbnailSize: CGFloat = .iconLarge
-    static let removeButtonSize: CGFloat = .iconSmall
     static let contentSpacing: CGFloat = .space24
     static let sectionRowSpacing: CGFloat = .space16
     static let cellVerticalPadding: CGFloat = .space16
@@ -41,75 +39,12 @@ struct UploadReviewView: View {
         let id: PickedFile.ID
     }
 
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
-
     private func rowIcon(_ image: Image) -> some View {
         image
             .resizable()
             .scaledToFit()
             .foregroundStyle(Color.secondaryDS)
             .frame(width: .iconSmall, height: .iconSmall)
-    }
-
-    private func fileRow(_ file: PickedFile) -> some View {
-        HStack(spacing: Constants.rowSpacing) {
-            Button {
-                previewSelection = PreviewSelection(id: file.id)
-            } label: {
-                thumbnail(for: file)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(L10n.Uploads.reviewPreviewFile(file.fileName))
-            VStack(alignment: .leading, spacing: Constants.rowTextSpacing) {
-                Text(file.fileName)
-                    .type(.body2(.regular), style: .primary(for: .label))
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                Text(Self.byteFormatter.string(fromByteCount: file.size))
-                    .type(.body3(.regular), style: .secondary)
-            }
-            Spacer(minLength: Constants.rowSpacing)
-            Button {
-                store.send(.removeFileTapped(id: file.id), animation: .default)
-            } label: {
-                IconKit.closeCircle
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
-                    .frame(width: Constants.removeButtonSize, height: Constants.removeButtonSize)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(L10n.Common.remove)
-        }
-        .padding(.vertical, .space4)
-    }
-
-    @ViewBuilder
-    private func thumbnail(for file: PickedFile) -> some View {
-        let kind = (file.fileName as NSString).pathExtension.lowercased()
-        if FileItem.isImageKind(kind), kind != "svg" {
-            AsyncImage(url: file.fileURL) { phase in
-                switch phase {
-                case let .success(image):
-                    image.resizable().scaledToFill()
-                case .failure:
-                    FileTypeIcon(kind: kind)
-                default:
-                    ThumbnailLoadingPlaceholder()
-                }
-            }
-            .frame(width: Constants.thumbnailSize, height: Constants.thumbnailSize)
-            .clipShape(RoundedRectangle(cornerRadius: .radiusSmall))
-        } else if FileItem.isVideoKind(kind) {
-            VideoThumbnailView(url: file.fileURL, size: Constants.thumbnailSize)
-        } else {
-            FileTypeIcon(kind: kind)
-                .frame(width: Constants.thumbnailSize, height: Constants.thumbnailSize)
-        }
     }
 
     /// "Add more files" — opens the same camera / Photos / Files menu the browse `+` uses,
@@ -223,7 +158,7 @@ struct UploadReviewView: View {
                 Text(L10n.Uploads.reviewSectionSize)
                     .type(.body2(.regular), style: .primary(for: .label))
                 Spacer()
-                Text(Self.byteFormatter.string(fromByteCount: store.totalSize))
+                Text(UploadReviewFormat.byteFormatter.string(fromByteCount: store.totalSize))
                     .type(.body2(.regular), style: .secondary)
             }
         }
@@ -237,7 +172,11 @@ struct UploadReviewView: View {
         VStack(alignment: .leading, spacing: Constants.rowSpacing) {
             DSFieldLabel(L10n.Uploads.reviewSectionFiles)
             ForEach(Array(store.files.enumerated()), id: \.element.id) { index, file in
-                fileRow(file)
+                UploadFileRow(
+                    file: file,
+                    onPreview: { previewSelection = PreviewSelection(id: file.id) },
+                    onRemove: { store.send(.removeFileTapped(id: file.id), animation: .default) }
+                )
                 if index < store.files.count - 1 {
                     Divider()
                 }
@@ -316,40 +255,6 @@ struct UploadReviewView: View {
                 store.send(.stage(.camera(url)))
             }
         ))
-    }
-}
-
-/// Full screen preview for a staged file, opened from its row thumbnail. Goes through
-/// `QuickLook`, which swipes across the whole batch starting on the tapped file. Wrapped in a
-/// `NavigationStack` so `previewChrome` can hang a close button off it — `QLPreviewController`
-/// only draws its own Done bar when UIKit presents it directly, not through a representable.
-private struct PickedFilePreview: View {
-    let urls: [URL]
-    let names: [String]
-    let initialIndex: Int
-    let onClose: () -> Void
-
-    @State private var currentIndex: Int
-
-    init(urls: [URL], names: [String], initialIndex: Int, onClose: @escaping () -> Void) {
-        self.urls = urls
-        self.names = names
-        self.initialIndex = initialIndex
-        self.onClose = onClose
-        self._currentIndex = State(initialValue: initialIndex)
-    }
-
-    private var title: String? {
-        names.indices.contains(currentIndex) ? names[currentIndex] : nil
-    }
-
-    var body: some View {
-        NavigationStack {
-            QuickLookPreview(urls: urls, initialIndex: initialIndex) { currentIndex = $0 }
-                .ignoresSafeArea()
-                .background(Color.backgroundPrimary.ignoresSafeArea())
-                .previewChrome(title: title, onClose: onClose)
-        }
     }
 }
 

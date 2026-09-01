@@ -73,13 +73,21 @@ struct TextFilePreviewView: View {
                 }
         }
         .dsToast($savedToast)
-        .onAppear {
-            draft = content ?? ""
-            refreshRenderedMarkdown()
-        }
-        .onChange(of: content) { _, newValue in
-            draft = newValue ?? ""
-            refreshRenderedMarkdown()
+        .onAppear { draft = content ?? "" }
+        .onChange(of: content) { _, newValue in draft = newValue ?? "" }
+        // `MarkdownRenderer.html` parses the whole document; run it off the main thread so a
+        // large Markdown file doesn't freeze the UI on open. `.task(id:)` cancels a superseded
+        // render, so a fast content change can't land a stale HTML string.
+        .task(id: content) {
+            guard isMarkdown else {
+                renderedMarkdownHTML = ""
+                return
+            }
+            let source = content ?? ""
+            let html = await Task.detached(priority: .userInitiated) {
+                MarkdownRenderer.html(from: source)
+            }.value
+            if !Task.isCancelled { renderedMarkdownHTML = html }
         }
         .onChange(of: isSaving) { wasSaving, nowSaving in
             if wasSaving, !nowSaving, errorMessage == nil {
@@ -87,14 +95,6 @@ struct TextFilePreviewView: View {
                 isEditing = false
             }
         }
-    }
-
-    /// `MarkdownRenderer.html` re-parses the whole document — memoized here rather than
-    /// called inline from `editorBody`, which would otherwise re-run it synchronously on the
-    /// main thread on every unrelated SwiftUI re-render while in rendered mode.
-    private func refreshRenderedMarkdown() {
-        guard isMarkdown else { return }
-        renderedMarkdownHTML = MarkdownRenderer.html(from: draft)
     }
 
     /// Leading nav-bar item: toggles the Runestone editor between read-only and editable; the
@@ -128,9 +128,9 @@ struct TextFilePreviewView: View {
     }
 
     private func toggleEditing() {
+        // Saving updates `content` upstream, which re-fires the markdown render task above.
         if isEditing {
             onSave(draft)
-            refreshRenderedMarkdown()
         }
         isEditing.toggle()
     }

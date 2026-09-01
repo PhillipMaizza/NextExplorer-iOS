@@ -72,8 +72,14 @@ struct ListStateOverlay: View {
 
     var body: some View {
         ZStack {
-            EmptyStateView(icon: IconKit.warning, message: errorMessage ?? "", retry: onRetry)
-                .opacity(phase == .error && errorMessage != nil ? 1 : 0)
+            EmptyStateView(
+                icon: IconKit.warning,
+                message: errorMessage ?? "",
+                retry: onRetry
+            )
+            .opacity(
+                phase == .error && errorMessage != nil ? 1 : 0
+            )
 
             EmptyStateView(icon: emptyIcon, message: emptyMessage)
                 .opacity(phase == .empty ? 1 : 0)

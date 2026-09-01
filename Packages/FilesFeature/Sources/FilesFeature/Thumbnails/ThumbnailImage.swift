@@ -69,6 +69,10 @@ struct ThumbnailImage: View {
             let thumbnailURL = await thumbnailCache.resolvedURL(path, signature) {
                 try? await filesClient.thumbnailURL(serverURL, path)
             }
+            // A cancelled task (the row scrolled away, or the tab was switched mid load) is not
+            // a failure: leave the loading placeholder so re-appearing retries, instead of
+            // marking it resolved and dropping to the generic fallback icon.
+            if Task.isCancelled { return }
             guard let thumbnailURL else {
                 didResolve = true
                 return
@@ -77,14 +81,19 @@ struct ThumbnailImage: View {
                 uiImage = cached
                 return
             }
-            guard let data = try? await thumbnailCache.data(thumbnailURL) else {
-                didResolve = true
+            let data: Data
+            do {
+                data = try await thumbnailCache.data(thumbnailURL)
+            } catch {
+                if !Task.isCancelled { didResolve = true }
                 return
             }
+            if Task.isCancelled { return }
             let target = maxPixelDimension
             let decoded = await Task.detached(priority: .utility) {
                 ImageDownsampling.image(from: data, maxPixelDimension: target)
             }.value
+            if Task.isCancelled { return }
             if let decoded {
                 ThumbnailMemoryCache.shared.setObject(
                     decoded,

@@ -47,4 +47,6 @@ public extension CGFloat {
 
     /// 1pt — the standard hairline stroke width for control borders (buttons, fields).
     static let borderWidthHairline: CGFloat = 1.0
+    /// 2pt — a focused field's accent border, thicker than the resting hairline.
+    static let borderWidthFocused: CGFloat = 2.0
 }

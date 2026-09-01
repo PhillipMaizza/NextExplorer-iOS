@@ -22,7 +22,7 @@ extension FilesClient {
                     serverURL: serverURL, path: path, result: result, etag: etag, fetchedAt: now()
                 )
                 return result
-            case let .notModified(etag):
+            case .notModified:
                 guard let cached else {
                     // A 304 with no cached copy: the entry was evicted or cleared between the
                     // read and the response. Re fetch unconditionally.

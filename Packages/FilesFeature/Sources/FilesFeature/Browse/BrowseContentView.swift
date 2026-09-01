@@ -31,9 +31,6 @@ private enum Constants {
     static let selectionToolbarIconSize: CGFloat = .iconMedium
     /// Height of the invisible long-press paste target past the last row.
     static let pasteTargetMinHeight: CGFloat = 260
-    /// The upload `+` is the folder's primary action, so it carries the accent tint and a
-    /// heavier glyph than the neutral options menu beside it.
-    static let uploadButtonWeight: Font.Weight = .bold
     /// Gap between the empty folder message and its upload call to action.
     static let emptyUploadButtonTopSpacing: CGFloat = .space24
     static let emptyUploadButtonHPadding: CGFloat = .space24
@@ -119,7 +116,12 @@ struct BrowseContentView: View {
                 // id) updates the cover's content instead of dismissing and re-presenting it.
                 if let item = store.previewItem {
                     PreviewZoomContainer(sourceID: item.id, namespace: previewTransition) {
-                        previewContent(for: item)
+                        BrowsePreviewRouter(
+                            store: store,
+                            item: item,
+                            removeArchiveAfterDownload: removeArchiveAfterDownload,
+                            onShareTarget: { shareTarget = $0 }
+                        )
                     }
                     .sheet(isPresented: isDeletingFromPreviewBinding) {
                         deleteConfirmationSheet(dismissingPreview: true)
@@ -205,16 +207,6 @@ struct BrowseContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.easeInOut(duration: Constants.contentRevealDuration), value: isInitialLoad)
         .tint(Color.accent)
-        .searchable(
-            text: $store.searchQuery.sending(\.searchQueryChanged),
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: L10n.Common.search
-        )
-        .searchScopes($store.searchScope.sending(\.searchScopeChanged)) {
-            ForEach(BrowseFeature.SearchScope.allCases, id: \.self) { scope in
-                Text(scope.title).tag(scope)
-            }
-        }
         .refreshable {
             await store.send(.refreshButtonTapped).finish()
             didFinishRefreshing.toggle()
@@ -239,6 +231,21 @@ struct BrowseContentView: View {
             }
         }
         .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: store.dataSource)
+        .safeAreaInset(edge: .top, spacing: 0) {
+            PinnedTitleSearchHeader(
+                title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title,
+                searchText: $store.searchQuery.sending(\.searchQueryChanged)
+            ) {
+                if store.isSearching {
+                    DSSegmentedControl(
+                        options: BrowseFeature.SearchScope.allCases,
+                        selection: $store.searchScope.sending(\.searchScopeChanged),
+                        label: { $0.title }
+                    )
+                }
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             selectSortToolbar(
                 isSelecting: store.isSelecting,
@@ -285,8 +292,7 @@ struct BrowseContentView: View {
                     UploadSourceMenu(
                         label: {
                             IconKit.plus
-                                .fontWeight(Constants.uploadButtonWeight)
-                                .foregroundStyle(Color.accent)
+                                .foregroundStyle(Color.primaryDS)
                         },
                         leadingActions: {
                             if !store.directoryPath.isEmpty {
@@ -582,102 +588,6 @@ struct BrowseContentView: View {
         )
     }
 
-    @ViewBuilder
-    private func previewContent(for item: FileItem) -> some View {
-        if item.isUnsupportedForPreview {
-            UnsupportedFilePreviewView(
-                item: item,
-                systemShare: .remote(item, serverURL: store.serverURL),
-                onDismiss: { store.send(.previewDismissed) },
-                onShareLink: (store.access?.canShare ?? false) ? {
-                    shareTarget = item
-                } : nil,
-                onRename: (store.access?.canWrite ?? false) ? {
-                    store.send(.renameTapped(item))
-                } : nil,
-                onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
-                } : nil,
-                onDelete: (store.access?.canDelete ?? false) ? {
-                    store.send(.deleteTapped(item))
-                } : nil
-            )
-        } else if item.isStreamableMedia, let url = FilesClient.previewURL(serverURL: store.serverURL, item: item) {
-            // Guaranteed `isNativelyPlayable` here — undecodable containers/codecs are
-            // `isUnsupportedForPreview` and handled by the branch above.
-            StreamingPreviewView(
-                item: item,
-                url: url,
-                serverURL: store.serverURL,
-                onDismiss: { store.send(.previewDismissed) },
-                onShare: (store.access?.canShare ?? false) ? {
-                    shareTarget = item
-                } : nil,
-                onRename: (store.access?.canWrite ?? false) ? {
-                    store.send(.renameTapped(item))
-                } : nil,
-                onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
-                } : nil,
-                onDelete: (store.access?.canDelete ?? false) ? {
-                    store.send(.deleteTapped(item))
-                } : nil
-            )
-        } else if item.isBrowsableArchive {
-            ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
-        } else if (item.isImage || item.isRawImage) && !item.isSVG {
-            ImageGalleryView(
-                items: store.displayedItems.filter { ($0.isImage || $0.isRawImage) && !$0.isSVG },
-                initialItem: item,
-                serverURL: store.serverURL,
-                onDismiss: { store.send(.previewDismissed) },
-                onShare: (store.access?.canShare ?? false) ? { current in
-                    shareTarget = current
-                } : nil,
-                onRename: (store.access?.canWrite ?? false) ? { current in
-                    store.send(.renameTapped(current))
-                } : nil,
-                onDownload: (store.access?.canDownload ?? false) ? { current in
-                    store.send(.downloadTapped(current, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
-                } : nil,
-                onDelete: (store.access?.canDelete ?? false) ? { current in
-                    store.send(.deleteTapped(current))
-                } : nil
-            )
-        } else if item.isPreviewableViaDownload {
-            FilePreviewContainerView(
-                fileURL: store.previewFileURL,
-                errorMessage: store.previewErrorMessage,
-                onDismiss: { store.send(.previewDismissed) },
-                onShareLink: (store.access?.canShare ?? false) ? {
-                    shareTarget = item
-                } : nil,
-                onRename: (store.access?.canWrite ?? false) ? {
-                    store.send(.renameTapped(item))
-                } : nil,
-                onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
-                } : nil,
-                onDelete: (store.access?.canDelete ?? false) ? {
-                    store.send(.deleteTapped(item))
-                } : nil
-            )
-        } else {
-            TextFilePreviewView(
-                item: item,
-                serverURL: store.serverURL,
-                fileName: item.name,
-                kind: item.kind,
-                content: store.textContent,
-                errorMessage: store.textEditorErrorMessage,
-                isLoading: store.isLoadingTextContent,
-                isSaving: store.isSavingTextContent,
-                onSave: { store.send(.textSaveTapped($0)) },
-                onDismiss: { store.send(.previewDismissed) }
-            )
-        }
-    }
-
     /// Distinct identities for "still loading" vs. "have a result", so swapping between the
     /// two (once the fetch resolves) is a genuinely fresh sheet presentation rather than an
     /// in-place content change — see `FileInfoLoadingSheet`'s doc comment for why that
@@ -907,115 +817,13 @@ struct BrowseContentView: View {
         L10n.Browse.deleteConfirmMany(store.selectedItemIDs.count)
     }
 
-    @ViewBuilder
-    private func fileActionsContextMenu(for item: FileItem) -> some View {
-        // Explicit `.tint`: this whole view is under `.tint(Color.accent)`, which would
-        // otherwise cascade into the menu and color every icon/label gold instead of the
-        // system's normal label color — only Delete should stand out, in red.
-        Button {
-            store.send(.infoTapped(item))
-        } label: {
-            Label { Text(L10n.Browse.actionGetInfo) } icon: { IconKit.info }
-        }
-        .tint(.primaryDS)
-        Button {
-            store.send(.permissionsTapped(item))
-        } label: {
-            Label { Text(L10n.Browse.actionPermissions) } icon: { IconKit.lock }
-        }
-        .tint(.primaryDS)
-        if item.isHTML {
-            Button {
-                store.send(.openInBrowserTapped(item))
-            } label: {
-                Label { Text(L10n.Browse.actionOpenInBrowser) } icon: { IconKit.web }
-            }
-            .tint(.primaryDS)
-        }
-        if store.access?.canWrite ?? false {
-            Button {
-                store.send(.renameTapped(item))
-            } label: {
-                Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
-            }
-            .tint(.primaryDS)
-        }
-        if store.access?.canWrite ?? false {
-            // Extract only offers `.zip` — the server's own extract route 415s anything else
-            // ("Only .zip archives are supported"), `.rar` included despite this app being
-            // able to browse rar contents client-side.
-            if item.kind.lowercased() == "zip" {
-                Button {
-                    store.send(.extractZipTapped(item))
-                } label: {
-                    Label { Text(L10n.Browse.actionExtract) } icon: { IconKit.extract }
-                }
-                .tint(.primaryDS)
-            }
-            Button {
-                store.send(.compressTapped(item))
-            } label: {
-                Label { Text(L10n.Browse.actionCompress) } icon: { IconKit.archiveDocument }
-            }
-            .tint(.primaryDS)
-        }
-        // Copy needs no permission on this folder (the server checks the destination on
-        // paste); move has to delete the original, so it mirrors the web client's
-        // `canWrite && canDelete` gate. A lone root location has nowhere to go and can't be
-        // left absent, so neither is offered for it.
-        if !isSoleRootLocation(item) {
-            Button {
-                store.send(.copyTapped(item), animation: .default)
-            } label: {
-                Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
-            }
-            .tint(.primaryDS)
-            if (store.access?.canWrite ?? false) && (store.access?.canDelete ?? false) {
-                Button {
-                    store.send(.moveTapped(item), animation: .default)
-                } label: {
-                    Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
-                }
-                .tint(.primaryDS)
-            }
-        }
-        if store.access?.canDownload ?? false {
-            Button {
-                store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
-            } label: {
-                Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
-            }
-            .tint(.primaryDS)
-        }
-        // Only folders can be favorited — the server 400s on anything else.
-        if item.isDirectory {
-            Button {
-                store.send(.favoriteToggleButtonTapped(item))
-            } label: {
-                if store.favoritePaths.contains(item.id) {
-                    Label { Text(L10n.Browse.actionRemoveFromFavorites) } icon: { IconKit.starFill }
-                } else {
-                    Label { Text(L10n.Browse.actionAddToFavorites) } icon: { IconKit.star }
-                }
-            }
-            .tint(.primaryDS)
-        }
-        if store.access?.canShare ?? false {
-            Button {
-                shareTarget = item
-            } label: {
-                Label { Text(L10n.Browse.actionShare) } icon: { IconKit.shareLink }
-            }
-            .tint(.primaryDS)
-        }
-        if store.access?.canDelete ?? false {
-            Button(role: .destructive) {
-                store.send(.deleteTapped(item))
-            } label: {
-                Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
-            }
-            .tint(.negative)
-        }
+    private func fileActionsMenu(for item: FileItem) -> some View {
+        FileActionsMenu(
+            store: store,
+            item: item,
+            removeArchiveAfterDownload: removeArchiveAfterDownload,
+            onShare: { shareTarget = $0 }
+        )
     }
 
     /// Which branch of `overlayStateContent` is currently showing — a plain discriminant so
@@ -1064,7 +872,10 @@ struct BrowseContentView: View {
                 .transition(.opacity)
         case .error:
             if let errorMessage = store.phase.errorMessage {
-                EmptyStateView(icon: IconKit.warning, message: errorMessage) {
+                EmptyStateView(
+                    icon: IconKit.warning,
+                    message: errorMessage
+                ) {
                     store.send(.refreshButtonTapped)
                 }
                     .transition(.opacity)
@@ -1147,7 +958,7 @@ struct BrowseContentView: View {
                         .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
                         .contextMenu {
                             if !store.isSelecting {
-                                fileActionsContextMenu(for: item)
+                                fileActionsMenu(for: item)
                             }
                         }
                     }
@@ -1166,6 +977,7 @@ struct BrowseContentView: View {
         }
         .backgroundGradient()
         .safeAreaPadding(.bottom, bottomChromeClearance)
+        .dismissKeyboardOnTap()
     }
 
     /// Invisible long-press target filling the space past the last row — a plain
@@ -1203,12 +1015,6 @@ struct BrowseContentView: View {
     private var bottomChromeClearance: CGFloat {
         (store.directoryPath.isEmpty ? 0 : BrowseBreadcrumbBarMetrics.height)
             + (isUploadBarVisible ? uploadBarHeight + UploadBarChrome.gap : 0)
-    }
-
-    /// A top-level location (root screen) that is the only one there: it has nowhere to be
-    /// copied or moved to, and can't be left absent, so the transfer actions are hidden.
-    private func isSoleRootLocation(_ item: FileItem) -> Bool {
-        store.directoryPath.isEmpty && item.path.isEmpty && store.items.count <= 1
     }
 
     /// Gates the `+` upload menu on the folder's own `FileAccess.canUpload`. Defaults to
@@ -1290,7 +1096,7 @@ struct BrowseContentView: View {
             .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
             .contextMenu {
                 if !store.isSelecting {
-                    fileActionsContextMenu(for: item)
+                    fileActionsMenu(for: item)
                 }
             }
             .listRowBackground(Color.backgroundSecondary)

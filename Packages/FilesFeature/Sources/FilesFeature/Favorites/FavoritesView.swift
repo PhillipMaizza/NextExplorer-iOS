@@ -89,7 +89,7 @@ struct FavoritesView: View {
             rootContent
         } destination: { store in
             BrowseContentView(store: store)
-                .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title)
+                .navigationTitle("")
         }
         .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
             if !currentDirectoryPath.isEmpty && !isTopScreenSelecting {
@@ -118,11 +118,12 @@ struct FavoritesView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .searchable(
-                text: $store.searchQuery.sending(\.searchQueryChanged),
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: L10n.Common.search
-            )
+            .safeAreaInset(edge: .top, spacing: 0) {
+                PinnedTitleSearchHeader(
+                    title: store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle,
+                    searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                )
+            }
             .refreshable {
                 await store.send(.refreshButtonTapped).finish()
                 didFinishRefreshing.toggle()
@@ -202,11 +203,9 @@ struct FavoritesView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.bulkRemoveConfirmationIsPresented)
-            .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle)
-            // Force large — otherwise it can render inline on the first appear (the tab's nav
-            // stack lays out while the launch splash still covers it) and only fix itself on a
-            // later tab switch.
-            .navigationBarTitleDisplayMode(store.isSelecting ? .inline : .large)
+            // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 store.send(.onAppear)
             }
@@ -220,20 +219,6 @@ struct FavoritesView: View {
         }
     }
 
-    @ViewBuilder
-    private func rowContextMenu(for favorite: Favorite) -> some View {
-        Button {
-            store.send(.editTapped(favorite))
-        } label: {
-            Label { Text(L10n.Favorites.actionEdit) } icon: { IconKit.rename }
-        }
-        Button(role: .destructive) {
-            store.send(.removeTapped(favorite))
-        } label: {
-            Label { Text(L10n.Favorites.actionRemoveFromFavorites) } icon: { IconKit.unfavorite }
-        }
-        .tint(.negative)
-    }
 
     private func favoriteRowIcon(_ favorite: Favorite) -> some View {
         FileRowView(
@@ -294,7 +279,7 @@ struct FavoritesView: View {
                 .listRowBackground(Color.backgroundSecondary)
                 .contextMenu {
                     if !store.isSelecting {
-                        rowContextMenu(for: favorite)
+                        FavoriteRowContextMenu(store: store, favorite: favorite)
                     }
                 }
                 .swipeActions(edge: .leading) {
@@ -329,6 +314,7 @@ struct FavoritesView: View {
         .scrollContentBackground(.hidden)
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
         // Only spring row diffs once the list is the content — during the skeleton→content
         // swap the outer `.animation(value: listPhase)` owns the cross-fade alone, so the two
         // don't run the same transition twice.
@@ -349,6 +335,7 @@ struct FavoritesView: View {
         }
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
     }
 
     @ViewBuilder
@@ -375,7 +362,7 @@ struct FavoritesView: View {
                     .hapticFeedback(.selection, trigger: store.selectedFavoriteIDs.contains(favorite.id))
                     .contextMenu {
                         if !store.isSelecting {
-                            rowContextMenu(for: favorite)
+                            FavoriteRowContextMenu(store: store, favorite: favorite)
                         }
                     }
         }

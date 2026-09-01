@@ -4,19 +4,6 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-private enum Metrics {
-    static let avatarSize: CGFloat = .size40
-    static let rowSpacing: CGFloat = .space12
-    static let authIconSize: CGFloat = .iconXSmall
-    static let authIconChipSize: CGFloat = .size24
-    static let tagHorizontalPadding: CGFloat = .space8
-    static let tagVerticalPadding: CGFloat = .space2
-    static let tagBorderWidth: CGFloat = 1
-    static let sheetContentSpacing: CGFloat = .space24
-    static let sheetHorizontalPadding: CGFloat = .space24
-    static let sheetMaxHeightFraction: CGFloat = 0.9
-}
-
 /// The admin user list (web `UserList`). Pushed from Settings; a tap pushes `UserDetailView`
 /// onto the same navigation stack.
 struct UserManagementView: View {
@@ -40,13 +27,17 @@ struct UserManagementView: View {
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
         .backgroundGradient()
-        .navigationTitle(L10n.UserManagement.navigationTitle)
-        .navigationBarTitleDisplayMode(.large)
-        .searchable(
-            text: $store.searchQuery.sending(\.searchQueryChanged),
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: L10n.UserManagement.searchPrompt
-        )
+        .dismissKeyboardOnTap()
+        .safeAreaInset(edge: .top, spacing: 0) {
+            PinnedTitleSearchHeader(
+                title: L10n.UserManagement.navigationTitle,
+                searchText: $store.searchQuery.sending(\.searchQueryChanged),
+                prompt: L10n.UserManagement.searchPrompt
+            )
+        }
+        // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 SortToolbarButton(isDisabled: store.users.isEmpty) { isSortSheetPresented = true }
@@ -56,7 +47,7 @@ struct UserManagementView: View {
             }
             ToolbarItem(placement: .topBarTrailing) {
                 Button { store.send(.createUserTapped) } label: {
-                    IconKit.plus.fontWeight(.bold).foregroundStyle(Color.accent)
+                    IconKit.plus.foregroundStyle(Color.primaryDS)
                 }
                 .accessibilityLabel(L10n.UserManagement.createUser)
             }
@@ -95,7 +86,10 @@ struct UserManagementView: View {
         if store.phase == .loading && store.users.isEmpty {
             ProgressView()
         } else if let error = store.phase.errorMessage, store.users.isEmpty {
-            EmptyStateView(icon: IconKit.warning, message: error) {
+            EmptyStateView(
+                icon: IconKit.warning,
+                message: error
+            ) {
                 store.send(.refreshRequested)
             }
         } else if store.users.isEmpty {
@@ -117,195 +111,6 @@ struct UserManagementView: View {
 
     private var passwordSheetPresented: Binding<Bool> {
         Binding(get: { store.passwordSheet != nil }, set: { if !$0 { store.send(.passwordSheetDismissed) } })
-    }
-}
-
-// MARK: Row
-
-private struct UserRow: View {
-    let user: User
-
-    var body: some View {
-        HStack(spacing: Metrics.rowSpacing) {
-            AvatarView(displayName: user.displayName ?? user.username, size: Metrics.avatarSize)
-
-            VStack(alignment: .leading, spacing: .space2) {
-                HStack(spacing: .space8) {
-                    Text(user.displayName ?? user.username)
-                        .type(.body2(.semibold), style: .primary(for: .label))
-                        .lineLimit(1)
-                    if user.isAdmin {
-                        AdminTag()
-                    }
-                }
-                if let email = user.email {
-                    Text(email).type(.body3(.regular), style: .secondary).lineLimit(1).truncationMode(.middle)
-                }
-            }
-
-            Spacer(minLength: .space8)
-
-            AuthMethodChips(methods: user.authMethods)
-
-            IconKit.chevronRight
-                .resizable().scaledToFit()
-                .foregroundStyle(Color.tertiaryDS)
-                .frame(width: Metrics.authIconSize, height: Metrics.authIconSize)
-        }
-        .padding(.vertical, .space4)
-        .contentShape(Rectangle())
-    }
-}
-
-/// The accent outlined "ADMIN" pill, matching the one on the Settings profile card.
-struct AdminTag: View {
-    var body: some View {
-        Text(L10n.UserManagement.badgeAdmin.uppercased())
-            .type(.caption(.semibold), style: .link)
-            .padding(.horizontal, Metrics.tagHorizontalPadding)
-            .padding(.vertical, Metrics.tagVerticalPadding)
-            .overlay(
-                RoundedRectangle(cornerRadius: .radiusSmall)
-                    .strokeBorder(Color.accent, lineWidth: Metrics.tagBorderWidth)
-            )
-    }
-}
-
-/// Overlapping circular chips, one per sign in method: key for a local password, cloud for
-/// SSO. Mirrors the web list's login type cluster.
-struct AuthMethodChips: View {
-    let methods: [AuthMethod]
-
-    var body: some View {
-        HStack(spacing: -Metrics.authIconSize / 2) {
-            ForEach(Array(methods.enumerated()), id: \.offset) { _, method in
-                (method.isPassword ? IconKit.key : IconKit.cloud)
-                    .resizable().scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
-                    .frame(width: Metrics.authIconSize, height: Metrics.authIconSize)
-                    .frame(width: Metrics.authIconChipSize, height: Metrics.authIconChipSize)
-                    .background(Circle().fill(Color.backgroundPrimary))
-                    .overlay(Circle().strokeBorder(Color.backgroundSecondary, lineWidth: 2))
-            }
-        }
-    }
-}
-
-// MARK: Create User sheet
-
-private struct CreateUserSheet: View {
-    @Bindable var store: StoreOf<UserManagementFeature>
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        DSDynamicHeightSheet(maxHeightFraction: Metrics.sheetMaxHeightFraction) {
-            VStack(alignment: .leading, spacing: Metrics.sheetContentSpacing) {
-                DSSheetHeader(
-                    icon: IconKit.people,
-                    title: L10n.UserManagement.createNavigationTitle,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onClose: { dismiss() }
-                )
-
-                if let sheet = store.createSheet {
-                    if let error = sheet.errorMessage {
-                        DSErrorCard(error)
-                    }
-                    LabeledField(L10n.UserManagement.createEmailField, error: sheet.emailError, uppercased: false) {
-                        DSTextField(L10n.UserManagement.createEmailPlaceholder, text: fieldBinding(\.email, UserManagementFeature.Action.createEmailChanged))
-                            .keyboardType(.emailAddress)
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                    }
-                    LabeledField(L10n.UserManagement.createUsernameField, uppercased: false) {
-                        DSTextField(L10n.UserManagement.createUsernamePlaceholder, text: fieldBinding(\.username, UserManagementFeature.Action.createUsernameChanged))
-                            .textInputAutocapitalization(.never)
-                            .autocorrectionDisabled()
-                    }
-                    LabeledField(L10n.Common.password, error: sheet.passwordError, uppercased: false) {
-                        DSSecureField(L10n.UserManagement.createPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: fieldBinding(\.password, UserManagementFeature.Action.createPasswordChanged))
-                    }
-                    DSToggleRow(
-                        title: L10n.UserManagement.createGrantAdminToggle,
-                        subtitle: L10n.UserManagement.createGrantAdminSubtitle,
-                        icon: IconKit.shield,
-                        isOn: Binding(
-                            get: { store.createSheet?.isAdmin ?? false },
-                            set: { store.send(.createIsAdminChanged($0)) }
-                        )
-                    )
-                }
-            }
-            .padding(.horizontal, Metrics.sheetHorizontalPadding)
-            .padding(.vertical, Metrics.sheetContentSpacing)
-        } footer: {
-            DSSheetFooter {
-                DSButton(L10n.UserManagement.createSubmit, style: .primary, isLoading: store.createSheet?.isSubmitting ?? false) {
-                    store.send(.createSubmitTapped)
-                }
-                .disabled(!(store.createSheet?.isSubmitEnabled ?? false))
-            }
-        }
-    }
-
-    private func fieldBinding(
-        _ keyPath: KeyPath<UserManagementFeature.CreateUserState, String>,
-        _ action: @escaping (String) -> UserManagementFeature.Action
-    ) -> Binding<String> {
-        Binding(
-            get: { store.createSheet?[keyPath: keyPath] ?? "" },
-            set: { store.send(action($0)) }
-        )
-    }
-}
-
-// MARK: Set password sheet
-
-private struct SetPasswordSheet: View {
-    @Bindable var store: StoreOf<UserManagementFeature>
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        DSDynamicHeightSheet(maxHeightFraction: Metrics.sheetMaxHeightFraction) {
-            VStack(alignment: .leading, spacing: Metrics.sheetContentSpacing) {
-                DSSheetHeader(
-                    icon: IconKit.key,
-                    title: L10n.UserManagement.setPasswordNavigationTitle,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onClose: { dismiss() }
-                )
-
-                if let sheet = store.passwordSheet {
-                    if let error = sheet.errorMessage {
-                        DSErrorCard(error)
-                    }
-                    Text(sheet.hasExistingPassword
-                        ? L10n.UserManagement.setPasswordResetIntro(sheet.userLabel)
-                        : L10n.UserManagement.setPasswordSetIntro(sheet.userLabel))
-                        .type(.body3(.regular), style: .secondary)
-
-                    LabeledField(L10n.UserManagement.setPasswordNewField, error: sheet.passwordError, uppercased: false) {
-                        DSSecureField(L10n.UserManagement.setPasswordPlaceholder(CredentialRules.minimumPasswordLength), text: Binding(
-                            get: { store.passwordSheet?.password ?? "" },
-                            set: { store.send(.passwordFieldChanged($0)) }
-                        ))
-                    }
-                }
-            }
-            .padding(.horizontal, Metrics.sheetHorizontalPadding)
-            .padding(.vertical, Metrics.sheetContentSpacing)
-        } footer: {
-            DSSheetFooter {
-                DSButton(
-                    (store.passwordSheet?.hasExistingPassword ?? false) ? L10n.UserManagement.setPasswordResetTitle : L10n.UserManagement.setPasswordSetTitle,
-                    style: .primary,
-                    isLoading: store.passwordSheet?.isSubmitting ?? false
-                ) {
-                    store.send(.passwordSubmitTapped)
-                }
-                .disabled(!(store.passwordSheet?.isSubmitEnabled ?? false))
-            }
-        }
     }
 }
 

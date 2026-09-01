@@ -56,17 +56,6 @@ struct DownloadsView: View {
         store.downloads.filter { store.selectedDownloadIDs.contains($0.id) }.map(\.url)
     }
 
-    /// Deep-links the Files app straight to this file (`LSSupportsOpeningDocumentsInPlace`/
-    /// `UIFileSharingEnabled`, set in Info.plist, expose the app's Documents folder there) —
-    /// `nil` for `.cache`-location downloads, which are app-private and never show up in
-    /// Files regardless of scheme.
-    private func filesAppURL(for download: LocalDownload) -> URL? {
-        guard download.location == .documents else { return nil }
-        guard var components = URLComponents(url: download.url, resolvingAgainstBaseURL: false) else { return nil }
-        components.scheme = "shareddocuments"
-        return components.url
-    }
-
     /// The whole `Documents/Downloads` folder, for the top-right menu's generic "Open in
     /// Files" (as opposed to `filesAppURL(for:)`, which deep-links to one specific file).
     private var documentsDownloadsFolderURL: URL? {
@@ -133,35 +122,6 @@ struct DownloadsView: View {
     }
 
     @ViewBuilder
-    private func rowContextMenu(for download: LocalDownload) -> some View {
-        if let filesAppURL = filesAppURL(for: download) {
-            Button {
-                openURL(filesAppURL)
-            } label: {
-                Label { Text(L10n.Downloads.actionOpenInFiles) } icon: { IconKit.folder }
-            }
-            .tint(.primaryDS)
-            Divider()
-        }
-        ShareLink(item: download.url) {
-            Label { Text(L10n.Common.share) } icon: { IconKit.share }
-        }
-        .tint(.primaryDS)
-        Button {
-            store.send(.renameTapped(download))
-        } label: {
-            Label { Text(L10n.Browse.actionRename) } icon: { IconKit.rename }
-        }
-        .tint(.primaryDS)
-        Button(role: .destructive) {
-            store.send(.deleteTapped(download))
-        } label: {
-            Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
-        }
-        .tint(.negative)
-    }
-
-    @ViewBuilder
     private var downloadRows: some View {
         // Bound once — `displayedDownloads` filters + sorts on every read, and the separator
         // checks below would otherwise re-derive it per row.
@@ -215,7 +175,7 @@ struct DownloadsView: View {
             }
             .contextMenu {
                 if !store.isSelecting {
-                    rowContextMenu(for: download)
+                    DownloadRowContextMenu(store: store, download: download, openURL: openURL)
                 }
             }
             .listRowSeparator(download.id == firstID ? .hidden : .visible, edges: .top)
@@ -235,6 +195,7 @@ struct DownloadsView: View {
         .scrollContentBackground(.hidden)
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
         // Only spring row diffs once the list is the content — during the skeleton→content
         // swap the outer `.animation(value: listPhase)` owns the cross-fade alone.
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
@@ -277,6 +238,7 @@ struct DownloadsView: View {
         }
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
     }
 
     @ViewBuilder
@@ -302,7 +264,7 @@ struct DownloadsView: View {
                     .hapticFeedback(.selection, trigger: store.selectedDownloadIDs.contains(download.id))
                     .contextMenu {
                         if !store.isSelecting {
-                            rowContextMenu(for: download)
+                            DownloadRowContextMenu(store: store, download: download, openURL: openURL)
                         }
                     }
         }
@@ -322,11 +284,12 @@ struct DownloadsView: View {
             // appearance, and the overlay (default-centered on whatever frame it currently
             // sees) visibly slides from that transient small frame to the real one.
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .searchable(
-                text: $store.searchQuery.sending(\.searchQueryChanged),
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: L10n.Common.search
-            )
+            .safeAreaInset(edge: .top, spacing: 0) {
+                PinnedTitleSearchHeader(
+                    title: store.isSelecting ? L10n.Common.selectedCount(store.selectedDownloadIDs.count) : L10n.Downloads.navigationTitle,
+                    searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                )
+            }
             .refreshable {
                 await store.send(.refreshButtonTapped).finish()
                 didFinishRefreshing.toggle()
@@ -477,11 +440,10 @@ struct DownloadsView: View {
                     )
                 }
             }
-            .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedDownloadIDs.count) : L10n.Downloads.navigationTitle)
-            // Force large — otherwise it can render inline on the first appear (the tab's nav
-            // stack lays out while the launch splash still covers it) and only fix itself on a
-            // later tab switch.
-            .navigationBarTitleDisplayMode(store.isSelecting ? .inline : .large)
+            // Title lives in the pinned header (see `PinnedTitleSearchHeader`); the nav bar keeps
+            // only its actions.
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 store.send(.onAppear)
             }

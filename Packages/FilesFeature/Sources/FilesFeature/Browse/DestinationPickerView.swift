@@ -103,7 +103,10 @@ struct DestinationPickerView: View {
             ProgressView()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let errorMessage = store.phase.errorMessage {
-            EmptyStateView(icon: IconKit.warning, message: errorMessage) {
+            EmptyStateView(
+                icon: IconKit.warning,
+                message: errorMessage
+            ) {
                 store.send(.retryTapped)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

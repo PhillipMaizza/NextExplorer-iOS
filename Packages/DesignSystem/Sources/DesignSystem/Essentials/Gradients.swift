@@ -18,6 +18,14 @@ public extension LinearGradient {
         startPoint: .topLeading,
         endPoint: .bottomTrailing
     )
+
+    /// The accent color into a lighter tint of itself — for accent surfaces/borders that want
+    /// a little depth instead of a flat `Color.accent` fill.
+    static let accent = LinearGradient(
+        colors: [.accent, .accent.mix(with: .white, by: 0.3)],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
 }
 
 public extension View {

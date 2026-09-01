@@ -14,6 +14,9 @@ struct ServerLogoThumbnail: View {
     var overrideImageData: Data?
 
     @State private var fetched: UIImage?
+    @State private var overrideImage: UIImage?
+
+    private var maxPixelDimension: CGFloat { size * UIScreen.main.scale }
 
     var body: some View {
         content
@@ -22,12 +25,13 @@ struct ServerLogoThumbnail: View {
             .clipShape(Circle())
             .overlay(Circle().strokeBorder(Color.borderPrimary, lineWidth: .borderWidthHairline))
             .task(id: branding.appLogoUrl) { await fetch() }
+            .task(id: overrideImageData) { await decodeOverride() }
     }
 
     @ViewBuilder
     private var content: some View {
-        if let overrideImageData, let image = UIImage(data: overrideImageData) {
-            Image(uiImage: image).resizable().scaledToFill()
+        if let overrideImage {
+            Image(uiImage: overrideImage).resizable().scaledToFill()
         } else if let fetched {
             Image(uiImage: fetched).resizable().scaledToFill()
         } else {
@@ -38,12 +42,28 @@ struct ServerLogoThumbnail: View {
         }
     }
 
+    private func decodeOverride() async {
+        guard let overrideImageData else {
+            overrideImage = nil
+            return
+        }
+        let target = maxPixelDimension
+        let image = await Task.detached(priority: .utility) {
+            ImageDownsampling.image(from: overrideImageData, maxPixelDimension: target)
+        }.value
+        if !Task.isCancelled { overrideImage = image }
+    }
+
     private func fetch() async {
         guard let url = branding.resolvedLogoURL(serverURL: serverURL) else {
             fetched = nil
             return
         }
         guard let (data, _) = try? await URLSession.shared.data(from: url) else { return }
-        fetched = UIImage(data: data)
+        let target = maxPixelDimension
+        let image = await Task.detached(priority: .utility) {
+            ImageDownsampling.image(from: data, maxPixelDimension: target)
+        }.value
+        if !Task.isCancelled { fetched = image }
     }
 }

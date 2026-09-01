@@ -70,14 +70,23 @@ struct CodeEditorView: UIViewRepresentable {
         view.backgroundColor = .clear
         view.showLineNumbers = true
         view.isEditable = isEditable
-        let state: TextViewState
-        if let language = CodeEditorLanguage.language(forKind: kind) {
-            state = TextViewState(text: text, language: language)
-        } else {
-            state = TextViewState(text: text)
+        // `TextViewState` does the initial tree-sitter parse of the whole document; building it
+        // on the main thread freezes the UI when a large source file opens. Build it off main,
+        // then apply on the main actor. `StateBox` carries the non Sendable state across.
+        let text = self.text
+        let kind = self.kind
+        Task {
+            let box = await Task.detached(priority: .userInitiated) {
+                let language = CodeEditorLanguage.language(forKind: kind)
+                return StateBox(state: language.map { TextViewState(text: text, language: $0) } ?? TextViewState(text: text))
+            }.value
+            view.setState(box.state)
         }
-        view.setState(state)
         return view
+    }
+
+    private struct StateBox: @unchecked Sendable {
+        let state: TextViewState
     }
 
     func updateUIView(_ uiView: TextView, context: Context) {

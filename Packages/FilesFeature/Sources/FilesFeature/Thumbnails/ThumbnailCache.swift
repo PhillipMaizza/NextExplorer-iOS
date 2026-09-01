@@ -65,26 +65,23 @@ extension ThumbnailCache: DependencyKey {
             if let cached = try? Data(contentsOf: fileURL) {
                 return cached
             }
-            let (bytes, response) = try await URLSession.shared.bytes(from: url)
+            // Stream to a temp file rather than buffering. `thumbnailURL` can fall back to a
+            // full size preview, so accumulating the response in memory (worse, byte by byte)
+            // burned seconds of CPU and stalled the UI. `download` streams on URLSession's own
+            // threads and cancels cleanly when the owning view's `.task` is torn down.
+            let (downloadedURL, response) = try await URLSession.shared.download(from: url)
+            defer { try? FileManager.default.removeItem(at: downloadedURL) }
             guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
                 throw URLError(.badServerResponse)
             }
-            if httpResponse.expectedContentLength > maxResponseBytes {
+            let downloadedSize = (try? downloadedURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+            guard downloadedSize <= maxResponseBytes else {
                 throw URLError(.dataLengthExceedsMaximum)
             }
-            var data = Data()
-            if httpResponse.expectedContentLength > 0 {
-                data.reserveCapacity(Int(httpResponse.expectedContentLength))
-            }
-            for try await byte in bytes {
-                data.append(byte)
-                if data.count > maxResponseBytes {
-                    throw URLError(.dataLengthExceedsMaximum)
-                }
-            }
             try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-            try data.write(to: fileURL, options: .atomic)
-            return data
+            try? FileManager.default.removeItem(at: fileURL)
+            try FileManager.default.moveItem(at: downloadedURL, to: fileURL)
+            return try Data(contentsOf: fileURL)
         },
         resolvedURL: { path, signature, resolve in
             let recordURL = try? resolutionRecordURL(for: path)
