@@ -33,6 +33,12 @@ public struct ThumbnailCache: Sendable {
 }
 
 extension ThumbnailCache: DependencyKey {
+    /// Hard ceiling on a single thumbnail response. `thumbnailURL` can fall back to
+    /// `GET /api/preview?path=...`, i.e. a full size original, and a hostile or misconfigured
+    /// server can point it anywhere, so an uncapped buffer here is an OOM vector per grid cell.
+    /// Matches NetworkClient's own in memory response cap.
+    private static let maxResponseBytes = 32 * 1024 * 1024
+
     private static func hexDigest(of string: String) -> String {
         SHA256.hash(data: Data(string.utf8)).map { String(format: "%02x", $0) }.joined()
     }
@@ -59,9 +65,22 @@ extension ThumbnailCache: DependencyKey {
             if let cached = try? Data(contentsOf: fileURL) {
                 return cached
             }
-            let (data, response) = try await URLSession.shared.data(from: url)
+            let (bytes, response) = try await URLSession.shared.bytes(from: url)
             guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
                 throw URLError(.badServerResponse)
+            }
+            if httpResponse.expectedContentLength > maxResponseBytes {
+                throw URLError(.dataLengthExceedsMaximum)
+            }
+            var data = Data()
+            if httpResponse.expectedContentLength > 0 {
+                data.reserveCapacity(Int(httpResponse.expectedContentLength))
+            }
+            for try await byte in bytes {
+                data.append(byte)
+                if data.count > maxResponseBytes {
+                    throw URLError(.dataLengthExceedsMaximum)
+                }
             }
             try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
             try data.write(to: fileURL, options: .atomic)

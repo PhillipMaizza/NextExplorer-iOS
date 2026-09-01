@@ -53,6 +53,24 @@ public struct LocalDownloadStore: Sendable {
 }
 
 extension LocalDownloadStore: DependencyKey {
+    /// The first free URL in `directory` for `fileName`: the name itself if unused, otherwise
+    /// the name with a " (1)", " (2)", ... suffix inserted before the extension.
+    private static func availableDestination(in directory: URL, fileName: String) -> URL {
+        let fileManager = FileManager.default
+        let candidate = directory.appendingPathComponent(fileName)
+        guard fileManager.fileExists(atPath: candidate.path) else { return candidate }
+
+        let base = (fileName as NSString).deletingPathExtension
+        let ext = (fileName as NSString).pathExtension
+        var index = 1
+        while true {
+            let suffixed = ext.isEmpty ? "\(base) (\(index))" : "\(base) (\(index)).\(ext)"
+            let url = directory.appendingPathComponent(suffixed)
+            if !fileManager.fileExists(atPath: url.path) { return url }
+            index += 1
+        }
+    }
+
     private static func downloadsDirectory(for location: DownloadLocation, create: Bool) throws -> URL {
         let fileManager = FileManager.default
         let searchDirectory: FileManager.SearchPathDirectory = location == .documents ? .documentDirectory : .cachesDirectory
@@ -67,10 +85,10 @@ extension LocalDownloadStore: DependencyKey {
             try fileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: true)
             // `fileName` originates from the server's `FileItem.name` — keep a hostile `../`
             // from landing the copy outside the Downloads folder.
-            let destination = downloadsDirectory.appendingPathComponent(SafeFileName.component(fileName))
-            if fileManager.fileExists(atPath: destination.path) {
-                try fileManager.removeItem(at: destination)
-            }
+            let safeName = SafeFileName.component(fileName)
+            // Two different server files that happen to share a name must not clobber each
+            // other locally, so disambiguate with a "(1)", "(2)", ... suffix like Finder does.
+            let destination = availableDestination(in: downloadsDirectory, fileName: safeName)
             try fileManager.copyItem(at: sourceURL, to: destination)
             return destination
         },

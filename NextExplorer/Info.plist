@@ -30,7 +30,7 @@
 	<string>NextExplorer connects to the NextExplorer server you enter, which is usually on your local network.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
-		<key>NSAllowsArbitraryLoads</key>
+		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
 	<key>UIApplicationSceneManifest</key>

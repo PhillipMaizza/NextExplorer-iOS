@@ -188,6 +188,17 @@
         }
       }
     },
+    "archive.entryTooLarge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This item is too large to open."
+          }
+        }
+      }
+    },
     "archive.openArchiveFailed": {
       "extractionState": "manual",
       "localizations": {
@@ -1768,6 +1779,50 @@
           "stringUnit": {
             "state": "translated",
             "value": "Files you download from Browse show up here."
+          }
+        }
+      }
+    },
+    "downloads.errorGeneric": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couldn't complete that action."
+          }
+        }
+      }
+    },
+    "downloads.errorInvalidName": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That name isn't allowed."
+          }
+        }
+      }
+    },
+    "downloads.errorMissing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That file could no longer be found."
+          }
+        }
+      }
+    },
+    "downloads.errorNameExists": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A file with that name already exists."
           }
         }
       }
@@ -4606,6 +4661,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couldn't add those files. Try again."
+          }
+        }
+      }
+    },
+    "uploads.stagingSkipped": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld items couldn't be prepared and were left out."
           }
         }
       }

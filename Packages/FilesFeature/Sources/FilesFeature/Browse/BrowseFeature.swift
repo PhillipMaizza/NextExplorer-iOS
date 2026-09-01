@@ -288,7 +288,18 @@ public struct BrowseFeature {
         /// and sorted by `sortOption`.
         public var displayedItems: IdentifiedArrayOf<FileItem> {
             let visible = preferences.showHiddenFiles ? items : items.filter { !isHiddenFileName($0.name) }
-            return IdentifiedArray(uniqueElements: BrowseFeature.sorted(visible, by: sortOption, direction: sortDirection))
+            return IdentifiedArray(BrowseFeature.sorted(visible, by: sortOption, direction: sortDirection), id: \.id, uniquingIDsWith: { first, _ in first })
+        }
+
+        /// Whether `displayedItems` would be non empty, and how many entries it would hold,
+        /// without paying `displayedItems`' filter+sort. Used for the toolbar/selection/empty
+        /// state checks that only need emptiness or a count, not the ordered list.
+        public var hasDisplayedItems: Bool {
+            preferences.showHiddenFiles ? !items.isEmpty : items.contains { !isHiddenFileName($0.name) }
+        }
+
+        public var displayedItemCount: Int {
+            preferences.showHiddenFiles ? items.count : items.reduce(0) { isHiddenFileName($1.name) ? $0 : $0 + 1 }
         }
 
         /// `searchResults`, with hidden entries dropped unless the preference is on.
@@ -434,7 +445,7 @@ public struct BrowseFeature {
             case let .itemsResponse(.success(result)):
                 state.phase = .loaded
                 state.dataSource = .live
-                state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(result.items))
+                state.items = IdentifiedArray(Self.sortedAlphabetically(result.items), id: \.id, uniquingIDsWith: { first, _ in first })
                 state.access = result.access
                 return .merge(
                     search(&state),
@@ -451,7 +462,7 @@ public struct BrowseFeature {
                 if error == .offline,
                    let cached = directoryCacheStore.read(serverURL: state.serverURL, path: state.directoryPath) {
                     state.phase = .loaded
-                    state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))
+                    state.items = IdentifiedArray(Self.sortedAlphabetically(cached.items), id: \.id, uniquingIDsWith: { first, _ in first })
                     state.access = cached.access
                     state.dataSource = .cached(fetchedAt: cached.fetchedAt)
                     return search(&state)
@@ -527,7 +538,7 @@ public struct BrowseFeature {
 
             case let .searchResultsResponse(.success(results)):
                 state.isSearchingEverywhere = false
-                state.searchResults = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(results))
+                state.searchResults = IdentifiedArray(Self.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
                 return .none
 
             case let .searchResultsResponse(.failure(error)):

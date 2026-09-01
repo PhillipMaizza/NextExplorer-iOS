@@ -243,7 +243,7 @@ struct BrowseContentView: View {
             selectSortToolbar(
                 isSelecting: store.isSelecting,
                 isAllSelected: isAllSelected,
-                isSelectAvailable: !store.isSearching && !store.displayedItems.isEmpty,
+                isSelectAvailable: !store.isSearching && store.hasDisplayedItems,
                 isGridView: viewMode == .grid,
                 onSelectModeToggled: { store.send(.selectModeToggled) },
                 onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
@@ -838,7 +838,7 @@ struct BrowseContentView: View {
     }
 
     private var isAllSelected: Bool {
-        !store.displayedItems.isEmpty && store.selectedItemIDs.count == store.displayedItems.count
+        store.hasDisplayedItems && store.selectedItemIDs.count == store.displayedItemCount
     }
 
     /// Rename only makes sense for a single target — `nil` (hiding the toolbar icon) for
@@ -1045,7 +1045,7 @@ struct BrowseContentView: View {
     private var overlayState: OverlayState {
         if store.phase.errorMessage != nil {
             .error
-        } else if store.phase.hasLoaded && !store.isSearching && store.displayedItems.isEmpty {
+        } else if store.phase.hasLoaded && !store.isSearching && !store.hasDisplayedItems {
             .empty
         } else if store.isSearching && store.searchScope == .everywhere && store.isSearchingEverywhere {
             .searchingEverywhere
@@ -1111,7 +1111,10 @@ struct BrowseContentView: View {
     }
 
     private var gridContent: some View {
-        ScrollView {
+        // Bind once: `store.displayedItems` filters + localized sorts on every read, and this
+        // builder would otherwise hit it for the ForEach and the animation value separately.
+        let displayedItems = store.displayedItems
+        return ScrollView {
             LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
                 if store.isSearching {
                     ForEach(store.displayedSearchResults ?? []) { result in
@@ -1124,7 +1127,7 @@ struct BrowseContentView: View {
                         .buttonStyle(DSHapticButtonStyle())
                     }
                 } else {
-                    ForEach(store.displayedItems) { item in
+                    ForEach(displayedItems) { item in
                         Button {
                             if store.isSelecting {
                                 store.send(.itemSelectionToggled(item.id))
@@ -1153,7 +1156,7 @@ struct BrowseContentView: View {
             .padding(Constants.gridSpacing)
             .animation(
                 .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-                value: store.displayedItems
+                value: displayedItems
             )
             .animation(
                 .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),

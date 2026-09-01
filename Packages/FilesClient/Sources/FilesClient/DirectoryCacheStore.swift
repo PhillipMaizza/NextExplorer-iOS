@@ -20,6 +20,13 @@ public struct DirectoryCacheStore: Sendable {
     public var write: @Sendable (
         _ serverURL: URL, _ path: String, _ result: BrowseResult, _ etag: String?, _ fetchedAt: Date
     ) -> Void
+    /// Refreshes only the freshness stamp of an existing entry after a `304 Not Modified`,
+    /// and only when the stored `etag` still equals `expectedETag`. This is a compare and set:
+    /// it never rewrites the items, so a stale in flight `304` handler cannot clobber a newer
+    /// listing a concurrent browse just wrote (the etag will no longer match).
+    public var touch: @Sendable (
+        _ serverURL: URL, _ path: String, _ expectedETag: String?, _ fetchedAt: Date
+    ) -> Void
     public var remove: @Sendable (_ serverURL: URL, _ path: String) -> Void
     /// Drops every entry, e.g. from a "Clear offline cache" settings action or on sign out.
     public var clearAll: @Sendable () -> Void
@@ -30,6 +37,7 @@ public struct DirectoryCacheStore: Sendable {
         read: @escaping @Sendable (URL, String) -> CachedDirectory?,
         lastWrittenAt: @escaping @Sendable (URL, String) -> Date?,
         write: @escaping @Sendable (URL, String, BrowseResult, String?, Date) -> Void,
+        touch: @escaping @Sendable (URL, String, String?, Date) -> Void,
         remove: @escaping @Sendable (URL, String) -> Void,
         clearAll: @escaping @Sendable () -> Void,
         totalSizeBytes: @escaping @Sendable () -> Int64
@@ -37,6 +45,7 @@ public struct DirectoryCacheStore: Sendable {
         self.read = read
         self.lastWrittenAt = lastWrittenAt
         self.write = write
+        self.touch = touch
         self.remove = remove
         self.clearAll = clearAll
         self.totalSizeBytes = totalSizeBytes
@@ -48,6 +57,9 @@ extension DirectoryCacheStore {
     public func lastWrittenAt(serverURL: URL, path: String) -> Date? { lastWrittenAt(serverURL, path) }
     public func write(serverURL: URL, path: String, result: BrowseResult, etag: String?, fetchedAt: Date) {
         write(serverURL, path, result, etag, fetchedAt)
+    }
+    public func touch(serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
+        touch(serverURL, path, expectedETag, fetchedAt)
     }
     public func remove(serverURL: URL, path: String) { remove(serverURL, path) }
 }
@@ -109,6 +121,11 @@ extension DirectoryCacheStore: DependencyKey {
             var resourceValues = URLResourceValues()
             resourceValues.isExcludedFromBackup = true
             try? url.setResourceValues(resourceValues)
+            // Directory listings carry every file/folder name, path and access rule; keep them
+            // encrypted at rest. New JSON files written into this directory inherit the class.
+            try? fileManager.setAttributes(
+                [.protectionKey: FileProtectionType.completeUnlessOpen], ofItemAtPath: url.path
+            )
             return url
         }()
 
@@ -168,6 +185,26 @@ extension DirectoryCacheStore: DependencyKey {
             }
             try? data.write(to: fileURL, options: .atomic)
             evictIfNeeded()
+        }
+
+        func touch(serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
+            lock.lock()
+            defer { lock.unlock() }
+            guard
+                let fileURL = fileURL(serverURL: serverURL, path: path),
+                let data = try? Data(contentsOf: fileURL),
+                let current = try? JSONDecoder.cache.decode(CachedDirectory.self, from: data),
+                current.etag == expectedETag
+            else { return }
+            let refreshed = CachedDirectory(
+                path: current.path,
+                items: current.items,
+                access: current.access,
+                fetchedAt: fetchedAt,
+                etag: current.etag
+            )
+            guard let encoded = try? JSONEncoder.cache.encode(refreshed) else { return }
+            try? encoded.write(to: fileURL, options: .atomic)
         }
 
         func remove(serverURL: URL, path: String) {
@@ -232,6 +269,7 @@ extension DirectoryCacheStore: DependencyKey {
                 read: { self.read(serverURL: $0, path: $1) },
                 lastWrittenAt: { self.lastWrittenAt(serverURL: $0, path: $1) },
                 write: { self.write(serverURL: $0, path: $1, result: $2, etag: $3, fetchedAt: $4) },
+                touch: { self.touch(serverURL: $0, path: $1, expectedETag: $2, fetchedAt: $3) },
                 remove: { self.remove(serverURL: $0, path: $1) },
                 clearAll: { self.clearAll() },
                 totalSizeBytes: { self.totalSizeBytes() }
@@ -262,6 +300,7 @@ extension DirectoryCacheStore: DependencyKey {
         read: { _, _ in nil },
         lastWrittenAt: { _, _ in Date() },
         write: { _, _, _, _, _ in },
+        touch: { _, _, _, _ in },
         remove: { _, _ in },
         clearAll: {},
         totalSizeBytes: { 0 }
@@ -274,6 +313,7 @@ extension DirectoryCacheStore: DependencyKey {
             read: { box.read(serverURL: $0, path: $1) },
             lastWrittenAt: { box.read(serverURL: $0, path: $1)?.fetchedAt },
             write: { box.write(serverURL: $0, path: $1, result: $2, etag: $3, fetchedAt: $4) },
+            touch: { box.touch(serverURL: $0, path: $1, expectedETag: $2, fetchedAt: $3) },
             remove: { box.remove(serverURL: $0, path: $1) },
             clearAll: { box.clearAll() },
             totalSizeBytes: { 0 }
@@ -297,6 +337,15 @@ extension DirectoryCacheStore: DependencyKey {
             lock.lock(); defer { lock.unlock() }
             entries[key(serverURL, path)] = CachedDirectory(
                 path: result.path, items: result.items, access: result.access, fetchedAt: fetchedAt, etag: etag
+            )
+        }
+
+        func touch(serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
+            lock.lock(); defer { lock.unlock() }
+            let entryKey = key(serverURL, path)
+            guard let current = entries[entryKey], current.etag == expectedETag else { return }
+            entries[entryKey] = CachedDirectory(
+                path: current.path, items: current.items, access: current.access, fetchedAt: fetchedAt, etag: current.etag
             )
         }
 
