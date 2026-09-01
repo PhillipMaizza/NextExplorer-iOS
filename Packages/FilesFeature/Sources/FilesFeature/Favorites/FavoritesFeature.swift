@@ -100,7 +100,7 @@ public struct FavoritesFeature {
 
             case let .favoritesResponse(.success(favorites)):
                 state.phase = .loaded
-                state.favorites = IdentifiedArray(uniqueElements: favorites.sorted { $0.position < $1.position })
+                state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
                 return .none
 
             case let .favoritesResponse(.failure(error)):
@@ -153,7 +153,7 @@ public struct FavoritesFeature {
                 guard state.canReorder else { return .none }
                 var items = Array(state.favorites)
                 items.move(fromOffsets: source, toOffset: destination)
-                state.favorites = IdentifiedArray(uniqueElements: items)
+                state.favorites = IdentifiedArray(items, id: \.id, uniquingIDsWith: { first, _ in first })
                 state.actionErrorMessage = nil
                 let orderedIDs = items.map(\.id)
                 let serverURL = state.serverURL
@@ -166,7 +166,7 @@ public struct FavoritesFeature {
                 .cancellable(id: CancelID.reorder, cancelInFlight: true)
 
             case let .reorderResponse(.success(favorites)):
-                state.favorites = IdentifiedArray(uniqueElements: favorites.sorted { $0.position < $1.position })
+                state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
                 return .send(.delegate(.favoritesChanged))
 
             case .reorderResponse(.failure):

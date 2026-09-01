@@ -20,8 +20,13 @@ public struct UserManagementFeature {
         case load
         /// Per user volume loads, so switching users mid fetch can't land stale volumes.
         case volumes
-        /// Profile save, grant admin and delete for the open detail user, cancelled with the detail.
-        case userMutation
+        /// Profile save for the open detail user. Its own id so it can't silently cancel a
+        /// concurrent grant or delete, and vice versa; all three are cancelled with the detail.
+        case saveProfile
+        /// Grant admin for the open detail user, cancelled with the detail.
+        case grantRole
+        /// Delete for the open detail user, cancelled with the detail.
+        case deleteUser
         /// Volume assign, update and remove for the open detail user, cancelled with the detail.
         case volumeMutation
         /// Create user sheet submission.
@@ -311,7 +316,7 @@ public struct UserManagementFeature {
 
             case let .usersResponse(.success(users)):
                 state.phase = .loaded
-                state.users = IdentifiedArray(uniqueElements: users)
+                state.users = IdentifiedArray(users, id: \.id, uniquingIDsWith: { first, _ in first })
                 if let user = state.detailUser {
                     // Don't stomp edits the admin has typed but not saved; a background reload
                     // (e.g. right after setting a password) would otherwise wipe them.
@@ -377,7 +382,9 @@ public struct UserManagementFeature {
                 state.isUpdatingRoles = false
                 if state.volumesPhase == .loading { state.volumesPhase = .idle }
                 return .merge(
-                    .cancel(id: CancelID.userMutation),
+                    .cancel(id: CancelID.saveProfile),
+                    .cancel(id: CancelID.grantRole),
+                    .cancel(id: CancelID.deleteUser),
                     .cancel(id: CancelID.volumeMutation),
                     .cancel(id: CancelID.volumes)
                 )
@@ -392,7 +399,7 @@ public struct UserManagementFeature {
 
             case let .volumesResponse(.success(volumes)):
                 state.volumesPhase = .loaded
-                state.volumes = IdentifiedArray(uniqueElements: volumes)
+                state.volumes = IdentifiedArray(volumes, id: \.id, uniquingIDsWith: { first, _ in first })
                 return .none
 
             case let .volumesResponse(.failure(error)):
@@ -428,7 +435,7 @@ public struct UserManagementFeature {
                         try await filesClient.updateUser(serverURL, id, request)
                     }))
                 }
-                .cancellable(id: CancelID.userMutation, cancelInFlight: true)
+                .cancellable(id: CancelID.saveProfile, cancelInFlight: true)
 
             case let .profileResponse(.success(user)):
                 state.isSavingProfile = false
@@ -455,7 +462,7 @@ public struct UserManagementFeature {
                         try await filesClient.updateUser(serverURL, id, request)
                     }))
                 }
-                .cancellable(id: CancelID.userMutation, cancelInFlight: true)
+                .cancellable(id: CancelID.grantRole, cancelInFlight: true)
 
             case let .rolesResponse(.success(user)):
                 state.isUpdatingRoles = false
@@ -487,7 +494,7 @@ public struct UserManagementFeature {
                         return true
                     }))
                 }
-                .cancellable(id: CancelID.userMutation, cancelInFlight: true)
+                .cancellable(id: CancelID.deleteUser, cancelInFlight: true)
 
             case let .deleteUserResponse(id, .success):
                 state.users.remove(id: id)

@@ -4,8 +4,9 @@ import Foundation
 /// Mirrors the fields of `GET /api/browse/*` the client actually renders (`items` + `access`),
 /// plus the time it was fetched so the UI can tell the user how stale the copy is.
 ///
-/// `/api/browse` sends no `ETag` / `Last-Modified`, so there is no conditional revalidation:
-/// a cached entry is either served as is (offline) or fully replaced by a fresh fetch.
+/// `/api/browse` sends a strong `ETag`; the stored one rides back as `If-None-Match` on the
+/// next fetch, so an unchanged directory answers `304` (served from this cache) and a changed
+/// one returns `200` and replaces the entry. Offline, the cached entry is served as is.
 public struct CachedDirectory: Codable, Equatable, Sendable {
     /// Bumped whenever the stored shape changes; a mismatch on read discards the entry rather
     /// than risking a decode against stale data.

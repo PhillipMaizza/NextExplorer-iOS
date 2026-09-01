@@ -37,11 +37,13 @@ extension FilesClient {
                     )
                     return result
                 }
-                let result = BrowseResult(items: cached.items, access: cached.access, path: cached.path)
-                directoryCacheStore.write(
-                    serverURL: serverURL, path: path, result: result, etag: etag ?? cached.etag, fetchedAt: now()
+                // A 304 confirms the copy we conditioned on is current. Only refresh its
+                // freshness stamp, and only if the stored etag still matches ours, so a stale
+                // prefetch response can't overwrite a newer listing a concurrent browse wrote.
+                directoryCacheStore.touch(
+                    serverURL: serverURL, path: path, expectedETag: cached.etag, fetchedAt: now()
                 )
-                return result
+                return BrowseResult(items: cached.items, access: cached.access, path: cached.path)
             }
         }
 

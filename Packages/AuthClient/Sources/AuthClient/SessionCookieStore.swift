@@ -58,8 +58,13 @@ struct SessionCookieStore: Sendable {
     }
 
     func clear(serverURL: URL?) {
+        // `clearSession` (session expiry / 401 teardown) passes no URL, so recover the server
+        // from the persisted credentials before deleting them. Otherwise the live session
+        // cookie stays in `HTTPCookieStorage` and keeps riding on outbound requests until the
+        // process is killed, and could be inherited by the next account this launch.
+        let targetURL = serverURL ?? loadPersisted()?.serverBaseURL
         try? keychainClient.delete(Self.storageKey)
-        guard let serverURL, let cookies = cookieStorage.cookies(for: serverURL) else { return }
+        guard let targetURL, let cookies = cookieStorage.cookies(for: targetURL) else { return }
         for cookie in cookies {
             cookieStorage.deleteCookie(cookie)
         }

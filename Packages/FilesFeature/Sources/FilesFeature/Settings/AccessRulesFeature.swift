@@ -83,7 +83,7 @@ public struct AccessRulesFeature {
                 }
                 if !state.isDirty {
                     state.loaded = settings.accessRules
-                    state.drafts = IdentifiedArray(uniqueElements: settings.accessRules)
+                    state.drafts = IdentifiedArray(settings.accessRules, id: \.id, uniquingIDsWith: { first, _ in first })
                 } else {
                     state.loaded = settings.accessRules
                 }
@@ -144,7 +144,7 @@ public struct AccessRulesFeature {
             case let .saveResponse(.success(rules)):
                 state.isSaving = false
                 state.loaded = rules
-                state.drafts = IdentifiedArray(uniqueElements: rules)
+                state.drafts = IdentifiedArray(rules, id: \.id, uniquingIDsWith: { first, _ in first })
                 return .send(.delegate(.saved))
 
             case let .saveResponse(.failure(error)):

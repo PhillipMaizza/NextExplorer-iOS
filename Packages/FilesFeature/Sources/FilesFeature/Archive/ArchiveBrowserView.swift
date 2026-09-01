@@ -32,6 +32,7 @@ struct ArchiveEntry: Sendable {
 enum ArchiveReaderError: Error {
     case unsupportedFormat
     case entryNotFound
+    case entryTooLarge
 }
 
 /// Keeps the archive open (`ZIPFoundation.Archive` holds a live file handle; `Unrar.Archive`
@@ -41,11 +42,13 @@ enum ArchiveReaderError: Error {
 /// cache, not part of the "source" concept — `Unrar.Archive.entries()` fully re-parses the
 /// archive's header list on every call, so without this, previewing an HTML file with N
 /// sibling assets inside a `.rar` would re-parse the whole archive N+1 times.
-/// `@unchecked Sendable`: `ZIPFoundation.Archive` / `Unrar.Archive` aren't thread-safe, but
-/// `ArchiveBrowserView` only hands this to one background extraction at a time (`extractingRow`
-/// gates taps) and `resolveAsset` runs its lookups sequentially — never concurrently.
+/// `@unchecked Sendable`: `ZIPFoundation.Archive` / `Unrar.Archive` aren't thread-safe and
+/// `cachedRarEntries` is mutable, so every access to the underlying handles goes through
+/// `lock` — `entries()`, `extract(_:to:)` and the `rarEntries()` cache are all serialized by
+/// the type itself rather than by a caller-side gating convention.
 private final class ArchiveSource: @unchecked Sendable {
     let kind: Kind
+    private let lock = NSLock()
     private var cachedRarEntries: [Unrar.Entry]?
 
     enum Kind {
@@ -57,7 +60,72 @@ private final class ArchiveSource: @unchecked Sendable {
         self.kind = kind
     }
 
-    fileprivate func rarEntries() throws -> [Unrar.Entry] {
+    func entries() throws -> [ArchiveEntry] {
+        lock.lock()
+        defer { lock.unlock() }
+        switch kind {
+        case let .zip(archive):
+            return archive.map { entry in
+                ArchiveEntry(path: entry.path, isDirectory: entry.type == .directory, size: entry.uncompressedSize)
+            }
+        case .rar:
+            return try rarEntries().map { entry in
+                ArchiveEntry(path: entry.fileName, isDirectory: entry.directory, size: entry.uncompressedSize)
+            }
+        }
+    }
+
+    /// Extracts a single entry, by its full in-archive path, to `destinationURL`. Both branches
+    /// stream to disk rather than buffering the whole entry in memory, and both enforce a hard
+    /// size ceiling (`ArchiveReader.guardExtraction` on the declared size, plus a running byte
+    /// count on the actual stream) so a crafted archive whose header understates the inflated
+    /// size still can't fill the device.
+    func extract(_ entryPath: String, to destinationURL: URL) throws {
+        lock.lock()
+        defer { lock.unlock() }
+        switch kind {
+        case let .zip(archive):
+            guard let entry = archive[entryPath] else { throw ArchiveReaderError.entryNotFound }
+            try ArchiveReader.guardExtraction(uncompressedSize: entry.uncompressedSize, destination: destinationURL)
+            guard FileManager.default.createFile(atPath: destinationURL.path, contents: nil) else {
+                throw ArchiveReaderError.entryNotFound
+            }
+            let fileHandle = try FileHandle(forWritingTo: destinationURL)
+            defer { try? fileHandle.close() }
+            var written: UInt64 = 0
+            _ = try archive.extract(entry, bufferSize: 1024 * 1024, skipCRC32: true) { chunk in
+                written += UInt64(chunk.count)
+                guard written <= ArchiveReader.maxEntrySize else { throw ArchiveReaderError.entryTooLarge }
+                fileHandle.write(chunk)
+            }
+        case let .rar(archive):
+            guard let entry = try rarEntries().first(where: { $0.fileName == entryPath }) else {
+                throw ArchiveReaderError.entryNotFound
+            }
+            try ArchiveReader.guardExtraction(uncompressedSize: entry.uncompressedSize, destination: destinationURL)
+            guard FileManager.default.createFile(atPath: destinationURL.path, contents: nil) else {
+                throw ArchiveReaderError.entryNotFound
+            }
+            let fileHandle = try FileHandle(forWritingTo: destinationURL)
+            defer { try? fileHandle.close() }
+            var written: UInt64 = 0
+            var overflowed = false
+            // `Unrar`'s handler can't throw, so once the running count passes the ceiling we stop
+            // writing and report afterward — the decoder keeps running but nothing more hits disk.
+            try archive.extract(entry) { chunk, _ in
+                guard !overflowed else { return }
+                written += UInt64(chunk.count)
+                if written > ArchiveReader.maxEntrySize {
+                    overflowed = true
+                    return
+                }
+                fileHandle.write(chunk)
+            }
+            if overflowed { throw ArchiveReaderError.entryTooLarge }
+        }
+    }
+
+    private func rarEntries() throws -> [Unrar.Entry] {
         guard case let .rar(archive) = kind else { return [] }
         if let cachedRarEntries { return cachedRarEntries }
         let entries = try archive.entries()
@@ -70,6 +138,11 @@ private final class ArchiveSource: @unchecked Sendable {
 /// this (`POST /api/files/zip/extract` only fully unpacks to disk), so this is the only way
 /// to show what's inside without materializing every archive a user taps.
 enum ArchiveReader {
+    /// Hard ceiling on a single extracted entry. A crafted archive (a "zip bomb") can declare a
+    /// tiny compressed size yet inflate to hundreds of gigabytes; without a cap the streaming
+    /// writer would fill the device before the write ever failed.
+    static let maxEntrySize: UInt64 = 2 * 1024 * 1024 * 1024
+
     fileprivate static func open(fileURL: URL, kind: String) throws -> ArchiveSource {
         switch kind.lowercased() {
         case "zip": return ArchiveSource(.zip(try ZIPFoundation.Archive(url: fileURL, accessMode: .read)))
@@ -79,41 +152,27 @@ enum ArchiveReader {
     }
 
     fileprivate static func entries(from source: ArchiveSource) throws -> [ArchiveEntry] {
-        switch source.kind {
-        case let .zip(archive):
-            return archive.map { entry in
-                ArchiveEntry(path: entry.path, isDirectory: entry.type == .directory, size: entry.uncompressedSize)
-            }
-        case .rar:
-            return try source.rarEntries().map { entry in
-                ArchiveEntry(path: entry.fileName, isDirectory: entry.directory, size: entry.uncompressedSize)
-            }
+        try source.entries()
+    }
+
+    fileprivate static func extract(_ entryPath: String, from source: ArchiveSource, to destinationURL: URL) throws {
+        try source.extract(entryPath, to: destinationURL)
+    }
+
+    /// Rejects an extraction before it starts when the declared size exceeds the ceiling or the
+    /// volume's available space, so an honest but huge entry never begins filling the disk.
+    static func guardExtraction(uncompressedSize: UInt64, destination: URL) throws {
+        guard uncompressedSize <= maxEntrySize else { throw ArchiveReaderError.entryTooLarge }
+        if let available = availableCapacity(at: destination.deletingLastPathComponent()),
+           uncompressedSize > available {
+            throw ArchiveReaderError.entryTooLarge
         }
     }
 
-    /// Extracts a single entry, by its full in-archive path, to `destinationURL`. Both
-    /// branches stream to disk rather than buffering the whole entry in memory — the rar
-    /// branch via `Unrar.Archive`'s chunked `extract(_:handler:)`, matching what
-    /// `ZIPFoundation.Archive.extract(_:to:)` already does internally — so opening a
-    /// multi-gigabyte video from inside an archive doesn't hold the whole thing in RAM first.
-    fileprivate static func extract(_ entryPath: String, from source: ArchiveSource, to destinationURL: URL) throws {
-        switch source.kind {
-        case let .zip(archive):
-            guard let entry = archive[entryPath] else { throw ArchiveReaderError.entryNotFound }
-            _ = try archive.extract(entry, to: destinationURL)
-        case let .rar(archive):
-            guard let entry = try source.rarEntries().first(where: { $0.fileName == entryPath }) else {
-                throw ArchiveReaderError.entryNotFound
-            }
-            guard FileManager.default.createFile(atPath: destinationURL.path, contents: nil) else {
-                throw ArchiveReaderError.entryNotFound
-            }
-            let fileHandle = try FileHandle(forWritingTo: destinationURL)
-            defer { try? fileHandle.close() }
-            try archive.extract(entry) { chunk, _ in
-                fileHandle.write(chunk)
-            }
-        }
+    private static func availableCapacity(at url: URL) -> UInt64? {
+        guard let capacity = try? url.resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
+            .volumeAvailableCapacityForImportantUsage else { return nil }
+        return capacity >= 0 ? UInt64(capacity) : nil
     }
 }
 
@@ -125,7 +184,7 @@ private struct ArchiveRow: Identifiable {
     let isDirectory: Bool
     let size: UInt64?
 
-    var id: String { name }
+    var id: String { "\(isDirectory ? "d" : "f")/\(name)" }
 }
 
 /// One in-archive file opened for preview, bundled with its extracted location and the row
@@ -136,6 +195,14 @@ private struct ArchiveEntryPreview: Identifiable, Equatable {
     let sourceID: String
 
     var id: String { fileURL.path }
+}
+
+/// Result of a background entry extraction — `tooLarge` is split out so the user gets a
+/// "too large to open" message rather than the generic open failure.
+private enum ArchiveExtractionOutcome: Sendable {
+    case success
+    case tooLarge
+    case failed
 }
 
 /// Full-screen client-side browser for `.zip`/`.rar` contents (`FileItem.isBrowsableArchive`)
@@ -241,6 +308,17 @@ struct ArchiveBrowserView: View {
         }
         // Navigating a folder abandons any in-flight extraction the user walked away from.
         .onChange(of: currentPath) { _, _ in extractingRow = nil }
+        // Closing the browser purges this archive's extracted entries and resolved assets from
+        // `tmp` — otherwise the last opened entry of every archive ever browsed lingers there
+        // until the OS purges under pressure. Skipped while an extraction is still running so we
+        // never delete a file out from under an in-flight write.
+        .onDisappear {
+            guard extractingRow == nil else { return }
+            let directory = Self.temporaryDirectory(for: item)
+            Task.detached(priority: .utility) { [directory] in
+                try? FileManager.default.removeItem(at: directory)
+            }
+        }
     }
 
     @ViewBuilder
@@ -336,22 +414,28 @@ struct ArchiveBrowserView: View {
         Task {
             // Off the main thread — a multi-gigabyte entry (a large video, or an unsupported
             // binary opened just to be shared) would otherwise freeze the UI while it unpacks.
-            let extracted = await Task.detached(priority: .userInitiated) { () -> Bool in
+            let outcome = await Task.detached(priority: .userInitiated) { () -> ArchiveExtractionOutcome in
                 try? FileManager.default.removeItem(at: destination)
                 try? FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
                 do {
                     try ArchiveReader.extract(fullPath, from: source, to: destination)
-                    return true
+                    return .success
+                } catch ArchiveReaderError.entryTooLarge {
+                    try? FileManager.default.removeItem(at: destination)
+                    return .tooLarge
                 } catch {
-                    return false
+                    return .failed
                 }
             }.value
             // Bail if the user navigated away or tapped another row meanwhile.
             guard extractingRow == rowName else { return }
             extractingRow = nil
-            if extracted {
+            switch outcome {
+            case .success:
                 previewingEntry = ArchiveEntryPreview(item: entryItem, fileURL: destination, sourceID: rowName)
-            } else {
+            case .tooLarge:
+                toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.entryTooLarge)
+            case .failed:
                 toastMessage = DSToastMessage(icon: IconKit.warning, text: L10n.Archive.openFailed)
             }
         }

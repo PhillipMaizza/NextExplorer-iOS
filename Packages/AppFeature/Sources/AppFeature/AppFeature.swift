@@ -51,6 +51,7 @@ public struct AppFeature {
 
     @Dependency(\.authClient) var authClient
     @Dependency(\.directoryCacheStore) var directoryCacheStore
+    @Dependency(\.previewCacheStore) var previewCacheStore
 
     public init() {}
 
@@ -128,9 +129,11 @@ public struct AppFeature {
                 }
                 let authClient = self.authClient
                 let directoryCacheStore = self.directoryCacheStore
+                let previewCacheStore = self.previewCacheStore
                 return .run { _ in
                     await authClient.clearSession()
                     directoryCacheStore.clearAll()
+                    try? previewCacheStore.clear()
                 }
 
             case .sessionExpiryDetected:
@@ -143,28 +146,40 @@ public struct AppFeature {
                 }
                 let authClient = self.authClient
                 let directoryCacheStore = self.directoryCacheStore
+                let previewCacheStore = self.previewCacheStore
                 return .run { _ in
                     await authClient.clearSession()
                     directoryCacheStore.clearAll()
+                    try? previewCacheStore.clear()
                 }
 
             case let .destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))):
                 if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
                 // A fresh sign in must never expose the previous account's cached listings for
                 // the same server. Cleared synchronously before the authenticated destination
-                // mounts, so the new `BrowseFeature`'s first cache read can't race it.
+                // mounts, so the new `BrowseFeature`'s first cache read can't race it; the
+                // downloaded file bytes are purged off the main thread since nothing reads them
+                // until a preview opens.
                 directoryCacheStore.clearAll()
                 state.didAuthenticateFromLogin = true
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
                 )
-                return .none
+                let previewCacheStore = self.previewCacheStore
+                return .run { _ in try? previewCacheStore.clear() }
 
             case .destination(.authenticated(.delegate(.loggedOut))):
                 state.$fileClipboard.withLock { $0 = nil }
                 state.didAuthenticateFromLogin = false
                 state.destination = .unauthenticated(.init())
-                return .none
+                // Explicit sign out purges both caches so the next user on a shared device can't
+                // recover the previous session's directory listings or downloaded file bytes.
+                let directoryCacheStore = self.directoryCacheStore
+                let previewCacheStore = self.previewCacheStore
+                return .run { _ in
+                    directoryCacheStore.clearAll()
+                    try? previewCacheStore.clear()
+                }
 
             case .destination:
                 return .none

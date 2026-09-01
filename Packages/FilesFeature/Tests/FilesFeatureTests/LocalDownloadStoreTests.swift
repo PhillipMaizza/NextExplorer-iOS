@@ -50,7 +50,7 @@ struct LocalDownloadStoreTests {
     // MARK: Edge cases
 
     @Test
-    func saveOverwritesAnExistingFileWithTheSameNameRatherThanFailing() throws {
+    func saveDisambiguatesAnExistingNameRatherThanOverwriting() throws {
         let fileName = "\(UUID().uuidString).txt"
         let firstSource = try makeSourceFile(named: fileName, contents: "first")
         let firstDestination = try store.save(firstSource, fileName, .documents)
@@ -65,8 +65,12 @@ struct LocalDownloadStoreTests {
 
         let secondDestination = try store.save(secondSource, fileName, .documents)
 
-        #expect(secondDestination == firstDestination)
+        // Two different server files sharing a name must both survive locally.
+        #expect(secondDestination != firstDestination)
+        #expect(secondDestination.lastPathComponent.contains("(1)"))
+        #expect(try String(contentsOf: firstDestination, encoding: .utf8) == "first")
         #expect(try String(contentsOf: secondDestination, encoding: .utf8) == "second")
+        try? FileManager.default.removeItem(at: secondDestination)
     }
 
     @Test

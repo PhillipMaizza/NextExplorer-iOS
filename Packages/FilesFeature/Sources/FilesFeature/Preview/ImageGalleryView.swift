@@ -11,6 +11,11 @@ private enum Constants {
     /// Chrome (nav bar + bottom bar + status bar + page dots) crossfade on tap. Short, to
     /// match the Photos viewer.
     static let controlsFadeDuration: Double = 0.22
+    /// How many pages either side of the current one keep a decoded bitmap resident. A page
+    /// style `TabView` materializes every child, so without this a folder of hundreds of photos
+    /// would hold a decoded image per page and jetsam. Pages outside the window drop their
+    /// bitmap and re decode when swiped back near.
+    static let retainWindow = 2
 }
 
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
@@ -67,8 +72,8 @@ struct ImageGalleryView: View {
             // never resizes or reflows the content — the image stays perfectly still
             // while the chrome fades, matching the Photos viewer.
             TabView(selection: $selection) {
-                ForEach(items) { item in
-                    ImageGalleryPage(item: item, serverURL: serverURL)
+                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                    ImageGalleryPage(item: item, serverURL: serverURL, isNear: isNear(index))
                         .tag(item.id)
                 }
             }
@@ -109,6 +114,12 @@ struct ImageGalleryView: View {
         .onDisappear { OrientationLock.shared.lock() }
     }
 
+    /// Whether page `index` is close enough to the current selection to keep a decoded bitmap.
+    private func isNear(_ index: Int) -> Bool {
+        guard let selected = items.firstIndex(where: { $0.id == selection }) else { return false }
+        return abs(index - selected) <= Constants.retainWindow
+    }
+
     /// Binds one of the caller's `(FileItem) -> Void` toolbar callbacks to whichever image is
     /// currently on screen, or `nil` when the caller didn't supply that action.
     private func currentItemAction(_ action: ((FileItem) -> Void)?) -> (() -> Void)? {
@@ -120,6 +131,10 @@ struct ImageGalleryView: View {
 private struct ImageGalleryPage: View {
     let item: FileItem
     let serverURL: URL
+    /// When false (page is outside the retain window) the decoded bitmap is dropped so a large
+    /// folder can't hold an image per page. Flips back true when swiped near, triggering a
+    /// re decode.
+    var isNear: Bool = true
     var onZoomChange: (Bool) -> Void = { _ in }
 
     @State private var gifURL: URL?
@@ -152,7 +167,16 @@ private struct ImageGalleryPage: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .task(id: item.id) {
+        .task(id: "\(item.id)\u{0}\(isNear)") {
+            guard isNear else {
+                // Outside the retain window: release the decoded bitmap (and any GIF handle)
+                // so it stops counting against resident memory.
+                image = nil
+                gifURL = nil
+                errorMessage = nil
+                return
+            }
+            guard image == nil, gifURL == nil else { return }
             do {
                 let fileURL = try await filesClient.previewFile(serverURL, item)
                 if item.kind.lowercased() == "gif" {

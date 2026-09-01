@@ -38,6 +38,9 @@ public struct UploadReviewFeature {
         /// `true` when the last staging batch produced nothing and there's nothing else
         /// pending — the sheet stays open showing an error rather than vanishing.
         public var stagingFailed = false
+        /// How many picked items failed to copy out of the picker across this session. Surfaced
+        /// as a warning so the user knows fewer files arrived than they selected.
+        public var skippedCount = 0
         /// `""` means no folder chosen yet (the pick started at the root) — Upload stays
         /// disabled until the user picks one.
         public var destination: String
@@ -128,6 +131,7 @@ public struct UploadReviewFeature {
 
             case let .stagingBatchFinished(requested, staged):
                 // Items that failed to stage never arrive as `filePrepared`; drop them here.
+                state.skippedCount += max(0, requested - staged)
                 state.preparingCount = max(0, state.preparingCount - max(0, requested - staged))
                 guard state.files.isEmpty, state.preparingCount == 0 else { return .none }
                 if staged == 0, requested > 0 {

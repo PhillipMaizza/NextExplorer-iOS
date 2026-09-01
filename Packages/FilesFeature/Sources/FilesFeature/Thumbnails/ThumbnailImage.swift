@@ -13,8 +13,16 @@ private enum ThumbnailMemoryCache {
     nonisolated(unsafe) static let shared: NSCache<NSURL, UIImage> = {
         let cache = NSCache<NSURL, UIImage>()
         cache.countLimit = 400
+        // Count alone doesn't bound bytes: 400 large decoded bitmaps is hundreds of MB. Cap
+        // total decoded cost too so the cache evicts by memory, not just entry count.
+        cache.totalCostLimit = 96 * 1024 * 1024
         return cache
     }()
+
+    static func decodedByteCost(of image: UIImage) -> Int {
+        guard let cgImage = image.cgImage else { return 0 }
+        return cgImage.bytesPerRow * cgImage.height
+    }
 }
 
 /// Lazily resolves and displays a thumbnail for one file: a small spinner while the request
@@ -34,6 +42,10 @@ struct ThumbnailImage: View {
     let signature: String
     let fallbackIcon: Image
     let iconTint: Color
+    /// Decode ceiling in pixels. A thumbnail is only ever shown at an icon/grid size, so
+    /// decoding the server bytes (which can be a full size preview fallback) at full resolution
+    /// is wasted memory and a main thread decode. Downsampled to this on a background task.
+    var maxPixelDimension: CGFloat = 512
 
     @State private var uiImage: UIImage?
     @State private var didResolve = false
@@ -69,9 +81,16 @@ struct ThumbnailImage: View {
                 didResolve = true
                 return
             }
-            let decoded = UIImage(data: data)
+            let target = maxPixelDimension
+            let decoded = await Task.detached(priority: .utility) {
+                ImageDownsampling.image(from: data, maxPixelDimension: target)
+            }.value
             if let decoded {
-                ThumbnailMemoryCache.shared.setObject(decoded, forKey: thumbnailURL as NSURL)
+                ThumbnailMemoryCache.shared.setObject(
+                    decoded,
+                    forKey: thumbnailURL as NSURL,
+                    cost: ThumbnailMemoryCache.decodedByteCost(of: decoded)
+                )
             }
             uiImage = decoded
             didResolve = true

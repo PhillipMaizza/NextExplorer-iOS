@@ -113,7 +113,7 @@ public struct SettingsFeature {
     @Dependency(\.previewCacheStore) var previewCacheStore
     @Dependency(\.directoryCacheStore) var directoryCacheStore
 
-    private enum CancelID { case serverUsage }
+    private enum CancelID { case serverUsage, volumeUsage }
 
     public init() {}
 
@@ -183,7 +183,10 @@ public struct SettingsFeature {
                 .cancellable(id: CancelID.serverUsage, cancelInFlight: true)
 
             case let .volumesResponse(volumes):
-                state.serverUsage = IdentifiedArray(uniqueElements: volumes.map { VolumeUsage(volume: $0, usage: nil) })
+                state.serverUsage = IdentifiedArray(
+                    volumes.map { VolumeUsage(volume: $0, usage: nil) },
+                    id: \.id, uniquingIDsWith: { first, _ in first }
+                )
                 let serverURL = state.serverURL
                 let filesClient = self.filesClient
                 return .merge(volumes.map { volume in
@@ -194,7 +197,7 @@ public struct SettingsFeature {
                         ))
                     }
                 })
-                .cancellable(id: CancelID.serverUsage, cancelInFlight: false)
+                .cancellable(id: CancelID.volumeUsage, cancelInFlight: false)
 
             case let .serverUsageResponse(path, .success(usage)):
                 state.serverUsage[id: path]?.usage = usage

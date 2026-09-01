@@ -27,7 +27,7 @@ struct SharedView: View {
     private var segment: Binding<SharedFeature.Segment> {
         Binding(
             get: { store.segment },
-            set: { newValue in withAnimation(DSMotion.disclosure) { store.send(.segmentChanged(newValue)) } }
+            set: { newValue in withAnimation(DSMotion.disclosure) { _ = store.send(.segmentChanged(newValue)) } }
         )
     }
 
@@ -141,8 +141,6 @@ private struct SharedSegmentList: View {
     private var phase: DataPhase { store.state.phase(for: segment) }
     private var errorMessage: String? { phase.errorMessage }
     private var isEmpty: Bool { store.state.isEmpty(for: segment) }
-    private var activeShares: IdentifiedArrayOf<Share> { store.state.activeShares(for: segment) }
-    private var expiredShares: IdentifiedArrayOf<Share> { store.state.expiredShares(for: segment) }
 
     /// The card skeleton until this segment has been fetched once, then error / empty /
     /// no-results / list.
@@ -155,13 +153,16 @@ private struct SharedSegmentList: View {
     }
 
     var body: some View {
-        List {
+        // One filter+sort pass shared by both sections and the diff animation, rather than
+        // three independent derivations (each ran the localized sort) per render.
+        let partition = store.state.displayedSharesPartition(for: segment)
+        return List {
             if listPhase == .loading {
                 skeletonRows
             } else {
-                section(for: activeShares, header: nil)
-                if !expiredShares.isEmpty {
-                    section(for: expiredShares, header: L10n.Shared.sectionExpired)
+                section(for: partition.active, header: nil)
+                if !partition.expired.isEmpty {
+                    section(for: partition.expired, header: L10n.Shared.sectionExpired)
                 }
             }
         }
@@ -173,7 +174,7 @@ private struct SharedSegmentList: View {
             didFinishRefreshing.toggle()
         }
         .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in errorMessage == nil }
-        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.state.displayedShares(for: segment))
+        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: partition.all)
         .overlay {
             ListStateOverlay(
                 phase: listPhase,

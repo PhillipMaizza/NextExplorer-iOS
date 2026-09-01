@@ -140,7 +140,7 @@ public struct CreateShareLinkFeature {
 
             case let .shareableUsersResponse(.success(users)):
                 state.usersPhase = .loaded
-                state.shareableUsers = IdentifiedArray(uniqueElements: users)
+                state.shareableUsers = IdentifiedArray(users, id: \.id, uniquingIDsWith: { first, _ in first })
                 return .none
 
             case let .shareableUsersResponse(.failure(error)):

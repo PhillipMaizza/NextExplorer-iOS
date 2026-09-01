@@ -249,10 +249,13 @@ public struct DownloadsFeature {
         state.deleteConfirmationItem = nil
         let localDownloadStore = self.localDownloadStore
         return .run { send in
-            await send(.deleteResponse(try await apiResult {
+            do {
                 try localDownloadStore.delete(download.url)
-                return download.id
-            }))
+                await send(.deleteResponse(.success(download.id)))
+            } catch {
+                guard !Task.isCancelled else { return }
+                await send(.deleteResponse(.failure(Self.localStoreError(error))))
+            }
         }
     }
 
@@ -265,11 +268,35 @@ public struct DownloadsFeature {
         }
         let localDownloadStore = self.localDownloadStore
         return .run { send in
-            await send(.renameResponse(try await apiResult {
+            do {
                 _ = try localDownloadStore.rename(download.url, trimmed)
-                return try localDownloadStore.list()
-            }))
+                let list = try localDownloadStore.list()
+                await send(.renameResponse(.success(list)))
+            } catch {
+                guard !Task.isCancelled else { return }
+                await send(.renameResponse(.failure(Self.localStoreError(error))))
+            }
         }
+    }
+
+    /// Rename/delete here are local filesystem operations, so a failure is a `CocoaError`, not a
+    /// network fault. Surface the actual reason instead of the generic "network error" the
+    /// shared `apiResult` boxing would produce. `serverMessage`'s `userMessage` is exactly the
+    /// carried string; the status code is unused for that case.
+    private static func localStoreError(_ error: Error) -> FilesClientError {
+        if let filesError = error as? FilesClientError { return filesError }
+        let message: String
+        switch (error as? CocoaError)?.code {
+        case .fileWriteFileExists:
+            message = L10n.Downloads.errorNameExists
+        case .fileWriteInvalidFileName:
+            message = L10n.Downloads.errorInvalidName
+        case .fileNoSuchFile, .fileReadNoSuchFile:
+            message = L10n.Downloads.errorMissing
+        default:
+            message = L10n.Downloads.errorGeneric
+        }
+        return .serverMessage(statusCode: 0, message: message)
     }
 
     /// Best-effort, matching the sign-out flow's philosophy: one file refusing to delete

@@ -175,6 +175,10 @@ downloads.deleteConfirmOne	Delete “%@”?
 downloads.deleteConfirmMany	Delete %lld files?
 downloads.deleteSingleMessage	This only removes the local copy. The file stays on the server.
 downloads.deleteBulkMessage	This only removes the local copies. The files stay on the server.
+downloads.errorNameExists	A file with that name already exists.
+downloads.errorInvalidName	That name isn't allowed.
+downloads.errorMissing	That file could no longer be found.
+downloads.errorGeneric	Couldn't complete that action.
 
 # ---- unsupported file preview ----
 unsupportedPreview.genericType	File
@@ -202,6 +206,7 @@ uploads.reviewAddMore	Add more files
 uploads.reviewPreviewFile	Preview %@
 uploads.reviewInsecureNetworkNotice	Connected over http. If this server is only on your home network, uploads won't work while you're away from it.
 uploads.stagingFailed	Couldn't add those files. Try again.
+uploads.stagingSkipped	%lld items couldn't be prepared and were left out.
 uploads.discardTitle	Discard upload?
 uploads.discardMessage	The files you added won't be uploaded.
 uploads.discardConfirm	Discard
@@ -425,6 +430,7 @@ permissions.rightExecute	Execute
 archive.emptyFolder	This folder is empty.
 archive.openFailed	Couldn't open this file.
 archive.openArchiveFailed	Couldn't open this archive.
+archive.entryTooLarge	This item is too large to open.
 
 # ---- image gallery / text preview ----
 gallery.loadFailed	Couldn't load this image.
