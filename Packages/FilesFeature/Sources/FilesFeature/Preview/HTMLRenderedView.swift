@@ -54,7 +54,13 @@ struct HTMLRenderedView: View {
         let mainFileURL = directory.appendingPathComponent("index.html")
         guard (try? html.write(to: mainFileURL, atomically: true, encoding: .utf8)) != nil else { return }
 
-        for relativePath in Self.relativeAssetPaths(in: html) {
+        // The `href`/`src` regex scan walks the entire document; run it off the main thread so a
+        // large HTML file doesn't stall the UI while its assets are being resolved.
+        let html = self.html
+        let assetPaths = await Task.detached(priority: .userInitiated) {
+            Self.relativeAssetPaths(in: html)
+        }.value
+        for relativePath in assetPaths {
             guard let downloadedURL = await resolveAsset(relativePath) else { continue }
             // Root-absolute references (`/assets/app.js`) are resolved by `resolveAsset`
             // relative to the file's own folder too (there's no real site root to anchor
@@ -72,7 +78,7 @@ struct HTMLRenderedView: View {
     /// Every `href="..."`/`src="..."` value that isn't already absolute (`http(s)://`,
     /// protocol-relative `//`, `data:`, `mailto:`) or an in-page anchor (`#section`) — the
     /// same-folder assets a fetched HTML string alone has no way to reach.
-    private static func relativeAssetPaths(in html: String) -> [String] {
+    nonisolated private static func relativeAssetPaths(in html: String) -> [String] {
         guard let regex = try? NSRegularExpression(pattern: #"(?:href|src)\s*=\s*["']([^"'#][^"']*)["']"#, options: [.caseInsensitive]) else {
             return []
         }
