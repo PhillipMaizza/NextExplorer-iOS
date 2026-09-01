@@ -27,6 +27,23 @@ struct SettingsView: View {
     /// here, above every `.navigationDestination`, is the only spot a bottom overlay isn't
     /// occluded by a pushed screen, so those two views don't each need their own.
     @State private var userManagementToast: DSToastMessage?
+    /// View-local filter for the settings list — no reducer state needed, it only hides rows.
+    @State private var settingsSearch = ""
+
+    /// Whether a row/section with this label should show for the current search.
+    private func matches(_ label: String) -> Bool {
+        settingsSearch.isEmpty || label.localizedCaseInsensitiveContains(settingsSearch)
+    }
+
+    /// True when the search is empty (show everything) or at least one of `labels` matches —
+    /// used to drop a whole section (and its header) once none of its rows match.
+    private func anyMatch(_ labels: [String]) -> Bool {
+        labels.contains(where: matches)
+    }
+
+    /// The contextual sections (account, admin, storage usage) are hidden entirely while
+    /// searching — a search narrows to the labelled preference rows.
+    private var isSearching: Bool { !settingsSearch.isEmpty }
 
     /// Falls back to whatever the system currently resolves to until the user has
     /// explicitly overridden it, so the toggle starts in sync with the system, exactly
@@ -99,159 +116,209 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                profileSection
+                if !isSearching {
+                    profileSection
+                }
 
-                Section {
-                    DSToggleRow(
-                        title: L10n.Settings.toggleShowHiddenFiles,
-                        icon: IconKit.eye,
-                        isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles)
-                    )
-                    DSToggleRow(
-                        title: L10n.Settings.toggleRenderHTML,
-                        icon: IconKit.web,
-                        isOn: $renderHTMLPages
-                    )
-                    DSToggleRow(
-                        title: L10n.Settings.toggleRenderMarkdown,
-                        icon: IconKit.textformat,
-                        isOn: $renderMarkdownPages
-                    )
-                    NavigationLink {
-                        DateFormatPickerView(selection: dateFormat)
-                    } label: {
-                        Label {
-                            HStack {
-                                Text(L10n.Settings.rowDateFormat).type(.body2(.regular), style: .primary(for: .label))
-                                Spacer()
-                                Text(dateFormat.wrappedValue.title).type(.body2(.regular), style: .secondary)
+                if anyMatch([L10n.Settings.toggleShowHiddenFiles, L10n.Settings.toggleRenderHTML, L10n.Settings.toggleRenderMarkdown, L10n.Settings.rowDateFormat, L10n.Settings.toggleHaptics]) {
+                    Section {
+                        if matches(L10n.Settings.toggleShowHiddenFiles) {
+                            DSToggleRow(
+                                title: L10n.Settings.toggleShowHiddenFiles,
+                                icon: IconKit.eye,
+                                isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles)
+                            )
+                        }
+                        if matches(L10n.Settings.toggleRenderHTML) {
+                            DSToggleRow(
+                                title: L10n.Settings.toggleRenderHTML,
+                                icon: IconKit.web,
+                                isOn: $renderHTMLPages
+                            )
+                        }
+                        if matches(L10n.Settings.toggleRenderMarkdown) {
+                            DSToggleRow(
+                                title: L10n.Settings.toggleRenderMarkdown,
+                                icon: IconKit.textformat,
+                                isOn: $renderMarkdownPages
+                            )
+                        }
+                        if matches(L10n.Settings.rowDateFormat) {
+                            NavigationLink {
+                                DateFormatPickerView(selection: dateFormat)
+                            } label: {
+                                Label {
+                                    HStack {
+                                        Text(L10n.Settings.rowDateFormat).type(.body2(.regular), style: .primary(for: .label))
+                                        Spacer()
+                                        Text(dateFormat.wrappedValue.title).type(.body2(.regular), style: .secondary)
+                                    }
+                                } icon: {
+                                    IconKit.calendar
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundStyle(Color.secondaryDS)
+                                        .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                                }
                             }
-                        } icon: {
-                            IconKit.calendar
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.secondaryDS)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                        if matches(L10n.Settings.toggleHaptics) {
+                            DSToggleRow(
+                                title: L10n.Settings.toggleHaptics,
+                                icon: IconKit.haptics,
+                                isOn: $hapticsEnabled
+                            )
+                        }
+                    } header: {
+                        sectionHeader(L10n.Settings.sectionGeneral)
+                    }
+                    .listRowBackground(Color.backgroundSecondary)
+                }
+
+                if anyMatch([L10n.Settings.toggleDarkMode, L10n.Settings.toggleShowThumbnails, L10n.Settings.rowThumbnailSize, L10n.Settings.toggleShowExtensions]) {
+                    Section {
+                        if matches(L10n.Settings.toggleDarkMode) {
+                            DSToggleRow(title: L10n.Settings.toggleDarkMode, icon: IconKit.darkMode, isOn: isDarkModeOn)
+                        }
+                        if matches(L10n.Settings.toggleShowThumbnails) {
+                            DSToggleRow(
+                                title: L10n.Settings.toggleShowThumbnails,
+                                icon: IconKit.photo,
+                                isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
+                            )
+                        }
+                        if matches(L10n.Settings.rowThumbnailSize) {
+                            Picker(selection: thumbnailSize) {
+                                ForEach(ThumbnailSize.allCases) { size in
+                                    Text(size.title).tag(size)
+                                }
+                            } label: {
+                                Label {
+                                    Text(L10n.Settings.rowThumbnailSize).type(.body2(.regular), style: .primary(for: .label))
+                                } icon: {
+                                    IconKit.squareGrid
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundStyle(Color.secondaryDS)
+                                        .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                                }
+                            }
+                            .pickerStyle(.menu)
+                            .tint(Color.secondaryDS)
+                            .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
+                        }
+                        if matches(L10n.Settings.toggleShowExtensions) {
+                            DSToggleRow(
+                                title: L10n.Settings.toggleShowExtensions,
+                                icon: IconKit.tag,
+                                isOn: $showFilenameExtensions
+                            )
+                        }
+                    } header: {
+                        sectionHeader(L10n.Settings.sectionDisplay)
+                    }
+                    .listRowBackground(Color.backgroundSecondary)
+                }
+
+                if !isSearching {
+                    usersSection
+
+                    serverAdminSection
+
+                    serverStorageSection
+                }
+
+                if anyMatch([L10n.Settings.toggleRemoveArchives, L10n.Settings.toggleKeepClipboard, L10n.Settings.rowRemoveAllDownloads, L10n.Settings.rowClearCache]) {
+                    Section {
+                        if matches(L10n.Settings.toggleRemoveArchives) {
+                            DSToggleRow(
+                                title: L10n.Settings.toggleRemoveArchives,
+                                icon: IconKit.archivePage,
+                                isOn: $removeArchiveAfterDownload
+                            )
+                        }
+                        if matches(L10n.Settings.toggleKeepClipboard) {
+                            DSToggleRow(
+                                title: L10n.Settings.toggleKeepClipboard,
+                                subtitle: L10n.Settings.toggleKeepClipboardSubtitle,
+                                icon: IconKit.paste,
+                                isOn: $keepClipboardAfterCopy
+                            )
+                        }
+                        if matches(L10n.Settings.rowRemoveAllDownloads) {
+                            DSNavigationRow(
+                                title: L10n.Settings.rowRemoveAllDownloads,
+                                icon: IconKit.delete,
+                                accessory: .detail(Self.byteFormatter.string(fromByteCount: store.downloadsSize)),
+                                role: .accent
+                            ) {
+                                store.send(.removeAllDownloadsTapped)
+                            }
+                            .disabled(store.isRemovingAllDownloads || !store.hasDownloads)
+                            .opacity(store.hasDownloads ? Constants.fullOpacity : Constants.disabledOpacity)
+                        }
+                        if matches(L10n.Settings.rowClearCache) {
+                            DSNavigationRow(
+                                title: L10n.Settings.rowClearCache,
+                                icon: IconKit.delete,
+                                accessory: .detail(Self.byteFormatter.string(fromByteCount: store.cacheSize)),
+                                role: .accent
+                            ) {
+                                store.send(.clearCacheTapped)
+                            }
+                            .disabled(store.isClearingCache || store.cacheSize == 0)
+                            .opacity(store.cacheSize > 0 ? Constants.fullOpacity : Constants.disabledOpacity)
+                        }
+                    } header: {
+                        sectionHeader(L10n.Settings.sectionStorage)
+                    } footer: {
+                        if !isSearching {
+                            Text(L10n.Settings.storageFootnote)
+                                .type(.body3(.regular), style: .tertiary)
                         }
                     }
-                    DSToggleRow(
-                        title: L10n.Settings.toggleHaptics,
-                        icon: IconKit.haptics,
-                        isOn: $hapticsEnabled
-                    )
-                } header: {
-                    sectionHeader(L10n.Settings.sectionGeneral)
+                    .listRowBackground(Color.backgroundSecondary)
                 }
-                .listRowBackground(Color.backgroundSecondary)
 
-                Section {
-                    DSToggleRow(title: L10n.Settings.toggleDarkMode, icon: IconKit.darkMode, isOn: isDarkModeOn)
-                    DSToggleRow(
-                        title: L10n.Settings.toggleShowThumbnails,
-                        icon: IconKit.photo,
-                        isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
-                    )
-                    Picker(selection: thumbnailSize) {
-                        ForEach(ThumbnailSize.allCases) { size in
-                            Text(size.title).tag(size)
+                if anyMatch([L10n.Settings.rowOpenSourceLicenses]) {
+                    Section {
+                        if matches(L10n.Settings.rowOpenSourceLicenses) {
+                            NavigationLink {
+                                LicensesView()
+                            } label: {
+                                Label {
+                                    Text(L10n.Settings.rowOpenSourceLicenses).type(.body2(.regular), style: .primary(for: .label))
+                                } icon: {
+                                    IconKit.document
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundStyle(Color.secondaryDS)
+                                        .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                                }
+                            }
                         }
-                    } label: {
-                        Label {
-                            Text(L10n.Settings.rowThumbnailSize).type(.body2(.regular), style: .primary(for: .label))
-                        } icon: {
-                            IconKit.squareGrid
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.secondaryDS)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    .tint(Color.secondaryDS)
-                    .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
-                    DSToggleRow(
-                        title: L10n.Settings.toggleShowExtensions,
-                        icon: IconKit.tag,
-                        isOn: $showFilenameExtensions
-                    )
-                } header: {
-                    sectionHeader(L10n.Settings.sectionDisplay)
-                }
-                .listRowBackground(Color.backgroundSecondary)
-
-                usersSection
-
-                serverAdminSection
-
-                serverStorageSection
-
-                Section {
-                    DSToggleRow(
-                        title: L10n.Settings.toggleRemoveArchives,
-                        icon: IconKit.archivePage,
-                        isOn: $removeArchiveAfterDownload
-                    )
-                    DSToggleRow(
-                        title: L10n.Settings.toggleKeepClipboard,
-                        subtitle: L10n.Settings.toggleKeepClipboardSubtitle,
-                        icon: IconKit.paste,
-                        isOn: $keepClipboardAfterCopy
-                    )
-                    DSNavigationRow(
-                        title: L10n.Settings.rowRemoveAllDownloads,
-                        icon: IconKit.delete,
-                        accessory: .detail(Self.byteFormatter.string(fromByteCount: store.downloadsSize)),
-                        role: .accent
-                    ) {
-                        store.send(.removeAllDownloadsTapped)
-                    }
-                    .disabled(store.isRemovingAllDownloads || !store.hasDownloads)
-                    .opacity(store.hasDownloads ? Constants.fullOpacity : Constants.disabledOpacity)
-                    DSNavigationRow(
-                        title: L10n.Settings.rowClearCache,
-                        icon: IconKit.delete,
-                        accessory: .detail(Self.byteFormatter.string(fromByteCount: store.cacheSize)),
-                        role: .accent
-                    ) {
-                        store.send(.clearCacheTapped)
-                    }
-                    .disabled(store.isClearingCache || store.cacheSize == 0)
-                    .opacity(store.cacheSize > 0 ? Constants.fullOpacity : Constants.disabledOpacity)
-                } header: {
-                    sectionHeader(L10n.Settings.sectionStorage)
-                } footer: {
-                    Text(L10n.Settings.storageFootnote)
-                        .type(.body3(.regular), style: .tertiary)
-                }
-                .listRowBackground(Color.backgroundSecondary)
-
-                Section {
-                    NavigationLink {
-                        LicensesView()
-                    } label: {
-                        Label {
-                            Text(L10n.Settings.rowOpenSourceLicenses).type(.body2(.regular), style: .primary(for: .label))
-                        } icon: {
-                            IconKit.document
-                                .resizable()
-                                .scaledToFit()
-                                .foregroundStyle(Color.secondaryDS)
-                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                    } header: {
+                        sectionHeader(L10n.Settings.sectionLicenses)
+                    } footer: {
+                        if !isSearching {
+                            Text(appVersionText)
+                                .type(.label4, style: .tertiary)
+                                .frame(maxWidth: .infinity)
+                                .multilineTextAlignment(.center)
+                                .padding(.top, Constants.footerTopPadding)
                         }
                     }
-                } header: {
-                    sectionHeader(L10n.Settings.sectionLicenses)
-                } footer: {
-                    Text(appVersionText)
-                        .type(.label4, style: .tertiary)
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, Constants.footerTopPadding)
+                    .listRowBackground(Color.backgroundSecondary)
                 }
-                .listRowBackground(Color.backgroundSecondary)
             }
             .scrollContentBackground(.hidden)
             .backgroundGradient()
+            .safeAreaInset(edge: .top, spacing: 0) {
+                PinnedTitleSearchHeader(
+                    title: L10n.Settings.navigationTitle,
+                    searchText: $settingsSearch
+                )
+            }
             .navigationDestination(
                 item: $store.scope(state: \.userManagement, action: \.userManagement)
             ) { userManagementStore in
@@ -277,7 +344,9 @@ struct SettingsView: View {
             ) { accessRulesStore in
                 AccessRulesView(store: accessRulesStore)
             }
-            .navigationTitle(L10n.Settings.navigationTitle)
+            // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .sheet(isPresented: isConfirmingSignOut) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
