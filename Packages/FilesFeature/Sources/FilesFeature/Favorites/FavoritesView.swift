@@ -219,20 +219,6 @@ struct FavoritesView: View {
         }
     }
 
-    @ViewBuilder
-    private func rowContextMenu(for favorite: Favorite) -> some View {
-        Button {
-            store.send(.editTapped(favorite))
-        } label: {
-            Label { Text(L10n.Favorites.actionEdit) } icon: { IconKit.rename }
-        }
-        Button(role: .destructive) {
-            store.send(.removeTapped(favorite))
-        } label: {
-            Label { Text(L10n.Favorites.actionRemoveFromFavorites) } icon: { IconKit.unfavorite }
-        }
-        .tint(.negative)
-    }
 
     private func favoriteRowIcon(_ favorite: Favorite) -> some View {
         FileRowView(
@@ -293,7 +279,7 @@ struct FavoritesView: View {
                 .listRowBackground(Color.backgroundSecondary)
                 .contextMenu {
                     if !store.isSelecting {
-                        rowContextMenu(for: favorite)
+                        FavoriteRowContextMenu(store: store, favorite: favorite)
                     }
                 }
                 .swipeActions(edge: .leading) {
@@ -376,7 +362,7 @@ struct FavoritesView: View {
                     .hapticFeedback(.selection, trigger: store.selectedFavoriteIDs.contains(favorite.id))
                     .contextMenu {
                         if !store.isSelecting {
-                            rowContextMenu(for: favorite)
+                            FavoriteRowContextMenu(store: store, favorite: favorite)
                         }
                     }
         }

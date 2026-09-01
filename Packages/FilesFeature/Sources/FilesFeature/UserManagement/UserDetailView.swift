@@ -5,21 +5,7 @@ import FilesClient
 import Localization
 import SwiftUI
 
-private enum Metrics {
-    static let avatarSize: CGFloat = .size56
-    static let contentSpacing: CGFloat = .space24
-    static let cardSpacing: CGFloat = .space12
-    static let cardTitleSpacing: CGFloat = .space8
-    static let cardPadding: CGFloat = .space16
-    static let cardCornerRadius: CGFloat = .radiusCard
-    static let horizontalPadding: CGFloat = .space16
-    static let rowIconSize: CGFloat = .iconSmall
-    static let lockedInfoIconSize: CGFloat = .iconXSmall
-    static let volumeSheetSpacing: CGFloat = .space24
-    static let volumeSheetMaxHeightFraction: CGFloat = 0.9
-    static let badgeHorizontalPadding: CGFloat = .space8
-    static let badgeVerticalPadding: CGFloat = .space2
-}
+private typealias Metrics = UserDetailMetrics
 
 /// The admin user detail screen (web `UserDetail`). Pushed onto the Settings navigation
 /// stack by `UserManagementView`. Profile, Security and Volumes tabs, the last only with the
@@ -52,11 +38,11 @@ struct UserDetailView: View {
 
                     switch store.detailTab {
                     case .profile:
-                        profileTab(user)
+                        ProfileTabView(store: store, user: user)
                     case .security:
-                        securityTab(user)
+                        SecurityTabView(store: store, user: user)
                     case .volumes:
-                        volumesTab
+                        VolumesTabView(store: store)
                     }
                 }
                 .padding(.horizontal, Metrics.horizontalPadding)
@@ -97,8 +83,6 @@ struct UserDetailView: View {
         }
     }
 
-    // MARK: Header
-
     private func header(_ user: User) -> some View {
         HStack(spacing: Metrics.cardSpacing) {
             AvatarView(displayName: user.displayName ?? user.username, size: Metrics.avatarSize)
@@ -117,207 +101,7 @@ struct UserDetailView: View {
         }
     }
 
-    // MARK: Profile tab
-
-    @ViewBuilder
-    private func profileTab(_ user: User) -> some View {
-        Card(L10n.UserDetail.sectionGeneralInfo) {
-            LabeledField(L10n.UserDetail.profileDisplayNameField, uppercased: false) {
-                DSTextField(L10n.UserDetail.profileDisplayNamePlaceholder, text: binding(\.editDisplayName, UserManagementFeature.Action.editDisplayNameChanged))
-                    .autocorrectionDisabled()
-            }
-            LabeledField(L10n.UserDetail.profileUsernameField, error: store.isProfileDirty ? store.profileUsernameError : nil, uppercased: false) {
-                DSTextField(L10n.UserDetail.profileUsernamePlaceholder, text: binding(\.editUsername, UserManagementFeature.Action.editUsernameChanged))
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-            }
-            LabeledField(L10n.UserDetail.profileEmailField, error: store.isProfileDirty ? store.profileEmailError : nil, uppercased: false) {
-                DSTextField(L10n.UserDetail.profileEmailPlaceholder, text: binding(\.editEmail, UserManagementFeature.Action.editEmailChanged))
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled()
-            }
-            DSButton(L10n.UserDetail.profileSave, style: .primary, isLoading: store.isSavingProfile) {
-                store.send(.saveProfileTapped)
-            }
-            .disabled(!store.isProfileSaveEnabled)
-            .padding(.top, .space4)
-        }
-
-        Card(L10n.UserDetail.sectionRoles) {
-            HStack(alignment: .top, spacing: .space8) {
-                IconKit.shield
-                    .resizable().scaledToFit()
-                    .foregroundStyle(Color.accent)
-                    .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                    .padding(.top, .space2)
-                VStack(alignment: .leading, spacing: .space2) {
-                    Text(L10n.UserDetail.roleAdmin).type(.body2(.semibold), style: .primary(for: .label))
-                    Text(L10n.UserDetail.roleAdminSubtitle)
-                        .type(.body3(.regular), style: .secondary)
-                }
-                Spacer(minLength: .space8)
-            }
-            if store.isUpdatingRoles {
-                ProgressView().frame(maxWidth: .infinity, alignment: .leading)
-            } else if user.isAdmin {
-                // No "Revoke Admin": the backend refuses to demote any administrator
-                // (`PATCH /api/users/:id` 400s with "Demotion of admin is not allowed."), so
-                // offering the action would only ever produce an error.
-                HStack(alignment: .firstTextBaseline, spacing: .space4) {
-                    IconKit.info
-                        .resizable().scaledToFit()
-                        .foregroundStyle(Color.tertiaryDS)
-                        .frame(width: Metrics.lockedInfoIconSize, height: Metrics.lockedInfoIconSize)
-                    Text(L10n.UserDetail.roleAdminLocked)
-                        .type(.caption(.regular), style: .tertiary)
-                    Spacer(minLength: 0)
-                }
-            } else {
-                DSButton(L10n.UserDetail.roleGrantAdmin, style: .secondary) { store.send(.grantAdminTapped) }
-            }
-        }
-
-        if !store.isViewingOwnAccount {
-            dangerZone(user)
-        }
-    }
-
-    private func dangerZone(_ user: User) -> some View {
-        VStack(alignment: .leading, spacing: Metrics.cardSpacing) {
-            Text(L10n.UserDetail.dangerZoneTitle).type(.body2(.semibold), style: .error)
-            Text(L10n.UserDetail.dangerZoneSubtitle)
-                .type(.body3(.regular), style: .secondary)
-            DSButton(L10n.UserDetail.dangerZoneRemoveUser, icon: IconKit.delete, style: .failure) {
-                store.send(.deleteUserTapped(user))
-            }
-        }
-        .padding(Metrics.cardPadding)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.negative.opacity(0.08)))
-        .overlay(
-            RoundedRectangle(cornerRadius: Metrics.cardCornerRadius)
-                .strokeBorder(Color.negative.opacity(0.3), lineWidth: .borderWidthHairline)
-        )
-    }
-
-    // MARK: Security tab
-
-    @ViewBuilder
-    private func securityTab(_ user: User) -> some View {
-        Card(L10n.UserDetail.sectionLocalPassword) {
-            HStack(alignment: .top, spacing: .space8) {
-                IconKit.key
-                    .resizable().scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
-                    .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                    .padding(.top, .space2)
-                Text(user.hasLocalPassword
-                    ? L10n.UserDetail.passwordHasLocal
-                    : L10n.UserDetail.passwordSSOOnly)
-                    .type(.body3(.regular), style: .secondary)
-                Spacer(minLength: .space8)
-            }
-            DSButton(user.hasLocalPassword ? L10n.UserDetail.passwordReset : L10n.UserDetail.passwordSet, style: .secondary) {
-                store.send(.setPasswordTapped)
-            }
-        }
-
-        Card(L10n.UserDetail.sectionSSO) {
-            if user.oidcMethods.isEmpty {
-                HStack(spacing: .space8) {
-                    IconKit.cloud
-                        .resizable().scaledToFit()
-                        .foregroundStyle(Color.tertiaryDS)
-                        .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                    Text(L10n.UserDetail.ssoNone).type(.body3(.regular), style: .secondary)
-                }
-            } else {
-                ForEach(Array(user.oidcMethods.enumerated()), id: \.offset) { _, method in
-                    HStack(spacing: .space8) {
-                        IconKit.cloud
-                            .resizable().scaledToFit()
-                            .foregroundStyle(Color.secondaryDS)
-                            .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                        Text(method.provider ?? L10n.UserDetail.ssoBadge).type(.body2(.regular), style: .primary(for: .label))
-                        Spacer()
-                        Text(L10n.UserDetail.ssoLinked).type(.caption(.semibold), style: .success)
-                    }
-                }
-            }
-        }
-    }
-
-    // MARK: Volumes tab
-
-    @ViewBuilder
-    private var volumesTab: some View {
-        Card(L10n.UserDetail.sectionAssignedVolumes) {
-            if store.volumesPhase == .loading {
-                ProgressView().frame(maxWidth: .infinity, alignment: .center).padding(.vertical, .space8)
-            } else if store.volumes.isEmpty {
-                VStack(spacing: .space4) {
-                    Text(L10n.UserDetail.volumesNone).type(.body3(.regular), style: .secondary)
-                    Text(L10n.UserDetail.volumesNoneSubtitle).type(.caption(.regular), style: .tertiary)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, .space8)
-            } else {
-                ForEach(store.volumes) { volume in
-                    volumeRow(volume)
-                }
-            }
-            DSButton(L10n.UserDetail.volumesAssign, icon: IconKit.plus, style: .secondary) {
-                store.send(.addVolumeTapped)
-            }
-            .padding(.top, .space4)
-        }
-
-        Text(L10n.UserDetail.volumesFootnote)
-            .type(.body3(.regular), style: .secondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(Metrics.cardPadding)
-            .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.accent.opacity(0.08)))
-    }
-
-    private func volumeRow(_ volume: UserVolume) -> some View {
-        HStack(spacing: .space12) {
-            IconKit.folder
-                .resizable().scaledToFit()
-                .foregroundStyle(Color.secondaryDS)
-                .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-            VStack(alignment: .leading, spacing: .space2) {
-                Text(volume.label).type(.body2(.semibold), style: .primary(for: .label)).lineLimit(1)
-                Text(volume.path).type(.caption(.regular), style: .tertiary).lineLimit(1).truncationMode(.middle)
-            }
-            Spacer(minLength: .space8)
-            AccessModeBadge(mode: volume.accessMode)
-            Button { store.send(.editVolumeTapped(volume)) } label: {
-                IconKit.rename.resizable().scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
-                    .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-            }
-            .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel(L10n.UserDetail.volumeEditAccessibility(volume.label))
-            Button { store.send(.removeVolumeTapped(volume)) } label: {
-                IconKit.delete.resizable().scaledToFit()
-                    .foregroundStyle(Color.negative)
-                    .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-            }
-            .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel(L10n.UserDetail.volumeRemoveAccessibility(volume.label))
-        }
-        .padding(.vertical, .space8)
-    }
-
-    // MARK: Helpers
-
-    private func binding(
-        _ keyPath: KeyPath<UserManagementFeature.State, String>,
-        _ action: @escaping (String) -> UserManagementFeature.Action
-    ) -> Binding<String> {
-        Binding(get: { store.state[keyPath: keyPath] }, set: { store.send(action($0)) })
-    }
+    // MARK: Sheet bindings
 
     private var volumeSheetPresented: Binding<Bool> {
         Binding(get: { store.volumeSheet != nil }, set: { if !$0 { store.send(.volumeSheetDismissed) } })
@@ -334,222 +118,6 @@ struct UserDetailView: View {
     /// surfaced one navigation level below, behind the pushed detail.
     private var deleteAlertPresented: Binding<Bool> {
         Binding(get: { store.userToDelete != nil }, set: { _ in })
-    }
-}
-
-// MARK: Small pieces
-
-/// A section: an optional uppercase header over a rounded `backgroundSecondary` box. The
-/// header sits outside the box so the tabs read as a list of labelled sections rather than
-/// nested titled cards. Pass no title for a plain card (an intro blurb, a single note).
-struct Card<Content: View>: View {
-    let title: String?
-    @ViewBuilder let content: Content
-
-    init(_ title: String? = nil, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.content = content()
-    }
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: Metrics.cardTitleSpacing) {
-            if let title {
-                DSFieldLabel(title)
-            }
-            VStack(alignment: .leading, spacing: Metrics.cardSpacing) {
-                content
-            }
-            .padding(Metrics.cardPadding)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.backgroundSecondary))
-        }
-    }
-}
-
-struct AccessModeBadge: View {
-    let mode: ShareAccessMode
-
-    private var tint: Color { mode == .readonly ? .attention : .positive }
-
-    var body: some View {
-        Text(mode == .readonly ? L10n.AccessMode.readonly : L10n.AccessMode.readwrite)
-            .type(.caption(.semibold))
-            .foregroundStyle(tint)
-            .padding(.horizontal, Metrics.badgeHorizontalPadding)
-            .padding(.vertical, Metrics.badgeVerticalPadding)
-            .background(Capsule().fill(tint.opacity(0.15)))
-    }
-}
-
-// MARK: Volume assign sheet
-
-private struct VolumeAssignSheet: View {
-    @Bindable var store: StoreOf<UserManagementFeature>
-    @Environment(\.dismiss) private var dismiss
-    @Dependency(\.filesClient) private var filesClient
-
-    @State private var listing: AdminDirectoryListing?
-    @State private var isBrowsing = false
-    @State private var browseError: String?
-    /// The directory currently being listed; `nil` is the server's volume root. Bound to a
-    /// `.task(id:)` so drilling in or out cancels any in flight listing before the next one,
-    /// since rapid taps otherwise race and the slower one wins.
-    @State private var browsePath: String?
-
-    private var sheet: UserManagementFeature.VolumeSheetState? { store.volumeSheet }
-
-    var body: some View {
-        DSDynamicHeightSheet(maxHeightFraction: Metrics.volumeSheetMaxHeightFraction) {
-            VStack(alignment: .leading, spacing: Metrics.volumeSheetSpacing) {
-                DSSheetHeader(
-                    icon: IconKit.drive,
-                    title: sheet?.isEditing == true ? L10n.UserDetail.volumeSheetTitleEdit : L10n.UserDetail.volumeSheetTitleNew,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onClose: { dismiss() }
-                )
-
-                if let sheet {
-                    if let error = sheet.errorMessage {
-                        DSErrorCard(error)
-                    }
-
-                    LabeledField(L10n.UserDetail.volumeSheetLabelField, uppercased: false) {
-                        DSTextField(L10n.UserDetail.volumeSheetLabelPlaceholder, text: Binding(
-                            get: { store.volumeSheet?.label ?? "" },
-                            set: { store.send(.volumeLabelChanged($0)) }
-                        ))
-                        .autocorrectionDisabled()
-                    }
-
-                    VStack(alignment: .leading, spacing: .space4) {
-                        DSFieldLabel(L10n.UserDetail.volumeSheetAccessMode, uppercased: false)
-                        DSSegmentedControl(
-                            options: ShareAccessMode.allCases,
-                            selection: Binding(
-                                get: { store.volumeSheet?.accessMode ?? .readwrite },
-                                set: { store.send(.volumeAccessModeChanged($0)) }
-                            ),
-                            label: { $0.title }
-                        )
-                    }
-
-                    VStack(alignment: .leading, spacing: .space4) {
-                        DSFieldLabel(L10n.UserDetail.volumeSheetDirectory, uppercased: false)
-                        if sheet.isEditing {
-                            Text(sheet.selectedPath)
-                                .type(.body2(.regular))
-                                .foregroundStyle(Color.secondaryDS)
-                                .lineLimit(1)
-                                .truncationMode(.middle)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .roundedFieldStyle()
-                        } else {
-                            directoryBrowser(selectedPath: sheet.selectedPath)
-                        }
-                    }
-                }
-            }
-            .padding(.horizontal, Metrics.volumeSheetSpacing)
-            .padding(.vertical, Metrics.volumeSheetSpacing)
-        } footer: {
-            DSSheetFooter {
-                DSButton(
-                    (sheet?.isEditing ?? false) ? L10n.UserDetail.volumeSheetSaveEdit : L10n.UserDetail.volumeSheetSaveNew,
-                    style: .primary,
-                    isLoading: sheet?.isSubmitting ?? false
-                ) {
-                    store.send(.volumeSubmitTapped)
-                }
-                .disabled(!(sheet?.isSubmitEnabled ?? false))
-            }
-        }
-        .task(id: browsePath) {
-            guard sheet?.isEditing == false else { return }
-            await loadDirectories(path: browsePath)
-        }
-    }
-
-    @ViewBuilder
-    private func directoryBrowser(selectedPath: String) -> some View {
-        VStack(alignment: .leading, spacing: .space8) {
-            if let listing {
-                HStack(spacing: .space8) {
-                    Text(listing.current).type(.caption(.regular), style: .tertiary).lineLimit(1).truncationMode(.head)
-                    Spacer()
-                    if let parent = listing.parent {
-                        Button {
-                            browsePath = parent
-                        } label: {
-                            IconKit.levelUp.resizable().scaledToFit()
-                                .foregroundStyle(Color.accent)
-                                .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                        }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .accessibilityLabel(L10n.UserDetail.directoryPickerGoUp)
-                    }
-                }
-                Button {
-                    store.send(.volumePathSelected(listing.current))
-                } label: {
-                    rowLabel(L10n.UserDetail.directoryPickerUseThis, isSelected: selectedPath == listing.current, icon: IconKit.checkmark)
-                }
-                .buttonStyle(DSHapticButtonStyle())
-
-                ForEach(listing.directories) { directory in
-                    HStack(spacing: .space8) {
-                        Button {
-                            store.send(.volumePathSelected(directory.path))
-                        } label: {
-                            rowLabel(directory.name, isSelected: selectedPath == directory.path, icon: IconKit.folder)
-                        }
-                        .buttonStyle(DSHapticButtonStyle())
-                        Spacer()
-                        Button {
-                            browsePath = directory.path
-                        } label: {
-                            IconKit.chevronRight.resizable().scaledToFit()
-                                .foregroundStyle(Color.tertiaryDS)
-                                .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                        }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .accessibilityLabel(L10n.UserDetail.directoryPickerOpen(directory.name))
-                    }
-                }
-            } else if isBrowsing {
-                ProgressView().frame(maxWidth: .infinity).padding(.vertical, .space8)
-            } else if let browseError {
-                Text(browseError).type(.body3(.semibold), style: .error)
-            }
-        }
-        .padding(Metrics.cardPadding)
-        .background(RoundedRectangle(cornerRadius: Metrics.cardCornerRadius).fill(Color.backgroundSecondary))
-    }
-
-    private func rowLabel(_ text: String, isSelected: Bool, icon: Image) -> some View {
-        HStack(spacing: .space8) {
-            icon.resizable().scaledToFit()
-                .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
-                .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-            Text(text)
-                .type(.body3(.regular), style: isSelected ? .link : .primary(for: .label))
-                .lineLimit(1)
-        }
-        .padding(.vertical, .space4)
-        .contentShape(Rectangle())
-    }
-
-    private func loadDirectories(path: String?) async {
-        isBrowsing = true
-        browseError = nil
-        defer { isBrowsing = false }
-        do {
-            let next = try await filesClient.browseAdminDirectories(store.serverURL, path)
-            guard !Task.isCancelled else { return }
-            listing = next
-        } catch {
-            guard !Task.isCancelled else { return }
-            browseError = (error as? FilesClientError)?.userMessage ?? L10n.UserDetail.directoryPickerFailed
-        }
     }
 }
 
@@ -597,6 +165,14 @@ private func previewDetailState(
         UserDetailView(store: Store(initialState: previewDetailState(userID: "u2", tab: .volumes) {
             $0.volumes = IdentifiedArray(uniqueElements: UserVolume.previewVolumes(userID: "u2"))
             $0.volumesPhase = .loaded
+        }) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
+    }
+}
+
+#Preview("Detail — volumes loading") {
+    NavigationStack {
+        UserDetailView(store: Store(initialState: previewDetailState(userID: "u2", tab: .volumes) {
+            $0.volumesPhase = .loading
         }) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
     }
 }

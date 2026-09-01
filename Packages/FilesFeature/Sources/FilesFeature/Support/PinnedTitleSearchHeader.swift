@@ -53,7 +53,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     private var searchField: some View {
         HStack(spacing: .space8) {
             IconKit.search
-                .foregroundStyle(isFocused ? Color.accent : Color.secondaryDS)
+                .foregroundStyle(Color.secondaryDS)
             TextField(
                 text: $searchText,
                 prompt: Text(prompt).foregroundColor(Color.secondaryDS)
@@ -76,6 +76,12 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
         }
         .animation(.easeInOut(duration: 0.15), value: searchText.isEmpty)
         .roundedFieldStyle(isFocused: isFocused)
+        .runningDashBorder(
+                isFocused: isFocused,
+                color: .accent,
+                cornerRadius: .radiusLarge,
+                lineWidth: 2
+            )
     }
 }
 
@@ -87,5 +93,64 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         extraTopPadding: CGFloat = 0
     ) {
         self.init(title: title, searchText: searchText, prompt: prompt, extraTopPadding: extraTopPadding) { EmptyView() }
+    }
+}
+struct RunningDashBorderModifier: ViewModifier {
+    let isFocused: Bool
+    let color: Color
+    let cornerRadius: CGFloat
+    let lineWidth: CGFloat
+
+    @State private var angle: Double = 0
+
+    func body(content: Content) -> some View {
+        content
+            .overlay(
+                AngularGradient(
+                    gradient: Gradient(stops: [
+                        .init(color: color, location: 0.0),
+                        .init(color: .clear, location: 0.5),
+                        .init(color: color, location: 1.0)
+                    ]),
+                    center: .center
+                )
+                .rotationEffect(.degrees(angle))
+                .mask(
+                    RoundedRectangle(cornerRadius: cornerRadius)
+                        .strokeBorder(lineWidth: lineWidth)
+                )
+                .opacity(isFocused ? 1 : 0)
+            )
+            .onChange(of: isFocused) { _, focused in
+                if focused {
+                    angle = 0
+                    withAnimation(
+                        .linear(duration: 2.0)
+                        .repeatForever(autoreverses: false)
+                    ) {
+                        angle = 360
+                    }
+                } else {
+                    withAnimation(.easeOut(duration: 0.2)) {
+                        angle = 0
+                    }
+                }
+            }
+    }
+}
+
+extension View {
+    func runningDashBorder(
+        isFocused: Bool,
+        color: Color = .accent,
+        cornerRadius: CGFloat = .radiusLarge,
+        lineWidth: CGFloat = 2
+    ) -> some View {
+        modifier(RunningDashBorderModifier(
+            isFocused: isFocused,
+            color: color,
+            cornerRadius: cornerRadius,
+            lineWidth: lineWidth
+        ))
     }
 }

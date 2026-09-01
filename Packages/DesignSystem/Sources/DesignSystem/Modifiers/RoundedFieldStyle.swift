@@ -14,7 +14,7 @@ private struct RoundedFieldModifier: ViewModifier {
             .padding(.horizontal, .space12)
             .frame(height: height)
             .overlay(
-                RoundedRectangle(cornerRadius: .radiusControl)
+                RoundedRectangle(cornerRadius: .radiusLarge)
                     .strokeBorder(borderStyle, lineWidth: isFocused ? .borderWidthFocused : .borderWidthHairline)
             )
             .animation(.easeInOut(duration: 0.15), value: isFocused)
