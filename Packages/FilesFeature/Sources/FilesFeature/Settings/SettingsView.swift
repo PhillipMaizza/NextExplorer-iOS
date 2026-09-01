@@ -316,7 +316,8 @@ struct SettingsView: View {
             .safeAreaInset(edge: .top, spacing: 0) {
                 PinnedTitleSearchHeader(
                     title: L10n.Settings.navigationTitle,
-                    searchText: $settingsSearch
+                    searchText: $settingsSearch,
+                    extraTopPadding: .size44
                 )
             }
             .navigationDestination(

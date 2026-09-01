@@ -15,6 +15,10 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     let title: String
     @Binding var searchText: String
     var prompt: String = L10n.Common.search
+    /// Extra padding above the title. A screen whose nav bar carries no toolbar actions (e.g.
+    /// Settings) sits higher than one that does; pass the actions' height here so every tab's
+    /// title lines up.
+    var extraTopPadding: CGFloat = 0
     /// Rendered below the search field, e.g. a search-scope segmented control while searching.
     @ViewBuilder var accessory: () -> Accessory
 
@@ -32,7 +36,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             accessory()
         }
         .padding(.horizontal, .space16)
-        .padding(.top, .space8)
+        .padding(.top, .space8 + extraTopPadding)
         .padding(.bottom, .space12)
         // Fades from the screen's top gradient color to clear so the pinned header blends into
         // the `backgroundGradient()` behind it instead of sitting on a hard opaque band.
@@ -49,7 +53,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     private var searchField: some View {
         HStack(spacing: .space8) {
             IconKit.search
-                .foregroundStyle(Color.secondaryDS)
+                .foregroundStyle(isFocused ? Color.accent : Color.secondaryDS)
             TextField(
                 text: $searchText,
                 prompt: Text(prompt).foregroundColor(Color.secondaryDS)
@@ -71,12 +75,17 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             }
         }
         .animation(.easeInOut(duration: 0.15), value: searchText.isEmpty)
-        .roundedFieldStyle()
+        .roundedFieldStyle(isFocused: isFocused)
     }
 }
 
 extension PinnedTitleSearchHeader where Accessory == EmptyView {
-    init(title: String, searchText: Binding<String>, prompt: String = L10n.Common.search) {
-        self.init(title: title, searchText: searchText, prompt: prompt) { EmptyView() }
+    init(
+        title: String,
+        searchText: Binding<String>,
+        prompt: String = L10n.Common.search,
+        extraTopPadding: CGFloat = 0
+    ) {
+        self.init(title: title, searchText: searchText, prompt: prompt, extraTopPadding: extraTopPadding) { EmptyView() }
     }
 }
