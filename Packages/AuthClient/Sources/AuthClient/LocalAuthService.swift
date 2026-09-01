@@ -6,23 +6,6 @@ import NetworkClient
 struct LocalAuthService: Sendable {
     let networkClient: NetworkClient
 
-    /// The server's `/api/auth/login` route destructures `{ email, password, username }` from
-    /// the body and only ever looks the user up by the `email` column — confirmed against
-    /// `backend/src/routes/auth.js` and `backend/src/services/users/localAuth.js`. A `username`
-    /// field is accepted as a fallback source for the value but is never queried on its own,
-    /// so this must be sent as `email` regardless of which the user actually typed.
-    private struct LoginRequestBody: Encodable {
-        let email: String
-        let password: String
-    }
-
-    /// `/api/auth/login` and `/api/auth/me` both wrap the user object under a `"user"`
-    /// key, and `/me` can return a 200 with `user: null` for an expired/absent session
-    /// rather than a 401 — confirmed against `backend/src/routes/auth.js`.
-    private struct UserEnvelope: Decodable {
-        let user: User?
-    }
-
     func status(serverURL: URL) async throws -> AuthStatus {
         let request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.status, method: .get)
         return try await send(request, decoding: AuthStatus.self)
