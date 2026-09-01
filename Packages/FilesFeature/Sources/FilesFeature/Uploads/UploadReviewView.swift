@@ -164,6 +164,9 @@ struct UploadReviewView: View {
             if isServerConnectionInsecure {
                 DSInfoCard(L10n.Uploads.reviewInsecureNetworkNotice)
             }
+            if store.skippedCount > 0 {
+                DSInfoCard(L10n.Uploads.stagingSkipped(store.skippedCount))
+            }
             pathAndSizeSection
             filesSection
         }

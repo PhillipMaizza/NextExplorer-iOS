@@ -25,6 +25,7 @@ public enum L10n {
     }
     public enum Archive {
         public static var emptyFolder: String { tr("archive.emptyFolder") }  // "This folder is empty."
+        public static var entryTooLarge: String { tr("archive.entryTooLarge") }  // "This item is too large to open."
         public static var openArchiveFailed: String { tr("archive.openArchiveFailed") }  // "Couldn't open this archive."
         public static var openFailed: String { tr("archive.openFailed") }  // "Couldn't open this file."
     }
@@ -185,6 +186,10 @@ public enum L10n {
         public static var deleteConfirmTitle: String { tr("downloads.deleteConfirmTitle") }  // "Delete?"
         public static var deleteSingleMessage: String { tr("downloads.deleteSingleMessage") }
         public static var emptyList: String { tr("downloads.emptyList") }  // "Files you download from Browse show up here."
+        public static var errorGeneric: String { tr("downloads.errorGeneric") }  // "Couldn't complete that action."
+        public static var errorInvalidName: String { tr("downloads.errorInvalidName") }  // "That name isn't allowed."
+        public static var errorMissing: String { tr("downloads.errorMissing") }  // "That file could no longer be found."
+        public static var errorNameExists: String { tr("downloads.errorNameExists") }  // "A file with that name already exists."
         public static var navigationTitle: String { tr("downloads.navigationTitle") }  // "Downloads"
     }
     public enum EditShare {
@@ -487,6 +492,7 @@ public enum L10n {
         public static var reviewTitleOne: String { tr("uploads.reviewTitleOne") }  // "Upload 1 file"
         public static var reviewUploadButton: String { tr("uploads.reviewUploadButton") }  // "Upload"
         public static var stagingFailed: String { tr("uploads.stagingFailed") }  // "Couldn't add those files. Try again."
+        public static func stagingSkipped(_ a0: CVarArg) -> String { tr("uploads.stagingSkipped", a0) }
         public static var statusFailed: String { tr("uploads.statusFailed") }  // "Upload failed"
         public static var statusWaiting: String { tr("uploads.statusWaiting") }  // "Waiting"
     }

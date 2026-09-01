@@ -125,19 +125,31 @@ public struct SharedFeature {
                     return (lhs.expiresAt ?? .distantFuture) < (rhs.expiresAt ?? .distantFuture)
                 }
             }
-            return IdentifiedArray(uniqueElements: sortDirection == .ascending ? sorted : sorted.reversed())
+            return IdentifiedArray(sortDirection == .ascending ? sorted : sorted.reversed(), id: \.id, uniquingIDsWith: { first, _ in first })
         }
 
         public var activeShares: IdentifiedArrayOf<Share> { activeShares(for: segment) }
 
         public func activeShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
-            IdentifiedArray(uniqueElements: displayedShares(for: segment).filter { !isExpired($0) })
+            displayedSharesPartition(for: segment).active
         }
 
         public var expiredShares: IdentifiedArrayOf<Share> { expiredShares(for: segment) }
 
         public func expiredShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
-            IdentifiedArray(uniqueElements: displayedShares(for: segment).filter(isExpired))
+            displayedSharesPartition(for: segment).expired
+        }
+
+        /// One filter+sort pass, split into active/expired. `activeShares`, `expiredShares` and
+        /// the list's `.animation(value:)` all need slices of the same ordered list; deriving
+        /// each independently ran the localized sort three times per render.
+        public func displayedSharesPartition(
+            for segment: Segment
+        ) -> (all: IdentifiedArrayOf<Share>, active: IdentifiedArrayOf<Share>, expired: IdentifiedArrayOf<Share>) {
+            let all = displayedShares(for: segment)
+            let active = IdentifiedArray(all.filter { !isExpired($0) }, id: \.id, uniquingIDsWith: { first, _ in first })
+            let expired = IdentifiedArray(all.filter(isExpired), id: \.id, uniquingIDsWith: { first, _ in first })
+            return (all, active, expired)
         }
 
         /// No shares in the current segment at all (before search) — drives the empty state.
@@ -208,6 +220,16 @@ public struct SharedFeature {
                 return .concatenate(load(&state, segment: state.segment), loadUsers(state))
 
             case let .expiryTick(now):
+                // Advancing `now` re-renders the whole list. Only do it when a share actually
+                // crosses its expiry in this interval, so a quiet list stays still between ticks.
+                let previousNow = state.now
+                let crossesExpiry: (Share) -> Bool = { share in
+                    guard let expiresAt = share.expiresAt else { return false }
+                    return expiresAt > previousNow && expiresAt <= now
+                }
+                guard state.byMe.contains(where: crossesExpiry) || state.withMe.contains(where: crossesExpiry) else {
+                    return .none
+                }
                 state.now = now
                 return .none
 
@@ -238,7 +260,7 @@ public struct SharedFeature {
 
             case let .sharesResponse(segment, .success(shares)):
                 state.phases[segment] = .loaded
-                let identified = IdentifiedArray(uniqueElements: shares)
+                let identified = IdentifiedArray(shares, id: \.id, uniquingIDsWith: { first, _ in first })
                 if segment == .byMe { state.byMe = identified } else { state.withMe = identified }
                 return .none
 

@@ -23,7 +23,8 @@ enum UploadStagingLocation {
 ///
 /// `stageDocuments` / `stagePhotos` return an `AsyncStream` so the review sheet fills in file
 /// by file as each heavy item finishes copying, rather than blocking behind the whole batch.
-/// Files that fail to copy are simply omitted from the stream.
+/// Files that fail to copy are omitted from the stream; the caller reconciles the count that
+/// arrived against the count requested to surface how many were skipped.
 public struct UploadStagingClient: Sendable {
     public var stageDocuments: @Sendable (_ urls: [URL]) -> AsyncStream<PickedFile>
     public var stagePhotos: @Sendable (_ items: [PhotosPickerItem]) -> AsyncStream<PickedFile>

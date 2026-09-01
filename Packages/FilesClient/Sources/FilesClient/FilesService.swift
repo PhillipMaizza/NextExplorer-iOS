@@ -1,4 +1,5 @@
 import CoreModels
+import CryptoKit
 import Foundation
 import NetworkClient
 
@@ -112,7 +113,7 @@ struct FilesService: Sendable {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(RenameItemBody(path: item.path, name: item.name, newName: newName))
-        let envelope = try await send(request, decoding: RenameItemEnvelope.self)
+        let envelope = try await sendReportingMessage(request, decoding: RenameItemEnvelope.self)
         return envelope.item
     }
 
@@ -125,7 +126,7 @@ struct FilesService: Sendable {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(CreateFolderBody(path: path, name: name))
-        let envelope = try await send(request, decoding: CreateFolderEnvelope.self)
+        let envelope = try await sendReportingMessage(request, decoding: CreateFolderEnvelope.self)
         return envelope.item
     }
 
@@ -163,7 +164,7 @@ struct FilesService: Sendable {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(EditorPathBody(path: path))
-        let envelope = try await send(request, decoding: EditorContentEnvelope.self)
+        let envelope = try await sendReportingMessage(request, decoding: EditorContentEnvelope.self)
         return envelope.content
     }
 
@@ -172,8 +173,8 @@ struct FilesService: Sendable {
         var request = Self.makeRequest(url: url, method: .put)
         request.setJSONContentType()
         request.httpBody = try Self.encode(EditorSaveBody(path: path, content: content))
-        let (_, response) = try await performSend(request)
-        try Self.validate(response)
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
     }
 
     /// `POST /api/files/zip/extract`, confirmed against `backend/src/routes/zip.js`: unpacks
@@ -185,7 +186,7 @@ struct FilesService: Sendable {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(ExtractZipBody(path: item.id))
-        let envelope = try await send(request, decoding: ExtractZipEnvelope.self)
+        let envelope = try await sendReportingMessage(request, decoding: ExtractZipEnvelope.self)
         return envelope.item
     }
 
@@ -202,7 +203,7 @@ struct FilesService: Sendable {
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
         }
-        let envelope = try await send(request, decoding: CompressItemEnvelope.self)
+        let envelope = try await sendReportingMessage(request, decoding: CompressItemEnvelope.self)
         return envelope.item
     }
 
@@ -224,7 +225,7 @@ struct FilesService: Sendable {
             expiresAt: request.expiresAt.map(Self.formatShareExpiry)
         )
         httpRequest.httpBody = try Self.encode(body)
-        return try await send(httpRequest, decoding: CreatedShare.self)
+        return try await sendReportingMessage(httpRequest, decoding: CreatedShare.self)
     }
 
     /// `GET /api/shares` (owner) and `GET /api/shares/shared-with-me` (recipient), both
@@ -572,10 +573,82 @@ struct FilesService: Sendable {
                 try? FileManager.default.removeItem(at: fileURL)
                 try FileManager.default.moveItem(at: downloadedURL, to: fileURL)
                 try Self.cacheMetaValue(for: item).write(to: metaURL, atomically: true, encoding: .utf8)
+                Self.applyCacheProtection(to: fileURL)
+                Self.applyCacheProtection(to: metaURL)
+                Self.evictPreviewCacheIfNeeded()
                 return fileURL
             } catch {
                 throw FilesClientError.decoding(error.localizedDescription)
             }
+        }
+    }
+
+    /// Cached file bytes and directory listings are sensitive (they are the user's files).
+    /// `.completeUnlessOpen` keeps them encrypted at rest while still allowing an in flight
+    /// preview/download that opened the file before the device locked to finish.
+    private static func applyCacheProtection(to url: URL) {
+        try? FileManager.default.setAttributes(
+            [.protectionKey: FileProtectionType.completeUnlessOpen], ofItemAtPath: url.path
+        )
+    }
+
+    /// Total byte ceiling for the on disk preview + raw download cache. Without it the cache
+    /// only ever grows (each previewed/downloaded file is added, never reclaimed) and can fill
+    /// the device, since `Library/Caches` is only purged under severe OS storage pressure.
+    static let previewCacheMaxBytes: Int64 = 512 * 1024 * 1024
+
+    private static let evictionLock = NSLock()
+
+    /// Evicts the least recently modified cache slots once the preview/download cache exceeds
+    /// `previewCacheMaxBytes`. Runs after each successful download (already an I/O heavy op) so
+    /// growth stays bounded within a single long session, not just across relaunches. A whole
+    /// item slot (its file and `.meta`) is removed at once so a slot is never left half evicted.
+    static func evictPreviewCacheIfNeeded() {
+        evictionLock.lock()
+        defer { evictionLock.unlock() }
+
+        let fileManager = FileManager.default
+        guard let cachesDirectory = try? fileManager.url(
+            for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false
+        ) else { return }
+        let root = cachesDirectory.appendingPathComponent(Self.previewCacheRootDirectory, isDirectory: true)
+
+        struct Slot {
+            let directory: URL
+            let modified: Date
+            let size: Int64
+        }
+
+        var slots: [Slot] = []
+        var total: Int64 = 0
+        for namespace in [Self.previewCacheNamespace, Self.rawDownloadCacheNamespace] {
+            let namespaceRoot = root.appendingPathComponent(namespace, isDirectory: true)
+            let slotDirectories = (try? fileManager.contentsOfDirectory(
+                at: namespaceRoot, includingPropertiesForKeys: [.contentModificationDateKey], options: []
+            )) ?? []
+            for slotDirectory in slotDirectories {
+                let contents = (try? fileManager.contentsOfDirectory(
+                    at: slotDirectory, includingPropertiesForKeys: [.fileSizeKey, .contentModificationDateKey], options: []
+                )) ?? []
+                var slotSize: Int64 = 0
+                var modified = Date.distantPast
+                for entry in contents {
+                    let values = try? entry.resourceValues(forKeys: [.fileSizeKey, .contentModificationDateKey])
+                    slotSize += Int64(values?.fileSize ?? 0)
+                    if let entryModified = values?.contentModificationDate, entryModified > modified {
+                        modified = entryModified
+                    }
+                }
+                slots.append(Slot(directory: slotDirectory, modified: modified, size: slotSize))
+                total += slotSize
+            }
+        }
+
+        guard total > Self.previewCacheMaxBytes else { return }
+        for slot in slots.sorted(by: { $0.modified < $1.modified }) {
+            guard total > Self.previewCacheMaxBytes else { break }
+            try? fileManager.removeItem(at: slot.directory)
+            total -= slot.size
         }
     }
 
@@ -665,6 +738,7 @@ struct FilesService: Sendable {
         try handle.write(contentsOf: Data("\r\n--\(boundary)--\r\n".utf8))
     }
 
+    static let maxLogoBytes = 2 * 1024 * 1024
     static let previewCacheRootDirectory = "PreviewCache"
     static let cacheMetaSidecarName = ".meta"
     static let rawPreviewFileExtension = "jpg"
@@ -675,16 +749,14 @@ struct FilesService: Sendable {
     static let previewCacheNamespace = "preview"
     static let rawDownloadCacheNamespace = "download"
 
-    /// One subdirectory per item path (slashes swapped out so it's a single valid path
-    /// component) — distinct files that happen to share a name never collide, since they
-    /// have distinct full paths.
+    /// One subdirectory per item path, keyed by a SHA256 of the full `item.id`. A hash is
+    /// injective in a way slash flattening was not (`a/b` and `a_b` both flattened to `a_b`
+    /// and could serve each other's bytes on a matching size/mtime) and can never traverse.
     private static func previewCacheDirectory(for item: FileItem, namespace: String) -> URL {
         let cachesDirectory = (try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
             ?? FileManager.default.temporaryDirectory
-        let flattened = item.id.replacingOccurrences(of: "/", with: "_")
-        // Every slash is already gone, so the only strings left that would still traverse are
-        // a bare "." / ".." (a server handing back `item.id == ".."`).
-        let key = (flattened.isEmpty || flattened == "." || flattened == "..") ? "_" : flattened
+        let digest = SHA256.hash(data: Data(item.id.utf8))
+        let key = digest.map { String(format: "%02x", $0) }.joined()
         return cachesDirectory.appendingPathComponent(Self.previewCacheRootDirectory, isDirectory: true)
             .appendingPathComponent(namespace, isDirectory: true)
             .appendingPathComponent(key, isDirectory: true)
@@ -903,6 +975,9 @@ struct FilesService: Sendable {
     /// small (≤2 MB, enforced client and server side), so the envelope is built in memory
     /// rather than streamed from disk like `uploadFile`.
     func uploadServerLogo(serverURL: URL, jpegData: Data) async throws -> String {
+        guard jpegData.count <= Self.maxLogoBytes else {
+            throw FilesClientError.decoding("Logo image exceeds the \(Self.maxLogoBytes / (1024 * 1024)) MB limit.")
+        }
         let url = serverURL.appendingPathComponent(APIPath.uploadLogo)
         let boundary = "Boundary-\(UUID().uuidString)"
         var request = Self.makeRequest(url: url, method: .post)
@@ -1311,15 +1386,27 @@ struct FilesService: Sendable {
         return formatter
     }()
 
+    /// Fallback for a whole second date (no fractional part). The backend always emits
+    /// millisecond fractions via `toISOString()`, but one non fractional date anywhere must
+    /// not abort a whole screen's decode.
+    nonisolated(unsafe) private static let iso8601FormatterNoFractional: ISO8601DateFormatter = {
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime]
+        return formatter
+    }()
+
     private static let sharedDecoder: JSONDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { keyedDecoder in
             let container = try keyedDecoder.singleValueContainer()
             let dateString = try container.decode(String.self)
-            guard let date = iso8601Formatter.date(from: dateString) else {
-                throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid ISO8601 date: \(dateString)")
+            if let date = iso8601Formatter.date(from: dateString) {
+                return date
             }
-            return date
+            if let date = iso8601FormatterNoFractional.date(from: dateString) {
+                return date
+            }
+            throw DecodingError.dataCorruptedError(in: container, debugDescription: "Invalid ISO8601 date: \(dateString)")
         }
         return decoder
     }()
