@@ -89,7 +89,7 @@ struct FavoritesView: View {
             rootContent
         } destination: { store in
             BrowseContentView(store: store)
-                .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title)
+                .navigationTitle("")
         }
         .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
             if !currentDirectoryPath.isEmpty && !isTopScreenSelecting {
@@ -118,11 +118,12 @@ struct FavoritesView: View {
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .searchable(
-                text: $store.searchQuery.sending(\.searchQueryChanged),
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: L10n.Common.search
-            )
+            .safeAreaInset(edge: .top, spacing: 0) {
+                PinnedTitleSearchHeader(
+                    title: store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle,
+                    searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                )
+            }
             .refreshable {
                 await store.send(.refreshButtonTapped).finish()
                 didFinishRefreshing.toggle()
@@ -202,11 +203,9 @@ struct FavoritesView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.bulkRemoveConfirmationIsPresented)
-            .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle)
-            // Force large — otherwise it can render inline on the first appear (the tab's nav
-            // stack lays out while the launch splash still covers it) and only fix itself on a
-            // later tab switch.
-            .navigationBarTitleDisplayMode(store.isSelecting ? .inline : .large)
+            // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 store.send(.onAppear)
             }

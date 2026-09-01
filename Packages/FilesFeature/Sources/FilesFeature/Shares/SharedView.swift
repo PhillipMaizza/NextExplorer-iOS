@@ -63,13 +63,16 @@ struct SharedView: View {
                 .tabViewStyle(.page(indexDisplayMode: .never))
             }
             .backgroundGradient()
-            .navigationTitle(L10n.Shared.navigationTitle)
-            .navigationBarTitleDisplayMode(.large)
-            .searchable(
-                text: $store.searchQuery.sending(\.searchQueryChanged),
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: L10n.Common.search
-            )
+            // Title lives in the pinned header (see `PinnedTitleSearchHeader`), which also keeps
+            // the search field visible above the paged By-me/With-me lists.
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                PinnedTitleSearchHeader(
+                    title: L10n.Shared.navigationTitle,
+                    searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                )
+            }
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }

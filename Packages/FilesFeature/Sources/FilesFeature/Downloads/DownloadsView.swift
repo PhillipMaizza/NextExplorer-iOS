@@ -322,11 +322,12 @@ struct DownloadsView: View {
             // appearance, and the overlay (default-centered on whatever frame it currently
             // sees) visibly slides from that transient small frame to the real one.
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .searchable(
-                text: $store.searchQuery.sending(\.searchQueryChanged),
-                placement: .navigationBarDrawer(displayMode: .always),
-                prompt: L10n.Common.search
-            )
+            .safeAreaInset(edge: .top, spacing: 0) {
+                PinnedTitleSearchHeader(
+                    title: store.isSelecting ? L10n.Common.selectedCount(store.selectedDownloadIDs.count) : L10n.Downloads.navigationTitle,
+                    searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                )
+            }
             .refreshable {
                 await store.send(.refreshButtonTapped).finish()
                 didFinishRefreshing.toggle()
@@ -477,11 +478,10 @@ struct DownloadsView: View {
                     )
                 }
             }
-            .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedDownloadIDs.count) : L10n.Downloads.navigationTitle)
-            // Force large — otherwise it can render inline on the first appear (the tab's nav
-            // stack lays out while the launch splash still covers it) and only fix itself on a
-            // later tab switch.
-            .navigationBarTitleDisplayMode(store.isSelecting ? .inline : .large)
+            // Title lives in the pinned header (see `PinnedTitleSearchHeader`); the nav bar keeps
+            // only its actions.
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
             .task {
                 store.send(.onAppear)
             }

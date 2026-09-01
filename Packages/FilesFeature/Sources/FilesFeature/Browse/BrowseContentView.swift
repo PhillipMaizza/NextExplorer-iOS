@@ -205,16 +205,6 @@ struct BrowseContentView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.easeInOut(duration: Constants.contentRevealDuration), value: isInitialLoad)
         .tint(Color.accent)
-        .searchable(
-            text: $store.searchQuery.sending(\.searchQueryChanged),
-            placement: .navigationBarDrawer(displayMode: .always),
-            prompt: L10n.Common.search
-        )
-        .searchScopes($store.searchScope.sending(\.searchScopeChanged)) {
-            ForEach(BrowseFeature.SearchScope.allCases, id: \.self) { scope in
-                Text(scope.title).tag(scope)
-            }
-        }
         .refreshable {
             await store.send(.refreshButtonTapped).finish()
             didFinishRefreshing.toggle()
@@ -239,6 +229,21 @@ struct BrowseContentView: View {
             }
         }
         .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: store.dataSource)
+        .safeAreaInset(edge: .top, spacing: 0) {
+            PinnedTitleSearchHeader(
+                title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title,
+                searchText: $store.searchQuery.sending(\.searchQueryChanged)
+            ) {
+                if store.isSearching {
+                    DSSegmentedControl(
+                        options: BrowseFeature.SearchScope.allCases,
+                        selection: $store.searchScope.sending(\.searchScopeChanged),
+                        label: { $0.title }
+                    )
+                }
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             selectSortToolbar(
                 isSelecting: store.isSelecting,

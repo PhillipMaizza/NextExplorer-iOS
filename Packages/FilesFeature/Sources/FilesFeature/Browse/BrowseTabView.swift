@@ -31,11 +31,13 @@ struct BrowseTabView: View {
 
     var body: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
+            // The title lives in `BrowseContentView`'s pinned header, not the nav bar (see
+            // `PinnedTitleSearchHeader`), so the nav bar carries only the back button + actions.
             BrowseContentView(store: store.scope(state: \.root, action: \.root))
-                .navigationTitle(store.root.isSelecting ? L10n.Common.selectedCount(store.root.selectedItemIDs.count) : store.root.title)
+                .navigationTitle("")
         } destination: { store in
             BrowseContentView(store: store)
-                .navigationTitle(store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title)
+                .navigationTitle("")
         }
         .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
             if !currentDirectoryPath.isEmpty && !isTopScreenSelecting {
