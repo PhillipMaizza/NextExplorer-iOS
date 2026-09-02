@@ -38,16 +38,20 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
         .padding(.horizontal, .space16)
         .padding(.top, .space8 + extraTopPadding)
         .padding(.bottom, .space12)
-        // Fades from the screen's top gradient color to clear so the pinned header blends into
-        // the `backgroundGradient()` behind it instead of sitting on a hard opaque band.
-        .background(
+        // Solid top color behind the title/search (matches the `backgroundGradient()` top stop,
+        // so it reads seamless) so scrolled rows never bleed through the header. A short fade
+        // tail sits just below the header edge to melt into the list gradient instead of ending
+        // on a hard band.
+        .background(Color.backgroundGradientTop.ignoresSafeArea(edges: .top))
+        .background(alignment: .bottom) {
             LinearGradient(
                 colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .ignoresSafeArea(edges: .top)
-        )
+            .frame(height: .space16)
+            .offset(y: .space16)
+        }
     }
 
     private var searchField: some View {
