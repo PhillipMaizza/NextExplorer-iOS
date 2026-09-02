@@ -36,6 +36,10 @@ private enum Constants {
     static let emptyUploadButtonHPadding: CGFloat = .space24
     /// Keeps the empty folder's dashed upload button from spanning an iPad's full width.
     static let emptyUploadButtonMaxWidth: CGFloat = 360
+    /// Placeholder date/size for a search hit's thumbnail item — a search result carries neither,
+    /// and fixed values keep its thumbnail cache key steady across renders.
+    static let searchThumbnailPlaceholderDate = Date(timeIntervalSince1970: 0)
+    static let searchThumbnailPlaceholderSize: Int64 = 0
 }
 
 /// The list body shown at every depth of Browse: root and every pushed subfolder
@@ -49,6 +53,7 @@ struct BrowseContentView: View {
     @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
     @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
     @State private var isSortSheetPresented = false
+    @State private var isSearchFilterSheetPresented = false
     @State private var toastMessage: DSToastMessage?
     /// The item whose "Create Share Link" sheet is open (from the context menu or the
     /// selection toolbar). Local view state, not routed through `BrowseFeature` — the sheet
@@ -234,7 +239,9 @@ struct BrowseContentView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title,
-                searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                searchText: $store.searchQuery.sending(\.searchQueryChanged),
+                filterAction: store.isSearching ? { isSearchFilterSheetPresented = true } : nil,
+                isFilterActive: !store.selectedSearchCategories.isEmpty
             ) {
                 if store.isSearching {
                     DSSegmentedControl(
@@ -421,6 +428,15 @@ struct BrowseContentView: View {
                 onDismiss: { isSortSheetPresented = false }
             )
         }
+        .sheet(isPresented: $isSearchFilterSheetPresented) {
+            SearchFilterSheet(
+                availableCategories: store.availableSearchCategories,
+                selectedCategories: store.selectedSearchCategories,
+                onToggle: { store.send(.searchCategoryToggled($0)) },
+                onSelectAll: { store.send(.searchFilterCleared) },
+                onDismiss: { isSearchFilterSheetPresented = false }
+            )
+        }
         .sheet(item: renameItemBinding) { item in
             renameSheet(item)
         }
@@ -495,6 +511,10 @@ struct BrowseContentView: View {
                 GridCellView(
                     name: row.name, isDirectory: row.isDirectory,
                     isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
+                    thumbnailFile: searchResultThumbnailFile(row),
+                    serverURL: store.serverURL,
+                    showThumbnails: store.preferences.showThumbnails,
+                    iconSize: thumbnailSize.iconSize,
                     matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition),
                     isOpening: isOpeningID(row.id)
                 )
@@ -502,11 +522,33 @@ struct BrowseContentView: View {
                 FileRowView(
                     name: row.name, isDirectory: row.isDirectory, subtitle: row.matchLine,
                     isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
+                    thumbnailFile: searchResultThumbnailFile(row),
+                    serverURL: store.serverURL,
+                    showThumbnails: store.preferences.showThumbnails,
                     matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition),
                     isOpening: isOpeningID(row.id)
                 )
             }
         }
+    }
+
+    /// A thumbnail-capable `FileItem` for a file search hit; `nil` for a directory, which keeps
+    /// its folder glyph. Search hits carry no size or modified date, so use stable placeholders
+    /// to hold the thumbnail cache key steady across renders. `supportsThumbnail` is set for the
+    /// kinds the server will thumbnail (images, RAW, video); a PDF renders its first page on
+    /// device off its kind alone, matching a browse row.
+    private func searchResultThumbnailFile(_ result: SearchResultItem) -> FileItem? {
+        guard !result.isDirectory else { return nil }
+        let kind = searchResultKind(result)
+        let serverThumbnailable = FileItem.isImageKind(kind) || FileItem.isRawImageKind(kind) || FileItem.isVideoKind(kind)
+        return FileItem(
+            name: result.name,
+            path: result.path,
+            dateModified: Constants.searchThumbnailPlaceholderDate,
+            size: Constants.searchThumbnailPlaceholderSize,
+            kind: kind,
+            supportsThumbnail: serverThumbnailable
+        )
     }
 
     /// Extracted from the grid/list `ForEach` bodies — inlining the full cell (with the
@@ -829,7 +871,7 @@ struct BrowseContentView: View {
     /// Which branch of `overlayStateContent` is currently showing — a plain discriminant so
     /// the overlay can cross-fade between states instead of hard-cutting between them.
     private enum OverlayState: Hashable {
-        case none, error, empty, searchingEverywhere, noResults
+        case none, error, empty, searching, noResults
     }
 
     /// A fetch with nothing yet to show: the first load of this folder (including the frame
@@ -855,8 +897,10 @@ struct BrowseContentView: View {
             .error
         } else if store.phase.hasLoaded && !store.isSearching && !store.hasDisplayedItems {
             .empty
-        } else if store.isSearching && store.searchScope == .everywhere && store.isSearchingEverywhere {
-            .searchingEverywhere
+        } else if store.isSearching && store.isSearchingRemotely && (store.displayedSearchResults?.isEmpty ?? true) {
+            // A recursive backend search is in flight with nothing to show yet (the client
+            // pre-fill found no local matches) — spin rather than flash "no results".
+            .searching
         } else if store.isSearching, let results = store.displayedSearchResults, results.isEmpty {
             .noResults
         } else {
@@ -867,7 +911,7 @@ struct BrowseContentView: View {
     @ViewBuilder
     private var overlayStateContent: some View {
         switch overlayState {
-        case .searchingEverywhere:
+        case .searching:
             ProgressView()
                 .transition(.opacity)
         case .error:
@@ -1241,7 +1285,7 @@ private let browsePreviewEmptyAccess = FileAccess(
     browsePreview(mutateState: {
         $0.searchQuery = "vacation"
         $0.searchScope = .everywhere
-        $0.isSearchingEverywhere = true
+        $0.isSearchingRemotely = true
     })
 }
 

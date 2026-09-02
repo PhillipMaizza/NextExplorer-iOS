@@ -58,7 +58,7 @@ public struct DownloadsFeature {
         public var displayedDownloads: [LocalDownload] {
             let matches = searchQuery.isEmpty
                 ? Array(downloads)
-                : downloads.filter { FuzzyMatch.matches(query: searchQuery, in: $0.fileName) }
+                : downloads.filter { SearchMatch.matches(query: searchQuery, in: $0.fileName) }
             let sorted = matches.sorted { lhs, rhs in
                 switch sortOption {
                 case .name:

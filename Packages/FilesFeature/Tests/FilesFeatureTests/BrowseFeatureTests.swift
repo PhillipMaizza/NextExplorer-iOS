@@ -565,30 +565,91 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: - Search: "This Folder" scope (client-side fuzzy match, no network)
+    // MARK: - Search: recursive backend search (both scopes), instant client pre-fill
 
     @Test
-    func searchInThisFolderReturnsFuzzyMatchesFromAlreadyLoadedItems() async {
+    func thisFolderSearchPreFillsFromLoadedItemsThenHitsTheBackendScopedToTheCurrentDirectory() async {
         let serverURL = URL(string: "https://example.com")!
-        let match = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
-        let nonMatch = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
-        state.items = [match, nonMatch]
+        let loadedMatch = FileItem(name: "vacation.jpg", path: "Photos", dateModified: Date(), size: 0, kind: "jpg")
+        let loadedNonMatch = FileItem(name: "notes.txt", path: "Photos", dateModified: Date(), size: 0, kind: "txt")
+        let deepHit = SearchResultItem(name: "vacation-2.jpg", path: "Photos/Trips", kind: "file")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
+        state.items = [loadedMatch, loadedNonMatch]
         let clock = TestClock()
+        let scopePath = LockIsolated<String?>(nil)
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
             $0.continuousClock = clock
+            $0.filesClient.search = { _, path, _, _ in scopePath.setValue(path); return [deepHit] }
         }
 
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
+            // Instant pre-fill from the loaded folder while the recursive backend search runs.
+            $0.searchResults = [SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "file")]
+            $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .milliseconds(50))
+        await clock.advance(by: .seconds(1))
         await store.receive(\.searchResultsResponse.success) {
-            $0.searchResults = [SearchResultItem(name: "vacation.jpg", path: "", kind: "jpg")]
+            $0.isSearchingRemotely = false
+            $0.searchResults = [deepHit]
         }
+        // "This Folder" scopes the recursive backend search to the current directory.
+        #expect(scopePath.value == "Photos")
+    }
+
+    @Test
+    func aWhitespaceOnlyQueryIsTreatedAsEmptyAndNeverHitsTheBackend() async {
+        let serverURL = URL(string: "https://example.com")!
+        let state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        let clock = TestClock()
+        let calls = LockIsolated(0)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in calls.withValue { $0 += 1 }; return [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.searchQueryChanged("   "))
+        await clock.advance(by: .seconds(2))
+        #expect(calls.value == 0)
+        #expect(store.state.searchResults == nil)
+        #expect(store.state.isSearchingRemotely == false)
+    }
+
+    @Test
+    func everywhereSearchHitsTheBackendFromTheRoot() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
+        state.searchScope = .everywhere
+        let result = SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "file")
+        let clock = TestClock()
+        let scopePath = LockIsolated<String?>(nil)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, path, _, _ in scopePath.setValue(path); return [result] }
+        }
+
+        // No loaded items, so the pre-fill is empty; the network result fills the list.
+        await store.send(.searchQueryChanged("vac")) {
+            $0.searchQuery = "vac"
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [result]
+        }
+        #expect(scopePath.value == "")
     }
 
     @Test
@@ -603,15 +664,16 @@ struct BrowseFeatureTests {
             BrowseFeature()
         } withDependencies: {
             $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in [] }
         }
+        store.exhaustivity = .off
 
-        await store.send(.searchQueryChanged("vac")) {
-            $0.searchQuery = "vac"
-        }
-        // Backspacing to empty before the settle delay elapses must cancel that effect
-        // outright, not just ignore its eventual result.
+        await store.send(.searchQueryChanged("vac"))
+        // Backspacing to empty before the debounce elapses must cancel that effect outright.
         await store.send(.searchQueryChanged("")) {
             $0.searchQuery = ""
+            $0.searchResults = nil
+            $0.isSearchingRemotely = false
         }
         await clock.advance(by: .seconds(1))
         await store.finish()
@@ -619,66 +681,36 @@ struct BrowseFeatureTests {
 
     @Test
     func rapidRetypingOnlyDeliversResultsForTheLatestQuery() async {
-        // Regression: `.cancellable(id: CancelID.search, cancelInFlight: true)` must cancel
-        // the previous keystroke's settle-delay effect, or a fast backspace/retype could
-        // flash a stale intermediate result set.
+        // Regression: `.cancellable(id: CancelID.search, cancelInFlight: true)` must cancel the
+        // previous keystroke's debounced request, or a stale response could land last.
         let serverURL = URL(string: "https://example.com")!
         let match = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let result = SearchResultItem(name: "vacation.jpg", path: "", kind: "file")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [match]
         let clock = TestClock()
+        let calls = LockIsolated(0)
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
             $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in calls.withValue { $0 += 1 }; return [result] }
         }
+        store.exhaustivity = .off
 
-        await store.send(.searchQueryChanged("v")) {
-            $0.searchQuery = "v"
-        }
-        await store.send(.searchQueryChanged("va")) {
-            $0.searchQuery = "va"
-        }
-        await clock.advance(by: .milliseconds(50))
-        await store.receive(\.searchResultsResponse.success) {
-            $0.searchResults = [SearchResultItem(name: "vacation.jpg", path: "", kind: "jpg")]
-        }
-    }
-
-    // MARK: - Search: "Everywhere" scope (network search, debounced)
-
-    @Test
-    func searchEverywhereHitsTheNetworkAfterTheDebounceAndSurfacesResults() async {
-        let serverURL = URL(string: "https://example.com")!
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
-        state.searchScope = .everywhere
-        let result = SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "jpg")
-        let clock = TestClock()
-
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.continuousClock = clock
-            $0.filesClient.search = { _, _, _, _ in [result] }
-        }
-
-        await store.send(.searchQueryChanged("vac")) {
-            $0.searchQuery = "vac"
-            $0.isSearchingEverywhere = true
-        }
-        await clock.advance(by: .milliseconds(150))
-        await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingEverywhere = false
-            $0.searchResults = [result]
-        }
+        await store.send(.searchQueryChanged("v"))
+        await store.send(.searchQueryChanged("va"))
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success)
+        #expect(calls.value == 1)
+        #expect(store.state.searchResults?.map(\.id) == [result.id])
     }
 
     @Test
-    func searchEverywhereSurfacesANetworkFailureAsEmptyResultsRatherThanCrashing() async {
+    func aSearchNetworkFailureSurfacesEmptyResultsWithAMessageRatherThanCrashing() async {
         let serverURL = URL(string: "https://example.com")!
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
-        state.searchScope = .everywhere
+        let state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         let clock = TestClock()
 
         let store = TestStore(initialState: state) {
@@ -690,11 +722,12 @@ struct BrowseFeatureTests {
 
         await store.send(.searchQueryChanged("vac")) {
             $0.searchQuery = "vac"
-            $0.isSearchingEverywhere = true
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .milliseconds(150))
+        await clock.advance(by: .seconds(1))
         await store.receive(\.searchResultsResponse.failure) {
-            $0.isSearchingEverywhere = false
+            $0.isSearchingRemotely = false
             $0.searchResults = []
             $0.fileActionErrorMessage = "Couldn't search. Check your connection and try again."
         }
@@ -705,7 +738,7 @@ struct BrowseFeatureTests {
         let serverURL = URL(string: "https://example.com")!
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.searchQuery = "vac"
-        let result = SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "jpg")
+        let result = SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "file")
         let clock = TestClock()
 
         let store = TestStore(initialState: state) {
@@ -717,11 +750,12 @@ struct BrowseFeatureTests {
 
         await store.send(.searchScopeChanged(.everywhere)) {
             $0.searchScope = .everywhere
-            $0.isSearchingEverywhere = true
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
         }
-        await clock.advance(by: .milliseconds(150))
+        await clock.advance(by: .seconds(1))
         await store.receive(\.searchResultsResponse.success) {
-            $0.isSearchingEverywhere = false
+            $0.isSearchingRemotely = false
             $0.searchResults = [result]
         }
     }

@@ -106,4 +106,8 @@ public enum IconKit {
     public static let sparkle = Image(systemName: "sparkles")
     public static let resize = Image(systemName: "arrow.up.left.and.arrow.down.right")
     public static let speed = Image(systemName: "speedometer")
+    public static let filter = Image(systemName: "line.3.horizontal.decrease.circle")
+    public static let filterFill = Image(systemName: "line.3.horizontal.decrease.circle.fill")
+    public static let film = Image(systemName: "film")
+    public static let music = Image(systemName: "music.note")
 }
