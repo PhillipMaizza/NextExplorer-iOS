@@ -14,6 +14,14 @@ private enum Constants {
     static let failureDisplayDuration: Duration = .seconds(1)
     /// How long an error message stays on screen before it clears itself.
     static let errorDismissDuration: Duration = .seconds(4)
+    /// Upper bounds on what the fields accept, so a pathological paste (a whole document
+    /// dropped into a field) can't reach a network call or a regex. The host cap is generous
+    /// enough to survive a pasted `https://…:port/path` that `normalizedURL` then trims down;
+    /// the final host is bounded to 253 (DNS max) by `normalizedURL` itself. Email follows
+    /// RFC 5321's 254; the password cap is a sane ceiling well above any real passphrase.
+    static let maxHostInputLength = 2048
+    static let maxEmailLength = 254
+    static let maxPasswordLength = 256
 }
 
 @Reducer
@@ -169,7 +177,8 @@ public struct LoginFormFeature {
                 state.resetConnection()
                 return Self.cancelInFlightWork()
 
-            case let .hostChanged(text):
+            case let .hostChanged(rawText):
+                let text = String(rawText.prefix(Constants.maxHostInputLength))
                 state.host = text
                 let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
                 if trimmed.isEmpty {
@@ -190,11 +199,11 @@ public struct LoginFormFeature {
                 return Self.cancelInFlightWork()
 
             case let .identifierChanged(text):
-                state.identifier = text
+                state.identifier = String(text.prefix(Constants.maxEmailLength))
                 return .none
 
             case let .passwordChanged(text):
-                state.password = text
+                state.password = String(text.prefix(Constants.maxPasswordLength))
                 return .none
 
             case .togglePasswordVisibility:
@@ -370,26 +379,86 @@ public struct LoginFormFeature {
 
     /// Basic shape check (`x@y.z`) — the server is the real source of truth on whether the
     /// address exists, this only catches "clearly not an email" before spending a network call.
+    /// Shares the one regex in `CredentialRules` so login and user management stay in lockstep.
     static func isValidEmail(_ text: String) -> Bool {
-        text.range(of: #"^[^\s@]+@[^\s@]+\.[^\s@]+$"#, options: .regularExpression) != nil
+        CredentialRules.isEmailShaped(text)
     }
 
-    /// Strips whitespace, a leading scheme the user may have typed or pasted, and any trailing
-    /// slashes before validating the host.
+    /// Reduces whatever the user typed or pasted to a bare `host[:port]` and rejects anything
+    /// that isn't a plausible server address before a network call is ever spent. Strips (in
+    /// order): surrounding whitespace, a leading `http(s)://`, any `/path`, `?query` or
+    /// `#fragment`, and a `user:pass@` userinfo prefix. What remains must be a valid host
+    /// (hostname, IPv4, or bracketed IPv6) with, at most, one numeric port in `1...65535`.
+    /// A pasted `https://user@box.local:3000/files?x=1` becomes `http(s)://box.local:3000`.
     static func normalizedURL(scheme: URLScheme, host: String) -> URL? {
-        var trimmedHost = host.trimmingCharacters(in: .whitespacesAndNewlines)
-        for prefix in ["https://", "http://"] where trimmedHost.lowercased().hasPrefix(prefix) {
-            trimmedHost.removeFirst(prefix.count)
+        var text = host.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard (1...Constants.maxHostInputLength).contains(text.count) else { return nil }
+
+        for prefix in ["https://", "http://"] where text.lowercased().hasPrefix(prefix) {
+            text.removeFirst(prefix.count)
             break
         }
-        while trimmedHost.hasSuffix("/") {
-            trimmedHost.removeLast()
+        if let cut = text.firstIndex(where: { $0 == "/" || $0 == "?" || $0 == "#" }) {
+            text = String(text[..<cut])
         }
-        guard !trimmedHost.isEmpty, let components = URLComponents(string: "\(scheme.rawValue)://\(trimmedHost)"),
-              components.host != nil else {
-            return nil
+        if let at = text.lastIndex(of: "@") {
+            text = String(text[text.index(after: at)...])
         }
-        return components.url
+        guard !text.isEmpty else { return nil }
+
+        // Peel off an optional `:port`. A bracketed IPv6 literal keeps its inner colons; a
+        // bare host may carry at most one colon, the port separator — anything else (an
+        // unbracketed IPv6, a stray colon) is rejected rather than guessed at.
+        var hostPart = text
+        var portPart: Substring?
+        if text.hasPrefix("[") {
+            guard let close = text.firstIndex(of: "]") else { return nil }
+            hostPart = String(text[text.index(after: text.startIndex)..<close])
+            let rest = text[text.index(after: close)...]
+            if rest.isEmpty {
+                portPart = nil
+            } else if rest.hasPrefix(":") {
+                portPart = rest.dropFirst()
+            } else {
+                return nil
+            }
+        } else if let colon = text.firstIndex(of: ":") {
+            let after = text[text.index(after: colon)...]
+            guard !after.contains(":") else { return nil }
+            hostPart = String(text[..<colon])
+            portPart = after
+        }
+
+        if let portPart {
+            guard let port = Int(portPart), (1...65535).contains(port) else { return nil }
+        }
+        guard isValidHost(hostPart) else { return nil }
+
+        var components = URLComponents()
+        components.scheme = scheme.rawValue
+        // Foundation does not auto-bracket an IPv6 literal, and an unbracketed one yields a
+        // malformed URL — so re-wrap it before handing the host back to URLComponents.
+        components.host = hostPart.contains(":") ? "[\(hostPart)]" : hostPart
+        components.port = portPart.flatMap { Int($0) }
+        guard let url = components.url else { return nil }
+        return url
+    }
+
+    /// A hostname, IPv4 address, or (bracket-stripped) IPv6 literal. Rejects spaces, punctuation
+    /// and other junk that `URLComponents` would otherwise silently percent-encode into a host
+    /// that can never resolve.
+    static func isValidHost(_ host: String) -> Bool {
+        guard !host.isEmpty else { return false }
+        if host.contains(":") {
+            // Only reached for a bracket-stripped IPv6 literal.
+            return host.range(of: #"^[0-9A-Fa-f:.]+$"#, options: .regularExpression) != nil
+                && host.filter { $0 == ":" }.count >= 2
+        }
+        // Dot-separated labels of [A-Za-z0-9_-], no leading/trailing hyphen per label, ≤253 total.
+        return host.range(
+            of: #"^(?=.{1,253}$)([A-Za-z0-9_](?:[A-Za-z0-9_-]{0,61}[A-Za-z0-9_])?)(\.[A-Za-z0-9_](?:[A-Za-z0-9_-]{0,61}[A-Za-z0-9_])?)*$"#,
+            options: .regularExpression
+        ) != nil
     }
 
     static func fetchStatusResult(_ authClient: AuthClient, _ url: URL) async -> Result<AuthStatus, AuthClientError> {
@@ -420,7 +489,7 @@ public struct LoginFormFeature {
         case .network: L10n.Login.errorUnreachable
         case .decoding: L10n.Login.errorUnexpectedResponse
         case .keychain: L10n.Login.errorKeychain
-        case .server: L10n.Login.errorDecoding
+        case let .server(statusCode): L10n.Login.errorServer(statusCode)
         case .noAuthMethodsEnabled: L10n.Login.errorNoLocalAuth
         case .rateLimited: L10n.Login.errorRateLimited
         }

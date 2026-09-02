@@ -70,6 +70,16 @@ struct SharedView: View {
                     searchText: $store.searchQuery.sending(\.searchQueryChanged)
                 )
             }
+            .safeAreaInset(edge: .top, spacing: 0) {
+                if case let .cached(fetchedAt) = store.dataSources[store.segment] ?? .live {
+                    DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
+                        .padding(.horizontal, .space16)
+                        .padding(.vertical, .space8)
+                        .background(Color.backgroundPrimary)
+                        .transition(.move(edge: .top).combined(with: .opacity))
+                }
+            }
+            .animation(.easeInOut(duration: 0.2), value: store.dataSources[store.segment])
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }

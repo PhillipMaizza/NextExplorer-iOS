@@ -88,6 +88,7 @@ public struct MainTabView: View {
                 }
                 store.send(.appBecameActive)
             }
+            .task { await store.send(.observeConnectivity).finish() }
     }
 
     private func setUploadBarHeight(_ height: CGFloat) {

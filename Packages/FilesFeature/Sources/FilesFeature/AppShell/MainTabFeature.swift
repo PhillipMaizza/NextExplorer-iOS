@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import Foundation
 import Localization
+import NetworkClient
 
 @Reducer
 public struct MainTabFeature {
@@ -49,6 +50,11 @@ public struct MainTabFeature {
         /// re-fetches the current folder and every pushed subfolder, since `BrowseFeature.onAppear`
         /// deliberately no-ops once a folder already has items loaded.
         case appBecameActive
+        /// Long-lived subscription to reachability, started once from the view's `.task`.
+        case observeConnectivity
+        /// The connection came back — refresh the list tabs so their offline "saved copy"
+        /// banners clear and they show live data without a manual pull.
+        case connectivityRestored
         case browse(BrowseTabFeature.Action)
         case favorites(FavoritesFeature.Action)
         case shared(SharedFeature.Action)
@@ -63,6 +69,10 @@ public struct MainTabFeature {
             case signOutButtonTapped
         }
     }
+
+    @Dependency(\.connectivity) var connectivity
+
+    private enum CancelID { case connectivity }
 
     public init() {}
 
@@ -135,6 +145,32 @@ public struct MainTabFeature {
                     .send(.browse(.syncPathStack)),
                     .send(.favorites(.syncPathStack)),
                     .send(.uploads(.appResumed))
+                )
+
+            case .observeConnectivity:
+                // First value is the current state (ignored); refresh only on a real
+                // offline -> online transition.
+                let connectivity = self.connectivity
+                return .run { send in
+                    var wasOnline = true
+                    for await online in connectivity.events() {
+                        defer { wasOnline = online }
+                        if online, !wasOnline { await send(.connectivityRestored) }
+                    }
+                }
+                .cancellable(id: CancelID.connectivity, cancelInFlight: true)
+
+            case .connectivityRestored:
+                // Refresh every list tab (each is cancel-in-flight, so this is cheap) so no tab
+                // is left showing a stale offline copy after the connection returns. Both tabs
+                // that own a browse stack refresh their root and every pushed subfolder, matching
+                // `appBecameActive`; Favorites needs `syncPathStack` too or a folder pushed inside
+                // the Favorites tab keeps its "saved copy" banner after the connection is back.
+                return .merge(
+                    .send(.browse(.syncPathStack)),
+                    .send(.favorites(.refreshButtonTapped)),
+                    .send(.favorites(.syncPathStack)),
+                    .send(.shared(.refreshRequested))
                 )
 
             case .browse(.delegate(.favoritesChanged)), .favorites(.delegate(.favoritesChanged)):

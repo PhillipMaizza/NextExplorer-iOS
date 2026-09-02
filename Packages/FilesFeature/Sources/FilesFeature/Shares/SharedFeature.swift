@@ -60,6 +60,9 @@ public struct SharedFeature {
         /// switching back doesn't re-hit the server unless the user pulls to refresh or the
         /// last attempt `.failed`.
         public var phases: [Segment: DataPhase] = [:]
+        /// Per segment: `.cached` while that segment shows an offline copy, `.live` once a fetch
+        /// lands. Absent means `.live`.
+        public var dataSources: [Segment: CachedListSource] = [:]
         /// A failed delete, or a refresh failure over an already populated segment, shown as a
         /// toast rather than the full screen `errorMessage`.
         public var actionErrorMessage: String?
@@ -209,6 +212,13 @@ public struct SharedFeature {
     }
 
     @Dependency(\.filesClient) var filesClient
+    @Dependency(\.jsonCacheStore) var jsonCacheStore
+
+    private static func cacheNamespace(_ segment: Segment) -> String { "shares.\(segment.rawValue)" }
+
+    /// Per segment, so a spammed pull to refresh (or a fast segment reselect) supersedes the
+    /// previous same segment load instead of racing it, while the other segment keeps loading.
+    private enum CancelID: Hashable { case load(Segment) }
 
     public init() {}
 
@@ -260,11 +270,22 @@ public struct SharedFeature {
 
             case let .sharesResponse(segment, .success(shares)):
                 state.phases[segment] = .loaded
+                state.dataSources[segment] = .live
                 let identified = IdentifiedArray(shares, id: \.id, uniquingIDsWith: { first, _ in first })
                 if segment == .byMe { state.byMe = identified } else { state.withMe = identified }
+                syncCache(state, segment: segment)
                 return .none
 
             case let .sharesResponse(segment, .failure(error)):
+                // Offline with a saved copy of this segment: show it under a banner.
+                if error == .offline,
+                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, as: [Share].self) {
+                    let identified = IdentifiedArray(cached.value, id: \.id, uniquingIDsWith: { first, _ in first })
+                    if segment == .byMe { state.byMe = identified } else { state.withMe = identified }
+                    state.phases[segment] = .loaded
+                    state.dataSources[segment] = .cached(fetchedAt: cached.fetchedAt)
+                    return .none
+                }
                 // Full screen error only when that segment has nothing to blank; a refresh
                 // failure over a populated segment stays `.loaded` and toasts.
                 let segmentEmpty = (segment == .byMe ? state.byMe : state.withMe).isEmpty
@@ -307,6 +328,7 @@ public struct SharedFeature {
             case let .deleteResponse(id, .success):
                 state.deletingIDs.remove(id)
                 state.byMe.remove(id: id)
+                syncCache(state, segment: .byMe)
                 return .none
 
             case let .deleteResponse(id, .failure(error)):
@@ -333,6 +355,14 @@ public struct SharedFeature {
     }
 
     private func load(_ state: inout State, segment: Segment) -> Effect<Action> {
+        // Paint the saved copy immediately on a first load (stale-while-revalidate); a
+        // successful fetch replaces it, only a failed one surfaces the offline banner.
+        let current = segment == .byMe ? state.byMe : state.withMe
+        if !(state.phases[segment]?.hasLoaded ?? false), current.isEmpty,
+           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, as: [Share].self) {
+            let identified = IdentifiedArray(cached.value, id: \.id, uniquingIDsWith: { first, _ in first })
+            if segment == .byMe { state.byMe = identified } else { state.withMe = identified }
+        }
         state.phases[segment] = .loading
         let serverURL = state.serverURL
         let filesClient = self.filesClient
@@ -343,6 +373,13 @@ public struct SharedFeature {
                     : await filesClient.sharedWithMeLinks(serverURL)
             }))
         }
+        .cancellable(id: CancelID.load(segment), cancelInFlight: true)
+    }
+
+    /// Persists a segment's current list as its offline copy.
+    private func syncCache(_ state: State, segment: Segment) {
+        let shares = segment == .byMe ? state.byMe : state.withMe
+        ListCache.save(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, value: Array(shares))
     }
 
     /// Best-effort — recipient names are a nicety, not worth surfacing an error for.

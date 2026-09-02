@@ -36,6 +36,96 @@ struct LoginFormFeatureTests {
         #expect(LoginFormFeature.normalizedURL(scheme: .https, host: "   ") == nil)
     }
 
+    @Test("edge case: a pasted path, query and fragment are dropped, keeping only host[:port]")
+    func pathQueryFragmentStripped() {
+        #expect(
+            LoginFormFeature.normalizedURL(scheme: .https, host: "example.com/files/photos?sort=name#top")?
+                .absoluteString == "https://example.com"
+        )
+        #expect(
+            LoginFormFeature.normalizedURL(scheme: .http, host: "192.168.1.50:3000/inbox")?
+                .absoluteString == "http://192.168.1.50:3000"
+        )
+    }
+
+    @Test("edge case: a user:pass@ userinfo prefix is stripped, not carried into the request")
+    func userinfoStripped() {
+        #expect(
+            LoginFormFeature.normalizedURL(scheme: .http, host: "admin:hunter2@box.local:3000")?
+                .absoluteString == "http://box.local:3000"
+        )
+    }
+
+    @Test("edge case: an out-of-range or non-numeric port is rejected outright")
+    func invalidPortRejected() {
+        #expect(LoginFormFeature.normalizedURL(scheme: .http, host: "box.local:99999") == nil)
+        #expect(LoginFormFeature.normalizedURL(scheme: .http, host: "box.local:0") == nil)
+        #expect(LoginFormFeature.normalizedURL(scheme: .http, host: "box.local:-1") == nil)
+        #expect(LoginFormFeature.normalizedURL(scheme: .http, host: "box.local:abc") == nil)
+    }
+
+    @Test("edge case: gibberish that isn't a plausible host is rejected before any network call")
+    func gibberishHostRejected() {
+        for junk in ["!!!!", "..", "foo bar", "http://", "https://", "-lead.example.com", "exam ple.com"] {
+            #expect(LoginFormFeature.normalizedURL(scheme: .https, host: junk) == nil, "\(junk) should be invalid")
+        }
+    }
+
+    @Test("edge case: a bracketed IPv6 literal (with an optional port) is accepted; an unbracketed one is not")
+    func ipv6HostHandling() {
+        #expect(LoginFormFeature.normalizedURL(scheme: .http, host: "[::1]:3000")?.absoluteString == "http://[::1]:3000")
+        #expect(LoginFormFeature.normalizedURL(scheme: .https, host: "[2001:db8::1]")?.absoluteString == "https://[2001:db8::1]")
+        // Unbracketed IPv6 is ambiguous with the port separator — rejected rather than guessed.
+        #expect(LoginFormFeature.normalizedURL(scheme: .https, host: "fe80::1") == nil)
+    }
+
+    @Test("edge case: plain hostnames, LAN single-labels and IPv4 all pass")
+    func validHostsPass() {
+        #expect(LoginFormFeature.normalizedURL(scheme: .https, host: "nextexplorer.example.com") != nil)
+        #expect(LoginFormFeature.normalizedURL(scheme: .http, host: "nas") != nil)
+        #expect(LoginFormFeature.normalizedURL(scheme: .http, host: "box.local:8080") != nil)
+        #expect(LoginFormFeature.normalizedURL(scheme: .http, host: "192.168.1.50:3000") != nil)
+    }
+
+    // MARK: - monkey test (fuzz)
+
+    @Test("monkey test: thousands of garbage server inputs never crash, and any URL that survives is clean")
+    func normalizedURLFuzzing() {
+        var rng = SplitMix64(seed: 0xC0FFEE_0027)
+        for _ in 0..<4000 {
+            let junk = FuzzStrings.random(using: &rng, maxLength: 60)
+            for scheme in [LoginFormFeature.URLScheme.https, .http] {
+                // The only hard requirement: this must not trap on any input.
+                guard let url = LoginFormFeature.normalizedURL(scheme: scheme, host: junk) else { continue }
+                // Anything that survives is a clean authority-only URL.
+                #expect(url.scheme == scheme.rawValue)
+                #expect(!(url.host ?? "").isEmpty, "host missing for \(junk.debugDescription)")
+                #expect(url.path.isEmpty, "path leaked for \(junk.debugDescription): \(url.path)")
+                #expect(url.query == nil, "query leaked for \(junk.debugDescription)")
+                #expect(url.fragment == nil, "fragment leaked for \(junk.debugDescription)")
+                #expect(url.user == nil && url.password == nil, "userinfo leaked for \(junk.debugDescription)")
+                if let port = url.port { #expect((1...65535).contains(port), "bad port \(port) for \(junk.debugDescription)") }
+            }
+        }
+    }
+
+    // MARK: - field length caps
+
+    @Test("edge case: a pathological paste into the fields is truncated, never stored whole")
+    func fieldsAreLengthCapped() async {
+        let store = TestStore(initialState: LoginFormFeature.State()) { LoginFormFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.hostChanged(String(repeating: "a", count: 5000)))
+        #expect(store.state.host.count == 2048)
+
+        await store.send(.identifierChanged(String(repeating: "x", count: 5000)))
+        #expect(store.state.identifier.count == 254)
+
+        await store.send(.passwordChanged(String(repeating: "p", count: 5000)))
+        #expect(store.state.password.count == 256)
+    }
+
     // MARK: - testConnectionButtonTapped
 
     @Test("happy path: a successful test shows the checkmark, then advances to the credentials page")
@@ -384,6 +474,39 @@ struct LoginFormFeatureTests {
             $0.errorMessage = L10n.Login.errorRateLimited
             // A rate limit says nothing about which field was wrong — unlike
             // `.invalidCredentials`, it must not red-border the fields.
+            $0.invalidFieldsScope = nil
+        }
+        await store.receive(\.revertSubmitToIdle) {
+            $0.submitPhase = .idle
+        }
+        await store.receive(\.clearErrorMessage) {
+            $0.errorMessage = nil
+        }
+    }
+
+    @Test("unexpected error: a 5xx server status surfaces a server-problem message with the code, not a decode/address error")
+    func serverErrorStatusSurfacesMessage() async {
+        let store = TestStore(
+            initialState: LoginFormFeature.State(
+                host: "nextexplorer.example.com",
+                identifier: "phillip@example.com",
+                password: "hunter2",
+                authStatus: AuthStatus(localEnabled: true, oidcEnabled: false)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient.login = { _, _, _ in throw AuthClientError.server(statusCode: 503) }
+            $0.continuousClock = ImmediateClock()
+        }
+
+        await store.send(.continueButtonTapped) {
+            $0.submitPhase = .submitting
+        }
+        await store.receive(\.submitFailed) {
+            $0.submitPhase = .failure
+            $0.errorMessage = L10n.Login.errorServer(503)
+            // A server-side fault says nothing about which credential field was wrong.
             $0.invalidFieldsScope = nil
         }
         await store.receive(\.revertSubmitToIdle) {
