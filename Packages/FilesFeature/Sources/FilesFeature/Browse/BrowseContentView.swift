@@ -520,7 +520,7 @@ struct BrowseContentView: View {
                 )
             } else {
                 FileRowView(
-                    name: row.name, isDirectory: row.isDirectory, subtitle: row.matchLine,
+                    name: row.name, isDirectory: row.isDirectory, subtitle: searchResultSubtitle(row),
                     isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
                     thumbnailFile: searchResultThumbnailFile(row),
                     serverURL: store.serverURL,
@@ -530,6 +530,15 @@ struct BrowseContentView: View {
                 )
             }
         }
+    }
+
+    /// The subtitle for a search hit's row: a content match shows "Line N: <snippet>" (matching
+    /// the web), a filename-only hit shows nothing. `matchLine` without a number falls back to the
+    /// bare snippet.
+    private func searchResultSubtitle(_ result: SearchResultItem) -> String? {
+        guard let matchLine = result.matchLine else { return nil }
+        guard let lineNumber = result.matchLineNumber else { return matchLine }
+        return L10n.Browse.searchMatchLine(lineNumber, matchLine)
     }
 
     /// A thumbnail-capable `FileItem` for a file search hit; `nil` for a directory, which keeps
@@ -953,6 +962,9 @@ struct BrowseContentView: View {
         }
         .listStyle(.insetGrouped)
         .scrollContentBackground(.hidden)
+        // Scrolling the results dismisses the search keyboard, the expected gesture when the
+        // results fill the screen and tapping a row would navigate rather than just defocus.
+        .scrollDismissesKeyboard(.immediately)
         .backgroundGradient()
         .safeAreaPadding(.bottom, bottomChromeClearance)
         .animation(
@@ -1019,6 +1031,7 @@ struct BrowseContentView: View {
             )
             pasteTargetArea
         }
+        .scrollDismissesKeyboard(.immediately)
         .backgroundGradient()
         .safeAreaPadding(.bottom, bottomChromeClearance)
         .dismissKeyboardOnTap()

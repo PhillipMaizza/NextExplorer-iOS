@@ -5874,6 +5874,17 @@
           }
         }
       }
+    },
+    "browse.searchMatchLine": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line %1$lld: %2$@"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

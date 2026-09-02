@@ -89,6 +89,7 @@ public enum L10n {
         public static var scopeThisFolder: String { tr("browse.scopeThisFolder") }  // "This Folder"
         public static var searchEverywhere: String { tr("browse.searchEverywhere") }  // "Search everywhere"
         public static var searchFailed: String { tr("browse.searchFailed") }  // "Couldn't search. Check your connection and try again."
+        public static func searchMatchLine(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.searchMatchLine", a0, a1) }  // "Line %1$lld: %2$@"
         public static func searchNoMatchesInFolder(_ a0: CVarArg) -> String { tr("browse.searchNoMatchesInFolder", a0) }
         public static var searchScopeEverywhere: String { tr("browse.searchScopeEverywhere") }  // "Everywhere"
         public static var searchScopeInFolder: String { tr("browse.searchScopeInFolder") }  // "This Folder"
