@@ -7,11 +7,13 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    static let searchDebounce: Duration = .milliseconds(150)
-    static let searchLimit = 50
-    /// Not a network debounce (this-folder search has no round trip) — just a brief settle
-    /// so a fast backspace/retype doesn't flash intermediate result sets.
-    static let localSearchSettleDelay: Duration = .milliseconds(50)
+    /// Gate before the recursive backend search fires, so a burst of keystrokes collapses to one
+    /// request (superseded ones are cancelled). 1s, matching the web client — the backend recurses
+    /// and scans file contents with ripgrep, which is expensive, so this deliberately throttles
+    /// how often it runs. The instant client side pre-fill covers perceived latency in the gap.
+    static let searchDebounce: Duration = .seconds(1)
+    /// Matches the backend's own default result cap.
+    static let searchLimit = 100
     /// An action taken from a full-screen preview that also dismisses the cover (delete,
     /// "Open" on the download toast, "View in Shared") waits this long before it runs, so the
     /// cover finishes dismissing first and the effect — a row sliding out, a tab switch —
@@ -193,7 +195,13 @@ public struct BrowseFeature {
         public var searchQuery = ""
         public var searchScope: SearchScope = .thisFolder
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
-        public var isSearchingEverywhere = false
+        /// True while a recursive backend search (either scope) is in flight, so the UI can show a
+        /// spinner over the instant client side pre-fill until the authoritative results land.
+        public var isSearchingRemotely = false
+        /// The file type categories the search results are filtered to. Empty means "all types";
+        /// otherwise a result shows only if its category is in the set. Only relevant while
+        /// searching, and pruned to the categories actually present as results change.
+        public var selectedSearchCategories: Set<FileCategory> = []
         public var sortOption: SortOption = .name
         public var sortDirection: SortDirection = .ascending
         /// Read live from the same in-memory key `SettingsFeature` writes, so toggling
@@ -302,10 +310,30 @@ public struct BrowseFeature {
             preferences.showHiddenFiles ? items.count : items.reduce(0) { isHiddenFileName($1.name) ? $0 : $0 + 1 }
         }
 
-        /// `searchResults`, with hidden entries dropped unless the preference is on.
+        /// `searchResults`, with hidden entries dropped unless the preference is on, then narrowed
+        /// to `selectedSearchCategories` when the type filter is active.
         public var displayedSearchResults: IdentifiedArrayOf<SearchResultItem>? {
             guard let searchResults else { return nil }
-            return preferences.showHiddenFiles ? searchResults : searchResults.filter { !isHiddenFileName($0.name) }
+            let visible = preferences.showHiddenFiles ? searchResults : searchResults.filter { !isHiddenFileName($0.name) }
+            guard !selectedSearchCategories.isEmpty else { return visible }
+            return visible.filter { selectedSearchCategories.contains(Self.category(of: $0)) }
+        }
+
+        /// The categories actually present in the current (hidden filtered) results, in display
+        /// order — the rows the filter sheet offers. Independent of the current selection, so
+        /// toggling a category off doesn't make it vanish from the sheet.
+        public var availableSearchCategories: [FileCategory] {
+            guard let searchResults else { return [] }
+            let visible = preferences.showHiddenFiles ? searchResults : searchResults.filter { !isHiddenFileName($0.name) }
+            let present = Set(visible.map(Self.category(of:)))
+            return FileCategory.allCases.filter(present.contains)
+        }
+
+        /// A search hit reports only `dir`/`file` for kind, so derive the extension from the name
+        /// (the same thing the row icon does) before bucketing it. The extension is ignored for a
+        /// directory, which `FileCategory.of` buckets as `.folder` off the flag alone.
+        static func category(of result: SearchResultItem) -> FileCategory {
+            FileCategory.of(kind: (result.name as NSString).pathExtension, isDirectory: result.isDirectory)
         }
 
         public init(serverURL: URL, directoryPath: String, title: String) {
@@ -323,6 +351,8 @@ public struct BrowseFeature {
         case rowTapped(FileItem)
         case searchQueryChanged(String)
         case searchScopeChanged(SearchScope)
+        case searchCategoryToggled(FileCategory)
+        case searchFilterCleared
         case searchResultTapped(SearchResultItem)
         case searchResultsResponse(Result<[SearchResultItem], FilesClientError>)
         case sortOptionChanged(SortOption)
@@ -521,6 +551,18 @@ public struct BrowseFeature {
                 state.searchScope = scope
                 return search(&state)
 
+            case let .searchCategoryToggled(category):
+                if state.selectedSearchCategories.contains(category) {
+                    state.selectedSearchCategories.remove(category)
+                } else {
+                    state.selectedSearchCategories.insert(category)
+                }
+                return .none
+
+            case .searchFilterCleared:
+                state.selectedSearchCategories = []
+                return .none
+
             case let .searchResultTapped(result):
                 guard !result.isDirectory else {
                     return .send(.delegate(.openPath(path: result.id, title: result.name)))
@@ -541,15 +583,18 @@ public struct BrowseFeature {
                 return .send(.rowTapped(item))
 
             case let .searchResultsResponse(.success(results)):
-                state.isSearchingEverywhere = false
+                state.isSearchingRemotely = false
                 state.searchResults = IdentifiedArray(Self.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
+                // Drop any selected category the new results no longer contain, so the filter
+                // can't strand the list on an empty set the sheet doesn't even offer.
+                state.selectedSearchCategories.formIntersection(Set(state.availableSearchCategories))
                 return .none
 
             case let .searchResultsResponse(.failure(error)):
-                state.isSearchingEverywhere = false
+                state.isSearchingRemotely = false
                 state.searchResults = []
-                // Surface it, otherwise a network blip during an "Everywhere" search is
-                // indistinguishable from a genuine empty result.
+                // Surface it, otherwise a network blip during a search is indistinguishable from
+                // a genuine empty result.
                 state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : L10n.Browse.searchFailed
                 return .none
 
@@ -1176,49 +1221,45 @@ public struct BrowseFeature {
         }
     }
 
-    /// "This Folder" is answered instantly (and fuzzily) from the already-loaded
-    /// `items`. No debounce is needed since there's no network round trip. "Everywhere"
-    /// still hits `/api/search` and keeps a short debounce so keystrokes don't each
-    /// fire their own request.
+    /// Both scopes run a recursive, content aware `/api/search` (only the base path differs),
+    /// debounced so a burst of keystrokes fires one request. A client side pre-fill from the
+    /// already-loaded folder paints instantly while that request is in flight.
     private func search(_ state: inout State) -> Effect<Action> {
-        guard !state.searchQuery.isEmpty else {
+        // Trim like the backend does before its own empty check, so an all-whitespace query is
+        // treated as empty rather than pre-filling everything and 400ing on a blank `q`.
+        let query = state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else {
             state.searchResults = nil
-            state.isSearchingEverywhere = false
+            state.isSearchingRemotely = false
+            state.selectedSearchCategories = []
             return .cancel(id: CancelID.search)
         }
 
-        guard state.searchScope == .everywhere else {
-            state.isSearchingEverywhere = false
+        // Instant client side pre-fill from the already loaded folder, so results appear the
+        // moment the user types while the recursive backend search runs. These are name matches
+        // in the current folder only — a subset of what either scope's backend search returns, so
+        // the authoritative response only ever adds to them (subfolders + content matches).
+        // Deliberately does NOT prune `selectedSearchCategories`: the pre-fill sees only this
+        // folder, so a selected category the backend subtree contains but this folder lacks would
+        // be wrongly cleared. Pruning happens against the authoritative response instead.
+        let preliminary = state.items
+            .filter { SearchMatch.matches(query: query, in: $0.name) }
+            .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file") }
+        state.searchResults = IdentifiedArray(Self.sortedAlphabetically(preliminary), id: \.id, uniquingIDsWith: { first, _ in first })
+        state.isSearchingRemotely = true
 
-            let items = state.items
-            let query = state.searchQuery
-            let clock = self.clock
-
-            return .run { send in
-                try await clock.sleep(for: Constants.localSearchSettleDelay)
-
-                let matches = items
-                    .filter { FuzzyMatch.matches(query: query, in: $0.name) }
-                    .map {
-                        SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : $0.kind)
-                    }
-                let sortedResults = Self.sortedAlphabetically(matches)
-
-                await send(.searchResultsResponse(.success(sortedResults)))
-            }
-            .cancellable(id: CancelID.search, cancelInFlight: true)
-        }
-
-        state.isSearchingEverywhere = true
+        // Both scopes hit the same recursive, content aware backend endpoint; only the base path
+        // differs. "This Folder" scopes to the current directory (its whole subtree); "Everywhere"
+        // searches from the root.
+        let scopePath = state.searchScope == .everywhere ? "" : state.directoryPath
         let serverURL = state.serverURL
-        let query = state.searchQuery
         let filesClient = self.filesClient
         let clock = self.clock
 
         return .run { send in
             try await clock.sleep(for: Constants.searchDebounce)
             await send(.searchResultsResponse(try await apiResult {
-                try await filesClient.search(serverURL, "", query, Constants.searchLimit)
+                try await filesClient.search(serverURL, scopePath, query, Constants.searchLimit)
             }))
         }
         .cancellable(id: CancelID.search, cancelInFlight: true)

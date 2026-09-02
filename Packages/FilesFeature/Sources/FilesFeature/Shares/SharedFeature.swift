@@ -113,8 +113,8 @@ public struct SharedFeature {
         public func displayedShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
             let base = isSearching
                 ? shares(for: segment).filter {
-                    FuzzyMatch.matches(query: searchQuery, in: $0.displayName)
-                        || FuzzyMatch.matches(query: searchQuery, in: $0.sourcePath ?? "")
+                    SearchMatch.matches(query: searchQuery, in: $0.displayName)
+                        || SearchMatch.matches(query: searchQuery, in: $0.sourcePath ?? "")
                 }
                 : shares(for: segment)
             let sorted = base.sorted { lhs, rhs in
