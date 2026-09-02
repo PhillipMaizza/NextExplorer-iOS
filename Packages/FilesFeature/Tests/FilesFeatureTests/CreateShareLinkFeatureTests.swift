@@ -103,6 +103,23 @@ struct CreateShareLinkFeatureTests {
     }
 
     @Test
+    func passwordProtectionOnButBlankIsRejectedBeforeAnyRequest() async {
+        var state = makeState()
+        state.isPasswordEnabled = true
+        state.password = ""
+
+        let store = TestStore(initialState: state) {
+            CreateShareLinkFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+        }
+
+        await store.send(.createTapped) {
+            $0.errorMessage = L10n.CreateShare.errorPasswordRequired
+        }
+    }
+
+    @Test
     func choosingSpecificUsersLoadsUsersAndBlocksCreationUntilOneIsPicked() async {
         let jamie = User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie")
         let store = TestStore(initialState: makeState()) {

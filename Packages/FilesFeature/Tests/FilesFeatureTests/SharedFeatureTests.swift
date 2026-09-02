@@ -42,9 +42,63 @@ struct SharedFeatureTests {
         await store.send(.onAppear) { $0.phases[.byMe] = .loading }
         await store.receive(\.sharesResponse) {
             $0.phases[.byMe] = .loaded
+            $0.dataSources[.byMe] = .live
             $0.byMe = [share]
         }
         await store.receive(\.usersResponse)
+    }
+
+    @Test
+    func offlineFallsBackToTheSavedCopyForTheSegment() async throws {
+        let cache = JSONCacheStore.inMemory()
+        let share = makeShare(id: "s1")
+        cache.write(key: ListCache.key("shares.byMe", serverURL: serverURL), data: try JSONEncoder().encode([share]))
+
+        let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
+            SharedFeature()
+        } withDependencies: {
+            $0.jsonCacheStore = cache
+            $0.filesClient.mySharedLinks = { _ in throw FilesClientError.offline }
+            $0.filesClient.shareableUsers = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.onAppear)
+        await store.receive(\.sharesResponse)
+
+        #expect(store.state.byMe.map(\.id) == ["s1"])
+        #expect(store.state.phases[.byMe] == .loaded)
+        guard case .cached = store.state.dataSources[.byMe] else {
+            Issue.record("expected a cached data source offline")
+            return
+        }
+    }
+
+    @Test
+    func rapidRefreshSupersedesTheInFlightLoadInsteadOfRacingIt() async {
+        let share = makeShare()
+        let clock = TestClock()
+        let completions = LockIsolated(0)
+        let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
+            SharedFeature()
+        } withDependencies: {
+            $0.filesClient.mySharedLinks = { _ in
+                try await clock.sleep(for: .seconds(1))
+                completions.withValue { $0 += 1 }
+                return [share]
+            }
+            $0.filesClient.shareableUsers = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        // Two refreshes before the first byMe load resolves: the second supersedes the first,
+        // so a slow stale response can't land after (and clobber) the newer one.
+        await store.send(.refreshRequested)
+        await store.send(.refreshRequested)
+        await clock.advance(by: .seconds(2))
+        await store.receive(\.sharesResponse)
+
+        #expect(completions.value == 1)
     }
 
     @Test
@@ -62,6 +116,7 @@ struct SharedFeatureTests {
         await store.send(.onAppear) { $0.phases[.byMe] = .loading }
         await store.receive(\.sharesResponse) {
             $0.phases[.byMe] = .loaded
+            $0.dataSources[.byMe] = .live
             $0.byMe = [byMeShare]
         }
         await store.receive(\.usersResponse)
@@ -72,6 +127,7 @@ struct SharedFeatureTests {
         }
         await store.receive(\.sharesResponse) {
             $0.phases[.withMe] = .loaded
+            $0.dataSources[.withMe] = .live
             $0.withMe = [withMeShare]
         }
 
@@ -145,6 +201,7 @@ struct SharedFeatureTests {
         }
         await store.receive(\.sharesResponse) {
             $0.phases[.byMe] = .loaded
+            $0.dataSources[.byMe] = .live
             $0.byMe = [first, second]
         }
     }

@@ -180,6 +180,12 @@ public struct CreateShareLinkFeature {
 
             case .createTapped:
                 guard state.isCreateEnabled else { return .none }
+                // Turning protection on but leaving the field blank would otherwise send no
+                // password and quietly create an unprotected share, the opposite of intent.
+                if state.isPasswordEnabled, state.password.isEmpty {
+                    state.errorMessage = L10n.CreateShare.errorPasswordRequired
+                    return .none
+                }
                 if state.isExpiryEnabled, state.expiresAt <= date.now {
                     state.errorMessage = L10n.CreateShare.errorPastExpiration
                     return .none

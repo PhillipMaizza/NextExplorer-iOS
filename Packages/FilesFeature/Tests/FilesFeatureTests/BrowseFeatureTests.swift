@@ -870,6 +870,80 @@ struct BrowseFeatureTests {
     // MARK: File actions — favorite toggle
 
     @Test
+    func anInPlaceMutationWritesTheCorrectedListingThroughToTheCache() async {
+        let serverURL = URL(string: "https://example.com")!
+        let cache = DirectoryCacheStore.inMemory()
+        let existing = FileItem(name: "Old", path: "Docs", dateModified: Date(), size: 0, kind: "txt")
+        let newFolder = FileItem(name: "Reports", path: "Docs", dateModified: Date(), size: 0, kind: "directory")
+
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
+        state.items = [existing]
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.directoryCacheStore = cache
+            $0.date = .constant(Date(timeIntervalSince1970: 1_000))
+        }
+        store.exhaustivity = .off
+
+        // A create edits this folder in place; the on-disk cache must now hold the new listing
+        // so an offline revisit shows the folder, not the pre-create state.
+        await store.send(.newFolderResponse(.success(newFolder)))
+
+        let cached = cache.read(serverURL: serverURL, path: "Docs")
+        #expect(cached?.items.contains(where: { $0.id == newFolder.id }) == true)
+        #expect(cached?.etag == nil, "etag must be nil so the next online browse revalidates cleanly")
+    }
+
+    @Test
+    func rapidFavoriteDoubleTapFiresASingleRequest() async {
+        let serverURL = URL(string: "https://example.com")!
+        let dir = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let clock = TestClock()
+        let completions = LockIsolated(0)
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.addFavorite = { _, path in
+                try await clock.sleep(for: .seconds(1))
+                completions.withValue { $0 += 1 }
+                return Favorite(id: "1", path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+            }
+        }
+        store.exhaustivity = .off
+
+        // Two taps on the same star before the first resolves: the second supersedes the first.
+        await store.send(.favoriteToggleButtonTapped(dir))
+        await store.send(.favoriteToggleButtonTapped(dir))
+        await clock.advance(by: .seconds(2))
+        await store.receive(\.favoriteToggleResponse.success)
+
+        #expect(completions.value == 1)
+    }
+
+    @Test
+    func bulkDownloadWhileOneIsAlreadyInFlightIsIgnored() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.isBulkActionInFlight = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.downloadRawFile = { _, _ in
+                Issue.record("a second bulk download must not start while one is in flight")
+                return URL(fileURLWithPath: "/tmp/x")
+            }
+        }
+
+        // No state change, no effect: the re-entry guard swallows it.
+        await store.send(.bulkDownloadTapped(.documents, removeArchiveAfterDownload: false))
+    }
+
+    @Test
     func favoriteToggleOnAFileIsANoOpBecauseOnlyFoldersCanBeFavorited() async {
         // The real server 400s (`favoritesService.validatePath`) on anything that isn't a
         // directory — this mirrors that restriction client-side rather than round-tripping
@@ -1134,7 +1208,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.newFolderResponse.failure) {
             $0.isPerformingFileAction = false
-            $0.isNewFolderSheetPresented = false
+            // The sheet stays open so the user can correct the name and retry.
             $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
         }
     }

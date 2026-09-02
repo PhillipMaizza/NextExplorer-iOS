@@ -49,17 +49,31 @@ struct NameInputSheet: View {
         name.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    /// Inline reason the current name can't be used (a path separator, a reserved name), or `nil`.
+    private var validationError: String? {
+        FileNameValidation.errorMessage(forTrimmed: trimmedName)
+    }
+
     var body: some View {
         DSDynamicHeightSheet {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(icon: icon, title: title, closeAccessibilityLabel: L10n.Common.close, onClose: onCancel)
-                DSTextField(placeholder, text: $name, focused: $isFieldFocused)
-                    .textInputAutocapitalization(.words)
-                    .autocorrectionDisabled()
-                    .submitLabel(.done)
-                    .onSubmit(submit)
+                VStack(alignment: .leading, spacing: .space8) {
+                    DSTextField(placeholder, text: $name, focused: $isFieldFocused)
+                        .textInputAutocapitalization(.words)
+                        .autocorrectionDisabled()
+                        .submitLabel(.done)
+                        .onSubmit(submit)
+                    if let validationError {
+                        Text(validationError)
+                            .type(.body2(.semibold), style: .error)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .transition(.opacity)
+                    }
+                }
+                .animation(.easeInOut(duration: 0.15), value: validationError)
                 DSButton(confirmTitle, style: .primary, isLoading: isBusy, action: submit)
-                    .disabled(trimmedName.isEmpty)
+                    .disabled(!FileNameValidation.isAcceptable(trimmed: trimmedName))
             }
             .padding(.horizontal, Constants.horizontalPadding)
             .padding(.vertical, Constants.verticalPadding)
@@ -68,7 +82,7 @@ struct NameInputSheet: View {
     }
 
     private func submit() {
-        guard !trimmedName.isEmpty, !isBusy else { return }
+        guard FileNameValidation.isAcceptable(trimmed: trimmedName), !isBusy else { return }
         onConfirm(name)
     }
 }
@@ -95,6 +109,21 @@ struct NameInputSheet: View {
             placeholder: "Name",
             confirmTitle: "Save",
             initialName: "vacation.jpg",
+            isBusy: false,
+            onConfirm: { _ in },
+            onCancel: {}
+        )
+    }
+}
+
+#Preview("Invalid name") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        NameInputSheet(
+            icon: IconKit.folder,
+            title: "New folder",
+            placeholder: "Folder name",
+            confirmTitle: "Create",
+            initialName: "Reports/2026",
             isBusy: false,
             onConfirm: { _ in },
             onCancel: {}

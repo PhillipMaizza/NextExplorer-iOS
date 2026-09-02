@@ -83,6 +83,78 @@ struct FavoritesFeatureTests {
     }
 
     @Test
+    func offlineFallsBackToTheSavedCopyUnderTheBanner() async throws {
+        let cache = JSONCacheStore.inMemory()
+        let fav = makeFavorite(id: "1", path: "Docs")
+        cache.write(key: ListCache.key("favorites", serverURL: serverURL), data: try JSONEncoder().encode([fav]))
+
+        let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.jsonCacheStore = cache
+            $0.filesClient.favorites = { _ in throw FilesClientError.offline }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.onAppear)
+        await store.receive(\.favoritesResponse.failure)
+
+        #expect(store.state.favorites.map(\.id) == ["1"])
+        #expect(store.state.phase == .loaded)
+        guard case .cached = store.state.dataSource else {
+            Issue.record("expected a cached data source offline")
+            return
+        }
+    }
+
+    @Test
+    func aSuccessfulLoadWritesTheSavedCopyAndMarksLive() async throws {
+        let cache = JSONCacheStore.inMemory()
+        let fav = makeFavorite(id: "9", path: "Photos")
+        let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.jsonCacheStore = cache
+            $0.filesClient.favorites = { _ in [fav] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.onAppear)
+        await store.receive(\.favoritesResponse.success)
+
+        #expect(store.state.dataSource == .live)
+        let cached = try #require(cache.read(key: ListCache.key("favorites", serverURL: serverURL)))
+        let decoded = try JSONDecoder().decode([Favorite].self, from: cached.data)
+        #expect(decoded.map(\.id) == ["9"])
+    }
+
+    @Test
+    func rapidRemoveDoubleTapFiresASingleRequest() async {
+        let favorite = makeFavorite(id: "1", path: "Documents")
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [favorite]
+        let clock = TestClock()
+        let completions = LockIsolated(0)
+
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.filesClient.removeFavorite = { _, _ in
+                try await clock.sleep(for: .seconds(1))
+                completions.withValue { $0 += 1 }
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.removeTapped(favorite))
+        await store.send(.removeTapped(favorite))
+        await clock.advance(by: .seconds(2))
+        await store.receive(\.removeResponse)
+
+        #expect(completions.value == 1)
+    }
+
+    @Test
     func openFolderDelegateFromAPushedScreenPushesAnotherLevel() async {
         let subfolder = FileItem(name: "2020", path: "Photos", dateModified: Date(), size: 0, kind: "directory")
         var state = FavoritesFeature.State(serverURL: serverURL)

@@ -419,12 +419,16 @@ public struct BrowseFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.date) var date
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.openURL) var openURL
-    private enum CancelID {
+    private enum CancelID: Hashable {
         case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
         case prefetchChildren, prefetchFavorites
+        /// Per path, so spamming one item's star collapses to a single in flight toggle
+        /// (the latest tap wins) while other items toggle independently.
+        case favorite(String)
     }
 
     public init() {}
@@ -625,6 +629,7 @@ public struct BrowseFeature {
                 if state.previewItem?.id == result.originalID {
                     state.previewItem = result.renamed
                 }
+                syncListingCache(state)
                 return .none
 
             case let .renameResponse(.failure(error)):
@@ -647,11 +652,13 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 state.isNewFolderSheetPresented = false
                 state.items.append(folder)
+                syncListingCache(state)
                 return .none
 
             case let .newFolderResponse(.failure(error)):
                 state.isPerformingFileAction = false
-                state.isNewFolderSheetPresented = false
+                // Keep the sheet open (mirrors rename) so a server rejection (a name taken, a
+                // permission) leaves the typed name in place for the user to correct and retry.
                 state.fileActionErrorMessage = error.userMessage
                 return .none
 
@@ -681,6 +688,7 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 state.items.remove(id: result.itemID)
                 let wasFavorited = state.favoritePaths.remove(result.itemID) != nil
+                syncListingCache(state)
                 return wasFavorited ? .send(.delegate(.favoritesChanged)) : .none
 
             case let .deleteResponse(.failure(error)):
@@ -689,6 +697,7 @@ public struct BrowseFeature {
                 return .none
 
             case let .extractZipTapped(item):
+                guard !state.isPerformingFileAction else { return .none }
                 state.isPerformingFileAction = true
                 state.fileActionProgressMessage = L10n.Browse.progressExtracting
                 let serverURL = state.serverURL
@@ -701,6 +710,7 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
                 state.items.append(extracted)
+                syncListingCache(state)
                 return .none
 
             case let .extractZipResponse(.failure(error)):
@@ -710,6 +720,7 @@ public struct BrowseFeature {
                 return .none
 
             case let .compressTapped(item):
+                guard !state.isPerformingFileAction else { return .none }
                 state.isPerformingFileAction = true
                 state.fileActionProgressMessage = L10n.Browse.progressCompressing
                 let serverURL = state.serverURL
@@ -722,6 +733,7 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
                 state.items.append(compressed)
+                syncListingCache(state)
                 return .none
 
             case let .compressResponse(.failure(error)):
@@ -797,6 +809,7 @@ public struct BrowseFeature {
                 }
                 state.isSelecting = false
                 state.selectedItemIDs = []
+                syncListingCache(state)
                 return hadFavorited ? .send(.delegate(.favoritesChanged)) : .none
 
             case let .bulkDeleteResponse(.failure(error)):
@@ -1226,10 +1239,13 @@ public struct BrowseFeature {
                 return FavoriteToggleResult(path: path, isFavorite: !isCurrentlyFavorite)
             }))
         }
+        // A second tap on the same star before the first resolves supersedes it, so a rapid
+        // double tap can never fire two competing add/remove requests for one path.
+        .cancellable(id: CancelID.favorite(path), cancelInFlight: true)
     }
 
     private func confirmRename(_ state: inout State, newName: String) -> Effect<Action> {
-        guard let item = state.renameSheetItem else { return .none }
+        guard !state.isPerformingFileAction, let item = state.renameSheetItem else { return .none }
         let trimmedName = newName.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty, trimmedName != item.name else {
             state.renameSheetItem = nil
@@ -1247,6 +1263,7 @@ public struct BrowseFeature {
     }
 
     private func confirmNewFolder(_ state: inout State, name: String) -> Effect<Action> {
+        guard !state.isPerformingFileAction else { return .none }
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedName.isEmpty else {
             state.isNewFolderSheetPresented = false
@@ -1302,6 +1319,7 @@ public struct BrowseFeature {
     /// leaves the resulting `.zip` sitting alongside the folder on the server, same side
     /// effect "Compress" already has) and the resulting archive is downloaded like any file.
     private func startDownload(_ state: inout State, item: FileItem, location: DownloadLocation, removeArchiveAfterDownload: Bool) -> Effect<Action> {
+        guard !state.isPerformingFileAction else { return .none }
         state.isPerformingFileAction = true
         state.fileActionProgressMessage = item.isDirectory ? L10n.Browse.progressCompressing : L10n.Browse.progressDownloading
         let serverURL = state.serverURL
@@ -1334,6 +1352,7 @@ public struct BrowseFeature {
     private func confirmBulkDelete(_ state: inout State) -> Effect<Action> {
         state.bulkDeleteConfirmationIsPresented = false
         state.deleteImpactCheck = .idle
+        guard !state.isBulkActionInFlight else { return .none }
         let itemsToDelete = state.selectedItemIDs.compactMap { state.items[id: $0] }
         guard !itemsToDelete.isEmpty else { return .none }
         state.isBulkActionInFlight = true
@@ -1355,6 +1374,7 @@ public struct BrowseFeature {
     /// matching the same philosophy the sign-out flow already uses elsewhere: one failure
     /// shouldn't block toggling the rest.
     private func startBulkFavorite(_ state: inout State) -> Effect<Action> {
+        guard !state.isBulkActionInFlight else { return .none }
         let targets = state.selectedItemIDs
             .compactMap { state.items[id: $0] }
             .filter(\.isDirectory)
@@ -1387,6 +1407,7 @@ public struct BrowseFeature {
     /// progress toast can report "N of M" as it goes. Best-effort — one item's failure
     /// doesn't stop the rest of the batch.
     private func startBulkDownload(_ state: inout State, location: DownloadLocation, removeArchiveAfterDownload: Bool) -> Effect<Action> {
+        guard !state.isBulkActionInFlight else { return .none }
         let targets = state.selectedItemIDs.compactMap { state.items[id: $0] }
         guard !targets.isEmpty else { return .none }
         state.isBulkActionInFlight = true
@@ -1495,7 +1516,7 @@ public struct BrowseFeature {
     }
 
     private func confirmTextSave(_ state: inout State, newContent: String) -> Effect<Action> {
-        guard let item = state.previewItem else { return .none }
+        guard !state.isSavingTextContent, let item = state.previewItem else { return .none }
         state.isSavingTextContent = true
         state.textEditorErrorMessage = nil
         let serverURL = state.serverURL
@@ -1555,6 +1576,23 @@ public struct BrowseFeature {
             }
         )
         .cancellable(id: CancelID.load, cancelInFlight: true)
+    }
+
+    /// A mutation that edits this folder in place (rename/create/delete/extract/compress) updates
+    /// `state.items` but not the on disk listing cache, so an offline revisit, or the first paint
+    /// on the next load, would otherwise show the pre mutation listing. Write the corrected
+    /// listing straight through with a nil etag, so the next online browse revalidates cleanly (a
+    /// 200 that rewrites the real etag) instead of trusting a stamp we invented. Transfer and
+    /// upload instead trigger a full refetch, which keeps their listings in sync on its own.
+    private func syncListingCache(_ state: State) {
+        guard let access = state.access else { return }
+        directoryCacheStore.write(
+            serverURL: state.serverURL,
+            path: state.directoryPath,
+            result: BrowseResult(items: Array(state.items), access: access, path: state.directoryPath),
+            etag: nil,
+            fetchedAt: date.now
+        )
     }
 
     /// Folders before files, each group alphabetical, matching the web client's own

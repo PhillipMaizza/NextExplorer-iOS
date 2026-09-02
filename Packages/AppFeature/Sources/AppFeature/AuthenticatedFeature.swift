@@ -32,6 +32,7 @@ public struct AuthenticatedFeature {
 
     @Dependency(\.authClient) var authClient
     @Dependency(\.directoryCacheStore) var directoryCacheStore
+    @Dependency(\.jsonCacheStore) var jsonCacheStore
 
     public init() {}
 
@@ -46,10 +47,12 @@ public struct AuthenticatedFeature {
                 let serverURL = state.serverURL
                 let authClient = self.authClient
                 let directoryCacheStore = self.directoryCacheStore
+                let jsonCacheStore = self.jsonCacheStore
                 return .run { send in
                     try? await authClient.logout(serverURL)
                     await authClient.clearSession()
                     directoryCacheStore.clearAll()
+                    jsonCacheStore.clearAll()
                     await send(.signOutResponse)
                 }
 

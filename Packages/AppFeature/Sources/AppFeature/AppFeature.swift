@@ -51,6 +51,7 @@ public struct AppFeature {
 
     @Dependency(\.authClient) var authClient
     @Dependency(\.directoryCacheStore) var directoryCacheStore
+    @Dependency(\.jsonCacheStore) var jsonCacheStore
     @Dependency(\.previewCacheStore) var previewCacheStore
 
     public init() {}
@@ -129,10 +130,12 @@ public struct AppFeature {
                 }
                 let authClient = self.authClient
                 let directoryCacheStore = self.directoryCacheStore
+                let jsonCacheStore = self.jsonCacheStore
                 let previewCacheStore = self.previewCacheStore
                 return .run { _ in
                     await authClient.clearSession()
                     directoryCacheStore.clearAll()
+                    jsonCacheStore.clearAll()
                     try? previewCacheStore.clear()
                 }
 
@@ -146,10 +149,12 @@ public struct AppFeature {
                 }
                 let authClient = self.authClient
                 let directoryCacheStore = self.directoryCacheStore
+                let jsonCacheStore = self.jsonCacheStore
                 let previewCacheStore = self.previewCacheStore
                 return .run { _ in
                     await authClient.clearSession()
                     directoryCacheStore.clearAll()
+                    jsonCacheStore.clearAll()
                     try? previewCacheStore.clear()
                 }
 
@@ -161,6 +166,7 @@ public struct AppFeature {
                 // downloaded file bytes are purged off the main thread since nothing reads them
                 // until a preview opens.
                 directoryCacheStore.clearAll()
+                jsonCacheStore.clearAll()
                 state.didAuthenticateFromLogin = true
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
@@ -175,9 +181,11 @@ public struct AppFeature {
                 // Explicit sign out purges both caches so the next user on a shared device can't
                 // recover the previous session's directory listings or downloaded file bytes.
                 let directoryCacheStore = self.directoryCacheStore
+                let jsonCacheStore = self.jsonCacheStore
                 let previewCacheStore = self.previewCacheStore
                 return .run { _ in
                     directoryCacheStore.clearAll()
+                    jsonCacheStore.clearAll()
                     try? previewCacheStore.clear()
                 }
 

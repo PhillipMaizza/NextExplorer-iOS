@@ -66,6 +66,33 @@ struct MainTabFeatureTests {
     }
 
     @Test
+    func connectivityRestoredRefreshesTheFavoritesTabPushedStackNotJustItsRoot() async {
+        // A folder pushed inside the Favorites tab shows a "saved copy" banner while offline;
+        // on reconnect it must refresh through `favorites.syncPathStack`, or it keeps the banner
+        // even though the connection is back. Regression guard for the reconnect fan-out.
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.favorites.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
+        let store = TestStore(initialState: state) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.favorites = { _ in [] }
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "Photos")
+            }
+            $0.filesClient.mySharedLinks = { _ in [] }
+            $0.filesClient.sharedWithMeLinks = { _ in [] }
+            $0.filesClient.shareableUsers = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.connectivityRestored)
+        await store.receive(\.favorites.refreshButtonTapped)
+        await store.receive(\.favorites.syncPathStack)
+        // The pushed folder actually gets its refresh fanned out to it.
+        await store.receive(\.favorites.path)
+    }
+
+    @Test
     func favoritesChangedFromBrowseRefreshesTheFavoritesTab() async {
         let favorite = Favorite(id: "1", path: "Photos", label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
 
