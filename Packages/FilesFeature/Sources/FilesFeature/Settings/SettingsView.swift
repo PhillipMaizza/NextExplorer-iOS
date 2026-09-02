@@ -51,6 +51,7 @@ struct SettingsView: View {
                 }
 
                 StorageSettingsSection(store: store, filter: filter)
+                LegalSettingsSection(filter: filter)
                 LicensesSettingsSection(filter: filter)
             }
             .scrollContentBackground(.hidden)

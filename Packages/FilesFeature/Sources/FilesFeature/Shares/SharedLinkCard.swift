@@ -4,10 +4,136 @@ import Localization
 import SwiftUI
 import UIKit
 
-/// One share on the Shared tab: a collapsed header (name + path) that expands to its
-/// metadata (shared-with / access / expiration), a direct-link mode picker, then the
-/// per-link actions. "With me" shares hide the path and the delete action.
-struct SharedLinkCard: View {
+/// Shared metrics for the two rows that make up one share on the Shared tab. They live in
+/// separate `List` rows (header + detail) on purpose: a header row whose height never changes
+/// cannot be vertically centered by its list cell, so it stays perfectly fixed while the detail
+/// row is inserted/removed with the List's own animation. A single combined row instead lets the
+/// cell center the header mid animation, so the title drifts down then up.
+enum SharedLinkMetrics {
+    static let padding: CGFloat = .space16
+    /// Matches the Browse file row's vertical rhythm (`FileRowView`).
+    static let headerVerticalPadding: CGFloat = .space16
+    /// Plain reveal, no spring overshoot: header holds still, detail row eases in/out.
+    static var expand: Animation { .easeInOut(duration: 0.5) }
+    static let actionRowSpacing: CGFloat = .space8
+    /// One value for both the meta rows and the link-mode row so they read as one list.
+    static let rowVerticalPadding: CGFloat = .space8
+    static let actionVerticalPadding: CGFloat = .space12
+    static let iconSize: CGFloat = .iconMedium
+    static let metaIconSize: CGFloat = .iconSmall
+    static let chevronSize: CGFloat = .iconXSmall
+    static let actionIconSize: CGFloat = .iconSmall
+    static let badgeHorizontalPadding: CGFloat = .space8
+    static let badgeVerticalPadding: CGFloat = .space2
+    /// Recipient chip inner padding — roomier than the expired badge so names breathe.
+    static let chipHorizontalPadding: CGFloat = .space12
+    static let chipVerticalPadding: CGFloat = .space4
+    /// Chip tint strength — the recipient's categorical color at low alpha behind its name.
+    static let chipFillOpacity: Double = 0.16
+    static let deletingOpacity: Double = 0.4
+    /// Expired links mute the info rows — but never the actions, which stay usable
+    /// (delete) or at least fully legible.
+    static let expiredInfoOpacity: Double = 0.55
+}
+
+/// The always-visible top of a share: icon + name + path (+ expired badge) and the chevron. Tap
+/// toggles the detail. This is its own list row so its height is constant and it never moves.
+struct SharedLinkHeaderRow: View {
+    private typealias Metrics = SharedLinkMetrics
+
+    let share: Share
+    let serverURL: URL
+    let isByMe: Bool
+    let isExpired: Bool
+    let isDeleting: Bool
+    let isExpanded: Bool
+    let onToggle: () -> Void
+
+    var body: some View {
+        Button(action: onToggle) {
+            HStack(spacing: .space12) {
+                shareIcon
+                    .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+
+                VStack(alignment: .leading, spacing: .space2) {
+                    HStack(spacing: .space8) {
+                        Text(share.displayName)
+                            .type(.body2(.semibold), style: .primary(for: .label))
+                            .lineLimit(1)
+                        if isExpired {
+                            Text(L10n.Shared.badgeExpired.uppercased())
+                                .type(.caption(.semibold), style: .error)
+                                .padding(.horizontal, Metrics.badgeHorizontalPadding)
+                                .padding(.vertical, Metrics.badgeVerticalPadding)
+                                .background(RoundedRectangle(cornerRadius: .radiusXSmall).fill(Color.negative.opacity(0.15)))
+                        }
+                    }
+                    if isByMe, let path = share.sourcePath, !path.isEmpty {
+                        Text(path)
+                            .type(.body3(.regular), style: .secondary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                    }
+                }
+
+                Spacer(minLength: 0)
+
+                // Points down when collapsed, flips up when expanded.
+                IconKit.chevronDown
+                    .resizable().scaledToFit()
+                    .foregroundStyle(Color.secondaryDS)
+                    .frame(width: Metrics.chevronSize, height: Metrics.chevronSize)
+                    .rotationEffect(.degrees(isExpanded ? 180 : 0))
+            }
+            .padding(.horizontal, Metrics.padding)
+            .padding(.vertical, Metrics.headerVerticalPadding)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(DSHapticButtonStyle())
+        .opacity(isDeleting ? Metrics.deletingOpacity : 1)
+        .disabled(isDeleting)
+    }
+
+    /// Folder glyph for directory shares, a real thumbnail for a by-me image share, otherwise
+    /// a per-format `FileTypeIcon` keyed off the shared item's own extension — same treatment
+    /// the Browse list gives a file row.
+    @ViewBuilder
+    private var shareIcon: some View {
+        if share.isDirectory {
+            IconKit.folderFill
+                .resizable().scaledToFit()
+                .foregroundStyle(Color.accent)
+        } else if let thumbnailPath {
+            ThumbnailImage(
+                serverURL: serverURL,
+                path: thumbnailPath,
+                signature: "\(share.updatedAt.timeIntervalSince1970)",
+                fallbackIcon: IconKit.document,
+                iconTint: Color.secondaryDS
+            )
+            .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+        } else {
+            FileTypeIcon(kind: (share.displayName as NSString).pathExtension)
+        }
+    }
+
+    /// Full server path for a by-me image share — the only case a real thumbnail is
+    /// reachable: shared-with-me links carry only the leaf name, and non-image kinds have no
+    /// server thumbnail to fetch.
+    private var thumbnailPath: String? {
+        guard isByMe, let path = share.sourcePath, !path.isEmpty else { return nil }
+        let ext = (share.displayName as NSString).pathExtension
+        guard FileItem.isImageKind(ext) || FileItem.isRawImageKind(ext) else { return nil }
+        return path
+    }
+}
+
+/// The expanded metadata for a share: shared-with / access / expiration, the direct-link mode
+/// picker, and the per-link actions ("by me"); or just who shared it, access and expiry ("with
+/// me"). Rendered as its own list row so it inserts/removes cleanly below the fixed header.
+struct SharedLinkDetailRow: View {
+    private typealias Metrics = SharedLinkMetrics
+
     let share: Share
     let serverURL: URL
     let isByMe: Bool
@@ -19,74 +145,13 @@ struct SharedLinkCard: View {
     let onEdit: () -> Void
     let onCopied: (String) -> Void
 
-    @State private var isExpanded: Bool
-    /// Split from `isExpanded` so the chevron spins first and the body reveal follows a beat
-    /// later, rather than both riding one spring.
-    @State private var isChevronRotated: Bool
     @State private var directLinkMode: DirectLinkMode = .auto
 
-    init(
-        share: Share,
-        serverURL: URL,
-        isByMe: Bool,
-        isExpired: Bool,
-        audience: SharedFeature.State.Audience = .anyone,
-        sharedByText: String = "",
-        isDeleting: Bool,
-        startExpanded: Bool = false,
-        onDelete: @escaping () -> Void,
-        onEdit: @escaping () -> Void = {},
-        onCopied: @escaping (String) -> Void
-    ) {
-        self.share = share
-        self.serverURL = serverURL
-        self.isByMe = isByMe
-        self.isExpired = isExpired
-        self.audience = audience
-        self.sharedByText = sharedByText
-        self.isDeleting = isDeleting
-        self.onDelete = onDelete
-        self.onEdit = onEdit
-        self.onCopied = onCopied
-        self._isExpanded = State(initialValue: startExpanded)
-        self._isChevronRotated = State(initialValue: startExpanded)
-    }
-
-    private enum Metrics {
-        static let padding: CGFloat = .space16
-        /// Matches the Browse file row's vertical rhythm (`FileRowView`).
-        static let headerVerticalPadding: CGFloat = .space16
-        /// The chevron spin runs first; the body reveal is delayed by this much.
-        static let chevronSpinDuration: Double = 0.18
-        static var chevronSpin: Animation { .snappy(duration: chevronSpinDuration) }
-        static let actionRowSpacing: CGFloat = .space8
-        /// One value for both the meta rows and the link-mode row so they read as one list.
-        static let rowVerticalPadding: CGFloat = .space8
-        static let actionVerticalPadding: CGFloat = .space12
-        static let iconSize: CGFloat = .iconMedium
-        static let metaIconSize: CGFloat = .iconSmall
-        static let chevronSize: CGFloat = .iconXSmall
-        static let actionIconSize: CGFloat = .iconSmall
-        static let badgeHorizontalPadding: CGFloat = .space8
-        static let badgeVerticalPadding: CGFloat = .space2
-        /// Chip tint strength — the recipient's categorical color at low alpha behind its name.
-        static let chipFillOpacity: Double = 0.16
-        static let deletingOpacity: Double = 0.4
-        /// Expired links mute the info rows — but never the actions, which stay usable
-        /// (delete) or at least fully legible.
-        static let expiredInfoOpacity: Double = 0.55
-    }
-
     var body: some View {
-        VStack(spacing: 0) {
-            header
-            if isExpanded {
-                Group {
-                    if isByMe { ownerBody } else { recipientBody }
-                }
-                .transition(.opacity)
-            }
+        Group {
+            if isByMe { ownerBody } else { recipientBody }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .opacity(isDeleting ? Metrics.deletingOpacity : 1)
         .disabled(isDeleting)
     }
@@ -167,27 +232,29 @@ struct SharedLinkCard: View {
         .padding(.vertical, Metrics.rowVerticalPadding)
     }
 
-    /// Every recipient as its own chip, each in a stable per-name color, wrapping onto as many
-    /// rows as it takes. Any recipients whose display name hasn't loaded collapse into a
-    /// trailing neutral `+N`.
+    /// Every recipient as its own chip, each in a stable per-name color, laid out on a single
+    /// horizontal row that scrolls when the names overflow. Any recipients whose display name
+    /// hasn't loaded collapse into a trailing neutral `+N`.
     @ViewBuilder
     private func recipientChips(names: [String], unnamed: Int) -> some View {
-        DSFlowLayout(horizontalSpacing: .space4, verticalSpacing: .space4) {
-            ForEach(names, id: \.self) { name in
-                Text(name)
-                    .type(.caption(.semibold))
-                    .foregroundStyle(Color.categorical(for: name))
-                    .lineLimit(1)
-                    .padding(.horizontal, .space8)
-                    .padding(.vertical, Metrics.badgeVerticalPadding)
-                    .background(Capsule().fill(Color.categorical(for: name).opacity(Metrics.chipFillOpacity)))
-            }
-            if unnamed > 0 {
-                Text(L10n.Shared.moreRecipients(unnamed))
-                    .type(.caption(.semibold), style: .secondary)
-                    .padding(.horizontal, .space8)
-                    .padding(.vertical, Metrics.badgeVerticalPadding)
-                    .background(Capsule().fill(Color.secondaryDS.opacity(Metrics.chipFillOpacity)))
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: .space4) {
+                ForEach(names, id: \.self) { name in
+                    Text(name)
+                        .type(.body3(.semibold))
+                        .foregroundStyle(Color.categorical(for: name))
+                        .lineLimit(1)
+                        .padding(.horizontal, Metrics.chipHorizontalPadding)
+                        .padding(.vertical, Metrics.chipVerticalPadding)
+                        .background(Capsule().fill(Color.categorical(for: name).opacity(Metrics.chipFillOpacity)))
+                }
+                if unnamed > 0 {
+                    Text(L10n.Shared.moreRecipients(unnamed))
+                        .type(.body3(.semibold), style: .secondary)
+                        .padding(.horizontal, Metrics.chipHorizontalPadding)
+                        .padding(.vertical, Metrics.chipVerticalPadding)
+                        .background(Capsule().fill(Color.secondaryDS.opacity(Metrics.chipFillOpacity)))
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -196,85 +263,6 @@ struct SharedLinkCard: View {
     private var audienceIsAnyone: Bool {
         if case .anyone = audience { return true }
         return false
-    }
-
-    /// Folder glyph for directory shares, a real thumbnail for a by-me image share, otherwise
-    /// a per-format `FileTypeIcon` keyed off the shared item's own extension — same treatment
-    /// the Browse list gives a file row.
-    @ViewBuilder
-    private var shareIcon: some View {
-        if share.isDirectory {
-            IconKit.folderFill
-                .resizable().scaledToFit()
-                .foregroundStyle(Color.accent)
-        } else if let thumbnailPath {
-            ThumbnailImage(
-                serverURL: serverURL,
-                path: thumbnailPath,
-                signature: "\(share.updatedAt.timeIntervalSince1970)",
-                fallbackIcon: IconKit.document,
-                iconTint: Color.secondaryDS
-            )
-            .frame(width: Metrics.iconSize, height: Metrics.iconSize)
-        } else {
-            FileTypeIcon(kind: (share.displayName as NSString).pathExtension)
-        }
-    }
-
-    /// Full server path for a by-me image share — the only case a real thumbnail is
-    /// reachable: shared-with-me links carry only the leaf name, and non-image kinds have no
-    /// server thumbnail to fetch.
-    private var thumbnailPath: String? {
-        guard isByMe, let path = share.sourcePath, !path.isEmpty else { return nil }
-        let ext = (share.displayName as NSString).pathExtension
-        guard FileItem.isImageKind(ext) || FileItem.isRawImageKind(ext) else { return nil }
-        return path
-    }
-
-    private var header: some View {
-        Button {
-            withAnimation(Metrics.chevronSpin) { isChevronRotated.toggle() }
-            withAnimation(DSMotion.disclosure.delay(Metrics.chevronSpinDuration)) { isExpanded.toggle() }
-        } label: {
-            HStack(spacing: .space12) {
-                shareIcon
-                    .frame(width: Metrics.iconSize, height: Metrics.iconSize)
-
-                VStack(alignment: .leading, spacing: .space2) {
-                    HStack(spacing: .space8) {
-                        Text(share.displayName)
-                            .type(.body2(.semibold), style: .primary(for: .label))
-                            .lineLimit(1)
-                        if isExpired {
-                            Text(L10n.Shared.badgeExpired.uppercased())
-                                .type(.caption(.semibold), style: .error)
-                                .padding(.horizontal, Metrics.badgeHorizontalPadding)
-                                .padding(.vertical, Metrics.badgeVerticalPadding)
-                                .background(RoundedRectangle(cornerRadius: .radiusXSmall).fill(Color.negative.opacity(0.15)))
-                        }
-                    }
-                    if isByMe, let path = share.sourcePath, !path.isEmpty {
-                        Text(path)
-                            .type(.body3(.regular), style: .secondary)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                    }
-                }
-
-                Spacer(minLength: 0)
-
-                // Points down when collapsed, flips up when expanded.
-                IconKit.chevronDown
-                    .resizable().scaledToFit()
-                    .foregroundStyle(Color.secondaryDS)
-                    .frame(width: Metrics.chevronSize, height: Metrics.chevronSize)
-                    .rotationEffect(.degrees(isChevronRotated ? 180 : 0))
-            }
-            .padding(.horizontal, Metrics.padding)
-            .padding(.vertical, Metrics.headerVerticalPadding)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(DSHapticButtonStyle())
     }
 
     private var linkModeRow: some View {
@@ -388,38 +376,69 @@ extension Share {
     }
 }
 
+/// Preview host: composes the header + detail rows in a real inset-grouped List and drives the
+/// expansion so the accordion can be exercised, exactly as `SharedSegmentList` does.
+private struct SharedLinkCardPreview: View {
+    let share: Share
+    var isByMe: Bool = true
+    var isExpired: Bool = false
+    var audience: SharedFeature.State.Audience = .anyone
+    var sharedByText: String = ""
+    var startExpanded: Bool = false
+
+    @State private var isExpanded = false
+    private let url = URL(string: "https://cloud.phillipmaizza.com")!
+
+    var body: some View {
+        List {
+            Section {
+                SharedLinkHeaderRow(
+                    share: share, serverURL: url, isByMe: isByMe, isExpired: isExpired,
+                    isDeleting: false, isExpanded: isExpanded,
+                    onToggle: { withAnimation(SharedLinkMetrics.expand) { isExpanded.toggle() } }
+                )
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.backgroundSecondary)
+                .listRowSeparator(.hidden)
+                if isExpanded {
+                    SharedLinkDetailRow(
+                        share: share, serverURL: url, isByMe: isByMe, isExpired: isExpired,
+                        audience: audience, sharedByText: sharedByText, isDeleting: false,
+                        onDelete: {}, onEdit: {}, onCopied: { _ in }
+                    )
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.backgroundSecondary)
+                    .listRowSeparator(.hidden)
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .background(Color.backgroundPrimary)
+        .onAppear { isExpanded = startExpanded }
+    }
+}
+
 #Preview("Card — collapsed / expanded") {
-    let url = URL(string: "https://cloud.phillipmaizza.com")!
-    return ScrollView {
-        VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(isDirectory: true), serverURL: url, isByMe: true, isExpired: false, isDeleting: false, onDelete: {}, onCopied: { _ in })
-            SharedLinkCard(share: .previewCard(), serverURL: url, isByMe: true, isExpired: false, isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
-        }
-        .padding(.space16)
-    }
-    .background(Color.backgroundPrimary)
+    SharedLinkCardPreview(share: .previewCard(isDirectory: true))
 }
 
-#Preview("Card — users / password / expiry") {
-    let url = URL(string: "https://cloud.phillipmaizza.com")!
-    return ScrollView {
-        VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(target: .users, hasPassword: true), serverURL: url, isByMe: true, isExpired: false, audience: .users(names: ["Jamie Rivera", "Sam Okafor", "Jeremy Brown", "Dana Lee"], unnamed: 1), isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
-            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(86_400 * 3)), serverURL: url, isByMe: true, isExpired: false, isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
-        }
-        .padding(.space16)
-    }
-    .background(Color.backgroundPrimary)
+#Preview("Card — users") {
+    SharedLinkCardPreview(
+        share: .previewCard(target: .users),
+        audience: .users(names: ["Jamie Rivera", "Sam Okafor", "Jeremy Brown", "Dana Lee"], unnamed: 1),
+        startExpanded: true
+    )
 }
 
-#Preview("Card — expired / with me") {
-    let url = URL(string: "https://cloud.phillipmaizza.com")!
-    return ScrollView {
-        VStack(spacing: .space12) {
-            SharedLinkCard(share: .previewCard(expiresAt: Date().addingTimeInterval(-3600)), serverURL: url, isByMe: true, isExpired: true, isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
-            SharedLinkCard(share: .previewCard(sourcePath: nil), serverURL: url, isByMe: false, isExpired: false, isDeleting: false, startExpanded: true, onDelete: {}, onCopied: { _ in })
-        }
-        .padding(.space16)
-    }
-    .background(Color.backgroundPrimary)
+#Preview("Card — expiry") {
+    SharedLinkCardPreview(share: .previewCard(expiresAt: Date().addingTimeInterval(86_400 * 3)), startExpanded: true)
+}
+
+#Preview("Card — expired") {
+    SharedLinkCardPreview(share: .previewCard(expiresAt: Date().addingTimeInterval(-3600)), isExpired: true, startExpanded: true)
+}
+
+#Preview("Card — with me") {
+    SharedLinkCardPreview(share: .previewCard(sourcePath: nil), isByMe: false, sharedByText: "Alex Kim", startExpanded: true)
 }

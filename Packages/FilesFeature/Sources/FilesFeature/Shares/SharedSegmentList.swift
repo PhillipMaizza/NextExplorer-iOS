@@ -23,6 +23,10 @@ struct SharedSegmentList: View {
     @State private var pullOffset: CGFloat = 0
     /// Flipped once a pull-to-refresh finishes, purely as a `.hapticFeedback` trigger.
     @State private var didFinishRefreshing = false
+    /// Which shares are expanded. Kept here (not in the row) so the header and its detail can be
+    /// two separate list rows: the header row's height never changes, so it can never be
+    /// vertically centered by its cell and stays fixed while the detail row animates in/out.
+    @State private var expandedIDs: Set<Share.ID> = []
 
     private var phase: DataPhase { store.state.phase(for: segment) }
     private var errorMessage: String? { phase.errorMessage }
@@ -91,9 +95,9 @@ struct SharedSegmentList: View {
     private var skeletonRows: some View {
         Section {
             ForEach(Array(Self.placeholderShares.enumerated()), id: \.element.id) { index, share in
-                SharedLinkCard(
+                SharedLinkHeaderRow(
                     share: share, serverURL: store.serverURL, isByMe: true, isExpired: false,
-                    isDeleting: false, onDelete: {}, onCopied: { _ in }
+                    isDeleting: false, isExpanded: false, onToggle: {}
                 )
                 .redacted(reason: .placeholder)
                 .shimmering()
@@ -109,30 +113,53 @@ struct SharedSegmentList: View {
     @ViewBuilder
     private func section(for shares: IdentifiedArrayOf<Share>, header: String?) -> some View {
         let firstID = shares.first?.id
-        let lastID = shares.last?.id
         Section {
+            // Each share is a header row plus, when expanded, a separate detail row. The single
+            // separator between shares is drawn on the top of every header but the first; the
+            // header/detail pair carries none, so it reads as one card.
             ForEach(shares) { share in
-                SharedLinkCard(
+                SharedLinkHeaderRow(
                     share: share,
                     serverURL: store.serverURL,
                     isByMe: segment == .byMe,
                     isExpired: store.state.isExpired(share),
-                    audience: store.state.audience(for: share),
-                    sharedByText: store.state.sharedByLabel(for: share),
                     isDeleting: store.deletingIDs.contains(share.id),
-                    onDelete: { store.send(.deleteTapped(share)) },
-                    onEdit: { store.send(.editTapped(share)) },
-                    onCopied: { onToast(.success($0)) }
+                    isExpanded: expandedIDs.contains(share.id),
+                    onToggle: { toggleExpanded(share.id) }
                 )
                 .listRowInsets(EdgeInsets())
                 .listRowBackground(Color.backgroundSecondary)
                 .listRowSeparator(share.id == firstID ? .hidden : .visible, edges: .top)
-                .listRowSeparator(share.id == lastID ? .hidden : .visible, edges: .bottom)
+                .listRowSeparator(.hidden, edges: .bottom)
+
+                if expandedIDs.contains(share.id) {
+                    SharedLinkDetailRow(
+                        share: share,
+                        serverURL: store.serverURL,
+                        isByMe: segment == .byMe,
+                        isExpired: store.state.isExpired(share),
+                        audience: store.state.audience(for: share),
+                        sharedByText: store.state.sharedByLabel(for: share),
+                        isDeleting: store.deletingIDs.contains(share.id),
+                        onDelete: { store.send(.deleteTapped(share)) },
+                        onEdit: { store.send(.editTapped(share)) },
+                        onCopied: { onToast(.success($0)) }
+                    )
+                    .listRowInsets(EdgeInsets())
+                    .listRowBackground(Color.backgroundSecondary)
+                    .listRowSeparator(.hidden)
+                }
             }
         } header: {
             if let header {
                 DSFieldLabel(header)
             }
+        }
+    }
+
+    private func toggleExpanded(_ id: Share.ID) {
+        withAnimation(SharedLinkMetrics.expand) {
+            if expandedIDs.contains(id) { expandedIDs.remove(id) } else { expandedIDs.insert(id) }
         }
     }
 }

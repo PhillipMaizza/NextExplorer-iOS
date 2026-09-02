@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NextExplorer Terms of Use</title>
+<meta name="description" content="The terms governing use of the NextExplorer iOS app.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+  :root {
+    --ground: #f7f7f5;
+    --surface: #ffffff;
+    --raise: #fbfaf8;
+    --ink: #1c1b19;
+    --muted: #6e6a63;
+    --faint: #928d84;
+    --line: #e6e3dd;
+    --accent: #c9741f;
+    --accent-inkline: #a85f16;
+    --accent-soft: rgba(201, 116, 31, 0.10);
+    --good: #3c8558;
+    --good-soft: rgba(60, 133, 88, 0.10);
+    --shadow: 0 1px 2px rgba(28, 27, 25, 0.04), 0 8px 28px rgba(28, 27, 25, 0.05);
+    color-scheme: light;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --ground: #131210;
+      --surface: #1c1a16;
+      --raise: #232019;
+      --ink: #ece8e1;
+      --muted: #a29c91;
+      --faint: #726c62;
+      --line: #2d2924;
+      --accent: #eba24a;
+      --accent-inkline: #f0b166;
+      --accent-soft: rgba(235, 162, 74, 0.13);
+      --good: #63b083;
+      --good-soft: rgba(99, 176, 131, 0.12);
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #131210;
+    --surface: #1c1a16;
+    --raise: #232019;
+    --ink: #ece8e1;
+    --muted: #a29c91;
+    --faint: #726c62;
+    --line: #2d2924;
+    --accent: #eba24a;
+    --accent-inkline: #f0b166;
+    --accent-soft: rgba(235, 162, 74, 0.13);
+    --good: #63b083;
+    --good-soft: rgba(99, 176, 131, 0.12);
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.5rem; }
+
+  header { border-bottom: 1px solid var(--line); background: var(--surface); }
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 1rem; padding: 1.1rem 0;
+  }
+  .brand { display: flex; align-items: center; gap: 0.7rem; }
+  .brand svg { display: block; width: 30px; height: 30px; }
+  .brand .name {
+    font-family: "Figtree", system-ui, sans-serif;
+    font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; color: var(--ink);
+  }
+  .theme-toggle {
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase;
+    color: var(--muted); background: transparent; border: 1px solid var(--line);
+    border-radius: 8px; padding: 0.4rem 0.7rem; cursor: pointer;
+  }
+  .theme-toggle:hover { color: var(--ink); border-color: var(--accent); }
+  .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .masthead { padding: 2.75rem 0 2rem; }
+  .eyebrow {
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--accent-inkline); margin: 0 0 0.9rem;
+  }
+  h1 {
+    font-family: "Figtree", system-ui, sans-serif;
+    font-weight: 700; font-size: clamp(2rem, 6vw, 2.85rem); line-height: 1.08;
+    letter-spacing: -0.02em; margin: 0 0 1rem; text-wrap: balance;
+  }
+  .lede { font-size: 1.18rem; color: var(--muted); margin: 0 0 1.4rem; max-width: 38rem; }
+  .meta {
+    display: flex; flex-wrap: wrap; gap: 0.5rem;
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 0.75rem; letter-spacing: 0.02em;
+  }
+  .meta span {
+    border: 1px solid var(--line); border-radius: 999px; padding: 0.28rem 0.7rem; color: var(--muted);
+  }
+
+  .callout {
+    display: flex; gap: 0.9rem; align-items: flex-start;
+    background: var(--accent-soft); border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
+    border-radius: 14px; padding: 1.15rem 1.25rem; margin: 0 0 2.5rem;
+  }
+  .callout .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--accent); margin-top: 0.5rem; }
+  .callout p { margin: 0; }
+  .callout strong { font-family: "Figtree", system-ui, sans-serif; }
+
+  nav.toc { margin: 0 0 2.75rem; }
+  nav.toc h2 {
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--faint); margin: 0 0 0.8rem; font-weight: 500;
+  }
+  nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc;
+    column-count: 2; column-gap: 2rem; }
+  nav.toc li { counter-increment: toc; margin: 0 0 0.4rem; break-inside: avoid; }
+  nav.toc a {
+    color: var(--ink); text-decoration: none; display: flex; gap: 0.6rem; align-items: baseline;
+    font-size: 0.95rem;
+  }
+  nav.toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-family: "Figtree", system-ui, sans-serif; font-size: 0.72rem;
+    color: var(--accent-inkline);
+  }
+  nav.toc a:hover { color: var(--accent-inkline); }
+
+  main { padding-bottom: 3rem; }
+  section { padding: 1.6rem 0; border-top: 1px solid var(--line); }
+  section:first-of-type { border-top: none; }
+  h2.sec {
+    font-family: "Figtree", system-ui, sans-serif;
+    font-weight: 600; font-size: 1.4rem; letter-spacing: -0.01em;
+    margin: 0 0 0.9rem; display: flex; gap: 0.7rem; align-items: baseline; text-wrap: balance;
+  }
+  h2.sec .num {
+    font-family: "Figtree", system-ui, sans-serif; font-size: 0.85rem;
+    color: var(--accent-inkline); font-weight: 500;
+  }
+  h3 {
+    font-family: "Figtree", system-ui, sans-serif; font-weight: 600;
+    font-size: 1.05rem; margin: 1.5rem 0 0.5rem;
+  }
+  p { margin: 0 0 1rem; }
+  a { color: var(--accent-inkline); }
+  ul { margin: 0 0 1rem; padding-left: 1.2rem; }
+  li { margin: 0 0 0.5rem; }
+  .term {
+    font-family: "Figtree", system-ui, sans-serif;
+    font-size: 0.86em; background: var(--accent-soft); color: var(--accent-inkline);
+    padding: 0.08em 0.4em; border-radius: 5px;
+  }
+  .ph {
+    font-family: "Figtree", system-ui, sans-serif; font-size: 0.86em;
+    background: var(--accent-soft); color: var(--accent-inkline);
+    border: 1px dashed var(--accent); border-radius: 5px; padding: 0.05em 0.4em;
+  }
+  .legal { font-size: 0.95rem; color: var(--muted); }
+  .legal strong { color: var(--ink); font-family: "Figtree", system-ui, sans-serif; }
+
+  footer.pagefoot {
+    border-top: 1px solid var(--line); background: var(--surface);
+    padding: 2rem 0; color: var(--muted); font-size: 0.92rem;
+  }
+  footer.pagefoot .name {
+    font-family: "Figtree", system-ui, sans-serif; font-weight: 700; color: var(--ink);
+  }
+  footer.pagefoot a { color: var(--accent-inkline); }
+
+  @media (max-width: 34rem) {
+    nav.toc ol { column-count: 1; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap topbar">
+    <div class="brand">
+      <svg viewBox="0 0 48 40" aria-hidden="true">
+        <defs>
+          <linearGradient id="mk" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#f4b24a"></stop>
+            <stop offset="1" stop-color="#d9822b"></stop>
+          </linearGradient>
+        </defs>
+        <path d="M6 6 L20 6 L20 34 L6 34 Z" fill="url(#mk)"></path>
+        <path d="M28 6 L42 6 L42 34 L28 34 Z" fill="url(#mk)"></path>
+        <path d="M20 6 L20 34 L13 20 Z" fill="rgba(0,0,0,0.16)"></path>
+        <path d="M42 6 L42 34 L35 20 Z" fill="rgba(0,0,0,0.16)"></path>
+      </svg>
+      <span class="name">NextExplorer</span>
+    </div>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">Theme</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="masthead">
+    <p class="eyebrow">Legal &middot; Terms</p>
+    <h1>Terms of Use</h1>
+    <p class="lede">These terms govern your use of the NextExplorer app. NextExplorer is a tool for reaching your own server: you bring the server and the files, and the App is the window onto them.</p>
+    <div class="meta">
+      <span>Effective 2 September 2026</span>
+      <span>App version 1.0</span>
+      <span>iOS</span>
+    </div>
+  </div>
+
+  <div class="callout" role="note">
+    <span class="dot" aria-hidden="true"></span>
+    <p><strong>In plain terms:</strong> the App is provided as is, for use with a server you control. We don&rsquo;t host your files and aren&rsquo;t responsible for your server or its contents. Use it lawfully and keep your credentials safe.</p>
+  </div>
+
+  <nav class="toc" aria-label="Contents">
+    <h2>Contents</h2>
+    <ol>
+      <li><a href="#accept">Acceptance of these terms</a></li>
+      <li><a href="#service">What NextExplorer is</a></li>
+      <li><a href="#license">Your license to use the App</a></li>
+      <li><a href="#responsibilities">Your responsibilities</a></li>
+      <li><a href="#acceptable">Acceptable use</a></li>
+      <li><a href="#servers">Your server and its content</a></li>
+      <li><a href="#ip">Intellectual property</a></li>
+      <li><a href="#warranty">Disclaimer of warranties</a></li>
+      <li><a href="#liability">Limitation of liability</a></li>
+      <li><a href="#termination">Termination</a></li>
+      <li><a href="#law">Governing law</a></li>
+      <li><a href="#changes">Changes to these terms</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ol>
+  </nav>
+
+  <main>
+    <section id="accept">
+      <h2 class="sec"><span class="num">01</span> Acceptance of these terms</h2>
+      <p>By downloading, installing, or using the <strong>NextExplorer</strong> iOS application (the <span class="term">App</span>), published by Phillip Maizza (<span class="term">we</span>, <span class="term">us</span>), you agree to these Terms of Use. If you do not agree, do not use the App.</p>
+      <p>These terms are between you and us. They are not a substitute for, and are in addition to, Apple&rsquo;s <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" rel="noopener" target="_blank">Licensed Application End User License Agreement</a>, which also applies to apps obtained through the App Store.</p>
+    </section>
+
+    <section id="service">
+      <h2 class="sec"><span class="num">02</span> What NextExplorer is</h2>
+      <p>NextExplorer is client software that connects to a compatible self hosted file server that you specify and sign in to. Through it you can browse, preview, upload, download, and share files that reside on that server.</p>
+      <p>We do not operate any server for you, do not store your files, and are not a party to the relationship between you and your server or its administrator. The App simply lets your device talk to a server of your choosing.</p>
+    </section>
+
+    <section id="license">
+      <h2 class="sec"><span class="num">03</span> Your license to use the App</h2>
+      <p>Subject to these terms, we grant you a personal license to install and use the App on Apple devices that you own or control, for your personal or internal business use. This license is not exclusive; it cannot be transferred, and it may be revoked.</p>
+      <p>You may not: sell, rent, sublicense, or redistribute the App; reverse engineer, decompile, or disassemble it except to the extent that applicable law expressly permits; remove or alter any proprietary notices; or use it to build a competing product.</p>
+    </section>
+
+    <section id="responsibilities">
+      <h2 class="sec"><span class="num">04</span> Your responsibilities</h2>
+      <ul>
+        <li>You are responsible for the server you connect to, for having the right to access it, and for the files and data you handle through it.</li>
+        <li>You are responsible for keeping your server address and credentials confidential, and for all activity carried out through your device.</li>
+        <li>You are responsible for your own backups. The App is not a backup service and does not guarantee that any file, cached copy, or upload is preserved.</li>
+        <li>You are responsible for complying with the laws that apply to you and with the policies of your server and network.</li>
+      </ul>
+    </section>
+
+    <section id="acceptable">
+      <h2 class="sec"><span class="num">05</span> Acceptable use</h2>
+      <p>You agree not to use the App to access, store, or distribute material unlawfully, to infringe anyone&rsquo;s rights, to gain unauthorized access to any system, or to interfere with the operation of any server or network. You agree not to use the App in any way that violates applicable law or the rights of others.</p>
+    </section>
+
+    <section id="servers">
+      <h2 class="sec"><span class="num">06</span> Your server and its content</h2>
+      <p>All files, folders, share links, and settings you access through the App live on your server and belong to you or its administrator. We do not see, control, endorse, or take responsibility for that content or for how your server behaves.</p>
+      <p>If you connect to a server over an insecure connection despite the App&rsquo;s warning, you accept the risks that follow, including the exposure of data in transit.</p>
+    </section>
+
+    <section id="ip">
+      <h2 class="sec"><span class="num">07</span> Intellectual property</h2>
+      <p>The App, its name, and its design are owned by us and protected by intellectual property laws. Nothing in these terms transfers those rights to you beyond the limited license above.</p>
+      <p>The App includes open source components used under their respective licenses, which are listed on the <strong>Open Source Licenses</strong> screen within the App&rsquo;s Settings. Your use of those components is governed by their licenses.</p>
+    </section>
+
+    <section id="warranty">
+      <h2 class="sec"><span class="num">08</span> Disclaimer of warranties</h2>
+      <p class="legal">The App is provided <strong>&ldquo;as is&rdquo;</strong> and <strong>&ldquo;as available&rdquo;</strong>, without warranties of any kind, whether express or implied, including but not limited to implied warranties of merchantability, fitness for a particular purpose, and noninfringement. We do not warrant that the App will be uninterrupted, free of errors, compatible with every server, or that any data will be preserved. You use the App at your own risk, to the fullest extent permitted by law.</p>
+    </section>
+
+    <section id="liability">
+      <h2 class="sec"><span class="num">09</span> Limitation of liability</h2>
+      <p class="legal">To the fullest extent permitted by law, we will not be liable for any indirect, incidental, special, consequential, or punitive damages, or for any loss of data, files, profits, or goodwill, arising out of or relating to your use of, or inability to use, the App, even if we have been advised of the possibility of such damages. Where liability cannot be excluded, our total liability is limited to the amount you paid for the App, if any.</p>
+    </section>
+
+    <section id="termination">
+      <h2 class="sec"><span class="num">10</span> Termination</h2>
+      <p>These terms apply for as long as you use the App. You may end them at any time by ceasing to use the App and deleting it from your devices. The sections on intellectual property, disclaimers, limitation of liability, and governing law survive termination.</p>
+    </section>
+
+    <section id="law">
+      <h2 class="sec"><span class="num">11</span> Governing law</h2>
+      <p>These terms are governed by the laws of <strong>Spain</strong>, without regard to its rules on conflicts of law. The courts located in Spain will have exclusive jurisdiction over any dispute, unless mandatory consumer protection law in your place of residence provides otherwise.</p>
+    </section>
+
+    <section id="changes">
+      <h2 class="sec"><span class="num">12</span> Changes to these terms</h2>
+      <p>We may update these terms from time to time. When we do, we will revise the effective date above and post the updated terms at this address. Continuing to use the App after an update means you accept the revised terms.</p>
+    </section>
+
+    <section id="contact">
+      <h2 class="sec"><span class="num">13</span> Contact</h2>
+      <p>Questions about these terms? Reach us at <a href="mailto:hello@phillipmaizza.com">hello@phillipmaizza.com</a>.</p>
+    </section>
+  </main>
+</div>
+
+<footer class="pagefoot">
+  <div class="wrap">
+    <p><span class="name">NextExplorer</span>: a client for the files on your own server.</p>
+    <p>&copy; 2026 Phillip Maizza. Last updated 2 September 2026.</p>
+  </div>
+</footer>
+
+<script>
+  (function () {
+    var root = document.documentElement;
+    var btn = document.getElementById("themeToggle");
+    var stored = null;
+    try { stored = localStorage.getItem("ne-theme"); } catch (e) {}
+    if (stored === "dark" || stored === "light") root.setAttribute("data-theme", stored);
+    function current() {
+      var t = root.getAttribute("data-theme");
+      if (t) return t;
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+    btn.addEventListener("click", function () {
+      var next = current() === "dark" ? "light" : "dark";
+      root.setAttribute("data-theme", next);
+      try { localStorage.setItem("ne-theme", next); } catch (e) {}
+    });
+  })();
+</script>
+</body>
+</html>

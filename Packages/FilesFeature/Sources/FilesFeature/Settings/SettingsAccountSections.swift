@@ -13,6 +13,7 @@ private enum Constants {
     static let signOutFadeDuration: Double = 0.15
 }
 
+@MainActor
 private func sectionHeader(_ title: String) -> some View {
     DSFieldLabel(title)
 }

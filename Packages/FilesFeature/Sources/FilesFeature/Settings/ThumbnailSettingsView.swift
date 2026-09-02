@@ -7,8 +7,8 @@ import SwiftUI
 private enum Metrics {
     static let contentSpacing: CGFloat = .space16
     static let horizontalPadding: CGFloat = .space16
-    static let rowSpacing: CGFloat = .space4
-    static let rowIconSpacing: CGFloat = .space8
+    static let rowSpacing: CGFloat = .space8
+    static let rowIconSpacing: CGFloat = .space12
     static let rowIconSize: CGFloat = .iconSmall
     static let disabledOpacity: Double = 0.5
     static let sizeStep = 8
@@ -58,18 +58,20 @@ struct ThumbnailSettingsView: View {
     }
 
     private var formCard: some View {
-        Card {
-            DSToggleRow(
-                title: L10n.ThumbnailSettings.enable,
-                subtitle: L10n.ThumbnailSettings.enableHelp,
-                icon: IconKit.photo,
-                isOn: $store.draft.isEnabled.sending(\.enabledChanged)
-            )
+        VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
+            Card {
+                DSToggleRow(
+                    title: L10n.ThumbnailSettings.enable,
+                    subtitle: L10n.ThumbnailSettings.enableHelp,
+                    icon: IconKit.photo,
+                    isOn: $store.draft.isEnabled.sending(\.enabledChanged)
+                )
+            }
 
-            VStack(alignment: .leading, spacing: .space16) {
-                numericRow(
+            VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
+                numericSection(
                     title: L10n.ThumbnailSettings.quality,
-                    help: L10n.ThumbnailSettings.qualityHelp,
+                    footer: L10n.ThumbnailSettings.qualityHelp,
                     icon: IconKit.sparkle,
                     value: store.draft.quality,
                     unit: nil,
@@ -77,9 +79,9 @@ struct ThumbnailSettingsView: View {
                     step: Metrics.qualityStep,
                     onChange: { store.send(.qualityChanged($0)) }
                 )
-                numericRow(
+                numericSection(
                     title: L10n.ThumbnailSettings.maxDimension,
-                    help: L10n.ThumbnailSettings.maxDimensionHelp,
+                    footer: L10n.ThumbnailSettings.maxDimensionHelp,
                     icon: IconKit.resize,
                     value: store.draft.size,
                     unit: "px",
@@ -87,9 +89,9 @@ struct ThumbnailSettingsView: View {
                     step: Metrics.sizeStep,
                     onChange: { store.send(.sizeChanged($0)) }
                 )
-                numericRow(
+                numericSection(
                     title: L10n.ThumbnailSettings.concurrency,
-                    help: L10n.ThumbnailSettings.concurrencyHelp,
+                    footer: L10n.ThumbnailSettings.concurrencyHelp,
                     icon: IconKit.speed,
                     value: store.draft.concurrency,
                     unit: nil,
@@ -103,9 +105,12 @@ struct ThumbnailSettingsView: View {
         }
     }
 
-    private func numericRow(
+    /// One numeric option laid out as a grouped section: a card whose first line holds the icon,
+    /// the option name, the value and the stepper, with the help text on its own line below the
+    /// whole stepper.
+    private func numericSection(
         title: String,
-        help: String,
+        footer: String,
         icon: Image,
         value: Int,
         unit: String?,
@@ -113,25 +118,29 @@ struct ThumbnailSettingsView: View {
         step: Int,
         onChange: @escaping (Int) -> Void
     ) -> some View {
-        VStack(alignment: .leading, spacing: Metrics.rowSpacing) {
-            Stepper(
-                value: Binding(get: { value }, set: { onChange($0) }),
-                in: range,
-                step: step
-            ) {
-                HStack(spacing: Metrics.rowIconSpacing) {
-                    icon
-                        .resizable().scaledToFit()
-                        .foregroundStyle(Color.secondaryDS)
-                        .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                    Text(title).type(.body2(.regular), style: .primary(for: .label))
-                    Spacer()
-                    Text(unit.map { "\(value) \($0)" } ?? "\(value)")
-                        .type(.body2(.semibold), style: .primary(for: .label))
-                        .monospacedDigit()
+        Card {
+            VStack(alignment: .leading, spacing: Metrics.rowSpacing) {
+                Stepper(
+                    value: Binding(get: { value }, set: { onChange($0) }),
+                    in: range,
+                    step: step
+                ) {
+                    HStack(spacing: Metrics.rowIconSpacing) {
+                        icon
+                            .resizable().scaledToFit()
+                            .foregroundStyle(Color.secondaryDS)
+                            .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
+                        Text(title).type(.body2(.regular), style: .primary(for: .label))
+                        Spacer(minLength: Metrics.rowIconSpacing)
+                        Text(unit.map { "\(value) \($0)" } ?? "\(value)")
+                            .type(.body2(.semibold), style: .primary(for: .label))
+                            .monospacedDigit()
+                    }
                 }
+                Text(footer)
+                    .type(.body3(.regular), style: .tertiary)
+                    .padding(.leading, Metrics.rowIconSize + Metrics.rowIconSpacing)
             }
-            Text(help).type(.body3(.regular), style: .tertiary)
         }
     }
 }

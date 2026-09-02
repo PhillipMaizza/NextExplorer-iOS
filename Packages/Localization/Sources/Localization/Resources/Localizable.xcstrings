@@ -3279,6 +3279,17 @@
         }
       }
     },
+    "settings.rowPrivacyPolicy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Privacy Policy"
+          }
+        }
+      }
+    },
     "settings.rowRemoveAllDownloads": {
       "extractionState": "manual",
       "localizations": {
@@ -3297,6 +3308,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Server"
+          }
+        }
+      }
+    },
+    "settings.rowTermsOfUse": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terms of Use"
           }
         }
       }
@@ -3363,6 +3385,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "General"
+          }
+        }
+      }
+    },
+    "settings.sectionLegal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legal"
           }
         }
       }
