@@ -5,7 +5,7 @@ private struct RoundedFieldModifier: ViewModifier {
     var isFocused: Bool
 
     private var borderStyle: AnyShapeStyle {
-        isFocused ? AnyShapeStyle(LinearGradient.accent) : AnyShapeStyle(Color.borderPrimary)
+        isFocused ? AnyShapeStyle(Color.accent) : AnyShapeStyle(Color.borderPrimary)
     }
 
     func body(content: Content) -> some View {
@@ -14,7 +14,7 @@ private struct RoundedFieldModifier: ViewModifier {
             .padding(.horizontal, .space12)
             .frame(height: height)
             .overlay(
-                RoundedRectangle(cornerRadius: .radiusLarge)
+                RoundedRectangle(cornerRadius: .radiusControl)
                     .strokeBorder(borderStyle, lineWidth: isFocused ? .borderWidthFocused : .borderWidthHairline)
             )
             .animation(.easeInOut(duration: 0.15), value: isFocused)

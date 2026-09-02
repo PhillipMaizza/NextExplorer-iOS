@@ -330,6 +330,7 @@ settings.sectionStorage	Storage
 settings.sectionServerStorage	Server Storage
 settings.serverStorageUsed	%1$@ of %2$@
 settings.sectionLicenses	Licenses
+settings.sectionLegal	Legal
 settings.sectionUsers	Users
 settings.sectionAdmin	Admin
 settings.toggleShowHiddenFiles	Show Hidden Files
@@ -347,6 +348,8 @@ settings.rowThumbnailSize	Thumbnail Size
 settings.rowRemoveAllDownloads	Remove All Downloads
 settings.rowClearCache	Clear Cache
 settings.rowOpenSourceLicenses	Open Source Licenses
+settings.rowPrivacyPolicy	Privacy Policy
+settings.rowTermsOfUse	Terms of Use
 settings.rowUserManagement	User Management
 settings.rowChangePassword	Change Password
 settings.rowServer	Server
