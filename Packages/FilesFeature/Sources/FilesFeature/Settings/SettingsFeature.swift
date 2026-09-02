@@ -112,8 +112,9 @@ public struct SettingsFeature {
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.previewCacheStore) var previewCacheStore
     @Dependency(\.directoryCacheStore) var directoryCacheStore
+    @Dependency(\.jsonCacheStore) var jsonCacheStore
 
-    private enum CancelID { case serverUsage, volumeUsage }
+    private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey) }
 
     public init() {}
 
@@ -215,9 +216,10 @@ public struct SettingsFeature {
                     await send(.downloadsSizeResponse(downloads.reduce(0) { $0 + $1.size }))
                 }
                 let directoryCacheStore = self.directoryCacheStore
+                let jsonCacheStore = self.jsonCacheStore
                 let checkCacheSize = Effect<Action>.run { send in
                     let size = (try? previewCacheStore.size()) ?? 0
-                    await send(.cacheSizeResponse(size + directoryCacheStore.totalSizeBytes()))
+                    await send(.cacheSizeResponse(size + directoryCacheStore.totalSizeBytes() + jsonCacheStore.totalSizeBytes()))
                 }
                 guard !state.isLoadingPreferences else {
                     return .merge(checkDownloads, checkCacheSize)
@@ -329,9 +331,11 @@ public struct SettingsFeature {
                 state.isClearingCache = true
                 let previewCacheStore = self.previewCacheStore
                 let directoryCacheStore = self.directoryCacheStore
+                let jsonCacheStore = self.jsonCacheStore
                 return .run { send in
                     try? previewCacheStore.clear()
                     directoryCacheStore.clearAll()
+                    jsonCacheStore.clearAll()
                     await send(.clearCacheResponse)
                 }
 
@@ -371,5 +375,8 @@ public struct SettingsFeature {
                 try await filesClient.updatePreference(serverURL, key, value)
             }))
         }
+        // Per key, so hammering one toggle converges the server on the latest value instead of
+        // letting an earlier PATCH land last and leave the server out of sync with the switch.
+        .cancellable(id: CancelID.preference(key), cancelInFlight: true)
     }
 }

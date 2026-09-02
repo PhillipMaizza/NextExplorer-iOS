@@ -639,6 +639,28 @@
         }
       }
     },
+    "browse.nameErrorReserved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That name isn't allowed."
+          }
+        }
+      }
+    },
+    "browse.nameErrorSeparators": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A name can't contain / or \\."
+          }
+        }
+      }
+    },
     "browse.navigationTitle": {
       "extractionState": "manual",
       "localizations": {
@@ -1383,6 +1405,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Direct link mode"
+          }
+        }
+      }
+    },
+    "createShare.errorPasswordRequired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter a password or turn off password protection."
           }
         }
       }
@@ -2487,17 +2520,6 @@
         }
       }
     },
-    "login.errorDecoding": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Server responded unexpectedly. Check the address and try again."
-          }
-        }
-      }
-    },
     "login.errorIncomplete": {
       "extractionState": "manual",
       "localizations": {
@@ -2571,6 +2593,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Too many attempts. Please wait a few minutes and try again."
+          }
+        }
+      }
+    },
+    "login.errorServer": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The server ran into a problem (error %lld). Please try again later."
           }
         }
       }

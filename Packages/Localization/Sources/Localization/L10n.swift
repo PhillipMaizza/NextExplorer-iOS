@@ -68,6 +68,8 @@ public enum L10n {
         public static func downloadSavedCountTo(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("browse.downloadSavedCountTo", a0, a1, a2) }
         public static func downloadSavedTo(_ a0: CVarArg) -> String { tr("browse.downloadSavedTo", a0) }
         public static var locations: String { tr("browse.locations") }  // "Locations"
+        public static var nameErrorReserved: String { tr("browse.nameErrorReserved") }  // "That name isn't allowed."
+        public static var nameErrorSeparators: String { tr("browse.nameErrorSeparators") }  // "A name can't contain / or \."
         public static var navigationTitle: String { tr("browse.navigationTitle") }  // "Browse"
         public static var newFolderConfirm: String { tr("browse.newFolderConfirm") }  // "Create"
         public static var newFolderPlaceholder: String { tr("browse.newFolderPlaceholder") }  // "Folder name"
@@ -142,6 +144,7 @@ public enum L10n {
         public static var directFileLink: String { tr("createShare.directFileLink") }  // "Direct file link"
         public static var directFolderLink: String { tr("createShare.directFolderLink") }  // "Direct folder ZIP link"
         public static var directLinkMode: String { tr("createShare.directLinkMode") }  // "Direct link mode"
+        public static var errorPasswordRequired: String { tr("createShare.errorPasswordRequired") }  // "Enter a password or turn off password protection."
         public static var errorPastExpiration: String { tr("createShare.errorPastExpiration") }  // "Pick an expiration date in the future."
         public static var fieldExpires: String { tr("createShare.fieldExpires") }  // "Expires"
         public static var fieldPassword: String { tr("createShare.fieldPassword") }  // "Password"
@@ -266,7 +269,6 @@ public enum L10n {
     }
     public enum Login {
         public static var emailField: String { tr("login.emailField") }  // "Email"
-        public static var errorDecoding: String { tr("login.errorDecoding") }
         public static var errorIncomplete: String { tr("login.errorIncomplete") }  // "Sign-in didn't complete. Please try again."
         public static var errorInvalidCredentials: String { tr("login.errorInvalidCredentials") }  // "Incorrect username or password."
         public static var errorInvalidEmail: String { tr("login.errorInvalidEmail") }  // "Enter a valid email address."
@@ -274,6 +276,7 @@ public enum L10n {
         public static var errorKeychain: String { tr("login.errorKeychain") }  // "Could not save your session on this device."
         public static var errorNoLocalAuth: String { tr("login.errorNoLocalAuth") }  // "This server doesn't have username/password sign-in enabled."
         public static var errorRateLimited: String { tr("login.errorRateLimited") }  // "Too many attempts. Please wait a few minutes and try again."
+        public static func errorServer(_ a0: CVarArg) -> String { tr("login.errorServer", a0) }
         public static var errorSessionExpired: String { tr("login.errorSessionExpired") }  // "Your session expired. Please sign in again."
         public static var errorUnexpectedResponse: String { tr("login.errorUnexpectedResponse") }  // "Unexpected response from server."
         public static var errorUnreachable: String { tr("login.errorUnreachable") }
