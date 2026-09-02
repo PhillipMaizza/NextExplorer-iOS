@@ -39,7 +39,7 @@ public struct FavoritesFeature {
         /// by `load` and every reorder response.
         public var displayedFavorites: [Favorite] {
             guard !searchQuery.isEmpty else { return Array(favorites) }
-            return favorites.filter { FuzzyMatch.matches(query: searchQuery, in: $0.displayName) }
+            return favorites.filter { SearchMatch.matches(query: searchQuery, in: $0.displayName) }
         }
 
         /// Drag reorder only makes sense over the full, unfiltered list.

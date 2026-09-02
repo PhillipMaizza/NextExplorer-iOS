@@ -2,6 +2,12 @@ import DesignSystem
 import Localization
 import SwiftUI
 
+private enum Constants {
+    /// Field cross fades: the clear button appearing with text, and the filter button sliding in
+    /// on focus.
+    static let fieldAnimationDuration: Double = 0.15
+}
+
 /// A large title and an always-visible search field pinned ABOVE the scrolling list, instead of
 /// in the navigation bar. A system large title only stays large while the scroll offset is 0 and
 /// collapses to inline the instant the content settles below an always-on `.searchable` drawer
@@ -19,6 +25,11 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     /// Settings) sits higher than one that does; pass the actions' height here so every tab's
     /// title lines up.
     var extraTopPadding: CGFloat = 0
+    /// Optional filter control shown inside the search field, next to the search glyph, while the
+    /// field is focused. A screen that offers a type filter (Browse search) sets this; `nil` hides
+    /// it. `isFilterActive` tints it accent to signal a filter is applied.
+    var filterAction: (() -> Void)? = nil
+    var isFilterActive: Bool = false
     /// Rendered below the search field, e.g. a search-scope segmented control while searching.
     @ViewBuilder var accessory: () -> Accessory
 
@@ -68,7 +79,19 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .submitLabel(.search)
-            if !searchText.isEmpty {
+            // One trailing control at a time so their tap targets never overlap: the filter
+            // button owns the slot while the field is focused (Browse search); otherwise the clear
+            // (x) button appears when there's text. On screens with no filter it's always the
+            // clear button, unchanged.
+            if isFocused, let filterAction {
+                Button(action: filterAction) {
+                    (isFilterActive ? IconKit.filterFill : IconKit.filter)
+                        .foregroundStyle(isFilterActive ? Color.accent : Color.secondaryDS)
+                }
+                .buttonStyle(.plain)
+                .transition(.move(edge: .trailing).combined(with: .opacity))
+                .accessibilityLabel(L10n.Filter.button)
+            } else if !searchText.isEmpty {
                 Button {
                     searchText = ""
                 } label: {
@@ -78,14 +101,9 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .transition(.opacity)
             }
         }
-        .animation(.easeInOut(duration: 0.15), value: searchText.isEmpty)
-        .roundedFieldStyle()
-        .runningDashBorder(
-                isFocused: isFocused,
-                color: .accent,
-                cornerRadius: .radiusControl,
-                lineWidth: 2
-            )
+        .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: searchText.isEmpty)
+        .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: isFocused)
+        .roundedFieldStyle(isFocused: isFocused)
     }
 }
 
@@ -97,122 +115,5 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         extraTopPadding: CGFloat = 0
     ) {
         self.init(title: title, searchText: searchText, prompt: prompt, extraTopPadding: extraTopPadding) { EmptyView() }
-    }
-}
-/// A comet of light that laps the field's border while it's focused: a bright head with a tail
-/// that fades to nothing, gliding around a `trim`med rounded rect perimeter (aspect independent,
-/// unlike an `AngularGradient` mask, which pools into two marks on a wide short field). Each lap
-/// eases in and out — accelerating away from the seam, decelerating back into it — and the whole
-/// comet fades up at the start of a lap and fades away as it finishes, so the loop restarts on a
-/// soft pulse rather than a hard jump. Driven by a `TimelineView` clock so position, tail fade
-/// and the per lap envelope are all derived from one time value.
-struct RunningDashBorderModifier: ViewModifier {
-    let isFocused: Bool
-    let color: Color
-    let cornerRadius: CGFloat
-    let lineWidth: CGFloat
-
-    /// Length of the comet (head to tail) as a fraction of the total perimeter. Well under 1 so a
-    /// gap always remains and it reads as a moving segment, not a closed border.
-    private let cometLength: CGFloat = 0.35
-    /// The tail is built from this many arcs, all ending at the head and each a little longer, so
-    /// their translucent overlap accumulates into a smooth head→tail fade.
-    private let tailSteps = 16
-    /// Per arc opacity. Low, so `tailSteps` of overlap reach near opaque at the head while a lone
-    /// arc at the tail is nearly clear.
-    private let layerOpacity: Double = 0.16
-    private let lapDuration: Double = 4.0
-
-    func body(content: Content) -> some View {
-        content
-            .overlay {
-                if isFocused {
-                    cometOverlay.transition(.opacity)
-                }
-            }
-            .animation(.easeInOut(duration: 0.3), value: isFocused)
-    }
-
-    private var cometOverlay: some View {
-        TimelineView(.animation) { timeline in
-            let cycle = (timeline.date.timeIntervalSinceReferenceDate
-                .truncatingRemainder(dividingBy: lapDuration)) / lapDuration
-            // Smoothstep the lap position so it accelerates out of the seam and decelerates back
-            // into it (the spring-like ease), and a sine envelope so the comet fades up at the
-            // lap start and away as it finishes.
-            let head = CGFloat(smoothstep(cycle))
-            let envelope = sin(.pi * cycle)
-
-            cometTrail(head: head)
-                .opacity(envelope)
-        }
-    }
-
-    /// The comet as `tailSteps` arcs that all end at the head and grow toward the tail, each at a
-    /// low opacity. Where many overlap (the head) the color builds to near opaque; toward the tail,
-    /// where only the longest arcs reach, it thins to nothing — a smooth fade with no beading.
-    private func cometTrail(head: CGFloat) -> some View {
-        let inset = lineWidth / 2
-        return ZStack {
-            ForEach(0..<tailSteps, id: \.self) { index in
-                let length = cometLength * CGFloat(index + 1) / CGFloat(tailSteps)
-                BorderArcShape(
-                    from: head - length,
-                    length: length,
-                    cornerRadius: cornerRadius,
-                    inset: inset
-                )
-                .stroke(
-                    color.opacity(layerOpacity),
-                    style: StrokeStyle(lineWidth: lineWidth, lineCap: .butt)
-                )
-            }
-        }
-    }
-
-    /// Cubic smoothstep: 0→1 with zero velocity at both ends.
-    private func smoothstep(_ t: Double) -> Double {
-        let x = min(max(t, 0), 1)
-        return x * x * (3 - 2 * x)
-    }
-}
-
-/// One arc of the rounded rect perimeter, `length` long starting at `from` (both in 0…1 of the
-/// perimeter), wrapping across the 1→0 seam so a slice straddling a corner never breaks.
-private struct BorderArcShape: Shape {
-    var from: CGFloat
-    var length: CGFloat
-    var cornerRadius: CGFloat
-    var inset: CGFloat
-
-    func path(in rect: CGRect) -> Path {
-        let base = Path(
-            roundedRect: rect.insetBy(dx: inset, dy: inset),
-            cornerRadius: cornerRadius
-        )
-        let start = ((from.truncatingRemainder(dividingBy: 1)) + 1).truncatingRemainder(dividingBy: 1)
-        let end = start + length
-        if end <= 1 {
-            return base.trimmedPath(from: start, to: end)
-        }
-        var wrapped = base.trimmedPath(from: start, to: 1)
-        wrapped.addPath(base.trimmedPath(from: 0, to: end - 1))
-        return wrapped
-    }
-}
-
-extension View {
-    func runningDashBorder(
-        isFocused: Bool,
-        color: Color = .accent,
-        cornerRadius: CGFloat = .radiusControl,
-        lineWidth: CGFloat = 2
-    ) -> some View {
-        modifier(RunningDashBorderModifier(
-            isFocused: isFocused,
-            color: color,
-            cornerRadius: cornerRadius,
-            lineWidth: lineWidth
-        ))
     }
 }

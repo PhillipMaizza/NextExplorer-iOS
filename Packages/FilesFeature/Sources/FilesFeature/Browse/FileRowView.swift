@@ -51,12 +51,19 @@ struct FileRowView: View {
         return formatter
     }()
 
+    /// `thumbnailFile` opts a caller with only a name/kind (a search hit, which carries no size or
+    /// modified date) into the same thumbnail rendering a browse row gets, while keeping a custom
+    /// `subtitle` (e.g. a search match line) and no date/size line. Server thumbnails still need
+    /// the file to report `supportsThumbnail`; the on device PDF render only needs its kind.
     init(
         name: String,
         isDirectory: Bool,
         subtitle: String? = nil,
         isFavorite: Bool = false,
         kind: String? = nil,
+        thumbnailFile: FileItem? = nil,
+        serverURL: URL? = nil,
+        showThumbnails: Bool = false,
         customIcon: Image? = nil,
         customIconTint: Color? = nil,
         customIconFilled: Bool = false,
@@ -69,13 +76,13 @@ struct FileRowView: View {
         self.size = nil
         self.customSubtitle = subtitle
         self.isFavorite = isFavorite
-        self.itemID = nil
+        self.itemID = thumbnailFile?.id
         self.kind = kind
-        self.supportsThumbnail = false
-        self.thumbnailSignature = ""
-        self.serverURL = nil
-        self.showThumbnails = false
-        self.file = nil
+        self.supportsThumbnail = thumbnailFile?.supportsThumbnail ?? false
+        self.thumbnailSignature = thumbnailFile?.cacheSignature ?? ""
+        self.serverURL = serverURL
+        self.showThumbnails = showThumbnails
+        self.file = thumbnailFile
         self.customIcon = customIcon
         self.customIconTint = customIconTint
         self.customIconFilled = customIconFilled

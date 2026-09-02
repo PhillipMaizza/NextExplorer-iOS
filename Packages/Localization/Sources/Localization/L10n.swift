@@ -413,6 +413,18 @@ public enum L10n {
         public static var segmentWithMe: String { tr("shared.segmentWithMe") }  // "With me"
         public static var sharedByUnknown: String { tr("shared.sharedByUnknown") }  // "Someone"
     }
+    public enum Filter {
+        public static var sheetTitle: String { tr("filter.sheetTitle") }  // "Filter by Type"
+        public static var button: String { tr("filter.button") }  // "Filter"
+        public static var all: String { tr("filter.all") }  // "All Types"
+        public static var folders: String { tr("filter.folders") }  // "Folders"
+        public static var images: String { tr("filter.images") }  // "Images"
+        public static var videos: String { tr("filter.videos") }  // "Videos"
+        public static var audio: String { tr("filter.audio") }  // "Audio"
+        public static var documents: String { tr("filter.documents") }  // "Documents"
+        public static var archives: String { tr("filter.archives") }  // "Archives"
+        public static var other: String { tr("filter.other") }  // "Other"
+    }
     public enum Sort {
         public static var ascending: String { tr("sort.ascending") }  // "Ascending"
         public static var dateAdded: String { tr("sort.dateAdded") }  // "Date Added"

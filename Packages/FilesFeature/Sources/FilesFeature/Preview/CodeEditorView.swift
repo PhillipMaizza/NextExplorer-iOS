@@ -70,41 +70,68 @@ struct CodeEditorView: UIViewRepresentable {
         view.backgroundColor = .clear
         view.showLineNumbers = true
         view.isEditable = isEditable
-        // `TextViewState` does the initial tree-sitter parse of the whole document; building it
-        // on the main thread freezes the UI when a large source file opens. Build it off main,
-        // then apply on the main actor. `StateBox` carries the non Sendable state across.
-        let text = self.text
-        let kind = self.kind
-        Task {
-            let box = await Task.detached(priority: .userInitiated) {
-                let language = CodeEditorLanguage.language(forKind: kind)
-                return StateBox(state: language.map { TextViewState(text: text, language: $0) } ?? TextViewState(text: text))
-            }.value
-            view.setState(box.state)
-        }
+        context.coordinator.applyDocument(text: text, kind: kind, to: view)
         return view
-    }
-
-    private struct StateBox: @unchecked Sendable {
-        let state: TextViewState
     }
 
     func updateUIView(_ uiView: TextView, context: Context) {
         uiView.isEditable = isEditable
-        guard uiView.text != text else { return }
-        uiView.text = text
+        // Reapply the document only when the bound text diverges from what the editor itself
+        // last reported, i.e. a genuine external change (first load, a reload, a save-driven
+        // content swap) — never our own echoed keystrokes, and never mid-scroll. Applying it
+        // through `setState` (below) rather than the raw `text` setter is what keeps Runestone's
+        // line manager consistent; a bare `uiView.text = text` here would leave it half-built and
+        // blank the document on the next lazy relayout a scroll triggers.
+        guard context.coordinator.lastReportedText != text else { return }
+        context.coordinator.applyDocument(text: text, kind: kind, to: uiView)
     }
 
     func makeCoordinator() -> Coordinator {
         Coordinator(text: $text)
     }
 
+    private struct StateBox: @unchecked Sendable {
+        let state: TextViewState
+    }
+
     @MainActor
     final class Coordinator: NSObject, TextViewDelegate {
         private let text: Binding<String>
+        /// The text the editor last held after an apply or a user edit. `updateUIView` compares
+        /// against this to tell an external content change (reapply) from its own echoed edit
+        /// (ignore), and `textViewDidChange` refuses to write anything back while we're the ones
+        /// mutating the document.
+        private(set) var lastReportedText: String
+        private var isApplyingDocument = false
+        /// Bumped on every apply so a slower off-main parse from a superseded apply can't land its
+        /// `setState` after a newer one and overwrite the current document.
+        private var applyGeneration = 0
 
         init(text: Binding<String>) {
             self.text = text
+            self.lastReportedText = text.wrappedValue
+        }
+
+        /// Sets the whole document via `setState` — the only Runestone-sanctioned way to load
+        /// content and the tree-sitter parse together. `TextViewState`'s parse runs off the main
+        /// thread so a large file doesn't freeze the UI on open; `StateBox` carries the non
+        /// Sendable state back across.
+        func applyDocument(text newText: String, kind: String, to view: TextView) {
+            lastReportedText = newText
+            isApplyingDocument = true
+            applyGeneration += 1
+            let generation = applyGeneration
+            Task {
+                let box = await Task.detached(priority: .userInitiated) {
+                    let language = CodeEditorLanguage.language(forKind: kind)
+                    return StateBox(state: language.map { TextViewState(text: newText, language: $0) } ?? TextViewState(text: newText))
+                }.value
+                // A newer apply superseded this one while it parsed — drop its stale result and
+                // leave `isApplyingDocument` for the newer apply to clear.
+                guard generation == applyGeneration else { return }
+                view.setState(box.state)
+                isApplyingDocument = false
+            }
         }
 
         // `textViewDidChange` is a `nonisolated` protocol requirement (Runestone doesn't
@@ -113,6 +140,11 @@ struct CodeEditorView: UIViewRepresentable {
         // `assumeIsolated` is safe and lets us still touch the main-actor-isolated `text`.
         nonisolated func textViewDidChange(_ textView: TextView) {
             MainActor.assumeIsolated {
+                // Ignore the change callbacks Runestone fires while we apply a document (and any
+                // it emits during a scroll relayout): only a real user edit should flow back into
+                // the binding, otherwise a transient value can overwrite the file with empty text.
+                guard !isApplyingDocument else { return }
+                lastReportedText = textView.text
                 text.wrappedValue = textView.text
             }
         }

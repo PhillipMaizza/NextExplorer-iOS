@@ -44,11 +44,18 @@ struct GridCellView: View {
     var isOpening: Bool = false
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
 
+    /// `thumbnailFile` opts a caller with only a name/kind (a search hit) into the same thumbnail
+    /// rendering a browse tile gets. Server thumbnails still need the file to report
+    /// `supportsThumbnail`; the on device PDF render only needs its kind.
     init(
         name: String,
         isDirectory: Bool,
         isFavorite: Bool = false,
         kind: String? = nil,
+        thumbnailFile: FileItem? = nil,
+        serverURL: URL? = nil,
+        showThumbnails: Bool = false,
+        iconSize: CGFloat = Constants.defaultIconSize,
         customIcon: Image? = nil,
         customIconTint: Color? = nil,
         customIconFilled: Bool = false,
@@ -58,14 +65,14 @@ struct GridCellView: View {
         self.name = name
         self.isDirectory = isDirectory
         self.isFavorite = isFavorite
-        self.itemID = nil
+        self.itemID = thumbnailFile?.id
         self.kind = kind
-        self.supportsThumbnail = false
-        self.thumbnailSignature = ""
-        self.serverURL = nil
-        self.showThumbnails = false
-        self.iconSize = Constants.defaultIconSize
-        self.file = nil
+        self.supportsThumbnail = thumbnailFile?.supportsThumbnail ?? false
+        self.thumbnailSignature = thumbnailFile?.cacheSignature ?? ""
+        self.serverURL = serverURL
+        self.showThumbnails = showThumbnails
+        self.iconSize = iconSize
+        self.file = thumbnailFile
         self.customIcon = customIcon
         self.customIconTint = customIconTint
         self.customIconFilled = customIconFilled
