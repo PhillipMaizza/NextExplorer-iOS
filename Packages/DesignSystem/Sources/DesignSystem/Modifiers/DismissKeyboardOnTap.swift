@@ -22,35 +22,53 @@ private struct KeyboardDismissTapInstaller: UIViewRepresentable {
     func makeCoordinator() -> Coordinator { Coordinator() }
 
     func makeUIView(context: Context) -> UIView {
-        let view = UIView()
+        let view = InstallerView()
         view.isUserInteractionEnabled = false
+        view.coordinator = context.coordinator
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {
-        // The view lands in a window a layout pass after creation, so install lazily here and
-        // guard against a second recognizer on later updates.
-        guard context.coordinator.recognizer == nil, let window = uiView.window else { return }
-        let tap = UITapGestureRecognizer(
-            target: context.coordinator, action: #selector(Coordinator.handleTap)
-        )
-        tap.cancelsTouchesInView = false
-        tap.delegate = context.coordinator
-        window.addGestureRecognizer(tap)
-        context.coordinator.recognizer = tap
-        context.coordinator.window = window
-    }
+    func updateUIView(_ uiView: UIView, context: Context) {}
 
     static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
-        if let recognizer = coordinator.recognizer {
-            coordinator.window?.removeGestureRecognizer(recognizer)
+        coordinator.detach()
+    }
+
+    /// Installs the recognizer from `didMoveToWindow` rather than `updateUIView`: the window is
+    /// guaranteed present exactly when this fires, whereas `updateUIView` is not guaranteed to run
+    /// again after the view first lands in a window — if it didn't, the recognizer was never
+    /// installed and tap to dismiss silently did nothing. Also re-attaches if the view moves to a
+    /// different window and detaches when it leaves one.
+    final class InstallerView: UIView {
+        weak var coordinator: Coordinator?
+
+        override func didMoveToWindow() {
+            super.didMoveToWindow()
+            coordinator?.attach(to: window)
         }
-        coordinator.recognizer = nil
     }
 
     final class Coordinator: NSObject, UIGestureRecognizerDelegate {
-        var recognizer: UITapGestureRecognizer?
-        weak var window: UIWindow?
+        private var recognizer: UITapGestureRecognizer?
+        private weak var window: UIWindow?
+
+        func attach(to newWindow: UIWindow?) {
+            guard let newWindow else { detach(); return }
+            if window === newWindow, recognizer != nil { return }
+            detach()
+            let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
+            tap.cancelsTouchesInView = false
+            tap.delegate = self
+            newWindow.addGestureRecognizer(tap)
+            recognizer = tap
+            window = newWindow
+        }
+
+        func detach() {
+            if let recognizer, let window { window.removeGestureRecognizer(recognizer) }
+            recognizer = nil
+            window = nil
+        }
 
         @objc func handleTap() {
             UIApplication.shared.sendAction(
