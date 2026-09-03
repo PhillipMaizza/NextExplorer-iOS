@@ -1,0 +1,542 @@
+# NextExplorer — हिन्दी (hi). key<TAB>value.
+common.cancel	रद्द करें
+common.save	सहेजें
+common.edit	संपादित करें
+common.retry	पुनः प्रयास करें
+common.delete	हटाएं
+common.remove	निकालें
+common.clear	साफ़ करें
+common.done	पूर्ण
+common.ok	ठीक है
+common.openSettings	सेटिंग्स खोलें
+common.logOut	साइन आउट करें
+common.close	बंद करें
+common.back	वापस
+common.share	साझा करें
+common.download	डाउनलोड करें
+common.sort	क्रमबद्ध करें
+common.select	चुनें
+common.search	खोजें
+common.password	पासवर्ड
+common.never	कभी नहीं
+common.selectedCount	%lld चयनित
+tab.browse	ब्राउज़ करें
+tab.favorites	पसंदीदा
+tab.shared	साझा किए गए
+tab.downloads	डाउनलोड
+tab.settings	सेटिंग्स
+sort.sheetTitle	इसके अनुसार क्रमबद्ध करें
+sort.name	नाम
+sort.size	आकार
+sort.kind	प्रकार
+sort.dateModified	संशोधन तिथि
+sort.dateAdded	जोड़ने की तिथि
+sort.dateShared	साझा करने की तिथि
+sort.expiration	समाप्ति
+sort.email	ईमेल
+sort.type	प्रकार
+sort.ascending	आरोही
+sort.descending	अवरोही
+select.selectAll	सभी चुनें
+select.deselectAll	सभी अचयनित करें
+select.listView	सूची दृश्य
+select.gridView	ग्रिड दृश्य
+emptyState.folderEmpty	यह फ़ोल्डर खाली है।
+emptyState.loadFailed	सर्वर तक नहीं पहुंच सके।
+emptyState.noSearchMatches	“%@” के लिए कोई परिणाम नहीं।
+accessMode.readonly	केवल पढ़ने योग्य
+accessMode.readwrite	पढ़ना और लिखना
+shareTarget.anyone	लिंक वाला कोई भी व्यक्ति
+shareTarget.users	विशिष्ट उपयोगकर्ता
+directLinkMode.auto	स्वचालित
+directLinkMode.inline	देखें
+directLinkMode.raw	रॉ
+directLinkMode.download	डाउनलोड
+thumbnailSize.small	छोटा
+thumbnailSize.medium	मध्यम
+thumbnailSize.large	बड़ा
+downloadLocation.documents	दस्तावेज़
+downloadLocation.cache	कैश
+dateFormat.automatic	स्वचालित
+browse.navigationTitle	ब्राउज़ करें
+browse.scopeThisFolder	यह फ़ोल्डर
+browse.scopeEverywhere	हर जगह
+browse.searchScopeInFolder	यह फ़ोल्डर
+browse.searchScopeEverywhere	हर जगह
+browse.locations	स्थान
+browse.open	खोलें
+browse.unsupportedFileType	असमर्थित फ़ाइल प्रकार
+browse.actionGetInfo	जानकारी
+browse.actionPermissions	अनुमतियां
+browse.actionRename	नाम बदलें
+browse.actionExtract	निकालें
+browse.actionCompress	संपीड़ित करें
+browse.actionDownload	डाउनलोड करें
+browse.actionAddToFavorites	पसंदीदा में जोड़ें
+browse.actionRemoveFromFavorites	पसंदीदा से निकालें
+browse.actionShare	साझा लिंक बनाएं
+browse.actionDelete	हटाएं
+browse.renameTitle	नाम बदलें
+browse.renameNamePlaceholder	नाम
+browse.actionNewFolder	फ़ोल्डर बनाएं
+browse.newFolderTitle	नया फ़ोल्डर
+browse.newFolderPlaceholder	फ़ोल्डर का नाम
+browse.newFolderConfirm	बनाएं
+browse.deleteConfirmTitle	हटाएं?
+browse.deleteConfirmOne	“%@” हटाएं?
+browse.deleteConfirmMany	%lld आइटम हटाएं?
+browse.deleteMessage	इसे पूर्ववत नहीं किया जा सकता।
+browse.deleteLinkedSharesOne	इससे यहां इंगित करने वाला 1 साझा लिंक भी हट जाता है।
+browse.deleteLinkedSharesMany	इससे यहां इंगित करने वाले %lld साझा लिंक भी हट जाते हैं।
+browse.deleteLinkedSharesUnavailable	यहां इंगित करने वाले लिंक जांच नहीं सके। जो मौजूद हैं वे काम करना बंद कर देंगे।
+browse.searchNoMatchesInFolder	“%@” के लिए कोई परिणाम नहीं।
+browse.searchEverywhere	हर जगह खोजें
+browse.searchFailed	खोज नहीं सके। अपना कनेक्शन जांचें और पुनः प्रयास करें।
+browse.progressExtracting	निकाला जा रहा है…
+browse.progressCompressing	संपीड़ित किया जा रहा है…
+browse.progressDownloading	डाउनलोड हो रहा है…
+browse.progressDownloadingIndexed	%2$lld में से %1$lld डाउनलोड हो रहा है…
+browse.downloadSavedTo	%@ में सहेजा गया
+browse.downloadSavedCountTo	%2$lld में से %1$lld आइटम %3$@ में सहेजे गए
+browse.downloadSavedAllTo	%1$lld आइटम %2$@ में सहेजे गए
+browse.downloadBulkFailed	इन आइटम को आपके डिवाइस पर सहेज नहीं सके।
+browse.offlineBannerTitle	ऑफ़लाइन
+browse.offlineBannerDetail	%@ से सहेजी गई प्रति दिखाई जा रही है
+browse.actionCopy	कॉपी करें
+browse.destinationPickerMoveTitle	यहां ले जाएं…
+browse.destinationPickerConfirmMove	यहां ले जाएं
+browse.destinationPickerNoFolders	यहां कोई फ़ोल्डर नहीं
+browse.destinationPickerLoadFailed	फ़ोल्डर लोड नहीं कर सके।
+browse.actionMove	ले जाएं
+browse.actionPaste	पेस्ट करें
+browse.actionPasteCount	%lld आइटम पेस्ट करें
+browse.actionPasteHere	यहां पेस्ट करें
+browse.actionClearClipboard	क्लिपबोर्ड साफ़ करें
+browse.clipboardMoveCount	%lld ले जाने के लिए
+browse.clipboardCopyCount	%lld कॉपी करने के लिए
+browse.clipboardCopiedOne	%@ कॉपी किया गया
+browse.clipboardCopiedMany	%lld आइटम कॉपी किए गए
+browse.progressMoving	ले जाया जा रहा है…
+browse.progressCopying	कॉपी किया जा रहा है…
+browse.transferMoved	%lld आइटम ले जाए गए
+browse.transferCopied	%lld आइटम कॉपी किए गए
+browse.transferMovedWithSkipped	%1$lld आइटम ले जाए गए, %2$lld छोड़े गए
+browse.transferCopiedWithSkipped	%1$lld आइटम कॉपी किए गए, %2$lld छोड़े गए
+browse.transferConflictTitle	आइटम बदलें?
+browse.transferConflictMessageOne	“%@” इस फ़ोल्डर में पहले से मौजूद है।
+browse.transferConflictMessageMany	%lld आइटम इस फ़ोल्डर में पहले से मौजूद हैं।
+browse.transferConflictReplace	बदलें
+browse.transferConflictKeepBoth	दोनों रखें
+browse.actionOpenInBrowser	ब्राउज़र में खोलें
+favorites.navigationTitle	पसंदीदा
+favorites.emptyList	फ़ोल्डर यहां देखने के लिए उन्हें ब्राउज़ में तारांकित करें।
+favorites.actionRemoveFromFavorites	पसंदीदा से निकालें
+favorites.actionEdit	संपादित करें
+favorites.editTitle	पसंदीदा संपादित करें
+favorites.editNameLabel	नाम
+favorites.editNameErrorEmpty	नाम खाली नहीं हो सकता।
+favorites.editIconLabel	आइकन
+favorites.editIconOutline	रूपरेखा
+favorites.editIconSolid	ठोस
+favorites.editColorLabel	रंग
+favorites.editColorDefault	डिफ़ॉल्ट
+favorites.editSave	सहेजें
+favorites.reorderFailed	नया क्रम सहेज नहीं सके।
+favorites.removeConfirm	%lld पसंदीदा निकालें?
+favorites.removeMessage	यह उन्हें केवल पसंदीदा से निकालता है।
+favorites.removeFailedOne	वह पसंदीदा निकाल नहीं सके।
+favorites.removeFailedMany	वे पसंदीदा निकाल नहीं सके।
+favorites.removePartial	%2$lld में से %1$lld निकाले गए।
+downloads.navigationTitle	डाउनलोड
+downloads.actionOpenInFiles	फ़ाइल्स में खोलें
+downloads.emptyList	ब्राउज़ से डाउनलोड की गई फ़ाइलें यहां दिखती हैं।
+downloads.deleteConfirmTitle	हटाएं?
+downloads.deleteConfirmOne	“%@” हटाएं?
+downloads.deleteConfirmMany	%lld फ़ाइलें हटाएं?
+downloads.deleteSingleMessage	यह केवल स्थानीय प्रति हटाता है। फ़ाइल सर्वर पर बनी रहती है।
+downloads.deleteBulkMessage	यह केवल स्थानीय प्रतियां हटाता है। फ़ाइलें सर्वर पर बनी रहती हैं।
+downloads.errorNameExists	उस नाम की फ़ाइल पहले से मौजूद है।
+downloads.errorInvalidName	वह नाम अनुमत नहीं है।
+downloads.errorMissing	वह फ़ाइल अब नहीं मिल सकी।
+downloads.errorGeneric	वह क्रिया पूरी नहीं कर सके।
+unsupportedPreview.genericType	फ़ाइल
+unsupportedPreview.cannotOpen	यह ऐप इस प्रकार की फ़ाइल नहीं खोल सकता।
+uploads.navigationTitle	अपलोड
+uploads.menuTitle	अपलोड करें
+uploads.actionUploadFromFiles	फ़ाइल्स से अपलोड करें
+uploads.actionUploadFromPhotos	गैलरी से अपलोड करें
+uploads.actionTakePhoto	फ़ोटो या वीडियो लें
+uploads.cameraDeniedTitle	कैमरा एक्सेस आवश्यक
+uploads.cameraDeniedMessage	फ़ोटो या वीडियो लेने के लिए सेटिंग्स में कैमरा एक्सेस की अनुमति दें।
+uploads.destinationTitle	यहां अपलोड करें…
+uploads.destinationConfirm	यहां अपलोड करें
+uploads.reviewTitleOne	1 फ़ाइल अपलोड करें
+uploads.reviewTitleMany	%lld फ़ाइलें अपलोड करें
+uploads.reviewSectionFiles	फ़ाइलें
+uploads.reviewSectionPath	पथ
+uploads.reviewSectionSize	कुल आकार
+uploads.reviewChooseFolder	एक फ़ोल्डर चुनें
+uploads.reviewUploadButton	अपलोड करें
+uploads.reviewPreparing	%lld तैयार हो रहा है…
+uploads.reviewAddMore	और फ़ाइलें जोड़ें
+uploads.reviewPreviewFile	%@ का पूर्वावलोकन
+uploads.reviewInsecureNetworkNotice	http के माध्यम से कनेक्ट किया गया। यदि यह सर्वर केवल आपके होम नेटवर्क पर है, तो उससे दूर रहने पर अपलोड काम नहीं करेंगे।
+uploads.stagingFailed	वे फ़ाइलें जोड़ नहीं सके। पुनः प्रयास करें।
+uploads.stagingSkipped	%lld आइटम तैयार नहीं हो सके और छोड़ दिए गए।
+uploads.discardTitle	अपलोड छोड़ें?
+uploads.discardMessage	आपके द्वारा जोड़ी गई फ़ाइलें अपलोड नहीं होंगी।
+uploads.discardConfirm	छोड़ें
+uploads.statusWaiting	प्रतीक्षा में
+uploads.statusFailed	अपलोड विफल
+uploads.barTitleOne	%@ अपलोड हो रहा है
+uploads.barTitleMany	%lld फ़ाइलें अपलोड हो रही हैं
+uploads.barFailedOne	1 अपलोड विफल
+uploads.barFailedMany	%lld अपलोड विफल
+uploads.retryAll	सभी पुनः प्रयास करें
+uploads.complete	अपलोड पूर्ण
+uploads.completeMany	%lld फ़ाइलें अपलोड की गईं
+uploads.completeWithFailures	%1$lld अपलोड की गईं, %2$lld विफल
+uploads.failedGeneric	यह फ़ाइल अपलोड नहीं कर सके।
+uploads.clear	साफ़ करें
+uploads.emptyList	अभी तक कोई अपलोड नहीं।
+uploads.cancelAll	सभी अपलोड रद्द करें
+shared.navigationTitle	साझा किए गए
+shared.segmentByMe	मेरे द्वारा
+shared.segmentWithMe	मेरे साथ
+shared.sectionExpired	समाप्त
+shared.badgeExpired	समाप्त
+shared.emptyByMe	इसका लिंक यहां देखने के लिए कोई फ़ाइल या फ़ोल्डर साझा करें।
+shared.emptyWithMe	अन्य लोग आपके साथ जो लिंक साझा करते हैं वे यहां दिखते हैं।
+shared.noSearchMatches	“%@” से कोई साझा मेल नहीं खाता।
+shared.deleteTitle	साझा लिंक हटाएं?
+shared.deleteMessage	लिंक तुरंत काम करना बंद कर देता है। फ़ाइल या फ़ोल्डर स्वयं प्रभावित नहीं होता।
+shared.sharedByUnknown	कोई
+shared.metaAccess	एक्सेस
+shared.metaExpiration	समाप्ति
+shared.metaSharedBy	साझाकर्ता
+shared.metaSharedWith	इनके साथ साझा
+shared.anyoneWithLink	लिंक वाला कोई भी व्यक्ति
+shared.linkMode	लिंक मोड
+shared.actionShareLink	लिंक साझा करें
+shared.actionFolderLink	फ़ोल्डर लिंक
+shared.actionFileLink	फ़ाइल लिंक
+shared.moreRecipients	+%lld
+shared.copiedShareLink	साझा लिंक कॉपी किया गया
+shared.copiedFolderZip	फ़ोल्डर ZIP लिंक कॉपी किया गया
+shared.copiedDirectFile	सीधा फ़ाइल लिंक कॉपी किया गया
+createShare.title	साझा लिंक बनाएं
+createShare.titleCreated	साझा बनाया गया
+createShare.sectionLabel	लेबल
+createShare.sectionAccessMode	एक्सेस मोड
+createShare.sectionWhoCanAccess	कौन एक्सेस कर सकता है
+createShare.sectionShareLink	साझा लिंक
+createShare.fieldPassword	पासवर्ड
+createShare.togglePasswordProtect	पासवर्ड से सुरक्षित करें
+createShare.toggleSetExpiration	समाप्ति तिथि सेट करें
+createShare.fieldExpires	समाप्त होता है
+createShare.submit	साझा लिंक बनाएं
+createShare.loadingUsers	उपयोगकर्ता लोड हो रहे हैं…
+createShare.noOtherUsers	साझा करने के लिए कोई अन्य उपयोगकर्ता नहीं।
+createShare.sharingPrefix	साझा किया जा रहा है:
+createShare.createdBanner	साझा लिंक सफलतापूर्वक बनाया गया!
+createShare.viewInShared	साझा में देखें
+createShare.directLinkMode	सीधा लिंक मोड
+createShare.directFolderLink	सीधा फ़ोल्डर ZIP लिंक
+createShare.directFileLink	सीधा फ़ाइल लिंक
+createShare.summaryAccess	एक्सेस
+createShare.summarySharedWith	इनके साथ साझा
+createShare.summaryPassword	पासवर्ड
+createShare.summaryPasswordProtected	सुरक्षित
+createShare.summaryExpires	समाप्त होता है
+createShare.summarySpecificPeople	विशिष्ट लोग
+createShare.errorPastExpiration	भविष्य की समाप्ति तिथि चुनें।
+editShare.title	साझा लिंक संपादित करें
+editShare.save	परिवर्तन सहेजें
+editShare.passwordKeepHint	वर्तमान पासवर्ड रखने के लिए खाली छोड़ें
+editShare.savedToast	साझा लिंक अपडेट किया गया
+thumbnailSettings.navigationTitle	थंबनेल
+thumbnailSettings.subtitle	नियंत्रित करें कि सर्वर हर क्लाइंट के लिए छवि थंबनेल कैसे बनाता है।
+thumbnailSettings.enable	थंबनेल बनाएं
+thumbnailSettings.enableHelp	इसके बजाय हर जगह पूरी छवियां देने के लिए बंद करें।
+thumbnailSettings.quality	गुणवत्ता
+thumbnailSettings.qualityHelp	उच्चतर बेहतर दिखता है और अधिक स्थान लेता है।
+thumbnailSettings.maxDimension	अधिकतम आयाम
+thumbnailSettings.maxDimensionHelp	बनाए गए थंबनेल की सबसे लंबी भुजा, पिक्सेल में।
+thumbnailSettings.concurrency	समवर्तीता
+thumbnailSettings.concurrencyHelp	सर्वर एक साथ कितने थंबनेल बनाता है।
+thumbnailSettings.unavailable	थंबनेल सेटिंग्स केवल व्यवस्थापकों के लिए उपलब्ध हैं।
+thumbnailSettings.saveButton	परिवर्तन सहेजें
+accessRules.navigationTitle	फ़ोल्डर एक्सेस नियम
+accessRules.subtitle	विशिष्ट पथों के लिए पढ़ने और लिखने के एक्सेस को ओवरराइड करें।
+accessRules.addRule	नियम जोड़ें
+accessRules.empty	कोई एक्सेस नियम कॉन्फ़िगर नहीं किया गया।
+accessRules.emptyHint	किसी पथ के एक्सेस को ओवरराइड करने के लिए एक नियम जोड़ें।
+accessRules.pathLabel	पथ
+accessRules.pathPlaceholder	दस्तावेज़/रिपोर्ट
+accessRules.recursive	सबफ़ोल्डर पर लागू करें
+accessRules.permissionReadWrite	पढ़ना और लिखना
+accessRules.permissionReadOnly	केवल पढ़ने योग्य
+accessRules.permissionHidden	छिपा हुआ
+accessRules.remove	निकालें
+accessRules.unavailable	एक्सेस नियम केवल व्यवस्थापकों के लिए उपलब्ध हैं।
+accessRules.saveButton	परिवर्तन सहेजें
+settings.rowThumbnails	थंबनेल
+settings.rowAccessRules	फ़ोल्डर एक्सेस नियम
+settings.navigationTitle	सेटिंग्स
+settings.appVersion	संस्करण %1$@ (%2$@)
+settings.sectionGeneral	सामान्य
+settings.sectionDisplay	प्रदर्शन
+settings.sectionStorage	संग्रहण
+settings.sectionServerStorage	सर्वर संग्रहण
+settings.serverStorageUsed	%2$@ में से %1$@
+settings.sectionLicenses	लाइसेंस
+settings.sectionLegal	कानूनी
+settings.sectionUsers	उपयोगकर्ता
+settings.sectionAdmin	व्यवस्थापन
+settings.toggleShowHiddenFiles	छिपी हुई फ़ाइलें दिखाएं
+settings.toggleRenderHTML	HTML पृष्ठ रेंडर करें
+settings.toggleRenderMarkdown	Markdown फ़ाइलें रेंडर करें
+settings.toggleHaptics	हैप्टिक्स
+settings.toggleDarkMode	डार्क मोड
+settings.toggleShowThumbnails	थंबनेल दिखाएं
+settings.toggleShowExtensions	फ़ाइल एक्सटेंशन दिखाएं
+settings.toggleRemoveArchives	डाउनलोड के बाद संग्रह हटाएं
+settings.toggleKeepClipboard	पेस्ट के बाद आइटम रखें
+settings.toggleKeepClipboardSubtitle	कॉपी किए गए आइटम दूसरे फ़ोल्डर में पेस्ट करने के लिए तैयार रहते हैं। स्थानांतरित आइटम हमेशा साफ़ हो जाते हैं।
+settings.rowDateFormat	तिथि प्रारूप
+settings.rowLanguage	भाषा
+settings.rowThumbnailSize	थंबनेल आकार
+settings.rowRemoveAllDownloads	सभी डाउनलोड हटाएं
+settings.rowClearCache	कैश साफ़ करें
+settings.rowOpenSourceLicenses	ओपन सोर्स लाइसेंस
+settings.rowPrivacyPolicy	गोपनीयता नीति
+settings.rowTermsOfUse	उपयोग की शर्तें
+settings.rowUserManagement	उपयोगकर्ता प्रबंधन
+settings.rowChangePassword	पासवर्ड बदलें
+settings.rowServer	सर्वर
+settings.storageFootnote	किसी फ़ोल्डर को डाउनलोड करने पर सर्वर उसे पहले ZIP में संपीड़ित करता है। आपके डिवाइस पर सहेजे जाने के बाद उस संग्रह को सर्वर से हटाने के लिए ऊपर का टॉगल चालू करें। डाउनलोड हटाना या कैश साफ़ करना केवल इस डिवाइस को प्रभावित करता है; सर्वर पर कुछ भी नहीं बदलता।
+settings.removeAllDownloadsTitle	सभी डाउनलोड हटाएं?
+settings.removeAllDownloadsConfirm	सभी हटाएं
+settings.removeAllDownloadsMessage	यह इस डिवाइस से हर डाउनलोड की गई फ़ाइल हटा देता है। वे सर्वर पर बनी रहती हैं।
+settings.clearCacheTitle	कैश साफ़ करें?
+settings.clearCacheConfirm	साफ़ करें
+settings.clearCacheMessage	यह ऑफ़लाइन उपयोग किए गए कैश किए गए पूर्वावलोकन, थंबनेल और सहेजी गई फ़ोल्डर सूचियां साफ़ करता है। सर्वर पर कुछ भी प्रभावित नहीं होता।
+settings.signOutAlertTitle	साइन आउट करें?
+settings.signOutMessage	अपनी फ़ाइलों तक पहुंचने के लिए आपको फिर से साइन इन करना होगा।
+settings.signOutButton	साइन आउट करें
+settings.signingOut	साइन आउट हो रहा है…
+settings.dateFormatNavigationTitle	तिथि प्रारूप
+settings.dateFormatShowTime	समय दिखाएं
+serverDetails.navigationTitle	सर्वर
+serverDetails.changeLogo	आइकन बदलें
+serverDetails.takePhoto	फ़ोटो लें
+serverDetails.chooseFromGallery	गैलरी से अपलोड करें
+serverDetails.nameLabel	सर्वर नाम
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	सर्वर का नाम खाली नहीं हो सकता।
+serverDetails.urlLabel	सर्वर URL
+serverDetails.urlFootnote	वह पता जहां आपका NextExplorer इंस्टेंस स्थापित है। इसे बदलने के लिए, साइन आउट करें और सर्वर फिर से जोड़ें।
+serverDetails.updateButton	सर्वर अपडेट करें
+serverDetails.savedMessage	सर्वर विवरण अपडेट किया गया।
+serverDetails.logoErrorTooLarge	वह छवि बहुत बड़ी है। 2 MB से कम की चुनें।
+serverDetails.cameraDeniedTitle	कैमरा एक्सेस बंद
+serverDetails.cameraDeniedMessage	फ़ोटो लेने के लिए सेटिंग्स में कैमरा एक्सेस चालू करें।
+licenses.navigationTitle	ओपन सोर्स लाइसेंस
+licenses.sectionSoftware	सॉफ़्टवेयर
+licenses.sectionFontSoftware	फ़ॉन्ट सॉफ़्टवेयर
+licenses.labelAuthor	लेखक
+licenses.labelOriginalVersion	मूल संस्करण
+licenses.labelModifiedVersion	संशोधित संस्करण
+licenses.labelReservedFontName	आरक्षित फ़ॉन्ट नाम
+fileInfo.navigationTitleFolder	फ़ोल्डर
+fileInfo.rowKind	प्रकार
+fileInfo.rowSize	आकार
+fileInfo.rowLocation	स्थान
+fileInfo.rowDateModified	संशोधन तिथि
+fileInfo.rowDateCreated	निर्माण तिथि
+fileInfo.rowFiles	फ़ाइलें
+fileInfo.rowFolders	फ़ोल्डर
+fileInfo.rowTotalSize	कुल आकार
+fileInfo.sectionServerDisk	सर्वर डिस्क
+fileInfo.diskFreeOf	%2$@ में से %1$@ खाली
+fileInfo.rowDimensions	आयाम
+fileInfo.rowCamera	कैमरा
+fileInfo.rowLens	लेंस
+fileInfo.rowDateTaken	लिए जाने की तिथि
+fileInfo.rowDuration	अवधि
+fileInfo.partialScan	आंशिक स्कैन गिना गया: यह फ़ोल्डर बहुत बड़ा है।
+permissions.title	अनुमतियां
+permissions.sectionMode	मोड
+permissions.numericLabel	संख्यात्मक
+permissions.applyToEnclosed	संलग्न आइटम पर लागू करें
+permissions.applyPermissions	अनुमतियां लागू करें
+permissions.sectionOwnership	स्वामित्व
+permissions.fieldOwner	स्वामी
+permissions.fieldGroup	समूह
+permissions.ownershipNote	स्वामित्व बदलने के लिए आमतौर पर सर्वर पर रूट या व्यवस्थापक विशेषाधिकार की आवश्यकता होती है।
+permissions.applyOwnership	स्वामित्व लागू करें
+permissions.scopeOwner	स्वामी
+permissions.scopeGroup	समूह
+permissions.scopeOthers	अन्य
+permissions.rightRead	पढ़ें
+permissions.rightWrite	लिखें
+permissions.rightExecute	निष्पादित करें
+archive.emptyFolder	यह फ़ोल्डर खाली है।
+archive.openFailed	यह फ़ाइल नहीं खोल सके।
+archive.openArchiveFailed	यह संग्रह नहीं खोल सके।
+archive.entryTooLarge	यह आइटम खोलने के लिए बहुत बड़ा है।
+gallery.loadFailed	यह छवि लोड नहीं कर सके।
+textPreview.saved	सहेजा गया
+textPreview.loadFailed	यह फ़ाइल लोड नहीं कर सके। अपना कनेक्शन जांचें और पुनः प्रयास करें।
+userManagement.navigationTitle	उपयोगकर्ता प्रबंधन
+userManagement.searchPrompt	उपयोगकर्ता खोजें
+userManagement.createUser	उपयोगकर्ता बनाएं
+userManagement.badgeAdmin	व्यवस्थापक
+userManagement.emptyList	अभी तक कोई उपयोगकर्ता नहीं।
+userManagement.noSearchMatches	“%@” से कोई उपयोगकर्ता मेल नहीं खाता।
+userManagement.loadFailed	सर्वर तक नहीं पहुंच सके।
+userManagement.sortType	प्रकार
+userManagement.sortName	नाम
+userManagement.sortEmail	ईमेल
+userManagement.tabProfile	प्रोफ़ाइल
+userManagement.tabSecurity	सुरक्षा
+userManagement.tabVolumes	वॉल्यूम
+userManagement.createNavigationTitle	उपयोगकर्ता बनाएं
+userManagement.createEmailField	ईमेल
+userManagement.createEmailPlaceholder	name@example.com
+userManagement.createUsernameField	उपयोगकर्ता नाम (वैकल्पिक)
+userManagement.createUsernamePlaceholder	ईमेल से व्युत्पन्न
+userManagement.createPasswordField	पासवर्ड
+userManagement.createPasswordPlaceholder	कम से कम %lld अक्षर
+userManagement.createGrantAdminToggle	व्यवस्थापक एक्सेस दें
+userManagement.createGrantAdminSubtitle	फ़ाइलों, साझाकरण और उपयोगकर्ताओं पर पूर्ण नियंत्रण।
+userManagement.createSubmit	उपयोगकर्ता बनाएं
+userManagement.setPasswordNavigationTitle	पासवर्ड
+userManagement.setPasswordNewField	नया पासवर्ड
+userManagement.setPasswordPlaceholder	कम से कम %lld अक्षर
+userManagement.setPasswordResetTitle	पासवर्ड रीसेट करें
+userManagement.setPasswordSetTitle	पासवर्ड सेट करें
+userManagement.setPasswordResetIntro	%@ के लिए नया स्थानीय पासवर्ड सेट करें। उनका वर्तमान पासवर्ड काम करना बंद कर देगा।
+userManagement.setPasswordSetIntro	%@ को स्थानीय पासवर्ड दें ताकि वे SSO के बिना साइन इन कर सकें।
+userManagement.toastProfileUpdated	प्रोफ़ाइल अपडेट की गई
+userManagement.toastAdminGranted	व्यवस्थापक अनुदत्त
+userManagement.toastUserRemoved	उपयोगकर्ता निकाला गया
+userManagement.toastUserCreated	उपयोगकर्ता बनाया गया
+userManagement.toastPasswordUpdated	पासवर्ड अपडेट किया गया
+userManagement.toastVolumeSaved	वॉल्यूम सहेजा गया
+userManagement.toastVolumeRemoved	वॉल्यूम निकाला गया
+userManagement.errorEmailRequired	ईमेल आवश्यक है।
+userManagement.errorEmailInvalid	एक मान्य ईमेल पता दर्ज करें।
+userManagement.errorUsernameRequired	उपयोगकर्ता नाम आवश्यक है।
+userManagement.errorEmailInUse	ईमेल पहले से उपयोग में है।
+userManagement.errorPasswordTooShort	कम से कम %lld अक्षर उपयोग करें।
+userDetail.fallbackName	उपयोगकर्ता
+userDetail.sectionGeneralInfo	सामान्य जानकारी
+userDetail.sectionRoles	भूमिकाएं और अनुमतियां
+userDetail.sectionLocalPassword	स्थानीय पासवर्ड
+userDetail.sectionSSO	सिंगल साइन-ऑन
+userDetail.sectionAssignedVolumes	निर्दिष्ट वॉल्यूम
+userDetail.profileDisplayNameField	प्रदर्शन नाम
+userDetail.profileDisplayNamePlaceholder	प्रदर्शन नाम
+userDetail.profileUsernameField	उपयोगकर्ता नाम
+userDetail.profileUsernamePlaceholder	उपयोगकर्ता नाम
+userDetail.profileEmailField	ईमेल
+userDetail.profileEmailPlaceholder	name@example.com
+userDetail.profileSave	परिवर्तन सहेजें
+userDetail.roleAdmin	व्यवस्थापक
+userDetail.roleAdminSubtitle	फ़ाइलों, साझाकरण और उपयोगकर्ताओं पर पूर्ण नियंत्रण।
+userDetail.roleAdminLocked	व्यवस्थापकों को ऐप से पदावनत नहीं किया जा सकता।
+userDetail.roleGrantAdmin	व्यवस्थापक बनाएं
+userDetail.passwordHasLocal	यह उपयोगकर्ता ईमेल और पासवर्ड से साइन इन करता है।
+userDetail.passwordSSOOnly	इस उपयोगकर्ता का कोई स्थानीय पासवर्ड नहीं है: केवल SSO।
+userDetail.passwordReset	पासवर्ड रीसेट करें
+userDetail.passwordSet	पासवर्ड सेट करें
+userDetail.ssoNone	कोई लिंक किया गया SSO प्रदाता नहीं।
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	लिंक किया गया
+userDetail.dangerZoneTitle	खतरा क्षेत्र
+userDetail.dangerZoneSubtitle	किसी उपयोगकर्ता को निकालने से उसका एक्सेस तुरंत रद्द हो जाता है। सर्वर पर उसके स्वामित्व वाली फ़ाइलें नहीं हटाई जातीं।
+userDetail.dangerZoneRemoveUser	उपयोगकर्ता निकालें
+userDetail.volumesNone	कोई वॉल्यूम निर्दिष्ट नहीं।
+userDetail.volumesNoneSubtitle	यह उपयोगकर्ता केवल डिफ़ॉल्ट साझा स्थान देखता है।
+userDetail.volumesAssign	वॉल्यूम निर्दिष्ट करें
+userDetail.volumesFootnote	वॉल्यूम किसी उपयोगकर्ता को डिफ़ॉल्ट साझा स्थान के बाहर की निर्देशिका तक एक्सेस देते हैं। वॉल्यूम निकालने से कभी फ़ाइलें नहीं हटतीं।
+userDetail.volumeEditAccessibility	%@ संपादित करें
+userDetail.volumeRemoveAccessibility	%@ निकालें
+userDetail.removeVolumeTitle	वॉल्यूम निकालें?
+userDetail.removeVolumeMessage	%@ इस उपयोगकर्ता से अनिर्दिष्ट किया जाता है। निर्देशिका स्वयं अछूती रहती है।
+userDetail.removeUserTitle	उपयोगकर्ता निकालें?
+userDetail.removeUserMessage	%@ तुरंत एक्सेस खो देता है। सर्वर पर उसकी फ़ाइलें नहीं हटाई जातीं।
+userDetail.volumeSheetLabelField	लेबल
+userDetail.volumeSheetLabelPlaceholder	वॉल्यूम लेबल
+userDetail.volumeSheetAccessMode	एक्सेस मोड
+userDetail.volumeSheetDirectory	निर्देशिका
+userDetail.volumeSheetSaveEdit	वॉल्यूम सहेजें
+userDetail.volumeSheetSaveNew	वॉल्यूम निर्दिष्ट करें
+userDetail.volumeSheetTitleEdit	वॉल्यूम संपादित करें
+userDetail.volumeSheetTitleNew	वॉल्यूम निर्दिष्ट करें
+userDetail.directoryPickerGoUp	एक निर्देशिका ऊपर जाएं
+userDetail.directoryPickerUseThis	इस निर्देशिका का उपयोग करें
+userDetail.directoryPickerOpen	%@ खोलें
+userDetail.directoryPickerFailed	निर्देशिकाएं सूचीबद्ध नहीं कर सके।
+previewToolbar.close	बंद करें
+previewToolbar.createShareLink	साझा लिंक बनाएं
+previewToolbar.download	डाउनलोड करें
+previewToolbar.delete	हटाएं
+previewToolbar.share	साझा करें
+previewToolbar.rename	नाम बदलें
+login.serverQuestion	आपका NextExplorer इंस्टेंस कहां है?
+login.testConnection	कनेक्शन जांचें
+login.emailField	ईमेल
+login.passwordField	पासवर्ड
+login.submit	साइन इन करें
+login.plaintextWarning	यह कनेक्शन एन्क्रिप्टेड नहीं है। आपका पासवर्ड और सत्र स्थानीय नेटवर्क पर सादे रूप में भेजे जाते हैं।
+error.sessionExpired	आपका सत्र समाप्त हो गया। फिर से साइन इन करें।
+error.rateLimited	बहुत अधिक अनुरोध। थोड़ी देर में पुनः प्रयास करें।
+error.network	सर्वर तक नहीं पहुंच सके।
+error.offline	आप ऑफ़लाइन हैं। इंटरनेट से कनेक्ट करें और पुनः प्रयास करें।
+error.decoding	सर्वर ने अप्रत्याशित रूप से प्रतिक्रिया दी।
+error.server	सर्वर त्रुटि (%lld)।
+error.forbidden	आपके पास यह करने की अनुमति नहीं है।
+changePassword.navigationTitle	पासवर्ड बदलें
+changePassword.intro	अपने ईमेल पते से साइन इन करने के लिए उपयोग किया जाने वाला पासवर्ड बदलें। आप इस डिवाइस पर साइन इन रहेंगे।
+changePassword.fieldCurrentPassword	वर्तमान पासवर्ड
+changePassword.fieldNewPasswordLabel	नया पासवर्ड
+changePassword.fieldConfirmPasswordLabel	नए पासवर्ड की पुष्टि करें
+changePassword.fieldConfirmPassword	नया पासवर्ड फिर से दर्ज करें
+changePassword.fieldNewPasswordPrompt	कम से कम %lld अक्षर
+changePassword.submitButton	पासवर्ड अपडेट करें
+changePassword.success	आपका पासवर्ड अपडेट कर दिया गया है।
+changePassword.errorMinLength	कम से कम %lld अक्षर उपयोग करें।
+changePassword.errorMismatch	पासवर्ड मेल नहीं खाते।
+login.portHint	एक पोर्ट जोड़ें (उदा. :3000)। अधिकांश होमलैब सर्वर सादे पोर्ट 80 पर नहीं सुनते।
+login.errorInvalidServer	एक मान्य सर्वर पता दर्ज करें।
+login.errorInvalidEmail	एक मान्य ईमेल पता दर्ज करें।
+login.errorInvalidCredentials	गलत उपयोगकर्ता नाम या पासवर्ड।
+login.errorSessionExpired	आपका सत्र समाप्त हो गया। कृपया फिर से साइन इन करें।
+login.errorIncomplete	साइन-इन पूरा नहीं हुआ। कृपया पुनः प्रयास करें।
+login.errorUnreachable	उस सर्वर तक नहीं पहुंच सके। पता जांचें और पुनः प्रयास करें।
+login.errorUnexpectedResponse	सर्वर से अप्रत्याशित प्रतिक्रिया।
+login.errorKeychain	इस डिवाइस पर आपका सत्र सहेज नहीं सके।
+login.errorDecoding	सर्वर ने अप्रत्याशित रूप से प्रतिक्रिया दी। पता जांचें और पुनः प्रयास करें।
+login.errorNoLocalAuth	इस सर्वर पर उपयोगकर्ता नाम/पासवर्ड साइन-इन सक्षम नहीं है।
+login.errorRateLimited	बहुत अधिक प्रयास। कृपया कुछ मिनट प्रतीक्षा करें और पुनः प्रयास करें।
+login.errorServer	सर्वर में समस्या आई (त्रुटि %lld)। कृपया बाद में पुनः प्रयास करें।
+browse.nameErrorReserved	वह नाम अनुमत नहीं है।
+browse.nameErrorSeparators	नाम में / या \ नहीं हो सकता।
+browse.searchMatchLine	पंक्ति %1$lld: %2$@
+browse.searchMatchLineLabel	पंक्ति %lld
+createShare.errorPasswordRequired	एक पासवर्ड दर्ज करें या पासवर्ड सुरक्षा बंद करें।
+filter.sheetTitle	प्रकार के अनुसार फ़िल्टर करें
+filter.button	फ़िल्टर
+filter.all	सभी प्रकार
+filter.folders	फ़ोल्डर
+filter.images	छवियां
+filter.videos	वीडियो
+filter.audio	ऑडियो
+filter.documents	दस्तावेज़
+filter.archives	संग्रह
+filter.other	अन्य
+language.navigationTitle	भाषा
+language.systemDefault	सिस्टम डिफ़ॉल्ट
+language.systemDefaultSubtitle	अपने डिवाइस की भाषा का पालन करें

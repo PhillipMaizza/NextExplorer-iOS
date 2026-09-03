@@ -1,0 +1,542 @@
+# NextExplorer — Svenska (sv). key<TAB>value.
+common.cancel	Avbryt
+common.save	Spara
+common.edit	Redigera
+common.retry	Försök igen
+common.delete	Radera
+common.remove	Ta bort
+common.clear	Rensa
+common.done	Klar
+common.ok	OK
+common.openSettings	Öppna Inställningar
+common.logOut	Logga ut
+common.close	Stäng
+common.back	Tillbaka
+common.share	Dela
+common.download	Ladda ner
+common.sort	Sortera
+common.select	Markera
+common.search	Sök
+common.password	Lösenord
+common.never	Aldrig
+common.selectedCount	%lld markerade
+tab.browse	Bläddra
+tab.favorites	Favoriter
+tab.shared	Delade
+tab.downloads	Nedladdningar
+tab.settings	Inställningar
+sort.sheetTitle	Sortera efter
+sort.name	Namn
+sort.size	Storlek
+sort.kind	Sort
+sort.dateModified	Ändringsdatum
+sort.dateAdded	Tillagd datum
+sort.dateShared	Delad datum
+sort.expiration	Upphör
+sort.email	E-post
+sort.type	Typ
+sort.ascending	Stigande
+sort.descending	Fallande
+select.selectAll	Markera alla
+select.deselectAll	Avmarkera alla
+select.listView	Listvy
+select.gridView	Rutnätsvy
+emptyState.folderEmpty	Den här mappen är tom.
+emptyState.loadFailed	Det gick inte att nå servern.
+emptyState.noSearchMatches	Inga träffar för ”%@”.
+accessMode.readonly	Skrivskyddad
+accessMode.readwrite	Läs och skriv
+shareTarget.anyone	Alla med länken
+shareTarget.users	Specifika användare
+directLinkMode.auto	Automatisk
+directLinkMode.inline	Visa
+directLinkMode.raw	Rå
+directLinkMode.download	Ladda ner
+thumbnailSize.small	Liten
+thumbnailSize.medium	Mellan
+thumbnailSize.large	Stor
+downloadLocation.documents	Dokument
+downloadLocation.cache	Cache
+dateFormat.automatic	Automatisk
+browse.navigationTitle	Bläddra
+browse.scopeThisFolder	Den här mappen
+browse.scopeEverywhere	Överallt
+browse.searchScopeInFolder	Den här mappen
+browse.searchScopeEverywhere	Överallt
+browse.locations	Platser
+browse.open	Öppna
+browse.unsupportedFileType	Filtypen stöds inte
+browse.actionGetInfo	Visa info
+browse.actionPermissions	Behörigheter
+browse.actionRename	Byt namn
+browse.actionExtract	Extrahera
+browse.actionCompress	Komprimera
+browse.actionDownload	Ladda ner
+browse.actionAddToFavorites	Lägg till i favoriter
+browse.actionRemoveFromFavorites	Ta bort från favoriter
+browse.actionShare	Skapa delningslänk
+browse.actionDelete	Radera
+browse.renameTitle	Byt namn
+browse.renameNamePlaceholder	Namn
+browse.actionNewFolder	Skapa mapp
+browse.newFolderTitle	Ny mapp
+browse.newFolderPlaceholder	Mappnamn
+browse.newFolderConfirm	Skapa
+browse.deleteConfirmTitle	Radera?
+browse.deleteConfirmOne	Radera ”%@”?
+browse.deleteConfirmMany	Radera %lld objekt?
+browse.deleteMessage	Det här kan inte ångras.
+browse.deleteLinkedSharesOne	Detta tar även bort 1 delningslänk som pekar hit.
+browse.deleteLinkedSharesMany	Detta tar även bort %lld delningslänkar som pekar hit.
+browse.deleteLinkedSharesUnavailable	Det gick inte att kontrollera länkar som pekar hit. De som finns slutar fungera.
+browse.searchNoMatchesInFolder	Inga träffar för ”%@”.
+browse.searchEverywhere	Sök överallt
+browse.searchFailed	Sökningen misslyckades. Kontrollera anslutningen och försök igen.
+browse.progressExtracting	Extraherar…
+browse.progressCompressing	Komprimerar…
+browse.progressDownloading	Laddar ner…
+browse.progressDownloadingIndexed	Laddar ner %1$lld av %2$lld…
+browse.downloadSavedTo	Sparad i %@
+browse.downloadSavedCountTo	Sparade %1$lld av %2$lld objekt i %3$@
+browse.downloadSavedAllTo	Sparade %1$lld objekt i %2$@
+browse.downloadBulkFailed	Det gick inte att spara dessa objekt på din enhet.
+browse.offlineBannerTitle	Offline
+browse.offlineBannerDetail	Visar en sparad kopia från %@
+browse.actionCopy	Kopiera
+browse.destinationPickerMoveTitle	Flytta till…
+browse.destinationPickerConfirmMove	Flytta hit
+browse.destinationPickerNoFolders	Inga mappar här
+browse.destinationPickerLoadFailed	Det gick inte att läsa in mapparna.
+browse.actionMove	Flytta
+browse.actionPaste	Klistra in
+browse.actionPasteCount	Klistra in %lld objekt
+browse.actionPasteHere	Klistra in här
+browse.actionClearClipboard	Rensa urklipp
+browse.clipboardMoveCount	%lld att flytta
+browse.clipboardCopyCount	%lld att kopiera
+browse.clipboardCopiedOne	%@ kopierad
+browse.clipboardCopiedMany	%lld objekt kopierade
+browse.progressMoving	Flyttar…
+browse.progressCopying	Kopierar…
+browse.transferMoved	Flyttade %lld objekt
+browse.transferCopied	Kopierade %lld objekt
+browse.transferMovedWithSkipped	Flyttade %1$lld objekt, hoppade över %2$lld
+browse.transferCopiedWithSkipped	Kopierade %1$lld objekt, hoppade över %2$lld
+browse.transferConflictTitle	Ersätt objekt?
+browse.transferConflictMessageOne	”%@” finns redan i den här mappen.
+browse.transferConflictMessageMany	%lld objekt finns redan i den här mappen.
+browse.transferConflictReplace	Ersätt
+browse.transferConflictKeepBoth	Behåll båda
+browse.actionOpenInBrowser	Öppna i webbläsare
+favorites.navigationTitle	Favoriter
+favorites.emptyList	Markera mappar i Bläddra för att se dem här.
+favorites.actionRemoveFromFavorites	Ta bort från favoriter
+favorites.actionEdit	Redigera
+favorites.editTitle	Redigera favorit
+favorites.editNameLabel	Namn
+favorites.editNameErrorEmpty	Namnet får inte vara tomt.
+favorites.editIconLabel	Symbol
+favorites.editIconOutline	Kontur
+favorites.editIconSolid	Fylld
+favorites.editColorLabel	Färg
+favorites.editColorDefault	Standard
+favorites.editSave	Spara
+favorites.reorderFailed	Det gick inte att spara den nya ordningen.
+favorites.removeConfirm	Ta bort %lld favoriter?
+favorites.removeMessage	Detta tar bara bort dem från favoriter.
+favorites.removeFailedOne	Det gick inte att ta bort den favoriten.
+favorites.removeFailedMany	Det gick inte att ta bort de favoriterna.
+favorites.removePartial	Tog bort %1$lld av %2$lld.
+downloads.navigationTitle	Nedladdningar
+downloads.actionOpenInFiles	Öppna i Filer
+downloads.emptyList	Filer du laddar ner från Bläddra visas här.
+downloads.deleteConfirmTitle	Radera?
+downloads.deleteConfirmOne	Radera ”%@”?
+downloads.deleteConfirmMany	Radera %lld filer?
+downloads.deleteSingleMessage	Detta tar bara bort den lokala kopian. Filen finns kvar på servern.
+downloads.deleteBulkMessage	Detta tar bara bort de lokala kopiorna. Filerna finns kvar på servern.
+downloads.errorNameExists	En fil med det namnet finns redan.
+downloads.errorInvalidName	Det namnet är inte tillåtet.
+downloads.errorMissing	Filen kunde inte längre hittas.
+downloads.errorGeneric	Det gick inte att slutföra åtgärden.
+unsupportedPreview.genericType	Fil
+unsupportedPreview.cannotOpen	Den här appen kan inte öppna den här filtypen.
+uploads.navigationTitle	Uppladdningar
+uploads.menuTitle	Ladda upp
+uploads.actionUploadFromFiles	Ladda upp från Filer
+uploads.actionUploadFromPhotos	Ladda upp från galleriet
+uploads.actionTakePhoto	Ta foto eller video
+uploads.cameraDeniedTitle	Kameraåtkomst krävs
+uploads.cameraDeniedMessage	Tillåt kameraåtkomst i Inställningar för att ta ett foto eller en video.
+uploads.destinationTitle	Ladda upp till…
+uploads.destinationConfirm	Ladda upp här
+uploads.reviewTitleOne	Ladda upp 1 fil
+uploads.reviewTitleMany	Ladda upp %lld filer
+uploads.reviewSectionFiles	Filer
+uploads.reviewSectionPath	Sökväg
+uploads.reviewSectionSize	Total storlek
+uploads.reviewChooseFolder	Välj en mapp
+uploads.reviewUploadButton	Ladda upp
+uploads.reviewPreparing	Förbereder %lld…
+uploads.reviewAddMore	Lägg till fler filer
+uploads.reviewPreviewFile	Förhandsvisa %@
+uploads.reviewInsecureNetworkNotice	Ansluten via http. Om den här servern bara finns i ditt hemnätverk fungerar inte uppladdningar när du är borta från det.
+uploads.stagingFailed	Det gick inte att lägga till de filerna. Försök igen.
+uploads.stagingSkipped	%lld objekt kunde inte förberedas och utelämnades.
+uploads.discardTitle	Kassera uppladdningen?
+uploads.discardMessage	Filerna du lade till laddas inte upp.
+uploads.discardConfirm	Kassera
+uploads.statusWaiting	Väntar
+uploads.statusFailed	Uppladdningen misslyckades
+uploads.barTitleOne	Laddar upp %@
+uploads.barTitleMany	Laddar upp %lld filer
+uploads.barFailedOne	1 uppladdning misslyckades
+uploads.barFailedMany	%lld uppladdningar misslyckades
+uploads.retryAll	Försök med alla igen
+uploads.complete	Uppladdning klar
+uploads.completeMany	%lld filer uppladdade
+uploads.completeWithFailures	%1$lld uppladdade, %2$lld misslyckades
+uploads.failedGeneric	Det gick inte att ladda upp den här filen.
+uploads.clear	Rensa
+uploads.emptyList	Inga uppladdningar än.
+uploads.cancelAll	Avbryt alla uppladdningar
+shared.navigationTitle	Delade
+shared.segmentByMe	Av mig
+shared.segmentWithMe	Med mig
+shared.sectionExpired	Utgångna
+shared.badgeExpired	utgången
+shared.emptyByMe	Dela en fil eller mapp för att se dess länk här.
+shared.emptyWithMe	Länkar som andra delar med dig visas här.
+shared.noSearchMatches	Inga delningar matchar ”%@”.
+shared.deleteTitle	Radera delningslänk?
+shared.deleteMessage	Länken slutar fungera omedelbart. Själva filen eller mappen påverkas inte.
+shared.sharedByUnknown	Någon
+shared.metaAccess	Åtkomst
+shared.metaExpiration	Upphör
+shared.metaSharedBy	Delad av
+shared.metaSharedWith	Delad med
+shared.anyoneWithLink	Alla med länken
+shared.linkMode	Länkläge
+shared.actionShareLink	Dela länk
+shared.actionFolderLink	Mapplänk
+shared.actionFileLink	Fillänk
+shared.moreRecipients	+%lld
+shared.copiedShareLink	Delningslänk kopierad
+shared.copiedFolderZip	ZIP-länk för mapp kopierad
+shared.copiedDirectFile	Direkt fillänk kopierad
+createShare.title	Skapa delningslänk
+createShare.titleCreated	Delning skapad
+createShare.sectionLabel	Etikett
+createShare.sectionAccessMode	Åtkomstläge
+createShare.sectionWhoCanAccess	Vem kan komma åt
+createShare.sectionShareLink	Delningslänk
+createShare.fieldPassword	Lösenord
+createShare.togglePasswordProtect	Lösenordsskydda
+createShare.toggleSetExpiration	Ange utgångsdatum
+createShare.fieldExpires	Upphör
+createShare.submit	Skapa delningslänk
+createShare.loadingUsers	Läser in användare…
+createShare.noOtherUsers	Inga andra användare att dela med.
+createShare.sharingPrefix	Delar:
+createShare.createdBanner	Delningslänk skapades!
+createShare.viewInShared	Visa i Delade
+createShare.directLinkMode	Direktlänksläge
+createShare.directFolderLink	Direkt ZIP-länk för mapp
+createShare.directFileLink	Direkt fillänk
+createShare.summaryAccess	Åtkomst
+createShare.summarySharedWith	Delad med
+createShare.summaryPassword	Lösenord
+createShare.summaryPasswordProtected	Skyddad
+createShare.summaryExpires	Upphör
+createShare.summarySpecificPeople	Specifika personer
+createShare.errorPastExpiration	Välj ett utgångsdatum i framtiden.
+editShare.title	Redigera delningslänk
+editShare.save	Spara ändringar
+editShare.passwordKeepHint	Lämna tomt för att behålla det nuvarande lösenordet
+editShare.savedToast	Delningslänk uppdaterad
+thumbnailSettings.navigationTitle	Miniatyrer
+thumbnailSettings.subtitle	Styr hur servern genererar bildminiatyrer för alla klienter.
+thumbnailSettings.enable	Generera miniatyrer
+thumbnailSettings.enableHelp	Stäng av för att visa fullständiga bilder överallt i stället.
+thumbnailSettings.quality	Kvalitet
+thumbnailSettings.qualityHelp	Högre ser bättre ut och tar mer plats.
+thumbnailSettings.maxDimension	Maximal dimension
+thumbnailSettings.maxDimensionHelp	Längsta kanten på en genererad miniatyr, i pixlar.
+thumbnailSettings.concurrency	Samtidighet
+thumbnailSettings.concurrencyHelp	Hur många miniatyrer servern bygger samtidigt.
+thumbnailSettings.unavailable	Miniatyrinställningar är endast tillgängliga för administratörer.
+thumbnailSettings.saveButton	Spara ändringar
+accessRules.navigationTitle	Åtkomstregler för mappar
+accessRules.subtitle	Åsidosätt läs- och skrivåtkomst för specifika sökvägar.
+accessRules.addRule	Lägg till regel
+accessRules.empty	Inga åtkomstregler konfigurerade.
+accessRules.emptyHint	Lägg till en regel för att åsidosätta åtkomst till en sökväg.
+accessRules.pathLabel	Sökväg
+accessRules.pathPlaceholder	Dokument/Rapporter
+accessRules.recursive	Tillämpa på undermappar
+accessRules.permissionReadWrite	Läs och skriv
+accessRules.permissionReadOnly	Skrivskyddad
+accessRules.permissionHidden	Dold
+accessRules.remove	Ta bort
+accessRules.unavailable	Åtkomstregler är endast tillgängliga för administratörer.
+accessRules.saveButton	Spara ändringar
+settings.rowThumbnails	Miniatyrer
+settings.rowAccessRules	Åtkomstregler för mappar
+settings.navigationTitle	Inställningar
+settings.appVersion	Version %1$@ (%2$@)
+settings.sectionGeneral	Allmänt
+settings.sectionDisplay	Skärm
+settings.sectionStorage	Lagring
+settings.sectionServerStorage	Serverlagring
+settings.serverStorageUsed	%1$@ av %2$@
+settings.sectionLicenses	Licenser
+settings.sectionLegal	Juridiskt
+settings.sectionUsers	Användare
+settings.sectionAdmin	Administration
+settings.toggleShowHiddenFiles	Visa dolda filer
+settings.toggleRenderHTML	Rendera HTML-sidor
+settings.toggleRenderMarkdown	Rendera Markdown-filer
+settings.toggleHaptics	Haptik
+settings.toggleDarkMode	Mörkt läge
+settings.toggleShowThumbnails	Visa miniatyrer
+settings.toggleShowExtensions	Visa filändelser
+settings.toggleRemoveArchives	Ta bort arkiv efter nedladdning
+settings.toggleKeepClipboard	Behåll objekt efter inklistring
+settings.toggleKeepClipboardSubtitle	Kopierade objekt förblir redo att klistras in i en annan mapp. Flyttade objekt rensas alltid.
+settings.rowDateFormat	Datumformat
+settings.rowLanguage	Språk
+settings.rowThumbnailSize	Miniatyrstorlek
+settings.rowRemoveAllDownloads	Ta bort alla nedladdningar
+settings.rowClearCache	Rensa cache
+settings.rowOpenSourceLicenses	Öppen källkod-licenser
+settings.rowPrivacyPolicy	Integritetspolicy
+settings.rowTermsOfUse	Användarvillkor
+settings.rowUserManagement	Användarhantering
+settings.rowChangePassword	Byt lösenord
+settings.rowServer	Server
+settings.storageFootnote	Att ladda ner en mapp komprimerar den först till en ZIP på servern. Aktivera reglaget ovan för att radera det arkivet från servern när det har sparats på din enhet. Att ta bort nedladdningar eller rensa cachen påverkar bara den här enheten; inget på servern rörs.
+settings.removeAllDownloadsTitle	Ta bort alla nedladdningar?
+settings.removeAllDownloadsConfirm	Ta bort alla
+settings.removeAllDownloadsMessage	Detta raderar alla nedladdade filer från den här enheten. De finns kvar på servern.
+settings.clearCacheTitle	Rensa cache?
+settings.clearCacheConfirm	Rensa
+settings.clearCacheMessage	Detta rensar cachade förhandsvisningar, miniatyrer och sparade mapplistor som används offline. Inget på servern påverkas.
+settings.signOutAlertTitle	Logga ut?
+settings.signOutMessage	Du måste logga in igen för att komma åt dina filer.
+settings.signOutButton	Logga ut
+settings.signingOut	Loggar ut…
+settings.dateFormatNavigationTitle	Datumformat
+settings.dateFormatShowTime	Visa tid
+serverDetails.navigationTitle	Server
+serverDetails.changeLogo	Byt symbol
+serverDetails.takePhoto	Ta foto
+serverDetails.chooseFromGallery	Ladda upp från galleriet
+serverDetails.nameLabel	Servernamn
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	Servernamnet får inte vara tomt.
+serverDetails.urlLabel	Server-URL
+serverDetails.urlFootnote	Adressen där din NextExplorer-instans är installerad. För att ändra den, logga ut och lägg till servern igen.
+serverDetails.updateButton	Uppdatera server
+serverDetails.savedMessage	Serveruppgifterna uppdaterades.
+serverDetails.logoErrorTooLarge	Den bilden är för stor. Välj en under 2 MB.
+serverDetails.cameraDeniedTitle	Kameraåtkomst av
+serverDetails.cameraDeniedMessage	Aktivera kameraåtkomst i Inställningar för att ta ett foto.
+licenses.navigationTitle	Öppen källkod-licenser
+licenses.sectionSoftware	Programvara
+licenses.sectionFontSoftware	Teckensnittsprogramvara
+licenses.labelAuthor	Upphovsperson
+licenses.labelOriginalVersion	Ursprunglig version
+licenses.labelModifiedVersion	Modifierad version
+licenses.labelReservedFontName	Reserverat teckensnittsnamn
+fileInfo.navigationTitleFolder	Mapp
+fileInfo.rowKind	Sort
+fileInfo.rowSize	Storlek
+fileInfo.rowLocation	Plats
+fileInfo.rowDateModified	Ändringsdatum
+fileInfo.rowDateCreated	Skapad datum
+fileInfo.rowFiles	Filer
+fileInfo.rowFolders	Mappar
+fileInfo.rowTotalSize	Total storlek
+fileInfo.sectionServerDisk	Serverdisk
+fileInfo.diskFreeOf	%1$@ ledigt av %2$@
+fileInfo.rowDimensions	Dimensioner
+fileInfo.rowCamera	Kamera
+fileInfo.rowLens	Objektiv
+fileInfo.rowDateTaken	Tagen datum
+fileInfo.rowDuration	Längd
+fileInfo.partialScan	Räknade en delvis genomsökning: den här mappen är mycket stor.
+permissions.title	Behörigheter
+permissions.sectionMode	Läge
+permissions.numericLabel	Numeriskt
+permissions.applyToEnclosed	Tillämpa på inneslutna objekt
+permissions.applyPermissions	Tillämpa behörigheter
+permissions.sectionOwnership	Ägarskap
+permissions.fieldOwner	Ägare
+permissions.fieldGroup	Grupp
+permissions.ownershipNote	Att ändra ägarskap kräver oftast root- eller administratörsbehörighet på servern.
+permissions.applyOwnership	Tillämpa ägarskap
+permissions.scopeOwner	Ägare
+permissions.scopeGroup	Grupp
+permissions.scopeOthers	Andra
+permissions.rightRead	Läs
+permissions.rightWrite	Skriv
+permissions.rightExecute	Kör
+archive.emptyFolder	Den här mappen är tom.
+archive.openFailed	Det gick inte att öppna den här filen.
+archive.openArchiveFailed	Det gick inte att öppna det här arkivet.
+archive.entryTooLarge	Det här objektet är för stort för att öppnas.
+gallery.loadFailed	Det gick inte att läsa in den här bilden.
+textPreview.saved	Sparad
+textPreview.loadFailed	Det gick inte att läsa in den här filen. Kontrollera anslutningen och försök igen.
+userManagement.navigationTitle	Användarhantering
+userManagement.searchPrompt	Sök användare
+userManagement.createUser	Skapa användare
+userManagement.badgeAdmin	Administratör
+userManagement.emptyList	Inga användare än.
+userManagement.noSearchMatches	Inga användare matchar ”%@”.
+userManagement.loadFailed	Det gick inte att nå servern.
+userManagement.sortType	Typ
+userManagement.sortName	Namn
+userManagement.sortEmail	E-post
+userManagement.tabProfile	Profil
+userManagement.tabSecurity	Säkerhet
+userManagement.tabVolumes	Volymer
+userManagement.createNavigationTitle	Skapa användare
+userManagement.createEmailField	E-post
+userManagement.createEmailPlaceholder	namn@exempel.com
+userManagement.createUsernameField	Användarnamn (valfritt)
+userManagement.createUsernamePlaceholder	Härledd från e-post
+userManagement.createPasswordField	Lösenord
+userManagement.createPasswordPlaceholder	Minst %lld tecken
+userManagement.createGrantAdminToggle	Ge administratörsåtkomst
+userManagement.createGrantAdminSubtitle	Full kontroll över filer, delningar och användare.
+userManagement.createSubmit	Skapa användare
+userManagement.setPasswordNavigationTitle	Lösenord
+userManagement.setPasswordNewField	Nytt lösenord
+userManagement.setPasswordPlaceholder	Minst %lld tecken
+userManagement.setPasswordResetTitle	Återställ lösenord
+userManagement.setPasswordSetTitle	Ange lösenord
+userManagement.setPasswordResetIntro	Ange ett nytt lokalt lösenord för %@. Det nuvarande lösenordet slutar fungera.
+userManagement.setPasswordSetIntro	Ge %@ ett lokalt lösenord så att inloggning utan SSO blir möjlig.
+userManagement.toastProfileUpdated	Profil uppdaterad
+userManagement.toastAdminGranted	Administratör beviljad
+userManagement.toastUserRemoved	Användare borttagen
+userManagement.toastUserCreated	Användare skapad
+userManagement.toastPasswordUpdated	Lösenord uppdaterat
+userManagement.toastVolumeSaved	Volym sparad
+userManagement.toastVolumeRemoved	Volym borttagen
+userManagement.errorEmailRequired	E-post krävs.
+userManagement.errorEmailInvalid	Ange en giltig e-postadress.
+userManagement.errorUsernameRequired	Användarnamn krävs.
+userManagement.errorEmailInUse	E-posten används redan.
+userManagement.errorPasswordTooShort	Använd minst %lld tecken.
+userDetail.fallbackName	Användare
+userDetail.sectionGeneralInfo	Allmän info
+userDetail.sectionRoles	Roller och behörigheter
+userDetail.sectionLocalPassword	Lokalt lösenord
+userDetail.sectionSSO	Enkel inloggning
+userDetail.sectionAssignedVolumes	Tilldelade volymer
+userDetail.profileDisplayNameField	Visningsnamn
+userDetail.profileDisplayNamePlaceholder	Visningsnamn
+userDetail.profileUsernameField	Användarnamn
+userDetail.profileUsernamePlaceholder	Användarnamn
+userDetail.profileEmailField	E-post
+userDetail.profileEmailPlaceholder	namn@exempel.com
+userDetail.profileSave	Spara ändringar
+userDetail.roleAdmin	Administratör
+userDetail.roleAdminSubtitle	Full kontroll över filer, delningar och användare.
+userDetail.roleAdminLocked	Administratörer kan inte nedgraderas från appen.
+userDetail.roleGrantAdmin	Ge administratör
+userDetail.passwordHasLocal	Den här användaren loggar in med en e-post och ett lösenord.
+userDetail.passwordSSOOnly	Den här användaren har inget lokalt lösenord: endast SSO.
+userDetail.passwordReset	Återställ lösenord
+userDetail.passwordSet	Ange lösenord
+userDetail.ssoNone	Inga länkade SSO-leverantörer.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Länkad
+userDetail.dangerZoneTitle	Farozon
+userDetail.dangerZoneSubtitle	Att ta bort en användare återkallar åtkomsten omedelbart. Filer de äger på servern raderas inte.
+userDetail.dangerZoneRemoveUser	Ta bort användare
+userDetail.volumesNone	Inga volymer tilldelade.
+userDetail.volumesNoneSubtitle	Den här användaren ser bara det delade standardutrymmet.
+userDetail.volumesAssign	Tilldela volym
+userDetail.volumesFootnote	Volymer ger en användare åtkomst till en katalog utanför det delade standardutrymmet. Att ta bort en volym raderar aldrig filer.
+userDetail.volumeEditAccessibility	Redigera %@
+userDetail.volumeRemoveAccessibility	Ta bort %@
+userDetail.removeVolumeTitle	Ta bort volym?
+userDetail.removeVolumeMessage	%@ avtilldelas från den här användaren. Själva katalogen rörs inte.
+userDetail.removeUserTitle	Ta bort användare?
+userDetail.removeUserMessage	%@ förlorar åtkomsten omedelbart. Deras filer på servern raderas inte.
+userDetail.volumeSheetLabelField	Etikett
+userDetail.volumeSheetLabelPlaceholder	Volymetikett
+userDetail.volumeSheetAccessMode	Åtkomstläge
+userDetail.volumeSheetDirectory	Katalog
+userDetail.volumeSheetSaveEdit	Spara volym
+userDetail.volumeSheetSaveNew	Tilldela volym
+userDetail.volumeSheetTitleEdit	Redigera volym
+userDetail.volumeSheetTitleNew	Tilldela volym
+userDetail.directoryPickerGoUp	Upp en katalog
+userDetail.directoryPickerUseThis	Använd den här katalogen
+userDetail.directoryPickerOpen	Öppna %@
+userDetail.directoryPickerFailed	Det gick inte att lista katalogerna.
+previewToolbar.close	Stäng
+previewToolbar.createShareLink	Skapa delningslänk
+previewToolbar.download	Ladda ner
+previewToolbar.delete	Radera
+previewToolbar.share	Dela
+previewToolbar.rename	Byt namn
+login.serverQuestion	Var finns din NextExplorer-instans?
+login.testConnection	Testa anslutningen
+login.emailField	E-post
+login.passwordField	Lösenord
+login.submit	Logga in
+login.plaintextWarning	Den här anslutningen är inte krypterad. Ditt lösenord och din session skickas i klartext över det lokala nätverket.
+error.sessionExpired	Din session har gått ut. Logga in igen.
+error.rateLimited	För många förfrågningar. Försök igen strax.
+error.network	Det gick inte att nå servern.
+error.offline	Du är offline. Anslut till internet och försök igen.
+error.decoding	Servern svarade oväntat.
+error.server	Serverfel (%lld).
+error.forbidden	Du har inte behörighet att göra det.
+changePassword.navigationTitle	Byt lösenord
+changePassword.intro	Byt lösenordet du använder för att logga in med din e-postadress. Du förblir inloggad på den här enheten.
+changePassword.fieldCurrentPassword	Nuvarande lösenord
+changePassword.fieldNewPasswordLabel	Nytt lösenord
+changePassword.fieldConfirmPasswordLabel	Bekräfta nytt lösenord
+changePassword.fieldConfirmPassword	Ange det nya lösenordet igen
+changePassword.fieldNewPasswordPrompt	Minst %lld tecken
+changePassword.submitButton	Uppdatera lösenord
+changePassword.success	Ditt lösenord har uppdaterats.
+changePassword.errorMinLength	Använd minst %lld tecken.
+changePassword.errorMismatch	Lösenorden matchar inte.
+login.portHint	Lägg till en port (t.ex. :3000). De flesta hemservrar lyssnar inte på port 80.
+login.errorInvalidServer	Ange en giltig serveradress.
+login.errorInvalidEmail	Ange en giltig e-postadress.
+login.errorInvalidCredentials	Felaktigt användarnamn eller lösenord.
+login.errorSessionExpired	Din session har gått ut. Logga in igen.
+login.errorIncomplete	Inloggningen slutfördes inte. Försök igen.
+login.errorUnreachable	Det gick inte att nå den servern. Kontrollera adressen och försök igen.
+login.errorUnexpectedResponse	Oväntat svar från servern.
+login.errorKeychain	Det gick inte att spara din session på den här enheten.
+login.errorDecoding	Servern svarade oväntat. Kontrollera adressen och försök igen.
+login.errorNoLocalAuth	Den här servern har inte inloggning med användarnamn och lösenord aktiverat.
+login.errorRateLimited	För många försök. Vänta några minuter och försök igen.
+login.errorServer	Servern stötte på ett problem (fel %lld). Försök igen senare.
+browse.nameErrorReserved	Det namnet är inte tillåtet.
+browse.nameErrorSeparators	Ett namn får inte innehålla / eller \.
+browse.searchMatchLine	Rad %1$lld: %2$@
+browse.searchMatchLineLabel	Rad %lld
+createShare.errorPasswordRequired	Ange ett lösenord eller stäng av lösenordsskydd.
+filter.sheetTitle	Filtrera efter typ
+filter.button	Filtrera
+filter.all	Alla typer
+filter.folders	Mappar
+filter.images	Bilder
+filter.videos	Videor
+filter.audio	Ljud
+filter.documents	Dokument
+filter.archives	Arkiv
+filter.other	Övrigt
+language.navigationTitle	Språk
+language.systemDefault	Systemstandard
+language.systemDefaultSubtitle	Följ enhetens språk

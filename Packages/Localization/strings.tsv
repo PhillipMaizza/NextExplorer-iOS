@@ -344,6 +344,7 @@ settings.toggleRemoveArchives	Remove Archives After Download
 settings.toggleKeepClipboard	Keep Items After Paste
 settings.toggleKeepClipboardSubtitle	Copied items stay ready to paste into another folder. Moved items always clear.
 settings.rowDateFormat	Date Format
+settings.rowLanguage	Language
 settings.rowThumbnailSize	Thumbnail Size
 settings.rowRemoveAllDownloads	Remove All Downloads
 settings.rowClearCache	Clear Cache
@@ -366,6 +367,11 @@ settings.signOutButton	Sign Out
 settings.signingOut	Signing Out…
 settings.dateFormatNavigationTitle	Date Format
 settings.dateFormatShowTime	Show Time
+
+# ---- language ----
+language.navigationTitle	Language
+language.systemDefault	System Default
+language.systemDefaultSubtitle	Follow your device language
 
 # ---- server details ----
 serverDetails.navigationTitle	Server

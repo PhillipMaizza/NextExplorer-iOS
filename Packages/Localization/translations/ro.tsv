@@ -1,0 +1,542 @@
+# NextExplorer — Română (ro). key<TAB>value.
+common.cancel	Anulează
+common.save	Salvează
+common.edit	Editează
+common.retry	Reîncearcă
+common.delete	Șterge
+common.remove	Elimină
+common.clear	Golește
+common.done	Gata
+common.ok	OK
+common.openSettings	Deschide Setări
+common.logOut	Deconectează-te
+common.close	Închide
+common.back	Înapoi
+common.share	Partajează
+common.download	Descarcă
+common.sort	Sortează
+common.select	Selectează
+common.search	Caută
+common.password	Parolă
+common.never	Niciodată
+common.selectedCount	%lld selectate
+tab.browse	Explorează
+tab.favorites	Favorite
+tab.shared	Partajate
+tab.downloads	Descărcări
+tab.settings	Setări
+sort.sheetTitle	Sortează după
+sort.name	Nume
+sort.size	Dimensiune
+sort.kind	Fel
+sort.dateModified	Data modificării
+sort.dateAdded	Data adăugării
+sort.dateShared	Data partajării
+sort.expiration	Expirare
+sort.email	E-mail
+sort.type	Tip
+sort.ascending	Crescător
+sort.descending	Descrescător
+select.selectAll	Selectează tot
+select.deselectAll	Deselectează tot
+select.listView	Vizualizare listă
+select.gridView	Vizualizare grilă
+emptyState.folderEmpty	Acest dosar este gol.
+emptyState.loadFailed	Nu s-a putut contacta serverul.
+emptyState.noSearchMatches	Niciun rezultat pentru „%@”.
+accessMode.readonly	Doar citire
+accessMode.readwrite	Citire și scriere
+shareTarget.anyone	Oricine are linkul
+shareTarget.users	Utilizatori anumiți
+directLinkMode.auto	Automat
+directLinkMode.inline	Vizualizează
+directLinkMode.raw	Brut
+directLinkMode.download	Descarcă
+thumbnailSize.small	Mică
+thumbnailSize.medium	Medie
+thumbnailSize.large	Mare
+downloadLocation.documents	Documente
+downloadLocation.cache	Cache
+dateFormat.automatic	Automat
+browse.navigationTitle	Explorează
+browse.scopeThisFolder	Acest dosar
+browse.scopeEverywhere	Peste tot
+browse.searchScopeInFolder	Acest dosar
+browse.searchScopeEverywhere	Peste tot
+browse.locations	Locații
+browse.open	Deschide
+browse.unsupportedFileType	Tip de fișier neacceptat
+browse.actionGetInfo	Informații
+browse.actionPermissions	Permisiuni
+browse.actionRename	Redenumește
+browse.actionExtract	Extrage
+browse.actionCompress	Comprimă
+browse.actionDownload	Descarcă
+browse.actionAddToFavorites	Adaugă la favorite
+browse.actionRemoveFromFavorites	Elimină de la favorite
+browse.actionShare	Creează link de partajare
+browse.actionDelete	Șterge
+browse.renameTitle	Redenumește
+browse.renameNamePlaceholder	Nume
+browse.actionNewFolder	Creează dosar
+browse.newFolderTitle	Dosar nou
+browse.newFolderPlaceholder	Numele dosarului
+browse.newFolderConfirm	Creează
+browse.deleteConfirmTitle	Ștergi?
+browse.deleteConfirmOne	Ștergi „%@”?
+browse.deleteConfirmMany	Ștergi %lld elemente?
+browse.deleteMessage	Această acțiune nu poate fi anulată.
+browse.deleteLinkedSharesOne	Aceasta elimină și 1 link de partajare care indică aici.
+browse.deleteLinkedSharesMany	Aceasta elimină și %lld linkuri de partajare care indică aici.
+browse.deleteLinkedSharesUnavailable	Nu s-au putut verifica linkurile care indică aici. Cele existente vor înceta să funcționeze.
+browse.searchNoMatchesInFolder	Niciun rezultat pentru „%@”.
+browse.searchEverywhere	Caută peste tot
+browse.searchFailed	Căutarea a eșuat. Verifică conexiunea și încearcă din nou.
+browse.progressExtracting	Se extrage…
+browse.progressCompressing	Se comprimă…
+browse.progressDownloading	Se descarcă…
+browse.progressDownloadingIndexed	Se descarcă %1$lld din %2$lld…
+browse.downloadSavedTo	Salvat în %@
+browse.downloadSavedCountTo	Salvate %1$lld din %2$lld elemente în %3$@
+browse.downloadSavedAllTo	Salvate %1$lld elemente în %2$@
+browse.downloadBulkFailed	Nu s-au putut salva aceste elemente pe dispozitiv.
+browse.offlineBannerTitle	Offline
+browse.offlineBannerDetail	Se afișează o copie salvată din %@
+browse.actionCopy	Copiază
+browse.destinationPickerMoveTitle	Mută în…
+browse.destinationPickerConfirmMove	Mută aici
+browse.destinationPickerNoFolders	Niciun dosar aici
+browse.destinationPickerLoadFailed	Nu s-au putut încărca dosarele.
+browse.actionMove	Mută
+browse.actionPaste	Lipește
+browse.actionPasteCount	Lipește %lld elemente
+browse.actionPasteHere	Lipește aici
+browse.actionClearClipboard	Golește clipboardul
+browse.clipboardMoveCount	%lld de mutat
+browse.clipboardCopyCount	%lld de copiat
+browse.clipboardCopiedOne	%@ copiat
+browse.clipboardCopiedMany	%lld elemente copiate
+browse.progressMoving	Se mută…
+browse.progressCopying	Se copiază…
+browse.transferMoved	%lld elemente mutate
+browse.transferCopied	%lld elemente copiate
+browse.transferMovedWithSkipped	%1$lld elemente mutate, %2$lld omise
+browse.transferCopiedWithSkipped	%1$lld elemente copiate, %2$lld omise
+browse.transferConflictTitle	Înlocuiești elementele?
+browse.transferConflictMessageOne	„%@” există deja în acest dosar.
+browse.transferConflictMessageMany	%lld elemente există deja în acest dosar.
+browse.transferConflictReplace	Înlocuiește
+browse.transferConflictKeepBoth	Păstrează ambele
+browse.actionOpenInBrowser	Deschide în browser
+favorites.navigationTitle	Favorite
+favorites.emptyList	Marchează dosare în Explorează pentru a le vedea aici.
+favorites.actionRemoveFromFavorites	Elimină de la favorite
+favorites.actionEdit	Editează
+favorites.editTitle	Editează favoritul
+favorites.editNameLabel	Nume
+favorites.editNameErrorEmpty	Numele nu poate fi gol.
+favorites.editIconLabel	Pictogramă
+favorites.editIconOutline	Contur
+favorites.editIconSolid	Plin
+favorites.editColorLabel	Culoare
+favorites.editColorDefault	Implicit
+favorites.editSave	Salvează
+favorites.reorderFailed	Nu s-a putut salva noua ordine.
+favorites.removeConfirm	Elimini %lld favorite?
+favorites.removeMessage	Aceasta doar le elimină de la favorite.
+favorites.removeFailedOne	Nu s-a putut elimina acel favorit.
+favorites.removeFailedMany	Nu s-au putut elimina acele favorite.
+favorites.removePartial	Eliminate %1$lld din %2$lld.
+downloads.navigationTitle	Descărcări
+downloads.actionOpenInFiles	Deschide în Fișiere
+downloads.emptyList	Fișierele descărcate din Explorează apar aici.
+downloads.deleteConfirmTitle	Ștergi?
+downloads.deleteConfirmOne	Ștergi „%@”?
+downloads.deleteConfirmMany	Ștergi %lld fișiere?
+downloads.deleteSingleMessage	Aceasta elimină doar copia locală. Fișierul rămâne pe server.
+downloads.deleteBulkMessage	Aceasta elimină doar copiile locale. Fișierele rămân pe server.
+downloads.errorNameExists	Există deja un fișier cu acest nume.
+downloads.errorInvalidName	Acest nume nu este permis.
+downloads.errorMissing	Acest fișier nu a mai putut fi găsit.
+downloads.errorGeneric	Nu s-a putut finaliza acea acțiune.
+unsupportedPreview.genericType	Fișier
+unsupportedPreview.cannotOpen	Această aplicație nu poate deschide acest tip de fișier.
+uploads.navigationTitle	Încărcări
+uploads.menuTitle	Încarcă
+uploads.actionUploadFromFiles	Încarcă din Fișiere
+uploads.actionUploadFromPhotos	Încarcă din galerie
+uploads.actionTakePhoto	Fă o fotografie sau un videoclip
+uploads.cameraDeniedTitle	Este necesar accesul la cameră
+uploads.cameraDeniedMessage	Permite accesul la cameră în Setări pentru a face o fotografie sau un videoclip.
+uploads.destinationTitle	Încarcă în…
+uploads.destinationConfirm	Încarcă aici
+uploads.reviewTitleOne	Încarcă 1 fișier
+uploads.reviewTitleMany	Încarcă %lld fișiere
+uploads.reviewSectionFiles	Fișiere
+uploads.reviewSectionPath	Cale
+uploads.reviewSectionSize	Dimensiune totală
+uploads.reviewChooseFolder	Alege un dosar
+uploads.reviewUploadButton	Încarcă
+uploads.reviewPreparing	Se pregătește %lld…
+uploads.reviewAddMore	Adaugă mai multe fișiere
+uploads.reviewPreviewFile	Previzualizează %@
+uploads.reviewInsecureNetworkNotice	Conectat prin http. Dacă acest server este doar în rețeaua ta de acasă, încărcările nu vor funcționa când ești în afara ei.
+uploads.stagingFailed	Nu s-au putut adăuga acele fișiere. Încearcă din nou.
+uploads.stagingSkipped	%lld elemente nu au putut fi pregatite și au fost omise.
+uploads.discardTitle	Renunți la încărcare?
+uploads.discardMessage	Fișierele adăugate nu vor fi încărcate.
+uploads.discardConfirm	Renunță
+uploads.statusWaiting	În așteptare
+uploads.statusFailed	Încărcarea a eșuat
+uploads.barTitleOne	Se încarcă %@
+uploads.barTitleMany	Se încarcă %lld fișiere
+uploads.barFailedOne	1 încărcare a eșuat
+uploads.barFailedMany	%lld încărcări au eșuat
+uploads.retryAll	Reîncearcă toate
+uploads.complete	Încărcare finalizată
+uploads.completeMany	%lld fișiere încărcate
+uploads.completeWithFailures	%1$lld încărcate, %2$lld eșuate
+uploads.failedGeneric	Nu s-a putut încărca acest fișier.
+uploads.clear	Golește
+uploads.emptyList	Nicio încărcare încă.
+uploads.cancelAll	Anulează toate încărcările
+shared.navigationTitle	Partajate
+shared.segmentByMe	De mine
+shared.segmentWithMe	Cu mine
+shared.sectionExpired	Expirate
+shared.badgeExpired	expirat
+shared.emptyByMe	Partajează un fișier sau dosar pentru a-i vedea linkul aici.
+shared.emptyWithMe	Linkurile pe care alții le partajează cu tine apar aici.
+shared.noSearchMatches	Nicio partajare nu corespunde cu „%@”.
+shared.deleteTitle	Ștergi linkul de partajare?
+shared.deleteMessage	Linkul încetează să funcționeze imediat. Fișierul sau dosarul în sine nu este afectat.
+shared.sharedByUnknown	Cineva
+shared.metaAccess	Acces
+shared.metaExpiration	Expirare
+shared.metaSharedBy	Partajat de
+shared.metaSharedWith	Partajat cu
+shared.anyoneWithLink	Oricine are linkul
+shared.linkMode	Mod link
+shared.actionShareLink	Partajează linkul
+shared.actionFolderLink	Link dosar
+shared.actionFileLink	Link fișier
+shared.moreRecipients	+%lld
+shared.copiedShareLink	Link de partajare copiat
+shared.copiedFolderZip	Link ZIP al dosarului copiat
+shared.copiedDirectFile	Link direct al fișierului copiat
+createShare.title	Creează link de partajare
+createShare.titleCreated	Partajare creată
+createShare.sectionLabel	Etichetă
+createShare.sectionAccessMode	Mod de acces
+createShare.sectionWhoCanAccess	Cine poate accesa
+createShare.sectionShareLink	Link de partajare
+createShare.fieldPassword	Parolă
+createShare.togglePasswordProtect	Protejează cu parolă
+createShare.toggleSetExpiration	Setează data de expirare
+createShare.fieldExpires	Expiră
+createShare.submit	Creează link de partajare
+createShare.loadingUsers	Se încarcă utilizatorii…
+createShare.noOtherUsers	Niciun alt utilizator cu care să partajezi.
+createShare.sharingPrefix	Se partajează:
+createShare.createdBanner	Link de partajare creat cu succes!
+createShare.viewInShared	Vezi în Partajate
+createShare.directLinkMode	Mod link direct
+createShare.directFolderLink	Link ZIP direct al dosarului
+createShare.directFileLink	Link direct al fișierului
+createShare.summaryAccess	Acces
+createShare.summarySharedWith	Partajat cu
+createShare.summaryPassword	Parolă
+createShare.summaryPasswordProtected	Protejat
+createShare.summaryExpires	Expiră
+createShare.summarySpecificPeople	Persoane anumite
+createShare.errorPastExpiration	Alege o dată de expirare în viitor.
+editShare.title	Editează linkul de partajare
+editShare.save	Salvează modificările
+editShare.passwordKeepHint	Lasă gol pentru a păstra parola actuală
+editShare.savedToast	Link de partajare actualizat
+thumbnailSettings.navigationTitle	Miniaturi
+thumbnailSettings.subtitle	Controlează modul în care serverul generează miniaturile de imagine pentru fiecare client.
+thumbnailSettings.enable	Generează miniaturi
+thumbnailSettings.enableHelp	Dezactivează pentru a servi peste tot imaginile complete.
+thumbnailSettings.quality	Calitate
+thumbnailSettings.qualityHelp	Mai mare arată mai bine și ocupă mai mult spațiu.
+thumbnailSettings.maxDimension	Dimensiune maximă
+thumbnailSettings.maxDimensionHelp	Cea mai lungă latură a unei miniaturi generate, în pixeli.
+thumbnailSettings.concurrency	Concurență
+thumbnailSettings.concurrencyHelp	Câte miniaturi construiește serverul deodată.
+thumbnailSettings.unavailable	Setările miniaturilor sunt disponibile doar administratorilor.
+thumbnailSettings.saveButton	Salvează modificările
+accessRules.navigationTitle	Reguli de acces la dosare
+accessRules.subtitle	Suprascrie accesul de citire și scriere pentru anumite căi.
+accessRules.addRule	Adaugă regulă
+accessRules.empty	Nicio regulă de acces configurată.
+accessRules.emptyHint	Adaugă o regulă pentru a suprascrie accesul la o cale.
+accessRules.pathLabel	Cale
+accessRules.pathPlaceholder	Documente/Rapoarte
+accessRules.recursive	Aplică la subdosare
+accessRules.permissionReadWrite	Citire și scriere
+accessRules.permissionReadOnly	Doar citire
+accessRules.permissionHidden	Ascuns
+accessRules.remove	Elimină
+accessRules.unavailable	Regulile de acces sunt disponibile doar administratorilor.
+accessRules.saveButton	Salvează modificările
+settings.rowThumbnails	Miniaturi
+settings.rowAccessRules	Reguli de acces la dosare
+settings.navigationTitle	Setări
+settings.appVersion	Versiunea %1$@ (%2$@)
+settings.sectionGeneral	General
+settings.sectionDisplay	Afișare
+settings.sectionStorage	Stocare
+settings.sectionServerStorage	Stocare server
+settings.serverStorageUsed	%1$@ din %2$@
+settings.sectionLicenses	Licențe
+settings.sectionLegal	Aspecte legale
+settings.sectionUsers	Utilizatori
+settings.sectionAdmin	Administrare
+settings.toggleShowHiddenFiles	Afișează fișierele ascunse
+settings.toggleRenderHTML	Randează paginile HTML
+settings.toggleRenderMarkdown	Randează fișierele Markdown
+settings.toggleHaptics	Feedback haptic
+settings.toggleDarkMode	Mod întunecat
+settings.toggleShowThumbnails	Afișează miniaturile
+settings.toggleShowExtensions	Afișează extensiile fișierelor
+settings.toggleRemoveArchives	Elimină arhivele după descărcare
+settings.toggleKeepClipboard	Păstrează elementele după lipire
+settings.toggleKeepClipboardSubtitle	Elementele copiate rămân gata de lipit în alt dosar. Elementele mutate se golesc mereu.
+settings.rowDateFormat	Format dată
+settings.rowLanguage	Limbă
+settings.rowThumbnailSize	Dimensiune miniaturi
+settings.rowRemoveAllDownloads	Elimină toate descărcările
+settings.rowClearCache	Golește cache-ul
+settings.rowOpenSourceLicenses	Licențe open source
+settings.rowPrivacyPolicy	Politică de confidențialitate
+settings.rowTermsOfUse	Termeni de utilizare
+settings.rowUserManagement	Gestionarea utilizatorilor
+settings.rowChangePassword	Schimbă parola
+settings.rowServer	Server
+settings.storageFootnote	Descărcarea unui dosar îl comprimă mai întâi într-un ZIP pe server. Activează comutatorul de mai sus pentru a șterge acea arhivă de pe server după ce este salvată pe dispozitiv. Eliminarea descărcărilor sau golirea cache-ului afectează doar acest dispozitiv; nimic de pe server nu este afectat.
+settings.removeAllDownloadsTitle	Elimini toate descărcările?
+settings.removeAllDownloadsConfirm	Elimină toate
+settings.removeAllDownloadsMessage	Aceasta șterge toate fișierele descărcate de pe acest dispozitiv. Rămân pe server.
+settings.clearCacheTitle	Golești cache-ul?
+settings.clearCacheConfirm	Golește
+settings.clearCacheMessage	Aceasta golește previzualizările, miniaturile și listele de dosare salvate pentru utilizare offline. Nimic de pe server nu este afectat.
+settings.signOutAlertTitle	Te deconectezi?
+settings.signOutMessage	Va trebui să te conectezi din nou pentru a-ți accesa fișierele.
+settings.signOutButton	Deconectează-te
+settings.signingOut	Se deconectează…
+settings.dateFormatNavigationTitle	Format dată
+settings.dateFormatShowTime	Afișează ora
+serverDetails.navigationTitle	Server
+serverDetails.changeLogo	Schimbă pictograma
+serverDetails.takePhoto	Fă o fotografie
+serverDetails.chooseFromGallery	Încarcă din galerie
+serverDetails.nameLabel	Numele serverului
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	Numele serverului nu poate fi gol.
+serverDetails.urlLabel	URL server
+serverDetails.urlFootnote	Adresa unde este instalată instanța ta NextExplorer. Pentru a o schimba, deconectează-te și adaugă serverul din nou.
+serverDetails.updateButton	Actualizează serverul
+serverDetails.savedMessage	Detaliile serverului au fost actualizate.
+serverDetails.logoErrorTooLarge	Acea imagine este prea mare. Alege una sub 2 MB.
+serverDetails.cameraDeniedTitle	Acces la cameră dezactivat
+serverDetails.cameraDeniedMessage	Activează accesul la cameră în Setări pentru a face o fotografie.
+licenses.navigationTitle	Licențe open source
+licenses.sectionSoftware	Software
+licenses.sectionFontSoftware	Software de fonturi
+licenses.labelAuthor	Autor
+licenses.labelOriginalVersion	Versiune originală
+licenses.labelModifiedVersion	Versiune modificată
+licenses.labelReservedFontName	Nume de font rezervat
+fileInfo.navigationTitleFolder	Dosar
+fileInfo.rowKind	Fel
+fileInfo.rowSize	Dimensiune
+fileInfo.rowLocation	Locație
+fileInfo.rowDateModified	Data modificării
+fileInfo.rowDateCreated	Data creării
+fileInfo.rowFiles	Fișiere
+fileInfo.rowFolders	Dosare
+fileInfo.rowTotalSize	Dimensiune totală
+fileInfo.sectionServerDisk	Disc server
+fileInfo.diskFreeOf	%1$@ liberi din %2$@
+fileInfo.rowDimensions	Dimensiuni
+fileInfo.rowCamera	Cameră
+fileInfo.rowLens	Obiectiv
+fileInfo.rowDateTaken	Data capturii
+fileInfo.rowDuration	Durată
+fileInfo.partialScan	S-a numărat o scanare parțială: acest dosar este foarte mare.
+permissions.title	Permisiuni
+permissions.sectionMode	Mod
+permissions.numericLabel	Numeric
+permissions.applyToEnclosed	Aplică la elementele conținute
+permissions.applyPermissions	Aplică permisiunile
+permissions.sectionOwnership	Proprietate
+permissions.fieldOwner	Proprietar
+permissions.fieldGroup	Grup
+permissions.ownershipNote	Schimbarea proprietății necesită de obicei privilegii de root sau administrator pe server.
+permissions.applyOwnership	Aplică proprietatea
+permissions.scopeOwner	Proprietar
+permissions.scopeGroup	Grup
+permissions.scopeOthers	Alții
+permissions.rightRead	Citire
+permissions.rightWrite	Scriere
+permissions.rightExecute	Executare
+archive.emptyFolder	Acest dosar este gol.
+archive.openFailed	Nu s-a putut deschide acest fișier.
+archive.openArchiveFailed	Nu s-a putut deschide această arhivă.
+archive.entryTooLarge	Acest element este prea mare pentru a fi deschis.
+gallery.loadFailed	Nu s-a putut încărca această imagine.
+textPreview.saved	Salvat
+textPreview.loadFailed	Nu s-a putut încărca acest fișier. Verifică conexiunea și încearcă din nou.
+userManagement.navigationTitle	Gestionarea utilizatorilor
+userManagement.searchPrompt	Caută utilizatori
+userManagement.createUser	Creează utilizator
+userManagement.badgeAdmin	Administrator
+userManagement.emptyList	Niciun utilizator încă.
+userManagement.noSearchMatches	Niciun utilizator nu corespunde cu „%@”.
+userManagement.loadFailed	Nu s-a putut contacta serverul.
+userManagement.sortType	Tip
+userManagement.sortName	Nume
+userManagement.sortEmail	E-mail
+userManagement.tabProfile	Profil
+userManagement.tabSecurity	Securitate
+userManagement.tabVolumes	Volume
+userManagement.createNavigationTitle	Creează utilizator
+userManagement.createEmailField	E-mail
+userManagement.createEmailPlaceholder	nume@exemplu.com
+userManagement.createUsernameField	Nume de utilizator (opțional)
+userManagement.createUsernamePlaceholder	Derivat din e-mail
+userManagement.createPasswordField	Parolă
+userManagement.createPasswordPlaceholder	Cel puțin %lld caractere
+userManagement.createGrantAdminToggle	Acordă acces de administrator
+userManagement.createGrantAdminSubtitle	Control complet asupra fișierelor, partajărilor și utilizatorilor.
+userManagement.createSubmit	Creează utilizator
+userManagement.setPasswordNavigationTitle	Parolă
+userManagement.setPasswordNewField	Parolă nouă
+userManagement.setPasswordPlaceholder	Cel puțin %lld caractere
+userManagement.setPasswordResetTitle	Resetează parola
+userManagement.setPasswordSetTitle	Setează parola
+userManagement.setPasswordResetIntro	Setează o parolă locală nouă pentru %@. Parola actuală va înceta să funcționeze.
+userManagement.setPasswordSetIntro	Dă-i lui %@ o parolă locală pentru a se putea conecta fără SSO.
+userManagement.toastProfileUpdated	Profil actualizat
+userManagement.toastAdminGranted	Administrator acordat
+userManagement.toastUserRemoved	Utilizator eliminat
+userManagement.toastUserCreated	Utilizator creat
+userManagement.toastPasswordUpdated	Parolă actualizată
+userManagement.toastVolumeSaved	Volum salvat
+userManagement.toastVolumeRemoved	Volum eliminat
+userManagement.errorEmailRequired	E-mailul este obligatoriu.
+userManagement.errorEmailInvalid	Introdu o adresă de e-mail validă.
+userManagement.errorUsernameRequired	Numele de utilizator este obligatoriu.
+userManagement.errorEmailInUse	E-mailul este deja folosit.
+userManagement.errorPasswordTooShort	Folosește cel puțin %lld caractere.
+userDetail.fallbackName	Utilizator
+userDetail.sectionGeneralInfo	Informații generale
+userDetail.sectionRoles	Roluri și permisiuni
+userDetail.sectionLocalPassword	Parolă locală
+userDetail.sectionSSO	Autentificare unică
+userDetail.sectionAssignedVolumes	Volume atribuite
+userDetail.profileDisplayNameField	Nume afișat
+userDetail.profileDisplayNamePlaceholder	Nume afișat
+userDetail.profileUsernameField	Nume de utilizator
+userDetail.profileUsernamePlaceholder	Nume de utilizator
+userDetail.profileEmailField	E-mail
+userDetail.profileEmailPlaceholder	nume@exemplu.com
+userDetail.profileSave	Salvează modificările
+userDetail.roleAdmin	Administrator
+userDetail.roleAdminSubtitle	Control complet asupra fișierelor, partajărilor și utilizatorilor.
+userDetail.roleAdminLocked	Administratorii nu pot fi retrogradați din aplicație.
+userDetail.roleGrantAdmin	Acordă administrator
+userDetail.passwordHasLocal	Acest utilizator se conectează cu un e-mail și o parolă.
+userDetail.passwordSSOOnly	Acest utilizator nu are parolă locală: doar SSO.
+userDetail.passwordReset	Resetează parola
+userDetail.passwordSet	Setează parola
+userDetail.ssoNone	Niciun furnizor SSO conectat.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Conectat
+userDetail.dangerZoneTitle	Zonă periculoasă
+userDetail.dangerZoneSubtitle	Eliminarea unui utilizator îi revocă accesul imediat. Fișierele pe care le deține pe server nu sunt șterse.
+userDetail.dangerZoneRemoveUser	Elimină utilizatorul
+userDetail.volumesNone	Niciun volum atribuit.
+userDetail.volumesNoneSubtitle	Acest utilizator vede doar spațiul partajat implicit.
+userDetail.volumesAssign	Atribuie volum
+userDetail.volumesFootnote	Volumele oferă unui utilizator acces la un director în afara spațiului partajat implicit. Eliminarea unui volum nu șterge niciodată fișiere.
+userDetail.volumeEditAccessibility	Editează %@
+userDetail.volumeRemoveAccessibility	Elimină %@
+userDetail.removeVolumeTitle	Elimini volumul?
+userDetail.removeVolumeMessage	%@ este dezatribuit de la acest utilizator. Directorul în sine nu este afectat.
+userDetail.removeUserTitle	Elimini utilizatorul?
+userDetail.removeUserMessage	%@ pierde accesul imediat. Fișierele sale de pe server nu sunt șterse.
+userDetail.volumeSheetLabelField	Etichetă
+userDetail.volumeSheetLabelPlaceholder	Eticheta volumului
+userDetail.volumeSheetAccessMode	Mod de acces
+userDetail.volumeSheetDirectory	Director
+userDetail.volumeSheetSaveEdit	Salvează volumul
+userDetail.volumeSheetSaveNew	Atribuie volum
+userDetail.volumeSheetTitleEdit	Editează volumul
+userDetail.volumeSheetTitleNew	Atribuie volum
+userDetail.directoryPickerGoUp	Urcă un director
+userDetail.directoryPickerUseThis	Folosește acest director
+userDetail.directoryPickerOpen	Deschide %@
+userDetail.directoryPickerFailed	Nu s-au putut lista directoarele.
+previewToolbar.close	Închide
+previewToolbar.createShareLink	Creează link de partajare
+previewToolbar.download	Descarcă
+previewToolbar.delete	Șterge
+previewToolbar.share	Partajează
+previewToolbar.rename	Redenumește
+login.serverQuestion	Unde se află instanța ta NextExplorer?
+login.testConnection	Testează conexiunea
+login.emailField	E-mail
+login.passwordField	Parolă
+login.submit	Conectează-te
+login.plaintextWarning	Această conexiune nu este criptată. Parola și sesiunea ta sunt trimise în clar prin rețeaua locală.
+error.sessionExpired	Sesiunea ta a expirat. Conectează-te din nou.
+error.rateLimited	Prea multe cereri. Încearcă din nou în scurt timp.
+error.network	Nu s-a putut contacta serverul.
+error.offline	Ești offline. Conectează-te la internet și încearcă din nou.
+error.decoding	Serverul a răspuns neașteptat.
+error.server	Eroare de server (%lld).
+error.forbidden	Nu ai permisiunea să faci asta.
+changePassword.navigationTitle	Schimbă parola
+changePassword.intro	Schimbă parola pe care o folosești pentru a te conecta cu adresa ta de e-mail. Vei rămâne conectat pe acest dispozitiv.
+changePassword.fieldCurrentPassword	Parola actuală
+changePassword.fieldNewPasswordLabel	Parolă nouă
+changePassword.fieldConfirmPasswordLabel	Confirmă parola nouă
+changePassword.fieldConfirmPassword	Reintrodu parola nouă
+changePassword.fieldNewPasswordPrompt	Cel puțin %lld caractere
+changePassword.submitButton	Actualizează parola
+changePassword.success	Parola ta a fost actualizată.
+changePassword.errorMinLength	Folosește cel puțin %lld caractere.
+changePassword.errorMismatch	Parolele nu se potrivesc.
+login.portHint	Adaugă un port (de ex. :3000). Majoritatea serverelor de acasă nu ascultă pe portul 80.
+login.errorInvalidServer	Introdu o adresă de server validă.
+login.errorInvalidEmail	Introdu o adresă de e-mail validă.
+login.errorInvalidCredentials	Nume de utilizator sau parolă incorecte.
+login.errorSessionExpired	Sesiunea ta a expirat. Te rugăm să te conectezi din nou.
+login.errorIncomplete	Conectarea nu s-a finalizat. Te rugăm să încerci din nou.
+login.errorUnreachable	Nu s-a putut contacta acel server. Verifică adresa și încearcă din nou.
+login.errorUnexpectedResponse	Răspuns neașteptat de la server.
+login.errorKeychain	Nu s-a putut salva sesiunea pe acest dispozitiv.
+login.errorDecoding	Serverul a răspuns neașteptat. Verifică adresa și încearcă din nou.
+login.errorNoLocalAuth	Acest server nu are activată conectarea cu nume de utilizator și parolă.
+login.errorRateLimited	Prea multe încercări. Așteaptă câteva minute și încearcă din nou.
+login.errorServer	Serverul a întâmpinat o problemă (eroare %lld). Încearcă din nou mai târziu.
+browse.nameErrorReserved	Acest nume nu este permis.
+browse.nameErrorSeparators	Un nume nu poate conține / sau \.
+browse.searchMatchLine	Linia %1$lld: %2$@
+browse.searchMatchLineLabel	Linia %lld
+createShare.errorPasswordRequired	Introdu o parolă sau dezactivează protecția cu parolă.
+filter.sheetTitle	Filtrează după tip
+filter.button	Filtrează
+filter.all	Toate tipurile
+filter.folders	Dosare
+filter.images	Imagini
+filter.videos	Videoclipuri
+filter.audio	Audio
+filter.documents	Documente
+filter.archives	Arhive
+filter.other	Altele
+language.navigationTitle	Limbă
+language.systemDefault	Implicit sistem
+language.systemDefaultSubtitle	Urmează limba dispozitivului

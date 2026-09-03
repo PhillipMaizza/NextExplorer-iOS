@@ -55,6 +55,11 @@ struct GeneralSettingsSection: View {
     @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
     @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
     @AppStorage(AppStorageKeys.hapticsEnabled) private var hapticsEnabled = true
+    @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
+
+    private var currentLanguageLabel: String {
+        appLanguage.isEmpty ? L10n.Language.systemDefault : LocalizationOverride.displayName(for: appLanguage)
+    }
 
     private var dateFormat: Binding<DateDisplayFormat> {
         Binding(
@@ -64,7 +69,7 @@ struct GeneralSettingsSection: View {
     }
 
     var body: some View {
-        if filter.anyMatch([L10n.Settings.toggleShowHiddenFiles, L10n.Settings.toggleRenderHTML, L10n.Settings.toggleRenderMarkdown, L10n.Settings.rowDateFormat, L10n.Settings.toggleHaptics]) {
+        if filter.anyMatch([L10n.Settings.toggleShowHiddenFiles, L10n.Settings.toggleRenderHTML, L10n.Settings.toggleRenderMarkdown, L10n.Settings.rowDateFormat, L10n.Settings.rowLanguage, L10n.Settings.toggleHaptics]) {
             Section {
                 if filter.matches(L10n.Settings.toggleShowHiddenFiles) {
                     DSToggleRow(
@@ -91,6 +96,25 @@ struct GeneralSettingsSection: View {
                             }
                         } icon: {
                             IconKit.calendar
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.secondaryDS)
+                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                    }
+                }
+                if filter.matches(L10n.Settings.rowLanguage) {
+                    NavigationLink {
+                        LanguagePickerView()
+                    } label: {
+                        Label {
+                            HStack {
+                                Text(L10n.Settings.rowLanguage).type(.body2(.regular), style: .primary(for: .label))
+                                Spacer()
+                                Text(currentLanguageLabel).type(.body2(.regular), style: .secondary)
+                            }
+                        } icon: {
+                            IconKit.language
                                 .resizable()
                                 .scaledToFit()
                                 .foregroundStyle(Color.secondaryDS)

@@ -1,0 +1,542 @@
+# NextExplorer — Italiano (it). key<TAB>value.
+common.cancel	Annulla
+common.save	Salva
+common.edit	Modifica
+common.retry	Riprova
+common.delete	Elimina
+common.remove	Rimuovi
+common.clear	Cancella
+common.done	Fatto
+common.ok	OK
+common.openSettings	Apri Impostazioni
+common.logOut	Esci
+common.close	Chiudi
+common.back	Indietro
+common.share	Condividi
+common.download	Scarica
+common.sort	Ordina
+common.select	Seleziona
+common.search	Cerca
+common.password	Password
+common.never	Mai
+common.selectedCount	%lld selezionati
+tab.browse	Esplora
+tab.favorites	Preferiti
+tab.shared	Condivisi
+tab.downloads	Download
+tab.settings	Impostazioni
+sort.sheetTitle	Ordina per
+sort.name	Nome
+sort.size	Dimensione
+sort.kind	Tipo
+sort.dateModified	Data di modifica
+sort.dateAdded	Data di aggiunta
+sort.dateShared	Data di condivisione
+sort.expiration	Scadenza
+sort.email	Email
+sort.type	Tipo
+sort.ascending	Crescente
+sort.descending	Decrescente
+select.selectAll	Seleziona tutto
+select.deselectAll	Deseleziona tutto
+select.listView	Vista elenco
+select.gridView	Vista griglia
+emptyState.folderEmpty	Questa cartella è vuota.
+emptyState.loadFailed	Impossibile raggiungere il server.
+emptyState.noSearchMatches	Nessun risultato per “%@”.
+accessMode.readonly	Sola lettura
+accessMode.readwrite	Lettura e scrittura
+shareTarget.anyone	Chiunque abbia il link
+shareTarget.users	Utenti specifici
+directLinkMode.auto	Automatico
+directLinkMode.inline	Visualizza
+directLinkMode.raw	Grezzo
+directLinkMode.download	Scarica
+thumbnailSize.small	Piccola
+thumbnailSize.medium	Media
+thumbnailSize.large	Grande
+downloadLocation.documents	Documenti
+downloadLocation.cache	Cache
+dateFormat.automatic	Automatico
+browse.navigationTitle	Esplora
+browse.scopeThisFolder	Questa cartella
+browse.scopeEverywhere	Ovunque
+browse.searchScopeInFolder	Questa cartella
+browse.searchScopeEverywhere	Ovunque
+browse.locations	Posizioni
+browse.open	Apri
+browse.unsupportedFileType	Tipo di file non supportato
+browse.actionGetInfo	Informazioni
+browse.actionPermissions	Autorizzazioni
+browse.actionRename	Rinomina
+browse.actionExtract	Estrai
+browse.actionCompress	Comprimi
+browse.actionDownload	Scarica
+browse.actionAddToFavorites	Aggiungi ai Preferiti
+browse.actionRemoveFromFavorites	Rimuovi dai Preferiti
+browse.actionShare	Crea link di condivisione
+browse.actionDelete	Elimina
+browse.renameTitle	Rinomina
+browse.renameNamePlaceholder	Nome
+browse.actionNewFolder	Crea cartella
+browse.newFolderTitle	Nuova cartella
+browse.newFolderPlaceholder	Nome della cartella
+browse.newFolderConfirm	Crea
+browse.deleteConfirmTitle	Eliminare?
+browse.deleteConfirmOne	Eliminare “%@”?
+browse.deleteConfirmMany	Eliminare %lld elementi?
+browse.deleteMessage	Questa azione non può essere annullata.
+browse.deleteLinkedSharesOne	Questo rimuove anche 1 link di condivisione che punta qui.
+browse.deleteLinkedSharesMany	Questo rimuove anche %lld link di condivisione che puntano qui.
+browse.deleteLinkedSharesUnavailable	Impossibile verificare i link che puntano qui. Quelli esistenti smetteranno di funzionare.
+browse.searchNoMatchesInFolder	Nessun risultato per “%@”.
+browse.searchEverywhere	Cerca ovunque
+browse.searchFailed	Ricerca non riuscita. Controlla la connessione e riprova.
+browse.progressExtracting	Estrazione…
+browse.progressCompressing	Compressione…
+browse.progressDownloading	Download…
+browse.progressDownloadingIndexed	Download di %1$lld di %2$lld…
+browse.downloadSavedTo	Salvato in %@
+browse.downloadSavedCountTo	Salvati %1$lld di %2$lld elementi in %3$@
+browse.downloadSavedAllTo	Salvati %1$lld elementi in %2$@
+browse.downloadBulkFailed	Impossibile salvare questi elementi sul dispositivo.
+browse.offlineBannerTitle	Offline
+browse.offlineBannerDetail	Visualizzazione di una copia salvata da %@
+browse.actionCopy	Copia
+browse.destinationPickerMoveTitle	Sposta in…
+browse.destinationPickerConfirmMove	Sposta qui
+browse.destinationPickerNoFolders	Nessuna cartella qui
+browse.destinationPickerLoadFailed	Impossibile caricare le cartelle.
+browse.actionMove	Sposta
+browse.actionPaste	Incolla
+browse.actionPasteCount	Incolla %lld elementi
+browse.actionPasteHere	Incolla qui
+browse.actionClearClipboard	Svuota appunti
+browse.clipboardMoveCount	%lld da spostare
+browse.clipboardCopyCount	%lld da copiare
+browse.clipboardCopiedOne	%@ copiato
+browse.clipboardCopiedMany	%lld elementi copiati
+browse.progressMoving	Spostamento…
+browse.progressCopying	Copia…
+browse.transferMoved	Spostati %lld elementi
+browse.transferCopied	Copiati %lld elementi
+browse.transferMovedWithSkipped	Spostati %1$lld elementi, saltati %2$lld
+browse.transferCopiedWithSkipped	Copiati %1$lld elementi, saltati %2$lld
+browse.transferConflictTitle	Sostituire gli elementi?
+browse.transferConflictMessageOne	"%@" esiste già in questa cartella.
+browse.transferConflictMessageMany	%lld elementi esistono già in questa cartella.
+browse.transferConflictReplace	Sostituisci
+browse.transferConflictKeepBoth	Mantieni entrambi
+browse.actionOpenInBrowser	Apri nel browser
+favorites.navigationTitle	Preferiti
+favorites.emptyList	Contrassegna le cartelle in Esplora per vederle qui.
+favorites.actionRemoveFromFavorites	Rimuovi dai Preferiti
+favorites.actionEdit	Modifica
+favorites.editTitle	Modifica preferito
+favorites.editNameLabel	Nome
+favorites.editNameErrorEmpty	Il nome non può essere vuoto.
+favorites.editIconLabel	Icona
+favorites.editIconOutline	Contorno
+favorites.editIconSolid	Pieno
+favorites.editColorLabel	Colore
+favorites.editColorDefault	Predefinito
+favorites.editSave	Salva
+favorites.reorderFailed	Impossibile salvare il nuovo ordine.
+favorites.removeConfirm	Rimuovere %lld preferiti?
+favorites.removeMessage	Questo li rimuove solo dai Preferiti.
+favorites.removeFailedOne	Impossibile rimuovere quel preferito.
+favorites.removeFailedMany	Impossibile rimuovere quei preferiti.
+favorites.removePartial	Rimossi %1$lld di %2$lld.
+downloads.navigationTitle	Download
+downloads.actionOpenInFiles	Apri in File
+downloads.emptyList	I file che scarichi da Esplora appaiono qui.
+downloads.deleteConfirmTitle	Eliminare?
+downloads.deleteConfirmOne	Eliminare “%@”?
+downloads.deleteConfirmMany	Eliminare %lld file?
+downloads.deleteSingleMessage	Questo rimuove solo la copia locale. Il file resta sul server.
+downloads.deleteBulkMessage	Questo rimuove solo le copie locali. I file restano sul server.
+downloads.errorNameExists	Esiste già un file con quel nome.
+downloads.errorInvalidName	Quel nome non è consentito.
+downloads.errorMissing	Impossibile trovare più quel file.
+downloads.errorGeneric	Impossibile completare l'azione.
+unsupportedPreview.genericType	File
+unsupportedPreview.cannotOpen	Questa app non può aprire questo tipo di file.
+uploads.navigationTitle	Caricamenti
+uploads.menuTitle	Carica
+uploads.actionUploadFromFiles	Carica da File
+uploads.actionUploadFromPhotos	Carica dalla galleria
+uploads.actionTakePhoto	Scatta foto o video
+uploads.cameraDeniedTitle	Accesso alla fotocamera necessario
+uploads.cameraDeniedMessage	Consenti l'accesso alla fotocamera in Impostazioni per scattare una foto o un video.
+uploads.destinationTitle	Carica in…
+uploads.destinationConfirm	Carica qui
+uploads.reviewTitleOne	Carica 1 file
+uploads.reviewTitleMany	Carica %lld file
+uploads.reviewSectionFiles	File
+uploads.reviewSectionPath	Percorso
+uploads.reviewSectionSize	Dimensione totale
+uploads.reviewChooseFolder	Scegli una cartella
+uploads.reviewUploadButton	Carica
+uploads.reviewPreparing	Preparazione di %lld…
+uploads.reviewAddMore	Aggiungi altri file
+uploads.reviewPreviewFile	Anteprima di %@
+uploads.reviewInsecureNetworkNotice	Connesso tramite http. Se questo server è solo sulla tua rete domestica, i caricamenti non funzioneranno quando sei lontano da essa.
+uploads.stagingFailed	Impossibile aggiungere quei file. Riprova.
+uploads.stagingSkipped	%lld elementi non sono stati preparati e sono stati esclusi.
+uploads.discardTitle	Scartare il caricamento?
+uploads.discardMessage	I file che hai aggiunto non verranno caricati.
+uploads.discardConfirm	Scarta
+uploads.statusWaiting	In attesa
+uploads.statusFailed	Caricamento non riuscito
+uploads.barTitleOne	Caricamento di %@
+uploads.barTitleMany	Caricamento di %lld file
+uploads.barFailedOne	1 caricamento non riuscito
+uploads.barFailedMany	%lld caricamenti non riusciti
+uploads.retryAll	Riprova tutto
+uploads.complete	Caricamento completato
+uploads.completeMany	%lld file caricati
+uploads.completeWithFailures	%1$lld caricati, %2$lld non riusciti
+uploads.failedGeneric	Impossibile caricare questo file.
+uploads.clear	Cancella
+uploads.emptyList	Ancora nessun caricamento.
+uploads.cancelAll	Annulla tutti i caricamenti
+shared.navigationTitle	Condivisi
+shared.segmentByMe	Da me
+shared.segmentWithMe	Con me
+shared.sectionExpired	Scaduti
+shared.badgeExpired	scaduto
+shared.emptyByMe	Condividi un file o una cartella per vederne il link qui.
+shared.emptyWithMe	I link che altri condividono con te appaiono qui.
+shared.noSearchMatches	Nessun elemento condiviso corrisponde a “%@”.
+shared.deleteTitle	Eliminare il link di condivisione?
+shared.deleteMessage	Il link smette di funzionare immediatamente. Il file o la cartella non viene toccato.
+shared.sharedByUnknown	Qualcuno
+shared.metaAccess	Accesso
+shared.metaExpiration	Scadenza
+shared.metaSharedBy	Condiviso da
+shared.metaSharedWith	Condiviso con
+shared.anyoneWithLink	Chiunque abbia il link
+shared.linkMode	Modalità link
+shared.actionShareLink	Condividi link
+shared.actionFolderLink	Link cartella
+shared.actionFileLink	Link file
+shared.moreRecipients	+%lld
+shared.copiedShareLink	Link di condivisione copiato
+shared.copiedFolderZip	Link ZIP della cartella copiato
+shared.copiedDirectFile	Link diretto al file copiato
+createShare.title	Crea link di condivisione
+createShare.titleCreated	Condivisione creata
+createShare.sectionLabel	Etichetta
+createShare.sectionAccessMode	Modalità di accesso
+createShare.sectionWhoCanAccess	Chi può accedere
+createShare.sectionShareLink	Link di condivisione
+createShare.fieldPassword	Password
+createShare.togglePasswordProtect	Proteggi con password
+createShare.toggleSetExpiration	Imposta data di scadenza
+createShare.fieldExpires	Scade
+createShare.submit	Crea link di condivisione
+createShare.loadingUsers	Caricamento utenti…
+createShare.noOtherUsers	Nessun altro utente con cui condividere.
+createShare.sharingPrefix	Condivisione:
+createShare.createdBanner	Link di condivisione creato correttamente!
+createShare.viewInShared	Vedi in Condivisi
+createShare.directLinkMode	Modalità link diretto
+createShare.directFolderLink	Link ZIP diretto della cartella
+createShare.directFileLink	Link diretto al file
+createShare.summaryAccess	Accesso
+createShare.summarySharedWith	Condiviso con
+createShare.summaryPassword	Password
+createShare.summaryPasswordProtected	Protetto
+createShare.summaryExpires	Scade
+createShare.summarySpecificPeople	Persone specifiche
+createShare.errorPastExpiration	Scegli una data di scadenza futura.
+editShare.title	Modifica link di condivisione
+editShare.save	Salva modifiche
+editShare.passwordKeepHint	Lascia vuoto per mantenere la password attuale
+editShare.savedToast	Link di condivisione aggiornato
+thumbnailSettings.navigationTitle	Miniature
+thumbnailSettings.subtitle	Controlla come il server genera le miniature delle immagini per ogni client.
+thumbnailSettings.enable	Genera miniature
+thumbnailSettings.enableHelp	Disattiva per servire ovunque le immagini complete.
+thumbnailSettings.quality	Qualità
+thumbnailSettings.qualityHelp	Più alta appare meglio e usa più spazio.
+thumbnailSettings.maxDimension	Dimensione massima
+thumbnailSettings.maxDimensionHelp	Lato più lungo di una miniatura generata, in pixel.
+thumbnailSettings.concurrency	Concorrenza
+thumbnailSettings.concurrencyHelp	Quante miniature il server genera contemporaneamente.
+thumbnailSettings.unavailable	Le impostazioni delle miniature sono disponibili solo per gli amministratori.
+thumbnailSettings.saveButton	Salva modifiche
+accessRules.navigationTitle	Regole di accesso alle cartelle
+accessRules.subtitle	Sovrascrivi l'accesso in lettura e scrittura per percorsi specifici.
+accessRules.addRule	Aggiungi regola
+accessRules.empty	Nessuna regola di accesso configurata.
+accessRules.emptyHint	Aggiungi una regola per sovrascrivere l'accesso a un percorso.
+accessRules.pathLabel	Percorso
+accessRules.pathPlaceholder	Documenti/Report
+accessRules.recursive	Applica alle sottocartelle
+accessRules.permissionReadWrite	Lettura e scrittura
+accessRules.permissionReadOnly	Sola lettura
+accessRules.permissionHidden	Nascosto
+accessRules.remove	Rimuovi
+accessRules.unavailable	Le regole di accesso sono disponibili solo per gli amministratori.
+accessRules.saveButton	Salva modifiche
+settings.rowThumbnails	Miniature
+settings.rowAccessRules	Regole di accesso alle cartelle
+settings.navigationTitle	Impostazioni
+settings.appVersion	Versione %1$@ (%2$@)
+settings.sectionGeneral	Generali
+settings.sectionDisplay	Schermo
+settings.sectionStorage	Archiviazione
+settings.sectionServerStorage	Archiviazione server
+settings.serverStorageUsed	%1$@ di %2$@
+settings.sectionLicenses	Licenze
+settings.sectionLegal	Note legali
+settings.sectionUsers	Utenti
+settings.sectionAdmin	Amministrazione
+settings.toggleShowHiddenFiles	Mostra file nascosti
+settings.toggleRenderHTML	Renderizza pagine HTML
+settings.toggleRenderMarkdown	Renderizza file Markdown
+settings.toggleHaptics	Feedback aptico
+settings.toggleDarkMode	Modalità scura
+settings.toggleShowThumbnails	Mostra miniature
+settings.toggleShowExtensions	Mostra estensioni dei file
+settings.toggleRemoveArchives	Rimuovi archivi dopo il download
+settings.toggleKeepClipboard	Mantieni elementi dopo l'incolla
+settings.toggleKeepClipboardSubtitle	Gli elementi copiati restano pronti da incollare in un'altra cartella. Gli elementi spostati vengono sempre cancellati.
+settings.rowDateFormat	Formato data
+settings.rowThumbnailSize	Dimensione miniatura
+settings.rowRemoveAllDownloads	Rimuovi tutti i download
+settings.rowClearCache	Svuota cache
+settings.rowOpenSourceLicenses	Licenze open source
+settings.rowPrivacyPolicy	Informativa sulla privacy
+settings.rowTermsOfUse	Condizioni d'uso
+settings.rowUserManagement	Gestione utenti
+settings.rowChangePassword	Cambia password
+settings.rowServer	Server
+settings.storageFootnote	Il download di una cartella la comprime prima in uno ZIP sul server. Attiva l'interruttore qui sopra per eliminare quell'archivio dal server una volta salvato sul dispositivo. Rimuovere i download o svuotare la cache riguarda solo questo dispositivo; nulla sul server viene toccato.
+settings.removeAllDownloadsTitle	Rimuovere tutti i download?
+settings.removeAllDownloadsConfirm	Rimuovi tutto
+settings.removeAllDownloadsMessage	Questo elimina ogni file scaricato da questo dispositivo. Restano sul server.
+settings.clearCacheTitle	Svuotare la cache?
+settings.clearCacheConfirm	Svuota
+settings.clearCacheMessage	Questo cancella anteprime, miniature ed elenchi di cartelle salvati per l'uso offline. Nulla sul server viene toccato.
+settings.signOutAlertTitle	Uscire?
+settings.signOutMessage	Dovrai accedere di nuovo per usare i tuoi file.
+settings.signOutButton	Esci
+settings.signingOut	Disconnessione…
+settings.dateFormatNavigationTitle	Formato data
+settings.dateFormatShowTime	Mostra ora
+serverDetails.navigationTitle	Server
+serverDetails.changeLogo	Cambia icona
+serverDetails.takePhoto	Scatta foto
+serverDetails.chooseFromGallery	Carica dalla galleria
+serverDetails.nameLabel	Nome del server
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	Il nome del server non può essere vuoto.
+serverDetails.urlLabel	URL del server
+serverDetails.urlFootnote	L'indirizzo dove è installata la tua istanza di NextExplorer. Per cambiarlo, esci e aggiungi di nuovo il server.
+serverDetails.updateButton	Aggiorna server
+serverDetails.savedMessage	Dettagli del server aggiornati.
+serverDetails.logoErrorTooLarge	Quell'immagine è troppo grande. Scegline una sotto i 2 MB.
+serverDetails.cameraDeniedTitle	Accesso alla fotocamera disattivato
+serverDetails.cameraDeniedMessage	Attiva l'accesso alla fotocamera in Impostazioni per scattare una foto.
+licenses.navigationTitle	Licenze open source
+licenses.sectionSoftware	Software
+licenses.sectionFontSoftware	Software dei font
+licenses.labelAuthor	Autore
+licenses.labelOriginalVersion	Versione originale
+licenses.labelModifiedVersion	Versione modificata
+licenses.labelReservedFontName	Nome riservato del font
+fileInfo.navigationTitleFolder	Cartella
+fileInfo.rowKind	Tipo
+fileInfo.rowSize	Dimensione
+fileInfo.rowLocation	Posizione
+fileInfo.rowDateModified	Data di modifica
+fileInfo.rowDateCreated	Data di creazione
+fileInfo.rowFiles	File
+fileInfo.rowFolders	Cartelle
+fileInfo.rowTotalSize	Dimensione totale
+fileInfo.sectionServerDisk	Disco del server
+fileInfo.diskFreeOf	%1$@ liberi di %2$@
+fileInfo.rowDimensions	Dimensioni
+fileInfo.rowCamera	Fotocamera
+fileInfo.rowLens	Obiettivo
+fileInfo.rowDateTaken	Data dello scatto
+fileInfo.rowDuration	Durata
+fileInfo.partialScan	Conteggiata una scansione parziale: questa cartella è molto grande.
+permissions.title	Autorizzazioni
+permissions.sectionMode	Modalità
+permissions.numericLabel	Numerico
+permissions.applyToEnclosed	Applica agli elementi contenuti
+permissions.applyPermissions	Applica autorizzazioni
+permissions.sectionOwnership	Proprietà
+permissions.fieldOwner	Proprietario
+permissions.fieldGroup	Gruppo
+permissions.ownershipNote	Cambiare la proprietà di solito richiede privilegi di root o di amministratore sul server.
+permissions.applyOwnership	Applica proprietà
+permissions.scopeOwner	Proprietario
+permissions.scopeGroup	Gruppo
+permissions.scopeOthers	Altri
+permissions.rightRead	Lettura
+permissions.rightWrite	Scrittura
+permissions.rightExecute	Esecuzione
+archive.emptyFolder	Questa cartella è vuota.
+archive.openFailed	Impossibile aprire questo file.
+archive.openArchiveFailed	Impossibile aprire questo archivio.
+archive.entryTooLarge	Questo elemento è troppo grande per essere aperto.
+gallery.loadFailed	Impossibile caricare questa immagine.
+textPreview.saved	Salvato
+textPreview.loadFailed	Impossibile caricare questo file. Controlla la connessione e riprova.
+userManagement.navigationTitle	Gestione utenti
+userManagement.searchPrompt	Cerca utenti
+userManagement.createUser	Crea utente
+userManagement.badgeAdmin	Amministratore
+userManagement.emptyList	Ancora nessun utente.
+userManagement.noSearchMatches	Nessun utente corrisponde a “%@”.
+userManagement.loadFailed	Impossibile raggiungere il server.
+userManagement.sortType	Tipo
+userManagement.sortName	Nome
+userManagement.sortEmail	Email
+userManagement.tabProfile	Profilo
+userManagement.tabSecurity	Sicurezza
+userManagement.tabVolumes	Volumi
+userManagement.createNavigationTitle	Crea utente
+userManagement.createEmailField	Email
+userManagement.createEmailPlaceholder	nome@esempio.com
+userManagement.createUsernameField	Nome utente (opzionale)
+userManagement.createUsernamePlaceholder	Derivato dall'email
+userManagement.createPasswordField	Password
+userManagement.createPasswordPlaceholder	Almeno %lld caratteri
+userManagement.createGrantAdminToggle	Concedi accesso amministratore
+userManagement.createGrantAdminSubtitle	Controllo completo su file, condivisioni e utenti.
+userManagement.createSubmit	Crea utente
+userManagement.setPasswordNavigationTitle	Password
+userManagement.setPasswordNewField	Nuova password
+userManagement.setPasswordPlaceholder	Almeno %lld caratteri
+userManagement.setPasswordResetTitle	Reimposta password
+userManagement.setPasswordSetTitle	Imposta password
+userManagement.setPasswordResetIntro	Imposta una nuova password locale per %@. La sua password attuale smette di funzionare.
+userManagement.setPasswordSetIntro	Assegna a %@ una password locale così può accedere senza SSO.
+userManagement.toastProfileUpdated	Profilo aggiornato
+userManagement.toastAdminGranted	Amministratore concesso
+userManagement.toastUserRemoved	Utente rimosso
+userManagement.toastUserCreated	Utente creato
+userManagement.toastPasswordUpdated	Password aggiornata
+userManagement.toastVolumeSaved	Volume salvato
+userManagement.toastVolumeRemoved	Volume rimosso
+userManagement.errorEmailRequired	L'email è obbligatoria.
+userManagement.errorEmailInvalid	Inserisci un indirizzo email valido.
+userManagement.errorUsernameRequired	Il nome utente è obbligatorio.
+userManagement.errorEmailInUse	Email già in uso.
+userManagement.errorPasswordTooShort	Usa almeno %lld caratteri.
+userDetail.fallbackName	Utente
+userDetail.sectionGeneralInfo	Informazioni generali
+userDetail.sectionRoles	Ruoli e autorizzazioni
+userDetail.sectionLocalPassword	Password locale
+userDetail.sectionSSO	Single Sign-On
+userDetail.sectionAssignedVolumes	Volumi assegnati
+userDetail.profileDisplayNameField	Nome visualizzato
+userDetail.profileDisplayNamePlaceholder	Nome visualizzato
+userDetail.profileUsernameField	Nome utente
+userDetail.profileUsernamePlaceholder	Nome utente
+userDetail.profileEmailField	Email
+userDetail.profileEmailPlaceholder	nome@esempio.com
+userDetail.profileSave	Salva modifiche
+userDetail.roleAdmin	Amministratore
+userDetail.roleAdminSubtitle	Controllo completo su file, condivisioni e utenti.
+userDetail.roleAdminLocked	Gli amministratori non possono essere declassati dall'app.
+userDetail.roleGrantAdmin	Concedi amministratore
+userDetail.passwordHasLocal	Questo utente accede con un'email e una password.
+userDetail.passwordSSOOnly	Questo utente non ha una password locale: solo SSO.
+userDetail.passwordReset	Reimposta password
+userDetail.passwordSet	Imposta password
+userDetail.ssoNone	Nessun provider SSO collegato.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Collegato
+userDetail.dangerZoneTitle	Zona pericolosa
+userDetail.dangerZoneSubtitle	Rimuovere un utente revoca subito il suo accesso. I file che possiede sul server non vengono eliminati.
+userDetail.dangerZoneRemoveUser	Rimuovi utente
+userDetail.volumesNone	Nessun volume assegnato.
+userDetail.volumesNoneSubtitle	Questo utente vede solo lo spazio condiviso predefinito.
+userDetail.volumesAssign	Assegna volume
+userDetail.volumesFootnote	I volumi danno a un utente accesso a una directory fuori dallo spazio condiviso predefinito. Rimuovere un volume non elimina mai i file.
+userDetail.volumeEditAccessibility	Modifica %@
+userDetail.volumeRemoveAccessibility	Rimuovi %@
+userDetail.removeVolumeTitle	Rimuovere il volume?
+userDetail.removeVolumeMessage	%@ viene rimosso da questo utente. La directory non viene toccata.
+userDetail.removeUserTitle	Rimuovere l'utente?
+userDetail.removeUserMessage	%@ perde subito l'accesso. I suoi file sul server non vengono eliminati.
+userDetail.volumeSheetLabelField	Etichetta
+userDetail.volumeSheetLabelPlaceholder	Etichetta del volume
+userDetail.volumeSheetAccessMode	Modalità di accesso
+userDetail.volumeSheetDirectory	Directory
+userDetail.volumeSheetSaveEdit	Salva volume
+userDetail.volumeSheetSaveNew	Assegna volume
+userDetail.volumeSheetTitleEdit	Modifica volume
+userDetail.volumeSheetTitleNew	Assegna volume
+userDetail.directoryPickerGoUp	Sali di una directory
+userDetail.directoryPickerUseThis	Usa questa directory
+userDetail.directoryPickerOpen	Apri %@
+userDetail.directoryPickerFailed	Impossibile elencare le directory.
+previewToolbar.close	Chiudi
+previewToolbar.createShareLink	Crea link di condivisione
+previewToolbar.download	Scarica
+previewToolbar.delete	Elimina
+previewToolbar.share	Condividi
+previewToolbar.rename	Rinomina
+login.serverQuestion	Dov'è la tua istanza di NextExplorer?
+login.testConnection	Prova la connessione
+login.emailField	Email
+login.passwordField	Password
+login.submit	Accedi
+login.plaintextWarning	Questa connessione non è cifrata. La tua password e la tua sessione vengono inviate in chiaro sulla rete locale.
+error.sessionExpired	La tua sessione è scaduta. Accedi di nuovo.
+error.rateLimited	Troppe richieste. Riprova tra poco.
+error.network	Impossibile raggiungere il server.
+error.offline	Sei offline. Connettiti a internet e riprova.
+error.decoding	Il server ha risposto in modo inatteso.
+error.server	Errore del server (%lld).
+error.forbidden	Non hai il permesso di farlo.
+changePassword.navigationTitle	Cambia password
+changePassword.intro	Cambia la password che usi per accedere con il tuo indirizzo email. Resterai connesso su questo dispositivo.
+changePassword.fieldCurrentPassword	Password attuale
+changePassword.fieldNewPasswordLabel	Nuova password
+changePassword.fieldConfirmPasswordLabel	Conferma nuova password
+changePassword.fieldConfirmPassword	Reinserisci la nuova password
+changePassword.fieldNewPasswordPrompt	Almeno %lld caratteri
+changePassword.submitButton	Aggiorna password
+changePassword.success	La tua password è stata aggiornata.
+changePassword.errorMinLength	Usa almeno %lld caratteri.
+changePassword.errorMismatch	Le password non coincidono.
+login.portHint	Aggiungi una porta (es. :3000). La maggior parte dei server casalinghi non ascolta sulla porta 80.
+login.errorInvalidServer	Inserisci un indirizzo server valido.
+login.errorInvalidEmail	Inserisci un indirizzo email valido.
+login.errorInvalidCredentials	Nome utente o password errati.
+login.errorSessionExpired	La tua sessione è scaduta. Accedi di nuovo.
+login.errorIncomplete	L'accesso non è stato completato. Riprova.
+login.errorUnreachable	Impossibile raggiungere quel server. Controlla l'indirizzo e riprova.
+login.errorUnexpectedResponse	Risposta inattesa dal server.
+login.errorKeychain	Impossibile salvare la tua sessione su questo dispositivo.
+login.errorDecoding	Il server ha risposto in modo inatteso. Controlla l'indirizzo e riprova.
+login.errorNoLocalAuth	Questo server non ha l'accesso con nome utente e password abilitato.
+login.errorRateLimited	Troppi tentativi. Attendi qualche minuto e riprova.
+login.errorServer	Il server ha riscontrato un problema (errore %lld). Riprova più tardi.
+browse.nameErrorReserved	Quel nome non è consentito.
+browse.nameErrorSeparators	Un nome non può contenere / o \.
+browse.searchMatchLine	Riga %1$lld: %2$@
+browse.searchMatchLineLabel	Riga %lld
+createShare.errorPasswordRequired	Inserisci una password o disattiva la protezione con password.
+filter.sheetTitle	Filtra per tipo
+filter.button	Filtra
+filter.all	Tutti i tipi
+filter.folders	Cartelle
+filter.images	Immagini
+filter.videos	Video
+filter.audio	Audio
+filter.documents	Documenti
+filter.archives	Archivi
+filter.other	Altro
+settings.rowLanguage	Lingua
+language.navigationTitle	Lingua
+language.systemDefault	Predefinito di sistema
+language.systemDefaultSubtitle	Segui la lingua del dispositivo

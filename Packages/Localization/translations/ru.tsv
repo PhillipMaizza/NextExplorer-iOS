@@ -1,0 +1,542 @@
+# NextExplorer — Русский (ru). key<TAB>value.
+common.cancel	Отмена
+common.save	Сохранить
+common.edit	Изменить
+common.retry	Повторить
+common.delete	Удалить
+common.remove	Убрать
+common.clear	Очистить
+common.done	Готово
+common.ok	ОК
+common.openSettings	Открыть настройки
+common.logOut	Выйти
+common.close	Закрыть
+common.back	Назад
+common.share	Поделиться
+common.download	Загрузить
+common.sort	Сортировка
+common.select	Выбрать
+common.search	Поиск
+common.password	Пароль
+common.never	Никогда
+common.selectedCount	Выбрано: %lld
+tab.browse	Обзор
+tab.favorites	Избранное
+tab.shared	Общие
+tab.downloads	Загрузки
+tab.settings	Настройки
+sort.sheetTitle	Сортировать по
+sort.name	Имя
+sort.size	Размер
+sort.kind	Тип
+sort.dateModified	Дата изменения
+sort.dateAdded	Дата добавления
+sort.dateShared	Дата открытия доступа
+sort.expiration	Срок действия
+sort.email	Эл. почта
+sort.type	Тип
+sort.ascending	По возрастанию
+sort.descending	По убыванию
+select.selectAll	Выбрать все
+select.deselectAll	Снять выделение
+select.listView	Список
+select.gridView	Сетка
+emptyState.folderEmpty	Эта папка пуста.
+emptyState.loadFailed	Не удалось связаться с сервером.
+emptyState.noSearchMatches	Нет результатов для «%@».
+accessMode.readonly	Только чтение
+accessMode.readwrite	Чтение и запись
+shareTarget.anyone	Любой, у кого есть ссылка
+shareTarget.users	Определённые пользователи
+directLinkMode.auto	Автоматически
+directLinkMode.inline	Просмотр
+directLinkMode.raw	Без обработки
+directLinkMode.download	Загрузка
+thumbnailSize.small	Маленькие
+thumbnailSize.medium	Средние
+thumbnailSize.large	Большие
+downloadLocation.documents	Документы
+downloadLocation.cache	Кеш
+dateFormat.automatic	Автоматически
+browse.navigationTitle	Обзор
+browse.scopeThisFolder	Эта папка
+browse.scopeEverywhere	Везде
+browse.searchScopeInFolder	Эта папка
+browse.searchScopeEverywhere	Везде
+browse.locations	Расположения
+browse.open	Открыть
+browse.unsupportedFileType	Неподдерживаемый тип файла
+browse.actionGetInfo	Свойства
+browse.actionPermissions	Права доступа
+browse.actionRename	Переименовать
+browse.actionExtract	Извлечь
+browse.actionCompress	Сжать
+browse.actionDownload	Загрузить
+browse.actionAddToFavorites	Добавить в избранное
+browse.actionRemoveFromFavorites	Убрать из избранного
+browse.actionShare	Создать ссылку для доступа
+browse.actionDelete	Удалить
+browse.renameTitle	Переименовать
+browse.renameNamePlaceholder	Имя
+browse.actionNewFolder	Создать папку
+browse.newFolderTitle	Новая папка
+browse.newFolderPlaceholder	Имя папки
+browse.newFolderConfirm	Создать
+browse.deleteConfirmTitle	Удалить?
+browse.deleteConfirmOne	Удалить «%@»?
+browse.deleteConfirmMany	Удалить объектов: %lld?
+browse.deleteMessage	Это действие нельзя отменить.
+browse.deleteLinkedSharesOne	При этом также удаляется 1 ссылка, ведущая сюда.
+browse.deleteLinkedSharesMany	При этом также удаляется ссылок, ведущих сюда: %lld.
+browse.deleteLinkedSharesUnavailable	Не удалось проверить ссылки, ведущие сюда. Существующие перестанут работать.
+browse.searchNoMatchesInFolder	Нет результатов для «%@».
+browse.searchEverywhere	Искать везде
+browse.searchFailed	Не удалось выполнить поиск. Проверьте соединение и повторите попытку.
+browse.progressExtracting	Извлечение…
+browse.progressCompressing	Сжатие…
+browse.progressDownloading	Загрузка…
+browse.progressDownloadingIndexed	Загрузка %1$lld из %2$lld…
+browse.downloadSavedTo	Сохранено в %@
+browse.downloadSavedCountTo	Сохранено %1$lld из %2$lld объектов в %3$@
+browse.downloadSavedAllTo	Сохранено объектов: %1$lld в %2$@
+browse.downloadBulkFailed	Не удалось сохранить эти объекты на устройство.
+browse.offlineBannerTitle	Офлайн
+browse.offlineBannerDetail	Показана сохранённая копия от %@
+browse.actionCopy	Скопировать
+browse.destinationPickerMoveTitle	Переместить в…
+browse.destinationPickerConfirmMove	Переместить сюда
+browse.destinationPickerNoFolders	Здесь нет папок
+browse.destinationPickerLoadFailed	Не удалось загрузить папки.
+browse.actionMove	Переместить
+browse.actionPaste	Вставить
+browse.actionPasteCount	Вставить объектов: %lld
+browse.actionPasteHere	Вставить сюда
+browse.actionClearClipboard	Очистить буфер обмена
+browse.clipboardMoveCount	%lld к перемещению
+browse.clipboardCopyCount	%lld к копированию
+browse.clipboardCopiedOne	%@ скопировано
+browse.clipboardCopiedMany	Скопировано объектов: %lld
+browse.progressMoving	Перемещение…
+browse.progressCopying	Копирование…
+browse.transferMoved	Перемещено объектов: %lld
+browse.transferCopied	Скопировано объектов: %lld
+browse.transferMovedWithSkipped	Перемещено объектов: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped	Скопировано объектов: %1$lld, пропущено: %2$lld
+browse.transferConflictTitle	Заменить объекты?
+browse.transferConflictMessageOne	«%@» уже существует в этой папке.
+browse.transferConflictMessageMany	%lld объектов уже существуют в этой папке.
+browse.transferConflictReplace	Заменить
+browse.transferConflictKeepBoth	Оставить оба
+browse.actionOpenInBrowser	Открыть в браузере
+favorites.navigationTitle	Избранное
+favorites.emptyList	Отмечайте папки в Обзоре, чтобы видеть их здесь.
+favorites.actionRemoveFromFavorites	Убрать из избранного
+favorites.actionEdit	Изменить
+favorites.editTitle	Изменить избранное
+favorites.editNameLabel	Имя
+favorites.editNameErrorEmpty	Имя не может быть пустым.
+favorites.editIconLabel	Значок
+favorites.editIconOutline	Контур
+favorites.editIconSolid	Заливка
+favorites.editColorLabel	Цвет
+favorites.editColorDefault	По умолчанию
+favorites.editSave	Сохранить
+favorites.reorderFailed	Не удалось сохранить новый порядок.
+favorites.removeConfirm	Убрать из избранного: %lld?
+favorites.removeMessage	Это только уберёт их из избранного.
+favorites.removeFailedOne	Не удалось убрать это из избранного.
+favorites.removeFailedMany	Не удалось убрать их из избранного.
+favorites.removePartial	Убрано %1$lld из %2$lld.
+downloads.navigationTitle	Загрузки
+downloads.actionOpenInFiles	Открыть в «Файлах»
+downloads.emptyList	Файлы, загруженные из Обзора, появятся здесь.
+downloads.deleteConfirmTitle	Удалить?
+downloads.deleteConfirmOne	Удалить «%@»?
+downloads.deleteConfirmMany	Удалить файлов: %lld?
+downloads.deleteSingleMessage	Это удалит только локальную копию. Файл останется на сервере.
+downloads.deleteBulkMessage	Это удалит только локальные копии. Файлы останутся на сервере.
+downloads.errorNameExists	Файл с таким именем уже существует.
+downloads.errorInvalidName	Это имя недопустимо.
+downloads.errorMissing	Этот файл больше не найден.
+downloads.errorGeneric	Не удалось выполнить это действие.
+unsupportedPreview.genericType	Файл
+unsupportedPreview.cannotOpen	Это приложение не может открыть файл такого типа.
+uploads.navigationTitle	Отправки
+uploads.menuTitle	Отправить
+uploads.actionUploadFromFiles	Отправить из «Файлов»
+uploads.actionUploadFromPhotos	Отправить из галереи
+uploads.actionTakePhoto	Сделать фото или видео
+uploads.cameraDeniedTitle	Требуется доступ к камере
+uploads.cameraDeniedMessage	Разрешите доступ к камере в Настройках, чтобы сделать фото или видео.
+uploads.destinationTitle	Отправить в…
+uploads.destinationConfirm	Отправить сюда
+uploads.reviewTitleOne	Отправить 1 файл
+uploads.reviewTitleMany	Отправить файлов: %lld
+uploads.reviewSectionFiles	Файлы
+uploads.reviewSectionPath	Путь
+uploads.reviewSectionSize	Общий размер
+uploads.reviewChooseFolder	Выберите папку
+uploads.reviewUploadButton	Отправить
+uploads.reviewPreparing	Подготовка %lld…
+uploads.reviewAddMore	Добавить ещё файлы
+uploads.reviewPreviewFile	Просмотр %@
+uploads.reviewInsecureNetworkNotice	Подключено по http. Если этот сервер доступен только в вашей домашней сети, отправка не будет работать вне её.
+uploads.stagingFailed	Не удалось добавить эти файлы. Повторите попытку.
+uploads.stagingSkipped	Не удалось подготовить объектов: %lld, они были пропущены.
+uploads.discardTitle	Отменить отправку?
+uploads.discardMessage	Добавленные файлы не будут отправлены.
+uploads.discardConfirm	Отменить
+uploads.statusWaiting	Ожидание
+uploads.statusFailed	Ошибка отправки
+uploads.barTitleOne	Отправка %@
+uploads.barTitleMany	Отправка файлов: %lld
+uploads.barFailedOne	1 отправка не удалась
+uploads.barFailedMany	Не удалось отправок: %lld
+uploads.retryAll	Повторить все
+uploads.complete	Отправка завершена
+uploads.completeMany	Отправлено файлов: %lld
+uploads.completeWithFailures	Отправлено: %1$lld, с ошибкой: %2$lld
+uploads.failedGeneric	Не удалось отправить этот файл.
+uploads.clear	Очистить
+uploads.emptyList	Пока нет отправок.
+uploads.cancelAll	Отменить все отправки
+shared.navigationTitle	Общие
+shared.segmentByMe	Мной
+shared.segmentWithMe	Со мной
+shared.sectionExpired	Истёкшие
+shared.badgeExpired	истёк
+shared.emptyByMe	Откройте доступ к файлу или папке, чтобы увидеть ссылку здесь.
+shared.emptyWithMe	Ссылки, которыми с вами делятся другие, появятся здесь.
+shared.noSearchMatches	Нет совпадений для «%@».
+shared.deleteTitle	Удалить ссылку доступа?
+shared.deleteMessage	Ссылка сразу перестанет работать. Сам файл или папка не затрагиваются.
+shared.sharedByUnknown	Кто-то
+shared.metaAccess	Доступ
+shared.metaExpiration	Срок действия
+shared.metaSharedBy	Поделился
+shared.metaSharedWith	Доступ открыт
+shared.anyoneWithLink	Любой, у кого есть ссылка
+shared.linkMode	Режим ссылки
+shared.actionShareLink	Поделиться ссылкой
+shared.actionFolderLink	Ссылка на папку
+shared.actionFileLink	Ссылка на файл
+shared.moreRecipients	+%lld
+shared.copiedShareLink	Ссылка доступа скопирована
+shared.copiedFolderZip	ZIP-ссылка на папку скопирована
+shared.copiedDirectFile	Прямая ссылка на файл скопирована
+createShare.title	Создать ссылку доступа
+createShare.titleCreated	Доступ создан
+createShare.sectionLabel	Метка
+createShare.sectionAccessMode	Режим доступа
+createShare.sectionWhoCanAccess	Кто имеет доступ
+createShare.sectionShareLink	Ссылка доступа
+createShare.fieldPassword	Пароль
+createShare.togglePasswordProtect	Защитить паролем
+createShare.toggleSetExpiration	Задать срок действия
+createShare.fieldExpires	Истекает
+createShare.submit	Создать ссылку доступа
+createShare.loadingUsers	Загрузка пользователей…
+createShare.noOtherUsers	Нет других пользователей для предоставления доступа.
+createShare.sharingPrefix	Доступ:
+createShare.createdBanner	Ссылка доступа успешно создана!
+createShare.viewInShared	Показать в Общих
+createShare.directLinkMode	Режим прямой ссылки
+createShare.directFolderLink	Прямая ZIP-ссылка на папку
+createShare.directFileLink	Прямая ссылка на файл
+createShare.summaryAccess	Доступ
+createShare.summarySharedWith	Доступ открыт
+createShare.summaryPassword	Пароль
+createShare.summaryPasswordProtected	Защищено
+createShare.summaryExpires	Истекает
+createShare.summarySpecificPeople	Определённые люди
+createShare.errorPastExpiration	Выберите дату истечения в будущем.
+editShare.title	Изменить ссылку доступа
+editShare.save	Сохранить изменения
+editShare.passwordKeepHint	Оставьте пустым, чтобы сохранить текущий пароль
+editShare.savedToast	Ссылка доступа обновлена
+thumbnailSettings.navigationTitle	Миниатюры
+thumbnailSettings.subtitle	Управляйте тем, как сервер создаёт миниатюры изображений для всех клиентов.
+thumbnailSettings.enable	Создавать миниатюры
+thumbnailSettings.enableHelp	Отключите, чтобы везде показывать полные изображения.
+thumbnailSettings.quality	Качество
+thumbnailSettings.qualityHelp	Выше — лучше выглядит и занимает больше места.
+thumbnailSettings.maxDimension	Максимальный размер
+thumbnailSettings.maxDimensionHelp	Самая длинная сторона создаваемой миниатюры, в пикселях.
+thumbnailSettings.concurrency	Параллельность
+thumbnailSettings.concurrencyHelp	Сколько миниатюр сервер создаёт одновременно.
+thumbnailSettings.unavailable	Настройки миниатюр доступны только администраторам.
+thumbnailSettings.saveButton	Сохранить изменения
+accessRules.navigationTitle	Правила доступа к папкам
+accessRules.subtitle	Переопределите доступ на чтение и запись для определённых путей.
+accessRules.addRule	Добавить правило
+accessRules.empty	Правила доступа не настроены.
+accessRules.emptyHint	Добавьте правило, чтобы переопределить доступ к пути.
+accessRules.pathLabel	Путь
+accessRules.pathPlaceholder	Документы/Отчёты
+accessRules.recursive	Применить к подпапкам
+accessRules.permissionReadWrite	Чтение и запись
+accessRules.permissionReadOnly	Только чтение
+accessRules.permissionHidden	Скрыто
+accessRules.remove	Убрать
+accessRules.unavailable	Правила доступа доступны только администраторам.
+accessRules.saveButton	Сохранить изменения
+settings.rowThumbnails	Миниатюры
+settings.rowAccessRules	Правила доступа к папкам
+settings.navigationTitle	Настройки
+settings.appVersion	Версия %1$@ (%2$@)
+settings.sectionGeneral	Основные
+settings.sectionDisplay	Экран
+settings.sectionStorage	Хранилище
+settings.sectionServerStorage	Хранилище сервера
+settings.serverStorageUsed	%1$@ из %2$@
+settings.sectionLicenses	Лицензии
+settings.sectionLegal	Правовая информация
+settings.sectionUsers	Пользователи
+settings.sectionAdmin	Администрирование
+settings.toggleShowHiddenFiles	Показывать скрытые файлы
+settings.toggleRenderHTML	Отображать HTML-страницы
+settings.toggleRenderMarkdown	Отображать файлы Markdown
+settings.toggleHaptics	Тактильный отклик
+settings.toggleDarkMode	Тёмный режим
+settings.toggleShowThumbnails	Показывать миниатюры
+settings.toggleShowExtensions	Показывать расширения файлов
+settings.toggleRemoveArchives	Удалять архивы после загрузки
+settings.toggleKeepClipboard	Сохранять объекты после вставки
+settings.toggleKeepClipboardSubtitle	Скопированные объекты остаются готовыми для вставки в другую папку. Перемещённые объекты всегда очищаются.
+settings.rowDateFormat	Формат даты
+settings.rowLanguage	Язык
+settings.rowThumbnailSize	Размер миниатюр
+settings.rowRemoveAllDownloads	Удалить все загрузки
+settings.rowClearCache	Очистить кеш
+settings.rowOpenSourceLicenses	Лицензии открытого кода
+settings.rowPrivacyPolicy	Политика конфиденциальности
+settings.rowTermsOfUse	Условия использования
+settings.rowUserManagement	Управление пользователями
+settings.rowChangePassword	Изменить пароль
+settings.rowServer	Сервер
+settings.storageFootnote	При загрузке папки она сначала сжимается в ZIP на сервере. Включите переключатель выше, чтобы удалить этот архив с сервера после сохранения на устройстве. Удаление загрузок или очистка кеша затрагивает только это устройство; на сервере ничего не меняется.
+settings.removeAllDownloadsTitle	Удалить все загрузки?
+settings.removeAllDownloadsConfirm	Удалить все
+settings.removeAllDownloadsMessage	Это удалит все загруженные файлы с этого устройства. Они останутся на сервере.
+settings.clearCacheTitle	Очистить кеш?
+settings.clearCacheConfirm	Очистить
+settings.clearCacheMessage	Это очистит кешированные превью, миниатюры и сохранённые списки папок для офлайн-режима. На сервере ничего не затрагивается.
+settings.signOutAlertTitle	Выйти?
+settings.signOutMessage	Чтобы получить доступ к файлам, нужно снова войти.
+settings.signOutButton	Выйти
+settings.signingOut	Выход…
+settings.dateFormatNavigationTitle	Формат даты
+settings.dateFormatShowTime	Показывать время
+serverDetails.navigationTitle	Сервер
+serverDetails.changeLogo	Изменить значок
+serverDetails.takePhoto	Сделать фото
+serverDetails.chooseFromGallery	Отправить из галереи
+serverDetails.nameLabel	Имя сервера
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	Имя сервера не может быть пустым.
+serverDetails.urlLabel	URL сервера
+serverDetails.urlFootnote	Адрес, по которому установлен ваш экземпляр NextExplorer. Чтобы изменить его, выйдите и добавьте сервер заново.
+serverDetails.updateButton	Обновить сервер
+serverDetails.savedMessage	Данные сервера обновлены.
+serverDetails.logoErrorTooLarge	Это изображение слишком большое. Выберите файл до 2 МБ.
+serverDetails.cameraDeniedTitle	Доступ к камере отключён
+serverDetails.cameraDeniedMessage	Включите доступ к камере в Настройках, чтобы сделать фото.
+licenses.navigationTitle	Лицензии открытого кода
+licenses.sectionSoftware	Программное обеспечение
+licenses.sectionFontSoftware	Программное обеспечение шрифтов
+licenses.labelAuthor	Автор
+licenses.labelOriginalVersion	Оригинальная версия
+licenses.labelModifiedVersion	Изменённая версия
+licenses.labelReservedFontName	Зарезервированное имя шрифта
+fileInfo.navigationTitleFolder	Папка
+fileInfo.rowKind	Тип
+fileInfo.rowSize	Размер
+fileInfo.rowLocation	Расположение
+fileInfo.rowDateModified	Дата изменения
+fileInfo.rowDateCreated	Дата создания
+fileInfo.rowFiles	Файлы
+fileInfo.rowFolders	Папки
+fileInfo.rowTotalSize	Общий размер
+fileInfo.sectionServerDisk	Диск сервера
+fileInfo.diskFreeOf	%1$@ свободно из %2$@
+fileInfo.rowDimensions	Размеры
+fileInfo.rowCamera	Камера
+fileInfo.rowLens	Объектив
+fileInfo.rowDateTaken	Дата съёмки
+fileInfo.rowDuration	Длительность
+fileInfo.partialScan	Подсчитано частичное сканирование: эта папка очень большая.
+permissions.title	Права доступа
+permissions.sectionMode	Режим
+permissions.numericLabel	Числовой
+permissions.applyToEnclosed	Применить к вложенным объектам
+permissions.applyPermissions	Применить права
+permissions.sectionOwnership	Владение
+permissions.fieldOwner	Владелец
+permissions.fieldGroup	Группа
+permissions.ownershipNote	Изменение владельца обычно требует прав root или администратора на сервере.
+permissions.applyOwnership	Применить владение
+permissions.scopeOwner	Владелец
+permissions.scopeGroup	Группа
+permissions.scopeOthers	Остальные
+permissions.rightRead	Чтение
+permissions.rightWrite	Запись
+permissions.rightExecute	Выполнение
+archive.emptyFolder	Эта папка пуста.
+archive.openFailed	Не удалось открыть этот файл.
+archive.openArchiveFailed	Не удалось открыть этот архив.
+archive.entryTooLarge	Этот объект слишком большой, чтобы его открыть.
+gallery.loadFailed	Не удалось загрузить это изображение.
+textPreview.saved	Сохранено
+textPreview.loadFailed	Не удалось загрузить этот файл. Проверьте соединение и повторите попытку.
+userManagement.navigationTitle	Управление пользователями
+userManagement.searchPrompt	Поиск пользователей
+userManagement.createUser	Создать пользователя
+userManagement.badgeAdmin	Администратор
+userManagement.emptyList	Пока нет пользователей.
+userManagement.noSearchMatches	Нет пользователей, соответствующих «%@».
+userManagement.loadFailed	Не удалось связаться с сервером.
+userManagement.sortType	Тип
+userManagement.sortName	Имя
+userManagement.sortEmail	Эл. почта
+userManagement.tabProfile	Профиль
+userManagement.tabSecurity	Безопасность
+userManagement.tabVolumes	Тома
+userManagement.createNavigationTitle	Создать пользователя
+userManagement.createEmailField	Эл. почта
+userManagement.createEmailPlaceholder	name@example.com
+userManagement.createUsernameField	Имя пользователя (необязательно)
+userManagement.createUsernamePlaceholder	Из адреса эл. почты
+userManagement.createPasswordField	Пароль
+userManagement.createPasswordPlaceholder	Не менее %lld символов
+userManagement.createGrantAdminToggle	Предоставить доступ администратора
+userManagement.createGrantAdminSubtitle	Полный контроль над файлами, ссылками и пользователями.
+userManagement.createSubmit	Создать пользователя
+userManagement.setPasswordNavigationTitle	Пароль
+userManagement.setPasswordNewField	Новый пароль
+userManagement.setPasswordPlaceholder	Не менее %lld символов
+userManagement.setPasswordResetTitle	Сбросить пароль
+userManagement.setPasswordSetTitle	Задать пароль
+userManagement.setPasswordResetIntro	Задайте новый локальный пароль для %@. Текущий пароль перестанет работать.
+userManagement.setPasswordSetIntro	Задайте пользователю %@ локальный пароль, чтобы он мог входить без SSO.
+userManagement.toastProfileUpdated	Профиль обновлён
+userManagement.toastAdminGranted	Права администратора предоставлены
+userManagement.toastUserRemoved	Пользователь удалён
+userManagement.toastUserCreated	Пользователь создан
+userManagement.toastPasswordUpdated	Пароль обновлён
+userManagement.toastVolumeSaved	Том сохранён
+userManagement.toastVolumeRemoved	Том удалён
+userManagement.errorEmailRequired	Требуется адрес эл. почты.
+userManagement.errorEmailInvalid	Введите действительный адрес эл. почты.
+userManagement.errorUsernameRequired	Требуется имя пользователя.
+userManagement.errorEmailInUse	Этот адрес эл. почты уже используется.
+userManagement.errorPasswordTooShort	Используйте не менее %lld символов.
+userDetail.fallbackName	Пользователь
+userDetail.sectionGeneralInfo	Общая информация
+userDetail.sectionRoles	Роли и права
+userDetail.sectionLocalPassword	Локальный пароль
+userDetail.sectionSSO	Единый вход
+userDetail.sectionAssignedVolumes	Назначенные тома
+userDetail.profileDisplayNameField	Отображаемое имя
+userDetail.profileDisplayNamePlaceholder	Отображаемое имя
+userDetail.profileUsernameField	Имя пользователя
+userDetail.profileUsernamePlaceholder	Имя пользователя
+userDetail.profileEmailField	Эл. почта
+userDetail.profileEmailPlaceholder	name@example.com
+userDetail.profileSave	Сохранить изменения
+userDetail.roleAdmin	Администратор
+userDetail.roleAdminSubtitle	Полный контроль над файлами, ссылками и пользователями.
+userDetail.roleAdminLocked	Администраторов нельзя понизить из приложения.
+userDetail.roleGrantAdmin	Назначить администратором
+userDetail.passwordHasLocal	Этот пользователь входит с помощью эл. почты и пароля.
+userDetail.passwordSSOOnly	У этого пользователя нет локального пароля: только SSO.
+userDetail.passwordReset	Сбросить пароль
+userDetail.passwordSet	Задать пароль
+userDetail.ssoNone	Нет привязанных поставщиков SSO.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Привязано
+userDetail.dangerZoneTitle	Опасная зона
+userDetail.dangerZoneSubtitle	Удаление пользователя немедленно отзывает его доступ. Файлы, которыми он владеет на сервере, не удаляются.
+userDetail.dangerZoneRemoveUser	Удалить пользователя
+userDetail.volumesNone	Тома не назначены.
+userDetail.volumesNoneSubtitle	Этот пользователь видит только стандартное общее пространство.
+userDetail.volumesAssign	Назначить том
+userDetail.volumesFootnote	Тома дают пользователю доступ к каталогу вне стандартного общего пространства. Удаление тома никогда не удаляет файлы.
+userDetail.volumeEditAccessibility	Изменить %@
+userDetail.volumeRemoveAccessibility	Удалить %@
+userDetail.removeVolumeTitle	Удалить том?
+userDetail.removeVolumeMessage	%@ отвязывается от этого пользователя. Сам каталог не затрагивается.
+userDetail.removeUserTitle	Удалить пользователя?
+userDetail.removeUserMessage	%@ немедленно теряет доступ. Его файлы на сервере не удаляются.
+userDetail.volumeSheetLabelField	Метка
+userDetail.volumeSheetLabelPlaceholder	Метка тома
+userDetail.volumeSheetAccessMode	Режим доступа
+userDetail.volumeSheetDirectory	Каталог
+userDetail.volumeSheetSaveEdit	Сохранить том
+userDetail.volumeSheetSaveNew	Назначить том
+userDetail.volumeSheetTitleEdit	Изменить том
+userDetail.volumeSheetTitleNew	Назначить том
+userDetail.directoryPickerGoUp	На каталог вверх
+userDetail.directoryPickerUseThis	Использовать этот каталог
+userDetail.directoryPickerOpen	Открыть %@
+userDetail.directoryPickerFailed	Не удалось получить список каталогов.
+previewToolbar.close	Закрыть
+previewToolbar.createShareLink	Создать ссылку доступа
+previewToolbar.download	Загрузить
+previewToolbar.delete	Удалить
+previewToolbar.share	Поделиться
+previewToolbar.rename	Переименовать
+login.serverQuestion	Где находится ваш экземпляр NextExplorer?
+login.testConnection	Проверить соединение
+login.emailField	Эл. почта
+login.passwordField	Пароль
+login.submit	Войти
+login.plaintextWarning	Это соединение не зашифровано. Ваш пароль и сессия передаются в открытом виде по локальной сети.
+error.sessionExpired	Ваша сессия истекла. Войдите снова.
+error.rateLimited	Слишком много запросов. Повторите попытку позже.
+error.network	Не удалось связаться с сервером.
+error.offline	Вы офлайн. Подключитесь к интернету и повторите попытку.
+error.decoding	Сервер ответил неожиданно.
+error.server	Ошибка сервера (%lld).
+error.forbidden	У вас нет прав для этого действия.
+changePassword.navigationTitle	Изменить пароль
+changePassword.intro	Измените пароль, который вы используете для входа с помощью адреса эл. почты. Вы останетесь в системе на этом устройстве.
+changePassword.fieldCurrentPassword	Текущий пароль
+changePassword.fieldNewPasswordLabel	Новый пароль
+changePassword.fieldConfirmPasswordLabel	Подтвердите новый пароль
+changePassword.fieldConfirmPassword	Введите новый пароль ещё раз
+changePassword.fieldNewPasswordPrompt	Не менее %lld символов
+changePassword.submitButton	Обновить пароль
+changePassword.success	Ваш пароль обновлён.
+changePassword.errorMinLength	Используйте не менее %lld символов.
+changePassword.errorMismatch	Пароли не совпадают.
+login.portHint	Добавьте порт (например, :3000). Большинство домашних серверов не слушают порт 80.
+login.errorInvalidServer	Введите действительный адрес сервера.
+login.errorInvalidEmail	Введите действительный адрес эл. почты.
+login.errorInvalidCredentials	Неверное имя пользователя или пароль.
+login.errorSessionExpired	Ваша сессия истекла. Войдите снова.
+login.errorIncomplete	Вход не завершён. Повторите попытку.
+login.errorUnreachable	Не удалось связаться с этим сервером. Проверьте адрес и повторите попытку.
+login.errorUnexpectedResponse	Неожиданный ответ сервера.
+login.errorKeychain	Не удалось сохранить вашу сессию на этом устройстве.
+login.errorDecoding	Сервер ответил неожиданно. Проверьте адрес и повторите попытку.
+login.errorNoLocalAuth	На этом сервере не включён вход по имени пользователя и паролю.
+login.errorRateLimited	Слишком много попыток. Подождите несколько минут и повторите попытку.
+login.errorServer	На сервере возникла проблема (ошибка %lld). Повторите попытку позже.
+browse.nameErrorReserved	Это имя недопустимо.
+browse.nameErrorSeparators	Имя не может содержать / или \.
+browse.searchMatchLine	Строка %1$lld: %2$@
+browse.searchMatchLineLabel	Строка %lld
+createShare.errorPasswordRequired	Введите пароль или отключите защиту паролем.
+filter.sheetTitle	Фильтр по типу
+filter.button	Фильтр
+filter.all	Все типы
+filter.folders	Папки
+filter.images	Изображения
+filter.videos	Видео
+filter.audio	Аудио
+filter.documents	Документы
+filter.archives	Архивы
+filter.other	Другое
+language.navigationTitle	Язык
+language.systemDefault	Системный по умолчанию
+language.systemDefaultSubtitle	Следовать языку устройства

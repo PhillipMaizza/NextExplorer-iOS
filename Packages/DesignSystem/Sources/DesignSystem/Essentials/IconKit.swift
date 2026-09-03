@@ -55,6 +55,7 @@ public enum IconKit {
     /// Overlaid on a video's frame thumbnail to mark it as playable footage, not a still.
     public static let playCircle = Image(systemName: "play.circle.fill")
     public static let web = Image(systemName: "globe")
+    public static let language = Image(systemName: "character.bubble")
     public static let server = Image(systemName: "macpro.gen3.server")
     public static let listBullet = Image(systemName: "list.bullet")
     public static let squareGrid = Image(systemName: "square.grid.2x2")

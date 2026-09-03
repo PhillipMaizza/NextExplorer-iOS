@@ -2,6 +2,7 @@ import AppFeature
 import AppStorageKeys
 import ComposableArchitecture
 import DesignSystem
+import Localization
 import SwiftUI
 import UIKit
 
@@ -28,6 +29,10 @@ struct NextExplorerApp: App {
     @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
 
     init() {
+        // Point localization at the saved language before the first view builds, so the splash and
+        // login are already in the chosen language rather than flashing the system one first.
+        let saved = UserDefaults.standard.string(forKey: AppStorageKeys.appLanguage) ?? ""
+        LocalizationOverride.apply(saved.isEmpty ? nil : saved)
         DesignSystemFonts.registerAll()
         DesignSystemFonts.applyGlobalAppearance()
     }
