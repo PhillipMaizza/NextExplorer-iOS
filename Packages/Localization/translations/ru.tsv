@@ -540,3 +540,13 @@ filter.other	Другое
 language.navigationTitle	Язык
 language.systemDefault	Системный по умолчанию
 language.systemDefaultSubtitle	Следовать языку устройства
+common.copy	Копировать
+common.copied	Скопировано
+favorites.accessibilityBadge	Избранное
+login.showPassword	Показать пароль
+login.hidePassword	Скрыть пароль
+browse.breadcrumbHint	Открывает эту папку
+login.serverInfoAccessibility	О подключении к серверу
+login.serverInfoTitle	Что такое сервер?
+login.serverInfoBody	NextExplorer подключается к вашему собственному серверу NextExplorer. Администратор управляет сервером, создаёт учётные записи и сообщает вам его веб-адрес. Введите этот адрес, чтобы войти.\n\nЕщё нет сервера? Руководство по установке покажет, как разместить свой.
+login.serverInfoGuide	Открыть руководство по установке

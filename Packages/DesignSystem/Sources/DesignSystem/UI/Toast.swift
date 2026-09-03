@@ -135,7 +135,12 @@ private struct DSToastModifier: ViewModifier {
                 .background(Capsule().fill(message.backgroundColor))
                 .padding(.bottom, Constants.bottomInset + extraBottomInset)
                 .transition(.move(edge: .bottom).combined(with: .opacity))
+                // One VoiceOver element; spoken as a status announcement the moment it appears,
+                // since a transient toast never receives focus on its own.
+                .accessibilityElement(children: .combine)
+                .accessibilityAddTraits(.isStaticText)
                 .task(id: message.id) {
+                    AccessibilityNotification.Announcement(message.text).post()
                     guard !message.isPersistent else { return }
                     try? await Task.sleep(for: Constants.autoDismissDelay)
                     self.message = nil

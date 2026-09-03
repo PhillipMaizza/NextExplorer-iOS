@@ -540,3 +540,13 @@ filter.other	अन्य
 language.navigationTitle	भाषा
 language.systemDefault	सिस्टम डिफ़ॉल्ट
 language.systemDefaultSubtitle	अपने डिवाइस की भाषा का पालन करें
+common.copy	कॉपी करें
+common.copied	कॉपी किया गया
+favorites.accessibilityBadge	पसंदीदा
+login.showPassword	पासवर्ड दिखाएँ
+login.hidePassword	पासवर्ड छिपाएँ
+browse.breadcrumbHint	यह फ़ोल्डर खोलता है
+login.serverInfoAccessibility	सर्वर से कनेक्ट करने के बारे में
+login.serverInfoTitle	सर्वर क्या है?
+login.serverInfoBody	NextExplorer आपके अपने NextExplorer सर्वर से कनेक्ट होता है। एक व्यवस्थापक सर्वर चलाता है, खाते बनाता है और आपके साथ इसका वेब पता साझा करता है। साइन इन करने के लिए वह पता दर्ज करें।\n\nअभी तक सर्वर नहीं है? सेटअप गाइड आपको एक होस्ट करने का तरीका बताती है।
+login.serverInfoGuide	सेटअप गाइड खोलें

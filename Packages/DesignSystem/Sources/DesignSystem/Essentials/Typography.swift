@@ -81,9 +81,45 @@ public enum Typography {
             }
         }
 
+        /// The tier's weight, bumped one step heavier when the system Bold Text accessibility
+        /// setting is on. A system font inherits Bold Text for free; the custom Figtree font
+        /// does not, so the DS text modifier feeds `legibilityWeight` through here instead.
+        public func weight(boldText: Bool) -> Font.Weight {
+            boldText ? Self.bolder(weight) : weight
+        }
+
+        private static func bolder(_ weight: Font.Weight) -> Font.Weight {
+            switch weight {
+            case .ultraLight: .thin
+            case .thin: .light
+            case .light: .regular
+            case .regular: .semibold
+            case .medium: .semibold
+            case .semibold: .bold
+            case .bold: .heavy
+            case .heavy: .black
+            default: .bold
+            }
+        }
+
+        /// The system text style each tier scales against so the custom Figtree font tracks
+        /// Dynamic Type. `Font.custom(_:size:relativeTo:)` runs the base `size` through
+        /// `UIFontMetrics` for this style, which a bare `Font.custom(_:size:)` never does.
+        private var relativeTextStyle: Font.TextStyle {
+            switch self {
+            case .display, .headline1: .largeTitle
+            case .headline2, .headline3: .title
+            case .headline4, .subtitle1, .label1: .title2
+            case .label2: .title3
+            case .subtitle2, .body1, .body2, .label3: .body
+            case .body3, .label4: .subheadline
+            case .caption: .caption
+            }
+        }
+
         public func font() -> Font {
             _ = Self.fontsRegistered
-            return .custom(Self.familyName, size: size)
+            return .custom(Self.familyName, size: size, relativeTo: relativeTextStyle)
         }
     }
 
@@ -115,9 +151,9 @@ public enum Typography {
             case .disabled: .tertiaryDS
             case .inverted: .primaryInverted
             case .invertedSecondary: .secondaryInverted
-            case .success: .positive
-            case .link: .accent
-            case .error: .negative
+            case .success: .positiveText
+            case .link: .accentText
+            case .error: .negativeText
             case .warning: .attention
             case .custom(let color): color
             }
@@ -125,27 +161,34 @@ public enum Typography {
     }
 }
 
-public extension Text {
-    /// Applies a Design System text type (font + weight) to the text.
-    func type(_ type: Typography.TextType) -> Text {
-        font(type.font()).fontWeight(type.weight)
-    }
-
-    /// Applies a Design System text style (color) to the text.
-    func style(_ style: Typography.TextStyle) -> Text {
-        foregroundColor(style.color)
+public extension View {
+    /// Applies a Design System text type (font + weight) to any view. Runs through
+    /// `DSTextTypeModifier` so the weight honors the system Bold Text accessibility setting,
+    /// which the custom Figtree font would otherwise ignore.
+    func type(_ type: Typography.TextType) -> some View {
+        modifier(DSTextTypeModifier(type: type))
     }
 
     /// Applies both a text type (font + weight) and style (color) in one call.
-    func type(_ type: Typography.TextType, style: Typography.TextStyle) -> Text {
-        font(type.font()).fontWeight(type.weight).foregroundColor(style.color)
+    func type(_ type: Typography.TextType, style: Typography.TextStyle) -> some View {
+        modifier(DSTextTypeModifier(type: type)).foregroundColor(style.color)
+    }
+
+    /// Applies a Design System text style (color) to any view.
+    func style(_ style: Typography.TextStyle) -> some View {
+        foregroundColor(style.color)
     }
 }
 
-public extension View {
-    /// Applies a Design System text type (font + weight) to any view, chiefly for
-    /// `TextField`/`SecureField`, which aren't `Text` and so can't use `Text.type(_:)`.
-    func type(_ type: Typography.TextType) -> some View {
-        font(type.font()).fontWeight(type.weight)
+/// Applies a text tier's font and Bold-Text-aware weight. A `ViewModifier` (not a `Text`
+/// extension) so it can read `legibilityWeight` from the environment.
+private struct DSTextTypeModifier: ViewModifier {
+    let type: Typography.TextType
+    @Environment(\.legibilityWeight) private var legibilityWeight
+
+    func body(content: Content) -> some View {
+        content
+            .font(type.font())
+            .fontWeight(type.weight(boldText: legibilityWeight == .bold))
     }
 }

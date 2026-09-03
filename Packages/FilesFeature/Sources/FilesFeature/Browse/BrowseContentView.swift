@@ -1146,6 +1146,7 @@ struct BrowseContentView: View {
             }
             .buttonStyle(DSHapticButtonStyle())
             .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
+            .accessibilityAddTraits(store.isSelecting && store.selectedItemIDs.contains(item.id) ? [.isSelected] : [])
             .contextMenu {
                 if !store.isSelecting {
                     fileActionsMenu(for: item)
@@ -1161,6 +1162,7 @@ struct BrowseContentView: View {
                             IconKit.delete
                         }
                         .tint(.negative)
+                        .accessibilityLabel(L10n.Common.delete)
                     }
                     // Only folders can be favorited — the server 400s on anything else.
                     if item.isDirectory {
@@ -1170,6 +1172,7 @@ struct BrowseContentView: View {
                             store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
                         }
                         .tint(.accent)
+                        .accessibilityLabel(store.favoritePaths.contains(item.id) ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites)
                     }
                     if store.access?.canWrite ?? false {
                         Button {
@@ -1178,6 +1181,7 @@ struct BrowseContentView: View {
                             IconKit.rename
                         }
                         .tint(.positive)
+                        .accessibilityLabel(L10n.Browse.actionRename)
                     }
                 }
             }

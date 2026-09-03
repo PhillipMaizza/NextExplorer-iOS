@@ -1,6 +1,7 @@
 import AppStorageKeys
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -178,6 +179,7 @@ struct FileRowView: View {
                     .frame(width: .iconSmall, height: .iconSmall)
                     .symbolEffect(.bounce, value: isFavorite)
                     .transition(.scale.combined(with: .opacity))
+                    .accessibilityLabel(L10n.Favorites.accessibilityBadge)
             }
 
             if isDirectory {

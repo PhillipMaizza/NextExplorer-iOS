@@ -40,7 +40,7 @@ public enum DSButtonStyle: CaseIterable, Hashable {
         case .success, .failure, .inverted: .white
         case .secondary: .primaryDS
         case .ghost: .secondaryDS
-        case .tertiary: .accent
+        case .tertiary: .accentText
         }
     }
 
@@ -128,12 +128,16 @@ public struct DSButton: View {
                         icon
                     }
                     Text(title)
+                        .multilineTextAlignment(.center)
                 }
             }
             .type(.label3)
             .foregroundStyle(style.foregroundColor)
             .frame(maxWidth: .infinity)
-            .frame(height: size.height)
+            // `minHeight`, not a fixed height: at large Dynamic Type / Bold Text the label grows
+            // taller and the pill grows with it instead of clipping the text.
+            .fixedSize(horizontal: false, vertical: true)
+            .frame(minHeight: size.height)
             .background(RoundedRectangle(cornerRadius: .radiusControl).fill(style.backgroundColor))
             .overlay(
                 RoundedRectangle(cornerRadius: .radiusControl)

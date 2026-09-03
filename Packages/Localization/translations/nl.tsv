@@ -540,3 +540,13 @@ filter.other	Overig
 language.navigationTitle	Taal
 language.systemDefault	Systeemstandaard
 language.systemDefaultSubtitle	De taal van je apparaat volgen
+common.copy	Kopiëren
+common.copied	Gekopieerd
+favorites.accessibilityBadge	Favoriet
+login.showPassword	Wachtwoord tonen
+login.hidePassword	Wachtwoord verbergen
+browse.breadcrumbHint	Opent deze map
+login.serverInfoAccessibility	Over verbinden met een server
+login.serverInfoTitle	Wat is een server?
+login.serverInfoBody	NextExplorer maakt verbinding met je eigen NextExplorer-server. Een beheerder beheert de server, maakt accounts aan en deelt het webadres met je. Voer dat adres in om in te loggen.\n\nNog geen server? De installatiegids laat zien hoe je er zelf een host.
+login.serverInfoGuide	Installatiegids openen

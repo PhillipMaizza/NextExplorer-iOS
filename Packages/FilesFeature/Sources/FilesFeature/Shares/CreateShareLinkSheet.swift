@@ -324,6 +324,7 @@ struct CreateShareLinkSheet: View {
                     .background(RoundedRectangle(cornerRadius: .radiusControl).fill(copiedField == field ? Color.positive : Color.accent))
             }
             .buttonStyle(DSHapticButtonStyle())
+            .accessibilityLabel(copiedField == field ? L10n.Common.copied : L10n.Common.copy)
         }
     }
 
