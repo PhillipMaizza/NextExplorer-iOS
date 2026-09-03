@@ -137,6 +137,10 @@ struct BrowseBreadcrumbBar: View {
         // No `.disabled(isCurrent)`: disabling a `Button` dims it even with `.plain` style,
         // and the current segment should read at full opacity, not greyed out.
         .opacity(Constants.fullOpacity)
+        // The segment label is just a folder name; the hint tells VoiceOver what tapping does.
+        // The current segment is a no op, so it gets no hint.
+        .accessibilityHint(isCurrent ? "" : L10n.Browse.breadcrumbHint)
+        .accessibilityAddTraits(isCurrent ? [.isSelected] : [])
     }
 }
 

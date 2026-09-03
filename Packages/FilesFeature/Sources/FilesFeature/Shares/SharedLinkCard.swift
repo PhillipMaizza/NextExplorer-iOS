@@ -102,7 +102,7 @@ struct SharedLinkHeaderRow: View {
         if share.isDirectory {
             IconKit.folderFill
                 .resizable().scaledToFit()
-                .foregroundStyle(Color.accent)
+                .foregroundStyle(Color.accentText)
         } else if let thumbnailPath {
             ThumbnailImage(
                 serverURL: serverURL,

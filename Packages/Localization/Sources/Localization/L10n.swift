@@ -48,6 +48,7 @@ public enum L10n {
         public static var actionRemoveFromFavorites: String { tr("browse.actionRemoveFromFavorites") }  // "Remove from Favorites"
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
         public static var actionShare: String { tr("browse.actionShare") }  // "Create share link"
+        public static var breadcrumbHint: String { tr("browse.breadcrumbHint") }  // "Opens this folder"
         public static func clipboardCopiedMany(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedMany", a0) }
         public static func clipboardCopiedOne(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedOne", a0) }
         public static func clipboardCopyCount(_ a0: CVarArg) -> String { tr("browse.clipboardCopyCount", a0) }
@@ -123,6 +124,8 @@ public enum L10n {
         public static var cancel: String { tr("common.cancel") }  // "Cancel"
         public static var clear: String { tr("common.clear") }  // "Clear"
         public static var close: String { tr("common.close") }  // "Close"
+        public static var copied: String { tr("common.copied") }  // "Copied"
+        public static var copy: String { tr("common.copy") }  // "Copy"
         public static var delete: String { tr("common.delete") }  // "Delete"
         public static var done: String { tr("common.done") }  // "Done"
         public static var download: String { tr("common.download") }  // "Download"
@@ -218,6 +221,7 @@ public enum L10n {
         public static var sessionExpired: String { tr("error.sessionExpired") }  // "Your session expired. Sign in again."
     }
     public enum Favorites {
+        public static var accessibilityBadge: String { tr("favorites.accessibilityBadge") }  // "Favorite"
         public static var actionEdit: String { tr("favorites.actionEdit") }  // "Edit"
         public static var actionRemoveFromFavorites: String { tr("favorites.actionRemoveFromFavorites") }  // "Remove from Favorites"
         public static var editColorDefault: String { tr("favorites.editColorDefault") }  // "Default"
@@ -300,10 +304,16 @@ public enum L10n {
         public static var errorSessionExpired: String { tr("login.errorSessionExpired") }  // "Your session expired. Please sign in again."
         public static var errorUnexpectedResponse: String { tr("login.errorUnexpectedResponse") }  // "Unexpected response from server."
         public static var errorUnreachable: String { tr("login.errorUnreachable") }
+        public static var hidePassword: String { tr("login.hidePassword") }  // "Hide Password"
         public static var passwordField: String { tr("login.passwordField") }  // "Password"
         public static var plaintextWarning: String { tr("login.plaintextWarning") }
         public static var portHint: String { tr("login.portHint") }
+        public static var serverInfoAccessibility: String { tr("login.serverInfoAccessibility") }  // "About connecting to a server"
+        public static var serverInfoBody: String { tr("login.serverInfoBody") }
+        public static var serverInfoGuide: String { tr("login.serverInfoGuide") }  // "Open setup guide"
+        public static var serverInfoTitle: String { tr("login.serverInfoTitle") }  // "What is a server?"
         public static var serverQuestion: String { tr("login.serverQuestion") }  // "Where's your instance of NextExplorer?"
+        public static var showPassword: String { tr("login.showPassword") }  // "Show Password"
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }

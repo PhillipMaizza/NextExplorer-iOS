@@ -16,6 +16,8 @@ common.logOut	Log Out
 common.close	Close
 common.back	Back
 common.share	Share
+common.copy	Copy
+common.copied	Copied
 common.download	Download
 common.sort	Sort
 common.select	Select
@@ -79,6 +81,7 @@ browse.scopeEverywhere	Everywhere
 browse.searchScopeInFolder	This Folder
 browse.searchScopeEverywhere	Everywhere
 browse.locations	Locations
+browse.breadcrumbHint	Opens this folder
 browse.open	Open
 browse.unsupportedFileType	Unsupported file type
 browse.actionGetInfo	Get Info
@@ -149,6 +152,7 @@ browse.actionOpenInBrowser	Open in Browser
 favorites.navigationTitle	Favorites
 favorites.emptyList	Star folders in Browse to see them here.
 favorites.actionRemoveFromFavorites	Remove from Favorites
+favorites.accessibilityBadge	Favorite
 favorites.actionEdit	Edit
 favorites.editTitle	Edit Favorite
 favorites.editNameLabel	Name
@@ -551,9 +555,15 @@ previewToolbar.rename	Rename
 
 # ---- login ----
 login.serverQuestion	Where's your instance of NextExplorer?
+login.serverInfoAccessibility	About connecting to a server
+login.serverInfoTitle	What is a server?
+login.serverInfoBody	NextExplorer connects to your own NextExplorer server. An administrator runs the server, creates accounts, and shares its web address with you. Enter that address to sign in.\n\nNo server yet? The setup guide shows you how to host one.
+login.serverInfoGuide	Open setup guide
 login.testConnection	Test connection
 login.emailField	Email
 login.passwordField	Password
+login.showPassword	Show Password
+login.hidePassword	Hide Password
 login.submit	Log In
 login.plaintextWarning	This connection isn't encrypted. Your password and session are sent in the clear over the local network.
 

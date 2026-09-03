@@ -37,6 +37,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .accessibilityAddTraits(.isHeader)
 
             searchField
             accessory()
@@ -64,6 +65,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
         HStack(spacing: .space8) {
             IconKit.search
                 .foregroundStyle(Color.secondaryDS)
+                .accessibilityHidden(true)
             TextField(
                 text: $searchText,
                 prompt: Text(prompt).foregroundColor(Color.secondaryDS)
@@ -80,9 +82,13 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 Button {
                     searchText = ""
                 } label: {
-                    IconKit.closeCircle.foregroundStyle(Color.secondaryDS)
+                    IconKit.closeCircle
+                        .foregroundStyle(Color.secondaryDS)
+                        .frame(minWidth: .size44, minHeight: .size44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel(L10n.Common.clear)
                 .transition(.opacity)
             }
         }

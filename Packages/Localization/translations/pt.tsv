@@ -540,3 +540,13 @@ settings.rowLanguage	Idioma
 language.navigationTitle	Idioma
 language.systemDefault	Predefinição do sistema
 language.systemDefaultSubtitle	Seguir o idioma do dispositivo
+common.copy	Copiar
+common.copied	Copiado
+favorites.accessibilityBadge	Favorito
+login.showPassword	Mostrar senha
+login.hidePassword	Ocultar senha
+browse.breadcrumbHint	Abre esta pasta
+login.serverInfoAccessibility	Sobre a ligação a um servidor
+login.serverInfoTitle	O que é um servidor?
+login.serverInfoBody	O NextExplorer liga-se ao seu próprio servidor NextExplorer. Um administrador gere o servidor, cria as contas e partilha o respetivo endereço web. Introduza esse endereço para iniciar sessão.\n\nAinda não tem um servidor? O guia de configuração mostra como alojar um.
+login.serverInfoGuide	Abrir guia de configuração

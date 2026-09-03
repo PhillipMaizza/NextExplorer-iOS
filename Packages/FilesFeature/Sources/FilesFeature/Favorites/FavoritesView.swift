@@ -222,6 +222,7 @@ struct FavoritesView: View {
                         }
                         .buttonStyle(DSHapticButtonStyle())
                         .foregroundStyle(Color.accent)
+                        .accessibilityLabel(L10n.Favorites.actionRemoveFromFavorites)
                         .disabled(store.selectedFavoriteIDs.isEmpty)
                     }
                 }
@@ -313,6 +314,7 @@ struct FavoritesView: View {
                     }
                 }
                 .buttonStyle(DSHapticButtonStyle())
+                .accessibilityAddTraits(store.isSelecting && store.selectedFavoriteIDs.contains(favorite.id) ? [.isSelected] : [])
                 .listRowBackground(Color.backgroundSecondary)
                 .contextMenu {
                     if !store.isSelecting {
@@ -327,6 +329,7 @@ struct FavoritesView: View {
                             IconKit.rename
                         }
                         .tint(.accent)
+                        .accessibilityLabel(L10n.Favorites.actionEdit)
                     }
                 }
                 .swipeActions(edge: .trailing) {
@@ -339,6 +342,7 @@ struct FavoritesView: View {
                             IconKit.unfavorite
                         }
                         .tint(.accent)
+                        .accessibilityLabel(L10n.Favorites.actionRemoveFromFavorites)
                     }
                 }
                 .listRowSeparator(favorite.id == firstID ? .hidden : .visible, edges: .top)

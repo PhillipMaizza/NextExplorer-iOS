@@ -43,6 +43,7 @@ enum SettingsFormat {
 @MainActor
 private func sectionHeader(_ title: String) -> some View {
     DSFieldLabel(title)
+        .accessibilityAddTraits(.isHeader)
 }
 
 // MARK: General

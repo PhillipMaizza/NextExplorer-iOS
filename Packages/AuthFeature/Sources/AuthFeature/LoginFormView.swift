@@ -77,6 +77,8 @@ public struct LoginFormView: View {
     /// credentials page deliberately has no such geometry read over its fields — an
     /// `.onGeometryChange` / `GeometryReader` ancestor is a documented AutoFill hazard.
     @State private var serverScrollHeight: CGFloat = 0
+    /// Drives the "What is a server?" info sheet from the `(i)` beside the server-page title.
+    @State private var isServerInfoPresented = false
 
     public init(store: StoreOf<LoginFormFeature>, autoFocus: Bool = true) {
         self.store = store
@@ -241,9 +243,25 @@ public struct LoginFormView: View {
                     IconKit.logo
                         .resizable()
                         .frame(width: Constants.logoSize, height: Constants.logoSize)
-                    Text(L10n.Login.serverQuestion)
+                    Button {
+                        isServerInfoPresented = true
+                    } label: {
+                        // Inline `(i)` flowing right after the title text (`Text` image, so it
+                        // scales with the type and wraps with the sentence), the whole title
+                        // acting as the tap target.
+                        (
+                            Text(L10n.Login.serverQuestion)
+                            + Text(" ")
+                            + Text(IconKit.info)
+                                .font(Typography.TextType.body2(.regular).font())
+                                .foregroundColor(Color.secondaryDS)
+                        )
                         .type(.headline3, style: .primary(for: .label))
                         .multilineTextAlignment(.center)
+                    }
+                    .buttonStyle(DSHapticButtonStyle())
+                    .accessibilityLabel(L10n.Login.serverQuestion)
+                    .accessibilityHint(L10n.Login.serverInfoAccessibility)
                 }
                 .padding(.horizontal, .space16)
 
@@ -314,6 +332,9 @@ public struct LoginFormView: View {
         // Get the Local Network permission alert out of the way while the user is still
         // typing the address, not the moment they hit "Test connection".
         .onAppear { LocalNetworkPrimer.prime() }
+        .sheet(isPresented: $isServerInfoPresented) {
+            ServerInfoSheet(onClose: { isServerInfoPresented = false })
+        }
     }
 
     private var testConnectionButton: some View {
@@ -379,6 +400,7 @@ public struct LoginFormView: View {
                             .foregroundStyle(Color.primaryDS)
                     }
                     .buttonStyle(DSHapticButtonStyle())
+                    .accessibilityLabel(L10n.Common.back)
                     Spacer()
                 }
             }
@@ -488,8 +510,11 @@ public struct LoginFormView: View {
                     } label: {
                         (store.isPasswordVisible ? IconKit.eyeSlash : IconKit.eye)
                             .foregroundStyle(Color.secondaryDS)
+                            .frame(minWidth: .size44, minHeight: .size44)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(DSHapticButtonStyle())
+                    .accessibilityLabel(store.isPasswordVisible ? L10n.Login.hidePassword : L10n.Login.showPassword)
                     .transition(.opacity)
                 }
             }

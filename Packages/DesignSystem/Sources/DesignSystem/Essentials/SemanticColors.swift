@@ -9,6 +9,10 @@ private enum Constants {
 public extension Color {
     /// Actionable items (links, selected picker segment).
     static let accent = Color("Accent", bundle: .module)
+    /// Accent tuned for use AS TEXT/inline glyphs on the app backgrounds: the same gold in dark
+    /// mode, but a darker gold in light mode where the brand gold on white measures ~2:1 and
+    /// fails WCAG AA. `Color.accent` stays the brand fill; this is only for foreground text.
+    static let accentText = Color("AccentText", bundle: .module)
     /// Primary text/icons.
     static let primaryDS = Color("TextPrimary", bundle: .module)
     /// Secondary text, placeholders, subtitles.
@@ -22,6 +26,12 @@ public extension Color {
     static let attention = Color("Warning", bundle: .module)
     /// Negative/error feedback.
     static let negative = Color("Danger", bundle: .module)
+    /// Danger/success tuned for use AS TEXT: lighter in dark mode so error/success copy stays
+    /// AA-legible on the elevated dark `backgroundSecondary` surface, where the saturated fill
+    /// colors fall below 4.5:1. `Color.negative`/`Color.positive` stay the fill/icon colors,
+    /// which must keep white-on-fill contrast.
+    static let negativeText = Color("DangerText", bundle: .module)
+    static let positiveText = Color("SuccessText", bundle: .module)
     /// Default screen background.
     static let backgroundPrimary = Color("Background", bundle: .module)
     /// Secondary surface background (cards, grouped rows).

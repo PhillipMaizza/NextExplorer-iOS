@@ -540,3 +540,13 @@ filter.other	Autre
 language.navigationTitle	Langue
 language.systemDefault	Réglage du système
 language.systemDefaultSubtitle	Suivre la langue de l'appareil
+common.copy	Copier
+common.copied	Copié
+favorites.accessibilityBadge	Favori
+login.showPassword	Afficher le mot de passe
+login.hidePassword	Masquer le mot de passe
+browse.breadcrumbHint	Ouvre ce dossier
+login.serverInfoAccessibility	À propos de la connexion à un serveur
+login.serverInfoTitle	Qu'est-ce qu'un serveur ?
+login.serverInfoBody	NextExplorer se connecte à votre propre serveur NextExplorer. Un administrateur gère le serveur, crée les comptes et vous communique son adresse web. Saisissez cette adresse pour vous connecter.\n\nPas encore de serveur ? Le guide d'installation vous explique comment en héberger un.
+login.serverInfoGuide	Ouvrir le guide d'installation

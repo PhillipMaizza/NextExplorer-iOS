@@ -540,3 +540,13 @@ filter.other	其他
 language.navigationTitle	语言
 language.systemDefault	系统默认
 language.systemDefaultSubtitle	跟随设备语言
+common.copy	复制
+common.copied	已复制
+favorites.accessibilityBadge	收藏
+login.showPassword	显示密码
+login.hidePassword	隐藏密码
+browse.breadcrumbHint	打开此文件夹
+login.serverInfoAccessibility	关于连接到服务器
+login.serverInfoTitle	什么是服务器？
+login.serverInfoBody	NextExplorer 连接到你自己的 NextExplorer 服务器。管理员负责运行服务器、创建账户并与你分享其网址。输入该网址即可登录。\n\n还没有服务器？安装指南将教你如何自行搭建。
+login.serverInfoGuide	打开安装指南

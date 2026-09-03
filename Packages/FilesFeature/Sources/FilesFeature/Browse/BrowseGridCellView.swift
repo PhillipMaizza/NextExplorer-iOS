@@ -1,6 +1,7 @@
 import AppStorageKeys
 import CoreModels
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -133,6 +134,7 @@ struct GridCellView: View {
                                     .shadow(radius: Constants.favoriteBadgeShadowRadius))
                             .symbolEffect(.bounce, value: isFavorite)
                             .transition(.scale.combined(with: .opacity))
+                            .accessibilityLabel(L10n.Favorites.accessibilityBadge)
                     }
                 }
                 .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)

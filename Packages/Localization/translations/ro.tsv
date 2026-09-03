@@ -540,3 +540,13 @@ filter.other	Altele
 language.navigationTitle	Limbă
 language.systemDefault	Implicit sistem
 language.systemDefaultSubtitle	Urmează limba dispozitivului
+common.copy	Copiază
+common.copied	Copiat
+favorites.accessibilityBadge	Favorit
+login.showPassword	Afișează parola
+login.hidePassword	Ascunde parola
+browse.breadcrumbHint	Deschide acest folder
+login.serverInfoAccessibility	Despre conectarea la un server
+login.serverInfoTitle	Ce este un server?
+login.serverInfoBody	NextExplorer se conectează la propriul tău server NextExplorer. Un administrator gestionează serverul, creează conturile și îți comunică adresa web. Introdu acea adresă pentru a te conecta.\n\nÎncă nu ai un server? Ghidul de configurare îți arată cum să găzduiești unul.
+login.serverInfoGuide	Deschide ghidul de configurare

@@ -69,6 +69,12 @@ public struct AppView: View {
                 .zIndex(3)
             }
         }
+        // Full Dynamic Type support (see Typography.font). Capped at accessibility3 (~235%,
+        // comfortably above the 200% Apple asks for the Larger Text nutrition label) rather than
+        // accessibility5,
+        // whose extreme sizes shatter the app's fixed height chrome; buttons/rows grow with the
+        // text up to that point.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility3)
         .environment(\.locale, appLocale)
         .environment(\.layoutDirection, layoutDirection)
         .onChange(of: appLanguage, initial: true) { _, _ in

@@ -540,3 +540,13 @@ filter.other	Övrigt
 language.navigationTitle	Språk
 language.systemDefault	Systemstandard
 language.systemDefaultSubtitle	Följ enhetens språk
+common.copy	Kopiera
+common.copied	Kopierad
+favorites.accessibilityBadge	Favorit
+login.showPassword	Visa lösenord
+login.hidePassword	Dölj lösenord
+browse.breadcrumbHint	Öppnar den här mappen
+login.serverInfoAccessibility	Om att ansluta till en server
+login.serverInfoTitle	Vad är en server?
+login.serverInfoBody	NextExplorer ansluter till din egen NextExplorer-server. En administratör sköter servern, skapar konton och delar dess webbadress med dig. Ange den adressen för att logga in.\n\nIngen server ännu? Installationsguiden visar hur du är värd för en själv.
+login.serverInfoGuide	Öppna installationsguiden

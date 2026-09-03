@@ -17,7 +17,7 @@ public struct DSSelectionIndicator: View {
         (isSelected ? IconKit.checkmarkCircleFill : IconKit.radioUnselected)
             .resizable()
             .scaledToFit()
-            .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
+            .foregroundStyle(isSelected ? Color.accentText : Color.secondaryDS)
             .frame(width: size, height: size)
             .symbolEffect(.bounce, value: isSelected)
             .transition(.scale.combined(with: .opacity))

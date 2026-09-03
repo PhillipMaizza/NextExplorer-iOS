@@ -540,3 +540,13 @@ filter.other	기타
 language.navigationTitle	언어
 language.systemDefault	시스템 기본값
 language.systemDefaultSubtitle	기기 언어 따르기
+common.copy	복사
+common.copied	복사됨
+favorites.accessibilityBadge	즐겨찾기
+login.showPassword	비밀번호 표시
+login.hidePassword	비밀번호 숨기기
+browse.breadcrumbHint	이 폴더 열기
+login.serverInfoAccessibility	서버 연결 정보
+login.serverInfoTitle	서버란 무엇인가요?
+login.serverInfoBody	NextExplorer는 사용자 소유의 NextExplorer 서버에 연결합니다. 관리자가 서버를 운영하고 계정을 만든 후 웹 주소를 알려줍니다. 로그인하려면 해당 주소를 입력하세요.\n\n아직 서버가 없나요? 설치 가이드에서 직접 호스팅하는 방법을 확인하세요.
+login.serverInfoGuide	설치 가이드 열기

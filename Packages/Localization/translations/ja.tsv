@@ -540,3 +540,13 @@ filter.other	その他
 language.navigationTitle	言語
 language.systemDefault	システムのデフォルト
 language.systemDefaultSubtitle	デバイスの言語に従う
+common.copy	コピー
+common.copied	コピーしました
+favorites.accessibilityBadge	お気に入り
+login.showPassword	パスワードを表示
+login.hidePassword	パスワードを非表示
+browse.breadcrumbHint	このフォルダを開く
+login.serverInfoAccessibility	サーバーへの接続について
+login.serverInfoTitle	サーバーとは？
+login.serverInfoBody	NextExplorer はあなた自身の NextExplorer サーバーに接続します。管理者がサーバーを運用し、アカウントを作成して、その Web アドレスを共有します。そのアドレスを入力してサインインしてください。\n\nまだサーバーがありませんか？セットアップガイドが自分でホストする方法を説明します。
+login.serverInfoGuide	セットアップガイドを開く

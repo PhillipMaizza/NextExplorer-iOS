@@ -159,18 +159,21 @@ struct DownloadsView: View {
                         IconKit.delete
                     }
                     .tint(.negative)
+                    .accessibilityLabel(L10n.Common.delete)
                     Button {
                         store.send(.renameTapped(download))
                     } label: {
                         IconKit.rename
                     }
                     .tint(.positive)
+                    .accessibilityLabel(L10n.Browse.actionRename)
                     // The plain system share sheet — local downloads have no server-side
                     // sharing semantics to worry about, unlike Browse's items.
                     ShareLink(item: download.url) {
                         IconKit.share
                     }
                     .tint(.accent)
+                    .accessibilityLabel(L10n.Common.share)
                 }
             }
             .contextMenu {
@@ -353,6 +356,7 @@ struct DownloadsView: View {
                         ShareLink(items: selectedDownloadURLs) {
                             IconKit.share
                         }
+                        .accessibilityLabel(L10n.Common.share)
                         .disabled(store.selectedDownloadIDs.isEmpty)
                     }
                     ToolbarItem(placement: .bottomBar) {
@@ -362,6 +366,7 @@ struct DownloadsView: View {
                             IconKit.delete.foregroundStyle(Color.negative)
                         }
                         .buttonStyle(DSHapticButtonStyle())
+                        .accessibilityLabel(L10n.Common.delete)
                         .disabled(store.selectedDownloadIDs.isEmpty)
                     }
                 }
