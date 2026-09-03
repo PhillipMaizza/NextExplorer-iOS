@@ -12,6 +12,9 @@ public enum DSButtonStyle: CaseIterable, Hashable {
     /// Transparent, no border, no lift, neutral text — a dismiss ("Cancel") that shouldn't
     /// compete with the primary CTA beside it. Unlike `.tertiary` the label isn't accent.
     case ghost
+    /// Clear background, hairline border, neutral text — a lighter dismiss than `.secondary`
+    /// (which fills a surface) for pairing beside a filled primary without competing with it.
+    case outline
     /// Filled positive background — confirms a completed action.
     case success
     /// Filled negative background — flags a failed action.
@@ -25,7 +28,7 @@ public enum DSButtonStyle: CaseIterable, Hashable {
         switch self {
         case .primary: .accent
         case .secondary: .backgroundSecondary
-        case .tertiary, .ghost: .clear
+        case .tertiary, .ghost, .outline: .clear
         case .success: .positive
         case .failure: .negative
         case .inverted: Color(white: Constants.invertedFillWhite)
@@ -38,14 +41,14 @@ public enum DSButtonStyle: CaseIterable, Hashable {
         // so its label stays fixed-dark rather than following the semantic on-fill color.
         case .primary: .black
         case .success, .failure, .inverted: .white
-        case .secondary: .primaryDS
+        case .secondary, .outline: .primaryDS
         case .ghost: .secondaryDS
         case .tertiary: .accentText
         }
     }
 
     var borderColor: Color {
-        self == .secondary ? .borderPrimary : .clear
+        self == .secondary || self == .outline ? .borderPrimary : .clear
     }
 }
 
@@ -141,7 +144,7 @@ public struct DSButton: View {
             .background(RoundedRectangle(cornerRadius: .radiusControl).fill(style.backgroundColor))
             .overlay(
                 RoundedRectangle(cornerRadius: .radiusControl)
-                    .stroke(style.borderColor, lineWidth: style == .secondary ? .borderWidthHairline : 0)
+                    .stroke(style.borderColor, lineWidth: style == .secondary || style == .outline ? .borderWidthHairline : 0)
             )
         }
         .buttonStyle(DSHapticButtonStyle())

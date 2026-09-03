@@ -33,7 +33,7 @@ struct ServerInfoSheet: View {
         } footer: {
             DSSheetFooter {
                 HStack(spacing: .space12) {
-                    DSButton(L10n.Common.close, style: .secondary, action: onClose)
+                    DSButton(L10n.Common.close, style: .outline, action: onClose)
                     DSButton(L10n.Login.serverInfoGuide, style: .primary) {
                         guard let url = Constants.setupGuide else { return }
                         openURL(url)
