@@ -56,7 +56,7 @@ struct FilePreviewContainerView: View {
                     .frame(width: .iconMedium, height: .iconMedium)
                 Text(errorMessage).type(.body1(.regular), style: .secondary)
             } else {
-                ProgressView()
+                DSSpinner()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

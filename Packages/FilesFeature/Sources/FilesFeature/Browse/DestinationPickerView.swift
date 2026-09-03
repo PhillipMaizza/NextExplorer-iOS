@@ -100,7 +100,7 @@ struct DestinationPickerView: View {
     @ViewBuilder
     private var browseContent: some View {
         if store.phase == .loading && store.folders.isEmpty {
-            ProgressView()
+            DSSpinner()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let errorMessage = store.phase.errorMessage {
             EmptyStateView(
@@ -130,7 +130,7 @@ struct DestinationPickerView: View {
     @ViewBuilder
     private var searchContent: some View {
         if store.isSearching && (store.searchResults?.isEmpty ?? true) {
-            ProgressView()
+            DSSpinner()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let results = store.searchResults, results.isEmpty {
             EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))

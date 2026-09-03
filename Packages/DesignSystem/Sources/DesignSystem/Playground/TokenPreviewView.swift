@@ -74,7 +74,7 @@ private struct ButtonPreviewView: View {
                 Text("Test Connection").type(.label2).foregroundStyle(Color.backgroundPrimary)
             }
             DSAnimatedButton(phase: 1, isCollapsed: true, style: .inverted) {} content: {
-                ProgressView().tint(Color.backgroundPrimary)
+                DSSpinner(color: Color.backgroundPrimary)
             }
             DSAnimatedButton(phase: 2, isCollapsed: true, style: .success) {} content: {
                 IconKit.checkmark.foregroundStyle(.white)

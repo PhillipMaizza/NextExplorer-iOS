@@ -105,6 +105,7 @@ struct BrowsePreviewRouter: View {
                 isLoading: store.isLoadingTextContent,
                 isSaving: store.isSavingTextContent,
                 onSave: { store.send(.textSaveTapped($0)) },
+                onRetry: { store.send(.textContentRetryTapped) },
                 onDismiss: { store.send(.previewDismissed) }
             )
         }

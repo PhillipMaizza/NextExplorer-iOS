@@ -299,15 +299,22 @@ struct FavoritesFeatureTests {
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.favorites = [vacation, work]
 
+        let clock = TestClock()
         let store = TestStore(initialState: state) {
             FavoritesFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in [] }
         }
+        store.exhaustivity = .off
 
-        await store.send(.searchQueryChanged("vaca")) {
-            $0.searchQuery = "vaca"
-        }
-
+        // The name filter over the favorite folders still applies (a query also kicks off the
+        // recursive file search fan out, exercised in its own test).
+        await store.send(.searchQueryChanged("vaca"))
         #expect(store.state.displayedFavorites == [vacation])
+
+        await clock.advance(by: .seconds(1))
+        await store.skipReceivedActions()
     }
 
     @Test
@@ -639,5 +646,69 @@ struct FavoritesFeatureTests {
             $0.favorites = []
             $0.phase = .loaded
         }
+    }
+
+    // MARK: Recursive file search across favorites
+
+    @Test
+    func rootSearchFansOutAcrossEveryFavoriteAndMergesResults() async {
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [makeFavorite(id: "1", path: "Bills"), makeFavorite(id: "2", path: "Photos")]
+
+        let billsHit = SearchResultItem(name: "internet.pdf", path: "Bills", kind: "file")
+        let photosHit = SearchResultItem(name: "internet-plan.png", path: "Photos", kind: "file")
+        let clock = TestClock()
+        let searchedPaths = LockIsolated<Set<String>>([])
+
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, path, _, _ in
+                searchedPaths.withValue { $0.insert(path) }
+                switch path {
+                case "Bills": return [billsHit]
+                case "Photos": return [photosHit]
+                default: return []
+                }
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.searchQueryChanged("internet")) {
+            $0.searchQuery = "internet"
+            $0.searchPhase = .loading
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.fileSearchResponse.success)
+
+        // One backend search per favorite, and both hits merged into the results.
+        #expect(searchedPaths.value == ["Bills", "Photos"])
+        #expect(Set(store.state.fileSearchResults?.ids ?? []) == [billsHit.id, photosHit.id])
+        #expect(store.state.searchPhase == .loaded)
+    }
+
+    @Test
+    func clearingTheQueryCancelsTheSearchAndClearsResults() async {
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        state.favorites = [makeFavorite(id: "1", path: "Bills")]
+        state.fileSearchResults = [SearchResultItem(name: "internet.pdf", path: "Bills", kind: "file")]
+        state.searchPhase = .loaded
+        let clock = TestClock()
+
+        let store = TestStore(initialState: state) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in [] }
+        }
+
+        await store.send(.searchQueryChanged("")) {
+            $0.searchQuery = ""
+            $0.fileSearchResults = nil
+            $0.searchPhase = .idle
+        }
+        await clock.advance(by: .seconds(1))
+        await store.finish()
     }
 }

@@ -53,7 +53,6 @@ struct BrowseContentView: View {
     @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
     @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
     @State private var isSortSheetPresented = false
-    @State private var isSearchFilterSheetPresented = false
     @State private var toastMessage: DSToastMessage?
     /// The item whose "Create Share Link" sheet is open (from the context menu or the
     /// selection toolbar). Local view state, not routed through `BrowseFeature` — the sheet
@@ -239,9 +238,7 @@ struct BrowseContentView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title,
-                searchText: $store.searchQuery.sending(\.searchQueryChanged),
-                filterAction: store.isSearching ? { isSearchFilterSheetPresented = true } : nil,
-                isFilterActive: !store.selectedSearchCategories.isEmpty
+                searchText: $store.searchQuery.sending(\.searchQueryChanged)
             ) {
                 if store.isSearching {
                     DSSegmentedControl(
@@ -249,6 +246,14 @@ struct BrowseContentView: View {
                         selection: $store.searchScope.sending(\.searchScopeChanged),
                         label: { $0.title }
                     )
+                    if !store.availableSearchCategories.isEmpty {
+                        SearchFilterChips(
+                            availableCategories: store.availableSearchCategories,
+                            selectedCategories: store.selectedSearchCategories,
+                            onToggle: { store.send(.searchCategoryToggled($0)) },
+                            onSelectAll: { store.send(.searchFilterCleared) }
+                        )
+                    }
                 }
             }
         }
@@ -428,15 +433,6 @@ struct BrowseContentView: View {
                 onDismiss: { isSortSheetPresented = false }
             )
         }
-        .sheet(isPresented: $isSearchFilterSheetPresented) {
-            SearchFilterSheet(
-                availableCategories: store.availableSearchCategories,
-                selectedCategories: store.selectedSearchCategories,
-                onToggle: { store.send(.searchCategoryToggled($0)) },
-                onSelectAll: { store.send(.searchFilterCleared) },
-                onDismiss: { isSearchFilterSheetPresented = false }
-            )
-        }
         .sheet(item: renameItemBinding) { item in
             renameSheet(item)
         }
@@ -520,7 +516,8 @@ struct BrowseContentView: View {
                 )
             } else {
                 FileRowView(
-                    name: row.name, isDirectory: row.isDirectory, subtitle: searchResultSubtitle(row),
+                    name: row.name, isDirectory: row.isDirectory, subtitle: searchResultSnippet(row),
+                    lineLabel: searchResultLineLabel(row),
                     isFavorite: store.favoritePaths.contains(row.id), kind: searchResultKind(row),
                     thumbnailFile: searchResultThumbnailFile(row),
                     serverURL: store.serverURL,
@@ -530,15 +527,6 @@ struct BrowseContentView: View {
                 )
             }
         }
-    }
-
-    /// The subtitle for a search hit's row: a content match shows "Line N: <snippet>" (matching
-    /// the web), a filename-only hit shows nothing. `matchLine` without a number falls back to the
-    /// bare snippet.
-    private func searchResultSubtitle(_ result: SearchResultItem) -> String? {
-        guard let matchLine = result.matchLine else { return nil }
-        guard let lineNumber = result.matchLineNumber else { return matchLine }
-        return L10n.Browse.searchMatchLine(lineNumber, matchLine)
     }
 
     /// A thumbnail-capable `FileItem` for a file search hit; `nil` for a directory, which keeps
@@ -921,7 +909,7 @@ struct BrowseContentView: View {
     private var overlayStateContent: some View {
         switch overlayState {
         case .searching:
-            ProgressView()
+            DSSpinner()
                 .transition(.opacity)
         case .error:
             if let errorMessage = store.phase.errorMessage {

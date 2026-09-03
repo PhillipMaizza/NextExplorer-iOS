@@ -103,7 +103,7 @@ private struct ArchiveImagePreviewView: View {
                         Text(L10n.Gallery.loadFailed).type(.body1(.regular), style: .secondary)
                     }
                 default:
-                    ProgressView()
+                    DSSpinner()
                 }
             }
         }
@@ -193,7 +193,7 @@ private struct ArchiveTextEntryPreviewView: View {
                 CodeEditorView(kind: item.kind, text: .constant(content), isEditable: false)
             }
         } else {
-            ProgressView().frame(maxWidth: .infinity, maxHeight: .infinity)
+            DSSpinner().frame(maxWidth: .infinity, maxHeight: .infinity)
         }
     }
 }

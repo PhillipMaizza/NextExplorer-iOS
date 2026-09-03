@@ -169,7 +169,7 @@ struct SettingsServerStorageSection: View {
                             if let usage = row.usage, usage.isMeaningful {
                                 Text(usageCaption(usage)).type(.body3(.regular), style: .secondary)
                             } else if row.usage == nil {
-                                ProgressView().controlSize(.small)
+                                DSSpinner(size: .small)
                             }
                         }
                         if let usage = row.usage, usage.isMeaningful {

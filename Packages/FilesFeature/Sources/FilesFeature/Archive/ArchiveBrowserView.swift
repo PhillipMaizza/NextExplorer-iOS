@@ -195,7 +195,7 @@ struct ArchiveBrowserView: View {
             Text(row.name).type(.body2(.semibold), style: .primary(for: .label))
             Spacer()
             if extractingRow == row.name {
-                ProgressView().controlSize(.small)
+                DSSpinner(size: .small)
             } else if let size = row.size {
                 Text(Self.byteFormatter.string(fromByteCount: Int64(size)))
                     .type(.body3(.regular), style: .secondary)
@@ -220,7 +220,7 @@ struct ArchiveBrowserView: View {
                     .frame(width: .iconMedium, height: .iconMedium)
                 Text(message).type(.body1(.regular), style: .secondary)
             } else {
-                ProgressView()
+                DSSpinner()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

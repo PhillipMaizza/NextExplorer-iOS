@@ -122,7 +122,7 @@ public struct DSButton: View {
         Button(action: action) {
             HStack(spacing: .space8) {
                 if isLoading {
-                    ProgressView().tint(style.foregroundColor)
+                    DSSpinner(size: .small, color: style.foregroundColor)
                 } else {
                     if let icon {
                         icon

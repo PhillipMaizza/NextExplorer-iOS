@@ -22,7 +22,20 @@ public struct FavoritesFeature {
         /// `.cached` while the list on screen is an offline copy; `.live` once a fetch lands.
         public var dataSource: CachedListSource = .live
         public var searchQuery = ""
+        /// Recursive file search across every favorited folder's subtree, run while `searchQuery`
+        /// is non-empty. `nil` until the first search of a session; the fan out merges one backend
+        /// search per favorite. Distinct from `displayedFavorites`, which only ever name filters the
+        /// favorite folders themselves.
+        public var fileSearchResults: IdentifiedArrayOf<SearchResultItem>?
+        /// Lifecycle of the file search above: `.loading` on first run with no prior results,
+        /// `.loaded` once merged results land, `.failed` when every favorite's search errored.
+        public var searchPhase: DataPhase = .idle
         @Presents public var editSheet: FavoriteEditFeature.State?
+        /// A `BrowseFeature` scoped to a search hit's parent folder, presented as a full screen
+        /// preview cover over the results — so tapping a file result opens it directly (no visible
+        /// folder navigation) and dismissing returns straight to the results. Reuses Browse's whole
+        /// preview subsystem rather than duplicating it.
+        @Presents public var previewHost: BrowseFeature.State?
         public var isSelecting = false
         public var selectedFavoriteIDs: Set<Favorite.ID> = []
         public var bulkRemoveConfirmationIsPresented = false
@@ -44,6 +57,19 @@ public struct FavoritesFeature {
 
         /// Drag reorder only makes sense over the full, unfiltered list.
         public var canReorder: Bool { searchQuery.isEmpty && !isSelecting }
+
+        /// True while a query is active, so the view swaps the favorites list for file results.
+        public var isSearching: Bool { !searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+
+        /// File search results with hidden entries dropped unless the preference is on.
+        public var displayedSearchResults: [SearchResultItem] {
+            guard let fileSearchResults else { return [] }
+            return fileSearchResults.filter { showHiddenFiles || !isHiddenFileName($0.name) }
+        }
+
+        /// Mirrors the browse preference so a hidden file inside a favorite doesn't surface in
+        /// results unless the user opted in. Kept here so the reducer test can flip it.
+        public var showHiddenFiles = false
     }
 
     public enum Action: Equatable, Sendable {
@@ -58,6 +84,10 @@ public struct FavoritesFeature {
         case favoritesMoved(IndexSet, Int)
         case reorderResponse(Result<[Favorite], FilesClientError>)
         case searchQueryChanged(String)
+        case fileSearchResponse(Result<[SearchResultItem], FilesClientError>)
+        case searchRetryTapped
+        case searchResultTapped(SearchResultItem)
+        case previewHost(PresentationAction<BrowseFeature.Action>)
         case selectModeToggled
         case itemSelectionToggled(Favorite.ID)
         case selectAllTapped
@@ -86,11 +116,17 @@ public struct FavoritesFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.jsonCacheStore) var jsonCacheStore
+    @Dependency(\.continuousClock) var clock
 
     /// Cache namespace for this tab's saved offline copy.
     private static let cacheNamespace = "favorites"
 
-    private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID) }
+    private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search }
+
+    private enum Constants {
+        static let searchDebounce: Duration = .seconds(1)
+        static let searchLimit = 100
+    }
 
     public init() {}
 
@@ -197,6 +233,58 @@ public struct FavoritesFeature {
 
             case let .searchQueryChanged(query):
                 state.searchQuery = query
+                return favoriteSearch(&state)
+
+            case let .fileSearchResponse(.success(results)):
+                state.fileSearchResults = IdentifiedArray(
+                    BrowseFeature.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first }
+                )
+                state.searchPhase = .loaded
+                return .none
+
+            case let .fileSearchResponse(.failure(error)):
+                // A first search with nothing on screen shows the full screen failure; a refine over
+                // existing results keeps them and surfaces a toast instead.
+                if state.fileSearchResults == nil {
+                    state.searchPhase = .failed(error.userMessage)
+                } else {
+                    state.searchPhase = .loaded
+                    state.actionErrorMessage = error.userMessage
+                }
+                return .none
+
+            case .searchRetryTapped:
+                return favoriteSearch(&state)
+
+            case let .searchResultTapped(result):
+                // A directory result navigates into that folder (push). A file result opens directly
+                // in a preview cover hosted here (no folder navigation): spin up a `BrowseFeature`
+                // scoped to the file's parent, seed `previewItem` so the cover has content on the
+                // first frame, then let `rowTapped` fetch it. `result.path` is the parent dir.
+                guard !result.isDirectory else {
+                    state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.id, title: result.name))
+                    return .none
+                }
+                let ext = (result.name as NSString).pathExtension.lowercased()
+                let item = FileItem(
+                    name: result.name,
+                    path: result.path,
+                    dateModified: Date(),
+                    size: 0,
+                    kind: ext.isEmpty ? "unknown" : ext,
+                    supportsThumbnail: false
+                )
+                var host = BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.path, title: (result.path as NSString).lastPathComponent)
+                host.previewItem = item
+                state.previewHost = host
+                return .send(.previewHost(.presented(.rowTapped(item))))
+
+            case .previewHost(.presented(.previewDismissed)):
+                // Closing the file preview tears the whole host down, returning to the results.
+                state.previewHost = nil
+                return .none
+
+            case .previewHost:
                 return .none
 
             case .selectModeToggled:
@@ -291,6 +379,9 @@ public struct FavoritesFeature {
         .ifLet(\.$editSheet, action: \.editSheet) {
             FavoriteEditFeature()
         }
+        .ifLet(\.$previewHost, action: \.previewHost) {
+            BrowseFeature()
+        }
     }
 
     private func load(_ state: inout State) -> Effect<Action> {
@@ -309,6 +400,57 @@ public struct FavoritesFeature {
             await send(.favoritesResponse(try await apiResult { try await filesClient.favorites(serverURL) }))
         }
         .cancellable(id: CancelID.load, cancelInFlight: true)
+    }
+
+    /// Recursive file search fanned out across every favorited folder: one backend search per
+    /// favorite (each searches that folder's whole subtree), merged and de duped. Tolerant per
+    /// favorite so a since deleted favorite can't fail the whole search; results are still
+    /// authoritative for the ones that answered.
+    private func favoriteSearch(_ state: inout State) -> Effect<Action> {
+        let query = state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !query.isEmpty else {
+            state.fileSearchResults = nil
+            state.searchPhase = .idle
+            return .cancel(id: CancelID.search)
+        }
+        let favoritePaths = state.favorites.map(\.path)
+        guard !favoritePaths.isEmpty else {
+            state.fileSearchResults = []
+            state.searchPhase = .loaded
+            return .cancel(id: CancelID.search)
+        }
+        // First search of a query shows the skeleton; refining an existing result set keeps the
+        // current rows on screen while the new fan out runs.
+        state.searchPhase = state.fileSearchResults == nil ? .loading : .loaded
+        let serverURL = state.serverURL
+        let filesClient = self.filesClient
+        let clock = self.clock
+        return .run { send in
+            try await clock.sleep(for: Constants.searchDebounce)
+            let outcomes = try await withThrowingTaskGroup(of: Result<[SearchResultItem], FilesClientError>.self) { group in
+                for path in favoritePaths {
+                    group.addTask {
+                        try await apiResult { try await filesClient.search(serverURL, path, query, Constants.searchLimit) }
+                    }
+                }
+                var acc: [Result<[SearchResultItem], FilesClientError>] = []
+                for try await outcome in group { acc.append(outcome) }
+                return acc
+            }
+            let hits = outcomes.compactMap { try? $0.get() }.flatMap { $0 }
+            let firstFailure = outcomes.compactMap { outcome -> FilesClientError? in
+                if case let .failure(error) = outcome { return error }
+                return nil
+            }.first
+            // Surface an error (retryable) only when nothing came back and at least one favorite
+            // failed — a partial success still shows its hits.
+            if hits.isEmpty, let firstFailure {
+                await send(.fileSearchResponse(.failure(firstFailure)))
+            } else {
+                await send(.fileSearchResponse(.success(hits)))
+            }
+        }
+        .cancellable(id: CancelID.search, cancelInFlight: true)
     }
 
     /// Persists the current list as this tab's offline copy, keeping it in sync after a load or

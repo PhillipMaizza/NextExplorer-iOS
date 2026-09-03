@@ -97,7 +97,7 @@ public struct DSNavigationRow: View {
             }
         } icon: {
             if isLoading {
-                ProgressView()
+                DSSpinner()
                     .tint(iconColor)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
             } else {

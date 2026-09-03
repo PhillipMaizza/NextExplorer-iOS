@@ -62,7 +62,7 @@ struct StreamingPreviewView: View {
                 // Audio (and video with no poster) shows nothing but a black rectangle
                 // while the stream buffers — a spinner until the first frame plays.
                 if !hasStartedPlaying, !(item.isVideo && item.supportsThumbnail) {
-                    ProgressView()
+                    DSSpinner()
                         .tint(Color.white)
                         .allowsHitTesting(false)
                 }

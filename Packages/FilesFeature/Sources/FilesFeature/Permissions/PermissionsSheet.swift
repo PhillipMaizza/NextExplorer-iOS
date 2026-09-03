@@ -57,7 +57,7 @@ struct PermissionsSheet: View {
             if store.phase == .loading && store.permissions == nil {
                 HStack {
                     Spacer()
-                    ProgressView()
+                    DSSpinner()
                     Spacer()
                 }
                 .padding(.vertical, .space24)

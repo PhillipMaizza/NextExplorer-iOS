@@ -24,9 +24,15 @@ struct TextFilePreviewView: View {
     let isLoading: Bool
     let isSaving: Bool
     let onSave: (String) -> Void
+    let onRetry: () -> Void
     let onDismiss: () -> Void
 
-    @State private var draft = ""
+    /// The edit buffer, `nil` until the user first types. While `nil`, the editor reads `content`
+    /// directly, so a freshly mounted `CodeEditorView` gets the full document on its very first
+    /// `makeUIView` instead of an empty string that a lagged `draft` copy would swap in one render
+    /// later. That empty then swap is what left Runestone's document half built and blank when the
+    /// content arrived after the editor mounted (a slow "Everywhere" search hit this every time).
+    @State private var draft: String?
     @State private var renderedMarkdownHTML = ""
     @State private var isEditing = false
     @State private var savedToast: DSToastMessage?
@@ -34,6 +40,16 @@ struct TextFilePreviewView: View {
     @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
     @Environment(\.openURL) private var openURL
     @Dependency(\.filesClient) private var filesClient
+
+    /// The text currently shown/edited: the edit buffer once the user has typed, otherwise the
+    /// loaded `content` verbatim.
+    private var currentText: String { draft ?? content ?? "" }
+
+    /// Editor binding: reads `currentText` (so the first render already has the full document),
+    /// writes land in `draft`.
+    private var editorText: Binding<String> {
+        Binding(get: { currentText }, set: { draft = $0 })
+    }
 
     private var isHTML: Bool {
         let lowercaseKind = kind.lowercased()
@@ -73,8 +89,9 @@ struct TextFilePreviewView: View {
                 }
         }
         .dsToast($savedToast)
-        .onAppear { draft = content ?? "" }
-        .onChange(of: content) { _, newValue in draft = newValue ?? "" }
+        // A new document (first load, or the reload after a save) discards any stale edit buffer so
+        // the editor follows the authoritative `content` again.
+        .onChange(of: content) { _, _ in draft = nil }
         // `MarkdownRenderer.html` parses the whole document; run it off the main thread so a
         // large Markdown file doesn't freeze the UI on open. `.task(id:)` cancels a superseded
         // render, so a fast content change can't land a stale HTML string.
@@ -102,7 +119,7 @@ struct TextFilePreviewView: View {
     @ViewBuilder
     private var editToggleButton: some View {
         if isSaving {
-            ProgressView()
+            DSSpinner()
         } else if content != nil {
             Button(action: toggleEditing) {
                 (isEditing ? IconKit.checkmark : IconKit.rename)
@@ -130,7 +147,7 @@ struct TextFilePreviewView: View {
     private func toggleEditing() {
         // Saving updates `content` upstream, which re-fires the markdown render task above.
         if isEditing {
-            onSave(draft)
+            onSave(currentText)
         }
         isEditing.toggle()
     }
@@ -138,13 +155,14 @@ struct TextFilePreviewView: View {
     @ViewBuilder
     private var editorBody: some View {
         if let errorMessage {
-            statusContent(icon: IconKit.warning, message: errorMessage, tint: .negative)
+            errorContent(errorMessage)
         } else if isLoading {
-            statusContent(icon: nil, message: nil, tint: .primaryDS)
+            DSSpinner()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if isHTML, renderHTMLPages, !isEditing {
             // "Render HTML Pages" in Settings — editing always drops back to code (there's no
             // in-place editor for a rendered page), regardless of this setting.
-            HTMLRenderedView(cacheKey: item.id, html: draft, resolveAsset: resolveServerAsset)
+            HTMLRenderedView(cacheKey: item.id, html: currentText, resolveAsset: resolveServerAsset)
         } else if isMarkdown, renderMarkdownPages, !isEditing {
             // "Render Markdown Files" in Settings — same rendering pipeline as HTML, fed
             // compiled-to-HTML Markdown instead of the raw source.
@@ -153,25 +171,26 @@ struct TextFilePreviewView: View {
             // Real tree-sitter syntax highlighting (Runestone) — kept visible whether or not
             // `isEditing` is on, not just while actively editing, since highlighting helps
             // reading just as much as writing.
-            CodeEditorView(kind: kind, text: $draft, isEditable: isEditing)
+            CodeEditorView(kind: kind, text: editorText, isEditable: isEditing)
         }
     }
 
-    private func statusContent(icon: Image?, message: String?, tint: Color) -> some View {
+    /// Load failure: the warning + message plus a retry that re-fires the `/api/editor` fetch,
+    /// so a transient network error isn't a dead end that forces closing the preview.
+    private func errorContent(_ message: String) -> some View {
         VStack(spacing: Constants.statusSpacing) {
-            if let icon, let message {
-                icon
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(tint)
-                    .frame(width: .iconMedium, height: .iconMedium)
-                Text(message).type(.body1(.regular), style: .secondary)
-            } else {
-                ProgressView()
-            }
+            IconKit.warning
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(Color.negative)
+                .frame(width: .iconMedium, height: .iconMedium)
+            Text(message).type(.body1(.regular), style: .secondary)
+            DSButton(L10n.Common.retry, style: .secondary) { onRetry() }
+                .fixedSize()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
+
 }
 
 #Preview("Loading") {
@@ -185,6 +204,7 @@ struct TextFilePreviewView: View {
         isLoading: true,
         isSaving: false,
         onSave: { _ in },
+        onRetry: {},
         onDismiss: {}
     )
 }
@@ -200,6 +220,7 @@ struct TextFilePreviewView: View {
         isLoading: false,
         isSaving: false,
         onSave: { _ in },
+        onRetry: {},
         onDismiss: {}
     )
 }
@@ -215,6 +236,7 @@ struct TextFilePreviewView: View {
         isLoading: false,
         isSaving: true,
         onSave: { _ in },
+        onRetry: {},
         onDismiss: {}
     )
 }
@@ -230,6 +252,7 @@ struct TextFilePreviewView: View {
         isLoading: false,
         isSaving: false,
         onSave: { _ in },
+        onRetry: {},
         onDismiss: {}
     )
 }

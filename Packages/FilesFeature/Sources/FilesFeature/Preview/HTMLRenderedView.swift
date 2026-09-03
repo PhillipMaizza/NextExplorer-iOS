@@ -1,3 +1,4 @@
+import DesignSystem
 import SwiftUI
 import WebKit
 
@@ -33,7 +34,7 @@ struct HTMLRenderedView: View {
             if let localHTMLURL {
                 HTMLWebView(fileURL: localHTMLURL, readAccessURL: localHTMLURL.deletingLastPathComponent())
             } else {
-                ProgressView()
+                DSSpinner()
             }
         }
         .task(id: html) {

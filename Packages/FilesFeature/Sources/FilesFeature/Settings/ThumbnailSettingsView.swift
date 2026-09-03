@@ -51,7 +51,7 @@ struct ThumbnailSettingsView: View {
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
             if store.phase == .loading && store.loaded == nil && !store.isUnavailable {
-                ProgressView()
+                DSSpinner()
             }
         }
         .onAppear { store.send(.onAppear) }

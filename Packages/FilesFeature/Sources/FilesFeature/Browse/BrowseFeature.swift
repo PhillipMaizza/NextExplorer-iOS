@@ -424,6 +424,7 @@ public struct BrowseFeature {
         case openInBrowserTapped(FileItem)
         case googleDocsPointerResponse(item: FileItem, Result<URL, FilesClientError>)
         case textSaveTapped(String)
+        case textContentRetryTapped
         case textSaveResponse(Result<String, FilesClientError>)
         case delegate(Delegate)
 
@@ -1092,6 +1093,10 @@ public struct BrowseFeature {
                     state.previewItem = item
                     return loadTextContent(&state, item: item)
                 }
+
+            case .textContentRetryTapped:
+                guard let item = state.previewItem else { return .none }
+                return loadTextContent(&state, item: item)
 
             case let .textSaveTapped(newContent):
                 return confirmTextSave(&state, newContent: newContent)

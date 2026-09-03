@@ -339,7 +339,7 @@ public struct LoginFormView: View {
                         .type(.label3)
                         .foregroundStyle(.white)
                 case .testing:
-                    ProgressView().tint(.white)
+                    DSSpinner(color: .white)
                 case .success:
                     IconKit.checkmark
                         .resizable()
@@ -517,7 +517,7 @@ public struct LoginFormView: View {
                         .type(.label3)
                         .foregroundStyle(Color.black)
                 case .submitting:
-                    ProgressView().tint(Color.black)
+                    DSSpinner(color: .black)
                 case .success:
                     IconKit.checkmark
                         .resizable()
