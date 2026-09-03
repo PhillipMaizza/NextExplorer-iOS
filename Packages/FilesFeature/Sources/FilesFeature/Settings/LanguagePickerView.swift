@@ -40,6 +40,11 @@ struct LanguagePickerView: View {
 
     private func row(code: String, title: String, subtitle: String?) -> some View {
         Button {
+            // Point the bundle at the new language BEFORE writing `appLanguage`, so the rebuild the
+            // write triggers (the app root re-ids on this value) already resolves `tr()` through the
+            // new `.lproj`. Applying only in the root's `onChange` fires after that rebuild has
+            // rendered with the old bundle, leaving the UI in the previous language.
+            LocalizationOverride.apply(code.isEmpty ? nil : code)
             appLanguage = code
         } label: {
             HStack {
