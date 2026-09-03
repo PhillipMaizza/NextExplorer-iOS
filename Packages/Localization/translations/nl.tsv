@@ -1,0 +1,542 @@
+# NextExplorer — Nederlands (nl). key<TAB>value.
+common.cancel	Annuleren
+common.save	Bewaren
+common.edit	Wijzigen
+common.retry	Opnieuw proberen
+common.delete	Verwijderen
+common.remove	Verwijderen
+common.clear	Wissen
+common.done	Gereed
+common.ok	Oké
+common.openSettings	Open Instellingen
+common.logOut	Uitloggen
+common.close	Sluiten
+common.back	Terug
+common.share	Delen
+common.download	Downloaden
+common.sort	Sorteren
+common.select	Selecteren
+common.search	Zoeken
+common.password	Wachtwoord
+common.never	Nooit
+common.selectedCount	%lld geselecteerd
+tab.browse	Verkennen
+tab.favorites	Favorieten
+tab.shared	Gedeeld
+tab.downloads	Downloads
+tab.settings	Instellingen
+sort.sheetTitle	Sorteren op
+sort.name	Naam
+sort.size	Grootte
+sort.kind	Soort
+sort.dateModified	Wijzigingsdatum
+sort.dateAdded	Datum toegevoegd
+sort.dateShared	Datum gedeeld
+sort.expiration	Verloopt
+sort.email	E-mail
+sort.type	Type
+sort.ascending	Oplopend
+sort.descending	Aflopend
+select.selectAll	Alles selecteren
+select.deselectAll	Selectie opheffen
+select.listView	Lijstweergave
+select.gridView	Rasterweergave
+emptyState.folderEmpty	Deze map is leeg.
+emptyState.loadFailed	Kan de server niet bereiken.
+emptyState.noSearchMatches	Geen resultaten voor “%@”.
+accessMode.readonly	Alleen-lezen
+accessMode.readwrite	Lezen en schrijven
+shareTarget.anyone	Iedereen met de link
+shareTarget.users	Specifieke gebruikers
+directLinkMode.auto	Automatisch
+directLinkMode.inline	Weergeven
+directLinkMode.raw	Onbewerkt
+directLinkMode.download	Downloaden
+thumbnailSize.small	Klein
+thumbnailSize.medium	Gemiddeld
+thumbnailSize.large	Groot
+downloadLocation.documents	Documenten
+downloadLocation.cache	Cache
+dateFormat.automatic	Automatisch
+browse.navigationTitle	Verkennen
+browse.scopeThisFolder	Deze map
+browse.scopeEverywhere	Overal
+browse.searchScopeInFolder	Deze map
+browse.searchScopeEverywhere	Overal
+browse.locations	Locaties
+browse.open	Openen
+browse.unsupportedFileType	Niet-ondersteund bestandstype
+browse.actionGetInfo	Toon info
+browse.actionPermissions	Rechten
+browse.actionRename	Naam wijzigen
+browse.actionExtract	Uitpakken
+browse.actionCompress	Comprimeren
+browse.actionDownload	Downloaden
+browse.actionAddToFavorites	Aan favorieten toevoegen
+browse.actionRemoveFromFavorites	Uit favorieten verwijderen
+browse.actionShare	Deellink maken
+browse.actionDelete	Verwijderen
+browse.renameTitle	Naam wijzigen
+browse.renameNamePlaceholder	Naam
+browse.actionNewFolder	Map maken
+browse.newFolderTitle	Nieuwe map
+browse.newFolderPlaceholder	Mapnaam
+browse.newFolderConfirm	Maken
+browse.deleteConfirmTitle	Verwijderen?
+browse.deleteConfirmOne	“%@” verwijderen?
+browse.deleteConfirmMany	%lld items verwijderen?
+browse.deleteMessage	Dit kan niet ongedaan worden gemaakt.
+browse.deleteLinkedSharesOne	Hiermee wordt ook 1 deellink verwijderd die hierheen verwijst.
+browse.deleteLinkedSharesMany	Hiermee worden ook %lld deellinks verwijderd die hierheen verwijzen.
+browse.deleteLinkedSharesUnavailable	Kan de links die hierheen verwijzen niet controleren. Bestaande links werken niet meer.
+browse.searchNoMatchesInFolder	Geen resultaten voor “%@”.
+browse.searchEverywhere	Overal zoeken
+browse.searchFailed	Zoeken mislukt. Controleer je verbinding en probeer het opnieuw.
+browse.progressExtracting	Uitpakken…
+browse.progressCompressing	Comprimeren…
+browse.progressDownloading	Downloaden…
+browse.progressDownloadingIndexed	%1$lld van %2$lld downloaden…
+browse.downloadSavedTo	Bewaard in %@
+browse.downloadSavedCountTo	%1$lld van %2$lld items bewaard in %3$@
+browse.downloadSavedAllTo	%1$lld items bewaard in %2$@
+browse.downloadBulkFailed	Kan deze items niet op je apparaat bewaren.
+browse.offlineBannerTitle	Offline
+browse.offlineBannerDetail	Bewaarde kopie van %@ wordt getoond
+browse.actionCopy	Kopiëren
+browse.destinationPickerMoveTitle	Verplaatsen naar…
+browse.destinationPickerConfirmMove	Hierheen verplaatsen
+browse.destinationPickerNoFolders	Geen mappen hier
+browse.destinationPickerLoadFailed	Kan de mappen niet laden.
+browse.actionMove	Verplaatsen
+browse.actionPaste	Plakken
+browse.actionPasteCount	%lld items plakken
+browse.actionPasteHere	Hier plakken
+browse.actionClearClipboard	Klembord wissen
+browse.clipboardMoveCount	%lld te verplaatsen
+browse.clipboardCopyCount	%lld te kopiëren
+browse.clipboardCopiedOne	%@ gekopieerd
+browse.clipboardCopiedMany	%lld items gekopieerd
+browse.progressMoving	Verplaatsen…
+browse.progressCopying	Kopiëren…
+browse.transferMoved	%lld items verplaatst
+browse.transferCopied	%lld items gekopieerd
+browse.transferMovedWithSkipped	%1$lld items verplaatst, %2$lld overgeslagen
+browse.transferCopiedWithSkipped	%1$lld items gekopieerd, %2$lld overgeslagen
+browse.transferConflictTitle	Items vervangen?
+browse.transferConflictMessageOne	"%@" bestaat al in deze map.
+browse.transferConflictMessageMany	%lld items bestaan al in deze map.
+browse.transferConflictReplace	Vervangen
+browse.transferConflictKeepBoth	Beide behouden
+browse.actionOpenInBrowser	Openen in browser
+favorites.navigationTitle	Favorieten
+favorites.emptyList	Markeer mappen in Verkennen om ze hier te zien.
+favorites.actionRemoveFromFavorites	Uit favorieten verwijderen
+favorites.actionEdit	Wijzigen
+favorites.editTitle	Favoriet wijzigen
+favorites.editNameLabel	Naam
+favorites.editNameErrorEmpty	De naam mag niet leeg zijn.
+favorites.editIconLabel	Symbool
+favorites.editIconOutline	Omlijnd
+favorites.editIconSolid	Gevuld
+favorites.editColorLabel	Kleur
+favorites.editColorDefault	Standaard
+favorites.editSave	Bewaren
+favorites.reorderFailed	Kan de nieuwe volgorde niet bewaren.
+favorites.removeConfirm	%lld favorieten verwijderen?
+favorites.removeMessage	Hiermee worden ze alleen uit favorieten verwijderd.
+favorites.removeFailedOne	Kan die favoriet niet verwijderen.
+favorites.removeFailedMany	Kan die favorieten niet verwijderen.
+favorites.removePartial	%1$lld van %2$lld verwijderd.
+downloads.navigationTitle	Downloads
+downloads.actionOpenInFiles	Openen in Bestanden
+downloads.emptyList	Bestanden die je downloadt vanuit Verkennen verschijnen hier.
+downloads.deleteConfirmTitle	Verwijderen?
+downloads.deleteConfirmOne	“%@” verwijderen?
+downloads.deleteConfirmMany	%lld bestanden verwijderen?
+downloads.deleteSingleMessage	Hiermee wordt alleen de lokale kopie verwijderd. Het bestand blijft op de server.
+downloads.deleteBulkMessage	Hiermee worden alleen de lokale kopieën verwijderd. De bestanden blijven op de server.
+downloads.errorNameExists	Er bestaat al een bestand met die naam.
+downloads.errorInvalidName	Die naam is niet toegestaan.
+downloads.errorMissing	Dat bestand kon niet meer worden gevonden.
+downloads.errorGeneric	Kan die actie niet voltooien.
+unsupportedPreview.genericType	Bestand
+unsupportedPreview.cannotOpen	Deze app kan dit bestandstype niet openen.
+uploads.navigationTitle	Uploads
+uploads.menuTitle	Uploaden
+uploads.actionUploadFromFiles	Uploaden vanuit Bestanden
+uploads.actionUploadFromPhotos	Uploaden vanuit galerij
+uploads.actionTakePhoto	Foto of video maken
+uploads.cameraDeniedTitle	Cameratoegang vereist
+uploads.cameraDeniedMessage	Sta cameratoegang toe in Instellingen om een foto of video te maken.
+uploads.destinationTitle	Uploaden naar…
+uploads.destinationConfirm	Hierheen uploaden
+uploads.reviewTitleOne	1 bestand uploaden
+uploads.reviewTitleMany	%lld bestanden uploaden
+uploads.reviewSectionFiles	Bestanden
+uploads.reviewSectionPath	Pad
+uploads.reviewSectionSize	Totale grootte
+uploads.reviewChooseFolder	Kies een map
+uploads.reviewUploadButton	Uploaden
+uploads.reviewPreparing	%lld voorbereiden…
+uploads.reviewAddMore	Meer bestanden toevoegen
+uploads.reviewPreviewFile	Voorbeeld van %@
+uploads.reviewInsecureNetworkNotice	Verbonden via http. Als deze server alleen op je thuisnetwerk staat, werken uploads niet wanneer je er niet mee verbonden bent.
+uploads.stagingFailed	Kan die bestanden niet toevoegen. Probeer het opnieuw.
+uploads.stagingSkipped	%lld items konden niet worden voorbereid en zijn weggelaten.
+uploads.discardTitle	Upload verwerpen?
+uploads.discardMessage	De bestanden die je hebt toegevoegd worden niet geüpload.
+uploads.discardConfirm	Verwerpen
+uploads.statusWaiting	Wachten
+uploads.statusFailed	Upload mislukt
+uploads.barTitleOne	%@ uploaden
+uploads.barTitleMany	%lld bestanden uploaden
+uploads.barFailedOne	1 upload mislukt
+uploads.barFailedMany	%lld uploads mislukt
+uploads.retryAll	Alles opnieuw proberen
+uploads.complete	Upload voltooid
+uploads.completeMany	%lld bestanden geüpload
+uploads.completeWithFailures	%1$lld geüpload, %2$lld mislukt
+uploads.failedGeneric	Kan dit bestand niet uploaden.
+uploads.clear	Wissen
+uploads.emptyList	Nog geen uploads.
+uploads.cancelAll	Alle uploads annuleren
+shared.navigationTitle	Gedeeld
+shared.segmentByMe	Door mij
+shared.segmentWithMe	Met mij
+shared.sectionExpired	Verlopen
+shared.badgeExpired	verlopen
+shared.emptyByMe	Deel een bestand of map om de link hier te zien.
+shared.emptyWithMe	Links die anderen met je delen verschijnen hier.
+shared.noSearchMatches	Geen gedeelde items komen overeen met “%@”.
+shared.deleteTitle	Deellink verwijderen?
+shared.deleteMessage	De link werkt onmiddellijk niet meer. Het bestand of de map zelf blijft ongemoeid.
+shared.sharedByUnknown	Iemand
+shared.metaAccess	Toegang
+shared.metaExpiration	Verloopt
+shared.metaSharedBy	Gedeeld door
+shared.metaSharedWith	Gedeeld met
+shared.anyoneWithLink	Iedereen met de link
+shared.linkMode	Linkmodus
+shared.actionShareLink	Link delen
+shared.actionFolderLink	Maplink
+shared.actionFileLink	Bestandslink
+shared.moreRecipients	+%lld
+shared.copiedShareLink	Deellink gekopieerd
+shared.copiedFolderZip	ZIP-link van map gekopieerd
+shared.copiedDirectFile	Directe bestandslink gekopieerd
+createShare.title	Deellink maken
+createShare.titleCreated	Deellink aangemaakt
+createShare.sectionLabel	Label
+createShare.sectionAccessMode	Toegangsmodus
+createShare.sectionWhoCanAccess	Wie heeft toegang
+createShare.sectionShareLink	Deellink
+createShare.fieldPassword	Wachtwoord
+createShare.togglePasswordProtect	Beveiligen met wachtwoord
+createShare.toggleSetExpiration	Vervaldatum instellen
+createShare.fieldExpires	Verloopt
+createShare.submit	Deellink maken
+createShare.loadingUsers	Gebruikers laden…
+createShare.noOtherUsers	Geen andere gebruikers om mee te delen.
+createShare.sharingPrefix	Delen:
+createShare.createdBanner	Deellink succesvol aangemaakt!
+createShare.viewInShared	Bekijk in Gedeeld
+createShare.directLinkMode	Directe-linkmodus
+createShare.directFolderLink	Directe ZIP-link van map
+createShare.directFileLink	Directe bestandslink
+createShare.summaryAccess	Toegang
+createShare.summarySharedWith	Gedeeld met
+createShare.summaryPassword	Wachtwoord
+createShare.summaryPasswordProtected	Beveiligd
+createShare.summaryExpires	Verloopt
+createShare.summarySpecificPeople	Specifieke personen
+createShare.errorPastExpiration	Kies een vervaldatum in de toekomst.
+editShare.title	Deellink bewerken
+editShare.save	Wijzigingen bewaren
+editShare.passwordKeepHint	Laat leeg om het huidige wachtwoord te behouden
+editShare.savedToast	Deellink bijgewerkt
+thumbnailSettings.navigationTitle	Miniaturen
+thumbnailSettings.subtitle	Bepaal hoe de server afbeeldingsminiaturen genereert voor elke client.
+thumbnailSettings.enable	Miniaturen genereren
+thumbnailSettings.enableHelp	Schakel uit om overal volledige afbeeldingen te tonen.
+thumbnailSettings.quality	Kwaliteit
+thumbnailSettings.qualityHelp	Hoger ziet er beter uit en gebruikt meer ruimte.
+thumbnailSettings.maxDimension	Maximale afmeting
+thumbnailSettings.maxDimensionHelp	Langste zijde van een gegenereerde miniatuur, in pixels.
+thumbnailSettings.concurrency	Gelijktijdigheid
+thumbnailSettings.concurrencyHelp	Hoeveel miniaturen de server tegelijk maakt.
+thumbnailSettings.unavailable	Miniatuurinstellingen zijn alleen beschikbaar voor beheerders.
+thumbnailSettings.saveButton	Wijzigingen bewaren
+accessRules.navigationTitle	Toegangsregels voor mappen
+accessRules.subtitle	Overschrijf lees- en schrijftoegang voor specifieke paden.
+accessRules.addRule	Regel toevoegen
+accessRules.empty	Geen toegangsregels geconfigureerd.
+accessRules.emptyHint	Voeg een regel toe om de toegang tot een pad te overschrijven.
+accessRules.pathLabel	Pad
+accessRules.pathPlaceholder	Documenten/Rapporten
+accessRules.recursive	Toepassen op submappen
+accessRules.permissionReadWrite	Lezen en schrijven
+accessRules.permissionReadOnly	Alleen-lezen
+accessRules.permissionHidden	Verborgen
+accessRules.remove	Verwijderen
+accessRules.unavailable	Toegangsregels zijn alleen beschikbaar voor beheerders.
+accessRules.saveButton	Wijzigingen bewaren
+settings.rowThumbnails	Miniaturen
+settings.rowAccessRules	Toegangsregels voor mappen
+settings.navigationTitle	Instellingen
+settings.appVersion	Versie %1$@ (%2$@)
+settings.sectionGeneral	Algemeen
+settings.sectionDisplay	Weergave
+settings.sectionStorage	Opslag
+settings.sectionServerStorage	Serveropslag
+settings.serverStorageUsed	%1$@ van %2$@
+settings.sectionLicenses	Licenties
+settings.sectionLegal	Juridisch
+settings.sectionUsers	Gebruikers
+settings.sectionAdmin	Beheer
+settings.toggleShowHiddenFiles	Verborgen bestanden tonen
+settings.toggleRenderHTML	HTML-pagina's weergeven
+settings.toggleRenderMarkdown	Markdown-bestanden weergeven
+settings.toggleHaptics	Haptische feedback
+settings.toggleDarkMode	Donkere modus
+settings.toggleShowThumbnails	Miniaturen tonen
+settings.toggleShowExtensions	Bestandsextensies tonen
+settings.toggleRemoveArchives	Archieven verwijderen na downloaden
+settings.toggleKeepClipboard	Items behouden na plakken
+settings.toggleKeepClipboardSubtitle	Gekopieerde items blijven klaar om in een andere map te plakken. Verplaatste items worden altijd gewist.
+settings.rowDateFormat	Datumnotatie
+settings.rowLanguage	Taal
+settings.rowThumbnailSize	Miniatuurgrootte
+settings.rowRemoveAllDownloads	Alle downloads verwijderen
+settings.rowClearCache	Cache wissen
+settings.rowOpenSourceLicenses	Opensourcelicenties
+settings.rowPrivacyPolicy	Privacybeleid
+settings.rowTermsOfUse	Gebruiksvoorwaarden
+settings.rowUserManagement	Gebruikersbeheer
+settings.rowChangePassword	Wachtwoord wijzigen
+settings.rowServer	Server
+settings.storageFootnote	Bij het downloaden van een map wordt deze eerst op de server tot een ZIP gecomprimeerd. Zet de schakelaar hierboven aan om dat archief van de server te verwijderen zodra het op je apparaat is bewaard. Downloads verwijderen of de cache wissen heeft alleen invloed op dit apparaat; niets op de server wordt aangeraakt.
+settings.removeAllDownloadsTitle	Alle downloads verwijderen?
+settings.removeAllDownloadsConfirm	Alles verwijderen
+settings.removeAllDownloadsMessage	Hiermee worden alle gedownloade bestanden van dit apparaat verwijderd. Ze blijven op de server.
+settings.clearCacheTitle	Cache wissen?
+settings.clearCacheConfirm	Wissen
+settings.clearCacheMessage	Hiermee worden gecachte voorbeelden, miniaturen en offline bewaarde mapoverzichten gewist. Niets op de server wordt beïnvloed.
+settings.signOutAlertTitle	Uitloggen?
+settings.signOutMessage	Je moet opnieuw inloggen om bij je bestanden te komen.
+settings.signOutButton	Uitloggen
+settings.signingOut	Uitloggen…
+settings.dateFormatNavigationTitle	Datumnotatie
+settings.dateFormatShowTime	Tijd tonen
+serverDetails.navigationTitle	Server
+serverDetails.changeLogo	Symbool wijzigen
+serverDetails.takePhoto	Foto maken
+serverDetails.chooseFromGallery	Uploaden vanuit galerij
+serverDetails.nameLabel	Servernaam
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	De servernaam mag niet leeg zijn.
+serverDetails.urlLabel	Server-URL
+serverDetails.urlFootnote	Het adres waar je NextExplorer-instantie is geïnstalleerd. Om het te wijzigen, log uit en voeg de server opnieuw toe.
+serverDetails.updateButton	Server bijwerken
+serverDetails.savedMessage	Servergegevens bijgewerkt.
+serverDetails.logoErrorTooLarge	Die afbeelding is te groot. Kies er een van minder dan 2 MB.
+serverDetails.cameraDeniedTitle	Cameratoegang uit
+serverDetails.cameraDeniedMessage	Zet cameratoegang aan in Instellingen om een foto te maken.
+licenses.navigationTitle	Opensourcelicenties
+licenses.sectionSoftware	Software
+licenses.sectionFontSoftware	Lettertypesoftware
+licenses.labelAuthor	Auteur
+licenses.labelOriginalVersion	Originele versie
+licenses.labelModifiedVersion	Gewijzigde versie
+licenses.labelReservedFontName	Gereserveerde lettertypenaam
+fileInfo.navigationTitleFolder	Map
+fileInfo.rowKind	Soort
+fileInfo.rowSize	Grootte
+fileInfo.rowLocation	Locatie
+fileInfo.rowDateModified	Wijzigingsdatum
+fileInfo.rowDateCreated	Aanmaakdatum
+fileInfo.rowFiles	Bestanden
+fileInfo.rowFolders	Mappen
+fileInfo.rowTotalSize	Totale grootte
+fileInfo.sectionServerDisk	Serverschijf
+fileInfo.diskFreeOf	%1$@ vrij van %2$@
+fileInfo.rowDimensions	Afmetingen
+fileInfo.rowCamera	Camera
+fileInfo.rowLens	Lens
+fileInfo.rowDateTaken	Opnamedatum
+fileInfo.rowDuration	Duur
+fileInfo.partialScan	Gedeeltelijke scan geteld: deze map is erg groot.
+permissions.title	Rechten
+permissions.sectionMode	Modus
+permissions.numericLabel	Numeriek
+permissions.applyToEnclosed	Toepassen op ingesloten items
+permissions.applyPermissions	Rechten toepassen
+permissions.sectionOwnership	Eigendom
+permissions.fieldOwner	Eigenaar
+permissions.fieldGroup	Groep
+permissions.ownershipNote	Eigendom wijzigen vereist meestal root- of beheerdersrechten op de server.
+permissions.applyOwnership	Eigendom toepassen
+permissions.scopeOwner	Eigenaar
+permissions.scopeGroup	Groep
+permissions.scopeOthers	Anderen
+permissions.rightRead	Lezen
+permissions.rightWrite	Schrijven
+permissions.rightExecute	Uitvoeren
+archive.emptyFolder	Deze map is leeg.
+archive.openFailed	Kan dit bestand niet openen.
+archive.openArchiveFailed	Kan dit archief niet openen.
+archive.entryTooLarge	Dit item is te groot om te openen.
+gallery.loadFailed	Kan deze afbeelding niet laden.
+textPreview.saved	Bewaard
+textPreview.loadFailed	Kan dit bestand niet laden. Controleer je verbinding en probeer het opnieuw.
+userManagement.navigationTitle	Gebruikersbeheer
+userManagement.searchPrompt	Gebruikers zoeken
+userManagement.createUser	Gebruiker aanmaken
+userManagement.badgeAdmin	Beheerder
+userManagement.emptyList	Nog geen gebruikers.
+userManagement.noSearchMatches	Geen gebruikers komen overeen met “%@”.
+userManagement.loadFailed	Kan de server niet bereiken.
+userManagement.sortType	Type
+userManagement.sortName	Naam
+userManagement.sortEmail	E-mail
+userManagement.tabProfile	Profiel
+userManagement.tabSecurity	Beveiliging
+userManagement.tabVolumes	Volumes
+userManagement.createNavigationTitle	Gebruiker aanmaken
+userManagement.createEmailField	E-mail
+userManagement.createEmailPlaceholder	naam@voorbeeld.com
+userManagement.createUsernameField	Gebruikersnaam (optioneel)
+userManagement.createUsernamePlaceholder	Afgeleid van e-mail
+userManagement.createPasswordField	Wachtwoord
+userManagement.createPasswordPlaceholder	Minstens %lld tekens
+userManagement.createGrantAdminToggle	Beheerderstoegang verlenen
+userManagement.createGrantAdminSubtitle	Volledige controle over bestanden, deellinks en gebruikers.
+userManagement.createSubmit	Gebruiker aanmaken
+userManagement.setPasswordNavigationTitle	Wachtwoord
+userManagement.setPasswordNewField	Nieuw wachtwoord
+userManagement.setPasswordPlaceholder	Minstens %lld tekens
+userManagement.setPasswordResetTitle	Wachtwoord opnieuw instellen
+userManagement.setPasswordSetTitle	Wachtwoord instellen
+userManagement.setPasswordResetIntro	Stel een nieuw lokaal wachtwoord in voor %@. Het huidige wachtwoord werkt niet meer.
+userManagement.setPasswordSetIntro	Geef %@ een lokaal wachtwoord zodat aanmelden zonder SSO mogelijk is.
+userManagement.toastProfileUpdated	Profiel bijgewerkt
+userManagement.toastAdminGranted	Beheerder verleend
+userManagement.toastUserRemoved	Gebruiker verwijderd
+userManagement.toastUserCreated	Gebruiker aangemaakt
+userManagement.toastPasswordUpdated	Wachtwoord bijgewerkt
+userManagement.toastVolumeSaved	Volume bewaard
+userManagement.toastVolumeRemoved	Volume verwijderd
+userManagement.errorEmailRequired	E-mail is vereist.
+userManagement.errorEmailInvalid	Voer een geldig e-mailadres in.
+userManagement.errorUsernameRequired	Gebruikersnaam is vereist.
+userManagement.errorEmailInUse	E-mail is al in gebruik.
+userManagement.errorPasswordTooShort	Gebruik minstens %lld tekens.
+userDetail.fallbackName	Gebruiker
+userDetail.sectionGeneralInfo	Algemene info
+userDetail.sectionRoles	Rollen en rechten
+userDetail.sectionLocalPassword	Lokaal wachtwoord
+userDetail.sectionSSO	Single sign-on
+userDetail.sectionAssignedVolumes	Toegewezen volumes
+userDetail.profileDisplayNameField	Weergavenaam
+userDetail.profileDisplayNamePlaceholder	Weergavenaam
+userDetail.profileUsernameField	Gebruikersnaam
+userDetail.profileUsernamePlaceholder	Gebruikersnaam
+userDetail.profileEmailField	E-mail
+userDetail.profileEmailPlaceholder	naam@voorbeeld.com
+userDetail.profileSave	Wijzigingen bewaren
+userDetail.roleAdmin	Beheerder
+userDetail.roleAdminSubtitle	Volledige controle over bestanden, deellinks en gebruikers.
+userDetail.roleAdminLocked	Beheerders kunnen niet vanuit de app worden gedegradeerd.
+userDetail.roleGrantAdmin	Beheerder verlenen
+userDetail.passwordHasLocal	Deze gebruiker meldt zich aan met een e-mail en wachtwoord.
+userDetail.passwordSSOOnly	Deze gebruiker heeft geen lokaal wachtwoord: alleen SSO.
+userDetail.passwordReset	Wachtwoord opnieuw instellen
+userDetail.passwordSet	Wachtwoord instellen
+userDetail.ssoNone	Geen gekoppelde SSO-providers.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Gekoppeld
+userDetail.dangerZoneTitle	Gevarenzone
+userDetail.dangerZoneSubtitle	Een gebruiker verwijderen trekt zijn toegang onmiddellijk in. Bestanden die hij op de server bezit, worden niet verwijderd.
+userDetail.dangerZoneRemoveUser	Gebruiker verwijderen
+userDetail.volumesNone	Geen volumes toegewezen.
+userDetail.volumesNoneSubtitle	Deze gebruiker ziet alleen de standaard gedeelde ruimte.
+userDetail.volumesAssign	Volume toewijzen
+userDetail.volumesFootnote	Volumes geven een gebruiker toegang tot een map buiten de standaard gedeelde ruimte. Een volume verwijderen wist nooit bestanden.
+userDetail.volumeEditAccessibility	%@ wijzigen
+userDetail.volumeRemoveAccessibility	%@ verwijderen
+userDetail.removeVolumeTitle	Volume verwijderen?
+userDetail.removeVolumeMessage	%@ wordt van deze gebruiker losgekoppeld. De map zelf blijft ongemoeid.
+userDetail.removeUserTitle	Gebruiker verwijderen?
+userDetail.removeUserMessage	%@ verliest onmiddellijk de toegang. Zijn bestanden op de server worden niet verwijderd.
+userDetail.volumeSheetLabelField	Label
+userDetail.volumeSheetLabelPlaceholder	Volumelabel
+userDetail.volumeSheetAccessMode	Toegangsmodus
+userDetail.volumeSheetDirectory	Map
+userDetail.volumeSheetSaveEdit	Volume bewaren
+userDetail.volumeSheetSaveNew	Volume toewijzen
+userDetail.volumeSheetTitleEdit	Volume wijzigen
+userDetail.volumeSheetTitleNew	Volume toewijzen
+userDetail.directoryPickerGoUp	Eén map omhoog
+userDetail.directoryPickerUseThis	Deze map gebruiken
+userDetail.directoryPickerOpen	%@ openen
+userDetail.directoryPickerFailed	Kan de mappen niet weergeven.
+previewToolbar.close	Sluiten
+previewToolbar.createShareLink	Deellink maken
+previewToolbar.download	Downloaden
+previewToolbar.delete	Verwijderen
+previewToolbar.share	Delen
+previewToolbar.rename	Naam wijzigen
+login.serverQuestion	Waar staat jouw NextExplorer-instantie?
+login.testConnection	Verbinding testen
+login.emailField	E-mail
+login.passwordField	Wachtwoord
+login.submit	Inloggen
+login.plaintextWarning	Deze verbinding is niet versleuteld. Je wachtwoord en sessie worden onversleuteld over het lokale netwerk verzonden.
+error.sessionExpired	Je sessie is verlopen. Meld je opnieuw aan.
+error.rateLimited	Te veel verzoeken. Probeer het zo dadelijk opnieuw.
+error.network	Kan de server niet bereiken.
+error.offline	Je bent offline. Maak verbinding met internet en probeer het opnieuw.
+error.decoding	De server gaf een onverwacht antwoord.
+error.server	Serverfout (%lld).
+error.forbidden	Je hebt geen toestemming om dat te doen.
+changePassword.navigationTitle	Wachtwoord wijzigen
+changePassword.intro	Wijzig het wachtwoord waarmee je je aanmeldt met je e-mailadres. Je blijft aangemeld op dit apparaat.
+changePassword.fieldCurrentPassword	Huidig wachtwoord
+changePassword.fieldNewPasswordLabel	Nieuw wachtwoord
+changePassword.fieldConfirmPasswordLabel	Nieuw wachtwoord bevestigen
+changePassword.fieldConfirmPassword	Voer het nieuwe wachtwoord opnieuw in
+changePassword.fieldNewPasswordPrompt	Minstens %lld tekens
+changePassword.submitButton	Wachtwoord bijwerken
+changePassword.success	Je wachtwoord is bijgewerkt.
+changePassword.errorMinLength	Gebruik minstens %lld tekens.
+changePassword.errorMismatch	De wachtwoorden komen niet overeen.
+login.portHint	Voeg een poort toe (bijv. :3000). De meeste thuisservers luisteren niet op poort 80.
+login.errorInvalidServer	Voer een geldig serveradres in.
+login.errorInvalidEmail	Voer een geldig e-mailadres in.
+login.errorInvalidCredentials	Onjuiste gebruikersnaam of wachtwoord.
+login.errorSessionExpired	Je sessie is verlopen. Meld je opnieuw aan.
+login.errorIncomplete	Aanmelden is niet voltooid. Probeer het opnieuw.
+login.errorUnreachable	Kan die server niet bereiken. Controleer het adres en probeer het opnieuw.
+login.errorUnexpectedResponse	Onverwacht antwoord van de server.
+login.errorKeychain	Kan je sessie niet op dit apparaat bewaren.
+login.errorDecoding	De server gaf een onverwacht antwoord. Controleer het adres en probeer het opnieuw.
+login.errorNoLocalAuth	Op deze server is aanmelden met gebruikersnaam en wachtwoord niet ingeschakeld.
+login.errorRateLimited	Te veel pogingen. Wacht enkele minuten en probeer het opnieuw.
+login.errorServer	De server heeft een probleem ondervonden (fout %lld). Probeer het later opnieuw.
+browse.nameErrorReserved	Die naam is niet toegestaan.
+browse.nameErrorSeparators	Een naam mag geen / of \ bevatten.
+browse.searchMatchLine	Regel %1$lld: %2$@
+browse.searchMatchLineLabel	Regel %lld
+createShare.errorPasswordRequired	Voer een wachtwoord in of schakel wachtwoordbeveiliging uit.
+filter.sheetTitle	Filteren op type
+filter.button	Filteren
+filter.all	Alle types
+filter.folders	Mappen
+filter.images	Afbeeldingen
+filter.videos	Video's
+filter.audio	Audio
+filter.documents	Documenten
+filter.archives	Archieven
+filter.other	Overig
+language.navigationTitle	Taal
+language.systemDefault	Systeemstandaard
+language.systemDefaultSubtitle	De taal van je apparaat volgen

@@ -9,11 +9,13 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../CoreModels"),
+        .package(path: "../AppStorageKeys"),
         .package(path: "../AuthClient"),
         .package(path: "../AuthFeature"),
         .package(path: "../DesignSystem"),
         .package(path: "../FilesClient"),
         .package(path: "../FilesFeature"),
+        .package(path: "../Localization"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0")
     ],
     targets: [
@@ -21,11 +23,13 @@ let package = Package(
             name: "AppFeature",
             dependencies: [
                 "CoreModels",
+                "AppStorageKeys",
                 "AuthClient",
                 "AuthFeature",
                 "DesignSystem",
                 "FilesClient",
                 "FilesFeature",
+                "Localization",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]

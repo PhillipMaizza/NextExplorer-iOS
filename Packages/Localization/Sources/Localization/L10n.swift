@@ -272,6 +272,11 @@ public enum L10n {
     public enum Gallery {
         public static var loadFailed: String { tr("gallery.loadFailed") }  // "Couldn't load this image."
     }
+    public enum Language {
+        public static var navigationTitle: String { tr("language.navigationTitle") }  // "Language"
+        public static var systemDefault: String { tr("language.systemDefault") }  // "System Default"
+        public static var systemDefaultSubtitle: String { tr("language.systemDefaultSubtitle") }  // "Follow your device language"
+    }
     public enum Licenses {
         public static var labelAuthor: String { tr("licenses.labelAuthor") }  // "Author"
         public static var labelModifiedVersion: String { tr("licenses.labelModifiedVersion") }  // "Modified Version"
@@ -365,6 +370,7 @@ public enum L10n {
         public static var rowChangePassword: String { tr("settings.rowChangePassword") }  // "Change Password"
         public static var rowClearCache: String { tr("settings.rowClearCache") }  // "Clear Cache"
         public static var rowDateFormat: String { tr("settings.rowDateFormat") }  // "Date Format"
+        public static var rowLanguage: String { tr("settings.rowLanguage") }  // "Language"
         public static var rowOpenSourceLicenses: String { tr("settings.rowOpenSourceLicenses") }  // "Open Source Licenses"
         public static var rowPrivacyPolicy: String { tr("settings.rowPrivacyPolicy") }  // "Privacy Policy"
         public static var rowRemoveAllDownloads: String { tr("settings.rowRemoveAllDownloads") }  // "Remove All Downloads"
@@ -614,10 +620,14 @@ public enum L10n {
     }
 }
 
+// Looks up through `LocalizationOverride.bundle` so an in-app language switch resolves live
+// (it points at the chosen language's compiled `.lproj`); with no override it is `.module`,
+// i.e. the system-resolved language. The key itself is the fallback when a language is
+// missing an entry, which the String Catalog only fills for `en`.
 private func tr(_ key: String) -> String {
-    String(localized: String.LocalizationValue(key), table: "Localizable", bundle: .module)
+    LocalizationOverride.bundle.localizedString(forKey: key, value: key, table: "Localizable")
 }
 
 private func tr(_ key: String, _ arguments: CVarArg...) -> String {
-    String(format: tr(key), locale: .current, arguments: arguments)
+    String(format: tr(key), locale: LocalizationOverride.locale, arguments: arguments)
 }

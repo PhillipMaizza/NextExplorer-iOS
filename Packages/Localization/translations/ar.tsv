@@ -1,0 +1,542 @@
+# NextExplorer — العربية (ar). key<TAB>value. لغة تُكتب من اليمين إلى اليسار.
+common.cancel	إلغاء
+common.save	حفظ
+common.edit	تحرير
+common.retry	إعادة المحاولة
+common.delete	حذف
+common.remove	إزالة
+common.clear	مسح
+common.done	تم
+common.ok	موافق
+common.openSettings	فتح الإعدادات
+common.logOut	تسجيل الخروج
+common.close	إغلاق
+common.back	رجوع
+common.share	مشاركة
+common.download	تنزيل
+common.sort	فرز
+common.select	تحديد
+common.search	بحث
+common.password	كلمة السر
+common.never	أبدًا
+common.selectedCount	%lld محدد
+tab.browse	تصفح
+tab.favorites	المفضلة
+tab.shared	المشتركة
+tab.downloads	التنزيلات
+tab.settings	الإعدادات
+sort.sheetTitle	الفرز حسب
+sort.name	الاسم
+sort.size	الحجم
+sort.kind	النوع
+sort.dateModified	تاريخ التعديل
+sort.dateAdded	تاريخ الإضافة
+sort.dateShared	تاريخ المشاركة
+sort.expiration	انتهاء الصلاحية
+sort.email	البريد الإلكتروني
+sort.type	النوع
+sort.ascending	تصاعدي
+sort.descending	تنازلي
+select.selectAll	تحديد الكل
+select.deselectAll	إلغاء تحديد الكل
+select.listView	عرض القائمة
+select.gridView	عرض الشبكة
+emptyState.folderEmpty	هذا المجلد فارغ.
+emptyState.loadFailed	تعذّر الوصول إلى الخادم.
+emptyState.noSearchMatches	لا نتائج لـ ‏«%@».
+accessMode.readonly	للقراءة فقط
+accessMode.readwrite	قراءة وكتابة
+shareTarget.anyone	أي شخص لديه الرابط
+shareTarget.users	مستخدمون محددون
+directLinkMode.auto	تلقائي
+directLinkMode.inline	عرض
+directLinkMode.raw	خام
+directLinkMode.download	تنزيل
+thumbnailSize.small	صغير
+thumbnailSize.medium	متوسط
+thumbnailSize.large	كبير
+downloadLocation.documents	المستندات
+downloadLocation.cache	ذاكرة التخزين المؤقت
+dateFormat.automatic	تلقائي
+browse.navigationTitle	تصفح
+browse.scopeThisFolder	هذا المجلد
+browse.scopeEverywhere	كل مكان
+browse.searchScopeInFolder	هذا المجلد
+browse.searchScopeEverywhere	كل مكان
+browse.locations	المواقع
+browse.open	فتح
+browse.unsupportedFileType	نوع ملف غير مدعوم
+browse.actionGetInfo	معلومات
+browse.actionPermissions	الأذونات
+browse.actionRename	إعادة تسمية
+browse.actionExtract	استخراج
+browse.actionCompress	ضغط
+browse.actionDownload	تنزيل
+browse.actionAddToFavorites	إضافة إلى المفضلة
+browse.actionRemoveFromFavorites	إزالة من المفضلة
+browse.actionShare	إنشاء رابط مشاركة
+browse.actionDelete	حذف
+browse.renameTitle	إعادة تسمية
+browse.renameNamePlaceholder	الاسم
+browse.actionNewFolder	إنشاء مجلد
+browse.newFolderTitle	مجلد جديد
+browse.newFolderPlaceholder	اسم المجلد
+browse.newFolderConfirm	إنشاء
+browse.deleteConfirmTitle	حذف؟
+browse.deleteConfirmOne	حذف ‏«%@»؟
+browse.deleteConfirmMany	حذف %lld عنصر؟
+browse.deleteMessage	لا يمكن التراجع عن هذا الإجراء.
+browse.deleteLinkedSharesOne	يؤدي هذا أيضًا إلى إزالة رابط مشاركة واحد يشير إلى هنا.
+browse.deleteLinkedSharesMany	يؤدي هذا أيضًا إلى إزالة %lld رابط مشاركة تشير إلى هنا.
+browse.deleteLinkedSharesUnavailable	تعذّر التحقق من الروابط التي تشير إلى هنا. أي روابط موجودة ستتوقف عن العمل.
+browse.searchNoMatchesInFolder	لا نتائج لـ ‏«%@».
+browse.searchEverywhere	البحث في كل مكان
+browse.searchFailed	تعذّر البحث. تحقق من اتصالك وأعد المحاولة.
+browse.progressExtracting	جارٍ الاستخراج…
+browse.progressCompressing	جارٍ الضغط…
+browse.progressDownloading	جارٍ التنزيل…
+browse.progressDownloadingIndexed	جارٍ تنزيل %1$lld من %2$lld…
+browse.downloadSavedTo	تم الحفظ في %@
+browse.downloadSavedCountTo	تم حفظ %1$lld من %2$lld عنصر في %3$@
+browse.downloadSavedAllTo	تم حفظ %1$lld عنصر في %2$@
+browse.downloadBulkFailed	تعذّر حفظ هذه العناصر على جهازك.
+browse.offlineBannerTitle	غير متصل
+browse.offlineBannerDetail	يتم عرض نسخة محفوظة من %@
+browse.actionCopy	نسخ
+browse.destinationPickerMoveTitle	نقل إلى…
+browse.destinationPickerConfirmMove	النقل إلى هنا
+browse.destinationPickerNoFolders	لا مجلدات هنا
+browse.destinationPickerLoadFailed	تعذّر تحميل المجلدات.
+browse.actionMove	نقل
+browse.actionPaste	لصق
+browse.actionPasteCount	لصق %lld عنصر
+browse.actionPasteHere	اللصق هنا
+browse.actionClearClipboard	مسح الحافظة
+browse.clipboardMoveCount	%lld للنقل
+browse.clipboardCopyCount	%lld للنسخ
+browse.clipboardCopiedOne	تم نسخ %@
+browse.clipboardCopiedMany	تم نسخ %lld عنصر
+browse.progressMoving	جارٍ النقل…
+browse.progressCopying	جارٍ النسخ…
+browse.transferMoved	تم نقل %lld عنصر
+browse.transferCopied	تم نسخ %lld عنصر
+browse.transferMovedWithSkipped	تم نقل %1$lld عنصر، وتم تخطي %2$lld
+browse.transferCopiedWithSkipped	تم نسخ %1$lld عنصر، وتم تخطي %2$lld
+browse.transferConflictTitle	استبدال العناصر؟
+browse.transferConflictMessageOne	‏«%@» موجود بالفعل في هذا المجلد.
+browse.transferConflictMessageMany	%lld عنصر موجود بالفعل في هذا المجلد.
+browse.transferConflictReplace	استبدال
+browse.transferConflictKeepBoth	الاحتفاظ بكليهما
+browse.actionOpenInBrowser	فتح في المتصفح
+favorites.navigationTitle	المفضلة
+favorites.emptyList	ضع علامة نجمة على المجلدات في تصفح لتظهر هنا.
+favorites.actionRemoveFromFavorites	إزالة من المفضلة
+favorites.actionEdit	تحرير
+favorites.editTitle	تحرير المفضلة
+favorites.editNameLabel	الاسم
+favorites.editNameErrorEmpty	لا يمكن أن يكون الاسم فارغًا.
+favorites.editIconLabel	الأيقونة
+favorites.editIconOutline	محدد
+favorites.editIconSolid	ممتلئ
+favorites.editColorLabel	اللون
+favorites.editColorDefault	افتراضي
+favorites.editSave	حفظ
+favorites.reorderFailed	تعذّر حفظ الترتيب الجديد.
+favorites.removeConfirm	إزالة %lld من المفضلة؟
+favorites.removeMessage	هذا يزيلها من المفضلة فقط.
+favorites.removeFailedOne	تعذّر إزالة تلك المفضلة.
+favorites.removeFailedMany	تعذّر إزالة تلك المفضلات.
+favorites.removePartial	تمت إزالة %1$lld من %2$lld.
+downloads.navigationTitle	التنزيلات
+downloads.actionOpenInFiles	فتح في الملفات
+downloads.emptyList	تظهر هنا الملفات التي تنزّلها من تصفح.
+downloads.deleteConfirmTitle	حذف؟
+downloads.deleteConfirmOne	حذف ‏«%@»؟
+downloads.deleteConfirmMany	حذف %lld ملف؟
+downloads.deleteSingleMessage	هذا يزيل النسخة المحلية فقط. يبقى الملف على الخادم.
+downloads.deleteBulkMessage	هذا يزيل النسخ المحلية فقط. تبقى الملفات على الخادم.
+downloads.errorNameExists	يوجد بالفعل ملف بهذا الاسم.
+downloads.errorInvalidName	هذا الاسم غير مسموح به.
+downloads.errorMissing	لم يعد من الممكن العثور على هذا الملف.
+downloads.errorGeneric	تعذّر إكمال هذا الإجراء.
+unsupportedPreview.genericType	ملف
+unsupportedPreview.cannotOpen	لا يمكن لهذا التطبيق فتح هذا النوع من الملفات.
+uploads.navigationTitle	الرفع
+uploads.menuTitle	رفع
+uploads.actionUploadFromFiles	الرفع من الملفات
+uploads.actionUploadFromPhotos	الرفع من المعرض
+uploads.actionTakePhoto	التقاط صورة أو فيديو
+uploads.cameraDeniedTitle	الوصول إلى الكاميرا مطلوب
+uploads.cameraDeniedMessage	اسمح بالوصول إلى الكاميرا في الإعدادات لالتقاط صورة أو فيديو.
+uploads.destinationTitle	الرفع إلى…
+uploads.destinationConfirm	الرفع إلى هنا
+uploads.reviewTitleOne	رفع ملف واحد
+uploads.reviewTitleMany	رفع %lld ملف
+uploads.reviewSectionFiles	الملفات
+uploads.reviewSectionPath	المسار
+uploads.reviewSectionSize	الحجم الإجمالي
+uploads.reviewChooseFolder	اختر مجلدًا
+uploads.reviewUploadButton	رفع
+uploads.reviewPreparing	جارٍ تحضير %lld…
+uploads.reviewAddMore	إضافة المزيد من الملفات
+uploads.reviewPreviewFile	معاينة %@
+uploads.reviewInsecureNetworkNotice	متصل عبر http. إذا كان هذا الخادم على شبكتك المنزلية فقط، فلن يعمل الرفع عندما تكون بعيدًا عنها.
+uploads.stagingFailed	تعذّر إضافة تلك الملفات. أعد المحاولة.
+uploads.stagingSkipped	تعذّر تحضير %lld عنصر وتم استبعادها.
+uploads.discardTitle	تجاهل الرفع؟
+uploads.discardMessage	لن يتم رفع الملفات التي أضفتها.
+uploads.discardConfirm	تجاهل
+uploads.statusWaiting	في الانتظار
+uploads.statusFailed	فشل الرفع
+uploads.barTitleOne	جارٍ رفع %@
+uploads.barTitleMany	جارٍ رفع %lld ملف
+uploads.barFailedOne	فشل رفع واحد
+uploads.barFailedMany	فشل %lld رفع
+uploads.retryAll	إعادة محاولة الكل
+uploads.complete	اكتمل الرفع
+uploads.completeMany	تم رفع %lld ملف
+uploads.completeWithFailures	تم رفع %1$lld، وفشل %2$lld
+uploads.failedGeneric	تعذّر رفع هذا الملف.
+uploads.clear	مسح
+uploads.emptyList	لا عمليات رفع بعد.
+uploads.cancelAll	إلغاء جميع عمليات الرفع
+shared.navigationTitle	المشتركة
+shared.segmentByMe	بواسطتي
+shared.segmentWithMe	معي
+shared.sectionExpired	منتهية الصلاحية
+shared.badgeExpired	منتهي
+shared.emptyByMe	شارك ملفًا أو مجلدًا لرؤية رابطه هنا.
+shared.emptyWithMe	تظهر هنا الروابط التي يشاركها الآخرون معك.
+shared.noSearchMatches	لا مشاركات تطابق ‏«%@».
+shared.deleteTitle	حذف رابط المشاركة؟
+shared.deleteMessage	يتوقف الرابط عن العمل فورًا. لا يتأثر الملف أو المجلد نفسه.
+shared.sharedByUnknown	شخص ما
+shared.metaAccess	الوصول
+shared.metaExpiration	انتهاء الصلاحية
+shared.metaSharedBy	تمت المشاركة بواسطة
+shared.metaSharedWith	تمت المشاركة مع
+shared.anyoneWithLink	أي شخص لديه الرابط
+shared.linkMode	وضع الرابط
+shared.actionShareLink	مشاركة الرابط
+shared.actionFolderLink	رابط المجلد
+shared.actionFileLink	رابط الملف
+shared.moreRecipients	+%lld
+shared.copiedShareLink	تم نسخ رابط المشاركة
+shared.copiedFolderZip	تم نسخ رابط ZIP للمجلد
+shared.copiedDirectFile	تم نسخ رابط الملف المباشر
+createShare.title	إنشاء رابط مشاركة
+createShare.titleCreated	تم إنشاء المشاركة
+createShare.sectionLabel	التسمية
+createShare.sectionAccessMode	وضع الوصول
+createShare.sectionWhoCanAccess	من يمكنه الوصول
+createShare.sectionShareLink	رابط المشاركة
+createShare.fieldPassword	كلمة السر
+createShare.togglePasswordProtect	الحماية بكلمة سر
+createShare.toggleSetExpiration	تعيين تاريخ انتهاء الصلاحية
+createShare.fieldExpires	ينتهي في
+createShare.submit	إنشاء رابط مشاركة
+createShare.loadingUsers	جارٍ تحميل المستخدمين…
+createShare.noOtherUsers	لا يوجد مستخدمون آخرون للمشاركة معهم.
+createShare.sharingPrefix	مشاركة:
+createShare.createdBanner	تم إنشاء رابط المشاركة بنجاح!
+createShare.viewInShared	عرض في المشتركة
+createShare.directLinkMode	وضع الرابط المباشر
+createShare.directFolderLink	رابط ZIP مباشر للمجلد
+createShare.directFileLink	رابط ملف مباشر
+createShare.summaryAccess	الوصول
+createShare.summarySharedWith	تمت المشاركة مع
+createShare.summaryPassword	كلمة السر
+createShare.summaryPasswordProtected	محمي
+createShare.summaryExpires	ينتهي في
+createShare.summarySpecificPeople	أشخاص محددون
+createShare.errorPastExpiration	اختر تاريخ انتهاء صلاحية في المستقبل.
+editShare.title	تحرير رابط المشاركة
+editShare.save	حفظ التغييرات
+editShare.passwordKeepHint	اتركه فارغًا للاحتفاظ بكلمة السر الحالية
+editShare.savedToast	تم تحديث رابط المشاركة
+thumbnailSettings.navigationTitle	الصور المصغّرة
+thumbnailSettings.subtitle	تحكّم في كيفية إنشاء الخادم للصور المصغّرة لكل عميل.
+thumbnailSettings.enable	إنشاء صور مصغّرة
+thumbnailSettings.enableHelp	أوقف التشغيل لعرض الصور الكاملة في كل مكان بدلاً من ذلك.
+thumbnailSettings.quality	الجودة
+thumbnailSettings.qualityHelp	الأعلى يبدو أفضل ويستخدم مساحة أكبر.
+thumbnailSettings.maxDimension	الأبعاد القصوى
+thumbnailSettings.maxDimensionHelp	أطول حافة للصورة المصغّرة المُنشأة، بالبكسل.
+thumbnailSettings.concurrency	التزامن
+thumbnailSettings.concurrencyHelp	عدد الصور المصغّرة التي ينشئها الخادم في وقت واحد.
+thumbnailSettings.unavailable	إعدادات الصور المصغّرة متاحة للمسؤولين فقط.
+thumbnailSettings.saveButton	حفظ التغييرات
+accessRules.navigationTitle	قواعد الوصول إلى المجلدات
+accessRules.subtitle	تجاوز وصول القراءة والكتابة لمسارات محددة.
+accessRules.addRule	إضافة قاعدة
+accessRules.empty	لا قواعد وصول مُهيأة.
+accessRules.emptyHint	أضف قاعدة لتجاوز الوصول إلى مسار.
+accessRules.pathLabel	المسار
+accessRules.pathPlaceholder	المستندات/التقارير
+accessRules.recursive	تطبيق على المجلدات الفرعية
+accessRules.permissionReadWrite	قراءة وكتابة
+accessRules.permissionReadOnly	للقراءة فقط
+accessRules.permissionHidden	مخفي
+accessRules.remove	إزالة
+accessRules.unavailable	قواعد الوصول متاحة للمسؤولين فقط.
+accessRules.saveButton	حفظ التغييرات
+settings.rowThumbnails	الصور المصغّرة
+settings.rowAccessRules	قواعد الوصول إلى المجلدات
+settings.navigationTitle	الإعدادات
+settings.appVersion	الإصدار %1$@ ‏(%2$@)
+settings.sectionGeneral	عام
+settings.sectionDisplay	العرض
+settings.sectionStorage	التخزين
+settings.sectionServerStorage	تخزين الخادم
+settings.serverStorageUsed	%1$@ من %2$@
+settings.sectionLicenses	التراخيص
+settings.sectionLegal	قانوني
+settings.sectionUsers	المستخدمون
+settings.sectionAdmin	الإدارة
+settings.toggleShowHiddenFiles	إظهار الملفات المخفية
+settings.toggleRenderHTML	عرض صفحات HTML
+settings.toggleRenderMarkdown	عرض ملفات Markdown
+settings.toggleHaptics	الاستجابة اللمسية
+settings.toggleDarkMode	الوضع الداكن
+settings.toggleShowThumbnails	إظهار الصور المصغّرة
+settings.toggleShowExtensions	إظهار امتدادات الملفات
+settings.toggleRemoveArchives	إزالة الأرشيفات بعد التنزيل
+settings.toggleKeepClipboard	الاحتفاظ بالعناصر بعد اللصق
+settings.toggleKeepClipboardSubtitle	تبقى العناصر المنسوخة جاهزة للصق في مجلد آخر. العناصر المنقولة تُمسح دائمًا.
+settings.rowDateFormat	تنسيق التاريخ
+settings.rowLanguage	اللغة
+settings.rowThumbnailSize	حجم الصورة المصغّرة
+settings.rowRemoveAllDownloads	إزالة جميع التنزيلات
+settings.rowClearCache	مسح ذاكرة التخزين المؤقت
+settings.rowOpenSourceLicenses	تراخيص المصدر المفتوح
+settings.rowPrivacyPolicy	سياسة الخصوصية
+settings.rowTermsOfUse	شروط الاستخدام
+settings.rowUserManagement	إدارة المستخدمين
+settings.rowChangePassword	تغيير كلمة السر
+settings.rowServer	الخادم
+settings.storageFootnote	يؤدي تنزيل مجلد إلى ضغطه أولاً كملف ZIP على الخادم. فعّل المفتاح أعلاه لحذف ذلك الأرشيف من الخادم بمجرد حفظه على جهازك. إزالة التنزيلات أو مسح ذاكرة التخزين المؤقت يؤثر على هذا الجهاز فقط؛ لا يتأثر أي شيء على الخادم.
+settings.removeAllDownloadsTitle	إزالة جميع التنزيلات؟
+settings.removeAllDownloadsConfirm	إزالة الكل
+settings.removeAllDownloadsMessage	يؤدي هذا إلى حذف كل ملف تم تنزيله من هذا الجهاز. تبقى على الخادم.
+settings.clearCacheTitle	مسح ذاكرة التخزين المؤقت؟
+settings.clearCacheConfirm	مسح
+settings.clearCacheMessage	يؤدي هذا إلى مسح المعاينات والصور المصغّرة وقوائم المجلدات المحفوظة للاستخدام دون اتصال. لا يتأثر أي شيء على الخادم.
+settings.signOutAlertTitle	تسجيل الخروج؟
+settings.signOutMessage	ستحتاج إلى تسجيل الدخول مرة أخرى للوصول إلى ملفاتك.
+settings.signOutButton	تسجيل الخروج
+settings.signingOut	جارٍ تسجيل الخروج…
+settings.dateFormatNavigationTitle	تنسيق التاريخ
+settings.dateFormatShowTime	إظهار الوقت
+serverDetails.navigationTitle	الخادم
+serverDetails.changeLogo	تغيير الأيقونة
+serverDetails.takePhoto	التقاط صورة
+serverDetails.chooseFromGallery	الرفع من المعرض
+serverDetails.nameLabel	اسم الخادم
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	لا يمكن أن يكون اسم الخادم فارغًا.
+serverDetails.urlLabel	عنوان URL للخادم
+serverDetails.urlFootnote	العنوان الذي تم تثبيت نسخة NextExplorer الخاصة بك عليه. لتغييره، سجّل الخروج وأضف الخادم مرة أخرى.
+serverDetails.updateButton	تحديث الخادم
+serverDetails.savedMessage	تم تحديث تفاصيل الخادم.
+serverDetails.logoErrorTooLarge	تلك الصورة كبيرة جدًا. اختر واحدة أقل من 2 ميغابايت.
+serverDetails.cameraDeniedTitle	الوصول إلى الكاميرا متوقف
+serverDetails.cameraDeniedMessage	فعّل الوصول إلى الكاميرا في الإعدادات لالتقاط صورة.
+licenses.navigationTitle	تراخيص المصدر المفتوح
+licenses.sectionSoftware	البرامج
+licenses.sectionFontSoftware	برامج الخطوط
+licenses.labelAuthor	المؤلف
+licenses.labelOriginalVersion	الإصدار الأصلي
+licenses.labelModifiedVersion	الإصدار المعدّل
+licenses.labelReservedFontName	اسم الخط المحجوز
+fileInfo.navigationTitleFolder	مجلد
+fileInfo.rowKind	النوع
+fileInfo.rowSize	الحجم
+fileInfo.rowLocation	الموقع
+fileInfo.rowDateModified	تاريخ التعديل
+fileInfo.rowDateCreated	تاريخ الإنشاء
+fileInfo.rowFiles	الملفات
+fileInfo.rowFolders	المجلدات
+fileInfo.rowTotalSize	الحجم الإجمالي
+fileInfo.sectionServerDisk	قرص الخادم
+fileInfo.diskFreeOf	%1$@ متاح من %2$@
+fileInfo.rowDimensions	الأبعاد
+fileInfo.rowCamera	الكاميرا
+fileInfo.rowLens	العدسة
+fileInfo.rowDateTaken	تاريخ الالتقاط
+fileInfo.rowDuration	المدة
+fileInfo.partialScan	تم احتساب فحص جزئي: هذا المجلد كبير جدًا.
+permissions.title	الأذونات
+permissions.sectionMode	الوضع
+permissions.numericLabel	رقمي
+permissions.applyToEnclosed	تطبيق على العناصر المضمّنة
+permissions.applyPermissions	تطبيق الأذونات
+permissions.sectionOwnership	الملكية
+permissions.fieldOwner	المالك
+permissions.fieldGroup	المجموعة
+permissions.ownershipNote	عادةً ما يتطلب تغيير الملكية صلاحيات الجذر أو المسؤول على الخادم.
+permissions.applyOwnership	تطبيق الملكية
+permissions.scopeOwner	المالك
+permissions.scopeGroup	المجموعة
+permissions.scopeOthers	الآخرون
+permissions.rightRead	قراءة
+permissions.rightWrite	كتابة
+permissions.rightExecute	تنفيذ
+archive.emptyFolder	هذا المجلد فارغ.
+archive.openFailed	تعذّر فتح هذا الملف.
+archive.openArchiveFailed	تعذّر فتح هذا الأرشيف.
+archive.entryTooLarge	هذا العنصر كبير جدًا بحيث لا يمكن فتحه.
+gallery.loadFailed	تعذّر تحميل هذه الصورة.
+textPreview.saved	تم الحفظ
+textPreview.loadFailed	تعذّر تحميل هذا الملف. تحقق من اتصالك وأعد المحاولة.
+userManagement.navigationTitle	إدارة المستخدمين
+userManagement.searchPrompt	البحث عن مستخدمين
+userManagement.createUser	إنشاء مستخدم
+userManagement.badgeAdmin	مسؤول
+userManagement.emptyList	لا مستخدمين بعد.
+userManagement.noSearchMatches	لا مستخدمين يطابقون ‏«%@».
+userManagement.loadFailed	تعذّر الوصول إلى الخادم.
+userManagement.sortType	النوع
+userManagement.sortName	الاسم
+userManagement.sortEmail	البريد الإلكتروني
+userManagement.tabProfile	الملف الشخصي
+userManagement.tabSecurity	الأمان
+userManagement.tabVolumes	وحدات التخزين
+userManagement.createNavigationTitle	إنشاء مستخدم
+userManagement.createEmailField	البريد الإلكتروني
+userManagement.createEmailPlaceholder	name@example.com
+userManagement.createUsernameField	اسم المستخدم (اختياري)
+userManagement.createUsernamePlaceholder	مشتق من البريد الإلكتروني
+userManagement.createPasswordField	كلمة السر
+userManagement.createPasswordPlaceholder	‏%lld حرفًا على الأقل
+userManagement.createGrantAdminToggle	منح وصول المسؤول
+userManagement.createGrantAdminSubtitle	تحكّم كامل في الملفات والمشاركات والمستخدمين.
+userManagement.createSubmit	إنشاء مستخدم
+userManagement.setPasswordNavigationTitle	كلمة السر
+userManagement.setPasswordNewField	كلمة سر جديدة
+userManagement.setPasswordPlaceholder	‏%lld حرفًا على الأقل
+userManagement.setPasswordResetTitle	إعادة تعيين كلمة السر
+userManagement.setPasswordSetTitle	تعيين كلمة السر
+userManagement.setPasswordResetIntro	عيّن كلمة سر محلية جديدة لـ %@. ستتوقف كلمة سره الحالية عن العمل.
+userManagement.setPasswordSetIntro	امنح %@ كلمة سر محلية ليتمكن من تسجيل الدخول دون SSO.
+userManagement.toastProfileUpdated	تم تحديث الملف الشخصي
+userManagement.toastAdminGranted	تم منح صلاحية المسؤول
+userManagement.toastUserRemoved	تمت إزالة المستخدم
+userManagement.toastUserCreated	تم إنشاء المستخدم
+userManagement.toastPasswordUpdated	تم تحديث كلمة السر
+userManagement.toastVolumeSaved	تم حفظ وحدة التخزين
+userManagement.toastVolumeRemoved	تمت إزالة وحدة التخزين
+userManagement.errorEmailRequired	البريد الإلكتروني مطلوب.
+userManagement.errorEmailInvalid	أدخل عنوان بريد إلكتروني صالحًا.
+userManagement.errorUsernameRequired	اسم المستخدم مطلوب.
+userManagement.errorEmailInUse	البريد الإلكتروني مستخدم بالفعل.
+userManagement.errorPasswordTooShort	استخدم %lld حرفًا على الأقل.
+userDetail.fallbackName	مستخدم
+userDetail.sectionGeneralInfo	معلومات عامة
+userDetail.sectionRoles	الأدوار والأذونات
+userDetail.sectionLocalPassword	كلمة السر المحلية
+userDetail.sectionSSO	الدخول الموحّد
+userDetail.sectionAssignedVolumes	وحدات التخزين المعيّنة
+userDetail.profileDisplayNameField	الاسم المعروض
+userDetail.profileDisplayNamePlaceholder	الاسم المعروض
+userDetail.profileUsernameField	اسم المستخدم
+userDetail.profileUsernamePlaceholder	اسم المستخدم
+userDetail.profileEmailField	البريد الإلكتروني
+userDetail.profileEmailPlaceholder	name@example.com
+userDetail.profileSave	حفظ التغييرات
+userDetail.roleAdmin	مسؤول
+userDetail.roleAdminSubtitle	تحكّم كامل في الملفات والمشاركات والمستخدمين.
+userDetail.roleAdminLocked	لا يمكن تخفيض رتبة المسؤولين من التطبيق.
+userDetail.roleGrantAdmin	منح المسؤول
+userDetail.passwordHasLocal	يسجّل هذا المستخدم الدخول ببريد إلكتروني وكلمة سر.
+userDetail.passwordSSOOnly	ليس لهذا المستخدم كلمة سر محلية: SSO فقط.
+userDetail.passwordReset	إعادة تعيين كلمة السر
+userDetail.passwordSet	تعيين كلمة السر
+userDetail.ssoNone	لا مزوّدو SSO مرتبطون.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	مرتبط
+userDetail.dangerZoneTitle	منطقة الخطر
+userDetail.dangerZoneSubtitle	إزالة مستخدم يلغي وصوله فورًا. لا تُحذف الملفات التي يملكها على الخادم.
+userDetail.dangerZoneRemoveUser	إزالة المستخدم
+userDetail.volumesNone	لا وحدات تخزين معيّنة.
+userDetail.volumesNoneSubtitle	يرى هذا المستخدم المساحة المشتركة الافتراضية فقط.
+userDetail.volumesAssign	تعيين وحدة تخزين
+userDetail.volumesFootnote	تمنح وحدات التخزين المستخدم وصولاً إلى دليل خارج المساحة المشتركة الافتراضية. إزالة وحدة تخزين لا تحذف الملفات أبدًا.
+userDetail.volumeEditAccessibility	تحرير %@
+userDetail.volumeRemoveAccessibility	إزالة %@
+userDetail.removeVolumeTitle	إزالة وحدة التخزين؟
+userDetail.removeVolumeMessage	تم إلغاء تعيين %@ من هذا المستخدم. لا يتأثر الدليل نفسه.
+userDetail.removeUserTitle	إزالة المستخدم؟
+userDetail.removeUserMessage	يفقد %@ الوصول فورًا. لا تُحذف ملفاته على الخادم.
+userDetail.volumeSheetLabelField	التسمية
+userDetail.volumeSheetLabelPlaceholder	تسمية وحدة التخزين
+userDetail.volumeSheetAccessMode	وضع الوصول
+userDetail.volumeSheetDirectory	الدليل
+userDetail.volumeSheetSaveEdit	حفظ وحدة التخزين
+userDetail.volumeSheetSaveNew	تعيين وحدة تخزين
+userDetail.volumeSheetTitleEdit	تحرير وحدة التخزين
+userDetail.volumeSheetTitleNew	تعيين وحدة تخزين
+userDetail.directoryPickerGoUp	الصعود دليلاً واحدًا
+userDetail.directoryPickerUseThis	استخدام هذا الدليل
+userDetail.directoryPickerOpen	فتح %@
+userDetail.directoryPickerFailed	تعذّر سرد الأدلة.
+previewToolbar.close	إغلاق
+previewToolbar.createShareLink	إنشاء رابط مشاركة
+previewToolbar.download	تنزيل
+previewToolbar.delete	حذف
+previewToolbar.share	مشاركة
+previewToolbar.rename	إعادة تسمية
+login.serverQuestion	أين توجد نسخة NextExplorer الخاصة بك؟
+login.testConnection	اختبار الاتصال
+login.emailField	البريد الإلكتروني
+login.passwordField	كلمة السر
+login.submit	تسجيل الدخول
+login.plaintextWarning	هذا الاتصال غير مشفّر. تُرسل كلمة سرك وجلستك كنص عادي عبر الشبكة المحلية.
+error.sessionExpired	انتهت صلاحية جلستك. سجّل الدخول مرة أخرى.
+error.rateLimited	طلبات كثيرة جدًا. أعد المحاولة قريبًا.
+error.network	تعذّر الوصول إلى الخادم.
+error.offline	أنت غير متصل. اتصل بالإنترنت وأعد المحاولة.
+error.decoding	استجاب الخادم بشكل غير متوقع.
+error.server	خطأ في الخادم (%lld).
+error.forbidden	ليس لديك إذن للقيام بذلك.
+changePassword.navigationTitle	تغيير كلمة السر
+changePassword.intro	غيّر كلمة السر التي تستخدمها لتسجيل الدخول ببريدك الإلكتروني. ستبقى مسجّل الدخول على هذا الجهاز.
+changePassword.fieldCurrentPassword	كلمة السر الحالية
+changePassword.fieldNewPasswordLabel	كلمة سر جديدة
+changePassword.fieldConfirmPasswordLabel	تأكيد كلمة السر الجديدة
+changePassword.fieldConfirmPassword	أعد إدخال كلمة السر الجديدة
+changePassword.fieldNewPasswordPrompt	‏%lld حرفًا على الأقل
+changePassword.submitButton	تحديث كلمة السر
+changePassword.success	تم تحديث كلمة سرك.
+changePassword.errorMinLength	استخدم %lld حرفًا على الأقل.
+changePassword.errorMismatch	كلمتا السر غير متطابقتين.
+login.portHint	أضف منفذًا (مثل :3000). معظم خوادم المنزل لا تستمع على المنفذ 80 العادي.
+login.errorInvalidServer	أدخل عنوان خادم صالحًا.
+login.errorInvalidEmail	أدخل عنوان بريد إلكتروني صالحًا.
+login.errorInvalidCredentials	اسم المستخدم أو كلمة السر غير صحيحة.
+login.errorSessionExpired	انتهت صلاحية جلستك. يُرجى تسجيل الدخول مرة أخرى.
+login.errorIncomplete	لم يكتمل تسجيل الدخول. يُرجى إعادة المحاولة.
+login.errorUnreachable	تعذّر الوصول إلى ذلك الخادم. تحقق من العنوان وأعد المحاولة.
+login.errorUnexpectedResponse	استجابة غير متوقعة من الخادم.
+login.errorKeychain	تعذّر حفظ جلستك على هذا الجهاز.
+login.errorDecoding	استجاب الخادم بشكل غير متوقع. تحقق من العنوان وأعد المحاولة.
+login.errorNoLocalAuth	هذا الخادم لا يتيح تسجيل الدخول باسم المستخدم وكلمة السر.
+login.errorRateLimited	محاولات كثيرة جدًا. يُرجى الانتظار بضع دقائق وإعادة المحاولة.
+login.errorServer	واجه الخادم مشكلة (خطأ %lld). يُرجى إعادة المحاولة لاحقًا.
+browse.nameErrorReserved	هذا الاسم غير مسموح به.
+browse.nameErrorSeparators	لا يمكن أن يحتوي الاسم على / أو \.
+browse.searchMatchLine	السطر %1$lld: %2$@
+browse.searchMatchLineLabel	السطر %lld
+createShare.errorPasswordRequired	أدخل كلمة سر أو أوقف الحماية بكلمة سر.
+filter.sheetTitle	التصفية حسب النوع
+filter.button	تصفية
+filter.all	جميع الأنواع
+filter.folders	المجلدات
+filter.images	الصور
+filter.videos	الفيديوهات
+filter.audio	الصوت
+filter.documents	المستندات
+filter.archives	الأرشيفات
+filter.other	أخرى
+language.navigationTitle	اللغة
+language.systemDefault	إعداد النظام الافتراضي
+language.systemDefaultSubtitle	اتّبع لغة جهازك

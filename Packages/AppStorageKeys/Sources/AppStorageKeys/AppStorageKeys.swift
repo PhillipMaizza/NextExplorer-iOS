@@ -25,6 +25,10 @@ public enum AppStorageKeys {
     public static let removeArchiveAfterDownload = "removeArchiveAfterDownload"
     public static let keepClipboardAfterCopy = "keepClipboardAfterCopy"
 
+    /// Chosen UI language code (e.g. "fr", "zh-CN"). Empty string means follow the system
+    /// language. Read by `LocalizationOverride` at launch and by the app root to rebind the locale.
+    public static let appLanguage = "appLanguage"
+
     /// Per-tab list/grid choice; the value is that tab's own `…ViewMode.rawValue`.
     public static let browseViewMode = "browseViewMode"
     public static let favoritesViewMode = "favoritesViewMode"

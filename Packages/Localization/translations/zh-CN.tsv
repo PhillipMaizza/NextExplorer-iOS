@@ -1,0 +1,542 @@
+# NextExplorer — 简体中文 (zh-CN). key<TAB>value.
+common.cancel	取消
+common.save	保存
+common.edit	编辑
+common.retry	重试
+common.delete	删除
+common.remove	移除
+common.clear	清除
+common.done	完成
+common.ok	好
+common.openSettings	打开设置
+common.logOut	退出登录
+common.close	关闭
+common.back	返回
+common.share	共享
+common.download	下载
+common.sort	排序
+common.select	选择
+common.search	搜索
+common.password	密码
+common.never	永不
+common.selectedCount	已选择 %lld 项
+tab.browse	浏览
+tab.favorites	收藏
+tab.shared	共享
+tab.downloads	下载
+tab.settings	设置
+sort.sheetTitle	排序方式
+sort.name	名称
+sort.size	大小
+sort.kind	种类
+sort.dateModified	修改日期
+sort.dateAdded	添加日期
+sort.dateShared	共享日期
+sort.expiration	到期
+sort.email	电子邮件
+sort.type	类型
+sort.ascending	升序
+sort.descending	降序
+select.selectAll	全选
+select.deselectAll	取消全选
+select.listView	列表视图
+select.gridView	网格视图
+emptyState.folderEmpty	此文件夹为空。
+emptyState.loadFailed	无法连接到服务器。
+emptyState.noSearchMatches	没有“%@”的结果。
+accessMode.readonly	只读
+accessMode.readwrite	读写
+shareTarget.anyone	任何拥有链接的人
+shareTarget.users	特定用户
+directLinkMode.auto	自动
+directLinkMode.inline	查看
+directLinkMode.raw	原始
+directLinkMode.download	下载
+thumbnailSize.small	小
+thumbnailSize.medium	中
+thumbnailSize.large	大
+downloadLocation.documents	文稿
+downloadLocation.cache	缓存
+dateFormat.automatic	自动
+browse.navigationTitle	浏览
+browse.scopeThisFolder	此文件夹
+browse.scopeEverywhere	所有位置
+browse.searchScopeInFolder	此文件夹
+browse.searchScopeEverywhere	所有位置
+browse.locations	位置
+browse.open	打开
+browse.unsupportedFileType	不支持的文件类型
+browse.actionGetInfo	显示简介
+browse.actionPermissions	权限
+browse.actionRename	重命名
+browse.actionExtract	解压
+browse.actionCompress	压缩
+browse.actionDownload	下载
+browse.actionAddToFavorites	添加到收藏
+browse.actionRemoveFromFavorites	从收藏中移除
+browse.actionShare	创建共享链接
+browse.actionDelete	删除
+browse.renameTitle	重命名
+browse.renameNamePlaceholder	名称
+browse.actionNewFolder	新建文件夹
+browse.newFolderTitle	新建文件夹
+browse.newFolderPlaceholder	文件夹名称
+browse.newFolderConfirm	创建
+browse.deleteConfirmTitle	删除？
+browse.deleteConfirmOne	删除“%@”？
+browse.deleteConfirmMany	删除 %lld 项？
+browse.deleteMessage	此操作无法撤销。
+browse.deleteLinkedSharesOne	这还会移除 1 个指向此处的共享链接。
+browse.deleteLinkedSharesMany	这还会移除 %lld 个指向此处的共享链接。
+browse.deleteLinkedSharesUnavailable	无法检查指向此处的链接。现有链接将停止工作。
+browse.searchNoMatchesInFolder	没有“%@”的结果。
+browse.searchEverywhere	在所有位置搜索
+browse.searchFailed	无法搜索。请检查连接后重试。
+browse.progressExtracting	正在解压…
+browse.progressCompressing	正在压缩…
+browse.progressDownloading	正在下载…
+browse.progressDownloadingIndexed	正在下载 %2$lld 项中的第 %1$lld 项…
+browse.downloadSavedTo	已保存到 %@
+browse.downloadSavedCountTo	已将 %2$lld 项中的 %1$lld 项保存到 %3$@
+browse.downloadSavedAllTo	已将 %1$lld 项保存到 %2$@
+browse.downloadBulkFailed	无法将这些项目保存到您的设备。
+browse.offlineBannerTitle	离线
+browse.offlineBannerDetail	正在显示来自 %@ 的已保存副本
+browse.actionCopy	拷贝
+browse.destinationPickerMoveTitle	移动到…
+browse.destinationPickerConfirmMove	移动到此处
+browse.destinationPickerNoFolders	此处没有文件夹
+browse.destinationPickerLoadFailed	无法加载文件夹。
+browse.actionMove	移动
+browse.actionPaste	粘贴
+browse.actionPasteCount	粘贴 %lld 项
+browse.actionPasteHere	粘贴到此处
+browse.actionClearClipboard	清空剪贴板
+browse.clipboardMoveCount	%lld 项待移动
+browse.clipboardCopyCount	%lld 项待拷贝
+browse.clipboardCopiedOne	已拷贝 %@
+browse.clipboardCopiedMany	已拷贝 %lld 项
+browse.progressMoving	正在移动…
+browse.progressCopying	正在拷贝…
+browse.transferMoved	已移动 %lld 项
+browse.transferCopied	已拷贝 %lld 项
+browse.transferMovedWithSkipped	已移动 %1$lld 项，跳过 %2$lld 项
+browse.transferCopiedWithSkipped	已拷贝 %1$lld 项，跳过 %2$lld 项
+browse.transferConflictTitle	替换项目？
+browse.transferConflictMessageOne	“%@”已存在于此文件夹中。
+browse.transferConflictMessageMany	%lld 项已存在于此文件夹中。
+browse.transferConflictReplace	替换
+browse.transferConflictKeepBoth	两者都保留
+browse.actionOpenInBrowser	在浏览器中打开
+favorites.navigationTitle	收藏
+favorites.emptyList	在“浏览”中标记文件夹即可在此处查看。
+favorites.actionRemoveFromFavorites	从收藏中移除
+favorites.actionEdit	编辑
+favorites.editTitle	编辑收藏
+favorites.editNameLabel	名称
+favorites.editNameErrorEmpty	名称不能为空。
+favorites.editIconLabel	图标
+favorites.editIconOutline	轮廓
+favorites.editIconSolid	实心
+favorites.editColorLabel	颜色
+favorites.editColorDefault	默认
+favorites.editSave	保存
+favorites.reorderFailed	无法保存新顺序。
+favorites.removeConfirm	移除 %lld 个收藏？
+favorites.removeMessage	这仅会将它们从收藏中移除。
+favorites.removeFailedOne	无法移除该收藏。
+favorites.removeFailedMany	无法移除这些收藏。
+favorites.removePartial	已移除 %2$lld 项中的 %1$lld 项。
+downloads.navigationTitle	下载
+downloads.actionOpenInFiles	在“文件”中打开
+downloads.emptyList	您从“浏览”下载的文件会显示在此处。
+downloads.deleteConfirmTitle	删除？
+downloads.deleteConfirmOne	删除“%@”？
+downloads.deleteConfirmMany	删除 %lld 个文件？
+downloads.deleteSingleMessage	这仅会移除本地副本。文件仍保留在服务器上。
+downloads.deleteBulkMessage	这仅会移除本地副本。文件仍保留在服务器上。
+downloads.errorNameExists	同名文件已存在。
+downloads.errorInvalidName	该名称不允许使用。
+downloads.errorMissing	无法再找到该文件。
+downloads.errorGeneric	无法完成该操作。
+unsupportedPreview.genericType	文件
+unsupportedPreview.cannotOpen	此应用无法打开此类型的文件。
+uploads.navigationTitle	上传
+uploads.menuTitle	上传
+uploads.actionUploadFromFiles	从“文件”上传
+uploads.actionUploadFromPhotos	从相册上传
+uploads.actionTakePhoto	拍照或录像
+uploads.cameraDeniedTitle	需要相机访问权限
+uploads.cameraDeniedMessage	请在“设置”中允许相机访问，以便拍照或录像。
+uploads.destinationTitle	上传到…
+uploads.destinationConfirm	上传到此处
+uploads.reviewTitleOne	上传 1 个文件
+uploads.reviewTitleMany	上传 %lld 个文件
+uploads.reviewSectionFiles	文件
+uploads.reviewSectionPath	路径
+uploads.reviewSectionSize	总大小
+uploads.reviewChooseFolder	选择一个文件夹
+uploads.reviewUploadButton	上传
+uploads.reviewPreparing	正在准备 %lld 项…
+uploads.reviewAddMore	添加更多文件
+uploads.reviewPreviewFile	预览 %@
+uploads.reviewInsecureNetworkNotice	通过 http 连接。如果此服务器仅在您的家庭网络中，离开该网络时上传将无法工作。
+uploads.stagingFailed	无法添加这些文件。请重试。
+uploads.stagingSkipped	%lld 项无法准备，已被略过。
+uploads.discardTitle	放弃上传？
+uploads.discardMessage	您添加的文件将不会上传。
+uploads.discardConfirm	放弃
+uploads.statusWaiting	等待中
+uploads.statusFailed	上传失败
+uploads.barTitleOne	正在上传 %@
+uploads.barTitleMany	正在上传 %lld 个文件
+uploads.barFailedOne	1 个上传失败
+uploads.barFailedMany	%lld 个上传失败
+uploads.retryAll	全部重试
+uploads.complete	上传完成
+uploads.completeMany	已上传 %lld 个文件
+uploads.completeWithFailures	已上传 %1$lld 个，失败 %2$lld 个
+uploads.failedGeneric	无法上传此文件。
+uploads.clear	清除
+uploads.emptyList	暂无上传。
+uploads.cancelAll	取消所有上传
+shared.navigationTitle	共享
+shared.segmentByMe	由我共享
+shared.segmentWithMe	与我共享
+shared.sectionExpired	已过期
+shared.badgeExpired	已过期
+shared.emptyByMe	共享文件或文件夹后即可在此处查看其链接。
+shared.emptyWithMe	他人与您共享的链接会显示在此处。
+shared.noSearchMatches	没有与“%@”匹配的共享。
+shared.deleteTitle	删除共享链接？
+shared.deleteMessage	链接会立即停止工作。文件或文件夹本身不受影响。
+shared.sharedByUnknown	某人
+shared.metaAccess	访问权限
+shared.metaExpiration	到期
+shared.metaSharedBy	共享者
+shared.metaSharedWith	共享给
+shared.anyoneWithLink	任何拥有链接的人
+shared.linkMode	链接模式
+shared.actionShareLink	共享链接
+shared.actionFolderLink	文件夹链接
+shared.actionFileLink	文件链接
+shared.moreRecipients	+%lld
+shared.copiedShareLink	已拷贝共享链接
+shared.copiedFolderZip	已拷贝文件夹 ZIP 链接
+shared.copiedDirectFile	已拷贝直接文件链接
+createShare.title	创建共享链接
+createShare.titleCreated	已创建共享
+createShare.sectionLabel	标签
+createShare.sectionAccessMode	访问模式
+createShare.sectionWhoCanAccess	谁可以访问
+createShare.sectionShareLink	共享链接
+createShare.fieldPassword	密码
+createShare.togglePasswordProtect	密码保护
+createShare.toggleSetExpiration	设置到期日期
+createShare.fieldExpires	到期
+createShare.submit	创建共享链接
+createShare.loadingUsers	正在加载用户…
+createShare.noOtherUsers	没有其他可共享的用户。
+createShare.sharingPrefix	正在共享：
+createShare.createdBanner	共享链接创建成功！
+createShare.viewInShared	在“共享”中查看
+createShare.directLinkMode	直接链接模式
+createShare.directFolderLink	直接文件夹 ZIP 链接
+createShare.directFileLink	直接文件链接
+createShare.summaryAccess	访问权限
+createShare.summarySharedWith	共享给
+createShare.summaryPassword	密码
+createShare.summaryPasswordProtected	受保护
+createShare.summaryExpires	到期
+createShare.summarySpecificPeople	特定人员
+createShare.errorPastExpiration	请选择将来的到期日期。
+editShare.title	编辑共享链接
+editShare.save	保存更改
+editShare.passwordKeepHint	留空以保留当前密码
+editShare.savedToast	共享链接已更新
+thumbnailSettings.navigationTitle	缩略图
+thumbnailSettings.subtitle	控制服务器为每个客户端生成图像缩略图的方式。
+thumbnailSettings.enable	生成缩略图
+thumbnailSettings.enableHelp	关闭后将改为在所有位置提供完整图像。
+thumbnailSettings.quality	质量
+thumbnailSettings.qualityHelp	越高看起来越好，占用空间也越多。
+thumbnailSettings.maxDimension	最大尺寸
+thumbnailSettings.maxDimensionHelp	生成的缩略图最长边，以像素为单位。
+thumbnailSettings.concurrency	并发数
+thumbnailSettings.concurrencyHelp	服务器一次生成多少个缩略图。
+thumbnailSettings.unavailable	缩略图设置仅对管理员可用。
+thumbnailSettings.saveButton	保存更改
+accessRules.navigationTitle	文件夹访问规则
+accessRules.subtitle	覆盖特定路径的读写访问权限。
+accessRules.addRule	添加规则
+accessRules.empty	未配置访问规则。
+accessRules.emptyHint	添加规则以覆盖对某路径的访问权限。
+accessRules.pathLabel	路径
+accessRules.pathPlaceholder	文稿/报告
+accessRules.recursive	应用于子文件夹
+accessRules.permissionReadWrite	读写
+accessRules.permissionReadOnly	只读
+accessRules.permissionHidden	隐藏
+accessRules.remove	移除
+accessRules.unavailable	访问规则仅对管理员可用。
+accessRules.saveButton	保存更改
+settings.rowThumbnails	缩略图
+settings.rowAccessRules	文件夹访问规则
+settings.navigationTitle	设置
+settings.appVersion	版本 %1$@ (%2$@)
+settings.sectionGeneral	通用
+settings.sectionDisplay	显示
+settings.sectionStorage	存储
+settings.sectionServerStorage	服务器存储
+settings.serverStorageUsed	%2$@ 中的 %1$@
+settings.sectionLicenses	许可证
+settings.sectionLegal	法律
+settings.sectionUsers	用户
+settings.sectionAdmin	管理
+settings.toggleShowHiddenFiles	显示隐藏文件
+settings.toggleRenderHTML	渲染 HTML 页面
+settings.toggleRenderMarkdown	渲染 Markdown 文件
+settings.toggleHaptics	触感反馈
+settings.toggleDarkMode	深色模式
+settings.toggleShowThumbnails	显示缩略图
+settings.toggleShowExtensions	显示文件扩展名
+settings.toggleRemoveArchives	下载后移除压缩包
+settings.toggleKeepClipboard	粘贴后保留项目
+settings.toggleKeepClipboardSubtitle	拷贝的项目会保持可粘贴到其他文件夹的状态。移动的项目始终会被清除。
+settings.rowDateFormat	日期格式
+settings.rowLanguage	语言
+settings.rowThumbnailSize	缩略图大小
+settings.rowRemoveAllDownloads	移除所有下载
+settings.rowClearCache	清除缓存
+settings.rowOpenSourceLicenses	开源许可证
+settings.rowPrivacyPolicy	隐私政策
+settings.rowTermsOfUse	使用条款
+settings.rowUserManagement	用户管理
+settings.rowChangePassword	更改密码
+settings.rowServer	服务器
+settings.storageFootnote	下载文件夹会先在服务器上将其压缩为 ZIP。开启上面的开关，可在保存到设备后从服务器删除该压缩包。移除下载或清除缓存仅影响此设备；服务器上的内容不会被改动。
+settings.removeAllDownloadsTitle	移除所有下载？
+settings.removeAllDownloadsConfirm	全部移除
+settings.removeAllDownloadsMessage	这会从此设备删除所有已下载的文件。它们仍保留在服务器上。
+settings.clearCacheTitle	清除缓存？
+settings.clearCacheConfirm	清除
+settings.clearCacheMessage	这会清除用于离线的缓存预览、缩略图和已保存的文件夹列表。服务器上的内容不受影响。
+settings.signOutAlertTitle	退出登录？
+settings.signOutMessage	您需要重新登录才能访问您的文件。
+settings.signOutButton	退出登录
+settings.signingOut	正在退出登录…
+settings.dateFormatNavigationTitle	日期格式
+settings.dateFormatShowTime	显示时间
+serverDetails.navigationTitle	服务器
+serverDetails.changeLogo	更改图标
+serverDetails.takePhoto	拍照
+serverDetails.chooseFromGallery	从相册上传
+serverDetails.nameLabel	服务器名称
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	服务器名称不能为空。
+serverDetails.urlLabel	服务器 URL
+serverDetails.urlFootnote	您的 NextExplorer 实例的安装地址。若要更改，请退出登录并重新添加服务器。
+serverDetails.updateButton	更新服务器
+serverDetails.savedMessage	服务器详情已更新。
+serverDetails.logoErrorTooLarge	该图像过大。请选择小于 2 MB 的图像。
+serverDetails.cameraDeniedTitle	相机访问已关闭
+serverDetails.cameraDeniedMessage	请在“设置”中开启相机访问以便拍照。
+licenses.navigationTitle	开源许可证
+licenses.sectionSoftware	软件
+licenses.sectionFontSoftware	字体软件
+licenses.labelAuthor	作者
+licenses.labelOriginalVersion	原始版本
+licenses.labelModifiedVersion	修改版本
+licenses.labelReservedFontName	保留字体名称
+fileInfo.navigationTitleFolder	文件夹
+fileInfo.rowKind	种类
+fileInfo.rowSize	大小
+fileInfo.rowLocation	位置
+fileInfo.rowDateModified	修改日期
+fileInfo.rowDateCreated	创建日期
+fileInfo.rowFiles	文件
+fileInfo.rowFolders	文件夹
+fileInfo.rowTotalSize	总大小
+fileInfo.sectionServerDisk	服务器磁盘
+fileInfo.diskFreeOf	%2$@ 中可用 %1$@
+fileInfo.rowDimensions	尺寸
+fileInfo.rowCamera	相机
+fileInfo.rowLens	镜头
+fileInfo.rowDateTaken	拍摄日期
+fileInfo.rowDuration	时长
+fileInfo.partialScan	已计入部分扫描：此文件夹非常大。
+permissions.title	权限
+permissions.sectionMode	模式
+permissions.numericLabel	数字
+permissions.applyToEnclosed	应用于所含项目
+permissions.applyPermissions	应用权限
+permissions.sectionOwnership	所有权
+permissions.fieldOwner	所有者
+permissions.fieldGroup	组
+permissions.ownershipNote	更改所有权通常需要服务器上的 root 或管理员权限。
+permissions.applyOwnership	应用所有权
+permissions.scopeOwner	所有者
+permissions.scopeGroup	组
+permissions.scopeOthers	其他
+permissions.rightRead	读取
+permissions.rightWrite	写入
+permissions.rightExecute	执行
+archive.emptyFolder	此文件夹为空。
+archive.openFailed	无法打开此文件。
+archive.openArchiveFailed	无法打开此压缩包。
+archive.entryTooLarge	此项目过大，无法打开。
+gallery.loadFailed	无法加载此图像。
+textPreview.saved	已保存
+textPreview.loadFailed	无法加载此文件。请检查连接后重试。
+userManagement.navigationTitle	用户管理
+userManagement.searchPrompt	搜索用户
+userManagement.createUser	创建用户
+userManagement.badgeAdmin	管理员
+userManagement.emptyList	暂无用户。
+userManagement.noSearchMatches	没有与“%@”匹配的用户。
+userManagement.loadFailed	无法连接到服务器。
+userManagement.sortType	类型
+userManagement.sortName	名称
+userManagement.sortEmail	电子邮件
+userManagement.tabProfile	个人资料
+userManagement.tabSecurity	安全
+userManagement.tabVolumes	卷
+userManagement.createNavigationTitle	创建用户
+userManagement.createEmailField	电子邮件
+userManagement.createEmailPlaceholder	name@example.com
+userManagement.createUsernameField	用户名（可选）
+userManagement.createUsernamePlaceholder	由电子邮件推导
+userManagement.createPasswordField	密码
+userManagement.createPasswordPlaceholder	至少 %lld 个字符
+userManagement.createGrantAdminToggle	授予管理员访问权限
+userManagement.createGrantAdminSubtitle	对文件、共享和用户的完全控制。
+userManagement.createSubmit	创建用户
+userManagement.setPasswordNavigationTitle	密码
+userManagement.setPasswordNewField	新密码
+userManagement.setPasswordPlaceholder	至少 %lld 个字符
+userManagement.setPasswordResetTitle	重置密码
+userManagement.setPasswordSetTitle	设置密码
+userManagement.setPasswordResetIntro	为 %@ 设置新的本地密码。其当前密码将停止工作。
+userManagement.setPasswordSetIntro	为 %@ 设置本地密码，以便无需 SSO 即可登录。
+userManagement.toastProfileUpdated	个人资料已更新
+userManagement.toastAdminGranted	已授予管理员权限
+userManagement.toastUserRemoved	用户已移除
+userManagement.toastUserCreated	用户已创建
+userManagement.toastPasswordUpdated	密码已更新
+userManagement.toastVolumeSaved	卷已保存
+userManagement.toastVolumeRemoved	卷已移除
+userManagement.errorEmailRequired	电子邮件为必填项。
+userManagement.errorEmailInvalid	请输入有效的电子邮件地址。
+userManagement.errorUsernameRequired	用户名为必填项。
+userManagement.errorEmailInUse	电子邮件已被使用。
+userManagement.errorPasswordTooShort	请至少使用 %lld 个字符。
+userDetail.fallbackName	用户
+userDetail.sectionGeneralInfo	常规信息
+userDetail.sectionRoles	角色与权限
+userDetail.sectionLocalPassword	本地密码
+userDetail.sectionSSO	单点登录
+userDetail.sectionAssignedVolumes	已分配的卷
+userDetail.profileDisplayNameField	显示名称
+userDetail.profileDisplayNamePlaceholder	显示名称
+userDetail.profileUsernameField	用户名
+userDetail.profileUsernamePlaceholder	用户名
+userDetail.profileEmailField	电子邮件
+userDetail.profileEmailPlaceholder	name@example.com
+userDetail.profileSave	保存更改
+userDetail.roleAdmin	管理员
+userDetail.roleAdminSubtitle	对文件、共享和用户的完全控制。
+userDetail.roleAdminLocked	无法从应用中降级管理员。
+userDetail.roleGrantAdmin	授予管理员
+userDetail.passwordHasLocal	此用户使用电子邮件和密码登录。
+userDetail.passwordSSOOnly	此用户没有本地密码：仅限 SSO。
+userDetail.passwordReset	重置密码
+userDetail.passwordSet	设置密码
+userDetail.ssoNone	没有关联的 SSO 提供商。
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	已关联
+userDetail.dangerZoneTitle	危险区域
+userDetail.dangerZoneSubtitle	移除用户会立即撤销其访问权限。其在服务器上拥有的文件不会被删除。
+userDetail.dangerZoneRemoveUser	移除用户
+userDetail.volumesNone	未分配卷。
+userDetail.volumesNoneSubtitle	此用户仅能看到默认共享空间。
+userDetail.volumesAssign	分配卷
+userDetail.volumesFootnote	卷可让用户访问默认共享空间之外的目录。移除卷绝不会删除文件。
+userDetail.volumeEditAccessibility	编辑 %@
+userDetail.volumeRemoveAccessibility	移除 %@
+userDetail.removeVolumeTitle	移除卷？
+userDetail.removeVolumeMessage	%@ 已从此用户取消分配。目录本身不受影响。
+userDetail.removeUserTitle	移除用户？
+userDetail.removeUserMessage	%@ 会立即失去访问权限。其在服务器上的文件不会被删除。
+userDetail.volumeSheetLabelField	标签
+userDetail.volumeSheetLabelPlaceholder	卷标签
+userDetail.volumeSheetAccessMode	访问模式
+userDetail.volumeSheetDirectory	目录
+userDetail.volumeSheetSaveEdit	保存卷
+userDetail.volumeSheetSaveNew	分配卷
+userDetail.volumeSheetTitleEdit	编辑卷
+userDetail.volumeSheetTitleNew	分配卷
+userDetail.directoryPickerGoUp	上一级目录
+userDetail.directoryPickerUseThis	使用此目录
+userDetail.directoryPickerOpen	打开 %@
+userDetail.directoryPickerFailed	无法列出目录。
+previewToolbar.close	关闭
+previewToolbar.createShareLink	创建共享链接
+previewToolbar.download	下载
+previewToolbar.delete	删除
+previewToolbar.share	共享
+previewToolbar.rename	重命名
+login.serverQuestion	您的 NextExplorer 实例在哪里？
+login.testConnection	测试连接
+login.emailField	电子邮件
+login.passwordField	密码
+login.submit	登录
+login.plaintextWarning	此连接未加密。您的密码和会话以明文形式通过本地网络发送。
+error.sessionExpired	您的会话已过期。请重新登录。
+error.rateLimited	请求过多。请稍后重试。
+error.network	无法连接到服务器。
+error.offline	您已离线。请连接到互联网后重试。
+error.decoding	服务器响应异常。
+error.server	服务器错误 (%lld)。
+error.forbidden	您没有执行此操作的权限。
+changePassword.navigationTitle	更改密码
+changePassword.intro	更改您用于以电子邮件地址登录的密码。您在此设备上仍将保持登录状态。
+changePassword.fieldCurrentPassword	当前密码
+changePassword.fieldNewPasswordLabel	新密码
+changePassword.fieldConfirmPasswordLabel	确认新密码
+changePassword.fieldConfirmPassword	重新输入新密码
+changePassword.fieldNewPasswordPrompt	至少 %lld 个字符
+changePassword.submitButton	更新密码
+changePassword.success	您的密码已更新。
+changePassword.errorMinLength	请至少使用 %lld 个字符。
+changePassword.errorMismatch	密码不匹配。
+login.portHint	添加端口（例如 :3000）。大多数家庭服务器不会在默认的 80 端口上监听。
+login.errorInvalidServer	请输入有效的服务器地址。
+login.errorInvalidEmail	请输入有效的电子邮件地址。
+login.errorInvalidCredentials	用户名或密码不正确。
+login.errorSessionExpired	您的会话已过期。请重新登录。
+login.errorIncomplete	登录未完成。请重试。
+login.errorUnreachable	无法连接到该服务器。请检查地址后重试。
+login.errorUnexpectedResponse	服务器响应异常。
+login.errorKeychain	无法在此设备上保存您的会话。
+login.errorDecoding	服务器响应异常。请检查地址后重试。
+login.errorNoLocalAuth	此服务器未启用用户名/密码登录。
+login.errorRateLimited	尝试次数过多。请等待几分钟后重试。
+login.errorServer	服务器遇到问题（错误 %lld）。请稍后重试。
+browse.nameErrorReserved	该名称不允许使用。
+browse.nameErrorSeparators	名称不能包含 / 或 \。
+browse.searchMatchLine	第 %1$lld 行：%2$@
+browse.searchMatchLineLabel	第 %lld 行
+createShare.errorPasswordRequired	请输入密码或关闭密码保护。
+filter.sheetTitle	按类型筛选
+filter.button	筛选
+filter.all	所有类型
+filter.folders	文件夹
+filter.images	图像
+filter.videos	视频
+filter.audio	音频
+filter.documents	文稿
+filter.archives	压缩包
+filter.other	其他
+language.navigationTitle	语言
+language.systemDefault	系统默认
+language.systemDefaultSubtitle	跟随设备语言

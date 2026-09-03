@@ -1,0 +1,542 @@
+# NextExplorer — 한국어 (ko). key<TAB>value.
+common.cancel	취소
+common.save	저장
+common.edit	편집
+common.retry	다시 시도
+common.delete	삭제
+common.remove	제거
+common.clear	지우기
+common.done	완료
+common.ok	확인
+common.openSettings	설정 열기
+common.logOut	로그아웃
+common.close	닫기
+common.back	뒤로
+common.share	공유
+common.download	다운로드
+common.sort	정렬
+common.select	선택
+common.search	검색
+common.password	비밀번호
+common.never	안 함
+common.selectedCount	%lld개 선택됨
+tab.browse	탐색
+tab.favorites	즐겨찾기
+tab.shared	공유됨
+tab.downloads	다운로드
+tab.settings	설정
+sort.sheetTitle	정렬 기준
+sort.name	이름
+sort.size	크기
+sort.kind	종류
+sort.dateModified	수정한 날짜
+sort.dateAdded	추가한 날짜
+sort.dateShared	공유한 날짜
+sort.expiration	만료
+sort.email	이메일
+sort.type	유형
+sort.ascending	오름차순
+sort.descending	내림차순
+select.selectAll	모두 선택
+select.deselectAll	모두 선택 해제
+select.listView	목록 보기
+select.gridView	격자 보기
+emptyState.folderEmpty	이 폴더는 비어 있습니다.
+emptyState.loadFailed	서버에 연결할 수 없습니다.
+emptyState.noSearchMatches	“%@”에 대한 결과가 없습니다.
+accessMode.readonly	읽기 전용
+accessMode.readwrite	읽기 및 쓰기
+shareTarget.anyone	링크가 있는 모든 사용자
+shareTarget.users	특정 사용자
+directLinkMode.auto	자동
+directLinkMode.inline	보기
+directLinkMode.raw	원본
+directLinkMode.download	다운로드
+thumbnailSize.small	작게
+thumbnailSize.medium	보통
+thumbnailSize.large	크게
+downloadLocation.documents	문서
+downloadLocation.cache	캐시
+dateFormat.automatic	자동
+browse.navigationTitle	탐색
+browse.scopeThisFolder	이 폴더
+browse.scopeEverywhere	모든 위치
+browse.searchScopeInFolder	이 폴더
+browse.searchScopeEverywhere	모든 위치
+browse.locations	위치
+browse.open	열기
+browse.unsupportedFileType	지원되지 않는 파일 형식
+browse.actionGetInfo	정보 보기
+browse.actionPermissions	권한
+browse.actionRename	이름 변경
+browse.actionExtract	압축 풀기
+browse.actionCompress	압축
+browse.actionDownload	다운로드
+browse.actionAddToFavorites	즐겨찾기에 추가
+browse.actionRemoveFromFavorites	즐겨찾기에서 제거
+browse.actionShare	공유 링크 만들기
+browse.actionDelete	삭제
+browse.renameTitle	이름 변경
+browse.renameNamePlaceholder	이름
+browse.actionNewFolder	폴더 만들기
+browse.newFolderTitle	새 폴더
+browse.newFolderPlaceholder	폴더 이름
+browse.newFolderConfirm	만들기
+browse.deleteConfirmTitle	삭제할까요?
+browse.deleteConfirmOne	“%@”을(를) 삭제할까요?
+browse.deleteConfirmMany	항목 %lld개를 삭제할까요?
+browse.deleteMessage	이 작업은 취소할 수 없습니다.
+browse.deleteLinkedSharesOne	여기를 가리키는 공유 링크 1개도 함께 삭제됩니다.
+browse.deleteLinkedSharesMany	여기를 가리키는 공유 링크 %lld개도 함께 삭제됩니다.
+browse.deleteLinkedSharesUnavailable	여기를 가리키는 링크를 확인할 수 없습니다. 존재하는 링크는 작동을 멈춥니다.
+browse.searchNoMatchesInFolder	“%@”에 대한 결과가 없습니다.
+browse.searchEverywhere	모든 위치에서 검색
+browse.searchFailed	검색할 수 없습니다. 연결을 확인하고 다시 시도하세요.
+browse.progressExtracting	압축 푸는 중…
+browse.progressCompressing	압축하는 중…
+browse.progressDownloading	다운로드 중…
+browse.progressDownloadingIndexed	%2$lld개 중 %1$lld개 다운로드 중…
+browse.downloadSavedTo	%@에 저장됨
+browse.downloadSavedCountTo	%2$lld개 중 %1$lld개 항목을 %3$@에 저장함
+browse.downloadSavedAllTo	%1$lld개 항목을 %2$@에 저장함
+browse.downloadBulkFailed	이 항목을 기기에 저장할 수 없습니다.
+browse.offlineBannerTitle	오프라인
+browse.offlineBannerDetail	%@의 저장된 사본을 표시하는 중
+browse.actionCopy	복사
+browse.destinationPickerMoveTitle	이동할 위치…
+browse.destinationPickerConfirmMove	여기로 이동
+browse.destinationPickerNoFolders	여기에 폴더가 없습니다
+browse.destinationPickerLoadFailed	폴더를 불러올 수 없습니다.
+browse.actionMove	이동
+browse.actionPaste	붙여넣기
+browse.actionPasteCount	항목 %lld개 붙여넣기
+browse.actionPasteHere	여기에 붙여넣기
+browse.actionClearClipboard	클립보드 비우기
+browse.clipboardMoveCount	이동할 항목 %lld개
+browse.clipboardCopyCount	복사할 항목 %lld개
+browse.clipboardCopiedOne	%@ 복사됨
+browse.clipboardCopiedMany	항목 %lld개 복사됨
+browse.progressMoving	이동하는 중…
+browse.progressCopying	복사하는 중…
+browse.transferMoved	항목 %lld개 이동함
+browse.transferCopied	항목 %lld개 복사함
+browse.transferMovedWithSkipped	항목 %1$lld개 이동, %2$lld개 건너뜀
+browse.transferCopiedWithSkipped	항목 %1$lld개 복사, %2$lld개 건너뜀
+browse.transferConflictTitle	항목을 교체할까요?
+browse.transferConflictMessageOne	“%@”이(가) 이 폴더에 이미 있습니다.
+browse.transferConflictMessageMany	항목 %lld개가 이 폴더에 이미 있습니다.
+browse.transferConflictReplace	교체
+browse.transferConflictKeepBoth	둘 다 유지
+browse.actionOpenInBrowser	브라우저에서 열기
+favorites.navigationTitle	즐겨찾기
+favorites.emptyList	탐색에서 폴더를 즐겨찾기로 표시하면 여기에 나타납니다.
+favorites.actionRemoveFromFavorites	즐겨찾기에서 제거
+favorites.actionEdit	편집
+favorites.editTitle	즐겨찾기 편집
+favorites.editNameLabel	이름
+favorites.editNameErrorEmpty	이름은 비워 둘 수 없습니다.
+favorites.editIconLabel	아이콘
+favorites.editIconOutline	외곽선
+favorites.editIconSolid	채움
+favorites.editColorLabel	색상
+favorites.editColorDefault	기본값
+favorites.editSave	저장
+favorites.reorderFailed	새 순서를 저장할 수 없습니다.
+favorites.removeConfirm	즐겨찾기 %lld개를 제거할까요?
+favorites.removeMessage	즐겨찾기에서만 제거됩니다.
+favorites.removeFailedOne	해당 즐겨찾기를 제거할 수 없습니다.
+favorites.removeFailedMany	해당 즐겨찾기를 제거할 수 없습니다.
+favorites.removePartial	%2$lld개 중 %1$lld개 제거됨.
+downloads.navigationTitle	다운로드
+downloads.actionOpenInFiles	파일 앱에서 열기
+downloads.emptyList	탐색에서 다운로드한 파일이 여기에 표시됩니다.
+downloads.deleteConfirmTitle	삭제할까요?
+downloads.deleteConfirmOne	“%@”을(를) 삭제할까요?
+downloads.deleteConfirmMany	파일 %lld개를 삭제할까요?
+downloads.deleteSingleMessage	로컬 사본만 제거됩니다. 파일은 서버에 남아 있습니다.
+downloads.deleteBulkMessage	로컬 사본만 제거됩니다. 파일은 서버에 남아 있습니다.
+downloads.errorNameExists	같은 이름의 파일이 이미 있습니다.
+downloads.errorInvalidName	해당 이름은 허용되지 않습니다.
+downloads.errorMissing	해당 파일을 더 이상 찾을 수 없습니다.
+downloads.errorGeneric	해당 작업을 완료할 수 없습니다.
+unsupportedPreview.genericType	파일
+unsupportedPreview.cannotOpen	이 앱은 이 형식의 파일을 열 수 없습니다.
+uploads.navigationTitle	업로드
+uploads.menuTitle	업로드
+uploads.actionUploadFromFiles	파일 앱에서 업로드
+uploads.actionUploadFromPhotos	갤러리에서 업로드
+uploads.actionTakePhoto	사진 또는 동영상 촬영
+uploads.cameraDeniedTitle	카메라 접근 권한 필요
+uploads.cameraDeniedMessage	사진이나 동영상을 촬영하려면 설정에서 카메라 접근을 허용하세요.
+uploads.destinationTitle	업로드할 위치…
+uploads.destinationConfirm	여기에 업로드
+uploads.reviewTitleOne	파일 1개 업로드
+uploads.reviewTitleMany	파일 %lld개 업로드
+uploads.reviewSectionFiles	파일
+uploads.reviewSectionPath	경로
+uploads.reviewSectionSize	전체 크기
+uploads.reviewChooseFolder	폴더 선택
+uploads.reviewUploadButton	업로드
+uploads.reviewPreparing	%lld개 준비 중…
+uploads.reviewAddMore	파일 더 추가
+uploads.reviewPreviewFile	%@ 미리보기
+uploads.reviewInsecureNetworkNotice	http로 연결되었습니다. 이 서버가 홈 네트워크에만 있다면 네트워크를 벗어나면 업로드가 작동하지 않습니다.
+uploads.stagingFailed	해당 파일을 추가할 수 없습니다. 다시 시도하세요.
+uploads.stagingSkipped	항목 %lld개를 준비할 수 없어 제외되었습니다.
+uploads.discardTitle	업로드를 취소할까요?
+uploads.discardMessage	추가한 파일은 업로드되지 않습니다.
+uploads.discardConfirm	취소
+uploads.statusWaiting	대기 중
+uploads.statusFailed	업로드 실패
+uploads.barTitleOne	%@ 업로드 중
+uploads.barTitleMany	파일 %lld개 업로드 중
+uploads.barFailedOne	업로드 1개 실패
+uploads.barFailedMany	업로드 %lld개 실패
+uploads.retryAll	모두 다시 시도
+uploads.complete	업로드 완료
+uploads.completeMany	파일 %lld개 업로드됨
+uploads.completeWithFailures	%1$lld개 업로드, %2$lld개 실패
+uploads.failedGeneric	이 파일을 업로드할 수 없습니다.
+uploads.clear	지우기
+uploads.emptyList	아직 업로드가 없습니다.
+uploads.cancelAll	모든 업로드 취소
+shared.navigationTitle	공유됨
+shared.segmentByMe	내가 공유
+shared.segmentWithMe	나와 공유됨
+shared.sectionExpired	만료됨
+shared.badgeExpired	만료됨
+shared.emptyByMe	파일이나 폴더를 공유하면 여기에 링크가 표시됩니다.
+shared.emptyWithMe	다른 사람이 나와 공유한 링크가 여기에 표시됩니다.
+shared.noSearchMatches	“%@”과(와) 일치하는 공유가 없습니다.
+shared.deleteTitle	공유 링크를 삭제할까요?
+shared.deleteMessage	링크가 즉시 작동을 멈춥니다. 파일이나 폴더 자체는 영향을 받지 않습니다.
+shared.sharedByUnknown	누군가
+shared.metaAccess	접근
+shared.metaExpiration	만료
+shared.metaSharedBy	공유한 사람
+shared.metaSharedWith	공유 대상
+shared.anyoneWithLink	링크가 있는 모든 사용자
+shared.linkMode	링크 모드
+shared.actionShareLink	링크 공유
+shared.actionFolderLink	폴더 링크
+shared.actionFileLink	파일 링크
+shared.moreRecipients	+%lld
+shared.copiedShareLink	공유 링크가 복사됨
+shared.copiedFolderZip	폴더 ZIP 링크가 복사됨
+shared.copiedDirectFile	직접 파일 링크가 복사됨
+createShare.title	공유 링크 만들기
+createShare.titleCreated	공유가 생성됨
+createShare.sectionLabel	레이블
+createShare.sectionAccessMode	접근 모드
+createShare.sectionWhoCanAccess	접근할 수 있는 사람
+createShare.sectionShareLink	공유 링크
+createShare.fieldPassword	비밀번호
+createShare.togglePasswordProtect	비밀번호 보호
+createShare.toggleSetExpiration	만료 날짜 설정
+createShare.fieldExpires	만료
+createShare.submit	공유 링크 만들기
+createShare.loadingUsers	사용자 불러오는 중…
+createShare.noOtherUsers	공유할 다른 사용자가 없습니다.
+createShare.sharingPrefix	공유 중:
+createShare.createdBanner	공유 링크가 성공적으로 생성되었습니다!
+createShare.viewInShared	공유됨에서 보기
+createShare.directLinkMode	직접 링크 모드
+createShare.directFolderLink	직접 폴더 ZIP 링크
+createShare.directFileLink	직접 파일 링크
+createShare.summaryAccess	접근
+createShare.summarySharedWith	공유 대상
+createShare.summaryPassword	비밀번호
+createShare.summaryPasswordProtected	보호됨
+createShare.summaryExpires	만료
+createShare.summarySpecificPeople	특정 사용자
+createShare.errorPastExpiration	미래의 만료 날짜를 선택하세요.
+editShare.title	공유 링크 편집
+editShare.save	변경 사항 저장
+editShare.passwordKeepHint	현재 비밀번호를 유지하려면 비워 두세요
+editShare.savedToast	공유 링크가 업데이트됨
+thumbnailSettings.navigationTitle	썸네일
+thumbnailSettings.subtitle	서버가 모든 클라이언트를 위해 이미지 썸네일을 생성하는 방식을 제어합니다.
+thumbnailSettings.enable	썸네일 생성
+thumbnailSettings.enableHelp	끄면 모든 곳에서 전체 이미지를 제공합니다.
+thumbnailSettings.quality	품질
+thumbnailSettings.qualityHelp	높을수록 더 좋아 보이고 더 많은 공간을 사용합니다.
+thumbnailSettings.maxDimension	최대 크기
+thumbnailSettings.maxDimensionHelp	생성된 썸네일의 가장 긴 변, 픽셀 단위.
+thumbnailSettings.concurrency	동시 처리
+thumbnailSettings.concurrencyHelp	서버가 한 번에 만드는 썸네일 수.
+thumbnailSettings.unavailable	썸네일 설정은 관리자만 사용할 수 있습니다.
+thumbnailSettings.saveButton	변경 사항 저장
+accessRules.navigationTitle	폴더 접근 규칙
+accessRules.subtitle	특정 경로에 대한 읽기 및 쓰기 접근을 재정의합니다.
+accessRules.addRule	규칙 추가
+accessRules.empty	구성된 접근 규칙이 없습니다.
+accessRules.emptyHint	경로 접근을 재정의하려면 규칙을 추가하세요.
+accessRules.pathLabel	경로
+accessRules.pathPlaceholder	문서/보고서
+accessRules.recursive	하위 폴더에 적용
+accessRules.permissionReadWrite	읽기 및 쓰기
+accessRules.permissionReadOnly	읽기 전용
+accessRules.permissionHidden	숨김
+accessRules.remove	제거
+accessRules.unavailable	접근 규칙은 관리자만 사용할 수 있습니다.
+accessRules.saveButton	변경 사항 저장
+settings.rowThumbnails	썸네일
+settings.rowAccessRules	폴더 접근 규칙
+settings.navigationTitle	설정
+settings.appVersion	버전 %1$@ (%2$@)
+settings.sectionGeneral	일반
+settings.sectionDisplay	디스플레이
+settings.sectionStorage	저장 공간
+settings.sectionServerStorage	서버 저장 공간
+settings.serverStorageUsed	%2$@ 중 %1$@
+settings.sectionLicenses	라이선스
+settings.sectionLegal	법률
+settings.sectionUsers	사용자
+settings.sectionAdmin	관리
+settings.toggleShowHiddenFiles	숨김 파일 표시
+settings.toggleRenderHTML	HTML 페이지 렌더링
+settings.toggleRenderMarkdown	Markdown 파일 렌더링
+settings.toggleHaptics	햅틱
+settings.toggleDarkMode	다크 모드
+settings.toggleShowThumbnails	썸네일 표시
+settings.toggleShowExtensions	파일 확장자 표시
+settings.toggleRemoveArchives	다운로드 후 압축 파일 제거
+settings.toggleKeepClipboard	붙여넣기 후 항목 유지
+settings.toggleKeepClipboardSubtitle	복사한 항목은 다른 폴더에 붙여넣을 수 있도록 유지됩니다. 이동한 항목은 항상 지워집니다.
+settings.rowDateFormat	날짜 형식
+settings.rowLanguage	언어
+settings.rowThumbnailSize	썸네일 크기
+settings.rowRemoveAllDownloads	모든 다운로드 제거
+settings.rowClearCache	캐시 지우기
+settings.rowOpenSourceLicenses	오픈 소스 라이선스
+settings.rowPrivacyPolicy	개인정보 처리방침
+settings.rowTermsOfUse	이용약관
+settings.rowUserManagement	사용자 관리
+settings.rowChangePassword	비밀번호 변경
+settings.rowServer	서버
+settings.storageFootnote	폴더를 다운로드하면 서버에서 먼저 ZIP으로 압축합니다. 기기에 저장된 후 서버에서 해당 압축 파일을 삭제하려면 위의 스위치를 켜세요. 다운로드 제거나 캐시 지우기는 이 기기에만 영향을 주며 서버의 데이터는 변경되지 않습니다.
+settings.removeAllDownloadsTitle	모든 다운로드를 제거할까요?
+settings.removeAllDownloadsConfirm	모두 제거
+settings.removeAllDownloadsMessage	이 기기에서 다운로드한 모든 파일을 삭제합니다. 서버에는 남아 있습니다.
+settings.clearCacheTitle	캐시를 지울까요?
+settings.clearCacheConfirm	지우기
+settings.clearCacheMessage	오프라인에서 사용하는 캐시된 미리보기, 썸네일, 저장된 폴더 목록을 지웁니다. 서버의 데이터는 영향을 받지 않습니다.
+settings.signOutAlertTitle	로그아웃할까요?
+settings.signOutMessage	파일에 접근하려면 다시 로그인해야 합니다.
+settings.signOutButton	로그아웃
+settings.signingOut	로그아웃 중…
+settings.dateFormatNavigationTitle	날짜 형식
+settings.dateFormatShowTime	시간 표시
+serverDetails.navigationTitle	서버
+serverDetails.changeLogo	아이콘 변경
+serverDetails.takePhoto	사진 촬영
+serverDetails.chooseFromGallery	갤러리에서 업로드
+serverDetails.nameLabel	서버 이름
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	서버 이름은 비워 둘 수 없습니다.
+serverDetails.urlLabel	서버 URL
+serverDetails.urlFootnote	NextExplorer 인스턴스가 설치된 주소입니다. 변경하려면 로그아웃한 후 서버를 다시 추가하세요.
+serverDetails.updateButton	서버 업데이트
+serverDetails.savedMessage	서버 정보가 업데이트되었습니다.
+serverDetails.logoErrorTooLarge	이미지가 너무 큽니다. 2MB 미만의 이미지를 선택하세요.
+serverDetails.cameraDeniedTitle	카메라 접근 꺼짐
+serverDetails.cameraDeniedMessage	사진을 촬영하려면 설정에서 카메라 접근을 켜세요.
+licenses.navigationTitle	오픈 소스 라이선스
+licenses.sectionSoftware	소프트웨어
+licenses.sectionFontSoftware	폰트 소프트웨어
+licenses.labelAuthor	작성자
+licenses.labelOriginalVersion	원본 버전
+licenses.labelModifiedVersion	수정된 버전
+licenses.labelReservedFontName	예약된 폰트 이름
+fileInfo.navigationTitleFolder	폴더
+fileInfo.rowKind	종류
+fileInfo.rowSize	크기
+fileInfo.rowLocation	위치
+fileInfo.rowDateModified	수정한 날짜
+fileInfo.rowDateCreated	생성한 날짜
+fileInfo.rowFiles	파일
+fileInfo.rowFolders	폴더
+fileInfo.rowTotalSize	전체 크기
+fileInfo.sectionServerDisk	서버 디스크
+fileInfo.diskFreeOf	%2$@ 중 %1$@ 사용 가능
+fileInfo.rowDimensions	크기
+fileInfo.rowCamera	카메라
+fileInfo.rowLens	렌즈
+fileInfo.rowDateTaken	촬영한 날짜
+fileInfo.rowDuration	재생 시간
+fileInfo.partialScan	부분 스캔을 집계함: 이 폴더는 매우 큽니다.
+permissions.title	권한
+permissions.sectionMode	모드
+permissions.numericLabel	숫자
+permissions.applyToEnclosed	포함된 항목에 적용
+permissions.applyPermissions	권한 적용
+permissions.sectionOwnership	소유권
+permissions.fieldOwner	소유자
+permissions.fieldGroup	그룹
+permissions.ownershipNote	소유권을 변경하려면 보통 서버에서 root 또는 관리자 권한이 필요합니다.
+permissions.applyOwnership	소유권 적용
+permissions.scopeOwner	소유자
+permissions.scopeGroup	그룹
+permissions.scopeOthers	기타
+permissions.rightRead	읽기
+permissions.rightWrite	쓰기
+permissions.rightExecute	실행
+archive.emptyFolder	이 폴더는 비어 있습니다.
+archive.openFailed	이 파일을 열 수 없습니다.
+archive.openArchiveFailed	이 압축 파일을 열 수 없습니다.
+archive.entryTooLarge	이 항목은 너무 커서 열 수 없습니다.
+gallery.loadFailed	이 이미지를 불러올 수 없습니다.
+textPreview.saved	저장됨
+textPreview.loadFailed	이 파일을 불러올 수 없습니다. 연결을 확인하고 다시 시도하세요.
+userManagement.navigationTitle	사용자 관리
+userManagement.searchPrompt	사용자 검색
+userManagement.createUser	사용자 만들기
+userManagement.badgeAdmin	관리자
+userManagement.emptyList	아직 사용자가 없습니다.
+userManagement.noSearchMatches	“%@”과(와) 일치하는 사용자가 없습니다.
+userManagement.loadFailed	서버에 연결할 수 없습니다.
+userManagement.sortType	유형
+userManagement.sortName	이름
+userManagement.sortEmail	이메일
+userManagement.tabProfile	프로필
+userManagement.tabSecurity	보안
+userManagement.tabVolumes	볼륨
+userManagement.createNavigationTitle	사용자 만들기
+userManagement.createEmailField	이메일
+userManagement.createEmailPlaceholder	name@example.com
+userManagement.createUsernameField	사용자 이름 (선택 사항)
+userManagement.createUsernamePlaceholder	이메일에서 파생됨
+userManagement.createPasswordField	비밀번호
+userManagement.createPasswordPlaceholder	최소 %lld자
+userManagement.createGrantAdminToggle	관리자 접근 권한 부여
+userManagement.createGrantAdminSubtitle	파일, 공유 및 사용자에 대한 전체 제어.
+userManagement.createSubmit	사용자 만들기
+userManagement.setPasswordNavigationTitle	비밀번호
+userManagement.setPasswordNewField	새 비밀번호
+userManagement.setPasswordPlaceholder	최소 %lld자
+userManagement.setPasswordResetTitle	비밀번호 재설정
+userManagement.setPasswordSetTitle	비밀번호 설정
+userManagement.setPasswordResetIntro	%@의 새 로컬 비밀번호를 설정하세요. 현재 비밀번호는 작동을 멈춥니다.
+userManagement.setPasswordSetIntro	%@이(가) SSO 없이 로그인할 수 있도록 로컬 비밀번호를 부여하세요.
+userManagement.toastProfileUpdated	프로필이 업데이트됨
+userManagement.toastAdminGranted	관리자 권한이 부여됨
+userManagement.toastUserRemoved	사용자가 제거됨
+userManagement.toastUserCreated	사용자가 생성됨
+userManagement.toastPasswordUpdated	비밀번호가 업데이트됨
+userManagement.toastVolumeSaved	볼륨이 저장됨
+userManagement.toastVolumeRemoved	볼륨이 제거됨
+userManagement.errorEmailRequired	이메일이 필요합니다.
+userManagement.errorEmailInvalid	유효한 이메일 주소를 입력하세요.
+userManagement.errorUsernameRequired	사용자 이름이 필요합니다.
+userManagement.errorEmailInUse	이미 사용 중인 이메일입니다.
+userManagement.errorPasswordTooShort	최소 %lld자를 사용하세요.
+userDetail.fallbackName	사용자
+userDetail.sectionGeneralInfo	일반 정보
+userDetail.sectionRoles	역할 및 권한
+userDetail.sectionLocalPassword	로컬 비밀번호
+userDetail.sectionSSO	싱글 사인온
+userDetail.sectionAssignedVolumes	할당된 볼륨
+userDetail.profileDisplayNameField	표시 이름
+userDetail.profileDisplayNamePlaceholder	표시 이름
+userDetail.profileUsernameField	사용자 이름
+userDetail.profileUsernamePlaceholder	사용자 이름
+userDetail.profileEmailField	이메일
+userDetail.profileEmailPlaceholder	name@example.com
+userDetail.profileSave	변경 사항 저장
+userDetail.roleAdmin	관리자
+userDetail.roleAdminSubtitle	파일, 공유 및 사용자에 대한 전체 제어.
+userDetail.roleAdminLocked	관리자는 앱에서 강등할 수 없습니다.
+userDetail.roleGrantAdmin	관리자 부여
+userDetail.passwordHasLocal	이 사용자는 이메일과 비밀번호로 로그인합니다.
+userDetail.passwordSSOOnly	이 사용자는 로컬 비밀번호가 없습니다: SSO 전용.
+userDetail.passwordReset	비밀번호 재설정
+userDetail.passwordSet	비밀번호 설정
+userDetail.ssoNone	연결된 SSO 공급자가 없습니다.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	연결됨
+userDetail.dangerZoneTitle	위험 구역
+userDetail.dangerZoneSubtitle	사용자를 제거하면 접근 권한이 즉시 취소됩니다. 서버에서 해당 사용자가 소유한 파일은 삭제되지 않습니다.
+userDetail.dangerZoneRemoveUser	사용자 제거
+userDetail.volumesNone	할당된 볼륨이 없습니다.
+userDetail.volumesNoneSubtitle	이 사용자는 기본 공유 공간만 볼 수 있습니다.
+userDetail.volumesAssign	볼륨 할당
+userDetail.volumesFootnote	볼륨은 사용자에게 기본 공유 공간 외부의 디렉터리에 대한 접근을 제공합니다. 볼륨을 제거해도 파일은 삭제되지 않습니다.
+userDetail.volumeEditAccessibility	%@ 편집
+userDetail.volumeRemoveAccessibility	%@ 제거
+userDetail.removeVolumeTitle	볼륨을 제거할까요?
+userDetail.removeVolumeMessage	%@이(가) 이 사용자에서 할당 해제됩니다. 디렉터리 자체는 영향을 받지 않습니다.
+userDetail.removeUserTitle	사용자를 제거할까요?
+userDetail.removeUserMessage	%@이(가) 즉시 접근 권한을 잃습니다. 서버의 파일은 삭제되지 않습니다.
+userDetail.volumeSheetLabelField	레이블
+userDetail.volumeSheetLabelPlaceholder	볼륨 레이블
+userDetail.volumeSheetAccessMode	접근 모드
+userDetail.volumeSheetDirectory	디렉터리
+userDetail.volumeSheetSaveEdit	볼륨 저장
+userDetail.volumeSheetSaveNew	볼륨 할당
+userDetail.volumeSheetTitleEdit	볼륨 편집
+userDetail.volumeSheetTitleNew	볼륨 할당
+userDetail.directoryPickerGoUp	한 디렉터리 위로
+userDetail.directoryPickerUseThis	이 디렉터리 사용
+userDetail.directoryPickerOpen	%@ 열기
+userDetail.directoryPickerFailed	디렉터리를 나열할 수 없습니다.
+previewToolbar.close	닫기
+previewToolbar.createShareLink	공유 링크 만들기
+previewToolbar.download	다운로드
+previewToolbar.delete	삭제
+previewToolbar.share	공유
+previewToolbar.rename	이름 변경
+login.serverQuestion	NextExplorer 인스턴스는 어디에 있나요?
+login.testConnection	연결 테스트
+login.emailField	이메일
+login.passwordField	비밀번호
+login.submit	로그인
+login.plaintextWarning	이 연결은 암호화되지 않았습니다. 비밀번호와 세션이 로컬 네트워크를 통해 평문으로 전송됩니다.
+error.sessionExpired	세션이 만료되었습니다. 다시 로그인하세요.
+error.rateLimited	요청이 너무 많습니다. 잠시 후 다시 시도하세요.
+error.network	서버에 연결할 수 없습니다.
+error.offline	오프라인 상태입니다. 인터넷에 연결하고 다시 시도하세요.
+error.decoding	서버가 예기치 않게 응답했습니다.
+error.server	서버 오류 (%lld).
+error.forbidden	이 작업을 수행할 권한이 없습니다.
+changePassword.navigationTitle	비밀번호 변경
+changePassword.intro	이메일 주소로 로그인할 때 사용하는 비밀번호를 변경합니다. 이 기기에서는 로그인 상태가 유지됩니다.
+changePassword.fieldCurrentPassword	현재 비밀번호
+changePassword.fieldNewPasswordLabel	새 비밀번호
+changePassword.fieldConfirmPasswordLabel	새 비밀번호 확인
+changePassword.fieldConfirmPassword	새 비밀번호 다시 입력
+changePassword.fieldNewPasswordPrompt	최소 %lld자
+changePassword.submitButton	비밀번호 업데이트
+changePassword.success	비밀번호가 업데이트되었습니다.
+changePassword.errorMinLength	최소 %lld자를 사용하세요.
+changePassword.errorMismatch	비밀번호가 일치하지 않습니다.
+login.portHint	포트를 추가하세요 (예: :3000). 대부분의 홈랩 서버는 기본 포트 80에서 수신 대기하지 않습니다.
+login.errorInvalidServer	유효한 서버 주소를 입력하세요.
+login.errorInvalidEmail	유효한 이메일 주소를 입력하세요.
+login.errorInvalidCredentials	잘못된 사용자 이름 또는 비밀번호입니다.
+login.errorSessionExpired	세션이 만료되었습니다. 다시 로그인하세요.
+login.errorIncomplete	로그인이 완료되지 않았습니다. 다시 시도하세요.
+login.errorUnreachable	해당 서버에 연결할 수 없습니다. 주소를 확인하고 다시 시도하세요.
+login.errorUnexpectedResponse	서버로부터 예기치 않은 응답입니다.
+login.errorKeychain	이 기기에 세션을 저장할 수 없습니다.
+login.errorDecoding	서버가 예기치 않게 응답했습니다. 주소를 확인하고 다시 시도하세요.
+login.errorNoLocalAuth	이 서버는 사용자 이름/비밀번호 로그인이 활성화되어 있지 않습니다.
+login.errorRateLimited	시도가 너무 많습니다. 몇 분 기다린 후 다시 시도하세요.
+login.errorServer	서버에 문제가 발생했습니다 (오류 %lld). 나중에 다시 시도하세요.
+browse.nameErrorReserved	해당 이름은 허용되지 않습니다.
+browse.nameErrorSeparators	이름에는 / 또는 \를 포함할 수 없습니다.
+browse.searchMatchLine	%1$lld번째 줄: %2$@
+browse.searchMatchLineLabel	%lld번째 줄
+createShare.errorPasswordRequired	비밀번호를 입력하거나 비밀번호 보호를 끄세요.
+filter.sheetTitle	유형별 필터
+filter.button	필터
+filter.all	모든 유형
+filter.folders	폴더
+filter.images	이미지
+filter.videos	동영상
+filter.audio	오디오
+filter.documents	문서
+filter.archives	압축 파일
+filter.other	기타
+language.navigationTitle	언어
+language.systemDefault	시스템 기본값
+language.systemDefaultSubtitle	기기 언어 따르기
