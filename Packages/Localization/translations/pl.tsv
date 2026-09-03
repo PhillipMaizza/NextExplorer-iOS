@@ -540,3 +540,13 @@ filter.other	Inne
 language.navigationTitle	Język
 language.systemDefault	Domyślny systemu
 language.systemDefaultSubtitle	Podążaj za językiem urządzenia
+common.copy	Kopiuj
+common.copied	Skopiowano
+favorites.accessibilityBadge	Ulubione
+login.showPassword	Pokaż hasło
+login.hidePassword	Ukryj hasło
+browse.breadcrumbHint	Otwiera ten folder
+login.serverInfoAccessibility	Informacje o łączeniu z serwerem
+login.serverInfoTitle	Czym jest serwer?
+login.serverInfoBody	NextExplorer łączy się z Twoim własnym serwerem NextExplorer. Administrator zarządza serwerem, tworzy konta i udostępnia jego adres internetowy. Wpisz ten adres, aby się zalogować.\n\nNie masz jeszcze serwera? Przewodnik konfiguracji pokaże, jak go uruchomić.
+login.serverInfoGuide	Otwórz przewodnik konfiguracji

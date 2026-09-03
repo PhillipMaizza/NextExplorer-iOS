@@ -5,7 +5,7 @@ import SwiftUI
 
 private enum Constants {
     static let rowSpacing: CGFloat = .space8
-    static let chipSpacing: CGFloat = .space4
+    static let chipSpacing: CGFloat = .space8
     static let chipHorizontalPadding: CGFloat = .space12
     static let chipVerticalPadding: CGFloat = .space8
     static let iconSize: CGFloat = .iconXSmall
@@ -48,7 +48,7 @@ struct SearchFilterChips: View {
                 Text(title)
                     .type(.body2(isSelected ? .semibold : .regular))
             }
-            .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
+            .foregroundStyle(isSelected ? Color.accentText : Color.secondaryDS)
             .padding(.horizontal, Constants.chipHorizontalPadding)
             .padding(.vertical, Constants.chipVerticalPadding)
             // Same `backgroundSecondary` track as the scope segmented control, but selection reads

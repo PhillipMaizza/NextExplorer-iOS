@@ -71,7 +71,7 @@ public struct DSNavigationRow: View {
     private var iconColor: Color {
         switch role {
         case .standard: .secondaryDS
-        case .accent: .accent
+        case .accent: .accentText
         case .destructive: .negative
         }
     }

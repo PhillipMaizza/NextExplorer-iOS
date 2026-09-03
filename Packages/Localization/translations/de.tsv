@@ -540,3 +540,13 @@ filter.other	Andere
 language.navigationTitle	Sprache
 language.systemDefault	Systemstandard
 language.systemDefaultSubtitle	Der Gerätesprache folgen
+common.copy	Kopieren
+common.copied	Kopiert
+favorites.accessibilityBadge	Favorit
+login.showPassword	Passwort anzeigen
+login.hidePassword	Passwort verbergen
+browse.breadcrumbHint	Öffnet diesen Ordner
+login.serverInfoAccessibility	Über die Verbindung zu einem Server
+login.serverInfoTitle	Was ist ein Server?
+login.serverInfoBody	NextExplorer verbindet sich mit deinem eigenen NextExplorer-Server. Ein Administrator betreibt den Server, erstellt Konten und teilt dir seine Webadresse mit. Gib diese Adresse ein, um dich anzumelden.\n\nNoch kein Server? Die Einrichtungsanleitung zeigt dir, wie du einen selbst hostest.
+login.serverInfoGuide	Einrichtungsanleitung öffnen
