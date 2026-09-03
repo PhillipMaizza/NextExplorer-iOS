@@ -183,7 +183,7 @@ struct UploadReviewView: View {
             }
             if store.isPreparing {
                 HStack(spacing: Constants.rowSpacing) {
-                    ProgressView()
+                    DSSpinner()
                     Text(L10n.Uploads.reviewPreparing(store.preparingCount))
                         .type(.body3(.regular), style: .secondary)
                 }

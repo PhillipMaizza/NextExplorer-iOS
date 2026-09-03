@@ -142,7 +142,7 @@ struct VolumeAssignSheet: View {
                     }
                 }
             } else if isBrowsing {
-                ProgressView().frame(maxWidth: .infinity).padding(.vertical, .space8)
+                DSSpinner().frame(maxWidth: .infinity).padding(.vertical, .space8)
             } else if let browseError {
                 Text(browseError).type(.body3(.semibold), style: .error)
             }

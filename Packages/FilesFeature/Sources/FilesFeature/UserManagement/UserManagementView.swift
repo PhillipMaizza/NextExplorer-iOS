@@ -84,7 +84,7 @@ struct UserManagementView: View {
     @ViewBuilder
     private var overlay: some View {
         if store.phase == .loading && store.users.isEmpty {
-            ProgressView()
+            DSSpinner()
         } else if let error = store.phase.errorMessage, store.users.isEmpty {
             EmptyStateView(
                 icon: IconKit.warning,

@@ -117,7 +117,7 @@ struct SystemShareButton: View {
     var body: some View {
         Button(action: prepare) {
             if isPreparing {
-                ProgressView()
+                DSSpinner()
             } else {
                 IconKit.share.foregroundStyle(didFail ? Color.negative : Color.primaryDS)
             }

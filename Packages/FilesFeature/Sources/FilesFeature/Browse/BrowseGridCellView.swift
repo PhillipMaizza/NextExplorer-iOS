@@ -146,7 +146,7 @@ struct GridCellView: View {
         .frame(maxWidth: .infinity)
         .overlay(alignment: .bottomTrailing) {
             if isOpening {
-                ProgressView()
+                DSSpinner()
                     .controlSize(.small)
                     .padding(Constants.favoriteBadgePadding)
                     .background(Circle().fill(Color.backgroundPrimary).shadow(radius: Constants.favoriteBadgeShadowRadius))

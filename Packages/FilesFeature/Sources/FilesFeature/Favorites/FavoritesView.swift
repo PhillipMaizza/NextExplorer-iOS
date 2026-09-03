@@ -21,6 +21,7 @@ private enum Constants {
 struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
     @AppStorage(AppStorageKeys.favoritesViewMode) private var viewModeRaw = FavoritesViewMode.list.rawValue
+    @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
     /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
@@ -47,8 +48,20 @@ struct FavoritesView: View {
         if store.errorMessage != nil { return .error }
         if !store.phase.hasLoaded && store.favorites.isEmpty { return .loading }
         if store.favorites.isEmpty { return .empty }
-        if !store.searchQuery.isEmpty && store.displayedFavorites.isEmpty { return .noResults }
+        // While searching, the screen shows recursive file results across the favorited folders,
+        // so its phase follows `searchPhase`/results, not the favorites list.
+        if store.isSearching {
+            if store.searchPhase.errorMessage != nil && store.fileSearchResults == nil { return .error }
+            if !store.searchPhase.hasLoaded && store.fileSearchResults == nil { return .loading }
+            return store.displayedSearchResults.isEmpty ? .noResults : .content
+        }
         return .content
+    }
+
+    /// The message the error overlay shows: the search failure while searching, otherwise the
+    /// favorites load failure.
+    private var overlayErrorMessage: String? {
+        store.isSearching ? store.searchPhase.errorMessage : store.errorMessage
     }
 
     private var bulkRemoveConfirmationBinding: Binding<Bool> {
@@ -111,7 +124,9 @@ struct FavoritesView: View {
 
     private var rootContent: some View {
         Group {
-                if viewMode == .list {
+                if store.isSearching {
+                    searchResultsContent
+                } else if viewMode == .list {
                     listContent
                 } else {
                     gridContent
@@ -146,12 +161,12 @@ struct FavoritesView: View {
             .overlay {
                 ListStateOverlay(
                     phase: listPhase,
-                    errorMessage: store.errorMessage,
+                    errorMessage: overlayErrorMessage,
                     emptyIcon: IconKit.star,
                     emptyMessage: L10n.Favorites.emptyList,
                     noResultsMessage: L10n.EmptyState.noSearchMatches(store.searchQuery),
                     pullOffset: pullOffset,
-                    onRetry: { store.send(.refreshButtonTapped) }
+                    onRetry: { store.send(store.isSearching ? .searchRetryTapped : .refreshButtonTapped) }
                 )
             }
             .animation(DSMotion.contentReveal, value: listPhase)
@@ -176,6 +191,18 @@ struct FavoritesView: View {
             }
             .sheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
                 FavoriteEditSheet(store: editStore, onClose: { store.send(.editSheet(.dismiss)) })
+            }
+            // A tapped file result opens directly in this cover (no folder navigation); the host
+            // `BrowseFeature` drives the same preview router Browse uses.
+            .fullScreenCover(item: $store.scope(state: \.previewHost, action: \.previewHost)) { hostStore in
+                if let previewItem = hostStore.previewItem {
+                    BrowsePreviewRouter(
+                        store: hostStore,
+                        item: previewItem,
+                        removeArchiveAfterDownload: removeArchiveAfterDownload,
+                        onShareTarget: { _ in }
+                    )
+                }
             }
             .hapticFeedback(.selection, trigger: viewModeRaw)
             .hapticFeedback(.selection, trigger: store.isSelecting)
@@ -329,6 +356,48 @@ struct FavoritesView: View {
         // swap the outer `.animation(value: listPhase)` owns the cross-fade alone, so the two
         // don't run the same transition twice.
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)
+    }
+
+    /// Recursive file search results across the favorited folders, shown in place of the favorites
+    /// list while a query is active. Same inset-grouped styling as `listContent`; tapping a hit
+    /// pushes its containing folder and opens the file.
+    private var searchResultsContent: some View {
+        let results = store.displayedSearchResults
+        let firstID = results.first?.id
+        let lastID = results.last?.id
+        return List {
+            if listPhase == .loading {
+                skeletonRows
+            } else {
+                ForEach(results) { result in
+                    Button {
+                        store.send(.searchResultTapped(result))
+                    } label: {
+                        FileRowView(
+                            name: result.name,
+                            isDirectory: result.isDirectory,
+                            subtitle: searchResultSnippet(result),
+                            lineLabel: searchResultLineLabel(result),
+                            kind: searchResultKind(result)
+                        )
+                    }
+                    .buttonStyle(DSHapticButtonStyle())
+                    .listRowBackground(Color.backgroundSecondary)
+                    .listRowSeparator(result.id == firstID ? .hidden : .visible, edges: .top)
+                    .listRowSeparator(result.id == lastID ? .hidden : .visible, edges: .bottom)
+                }
+            }
+        }
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .backgroundGradient()
+        .scrollPullOffset($pullOffset)
+        .dismissKeyboardOnTap()
+        .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.fileSearchResults)
+    }
+
+    private func searchResultKind(_ result: SearchResultItem) -> String {
+        result.isDirectory ? result.kind : (result.name as NSString).pathExtension.lowercased()
     }
 
     private var gridContent: some View {
