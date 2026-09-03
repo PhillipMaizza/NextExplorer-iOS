@@ -81,6 +81,13 @@ struct BrowseContentView: View {
         ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium
     }
 
+    /// The root's title is re-derived from `L10n` here rather than read from `store.title` (which
+    /// captured it once at login) so it re-localizes live when the language changes. Pushed
+    /// subfolders show their real folder name from `store.title`.
+    private var displayTitle: String {
+        store.directoryPath.isEmpty ? L10n.Browse.navigationTitle : store.title
+    }
+
     private var gridColumns: [GridItem] {
         [GridItem(.adaptive(minimum: thumbnailSize.gridItemMinWidth), spacing: Constants.gridSpacing)]
     }
@@ -237,7 +244,7 @@ struct BrowseContentView: View {
         .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: store.dataSource)
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
-                title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : store.title,
+                title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : displayTitle,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged)
             ) {
                 if store.isSearching {

@@ -1,0 +1,542 @@
+# NextExplorer — 日本語 (ja). key<TAB>value.
+common.cancel	キャンセル
+common.save	保存
+common.edit	編集
+common.retry	再試行
+common.delete	削除
+common.remove	取り除く
+common.clear	消去
+common.done	完了
+common.ok	OK
+common.openSettings	設定を開く
+common.logOut	ログアウト
+common.close	閉じる
+common.back	戻る
+common.share	共有
+common.download	ダウンロード
+common.sort	並べ替え
+common.select	選択
+common.search	検索
+common.password	パスワード
+common.never	なし
+common.selectedCount	%lld 件を選択中
+tab.browse	ブラウズ
+tab.favorites	お気に入り
+tab.shared	共有
+tab.downloads	ダウンロード
+tab.settings	設定
+sort.sheetTitle	並べ替え基準
+sort.name	名前
+sort.size	サイズ
+sort.kind	種類
+sort.dateModified	変更日
+sort.dateAdded	追加日
+sort.dateShared	共有日
+sort.expiration	有効期限
+sort.email	メール
+sort.type	タイプ
+sort.ascending	昇順
+sort.descending	降順
+select.selectAll	すべて選択
+select.deselectAll	選択をすべて解除
+select.listView	リスト表示
+select.gridView	グリッド表示
+emptyState.folderEmpty	このフォルダは空です。
+emptyState.loadFailed	サーバに接続できませんでした。
+emptyState.noSearchMatches	「%@」の結果がありません。
+accessMode.readonly	読み出しのみ
+accessMode.readwrite	読み書き
+shareTarget.anyone	リンクを知っている全員
+shareTarget.users	特定のユーザ
+directLinkMode.auto	自動
+directLinkMode.inline	表示
+directLinkMode.raw	そのまま
+directLinkMode.download	ダウンロード
+thumbnailSize.small	小
+thumbnailSize.medium	中
+thumbnailSize.large	大
+downloadLocation.documents	書類
+downloadLocation.cache	キャッシュ
+dateFormat.automatic	自動
+browse.navigationTitle	ブラウズ
+browse.scopeThisFolder	このフォルダ
+browse.scopeEverywhere	すべての場所
+browse.searchScopeInFolder	このフォルダ
+browse.searchScopeEverywhere	すべての場所
+browse.locations	場所
+browse.open	開く
+browse.unsupportedFileType	サポートされていないファイルタイプ
+browse.actionGetInfo	情報を見る
+browse.actionPermissions	アクセス権
+browse.actionRename	名称変更
+browse.actionExtract	展開
+browse.actionCompress	圧縮
+browse.actionDownload	ダウンロード
+browse.actionAddToFavorites	お気に入りに追加
+browse.actionRemoveFromFavorites	お気に入りから削除
+browse.actionShare	共有リンクを作成
+browse.actionDelete	削除
+browse.renameTitle	名称変更
+browse.renameNamePlaceholder	名前
+browse.actionNewFolder	フォルダを作成
+browse.newFolderTitle	新規フォルダ
+browse.newFolderPlaceholder	フォルダ名
+browse.newFolderConfirm	作成
+browse.deleteConfirmTitle	削除しますか？
+browse.deleteConfirmOne	「%@」を削除しますか？
+browse.deleteConfirmMany	%lld 項目を削除しますか？
+browse.deleteMessage	この操作は取り消せません。
+browse.deleteLinkedSharesOne	ここを指す共有リンク 1 件も削除されます。
+browse.deleteLinkedSharesMany	ここを指す共有リンク %lld 件も削除されます。
+browse.deleteLinkedSharesUnavailable	ここを指すリンクを確認できませんでした。存在するリンクは機能しなくなります。
+browse.searchNoMatchesInFolder	「%@」の結果がありません。
+browse.searchEverywhere	すべての場所を検索
+browse.searchFailed	検索できませんでした。接続を確認して再試行してください。
+browse.progressExtracting	展開中…
+browse.progressCompressing	圧縮中…
+browse.progressDownloading	ダウンロード中…
+browse.progressDownloadingIndexed	%2$lld 件中 %1$lld 件をダウンロード中…
+browse.downloadSavedTo	%@ に保存しました
+browse.downloadSavedCountTo	%2$lld 件中 %1$lld 件を %3$@ に保存しました
+browse.downloadSavedAllTo	%1$lld 件を %2$@ に保存しました
+browse.downloadBulkFailed	これらの項目をデバイスに保存できませんでした。
+browse.offlineBannerTitle	オフライン
+browse.offlineBannerDetail	%@ の保存済みコピーを表示中
+browse.actionCopy	コピー
+browse.destinationPickerMoveTitle	移動先…
+browse.destinationPickerConfirmMove	ここに移動
+browse.destinationPickerNoFolders	ここにフォルダはありません
+browse.destinationPickerLoadFailed	フォルダを読み込めませんでした。
+browse.actionMove	移動
+browse.actionPaste	ペースト
+browse.actionPasteCount	%lld 項目をペースト
+browse.actionPasteHere	ここにペースト
+browse.actionClearClipboard	クリップボードを消去
+browse.clipboardMoveCount	移動する %lld 項目
+browse.clipboardCopyCount	コピーする %lld 項目
+browse.clipboardCopiedOne	%@ をコピーしました
+browse.clipboardCopiedMany	%lld 項目をコピーしました
+browse.progressMoving	移動中…
+browse.progressCopying	コピー中…
+browse.transferMoved	%lld 項目を移動しました
+browse.transferCopied	%lld 項目をコピーしました
+browse.transferMovedWithSkipped	%1$lld 項目を移動、%2$lld 項目をスキップ
+browse.transferCopiedWithSkipped	%1$lld 項目をコピー、%2$lld 項目をスキップ
+browse.transferConflictTitle	項目を置き換えますか？
+browse.transferConflictMessageOne	「%@」はこのフォルダに既に存在します。
+browse.transferConflictMessageMany	%lld 項目がこのフォルダに既に存在します。
+browse.transferConflictReplace	置き換える
+browse.transferConflictKeepBoth	両方を残す
+browse.actionOpenInBrowser	ブラウザで開く
+favorites.navigationTitle	お気に入り
+favorites.emptyList	「ブラウズ」でフォルダにスターを付けると、ここに表示されます。
+favorites.actionRemoveFromFavorites	お気に入りから削除
+favorites.actionEdit	編集
+favorites.editTitle	お気に入りを編集
+favorites.editNameLabel	名前
+favorites.editNameErrorEmpty	名前は空にできません。
+favorites.editIconLabel	アイコン
+favorites.editIconOutline	アウトライン
+favorites.editIconSolid	塗りつぶし
+favorites.editColorLabel	カラー
+favorites.editColorDefault	デフォルト
+favorites.editSave	保存
+favorites.reorderFailed	新しい並び順を保存できませんでした。
+favorites.removeConfirm	%lld 件のお気に入りを削除しますか？
+favorites.removeMessage	お気に入りから削除するだけです。
+favorites.removeFailedOne	そのお気に入りを削除できませんでした。
+favorites.removeFailedMany	それらのお気に入りを削除できませんでした。
+favorites.removePartial	%2$lld 件中 %1$lld 件を削除しました。
+downloads.navigationTitle	ダウンロード
+downloads.actionOpenInFiles	「ファイル」で開く
+downloads.emptyList	「ブラウズ」からダウンロードしたファイルがここに表示されます。
+downloads.deleteConfirmTitle	削除しますか？
+downloads.deleteConfirmOne	「%@」を削除しますか？
+downloads.deleteConfirmMany	%lld 個のファイルを削除しますか？
+downloads.deleteSingleMessage	ローカルコピーのみを削除します。ファイルはサーバに残ります。
+downloads.deleteBulkMessage	ローカルコピーのみを削除します。ファイルはサーバに残ります。
+downloads.errorNameExists	同じ名前のファイルが既に存在します。
+downloads.errorInvalidName	その名前は使用できません。
+downloads.errorMissing	そのファイルは見つからなくなりました。
+downloads.errorGeneric	その操作を完了できませんでした。
+unsupportedPreview.genericType	ファイル
+unsupportedPreview.cannotOpen	このAppはこの種類のファイルを開けません。
+uploads.navigationTitle	アップロード
+uploads.menuTitle	アップロード
+uploads.actionUploadFromFiles	「ファイル」からアップロード
+uploads.actionUploadFromPhotos	ギャラリーからアップロード
+uploads.actionTakePhoto	写真またはビデオを撮る
+uploads.cameraDeniedTitle	カメラへのアクセスが必要です
+uploads.cameraDeniedMessage	写真やビデオを撮るには、設定でカメラへのアクセスを許可してください。
+uploads.destinationTitle	アップロード先…
+uploads.destinationConfirm	ここにアップロード
+uploads.reviewTitleOne	1 個のファイルをアップロード
+uploads.reviewTitleMany	%lld 個のファイルをアップロード
+uploads.reviewSectionFiles	ファイル
+uploads.reviewSectionPath	パス
+uploads.reviewSectionSize	合計サイズ
+uploads.reviewChooseFolder	フォルダを選択
+uploads.reviewUploadButton	アップロード
+uploads.reviewPreparing	%lld 件を準備中…
+uploads.reviewAddMore	ファイルをさらに追加
+uploads.reviewPreviewFile	%@ をプレビュー
+uploads.reviewInsecureNetworkNotice	http で接続しています。このサーバがホームネットワークのみにある場合、そのネットワークから離れるとアップロードは機能しません。
+uploads.stagingFailed	それらのファイルを追加できませんでした。再試行してください。
+uploads.stagingSkipped	%lld 項目を準備できず、除外されました。
+uploads.discardTitle	アップロードを破棄しますか？
+uploads.discardMessage	追加したファイルはアップロードされません。
+uploads.discardConfirm	破棄
+uploads.statusWaiting	待機中
+uploads.statusFailed	アップロード失敗
+uploads.barTitleOne	%@ をアップロード中
+uploads.barTitleMany	%lld 個のファイルをアップロード中
+uploads.barFailedOne	1 件のアップロードが失敗しました
+uploads.barFailedMany	%lld 件のアップロードが失敗しました
+uploads.retryAll	すべて再試行
+uploads.complete	アップロード完了
+uploads.completeMany	%lld 個のファイルをアップロードしました
+uploads.completeWithFailures	%1$lld 件アップロード、%2$lld 件失敗
+uploads.failedGeneric	このファイルをアップロードできませんでした。
+uploads.clear	消去
+uploads.emptyList	まだアップロードはありません。
+uploads.cancelAll	すべてのアップロードをキャンセル
+shared.navigationTitle	共有
+shared.segmentByMe	自分から
+shared.segmentWithMe	自分宛て
+shared.sectionExpired	期限切れ
+shared.badgeExpired	期限切れ
+shared.emptyByMe	ファイルやフォルダを共有すると、そのリンクがここに表示されます。
+shared.emptyWithMe	他の人があなたと共有したリンクがここに表示されます。
+shared.noSearchMatches	「%@」に一致する共有はありません。
+shared.deleteTitle	共有リンクを削除しますか？
+shared.deleteMessage	リンクはすぐに機能しなくなります。ファイルやフォルダ自体には影響しません。
+shared.sharedByUnknown	誰か
+shared.metaAccess	アクセス
+shared.metaExpiration	有効期限
+shared.metaSharedBy	共有者
+shared.metaSharedWith	共有相手
+shared.anyoneWithLink	リンクを知っている全員
+shared.linkMode	リンクモード
+shared.actionShareLink	リンクを共有
+shared.actionFolderLink	フォルダリンク
+shared.actionFileLink	ファイルリンク
+shared.moreRecipients	+%lld
+shared.copiedShareLink	共有リンクをコピーしました
+shared.copiedFolderZip	フォルダの ZIP リンクをコピーしました
+shared.copiedDirectFile	ファイルの直接リンクをコピーしました
+createShare.title	共有リンクを作成
+createShare.titleCreated	共有を作成しました
+createShare.sectionLabel	ラベル
+createShare.sectionAccessMode	アクセスモード
+createShare.sectionWhoCanAccess	アクセスできる人
+createShare.sectionShareLink	共有リンク
+createShare.fieldPassword	パスワード
+createShare.togglePasswordProtect	パスワードで保護
+createShare.toggleSetExpiration	有効期限を設定
+createShare.fieldExpires	有効期限
+createShare.submit	共有リンクを作成
+createShare.loadingUsers	ユーザを読み込み中…
+createShare.noOtherUsers	共有できる他のユーザはいません。
+createShare.sharingPrefix	共有中:
+createShare.createdBanner	共有リンクを作成しました！
+createShare.viewInShared	「共有」で表示
+createShare.directLinkMode	直接リンクモード
+createShare.directFolderLink	フォルダの直接 ZIP リンク
+createShare.directFileLink	ファイルの直接リンク
+createShare.summaryAccess	アクセス
+createShare.summarySharedWith	共有相手
+createShare.summaryPassword	パスワード
+createShare.summaryPasswordProtected	保護済み
+createShare.summaryExpires	有効期限
+createShare.summarySpecificPeople	特定の人
+createShare.errorPastExpiration	将来の有効期限を選択してください。
+editShare.title	共有リンクを編集
+editShare.save	変更を保存
+editShare.passwordKeepHint	現在のパスワードを保持するには空のままにします
+editShare.savedToast	共有リンクを更新しました
+thumbnailSettings.navigationTitle	サムネール
+thumbnailSettings.subtitle	サーバがすべてのクライアント向けに画像サムネールを生成する方法を制御します。
+thumbnailSettings.enable	サムネールを生成
+thumbnailSettings.enableHelp	オフにすると、代わりにすべての場所でフル画像を提供します。
+thumbnailSettings.quality	品質
+thumbnailSettings.qualityHelp	高いほど見栄えが良くなり、容量も増えます。
+thumbnailSettings.maxDimension	最大寸法
+thumbnailSettings.maxDimensionHelp	生成されるサムネールの最長辺（ピクセル単位）。
+thumbnailSettings.concurrency	同時実行数
+thumbnailSettings.concurrencyHelp	サーバが一度に生成するサムネールの数。
+thumbnailSettings.unavailable	サムネール設定は管理者のみが利用できます。
+thumbnailSettings.saveButton	変更を保存
+accessRules.navigationTitle	フォルダアクセスルール
+accessRules.subtitle	特定のパスの読み書きアクセスを上書きします。
+accessRules.addRule	ルールを追加
+accessRules.empty	アクセスルールが設定されていません。
+accessRules.emptyHint	パスのアクセスを上書きするルールを追加します。
+accessRules.pathLabel	パス
+accessRules.pathPlaceholder	書類/レポート
+accessRules.recursive	サブフォルダに適用
+accessRules.permissionReadWrite	読み書き
+accessRules.permissionReadOnly	読み出しのみ
+accessRules.permissionHidden	非表示
+accessRules.remove	取り除く
+accessRules.unavailable	アクセスルールは管理者のみが利用できます。
+accessRules.saveButton	変更を保存
+settings.rowThumbnails	サムネール
+settings.rowAccessRules	フォルダアクセスルール
+settings.navigationTitle	設定
+settings.appVersion	バージョン %1$@ (%2$@)
+settings.sectionGeneral	一般
+settings.sectionDisplay	表示
+settings.sectionStorage	ストレージ
+settings.sectionServerStorage	サーバストレージ
+settings.serverStorageUsed	%2$@ 中 %1$@
+settings.sectionLicenses	ライセンス
+settings.sectionLegal	法律
+settings.sectionUsers	ユーザ
+settings.sectionAdmin	管理
+settings.toggleShowHiddenFiles	隠しファイルを表示
+settings.toggleRenderHTML	HTML ページをレンダリング
+settings.toggleRenderMarkdown	Markdown ファイルをレンダリング
+settings.toggleHaptics	触覚フィードバック
+settings.toggleDarkMode	ダークモード
+settings.toggleShowThumbnails	サムネールを表示
+settings.toggleShowExtensions	ファイル拡張子を表示
+settings.toggleRemoveArchives	ダウンロード後にアーカイブを削除
+settings.toggleKeepClipboard	ペースト後も項目を保持
+settings.toggleKeepClipboardSubtitle	コピーした項目は別のフォルダにペーストできる状態のまま残ります。移動した項目は常に消去されます。
+settings.rowDateFormat	日付形式
+settings.rowLanguage	言語
+settings.rowThumbnailSize	サムネールサイズ
+settings.rowRemoveAllDownloads	すべてのダウンロードを削除
+settings.rowClearCache	キャッシュを消去
+settings.rowOpenSourceLicenses	オープンソースライセンス
+settings.rowPrivacyPolicy	プライバシーポリシー
+settings.rowTermsOfUse	利用規約
+settings.rowUserManagement	ユーザ管理
+settings.rowChangePassword	パスワードを変更
+settings.rowServer	サーバ
+settings.storageFootnote	フォルダをダウンロードすると、サーバでまず ZIP に圧縮されます。デバイスに保存された後にそのアーカイブをサーバから削除するには、上のスイッチをオンにします。ダウンロードの削除やキャッシュの消去はこのデバイスにのみ影響し、サーバ上のものには影響しません。
+settings.removeAllDownloadsTitle	すべてのダウンロードを削除しますか？
+settings.removeAllDownloadsConfirm	すべて削除
+settings.removeAllDownloadsMessage	このデバイスからすべてのダウンロード済みファイルを削除します。サーバには残ります。
+settings.clearCacheTitle	キャッシュを消去しますか？
+settings.clearCacheConfirm	消去
+settings.clearCacheMessage	オフラインで使用するキャッシュ済みのプレビュー、サムネール、保存済みフォルダリストを消去します。サーバ上のものには影響しません。
+settings.signOutAlertTitle	サインアウトしますか？
+settings.signOutMessage	ファイルにアクセスするには再度サインインする必要があります。
+settings.signOutButton	サインアウト
+settings.signingOut	サインアウト中…
+settings.dateFormatNavigationTitle	日付形式
+settings.dateFormatShowTime	時刻を表示
+serverDetails.navigationTitle	サーバ
+serverDetails.changeLogo	アイコンを変更
+serverDetails.takePhoto	写真を撮る
+serverDetails.chooseFromGallery	ギャラリーからアップロード
+serverDetails.nameLabel	サーバ名
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	サーバ名は空にできません。
+serverDetails.urlLabel	サーバ URL
+serverDetails.urlFootnote	NextExplorer インスタンスがインストールされているアドレスです。変更するには、サインアウトしてサーバを再度追加してください。
+serverDetails.updateButton	サーバを更新
+serverDetails.savedMessage	サーバの詳細を更新しました。
+serverDetails.logoErrorTooLarge	その画像は大きすぎます。2 MB 未満のものを選択してください。
+serverDetails.cameraDeniedTitle	カメラへのアクセスがオフ
+serverDetails.cameraDeniedMessage	写真を撮るには、設定でカメラへのアクセスをオンにしてください。
+licenses.navigationTitle	オープンソースライセンス
+licenses.sectionSoftware	ソフトウェア
+licenses.sectionFontSoftware	フォントソフトウェア
+licenses.labelAuthor	作者
+licenses.labelOriginalVersion	オリジナルバージョン
+licenses.labelModifiedVersion	変更されたバージョン
+licenses.labelReservedFontName	予約フォント名
+fileInfo.navigationTitleFolder	フォルダ
+fileInfo.rowKind	種類
+fileInfo.rowSize	サイズ
+fileInfo.rowLocation	場所
+fileInfo.rowDateModified	変更日
+fileInfo.rowDateCreated	作成日
+fileInfo.rowFiles	ファイル
+fileInfo.rowFolders	フォルダ
+fileInfo.rowTotalSize	合計サイズ
+fileInfo.sectionServerDisk	サーバディスク
+fileInfo.diskFreeOf	%2$@ 中 %1$@ が空き
+fileInfo.rowDimensions	寸法
+fileInfo.rowCamera	カメラ
+fileInfo.rowLens	レンズ
+fileInfo.rowDateTaken	撮影日
+fileInfo.rowDuration	再生時間
+fileInfo.partialScan	部分スキャンを集計しました: このフォルダは非常に大きいです。
+permissions.title	アクセス権
+permissions.sectionMode	モード
+permissions.numericLabel	数値
+permissions.applyToEnclosed	内包する項目に適用
+permissions.applyPermissions	アクセス権を適用
+permissions.sectionOwnership	所有権
+permissions.fieldOwner	所有者
+permissions.fieldGroup	グループ
+permissions.ownershipNote	所有権の変更には通常、サーバ上の root または管理者権限が必要です。
+permissions.applyOwnership	所有権を適用
+permissions.scopeOwner	所有者
+permissions.scopeGroup	グループ
+permissions.scopeOthers	その他
+permissions.rightRead	読み出し
+permissions.rightWrite	書き込み
+permissions.rightExecute	実行
+archive.emptyFolder	このフォルダは空です。
+archive.openFailed	このファイルを開けませんでした。
+archive.openArchiveFailed	このアーカイブを開けませんでした。
+archive.entryTooLarge	この項目は大きすぎて開けません。
+gallery.loadFailed	この画像を読み込めませんでした。
+textPreview.saved	保存しました
+textPreview.loadFailed	このファイルを読み込めませんでした。接続を確認して再試行してください。
+userManagement.navigationTitle	ユーザ管理
+userManagement.searchPrompt	ユーザを検索
+userManagement.createUser	ユーザを作成
+userManagement.badgeAdmin	管理者
+userManagement.emptyList	まだユーザはいません。
+userManagement.noSearchMatches	「%@」に一致するユーザはいません。
+userManagement.loadFailed	サーバに接続できませんでした。
+userManagement.sortType	タイプ
+userManagement.sortName	名前
+userManagement.sortEmail	メール
+userManagement.tabProfile	プロフィール
+userManagement.tabSecurity	セキュリティ
+userManagement.tabVolumes	ボリューム
+userManagement.createNavigationTitle	ユーザを作成
+userManagement.createEmailField	メール
+userManagement.createEmailPlaceholder	name@example.com
+userManagement.createUsernameField	ユーザ名（任意）
+userManagement.createUsernamePlaceholder	メールから生成
+userManagement.createPasswordField	パスワード
+userManagement.createPasswordPlaceholder	%lld 文字以上
+userManagement.createGrantAdminToggle	管理者アクセスを付与
+userManagement.createGrantAdminSubtitle	ファイル、共有、ユーザを完全に制御できます。
+userManagement.createSubmit	ユーザを作成
+userManagement.setPasswordNavigationTitle	パスワード
+userManagement.setPasswordNewField	新しいパスワード
+userManagement.setPasswordPlaceholder	%lld 文字以上
+userManagement.setPasswordResetTitle	パスワードをリセット
+userManagement.setPasswordSetTitle	パスワードを設定
+userManagement.setPasswordResetIntro	%@ の新しいローカルパスワードを設定します。現在のパスワードは機能しなくなります。
+userManagement.setPasswordSetIntro	SSO なしでサインインできるように、%@ にローカルパスワードを設定します。
+userManagement.toastProfileUpdated	プロフィールを更新しました
+userManagement.toastAdminGranted	管理者権限を付与しました
+userManagement.toastUserRemoved	ユーザを削除しました
+userManagement.toastUserCreated	ユーザを作成しました
+userManagement.toastPasswordUpdated	パスワードを更新しました
+userManagement.toastVolumeSaved	ボリュームを保存しました
+userManagement.toastVolumeRemoved	ボリュームを削除しました
+userManagement.errorEmailRequired	メールは必須です。
+userManagement.errorEmailInvalid	有効なメールアドレスを入力してください。
+userManagement.errorUsernameRequired	ユーザ名は必須です。
+userManagement.errorEmailInUse	そのメールは既に使用されています。
+userManagement.errorPasswordTooShort	%lld 文字以上を使用してください。
+userDetail.fallbackName	ユーザ
+userDetail.sectionGeneralInfo	一般情報
+userDetail.sectionRoles	役割とアクセス権
+userDetail.sectionLocalPassword	ローカルパスワード
+userDetail.sectionSSO	シングルサインオン
+userDetail.sectionAssignedVolumes	割り当て済みボリューム
+userDetail.profileDisplayNameField	表示名
+userDetail.profileDisplayNamePlaceholder	表示名
+userDetail.profileUsernameField	ユーザ名
+userDetail.profileUsernamePlaceholder	ユーザ名
+userDetail.profileEmailField	メール
+userDetail.profileEmailPlaceholder	name@example.com
+userDetail.profileSave	変更を保存
+userDetail.roleAdmin	管理者
+userDetail.roleAdminSubtitle	ファイル、共有、ユーザを完全に制御できます。
+userDetail.roleAdminLocked	管理者はAppから降格できません。
+userDetail.roleGrantAdmin	管理者を付与
+userDetail.passwordHasLocal	このユーザはメールとパスワードでサインインします。
+userDetail.passwordSSOOnly	このユーザにはローカルパスワードがありません: SSO のみ。
+userDetail.passwordReset	パスワードをリセット
+userDetail.passwordSet	パスワードを設定
+userDetail.ssoNone	リンクされた SSO プロバイダはありません。
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	リンク済み
+userDetail.dangerZoneTitle	危険な操作
+userDetail.dangerZoneSubtitle	ユーザを削除すると、そのアクセス権はすぐに取り消されます。サーバ上でそのユーザが所有するファイルは削除されません。
+userDetail.dangerZoneRemoveUser	ユーザを削除
+userDetail.volumesNone	割り当て済みのボリュームはありません。
+userDetail.volumesNoneSubtitle	このユーザはデフォルトの共有スペースのみを表示できます。
+userDetail.volumesAssign	ボリュームを割り当て
+userDetail.volumesFootnote	ボリュームは、デフォルトの共有スペース外のディレクトリへのアクセスをユーザに付与します。ボリュームを削除してもファイルは決して削除されません。
+userDetail.volumeEditAccessibility	%@ を編集
+userDetail.volumeRemoveAccessibility	%@ を削除
+userDetail.removeVolumeTitle	ボリュームを削除しますか？
+userDetail.removeVolumeMessage	%@ はこのユーザから割り当て解除されます。ディレクトリ自体には影響しません。
+userDetail.removeUserTitle	ユーザを削除しますか？
+userDetail.removeUserMessage	%@ はすぐにアクセス権を失います。サーバ上のファイルは削除されません。
+userDetail.volumeSheetLabelField	ラベル
+userDetail.volumeSheetLabelPlaceholder	ボリュームラベル
+userDetail.volumeSheetAccessMode	アクセスモード
+userDetail.volumeSheetDirectory	ディレクトリ
+userDetail.volumeSheetSaveEdit	ボリュームを保存
+userDetail.volumeSheetSaveNew	ボリュームを割り当て
+userDetail.volumeSheetTitleEdit	ボリュームを編集
+userDetail.volumeSheetTitleNew	ボリュームを割り当て
+userDetail.directoryPickerGoUp	1つ上のディレクトリへ
+userDetail.directoryPickerUseThis	このディレクトリを使用
+userDetail.directoryPickerOpen	%@ を開く
+userDetail.directoryPickerFailed	ディレクトリを一覧表示できませんでした。
+previewToolbar.close	閉じる
+previewToolbar.createShareLink	共有リンクを作成
+previewToolbar.download	ダウンロード
+previewToolbar.delete	削除
+previewToolbar.share	共有
+previewToolbar.rename	名称変更
+login.serverQuestion	NextExplorer インスタンスはどこにありますか？
+login.testConnection	接続をテスト
+login.emailField	メール
+login.passwordField	パスワード
+login.submit	ログイン
+login.plaintextWarning	この接続は暗号化されていません。パスワードとセッションはローカルネットワーク上を平文で送信されます。
+error.sessionExpired	セッションの有効期限が切れました。再度サインインしてください。
+error.rateLimited	リクエストが多すぎます。しばらくしてから再試行してください。
+error.network	サーバに接続できませんでした。
+error.offline	オフラインです。インターネットに接続して再試行してください。
+error.decoding	サーバから予期しない応答がありました。
+error.server	サーバエラー (%lld)。
+error.forbidden	この操作を行う権限がありません。
+changePassword.navigationTitle	パスワードを変更
+changePassword.intro	メールアドレスでサインインする際に使うパスワードを変更します。このデバイスではサインインしたままになります。
+changePassword.fieldCurrentPassword	現在のパスワード
+changePassword.fieldNewPasswordLabel	新しいパスワード
+changePassword.fieldConfirmPasswordLabel	新しいパスワードを確認
+changePassword.fieldConfirmPassword	新しいパスワードを再入力
+changePassword.fieldNewPasswordPrompt	%lld 文字以上
+changePassword.submitButton	パスワードを更新
+changePassword.success	パスワードを更新しました。
+changePassword.errorMinLength	%lld 文字以上を使用してください。
+changePassword.errorMismatch	パスワードが一致しません。
+login.portHint	ポートを追加してください（例: :3000）。ほとんどのホームラボサーバは通常のポート 80 で待ち受けていません。
+login.errorInvalidServer	有効なサーバアドレスを入力してください。
+login.errorInvalidEmail	有効なメールアドレスを入力してください。
+login.errorInvalidCredentials	ユーザ名またはパスワードが正しくありません。
+login.errorSessionExpired	セッションの有効期限が切れました。再度サインインしてください。
+login.errorIncomplete	サインインが完了しませんでした。再試行してください。
+login.errorUnreachable	そのサーバに接続できませんでした。アドレスを確認して再試行してください。
+login.errorUnexpectedResponse	サーバから予期しない応答がありました。
+login.errorKeychain	このデバイスにセッションを保存できませんでした。
+login.errorDecoding	サーバから予期しない応答がありました。アドレスを確認して再試行してください。
+login.errorNoLocalAuth	このサーバではユーザ名/パスワードによるサインインが有効になっていません。
+login.errorRateLimited	試行回数が多すぎます。数分待ってから再試行してください。
+login.errorServer	サーバで問題が発生しました（エラー %lld）。後で再試行してください。
+browse.nameErrorReserved	その名前は使用できません。
+browse.nameErrorSeparators	名前に / または \ を含めることはできません。
+browse.searchMatchLine	%1$lld 行目: %2$@
+browse.searchMatchLineLabel	%lld 行目
+createShare.errorPasswordRequired	パスワードを入力するか、パスワード保護をオフにしてください。
+filter.sheetTitle	タイプで絞り込む
+filter.button	絞り込む
+filter.all	すべてのタイプ
+filter.folders	フォルダ
+filter.images	画像
+filter.videos	ビデオ
+filter.audio	オーディオ
+filter.documents	書類
+filter.archives	アーカイブ
+filter.other	その他
+language.navigationTitle	言語
+language.systemDefault	システムのデフォルト
+language.systemDefaultSubtitle	デバイスの言語に従う

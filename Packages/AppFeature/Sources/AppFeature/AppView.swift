@@ -1,7 +1,9 @@
+import AppStorageKeys
 import AuthClient
 import AuthFeature
 import ComposableArchitecture
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -25,9 +27,23 @@ public struct AppView: View {
     /// expanding button circle, then fades to reveal the authenticated app.
     @State private var authFillOpacity: Double = 0
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Chosen UI language ("" = follow system). Drives `LocalizationOverride`, the SwiftUI locale,
+    /// and a full rebuild of the content on change so every `L10n` string re-resolves live.
+    @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
     public init(store: StoreOf<AppFeature>) {
         self.store = store
+    }
+
+    private var selectedLanguage: String? { appLanguage.isEmpty ? nil : appLanguage }
+
+    private var appLocale: Locale {
+        selectedLanguage.map(Locale.init(identifier:)) ?? .autoupdatingCurrent
+    }
+
+    private var layoutDirection: LayoutDirection {
+        if let language = selectedLanguage, LocalizationOverride.isRTL(language) { return .rightToLeft }
+        return .leftToRight
     }
 
     public var body: some View {
@@ -52,6 +68,11 @@ public struct AppView: View {
                 .transition(.identity)
                 .zIndex(3)
             }
+        }
+        .environment(\.locale, appLocale)
+        .environment(\.layoutDirection, layoutDirection)
+        .onChange(of: appLanguage, initial: true) { _, _ in
+            LocalizationOverride.apply(selectedLanguage)
         }
         .onChange(of: store.didAuthenticateFromLogin) { _, fromLogin in
             guard fromLogin, !reduceMotion else {
@@ -108,6 +129,10 @@ public struct AppView: View {
             }
         }
         .animation(.easeInOut(duration: Constants.destinationCrossFadeDuration), value: store.destination)
+        // Remount when the language changes so every cached string and UIKit-backed title
+        // (nav bars, tab bar) re-resolves through the new `LocalizationOverride` bundle. The TCA
+        // store state lives outside the view tree, so navigation and data survive the swap.
+        .id(appLanguage)
     }
 }
 

@@ -1,0 +1,542 @@
+# NextExplorer — 繁體中文 (zh-TW). key<TAB>value.
+common.cancel	取消
+common.save	儲存
+common.edit	編輯
+common.retry	重試
+common.delete	刪除
+common.remove	移除
+common.clear	清除
+common.done	完成
+common.ok	好
+common.openSettings	打開設定
+common.logOut	登出
+common.close	關閉
+common.back	返回
+common.share	分享
+common.download	下載
+common.sort	排序
+common.select	選取
+common.search	搜尋
+common.password	密碼
+common.never	永不
+common.selectedCount	已選取 %lld 個
+tab.browse	瀏覽
+tab.favorites	喜好項目
+tab.shared	共享
+tab.downloads	下載
+tab.settings	設定
+sort.sheetTitle	排序方式
+sort.name	名稱
+sort.size	大小
+sort.kind	種類
+sort.dateModified	修改日期
+sort.dateAdded	加入日期
+sort.dateShared	分享日期
+sort.expiration	到期
+sort.email	電子郵件
+sort.type	類型
+sort.ascending	遞增
+sort.descending	遞減
+select.selectAll	全選
+select.deselectAll	取消全選
+select.listView	列表顯示方式
+select.gridView	網格顯示方式
+emptyState.folderEmpty	此檔案夾是空的。
+emptyState.loadFailed	無法連線到伺服器。
+emptyState.noSearchMatches	沒有「%@」的結果。
+accessMode.readonly	唯讀
+accessMode.readwrite	讀寫
+shareTarget.anyone	任何擁有連結的人
+shareTarget.users	特定使用者
+directLinkMode.auto	自動
+directLinkMode.inline	檢視
+directLinkMode.raw	原始
+directLinkMode.download	下載
+thumbnailSize.small	小
+thumbnailSize.medium	中
+thumbnailSize.large	大
+downloadLocation.documents	文件
+downloadLocation.cache	快取
+dateFormat.automatic	自動
+browse.navigationTitle	瀏覽
+browse.scopeThisFolder	此檔案夾
+browse.scopeEverywhere	所有位置
+browse.searchScopeInFolder	此檔案夾
+browse.searchScopeEverywhere	所有位置
+browse.locations	位置
+browse.open	打開
+browse.unsupportedFileType	不支援的檔案類型
+browse.actionGetInfo	顯示簡介
+browse.actionPermissions	權限
+browse.actionRename	重新命名
+browse.actionExtract	解壓縮
+browse.actionCompress	壓縮
+browse.actionDownload	下載
+browse.actionAddToFavorites	加入喜好項目
+browse.actionRemoveFromFavorites	從喜好項目移除
+browse.actionShare	建立共享連結
+browse.actionDelete	刪除
+browse.renameTitle	重新命名
+browse.renameNamePlaceholder	名稱
+browse.actionNewFolder	建立檔案夾
+browse.newFolderTitle	新檔案夾
+browse.newFolderPlaceholder	檔案夾名稱
+browse.newFolderConfirm	建立
+browse.deleteConfirmTitle	刪除？
+browse.deleteConfirmOne	刪除「%@」？
+browse.deleteConfirmMany	刪除 %lld 個項目？
+browse.deleteMessage	此操作無法還原。
+browse.deleteLinkedSharesOne	這也會移除 1 個指向此處的共享連結。
+browse.deleteLinkedSharesMany	這也會移除 %lld 個指向此處的共享連結。
+browse.deleteLinkedSharesUnavailable	無法檢查指向此處的連結。現有連結將停止運作。
+browse.searchNoMatchesInFolder	沒有「%@」的結果。
+browse.searchEverywhere	在所有位置搜尋
+browse.searchFailed	無法搜尋。請檢查連線後重試。
+browse.progressExtracting	正在解壓縮…
+browse.progressCompressing	正在壓縮…
+browse.progressDownloading	正在下載…
+browse.progressDownloadingIndexed	正在下載 %2$lld 個中的第 %1$lld 個…
+browse.downloadSavedTo	已儲存到 %@
+browse.downloadSavedCountTo	已將 %2$lld 個中的 %1$lld 個項目儲存到 %3$@
+browse.downloadSavedAllTo	已將 %1$lld 個項目儲存到 %2$@
+browse.downloadBulkFailed	無法將這些項目儲存到您的裝置。
+browse.offlineBannerTitle	離線
+browse.offlineBannerDetail	正在顯示來自 %@ 的已儲存副本
+browse.actionCopy	拷貝
+browse.destinationPickerMoveTitle	移動到…
+browse.destinationPickerConfirmMove	移動到此處
+browse.destinationPickerNoFolders	此處沒有檔案夾
+browse.destinationPickerLoadFailed	無法載入檔案夾。
+browse.actionMove	移動
+browse.actionPaste	貼上
+browse.actionPasteCount	貼上 %lld 個項目
+browse.actionPasteHere	貼上到此處
+browse.actionClearClipboard	清除剪貼板
+browse.clipboardMoveCount	%lld 個待移動
+browse.clipboardCopyCount	%lld 個待拷貝
+browse.clipboardCopiedOne	已拷貝 %@
+browse.clipboardCopiedMany	已拷貝 %lld 個項目
+browse.progressMoving	正在移動…
+browse.progressCopying	正在拷貝…
+browse.transferMoved	已移動 %lld 個項目
+browse.transferCopied	已拷貝 %lld 個項目
+browse.transferMovedWithSkipped	已移動 %1$lld 個項目，略過 %2$lld 個
+browse.transferCopiedWithSkipped	已拷貝 %1$lld 個項目，略過 %2$lld 個
+browse.transferConflictTitle	取代項目？
+browse.transferConflictMessageOne	「%@」已存在於此檔案夾中。
+browse.transferConflictMessageMany	%lld 個項目已存在於此檔案夾中。
+browse.transferConflictReplace	取代
+browse.transferConflictKeepBoth	兩者都保留
+browse.actionOpenInBrowser	在瀏覽器中打開
+favorites.navigationTitle	喜好項目
+favorites.emptyList	在「瀏覽」中將檔案夾加上星號即可在此處查看。
+favorites.actionRemoveFromFavorites	從喜好項目移除
+favorites.actionEdit	編輯
+favorites.editTitle	編輯喜好項目
+favorites.editNameLabel	名稱
+favorites.editNameErrorEmpty	名稱不能空白。
+favorites.editIconLabel	圖像
+favorites.editIconOutline	外框
+favorites.editIconSolid	實心
+favorites.editColorLabel	顏色
+favorites.editColorDefault	預設
+favorites.editSave	儲存
+favorites.reorderFailed	無法儲存新順序。
+favorites.removeConfirm	移除 %lld 個喜好項目？
+favorites.removeMessage	這只會將它們從喜好項目移除。
+favorites.removeFailedOne	無法移除該喜好項目。
+favorites.removeFailedMany	無法移除這些喜好項目。
+favorites.removePartial	已移除 %2$lld 個中的 %1$lld 個。
+downloads.navigationTitle	下載
+downloads.actionOpenInFiles	在「檔案」中打開
+downloads.emptyList	您從「瀏覽」下載的檔案會顯示在此處。
+downloads.deleteConfirmTitle	刪除？
+downloads.deleteConfirmOne	刪除「%@」？
+downloads.deleteConfirmMany	刪除 %lld 個檔案？
+downloads.deleteSingleMessage	這只會移除本機副本。檔案仍保留在伺服器上。
+downloads.deleteBulkMessage	這只會移除本機副本。檔案仍保留在伺服器上。
+downloads.errorNameExists	同名檔案已存在。
+downloads.errorInvalidName	該名稱不允許使用。
+downloads.errorMissing	無法再找到該檔案。
+downloads.errorGeneric	無法完成該操作。
+unsupportedPreview.genericType	檔案
+unsupportedPreview.cannotOpen	此 App 無法打開此類型的檔案。
+uploads.navigationTitle	上傳
+uploads.menuTitle	上傳
+uploads.actionUploadFromFiles	從「檔案」上傳
+uploads.actionUploadFromPhotos	從圖庫上傳
+uploads.actionTakePhoto	拍照或錄影
+uploads.cameraDeniedTitle	需要相機取用權限
+uploads.cameraDeniedMessage	請在「設定」中允許相機取用，以便拍照或錄影。
+uploads.destinationTitle	上傳到…
+uploads.destinationConfirm	上傳到此處
+uploads.reviewTitleOne	上傳 1 個檔案
+uploads.reviewTitleMany	上傳 %lld 個檔案
+uploads.reviewSectionFiles	檔案
+uploads.reviewSectionPath	路徑
+uploads.reviewSectionSize	總大小
+uploads.reviewChooseFolder	選擇一個檔案夾
+uploads.reviewUploadButton	上傳
+uploads.reviewPreparing	正在準備 %lld 個…
+uploads.reviewAddMore	加入更多檔案
+uploads.reviewPreviewFile	預覽 %@
+uploads.reviewInsecureNetworkNotice	透過 http 連線。如果此伺服器僅在您的家庭網路中，離開該網路時上傳將無法運作。
+uploads.stagingFailed	無法加入這些檔案。請重試。
+uploads.stagingSkipped	%lld 個項目無法準備，已被略過。
+uploads.discardTitle	放棄上傳？
+uploads.discardMessage	您加入的檔案將不會上傳。
+uploads.discardConfirm	放棄
+uploads.statusWaiting	等待中
+uploads.statusFailed	上傳失敗
+uploads.barTitleOne	正在上傳 %@
+uploads.barTitleMany	正在上傳 %lld 個檔案
+uploads.barFailedOne	1 個上傳失敗
+uploads.barFailedMany	%lld 個上傳失敗
+uploads.retryAll	全部重試
+uploads.complete	上傳完成
+uploads.completeMany	已上傳 %lld 個檔案
+uploads.completeWithFailures	已上傳 %1$lld 個，失敗 %2$lld 個
+uploads.failedGeneric	無法上傳此檔案。
+uploads.clear	清除
+uploads.emptyList	尚無上傳。
+uploads.cancelAll	取消所有上傳
+shared.navigationTitle	共享
+shared.segmentByMe	由我共享
+shared.segmentWithMe	與我共享
+shared.sectionExpired	已過期
+shared.badgeExpired	已過期
+shared.emptyByMe	共享檔案或檔案夾後即可在此處查看其連結。
+shared.emptyWithMe	他人與您共享的連結會顯示在此處。
+shared.noSearchMatches	沒有與「%@」相符的共享。
+shared.deleteTitle	刪除共享連結？
+shared.deleteMessage	連結會立即停止運作。檔案或檔案夾本身不受影響。
+shared.sharedByUnknown	某人
+shared.metaAccess	取用權限
+shared.metaExpiration	到期
+shared.metaSharedBy	共享者
+shared.metaSharedWith	共享給
+shared.anyoneWithLink	任何擁有連結的人
+shared.linkMode	連結模式
+shared.actionShareLink	共享連結
+shared.actionFolderLink	檔案夾連結
+shared.actionFileLink	檔案連結
+shared.moreRecipients	+%lld
+shared.copiedShareLink	已拷貝共享連結
+shared.copiedFolderZip	已拷貝檔案夾 ZIP 連結
+shared.copiedDirectFile	已拷貝直接檔案連結
+createShare.title	建立共享連結
+createShare.titleCreated	已建立共享
+createShare.sectionLabel	標籤
+createShare.sectionAccessMode	取用模式
+createShare.sectionWhoCanAccess	誰可以取用
+createShare.sectionShareLink	共享連結
+createShare.fieldPassword	密碼
+createShare.togglePasswordProtect	密碼保護
+createShare.toggleSetExpiration	設定到期日期
+createShare.fieldExpires	到期
+createShare.submit	建立共享連結
+createShare.loadingUsers	正在載入使用者…
+createShare.noOtherUsers	沒有其他可共享的使用者。
+createShare.sharingPrefix	正在共享：
+createShare.createdBanner	共享連結建立成功！
+createShare.viewInShared	在「共享」中查看
+createShare.directLinkMode	直接連結模式
+createShare.directFolderLink	直接檔案夾 ZIP 連結
+createShare.directFileLink	直接檔案連結
+createShare.summaryAccess	取用權限
+createShare.summarySharedWith	共享給
+createShare.summaryPassword	密碼
+createShare.summaryPasswordProtected	受保護
+createShare.summaryExpires	到期
+createShare.summarySpecificPeople	特定人員
+createShare.errorPastExpiration	請選擇未來的到期日期。
+editShare.title	編輯共享連結
+editShare.save	儲存更改
+editShare.passwordKeepHint	留空以保留目前密碼
+editShare.savedToast	共享連結已更新
+thumbnailSettings.navigationTitle	縮覽圖
+thumbnailSettings.subtitle	控制伺服器為每個用戶端生成圖像縮覽圖的方式。
+thumbnailSettings.enable	生成縮覽圖
+thumbnailSettings.enableHelp	關閉後將改為在所有位置提供完整圖像。
+thumbnailSettings.quality	品質
+thumbnailSettings.qualityHelp	越高看起來越好，佔用空間也越多。
+thumbnailSettings.maxDimension	最大尺寸
+thumbnailSettings.maxDimensionHelp	生成的縮覽圖最長邊，以像素為單位。
+thumbnailSettings.concurrency	並行數
+thumbnailSettings.concurrencyHelp	伺服器一次生成多少個縮覽圖。
+thumbnailSettings.unavailable	縮覽圖設定僅對管理員可用。
+thumbnailSettings.saveButton	儲存更改
+accessRules.navigationTitle	檔案夾取用規則
+accessRules.subtitle	覆寫特定路徑的讀寫取用權限。
+accessRules.addRule	加入規則
+accessRules.empty	未設定取用規則。
+accessRules.emptyHint	加入規則以覆寫對某路徑的取用權限。
+accessRules.pathLabel	路徑
+accessRules.pathPlaceholder	文件/報告
+accessRules.recursive	套用至子檔案夾
+accessRules.permissionReadWrite	讀寫
+accessRules.permissionReadOnly	唯讀
+accessRules.permissionHidden	隱藏
+accessRules.remove	移除
+accessRules.unavailable	取用規則僅對管理員可用。
+accessRules.saveButton	儲存更改
+settings.rowThumbnails	縮覽圖
+settings.rowAccessRules	檔案夾取用規則
+settings.navigationTitle	設定
+settings.appVersion	版本 %1$@ (%2$@)
+settings.sectionGeneral	一般
+settings.sectionDisplay	顯示
+settings.sectionStorage	儲存空間
+settings.sectionServerStorage	伺服器儲存空間
+settings.serverStorageUsed	%2$@ 中的 %1$@
+settings.sectionLicenses	授權
+settings.sectionLegal	法律
+settings.sectionUsers	使用者
+settings.sectionAdmin	管理
+settings.toggleShowHiddenFiles	顯示隱藏檔案
+settings.toggleRenderHTML	算繪 HTML 頁面
+settings.toggleRenderMarkdown	算繪 Markdown 檔案
+settings.toggleHaptics	觸覺回饋
+settings.toggleDarkMode	深色模式
+settings.toggleShowThumbnails	顯示縮覽圖
+settings.toggleShowExtensions	顯示副檔名
+settings.toggleRemoveArchives	下載後移除壓縮檔
+settings.toggleKeepClipboard	貼上後保留項目
+settings.toggleKeepClipboardSubtitle	拷貝的項目會保持可貼上到其他檔案夾的狀態。移動的項目一律會被清除。
+settings.rowDateFormat	日期格式
+settings.rowLanguage	語言
+settings.rowThumbnailSize	縮覽圖大小
+settings.rowRemoveAllDownloads	移除所有下載
+settings.rowClearCache	清除快取
+settings.rowOpenSourceLicenses	開放原始碼授權
+settings.rowPrivacyPolicy	隱私權政策
+settings.rowTermsOfUse	使用條款
+settings.rowUserManagement	使用者管理
+settings.rowChangePassword	更改密碼
+settings.rowServer	伺服器
+settings.storageFootnote	下載檔案夾會先在伺服器上將其壓縮為 ZIP。開啟上方的開關，可在儲存到裝置後從伺服器刪除該壓縮檔。移除下載或清除快取僅影響此裝置；伺服器上的內容不會被更動。
+settings.removeAllDownloadsTitle	移除所有下載？
+settings.removeAllDownloadsConfirm	全部移除
+settings.removeAllDownloadsMessage	這會從此裝置刪除所有已下載的檔案。它們仍保留在伺服器上。
+settings.clearCacheTitle	清除快取？
+settings.clearCacheConfirm	清除
+settings.clearCacheMessage	這會清除用於離線的快取預覽、縮覽圖和已儲存的檔案夾列表。伺服器上的內容不受影響。
+settings.signOutAlertTitle	登出？
+settings.signOutMessage	您需要重新登入才能取用您的檔案。
+settings.signOutButton	登出
+settings.signingOut	正在登出…
+settings.dateFormatNavigationTitle	日期格式
+settings.dateFormatShowTime	顯示時間
+serverDetails.navigationTitle	伺服器
+serverDetails.changeLogo	更改圖像
+serverDetails.takePhoto	拍照
+serverDetails.chooseFromGallery	從圖庫上傳
+serverDetails.nameLabel	伺服器名稱
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	伺服器名稱不能空白。
+serverDetails.urlLabel	伺服器 URL
+serverDetails.urlFootnote	您的 NextExplorer 執行個體的安裝位址。若要更改，請登出並重新加入伺服器。
+serverDetails.updateButton	更新伺服器
+serverDetails.savedMessage	伺服器詳細資料已更新。
+serverDetails.logoErrorTooLarge	該圖像過大。請選擇小於 2 MB 的圖像。
+serverDetails.cameraDeniedTitle	相機取用已關閉
+serverDetails.cameraDeniedMessage	請在「設定」中開啟相機取用以便拍照。
+licenses.navigationTitle	開放原始碼授權
+licenses.sectionSoftware	軟體
+licenses.sectionFontSoftware	字型軟體
+licenses.labelAuthor	作者
+licenses.labelOriginalVersion	原始版本
+licenses.labelModifiedVersion	修改版本
+licenses.labelReservedFontName	保留字型名稱
+fileInfo.navigationTitleFolder	檔案夾
+fileInfo.rowKind	種類
+fileInfo.rowSize	大小
+fileInfo.rowLocation	位置
+fileInfo.rowDateModified	修改日期
+fileInfo.rowDateCreated	建立日期
+fileInfo.rowFiles	檔案
+fileInfo.rowFolders	檔案夾
+fileInfo.rowTotalSize	總大小
+fileInfo.sectionServerDisk	伺服器磁碟
+fileInfo.diskFreeOf	%2$@ 中可用 %1$@
+fileInfo.rowDimensions	尺寸
+fileInfo.rowCamera	相機
+fileInfo.rowLens	鏡頭
+fileInfo.rowDateTaken	拍攝日期
+fileInfo.rowDuration	時間長度
+fileInfo.partialScan	已計入部分掃描：此檔案夾非常大。
+permissions.title	權限
+permissions.sectionMode	模式
+permissions.numericLabel	數字
+permissions.applyToEnclosed	套用至所含項目
+permissions.applyPermissions	套用權限
+permissions.sectionOwnership	擁有權
+permissions.fieldOwner	擁有者
+permissions.fieldGroup	群組
+permissions.ownershipNote	更改擁有權通常需要伺服器上的 root 或管理員權限。
+permissions.applyOwnership	套用擁有權
+permissions.scopeOwner	擁有者
+permissions.scopeGroup	群組
+permissions.scopeOthers	其他
+permissions.rightRead	讀取
+permissions.rightWrite	寫入
+permissions.rightExecute	執行
+archive.emptyFolder	此檔案夾是空的。
+archive.openFailed	無法打開此檔案。
+archive.openArchiveFailed	無法打開此壓縮檔。
+archive.entryTooLarge	此項目過大，無法打開。
+gallery.loadFailed	無法載入此圖像。
+textPreview.saved	已儲存
+textPreview.loadFailed	無法載入此檔案。請檢查連線後重試。
+userManagement.navigationTitle	使用者管理
+userManagement.searchPrompt	搜尋使用者
+userManagement.createUser	建立使用者
+userManagement.badgeAdmin	管理員
+userManagement.emptyList	尚無使用者。
+userManagement.noSearchMatches	沒有與「%@」相符的使用者。
+userManagement.loadFailed	無法連線到伺服器。
+userManagement.sortType	類型
+userManagement.sortName	名稱
+userManagement.sortEmail	電子郵件
+userManagement.tabProfile	個人資料
+userManagement.tabSecurity	安全性
+userManagement.tabVolumes	卷宗
+userManagement.createNavigationTitle	建立使用者
+userManagement.createEmailField	電子郵件
+userManagement.createEmailPlaceholder	name@example.com
+userManagement.createUsernameField	使用者名稱（選填）
+userManagement.createUsernamePlaceholder	由電子郵件衍生
+userManagement.createPasswordField	密碼
+userManagement.createPasswordPlaceholder	至少 %lld 個字元
+userManagement.createGrantAdminToggle	授予管理員取用權限
+userManagement.createGrantAdminSubtitle	對檔案、共享和使用者的完全控制。
+userManagement.createSubmit	建立使用者
+userManagement.setPasswordNavigationTitle	密碼
+userManagement.setPasswordNewField	新密碼
+userManagement.setPasswordPlaceholder	至少 %lld 個字元
+userManagement.setPasswordResetTitle	重置密碼
+userManagement.setPasswordSetTitle	設定密碼
+userManagement.setPasswordResetIntro	為 %@ 設定新的本機密碼。其目前密碼將停止運作。
+userManagement.setPasswordSetIntro	為 %@ 設定本機密碼，以便無需 SSO 即可登入。
+userManagement.toastProfileUpdated	個人資料已更新
+userManagement.toastAdminGranted	已授予管理員權限
+userManagement.toastUserRemoved	使用者已移除
+userManagement.toastUserCreated	使用者已建立
+userManagement.toastPasswordUpdated	密碼已更新
+userManagement.toastVolumeSaved	卷宗已儲存
+userManagement.toastVolumeRemoved	卷宗已移除
+userManagement.errorEmailRequired	電子郵件為必填項。
+userManagement.errorEmailInvalid	請輸入有效的電子郵件位址。
+userManagement.errorUsernameRequired	使用者名稱為必填項。
+userManagement.errorEmailInUse	電子郵件已被使用。
+userManagement.errorPasswordTooShort	請至少使用 %lld 個字元。
+userDetail.fallbackName	使用者
+userDetail.sectionGeneralInfo	一般資訊
+userDetail.sectionRoles	角色與權限
+userDetail.sectionLocalPassword	本機密碼
+userDetail.sectionSSO	單一登入
+userDetail.sectionAssignedVolumes	已指派的卷宗
+userDetail.profileDisplayNameField	顯示名稱
+userDetail.profileDisplayNamePlaceholder	顯示名稱
+userDetail.profileUsernameField	使用者名稱
+userDetail.profileUsernamePlaceholder	使用者名稱
+userDetail.profileEmailField	電子郵件
+userDetail.profileEmailPlaceholder	name@example.com
+userDetail.profileSave	儲存更改
+userDetail.roleAdmin	管理員
+userDetail.roleAdminSubtitle	對檔案、共享和使用者的完全控制。
+userDetail.roleAdminLocked	無法從 App 中降級管理員。
+userDetail.roleGrantAdmin	授予管理員
+userDetail.passwordHasLocal	此使用者使用電子郵件和密碼登入。
+userDetail.passwordSSOOnly	此使用者沒有本機密碼：僅限 SSO。
+userDetail.passwordReset	重置密碼
+userDetail.passwordSet	設定密碼
+userDetail.ssoNone	沒有連結的 SSO 供應商。
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	已連結
+userDetail.dangerZoneTitle	危險區域
+userDetail.dangerZoneSubtitle	移除使用者會立即撤銷其取用權限。其在伺服器上擁有的檔案不會被刪除。
+userDetail.dangerZoneRemoveUser	移除使用者
+userDetail.volumesNone	未指派卷宗。
+userDetail.volumesNoneSubtitle	此使用者僅能看到預設共享空間。
+userDetail.volumesAssign	指派卷宗
+userDetail.volumesFootnote	卷宗可讓使用者取用預設共享空間之外的目錄。移除卷宗絕不會刪除檔案。
+userDetail.volumeEditAccessibility	編輯 %@
+userDetail.volumeRemoveAccessibility	移除 %@
+userDetail.removeVolumeTitle	移除卷宗？
+userDetail.removeVolumeMessage	%@ 已從此使用者取消指派。目錄本身不受影響。
+userDetail.removeUserTitle	移除使用者？
+userDetail.removeUserMessage	%@ 會立即失去取用權限。其在伺服器上的檔案不會被刪除。
+userDetail.volumeSheetLabelField	標籤
+userDetail.volumeSheetLabelPlaceholder	卷宗標籤
+userDetail.volumeSheetAccessMode	取用模式
+userDetail.volumeSheetDirectory	目錄
+userDetail.volumeSheetSaveEdit	儲存卷宗
+userDetail.volumeSheetSaveNew	指派卷宗
+userDetail.volumeSheetTitleEdit	編輯卷宗
+userDetail.volumeSheetTitleNew	指派卷宗
+userDetail.directoryPickerGoUp	上一層目錄
+userDetail.directoryPickerUseThis	使用此目錄
+userDetail.directoryPickerOpen	打開 %@
+userDetail.directoryPickerFailed	無法列出目錄。
+previewToolbar.close	關閉
+previewToolbar.createShareLink	建立共享連結
+previewToolbar.download	下載
+previewToolbar.delete	刪除
+previewToolbar.share	分享
+previewToolbar.rename	重新命名
+login.serverQuestion	您的 NextExplorer 執行個體在哪裡？
+login.testConnection	測試連線
+login.emailField	電子郵件
+login.passwordField	密碼
+login.submit	登入
+login.plaintextWarning	此連線未加密。您的密碼和工作階段以明文形式透過本地網路傳送。
+error.sessionExpired	您的工作階段已過期。請重新登入。
+error.rateLimited	請求過多。請稍後重試。
+error.network	無法連線到伺服器。
+error.offline	您已離線。請連線到網際網路後重試。
+error.decoding	伺服器回應異常。
+error.server	伺服器錯誤 (%lld)。
+error.forbidden	您沒有執行此操作的權限。
+changePassword.navigationTitle	更改密碼
+changePassword.intro	更改您用於以電子郵件位址登入的密碼。您在此裝置上仍會保持登入狀態。
+changePassword.fieldCurrentPassword	目前密碼
+changePassword.fieldNewPasswordLabel	新密碼
+changePassword.fieldConfirmPasswordLabel	確認新密碼
+changePassword.fieldConfirmPassword	重新輸入新密碼
+changePassword.fieldNewPasswordPrompt	至少 %lld 個字元
+changePassword.submitButton	更新密碼
+changePassword.success	您的密碼已更新。
+changePassword.errorMinLength	請至少使用 %lld 個字元。
+changePassword.errorMismatch	密碼不相符。
+login.portHint	加入通訊埠（例如 :3000）。大多數家用伺服器不會在預設的 80 通訊埠上接聽。
+login.errorInvalidServer	請輸入有效的伺服器位址。
+login.errorInvalidEmail	請輸入有效的電子郵件位址。
+login.errorInvalidCredentials	使用者名稱或密碼不正確。
+login.errorSessionExpired	您的工作階段已過期。請重新登入。
+login.errorIncomplete	登入未完成。請重試。
+login.errorUnreachable	無法連線到該伺服器。請檢查位址後重試。
+login.errorUnexpectedResponse	伺服器回應異常。
+login.errorKeychain	無法在此裝置上儲存您的工作階段。
+login.errorDecoding	伺服器回應異常。請檢查位址後重試。
+login.errorNoLocalAuth	此伺服器未啟用使用者名稱/密碼登入。
+login.errorRateLimited	嘗試次數過多。請等待幾分鐘後重試。
+login.errorServer	伺服器遇到問題（錯誤 %lld）。請稍後重試。
+browse.nameErrorReserved	該名稱不允許使用。
+browse.nameErrorSeparators	名稱不能包含 / 或 \。
+browse.searchMatchLine	第 %1$lld 行：%2$@
+browse.searchMatchLineLabel	第 %lld 行
+createShare.errorPasswordRequired	請輸入密碼或關閉密碼保護。
+filter.sheetTitle	依類型篩選
+filter.button	篩選
+filter.all	所有類型
+filter.folders	檔案夾
+filter.images	圖像
+filter.videos	影片
+filter.audio	音訊
+filter.documents	文件
+filter.archives	壓縮檔
+filter.other	其他
+language.navigationTitle	語言
+language.systemDefault	系統預設
+language.systemDefaultSubtitle	跟隨裝置語言

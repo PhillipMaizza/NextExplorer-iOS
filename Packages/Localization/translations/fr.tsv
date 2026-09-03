@@ -1,0 +1,542 @@
+# NextExplorer — Français (fr). key<TAB>value.
+common.cancel	Annuler
+common.save	Enregistrer
+common.edit	Modifier
+common.retry	Réessayer
+common.delete	Supprimer
+common.remove	Retirer
+common.clear	Effacer
+common.done	OK
+common.ok	OK
+common.openSettings	Ouvrir Réglages
+common.logOut	Se déconnecter
+common.close	Fermer
+common.back	Retour
+common.share	Partager
+common.download	Télécharger
+common.sort	Trier
+common.select	Sélectionner
+common.search	Rechercher
+common.password	Mot de passe
+common.never	Jamais
+common.selectedCount	%lld sélectionnés
+tab.browse	Explorer
+tab.favorites	Favoris
+tab.shared	Partagés
+tab.downloads	Téléchargements
+tab.settings	Réglages
+sort.sheetTitle	Trier par
+sort.name	Nom
+sort.size	Taille
+sort.kind	Type
+sort.dateModified	Date de modification
+sort.dateAdded	Date d'ajout
+sort.dateShared	Date de partage
+sort.expiration	Expiration
+sort.email	E-mail
+sort.type	Type
+sort.ascending	Croissant
+sort.descending	Décroissant
+select.selectAll	Tout sélectionner
+select.deselectAll	Tout désélectionner
+select.listView	Vue en liste
+select.gridView	Vue en grille
+emptyState.folderEmpty	Ce dossier est vide.
+emptyState.loadFailed	Impossible de joindre le serveur.
+emptyState.noSearchMatches	Aucun résultat pour « %@ ».
+accessMode.readonly	Lecture seule
+accessMode.readwrite	Lecture et écriture
+shareTarget.anyone	Toute personne disposant du lien
+shareTarget.users	Utilisateurs spécifiques
+directLinkMode.auto	Automatique
+directLinkMode.inline	Afficher
+directLinkMode.raw	Brut
+directLinkMode.download	Télécharger
+thumbnailSize.small	Petite
+thumbnailSize.medium	Moyenne
+thumbnailSize.large	Grande
+downloadLocation.documents	Documents
+downloadLocation.cache	Cache
+dateFormat.automatic	Automatique
+browse.navigationTitle	Explorer
+browse.scopeThisFolder	Ce dossier
+browse.scopeEverywhere	Partout
+browse.searchScopeInFolder	Ce dossier
+browse.searchScopeEverywhere	Partout
+browse.locations	Emplacements
+browse.open	Ouvrir
+browse.unsupportedFileType	Type de fichier non pris en charge
+browse.actionGetInfo	Informations
+browse.actionPermissions	Autorisations
+browse.actionRename	Renommer
+browse.actionExtract	Extraire
+browse.actionCompress	Compresser
+browse.actionDownload	Télécharger
+browse.actionAddToFavorites	Ajouter aux favoris
+browse.actionRemoveFromFavorites	Retirer des favoris
+browse.actionShare	Créer un lien de partage
+browse.actionDelete	Supprimer
+browse.renameTitle	Renommer
+browse.renameNamePlaceholder	Nom
+browse.actionNewFolder	Créer un dossier
+browse.newFolderTitle	Nouveau dossier
+browse.newFolderPlaceholder	Nom du dossier
+browse.newFolderConfirm	Créer
+browse.deleteConfirmTitle	Supprimer ?
+browse.deleteConfirmOne	Supprimer « %@ » ?
+browse.deleteConfirmMany	Supprimer %lld éléments ?
+browse.deleteMessage	Cette action est irréversible.
+browse.deleteLinkedSharesOne	Cela supprime aussi 1 lien de partage pointant ici.
+browse.deleteLinkedSharesMany	Cela supprime aussi %lld liens de partage pointant ici.
+browse.deleteLinkedSharesUnavailable	Impossible de vérifier les liens pointant ici. Ceux qui existent cesseront de fonctionner.
+browse.searchNoMatchesInFolder	Aucun résultat pour « %@ ».
+browse.searchEverywhere	Rechercher partout
+browse.searchFailed	Recherche impossible. Vérifiez votre connexion et réessayez.
+browse.progressExtracting	Extraction…
+browse.progressCompressing	Compression…
+browse.progressDownloading	Téléchargement…
+browse.progressDownloadingIndexed	Téléchargement de %1$lld sur %2$lld…
+browse.downloadSavedTo	Enregistré dans %@
+browse.downloadSavedCountTo	%1$lld éléments sur %2$lld enregistrés dans %3$@
+browse.downloadSavedAllTo	%1$lld éléments enregistrés dans %2$@
+browse.downloadBulkFailed	Impossible d'enregistrer ces éléments sur votre appareil.
+browse.offlineBannerTitle	Hors ligne
+browse.offlineBannerDetail	Affichage d'une copie enregistrée du %@
+browse.actionCopy	Copier
+browse.destinationPickerMoveTitle	Déplacer vers…
+browse.destinationPickerConfirmMove	Déplacer ici
+browse.destinationPickerNoFolders	Aucun dossier ici
+browse.destinationPickerLoadFailed	Impossible de charger les dossiers.
+browse.actionMove	Déplacer
+browse.actionPaste	Coller
+browse.actionPasteCount	Coller %lld éléments
+browse.actionPasteHere	Coller ici
+browse.actionClearClipboard	Vider le presse-papiers
+browse.clipboardMoveCount	%lld à déplacer
+browse.clipboardCopyCount	%lld à copier
+browse.clipboardCopiedOne	%@ copié
+browse.clipboardCopiedMany	%lld éléments copiés
+browse.progressMoving	Déplacement…
+browse.progressCopying	Copie…
+browse.transferMoved	%lld éléments déplacés
+browse.transferCopied	%lld éléments copiés
+browse.transferMovedWithSkipped	%1$lld éléments déplacés, %2$lld ignorés
+browse.transferCopiedWithSkipped	%1$lld éléments copiés, %2$lld ignorés
+browse.transferConflictTitle	Remplacer les éléments ?
+browse.transferConflictMessageOne	« %@ » existe déjà dans ce dossier.
+browse.transferConflictMessageMany	%lld éléments existent déjà dans ce dossier.
+browse.transferConflictReplace	Remplacer
+browse.transferConflictKeepBoth	Conserver les deux
+browse.actionOpenInBrowser	Ouvrir dans le navigateur
+favorites.navigationTitle	Favoris
+favorites.emptyList	Marquez des dossiers dans Explorer pour les voir ici.
+favorites.actionRemoveFromFavorites	Retirer des favoris
+favorites.actionEdit	Modifier
+favorites.editTitle	Modifier le favori
+favorites.editNameLabel	Nom
+favorites.editNameErrorEmpty	Le nom ne peut pas être vide.
+favorites.editIconLabel	Icône
+favorites.editIconOutline	Contour
+favorites.editIconSolid	Plein
+favorites.editColorLabel	Couleur
+favorites.editColorDefault	Par défaut
+favorites.editSave	Enregistrer
+favorites.reorderFailed	Impossible d'enregistrer le nouvel ordre.
+favorites.removeConfirm	Retirer %lld favoris ?
+favorites.removeMessage	Cela les retire uniquement des favoris.
+favorites.removeFailedOne	Impossible de retirer ce favori.
+favorites.removeFailedMany	Impossible de retirer ces favoris.
+favorites.removePartial	%1$lld sur %2$lld retirés.
+downloads.navigationTitle	Téléchargements
+downloads.actionOpenInFiles	Ouvrir dans Fichiers
+downloads.emptyList	Les fichiers que vous téléchargez depuis Explorer apparaissent ici.
+downloads.deleteConfirmTitle	Supprimer ?
+downloads.deleteConfirmOne	Supprimer « %@ » ?
+downloads.deleteConfirmMany	Supprimer %lld fichiers ?
+downloads.deleteSingleMessage	Cela supprime uniquement la copie locale. Le fichier reste sur le serveur.
+downloads.deleteBulkMessage	Cela supprime uniquement les copies locales. Les fichiers restent sur le serveur.
+downloads.errorNameExists	Un fichier portant ce nom existe déjà.
+downloads.errorInvalidName	Ce nom n'est pas autorisé.
+downloads.errorMissing	Ce fichier est introuvable.
+downloads.errorGeneric	Impossible d'effectuer cette action.
+unsupportedPreview.genericType	Fichier
+unsupportedPreview.cannotOpen	Cette app ne peut pas ouvrir ce type de fichier.
+uploads.navigationTitle	Envois
+uploads.menuTitle	Envoyer
+uploads.actionUploadFromFiles	Envoyer depuis Fichiers
+uploads.actionUploadFromPhotos	Envoyer depuis la galerie
+uploads.actionTakePhoto	Prendre une photo ou une vidéo
+uploads.cameraDeniedTitle	Accès à l'appareil photo requis
+uploads.cameraDeniedMessage	Autorisez l'accès à l'appareil photo dans Réglages pour prendre une photo ou une vidéo.
+uploads.destinationTitle	Envoyer vers…
+uploads.destinationConfirm	Envoyer ici
+uploads.reviewTitleOne	Envoyer 1 fichier
+uploads.reviewTitleMany	Envoyer %lld fichiers
+uploads.reviewSectionFiles	Fichiers
+uploads.reviewSectionPath	Chemin
+uploads.reviewSectionSize	Taille totale
+uploads.reviewChooseFolder	Choisir un dossier
+uploads.reviewUploadButton	Envoyer
+uploads.reviewPreparing	Préparation de %lld…
+uploads.reviewAddMore	Ajouter d'autres fichiers
+uploads.reviewPreviewFile	Aperçu de %@
+uploads.reviewInsecureNetworkNotice	Connecté en http. Si ce serveur n'est que sur votre réseau domestique, les envois ne fonctionneront pas hors de ce réseau.
+uploads.stagingFailed	Impossible d'ajouter ces fichiers. Réessayez.
+uploads.stagingSkipped	%lld éléments n'ont pas pu être préparés et ont été ignorés.
+uploads.discardTitle	Abandonner l'envoi ?
+uploads.discardMessage	Les fichiers que vous avez ajoutés ne seront pas envoyés.
+uploads.discardConfirm	Abandonner
+uploads.statusWaiting	En attente
+uploads.statusFailed	Échec de l'envoi
+uploads.barTitleOne	Envoi de %@
+uploads.barTitleMany	Envoi de %lld fichiers
+uploads.barFailedOne	1 envoi a échoué
+uploads.barFailedMany	%lld envois ont échoué
+uploads.retryAll	Tout réessayer
+uploads.complete	Envoi terminé
+uploads.completeMany	%lld fichiers envoyés
+uploads.completeWithFailures	%1$lld envoyés, %2$lld en échec
+uploads.failedGeneric	Impossible d'envoyer ce fichier.
+uploads.clear	Effacer
+uploads.emptyList	Aucun envoi pour l'instant.
+uploads.cancelAll	Annuler tous les envois
+shared.navigationTitle	Partagés
+shared.segmentByMe	Par moi
+shared.segmentWithMe	Avec moi
+shared.sectionExpired	Expirés
+shared.badgeExpired	expiré
+shared.emptyByMe	Partagez un fichier ou un dossier pour voir son lien ici.
+shared.emptyWithMe	Les liens que d'autres partagent avec vous apparaissent ici.
+shared.noSearchMatches	Aucun partage ne correspond à « %@ ».
+shared.deleteTitle	Supprimer le lien de partage ?
+shared.deleteMessage	Le lien cesse de fonctionner immédiatement. Le fichier ou le dossier lui-même n'est pas touché.
+shared.sharedByUnknown	Quelqu'un
+shared.metaAccess	Accès
+shared.metaExpiration	Expiration
+shared.metaSharedBy	Partagé par
+shared.metaSharedWith	Partagé avec
+shared.anyoneWithLink	Toute personne disposant du lien
+shared.linkMode	Mode de lien
+shared.actionShareLink	Partager le lien
+shared.actionFolderLink	Lien du dossier
+shared.actionFileLink	Lien du fichier
+shared.moreRecipients	+%lld
+shared.copiedShareLink	Lien de partage copié
+shared.copiedFolderZip	Lien ZIP du dossier copié
+shared.copiedDirectFile	Lien direct du fichier copié
+createShare.title	Créer un lien de partage
+createShare.titleCreated	Partage créé
+createShare.sectionLabel	Libellé
+createShare.sectionAccessMode	Mode d'accès
+createShare.sectionWhoCanAccess	Qui peut accéder
+createShare.sectionShareLink	Lien de partage
+createShare.fieldPassword	Mot de passe
+createShare.togglePasswordProtect	Protéger par mot de passe
+createShare.toggleSetExpiration	Définir une date d'expiration
+createShare.fieldExpires	Expire le
+createShare.submit	Créer un lien de partage
+createShare.loadingUsers	Chargement des utilisateurs…
+createShare.noOtherUsers	Aucun autre utilisateur avec qui partager.
+createShare.sharingPrefix	Partage :
+createShare.createdBanner	Lien de partage créé avec succès !
+createShare.viewInShared	Voir dans Partagés
+createShare.directLinkMode	Mode de lien direct
+createShare.directFolderLink	Lien ZIP direct du dossier
+createShare.directFileLink	Lien direct du fichier
+createShare.summaryAccess	Accès
+createShare.summarySharedWith	Partagé avec
+createShare.summaryPassword	Mot de passe
+createShare.summaryPasswordProtected	Protégé
+createShare.summaryExpires	Expire le
+createShare.summarySpecificPeople	Personnes spécifiques
+createShare.errorPastExpiration	Choisissez une date d'expiration future.
+editShare.title	Modifier le lien de partage
+editShare.save	Enregistrer les modifications
+editShare.passwordKeepHint	Laissez vide pour conserver le mot de passe actuel
+editShare.savedToast	Lien de partage mis à jour
+thumbnailSettings.navigationTitle	Miniatures
+thumbnailSettings.subtitle	Contrôlez la façon dont le serveur génère les miniatures d'image pour tous les clients.
+thumbnailSettings.enable	Générer des miniatures
+thumbnailSettings.enableHelp	Désactivez pour servir partout les images complètes.
+thumbnailSettings.quality	Qualité
+thumbnailSettings.qualityHelp	Plus élevée : meilleur rendu, plus d'espace utilisé.
+thumbnailSettings.maxDimension	Dimension maximale
+thumbnailSettings.maxDimensionHelp	Bord le plus long d'une miniature générée, en pixels.
+thumbnailSettings.concurrency	Simultanéité
+thumbnailSettings.concurrencyHelp	Nombre de miniatures que le serveur génère à la fois.
+thumbnailSettings.unavailable	Les réglages de miniatures sont réservés aux administrateurs.
+thumbnailSettings.saveButton	Enregistrer les modifications
+accessRules.navigationTitle	Règles d'accès aux dossiers
+accessRules.subtitle	Remplacez l'accès en lecture et écriture pour des chemins spécifiques.
+accessRules.addRule	Ajouter une règle
+accessRules.empty	Aucune règle d'accès configurée.
+accessRules.emptyHint	Ajoutez une règle pour remplacer l'accès à un chemin.
+accessRules.pathLabel	Chemin
+accessRules.pathPlaceholder	Documents/Rapports
+accessRules.recursive	Appliquer aux sous-dossiers
+accessRules.permissionReadWrite	Lecture et écriture
+accessRules.permissionReadOnly	Lecture seule
+accessRules.permissionHidden	Masqué
+accessRules.remove	Retirer
+accessRules.unavailable	Les règles d'accès sont réservées aux administrateurs.
+accessRules.saveButton	Enregistrer les modifications
+settings.rowThumbnails	Miniatures
+settings.rowAccessRules	Règles d'accès aux dossiers
+settings.navigationTitle	Réglages
+settings.appVersion	Version %1$@ (%2$@)
+settings.sectionGeneral	Général
+settings.sectionDisplay	Affichage
+settings.sectionStorage	Stockage
+settings.sectionServerStorage	Stockage du serveur
+settings.serverStorageUsed	%1$@ sur %2$@
+settings.sectionLicenses	Licences
+settings.sectionLegal	Mentions légales
+settings.sectionUsers	Utilisateurs
+settings.sectionAdmin	Administration
+settings.toggleShowHiddenFiles	Afficher les fichiers masqués
+settings.toggleRenderHTML	Afficher les pages HTML
+settings.toggleRenderMarkdown	Afficher les fichiers Markdown
+settings.toggleHaptics	Retour haptique
+settings.toggleDarkMode	Mode sombre
+settings.toggleShowThumbnails	Afficher les miniatures
+settings.toggleShowExtensions	Afficher les extensions de fichier
+settings.toggleRemoveArchives	Supprimer les archives après le téléchargement
+settings.toggleKeepClipboard	Conserver les éléments après le collage
+settings.toggleKeepClipboardSubtitle	Les éléments copiés restent prêts à coller dans un autre dossier. Les éléments déplacés sont toujours effacés.
+settings.rowDateFormat	Format de date
+settings.rowLanguage	Langue
+settings.rowThumbnailSize	Taille des miniatures
+settings.rowRemoveAllDownloads	Supprimer tous les téléchargements
+settings.rowClearCache	Vider le cache
+settings.rowOpenSourceLicenses	Licences open source
+settings.rowPrivacyPolicy	Politique de confidentialité
+settings.rowTermsOfUse	Conditions d'utilisation
+settings.rowUserManagement	Gestion des utilisateurs
+settings.rowChangePassword	Changer le mot de passe
+settings.rowServer	Serveur
+settings.storageFootnote	Le téléchargement d'un dossier le compresse d'abord en ZIP sur le serveur. Activez l'option ci-dessus pour supprimer cette archive du serveur une fois enregistrée sur votre appareil. Supprimer les téléchargements ou vider le cache n'affecte que cet appareil ; rien n'est touché sur le serveur.
+settings.removeAllDownloadsTitle	Supprimer tous les téléchargements ?
+settings.removeAllDownloadsConfirm	Tout supprimer
+settings.removeAllDownloadsMessage	Cela supprime tous les fichiers téléchargés de cet appareil. Ils restent sur le serveur.
+settings.clearCacheTitle	Vider le cache ?
+settings.clearCacheConfirm	Vider
+settings.clearCacheMessage	Cela efface les aperçus, miniatures et listes de dossiers enregistrés pour une utilisation hors ligne. Rien n'est affecté sur le serveur.
+settings.signOutAlertTitle	Se déconnecter ?
+settings.signOutMessage	Vous devrez vous reconnecter pour accéder à vos fichiers.
+settings.signOutButton	Se déconnecter
+settings.signingOut	Déconnexion…
+settings.dateFormatNavigationTitle	Format de date
+settings.dateFormatShowTime	Afficher l'heure
+serverDetails.navigationTitle	Serveur
+serverDetails.changeLogo	Changer l'icône
+serverDetails.takePhoto	Prendre une photo
+serverDetails.chooseFromGallery	Envoyer depuis la galerie
+serverDetails.nameLabel	Nom du serveur
+serverDetails.namePlaceholder	Explorer
+serverDetails.nameErrorEmpty	Le nom du serveur ne peut pas être vide.
+serverDetails.urlLabel	URL du serveur
+serverDetails.urlFootnote	L'adresse où votre instance NextExplorer est installée. Pour la modifier, déconnectez-vous et ajoutez à nouveau le serveur.
+serverDetails.updateButton	Mettre à jour le serveur
+serverDetails.savedMessage	Détails du serveur mis à jour.
+serverDetails.logoErrorTooLarge	Cette image est trop grande. Choisissez-en une de moins de 2 Mo.
+serverDetails.cameraDeniedTitle	Accès à l'appareil photo désactivé
+serverDetails.cameraDeniedMessage	Activez l'accès à l'appareil photo dans Réglages pour prendre une photo.
+licenses.navigationTitle	Licences open source
+licenses.sectionSoftware	Logiciels
+licenses.sectionFontSoftware	Logiciels de polices
+licenses.labelAuthor	Auteur
+licenses.labelOriginalVersion	Version originale
+licenses.labelModifiedVersion	Version modifiée
+licenses.labelReservedFontName	Nom de police réservé
+fileInfo.navigationTitleFolder	Dossier
+fileInfo.rowKind	Type
+fileInfo.rowSize	Taille
+fileInfo.rowLocation	Emplacement
+fileInfo.rowDateModified	Date de modification
+fileInfo.rowDateCreated	Date de création
+fileInfo.rowFiles	Fichiers
+fileInfo.rowFolders	Dossiers
+fileInfo.rowTotalSize	Taille totale
+fileInfo.sectionServerDisk	Disque du serveur
+fileInfo.diskFreeOf	%1$@ libres sur %2$@
+fileInfo.rowDimensions	Dimensions
+fileInfo.rowCamera	Appareil photo
+fileInfo.rowLens	Objectif
+fileInfo.rowDateTaken	Date de prise de vue
+fileInfo.rowDuration	Durée
+fileInfo.partialScan	Analyse partielle prise en compte : ce dossier est très volumineux.
+permissions.title	Autorisations
+permissions.sectionMode	Mode
+permissions.numericLabel	Numérique
+permissions.applyToEnclosed	Appliquer aux éléments contenus
+permissions.applyPermissions	Appliquer les autorisations
+permissions.sectionOwnership	Propriété
+permissions.fieldOwner	Propriétaire
+permissions.fieldGroup	Groupe
+permissions.ownershipNote	Changer la propriété nécessite généralement des privilèges root ou administrateur sur le serveur.
+permissions.applyOwnership	Appliquer la propriété
+permissions.scopeOwner	Propriétaire
+permissions.scopeGroup	Groupe
+permissions.scopeOthers	Autres
+permissions.rightRead	Lecture
+permissions.rightWrite	Écriture
+permissions.rightExecute	Exécution
+archive.emptyFolder	Ce dossier est vide.
+archive.openFailed	Impossible d'ouvrir ce fichier.
+archive.openArchiveFailed	Impossible d'ouvrir cette archive.
+archive.entryTooLarge	Cet élément est trop volumineux pour être ouvert.
+gallery.loadFailed	Impossible de charger cette image.
+textPreview.saved	Enregistré
+textPreview.loadFailed	Impossible de charger ce fichier. Vérifiez votre connexion et réessayez.
+userManagement.navigationTitle	Gestion des utilisateurs
+userManagement.searchPrompt	Rechercher des utilisateurs
+userManagement.createUser	Créer un utilisateur
+userManagement.badgeAdmin	Admin
+userManagement.emptyList	Aucun utilisateur pour l'instant.
+userManagement.noSearchMatches	Aucun utilisateur ne correspond à « %@ ».
+userManagement.loadFailed	Impossible de joindre le serveur.
+userManagement.sortType	Type
+userManagement.sortName	Nom
+userManagement.sortEmail	E-mail
+userManagement.tabProfile	Profil
+userManagement.tabSecurity	Sécurité
+userManagement.tabVolumes	Volumes
+userManagement.createNavigationTitle	Créer un utilisateur
+userManagement.createEmailField	E-mail
+userManagement.createEmailPlaceholder	nom@exemple.com
+userManagement.createUsernameField	Nom d'utilisateur (facultatif)
+userManagement.createUsernamePlaceholder	Dérivé de l'e-mail
+userManagement.createPasswordField	Mot de passe
+userManagement.createPasswordPlaceholder	Au moins %lld caractères
+userManagement.createGrantAdminToggle	Accorder l'accès administrateur
+userManagement.createGrantAdminSubtitle	Contrôle total sur les fichiers, partages et utilisateurs.
+userManagement.createSubmit	Créer un utilisateur
+userManagement.setPasswordNavigationTitle	Mot de passe
+userManagement.setPasswordNewField	Nouveau mot de passe
+userManagement.setPasswordPlaceholder	Au moins %lld caractères
+userManagement.setPasswordResetTitle	Réinitialiser le mot de passe
+userManagement.setPasswordSetTitle	Définir le mot de passe
+userManagement.setPasswordResetIntro	Définissez un nouveau mot de passe local pour %@. Son mot de passe actuel cessera de fonctionner.
+userManagement.setPasswordSetIntro	Donnez à %@ un mot de passe local pour qu'il puisse se connecter sans SSO.
+userManagement.toastProfileUpdated	Profil mis à jour
+userManagement.toastAdminGranted	Administrateur accordé
+userManagement.toastUserRemoved	Utilisateur supprimé
+userManagement.toastUserCreated	Utilisateur créé
+userManagement.toastPasswordUpdated	Mot de passe mis à jour
+userManagement.toastVolumeSaved	Volume enregistré
+userManagement.toastVolumeRemoved	Volume supprimé
+userManagement.errorEmailRequired	L'e-mail est requis.
+userManagement.errorEmailInvalid	Saisissez une adresse e-mail valide.
+userManagement.errorUsernameRequired	Le nom d'utilisateur est requis.
+userManagement.errorEmailInUse	E-mail déjà utilisé.
+userManagement.errorPasswordTooShort	Utilisez au moins %lld caractères.
+userDetail.fallbackName	Utilisateur
+userDetail.sectionGeneralInfo	Informations générales
+userDetail.sectionRoles	Rôles et autorisations
+userDetail.sectionLocalPassword	Mot de passe local
+userDetail.sectionSSO	Authentification unique
+userDetail.sectionAssignedVolumes	Volumes attribués
+userDetail.profileDisplayNameField	Nom affiché
+userDetail.profileDisplayNamePlaceholder	Nom affiché
+userDetail.profileUsernameField	Nom d'utilisateur
+userDetail.profileUsernamePlaceholder	Nom d'utilisateur
+userDetail.profileEmailField	E-mail
+userDetail.profileEmailPlaceholder	nom@exemple.com
+userDetail.profileSave	Enregistrer les modifications
+userDetail.roleAdmin	Administrateur
+userDetail.roleAdminSubtitle	Contrôle total sur les fichiers, partages et utilisateurs.
+userDetail.roleAdminLocked	Les administrateurs ne peuvent pas être rétrogradés depuis l'app.
+userDetail.roleGrantAdmin	Accorder admin
+userDetail.passwordHasLocal	Cet utilisateur se connecte avec un e-mail et un mot de passe.
+userDetail.passwordSSOOnly	Cet utilisateur n'a pas de mot de passe local : SSO uniquement.
+userDetail.passwordReset	Réinitialiser le mot de passe
+userDetail.passwordSet	Définir le mot de passe
+userDetail.ssoNone	Aucun fournisseur SSO lié.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Lié
+userDetail.dangerZoneTitle	Zone sensible
+userDetail.dangerZoneSubtitle	Supprimer un utilisateur révoque immédiatement son accès. Les fichiers qu'il possède sur le serveur ne sont pas supprimés.
+userDetail.dangerZoneRemoveUser	Supprimer l'utilisateur
+userDetail.volumesNone	Aucun volume attribué.
+userDetail.volumesNoneSubtitle	Cet utilisateur ne voit que l'espace partagé par défaut.
+userDetail.volumesAssign	Attribuer un volume
+userDetail.volumesFootnote	Les volumes donnent à un utilisateur l'accès à un répertoire hors de l'espace partagé par défaut. Retirer un volume ne supprime jamais de fichiers.
+userDetail.volumeEditAccessibility	Modifier %@
+userDetail.volumeRemoveAccessibility	Retirer %@
+userDetail.removeVolumeTitle	Retirer le volume ?
+userDetail.removeVolumeMessage	%@ est retiré de cet utilisateur. Le répertoire lui-même n'est pas touché.
+userDetail.removeUserTitle	Supprimer l'utilisateur ?
+userDetail.removeUserMessage	%@ perd immédiatement l'accès. Ses fichiers sur le serveur ne sont pas supprimés.
+userDetail.volumeSheetLabelField	Libellé
+userDetail.volumeSheetLabelPlaceholder	Libellé du volume
+userDetail.volumeSheetAccessMode	Mode d'accès
+userDetail.volumeSheetDirectory	Répertoire
+userDetail.volumeSheetSaveEdit	Enregistrer le volume
+userDetail.volumeSheetSaveNew	Attribuer un volume
+userDetail.volumeSheetTitleEdit	Modifier le volume
+userDetail.volumeSheetTitleNew	Attribuer un volume
+userDetail.directoryPickerGoUp	Remonter d'un répertoire
+userDetail.directoryPickerUseThis	Utiliser ce répertoire
+userDetail.directoryPickerOpen	Ouvrir %@
+userDetail.directoryPickerFailed	Impossible de lister les répertoires.
+previewToolbar.close	Fermer
+previewToolbar.createShareLink	Créer un lien de partage
+previewToolbar.download	Télécharger
+previewToolbar.delete	Supprimer
+previewToolbar.share	Partager
+previewToolbar.rename	Renommer
+login.serverQuestion	Où se trouve votre instance de NextExplorer ?
+login.testConnection	Tester la connexion
+login.emailField	E-mail
+login.passwordField	Mot de passe
+login.submit	Se connecter
+login.plaintextWarning	Cette connexion n'est pas chiffrée. Votre mot de passe et votre session sont envoyés en clair sur le réseau local.
+error.sessionExpired	Votre session a expiré. Reconnectez-vous.
+error.rateLimited	Trop de requêtes. Réessayez bientôt.
+error.network	Impossible de joindre le serveur.
+error.offline	Vous êtes hors ligne. Connectez-vous à Internet et réessayez.
+error.decoding	Réponse inattendue du serveur.
+error.server	Erreur du serveur (%lld).
+error.forbidden	Vous n'avez pas l'autorisation de faire cela.
+changePassword.navigationTitle	Changer le mot de passe
+changePassword.intro	Changez le mot de passe que vous utilisez pour vous connecter avec votre adresse e-mail. Vous resterez connecté sur cet appareil.
+changePassword.fieldCurrentPassword	Mot de passe actuel
+changePassword.fieldNewPasswordLabel	Nouveau mot de passe
+changePassword.fieldConfirmPasswordLabel	Confirmer le nouveau mot de passe
+changePassword.fieldConfirmPassword	Ressaisissez le nouveau mot de passe
+changePassword.fieldNewPasswordPrompt	Au moins %lld caractères
+changePassword.submitButton	Mettre à jour le mot de passe
+changePassword.success	Votre mot de passe a été mis à jour.
+changePassword.errorMinLength	Utilisez au moins %lld caractères.
+changePassword.errorMismatch	Les mots de passe ne correspondent pas.
+login.portHint	Ajoutez un port (par ex. :3000). La plupart des serveurs domestiques n'écoutent pas sur le port 80.
+login.errorInvalidServer	Saisissez une adresse de serveur valide.
+login.errorInvalidEmail	Saisissez une adresse e-mail valide.
+login.errorInvalidCredentials	Nom d'utilisateur ou mot de passe incorrect.
+login.errorSessionExpired	Votre session a expiré. Veuillez vous reconnecter.
+login.errorIncomplete	La connexion n'a pas abouti. Veuillez réessayer.
+login.errorUnreachable	Impossible de joindre ce serveur. Vérifiez l'adresse et réessayez.
+login.errorUnexpectedResponse	Réponse inattendue du serveur.
+login.errorKeychain	Impossible d'enregistrer votre session sur cet appareil.
+login.errorDecoding	Réponse inattendue du serveur. Vérifiez l'adresse et réessayez.
+login.errorNoLocalAuth	Ce serveur n'a pas activé la connexion par nom d'utilisateur et mot de passe.
+login.errorRateLimited	Trop de tentatives. Patientez quelques minutes et réessayez.
+login.errorServer	Le serveur a rencontré un problème (erreur %lld). Réessayez plus tard.
+browse.nameErrorReserved	Ce nom n'est pas autorisé.
+browse.nameErrorSeparators	Un nom ne peut pas contenir / ou \.
+browse.searchMatchLine	Ligne %1$lld : %2$@
+browse.searchMatchLineLabel	Ligne %lld
+createShare.errorPasswordRequired	Saisissez un mot de passe ou désactivez la protection par mot de passe.
+filter.sheetTitle	Filtrer par type
+filter.button	Filtrer
+filter.all	Tous les types
+filter.folders	Dossiers
+filter.images	Images
+filter.videos	Vidéos
+filter.audio	Audio
+filter.documents	Documents
+filter.archives	Archives
+filter.other	Autre
+language.navigationTitle	Langue
+language.systemDefault	Réglage du système
+language.systemDefaultSubtitle	Suivre la langue de l'appareil
