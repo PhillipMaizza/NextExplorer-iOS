@@ -584,3 +584,22 @@ login.errorKeychain	Could not save your session on this device.
 login.errorDecoding	Server responded unexpectedly. Check the address and try again.
 login.errorNoLocalAuth	This server doesn't have username/password sign-in enabled.
 login.errorRateLimited	Too many attempts. Please wait a few minutes and try again.
+
+# ---- restored keys (were present in generated catalog but missing from tsv) ----
+browse.nameErrorReserved	That name isn't allowed.
+browse.nameErrorSeparators	A name can't contain / or \.
+browse.searchMatchLine	Line %1$lld: %2$@
+browse.searchMatchLineLabel	Line %lld
+createShare.errorPasswordRequired	Enter a password or turn off password protection.
+login.errorServer	The server ran into a problem (error %lld). Please try again later.
+# ---- filter by type ----
+filter.sheetTitle	Filter by Type
+filter.button	Filter
+filter.all	All Types
+filter.folders	Folders
+filter.images	Images
+filter.videos	Videos
+filter.audio	Audio
+filter.documents	Documents
+filter.archives	Archives
+filter.other	Other

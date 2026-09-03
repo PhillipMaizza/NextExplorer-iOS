@@ -163,7 +163,7 @@ private struct ImageGalleryPage: View {
             } else if let errorMessage {
                 statusContent(message: errorMessage)
             } else {
-                ProgressView()
+                DSSpinner()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

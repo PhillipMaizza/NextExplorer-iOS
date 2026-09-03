@@ -89,7 +89,8 @@ public enum L10n {
         public static var scopeThisFolder: String { tr("browse.scopeThisFolder") }  // "This Folder"
         public static var searchEverywhere: String { tr("browse.searchEverywhere") }  // "Search everywhere"
         public static var searchFailed: String { tr("browse.searchFailed") }  // "Couldn't search. Check your connection and try again."
-        public static func searchMatchLine(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.searchMatchLine", a0, a1) }  // "Line %1$lld: %2$@"
+        public static func searchMatchLine(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.searchMatchLine", a0, a1) }
+        public static func searchMatchLineLabel(_ a0: CVarArg) -> String { tr("browse.searchMatchLineLabel", a0) }
         public static func searchNoMatchesInFolder(_ a0: CVarArg) -> String { tr("browse.searchNoMatchesInFolder", a0) }
         public static var searchScopeEverywhere: String { tr("browse.searchScopeEverywhere") }  // "Everywhere"
         public static var searchScopeInFolder: String { tr("browse.searchScopeInFolder") }  // "This Folder"
@@ -256,6 +257,18 @@ public enum L10n {
         public static var rowTotalSize: String { tr("fileInfo.rowTotalSize") }  // "Total Size"
         public static var sectionServerDisk: String { tr("fileInfo.sectionServerDisk") }  // "Server Disk"
     }
+    public enum Filter {
+        public static var all: String { tr("filter.all") }  // "All Types"
+        public static var archives: String { tr("filter.archives") }  // "Archives"
+        public static var audio: String { tr("filter.audio") }  // "Audio"
+        public static var button: String { tr("filter.button") }  // "Filter"
+        public static var documents: String { tr("filter.documents") }  // "Documents"
+        public static var folders: String { tr("filter.folders") }  // "Folders"
+        public static var images: String { tr("filter.images") }  // "Images"
+        public static var other: String { tr("filter.other") }  // "Other"
+        public static var sheetTitle: String { tr("filter.sheetTitle") }  // "Filter by Type"
+        public static var videos: String { tr("filter.videos") }  // "Videos"
+    }
     public enum Gallery {
         public static var loadFailed: String { tr("gallery.loadFailed") }  // "Couldn't load this image."
     }
@@ -270,6 +283,7 @@ public enum L10n {
     }
     public enum Login {
         public static var emailField: String { tr("login.emailField") }  // "Email"
+        public static var errorDecoding: String { tr("login.errorDecoding") }
         public static var errorIncomplete: String { tr("login.errorIncomplete") }  // "Sign-in didn't complete. Please try again."
         public static var errorInvalidCredentials: String { tr("login.errorInvalidCredentials") }  // "Incorrect username or password."
         public static var errorInvalidEmail: String { tr("login.errorInvalidEmail") }  // "Enter a valid email address."
@@ -413,18 +427,6 @@ public enum L10n {
         public static var segmentByMe: String { tr("shared.segmentByMe") }  // "By me"
         public static var segmentWithMe: String { tr("shared.segmentWithMe") }  // "With me"
         public static var sharedByUnknown: String { tr("shared.sharedByUnknown") }  // "Someone"
-    }
-    public enum Filter {
-        public static var sheetTitle: String { tr("filter.sheetTitle") }  // "Filter by Type"
-        public static var button: String { tr("filter.button") }  // "Filter"
-        public static var all: String { tr("filter.all") }  // "All Types"
-        public static var folders: String { tr("filter.folders") }  // "Folders"
-        public static var images: String { tr("filter.images") }  // "Images"
-        public static var videos: String { tr("filter.videos") }  // "Videos"
-        public static var audio: String { tr("filter.audio") }  // "Audio"
-        public static var documents: String { tr("filter.documents") }  // "Documents"
-        public static var archives: String { tr("filter.archives") }  // "Archives"
-        public static var other: String { tr("filter.other") }  // "Other"
     }
     public enum Sort {
         public static var ascending: String { tr("sort.ascending") }  // "Ascending"

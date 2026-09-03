@@ -118,7 +118,7 @@ private struct DSToastModifier: ViewModifier {
                             .scaledToFit()
                             .frame(width: Constants.iconSize, height: Constants.iconSize)
                     } else {
-                        ProgressView()
+                        DSSpinner()
                             .tint(Color.primaryInverted)
                     }
                     Text(message.text).type(.body2(.semibold))

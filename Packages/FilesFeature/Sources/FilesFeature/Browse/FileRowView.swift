@@ -18,6 +18,9 @@ struct FileRowView: View {
     let dateModified: Date?
     let size: Int64?
     let customSubtitle: String?
+    /// A small semibold line rendered under the subtitle, e.g. "Line 58" for a search content
+    /// match. `nil` hides it.
+    let lineLabel: String?
     let isFavorite: Bool
     let itemID: String?
     let kind: String?
@@ -59,6 +62,7 @@ struct FileRowView: View {
         name: String,
         isDirectory: Bool,
         subtitle: String? = nil,
+        lineLabel: String? = nil,
         isFavorite: Bool = false,
         kind: String? = nil,
         thumbnailFile: FileItem? = nil,
@@ -75,6 +79,7 @@ struct FileRowView: View {
         self.dateModified = nil
         self.size = nil
         self.customSubtitle = subtitle
+        self.lineLabel = lineLabel
         self.isFavorite = isFavorite
         self.itemID = thumbnailFile?.id
         self.kind = kind
@@ -96,6 +101,7 @@ struct FileRowView: View {
         self.dateModified = item.dateModified
         self.size = item.isDirectory ? nil : item.size
         self.customSubtitle = nil
+        self.lineLabel = nil
         self.isFavorite = isFavorite
         self.itemID = item.id
         self.kind = item.kind
@@ -150,12 +156,17 @@ struct FileRowView: View {
                         .type(.body3(.regular), style: isHidden ? .tertiary : .secondary)
                         .lineLimit(1)
                 }
-            }
+                if let lineLabel {
+                    Text(lineLabel)
+                        .type(.body3(.semibold), style: isHidden ? .tertiary : .secondary)
+                        .lineLimit(1)
+                }
+}
 
             Spacer()
 
             if isOpening {
-                ProgressView()
+                DSSpinner()
                     .controlSize(.small)
             }
 
@@ -260,6 +271,10 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
         FileRowView(name: ".hidden",
                     isDirectory: false,
                     subtitle: "18kb")
+        FileRowView(name: "ContentView.swift",
+                    isDirectory: false,
+                    subtitle: "let count = 0",
+                    lineLabel: "Line 58")
 
     }
     .padding(.space16)

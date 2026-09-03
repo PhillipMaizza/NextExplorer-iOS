@@ -125,7 +125,7 @@ struct EditShareSheet: View {
     private var userPicker: some View {
         if store.usersPhase == .loading {
             HStack(spacing: .space8) {
-                ProgressView()
+                DSSpinner()
                 Text(L10n.CreateShare.loadingUsers).type(.body3(.regular), style: .secondary)
             }
             .padding(.vertical, .space8)

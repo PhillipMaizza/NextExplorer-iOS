@@ -37,7 +37,7 @@ struct FileInfoLoadingSheet: View {
                 onClose: onDismiss
             )
 
-            ProgressView()
+            DSSpinner()
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, Constants.progressVerticalPadding)
         }

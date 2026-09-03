@@ -3,8 +3,7 @@ import Localization
 import SwiftUI
 
 private enum Constants {
-    /// Field cross fades: the clear button appearing with text, and the filter button sliding in
-    /// on focus.
+    /// Cross fade for the clear button appearing with text.
     static let fieldAnimationDuration: Double = 0.15
 }
 
@@ -25,12 +24,8 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     /// Settings) sits higher than one that does; pass the actions' height here so every tab's
     /// title lines up.
     var extraTopPadding: CGFloat = 0
-    /// Optional filter control shown inside the search field, next to the search glyph, while the
-    /// field is focused. A screen that offers a type filter (Browse search) sets this; `nil` hides
-    /// it. `isFilterActive` tints it accent to signal a filter is applied.
-    var filterAction: (() -> Void)? = nil
-    var isFilterActive: Bool = false
-    /// Rendered below the search field, e.g. a search-scope segmented control while searching.
+    /// Rendered below the search field, e.g. a search-scope segmented control plus type filter
+    /// chips while searching.
     @ViewBuilder var accessory: () -> Accessory
 
     @FocusState private var isFocused: Bool
@@ -79,19 +74,9 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .submitLabel(.search)
-            // One trailing control at a time so their tap targets never overlap: the filter
-            // button owns the slot while the field is focused (Browse search); otherwise the clear
-            // (x) button appears when there's text. On screens with no filter it's always the
-            // clear button, unchanged.
-            if isFocused, let filterAction {
-                Button(action: filterAction) {
-                    (isFilterActive ? IconKit.filterFill : IconKit.filter)
-                        .foregroundStyle(isFilterActive ? Color.accent : Color.secondaryDS)
-                }
-                .buttonStyle(.plain)
-                .transition(.move(edge: .trailing).combined(with: .opacity))
-                .accessibilityLabel(L10n.Filter.button)
-            } else if !searchText.isEmpty {
+            // Trailing clear (x) button appears whenever there's text. The type filter now lives
+            // in chips below the field (Browse search), so it no longer contends for this slot.
+            if !searchText.isEmpty {
                 Button {
                     searchText = ""
                 } label: {
@@ -102,7 +87,6 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             }
         }
         .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: searchText.isEmpty)
-        .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: isFocused)
         .roundedFieldStyle(isFocused: isFocused)
     }
 }

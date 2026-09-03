@@ -8,7 +8,7 @@ struct ThumbnailLoadingPlaceholder: View {
     var body: some View {
         ZStack {
             Color.backgroundSecondary
-            ProgressView().controlSize(.small)
+            DSSpinner(size: .small)
         }
     }
 }

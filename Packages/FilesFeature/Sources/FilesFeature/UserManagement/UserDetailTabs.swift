@@ -54,7 +54,7 @@ struct ProfileTabView: View {
                     Spacer(minLength: .space8)
                 }
                 if store.isUpdatingRoles {
-                    ProgressView().frame(maxWidth: .infinity, alignment: .leading)
+                    DSSpinner().frame(maxWidth: .infinity, alignment: .leading)
                 } else if user.isAdmin {
                     // No "Revoke Admin": the backend refuses to demote any administrator
                     // (`PATCH /api/users/:id` 400s with "Demotion of admin is not allowed."), so
@@ -171,7 +171,7 @@ struct VolumesTabView: View {
         VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
             Card(L10n.UserDetail.sectionAssignedVolumes) {
                 if store.volumesPhase == .loading {
-                    ProgressView().frame(maxWidth: .infinity, alignment: .center).padding(.vertical, .space8)
+                    DSSpinner().frame(maxWidth: .infinity, alignment: .center).padding(.vertical, .space8)
                 } else if store.volumes.isEmpty {
                     VStack(spacing: .space4) {
                         Text(L10n.UserDetail.volumesNone).type(.body3(.regular), style: .secondary)
