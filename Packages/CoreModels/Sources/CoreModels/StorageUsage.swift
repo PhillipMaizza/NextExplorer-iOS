@@ -28,10 +28,12 @@ public struct StorageUsage: Codable, Equatable, Sendable {
         total = try container.decodeIfPresent(Int64.self, forKey: .total) ?? 0
     }
 
-    /// Bytes used on the volume — the folder's recursive size, mirroring the web client.
-    public var used: Int64 { size }
+    /// Bytes actually filled on the volume: capacity minus `df` free space. Not `size` (the
+    /// target folder's own recursive bytes), which is only a fraction of what fills the disk,
+    /// so the meter and the "N free of M" caption agree on the same filled amount.
+    public var used: Int64 { max(0, capacity - free) }
 
-    /// Total capacity: the `df` total, or `used + free` when `df` didn't report one.
+    /// Total capacity: the `df` total, or `size + free` when `df` didn't report one.
     public var capacity: Int64 { total > 0 ? total : size + free }
 
     /// `0...1`, clamped. `0` when there's nothing to divide by.

@@ -184,11 +184,13 @@ struct TextFilePreviewView: View {
                 .scaledToFit()
                 .foregroundStyle(Color.negative)
                 .frame(width: .iconMedium, height: .iconMedium)
-            Text(message).type(.body1(.regular), style: .secondary)
-            DSButton(L10n.Common.retry, style: .secondary) { onRetry() }
-                .fixedSize()
+            Text(message)
+                .type(.body1(.regular), style: .secondary)
+                .multilineTextAlignment(.center)
+            RetryLinkButton(action: onRetry)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .padding(.horizontal, .space16)
     }
 
 }

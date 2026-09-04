@@ -119,7 +119,7 @@ struct MainTabFeatureTests {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { [download] }
+            $0.localDownloadStore.list = { _ in [download] }
         }
 
         await store.send(.browse(.delegate(.openDownloadsTapped))) {
@@ -291,7 +291,7 @@ struct MainTabFeatureTests {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { [download] }
+            $0.localDownloadStore.list = { _ in [download] }
         }
 
         await store.send(.favorites(.delegate(.openDownloadsTapped))) {
