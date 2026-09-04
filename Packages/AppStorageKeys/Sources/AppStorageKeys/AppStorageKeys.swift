@@ -1,3 +1,5 @@
+import Foundation
+
 /// Every `UserDefaults` key the app reads through `@AppStorage`, spelled once. Its own
 /// package because the app target, every feature package and DesignSystem's haptics modifier
 /// all need it.
@@ -22,6 +24,8 @@ public enum AppStorageKeys {
 
     public static let hapticsEnabled = "hapticsEnabled"
     public static let showFilenameExtensions = "showFilenameExtensions"
+    /// Whether the tab bar shows a text title under each icon. On by default.
+    public static let showTabLabels = "showTabLabels"
     public static let removeArchiveAfterDownload = "removeArchiveAfterDownload"
     public static let keepClipboardAfterCopy = "keepClipboardAfterCopy"
 
@@ -33,4 +37,22 @@ public enum AppStorageKeys {
     public static let browseViewMode = "browseViewMode"
     public static let favoritesViewMode = "favoritesViewMode"
     public static let downloadsViewMode = "downloadsViewMode"
+
+    /// Preferences reset to their defaults on sign out, so a new session on this device starts
+    /// clean instead of inheriting the previous account's view modes and display choices.
+    /// Device-level chrome the user sets for themselves, not per account (appearance, language,
+    /// haptics), is deliberately left untouched.
+    public static let sessionScopedKeys: [String] = [
+        browseViewMode, favoritesViewMode, downloadsViewMode,
+        thumbnailSize, showFilenameExtensions, showTabLabels,
+        renderHTMLPages, renderMarkdownPages,
+        removeArchiveAfterDownload, keepClipboardAfterCopy,
+        dateDisplayFormat, includeTimeInDates,
+    ]
+
+    /// Clears every `sessionScopedKeys` entry so each `@AppStorage` falls back to its declared
+    /// default. Called at sign out / session end alongside the cache clears.
+    public static func resetSessionPreferences(in defaults: UserDefaults = .standard) {
+        for key in sessionScopedKeys { defaults.removeObject(forKey: key) }
+    }
 }

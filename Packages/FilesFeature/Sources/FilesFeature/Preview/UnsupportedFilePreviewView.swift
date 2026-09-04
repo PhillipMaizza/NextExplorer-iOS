@@ -54,7 +54,9 @@ struct UnsupportedFilePreviewView: View {
                         .type(.body2(.regular), style: .secondary)
                 }
 
-                DSInfoCard(L10n.UnsupportedPreview.cannotOpen)
+                Text(L10n.UnsupportedPreview.cannotOpen)
+                    .type(.body2(.regular), style: .secondary)
+                    .multilineTextAlignment(.center)
 
                 Spacer()
             }

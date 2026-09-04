@@ -1507,7 +1507,18 @@ struct BrowseFeatureTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.compressItem = { _, _ in compressed }
+            // Compress auto-refreshes so the new archive carries full server metadata and is
+            // browsable immediately; the refetch returns the same two entries.
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(
+                    items: [item, compressed],
+                    access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true),
+                    path: ""
+                )
+            }
+            $0.filesClient.favorites = { _ in [] }
         }
+        store.exhaustivity = .off
 
         await store.send(.compressTapped(item)) {
             $0.isPerformingFileAction = true
@@ -1518,6 +1529,9 @@ struct BrowseFeatureTests {
             $0.fileActionProgressMessage = nil
             $0.items = [item, compressed]
         }
+        // The auto-refresh reloads the listing; the archive is still present afterwards.
+        await store.skipReceivedActions()
+        #expect(store.state.items.map(\.name).contains("Documents.zip"))
     }
 
     @Test
@@ -1555,7 +1569,7 @@ struct BrowseFeatureTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.downloadRawFile = { _, _ in cachedURL }
-            $0.localDownloadStore.save = { _, _, _ in savedURL }
+            $0.localDownloadStore.save = { _, _, _, _ in savedURL }
         }
 
         await store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: false)) {
@@ -1607,7 +1621,7 @@ struct BrowseFeatureTests {
         } withDependencies: {
             $0.filesClient.compressItem = { _, _ in compressed }
             $0.filesClient.downloadRawFile = { _, _ in cachedURL }
-            $0.localDownloadStore.save = { _, _, _ in savedURL }
+            $0.localDownloadStore.save = { _, _, _, _ in savedURL }
         }
 
         await store.send(.downloadTapped(item, .cache, removeArchiveAfterDownload: false)) {
@@ -1636,7 +1650,7 @@ struct BrowseFeatureTests {
         } withDependencies: {
             $0.filesClient.compressItem = { _, _ in compressed }
             $0.filesClient.downloadRawFile = { _, _ in URL(fileURLWithPath: "/tmp/cached/Documents.zip") }
-            $0.localDownloadStore.save = { _, _, _ in URL(fileURLWithPath: "/tmp/Caches/Downloads/Documents.zip") }
+            $0.localDownloadStore.save = { _, _, _, _ in URL(fileURLWithPath: "/tmp/Caches/Downloads/Documents.zip") }
             $0.filesClient.deleteItems = { _, items in deletedItems.withValue { $0 = items } }
         }
         store.exhaustivity = .off
@@ -1658,7 +1672,7 @@ struct BrowseFeatureTests {
         } withDependencies: {
             $0.filesClient.compressItem = { _, _ in compressed }
             $0.filesClient.downloadRawFile = { _, _ in URL(fileURLWithPath: "/tmp/cached/Documents.zip") }
-            $0.localDownloadStore.save = { _, _, _ in URL(fileURLWithPath: "/tmp/Caches/Downloads/Documents.zip") }
+            $0.localDownloadStore.save = { _, _, _, _ in URL(fileURLWithPath: "/tmp/Caches/Downloads/Documents.zip") }
             $0.filesClient.deleteItems = { _, _ in throw FilesClientError.server(statusCode: 500) }
         }
         store.exhaustivity = .off
@@ -1680,7 +1694,7 @@ struct BrowseFeatureTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.downloadRawFile = { _, _ in URL(fileURLWithPath: "/tmp/cached/report.pdf") }
-            $0.localDownloadStore.save = { _, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf") }
+            $0.localDownloadStore.save = { _, _, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf") }
         }
         store.exhaustivity = .off
 
@@ -1727,7 +1741,7 @@ struct BrowseFeatureTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.downloadRawFile = { _, _ in cachedURL }
-            $0.localDownloadStore.save = { _, _, _ in throw DiskFullError() }
+            $0.localDownloadStore.save = { _, _, _, _ in throw DiskFullError() }
         }
 
         await store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: false)) {
@@ -1949,7 +1963,7 @@ struct BrowseFeatureTests {
         } withDependencies: {
             $0.filesClient.compressItem = { _, _ in compressedFolder }
             $0.filesClient.downloadRawFile = { _, item in URL(fileURLWithPath: "/tmp/cached/\(item.name)") }
-            $0.localDownloadStore.save = { sourceURL, fileName, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
+            $0.localDownloadStore.save = { sourceURL, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
         }
         store.exhaustivity = .off
 
@@ -1982,7 +1996,7 @@ struct BrowseFeatureTests {
         } withDependencies: {
             $0.filesClient.compressItem = { _, _ in compressedFolder }
             $0.filesClient.downloadRawFile = { _, item in URL(fileURLWithPath: "/tmp/cached/\(item.name)") }
-            $0.localDownloadStore.save = { _, fileName, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
+            $0.localDownloadStore.save = { _, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
             $0.filesClient.deleteItems = { _, items in deletedItems.withValue { $0.append(contentsOf: items) } }
         }
         store.exhaustivity = .off
@@ -2009,7 +2023,7 @@ struct BrowseFeatureTests {
                 if item.id == badFile.id { throw FilesClientError.server(statusCode: 500) }
                 return URL(fileURLWithPath: "/tmp/cached/\(item.name)")
             }
-            $0.localDownloadStore.save = { sourceURL, fileName, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
+            $0.localDownloadStore.save = { sourceURL, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
         }
         store.exhaustivity = .off
 

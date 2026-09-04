@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import CoreModels
 import DesignSystem
 import FilesClient
 import Foundation
@@ -50,6 +51,8 @@ public struct DownloadsFeature {
         public var isSelecting = false
         public var selectedDownloadIDs: Set<LocalDownload.ID> = []
         public var bulkDeleteConfirmationIsPresented = false
+        /// Current account's downloads scope, so the tab lists only this account's files.
+        @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
 
         public init() {}
 
@@ -113,7 +116,7 @@ public struct DownloadsFeature {
                 // Routing it through an async effect returned a frame later and flashed the
                 // loading skeleton on a tab whose data is effectively instant.
                 do {
-                    state.downloads = IdentifiedArray(uniqueElements: try localDownloadStore.list())
+                    state.downloads = IdentifiedArray(uniqueElements: try localDownloadStore.list(state.downloadScope))
                     state.phase = .loaded
                 } catch {
                     state.phase = .failed(((error as? FilesClientError) ?? .network(String(describing: error))).userMessage)
@@ -238,8 +241,9 @@ public struct DownloadsFeature {
     private func load(_ state: inout State) -> Effect<Action> {
         state.phase = .loading
         let localDownloadStore = self.localDownloadStore
+        let downloadScope = state.downloadScope
         return .run { send in
-            await send(.downloadsResponse(try await apiResult { try localDownloadStore.list() }))
+            await send(.downloadsResponse(try await apiResult { try localDownloadStore.list(downloadScope) }))
         }
         .cancellable(id: CancelID.load, cancelInFlight: true)
     }
@@ -267,10 +271,11 @@ public struct DownloadsFeature {
             return .none
         }
         let localDownloadStore = self.localDownloadStore
+        let downloadScope = state.downloadScope
         return .run { send in
             do {
                 _ = try localDownloadStore.rename(download.url, trimmed)
-                let list = try localDownloadStore.list()
+                let list = try localDownloadStore.list(downloadScope)
                 await send(.renameResponse(.success(list)))
             } catch {
                 guard !Task.isCancelled else { return }

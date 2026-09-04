@@ -31,6 +31,9 @@ public struct SettingsFeature {
         /// Shared with `BrowseFeature` under the same in-memory key, so toggling
         /// "Show Hidden Files" here is reflected immediately in an already-open folder.
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
+        /// Current account's downloads scope, so the size/existence checks count only this
+        /// account's files. Shared with `BrowseFeature`/`DownloadsFeature` under one key.
+        @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         public var isLoadingPreferences = false
         public var removeAllDownloadsConfirmationIsPresented = false
         public var isRemovingAllDownloads = false
@@ -210,8 +213,9 @@ public struct SettingsFeature {
             case .onAppear:
                 let localDownloadStore = self.localDownloadStore
                 let previewCacheStore = self.previewCacheStore
+                let downloadScope = state.downloadScope
                 let checkDownloads = Effect<Action>.run { send in
-                    let downloads = (try? localDownloadStore.list()) ?? []
+                    let downloads = (try? localDownloadStore.list(downloadScope)) ?? []
                     await send(.hasDownloadsResponse(!downloads.isEmpty))
                     await send(.downloadsSizeResponse(downloads.reduce(0) { $0 + $1.size }))
                 }
@@ -290,10 +294,11 @@ public struct SettingsFeature {
                 state.removeAllDownloadsConfirmationIsPresented = false
                 state.isRemovingAllDownloads = true
                 let localDownloadStore = self.localDownloadStore
+                let downloadScope = state.downloadScope
                 return .run { send in
                     // Best-effort, matching the sign-out flow's philosophy: one file
                     // refusing to delete shouldn't block clearing the rest.
-                    let downloads = (try? localDownloadStore.list()) ?? []
+                    let downloads = (try? localDownloadStore.list(downloadScope)) ?? []
                     for download in downloads {
                         try? localDownloadStore.delete(download.url)
                     }

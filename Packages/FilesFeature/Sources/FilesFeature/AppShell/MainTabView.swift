@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -38,6 +39,9 @@ public struct MainTabView: View {
     /// The bar's real rendered height, measured below and read by list screens instead of a
     /// guessed constant so the clearance stays right under Dynamic Type.
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
+    /// Settings → "Show Tab Labels": titles under each tab icon (with the smaller glyph set),
+    /// or the full-size icons on their own.
+    @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = true
 
     public init(store: StoreOf<MainTabFeature>) {
         self.store = store
@@ -123,8 +127,11 @@ public struct MainTabView: View {
             Tab(value: MainTabFeature.Tab.browse) {
                 BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
             } label: {
-                tabIcon(store.selectedTab == .browse ? IconKit.tabBrowseFill : IconKit.tabBrowse)
-                    .accessibilityLabel(L10n.Tab.browse)
+                tabLabel(
+                    L10n.Tab.browse,
+                    icon: store.selectedTab == .browse ? IconKit.tabBrowseFill : IconKit.tabBrowse,
+                    smallIcon: store.selectedTab == .browse ? IconKit.tabBrowseFillSmall : IconKit.tabBrowseSmall
+                )
             }
 
             Tab(value: MainTabFeature.Tab.favorites) {
@@ -132,8 +139,11 @@ public struct MainTabView: View {
                     FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
                 }
             } label: {
-                tabIcon(store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites)
-                    .accessibilityLabel(L10n.Tab.favorites)
+                tabLabel(
+                    L10n.Tab.favorites,
+                    icon: store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites,
+                    smallIcon: store.selectedTab == .favorites ? IconKit.tabFavoritesFillSmall : IconKit.tabFavoritesSmall
+                )
             }
 
             Tab(value: MainTabFeature.Tab.shared) {
@@ -141,8 +151,11 @@ public struct MainTabView: View {
                     SharedView(store: store.scope(state: \.shared, action: \.shared))
                 }
             } label: {
-                tabIcon(store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare)
-                    .accessibilityLabel(L10n.Tab.shared)
+                tabLabel(
+                    L10n.Tab.shared,
+                    icon: store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare,
+                    smallIcon: store.selectedTab == .shared ? IconKit.tabShareFillSmall : IconKit.tabShareSmall
+                )
             }
 
             Tab(value: MainTabFeature.Tab.downloads) {
@@ -150,8 +163,11 @@ public struct MainTabView: View {
                     DownloadsView(store: store.scope(state: \.downloads, action: \.downloads))
                 }
             } label: {
-                tabIcon(store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads)
-                    .accessibilityLabel(L10n.Tab.downloads)
+                tabLabel(
+                    L10n.Tab.downloads,
+                    icon: store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads,
+                    smallIcon: store.selectedTab == .downloads ? IconKit.tabDownloadsFillSmall : IconKit.tabDownloadsSmall
+                )
             }
 
             Tab(value: MainTabFeature.Tab.settings) {
@@ -159,11 +175,35 @@ public struct MainTabView: View {
                     SettingsView(store: store.scope(state: \.settings, action: \.settings))
                 }
             } label: {
-                tabIcon(store.selectedTab == .settings ? IconKit.tabSettingsFill : IconKit.tabSettings)
-                    .accessibilityLabel(L10n.Tab.settings)
+                tabLabel(
+                    L10n.Tab.settings,
+                    icon: store.selectedTab == .settings ? IconKit.tabSettingsFill : IconKit.tabSettings,
+                    smallIcon: store.selectedTab == .settings ? IconKit.tabSettingsFillSmall : IconKit.tabSettingsSmall
+                )
             }
         }
         .tint(Color.accent)
+        // The tab bar caches its item views; without a fresh identity when the preference flips,
+        // toggling labels off leaves the old titled items on screen. Rebuild on the toggle.
+        // `visitedTabs` (MainTabView @State) and the store-bound selection both survive it.
+        .id(showTabLabels)
+    }
+
+    /// A tab bar item: title + smaller glyph when "Show Tab Labels" is on, the full-size icon
+    /// on its own otherwise. The title carries the accessibility label in both modes.
+    @ViewBuilder
+    private func tabLabel(_ title: String, icon: Image, smallIcon: Image) -> some View {
+        if showTabLabels {
+            Label {
+                Text(title)
+            } icon: {
+                tabIcon(smallIcon)
+            }
+            .accessibilityLabel(title)
+        } else {
+            tabIcon(icon)
+                .accessibilityLabel(title)
+        }
     }
 
     private func tabIcon(_ image: Image) -> some View {

@@ -212,6 +212,8 @@ public struct BrowseFeature {
         /// action follows the user across every folder. `nil` when nothing is staged. Only
         /// ever holds copies — "Move" goes through `destinationPicker`, not the clipboard.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var clipboard: FileClipboard?
+        /// Current account's downloads scope, so saved files land in this account's folder.
+        @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// The "Move" destination chooser, presented for a single item or a multi selection.
         @Presents public var destinationPicker: DestinationPickerFeature.State?
         /// The review sheet shown after files are picked from the `+` menu — file list,
@@ -780,7 +782,9 @@ public struct BrowseFeature {
                 state.fileActionProgressMessage = nil
                 state.items.append(compressed)
                 syncListingCache(state)
-                return .none
+                // Refetch so the new archive carries the same server metadata a normal listing
+                // entry does and is browsable straight away, not only after a manual refresh.
+                return load(&state)
 
             case let .compressResponse(.failure(error)):
                 state.isPerformingFileAction = false
@@ -1371,6 +1375,7 @@ public struct BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         let localDownloadStore = self.localDownloadStore
+        let downloadScope = state.downloadScope
         return .run { send in
             await send(.downloadResponse(try await apiResult {
                 var compressedArchive: FileItem?
@@ -1384,7 +1389,7 @@ public struct BrowseFeature {
                     fileToDownload = item
                 }
                 let cachedURL = try await filesClient.downloadRawFile(serverURL, fileToDownload)
-                let destinationURL = try localDownloadStore.save(cachedURL, fileToDownload.name, location)
+                let destinationURL = try localDownloadStore.save(cachedURL, fileToDownload.name, location, downloadScope)
                 // Best-effort, and after the fact — the download already succeeded, so a
                 // cleanup failure here shouldn't surface as an error to the user.
                 if removeArchiveAfterDownload, let compressedArchive {
@@ -1461,6 +1466,7 @@ public struct BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = self.filesClient
         let localDownloadStore = self.localDownloadStore
+        let downloadScope = state.downloadScope
         return .run { send in
             var savedCount = 0
             for (index, item) in targets.enumerated() {
@@ -1478,7 +1484,7 @@ public struct BrowseFeature {
                         fileToDownload = item
                     }
                     let cachedURL = try await filesClient.downloadRawFile(serverURL, fileToDownload)
-                    _ = try localDownloadStore.save(cachedURL, fileToDownload.name, location)
+                    _ = try localDownloadStore.save(cachedURL, fileToDownload.name, location, downloadScope)
                     if removeArchiveAfterDownload, let compressedArchive {
                         try? await filesClient.deleteItems(serverURL, [compressedArchive])
                     }
