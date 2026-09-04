@@ -298,13 +298,16 @@ public enum L10n {
         public static var errorInvalidEmail: String { tr("login.errorInvalidEmail") }  // "Enter a valid email address."
         public static var errorInvalidServer: String { tr("login.errorInvalidServer") }  // "Enter a valid server address."
         public static var errorKeychain: String { tr("login.errorKeychain") }  // "Could not save your session on this device."
+        public static var errorNoAuthMethods: String { tr("login.errorNoAuthMethods") }  // "This server has no sign-in methods enabled."
         public static var errorNoLocalAuth: String { tr("login.errorNoLocalAuth") }  // "This server doesn't have username/password sign-in enabled."
         public static var errorRateLimited: String { tr("login.errorRateLimited") }  // "Too many attempts. Please wait a few minutes and try again."
         public static func errorServer(_ a0: CVarArg) -> String { tr("login.errorServer", a0) }
         public static var errorSessionExpired: String { tr("login.errorSessionExpired") }  // "Your session expired. Please sign in again."
+        public static var errorSso: String { tr("login.errorSso") }  // "Single sign-on didn't complete. Please try again."
         public static var errorUnexpectedResponse: String { tr("login.errorUnexpectedResponse") }  // "Unexpected response from server."
         public static var errorUnreachable: String { tr("login.errorUnreachable") }
         public static var hidePassword: String { tr("login.hidePassword") }  // "Hide Password"
+        public static var orDivider: String { tr("login.orDivider") }  // "or"
         public static var passwordField: String { tr("login.passwordField") }  // "Password"
         public static var plaintextWarning: String { tr("login.plaintextWarning") }
         public static var portHint: String { tr("login.portHint") }
@@ -314,6 +317,7 @@ public enum L10n {
         public static var serverInfoTitle: String { tr("login.serverInfoTitle") }  // "What is a server?"
         public static var serverQuestion: String { tr("login.serverQuestion") }  // "Where's your instance of NextExplorer?"
         public static var showPassword: String { tr("login.showPassword") }  // "Show Password"
+        public static var ssoButton: String { tr("login.ssoButton") }  // "Sign in with SSO"
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }

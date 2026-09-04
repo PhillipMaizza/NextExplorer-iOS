@@ -14,6 +14,14 @@ extension LocalAuthService {
         let password: String
     }
 
+    /// The body of `POST /api/auth/oidc/exchange`: the one time code from the mobile bridge
+    /// callback plus the PKCE verifier that proves this app started the flow. Confirmed against
+    /// `backend/src/routes/auth.js` and `backend/src/services/oidcMobileBridge.js`.
+    struct OIDCExchangeRequestBody: Encodable {
+        let code: String
+        let code_verifier: String
+    }
+
     /// `/api/auth/login` and `/api/auth/me` both wrap the user object under a `"user"`
     /// key, and `/me` can return a 200 with `user: null` for an expired/absent session
     /// rather than a 401 — confirmed against `backend/src/routes/auth.js`.

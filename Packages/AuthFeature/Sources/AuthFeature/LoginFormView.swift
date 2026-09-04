@@ -45,6 +45,7 @@ private enum Constants {
     /// Scale that circle reaches — a `.size48` button circle blown up past the far corner of
     /// any phone from wherever the button sits.
     static let submitFloodScale: CGFloat = 34
+    static let dividerOpacity: Double = 0.35
 }
 
 public struct LoginFormView: View {
@@ -410,16 +411,25 @@ public struct LoginFormView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: .space24) {
-                    identifierField
-                    passwordField
+                    if store.authStatus?.localEnabled == true {
+                        identifierField
+                        passwordField
 
-                    // After the fields on purpose: a conditional sibling *above* them shifts
-                    // their position in the container and drops the keyboard's AutoFill session.
-                    if store.scheme == .http {
-                        DSInfoCard(L10n.Login.plaintextWarning)
+                        // After the fields on purpose: a conditional sibling *above* them shifts
+                        // their position in the container and drops the keyboard's AutoFill session.
+                        if store.scheme == .http {
+                            DSInfoCard(L10n.Login.plaintextWarning)
+                        }
+
+                        continueButton
                     }
 
-                    continueButton
+                    if store.authStatus?.oidcEnabled == true {
+                        if store.authStatus?.localEnabled == true {
+                            orDivider
+                        }
+                        ssoButton
+                    }
 
                     if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {
                         Text(errorMessage)
@@ -564,6 +574,30 @@ public struct LoginFormView: View {
         }
         .animation(.easeInOut(duration: Constants.contentFadeDuration), value: isSubmitLocalEnabled)
     }
+
+    private var orDivider: some View {
+        HStack(spacing: .space12) {
+            Rectangle().fill(Color.secondaryDS.opacity(Constants.dividerOpacity)).frame(height: 1)
+            Text(L10n.Login.orDivider)
+                .type(.body2(.semibold), style: .secondary)
+                .fixedSize()
+            Rectangle().fill(Color.secondaryDS.opacity(Constants.dividerOpacity)).frame(height: 1)
+        }
+        .accessibilityHidden(true)
+    }
+
+    private var ssoButton: some View {
+        DSButton(
+            L10n.Login.ssoButton,
+            icon: IconKit.person,
+            style: .outline,
+            size: .medium,
+            isLoading: store.isAuthenticatingOIDC
+        ) {
+            store.send(.ssoButtonTapped)
+        }
+        .disabled(store.isAuthenticatingOIDC)
+    }
 }
 
 /// Split out of `LoginFormView.body` — inlining these three `.hapticFeedback` calls alongside
@@ -609,6 +643,40 @@ private struct ConnectionPhaseHapticsModifier: ViewModifier {
                 connectionPhase: .success,
                 host: "nextexplorer.example.com",
                 authStatus: AuthStatus(localEnabled: true, oidcEnabled: false)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient = .previewValue
+        }
+    )
+}
+
+#Preview("Credentials Local + SSO") {
+    LoginFormView(
+        store: Store(
+            initialState: LoginFormFeature.State(
+                currentPage: .credentials,
+                connectionPhase: .success,
+                host: "nextexplorer.example.com",
+                authStatus: AuthStatus(localEnabled: true, oidcEnabled: true)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient = .previewValue
+        }
+    )
+}
+
+#Preview("Credentials SSO only") {
+    LoginFormView(
+        store: Store(
+            initialState: LoginFormFeature.State(
+                currentPage: .credentials,
+                connectionPhase: .success,
+                host: "sso.example.com",
+                authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)
             )
         ) {
             LoginFormFeature()

@@ -26,6 +26,23 @@ struct LocalAuthService: Sendable {
         return user
     }
 
+    func exchangeOIDC(serverURL: URL, code: String, codeVerifier: String) async throws -> User {
+        var request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.oidcExchange, method: .post)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(
+                OIDCExchangeRequestBody(code: code, code_verifier: codeVerifier)
+            )
+        } catch {
+            throw AuthClientError.decoding(error.localizedDescription)
+        }
+        let envelope = try await send(request, decoding: UserEnvelope.self, unauthorizedError: .oidcFailed("exchange rejected"))
+        guard let user = envelope.user else {
+            throw AuthClientError.oidcFailed("no user in exchange response")
+        }
+        return user
+    }
+
     func me(serverURL: URL) async throws -> User {
         let request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.me, method: .get)
         let envelope = try await send(request, decoding: UserEnvelope.self, unauthorizedError: .sessionExpired)
