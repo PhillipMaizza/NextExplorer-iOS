@@ -144,6 +144,7 @@ struct DisplaySettingsSection: View {
     @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
+    @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = true
     @Environment(\.colorScheme) private var systemColorScheme
 
     private var isDarkModeOn: Binding<Bool> {
@@ -164,7 +165,7 @@ struct DisplaySettingsSection: View {
     }
 
     var body: some View {
-        if filter.anyMatch([L10n.Settings.toggleDarkMode, L10n.Settings.toggleShowThumbnails, L10n.Settings.rowThumbnailSize, L10n.Settings.toggleShowExtensions]) {
+        if filter.anyMatch([L10n.Settings.toggleDarkMode, L10n.Settings.toggleShowThumbnails, L10n.Settings.rowThumbnailSize, L10n.Settings.toggleShowExtensions, L10n.Settings.toggleShowTabLabels]) {
             Section {
                 if filter.matches(L10n.Settings.toggleDarkMode) {
                     DSToggleRow(title: L10n.Settings.toggleDarkMode, icon: IconKit.darkMode, isOn: isDarkModeOn)
@@ -198,6 +199,9 @@ struct DisplaySettingsSection: View {
                 }
                 if filter.matches(L10n.Settings.toggleShowExtensions) {
                     DSToggleRow(title: L10n.Settings.toggleShowExtensions, icon: IconKit.tag, isOn: $showFilenameExtensions)
+                }
+                if filter.matches(L10n.Settings.toggleShowTabLabels) {
+                    DSToggleRow(title: L10n.Settings.toggleShowTabLabels, icon: IconKit.tabBrowse, isOn: $showTabLabels)
                 }
             } header: {
                 sectionHeader(L10n.Settings.sectionDisplay)

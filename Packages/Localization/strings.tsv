@@ -6,6 +6,7 @@ common.cancel	Cancel
 common.save	Save
 common.edit	Edit
 common.retry	Try Again
+common.syncCompleted	Sync completed
 common.delete	Delete
 common.remove	Remove
 common.clear	Clear
@@ -344,6 +345,7 @@ settings.toggleHaptics	Haptics
 settings.toggleDarkMode	Dark Mode
 settings.toggleShowThumbnails	Show Thumbnails
 settings.toggleShowExtensions	Show Filename Extensions
+settings.toggleShowTabLabels	Show Tab Labels
 settings.toggleRemoveArchives	Remove Archives After Download
 settings.toggleKeepClipboard	Keep Items After Paste
 settings.toggleKeepClipboardSubtitle	Copied items stay ready to paste into another folder. Moved items always clear.
@@ -366,7 +368,7 @@ settings.clearCacheTitle	Clear Cache?
 settings.clearCacheConfirm	Clear
 settings.clearCacheMessage	This clears cached previews, thumbnails, and saved folder listings used offline. Nothing on the server is affected.
 settings.signOutAlertTitle	Sign Out?
-settings.signOutMessage	You'll need to sign in again to access your files.
+settings.signOutMessage	You'll need to sign in again to access your files. Cached previews, thumbnails, and saved folder listings on this device will be cleared.
 settings.signOutButton	Sign Out
 settings.signingOut	Signing Out…
 settings.dateFormatNavigationTitle	Date Format

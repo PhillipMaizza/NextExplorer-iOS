@@ -1,3 +1,4 @@
+import AppStorageKeys
 import AuthClient
 import AuthFeature
 import ComposableArchitecture
@@ -30,6 +31,10 @@ public struct AppFeature {
         /// Cleared on every sign out so a staged copy/move never carries across into a
         /// different account's session.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var fileClipboard: FileClipboard?
+        /// The signed-in account's downloads scope (server + user id), so each account's saved
+        /// files stay in their own folder. Set when a session is confirmed, cleared on sign out
+        /// and expiry. Read by `BrowseFeature`/`DownloadsFeature`/`SettingsFeature`.
+        @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
 
         public init(destination: Destination.State = .loading) {
             self.destination = destination
@@ -104,6 +109,9 @@ public struct AppFeature {
 
             case let .sessionValidationResponse(.success(user), credentials):
                 if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                state.$downloadScope.withLock {
+                    $0 = DownloadAccountScope.identifier(serverURL: credentials.serverBaseURL, userID: user.id)
+                }
                 if case let .authenticated(current) = state.destination, current.user == user {
                     return .none
                 }
@@ -125,6 +133,7 @@ public struct AppFeature {
                     return .none
                 }
                 state.didAuthenticateFromLogin = false
+                state.$downloadScope.withLock { $0 = "" }
                 withAnimation {
                     state.destination = .unauthenticated(.init())
                 }
@@ -132,6 +141,7 @@ public struct AppFeature {
                 let directoryCacheStore = self.directoryCacheStore
                 let jsonCacheStore = self.jsonCacheStore
                 let previewCacheStore = self.previewCacheStore
+                AppStorageKeys.resetSessionPreferences()
                 return .run { _ in
                     await authClient.clearSession()
                     directoryCacheStore.clearAll()
@@ -142,6 +152,7 @@ public struct AppFeature {
             case .sessionExpiryDetected:
                 if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
                 state.$fileClipboard.withLock { $0 = nil }
+                state.$downloadScope.withLock { $0 = "" }
                 guard case .authenticated = state.destination else { return .none }
                 state.didAuthenticateFromLogin = false
                 withAnimation {
@@ -151,6 +162,7 @@ public struct AppFeature {
                 let directoryCacheStore = self.directoryCacheStore
                 let jsonCacheStore = self.jsonCacheStore
                 let previewCacheStore = self.previewCacheStore
+                AppStorageKeys.resetSessionPreferences()
                 return .run { _ in
                     await authClient.clearSession()
                     directoryCacheStore.clearAll()
@@ -160,6 +172,9 @@ public struct AppFeature {
 
             case let .destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))):
                 if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                state.$downloadScope.withLock {
+                    $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id)
+                }
                 // A fresh sign in must never expose the previous account's cached listings for
                 // the same server. Cleared synchronously before the authenticated destination
                 // mounts, so the new `BrowseFeature`'s first cache read can't race it; the
@@ -176,13 +191,17 @@ public struct AppFeature {
 
             case .destination(.authenticated(.delegate(.loggedOut))):
                 state.$fileClipboard.withLock { $0 = nil }
+                state.$downloadScope.withLock { $0 = "" }
                 state.didAuthenticateFromLogin = false
                 state.destination = .unauthenticated(.init())
                 // Explicit sign out purges both caches so the next user on a shared device can't
-                // recover the previous session's directory listings or downloaded file bytes.
+                // recover the previous session's directory listings or downloaded file bytes, and
+                // resets per-device UI prefs (view modes, display toggles) so the next session
+                // starts from defaults rather than inheriting this account's choices.
                 let directoryCacheStore = self.directoryCacheStore
                 let jsonCacheStore = self.jsonCacheStore
                 let previewCacheStore = self.previewCacheStore
+                AppStorageKeys.resetSessionPreferences()
                 return .run { _ in
                     directoryCacheStore.clearAll()
                     jsonCacheStore.clearAll()

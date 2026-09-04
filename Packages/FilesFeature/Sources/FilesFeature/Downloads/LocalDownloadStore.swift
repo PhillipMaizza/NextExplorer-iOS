@@ -29,19 +29,22 @@ public struct LocalDownload: Equatable, Identifiable, Sendable {
 /// per the "Download Location" setting. Deliberately separate from that internal cache
 /// directory, which is purely an implementation detail the user has no visibility into.
 public struct LocalDownloadStore: Sendable {
-    public var save: @Sendable (_ sourceURL: URL, _ fileName: String, _ location: DownloadLocation) throws -> URL
+    /// `scope` is the current account's `DownloadAccountScope.identifier`, so each account saves
+    /// into its own subfolder and can't see another account's files on a shared device. An empty
+    /// scope maps to the unscoped legacy folder.
+    public var save: @Sendable (_ sourceURL: URL, _ fileName: String, _ location: DownloadLocation, _ scope: String) throws -> URL
     /// Both `Documents/Downloads` and `Caches/Downloads` — the user's "Download Location"
     /// preference can change over time, so past downloads under the other location would
-    /// otherwise silently disappear from the Downloads tab.
-    public var list: @Sendable () throws -> [LocalDownload]
+    /// otherwise silently disappear from the Downloads tab. Scoped to one account (see `save`).
+    public var list: @Sendable (_ scope: String) throws -> [LocalDownload]
     public var delete: @Sendable (_ url: URL) throws -> Void
     /// Renames the local copy in place (same folder), returning its new URL. Local only, like
     /// `delete` — the server file is never touched.
     public var rename: @Sendable (_ url: URL, _ newName: String) throws -> URL
 
     public init(
-        save: @escaping @Sendable (_ sourceURL: URL, _ fileName: String, _ location: DownloadLocation) throws -> URL,
-        list: @escaping @Sendable () throws -> [LocalDownload],
+        save: @escaping @Sendable (_ sourceURL: URL, _ fileName: String, _ location: DownloadLocation, _ scope: String) throws -> URL,
+        list: @escaping @Sendable (_ scope: String) throws -> [LocalDownload],
         delete: @escaping @Sendable (_ url: URL) throws -> Void,
         rename: @escaping @Sendable (_ url: URL, _ newName: String) throws -> URL
     ) {
@@ -71,17 +74,43 @@ extension LocalDownloadStore: DependencyKey {
         }
     }
 
-    private static func downloadsDirectory(for location: DownloadLocation, create: Bool) throws -> URL {
+    /// The account-scoped downloads folder. An empty `scope` returns the legacy unscoped folder
+    /// (`Downloads/`); a non-empty one nests under it (`Downloads/<scope>/`).
+    private static func downloadsDirectory(for location: DownloadLocation, scope: String, create: Bool) throws -> URL {
         let fileManager = FileManager.default
         let searchDirectory: FileManager.SearchPathDirectory = location == .documents ? .documentDirectory : .cachesDirectory
         let base = try fileManager.url(for: searchDirectory, in: .userDomainMask, appropriateFor: nil, create: create)
-        return base.appendingPathComponent("Downloads", isDirectory: true)
+        let root = base.appendingPathComponent("Downloads", isDirectory: true)
+        return scope.isEmpty ? root : root.appendingPathComponent(scope, isDirectory: true)
+    }
+
+    /// Moves any files sitting loose in the legacy unscoped `Downloads/` root into the current
+    /// account's scoped folder, so downloads saved before per-account scoping stay visible.
+    /// Only regular files at the root move; other accounts' scope subfolders are left alone.
+    private static func migrateLegacyDownloads(for location: DownloadLocation, scope: String) {
+        guard !scope.isEmpty else { return }
+        let fileManager = FileManager.default
+        guard let legacyRoot = try? downloadsDirectory(for: location, scope: "", create: false),
+              fileManager.fileExists(atPath: legacyRoot.path),
+              let contents = try? fileManager.contentsOfDirectory(
+                  at: legacyRoot,
+                  includingPropertiesForKeys: [.isDirectoryKey],
+                  options: [.skipsHiddenFiles]
+              )
+        else { return }
+        let looseFiles = contents.filter { (try? $0.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) != true }
+        guard !looseFiles.isEmpty, let scoped = try? downloadsDirectory(for: location, scope: scope, create: true) else { return }
+        try? fileManager.createDirectory(at: scoped, withIntermediateDirectories: true)
+        for fileURL in looseFiles {
+            let destination = availableDestination(in: scoped, fileName: fileURL.lastPathComponent)
+            try? fileManager.moveItem(at: fileURL, to: destination)
+        }
     }
 
     public static let liveValue = LocalDownloadStore(
-        save: { sourceURL, fileName, location in
+        save: { sourceURL, fileName, location, scope in
             let fileManager = FileManager.default
-            let downloadsDirectory = try downloadsDirectory(for: location, create: true)
+            let downloadsDirectory = try downloadsDirectory(for: location, scope: scope, create: true)
             try fileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: true)
             // `fileName` originates from the server's `FileItem.name` — keep a hostile `../`
             // from landing the copy outside the Downloads folder.
@@ -92,11 +121,12 @@ extension LocalDownloadStore: DependencyKey {
             try fileManager.copyItem(at: sourceURL, to: destination)
             return destination
         },
-        list: {
+        list: { scope in
             let fileManager = FileManager.default
             var downloads: [LocalDownload] = []
             for location in DownloadLocation.allCases {
-                let directory = try downloadsDirectory(for: location, create: false)
+                migrateLegacyDownloads(for: location, scope: scope)
+                let directory = try downloadsDirectory(for: location, scope: scope, create: false)
                 guard fileManager.fileExists(atPath: directory.path) else { continue }
                 let contents = try fileManager.contentsOfDirectory(
                     at: directory,
@@ -139,8 +169,8 @@ extension LocalDownloadStore: DependencyKey {
     )
 
     public static let testValue = LocalDownloadStore(
-        save: { _, _, _ in throw Unimplemented() },
-        list: { throw Unimplemented() },
+        save: { _, _, _, _ in throw Unimplemented() },
+        list: { _ in throw Unimplemented() },
         delete: { _ in throw Unimplemented() },
         rename: { _, _ in throw Unimplemented() }
     )

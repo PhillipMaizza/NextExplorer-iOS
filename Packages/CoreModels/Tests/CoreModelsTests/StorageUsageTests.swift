@@ -17,6 +17,14 @@ struct StorageUsageTests {
         #expect(usage.isMeaningful)
     }
 
+    @Test("used is filled disk (capacity - free), not the target folder's own size")
+    func usedIsFilledDisk() throws {
+        // A small folder (`size` 5) on a nearly full volume: filled disk is 90, not 5.
+        let usage = try decode(#"{"path": "small", "size": 5, "free": 10, "total": 100}"#)
+        #expect(usage.used == 90)
+        #expect(abs(usage.fraction - 0.9) < 0.0001)
+    }
+
     @Test("capacity falls back to used + free when df reported no total")
     func capacityFallback() throws {
         let usage = try decode(#"{"path": "x", "size": 30, "free": 70, "total": 0}"#)

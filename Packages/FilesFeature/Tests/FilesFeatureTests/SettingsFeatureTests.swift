@@ -59,7 +59,7 @@ struct SettingsFeatureTests {
             $0.filesClient.fetchPreferences = { _ in UserPreferences(showHiddenFiles: true, showThumbnails: false) }
             $0.filesClient.fetchBranding = { _ in Branding() }
             $0.filesClient.serverFeatures = { _ in ServerFeatures() }
-            $0.localDownloadStore.list = { [] }
+            $0.localDownloadStore.list = { _ in [] }
             $0.previewCacheStore.size = { 0 }
         }
         // `onAppear` merges three independent effects (preferences fetch, downloads check,
@@ -85,7 +85,7 @@ struct SettingsFeatureTests {
             $0.filesClient.fetchPreferences = { _ in throw FilesClientError.sessionExpired }
             $0.filesClient.fetchBranding = { _ in Branding() }
             $0.filesClient.serverFeatures = { _ in ServerFeatures() }
-            $0.localDownloadStore.list = { [] }
+            $0.localDownloadStore.list = { _ in [] }
             $0.previewCacheStore.size = { 0 }
         }
         store.exhaustivity = .off
@@ -107,7 +107,7 @@ struct SettingsFeatureTests {
         let store = TestStore(initialState: state) {
             SettingsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { [] }
+            $0.localDownloadStore.list = { _ in [] }
             $0.previewCacheStore.size = { 0 }
         }
         // No `filesClient` dependency overridden: a network call here would crash with
@@ -362,7 +362,7 @@ struct SettingsFeatureTests {
         let store = TestStore(initialState: state) {
             SettingsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { downloads }
+            $0.localDownloadStore.list = { _ in downloads }
             $0.localDownloadStore.delete = { url in deletedURLs.withValue { $0.append(url) } }
         }
 
@@ -391,7 +391,7 @@ struct SettingsFeatureTests {
         let store = TestStore(initialState: state) {
             SettingsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { downloads }
+            $0.localDownloadStore.list = { _ in downloads }
             $0.localDownloadStore.delete = { _ in throw FilesClientError.network("permission denied") }
         }
 

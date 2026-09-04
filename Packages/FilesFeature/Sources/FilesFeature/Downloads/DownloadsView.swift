@@ -299,6 +299,7 @@ struct DownloadsView: View {
             }
             .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
             .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
+            .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: store.errorMessage == nil)
             // Skeleton rows live inside the List/grid (see `listContent`/`gridContent`); the
             // empty/error message is an overlay fed the list's pull-to-refresh drag so it
             // rubber-bands with it. One animation cross-fades the whole state change.
@@ -462,7 +463,7 @@ struct DownloadsView: View {
         store: Store(initialState: DownloadsFeature.State()) {
             DownloadsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = {
+            $0.localDownloadStore.list = { _ in
                 [
                     LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: "report.pdf", location: .documents, size: 245_000, modifiedDate: Date()),
                     LocalDownload(url: URL(fileURLWithPath: "/tmp/Caches/Downloads/vacation.jpg"), fileName: "vacation.jpg", location: .cache, size: 2_400_000, modifiedDate: Date().addingTimeInterval(-86400)),
@@ -477,7 +478,7 @@ struct DownloadsView: View {
         store: Store(initialState: DownloadsFeature.State()) {
             DownloadsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { [] }
+            $0.localDownloadStore.list = { _ in [] }
         }
     )
 }
@@ -487,7 +488,7 @@ struct DownloadsView: View {
         store: Store(initialState: DownloadsFeature.State()) {
             DownloadsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { throw NSError(domain: "test", code: 1) }
+            $0.localDownloadStore.list = { _ in throw NSError(domain: "test", code: 1) }
         }
     )
 }

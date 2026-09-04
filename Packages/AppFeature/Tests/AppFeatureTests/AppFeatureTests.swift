@@ -7,8 +7,19 @@ import Testing
 @testable import AppFeature
 
 @MainActor
-@Suite("AppFeature")
+// Serialized: these tests drive session-boundary transitions that write the process-wide
+// `@Shared(.inMemory)` download scope; running them in parallel lets one test's scope write
+// race into another's assertions.
+@Suite("AppFeature", .serialized)
 struct AppFeatureTests {
+    /// Runs before each test (swift-testing makes a fresh suite instance per test). The download
+    /// scope lives in process-wide `@Shared(.inMemory)`, so clear it so one test's session write
+    /// can't leak into the next test's baseline.
+    init() {
+        @Shared(.inMemory(DownloadAccountScope.sharedKey)) var downloadScope = ""
+        $downloadScope.withLock { $0 = "" }
+    }
+
     private let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
 
     @Test("happy path: a valid restored session is confirmed with the server, then routes to authenticated")
@@ -34,7 +45,10 @@ struct AppFeatureTests {
 
         await store.send(.onAppear)
         // Optimistic: the app shows immediately with a placeholder user from the credentials.
+        // `@Shared` writes apply to the store eagerly, so TestStore surfaces the scope set by
+        // the follow-up `sessionValidationResponse` effect here, at the first assertion after it.
         await store.receive(\.sessionRestoreResponse) {
+            $0.$downloadScope.withLock { $0 = DownloadAccountScope.identifier(serverURL: self.serverURL, userID: user.id) }
             $0.destination = .authenticated(
                 AuthenticatedFeature.State(
                     serverURL: self.serverURL,
@@ -152,6 +166,7 @@ struct AppFeatureTests {
         let user = User(id: "1", username: "phillip", email: nil, roles: [])
 
         await store.send(.destination(.unauthenticated(.delegate(.authenticated(user, serverURL))))) {
+            $0.$downloadScope.withLock { $0 = DownloadAccountScope.identifier(serverURL: self.serverURL, userID: user.id) }
             $0.didAuthenticateFromLogin = true
             $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, user: user))
         }

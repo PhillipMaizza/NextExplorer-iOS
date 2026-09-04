@@ -26,7 +26,7 @@ struct DownloadsFeatureTests {
         let store = TestStore(initialState: DownloadsFeature.State()) {
             DownloadsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { [download] }
+            $0.localDownloadStore.list = { _ in [download] }
         }
 
         // The initial scan is local and synchronous — `onAppear` fills the list inline, no
@@ -47,7 +47,7 @@ struct DownloadsFeatureTests {
         let store = TestStore(initialState: state) {
             DownloadsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { [refreshed] }
+            $0.localDownloadStore.list = { _ in [refreshed] }
         }
 
         await store.send(.refreshButtonTapped) {
@@ -105,7 +105,7 @@ struct DownloadsFeatureTests {
         let store = TestStore(initialState: DownloadsFeature.State()) {
             DownloadsFeature()
         } withDependencies: {
-            $0.localDownloadStore.list = { throw FilesClientError.network("disk error") }
+            $0.localDownloadStore.list = { _ in throw FilesClientError.network("disk error") }
         }
 
         await store.send(.onAppear) {

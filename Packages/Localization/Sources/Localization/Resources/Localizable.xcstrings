@@ -13804,6 +13804,17 @@
         }
       }
     },
+    "common.syncCompleted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sync completed"
+          }
+        }
+      }
+    },
     "createShare.createdBanner": {
       "extractionState": "manual",
       "localizations": {
@@ -37073,7 +37084,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "You'll need to sign in again to access your files."
+            "value": "You'll need to sign in again to access your files. Cached previews, thumbnails, and saved folder listings on this device will be cleared."
           }
         },
         "ar": {
@@ -38347,6 +38358,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "顯示隱藏檔案"
+          }
+        }
+      }
+    },
+    "settings.toggleShowTabLabels": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show Tab Labels"
           }
         }
       }

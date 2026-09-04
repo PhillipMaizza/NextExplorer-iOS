@@ -65,6 +65,7 @@ struct SharedSegmentList: View {
             didFinishRefreshing.toggle()
         }
         .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in errorMessage == nil }
+        .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: errorMessage == nil)
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: partition.all)
         .overlay {
             ListStateOverlay(

@@ -143,6 +143,7 @@ public enum L10n {
         public static func selectedCount(_ a0: CVarArg) -> String { tr("common.selectedCount", a0) }
         public static var share: String { tr("common.share") }  // "Share"
         public static var sort: String { tr("common.sort") }  // "Sort"
+        public static var syncCompleted: String { tr("common.syncCompleted") }  // "Sync completed"
     }
     public enum CreateShare {
         public static var createdBanner: String { tr("createShare.createdBanner") }  // "Share link created successfully!"
@@ -404,7 +405,7 @@ public enum L10n {
         public static func serverStorageUsed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.serverStorageUsed", a0, a1) }
         public static var signOutAlertTitle: String { tr("settings.signOutAlertTitle") }  // "Sign Out?"
         public static var signOutButton: String { tr("settings.signOutButton") }  // "Sign Out"
-        public static var signOutMessage: String { tr("settings.signOutMessage") }  // "You'll need to sign in again to access your files."
+        public static var signOutMessage: String { tr("settings.signOutMessage") }
         public static var signingOut: String { tr("settings.signingOut") }  // "Signing Out…"
         public static var storageFootnote: String { tr("settings.storageFootnote") }
         public static var toggleDarkMode: String { tr("settings.toggleDarkMode") }  // "Dark Mode"
@@ -416,6 +417,7 @@ public enum L10n {
         public static var toggleRenderMarkdown: String { tr("settings.toggleRenderMarkdown") }  // "Render Markdown Files"
         public static var toggleShowExtensions: String { tr("settings.toggleShowExtensions") }  // "Show Filename Extensions"
         public static var toggleShowHiddenFiles: String { tr("settings.toggleShowHiddenFiles") }  // "Show Hidden Files"
+        public static var toggleShowTabLabels: String { tr("settings.toggleShowTabLabels") }  // "Show Tab Labels"
         public static var toggleShowThumbnails: String { tr("settings.toggleShowThumbnails") }  // "Show Thumbnails"
     }
     public enum ShareTarget {

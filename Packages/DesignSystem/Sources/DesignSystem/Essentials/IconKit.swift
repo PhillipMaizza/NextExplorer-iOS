@@ -11,7 +11,9 @@ public enum IconKit {
     public static let checkmark = Image(systemName: "checkmark")
     public static let close = Image(systemName: "xmark")
     public static let closeCircle = Image(systemName: "xmark.circle.fill")
-    public static let back = Image(systemName: "chevron.left")
+    // `.backward`, not `.left`: the semantic variant auto mirrors under a right to left layout
+    // (Arabic), so a back control points the correct way. `.left` is absolute and never flips.
+    public static let back = Image(systemName: "chevron.backward")
     public static let envelope = Image(systemName: "envelope")
     public static let lock = Image(systemName: "lock")
     public static let lockOpen = Image(systemName: "lock.open")
@@ -36,6 +38,19 @@ public enum IconKit {
     public static let tabSettings = Image("tabSettings", bundle: .module).renderingMode(.template)
     public static let tabSettingsFill = Image("tabSettingsFill", bundle: .module).renderingMode(.template)
 
+    /// Smaller-weight variants of the tab glyphs, paired with a text label when the tab bar
+    /// shows titles (Settings → "Show Tab Labels"); the full-size set above is used icon-only.
+    public static let tabBrowseSmall = Image("tabBrowse_small", bundle: .module).renderingMode(.template)
+    public static let tabBrowseFillSmall = Image("tabBrowseFill_small", bundle: .module).renderingMode(.template)
+    public static let tabFavoritesSmall = Image("tabFavorites_small", bundle: .module).renderingMode(.template)
+    public static let tabFavoritesFillSmall = Image("tabFavoritesFill_small", bundle: .module).renderingMode(.template)
+    public static let tabShareSmall = Image("tabShare_small", bundle: .module).renderingMode(.template)
+    public static let tabShareFillSmall = Image("tabShareFill_small", bundle: .module).renderingMode(.template)
+    public static let tabDownloadsSmall = Image("tabDownloads_small", bundle: .module).renderingMode(.template)
+    public static let tabDownloadsFillSmall = Image("tabDownloadsFill_small", bundle: .module).renderingMode(.template)
+    public static let tabSettingsSmall = Image("tabSettings_small", bundle: .module).renderingMode(.template)
+    public static let tabSettingsFillSmall = Image("tabSettingsFill_small", bundle: .module).renderingMode(.template)
+
     // Main screen (browse / favorites / settings)
     public static let folder = Image(systemName: "folder")
     public static let folderFill = Image(systemName: "folder.fill")
@@ -44,7 +59,9 @@ public enum IconKit {
     public static let star = Image(systemName: "star")
     public static let starFill = Image(systemName: "star.fill")
     public static let gearshape = Image(systemName: "gearshape")
-    public static let chevronRight = Image(systemName: "chevron.right")
+    // `.forward`, not `.right`: the semantic variant auto mirrors under a right to left layout
+    // (Arabic) so disclosure and breadcrumb chevrons point into the content the correct way.
+    public static let chevronRight = Image(systemName: "chevron.forward")
     public static let chevronDown = Image(systemName: "chevron.down")
     public static let externalLink = Image(systemName: "arrow.up.right")
     public static let warning = Image(systemName: "exclamationmark.triangle")
