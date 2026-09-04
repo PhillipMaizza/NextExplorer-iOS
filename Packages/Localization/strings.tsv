@@ -600,6 +600,10 @@ login.errorKeychain	Could not save your session on this device.
 login.errorDecoding	Server responded unexpectedly. Check the address and try again.
 login.errorNoLocalAuth	This server doesn't have username/password sign-in enabled.
 login.errorRateLimited	Too many attempts. Please wait a few minutes and try again.
+login.ssoButton	Sign in with SSO
+login.orDivider	or
+login.errorSso	Single sign-on didn't complete. Please try again.
+login.errorNoAuthMethods	This server has no sign-in methods enabled.
 
 # ---- restored keys (were present in generated catalog but missing from tsv) ----
 browse.nameErrorReserved	That name isn't allowed.

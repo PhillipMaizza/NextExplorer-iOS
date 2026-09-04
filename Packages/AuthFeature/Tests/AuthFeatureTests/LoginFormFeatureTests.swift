@@ -265,9 +265,9 @@ struct LoginFormFeatureTests {
         }
     }
 
-    @Test("unexpected error: a server with only SSO enabled surfaces a readable message (this app only supports username/password)")
-    func noLocalAuthMethodEnabled() async {
-        let store = TestStore(initialState: LoginFormFeature.State(host: "nextexplorer.example.com")) {
+    @Test("a server with only SSO enabled still advances to the credentials page (SSO button only)")
+    func ssoOnlyServerAdvances() async {
+        let store = TestStore(initialState: LoginFormFeature.State(host: "sso.example.com")) {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.fetchStatus = { _ in AuthStatus(localEnabled: false, oidcEnabled: true) }
@@ -276,12 +276,99 @@ struct LoginFormFeatureTests {
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
         await store.receive(\.testConnectionResponse.success) {
-            $0.connectionPhase = .failure
+            $0.connectionPhase = .success
             $0.authStatus = AuthStatus(localEnabled: false, oidcEnabled: true)
-            $0.errorMessage = L10n.Login.errorNoLocalAuth
+        }
+        await store.receive(\.advanceToCredentials) {
+            $0.currentPage = .credentials
+        }
+    }
+
+    @Test("a server with no auth methods at all surfaces a readable message")
+    func noAuthMethodsEnabled() async {
+        let store = TestStore(initialState: LoginFormFeature.State(host: "nextexplorer.example.com")) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient.fetchStatus = { _ in AuthStatus(localEnabled: false, oidcEnabled: false) }
+            $0.continuousClock = ImmediateClock()
+        }
+
+        await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
+        await store.receive(\.testConnectionResponse.success) {
+            $0.connectionPhase = .failure
+            $0.authStatus = AuthStatus(localEnabled: false, oidcEnabled: false)
+            $0.errorMessage = L10n.Login.errorNoAuthMethods
         }
         await store.receive(\.revertToIdle) {
             $0.connectionPhase = .idle
+        }
+        await store.receive(\.clearErrorMessage) {
+            $0.errorMessage = nil
+        }
+    }
+
+    @Test("SSO happy path: tapping the SSO button runs the web flow and delegates authentication")
+    func ssoButtonAuthenticates() async {
+        let user = User(id: "sso-1", username: "ssouser", email: "sso@example.com", roles: ["user"])
+        let store = TestStore(
+            initialState: LoginFormFeature.State(
+                currentPage: .credentials,
+                connectionPhase: .success,
+                host: "sso.example.com",
+                authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient.loginOIDC = { [user] _ in user }
+            $0.continuousClock = ImmediateClock()
+        }
+
+        await store.send(.ssoButtonTapped) { $0.isAuthenticatingOIDC = true }
+        await store.receive(\.oidcResponse) { $0.isAuthenticatingOIDC = false }
+        await store.receive(\.delegate)
+    }
+
+    @Test("SSO cancel: dismissing the web sheet clears the in-flight flag with no error banner")
+    func ssoButtonCancelled() async {
+        let store = TestStore(
+            initialState: LoginFormFeature.State(
+                currentPage: .credentials,
+                connectionPhase: .success,
+                host: "sso.example.com",
+                authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient.loginOIDC = { _ in throw AuthClientError.oidcCancelled }
+            $0.continuousClock = ImmediateClock()
+        }
+
+        await store.send(.ssoButtonTapped) { $0.isAuthenticatingOIDC = true }
+        await store.receive(\.oidcResponse) { $0.isAuthenticatingOIDC = false }
+    }
+
+    @Test("SSO failure: a failed web flow surfaces the SSO error message, then clears it")
+    func ssoButtonFailure() async {
+        let store = TestStore(
+            initialState: LoginFormFeature.State(
+                currentPage: .credentials,
+                connectionPhase: .success,
+                host: "sso.example.com",
+                authStatus: AuthStatus(localEnabled: false, oidcEnabled: true)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient.loginOIDC = { _ in throw AuthClientError.oidcFailed("boom") }
+            $0.continuousClock = ImmediateClock()
+        }
+
+        await store.send(.ssoButtonTapped) { $0.isAuthenticatingOIDC = true }
+        await store.receive(\.oidcResponse) {
+            $0.isAuthenticatingOIDC = false
+            $0.errorMessage = L10n.Login.errorSso
         }
         await store.receive(\.clearErrorMessage) {
             $0.errorMessage = nil

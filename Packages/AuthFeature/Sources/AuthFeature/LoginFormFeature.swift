@@ -35,6 +35,7 @@ public struct LoginFormFeature {
         case errorDismiss
         case submit
         case submitRevert
+        case oidc
     }
 
     public enum URLScheme: String, CaseIterable, Equatable, Hashable, Sendable, Identifiable {
@@ -92,6 +93,9 @@ public struct LoginFormFeature {
         public var password: String
         public var isPasswordVisible: Bool
         public var submitPhase: SubmitPhase
+        /// A single lone in-flight flag for the SSO button while the web sheet + exchange run
+        /// (per architecture rule #8, one mutation flag is fine; it is not a load lifecycle).
+        public var isAuthenticatingOIDC: Bool
         public var errorMessage: String?
         public var invalidFieldsScope: InvalidFieldScope?
         public var authStatus: AuthStatus?
@@ -105,6 +109,7 @@ public struct LoginFormFeature {
             password: String = "",
             isPasswordVisible: Bool = false,
             submitPhase: SubmitPhase = .idle,
+            isAuthenticatingOIDC: Bool = false,
             errorMessage: String? = nil,
             invalidFieldsScope: InvalidFieldScope? = nil,
             authStatus: AuthStatus? = nil
@@ -118,6 +123,7 @@ public struct LoginFormFeature {
             self.password = password
             self.isPasswordVisible = isPasswordVisible
             self.submitPhase = submitPhase
+            self.isAuthenticatingOIDC = isAuthenticatingOIDC
             self.errorMessage = errorMessage
             self.invalidFieldsScope = invalidFieldsScope
             self.authStatus = authStatus
@@ -131,6 +137,7 @@ public struct LoginFormFeature {
             currentPage = .server
             connectionPhase = .idle
             submitPhase = .idle
+            isAuthenticatingOIDC = false
             authStatus = nil
             errorMessage = nil
             invalidFieldsScope = nil
@@ -153,6 +160,8 @@ public struct LoginFormFeature {
         case continueButtonTapped
         case submitSucceeded(User, URL)
         case submitFailed(AuthClientError)
+        case ssoButtonTapped
+        case oidcResponse(Result<User, AuthClientError>, URL)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -237,7 +246,7 @@ public struct LoginFormFeature {
             case let .testConnectionResponse(.success(status)):
                 state.authStatus = status
                 let clock = self.clock
-                guard status.localEnabled else {
+                guard status.localEnabled || status.oidcEnabled else {
                     state.connectionPhase = .failure
                     state.errorMessage = Self.message(for: .noAuthMethodsEnabled)
                     return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock))
@@ -324,6 +333,33 @@ public struct LoginFormFeature {
                 }
                 return .merge(Self.scheduleSubmitRevert(self.clock), Self.scheduleErrorDismiss(self.clock))
 
+            case .ssoButtonTapped:
+                guard state.authStatus?.oidcEnabled == true,
+                      !state.isAuthenticatingOIDC,
+                      let url = Self.normalizedURL(scheme: state.scheme, host: state.host) else {
+                    return .none
+                }
+                state.isAuthenticatingOIDC = true
+                state.errorMessage = nil
+                state.invalidFieldsScope = nil
+                let authClient = self.authClient
+                return .run { send in
+                    await send(.oidcResponse(await Self.loginOIDCResult(authClient, url), url))
+                }
+                .cancellable(id: CancelID.oidc, cancelInFlight: true)
+
+            case let .oidcResponse(.success(user), url):
+                state.isAuthenticatingOIDC = false
+                return .send(.delegate(.authenticated(user, url)))
+
+            case let .oidcResponse(.failure(error), _):
+                state.isAuthenticatingOIDC = false
+                // A user dismissing the web sheet is a cancellation, not a failure: leave the
+                // screen as it was with no error banner.
+                guard error != .oidcCancelled else { return .none }
+                state.errorMessage = Self.message(for: error)
+                return Self.scheduleErrorDismiss(self.clock)
+
             case .delegate:
                 return .none
             }
@@ -342,7 +378,8 @@ public struct LoginFormFeature {
             .cancel(id: CancelID.failureRevert),
             .cancel(id: CancelID.errorDismiss),
             .cancel(id: CancelID.submit),
-            .cancel(id: CancelID.submitRevert)
+            .cancel(id: CancelID.submitRevert),
+            .cancel(id: CancelID.oidc)
         )
     }
 
@@ -477,6 +514,14 @@ public struct LoginFormFeature {
         }
     }
 
+    static func loginOIDCResult(_ authClient: AuthClient, _ url: URL) async -> Result<User, AuthClientError> {
+        do {
+            return .success(try await authClient.loginOIDC(url))
+        } catch {
+            return .failure(mapError(error))
+        }
+    }
+
     static func mapError(_ error: Error) -> AuthClientError {
         (error as? AuthClientError) ?? .network(String(describing: error))
     }
@@ -490,8 +535,10 @@ public struct LoginFormFeature {
         case .decoding: L10n.Login.errorUnexpectedResponse
         case .keychain: L10n.Login.errorKeychain
         case let .server(statusCode): L10n.Login.errorServer(statusCode)
-        case .noAuthMethodsEnabled: L10n.Login.errorNoLocalAuth
+        case .noAuthMethodsEnabled: L10n.Login.errorNoAuthMethods
         case .rateLimited: L10n.Login.errorRateLimited
+        case .oidcCancelled: L10n.Login.errorSso
+        case .oidcFailed: L10n.Login.errorSso
         }
     }
 }

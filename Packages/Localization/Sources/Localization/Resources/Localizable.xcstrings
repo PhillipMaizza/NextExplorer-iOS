@@ -27179,6 +27179,17 @@
         }
       }
     },
+    "login.errorNoAuthMethods": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This server has no sign-in methods enabled."
+          }
+        }
+      }
+    },
     "login.errorNoLocalAuth": {
       "extractionState": "manual",
       "localizations": {
@@ -27607,6 +27618,17 @@
         }
       }
     },
+    "login.errorSso": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Single sign-on didn't complete. Please try again."
+          }
+        }
+      }
+    },
     "login.errorUnexpectedResponse": {
       "extractionState": "manual",
       "localizations": {
@@ -27924,6 +27946,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "隱藏密碼"
+          }
+        }
+      }
+    },
+    "login.orDivider": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "or"
           }
         }
       }
@@ -28887,6 +28920,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "顯示密碼"
+          }
+        }
+      }
+    },
+    "login.ssoButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in with SSO"
           }
         }
       }
