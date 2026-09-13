@@ -547,6 +547,10 @@ public struct BrowseFeature {
                 return .send(.delegate(.openFolder(item)))
 
             case let .searchQueryChanged(query):
+                // A focus change or keyboard dismiss can re-send the same text through the
+                // field's binding; re-running `search` would reset results to the local pre-fill
+                // and refetch, flashing the list. Only act on a real text change.
+                guard query != state.searchQuery else { return .none }
                 state.searchQuery = query
                 return search(&state)
 

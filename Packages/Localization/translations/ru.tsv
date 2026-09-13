@@ -550,3 +550,9 @@ login.serverInfoAccessibility	О подключении к серверу
 login.serverInfoTitle	Что такое сервер?
 login.serverInfoBody	NextExplorer подключается к вашему собственному серверу NextExplorer. Администратор управляет сервером, создаёт учётные записи и сообщает вам его веб-адрес. Введите этот адрес, чтобы войти.\n\nЕщё нет сервера? Руководство по установке покажет, как разместить свой.
 login.serverInfoGuide	Открыть руководство по установке
+login.ssoButton	Войти через SSO
+login.errorSso	Не удалось выполнить единый вход. Повторите попытку.
+common.syncCompleted	Синхронизация завершена
+settings.toggleShowTabLabels	Показывать подписи вкладок
+login.orDivider	или
+login.errorNoAuthMethods	На этом сервере не включены способы входа.

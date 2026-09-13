@@ -14,6 +14,9 @@ struct BrowsePreviewRouter: View {
     let item: FileItem
     let removeArchiveAfterDownload: Bool
     let onShareTarget: (FileItem) -> Void
+    /// Only the image gallery uses this: reports the swiped-to image so the cover's `.zoom`
+    /// source follows the current page. Every other branch previews a single item.
+    var onGalleryItemChange: (FileItem) -> Void = { _ in }
 
     var body: some View {
         if item.isUnsupportedForPreview {
@@ -74,7 +77,8 @@ struct BrowsePreviewRouter: View {
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? { current in
                     store.send(.deleteTapped(current))
-                } : nil
+                } : nil,
+                onCurrentItemChange: onGalleryItemChange
             )
         } else if item.isPreviewableViaDownload {
             FilePreviewContainerView(

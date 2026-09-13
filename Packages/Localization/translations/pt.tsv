@@ -550,3 +550,9 @@ login.serverInfoAccessibility	Sobre a ligação a um servidor
 login.serverInfoTitle	O que é um servidor?
 login.serverInfoBody	O NextExplorer liga-se ao seu próprio servidor NextExplorer. Um administrador gere o servidor, cria as contas e partilha o respetivo endereço web. Introduza esse endereço para iniciar sessão.\n\nAinda não tem um servidor? O guia de configuração mostra como alojar um.
 login.serverInfoGuide	Abrir guia de configuração
+login.ssoButton	Iniciar sessão com SSO
+login.errorSso	O início de sessão único não foi concluído. Tente novamente.
+common.syncCompleted	Sincronização concluída
+settings.toggleShowTabLabels	Mostrar rótulos das abas
+login.orDivider	ou
+login.errorNoAuthMethods	Este servidor não tem métodos de início de sessão ativados.

@@ -550,3 +550,9 @@ login.serverInfoAccessibility	サーバーへの接続について
 login.serverInfoTitle	サーバーとは？
 login.serverInfoBody	NextExplorer はあなた自身の NextExplorer サーバーに接続します。管理者がサーバーを運用し、アカウントを作成して、その Web アドレスを共有します。そのアドレスを入力してサインインしてください。\n\nまだサーバーがありませんか？セットアップガイドが自分でホストする方法を説明します。
 login.serverInfoGuide	セットアップガイドを開く
+login.ssoButton	SSO でサインイン
+login.errorSso	シングルサインオンを完了できませんでした。もう一度お試しください。
+common.syncCompleted	同期が完了しました
+settings.toggleShowTabLabels	タブラベルを表示
+login.orDivider	または
+login.errorNoAuthMethods	このサーバーでは有効なサインイン方法がありません。

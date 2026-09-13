@@ -70,6 +70,11 @@ struct BrowseContentView: View {
     /// interactively swipes-to-dismiss with the native `.zoom` morph (Twitter/Photos style),
     /// instead of a hand-rolled drag gesture.
     @Namespace private var previewTransition
+    /// The image the gallery is currently showing (it swipes between siblings). Drives the
+    /// cover's `.zoom` source and scrolls the matching cell into view, so dismissing after a
+    /// swipe morphs back to the visible image instead of the one first tapped. `nil` until the
+    /// gallery reports a page, then the tapped item's id is used.
+    @State private var galleryCurrentItemID: String?
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
 
@@ -126,12 +131,13 @@ struct BrowseContentView: View {
                 // `isPresented`, not `item:` — so an in-place rename (which changes the item's
                 // id) updates the cover's content instead of dismissing and re-presenting it.
                 if let item = store.previewItem {
-                    PreviewZoomContainer(sourceID: item.id, namespace: previewTransition) {
+                    PreviewZoomContainer(sourceID: galleryCurrentItemID ?? item.id, namespace: previewTransition) {
                         BrowsePreviewRouter(
                             store: store,
                             item: item,
                             removeArchiveAfterDownload: removeArchiveAfterDownload,
-                            onShareTarget: { shareTarget = $0 }
+                            onShareTarget: { shareTarget = $0 },
+                            onGalleryItemChange: { galleryCurrentItemID = $0.id }
                         )
                     }
                     .sheet(isPresented: isDeletingFromPreviewBinding) {
@@ -188,7 +194,11 @@ struct BrowseContentView: View {
             // The share target is view-local state; clear it whenever the preview closes so a
             // stale value can't auto-reopen the share sheet over the next preview.
             .onChange(of: store.previewItem == nil) { _, previewClosed in
-                if previewClosed { shareTarget = nil }
+                if previewClosed {
+                    shareTarget = nil
+                    // Cleared after the dismiss morph has already captured the source id.
+                    galleryCurrentItemID = nil
+                }
             }
             .task {
                 store.send(.onAppear)
@@ -946,38 +956,42 @@ struct BrowseContentView: View {
     }
 
     private var listContent: some View {
-        List {
-            Section {
-                if store.isSearching {
-                    searchResultRows
-                } else {
-                    folderItemRows
+        ScrollViewReader { proxy in
+            List {
+                Section {
+                    if store.isSearching {
+                        searchResultRows
+                    } else {
+                        folderItemRows
+                    }
                 }
+                pasteTargetRow
             }
-            pasteTargetRow
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            // Scrolling the results dismisses the search keyboard, the expected gesture when the
+            // results fill the screen and tapping a row would navigate rather than just defocus.
+            .scrollDismissesKeyboard(.immediately)
+            .backgroundGradient()
+            .safeAreaPadding(.bottom, bottomChromeClearance)
+            .animation(
+                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+                value: store.displayedItems
+            )
+            .animation(
+                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+                value: store.displayedSearchResults
+            )
+            .scrollGalleryPageIntoView(proxy, id: galleryCurrentItemID)
         }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        // Scrolling the results dismisses the search keyboard, the expected gesture when the
-        // results fill the screen and tapping a row would navigate rather than just defocus.
-        .scrollDismissesKeyboard(.immediately)
-        .backgroundGradient()
-        .safeAreaPadding(.bottom, bottomChromeClearance)
-        .animation(
-            .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-            value: store.displayedItems
-        )
-        .animation(
-            .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-            value: store.displayedSearchResults
-        )
     }
 
     private var gridContent: some View {
         // Bind once: `store.displayedItems` filters + localized sorts on every read, and this
         // builder would otherwise hit it for the ForEach and the animation value separately.
         let displayedItems = store.displayedItems
-        return ScrollView {
+        return ScrollViewReader { proxy in
+            ScrollView {
             LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
                 if store.isSearching {
                     ForEach(store.displayedSearchResults ?? []) { result in
@@ -1026,11 +1040,13 @@ struct BrowseContentView: View {
                 value: store.displayedSearchResults
             )
             pasteTargetArea
+            }
+            .scrollDismissesKeyboard(.immediately)
+            .backgroundGradient()
+            .safeAreaPadding(.bottom, bottomChromeClearance)
+            .dismissKeyboardOnTap()
+            .scrollGalleryPageIntoView(proxy, id: galleryCurrentItemID)
         }
-        .scrollDismissesKeyboard(.immediately)
-        .backgroundGradient()
-        .safeAreaPadding(.bottom, bottomChromeClearance)
-        .dismissKeyboardOnTap()
     }
 
     /// Invisible long-press target filling the space past the last row — a plain

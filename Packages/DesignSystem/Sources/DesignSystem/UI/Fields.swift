@@ -46,6 +46,10 @@ public struct DSFieldContainer<Content: View>: View {
             .frame(height: .size56)
             .background(
                 RoundedRectangle(cornerRadius: .radiusControl)
+                    .fill(Color.backgroundSecondary)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: .radiusControl)
                     .stroke(isInvalid ? Color.negative : Color.borderPrimary, lineWidth: isInvalid ? FieldConstants.invalidBorderWidth : .borderWidthHairline)
             )
             .animation(.easeInOut(duration: FieldConstants.borderFadeDuration), value: isInvalid)

@@ -144,7 +144,7 @@ struct DisplaySettingsSection: View {
     @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
-    @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = true
+    @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
     @Environment(\.colorScheme) private var systemColorScheme
 
     private var isDarkModeOn: Binding<Bool> {

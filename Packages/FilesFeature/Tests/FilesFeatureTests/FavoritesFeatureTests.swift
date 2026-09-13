@@ -692,6 +692,7 @@ struct FavoritesFeatureTests {
     func clearingTheQueryCancelsTheSearchAndClearsResults() async {
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.favorites = [makeFavorite(id: "1", path: "Bills")]
+        state.searchQuery = "internet"
         state.fileSearchResults = [SearchResultItem(name: "internet.pdf", path: "Bills", kind: "file")]
         state.searchPhase = .loaded
         let clock = TestClock()

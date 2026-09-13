@@ -33,6 +33,10 @@ struct ImageGalleryView: View {
     private let onRename: ((FileItem) -> Void)?
     private let onDownload: ((FileItem) -> Void)?
     private let onDelete: ((FileItem) -> Void)?
+    /// Reports the page currently on screen as the user swipes, so the caller can keep the
+    /// `.zoom` transition source (and the underlying list's scroll position) on the image the
+    /// cover will actually dismiss back to, not the one first tapped.
+    private let onCurrentItemChange: (FileItem) -> Void
 
     @State private var selection: String
     /// Single-tap toggles the nav bar + bottom action bar + system overlays, like the Photos
@@ -46,7 +50,8 @@ struct ImageGalleryView: View {
         onShare: ((FileItem) -> Void)? = nil,
         onRename: ((FileItem) -> Void)? = nil,
         onDownload: ((FileItem) -> Void)? = nil,
-        onDelete: ((FileItem) -> Void)? = nil
+        onDelete: ((FileItem) -> Void)? = nil,
+        onCurrentItemChange: @escaping (FileItem) -> Void = { _ in }
     ) {
         self.items = items
         self.serverURL = serverURL
@@ -55,6 +60,7 @@ struct ImageGalleryView: View {
         self.onRename = onRename
         self.onDownload = onDownload
         self.onDelete = onDelete
+        self.onCurrentItemChange = onCurrentItemChange
         self._selection = State(initialValue: initialItem.id)
     }
 
@@ -88,6 +94,8 @@ struct ImageGalleryView: View {
                 let slot = oldItems.firstIndex { $0.id == selection } ?? 0
                 selection = (newItems.indices.contains(slot) ? newItems[slot] : newItems[newItems.count - 1]).id
             }
+            // Keep the caller's zoom source and list scroll aligned with the page swiped to.
+            .onChange(of: selection) { _, _ in currentItem.map(onCurrentItemChange) }
             .contentShape(Rectangle())
             // A short fade, nothing more. The earlier lag was this animation fighting the
             // content reflow when the bars resized the image — now that the image is
