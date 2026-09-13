@@ -232,6 +232,10 @@ public struct FavoritesFeature {
                 return load(&state)
 
             case let .searchQueryChanged(query):
+                // A focus change or keyboard dismiss can re-send the same text through the
+                // field's binding; re-running the search would flash the results. Only act on a
+                // real text change.
+                guard query != state.searchQuery else { return .none }
                 state.searchQuery = query
                 return favoriteSearch(&state)
 

@@ -550,3 +550,9 @@ login.serverInfoAccessibility	À propos de la connexion à un serveur
 login.serverInfoTitle	Qu'est-ce qu'un serveur ?
 login.serverInfoBody	NextExplorer se connecte à votre propre serveur NextExplorer. Un administrateur gère le serveur, crée les comptes et vous communique son adresse web. Saisissez cette adresse pour vous connecter.\n\nPas encore de serveur ? Le guide d'installation vous explique comment en héberger un.
 login.serverInfoGuide	Ouvrir le guide d'installation
+login.ssoButton	Se connecter avec le SSO
+login.errorSso	L'authentification unique n'a pas abouti. Veuillez réessayer.
+common.syncCompleted	Synchronisation terminée
+settings.toggleShowTabLabels	Afficher les libellés d'onglets
+login.orDivider	ou
+login.errorNoAuthMethods	Aucune méthode de connexion n'est activée sur ce serveur.

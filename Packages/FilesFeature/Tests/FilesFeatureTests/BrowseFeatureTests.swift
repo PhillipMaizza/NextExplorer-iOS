@@ -601,6 +601,37 @@ struct BrowseFeatureTests {
     }
 
     @Test
+    func reSendingTheSameQueryIsANoOpSoResultsDoNotFlash() async {
+        let serverURL = URL(string: "https://example.com")!
+        let deepHit = SearchResultItem(name: "vacation-2.jpg", path: "Photos/Trips", kind: "file")
+        let state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
+        let clock = TestClock()
+        let calls = LockIsolated(0)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in calls.withValue { $0 += 1 }; return [deepHit] }
+        }
+
+        await store.send(.searchQueryChanged("vac")) {
+            $0.searchQuery = "vac"
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [deepHit]
+        }
+        // A focus change / keyboard dismiss re-sends the same text through the binding; it must
+        // not reset results to the pre-fill or refire the backend search.
+        await store.send(.searchQueryChanged("vac"))
+        #expect(calls.value == 1)
+    }
+
+    @Test
     func aWhitespaceOnlyQueryIsTreatedAsEmptyAndNeverHitsTheBackend() async {
         let serverURL = URL(string: "https://example.com")!
         let state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")

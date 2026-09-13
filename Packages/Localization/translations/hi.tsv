@@ -550,3 +550,9 @@ login.serverInfoAccessibility	सर्वर से कनेक्ट कर�
 login.serverInfoTitle	सर्वर क्या है?
 login.serverInfoBody	NextExplorer आपके अपने NextExplorer सर्वर से कनेक्ट होता है। एक व्यवस्थापक सर्वर चलाता है, खाते बनाता है और आपके साथ इसका वेब पता साझा करता है। साइन इन करने के लिए वह पता दर्ज करें।\n\nअभी तक सर्वर नहीं है? सेटअप गाइड आपको एक होस्ट करने का तरीका बताती है।
 login.serverInfoGuide	सेटअप गाइड खोलें
+login.ssoButton	SSO से साइन इन करें
+login.errorSso	सिंगल साइन-ऑन पूरा नहीं हुआ। कृपया फिर से प्रयास करें।
+common.syncCompleted	सिंक पूरा हुआ
+settings.toggleShowTabLabels	टैब लेबल दिखाएं
+login.orDivider	या
+login.errorNoAuthMethods	इस सर्वर पर कोई साइन-इन विधि सक्षम नहीं है।

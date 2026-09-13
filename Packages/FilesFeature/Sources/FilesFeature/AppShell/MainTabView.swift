@@ -41,7 +41,7 @@ public struct MainTabView: View {
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
     /// Settings → "Show Tab Labels": titles under each tab icon (with the smaller glyph set),
     /// or the full-size icons on their own.
-    @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = true
+    @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
 
     public init(store: StoreOf<MainTabFeature>) {
         self.store = store

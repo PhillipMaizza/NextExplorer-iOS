@@ -550,3 +550,9 @@ login.serverInfoAccessibility	Despre conectarea la un server
 login.serverInfoTitle	Ce este un server?
 login.serverInfoBody	NextExplorer se conectează la propriul tău server NextExplorer. Un administrator gestionează serverul, creează conturile și îți comunică adresa web. Introdu acea adresă pentru a te conecta.\n\nÎncă nu ai un server? Ghidul de configurare îți arată cum să găzduiești unul.
 login.serverInfoGuide	Deschide ghidul de configurare
+login.ssoButton	Autentificare cu SSO
+login.errorSso	Autentificarea unică nu s-a finalizat. Încearcă din nou.
+common.syncCompleted	Sincronizare finalizată
+settings.toggleShowTabLabels	Afișează etichetele filelor
+login.orDivider	sau
+login.errorNoAuthMethods	Acest server nu are metode de conectare activate.
