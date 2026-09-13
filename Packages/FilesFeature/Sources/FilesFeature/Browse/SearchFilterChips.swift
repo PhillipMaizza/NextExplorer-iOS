@@ -46,9 +46,9 @@ struct SearchFilterChips: View {
                     .scaledToFit()
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
                 Text(title)
-                    .type(.body2(isSelected ? .semibold : .regular))
+                    .type(.body3(isSelected ? .semibold : .regular))
             }
-            .foregroundStyle(isSelected ? Color.accentText : Color.secondaryDS)
+            .foregroundStyle(Color.secondaryDS)
             .padding(.horizontal, Constants.chipHorizontalPadding)
             .padding(.vertical, Constants.chipVerticalPadding)
             // Same `backgroundSecondary` track as the scope segmented control, but selection reads
