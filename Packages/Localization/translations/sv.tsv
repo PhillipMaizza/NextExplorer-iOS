@@ -550,3 +550,9 @@ login.serverInfoAccessibility	Om att ansluta till en server
 login.serverInfoTitle	Vad är en server?
 login.serverInfoBody	NextExplorer ansluter till din egen NextExplorer-server. En administratör sköter servern, skapar konton och delar dess webbadress med dig. Ange den adressen för att logga in.\n\nIngen server ännu? Installationsguiden visar hur du är värd för en själv.
 login.serverInfoGuide	Öppna installationsguiden
+login.ssoButton	Logga in med SSO
+login.errorSso	Enkel inloggning slutfördes inte. Försök igen.
+common.syncCompleted	Synkronisering klar
+settings.toggleShowTabLabels	Visa fliketiketter
+login.orDivider	eller
+login.errorNoAuthMethods	Den här servern har inga inloggningsmetoder aktiverade.

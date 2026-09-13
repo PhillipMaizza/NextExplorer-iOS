@@ -550,3 +550,9 @@ login.serverInfoAccessibility	Over verbinden met een server
 login.serverInfoTitle	Wat is een server?
 login.serverInfoBody	NextExplorer maakt verbinding met je eigen NextExplorer-server. Een beheerder beheert de server, maakt accounts aan en deelt het webadres met je. Voer dat adres in om in te loggen.\n\nNog geen server? De installatiegids laat zien hoe je er zelf een host.
 login.serverInfoGuide	Installatiegids openen
+login.ssoButton	Aanmelden met SSO
+login.errorSso	Eenmalige aanmelding is niet voltooid. Probeer het opnieuw.
+common.syncCompleted	Synchronisatie voltooid
+settings.toggleShowTabLabels	Tabbladlabels tonen
+login.orDivider	of
+login.errorNoAuthMethods	Op deze server zijn geen aanmeldmethoden ingeschakeld.

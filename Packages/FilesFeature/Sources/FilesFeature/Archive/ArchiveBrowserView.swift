@@ -293,9 +293,16 @@ struct ArchiveBrowserView: View {
     private func load() async {
         do {
             let fileURL = try await filesClient.downloadRawFile(serverURL, item)
-            let opened = try ArchiveReader.open(fileURL: fileURL, kind: item.kind)
+            let kind = item.kind
+            // Opening the container and listing its entries parses the whole archive; keep both
+            // off the main actor so a large or deeply nested archive does not freeze the UI on
+            // open, matching the extract path below.
+            let (opened, listed) = try await Task.detached(priority: .userInitiated) {
+                let source = try ArchiveReader.open(fileURL: fileURL, kind: kind)
+                return (source, try ArchiveReader.entries(from: source))
+            }.value
             source = opened
-            entries = try ArchiveReader.entries(from: opened)
+            entries = listed
             isLoading = false
         } catch {
             // Backing out mid download cancels this; not an open failure, so don't flash the

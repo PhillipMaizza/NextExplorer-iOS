@@ -18,6 +18,14 @@ struct SettingsView: View {
 
     private var filter: SettingsSearchFilter { SettingsSearchFilter(query: settingsSearch) }
 
+    /// Top padding for the pinned title, so it lines up with the other tabs. Those carry a
+    /// toolbar button that reserves nav bar height; Settings has none, so it pads to match.
+    /// `.size44` aligns on iOS 18 through 25; iOS 26's taller glass nav bar reserves ~10pt more,
+    /// measured against the Downloads tab title.
+    private static var titleTopPadding: CGFloat {
+        if #available(iOS 26.0, *) { .size44 + .space8 + .space2 } else { .size44 }
+    }
+
     // No op setters: each confirmation sheet is dismiss disabled and only closes through one
     // of `DSAlertSheet`'s own buttons, which drive the reducer directly. Sign out in
     // particular tears down this whole authenticated scope on confirm, so a SwiftUI initiated
@@ -61,7 +69,7 @@ struct SettingsView: View {
                 PinnedTitleSearchHeader(
                     title: L10n.Settings.navigationTitle,
                     searchText: $settingsSearch,
-                    extraTopPadding: .size44
+                    extraTopPadding: Self.titleTopPadding
                 )
             }
             .navigationDestination(

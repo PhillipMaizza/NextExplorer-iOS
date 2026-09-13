@@ -550,3 +550,9 @@ login.serverInfoAccessibility	حول الاتصال بخادم
 login.serverInfoTitle	ما هو الخادم؟
 login.serverInfoBody	يتصل NextExplorer بخادم NextExplorer الخاص بك. يقوم المسؤول بتشغيل الخادم وإنشاء الحسابات ومشاركة عنوانه الإلكتروني معك. أدخل هذا العنوان لتسجيل الدخول.\n\nليس لديك خادم بعد؟ يوضح لك دليل الإعداد كيفية استضافة واحد.
 login.serverInfoGuide	فتح دليل الإعداد
+login.ssoButton	تسجيل الدخول عبر SSO
+login.errorSso	لم تكتمل عملية الدخول الموحّد. يرجى المحاولة مرة أخرى.
+common.syncCompleted	اكتملت المزامنة
+settings.toggleShowTabLabels	إظهار تسميات علامات التبويب
+login.orDivider	أو
+login.errorNoAuthMethods	لا توجد طرق تسجيل دخول مفعّلة على هذا الخادم.

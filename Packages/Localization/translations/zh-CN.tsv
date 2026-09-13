@@ -550,3 +550,9 @@ login.serverInfoAccessibility	关于连接到服务器
 login.serverInfoTitle	什么是服务器？
 login.serverInfoBody	NextExplorer 连接到你自己的 NextExplorer 服务器。管理员负责运行服务器、创建账户并与你分享其网址。输入该网址即可登录。\n\n还没有服务器？安装指南将教你如何自行搭建。
 login.serverInfoGuide	打开安装指南
+login.ssoButton	使用 SSO 登录
+login.errorSso	单点登录未完成。请重试。
+common.syncCompleted	同步完成
+settings.toggleShowTabLabels	显示标签栏文字
+login.orDivider	或
+login.errorNoAuthMethods	此服务器未启用任何登录方式。

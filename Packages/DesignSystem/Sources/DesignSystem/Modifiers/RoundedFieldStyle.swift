@@ -13,6 +13,10 @@ private struct RoundedFieldModifier: ViewModifier {
             .textFieldStyle(.plain)
             .padding(.horizontal, .space12)
             .frame(height: height)
+            .background(
+                RoundedRectangle(cornerRadius: .radiusControl)
+                    .fill(Color.backgroundSecondary)
+            )
             .overlay(
                 RoundedRectangle(cornerRadius: .radiusControl)
                     .strokeBorder(borderStyle, lineWidth: isFocused ? .borderWidthFocused : .borderWidthHairline)

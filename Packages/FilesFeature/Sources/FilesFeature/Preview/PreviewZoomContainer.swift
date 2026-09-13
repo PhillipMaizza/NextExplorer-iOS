@@ -22,6 +22,18 @@ extension View {
     }
 }
 
+extension View {
+    /// Scrolls the file whose id matches the open gallery's current page to center, so the
+    /// cover's `.zoom` dismiss morphs back to an on-screen cell after the user swipes between
+    /// images. Runs while the full-screen cover covers the list, so the reposition is unseen.
+    func scrollGalleryPageIntoView(_ proxy: ScrollViewProxy, id: String?) -> some View {
+        onChange(of: id) { _, newID in
+            guard let newID else { return }
+            proxy.scrollTo(newID, anchor: .center)
+        }
+    }
+}
+
 /// Wraps a full-screen file preview presented in a `.fullScreenCover` so its native `.zoom`
 /// open/dismiss morph (see `BrowseContentView` / `DownloadsView`) reads against the app
 /// background gradient rather than the cover's default black: the content is pinned full

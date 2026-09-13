@@ -550,3 +550,9 @@ login.serverInfoAccessibility	Informacje o łączeniu z serwerem
 login.serverInfoTitle	Czym jest serwer?
 login.serverInfoBody	NextExplorer łączy się z Twoim własnym serwerem NextExplorer. Administrator zarządza serwerem, tworzy konta i udostępnia jego adres internetowy. Wpisz ten adres, aby się zalogować.\n\nNie masz jeszcze serwera? Przewodnik konfiguracji pokaże, jak go uruchomić.
 login.serverInfoGuide	Otwórz przewodnik konfiguracji
+login.ssoButton	Zaloguj się przez SSO
+login.errorSso	Logowanie jednokrotne nie powiodło się. Spróbuj ponownie.
+common.syncCompleted	Synchronizacja zakończona
+settings.toggleShowTabLabels	Pokaż etykiety kart
+login.orDivider	lub
+login.errorNoAuthMethods	Ten serwer nie ma włączonych metod logowania.
