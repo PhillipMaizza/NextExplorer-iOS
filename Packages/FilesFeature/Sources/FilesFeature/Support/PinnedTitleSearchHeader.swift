@@ -93,7 +93,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             }
         }
         .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: searchText.isEmpty)
-        .roundedFieldStyle(isFocused: isFocused)
+        .roundedFieldStyle(isFocused: isFocused, bordered: false)
     }
 }
 
