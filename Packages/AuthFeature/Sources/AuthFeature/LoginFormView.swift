@@ -15,6 +15,7 @@ private enum Constants {
     static let backChevronSize: CGFloat = .iconSmall
     static let backChevronWeight: Font.Weight = .semibold
     static let checkmarkSize: CGFloat = .iconSmall
+    static let ssoIconSize: CGFloat = .iconSmall
     /// How long after a failed Test Connection (once the button has morphed into the red X
     /// and the field has shaken) the error text waits before fading in.
     static let errorRevealDelay: Duration = .seconds(0.4)
@@ -64,6 +65,10 @@ public struct LoginFormView: View {
     @State private var submitButtonRect: CGRect = .zero
     /// Scale of that flooding circle: 1 == exactly the collapsed button, grows to cover.
     @State private var submitFloodScale: CGFloat = 1
+    /// SSO button's rect + its own flood circle scale, so an SSO sign-in floods from the SSO
+    /// button the same way a password one floods from the submit button.
+    @State private var ssoButtonRect: CGRect = .zero
+    @State private var ssoFloodScale: CGFloat = 1
     @State private var shakeTrigger: CGFloat = 0
     @State private var identifierShakeTrigger: CGFloat = 0
     @State private var passwordShakeTrigger: CGFloat = 0
@@ -124,6 +129,23 @@ public struct LoginFormView: View {
         }
     }
 
+    /// Same beat-separation for SSO: drop the keyboard and let its dismiss animation finish
+    /// before `.ssoButtonTapped` presents the web sheet, otherwise the keyboard stays up
+    /// underneath (and behind) the ASWebAuthenticationSession sheet.
+    private func submitSSO() {
+        let wasKeyboardVisible = focusedField != nil
+        focusedField = nil
+        guard wasKeyboardVisible else {
+            store.send(.ssoButtonTapped)
+            return
+        }
+        Task {
+            try? await Task.sleep(for: Constants.keyboardDismissDuration)
+            guard !Task.isCancelled else { return }
+            store.send(.ssoButtonTapped)
+        }
+    }
+
     private var hostPlaceholder: String {
         switch store.scheme {
         case .https: "nextexplorer.example.com"
@@ -180,6 +202,16 @@ public struct LoginFormView: View {
                     .position(x: submitButtonRect.midX, y: submitButtonRect.midY)
                     .allowsHitTesting(false)
             }
+            if store.oidcPhase == .success, ssoButtonRect != .zero {
+                // Same TKSubmitTransition flood, seeded from the SSO button so an SSO sign-in
+                // grows into the app exactly like a password one, rather than snapping in.
+                Circle()
+                    .fill(Color.accent)
+                    .frame(width: ssoButtonRect.height, height: ssoButtonRect.height)
+                    .scaleEffect(ssoFloodScale, anchor: .center)
+                    .position(x: ssoButtonRect.midX, y: ssoButtonRect.midY)
+                    .allowsHitTesting(false)
+            }
         }
         .onChange(of: store.submitPhase) { _, phase in
             switch phase {
@@ -190,6 +222,17 @@ public struct LoginFormView: View {
                 }
             case .idle, .submitting, .failure:
                 submitFloodScale = 1
+            }
+        }
+        .onChange(of: store.oidcPhase) { _, phase in
+            switch phase {
+            case .success:
+                ssoFloodScale = 1
+                withAnimation(.timingCurve(0.9, 0.0, 1, 0.1, duration: Constants.submitFloodDuration)) {
+                    ssoFloodScale = Constants.submitFloodScale
+                }
+            case .idle, .authenticating:
+                ssoFloodScale = 1
             }
         }
         .modifier(LoginHapticsModifier(errorMessage: store.errorMessage, connectionPhase: store.connectionPhase))
@@ -587,16 +630,44 @@ public struct LoginFormView: View {
     }
 
     private var ssoButton: some View {
-        DSButton(
-            L10n.Login.ssoButton,
-            icon: IconKit.person,
-            style: .outline,
+        let phase = store.oidcPhase
+        let isCollapsed = phase != .idle
+        return DSAnimatedButton(
+            phase: phase,
+            isCollapsed: isCollapsed,
+            // Outline while idle/authenticating so it stays visually secondary to Continue, then
+            // `.primary` (accent) on success so the collapsed circle is the same object the
+            // accent flood grows out of, exactly like the password button collapses and floods.
+            style: phase == .success ? .primary : .outline,
             size: .medium,
-            isLoading: store.isAuthenticatingOIDC
+            isHitEnabled: !isCollapsed,
+            action: submitSSO
         ) {
-            store.send(.ssoButtonTapped)
+            ZStack {
+                switch phase {
+                case .idle:
+                    HStack(spacing: .space8) {
+                        IconKit.person
+                            .resizable()
+                            .frame(width: Constants.ssoIconSize, height: Constants.ssoIconSize)
+                        Text(L10n.Login.ssoButton)
+                            .type(.label3)
+                    }
+                    .foregroundStyle(Color.primaryDS)
+                case .authenticating:
+                    DSSpinner(color: .primaryDS)
+                case .success:
+                    IconKit.checkmark
+                        .resizable()
+                        .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
+                        .foregroundStyle(Color.black)
+                        .bold()
+                }
+            }
         }
-        .disabled(store.isAuthenticatingOIDC)
+        .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .named(Constants.rootSpace)) }) { newFrame in
+            if newFrame != .zero { ssoButtonRect = newFrame }
+        }
     }
 }
 
