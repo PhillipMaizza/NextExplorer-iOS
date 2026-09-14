@@ -13,6 +13,7 @@ struct SettingsView: View {
     /// here, above every `.navigationDestination`, is the only spot a bottom overlay isn't
     /// occluded by a pushed screen, so those two views don't each need their own.
     @State private var userManagementToast: DSToastMessage?
+    @State private var tipToast: DSToastMessage?
     /// View-local filter for the settings list — no reducer state needed, it only hides rows.
     @State private var settingsSearch = ""
 
@@ -60,7 +61,7 @@ struct SettingsView: View {
 
                 StorageSettingsSection(store: store, filter: filter)
                 LegalSettingsSection(filter: filter)
-                LicensesSettingsSection(filter: filter)
+                LicensesSettingsSection(store: store, filter: filter)
             }
             .scrollContentBackground(.hidden)
             .backgroundGradient()
@@ -142,16 +143,29 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
+            .sheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
+                TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
+            }
             .task {
                 store.send(.onAppear)
             }
         }
         .tint(Color.accent)
         .dsToast(userManagementToastBinding)
+        .dsToast(tipToastBinding)
         .onChange(of: store.userManagement?.toast) { _, toast in
             guard let toast else { return }
             userManagementToast = .success(toast)
         }
+        .onChange(of: store.tipToast) { _, message in
+            guard let message else { return }
+            tipToast = .success(message)
+            store.send(.tipToastShown)
+        }
+    }
+
+    private var tipToastBinding: Binding<DSToastMessage?> {
+        Binding(get: { tipToast }, set: { tipToast = $0 })
     }
 
     private var userManagementToastBinding: Binding<DSToastMessage?> {

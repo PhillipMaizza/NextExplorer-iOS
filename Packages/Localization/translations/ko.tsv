@@ -556,3 +556,12 @@ common.syncCompleted	동기화 완료
 settings.toggleShowTabLabels	탭 레이블 표시
 login.orDivider	또는
 login.errorNoAuthMethods	이 서버에는 사용 설정된 로그인 방법이 없습니다.
+# Credits + tip jar
+settings.creditsMadeBy	Phillip Maizza가 ❤️을 담아 제작
+settings.creditsLikeApp	앱이 마음에 드시나요?
+settings.creditsBuyCoffee	커피 한 잔 사주기 ☕️
+tipJar.title	커피 한 잔 사주기
+tipJar.explanation	NextExplorer는 무료이며 오픈 소스입니다. 유용하셨다면 작은 후원이 개발을 이어가는 데 도움이 됩니다. 감사합니다!
+tipJar.toastThanks	프로젝트를 후원해 주셔서 감사합니다! 🙏
+tipJar.errorLoad	후원 옵션을 불러오지 못했습니다. 다시 시도해 주세요.
+tipJar.errorPurchase	구매가 완료되지 않았습니다. 다시 시도해 주세요.

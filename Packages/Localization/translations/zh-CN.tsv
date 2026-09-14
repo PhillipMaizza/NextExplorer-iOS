@@ -556,3 +556,12 @@ common.syncCompleted	同步完成
 settings.toggleShowTabLabels	显示标签栏文字
 login.orDivider	或
 login.errorNoAuthMethods	此服务器未启用任何登录方式。
+# Credits + tip jar
+settings.creditsMadeBy	由 Phillip Maizza 用 ❤️ 打造
+settings.creditsLikeApp	喜欢这个应用吗？
+settings.creditsBuyCoffee	请我喝杯咖啡 ☕️
+tipJar.title	请我喝杯咖啡
+tipJar.explanation	NextExplorer 免费且开源。如果它对你有用，一点小小的打赏能帮助它继续下去。谢谢！
+tipJar.toastThanks	感谢你支持这个项目！🙏
+tipJar.errorLoad	无法加载打赏选项。请重试。
+tipJar.errorPurchase	购买未完成。请重试。

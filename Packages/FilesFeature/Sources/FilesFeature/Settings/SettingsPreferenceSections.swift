@@ -8,6 +8,8 @@ import SwiftUI
 private enum Constants {
     static let rowIconSize: CGFloat = .iconSmall
     static let footerTopPadding: CGFloat = .space8
+    static let versionLogoSize: CGFloat = .iconMedium
+    static let versionLogoSpacing: CGFloat = .zero
     static let fullOpacity: Double = 1.0
     static let disabledOpacity: Double = 0.5
 }
@@ -330,13 +332,28 @@ struct LegalSettingsSection: View {
 // MARK: Licenses
 
 struct LicensesSettingsSection: View {
+    @Bindable var store: StoreOf<SettingsFeature>
     let filter: SettingsSearchFilter
 
     private var appVersionText: String {
         let info = Bundle.main.infoDictionary
         let version = info?["CFBundleShortVersionString"] as? String ?? "-"
         let build = info?["CFBundleVersion"] as? String ?? "-"
+        // Reuse the localized "Version x(y)" string but drop the build in parens, leaving just
+        // the marketing version.
         return L10n.Settings.appVersion(version, build)
+            .replacingOccurrences(of: "(\(build))", with: "")
+            .trimmingCharacters(in: .whitespaces)
+    }
+
+    /// "Like the app? Buy me a coffee ☕️" as one wrapping line, the coffee half accented so it
+    /// reads as the tappable part.
+    private var tipPrompt: AttributedString {
+        var prompt = AttributedString(L10n.Settings.creditsLikeApp + " ")
+        var coffee = AttributedString(L10n.Settings.creditsBuyCoffee)
+        coffee.foregroundColor = .accent
+        prompt.append(coffee)
+        return prompt
     }
 
     var body: some View {
@@ -361,11 +378,29 @@ struct LicensesSettingsSection: View {
                 sectionHeader(L10n.Settings.sectionLicenses)
             } footer: {
                 if !filter.isActive {
-                    Text(appVersionText)
-                        .type(.label4, style: .tertiary)
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                        .padding(.top, Constants.footerTopPadding)
+                    VStack(spacing: .space16) {
+                        VStack(spacing: Constants.versionLogoSpacing) {
+                            IconKit.logo
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: Constants.versionLogoSize, height: Constants.versionLogoSize)
+                            Text(appVersionText)
+                                .type(.label4, style: .tertiary)
+                        }
+                        VStack(spacing: .space4) {
+                            Text(L10n.Settings.creditsMadeBy)
+                                .type(.label4, style: .tertiary)
+                            Button {
+                                store.send(.tipJarButtonTapped)
+                            } label: {
+                                Text(tipPrompt).type(.label4, style: .tertiary)
+                            }
+                            .buttonStyle(.plain)
+                        }
+                    }
+                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, Constants.footerTopPadding)
                 }
             }
             .listRowBackground(Color.backgroundSecondary)

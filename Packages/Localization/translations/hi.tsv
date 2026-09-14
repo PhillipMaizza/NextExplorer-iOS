@@ -556,3 +556,12 @@ common.syncCompleted	सिंक पूरा हुआ
 settings.toggleShowTabLabels	टैब लेबल दिखाएं
 login.orDivider	या
 login.errorNoAuthMethods	इस सर्वर पर कोई साइन-इन विधि सक्षम नहीं है।
+# Credits + tip jar
+settings.creditsMadeBy	Phillip Maizza द्वारा ❤️ से बनाया गया
+settings.creditsLikeApp	क्या आपको ऐप पसंद है?
+settings.creditsBuyCoffee	मुझे एक कॉफ़ी पिलाएँ ☕️
+tipJar.title	मुझे एक कॉफ़ी पिलाएँ
+tipJar.explanation	NextExplorer मुफ़्त और ओपन सोर्स है। अगर यह आपके काम आता है, तो एक छोटी सी टिप इसे चलाते रहने में मदद करती है। धन्यवाद!
+tipJar.toastThanks	प्रोजेक्ट का समर्थन करने के लिए धन्यवाद! 🙏
+tipJar.errorLoad	टिप विकल्प लोड नहीं हो सके। कृपया पुनः प्रयास करें।
+tipJar.errorPurchase	खरीदारी पूरी नहीं हो सकी। कृपया पुनः प्रयास करें।
