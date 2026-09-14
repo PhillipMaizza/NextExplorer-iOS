@@ -39,6 +39,12 @@ struct TipJarSheet: View {
                     DSErrorCard(error)
                 }
 
+                if let notice = store.noticeMessage {
+                    Text(notice)
+                        .type(.body2(.regular), style: .secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 content
             }
             .padding(.horizontal, Metrics.horizontalPadding)

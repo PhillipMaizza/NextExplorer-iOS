@@ -635,3 +635,4 @@ tipJar.explanation	NextExplorer is free and open source. If it's useful to you, 
 tipJar.toastThanks	Thank you for supporting the project! 🙏
 tipJar.errorLoad	Couldn't load the tip options. Please try again.
 tipJar.errorPurchase	The purchase didn't go through. Please try again.
+tipJar.pending	Waiting for approval. You'll be charged once it's approved.

@@ -565,3 +565,4 @@ tipJar.explanation	NextExplorer는 무료이며 오픈 소스입니다. 유용�
 tipJar.toastThanks	프로젝트를 후원해 주셔서 감사합니다! 🙏
 tipJar.errorLoad	후원 옵션을 불러오지 못했습니다. 다시 시도해 주세요.
 tipJar.errorPurchase	구매가 완료되지 않았습니다. 다시 시도해 주세요.
+tipJar.pending	승인 대기 중입니다. 승인되면 결제됩니다.

@@ -3,6 +3,7 @@ import AuthClient
 import AuthFeature
 import ComposableArchitecture
 import DesignSystem
+import FilesFeature
 import Localization
 import SwiftUI
 
@@ -94,6 +95,12 @@ public struct AppView: View {
         }
         .task {
             store.send(.onAppear)
+        }
+        // Finish tip transactions that resolve outside the inline purchase (Ask to Buy approvals,
+        // interrupted purchases). Started once for the app's lifetime; without it StoreKit
+        // redelivers the same unfinished transaction on every launch.
+        .task {
+            await TipTransactionObserver.run()
         }
         .onChange(of: store.sessionDidExpire) { _, didExpire in
             guard didExpire else { return }

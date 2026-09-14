@@ -91,6 +91,22 @@ struct TipJarFeatureTests {
         }
     }
 
+    @Test("tip pending: shows the neutral waiting note, clears the spinner, does not delegate")
+    func tipPending() async {
+        let store = TestStore(
+            initialState: TipJarFeature.State(productsPhase: .loaded, products: sample)
+        ) {
+            TipJarFeature()
+        } withDependencies: {
+            $0.storeKitTipClient.purchase = { _ in .pending }
+        }
+        await store.send(.tipTapped(TipProductID.coffee)) { $0.purchasingID = TipProductID.coffee }
+        await store.receive(\.purchaseResponse) {
+            $0.purchasingID = nil
+            $0.noticeMessage = L10n.TipJar.pending
+        }
+    }
+
     @Test("only one purchase runs at a time: a second tap while one is in flight is ignored")
     func singleInFlight() async {
         let store = TestStore(

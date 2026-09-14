@@ -565,3 +565,4 @@ tipJar.explanation	NextExplorer 免费且开源。如果它对你有用，一点
 tipJar.toastThanks	感谢你支持这个项目！🙏
 tipJar.errorLoad	无法加载打赏选项。请重试。
 tipJar.errorPurchase	购买未完成。请重试。
+tipJar.pending	等待批准。批准后将进行扣款。
