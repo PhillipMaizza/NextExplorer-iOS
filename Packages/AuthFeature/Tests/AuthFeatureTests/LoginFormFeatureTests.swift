@@ -324,8 +324,8 @@ struct LoginFormFeatureTests {
             $0.continuousClock = ImmediateClock()
         }
 
-        await store.send(.ssoButtonTapped) { $0.isAuthenticatingOIDC = true }
-        await store.receive(\.oidcResponse) { $0.isAuthenticatingOIDC = false }
+        await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
+        await store.receive(\.oidcResponse) { $0.oidcPhase = .success }
         await store.receive(\.delegate)
     }
 
@@ -345,8 +345,8 @@ struct LoginFormFeatureTests {
             $0.continuousClock = ImmediateClock()
         }
 
-        await store.send(.ssoButtonTapped) { $0.isAuthenticatingOIDC = true }
-        await store.receive(\.oidcResponse) { $0.isAuthenticatingOIDC = false }
+        await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
+        await store.receive(\.oidcResponse) { $0.oidcPhase = .idle }
     }
 
     @Test("SSO failure: a failed web flow surfaces the SSO error message, then clears it")
@@ -365,9 +365,9 @@ struct LoginFormFeatureTests {
             $0.continuousClock = ImmediateClock()
         }
 
-        await store.send(.ssoButtonTapped) { $0.isAuthenticatingOIDC = true }
+        await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
         await store.receive(\.oidcResponse) {
-            $0.isAuthenticatingOIDC = false
+            $0.oidcPhase = .idle
             $0.errorMessage = L10n.Login.errorSso
         }
         await store.receive(\.clearErrorMessage) {

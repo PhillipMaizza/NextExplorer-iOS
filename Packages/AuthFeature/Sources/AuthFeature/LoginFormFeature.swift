@@ -36,6 +36,7 @@ public struct LoginFormFeature {
         case submit
         case submitRevert
         case oidc
+        case oidcSuccessAdvance
     }
 
     public enum URLScheme: String, CaseIterable, Equatable, Hashable, Sendable, Identifiable {
@@ -69,6 +70,16 @@ public struct LoginFormFeature {
         case failure
     }
 
+    /// The SSO button's lifecycle: `idle`, `authenticating` while the web sheet + code exchange
+    /// run, then a brief `success` beat that seeds the accent flood into the app. Mirrors
+    /// `submitPhase` so the SSO path gets the same login to app choreography the password path
+    /// has, instead of snapping straight in.
+    public enum OIDCPhase: Equatable, Sendable {
+        case idle
+        case authenticating
+        case success
+    }
+
     /// Which credential field(s) should shake/red-border for the current `errorMessage` — a
     /// locally-rejected non-email only implicates the email field, while a server-rejected
     /// email/password implicates both (the server never says which one was actually wrong).
@@ -93,9 +104,9 @@ public struct LoginFormFeature {
         public var password: String
         public var isPasswordVisible: Bool
         public var submitPhase: SubmitPhase
-        /// A single lone in-flight flag for the SSO button while the web sheet + exchange run
-        /// (per architecture rule #8, one mutation flag is fine; it is not a load lifecycle).
-        public var isAuthenticatingOIDC: Bool
+        /// The SSO button's lifecycle (idle / authenticating / success). A phase, not a bool
+        /// cluster, because it now carries a success beat that drives the accent flood.
+        public var oidcPhase: OIDCPhase
         public var errorMessage: String?
         public var invalidFieldsScope: InvalidFieldScope?
         public var authStatus: AuthStatus?
@@ -109,7 +120,7 @@ public struct LoginFormFeature {
             password: String = "",
             isPasswordVisible: Bool = false,
             submitPhase: SubmitPhase = .idle,
-            isAuthenticatingOIDC: Bool = false,
+            oidcPhase: OIDCPhase = .idle,
             errorMessage: String? = nil,
             invalidFieldsScope: InvalidFieldScope? = nil,
             authStatus: AuthStatus? = nil
@@ -123,7 +134,7 @@ public struct LoginFormFeature {
             self.password = password
             self.isPasswordVisible = isPasswordVisible
             self.submitPhase = submitPhase
-            self.isAuthenticatingOIDC = isAuthenticatingOIDC
+            self.oidcPhase = oidcPhase
             self.errorMessage = errorMessage
             self.invalidFieldsScope = invalidFieldsScope
             self.authStatus = authStatus
@@ -137,7 +148,7 @@ public struct LoginFormFeature {
             currentPage = .server
             connectionPhase = .idle
             submitPhase = .idle
-            isAuthenticatingOIDC = false
+            oidcPhase = .idle
             authStatus = nil
             errorMessage = nil
             invalidFieldsScope = nil
@@ -335,11 +346,11 @@ public struct LoginFormFeature {
 
             case .ssoButtonTapped:
                 guard state.authStatus?.oidcEnabled == true,
-                      !state.isAuthenticatingOIDC,
+                      state.oidcPhase == .idle,
                       let url = Self.normalizedURL(scheme: state.scheme, host: state.host) else {
                     return .none
                 }
-                state.isAuthenticatingOIDC = true
+                state.oidcPhase = .authenticating
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
                 let authClient = self.authClient
@@ -349,11 +360,18 @@ public struct LoginFormFeature {
                 .cancellable(id: CancelID.oidc, cancelInFlight: true)
 
             case let .oidcResponse(.success(user), url):
-                state.isAuthenticatingOIDC = false
-                return .send(.delegate(.authenticated(user, url)))
+                // Mirror `submitSucceeded`: hold a brief success beat so the accent flood can
+                // grow out of the SSO button before the app zooms in, instead of snapping.
+                state.oidcPhase = .success
+                let clock = self.clock
+                return .run { send in
+                    try await clock.sleep(for: Constants.successDisplayDuration)
+                    await send(.delegate(.authenticated(user, url)))
+                }
+                .cancellable(id: CancelID.oidcSuccessAdvance, cancelInFlight: true)
 
             case let .oidcResponse(.failure(error), _):
-                state.isAuthenticatingOIDC = false
+                state.oidcPhase = .idle
                 // A user dismissing the web sheet is a cancellation, not a failure: leave the
                 // screen as it was with no error banner.
                 guard error != .oidcCancelled else { return .none }
