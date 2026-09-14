@@ -1,0 +1,64 @@
+{
+  "identifier" : "16CAD0FE-BDD6-418C-97C9-365C881818CB",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "36F86D77-D8D6-4B80-87F6-1567FBC0941E",
+      "localizations" : [
+        {
+          "description" : "A small coffee to say thanks.",
+          "displayName" : "Coffee",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.phillipmaizza.nextexplorer.tip.coffee",
+      "referenceName" : "Coffee",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "2.99",
+      "familyShareable" : false,
+      "internalID" : "1552EFFB-09C3-47EB-8564-D35FE49C313F",
+      "localizations" : [
+        {
+          "description" : "A slice of cake to support development.",
+          "displayName" : "Cake",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.phillipmaizza.nextexplorer.tip.cake",
+      "referenceName" : "Cake",
+      "type" : "Consumable"
+    },
+    {
+      "displayPrice" : "4.99",
+      "familyShareable" : false,
+      "internalID" : "F60DF15C-208E-4411-BB76-BEF2FB02FFD2",
+      "localizations" : [
+        {
+          "description" : "A generous tip. Thank you!",
+          "displayName" : "Generous",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.phillipmaizza.nextexplorer.tip.generous",
+      "referenceName" : "Generous",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+    "_applicationInternalID" : "0",
+    "_developerTeamID" : "",
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : []
+  },
+  "subscriptionGroups" : [],
+  "version" : {
+    "major" : 3,
+    "minor" : 0
+  }
+}

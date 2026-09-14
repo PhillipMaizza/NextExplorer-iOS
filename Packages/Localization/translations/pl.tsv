@@ -556,3 +556,12 @@ common.syncCompleted	Synchronizacja zakończona
 settings.toggleShowTabLabels	Pokaż etykiety kart
 login.orDivider	lub
 login.errorNoAuthMethods	Ten serwer nie ma włączonych metod logowania.
+# Credits + tip jar
+settings.creditsMadeBy	Zrobione z ❤️ przez Phillip Maizza
+settings.creditsLikeApp	Podoba Ci się aplikacja?
+settings.creditsBuyCoffee	Postaw mi kawę ☕️
+tipJar.title	Postaw mi kawę
+tipJar.explanation	NextExplorer jest darmowy i open source. Jeśli jest dla Ciebie przydatny, mały napiwek pomoże go utrzymać. Dziękuję!
+tipJar.toastThanks	Dziękuję za wsparcie projektu! 🙏
+tipJar.errorLoad	Nie udało się wczytać opcji napiwku. Spróbuj ponownie.
+tipJar.errorPurchase	Zakup nie powiódł się. Spróbuj ponownie.

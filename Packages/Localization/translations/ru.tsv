@@ -556,3 +556,12 @@ common.syncCompleted	Синхронизация завершена
 settings.toggleShowTabLabels	Показывать подписи вкладок
 login.orDivider	или
 login.errorNoAuthMethods	На этом сервере не включены способы входа.
+# Credits + tip jar
+settings.creditsMadeBy	Сделано с ❤️ Phillip Maizza
+settings.creditsLikeApp	Нравится приложение?
+settings.creditsBuyCoffee	Купите мне кофе ☕️
+tipJar.title	Купите мне кофе
+tipJar.explanation	NextExplorer бесплатен и с открытым исходным кодом. Если он вам полезен, небольшие чаевые помогут его развивать. Спасибо!
+tipJar.toastThanks	Спасибо за поддержку проекта! 🙏
+tipJar.errorLoad	Не удалось загрузить варианты чаевых. Попробуйте ещё раз.
+tipJar.errorPurchase	Покупка не прошла. Попробуйте ещё раз.

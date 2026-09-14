@@ -556,3 +556,12 @@ common.syncCompleted	Sincronizzazione completata
 settings.toggleShowTabLabels	Mostra etichette schede
 login.orDivider	o
 login.errorNoAuthMethods	Questo server non ha metodi di accesso abilitati.
+# Credits + tip jar
+settings.creditsMadeBy	Fatto con ❤️ da Phillip Maizza
+settings.creditsLikeApp	Ti piace l’app?
+settings.creditsBuyCoffee	Offrimi un caffè ☕️
+tipJar.title	Offrimi un caffè
+tipJar.explanation	NextExplorer è gratuito e open source. Se ti è utile, una piccola offerta aiuta a mantenerlo. Grazie!
+tipJar.toastThanks	Grazie per aver sostenuto il progetto! 🙏
+tipJar.errorLoad	Impossibile caricare le opzioni di offerta. Riprova.
+tipJar.errorPurchase	L’acquisto non è andato a buon fine. Riprova.
