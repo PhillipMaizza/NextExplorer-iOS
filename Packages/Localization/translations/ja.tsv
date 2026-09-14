@@ -556,3 +556,12 @@ common.syncCompleted	同期が完了しました
 settings.toggleShowTabLabels	タブラベルを表示
 login.orDivider	または
 login.errorNoAuthMethods	このサーバーでは有効なサインイン方法がありません。
+# Credits + tip jar
+settings.creditsMadeBy	Phillip Maizza が ❤️ を込めて作成
+settings.creditsLikeApp	アプリは気に入りましたか？
+settings.creditsBuyCoffee	コーヒーをおごる ☕️
+tipJar.title	コーヒーをおごる
+tipJar.explanation	NextExplorer は無料でオープンソースです。お役に立てているなら、ささやかなチップが開発の支えになります。ありがとうございます！
+tipJar.toastThanks	プロジェクトへのご支援ありがとうございます！🙏
+tipJar.errorLoad	チップの項目を読み込めませんでした。もう一度お試しください。
+tipJar.errorPurchase	購入が完了しませんでした。もう一度お試しください。

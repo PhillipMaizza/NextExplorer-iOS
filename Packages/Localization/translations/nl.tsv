@@ -556,3 +556,12 @@ common.syncCompleted	Synchronisatie voltooid
 settings.toggleShowTabLabels	Tabbladlabels tonen
 login.orDivider	of
 login.errorNoAuthMethods	Op deze server zijn geen aanmeldmethoden ingeschakeld.
+# Credits + tip jar
+settings.creditsMadeBy	Gemaakt met ❤️ door Phillip Maizza
+settings.creditsLikeApp	Vind je de app leuk?
+settings.creditsBuyCoffee	Trakteer me op een koffie ☕️
+tipJar.title	Trakteer me op een koffie
+tipJar.explanation	NextExplorer is gratis en open source. Als je er iets aan hebt, helpt een kleine fooi om het draaiende te houden. Bedankt!
+tipJar.toastThanks	Bedankt voor je steun aan het project! 🙏
+tipJar.errorLoad	Kan de fooiopties niet laden. Probeer het opnieuw.
+tipJar.errorPurchase	De aankoop is niet gelukt. Probeer het opnieuw.

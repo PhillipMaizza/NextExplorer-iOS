@@ -556,3 +556,12 @@ common.syncCompleted	Synkronisering klar
 settings.toggleShowTabLabels	Visa fliketiketter
 login.orDivider	eller
 login.errorNoAuthMethods	Den här servern har inga inloggningsmetoder aktiverade.
+# Credits + tip jar
+settings.creditsMadeBy	Skapad med ❤️ av Phillip Maizza
+settings.creditsLikeApp	Gillar du appen?
+settings.creditsBuyCoffee	Bjud mig på en kaffe ☕️
+tipJar.title	Bjud mig på en kaffe
+tipJar.explanation	NextExplorer är gratis och öppen källkod. Om den är användbar hjälper en liten dricks till att hålla den vid liv. Tack!
+tipJar.toastThanks	Tack för att du stöttar projektet! 🙏
+tipJar.errorLoad	Det gick inte att läsa in dricksalternativen. Försök igen.
+tipJar.errorPurchase	Köpet gick inte igenom. Försök igen.

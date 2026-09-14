@@ -375,6 +375,9 @@ public enum L10n {
         public static var clearCacheConfirm: String { tr("settings.clearCacheConfirm") }  // "Clear"
         public static var clearCacheMessage: String { tr("settings.clearCacheMessage") }
         public static var clearCacheTitle: String { tr("settings.clearCacheTitle") }  // "Clear Cache?"
+        public static var creditsBuyCoffee: String { tr("settings.creditsBuyCoffee") }  // "Buy me a coffee ☕️"
+        public static var creditsLikeApp: String { tr("settings.creditsLikeApp") }  // "Like the app?"
+        public static var creditsMadeBy: String { tr("settings.creditsMadeBy") }  // "Made with ❤️ by Phillip Maizza"
         public static var dateFormatNavigationTitle: String { tr("settings.dateFormatNavigationTitle") }  // "Date Format"
         public static var dateFormatShowTime: String { tr("settings.dateFormatShowTime") }  // "Show Time"
         public static var navigationTitle: String { tr("settings.navigationTitle") }  // "Settings"
@@ -493,6 +496,13 @@ public enum L10n {
         public static var large: String { tr("thumbnailSize.large") }  // "Large"
         public static var medium: String { tr("thumbnailSize.medium") }  // "Medium"
         public static var small: String { tr("thumbnailSize.small") }  // "Small"
+    }
+    public enum TipJar {
+        public static var errorLoad: String { tr("tipJar.errorLoad") }  // "Couldn't load the tip options. Please try again."
+        public static var errorPurchase: String { tr("tipJar.errorPurchase") }  // "The purchase didn't go through. Please try again."
+        public static var explanation: String { tr("tipJar.explanation") }
+        public static var title: String { tr("tipJar.title") }  // "Buy me a coffee"
+        public static var toastThanks: String { tr("tipJar.toastThanks") }  // "Thank you for supporting the project! 🙏"
     }
     public enum UnsupportedPreview {
         public static var cannotOpen: String { tr("unsupportedPreview.cannotOpen") }  // "This app can't open this type of file."

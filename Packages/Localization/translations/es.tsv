@@ -556,3 +556,12 @@ common.syncCompleted	Sincronización completada
 settings.toggleShowTabLabels	Mostrar etiquetas de pestañas
 login.orDivider	o
 login.errorNoAuthMethods	Este servidor no tiene métodos de inicio de sesión habilitados.
+# Credits + tip jar
+settings.creditsMadeBy	Hecho con ❤️ por Phillip Maizza
+settings.creditsLikeApp	¿Te gusta la app?
+settings.creditsBuyCoffee	Invítame a un café ☕️
+tipJar.title	Invítame a un café
+tipJar.explanation	NextExplorer es gratis y de código abierto. Si te resulta útil, una pequeña propina ayuda a mantenerlo. ¡Gracias!
+tipJar.toastThanks	¡Gracias por apoyar el proyecto! 🙏
+tipJar.errorLoad	No se pudieron cargar las opciones de propina. Inténtalo de nuevo.
+tipJar.errorPurchase	La compra no se completó. Inténtalo de nuevo.

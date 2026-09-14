@@ -2,242 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>try{var t=localStorage.getItem("ne-theme");if(t==="dark"||t==="light")document.documentElement.setAttribute("data-theme",t)}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NextExplorer Privacy Policy</title>
-<meta name="description" content="How the NextExplorer iOS app handles your data: it doesn't collect any.">
+<title>NextExplorer for iOS Privacy Policy</title>
+<meta name="description" content="How the NextExplorer for iOS app handles your data: it doesn't collect any.">
+<link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700&display=swap">
-<style>
-  :root {
-    --ground: #f7f7f5;
-    --surface: #ffffff;
-    --raise: #fbfaf8;
-    --ink: #1c1b19;
-    --muted: #6e6a63;
-    --faint: #928d84;
-    --line: #e6e3dd;
-    --accent: #c9741f;
-    --accent-inkline: #a85f16;
-    --accent-soft: rgba(201, 116, 31, 0.10);
-    --good: #3c8558;
-    --good-soft: rgba(60, 133, 88, 0.10);
-    --shadow: 0 1px 2px rgba(28, 27, 25, 0.04), 0 8px 28px rgba(28, 27, 25, 0.05);
-    color-scheme: light;
-  }
-  :root:not([data-theme="light"]) {
-    @media (prefers-color-scheme: dark) {
-      --ground: #131210;
-      --surface: #1c1a16;
-      --raise: #232019;
-      --ink: #ece8e1;
-      --muted: #a29c91;
-      --faint: #726c62;
-      --line: #2d2924;
-      --accent: #eba24a;
-      --accent-inkline: #f0b166;
-      --accent-soft: rgba(235, 162, 74, 0.13);
-      --good: #63b083;
-      --good-soft: rgba(99, 176, 131, 0.12);
-      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
-      color-scheme: dark;
-    }
-  }
-  :root[data-theme="dark"] {
-    --ground: #131210;
-    --surface: #1c1a16;
-    --raise: #232019;
-    --ink: #ece8e1;
-    --muted: #a29c91;
-    --faint: #726c62;
-    --line: #2d2924;
-    --accent: #eba24a;
-    --accent-inkline: #f0b166;
-    --accent-soft: rgba(235, 162, 74, 0.13);
-    --good: #63b083;
-    --good-soft: rgba(99, 176, 131, 0.12);
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.35);
-    color-scheme: dark;
-  }
-
-  * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
-  body {
-    margin: 0;
-    background: var(--ground);
-    color: var(--ink);
-    font-family: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
-    font-size: 1.0625rem;
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  .wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.5rem; }
-
-  /* Header */
-  header { border-bottom: 1px solid var(--line); background: var(--surface); }
-  .topbar {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 1rem; padding: 1.1rem 0;
-  }
-  .brand { display: flex; align-items: center; gap: 0.7rem; }
-  .brand svg { display: block; width: 30px; height: 30px; }
-  .brand .name {
-    font-family: "Figtree", system-ui, sans-serif;
-    font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; color: var(--ink);
-  }
-  .theme-toggle {
-    font-family: "Figtree", system-ui, sans-serif;
-    font-size: 0.72rem; letter-spacing: 0.04em; text-transform: uppercase;
-    color: var(--muted); background: transparent; border: 1px solid var(--line);
-    border-radius: 8px; padding: 0.4rem 0.7rem; cursor: pointer;
-  }
-  .theme-toggle:hover { color: var(--ink); border-color: var(--accent); }
-  .theme-toggle:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-
-  .masthead { padding: 2.75rem 0 2rem; }
-  .eyebrow {
-    font-family: "Figtree", system-ui, sans-serif;
-    font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase;
-    color: var(--accent-inkline); margin: 0 0 0.9rem;
-  }
-  h1 {
-    font-family: "Figtree", system-ui, sans-serif;
-    font-weight: 700; font-size: clamp(2rem, 6vw, 2.85rem); line-height: 1.08;
-    letter-spacing: -0.02em; margin: 0 0 1rem; text-wrap: balance;
-  }
-  .lede { font-size: 1.18rem; color: var(--muted); margin: 0 0 1.4rem; max-width: 38rem; }
-  .meta {
-    display: flex; flex-wrap: wrap; gap: 0.5rem;
-    font-family: "Figtree", system-ui, sans-serif;
-    font-size: 0.75rem; letter-spacing: 0.02em;
-  }
-  .meta span {
-    border: 1px solid var(--line); border-radius: 999px; padding: 0.28rem 0.7rem; color: var(--muted);
-  }
-
-  /* Callout */
-  .callout {
-    display: flex; gap: 0.9rem; align-items: flex-start;
-    background: var(--good-soft); border: 1px solid color-mix(in srgb, var(--good) 35%, transparent);
-    border-radius: 14px; padding: 1.15rem 1.25rem; margin: 0 0 2.5rem;
-  }
-  .callout .dot { flex: none; width: 10px; height: 10px; border-radius: 50%; background: var(--good); margin-top: 0.5rem; }
-  .callout p { margin: 0; }
-  .callout strong { font-family: "Figtree", system-ui, sans-serif; }
-
-  /* TOC */
-  nav.toc { margin: 0 0 2.75rem; }
-  nav.toc h2 {
-    font-family: "Figtree", system-ui, sans-serif;
-    font-size: 0.72rem; letter-spacing: 0.14em; text-transform: uppercase;
-    color: var(--faint); margin: 0 0 0.8rem; font-weight: 500;
-  }
-  nav.toc ol { list-style: none; margin: 0; padding: 0; counter-reset: toc;
-    column-count: 2; column-gap: 2rem; }
-  nav.toc li { counter-increment: toc; margin: 0 0 0.4rem; break-inside: avoid; }
-  nav.toc a {
-    color: var(--ink); text-decoration: none; display: flex; gap: 0.6rem; align-items: baseline;
-    font-size: 0.95rem;
-  }
-  nav.toc a::before {
-    content: counter(toc, decimal-leading-zero);
-    font-family: "Figtree", system-ui, sans-serif; font-size: 0.72rem;
-    color: var(--accent-inkline);
-  }
-  nav.toc a:hover { color: var(--accent-inkline); }
-
-  main { padding-bottom: 3rem; }
-  section { padding: 1.6rem 0; border-top: 1px solid var(--line); }
-  section:first-of-type { border-top: none; }
-  h2.sec {
-    font-family: "Figtree", system-ui, sans-serif;
-    font-weight: 600; font-size: 1.4rem; letter-spacing: -0.01em;
-    margin: 0 0 0.9rem; display: flex; gap: 0.7rem; align-items: baseline; text-wrap: balance;
-  }
-  h2.sec .num {
-    font-family: "Figtree", system-ui, sans-serif; font-size: 0.85rem;
-    color: var(--accent-inkline); font-weight: 500;
-  }
-  h3 {
-    font-family: "Figtree", system-ui, sans-serif; font-weight: 600;
-    font-size: 1.05rem; margin: 1.5rem 0 0.5rem;
-  }
-  p { margin: 0 0 1rem; }
-  a { color: var(--accent-inkline); }
-  ul { margin: 0 0 1rem; padding-left: 1.2rem; }
-  li { margin: 0 0 0.5rem; }
-  .term {
-    font-family: "Figtree", system-ui, sans-serif;
-    font-size: 0.86em; background: var(--accent-soft); color: var(--accent-inkline);
-    padding: 0.08em 0.4em; border-radius: 5px;
-  }
-  .ph {
-    font-family: "Figtree", system-ui, sans-serif; font-size: 0.86em;
-    background: var(--accent-soft); color: var(--accent-inkline);
-    border: 1px dashed var(--accent); border-radius: 5px; padding: 0.05em 0.4em;
-  }
-  .data-list {
-    list-style: none; padding: 0; margin: 0.5rem 0 1rem;
-    display: grid; gap: 0.75rem;
-  }
-  .data-list li {
-    background: var(--raise); border: 1px solid var(--line); border-radius: 12px;
-    padding: 0.9rem 1rem; margin: 0;
-  }
-  .data-list .k {
-    font-family: "Figtree", system-ui, sans-serif; font-weight: 600; color: var(--ink);
-    display: block; margin-bottom: 0.15rem;
-  }
-  .data-list .v { color: var(--muted); font-size: 0.97rem; }
-
-  footer.pagefoot {
-    border-top: 1px solid var(--line); background: var(--surface);
-    padding: 2rem 0; color: var(--muted); font-size: 0.92rem;
-  }
-  footer.pagefoot .name {
-    font-family: "Figtree", system-ui, sans-serif; font-weight: 700; color: var(--ink);
-  }
-  footer.pagefoot a { color: var(--accent-inkline); }
-
-  @media (max-width: 34rem) {
-    nav.toc ol { column-count: 1; }
-  }
-  @media (prefers-reduced-motion: reduce) {
-    * { scroll-behavior: auto; }
-  }
-  html { scroll-behavior: smooth; }
-</style>
+<link rel="stylesheet" href="assets/css/site.css">
 </head>
-<body>
-<header>
-  <div class="wrap topbar">
-    <div class="brand">
-      <svg viewBox="0 0 48 40" aria-hidden="true">
-        <defs>
-          <linearGradient id="mk" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#f4b24a"></stop>
-            <stop offset="1" stop-color="#d9822b"></stop>
-          </linearGradient>
-        </defs>
-        <path d="M6 6 L20 6 L20 34 L6 34 Z" fill="url(#mk)"></path>
-        <path d="M28 6 L42 6 L42 34 L28 34 Z" fill="url(#mk)"></path>
-        <path d="M20 6 L20 34 L13 20 Z" fill="rgba(0,0,0,0.16)"></path>
-        <path d="M42 6 L42 34 L35 20 Z" fill="rgba(0,0,0,0.16)"></path>
-      </svg>
-      <span class="name">NextExplorer</span>
-    </div>
-    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle color theme">Theme</button>
-  </div>
-</header>
+<body class="legal">
+<div id="site-header"></div>
 
-<div class="wrap">
+<div class="wrap narrow">
   <div class="masthead">
     <p class="eyebrow">Legal &middot; Privacy</p>
     <h1>Privacy Policy</h1>
-    <p class="lede">NextExplorer is a file browser for your own server. It keeps your files, your credentials, and your activity between your device and the server you choose, and nowhere else.</p>
+    <p class="lede">NextExplorer for iOS is a file browser for your own server. It keeps your files, your credentials, and your activity between your device and the server you choose, and nowhere else.</p>
     <div class="meta">
-      <span>Effective 2 September 2026</span>
+      <span>Effective 14 September 2026</span>
       <span>App version 1.0</span>
       <span>iOS</span>
     </div>
@@ -245,14 +29,14 @@
 
   <div class="callout" role="note">
     <span class="dot" aria-hidden="true"></span>
-    <p><strong>Short version:</strong> the developer of NextExplorer collects nothing. There is no account with us, no analytics, no tracking, and no third party advertising or SDKs. The app talks only to the server you point it at.</p>
+    <p><strong>Short version:</strong> the developer of NextExplorer for iOS collects nothing. There is no account with us, no analytics, no tracking, and no third party advertising or SDKs. The app talks only to the server you point it at.</p>
   </div>
 
   <nav class="toc" aria-label="Contents">
     <h2>Contents</h2>
     <ol>
       <li><a href="#scope">Who this policy covers</a></li>
-      <li><a href="#model">How NextExplorer works</a></li>
+      <li><a href="#model">How NextExplorer for iOS works</a></li>
       <li><a href="#collect">What the developer collects</a></li>
       <li><a href="#device">Data stored on your device</a></li>
       <li><a href="#server">Data exchanged with your server</a></li>
@@ -269,13 +53,13 @@
   <main>
     <section id="scope">
       <h2 class="sec"><span class="num">01</span> Who this policy covers</h2>
-      <p>This policy describes how the <strong>NextExplorer</strong> iOS application (the <span class="term">App</span>) handles information. It is published by Phillip Maizza (<span class="term">we</span>, <span class="term">us</span>).</p>
+      <p>This policy describes how the <strong>NextExplorer for iOS</strong> application (the <span class="term">App</span>) handles information. It is published by Phillip Maizza (<span class="term">we</span>, <span class="term">us</span>).</p>
       <p>It covers the App itself. It does <em>not</em> cover the server you connect the App to. That server is operated by you or by whoever administers it, under its own terms and privacy practices, which we neither control nor see.</p>
     </section>
 
     <section id="model">
-      <h2 class="sec"><span class="num">02</span> How NextExplorer works</h2>
-      <p>NextExplorer is a <strong>client</strong>. You supply the address of a compatible self hosted file server and sign in with your own credentials for that server. The App then browses, previews, uploads, downloads, and shares the files that live on <em>that</em> server.</p>
+      <h2 class="sec"><span class="num">02</span> How NextExplorer for iOS works</h2>
+      <p>NextExplorer for iOS is a <strong>client</strong>. You supply the address of a compatible self hosted file server and sign in with your own credentials for that server. The App then browses, previews, uploads, downloads, and shares the files that live on <em>that</em> server.</p>
       <p>We do not run any server on your behalf. We never receive a copy of your files, your file names, your directory structure, or your login details. Everything the App does happens either on your device or directly between your device and your server.</p>
     </section>
 
@@ -283,11 +67,12 @@
       <h2 class="sec"><span class="num">03</span> What the developer collects</h2>
       <p><strong>Nothing.</strong> The App contains no analytics, no crash reporting service, no advertising identifiers, and no third party tracking. It does not build a profile of you and does not phone home to us.</p>
       <p>This is reflected in the App&rsquo;s App Store privacy details and its bundled privacy manifest, which declare <span class="term">Data Not Collected</span> and no tracking domains.</p>
+      <p>The App offers an optional &ldquo;tip jar&rdquo; (a small, voluntary in-app purchase to support development). If you choose to tip, the payment is processed entirely by Apple. The developer never receives your card number, billing address, or any other payment detail: only anonymous, aggregated sales totals from Apple. Nothing is unlocked and no account is created.</p>
     </section>
 
     <section id="device">
       <h2 class="sec"><span class="num">04</span> Data stored on your device</h2>
-      <p>To work offline and stay fast, the App stores some information locally on your iPhone or iPad. This data never leaves your device except when the App sends it back to your own server, and you can erase it at any time (see <a href="#retention">Retention and deletion</a>).</p>
+      <p>To work offline and stay fast, the App stores some information locally on your iPhone. This data never leaves your device except when the App sends it back to your own server, and you can erase it at any time (see <a href="#retention">Retention and deletion</a>).</p>
       <ul class="data-list">
         <li><span class="k">Server address and session</span><span class="v">The server URL you enter and the authentication token or credentials for it, held in the iOS <span class="term">Keychain</span>, the system&rsquo;s encrypted credential store.</span></li>
         <li><span class="k">Offline directory cache</span><span class="v">A local copy of the folder listings you have opened, saved as files on device so folders load instantly and remain viewable when the server is unreachable.</span></li>
@@ -315,7 +100,7 @@
     <section id="thirdparty">
       <h2 class="sec"><span class="num">07</span> Third parties</h2>
       <p>The App bundles open source software components, listed with their licenses on the <strong>Open Source Licenses</strong> screen inside Settings. These components run entirely on your device and do not receive your data.</p>
-      <p>The App is distributed through the Apple App Store. Apple&rsquo;s handling of your download and purchase is governed by <a href="https://www.apple.com/legal/privacy/" rel="noopener" target="_blank">Apple&rsquo;s Privacy Policy</a>.</p>
+      <p>The App is distributed through the Apple App Store, and any optional in-app tip is processed by Apple. Apple&rsquo;s handling of your download and purchase is governed by <a href="https://www.apple.com/legal/privacy/" rel="noopener" target="_blank">Apple&rsquo;s Privacy Policy</a>.</p>
     </section>
 
     <section id="retention">
@@ -336,7 +121,7 @@
 
     <section id="children">
       <h2 class="sec"><span class="num">10</span> Children</h2>
-      <p>NextExplorer is a general purpose tool for accessing your own file server and is not directed at children. Because we collect no personal information at all, the App does not knowingly gather data from anyone, including children.</p>
+      <p>NextExplorer for iOS is a general purpose tool for accessing your own file server and is not directed at children. Because we collect no personal information at all, the App does not knowingly gather data from anyone, including children.</p>
     </section>
 
     <section id="changes">
@@ -351,31 +136,7 @@
   </main>
 </div>
 
-<footer class="pagefoot">
-  <div class="wrap">
-    <p><span class="name">NextExplorer</span>: a client for the files on your own server.</p>
-    <p>&copy; 2026 Phillip Maizza. Last updated 2 September 2026.</p>
-  </div>
-</footer>
-
-<script>
-  (function () {
-    var root = document.documentElement;
-    var btn = document.getElementById("themeToggle");
-    var stored = null;
-    try { stored = localStorage.getItem("ne-theme"); } catch (e) {}
-    if (stored === "dark" || stored === "light") root.setAttribute("data-theme", stored);
-    function current() {
-      var t = root.getAttribute("data-theme");
-      if (t) return t;
-      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-    }
-    btn.addEventListener("click", function () {
-      var next = current() === "dark" ? "light" : "dark";
-      root.setAttribute("data-theme", next);
-      try { localStorage.setItem("ne-theme", next); } catch (e) {}
-    });
-  })();
-</script>
+<div id="site-footer"></div>
+<script src="assets/js/site.js" defer></script>
 </body>
 </html>

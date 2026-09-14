@@ -69,6 +69,9 @@ public struct LoginFormView: View {
     /// button the same way a password one floods from the submit button.
     @State private var ssoButtonRect: CGRect = .zero
     @State private var ssoFloodScale: CGFloat = 1
+    /// When Reduce Motion is on, the full-screen accent flood (a large scaling animation) is
+    /// suppressed; `AppView` already hands sign-in an instant, motion-free reveal instead.
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var shakeTrigger: CGFloat = 0
     @State private var identifierShakeTrigger: CGFloat = 0
     @State private var passwordShakeTrigger: CGFloat = 0
@@ -189,7 +192,7 @@ public struct LoginFormView: View {
         .backgroundGradient()
         .coordinateSpace(.named(Constants.rootSpace))
         .overlay {
-            if store.submitPhase == .success, submitButtonRect != .zero {
+            if !reduceMotion, store.submitPhase == .success, submitButtonRect != .zero {
                 Circle()
                     .fill(Color.accent)
                     .frame(width: submitButtonRect.height, height: submitButtonRect.height)
@@ -202,7 +205,7 @@ public struct LoginFormView: View {
                     .position(x: submitButtonRect.midX, y: submitButtonRect.midY)
                     .allowsHitTesting(false)
             }
-            if store.oidcPhase == .success, ssoButtonRect != .zero {
+            if !reduceMotion, store.oidcPhase == .success, ssoButtonRect != .zero {
                 // Same TKSubmitTransition flood, seeded from the SSO button so an SSO sign-in
                 // grows into the app exactly like a password one, rather than snapping in.
                 Circle()

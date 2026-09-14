@@ -556,3 +556,12 @@ common.syncCompleted	اكتملت المزامنة
 settings.toggleShowTabLabels	إظهار تسميات علامات التبويب
 login.orDivider	أو
 login.errorNoAuthMethods	لا توجد طرق تسجيل دخول مفعّلة على هذا الخادم.
+# Credits + tip jar
+settings.creditsMadeBy	صُنع بـ ❤️ بواسطة Phillip Maizza
+settings.creditsLikeApp	هل يعجبك التطبيق؟
+settings.creditsBuyCoffee	ادعُني إلى قهوة ☕️
+tipJar.title	ادعُني إلى قهوة
+tipJar.explanation	NextExplorer مجاني ومفتوح المصدر. إذا كان مفيدًا لك، فإن إكرامية صغيرة تساعد على استمراره. شكرًا لك!
+tipJar.toastThanks	شكرًا لدعمك المشروع! 🙏
+tipJar.errorLoad	تعذّر تحميل خيارات الإكرامية. حاول مرة أخرى.
+tipJar.errorPurchase	لم تتم عملية الشراء. حاول مرة أخرى.

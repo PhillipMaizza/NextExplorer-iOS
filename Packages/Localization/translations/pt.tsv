@@ -556,3 +556,12 @@ common.syncCompleted	Sincronização concluída
 settings.toggleShowTabLabels	Mostrar rótulos das abas
 login.orDivider	ou
 login.errorNoAuthMethods	Este servidor não tem métodos de início de sessão ativados.
+# Credits + tip jar
+settings.creditsMadeBy	Feito com ❤️ por Phillip Maizza
+settings.creditsLikeApp	Gosta do app?
+settings.creditsBuyCoffee	Pague-me um café ☕️
+tipJar.title	Pague-me um café
+tipJar.explanation	O NextExplorer é gratuito e de código aberto. Se for útil para você, uma pequena gorjeta ajuda a mantê-lo. Obrigado!
+tipJar.toastThanks	Obrigado por apoiar o projeto! 🙏
+tipJar.errorLoad	Não foi possível carregar as opções de gorjeta. Tente novamente.
+tipJar.errorPurchase	A compra não foi concluída. Tente novamente.

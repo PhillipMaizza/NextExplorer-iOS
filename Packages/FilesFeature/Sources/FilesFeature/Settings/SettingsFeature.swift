@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CoreModels
 import FilesClient
 import Foundation
+import Localization
 
 /// Account info, the two `user_settings` preferences that affect anything this app has
 /// built (`showHiddenFiles`, `showThumbnails`, see `UserPreferences`), and sign out.
@@ -25,6 +26,10 @@ public struct SettingsFeature {
         @Presents public var serverDetails: ServerDetailsFeature.State?
         @Presents public var thumbnailSettings: ThumbnailSettingsFeature.State?
         @Presents public var accessRules: AccessRulesFeature.State?
+        @Presents public var tipJar: TipJarFeature.State?
+        /// One shot signal: set when a tip completes so the view can raise the thank you toast,
+        /// cleared by `tipToastShown`.
+        public var tipToast: String?
         /// Server branding, fetched on appear and shared with `ServerDetailsFeature` so an
         /// admin's edit there is reflected in the server row the moment it saves.
         @Shared(.inMemory(Branding.sharedKey)) public var branding = Branding()
@@ -79,6 +84,9 @@ public struct SettingsFeature {
         case thumbnailSettings(PresentationAction<ThumbnailSettingsFeature.Action>)
         case accessRulesButtonTapped
         case accessRules(PresentationAction<AccessRulesFeature.Action>)
+        case tipJarButtonTapped
+        case tipJar(PresentationAction<TipJarFeature.Action>)
+        case tipToastShown
         case brandingResponse(Result<Branding, FilesClientError>)
         case serverFeaturesResponse(ServerFeatures)
         case volumesResponse([Volume])
@@ -166,6 +174,22 @@ public struct SettingsFeature {
                 return .none
 
             case .accessRules:
+                return .none
+
+            case .tipJarButtonTapped:
+                state.tipJar = TipJarFeature.State()
+                return .none
+
+            case .tipJar(.presented(.delegate(.tipped))):
+                state.tipJar = nil
+                state.tipToast = L10n.TipJar.toastThanks
+                return .none
+
+            case .tipJar:
+                return .none
+
+            case .tipToastShown:
+                state.tipToast = nil
                 return .none
 
             case let .brandingResponse(.success(branding)):
@@ -367,6 +391,9 @@ public struct SettingsFeature {
         }
         .ifLet(\.$accessRules, action: \.accessRules) {
             AccessRulesFeature()
+        }
+        .ifLet(\.$tipJar, action: \.tipJar) {
+            TipJarFeature()
         }
     }
 

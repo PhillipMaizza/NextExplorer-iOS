@@ -556,3 +556,12 @@ common.syncCompleted	Sincronizare finalizată
 settings.toggleShowTabLabels	Afișează etichetele filelor
 login.orDivider	sau
 login.errorNoAuthMethods	Acest server nu are metode de conectare activate.
+# Credits + tip jar
+settings.creditsMadeBy	Creat cu ❤️ de Phillip Maizza
+settings.creditsLikeApp	Îți place aplicația?
+settings.creditsBuyCoffee	Fă-mi cinste cu o cafea ☕️
+tipJar.title	Fă-mi cinste cu o cafea
+tipJar.explanation	NextExplorer este gratuit și open source. Dacă îți este util, un mic bacșiș ajută să meargă mai departe. Mulțumesc!
+tipJar.toastThanks	Mulțumesc că susții proiectul! 🙏
+tipJar.errorLoad	Opțiunile de bacșiș nu au putut fi încărcate. Încearcă din nou.
+tipJar.errorPurchase	Achiziția nu a reușit. Încearcă din nou.

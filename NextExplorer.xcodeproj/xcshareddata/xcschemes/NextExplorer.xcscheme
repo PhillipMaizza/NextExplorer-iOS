@@ -65,6 +65,9 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       queueDebuggingEnabled = "No">
+      <StoreKitConfigurationFileReference
+         identifier = "../../NextExplorer/TipJar.storekit">
+      </StoreKitConfigurationFileReference>
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference

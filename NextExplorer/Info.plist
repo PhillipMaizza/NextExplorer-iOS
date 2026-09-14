@@ -4,22 +4,14 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>NextExplorer</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>$(PRODUCT_NAME)</string>
-	<key>CFBundlePackageType</key>
-	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
-	<key>CFBundleShortVersionString</key>
-	<string>$(MARKETING_VERSION)</string>
-	<key>CFBundleVersion</key>
-	<string>$(CURRENT_PROJECT_VERSION)</string>
-	<key>CFBundleDisplayName</key>
-	<string>NextExplorer</string>
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
@@ -40,27 +32,35 @@
 		<string>zh-CN</string>
 		<string>zh-TW</string>
 	</array>
+	<key>CFBundleName</key>
+	<string>$(PRODUCT_NAME)</string>
+	<key>CFBundlePackageType</key>
+	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+	<key>CFBundleShortVersionString</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>CFBundleVersion</key>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
-	<key>NSCameraUsageDescription</key>
-	<string>NextExplorer uses the camera so you can take a photo or video and upload it to your server.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>NextExplorer uses the microphone to record sound when you capture a video to upload.</string>
-	<key>NSLocalNetworkUsageDescription</key>
-	<string>NextExplorer connects to the NextExplorer server you enter, which is usually on your local network.</string>
+	<key>LSSupportsOpeningDocumentsInPlace</key>
+	<true/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
 		<true/>
 	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>NextExplorer uses the camera so you can take a photo or video and upload it to your server.</string>
+	<key>NSLocalNetworkUsageDescription</key>
+	<string>NextExplorer connects to the NextExplorer server you enter, which is usually on your local network.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>NextExplorer uses the microphone to record sound when you capture a video to upload.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 	</dict>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<true/>
 	<key>UIFileSharingEnabled</key>
 	<true/>

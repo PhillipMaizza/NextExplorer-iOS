@@ -625,3 +625,13 @@ filter.audio	Audio
 filter.documents	Documents
 filter.archives	Archives
 filter.other	Other
+
+# Credits + tip jar
+settings.creditsMadeBy	Made with ❤️ by Phillip Maizza
+settings.creditsLikeApp	Like the app?
+settings.creditsBuyCoffee	Buy me a coffee ☕️
+tipJar.title	Buy me a coffee
+tipJar.explanation	NextExplorer is free and open source. If it's useful to you, a small tip helps keep it going. Thank you!
+tipJar.toastThanks	Thank you for supporting the project! 🙏
+tipJar.errorLoad	Couldn't load the tip options. Please try again.
+tipJar.errorPurchase	The purchase didn't go through. Please try again.

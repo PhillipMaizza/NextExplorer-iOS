@@ -556,3 +556,12 @@ common.syncCompleted	Synchronisierung abgeschlossen
 settings.toggleShowTabLabels	Tab-Beschriftungen anzeigen
 login.orDivider	oder
 login.errorNoAuthMethods	Für diesen Server sind keine Anmeldemethoden aktiviert.
+# Credits + tip jar
+settings.creditsMadeBy	Mit ❤️ von Phillip Maizza
+settings.creditsLikeApp	Gefällt dir die App?
+settings.creditsBuyCoffee	Spendier mir einen Kaffee ☕️
+tipJar.title	Spendier mir einen Kaffee
+tipJar.explanation	NextExplorer ist kostenlos und quelloffen. Wenn sie dir nützt, hilft ein kleines Trinkgeld, sie am Leben zu halten. Danke!
+tipJar.toastThanks	Danke, dass du das Projekt unterstützt! 🙏
+tipJar.errorLoad	Die Trinkgeld-Optionen konnten nicht geladen werden. Bitte versuche es erneut.
+tipJar.errorPurchase	Der Kauf ist nicht durchgegangen. Bitte versuche es erneut.
