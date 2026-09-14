@@ -31,8 +31,6 @@ public struct AuthenticatedFeature {
     }
 
     @Dependency(\.authClient) var authClient
-    @Dependency(\.directoryCacheStore) var directoryCacheStore
-    @Dependency(\.jsonCacheStore) var jsonCacheStore
 
     public init() {}
 
@@ -46,13 +44,13 @@ public struct AuthenticatedFeature {
                 state.mainTab.settings.isSigningOut = true
                 let serverURL = state.serverURL
                 let authClient = self.authClient
-                let directoryCacheStore = self.directoryCacheStore
-                let jsonCacheStore = self.jsonCacheStore
+                // Cache teardown (directory, JSON, preview, in-memory thumbnails) is done once,
+                // authoritatively, by `AppFeature`'s `.loggedOut` handler after the delegate
+                // below fires. Keeping it there avoids two features clearing the same caches and
+                // a future edit dropping one path silently.
                 return .run { send in
                     try? await authClient.logout(serverURL)
                     await authClient.clearSession()
-                    directoryCacheStore.clearAll()
-                    jsonCacheStore.clearAll()
                     await send(.signOutResponse)
                 }
 

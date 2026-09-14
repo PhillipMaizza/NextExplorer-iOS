@@ -46118,6 +46118,113 @@
         }
       }
     },
+    "tipJar.pending": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Waiting for approval. You'll be charged once it's approved."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "في انتظار الموافقة. سيتم خصم المبلغ بمجرد الموافقة."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Warten auf Genehmigung. Die Zahlung erfolgt, sobald sie genehmigt ist."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esperando aprobación. Se te cobrará una vez aprobada."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente d’approbation. Vous serez débité une fois approuvé."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "अनुमोदन की प्रतीक्षा है। स्वीकृत होते ही शुल्क लिया जाएगा।"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In attesa di approvazione. L’addebito avverrà una volta approvata."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "承認待ちです。承認されると課金されます。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "승인 대기 중입니다. 승인되면 결제됩니다."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wachten op goedkeuring. Er wordt afgeschreven zodra dit is goedgekeurd."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Oczekiwanie na zatwierdzenie. Opłata zostanie pobrana po zatwierdzeniu."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aguardando aprovação. A cobrança será feita após a aprovação."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se așteaptă aprobarea. Vei fi taxat după aprobare."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ожидание подтверждения. Списание произойдёт после одобрения."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Väntar på godkännande. Du debiteras när det har godkänts."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等待批准。批准后将进行扣款。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "等待核准。核准後將會扣款。"
+          }
+        }
+      }
+    },
     "tipJar.title": {
       "extractionState": "manual",
       "localizations": {

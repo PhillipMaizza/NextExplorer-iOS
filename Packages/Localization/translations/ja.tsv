@@ -565,3 +565,4 @@ tipJar.explanation	NextExplorer は無料でオープンソースです。お役
 tipJar.toastThanks	プロジェクトへのご支援ありがとうございます！🙏
 tipJar.errorLoad	チップの項目を読み込めませんでした。もう一度お試しください。
 tipJar.errorPurchase	購入が完了しませんでした。もう一度お試しください。
+tipJar.pending	承認待ちです。承認されると課金されます。

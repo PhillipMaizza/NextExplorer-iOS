@@ -9,7 +9,7 @@ import UIKit
 /// (content-hashed) URL. Without it, every time a row scrolls back into view `ThumbnailImage`
 /// re-reads the bytes off disk and rebuilds the `UIImage` — needless churn on a large grid.
 /// `NSCache` evicts itself under memory pressure.
-private enum ThumbnailMemoryCache {
+enum ThumbnailMemoryCache {
     nonisolated(unsafe) static let shared: NSCache<NSURL, UIImage> = {
         let cache = NSCache<NSURL, UIImage>()
         cache.countLimit = 400
@@ -22,6 +22,13 @@ private enum ThumbnailMemoryCache {
     static func decodedByteCost(of image: UIImage) -> Int {
         guard let cgImage = image.cgImage else { return 0 }
         return cgImage.bytesPerRow * cgImage.height
+    }
+
+    /// Drops every decoded thumbnail. The disk layer is content hashed and cleared with the
+    /// preview cache at each session boundary; this in memory copy is not user scoped, so it
+    /// is emptied at the same points so no decoded image outlives a sign out (rule #11).
+    static func removeAll() {
+        shared.removeAllObjects()
     }
 }
 

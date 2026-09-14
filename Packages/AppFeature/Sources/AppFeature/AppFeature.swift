@@ -58,6 +58,7 @@ public struct AppFeature {
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     @Dependency(\.previewCacheStore) var previewCacheStore
+    @Dependency(\.thumbnailCache) var thumbnailCache
 
     public init() {}
 
@@ -141,12 +142,14 @@ public struct AppFeature {
                 let directoryCacheStore = self.directoryCacheStore
                 let jsonCacheStore = self.jsonCacheStore
                 let previewCacheStore = self.previewCacheStore
+                let thumbnailCache = self.thumbnailCache
                 AppStorageKeys.resetSessionPreferences()
                 return .run { _ in
                     await authClient.clearSession()
                     directoryCacheStore.clearAll()
                     jsonCacheStore.clearAll()
                     try? previewCacheStore.clear()
+                    thumbnailCache.clearMemory()
                 }
 
             case .sessionExpiryDetected:
@@ -162,12 +165,14 @@ public struct AppFeature {
                 let directoryCacheStore = self.directoryCacheStore
                 let jsonCacheStore = self.jsonCacheStore
                 let previewCacheStore = self.previewCacheStore
+                let thumbnailCache = self.thumbnailCache
                 AppStorageKeys.resetSessionPreferences()
                 return .run { _ in
                     await authClient.clearSession()
                     directoryCacheStore.clearAll()
                     jsonCacheStore.clearAll()
                     try? previewCacheStore.clear()
+                    thumbnailCache.clearMemory()
                 }
 
             case let .destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))):
@@ -182,6 +187,7 @@ public struct AppFeature {
                 // until a preview opens.
                 directoryCacheStore.clearAll()
                 jsonCacheStore.clearAll()
+                thumbnailCache.clearMemory()
                 state.didAuthenticateFromLogin = true
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
@@ -201,11 +207,13 @@ public struct AppFeature {
                 let directoryCacheStore = self.directoryCacheStore
                 let jsonCacheStore = self.jsonCacheStore
                 let previewCacheStore = self.previewCacheStore
+                let thumbnailCache = self.thumbnailCache
                 AppStorageKeys.resetSessionPreferences()
                 return .run { _ in
                     directoryCacheStore.clearAll()
                     jsonCacheStore.clearAll()
                     try? previewCacheStore.clear()
+                    thumbnailCache.clearMemory()
                 }
 
             case .destination:

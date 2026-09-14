@@ -20,15 +20,22 @@ public struct ThumbnailCache: Sendable {
     public var resolvedURL: @Sendable (
         _ path: String, _ signature: String, _ resolve: @Sendable () async -> URL?
     ) async -> URL?
+    /// Empties the process-wide in-memory decoded-thumbnail cache. Called at every session
+    /// boundary (sign out, session expiry, fresh sign in) and from "Clear Cache" so no decoded
+    /// image survives an account switch. The on-disk bytes live under the preview cache root and
+    /// are cleared separately by `PreviewCacheStore`.
+    public var clearMemory: @Sendable () -> Void
 
     public init(
         data: @escaping @Sendable (_ url: URL) async throws -> Data,
         resolvedURL: @escaping @Sendable (
             _ path: String, _ signature: String, _ resolve: @Sendable () async -> URL?
-        ) async -> URL?
+        ) async -> URL?,
+        clearMemory: @escaping @Sendable () -> Void
     ) {
         self.data = data
         self.resolvedURL = resolvedURL
+        self.clearMemory = clearMemory
     }
 }
 
@@ -99,12 +106,14 @@ extension ThumbnailCache: DependencyKey {
                     .write(to: recordURL, atomically: true, encoding: .utf8)
             }
             return resolved
-        }
+        },
+        clearMemory: { ThumbnailMemoryCache.removeAll() }
     )
 
     public static let testValue = ThumbnailCache(
         data: { _ in throw Unimplemented() },
-        resolvedURL: { _, _, resolve in await resolve() }
+        resolvedURL: { _, _, resolve in await resolve() },
+        clearMemory: {}
     )
 
     private struct Unimplemented: Error {}

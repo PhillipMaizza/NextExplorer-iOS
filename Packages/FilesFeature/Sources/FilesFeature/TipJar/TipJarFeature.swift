@@ -15,17 +15,22 @@ public struct TipJarFeature {
         /// mutation flag, not a load lifecycle (architecture rule #8).
         public var purchasingID: String?
         public var errorMessage: String?
+        /// A neutral note (not an error): shown when a purchase is deferred for approval
+        /// (Ask to Buy), so the user isn't left with a spinner that silently vanishes.
+        public var noticeMessage: String?
 
         public init(
             productsPhase: DataPhase = .idle,
             products: [TipProduct] = [],
             purchasingID: String? = nil,
-            errorMessage: String? = nil
+            errorMessage: String? = nil,
+            noticeMessage: String? = nil
         ) {
             self.productsPhase = productsPhase
             self.products = products
             self.purchasingID = purchasingID
             self.errorMessage = errorMessage
+            self.noticeMessage = noticeMessage
         }
     }
 
@@ -76,6 +81,7 @@ public struct TipJarFeature {
                 guard state.purchasingID == nil else { return .none }
                 state.purchasingID = id
                 state.errorMessage = nil
+                state.noticeMessage = nil
                 let client = self.client
                 return .run { send in
                     do {
@@ -87,8 +93,15 @@ public struct TipJarFeature {
 
             case let .purchaseResponse(outcome):
                 state.purchasingID = nil
-                guard outcome == .success else { return .none }
-                return .send(.delegate(.tipped))
+                switch outcome {
+                case .success:
+                    return .send(.delegate(.tipped))
+                case .pending:
+                    state.noticeMessage = L10n.TipJar.pending
+                    return .none
+                case .userCancelled:
+                    return .none
+                }
 
             case let .purchaseFailed(message):
                 state.purchasingID = nil

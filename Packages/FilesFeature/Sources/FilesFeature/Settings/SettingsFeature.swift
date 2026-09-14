@@ -122,6 +122,7 @@ public struct SettingsFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.previewCacheStore) var previewCacheStore
+    @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
 
@@ -361,10 +362,12 @@ public struct SettingsFeature {
                 let previewCacheStore = self.previewCacheStore
                 let directoryCacheStore = self.directoryCacheStore
                 let jsonCacheStore = self.jsonCacheStore
+                let thumbnailCache = self.thumbnailCache
                 return .run { send in
                     try? previewCacheStore.clear()
                     directoryCacheStore.clearAll()
                     jsonCacheStore.clearAll()
+                    thumbnailCache.clearMemory()
                     await send(.clearCacheResponse)
                 }
 
