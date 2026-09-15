@@ -18,6 +18,10 @@ let package = Package(
         .package(url: "https://github.com/simonbs/TreeSitterLanguages", from: "0.1.10"),
         .package(url: "https://github.com/weichsel/ZIPFoundation", from: "0.9.19"),
         .package(url: "https://github.com/mtgto/Unrar.swift", from: "0.5.4"),
+        // libvlc (VideoLAN) as a binary xcframework, for the video/audio containers and codecs
+        // AVFoundation can't decode (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma) —
+        // parity with the web client's player.
+        .package(url: "https://github.com/tylerjonesio/vlckit-spm", exact: "3.6.0"),
         // No semver release tags exist (Apple ties this one to Swift toolchain snapshot tags
         // instead) — pinned to an exact commit on `main` rather than a moving branch, so this
         // stays fully reproducible.
@@ -39,6 +43,7 @@ let package = Package(
                 // so reading a .zip/.rar's contents happens entirely on-device instead.
                 .product(name: "ZIPFoundation", package: "ZIPFoundation"),
                 .product(name: "Unrar", package: "Unrar.swift"),
+                .product(name: "VLCKitSPM", package: "vlckit-spm"),
                 .product(name: "Markdown", package: "swift-markdown"),
                 // Curated to the code/text kinds `FileTypeIcon`'s badge table already covers —
                 // TreeSitterLanguages has 70+, most of which this app never encounters.

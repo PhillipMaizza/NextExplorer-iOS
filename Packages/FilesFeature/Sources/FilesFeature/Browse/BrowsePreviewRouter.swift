@@ -38,26 +38,28 @@ struct BrowsePreviewRouter: View {
                 } : nil
             )
         } else if item.isStreamableMedia, let url = FilesClient.previewURL(serverURL: store.serverURL, item: item) {
-            // Guaranteed `isNativelyPlayable` here — undecodable containers/codecs are
-            // `isUnsupportedForPreview` and handled by the branch above.
-            StreamingPreviewView(
-                item: item,
-                url: url,
-                serverURL: store.serverURL,
-                onDismiss: { store.send(.previewDismissed) },
-                onShare: (store.access?.canShare ?? false) ? {
-                    onShareTarget(item)
-                } : nil,
-                onRename: (store.access?.canWrite ?? false) ? {
-                    store.send(.renameTapped(item))
-                } : nil,
-                onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
-                } : nil,
-                onDelete: (store.access?.canDelete ?? false) ? {
-                    store.send(.deleteTapped(item))
-                } : nil
-            )
+            let onShare: (() -> Void)? = (store.access?.canShare ?? false) ? { onShareTarget(item) } : nil
+            let onRename: (() -> Void)? = (store.access?.canWrite ?? false) ? { store.send(.renameTapped(item)) } : nil
+            let onDownload: (() -> Void)? = (store.access?.canDownload ?? false) ? {
+                store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+            } : nil
+            let onDelete: (() -> Void)? = (store.access?.canDelete ?? false) ? { store.send(.deleteTapped(item)) } : nil
+
+            // Natively decodable formats get AVPlayer (hardware decode, system transport); the
+            // rest play through libvlc via `VLCPlayerView`.
+            if item.isNativelyPlayable {
+                StreamingPreviewView(
+                    item: item, url: url, serverURL: store.serverURL,
+                    onDismiss: { store.send(.previewDismissed) },
+                    onShare: onShare, onRename: onRename, onDownload: onDownload, onDelete: onDelete
+                )
+            } else {
+                VLCPlayerView(
+                    item: item, url: url, serverURL: store.serverURL,
+                    onDismiss: { store.send(.previewDismissed) },
+                    onShare: onShare, onRename: onRename, onDownload: onDownload, onDelete: onDelete
+                )
+            }
         } else if item.isBrowsableArchive {
             ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
         } else if (item.isImage || item.isRawImage) && !item.isSVG {

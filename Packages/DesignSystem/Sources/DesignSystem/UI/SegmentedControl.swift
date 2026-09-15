@@ -6,6 +6,8 @@ private enum SegmentedControlConstants {
     /// into place" moment in the app shares the same feel.
     static let pillSpringResponse: Double = 0.35
     static let pillSpringDamping: Double = 0.8
+    /// Softens the track's hairline border so it defines the control without reading as a hard line.
+    static let borderOpacity: Double = 0.5
 }
 
 /// A pill-shaped segmented control: accent-filled selected segment on a `backgroundSecondary`
@@ -53,6 +55,12 @@ public struct DSSegmentedControl<Option: Hashable>: View {
         }
         .padding(.space4)
         .background(RoundedRectangle(cornerRadius: .radiusFull).fill(Color.backgroundSecondary))
+        // Hairline border (matching the input fields) so the track stays legible even on a
+        // same colored surface, e.g. the iPad login card, which is also backgroundSecondary.
+        .overlay(
+            RoundedRectangle(cornerRadius: .radiusFull)
+                .stroke(Color.borderPrimary.opacity(SegmentedControlConstants.borderOpacity), lineWidth: .borderWidthHairline)
+        )
         .animation(
             .spring(response: SegmentedControlConstants.pillSpringResponse, dampingFraction: SegmentedControlConstants.pillSpringDamping),
             value: selection

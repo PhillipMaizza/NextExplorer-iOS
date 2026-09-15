@@ -71,6 +71,9 @@ public enum IconKit {
     public static let camera = Image(systemName: "camera")
     /// Overlaid on a video's frame thumbnail to mark it as playable footage, not a still.
     public static let playCircle = Image(systemName: "play.circle.fill")
+    /// Transport controls for the media player.
+    public static let play = Image(systemName: "play.fill")
+    public static let pause = Image(systemName: "pause.fill")
     public static let web = Image(systemName: "globe")
     public static let language = Image(systemName: "character.bubble")
     public static let server = Image(systemName: "macpro.gen3.server")
