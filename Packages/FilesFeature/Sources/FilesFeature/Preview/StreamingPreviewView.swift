@@ -38,7 +38,12 @@ struct StreamingPreviewView: View {
         self.onRename = onRename
         self.onDownload = onDownload
         self.onDelete = onDelete
-        self._player = State(initialValue: AVPlayer(url: url))
+        // `AVPlayer(url:)` does NOT send cookies from `HTTPCookieStorage.shared`, so the
+        // session cookie the server auths `GET /api/preview` with never goes out and the
+        // stream 401s (an unplayable "no entry" player). Pass the matching cookies explicitly.
+        let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
+        let asset = AVURLAsset(url: url, options: [AVURLAssetHTTPCookiesKey: cookies])
+        self._player = State(initialValue: AVPlayer(playerItem: AVPlayerItem(asset: asset)))
     }
 
     var body: some View {

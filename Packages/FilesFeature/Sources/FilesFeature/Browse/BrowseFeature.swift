@@ -494,15 +494,23 @@ public struct BrowseFeature {
                 )
 
             case let .itemsResponse(.failure(error)):
-                // Offline with a saved copy of this folder: show it under a banner rather than
-                // an error screen. Any other failure keeps the normal error path.
-                if error == .offline,
-                   let cached = directoryCacheStore.read(serverURL: state.serverURL, path: state.directoryPath) {
-                    state.phase = .loaded
-                    state.items = IdentifiedArray(Self.sortedAlphabetically(cached.items), id: \.id, uniquingIDsWith: { first, _ in first })
-                    state.access = cached.access
-                    state.dataSource = .cached(fetchedAt: cached.fetchedAt)
-                    return search(&state)
+                // Offline (server unreachable) with a copy to show: keep it on screen under the
+                // "saved copy" banner rather than a blocking error overlay. Prefer a fresh disk
+                // read for its fetched-at stamp; otherwise keep whatever the cache-first paint
+                // (or a prior load this session) already put in `state.items`. Only a real
+                // server error, or offline with nothing cached, falls through to the error path.
+                if error == .offline {
+                    if let cached = directoryCacheStore.read(serverURL: state.serverURL, path: state.directoryPath) {
+                        state.phase = .loaded
+                        state.items = IdentifiedArray(Self.sortedAlphabetically(cached.items), id: \.id, uniquingIDsWith: { first, _ in first })
+                        state.access = cached.access
+                        state.dataSource = .cached(fetchedAt: cached.fetchedAt)
+                        return search(&state)
+                    } else if !state.items.isEmpty {
+                        state.phase = .loaded
+                        state.dataSource = .cached(fetchedAt: date.now)
+                        return search(&state)
+                    }
                 }
                 state.phase = .failed(error.userMessage)
                 return .none

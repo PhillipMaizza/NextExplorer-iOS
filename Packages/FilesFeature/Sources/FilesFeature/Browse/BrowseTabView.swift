@@ -12,6 +12,7 @@ private enum Constants {
 
 struct BrowseTabView: View {
     @Bindable var store: StoreOf<BrowseTabFeature>
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     /// The topmost screen's path — one `BrowseBreadcrumbBar` instance living here, above the
     /// whole `NavigationStack`, rather than one recreated inside every pushed `BrowseContentView`
@@ -30,6 +31,24 @@ struct BrowseTabView: View {
     }
 
     var body: some View {
+        Group {
+            if horizontalSizeClass == .regular {
+                // In a NavigationSplitView detail the pushed List doesn't respect an ancestor
+                // bottom safeAreaInset and paints over it, so the bar flashes then hides behind
+                // the list. An overlay stays above the content instead; `BrowseContentView`
+                // already reserves the same height at the bottom of its own scroll content.
+                navigationStack
+                    .overlay(alignment: .bottom) { breadcrumbBar }
+            } else {
+                navigationStack
+                    .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) { breadcrumbBar }
+            }
+        }
+        .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
+        .tint(Color.accent)
+    }
+
+    private var navigationStack: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {
             // The title lives in `BrowseContentView`'s pinned header, not the nav bar (see
             // `PinnedTitleSearchHeader`), so the nav bar carries only the back button + actions.
@@ -39,16 +58,16 @@ struct BrowseTabView: View {
             BrowseContentView(store: store)
                 .navigationTitle("")
         }
-        .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
-            if !currentDirectoryPath.isEmpty && !isTopScreenSelecting {
-                BrowseBreadcrumbBar(directoryPath: currentDirectoryPath) { path, title in
-                    store.send(.navigateToDirectory(path: path, title: title))
-                }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+    }
+
+    @ViewBuilder
+    private var breadcrumbBar: some View {
+        if !currentDirectoryPath.isEmpty && !isTopScreenSelecting {
+            BrowseBreadcrumbBar(directoryPath: currentDirectoryPath) { path, title in
+                store.send(.navigateToDirectory(path: path, title: title))
             }
+            .transition(.move(edge: .bottom).combined(with: .opacity))
         }
-        .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
-        .tint(Color.accent)
     }
 }
 

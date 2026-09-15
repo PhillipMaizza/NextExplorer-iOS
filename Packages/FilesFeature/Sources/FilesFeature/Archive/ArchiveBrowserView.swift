@@ -49,6 +49,10 @@ private enum ArchiveExtractionOutcome: Sendable {
 struct ArchiveBrowserView: View {
     let item: FileItem
     let serverURL: URL
+    /// When set, the archive is already on disk (an archive extracted from *inside* another
+    /// archive — a nested .zip/.rar) and this file is browsed directly instead of downloading
+    /// from the server. Owned by the parent browser; never deleted here.
+    var localFileURL: URL?
     let onDismiss: () -> Void
 
     @State private var entries: [ArchiveEntry] = []
@@ -292,7 +296,12 @@ struct ArchiveBrowserView: View {
 
     private func load() async {
         do {
-            let fileURL = try await filesClient.downloadRawFile(serverURL, item)
+            let fileURL: URL
+            if let localFileURL {
+                fileURL = localFileURL
+            } else {
+                fileURL = try await filesClient.downloadRawFile(serverURL, item)
+            }
             let kind = item.kind
             // Opening the container and listing its entries parses the whole archive; keep both
             // off the main actor so a large or deeply nested archive does not freeze the UI on

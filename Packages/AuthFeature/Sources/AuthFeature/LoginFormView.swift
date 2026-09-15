@@ -24,6 +24,15 @@ private enum Constants {
     static let invalidFieldsDuration: Duration = .seconds(2)
     static let logoSize: CGFloat = .size96
     static let credentialsLogoSize: CGFloat = .size56
+    /// On regular width (iPad, not compact multitasking) the login form floats in a centered
+    /// surface card over the full-bleed gradient, rather than stretching edge to edge.
+    static let cardWidth: CGFloat = 440
+    static let cardMaxHeight: CGFloat = 620
+    static let cardOuterPadding: CGFloat = .space24
+    /// Login card background gradient stops (regular width). Top leading #FFC228 into bottom
+    /// trailing #FF9D00, a warm amber accent wash.
+    static let backgroundGradientTop = Color(red: 1.0, green: 194.0 / 255.0, blue: 40.0 / 255.0)
+    static let backgroundGradientBottom = Color(red: 1.0, green: 157.0 / 255.0, blue: 0.0)
     static let maskedPasswordPlaceholder = "••••••••"
     /// Focusing `identifierField` the instant the credentials page appears races the page-slide
     /// transition: the field becomes first responder before its final on-screen position/frame
@@ -72,6 +81,10 @@ public struct LoginFormView: View {
     /// When Reduce Motion is on, the full-screen accent flood (a large scaling animation) is
     /// suppressed; `AppView` already hands sign-in an instant, motion-free reveal instead.
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    /// Regular width gets the centered login card; compact (iPhone, iPad narrow multitasking)
+    /// stays full bleed. Gated on size class, never device idiom, so Split View / Slide Over
+    /// fall back to the phone layout.
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var shakeTrigger: CGFloat = 0
     @State private var identifierShakeTrigger: CGFloat = 0
     @State private var passwordShakeTrigger: CGFloat = 0
@@ -171,25 +184,9 @@ public struct LoginFormView: View {
 
     public var body: some View {
         ZStack {
-            if store.currentPage == .server {
-                serverPage
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .leading).combined(with: .opacity),
-                        removal: .move(edge: .leading).combined(with: .opacity)
-                    ))
-            } else {
-                credentialsPage
-                    .transition(.asymmetric(
-                        insertion: .move(edge: .trailing).combined(with: .opacity),
-                        removal: .move(edge: .trailing).combined(with: .opacity)
-                    ))
-            }
+            cardWrappedPages
         }
-        .animation(
-            .spring(response: Constants.pageTransitionSpringResponse, dampingFraction: Constants.pageTransitionSpringDamping),
-            value: store.currentPage
-        )
-        .backgroundGradient()
+        .background(loginBackground)
         .coordinateSpace(.named(Constants.rootSpace))
         .overlay {
             if !reduceMotion, store.submitPhase == .success, submitButtonRect != .zero {
@@ -277,6 +274,76 @@ public struct LoginFormView: View {
                 isPasswordFieldInvalid = false
             }
         }
+    }
+
+    /// Screen background. Regular width (the card layout) sits on a warm amber accent wash so
+    /// the white card floats on a brand gradient; compact keeps the neutral app gradient.
+    private var loginBackground: some View {
+        Group {
+            if horizontalSizeClass == .regular {
+                LinearGradient(
+                    colors: [Constants.backgroundGradientTop, Constants.backgroundGradientBottom],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing
+                )
+            } else {
+                LinearGradient.backgroundPrimary
+            }
+        }
+        .ignoresSafeArea()
+    }
+
+    /// The two sliding pages. On regular width they float in a centered surface card over the
+    /// gradient; on compact they stay full bleed exactly as before.
+    @ViewBuilder
+    private var cardWrappedPages: some View {
+        if horizontalSizeClass == .regular {
+            // Wrap the floating card in a keyboard-aware ScrollView: with the fields inside the
+            // page's own scroll view, SwiftUI's keyboard avoidance only shifts that inner scroll,
+            // so a fixed-height centered card keeps its lower half (the field + button) behind the
+            // keyboard in iPad landscape. This outer scroll can lift the whole card instead;
+            // `containerRelativeFrame` keeps it centered when there's room to spare.
+            ScrollView {
+                styledCard
+                    .containerRelativeFrame(.vertical, alignment: .center)
+            }
+            .scrollBounceBehavior(.basedOnSize)
+            .scrollIndicators(.hidden)
+        } else {
+            pages
+        }
+    }
+
+    private var styledCard: some View {
+        pages
+            .frame(maxWidth: Constants.cardWidth, maxHeight: Constants.cardMaxHeight)
+            .background(Color.backgroundSecondary)
+            .clipShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
+            .elevation(.level16)
+            .frame(maxWidth: .infinity)
+            .padding(Constants.cardOuterPadding)
+    }
+
+    private var pages: some View {
+        ZStack {
+            if store.currentPage == .server {
+                serverPage
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .leading).combined(with: .opacity),
+                        removal: .move(edge: .leading).combined(with: .opacity)
+                    ))
+            } else {
+                credentialsPage
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .move(edge: .trailing).combined(with: .opacity)
+                    ))
+            }
+        }
+        .animation(
+            .spring(response: Constants.pageTransitionSpringResponse, dampingFraction: Constants.pageTransitionSpringDamping),
+            value: store.currentPage
+        )
     }
 
     // MARK: - Server page
@@ -440,11 +507,14 @@ public struct LoginFormView: View {
                     Button {
                         store.send(.backButtonTapped)
                     } label: {
+                        // Sized via font, not `.resizable()` into a square frame: a chevron is
+                        // not square, so a square resizable frame stretches the glyph. The 44pt
+                        // frame is the tap target.
                         IconKit.back
-                            .resizable()
-                            .frame(width: Constants.backChevronSize, height: Constants.backChevronSize)
-                            .fontWeight(Constants.backChevronWeight)
+                            .font(.system(size: Constants.backChevronSize, weight: Constants.backChevronWeight))
                             .foregroundStyle(Color.primaryDS)
+                            .frame(width: .size44, height: .size44, alignment: .leading)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(DSHapticButtonStyle())
                     .accessibilityLabel(L10n.Common.back)
@@ -490,7 +560,15 @@ public struct LoginFormView: View {
             }
             .scrollDismissesKeyboard(.immediately)
         }
-        .backgroundGradient()
+        // Opaque so the outgoing page can't show through mid slide. In the card (regular width)
+        // that fill is the card surface; full bleed it stays the gradient.
+        .background {
+            if horizontalSizeClass == .regular {
+                Color.backgroundSecondary
+            } else {
+                LinearGradient.backgroundPrimary.ignoresSafeArea()
+            }
+        }
     }
 
     private var identifierField: some View {
@@ -499,7 +577,9 @@ public struct LoginFormView: View {
             // on the field is a documented AutoFill target-resolution hazard.
             TextField(
                 text: Binding(get: { store.identifier }, set: { store.send(.identifierChanged($0)) }),
-                prompt: Text("name@company.com").foregroundColor(Color.secondaryDS)
+                // `verbatim` so the email-shaped placeholder isn't markdown/link inferred (iOS 18
+                // renders an inferred email as a blue link, ignoring the prompt's own color).
+                prompt: Text(verbatim: "name@company.com").foregroundStyle(Color.secondaryDS)
             ) {
                 EmptyView()
             }
@@ -758,4 +838,33 @@ private struct ConnectionPhaseHapticsModifier: ViewModifier {
             $0.authClient = .previewValue
         }
     )
+}
+
+#Preview("Card · Server (regular)") {
+    LoginFormView(
+        store: Store(initialState: LoginFormFeature.State()) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient = .previewValue
+        }
+    )
+    .environment(\.horizontalSizeClass, .regular)
+}
+
+#Preview("Card · Credentials (regular)") {
+    LoginFormView(
+        store: Store(
+            initialState: LoginFormFeature.State(
+                currentPage: .credentials,
+                connectionPhase: .success,
+                host: "nextexplorer.example.com",
+                authStatus: AuthStatus(localEnabled: true, oidcEnabled: true)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.authClient = .previewValue
+        }
+    )
+    .environment(\.horizontalSizeClass, .regular)
 }
