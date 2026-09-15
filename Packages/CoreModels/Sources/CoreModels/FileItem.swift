@@ -35,10 +35,9 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     private static let audioExtensions: Set<String> = [
         "mp3", "wav", "flac", "aac", "m4a", "ogg", "opus", "wma"
     ]
-    // Subset of the above `AVFoundation` can actually decode/demux — the rest (mkv, avi, wmv,
-    // flv, mpg, mpeg, webm; ogg, opus, wma) need a real third-party decoder (e.g. VLCKit) that
-    // isn't wired up yet, so `StreamingPreviewView` would otherwise open to a silently blank
-    // or broken player.
+    // Subset of the above `AVFoundation` can actually decode/demux natively — the rest (mkv,
+    // avi, wmv, flv, mpg, mpeg, webm; ogg, opus, wma) play through `VLCPlayerView` (libvlc)
+    // instead. Both are supported for preview; this flag only picks which player opens.
     private static let nativelyPlayableVideoExtensions: Set<String> = ["mp4", "mov", "m4v"]
     private static let nativelyPlayableAudioExtensions: Set<String> = ["mp3", "wav", "aac", "m4a", "flac"]
     // Mirrors the web client's `archiveExts` (`frontend/src/icons/FileIcon.vue`) — purely a
@@ -51,6 +50,15 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     // everything else for null/control bytes, but checking client-side avoids a round trip
     // just to be told a `.exe` isn't text. Not exhaustive — genuinely unrecognized binary
     // content still gets caught server-side by that same sniff.
+    // Rich documents outside the server's `PREVIEWABLE_EXTENSIONS` that QuickLook
+    // (`QLPreviewController`) renders natively once the raw bytes are on disk — Word, Excel,
+    // PowerPoint, the OpenDocument trio, and RTF. They come down via the unrestricted
+    // `POST /api/files/download` (`downloadRawFile`), never `GET /api/preview` (which 415s
+    // them). RTF in particular must land here: the text editor would otherwise show its raw
+    // `\rtf1\ansi...` markup.
+    private static let officeDocumentExtensions: Set<String> = [
+        "doc", "docx", "xls", "xlsx", "ppt", "pptx", "odt", "ods", "odp", "rtf"
+    ]
     private static let knownBinaryExtensions: Set<String> = [
         "exe", "msi", "apk", "dmg", "pkg", "deb", "rpm",
         "ttf", "otf", "woff", "woff2",
@@ -76,13 +84,14 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// unlike raster formats, `UIImage`/`AsyncImage` can't rasterize them — they need
     /// `QLPreviewController`'s WebKit-backed renderer instead, same path as PDFs.
     public var isSVG: Bool { lowercaseKind == "svg" }
-    /// Word documents — QuickLook renders these natively, but unlike images/PDF they're
-    /// outside `PREVIEWABLE_EXTENSIONS`, so they come down via the generic
-    /// `POST /api/download` (`FilesClient.downloadRawFile`), not `GET /api/preview`. Note the
-    /// real path is `/api/download`, not `/api/files/download` — the latter looks right by
-    /// pattern-matching the backend's own `routes/files/download.js` filename, but that file
-    /// is mounted at plain `/api` in `routes/index.js`. Got this wrong once already.
-    public var isOfficeDocument: Bool { lowercaseKind == "doc" || lowercaseKind == "docx" }
+    /// Office/rich documents (Word, Excel, PowerPoint, OpenDocument, RTF) — QuickLook renders
+    /// these natively, but unlike images/PDF they're outside `PREVIEWABLE_EXTENSIONS`, so they
+    /// come down via the generic `POST /api/download` (`FilesClient.downloadRawFile`), not
+    /// `GET /api/preview`. Note the real path is `/api/download`, not `/api/files/download` —
+    /// the latter looks right by pattern-matching the backend's own `routes/files/download.js`
+    /// filename, but that file is mounted at plain `/api` in `routes/index.js`. Got this wrong
+    /// once already.
+    public var isOfficeDocument: Bool { Self.officeDocumentExtensions.contains(lowercaseKind) }
     /// A PDF. The server refuses to thumbnail these (`backend/src/routes/thumbnails.js`
     /// rejects the `pdf` extension outright), so the client renders the first page itself
     /// from the downloaded file, see `PDFThumbnailImage`.
@@ -126,7 +135,9 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     /// anything" — shared by the top-level browse list and `ArchiveBrowserView`'s in-archive
     /// rows, so the two don't drift on what counts as unsupported.
     public var isUnsupportedForPreview: Bool {
-        (isArchive && !isBrowsableArchive) || (isStreamableMedia && !isNativelyPlayable) || (!isPreviewable && !isBrowsableArchive)
+        // Non native media is no longer unsupported: `VLCPlayerView` handles the containers and
+        // codecs AVFoundation can't (`isNativelyPlayable` only chooses which player opens).
+        (isArchive && !isBrowsableArchive) || (!isPreviewable && !isBrowsableArchive)
     }
 
     public init(

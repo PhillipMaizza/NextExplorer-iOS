@@ -19,12 +19,17 @@ struct SettingsView: View {
 
     private var filter: SettingsSearchFilter { SettingsSearchFilter(query: settingsSearch) }
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     /// Top padding for the pinned title, so it lines up with the other tabs. Those carry a
     /// toolbar button that reserves nav bar height; Settings has none, so it pads to match.
     /// `.size44` aligns on iOS 18 through 25; iOS 26's taller glass nav bar reserves ~10pt more,
-    /// measured against the Downloads tab title.
-    private static var titleTopPadding: CGFloat {
-        if #available(iOS 26.0, *) { .size44 + .space8 + .space2 } else { .size44 }
+    /// measured against the Downloads tab title. On iPad (the split view detail) there's no such
+    /// reserved nav bar, so the padding is just dead space above the title.
+    private var titleTopPadding: CGFloat {
+        if horizontalSizeClass == .regular { return 0 }
+        if #available(iOS 26.0, *) { return .size44 + .space8 + .space2 }
+        return .size44
     }
 
     // No op setters: each confirmation sheet is dismiss disabled and only closes through one
@@ -70,7 +75,7 @@ struct SettingsView: View {
                 PinnedTitleSearchHeader(
                     title: L10n.Settings.navigationTitle,
                     searchText: $settingsSearch,
-                    extraTopPadding: Self.titleTopPadding
+                    extraTopPadding: titleTopPadding
                 )
             }
             .navigationDestination(

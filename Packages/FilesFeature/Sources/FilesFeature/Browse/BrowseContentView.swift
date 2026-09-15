@@ -243,15 +243,6 @@ struct BrowseContentView: View {
                 // settling on first appear (same fix as `SharedView`).
                 .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: overlayState)
         }
-        .safeAreaInset(edge: .top, spacing: 0) {
-            if case let .cached(fetchedAt) = store.dataSource {
-                DSInfoCard(L10n.Browse.offlineBannerDetail(Self.relativeTime(from: fetchedAt)))
-                    .padding(.horizontal, .space16)
-                    .padding(.vertical, .space8)
-                    .background(Color.backgroundPrimary)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-            }
-        }
         .animation(.easeInOut(duration: Constants.overlayCrossfadeDuration), value: store.dataSource)
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
@@ -965,6 +956,7 @@ struct BrowseContentView: View {
                         folderItemRows
                     }
                 }
+                offlineFooterRow
                 pasteTargetRow
             }
             .listStyle(.insetGrouped)
@@ -1039,6 +1031,7 @@ struct BrowseContentView: View {
                 .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
                 value: store.displayedSearchResults
             )
+            offlineFooter
             pasteTargetArea
             }
             .scrollDismissesKeyboard(.immediately)
@@ -1064,6 +1057,29 @@ struct BrowseContentView: View {
                 .listRowBackground(Color.clear)
                 .listRowSeparator(.hidden)
                 .contextMenu { pasteEmptySpaceMenu }
+        }
+    }
+
+    /// "Showing a saved copy" notice, rendered as a footer below the last row/cell of the
+    /// list/grid (not a blocking overlay) whenever the listing on screen came from the offline
+    /// cache. Scrolls with the content, so a reachable listing shows nothing extra.
+    @ViewBuilder
+    private var offlineFooter: some View {
+        if case let .cached(fetchedAt) = store.dataSource {
+            DSInfoCard(L10n.Browse.offlineBannerDetail(Self.relativeTime(from: fetchedAt)))
+                .padding(.horizontal, .space16)
+                .padding(.top, .space12)
+        }
+    }
+
+    /// `offlineFooter` as a plain, separatorless `List` row for `listContent`.
+    @ViewBuilder
+    private var offlineFooterRow: some View {
+        if case .cached = store.dataSource {
+            offlineFooter
+                .listRowInsets(EdgeInsets())
+                .listRowBackground(Color.clear)
+                .listRowSeparator(.hidden)
         }
     }
 

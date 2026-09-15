@@ -148,6 +148,7 @@ struct DisplaySettingsSection: View {
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
     @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
     @Environment(\.colorScheme) private var systemColorScheme
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private var isDarkModeOn: Binding<Bool> {
         Binding(
@@ -202,7 +203,9 @@ struct DisplaySettingsSection: View {
                 if filter.matches(L10n.Settings.toggleShowExtensions) {
                     DSToggleRow(title: L10n.Settings.toggleShowExtensions, icon: IconKit.tag, isOn: $showFilenameExtensions)
                 }
-                if filter.matches(L10n.Settings.toggleShowTabLabels) {
+                // Tab labels only exist on the bottom tab bar (compact). iPad uses the sidebar,
+                // so the toggle is meaningless there.
+                if horizontalSizeClass != .regular, filter.matches(L10n.Settings.toggleShowTabLabels) {
                     DSToggleRow(title: L10n.Settings.toggleShowTabLabels, icon: IconKit.tabBrowse, isOn: $showTabLabels)
                 }
             } header: {
@@ -334,6 +337,7 @@ struct LegalSettingsSection: View {
 struct LicensesSettingsSection: View {
     @Bindable var store: StoreOf<SettingsFeature>
     let filter: SettingsSearchFilter
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private var appVersionText: String {
         let info = Bundle.main.infoDictionary
@@ -379,13 +383,17 @@ struct LicensesSettingsSection: View {
             } footer: {
                 if !filter.isActive {
                     VStack(spacing: .space16) {
-                        VStack(spacing: Constants.versionLogoSpacing) {
-                            IconKit.logo
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: Constants.versionLogoSize, height: Constants.versionLogoSize)
-                            Text(appVersionText)
-                                .type(.label4, style: .tertiary)
+                        // On iPad the logo + version live in the sidebar footer instead, so this
+                        // section only carries the credits there; compact keeps the full block.
+                        if horizontalSizeClass != .regular {
+                            VStack(spacing: Constants.versionLogoSpacing) {
+                                IconKit.logo
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: Constants.versionLogoSize, height: Constants.versionLogoSize)
+                                Text(appVersionText)
+                                    .type(.label4, style: .tertiary)
+                            }
                         }
                         VStack(spacing: .space4) {
                             Text(L10n.Settings.creditsMadeBy)

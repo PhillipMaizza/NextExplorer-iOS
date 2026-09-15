@@ -29,6 +29,10 @@ struct ArchiveEntryPreviewView: View {
             // Same Files-app style screen as the browse tab, minus the server actions — only
             // system-sharing the already-extracted file applies to an archive entry.
             UnsupportedFilePreviewView(item: item, systemShare: .local(fileURL), onDismiss: onDismiss)
+        } else if item.isBrowsableArchive {
+            // A nested .zip/.rar: browse the already-extracted local file in place, rather than
+            // falling through to the text viewer and showing its raw bytes.
+            ArchiveBrowserView(item: item, serverURL: serverURL, localFileURL: fileURL, onDismiss: onDismiss)
         } else if (item.isImage || item.isRawImage) && !item.isSVG {
             ArchiveImagePreviewView(
                 fileName: item.name,
@@ -39,10 +43,14 @@ struct ArchiveEntryPreviewView: View {
         } else if item.isPreviewableViaDownload {
             FilePreviewContainerView(fileURL: fileURL, errorMessage: nil, onDismiss: onDismiss)
         } else if item.isStreamableMedia {
-            // `item.supportsThumbnail` is always `false` for archive entries (no server
-            // metadata to know otherwise), so `StreamingPreviewView`'s poster never renders
-            // here — `serverURL` is otherwise unused for a local file URL.
-            StreamingPreviewView(item: item, url: fileURL, serverURL: serverURL, onDismiss: onDismiss)
+            // Local extracted file, so no auth cookie needed either way. `item.supportsThumbnail`
+            // is always `false` for archive entries, so `StreamingPreviewView`'s poster never
+            // renders. Non native containers/codecs play through libvlc via `VLCPlayerView`.
+            if item.isNativelyPlayable {
+                StreamingPreviewView(item: item, url: fileURL, serverURL: serverURL, onDismiss: onDismiss)
+            } else {
+                VLCPlayerView(item: item, url: fileURL, serverURL: serverURL, onDismiss: onDismiss)
+            }
         } else {
             ArchiveTextEntryPreviewView(item: item, fileURL: fileURL, resolveAsset: resolveAsset, onDismiss: onDismiss)
         }

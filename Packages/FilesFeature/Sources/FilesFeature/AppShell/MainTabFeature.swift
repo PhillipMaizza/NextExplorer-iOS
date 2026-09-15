@@ -6,7 +6,7 @@ import NetworkClient
 
 @Reducer
 public struct MainTabFeature {
-    public enum Tab: Equatable, Sendable {
+    public enum Tab: Equatable, Hashable, Sendable {
         case browse, favorites, shared, downloads, settings
     }
 

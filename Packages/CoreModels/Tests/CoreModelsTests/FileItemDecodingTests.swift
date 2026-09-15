@@ -165,18 +165,18 @@ struct FileItemDecodingTests {
         }
     }
 
-    @Test("happy path: doc and docx report isOfficeDocument and are previewable via download")
+    @Test("happy path: office and rich document kinds report isOfficeDocument and are previewable via download")
     func officeDocumentKinds() {
-        for kind in ["doc", "docx", "DOC", "DOCX"] {
+        for kind in ["doc", "docx", "xls", "xlsx", "ppt", "pptx", "odt", "ods", "odp", "rtf", "DOCX", "PPTX", "RTF"] {
             let item = FileItem(name: "report.\(kind)", path: "", dateModified: Date(), size: 0, kind: kind)
             #expect(item.isOfficeDocument, "expected \(kind) to be an office document")
             #expect(item.isPreviewableViaDownload, "expected \(kind) to be previewable via download")
         }
     }
 
-    @Test("edge case: other document/text kinds are not office documents")
+    @Test("edge case: plain text and other kinds are not office documents")
     func nonOfficeDocumentKinds() {
-        for kind in ["txt", "pdf", "rtf", "odt", "directory"] {
+        for kind in ["txt", "pdf", "md", "csv", "directory"] {
             let item = FileItem(name: "file", path: "", dateModified: Date(), size: 0, kind: kind)
             #expect(!item.isOfficeDocument, "expected \(kind) not to be an office document")
         }

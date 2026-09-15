@@ -2,6 +2,7 @@ import AppFeature
 import AppStorageKeys
 import ComposableArchitecture
 import DesignSystem
+import FilesFeature
 import Localization
 import SwiftUI
 import UIKit
