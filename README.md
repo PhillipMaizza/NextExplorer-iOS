@@ -28,7 +28,6 @@ Browse, preview, search and share. Your files stay between your device and the s
 
 </div>
 
----
 
 <div align="center">
 
@@ -38,8 +37,6 @@ NextExplorer is a *client*. You supply the address of your own compatible file s
 No NextExplorer account, no middleman, no tracking. Your files, credentials and activity stay between your device and that server, and nowhere else.
 
 </div>
-
----
 
 ## Snapshots
 
@@ -53,7 +50,6 @@ Straight from the app on iPhone.
 
 </div>
 
----
 
 ## Features
 
@@ -65,7 +61,6 @@ Straight from the app on iPhone.
 - **Everyone's app.** 17 languages with full right-to-left support, plus complete VoiceOver and Dynamic Type accessibility.
 - **iPhone and iPad.** Universal layout with a split-view sidebar on larger screens.
 
----
 
 <details>
 <summary><h2>Under the hood</h2></summary>
@@ -113,13 +108,9 @@ To try it against real data you need a compatible self-hosted server and an acco
 
 </details>
 
----
-
 ## Contributing
 
 Contributions are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the branch and PR conventions and the architecture rules (constants, concurrency, state modelling, localization and cache safety) that every change follows.
-
----
 
 ## Privacy
 
@@ -127,13 +118,9 @@ The app talks only to the server you point it at. No analytics, no third-party t
 
 See the [Privacy Policy](https://phillipmaizza.com/nextexplorer/privacy) and [Terms of Use](https://phillipmaizza.com/nextexplorer/terms) for the full text.
 
----
-
 ## Support
 
 Questions, a bug, or a feature idea? Open an issue on this repo, or reach out through the [support site](https://phillipmaizza.com/nextexplorer). Replies usually land within a couple of days.
-
----
 
 ## License
 
