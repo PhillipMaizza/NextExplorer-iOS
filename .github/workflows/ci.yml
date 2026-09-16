@@ -1,0 +1,95 @@
+name: CI
+
+# Builds the app and runs the Swift package test suites on every pull request
+# to main and on pushes to main, so a contributor sees a green or red check
+# before anyone reviews the change.
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Build and test
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    env:
+      SIM_DEVICE: iPhone 16
+      # Package test suites, discovered under Packages/<name>/Tests.
+      # Keychain is intentionally omitted: its tests hit the real Security framework, which
+      # returns errSecMissingEntitlement (-34018) for a standalone SwiftPM test bundle on the
+      # simulator (no app host / keychain-access-group entitlement). They pass only inside an
+      # entitled app host, so they run locally in Xcode, not in this package-by-package CI.
+      TEST_PACKAGES: >-
+        CoreModels
+        NetworkClient
+        AuthClient
+        FilesClient
+        Localization
+        DesignSystem
+        AuthFeature
+        FilesFeature
+        AppStorageKeys
+        AppFeature
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # The app builds against the latest SDK; if a specific Xcode is needed,
+      # pin xcode-version to it here.
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          echo "Available simulator runtimes:"
+          xcrun simctl list runtimes | grep -i ios || true
+
+      # The Composable Architecture and its dependencies ship Swift macros. On a fresh CI
+      # machine xcodebuild refuses to run an unvalidated macro ("must be enabled before it
+      # can be used"); this opts out of the interactive fingerprint prompt.
+      - name: Trust Swift package macros
+        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+
+      - name: Resolve package dependencies
+        run: |
+          xcodebuild -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -resolvePackageDependencies
+
+      - name: Build app
+        run: |
+          xcodebuild build \
+            -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Test packages
+        run: |
+          set -o pipefail
+          DEST="platform=iOS Simulator,name=${SIM_DEVICE},OS=latest"
+          echo "Test destination: ${DEST}"
+          FAIL=0
+          for pkg in ${TEST_PACKAGES}; do
+            echo "::group::Test ${pkg}"
+            if ! ( cd "Packages/${pkg}" && xcodebuild test \
+                -scheme "${pkg}" \
+                -destination "${DEST}" ); then
+              echo "::error::${pkg} tests failed"
+              FAIL=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $FAIL
