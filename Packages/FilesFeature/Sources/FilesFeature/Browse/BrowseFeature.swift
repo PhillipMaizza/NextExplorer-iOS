@@ -590,7 +590,7 @@ public struct BrowseFeature {
                 let item = FileItem(
                     name: result.name,
                     path: result.path,
-                    dateModified: Date(),
+                    dateModified: date.now,
                     size: 0,
                     kind: ext.isEmpty ? "unknown" : ext,
                     supportsThumbnail: false

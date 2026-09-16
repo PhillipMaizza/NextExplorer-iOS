@@ -124,6 +124,7 @@ public struct FavoritesFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.date) var date
 
     /// Cache namespace for this tab's saved offline copy.
     private static let cacheNamespace = "favorites"
@@ -281,7 +282,7 @@ public struct FavoritesFeature {
                 let item = FileItem(
                     name: result.name,
                     path: result.path,
-                    dateModified: Date(),
+                    dateModified: date.now,
                     size: 0,
                     kind: ext.isEmpty ? "unknown" : ext,
                     supportsThumbnail: false

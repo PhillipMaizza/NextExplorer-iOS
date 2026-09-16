@@ -373,14 +373,15 @@ struct DownloadsView: View {
                         .disabled(store.selectedDownloadIDs.isEmpty)
                     }
                     ToolbarItem(placement: .bottomBar) {
-                        Button(role: .destructive) {
+                        SelectionToolbarButton(
+                            icon: IconKit.delete,
+                            role: .destructive,
+                            tint: .negative,
+                            accessibilityLabel: L10n.Common.delete,
+                            isDisabled: store.selectedDownloadIDs.isEmpty
+                        ) {
                             store.send(.bulkDeleteTapped)
-                        } label: {
-                            IconKit.delete.foregroundStyle(Color.negative)
                         }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .accessibilityLabel(L10n.Common.delete)
-                        .disabled(store.selectedDownloadIDs.isEmpty)
                     }
                 }
             }
