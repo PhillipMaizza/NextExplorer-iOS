@@ -16,7 +16,7 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 ## Proposing a change
 
 1. Open an issue first for anything non-trivial, so the direction is agreed before code is written.
-2. Branch from `main`. Branches are named `feature/NXTIOS-XXXX-short-slug`, where `XXXX` is the next incremental ticket number, zero-padded to four digits (for example `feature/NXTIOS-0042-grid-spacing`). No bare descriptive branch names.
+2. Branch from `main`. Branches are named `feature/NXTIOS-short-slug` (for example `feature/NXTIOS-grid-spacing`). No bare descriptive branch names.
 3. Keep the change on the one working branch and open a pull request against `main` when it is ready. Describe what changed and why, and reference the issue.
 
 ## Architecture
@@ -52,6 +52,14 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 
 - Every user-facing string goes through `L10n.<key>`. No hard-coded display text.
 - The app ships 17 languages. A new key is added to the string catalog for every language, with placeholder validation intact.
+- Do not hand-edit the generated catalog. Edit the source and regenerate with the scripts below.
+
+## Scripts
+
+Two helpers under `Scripts/` drive localization. The `Localization` package is generated, so localization changes flow through these, not by editing `Localizable.xcstrings` or `L10n.swift` directly.
+
+- **`gen-l10n.py`** regenerates the `Localization` package from its human-edited source. `Packages/Localization/strings.tsv` (one `key<TAB>English` per line) is the source of truth; the script rewrites `Localizable.xcstrings` and the two-level `L10n.swift` accessors, folds in each `translations/<lang>.tsv`, falls back to English for missing keys, and re-checks placeholder integrity. Run it after any string change: `python3 Scripts/gen-l10n.py`.
+- **`machine-translate.py`** fills `translations/<lang>.tsv` for the non-hand-authored languages via deep-translator's keyless MyMemory backend. Format specifiers (`%@`, `%lld`, `%1$@`, ...) are masked before translation and restored after, so none are dropped; per-string failures fall back to English. Its output is always re-validated by `gen-l10n.py`.
 
 ## Naming and style
 
