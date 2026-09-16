@@ -14,14 +14,14 @@ private enum Constants {
     static let downloadTempFilePrefix = "download-"
 }
 
-extension NetworkClient {
+public extension NetworkClient {
     /// Ceiling on a response buffered by `send`. The `send` path exists only for JSON control
     /// responses (listings, share lists, editor content) — anything file-sized goes through
     /// `download`, which streams to disk. 32 MB is far above any legitimate JSON payload while
     /// still cutting off a hostile server trying to exhaust memory here.
-    public static let defaultMaxInMemoryResponseBytes = 32 * 1024 * 1024
+    static let defaultMaxInMemoryResponseBytes = 32 * 1024 * 1024
 
-    public static func live(
+    static func live(
         trustEvaluator: ServerTrustEvaluating = DefaultServerTrustEvaluator(),
         cookieStorage: HTTPCookieStorage = .shared,
         protocolClasses: [AnyClass] = [],
@@ -84,10 +84,10 @@ extension NetworkClient {
             return (stableURL, httpResponse)
         }
 
-        // Stream to a temp file rather than `session.data(for:)` so response size is bounded
-        // by disk, not resident memory; then size-check before loading it in. This path only
-        // ever carries JSON control responses — file-sized payloads use `download` — so the
-        // extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
+        /// Stream to a temp file rather than `session.data(for:)` so response size is bounded
+        /// by disk, not resident memory; then size-check before loading it in. This path only
+        /// ever carries JSON control responses — file-sized payloads use `download` — so the
+        /// extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
         @Sendable func sendInMemory(
             _ request: URLRequest, using inMemorySession: URLSession
         ) async throws -> (Data, HTTPURLResponse) {
@@ -107,7 +107,7 @@ extension NetworkClient {
                 throw NetworkError.responseTooLarge
             }
             do {
-                return (try Data(contentsOf: temporaryURL), httpResponse)
+                return try (Data(contentsOf: temporaryURL), httpResponse)
             } catch {
                 throw NetworkError.transport(error.localizedDescription)
             }
@@ -153,8 +153,8 @@ extension NetworkClient: DependencyKey {
     }
 }
 
-extension DependencyValues {
-    public var networkClient: NetworkClient {
+public extension DependencyValues {
+    var networkClient: NetworkClient {
         get { self[NetworkClient.self] }
         set { self[NetworkClient.self] = newValue }
     }

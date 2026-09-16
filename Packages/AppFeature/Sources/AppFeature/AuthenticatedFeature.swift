@@ -16,7 +16,7 @@ public struct AuthenticatedFeature {
         public init(serverURL: URL, user: User) {
             self.serverURL = serverURL
             self.user = user
-            self.mainTab = MainTabFeature.State(serverURL: serverURL, user: user)
+            mainTab = MainTabFeature.State(serverURL: serverURL, user: user)
         }
     }
 
@@ -43,7 +43,7 @@ public struct AuthenticatedFeature {
             case .mainTab(.delegate(.signOutButtonTapped)):
                 state.mainTab.settings.isSigningOut = true
                 let serverURL = state.serverURL
-                let authClient = self.authClient
+                let authClient = authClient
                 // Cache teardown (directory, JSON, preview, in-memory thumbnails) is done once,
                 // authoritatively, by `AppFeature`'s `.loggedOut` handler after the delegate
                 // below fires. Keeping it there avoids two features clearing the same caches and

@@ -8,8 +8,13 @@ enum FavoriteColor {
         let hex: String
         let fill: UInt32
 
-        var id: String { hex }
-        var color: Color { Color(hex: fill) }
+        var id: String {
+            hex
+        }
+
+        var color: Color {
+            Color(hex: fill)
+        }
     }
 
     static let palette: [Swatch] = [
@@ -34,9 +39,9 @@ enum FavoriteColor {
     /// Whether `stored` refers to the same swatch as `hex` (case-insensitive, both optional).
     static func matches(_ stored: String?, _ hex: String?) -> Bool {
         switch (stored?.lowercased(), hex?.lowercased()) {
-        case (nil, nil): return true
-        case let (a?, b?): return a == b
-        default: return false
+        case (nil, nil): true
+        case let (a?, b?): a == b
+        default: false
         }
     }
 }

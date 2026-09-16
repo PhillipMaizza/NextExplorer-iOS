@@ -1,12 +1,10 @@
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
-@Suite
 struct DateDisplayFormatTests {
-    // Noon UTC, not midnight: keeps the calendar day stable across any reasonable local
-    // time zone the test machine might run in.
+    /// Noon UTC, not midnight: keeps the calendar day stable across any reasonable local
+    /// time zone the test machine might run in.
     private let date = Date(timeIntervalSince1970: 1_735_819_200) // 2025-01-02T12:00:00Z
 
     @Test

@@ -59,10 +59,10 @@ public struct TipJarFeature {
             case .task:
                 guard state.productsPhase.shouldLoadOnAppear else { return .none }
                 state.productsPhase = .loading
-                let client = self.client
+                let client = client
                 return .run { send in
                     do {
-                        await send(.productsResponse(try await client.products()))
+                        try await send(.productsResponse(client.products()))
                     } catch {
                         await send(.productsFailed(L10n.TipJar.errorLoad))
                     }
@@ -82,10 +82,10 @@ public struct TipJarFeature {
                 state.purchasingID = id
                 state.errorMessage = nil
                 state.noticeMessage = nil
-                let client = self.client
+                let client = client
                 return .run { send in
                     do {
-                        await send(.purchaseResponse(try await client.purchase(id)))
+                        try await send(.purchaseResponse(client.purchase(id)))
                     } catch {
                         await send(.purchaseFailed(L10n.TipJar.errorPurchase))
                     }

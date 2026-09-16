@@ -1,8 +1,7 @@
 import ComposableArchitecture
+@testable import FilesFeature
 import Foundation
 import Testing
-
-@testable import FilesFeature
 
 /// `ThumbnailCache.liveValue` hits the real filesystem for its cache layer; its network leg
 /// (`URLSession.shared`) isn't mockable without a protocol seam. These tests exercise the
@@ -66,7 +65,7 @@ struct ThumbnailCacheTests {
     @Test
     func resolvedURLCallsTheResolverOnAMissAndRemembersTheResultForNextTime() async throws {
         let path = "Photos/\(UUID().uuidString).jpg"
-        defer { try? FileManager.default.removeItem(at: try! recordURL(forPath: path)) }
+        defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
         let resolved = URL(string: "https://example.com/static/thumbnails/abc.webp")!
         let callCount = LockIsolated(0)
 
@@ -89,7 +88,7 @@ struct ThumbnailCacheTests {
     @Test
     func resolvedURLReResolvesWhenTheFileSignatureChanges() async throws {
         let path = "Photos/\(UUID().uuidString).jpg"
-        defer { try? FileManager.default.removeItem(at: try! recordURL(forPath: path)) }
+        defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
         let old = URL(string: "https://example.com/static/thumbnails/v1.webp")!
         let new = URL(string: "https://example.com/static/thumbnails/v2.webp")!
 
@@ -102,7 +101,7 @@ struct ThumbnailCacheTests {
     @Test
     func resolvedURLRemembersANilResultSoAnUnthumbnailableFileIsNotReAsked() async throws {
         let path = "Docs/\(UUID().uuidString).pdf"
-        defer { try? FileManager.default.removeItem(at: try! recordURL(forPath: path)) }
+        defer { try? FileManager.default.removeItem(at: try recordURL(forPath: path)) }
         let callCount = LockIsolated(0)
 
         let first = await store.resolvedURL(path, "5.0|1") {

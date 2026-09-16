@@ -31,33 +31,43 @@ public struct EditShareFeature {
         public var errorMessage: String?
         @Shared(.inMemory(SharedFeature.revisionKey)) var shareLinksRevision = 0
 
-        public var id: Share.ID { share.id }
+        public var id: Share.ID {
+            share.id
+        }
 
         public init(serverURL: URL, share: Share, now: Date = Date()) {
             self.serverURL = serverURL
             self.share = share
-            self.label = share.label ?? ""
-            self.accessMode = share.accessMode
-            self.target = share.sharingType
-            self.isExpiryEnabled = share.expiresAt != nil
-            self.expiresAt = share.expiresAt ?? now.addingTimeInterval(CreateShareLinkFeature.defaultExpiryDays * 24 * 60 * 60)
-            self.wantsPassword = share.hasPassword
-            self.selectedUserIDs = Set(share.permittedUserIds ?? [])
+            label = share.label ?? ""
+            accessMode = share.accessMode
+            target = share.sharingType
+            isExpiryEnabled = share.expiresAt != nil
+            expiresAt = share.expiresAt ?? now.addingTimeInterval(CreateShareLinkFeature.defaultExpiryDays * 24 * 60 * 60)
+            wantsPassword = share.hasPassword
+            selectedUserIDs = Set(share.permittedUserIds ?? [])
         }
 
-        var trimmedLabel: String { label.trimmingCharacters(in: .whitespacesAndNewlines) }
+        var trimmedLabel: String {
+            label.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
 
         var isSaveEnabled: Bool {
             guard !isSaving else { return false }
-            if target == .users { return !selectedUserIDs.isEmpty }
+            if target == .users {
+                return !selectedUserIDs.isEmpty
+            }
             return true
         }
 
         /// What to do with the password on save. A still-on field left blank keeps the
         /// current password; turning the toggle off on a protected share removes it.
         var passwordChange: UpdateShareRequest.PasswordChange {
-            if wantsPassword && !newPassword.isEmpty { return .set(newPassword) }
-            if !wantsPassword && share.hasPassword { return .remove }
+            if wantsPassword, !newPassword.isEmpty {
+                return .set(newPassword)
+            }
+            if !wantsPassword, share.hasPassword {
+                return .remove
+            }
             return .keep
         }
     }
@@ -106,9 +116,9 @@ public struct EditShareFeature {
                 guard target == .users, state.usersPhase.shouldLoadOnAppear else { return .none }
                 state.usersPhase = .loading
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.shareableUsersResponse(try await apiResult {
+                    try await send(.shareableUsersResponse(apiResult {
                         try await filesClient.shareableUsers(serverURL)
                     }))
                 }
@@ -133,7 +143,9 @@ public struct EditShareFeature {
 
             case let .wantsPasswordChanged(isOn):
                 state.wantsPassword = isOn
-                if !isOn { state.newPassword = "" }
+                if !isOn {
+                    state.newPassword = ""
+                }
                 return .none
 
             case let .newPasswordChanged(password):
@@ -166,9 +178,9 @@ public struct EditShareFeature {
                 )
                 let serverURL = state.serverURL
                 let shareID = state.share.id
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.saveResponse(try await apiResult {
+                    try await send(.saveResponse(apiResult {
                         try await filesClient.updateShareLink(serverURL, shareID, request)
                     }))
                 }

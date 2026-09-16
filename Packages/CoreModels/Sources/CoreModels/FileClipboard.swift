@@ -34,7 +34,9 @@ public struct FileClipboard: Equatable, Sendable {
         for source in sourceItemPaths where directoryPath == source || directoryPath.hasPrefix("\(source)/") {
             return false
         }
-        if operation == .move && sourceParentPaths.contains(directoryPath) { return false }
+        if operation == .move, sourceParentPaths.contains(directoryPath) {
+            return false
+        }
         return true
     }
 }

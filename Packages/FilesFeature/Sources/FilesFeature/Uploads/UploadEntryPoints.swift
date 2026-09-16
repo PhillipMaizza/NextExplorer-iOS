@@ -18,11 +18,11 @@ enum CameraAccess {
     static func resolve() async -> Bool {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
-            return true
+            true
         case .notDetermined:
-            return await AVCaptureDevice.requestAccess(for: .video)
+            await AVCaptureDevice.requestAccess(for: .video)
         default:
-            return false
+            false
         }
     }
 }
@@ -64,7 +64,9 @@ struct UploadPickers: ViewModifier {
                 allowedContentTypes: [.item],
                 allowsMultipleSelection: true
             ) { result in
-                if case let .success(urls) = result { onDocumentsPicked(urls) }
+                if case let .success(urls) = result {
+                    onDocumentsPicked(urls)
+                }
             }
             .photosPicker(
                 isPresented: $isPhotosPickerPresented,
@@ -79,7 +81,9 @@ struct UploadPickers: ViewModifier {
             .fullScreenCover(isPresented: $isCameraPresented) {
                 CameraPicker { url in
                     isCameraPresented = false
-                    if let url { onCameraCaptured(url) }
+                    if let url {
+                        onCameraCaptured(url)
+                    }
                 }
                 .ignoresSafeArea()
             }
@@ -108,10 +112,10 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     ) {
         self.label = label
         self.leadingActions = leadingActions
-        self._isFilesPickerPresented = isFilesPickerPresented
-        self._isPhotosPickerPresented = isPhotosPickerPresented
-        self._isCameraPresented = isCameraPresented
-        self._isCameraDeniedAlertPresented = isCameraDeniedAlertPresented
+        _isFilesPickerPresented = isFilesPickerPresented
+        _isPhotosPickerPresented = isPhotosPickerPresented
+        _isCameraPresented = isCameraPresented
+        _isCameraDeniedAlertPresented = isCameraDeniedAlertPresented
     }
 
     var body: some View {

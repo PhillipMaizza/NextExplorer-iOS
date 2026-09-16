@@ -1,7 +1,7 @@
 import Foundation
 
-extension KeychainClient {
-    public static func inMemory() -> KeychainClient {
+public extension KeychainClient {
+    static func inMemory() -> KeychainClient {
         let storage = LockedStorage()
         return KeychainClient(
             save: { storage.set($1, forKey: $0) },
@@ -10,7 +10,7 @@ extension KeychainClient {
         )
     }
 
-    public static let previewValue: KeychainClient = .inMemory()
+    static let previewValue: KeychainClient = .inMemory()
 }
 
 /// `@unchecked Sendable` is safe here: every access to `storage` is behind `lock`, so the

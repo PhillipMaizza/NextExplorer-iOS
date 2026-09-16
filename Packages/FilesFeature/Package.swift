@@ -5,7 +5,7 @@ let package = Package(
     name: "FilesFeature",
     platforms: [.iOS(.v18)],
     products: [
-        .library(name: "FilesFeature", targets: ["FilesFeature"])
+        .library(name: "FilesFeature", targets: ["FilesFeature"]),
     ],
     dependencies: [
         .package(path: "../AppStorageKeys"),
@@ -25,7 +25,7 @@ let package = Package(
         // No semver release tags exist (Apple ties this one to Swift toolchain snapshot tags
         // instead) — pinned to an exact commit on `main` rather than a moving branch, so this
         // stays fully reproducible.
-        .package(url: "https://github.com/apple/swift-markdown", revision: "27b7fc1a19068bcea3d2072db0ce86360d1400ed")
+        .package(url: "https://github.com/apple/swift-markdown", revision: "27b7fc1a19068bcea3d2072db0ce86360d1400ed"),
     ],
     targets: [
         .target(
@@ -68,7 +68,7 @@ let package = Package(
                 .product(name: "TreeSitterTOMLRunestone", package: "TreeSitterLanguages"),
                 .product(name: "TreeSitterMarkdownRunestone", package: "TreeSitterLanguages"),
                 .product(name: "TreeSitterBashRunestone", package: "TreeSitterLanguages"),
-                .product(name: "TreeSitterSwiftRunestone", package: "TreeSitterLanguages")
+                .product(name: "TreeSitterSwiftRunestone", package: "TreeSitterLanguages"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
@@ -76,9 +76,9 @@ let package = Package(
             name: "FilesFeatureTests",
             dependencies: [
                 "FilesFeature",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
-        )
+        ),
     ]
 )

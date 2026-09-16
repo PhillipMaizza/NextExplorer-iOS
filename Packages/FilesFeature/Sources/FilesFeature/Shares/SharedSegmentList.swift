@@ -28,17 +28,33 @@ struct SharedSegmentList: View {
     /// vertically centered by its cell and stays fixed while the detail row animates in/out.
     @State private var expandedIDs: Set<Share.ID> = []
 
-    private var phase: DataPhase { store.state.phase(for: segment) }
-    private var errorMessage: String? { phase.errorMessage }
-    private var isEmpty: Bool { store.state.isEmpty(for: segment) }
+    private var phase: DataPhase {
+        store.state.phase(for: segment)
+    }
+
+    private var errorMessage: String? {
+        phase.errorMessage
+    }
+
+    private var isEmpty: Bool {
+        store.state.isEmpty(for: segment)
+    }
 
     /// The card skeleton until this segment has been fetched once, then error / empty /
     /// no-results / list.
     private var listPhase: ListPhase {
-        if errorMessage != nil { return .error }
-        if !phase.hasLoaded && isEmpty { return .loading }
-        if isEmpty { return .empty }
-        if store.state.isSearchWithoutResults(for: segment) { return .noResults }
+        if errorMessage != nil {
+            return .error
+        }
+        if !phase.hasLoaded, isEmpty {
+            return .loading
+        }
+        if isEmpty {
+            return .empty
+        }
+        if store.state.isSearchWithoutResults(for: segment) {
+            return .noResults
+        }
         return .content
     }
 
@@ -160,7 +176,11 @@ struct SharedSegmentList: View {
 
     private func toggleExpanded(_ id: Share.ID) {
         withAnimation(SharedLinkMetrics.expand) {
-            if expandedIDs.contains(id) { expandedIDs.remove(id) } else { expandedIDs.insert(id) }
+            if expandedIDs.contains(id) {
+                expandedIDs.remove(id)
+            } else {
+                expandedIDs.insert(id)
+            }
         }
     }
 }

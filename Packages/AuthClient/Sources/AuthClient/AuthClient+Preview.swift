@@ -1,8 +1,8 @@
 import CoreModels
 import Foundation
 
-extension AuthClient {
-    public static let previewValue = AuthClient(
+public extension AuthClient {
+    static let previewValue = AuthClient(
         fetchStatus: { _ in AuthStatus(localEnabled: true, oidcEnabled: true) },
         login: { _, _, _ in User.preview },
         loginOIDC: { _ in User.preview },

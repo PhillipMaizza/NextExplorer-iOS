@@ -79,7 +79,7 @@ struct TipJarSheet: View {
         } label: {
             HStack(spacing: Metrics.emojiToTitle) {
                 Text(product.emoji).type(.body1(.regular))
-                Text(product.displayName).type(.body2(.semibold), style: .primary(for: .label))
+                Text(product.displayName).type(.body2(.semibold), style: .primaryOnSurface)
                 Spacer(minLength: Metrics.rowSpacing)
                 if store.purchasingID == product.id {
                     DSSpinner(size: .small)

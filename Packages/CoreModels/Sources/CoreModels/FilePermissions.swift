@@ -66,7 +66,9 @@ public struct FilePermissions: Decodable, Equatable, Sendable {
     }
 
     /// Just the nine permission bits, file-type bits masked off.
-    public var permissionBits: Int { mode & 0o777 }
+    public var permissionBits: Int {
+        mode & 0o777
+    }
 
     /// Three-digit, zero-padded octal — the exact shape `POST /api/permissions/chmod`
     /// requires (`/^[0-7]{3}$/`).

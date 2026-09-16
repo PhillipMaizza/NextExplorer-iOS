@@ -1,6 +1,6 @@
 import Foundation
-import Testing
 @testable import NetworkClient
+import Testing
 
 @Suite("NetworkClient live implementation", .serialized)
 struct NetworkClientLiveTests {

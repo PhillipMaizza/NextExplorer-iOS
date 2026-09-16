@@ -14,6 +14,7 @@ public struct ChangePasswordFeature {
     public enum NewPasswordError: Equatable, Sendable {
         case tooShort(minimum: Int)
     }
+
     public enum ConfirmPasswordError: Equatable, Sendable {
         case mismatch
     }
@@ -38,9 +39,11 @@ public struct ChangePasswordFeature {
                 ? nil
                 : .tooShort(minimum: CredentialRules.minimumPasswordLength)
         }
+
         var confirmError: ConfirmPasswordError? {
             confirmPassword.isEmpty || confirmPassword == newPassword ? nil : .mismatch
         }
+
         var isSubmitEnabled: Bool {
             !currentPassword.isEmpty
                 && CredentialRules.isPasswordLongEnough(newPassword)
@@ -89,9 +92,9 @@ public struct ChangePasswordFeature {
                 let serverURL = state.serverURL
                 let current = state.currentPassword
                 let new = state.newPassword
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.response(try await apiResult {
+                    try await send(.response(apiResult {
                         try await filesClient.changeOwnPassword(serverURL, current, new)
                         return true
                     }))

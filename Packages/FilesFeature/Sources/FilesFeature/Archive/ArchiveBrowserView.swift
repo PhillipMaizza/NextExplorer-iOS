@@ -20,7 +20,9 @@ private struct ArchiveRow: Identifiable {
     let isDirectory: Bool
     let size: UInt64?
 
-    var id: String { "\(isDirectory ? "d" : "f")/\(name)" }
+    var id: String {
+        "\(isDirectory ? "d" : "f")/\(name)"
+    }
 }
 
 /// One in-archive file opened for preview, bundled with its extracted location and the row
@@ -30,7 +32,9 @@ private struct ArchiveEntryPreview: Identifiable, Equatable {
     let fileURL: URL
     let sourceID: String
 
-    var id: String { fileURL.path }
+    var id: String {
+        fileURL.path
+    }
 }
 
 /// Result of a background entry extraction — `tooLarge` is split out so the user gets a
@@ -196,7 +200,7 @@ struct ArchiveBrowserView: View {
                     .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                     .matchedTransitionSource(id: row.name, in: entryTransition)
             }
-            Text(row.name).type(.body2(.semibold), style: .primary(for: .label))
+            Text(row.name).type(.body2(.semibold), style: .primaryOnSurface)
             Spacer()
             if extractingRow == row.name {
                 DSSpinner(size: .small)
@@ -296,11 +300,10 @@ struct ArchiveBrowserView: View {
 
     private func load() async {
         do {
-            let fileURL: URL
-            if let localFileURL {
-                fileURL = localFileURL
+            let fileURL: URL = if let localFileURL {
+                localFileURL
             } else {
-                fileURL = try await filesClient.downloadRawFile(serverURL, item)
+                try await filesClient.downloadRawFile(serverURL, item)
             }
             let kind = item.kind
             // Opening the container and listing its entries parses the whole archive; keep both
@@ -308,7 +311,7 @@ struct ArchiveBrowserView: View {
             // open, matching the extract path below.
             let (opened, listed) = try await Task.detached(priority: .userInitiated) {
                 let source = try ArchiveReader.open(fileURL: fileURL, kind: kind)
-                return (source, try ArchiveReader.entries(from: source))
+                return try (source, ArchiveReader.entries(from: source))
             }.value
             source = opened
             entries = listed

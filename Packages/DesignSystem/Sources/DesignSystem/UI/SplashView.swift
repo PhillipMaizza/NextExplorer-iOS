@@ -65,8 +65,16 @@ public struct SplashView: View {
         .backgroundGradient()
         .opacity(fade)
         .task { await run() }
-        .onAppear { if isReady { readyLatch = true } }
-        .onChange(of: isReady) { _, new in if new { readyLatch = true } }
+        .onAppear {
+            if isReady {
+                readyLatch = true
+            }
+        }
+        .onChange(of: isReady) {
+            _, new in if new {
+                readyLatch = true
+            }
+        }
         .onChange(of: readyLatch) { _, _ in maybeExit() }
         .onChange(of: didSettle) { _, _ in maybeExit() }
     }
@@ -102,7 +110,9 @@ public struct SplashView: View {
 
         // Safety net: clear no matter what.
         try? await Task.sleep(for: .seconds(Constants.maxOnScreen))
-        if !isExiting { onFinished() }
+        if !isExiting {
+            onFinished()
+        }
     }
 
     private func maybeExit() {

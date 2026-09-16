@@ -8,8 +8,13 @@ public struct SearchResultItem: Codable, Equatable, Identifiable, Sendable {
     public let matchLine: String?
     public let matchLineNumber: Int?
 
-    public var isDirectory: Bool { kind == "dir" }
-    public var id: String { path.isEmpty ? name : "\(path)/\(name)" }
+    public var isDirectory: Bool {
+        kind == "dir"
+    }
+
+    public var id: String {
+        path.isEmpty ? name : "\(path)/\(name)"
+    }
 
     public init(
         name: String,

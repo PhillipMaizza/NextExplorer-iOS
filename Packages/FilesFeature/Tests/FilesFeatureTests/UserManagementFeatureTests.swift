@@ -1,14 +1,12 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Localization
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct UserManagementFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
 
@@ -19,8 +17,12 @@ struct UserManagementFeatureTests {
         oidc: Bool = false
     ) -> User {
         var methods: [AuthMethod] = []
-        if password { methods.append(AuthMethod(method: "local_password")) }
-        if oidc { methods.append(AuthMethod(method: "oidc", provider: "Authentik")) }
+        if password {
+            methods.append(AuthMethod(method: "local_password"))
+        }
+        if oidc {
+            methods.append(AuthMethod(method: "oidc", provider: "Authentik"))
+        }
         return User(
             id: id,
             username: "user\(id)",
@@ -164,7 +166,7 @@ struct UserManagementFeatureTests {
             $0.filesClient.updateUser = { _, _, _ in Issue.record("must not call the server"); throw FilesClientError.network("x") }
         }
         await store.send(.userTapped("2"))
-        await store.send(.grantAdminTapped)  // guarded, user is already an admin
+        await store.send(.grantAdminTapped) // guarded, user is already an admin
         #expect(store.state.isUpdatingRoles == false)
     }
 
@@ -298,7 +300,7 @@ struct UserManagementFeatureTests {
         await store.send(.editUsernameChanged("   "))
         #expect(store.state.profileUsernameError == L10n.UserManagement.errorUsernameRequired)
         #expect(store.state.isProfileSaveEnabled == false)
-        await store.send(.saveProfileTapped)  // guarded, no effect
+        await store.send(.saveProfileTapped) // guarded, no effect
         await store.send(.editUsernameChanged("renamed"))
         #expect(store.state.profileUsernameError == nil)
         #expect(store.state.isProfileSaveEnabled == true)
@@ -313,7 +315,7 @@ struct UserManagementFeatureTests {
         await store.send(.editEmailChanged(""))
         #expect(store.state.profileEmailError == L10n.UserManagement.errorEmailRequired)
         #expect(store.state.isProfileSaveEnabled == false)
-        await store.send(.saveProfileTapped)  // guarded, no effect
+        await store.send(.saveProfileTapped) // guarded, no effect
 
         await store.send(.editEmailChanged("broken@"))
         #expect(store.state.profileEmailError == L10n.UserManagement.errorEmailInvalid)
@@ -468,7 +470,7 @@ struct UserManagementFeatureTests {
         // Server list is now empty; switching tabs refetches only when nothing is loaded.
         store.dependencies.filesClient.userVolumes = { _, _ in [] }
         await store.send(.detailTabChanged(.security))
-        await store.send(.detailTabChanged(.volumes))  // volumes already loaded → no refetch
+        await store.send(.detailTabChanged(.volumes)) // volumes already loaded → no refetch
         #expect(store.state.volumes.count == 1)
     }
 
@@ -529,7 +531,7 @@ struct UserManagementFeatureTests {
         let users = [
             makeUser(id: "1"),
             User(id: "2", username: "jrivera", email: "jamie@corp.com", displayName: "Jamie Rivera"),
-            User(id: "3", username: "sokafor", email: "sam@corp.com", displayName: "Sam Okafor")
+            User(id: "3", username: "sokafor", email: "sam@corp.com", displayName: "Sam Okafor"),
         ]
         let store = await bootedStore(users: users)
 
@@ -550,7 +552,7 @@ struct UserManagementFeatureTests {
         let users = [
             User(id: "1", username: "amy", email: "amy@corp.com", displayName: "Amy"),
             User(id: "2", username: "mia", email: "mia@corp.com", displayName: "Mia", roles: ["admin"]),
-            User(id: "3", username: "zoe", email: "zoe@corp.com", displayName: "Zoe")
+            User(id: "3", username: "zoe", email: "zoe@corp.com", displayName: "Zoe"),
         ]
         let store = await bootedStore(users: users)
 

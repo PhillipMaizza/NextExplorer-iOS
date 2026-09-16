@@ -43,7 +43,9 @@ struct TextFilePreviewView: View {
 
     /// The text currently shown/edited: the edit buffer once the user has typed, otherwise the
     /// loaded `content` verbatim.
-    private var currentText: String { draft ?? content ?? "" }
+    private var currentText: String {
+        draft ?? content ?? ""
+    }
 
     /// Editor binding: reads `currentText` (so the first render already has the full document),
     /// writes land in `draft`.
@@ -104,7 +106,9 @@ struct TextFilePreviewView: View {
             let html = await Task.detached(priority: .userInitiated) {
                 MarkdownRenderer.html(from: source)
             }.value
-            if !Task.isCancelled { renderedMarkdownHTML = html }
+            if !Task.isCancelled {
+                renderedMarkdownHTML = html
+            }
         }
         .onChange(of: isSaving) { wasSaving, nowSaving in
             if wasSaving, !nowSaving, errorMessage == nil {
@@ -192,7 +196,6 @@ struct TextFilePreviewView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .padding(.horizontal, .space16)
     }
-
 }
 
 #Preview("Loading") {

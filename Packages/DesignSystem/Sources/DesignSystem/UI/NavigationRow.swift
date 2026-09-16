@@ -56,7 +56,7 @@ public struct DSNavigationRow: View {
 
     private var titleStyle: Typography.TextStyle {
         switch role {
-        case .standard: .primary(for: .label)
+        case .standard: .primaryOnSurface
         case .accent: .link
         case .destructive: .error
         }

@@ -30,11 +30,11 @@ public struct MainTabFeature {
         public var uploadToast: UploadToast?
 
         public init(serverURL: URL, user: User) {
-            self.browse = BrowseTabFeature.State(serverURL: serverURL)
-            self.favorites = FavoritesFeature.State(serverURL: serverURL)
-            self.shared = SharedFeature.State(serverURL: serverURL)
-            self.settings = SettingsFeature.State(serverURL: serverURL, user: user)
-            self.uploads = UploadsFeature.State(serverURL: serverURL)
+            browse = BrowseTabFeature.State(serverURL: serverURL)
+            favorites = FavoritesFeature.State(serverURL: serverURL)
+            shared = SharedFeature.State(serverURL: serverURL)
+            settings = SettingsFeature.State(serverURL: serverURL, user: user)
+            uploads = UploadsFeature.State(serverURL: serverURL)
         }
 
         /// The folder currently on screen in the Browse tab (root or the deepest pushed
@@ -150,12 +150,14 @@ public struct MainTabFeature {
             case .observeConnectivity:
                 // First value is the current state (ignored); refresh only on a real
                 // offline -> online transition.
-                let connectivity = self.connectivity
+                let connectivity = connectivity
                 return .run { send in
                     var wasOnline = true
                     for await online in connectivity.events() {
                         defer { wasOnline = online }
-                        if online, !wasOnline { await send(.connectivityRestored) }
+                        if online, !wasOnline {
+                            await send(.connectivityRestored)
+                        }
                     }
                 }
                 .cancellable(id: CancelID.connectivity, cancelInFlight: true)

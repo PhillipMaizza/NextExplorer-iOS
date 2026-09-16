@@ -10,7 +10,9 @@ public enum ThumbnailSize: String, CaseIterable, Identifiable, Sendable {
     case medium
     case large
 
-    public var id: String { rawValue }
+    public var id: String {
+        rawValue
+    }
 
     public var title: String {
         switch self {

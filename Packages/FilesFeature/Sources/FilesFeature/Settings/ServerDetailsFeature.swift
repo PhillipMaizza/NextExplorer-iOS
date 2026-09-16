@@ -36,10 +36,12 @@ public struct ServerDetailsFeature {
         public init(serverURL: URL, branding: Branding) {
             self.serverURL = serverURL
             self.branding = branding
-            self.nameDraft = branding.appName
+            nameDraft = branding.appName
         }
 
-        var trimmedName: String { nameDraft.trimmingCharacters(in: .whitespacesAndNewlines) }
+        var trimmedName: String {
+            nameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
 
         var isNameValid: Bool {
             !trimmedName.isEmpty && trimmedName.count <= ServerDetailsFeature.maxNameLength
@@ -55,7 +57,9 @@ public struct ServerDetailsFeature {
             pendingLogoData != nil || trimmedName != branding.appName
         }
 
-        var isSaveEnabled: Bool { isDirty && isNameValid && !isSaving }
+        var isSaveEnabled: Bool {
+            isDirty && isNameValid && !isSaving
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -84,9 +88,9 @@ public struct ServerDetailsFeature {
             switch action {
             case .onAppear:
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.brandingResponse(try await apiResult { try await filesClient.fetchBranding(serverURL) }))
+                    try await send(.brandingResponse(apiResult { try await filesClient.fetchBranding(serverURL) }))
                 }
                 .cancellable(id: CancelID.load, cancelInFlight: true)
 
@@ -94,7 +98,9 @@ public struct ServerDetailsFeature {
                 let nameWasUntouched = state.nameDraft == state.branding.appName
                 state.branding = branding
                 state.$sharedBranding.withLock { $0 = branding }
-                if nameWasUntouched { state.nameDraft = branding.appName }
+                if nameWasUntouched {
+                    state.nameDraft = branding.appName
+                }
                 return .none
 
             case .brandingResponse(.failure):
@@ -121,17 +127,16 @@ public struct ServerDetailsFeature {
                 state.isSaving = true
                 state.errorMessage = nil
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 let name = state.trimmedName
                 let pendingLogo = state.pendingLogoData
                 let currentLogoPath = state.branding.appLogoUrl
                 return .run { send in
-                    await send(.saveResponse(try await apiResult {
-                        let logoPath: String
-                        if let pendingLogo {
-                            logoPath = try await filesClient.uploadServerLogo(serverURL, pendingLogo)
+                    try await send(.saveResponse(apiResult {
+                        let logoPath: String = if let pendingLogo {
+                            try await filesClient.uploadServerLogo(serverURL, pendingLogo)
                         } else {
-                            logoPath = currentLogoPath
+                            currentLogoPath
                         }
                         return try await filesClient.updateBranding(serverURL, name, logoPath)
                     }))

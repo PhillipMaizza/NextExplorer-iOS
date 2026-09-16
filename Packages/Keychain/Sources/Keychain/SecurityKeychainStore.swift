@@ -58,7 +58,7 @@ struct SecurityKeychainStore: Sendable {
         var query: [CFString: Any] = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: configuration.service,
-            kSecAttrAccount: key
+            kSecAttrAccount: key,
         ]
         if let accessGroup = configuration.accessGroup {
             query[kSecAttrAccessGroup] = accessGroup

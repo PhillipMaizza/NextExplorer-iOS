@@ -4,8 +4,8 @@ import CoreGraphics
 public extension CGFloat {
     /// 0pt — no rounding.
     static let radiusNone: CGFloat = 0
-        /// 4pt — extra small rounding, used for tags.
-        static let radiusXSmall: CGFloat = 4
+    /// 4pt — extra small rounding, used for tags.
+    static let radiusXSmall: CGFloat = 4
     /// 8pt — small rounding, used for input fields.
     static let radiusSmall: CGFloat = 8
     /// 12pt — matches the web client's auth inputs/buttons.
@@ -21,6 +21,10 @@ public extension CGFloat {
     /// sit with Liquid Glass's rounder language, `radiusMedium` below it. Use this rather than
     /// a fixed token so every card tracks the platform together.
     static var radiusCard: CGFloat {
-        if #available(iOS 26.0, *) { .radiusLarge } else { .radiusMedium }
+        if #available(iOS 26.0, *) {
+            .radiusLarge
+        } else {
+            .radiusMedium
+        }
     }
 }

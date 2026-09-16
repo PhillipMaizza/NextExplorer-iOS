@@ -1,10 +1,10 @@
 import AuthClient
+@testable import AuthFeature
 import ComposableArchitecture
 import CoreModels
 import Foundation
 import Localization
 import Testing
-@testable import AuthFeature
 
 @MainActor
 @Suite("LoginFormFeature")
@@ -92,7 +92,7 @@ struct LoginFormFeatureTests {
     @Test("monkey test: thousands of garbage server inputs never crash, and any URL that survives is clean")
     func normalizedURLFuzzing() {
         var rng = SplitMix64(seed: 0xC0FFEE_0027)
-        for _ in 0..<4000 {
+        for _ in 0 ..< 4000 {
             let junk = FuzzStrings.random(using: &rng, maxLength: 60)
             for scheme in [LoginFormFeature.URLScheme.https, .http] {
                 // The only hard requirement: this must not trap on any input.
@@ -104,7 +104,9 @@ struct LoginFormFeatureTests {
                 #expect(url.query == nil, "query leaked for \(junk.debugDescription)")
                 #expect(url.fragment == nil, "fragment leaked for \(junk.debugDescription)")
                 #expect(url.user == nil && url.password == nil, "userinfo leaked for \(junk.debugDescription)")
-                if let port = url.port { #expect((1...65535).contains(port), "bad port \(port) for \(junk.debugDescription)") }
+                if let port = url.port {
+                    #expect((1 ... 65535).contains(port), "bad port \(port) for \(junk.debugDescription)")
+                }
             }
         }
     }
@@ -129,7 +131,7 @@ struct LoginFormFeatureTests {
     // MARK: - testConnectionButtonTapped
 
     @Test("happy path: a successful test shows the checkmark, then advances to the credentials page")
-    func testConnectionUnlocksLocalFields() async {
+    func connectionUnlocksLocalFields() async {
         let store = TestStore(initialState: LoginFormFeature.State(host: "nextexplorer.example.com")) {
             LoginFormFeature()
         } withDependencies: {

@@ -124,7 +124,7 @@ struct UploadReviewView: View {
         }
     }
 
-    private func infoRow<Content: View>(@ViewBuilder content: () -> Content) -> some View {
+    private func infoRow(@ViewBuilder content: () -> some View) -> some View {
         HStack(spacing: Constants.rowSpacing, content: content)
             .contentShape(Rectangle())
     }
@@ -135,7 +135,7 @@ struct UploadReviewView: View {
                 infoRow {
                     rowIcon(IconKit.folder)
                     Text(L10n.Uploads.reviewSectionPath)
-                        .type(.body2(.regular), style: .primary(for: .label))
+                        .type(.body2(.regular), style: .primaryOnSurface)
                     Spacer()
                     Text(store.hasDestination
                         ? (store.destination as NSString).lastPathComponent
@@ -156,7 +156,7 @@ struct UploadReviewView: View {
             infoRow {
                 rowIcon(IconKit.size)
                 Text(L10n.Uploads.reviewSectionSize)
-                    .type(.body2(.regular), style: .primary(for: .label))
+                    .type(.body2(.regular), style: .primaryOnSurface)
                 Spacer()
                 Text(UploadReviewFormat.byteFormatter.string(fromByteCount: store.totalSize))
                     .type(.body2(.regular), style: .secondary)

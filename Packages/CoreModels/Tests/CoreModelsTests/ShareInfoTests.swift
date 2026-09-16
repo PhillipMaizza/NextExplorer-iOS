@@ -1,9 +1,7 @@
+@testable import CoreModels
 import Foundation
 import Testing
 
-@testable import CoreModels
-
-@Suite
 struct ShareInfoTests {
     @Test
     func decodesTheInfoEndpointShape() throws {

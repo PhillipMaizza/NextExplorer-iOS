@@ -16,10 +16,14 @@ private struct FeatureToastModifier: ViewModifier {
         content
             .dsToast($message, extraBottomInset: extraBottomInset)
             .onChange(of: error) { _, newValue in
-                if let newValue { message = DSToastMessage(icon: IconKit.warning, text: newValue) }
+                if let newValue {
+                    message = DSToastMessage(icon: IconKit.warning, text: newValue)
+                }
             }
             .onChange(of: success) { _, newValue in
-                if let newValue { message = .success(newValue) }
+                if let newValue {
+                    message = .success(newValue)
+                }
             }
     }
 }

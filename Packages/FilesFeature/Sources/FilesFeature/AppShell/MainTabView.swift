@@ -92,7 +92,11 @@ public struct MainTabView: View {
             }
             .dsToast(Binding(
                 get: { uploadToastMessage },
-                set: { if $0 == nil { store.send(.dismissUploadToast) } }
+                set: {
+                    if $0 == nil {
+                        store.send(.dismissUploadToast)
+                    }
+                }
             ), extraBottomInset: Constants.toastTabBarClearance)
             .hapticFeedback(.selection, trigger: store.selectedTab)
             .onChange(of: store.selectedTab, initial: true) { _, tab in
@@ -177,7 +181,7 @@ public struct MainTabView: View {
         }
     }
 
-    private func split<Detail: View>(@ViewBuilder detail: () -> Detail) -> some View {
+    private func split(@ViewBuilder detail: () -> some View) -> some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {
             sidebar
         } detail: {
@@ -190,7 +194,11 @@ public struct MainTabView: View {
     private var sidebar: some View {
         List(selection: Binding(
             get: { store.selectedTab },
-            set: { if let tab = $0 { store.send(.tabSelected(tab)) } }
+            set: {
+                if let tab = $0 {
+                    store.send(.tabSelected(tab))
+                }
+            }
         )) {
             Section {
                 sidebarProfile
@@ -214,7 +222,7 @@ public struct MainTabView: View {
         let isSelected = store.selectedTab == item.tab
         return Label {
             Text(item.title)
-                .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primary(for: .label) : .secondary)
+                .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
         } icon: {
             sidebarIcon(item.icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
         }
@@ -251,7 +259,7 @@ public struct MainTabView: View {
             AvatarView(displayName: store.settings.displayName, size: .size44)
             VStack(alignment: .leading, spacing: .space2) {
                 Text(store.settings.displayName)
-                    .type(.body2(.bold), style: .primary(for: .label))
+                    .type(.body2(.bold), style: .primaryOnSurface)
                     .lineLimit(1)
                 if let email = store.settings.user.email {
                     Text(email)

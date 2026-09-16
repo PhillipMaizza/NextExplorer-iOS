@@ -17,7 +17,9 @@ struct SettingsView: View {
     /// View-local filter for the settings list — no reducer state needed, it only hides rows.
     @State private var settingsSearch = ""
 
-    private var filter: SettingsSearchFilter { SettingsSearchFilter(query: settingsSearch) }
+    private var filter: SettingsSearchFilter {
+        SettingsSearchFilter(query: settingsSearch)
+    }
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
@@ -27,15 +29,19 @@ struct SettingsView: View {
     /// measured against the Downloads tab title. On iPad (the split view detail) there's no such
     /// reserved nav bar, so the padding is just dead space above the title.
     private var titleTopPadding: CGFloat {
-        if horizontalSizeClass == .regular { return 0 }
-        if #available(iOS 26.0, *) { return .size44 + .space8 + .space2 }
+        if horizontalSizeClass == .regular {
+            return 0
+        }
+        if #available(iOS 26.0, *) {
+            return .size44 + .space8 + .space2
+        }
         return .size44
     }
 
-    // No op setters: each confirmation sheet is dismiss disabled and only closes through one
-    // of `DSAlertSheet`'s own buttons, which drive the reducer directly. Sign out in
-    // particular tears down this whole authenticated scope on confirm, so a SwiftUI initiated
-    // dismiss action would land in a dead store.
+    /// No op setters: each confirmation sheet is dismiss disabled and only closes through one
+    /// of `DSAlertSheet`'s own buttons, which drive the reducer directly. Sign out in
+    /// particular tears down this whole authenticated scope on confirm, so a SwiftUI initiated
+    /// dismiss action would land in a dead store.
     private var isConfirmingSignOut: Binding<Bool> {
         Binding(get: { store.isConfirmingSignOut }, set: { _ in })
     }
@@ -178,7 +184,9 @@ struct SettingsView: View {
             get: { userManagementToast },
             set: { newValue in
                 userManagementToast = newValue
-                if newValue == nil { store.send(.userManagement(.presented(.toastDismissed))) }
+                if newValue == nil {
+                    store.send(.userManagement(.presented(.toastDismissed)))
+                }
             }
         )
     }
@@ -203,8 +211,8 @@ private func settingsPreview(
     )
 }
 
-/// The default `.previewValue` reports `volumeUsage` enabled with two volumes, so the
-/// server-storage section fills in from `onAppear` like the real thing.
+// The default `.previewValue` reports `volumeUsage` enabled with two volumes, so the
+// server-storage section fills in from `onAppear` like the real thing.
 #Preview {
     settingsPreview()
 }

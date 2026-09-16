@@ -15,10 +15,18 @@ public struct User: Codable, Equatable, Hashable, Identifiable, Sendable {
     /// Only populated by the admin `GET /api/users` list; empty for `/api/auth/me`.
     public let authMethods: [AuthMethod]
 
-    public var isAdmin: Bool { roles.contains(UserRole.admin) }
+    public var isAdmin: Bool {
+        roles.contains(UserRole.admin)
+    }
+
     /// Whether this user can sign in with a local email and password, rather than SSO only.
-    public var hasLocalPassword: Bool { authMethods.contains { $0.isPassword } }
-    public var oidcMethods: [AuthMethod] { authMethods.filter { $0.isOIDC } }
+    public var hasLocalPassword: Bool {
+        authMethods.contains { $0.isPassword }
+    }
+
+    public var oidcMethods: [AuthMethod] {
+        authMethods.filter(\.isOIDC)
+    }
 
     public init(
         id: String,

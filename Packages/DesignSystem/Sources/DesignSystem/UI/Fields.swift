@@ -33,7 +33,7 @@ public struct DSFieldContainer<Content: View>: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: .space8) {
             Text(label)
-                .type(.body2(.semibold), style: .primary(for: .label))
+                .type(.body2(.semibold), style: .primaryOnSurface)
 
             HStack(spacing: .space8) {
                 icon
@@ -68,7 +68,7 @@ public struct DSFieldLabel: View {
 
     public init(_ text: String, uppercased: Bool = true) {
         self.text = text
-        self.isUppercased = uppercased
+        isUppercased = uppercased
     }
 
     public var body: some View {
@@ -96,7 +96,7 @@ public struct DSTextField: View {
         focused focus: FocusState<Bool>.Binding? = nil
     ) {
         self.title = title
-        self._text = text
+        _text = text
         self.prompt = prompt
         self.focus = focus
     }
@@ -127,7 +127,7 @@ public struct DSSecureField: View {
 
     public init(_ title: String, text: Binding<String>, prompt: Text? = nil) {
         self.title = title
-        self._text = text
+        _text = text
         self.prompt = prompt
     }
 

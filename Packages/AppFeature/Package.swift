@@ -5,7 +5,7 @@ let package = Package(
     name: "AppFeature",
     platforms: [.iOS(.v18)],
     products: [
-        .library(name: "AppFeature", targets: ["AppFeature"])
+        .library(name: "AppFeature", targets: ["AppFeature"]),
     ],
     dependencies: [
         .package(path: "../CoreModels"),
@@ -16,7 +16,7 @@ let package = Package(
         .package(path: "../FilesClient"),
         .package(path: "../FilesFeature"),
         .package(path: "../Localization"),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0")
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
     ],
     targets: [
         .target(
@@ -30,7 +30,7 @@ let package = Package(
                 "FilesClient",
                 "FilesFeature",
                 "Localization",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
@@ -38,9 +38,9 @@ let package = Package(
             name: "AppFeatureTests",
             dependencies: [
                 "AppFeature",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
-        )
+        ),
     ]
 )

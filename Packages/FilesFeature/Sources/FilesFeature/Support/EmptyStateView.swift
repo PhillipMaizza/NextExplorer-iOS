@@ -33,7 +33,7 @@ struct EmptyStateView: View {
 }
 
 #Preview("Error") {
-    EmptyStateView(icon: IconKit.warning, message: "Couldn't reach the server.", retry: { })
+    EmptyStateView(icon: IconKit.warning, message: "Couldn't reach the server.", retry: {})
 }
 
 #Preview("No items") {

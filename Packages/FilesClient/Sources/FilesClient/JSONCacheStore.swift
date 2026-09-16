@@ -42,9 +42,17 @@ public struct JSONCacheStore: Sendable {
         self.totalSizeBytes = totalSizeBytes
     }
 
-    public func read(key: String) -> CachedPayload? { read(key) }
-    public func write(key: String, data: Data) { write(key, data) }
-    public func remove(key: String) { remove(key) }
+    public func read(key: String) -> CachedPayload? {
+        read(key)
+    }
+
+    public func write(key: String, data: Data) {
+        write(key, data)
+    }
+
+    public func remove(key: String) {
+        remove(key)
+    }
 }
 
 extension JSONCacheStore: DependencyKey {
@@ -145,7 +153,9 @@ extension JSONCacheStore: DependencyKey {
             defer { lock.unlock() }
             guard let directory else { return }
             let entries = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
-            for entry in entries { try? fileManager.removeItem(at: entry) }
+            for entry in entries {
+                try? fileManager.removeItem(at: entry)
+            }
         }
 
         func totalSizeBytes() -> Int64 {

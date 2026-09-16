@@ -84,7 +84,7 @@ extension FilesService {
 
     /// Share-expiry wire format is plain `withInternetDateTime` (no fractional seconds, unlike
     /// the decode path). Cached like `iso8601Formatter` — safe to format from concurrently.
-    nonisolated(unsafe) private static let shareExpiryFormatter: ISO8601DateFormatter = {
+    private nonisolated(unsafe) static let shareExpiryFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
         return formatter

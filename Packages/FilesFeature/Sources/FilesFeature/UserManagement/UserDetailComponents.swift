@@ -53,7 +53,9 @@ struct Card<Content: View>: View {
 struct AccessModeBadge: View {
     let mode: ShareAccessMode
 
-    private var tint: Color { mode == .readonly ? .attention : .positive }
+    private var tint: Color {
+        mode == .readonly ? .attention : .positive
+    }
 
     var body: some View {
         Text(mode == .readonly ? L10n.AccessMode.readonly : L10n.AccessMode.readwrite)

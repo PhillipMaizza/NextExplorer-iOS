@@ -1,11 +1,9 @@
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 /// `SafeDestination.within` is the guard that stops a crafted archive entry name or HTML
 /// `src`/`href` value (both attacker-influenced) from writing outside its sandbox folder.
-@Suite
 struct SafeDestinationTests {
     private let base = FileManager.default.temporaryDirectory
         .appendingPathComponent("SafeDestinationTests", isDirectory: true)

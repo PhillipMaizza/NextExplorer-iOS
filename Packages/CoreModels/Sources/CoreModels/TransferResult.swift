@@ -35,6 +35,11 @@ public struct TransferResult: Codable, Equatable, Sendable {
     }
 
     /// Entries the server actually acted on.
-    public var movedCount: Int { items.filter { !$0.skipped }.count }
-    public var skippedCount: Int { items.filter(\.skipped).count }
+    public var movedCount: Int {
+        items.filter { !$0.skipped }.count
+    }
+
+    public var skippedCount: Int {
+        items.filter(\.skipped).count
+    }
 }

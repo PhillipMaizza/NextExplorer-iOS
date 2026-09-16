@@ -1,8 +1,7 @@
+@testable import CoreModels
 import Foundation
 import Testing
-@testable import CoreModels
 
-@Suite
 struct GoogleDocsPointerTests {
     @Test func recognisesTheDriveStubExtensions() {
         #expect(GoogleDocsPointer.isPointerKind("gsheet"))

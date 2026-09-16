@@ -83,7 +83,7 @@ struct UserManagementView: View {
 
     @ViewBuilder
     private var overlay: some View {
-        if store.phase == .loading && store.users.isEmpty {
+        if store.phase == .loading, store.users.isEmpty {
             DSSpinner()
         } else if let error = store.phase.errorMessage, store.users.isEmpty {
             EmptyStateView(
@@ -102,15 +102,27 @@ struct UserManagementView: View {
     // MARK: Bindings
 
     private var detailPresented: Binding<Bool> {
-        Binding(get: { store.detailUserID != nil }, set: { if !$0 { store.send(.detailDismissed) } })
+        Binding(get: { store.detailUserID != nil }, set: {
+            if !$0 {
+                store.send(.detailDismissed)
+            }
+        })
     }
 
     private var createSheetPresented: Binding<Bool> {
-        Binding(get: { store.createSheet != nil }, set: { if !$0 { store.send(.createSheetDismissed) } })
+        Binding(get: { store.createSheet != nil }, set: {
+            if !$0 {
+                store.send(.createSheetDismissed)
+            }
+        })
     }
 
     private var passwordSheetPresented: Binding<Bool> {
-        Binding(get: { store.passwordSheet != nil }, set: { if !$0 { store.send(.passwordSheetDismissed) } })
+        Binding(get: { store.passwordSheet != nil }, set: {
+            if !$0 {
+                store.send(.passwordSheetDismissed)
+            }
+        })
     }
 }
 
@@ -127,7 +139,7 @@ struct LabeledField<Content: View>: View {
     init(_ title: String, error: String? = nil, uppercased: Bool = true, @ViewBuilder content: () -> Content) {
         self.title = title
         self.error = error
-        self.isUppercased = uppercased
+        isUppercased = uppercased
         self.content = content()
     }
 

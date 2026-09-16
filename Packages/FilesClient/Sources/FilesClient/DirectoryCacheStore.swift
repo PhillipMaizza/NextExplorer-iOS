@@ -52,16 +52,26 @@ public struct DirectoryCacheStore: Sendable {
     }
 }
 
-extension DirectoryCacheStore {
-    public func read(serverURL: URL, path: String) -> CachedDirectory? { read(serverURL, path) }
-    public func lastWrittenAt(serverURL: URL, path: String) -> Date? { lastWrittenAt(serverURL, path) }
-    public func write(serverURL: URL, path: String, result: BrowseResult, etag: String?, fetchedAt: Date) {
+public extension DirectoryCacheStore {
+    func read(serverURL: URL, path: String) -> CachedDirectory? {
+        read(serverURL, path)
+    }
+
+    func lastWrittenAt(serverURL: URL, path: String) -> Date? {
+        lastWrittenAt(serverURL, path)
+    }
+
+    func write(serverURL: URL, path: String, result: BrowseResult, etag: String?, fetchedAt: Date) {
         write(serverURL, path, result, etag, fetchedAt)
     }
-    public func touch(serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
+
+    func touch(serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
         touch(serverURL, path, expectedETag, fetchedAt)
     }
-    public func remove(serverURL: URL, path: String) { remove(serverURL, path) }
+
+    func remove(serverURL: URL, path: String) {
+        remove(serverURL, path)
+    }
 }
 
 extension DirectoryCacheStore: DependencyKey {
@@ -219,7 +229,9 @@ extension DirectoryCacheStore: DependencyKey {
             defer { lock.unlock() }
             guard let directory else { return }
             let entries = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
-            for entry in entries { try? fileManager.removeItem(at: entry) }
+            for entry in entries {
+                try? fileManager.removeItem(at: entry)
+            }
         }
 
         func totalSizeBytes() -> Int64 {

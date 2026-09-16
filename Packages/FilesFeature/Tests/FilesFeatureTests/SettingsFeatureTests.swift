@@ -1,13 +1,11 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct SettingsFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
     private let user = User(id: "1", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
@@ -31,7 +29,7 @@ struct SettingsFeatureTests {
         store.exhaustivity = .off
 
         await store.send(.userManagementButtonTapped) {
-            $0.userManagement = UserManagementFeature.State(serverURL: self.serverURL, currentUserID: "admin-1")
+            $0.userManagement = UserManagementFeature.State(serverURL: serverURL, currentUserID: "admin-1")
         }
         await store.send(.userManagement(.dismiss)) {
             $0.userManagement = nil
@@ -44,7 +42,7 @@ struct SettingsFeatureTests {
         store.exhaustivity = .off
 
         await store.send(.changePasswordButtonTapped) {
-            $0.changePassword = ChangePasswordFeature.State(serverURL: self.serverURL)
+            $0.changePassword = ChangePasswordFeature.State(serverURL: serverURL)
         }
         await store.send(.changePassword(.dismiss)) {
             $0.changePassword = nil
@@ -187,7 +185,7 @@ struct SettingsFeatureTests {
 
         await store.send(.serverDetailsButtonTapped) {
             $0.serverDetails = ServerDetailsFeature.State(
-                serverURL: self.serverURL,
+                serverURL: serverURL,
                 branding: Branding(appName: "Rivendell", appLogoUrl: Branding.defaultLogoPath)
             )
         }
@@ -214,10 +212,10 @@ struct SettingsFeatureTests {
         store.exhaustivity = .off
 
         await store.send(.thumbnailSettingsButtonTapped) {
-            $0.thumbnailSettings = ThumbnailSettingsFeature.State(serverURL: self.serverURL)
+            $0.thumbnailSettings = ThumbnailSettingsFeature.State(serverURL: serverURL)
         }
         await store.send(.accessRulesButtonTapped) {
-            $0.accessRules = AccessRulesFeature.State(serverURL: self.serverURL)
+            $0.accessRules = AccessRulesFeature.State(serverURL: serverURL)
         }
     }
 

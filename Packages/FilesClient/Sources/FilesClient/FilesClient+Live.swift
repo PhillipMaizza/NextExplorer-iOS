@@ -3,8 +3,8 @@ import Dependencies
 import Foundation
 import NetworkClient
 
-extension FilesClient {
-    public static func live(
+public extension FilesClient {
+    static func live(
         networkClient: NetworkClient,
         directoryCacheStore: DirectoryCacheStore = .liveValue,
         now: @escaping @Sendable () -> Date = { Date() }
@@ -234,8 +234,8 @@ extension FilesClient: DependencyKey {
     }
 }
 
-extension DependencyValues {
-    public var filesClient: FilesClient {
+public extension DependencyValues {
+    var filesClient: FilesClient {
         get { self[FilesClient.self] }
         set { self[FilesClient.self] = newValue }
     }

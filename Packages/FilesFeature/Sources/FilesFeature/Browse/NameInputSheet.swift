@@ -42,7 +42,7 @@ struct NameInputSheet: View {
         self.isBusy = isBusy
         self.onConfirm = onConfirm
         self.onCancel = onCancel
-        self._name = State(initialValue: initialName)
+        _name = State(initialValue: initialName)
     }
 
     private var trimmedName: String {

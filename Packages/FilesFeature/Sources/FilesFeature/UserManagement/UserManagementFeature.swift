@@ -85,11 +85,13 @@ public struct UserManagementFeature {
         var emailError: String? {
             email.trimmed.isEmpty || CredentialRules.isEmailShaped(email) ? nil : L10n.UserManagement.errorEmailInvalid
         }
+
         var passwordError: String? {
             password.isEmpty || CredentialRules.isPasswordLongEnough(password)
                 ? nil
                 : L10n.UserManagement.errorPasswordTooShort(CredentialRules.minimumPasswordLength)
         }
+
         var isSubmitEnabled: Bool {
             CredentialRules.isEmailShaped(email)
                 && CredentialRules.isPasswordLongEnough(password)
@@ -111,7 +113,10 @@ public struct UserManagementFeature {
                 ? nil
                 : L10n.UserManagement.errorPasswordTooShort(CredentialRules.minimumPasswordLength)
         }
-        var isSubmitEnabled: Bool { CredentialRules.isPasswordLongEnough(password) && !isSubmitting }
+
+        var isSubmitEnabled: Bool {
+            CredentialRules.isPasswordLongEnough(password) && !isSubmitting
+        }
     }
 
     /// Local state for the Assign or Edit Volume sheet. `editingVolumeID == nil` means add.
@@ -124,7 +129,10 @@ public struct UserManagementFeature {
         public var isSubmitting = false
         public var errorMessage: String?
 
-        var isEditing: Bool { editingVolumeID != nil }
+        var isEditing: Bool {
+            editingVolumeID != nil
+        }
+
         var isSubmitEnabled: Bool {
             !label.trimmed.isEmpty && !selectedPath.trimmed.isEmpty && !isSubmitting
         }
@@ -157,7 +165,7 @@ public struct UserManagementFeature {
         public var isSavingProfile = false
         public var isUpdatingRoles = false
 
-        // Volumes tab.
+        /// Volumes tab.
         public var volumes: IdentifiedArrayOf<UserVolume> = []
         /// The current detail user's volumes load. `.loaded` stops a user with genuinely zero
         /// volumes from hitting the endpoint again on every tab switch.
@@ -226,7 +234,9 @@ public struct UserManagementFeature {
         /// Inline error for the Profile email field. The server requires a non empty email and
         /// 409s on a duplicate; the shape check is a client side nicety.
         public var profileEmailError: String? {
-            if editEmail.trimmed.isEmpty { return L10n.UserManagement.errorEmailRequired }
+            if editEmail.trimmed.isEmpty {
+                return L10n.UserManagement.errorEmailRequired
+            }
             return CredentialRules.isEmailShaped(editEmail) ? nil : L10n.UserManagement.errorEmailInvalid
         }
 
@@ -363,7 +373,7 @@ public struct UserManagementFeature {
                 // Volumes tab can still turn up on a detail screen.
                 if !state.hasLoadedFeatures {
                     let serverURL = state.serverURL
-                    let filesClient = self.filesClient
+                    let filesClient = filesClient
                     effects.append(.run { send in
                         if let features = try? await filesClient.serverFeatures(serverURL) {
                             await send(.featuresResponse(features))
@@ -380,7 +390,9 @@ public struct UserManagementFeature {
                 state.detailErrorMessage = nil
                 state.isSavingProfile = false
                 state.isUpdatingRoles = false
-                if state.volumesPhase == .loading { state.volumesPhase = .idle }
+                if state.volumesPhase == .loading {
+                    state.volumesPhase = .idle
+                }
                 return .merge(
                     .cancel(id: CancelID.saveProfile),
                     .cancel(id: CancelID.grantRole),
@@ -392,7 +404,8 @@ public struct UserManagementFeature {
             case let .detailTabChanged(tab):
                 state.detailTab = tab
                 if tab == .volumes, state.isUserVolumesEnabled, state.volumesPhase.shouldLoadOnAppear,
-                   let id = state.detailUserID {
+                   let id = state.detailUserID
+                {
                     return loadVolumes(&state, userID: id)
                 }
                 return .none
@@ -429,9 +442,9 @@ public struct UserManagementFeature {
                     displayName: state.editDisplayName.trimmed
                 )
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.profileResponse(try await apiResult {
+                    try await send(.profileResponse(apiResult {
                         try await filesClient.updateUser(serverURL, id, request)
                     }))
                 }
@@ -455,10 +468,10 @@ public struct UserManagementFeature {
                 state.detailErrorMessage = nil
                 let request = UpdateUserRequest(roles: (Set(user.roles).union([UserRole.admin])).sorted())
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 let id = user.id
                 return .run { send in
-                    await send(.rolesResponse(try await apiResult {
+                    try await send(.rolesResponse(apiResult {
                         try await filesClient.updateUser(serverURL, id, request)
                     }))
                 }
@@ -487,9 +500,9 @@ public struct UserManagementFeature {
                 guard let user = state.userToDelete else { return .none }
                 state.userToDelete = nil
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.deleteUserResponse(user.id, try await apiResult {
+                    try await send(.deleteUserResponse(user.id, apiResult {
                         try await filesClient.deleteUser(serverURL, user.id)
                         return true
                     }))
@@ -498,7 +511,9 @@ public struct UserManagementFeature {
 
             case let .deleteUserResponse(id, .success):
                 state.users.remove(id: id)
-                if state.detailUserID == id { state.detailUserID = nil }
+                if state.detailUserID == id {
+                    state.detailUserID = nil
+                }
                 state.toast = L10n.UserManagement.toastUserRemoved
                 return .none
 
@@ -543,9 +558,9 @@ public struct UserManagementFeature {
                     isAdmin: sheet.isAdmin
                 )
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.createResponse(try await apiResult {
+                    try await send(.createResponse(apiResult {
                         try await filesClient.createUser(serverURL, request)
                     }))
                 }
@@ -584,11 +599,11 @@ public struct UserManagementFeature {
                 state.passwordSheet?.isSubmitting = true
                 state.passwordSheet?.errorMessage = nil
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 let userID = sheet.userID
                 let password = sheet.password
                 return .run { send in
-                    await send(.passwordResponse(try await apiResult {
+                    try await send(.passwordResponse(apiResult {
                         try await filesClient.setUserPassword(serverURL, userID, password)
                         return true
                     }))
@@ -644,14 +659,14 @@ public struct UserManagementFeature {
                 state.volumeSheet?.isSubmitting = true
                 state.volumeSheet?.errorMessage = nil
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 let userID = sheet.userID
                 let label = sheet.label.trimmed
                 let path = sheet.selectedPath.trimmed
                 let mode = sheet.accessMode
                 let editingID = sheet.editingVolumeID
                 return .run { send in
-                    await send(.volumeResponse(try await apiResult {
+                    try await send(.volumeResponse(apiResult {
                         if let editingID {
                             return try await filesClient.updateUserVolume(serverURL, userID, editingID, label, mode)
                         }
@@ -685,9 +700,9 @@ public struct UserManagementFeature {
                 guard let volume = state.volumeToRemove else { return .none }
                 state.volumeToRemove = nil
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.removeVolumeResponse(volume.id, try await apiResult {
+                    try await send(.removeVolumeResponse(volume.id, apiResult {
                         try await filesClient.removeUserVolume(serverURL, volume.userId, volume.id)
                         return true
                     }))
@@ -714,12 +729,14 @@ public struct UserManagementFeature {
 
     private func loadEverything(_ state: inout State) -> Effect<Action> {
         let serverURL = state.serverURL
-        let filesClient = self.filesClient
-        if state.users.isEmpty { state.phase = .loading }
+        let filesClient = filesClient
+        if state.users.isEmpty {
+            state.phase = .loading
+        }
         // Sequential, not `.merge`: the users list is the payload, the feature flag is a best
         // effort nicety that only gates a tab. Ordering also keeps the tests deterministic.
         return .run { send in
-            await send(.usersResponse(try await apiResult {
+            try await send(.usersResponse(apiResult {
                 try await filesClient.listUsers(serverURL)
             }))
             if let features = try? await filesClient.serverFeatures(serverURL) {
@@ -731,9 +748,9 @@ public struct UserManagementFeature {
 
     private func reloadUsers(_ state: inout State) -> Effect<Action> {
         let serverURL = state.serverURL
-        let filesClient = self.filesClient
+        let filesClient = filesClient
         return .run { send in
-            await send(.usersResponse(try await apiResult {
+            try await send(.usersResponse(apiResult {
                 try await filesClient.listUsers(serverURL)
             }))
         }
@@ -743,9 +760,9 @@ public struct UserManagementFeature {
     private func loadVolumes(_ state: inout State, userID: String) -> Effect<Action> {
         state.volumesPhase = .loading
         let serverURL = state.serverURL
-        let filesClient = self.filesClient
+        let filesClient = filesClient
         return .run { send in
-            await send(.volumesResponse(try await apiResult {
+            try await send(.volumesResponse(apiResult {
                 try await filesClient.userVolumes(serverURL, userID)
             }))
         }
@@ -760,7 +777,9 @@ public struct UserManagementFeature {
 }
 
 private extension String {
-    var trimmed: String { trimmingCharacters(in: .whitespacesAndNewlines) }
+    var trimmed: String {
+        trimmingCharacters(in: .whitespacesAndNewlines)
+    }
 }
 
 /// The name the list sorts and groups by: the display name if the server has one, else the

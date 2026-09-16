@@ -19,7 +19,9 @@ private enum Constants {
 struct SettingsSearchFilter {
     let query: String
 
-    var isActive: Bool { !query.isEmpty }
+    var isActive: Bool {
+        !query.isEmpty
+    }
 
     /// Whether a row/section with this label should show for the current search.
     func matches(_ label: String) -> Bool {
@@ -93,7 +95,7 @@ struct GeneralSettingsSection: View {
                     } label: {
                         Label {
                             HStack {
-                                Text(L10n.Settings.rowDateFormat).type(.body2(.regular), style: .primary(for: .label))
+                                Text(L10n.Settings.rowDateFormat).type(.body2(.regular), style: .primaryOnSurface)
                                 Spacer()
                                 Text(dateFormat.wrappedValue.title).type(.body2(.regular), style: .secondary)
                             }
@@ -112,7 +114,7 @@ struct GeneralSettingsSection: View {
                     } label: {
                         Label {
                             HStack {
-                                Text(L10n.Settings.rowLanguage).type(.body2(.regular), style: .primary(for: .label))
+                                Text(L10n.Settings.rowLanguage).type(.body2(.regular), style: .primaryOnSurface)
                                 Spacer()
                                 Text(currentLanguageLabel).type(.body2(.regular), style: .secondary)
                             }
@@ -187,7 +189,7 @@ struct DisplaySettingsSection: View {
                         }
                     } label: {
                         Label {
-                            Text(L10n.Settings.rowThumbnailSize).type(.body2(.regular), style: .primary(for: .label))
+                            Text(L10n.Settings.rowThumbnailSize).type(.body2(.regular), style: .primaryOnSurface)
                         } icon: {
                             IconKit.squareGrid
                                 .resizable()
@@ -283,7 +285,7 @@ struct LegalSettingsSection: View {
 
     @Environment(\.openURL) private var openURL
 
-    // Hosted alongside the app's site. Update these if the pages move.
+    /// Hosted alongside the app's site. Update these if the pages move.
     private enum Links {
         static let privacy = "https://phillipmaizza.com/nextexplorer/privacy.html"
         static let terms = "https://phillipmaizza.com/nextexplorer/terms.html"
@@ -307,11 +309,13 @@ struct LegalSettingsSection: View {
 
     private func legalRow(title: String, icon: Image, link: String) -> some View {
         Button {
-            if let url = URL(string: link) { openURL(url) }
+            if let url = URL(string: link) {
+                openURL(url)
+            }
         } label: {
             Label {
                 HStack {
-                    Text(title).type(.body2(.regular), style: .primary(for: .label))
+                    Text(title).type(.body2(.regular), style: .primaryOnSurface)
                     Spacer()
                     IconKit.externalLink
                         .resizable()
@@ -368,7 +372,7 @@ struct LicensesSettingsSection: View {
                         LicensesView()
                     } label: {
                         Label {
-                            Text(L10n.Settings.rowOpenSourceLicenses).type(.body2(.regular), style: .primary(for: .label))
+                            Text(L10n.Settings.rowOpenSourceLicenses).type(.body2(.regular), style: .primaryOnSurface)
                         } icon: {
                             IconKit.document
                                 .resizable()

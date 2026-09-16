@@ -12,7 +12,9 @@ public struct LocalDownload: Equatable, Identifiable, Sendable {
     public let size: Int64
     public let modifiedDate: Date
 
-    public var id: String { url.path }
+    public var id: String {
+        url.path
+    }
 
     public init(url: URL, fileName: String, location: DownloadLocation, size: Int64, modifiedDate: Date) {
         self.url = url
@@ -69,7 +71,9 @@ extension LocalDownloadStore: DependencyKey {
         while true {
             let suffixed = ext.isEmpty ? "\(base) (\(index))" : "\(base) (\(index)).\(ext)"
             let url = directory.appendingPathComponent(suffixed)
-            if !fileManager.fileExists(atPath: url.path) { return url }
+            if !fileManager.fileExists(atPath: url.path) {
+                return url
+            }
             index += 1
         }
     }

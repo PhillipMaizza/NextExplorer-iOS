@@ -1,14 +1,12 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Localization
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct EditShareFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
     private let fixedNow = Date(timeIntervalSince1970: 1_800_000_000)

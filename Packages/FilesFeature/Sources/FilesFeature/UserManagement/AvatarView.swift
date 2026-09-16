@@ -51,7 +51,7 @@ struct AvatarView: View {
             .fill(Color.accent)
             .overlay {
                 Text(initials)
-                    .type(.body1(.bold), style: .primary(for: .label))
+                    .type(.body1(.bold), style: .primaryOnSurface)
             }
     }
 }
@@ -70,4 +70,3 @@ struct AvatarView: View {
     )
     .colorScheme(.light)
 }
-

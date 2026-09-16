@@ -30,7 +30,7 @@ enum DirectoryPrefetch {
 
         await withTaskGroup(of: Void.self) { group in
             var iterator = stale.makeIterator()
-            for _ in 0..<maxConcurrent {
+            for _ in 0 ..< maxConcurrent {
                 guard let path = iterator.next() else { break }
                 group.addTask { await filesClient.prefetchDirectory(serverURL, path) }
             }

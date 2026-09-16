@@ -8,8 +8,8 @@ import Testing
 /// coordinates them all on one process-wide gate.
 struct SerializedPreviewCacheAccess: SuiteTrait, TestScoping {
     func provideScope(
-        for test: Test,
-        testCase: Test.Case?,
+        for _: Test,
+        testCase _: Test.Case?,
         performing function: @Sendable () async throws -> Void
     ) async throws {
         await Self.gate.wait()

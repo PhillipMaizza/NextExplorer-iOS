@@ -57,7 +57,7 @@ struct BrowseBreadcrumbBar: View {
     }
 
     private func cumulativePath(through index: Int) -> String {
-        ([rootPath] + pathSegments[0...index]).filter { !$0.isEmpty }.joined(separator: "/")
+        ([rootPath] + pathSegments[0 ... index]).filter { !$0.isEmpty }.joined(separator: "/")
     }
 
     /// A fixed id for the trailing edge of the bar (rather than tagging the last real

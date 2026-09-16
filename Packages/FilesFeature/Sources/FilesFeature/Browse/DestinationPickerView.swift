@@ -99,7 +99,7 @@ struct DestinationPickerView: View {
 
     @ViewBuilder
     private var browseContent: some View {
-        if store.phase == .loading && store.folders.isEmpty {
+        if store.phase == .loading, store.folders.isEmpty {
             DSSpinner()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let errorMessage = store.phase.errorMessage {
@@ -129,7 +129,7 @@ struct DestinationPickerView: View {
 
     @ViewBuilder
     private var searchContent: some View {
-        if store.isSearching && (store.searchResults?.isEmpty ?? true) {
+        if store.isSearching, store.searchResults?.isEmpty ?? true {
             DSSpinner()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let results = store.searchResults, results.isEmpty {
@@ -158,7 +158,7 @@ struct DestinationPickerView: View {
                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
             VStack(alignment: .leading, spacing: .space2) {
                 Text(name)
-                    .type(.body2(.regular), style: .primary(for: .label))
+                    .type(.body2(.regular), style: .primaryOnSurface)
                     .lineLimit(1)
                 if let subtitle {
                     Text(subtitle)

@@ -4,8 +4,8 @@ import Foundation
 import Keychain
 import NetworkClient
 
-extension AuthClient {
-    public static func live(
+public extension AuthClient {
+    static func live(
         networkClient: NetworkClient,
         keychainClient: KeychainClient,
         cookieStorage: HTTPCookieStorage
@@ -52,7 +52,7 @@ extension AuthClient {
                 )
                 components?.queryItems = [
                     URLQueryItem(name: "code_challenge", value: pkce.challenge),
-                    URLQueryItem(name: "code_challenge_method", value: "S256")
+                    URLQueryItem(name: "code_challenge_method", value: "S256"),
                 ]
                 guard let authURL = components?.url else {
                     throw AuthClientError.oidcFailed("could not build authorization URL")
@@ -115,8 +115,8 @@ extension AuthClient: DependencyKey {
     }
 }
 
-extension DependencyValues {
-    public var authClient: AuthClient {
+public extension DependencyValues {
+    var authClient: AuthClient {
         get { self[AuthClient.self] }
         set { self[AuthClient.self] = newValue }
     }

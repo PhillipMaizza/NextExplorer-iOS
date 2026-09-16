@@ -28,14 +28,16 @@ struct FileInfoSheet: View {
     let item: FileItem
     let metadata: FileMetadata?
     /// Server disk figures for a directory, when the server reported them.
-    var usage: StorageUsage? = nil
+    var usage: StorageUsage?
     let errorMessage: String?
     let onDismiss: () -> Void
 
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
     @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
 
-    private var dateFormat: DateDisplayFormat { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system }
+    private var dateFormat: DateDisplayFormat {
+        DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
+    }
 
     private static let byteFormatter: ByteCountFormatter = {
         let formatter = ByteCountFormatter()
@@ -150,7 +152,7 @@ struct FileInfoSheet: View {
     }
 
     @ViewBuilder
-    private func card<Content: View>(@ViewBuilder _ content: () -> Content) -> some View {
+    private func card(@ViewBuilder _ content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: .space8) {
             content()
         }
@@ -171,7 +173,7 @@ struct FileInfoSheet: View {
                 .fixedSize(horizontal: true, vertical: false)
             Spacer(minLength: Constants.rowMinimumGap)
             Text(value)
-                .type(.body2(.regular), style: .primary(for: .label))
+                .type(.body2(.regular), style: .primaryOnSurface)
                 .multilineTextAlignment(.trailing)
                 .lineLimit(2)
         }

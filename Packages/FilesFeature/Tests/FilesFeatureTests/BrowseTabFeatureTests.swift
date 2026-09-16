@@ -1,13 +1,11 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct BrowseTabFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
 
@@ -21,7 +19,7 @@ struct BrowseTabFeatureTests {
         }
 
         await store.send(.root(.delegate(.openFolder(item)))) {
-            $0.path.append(BrowseFeature.State(serverURL: self.serverURL, directoryPath: item.id, title: item.name))
+            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: item.id, title: item.name))
         }
     }
 
@@ -37,7 +35,7 @@ struct BrowseTabFeatureTests {
         }
 
         await store.send(.path(.element(id: 0, action: .delegate(.openFolder(nested))))) {
-            $0.path.append(BrowseFeature.State(serverURL: self.serverURL, directoryPath: nested.id, title: nested.name))
+            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: nested.id, title: nested.name))
         }
     }
 
@@ -52,7 +50,7 @@ struct BrowseTabFeatureTests {
         }
 
         await store.send(.navigateToDirectory(path: "Photos", title: "Photos")) {
-            $0.path = StackState([BrowseFeature.State(serverURL: self.serverURL, directoryPath: "Photos", title: "Photos")])
+            $0.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")])
         }
     }
 
@@ -118,7 +116,7 @@ struct BrowseTabFeatureTests {
         }
 
         await store.send(.navigateToDirectory(path: "Photos", title: "Photos")) {
-            $0.path = StackState([BrowseFeature.State(serverURL: self.serverURL, directoryPath: "Photos", title: "Photos")])
+            $0.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")])
         }
     }
 

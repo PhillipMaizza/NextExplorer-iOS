@@ -16,7 +16,9 @@ struct OpenSourceLicense: Identifiable {
     let licenseName: String
     let text: String
 
-    var id: String { name }
+    var id: String {
+        name
+    }
 }
 
 extension OpenSourceLicense {
@@ -170,7 +172,7 @@ extension OpenSourceLicense {
             FROM, OUT OF THE USE OR INABILITY TO USE THE FONT SOFTWARE OR FROM
             OTHER DEALINGS IN THE FONT SOFTWARE.
             """
-        )
+        ),
     ]
 }
 
@@ -181,7 +183,7 @@ struct LicensesView: View {
                 LicenseDetailView(license: license)
             } label: {
                 HStack {
-                    Text(license.name).type(.body2(.regular), style: .primary(for: .label))
+                    Text(license.name).type(.body2(.regular), style: .primaryOnSurface)
                     Spacer()
                     Text(license.licenseName).type(.body2(.regular), style: .secondary)
                 }
@@ -201,7 +203,7 @@ private struct LicenseDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: Constants.detailSpacing) {
-                Text(license.name).type(.headline3, style: .primary(for: .label))
+                Text(license.name).type(.headline3, style: .primaryOnSurface)
                 Text(license.licenseName).type(.body2(.regular), style: .secondary)
                 Text(license.text)
                     .type(.body3(.regular), style: .secondary)

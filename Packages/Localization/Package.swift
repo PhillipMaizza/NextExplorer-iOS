@@ -6,7 +6,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.iOS(.v18)],
     products: [
-        .library(name: "Localization", targets: ["Localization"])
+        .library(name: "Localization", targets: ["Localization"]),
     ],
     targets: [
         .target(
@@ -18,6 +18,6 @@ let package = Package(
             name: "LocalizationTests",
             dependencies: ["Localization"],
             swiftSettings: [.swiftLanguageMode(.v6)]
-        )
+        ),
     ]
 )

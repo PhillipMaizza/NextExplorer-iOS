@@ -34,14 +34,14 @@ public struct DSToastMessage: Equatable, Identifiable {
         // back-to-back (e.g. tapping two different unsupported files in a row) need distinct
         // ids or the second tap's toast silently inherits whatever time was left on the
         // first one's timer instead of a fresh window.
-        self.id = UUID().uuidString
+        id = UUID().uuidString
         self.icon = icon
         self.text = text
-        self.backgroundColor = .negative
-        self.isPersistent = false
-        self.isSuccess = false
-        self.actionTitle = nil
-        self.action = nil
+        backgroundColor = .negative
+        isPersistent = false
+        isSuccess = false
+        actionTitle = nil
+        action = nil
     }
 
     /// A persistent progress toast — no auto-dismiss timer at all, since there's no fixed
@@ -64,34 +64,34 @@ public struct DSToastMessage: Equatable, Identifiable {
     }
 
     private init(progressText: String) {
-        self.id = UUID().uuidString
-        self.icon = nil
-        self.text = progressText
-        self.backgroundColor = .secondaryDS
-        self.isPersistent = true
-        self.isSuccess = false
-        self.actionTitle = nil
-        self.action = nil
+        id = UUID().uuidString
+        icon = nil
+        text = progressText
+        backgroundColor = .secondaryDS
+        isPersistent = true
+        isSuccess = false
+        actionTitle = nil
+        action = nil
     }
 
     private init(successText: String, actionTitle: String?, action: (() -> Void)?) {
-        self.id = UUID().uuidString
-        self.icon = IconKit.checkmark
-        self.text = successText
-        self.backgroundColor = .positive
-        self.isPersistent = false
-        self.isSuccess = true
+        id = UUID().uuidString
+        icon = IconKit.checkmark
+        text = successText
+        backgroundColor = .positive
+        isPersistent = false
+        isSuccess = true
         self.actionTitle = actionTitle
         self.action = action
     }
 
     private init(failureText: String, actionTitle: String?, action: (() -> Void)?) {
-        self.id = UUID().uuidString
-        self.icon = IconKit.warning
-        self.text = failureText
-        self.backgroundColor = .negative
-        self.isPersistent = false
-        self.isSuccess = false
+        id = UUID().uuidString
+        icon = IconKit.warning
+        text = failureText
+        backgroundColor = .negative
+        isPersistent = false
+        isSuccess = false
         self.actionTitle = actionTitle
         self.action = action
     }

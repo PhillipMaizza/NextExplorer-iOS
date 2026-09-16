@@ -59,7 +59,7 @@ struct UploadsView: View {
                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
             VStack(alignment: .leading, spacing: Constants.textSpacing) {
                 Text(job.fileName)
-                    .type(.body2(.regular), style: .primary(for: .label))
+                    .type(.body2(.regular), style: .primaryOnSurface)
                     .lineLimit(1)
                     .truncationMode(.middle)
                 subtitle(job)

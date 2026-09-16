@@ -1,14 +1,12 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Localization
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct MainTabFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
     private let testDate = Date(timeIntervalSince1970: 1_000_000)
@@ -51,7 +49,7 @@ struct MainTabFeatureTests {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
         } withDependencies: {
-            $0.date = .constant(self.testDate)
+            $0.date = .constant(testDate)
             $0.filesClient.browse = { _, _ in
                 BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
             }
@@ -199,7 +197,7 @@ struct MainTabFeatureTests {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
         } withDependencies: {
-            $0.date = .constant(self.testDate)
+            $0.date = .constant(testDate)
             $0.filesClient.uploadFile = { _, _, name, dest, _ in
                 FileItem(name: name, path: dest, dateModified: Date(timeIntervalSince1970: 1), size: 1, kind: "txt")
             }

@@ -18,7 +18,10 @@ public struct FavoritesFeature {
         public var actionErrorMessage: String?
 
         /// The first load's failure text, if it's still the current state.
-        public var errorMessage: String? { phase.errorMessage }
+        public var errorMessage: String? {
+            phase.errorMessage
+        }
+
         /// `.cached` while the list on screen is an offline copy; `.live` once a fetch lands.
         public var dataSource: CachedListSource = .live
         public var searchQuery = ""
@@ -56,10 +59,14 @@ public struct FavoritesFeature {
         }
 
         /// Drag reorder only makes sense over the full, unfiltered list.
-        public var canReorder: Bool { searchQuery.isEmpty && !isSelecting }
+        public var canReorder: Bool {
+            searchQuery.isEmpty && !isSelecting
+        }
 
         /// True while a query is active, so the view swaps the favorites list for file results.
-        public var isSearching: Bool { !searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        public var isSearching: Bool {
+            !searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
 
         /// File search results with hidden entries dropped unless the preference is on.
         public var displayedSearchResults: [SearchResultItem] {
@@ -150,7 +157,8 @@ public struct FavoritesFeature {
             case let .favoritesResponse(.failure(error)):
                 // Offline with a saved copy: show it under a banner rather than an error screen.
                 if error == .offline,
-                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, as: [Favorite].self) {
+                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, as: [Favorite].self)
+                {
                     state.phase = .loaded
                     state.favorites = IdentifiedArray(cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
                     state.dataSource = .cached(fetchedAt: cached.fetchedAt)
@@ -173,9 +181,9 @@ public struct FavoritesFeature {
             case let .removeTapped(favorite):
                 state.actionErrorMessage = nil
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.removeResponse(favorite.id, try await apiResult {
+                    try await send(.removeResponse(favorite.id, apiResult {
                         try await filesClient.removeFavorite(serverURL, favorite.path)
                         return true
                     }), animation: .default)
@@ -212,9 +220,9 @@ public struct FavoritesFeature {
                 state.actionErrorMessage = nil
                 let orderedIDs = items.map(\.id)
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.reorderResponse(try await apiResult {
+                    try await send(.reorderResponse(apiResult {
                         try await filesClient.reorderFavorites(serverURL, orderedIDs)
                     }))
                 }
@@ -394,14 +402,15 @@ public struct FavoritesFeature {
         // only a failed one (offline) surfaces the "saved copy" banner, so `dataSource` stays
         // `.live` here.
         if !state.phase.hasLoaded, state.favorites.isEmpty,
-           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, as: [Favorite].self) {
+           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, as: [Favorite].self)
+        {
             state.favorites = IdentifiedArray(cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
         }
         state.phase = .loading
         let serverURL = state.serverURL
-        let filesClient = self.filesClient
+        let filesClient = filesClient
         return .run { send in
-            await send(.favoritesResponse(try await apiResult { try await filesClient.favorites(serverURL) }))
+            try await send(.favoritesResponse(apiResult { try await filesClient.favorites(serverURL) }))
         }
         .cancellable(id: CancelID.load, cancelInFlight: true)
     }
@@ -427,8 +436,8 @@ public struct FavoritesFeature {
         // current rows on screen while the new fan out runs.
         state.searchPhase = state.fileSearchResults == nil ? .loading : .loaded
         let serverURL = state.serverURL
-        let filesClient = self.filesClient
-        let clock = self.clock
+        let filesClient = filesClient
+        let clock = clock
         return .run { send in
             try await clock.sleep(for: Constants.searchDebounce)
             let outcomes = try await withThrowingTaskGroup(of: Result<[SearchResultItem], FilesClientError>.self) { group in
@@ -438,12 +447,16 @@ public struct FavoritesFeature {
                     }
                 }
                 var acc: [Result<[SearchResultItem], FilesClientError>] = []
-                for try await outcome in group { acc.append(outcome) }
+                for try await outcome in group {
+                    acc.append(outcome)
+                }
                 return acc
             }
             let hits = outcomes.compactMap { try? $0.get() }.flatMap { $0 }
             let firstFailure = outcomes.compactMap { outcome -> FilesClientError? in
-                if case let .failure(error) = outcome { return error }
+                if case let .failure(error) = outcome {
+                    return error
+                }
                 return nil
             }.first
             // Surface an error (retryable) only when nothing came back and at least one favorite
@@ -470,13 +483,11 @@ public struct FavoritesFeature {
         let targets = state.favorites.filter { state.selectedFavoriteIDs.contains($0.id) }
         guard !targets.isEmpty else { return .none }
         let serverURL = state.serverURL
-        let filesClient = self.filesClient
+        let filesClient = filesClient
         return .run { send in
             var removedPaths: [String] = []
-            for favorite in targets {
-                if (try? await filesClient.removeFavorite(serverURL, favorite.path)) != nil {
-                    removedPaths.append(favorite.path)
-                }
+            for favorite in targets where await (try? filesClient.removeFavorite(serverURL, favorite.path)) != nil {
+                removedPaths.append(favorite.path)
             }
             await send(.bulkRemoveResponse(removedPaths), animation: .default)
         }

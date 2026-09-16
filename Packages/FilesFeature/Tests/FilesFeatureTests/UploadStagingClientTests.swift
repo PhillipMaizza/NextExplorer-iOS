@@ -1,9 +1,7 @@
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
-@Suite
 struct UploadStagingClientTests {
     @Test
     func discardDeletesStagedFilesAndIgnoresMissingOnes() async throws {

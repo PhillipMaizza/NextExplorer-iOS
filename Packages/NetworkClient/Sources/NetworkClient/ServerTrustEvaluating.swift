@@ -10,7 +10,7 @@ public protocol ServerTrustEvaluating: Sendable {
 public struct DefaultServerTrustEvaluator: ServerTrustEvaluating {
     public init() {}
 
-    public func evaluate(_ challenge: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+    public func evaluate(_: URLAuthenticationChallenge) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         (.performDefaultHandling, nil)
     }
 }

@@ -78,7 +78,7 @@ extension ThumbnailCache: DependencyKey {
             // threads and cancels cleanly when the owning view's `.task` is torn down.
             let (downloadedURL, response) = try await URLSession.shared.download(from: url)
             defer { try? FileManager.default.removeItem(at: downloadedURL) }
-            guard let httpResponse = response as? HTTPURLResponse, 200..<300 ~= httpResponse.statusCode else {
+            guard let httpResponse = response as? HTTPURLResponse, 200 ..< 300 ~= httpResponse.statusCode else {
                 throw URLError(.badServerResponse)
             }
             let downloadedSize = (try? downloadedURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
@@ -93,7 +93,8 @@ extension ThumbnailCache: DependencyKey {
         resolvedURL: { path, signature, resolve in
             let recordURL = try? resolutionRecordURL(for: path)
             if let recordURL,
-               let record = try? String(contentsOf: recordURL, encoding: .utf8) {
+               let record = try? String(contentsOf: recordURL, encoding: .utf8)
+            {
                 let parts = record.components(separatedBy: resolutionRecordSeparator)
                 if parts.count == 2, parts[0] == signature {
                     return parts[1].isEmpty ? nil : URL(string: parts[1])

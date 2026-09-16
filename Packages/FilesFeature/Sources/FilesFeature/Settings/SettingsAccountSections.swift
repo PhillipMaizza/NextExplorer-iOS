@@ -32,7 +32,7 @@ struct SettingsProfileSection: View {
                 AvatarView(displayName: store.displayName, size: Constants.avatarSize)
 
                 VStack(alignment: .leading, spacing: .space2) {
-                    Text(store.displayName).type(.body2(.bold), style: .primary(for: .label))
+                    Text(store.displayName).type(.body2(.bold), style: .primaryOnSurface)
                     if let email = store.user.email {
                         Text(email).type(.body3(.regular), style: .secondary).lineLimit(1).truncationMode(.tail)
                     }
@@ -71,7 +71,11 @@ struct SettingsProfileSection: View {
     }
 
     private var serverHostAccessory: DSNavigationRow.Accessory {
-        if let host = store.serverURL.host { .detail(host) } else { .none }
+        if let host = store.serverURL.host {
+            .detail(host)
+        } else {
+            .none
+        }
     }
 
     /// Self service password change (`POST /api/auth/password`). No profile editing here: the
@@ -160,12 +164,12 @@ struct SettingsServerStorageSection: View {
     let store: StoreOf<SettingsFeature>
 
     var body: some View {
-        if store.isVolumeUsageEnabled && !store.serverUsage.isEmpty {
+        if store.isVolumeUsageEnabled, !store.serverUsage.isEmpty {
             Section {
                 ForEach(store.serverUsage) { row in
                     VStack(alignment: .leading, spacing: .space8) {
                         HStack {
-                            Text(row.volume.name).type(.body2(.regular), style: .primary(for: .label))
+                            Text(row.volume.name).type(.body2(.regular), style: .primaryOnSurface)
                             Spacer()
                             if let usage = row.usage, usage.isMeaningful {
                                 Text(usageCaption(usage)).type(.body3(.regular), style: .secondary)

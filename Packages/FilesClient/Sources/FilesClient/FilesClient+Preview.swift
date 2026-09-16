@@ -1,8 +1,8 @@
 import CoreModels
 import Foundation
 
-extension FilesClient {
-    public static let previewValue = FilesClient(
+public extension FilesClient {
+    static let previewValue = FilesClient(
         browse: { _, path in
             BrowseResult(
                 items: FileItem.previewItems,
@@ -134,11 +134,10 @@ extension FilesClient {
         sharedWithMeLinks: { _ in Share.previewSharedWithMe },
         updateShareLink: { _, shareID, request in
             let base = Share.previewSharedByMe.first { $0.id == shareID } ?? Share.previewSharedByMe[0]
-            let hasPassword: Bool
-            switch request.password {
-            case .keep: hasPassword = base.hasPassword
-            case .remove: hasPassword = false
-            case .set: hasPassword = true
+            let hasPassword: Bool = switch request.password {
+            case .keep: base.hasPassword
+            case .remove: false
+            case .set: true
             }
             return Share(
                 id: base.id, shareToken: base.shareToken, ownerId: base.ownerId,
@@ -154,7 +153,7 @@ extension FilesClient {
         shareableUsers: { _ in
             [
                 User(id: "u2", username: "jamie", email: "jamie@example.com", displayName: "Jamie Rivera"),
-                User(id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor")
+                User(id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor"),
             ]
         },
         resolveShareLink: { _, token in
@@ -167,7 +166,7 @@ extension FilesClient {
                 thumbnails: ThumbnailSettings(),
                 accessRules: [
                     AccessRule(id: "r1", path: "Documents/Reports", isRecursive: true, permission: .readOnly),
-                    AccessRule(id: "r2", path: "Private", isRecursive: false, permission: .hidden)
+                    AccessRule(id: "r2", path: "Private", isRecursive: false, permission: .hidden),
                 ]
             )
         },
@@ -234,15 +233,15 @@ extension FilesClient {
                 directories: [
                     AdminDirectory(name: "projects", path: base + "/projects"),
                     AdminDirectory(name: "media", path: base + "/media"),
-                    AdminDirectory(name: "backups", path: base + "/backups")
+                    AdminDirectory(name: "backups", path: base + "/backups"),
                 ]
             )
         }
     )
 }
 
-extension User {
-    public static let previewManagedUsers: [User] = [
+public extension User {
+    static let previewManagedUsers: [User] = [
         User(
             id: "u1", username: "admin", email: "admin@example.com", displayName: "Site Admin",
             roles: ["admin"], emailVerified: true, createdAt: Date(timeIntervalSinceNow: -86_400 * 90),
@@ -257,15 +256,15 @@ extension User {
             id: "u3", username: "sam", email: "sam@example.com", displayName: "Sam Okafor",
             roles: [], emailVerified: false, createdAt: Date(timeIntervalSinceNow: -86_400 * 5),
             updatedAt: Date(), authMethods: [AuthMethod(method: "oidc", provider: "Google")]
-        )
+        ),
     ]
 }
 
-extension UserVolume {
-    public static func previewVolumes(userID: String) -> [UserVolume] {
+public extension UserVolume {
+    static func previewVolumes(userID: String) -> [UserVolume] {
         [
             UserVolume(id: "v1", userId: userID, label: "Projects", path: "/srv/volumes/projects", accessMode: .readwrite, createdAt: Date(), updatedAt: Date()),
-            UserVolume(id: "v2", userId: userID, label: "Archive", path: "/srv/volumes/archive", accessMode: .readonly, createdAt: Date(), updatedAt: Date())
+            UserVolume(id: "v2", userId: userID, label: "Archive", path: "/srv/volumes/archive", accessMode: .readonly, createdAt: Date(), updatedAt: Date()),
         ]
     }
 }
@@ -293,7 +292,7 @@ extension Share {
             accessMode: .readonly, sharingType: .anyone, hasPassword: false,
             expiresAt: Date().addingTimeInterval(-86_400), label: "invoice.pdf",
             downloadCount: 12, lastAccessedAt: nil, createdAt: Date(), updatedAt: Date()
-        )
+        ),
     ]
 
     static let previewSharedWithMe: [Share] = [
@@ -303,7 +302,7 @@ extension Share {
             accessMode: .readwrite, sharingType: .users, hasPassword: false,
             expiresAt: nil, label: "Team Roadmap", downloadCount: 0,
             lastAccessedAt: nil, createdAt: Date(), updatedAt: Date()
-        )
+        ),
     ]
 }
 
@@ -312,19 +311,19 @@ extension FileItem {
         FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory"),
         FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory"),
         FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
-        FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 1_024, kind: "txt")
+        FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 1_024, kind: "txt"),
     ]
 }
 
 extension Favorite {
     static let previewFavorites: [Favorite] = [
-        Favorite(id: "1", path: "Documents", label: "Documents", icon: "folder", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+        Favorite(id: "1", path: "Documents", label: "Documents", icon: "folder", color: nil, position: 0, createdAt: Date(), updatedAt: Date()),
     ]
 }
 
 extension Volume {
     static let previewVolumes: [Volume] = [
         Volume(name: "media", path: "media"),
-        Volume(name: "home", path: "home")
+        Volume(name: "home", path: "home"),
     ]
 }

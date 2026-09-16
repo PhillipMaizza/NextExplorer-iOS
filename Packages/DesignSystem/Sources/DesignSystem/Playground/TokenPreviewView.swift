@@ -3,8 +3,8 @@ import SwiftUI
 struct TokenPreviewView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: .space12) {
-            Text("Headline").type(.headline1, style: .primary(for: .label))
-            Text("Body").type(.body1(.semibold), style: .primary(for: .label))
+            Text("Headline").type(.headline1, style: .primaryOnSurface)
+            Text("Body").type(.body1(.semibold), style: .primaryOnSurface)
             Text("Label").type(.label1, style: .secondary)
 
             let swatches: [Color] = [.accent, .positive, .attention, .negative]
@@ -31,7 +31,7 @@ private struct TypographyPreviewView: View {
         ("body1", .body1(.bold)),
         ("body2", .body2(.bold)),
         ("button", .label1),
-        ("label1", .label1)
+        ("label1", .label1),
     ]
 
     var body: some View {
@@ -39,7 +39,7 @@ private struct TypographyPreviewView: View {
             ForEach(rows, id: \.name) { row in
                 VStack(alignment: .leading, spacing: .space4) {
                     Text("The quick brown fox — 0123456789")
-                        .type(row.type, style: .primary(for: .label))
+                        .type(row.type, style: .primaryOnSurface)
                     Text("\(row.name)  \(Int(row.type.size))pt  \(String(describing: row.type.weight))")
                         .type(.label1, style: .secondary)
                 }

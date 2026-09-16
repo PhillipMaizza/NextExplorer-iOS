@@ -1,6 +1,6 @@
+@testable import CoreModels
 import Foundation
 import Testing
-@testable import CoreModels
 
 @Suite("FileClipboard.canPaste")
 struct FileClipboardTests {
@@ -36,7 +36,7 @@ struct FileClipboardTests {
 
     @Test("move is blocked into the item's own parent and into a folder being moved")
     func moveGuards() {
-        let file = FileClipboard(items: [self.file("a.txt", path: "Inbox")], operation: .move)
+        let file = FileClipboard(items: [file("a.txt", path: "Inbox")], operation: .move)
         #expect(file.canPaste(into: "Inbox", canWrite: true) == false)
         #expect(file.canPaste(into: "Documents", canWrite: true) == true)
 

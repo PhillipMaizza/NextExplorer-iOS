@@ -127,7 +127,9 @@ struct SharedView: View {
             }
             .onChange(of: store.externalRevision) { _, _ in store.send(.externalRevisionChanged) }
             .onChange(of: store.actionErrorMessage) { _, newValue in
-                if let newValue { toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue) }
+                if let newValue {
+                    toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue)
+                }
             }
         }
         .tint(Color.accent)

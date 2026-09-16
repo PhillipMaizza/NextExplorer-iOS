@@ -1,13 +1,11 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct SharedFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
 
@@ -52,7 +50,7 @@ struct SharedFeatureTests {
     func offlineFallsBackToTheSavedCopyForTheSegment() async throws {
         let cache = JSONCacheStore.inMemory()
         let share = makeShare(id: "s1")
-        cache.write(key: ListCache.key("shares.byMe", serverURL: serverURL), data: try JSONEncoder().encode([share]))
+        try cache.write(key: ListCache.key("shares.byMe", serverURL: serverURL), data: JSONEncoder().encode([share]))
 
         let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
             SharedFeature()

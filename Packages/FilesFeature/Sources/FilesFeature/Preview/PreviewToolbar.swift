@@ -51,7 +51,9 @@ private struct PreviewChrome: ViewModifier {
     let onClose: () -> Void
 
     private var hasSystemShare: Bool {
-        if case .unavailable = systemShare { return false }
+        if case .unavailable = systemShare {
+            return false
+        }
         return true
     }
 
@@ -109,8 +111,12 @@ struct SystemShareButton: View {
     @State private var didFail = false
 
     private var isDisabled: Bool {
-        if case .local(nil) = source { return true }
-        if case .unavailable = source { return true }
+        if case .local(nil) = source {
+            return true
+        }
+        if case .unavailable = source {
+            return true
+        }
         return isPreparing
     }
 
@@ -134,7 +140,9 @@ struct SystemShareButton: View {
         case .unavailable:
             break
         case let .local(url):
-            if let url { shareURL = IdentifiedURL(url: url) }
+            if let url {
+                shareURL = IdentifiedURL(url: url)
+            }
         case let .remote(item, serverURL):
             guard !isPreparing else { return }
             isPreparing = true
@@ -159,9 +167,9 @@ struct IdentifiedURL: Identifiable {
 private struct ActivityShareSheet: UIViewControllerRepresentable {
     let items: [Any]
 
-    func makeUIViewController(context: Context) -> UIActivityViewController {
+    func makeUIViewController(context _: Context) -> UIActivityViewController {
         UIActivityViewController(activityItems: items, applicationActivities: nil)
     }
 
-    func updateUIViewController(_ controller: UIActivityViewController, context: Context) {}
+    func updateUIViewController(_: UIActivityViewController, context _: Context) {}
 }

@@ -5,13 +5,13 @@ let package = Package(
     name: "AuthClient",
     platforms: [.iOS(.v18)],
     products: [
-        .library(name: "AuthClient", targets: ["AuthClient"])
+        .library(name: "AuthClient", targets: ["AuthClient"]),
     ],
     dependencies: [
         .package(path: "../CoreModels"),
         .package(path: "../Keychain"),
         .package(path: "../NetworkClient"),
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.5.0")
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.5.0"),
     ],
     targets: [
         .target(
@@ -21,7 +21,7 @@ let package = Package(
                 "Keychain",
                 "NetworkClient",
                 .product(name: "Dependencies", package: "swift-dependencies"),
-                .product(name: "DependenciesMacros", package: "swift-dependencies")
+                .product(name: "DependenciesMacros", package: "swift-dependencies"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
@@ -29,6 +29,6 @@ let package = Package(
             name: "AuthClientTests",
             dependencies: ["AuthClient"],
             swiftSettings: [.swiftLanguageMode(.v6)]
-        )
+        ),
     ]
 )

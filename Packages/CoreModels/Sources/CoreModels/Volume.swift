@@ -6,7 +6,9 @@ public struct Volume: Codable, Equatable, Identifiable, Sendable {
     public let path: String
     public let accessMode: String?
 
-    public var id: String { path }
+    public var id: String {
+        path
+    }
 
     public init(name: String, path: String, accessMode: String? = nil) {
         self.name = name

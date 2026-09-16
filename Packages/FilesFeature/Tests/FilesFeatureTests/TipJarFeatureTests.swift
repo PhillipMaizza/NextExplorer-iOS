@@ -1,11 +1,9 @@
 import ComposableArchitecture
+@testable import FilesFeature
 import Localization
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct TipJarFeatureTests {
     private let sample = [
         TipProduct(id: TipProductID.coffee, displayName: "Coffee", displayPrice: "$0.99"),
@@ -22,7 +20,7 @@ struct TipJarFeatureTests {
         }
         await store.send(.task) { $0.productsPhase = .loading }
         await store.receive(\.productsResponse) {
-            $0.products = self.sample
+            $0.products = sample
             $0.productsPhase = .loaded
         }
     }

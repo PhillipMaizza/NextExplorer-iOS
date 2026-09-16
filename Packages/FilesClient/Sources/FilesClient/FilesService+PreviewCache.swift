@@ -50,7 +50,8 @@ extension FilesService {
         let slot = previewCacheSlot(for: item)
         guard FileManager.default.fileExists(atPath: slot.fileURL.path),
               let cachedMeta = try? String(contentsOf: slot.metaURL, encoding: .utf8),
-              cachedMeta == Self.cacheMetaValue(for: item) else {
+              cachedMeta == Self.cacheMetaValue(for: item)
+        else {
             return nil
         }
         return slot.fileURL
@@ -100,7 +101,8 @@ extension FilesService {
 
         if FileManager.default.fileExists(atPath: fileURL.path),
            let cachedMeta = try? String(contentsOf: metaURL, encoding: .utf8),
-           cachedMeta == Self.cacheMetaValue(for: item) {
+           cachedMeta == Self.cacheMetaValue(for: item)
+        {
             return fileURL
         }
 
@@ -119,7 +121,7 @@ extension FilesService {
         _ request: URLRequest, directory: URL, fileURL: URL, metaURL: URL, item: FileItem,
         lowPriority: Bool = false
     ) async throws -> URL {
-        let networkClient = self.networkClient
+        let networkClient = networkClient
         return try await downloadCoordinator.run(forFileAt: fileURL) {
             let downloadedURL: URL
             let response: HTTPURLResponse
@@ -172,8 +174,8 @@ extension FilesService {
         ) else { return }
         let root = cachesDirectory.appendingPathComponent(Self.previewCacheRootDirectory, isDirectory: true)
 
-        /// A single evictable unit removed atomically: a per item preview/download directory, or
-        /// a lone thumbnail file. `url` is whatever `removeItem` should delete.
+        // A single evictable unit removed atomically: a per item preview/download directory, or
+        // a lone thumbnail file. `url` is whatever `removeItem` should delete.
         struct Slot {
             let url: URL
             let modified: Date

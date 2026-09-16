@@ -27,7 +27,9 @@ public struct TipProduct: Equatable, Identifiable, Sendable {
     public let id: String
     public let displayName: String
     public let displayPrice: String
-    public var emoji: String { TipProductID.emoji(for: id) }
+    public var emoji: String {
+        TipProductID.emoji(for: id)
+    }
 
     public init(id: String, displayName: String, displayPrice: String) {
         self.id = id
@@ -95,8 +97,8 @@ extension StoreKitTipClient: DependencyKey {
     )
 }
 
-extension DependencyValues {
-    public var storeKitTipClient: StoreKitTipClient {
+public extension DependencyValues {
+    var storeKitTipClient: StoreKitTipClient {
         get { self[StoreKitTipClient.self] }
         set { self[StoreKitTipClient.self] = newValue }
     }

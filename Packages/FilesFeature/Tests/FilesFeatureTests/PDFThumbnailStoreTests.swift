@@ -1,11 +1,10 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Testing
 import UIKit
-
-@testable import FilesFeature
 
 @MainActor
 @Suite(.serialized)
@@ -50,21 +49,27 @@ struct PDFThumbnailStoreTests {
     }
 
     private func waitForReady(_ entry: PDFThumbnailStore.Entry) async -> UIImage? {
-        for _ in 0..<40 {
-            if case let .ready(image) = entry.state { return image }
+        for _ in 0 ..< 40 {
+            if case let .ready(image) = entry.state {
+                return image
+            }
             try? await Task.sleep(for: .milliseconds(50))
         }
-        if case let .ready(image) = entry.state { return image }
+        if case let .ready(image) = entry.state {
+            return image
+        }
         return nil
     }
 
     private func isUnavailable(_ entry: PDFThumbnailStore.Entry) -> Bool {
-        if case .unavailable = entry.state { return true }
+        if case .unavailable = entry.state {
+            return true
+        }
         return false
     }
 
     @Test
-    func loadFetchesRendersAndPublishesTheImageOnce() async throws {
+    func loadFetchesRendersAndPublishesTheImageOnce() async {
         let store = PDFThumbnailStore()
         let pdfURL = makePDF()
         defer { try? FileManager.default.removeItem(at: pdfURL) }
@@ -90,7 +95,7 @@ struct PDFThumbnailStoreTests {
     }
 
     @Test
-    func loadMarksFilesOverTheSizeCapUnavailableWithoutFetching() async throws {
+    func loadMarksFilesOverTheSizeCapUnavailableWithoutFetching() {
         let store = PDFThumbnailStore()
         let fetchCount = LockIsolated(0)
         var client = FilesClient.previewValue
@@ -126,7 +131,7 @@ struct PDFThumbnailStoreTests {
 
         let entry = load(store, key: key, item: file, client: client, cache: cache)
 
-        for _ in 0..<40 where !isUnavailable(entry) {
+        for _ in 0 ..< 40 where !isUnavailable(entry) {
             try? await Task.sleep(for: .milliseconds(50))
         }
         #expect(isUnavailable(entry))

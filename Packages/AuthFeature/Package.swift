@@ -5,14 +5,14 @@ let package = Package(
     name: "AuthFeature",
     platforms: [.iOS(.v18)],
     products: [
-        .library(name: "AuthFeature", targets: ["AuthFeature"])
+        .library(name: "AuthFeature", targets: ["AuthFeature"]),
     ],
     dependencies: [
         .package(path: "../CoreModels"),
         .package(path: "../AuthClient"),
         .package(path: "../DesignSystem"),
         .package(path: "../Localization"),
-        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0")
+        .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
     ],
     targets: [
         .target(
@@ -22,7 +22,7 @@ let package = Package(
                 "AuthClient",
                 "DesignSystem",
                 "Localization",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
@@ -30,9 +30,9 @@ let package = Package(
             name: "AuthFeatureTests",
             dependencies: [
                 "AuthFeature",
-                .product(name: "ComposableArchitecture", package: "swift-composable-architecture")
+                .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
-        )
+        ),
     ]
 )

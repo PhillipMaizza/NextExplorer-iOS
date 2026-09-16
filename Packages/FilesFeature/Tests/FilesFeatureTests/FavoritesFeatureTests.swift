@@ -1,14 +1,12 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Localization
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct FavoritesFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
 
@@ -66,7 +64,7 @@ struct FavoritesFeatureTests {
         }
 
         await store.send(.rowTapped(favorite)) {
-            $0.path.append(BrowseFeature.State(serverURL: self.serverURL, directoryPath: "Photos/Vacation", title: "My Trip"))
+            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Vacation", title: "My Trip"))
         }
     }
 
@@ -78,7 +76,7 @@ struct FavoritesFeatureTests {
         }
 
         await store.send(.rowTapped(favorite)) {
-            $0.path.append(BrowseFeature.State(serverURL: self.serverURL, directoryPath: "Photos/Vacation", title: "Vacation"))
+            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Vacation", title: "Vacation"))
         }
     }
 
@@ -86,7 +84,7 @@ struct FavoritesFeatureTests {
     func offlineFallsBackToTheSavedCopyUnderTheBanner() async throws {
         let cache = JSONCacheStore.inMemory()
         let fav = makeFavorite(id: "1", path: "Docs")
-        cache.write(key: ListCache.key("favorites", serverURL: serverURL), data: try JSONEncoder().encode([fav]))
+        try cache.write(key: ListCache.key("favorites", serverURL: serverURL), data: JSONEncoder().encode([fav]))
 
         let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
             FavoritesFeature()
@@ -165,7 +163,7 @@ struct FavoritesFeatureTests {
         }
 
         await store.send(.path(.element(id: 0, action: .delegate(.openFolder(subfolder))))) {
-            $0.path.append(BrowseFeature.State(serverURL: self.serverURL, directoryPath: "Photos/2020", title: "2020"))
+            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/2020", title: "2020"))
         }
     }
 
@@ -238,7 +236,7 @@ struct FavoritesFeatureTests {
         }
 
         await store.send(.navigateToDirectory(path: "Music", title: "Music")) {
-            $0.path = StackState([BrowseFeature.State(serverURL: self.serverURL, directoryPath: "Music", title: "Music")])
+            $0.path = StackState([BrowseFeature.State(serverURL: serverURL, directoryPath: "Music", title: "Music")])
         }
     }
 
@@ -408,7 +406,7 @@ struct FavoritesFeatureTests {
         let store = TestStore(initialState: state) { FavoritesFeature() }
 
         await store.send(.editTapped(favorite)) {
-            $0.editSheet = FavoriteEditFeature.State(serverURL: self.serverURL, favorite: favorite)
+            $0.editSheet = FavoriteEditFeature.State(serverURL: serverURL, favorite: favorite)
         }
 
         let updated = Favorite(

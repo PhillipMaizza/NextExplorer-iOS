@@ -41,7 +41,9 @@ final class PDFThumbnailStore {
         case unavailable
 
         var isReady: Bool {
-            if case .ready = self { return true }
+            if case .ready = self {
+                return true
+            }
             return false
         }
     }

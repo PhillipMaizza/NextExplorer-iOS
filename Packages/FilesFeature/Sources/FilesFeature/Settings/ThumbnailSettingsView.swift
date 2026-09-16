@@ -50,7 +50,7 @@ struct ThumbnailSettingsView: View {
         .navigationTitle(L10n.ThumbnailSettings.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .overlay {
-            if store.phase == .loading && store.loaded == nil && !store.isUnavailable {
+            if store.phase == .loading, store.loaded == nil, !store.isUnavailable {
                 DSSpinner()
             }
         }
@@ -130,10 +130,10 @@ struct ThumbnailSettingsView: View {
                             .resizable().scaledToFit()
                             .foregroundStyle(Color.secondaryDS)
                             .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                        Text(title).type(.body2(.regular), style: .primary(for: .label))
+                        Text(title).type(.body2(.regular), style: .primaryOnSurface)
                         Spacer(minLength: Metrics.rowIconSpacing)
                         Text(unit.map { "\(value) \($0)" } ?? "\(value)")
-                            .type(.body2(.semibold), style: .primary(for: .label))
+                            .type(.body2(.semibold), style: .primaryOnSurface)
                             .monospacedDigit()
                     }
                 }

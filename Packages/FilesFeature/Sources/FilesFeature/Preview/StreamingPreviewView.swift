@@ -43,7 +43,7 @@ struct StreamingPreviewView: View {
         // stream 401s (an unplayable "no entry" player). Pass the matching cookies explicitly.
         let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
         let asset = AVURLAsset(url: url, options: [AVURLAssetHTTPCookiesKey: cookies])
-        self._player = State(initialValue: AVPlayer(playerItem: AVPlayerItem(asset: asset)))
+        _player = State(initialValue: AVPlayer(playerItem: AVPlayerItem(asset: asset)))
     }
 
     var body: some View {
@@ -84,12 +84,16 @@ struct StreamingPreviewView: View {
             )
         }
         .onReceive(player.publisher(for: \.rate)) { rate in
-            if rate != 0 { hasStartedPlaying = true }
+            if rate != 0 {
+                hasStartedPlaying = true
+            }
         }
         .onAppear {
             // Only video gets free rotation — an audio-only stream has nothing worth
             // rotating for, so it stays locked to portrait like every non-media screen.
-            if item.isVideo { OrientationLock.shared.unlock() }
+            if item.isVideo {
+                OrientationLock.shared.unlock()
+            }
             // `setCategory` can block — AVFoundation warns against calling it synchronously
             // on the main thread while a session may already be active. `play()` itself must
             // stay on the main actor for `VideoPlayer` to observe it.
@@ -99,7 +103,9 @@ struct StreamingPreviewView: View {
             player.play()
         }
         .onDisappear {
-            if item.isVideo { OrientationLock.shared.lock() }
+            if item.isVideo {
+                OrientationLock.shared.lock()
+            }
             player.pause()
             Task.detached(priority: .userInitiated) {
                 try? AVAudioSession.sharedInstance().setCategory(.ambient)

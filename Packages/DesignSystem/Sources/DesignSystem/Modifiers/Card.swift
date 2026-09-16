@@ -27,9 +27,9 @@ public extension View {
 
 #Preview {
     VStack(spacing: .space16) {
-        Text("A card").type(.body2(.regular), style: .primary(for: .label)).dsCard()
+        Text("A card").type(.body2(.regular), style: .primaryOnSurface).dsCard()
         VStack(alignment: .leading, spacing: .space8) {
-            Text("Title").type(.body2(.bold), style: .primary(for: .label))
+            Text("Title").type(.body2(.bold), style: .primaryOnSurface)
             Text("Detail line").type(.body3(.regular), style: .secondary)
         }
         .dsCard()

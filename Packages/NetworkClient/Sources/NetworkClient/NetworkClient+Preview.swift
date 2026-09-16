@@ -7,7 +7,7 @@ private enum Constants {
 }
 
 extension NetworkClient {
-    public static let previewValue: NetworkClient = NetworkClient(
+    public static let previewValue: NetworkClient = .init(
         send: { request in
             try Self.cannedResponse(for: request)
         },

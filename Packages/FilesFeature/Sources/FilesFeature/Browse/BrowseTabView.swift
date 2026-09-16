@@ -62,7 +62,7 @@ struct BrowseTabView: View {
 
     @ViewBuilder
     private var breadcrumbBar: some View {
-        if !currentDirectoryPath.isEmpty && !isTopScreenSelecting {
+        if !currentDirectoryPath.isEmpty, !isTopScreenSelecting {
             BrowseBreadcrumbBar(directoryPath: currentDirectoryPath) { path, title in
                 store.send(.navigateToDirectory(path: path, title: title))
             }

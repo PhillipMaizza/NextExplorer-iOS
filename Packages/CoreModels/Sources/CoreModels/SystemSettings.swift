@@ -12,9 +12,9 @@ public struct ThumbnailSettings: Equatable, Sendable, Decodable {
     /// How many thumbnails the server builds concurrently.
     public var concurrency: Int
 
-    public static let sizeRange = 64...1024
-    public static let qualityRange = 1...100
-    public static let concurrencyRange = 1...50
+    public static let sizeRange = 64 ... 1024
+    public static let qualityRange = 1 ... 100
+    public static let concurrencyRange = 1 ... 50
 
     public init(isEnabled: Bool = true, size: Int = 200, quality: Int = 70, concurrency: Int = 10) {
         self.isEnabled = isEnabled

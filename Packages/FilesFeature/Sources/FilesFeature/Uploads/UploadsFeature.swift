@@ -22,7 +22,11 @@ public struct UploadsFeature {
             }
 
             var isFailed: Bool {
-                if case .failed = self { true } else { false }
+                if case .failed = self {
+                    true
+                } else {
+                    false
+                }
             }
         }
 
@@ -34,7 +38,7 @@ public struct UploadsFeature {
         public var status: Status
         /// When the job last entered `.uploading`. Used only to spot a job that has been
         /// "uploading" implausibly long across a background/resume so it can be restarted.
-        public var startedAt: Date? = nil
+        public var startedAt: Date?
     }
 
     /// Reported to the parent when the queue drains: what to toast, and which folders to
@@ -62,12 +66,14 @@ public struct UploadsFeature {
         }
 
         public var failedCount: Int {
-            jobs.filter { $0.status.isFailed }.count
+            jobs.filter(\.status.isFailed).count
         }
 
         /// The bar stays up while uploads run *and* while failures are waiting to be retried
         /// or dismissed.
-        public var isBarVisible: Bool { isActive || failedCount > 0 }
+        public var isBarVisible: Bool {
+            isActive || failedCount > 0
+        }
 
         var currentJob: UploadJob? {
             jobs.first { $0.status == .uploading }
@@ -199,7 +205,9 @@ public struct UploadsFeature {
             case let .cancelJobTapped(id):
                 let stagedURL = state.jobs[id: id]?.fileURL
                 state.jobs.remove(id: id)
-                if state.jobs.isEmpty { state.isSheetPresented = false }
+                if state.jobs.isEmpty {
+                    state.isSheetPresented = false
+                }
                 return .merge(
                     .cancel(id: CancelID.job(id)),
                     discard(stagedURL.map { [$0] } ?? []),
@@ -220,7 +228,7 @@ public struct UploadsFeature {
                 return .send(.startNextIfIdle)
 
             case .retryAllFailedTapped:
-                let failed = state.jobs.filter { $0.status.isFailed }
+                let failed = state.jobs.filter(\.status.isFailed)
                 guard !failed.isEmpty else { return .none }
                 for job in failed {
                     state.jobs[id: job.id]?.status = .queued
@@ -229,9 +237,11 @@ public struct UploadsFeature {
                 return .send(.startNextIfIdle)
 
             case .clearFinishedTapped:
-                let stagedURLs = state.jobs.filter { $0.status.isTerminal }.map(\.fileURL)
+                let stagedURLs = state.jobs.filter(\.status.isTerminal).map(\.fileURL)
                 state.jobs.removeAll { $0.status.isTerminal }
-                if state.jobs.isEmpty { state.isSheetPresented = false }
+                if state.jobs.isEmpty {
+                    state.isSheetPresented = false
+                }
                 return discard(stagedURLs)
 
             case let .sheetPresented(isPresented):
@@ -252,12 +262,12 @@ public struct UploadsFeature {
     /// dependency locally so the `@Sendable` effect closure doesn't capture `self`.
     private func discard(_ urls: [URL]) -> Effect<Action> {
         guard !urls.isEmpty else { return .none }
-        let uploadStaging = self.uploadStaging
+        let uploadStaging = uploadStaging
         return .run { _ in await uploadStaging.discard(urls) }
     }
 
     private func upload(_ job: UploadJob, serverURL: URL) -> Effect<Action> {
-        let filesClient = self.filesClient
+        let filesClient = filesClient
         return .run { send in
             let (progress, continuation) = AsyncStream<Double>.makeStream()
             // Throttle the callbacks (URLSession fires many) so each one does not force a full
@@ -281,7 +291,9 @@ public struct UploadsFeature {
                                 last = fraction
                                 return true
                             }
-                            if shouldForward { continuation.yield(fraction) }
+                            if shouldForward {
+                                continuation.yield(fraction)
+                            }
                         }
                     }
                 } catch {
@@ -312,7 +324,7 @@ private extension UploadsFeature.State {
         let completed = jobs.filter { $0.status == .completed }
         return UploadsFeature.FinishSummary(
             uploadedCount: completed.count,
-            failedCount: jobs.filter { $0.status.isFailed }.count,
+            failedCount: jobs.filter(\.status.isFailed).count,
             lastDestination: completed.last?.destination,
             changedPaths: Set(completed.map(\.destination))
         )

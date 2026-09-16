@@ -1,14 +1,12 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Localization
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct DestinationPickerFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
 
@@ -32,15 +30,15 @@ struct DestinationPickerFeatureTests {
             DestinationPickerFeature()
         } withDependencies: {
             $0.filesClient.browse = { _, _ in
-                BrowseResult(items: [self.folder("Documents"), self.file("readme.txt")], access: self.access(), path: "")
+                BrowseResult(items: [folder("Documents"), file("readme.txt")], access: access(), path: "")
             }
         }
 
         await store.send(.onAppear) { $0.phase = .loading }
         await store.receive(\.foldersResponse.success) {
             $0.phase = .loaded
-            $0.currentAccess = self.access()
-            $0.folders = [self.folder("Documents")]
+            $0.currentAccess = access()
+            $0.folders = [folder("Documents")]
         }
     }
 
@@ -82,8 +80,8 @@ struct DestinationPickerFeatureTests {
         } withDependencies: {
             $0.filesClient.browse = { _, path in
                 BrowseResult(
-                    items: path == "Documents" ? [self.folder("Work", path: "Documents")] : [self.folder("Documents")],
-                    access: self.access(), path: path
+                    items: path == "Documents" ? [folder("Work", path: "Documents")] : [folder("Documents")],
+                    access: access(), path: path
                 )
             }
         }
@@ -95,7 +93,7 @@ struct DestinationPickerFeatureTests {
             $0.directoryPath = "Documents"
         }
         await store.receive(\.foldersResponse.success) {
-            $0.folders = [self.folder("Work", path: "Documents")]
+            $0.folders = [folder("Work", path: "Documents")]
         }
     }
 
@@ -107,7 +105,7 @@ struct DestinationPickerFeatureTests {
             DestinationPickerFeature()
         } withDependencies: {
             $0.filesClient.browse = { _, path in
-                BrowseResult(items: [self.folder("Child", path: path)], access: self.access(), path: path)
+                BrowseResult(items: [folder("Child", path: path)], access: access(), path: path)
             }
         }
         store.exhaustivity = .off
@@ -150,7 +148,7 @@ struct DestinationPickerFeatureTests {
         let store = TestStore(initialState: state) {
             DestinationPickerFeature()
         } withDependencies: {
-            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: self.access(), path: "") }
+            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: access(), path: "") }
         }
         store.exhaustivity = .off
 
@@ -169,7 +167,7 @@ struct DestinationPickerFeatureTests {
         let store = TestStore(initialState: state) {
             DestinationPickerFeature()
         } withDependencies: {
-            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: self.access(), path: "") }
+            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: access(), path: "") }
         }
         store.exhaustivity = .off
 
@@ -252,7 +250,7 @@ struct DestinationPickerFeatureTests {
         } withDependencies: {
             $0.continuousClock = clock
             $0.filesClient.browse = { _, _ in
-                BrowseResult(items: [self.folder("Photos", path: "Media")], access: self.access(), path: "Media")
+                BrowseResult(items: [folder("Photos", path: "Media")], access: access(), path: "Media")
             }
             $0.filesClient.search = { _, path, _, _ in
                 searchScope.setValue(path)

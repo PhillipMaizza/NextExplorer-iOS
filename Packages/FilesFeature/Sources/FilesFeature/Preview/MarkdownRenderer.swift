@@ -106,7 +106,7 @@ enum MarkdownRenderer {
             #"(?i)\son\w+\s*=\s*'[^']*'"#,
             #"(?i)\son\w+\s*=\s*[^\s>]+"#,
             #"(?i)(href|src)\s*=\s*"\s*javascript:[^"]*""#,
-            #"(?i)(href|src)\s*=\s*'\s*javascript:[^']*'"#
+            #"(?i)(href|src)\s*=\s*'\s*javascript:[^']*'"#,
         ] {
             result = result.replacingOccurrences(of: pattern, with: "", options: .regularExpression)
         }

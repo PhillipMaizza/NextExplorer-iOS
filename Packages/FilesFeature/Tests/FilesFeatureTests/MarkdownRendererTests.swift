@@ -1,8 +1,6 @@
+@testable import FilesFeature
 import Testing
 
-@testable import FilesFeature
-
-@Suite
 struct MarkdownRendererTests {
     @Test func wrapsOutputInADocumentWithAUTF8Charset() {
         let html = MarkdownRenderer.html(from: "# Title")

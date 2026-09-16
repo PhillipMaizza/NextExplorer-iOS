@@ -19,6 +19,7 @@ extension FilesService {
             let appName: String
             let appLogoUrl: String
         }
+
         let branding: Branding
     }
 
@@ -29,6 +30,7 @@ extension FilesService {
             let quality: Int
             let concurrency: Int
         }
+
         let thumbnails: Thumbnails
     }
 
@@ -36,6 +38,7 @@ extension FilesService {
         struct Access: Encodable {
             let rules: [AccessRule]
         }
+
         let access: Access
     }
 

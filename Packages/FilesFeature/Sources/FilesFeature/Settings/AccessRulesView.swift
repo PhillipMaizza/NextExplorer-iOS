@@ -56,7 +56,7 @@ struct AccessRulesView: View {
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
         .overlay {
-            if store.phase == .loading && store.loaded == nil && !store.isUnavailable {
+            if store.phase == .loading, store.loaded == nil, !store.isUnavailable {
                 DSSpinner()
             }
         }
@@ -129,9 +129,9 @@ struct AccessRulesView: View {
 
     private static func permissionLabel(_ permission: AccessRule.Permission) -> String {
         switch permission {
-        case .readWrite: return L10n.AccessRules.permissionReadWrite
-        case .readOnly: return L10n.AccessRules.permissionReadOnly
-        case .hidden: return L10n.AccessRules.permissionHidden
+        case .readWrite: L10n.AccessRules.permissionReadWrite
+        case .readOnly: L10n.AccessRules.permissionReadOnly
+        case .hidden: L10n.AccessRules.permissionHidden
         }
     }
 }
@@ -143,7 +143,9 @@ private extension AccessRulesFeature.State {
         error: String? = nil
     ) -> Self {
         var state = AccessRulesFeature.State(serverURL: URL(string: "https://files.example.com")!)
-        if loaded { state.loaded = rules }
+        if loaded {
+            state.loaded = rules
+        }
         state.phase = loaded ? .loaded : .idle
         state.drafts = IdentifiedArray(uniqueElements: rules)
         state.errorMessage = error
@@ -157,7 +159,7 @@ private extension AccessRulesFeature.State {
             store: Store(
                 initialState: .preview(rules: [
                     AccessRule(id: "1", path: "Documents/Reports", isRecursive: true, permission: .readOnly),
-                    AccessRule(id: "2", path: "Private", isRecursive: false, permission: .hidden)
+                    AccessRule(id: "2", path: "Private", isRecursive: false, permission: .hidden),
                 ])
             ) { AccessRulesFeature() }
         )

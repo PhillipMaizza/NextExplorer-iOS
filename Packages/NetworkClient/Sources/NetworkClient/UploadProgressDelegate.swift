@@ -11,9 +11,9 @@ final class UploadProgressDelegate: NSObject, URLSessionTaskDelegate {
     }
 
     func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
-        didSendBodyData bytesSent: Int64,
+        _: URLSession,
+        task _: URLSessionTask,
+        didSendBodyData _: Int64,
         totalBytesSent: Int64,
         totalBytesExpectedToSend: Int64
     ) {

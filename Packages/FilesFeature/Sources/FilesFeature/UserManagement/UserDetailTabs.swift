@@ -47,7 +47,7 @@ struct ProfileTabView: View {
                         .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                         .padding(.top, .space2)
                     VStack(alignment: .leading, spacing: .space2) {
-                        Text(L10n.UserDetail.roleAdmin).type(.body2(.semibold), style: .primary(for: .label))
+                        Text(L10n.UserDetail.roleAdmin).type(.body2(.semibold), style: .primaryOnSurface)
                         Text(L10n.UserDetail.roleAdminSubtitle)
                             .type(.body3(.regular), style: .secondary)
                     }
@@ -149,7 +149,7 @@ struct SecurityTabView: View {
                                 .resizable().scaledToFit()
                                 .foregroundStyle(Color.secondaryDS)
                                 .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                            Text(method.provider ?? L10n.UserDetail.ssoBadge).type(.body2(.regular), style: .primary(for: .label))
+                            Text(method.provider ?? L10n.UserDetail.ssoBadge).type(.body2(.regular), style: .primaryOnSurface)
                             Spacer()
                             Text(L10n.UserDetail.ssoLinked).type(.caption(.semibold), style: .success)
                         }
@@ -205,7 +205,7 @@ struct VolumesTabView: View {
                 .foregroundStyle(Color.secondaryDS)
                 .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
             VStack(alignment: .leading, spacing: .space2) {
-                Text(volume.label).type(.body2(.semibold), style: .primary(for: .label)).lineLimit(1)
+                Text(volume.label).type(.body2(.semibold), style: .primaryOnSurface).lineLimit(1)
                 Text(volume.path).type(.caption(.regular), style: .tertiary).lineLimit(1).truncationMode(.middle)
             }
             Spacer(minLength: .space8)

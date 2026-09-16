@@ -57,7 +57,9 @@ public struct SettingsFeature {
         public var isVolumeUsageEnabled = false
         public var serverUsage: IdentifiedArrayOf<VolumeUsage> = []
 
-        public var displayName: String { user.displayName ?? user.username }
+        public var displayName: String {
+            user.displayName ?? user.username
+        }
 
         public init(serverURL: URL, user: User) {
             self.serverURL = serverURL
@@ -69,7 +71,9 @@ public struct SettingsFeature {
         public let volume: Volume
         public var usage: StorageUsage?
 
-        public var id: String { volume.path }
+        public var id: String {
+            volume.path
+        }
     }
 
     public enum Action: Sendable {
@@ -204,7 +208,7 @@ public struct SettingsFeature {
                 state.isVolumeUsageEnabled = features.isVolumeUsageEnabled
                 guard features.isVolumeUsageEnabled else { return .none }
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
                     guard let volumes = try? await filesClient.volumes(serverURL) else { return }
                     await send(.volumesResponse(volumes))
@@ -217,12 +221,12 @@ public struct SettingsFeature {
                     id: \.id, uniquingIDsWith: { first, _ in first }
                 )
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .merge(volumes.map { volume in
                     .run { send in
-                        await send(.serverUsageResponse(
+                        try await send(.serverUsageResponse(
                             path: volume.path,
-                            try await apiResult { try await filesClient.fetchUsage(serverURL, volume.path) }
+                            apiResult { try await filesClient.fetchUsage(serverURL, volume.path) }
                         ))
                     }
                 })
@@ -236,16 +240,16 @@ public struct SettingsFeature {
                 return .none
 
             case .onAppear:
-                let localDownloadStore = self.localDownloadStore
-                let previewCacheStore = self.previewCacheStore
+                let localDownloadStore = localDownloadStore
+                let previewCacheStore = previewCacheStore
                 let downloadScope = state.downloadScope
                 let checkDownloads = Effect<Action>.run { send in
                     let downloads = (try? localDownloadStore.list(downloadScope)) ?? []
                     await send(.hasDownloadsResponse(!downloads.isEmpty))
                     await send(.downloadsSizeResponse(downloads.reduce(0) { $0 + $1.size }))
                 }
-                let directoryCacheStore = self.directoryCacheStore
-                let jsonCacheStore = self.jsonCacheStore
+                let directoryCacheStore = directoryCacheStore
+                let jsonCacheStore = jsonCacheStore
                 let checkCacheSize = Effect<Action>.run { send in
                     let size = (try? previewCacheStore.size()) ?? 0
                     await send(.cacheSizeResponse(size + directoryCacheStore.totalSizeBytes() + jsonCacheStore.totalSizeBytes()))
@@ -255,19 +259,19 @@ public struct SettingsFeature {
                 }
                 state.isLoadingPreferences = true
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .merge(
                     checkDownloads,
                     checkCacheSize,
                     .run { send in
-                        await send(.brandingResponse(try await apiResult { try await filesClient.fetchBranding(serverURL) }))
+                        try await send(.brandingResponse(apiResult { try await filesClient.fetchBranding(serverURL) }))
                     },
                     .run { send in
                         guard let features = try? await filesClient.serverFeatures(serverURL) else { return }
                         await send(.serverFeaturesResponse(features))
                     },
                     .run { send in
-                        await send(.preferencesResponse(try await apiResult {
+                        try await send(.preferencesResponse(apiResult {
                             try await filesClient.fetchPreferences(serverURL)
                         }))
                     }
@@ -318,7 +322,7 @@ public struct SettingsFeature {
             case .removeAllDownloadsConfirmed:
                 state.removeAllDownloadsConfirmationIsPresented = false
                 state.isRemovingAllDownloads = true
-                let localDownloadStore = self.localDownloadStore
+                let localDownloadStore = localDownloadStore
                 let downloadScope = state.downloadScope
                 return .run { send in
                     // Best-effort, matching the sign-out flow's philosophy: one file
@@ -359,10 +363,10 @@ public struct SettingsFeature {
             case .clearCacheConfirmed:
                 state.clearCacheConfirmationIsPresented = false
                 state.isClearingCache = true
-                let previewCacheStore = self.previewCacheStore
-                let directoryCacheStore = self.directoryCacheStore
-                let jsonCacheStore = self.jsonCacheStore
-                let thumbnailCache = self.thumbnailCache
+                let previewCacheStore = previewCacheStore
+                let directoryCacheStore = directoryCacheStore
+                let jsonCacheStore = jsonCacheStore
+                let thumbnailCache = thumbnailCache
                 return .run { send in
                     try? previewCacheStore.clear()
                     directoryCacheStore.clearAll()
@@ -404,9 +408,9 @@ public struct SettingsFeature {
     /// means the server falls out of sync with the switch until the next successful one.
     private func updatePreference(_ key: UserPreferenceKey, _ value: Bool, state: inout State) -> Effect<Action> {
         let serverURL = state.serverURL
-        let filesClient = self.filesClient
+        let filesClient = filesClient
         return .run { send in
-            await send(.updatePreferenceResponse(try await apiResult {
+            try await send(.updatePreferenceResponse(apiResult {
                 try await filesClient.updatePreference(serverURL, key, value)
             }))
         }

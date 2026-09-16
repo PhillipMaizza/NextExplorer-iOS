@@ -22,7 +22,10 @@ private enum Constants {
     /// Password / expiration fields fade in and out under their toggle. Opacity only — a
     /// height-interpolating transition (`.move`/`.scale`) makes the capped `DSDynamicHeightSheet`
     /// re-measure and re-propose its detent every frame, which reads as lag.
-    static var fieldReveal: AnyTransition { .opacity }
+    static var fieldReveal: AnyTransition {
+        .opacity
+    }
+
     static let fieldRevealAnimation: Animation = .easeInOut(duration: 0.2)
 }
 
@@ -177,7 +180,7 @@ struct CreateShareLinkSheet: View {
                             AvatarView(displayName: user.displayName ?? user.username, size: Constants.userAvatarSize)
                             VStack(alignment: .leading, spacing: .space2) {
                                 Text(user.displayName ?? user.username)
-                                    .type(.body3(.semibold), style: .primary(for: .label))
+                                    .type(.body3(.semibold), style: .primaryOnSurface)
                                     .lineLimit(1)
                                 if let email = user.email {
                                     Text(email).type(.caption(.regular), style: .secondary).lineLimit(1)
@@ -199,7 +202,7 @@ struct CreateShareLinkSheet: View {
     private var sourceCard: some View {
         VStack(alignment: .leading, spacing: .space2) {
             Text(L10n.CreateShare.sharingPrefix).type(.body3(.regular), style: .secondary)
-            Text(store.itemName).type(.body2(.bold), style: .primary(for: .label)).lineLimit(1)
+            Text(store.itemName).type(.body2(.bold), style: .primaryOnSurface).lineLimit(1)
             Text(store.sourcePath).type(.caption(.regular), style: .tertiary).lineLimit(1).truncationMode(.middle)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -234,7 +237,7 @@ struct CreateShareLinkSheet: View {
                 VStack(alignment: .leading, spacing: Constants.sectionSpacing) {
                     HStack(spacing: .space8) {
                         Text(created.share.isDirectory ? L10n.CreateShare.directFolderLink : L10n.CreateShare.directFileLink)
-                            .type(.body2(.semibold), style: .primary(for: .label))
+                            .type(.body2(.semibold), style: .primaryOnSurface)
                         Spacer()
                         Picker(L10n.CreateShare.directLinkMode, selection: $store.directLinkMode.sending(\.directLinkModeChanged)) {
                             ForEach(DirectLinkMode.allCases) { mode in
@@ -288,7 +291,7 @@ struct CreateShareLinkSheet: View {
             Text(label).type(.body2(.regular), style: .secondary)
             Spacer()
             Text(value)
-                .type(.body2(.semibold), style: .primary(for: .label))
+                .type(.body2(.semibold), style: .primaryOnSurface)
                 .lineLimit(1)
                 .truncationMode(.tail)
         }
@@ -333,7 +336,11 @@ struct CreateShareLinkSheet: View {
         withAnimation { copiedField = field }
         Task {
             try? await Task.sleep(for: .seconds(Constants.copyFeedbackSeconds))
-            withAnimation { if copiedField == field { copiedField = nil } }
+            withAnimation {
+                if copiedField == field {
+                    copiedField = nil
+                }
+            }
         }
     }
 

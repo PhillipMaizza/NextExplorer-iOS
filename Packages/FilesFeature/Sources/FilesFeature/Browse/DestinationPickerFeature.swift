@@ -44,24 +44,26 @@ public struct DestinationPickerFeature {
 
         public init(serverURL: URL, items: [FileItem]) {
             self.serverURL = serverURL
-            self.purpose = .move
+            purpose = .move
             self.items = items
             // Start in the folder the items already sit in, so the common case (moving into a
             // sibling or a nearby folder) opens right where the user is, with the breadcrumb
             // bar available to walk back up.
-            self.directoryPath = items.first?.path ?? ""
+            directoryPath = items.first?.path ?? ""
         }
 
         public init(serverURL: URL, uploadStartingAt startPath: String) {
             self.serverURL = serverURL
-            self.purpose = .upload
-            self.items = []
-            self.directoryPath = startPath
+            purpose = .upload
+            items = []
+            directoryPath = startPath
         }
 
         /// The leading toolbar button steps back up the drill path while there is one,
         /// otherwise it dismisses the sheet.
-        public var canNavigateBack: Bool { !navigationHistory.isEmpty }
+        public var canNavigateBack: Bool {
+            !navigationHistory.isEmpty
+        }
 
         /// Whether the trailing confirm button is enabled for the folder currently shown.
         /// Move: `FileClipboard.canPaste` rules (never root, never the item's own parent or a
@@ -69,11 +71,11 @@ public struct DestinationPickerFeature {
         public var canConfirm: Bool {
             switch purpose {
             case .move:
-                return FileClipboard(items: items, operation: .move).canPaste(into: directoryPath, canWrite: true)
+                FileClipboard(items: items, operation: .move).canPaste(into: directoryPath, canWrite: true)
             case .upload:
                 // `nil` while the folder's listing is still loading — confirm stays disabled
                 // until the server says uploads are allowed here.
-                return !directoryPath.isEmpty && (currentAccess?.canUpload ?? false)
+                !directoryPath.isEmpty && (currentAccess?.canUpload ?? false)
             }
         }
     }
@@ -203,11 +205,11 @@ public struct DestinationPickerFeature {
         state.currentAccess = nil
         let serverURL = state.serverURL
         let directoryPath = state.directoryPath
-        let filesClient = self.filesClient
+        let filesClient = filesClient
         return .merge(
             .cancel(id: CancelID.search),
             .run { send in
-                await send(.foldersResponse(try await apiResult { try await filesClient.browse(serverURL, directoryPath) }))
+                try await send(.foldersResponse(apiResult { try await filesClient.browse(serverURL, directoryPath) }))
             }
             .cancellable(id: CancelID.load, cancelInFlight: true)
         )
@@ -224,11 +226,11 @@ public struct DestinationPickerFeature {
         let serverURL = state.serverURL
         let scope = state.directoryPath
         let query = state.searchQuery
-        let filesClient = self.filesClient
-        let clock = self.clock
+        let filesClient = filesClient
+        let clock = clock
         return .run { send in
             try await clock.sleep(for: Constants.searchDebounce)
-            await send(.searchResultsResponse(try await apiResult {
+            try await send(.searchResultsResponse(apiResult {
                 try await filesClient.search(serverURL, scope, query, Constants.searchLimit)
             }))
         }

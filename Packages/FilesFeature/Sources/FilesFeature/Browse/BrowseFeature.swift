@@ -866,8 +866,9 @@ public struct BrowseFeature {
                 for itemID in result.itemIDs {
                     state.items.remove(id: itemID)
                 }
-                let hadFavorited = result.itemIDs.reduce(into: false) { hadFavorited, itemID in
-                    if state.favoritePaths.remove(itemID) != nil { hadFavorited = true }
+                var hadFavorited = false
+                for itemID in result.itemIDs where state.favoritePaths.remove(itemID) != nil {
+                    hadFavorited = true
                 }
                 state.isSelecting = false
                 state.selectedItemIDs = []

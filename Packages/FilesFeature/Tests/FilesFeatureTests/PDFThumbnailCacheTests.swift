@@ -1,12 +1,10 @@
+@testable import FilesFeature
 import Foundation
 import Testing
 import UIKit
 
-@testable import FilesFeature
-
 /// Covers the two pieces of `PDFThumbnailCache` that run without a live server: rasterizing
 /// page one of a real PDF, and the short circuit that skips re-rendering on a hit.
-@Suite
 struct PDFThumbnailCacheTests {
     /// An isolated render-cache directory per test, so nothing lands in the shared
     /// `PreviewCache` root the `PreviewCacheStoreTests` size/clear assertions depend on.

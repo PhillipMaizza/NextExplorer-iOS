@@ -7,7 +7,9 @@ import Localization
 public enum DownloadLocation: String, CaseIterable, Identifiable, Equatable, Sendable {
     case documents, cache
 
-    public var id: String { rawValue }
+    public var id: String {
+        rawValue
+    }
 
     public var title: String {
         switch self {

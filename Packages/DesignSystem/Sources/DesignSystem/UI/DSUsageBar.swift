@@ -20,9 +20,9 @@ public struct DSUsageBar: View {
 
     private var fillColor: Color {
         switch fraction {
-        case ..<Constants.cautionThreshold: return .positive
-        case ..<Constants.criticalThreshold: return .attention
-        default: return .negative
+        case ..<Constants.cautionThreshold: .positive
+        case ..<Constants.criticalThreshold: .attention
+        default: .negative
         }
     }
 

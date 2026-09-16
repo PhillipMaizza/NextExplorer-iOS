@@ -15,13 +15,25 @@ public enum FileCategory: String, CaseIterable, Sendable, Hashable {
     /// Buckets a `kind` (and the directory flag, since a folder's kind is `"directory"`). Anything
     /// not recognised as one of the media/document groups falls through to `.other`.
     public static func of(kind: String, isDirectory: Bool) -> FileCategory {
-        if isDirectory { return .folder }
+        if isDirectory {
+            return .folder
+        }
         let lowered = kind.lowercased()
-        if FileItem.isImageKind(lowered) || FileItem.isRawImageKind(lowered) { return .image }
-        if FileItem.isVideoKind(lowered) { return .video }
-        if FileItem.isAudioKind(lowered) { return .audio }
-        if FileItem.isArchiveKind(lowered) { return .archive }
-        if documentExtensions.contains(lowered) { return .document }
+        if FileItem.isImageKind(lowered) || FileItem.isRawImageKind(lowered) {
+            return .image
+        }
+        if FileItem.isVideoKind(lowered) {
+            return .video
+        }
+        if FileItem.isAudioKind(lowered) {
+            return .audio
+        }
+        if FileItem.isArchiveKind(lowered) {
+            return .archive
+        }
+        if documentExtensions.contains(lowered) {
+            return .document
+        }
         return .other
     }
 

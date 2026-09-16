@@ -1,0 +1,42 @@
+# SwiftLint configuration for NextExplorer.
+# Whitespace and ordering are owned by SwiftFormat; SwiftLint here focuses on correctness
+# and clarity. The size/complexity metric rules are disabled because TCA reducers and the
+# TestStore suites are legitimately large.
+
+excluded:
+  - "**/.build"
+  - Packages/Localization/Sources/Localization/L10n.swift
+
+disabled_rules:
+  - line_length
+  - todo
+  - cyclomatic_complexity
+  - function_body_length
+  - type_body_length
+  - file_length
+  - function_parameter_count
+  - large_tuple
+  - nesting
+  - identifier_name
+  - type_name
+  - trailing_comma
+  - opening_brace
+  - blanket_disable_command
+  # Cosmetic and largely test-only; left off to keep the signal on correctness.
+  - non_optional_string_data_conversion
+  - optional_data_string_conversion
+  - multiple_closures_with_trailing_closure
+  - closure_parameter_position
+  - static_over_final_class
+  - block_based_kvo
+
+opt_in_rules:
+  # empty_count intentionally omitted: it false-positives on custom types that expose a
+  # `count` but no `isEmpty` (e.g. UploadReviewFeature.PickSource).
+  - closure_spacing
+  - redundant_nil_coalescing
+  - explicit_init
+  - overridden_super_call
+  - unavailable_function
+
+analyzer_rules: []

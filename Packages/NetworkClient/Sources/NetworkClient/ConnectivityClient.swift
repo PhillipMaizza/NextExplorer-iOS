@@ -43,12 +43,14 @@ extension ConnectivityClient: DependencyKey {
             monitor.pathUpdateHandler = { [weak self] path in
                 guard let self else { return }
                 let online = path.status == .satisfied
-                self.lock.lock()
-                let changed = online != self.isOnline
-                self.isOnline = online
-                let sinks = changed ? Array(self.continuations.values) : []
-                self.lock.unlock()
-                for sink in sinks { sink.yield(online) }
+                lock.lock()
+                let changed = online != isOnline
+                isOnline = online
+                let sinks = changed ? Array(continuations.values) : []
+                lock.unlock()
+                for sink in sinks {
+                    sink.yield(online)
+                }
             }
             monitor.start(queue: queue)
         }
@@ -68,9 +70,9 @@ extension ConnectivityClient: DependencyKey {
                 continuation.yield(current)
                 continuation.onTermination = { [weak self] _ in
                     guard let self else { return }
-                    self.lock.lock()
-                    self.continuations[id] = nil
-                    self.lock.unlock()
+                    lock.lock()
+                    continuations[id] = nil
+                    lock.unlock()
                 }
             }
         }

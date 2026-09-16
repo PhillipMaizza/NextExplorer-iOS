@@ -17,7 +17,7 @@ public struct DSShakeEffect: GeometryEffect {
         self.animatableData = animatableData
     }
 
-    public func effectValue(size: CGSize) -> ProjectionTransform {
+    public func effectValue(size _: CGSize) -> ProjectionTransform {
         let translation = travelDistance * sin(animatableData * .pi * numberOfShakes)
         return ProjectionTransform(CGAffineTransform(translationX: translation, y: 0))
     }

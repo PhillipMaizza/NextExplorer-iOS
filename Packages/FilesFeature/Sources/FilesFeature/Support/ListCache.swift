@@ -31,7 +31,7 @@ enum ListCache {
         "\(namespace)|\(serverURL.absoluteString)"
     }
 
-    static func load<T: Decodable>(_ store: JSONCacheStore, _ namespace: String, serverURL: URL, as type: T.Type) -> (value: T, fetchedAt: Date)? {
+    static func load<T: Decodable>(_ store: JSONCacheStore, _ namespace: String, serverURL: URL, as _: T.Type) -> (value: T, fetchedAt: Date)? {
         guard
             let payload = store.read(key: key(namespace, serverURL: serverURL)),
             let value = try? JSONDecoder().decode(T.self, from: payload.data)
@@ -39,7 +39,7 @@ enum ListCache {
         return (value, payload.fetchedAt)
     }
 
-    static func save<T: Encodable>(_ store: JSONCacheStore, _ namespace: String, serverURL: URL, value: T) {
+    static func save(_ store: JSONCacheStore, _ namespace: String, serverURL: URL, value: some Encodable) {
         guard let data = try? JSONEncoder().encode(value) else { return }
         store.write(key: key(namespace, serverURL: serverURL), data: data)
     }

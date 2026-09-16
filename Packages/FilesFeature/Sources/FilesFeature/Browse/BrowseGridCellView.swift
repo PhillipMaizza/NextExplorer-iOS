@@ -66,14 +66,14 @@ struct GridCellView: View {
         self.name = name
         self.isDirectory = isDirectory
         self.isFavorite = isFavorite
-        self.itemID = thumbnailFile?.id
+        itemID = thumbnailFile?.id
         self.kind = kind
-        self.supportsThumbnail = thumbnailFile?.supportsThumbnail ?? false
-        self.thumbnailSignature = thumbnailFile?.cacheSignature ?? ""
+        supportsThumbnail = thumbnailFile?.supportsThumbnail ?? false
+        thumbnailSignature = thumbnailFile?.cacheSignature ?? ""
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
         self.iconSize = iconSize
-        self.file = thumbnailFile
+        file = thumbnailFile
         self.customIcon = customIcon
         self.customIconTint = customIconTint
         self.customIconFilled = customIconFilled
@@ -82,25 +82,27 @@ struct GridCellView: View {
     }
 
     init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, iconSize: CGFloat = Constants.defaultIconSize, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false) {
-        self.name = item.name
-        self.isDirectory = item.isDirectory
+        name = item.name
+        isDirectory = item.isDirectory
         self.isFavorite = isFavorite
-        self.itemID = item.id
-        self.kind = item.kind
-        self.supportsThumbnail = item.supportsThumbnail
-        self.thumbnailSignature = item.cacheSignature
+        itemID = item.id
+        kind = item.kind
+        supportsThumbnail = item.supportsThumbnail
+        thumbnailSignature = item.cacheSignature
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
         self.iconSize = iconSize
-        self.file = item
-        self.customIcon = nil
-        self.customIconTint = nil
-        self.customIconFilled = false
+        file = item
+        customIcon = nil
+        customIconTint = nil
+        customIconFilled = false
         self.matchedSource = matchedSource
         self.isOpening = isOpening
     }
 
-    private var isHidden: Bool { isHiddenFileName(name) }
+    private var isHidden: Bool {
+        isHiddenFileName(name)
+    }
 
     private var displayName: String {
         displayFileName(name, isDirectory: isDirectory, showExtension: showFilenameExtensions)
@@ -131,7 +133,8 @@ struct GridCellView: View {
                                 Circle()
                                     .fill(Color.backgroundPrimary)
                                     .frame(width: Constants.favoriteBadgeBackgroundSize, height: Constants.favoriteBadgeBackgroundSize)
-                                    .shadow(radius: Constants.favoriteBadgeShadowRadius))
+                                    .shadow(radius: Constants.favoriteBadgeShadowRadius)
+                            )
                             .symbolEffect(.bounce, value: isFavorite)
                             .transition(.scale.combined(with: .opacity))
                             .accessibilityLabel(L10n.Favorites.accessibilityBadge)
@@ -141,7 +144,7 @@ struct GridCellView: View {
                 // Only favoriting buzzes — un-favoriting isn't a "win" worth celebrating the same way.
                 .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
             Text(displayName)
-                .type(.body2(.semibold), style: isHidden ? .tertiary : .primary(for: .label))
+                .type(.body2(.semibold), style: isHidden ? .tertiary : .primaryOnSurface)
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
         }

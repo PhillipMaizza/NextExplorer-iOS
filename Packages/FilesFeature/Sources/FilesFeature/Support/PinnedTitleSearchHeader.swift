@@ -33,7 +33,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: .space12) {
             Text(title)
-                .type(.headline2, style: .primary(for: .label))
+                .type(.headline2, style: .primaryOnSurface)
                 .lineLimit(1)
                 .truncationMode(.tail)
                 .frame(maxWidth: .infinity, alignment: .leading)

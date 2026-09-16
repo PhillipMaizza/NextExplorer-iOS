@@ -19,7 +19,7 @@ public enum SessionExpiry {
 ///     }
 func apiResult<T>(_ operation: () async throws -> T) async throws -> Result<T, FilesClientError> {
     do {
-        return .success(try await operation())
+        return try await .success(operation())
     } catch {
         // A cancelled effect (owning feature disappeared, request superseded) is not a
         // failure to report. The lower layers flatten `CancellationError` into a

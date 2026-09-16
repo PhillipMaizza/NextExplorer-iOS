@@ -33,5 +33,7 @@ public struct ShareInfo: Decodable, Equatable, Sendable {
 
     /// Restricted to named recipients — a signed-in user who isn't one gets a 403 on
     /// browse, so the sheet warns before opening.
-    public var isRestrictedToUsers: Bool { sharingType == .users }
+    public var isRestrictedToUsers: Bool {
+        sharingType == .users
+    }
 }

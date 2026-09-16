@@ -36,7 +36,7 @@ struct UploadFileRow: View {
             .accessibilityLabel(L10n.Uploads.reviewPreviewFile(file.fileName))
             VStack(alignment: .leading, spacing: Metrics.rowTextSpacing) {
                 Text(file.fileName)
-                    .type(.body2(.regular), style: .primary(for: .label))
+                    .type(.body2(.regular), style: .primaryOnSurface)
                     .lineLimit(1)
                     .truncationMode(.middle)
                 Text(UploadReviewFormat.byteFormatter.string(fromByteCount: file.size))

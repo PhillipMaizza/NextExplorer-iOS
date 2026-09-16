@@ -102,7 +102,7 @@ struct SortSheet<Option: Hashable, Direction: Hashable>: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                 Text(title)
-                    .type(.body1(isSelected ? .semibold : .regular), style: .primary(for: .label))
+                    .type(.body1(isSelected ? .semibold : .regular), style: .primaryOnSurface)
                 Spacer()
                 ZStack {
                     IconKit.radioUnselected

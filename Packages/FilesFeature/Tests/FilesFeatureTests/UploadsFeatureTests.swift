@@ -1,14 +1,12 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Localization
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct UploadsFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
     private let now = Date(timeIntervalSince1970: 1_000_000)
@@ -46,8 +44,8 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
-            $0.date = .constant(self.now)
-            $0.filesClient.uploadFile = { _, _, name, _, _ in self.uploaded(name) }
+            $0.date = .constant(now)
+            $0.filesClient.uploadFile = { _, _, name, _, _ in uploaded(name) }
         }
         store.exhaustivity = .off
 
@@ -81,11 +79,13 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
-            $0.date = .constant(self.now)
+            $0.date = .constant(now)
             $0.filesClient.uploadFile = { _, _, name, _, _ in
                 let n = attempts.withValue { value -> Int in value += 1; return value }
-                if n == 1 { throw FilesClientError.server(statusCode: 500) }
-                return self.uploaded(name)
+                if n == 1 {
+                    throw FilesClientError.server(statusCode: 500)
+                }
+                return uploaded(name)
             }
         }
         store.exhaustivity = .off
@@ -115,7 +115,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
-            $0.date = .constant(self.now)
+            $0.date = .constant(now)
             $0.filesClient.uploadFile = { _, _, _, _, _ in
                 try await Task.never()
             }
@@ -141,11 +141,13 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
-            $0.date = .constant(self.now)
+            $0.date = .constant(now)
             $0.filesClient.uploadFile = { _, _, name, _, _ in
                 let n = attempts.withValue { value -> Int in value += 1; return value }
-                if n <= 2 { throw FilesClientError.server(statusCode: 500) }
-                return self.uploaded(name)
+                if n <= 2 {
+                    throw FilesClientError.server(statusCode: 500)
+                }
+                return uploaded(name)
             }
         }
         store.exhaustivity = .off
@@ -179,8 +181,8 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
-            $0.date = .constant(self.now)
-            $0.filesClient.uploadFile = { _, _, name, dest, _ in self.uploaded(name, destination: dest) }
+            $0.date = .constant(now)
+            $0.filesClient.uploadFile = { _, _, name, dest, _ in uploaded(name, destination: dest) }
         }
         store.exhaustivity = .off
 
@@ -206,7 +208,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: state) {
             UploadsFeature()
         } withDependencies: {
-            $0.date = .constant(self.now)
+            $0.date = .constant(now)
             $0.filesClient.uploadFile = { _, _, _, _, _ in try await Task.never() }
         }
         store.exhaustivity = .off
@@ -231,7 +233,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: state) {
             UploadsFeature()
         } withDependencies: {
-            $0.date = .constant(self.now)
+            $0.date = .constant(now)
             $0.filesClient.uploadFile = { _, _, _, _, _ in try await Task.never() }
         }
         store.exhaustivity = .off
@@ -242,7 +244,7 @@ struct UploadsFeatureTests {
         }
         await store.receive(\.startNextIfIdle) {
             $0.jobs[id: UUID(0)]?.status = .uploading
-            $0.jobs[id: UUID(0)]?.startedAt = self.now
+            $0.jobs[id: UUID(0)]?.startedAt = now
         }
     }
 
@@ -254,7 +256,7 @@ struct UploadsFeatureTests {
         let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
             UploadsFeature()
         } withDependencies: {
-            $0.date = .constant(self.now)
+            $0.date = .constant(now)
             $0.filesClient.uploadFile = { _, _, _, _, _ in throw FilesClientError.sessionExpired }
         }
         store.exhaustivity = .off

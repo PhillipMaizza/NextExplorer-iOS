@@ -5,12 +5,12 @@ let package = Package(
     name: "FilesClient",
     platforms: [.iOS(.v18)],
     products: [
-        .library(name: "FilesClient", targets: ["FilesClient"])
+        .library(name: "FilesClient", targets: ["FilesClient"]),
     ],
     dependencies: [
         .package(path: "../CoreModels"),
         .package(path: "../NetworkClient"),
-        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.5.0")
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.5.0"),
     ],
     targets: [
         .target(
@@ -19,7 +19,7 @@ let package = Package(
                 "CoreModels",
                 "NetworkClient",
                 .product(name: "Dependencies", package: "swift-dependencies"),
-                .product(name: "DependenciesMacros", package: "swift-dependencies")
+                .product(name: "DependenciesMacros", package: "swift-dependencies"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
@@ -27,6 +27,6 @@ let package = Package(
             name: "FilesClientTests",
             dependencies: ["FilesClient", "NetworkClient"],
             swiftSettings: [.swiftLanguageMode(.v6)]
-        )
+        ),
     ]
 )

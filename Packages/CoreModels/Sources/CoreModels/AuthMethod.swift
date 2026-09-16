@@ -12,6 +12,11 @@ public struct AuthMethod: Codable, Equatable, Sendable, Hashable {
         self.provider = provider
     }
 
-    public var isPassword: Bool { method == "local_password" }
-    public var isOIDC: Bool { method == "oidc" }
+    public var isPassword: Bool {
+        method == "local_password"
+    }
+
+    public var isOIDC: Bool {
+        method == "oidc"
+    }
 }

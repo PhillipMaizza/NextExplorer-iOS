@@ -25,7 +25,7 @@ private enum Constants {
 struct AnimatedImageView: UIViewRepresentable {
     let fileURL: URL
 
-    func makeUIView(context: Context) -> UIImageView {
+    func makeUIView(context _: Context) -> UIImageView {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFit
         imageView.image = Self.decodeAnimatedImage(at: fileURL)
@@ -33,7 +33,7 @@ struct AnimatedImageView: UIViewRepresentable {
         return imageView
     }
 
-    func updateUIView(_ uiView: UIImageView, context: Context) {}
+    func updateUIView(_: UIImageView, context _: Context) {}
 
     private static func decodeAnimatedImage(at url: URL) -> UIImage? {
         // `CGImageSourceCreateWithURL` memory-maps the file rather than reading it all into a
@@ -55,7 +55,7 @@ struct AnimatedImageView: UIViewRepresentable {
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceCreateThumbnailWithTransform: true,
             kCGImageSourceShouldCacheImmediately: true,
-            kCGImageSourceThumbnailMaxPixelSize: max(1, maxPixelDimension)
+            kCGImageSourceThumbnailMaxPixelSize: max(1, maxPixelDimension),
         ]
 
         var frames: [UIImage] = []
@@ -79,7 +79,8 @@ struct AnimatedImageView: UIViewRepresentable {
     /// (common, deliberately-abused) authoring bug rather than a real near-zero delay.
     private static func frameDuration(source: CGImageSource, index: Int) -> Double {
         guard let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil) as? [CFString: Any],
-              let gifProperties = properties[kCGImagePropertyGIFDictionary] as? [CFString: Any] else {
+              let gifProperties = properties[kCGImagePropertyGIFDictionary] as? [CFString: Any]
+        else {
             return Constants.fallbackFrameDelay
         }
         let delay = (gifProperties[kCGImagePropertyGIFUnclampedDelayTime] as? Double)

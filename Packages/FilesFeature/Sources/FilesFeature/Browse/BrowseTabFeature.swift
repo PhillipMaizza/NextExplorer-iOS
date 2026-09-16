@@ -13,7 +13,7 @@ public struct BrowseTabFeature {
         public var path = StackState<BrowseFeature.State>()
 
         public init(serverURL: URL) {
-            self.root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
+            root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
         }
     }
 

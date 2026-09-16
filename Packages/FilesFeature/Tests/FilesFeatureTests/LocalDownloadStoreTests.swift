@@ -1,7 +1,6 @@
+@testable import FilesFeature
 import Foundation
 import Testing
-
-@testable import FilesFeature
 
 /// Exercises `LocalDownloadStore.liveValue` against the real filesystem (the simulator's own
 /// sandboxed Documents/Caches directories) — same spirit as `KeychainClientTests` hitting the
@@ -233,6 +232,8 @@ struct LocalDownloadStoreTests {
         #expect(!FileManager.default.fileExists(atPath: legacyFile.path))
         let migrated = downloads.first { $0.fileName == fileName }
         #expect(migrated?.url.deletingLastPathComponent().lastPathComponent == migrationScope)
-        if let migrated { try? FileManager.default.removeItem(at: migrated.url) }
+        if let migrated {
+            try? FileManager.default.removeItem(at: migrated.url)
+        }
     }
 }

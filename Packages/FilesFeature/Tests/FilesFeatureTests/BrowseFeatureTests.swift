@@ -1,14 +1,12 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Localization
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct BrowseFeatureTests {
     @Test
     func onAppearLoadsRootItems() async {
@@ -1994,7 +1992,7 @@ struct BrowseFeatureTests {
         } withDependencies: {
             $0.filesClient.compressItem = { _, _ in compressedFolder }
             $0.filesClient.downloadRawFile = { _, item in URL(fileURLWithPath: "/tmp/cached/\(item.name)") }
-            $0.localDownloadStore.save = { sourceURL, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
+            $0.localDownloadStore.save = { _, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
         }
         store.exhaustivity = .off
 
@@ -2051,10 +2049,12 @@ struct BrowseFeatureTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.downloadRawFile = { _, item in
-                if item.id == badFile.id { throw FilesClientError.server(statusCode: 500) }
+                if item.id == badFile.id {
+                    throw FilesClientError.server(statusCode: 500)
+                }
                 return URL(fileURLWithPath: "/tmp/cached/\(item.name)")
             }
-            $0.localDownloadStore.save = { sourceURL, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
+            $0.localDownloadStore.save = { _, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
         }
         store.exhaustivity = .off
 
@@ -2251,7 +2251,6 @@ struct BrowseFeatureTests {
 /// against hand-built state, rather than through the reducer: sorting/filtering is derived
 /// state, not something any action produces, so there's no meaningful action to send.
 @MainActor
-@Suite
 struct BrowseFeatureDisplayedItemsTests {
     private let serverURL = URL(string: "https://example.com")!
 
@@ -2458,7 +2457,6 @@ struct BrowseFeatureDisplayedItemsTests {
 // MARK: - Copy / Move / Paste
 
 @MainActor
-@Suite
 struct BrowseFeatureTransferTests {
     private let serverURL = URL(string: "https://example.com")!
 
@@ -2479,8 +2477,12 @@ struct BrowseFeatureTransferTests {
 
     private nonisolated func result(destination: String, moved: Int, skipped: Int = 0) -> TransferResult {
         var entries: [TransferResult.Entry] = []
-        for i in 0..<moved { entries.append(.init(from: "Inbox/f\(i)", to: "\(destination)/f\(i)")) }
-        for i in 0..<skipped { entries.append(.init(from: "Inbox/s\(i)", to: "Inbox/s\(i)", skipped: true)) }
+        for i in 0 ..< moved {
+            entries.append(.init(from: "Inbox/f\(i)", to: "\(destination)/f\(i)"))
+        }
+        for i in 0 ..< skipped {
+            entries.append(.init(from: "Inbox/s\(i)", to: "Inbox/s\(i)", skipped: true))
+        }
         return TransferResult(destination: destination, items: entries)
     }
 
@@ -2501,7 +2503,7 @@ struct BrowseFeatureTransferTests {
         let store = TestStore(initialState: makeState()) { BrowseFeature() }
 
         await store.send(.moveTapped(file)) {
-            $0.destinationPicker = DestinationPickerFeature.State(serverURL: self.serverURL, items: [file])
+            $0.destinationPicker = DestinationPickerFeature.State(serverURL: serverURL, items: [file])
         }
     }
 
@@ -2517,8 +2519,8 @@ struct BrowseFeatureTransferTests {
             $0.uploadStaging = UploadStagingClient(
                 stageDocuments: { _ in
                     AsyncStream<PickedFile> { continuation in
-                        continuation.yield(self.picked("a.jpg", id: UUID(0)))
-                        continuation.yield(self.picked("b.jpg", id: UUID(1)))
+                        continuation.yield(picked("a.jpg", id: UUID(0)))
+                        continuation.yield(picked("b.jpg", id: UUID(1)))
                         continuation.finish()
                     }
                 },
@@ -2607,7 +2609,7 @@ struct BrowseFeatureTransferTests {
         let store = TestStore(initialState: state) { BrowseFeature() }
 
         await store.send(.bulkMoveTapped) {
-            $0.destinationPicker = DestinationPickerFeature.State(serverURL: self.serverURL, items: [a, b])
+            $0.destinationPicker = DestinationPickerFeature.State(serverURL: serverURL, items: [a, b])
             $0.isSelecting = false
             $0.selectedItemIDs = []
         }
@@ -2626,7 +2628,7 @@ struct BrowseFeatureTransferTests {
         } withDependencies: {
             $0.filesClient.transferItems = { _, _, destination, operation in
                 captured.setValue((destination, operation))
-                return self.result(destination: destination, moved: 1)
+                return result(destination: destination, moved: 1)
             }
         }
         store.exhaustivity = .off
@@ -2678,7 +2680,7 @@ struct BrowseFeatureTransferTests {
         } withDependencies: {
             $0.filesClient.transferItems = { _, items, destination, operation in
                 captured.setValue((items, destination, operation))
-                return self.result(destination: destination, moved: 1)
+                return result(destination: destination, moved: 1)
             }
         }
 
@@ -2712,7 +2714,7 @@ struct BrowseFeatureTransferTests {
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
-            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 1) }
+            $0.filesClient.transferItems = { _, _, destination, _ in result(destination: destination, moved: 1) }
         }
         store.exhaustivity = .off
 
@@ -2758,8 +2760,10 @@ struct BrowseFeatureTransferTests {
         } withDependencies: {
             $0.filesClient.transferItems = { _, _, destination, _ in
                 attempts.withValue { $0 += 1 }
-                if attempts.value == 1 { throw FilesClientError.serverMessage(statusCode: 500, message: "Nope.") }
-                return self.result(destination: destination, moved: 1)
+                if attempts.value == 1 {
+                    throw FilesClientError.serverMessage(statusCode: 500, message: "Nope.")
+                }
+                return result(destination: destination, moved: 1)
             }
         }
         store.exhaustivity = .off
@@ -2817,7 +2821,7 @@ struct BrowseFeatureTransferTests {
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
-            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 2, skipped: 1) }
+            $0.filesClient.transferItems = { _, _, destination, _ in result(destination: destination, moved: 2, skipped: 1) }
         }
         store.exhaustivity = .off
 
@@ -2835,7 +2839,7 @@ struct BrowseFeatureTransferTests {
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
-            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 2, skipped: 1) }
+            $0.filesClient.transferItems = { _, _, destination, _ in result(destination: destination, moved: 2, skipped: 1) }
         }
         store.exhaustivity = .off
 
@@ -2882,7 +2886,7 @@ struct BrowseFeatureTransferTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.deleteItems = { _, items in deleted.setValue(items) }
-            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 1) }
+            $0.filesClient.transferItems = { _, _, destination, _ in result(destination: destination, moved: 1) }
         }
         store.exhaustivity = .off
 
@@ -2906,7 +2910,7 @@ struct BrowseFeatureTransferTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.deleteItems = { _, _ in deleteCalled.setValue(true) }
-            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 1) }
+            $0.filesClient.transferItems = { _, _, destination, _ in result(destination: destination, moved: 1) }
         }
         store.exhaustivity = .off
 
@@ -2947,7 +2951,7 @@ struct BrowseFeatureTransferTests {
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
-            $0.filesClient.transferItems = { _, _, destination, _ in self.result(destination: destination, moved: 1) }
+            $0.filesClient.transferItems = { _, _, destination, _ in result(destination: destination, moved: 1) }
         }
         store.exhaustivity = .off
 

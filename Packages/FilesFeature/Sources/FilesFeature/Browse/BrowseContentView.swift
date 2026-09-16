@@ -282,7 +282,7 @@ struct BrowseContentView: View {
                     }
                 },
                 clipboardMenu: {
-                    if store.clipboard != nil && !store.directoryPath.isEmpty {
+                    if store.clipboard != nil, !store.directoryPath.isEmpty {
                         Section {
                             Button {
                                 store.send(.pasteTapped(keepItemsAfterCopy: keepClipboardAfterCopy), animation: .default)
@@ -305,7 +305,7 @@ struct BrowseContentView: View {
                     Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                 }
             }
-            if !store.isSelecting && canUploadHere {
+            if !store.isSelecting, canUploadHere {
                 if #available(iOS 26.0, *) {
                     ToolbarSpacer(.fixed, placement: .topBarTrailing)
                 }
@@ -386,7 +386,7 @@ struct BrowseContentView: View {
                         }
                     }
                 }
-                if isTransferActionVisible && (store.access?.canWrite ?? false) && (store.access?.canDelete ?? false) {
+                if isTransferActionVisible, store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                     ToolbarItem(placement: .bottomBar) {
                         selectionToolbarButton(icon: IconKit.move) {
                             store.send(.bulkMoveTapped, animation: .default)
@@ -481,7 +481,11 @@ struct BrowseContentView: View {
     private var previewPresentedBinding: Binding<Bool> {
         Binding(
             get: { store.previewItem != nil && isPreviewContentReady },
-            set: { if !$0 { store.send(.previewDismissed) } }
+            set: {
+                if !$0 {
+                    store.send(.previewDismissed)
+                }
+            }
         )
     }
 
@@ -491,17 +495,27 @@ struct BrowseContentView: View {
     /// Branch order mirrors `previewContent(for:)`.
     private var isPreviewContentReady: Bool {
         guard let item = store.previewItem else { return false }
-        if item.isUnsupportedForPreview { return true }
-        if item.isStreamableMedia { return true }
-        if item.isBrowsableArchive { return true }
-        if (item.isImage || item.isRawImage) && !item.isSVG { return true }
+        if item.isUnsupportedForPreview {
+            return true
+        }
+        if item.isStreamableMedia {
+            return true
+        }
+        if item.isBrowsableArchive {
+            return true
+        }
+        if (item.isImage || item.isRawImage) && !item.isSVG {
+            return true
+        }
         if item.isPreviewableViaDownload {
             return store.previewFileURL != nil || store.previewErrorMessage != nil
         }
         return store.textContent != nil || store.textEditorErrorMessage != nil
     }
 
-    private func isOpening(_ item: FileItem) -> Bool { isOpeningID(item.id) }
+    private func isOpening(_ item: FileItem) -> Bool {
+        isOpeningID(item.id)
+    }
 
     private func isOpeningID(_ id: String) -> Bool {
         store.previewItem?.id == id && !isPreviewContentReady
@@ -663,7 +677,11 @@ struct BrowseContentView: View {
     private var infoPhaseBinding: Binding<InfoSheetPhase?> {
         Binding(
             get: { infoPhase },
-            set: { if $0 == nil { store.send(.infoDismissed) } }
+            set: {
+                if $0 == nil {
+                    store.send(.infoDismissed)
+                }
+            }
         )
     }
 
@@ -689,14 +707,22 @@ struct BrowseContentView: View {
     private var renameItemBinding: Binding<FileItem?> {
         Binding(
             get: { store.previewItem == nil ? store.renameSheetItem : nil },
-            set: { if $0 == nil { store.send(.renameCancelled) } }
+            set: {
+                if $0 == nil {
+                    store.send(.renameCancelled)
+                }
+            }
         )
     }
 
     private var renameItemFromPreviewBinding: Binding<FileItem?> {
         Binding(
             get: { store.previewItem != nil ? store.renameSheetItem : nil },
-            set: { if $0 == nil { store.send(.renameCancelled) } }
+            set: {
+                if $0 == nil {
+                    store.send(.renameCancelled)
+                }
+            }
         )
     }
 
@@ -716,13 +742,17 @@ struct BrowseContentView: View {
     private var newFolderSheetBinding: Binding<Bool> {
         Binding(
             get: { store.isNewFolderSheetPresented },
-            set: { if !$0 { store.send(.newFolderCancelled) } }
+            set: {
+                if !$0 {
+                    store.send(.newFolderCancelled)
+                }
+            }
         )
     }
 
-    // No op setter: the sheet is dismiss disabled and only closes through one of
-    // `DSAlertSheet`'s own buttons, which drive the reducer directly. Split in two so the
-    // confirmation presents over whichever surface is frontmost: the list, or a preview cover.
+    /// No op setter: the sheet is dismiss disabled and only closes through one of
+    /// `DSAlertSheet`'s own buttons, which drive the reducer directly. Split in two so the
+    /// confirmation presents over whichever surface is frontmost: the list, or a preview cover.
     private var isDeletingBinding: Binding<Bool> {
         Binding(get: { store.deleteConfirmationItem != nil && store.previewItem == nil }, set: { _ in })
     }
@@ -901,9 +931,9 @@ struct BrowseContentView: View {
     private var overlayState: OverlayState {
         if store.phase.errorMessage != nil {
             .error
-        } else if store.phase.hasLoaded && !store.isSearching && !store.hasDisplayedItems {
+        } else if store.phase.hasLoaded, !store.isSearching, !store.hasDisplayedItems {
             .empty
-        } else if store.isSearching && store.isSearchingRemotely && (store.displayedSearchResults?.isEmpty ?? true) {
+        } else if store.isSearching, store.isSearchingRemotely, store.displayedSearchResults?.isEmpty ?? true {
             // A recursive backend search is in flight with nothing to show yet (the client
             // pre-fill found no local matches) — spin rather than flash "no results".
             .searching
@@ -928,12 +958,12 @@ struct BrowseContentView: View {
                 ) {
                     store.send(.refreshButtonTapped)
                 }
-                    .transition(.opacity)
+                .transition(.opacity)
             }
         case .empty:
             VStack(spacing: Constants.emptyUploadButtonTopSpacing) {
                 EmptyStateView(icon: IconKit.folder, message: L10n.EmptyState.folderEmpty)
-                if !store.isSelecting && canUploadHere {
+                if !store.isSelecting, canUploadHere {
                     emptyStateUploadButton
                 }
             }
@@ -984,55 +1014,55 @@ struct BrowseContentView: View {
         let displayedItems = store.displayedItems
         return ScrollViewReader { proxy in
             ScrollView {
-            LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
-                if store.isSearching {
-                    ForEach(store.displayedSearchResults ?? []) { result in
-                        Button {
-                            store.send(.searchResultTapped(result))
-                        } label: {
-                            searchResultCell(row: result, grid: true)
-                                .dsCard(padding: Constants.gridCellPadding)
-                        }
-                        .buttonStyle(DSHapticButtonStyle())
-                    }
-                } else {
-                    ForEach(displayedItems) { item in
-                        Button {
-                            if store.isSelecting {
-                                store.send(.itemSelectionToggled(item.id))
-                            } else {
-                                handleTap(item)
+                LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
+                    if store.isSearching {
+                        ForEach(store.displayedSearchResults ?? []) { result in
+                            Button {
+                                store.send(.searchResultTapped(result))
+                            } label: {
+                                searchResultCell(row: result, grid: true)
+                                    .dsCard(padding: Constants.gridCellPadding)
                             }
-                        } label: {
-                            gridCell(for: item)
-                            .dsCard(padding: Constants.gridCellPadding)
-                            .overlay(alignment: .topLeading) {
+                            .buttonStyle(DSHapticButtonStyle())
+                        }
+                    } else {
+                        ForEach(displayedItems) { item in
+                            Button {
                                 if store.isSelecting {
-                                    DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                                    store.send(.itemSelectionToggled(item.id))
+                                } else {
+                                    handleTap(item)
                                 }
+                            } label: {
+                                gridCell(for: item)
+                                    .dsCard(padding: Constants.gridCellPadding)
+                                    .overlay(alignment: .topLeading) {
+                                        if store.isSelecting {
+                                            DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                                        }
+                                    }
                             }
-                        }
-                        .buttonStyle(DSHapticButtonStyle())
-                        .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
-                        .contextMenu {
-                            if !store.isSelecting {
-                                fileActionsMenu(for: item)
+                            .buttonStyle(DSHapticButtonStyle())
+                            .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
+                            .contextMenu {
+                                if !store.isSelecting {
+                                    fileActionsMenu(for: item)
+                                }
                             }
                         }
                     }
                 }
-            }
-            .padding(Constants.gridSpacing)
-            .animation(
-                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-                value: displayedItems
-            )
-            .animation(
-                .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
-                value: store.displayedSearchResults
-            )
-            offlineFooter
-            pasteTargetArea
+                .padding(Constants.gridSpacing)
+                .animation(
+                    .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+                    value: displayedItems
+                )
+                .animation(
+                    .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
+                    value: store.displayedSearchResults
+                )
+                offlineFooter
+                pasteTargetArea
             }
             .scrollDismissesKeyboard(.immediately)
             .backgroundGradient()
@@ -1049,7 +1079,7 @@ struct BrowseContentView: View {
     /// menu never opens.
     @ViewBuilder
     private var pasteTargetRow: some View {
-        if store.clipboard != nil && !store.directoryPath.isEmpty {
+        if store.clipboard != nil, !store.directoryPath.isEmpty {
             Color.clear
                 .frame(maxWidth: .infinity, minHeight: Constants.pasteTargetMinHeight)
                 .contentShape(Rectangle())
@@ -1085,7 +1115,7 @@ struct BrowseContentView: View {
 
     @ViewBuilder
     private var pasteTargetArea: some View {
-        if store.clipboard != nil && !store.directoryPath.isEmpty {
+        if store.clipboard != nil, !store.directoryPath.isEmpty {
             Color.clear
                 .frame(maxWidth: .infinity, minHeight: Constants.pasteTargetMinHeight)
                 .contentShape(Rectangle())
@@ -1140,7 +1170,7 @@ struct BrowseContentView: View {
     /// staged, so an empty menu never opens. Mirrors the `…` menu's paste/clear pair.
     @ViewBuilder
     private var pasteEmptySpaceMenu: some View {
-        if store.clipboard != nil && !store.directoryPath.isEmpty {
+        if store.clipboard != nil, !store.directoryPath.isEmpty {
             Button {
                 store.send(.pasteTapped(keepItemsAfterCopy: keepClipboardAfterCopy), animation: .default)
             } label: {
@@ -1255,9 +1285,9 @@ struct BrowseContentView: View {
                          style: .secondary,
                          size: .small,
                          isLoading: false, action: {
-                        store.send(.searchScopeChanged(.everywhere))
-                })
-                .padding(.top, Constants.emptyStateSpacing)
+                             store.send(.searchScopeChanged(.everywhere))
+                         })
+                         .padding(.top, Constants.emptyStateSpacing)
             }
         }
         .padding(.space16)

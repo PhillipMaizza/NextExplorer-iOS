@@ -81,12 +81,12 @@ public enum DesignSystemFonts {
 
         let kWeightAxisIdentifier: FourCharCode = 0x77676874
         let variation: [CFNumber: CFNumber] = [
-            (kWeightAxisIdentifier as CFNumber): (weight as CFNumber)
+            kWeightAxisIdentifier as CFNumber: weight as CFNumber,
         ]
 
         let attributes: [CFString: Any] = [
             kCTFontNameAttribute: familyName as CFString,
-            kCTFontVariationAttribute: variation
+            kCTFontVariationAttribute: variation,
         ]
         let descriptor = CTFontDescriptorCreateWithAttributes(attributes as CFDictionary)
         let ctFont = CTFontCreateWithFontDescriptor(descriptor, size, nil)

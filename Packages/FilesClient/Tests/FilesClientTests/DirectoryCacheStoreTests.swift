@@ -1,8 +1,7 @@
 import CoreModels
+@testable import FilesClient
 import Foundation
 import Testing
-
-@testable import FilesClient
 
 @Suite(.serialized)
 struct DirectoryCacheStoreTests {
@@ -117,7 +116,7 @@ struct DirectoryCacheStoreTests {
 
         store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: ["small"]), etag: nil, fetchedAt: Date())
 
-        let hugeNames = (0..<60_000).map { "file-with-a-fairly-long-name-number-\($0).txt" }
+        let hugeNames = (0 ..< 60_000).map { "file-with-a-fairly-long-name-number-\($0).txt" }
         store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: hugeNames), etag: nil, fetchedAt: Date())
 
         #expect(store.read(serverURL: serverURL, path: "docs") == nil)
@@ -130,7 +129,7 @@ struct DirectoryCacheStoreTests {
         defer { cleanUp(root) }
         let store = DirectoryCacheStore.onDisk(rootDirectory: root, maxEntries: 3)
 
-        for index in 0..<6 {
+        for index in 0 ..< 6 {
             store.write(
                 serverURL: serverURL,
                 path: "dir\(index)",
@@ -140,7 +139,7 @@ struct DirectoryCacheStoreTests {
             )
         }
 
-        let survivors = (0..<6).filter { store.read(serverURL: serverURL, path: "dir\($0)") != nil }
+        let survivors = (0 ..< 6).filter { store.read(serverURL: serverURL, path: "dir\($0)") != nil }
         #expect(survivors == [3, 4, 5])
     }
 
@@ -245,7 +244,7 @@ struct DirectoryCacheStoreTests {
             try FileManager.default.contentsOfDirectory(at: cacheDirectory, includingPropertiesForKeys: nil)
                 .first { $0.pathExtension == "json" }
         )
-        let stale = try JSONSerialization.jsonObject(with: Data(contentsOf: file)) as! [String: Any]
+        let stale = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: file)) as? [String: Any])
         var mutated = stale
         mutated["schemaVersion"] = CachedDirectory.currentSchemaVersion + 1
         try JSONSerialization.data(withJSONObject: mutated).write(to: file)

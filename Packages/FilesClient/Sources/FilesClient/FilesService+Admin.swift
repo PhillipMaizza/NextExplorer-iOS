@@ -18,7 +18,7 @@ extension FilesService {
         // Unlike every other call, a 401 here is "current password is incorrect", not a dead
         // session, so it must reach the user as its message, not as `.sessionExpired`.
         switch response.statusCode {
-        case 200..<300:
+        case 200 ..< 300:
             return
         case 429:
             throw FilesClientError.rateLimited

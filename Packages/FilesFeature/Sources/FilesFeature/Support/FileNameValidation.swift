@@ -10,8 +10,12 @@ enum FileNameValidation {
     /// by an error the user hasn't had a chance to earn yet.
     static func errorMessage(forTrimmed name: String) -> String? {
         guard !name.isEmpty else { return nil }
-        if name == "." || name == ".." { return L10n.Browse.nameErrorReserved }
-        if name.contains("/") || name.contains("\\") { return L10n.Browse.nameErrorSeparators }
+        if name == "." || name == ".." {
+            return L10n.Browse.nameErrorReserved
+        }
+        if name.contains("/") || name.contains("\\") {
+            return L10n.Browse.nameErrorSeparators
+        }
         return nil
     }
 
