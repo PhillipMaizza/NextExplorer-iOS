@@ -23,9 +23,12 @@ jobs:
     env:
       SIM_DEVICE: iPhone 16
       # Package test suites, discovered under Packages/<name>/Tests.
+      # Keychain is intentionally omitted: its tests hit the real Security framework, which
+      # returns errSecMissingEntitlement (-34018) for a standalone SwiftPM test bundle on the
+      # simulator (no app host / keychain-access-group entitlement). They pass only inside an
+      # entitled app host, so they run locally in Xcode, not in this package-by-package CI.
       TEST_PACKAGES: >-
         CoreModels
-        Keychain
         NetworkClient
         AuthClient
         FilesClient

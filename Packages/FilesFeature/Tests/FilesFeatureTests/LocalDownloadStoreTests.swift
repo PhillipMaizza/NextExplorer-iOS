@@ -7,7 +7,11 @@ import Testing
 /// sandboxed Documents/Caches directories) — same spirit as `KeychainClientTests` hitting the
 /// real Security framework rather than a mock, since the whole point is verifying actual
 /// on-disk behavior.
-@Suite
+///
+/// Serialized: these tests share the one on-disk `Downloads/` tree, and legacy migration moves
+/// loose files out of the unscoped root into whichever scope lists first. Run in parallel, one
+/// test's migration can claim another's loose fixture, so they must run one at a time.
+@Suite(.serialized)
 struct LocalDownloadStoreTests {
     private let store = LocalDownloadStore.liveValue
     /// A fake per-account scope so tests exercise the scoped `Downloads/<scope>/` folder and
