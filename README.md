@@ -42,7 +42,7 @@ No NextExplorer account, no middleman, no tracking. Your files, credentials and 
 
 ## Snapshots
 
-Raw captures from an iPhone. No mockups, no marketing frames, this is the actual app.
+Straight from the app on iPhone.
 
 <div align="center">
 
