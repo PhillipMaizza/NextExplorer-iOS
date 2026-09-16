@@ -21,7 +21,7 @@ Browse, preview, search and share. Your files stay between your device and the s
 
 <br/>
 
-<a href="https://phillipmaizza.com/nextexplorer">
+<a href="https://apps.apple.com/app/id6811976306">
   <img src="https://img.shields.io/badge/Download_on_the-App_Store-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download on the App Store" height="48" />
 </a>
 
