@@ -1,6 +1,6 @@
 import Foundation
-import Testing
 @testable import Keychain
+import Testing
 
 @Suite("KeychainClient live implementation")
 struct KeychainClientTests {

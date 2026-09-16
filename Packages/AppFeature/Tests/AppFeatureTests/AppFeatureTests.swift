@@ -1,10 +1,10 @@
+@testable import AppFeature
 import AuthClient
 import AuthFeature
 import ComposableArchitecture
 import CoreModels
 import Foundation
 import Testing
-@testable import AppFeature
 
 @MainActor
 // Serialized: these tests drive session-boundary transitions that write the process-wide
@@ -48,16 +48,16 @@ struct AppFeatureTests {
         // `@Shared` writes apply to the store eagerly, so TestStore surfaces the scope set by
         // the follow-up `sessionValidationResponse` effect here, at the first assertion after it.
         await store.receive(\.sessionRestoreResponse) {
-            $0.$downloadScope.withLock { $0 = DownloadAccountScope.identifier(serverURL: self.serverURL, userID: user.id) }
+            $0.$downloadScope.withLock { $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id) }
             $0.destination = .authenticated(
                 AuthenticatedFeature.State(
-                    serverURL: self.serverURL,
+                    serverURL: serverURL,
                     user: User(id: "", username: "phillip", email: nil)
                 )
             )
         }
         await store.receive(\.sessionValidationResponse) {
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, user: user))
+            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
         }
     }
 
@@ -89,7 +89,7 @@ struct AppFeatureTests {
         await store.receive(\.sessionRestoreResponse) {
             $0.destination = .authenticated(
                 AuthenticatedFeature.State(
-                    serverURL: self.serverURL,
+                    serverURL: serverURL,
                     user: User(id: "", username: "phillip", email: nil)
                 )
             )
@@ -126,7 +126,7 @@ struct AppFeatureTests {
         await store.receive(\.sessionRestoreResponse) {
             $0.destination = .authenticated(
                 AuthenticatedFeature.State(
-                    serverURL: self.serverURL,
+                    serverURL: serverURL,
                     user: User(id: "", username: "phillip", email: nil)
                 )
             )
@@ -166,9 +166,9 @@ struct AppFeatureTests {
         let user = User(id: "1", username: "phillip", email: nil, roles: [])
 
         await store.send(.destination(.unauthenticated(.delegate(.authenticated(user, serverURL))))) {
-            $0.$downloadScope.withLock { $0 = DownloadAccountScope.identifier(serverURL: self.serverURL, userID: user.id) }
+            $0.$downloadScope.withLock { $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id) }
             $0.didAuthenticateFromLogin = true
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: self.serverURL, user: user))
+            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
         }
         await store.finish()
         #expect(cacheCleared.value)

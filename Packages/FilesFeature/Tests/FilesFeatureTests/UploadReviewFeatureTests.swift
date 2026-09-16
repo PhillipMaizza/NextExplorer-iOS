@@ -1,12 +1,10 @@
 import ComposableArchitecture
 import CoreModels
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct UploadReviewFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
 
@@ -22,7 +20,9 @@ struct UploadReviewFeatureTests {
         UploadStagingClient(
             stageDocuments: { _ in
                 AsyncStream<PickedFile> { continuation in
-                    for file in files { continuation.yield(file) }
+                    for file in files {
+                        continuation.yield(file)
+                    }
                     continuation.finish()
                 }
             },
@@ -59,7 +59,7 @@ struct UploadReviewFeatureTests {
         store.exhaustivity = .off
 
         await store.send(.pathTapped) {
-            $0.folderPicker = DestinationPickerFeature.State(serverURL: self.serverURL, uploadStartingAt: "")
+            $0.folderPicker = DestinationPickerFeature.State(serverURL: serverURL, uploadStartingAt: "")
         }
         await store.send(.folderPicker(.presented(.delegate(.confirmed(destination: "Documents/Trips"))))) {
             $0.destination = "Documents/Trips"

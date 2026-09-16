@@ -53,8 +53,7 @@ public extension Elevation {
 public extension View {
     /// Applies the design system's two-layer elevation shadow.
     func elevation(_ level: Elevation, alpha: Double = Elevation.defaultAlpha) -> some View {
-        self
-            .shadow(color: Elevation.shadowColor.opacity(alpha), radius: level.firstShadow.blur / 2, x: 0, y: level.firstShadow.y)
+        shadow(color: Elevation.shadowColor.opacity(alpha), radius: level.firstShadow.blur / 2, x: 0, y: level.firstShadow.y)
             .shadow(color: Elevation.shadowColor.opacity(alpha), radius: level.secondShadow.blur / 2, x: 0, y: level.secondShadow.y)
     }
 }

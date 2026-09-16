@@ -49,7 +49,8 @@ public enum LocalizationOverride {
     public static func apply(_ language: String?) {
         guard let language,
               let path = Bundle.module.path(forResource: language, ofType: "lproj"),
-              let resolved = Bundle(path: path) else {
+              let resolved = Bundle(path: path)
+        else {
             state.withLock { $0 = Override() }
             return
         }

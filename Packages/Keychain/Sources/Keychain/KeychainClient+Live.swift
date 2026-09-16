@@ -1,7 +1,7 @@
 import Dependencies
 
-extension KeychainClient {
-    public static func live(configuration: KeychainConfiguration = .default) -> KeychainClient {
+public extension KeychainClient {
+    static func live(configuration: KeychainConfiguration = .default) -> KeychainClient {
         let store = SecurityKeychainStore(configuration: configuration)
         return KeychainClient(
             save: { try store.save(key: $0, data: $1) },
@@ -15,8 +15,8 @@ extension KeychainClient: DependencyKey {
     public static let liveValue: KeychainClient = .live()
 }
 
-extension DependencyValues {
-    public var keychainClient: KeychainClient {
+public extension DependencyValues {
+    var keychainClient: KeychainClient {
         get { self[KeychainClient.self] }
         set { self[KeychainClient.self] = newValue }
     }

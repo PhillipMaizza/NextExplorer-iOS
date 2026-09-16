@@ -109,7 +109,7 @@ struct CodeEditorView: UIViewRepresentable {
 
         init(text: Binding<String>) {
             self.text = text
-            self.lastReportedText = text.wrappedValue
+            lastReportedText = text.wrappedValue
         }
 
         /// Sets the whole document via `setState` — the only Runestone-sanctioned way to load
@@ -134,10 +134,10 @@ struct CodeEditorView: UIViewRepresentable {
             }
         }
 
-        // `textViewDidChange` is a `nonisolated` protocol requirement (Runestone doesn't
-        // annotate it `@MainActor`), so a `@MainActor` method can't satisfy it directly —
-        // but UIKit only ever calls delegate methods on the main thread, so hopping in with
-        // `assumeIsolated` is safe and lets us still touch the main-actor-isolated `text`.
+        /// `textViewDidChange` is a `nonisolated` protocol requirement (Runestone doesn't
+        /// annotate it `@MainActor`), so a `@MainActor` method can't satisfy it directly —
+        /// but UIKit only ever calls delegate methods on the main thread, so hopping in with
+        /// `assumeIsolated` is safe and lets us still touch the main-actor-isolated `text`.
         nonisolated func textViewDidChange(_ textView: TextView) {
             MainActor.assumeIsolated {
                 // Ignore the change callbacks Runestone fires while we apply a document (and any

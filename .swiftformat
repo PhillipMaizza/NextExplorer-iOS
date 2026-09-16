@@ -1,0 +1,20 @@
+# SwiftFormat configuration for NextExplorer.
+# Formatting is whitespace and ordering only; rules that would restructure SwiftUI view
+# bodies are disabled because several bodies are deliberately shaped for the type checker
+# (see CLAUDE.md rule 10).
+
+--swiftversion 5.9
+
+# Generated or vendored code is never formatted. BrowseFeature.swift is excluded too: its
+# ~1700 line Reduce body is a single expression that the type checker only just manages, and
+# reformatting it (wrapping the one line bodies, etc.) pushes it past the inference limit
+# ("type '(_, _) -> _' cannot conform to 'Reducer'"). See CLAUDE.md rule 10.
+--exclude **/.build,Packages/Localization/Sources/Localization/L10n.swift,Packages/FilesFeature/Sources/FilesFeature/Browse/BrowseFeature.swift
+
+# redundantSwiftUIGroup / redundantViewBuilder restructure view hierarchies (can change
+#   @ViewBuilder result-builder semantics and transition identity).
+# numberFormatting rewrites numeric literals (noise, and touches test fixtures).
+# noForceUnwrapInTests has no safe autofix, so it only produces lint errors.
+--disable redundantSwiftUIGroup,redundantViewBuilder,numberFormatting,noForceUnwrapInTests
+
+--header ignore

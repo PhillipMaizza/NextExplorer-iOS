@@ -23,11 +23,11 @@ private struct FileBadge {
     let foreground: Color
 }
 
-extension FileItem {
+private extension FileItem {
     /// Mirrors the web client's per-extension badge table exactly (`FileIcon.vue`'s `badge`
     /// computed property) — same labels, same hex colors — so a `.py` file looks the same
     /// shade of blue here as it does on the web.
-    fileprivate static func badge(forKind kind: String) -> FileBadge? {
+    static func badge(forKind kind: String) -> FileBadge? {
         switch kind.lowercased() {
         case "pdf": FileBadge(label: "PDF", background: Color(hex: 0xE81123), foreground: .white)
         case "doc", "docx", "rtf": FileBadge(label: "DOC", background: Color(hex: 0x2563EB), foreground: .white)

@@ -45,7 +45,7 @@ struct UnsupportedFilePreviewView: View {
                         .frame(width: Constants.iconSize, height: Constants.iconSize)
 
                     Text(item.name)
-                        .type(.headline3, style: .primary(for: .label))
+                        .type(.headline3, style: .primaryOnSurface)
                         .multilineTextAlignment(.center)
                         .lineLimit(3)
                     Text(typeText)

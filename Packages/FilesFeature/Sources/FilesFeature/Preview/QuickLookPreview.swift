@@ -57,9 +57,11 @@ struct QuickLookPreview: UIViewControllerRepresentable {
             self.urls = urls
         }
 
-        func numberOfPreviewItems(in controller: QLPreviewController) -> Int { urls.count }
+        func numberOfPreviewItems(in _: QLPreviewController) -> Int {
+            urls.count
+        }
 
-        func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
+        func previewController(_: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
             urls[index] as NSURL
         }
     }
@@ -89,12 +91,12 @@ final class QLIndexObserver: NSObject {
 
     override func observeValue(
         forKeyPath keyPath: String?,
-        of object: Any?,
+        of _: Any?,
         change: [NSKeyValueChangeKey: Any]?,
-        context: UnsafeMutableRawPointer?
+        context _: UnsafeMutableRawPointer?
     ) {
         guard keyPath == Self.keyPath, let index = change?[.newKey] as? Int else { return }
-        let onChange = self.onChange
+        let onChange = onChange
         Task { @MainActor in onChange(index) }
     }
 }

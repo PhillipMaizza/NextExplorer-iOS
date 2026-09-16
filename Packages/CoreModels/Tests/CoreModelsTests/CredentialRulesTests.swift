@@ -1,5 +1,5 @@
-import Testing
 @testable import CoreModels
+import Testing
 
 @Suite("CredentialRules")
 struct CredentialRulesTests {

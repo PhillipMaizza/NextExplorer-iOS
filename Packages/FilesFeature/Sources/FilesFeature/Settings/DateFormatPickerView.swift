@@ -31,7 +31,7 @@ struct DateFormatPickerView: View {
                     } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: Constants.rowSpacing) {
-                                Text(format.title).type(.body1(.regular), style: .primary(for: .label))
+                                Text(format.title).type(.body1(.regular), style: .primaryOnSurface)
                                 Text(format.example(includeTime: includeTime)).type(.body3(.regular), style: .secondary)
                             }
                             Spacer()

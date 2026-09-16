@@ -57,7 +57,7 @@ struct HTMLRenderedView: View {
 
         // The `href`/`src` regex scan walks the entire document; run it off the main thread so a
         // large HTML file doesn't stall the UI while its assets are being resolved.
-        let html = self.html
+        let html = html
         let assetPaths = await Task.detached(priority: .userInitiated) {
             Self.relativeAssetPaths(in: html)
         }.value
@@ -79,7 +79,7 @@ struct HTMLRenderedView: View {
     /// Every `href="..."`/`src="..."` value that isn't already absolute (`http(s)://`,
     /// protocol-relative `//`, `data:`, `mailto:`) or an in-page anchor (`#section`) — the
     /// same-folder assets a fetched HTML string alone has no way to reach.
-    nonisolated private static func relativeAssetPaths(in html: String) -> [String] {
+    private nonisolated static func relativeAssetPaths(in html: String) -> [String] {
         guard let regex = try? NSRegularExpression(pattern: #"(?:href|src)\s*=\s*["']([^"'#][^"']*)["']"#, options: [.caseInsensitive]) else {
             return []
         }
@@ -162,7 +162,7 @@ private struct HTMLWebView: UIViewRepresentable {
         }
 
         func webView(
-            _ webView: WKWebView,
+            _: WKWebView,
             decidePolicyFor navigationAction: WKNavigationAction
         ) async -> WKNavigationActionPolicy {
             navigationAction.request.url?.isFileURL == true ? .allow : .cancel

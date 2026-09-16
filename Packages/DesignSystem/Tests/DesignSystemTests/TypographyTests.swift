@@ -1,11 +1,11 @@
-import Testing
 @testable import DesignSystem
+import Testing
 
 @Suite("Typography")
 struct TypographyTests {
     @Test("every text style resolves to a distinct color role")
     func textStylesHaveColors() {
-        #expect(Typography.TextStyle.primary(for: .label).color != Typography.TextStyle.error.color)
+        #expect(Typography.TextStyle.primaryOnSurface.color != Typography.TextStyle.error.color)
     }
 
     @Test("headline1 is the largest, non-zero-size text type")

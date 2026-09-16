@@ -365,12 +365,12 @@ public struct LoginFormView: View {
                         // acting as the tap target.
                         (
                             Text(L10n.Login.serverQuestion)
-                            + Text(" ")
-                            + Text(IconKit.info)
+                                + Text(" ")
+                                + Text(IconKit.info)
                                 .font(Typography.TextType.body2(.regular).font())
                                 .foregroundColor(Color.secondaryDS)
                         )
-                        .type(.headline3, style: .primary(for: .label))
+                        .type(.headline3, style: .primaryOnSurface)
                         .multilineTextAlignment(.center)
                     }
                     .buttonStyle(DSHapticButtonStyle())
@@ -404,8 +404,16 @@ public struct LoginFormView: View {
                     .onSubmit(submitTestConnection)
                     .shake(trigger: shakeTrigger)
                     .focused($focusedField, equals: .host)
-                    .onAppear { if autoFocus { focusedField = .host } }
-                    .onChange(of: autoFocus) { _, ready in if ready { focusedField = .host } }
+                    .onAppear {
+                        if autoFocus {
+                            focusedField = .host
+                        }
+                    }
+                    .onChange(of: autoFocus) {
+                        _, ready in if ready {
+                            focusedField = .host
+                        }
+                    }
                 }
                 .padding(.horizontal, .space24)
 
@@ -498,7 +506,7 @@ public struct LoginFormView: View {
         VStack(spacing: 0) {
             ZStack {
                 Text(store.host)
-                    .type(.body1(.semibold), style: .primary(for: .label))
+                    .type(.body1(.semibold), style: .primaryOnSurface)
                     .lineLimit(1)
                     .truncationMode(.middle)
                     .padding(.horizontal, Constants.navBarTitleHorizontalPadding)
@@ -696,7 +704,9 @@ public struct LoginFormView: View {
         }
         .disabled(!isSubmitLocalEnabled && phase == .idle)
         .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .named(Constants.rootSpace)) }) { newFrame in
-            if newFrame != .zero { submitButtonRect = newFrame }
+            if newFrame != .zero {
+                submitButtonRect = newFrame
+            }
         }
         .animation(.easeInOut(duration: Constants.contentFadeDuration), value: isSubmitLocalEnabled)
     }
@@ -749,7 +759,9 @@ public struct LoginFormView: View {
             }
         }
         .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .named(Constants.rootSpace)) }) { newFrame in
-            if newFrame != .zero { ssoButtonRect = newFrame }
+            if newFrame != .zero {
+                ssoButtonRect = newFrame
+            }
         }
     }
 }

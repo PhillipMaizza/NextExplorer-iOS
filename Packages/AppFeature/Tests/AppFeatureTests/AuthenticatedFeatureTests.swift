@@ -1,9 +1,9 @@
+@testable import AppFeature
 import AuthClient
 import ComposableArchitecture
 import CoreModels
 import Foundation
 import Testing
-@testable import AppFeature
 
 @MainActor
 @Suite("AuthenticatedFeature")

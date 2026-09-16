@@ -22,7 +22,9 @@ public enum DirectLinkMode: String, Codable, Sendable, CaseIterable, Hashable, I
     case raw
     case download
 
-    public var id: String { rawValue }
+    public var id: String {
+        rawValue
+    }
 }
 
 /// One row from `GET /api/shares` (shared by me) or `GET /api/shares/shared-with-me`
@@ -114,16 +116,24 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
 
     /// `owner_id` follows the same unconfirmed int-vs-string shape as `User.id`.
     private static func decodeStringOrInt(_ container: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) throws -> String {
-        if let stringValue = try? container.decode(String.self, forKey: key) { return stringValue }
-        return String(try container.decode(Int.self, forKey: key))
+        if let stringValue = try? container.decode(String.self, forKey: key) {
+            return stringValue
+        }
+        return try String(container.decode(Int.self, forKey: key))
     }
 
     /// Explicit label, else the recipient-only leaf name, else the last component of the
     /// owner-side path, else the token.
     public var displayName: String {
-        if let label, !label.isEmpty { return label }
-        if let sourceName, !sourceName.isEmpty { return sourceName }
-        if let leaf = sourcePath?.split(separator: "/").last { return String(leaf) }
+        if let label, !label.isEmpty {
+            return label
+        }
+        if let sourceName, !sourceName.isEmpty {
+            return sourceName
+        }
+        if let leaf = sourcePath?.split(separator: "/").last {
+            return String(leaf)
+        }
         return shareToken
     }
 

@@ -1,9 +1,9 @@
+@testable import AuthClient
 import CoreModels
 import Foundation
 import Keychain
 import NetworkClient
 import Testing
-@testable import AuthClient
 
 @Suite("AuthClient live implementation")
 struct AuthClientLiveTests {
@@ -40,7 +40,7 @@ struct AuthClientLiveTests {
         let client = makeClient(cookieStorage: makeCookieStorage()) { request in
             let url = try #require(request.url)
             let body = Data(#"{"strategies":{"local":true,"oidc":false}}"#.utf8)
-            return (body, try self.response(statusCode: 200, url: url))
+            return try (body, response(statusCode: 200, url: url))
         }
         let status = try await client.fetchStatus(serverURL)
         #expect(status.localEnabled == true)
@@ -51,7 +51,7 @@ struct AuthClientLiveTests {
     func fetchStatusMalformedBody() async throws {
         let client = makeClient(cookieStorage: makeCookieStorage()) { request in
             let url = try #require(request.url)
-            return (Data("not json".utf8), try self.response(statusCode: 200, url: url))
+            return try (Data("not json".utf8), response(statusCode: 200, url: url))
         }
         await #expect(throws: AuthClientError.self) {
             _ = try await client.fetchStatus(serverURL)
@@ -62,12 +62,12 @@ struct AuthClientLiveTests {
     func fetchStatusServerError() async throws {
         let client = makeClient(cookieStorage: makeCookieStorage()) { request in
             let url = try #require(request.url)
-            return (Data(), try self.response(statusCode: 500, url: url))
+            return try (Data(), response(statusCode: 500, url: url))
         }
         do {
             _ = try await client.fetchStatus(serverURL)
             Issue.record("expected fetchStatus to throw")
-        } catch AuthClientError.server(let statusCode) {
+        } catch let AuthClientError.server(statusCode) {
             #expect(statusCode == 500)
         }
     }
@@ -96,12 +96,12 @@ struct AuthClientLiveTests {
                     .name: AuthClientConfiguration.CookieName.local,
                     .value: "abc123",
                     .domain: host,
-                    .path: "/"
+                    .path: "/",
                 ]))
                 cookieStorage.setCookie(cookie)
             }
             let body = Data(#"{"user":{"id":"1","username":"phillip","roles":["admin"]}}"#.utf8)
-            return (body, try self.response(statusCode: 200, url: url))
+            return try (body, response(statusCode: 200, url: url))
         }
 
         let user = try await client.login(serverURL, "phillip", "hunter2")
@@ -118,7 +118,7 @@ struct AuthClientLiveTests {
         let keychainClient = KeychainClient.inMemory()
         let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychainClient) { request in
             let url = try #require(request.url)
-            return (Data(), try self.response(statusCode: 401, url: url))
+            return try (Data(), response(statusCode: 401, url: url))
         }
 
         await #expect(throws: AuthClientError.invalidCredentials) {
@@ -141,12 +141,12 @@ struct AuthClientLiveTests {
                     .name: AuthClientConfiguration.CookieName.local,
                     .value: "abc123",
                     .domain: host,
-                    .path: "/"
+                    .path: "/",
                 ]))
                 cookieStorage.setCookie(cookie)
             }
             let responseBody = Data(#"{"user":{"id":"1","username":"phillip","roles":[]}}"#.utf8)
-            return (responseBody, try self.response(statusCode: 200, url: url))
+            return try (responseBody, response(statusCode: 200, url: url))
         }
 
         _ = try await client.login(serverURL, "phillip", "hunter2")
@@ -156,7 +156,7 @@ struct AuthClientLiveTests {
     func loginRateLimited() async throws {
         let client = makeClient(cookieStorage: makeCookieStorage()) { request in
             let url = try #require(request.url)
-            return (Data(), try self.response(statusCode: 429, url: url))
+            return try (Data(), response(statusCode: 429, url: url))
         }
 
         await #expect(throws: AuthClientError.rateLimited) {
@@ -169,7 +169,7 @@ struct AuthClientLiveTests {
         let client = makeClient(cookieStorage: makeCookieStorage()) { request in
             let url = try #require(request.url)
             let body = Data(#"{"user":{"id":"1","username":"phillip","roles":[]}}"#.utf8)
-            return (body, try self.response(statusCode: 200, url: url))
+            return try (body, response(statusCode: 200, url: url))
         }
 
         await #expect(throws: AuthClientError.sessionCookieMissing) {
@@ -181,7 +181,7 @@ struct AuthClientLiveTests {
     func loginMalformedBody() async throws {
         let client = makeClient(cookieStorage: makeCookieStorage()) { request in
             let url = try #require(request.url)
-            return (Data("not json".utf8), try self.response(statusCode: 200, url: url))
+            return try (Data("not json".utf8), response(statusCode: 200, url: url))
         }
         await #expect(throws: AuthClientError.self) {
             _ = try await client.login(serverURL, "phillip", "hunter2")
@@ -205,12 +205,12 @@ struct AuthClientLiveTests {
                     .name: AuthClientConfiguration.CookieName.local,
                     .value: "abc123",
                     .domain: host,
-                    .path: "/"
+                    .path: "/",
                 ]))
                 cookieStorage.setCookie(cookie)
             }
             let body = Data(#"{"user":{"id":"1","username":"phillip","roles":[]}}"#.utf8)
-            return (body, try self.response(statusCode: 200, url: url))
+            return try (body, response(statusCode: 200, url: url))
         }
 
         do {
@@ -228,7 +228,7 @@ struct AuthClientLiveTests {
         let client = makeClient(cookieStorage: makeCookieStorage()) { request in
             let url = try #require(request.url)
             let body = Data(#"{"user":{"id":"1","username":"phillip","roles":["admin"]}}"#.utf8)
-            return (body, try self.response(statusCode: 200, url: url))
+            return try (body, response(statusCode: 200, url: url))
         }
         let user = try await client.me(serverURL)
         #expect(user.username == "phillip")
@@ -239,7 +239,7 @@ struct AuthClientLiveTests {
     func meSessionExpired() async throws {
         let client = makeClient(cookieStorage: makeCookieStorage()) { request in
             let url = try #require(request.url)
-            return (Data(), try self.response(statusCode: 401, url: url))
+            return try (Data(), response(statusCode: 401, url: url))
         }
         await #expect(throws: AuthClientError.sessionExpired) {
             _ = try await client.me(serverURL)
@@ -250,7 +250,7 @@ struct AuthClientLiveTests {
     func meNullUserWith200IsSessionExpired() async throws {
         let client = makeClient(cookieStorage: makeCookieStorage()) { request in
             let url = try #require(request.url)
-            return (Data(#"{"user":null}"#.utf8), try self.response(statusCode: 200, url: url))
+            return try (Data(#"{"user":null}"#.utf8), response(statusCode: 200, url: url))
         }
         await #expect(throws: AuthClientError.sessionExpired) {
             _ = try await client.me(serverURL)
@@ -262,12 +262,12 @@ struct AuthClientLiveTests {
     @Test("restoreSession happy path reinstalls the persisted cookie")
     func restoreSessionHappyPath() async throws {
         let keychainClient = KeychainClient.inMemory()
-        let credentials = SessionCredentials(
+        let credentials = try SessionCredentials(
             serverBaseURL: serverURL,
             authMode: .local,
             cookieName: AuthClientConfiguration.CookieName.local,
             cookieValue: "restored-value",
-            cookieDomain: try #require(serverURL.host),
+            cookieDomain: #require(serverURL.host),
             cookiePath: "/",
             cookieIsSecure: false,
             expiresAt: nil,
@@ -288,7 +288,7 @@ struct AuthClientLiveTests {
     }
 
     @Test("restoreSession edge case: nothing persisted returns nil")
-    func restoreSessionNothingPersisted() async throws {
+    func restoreSessionNothingPersisted() async {
         let client = makeClient(cookieStorage: makeCookieStorage()) { _ in
             throw NetworkError.transport("should not be called")
         }
@@ -320,14 +320,14 @@ struct AuthClientLiveTests {
                 .name: AuthClientConfiguration.CookieName.local,
                 .value: "abc123",
                 .domain: host,
-                .path: "/"
+                .path: "/",
             ]))
             cookieStorage.setCookie(cookie)
         }
 
         let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { request in
             let url = try #require(request.url)
-            return (Data(), try self.response(statusCode: 200, url: url))
+            return try (Data(), response(statusCode: 200, url: url))
         }
 
         try await client.logout(serverURL)
@@ -358,7 +358,7 @@ struct AuthClientLiveTests {
 
         let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychainClient) { request in
             let url = try #require(request.url)
-            return (Data(), try self.response(statusCode: 401, url: url))
+            return try (Data(), response(statusCode: 401, url: url))
         }
 
         try await client.logout(serverURL)
@@ -373,7 +373,7 @@ struct AuthClientLiveTests {
 
         let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychainClient) { request in
             let url = try #require(request.url)
-            return (Data(), try self.response(statusCode: 500, url: url))
+            return try (Data(), response(statusCode: 500, url: url))
         }
 
         try await client.logout(serverURL)

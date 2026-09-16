@@ -12,8 +12,13 @@ final class StubURLProtocol: URLProtocol {
     nonisolated(unsafe) static var stub: Stub?
     nonisolated(unsafe) static var failure: URLError?
 
-    override class func canInit(with request: URLRequest) -> Bool { true }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override class func canInit(with _: URLRequest) -> Bool {
+        true
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
 
     override func startLoading() {
         if let failure = Self.failure {

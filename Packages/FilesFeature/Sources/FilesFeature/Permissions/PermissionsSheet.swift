@@ -54,7 +54,7 @@ struct PermissionsSheet: View {
                 }
             }
 
-            if store.phase == .loading && store.permissions == nil {
+            if store.phase == .loading, store.permissions == nil {
                 HStack {
                     Spacer()
                     DSSpinner()
@@ -102,7 +102,7 @@ struct PermissionsSheet: View {
                     Text(L10n.Permissions.numericLabel).type(.body3(.regular), style: .secondary)
                     Spacer()
                     Text(store.octalString)
-                        .type(.body2(.bold), style: .primary(for: .label))
+                        .type(.body2(.bold), style: .primaryOnSurface)
                         .monospaced()
                 }
                 if store.item.isDirectory {
@@ -132,7 +132,7 @@ struct PermissionsSheet: View {
             ForEach(Self.scopes, id: \.0) { scope, title in
                 GridRow {
                     Text(title)
-                        .type(.body3(.regular), style: .primary(for: .label))
+                        .type(.body3(.regular), style: .primaryOnSurface)
                         .gridColumnAlignment(.leading)
                     ForEach(Self.rights, id: \.0) { right, _ in
                         checkbox(scope, right)

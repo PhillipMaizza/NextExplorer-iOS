@@ -46,7 +46,7 @@ public struct QAHarness: View {
                 result("release-notes.md", "Projects", "md", "Added the waterfall layout to the gallery grid.", 12),
                 result("app-server.swift", "Projects/Server", "swift", "let waterfall = LayoutEngine(columns: 3)", 47),
                 result("design-spec.txt", "Documents", "txt", "The waterfall view reflows on scroll.", 8),
-                result("waterfall.png", "Photos", "png", nil, nil)
+                result("waterfall.png", "Photos", "png", nil, nil),
             ])
         }
 
@@ -63,7 +63,7 @@ public struct QAHarness: View {
             file("Budget 2026.xlsx", "xlsx", 512_000, "2026-09-09", thumb: false),
             file("Proposal.docx", "docx", 340_000, "2026-09-07", thumb: false),
             file("Archive.zip", "zip", 6_700_000, "2026-09-06", thumb: false),
-            file("README.md", "md", 8_400, "2026-09-05", thumb: false)
+            file("README.md", "md", 8_400, "2026-09-05", thumb: false),
         ])
 
         state.favorites.phase = .loaded
@@ -72,7 +72,7 @@ public struct QAHarness: View {
             fav("2", "Projects", "Projects", 1),
             fav("3", "Documents/Quarterly Report", "Quarterly Report", 2),
             fav("4", "Music", "Music", 3),
-            fav("5", "Projects/Design", "Design", 4)
+            fav("5", "Projects/Design", "Design", 4),
         ])
 
         return state

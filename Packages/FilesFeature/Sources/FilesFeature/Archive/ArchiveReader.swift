@@ -103,13 +103,17 @@ final class ArchiveSource: @unchecked Sendable {
                 }
                 fileHandle.write(chunk)
             }
-            if overflowed { throw ArchiveReaderError.entryTooLarge }
+            if overflowed {
+                throw ArchiveReaderError.entryTooLarge
+            }
         }
     }
 
     private func rarEntries() throws -> [Unrar.Entry] {
         guard case let .rar(archive) = kind else { return [] }
-        if let cachedRarEntries { return cachedRarEntries }
+        if let cachedRarEntries {
+            return cachedRarEntries
+        }
         let entries = try archive.entries()
         cachedRarEntries = entries
         return entries
@@ -127,8 +131,8 @@ enum ArchiveReader {
 
     static func open(fileURL: URL, kind: String) throws -> ArchiveSource {
         switch kind.lowercased() {
-        case "zip": return ArchiveSource(.zip(try ZIPFoundation.Archive(url: fileURL, accessMode: .read)))
-        case "rar": return ArchiveSource(.rar(try Unrar.Archive(fileURL: fileURL)))
+        case "zip": return try ArchiveSource(.zip(ZIPFoundation.Archive(url: fileURL, accessMode: .read)))
+        case "rar": return try ArchiveSource(.rar(Unrar.Archive(fileURL: fileURL)))
         default: throw ArchiveReaderError.unsupportedFormat
         }
     }
@@ -146,7 +150,8 @@ enum ArchiveReader {
     static func guardExtraction(uncompressedSize: UInt64, destination: URL) throws {
         guard uncompressedSize <= maxEntrySize else { throw ArchiveReaderError.entryTooLarge }
         if let available = availableCapacity(at: destination.deletingLastPathComponent()),
-           uncompressedSize > available {
+           uncompressedSize > available
+        {
             throw ArchiveReaderError.entryTooLarge
         }
     }

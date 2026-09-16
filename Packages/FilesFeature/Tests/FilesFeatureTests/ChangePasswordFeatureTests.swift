@@ -1,12 +1,10 @@
 import ComposableArchitecture
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct ChangePasswordFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
 
@@ -47,7 +45,7 @@ struct ChangePasswordFeatureTests {
         let store = store {
             $0.filesClient.changeOwnPassword = { _, _, _ in Issue.record("must not call the server") }
         }
-        await store.send(.submitTapped)  // nothing filled in
+        await store.send(.submitTapped) // nothing filled in
         #expect(store.state.isSubmitting == false)
     }
 
@@ -56,7 +54,7 @@ struct ChangePasswordFeatureTests {
     @Test
     func aSuccessfulChangeClearsTheFormAndShowsSuccess() async {
         let store = store {
-            $0.filesClient.changeOwnPassword = { url, current, new in
+            $0.filesClient.changeOwnPassword = { _, current, new in
                 #expect(current == "old-pass")
                 #expect(new == "the-new-one")
             }
@@ -106,7 +104,7 @@ struct ChangePasswordFeatureTests {
             $0.isSubmitting = false
             $0.errorMessage = "Current password is incorrect."
         }
-        #expect(store.state.currentPassword == "nope")  // form is kept for a retry
+        #expect(store.state.currentPassword == "nope") // form is kept for a retry
     }
 
     @Test

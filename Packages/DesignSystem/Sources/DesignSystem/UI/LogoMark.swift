@@ -38,7 +38,11 @@ private enum LogoGeometry {
         var path = Path()
         for (index, point) in points.enumerated() {
             let scaled = CGPoint(x: offsetX + point.x * scale, y: offsetY + point.y * scale)
-            if index == 0 { path.move(to: scaled) } else { path.addLine(to: scaled) }
+            if index == 0 {
+                path.move(to: scaled)
+            } else {
+                path.addLine(to: scaled)
+            }
         }
         path.closeSubpath()
         return path
@@ -47,7 +51,9 @@ private enum LogoGeometry {
 
 private struct FacetShape: Shape {
     let points: [CGPoint]
-    func path(in rect: CGRect) -> Path { LogoGeometry.path(points, in: rect) }
+    func path(in rect: CGRect) -> Path {
+        LogoGeometry.path(points, in: rect)
+    }
 }
 
 private struct Wing: View {

@@ -16,7 +16,7 @@ struct PhotoCapturePicker: UIViewControllerRepresentable {
         return controller
     }
 
-    func updateUIViewController(_ controller: UIImagePickerController, context: Context) {}
+    func updateUIViewController(_: UIImagePickerController, context _: Context) {}
 
     func makeCoordinator() -> Coordinator {
         Coordinator(onCapture: onCapture)
@@ -30,13 +30,13 @@ struct PhotoCapturePicker: UIViewControllerRepresentable {
         }
 
         func imagePickerController(
-            _ picker: UIImagePickerController,
+            _: UIImagePickerController,
             didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
         ) {
             onCapture(info[.editedImage] as? UIImage ?? info[.originalImage] as? UIImage)
         }
 
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        func imagePickerControllerDidCancel(_: UIImagePickerController) {
             onCapture(nil)
         }
     }

@@ -14,6 +14,7 @@ public enum Typography {
             }
         }
     }
+
     /// Font size/weight tiers. Separate from `TextStyle` (color) so either can vary independently.
     ///
     /// Backed by the Figtree variable font (registered lazily on first use, see
@@ -71,8 +72,8 @@ public enum Typography {
             case .headline4: .semibold
             case .subtitle1: .regular
             case .subtitle2: .regular
-            case .body1(let trait), .body2(let trait),
-                    .body3(let trait), .caption(let trait):
+            case let .body1(trait), let .body2(trait),
+                 let .body3(trait), let .caption(trait):
                 trait.weight
             case .label1: .semibold
             case .label2: .semibold
@@ -125,12 +126,10 @@ public enum Typography {
 
     /// Text color roles.
     public enum TextStyle {
-        public enum Target {
-            case label
-            case button
-        }
-
-        case primary(for: Target)
+        /// Primary text on a plain surface (the app background or a card).
+        case primaryOnSurface
+        /// Primary text on a filled accent surface (a filled button), inverted for contrast.
+        case primaryOnAccent
         case secondary
         case tertiary
         case disabled
@@ -144,8 +143,8 @@ public enum Typography {
 
         public var color: Color {
             switch self {
-            case .primary(let target):
-                target == .button ? .primaryInverted : .primaryDS
+            case .primaryOnSurface: .primaryDS
+            case .primaryOnAccent: .primaryInverted
             case .secondary: .secondaryDS
             case .tertiary: .tertiaryDS
             case .disabled: .tertiaryDS
@@ -155,7 +154,7 @@ public enum Typography {
             case .link: .accentText
             case .error: .negativeText
             case .warning: .attention
-            case .custom(let color): color
+            case let .custom(color): color
             }
         }
     }

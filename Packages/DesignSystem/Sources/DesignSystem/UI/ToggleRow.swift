@@ -19,14 +19,14 @@ public struct DSToggleRow: View {
         self.title = title
         self.subtitle = subtitle
         self.icon = icon
-        self._isOn = isOn
+        _isOn = isOn
     }
 
     public var body: some View {
         Toggle(isOn: $isOn) {
             Label {
                 VStack(alignment: .leading, spacing: Constants.titleSpacing) {
-                    Text(title).type(.body2(.regular), style: .primary(for: .label))
+                    Text(title).type(.body2(.regular), style: .primaryOnSurface)
                     if let subtitle {
                         Text(subtitle).type(.body3(.regular), style: .secondary)
                     }

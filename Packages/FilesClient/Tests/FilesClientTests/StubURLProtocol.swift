@@ -18,8 +18,13 @@ final class StubURLProtocol: URLProtocol {
     nonisolated(unsafe) static var capturedRequest: URLRequest?
     nonisolated(unsafe) static var capturedRequestBody: Data?
 
-    override class func canInit(with request: URLRequest) -> Bool { true }
-    override class func canonicalRequest(for request: URLRequest) -> URLRequest { request }
+    override class func canInit(with _: URLRequest) -> Bool {
+        true
+    }
+
+    override class func canonicalRequest(for request: URLRequest) -> URLRequest {
+        request
+    }
 
     override func startLoading() {
         Self.capturedRequest = request
@@ -31,7 +36,9 @@ final class StubURLProtocol: URLProtocol {
             var buffer = [UInt8](repeating: 0, count: bufferSize)
             while stream.hasBytesAvailable {
                 let read = stream.read(&buffer, maxLength: bufferSize)
-                if read <= 0 { break }
+                if read <= 0 {
+                    break
+                }
                 data.append(buffer, count: read)
             }
             return data

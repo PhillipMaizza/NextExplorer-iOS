@@ -83,15 +83,23 @@ struct DownloadsView: View {
     /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
     /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
     private var listPhase: ListPhase {
-        if store.errorMessage != nil { return .error }
-        if !store.phase.hasLoaded && store.downloads.isEmpty { return .loading }
-        if store.downloads.isEmpty { return .empty }
-        if !store.searchQuery.isEmpty && store.displayedDownloads.isEmpty { return .noResults }
+        if store.errorMessage != nil {
+            return .error
+        }
+        if !store.phase.hasLoaded, store.downloads.isEmpty {
+            return .loading
+        }
+        if store.downloads.isEmpty {
+            return .empty
+        }
+        if !store.searchQuery.isEmpty, store.displayedDownloads.isEmpty {
+            return .noResults
+        }
         return .content
     }
 
-    // No op setters: each confirmation sheet is dismiss disabled and only closes through one
-    // of `DSAlertSheet`'s own buttons, which drive the reducer directly.
+    /// No op setters: each confirmation sheet is dismiss disabled and only closes through one
+    /// of `DSAlertSheet`'s own buttons, which drive the reducer directly.
     private var deleteConfirmationBinding: Binding<Bool> {
         Binding(get: { store.deleteConfirmationItem != nil }, set: { _ in })
     }
@@ -110,7 +118,11 @@ struct DownloadsView: View {
     }
 
     private var renameItemBinding: Binding<LocalDownload?> {
-        Binding(get: { store.renameItem }, set: { if $0 == nil { store.send(.renameCancelled) } })
+        Binding(get: { store.renameItem }, set: {
+            if $0 == nil {
+                store.send(.renameCancelled)
+            }
+        })
     }
 
     private func handleTap(_ download: LocalDownload) {
@@ -247,29 +259,29 @@ struct DownloadsView: View {
     @ViewBuilder
     private var downloadCells: some View {
         ForEach(store.displayedDownloads) { download in
-                    Button {
-                        handleTap(download)
-                    } label: {
-                        GridCellView(
-                            name: download.fileName,
-                            isDirectory: false,
-                            kind: (download.fileName as NSString).pathExtension,
-                            matchedSource: PreviewMatchedSource(id: download.id, namespace: previewTransition)
-                        )
-                        .dsCard(padding: Constants.gridCellPadding)
-                        .overlay(alignment: .topLeading) {
-                            if store.isSelecting {
-                                DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
-                            }
-                        }
+            Button {
+                handleTap(download)
+            } label: {
+                GridCellView(
+                    name: download.fileName,
+                    isDirectory: false,
+                    kind: (download.fileName as NSString).pathExtension,
+                    matchedSource: PreviewMatchedSource(id: download.id, namespace: previewTransition)
+                )
+                .dsCard(padding: Constants.gridCellPadding)
+                .overlay(alignment: .topLeading) {
+                    if store.isSelecting {
+                        DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
                     }
-                    .buttonStyle(DSHapticButtonStyle())
-                    .hapticFeedback(.selection, trigger: store.selectedDownloadIDs.contains(download.id))
-                    .contextMenu {
-                        if !store.isSelecting {
-                            DownloadRowContextMenu(store: store, download: download, openURL: openURL)
-                        }
-                    }
+                }
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .hapticFeedback(.selection, trigger: store.selectedDownloadIDs.contains(download.id))
+            .contextMenu {
+                if !store.isSelecting {
+                    DownloadRowContextMenu(store: store, download: download, openURL: openURL)
+                }
+            }
         }
     }
 

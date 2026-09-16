@@ -15,7 +15,9 @@ public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
     case abbreviatedMonthDayYear
     case dayAbbreviatedMonthYear
 
-    public var id: String { rawValue }
+    public var id: String {
+        rawValue
+    }
 
     public var title: String {
         switch self {
@@ -77,7 +79,9 @@ public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
         func dateFormatter(for format: DateDisplayFormat) -> DateFormatter {
             lock.lock()
             defer { lock.unlock() }
-            if let existing = formatters[format] { return existing }
+            if let existing = formatters[format] {
+                return existing
+            }
             let formatter = DateFormatter()
             if let pattern = format.dateFormatPattern {
                 formatter.dateFormat = pattern

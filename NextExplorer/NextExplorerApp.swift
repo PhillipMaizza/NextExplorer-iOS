@@ -11,7 +11,7 @@ import UIKit
 /// way to plumb that per-screen override through, since `UIApplicationDelegate` (not the
 /// SwiftUI `App`/`WindowGroup`) is what UIKit actually consults on every rotation attempt.
 final class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
+    func application(_: UIApplication, supportedInterfaceOrientationsFor _: UIWindow?) -> UIInterfaceOrientationMask {
         OrientationLock.shared.mask
     }
 }

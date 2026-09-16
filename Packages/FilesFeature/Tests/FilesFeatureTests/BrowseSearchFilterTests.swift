@@ -1,12 +1,10 @@
 import ComposableArchitecture
 import CoreModels
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct BrowseSearchFilterTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
 

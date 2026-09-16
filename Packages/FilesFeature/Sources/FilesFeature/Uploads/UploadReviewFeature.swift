@@ -52,16 +52,30 @@ public struct UploadReviewFeature {
         public init(serverURL: URL, files: [PickedFile] = [], startingDestination: String, preparingCount: Int = 0) {
             self.serverURL = serverURL
             self.files = IdentifiedArray(uniqueElements: files)
-            self.destination = startingDestination
+            destination = startingDestination
             self.preparingCount = preparingCount
         }
 
-        public var isPreparing: Bool { preparingCount > 0 }
+        public var isPreparing: Bool {
+            preparingCount > 0
+        }
+
         /// Total files the sheet is about, including ones still being prepared.
-        public var totalCount: Int { files.count + preparingCount }
-        public var totalSize: Int64 { files.reduce(0) { $0 + $1.size } }
-        public var canUpload: Bool { !isPreparing && !files.isEmpty && !destination.isEmpty }
-        public var hasDestination: Bool { !destination.isEmpty }
+        public var totalCount: Int {
+            files.count + preparingCount
+        }
+
+        public var totalSize: Int64 {
+            files.reduce(0) { $0 + $1.size }
+        }
+
+        public var canUpload: Bool {
+            !isPreparing && !files.isEmpty && !destination.isEmpty
+        }
+
+        public var hasDestination: Bool {
+            !destination.isEmpty
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -99,7 +113,7 @@ public struct UploadReviewFeature {
                 guard requested > 0 else { return .none }
                 state.stagingFailed = false
                 state.preparingCount += requested
-                let uploadStaging = self.uploadStaging
+                let uploadStaging = uploadStaging
                 return .run { send in
                     var staged = 0
                     switch source {
@@ -161,7 +175,7 @@ public struct UploadReviewFeature {
             case let .removeFileTapped(id):
                 let removed = state.files[id: id]?.fileURL
                 state.files.remove(id: id)
-                let uploadStaging = self.uploadStaging
+                let uploadStaging = uploadStaging
                 let discardEffect: Effect<Action> = removed.map { url in
                     .run { _ in await uploadStaging.discard([url]) }
                 } ?? .none

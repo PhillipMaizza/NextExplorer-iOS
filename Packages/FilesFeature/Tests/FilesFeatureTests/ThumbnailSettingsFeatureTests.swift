@@ -1,13 +1,11 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct ThumbnailSettingsFeatureTests {
     private let serverURL = URL(string: "https://files.example.com")!
 

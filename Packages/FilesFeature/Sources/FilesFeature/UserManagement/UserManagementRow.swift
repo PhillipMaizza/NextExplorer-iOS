@@ -25,7 +25,7 @@ struct UserRow: View {
             VStack(alignment: .leading, spacing: .space2) {
                 HStack(spacing: .space8) {
                     Text(user.displayName ?? user.username)
-                        .type(.body2(.semibold), style: .primary(for: .label))
+                        .type(.body2(.semibold), style: .primaryOnSurface)
                         .lineLimit(1)
                     if user.isAdmin {
                         AdminTag()

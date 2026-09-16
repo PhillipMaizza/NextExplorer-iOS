@@ -1,9 +1,7 @@
+@testable import FilesFeature
 import SwiftUI
 import Testing
 
-@testable import FilesFeature
-
-@Suite
 struct FavoriteAppearanceTests {
     @Test
     func hexStringParsesWithAndWithoutHash() {

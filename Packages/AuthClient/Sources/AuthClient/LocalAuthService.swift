@@ -59,7 +59,7 @@ struct LocalAuthService: Sendable {
 
     private func send<Response: Decodable>(
         _ request: URLRequest,
-        decoding type: Response.Type,
+        decoding _: Response.Type,
         unauthorizedError: AuthClientError = .sessionExpired
     ) async throws -> Response {
         let (data, response) = try await performSend(request)
@@ -87,7 +87,7 @@ struct LocalAuthService: Sendable {
 
     private static func validate(_ response: HTTPURLResponse, unauthorizedError: AuthClientError) throws {
         switch response.statusCode {
-        case 200..<300:
+        case 200 ..< 300:
             return
         case 401:
             throw unauthorizedError

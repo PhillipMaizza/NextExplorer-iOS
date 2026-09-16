@@ -36,14 +36,18 @@ public struct AppView: View {
         self.store = store
     }
 
-    private var selectedLanguage: String? { appLanguage.isEmpty ? nil : appLanguage }
+    private var selectedLanguage: String? {
+        appLanguage.isEmpty ? nil : appLanguage
+    }
 
     private var appLocale: Locale {
         selectedLanguage.map(Locale.init(identifier:)) ?? .autoupdatingCurrent
     }
 
     private var layoutDirection: LayoutDirection {
-        if let language = selectedLanguage, LocalizationOverride.isRTL(language) { return .rightToLeft }
+        if let language = selectedLanguage, LocalizationOverride.isRTL(language) {
+            return .rightToLeft
+        }
         return .leftToRight
     }
 
@@ -133,8 +137,9 @@ public struct AppView: View {
                 // each nav bar's layout on screen the moment the splash is gone; the TCA store
                 // state survives the identity change, so the content stays put and only the
                 // nav bars relayout, no reload flash.
-                if (!isSplashPresented || splashIsExiting),
-                   let scopedStore = store.scope(state: \.destination.authenticated, action: \.destination.authenticated) {
+                if !isSplashPresented || splashIsExiting,
+                   let scopedStore = store.scope(state: \.destination.authenticated, action: \.destination.authenticated)
+                {
                     AuthenticatedView(store: scopedStore)
                         .id(isSplashPresented)
                         .transition(.opacity)

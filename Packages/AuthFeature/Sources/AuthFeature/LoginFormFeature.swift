@@ -43,8 +43,13 @@ public struct LoginFormFeature {
         case https
         case http
 
-        public var id: String { rawValue }
-        public var displayName: String { rawValue }
+        public var id: String {
+            rawValue
+        }
+
+        public var displayName: String {
+            rawValue
+        }
     }
 
     public enum Page: Equatable, Sendable {
@@ -129,7 +134,7 @@ public struct LoginFormFeature {
             self.connectionPhase = connectionPhase
             self.scheme = scheme
             self.host = host
-            self.savedOtherSchemeHost = ""
+            savedOtherSchemeHost = ""
             self.identifier = identifier
             self.password = password
             self.isPasswordVisible = isPasswordVisible
@@ -140,7 +145,9 @@ public struct LoginFormFeature {
             self.authStatus = authStatus
         }
 
-        public var isSubmitting: Bool { submitPhase == .submitting }
+        public var isSubmitting: Bool {
+            submitPhase == .submitting
+        }
 
         /// Any edit to the server URL, or pressing back, invalidates whatever the last
         /// Test Connection call found — the whole handshake starts over.
@@ -242,21 +249,21 @@ public struct LoginFormFeature {
                 }
                 state.connectionPhase = .testing
                 state.errorMessage = nil
-                let authClient = self.authClient
-                let clock = self.clock
+                let authClient = authClient
+                let clock = clock
                 return .merge(
                     .cancel(id: CancelID.successAdvance),
                     .run { send in
                         async let statusResult = Self.fetchStatusResult(authClient, url)
                         try? await clock.sleep(for: Constants.minimumSpinnerDuration)
-                        await send(.testConnectionResponse(await statusResult))
+                        await send(.testConnectionResponse(statusResult))
                     }
                     .cancellable(id: CancelID.connectionTest, cancelInFlight: true)
                 )
 
             case let .testConnectionResponse(.success(status)):
                 state.authStatus = status
-                let clock = self.clock
+                let clock = clock
                 guard status.localEnabled || status.oidcEnabled else {
                     state.connectionPhase = .failure
                     state.errorMessage = Self.message(for: .noAuthMethodsEnabled)
@@ -273,7 +280,7 @@ public struct LoginFormFeature {
                 state.connectionPhase = .failure
                 state.authStatus = nil
                 state.errorMessage = Self.message(for: error)
-                return .merge(Self.scheduleRevertToIdle(self.clock), Self.scheduleErrorDismiss(self.clock))
+                return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock))
 
             case .revertToIdle:
                 state.connectionPhase = .idle
@@ -294,7 +301,8 @@ public struct LoginFormFeature {
 
             case .continueButtonTapped:
                 guard state.authStatus?.localEnabled == true,
-                      let url = Self.normalizedURL(scheme: state.scheme, host: state.host) else {
+                      let url = Self.normalizedURL(scheme: state.scheme, host: state.host)
+                else {
                     return .none
                 }
                 let identifier = state.identifier.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -307,8 +315,8 @@ public struct LoginFormFeature {
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
                 let password = state.password
-                let authClient = self.authClient
-                let clock = self.clock
+                let authClient = authClient
+                let clock = clock
                 return .run { send in
                     async let result = Self.loginResult(authClient, url, identifier, password)
                     // Hold the spinner up briefly so it reads even when the call resolves fast.
@@ -322,7 +330,7 @@ public struct LoginFormFeature {
 
             case let .submitSucceeded(user, url):
                 state.submitPhase = .success
-                let clock = self.clock
+                let clock = clock
                 // Hold the checkmark a beat before handing off, so the button's success state
                 // registers ahead of the zoom into the app.
                 return .run { send in
@@ -340,22 +348,23 @@ public struct LoginFormFeature {
                 // It stays on screen until the next submit attempt or navigation reset clears
                 // it, instead of silently vanishing after a few seconds.
                 guard error != .sessionCookieMissing else {
-                    return Self.scheduleSubmitRevert(self.clock)
+                    return Self.scheduleSubmitRevert(clock)
                 }
-                return .merge(Self.scheduleSubmitRevert(self.clock), Self.scheduleErrorDismiss(self.clock))
+                return .merge(Self.scheduleSubmitRevert(clock), Self.scheduleErrorDismiss(clock))
 
             case .ssoButtonTapped:
                 guard state.authStatus?.oidcEnabled == true,
                       state.oidcPhase == .idle,
-                      let url = Self.normalizedURL(scheme: state.scheme, host: state.host) else {
+                      let url = Self.normalizedURL(scheme: state.scheme, host: state.host)
+                else {
                     return .none
                 }
                 state.oidcPhase = .authenticating
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
-                let authClient = self.authClient
+                let authClient = authClient
                 return .run { send in
-                    await send(.oidcResponse(await Self.loginOIDCResult(authClient, url), url))
+                    await send(.oidcResponse(Self.loginOIDCResult(authClient, url), url))
                 }
                 .cancellable(id: CancelID.oidc, cancelInFlight: true)
 
@@ -363,7 +372,7 @@ public struct LoginFormFeature {
                 // Mirror `submitSucceeded`: hold a brief success beat so the accent flood can
                 // grow out of the SSO button before the app zooms in, instead of snapping.
                 state.oidcPhase = .success
-                let clock = self.clock
+                let clock = clock
                 return .run { send in
                     try await clock.sleep(for: Constants.successDisplayDuration)
                     await send(.delegate(.authenticated(user, url)))
@@ -376,7 +385,7 @@ public struct LoginFormFeature {
                 // screen as it was with no error banner.
                 guard error != .oidcCancelled else { return .none }
                 state.errorMessage = Self.message(for: error)
-                return Self.scheduleErrorDismiss(self.clock)
+                return Self.scheduleErrorDismiss(clock)
 
             case .delegate:
                 return .none
@@ -447,7 +456,7 @@ public struct LoginFormFeature {
     /// A pasted `https://user@box.local:3000/files?x=1` becomes `http(s)://box.local:3000`.
     static func normalizedURL(scheme: URLScheme, host: String) -> URL? {
         var text = host.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard (1...Constants.maxHostInputLength).contains(text.count) else { return nil }
+        guard (1 ... Constants.maxHostInputLength).contains(text.count) else { return nil }
 
         for prefix in ["https://", "http://"] where text.lowercased().hasPrefix(prefix) {
             text.removeFirst(prefix.count)
@@ -468,7 +477,7 @@ public struct LoginFormFeature {
         var portPart: Substring?
         if text.hasPrefix("[") {
             guard let close = text.firstIndex(of: "]") else { return nil }
-            hostPart = String(text[text.index(after: text.startIndex)..<close])
+            hostPart = String(text[text.index(after: text.startIndex) ..< close])
             let rest = text[text.index(after: close)...]
             if rest.isEmpty {
                 portPart = nil
@@ -485,7 +494,7 @@ public struct LoginFormFeature {
         }
 
         if let portPart {
-            guard let port = Int(portPart), (1...65535).contains(port) else { return nil }
+            guard let port = Int(portPart), (1 ... 65535).contains(port) else { return nil }
         }
         guard isValidHost(hostPart) else { return nil }
 
@@ -518,7 +527,7 @@ public struct LoginFormFeature {
 
     static func fetchStatusResult(_ authClient: AuthClient, _ url: URL) async -> Result<AuthStatus, AuthClientError> {
         do {
-            return .success(try await authClient.fetchStatus(url))
+            return try await .success(authClient.fetchStatus(url))
         } catch {
             return .failure(mapError(error))
         }
@@ -526,7 +535,7 @@ public struct LoginFormFeature {
 
     static func loginResult(_ authClient: AuthClient, _ url: URL, _ identifier: String, _ password: String) async -> Result<User, AuthClientError> {
         do {
-            return .success(try await authClient.login(url, identifier, password))
+            return try await .success(authClient.login(url, identifier, password))
         } catch {
             return .failure(mapError(error))
         }
@@ -534,7 +543,7 @@ public struct LoginFormFeature {
 
     static func loginOIDCResult(_ authClient: AuthClient, _ url: URL) async -> Result<User, AuthClientError> {
         do {
-            return .success(try await authClient.loginOIDC(url))
+            return try await .success(authClient.loginOIDC(url))
         } catch {
             return .failure(mapError(error))
         }

@@ -1,9 +1,7 @@
+@testable import CoreModels
 import Foundation
 import Testing
 
-@testable import CoreModels
-
-@Suite
 struct SystemSettingsTests {
     @Test
     func decodesTheFullAdminShape() throws {

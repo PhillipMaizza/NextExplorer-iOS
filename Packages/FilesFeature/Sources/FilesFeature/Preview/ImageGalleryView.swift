@@ -61,7 +61,7 @@ struct ImageGalleryView: View {
         self.onDownload = onDownload
         self.onDelete = onDelete
         self.onCurrentItemChange = onCurrentItemChange
-        self._selection = State(initialValue: initialItem.id)
+        _selection = State(initialValue: initialItem.id)
     }
 
     private var currentItem: FileItem? {
@@ -89,7 +89,9 @@ struct ImageGalleryView: View {
             // it. Close if that emptied the gallery, otherwise hold the same slot so a dangling
             // `selection` lands on the neighbour.
             .onChange(of: items) { oldItems, newItems in
-                if newItems.isEmpty { onDismiss(); return }
+                if newItems.isEmpty {
+                    onDismiss(); return
+                }
                 guard !newItems.contains(where: { $0.id == selection }) else { return }
                 let slot = oldItems.firstIndex { $0.id == selection } ?? 0
                 selection = (newItems.indices.contains(slot) ? newItems[slot] : newItems[newItems.count - 1]).id

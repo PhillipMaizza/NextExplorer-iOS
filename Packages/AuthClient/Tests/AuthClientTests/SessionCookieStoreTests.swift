@@ -1,8 +1,8 @@
+@testable import AuthClient
 import CoreModels
 import Foundation
 import Keychain
 import Testing
-@testable import AuthClient
 
 @Suite("SessionCookieStore")
 struct SessionCookieStoreTests {
@@ -38,7 +38,7 @@ struct SessionCookieStoreTests {
             .name: "some-other-cookie",
             .value: "abc",
             .domain: host,
-            .path: "/"
+            .path: "/",
         ]))
         HTTPCookieStorage.shared.setCookie(cookie)
 
@@ -62,7 +62,7 @@ struct SessionCookieStoreTests {
             .value: "s%3Aabc123",
             .domain: host,
             .path: "/",
-            .expires: expiresAt
+            .expires: expiresAt,
         ]))
         HTTPCookieStorage.shared.setCookie(cookie)
 
@@ -136,7 +136,7 @@ struct SessionCookieStoreTests {
             .name: AuthClientConfiguration.CookieName.local,
             .value: "abc",
             .domain: host,
-            .path: "/"
+            .path: "/",
         ]))
         HTTPCookieStorage.shared.setCookie(cookie)
 
@@ -157,7 +157,7 @@ struct SessionCookieStoreTests {
             .name: AuthClientConfiguration.CookieName.local,
             .value: "abc",
             .domain: host,
-            .path: "/"
+            .path: "/",
         ]))
         HTTPCookieStorage.shared.setCookie(cookie)
 

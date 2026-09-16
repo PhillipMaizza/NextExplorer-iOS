@@ -17,7 +17,7 @@ struct FilesService: Sendable {
     /// download the bytes and then race on the `moveItem` into the shared slot.
     let downloadCoordinator = PreviewDownloadCoordinator()
 
-    static func encode<Body: Encodable>(_ body: Body) throws -> Data {
+    static func encode(_ body: some Encodable) throws -> Data {
         do {
             return try JSONEncoder().encode(body)
         } catch {
@@ -25,7 +25,7 @@ struct FilesService: Sendable {
         }
     }
 
-    func send<Response: Decodable>(_ request: URLRequest, decoding type: Response.Type) async throws -> Response {
+    func send<Response: Decodable>(_ request: URLRequest, decoding _: Response.Type) async throws -> Response {
         let (data, response) = try await performSend(request)
         try Self.validate(response)
         do {
@@ -49,7 +49,7 @@ struct FilesService: Sendable {
     /// `.serverMessage` rather than a bare `.server(statusCode:)`. The admin user management
     /// endpoints return meaningful validation text ("Email already in use.", etc.).
     func sendReportingMessage<Response: Decodable>(
-        _ request: URLRequest, decoding type: Response.Type
+        _ request: URLRequest, decoding _: Response.Type
     ) async throws -> Response {
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
@@ -72,7 +72,7 @@ struct FilesService: Sendable {
 
     static func validate(_ response: HTTPURLResponse) throws {
         switch response.statusCode {
-        case 200..<300:
+        case 200 ..< 300:
             return
         case 401:
             throw FilesClientError.sessionExpired
@@ -93,7 +93,7 @@ struct FilesService: Sendable {
 
     static func validateReportingMessage(_ data: Data, _ response: HTTPURLResponse) throws {
         switch response.statusCode {
-        case 200..<300:
+        case 200 ..< 300:
             return
         case 401:
             throw FilesClientError.sessionExpired
@@ -146,7 +146,7 @@ struct FilesService: Sendable {
     /// `ISO8601DateFormatter` (and a `JSONDecoder`) per field, or per request, was pure
     /// overhead on large directories. `ISO8601DateFormatter` is documented as safe to use for
     /// parsing from multiple threads even though it is not marked `Sendable`.
-    nonisolated(unsafe) private static let iso8601Formatter: ISO8601DateFormatter = {
+    private nonisolated(unsafe) static let iso8601Formatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter
@@ -155,7 +155,7 @@ struct FilesService: Sendable {
     /// Fallback for a whole second date (no fractional part). The backend always emits
     /// millisecond fractions via `toISOString()`, but one non fractional date anywhere must
     /// not abort a whole screen's decode.
-    nonisolated(unsafe) private static let iso8601FormatterNoFractional: ISO8601DateFormatter = {
+    private nonisolated(unsafe) static let iso8601FormatterNoFractional: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
         return formatter
@@ -177,5 +177,7 @@ struct FilesService: Sendable {
         return decoder
     }()
 
-    static func makeDecoder() -> JSONDecoder { sharedDecoder }
+    static func makeDecoder() -> JSONDecoder {
+        sharedDecoder
+    }
 }

@@ -91,15 +91,23 @@ struct VLCPlayerView: View {
             )
         }
         .onChange(of: controller.isPlaying) { _, playing in
-            if playing { scheduleAutoHide() } else { controlsVisible = true; autoHideTask?.cancel() }
+            if playing {
+                scheduleAutoHide()
+            } else {
+                controlsVisible = true; autoHideTask?.cancel()
+            }
         }
         .onAppear {
-            if item.isVideo { OrientationLock.shared.unlock() }
+            if item.isVideo {
+                OrientationLock.shared.unlock()
+            }
             controller.start(url: url)
             scheduleAutoHide()
         }
         .onDisappear {
-            if item.isVideo { OrientationLock.shared.lock() }
+            if item.isVideo {
+                OrientationLock.shared.lock()
+            }
             autoHideTask?.cancel()
             controller.stop()
         }
@@ -107,7 +115,11 @@ struct VLCPlayerView: View {
 
     private func toggleControls() {
         controlsVisible.toggle()
-        if controlsVisible { scheduleAutoHide() } else { autoHideTask?.cancel() }
+        if controlsVisible {
+            scheduleAutoHide()
+        } else {
+            autoHideTask?.cancel()
+        }
     }
 
     /// Fade the controls out after a few idle seconds, matching AVPlayer's chrome. Only while
@@ -126,7 +138,7 @@ struct VLCPlayerView: View {
 private struct VLCVideoSurface: UIViewRepresentable {
     let player: VLCMediaPlayer
 
-    func makeUIView(context: Context) -> UIView {
+    func makeUIView(context _: Context) -> UIView {
         let view = UIView()
         view.backgroundColor = .black
         view.isUserInteractionEnabled = false
@@ -134,7 +146,7 @@ private struct VLCVideoSurface: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    func updateUIView(_: UIView, context _: Context) {}
 }
 
 /// Transport controls (VLCKit ships no UI of its own): a centered play/pause toggle plus a
@@ -274,13 +286,21 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
         player.play()
     }
 
-    func stop() { player.stop() }
-
-    func togglePlayPause() {
-        if player.isPlaying { player.pause() } else { player.play() }
+    func stop() {
+        player.stop()
     }
 
-    func setScrubbing(_ scrubbing: Bool) { isScrubbing = scrubbing }
+    func togglePlayPause() {
+        if player.isPlaying {
+            player.pause()
+        } else {
+            player.play()
+        }
+    }
+
+    func setScrubbing(_ scrubbing: Bool) {
+        isScrubbing = scrubbing
+    }
 
     func scrub(to value: Float) {
         position = value
@@ -289,24 +309,28 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
 
     // MARK: VLCMediaPlayerDelegate
 
-    @objc nonisolated func mediaPlayerStateChanged(_ aNotification: Notification) {
+    @objc nonisolated func mediaPlayerStateChanged(_: Notification) {
         Task { @MainActor [weak self] in
             guard let self else { return }
             isPlaying = player.isPlaying
             isBuffering = player.state == .buffering || player.state == .opening
             hasError = player.state == .error
-            if hasError { isBuffering = false }
+            if hasError {
+                isBuffering = false
+            }
             durationText = player.media?.length.stringValue ?? durationText
         }
     }
 
-    @objc nonisolated func mediaPlayerTimeChanged(_ aNotification: Notification) {
+    @objc nonisolated func mediaPlayerTimeChanged(_: Notification) {
         Task { @MainActor [weak self] in
             guard let self, !isScrubbing else { return }
             position = player.position
             elapsedText = player.time.stringValue
             durationText = player.media?.length.stringValue ?? durationText
-            if isBuffering { isBuffering = false }
+            if isBuffering {
+                isBuffering = false
+            }
         }
     }
 }

@@ -53,6 +53,8 @@ public enum AppStorageKeys {
     /// Clears every `sessionScopedKeys` entry so each `@AppStorage` falls back to its declared
     /// default. Called at sign out / session end alongside the cache clears.
     public static func resetSessionPreferences(in defaults: UserDefaults = .standard) {
-        for key in sessionScopedKeys { defaults.removeObject(forKey: key) }
+        for key in sessionScopedKeys {
+            defaults.removeObject(forKey: key)
+        }
     }
 }

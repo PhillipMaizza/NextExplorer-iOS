@@ -19,7 +19,8 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
             ) { callbackURL, error in
                 if let error {
                     if let asError = error as? ASWebAuthenticationSessionError,
-                       asError.code == .canceledLogin {
+                       asError.code == .canceledLogin
+                    {
                         continuation.resume(throwing: AuthClientError.oidcCancelled)
                     } else {
                         continuation.resume(throwing: AuthClientError.oidcFailed(String(describing: error)))
@@ -43,10 +44,10 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
         }
     }
 
-    func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+    func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
         let window = UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
-            .flatMap { $0.windows }
+            .flatMap(\.windows)
             .first { $0.isKeyWindow }
         return window ?? ASPresentationAnchor()
     }

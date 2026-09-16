@@ -33,7 +33,7 @@ struct ArchiveEntryPreviewView: View {
             // A nested .zip/.rar: browse the already-extracted local file in place, rather than
             // falling through to the text viewer and showing its raw bytes.
             ArchiveBrowserView(item: item, serverURL: serverURL, localFileURL: fileURL, onDismiss: onDismiss)
-        } else if (item.isImage || item.isRawImage) && !item.isSVG {
+        } else if item.isImage || item.isRawImage, !item.isSVG {
             ArchiveImagePreviewView(
                 fileName: item.name,
                 fileURL: fileURL,

@@ -57,7 +57,9 @@ struct ServerDetailsView: View {
         .fullScreenCover(isPresented: $isCameraPresented) {
             PhotoCapturePicker { image in
                 isCameraPresented = false
-                if let image { handlePicked(image) }
+                if let image {
+                    handlePicked(image)
+                }
             }
             .ignoresSafeArea()
         }
@@ -77,7 +79,9 @@ struct ServerDetailsView: View {
                 closeAccessibilityLabel: L10n.Common.close,
                 onConfirm: {
                     isCameraDeniedAlertPresented = false
-                    if let url = URL(string: UIApplication.openSettingsURLString) { UIApplication.shared.open(url) }
+                    if let url = URL(string: UIApplication.openSettingsURLString) {
+                        UIApplication.shared.open(url)
+                    }
                 },
                 onDismiss: { isCameraDeniedAlertPresented = false }
             )
@@ -117,10 +121,10 @@ struct ServerDetailsView: View {
     }
 
     @ViewBuilder
-    private func section<Content: View>(
+    private func section(
         _ title: String,
         error: String? = nil,
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: () -> some View
     ) -> some View {
         VStack(alignment: .leading, spacing: Metrics.fieldSpacing) {
             DSFieldLabel(title, uppercased: false)
@@ -134,8 +138,8 @@ struct ServerDetailsView: View {
 
     private var nameErrorText: String? {
         switch store.nameError {
-        case .empty: return L10n.ServerDetails.nameErrorEmpty
-        case nil: return nil
+        case .empty: L10n.ServerDetails.nameErrorEmpty
+        case nil: nil
         }
     }
 
@@ -185,7 +189,8 @@ struct ServerDetailsView: View {
 
     private func loadGalleryImage(_ item: PhotosPickerItem) async {
         guard let data = try? await item.loadTransferable(type: Data.self),
-              let image = UIImage(data: data) else {
+              let image = UIImage(data: data)
+        else {
             store.send(.logoPickFailed)
             return
         }

@@ -1,10 +1,8 @@
 import Dependencies
+@testable import FilesClient
 import Foundation
 import Testing
 
-@testable import FilesClient
-
-@Suite
 struct PreviewDownloadCoordinatorTests {
     private let fileA = URL(fileURLWithPath: "/tmp/preview-cache/a/preview.pdf")
     private let fileB = URL(fileURLWithPath: "/tmp/preview-cache/b/preview.pdf")
@@ -84,7 +82,7 @@ struct PreviewDownloadCoordinatorTests {
         #expect(runs.value == 1)
 
         // A later call is a fresh attempt, not a cached failure.
-        _ = try await coordinator.run(forFileAt: fileA) { self.fileA }
+        _ = try await coordinator.run(forFileAt: fileA) { fileA }
         #expect(runs.value == 1)
     }
 }

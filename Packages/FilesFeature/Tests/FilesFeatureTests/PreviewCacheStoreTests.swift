@@ -1,7 +1,6 @@
+@testable import FilesFeature
 import Foundation
 import Testing
-
-@testable import FilesFeature
 
 /// Exercises `PreviewCacheStore.liveValue` against the real filesystem, same spirit as
 /// `LocalDownloadStoreTests` — the whole point is verifying actual on-disk behavior.

@@ -41,7 +41,9 @@ public struct AppFeature {
         }
 
         public var isAuthenticated: Bool {
-            if case .authenticated = destination { return true }
+            if case .authenticated = destination {
+                return true
+            }
             return false
         }
     }
@@ -70,7 +72,7 @@ public struct AppFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                let authClient = self.authClient
+                let authClient = authClient
                 return .run { send in
                     let credentials = await authClient.restoreSession()
                     await send(.sessionRestoreResponse(credentials))
@@ -97,7 +99,7 @@ public struct AppFeature {
                     )
                 }
 
-                let authClient = self.authClient
+                let authClient = authClient
                 return .run { send in
                     do {
                         let user = try await authClient.me(credentials.serverBaseURL)
@@ -109,7 +111,9 @@ public struct AppFeature {
                 }
 
             case let .sessionValidationResponse(.success(user), credentials):
-                if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                if state.sessionDidExpire {
+                    state.$sessionDidExpire.withLock { $0 = false }
+                }
                 state.$downloadScope.withLock {
                     $0 = DownloadAccountScope.identifier(serverURL: credentials.serverBaseURL, userID: user.id)
                 }
@@ -138,11 +142,11 @@ public struct AppFeature {
                 withAnimation {
                     state.destination = .unauthenticated(.init())
                 }
-                let authClient = self.authClient
-                let directoryCacheStore = self.directoryCacheStore
-                let jsonCacheStore = self.jsonCacheStore
-                let previewCacheStore = self.previewCacheStore
-                let thumbnailCache = self.thumbnailCache
+                let authClient = authClient
+                let directoryCacheStore = directoryCacheStore
+                let jsonCacheStore = jsonCacheStore
+                let previewCacheStore = previewCacheStore
+                let thumbnailCache = thumbnailCache
                 AppStorageKeys.resetSessionPreferences()
                 return .run { _ in
                     await authClient.clearSession()
@@ -153,7 +157,9 @@ public struct AppFeature {
                 }
 
             case .sessionExpiryDetected:
-                if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                if state.sessionDidExpire {
+                    state.$sessionDidExpire.withLock { $0 = false }
+                }
                 state.$fileClipboard.withLock { $0 = nil }
                 state.$downloadScope.withLock { $0 = "" }
                 guard case .authenticated = state.destination else { return .none }
@@ -161,11 +167,11 @@ public struct AppFeature {
                 withAnimation {
                     state.destination = .unauthenticated(.init())
                 }
-                let authClient = self.authClient
-                let directoryCacheStore = self.directoryCacheStore
-                let jsonCacheStore = self.jsonCacheStore
-                let previewCacheStore = self.previewCacheStore
-                let thumbnailCache = self.thumbnailCache
+                let authClient = authClient
+                let directoryCacheStore = directoryCacheStore
+                let jsonCacheStore = jsonCacheStore
+                let previewCacheStore = previewCacheStore
+                let thumbnailCache = thumbnailCache
                 AppStorageKeys.resetSessionPreferences()
                 return .run { _ in
                     await authClient.clearSession()
@@ -176,7 +182,9 @@ public struct AppFeature {
                 }
 
             case let .destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))):
-                if state.sessionDidExpire { state.$sessionDidExpire.withLock { $0 = false } }
+                if state.sessionDidExpire {
+                    state.$sessionDidExpire.withLock { $0 = false }
+                }
                 state.$downloadScope.withLock {
                     $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id)
                 }
@@ -192,7 +200,7 @@ public struct AppFeature {
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
                 )
-                let previewCacheStore = self.previewCacheStore
+                let previewCacheStore = previewCacheStore
                 return .run { _ in try? previewCacheStore.clear() }
 
             case .destination(.authenticated(.delegate(.loggedOut))):
@@ -204,10 +212,10 @@ public struct AppFeature {
                 // recover the previous session's directory listings or downloaded file bytes, and
                 // resets per-device UI prefs (view modes, display toggles) so the next session
                 // starts from defaults rather than inheriting this account's choices.
-                let directoryCacheStore = self.directoryCacheStore
-                let jsonCacheStore = self.jsonCacheStore
-                let previewCacheStore = self.previewCacheStore
-                let thumbnailCache = self.thumbnailCache
+                let directoryCacheStore = directoryCacheStore
+                let jsonCacheStore = jsonCacheStore
+                let previewCacheStore = previewCacheStore
+                let thumbnailCache = thumbnailCache
                 AppStorageKeys.resetSessionPreferences()
                 return .run { _ in
                     directoryCacheStore.clearAll()

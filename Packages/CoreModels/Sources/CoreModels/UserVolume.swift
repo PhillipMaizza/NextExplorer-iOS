@@ -36,7 +36,9 @@ public struct AdminDirectory: Codable, Equatable, Identifiable, Sendable {
     public let name: String
     public let path: String
 
-    public var id: String { path }
+    public var id: String {
+        path
+    }
 
     public init(name: String, path: String) {
         self.name = name

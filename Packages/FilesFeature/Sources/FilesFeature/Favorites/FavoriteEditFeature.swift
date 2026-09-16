@@ -28,25 +28,33 @@ public struct FavoriteEditFeature {
         public var isSaving = false
         public var errorMessage: String?
 
-        public var id: Favorite.ID { favorite.id }
+        public var id: Favorite.ID {
+            favorite.id
+        }
 
         public init(serverURL: URL, favorite: Favorite) {
             self.serverURL = serverURL
             self.favorite = favorite
             // Seeded from the resolved display name (folder name when no label is set) so the
             // field is never empty on open and a save always keeps a real name.
-            self.nameDraft = favorite.displayName
-            self.iconDraft = FavoriteIcon.bareName(favorite.icon) ?? FavoriteIcon.fallbackName
-            self.iconStyleDraft = FavoriteIcon.isFilled(favorite.icon) ? .solid : .outline
-            self.colorDraft = favorite.color
+            nameDraft = favorite.displayName
+            iconDraft = FavoriteIcon.bareName(favorite.icon) ?? FavoriteIcon.fallbackName
+            iconStyleDraft = FavoriteIcon.isFilled(favorite.icon) ? .solid : .outline
+            colorDraft = favorite.color
         }
 
-        var trimmedName: String { nameDraft.trimmingCharacters(in: .whitespacesAndNewlines) }
+        var trimmedName: String {
+            nameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
 
-        var nameError: NameError? { trimmedName.isEmpty ? .empty : nil }
+        var nameError: NameError? {
+            trimmedName.isEmpty ? .empty : nil
+        }
 
         /// The `"<style>:<name>"` token this edit would persist.
-        var iconToken: String { FavoriteIcon.token(name: iconDraft, filled: iconStyleDraft == .solid) }
+        var iconToken: String {
+            FavoriteIcon.token(name: iconDraft, filled: iconStyleDraft == .solid)
+        }
 
         private var originalIcon: String {
             FavoriteIcon.token(
@@ -61,7 +69,9 @@ public struct FavoriteEditFeature {
                 || !FavoriteColor.matches(colorDraft, favorite.color)
         }
 
-        var isSaveEnabled: Bool { isDirty && nameError == nil && !isSaving }
+        var isSaveEnabled: Bool {
+            isDirty && nameError == nil && !isSaving
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -116,9 +126,9 @@ public struct FavoriteEditFeature {
                 let label = state.trimmedName
                 let icon = state.iconToken
                 let color = state.colorDraft
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.saveResponse(try await apiResult {
+                    try await send(.saveResponse(apiResult {
                         try await filesClient.updateFavorite(serverURL, id, label, icon, color)
                     }))
                 }

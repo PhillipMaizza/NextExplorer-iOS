@@ -1,9 +1,8 @@
 import Foundation
-import Testing
 @testable import Localization
+import Testing
 
 struct L10nTests {
-
     @Test("a spread of accessors resolve to real catalog entries, not the raw key")
     func accessorsResolve() {
         let pairs: [(key: String, value: String)] = [
