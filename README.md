@@ -1,20 +1,57 @@
+<div align="center">
+
+<img src="Screenshots/icon.png" width="120" alt="NextExplorer app icon" />
+
 # NextExplorer for iOS
 
-A fast, private, native file browser for your own self-hosted NextExplorer server.
+**Every file, right where you left it.**
 
-Browse, preview, search and share every file on your server from a clean, native iOS app. You bring the server; NextExplorer brings the browsing. Your files, credentials and activity stay between your device and the server you choose, and nowhere else.
+A fast, private, native file browser for your own self-hosted server.
+Browse, preview, search and share. Your files stay between your device and the server you choose.
 
-> **Your server, your rules.** NextExplorer for iOS is a *client*. You supply the address of your own compatible file server and sign in with your own credentials. There is no NextExplorer account, no middleman, and no tracking.
+<br/>
+
+![Platform](https://img.shields.io/badge/platform-iPhone%20%7C%20iPad-blue)
+![iOS](https://img.shields.io/badge/iOS-18%2B-black?logo=apple)
+![Swift](https://img.shields.io/badge/Swift-5-orange?logo=swift&logoColor=white)
+![Architecture](https://img.shields.io/badge/architecture-SwiftUI%20%2B%20TCA-purple)
+![Languages](https://img.shields.io/badge/localized-17%20languages-green)
+![Accessibility](https://img.shields.io/badge/a11y-VoiceOver%20%2B%20Dynamic%20Type-teal)
+![Tracking](https://img.shields.io/badge/tracking-none-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
+
+<br/>
+
+<a href="https://apps.apple.com/app/id6811976306">
+  <img src="https://img.shields.io/badge/Download_on_the-App_Store-000000?style=for-the-badge&logo=apple&logoColor=white" alt="Download on the App Store" height="48" />
+</a>
+
+</div>
 
 ---
 
-## Screenshots
+<div align="center">
 
-Raw captures from an iPhone. No mockups, no marketing frames, this is the actual app.
+### Your server, your rules.
+
+NextExplorer is a *client*. You supply the address of your own compatible file server and sign in with your own credentials.
+No NextExplorer account, no middleman, no tracking. Your files, credentials and activity stay between your device and that server, and nowhere else.
+
+</div>
+
+---
+
+## Snapshots
+
+Straight from the app on iPhone.
+
+<div align="center">
 
 | Browse | Search | Favorites | Shared | Settings |
 |:---:|:---:|:---:|:---:|:---:|
-| <img src="Screenshots/browse.png" width="180" alt="Browsing folders and files"> | <img src="Screenshots/search.png" width="180" alt="Searching by name and full text"> | <img src="Screenshots/favorites.png" width="180" alt="Starred favorites"> | <img src="Screenshots/shared.png" width="180" alt="Shared by me and with me"> | <img src="Screenshots/settings.png" width="180" alt="Settings"> |
+| <img src="Screenshots/browse.png" width="170" alt="Browsing folders and files" /> | <img src="Screenshots/search.png" width="170" alt="Searching by name and full text" /> | <img src="Screenshots/favorites.png" width="170" alt="Starred favorites" /> | <img src="Screenshots/shared.png" width="170" alt="Shared by me and with me" /> | <img src="Screenshots/settings.png" width="170" alt="Settings" /> |
+
+</div>
 
 ---
 
@@ -30,32 +67,12 @@ Raw captures from an iPhone. No mockups, no marketing frames, this is the actual
 
 ---
 
-## Requirements
+<details>
+<summary><h2>Under the hood</h2></summary>
 
-- iOS 18 or later
-- iPhone or iPad
-- A compatible self-hosted NextExplorer server and your own account on it
+<br/>
 
----
-
-## Building from source
-
-1. Install Xcode 16 or later.
-2. Clone the repo:
-   ```sh
-   git clone git@github.com:PhillipMaizza/NextExplorer-iOS.git
-   cd NextExplorer-iOS
-   ```
-3. Open `NextExplorer.xcodeproj` in Xcode.
-4. Select the **NextExplorer** scheme and an iOS 18+ simulator or device, then Run.
-
-Swift Package Manager resolves all dependencies on first build; there is nothing to install by hand. To run the tests, use `Product > Test` in Xcode, or `xcodebuild test` against a matching simulator.
-
----
-
-## Architecture
-
-Native iOS, SwiftUI, and [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture). The app is split into focused Swift packages under `Packages/`:
+Native iOS 18+, SwiftUI, and [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture). No storyboards driving the app, no UIKit view controllers behind the screens, no third-party analytics. The app is split into focused Swift packages under `Packages/`:
 
 | Package | Responsibility |
 |---|---|
@@ -65,27 +82,61 @@ Native iOS, SwiftUI, and [The Composable Architecture](https://github.com/pointf
 | `NetworkClient` | HTTP layer, ETag revalidation, connectivity |
 | `CoreModels` | Shared domain models |
 | `DesignSystem` | Colors, typography, reusable components |
-| `Localization` | 17-language string catalog and live language switch |
+| `Localization` | 17-language string catalog and live in-app language switch |
 | `Keychain` / `AppStorageKeys` | Credential storage and device preferences |
 
-See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the working conventions and [`CLAUDE.md`](CLAUDE.md) for the full architectural rules.
+Some choices worth calling out:
+
+- **Phase-driven state.** Each screen load is one `DataPhase` (`idle` / `loading` / `loaded` / `failed`), not a scatter of loading and error booleans.
+- **Heavy work stays off the main thread.** Image decode, large reads, parsing and archive work run detached. Downloads stream instead of buffering into memory.
+- **Cancellation is not failure.** A tab switch or scroll-away cancels a load cleanly, without flashing an error.
+- **Offline cache is fallback-only and account-safe.** Stale-while-revalidate on disk, wiped on every logout, session expiry and fresh sign-in, so one account's data never leaks into the next.
+
+</details>
+
+---
+
+<details>
+<summary><h2>Building from source</h2></summary>
+
+<br/>
+
+1. Install Xcode 16 or later.
+2. Clone the repo:
+   ```sh
+   git clone git@github.com:PhillipMaizza/NextExplorer-iOS.git
+   cd NextExplorer-iOS
+   ```
+3. Open `NextExplorer.xcodeproj`, pick the **NextExplorer** scheme and an iOS 18+ simulator or device, then Run.
+
+Swift Package Manager resolves every dependency on first build; nothing to install by hand. Run the tests with `Product > Test`, or `xcodebuild test` against a matching simulator.
+
+To try it against real data you need a compatible self-hosted server and an account on it.
+
+</details>
+
+---
+
+## Contributing
+
+Contributions are welcome. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the branch and PR conventions and the architecture rules (constants, concurrency, state modelling, localization and cache safety) that every change follows.
 
 ---
 
 ## Privacy
 
-The app talks only to the server you point it at. It ships no analytics, no third-party trackers, and no telemetry. Cached copies of your data are cleared on logout, session expiry and fresh sign-in, so one account's files never leak into the next.
+The app talks only to the server you point it at. No analytics, no third-party trackers, no telemetry. Cached copies are cleared on logout, session expiry and fresh sign-in.
 
-See the [Privacy Policy](https://nextexplorer.phillipmaizza.com) and [Terms of Use](https://nextexplorer.phillipmaizza.com) for the full text.
+See the [Privacy Policy](https://phillipmaizza.com/nextexplorer/privacy) and [Terms of Use](https://phillipmaizza.com/nextexplorer/terms) for the full text.
 
 ---
 
 ## Support
 
-Questions, a bug, or a feature idea? Open an issue on this repo, or reach out through the [support site](https://nextexplorer.phillipmaizza.com). Replies usually land within a couple of days.
+Questions, a bug, or a feature idea? Open an issue on this repo, or reach out through the [support site](https://phillipmaizza.com/nextexplorer). Replies usually land within a couple of days.
 
 ---
 
 ## License
 
-Copyright © Phillip Maizza. All rights reserved. This source is published for review and reference; it is not currently offered under an open-source license. If you would like to reuse part of it, get in touch.
+Released under the [MIT License](LICENSE). Copyright © 2026 Phillip Maizza.
