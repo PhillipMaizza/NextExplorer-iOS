@@ -94,8 +94,6 @@ Some choices worth calling out:
 
 </details>
 
----
-
 <details>
 <summary><h2>Building from source</h2></summary>
 
