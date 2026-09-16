@@ -96,7 +96,10 @@ Some choices worth calling out:
 
 ---
 
-## Building from source
+<details>
+<summary><h2>Building from source</h2></summary>
+
+<br/>
 
 1. Install Xcode 16 or later.
 2. Clone the repo:
@@ -109,6 +112,8 @@ Some choices worth calling out:
 Swift Package Manager resolves every dependency on first build; nothing to install by hand. Run the tests with `Product > Test`, or `xcodebuild test` against a matching simulator.
 
 To try it against real data you need a compatible self-hosted server and an account on it.
+
+</details>
 
 ---
 
