@@ -77,6 +77,7 @@
 				292E4694303C3E8F003CDCA4 /* Sources */,
 				292E4695303C3E8F003CDCA4 /* Frameworks */,
 				292E4696303C3E8F003CDCA4 /* Resources */,
+				AA57C0DE0000000000000011 /* Set build number from git */,
 				AA57C0DE0000000000000010 /* SwiftFormat and SwiftLint */,
 			);
 			buildRules = (
@@ -99,6 +100,25 @@
 /* End PBXNativeTarget section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		AA57C0DE0000000000000011 /* Set build number from git */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Set build number from git";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Stamp CFBundleVersion with the git commit count so every build gets a\n# unique, monotonically increasing build number without editing the project.\nbuild_number=$(git -C \"$SRCROOT\" rev-list --count HEAD 2>/dev/null)\nif [ -z \"$build_number\" ]; then\n  echo \"warning: not a git checkout, keeping CURRENT_PROJECT_VERSION=$CURRENT_PROJECT_VERSION\"\n  exit 0\nfi\nplist=\"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nif [ -f \"$plist\" ]; then\n  /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\n  echo \"Set build number to $build_number\"\nfi\n";
+		};
 		AA57C0DE0000000000000010 /* SwiftFormat and SwiftLint */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
