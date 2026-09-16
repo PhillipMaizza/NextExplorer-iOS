@@ -16,7 +16,9 @@ struct ServerLogoThumbnail: View {
     @State private var fetched: UIImage?
     @State private var overrideImage: UIImage?
 
-    private var maxPixelDimension: CGFloat { size * UIScreen.main.scale }
+    private var maxPixelDimension: CGFloat {
+        size * UIScreen.main.scale
+    }
 
     var body: some View {
         content
@@ -51,7 +53,9 @@ struct ServerLogoThumbnail: View {
         let image = await Task.detached(priority: .utility) {
             ImageDownsampling.image(from: overrideImageData, maxPixelDimension: target)
         }.value
-        if !Task.isCancelled { overrideImage = image }
+        if !Task.isCancelled {
+            overrideImage = image
+        }
     }
 
     private func fetch() async {
@@ -64,6 +68,8 @@ struct ServerLogoThumbnail: View {
         let image = await Task.detached(priority: .utility) {
             ImageDownsampling.image(from: data, maxPixelDimension: target)
         }.value
-        if !Task.isCancelled { fetched = image }
+        if !Task.isCancelled {
+            fetched = image
+        }
     }
 }

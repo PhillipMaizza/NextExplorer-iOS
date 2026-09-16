@@ -27,7 +27,9 @@ public struct PermissionsFeature {
         public var isSavingOwnership = false
         public var actionError: String?
 
-        public var id: FileItem.ID { item.id }
+        public var id: FileItem.ID {
+            item.id
+        }
 
         public init(serverURL: URL, item: FileItem) {
             self.serverURL = serverURL
@@ -35,7 +37,9 @@ public struct PermissionsFeature {
         }
 
         /// The grid as the 3-digit octal string `chmod` wants.
-        public var octalString: String { FilePermissions.octalString(from: grid) }
+        public var octalString: String {
+            FilePermissions.octalString(from: grid)
+        }
 
         public var isModeDirty: Bool {
             guard let original = permissions?.octalString else { return false }
@@ -77,9 +81,9 @@ public struct PermissionsFeature {
                 state.phase = .loading
                 let serverURL = state.serverURL
                 let path = state.item.id
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.permissionsResponse(try await apiResult {
+                    try await send(.permissionsResponse(apiResult {
                         try await filesClient.fetchPermissions(serverURL, path)
                     }))
                 }
@@ -100,7 +104,11 @@ public struct PermissionsFeature {
 
             case let .toggle(scope, right):
                 var rights = state.grid[scope] ?? []
-                if rights.contains(right) { rights.remove(right) } else { rights.insert(right) }
+                if rights.contains(right) {
+                    rights.remove(right)
+                } else {
+                    rights.insert(right)
+                }
                 state.grid[scope] = rights
                 state.actionError = nil
                 return .none
@@ -127,9 +135,9 @@ public struct PermissionsFeature {
                 let path = state.item.id
                 let mode = state.octalString
                 let recursive = state.recursive && state.item.isDirectory
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.modeResponse(try await apiResult {
+                    try await send(.modeResponse(apiResult {
                         try await filesClient.changePermissions(serverURL, path, mode, recursive)
                         return true
                     }))
@@ -156,9 +164,9 @@ public struct PermissionsFeature {
                 let groupArg = (group.isEmpty || group == permissions.group) ? nil : group
                 let serverURL = state.serverURL
                 let path = state.item.id
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.ownershipResponse(try await apiResult {
+                    try await send(.ownershipResponse(apiResult {
                         try await filesClient.changeOwnership(serverURL, path, ownerArg, groupArg)
                         return true
                     }))

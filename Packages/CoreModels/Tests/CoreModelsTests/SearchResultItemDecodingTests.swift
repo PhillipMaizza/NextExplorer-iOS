@@ -1,6 +1,6 @@
+@testable import CoreModels
 import Foundation
 import Testing
-@testable import CoreModels
 
 @Suite("SearchResultItem decoding")
 struct SearchResultItemDecodingTests {

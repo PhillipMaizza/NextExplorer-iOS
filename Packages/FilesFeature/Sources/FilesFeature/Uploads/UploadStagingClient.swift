@@ -59,7 +59,11 @@ extension UploadStagingClient: DependencyKey {
                         for url in urls {
                             group.addTask {
                                 let didAccess = url.startAccessingSecurityScopedResource()
-                                defer { if didAccess { url.stopAccessingSecurityScopedResource() } }
+                                defer {
+                                    if didAccess {
+                                        url.stopAccessingSecurityScopedResource()
+                                    }
+                                }
                                 let name = url.lastPathComponent
                                 let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(name)")
                                 try? FileManager.default.removeItem(at: temp)
@@ -69,7 +73,9 @@ extension UploadStagingClient: DependencyKey {
                             }
                         }
                         for await file in group {
-                            if let file { continuation.yield(file) }
+                            if let file {
+                                continuation.yield(file)
+                            }
                         }
                     }
                     continuation.finish()
@@ -105,7 +111,9 @@ extension UploadStagingClient: DependencyKey {
                             nextIndex += 1
                         }
                         for await file in group {
-                            if let file { continuation.yield(file) }
+                            if let file {
+                                continuation.yield(file)
+                            }
                             if nextIndex < items.count {
                                 addTask(index: nextIndex)
                                 nextIndex += 1

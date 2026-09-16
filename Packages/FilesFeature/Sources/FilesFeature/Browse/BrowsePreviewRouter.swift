@@ -62,7 +62,7 @@ struct BrowsePreviewRouter: View {
             }
         } else if item.isBrowsableArchive {
             ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
-        } else if (item.isImage || item.isRawImage) && !item.isSVG {
+        } else if item.isImage || item.isRawImage, !item.isSVG {
             ImageGalleryView(
                 items: store.displayedItems.filter { ($0.isImage || $0.isRawImage) && !$0.isSVG },
                 initialItem: item,

@@ -12,7 +12,7 @@ public struct DSFlowLayout: Layout {
         self.verticalSpacing = verticalSpacing
     }
 
-    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) -> CGSize {
+    public func sizeThatFits(proposal: ProposedViewSize, subviews: Subviews, cache _: inout Void) -> CGSize {
         let maxWidth = proposal.width ?? .infinity
         var rowWidth: CGFloat = 0
         var rowHeight: CGFloat = 0
@@ -36,7 +36,7 @@ public struct DSFlowLayout: Layout {
         return CGSize(width: min(totalWidth, maxWidth), height: totalHeight)
     }
 
-    public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout Void) {
+    public func placeSubviews(in bounds: CGRect, proposal _: ProposedViewSize, subviews: Subviews, cache _: inout Void) {
         var x = bounds.minX
         var y = bounds.minY
         var rowHeight: CGFloat = 0

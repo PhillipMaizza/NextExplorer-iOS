@@ -1,8 +1,6 @@
+@testable import FilesFeature
 import Testing
 
-@testable import FilesFeature
-
-@Suite
 struct SearchMatchTests {
     // MARK: Happy path
 

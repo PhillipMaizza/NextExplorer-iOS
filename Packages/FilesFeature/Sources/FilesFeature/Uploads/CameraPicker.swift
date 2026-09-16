@@ -20,7 +20,7 @@ struct CameraPicker: UIViewControllerRepresentable {
         return controller
     }
 
-    func updateUIViewController(_ controller: UIImagePickerController, context: Context) {}
+    func updateUIViewController(_: UIImagePickerController, context _: Context) {}
 
     func makeCoordinator() -> Coordinator {
         Coordinator(onCapture: onCapture)
@@ -34,7 +34,7 @@ struct CameraPicker: UIViewControllerRepresentable {
         }
 
         func imagePickerController(
-            _ picker: UIImagePickerController,
+            _: UIImagePickerController,
             didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
         ) {
             if let movieURL = info[.mediaURL] as? URL {
@@ -51,7 +51,7 @@ struct CameraPicker: UIViewControllerRepresentable {
             onCapture((try? data.write(to: url)) != nil ? url : nil)
         }
 
-        func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        func imagePickerControllerDidCancel(_: UIImagePickerController) {
             onCapture(nil)
         }
 

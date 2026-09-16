@@ -77,18 +77,18 @@ struct FileRowView: View {
     ) {
         self.name = name
         self.isDirectory = isDirectory
-        self.dateModified = nil
-        self.size = nil
-        self.customSubtitle = subtitle
+        dateModified = nil
+        size = nil
+        customSubtitle = subtitle
         self.lineLabel = lineLabel
         self.isFavorite = isFavorite
-        self.itemID = thumbnailFile?.id
+        itemID = thumbnailFile?.id
         self.kind = kind
-        self.supportsThumbnail = thumbnailFile?.supportsThumbnail ?? false
-        self.thumbnailSignature = thumbnailFile?.cacheSignature ?? ""
+        supportsThumbnail = thumbnailFile?.supportsThumbnail ?? false
+        thumbnailSignature = thumbnailFile?.cacheSignature ?? ""
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
-        self.file = thumbnailFile
+        file = thumbnailFile
         self.customIcon = customIcon
         self.customIconTint = customIconTint
         self.customIconFilled = customIconFilled
@@ -97,38 +97,44 @@ struct FileRowView: View {
     }
 
     init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false) {
-        self.name = item.name
-        self.isDirectory = item.isDirectory
-        self.dateModified = item.dateModified
-        self.size = item.isDirectory ? nil : item.size
-        self.customSubtitle = nil
-        self.lineLabel = nil
+        name = item.name
+        isDirectory = item.isDirectory
+        dateModified = item.dateModified
+        size = item.isDirectory ? nil : item.size
+        customSubtitle = nil
+        lineLabel = nil
         self.isFavorite = isFavorite
-        self.itemID = item.id
-        self.kind = item.kind
-        self.supportsThumbnail = item.supportsThumbnail
-        self.thumbnailSignature = item.cacheSignature
+        itemID = item.id
+        kind = item.kind
+        supportsThumbnail = item.supportsThumbnail
+        thumbnailSignature = item.cacheSignature
         self.serverURL = serverURL
         self.showThumbnails = showThumbnails
-        self.file = item
-        self.customIcon = nil
-        self.customIconTint = nil
-        self.customIconFilled = false
+        file = item
+        customIcon = nil
+        customIconTint = nil
+        customIconFilled = false
         self.matchedSource = matchedSource
         self.isOpening = isOpening
     }
 
-    private var dateFormat: DateDisplayFormat { DateDisplayFormat(rawValue: dateFormatRaw) ?? .system }
+    private var dateFormat: DateDisplayFormat {
+        DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
+    }
 
     private var subtitle: String? {
-        if let customSubtitle { return customSubtitle }
+        if let customSubtitle {
+            return customSubtitle
+        }
         guard let dateModified else { return nil }
         let dateText = dateFormat.string(from: dateModified, includeTime: includeTime)
         guard let size else { return dateText }
         return "\(Self.byteFormatter.string(fromByteCount: size)) • \(dateText)"
     }
 
-    private var isHidden: Bool { isHiddenFileName(name) }
+    private var isHidden: Bool {
+        isHiddenFileName(name)
+    }
 
     private var displayName: String {
         displayFileName(name, isDirectory: isDirectory, showExtension: showFilenameExtensions)
@@ -150,7 +156,7 @@ struct FileRowView: View {
 
             VStack(alignment: .leading, spacing: .space2) {
                 Text(displayName)
-                    .type(.body2(.semibold), style: isHidden ? .tertiary : .primary(for: .label))
+                    .type(.body2(.semibold), style: isHidden ? .tertiary : .primaryOnSurface)
                     .lineLimit(1)
                 if let subtitle {
                     Text(subtitle)
@@ -162,7 +168,7 @@ struct FileRowView: View {
                         .type(.body3(.semibold), style: isHidden ? .tertiary : .secondary)
                         .lineLimit(1)
                 }
-}
+            }
 
             Spacer()
 
@@ -241,7 +247,6 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
     return (name as NSString).deletingPathExtension
 }
 
-
 #Preview {
     VStack(spacing: .space16) {
         FileRowView(name: "Folder",
@@ -277,7 +282,6 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
                     isDirectory: false,
                     subtitle: "let count = 0",
                     lineLabel: "Line 58")
-
     }
     .padding(.space16)
 }

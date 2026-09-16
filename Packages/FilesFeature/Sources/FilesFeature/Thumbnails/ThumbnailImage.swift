@@ -1,8 +1,8 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
-import SwiftUI
 import FilesClient
+import SwiftUI
 import UIKit
 
 /// Process-wide in-memory cache of decoded thumbnails, keyed by the thumbnail's own
@@ -79,7 +79,9 @@ struct ThumbnailImage: View {
             // A cancelled task (the row scrolled away, or the tab was switched mid load) is not
             // a failure: leave the loading placeholder so re-appearing retries, instead of
             // marking it resolved and dropping to the generic fallback icon.
-            if Task.isCancelled { return }
+            if Task.isCancelled {
+                return
+            }
             guard let thumbnailURL else {
                 didResolve = true
                 return
@@ -92,15 +94,21 @@ struct ThumbnailImage: View {
             do {
                 data = try await thumbnailCache.data(thumbnailURL)
             } catch {
-                if !Task.isCancelled { didResolve = true }
+                if !Task.isCancelled {
+                    didResolve = true
+                }
                 return
             }
-            if Task.isCancelled { return }
+            if Task.isCancelled {
+                return
+            }
             let target = maxPixelDimension
             let decoded = await Task.detached(priority: .utility) {
                 ImageDownsampling.image(from: data, maxPixelDimension: target)
             }.value
-            if Task.isCancelled { return }
+            if Task.isCancelled {
+                return
+            }
             if let decoded {
                 ThumbnailMemoryCache.shared.setObject(
                     decoded,

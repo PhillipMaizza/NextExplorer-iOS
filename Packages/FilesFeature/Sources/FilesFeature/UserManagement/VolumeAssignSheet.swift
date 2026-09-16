@@ -22,7 +22,9 @@ struct VolumeAssignSheet: View {
     /// since rapid taps otherwise race and the slower one wins.
     @State private var browsePath: String?
 
-    private var sheet: UserManagementFeature.VolumeSheetState? { store.volumeSheet }
+    private var sheet: UserManagementFeature.VolumeSheetState? {
+        store.volumeSheet
+    }
 
     var body: some View {
         DSDynamicHeightSheet(maxHeightFraction: Metrics.volumeSheetMaxHeightFraction) {
@@ -157,7 +159,7 @@ struct VolumeAssignSheet: View {
                 .foregroundStyle(isSelected ? Color.accent : Color.secondaryDS)
                 .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
             Text(text)
-                .type(.body3(.regular), style: isSelected ? .link : .primary(for: .label))
+                .type(.body3(.regular), style: isSelected ? .link : .primaryOnSurface)
                 .lineLimit(1)
         }
         .padding(.vertical, .space4)

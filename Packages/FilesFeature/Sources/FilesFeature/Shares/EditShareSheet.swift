@@ -144,7 +144,7 @@ struct EditShareSheet: View {
                             AvatarView(displayName: user.displayName ?? user.username, size: Constants.userAvatarSize)
                             VStack(alignment: .leading, spacing: .space2) {
                                 Text(user.displayName ?? user.username)
-                                    .type(.body3(.semibold), style: .primary(for: .label))
+                                    .type(.body3(.semibold), style: .primaryOnSurface)
                                     .lineLimit(1)
                                 if let email = user.email {
                                     Text(email).type(.caption(.regular), style: .secondary).lineLimit(1)
@@ -166,7 +166,7 @@ struct EditShareSheet: View {
     private var sourceCard: some View {
         VStack(alignment: .leading, spacing: .space2) {
             Text(L10n.CreateShare.sharingPrefix).type(.body3(.regular), style: .secondary)
-            Text(store.share.displayName).type(.body2(.bold), style: .primary(for: .label)).lineLimit(1)
+            Text(store.share.displayName).type(.body2(.bold), style: .primaryOnSurface).lineLimit(1)
             if let path = store.share.sourcePath {
                 Text(path).type(.caption(.regular), style: .tertiary).lineLimit(1).truncationMode(.middle)
             }

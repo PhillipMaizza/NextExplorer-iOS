@@ -1,13 +1,11 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct AccessRulesFeatureTests {
     private let serverURL = URL(string: "https://files.example.com")!
 
@@ -64,7 +62,7 @@ struct AccessRulesFeatureTests {
         state.loaded = []
         state.drafts = [
             AccessRule(id: "a", path: "  Reports  ", isRecursive: true, permission: .readOnly),
-            AccessRule(id: "b", path: "   ", isRecursive: true, permission: .readWrite)
+            AccessRule(id: "b", path: "   ", isRecursive: true, permission: .readWrite),
         ]
         let echoed = [AccessRule(id: "srv-a", path: "Reports", isRecursive: true, permission: .readOnly)]
         let store = TestStore(initialState: state) {

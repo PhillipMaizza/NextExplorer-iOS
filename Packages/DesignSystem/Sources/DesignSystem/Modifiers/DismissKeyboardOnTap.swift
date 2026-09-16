@@ -19,7 +19,9 @@ public extension View {
 }
 
 private struct KeyboardDismissTapInstaller: UIViewRepresentable {
-    func makeCoordinator() -> Coordinator { Coordinator() }
+    func makeCoordinator() -> Coordinator {
+        Coordinator()
+    }
 
     func makeUIView(context: Context) -> UIView {
         let view = InstallerView()
@@ -28,9 +30,9 @@ private struct KeyboardDismissTapInstaller: UIViewRepresentable {
         return view
     }
 
-    func updateUIView(_ uiView: UIView, context: Context) {}
+    func updateUIView(_: UIView, context _: Context) {}
 
-    static func dismantleUIView(_ uiView: UIView, coordinator: Coordinator) {
+    static func dismantleUIView(_: UIView, coordinator: Coordinator) {
         coordinator.detach()
     }
 
@@ -54,7 +56,9 @@ private struct KeyboardDismissTapInstaller: UIViewRepresentable {
 
         func attach(to newWindow: UIWindow?) {
             guard let newWindow else { detach(); return }
-            if window === newWindow, recognizer != nil { return }
+            if window === newWindow, recognizer != nil {
+                return
+            }
             detach()
             let tap = UITapGestureRecognizer(target: self, action: #selector(handleTap))
             tap.cancelsTouchesInView = false
@@ -65,7 +69,9 @@ private struct KeyboardDismissTapInstaller: UIViewRepresentable {
         }
 
         func detach() {
-            if let recognizer, let window { window.removeGestureRecognizer(recognizer) }
+            if let recognizer, let window {
+                window.removeGestureRecognizer(recognizer)
+            }
             recognizer = nil
             window = nil
         }
@@ -77,14 +83,16 @@ private struct KeyboardDismissTapInstaller: UIViewRepresentable {
         }
 
         func gestureRecognizer(
-            _ gestureRecognizer: UIGestureRecognizer,
-            shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
-        ) -> Bool { true }
+            _: UIGestureRecognizer,
+            shouldRecognizeSimultaneouslyWith _: UIGestureRecognizer
+        ) -> Bool {
+            true
+        }
 
-        // Ignore taps that land on a text input, so tapping a field to focus it doesn't resign
-        // the responder on the same tap that begins editing.
+        /// Ignore taps that land on a text input, so tapping a field to focus it doesn't resign
+        /// the responder on the same tap that begins editing.
         func gestureRecognizer(
-            _ gestureRecognizer: UIGestureRecognizer,
+            _: UIGestureRecognizer,
             shouldReceive touch: UITouch
         ) -> Bool {
             var view = touch.view

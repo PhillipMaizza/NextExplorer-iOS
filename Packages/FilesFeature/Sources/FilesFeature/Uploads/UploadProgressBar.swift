@@ -43,7 +43,7 @@ struct UploadProgressBar: View {
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
             VStack(alignment: .leading, spacing: Constants.textSpacing) {
                 Text(title)
-                    .type(.body3(.semibold), style: .primary(for: .label))
+                    .type(.body3(.semibold), style: .primaryOnSurface)
                     .lineLimit(1)
                     .truncationMode(.middle)
                 ProgressView(value: progress)
@@ -94,7 +94,7 @@ struct UploadFailedBar: View {
                 .foregroundStyle(Color.negative)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
             Text(label)
-                .type(.body3(.semibold), style: .primary(for: .label))
+                .type(.body3(.semibold), style: .primaryOnSurface)
                 .lineLimit(1)
             Spacer(minLength: Constants.contentSpacing)
             Button(action: onRetry) {

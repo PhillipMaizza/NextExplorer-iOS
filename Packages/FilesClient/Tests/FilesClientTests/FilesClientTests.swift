@@ -1,11 +1,9 @@
 import CoreModels
+@testable import FilesClient
 import Foundation
 import NetworkClient
 import Testing
 
-@testable import FilesClient
-
-@Suite
 struct FilesClientTests {
     @Test
     func previewValueBrowseReturnsSeededItems() async throws {
@@ -190,7 +188,7 @@ struct FilesClientLiveTests {
     }
 
     @Test
-    func browseDoesNotWriteThroughOnFailure() async throws {
+    func browseDoesNotWriteThroughOnFailure() async {
         StubURLProtocol.stub = nil
         StubURLProtocol.failure = URLError(.notConnectedToInternet)
         let store = DirectoryCacheStore.inMemory()
@@ -259,7 +257,7 @@ struct FilesClientLiveTests {
     }
 
     @Test
-    func prefetchDirectoryWritesThroughOverTheLowPrioritySession() async throws {
+    func prefetchDirectoryWritesThroughOverTheLowPrioritySession() async {
         stub(statusCode: 200, body: browseResultJSON, headers: ["Content-Type": "application/json", "ETag": "\"pf\""])
         let store = DirectoryCacheStore.inMemory()
         let client = FilesClient.live(
@@ -277,7 +275,7 @@ struct FilesClientLiveTests {
     }
 
     @Test
-    func prefetchDirectorySwallowsFailures() async throws {
+    func prefetchDirectorySwallowsFailures() async {
         StubURLProtocol.stub = nil
         StubURLProtocol.failure = URLError(.notConnectedToInternet)
         let store = DirectoryCacheStore.inMemory()

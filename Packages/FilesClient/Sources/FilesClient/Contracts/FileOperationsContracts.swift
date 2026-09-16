@@ -49,6 +49,7 @@ extension FilesService {
             let name: String
             let path: String
         }
+
         let items: [Item]
         let destination: String
     }

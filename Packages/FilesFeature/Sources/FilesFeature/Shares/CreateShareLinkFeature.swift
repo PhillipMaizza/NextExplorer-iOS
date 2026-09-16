@@ -47,8 +47,8 @@ public struct CreateShareLinkFeature {
             self.itemName = itemName
             self.itemPath = itemPath
             self.isDirectory = isDirectory
-            self.label = itemName
-            self.expiresAt = now.addingTimeInterval(defaultExpiryDays * 24 * 60 * 60)
+            label = itemName
+            expiresAt = now.addingTimeInterval(defaultExpiryDays * 24 * 60 * 60)
         }
 
         /// Full logical path of the shared item — parent path plus name, matching the
@@ -98,7 +98,7 @@ public struct CreateShareLinkFeature {
             switch action {
             case .onAppear:
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
                     guard let preferences = try? await filesClient.fetchPreferences(serverURL) else { return }
                     await send(.preferencesResponse(preferences))
@@ -131,9 +131,9 @@ public struct CreateShareLinkFeature {
                 guard target == .users, state.usersPhase.shouldLoadOnAppear else { return .none }
                 state.usersPhase = .loading
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.shareableUsersResponse(try await apiResult {
+                    try await send(.shareableUsersResponse(apiResult {
                         try await filesClient.shareableUsers(serverURL)
                     }))
                 }
@@ -204,9 +204,9 @@ public struct CreateShareLinkFeature {
                     expiresAt: state.isExpiryEnabled ? state.expiresAt : nil
                 )
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.createResponse(try await apiResult {
+                    try await send(.createResponse(apiResult {
                         try await filesClient.createShareLink(serverURL, request)
                     }), animation: .default)
                 }

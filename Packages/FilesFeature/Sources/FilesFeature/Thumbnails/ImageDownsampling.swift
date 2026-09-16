@@ -25,7 +25,7 @@ enum ImageDownsampling {
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceCreateThumbnailWithTransform: true,
             kCGImageSourceShouldCacheImmediately: true,
-            kCGImageSourceThumbnailMaxPixelSize: max(1, maxPixelDimension)
+            kCGImageSourceThumbnailMaxPixelSize: max(1, maxPixelDimension),
         ]
         guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
             return nil

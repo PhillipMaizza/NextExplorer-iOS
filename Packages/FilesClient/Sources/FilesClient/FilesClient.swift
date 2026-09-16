@@ -188,12 +188,12 @@ public struct FilesClient: Sendable {
     ) async throws -> AdminDirectoryListing
 }
 
-extension FilesClient {
+public extension FilesClient {
     /// The same `GET /api/preview?path=...` URL `previewFile` downloads, exposed as a plain
     /// synchronous URL for streamable media (video/audio): `AVPlayer` can play it directly,
     /// using the server's existing HTTP Range support for seeking, without buffering the
     /// whole file into memory first the way a full download would.
-    public static func previewURL(serverURL: URL, item: FileItem) -> URL? {
+    static func previewURL(serverURL: URL, item: FileItem) -> URL? {
         var components = URLComponents(url: serverURL.appendingPathComponent(APIPath.preview), resolvingAgainstBaseURL: false)
         components?.queryItems = [URLQueryItem(name: QueryKey.path, value: item.id)]
         return components?.url
@@ -202,7 +202,7 @@ extension FilesClient {
     /// `GET /api/raw?path=...` — the file served verbatim (`text/plain`, `nosniff`). Handed to
     /// Safari for "Open in Browser": the server has no rendered-HTML endpoint, and cookie auth
     /// means Safari may hit a login page first (or 401 if the server requires auth).
-    public static func rawFileURL(serverURL: URL, item: FileItem) -> URL? {
+    static func rawFileURL(serverURL: URL, item: FileItem) -> URL? {
         var components = URLComponents(url: serverURL.appendingPathComponent(APIPath.raw), resolvingAgainstBaseURL: false)
         components?.queryItems = [URLQueryItem(name: QueryKey.path, value: item.id)]
         return components?.url

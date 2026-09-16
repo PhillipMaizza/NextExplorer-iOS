@@ -9,7 +9,7 @@ import SwiftUI
 /// each caller rather than being forced into this shared shape.
 @MainActor
 @ToolbarContentBuilder
-func selectSortToolbar<SortMenu: View, ClipboardMenu: View>(
+func selectSortToolbar(
     isSelecting: Bool,
     isAllSelected: Bool,
     isSelectAvailable: Bool,
@@ -18,8 +18,8 @@ func selectSortToolbar<SortMenu: View, ClipboardMenu: View>(
     onSelectAllToggled: @escaping () -> Void,
     onCancel: @escaping () -> Void,
     onToggleViewMode: @escaping () -> Void,
-    @ViewBuilder clipboardMenu: () -> ClipboardMenu = { EmptyView() },
-    @ViewBuilder sortMenu: () -> SortMenu
+    @ViewBuilder clipboardMenu: () -> some View = { EmptyView() },
+    @ViewBuilder sortMenu: () -> some View
 ) -> some ToolbarContent {
     if isSelecting {
         ToolbarItem(placement: .topBarLeading) {

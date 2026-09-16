@@ -1,12 +1,10 @@
 import ComposableArchitecture
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct DownloadsFeatureTests {
     private func makeDownload(fileName: String = "report.pdf", location: DownloadLocation = .documents) -> LocalDownload {
         LocalDownload(

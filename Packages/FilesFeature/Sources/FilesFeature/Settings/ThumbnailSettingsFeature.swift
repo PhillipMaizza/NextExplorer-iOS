@@ -27,8 +27,13 @@ public struct ThumbnailSettingsFeature {
             self.serverURL = serverURL
         }
 
-        var isDirty: Bool { loaded != nil && draft != loaded }
-        var isSaveEnabled: Bool { isDirty && !isSaving }
+        var isDirty: Bool {
+            loaded != nil && draft != loaded
+        }
+
+        var isSaveEnabled: Bool {
+            isDirty && !isSaving
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -60,9 +65,9 @@ public struct ThumbnailSettingsFeature {
                 state.phase = .loading
                 state.errorMessage = nil
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.settingsResponse(try await apiResult {
+                    try await send(.settingsResponse(apiResult {
                         try await filesClient.fetchSystemSettings(serverURL)
                     }))
                 }
@@ -73,7 +78,9 @@ public struct ThumbnailSettingsFeature {
                 if let thumbnails = settings.thumbnails {
                     let untouched = !state.isDirty
                     state.loaded = thumbnails
-                    if untouched { state.draft = thumbnails }
+                    if untouched {
+                        state.draft = thumbnails
+                    }
                 } else {
                     state.isUnavailable = true
                 }
@@ -109,9 +116,9 @@ public struct ThumbnailSettingsFeature {
                 state.errorMessage = nil
                 let serverURL = state.serverURL
                 let draft = state.draft
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.saveResponse(try await apiResult {
+                    try await send(.saveResponse(apiResult {
                         try await filesClient.updateThumbnailSettings(serverURL, draft)
                     }))
                 }

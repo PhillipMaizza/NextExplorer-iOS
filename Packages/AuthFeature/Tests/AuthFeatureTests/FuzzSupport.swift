@@ -4,7 +4,10 @@ import Foundation
 /// run. Seedable, unlike `SystemRandomNumberGenerator`, which keeps a fuzz failure reproducible.
 struct SplitMix64: RandomNumberGenerator {
     private var state: UInt64
-    init(seed: UInt64) { state = seed }
+    init(seed: UInt64) {
+        state = seed
+    }
+
     mutating func next() -> UInt64 {
         state &+= 0x9E37_79B9_7F4A_7C15
         var z = state
@@ -25,7 +28,7 @@ enum FuzzStrings {
         let length = Int(rng.next() % UInt64(maxLength + 1))
         var out = ""
         out.reserveCapacity(length)
-        for _ in 0..<length {
+        for _ in 0 ..< length {
             out.append(alphabet[Int(rng.next() % UInt64(alphabet.count))])
         }
         return out

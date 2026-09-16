@@ -18,7 +18,7 @@ struct PickedFilePreview: View {
         self.names = names
         self.initialIndex = initialIndex
         self.onClose = onClose
-        self._currentIndex = State(initialValue: initialIndex)
+        _currentIndex = State(initialValue: initialIndex)
     }
 
     private var title: String? {

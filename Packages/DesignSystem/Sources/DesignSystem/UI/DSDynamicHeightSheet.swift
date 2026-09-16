@@ -21,7 +21,9 @@ import UIKit
 public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     /// Ignore capped-mode measurement changes smaller than this — sub-point relayout churn
     /// (an icon mid `.contentTransition`) shouldn't re-propose a detent.
-    private static var changeThreshold: CGFloat { 1 }
+    private static var changeThreshold: CGFloat {
+        1
+    }
 
     private let maxHeightFraction: CGFloat?
     private let content: Content
@@ -52,8 +54,8 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
             .first(where: { $0.activationState == .foregroundActive })?
             .screen.bounds.height
             ?? UIApplication.shared.connectedScenes
-                .compactMap { ($0 as? UIWindowScene)?.screen.bounds.height }
-                .first
+            .compactMap { ($0 as? UIWindowScene)?.screen.bounds.height }
+            .first
             ?? 800
     }
 
@@ -85,7 +87,9 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     /// A bare `GeometryReader` in the bottom `safeAreaInset` reports the whole inset region
     /// rather than a zero height when there's nothing to measure, which then inflates the
     /// detent toward full screen. Skip the footer plumbing entirely when no footer was given.
-    private var hasFooter: Bool { Footer.self != EmptyView.self }
+    private var hasFooter: Bool {
+        Footer.self != EmptyView.self
+    }
 
     private var measuredContent: some View {
         ScrollView {
@@ -143,8 +147,8 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     }
 }
 
-extension DSDynamicHeightSheet where Footer == EmptyView {
-    public init(maxHeightFraction: CGFloat? = nil, @ViewBuilder content: () -> Content) {
+public extension DSDynamicHeightSheet where Footer == EmptyView {
+    init(maxHeightFraction: CGFloat? = nil, @ViewBuilder content: () -> Content) {
         self.init(maxHeightFraction: maxHeightFraction, content: content, footer: { EmptyView() })
     }
 }

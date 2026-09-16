@@ -39,7 +39,9 @@ public enum DataPhase: Equatable, Sendable {
 
     /// The full screen error text, set only while the first load is `.failed`.
     public var errorMessage: String? {
-        if case let .failed(message) = self { return message }
+        if case let .failed(message) = self {
+            return message
+        }
         return nil
     }
 
@@ -49,8 +51,8 @@ public enum DataPhase: Equatable, Sendable {
     /// single time the tab is revisited).
     public var shouldLoadOnAppear: Bool {
         switch self {
-        case .idle, .failed: return true
-        case .loading, .loaded: return false
+        case .idle, .failed: true
+        case .loading, .loaded: false
         }
     }
 }

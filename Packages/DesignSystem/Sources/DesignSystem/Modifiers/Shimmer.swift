@@ -52,7 +52,7 @@ private struct ShimmerModifier: ViewModifier {
 
 #Preview {
     VStack(alignment: .leading, spacing: .space16) {
-        ForEach(0..<5, id: \.self) { _ in
+        ForEach(0 ..< 5, id: \.self) { _ in
             HStack(spacing: .space12) {
                 RoundedRectangle(cornerRadius: .radiusSmall)
                     .frame(width: .iconMedium, height: .iconMedium)

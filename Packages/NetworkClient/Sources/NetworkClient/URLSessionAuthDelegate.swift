@@ -15,15 +15,15 @@ final class URLSessionAuthDelegate: NSObject, URLSessionDelegate, URLSessionTask
     /// any task that carries its own delegate, such as the upload task and its
     /// `UploadProgressDelegate`, whose per task delegate has no challenge method of its own.
     func urlSession(
-        _ session: URLSession,
+        _: URLSession,
         didReceive challenge: URLAuthenticationChallenge
     ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         await trustEvaluator.evaluate(challenge)
     }
 
     func urlSession(
-        _ session: URLSession,
-        task: URLSessionTask,
+        _: URLSession,
+        task _: URLSessionTask,
         didReceive challenge: URLAuthenticationChallenge
     ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         await trustEvaluator.evaluate(challenge)

@@ -49,7 +49,7 @@ struct LanguagePickerView: View {
         } label: {
             HStack {
                 VStack(alignment: .leading, spacing: Constants.rowSpacing) {
-                    Text(title).type(.body1(.regular), style: .primary(for: .label))
+                    Text(title).type(.body1(.regular), style: .primaryOnSurface)
                     if let subtitle {
                         Text(subtitle).type(.body3(.regular), style: .secondary)
                     }

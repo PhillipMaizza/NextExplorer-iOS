@@ -89,9 +89,11 @@ struct UserDetailView: View {
             VStack(alignment: .leading, spacing: .space2) {
                 HStack(spacing: .space8) {
                     Text(user.displayName ?? user.username)
-                        .type(.headline3, style: .primary(for: .label))
+                        .type(.headline3, style: .primaryOnSurface)
                         .lineLimit(1)
-                    if user.isAdmin { AdminTag() }
+                    if user.isAdmin {
+                        AdminTag()
+                    }
                 }
                 if let email = user.email {
                     Text(email).type(.body3(.regular), style: .secondary).lineLimit(1).truncationMode(.middle)
@@ -104,11 +106,15 @@ struct UserDetailView: View {
     // MARK: Sheet bindings
 
     private var volumeSheetPresented: Binding<Bool> {
-        Binding(get: { store.volumeSheet != nil }, set: { if !$0 { store.send(.volumeSheetDismissed) } })
+        Binding(get: { store.volumeSheet != nil }, set: {
+            if !$0 {
+                store.send(.volumeSheetDismissed)
+            }
+        })
     }
 
-    // No op setters: both confirmation sheets are dismiss disabled and only close through one
-    // of `DSAlertSheet`'s own buttons, which drive the reducer directly.
+    /// No op setters: both confirmation sheets are dismiss disabled and only close through one
+    /// of `DSAlertSheet`'s own buttons, which drive the reducer directly.
     private var removeVolumeAlertPresented: Binding<Bool> {
         Binding(get: { store.volumeToRemove != nil }, set: { _ in })
     }

@@ -1,14 +1,12 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+@testable import FilesFeature
 import Foundation
 import Localization
 import Testing
 
-@testable import FilesFeature
-
 @MainActor
-@Suite
 struct CreateShareLinkFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
     private let now = Date(timeIntervalSince1970: 1_700_000_000)
@@ -52,7 +50,7 @@ struct CreateShareLinkFeatureTests {
         } withDependencies: {
             $0.date = .constant(now)
             $0.filesClient.createShareLink = { url, request in
-                #expect(url == self.serverURL)
+                #expect(url == serverURL)
                 #expect(request.sourcePath == "Documents/Report.pdf")
                 #expect(request.accessMode == .readonly)
                 return created
@@ -210,7 +208,7 @@ struct CreateShareLinkFeatureTests {
         await store.send(.onAppear)
         await store.receive(\.preferencesResponse) {
             $0.isExpiryEnabled = true
-            $0.expiresAt = self.now.addingTimeInterval(14 * 86_400)
+            $0.expiresAt = now.addingTimeInterval(14 * 86_400)
         }
     }
 

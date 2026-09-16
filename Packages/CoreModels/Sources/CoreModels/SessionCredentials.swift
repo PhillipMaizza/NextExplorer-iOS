@@ -44,7 +44,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
             .name: cookieName,
             .value: cookieValue,
             .domain: cookieDomain,
-            .path: cookiePath
+            .path: cookiePath,
         ]
         // `HTTPCookiePropertyKey.secure`'s mere PRESENCE marks the cookie secure, regardless
         // of its string value — it must be omitted entirely to produce a non-secure cookie.

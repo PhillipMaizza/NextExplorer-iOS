@@ -26,7 +26,9 @@ struct FavoriteEditSheet: View {
 
     private let iconColumns = [GridItem(.adaptive(minimum: Metrics.iconColumnMin), spacing: .space8)]
 
-    private var tint: Color { FavoriteColor.resolve(store.colorDraft) ?? .accent }
+    private var tint: Color {
+        FavoriteColor.resolve(store.colorDraft) ?? .accent
+    }
 
     var body: some View {
         DSDynamicHeightSheet(maxHeightFraction: Metrics.maxHeightFraction) {
@@ -75,27 +77,29 @@ struct FavoriteEditSheet: View {
         }
     }
 
-    private var iconVariant: SymbolVariants { store.iconStyleDraft == .solid ? .fill : .none }
+    private var iconVariant: SymbolVariants {
+        store.iconStyleDraft == .solid ? .fill : .none
+    }
 
     private var nameErrorText: String? {
         switch store.nameError {
-        case .empty: return L10n.Favorites.editNameErrorEmpty
-        case nil: return nil
+        case .empty: L10n.Favorites.editNameErrorEmpty
+        case nil: nil
         }
     }
 
     private func iconStyleLabel(_ style: FavoriteEditFeature.IconStyle) -> String {
         switch style {
-        case .outline: return L10n.Favorites.editIconOutline
-        case .solid: return L10n.Favorites.editIconSolid
+        case .outline: L10n.Favorites.editIconOutline
+        case .solid: L10n.Favorites.editIconSolid
         }
     }
 
     @ViewBuilder
-    private func section<Content: View>(
+    private func section(
         _ title: String,
         error: String? = nil,
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: () -> some View
     ) -> some View {
         VStack(alignment: .leading, spacing: Metrics.sectionSpacing) {
             DSFieldLabel(title)

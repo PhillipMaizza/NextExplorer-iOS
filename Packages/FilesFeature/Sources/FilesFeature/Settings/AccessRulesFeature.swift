@@ -30,7 +30,9 @@ public struct AccessRulesFeature {
             return Array(drafts) != loaded
         }
 
-        var isSaveEnabled: Bool { isDirty && !isSaving }
+        var isSaveEnabled: Bool {
+            isDirty && !isSaving
+        }
     }
 
     public enum Action: Equatable, Sendable {
@@ -64,9 +66,9 @@ public struct AccessRulesFeature {
                 state.phase = .loading
                 state.errorMessage = nil
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.settingsResponse(try await apiResult {
+                    try await send(.settingsResponse(apiResult {
                         try await filesClient.fetchSystemSettings(serverURL)
                     }))
                 }
@@ -77,7 +79,7 @@ public struct AccessRulesFeature {
                 // `access.rules` is admin only; an empty array from a non-admin is
                 // indistinguishable from an admin with no rules, so treat a response that
                 // also lacks `thumbnails` as "not an admin".
-                if settings.thumbnails == nil && settings.accessRules.isEmpty {
+                if settings.thumbnails == nil, settings.accessRules.isEmpty {
                     state.isUnavailable = true
                     return .none
                 }
@@ -133,9 +135,9 @@ public struct AccessRulesFeature {
                         return trimmed
                     }
                     .filter { !$0.path.isEmpty }
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.saveResponse(try await apiResult {
+                    try await send(.saveResponse(apiResult {
                         try await filesClient.updateAccessRules(serverURL, rules)
                     }))
                 }

@@ -42,7 +42,10 @@ public struct DownloadsFeature {
         public var actionErrorMessage: String?
 
         /// The first load's failure text, if it's still the current state.
-        public var errorMessage: String? { phase.errorMessage }
+        public var errorMessage: String? {
+            phase.errorMessage
+        }
+
         public var deleteConfirmationItem: LocalDownload?
         public var renameItem: LocalDownload?
         public var searchQuery = ""
@@ -116,7 +119,7 @@ public struct DownloadsFeature {
                 // Routing it through an async effect returned a frame later and flashed the
                 // loading skeleton on a tab whose data is effectively instant.
                 do {
-                    state.downloads = IdentifiedArray(uniqueElements: try localDownloadStore.list(state.downloadScope))
+                    state.downloads = try IdentifiedArray(uniqueElements: localDownloadStore.list(state.downloadScope))
                     state.phase = .loaded
                 } catch {
                     state.phase = .failed(((error as? FilesClientError) ?? .network(String(describing: error))).userMessage)
@@ -240,10 +243,10 @@ public struct DownloadsFeature {
 
     private func load(_ state: inout State) -> Effect<Action> {
         state.phase = .loading
-        let localDownloadStore = self.localDownloadStore
+        let localDownloadStore = localDownloadStore
         let downloadScope = state.downloadScope
         return .run { send in
-            await send(.downloadsResponse(try await apiResult { try localDownloadStore.list(downloadScope) }))
+            try await send(.downloadsResponse(apiResult { try localDownloadStore.list(downloadScope) }))
         }
         .cancellable(id: CancelID.load, cancelInFlight: true)
     }
@@ -251,7 +254,7 @@ public struct DownloadsFeature {
     private func confirmDelete(_ state: inout State) -> Effect<Action> {
         guard let download = state.deleteConfirmationItem else { return .none }
         state.deleteConfirmationItem = nil
-        let localDownloadStore = self.localDownloadStore
+        let localDownloadStore = localDownloadStore
         return .run { send in
             do {
                 try localDownloadStore.delete(download.url)
@@ -270,7 +273,7 @@ public struct DownloadsFeature {
             state.renameItem = nil
             return .none
         }
-        let localDownloadStore = self.localDownloadStore
+        let localDownloadStore = localDownloadStore
         let downloadScope = state.downloadScope
         return .run { send in
             do {
@@ -289,17 +292,18 @@ public struct DownloadsFeature {
     /// shared `apiResult` boxing would produce. `serverMessage`'s `userMessage` is exactly the
     /// carried string; the status code is unused for that case.
     private static func localStoreError(_ error: Error) -> FilesClientError {
-        if let filesError = error as? FilesClientError { return filesError }
-        let message: String
-        switch (error as? CocoaError)?.code {
+        if let filesError = error as? FilesClientError {
+            return filesError
+        }
+        let message: String = switch (error as? CocoaError)?.code {
         case .fileWriteFileExists:
-            message = L10n.Downloads.errorNameExists
+            L10n.Downloads.errorNameExists
         case .fileWriteInvalidFileName:
-            message = L10n.Downloads.errorInvalidName
+            L10n.Downloads.errorInvalidName
         case .fileNoSuchFile, .fileReadNoSuchFile:
-            message = L10n.Downloads.errorMissing
+            L10n.Downloads.errorMissing
         default:
-            message = L10n.Downloads.errorGeneric
+            L10n.Downloads.errorGeneric
         }
         return .serverMessage(statusCode: 0, message: message)
     }
@@ -310,13 +314,11 @@ public struct DownloadsFeature {
         state.bulkDeleteConfirmationIsPresented = false
         let targets = state.downloads.filter { state.selectedDownloadIDs.contains($0.id) }
         guard !targets.isEmpty else { return .none }
-        let localDownloadStore = self.localDownloadStore
+        let localDownloadStore = localDownloadStore
         return .run { send in
             var deletedIDs: [LocalDownload.ID] = []
-            for download in targets {
-                if (try? localDownloadStore.delete(download.url)) != nil {
-                    deletedIDs.append(download.id)
-                }
+            for download in targets where (try? localDownloadStore.delete(download.url)) != nil {
+                deletedIDs.append(download.id)
             }
             await send(.bulkDeleteResponse(deletedIDs), animation: .default)
         }

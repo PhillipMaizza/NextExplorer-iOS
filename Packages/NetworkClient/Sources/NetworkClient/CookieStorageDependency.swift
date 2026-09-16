@@ -6,8 +6,8 @@ private enum HTTPCookieStorageKey: DependencyKey {
     static let testValue: HTTPCookieStorage = .shared
 }
 
-extension DependencyValues {
-    public var cookieStorage: HTTPCookieStorage {
+public extension DependencyValues {
+    var cookieStorage: HTTPCookieStorage {
         get { self[HTTPCookieStorageKey.self] }
         set { self[HTTPCookieStorageKey.self] = newValue }
     }

@@ -87,12 +87,18 @@ public struct SharedFeature {
         }
 
         /// The current segment's load state.
-        public var phase: DataPhase { phase(for: segment) }
+        public var phase: DataPhase {
+            phase(for: segment)
+        }
 
-        public func phase(for segment: Segment) -> DataPhase { phases[segment] ?? .idle }
+        public func phase(for segment: Segment) -> DataPhase {
+            phases[segment] ?? .idle
+        }
 
         /// The current segment's first load failure text, if that's still its state.
-        public var errorMessage: String? { phase.errorMessage }
+        public var errorMessage: String? {
+            phase.errorMessage
+        }
 
         func isExpired(_ share: Share) -> Bool {
             guard let expiresAt = share.expiresAt else { return false }
@@ -100,15 +106,21 @@ public struct SharedFeature {
         }
 
         /// The current segment's raw (unfiltered, unsorted) list.
-        public var segmentShares: IdentifiedArrayOf<Share> { shares(for: segment) }
+        public var segmentShares: IdentifiedArrayOf<Share> {
+            shares(for: segment)
+        }
 
         public func shares(for segment: Segment) -> IdentifiedArrayOf<Share> {
             segment == .byMe ? byMe : withMe
         }
 
-        public var isSearching: Bool { !searchQuery.isEmpty }
+        public var isSearching: Bool {
+            !searchQuery.isEmpty
+        }
 
-        public var displayedShares: IdentifiedArrayOf<Share> { displayedShares(for: segment) }
+        public var displayedShares: IdentifiedArrayOf<Share> {
+            displayedShares(for: segment)
+        }
 
         public func displayedShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
             let base = isSearching
@@ -120,24 +132,28 @@ public struct SharedFeature {
             let sorted = base.sorted { lhs, rhs in
                 switch sortOption {
                 case .name:
-                    return lhs.displayName.localizedCaseInsensitiveCompare(rhs.displayName) == .orderedAscending
+                    lhs.displayName.localizedCaseInsensitiveCompare(rhs.displayName) == .orderedAscending
                 case .dateShared:
-                    return lhs.createdAt < rhs.createdAt
+                    lhs.createdAt < rhs.createdAt
                 case .expiration:
                     // No expiry sorts after any real date.
-                    return (lhs.expiresAt ?? .distantFuture) < (rhs.expiresAt ?? .distantFuture)
+                    (lhs.expiresAt ?? .distantFuture) < (rhs.expiresAt ?? .distantFuture)
                 }
             }
             return IdentifiedArray(sortDirection == .ascending ? sorted : sorted.reversed(), id: \.id, uniquingIDsWith: { first, _ in first })
         }
 
-        public var activeShares: IdentifiedArrayOf<Share> { activeShares(for: segment) }
+        public var activeShares: IdentifiedArrayOf<Share> {
+            activeShares(for: segment)
+        }
 
         public func activeShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
             displayedSharesPartition(for: segment).active
         }
 
-        public var expiredShares: IdentifiedArrayOf<Share> { expiredShares(for: segment) }
+        public var expiredShares: IdentifiedArrayOf<Share> {
+            expiredShares(for: segment)
+        }
 
         public func expiredShares(for segment: Segment) -> IdentifiedArrayOf<Share> {
             displayedSharesPartition(for: segment).expired
@@ -156,12 +172,18 @@ public struct SharedFeature {
         }
 
         /// No shares in the current segment at all (before search) — drives the empty state.
-        public var isCurrentSegmentEmpty: Bool { isEmpty(for: segment) }
+        public var isCurrentSegmentEmpty: Bool {
+            isEmpty(for: segment)
+        }
 
-        public func isEmpty(for segment: Segment) -> Bool { shares(for: segment).isEmpty }
+        public func isEmpty(for segment: Segment) -> Bool {
+            shares(for: segment).isEmpty
+        }
 
         /// A search that filtered everything out.
-        public var isSearchWithoutResults: Bool { isSearchWithoutResults(for: segment) }
+        public var isSearchWithoutResults: Bool {
+            isSearchWithoutResults(for: segment)
+        }
 
         public func isSearchWithoutResults(for segment: Segment) -> Bool {
             isSearching && !shares(for: segment).isEmpty && displayedShares(for: segment).isEmpty
@@ -214,7 +236,9 @@ public struct SharedFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.jsonCacheStore) var jsonCacheStore
 
-    private static func cacheNamespace(_ segment: Segment) -> String { "shares.\(segment.rawValue)" }
+    private static func cacheNamespace(_ segment: Segment) -> String {
+        "shares.\(segment.rawValue)"
+    }
 
     /// Per segment, so a spammed pull to refresh (or a fast segment reselect) supersedes the
     /// previous same segment load instead of racing it, while the other segment keeps loading.
@@ -272,16 +296,25 @@ public struct SharedFeature {
                 state.phases[segment] = .loaded
                 state.dataSources[segment] = .live
                 let identified = IdentifiedArray(shares, id: \.id, uniquingIDsWith: { first, _ in first })
-                if segment == .byMe { state.byMe = identified } else { state.withMe = identified }
+                if segment == .byMe {
+                    state.byMe = identified
+                } else {
+                    state.withMe = identified
+                }
                 syncCache(state, segment: segment)
                 return .none
 
             case let .sharesResponse(segment, .failure(error)):
                 // Offline with a saved copy of this segment: show it under a banner.
                 if error == .offline,
-                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, as: [Share].self) {
+                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, as: [Share].self)
+                {
                     let identified = IdentifiedArray(cached.value, id: \.id, uniquingIDsWith: { first, _ in first })
-                    if segment == .byMe { state.byMe = identified } else { state.withMe = identified }
+                    if segment == .byMe {
+                        state.byMe = identified
+                    } else {
+                        state.withMe = identified
+                    }
                     state.phases[segment] = .loaded
                     state.dataSources[segment] = .cached(fetchedAt: cached.fetchedAt)
                     return .none
@@ -317,9 +350,9 @@ public struct SharedFeature {
                 state.deleteConfirmationShare = nil
                 state.deletingIDs.insert(share.id)
                 let serverURL = state.serverURL
-                let filesClient = self.filesClient
+                let filesClient = filesClient
                 return .run { send in
-                    await send(.deleteResponse(share.id, try await apiResult {
+                    try await send(.deleteResponse(share.id, apiResult {
                         try await filesClient.deleteShareLink(serverURL, share.id)
                         return true
                     }), animation: .default)
@@ -359,15 +392,20 @@ public struct SharedFeature {
         // successful fetch replaces it, only a failed one surfaces the offline banner.
         let current = segment == .byMe ? state.byMe : state.withMe
         if !(state.phases[segment]?.hasLoaded ?? false), current.isEmpty,
-           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, as: [Share].self) {
+           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, as: [Share].self)
+        {
             let identified = IdentifiedArray(cached.value, id: \.id, uniquingIDsWith: { first, _ in first })
-            if segment == .byMe { state.byMe = identified } else { state.withMe = identified }
+            if segment == .byMe {
+                state.byMe = identified
+            } else {
+                state.withMe = identified
+            }
         }
         state.phases[segment] = .loading
         let serverURL = state.serverURL
-        let filesClient = self.filesClient
+        let filesClient = filesClient
         return .run { send in
-            await send(.sharesResponse(segment, try await apiResult {
+            try await send(.sharesResponse(segment, apiResult {
                 try segment == .byMe
                     ? await filesClient.mySharedLinks(serverURL)
                     : await filesClient.sharedWithMeLinks(serverURL)
@@ -385,7 +423,7 @@ public struct SharedFeature {
     /// Best-effort — recipient names are a nicety, not worth surfacing an error for.
     private func loadUsers(_ state: State) -> Effect<Action> {
         let serverURL = state.serverURL
-        let filesClient = self.filesClient
+        let filesClient = filesClient
         return .run { send in
             if let users = try? await filesClient.shareableUsers(serverURL) {
                 await send(.usersResponse(users))

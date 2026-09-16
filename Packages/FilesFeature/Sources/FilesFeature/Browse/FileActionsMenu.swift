@@ -75,7 +75,7 @@ struct FileActionsMenu: View {
                 Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
             }
             .tint(.primaryDS)
-            if (store.access?.canWrite ?? false) && (store.access?.canDelete ?? false) {
+            if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                 Button {
                     store.send(.moveTapped(item), animation: .default)
                 } label: {

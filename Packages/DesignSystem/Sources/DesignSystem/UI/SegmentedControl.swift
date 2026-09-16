@@ -19,11 +19,13 @@ public struct DSSegmentedControl<Option: Hashable>: View {
     private let label: (Option) -> String
     @Binding private var selection: Option
     @Namespace private var pillNamespace
-    private static var pillID: String { "pill" }
+    private static var pillID: String {
+        "pill"
+    }
 
     public init(options: [Option], selection: Binding<Option>, label: @escaping (Option) -> String) {
         self.options = options
-        self._selection = selection
+        _selection = selection
         self.label = label
     }
 

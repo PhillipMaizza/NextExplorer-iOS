@@ -1,6 +1,6 @@
+@testable import FilesFeature
 import Localization
 import Testing
-@testable import FilesFeature
 
 @Suite("FileNameValidation")
 struct FileNameValidationTests {
@@ -34,7 +34,7 @@ struct FileNameValidationTests {
     @Test("monkey test: thousands of garbage names never crash, and any accepted name is genuinely safe")
     func fileNameFuzzing() {
         var rng = SplitMix64(seed: 0xF11E_0027)
-        for _ in 0..<4000 {
+        for _ in 0 ..< 4000 {
             let trimmed = FuzzStrings.random(using: &rng, maxLength: 40)
                 .trimmingCharacters(in: .whitespacesAndNewlines)
             let message = FileNameValidation.errorMessage(forTrimmed: trimmed)

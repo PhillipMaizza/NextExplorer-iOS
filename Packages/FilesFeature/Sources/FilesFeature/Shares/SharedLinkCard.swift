@@ -14,7 +14,10 @@ enum SharedLinkMetrics {
     /// Matches the Browse file row's vertical rhythm (`FileRowView`).
     static let headerVerticalPadding: CGFloat = .space16
     /// Plain reveal, no spring overshoot: header holds still, detail row eases in/out.
-    static var expand: Animation { .easeInOut(duration: 0.5) }
+    static var expand: Animation {
+        .easeInOut(duration: 0.5)
+    }
+
     static let actionRowSpacing: CGFloat = .space8
     /// One value for both the meta rows and the link-mode row so they read as one list.
     static let rowVerticalPadding: CGFloat = .space8
@@ -58,7 +61,7 @@ struct SharedLinkHeaderRow: View {
                 VStack(alignment: .leading, spacing: .space2) {
                     HStack(spacing: .space8) {
                         Text(share.displayName)
-                            .type(.body2(.semibold), style: .primary(for: .label))
+                            .type(.body2(.semibold), style: .primaryOnSurface)
                             .lineLimit(1)
                         if isExpired {
                             Text(L10n.Shared.badgeExpired.uppercased())
@@ -149,7 +152,11 @@ struct SharedLinkDetailRow: View {
 
     var body: some View {
         Group {
-            if isByMe { ownerBody } else { recipientBody }
+            if isByMe {
+                ownerBody
+            } else {
+                recipientBody
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .opacity(isDeleting ? Metrics.deletingOpacity : 1)
@@ -219,7 +226,7 @@ struct SharedLinkDetailRow: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Metrics.metaIconSize, height: Metrics.metaIconSize)
                     .padding(.top, .space2)
-                Text(L10n.Shared.metaSharedWith).type(.body2(.regular), style: .primary(for: .label))
+                Text(L10n.Shared.metaSharedWith).type(.body2(.regular), style: .primaryOnSurface)
                 Spacer(minLength: .space8)
                 if audienceIsAnyone {
                     Text(L10n.Shared.anyoneWithLink).type(.body2(.regular), style: .secondary)
@@ -261,7 +268,9 @@ struct SharedLinkDetailRow: View {
     }
 
     private var audienceIsAnyone: Bool {
-        if case .anyone = audience { return true }
+        if case .anyone = audience {
+            return true
+        }
         return false
     }
 
@@ -271,7 +280,7 @@ struct SharedLinkDetailRow: View {
                 .resizable().scaledToFit()
                 .foregroundStyle(Color.secondaryDS)
                 .frame(width: Metrics.metaIconSize, height: Metrics.metaIconSize)
-            Text(L10n.Shared.linkMode).type(.body2(.regular), style: .primary(for: .label))
+            Text(L10n.Shared.linkMode).type(.body2(.regular), style: .primaryOnSurface)
             Spacer()
             Picker(L10n.Shared.linkMode, selection: $directLinkMode) {
                 ForEach(DirectLinkMode.allCases) { mode in
@@ -292,7 +301,7 @@ struct SharedLinkDetailRow: View {
                 .resizable().scaledToFit()
                 .foregroundStyle(Color.secondaryDS)
                 .frame(width: Metrics.metaIconSize, height: Metrics.metaIconSize)
-            Text(label).type(.body2(.regular), style: .primary(for: .label))
+            Text(label).type(.body2(.regular), style: .primaryOnSurface)
             Spacer()
             Text(value)
                 .type(.body2(.regular), style: isWarning ? .error : .secondary)

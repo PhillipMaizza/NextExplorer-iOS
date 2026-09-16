@@ -1,7 +1,7 @@
-import Testing
 @testable import CoreModels
+import Testing
 
-@Suite struct SafeFileNameTests {
+struct SafeFileNameTests {
     @Test func plainNamesPassThrough() {
         #expect(SafeFileName.component("photo.jpg") == "photo.jpg")
         #expect(SafeFileName.component("My Report (final).pdf") == "My Report (final).pdf")

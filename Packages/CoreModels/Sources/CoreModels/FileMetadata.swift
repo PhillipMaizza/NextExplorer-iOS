@@ -16,7 +16,9 @@ public struct FileMetadata: Codable, Equatable, Sendable {
     public let image: ImageMetadata?
     public let video: VideoMetadata?
 
-    public var isDirectory: Bool { kind == "directory" }
+    public var isDirectory: Bool {
+        kind == "directory"
+    }
 
     public init(
         path: String,
