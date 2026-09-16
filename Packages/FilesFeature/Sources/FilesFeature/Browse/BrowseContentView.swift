@@ -25,10 +25,6 @@ private enum Constants {
     /// Skeleton to loaded content crossfade — a touch longer than the overlay swap so the
     /// placeholder visibly resolves into the real rows rather than blinking out.
     static let contentRevealDuration: Double = 0.3
-    /// One size for every glyph in the multi-select bottom toolbar — SF Symbols have
-    /// different intrinsic aspect ratios, so without an explicit frame `trash` and `star`
-    /// render visibly different heights.
-    static let selectionToolbarIconSize: CGFloat = .iconMedium
     /// Height of the invisible long-press paste target past the last row.
     static let pasteTargetMinHeight: CGFloat = 260
     /// Gap between the empty folder message and its upload call to action.
@@ -876,15 +872,7 @@ struct BrowseContentView: View {
         tint: Color? = nil,
         action: @escaping () -> Void
     ) -> some View {
-        Button(role: role, action: action) {
-            icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: Constants.selectionToolbarIconSize, height: Constants.selectionToolbarIconSize)
-                .foregroundStyle(tint ?? Color.primaryDS)
-        }
-        .buttonStyle(DSHapticButtonStyle())
-        .transition(.scale.combined(with: .opacity))
+        SelectionToolbarButton(icon: icon, role: role, tint: tint, action: action)
     }
 
     private var bulkDeleteConfirmationBinding: Binding<Bool> {
@@ -916,16 +904,6 @@ struct BrowseContentView: View {
     /// empty" for a frame.
     private var isInitialLoad: Bool {
         !store.phase.hasLoaded && store.items.isEmpty && store.phase.errorMessage == nil
-    }
-
-    private static let offlineRelativeFormatter: RelativeDateTimeFormatter = {
-        let formatter = RelativeDateTimeFormatter()
-        formatter.unitsStyle = .full
-        return formatter
-    }()
-
-    private static func relativeTime(from date: Date) -> String {
-        offlineRelativeFormatter.localizedString(for: date, relativeTo: Date())
     }
 
     private var overlayState: OverlayState {
@@ -1096,7 +1074,7 @@ struct BrowseContentView: View {
     @ViewBuilder
     private var offlineFooter: some View {
         if case let .cached(fetchedAt) = store.dataSource {
-            DSInfoCard(L10n.Browse.offlineBannerDetail(Self.relativeTime(from: fetchedAt)))
+            DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
                 .padding(.horizontal, .space16)
                 .padding(.top, .space12)
         }

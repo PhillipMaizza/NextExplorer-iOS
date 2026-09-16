@@ -283,7 +283,7 @@ accessRules.saveButton	Сохранить изменения
 settings.rowThumbnails	Миниатюры
 settings.rowAccessRules	Правила доступа к папкам
 settings.navigationTitle	Настройки
-settings.appVersion	Версия %1$@ (%2$@)
+settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	Основные
 settings.sectionDisplay	Экран
 settings.sectionStorage	Хранилище

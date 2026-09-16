@@ -283,7 +283,7 @@ accessRules.saveButton	変更を保存
 settings.rowThumbnails	サムネール
 settings.rowAccessRules	フォルダアクセスルール
 settings.navigationTitle	設定
-settings.appVersion	バージョン %1$@ (%2$@)
+settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	一般
 settings.sectionDisplay	表示
 settings.sectionStorage	ストレージ

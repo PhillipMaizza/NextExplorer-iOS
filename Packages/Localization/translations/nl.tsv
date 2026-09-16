@@ -283,7 +283,7 @@ accessRules.saveButton	Wijzigingen bewaren
 settings.rowThumbnails	Miniaturen
 settings.rowAccessRules	Toegangsregels voor mappen
 settings.navigationTitle	Instellingen
-settings.appVersion	Versie %1$@ (%2$@)
+settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	Algemeen
 settings.sectionDisplay	Weergave
 settings.sectionStorage	Opslag

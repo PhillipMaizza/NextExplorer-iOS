@@ -283,7 +283,7 @@ accessRules.saveButton	Guardar alterações
 settings.rowThumbnails	Miniaturas
 settings.rowAccessRules	Regras de acesso a pastas
 settings.navigationTitle	Definições
-settings.appVersion	Versão %1$@ (%2$@)
+settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	Geral
 settings.sectionDisplay	Ecrã
 settings.sectionStorage	Armazenamento

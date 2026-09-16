@@ -1183,8 +1183,10 @@ struct BrowseFeatureTests {
             initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         ) {
             BrowseFeature()
+        } withDependencies: {
+            $0.date = .constant(Date(timeIntervalSince1970: 0))
         }
-        // `searchResultTapped` stamps `Date()` into the synthesized `FileItem`, so match on
+        // `searchResultTapped` stamps `date.now` into the synthesized `FileItem`, so match on
         // the fields it actually derives rather than the whole value.
         store.exhaustivity = .off
 

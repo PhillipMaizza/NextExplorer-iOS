@@ -226,15 +226,14 @@ struct FavoritesView: View {
                     // Filled star, not trash: this only ever unfavorites the selection —
                     // the underlying folders/files aren't touched, so "delete" iconography
                     // would overstate what the action does.
-                    Button {
+                    SelectionToolbarButton(
+                        icon: IconKit.starFill,
+                        tint: .accent,
+                        accessibilityLabel: L10n.Favorites.actionRemoveFromFavorites,
+                        isDisabled: store.selectedFavoriteIDs.isEmpty
+                    ) {
                         store.send(.bulkRemoveTapped)
-                    } label: {
-                        IconKit.starFill
                     }
-                    .buttonStyle(DSHapticButtonStyle())
-                    .foregroundStyle(Color.accent)
-                    .accessibilityLabel(L10n.Favorites.actionRemoveFromFavorites)
-                    .disabled(store.selectedFavoriteIDs.isEmpty)
                 }
             }
         }

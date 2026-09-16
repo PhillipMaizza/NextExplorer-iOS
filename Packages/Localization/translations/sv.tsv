@@ -283,7 +283,7 @@ accessRules.saveButton	Spara ändringar
 settings.rowThumbnails	Miniatyrer
 settings.rowAccessRules	Åtkomstregler för mappar
 settings.navigationTitle	Inställningar
-settings.appVersion	Version %1$@ (%2$@)
+settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	Allmänt
 settings.sectionDisplay	Skärm
 settings.sectionStorage	Lagring

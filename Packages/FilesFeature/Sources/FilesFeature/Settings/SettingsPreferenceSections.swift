@@ -347,11 +347,7 @@ struct LicensesSettingsSection: View {
         let info = Bundle.main.infoDictionary
         let version = info?["CFBundleShortVersionString"] as? String ?? "-"
         let build = info?["CFBundleVersion"] as? String ?? "-"
-        // Reuse the localized "Version x(y)" string but drop the build in parens, leaving just
-        // the marketing version.
         return L10n.Settings.appVersion(version, build)
-            .replacingOccurrences(of: "(\(build))", with: "")
-            .trimmingCharacters(in: .whitespaces)
     }
 
     /// "Like the app? Buy me a coffee ☕️" as one wrapping line, the coffee half accented so it

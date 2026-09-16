@@ -283,7 +283,7 @@ accessRules.saveButton	保存更改
 settings.rowThumbnails	缩略图
 settings.rowAccessRules	文件夹访问规则
 settings.navigationTitle	设置
-settings.appVersion	版本 %1$@ (%2$@)
+settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	通用
 settings.sectionDisplay	显示
 settings.sectionStorage	存储

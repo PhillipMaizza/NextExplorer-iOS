@@ -328,7 +328,7 @@ settings.rowAccessRules	Folder Access Rules
 
 # ---- settings ----
 settings.navigationTitle	Settings
-settings.appVersion	Version %1$@ (%2$@)
+settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	General
 settings.sectionDisplay	Display
 settings.sectionStorage	Storage

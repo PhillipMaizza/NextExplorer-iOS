@@ -283,7 +283,7 @@ accessRules.saveButton	حفظ التغييرات
 settings.rowThumbnails	الصور المصغّرة
 settings.rowAccessRules	قواعد الوصول إلى المجلدات
 settings.navigationTitle	الإعدادات
-settings.appVersion	الإصدار %1$@ ‏(%2$@)
+settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	عام
 settings.sectionDisplay	العرض
 settings.sectionStorage	التخزين
