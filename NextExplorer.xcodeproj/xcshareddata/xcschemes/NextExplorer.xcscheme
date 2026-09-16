@@ -30,28 +30,6 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
       <Testables>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "292E46A4303C3E91003CDCA4"
-               BuildableName = "NextExplorerTests.xctest"
-               BlueprintName = "NextExplorerTests"
-               ReferencedContainer = "container:NextExplorer.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
-         <TestableReference
-            skipped = "NO"
-            parallelizable = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "292E46AE303C3E91003CDCA4"
-               BuildableName = "NextExplorerUITests.xctest"
-               BlueprintName = "NextExplorerUITests"
-               ReferencedContainer = "container:NextExplorer.xcodeproj">
-            </BuildableReference>
-         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
@@ -65,9 +43,6 @@
       debugServiceExtension = "internal"
       allowLocationSimulation = "YES"
       queueDebuggingEnabled = "No">
-      <StoreKitConfigurationFileReference
-         identifier = "../../NextExplorer/TipJar.storekit">
-      </StoreKitConfigurationFileReference>
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
@@ -78,6 +53,9 @@
             ReferencedContainer = "container:NextExplorer.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference
+         identifier = "../../NextExplorer/TipJar.storekit">
+      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
