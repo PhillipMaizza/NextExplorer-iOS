@@ -283,7 +283,7 @@ accessRules.saveButton	परिवर्तन सहेजें
 settings.rowThumbnails	थंबनेल
 settings.rowAccessRules	फ़ोल्डर एक्सेस नियम
 settings.navigationTitle	सेटिंग्स
-settings.appVersion	संस्करण %1$@ (%2$@)
+settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	सामान्य
 settings.sectionDisplay	प्रदर्शन
 settings.sectionStorage	संग्रहण
