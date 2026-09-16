@@ -18,6 +18,7 @@ Browse, preview, search and share. Your files stay between your device and the s
 ![Languages](https://img.shields.io/badge/localized-17%20languages-green)
 ![Accessibility](https://img.shields.io/badge/a11y-VoiceOver%20%2B%20Dynamic%20Type-teal)
 ![Tracking](https://img.shields.io/badge/tracking-none-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-lightgrey)
 
 <br/>
 
@@ -88,8 +89,6 @@ Some choices worth calling out:
 - **Cancellation is not failure.** A tab switch or scroll-away cancels a load cleanly, without flashing an error.
 - **Offline cache is fallback-only and account-safe.** Stale-while-revalidate on disk, wiped on every logout, session expiry and fresh sign-in, so one account's data never leaks into the next.
 
-Full rules live in [`CLAUDE.md`](CLAUDE.md).
-
 ---
 
 ## Building from source
@@ -130,4 +129,4 @@ Questions, a bug, or a feature idea? Open an issue on this repo, or reach out th
 
 ## License
 
-Copyright © Phillip Maizza. All rights reserved. This source is published for review and reference; it is not currently offered under an open-source license. If you would like to reuse part of it, get in touch.
+Released under the [MIT License](LICENSE). Copyright © 2026 Phillip Maizza.
