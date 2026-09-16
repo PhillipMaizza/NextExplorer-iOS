@@ -127,17 +127,19 @@ struct FileItemDecodingTests {
         }
     }
 
-    @Test("happy path: previewable kinds (playable media, downloadable, plain text, browsable archives) are never flagged unsupported")
+    @Test("happy path: previewable kinds (native and VLC media, downloadable, plain text, browsable archives) are never flagged unsupported")
     func supportedKindsAreNotUnsupportedForPreview() {
-        for kind in ["mp4", "mp3", "jpg", "nef", "pdf", "doc", "docx", "txt", "md", "zip", "rar"] {
+        // Includes the VLC-only containers (mkv, webm, avi, ogg, wma): they play through
+        // VLCPlayerView, so they are previewable and must never report unsupported.
+        for kind in ["mp4", "mp3", "mkv", "webm", "avi", "ogg", "wma", "jpg", "nef", "pdf", "doc", "docx", "txt", "md", "zip", "rar"] {
             let item = FileItem(name: "file.\(kind)", path: "", dateModified: Date(), size: 0, kind: kind)
             #expect(!item.isUnsupportedForPreview, "expected \(kind) not to be unsupported")
         }
     }
 
-    @Test("edge case: unplayable streamable containers, non-browsable archives, and known binaries are unsupported")
+    @Test("edge case: non-browsable archives and known binaries are unsupported")
     func unsupportedKindsAreFlaggedUnsupportedForPreview() {
-        for kind in ["webm", "mkv", "ogg", "wma", "7z", "tar", "exe", "dmg", "ttf"] {
+        for kind in ["7z", "tar", "gz", "exe", "dmg", "ttf"] {
             let item = FileItem(name: "file.\(kind)", path: "", dateModified: Date(), size: 0, kind: kind)
             #expect(item.isUnsupportedForPreview, "expected \(kind) to be unsupported")
         }
