@@ -67,7 +67,10 @@ Straight from the app on iPhone.
 
 ---
 
-## Under the hood
+<details>
+<summary><h2>Under the hood</h2></summary>
+
+<br/>
 
 Native iOS 18+, SwiftUI, and [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture). No storyboards driving the app, no UIKit view controllers behind the screens, no third-party analytics. The app is split into focused Swift packages under `Packages/`:
 
@@ -88,6 +91,8 @@ Some choices worth calling out:
 - **Heavy work stays off the main thread.** Image decode, large reads, parsing and archive work run detached. Downloads stream instead of buffering into memory.
 - **Cancellation is not failure.** A tab switch or scroll-away cancels a load cleanly, without flashing an error.
 - **Offline cache is fallback-only and account-safe.** Stale-while-revalidate on disk, wiped on every logout, session expiry and fresh sign-in, so one account's data never leaks into the next.
+
+</details>
 
 ---
 
