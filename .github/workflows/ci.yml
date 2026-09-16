@@ -3,12 +3,17 @@ name: CI
 # Builds the app and runs the Swift package test suites on every pull request
 # to main and on pushes to main, so a contributor sees a green or red check
 # before anyone reviews the change.
+#
+# The XCUITest suite is heavier (boots a simulator, cold launches the app per
+# test) so it runs on pushes to main only, not on every pull request.
 
 on:
   pull_request:
     branches: [main]
   push:
     branches: [main]
+  # Manual trigger so the heavier UI test job can be run on any branch on demand.
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -110,3 +115,44 @@ jobs:
             echo "::endgroup::"
           done
           exit $FAIL
+
+  ui-test:
+    name: UI tests
+    # Push events only fire on merges to main (PRs use the pull_request event), so this keeps the
+    # slow XCUITest suite off automatic branch/PR runs. workflow_dispatch lets it be run by hand on
+    # any branch from the Actions tab.
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    runs-on: macos-15
+    timeout-minutes: 60
+
+    env:
+      SIM_DEVICE: iPhone 16
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: Trust Swift package macros
+        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+
+      - name: Resolve package dependencies
+        run: |
+          xcodebuild -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -resolvePackageDependencies
+
+      - name: Run XCUITests
+        run: |
+          set -o pipefail
+          DEST="platform=iOS Simulator,name=${SIM_DEVICE},OS=latest"
+          echo "UI test destination: ${DEST}"
+          xcodebuild test \
+            -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -destination "${DEST}" \
+            -only-testing:NextExplorerUITests

@@ -309,7 +309,8 @@ public struct MainTabView: View {
                 tabLabel(
                     L10n.Tab.browse,
                     icon: store.selectedTab == .browse ? IconKit.tabBrowseFill : IconKit.tabBrowse,
-                    smallIcon: store.selectedTab == .browse ? IconKit.tabBrowseFillSmall : IconKit.tabBrowseSmall
+                    smallIcon: store.selectedTab == .browse ? IconKit.tabBrowseFillSmall : IconKit.tabBrowseSmall,
+                    identifier: AccessibilityIdentifiers.Tab.browse
                 )
             }
 
@@ -321,7 +322,8 @@ public struct MainTabView: View {
                 tabLabel(
                     L10n.Tab.favorites,
                     icon: store.selectedTab == .favorites ? IconKit.tabFavoritesFill : IconKit.tabFavorites,
-                    smallIcon: store.selectedTab == .favorites ? IconKit.tabFavoritesFillSmall : IconKit.tabFavoritesSmall
+                    smallIcon: store.selectedTab == .favorites ? IconKit.tabFavoritesFillSmall : IconKit.tabFavoritesSmall,
+                    identifier: AccessibilityIdentifiers.Tab.favorites
                 )
             }
 
@@ -333,7 +335,8 @@ public struct MainTabView: View {
                 tabLabel(
                     L10n.Tab.shared,
                     icon: store.selectedTab == .shared ? IconKit.tabShareFill : IconKit.tabShare,
-                    smallIcon: store.selectedTab == .shared ? IconKit.tabShareFillSmall : IconKit.tabShareSmall
+                    smallIcon: store.selectedTab == .shared ? IconKit.tabShareFillSmall : IconKit.tabShareSmall,
+                    identifier: AccessibilityIdentifiers.Tab.shared
                 )
             }
 
@@ -345,7 +348,8 @@ public struct MainTabView: View {
                 tabLabel(
                     L10n.Tab.downloads,
                     icon: store.selectedTab == .downloads ? IconKit.tabDownloadsFill : IconKit.tabDownloads,
-                    smallIcon: store.selectedTab == .downloads ? IconKit.tabDownloadsFillSmall : IconKit.tabDownloadsSmall
+                    smallIcon: store.selectedTab == .downloads ? IconKit.tabDownloadsFillSmall : IconKit.tabDownloadsSmall,
+                    identifier: AccessibilityIdentifiers.Tab.downloads
                 )
             }
 
@@ -357,7 +361,8 @@ public struct MainTabView: View {
                 tabLabel(
                     L10n.Tab.settings,
                     icon: store.selectedTab == .settings ? IconKit.tabSettingsFill : IconKit.tabSettings,
-                    smallIcon: store.selectedTab == .settings ? IconKit.tabSettingsFillSmall : IconKit.tabSettingsSmall
+                    smallIcon: store.selectedTab == .settings ? IconKit.tabSettingsFillSmall : IconKit.tabSettingsSmall,
+                    identifier: AccessibilityIdentifiers.Tab.settings
                 )
             }
         }
@@ -371,7 +376,7 @@ public struct MainTabView: View {
     /// A tab bar item: title + smaller glyph when "Show Tab Labels" is on, the full-size icon
     /// on its own otherwise. The title carries the accessibility label in both modes.
     @ViewBuilder
-    private func tabLabel(_ title: String, icon: Image, smallIcon: Image) -> some View {
+    private func tabLabel(_ title: String, icon: Image, smallIcon: Image, identifier: String) -> some View {
         if showTabLabels {
             Label {
                 Text(title)
@@ -379,9 +384,11 @@ public struct MainTabView: View {
                 tabIcon(smallIcon)
             }
             .accessibilityLabel(title)
+            .accessibilityIdentifier(identifier)
         } else {
             tabIcon(icon)
                 .accessibilityLabel(title)
+                .accessibilityIdentifier(identifier)
         }
     }
 

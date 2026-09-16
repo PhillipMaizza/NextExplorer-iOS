@@ -403,6 +403,7 @@ public struct LoginFormView: View {
                     .submitLabel(.go)
                     .onSubmit(submitTestConnection)
                     .shake(trigger: shakeTrigger)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Login.hostField)
                     .focused($focusedField, equals: .host)
                     .onAppear {
                         if autoFocus {
@@ -475,27 +476,33 @@ public struct LoginFormView: View {
             isHitEnabled: !isCollapsed,
             action: submitTestConnection
         ) {
-            ZStack {
-                switch store.connectionPhase {
-                case .idle:
-                    Text(L10n.Login.testConnection)
-                        .type(.label3)
-                        .foregroundStyle(.white)
-                case .testing:
-                    DSSpinner(color: .white)
-                case .success:
-                    IconKit.checkmark
-                        .resizable()
-                        .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
-                        .foregroundStyle(.white)
-                        .bold()
-                case .failure:
-                    IconKit.close
-                        .resizable()
-                        .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
-                        .foregroundStyle(.white)
-                        .bold()
-                }
+            testConnectionButtonLabel
+        }
+        .accessibilityIdentifier(AccessibilityIdentifiers.Login.testConnectionButton)
+    }
+
+    @ViewBuilder
+    private var testConnectionButtonLabel: some View {
+        ZStack {
+            switch store.connectionPhase {
+            case .idle:
+                Text(L10n.Login.testConnection)
+                    .type(.label3)
+                    .foregroundStyle(.white)
+            case .testing:
+                DSSpinner(color: .white)
+            case .success:
+                IconKit.checkmark
+                    .resizable()
+                    .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
+                    .foregroundStyle(.white)
+                    .bold()
+            case .failure:
+                IconKit.close
+                    .resizable()
+                    .frame(width: Constants.checkmarkSize, height: Constants.checkmarkSize)
+                    .foregroundStyle(.white)
+                    .bold()
             }
         }
     }
@@ -597,6 +604,7 @@ public struct LoginFormView: View {
             .textContentType(.username)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
+            .accessibilityIdentifier(AccessibilityIdentifiers.Login.emailField)
             .focused($focusedField, equals: .identifier)
             .task {
                 try? await Task.sleep(for: Constants.identifierAutoFocusDelay)
@@ -624,6 +632,7 @@ public struct LoginFormView: View {
                     .opacity(store.isPasswordVisible ? 0 : 1)
                     .allowsHitTesting(!store.isPasswordVisible)
                     .accessibilityHidden(store.isPasswordVisible)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Login.passwordField)
                     // Only the field currently on-screen may claim `.password`; both fields
                     // staying mounted with the same content type makes AutoFill's
                     // username/password pairing ambiguous and it silently declines to fill
@@ -639,6 +648,7 @@ public struct LoginFormView: View {
                     .opacity(store.isPasswordVisible ? 1 : 0)
                     .allowsHitTesting(store.isPasswordVisible)
                     .accessibilityHidden(!store.isPasswordVisible)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Login.passwordFieldVisible)
                     .textContentType(store.isPasswordVisible ? .password : nil)
                 }
                 .textFieldStyle(.plain)
@@ -703,6 +713,7 @@ public struct LoginFormView: View {
             }
         }
         .disabled(!isSubmitLocalEnabled && phase == .idle)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Login.submitButton)
         .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .named(Constants.rootSpace)) }) { newFrame in
             if newFrame != .zero {
                 submitButtonRect = newFrame

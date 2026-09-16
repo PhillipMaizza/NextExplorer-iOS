@@ -324,6 +324,7 @@ struct BrowseContentView: View {
                         isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
                     )
                     .accessibilityLabel(L10n.Uploads.menuTitle)
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
                 }
             }
         }
@@ -356,49 +357,52 @@ struct BrowseContentView: View {
                 }
                 if let singleSelectedItem, store.access?.canWrite ?? false {
                     ToolbarItem(placement: .bottomBar) {
-                        selectionToolbarButton(icon: IconKit.rename) {
+                        selectionToolbarButton(icon: IconKit.rename, accessibilityLabel: L10n.Browse.actionRename) {
                             store.send(.renameTapped(singleSelectedItem))
                         }
                     }
                 }
                 if let singleSelectedItem, store.access?.canShare ?? false {
                     ToolbarItem(placement: .bottomBar) {
-                        selectionToolbarButton(icon: IconKit.shareLink) {
+                        selectionToolbarButton(icon: IconKit.shareLink, accessibilityLabel: L10n.Browse.actionShare) {
                             shareTarget = singleSelectedItem
                         }
                     }
                 }
                 if isFavoriteActionVisible {
                     ToolbarItem(placement: .bottomBar) {
-                        selectionToolbarButton(icon: isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star) {
+                        selectionToolbarButton(
+                            icon: isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star,
+                            accessibilityLabel: isEntireSelectionAlreadyFavorited ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites
+                        ) {
                             store.send(.bulkFavoriteTapped)
                         }
                     }
                 }
                 if isTransferActionVisible {
                     ToolbarItem(placement: .bottomBar) {
-                        selectionToolbarButton(icon: IconKit.copy) {
+                        selectionToolbarButton(icon: IconKit.copy, accessibilityLabel: L10n.Browse.actionCopy) {
                             store.send(.bulkCopyTapped, animation: .default)
                         }
                     }
                 }
                 if isTransferActionVisible, store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                     ToolbarItem(placement: .bottomBar) {
-                        selectionToolbarButton(icon: IconKit.move) {
+                        selectionToolbarButton(icon: IconKit.move, accessibilityLabel: L10n.Browse.actionMove) {
                             store.send(.bulkMoveTapped, animation: .default)
                         }
                     }
                 }
                 if isDownloadActionVisible {
                     ToolbarItem(placement: .bottomBar) {
-                        selectionToolbarButton(icon: IconKit.download) {
+                        selectionToolbarButton(icon: IconKit.download, accessibilityLabel: L10n.Browse.actionDownload) {
                             store.send(.bulkDownloadTapped(.documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
                         }
                     }
                 }
                 if isDeleteActionVisible {
                     ToolbarItem(placement: .bottomBar) {
-                        selectionToolbarButton(icon: IconKit.delete, role: .destructive, tint: .negative) {
+                        selectionToolbarButton(icon: IconKit.delete, role: .destructive, tint: .negative, accessibilityLabel: L10n.Browse.actionDelete) {
                             store.send(.bulkDeleteTapped)
                         }
                     }
@@ -870,9 +874,10 @@ struct BrowseContentView: View {
         icon: Image,
         role: ButtonRole? = nil,
         tint: Color? = nil,
+        accessibilityLabel: String? = nil,
         action: @escaping () -> Void
     ) -> some View {
-        SelectionToolbarButton(icon: icon, role: role, tint: tint, action: action)
+        SelectionToolbarButton(icon: icon, role: role, tint: tint, accessibilityLabel: accessibilityLabel, action: action)
     }
 
     private var bulkDeleteConfirmationBinding: Binding<Bool> {

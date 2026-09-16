@@ -30,6 +30,11 @@ struct NextExplorerApp: App {
     @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
 
     init() {
+        #if DEBUG
+            // Swap in the fully mocked, backend free dependency graph when launched by XCUITest.
+            // A no op in every normal launch. Runs before the root store is first built in `body`.
+            AppFeature.prepareUITestDependencies()
+        #endif
         // Point localization at the saved language before the first view builds, so the splash and
         // login are already in the chosen language rather than flashing the system one first.
         let saved = UserDefaults.standard.string(forKey: AppStorageKeys.appLanguage) ?? ""
@@ -43,6 +48,12 @@ struct NextExplorerApp: App {
             AppView(store: Self.store)
                 .tint(Color.accent)
                 .preferredColorScheme(hasAppearanceOverride ? (prefersDarkModeOverride ? .dark : .light) : nil)
+            #if DEBUG
+                .onAppear {
+                    // Under XCUITest, collapse animation durations once the window is attached.
+                    DispatchQueue.main.async { UITestSupport.applyAnimationSpeedIfNeeded() }
+                }
+            #endif
         }
     }
 }
