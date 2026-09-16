@@ -56,6 +56,12 @@ jobs:
           echo "Available simulator runtimes:"
           xcrun simctl list runtimes | grep -i ios || true
 
+      # The Composable Architecture and its dependencies ship Swift macros. On a fresh CI
+      # machine xcodebuild refuses to run an unvalidated macro ("must be enabled before it
+      # can be used"); this opts out of the interactive fingerprint prompt.
+      - name: Trust Swift package macros
+        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+
       - name: Resolve package dependencies
         run: |
           xcodebuild -project NextExplorer.xcodeproj \
