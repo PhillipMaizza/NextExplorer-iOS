@@ -1,3 +1,4 @@
+import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
@@ -76,6 +77,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .autocorrectionDisabled()
                 .textInputAutocapitalization(.never)
                 .submitLabel(.search)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Search.field)
             // Trailing clear (x) button appears whenever there's text. The type filter now lives
             // in chips below the field (Browse search), so it no longer contends for this slot.
             if !searchText.isEmpty {
