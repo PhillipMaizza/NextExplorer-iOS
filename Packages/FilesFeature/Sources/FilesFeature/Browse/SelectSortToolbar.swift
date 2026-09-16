@@ -1,3 +1,4 @@
+import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
@@ -53,6 +54,7 @@ func selectSortToolbar(
             } label: {
                 IconKit.moreOptions.foregroundStyle(Color.primaryDS)
             }
+            .accessibilityIdentifier(AccessibilityIdentifiers.Browse.moreMenu)
         }
     }
 }

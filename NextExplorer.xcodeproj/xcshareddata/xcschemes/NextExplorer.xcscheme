@@ -30,6 +30,17 @@
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
       <Testables>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "AA57C0DE0000000000000100"
+               BuildableName = "NextExplorerUITests.xctest"
+               BlueprintName = "NextExplorerUITests"
+               ReferencedContainer = "container:NextExplorer.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
