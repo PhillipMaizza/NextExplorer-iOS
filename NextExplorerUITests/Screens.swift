@@ -191,6 +191,32 @@ struct BrowseScreen {
         app.labeledButton(L10n.Select.gridView)
     }
 
+    /// The "..." menu's Sort entry, which opens the SortSheet.
+    var sortMenuItem: XCUIElement {
+        app.labeledButton(L10n.Common.sort)
+    }
+
+    /// SortSheet header, proof the sheet opened.
+    var sortSheetTitle: XCUIElement {
+        app.staticTexts[L10n.Sort.sheetTitle]
+    }
+
+    /// The SortSheet's "Descending" direction radio row. Its button label aggregates the icon,
+    /// title and radio, so match on the title substring.
+    var sortDescendingOption: XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", L10n.Sort.descending)).firstMatch
+    }
+
+    /// SortSheet's circular close button (DSSheetHeader).
+    var sortSheetClose: XCUIElement {
+        app.labeledButton(L10n.Common.close)
+    }
+
+    /// The transient "Sync completed" toast a successful pull to refresh raises.
+    var syncCompletedToast: XCUIElement {
+        app.staticTexts[L10n.Common.syncCompleted]
+    }
+
     /// Select mode bottom bar delete button (now carries an accessibility label).
     var bulkDeleteButton: XCUIElement {
         app.labeledButton(L10n.Browse.actionDelete)

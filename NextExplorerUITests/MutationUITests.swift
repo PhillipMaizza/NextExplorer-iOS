@@ -8,11 +8,10 @@ final class MutationUITests: UITestCase {
         let app = launchApp(auth: .loggedIn, scenario: .normal)
         let browse = BrowseScreen(app: app)
 
-        // New Folder only appears below the root, so push into a folder first.
+        // New Folder only appears below the root, so push into a folder first. Pushing can drop
+        // the first tap under load, so retry until the folder only upload menu shows.
         XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-        browse.item(Fixture.folder).tap()
-
-        XCTAssertTrue(browse.uploadMenu.waitToAppear(), "The upload/new folder menu should be in the toolbar inside a folder")
+        openMenu({ browse.item(Fixture.folder).tap() }, until: browse.uploadMenu)
         openMenu({ browse.uploadMenu.tap() }, until: browse.newFolderMenuItem)
         browse.newFolderMenuItem.tap()
 
