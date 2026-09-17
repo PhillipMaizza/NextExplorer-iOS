@@ -566,3 +566,10 @@ tipJar.toastThanks	Obrigado por apoiar o projeto! 🙏
 tipJar.errorLoad	Não foi possível carregar as opções de gorjeta. Tente novamente.
 tipJar.errorPurchase	A compra não foi concluída. Tente novamente.
 tipJar.pending	Aguardando aprovação. A cobrança será feita após a aprovação.
+settings.sectionAccounts	Contas
+settings.addAccount	Adicionar conta
+settings.accountSignOut	Terminar sessão
+settings.accountSignOutTitle	Terminar sessão?
+settings.accountSignOutMessage	Terminar a sessão de %@ neste dispositivo? Terá de iniciar sessão novamente para usar esta conta.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, conta ativa

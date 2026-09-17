@@ -142,7 +142,9 @@ extension DirectoryCacheStore: DependencyKey {
         private func fileURL(serverURL: URL, path: String) -> URL? {
             guard let directory else { return nil }
             let normalizedPath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-            let key = "\(serverURL.absoluteString)\n\(normalizedPath)"
+            // The active account is folded into the key so several signed-in accounts keep
+            // separate entries and a switch reads the right account's cache without a wipe.
+            let key = "\(CacheAccountScope.current)\n\(serverURL.absoluteString)\n\(normalizedPath)"
             let digest = SHA256.hash(data: Data(key.utf8))
             let name = digest.map { String(format: "%02x", $0) }.joined()
             return directory.appendingPathComponent(name).appendingPathExtension(Constants.fileExtension)

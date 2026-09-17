@@ -566,3 +566,10 @@ tipJar.toastThanks	प्रोजेक्ट का समर्थन कर�
 tipJar.errorLoad	टिप विकल्प लोड नहीं हो सके। कृपया पुनः प्रयास करें।
 tipJar.errorPurchase	खरीदारी पूरी नहीं हो सकी। कृपया पुनः प्रयास करें।
 tipJar.pending	अनुमोदन की प्रतीक्षा है। स्वीकृत होते ही शुल्क लिया जाएगा।
+settings.sectionAccounts	खाते
+settings.addAccount	खाता जोड़ें
+settings.accountSignOut	साइन आउट
+settings.accountSignOutTitle	साइन आउट करें?
+settings.accountSignOutMessage	इस डिवाइस पर %@ को साइन आउट करें? इस खाते का उपयोग करने के लिए आपको फिर से साइन इन करना होगा.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, सक्रिय खाता

@@ -81,89 +81,131 @@ struct SessionCookieStoreTests {
         #expect(credentials.expiresAt != nil)
     }
 
-    // MARK: - persist / loadPersisted
+    private func credentials(serverURL: URL, value: String, username: String) throws -> SessionCredentials {
+        let host = try #require(serverURL.host)
+        return SessionCredentials(
+            serverBaseURL: serverURL,
+            authMode: .local,
+            cookieName: AuthClientConfiguration.CookieName.local,
+            cookieValue: value,
+            cookieDomain: host,
+            cookiePath: "/",
+            cookieIsSecure: false,
+            expiresAt: nil,
+            username: username
+        )
+    }
+
+    // MARK: - persist / activeCredentials
 
     @Test("persist happy path: round-trips through the keychain and installs the cookie")
     func persistRoundTripsAndInstalls() throws {
         let keychainClient = KeychainClient.inMemory()
         let store = makeStore(keychainClient: keychainClient)
         let serverURL = uniqueServerURL()
-        let host = try #require(serverURL.host)
-        let credentials = SessionCredentials(
-            serverBaseURL: serverURL,
-            authMode: .local,
-            cookieName: AuthClientConfiguration.CookieName.local,
-            cookieValue: "persisted-value",
-            cookieDomain: host,
-            cookiePath: "/",
-            cookieIsSecure: false,
-            expiresAt: nil,
-            username: "phillip"
-        )
+        let creds = try credentials(serverURL: serverURL, value: "persisted-value", username: "phillip")
 
-        try store.persist(credentials)
+        try store.persist(creds)
 
-        let loaded = try #require(store.loadPersisted())
+        let loaded = try #require(store.activeCredentials())
         #expect(loaded.cookieValue == "persisted-value")
         let installedCookies = try #require(HTTPCookieStorage.shared.cookies(for: serverURL))
         #expect(installedCookies.contains { $0.value == "persisted-value" })
     }
 
-    @Test("loadPersisted edge case: nothing saved returns nil")
-    func loadPersistedNothingSavedReturnsNil() {
+    @Test("activeCredentials edge case: nothing saved returns nil")
+    func activeNothingSavedReturnsNil() {
         let store = makeStore()
-        #expect(store.loadPersisted() == nil)
+        #expect(store.activeCredentials() == nil)
     }
 
-    @Test("loadPersisted edge case: corrupted data returns nil rather than throwing")
-    func loadPersistedCorruptedDataReturnsNil() throws {
+    @Test("loadStored edge case: corrupted data returns an empty set rather than throwing")
+    func loadStoredCorruptedDataReturnsEmpty() throws {
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("currentSession", Data("not valid json".utf8))
+        try keychainClient.save("storedSessions", Data("not valid json".utf8))
         let store = makeStore(keychainClient: keychainClient)
-        #expect(store.loadPersisted() == nil)
+        #expect(store.activeCredentials() == nil)
     }
 
-    // MARK: - clear
+    // MARK: - migration
 
-    @Test("clear happy path: removes the keychain entry and matching cookies for the server")
-    func clearRemovesKeychainAndCookies() throws {
+    @Test("migration: a legacy single-session blob is folded into the stored set and made active")
+    func migratesLegacySingleSession() throws {
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("currentSession", Data("placeholder".utf8))
-        let store = makeStore(keychainClient: keychainClient)
         let serverURL = uniqueServerURL()
-        let host = try #require(serverURL.host)
-        let cookie = try #require(HTTPCookie(properties: [
-            .name: AuthClientConfiguration.CookieName.local,
-            .value: "abc",
-            .domain: host,
-            .path: "/",
-        ]))
-        HTTPCookieStorage.shared.setCookie(cookie)
+        let legacy = try credentials(serverURL: serverURL, value: "legacy", username: "phillip")
+        try keychainClient.save("currentSession", JSONEncoder().encode(legacy))
+        let store = makeStore(keychainClient: keychainClient)
 
-        store.clear(serverURL: serverURL)
-
+        let active = try #require(store.activeCredentials())
+        #expect(active.cookieValue == "legacy")
+        #expect(store.allSessions().count == 1)
+        // The legacy key is dropped so migration only happens once.
         #expect(try keychainClient.load("currentSession") == nil)
-        #expect(HTTPCookieStorage.shared.cookies(for: serverURL)?.isEmpty ?? true)
+        #expect(try keychainClient.load("storedSessions") != nil)
     }
 
-    @Test("clear edge case: a nil serverURL still removes the keychain entry, leaving cookies untouched")
-    func clearWithNilServerURLOnlyClearsKeychain() throws {
+    // MARK: - multi-account switch / remove
+
+    @Test("two accounts coexist; setActive switches the active one and installs its cookie")
+    func switchesBetweenAccounts() throws {
+        let store = makeStore(keychainClient: .inMemory())
+        let serverA = uniqueServerURL()
+        let serverB = uniqueServerURL()
+        let credsA = try credentials(serverURL: serverA, value: "aaa", username: "phillip")
+        let credsB = try credentials(serverURL: serverB, value: "bbb", username: "jane")
+
+        try store.persist(credsA)
+        try store.persist(credsB)
+        #expect(store.allSessions().count == 2)
+        #expect(store.activeCredentials()?.accountID == credsB.accountID)
+
+        let switched = try #require(store.setActive(id: credsA.accountID))
+        #expect(switched.accountID == credsA.accountID)
+        #expect(store.activeCredentials()?.accountID == credsA.accountID)
+        #expect(HTTPCookieStorage.shared.cookies(for: serverA)?.contains { $0.value == "aaa" } == true)
+    }
+
+    @Test("remove happy path: removing the active account returns the next remaining account and drops its cookie")
+    func removeActiveReturnsNext() throws {
+        let store = makeStore(keychainClient: .inMemory())
+        let serverA = uniqueServerURL()
+        let serverB = uniqueServerURL()
+        let credsA = try credentials(serverURL: serverA, value: "aaa", username: "phillip")
+        let credsB = try credentials(serverURL: serverB, value: "bbb", username: "jane")
+        try store.persist(credsA)
+        try store.persist(credsB) // B active
+
+        let next = try #require(store.remove(id: credsB.accountID))
+        #expect(next.accountID == credsA.accountID)
+        #expect(store.allSessions().count == 1)
+        #expect(HTTPCookieStorage.shared.cookies(for: serverB)?.contains { $0.value == "bbb" } != true)
+    }
+
+    @Test("remove edge case: removing the last account returns nil")
+    func removeLastReturnsNil() throws {
+        let store = makeStore(keychainClient: .inMemory())
+        let serverA = uniqueServerURL()
+        let credsA = try credentials(serverURL: serverA, value: "aaa", username: "phillip")
+        try store.persist(credsA)
+
+        #expect(store.remove(id: credsA.accountID) == nil)
+        #expect(store.allSessions().isEmpty)
+    }
+
+    // MARK: - clearAll
+
+    @Test("clearAll removes the stored set and every account's cookies")
+    func clearAllRemovesEverything() throws {
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("currentSession", Data("placeholder".utf8))
         let store = makeStore(keychainClient: keychainClient)
-        let serverURL = uniqueServerURL()
-        let host = try #require(serverURL.host)
-        let cookie = try #require(HTTPCookie(properties: [
-            .name: AuthClientConfiguration.CookieName.local,
-            .value: "abc",
-            .domain: host,
-            .path: "/",
-        ]))
-        HTTPCookieStorage.shared.setCookie(cookie)
+        let serverA = uniqueServerURL()
+        try store.persist(credentials(serverURL: serverA, value: "aaa", username: "phillip"))
 
-        store.clear(serverURL: nil)
+        store.clearAll()
 
-        #expect(try keychainClient.load("currentSession") == nil)
-        #expect(HTTPCookieStorage.shared.cookies(for: serverURL)?.contains { $0.value == "abc" } == true)
+        #expect(try keychainClient.load("storedSessions") == nil)
+        #expect(HTTPCookieStorage.shared.cookies(for: serverA)?.isEmpty ?? true)
+        #expect(store.activeCredentials() == nil)
     }
 }

@@ -107,8 +107,9 @@ struct AuthClientLiveTests {
         let user = try await client.login(serverURL, "phillip", "hunter2")
         #expect(user.username == "phillip")
 
-        let stored = try #require(try keychainClient.load("currentSession"))
-        let credentials = try JSONDecoder().decode(SessionCredentials.self, from: stored)
+        let stored = try #require(try keychainClient.load("storedSessions"))
+        let sessions = try JSONDecoder().decode(StoredSessions.self, from: stored)
+        let credentials = try #require(sessions.active)
         #expect(credentials.cookieValue == "abc123")
         #expect(credentials.authMode == .local)
     }
@@ -124,7 +125,7 @@ struct AuthClientLiveTests {
         await #expect(throws: AuthClientError.invalidCredentials) {
             _ = try await client.login(serverURL, "phillip", "wrong")
         }
-        #expect(try keychainClient.load("currentSession") == nil)
+        #expect(try keychainClient.load("storedSessions") == nil)
     }
 
     @Test("regression: login request body sends the identifier as `email`, matching the real server's field name")
@@ -257,7 +258,7 @@ struct AuthClientLiveTests {
         }
     }
 
-    // MARK: - restoreSession / clearSession
+    // MARK: - restoreSession / clearAllSessions
 
     @Test("restoreSession happy path reinstalls the persisted cookie")
     func restoreSessionHappyPath() async throws {
@@ -296,88 +297,65 @@ struct AuthClientLiveTests {
         #expect(restored == nil)
     }
 
-    @Test("clearSession removes the persisted credentials")
-    func clearSessionRemovesPersisted() async throws {
+    @Test("clearAllSessions removes the persisted credentials")
+    func clearAllSessionsRemovesPersisted() async throws {
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("currentSession", Data("placeholder".utf8))
+        try keychainClient.save("storedSessions", Data("placeholder".utf8))
 
         let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychainClient) { _ in
             throw NetworkError.transport("should not be called")
         }
-        await client.clearSession()
-        #expect(try keychainClient.load("currentSession") == nil)
+        await client.clearAllSessions()
+        #expect(try keychainClient.load("storedSessions") == nil)
     }
 
-    // MARK: - logout
+    // MARK: - logout (server-side only; local teardown is removeAccount's job)
 
-    @Test("logout happy path: calls the server and clears the local session")
+    @Test("logout happy path: calls the server without throwing")
     func logoutHappyPath() async throws {
+        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: .inMemory()) { request in
+            let url = try #require(request.url)
+            return try (Data(), response(statusCode: 200, url: url))
+        }
+        try await client.logout(serverURL)
+    }
+
+    @Test("logout edge case: server unreachable is swallowed (best-effort)")
+    func logoutServerUnreachableIsBestEffort() async throws {
+        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: .inMemory()) { _ in
+            throw NetworkError.transport("offline")
+        }
+        try await client.logout(serverURL)
+    }
+
+    // MARK: - removeAccount
+
+    @Test("removeAccount drops the account locally and clears its cookie, best-effort server logout")
+    func removeAccountDropsAccount() async throws {
         let cookieStorage = makeCookieStorage()
         let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("currentSession", Data("placeholder".utf8))
-        if let host = serverURL.host {
-            let cookie = try #require(HTTPCookie(properties: [
-                .name: AuthClientConfiguration.CookieName.local,
-                .value: "abc123",
-                .domain: host,
-                .path: "/",
-            ]))
-            cookieStorage.setCookie(cookie)
-        }
+        let credentials = try SessionCredentials(
+            serverBaseURL: serverURL,
+            authMode: .local,
+            cookieName: AuthClientConfiguration.CookieName.local,
+            cookieValue: "abc123",
+            cookieDomain: #require(serverURL.host),
+            cookiePath: "/",
+            cookieIsSecure: false,
+            expiresAt: nil,
+            username: "phillip"
+        )
+        let store = SessionCookieStore(keychainClient: keychainClient, cookieStorage: cookieStorage)
+        try store.persist(credentials)
 
         let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { request in
             let url = try #require(request.url)
             return try (Data(), response(statusCode: 200, url: url))
         }
 
-        try await client.logout(serverURL)
-
-        #expect(try keychainClient.load("currentSession") == nil)
+        let next = await client.removeAccount(credentials.accountID)
+        #expect(next == nil)
+        #expect(store.activeCredentials() == nil)
         #expect(cookieStorage.cookies(for: serverURL)?.isEmpty ?? true)
-    }
-
-    @Test("logout edge case: server unreachable still clears the local session (best-effort)")
-    func logoutServerUnreachableStillClearsLocalSession() async throws {
-        let cookieStorage = makeCookieStorage()
-        let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("currentSession", Data("placeholder".utf8))
-
-        let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { _ in
-            throw NetworkError.transport("offline")
-        }
-
-        try await client.logout(serverURL)
-
-        #expect(try keychainClient.load("currentSession") == nil)
-    }
-
-    @Test("logout edge case: session already expired (401) still clears the local session")
-    func logoutAlreadyExpiredStillClearsLocalSession() async throws {
-        let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("currentSession", Data("placeholder".utf8))
-
-        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychainClient) { request in
-            let url = try #require(request.url)
-            return try (Data(), response(statusCode: 401, url: url))
-        }
-
-        try await client.logout(serverURL)
-
-        #expect(try keychainClient.load("currentSession") == nil)
-    }
-
-    @Test("logout edge case: unexpected server error (500) still clears the local session")
-    func logoutServerErrorStillClearsLocalSession() async throws {
-        let keychainClient = KeychainClient.inMemory()
-        try keychainClient.save("currentSession", Data("placeholder".utf8))
-
-        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychainClient) { request in
-            let url = try #require(request.url)
-            return try (Data(), response(statusCode: 500, url: url))
-        }
-
-        try await client.logout(serverURL)
-
-        #expect(try keychainClient.load("currentSession") == nil)
     }
 }

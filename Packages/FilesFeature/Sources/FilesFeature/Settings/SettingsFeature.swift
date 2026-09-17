@@ -39,6 +39,13 @@ public struct SettingsFeature {
         /// Current account's downloads scope, so the size/existence checks count only this
         /// account's files. Shared with `BrowseFeature`/`DownloadsFeature` under one key.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
+        /// Every signed-in account for the multi-server switcher, published by `AppFeature`. The
+        /// actual switch / remove / add work is owned upstream (it needs `authClient`); this only
+        /// renders the list and emits intent.
+        @Shared(.inMemory(AccountSummary.sharedKey)) public var accounts: [AccountSummary] = []
+        /// Set when the user taps to sign an account out of the switcher, driving the confirm
+        /// dialog; cleared on cancel or confirm.
+        public var accountPendingRemoval: AccountSummary?
         public var isLoadingPreferences = false
         public var removeAllDownloadsConfirmationIsPresented = false
         public var isRemovingAllDownloads = false
@@ -102,6 +109,11 @@ public struct SettingsFeature {
         case signOutButtonTapped
         case cancelSignOutTapped
         case confirmSignOutTapped
+        case switchAccountTapped(String)
+        case addAccountTapped
+        case removeAccountTapped(AccountSummary)
+        case removeAccountCancelled
+        case removeAccountConfirmed
         case removeAllDownloadsTapped
         case removeAllDownloadsCancelled
         case removeAllDownloadsConfirmed
@@ -120,6 +132,10 @@ public struct SettingsFeature {
             /// Every local download was just deleted — `MainTabFeature` clears the
             /// Downloads tab's list without waiting for it to re-scan the (now empty) disk.
             case allDownloadsRemoved
+            /// Multi-server switcher intent, handled upstream where `authClient` lives.
+            case switchAccount(String)
+            case removeAccount(String)
+            case addAccountRequested
         }
     }
 
@@ -310,6 +326,27 @@ public struct SettingsFeature {
                 // the sheet's confirm spinner, and the whole authenticated scope (this sheet
                 // with it) is torn down once sign out finishes.
                 return .send(.delegate(.signOutButtonTapped))
+
+            case let .switchAccountTapped(id):
+                // Tapping the already-active account is a no-op.
+                guard state.accounts.first(where: { $0.id == id })?.isActive != true else { return .none }
+                return .send(.delegate(.switchAccount(id)))
+
+            case .addAccountTapped:
+                return .send(.delegate(.addAccountRequested))
+
+            case let .removeAccountTapped(account):
+                state.accountPendingRemoval = account
+                return .none
+
+            case .removeAccountCancelled:
+                state.accountPendingRemoval = nil
+                return .none
+
+            case .removeAccountConfirmed:
+                guard let id = state.accountPendingRemoval?.id else { return .none }
+                state.accountPendingRemoval = nil
+                return .send(.delegate(.removeAccount(id)))
 
             case .removeAllDownloadsTapped:
                 state.removeAllDownloadsConfirmationIsPresented = true

@@ -235,7 +235,9 @@ extension FilesService {
     private static func previewCacheDirectory(for item: FileItem, namespace: String) -> URL {
         let cachesDirectory = (try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
             ?? FileManager.default.temporaryDirectory
-        let digest = SHA256.hash(data: Data(item.id.utf8))
+        // The active account is folded into the slot key so two accounts never serve each other's
+        // downloaded preview/raw bytes for a matching item id.
+        let digest = SHA256.hash(data: Data("\(CacheAccountScope.current)\n\(item.id)".utf8))
         let key = digest.map { String(format: "%02x", $0) }.joined()
         return cachesDirectory.appendingPathComponent(Self.previewCacheRootDirectory, isDirectory: true)
             .appendingPathComponent(namespace, isDirectory: true)

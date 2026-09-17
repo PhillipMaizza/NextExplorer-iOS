@@ -67,6 +67,10 @@ public struct MainTabFeature {
 
         public enum Delegate: Equatable, Sendable {
             case signOutButtonTapped
+            /// Multi-server account switcher (Settings): activate, remove, or add another account.
+            case switchAccount(String)
+            case removeAccount(String)
+            case addAccountRequested
         }
     }
 
@@ -188,6 +192,15 @@ public struct MainTabFeature {
 
             case .settings(.delegate(.signOutButtonTapped)):
                 return .send(.delegate(.signOutButtonTapped))
+
+            case let .settings(.delegate(.switchAccount(id))):
+                return .send(.delegate(.switchAccount(id)))
+
+            case let .settings(.delegate(.removeAccount(id))):
+                return .send(.delegate(.removeAccount(id)))
+
+            case .settings(.delegate(.addAccountRequested)):
+                return .send(.delegate(.addAccountRequested))
 
             case .settings(.delegate(.allDownloadsRemoved)):
                 state.downloads.downloads = []

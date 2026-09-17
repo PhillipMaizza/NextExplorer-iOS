@@ -113,6 +113,79 @@ struct SettingsProfileSection: View {
     }
 }
 
+// MARK: Accounts (multi-server switcher)
+
+/// The list of signed-in servers/accounts, with the active one checkmarked, plus a row to add
+/// another. Tapping a row switches the active account (no re-auth); a trailing swipe signs one
+/// account out. The switch / remove / add work is owned upstream where `authClient` lives; this
+/// only renders `store.accounts` and emits intent. Hidden while searching.
+struct SettingsAccountsSection: View {
+    let store: StoreOf<SettingsFeature>
+
+    var body: some View {
+        Section {
+            ForEach(store.accounts) { account in
+                accountRow(account)
+            }
+            addAccountRow
+        } header: {
+            sectionHeader(L10n.Settings.sectionAccounts)
+        }
+        .listRowBackground(Color.backgroundSecondary)
+    }
+
+    private func accountRow(_ account: AccountSummary) -> some View {
+        Button {
+            store.send(.switchAccountTapped(account.id))
+        } label: {
+            HStack(spacing: Constants.profileRowSpacing) {
+                AvatarView(displayName: account.displayName, size: Constants.avatarSize)
+
+                VStack(alignment: .leading, spacing: .space2) {
+                    Text(account.displayName).type(.body2(.regular), style: .primaryOnSurface)
+                    Text(account.serverHost)
+                        .type(.body3(.regular), style: .secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                }
+
+                Spacer()
+
+                if account.isActive {
+                    IconKit.checkmark
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: .iconSmall, height: .iconSmall)
+                        .foregroundStyle(Color.accentText)
+                        .accessibilityHidden(true)
+                }
+            }
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(store.isSigningOut)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(account.isActive
+            ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
+            : L10n.Settings.accountLabel(account.displayName, account.serverHost))
+        .accessibilityAddTraits(account.isActive ? [.isButton, .isSelected] : .isButton)
+        .swipeActions(edge: .trailing) {
+            Button(role: .destructive) {
+                store.send(.removeAccountTapped(account))
+            } label: {
+                Label(L10n.Settings.accountSignOut, systemImage: "rectangle.portrait.and.arrow.right")
+            }
+        }
+    }
+
+    private var addAccountRow: some View {
+        DSNavigationRow(title: L10n.Settings.addAccount, icon: IconKit.plus, accessory: .none) {
+            store.send(.addAccountTapped)
+        }
+        .disabled(store.isSigningOut)
+    }
+}
+
 // MARK: Users (admin)
 
 struct SettingsUsersSection: View {

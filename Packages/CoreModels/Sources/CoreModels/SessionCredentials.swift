@@ -37,6 +37,14 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
         self.username = username
     }
 
+    /// Stable identity of the account this session belongs to, so the multi-server switcher can
+    /// list, activate and remove one specific account. Keyed on the server plus the username, so
+    /// two accounts on the same server are still distinct. Not persisted: derived, so it survives
+    /// an older stored blob that predates it.
+    public var accountID: String {
+        serverBaseURL.absoluteString + "|" + (username ?? "")
+    }
+
     /// Reconstructs the `HTTPCookie` this session was captured from, so it can be
     /// reinstalled into `HTTPCookieStorage.shared` on app relaunch.
     public var httpCookie: HTTPCookie? {

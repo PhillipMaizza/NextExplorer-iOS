@@ -566,3 +566,10 @@ tipJar.toastThanks	プロジェクトへのご支援ありがとうございま�
 tipJar.errorLoad	チップの項目を読み込めませんでした。もう一度お試しください。
 tipJar.errorPurchase	購入が完了しませんでした。もう一度お試しください。
 tipJar.pending	承認待ちです。承認されると課金されます。
+settings.sectionAccounts	アカウント
+settings.addAccount	アカウントを追加
+settings.accountSignOut	サインアウト
+settings.accountSignOutTitle	サインアウトしますか？
+settings.accountSignOutMessage	このデバイスで %@ をサインアウトしますか？このアカウントを使うには再度サインインする必要があります。
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, 使用中のアカウント

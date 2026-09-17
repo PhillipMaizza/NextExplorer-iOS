@@ -67,33 +67,48 @@
             case sessionExpired
         }
 
-        static func credentials() -> SessionCredentials {
+        static func credentials(serverURL: URL = UITestSupport.serverURL, username: String = "phillip") -> SessionCredentials {
             SessionCredentials(
                 serverBaseURL: serverURL,
                 authMode: .local,
                 cookieName: "connect.sid",
                 cookieValue: "uitest-cookie",
-                cookieDomain: "nextexplorer.example.com",
+                cookieDomain: serverURL.host ?? "nextexplorer.example.com",
                 cookiePath: "/",
                 cookieIsSecure: true,
                 expiresAt: nil,
-                username: "phillip"
+                username: username
             )
         }
 
         static func authClient(_ auth: Auth) -> AuthClient {
             var client = AuthClient.previewValue
+            // A stateful account set so the multi-server switcher behaves for real in UI tests:
+            // adding a server appends a row, switching/removing update the active account.
+            let sessions = MockSessionStore(seed: auth == .loggedOut ? [] : [credentials()])
             client.me = { _ in user }
-            client.login = { _, _, _ in user }
-            client.loginOIDC = { _ in user }
+            client.login = { serverURL, identifier, _ in
+                sessions.upsert(credentials(serverURL: serverURL, username: identifier))
+                return user
+            }
+            client.loginOIDC = { serverURL in
+                sessions.upsert(credentials(serverURL: serverURL, username: user.username))
+                return user
+            }
             client.fetchStatus = { _ in AuthStatus(localEnabled: true, oidcEnabled: true) }
+            client.listSessions = { sessions.all() }
+            client.activeAccountID = { sessions.activeID() }
+            client.switchAccount = { id in sessions.setActive(id) }
+            client.removeAccount = { id in sessions.remove(id) }
+            client.clearActiveSession = { sessions.clearActive() }
+            client.clearAllSessions = { sessions.clearAll() }
             switch auth {
             case .loggedOut:
                 client.restoreSession = { nil }
             case .loggedIn:
-                client.restoreSession = { credentials() }
+                client.restoreSession = { sessions.active() }
             case .expired:
-                client.restoreSession = { credentials() }
+                client.restoreSession = { sessions.active() }
                 client.me = { _ in throw AuthClientError.sessionExpired }
             }
             return client
@@ -210,6 +225,66 @@
             let archive = FileItem(name: "\(item.name).zip", path: item.path, dateModified: Date(), size: 0, kind: "zip")
             locked { items.append(archive) }
             return archive
+        }
+    }
+
+    /// A tiny mutable multi-account set backing the mocked auth client, so the multi-server
+    /// switcher (add / switch / remove) works end to end in UI tests. One instance per launch.
+    final class MockSessionStore: @unchecked Sendable {
+        private let lock = NSLock()
+        private var stored: StoredSessions
+
+        init(seed: [SessionCredentials]) {
+            var s = StoredSessions()
+            for credential in seed {
+                s.upsert(credential)
+            }
+            stored = s
+        }
+
+        private func locked<T>(_ body: () -> T) -> T {
+            lock.lock(); defer { lock.unlock() }
+            return body()
+        }
+
+        func all() -> [SessionCredentials] {
+            locked { stored.sessions }
+        }
+
+        func active() -> SessionCredentials? {
+            locked { stored.active }
+        }
+
+        func activeID() -> String? {
+            locked { stored.activeID }
+        }
+
+        func upsert(_ credential: SessionCredentials) {
+            locked { stored.upsert(credential) }
+        }
+
+        func setActive(_ id: String) -> SessionCredentials? {
+            locked {
+                guard stored.session(id: id) != nil else { return nil }
+                stored.activeID = id
+                return stored.active
+            }
+        }
+
+        func remove(_ id: String) -> SessionCredentials? {
+            locked { stored.remove(id: id); return stored.active }
+        }
+
+        func clearActive() -> SessionCredentials? {
+            locked {
+                guard let active = stored.active else { return nil }
+                stored.remove(id: active.accountID)
+                return stored.active
+            }
+        }
+
+        func clearAll() {
+            locked { stored = StoredSessions() }
         }
     }
 

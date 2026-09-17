@@ -566,3 +566,10 @@ tipJar.toastThanks	Bedankt voor je steun aan het project! 🙏
 tipJar.errorLoad	Kan de fooiopties niet laden. Probeer het opnieuw.
 tipJar.errorPurchase	De aankoop is niet gelukt. Probeer het opnieuw.
 tipJar.pending	Wachten op goedkeuring. Er wordt afgeschreven zodra dit is goedgekeurd.
+settings.sectionAccounts	Accounts
+settings.addAccount	Account toevoegen
+settings.accountSignOut	Afmelden
+settings.accountSignOutTitle	Afmelden?
+settings.accountSignOutMessage	%@ afmelden op dit apparaat? Je moet opnieuw inloggen om dit account te gebruiken.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, actief account

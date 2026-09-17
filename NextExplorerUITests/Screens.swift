@@ -290,6 +290,20 @@ struct SettingsScreen {
         app.navigationBars.buttons.firstMatch
     }
 
+    /// Multi-server switcher: the Accounts section header and the "Add Account" row.
+    var accountsSectionHeader: XCUIElement {
+        app.staticTexts[L10n.Settings.sectionAccounts]
+    }
+
+    var addAccountRow: XCUIElement {
+        app.buttons[L10n.Settings.addAccount].firstMatch
+    }
+
+    /// An account row in the switcher, matched on the server host it displays.
+    func accountRow(host: String) -> XCUIElement {
+        app.staticTexts[host].firstMatch
+    }
+
     /// Admin section row that pushes the thumbnail settings screen.
     var thumbnailsRow: XCUIElement {
         app.staticTexts[L10n.Settings.rowThumbnails]

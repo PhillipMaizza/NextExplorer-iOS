@@ -371,6 +371,13 @@ settings.signOutAlertTitle	Sign Out?
 settings.signOutMessage	You'll need to sign in again to access your files. Cached previews, thumbnails, and saved folder listings on this device will be cleared.
 settings.signOutButton	Sign Out
 settings.signingOut	Signing Out…
+settings.sectionAccounts	Accounts
+settings.addAccount	Add Account
+settings.accountSignOut	Sign Out
+settings.accountSignOutTitle	Sign Out?
+settings.accountSignOutMessage	Sign %@ out on this device? You'll need to sign in again to use this account.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, active account
 settings.dateFormatNavigationTitle	Date Format
 settings.dateFormatShowTime	Show Time
 

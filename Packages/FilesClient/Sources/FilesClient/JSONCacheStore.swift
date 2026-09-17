@@ -111,7 +111,9 @@ extension JSONCacheStore: DependencyKey {
 
         private func fileURL(key: String) -> URL? {
             guard let directory else { return nil }
-            let digest = SHA256.hash(data: Data(key.utf8))
+            // The caller's key (favorites, shares.byMe, ...) carries no server, so fold the active
+            // account in: two servers' Favorites/Shared lists must not share one cache entry.
+            let digest = SHA256.hash(data: Data("\(CacheAccountScope.current)\n\(key)".utf8))
             let name = digest.map { String(format: "%02x", $0) }.joined()
             return directory.appendingPathComponent(name).appendingPathExtension(Constants.fileExtension)
         }

@@ -566,3 +566,10 @@ tipJar.toastThanks	感谢你支持这个项目！🙏
 tipJar.errorLoad	无法加载打赏选项。请重试。
 tipJar.errorPurchase	购买未完成。请重试。
 tipJar.pending	等待批准。批准后将进行扣款。
+settings.sectionAccounts	账户
+settings.addAccount	添加账户
+settings.accountSignOut	退出登录
+settings.accountSignOutTitle	退出登录？
+settings.accountSignOutMessage	在此设备上退出 %@ 吗？您需要重新登录才能使用此账户。
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, 当前账户

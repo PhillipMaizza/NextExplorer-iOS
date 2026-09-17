@@ -54,11 +54,16 @@ struct SettingsView: View {
         Binding(get: { store.clearCacheConfirmationIsPresented }, set: { _ in })
     }
 
+    private var isConfirmingAccountRemoval: Binding<Bool> {
+        Binding(get: { store.accountPendingRemoval != nil }, set: { _ in })
+    }
+
     var body: some View {
         NavigationStack {
             List {
                 if !filter.isActive {
                     SettingsProfileSection(store: store)
+                    SettingsAccountsSection(store: store)
                 }
 
                 GeneralSettingsSection(store: store, filter: filter)
@@ -154,6 +159,19 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
+            .sheet(isPresented: isConfirmingAccountRemoval) {
+                DSAlertSheet(
+                    icon: IconKit.signOut,
+                    title: L10n.Settings.accountSignOutTitle,
+                    message: L10n.Settings.accountSignOutMessage(store.accountPendingRemoval?.displayName ?? ""),
+                    confirmTitle: L10n.Common.logOut,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.removeAccountConfirmed) },
+                    onDismiss: { store.send(.removeAccountCancelled) }
+                )
+            }
             .sheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
                 TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
             }
@@ -215,6 +233,17 @@ private func settingsPreview(
 // server-storage section fills in from `onAppear` like the real thing.
 #Preview {
     settingsPreview()
+}
+
+#Preview("Accounts — multiple") {
+    @Shared(.inMemory(AccountSummary.sharedKey)) var accounts: [AccountSummary] = []
+    $accounts.withLock {
+        $0 = [
+            AccountSummary(id: "a", username: "jdoe", serverURL: URL(string: "https://home.example.com") ?? URL(fileURLWithPath: "/"), isActive: true),
+            AccountSummary(id: "b", username: "work", serverURL: URL(string: "https://files.acme.example.net") ?? URL(fileURLWithPath: "/"), isActive: false),
+        ]
+    }
+    return settingsPreview()
 }
 
 #Preview("Server storage — off") {

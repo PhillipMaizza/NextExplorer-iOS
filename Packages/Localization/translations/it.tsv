@@ -566,3 +566,10 @@ tipJar.toastThanks	Grazie per aver sostenuto il progetto! 🙏
 tipJar.errorLoad	Impossibile caricare le opzioni di offerta. Riprova.
 tipJar.errorPurchase	L’acquisto non è andato a buon fine. Riprova.
 tipJar.pending	In attesa di approvazione. L’addebito avverrà una volta approvata.
+settings.sectionAccounts	Account
+settings.addAccount	Aggiungi account
+settings.accountSignOut	Esci
+settings.accountSignOutTitle	Uscire?
+settings.accountSignOutMessage	Disconnettere %@ da questo dispositivo? Dovrai accedere di nuovo per usare questo account.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, account attivo

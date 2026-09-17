@@ -20,6 +20,8 @@ public struct AppFeature {
     @ObservableState
     public struct State: Equatable {
         public var destination: Destination.State
+        /// Login sheet for adding another server while already signed in (multi-server).
+        @Presents public var addAccount: LoginFormFeature.State?
         /// `true` only when the current authenticated session was reached by the user tapping
         /// the login button this launch — drives `AppView`'s zoom-from-the-button presentation.
         /// A restored/optimistic session (cold launch) leaves this `false` so the app just
@@ -35,6 +37,8 @@ public struct AppFeature {
         /// files stay in their own folder. Set when a session is confirmed, cleared on sign out
         /// and expiry. Read by `BrowseFeature`/`DownloadsFeature`/`SettingsFeature`.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
+        /// Every signed-in account, for the Settings switcher. Rebuilt after any account change.
+        @Shared(.inMemory(AccountSummary.sharedKey)) public var accounts: [AccountSummary] = []
 
         public init(destination: Destination.State = .loading) {
             self.destination = destination
@@ -46,6 +50,11 @@ public struct AppFeature {
             }
             return false
         }
+
+        var currentAccountID: String? {
+            guard case let .authenticated(authenticated) = destination else { return nil }
+            return authenticated.accountID
+        }
     }
 
     public enum Action {
@@ -53,6 +62,10 @@ public struct AppFeature {
         case sessionRestoreResponse(SessionCredentials?)
         case sessionValidationResponse(Result<User, AuthClientError>, SessionCredentials)
         case sessionExpiryDetected
+        case activeAccountTornDown(SessionCredentials?)
+        case activateAccount(SessionCredentials)
+        case accountsRefreshed([AccountSummary])
+        case addAccount(PresentationAction<LoginFormFeature.Action>)
         case destination(Destination.Action)
     }
 
@@ -83,8 +96,13 @@ public struct AppFeature {
                     withAnimation {
                         state.destination = .unauthenticated(.init())
                     }
-                    return .none
+                    return refreshAccounts
                 }
+
+                // The active account's cache namespace must be live before the optimistic Browse
+                // mounts, so its first cache read hits this account's entries, not the previous
+                // one's.
+                CacheAccountScope.set(credentials.accountID)
 
                 // Optimistic: trust the stored cookie and show the app straight away, with a
                 // placeholder user filled in from the confirmed `me` response. The splash
@@ -100,15 +118,18 @@ public struct AppFeature {
                 }
 
                 let authClient = authClient
-                return .run { send in
-                    do {
-                        let user = try await authClient.me(credentials.serverBaseURL)
-                        await send(.sessionValidationResponse(.success(user), credentials))
-                    } catch {
-                        let authError = (error as? AuthClientError) ?? .network(String(describing: error))
-                        await send(.sessionValidationResponse(.failure(authError), credentials))
+                return .merge(
+                    refreshAccounts,
+                    .run { send in
+                        do {
+                            let user = try await authClient.me(credentials.serverBaseURL)
+                            await send(.sessionValidationResponse(.success(user), credentials))
+                        } catch {
+                            let authError = (error as? AuthClientError) ?? .network(String(describing: error))
+                            await send(.sessionValidationResponse(.failure(authError), credentials))
+                        }
                     }
-                }
+                )
 
             case let .sessionValidationResponse(.success(user), credentials):
                 if state.sessionDidExpire {
@@ -118,14 +139,14 @@ public struct AppFeature {
                     $0 = DownloadAccountScope.identifier(serverURL: credentials.serverBaseURL, userID: user.id)
                 }
                 if case let .authenticated(current) = state.destination, current.user == user {
-                    return .none
+                    return refreshAccounts
                 }
                 withAnimation {
                     state.destination = .authenticated(
                         AuthenticatedFeature.State(serverURL: credentials.serverBaseURL, user: user)
                     )
                 }
-                return .none
+                return refreshAccounts
 
             case let .sessionValidationResponse(.failure(error), _):
                 // Only a real auth rejection tears down the optimistic session; a network
@@ -137,62 +158,77 @@ public struct AppFeature {
                 default:
                     return .none
                 }
-                state.didAuthenticateFromLogin = false
-                state.$downloadScope.withLock { $0 = "" }
-                withAnimation {
-                    state.destination = .unauthenticated(.init())
-                }
+                // The active account is invalid: drop it and fall through to whatever account
+                // remains (or the login screen when it was the last one).
                 let authClient = authClient
-                let directoryCacheStore = directoryCacheStore
-                let jsonCacheStore = jsonCacheStore
-                let previewCacheStore = previewCacheStore
-                let thumbnailCache = thumbnailCache
-                AppStorageKeys.resetSessionPreferences()
-                return .run { _ in
-                    await authClient.clearSession()
-                    directoryCacheStore.clearAll()
-                    jsonCacheStore.clearAll()
-                    try? previewCacheStore.clear()
-                    thumbnailCache.clearMemory()
+                return .run { send in
+                    await send(.activeAccountTornDown(authClient.clearActiveSession()))
                 }
 
             case .sessionExpiryDetected:
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
-                state.$fileClipboard.withLock { $0 = nil }
-                state.$downloadScope.withLock { $0 = "" }
                 guard case .authenticated = state.destination else { return .none }
+                let authClient = authClient
+                return .run { send in
+                    await send(.activeAccountTornDown(authClient.clearActiveSession()))
+                }
+
+            case let .activeAccountTornDown(next):
+                state.$fileClipboard.withLock { $0 = nil }
+                if let next {
+                    // Another account is still signed in — switch to it rather than dropping the
+                    // user out to the login screen.
+                    return .send(.activateAccount(next))
+                }
+                // Last account gone: full teardown to the login screen.
+                return teardownToLogin(&state)
+
+            case let .activateAccount(credentials):
+                state.$fileClipboard.withLock { $0 = nil }
+                CacheAccountScope.set(credentials.accountID)
+                // Finalized once `me` confirms the user id; empty in the meantime.
+                state.$downloadScope.withLock { $0 = "" }
                 state.didAuthenticateFromLogin = false
                 withAnimation {
-                    state.destination = .unauthenticated(.init())
+                    state.destination = .authenticated(
+                        AuthenticatedFeature.State(
+                            serverURL: credentials.serverBaseURL,
+                            user: User(id: "", username: credentials.username ?? "", email: nil)
+                        )
+                    )
                 }
                 let authClient = authClient
-                let directoryCacheStore = directoryCacheStore
-                let jsonCacheStore = jsonCacheStore
-                let previewCacheStore = previewCacheStore
-                let thumbnailCache = thumbnailCache
-                AppStorageKeys.resetSessionPreferences()
-                return .run { _ in
-                    await authClient.clearSession()
-                    directoryCacheStore.clearAll()
-                    jsonCacheStore.clearAll()
-                    try? previewCacheStore.clear()
-                    thumbnailCache.clearMemory()
-                }
+                return .merge(
+                    refreshAccounts,
+                    .run { send in
+                        do {
+                            let user = try await authClient.me(credentials.serverBaseURL)
+                            await send(.sessionValidationResponse(.success(user), credentials))
+                        } catch {
+                            let authError = (error as? AuthClientError) ?? .network(String(describing: error))
+                            await send(.sessionValidationResponse(.failure(authError), credentials))
+                        }
+                    }
+                )
+
+            case let .accountsRefreshed(accounts):
+                state.$accounts.withLock { $0 = accounts }
+                return .none
 
             case let .destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))):
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
+                let accountID = serverURL.absoluteString + "|" + user.username
+                CacheAccountScope.set(accountID)
                 state.$downloadScope.withLock {
                     $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id)
                 }
-                // A fresh sign in must never expose the previous account's cached listings for
-                // the same server. Cleared synchronously before the authenticated destination
-                // mounts, so the new `BrowseFeature`'s first cache read can't race it; the
-                // downloaded file bytes are purged off the main thread since nothing reads them
-                // until a preview opens.
+                // A fresh sign in on the login screen means no account is currently active, so
+                // clear every cache: on a shared device this must not expose a previous account's
+                // cached listings for the same server before its own namespace takes over.
                 directoryCacheStore.clearAll()
                 jsonCacheStore.clearAll()
                 thumbnailCache.clearMemory()
@@ -201,33 +237,108 @@ public struct AppFeature {
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
                 )
                 let previewCacheStore = previewCacheStore
-                return .run { _ in try? previewCacheStore.clear() }
+                return .merge(
+                    refreshAccounts,
+                    .run { _ in try? previewCacheStore.clear() }
+                )
 
-            case .destination(.authenticated(.delegate(.loggedOut))):
-                state.$fileClipboard.withLock { $0 = nil }
-                state.$downloadScope.withLock { $0 = "" }
-                state.didAuthenticateFromLogin = false
-                state.destination = .unauthenticated(.init())
-                // Explicit sign out purges both caches so the next user on a shared device can't
-                // recover the previous session's directory listings or downloaded file bytes, and
-                // resets per-device UI prefs (view modes, display toggles) so the next session
-                // starts from defaults rather than inheriting this account's choices.
-                let directoryCacheStore = directoryCacheStore
-                let jsonCacheStore = jsonCacheStore
-                let previewCacheStore = previewCacheStore
-                let thumbnailCache = thumbnailCache
-                AppStorageKeys.resetSessionPreferences()
-                return .run { _ in
-                    directoryCacheStore.clearAll()
-                    jsonCacheStore.clearAll()
-                    try? previewCacheStore.clear()
-                    thumbnailCache.clearMemory()
+            case .destination(.authenticated(.delegate(.addAccountRequested))):
+                state.addAccount = LoginFormFeature.State()
+                return .none
+
+            case let .destination(.authenticated(.delegate(.activeAccountChanged(credentials)))):
+                guard let credentials else {
+                    // The last account was signed out.
+                    return teardownToLogin(&state)
                 }
+                // Removing a non-active account leaves the active one unchanged — just refresh the
+                // switcher list, keep the UI where it is.
+                if credentials.accountID == state.currentAccountID {
+                    return refreshAccounts
+                }
+                // Switched accounts (or signed the active one out and fell through to the next):
+                // mount the new account without clearing caches, so both accounts' caches survive.
+                return .send(.activateAccount(credentials))
 
             case .destination:
                 return .none
+
+            case let .addAccount(.presented(.delegate(.authenticated(user, serverURL)))):
+                // Login already persisted and activated the new account; adopt it without a cache
+                // wipe so the accounts already signed in keep their caches. The real user is in
+                // hand, so no `me` round trip is needed.
+                state.addAccount = nil
+                state.$fileClipboard.withLock { $0 = nil }
+                let accountID = serverURL.absoluteString + "|" + user.username
+                CacheAccountScope.set(accountID)
+                state.$downloadScope.withLock {
+                    $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id)
+                }
+                state.didAuthenticateFromLogin = false
+                withAnimation {
+                    state.destination = .authenticated(
+                        AuthenticatedFeature.State(serverURL: serverURL, user: user)
+                    )
+                }
+                return refreshAccounts
+
+            case .addAccount:
+                return .none
             }
         }
+        .ifLet(\.$addAccount, action: \.addAccount) {
+            LoginFormFeature()
+        }
+    }
+
+    /// Rebuilds the published account list from the current stored sessions.
+    private var refreshAccounts: Effect<Action> {
+        let authClient = authClient
+        return .run { send in
+            let sessions = await authClient.listSessions()
+            let active = await authClient.activeAccountID()
+            await send(.accountsRefreshed(Self.summaries(sessions, activeID: active)))
+        }
+    }
+
+    private static func summaries(_ sessions: [SessionCredentials], activeID: String?) -> [AccountSummary] {
+        sessions.map {
+            AccountSummary(
+                id: $0.accountID,
+                username: $0.username ?? "",
+                serverURL: $0.serverBaseURL,
+                isActive: $0.accountID == activeID
+            )
+        }
+    }
+
+    /// Full teardown to the login screen: no account left signed in. Clears every cache and
+    /// per-session state so nothing leaks into the next sign in.
+    private func teardownToLogin(_ state: inout State) -> Effect<Action> {
+        state.$fileClipboard.withLock { $0 = nil }
+        state.$downloadScope.withLock { $0 = "" }
+        CacheAccountScope.set("")
+        state.didAuthenticateFromLogin = false
+        state.addAccount = nil
+        withAnimation {
+            state.destination = .unauthenticated(.init())
+        }
+        let authClient = authClient
+        let directoryCacheStore = directoryCacheStore
+        let jsonCacheStore = jsonCacheStore
+        let previewCacheStore = previewCacheStore
+        let thumbnailCache = thumbnailCache
+        AppStorageKeys.resetSessionPreferences()
+        return .merge(
+            refreshAccounts,
+            .run { _ in
+                await authClient.clearAllSessions()
+                directoryCacheStore.clearAll()
+                jsonCacheStore.clearAll()
+                try? previewCacheStore.clear()
+                thumbnailCache.clearMemory()
+            }
+        )
     }
 }
 
