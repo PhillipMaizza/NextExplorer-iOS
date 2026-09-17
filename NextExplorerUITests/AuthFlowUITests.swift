@@ -41,7 +41,7 @@ final class AuthFlowUITests: UITestCase {
     func testSignOutReturnsToLogin() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.languageRow)
+        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
 
         XCTAssertTrue(settings.signOutButton.waitToAppear(), "Settings should expose a Sign Out button")
         settings.signOutButton.tap()

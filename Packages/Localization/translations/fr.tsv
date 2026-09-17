@@ -566,3 +566,10 @@ tipJar.toastThanks	Merci de soutenir le projet ! 🙏
 tipJar.errorLoad	Impossible de charger les options de pourboire. Veuillez réessayer.
 tipJar.errorPurchase	L’achat n’a pas abouti. Veuillez réessayer.
 tipJar.pending	En attente d’approbation. Vous serez débité une fois approuvé.
+settings.sectionAccounts	Comptes
+settings.addAccount	Ajouter un compte
+settings.accountSignOut	Se déconnecter
+settings.accountSignOutTitle	Se déconnecter ?
+settings.accountSignOutMessage	Déconnecter %@ de cet appareil ? Vous devrez vous reconnecter pour utiliser ce compte.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, compte actif

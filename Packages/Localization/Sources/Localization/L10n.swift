@@ -371,6 +371,12 @@ public enum L10n {
         public static var urlLabel: String { tr("serverDetails.urlLabel") }  // "Server URL"
     }
     public enum Settings {
+        public static func accountActiveLabel(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.accountActiveLabel", a0, a1) }
+        public static func accountLabel(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.accountLabel", a0, a1) }
+        public static var accountSignOut: String { tr("settings.accountSignOut") }  // "Sign Out"
+        public static func accountSignOutMessage(_ a0: CVarArg) -> String { tr("settings.accountSignOutMessage", a0) }
+        public static var accountSignOutTitle: String { tr("settings.accountSignOutTitle") }  // "Sign Out?"
+        public static var addAccount: String { tr("settings.addAccount") }  // "Add Account"
         public static func appVersion(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.appVersion", a0, a1) }
         public static var clearCacheConfirm: String { tr("settings.clearCacheConfirm") }  // "Clear"
         public static var clearCacheMessage: String { tr("settings.clearCacheMessage") }
@@ -397,6 +403,7 @@ public enum L10n {
         public static var rowThumbnailSize: String { tr("settings.rowThumbnailSize") }  // "Thumbnail Size"
         public static var rowThumbnails: String { tr("settings.rowThumbnails") }  // "Thumbnails"
         public static var rowUserManagement: String { tr("settings.rowUserManagement") }  // "User Management"
+        public static var sectionAccounts: String { tr("settings.sectionAccounts") }  // "Accounts"
         public static var sectionAdmin: String { tr("settings.sectionAdmin") }  // "Admin"
         public static var sectionDisplay: String { tr("settings.sectionDisplay") }  // "Display"
         public static var sectionGeneral: String { tr("settings.sectionGeneral") }  // "General"

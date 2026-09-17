@@ -110,6 +110,9 @@ public struct AppView: View {
             guard didExpire else { return }
             store.send(.sessionExpiryDetected)
         }
+        .sheet(item: $store.scope(state: \.addAccount, action: \.addAccount)) { addAccountStore in
+            LoginFormView(store: addAccountStore, autoFocus: true)
+        }
     }
 
     @ViewBuilder

@@ -566,3 +566,10 @@ tipJar.toastThanks	Dziękuję za wsparcie projektu! 🙏
 tipJar.errorLoad	Nie udało się wczytać opcji napiwku. Spróbuj ponownie.
 tipJar.errorPurchase	Zakup nie powiódł się. Spróbuj ponownie.
 tipJar.pending	Oczekiwanie na zatwierdzenie. Opłata zostanie pobrana po zatwierdzeniu.
+settings.sectionAccounts	Konta
+settings.addAccount	Dodaj konto
+settings.accountSignOut	Wyloguj
+settings.accountSignOutTitle	Wylogować?
+settings.accountSignOutMessage	Wylogować %@ na tym urządzeniu? Aby korzystać z tego konta, trzeba będzie zalogować się ponownie.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, aktywne konto

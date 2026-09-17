@@ -566,3 +566,10 @@ tipJar.toastThanks	Danke, dass du das Projekt unterstützt! 🙏
 tipJar.errorLoad	Die Trinkgeld-Optionen konnten nicht geladen werden. Bitte versuche es erneut.
 tipJar.errorPurchase	Der Kauf ist nicht durchgegangen. Bitte versuche es erneut.
 tipJar.pending	Warten auf Genehmigung. Die Zahlung erfolgt, sobald sie genehmigt ist.
+settings.sectionAccounts	Konten
+settings.addAccount	Konto hinzufügen
+settings.accountSignOut	Abmelden
+settings.accountSignOutTitle	Abmelden?
+settings.accountSignOutMessage	%@ auf diesem Gerät abmelden? Du musst dich erneut anmelden, um dieses Konto zu verwenden.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, aktives Konto
