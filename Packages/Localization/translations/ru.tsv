@@ -566,3 +566,10 @@ tipJar.toastThanks	Спасибо за поддержку проекта! 🙏
 tipJar.errorLoad	Не удалось загрузить варианты чаевых. Попробуйте ещё раз.
 tipJar.errorPurchase	Покупка не прошла. Попробуйте ещё раз.
 tipJar.pending	Ожидание подтверждения. Списание произойдёт после одобрения.
+settings.sectionAccounts	Аккаунты
+settings.addAccount	Добавить аккаунт
+settings.accountSignOut	Выйти
+settings.accountSignOutTitle	Выйти?
+settings.accountSignOutMessage	Выйти из аккаунта %@ на этом устройстве? Чтобы снова использовать этот аккаунт, потребуется войти заново.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, активный аккаунт

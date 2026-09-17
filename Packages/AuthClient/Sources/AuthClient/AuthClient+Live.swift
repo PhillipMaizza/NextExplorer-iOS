@@ -92,15 +92,33 @@ public extension AuthClient {
             },
             logout: { serverURL in
                 try? await localAuthService.logout(serverURL: serverURL)
-                cookieStore.clear(serverURL: serverURL)
             },
             restoreSession: {
-                guard let credentials = cookieStore.loadPersisted() else { return nil }
+                guard let credentials = cookieStore.activeCredentials() else { return nil }
                 cookieStore.install(credentials)
                 return credentials
             },
-            clearSession: {
-                cookieStore.clear(serverURL: nil)
+            listSessions: {
+                cookieStore.allSessions()
+            },
+            activeAccountID: {
+                cookieStore.activeCredentials()?.accountID
+            },
+            switchAccount: { accountID in
+                cookieStore.setActive(id: accountID)
+            },
+            removeAccount: { accountID in
+                // Best-effort server logout of the account being removed, then drop it locally.
+                if let serverURL = cookieStore.allSessions().first(where: { $0.accountID == accountID })?.serverBaseURL {
+                    try? await localAuthService.logout(serverURL: serverURL)
+                }
+                return cookieStore.remove(id: accountID)
+            },
+            clearActiveSession: {
+                cookieStore.clearActive()
+            },
+            clearAllSessions: {
+                cookieStore.clearAll()
             }
         )
     }

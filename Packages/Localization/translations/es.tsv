@@ -566,3 +566,10 @@ tipJar.toastThanks	¡Gracias por apoyar el proyecto! 🙏
 tipJar.errorLoad	No se pudieron cargar las opciones de propina. Inténtalo de nuevo.
 tipJar.errorPurchase	La compra no se completó. Inténtalo de nuevo.
 tipJar.pending	Esperando aprobación. Se te cobrará una vez aprobada.
+settings.sectionAccounts	Cuentas
+settings.addAccount	Añadir cuenta
+settings.accountSignOut	Cerrar sesión
+settings.accountSignOutTitle	¿Cerrar sesión?
+settings.accountSignOutMessage	¿Cerrar la sesión de %@ en este dispositivo? Deberás iniciar sesión de nuevo para usar esta cuenta.
+settings.accountLabel	%1$@, %2$@
+settings.accountActiveLabel	%1$@, %2$@, cuenta activa
