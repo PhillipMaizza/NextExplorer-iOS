@@ -218,6 +218,13 @@
         static func prepareUITestDependencies(from environment: [String: String] = ProcessInfo.processInfo.environment) {
             guard environment[UITestSupport.mockFlag] == "1" else { return }
 
+            // Wipe persisted defaults so @AppStorage state (view mode, thumbnail size, ...) can't
+            // leak between launches and make the suite order dependent: every test starts from the
+            // shipped defaults.
+            if let bundleID = Bundle.main.bundleIdentifier {
+                UserDefaults.standard.removePersistentDomain(forName: bundleID)
+            }
+
             if environment[UITestSupport.disableAnimationsFlag] == "1" {
                 UIView.setAnimationsEnabled(false)
             }
