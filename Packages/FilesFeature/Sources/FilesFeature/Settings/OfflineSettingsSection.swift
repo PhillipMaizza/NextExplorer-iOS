@@ -11,6 +11,8 @@ private enum Constants {
     static let progressSpacing: CGFloat = .space8
     static let statusPulseOpacity: Double = 0.55
     static let statusPulseDuration: Double = 1.1
+    static let preparingBarHeight: CGFloat = 6
+    static let preparingBarOpacity: Double = 0.3
 }
 
 /// The Offline section: a row to open the file/folder chooser, a live progress block while a
@@ -121,8 +123,16 @@ struct OfflineSettingsSection: View {
                     value: statusPulse
                 )
                 .onAppear { statusPulse = true }
-            ProgressView(value: progress.fractionComplete)
-                .tint(Color.accent)
+            if progress.phase == .preparing {
+                // No count yet while we walk the folders: an indeterminate shimmer reads as "working".
+                Capsule()
+                    .fill(Color.accent.opacity(Constants.preparingBarOpacity))
+                    .frame(height: Constants.preparingBarHeight)
+                    .shimmering()
+            } else {
+                ProgressView(value: progress.fractionComplete)
+                    .tint(Color.accent)
+            }
             HStack {
                 Text(L10n.Offline.progressCount(progress.filesDone, progress.filesTotal))
                     .type(.body3(.regular), style: .tertiary)
