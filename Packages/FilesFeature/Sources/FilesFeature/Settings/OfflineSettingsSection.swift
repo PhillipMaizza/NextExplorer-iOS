@@ -9,6 +9,8 @@ private enum Constants {
     static let fullOpacity: Double = 1.0
     static let disabledOpacity: Double = 0.5
     static let progressSpacing: CGFloat = .space8
+    static let statusPulseOpacity: Double = 0.55
+    static let statusPulseDuration: Double = 1.1
 }
 
 /// The Offline section: a row to open the file/folder chooser, a live progress block while a
@@ -18,6 +20,8 @@ struct OfflineSettingsSection: View {
     let store: StoreOf<SettingsFeature>
     let filter: SettingsSearchFilter
     @AppStorage(AppStorageKeys.preferOfflineMedia) private var preferOfflineMedia = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var statusPulse = false
 
     private var progress: OfflineDownloadProgress {
         store.offlineProgress
@@ -110,6 +114,13 @@ struct OfflineSettingsSection: View {
             Text(statusText)
                 .type(.body3(.regular), style: .secondary)
                 .lineLimit(1)
+                // A slow breathing fade while a sync runs, so the row reads as actively working.
+                .opacity(statusPulse ? Constants.statusPulseOpacity : 1)
+                .animation(
+                    reduceMotion ? nil : .easeInOut(duration: Constants.statusPulseDuration).repeatForever(autoreverses: true),
+                    value: statusPulse
+                )
+                .onAppear { statusPulse = true }
             ProgressView(value: progress.fractionComplete)
                 .tint(Color.accent)
             HStack {
