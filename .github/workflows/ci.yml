@@ -126,7 +126,9 @@ jobs:
     # any branch from the Actions tab.
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: macos-15
-    timeout-minutes: 60
+    # Headroom for the one automatic retry below: a simulator launch flake can hang the first
+    # attempt for a while before it fails, so a retry must still fit inside the budget.
+    timeout-minutes: 90
 
     env:
       SIM_DEVICE: iPhone 16
@@ -149,14 +151,58 @@ jobs:
             -scheme NextExplorer \
             -resolvePackageDependencies
 
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
+      - name: Boot simulator
+        # Pin the destination to a concrete UDID and fully boot it before xcodebuild attaches.
+        # The recurring CI failure was a cold launch race ("Failed to send signal 19 to process")
+        # where xcodebuild could not SIGSTOP/resume the app on a not yet ready simulator; booting
+        # first and waiting for bootstatus avoids it.
+        run: |
+          set -euo pipefail
+          UDID=$(xcrun simctl list devices available "${SIM_DEVICE}" \
+            | grep -Eo '\(([0-9A-F-]{36})\)' | tr -d '()' | head -1 || true)
+          if [ -z "${UDID}" ]; then
+            echo "No available '${SIM_DEVICE}' simulator on this runner"; exit 1
+          fi
+          echo "SIM_UDID=${UDID}" >> "${GITHUB_ENV}"
+          echo "Booting ${SIM_DEVICE} (${UDID})"
+          xcrun simctl boot "${UDID}" || true
+          xcrun simctl bootstatus "${UDID}" -b
+
       - name: Run XCUITests
+        # One automatic retry: the launch flake is transient, so a fresh reboot + rerun clears it
+        # without masking a genuine test failure (a real failure fails both attempts). Output runs
+        # through xcbeautify so a failing test surfaces as a GitHub annotation instead of a raw
+        # xcodebuild dump, and the .xcresult is uploaded below for offline inspection.
         run: |
           set -o pipefail
-          DEST="platform=iOS Simulator,name=${SIM_DEVICE},OS=latest"
+          DEST="platform=iOS Simulator,id=${SIM_UDID}"
           echo "UI test destination: ${DEST}"
-          xcodebuild test \
-            -project NextExplorer.xcodeproj \
-            -scheme NextExplorer \
-            -destination "${DEST}" \
-            -enableCodeCoverage NO \
-            -only-testing:NextExplorerUITests
+          run_tests() {
+            rm -rf TestResults.xcresult
+            xcodebuild test \
+              -project NextExplorer.xcodeproj \
+              -scheme NextExplorer \
+              -destination "${DEST}" \
+              -enableCodeCoverage NO \
+              -resultBundlePath TestResults.xcresult \
+              -only-testing:NextExplorerUITests \
+              | xcbeautify --renderer github-actions
+          }
+          if ! run_tests; then
+            echo "::warning::UI tests failed on the first attempt (often a simulator launch flake). Rebooting and retrying once."
+            xcrun simctl shutdown "${SIM_UDID}" || true
+            xcrun simctl boot "${SIM_UDID}" || true
+            xcrun simctl bootstatus "${SIM_UDID}" -b || true
+            run_tests
+          fi
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: uitest-results
+          path: TestResults.xcresult
+          if-no-files-found: ignore
