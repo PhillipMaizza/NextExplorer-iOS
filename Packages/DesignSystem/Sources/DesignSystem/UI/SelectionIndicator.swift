@@ -1,5 +1,10 @@
 import SwiftUI
 
+private enum Constants {
+    /// Bounce playback speed on select/deselect; >1 makes the pop snappier.
+    static let bounceSpeed: Double = 1.8
+}
+
 /// The circular selection glyph shown on the leading edge of a row (or a grid cell overlay)
 /// while a list is in multi select mode: a filled accent checkmark when selected, a hollow
 /// secondary ring when not, with a bounce on change and a scale/opacity transition on
@@ -19,7 +24,7 @@ public struct DSSelectionIndicator: View {
             .scaledToFit()
             .foregroundStyle(isSelected ? Color.accentText : Color.secondaryDS)
             .frame(width: size, height: size)
-            .symbolEffect(.bounce, value: isSelected)
+            .symbolEffect(.bounce, options: .speed(Constants.bounceSpeed), value: isSelected)
             .transition(.scale.combined(with: .opacity))
     }
 }
