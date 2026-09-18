@@ -157,10 +157,13 @@ struct GridCellView: View {
                                     .frame(width: Constants.favoriteBadgeBackgroundSize, height: Constants.favoriteBadgeBackgroundSize)
                                     .shadow(radius: Constants.favoriteBadgeShadowRadius)
                             )
+                            .symbolEffect(.bounce, value: isAvailableOffline)
+                            .transition(.scale.combined(with: .opacity))
                             .accessibilityLabel(L10n.Offline.badgeAvailable)
                     }
                 }
                 .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)
+                .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isAvailableOffline)
                 // Only favoriting buzzes — un-favoriting isn't a "win" worth celebrating the same way.
                 .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
             Text(displayName)

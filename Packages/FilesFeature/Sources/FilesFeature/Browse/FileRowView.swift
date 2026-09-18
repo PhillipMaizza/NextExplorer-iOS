@@ -188,6 +188,8 @@ struct FileRowView: View {
                     .symbolVariant(.fill)
                     .foregroundStyle(Color.accent)
                     .frame(width: .iconSmall, height: .iconSmall)
+                    .symbolEffect(.bounce, value: isAvailableOffline)
+                    .transition(.scale.combined(with: .opacity))
                     .accessibilityLabel(L10n.Offline.badgeAvailable)
             }
 
@@ -213,6 +215,7 @@ struct FileRowView: View {
         .padding(.vertical, .space4)
         .contentShape(Rectangle())
         .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)
+        .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isAvailableOffline)
         // Only favoriting buzzes — un-favoriting isn't a "win" worth celebrating the same way.
         .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
     }
