@@ -322,4 +322,30 @@ struct SettingsScreen {
     var tipJarTitle: XCUIElement {
         app.staticTexts[L10n.TipJar.title]
     }
+
+    /// The Offline section row that opens the file/folder chooser.
+    var offlineDownloadRow: XCUIElement {
+        app.staticTexts[L10n.Offline.settingsRow]
+    }
+}
+
+/// The "Download for Offline" selection sheet presented from Settings.
+struct OfflineSelectionScreen {
+    let app: XCUIApplication
+
+    var title: XCUIElement {
+        app.staticTexts[L10n.Offline.selectionTitle]
+    }
+
+    func itemRow(_ name: String) -> XCUIElement {
+        app.staticTexts[name].firstMatch
+    }
+
+    var downloadButton: XCUIElement {
+        app.buttons[L10n.Offline.selectionDownload].firstMatch
+    }
+
+    var closeButton: XCUIElement {
+        app.buttons[L10n.Common.close].firstMatch
+    }
 }

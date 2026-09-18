@@ -43,6 +43,9 @@ struct FileRowView: View {
     /// True while this file's content is downloading after a tap — the row shows a trailing
     /// spinner and the full-screen preview holds off until it's ready.
     var isOpening: Bool = false
+    /// True when this item is downloaded (or covered by a pinned folder) for offline use — the row
+    /// shows a small offline badge so the user can tell what's available without a connection.
+    var isAvailableOffline: Bool = false
     /// Read live so an already-visible row updates immediately when the user changes the
     /// date format in Settings, rather than only on the next fetch.
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
@@ -96,8 +99,9 @@ struct FileRowView: View {
         self.isOpening = isOpening
     }
 
-    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false) {
+    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false, isAvailableOffline: Bool = false) {
         name = item.name
+        self.isAvailableOffline = isAvailableOffline
         isDirectory = item.isDirectory
         dateModified = item.dateModified
         size = item.isDirectory ? nil : item.size
@@ -175,6 +179,16 @@ struct FileRowView: View {
             if isOpening {
                 DSSpinner()
                     .controlSize(.small)
+            }
+
+            if isAvailableOffline {
+                IconKit.download
+                    .resizable()
+                    .scaledToFit()
+                    .symbolVariant(.fill)
+                    .foregroundStyle(Color.accent)
+                    .frame(width: .iconSmall, height: .iconSmall)
+                    .accessibilityLabel(L10n.Offline.badgeAvailable)
             }
 
             if isFavorite {

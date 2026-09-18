@@ -70,6 +70,11 @@ extension FilesService {
     }
 
     private func fetchPreviewFile(serverURL: URL, item: FileItem, lowPriority: Bool) async throws -> URL {
+        // A durable offline pin wins over the ephemeral preview cache: it is the same file, never
+        // evicted, and lets the preview open with no network at all.
+        if let offline = OfflineCache.localURL(for: item) {
+            return offline
+        }
         if let cached = cachedPreviewFileURL(item: item) {
             return cached
         }
@@ -78,10 +83,21 @@ extension FilesService {
         }
         let slot = previewCacheSlot(for: item)
         let request = Self.makeRequest(url: url, method: .get)
-        return try await downloadToCache(
-            request, directory: slot.directory, fileURL: slot.fileURL, metaURL: slot.metaURL,
-            item: item, lowPriority: lowPriority
-        )
+        do {
+            return try await downloadToCache(
+                request, directory: slot.directory, fileURL: slot.fileURL, metaURL: slot.metaURL,
+                item: item, lowPriority: lowPriority
+            )
+        } catch let error as FilesClientError where error == .offline {
+            // Offline and the metadata checked pin missed (e.g. a Favorites direct open seeds a
+            // placeholder `FileItem` with no real size/date): serve any pinned copy for this path as
+            // a last resort rather than failing. Only when genuinely offline, never masking a real
+            // server error or a changed file while online.
+            if let fallback = OfflineCache.localURL(forPath: item.id) {
+                return fallback
+            }
+            throw error
+        }
     }
 
     /// `POST /api/download`, confirmed against `backend/src/routes/files/download.js` mounted
@@ -95,6 +111,9 @@ extension FilesService {
     /// first. Reuses `previewFile`'s cache layout (same staleness key) but under its own
     /// `namespace`, so the two endpoints never share a cache slot for the same item.
     func downloadRawFile(serverURL: URL, item: FileItem) async throws -> URL {
+        if let offline = OfflineCache.localURL(for: item) {
+            return offline
+        }
         let directory = Self.previewCacheDirectory(for: item, namespace: Self.rawDownloadCacheNamespace)
         let fileURL = directory.appendingPathComponent(SafeFileName.component(item.name))
         let metaURL = directory.appendingPathComponent(Self.cacheMetaSidecarName)
@@ -110,7 +129,53 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(DownloadRawFileBody(path: item.id))
-        return try await downloadToCache(request, directory: directory, fileURL: fileURL, metaURL: metaURL, item: item)
+        do {
+            return try await downloadToCache(request, directory: directory, fileURL: fileURL, metaURL: metaURL, item: item)
+        } catch let error as FilesClientError where error == .offline {
+            if let fallback = OfflineCache.localURL(forPath: item.id) {
+                return fallback
+            }
+            throw error
+        }
+    }
+
+    /// Streams `item`'s verbatim bytes (`POST /api/download`) into the durable offline store so it
+    /// opens with no network later. Runs over the low priority session: a folder-wide offline sync
+    /// must never starve an interactive preview. Returns the local file (a cache hit returns with no
+    /// network); concurrent calls for the same slot share one transfer via `downloadCoordinator`.
+    func offlineDownloadFile(serverURL: URL, item: FileItem) async throws -> URL {
+        if let existing = OfflineCache.localURL(for: item) {
+            return existing
+        }
+        guard let slot = OfflineCache.slot(for: item, create: true) else {
+            throw FilesClientError.decoding("Could not open the offline store.")
+        }
+        let url = serverURL.appendingPathComponent(APIPath.download)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
+        request.httpBody = try Self.encode(DownloadRawFileBody(path: item.id))
+        let finalRequest = request
+        let networkClient = networkClient
+        return try await downloadCoordinator.run(forFileAt: slot.fileURL) {
+            let downloadedURL: URL
+            let response: HTTPURLResponse
+            do {
+                // Full priority (not the capped low priority pool): an offline sync is user
+                // initiated and wants throughput. The engine runs several of these at once.
+                (downloadedURL, response) = try await networkClient.download(finalRequest)
+            } catch {
+                throw Self.mapTransportError(error)
+            }
+            defer { try? FileManager.default.removeItem(at: downloadedURL) }
+            try Self.validate(response)
+            do {
+                return try OfflineCache.store(downloadedURL: downloadedURL, item: item)
+            } catch let error as FilesClientError {
+                throw error
+            } catch {
+                throw FilesClientError.decoding(error.localizedDescription)
+            }
+        }
     }
 
     /// Streams `request`'s response to disk (never buffering it in memory — previews,

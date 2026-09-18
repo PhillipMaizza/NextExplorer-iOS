@@ -58,6 +58,10 @@ struct SettingsView: View {
         Binding(get: { store.accountPendingRemoval != nil }, set: { _ in })
     }
 
+    private var isConfirmingRemoveOffline: Binding<Bool> {
+        Binding(get: { store.removeOfflineConfirmationIsPresented }, set: { _ in })
+    }
+
     var body: some View {
         NavigationStack {
             List {
@@ -76,6 +80,7 @@ struct SettingsView: View {
                 }
 
                 StorageSettingsSection(store: store, filter: filter)
+                OfflineSettingsSection(store: store, filter: filter)
                 LegalSettingsSection(filter: filter)
                 LicensesSettingsSection(store: store, filter: filter)
             }
@@ -113,6 +118,11 @@ struct SettingsView: View {
                 item: $store.scope(state: \.accessRules, action: \.accessRules)
             ) { accessRulesStore in
                 AccessRulesView(store: accessRulesStore)
+            }
+            .navigationDestination(
+                item: $store.scope(state: \.offlineManage, action: \.offlineManage)
+            ) { manageStore in
+                OfflineManageView(store: manageStore)
             }
             // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
             .navigationTitle("")
@@ -175,8 +185,30 @@ struct SettingsView: View {
             .sheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
                 TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
             }
+            .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
+                OfflineSelectionView(store: selectionStore)
+            }
+            .sheet(isPresented: isConfirmingRemoveOffline) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: L10n.Offline.removeConfirmTitle,
+                    message: L10n.Offline.removeConfirmMessage,
+                    confirmTitle: L10n.Offline.removeConfirm,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.removeOfflineConfirmed) },
+                    onDismiss: { store.send(.removeOfflineCancelled) }
+                )
+            }
+            .hapticFeedback(.warning, trigger: store.removeOfflineConfirmationIsPresented)
             .task {
                 store.send(.onAppear)
+            }
+            .onChange(of: store.offlineProgress.phase) { _, phase in
+                if phase == .completed {
+                    store.send(.refreshOfflineSize)
+                }
             }
         }
         .tint(Color.accent)

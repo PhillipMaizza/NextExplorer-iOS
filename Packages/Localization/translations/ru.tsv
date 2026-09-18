@@ -573,3 +573,31 @@ settings.accountSignOutTitle	Выйти?
 settings.accountSignOutMessage	Выйти из аккаунта %@ на этом устройстве? Чтобы снова использовать этот аккаунт, потребуется войти заново.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, активный аккаунт
+
+# ---- offline ----
+common.deselect	Снять выбор
+offline.sectionTitle	Офлайн
+offline.settingsRow	Загрузить файлы для офлайн-доступа
+offline.footnote	Загруженные файлы открываются даже без подключения.
+offline.available	Доступно офлайн: %@
+offline.removeRow	Удалить офлайн-файлы
+offline.removeConfirmTitle	Удалить офлайн-файлы?
+offline.removeConfirmMessage	Это удалит файлы, сохранённые для офлайн-доступа на этом устройстве. Ваши файлы на сервере не будут затронуты.
+offline.removeConfirm	Удалить
+offline.preparing	Подготовка…
+offline.downloadingName	Загрузка %@
+offline.progressCount	%lld из %lld файлов
+offline.downloadFailed	Не удалось завершить офлайн-загрузку.
+offline.selectionTitle	Загрузить для офлайна
+offline.selectionEmpty	Эта папка пуста.
+offline.selectionLoadFailed	Не удалось загрузить эту папку.
+offline.selectionEstimate	Примерный размер загрузки
+offline.selectionDownload	Загрузить
+offline.selectionInsufficientSpace	Недостаточно свободного места на этом устройстве
+offline.resyncRow	Обновить офлайн-файлы
+offline.badgeAvailable	Доступно офлайн
+offline.manageRow	Управление офлайн-файлами
+offline.manageTitle	Офлайн-файлы
+offline.manageEmpty	Ничего не загружено для офлайн-доступа.
+offline.preferOfflineToggle	Воспроизводить загруженные копии
+offline.preferOfflineSubtitle	Использовать загруженное видео вместо потоковой передачи, когда оно доступно.

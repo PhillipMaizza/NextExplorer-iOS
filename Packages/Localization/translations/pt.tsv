@@ -573,3 +573,31 @@ settings.accountSignOutTitle	Terminar sessão?
 settings.accountSignOutMessage	Terminar a sessão de %@ neste dispositivo? Terá de iniciar sessão novamente para usar esta conta.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, conta ativa
+
+# ---- offline ----
+common.deselect	Desmarcar
+offline.sectionTitle	Offline
+offline.settingsRow	Baixar arquivos para uso offline
+offline.footnote	Os arquivos baixados abrem mesmo sem conexão.
+offline.available	%@ disponíveis offline
+offline.removeRow	Remover arquivos offline
+offline.removeConfirmTitle	Remover arquivos offline?
+offline.removeConfirmMessage	Isso exclui os arquivos salvos para uso offline neste dispositivo. Seus arquivos no servidor não são afetados.
+offline.removeConfirm	Remover
+offline.preparing	Preparando…
+offline.downloadingName	Baixando %@
+offline.progressCount	%lld de %lld arquivos
+offline.downloadFailed	Não foi possível concluir o download offline.
+offline.selectionTitle	Baixar para offline
+offline.selectionEmpty	Esta pasta está vazia.
+offline.selectionLoadFailed	Não foi possível carregar esta pasta.
+offline.selectionEstimate	Download estimado
+offline.selectionDownload	Baixar
+offline.selectionInsufficientSpace	Espaço livre insuficiente neste dispositivo
+offline.resyncRow	Atualizar arquivos offline
+offline.badgeAvailable	Disponível offline
+offline.manageRow	Gerenciar arquivos offline
+offline.manageTitle	Arquivos offline
+offline.manageEmpty	Nada foi baixado para uso offline.
+offline.preferOfflineToggle	Reproduzir cópias baixadas
+offline.preferOfflineSubtitle	Usar um vídeo baixado em vez de transmitir quando estiver disponível.

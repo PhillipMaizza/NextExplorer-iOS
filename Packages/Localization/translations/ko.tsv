@@ -573,3 +573,31 @@ settings.accountSignOutTitle	로그아웃하시겠어요?
 settings.accountSignOutMessage	이 기기에서 %@ 계정을 로그아웃할까요? 이 계정을 사용하려면 다시 로그인해야 합니다.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 활성 계정
+
+# ---- offline ----
+common.deselect	선택 해제
+offline.sectionTitle	오프라인
+offline.settingsRow	오프라인 사용을 위해 파일 다운로드
+offline.footnote	다운로드한 파일은 연결이 없어도 열 수 있습니다.
+offline.available	%@ 오프라인 사용 가능
+offline.removeRow	오프라인 파일 제거
+offline.removeConfirmTitle	오프라인 파일을 제거할까요?
+offline.removeConfirmMessage	이 기기에 오프라인 사용을 위해 저장된 파일을 삭제합니다. 서버의 파일은 영향을 받지 않습니다.
+offline.removeConfirm	제거
+offline.preparing	준비 중…
+offline.downloadingName	%@ 다운로드 중
+offline.progressCount	%lld/%lld개 파일
+offline.downloadFailed	오프라인 다운로드를 완료하지 못했습니다.
+offline.selectionTitle	오프라인용으로 다운로드
+offline.selectionEmpty	이 폴더는 비어 있습니다.
+offline.selectionLoadFailed	이 폴더를 불러오지 못했습니다.
+offline.selectionEstimate	예상 다운로드 크기
+offline.selectionDownload	다운로드
+offline.selectionInsufficientSpace	이 기기에 여유 공간이 부족합니다
+offline.resyncRow	오프라인 파일 업데이트
+offline.badgeAvailable	오프라인 사용 가능
+offline.manageRow	오프라인 파일 관리
+offline.manageTitle	오프라인 파일
+offline.manageEmpty	오프라인 사용을 위해 다운로드된 항목이 없습니다.
+offline.preferOfflineToggle	다운로드한 사본 재생
+offline.preferOfflineSubtitle	사용 가능할 때 스트리밍 대신 다운로드한 동영상을 사용합니다.
