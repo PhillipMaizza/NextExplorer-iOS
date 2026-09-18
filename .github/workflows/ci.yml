@@ -26,7 +26,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Install SwiftFormat and SwiftLint
         run: brew install swiftformat swiftlint
@@ -63,7 +63,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # The app builds against the latest SDK; if a specific Xcode is needed,
       # pin xcode-version to it here.
@@ -106,9 +106,12 @@ jobs:
           FAIL=0
           for pkg in ${TEST_PACKAGES}; do
             echo "::group::Test ${pkg}"
+            # Coverage is not collected in CI; disabling it stops the sandboxed test host
+            # spamming "LLVM Profile Error: Failed to write file default.profraw".
             if ! ( cd "Packages/${pkg}" && xcodebuild test \
                 -scheme "${pkg}" \
-                -destination "${DEST}" ); then
+                -destination "${DEST}" \
+                -enableCodeCoverage NO ); then
               echo "::error::${pkg} tests failed"
               FAIL=1
             fi
@@ -130,7 +133,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
@@ -155,4 +158,5 @@ jobs:
             -project NextExplorer.xcodeproj \
             -scheme NextExplorer \
             -destination "${DEST}" \
+            -enableCodeCoverage NO \
             -only-testing:NextExplorerUITests
