@@ -84,10 +84,34 @@ public struct DSHapticButtonStyle: ButtonStyle {
     public init() {}
 
     public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .hapticFeedback(.impact(weight: .light), trigger: configuration.isPressed) { _, isPressed in
-                isPressed
-            }
+        PressFeedback(isPressed: configuration.isPressed) {
+            configuration.label
+        }
+    }
+
+    /// Adds a light haptic and a subtle scale-down on press. A nested view so it can read Reduce
+    /// Motion (a `ButtonStyle` can't observe `@Environment` directly).
+    private struct PressFeedback<Label: View>: View {
+        let isPressed: Bool
+        @ViewBuilder let label: Label
+        @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+        private static var pressedScale: CGFloat {
+            0.97
+        }
+
+        private static var pressDuration: Double {
+            0.15
+        }
+
+        var body: some View {
+            label
+                .scaleEffect(reduceMotion || !isPressed ? 1 : Self.pressedScale)
+                .animation(reduceMotion ? nil : .easeOut(duration: Self.pressDuration), value: isPressed)
+                .hapticFeedback(.impact(weight: .light), trigger: isPressed) { _, isPressed in
+                    isPressed
+                }
+        }
     }
 }
 
