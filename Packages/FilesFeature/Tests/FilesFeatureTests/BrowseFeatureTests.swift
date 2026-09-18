@@ -35,6 +35,7 @@ struct BrowseFeatureTests {
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
         await store.receive(\.favoritesResponse)
+        await store.receive(\.offlineAvailabilityComputed)
     }
 
     @Test
@@ -128,6 +129,7 @@ struct BrowseFeatureTests {
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
         await store.receive(\.favoritesResponse)
+        await store.receive(\.offlineAvailabilityComputed)
     }
 
     @Test
@@ -2995,6 +2997,7 @@ struct BrowseFeatureTransferTests {
             $0.dataSource = .cached(fetchedAt: fetchedAt)
         }
         await store.receive(\.favoritesResponse)
+        await store.receive(\.offlineAvailabilityComputed)
 
         #expect(store.state.phase.errorMessage == nil)
     }
@@ -3051,6 +3054,7 @@ struct BrowseFeatureTransferTests {
             $0.items = [freshItem]
         }
         await store.receive(\.favoritesResponse)
+        await store.receive(\.offlineAvailabilityComputed)
 
         #expect(store.state.dataSource == .live)
     }

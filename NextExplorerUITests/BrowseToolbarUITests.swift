@@ -52,16 +52,19 @@ final class BrowseToolbarUITests: UITestCase {
         let documents = browse.item(Fixture.folder)
         XCTAssertTrue(documents.waitToAppear())
 
-        // A slow, held coordinate drag downward trips the refresh control where a plain swipeDown
-        // only catches it intermittently. The gesture itself is still occasionally dropped, so
-        // retry it (as the suite does for tab/menu gestures) until the "Sync completed" toast the
-        // refresh raises appears.
+        // A held coordinate drag downward trips the refresh control where a plain swipeDown only
+        // catches it intermittently. The terminal hold (not the drag speed) is what pushes
+        // `.refreshable` past its threshold, so the drag runs at `.default` velocity: `.slow` over a
+        // long distance takes many seconds per attempt and, under the parallel-clone CI load, stalls
+        // the whole test past its timeout. The gesture is still occasionally dropped, so retry it (as
+        // the suite does for tab/menu gestures) until the "Sync completed" toast the refresh raises
+        // appears.
         let toast = browse.syncCompletedToast
         var pulled = false
-        for _ in 0 ..< 3 where !pulled {
+        for _ in 0 ..< 5 where !pulled {
             let start = app.windows.firstMatch.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.3))
-            let end = start.withOffset(CGVector(dx: 0, dy: 600))
-            start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .slow, thenHoldForDuration: 0.1)
+            let end = start.withOffset(CGVector(dx: 0, dy: 500))
+            start.press(forDuration: 0.1, thenDragTo: end, withVelocity: .default, thenHoldForDuration: 0.4)
             pulled = toast.appears(within: UITestTimeout.short)
         }
         XCTAssertTrue(pulled, "Pull to refresh should raise the sync completed toast")
