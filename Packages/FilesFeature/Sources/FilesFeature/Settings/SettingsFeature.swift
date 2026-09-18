@@ -26,6 +26,8 @@ public struct SettingsFeature {
         @Presents public var serverDetails: ServerDetailsFeature.State?
         @Presents public var thumbnailSettings: ThumbnailSettingsFeature.State?
         @Presents public var accessRules: AccessRulesFeature.State?
+        @Presents public var offlineSelection: OfflineSelectionFeature.State?
+        @Presents public var offlineManage: OfflineManageFeature.State?
         @Presents public var tipJar: TipJarFeature.State?
         /// One shot signal: set when a tip completes so the view can raise the thank you toast,
         /// cleared by `tipToastShown`.
@@ -57,6 +59,13 @@ public struct SettingsFeature {
         public var cacheSize: Int64 = 0
         public var isClearingCache = false
         public var clearCacheConfirmationIsPresented = false
+        /// Durable offline store size for this account, read from `OfflineFileStore` on appear and
+        /// refreshed when a download run completes.
+        public var offlineSize: Int64 = 0
+        public var removeOfflineConfirmationIsPresented = false
+        /// Live offline download progress, published by the session lifetime engine so this screen
+        /// reflects a run started here even after the user navigated away and back.
+        @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) public var offlineProgress = OfflineDownloadProgress()
 
         /// Server disk usage, one row per volume — the iOS take on the web client's volume
         /// list. Only populated (and only shown) when `GET /api/features` reports
@@ -95,6 +104,17 @@ public struct SettingsFeature {
         case thumbnailSettings(PresentationAction<ThumbnailSettingsFeature.Action>)
         case accessRulesButtonTapped
         case accessRules(PresentationAction<AccessRulesFeature.Action>)
+        case offlineDownloadButtonTapped
+        case offlineSelection(PresentationAction<OfflineSelectionFeature.Action>)
+        case offlineManageButtonTapped
+        case offlineManage(PresentationAction<OfflineManageFeature.Action>)
+        case cancelOfflineDownloadTapped
+        case resyncOfflineTapped
+        case removeOfflineTapped
+        case removeOfflineCancelled
+        case removeOfflineConfirmed
+        case refreshOfflineSize
+        case offlineSizeResponse(Int64)
         case tipJarButtonTapped
         case tipJar(PresentationAction<TipJarFeature.Action>)
         case tipToastShown
@@ -136,6 +156,13 @@ public struct SettingsFeature {
             case switchAccount(String)
             case removeAccount(String)
             case addAccountRequested
+            /// Offline download intent, handled by the session lifetime `OfflineDownloadsFeature`
+            /// engine that `MainTabFeature` owns (Settings is torn down on a tab switch; the engine
+            /// is not).
+            case startOfflineDownload([FileItem])
+            case cancelOfflineDownload
+            case resyncOffline
+            case removeOfflineFiles
         }
     }
 
@@ -145,300 +172,369 @@ public struct SettingsFeature {
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
+    @Dependency(\.offlineFileStore) var offlineFileStore
 
-    private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey) }
+    private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize }
 
     public init() {}
 
-    public var body: some ReducerOf<Self> {
-        Reduce { state, action in
-            switch action {
-            case .userManagementButtonTapped:
-                state.userManagement = UserManagementFeature.State(
-                    serverURL: state.serverURL,
-                    currentUserID: state.user.id
-                )
-                return .none
+    private func core(into state: inout State, action: Action) -> Effect<Action> {
+        switch action {
+        case .userManagementButtonTapped:
+            state.userManagement = UserManagementFeature.State(
+                serverURL: state.serverURL,
+                currentUserID: state.user.id
+            )
+            return .none
 
-            case .userManagement:
-                return .none
+        case .userManagement:
+            return .none
 
-            case .changePasswordButtonTapped:
-                state.changePassword = ChangePasswordFeature.State(serverURL: state.serverURL)
-                return .none
+        case .changePasswordButtonTapped:
+            state.changePassword = ChangePasswordFeature.State(serverURL: state.serverURL)
+            return .none
 
-            case .changePassword:
-                return .none
+        case .changePassword:
+            return .none
 
-            case .serverDetailsButtonTapped:
-                guard state.user.isAdmin else { return .none }
-                state.serverDetails = ServerDetailsFeature.State(
-                    serverURL: state.serverURL,
-                    branding: state.branding
-                )
-                return .none
+        case .serverDetailsButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.serverDetails = ServerDetailsFeature.State(
+                serverURL: state.serverURL,
+                branding: state.branding
+            )
+            return .none
 
-            case .serverDetails:
-                return .none
+        case .serverDetails:
+            return .none
 
-            case .thumbnailSettingsButtonTapped:
-                guard state.user.isAdmin else { return .none }
-                state.thumbnailSettings = ThumbnailSettingsFeature.State(serverURL: state.serverURL)
-                return .none
+        case .thumbnailSettingsButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.thumbnailSettings = ThumbnailSettingsFeature.State(serverURL: state.serverURL)
+            return .none
 
-            case .thumbnailSettings:
-                return .none
+        case .thumbnailSettings:
+            return .none
 
-            case .accessRulesButtonTapped:
-                guard state.user.isAdmin else { return .none }
-                state.accessRules = AccessRulesFeature.State(serverURL: state.serverURL)
-                return .none
+        case .accessRulesButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.accessRules = AccessRulesFeature.State(serverURL: state.serverURL)
+            return .none
 
-            case .accessRules:
-                return .none
+        case .accessRules:
+            return .none
 
-            case .tipJarButtonTapped:
-                state.tipJar = TipJarFeature.State()
-                return .none
+        case .offlineDownloadButtonTapped:
+            state.offlineSelection = OfflineSelectionFeature.State(serverURL: state.serverURL)
+            return .none
 
-            case .tipJar(.presented(.delegate(.tipped))):
-                state.tipJar = nil
-                state.tipToast = L10n.TipJar.toastThanks
-                return .none
+        case let .offlineSelection(.presented(.delegate(.confirmed(items)))):
+            state.offlineSelection = nil
+            return .send(.delegate(.startOfflineDownload(items)))
 
-            case .tipJar:
-                return .none
+        case .offlineSelection(.presented(.delegate(.cancelled))):
+            state.offlineSelection = nil
+            return .none
 
-            case .tipToastShown:
-                state.tipToast = nil
-                return .none
+        case .offlineSelection:
+            return .none
 
-            case let .brandingResponse(.success(branding)):
-                state.$branding.withLock { $0 = branding }
-                return .none
+        case .offlineManageButtonTapped:
+            state.offlineManage = OfflineManageFeature.State()
+            return .none
 
-            case .brandingResponse(.failure):
-                return .none
+        case .offlineManage(.presented(.delegate(.changed))):
+            return .send(.refreshOfflineSize)
 
-            case let .serverFeaturesResponse(features):
-                state.isVolumeUsageEnabled = features.isVolumeUsageEnabled
-                guard features.isVolumeUsageEnabled else { return .none }
-                let serverURL = state.serverURL
-                let filesClient = filesClient
-                return .run { send in
-                    guard let volumes = try? await filesClient.volumes(serverURL) else { return }
-                    await send(.volumesResponse(volumes))
-                }
-                .cancellable(id: CancelID.serverUsage, cancelInFlight: true)
+        case .offlineManage:
+            return .none
 
-            case let .volumesResponse(volumes):
-                state.serverUsage = IdentifiedArray(
-                    volumes.map { VolumeUsage(volume: $0, usage: nil) },
-                    id: \.id, uniquingIDsWith: { first, _ in first }
-                )
-                let serverURL = state.serverURL
-                let filesClient = filesClient
-                return .merge(volumes.map { volume in
-                    .run { send in
-                        try await send(.serverUsageResponse(
-                            path: volume.path,
-                            apiResult { try await filesClient.fetchUsage(serverURL, volume.path) }
-                        ))
-                    }
-                })
-                .cancellable(id: CancelID.volumeUsage, cancelInFlight: false)
+        case .cancelOfflineDownloadTapped:
+            return .send(.delegate(.cancelOfflineDownload))
 
-            case let .serverUsageResponse(path, .success(usage)):
-                state.serverUsage[id: path]?.usage = usage
-                return .none
+        case .resyncOfflineTapped:
+            return .send(.delegate(.resyncOffline))
 
-            case .serverUsageResponse(_, .failure):
-                return .none
+        case .removeOfflineTapped:
+            state.removeOfflineConfirmationIsPresented = true
+            return .none
 
-            case .onAppear:
-                let localDownloadStore = localDownloadStore
-                let previewCacheStore = previewCacheStore
-                let downloadScope = state.downloadScope
-                let checkDownloads = Effect<Action>.run { send in
-                    let downloads = (try? localDownloadStore.list(downloadScope)) ?? []
-                    await send(.hasDownloadsResponse(!downloads.isEmpty))
-                    await send(.downloadsSizeResponse(downloads.reduce(0) { $0 + $1.size }))
-                }
-                let directoryCacheStore = directoryCacheStore
-                let jsonCacheStore = jsonCacheStore
-                let checkCacheSize = Effect<Action>.run { send in
-                    let size = (try? previewCacheStore.size()) ?? 0
-                    await send(.cacheSizeResponse(size + directoryCacheStore.totalSizeBytes() + jsonCacheStore.totalSizeBytes()))
-                }
-                guard !state.isLoadingPreferences else {
-                    return .merge(checkDownloads, checkCacheSize)
-                }
-                state.isLoadingPreferences = true
-                let serverURL = state.serverURL
-                let filesClient = filesClient
-                return .merge(
-                    checkDownloads,
-                    checkCacheSize,
-                    .run { send in
-                        try await send(.brandingResponse(apiResult { try await filesClient.fetchBranding(serverURL) }))
-                    },
-                    .run { send in
-                        guard let features = try? await filesClient.serverFeatures(serverURL) else { return }
-                        await send(.serverFeaturesResponse(features))
-                    },
-                    .run { send in
-                        try await send(.preferencesResponse(apiResult {
-                            try await filesClient.fetchPreferences(serverURL)
-                        }))
-                    }
-                )
+        case .removeOfflineCancelled:
+            state.removeOfflineConfirmationIsPresented = false
+            return .none
 
-            case let .preferencesResponse(.success(preferences)):
-                state.isLoadingPreferences = false
-                state.$preferences.withLock { $0 = preferences }
-                return .none
+        case .removeOfflineConfirmed:
+            state.removeOfflineConfirmationIsPresented = false
+            state.offlineSize = 0
+            return .send(.delegate(.removeOfflineFiles))
 
-            case .preferencesResponse(.failure):
-                state.isLoadingPreferences = false
-                return .none
-
-            case let .setShowHiddenFiles(value):
-                state.$preferences.withLock { $0.showHiddenFiles = value }
-                return updatePreference(.showHiddenFiles, value, state: &state)
-
-            case let .setShowThumbnails(value):
-                state.$preferences.withLock { $0.showThumbnails = value }
-                return updatePreference(.showThumbnails, value, state: &state)
-
-            case .updatePreferenceResponse:
-                return .none
-
-            case .signOutButtonTapped:
-                state.isConfirmingSignOut = true
-                return .none
-
-            case .cancelSignOutTapped:
-                state.isConfirmingSignOut = false
-                return .none
-
-            case .confirmSignOutTapped:
-                // Keep the confirmation sheet up: the parent flips `isSigningOut`, which drives
-                // the sheet's confirm spinner, and the whole authenticated scope (this sheet
-                // with it) is torn down once sign out finishes.
-                return .send(.delegate(.signOutButtonTapped))
-
-            case let .switchAccountTapped(id):
-                // Tapping the already-active account is a no-op.
-                guard state.accounts.first(where: { $0.id == id })?.isActive != true else { return .none }
-                return .send(.delegate(.switchAccount(id)))
-
-            case .addAccountTapped:
-                return .send(.delegate(.addAccountRequested))
-
-            case let .removeAccountTapped(account):
-                state.accountPendingRemoval = account
-                return .none
-
-            case .removeAccountCancelled:
-                state.accountPendingRemoval = nil
-                return .none
-
-            case .removeAccountConfirmed:
-                guard let id = state.accountPendingRemoval?.id else { return .none }
-                state.accountPendingRemoval = nil
-                return .send(.delegate(.removeAccount(id)))
-
-            case .removeAllDownloadsTapped:
-                state.removeAllDownloadsConfirmationIsPresented = true
-                return .none
-
-            case .removeAllDownloadsCancelled:
-                state.removeAllDownloadsConfirmationIsPresented = false
-                return .none
-
-            case .removeAllDownloadsConfirmed:
-                state.removeAllDownloadsConfirmationIsPresented = false
-                state.isRemovingAllDownloads = true
-                let localDownloadStore = localDownloadStore
-                let downloadScope = state.downloadScope
-                return .run { send in
-                    // Best-effort, matching the sign-out flow's philosophy: one file
-                    // refusing to delete shouldn't block clearing the rest.
-                    let downloads = (try? localDownloadStore.list(downloadScope)) ?? []
-                    for download in downloads {
-                        try? localDownloadStore.delete(download.url)
-                    }
-                    await send(.removeAllDownloadsResponse)
-                }
-
-            case .removeAllDownloadsResponse:
-                state.isRemovingAllDownloads = false
-                state.hasDownloads = false
-                state.downloadsSize = 0
-                return .send(.delegate(.allDownloadsRemoved))
-
-            case let .hasDownloadsResponse(hasDownloads):
-                state.hasDownloads = hasDownloads
-                return .none
-
-            case let .downloadsSizeResponse(size):
-                state.downloadsSize = size
-                return .none
-
-            case let .cacheSizeResponse(size):
-                state.cacheSize = size
-                return .none
-
-            case .clearCacheTapped:
-                state.clearCacheConfirmationIsPresented = true
-                return .none
-
-            case .clearCacheCancelled:
-                state.clearCacheConfirmationIsPresented = false
-                return .none
-
-            case .clearCacheConfirmed:
-                state.clearCacheConfirmationIsPresented = false
-                state.isClearingCache = true
-                let previewCacheStore = previewCacheStore
-                let directoryCacheStore = directoryCacheStore
-                let jsonCacheStore = jsonCacheStore
-                let thumbnailCache = thumbnailCache
-                return .run { send in
-                    try? previewCacheStore.clear()
-                    directoryCacheStore.clearAll()
-                    jsonCacheStore.clearAll()
-                    thumbnailCache.clearMemory()
-                    await send(.clearCacheResponse)
-                }
-
-            case .clearCacheResponse:
-                state.isClearingCache = false
-                state.cacheSize = 0
-                return .none
-
-            case .delegate:
-                return .none
+        case .refreshOfflineSize:
+            let offlineFileStore = offlineFileStore
+            return .run { send in
+                await send(.offlineSizeResponse(offlineFileStore.totalSizeBytes()))
             }
+            .cancellable(id: CancelID.offlineSize, cancelInFlight: true)
+
+        case let .offlineSizeResponse(size):
+            state.offlineSize = size
+            return .none
+
+        case .tipJarButtonTapped:
+            state.tipJar = TipJarFeature.State()
+            return .none
+
+        case .tipJar(.presented(.delegate(.tipped))):
+            state.tipJar = nil
+            state.tipToast = L10n.TipJar.toastThanks
+            return .none
+
+        case .tipJar:
+            return .none
+
+        case .tipToastShown:
+            state.tipToast = nil
+            return .none
+
+        case let .brandingResponse(.success(branding)):
+            state.$branding.withLock { $0 = branding }
+            return .none
+
+        case .brandingResponse(.failure):
+            return .none
+
+        case let .serverFeaturesResponse(features):
+            state.isVolumeUsageEnabled = features.isVolumeUsageEnabled
+            guard features.isVolumeUsageEnabled else { return .none }
+            let serverURL = state.serverURL
+            let filesClient = filesClient
+            return .run { send in
+                guard let volumes = try? await filesClient.volumes(serverURL) else { return }
+                await send(.volumesResponse(volumes))
+            }
+            .cancellable(id: CancelID.serverUsage, cancelInFlight: true)
+
+        case let .volumesResponse(volumes):
+            state.serverUsage = IdentifiedArray(
+                volumes.map { VolumeUsage(volume: $0, usage: nil) },
+                id: \.id, uniquingIDsWith: { first, _ in first }
+            )
+            let serverURL = state.serverURL
+            let filesClient = filesClient
+            return .merge(volumes.map { volume in
+                .run { send in
+                    try await send(.serverUsageResponse(
+                        path: volume.path,
+                        apiResult { try await filesClient.fetchUsage(serverURL, volume.path) }
+                    ))
+                }
+            })
+            .cancellable(id: CancelID.volumeUsage, cancelInFlight: false)
+
+        case let .serverUsageResponse(path, .success(usage)):
+            state.serverUsage[id: path]?.usage = usage
+            return .none
+
+        case .serverUsageResponse(_, .failure):
+            return .none
+
+        case .onAppear:
+            let localDownloadStore = localDownloadStore
+            let previewCacheStore = previewCacheStore
+            let downloadScope = state.downloadScope
+            let checkDownloads = Effect<Action>.run { send in
+                let downloads = (try? localDownloadStore.list(downloadScope)) ?? []
+                await send(.hasDownloadsResponse(!downloads.isEmpty))
+                await send(.downloadsSizeResponse(downloads.reduce(0) { $0 + $1.size }))
+            }
+            let directoryCacheStore = directoryCacheStore
+            let jsonCacheStore = jsonCacheStore
+            let checkCacheSize = Effect<Action>.run { send in
+                let size = (try? previewCacheStore.size()) ?? 0
+                await send(.cacheSizeResponse(size + directoryCacheStore.totalSizeBytes() + jsonCacheStore.totalSizeBytes()))
+            }
+            let offlineFileStore = offlineFileStore
+            let checkOfflineSize = Effect<Action>.run { send in
+                await send(.offlineSizeResponse(offlineFileStore.totalSizeBytes()))
+            }
+            guard !state.isLoadingPreferences else {
+                return .merge(checkDownloads, checkCacheSize, checkOfflineSize)
+            }
+            state.isLoadingPreferences = true
+            let serverURL = state.serverURL
+            let filesClient = filesClient
+            return .merge(
+                checkDownloads,
+                checkCacheSize,
+                checkOfflineSize,
+                .run { send in
+                    try await send(.brandingResponse(apiResult { try await filesClient.fetchBranding(serverURL) }))
+                },
+                .run { send in
+                    guard let features = try? await filesClient.serverFeatures(serverURL) else { return }
+                    await send(.serverFeaturesResponse(features))
+                },
+                .run { send in
+                    try await send(.preferencesResponse(apiResult {
+                        try await filesClient.fetchPreferences(serverURL)
+                    }))
+                }
+            )
+
+        case let .preferencesResponse(.success(preferences)):
+            state.isLoadingPreferences = false
+            state.$preferences.withLock { $0 = preferences }
+            return .none
+
+        case .preferencesResponse(.failure):
+            state.isLoadingPreferences = false
+            return .none
+
+        case let .setShowHiddenFiles(value):
+            state.$preferences.withLock { $0.showHiddenFiles = value }
+            return updatePreference(.showHiddenFiles, value, state: &state)
+
+        case let .setShowThumbnails(value):
+            state.$preferences.withLock { $0.showThumbnails = value }
+            return updatePreference(.showThumbnails, value, state: &state)
+
+        case .updatePreferenceResponse:
+            return .none
+
+        case .signOutButtonTapped:
+            state.isConfirmingSignOut = true
+            return .none
+
+        case .cancelSignOutTapped:
+            state.isConfirmingSignOut = false
+            return .none
+
+        case .confirmSignOutTapped:
+            // Keep the confirmation sheet up: the parent flips `isSigningOut`, which drives
+            // the sheet's confirm spinner, and the whole authenticated scope (this sheet
+            // with it) is torn down once sign out finishes.
+            return .send(.delegate(.signOutButtonTapped))
+
+        case let .switchAccountTapped(id):
+            // Tapping the already-active account is a no-op.
+            guard state.accounts.first(where: { $0.id == id })?.isActive != true else { return .none }
+            return .send(.delegate(.switchAccount(id)))
+
+        case .addAccountTapped:
+            return .send(.delegate(.addAccountRequested))
+
+        case let .removeAccountTapped(account):
+            state.accountPendingRemoval = account
+            return .none
+
+        case .removeAccountCancelled:
+            state.accountPendingRemoval = nil
+            return .none
+
+        case .removeAccountConfirmed:
+            guard let id = state.accountPendingRemoval?.id else { return .none }
+            state.accountPendingRemoval = nil
+            return .send(.delegate(.removeAccount(id)))
+
+        case .removeAllDownloadsTapped:
+            state.removeAllDownloadsConfirmationIsPresented = true
+            return .none
+
+        case .removeAllDownloadsCancelled:
+            state.removeAllDownloadsConfirmationIsPresented = false
+            return .none
+
+        case .removeAllDownloadsConfirmed:
+            state.removeAllDownloadsConfirmationIsPresented = false
+            state.isRemovingAllDownloads = true
+            let localDownloadStore = localDownloadStore
+            let downloadScope = state.downloadScope
+            return .run { send in
+                // Best-effort, matching the sign-out flow's philosophy: one file
+                // refusing to delete shouldn't block clearing the rest.
+                let downloads = (try? localDownloadStore.list(downloadScope)) ?? []
+                for download in downloads {
+                    try? localDownloadStore.delete(download.url)
+                }
+                await send(.removeAllDownloadsResponse)
+            }
+
+        case .removeAllDownloadsResponse:
+            state.isRemovingAllDownloads = false
+            state.hasDownloads = false
+            state.downloadsSize = 0
+            return .send(.delegate(.allDownloadsRemoved))
+
+        case let .hasDownloadsResponse(hasDownloads):
+            state.hasDownloads = hasDownloads
+            return .none
+
+        case let .downloadsSizeResponse(size):
+            state.downloadsSize = size
+            return .none
+
+        case let .cacheSizeResponse(size):
+            state.cacheSize = size
+            return .none
+
+        case .clearCacheTapped:
+            state.clearCacheConfirmationIsPresented = true
+            return .none
+
+        case .clearCacheCancelled:
+            state.clearCacheConfirmationIsPresented = false
+            return .none
+
+        case .clearCacheConfirmed:
+            state.clearCacheConfirmationIsPresented = false
+            state.isClearingCache = true
+            let previewCacheStore = previewCacheStore
+            let directoryCacheStore = directoryCacheStore
+            let jsonCacheStore = jsonCacheStore
+            let thumbnailCache = thumbnailCache
+            return .run { send in
+                try? previewCacheStore.clear()
+                directoryCacheStore.clearAll()
+                jsonCacheStore.clearAll()
+                thumbnailCache.clearMemory()
+                await send(.clearCacheResponse)
+            }
+
+        case .clearCacheResponse:
+            state.isClearingCache = false
+            state.cacheSize = 0
+            return .none
+
+        case .delegate:
+            return .none
         }
-        .ifLet(\.$userManagement, action: \.userManagement) {
-            UserManagementFeature()
-        }
-        .ifLet(\.$changePassword, action: \.changePassword) {
-            ChangePasswordFeature()
-        }
-        .ifLet(\.$serverDetails, action: \.serverDetails) {
-            ServerDetailsFeature()
-        }
-        .ifLet(\.$thumbnailSettings, action: \.thumbnailSettings) {
-            ThumbnailSettingsFeature()
-        }
-        .ifLet(\.$accessRules, action: \.accessRules) {
-            AccessRulesFeature()
-        }
-        .ifLet(\.$tipJar, action: \.tipJar) {
-            TipJarFeature()
-        }
+    }
+
+    public var body: some ReducerOf<Self> {
+        Reduce(core(into:action:))
+            .ifLet(\.$userManagement, action: \.userManagement) {
+                UserManagementFeature()
+            }
+            .ifLet(\.$changePassword, action: \.changePassword) {
+                ChangePasswordFeature()
+            }
+            .ifLet(\.$serverDetails, action: \.serverDetails) {
+                ServerDetailsFeature()
+            }
+            .ifLet(\.$thumbnailSettings, action: \.thumbnailSettings) {
+                ThumbnailSettingsFeature()
+            }
+            .ifLet(\.$accessRules, action: \.accessRules) {
+                AccessRulesFeature()
+            }
+            .ifLet(\.$offlineSelection, action: \.offlineSelection) {
+                OfflineSelectionFeature()
+            }
+            .ifLet(\.$offlineManage, action: \.offlineManage) {
+                OfflineManageFeature()
+            }
+            .ifLet(\.$tipJar, action: \.tipJar) {
+                TipJarFeature()
+            }
     }
 
     /// Fire-and-forget: the toggle already updated optimistically, so a failed PATCH just

@@ -95,6 +95,11 @@ public struct FilesClient: Sendable {
     public var saveTextContent: @Sendable (_ serverURL: URL, _ path: String, _ content: String) async throws -> Void
     public var extractZip: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
     public var downloadRawFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
+    /// Streams `item`'s verbatim bytes into the durable offline store (`OfflineFileStore`) over the
+    /// low priority session, so it later opens with no network. Returns the local file; a file
+    /// already pinned returns immediately. Used by the offline download engine to walk a pinned
+    /// folder file by file.
+    public var offlineDownloadFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     /// `POST /api/upload` (`backend/src/routes/upload.js`): one `multipart/form-data` request
     /// per file — `uploadTo` = destination directory, `relativePath` = `fileName`, `filedata` =
     /// the file at `fileURL`. `destination` must not be empty (the server rejects the root).

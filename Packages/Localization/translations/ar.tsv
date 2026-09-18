@@ -573,3 +573,31 @@ settings.accountSignOutTitle	تسجيل الخروج؟
 settings.accountSignOutMessage	تسجيل خروج %@ من هذا الجهاز؟ ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام هذا الحساب.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, الحساب النشط
+
+# ---- offline ----
+common.deselect	إلغاء التحديد
+offline.sectionTitle	دون اتصال
+offline.settingsRow	تنزيل الملفات للاستخدام دون اتصال
+offline.footnote	تُفتح الملفات التي جرى تنزيلها حتى بدون اتصال.
+offline.available	%@ متاحة دون اتصال
+offline.removeRow	إزالة الملفات دون اتصال
+offline.removeConfirmTitle	إزالة الملفات دون اتصال؟
+offline.removeConfirmMessage	يؤدي هذا إلى حذف الملفات المحفوظة للاستخدام دون اتصال على هذا الجهاز. لن تتأثر ملفاتك على الخادم.
+offline.removeConfirm	إزالة
+offline.preparing	جارٍ التحضير…
+offline.downloadingName	جارٍ تنزيل %@
+offline.progressCount	%lld من %lld ملف
+offline.downloadFailed	تعذّر إكمال التنزيل دون اتصال.
+offline.selectionTitle	تنزيل للاستخدام دون اتصال
+offline.selectionEmpty	هذا المجلد فارغ.
+offline.selectionLoadFailed	تعذّر تحميل هذا المجلد.
+offline.selectionEstimate	التنزيل المقدّر
+offline.selectionDownload	تنزيل
+offline.selectionInsufficientSpace	لا توجد مساحة خالية كافية على هذا الجهاز
+offline.resyncRow	تحديث الملفات دون اتصال
+offline.badgeAvailable	متاح دون اتصال
+offline.manageRow	إدارة الملفات دون اتصال
+offline.manageTitle	الملفات دون اتصال
+offline.manageEmpty	لا يوجد شيء تم تنزيله للاستخدام دون اتصال.
+offline.preferOfflineToggle	تشغيل النسخ التي جرى تنزيلها
+offline.preferOfflineSubtitle	استخدم مقطع فيديو تم تنزيله بدلاً من البث عندما يكون متاحًا.

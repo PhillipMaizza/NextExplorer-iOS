@@ -34,6 +34,33 @@ extension FilesService {
     /// files. The server itself enforces a size cap (1MB default) and sniffs for binary
     /// content, surfacing either as a plain validation error this maps to `.server(statusCode:)`.
     func fetchTextContent(serverURL: URL, path: String) async throws -> String {
+        do {
+            return try await fetchTextContentFromServer(serverURL: serverURL, path: path)
+        } catch let error as FilesClientError where error == .offline {
+            // Offline: read the pinned copy if this file was downloaded for offline use, otherwise
+            // surface the offline error so the editor shows its offline state.
+            if let offlineURL = OfflineCache.localURL(forPath: path),
+               let bytes = try? Data(contentsOf: offlineURL),
+               let text = Self.decodeText(bytes)
+            {
+                return text
+            }
+            throw error
+        }
+    }
+
+    /// Decodes a pinned text file's bytes, trying UTF-8 first, then a couple of common fallbacks so a
+    /// non UTF-8 file (Latin-1, UTF-16) still opens offline rather than failing.
+    private static func decodeText(_ data: Data) -> String? {
+        for encoding: String.Encoding in [.utf8, .isoLatin1, .utf16, .windowsCP1252] {
+            if let text = String(data: data, encoding: encoding) {
+                return text
+            }
+        }
+        return nil
+    }
+
+    private func fetchTextContentFromServer(serverURL: URL, path: String) async throws -> String {
         let url = serverURL.appendingPathComponent(APIPath.editor)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()

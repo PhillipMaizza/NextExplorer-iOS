@@ -44,6 +44,8 @@ private enum Constants {
 /// directly here rather than threaded through `BrowseFeature.State`.
 struct BrowseContentView: View {
     @Bindable var store: StoreOf<BrowseFeature>
+    /// Observed only to refresh the offline badges when a download completes.
+    @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
@@ -198,6 +200,13 @@ struct BrowseContentView: View {
             }
             .task {
                 store.send(.onAppear)
+                store.send(.computeOfflineAvailability)
+            }
+            // A finished offline download can change what's available here, so refresh the badges.
+            .onChange(of: offlineProgress.phase) { _, phase in
+                if phase == .completed {
+                    store.send(.computeOfflineAvailability)
+                }
             }
     }
 
@@ -582,7 +591,8 @@ struct BrowseContentView: View {
             showThumbnails: store.preferences.showThumbnails,
             iconSize: thumbnailSize.iconSize,
             matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition),
-            isOpening: isOpening(item)
+            isOpening: isOpening(item),
+            isAvailableOffline: store.offlineItemIDs.contains(item.id)
         )
     }
 
@@ -593,7 +603,8 @@ struct BrowseContentView: View {
             serverURL: store.serverURL,
             showThumbnails: store.preferences.showThumbnails,
             matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition),
-            isOpening: isOpening(item)
+            isOpening: isOpening(item),
+            isAvailableOffline: store.offlineItemIDs.contains(item.id)
         )
     }
 

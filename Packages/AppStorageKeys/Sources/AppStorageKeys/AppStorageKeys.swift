@@ -28,6 +28,9 @@ public enum AppStorageKeys {
     public static let showTabLabels = "showTabLabels"
     public static let removeArchiveAfterDownload = "removeArchiveAfterDownload"
     public static let keepClipboardAfterCopy = "keepClipboardAfterCopy"
+    /// When on, a fully downloaded offline copy of a video/audio plays locally even while online,
+    /// instead of streaming. Off means stream when online, use the local copy only when offline.
+    public static let preferOfflineMedia = "preferOfflineMedia"
 
     /// Chosen UI language code (e.g. "fr", "zh-CN"). Empty string means follow the system
     /// language. Read by `LocalizationOverride` at launch and by the app root to rebind the locale.

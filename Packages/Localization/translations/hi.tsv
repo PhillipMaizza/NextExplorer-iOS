@@ -573,3 +573,31 @@ settings.accountSignOutTitle	साइन आउट करें?
 settings.accountSignOutMessage	इस डिवाइस पर %@ को साइन आउट करें? इस खाते का उपयोग करने के लिए आपको फिर से साइन इन करना होगा.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, सक्रिय खाता
+
+# ---- offline ----
+common.deselect	चयन हटाएँ
+offline.sectionTitle	ऑफ़लाइन
+offline.settingsRow	ऑफ़लाइन उपयोग के लिए फ़ाइलें डाउनलोड करें
+offline.footnote	डाउनलोड की गई फ़ाइलें बिना कनेक्शन के भी खुलती हैं।
+offline.available	%@ ऑफ़लाइन उपलब्ध
+offline.removeRow	ऑफ़लाइन फ़ाइलें हटाएँ
+offline.removeConfirmTitle	ऑफ़लाइन फ़ाइलें हटाएँ?
+offline.removeConfirmMessage	इससे इस डिवाइस पर ऑफ़लाइन उपयोग के लिए सहेजी गई फ़ाइलें हट जाती हैं। सर्वर पर आपकी फ़ाइलें प्रभावित नहीं होतीं।
+offline.removeConfirm	हटाएँ
+offline.preparing	तैयार हो रहा है…
+offline.downloadingName	%@ डाउनलोड हो रहा है
+offline.progressCount	%lld में से %lld फ़ाइलें
+offline.downloadFailed	ऑफ़लाइन डाउनलोड पूरा नहीं हो सका।
+offline.selectionTitle	ऑफ़लाइन के लिए डाउनलोड करें
+offline.selectionEmpty	यह फ़ोल्डर खाली है।
+offline.selectionLoadFailed	यह फ़ोल्डर लोड नहीं हो सका।
+offline.selectionEstimate	अनुमानित डाउनलोड
+offline.selectionDownload	डाउनलोड करें
+offline.selectionInsufficientSpace	इस डिवाइस पर पर्याप्त खाली स्थान नहीं है
+offline.resyncRow	ऑफ़लाइन फ़ाइलें अपडेट करें
+offline.badgeAvailable	ऑफ़लाइन उपलब्ध
+offline.manageRow	ऑफ़लाइन फ़ाइलें प्रबंधित करें
+offline.manageTitle	ऑफ़लाइन फ़ाइलें
+offline.manageEmpty	ऑफ़लाइन उपयोग के लिए कुछ भी डाउनलोड नहीं किया गया है।
+offline.preferOfflineToggle	डाउनलोड की गई कॉपी चलाएँ
+offline.preferOfflineSubtitle	उपलब्ध होने पर स्ट्रीम करने के बजाय डाउनलोड किया गया वीडियो उपयोग करें।

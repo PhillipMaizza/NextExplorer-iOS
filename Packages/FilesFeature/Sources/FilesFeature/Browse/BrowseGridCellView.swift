@@ -43,6 +43,7 @@ struct GridCellView: View {
     /// True while this file's content is downloading after a tap — a small spinner sits in the
     /// cell's bottom-trailing corner (not over the icon) and the preview holds off until ready.
     var isOpening: Bool = false
+    var isAvailableOffline: Bool = false
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
 
     /// `thumbnailFile` opts a caller with only a name/kind (a search hit) into the same thumbnail
@@ -81,7 +82,8 @@ struct GridCellView: View {
         self.isOpening = isOpening
     }
 
-    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, iconSize: CGFloat = Constants.defaultIconSize, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false) {
+    init(item: FileItem, isFavorite: Bool = false, serverURL: URL? = nil, showThumbnails: Bool = false, iconSize: CGFloat = Constants.defaultIconSize, matchedSource: PreviewMatchedSource? = nil, isOpening: Bool = false, isAvailableOffline: Bool = false) {
+        self.isAvailableOffline = isAvailableOffline
         name = item.name
         isDirectory = item.isDirectory
         self.isFavorite = isFavorite
@@ -138,6 +140,24 @@ struct GridCellView: View {
                             .symbolEffect(.bounce, value: isFavorite)
                             .transition(.scale.combined(with: .opacity))
                             .accessibilityLabel(L10n.Favorites.accessibilityBadge)
+                    }
+                }
+                .overlay(alignment: .bottomLeading) {
+                    if isAvailableOffline {
+                        IconKit.download
+                            .resizable()
+                            .scaledToFit()
+                            .symbolVariant(.fill)
+                            .foregroundStyle(Color.accent)
+                            .frame(width: Constants.favoriteBadgeSize, height: Constants.favoriteBadgeSize)
+                            .padding(Constants.favoriteBadgePadding)
+                            .background(
+                                Circle()
+                                    .fill(Color.backgroundPrimary)
+                                    .frame(width: Constants.favoriteBadgeBackgroundSize, height: Constants.favoriteBadgeBackgroundSize)
+                                    .shadow(radius: Constants.favoriteBadgeShadowRadius)
+                            )
+                            .accessibilityLabel(L10n.Offline.badgeAvailable)
                     }
                 }
                 .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)

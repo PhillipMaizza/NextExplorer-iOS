@@ -184,6 +184,10 @@ public struct BrowseFeature {
         public var title: String
         public var items: IdentifiedArrayOf<FileItem> = []
         public var favoritePaths: Set<String> = []
+        /// Ids of the items in this listing that are available offline (a pinned file, or a folder
+        /// covered by a pinned root), so rows/cells can show an offline badge. Recomputed off the
+        /// main actor when the listing loads, on appear, and when a download finishes.
+        public var offlineItemIDs: Set<String> = []
         public var access: FileAccess?
         /// The folder listing load lifecycle. `phase.hasLoaded` flips true the first time a
         /// browse response lands (success or failure), so the view shows the loading skeleton
@@ -348,6 +352,10 @@ public struct BrowseFeature {
     public enum Action: Equatable, Sendable {
         case onAppear
         case refreshButtonTapped
+        /// Recompute which visible items are available offline (from the offline store), off the
+        /// main actor. Sent on appear and when a download finishes.
+        case computeOfflineAvailability
+        case offlineAvailabilityComputed(Set<String>)
         case itemsResponse(Result<BrowseResult, FilesClientError>)
         case favoritesResponse([Favorite])
         case rowTapped(FileItem)
@@ -456,9 +464,10 @@ public struct BrowseFeature {
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.openURL) var openURL
+    @Dependency(\.offlineFileStore) var offlineFileStore
     private enum CancelID: Hashable {
         case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
-        case prefetchChildren, prefetchFavorites
+        case prefetchChildren, prefetchFavorites, offlineAvailability
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
         case favorite(String)
@@ -479,6 +488,13 @@ public struct BrowseFeature {
             case .refreshButtonTapped:
                 return load(&state)
 
+            case .computeOfflineAvailability:
+                return computeOfflineAvailability(&state)
+
+            case let .offlineAvailabilityComputed(ids):
+                state.offlineItemIDs = ids
+                return .none
+
             case let .itemsResponse(.success(result)):
                 state.phase = .loaded
                 state.dataSource = .live
@@ -486,6 +502,7 @@ public struct BrowseFeature {
                 state.access = result.access
                 return .merge(
                     search(&state),
+                    computeOfflineAvailability(&state),
                     prefetch(
                         serverURL: state.serverURL,
                         paths: result.items.filter(\.isDirectory).map(\.id),
@@ -505,11 +522,11 @@ public struct BrowseFeature {
                         state.items = IdentifiedArray(Self.sortedAlphabetically(cached.items), id: \.id, uniquingIDsWith: { first, _ in first })
                         state.access = cached.access
                         state.dataSource = .cached(fetchedAt: cached.fetchedAt)
-                        return search(&state)
+                        return .merge(search(&state), computeOfflineAvailability(&state))
                     } else if !state.items.isEmpty {
                         state.phase = .loaded
                         state.dataSource = .cached(fetchedAt: date.now)
-                        return search(&state)
+                        return .merge(search(&state), computeOfflineAvailability(&state))
                     }
                 }
                 state.phase = .failed(error.userMessage)
@@ -1613,6 +1630,35 @@ public struct BrowseFeature {
             )
         }
         .cancellable(id: cancelID, cancelInFlight: true)
+    }
+
+    /// Recomputes which of the current items are available offline, off the main actor (a per item
+    /// disk `stat`, too much for a large listing on the main thread), then commits the ids.
+    private func computeOfflineAvailability(_ state: inout State) -> Effect<Action> {
+        let items = state.items.elements
+        guard !items.isEmpty else {
+            state.offlineItemIDs = []
+            return .none
+        }
+        let offlineFileStore = offlineFileStore
+        return .run { send in
+            let ids = await Task.detached(priority: .utility) { () -> Set<String> in
+                let pinnedPaths = offlineFileStore.pinnedRoots().map(\.path)
+                var result = Set<String>()
+                for item in items {
+                    if item.isDirectory {
+                        if pinnedPaths.contains(where: { $0 == item.id || item.id.hasPrefix($0 + "/") }) {
+                            result.insert(item.id)
+                        }
+                    } else if offlineFileStore.localURL(item) != nil {
+                        result.insert(item.id)
+                    }
+                }
+                return result
+            }.value
+            await send(.offlineAvailabilityComputed(ids))
+        }
+        .cancellable(id: CancelID.offlineAvailability, cancelInFlight: true)
     }
 
     private func load(_ state: inout State) -> Effect<Action> {

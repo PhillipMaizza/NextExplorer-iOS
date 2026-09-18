@@ -573,3 +573,31 @@ settings.accountSignOutTitle	Deconectare?
 settings.accountSignOutMessage	Deconectezi %@ de pe acest dispozitiv? Va trebui să te autentifici din nou pentru a folosi acest cont.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, cont activ
+
+# ---- offline ----
+common.deselect	Deselectează
+offline.sectionTitle	Offline
+offline.settingsRow	Descarcă fișiere pentru utilizare offline
+offline.footnote	Fișierele descărcate se deschid chiar și fără conexiune.
+offline.available	%@ disponibile offline
+offline.removeRow	Elimină fișierele offline
+offline.removeConfirmTitle	Elimini fișierele offline?
+offline.removeConfirmMessage	Aceasta șterge fișierele salvate pentru utilizare offline pe acest dispozitiv. Fișierele tale de pe server nu sunt afectate.
+offline.removeConfirm	Elimină
+offline.preparing	Se pregătește…
+offline.downloadingName	Se descarcă %@
+offline.progressCount	%lld din %lld fișiere
+offline.downloadFailed	Descărcarea offline nu a putut fi finalizată.
+offline.selectionTitle	Descarcă pentru offline
+offline.selectionEmpty	Acest folder este gol.
+offline.selectionLoadFailed	Acest folder nu a putut fi încărcat.
+offline.selectionEstimate	Descărcare estimată
+offline.selectionDownload	Descarcă
+offline.selectionInsufficientSpace	Spațiu liber insuficient pe acest dispozitiv
+offline.resyncRow	Actualizează fișierele offline
+offline.badgeAvailable	Disponibil offline
+offline.manageRow	Gestionează fișierele offline
+offline.manageTitle	Fișiere offline
+offline.manageEmpty	Nu este nimic descărcat pentru utilizare offline.
+offline.preferOfflineToggle	Redă copiile descărcate
+offline.preferOfflineSubtitle	Folosește un videoclip descărcat în loc de streaming când este disponibil.

@@ -74,6 +74,7 @@ public struct AppFeature {
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     @Dependency(\.previewCacheStore) var previewCacheStore
     @Dependency(\.thumbnailCache) var thumbnailCache
+    @Dependency(\.offlineFileStore) var offlineFileStore
 
     public init() {}
 
@@ -237,9 +238,13 @@ public struct AppFeature {
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
                 )
                 let previewCacheStore = previewCacheStore
+                let offlineFileStore = offlineFileStore
                 return .merge(
                     refreshAccounts,
-                    .run { _ in try? previewCacheStore.clear() }
+                    .run { _ in
+                        try? previewCacheStore.clear()
+                        offlineFileStore.removeAll()
+                    }
                 )
 
             case .destination(.authenticated(.delegate(.addAccountRequested))):
@@ -328,6 +333,7 @@ public struct AppFeature {
         let jsonCacheStore = jsonCacheStore
         let previewCacheStore = previewCacheStore
         let thumbnailCache = thumbnailCache
+        let offlineFileStore = offlineFileStore
         AppStorageKeys.resetSessionPreferences()
         return .merge(
             refreshAccounts,
@@ -337,6 +343,7 @@ public struct AppFeature {
                 jsonCacheStore.clearAll()
                 try? previewCacheStore.clear()
                 thumbnailCache.clearMemory()
+                offlineFileStore.removeAll()
             }
         )
     }

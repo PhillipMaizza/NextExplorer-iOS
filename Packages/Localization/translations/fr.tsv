@@ -573,3 +573,31 @@ settings.accountSignOutTitle	Se déconnecter ?
 settings.accountSignOutMessage	Déconnecter %@ de cet appareil ? Vous devrez vous reconnecter pour utiliser ce compte.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, compte actif
+
+# ---- offline ----
+common.deselect	Désélectionner
+offline.sectionTitle	Hors ligne
+offline.settingsRow	Télécharger des fichiers pour une utilisation hors ligne
+offline.footnote	Les fichiers téléchargés s'ouvrent même sans connexion.
+offline.available	%@ disponibles hors ligne
+offline.removeRow	Supprimer les fichiers hors ligne
+offline.removeConfirmTitle	Supprimer les fichiers hors ligne ?
+offline.removeConfirmMessage	Cela supprime les fichiers enregistrés pour une utilisation hors ligne sur cet appareil. Vos fichiers sur le serveur ne sont pas affectés.
+offline.removeConfirm	Supprimer
+offline.preparing	Préparation…
+offline.downloadingName	Téléchargement de %@
+offline.progressCount	%lld sur %lld fichiers
+offline.downloadFailed	Le téléchargement hors ligne n'a pas pu être effectué.
+offline.selectionTitle	Télécharger pour hors ligne
+offline.selectionEmpty	Ce dossier est vide.
+offline.selectionLoadFailed	Ce dossier n'a pas pu être chargé.
+offline.selectionEstimate	Téléchargement estimé
+offline.selectionDownload	Télécharger
+offline.selectionInsufficientSpace	Espace libre insuffisant sur cet appareil
+offline.resyncRow	Mettre à jour les fichiers hors ligne
+offline.badgeAvailable	Disponible hors ligne
+offline.manageRow	Gérer les fichiers hors ligne
+offline.manageTitle	Fichiers hors ligne
+offline.manageEmpty	Rien n'est téléchargé pour une utilisation hors ligne.
+offline.preferOfflineToggle	Lire les copies téléchargées
+offline.preferOfflineSubtitle	Utiliser une vidéo téléchargée au lieu de la diffuser lorsqu'elle est disponible.

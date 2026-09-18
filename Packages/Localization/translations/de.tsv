@@ -573,3 +573,31 @@ settings.accountSignOutTitle	Abmelden?
 settings.accountSignOutMessage	%@ auf diesem Gerät abmelden? Du musst dich erneut anmelden, um dieses Konto zu verwenden.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktives Konto
+
+# ---- offline ----
+common.deselect	Abwählen
+offline.sectionTitle	Offline
+offline.settingsRow	Dateien für die Offline-Nutzung herunterladen
+offline.footnote	Heruntergeladene Dateien lassen sich auch ohne Verbindung öffnen.
+offline.available	%@ offline verfügbar
+offline.removeRow	Offline-Dateien entfernen
+offline.removeConfirmTitle	Offline-Dateien entfernen?
+offline.removeConfirmMessage	Dadurch werden die für die Offline-Nutzung auf diesem Gerät gespeicherten Dateien gelöscht. Deine Dateien auf dem Server sind nicht betroffen.
+offline.removeConfirm	Entfernen
+offline.preparing	Wird vorbereitet…
+offline.downloadingName	%@ wird heruntergeladen
+offline.progressCount	%lld von %lld Dateien
+offline.downloadFailed	Der Offline-Download konnte nicht abgeschlossen werden.
+offline.selectionTitle	Für Offline herunterladen
+offline.selectionEmpty	Dieser Ordner ist leer.
+offline.selectionLoadFailed	Dieser Ordner konnte nicht geladen werden.
+offline.selectionEstimate	Geschätzter Download
+offline.selectionDownload	Herunterladen
+offline.selectionInsufficientSpace	Nicht genügend freier Speicher auf diesem Gerät
+offline.resyncRow	Offline-Dateien aktualisieren
+offline.badgeAvailable	Offline verfügbar
+offline.manageRow	Offline-Dateien verwalten
+offline.manageTitle	Offline-Dateien
+offline.manageEmpty	Nichts ist für die Offline-Nutzung heruntergeladen.
+offline.preferOfflineToggle	Heruntergeladene Kopien abspielen
+offline.preferOfflineSubtitle	Ein heruntergeladenes Video abspielen statt zu streamen, wenn es verfügbar ist.

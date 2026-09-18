@@ -14,6 +14,12 @@ import VLCKitSPM
 /// libvlc uses its own HTTP stack, not `URLSession`'s shared cookie storage, so the session cookie
 /// is passed explicitly as an `:http-cookie` option or the stream 401s. Archive entries pass a
 /// local file URL, which needs no cookie.
+private enum VLCPlaybackConstants {
+    /// libvlc network cache depth for remote streams. Deeper than the shallow default so large videos
+    /// buffer and seek smoothly.
+    static let networkCachingMilliseconds = 3000
+}
+
 struct VLCPlayerView: View {
     let item: FileItem
     let url: URL
@@ -270,7 +276,9 @@ final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDel
     func start(url: URL) {
         let media = VLCMedia(url: url)
         if !url.isFileURL {
-            media.addOption(":network-caching=1500")
+            // A deeper network cache smooths playback and seeking on large remote streams, where
+            // the default was too shallow and stuttered.
+            media.addOption(":network-caching=\(VLCPlaybackConstants.networkCachingMilliseconds)")
             media.addOption(":http-reconnect")
             // libvlc has no `:http-cookie` option; its http access reads only the per-media
             // cookie jar, which must be populated before play(). Feed each session cookie as a

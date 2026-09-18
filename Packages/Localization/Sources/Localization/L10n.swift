@@ -127,6 +127,7 @@ public enum L10n {
         public static var copied: String { tr("common.copied") }  // "Copied"
         public static var copy: String { tr("common.copy") }  // "Copy"
         public static var delete: String { tr("common.delete") }  // "Delete"
+        public static var deselect: String { tr("common.deselect") }  // "Deselect"
         public static var done: String { tr("common.done") }  // "Done"
         public static var download: String { tr("common.download") }  // "Download"
         public static var edit: String { tr("common.edit") }  // "Edit"
@@ -321,6 +322,33 @@ public enum L10n {
         public static var ssoButton: String { tr("login.ssoButton") }  // "Sign in with SSO"
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
+    }
+    public enum Offline {
+        public static func available(_ a0: CVarArg) -> String { tr("offline.available", a0) }
+        public static var badgeAvailable: String { tr("offline.badgeAvailable") }  // "Available offline"
+        public static var downloadFailed: String { tr("offline.downloadFailed") }  // "The offline download couldn't be completed."
+        public static func downloadingName(_ a0: CVarArg) -> String { tr("offline.downloadingName", a0) }
+        public static var footnote: String { tr("offline.footnote") }  // "Downloaded files open even without a connection."
+        public static var manageEmpty: String { tr("offline.manageEmpty") }  // "Nothing is downloaded for offline use."
+        public static var manageRow: String { tr("offline.manageRow") }  // "Manage Offline Files"
+        public static var manageTitle: String { tr("offline.manageTitle") }  // "Offline Files"
+        public static var preferOfflineSubtitle: String { tr("offline.preferOfflineSubtitle") }
+        public static var preferOfflineToggle: String { tr("offline.preferOfflineToggle") }  // "Play downloaded copies"
+        public static var preparing: String { tr("offline.preparing") }  // "Preparing…"
+        public static func progressCount(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("offline.progressCount", a0, a1) }
+        public static var removeConfirm: String { tr("offline.removeConfirm") }  // "Remove"
+        public static var removeConfirmMessage: String { tr("offline.removeConfirmMessage") }
+        public static var removeConfirmTitle: String { tr("offline.removeConfirmTitle") }  // "Remove Offline Files?"
+        public static var removeRow: String { tr("offline.removeRow") }  // "Remove Offline Files"
+        public static var resyncRow: String { tr("offline.resyncRow") }  // "Update Offline Files"
+        public static var sectionTitle: String { tr("offline.sectionTitle") }  // "Offline"
+        public static var selectionDownload: String { tr("offline.selectionDownload") }  // "Download"
+        public static var selectionEmpty: String { tr("offline.selectionEmpty") }  // "This folder is empty."
+        public static var selectionEstimate: String { tr("offline.selectionEstimate") }  // "Estimated download"
+        public static var selectionInsufficientSpace: String { tr("offline.selectionInsufficientSpace") }  // "Not enough free space on this device"
+        public static var selectionLoadFailed: String { tr("offline.selectionLoadFailed") }  // "This folder couldn't be loaded."
+        public static var selectionTitle: String { tr("offline.selectionTitle") }  // "Download for Offline"
+        public static var settingsRow: String { tr("offline.settingsRow") }  // "Download Files for Offline Use"
     }
     public enum Permissions {
         public static var applyOwnership: String { tr("permissions.applyOwnership") }  // "Apply Ownership"

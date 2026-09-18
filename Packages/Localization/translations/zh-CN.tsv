@@ -573,3 +573,31 @@ settings.accountSignOutTitle	退出登录？
 settings.accountSignOutMessage	在此设备上退出 %@ 吗？您需要重新登录才能使用此账户。
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 当前账户
+
+# ---- offline ----
+common.deselect	取消选择
+offline.sectionTitle	离线
+offline.settingsRow	下载文件以供离线使用
+offline.footnote	已下载的文件即使没有网络也能打开。
+offline.available	%@ 可离线使用
+offline.removeRow	移除离线文件
+offline.removeConfirmTitle	移除离线文件？
+offline.removeConfirmMessage	这将删除此设备上为离线使用保存的文件。服务器上的文件不受影响。
+offline.removeConfirm	移除
+offline.preparing	正在准备…
+offline.downloadingName	正在下载 %@
+offline.progressCount	%lld/%lld 个文件
+offline.downloadFailed	无法完成离线下载。
+offline.selectionTitle	下载以供离线使用
+offline.selectionEmpty	此文件夹为空。
+offline.selectionLoadFailed	无法加载此文件夹。
+offline.selectionEstimate	预计下载量
+offline.selectionDownload	下载
+offline.selectionInsufficientSpace	此设备的可用空间不足
+offline.resyncRow	更新离线文件
+offline.badgeAvailable	可离线使用
+offline.manageRow	管理离线文件
+offline.manageTitle	离线文件
+offline.manageEmpty	没有为离线使用下载任何内容。
+offline.preferOfflineToggle	播放已下载的副本
+offline.preferOfflineSubtitle	可用时使用已下载的视频而非流式播放。

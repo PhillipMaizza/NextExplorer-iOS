@@ -573,3 +573,31 @@ settings.accountSignOutTitle	Afmelden?
 settings.accountSignOutMessage	%@ afmelden op dit apparaat? Je moet opnieuw inloggen om dit account te gebruiken.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, actief account
+
+# ---- offline ----
+common.deselect	Selectie opheffen
+offline.sectionTitle	Offline
+offline.settingsRow	Bestanden downloaden voor offline gebruik
+offline.footnote	Gedownloade bestanden openen ook zonder verbinding.
+offline.available	%@ offline beschikbaar
+offline.removeRow	Offline bestanden verwijderen
+offline.removeConfirmTitle	Offline bestanden verwijderen?
+offline.removeConfirmMessage	Hiermee worden de voor offline gebruik opgeslagen bestanden op dit apparaat verwijderd. Je bestanden op de server worden niet gewijzigd.
+offline.removeConfirm	Verwijderen
+offline.preparing	Voorbereiden…
+offline.downloadingName	%@ wordt gedownload
+offline.progressCount	%lld van %lld bestanden
+offline.downloadFailed	De offline download kon niet worden voltooid.
+offline.selectionTitle	Downloaden voor offline
+offline.selectionEmpty	Deze map is leeg.
+offline.selectionLoadFailed	Deze map kon niet worden geladen.
+offline.selectionEstimate	Geschatte download
+offline.selectionDownload	Downloaden
+offline.selectionInsufficientSpace	Onvoldoende vrije ruimte op dit apparaat
+offline.resyncRow	Offline bestanden bijwerken
+offline.badgeAvailable	Offline beschikbaar
+offline.manageRow	Offline bestanden beheren
+offline.manageTitle	Offline bestanden
+offline.manageEmpty	Er is niets gedownload voor offline gebruik.
+offline.preferOfflineToggle	Gedownloade kopieën afspelen
+offline.preferOfflineSubtitle	Een gedownloade video gebruiken in plaats van streamen wanneer die beschikbaar is.
