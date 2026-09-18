@@ -21,8 +21,6 @@ struct SharedSegmentList: View {
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
-    /// Flipped once a pull-to-refresh finishes, purely as a `.hapticFeedback` trigger.
-    @State private var didFinishRefreshing = false
     /// Which shares are expanded. Kept here (not in the row) so the header and its detail can be
     /// two separate list rows: the header row's height never changes, so it can never be
     /// vertically centered by its cell and stays fixed while the detail row animates in/out.
@@ -43,19 +41,12 @@ struct SharedSegmentList: View {
     /// The card skeleton until this segment has been fetched once, then error / empty /
     /// no-results / list.
     private var listPhase: ListPhase {
-        if errorMessage != nil {
-            return .error
-        }
-        if !phase.hasLoaded, isEmpty {
-            return .loading
-        }
-        if isEmpty {
-            return .empty
-        }
-        if store.state.isSearchWithoutResults(for: segment) {
-            return .noResults
-        }
-        return .content
+        .derive(
+            hasError: errorMessage != nil,
+            hasLoaded: phase.hasLoaded,
+            isEmpty: isEmpty,
+            hasNoResults: store.state.isSearchWithoutResults(for: segment)
+        )
     }
 
     var body: some View {
@@ -76,12 +67,9 @@ struct SharedSegmentList: View {
         .scrollContentBackground(.hidden)
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
-        .refreshable {
+        .syncRefreshFeedback(errorMessage: errorMessage, signalsErrorHaptic: false) {
             await store.send(.refreshRequested).finish()
-            didFinishRefreshing.toggle()
         }
-        .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in errorMessage == nil }
-        .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: errorMessage == nil)
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: partition.all)
         .overlay {
             ListStateOverlay(

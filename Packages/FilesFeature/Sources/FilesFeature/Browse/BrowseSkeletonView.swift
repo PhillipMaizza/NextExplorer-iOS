@@ -3,10 +3,6 @@ import DesignSystem
 import SwiftUI
 
 private enum Constants {
-    static let gridSpacing: CGFloat = .space16
-    /// Inset between a grid tile's content and its `backgroundSecondary` card edge, matching
-    /// `BrowseContentView`.
-    static let gridCellPadding: CGFloat = .space12
     /// Name width + byte size per placeholder row, deliberately uneven so the redacted title
     /// and subtitle bars don't line up as two flat columns.
     static let placeholderShapes: [(nameLength: Int, size: Int64)] = [
@@ -65,15 +61,15 @@ struct BrowseSkeletonView: View {
     private var content: some View {
         if isGridView {
             ScrollView {
-                LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
+                LazyVGrid(columns: gridColumns, spacing: FileGridMetrics.spacing) {
                     ForEach(Self.placeholderItems) { item in
                         placeholderRow(
                             GridCellView(item: item, iconSize: iconSize)
-                                .dsCard(padding: Constants.gridCellPadding)
+                                .dsCard(padding: FileGridMetrics.cellPadding)
                         )
                     }
                 }
-                .padding(Constants.gridSpacing)
+                .padding(FileGridMetrics.spacing)
             }
             .scrollDisabled(true)
         } else {
