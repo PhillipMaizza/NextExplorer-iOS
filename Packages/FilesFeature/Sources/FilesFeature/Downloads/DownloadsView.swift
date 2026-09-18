@@ -5,15 +5,7 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-private enum DownloadsViewMode: String {
-    case list, grid
-}
-
 private enum Constants {
-    static let gridSpacing: CGFloat = .space16
-    /// Inset between a grid tile's content and its `backgroundSecondary` card edge, matching
-    /// `BrowseContentView`.
-    static let gridCellPadding: CGFloat = .space12
     /// Uneven redacted name / size / location widths so the skeleton doesn't line up as flat
     /// columns. Each row is `(name, "size • location")`.
     static let skeletonRows: [(name: String, subtitle: String)] = [
@@ -27,25 +19,18 @@ private enum Constants {
 
 struct DownloadsView: View {
     @Bindable var store: StoreOf<DownloadsFeature>
-    @AppStorage(AppStorageKeys.downloadsViewMode) private var viewModeRaw = DownloadsViewMode.list.rawValue
+    @AppStorage(AppStorageKeys.downloadsViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
     @State private var previewedDownload: LocalDownload?
     /// Native `.zoom` open + swipe-to-dismiss morph between a download cell and its preview.
     @Namespace private var previewTransition
     @State private var isSortSheetPresented = false
-    /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
-    /// value itself is meaningless, only the fact that it just changed matters.
-    @State private var didFinishRefreshing = false
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
     @Environment(\.openURL) private var openURL
 
-    private var viewMode: DownloadsViewMode {
-        DownloadsViewMode(rawValue: viewModeRaw) ?? .list
-    }
-
-    private var gridColumns: [GridItem] {
-        [GridItem(.adaptive(minimum: 100), spacing: Constants.gridSpacing)]
+    private var viewMode: FileListViewMode {
+        FileListViewMode(rawValue: viewModeRaw) ?? .list
     }
 
     private var isAllSelected: Bool {
@@ -69,33 +54,16 @@ struct DownloadsView: View {
         return components.url
     }
 
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
-
-    private func subtitle(for download: LocalDownload) -> String {
-        "\(Self.byteFormatter.string(fromByteCount: download.size)) • \(download.location.title)"
-    }
-
     /// The one screen state, derived from the store — skeleton until the first response lands
     /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
     /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
     private var listPhase: ListPhase {
-        if store.errorMessage != nil {
-            return .error
-        }
-        if !store.phase.hasLoaded, store.downloads.isEmpty {
-            return .loading
-        }
-        if store.downloads.isEmpty {
-            return .empty
-        }
-        if !store.searchQuery.isEmpty, store.displayedDownloads.isEmpty {
-            return .noResults
-        }
-        return .content
+        .derive(
+            hasError: store.errorMessage != nil,
+            hasLoaded: store.phase.hasLoaded,
+            isEmpty: store.downloads.isEmpty,
+            hasNoResults: !store.searchQuery.isEmpty && store.displayedDownloads.isEmpty
+        )
     }
 
     /// No op setters: each confirmation sheet is dismiss disabled and only closes through one
@@ -125,14 +93,6 @@ struct DownloadsView: View {
         })
     }
 
-    private func handleTap(_ download: LocalDownload) {
-        if store.isSelecting {
-            store.send(.itemSelectionToggled(download.id))
-        } else {
-            previewedDownload = download
-        }
-    }
-
     @ViewBuilder
     private var downloadRows: some View {
         // Bound once — `displayedDownloads` filters + sorts on every read, and the separator
@@ -141,60 +101,15 @@ struct DownloadsView: View {
         let firstID = downloads.first?.id
         let lastID = downloads.last?.id
         ForEach(downloads) { download in
-            Button {
-                handleTap(download)
-            } label: {
-                HStack(spacing: .space12) {
-                    if store.isSelecting {
-                        DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
-                    }
-                    FileRowView(
-                        name: download.fileName,
-                        isDirectory: false,
-                        subtitle: subtitle(for: download),
-                        kind: (download.fileName as NSString).pathExtension,
-                        matchedSource: PreviewMatchedSource(id: download.id, namespace: previewTransition)
-                    )
-                }
-            }
-            .buttonStyle(DSHapticButtonStyle())
-            .listRowBackground(Color.backgroundSecondary)
-            .swipeActions(edge: .trailing) {
-                if !store.isSelecting {
-                    // No `role: .destructive` — a destructive-role swipe button makes `List`
-                    // collapse the row itself the moment it's tapped, before the confirmation
-                    // alert is answered. On Cancel the row is already gone, and the next data
-                    // update crashes the collection view with a section-count mismatch.
-                    Button {
-                        store.send(.deleteTapped(download))
-                    } label: {
-                        IconKit.delete
-                    }
-                    .tint(.negative)
-                    .accessibilityLabel(L10n.Common.delete)
-                    Button {
-                        store.send(.renameTapped(download))
-                    } label: {
-                        IconKit.rename
-                    }
-                    .tint(.positive)
-                    .accessibilityLabel(L10n.Browse.actionRename)
-                    // The plain system share sheet — local downloads have no server-side
-                    // sharing semantics to worry about, unlike Browse's items.
-                    ShareLink(item: download.url) {
-                        IconKit.share
-                    }
-                    .tint(.accent)
-                    .accessibilityLabel(L10n.Common.share)
-                }
-            }
-            .contextMenu {
-                if !store.isSelecting {
-                    DownloadRowContextMenu(store: store, download: download, openURL: openURL)
-                }
-            }
-            .listRowSeparator(download.id == firstID ? .hidden : .visible, edges: .top)
-            .listRowSeparator(download.id == lastID ? .hidden : .visible, edges: .bottom)
+            DownloadListRow(
+                store: store,
+                download: download,
+                namespace: previewTransition,
+                openURL: openURL,
+                isFirst: download.id == firstID,
+                isLast: download.id == lastID,
+                onPreview: { previewedDownload = download }
+            )
         }
     }
 
@@ -233,7 +148,7 @@ struct DownloadsView: View {
     private var skeletonCells: some View {
         ForEach(Array(Constants.skeletonRows.enumerated()), id: \.offset) { _, row in
             GridCellView(name: row.name, isDirectory: false, kind: "")
-                .dsCard(padding: Constants.gridCellPadding)
+                .dsCard(padding: FileGridMetrics.cellPadding)
                 .redacted(reason: .placeholder)
                 .shimmering()
         }
@@ -241,14 +156,14 @@ struct DownloadsView: View {
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
+            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
                 if listPhase == .loading {
                     skeletonCells
                 } else {
                     downloadCells
                 }
             }
-            .padding(Constants.gridSpacing)
+            .padding(FileGridMetrics.spacing)
             .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
         }
         .backgroundGradient()
@@ -259,29 +174,13 @@ struct DownloadsView: View {
     @ViewBuilder
     private var downloadCells: some View {
         ForEach(store.displayedDownloads) { download in
-            Button {
-                handleTap(download)
-            } label: {
-                GridCellView(
-                    name: download.fileName,
-                    isDirectory: false,
-                    kind: (download.fileName as NSString).pathExtension,
-                    matchedSource: PreviewMatchedSource(id: download.id, namespace: previewTransition)
-                )
-                .dsCard(padding: Constants.gridCellPadding)
-                .overlay(alignment: .topLeading) {
-                    if store.isSelecting {
-                        DSSelectionIndicator(isSelected: store.selectedDownloadIDs.contains(download.id))
-                    }
-                }
-            }
-            .buttonStyle(DSHapticButtonStyle())
-            .hapticFeedback(.selection, trigger: store.selectedDownloadIDs.contains(download.id))
-            .contextMenu {
-                if !store.isSelecting {
-                    DownloadRowContextMenu(store: store, download: download, openURL: openURL)
-                }
-            }
+            DownloadGridCell(
+                store: store,
+                download: download,
+                namespace: previewTransition,
+                openURL: openURL,
+                onPreview: { previewedDownload = download }
+            )
         }
     }
 
@@ -305,13 +204,9 @@ struct DownloadsView: View {
                     searchText: $store.searchQuery.sending(\.searchQueryChanged)
                 )
             }
-            .refreshable {
+            .syncRefreshFeedback(errorMessage: store.errorMessage) {
                 await store.send(.refreshButtonTapped).finish()
-                didFinishRefreshing.toggle()
             }
-            .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
-            .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
-            .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: store.errorMessage == nil)
             // Skeleton rows live inside the List/grid (see `listContent`/`gridContent`); the
             // empty/error message is an overlay fed the list's pull-to-refresh drag so it
             // rubber-bands with it. One animation cross-fades the whole state change.
@@ -339,7 +234,7 @@ struct DownloadsView: View {
                     onCancel: { store.send(.selectModeToggled) },
                     onToggleViewMode: {
                         withAnimation {
-                            viewModeRaw = (viewMode == .list ? DownloadsViewMode.grid : .list).rawValue
+                            viewModeRaw = (viewMode == .list ? FileListViewMode.grid : .list).rawValue
                         }
                     }
                 ) {

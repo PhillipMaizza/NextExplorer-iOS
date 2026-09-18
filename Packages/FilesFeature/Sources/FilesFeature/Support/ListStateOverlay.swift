@@ -13,6 +13,28 @@ enum ListPhase: Equatable {
     var isPlaceholder: Bool {
         self == .error || self == .empty || self == .noResults
     }
+
+    /// The one screen-state precedence every listing tab shares: a first-load error wins, then
+    /// the skeleton until the first response lands, then the empty state, then a search that
+    /// matched nothing, else the list. Callers pass the four predicates their store derives, so
+    /// the ordering lives here once instead of being re-spelled (and drifting) per view. A tab
+    /// with a bespoke branch (e.g. Favorites' search-results mode) computes that itself and
+    /// falls back to this for the ordinary path.
+    static func derive(hasError: Bool, hasLoaded: Bool, isEmpty: Bool, hasNoResults: Bool) -> ListPhase {
+        if hasError {
+            return .error
+        }
+        if !hasLoaded, isEmpty {
+            return .loading
+        }
+        if isEmpty {
+            return .empty
+        }
+        if hasNoResults {
+            return .noResults
+        }
+        return .content
+    }
 }
 
 /// A list feature's data-loading lifecycle, held in the reducer `State` in place of a spread

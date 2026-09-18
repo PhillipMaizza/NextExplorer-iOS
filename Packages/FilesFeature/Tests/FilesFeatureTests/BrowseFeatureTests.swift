@@ -207,10 +207,10 @@ struct BrowseFeatureTests {
         // the background.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
-            $0.isLoadingTextContent = true
+            $0.textPhase = .loading
         }
         await store.receive(\.textContentResponse.success) {
-            $0.isLoadingTextContent = false
+            $0.textPhase = .loaded
             $0.textContent = "hello world"
         }
     }
@@ -253,7 +253,7 @@ struct BrowseFeatureTests {
         await store.send(.rowTapped(stub))
         await store.receive(\.googleDocsPointerResponse) {
             $0.previewItem = stub
-            $0.isLoadingTextContent = true
+            $0.textPhase = .loading
         }
         await store.receive(\.textContentResponse.success)
     }
@@ -335,10 +335,10 @@ struct BrowseFeatureTests {
         // — `UIImage`/`AsyncImage` can't rasterize them.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
-            $0.isLoadingPreview = true
+            $0.previewPhase = .loading
         }
         await store.receive(\.previewFileResponse.success) {
-            $0.isLoadingPreview = false
+            $0.previewPhase = .loaded
             $0.previewFileURL = fileURL
         }
     }
@@ -356,11 +356,10 @@ struct BrowseFeatureTests {
 
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
-            $0.isLoadingTextContent = true
+            $0.textPhase = .loading
         }
         await store.receive(\.textContentResponse.failure) {
-            $0.isLoadingTextContent = false
-            $0.textEditorErrorMessage = FilesClientError.server(statusCode: 500).userMessage
+            $0.textPhase = .failed(FilesClientError.server(statusCode: 500).userMessage)
         }
     }
 
@@ -379,10 +378,10 @@ struct BrowseFeatureTests {
         // PDFs are `isPreviewableViaDownload` (QuickLook), not text and not streamable.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
-            $0.isLoadingPreview = true
+            $0.previewPhase = .loading
         }
         await store.receive(\.previewFileResponse.success) {
-            $0.isLoadingPreview = false
+            $0.previewPhase = .loaded
             $0.previewFileURL = fileURL
         }
     }
@@ -404,10 +403,10 @@ struct BrowseFeatureTests {
         // `downloadRawFile` (`POST /api/files/download`), not `GET /api/preview`.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
-            $0.isLoadingPreview = true
+            $0.previewPhase = .loading
         }
         await store.receive(\.previewFileResponse.success) {
-            $0.isLoadingPreview = false
+            $0.previewPhase = .loaded
             $0.previewFileURL = fileURL
         }
     }
@@ -454,7 +453,7 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.textSaveResponse.failure) {
             $0.isSavingTextContent = false
-            $0.textEditorErrorMessage = FilesClientError.server(statusCode: 500).userMessage
+            $0.textSaveError = FilesClientError.server(statusCode: 500).userMessage
         }
     }
 
@@ -475,8 +474,7 @@ struct BrowseFeatureTests {
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.previewItem = file
         state.previewFileURL = URL(fileURLWithPath: "/tmp/notes.txt")
-        state.previewErrorMessage = "some error"
-        state.isLoadingPreview = true
+        state.previewPhase = .failed("some error")
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -485,8 +483,7 @@ struct BrowseFeatureTests {
         await store.send(.previewDismissed) {
             $0.previewItem = nil
             $0.previewFileURL = nil
-            $0.isLoadingPreview = false
-            $0.previewErrorMessage = nil
+            $0.previewPhase = .idle
         }
     }
 
@@ -2102,10 +2099,10 @@ struct BrowseFeatureTests {
 
         await store.send(.infoTapped(item)) {
             $0.infoItem = item
-            $0.isLoadingInfoMetadata = true
+            $0.infoPhase = .loading
         }
         await store.receive(\.infoMetadataResponse.success) {
-            $0.isLoadingInfoMetadata = false
+            $0.infoPhase = .loaded
             $0.infoMetadata = metadata
         }
         await store.receive(\.infoUsageResponse.success) {
@@ -2131,10 +2128,10 @@ struct BrowseFeatureTests {
 
         await store.send(.infoTapped(item)) {
             $0.infoItem = item
-            $0.isLoadingInfoMetadata = true
+            $0.infoPhase = .loading
         }
         await store.receive(\.infoMetadataResponse.success) {
-            $0.isLoadingInfoMetadata = false
+            $0.infoPhase = .loaded
             $0.infoMetadata = metadata
         }
     }
@@ -2164,11 +2161,10 @@ struct BrowseFeatureTests {
 
         await store.send(.infoTapped(item)) {
             $0.infoItem = item
-            $0.isLoadingInfoMetadata = true
+            $0.infoPhase = .loading
         }
         await store.receive(\.infoMetadataResponse.failure) {
-            $0.isLoadingInfoMetadata = false
-            $0.infoErrorMessage = FilesClientError.server(statusCode: 403).userMessage
+            $0.infoPhase = .failed(FilesClientError.server(statusCode: 403).userMessage)
         }
     }
 
@@ -2182,7 +2178,7 @@ struct BrowseFeatureTests {
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.infoItem = first
         state.infoMetadata = FileMetadata(path: "Photos", name: "Photos", kind: "directory", size: 0, dateModified: fixedDate, dateCreated: fixedDate)
-        state.infoErrorMessage = "stale error"
+        state.infoPhase = .failed("stale error")
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -2196,11 +2192,10 @@ struct BrowseFeatureTests {
             $0.infoItem = second
             $0.infoMetadata = nil
             $0.infoUsage = nil
-            $0.infoErrorMessage = nil
-            $0.isLoadingInfoMetadata = true
+            $0.infoPhase = .loading
         }
         await store.receive(\.infoMetadataResponse.success) {
-            $0.isLoadingInfoMetadata = false
+            $0.infoPhase = .loaded
             $0.infoMetadata = secondMetadata
         }
     }
@@ -2213,8 +2208,7 @@ struct BrowseFeatureTests {
         state.infoItem = item
         state.infoMetadata = FileMetadata(path: "Photos", name: "Photos", kind: "directory", size: 0, dateModified: Date(), dateCreated: Date())
         state.infoUsage = StorageUsage(path: "Photos", size: 1, free: 1, total: 2)
-        state.infoErrorMessage = "some error"
-        state.isLoadingInfoMetadata = true
+        state.infoPhase = .failed("some error")
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -2224,8 +2218,7 @@ struct BrowseFeatureTests {
             $0.infoItem = nil
             $0.infoMetadata = nil
             $0.infoUsage = nil
-            $0.infoErrorMessage = nil
-            $0.isLoadingInfoMetadata = false
+            $0.infoPhase = .idle
         }
     }
 
