@@ -5,36 +5,21 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-private enum FavoritesViewMode: String {
-    case list, grid
-}
-
 private enum Constants {
-    static let gridSpacing: CGFloat = .space16
-    /// Inset between a grid tile's content and its `backgroundSecondary` card edge, matching
-    /// `BrowseContentView`.
-    static let gridCellPadding: CGFloat = .space12
     static let breadcrumbContentSpacing: CGFloat = .space8
     static let breadcrumbVisibilityAnimationDuration: Double = 0.25
 }
 
 struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
-    @AppStorage(AppStorageKeys.favoritesViewMode) private var viewModeRaw = FavoritesViewMode.list.rawValue
+    @AppStorage(AppStorageKeys.favoritesViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
     @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
-    /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
-    /// value itself is meaningless, only the fact that it just changed matters.
-    @State private var didFinishRefreshing = false
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
 
-    private var viewMode: FavoritesViewMode {
-        FavoritesViewMode(rawValue: viewModeRaw) ?? .list
-    }
-
-    private var gridColumns: [GridItem] {
-        [GridItem(.adaptive(minimum: 100), spacing: Constants.gridSpacing)]
+    private var viewMode: FileListViewMode {
+        FileListViewMode(rawValue: viewModeRaw) ?? .list
     }
 
     private var isAllSelected: Bool {
@@ -45,27 +30,24 @@ struct FavoritesView: View {
     /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
     /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
     private var listPhase: ListPhase {
-        if store.errorMessage != nil {
+        // The favorites list's own error / loading / empty precedence comes first (same shape as
+        // every tab). Only once that resolves to `.content` while a query is active does the
+        // screen follow the recursive-search sub-machine instead: it shows file results across the
+        // favorited folders, keyed off `searchPhase`/results rather than the favorites list.
+        let base = ListPhase.derive(
+            hasError: store.errorMessage != nil,
+            hasLoaded: store.phase.hasLoaded,
+            isEmpty: store.favorites.isEmpty,
+            hasNoResults: false
+        )
+        guard base == .content, store.isSearching else { return base }
+        if store.searchPhase.errorMessage != nil, store.fileSearchResults == nil {
             return .error
         }
-        if !store.phase.hasLoaded, store.favorites.isEmpty {
+        if !store.searchPhase.hasLoaded, store.fileSearchResults == nil {
             return .loading
         }
-        if store.favorites.isEmpty {
-            return .empty
-        }
-        // While searching, the screen shows recursive file results across the favorited folders,
-        // so its phase follows `searchPhase`/results, not the favorites list.
-        if store.isSearching {
-            if store.searchPhase.errorMessage != nil && store.fileSearchResults == nil {
-                return .error
-            }
-            if !store.searchPhase.hasLoaded && store.fileSearchResults == nil {
-                return .loading
-            }
-            return store.displayedSearchResults.isEmpty ? .noResults : .content
-        }
-        return .content
+        return store.displayedSearchResults.isEmpty ? .noResults : .content
     }
 
     /// The message the error overlay shows: the search failure while searching, otherwise the
@@ -159,13 +141,9 @@ struct FavoritesView: View {
             }
         }
         .animation(.easeInOut(duration: 0.2), value: store.dataSource)
-        .refreshable {
+        .syncRefreshFeedback(errorMessage: store.errorMessage) {
             await store.send(.refreshButtonTapped).finish()
-            didFinishRefreshing.toggle()
         }
-        .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.errorMessage == nil }
-        .hapticFeedback(.error, trigger: store.errorMessage) { _, newValue in newValue != nil }
-        .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: store.errorMessage == nil)
         // Skeleton rows live inside the List/grid (see `listContent`/`gridContent`); the
         // empty/error message is an overlay fed the list's pull-to-refresh drag so it
         // rubber-bands with it. One animation cross-fades the whole state change.
@@ -194,7 +172,7 @@ struct FavoritesView: View {
                 onCancel: { store.send(.selectModeToggled) },
                 onToggleViewMode: {
                     withAnimation {
-                        viewModeRaw = (viewMode == .list ? FavoritesViewMode.grid : .list).rawValue
+                        viewModeRaw = (viewMode == .list ? FileListViewMode.grid : .list).rawValue
                     }
                 },
                 sortMenu: { EmptyView() }
@@ -259,24 +237,6 @@ struct FavoritesView: View {
         }
     }
 
-    private func handleTap(_ favorite: Favorite) {
-        if store.isSelecting {
-            store.send(.itemSelectionToggled(favorite.id))
-        } else {
-            store.send(.rowTapped(favorite))
-        }
-    }
-
-    private func favoriteRowIcon(_ favorite: Favorite) -> some View {
-        FileRowView(
-            name: favorite.displayName,
-            isDirectory: true,
-            customIcon: FavoriteIcon.symbol(for: favorite.icon),
-            customIconTint: FavoriteColor.resolve(favorite.color),
-            customIconFilled: FavoriteIcon.isFilled(favorite.icon)
-        )
-    }
-
     /// Redacted `FileRowView` / `GridCellView` stand-ins that sit in the *same* `List` / grid
     /// as the real rows — never a separate scroll container (that fights the nav bar's large
     /// title). Shine suppressed under Reduce Motion.
@@ -296,7 +256,7 @@ struct FavoritesView: View {
     private var skeletonCells: some View {
         ForEach(Self.skeletonNames, id: \.self) { name in
             GridCellView(name: name, isDirectory: true)
-                .dsCard(padding: Constants.gridCellPadding)
+                .dsCard(padding: FileGridMetrics.cellPadding)
                 .redacted(reason: .placeholder)
                 .shimmering()
         }
@@ -312,50 +272,12 @@ struct FavoritesView: View {
                 skeletonRows
             } else {
                 ForEach(favorites) { favorite in
-                    Button {
-                        handleTap(favorite)
-                    } label: {
-                        HStack(spacing: .space12) {
-                            if store.isSelecting {
-                                DSSelectionIndicator(isSelected: store.selectedFavoriteIDs.contains(favorite.id))
-                            }
-                            favoriteRowIcon(favorite)
-                        }
-                    }
-                    .buttonStyle(DSHapticButtonStyle())
-                    .accessibilityAddTraits(store.isSelecting && store.selectedFavoriteIDs.contains(favorite.id) ? [.isSelected] : [])
-                    .listRowBackground(Color.backgroundSecondary)
-                    .contextMenu {
-                        if !store.isSelecting {
-                            FavoriteRowContextMenu(store: store, favorite: favorite)
-                        }
-                    }
-                    .swipeActions(edge: .leading) {
-                        if !store.isSelecting {
-                            Button {
-                                store.send(.editTapped(favorite))
-                            } label: {
-                                IconKit.rename
-                            }
-                            .tint(.accent)
-                            .accessibilityLabel(L10n.Favorites.actionEdit)
-                        }
-                    }
-                    .swipeActions(edge: .trailing) {
-                        if !store.isSelecting {
-                            // Unfavoriting doesn't touch the folder itself, so the swipe reads in
-                            // accent rather than destructive red.
-                            Button {
-                                store.send(.removeTapped(favorite))
-                            } label: {
-                                IconKit.unfavorite
-                            }
-                            .tint(.accent)
-                            .accessibilityLabel(L10n.Favorites.actionRemoveFromFavorites)
-                        }
-                    }
-                    .listRowSeparator(favorite.id == firstID ? .hidden : .visible, edges: .top)
-                    .listRowSeparator(favorite.id == lastID ? .hidden : .visible, edges: .bottom)
+                    FavoriteListRow(
+                        store: store,
+                        favorite: favorite,
+                        isFirst: favorite.id == firstID,
+                        isLast: favorite.id == lastID
+                    )
                 }
                 .onMove(perform: store.canReorder ? { store.send(.favoritesMoved($0, $1)) } : nil)
             }
@@ -415,14 +337,14 @@ struct FavoritesView: View {
 
     private var gridContent: some View {
         ScrollView {
-            LazyVGrid(columns: gridColumns, spacing: Constants.gridSpacing) {
+            LazyVGrid(columns: FileGridMetrics.columns, spacing: FileGridMetrics.spacing) {
                 if listPhase == .loading {
                     skeletonCells
                 } else {
                     favoriteCells
                 }
             }
-            .padding(Constants.gridSpacing)
+            .padding(FileGridMetrics.spacing)
             .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)
         }
         .backgroundGradient()
@@ -433,30 +355,7 @@ struct FavoritesView: View {
     @ViewBuilder
     private var favoriteCells: some View {
         ForEach(store.displayedFavorites) { favorite in
-            Button {
-                handleTap(favorite)
-            } label: {
-                GridCellView(
-                    name: favorite.displayName,
-                    isDirectory: true,
-                    customIcon: FavoriteIcon.symbol(for: favorite.icon),
-                    customIconTint: FavoriteColor.resolve(favorite.color),
-                    customIconFilled: FavoriteIcon.isFilled(favorite.icon)
-                )
-                .dsCard(padding: Constants.gridCellPadding)
-                .overlay(alignment: .topLeading) {
-                    if store.isSelecting {
-                        DSSelectionIndicator(isSelected: store.selectedFavoriteIDs.contains(favorite.id))
-                    }
-                }
-            }
-            .buttonStyle(DSHapticButtonStyle())
-            .hapticFeedback(.selection, trigger: store.selectedFavoriteIDs.contains(favorite.id))
-            .contextMenu {
-                if !store.isSelecting {
-                    FavoriteRowContextMenu(store: store, favorite: favorite)
-                }
-            }
+            FavoriteGridCell(store: store, favorite: favorite)
         }
     }
 }
