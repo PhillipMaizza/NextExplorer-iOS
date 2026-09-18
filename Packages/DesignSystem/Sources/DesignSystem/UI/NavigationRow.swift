@@ -121,7 +121,12 @@ public struct DSNavigationRow: View {
                 .foregroundStyle(Color.tertiaryDS)
                 .frame(width: Constants.chevronSize, height: Constants.chevronSize)
         case let .detail(text):
-            Text(text).type(.body2(.regular), style: .secondary)
+            // A numeric-text transition so a changing value (a cache/offline size after a clear)
+            // rolls over instead of snapping.
+            Text(text)
+                .type(.body2(.regular), style: .secondary)
+                .contentTransition(.numericText())
+                .animation(.snappy, value: text)
         case .none:
             EmptyView()
         }

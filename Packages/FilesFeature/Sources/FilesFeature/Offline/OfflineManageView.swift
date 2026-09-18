@@ -27,8 +27,8 @@ struct OfflineManageView: View {
             } else {
                 List {
                     Section {
-                        ForEach(store.usages) { usage in
-                            OfflineManageRow(usage: usage) {
+                        ForEach(Array(store.usages.enumerated()), id: \.element.id) { index, usage in
+                            OfflineManageRow(usage: usage, appearIndex: index) {
                                 store.send(.removeTapped(path: usage.root.path), animation: .default)
                             }
                         }
@@ -50,14 +50,22 @@ struct OfflineManageView: View {
 
 private struct OfflineManageRow: View {
     let usage: OfflinePinnedRootUsage
+    var appearIndex: Int = 0
     let onRemove: () -> Void
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var hasAppeared = false
+
+    private static let appearStep: Double = 0.05
+    private static let appearMaxDelay: Double = 0.4
+    private static let appearDuration: Double = 0.3
 
     private var name: String {
         let last = (usage.root.path as NSString).lastPathComponent
         return last.isEmpty ? usage.root.path : last
     }
 
-    var body: some View {
+    private var content: some View {
         HStack(spacing: .space12) {
             (usage.root.isDirectory ? IconKit.folder : IconKit.document)
                 .resizable()
@@ -85,6 +93,19 @@ private struct OfflineManageRow: View {
                 Label(L10n.Common.remove, systemImage: "trash")
             }
         }
+    }
+
+    var body: some View {
+        content
+            .opacity(hasAppeared || reduceMotion ? 1 : 0)
+            .offset(y: hasAppeared || reduceMotion ? 0 : .space8)
+            .onAppear {
+                guard !reduceMotion else { hasAppeared = true; return }
+                let delay = min(Double(appearIndex) * Self.appearStep, Self.appearMaxDelay)
+                withAnimation(.easeOut(duration: Self.appearDuration).delay(delay)) {
+                    hasAppeared = true
+                }
+            }
     }
 }
 
