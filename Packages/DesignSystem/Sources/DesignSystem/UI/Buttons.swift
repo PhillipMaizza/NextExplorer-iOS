@@ -74,6 +74,9 @@ private enum Constants {
     static let morphSpringDamping: Double = 0.8
     /// Fixed dark charcoal fill for `.inverted`, deliberately not theme-adaptive.
     static let invertedFillWhite: Double = 0.15
+    /// Press-down feedback: a subtle scale-down over this duration.
+    static let pressedScale: CGFloat = 0.97
+    static let pressDuration: Double = 0.15
 }
 
 /// Adds a light tap haptic on press-down without any of `.plain`'s visual side effects — any
@@ -84,10 +87,26 @@ public struct DSHapticButtonStyle: ButtonStyle {
     public init() {}
 
     public func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .hapticFeedback(.impact(weight: .light), trigger: configuration.isPressed) { _, isPressed in
-                isPressed
-            }
+        PressFeedback(isPressed: configuration.isPressed) {
+            configuration.label
+        }
+    }
+
+    /// Adds a light haptic and a subtle scale-down on press. A nested view so it can read Reduce
+    /// Motion (a `ButtonStyle` can't observe `@Environment` directly).
+    private struct PressFeedback<Label: View>: View {
+        let isPressed: Bool
+        @ViewBuilder let label: Label
+        @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+        var body: some View {
+            label
+                .scaleEffect(reduceMotion || !isPressed ? 1 : Constants.pressedScale)
+                .animation(reduceMotion ? nil : .easeOut(duration: Constants.pressDuration), value: isPressed)
+                .hapticFeedback(.impact(weight: .light), trigger: isPressed) { _, isPressed in
+                    isPressed
+                }
+        }
     }
 }
 

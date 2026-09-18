@@ -14,6 +14,10 @@ private enum Constants {
 public struct DSUsageBar: View {
     private let fraction: Double
 
+    /// Drives the fill so it grows in from empty on first appear, and eases to a new value on change.
+    @State private var displayFraction: Double = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     public init(fraction: Double) {
         self.fraction = min(1, max(0, fraction))
     }
@@ -32,11 +36,15 @@ public struct DSUsageBar: View {
                 Capsule().fill(Color.borderPrimary.opacity(Constants.trackOpacity))
                 Capsule()
                     .fill(fillColor)
-                    .frame(width: max(Constants.height, proxy.size.width * fraction))
-                    .animation(.easeOut(duration: Constants.fillAnimationDuration), value: fraction)
+                    .frame(width: max(Constants.height, proxy.size.width * displayFraction))
+                    .animation(reduceMotion ? nil : .easeOut(duration: Constants.fillAnimationDuration), value: displayFraction)
+                    .animation(reduceMotion ? nil : .easeInOut(duration: Constants.fillAnimationDuration), value: fillColor)
             }
         }
         .frame(height: Constants.height)
+        // Starts at 0 (see `displayFraction`), so this first assignment grows the fill in from empty.
+        .onAppear { displayFraction = fraction }
+        .onChange(of: fraction) { _, new in displayFraction = new }
         .accessibilityElement()
         .accessibilityValue(Text(fraction, format: .percent.precision(.fractionLength(0))))
     }
