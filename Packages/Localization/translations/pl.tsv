@@ -573,3 +573,31 @@ settings.accountSignOutTitle	Wylogować?
 settings.accountSignOutMessage	Wylogować %@ na tym urządzeniu? Aby korzystać z tego konta, trzeba będzie zalogować się ponownie.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktywne konto
+
+# ---- offline ----
+common.deselect	Odznacz
+offline.sectionTitle	Offline
+offline.settingsRow	Pobierz pliki do użytku offline
+offline.footnote	Pobrane pliki otwierają się nawet bez połączenia.
+offline.available	Dostępne offline: %@
+offline.removeRow	Usuń pliki offline
+offline.removeConfirmTitle	Usunąć pliki offline?
+offline.removeConfirmMessage	Spowoduje to usunięcie plików zapisanych do użytku offline na tym urządzeniu. Pliki na serwerze pozostaną bez zmian.
+offline.removeConfirm	Usuń
+offline.preparing	Przygotowywanie…
+offline.downloadingName	Pobieranie %@
+offline.progressCount	%lld z %lld plików
+offline.downloadFailed	Nie udało się ukończyć pobierania offline.
+offline.selectionTitle	Pobierz do trybu offline
+offline.selectionEmpty	Ten folder jest pusty.
+offline.selectionLoadFailed	Nie udało się załadować tego folderu.
+offline.selectionEstimate	Szacowane pobieranie
+offline.selectionDownload	Pobierz
+offline.selectionInsufficientSpace	Za mało wolnego miejsca na tym urządzeniu
+offline.resyncRow	Zaktualizuj pliki offline
+offline.badgeAvailable	Dostępne offline
+offline.manageRow	Zarządzaj plikami offline
+offline.manageTitle	Pliki offline
+offline.manageEmpty	Nic nie zostało pobrane do użytku offline.
+offline.preferOfflineToggle	Odtwarzaj pobrane kopie
+offline.preferOfflineSubtitle	Używaj pobranego wideo zamiast strumieniowania, gdy jest dostępne.

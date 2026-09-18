@@ -573,3 +573,31 @@ settings.accountSignOutTitle	Uscire?
 settings.accountSignOutMessage	Disconnettere %@ da questo dispositivo? Dovrai accedere di nuovo per usare questo account.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, account attivo
+
+# ---- offline ----
+common.deselect	Deseleziona
+offline.sectionTitle	Offline
+offline.settingsRow	Scarica file per l'uso offline
+offline.footnote	I file scaricati si aprono anche senza connessione.
+offline.available	%@ disponibili offline
+offline.removeRow	Rimuovi file offline
+offline.removeConfirmTitle	Rimuovere i file offline?
+offline.removeConfirmMessage	Questo elimina i file salvati per l'uso offline su questo dispositivo. I tuoi file sul server non vengono modificati.
+offline.removeConfirm	Rimuovi
+offline.preparing	Preparazione…
+offline.downloadingName	Download di %@
+offline.progressCount	%lld di %lld file
+offline.downloadFailed	Impossibile completare il download offline.
+offline.selectionTitle	Scarica per offline
+offline.selectionEmpty	Questa cartella è vuota.
+offline.selectionLoadFailed	Impossibile caricare questa cartella.
+offline.selectionEstimate	Download stimato
+offline.selectionDownload	Scarica
+offline.selectionInsufficientSpace	Spazio libero insufficiente su questo dispositivo
+offline.resyncRow	Aggiorna file offline
+offline.badgeAvailable	Disponibile offline
+offline.manageRow	Gestisci file offline
+offline.manageTitle	File offline
+offline.manageEmpty	Nessun elemento è scaricato per l'uso offline.
+offline.preferOfflineToggle	Riproduci le copie scaricate
+offline.preferOfflineSubtitle	Usa un video scaricato invece dello streaming quando è disponibile.

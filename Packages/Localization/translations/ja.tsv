@@ -573,3 +573,31 @@ settings.accountSignOutTitle	サインアウトしますか？
 settings.accountSignOutMessage	このデバイスで %@ をサインアウトしますか？このアカウントを使うには再度サインインする必要があります。
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 使用中のアカウント
+
+# ---- offline ----
+common.deselect	選択を解除
+offline.sectionTitle	オフライン
+offline.settingsRow	オフライン用にファイルをダウンロード
+offline.footnote	ダウンロードしたファイルは接続がなくても開けます。
+offline.available	%@ をオフラインで利用可能
+offline.removeRow	オフラインファイルを削除
+offline.removeConfirmTitle	オフラインファイルを削除しますか？
+offline.removeConfirmMessage	この端末にオフライン用として保存されたファイルを削除します。サーバー上のファイルには影響しません。
+offline.removeConfirm	削除
+offline.preparing	準備中…
+offline.downloadingName	%@ をダウンロード中
+offline.progressCount	%lld/%lld 個のファイル
+offline.downloadFailed	オフラインダウンロードを完了できませんでした。
+offline.selectionTitle	オフライン用にダウンロード
+offline.selectionEmpty	このフォルダは空です。
+offline.selectionLoadFailed	このフォルダを読み込めませんでした。
+offline.selectionEstimate	推定ダウンロード量
+offline.selectionDownload	ダウンロード
+offline.selectionInsufficientSpace	この端末の空き容量が足りません
+offline.resyncRow	オフラインファイルを更新
+offline.badgeAvailable	オフラインで利用可能
+offline.manageRow	オフラインファイルを管理
+offline.manageTitle	オフラインファイル
+offline.manageEmpty	オフライン用にダウンロードされたものはありません。
+offline.preferOfflineToggle	ダウンロードしたコピーを再生
+offline.preferOfflineSubtitle	利用可能な場合はストリーミングの代わりにダウンロードした動画を使用します。

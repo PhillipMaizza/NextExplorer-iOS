@@ -573,3 +573,31 @@ settings.accountSignOutTitle	Logga ut?
 settings.accountSignOutMessage	Logga ut %@ på den här enheten? Du måste logga in igen för att använda det här kontot.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktivt konto
+
+# ---- offline ----
+common.deselect	Avmarkera
+offline.sectionTitle	Offline
+offline.settingsRow	Hämta filer för offlineanvändning
+offline.footnote	Hämtade filer öppnas även utan anslutning.
+offline.available	%@ tillgängligt offline
+offline.removeRow	Ta bort offlinefiler
+offline.removeConfirmTitle	Ta bort offlinefiler?
+offline.removeConfirmMessage	Detta tar bort filerna som sparats för offlineanvändning på den här enheten. Dina filer på servern påverkas inte.
+offline.removeConfirm	Ta bort
+offline.preparing	Förbereder…
+offline.downloadingName	Hämtar %@
+offline.progressCount	%lld av %lld filer
+offline.downloadFailed	Offlinehämtningen kunde inte slutföras.
+offline.selectionTitle	Hämta för offline
+offline.selectionEmpty	Den här mappen är tom.
+offline.selectionLoadFailed	Den här mappen kunde inte läsas in.
+offline.selectionEstimate	Uppskattad hämtning
+offline.selectionDownload	Hämta
+offline.selectionInsufficientSpace	Otillräckligt med ledigt utrymme på enheten
+offline.resyncRow	Uppdatera offlinefiler
+offline.badgeAvailable	Tillgängligt offline
+offline.manageRow	Hantera offlinefiler
+offline.manageTitle	Offlinefiler
+offline.manageEmpty	Inget är hämtat för offlineanvändning.
+offline.preferOfflineToggle	Spela upp hämtade kopior
+offline.preferOfflineSubtitle	Använd en hämtad video i stället för att strömma när den finns.

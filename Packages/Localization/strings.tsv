@@ -22,6 +22,7 @@ common.copied	Copied
 common.download	Download
 common.sort	Sort
 common.select	Select
+common.deselect	Deselect
 common.search	Search
 common.password	Password
 common.never	Never
@@ -643,3 +644,30 @@ tipJar.toastThanks	Thank you for supporting the project! 🙏
 tipJar.errorLoad	Couldn't load the tip options. Please try again.
 tipJar.errorPurchase	The purchase didn't go through. Please try again.
 tipJar.pending	Waiting for approval. You'll be charged once it's approved.
+
+# ---- offline ----
+offline.sectionTitle	Offline
+offline.settingsRow	Download Files for Offline Use
+offline.footnote	Downloaded files open even without a connection.
+offline.available	%@ available offline
+offline.removeRow	Remove Offline Files
+offline.removeConfirmTitle	Remove Offline Files?
+offline.removeConfirmMessage	This deletes the files saved for offline use on this device. Your files on the server are not affected.
+offline.removeConfirm	Remove
+offline.preparing	Preparing…
+offline.downloadingName	Downloading %@
+offline.progressCount	%lld of %lld files
+offline.downloadFailed	The offline download couldn't be completed.
+offline.selectionTitle	Download for Offline
+offline.selectionEmpty	This folder is empty.
+offline.selectionLoadFailed	This folder couldn't be loaded.
+offline.selectionEstimate	Estimated download
+offline.selectionDownload	Download
+offline.selectionInsufficientSpace	Not enough free space on this device
+offline.resyncRow	Update Offline Files
+offline.badgeAvailable	Available offline
+offline.manageRow	Manage Offline Files
+offline.manageTitle	Offline Files
+offline.manageEmpty	Nothing is downloaded for offline use.
+offline.preferOfflineToggle	Play downloaded copies
+offline.preferOfflineSubtitle	Use a downloaded video instead of streaming when it's available.

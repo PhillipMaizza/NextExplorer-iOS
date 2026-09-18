@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -18,6 +19,29 @@ struct BrowsePreviewRouter: View {
     /// source follows the current page. Every other branch previews a single item.
     var onGalleryItemChange: (FileItem) -> Void = { _ in }
 
+    @Dependency(\.offlineFileStore) private var offlineFileStore
+    /// When on, a fully downloaded copy plays locally even online; off streams when online and uses
+    /// the local copy only as an offline fallback.
+    @AppStorage(AppStorageKeys.preferOfflineMedia) private var preferOfflineMedia = true
+
+    /// The primary source: with "prefer offline copies" on, a fully downloaded pinned copy (its
+    /// `dateModified|size` staleness key proves it is complete and current) plays locally even online.
+    /// Otherwise the Range-seekable preview stream, so online playback streams the fresh file.
+    private func playbackURL(for item: FileItem) -> URL? {
+        if preferOfflineMedia, let complete = offlineFileStore.localURL(item) {
+            return complete
+        }
+        return FilesClient.previewURL(serverURL: store.serverURL, item: item)
+    }
+
+    /// A pinned copy that couldn't be verified complete (a placeholder `FileItem` opened from search
+    /// or Favorites, with no real size/date). Used only if the stream fails, i.e. offline. `nil` when
+    /// the primary is already the verified local copy.
+    private func offlineFallbackURL(for item: FileItem) -> URL? {
+        guard offlineFileStore.localURL(item) == nil else { return nil }
+        return offlineFileStore.localURLIgnoringStaleness(item)
+    }
+
     var body: some View {
         if item.isUnsupportedForPreview {
             UnsupportedFilePreviewView(
@@ -37,7 +61,7 @@ struct BrowsePreviewRouter: View {
                     store.send(.deleteTapped(item))
                 } : nil
             )
-        } else if item.isStreamableMedia, let url = FilesClient.previewURL(serverURL: store.serverURL, item: item) {
+        } else if item.isStreamableMedia, let url = playbackURL(for: item) {
             let onShare: (() -> Void)? = (store.access?.canShare ?? false) ? { onShareTarget(item) } : nil
             let onRename: (() -> Void)? = (store.access?.canWrite ?? false) ? { store.send(.renameTapped(item)) } : nil
             let onDownload: (() -> Void)? = (store.access?.canDownload ?? false) ? {
@@ -45,21 +69,15 @@ struct BrowsePreviewRouter: View {
             } : nil
             let onDelete: (() -> Void)? = (store.access?.canDelete ?? false) ? { store.send(.deleteTapped(item)) } : nil
 
-            // Natively decodable formats get AVPlayer (hardware decode, system transport); the
-            // rest play through libvlc via `VLCPlayerView`.
-            if item.isNativelyPlayable {
-                StreamingPreviewView(
-                    item: item, url: url, serverURL: store.serverURL,
-                    onDismiss: { store.send(.previewDismissed) },
-                    onShare: onShare, onRename: onRename, onDownload: onDownload, onDelete: onDelete
-                )
-            } else {
-                VLCPlayerView(
-                    item: item, url: url, serverURL: store.serverURL,
-                    onDismiss: { store.send(.previewDismissed) },
-                    onShare: onShare, onRename: onRename, onDownload: onDownload, onDelete: onDelete
-                )
-            }
+            // Native formats start on AVPlayer and fall back to libvlc on a decode failure; the rest
+            // start on libvlc directly. A pinned offline copy plays from its local file (no stream).
+            VideoPlayerHost(
+                item: item, url: url, serverURL: store.serverURL,
+                preferNative: item.isNativelyPlayable,
+                offlineFallbackURL: offlineFallbackURL(for: item),
+                onDismiss: { store.send(.previewDismissed) },
+                onShare: onShare, onRename: onRename, onDownload: onDownload, onDelete: onDelete
+            )
         } else if item.isBrowsableArchive {
             ArchiveBrowserView(item: item, serverURL: store.serverURL, onDismiss: { store.send(.previewDismissed) })
         } else if item.isImage || item.isRawImage, !item.isSVG {

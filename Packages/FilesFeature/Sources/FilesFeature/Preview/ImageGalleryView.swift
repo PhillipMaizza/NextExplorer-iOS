@@ -16,6 +16,15 @@ private enum Constants {
     /// would hold a decoded image per page and jetsam. Pages outside the window drop their
     /// bitmap and re decode when swiped back near.
     static let retainWindow = 2
+    /// Blur applied to the low quality thumbnail placeholder so its upscaling reads as a soft
+    /// preview behind the sharpening image rather than a pixelated still.
+    static let placeholderBlur: CGFloat = 18
+    /// The image settles from this scale to 1 when it finishes loading, for a subtle finish pop.
+    static let settleFromScale: CGFloat = 1.03
+    static let settleSpringResponse: Double = 0.35
+    static let settleSpringDamping: Double = 0.82
+    /// Crossfade when the first frame replaces the placeholder.
+    static let imageFadeDuration: Double = 0.2
 }
 
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
@@ -138,6 +147,36 @@ struct ImageGalleryView: View {
     }
 }
 
+/// The image page lifecycle as one value (rule 8): `loading`, a progressive `streaming` frame, the
+/// final `loaded` image, a `gif`, or a `failed` message. Not `Equatable` because `UIImage` isn't;
+/// the view animates off the derived `hasImage` / `isFinal` instead.
+private enum GalleryImagePhase {
+    case loading
+    case streaming(UIImage)
+    case loaded(UIImage)
+    case gif(URL)
+    case failed(String)
+
+    var displayImage: UIImage? {
+        switch self {
+        case let .streaming(image), let .loaded(image): image
+        default: nil
+        }
+    }
+
+    var hasImage: Bool {
+        displayImage != nil
+    }
+
+    var isFinal: Bool {
+        if case .loaded = self {
+            true
+        } else {
+            false
+        }
+    }
+}
+
 private struct ImageGalleryPage: View {
     let item: FileItem
     let serverURL: URL
@@ -147,10 +186,12 @@ private struct ImageGalleryPage: View {
     var isNear: Bool = true
     var onZoomChange: (Bool) -> Void = { _ in }
 
-    @State private var gifURL: URL?
-    @State private var image: UIImage?
-    @State private var errorMessage: String?
+    /// One lifecycle for the page, not a spread of `image` + `gifURL` + `errorMessage` +
+    /// `didFinishLoading` bools (rule 8). `streaming` is a progressive frame still sharpening,
+    /// `loaded` is the final full quality image, which is what drives the settle animation.
+    @State private var phase: GalleryImagePhase = .loading
     @Dependency(\.filesClient) private var filesClient
+    @Dependency(\.offlineFileStore) private var offlineFileStore
 
     /// Decode ceiling for a still image. Generous enough that `ZoomableScrollView`'s 4x zoom
     /// still looks sharp, without ever holding a full 48MP bitmap resident. Read from
@@ -160,54 +201,133 @@ private struct ImageGalleryPage: View {
         return max(screen.width, screen.height) * UIScreen.main.scale * 2
     }
 
+    /// The blurred thumbnail placeholder shows only before any frame has decoded, so a page never
+    /// blanks to a spinner. Once even a rough streaming frame is up, it covers the placeholder.
+    private var showsPlaceholder: Bool {
+        guard item.supportsThumbnail else { return false }
+        if case .loading = phase {
+            return true
+        }
+        return false
+    }
+
     var body: some View {
         ZStack {
-            if let gifURL {
-                // GIFs play their real animation via `AnimatedImageView` — a decoded still
-                // would only ever show the first frame.
-                ZoomableScrollView(onZoomChange: onZoomChange) { AnimatedImageView(fileURL: gifURL) }
-            } else if let image {
+            if showsPlaceholder {
+                ThumbnailImage(
+                    serverURL: serverURL, path: item.id, signature: item.cacheSignature,
+                    fallbackIcon: IconKit.document, iconTint: Color.secondaryDS
+                )
+                .blur(radius: Constants.placeholderBlur)
+                .clipped()
+                .allowsHitTesting(false)
+            }
+
+            switch phase {
+            case let .gif(url):
+                // GIFs play their real animation via `AnimatedImageView` — a decoded still would
+                // only ever show the first frame.
+                ZoomableScrollView(onZoomChange: onZoomChange) { AnimatedImageView(fileURL: url) }
+            case let .streaming(uiImage), let .loaded(uiImage):
                 ZoomableScrollView(onZoomChange: onZoomChange) {
-                    Image(uiImage: image).resizable().scaledToFit()
+                    Image(uiImage: uiImage).resizable().scaledToFit()
                 }
-            } else if let errorMessage {
-                statusContent(message: errorMessage)
-            } else {
-                DSSpinner()
+                .transition(.opacity)
+                // Settle from a slight scale to 1 the moment the final image lands.
+                .scaleEffect(phase.isFinal ? 1 : Constants.settleFromScale)
+                .animation(.spring(response: Constants.settleSpringResponse, dampingFraction: Constants.settleSpringDamping), value: phase.isFinal)
+            case let .failed(message):
+                statusContent(message: message)
+            case .loading:
+                EmptyView()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .task(id: "\(item.id)\u{0}\(isNear)") {
-            guard isNear else {
-                // Outside the retain window: release the decoded bitmap (and any GIF handle)
-                // so it stops counting against resident memory.
-                image = nil
-                gifURL = nil
-                errorMessage = nil
-                return
-            }
-            guard image == nil, gifURL == nil else { return }
+        .animation(.easeOut(duration: Constants.imageFadeDuration), value: phase.hasImage)
+        .task(id: "\(item.id)\u{0}\(isNear)") { await load() }
+    }
+
+    @MainActor
+    private func load() async {
+        guard isNear else {
+            // Outside the retain window: release the decoded bitmap (and any GIF handle) so it
+            // stops counting against resident memory.
+            phase = .loading
+            return
+        }
+        // Only load from a clean slate; a page already loaded (or mid stream) is left as is.
+        guard case .loading = phase else { return }
+
+        // GIFs animate from a file (offline/cache aware); a decoded still would freeze on frame one.
+        if item.kind.lowercased() == "gif" {
             do {
                 let fileURL = try await filesClient.previewFile(serverURL, item)
-                if item.kind.lowercased() == "gif" {
-                    gifURL = fileURL
-                } else {
-                    let target = maxPixelDimension
-                    let decoded = await Task.detached(priority: .userInitiated) {
-                        ImageDownsampling.image(from: fileURL, maxPixelDimension: target)
-                    }.value
-                    guard let decoded else {
-                        errorMessage = L10n.Gallery.loadFailed
-                        return
-                    }
-                    image = decoded
+                if !Task.isCancelled {
+                    phase = .gif(fileURL)
                 }
             } catch {
-                // Swiping away mid load cancels this task; that is not a load failure, so leave
-                // the spinner rather than flashing an error screen the user already left.
                 if !Task.isCancelled {
-                    errorMessage = (error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed
+                    phase = .failed((error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed)
                 }
+            }
+            return
+        }
+
+        let target = maxPixelDimension
+
+        // A pinned offline copy decodes locally at final quality with no network.
+        if let localURL = offlineFileStore.localURL(item) {
+            let decoded = await Task.detached(priority: .userInitiated) {
+                ImageDownsampling.image(from: localURL, maxPixelDimension: target)
+            }.value
+            if Task.isCancelled {
+                return
+            }
+            phase = decoded.map(GalleryImagePhase.loaded) ?? .failed(L10n.Gallery.loadFailed)
+            return
+        }
+
+        // Online: stream progressively so the image ramps from rough to sharp with no spinner.
+        guard let url = FilesClient.previewURL(serverURL: serverURL, item: item) else {
+            await decodeViaPreviewFile(target: target)
+            return
+        }
+        let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
+        var lastFrame: UIImage?
+        for await frame in ProgressiveImageLoader.frames(url: url, cookies: cookies, maxPixelDimension: target) {
+            if Task.isCancelled {
+                return
+            }
+            lastFrame = frame
+            phase = .streaming(frame)
+        }
+        if Task.isCancelled {
+            return
+        }
+        if let lastFrame {
+            // The last frame is the full quality one: settle it in.
+            phase = .loaded(lastFrame)
+            return
+        }
+        // Nothing decoded (a server error, not a cancellation): fall back to a plain download so a
+        // real failure surfaces its message instead of a silent blank behind the placeholder.
+        await decodeViaPreviewFile(target: target)
+    }
+
+    @MainActor
+    private func decodeViaPreviewFile(target: CGFloat) async {
+        do {
+            let fileURL = try await filesClient.previewFile(serverURL, item)
+            let decoded = await Task.detached(priority: .userInitiated) {
+                ImageDownsampling.image(from: fileURL, maxPixelDimension: target)
+            }.value
+            if Task.isCancelled {
+                return
+            }
+            phase = decoded.map(GalleryImagePhase.loaded) ?? .failed(L10n.Gallery.loadFailed)
+        } catch {
+            if !Task.isCancelled {
+                phase = .failed((error as? FilesClientError)?.userMessage ?? L10n.Gallery.loadFailed)
             }
         }
     }

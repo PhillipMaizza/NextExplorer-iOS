@@ -27,6 +27,12 @@ public struct MainTabFeature {
         public var downloads = DownloadsFeature.State()
         public var settings: SettingsFeature.State
         public var uploads: UploadsFeature.State
+        /// The offline download engine, a session lifetime sibling so its long running download
+        /// effect survives the user leaving the Settings screen that started it.
+        public var offline: OfflineDownloadsFeature.State
+        /// Shared offline progress, reset when a fresh session mounts so a previous account's
+        /// finished run never lingers on the new account's Settings screen.
+        @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) public var offlineProgress = OfflineDownloadProgress()
         public var uploadToast: UploadToast?
 
         public init(serverURL: URL, user: User) {
@@ -35,6 +41,7 @@ public struct MainTabFeature {
             shared = SharedFeature.State(serverURL: serverURL)
             settings = SettingsFeature.State(serverURL: serverURL, user: user)
             uploads = UploadsFeature.State(serverURL: serverURL)
+            offline = OfflineDownloadsFeature.State(serverURL: serverURL)
         }
 
         /// The folder currently on screen in the Browse tab (root or the deepest pushed
@@ -61,6 +68,7 @@ public struct MainTabFeature {
         case downloads(DownloadsFeature.Action)
         case settings(SettingsFeature.Action)
         case uploads(UploadsFeature.Action)
+        case offline(OfflineDownloadsFeature.Action)
         case openUploadedLocation(String)
         case dismissUploadToast
         case delegate(Delegate)
@@ -98,6 +106,9 @@ public struct MainTabFeature {
         }
         Scope(state: \.uploads, action: \.uploads) {
             UploadsFeature()
+        }
+        Scope(state: \.offline, action: \.offline) {
+            OfflineDownloadsFeature()
         }
         Reduce { state, action in
             switch action {
@@ -148,23 +159,36 @@ public struct MainTabFeature {
                 return .merge(
                     .send(.browse(.syncPathStack)),
                     .send(.favorites(.syncPathStack)),
-                    .send(.uploads(.appResumed))
+                    .send(.uploads(.appResumed)),
+                    // Check the pinned folders for new files each time the app comes forward.
+                    .send(.offline(.autoSync(force: false)))
                 )
 
             case .observeConnectivity:
+                // Runs once when this session's shell mounts: clear any offline progress left over
+                // from a previous account (unless a download is somehow already running), then check
+                // the pinned folders for new files to pull down.
+                state.$offlineProgress.withLock {
+                    if !$0.isActive {
+                        $0 = OfflineDownloadProgress()
+                    }
+                }
                 // First value is the current state (ignored); refresh only on a real
                 // offline -> online transition.
                 let connectivity = connectivity
-                return .run { send in
-                    var wasOnline = true
-                    for await online in connectivity.events() {
-                        defer { wasOnline = online }
-                        if online, !wasOnline {
-                            await send(.connectivityRestored)
+                return .merge(
+                    .send(.offline(.autoSync(force: false))),
+                    .run { send in
+                        var wasOnline = true
+                        for await online in connectivity.events() {
+                            defer { wasOnline = online }
+                            if online, !wasOnline {
+                                await send(.connectivityRestored)
+                            }
                         }
                     }
-                }
-                .cancellable(id: CancelID.connectivity, cancelInFlight: true)
+                    .cancellable(id: CancelID.connectivity, cancelInFlight: true)
+                )
 
             case .connectivityRestored:
                 // Refresh every list tab (each is cancel-in-flight, so this is cheap) so no tab
@@ -176,7 +200,9 @@ public struct MainTabFeature {
                     .send(.browse(.syncPathStack)),
                     .send(.favorites(.refreshButtonTapped)),
                     .send(.favorites(.syncPathStack)),
-                    .send(.shared(.refreshRequested))
+                    .send(.shared(.refreshRequested)),
+                    // Back online: pull any files added to pinned folders while offline.
+                    .send(.offline(.autoSync(force: true)))
                 )
 
             case .browse(.delegate(.favoritesChanged)), .favorites(.delegate(.favoritesChanged)):
@@ -206,7 +232,19 @@ public struct MainTabFeature {
                 state.downloads.downloads = []
                 return .none
 
-            case .browse, .favorites, .shared, .downloads, .settings, .uploads, .delegate:
+            case let .settings(.delegate(.startOfflineDownload(items))):
+                return .send(.offline(.startDownload(items)))
+
+            case .settings(.delegate(.cancelOfflineDownload)):
+                return .send(.offline(.cancelTapped))
+
+            case .settings(.delegate(.resyncOffline)):
+                return .send(.offline(.resyncTapped))
+
+            case .settings(.delegate(.removeOfflineFiles)):
+                return .send(.offline(.removeAllOfflineTapped))
+
+            case .browse, .favorites, .shared, .downloads, .settings, .uploads, .offline, .delegate:
                 return .none
             }
         }

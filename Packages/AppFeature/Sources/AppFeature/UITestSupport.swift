@@ -34,9 +34,14 @@
             guard environment[mockFlag] == "1",
                   let raw = environment[animationSpeedKey],
                   let speed = Float(raw), speed > 0 else { return }
-            for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
-                for window in scene.windows {
-                    window.layer.speed = speed
+            // Called from the app's `onAppear` (via `DispatchQueue.main.async`) and the UI test
+            // setup, both on the main thread; assert that so the main actor only UIKit access is
+            // legal from this nonisolated helper.
+            MainActor.assumeIsolated {
+                for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
+                    for window in scene.windows {
+                        window.layer.speed = speed
+                    }
                 }
             }
         }
@@ -134,6 +139,12 @@
                 client.renameItem = { _, item, newName in store.rename(item, to: newName) }
                 client.deleteItems = { _, items in store.delete(items) }
                 client.compressItem = { _, item in store.compress(item) }
+                // Offline: a folder's estimate and a per file "download" that completes instantly, so
+                // the offline picker + download flow is exercisable without a backend or disk writes.
+                client.fetchUsage = { _, path in StorageUsage(path: path, size: 12_000_000, free: 0, total: 0) }
+                client.offlineDownloadFile = { _, item in
+                    URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(item.name)
+                }
                 // previewValue returns no search hits; give the search path deterministic results
                 // derived from the query so a UI test can assert on them.
                 // Stable result names (not echoed from the query) so a UI test asserting on them
@@ -301,7 +312,9 @@
             }
 
             if environment[UITestSupport.disableAnimationsFlag] == "1" {
-                UIView.setAnimationsEnabled(false)
+                MainActor.assumeIsolated {
+                    UIView.setAnimationsEnabled(false)
+                }
             }
 
             let auth = UITestSupport.Auth(rawValue: environment[UITestSupport.authKey] ?? "") ?? .loggedOut
@@ -314,6 +327,7 @@
                 $0.jsonCacheStore = .inMemory()
                 $0.previewCacheStore = .testValue
                 $0.thumbnailCache = .testValue
+                $0.offlineFileStore = .inMemory()
             }
         }
     }

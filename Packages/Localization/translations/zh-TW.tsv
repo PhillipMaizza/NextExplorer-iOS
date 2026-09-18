@@ -573,3 +573,31 @@ settings.accountSignOutTitle	登出？
 settings.accountSignOutMessage	要在此裝置上登出 %@ 嗎？您需要重新登入才能使用此帳戶。
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 使用中的帳戶
+
+# ---- offline ----
+common.deselect	取消選取
+offline.sectionTitle	離線
+offline.settingsRow	下載檔案以供離線使用
+offline.footnote	已下載的檔案即使沒有連線也能開啟。
+offline.available	%@ 可離線使用
+offline.removeRow	移除離線檔案
+offline.removeConfirmTitle	移除離線檔案？
+offline.removeConfirmMessage	這會刪除此裝置上為離線使用儲存的檔案。伺服器上的檔案不受影響。
+offline.removeConfirm	移除
+offline.preparing	正在準備…
+offline.downloadingName	正在下載 %@
+offline.progressCount	%lld/%lld 個檔案
+offline.downloadFailed	無法完成離線下載。
+offline.selectionTitle	下載以供離線使用
+offline.selectionEmpty	此資料夾是空的。
+offline.selectionLoadFailed	無法載入此資料夾。
+offline.selectionEstimate	預估下載量
+offline.selectionDownload	下載
+offline.selectionInsufficientSpace	此裝置的可用空間不足
+offline.resyncRow	更新離線檔案
+offline.badgeAvailable	可離線使用
+offline.manageRow	管理離線檔案
+offline.manageTitle	離線檔案
+offline.manageEmpty	沒有為離線使用下載任何內容。
+offline.preferOfflineToggle	播放已下載的副本
+offline.preferOfflineSubtitle	可用時使用已下載的影片而非串流播放。

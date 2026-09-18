@@ -573,3 +573,31 @@ settings.accountSignOutTitle	¿Cerrar sesión?
 settings.accountSignOutMessage	¿Cerrar la sesión de %@ en este dispositivo? Deberás iniciar sesión de nuevo para usar esta cuenta.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, cuenta activa
+
+# ---- offline ----
+common.deselect	Deseleccionar
+offline.sectionTitle	Sin conexión
+offline.settingsRow	Descargar archivos para uso sin conexión
+offline.footnote	Los archivos descargados se abren incluso sin conexión.
+offline.available	%@ disponibles sin conexión
+offline.removeRow	Eliminar archivos sin conexión
+offline.removeConfirmTitle	¿Eliminar archivos sin conexión?
+offline.removeConfirmMessage	Esto elimina los archivos guardados para uso sin conexión en este dispositivo. Tus archivos en el servidor no se ven afectados.
+offline.removeConfirm	Eliminar
+offline.preparing	Preparando…
+offline.downloadingName	Descargando %@
+offline.progressCount	%lld de %lld archivos
+offline.downloadFailed	No se pudo completar la descarga sin conexión.
+offline.selectionTitle	Descargar para sin conexión
+offline.selectionEmpty	Esta carpeta está vacía.
+offline.selectionLoadFailed	No se pudo cargar esta carpeta.
+offline.selectionEstimate	Descarga estimada
+offline.selectionDownload	Descargar
+offline.selectionInsufficientSpace	No hay suficiente espacio libre en este dispositivo
+offline.resyncRow	Actualizar archivos sin conexión
+offline.badgeAvailable	Disponible sin conexión
+offline.manageRow	Gestionar archivos sin conexión
+offline.manageTitle	Archivos sin conexión
+offline.manageEmpty	No hay nada descargado para uso sin conexión.
+offline.preferOfflineToggle	Reproducir copias descargadas
+offline.preferOfflineSubtitle	Usar un vídeo descargado en lugar de transmitirlo cuando esté disponible.
