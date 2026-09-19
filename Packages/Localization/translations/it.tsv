@@ -601,3 +601,4 @@ offline.manageTitle	File offline
 offline.manageEmpty	Nessun elemento è scaricato per l'uso offline.
 offline.preferOfflineToggle	Riproduci le copie scaricate
 offline.preferOfflineSubtitle	Usa un video scaricato invece dello streaming quando è disponibile.
+offline.tunnelSpeedNote	Raggiungere il server tramite un tunnel remoto può rallentare i download. Per i file di grandi dimensioni, collegati alla stessa rete e usa l'indirizzo locale del server.

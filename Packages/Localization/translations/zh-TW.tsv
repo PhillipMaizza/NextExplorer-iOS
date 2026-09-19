@@ -601,3 +601,4 @@ offline.manageTitle	離線檔案
 offline.manageEmpty	沒有為離線使用下載任何內容。
 offline.preferOfflineToggle	播放已下載的副本
 offline.preferOfflineSubtitle	可用時使用已下載的影片而非串流播放。
+offline.tunnelSpeedNote	透過遠端通道存取伺服器可能會拖慢下載速度。下載大型檔案時，請連線到相同網路並使用伺服器的本機位址。

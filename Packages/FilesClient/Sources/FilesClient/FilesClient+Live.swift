@@ -143,9 +143,12 @@ public extension FilesClient {
             downloadRawFile: { serverURL, item in
                 try await service.downloadRawFile(serverURL: serverURL, item: item)
             },
-            offlineDownloadFile: { serverURL, item in
-                try await service.offlineDownloadFile(serverURL: serverURL, item: item)
+            offlineDownloadFile: { serverURL, item, onProgress in
+                try await service.offlineDownloadFile(
+                    serverURL: serverURL, item: item, onProgress: onProgress
+                )
             },
+            flushDownloadConnections: { await networkClient.flushDownloadConnections() },
             uploadFile: { serverURL, fileURL, fileName, destination, onProgress in
                 try await service.uploadFile(
                     serverURL: serverURL, fileURL: fileURL, fileName: fileName,

@@ -601,3 +601,4 @@ offline.manageTitle	Offlinefiler
 offline.manageEmpty	Inget är hämtat för offlineanvändning.
 offline.preferOfflineToggle	Spela upp hämtade kopior
 offline.preferOfflineSubtitle	Använd en hämtad video i stället för att strömma när den finns.
+offline.tunnelSpeedNote	Att nå servern via en fjärrtunnel kan göra nedladdningar långsamma. Anslut till samma nätverk och använd serverns lokala adress för stora filer.

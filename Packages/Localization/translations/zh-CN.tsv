@@ -601,3 +601,4 @@ offline.manageTitle	离线文件
 offline.manageEmpty	没有为离线使用下载任何内容。
 offline.preferOfflineToggle	播放已下载的副本
 offline.preferOfflineSubtitle	可用时使用已下载的视频而非流式播放。
+offline.tunnelSpeedNote	通过远程隧道访问服务器可能会降低下载速度。下载大文件时，请连接到同一网络并使用服务器的本地地址。

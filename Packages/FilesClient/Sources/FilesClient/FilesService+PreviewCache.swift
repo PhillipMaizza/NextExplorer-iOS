@@ -140,41 +140,46 @@ extension FilesService {
     }
 
     /// Streams `item`'s verbatim bytes (`POST /api/download`) into the durable offline store so it
-    /// opens with no network later. Runs over the low priority session: a folder-wide offline sync
-    /// must never starve an interactive preview. Returns the local file (a cache hit returns with no
-    /// network); concurrent calls for the same slot share one transfer via `downloadCoordinator`.
-    func offlineDownloadFile(serverURL: URL, item: FileItem) async throws -> URL {
+    /// opens with no network later. Returns the local file (a cache hit returns with no network).
+    ///
+    /// Deliberately NOT routed through `downloadCoordinator`: the coordinator runs its work in a
+    /// detached task, which severs structured cancellation, so a cancelled offline run (a new download
+    /// superseding an `autoSync`, or an explicit cancel) would leave the old transfer running and
+    /// collide with the new one. Run directly instead, so cancelling the calling task propagates
+    /// straight into `downloadWithProgress` and actually stops the transfer. The coordinator's only
+    /// job was collapsing concurrent transfers into the same slot, which never happens here: a cache
+    /// hit short circuits, and only one offline run is ever in flight (shared cancel id).
+    func offlineDownloadFile(
+        serverURL: URL,
+        item: FileItem,
+        onProgress: @Sendable @escaping (Double) -> Void = { _ in }
+    ) async throws -> URL {
         if let existing = OfflineCache.localURL(for: item) {
             return existing
         }
-        guard let slot = OfflineCache.slot(for: item, create: true) else {
+        guard OfflineCache.slot(for: item, create: true) != nil else {
             throw FilesClientError.decoding("Could not open the offline store.")
         }
         let url = serverURL.appendingPathComponent(APIPath.download)
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(DownloadRawFileBody(path: item.id))
-        let finalRequest = request
-        let networkClient = networkClient
-        return try await downloadCoordinator.run(forFileAt: slot.fileURL) {
-            let downloadedURL: URL
-            let response: HTTPURLResponse
-            do {
-                // Full priority (not the capped low priority pool): an offline sync is user
-                // initiated and wants throughput. The engine runs several of these at once.
-                (downloadedURL, response) = try await networkClient.download(finalRequest)
-            } catch {
-                throw Self.mapTransportError(error)
-            }
-            defer { try? FileManager.default.removeItem(at: downloadedURL) }
-            try Self.validate(response)
-            do {
-                return try OfflineCache.store(downloadedURL: downloadedURL, item: item)
-            } catch let error as FilesClientError {
-                throw error
-            } catch {
-                throw FilesClientError.decoding(error.localizedDescription)
-            }
+
+        let downloadedURL: URL
+        let response: HTTPURLResponse
+        do {
+            (downloadedURL, response) = try await networkClient.downloadWithProgress(request, onProgress)
+        } catch {
+            throw Self.mapTransportError(error)
+        }
+        defer { try? FileManager.default.removeItem(at: downloadedURL) }
+        try Self.validate(response)
+        do {
+            return try OfflineCache.store(downloadedURL: downloadedURL, item: item)
+        } catch let error as FilesClientError {
+            throw error
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
         }
     }
 
