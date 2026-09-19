@@ -95,11 +95,20 @@ public struct FilesClient: Sendable {
     public var saveTextContent: @Sendable (_ serverURL: URL, _ path: String, _ content: String) async throws -> Void
     public var extractZip: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> FileItem
     public var downloadRawFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
-    /// Streams `item`'s verbatim bytes into the durable offline store (`OfflineFileStore`) over the
-    /// low priority session, so it later opens with no network. Returns the local file; a file
-    /// already pinned returns immediately. Used by the offline download engine to walk a pinned
-    /// folder file by file.
-    public var offlineDownloadFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
+    /// Streams `item`'s verbatim bytes into the durable offline store (`OfflineFileStore`), so it
+    /// later opens with no network. Returns the local file; a file already pinned returns
+    /// immediately. Used by the offline download engine to walk a pinned folder file by file.
+    /// `onProgress` reports this file's fractional transfer (0...1), already throttled in the network
+    /// layer; a cache hit returns at once without reporting.
+    public var offlineDownloadFile: @Sendable (
+        _ serverURL: URL,
+        _ item: FileItem,
+        _ onProgress: @Sendable @escaping (_ fraction: Double) -> Void
+    ) async throws -> URL
+    /// Drops pooled download connections so the next offline transfer opens a fresh socket. The engine
+    /// calls this at the start of a run: after the app has sat idle, a reused keep alive connection may
+    /// be dead and would otherwise stall the first file until it times out.
+    public var flushDownloadConnections: @Sendable () async -> Void
     /// `POST /api/upload` (`backend/src/routes/upload.js`): one `multipart/form-data` request
     /// per file — `uploadTo` = destination directory, `relativePath` = `fileName`, `filedata` =
     /// the file at `fileURL`. `destination` must not be empty (the server rejects the root).

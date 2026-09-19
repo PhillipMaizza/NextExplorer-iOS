@@ -601,3 +601,4 @@ offline.manageTitle	الملفات دون اتصال
 offline.manageEmpty	لا يوجد شيء تم تنزيله للاستخدام دون اتصال.
 offline.preferOfflineToggle	تشغيل النسخ التي جرى تنزيلها
 offline.preferOfflineSubtitle	استخدم مقطع فيديو تم تنزيله بدلاً من البث عندما يكون متاحًا.
+offline.tunnelSpeedNote	قد يؤدي الوصول إلى خادمك عبر نفق بعيد إلى إبطاء التنزيلات. للملفات الكبيرة، اتصل بالشبكة نفسها واستخدم العنوان المحلي لخادمك.

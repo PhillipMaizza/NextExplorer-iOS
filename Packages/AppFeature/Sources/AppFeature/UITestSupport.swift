@@ -142,8 +142,9 @@
                 // Offline: a folder's estimate and a per file "download" that completes instantly, so
                 // the offline picker + download flow is exercisable without a backend or disk writes.
                 client.fetchUsage = { _, path in StorageUsage(path: path, size: 12_000_000, free: 0, total: 0) }
-                client.offlineDownloadFile = { _, item in
-                    URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(item.name)
+                client.offlineDownloadFile = { _, item, onProgress in
+                    onProgress(1)
+                    return URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(item.name)
                 }
                 // previewValue returns no search hits; give the search path deterministic results
                 // derived from the query so a UI test can assert on them.

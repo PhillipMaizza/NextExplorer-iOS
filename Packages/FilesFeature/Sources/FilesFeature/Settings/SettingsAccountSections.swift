@@ -71,11 +71,12 @@ struct SettingsProfileSection: View {
     }
 
     private var serverHostAccessory: DSNavigationRow.Accessory {
-        if let host = store.serverURL.host {
-            .detail(host)
-        } else {
-            .none
+        guard let host = store.serverURL.host else { return .none }
+        // Keep an explicit port (e.g. a LAN instance), matching the account switcher rows.
+        if let port = store.serverURL.port {
+            return .detail("\(host):\(port)")
         }
+        return .detail(host)
     }
 
     /// Self service password change (`POST /api/auth/password`). No profile editing here: the

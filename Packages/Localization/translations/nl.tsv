@@ -601,3 +601,4 @@ offline.manageTitle	Offline bestanden
 offline.manageEmpty	Er is niets gedownload voor offline gebruik.
 offline.preferOfflineToggle	Gedownloade kopieën afspelen
 offline.preferOfflineSubtitle	Een gedownloade video gebruiken in plaats van streamen wanneer die beschikbaar is.
+offline.tunnelSpeedNote	Toegang tot je server via een externe tunnel kan downloads vertragen. Verbind voor grote bestanden met hetzelfde netwerk en gebruik het lokale adres van je server.
