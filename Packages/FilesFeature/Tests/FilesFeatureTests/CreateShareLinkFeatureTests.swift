@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import DependenciesTestSupport
 import CoreModels
 import FilesClient
 @testable import FilesFeature
@@ -6,6 +7,7 @@ import Foundation
 import Localization
 import Testing
 
+@Suite(.dependencies)
 @MainActor
 struct CreateShareLinkFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
