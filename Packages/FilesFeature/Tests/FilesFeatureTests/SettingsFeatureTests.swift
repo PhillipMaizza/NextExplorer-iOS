@@ -1,10 +1,12 @@
 import ComposableArchitecture
+import DependenciesTestSupport
 import CoreModels
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
 
+@Suite(.dependencies)
 @MainActor
 struct SettingsFeatureTests {
     private let serverURL = URL(string: "https://example.com")!

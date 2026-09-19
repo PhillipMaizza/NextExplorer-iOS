@@ -15,6 +15,9 @@ let package = Package(
         .package(path: "../DesignSystem"),
         .package(path: "../Localization"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
+        // Direct pin so the test target can reach `DependenciesTestSupport` (the `.dependencies`
+        // test trait) — it ships in swift-dependencies, which TCA already pulls in transitively.
+        .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.0"),
         .package(url: "https://github.com/simonbs/TreeSitterLanguages", from: "0.1.10"),
         .package(url: "https://github.com/weichsel/ZIPFoundation", from: "0.9.19"),
         .package(url: "https://github.com/mtgto/Unrar.swift", from: "0.5.4"),
@@ -77,6 +80,7 @@ let package = Package(
             dependencies: [
                 "FilesFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
+                .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
