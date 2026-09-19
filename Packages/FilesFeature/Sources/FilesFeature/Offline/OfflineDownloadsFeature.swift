@@ -15,6 +15,11 @@ public struct OfflineDownloadsFeature {
     public struct State: Equatable {
         public var serverURL: URL
         @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) public var progress = OfflineDownloadProgress()
+        /// Roots this in flight `startDownload` newly added to the manifest (ones not already pinned).
+        /// Kept so an explicit cancel can roll them back: a pin is written up front so an app kill can
+        /// resume, but a user who cancels never wanted those folders pinned, and leaving them makes the
+        /// manage screen list folders as downloaded when nothing was.
+        public var pendingPinPaths: Set<String> = []
 
         public init(serverURL: URL = URL(fileURLWithPath: "/")) {
             self.serverURL = serverURL
@@ -25,9 +30,9 @@ public struct OfflineDownloadsFeature {
         /// Start (or add to) an offline download for the chosen roots. Folders are walked
         /// recursively; files are downloaded directly.
         case startDownload([FileItem])
-        case prepared(fileCount: Int, totalBytes: Int64)
+        case prepared(fileCount: Int)
         case willDownload(name: String)
-        case didDownload(bytesDone: Int64, filesDone: Int)
+        case progressed(filesDone: Int, unitsDone: Double)
         case completed
         case failed(String)
         case cancelTapped
@@ -48,9 +53,16 @@ public struct OfflineDownloadsFeature {
     @Dependency(\.date) var date
 
     private enum Constants {
-        /// How many files download at once. Enough to saturate a typical connection without opening
-        /// so many sockets that each transfer crawls or the server rate limits.
-        static let maxConcurrentDownloads = 4
+        /// Files download one at a time, on purpose. The backend streams a single `/api/download` well
+        /// but chokes serving several at once over one connection (streams starve), and a starved
+        /// stream would hold its slot for minutes under the generous timeout and stall the whole run.
+        /// Serial also makes the "X of Y files" count honest and legible: exactly one file is in flight,
+        /// so the number is unambiguous instead of several partial files summing to a confusing bar.
+        static let maxConcurrentDownloads = 1
+        /// How many folder listings to fetch at once while walking the tree in the preparing phase.
+        /// Higher than the download fan out: `browse` calls are small and latency bound, so the walk
+        /// finishes far quicker without the bandwidth pressure of concurrent file transfers.
+        static let maxConcurrentBrowses = 8
         static let downloadTaskName = "OfflineDownload"
         static let syncTaskName = "OfflineSync"
         /// Minimum gap between automatic foreground syncs, so re-walking every pinned folder doesn't
@@ -75,15 +87,17 @@ public struct OfflineDownloadsFeature {
                 let filesClient = filesClient
                 let offlineFileStore = offlineFileStore
                 let existingRoots = offlineFileStore.pinnedRoots()
+                let existingPaths = Set(existingRoots.map(\.path))
                 let newRoots = roots.map { OfflinePinnedRoot(path: $0.id, isDirectory: $0.isDirectory) }
+                // Track only the genuinely new pins, so a cancel rolls back exactly what this run added.
+                state.pendingPinPaths = Set(newRoots.map(\.path)).subtracting(existingPaths)
                 return .run { send in
                     // Record the pins up front, so an interrupted run (app killed mid download) keeps
                     // its roots and a later sync resumes the missing files instead of losing them.
                     offlineFileStore.setPinnedRoots(Self.mergedRoots(existing: existingRoots, adding: newRoots))
 
                     let files = try await Self.enumerate(roots: roots, serverURL: serverURL, filesClient: filesClient)
-                    let totalBytes = files.reduce(Int64(0)) { $0 + $1.size }
-                    await send(.prepared(fileCount: files.count, totalBytes: totalBytes))
+                    await send(.prepared(fileCount: files.count))
                     offlineFileStore.setInterrupted(true)
                     await BackgroundActivity.run(name: Constants.downloadTaskName) {
                         await Self.runDownloads(files, serverURL: serverURL, filesClient: filesClient, send: send)
@@ -135,11 +149,10 @@ public struct OfflineDownloadsFeature {
                 }
                 return .none
 
-            case let .prepared(fileCount, totalBytes):
+            case let .prepared(fileCount):
                 state.$progress.withLock {
                     $0.phase = .downloading
                     $0.filesTotal = fileCount
-                    $0.bytesTotal = totalBytes
                 }
                 return .none
 
@@ -147,32 +160,50 @@ public struct OfflineDownloadsFeature {
                 state.$progress.withLock { $0.currentName = name }
                 return .none
 
-            case let .didDownload(bytesDone, filesDone):
+            case let .progressed(filesDone, unitsDone):
                 state.$progress.withLock {
-                    $0.bytesDone = bytesDone
-                    $0.filesDone = filesDone
+                    // Guard against an out of order snapshot from a concurrent task lowering the bar.
+                    $0.filesDone = max($0.filesDone, filesDone)
+                    $0.unitsDone = max($0.unitsDone, unitsDone)
                 }
                 return .none
 
             case .completed:
                 offlineFileStore.setInterrupted(false)
+                state.pendingPinPaths = []
                 state.$progress.withLock {
                     $0.phase = .completed
                     $0.currentName = ""
-                    $0.bytesDone = $0.bytesTotal
-                    $0.filesDone = $0.filesTotal
                 }
                 return .none
 
             case let .failed(message):
                 offlineFileStore.setInterrupted(false)
+                // A failed run keeps its pins so a retry / next sync can resume the missing files.
+                state.pendingPinPaths = []
                 state.$progress.withLock { $0.phase = .failed(message) }
                 return .none
 
             case .cancelTapped:
                 offlineFileStore.setInterrupted(false)
+                // Roll back the pins this run added but the user chose not to keep, so the manage
+                // screen doesn't list folders as downloaded when nothing was. Slots already fetched
+                // for a reverted root are dropped by `reconcile`.
+                let rolledBack = state.pendingPinPaths
+                state.pendingPinPaths = []
+                let offlineFileStore = offlineFileStore
                 state.$progress.withLock { $0 = OfflineDownloadProgress() }
-                return .cancel(id: CancelID.download)
+                return .merge(
+                    .cancel(id: CancelID.download),
+                    .run { _ in
+                        if !rolledBack.isEmpty {
+                            offlineFileStore.setPinnedRoots(
+                                offlineFileStore.pinnedRoots().filter { !rolledBack.contains($0.path) }
+                            )
+                            offlineFileStore.reconcile(nil)
+                        }
+                    }
+                )
 
             case .removeAllOfflineTapped:
                 let offlineFileStore = offlineFileStore
@@ -208,7 +239,7 @@ public struct OfflineDownloadsFeature {
             let pending = files.filter { offlineFileStore.localURL($0) == nil }
             guard !pending.isEmpty else {
                 if announceWhenNothingPending {
-                    await send(.prepared(fileCount: 0, totalBytes: 0))
+                    await send(.prepared(fileCount: 0))
                     await send(.completed)
                 }
                 return
@@ -216,8 +247,7 @@ public struct OfflineDownloadsFeature {
             if Task.isCancelled {
                 return
             }
-            let totalBytes = pending.reduce(Int64(0)) { $0 + $1.size }
-            await send(.prepared(fileCount: pending.count, totalBytes: totalBytes))
+            await send(.prepared(fileCount: pending.count))
             offlineFileStore.setInterrupted(true)
             await BackgroundActivity.run(name: Constants.syncTaskName) {
                 await Self.runDownloads(pending, serverURL: serverURL, filesClient: filesClient, send: send)
@@ -261,28 +291,58 @@ public struct OfflineDownloadsFeature {
     private static func runDownloads(
         _ files: [FileItem], serverURL: URL, filesClient: FilesClient, send: Send<Action>
     ) async {
+        // Start from a fresh socket: the download session may have sat idle since the last run, and a
+        // reused keep alive connection the server already dropped would stall the first file until it
+        // timed out.
+        await filesClient.flushDownloadConnections()
         let counter = DownloadProgressCounter()
-        await withTaskGroup(of: Void.self) { group in
-            var iterator = files.makeIterator()
-            func addNext() -> Bool {
-                guard let file = iterator.next() else { return false }
-                group.addTask {
-                    if Task.isCancelled {
-                        return
-                    }
-                    await send(.willDownload(name: file.name))
-                    _ = try? await filesClient.offlineDownloadFile(serverURL, file)
-                    let snapshot = await counter.record(bytes: file.size)
-                    await send(.didDownload(bytesDone: snapshot.bytes, filesDone: snapshot.files))
+        // Progress flows through this stream and out via one forwarder task. The byte callback (already
+        // throttled in the network delegate) only does a cheap synchronous `yield`, so nothing spawns
+        // an unstructured task on the transfer hot path, and the sole caller of `send` is the
+        // forwarder, keeping updates ordered and bounded.
+        let (events, continuation) = AsyncStream<Action>.makeStream()
+        await withTaskGroup(of: Void.self) { outer in
+            outer.addTask {
+                for await action in events {
+                    await send(action)
                 }
-                return true
             }
-            for _ in 0 ..< Constants.maxConcurrentDownloads where addNext() {}
-            while await group.next() != nil {
-                if Task.isCancelled {
-                    break
+            outer.addTask {
+                await withTaskGroup(of: Void.self) { group in
+                    var iterator = files.makeIterator()
+                    var nextKey = 0
+                    func addNext() -> Bool {
+                        guard let file = iterator.next() else { return false }
+                        let key = nextKey
+                        nextKey += 1
+                        group.addTask {
+                            if Task.isCancelled {
+                                return
+                            }
+                            continuation.yield(.willDownload(name: file.name))
+                            let url = try? await filesClient.offlineDownloadFile(serverURL, file) { fraction in
+                                if let snapshot = counter.progress(key: key, fileFraction: fraction) {
+                                    continuation.yield(.progressed(filesDone: snapshot.filesDone, unitsDone: snapshot.unitsDone))
+                                }
+                            }
+                            // A failed file (nil) still advances the bar (so it never stalls) but is
+                            // not counted as done: it stays pending and the next sync retries it,
+                            // instead of the run falsely reporting every file present.
+                            let snapshot = counter.complete(key: key, success: url != nil)
+                            continuation.yield(.progressed(filesDone: snapshot.filesDone, unitsDone: snapshot.unitsDone))
+                        }
+                        return true
+                    }
+                    for _ in 0 ..< Constants.maxConcurrentDownloads where addNext() {}
+                    while await group.next() != nil {
+                        if Task.isCancelled {
+                            break
+                        }
+                        _ = addNext()
+                    }
                 }
-                _ = addNext()
+                // Downloads are done (or cancelled): end the stream so the forwarder finishes.
+                continuation.finish()
             }
         }
     }
@@ -294,30 +354,90 @@ public struct OfflineDownloadsFeature {
         roots: [FileItem], serverURL: URL, filesClient: FilesClient
     ) async throws -> [FileItem] {
         var files: [FileItem] = []
-        var stack = roots
-        while let item = stack.popLast() {
-            try Task.checkCancellation()
+        var seen = Set<String>()
+        // A global bounded walk rather than one level at a time: up to `maxConcurrentBrowses` folder
+        // listings are always in flight regardless of tree shape, so a deep or lopsided tree (a
+        // narrow level feeding a wide one) never stalls the pool waiting for the slowest folder in a
+        // level before starting the next. Newly found subfolders are queued and pulled in as slots
+        // free up.
+        var queue: [FileItem] = []
+        for item in roots {
             if item.isDirectory {
-                if let result = try? await filesClient.browse(serverURL, item.id) {
-                    stack.append(contentsOf: result.items)
-                }
-            } else {
+                queue.append(item)
+            } else if seen.insert(item.id).inserted {
                 files.append(item)
+            }
+        }
+        guard !queue.isEmpty else { return files }
+        try await withThrowingTaskGroup(of: [FileItem].self) { group in
+            var active = 0
+            func fill() {
+                while active < Constants.maxConcurrentBrowses, let dir = queue.popLast() {
+                    // A folder that fails to list is skipped (empty), not fatal, so one unreadable
+                    // subfolder doesn't sink an otherwise good sync.
+                    group.addTask { await (try? filesClient.browse(serverURL, dir.id))?.items ?? [] }
+                    active += 1
+                }
+            }
+            fill()
+            while let items = try await group.next() {
+                active -= 1
+                try Task.checkCancellation()
+                for item in items {
+                    if item.isDirectory {
+                        queue.append(item)
+                    } else if seen.insert(item.id).inserted {
+                        files.append(item)
+                    }
+                }
+                fill()
             }
         }
         return files
     }
 }
 
-/// Serialises the running byte/file totals across the concurrent download tasks so each completion
-/// reports a consistent cumulative snapshot.
-private actor DownloadProgressCounter {
-    private var bytes: Int64 = 0
-    private var files = 0
+/// Serialises the running progress across the concurrent download tasks, in units of files rather
+/// than bytes so the bar always agrees with the "X of Y files" label. Each finished file contributes
+/// a whole unit; each still running file contributes its latest fractional progress (0...1), so the
+/// bar climbs smoothly through one large transfer instead of jumping only when a file finishes.
+/// `filesDone` counts only successes (for the label); `unitsDone` counts every finished file including
+/// failures (so a failed file still advances the bar rather than stalling it).
+///
+/// `@unchecked Sendable` lock-guarded class rather than an actor so the throttled progress callback
+/// (already rate limited in the network delegate) can record with a cheap synchronous lock rather
+/// than an `await` hop that would mean spawning a task per callback.
+final class DownloadProgressCounter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var completedUnits = 0
+    private var successFiles = 0
+    private var inflight: [Int: Double] = [:]
+    private var completedKeys: Set<Int> = []
 
-    func record(bytes newBytes: Int64) -> (bytes: Int64, files: Int) {
-        bytes += newBytes
-        files += 1
-        return (bytes, files)
+    private var currentUnits: Double {
+        Double(completedUnits) + inflight.values.reduce(0, +)
+    }
+
+    /// Records a file's latest fractional progress (0...1, capped so a server over report can't push
+    /// the bar past 100%). Returns `nil` for a late callback on an already completed file.
+    func progress(key: Int, fileFraction: Double) -> (filesDone: Int, unitsDone: Double)? {
+        lock.lock()
+        defer { lock.unlock() }
+        guard !completedKeys.contains(key) else { return nil }
+        inflight[key] = min(max(fileFraction, 0), 1)
+        return (successFiles, currentUnits)
+    }
+
+    /// Marks a file finished: drops its fractional partial and folds a whole unit into the total.
+    func complete(key: Int, success: Bool) -> (filesDone: Int, unitsDone: Double) {
+        lock.lock()
+        defer { lock.unlock() }
+        inflight[key] = nil
+        completedKeys.insert(key)
+        completedUnits += 1
+        if success {
+            successFiles += 1
+        }
+        return (successFiles, currentUnits)
     }
 }

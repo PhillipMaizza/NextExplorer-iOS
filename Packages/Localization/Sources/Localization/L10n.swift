@@ -349,6 +349,7 @@ public enum L10n {
         public static var selectionLoadFailed: String { tr("offline.selectionLoadFailed") }  // "This folder couldn't be loaded."
         public static var selectionTitle: String { tr("offline.selectionTitle") }  // "Download for Offline"
         public static var settingsRow: String { tr("offline.settingsRow") }  // "Download Files for Offline Use"
+        public static var tunnelSpeedNote: String { tr("offline.tunnelSpeedNote") }
     }
     public enum Permissions {
         public static var applyOwnership: String { tr("permissions.applyOwnership") }  // "Apply Ownership"

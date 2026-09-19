@@ -29,6 +29,7 @@ struct OfflineDownloadsFeatureTests {
             OfflineDownloadsFeature()
         } withDependencies: {
             $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
             $0.filesClient.browse = { _, path in
                 switch path {
                 case "A":
@@ -39,7 +40,7 @@ struct OfflineDownloadsFeatureTests {
                     BrowseResult(items: [], access: access(), path: path)
                 }
             }
-            $0.filesClient.offlineDownloadFile = { _, item in
+            $0.filesClient.offlineDownloadFile = { _, item, _ in
                 downloaded.withValue { $0.append(item.id) }
                 return URL(fileURLWithPath: "/tmp/\(item.name)")
             }
@@ -51,7 +52,8 @@ struct OfflineDownloadsFeatureTests {
 
         #expect(store.state.progress.phase == .completed)
         #expect(store.state.progress.filesTotal == 2)
-        #expect(store.state.progress.bytesTotal == 30)
+        #expect(store.state.progress.filesDone == 2)
+        #expect(store.state.progress.fractionComplete == 1)
         #expect(Set(downloaded.value) == ["A/a.txt", "A/B/b.txt"])
         #expect(offline.pinnedRoots().map(\.path) == ["A"])
     }
@@ -66,12 +68,13 @@ struct OfflineDownloadsFeatureTests {
         } withDependencies: {
             $0.date = .constant(Date(timeIntervalSince1970: 0))
             $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
             $0.filesClient.browse = { _, path in
                 path == "A"
                     ? BrowseResult(items: [file("a.txt", path: "A", size: 5)], access: access(), path: path)
                     : BrowseResult(items: [], access: access(), path: path)
             }
-            $0.filesClient.offlineDownloadFile = { _, item in
+            $0.filesClient.offlineDownloadFile = { _, item, _ in
                 downloaded.withValue { $0.append(item.id) }
                 return URL(fileURLWithPath: "/tmp/\(item.name)")
             }
@@ -93,12 +96,13 @@ struct OfflineDownloadsFeatureTests {
         } withDependencies: {
             $0.date = .constant(Date(timeIntervalSince1970: 0))
             $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
             $0.filesClient.browse = { _, path in
                 path == "A"
                     ? BrowseResult(items: [file("old.txt", path: "A"), file("new.txt", path: "A")], access: access(), path: path)
                     : BrowseResult(items: [], access: access(), path: path)
             }
-            $0.filesClient.offlineDownloadFile = { _, item in
+            $0.filesClient.offlineDownloadFile = { _, item, _ in
                 downloaded.withValue { $0.append(item.id) }
                 return URL(fileURLWithPath: "/tmp/\(item.name)")
             }
@@ -121,12 +125,13 @@ struct OfflineDownloadsFeatureTests {
         } withDependencies: {
             $0.date = .constant(Date(timeIntervalSince1970: 1100)) // 100s later, under the 300s throttle
             $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
             $0.filesClient.browse = { _, path in
                 path == "A"
                     ? BrowseResult(items: [file("new.txt", path: "A")], access: access(), path: path)
                     : BrowseResult(items: [], access: access(), path: path)
             }
-            $0.filesClient.offlineDownloadFile = { _, item in
+            $0.filesClient.offlineDownloadFile = { _, item, _ in
                 downloaded.withValue { $0.append(item.id) }
                 return URL(fileURLWithPath: "/tmp/\(item.name)")
             }
@@ -151,8 +156,9 @@ struct OfflineDownloadsFeatureTests {
             OfflineDownloadsFeature()
         } withDependencies: {
             $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
             $0.filesClient.browse = { _, _ in BrowseResult(items: [file("a.txt", path: "A")], access: access(), path: "A") }
-            $0.filesClient.offlineDownloadFile = { _, _ in URL(fileURLWithPath: "/tmp/a.txt") }
+            $0.filesClient.offlineDownloadFile = { _, _, _ in URL(fileURLWithPath: "/tmp/a.txt") }
         }
         store.exhaustivity = .off
 
@@ -170,6 +176,7 @@ struct OfflineDownloadsFeatureTests {
         } withDependencies: {
             $0.date = .constant(Date(timeIntervalSince1970: 0))
             $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
             $0.filesClient.browse = { _, path in
                 path == "A"
                     ? BrowseResult(items: [file("a.txt", path: "A")], access: access(), path: path)
@@ -180,6 +187,37 @@ struct OfflineDownloadsFeatureTests {
 
         await store.send(.autoSync(force: false))
         #expect(store.state.progress.phase == .idle)
+    }
+
+    @Test
+    func cancellingAFreshDownloadRollsBackItsNewlyAddedPins() async {
+        let offline = OfflineFileStore.inMemory()
+        let store = TestStore(initialState: OfflineDownloadsFeature.State(serverURL: serverURL)) {
+            OfflineDownloadsFeature()
+        } withDependencies: {
+            $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [file("a.txt", path: "A", size: 10)], access: access(), path: "A")
+            }
+            // A cancellable hang, so the run is still in flight when the cancel arrives.
+            $0.filesClient.offlineDownloadFile = { _, item, _ in
+                try await Task.sleep(for: .seconds(3600))
+                return URL(fileURLWithPath: "/tmp/\(item.name)")
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.startDownload([folder("A")]))
+        // Pins are written up front (so an app kill can resume).
+        await store.receive(\.prepared)
+        #expect(offline.pinnedRoots().map(\.path) == ["A"])
+
+        await store.send(.cancelTapped)
+        await store.finish()
+        // A user cancel rolls the just-added pin back, so the manage screen doesn't show a phantom
+        // "downloaded" folder that has no files.
+        #expect(offline.pinnedRoots().isEmpty)
     }
 
     @Test
@@ -200,6 +238,7 @@ struct OfflineDownloadsFeatureTests {
             OfflineDownloadsFeature()
         } withDependencies: {
             $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
             $0.filesClient.browse = { _, path in
                 switch path {
                 case "A":
@@ -210,7 +249,7 @@ struct OfflineDownloadsFeatureTests {
                     BrowseResult(items: [], access: access(), path: path)
                 }
             }
-            $0.filesClient.offlineDownloadFile = { _, item in
+            $0.filesClient.offlineDownloadFile = { _, item, _ in
                 downloaded.withValue { $0.append(item.id) }
                 return URL(fileURLWithPath: "/tmp/\(item.name)")
             }

@@ -11,6 +11,18 @@ private enum Constants {
     /// Connection cap for the low priority session — small, so however many fetches the UI
     /// kicks off they never take slots from the main session's 6 per host interactive pool.
     static let lowPriorityMaxConnectionsPerHost = 2
+    /// File downloads (previews, offline sync) stream to disk and can take a long time: a big file,
+    /// a slow link, a server that buffers before its first byte, or several concurrent transfers where
+    /// one waits behind the others. `timeoutIntervalForRequest` is an *inactivity* timer (reset on
+    /// every packet), so it never fires mid transfer; it only bounds a genuinely stalled connection.
+    /// The interactive 15s value is right for a tap sized API call but wrong here: it was timing large
+    /// downloads out (NSURLErrorTimedOut, -1001) and making them appear to crawl as they retried.
+    /// A file actively transferring resets this on every packet, so a real download of any size never
+    /// hits it (downloads run one at a time, so there is always a packet flowing). It fires only on a
+    /// genuinely stalled socket, most importantly a stale keep alive connection the server already
+    /// dropped: 60s bounds how long such a dead connection stalls before failing, instead of hanging
+    /// for minutes. Connections are also flushed before each batch (see `flushDownloadConnections`).
+    static let downloadRequestTimeout: TimeInterval = 60
     static let downloadTempFilePrefix = "download-"
 }
 
@@ -55,6 +67,22 @@ public extension NetworkClient {
         }
         let lowPrioritySession = URLSession(
             configuration: lowPriorityConfiguration, delegate: delegate, delegateQueue: nil
+        )
+
+        // A dedicated session for file downloads (previews, offline sync). Same cookie jar and trust
+        // handling as the main session, but a generous request (inactivity) timeout so a large or slow
+        // transfer isn't killed by the interactive 15s budget. This was the cause of "downloads are
+        // hyper slow": on the main session, large downloads timed out at 15s and retried in a loop.
+        let downloadConfiguration = URLSessionConfiguration.default
+        downloadConfiguration.httpCookieStorage = cookieStorage
+        downloadConfiguration.httpCookieAcceptPolicy = .always
+        downloadConfiguration.httpShouldSetCookies = true
+        downloadConfiguration.timeoutIntervalForRequest = Constants.downloadRequestTimeout
+        if !protocolClasses.isEmpty {
+            downloadConfiguration.protocolClasses = protocolClasses
+        }
+        let downloadSession = URLSession(
+            configuration: downloadConfiguration, delegate: delegate, delegateQueue: nil
         )
 
         @Sendable func streamToFile(
@@ -137,10 +165,64 @@ public extension NetworkClient {
                 return (data, httpResponse)
             },
             download: { request in
-                try await streamToFile(request, using: session)
+                try await streamToFile(request, using: downloadSession)
+            },
+            downloadWithProgress: { request, onProgress in
+                let holder = DownloadTaskHolder()
+                let observationBox = ProgressObservationBox()
+                let throttle = ProgressThrottle(onProgress: onProgress)
+                return try await withTaskCancellationHandler {
+                    try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<(URL, HTTPURLResponse), Error>) in
+                        // A completion handler task, NOT a download delegate: the delegate's per chunk
+                        // `didWriteData` runs on the session's serial delegate queue and applies
+                        // backpressure to the socket, which throttled the transfer. Progress instead
+                        // comes from the task's own `NSProgress` via KVO, which never touches that
+                        // queue. Server trust still falls through to the session `URLSessionAuthDelegate`.
+                        let task = downloadSession.downloadTask(with: request) { temporaryURL, response, error in
+                            observationBox.invalidate()
+                            if let error {
+                                continuation.resume(throwing: NetworkError.from(error))
+                                return
+                            }
+                            guard let temporaryURL, let httpResponse = response as? HTTPURLResponse else {
+                                continuation.resume(throwing: NetworkError.invalidResponse)
+                                return
+                            }
+                            // The system deletes `temporaryURL` the instant this returns, so move it
+                            // synchronously to a stable location the caller owns.
+                            let stableURL = FileManager.default.temporaryDirectory
+                                .appendingPathComponent("\(Constants.downloadTempFilePrefix)\(UUID().uuidString)")
+                            do {
+                                try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
+                                continuation.resume(returning: (stableURL, httpResponse))
+                            } catch {
+                                continuation.resume(throwing: NetworkError.transport(error.localizedDescription))
+                            }
+                        }
+                        let observation = task.progress.observe(\.fractionCompleted, options: [.new]) { progress, _ in
+                            throttle.report(progress.fractionCompleted)
+                        }
+                        observationBox.set(observation)
+                        if holder.store(task) {
+                            task.resume()
+                        } else {
+                            // Cancelled before the task started: cancel it so its completion handler
+                            // resumes the continuation with the cancellation error, not a leak.
+                            observationBox.invalidate()
+                            task.cancel()
+                        }
+                    }
+                } onCancel: {
+                    holder.cancel()
+                }
             },
             lowPriorityDownload: { request in
                 try await streamToFile(request, using: lowPrioritySession)
+            },
+            flushDownloadConnections: {
+                await withCheckedContinuation { continuation in
+                    downloadSession.flush { continuation.resume() }
+                }
             }
         )
     }

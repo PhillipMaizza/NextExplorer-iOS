@@ -601,3 +601,4 @@ offline.manageTitle	オフラインファイル
 offline.manageEmpty	オフライン用にダウンロードされたものはありません。
 offline.preferOfflineToggle	ダウンロードしたコピーを再生
 offline.preferOfflineSubtitle	利用可能な場合はストリーミングの代わりにダウンロードした動画を使用します。
+offline.tunnelSpeedNote	リモートトンネル経由でサーバーに接続するとダウンロードが遅くなることがあります。大きなファイルの場合は、同じネットワークに接続してサーバーのローカルアドレスを使用してください。

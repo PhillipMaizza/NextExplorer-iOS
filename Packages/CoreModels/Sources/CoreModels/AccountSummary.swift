@@ -22,7 +22,14 @@ public struct AccountSummary: Codable, Equatable, Identifiable, Sendable {
     public static let sharedKey = "signedInAccounts"
 
     public var serverHost: String {
-        serverURL.host ?? serverURL.absoluteString
+        guard let host = serverURL.host else { return serverURL.absoluteString }
+        // Keep an explicit port (e.g. a LAN instance at 192.168.1.187:3660), so it is
+        // distinguishable from a tunnel/domain entry for the same server. Default ports aren't in
+        // the URL, so `port` is nil for them and nothing is appended.
+        if let port = serverURL.port {
+            return "\(host):\(port)"
+        }
+        return host
     }
 
     /// A display name for the account when no richer profile is available: the username, or the

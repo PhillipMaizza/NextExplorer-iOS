@@ -671,3 +671,4 @@ offline.manageTitle	Offline Files
 offline.manageEmpty	Nothing is downloaded for offline use.
 offline.preferOfflineToggle	Play downloaded copies
 offline.preferOfflineSubtitle	Use a downloaded video instead of streaming when it's available.
+offline.tunnelSpeedNote	Reaching your server through a remote tunnel can slow downloads. For large files, connect to the same network and use your server's local address.

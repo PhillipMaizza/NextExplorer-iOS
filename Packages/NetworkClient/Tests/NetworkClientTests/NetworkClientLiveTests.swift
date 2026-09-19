@@ -153,4 +153,63 @@ struct NetworkClientLiveTests {
             _ = try await client.download(request)
         }
     }
+
+    // MARK: downloadWithProgress (completion handler + KVO progress, no per-chunk delegate)
+
+    @Test("downloadWithProgress lands the body on disk, returns the response, and reports final progress")
+    func downloadWithProgressStreamsAndReports() async throws {
+        let payload = Data(repeating: 0xCD, count: 64 * 1024)
+        StubURLProtocol.stub = .init(
+            statusCode: 200,
+            headers: ["Content-Length": String(payload.count)],
+            body: payload
+        )
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        let fractions = LockIsolatedBox<[Double]>([])
+        let request = URLRequest(url: URL(string: "https://example.com/api/download")!)
+        let (fileURL, response) = try await client.downloadWithProgress(request) { fraction in
+            fractions.withValue { $0.append(fraction) }
+        }
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        #expect(response.statusCode == 200)
+        // The file must outlive the call (URLSession deletes its own temp on return).
+        #expect(FileManager.default.fileExists(atPath: fileURL.path))
+        #expect(try Data(contentsOf: fileURL) == payload)
+        // Progress is reported and never exceeds 1.
+        let reported = fractions.value
+        #expect(reported.allSatisfy { $0 >= 0 && $0 <= 1 })
+    }
+
+    @Test("error path: a transport failure during downloadWithProgress wraps as NetworkError")
+    func downloadWithProgressTransportFailureIsWrapped() async {
+        StubURLProtocol.failure = URLError(.notConnectedToInternet)
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        let request = URLRequest(url: URL(string: "https://example.com/api/download")!)
+        await #expect(throws: NetworkError.self) {
+            _ = try await client.downloadWithProgress(request) { _ in }
+        }
+    }
+}
+
+/// Minimal lock box so the progress callback (invoked on the URLSession delegate queue) can collect
+/// values across threads in the test.
+private final class LockIsolatedBox<Value>: @unchecked Sendable {
+    private let lock = NSLock()
+    private var stored: Value
+    init(_ value: Value) {
+        stored = value
+    }
+
+    var value: Value {
+        lock.lock(); defer { lock.unlock() }
+        return stored
+    }
+
+    func withValue(_ mutate: (inout Value) -> Void) {
+        lock.lock(); defer { lock.unlock() }
+        mutate(&stored)
+    }
 }

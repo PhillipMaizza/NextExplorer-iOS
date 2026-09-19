@@ -21,9 +21,14 @@ extension NetworkClient {
         download: { request in
             try Self.cannedDownload(for: request)
         },
+        downloadWithProgress: { request, onProgress in
+            onProgress(1)
+            return try Self.cannedDownload(for: request)
+        },
         lowPriorityDownload: { request in
             try Self.cannedDownload(for: request)
-        }
+        },
+        flushDownloadConnections: {}
     )
 
     private static func cannedDownload(for request: URLRequest) throws -> (URL, HTTPURLResponse) {

@@ -601,3 +601,4 @@ offline.manageTitle	Archivos sin conexión
 offline.manageEmpty	No hay nada descargado para uso sin conexión.
 offline.preferOfflineToggle	Reproducir copias descargadas
 offline.preferOfflineSubtitle	Usar un vídeo descargado en lugar de transmitirlo cuando esté disponible.
+offline.tunnelSpeedNote	Acceder a tu servidor a través de un túnel remoto puede ralentizar las descargas. Para archivos grandes, conéctate a la misma red y usa la dirección local de tu servidor.

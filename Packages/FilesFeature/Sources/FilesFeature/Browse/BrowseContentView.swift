@@ -199,13 +199,18 @@ struct BrowseContentView: View {
                 }
             }
             .task {
+                // Yield first so these sends land after whatever action presented this view has
+                // finished reducing, never reentrantly during it (TCA forbids reentrant sends).
+                await Task.yield()
                 store.send(.onAppear)
                 store.send(.computeOfflineAvailability)
             }
             // A finished offline download can change what's available here, so refresh the badges.
+            // The completion mutates shared state, so this `onChange` fires mid reduce; hop to the next
+            // tick so the send isn't reentrant.
             .onChange(of: offlineProgress.phase) { _, phase in
                 if phase == .completed {
-                    store.send(.computeOfflineAvailability)
+                    Task { @MainActor in store.send(.computeOfflineAvailability) }
                 }
             }
     }

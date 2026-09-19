@@ -18,9 +18,14 @@ public struct OfflineDownloadProgress: Equatable, Sendable {
 
     public var phase: Phase = .idle
     public var filesTotal = 0
+    /// Files fully stored so far, for the "X of Y files" line. Counts successes only.
     public var filesDone = 0
-    public var bytesTotal: Int64 = 0
-    public var bytesDone: Int64 = 0
+    /// Files processed so far as a smooth count, including the fraction of the files currently
+    /// streaming (a half downloaded file contributes 0.5). Drives the bar so it tracks the visible
+    /// file count rather than raw bytes: a run that is "338 of 341 files" reads as nearly full even
+    /// when the three remaining files are huge, and still advances mid file instead of freezing on a
+    /// large one. A failed file counts as processed (it does not stall the bar) but not as done.
+    public var unitsDone: Double = 0
     /// The file currently downloading, for the "Downloading <name>" line.
     public var currentName = ""
 
@@ -32,15 +37,28 @@ public struct OfflineDownloadProgress: Equatable, Sendable {
         phase == .preparing || phase == .downloading
     }
 
-    /// 0...1 over bytes once totals are known, so the bar tracks real transferred size rather than
-    /// file count (one large video shouldn't jump the bar the same as one tiny text file). Falls back
-    /// to file count when the listing reported no sizes, so the bar still advances instead of sitting
-    /// at 0 until it snaps to 100.
-    public var fractionComplete: Double {
-        if bytesTotal > 0 {
-            return min(max(Double(bytesDone) / Double(bytesTotal), 0), 1)
+    /// The file number to show in "X of Y files". While downloading it is the file currently in
+    /// flight (1 based) rather than the count already finished, so a run reads "1 of 3" while the
+    /// first file downloads instead of a confusing "0 of 3". Completed reads "Y of Y".
+    public var currentFileNumber: Int {
+        switch phase {
+        case .completed:
+            filesTotal
+        case .downloading:
+            filesTotal == 0 ? 0 : min(filesDone + 1, filesTotal)
+        default:
+            filesDone
         }
-        guard filesTotal > 0 else { return phase == .completed ? 1 : 0 }
-        return min(max(Double(filesDone) / Double(filesTotal), 0), 1)
+    }
+
+    /// 0...1 over the processed file count (with sub file smoothing), so the bar and the
+    /// "X of Y files" label always agree. A completed run reads full even if a file or two failed
+    /// (those stay pending for the next sync).
+    public var fractionComplete: Double {
+        if phase == .completed {
+            return 1
+        }
+        guard filesTotal > 0 else { return 0 }
+        return min(max(unitsDone / Double(filesTotal), 0), 1)
     }
 }

@@ -118,6 +118,7 @@ struct OfflineSelectionView: View {
                     Text(estimateText)
                         .type(.label3, style: .primaryOnSurface)
                         .monospacedDigit()
+                        .multilineTextAlignment(.trailing)
                 }
                 if exceedsFreeSpace {
                     Text(L10n.Offline.selectionInsufficientSpace)

@@ -96,8 +96,11 @@ struct OfflineSettingsSection: View {
                     .accessibilityAddTraits(.isHeader)
             } footer: {
                 if !filter.isActive {
-                    Text(footerText)
-                        .type(.body3(.regular), style: .tertiary)
+                    VStack(alignment: .leading, spacing: .space2) {
+                        Text(footerText)
+                        Text(L10n.Offline.tunnelSpeedNote)
+                    }
+                    .type(.body3(.regular), style: .tertiary)
                 }
             }
             .listRowBackground(Color.backgroundSecondary)
@@ -134,7 +137,7 @@ struct OfflineSettingsSection: View {
                     .tint(Color.accent)
             }
             HStack {
-                Text(L10n.Offline.progressCount(progress.filesDone, progress.filesTotal))
+                Text(L10n.Offline.progressCount(progress.currentFileNumber, progress.filesTotal))
                     .type(.body3(.regular), style: .tertiary)
                     .monospacedDigit()
                 Spacer()
