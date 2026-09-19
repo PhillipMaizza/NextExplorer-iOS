@@ -245,6 +245,7 @@ struct LoginFormFeatureTests {
 
     @Test("edge case: empty host never calls the network")
     func emptyHostNeverCallsNetwork() async {
+        let clock = TestClock()
         let store = TestStore(initialState: LoginFormFeature.State()) {
             LoginFormFeature()
         } withDependencies: {
@@ -252,13 +253,18 @@ struct LoginFormFeatureTests {
                 Issue.record("fetchStatus should not be called with no host")
                 return AuthStatus(localEnabled: false, oidcEnabled: false)
             }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
 
         await store.send(.testConnectionButtonTapped) {
             $0.connectionPhase = .failure
             $0.errorMessage = L10n.Login.errorInvalidServer
         }
+        // The revert (1s) and the error dismiss (4s) run on distinct delays. A TestClock fires
+        // both timers in deadline order, so the two merged effects can't race the way an
+        // ImmediateClock lets them (it collapses both to t=0, and one can starve past the
+        // receive timeout under a loaded CI executor).
+        await clock.advance(by: .seconds(4))
         await store.receive(\.revertToIdle) {
             $0.connectionPhase = .idle
         }
