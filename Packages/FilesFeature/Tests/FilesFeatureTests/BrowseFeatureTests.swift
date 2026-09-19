@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import DependenciesTestSupport
 import CoreModels
 import FilesClient
 @testable import FilesFeature
@@ -6,6 +7,7 @@ import Foundation
 import Localization
 import Testing
 
+@Suite(.dependencies)
 @MainActor
 struct BrowseFeatureTests {
     @Test
@@ -2247,6 +2249,7 @@ struct BrowseFeatureTests {
 /// These test the pure `displayedItems`/`displayedSearchResults` computed properties directly
 /// against hand-built state, rather than through the reducer: sorting/filtering is derived
 /// state, not something any action produces, so there's no meaningful action to send.
+@Suite(.dependencies)
 @MainActor
 struct BrowseFeatureDisplayedItemsTests {
     private let serverURL = URL(string: "https://example.com")!
@@ -2453,6 +2456,7 @@ struct BrowseFeatureDisplayedItemsTests {
 
 // MARK: - Copy / Move / Paste
 
+@Suite(.dependencies)
 @MainActor
 struct BrowseFeatureTransferTests {
     private let serverURL = URL(string: "https://example.com")!
