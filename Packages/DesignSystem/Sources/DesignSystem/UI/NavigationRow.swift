@@ -4,6 +4,9 @@ private enum Constants {
     static let iconSize: CGFloat = .iconSmall
     static let chevronSize: CGFloat = .iconXSmall
     static let rowSpacing: CGFloat = .space8
+    /// A trailing detail (e.g. a server host:port) stays on one line and shrinks to fit the
+    /// space the title leaves before it would truncate.
+    static let detailMinScale: CGFloat = 0.6
 }
 
 /// A tappable settings-style row: a leading icon, a title, and a trailing accessory
@@ -125,6 +128,9 @@ public struct DSNavigationRow: View {
             // rolls over instead of snapping.
             Text(text)
                 .type(.body2(.regular), style: .secondary)
+                .lineLimit(1)
+                .minimumScaleFactor(Constants.detailMinScale)
+                .truncationMode(.middle)
                 .contentTransition(.numericText())
                 .animation(.snappy, value: text)
         case .none:
@@ -138,6 +144,7 @@ public struct DSNavigationRow: View {
         DSNavigationRow(title: "User Management", icon: IconKit.people) {}
         DSNavigationRow(title: "Change Password", icon: IconKit.key) {}
         DSNavigationRow(title: "Clear Cache", icon: IconKit.delete, accessory: .detail("128 MB"), role: .accent) {}
+        DSNavigationRow(title: "Server", icon: IconKit.server, accessory: .detail("files.a-very-long-subdomain.example.com:8443")) {}
         DSNavigationRow(title: "Sign Out", icon: IconKit.signOut, accessory: .none, role: .destructive) {}
     }
     .padding(.space16)

@@ -32,6 +32,7 @@ struct FavoritesFeatureTests {
             $0.phase = .loaded
             $0.favorites = [favorite]
         }
+        await store.receive(\.offlineAvailabilityComputed)
     }
 
     @Test
@@ -54,6 +55,7 @@ struct FavoritesFeatureTests {
             $0.phase = .loaded
             $0.favorites = [refreshed]
         }
+        await store.receive(\.offlineAvailabilityComputed)
     }
 
     @Test
@@ -103,6 +105,52 @@ struct FavoritesFeatureTests {
             Issue.record("expected a cached data source offline")
             return
         }
+    }
+
+    @Test
+    func stateInitPaintsTheSavedCopySoTheFirstFrameIsNotBlank() throws {
+        let cache = JSONCacheStore.inMemory()
+        let fav = makeFavorite(id: "7", path: "Downloads")
+        try cache.write(key: ListCache.key("favorites", serverURL: serverURL), data: JSONEncoder().encode([fav]))
+
+        // Constructed inside the dependency context the way the app builds the tab at mount: the
+        // saved copy is painted synchronously, before any `onAppear`, so an unreachable server
+        // can't leave the tab blank while its fetch times out. `phase` stays `.idle` so the tab
+        // still refetches.
+        let state = withDependencies {
+            $0.jsonCacheStore = cache
+        } operation: {
+            FavoritesFeature.State(serverURL: serverURL)
+        }
+
+        #expect(state.favorites.map(\.id) == ["7"])
+        #expect(state.phase == .idle)
+        #expect(state.dataSource == .live)
+    }
+
+    @Test
+    func offlineAvailabilityFlagsPinnedRootsAndTheirSubfolders() async {
+        let offline = OfflineFileStore.inMemory()
+        offline.setPinnedRoots([OfflinePinnedRoot(path: "Docs", isDirectory: true)])
+        let root = makeFavorite(id: "A", path: "Docs")
+        let subfolder = makeFavorite(id: "B", path: "Docs/Reports")
+        let unrelated = makeFavorite(id: "C", path: "Photos")
+
+        let store = TestStore(initialState: FavoritesFeature.State(serverURL: serverURL)) {
+            FavoritesFeature()
+        } withDependencies: {
+            $0.offlineFileStore = offline
+            $0.filesClient.favorites = { _ in [root, subfolder, unrelated] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.refreshButtonTapped)
+        await store.receive(\.favoritesResponse.success)
+        await store.receive(\.offlineAvailabilityComputed)
+
+        // The pinned root and the favorite that sits under it are both flagged; the unrelated one
+        // is not.
+        #expect(store.state.offlineFavoriteIDs == ["A", "B"])
     }
 
     @Test
@@ -578,6 +626,7 @@ struct FavoritesFeatureTests {
             $0.phase = .loaded
             $0.favorites = [favorite]
         }
+        await store.receive(\.offlineAvailabilityComputed)
     }
 
     // MARK: Edge cases
@@ -593,8 +642,10 @@ struct FavoritesFeatureTests {
         }
 
         // No `filesClient` dependency overridden: a network call here would crash with
-        // "Unimplemented", proving the guard skips a redundant fetch.
+        // "Unimplemented", proving the guard skips a redundant fetch. `onAppear` still refreshes
+        // the offline badges (a disk read, no network), so that one effect is expected.
         await store.send(.onAppear)
+        await store.receive(\.offlineAvailabilityComputed)
     }
 
     @Test
@@ -617,6 +668,7 @@ struct FavoritesFeatureTests {
             $0.phase = .loaded
             $0.favorites = [favorite]
         }
+        await store.receive(\.offlineAvailabilityComputed)
     }
 
     @Test

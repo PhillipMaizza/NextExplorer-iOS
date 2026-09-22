@@ -293,6 +293,7 @@ settings.sectionLicenses	라이선스
 settings.sectionLegal	법률
 settings.sectionUsers	사용자
 settings.sectionAdmin	관리
+settings.sectionInfo	정보
 settings.toggleShowHiddenFiles	숨김 파일 표시
 settings.toggleRenderHTML	HTML 페이지 렌더링
 settings.toggleRenderMarkdown	Markdown 파일 렌더링
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	로그아웃하시겠어요?
 settings.accountSignOutMessage	이 기기에서 %@ 계정을 로그아웃할까요? 이 계정을 사용하려면 다시 로그인해야 합니다.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 활성 계정
+settings.badgeActive	활성
 
 # ---- offline ----
 common.deselect	선택 해제

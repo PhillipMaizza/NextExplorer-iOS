@@ -350,14 +350,11 @@ struct LicensesSettingsSection: View {
         return L10n.Settings.appVersion(version, build)
     }
 
-    /// "Like the app? Buy me a coffee ☕️" as one wrapping line, the coffee half accented so it
-    /// reads as the tappable part.
-    private var tipPrompt: AttributedString {
-        var prompt = AttributedString(L10n.Settings.creditsLikeApp + " ")
-        var coffee = AttributedString(L10n.Settings.creditsBuyCoffee)
-        coffee.foregroundColor = .accent
-        prompt.append(coffee)
-        return prompt
+    /// "Like the app? Buy me a coffee ☕️" as one wrapping line. Only the coffee half is bold and
+    /// accented so it reads as the tappable part; the lead-in stays regular weight.
+    private var tipPrompt: Text {
+        Text(L10n.Settings.creditsLikeApp + " ").fontWeight(.regular)
+            + Text(L10n.Settings.creditsBuyCoffee).fontWeight(.bold).foregroundColor(.accent)
     }
 
     var body: some View {
@@ -396,12 +393,15 @@ struct LicensesSettingsSection: View {
                             }
                         }
                         VStack(spacing: .space4) {
+                            // `.body3(.regular)` is the same 14pt/subheadline metrics as label4 but
+                            // regular weight (label4 is semibold, and `.type` bakes that weight in
+                            // too close to the Text for an outer `.fontWeight` to override).
                             Text(L10n.Settings.creditsMadeBy)
-                                .type(.label4, style: .tertiary)
+                                .type(.body3(.regular), style: .tertiary)
                             Button {
                                 store.send(.tipJarButtonTapped)
                             } label: {
-                                Text(tipPrompt).type(.label4, style: .tertiary)
+                                tipPrompt.type(.label4, style: .tertiary)
                             }
                             .buttonStyle(.plain)
                         }

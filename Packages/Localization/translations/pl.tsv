@@ -293,6 +293,7 @@ settings.sectionLicenses	Licencje
 settings.sectionLegal	Informacje prawne
 settings.sectionUsers	Użytkownicy
 settings.sectionAdmin	Administracja
+settings.sectionInfo	Informacje
 settings.toggleShowHiddenFiles	Pokaż ukryte pliki
 settings.toggleRenderHTML	Renderuj strony HTML
 settings.toggleRenderMarkdown	Renderuj pliki Markdown
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	Wylogować?
 settings.accountSignOutMessage	Wylogować %@ na tym urządzeniu? Aby korzystać z tego konta, trzeba będzie zalogować się ponownie.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktywne konto
+settings.badgeActive	Aktywne
 
 # ---- offline ----
 common.deselect	Odznacz

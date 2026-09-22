@@ -110,7 +110,13 @@ public struct MainTabView: View {
                 }
                 store.send(.appBecameActive)
             }
-            .task { await store.send(.observeConnectivity).finish() }
+            .task {
+                // Switching accounts remounts this view via its `.id`, so this `.task` can fire
+                // while the switch action is still reducing. Yield first so the send lands on the
+                // next tick, never reentrantly during that action (TCA forbids reentrant sends).
+                await Task.yield()
+                await store.send(.observeConnectivity).finish()
+            }
     }
 
     private func setUploadBarHeight(_ height: CGFloat) {

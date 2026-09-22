@@ -62,10 +62,12 @@ struct GridCellView: View {
         customIconTint: Color? = nil,
         customIconFilled: Bool = false,
         matchedSource: PreviewMatchedSource? = nil,
-        isOpening: Bool = false
+        isOpening: Bool = false,
+        isAvailableOffline: Bool = false
     ) {
         self.name = name
         self.isDirectory = isDirectory
+        self.isAvailableOffline = isAvailableOffline
         self.isFavorite = isFavorite
         itemID = thumbnailFile?.id
         self.kind = kind

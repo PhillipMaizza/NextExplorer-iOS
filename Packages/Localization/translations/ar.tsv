@@ -293,6 +293,7 @@ settings.sectionLicenses	التراخيص
 settings.sectionLegal	قانوني
 settings.sectionUsers	المستخدمون
 settings.sectionAdmin	الإدارة
+settings.sectionInfo	معلومات
 settings.toggleShowHiddenFiles	إظهار الملفات المخفية
 settings.toggleRenderHTML	عرض صفحات HTML
 settings.toggleRenderMarkdown	عرض ملفات Markdown
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	تسجيل الخروج؟
 settings.accountSignOutMessage	تسجيل خروج %@ من هذا الجهاز؟ ستحتاج إلى تسجيل الدخول مرة أخرى لاستخدام هذا الحساب.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, الحساب النشط
+settings.badgeActive	نشط
 
 # ---- offline ----
 common.deselect	إلغاء التحديد
