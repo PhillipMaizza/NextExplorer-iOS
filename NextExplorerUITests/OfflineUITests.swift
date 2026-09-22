@@ -7,7 +7,7 @@ final class OfflineUITests: UITestCase {
     func testOfflinePickerOpensAndListsItems() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
         XCTAssertTrue(scrollTo(settings.offlineDownloadRow, in: app), "Settings should offer the offline download row")
         settings.offlineDownloadRow.tap()
@@ -20,7 +20,7 @@ final class OfflineUITests: UITestCase {
     func testSelectingAFileEnablesDownloadThenDismisses() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
         XCTAssertTrue(scrollTo(settings.offlineDownloadRow, in: app))
         settings.offlineDownloadRow.tap()

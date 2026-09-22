@@ -41,9 +41,13 @@ final class AuthFlowUITests: UITestCase {
     func testSignOutReturnsToLogin() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-        XCTAssertTrue(settings.signOutButton.waitToAppear(), "Settings should expose a Sign Out button")
+        // Sign Out now lives inside the active account's collapsible section.
+        XCTAssertTrue(settings.activeAccountRow.waitToAppear(), "Settings should show the active account")
+        settings.activeAccountRow.tap()
+
+        XCTAssertTrue(settings.signOutButton.waitToAppear(), "Expanding the account should reveal Sign Out")
         settings.signOutButton.tap()
 
         XCTAssertTrue(settings.confirmSignOut.waitToAppear(), "Sign out should present a confirmation sheet")

@@ -6,16 +6,16 @@ final class SettingsUITests: UITestCase {
     func testSettingsTabShowsContent() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-        XCTAssertTrue(settings.signOutButton.waitToAppear(), "Settings should expose Sign Out")
+        XCTAssertTrue(settings.addAccountRow.waitToAppear(), "Settings should expose the Accounts section")
         XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Settings should list its General rows")
     }
 
     func testOpenLanguagePicker() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
         XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Language row should be reachable")
         settings.languageRow.tap()
@@ -27,7 +27,7 @@ final class SettingsUITests: UITestCase {
     func testOpenThumbnailSettings() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
         // The admin section sits below the fold; the List only materializes it once scrolled near.
         XCTAssertTrue(scrollTo(settings.thumbnailsRow, in: app), "Admin settings should expose the Thumbnails row")
@@ -38,7 +38,7 @@ final class SettingsUITests: UITestCase {
     func testTipJarSheetOpens() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
         // The tip button lives in the version footer at the very bottom of the List.
         XCTAssertTrue(scrollTo(settings.tipButton, in: app), "The version footer should offer a tip button")

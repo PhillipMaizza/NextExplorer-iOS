@@ -7,7 +7,7 @@ final class MultiServerUITests: UITestCase {
     func testSwitcherShowsActiveAccountAndAddRow() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
         XCTAssertTrue(settings.accountsSectionHeader.waitToAppear(), "Settings should show an Accounts section")
         XCTAssertTrue(settings.addAccountRow.exists, "The switcher should offer an Add Account row")
@@ -17,7 +17,7 @@ final class MultiServerUITests: UITestCase {
     func testAddAccountOpensLoginSheet() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
         XCTAssertTrue(settings.addAccountRow.waitToAppear())
         settings.addAccountRow.tap()
@@ -28,7 +28,7 @@ final class MultiServerUITests: UITestCase {
     func testAddingSecondServerListsBothAccounts() {
         let app = launchApp(auth: .loggedIn)
         let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
         XCTAssertTrue(settings.addAccountRow.waitToAppear())
         settings.addAccountRow.tap()
@@ -47,7 +47,7 @@ final class MultiServerUITests: UITestCase {
         // Adding a server adopts it as active and remounts the app on the new account.
         XCTAssertTrue(TabBar(app: app).browse.waitToAppear(), "Adding an account should reveal the app on the new account")
 
-        selectTab(TabBar(app: app).settings, until: settings.signOutButton)
+        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
         XCTAssertTrue(settings.accountRow(host: "other.example.com").waitToAppear(), "The newly added server should be listed")
         XCTAssertTrue(settings.accountRow(host: "nextexplorer.example.com").exists, "The original account should still be listed")
     }
