@@ -25,7 +25,10 @@ extension BrowseFeature {
     }
 
     /// Recomputes which of the current items are available offline, off the main actor (a per item
-    /// disk `stat`, too much for a large listing on the main thread), then commits the ids.
+    /// disk `stat`, too much for a large listing on the main thread), then commits the ids. A file
+    /// counts as available when it's pinned (or inside a pinned folder) OR it's been saved to the
+    /// Downloads tab (matched by name within this account's scope); a folder when it's a pinned
+    /// root or sits under one.
     func computeOfflineAvailability(_ state: inout State) -> Effect<Action> {
         let items = state.items.elements
         guard !items.isEmpty else {
@@ -33,16 +36,23 @@ extension BrowseFeature {
             return .none
         }
         let offlineFileStore = offlineFileStore
+        let localDownloadStore = localDownloadStore
+        let downloadScope = state.downloadScope
         return .run { send in
             let ids = await Task.detached(priority: .utility) { () -> Set<String> in
                 let pinnedPaths = offlineFileStore.pinnedRoots().map(\.path)
+                let downloadedNames = Set(((try? localDownloadStore.list(downloadScope)) ?? []).map(\.fileName))
                 var result = Set<String>()
                 for item in items {
+                    // A pinned root, or anything (folder OR file) sitting under one, is available
+                    // offline — so browsing into a downloaded folder shows the icon on its files
+                    // too, not just the folder.
+                    let coveredByPin = pinnedPaths.contains { $0 == item.id || item.id.hasPrefix($0 + "/") }
                     if item.isDirectory {
-                        if pinnedPaths.contains(where: { $0 == item.id || item.id.hasPrefix($0 + "/") }) {
+                        if coveredByPin {
                             result.insert(item.id)
                         }
-                    } else if offlineFileStore.localURL(item) != nil {
+                    } else if coveredByPin || offlineFileStore.localURL(item) != nil || downloadedNames.contains(item.name) {
                         result.insert(item.id)
                     }
                 }
