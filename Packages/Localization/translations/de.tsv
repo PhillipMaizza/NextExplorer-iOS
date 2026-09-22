@@ -293,6 +293,7 @@ settings.sectionLicenses	Lizenzen
 settings.sectionLegal	Rechtliches
 settings.sectionUsers	Benutzer
 settings.sectionAdmin	Verwaltung
+settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Ausgeblendete Dateien anzeigen
 settings.toggleRenderHTML	HTML-Seiten rendern
 settings.toggleRenderMarkdown	Markdown-Dateien rendern
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	Abmelden?
 settings.accountSignOutMessage	%@ auf diesem Gerät abmelden? Du musst dich erneut anmelden, um dieses Konto zu verwenden.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktives Konto
+settings.badgeActive	Aktiv
 
 # ---- offline ----
 common.deselect	Abwählen

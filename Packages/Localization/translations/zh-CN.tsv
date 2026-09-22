@@ -293,6 +293,7 @@ settings.sectionLicenses	许可证
 settings.sectionLegal	法律
 settings.sectionUsers	用户
 settings.sectionAdmin	管理
+settings.sectionInfo	信息
 settings.toggleShowHiddenFiles	显示隐藏文件
 settings.toggleRenderHTML	渲染 HTML 页面
 settings.toggleRenderMarkdown	渲染 Markdown 文件
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	退出登录？
 settings.accountSignOutMessage	在此设备上退出 %@ 吗？您需要重新登录才能使用此账户。
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 当前账户
+settings.badgeActive	使用中
 
 # ---- offline ----
 common.deselect	取消选择

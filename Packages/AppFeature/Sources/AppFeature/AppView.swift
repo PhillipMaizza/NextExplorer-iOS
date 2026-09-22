@@ -14,6 +14,13 @@ private enum Constants {
     static let authFillFadeDuration: Double = 0.4
 }
 
+/// Identity for the authenticated subtree: it remounts when the splash finishes (to relayout nav
+/// bars) and when the active account changes (to play the switch transition).
+private struct AuthenticatedIdentity: Hashable {
+    let splashPresented: Bool
+    let accountID: String?
+}
+
 public struct AppView: View {
     @Bindable var store: StoreOf<AppFeature>
     /// The launch splash sits on top of `destinationContent` and removes itself once its own
@@ -49,6 +56,25 @@ public struct AppView: View {
             return .rightToLeft
         }
         return .leftToRight
+    }
+
+    /// A gentle zoom-and-fade used when the whole content is swapped out from under the user: an
+    /// account switch (the authenticated tree remounts for the new account) and a language change
+    /// (the tree remounts so every string re-resolves). New content scales up as the old fades,
+    /// so the change reads as a deliberate reveal rather than a hard cut. Flattened to a plain
+    /// fade under Reduce Motion.
+    private var contentSwapTransition: AnyTransition {
+        if reduceMotion {
+            return .opacity
+        }
+        return .asymmetric(
+            insertion: .scale(scale: 0.94).combined(with: .opacity),
+            removal: .opacity
+        )
+    }
+
+    private var contentSwapAnimation: Animation {
+        reduceMotion ? .easeInOut(duration: 0.25) : .smooth(duration: 0.45)
     }
 
     public var body: some View {
@@ -144,7 +170,11 @@ public struct AppView: View {
                    let scopedStore = store.scope(state: \.destination.authenticated, action: \.destination.authenticated)
                 {
                     AuthenticatedView(store: scopedStore)
-                        .id(isSplashPresented)
+                        // Keying on the active account too means switching accounts remounts the
+                        // authenticated tree, so the swap cross-fades instead of updating in place.
+                        // A plain quick fade (not the zoom reveal) — the switch should feel light.
+                        // The TCA store state survives the identity change.
+                        .id(AuthenticatedIdentity(splashPresented: isSplashPresented, accountID: store.currentAccountID))
                         .transition(.opacity)
                 }
             }
@@ -154,6 +184,8 @@ public struct AppView: View {
         // (nav bars, tab bar) re-resolves through the new `LocalizationOverride` bundle. The TCA
         // store state lives outside the view tree, so navigation and data survive the swap.
         .id(appLanguage)
+        .transition(contentSwapTransition)
+        .animation(contentSwapAnimation, value: appLanguage)
     }
 }
 

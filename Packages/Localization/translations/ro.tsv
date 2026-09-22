@@ -293,6 +293,7 @@ settings.sectionLicenses	Licențe
 settings.sectionLegal	Aspecte legale
 settings.sectionUsers	Utilizatori
 settings.sectionAdmin	Administrare
+settings.sectionInfo	Informații
 settings.toggleShowHiddenFiles	Afișează fișierele ascunse
 settings.toggleRenderHTML	Randează paginile HTML
 settings.toggleRenderMarkdown	Randează fișierele Markdown
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	Deconectare?
 settings.accountSignOutMessage	Deconectezi %@ de pe acest dispozitiv? Va trebui să te autentifici din nou pentru a folosi acest cont.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, cont activ
+settings.badgeActive	Activ
 
 # ---- offline ----
 common.deselect	Deselectează

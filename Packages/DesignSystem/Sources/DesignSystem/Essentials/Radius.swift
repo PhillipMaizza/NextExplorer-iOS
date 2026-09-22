@@ -27,4 +27,15 @@ public extension CGFloat {
             .radiusMedium
         }
     }
+
+    /// The corner radius for search fields: `radiusLarge` on iOS 26, to match Liquid Glass's
+    /// rounder search bars, `radiusControl` below it. Use this rather than a fixed token so every
+    /// search field tracks the platform together.
+    static var radiusSearchField: CGFloat {
+        if #available(iOS 26.0, *) {
+            .radiusLarge
+        } else {
+            .radiusControl
+        }
+    }
 }

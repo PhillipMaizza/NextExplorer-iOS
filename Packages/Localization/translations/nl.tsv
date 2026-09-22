@@ -293,6 +293,7 @@ settings.sectionLicenses	Licenties
 settings.sectionLegal	Juridisch
 settings.sectionUsers	Gebruikers
 settings.sectionAdmin	Beheer
+settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Verborgen bestanden tonen
 settings.toggleRenderHTML	HTML-pagina's weergeven
 settings.toggleRenderMarkdown	Markdown-bestanden weergeven
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	Afmelden?
 settings.accountSignOutMessage	%@ afmelden op dit apparaat? Je moet opnieuw inloggen om dit account te gebruiken.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, actief account
+settings.badgeActive	Actief
 
 # ---- offline ----
 common.deselect	Selectie opheffen

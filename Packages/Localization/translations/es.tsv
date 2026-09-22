@@ -293,6 +293,7 @@ settings.sectionLicenses	Licencias
 settings.sectionLegal	Legal
 settings.sectionUsers	Usuarios
 settings.sectionAdmin	Administración
+settings.sectionInfo	Información
 settings.toggleShowHiddenFiles	Mostrar archivos ocultos
 settings.toggleRenderHTML	Renderizar páginas HTML
 settings.toggleRenderMarkdown	Renderizar archivos Markdown
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	¿Cerrar sesión?
 settings.accountSignOutMessage	¿Cerrar la sesión de %@ en este dispositivo? Deberás iniciar sesión de nuevo para usar esta cuenta.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, cuenta activa
+settings.badgeActive	Activa
 
 # ---- offline ----
 common.deselect	Deseleccionar

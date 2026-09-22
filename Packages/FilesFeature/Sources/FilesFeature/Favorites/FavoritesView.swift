@@ -14,6 +14,9 @@ struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
     @AppStorage(AppStorageKeys.favoritesViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
     @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
+    /// A finished offline download can change which favorites are available offline, so refresh
+    /// the badges when it completes (mirrors `BrowseContentView`).
+    @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
@@ -234,6 +237,11 @@ struct FavoritesView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task {
             store.send(.onAppear)
+        }
+        .onChange(of: offlineProgress.phase) { _, phase in
+            if phase == .completed {
+                Task { @MainActor in store.send(.computeOfflineAvailability) }
+            }
         }
     }
 
