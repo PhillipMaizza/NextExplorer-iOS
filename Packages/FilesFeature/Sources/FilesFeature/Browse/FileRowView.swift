@@ -76,10 +76,12 @@ struct FileRowView: View {
         customIconTint: Color? = nil,
         customIconFilled: Bool = false,
         matchedSource: PreviewMatchedSource? = nil,
-        isOpening: Bool = false
+        isOpening: Bool = false,
+        isAvailableOffline: Bool = false
     ) {
         self.name = name
         self.isDirectory = isDirectory
+        self.isAvailableOffline = isAvailableOffline
         dateModified = nil
         size = nil
         customSubtitle = subtitle

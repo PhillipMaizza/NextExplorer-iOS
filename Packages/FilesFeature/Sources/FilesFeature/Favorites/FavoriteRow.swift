@@ -26,7 +26,8 @@ struct FavoriteListRow: View {
                 isDirectory: true,
                 customIcon: FavoriteIcon.symbol(for: favorite.icon),
                 customIconTint: FavoriteColor.resolve(favorite.color),
-                customIconFilled: FavoriteIcon.isFilled(favorite.icon)
+                customIconFilled: FavoriteIcon.isFilled(favorite.icon),
+                isAvailableOffline: store.offlineFavoriteIDs.contains(favorite.id)
             )
         } leadingSwipe: {
             if !store.isSelecting {
@@ -83,7 +84,8 @@ struct FavoriteGridCell: View {
                 isDirectory: true,
                 customIcon: FavoriteIcon.symbol(for: favorite.icon),
                 customIconTint: FavoriteColor.resolve(favorite.color),
-                customIconFilled: FavoriteIcon.isFilled(favorite.icon)
+                customIconFilled: FavoriteIcon.isFilled(favorite.icon),
+                isAvailableOffline: store.offlineFavoriteIDs.contains(favorite.id)
             )
         } contextMenu: {
             if !store.isSelecting {

@@ -407,6 +407,7 @@ public enum L10n {
         public static var accountSignOutTitle: String { tr("settings.accountSignOutTitle") }  // "Sign Out?"
         public static var addAccount: String { tr("settings.addAccount") }  // "Add Account"
         public static func appVersion(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.appVersion", a0, a1) }
+        public static var badgeActive: String { tr("settings.badgeActive") }  // "Active"
         public static var clearCacheConfirm: String { tr("settings.clearCacheConfirm") }  // "Clear"
         public static var clearCacheMessage: String { tr("settings.clearCacheMessage") }
         public static var clearCacheTitle: String { tr("settings.clearCacheTitle") }  // "Clear Cache?"
@@ -436,6 +437,7 @@ public enum L10n {
         public static var sectionAdmin: String { tr("settings.sectionAdmin") }  // "Admin"
         public static var sectionDisplay: String { tr("settings.sectionDisplay") }  // "Display"
         public static var sectionGeneral: String { tr("settings.sectionGeneral") }  // "General"
+        public static var sectionInfo: String { tr("settings.sectionInfo") }  // "Info"
         public static var sectionLegal: String { tr("settings.sectionLegal") }  // "Legal"
         public static var sectionLicenses: String { tr("settings.sectionLicenses") }  // "Licenses"
         public static var sectionServerStorage: String { tr("settings.sectionServerStorage") }  // "Server Storage"

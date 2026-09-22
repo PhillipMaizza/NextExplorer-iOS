@@ -66,8 +66,8 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 if !filter.isActive {
-                    SettingsProfileSection(store: store)
                     SettingsAccountsSection(store: store)
+                    SettingsProfileSection(store: store)
                 }
 
                 GeneralSettingsSection(store: store, filter: filter)
@@ -91,7 +91,8 @@ struct SettingsView: View {
                 PinnedTitleSearchHeader(
                     title: L10n.Settings.navigationTitle,
                     searchText: $settingsSearch,
-                    extraTopPadding: titleTopPadding
+                    extraTopPadding: titleTopPadding,
+                    showsSearchField: false
                 )
             }
             .navigationDestination(

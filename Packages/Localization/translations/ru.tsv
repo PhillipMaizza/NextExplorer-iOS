@@ -293,6 +293,7 @@ settings.sectionLicenses	Лицензии
 settings.sectionLegal	Правовая информация
 settings.sectionUsers	Пользователи
 settings.sectionAdmin	Администрирование
+settings.sectionInfo	Информация
 settings.toggleShowHiddenFiles	Показывать скрытые файлы
 settings.toggleRenderHTML	Отображать HTML-страницы
 settings.toggleRenderMarkdown	Отображать файлы Markdown
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	Выйти?
 settings.accountSignOutMessage	Выйти из аккаунта %@ на этом устройстве? Чтобы снова использовать этот аккаунт, потребуется войти заново.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, активный аккаунт
+settings.badgeActive	Активный
 
 # ---- offline ----
 common.deselect	Снять выбор

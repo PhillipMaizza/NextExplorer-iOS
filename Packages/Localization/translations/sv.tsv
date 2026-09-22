@@ -293,6 +293,7 @@ settings.sectionLicenses	Licenser
 settings.sectionLegal	Juridiskt
 settings.sectionUsers	Användare
 settings.sectionAdmin	Administration
+settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Visa dolda filer
 settings.toggleRenderHTML	Rendera HTML-sidor
 settings.toggleRenderMarkdown	Rendera Markdown-filer
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	Logga ut?
 settings.accountSignOutMessage	Logga ut %@ på den här enheten? Du måste logga in igen för att använda det här kontot.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, aktivt konto
+settings.badgeActive	Aktiv
 
 # ---- offline ----
 common.deselect	Avmarkera

@@ -293,6 +293,7 @@ settings.sectionLicenses	ライセンス
 settings.sectionLegal	法律
 settings.sectionUsers	ユーザ
 settings.sectionAdmin	管理
+settings.sectionInfo	情報
 settings.toggleShowHiddenFiles	隠しファイルを表示
 settings.toggleRenderHTML	HTML ページをレンダリング
 settings.toggleRenderMarkdown	Markdown ファイルをレンダリング
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	サインアウトしますか？
 settings.accountSignOutMessage	このデバイスで %@ をサインアウトしますか？このアカウントを使うには再度サインインする必要があります。
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 使用中のアカウント
+settings.badgeActive	アクティブ
 
 # ---- offline ----
 common.deselect	選択を解除

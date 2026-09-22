@@ -108,6 +108,7 @@ struct MainTabFeatureTests {
             $0.favorites.phase = .loaded
             $0.favorites.favorites = [favorite]
         }
+        await store.receive(\.favorites.offlineAvailabilityComputed)
     }
 
     @Test
@@ -187,6 +188,7 @@ struct MainTabFeatureTests {
             $0.favorites.phase = .loaded
             $0.favorites.favorites = [favorite]
         }
+        await store.receive(\.favorites.offlineAvailabilityComputed)
     }
 
     // MARK: Uploads

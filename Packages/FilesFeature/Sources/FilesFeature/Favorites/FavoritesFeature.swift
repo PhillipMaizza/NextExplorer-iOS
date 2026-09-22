@@ -24,6 +24,10 @@ public struct FavoritesFeature {
 
         /// `.cached` while the list on screen is an offline copy; `.live` once a fetch lands.
         public var dataSource: CachedListSource = .live
+        /// Ids of favorites whose folder is available offline, i.e. it is a pinned root or sits
+        /// under one (so a downloaded subfolder favorite is flagged too). Drives the download
+        /// badge on the row, mirroring `BrowseFeature.offlineItemIDs`.
+        public var offlineFavoriteIDs: Set<Favorite.ID> = []
         public var searchQuery = ""
         /// Recursive file search across every favorited folder's subtree, run while `searchQuery`
         /// is non-empty. `nil` until the first search of a session; the fan out merges one backend
@@ -48,6 +52,19 @@ public struct FavoritesFeature {
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
+            // Paint the last saved copy synchronously at construction, so the very first frame of
+            // the Favorites tab already shows the cached list instead of a skeleton. Without this
+            // the cache is only painted from `onAppear` (a `.task`, so it runs after the first
+            // render) and a hung fetch to an unreachable server (e.g. a LAN address off the LAN)
+            // leaves the tab blank the whole time it times out. `phase` stays `.idle` so
+            // `onAppear` still refetches (stale-while-revalidate); `dataSource` stays `.live` so an
+            // online refetch doesn't flash a "saved copy" banner.
+            @Dependency(\.jsonCacheStore) var jsonCacheStore
+            if let cached = ListCache.load(jsonCacheStore, FavoritesFeature.cacheNamespace, serverURL: serverURL, as: [Favorite].self) {
+                favorites = IdentifiedArray(
+                    cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first }
+                )
+            }
         }
 
         /// Favorites are shown in the user's own order (`position`, drag to reorder) — the
@@ -83,6 +100,9 @@ public struct FavoritesFeature {
         case onAppear
         case refreshButtonTapped
         case favoritesResponse(Result<[Favorite], FilesClientError>)
+        /// Recompute which favorites are available offline (a pinned root, or under one).
+        case computeOfflineAvailability
+        case offlineAvailabilityComputed(Set<Favorite.ID>)
         case rowTapped(Favorite)
         case removeTapped(Favorite)
         case removeResponse(Favorite.ID, Result<Bool, FilesClientError>)
@@ -123,13 +143,14 @@ public struct FavoritesFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.jsonCacheStore) var jsonCacheStore
+    @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.continuousClock) var clock
     @Dependency(\.date) var date
 
     /// Cache namespace for this tab's saved offline copy.
     private static let cacheNamespace = "favorites"
 
-    private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search }
+    private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search, offlineAvailability }
 
     private enum Constants {
         static let searchDebounce: Duration = .seconds(1)
@@ -142,18 +163,28 @@ public struct FavoritesFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                guard state.phase.shouldLoadOnAppear else { return .none }
-                return load(&state)
+                // Always refresh the offline badges (cheap disk read) so the cached first-frame
+                // favorites are flagged even when the list itself needn't reload.
+                let availability = computeOfflineAvailability(&state)
+                guard state.phase.shouldLoadOnAppear else { return availability }
+                return .merge(load(&state), availability)
 
             case .refreshButtonTapped:
                 return load(&state)
+
+            case .computeOfflineAvailability:
+                return computeOfflineAvailability(&state)
+
+            case let .offlineAvailabilityComputed(ids):
+                state.offlineFavoriteIDs = ids
+                return .none
 
             case let .favoritesResponse(.success(favorites)):
                 state.phase = .loaded
                 state.dataSource = .live
                 state.favorites = IdentifiedArray(favorites.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
                 syncCache(state)
-                return .none
+                return computeOfflineAvailability(&state)
 
             case let .favoritesResponse(.failure(error)):
                 // Offline with a saved copy: show it under a banner rather than an error screen.
@@ -163,7 +194,7 @@ public struct FavoritesFeature {
                     state.phase = .loaded
                     state.favorites = IdentifiedArray(cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
                     state.dataSource = .cached(fetchedAt: cached.fetchedAt)
-                    return .none
+                    return computeOfflineAvailability(&state)
                 }
                 // A full screen error only when there's nothing to blank; a failure over an
                 // already populated list stays `.loaded` and toasts instead.
@@ -414,6 +445,33 @@ public struct FavoritesFeature {
             try await send(.favoritesResponse(apiResult { try await filesClient.favorites(serverURL) }))
         }
         .cancellable(id: CancelID.load, cancelInFlight: true)
+    }
+
+    /// Recomputes which favorites are available offline, off the main actor (reads the pinned
+    /// manifest from disk), then commits the ids. A favorite folder counts as available when it is
+    /// a pinned directory root or sits under one, so a downloaded subfolder favorite is flagged
+    /// too. Mirrors `BrowseFeature.computeOfflineAvailability` for directories.
+    private func computeOfflineAvailability(_ state: inout State) -> Effect<Action> {
+        let favorites = state.favorites
+        guard !favorites.isEmpty else {
+            state.offlineFavoriteIDs = []
+            return .none
+        }
+        let offlineFileStore = offlineFileStore
+        return .run { send in
+            let ids = await Task.detached(priority: .utility) { () -> Set<Favorite.ID> in
+                let pinnedDirectoryPaths = offlineFileStore.pinnedRoots().filter(\.isDirectory).map(\.path)
+                var result = Set<Favorite.ID>()
+                for favorite in favorites where pinnedDirectoryPaths.contains(where: {
+                    $0 == favorite.path || favorite.path.hasPrefix($0 + "/")
+                }) {
+                    result.insert(favorite.id)
+                }
+                return result
+            }.value
+            await send(.offlineAvailabilityComputed(ids))
+        }
+        .cancellable(id: CancelID.offlineAvailability, cancelInFlight: true)
     }
 
     /// Recursive file search fanned out across every favorited folder: one backend search per

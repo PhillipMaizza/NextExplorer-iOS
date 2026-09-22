@@ -25,6 +25,9 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     /// Settings) sits higher than one that does; pass the actions' height here so every tab's
     /// title lines up.
     var extraTopPadding: CGFloat = 0
+    /// Whether to render the search field. A screen that only needs the pinned large title
+    /// without filtering (Settings) passes `false`.
+    var showsSearchField: Bool = true
     /// Rendered below the search field, e.g. a search-scope segmented control plus type filter
     /// chips while searching.
     @ViewBuilder var accessory: () -> Accessory
@@ -40,7 +43,9 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)
 
-            searchField
+            if showsSearchField {
+                searchField
+            }
             accessory()
         }
         .padding(.horizontal, .space16)
@@ -95,7 +100,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             }
         }
         .animation(.easeInOut(duration: Constants.fieldAnimationDuration), value: searchText.isEmpty)
-        .roundedFieldStyle(isFocused: isFocused, bordered: false)
+        .roundedFieldStyle(isFocused: isFocused, bordered: false, cornerRadius: .radiusSearchField)
     }
 }
 
@@ -104,8 +109,15 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         title: String,
         searchText: Binding<String>,
         prompt: String = L10n.Common.search,
-        extraTopPadding: CGFloat = 0
+        extraTopPadding: CGFloat = 0,
+        showsSearchField: Bool = true
     ) {
-        self.init(title: title, searchText: searchText, prompt: prompt, extraTopPadding: extraTopPadding) { EmptyView() }
+        self.init(
+            title: title,
+            searchText: searchText,
+            prompt: prompt,
+            extraTopPadding: extraTopPadding,
+            showsSearchField: showsSearchField
+        ) { EmptyView() }
     }
 }

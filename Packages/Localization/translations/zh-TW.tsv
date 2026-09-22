@@ -293,6 +293,7 @@ settings.sectionLicenses	授權
 settings.sectionLegal	法律
 settings.sectionUsers	使用者
 settings.sectionAdmin	管理
+settings.sectionInfo	資訊
 settings.toggleShowHiddenFiles	顯示隱藏檔案
 settings.toggleRenderHTML	算繪 HTML 頁面
 settings.toggleRenderMarkdown	算繪 Markdown 檔案
@@ -573,6 +574,7 @@ settings.accountSignOutTitle	登出？
 settings.accountSignOutMessage	要在此裝置上登出 %@ 嗎？您需要重新登入才能使用此帳戶。
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, 使用中的帳戶
+settings.badgeActive	使用中
 
 # ---- offline ----
 common.deselect	取消選取

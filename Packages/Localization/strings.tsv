@@ -339,6 +339,7 @@ settings.sectionLicenses	Licenses
 settings.sectionLegal	Legal
 settings.sectionUsers	Users
 settings.sectionAdmin	Admin
+settings.sectionInfo	Info
 settings.toggleShowHiddenFiles	Show Hidden Files
 settings.toggleRenderHTML	Render HTML Pages
 settings.toggleRenderMarkdown	Render Markdown Files
@@ -379,6 +380,7 @@ settings.accountSignOutTitle	Sign Out?
 settings.accountSignOutMessage	Sign %@ out on this device? You'll need to sign in again to use this account.
 settings.accountLabel	%1$@, %2$@
 settings.accountActiveLabel	%1$@, %2$@, active account
+settings.badgeActive	Active
 settings.dateFormatNavigationTitle	Date Format
 settings.dateFormatShowTime	Show Time
 
