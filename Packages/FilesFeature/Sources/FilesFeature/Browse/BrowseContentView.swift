@@ -86,7 +86,8 @@ struct BrowseContentView: View {
     private var viewMode: BrowseViewMode {
         let mode = BrowseViewMode(rawValue: viewModeRaw) ?? .list
         #if os(macOS)
-            return mode
+            // The Mac table already is the list, with columns; a stored list choice opens as it.
+            return mode == .list ? .table : mode
         #else
             return mode == .table ? .list : mode
         #endif
@@ -334,10 +335,9 @@ struct BrowseContentView: View {
                     }
                 },
                 macViewModes: MacViewModes(options: [
-                    .init(id: BrowseViewMode.list.rawValue, title: L10n.Select.listView, icon: IconKit.listBullet),
                     .init(id: BrowseViewMode.grid.rawValue, title: L10n.Select.gridView, icon: IconKit.squareGrid),
                     .init(id: BrowseViewMode.table.rawValue, title: L10n.Select.tableView, icon: IconKit.table),
-                ], selection: $viewModeRaw),
+                ], selection: Binding(get: { viewMode.rawValue }, set: { viewModeRaw = $0 })),
                 hasClipboardItems: store.clipboard != nil && !store.directoryPath.isEmpty,
                 clipboardMenu: {
                     if store.clipboard != nil, !store.directoryPath.isEmpty {
