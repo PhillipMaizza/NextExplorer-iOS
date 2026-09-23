@@ -143,7 +143,7 @@ private extension LocalDownload {
 #Preview("List row") {
     let store = Store(initialState: DownloadsFeature.State()) { DownloadsFeature() }
     return DownloadRowPreview { namespace in
-        List {
+        DSGroupedList {
             DownloadListRow(store: store, download: .preview, namespace: namespace, openURL: OpenURLAction { _ in .handled }, isFirst: true, isLast: true, onPreview: {})
         }
         .listStyle(.insetGrouped)

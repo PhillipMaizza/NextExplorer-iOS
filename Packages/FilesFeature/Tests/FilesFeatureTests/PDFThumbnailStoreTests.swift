@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 @testable import FilesFeature
 import Foundation
@@ -48,7 +49,7 @@ struct PDFThumbnailStoreTests {
         return entry
     }
 
-    private func waitForReady(_ entry: PDFThumbnailStore.Entry) async -> UIImage? {
+    private func waitForReady(_ entry: PDFThumbnailStore.Entry) async -> PlatformImage? {
         for _ in 0 ..< 40 {
             if case let .ready(image) = entry.state {
                 return image

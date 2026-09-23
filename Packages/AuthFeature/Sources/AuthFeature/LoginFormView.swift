@@ -47,6 +47,9 @@ private enum Constants {
     /// UIKit's own keyboard animation duration) before starting the morph gives each its own
     /// beat, so the spinner is actually visible.
     static let keyboardDismissDuration: Duration = .seconds(0.25)
+    static let macButtonHiddenScale: CGFloat = 0.9
+    static let macButtonPopDuration: Double = 0.3
+    static let macButtonPopBounce: Double = 0.35
     /// Named coordinate space the submit button's rect is measured in, so the flood circle
     /// positions against the same origin regardless of scroll offset.
     static let rootSpace = "loginRoot"
@@ -107,6 +110,15 @@ public struct LoginFormView: View {
         self.autoFocus = autoFocus
     }
 
+    /// A Mac has no on screen keyboard, so there is no dismiss animation to wait out before submitting.
+    private static var hasSoftwareKeyboard: Bool {
+        #if os(iOS)
+            true
+        #else
+            false
+        #endif
+    }
+
     private var isSubmitLocalEnabled: Bool {
         !store.identifier.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !store.password.isEmpty
     }
@@ -115,7 +127,7 @@ public struct LoginFormView: View {
     /// waits out its dismiss animation first so it doesn't fight the button's collapse-to-circle
     /// morph for the same beat (see `Constants.keyboardDismissDuration`).
     private func submitTestConnection() {
-        let wasKeyboardVisible = focusedField != nil
+        let wasKeyboardVisible = Self.hasSoftwareKeyboard && focusedField != nil
         focusedField = nil
         guard wasKeyboardVisible else {
             store.send(.testConnectionButtonTapped)
@@ -132,7 +144,7 @@ public struct LoginFormView: View {
     /// keyboard first so its dismiss reflow doesn't shift the submit button mid collapse (and
     /// mid sign-in reveal), which reads as the circle starting off-center and stuttering.
     private func submitCredentials() {
-        let wasKeyboardVisible = focusedField != nil
+        let wasKeyboardVisible = Self.hasSoftwareKeyboard && focusedField != nil
         focusedField = nil
         guard wasKeyboardVisible else {
             store.send(.continueButtonTapped)
@@ -149,7 +161,7 @@ public struct LoginFormView: View {
     /// before `.ssoButtonTapped` presents the web sheet, otherwise the keyboard stays up
     /// underneath (and behind) the ASWebAuthenticationSession sheet.
     private func submitSSO() {
-        let wasKeyboardVisible = focusedField != nil
+        let wasKeyboardVisible = Self.hasSoftwareKeyboard && focusedField != nil
         focusedField = nil
         guard wasKeyboardVisible else {
             store.send(.ssoButtonTapped)
@@ -434,11 +446,23 @@ public struct LoginFormView: View {
                         .transition(.opacity)
                 }
 
-                if !store.host.isEmpty {
+                #if os(macOS)
+                    // No keyboard reflow on a Mac: the slot is always reserved, so the button
+                    // pops in place without shifting anything around it.
                     testConnectionButton
                         .padding(.horizontal, .space24)
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
-                }
+                        .opacity(store.host.isEmpty ? 0 : 1)
+                        .scaleEffect(store.host.isEmpty ? Constants.macButtonHiddenScale : 1)
+                        .allowsHitTesting(!store.host.isEmpty)
+                        .accessibilityHidden(store.host.isEmpty)
+                        .animation(.spring(duration: Constants.macButtonPopDuration, bounce: Constants.macButtonPopBounce), value: store.host.isEmpty)
+                #else
+                    if !store.host.isEmpty {
+                        testConnectionButton
+                            .padding(.horizontal, .space24)
+                            .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    }
+                #endif
 
                 Spacer(minLength: .space48)
             }

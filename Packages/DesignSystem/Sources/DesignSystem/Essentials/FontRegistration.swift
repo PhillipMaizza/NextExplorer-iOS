@@ -1,6 +1,8 @@
 import CoreText
 import Foundation
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     static let navTitleSize: CGFloat = 17
@@ -53,43 +55,48 @@ public enum DesignSystemFonts {
     /// gradient wash the rest of the app draws behind system chrome.
     @MainActor
     public static func applyGlobalAppearance() {
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.titleTextAttributes = [.font: weightedFont(size: Constants.navTitleSize, weight: Constants.navTitleWeight)]
-        navBarAppearance.largeTitleTextAttributes = [.font: weightedFont(size: Constants.largeTitleSize, weight: Constants.largeTitleWeight)]
-        UINavigationBar.appearance().standardAppearance = navBarAppearance
-        UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
-        UINavigationBar.appearance().compactAppearance = navBarAppearance
+        #if os(iOS)
+            let navBarAppearance = UINavigationBarAppearance()
+            navBarAppearance.titleTextAttributes = [.font: weightedFont(size: Constants.navTitleSize, weight: Constants.navTitleWeight)]
+            navBarAppearance.largeTitleTextAttributes = [.font: weightedFont(size: Constants.largeTitleSize, weight: Constants.largeTitleWeight)]
+            UINavigationBar.appearance().standardAppearance = navBarAppearance
+            UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
+            UINavigationBar.appearance().compactAppearance = navBarAppearance
 
-        let tabItemAppearance = UITabBarItemAppearance()
-        tabItemAppearance.normal.titleTextAttributes = [.font: weightedFont(size: Constants.tabItemSize, weight: Constants.tabItemNormalWeight)]
-        tabItemAppearance.selected.titleTextAttributes = [.font: weightedFont(size: Constants.tabItemSize, weight: Constants.tabItemSelectedWeight)]
-        let tabBarAppearance = UITabBarAppearance()
-        tabBarAppearance.stackedLayoutAppearance = tabItemAppearance
-        tabBarAppearance.inlineLayoutAppearance = tabItemAppearance
-        tabBarAppearance.compactInlineLayoutAppearance = tabItemAppearance
-        UITabBar.appearance().standardAppearance = tabBarAppearance
-        UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+            let tabItemAppearance = UITabBarItemAppearance()
+            tabItemAppearance.normal.titleTextAttributes = [.font: weightedFont(size: Constants.tabItemSize, weight: Constants.tabItemNormalWeight)]
+            tabItemAppearance.selected.titleTextAttributes = [.font: weightedFont(size: Constants.tabItemSize, weight: Constants.tabItemSelectedWeight)]
+            let tabBarAppearance = UITabBarAppearance()
+            tabBarAppearance.stackedLayoutAppearance = tabItemAppearance
+            tabBarAppearance.inlineLayoutAppearance = tabItemAppearance
+            tabBarAppearance.compactInlineLayoutAppearance = tabItemAppearance
+            UITabBar.appearance().standardAppearance = tabBarAppearance
+            UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+        #endif
     }
 
-    /// Figtree is a variable font registered as one family at its default (Light)
-    /// instance. UIKit has no `.fontWeight()`-style modifier, so a specific weight has
-    /// to be dialed in directly on the `wght` variation axis.
-    private static func weightedFont(size: CGFloat, weight: CGFloat) -> UIFont {
-        guard UIFont(name: familyName, size: size) != nil else {
-            return .systemFont(ofSize: size, weight: weight >= Constants.systemFontSemiboldThreshold ? .semibold : .regular)
+    #if os(iOS)
+
+        /// Figtree is a variable font registered as one family at its default (Light)
+        /// instance. UIKit has no `.fontWeight()`-style modifier, so a specific weight has
+        /// to be dialed in directly on the `wght` variation axis.
+        private static func weightedFont(size: CGFloat, weight: CGFloat) -> UIFont {
+            guard UIFont(name: familyName, size: size) != nil else {
+                return .systemFont(ofSize: size, weight: weight >= Constants.systemFontSemiboldThreshold ? .semibold : .regular)
+            }
+
+            let kWeightAxisIdentifier: FourCharCode = 0x77676874
+            let variation: [CFNumber: CFNumber] = [
+                kWeightAxisIdentifier as CFNumber: weight as CFNumber,
+            ]
+
+            let attributes: [CFString: Any] = [
+                kCTFontNameAttribute: familyName as CFString,
+                kCTFontVariationAttribute: variation,
+            ]
+            let descriptor = CTFontDescriptorCreateWithAttributes(attributes as CFDictionary)
+            let ctFont = CTFontCreateWithFontDescriptor(descriptor, size, nil)
+            return ctFont as UIFont
         }
-
-        let kWeightAxisIdentifier: FourCharCode = 0x77676874
-        let variation: [CFNumber: CFNumber] = [
-            kWeightAxisIdentifier as CFNumber: weight as CFNumber,
-        ]
-
-        let attributes: [CFString: Any] = [
-            kCTFontNameAttribute: familyName as CFString,
-            kCTFontVariationAttribute: variation,
-        ]
-        let descriptor = CTFontDescriptorCreateWithAttributes(attributes as CFDictionary)
-        let ctFont = CTFontCreateWithFontDescriptor(descriptor, size, nil)
-        return ctFont as UIFont
-    }
+    #endif
 }

@@ -48,6 +48,6 @@ struct PreviewZoomContainer<ID: Hashable, Content: View>: View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backgroundGradient()
-            .navigationTransition(.zoom(sourceID: sourceID, in: namespace))
+            .zoomNavigationTransition(sourceID: sourceID, in: namespace)
     }
 }

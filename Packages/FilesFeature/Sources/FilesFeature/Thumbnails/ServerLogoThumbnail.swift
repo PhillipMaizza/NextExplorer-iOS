@@ -1,7 +1,9 @@
 import CoreModels
 import DesignSystem
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 /// The server's logo as a circle: the branding image once it loads, `IconKit.server`
 /// until then / on failure / when no custom logo is set. Fetches `branding.appLogoUrl` with a
@@ -13,11 +15,11 @@ struct ServerLogoThumbnail: View {
     /// A picked-but-unsaved logo, shown in place of the fetched one.
     var overrideImageData: Data?
 
-    @State private var fetched: UIImage?
-    @State private var overrideImage: UIImage?
+    @State private var fetched: PlatformImage?
+    @State private var overrideImage: PlatformImage?
 
     private var maxPixelDimension: CGFloat {
-        size * UIScreen.main.scale
+        size * PlatformScreen.scale
     }
 
     var body: some View {
@@ -33,9 +35,9 @@ struct ServerLogoThumbnail: View {
     @ViewBuilder
     private var content: some View {
         if let overrideImage {
-            Image(uiImage: overrideImage).resizable().scaledToFill()
+            Image(platformImage: overrideImage).resizable().scaledToFill()
         } else if let fetched {
-            Image(uiImage: fetched).resizable().scaledToFill()
+            Image(platformImage: fetched).resizable().scaledToFill()
         } else {
             IconKit.server
                 .resizable().scaledToFit()

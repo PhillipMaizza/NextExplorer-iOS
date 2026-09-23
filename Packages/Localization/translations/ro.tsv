@@ -604,3 +604,8 @@ offline.manageEmpty	Nu este nimic descărcat pentru utilizare offline.
 offline.preferOfflineToggle	Redă copiile descărcate
 offline.preferOfflineSubtitle	Folosește un videoclip descărcat în loc de streaming când este disponibil.
 offline.tunnelSpeedNote	Accesarea serverului printr-un tunel la distanță poate încetini descărcările. Pentru fișiere mari, conectează-te la aceeași rețea și folosește adresa locală a serverului.
+menu.rateApp	Evaluează NextExplorer…
+menu.support	Asistență NextExplorer
+settings.sectionSupport	Asistență
+settings.rowRateApp	Evaluează NextExplorer
+settings.rowSupport	Ajutor și asistență

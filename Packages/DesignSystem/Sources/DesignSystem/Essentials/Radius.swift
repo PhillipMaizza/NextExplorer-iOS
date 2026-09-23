@@ -21,7 +21,7 @@ public extension CGFloat {
     /// sit with Liquid Glass's rounder language, `radiusMedium` below it. Use this rather than
     /// a fixed token so every card tracks the platform together.
     static var radiusCard: CGFloat {
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, macOS 26.0, *) {
             .radiusLarge
         } else {
             .radiusMedium
@@ -32,7 +32,7 @@ public extension CGFloat {
     /// rounder search bars, `radiusControl` below it. Use this rather than a fixed token so every
     /// search field tracks the platform together.
     static var radiusSearchField: CGFloat {
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, macOS 26.0, *) {
             .radiusLarge
         } else {
             .radiusControl

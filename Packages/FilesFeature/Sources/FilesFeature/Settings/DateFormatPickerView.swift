@@ -18,7 +18,7 @@ struct DateFormatPickerView: View {
     @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
 
     var body: some View {
-        List {
+        DSGroupedList {
             Section {
                 DSToggleRow(title: L10n.Settings.dateFormatShowTime, icon: IconKit.time, isOn: $includeTime)
             }

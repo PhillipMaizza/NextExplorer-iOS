@@ -1,6 +1,10 @@
 import AuthenticationServices
 import Foundation
-import UIKit
+#if os(iOS)
+    import UIKit
+#elseif os(macOS)
+    import AppKit
+#endif
 
 /// Runs the OIDC leg in an `ASWebAuthenticationSession` — the only iOS web context that
 /// supports passkeys/WebAuthn (system credential store) while still handing the app the
@@ -45,10 +49,14 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
     }
 
     func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        let window = UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap(\.windows)
-            .first { $0.isKeyWindow }
-        return window ?? ASPresentationAnchor()
+        #if os(macOS)
+            return NSApp.keyWindow ?? NSApp.windows.first ?? ASPresentationAnchor()
+        #else
+            let window = UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .flatMap(\.windows)
+                .first { $0.isKeyWindow }
+            return window ?? ASPresentationAnchor()
+        #endif
     }
 }

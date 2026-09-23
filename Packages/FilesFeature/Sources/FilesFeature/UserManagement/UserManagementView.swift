@@ -11,7 +11,7 @@ struct UserManagementView: View {
     @State private var isSortSheetPresented = false
 
     var body: some View {
-        List {
+        DSGroupedList {
             Section {
                 ForEach(store.displayedUsers) { user in
                     Button {
@@ -42,7 +42,7 @@ struct UserManagementView: View {
             ToolbarItem(placement: .topBarTrailing) {
                 SortToolbarButton(isDisabled: store.users.isEmpty) { isSortSheetPresented = true }
             }
-            if #available(iOS 26.0, *) {
+            if #available(iOS 26.0, macOS 26.0, *) {
                 ToolbarSpacer(.fixed, placement: .topBarTrailing)
             }
             ToolbarItem(placement: .topBarTrailing) {

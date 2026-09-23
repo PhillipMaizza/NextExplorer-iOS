@@ -58,6 +58,7 @@ public enum IconKit {
     public static let search = Image(systemName: "magnifyingglass")
     public static let star = Image(systemName: "star")
     public static let starFill = Image(systemName: "star.fill")
+    public static let help = Image(systemName: "questionmark.circle")
     public static let gearshape = Image(systemName: "gearshape")
     // `.forward`, not `.right`: the semantic variant auto mirrors under a right to left layout
     // (Arabic) so disclosure and breadcrumb chevrons point into the content the correct way.

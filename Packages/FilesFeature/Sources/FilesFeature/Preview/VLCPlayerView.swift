@@ -2,7 +2,11 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#elseif os(macOS)
+    import AppKit
+#endif
 import VLCKitSPM
 
 /// Full-screen player for the video/audio containers and codecs AVFoundation can't decode
@@ -140,20 +144,44 @@ struct VLCPlayerView: View {
     }
 }
 
-/// libvlc rendering surface: hands the player a plain `UIView` as its `drawable`.
-private struct VLCVideoSurface: UIViewRepresentable {
-    let player: VLCMediaPlayer
+#if os(iOS)
+    /// libvlc rendering surface: hands the player a plain `UIView` as its `drawable`.
+    private struct VLCVideoSurface: UIViewRepresentable {
+        let player: VLCMediaPlayer
 
-    func makeUIView(context _: Context) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .black
-        view.isUserInteractionEnabled = false
-        player.drawable = view
-        return view
+        func makeUIView(context _: Context) -> UIView {
+            let view = UIView()
+            view.backgroundColor = .black
+            view.isUserInteractionEnabled = false
+            player.drawable = view
+            return view
+        }
+
+        func updateUIView(_: UIView, context _: Context) {}
     }
+#else
+    /// libvlc rendering surface: hands the player a layer backed `NSView` as its `drawable`.
+    private struct VLCVideoSurface: NSViewRepresentable {
+        let player: VLCMediaPlayer
 
-    func updateUIView(_: UIView, context _: Context) {}
-}
+        func makeNSView(context _: Context) -> NSView {
+            let view = PassthroughView()
+            view.wantsLayer = true
+            view.layer?.backgroundColor = .black
+            player.drawable = view
+            return view
+        }
+
+        func updateNSView(_: NSView, context _: Context) {}
+
+        /// Lets clicks fall through to the SwiftUI tap catcher above, like `isUserInteractionEnabled = false`.
+        private final class PassthroughView: NSView {
+            override func hitTest(_: NSPoint) -> NSView? {
+                nil
+            }
+        }
+    }
+#endif
 
 /// Transport controls (VLCKit ships no UI of its own): a centered play/pause toggle plus a
 /// bottom scrubber with elapsed / total time.

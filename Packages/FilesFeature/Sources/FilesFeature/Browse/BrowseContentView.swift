@@ -316,7 +316,7 @@ struct BrowseContentView: View {
                 }
             }
             if !store.isSelecting, canUploadHere {
-                if #available(iOS 26.0, *) {
+                if #available(iOS 26.0, macOS 26.0, *) {
                     ToolbarSpacer(.fixed, placement: .topBarTrailing)
                 }
                 ToolbarItem(placement: .topBarTrailing) {
@@ -363,7 +363,7 @@ struct BrowseContentView: View {
         ))
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
-        .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
+        .hidesTabBar(store.isSelecting)
         .toolbar {
             if store.isSelecting {
                 ToolbarItem(placement: .bottomBar) {
@@ -977,7 +977,7 @@ struct BrowseContentView: View {
 
     private var listContent: some View {
         ScrollViewReader { proxy in
-            List {
+            DSGroupedList {
                 Section {
                     if store.isSearching {
                         searchResultRows

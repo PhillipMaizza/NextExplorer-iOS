@@ -604,3 +604,8 @@ offline.manageEmpty	Ничего не загружено для офлайн-д�
 offline.preferOfflineToggle	Воспроизводить загруженные копии
 offline.preferOfflineSubtitle	Использовать загруженное видео вместо потоковой передачи, когда оно доступно.
 offline.tunnelSpeedNote	Доступ к серверу через удалённый туннель может замедлить загрузки. Для больших файлов подключитесь к той же сети и используйте локальный адрес сервера.
+menu.rateApp	Оценить NextExplorer…
+menu.support	Поддержка NextExplorer
+settings.sectionSupport	Поддержка
+settings.rowRateApp	Оценить NextExplorer
+settings.rowSupport	Помощь и поддержка

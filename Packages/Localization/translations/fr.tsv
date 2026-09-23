@@ -604,3 +604,8 @@ offline.manageEmpty	Rien n'est téléchargé pour une utilisation hors ligne.
 offline.preferOfflineToggle	Lire les copies téléchargées
 offline.preferOfflineSubtitle	Utiliser une vidéo téléchargée au lieu de la diffuser lorsqu'elle est disponible.
 offline.tunnelSpeedNote	Accéder à votre serveur via un tunnel distant peut ralentir les téléchargements. Pour les gros fichiers, connectez-vous au même réseau et utilisez l'adresse locale de votre serveur.
+menu.rateApp	Noter NextExplorer…
+menu.support	Assistance NextExplorer
+settings.sectionSupport	Assistance
+settings.rowRateApp	Noter NextExplorer
+settings.rowSupport	Aide et assistance

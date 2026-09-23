@@ -53,7 +53,7 @@ struct SharedSegmentList: View {
         // One filter+sort pass shared by both sections and the diff animation, rather than
         // three independent derivations (each ran the localized sort) per render.
         let partition = store.state.displayedSharesPartition(for: segment)
-        return List {
+        return DSGroupedList {
             if listPhase == .loading {
                 skeletonRows
             } else {

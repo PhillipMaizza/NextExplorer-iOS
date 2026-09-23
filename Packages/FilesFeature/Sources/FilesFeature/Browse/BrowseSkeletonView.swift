@@ -73,7 +73,7 @@ struct BrowseSkeletonView: View {
             }
             .scrollDisabled(true)
         } else {
-            List {
+            DSGroupedList {
                 Section {
                     ForEach(Self.placeholderItems) { item in
                         placeholderRow(FileRowView(item: item))

@@ -604,3 +604,8 @@ offline.manageEmpty	Nic nie zostało pobrane do użytku offline.
 offline.preferOfflineToggle	Odtwarzaj pobrane kopie
 offline.preferOfflineSubtitle	Używaj pobranego wideo zamiast strumieniowania, gdy jest dostępne.
 offline.tunnelSpeedNote	Łączenie się z serwerem przez zdalny tunel może spowalniać pobieranie. W przypadku dużych plików połącz się z tą samą siecią i użyj lokalnego adresu serwera.
+menu.rateApp	Oceń NextExplorer…
+menu.support	Pomoc NextExplorer
+settings.sectionSupport	Pomoc
+settings.rowRateApp	Oceń NextExplorer
+settings.rowSupport	Pomoc i wsparcie

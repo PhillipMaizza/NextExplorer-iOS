@@ -131,9 +131,11 @@ struct StreamingPreviewView: View {
             // `setCategory` can block; AVFoundation warns against calling it synchronously on the
             // main thread while a session may already be active. `play()` stays on the main actor
             // for `VideoPlayer` to observe it.
-            Task.detached(priority: .userInitiated) {
-                try? AVAudioSession.sharedInstance().setCategory(.playback)
-            }
+            #if os(iOS)
+                Task.detached(priority: .userInitiated) {
+                    try? AVAudioSession.sharedInstance().setCategory(.playback)
+                }
+            #endif
             player.play()
         }
         .onDisappear {
@@ -141,9 +143,11 @@ struct StreamingPreviewView: View {
                 OrientationLock.shared.lock()
             }
             player.pause()
-            Task.detached(priority: .userInitiated) {
-                try? AVAudioSession.sharedInstance().setCategory(.ambient)
-            }
+            #if os(iOS)
+                Task.detached(priority: .userInitiated) {
+                    try? AVAudioSession.sharedInstance().setCategory(.ambient)
+                }
+            #endif
         }
     }
 

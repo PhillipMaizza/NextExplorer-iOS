@@ -1,3 +1,4 @@
+import DesignSystem
 @testable import FilesFeature
 import Foundation
 import Testing
@@ -48,7 +49,7 @@ struct PDFThumbnailCacheTests {
         #expect(centrePixelIsBlue(image))
     }
 
-    private func centrePixelIsBlue(_ image: UIImage) -> Bool {
+    private func centrePixelIsBlue(_ image: PlatformImage) -> Bool {
         guard let cgImage = image.cgImage else { return false }
         var pixel = [UInt8](repeating: 0, count: 4)
         guard let context = CGContext(

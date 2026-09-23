@@ -127,9 +127,11 @@ struct GeneralSettingsSection: View {
                         }
                     }
                 }
-                if filter.matches(L10n.Settings.toggleHaptics) {
-                    DSToggleRow(title: L10n.Settings.toggleHaptics, icon: IconKit.haptics, isOn: $hapticsEnabled)
-                }
+                #if os(iOS)
+                    if filter.matches(L10n.Settings.toggleHaptics) {
+                        DSToggleRow(title: L10n.Settings.toggleHaptics, icon: IconKit.haptics, isOn: $hapticsEnabled)
+                    }
+                #endif
             } header: {
                 sectionHeader(L10n.Settings.sectionGeneral)
             }
