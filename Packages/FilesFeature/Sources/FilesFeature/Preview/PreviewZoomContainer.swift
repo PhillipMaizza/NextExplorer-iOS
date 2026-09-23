@@ -7,6 +7,31 @@ import SwiftUI
 struct PreviewMatchedSource {
     let id: AnyHashable
     let namespace: Namespace.ID
+    /// When set, the source reports whether it is currently in the view hierarchy, so a cover
+    /// that opens late (a slow load) can skip the zoom instead of morphing from a missing view.
+    var visibility: PreviewSourceVisibility?
+}
+
+/// Which zoom sources are on screen right now. A plain reference, not observed, so rows
+/// appearing and disappearing while scrolling never re-render the screen that owns it.
+final class PreviewSourceVisibility {
+    private var visibleIDs = Set<AnyHashable>()
+    var isScreenVisible = false
+
+    func setVisible(_ visible: Bool, id: AnyHashable) {
+        if visible {
+            visibleIDs.insert(id)
+        } else {
+            visibleIDs.remove(id)
+        }
+    }
+
+    /// UIKit crashes ("Cannot morph from a view that is not in the hierarchy") when a zoom
+    /// starts from a source that left the screen, e.g. after a tab switch or a scroll during a
+    /// slow open.
+    func canZoom(from id: AnyHashable) -> Bool {
+        isScreenVisible && visibleIDs.contains(id)
+    }
 }
 
 extension View {
@@ -16,6 +41,8 @@ extension View {
     func previewMatchedSource(_ source: PreviewMatchedSource?) -> some View {
         if let source {
             matchedTransitionSource(id: source.id, in: source.namespace)
+                .onAppear { source.visibility?.setVisible(true, id: source.id) }
+                .onDisappear { source.visibility?.setVisible(false, id: source.id) }
         } else {
             self
         }
@@ -39,15 +66,26 @@ extension View {
 /// background gradient rather than the cover's default black: the content is pinned full
 /// bleed over `backgroundGradient()`, and the whole stack — gradient included — is the
 /// transition subject, so the gradient fills every gap the morphing card leaves.
+///
+/// `zooms` false falls back to the standard cover transition, for when the source is gone.
 struct PreviewZoomContainer<ID: Hashable, Content: View>: View {
     let sourceID: ID
     let namespace: Namespace.ID
+    var zooms = true
     @ViewBuilder let content: Content
 
     var body: some View {
+        if zooms {
+            framedContent
+                .navigationTransition(.zoom(sourceID: sourceID, in: namespace))
+        } else {
+            framedContent
+        }
+    }
+
+    private var framedContent: some View {
         content
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .backgroundGradient()
-            .navigationTransition(.zoom(sourceID: sourceID, in: namespace))
     }
 }

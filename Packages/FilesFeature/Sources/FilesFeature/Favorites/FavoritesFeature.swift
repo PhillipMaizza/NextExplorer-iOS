@@ -131,6 +131,8 @@ public struct FavoritesFeature {
         /// Refetches only the pushed screens whose `directoryPath` equals `path`. Sent after
         /// an upload finishes so just the affected folder reloads.
         case refreshDirectory(path: String)
+        /// A download landed: recompute the "available offline" badges on pushed folders.
+        case offlineAvailabilityChanged
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -138,6 +140,7 @@ public struct FavoritesFeature {
             case openDownloadsTapped
             case goToSharedTab
             case uploadRequested([PendingUpload])
+            case downloadRequested([FileItem])
         }
     }
 
@@ -323,6 +326,10 @@ public struct FavoritesFeature {
                 state.previewHost = host
                 return .send(.previewHost(.presented(.rowTapped(item))))
 
+            case let .path(.element(id: _, action: .delegate(.downloadRequested(items)))),
+                 let .previewHost(.presented(.delegate(.downloadRequested(items)))):
+                return .send(.delegate(.downloadRequested(items)))
+
             case .previewHost(.presented(.previewDismissed)):
                 // Closing the file preview tears the whole host down, returning to the results.
                 state.previewHost = nil
@@ -399,6 +406,9 @@ public struct FavoritesFeature {
 
             case let .path(.element(id: _, action: .delegate(.uploadRequested(files)))):
                 return .send(.delegate(.uploadRequested(files)))
+
+            case .offlineAvailabilityChanged:
+                return .merge(state.path.ids.map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) })
 
             case let .navigateToDirectory(path, title):
                 BrowseNavigation.jump(to: path, title: title, serverURL: state.serverURL, stack: &state.path)

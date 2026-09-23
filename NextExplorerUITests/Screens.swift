@@ -62,6 +62,12 @@ struct LoginScreen {
 
 struct BrowseScreen {
     let app: XCUIApplication
+    /// The breadcrumb's leading "Locations" crumb. The bar only shows below the root, so it
+    /// proves a push into a folder landed (the upload menu exists at the root too).
+    var breadcrumbRoot: XCUIElement {
+        app.buttons[L10n.Browse.locations].firstMatch
+    }
+
     var searchField: XCUIElement {
         app.textFields[AccessibilityIdentifiers.Search.field]
     }

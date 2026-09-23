@@ -18,6 +18,7 @@ struct BrowseFeatureTests {
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
         } withDependencies: {
+            $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
             $0.filesClient.browse = { _, _ in
                 BrowseResult(
                     items: [item],
@@ -47,6 +48,7 @@ struct BrowseFeatureTests {
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
         } withDependencies: {
+            $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
             $0.filesClient.browse = { _, _ in throw FilesClientError.sessionExpired }
             $0.filesClient.favorites = { _ in [] }
         }
@@ -116,6 +118,7 @@ struct BrowseFeatureTests {
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
+            $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
             $0.filesClient.browse = { _, _ in
                 BrowseResult(items: [refreshed], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
             }
@@ -798,6 +801,7 @@ struct BrowseFeatureTests {
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
         } withDependencies: {
+            $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
             $0.filesClient.browse = { _, _ in
                 BrowseResult(
                     items: [],
@@ -986,25 +990,6 @@ struct BrowseFeatureTests {
         await store.receive(\.favoriteToggleResponse.success)
 
         #expect(completions.value == 1)
-    }
-
-    @Test
-    func bulkDownloadWhileOneIsAlreadyInFlightIsIgnored() async {
-        let serverURL = URL(string: "https://example.com")!
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
-        state.isBulkActionInFlight = true
-
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.downloadRawFile = { _, _ in
-                Issue.record("a second bulk download must not start while one is in flight")
-                return URL(fileURLWithPath: "/tmp/x")
-            }
-        }
-
-        // No state change, no effect: the re-entry guard swallows it.
-        await store.send(.bulkDownloadTapped(.documents, removeArchiveAfterDownload: false))
     }
 
     @Test
@@ -1591,200 +1576,155 @@ struct BrowseFeatureTests {
     // MARK: File actions — download
 
     @Test
-    func downloadTappedOnAFileDownloadsAndSavesItSuccessfully() async {
+    func downloadTappedHandsTheItemToTheAppDownloadQueue() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 0, kind: "pdf")
-        let cachedURL = URL(fileURLWithPath: "/tmp/cached/report.pdf")
-        let savedURL = URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf")
+        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 1_600_000_000, kind: "mkv")
 
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")) {
             BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.downloadRawFile = { _, _ in cachedURL }
-            $0.localDownloadStore.save = { _, _, _, _ in savedURL }
         }
 
-        await store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: false)) {
-            $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = "Downloading…"
-        }
-        await store.receive(\.downloadResponse.success) {
-            $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
-            $0.downloadSuccessMessage = "Saved to Documents"
-        }
+        await store.send(.downloadTapped(item))
+        await store.receive(.delegate(.downloadRequested([item])))
     }
 
     @Test
-    func downloadTappedOnAFileFailureSurfacesAReadableErrorMessage() async {
+    func downloadTappedFromAPreviewAlsoConfirmsWithAToast() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 0, kind: "pdf")
+        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 0, kind: "mkv")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
+        state.previewItem = item
 
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+        let store = TestStore(initialState: state) {
             BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.downloadRawFile = { _, _ in throw FilesClientError.server(statusCode: 403) }
         }
 
-        await store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: false)) {
-            $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = "Downloading…"
+        await store.send(.downloadTapped(item)) {
+            $0.downloadSuccessMessage = "Downloading movie.mkv"
         }
-        await store.receive(\.downloadResponse.failure) {
-            $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
-            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 403).userMessage
-        }
+        await store.receive(.delegate(.downloadRequested([item])))
     }
 
     @Test
-    func downloadTappedOnAFolderCompressesThenDownloadsBeforeSaving() async {
-        // Folders have no dedicated zip-download endpoint — this exercises the full
-        // compress → download → save chain, and that the progress message switches from
-        // "Compressing…" to "Downloading…" partway through.
+    func bulkDownloadTappedQueuesTheSelectionInListingOrderAndLeavesSelectMode() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let compressed = FileItem(name: "Documents.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
-        let cachedURL = URL(fileURLWithPath: "/tmp/cached/Documents.zip")
-        let savedURL = URL(fileURLWithPath: "/tmp/Caches/Downloads/Documents.zip")
+        let folder = FileItem(name: "Photos", path: "Files", dateModified: Date(), size: 0, kind: "directory")
+        let file = FileItem(name: "notes.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
+        let other = FileItem(name: "skip.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
+        state.items = [folder, file, other]
+        state.isSelecting = true
+        state.selectedItemIDs = [file.id, folder.id]
 
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+        let store = TestStore(initialState: state) {
             BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.compressItem = { _, _ in compressed }
-            $0.filesClient.downloadRawFile = { _, _ in cachedURL }
-            $0.localDownloadStore.save = { _, _, _, _ in savedURL }
         }
 
-        await store.send(.downloadTapped(item, .cache, removeArchiveAfterDownload: false)) {
-            $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = "Compressing…"
+        await store.send(.bulkDownloadTapped) {
+            $0.isSelecting = false
+            $0.selectedItemIDs = []
         }
-        await store.receive(\.downloadProgressUpdated) {
-            $0.fileActionProgressMessage = "Downloading…"
-        }
-        await store.receive(\.downloadResponse.success) {
-            $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
-            $0.downloadSuccessMessage = "Saved to Cache"
-        }
+        await store.receive(.delegate(.downloadRequested([folder, file])))
     }
 
     @Test
-    func downloadTappedOnAFolderWithRemoveArchiveEnabledDeletesTheCompressedArchiveOnceSaved() async {
+    func bulkDownloadWithNothingSelectedDoesNothing() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let compressed = FileItem(name: "Documents.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
-        let deletedItems = LockIsolated<[FileItem]>([])
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
+        state.isSelecting = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.bulkDownloadTapped)
+    }
+
+    @Test
+    func rootLoadFetchesServerFeaturesAndShowsThePersonalSpace() async {
+        let serverURL = URL(string: "https://example.com")!
+        let volume = FileItem(name: "Files", path: "", dateModified: Date(timeIntervalSince1970: 0), size: 0, kind: "directory")
+        let result = BrowseResult(items: [volume], access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true), path: "")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
         } withDependencies: {
-            $0.filesClient.compressItem = { _, _ in compressed }
-            $0.filesClient.downloadRawFile = { _, _ in URL(fileURLWithPath: "/tmp/cached/Documents.zip") }
-            $0.localDownloadStore.save = { _, _, _, _ in URL(fileURLWithPath: "/tmp/Caches/Downloads/Documents.zip") }
-            $0.filesClient.deleteItems = { _, items in deletedItems.withValue { $0 = items } }
+            $0.filesClient.browse = { _, _ in result }
+            $0.filesClient.favorites = { _ in [] }
+            $0.filesClient.serverFeatures = { _ in ServerFeatures(isPersonalEnabled: true) }
         }
         store.exhaustivity = .off
 
-        await store.send(.downloadTapped(item, .cache, removeArchiveAfterDownload: true))
-        await store.receive(\.downloadResponse.success)
-
-        #expect(deletedItems.value == [compressed])
+        await store.send(.refreshButtonTapped)
+        await store.receive(\.serverFeaturesResponse) {
+            $0.isPersonalSpaceEnabled = true
+        }
     }
 
     @Test
-    func downloadTappedOnAFolderWithRemoveArchiveEnabledStillSucceedsWhenDeletingTheArchiveFails() async {
+    func theRootPaintsTheLastKnownPersonalSpaceAnswerBeforeAnyFetch() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let compressed = FileItem(name: "Documents.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+        let cache = JSONCacheStore.inMemory()
+        let store = TestStore(initialState: withDependencies {
+            $0.jsonCacheStore = cache
+        } operation: {
+            BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        }) {
             BrowseFeature()
         } withDependencies: {
-            $0.filesClient.compressItem = { _, _ in compressed }
-            $0.filesClient.downloadRawFile = { _, _ in URL(fileURLWithPath: "/tmp/cached/Documents.zip") }
-            $0.localDownloadStore.save = { _, _, _, _ in URL(fileURLWithPath: "/tmp/Caches/Downloads/Documents.zip") }
-            $0.filesClient.deleteItems = { _, _ in throw FilesClientError.server(statusCode: 500) }
+            $0.jsonCacheStore = cache
+        }
+        #expect(store.state.isPersonalSpaceEnabled == false)
+
+        await store.send(.serverFeaturesResponse(ServerFeatures(isPersonalEnabled: true))) {
+            $0.isPersonalSpaceEnabled = true
+        }
+        await store.finish()
+
+        let next = withDependencies {
+            $0.jsonCacheStore = cache
+        } operation: {
+            BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        }
+        #expect(next.isPersonalSpaceEnabled, "the next launch should show My Files from the first frame")
+        let subfolder = withDependencies {
+            $0.jsonCacheStore = cache
+        } operation: {
+            BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
+        }
+        #expect(subfolder.isPersonalSpaceEnabled == false)
+    }
+
+    @Test
+    func subfolderLoadNeverAsksForServerFeatures() async {
+        let serverURL = URL(string: "https://example.com")!
+        let result = BrowseResult(items: [], access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true), path: "Files")
+
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in result }
+            $0.filesClient.favorites = { _ in [] }
+            $0.filesClient.serverFeatures = { _ in
+                Issue.record("only the root screen offers the personal space")
+                return ServerFeatures()
+            }
         }
         store.exhaustivity = .off
 
-        await store.send(.downloadTapped(item, .cache, removeArchiveAfterDownload: true))
-        await store.receive(\.downloadResponse.success) {
-            $0.downloadSuccessMessage = "Saved to Cache"
-        }
+        await store.send(.refreshButtonTapped)
+        await store.finish()
+        #expect(store.state.isPersonalSpaceEnabled == false)
     }
 
     @Test
-    func downloadTappedOnAFileWithRemoveArchiveEnabledNeverCallsDelete() async {
-        // No `deleteItems` override: a call here would crash with "Unimplemented," proving
-        // the cleanup only ever applies to a folder's own compressed archive.
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 0, kind: "pdf")
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+    func personalSpaceTappedOpensThePersonalPathAsMyFiles() async {
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")) {
             BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.downloadRawFile = { _, _ in URL(fileURLWithPath: "/tmp/cached/report.pdf") }
-            $0.localDownloadStore.save = { _, _, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf") }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: true))
-        await store.receive(\.downloadResponse.success)
-    }
-
-    @Test
-    func downloadTappedOnAFolderFailureWhenCompressFails() async {
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
-            BrowseFeature()
-        } withDependencies: {
-            // No `downloadRawFile`/`localDownloadStore` override: a call to either here would
-            // crash with "Unimplemented," proving the chain stops right after compress fails.
-            $0.filesClient.compressItem = { _, _ in throw FilesClientError.server(statusCode: 507) }
         }
 
-        await store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: false)) {
-            $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = "Compressing…"
-        }
-        await store.receive(\.downloadResponse.failure) {
-            $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
-            $0.fileActionErrorMessage = FilesClientError.server(statusCode: 507).userMessage
-        }
-    }
-
-    @Test
-    func downloadTappedFailureWhenSavingLocallyFailsAfterANetworkSucceeds() async {
-        // Edge case: the network half of the chain succeeds, but the local copy step (disk
-        // full, permissions, ...) fails — the error should still surface as a readable
-        // message via the same `FilesClientError.network` fallback every other action uses
-        // for a non-`FilesClientError` throw.
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 0, kind: "pdf")
-        let cachedURL = URL(fileURLWithPath: "/tmp/cached/report.pdf")
-        struct DiskFullError: Error {}
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.downloadRawFile = { _, _ in cachedURL }
-            $0.localDownloadStore.save = { _, _, _, _ in throw DiskFullError() }
-        }
-
-        await store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: false)) {
-            $0.isPerformingFileAction = true
-            $0.fileActionProgressMessage = "Downloading…"
-        }
-        await store.receive(\.downloadResponse.failure) {
-            $0.isPerformingFileAction = false
-            $0.fileActionProgressMessage = nil
-            $0.fileActionErrorMessage = FilesClientError.network(String(describing: DiskFullError())).userMessage
-        }
+        await store.send(.personalSpaceTapped)
+        await store.receive(.delegate(.openPath(path: "personal", title: L10n.Browse.myFiles)))
     }
 
     // MARK: Selection + bulk toolbar
@@ -1978,97 +1918,6 @@ struct BrowseFeatureTests {
         }
 
         await store.send(.bulkFavoriteTapped)
-    }
-
-    @Test
-    func bulkDownloadTappedSavesEverySelectedItem() async {
-        let file = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 0, kind: "pdf")
-        let folder = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let compressedFolder = FileItem(name: "Photos.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
-        var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
-        state.items = [file, folder]
-        state.isSelecting = true
-        state.selectedItemIDs = [file.id, folder.id]
-
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.compressItem = { _, _ in compressedFolder }
-            $0.filesClient.downloadRawFile = { _, item in URL(fileURLWithPath: "/tmp/cached/\(item.name)") }
-            $0.localDownloadStore.save = { _, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.bulkDownloadTapped(.documents, removeArchiveAfterDownload: false)) {
-            $0.isBulkActionInFlight = true
-            $0.fileActionProgressMessage = "Downloading 1 of 2…"
-        }
-        await store.receive(\.bulkDownloadResponse) {
-            $0.isBulkActionInFlight = false
-            $0.fileActionProgressMessage = nil
-            $0.isSelecting = false
-            $0.selectedItemIDs = []
-            $0.downloadSuccessMessage = "Saved 2 items to Documents"
-        }
-    }
-
-    @Test
-    func bulkDownloadTappedWithRemoveArchiveEnabledOnlyDeletesTheCompressedFolderArchives() async {
-        let file = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 0, kind: "pdf")
-        let folder = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let compressedFolder = FileItem(name: "Photos.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
-        var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
-        state.items = [file, folder]
-        state.isSelecting = true
-        state.selectedItemIDs = [file.id, folder.id]
-
-        let deletedItems = LockIsolated<[FileItem]>([])
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.compressItem = { _, _ in compressedFolder }
-            $0.filesClient.downloadRawFile = { _, item in URL(fileURLWithPath: "/tmp/cached/\(item.name)") }
-            $0.localDownloadStore.save = { _, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
-            $0.filesClient.deleteItems = { _, items in deletedItems.withValue { $0.append(contentsOf: items) } }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.bulkDownloadTapped(.documents, removeArchiveAfterDownload: true))
-        await store.receive(\.bulkDownloadResponse)
-
-        #expect(deletedItems.value == [compressedFolder])
-    }
-
-    @Test
-    func bulkDownloadTappedReportsPartialSuccessWhenOneItemFails() async {
-        let goodFile = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 0, kind: "pdf")
-        let badFile = FileItem(name: "broken.pdf", path: "", dateModified: Date(), size: 0, kind: "pdf")
-        var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
-        state.items = [goodFile, badFile]
-        state.isSelecting = true
-        state.selectedItemIDs = [goodFile.id, badFile.id]
-
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.downloadRawFile = { _, item in
-                if item.id == badFile.id {
-                    throw FilesClientError.server(statusCode: 500)
-                }
-                return URL(fileURLWithPath: "/tmp/cached/\(item.name)")
-            }
-            $0.localDownloadStore.save = { _, fileName, _, _ in URL(fileURLWithPath: "/tmp/Documents/Downloads/\(fileName)") }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.bulkDownloadTapped(.documents, removeArchiveAfterDownload: false))
-        await store.receive(\.bulkDownloadResponse) {
-            $0.isBulkActionInFlight = false
-            $0.fileActionProgressMessage = nil
-            $0.isSelecting = false
-            $0.selectedItemIDs = []
-            $0.downloadSuccessMessage = "Saved 1 of 2 items to Documents"
-        }
     }
 
     // MARK: File actions — get info

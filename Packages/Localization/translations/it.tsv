@@ -94,12 +94,6 @@ browse.searchEverywhere	Cerca ovunque
 browse.searchFailed	Ricerca non riuscita. Controlla la connessione e riprova.
 browse.progressExtracting	Estrazione…
 browse.progressCompressing	Compressione…
-browse.progressDownloading	Download…
-browse.progressDownloadingIndexed	Download di %1$lld di %2$lld…
-browse.downloadSavedTo	Salvato in %@
-browse.downloadSavedCountTo	Salvati %1$lld di %2$lld elementi in %3$@
-browse.downloadSavedAllTo	Salvati %1$lld elementi in %2$@
-browse.downloadBulkFailed	Impossibile salvare questi elementi sul dispositivo.
 browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Visualizzazione di una copia salvata da %@
 browse.actionCopy	Copia
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Mostra file nascosti
 settings.toggleRenderHTML	Renderizza pagine HTML
 settings.toggleRenderMarkdown	Renderizza file Markdown
 settings.toggleHaptics	Feedback aptico
-settings.toggleDarkMode	Modalità scura
 settings.toggleShowThumbnails	Mostra miniature
 settings.toggleShowExtensions	Mostra estensioni dei file
-settings.toggleRemoveArchives	Rimuovi archivi dopo il download
 settings.toggleKeepClipboard	Mantieni elementi dopo l'incolla
 settings.toggleKeepClipboardSubtitle	Gli elementi copiati restano pronti da incollare in un'altra cartella. Gli elementi spostati vengono sempre cancellati.
 settings.rowDateFormat	Formato data
@@ -314,7 +306,7 @@ settings.rowTermsOfUse	Condizioni d'uso
 settings.rowUserManagement	Gestione utenti
 settings.rowChangePassword	Cambia password
 settings.rowServer	Server
-settings.storageFootnote	Il download di una cartella la comprime prima in uno ZIP sul server. Attiva l'interruttore qui sopra per eliminare quell'archivio dal server una volta salvato sul dispositivo. Rimuovere i download o svuotare la cache riguarda solo questo dispositivo; nulla sul server viene toccato.
+settings.storageFootnote	Le cartelle si scaricano come ZIP, senza lasciare nulla sul server. Rimuovere i download o svuotare la cache riguarda solo questo dispositivo; sul server non viene toccato nulla.
 settings.removeAllDownloadsTitle	Rimuovere tutti i download?
 settings.removeAllDownloadsConfirm	Rimuovi tutto
 settings.removeAllDownloadsMessage	Questo elimina ogni file scaricato da questo dispositivo. Restano sul server.
@@ -604,3 +596,26 @@ offline.manageEmpty	Nessun elemento è scaricato per l'uso offline.
 offline.preferOfflineToggle	Riproduci le copie scaricate
 offline.preferOfflineSubtitle	Usa un video scaricato invece dello streaming quando è disponibile.
 offline.tunnelSpeedNote	Raggiungere il server tramite un tunnel remoto può rallentare i download. Per i file di grandi dimensioni, collegati alla stessa rete e usa l'indirizzo locale del server.
+settings.rowAppearance	Aspetto
+appearance.system	Sistema
+appearance.light	Chiaro
+appearance.dark	Scuro
+browse.myFiles	I miei file
+browse.myFilesSubtitle	Visibile solo a te
+downloadQueue.navigationTitle	Coda di download
+downloadQueue.openDownloads	Mostra download
+downloadQueue.emptyList	Nessun download in corso.
+downloadQueue.statusSaved	Salvato
+downloadQueue.cancelAll	Annulla tutti i download
+downloadQueue.barFailedOne	1 download non riuscito
+downloadQueue.barFailedMany	%lld download non riusciti
+downloadQueue.barTitleOne	Download di %@
+downloadQueue.barTitleMany	Download di %lld elementi
+downloadQueue.savedOne	Salvato in Download
+downloadQueue.savedMany	%lld elementi salvati in Download
+downloadQueue.bytesOf	%1$@ di %2$@
+downloadQueue.timeLeft	%@ rimanenti
+browse.sectionPersonal	Personale
+settings.sectionSupport	Supporto
+settings.rowRateApp	Valuta NextExplorer
+settings.rowSupport	Aiuto e supporto

@@ -199,8 +199,14 @@ public extension NetworkClient {
                                 continuation.resume(throwing: NetworkError.transport(error.localizedDescription))
                             }
                         }
-                        let observation = task.progress.observe(\.fractionCompleted, options: [.new]) { progress, _ in
-                            throttle.report(progress.fractionCompleted)
+                        // The task's byte counters, not its `NSProgress` (which counts in percent units
+                        // and stalls when the length is unknown), so a streamed archive still reports.
+                        let observation = task.observe(\.countOfBytesReceived, options: [.new]) { task, _ in
+                            let expected = task.countOfBytesExpectedToReceive
+                            throttle.report(TransferProgress(
+                                receivedBytes: task.countOfBytesReceived,
+                                expectedBytes: expected > 0 ? expected : nil
+                            ))
                         }
                         observationBox.set(observation)
                         if holder.store(task) {

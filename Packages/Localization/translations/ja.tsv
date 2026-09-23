@@ -94,12 +94,6 @@ browse.searchEverywhere	すべての場所を検索
 browse.searchFailed	検索できませんでした。接続を確認して再試行してください。
 browse.progressExtracting	展開中…
 browse.progressCompressing	圧縮中…
-browse.progressDownloading	ダウンロード中…
-browse.progressDownloadingIndexed	%2$lld 件中 %1$lld 件をダウンロード中…
-browse.downloadSavedTo	%@ に保存しました
-browse.downloadSavedCountTo	%2$lld 件中 %1$lld 件を %3$@ に保存しました
-browse.downloadSavedAllTo	%1$lld 件を %2$@ に保存しました
-browse.downloadBulkFailed	これらの項目をデバイスに保存できませんでした。
 browse.offlineBannerTitle	オフライン
 browse.offlineBannerDetail	%@ の保存済みコピーを表示中
 browse.actionCopy	コピー
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	隠しファイルを表示
 settings.toggleRenderHTML	HTML ページをレンダリング
 settings.toggleRenderMarkdown	Markdown ファイルをレンダリング
 settings.toggleHaptics	触覚フィードバック
-settings.toggleDarkMode	ダークモード
 settings.toggleShowThumbnails	サムネールを表示
 settings.toggleShowExtensions	ファイル拡張子を表示
-settings.toggleRemoveArchives	ダウンロード後にアーカイブを削除
 settings.toggleKeepClipboard	ペースト後も項目を保持
 settings.toggleKeepClipboardSubtitle	コピーした項目は別のフォルダにペーストできる状態のまま残ります。移動した項目は常に消去されます。
 settings.rowDateFormat	日付形式
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	利用規約
 settings.rowUserManagement	ユーザ管理
 settings.rowChangePassword	パスワードを変更
 settings.rowServer	サーバ
-settings.storageFootnote	フォルダをダウンロードすると、サーバでまず ZIP に圧縮されます。デバイスに保存された後にそのアーカイブをサーバから削除するには、上のスイッチをオンにします。ダウンロードの削除やキャッシュの消去はこのデバイスにのみ影響し、サーバ上のものには影響しません。
+settings.storageFootnote	フォルダは ZIP としてダウンロードされ、サーバには何も残りません。ダウンロードの削除やキャッシュの消去はこのデバイスにのみ影響し、サーバ上のものには影響しません。
 settings.removeAllDownloadsTitle	すべてのダウンロードを削除しますか？
 settings.removeAllDownloadsConfirm	すべて削除
 settings.removeAllDownloadsMessage	このデバイスからすべてのダウンロード済みファイルを削除します。サーバには残ります。
@@ -604,3 +596,26 @@ offline.manageEmpty	オフライン用にダウンロードされたものはあ
 offline.preferOfflineToggle	ダウンロードしたコピーを再生
 offline.preferOfflineSubtitle	利用可能な場合はストリーミングの代わりにダウンロードした動画を使用します。
 offline.tunnelSpeedNote	リモートトンネル経由でサーバーに接続するとダウンロードが遅くなることがあります。大きなファイルの場合は、同じネットワークに接続してサーバーのローカルアドレスを使用してください。
+settings.rowAppearance	外観
+appearance.system	システム
+appearance.light	ライト
+appearance.dark	ダーク
+browse.myFiles	マイファイル
+browse.myFilesSubtitle	あなただけに表示されます
+downloadQueue.navigationTitle	ダウンロードキュー
+downloadQueue.openDownloads	ダウンロードを表示
+downloadQueue.emptyList	進行中のダウンロードはありません。
+downloadQueue.statusSaved	保存済み
+downloadQueue.cancelAll	すべてのダウンロードをキャンセル
+downloadQueue.barFailedOne	1 件のダウンロードが失敗しました
+downloadQueue.barFailedMany	%lld 件のダウンロードが失敗しました
+downloadQueue.barTitleOne	%@ をダウンロード中
+downloadQueue.barTitleMany	%lld 個の項目をダウンロード中
+downloadQueue.savedOne	ダウンロードに保存しました
+downloadQueue.savedMany	%lld 個の項目をダウンロードに保存しました
+downloadQueue.bytesOf	%1$@ / %2$@
+downloadQueue.timeLeft	残り %@
+browse.sectionPersonal	個人
+settings.sectionSupport	サポート
+settings.rowRateApp	NextExplorerを評価
+settings.rowSupport	ヘルプとサポート

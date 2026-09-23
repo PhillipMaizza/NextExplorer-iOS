@@ -94,12 +94,6 @@ browse.searchEverywhere	Caută peste tot
 browse.searchFailed	Căutarea a eșuat. Verifică conexiunea și încearcă din nou.
 browse.progressExtracting	Se extrage…
 browse.progressCompressing	Se comprimă…
-browse.progressDownloading	Se descarcă…
-browse.progressDownloadingIndexed	Se descarcă %1$lld din %2$lld…
-browse.downloadSavedTo	Salvat în %@
-browse.downloadSavedCountTo	Salvate %1$lld din %2$lld elemente în %3$@
-browse.downloadSavedAllTo	Salvate %1$lld elemente în %2$@
-browse.downloadBulkFailed	Nu s-au putut salva aceste elemente pe dispozitiv.
 browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Se afișează o copie salvată din %@
 browse.actionCopy	Copiază
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Afișează fișierele ascunse
 settings.toggleRenderHTML	Randează paginile HTML
 settings.toggleRenderMarkdown	Randează fișierele Markdown
 settings.toggleHaptics	Feedback haptic
-settings.toggleDarkMode	Mod întunecat
 settings.toggleShowThumbnails	Afișează miniaturile
 settings.toggleShowExtensions	Afișează extensiile fișierelor
-settings.toggleRemoveArchives	Elimină arhivele după descărcare
 settings.toggleKeepClipboard	Păstrează elementele după lipire
 settings.toggleKeepClipboardSubtitle	Elementele copiate rămân gata de lipit în alt dosar. Elementele mutate se golesc mereu.
 settings.rowDateFormat	Format dată
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	Termeni de utilizare
 settings.rowUserManagement	Gestionarea utilizatorilor
 settings.rowChangePassword	Schimbă parola
 settings.rowServer	Server
-settings.storageFootnote	Descărcarea unui dosar îl comprimă mai întâi într-un ZIP pe server. Activează comutatorul de mai sus pentru a șterge acea arhivă de pe server după ce este salvată pe dispozitiv. Eliminarea descărcărilor sau golirea cache-ului afectează doar acest dispozitiv; nimic de pe server nu este afectat.
+settings.storageFootnote	Dosarele se descarcă ca ZIP, fără să rămână nimic pe server. Ștergerea descărcărilor sau golirea cache-ului afectează doar acest dispozitiv; nimic de pe server nu este modificat.
 settings.removeAllDownloadsTitle	Elimini toate descărcările?
 settings.removeAllDownloadsConfirm	Elimină toate
 settings.removeAllDownloadsMessage	Aceasta șterge toate fișierele descărcate de pe acest dispozitiv. Rămân pe server.
@@ -604,3 +596,26 @@ offline.manageEmpty	Nu este nimic descărcat pentru utilizare offline.
 offline.preferOfflineToggle	Redă copiile descărcate
 offline.preferOfflineSubtitle	Folosește un videoclip descărcat în loc de streaming când este disponibil.
 offline.tunnelSpeedNote	Accesarea serverului printr-un tunel la distanță poate încetini descărcările. Pentru fișiere mari, conectează-te la aceeași rețea și folosește adresa locală a serverului.
+settings.rowAppearance	Aspect
+appearance.system	Sistem
+appearance.light	Luminos
+appearance.dark	Întunecat
+browse.myFiles	Fișierele mele
+browse.myFilesSubtitle	Vizibil doar pentru tine
+downloadQueue.navigationTitle	Coadă de descărcări
+downloadQueue.openDownloads	Afișează descărcările
+downloadQueue.emptyList	Nicio descărcare în curs.
+downloadQueue.statusSaved	Salvat
+downloadQueue.cancelAll	Anulează toate descărcările
+downloadQueue.barFailedOne	1 descărcare a eșuat
+downloadQueue.barFailedMany	%lld descărcări au eșuat
+downloadQueue.barTitleOne	Se descarcă %@
+downloadQueue.barTitleMany	Se descarcă %lld elemente
+downloadQueue.savedOne	Salvat în Descărcări
+downloadQueue.savedMany	%lld elemente salvate în Descărcări
+downloadQueue.bytesOf	%1$@ din %2$@
+downloadQueue.timeLeft	%@ rămase
+browse.sectionPersonal	Personal
+settings.sectionSupport	Asistență
+settings.rowRateApp	Evaluează NextExplorer
+settings.rowSupport	Ajutor și asistență

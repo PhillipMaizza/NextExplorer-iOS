@@ -13,7 +13,6 @@ private enum Constants {
 struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
     @AppStorage(AppStorageKeys.favoritesViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
-    @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
     /// A finished offline download can change which favorites are available offline, so refresh
     /// the badges when it completes (mirrors `BrowseContentView`).
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
@@ -191,7 +190,6 @@ struct FavoritesView: View {
                 BrowsePreviewRouter(
                     store: hostStore,
                     item: previewItem,
-                    removeArchiveAfterDownload: removeArchiveAfterDownload,
                     onShareTarget: { _ in }
                 )
             }
