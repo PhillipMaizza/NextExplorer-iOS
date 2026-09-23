@@ -60,6 +60,48 @@ struct FilesService: Sendable {
         }
     }
 
+    /// For the archive endpoints (`POST /api/files/zip/compress` and `/extract`). Current backends
+    /// answer 200 with an NDJSON progress stream (`start`, `progress`, then `done` carrying the
+    /// item, or `error`; see `backend/src/utils/ndjsonStream.js`) instead of one JSON body, so the
+    /// result is decoded from the `done` line. A plain JSON body from an older server still works.
+    func sendArchiveOperation<Response: Decodable>(
+        _ request: URLRequest, decoding _: Response.Type
+    ) async throws -> Response {
+        let (data, response) = try await performSend(request)
+        try Self.validateReportingMessage(data, response)
+        return try Self.decodeArchiveOperation(Response.self, from: data)
+    }
+
+    static func decodeArchiveOperation<Response: Decodable>(_: Response.Type, from data: Data) throws -> Response {
+        let decoder = makeDecoder()
+        let events = data.split(separator: UInt8(ascii: "\n")).compactMap { line -> (ArchiveStreamEvent, Data)? in
+            let lineData = Data(line)
+            guard let event = try? decoder.decode(ArchiveStreamEvent.self, from: lineData), event.type != nil else { return nil }
+            return (event, lineData)
+        }
+        guard !events.isEmpty else {
+            do {
+                return try decoder.decode(Response.self, from: data)
+            } catch {
+                throw FilesClientError.decoding(error.localizedDescription)
+            }
+        }
+        if let (failure, _) = events.last(where: { $0.0.type == ArchiveStreamEvent.errorType }) {
+            guard let message = failure.message, !message.isEmpty else {
+                throw FilesClientError.server(statusCode: 500)
+            }
+            throw FilesClientError.serverMessage(statusCode: 500, message: message)
+        }
+        guard let (_, doneLine) = events.last(where: { $0.0.type == ArchiveStreamEvent.doneType }) else {
+            throw FilesClientError.decoding("The server ended the operation without a result.")
+        }
+        do {
+            return try decoder.decode(Response.self, from: doneLine)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+    }
+
     /// Maps a raw error from the transport layer to a `FilesClientError`, preserving the
     /// `.offline` classification `NetworkClient` already made so callers can fall back to a
     /// cached copy instead of showing a generic network failure.

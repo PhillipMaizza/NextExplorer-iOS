@@ -94,12 +94,6 @@ browse.searchEverywhere	Buscar en todo
 browse.searchFailed	No se pudo buscar. Comprueba tu conexión e inténtalo de nuevo.
 browse.progressExtracting	Extrayendo…
 browse.progressCompressing	Comprimiendo…
-browse.progressDownloading	Descargando…
-browse.progressDownloadingIndexed	Descargando %1$lld de %2$lld…
-browse.downloadSavedTo	Guardado en %@
-browse.downloadSavedCountTo	Se guardaron %1$lld de %2$lld elementos en %3$@
-browse.downloadSavedAllTo	Se guardaron %1$lld elementos en %2$@
-browse.downloadBulkFailed	No se pudieron guardar estos elementos en tu dispositivo.
 browse.offlineBannerTitle	Sin conexión
 browse.offlineBannerDetail	Mostrando una copia guardada de %@
 browse.actionCopy	Copiar
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Mostrar archivos ocultos
 settings.toggleRenderHTML	Renderizar páginas HTML
 settings.toggleRenderMarkdown	Renderizar archivos Markdown
 settings.toggleHaptics	Vibración
-settings.toggleDarkMode	Modo oscuro
 settings.toggleShowThumbnails	Mostrar miniaturas
 settings.toggleShowExtensions	Mostrar extensiones de archivo
-settings.toggleRemoveArchives	Eliminar archivos comprimidos tras la descarga
 settings.toggleKeepClipboard	Conservar elementos tras pegar
 settings.toggleKeepClipboardSubtitle	Los elementos copiados quedan listos para pegar en otra carpeta. Los elementos movidos siempre se borran.
 settings.rowDateFormat	Formato de fecha
@@ -314,7 +306,7 @@ settings.rowTermsOfUse	Condiciones de uso
 settings.rowUserManagement	Gestión de usuarios
 settings.rowChangePassword	Cambiar contraseña
 settings.rowServer	Servidor
-settings.storageFootnote	Al descargar una carpeta, el servidor la comprime primero en un ZIP. Activa el interruptor de arriba para eliminar ese archivo del servidor una vez guardado en tu dispositivo. Eliminar descargas o borrar la caché solo afecta a este dispositivo; nada en el servidor se toca.
+settings.storageFootnote	Las carpetas se descargan como ZIP sin dejar nada en el servidor. Eliminar descargas o vaciar la caché solo afecta a este dispositivo; no se toca nada en el servidor.
 settings.removeAllDownloadsTitle	¿Eliminar todas las descargas?
 settings.removeAllDownloadsConfirm	Eliminar todo
 settings.removeAllDownloadsMessage	Esto elimina todos los archivos descargados de este dispositivo. Permanecen en el servidor.
@@ -627,3 +619,29 @@ menu.newTab	Nueva pestaña
 browse.actionOpenInNewWindow	Abrir en una ventana nueva
 browse.actionOpenInNewTab	Abrir en una pestaña nueva
 select.viewAs	Visualización
+settings.rowAppearance	Apariencia
+appearance.system	Sistema
+appearance.light	Claro
+appearance.dark	Oscuro
+browse.myFiles	Mis archivos
+browse.myFilesSubtitle	Solo visible para ti
+downloadQueue.navigationTitle	Cola de descargas
+downloadQueue.openDownloads	Ver descargas
+downloadQueue.emptyList	No hay descargas en curso.
+downloadQueue.statusSaved	Guardado
+downloadQueue.cancelAll	Cancelar todas las descargas
+downloadQueue.barFailedOne	1 descarga fallida
+downloadQueue.barFailedMany	%lld descargas fallidas
+downloadQueue.barTitleOne	Descargando %@
+downloadQueue.barTitleMany	Descargando %lld elementos
+downloadQueue.savedOne	Guardado en Descargas
+downloadQueue.savedMany	%lld elementos guardados en Descargas
+downloadQueue.bytesOf	%1$@ de %2$@
+downloadQueue.timeLeft	quedan %@
+browse.sectionPersonal	Personal
+browse.progressDownloading	Descargando…
+browse.progressDownloadingIndexed	Descargando %1$lld de %2$lld…
+browse.downloadSavedTo	Guardado en %@
+browse.downloadSavedCountTo	Se guardaron %1$lld de %2$lld elementos en %3$@
+browse.downloadSavedAllTo	Se guardaron %1$lld elementos en %2$@
+browse.downloadBulkFailed	No se pudieron guardar estos elementos en tu dispositivo.

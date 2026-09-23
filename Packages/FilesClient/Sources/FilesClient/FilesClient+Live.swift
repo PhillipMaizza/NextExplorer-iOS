@@ -148,6 +148,9 @@ public extension FilesClient {
                     serverURL: serverURL, item: item, onProgress: onProgress
                 )
             },
+            downloadItem: { serverURL, item, onProgress in
+                try await service.downloadItem(serverURL: serverURL, item: item, onProgress: onProgress)
+            },
             flushDownloadConnections: { await networkClient.flushDownloadConnections() },
             uploadFile: { serverURL, fileURL, fileName, destination, onProgress in
                 try await service.uploadFile(

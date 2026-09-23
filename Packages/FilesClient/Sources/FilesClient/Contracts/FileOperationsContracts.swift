@@ -54,6 +54,14 @@ extension FilesService {
         let destination: String
     }
 
+    struct ArchiveStreamEvent: Decodable {
+        static let doneType = "done"
+        static let errorType = "error"
+
+        let type: String?
+        let message: String?
+    }
+
     struct CompressItemEnvelope: Decodable {
         let item: FileItem
     }

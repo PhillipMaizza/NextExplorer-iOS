@@ -62,6 +62,12 @@ struct LoginScreen {
 
 struct BrowseScreen {
     let app: XCUIApplication
+    /// The breadcrumb's leading "Locations" crumb. The bar only shows below the root, so it
+    /// proves a push into a folder landed (the upload menu exists at the root too).
+    var breadcrumbRoot: XCUIElement {
+        app.buttons[L10n.Browse.locations].firstMatch
+    }
+
     var searchField: XCUIElement {
         app.textFields[AccessibilityIdentifiers.Search.field]
     }
@@ -281,6 +287,12 @@ struct SettingsScreen {
         app.buttons[L10n.Settings.signOutButton].firstMatch
     }
 
+    /// The active account row (expands to reveal Change Password / Sign Out). A stable identifier
+    /// since its label is a combined accessibility element.
+    var activeAccountRow: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Settings.activeAccount].firstMatch
+    }
+
     /// The DSAlertSheet's destructive confirm button.
     var confirmSignOut: XCUIElement {
         app.buttons[L10n.Common.logOut].firstMatch
@@ -299,9 +311,11 @@ struct SettingsScreen {
         app.buttons[L10n.Settings.addAccount].firstMatch
     }
 
-    /// An account row in the switcher, matched on the server host it displays.
+    /// An account row in the switcher, matched on the server host in its combined accessibility
+    /// label (the row folds its name/host into one element, so the host isn't a separate static
+    /// text).
     func accountRow(host: String) -> XCUIElement {
-        app.staticTexts[host].firstMatch
+        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", host)).firstMatch
     }
 
     /// Admin section row that pushes the thumbnail settings screen.

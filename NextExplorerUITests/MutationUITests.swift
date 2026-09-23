@@ -9,9 +9,9 @@ final class MutationUITests: UITestCase {
         let browse = BrowseScreen(app: app)
 
         // New Folder only appears below the root, so push into a folder first. Pushing can drop
-        // the first tap under load, so retry until the folder only upload menu shows.
+        // the first tap under load, so retry until the breadcrumb (only below the root) shows.
         XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-        openMenu({ browse.item(Fixture.folder).tap() }, until: browse.uploadMenu)
+        openMenu({ browse.item(Fixture.folder).tap() }, until: browse.breadcrumbRoot)
         openMenu({ browse.uploadMenu.tap() }, until: browse.newFolderMenuItem)
         browse.newFolderMenuItem.tap()
 
@@ -29,8 +29,8 @@ final class MutationUITests: UITestCase {
         let browse = BrowseScreen(app: app)
         XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
         // New Folder only appears below root; pushing can drop the first tap, so retry until the
-        // upload menu (folder only toolbar item) shows.
-        openMenu({ browse.item(Fixture.folder).tap() }, until: browse.uploadMenu)
+        // breadcrumb (shown only below the root) proves the push landed.
+        openMenu({ browse.item(Fixture.folder).tap() }, until: browse.breadcrumbRoot)
         openMenu({ browse.uploadMenu.tap() }, until: browse.newFolderMenuItem)
         browse.newFolderMenuItem.tap()
 
@@ -46,7 +46,7 @@ final class MutationUITests: UITestCase {
         let app = launchApp(auth: .loggedIn, scenario: .normal)
         let browse = BrowseScreen(app: app)
         XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-        openMenu({ browse.item(Fixture.folder).tap() }, until: browse.uploadMenu)
+        openMenu({ browse.item(Fixture.folder).tap() }, until: browse.breadcrumbRoot)
         openMenu({ browse.uploadMenu.tap() }, until: browse.newFolderMenuItem)
         browse.newFolderMenuItem.tap()
 
@@ -62,7 +62,7 @@ final class MutationUITests: UITestCase {
         let app = launchApp(auth: .loggedIn, scenario: .normal)
         let browse = BrowseScreen(app: app)
         XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-        openMenu({ browse.item(Fixture.folder).tap() }, until: browse.uploadMenu)
+        openMenu({ browse.item(Fixture.folder).tap() }, until: browse.breadcrumbRoot)
         openMenu({ browse.uploadMenu.tap() }, until: browse.newFolderMenuItem)
         browse.newFolderMenuItem.tap()
 

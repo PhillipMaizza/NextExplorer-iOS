@@ -94,12 +94,6 @@ browse.searchEverywhere	Искать везде
 browse.searchFailed	Не удалось выполнить поиск. Проверьте соединение и повторите попытку.
 browse.progressExtracting	Извлечение…
 browse.progressCompressing	Сжатие…
-browse.progressDownloading	Загрузка…
-browse.progressDownloadingIndexed	Загрузка %1$lld из %2$lld…
-browse.downloadSavedTo	Сохранено в %@
-browse.downloadSavedCountTo	Сохранено %1$lld из %2$lld объектов в %3$@
-browse.downloadSavedAllTo	Сохранено объектов: %1$lld в %2$@
-browse.downloadBulkFailed	Не удалось сохранить эти объекты на устройство.
 browse.offlineBannerTitle	Офлайн
 browse.offlineBannerDetail	Показана сохранённая копия от %@
 browse.actionCopy	Скопировать
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Показывать скрытые файлы
 settings.toggleRenderHTML	Отображать HTML-страницы
 settings.toggleRenderMarkdown	Отображать файлы Markdown
 settings.toggleHaptics	Тактильный отклик
-settings.toggleDarkMode	Тёмный режим
 settings.toggleShowThumbnails	Показывать миниатюры
 settings.toggleShowExtensions	Показывать расширения файлов
-settings.toggleRemoveArchives	Удалять архивы после загрузки
 settings.toggleKeepClipboard	Сохранять объекты после вставки
 settings.toggleKeepClipboardSubtitle	Скопированные объекты остаются готовыми для вставки в другую папку. Перемещённые объекты всегда очищаются.
 settings.rowDateFormat	Формат даты
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	Условия использования
 settings.rowUserManagement	Управление пользователями
 settings.rowChangePassword	Изменить пароль
 settings.rowServer	Сервер
-settings.storageFootnote	При загрузке папки она сначала сжимается в ZIP на сервере. Включите переключатель выше, чтобы удалить этот архив с сервера после сохранения на устройстве. Удаление загрузок или очистка кеша затрагивает только это устройство; на сервере ничего не меняется.
+settings.storageFootnote	Папки загружаются в виде ZIP, на сервере ничего не остаётся. Удаление загрузок или очистка кэша затрагивает только это устройство; на сервере ничего не меняется.
 settings.removeAllDownloadsTitle	Удалить все загрузки?
 settings.removeAllDownloadsConfirm	Удалить все
 settings.removeAllDownloadsMessage	Это удалит все загруженные файлы с этого устройства. Они останутся на сервере.
@@ -627,3 +619,29 @@ menu.newTab	Новая вкладка
 browse.actionOpenInNewWindow	Открыть в новом окне
 browse.actionOpenInNewTab	Открыть в новой вкладке
 select.viewAs	Вид
+settings.rowAppearance	Оформление
+appearance.system	Системное
+appearance.light	Светлое
+appearance.dark	Тёмное
+browse.myFiles	Мои файлы
+browse.myFilesSubtitle	Видно только вам
+downloadQueue.navigationTitle	Очередь загрузок
+downloadQueue.openDownloads	Показать загрузки
+downloadQueue.emptyList	Нет активных загрузок.
+downloadQueue.statusSaved	Сохранено
+downloadQueue.cancelAll	Отменить все загрузки
+downloadQueue.barFailedOne	1 загрузка не удалась
+downloadQueue.barFailedMany	Не удалось загрузок: %lld
+downloadQueue.barTitleOne	Загрузка %@
+downloadQueue.barTitleMany	Загрузка элементов: %lld
+downloadQueue.savedOne	Сохранено в Загрузках
+downloadQueue.savedMany	Сохранено в Загрузках элементов: %lld
+downloadQueue.bytesOf	%1$@ из %2$@
+downloadQueue.timeLeft	осталось %@
+browse.sectionPersonal	Личное
+browse.progressDownloading	Загрузка…
+browse.progressDownloadingIndexed	Загрузка %1$lld из %2$lld…
+browse.downloadSavedTo	Сохранено в %@
+browse.downloadSavedCountTo	Сохранено %1$lld из %2$lld объектов в %3$@
+browse.downloadSavedAllTo	Сохранено объектов: %1$lld в %2$@
+browse.downloadBulkFailed	Не удалось сохранить эти объекты на устройство.

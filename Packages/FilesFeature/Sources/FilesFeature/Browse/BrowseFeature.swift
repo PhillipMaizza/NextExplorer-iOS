@@ -113,11 +113,6 @@ public struct BrowseFeature {
         case unavailable
     }
 
-    public struct DownloadResult: Equatable, Sendable {
-        public let destinationURL: URL
-        public let location: DownloadLocation
-    }
-
     public struct BulkDeleteResult: Equatable, Sendable {
         public let itemIDs: [String]
     }
@@ -190,6 +185,9 @@ public struct BrowseFeature {
         /// covered by a pinned root), so rows/cells can show an offline badge. Recomputed off the
         /// main actor when the listing loads, on appear, and when a download finishes.
         public var offlineItemIDs: Set<String> = []
+        /// The server has personal folders on (`features.personal.enabled`). Only the root screen
+        /// asks, since the root volume listing never includes the account's own folder.
+        public var isPersonalSpaceEnabled = false
         public var access: FileAccess?
         /// The folder listing load lifecycle. `phase.hasLoaded` flips true the first time a
         /// browse response lands (success or failure), so the view shows the loading skeleton
@@ -269,9 +267,9 @@ public struct BrowseFeature {
         /// running. Rename/delete don't set this: they're fast enough, and already have their
         /// own alert-driven confirm flow, that a progress indicator would just flicker.
         public var fileActionProgressMessage: String?
-        /// Set once a download finishes; `BrowseContentView` turns this into a success toast.
-        /// Mirrors `fileActionErrorMessage`'s lifecycle — it's never explicitly cleared back to
-        /// `nil` by the reducer, only ever overwritten by the next download's message.
+        /// Set when a download is queued from a preview cover, which hides the app level progress
+        /// bar; `BrowseContentView` turns it into a toast with an Open action. Never cleared by the
+        /// reducer, only overwritten by the next one.
         public var downloadSuccessMessage: String?
         /// macOS: where the last download was saved (a file, or the folder of a bulk download),
         /// so the success toast can show it in Finder.
@@ -363,6 +361,14 @@ public struct BrowseFeature {
             self.serverURL = serverURL
             self.directoryPath = directoryPath
             self.title = title
+            // The last known answer paints with the first frame, so the entry never pops in above
+            // the volumes (shifting them under the user's finger) once the features call returns.
+            if directoryPath.isEmpty {
+                @Dependency(\.jsonCacheStore) var jsonCacheStore
+                isPersonalSpaceEnabled = ListCache.load(
+                    jsonCacheStore, BrowseFeature.personalSpaceCacheNamespace, serverURL: serverURL, as: Bool.self
+                )?.value ?? false
+            }
         }
     }
 
@@ -375,6 +381,8 @@ public struct BrowseFeature {
         case offlineAvailabilityComputed(Set<String>)
         case itemsResponse(Result<BrowseResult, FilesClientError>)
         case favoritesResponse([Favorite])
+        case serverFeaturesResponse(ServerFeatures)
+        case personalSpaceTapped
         case rowTapped(FileItem)
         case searchQueryChanged(String)
         case searchScopeChanged(SearchScope)
@@ -411,13 +419,16 @@ public struct BrowseFeature {
         case extractZipResponse(Result<FileItem, FilesClientError>)
         case compressTapped(FileItem)
         case compressResponse(Result<FileItem, FilesClientError>)
-        case downloadTapped(FileItem, DownloadLocation, removeArchiveAfterDownload: Bool)
-        case downloadProgressUpdated(String)
-        /// macOS: the save panel was dismissed without choosing a destination.
-        case downloadCancelled
-        /// macOS: the folder picked for a bulk download.
-        case bulkDownloadFolderChosen(URL)
-        case downloadResponse(Result<DownloadResult, FilesClientError>)
+        case downloadTapped(FileItem)
+        #if os(macOS)
+            case downloadProgressUpdated(String)
+            /// The save panel was dismissed without choosing a destination.
+            case downloadCancelled
+            /// The folder picked for a bulk download.
+            case bulkDownloadFolderChosen(URL)
+            case downloadResponse(Result<URL, FilesClientError>)
+            case bulkDownloadResponse(savedCount: Int, total: Int)
+        #endif
         case selectModeToggled
         case itemSelectionToggled(FileItem.ID)
         case selectAllTapped
@@ -428,8 +439,7 @@ public struct BrowseFeature {
         case bulkDeleteResponse(Result<BulkDeleteResult, FilesClientError>)
         case bulkFavoriteTapped
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
-        case bulkDownloadTapped(DownloadLocation, removeArchiveAfterDownload: Bool)
-        case bulkDownloadResponse(savedCount: Int, total: Int, location: DownloadLocation)
+        case bulkDownloadTapped
         case beginUpload(UploadReviewFeature.PickSource)
         case uploadReview(PresentationAction<UploadReviewFeature.Action>)
         case copyTapped(FileItem)
@@ -476,6 +486,8 @@ public struct BrowseFeature {
             /// Files the user picked from the `+` menu, each already carrying its destination
             /// folder — bubbled up to `MainTabFeature`'s app-wide upload queue.
             case uploadRequested([PendingUpload])
+            /// Items handed to `MainTabFeature`'s app wide download queue.
+            case downloadRequested([FileItem])
             /// A copy/move just changed what's on the server. `BrowseTabFeature` re-fetches
             /// the whole live navigation stack so both the source and destination listings
             /// reflect the new state.
@@ -490,6 +502,8 @@ public struct BrowseFeature {
 
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.directoryCacheStore) var directoryCacheStore
+    @Dependency(\.jsonCacheStore) var jsonCacheStore
+    static let personalSpaceCacheNamespace = "personalSpace"
     @Dependency(\.continuousClock) var clock
     @Dependency(\.date) var date
     @Dependency(\.localDownloadStore) var localDownloadStore
@@ -565,6 +579,17 @@ public struct BrowseFeature {
                 }
                 state.phase = .failed(error.userMessage)
                 return .none
+
+            case let .serverFeaturesResponse(features):
+                state.isPersonalSpaceEnabled = features.isPersonalEnabled
+                let jsonCacheStore = jsonCacheStore
+                let serverURL = state.serverURL
+                return .run { _ in
+                    ListCache.save(jsonCacheStore, Self.personalSpaceCacheNamespace, serverURL: serverURL, value: features.isPersonalEnabled)
+                }
+
+            case .personalSpaceTapped:
+                return .send(.delegate(.openPath(path: PersonalSpace.rootPath, title: L10n.Browse.myFiles)))
 
             case let .favoritesResponse(favorites):
                 state.favoritePaths = Set(favorites.map(\.path))
@@ -855,9 +880,18 @@ public struct BrowseFeature {
                 state.fileActionErrorMessage = error.userMessage
                 return .none
 
-            case let .downloadTapped(item, location, removeArchiveAfterDownload):
-                return startDownload(&state, item: item, location: location, removeArchiveAfterDownload: removeArchiveAfterDownload)
+            case let .downloadTapped(item):
+                #if os(macOS)
+                    // A Mac saves where the user says, through the save panel, not the queue.
+                    return startDownload(&state, item: item)
+                #else
+                    if state.previewItem != nil {
+                        state.downloadSuccessMessage = L10n.DownloadQueue.barTitleOne(item.name)
+                    }
+                    return .send(.delegate(.downloadRequested([item])))
+                #endif
 
+        #if os(macOS)
             case let .downloadProgressUpdated(message):
                 state.fileActionProgressMessage = message
                 return .none
@@ -872,13 +906,11 @@ public struct BrowseFeature {
                 state.lastSavedDownloadURL = folder
                 return .none
 
-            case let .downloadResponse(.success(result)):
+            case let .downloadResponse(.success(destination)):
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
-                #if os(macOS)
-                    state.lastSavedDownloadURL = result.destinationURL
-                #endif
-                state.downloadSuccessMessage = L10n.Browse.downloadSavedTo(downloadDestinationTitle(state, location: result.location))
+                state.lastSavedDownloadURL = destination
+                state.downloadSuccessMessage = L10n.Browse.downloadSavedTo(savedDownloadFolderName(destination))
                 return .none
 
             case let .downloadResponse(.failure(error)):
@@ -886,6 +918,20 @@ public struct BrowseFeature {
                 state.fileActionProgressMessage = nil
                 state.fileActionErrorMessage = error.userMessage
                 return .none
+
+            case let .bulkDownloadResponse(savedCount, total):
+                state.isBulkActionInFlight = false
+                state.fileActionProgressMessage = nil
+                let folderName = state.lastSavedDownloadURL.map(savedDownloadFolderName) ?? ""
+                if savedCount == total {
+                    state.downloadSuccessMessage = L10n.Browse.downloadSavedAllTo(savedCount, folderName)
+                } else if savedCount > 0 {
+                    state.downloadSuccessMessage = L10n.Browse.downloadSavedCountTo(savedCount, total, folderName)
+                } else {
+                    state.fileActionErrorMessage = L10n.Browse.downloadBulkFailed
+                }
+                return .none
+        #endif
 
             case .selectModeToggled:
                 state.isSelecting.toggle()
@@ -956,22 +1002,16 @@ public struct BrowseFeature {
                 let didChangeAnything = !result.added.isEmpty || !result.removed.isEmpty
                 return didChangeAnything ? .send(.delegate(.favoritesChanged)) : .none
 
-            case let .bulkDownloadTapped(location, removeArchiveAfterDownload):
-                return startBulkDownload(&state, location: location, removeArchiveAfterDownload: removeArchiveAfterDownload)
-
-            case let .bulkDownloadResponse(savedCount, total, location):
-                state.isBulkActionInFlight = false
-                state.fileActionProgressMessage = nil
+            case .bulkDownloadTapped:
+                let targets = state.items.filter { state.selectedItemIDs.contains($0.id) }
+                guard !targets.isEmpty else { return .none }
                 state.isSelecting = false
                 state.selectedItemIDs = []
-                if savedCount == total {
-                    state.downloadSuccessMessage = L10n.Browse.downloadSavedAllTo(savedCount, downloadDestinationTitle(state, location: location))
-                } else if savedCount > 0 {
-                    state.downloadSuccessMessage = L10n.Browse.downloadSavedCountTo(savedCount, total, downloadDestinationTitle(state, location: location))
-                } else {
-                    state.fileActionErrorMessage = L10n.Browse.downloadBulkFailed
-                }
-                return .none
+                #if os(macOS)
+                    return startBulkDownload(&state, targets: Array(targets))
+                #else
+                    return .send(.delegate(.downloadRequested(Array(targets))))
+                #endif
 
             case let .beginUpload(source):
                 guard source.count > 0 else { return .none }

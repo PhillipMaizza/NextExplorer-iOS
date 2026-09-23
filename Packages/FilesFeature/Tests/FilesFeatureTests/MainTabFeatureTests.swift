@@ -378,4 +378,84 @@ struct MainTabFeatureTests {
         // At the Browse root there is no writable folder, so the chain ends there.
         await store.receive(\.browse.newFolderInVisibleFolder)
     }
+
+    @Test
+    func downloadRequestedFromBrowseEnqueuesIntoTheAppWideDownloadQueue() async {
+        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(timeIntervalSince1970: 1), size: 1, kind: "mkv")
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.uuid = .incrementing
+            $0.date = .constant(Date(timeIntervalSince1970: 0))
+            $0.filesClient.flushDownloadConnections = {}
+            $0.filesClient.downloadItem = { _, _, _ in try await Task.never() }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.browse(.delegate(.downloadRequested([item]))))
+        await store.receive(\.downloadQueue.enqueue)
+        #expect(store.state.downloadQueue.jobs.count == 1)
+        await store.send(.downloadQueue(.cancelAllTapped))
+    }
+
+    @Test
+    func downloadRequestedFromFavoritesAlsoEnqueues() async {
+        let item = FileItem(name: "a.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 1), size: 1, kind: "txt")
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.uuid = .incrementing
+            $0.date = .constant(Date(timeIntervalSince1970: 0))
+            $0.filesClient.flushDownloadConnections = {}
+            $0.filesClient.downloadItem = { _, _, _ in try await Task.never() }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.favorites(.delegate(.downloadRequested([item]))))
+        await store.receive(\.downloadQueue.enqueue)
+        await store.send(.downloadQueue(.cancelAllTapped))
+    }
+
+    @Test
+    func downloadQueueFinishedShowsTheSavedToastAndOpenGoesToDownloads() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.localDownloadStore.list = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.downloadQueue(.delegate(.queueFinished(.init(savedCount: 3, failedCount: 0))))) {
+            $0.downloadToast = L10n.DownloadQueue.savedMany(3)
+        }
+        await store.send(.openDownloadsTab) {
+            $0.downloadToast = nil
+            $0.selectedTab = .downloads
+        }
+        await store.receive(\.downloads.refreshButtonTapped)
+    }
+
+    @Test
+    func downloadQueueFinishedWithFailuresShowsNoToast() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        }
+
+        await store.send(.downloadQueue(.delegate(.queueFinished(.init(savedCount: 1, failedCount: 1)))))
+    }
+
+    @Test
+    func aSavedDownloadRefreshesTheDownloadsTabAndOfflineBadges() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.localDownloadStore.list = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.downloadQueue(.delegate(.itemSaved)))
+        await store.receive(\.downloads.refreshButtonTapped)
+        await store.receive(\.browse.offlineAvailabilityChanged)
+        await store.receive(\.favorites.offlineAvailabilityChanged)
+    }
 }

@@ -94,12 +94,6 @@ browse.searchEverywhere	Überall suchen
 browse.searchFailed	Suche fehlgeschlagen. Prüfe deine Verbindung und versuche es erneut.
 browse.progressExtracting	Wird entpackt…
 browse.progressCompressing	Wird komprimiert…
-browse.progressDownloading	Wird geladen…
-browse.progressDownloadingIndexed	%1$lld von %2$lld wird geladen…
-browse.downloadSavedTo	Gesichert in %@
-browse.downloadSavedCountTo	%1$lld von %2$lld Objekten in %3$@ gesichert
-browse.downloadSavedAllTo	%1$lld Objekte in %2$@ gesichert
-browse.downloadBulkFailed	Diese Objekte konnten nicht auf deinem Gerät gesichert werden.
 browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Gesicherte Kopie von %@ wird angezeigt
 browse.actionCopy	Kopieren
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Ausgeblendete Dateien anzeigen
 settings.toggleRenderHTML	HTML-Seiten rendern
 settings.toggleRenderMarkdown	Markdown-Dateien rendern
 settings.toggleHaptics	Haptik
-settings.toggleDarkMode	Dunkler Modus
 settings.toggleShowThumbnails	Miniaturen anzeigen
 settings.toggleShowExtensions	Dateiendungen anzeigen
-settings.toggleRemoveArchives	Archive nach dem Laden entfernen
 settings.toggleKeepClipboard	Objekte nach dem Einsetzen behalten
 settings.toggleKeepClipboardSubtitle	Kopierte Objekte bleiben bereit, um in einen anderen Ordner eingesetzt zu werden. Bewegte Objekte werden immer gelöscht.
 settings.rowDateFormat	Datumsformat
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	Nutzungsbedingungen
 settings.rowUserManagement	Benutzerverwaltung
 settings.rowChangePassword	Passwort ändern
 settings.rowServer	Server
-settings.storageFootnote	Beim Laden eines Ordners wird dieser zuerst auf dem Server als ZIP komprimiert. Aktiviere den Schalter oben, um dieses Archiv vom Server zu löschen, sobald es auf deinem Gerät gesichert wurde. Das Entfernen von Downloads oder das Leeren des Caches betrifft nur dieses Gerät; auf dem Server wird nichts berührt.
+settings.storageFootnote	Ordner werden als ZIP geladen, ohne etwas auf dem Server zu hinterlassen. Das Entfernen von Downloads oder das Leeren des Caches betrifft nur dieses Gerät; auf dem Server wird nichts berührt.
 settings.removeAllDownloadsTitle	Alle Downloads entfernen?
 settings.removeAllDownloadsConfirm	Alle entfernen
 settings.removeAllDownloadsMessage	Dies löscht jede geladene Datei von diesem Gerät. Sie bleiben auf dem Server.
@@ -627,3 +619,29 @@ menu.newTab	Neuer Tab
 browse.actionOpenInNewWindow	In neuem Fenster öffnen
 browse.actionOpenInNewTab	In neuem Tab öffnen
 select.viewAs	Darstellung
+settings.rowAppearance	Erscheinungsbild
+appearance.system	System
+appearance.light	Hell
+appearance.dark	Dunkel
+browse.myFiles	Meine Dateien
+browse.myFilesSubtitle	Nur für dich sichtbar
+downloadQueue.navigationTitle	Download-Warteschlange
+downloadQueue.openDownloads	Downloads anzeigen
+downloadQueue.emptyList	Keine laufenden Downloads.
+downloadQueue.statusSaved	Gespeichert
+downloadQueue.cancelAll	Alle Downloads abbrechen
+downloadQueue.barFailedOne	1 Download fehlgeschlagen
+downloadQueue.barFailedMany	%lld Downloads fehlgeschlagen
+downloadQueue.barTitleOne	%@ wird geladen
+downloadQueue.barTitleMany	%lld Objekte werden geladen
+downloadQueue.savedOne	In Downloads gespeichert
+downloadQueue.savedMany	%lld Objekte in Downloads gespeichert
+downloadQueue.bytesOf	%1$@ von %2$@
+downloadQueue.timeLeft	noch %@
+browse.sectionPersonal	Persönlich
+browse.progressDownloading	Wird geladen…
+browse.progressDownloadingIndexed	%1$lld von %2$lld wird geladen…
+browse.downloadSavedTo	Gesichert in %@
+browse.downloadSavedCountTo	%1$lld von %2$lld Objekten in %3$@ gesichert
+browse.downloadSavedAllTo	%1$lld Objekte in %2$@ gesichert
+browse.downloadBulkFailed	Diese Objekte konnten nicht auf deinem Gerät gesichert werden.

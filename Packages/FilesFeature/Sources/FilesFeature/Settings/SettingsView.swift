@@ -8,6 +8,8 @@ import SwiftUI
 private enum Metrics {
     /// Settings rows are sparser than file rows, so on macOS they get a little more height.
     static let macRowVerticalPadding: CGFloat = .space16
+    /// Room under the version footer so the last rows clear the floating tab bar comfortably.
+    static let listBottomPadding: CGFloat = .space48
 }
 
 struct SettingsView: View {
@@ -92,6 +94,7 @@ struct SettingsView: View {
             }
             .groupedListRowVerticalPadding(Metrics.macRowVerticalPadding)
             .scrollContentBackground(.hidden)
+            .contentMargins(.bottom, Metrics.listBottomPadding, for: .scrollContent)
             .backgroundGradient()
             .dismissKeyboardOnTap()
             .safeAreaInset(edge: .top, spacing: 0) {

@@ -26,31 +26,30 @@ final class DownloadTaskHolder: @unchecked Sendable {
     }
 }
 
-/// Rate limits fractional progress so a fast transfer doesn't fire the callback thousands of times.
+/// Rate limits transfer progress so a fast transfer doesn't fire the callback thousands of times.
 /// The KVO progress observation can be invoked from any thread, so the timestamp is lock guarded.
-/// A completion (`fraction >= 1`) always passes through.
+/// A completed transfer always passes through.
 final class ProgressThrottle: @unchecked Sendable {
     private let lock = NSLock()
-    private let onProgress: @Sendable (Double) -> Void
+    private let onProgress: @Sendable (TransferProgress) -> Void
     private let minInterval: TimeInterval
     private var lastEmit = 0.0
 
-    init(minInterval: TimeInterval = 0.1, onProgress: @escaping @Sendable (Double) -> Void) {
+    init(minInterval: TimeInterval = 0.1, onProgress: @escaping @Sendable (TransferProgress) -> Void) {
         self.minInterval = minInterval
         self.onProgress = onProgress
     }
 
-    func report(_ fraction: Double) {
-        let clamped = min(max(fraction, 0), 1)
+    func report(_ progress: TransferProgress) {
         lock.lock()
         let now = CFAbsoluteTimeGetCurrent()
-        let shouldEmit = clamped >= 1 || now - lastEmit >= minInterval
+        let shouldEmit = progress.isComplete || now - lastEmit >= minInterval
         if shouldEmit {
             lastEmit = now
         }
         lock.unlock()
         guard shouldEmit else { return }
-        onProgress(clamped)
+        onProgress(progress)
     }
 }
 

@@ -26,17 +26,22 @@ enum UploadBarChrome {
     static let gap: CGFloat = .space16
 }
 
-/// The persistent pill shown above the tab bar while an upload is running. Tapping it opens
-/// the full `UploadsView`; the trailing button cancels the whole queue.
-struct UploadProgressBar: View {
+/// The persistent pill shown above the tab bar while an upload or download queue runs. Tapping
+/// it opens that queue's sheet; the trailing button cancels the whole queue. A `nil` progress
+/// (a transfer of unknown length) shows an indeterminate bar.
+struct TransferProgressBar: View {
+    let icon: Image
     let title: String
-    let progress: Double
+    let progress: Double?
+    /// Optional sizes and time left under the bar.
+    var detail: String?
+    let cancelLabel: String
     let onTap: () -> Void
     let onCancelAll: () -> Void
 
     var body: some View {
         HStack(spacing: Constants.contentSpacing) {
-            IconKit.upload
+            icon
                 .resizable()
                 .scaledToFit()
                 .foregroundStyle(Color.accent)
@@ -46,8 +51,18 @@ struct UploadProgressBar: View {
                     .type(.body3(.semibold), style: .primaryOnSurface)
                     .lineLimit(1)
                     .truncationMode(.middle)
-                ProgressView(value: progress)
-                    .tint(Color.positive)
+                if let progress {
+                    ProgressView(value: progress)
+                        .tint(Color.positive)
+                } else {
+                    IndeterminateProgressBar()
+                }
+                if let detail {
+                    Text(detail)
+                        .type(.caption(.regular), style: .secondary)
+                        .lineLimit(1)
+                        .monospacedDigit()
+                }
             }
             Button(action: onCancelAll) {
                 IconKit.closeCircle
@@ -57,34 +72,30 @@ struct UploadProgressBar: View {
                     .frame(width: Constants.cancelSize, height: Constants.cancelSize)
             }
             .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel(L10n.Uploads.cancelAll)
+            .accessibilityLabel(cancelLabel)
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
-        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusControl))
+        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .elevation(.level4)
-        .contentShape(RoundedRectangle(cornerRadius: .radiusControl))
+        .contentShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .onTapGesture(perform: onTap)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(title)
-        .accessibilityValue(Text(progress.formatted(.percent.precision(.fractionLength(0)))))
+        .accessibilityValue(Text(detail ?? progress?.formatted(.percent.precision(.fractionLength(0))) ?? ""))
         .accessibilityAddTraits(.isButton)
         .accessibilityAction(.default, onTap)
-        .accessibilityAction(named: Text(L10n.Uploads.cancelAll), onCancelAll)
+        .accessibilityAction(named: Text(cancelLabel), onCancelAll)
     }
 }
 
 /// Same pill, shown once the queue drains with failures still in it: a warning, the count,
 /// and a Retry action. `onDismiss` clears the failed jobs.
-struct UploadFailedBar: View {
-    let count: Int
+struct TransferFailedBar: View {
+    let label: String
     let onRetry: () -> Void
     let onDismiss: () -> Void
     let onTap: () -> Void
-
-    private var label: String {
-        count == 1 ? L10n.Uploads.barFailedOne : L10n.Uploads.barFailedMany(count)
-    }
 
     var body: some View {
         HStack(spacing: Constants.contentSpacing) {
@@ -114,9 +125,9 @@ struct UploadFailedBar: View {
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.vertical, Constants.verticalPadding)
-        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusControl))
+        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .elevation(.level4)
-        .contentShape(RoundedRectangle(cornerRadius: .radiusControl))
+        .contentShape(RoundedRectangle(cornerRadius: .radiusCard, style: .continuous))
         .onTapGesture(perform: onTap)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(label)
@@ -127,10 +138,66 @@ struct UploadFailedBar: View {
     }
 }
 
-#Preview {
-    VStack {
-        UploadProgressBar(title: "Uploading 3 files", progress: 0.4, onTap: {}, onCancelAll: {})
-        UploadFailedBar(count: 3, onRetry: {}, onDismiss: {}, onTap: {})
+/// A thin bar with a sliding segment, for transfers whose total size isn't known.
+struct IndeterminateProgressBar: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @State private var isAnimating = false
+
+    private enum Metrics {
+        static let height: CGFloat = 4
+        static let segmentFraction: CGFloat = 0.35
+        static let duration: Double = 1.1
+        static let trackOpacity: Double = 0.2
     }
+
+    var body: some View {
+        GeometryReader { proxy in
+            let segment = proxy.size.width * Metrics.segmentFraction
+            Capsule()
+                .fill(Color.positive.opacity(Metrics.trackOpacity))
+                .overlay(alignment: .leading) {
+                    Capsule()
+                        .fill(Color.positive)
+                        .frame(width: segment)
+                        .offset(x: isAnimating ? proxy.size.width : (reduceMotion ? 0 : -segment))
+                        .animation(
+                            reduceMotion ? nil : .linear(duration: Metrics.duration).repeatForever(autoreverses: false),
+                            value: isAnimating
+                        )
+                }
+                .clipShape(Capsule())
+        }
+        .frame(height: Metrics.height)
+        .onAppear { isAnimating = !reduceMotion }
+    }
+}
+
+#Preview("Determinate") {
+    TransferProgressBar(
+        icon: IconKit.upload, title: "Uploading 3 files", progress: 0.4,
+        cancelLabel: "Cancel all", onTap: {}, onCancelAll: {}
+    )
     .padding()
+}
+
+#Preview("With detail") {
+    TransferProgressBar(
+        icon: IconKit.download, title: "Downloading movie.mkv", progress: 0.26,
+        detail: "412 MB of 1.6 GB · 2 min left",
+        cancelLabel: "Cancel all", onTap: {}, onCancelAll: {}
+    )
+    .padding()
+}
+
+#Preview("Indeterminate") {
+    TransferProgressBar(
+        icon: IconKit.download, title: "Downloading Photos.zip", progress: nil,
+        detail: "312 MB", cancelLabel: "Cancel all", onTap: {}, onCancelAll: {}
+    )
+    .padding()
+}
+
+#Preview("Failed") {
+    TransferFailedBar(label: "3 downloads failed", onRetry: {}, onDismiss: {}, onTap: {})
+        .padding()
 }

@@ -23,6 +23,11 @@ public enum L10n {
         public static var subtitle: String { tr("accessRules.subtitle") }  // "Override read and write access for specific paths."
         public static var unavailable: String { tr("accessRules.unavailable") }  // "Access rules are only available to administrators."
     }
+    public enum Appearance {
+        public static var dark: String { tr("appearance.dark") }  // "Dark"
+        public static var light: String { tr("appearance.light") }  // "Light"
+        public static var system: String { tr("appearance.system") }  // "System"
+    }
     public enum Archive {
         public static var emptyFolder: String { tr("archive.emptyFolder") }  // "This folder is empty."
         public static var entryTooLarge: String { tr("archive.entryTooLarge") }  // "This item is too large to open."
@@ -74,6 +79,8 @@ public enum L10n {
         public static func downloadSavedCountTo(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("browse.downloadSavedCountTo", a0, a1, a2) }
         public static func downloadSavedTo(_ a0: CVarArg) -> String { tr("browse.downloadSavedTo", a0) }
         public static var locations: String { tr("browse.locations") }  // "Locations"
+        public static var myFiles: String { tr("browse.myFiles") }  // "My Files"
+        public static var myFilesSubtitle: String { tr("browse.myFilesSubtitle") }  // "Only visible to you"
         public static var nameErrorReserved: String { tr("browse.nameErrorReserved") }  // "That name isn't allowed."
         public static var nameErrorSeparators: String { tr("browse.nameErrorSeparators") }  // "A name can't contain / or \."
         public static var navigationTitle: String { tr("browse.navigationTitle") }  // "Browse"
@@ -100,6 +107,7 @@ public enum L10n {
         public static func searchNoMatchesInFolder(_ a0: CVarArg) -> String { tr("browse.searchNoMatchesInFolder", a0) }
         public static var searchScopeEverywhere: String { tr("browse.searchScopeEverywhere") }  // "Everywhere"
         public static var searchScopeInFolder: String { tr("browse.searchScopeInFolder") }  // "This Folder"
+        public static var sectionPersonal: String { tr("browse.sectionPersonal") }  // "Personal"
         public static var showInFinder: String { tr("browse.showInFinder") }  // "Show in Finder"
         public static var transferConflictKeepBoth: String { tr("browse.transferConflictKeepBoth") }  // "Keep Both"
         public static func transferConflictMessageMany(_ a0: CVarArg) -> String { tr("browse.transferConflictMessageMany", a0) }
@@ -194,6 +202,21 @@ public enum L10n {
     public enum DownloadLocation {
         public static var cache: String { tr("downloadLocation.cache") }  // "Cache"
         public static var documents: String { tr("downloadLocation.documents") }  // "Documents"
+    }
+    public enum DownloadQueue {
+        public static func barFailedMany(_ a0: CVarArg) -> String { tr("downloadQueue.barFailedMany", a0) }
+        public static var barFailedOne: String { tr("downloadQueue.barFailedOne") }  // "1 download failed"
+        public static func barTitleMany(_ a0: CVarArg) -> String { tr("downloadQueue.barTitleMany", a0) }
+        public static func barTitleOne(_ a0: CVarArg) -> String { tr("downloadQueue.barTitleOne", a0) }
+        public static func bytesOf(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("downloadQueue.bytesOf", a0, a1) }
+        public static var cancelAll: String { tr("downloadQueue.cancelAll") }  // "Cancel all downloads"
+        public static var emptyList: String { tr("downloadQueue.emptyList") }  // "No downloads in progress."
+        public static var navigationTitle: String { tr("downloadQueue.navigationTitle") }  // "Download Queue"
+        public static var openDownloads: String { tr("downloadQueue.openDownloads") }  // "Show Downloads"
+        public static func savedMany(_ a0: CVarArg) -> String { tr("downloadQueue.savedMany", a0) }
+        public static var savedOne: String { tr("downloadQueue.savedOne") }  // "Saved to Downloads"
+        public static var statusSaved: String { tr("downloadQueue.statusSaved") }  // "Saved"
+        public static func timeLeft(_ a0: CVarArg) -> String { tr("downloadQueue.timeLeft", a0) }
     }
     public enum Downloads {
         public static var actionOpenInFiles: String { tr("downloads.actionOpenInFiles") }  // "Open in Files"
@@ -445,6 +468,7 @@ public enum L10n {
         public static var removeAllDownloadsMessage: String { tr("settings.removeAllDownloadsMessage") }
         public static var removeAllDownloadsTitle: String { tr("settings.removeAllDownloadsTitle") }  // "Remove All Downloads?"
         public static var rowAccessRules: String { tr("settings.rowAccessRules") }  // "Folder Access Rules"
+        public static var rowAppearance: String { tr("settings.rowAppearance") }  // "Appearance"
         public static var rowChangePassword: String { tr("settings.rowChangePassword") }  // "Change Password"
         public static var rowClearCache: String { tr("settings.rowClearCache") }  // "Clear Cache"
         public static var rowDateFormat: String { tr("settings.rowDateFormat") }  // "Date Format"
@@ -476,11 +500,9 @@ public enum L10n {
         public static var signOutMessage: String { tr("settings.signOutMessage") }
         public static var signingOut: String { tr("settings.signingOut") }  // "Signing Out…"
         public static var storageFootnote: String { tr("settings.storageFootnote") }
-        public static var toggleDarkMode: String { tr("settings.toggleDarkMode") }  // "Dark Mode"
         public static var toggleHaptics: String { tr("settings.toggleHaptics") }  // "Haptics"
         public static var toggleKeepClipboard: String { tr("settings.toggleKeepClipboard") }  // "Keep Items After Paste"
         public static var toggleKeepClipboardSubtitle: String { tr("settings.toggleKeepClipboardSubtitle") }
-        public static var toggleRemoveArchives: String { tr("settings.toggleRemoveArchives") }  // "Remove Archives After Download"
         public static var toggleRenderHTML: String { tr("settings.toggleRenderHTML") }  // "Render HTML Pages"
         public static var toggleRenderMarkdown: String { tr("settings.toggleRenderMarkdown") }  // "Render Markdown Files"
         public static var toggleShowExtensions: String { tr("settings.toggleShowExtensions") }  // "Show Filename Extensions"

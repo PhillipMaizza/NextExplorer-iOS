@@ -27,6 +27,7 @@ public struct MainTabFeature {
         public var downloads = DownloadsFeature.State()
         public var settings: SettingsFeature.State
         public var uploads: UploadsFeature.State
+        public var downloadQueue: DownloadQueueFeature.State
         /// The offline download engine, a session lifetime sibling so its long running download
         /// effect survives the user leaving the Settings screen that started it.
         public var offline: OfflineDownloadsFeature.State
@@ -34,6 +35,8 @@ public struct MainTabFeature {
         /// finished run never lingers on the new account's Settings screen.
         @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) public var offlineProgress = OfflineDownloadProgress()
         public var uploadToast: UploadToast?
+        /// The "saved to Downloads" confirmation once the download queue drains.
+        public var downloadToast: String?
 
         public init(serverURL: URL, user: User) {
             browse = BrowseTabFeature.State(serverURL: serverURL)
@@ -41,6 +44,7 @@ public struct MainTabFeature {
             shared = SharedFeature.State(serverURL: serverURL)
             settings = SettingsFeature.State(serverURL: serverURL, user: user)
             uploads = UploadsFeature.State(serverURL: serverURL)
+            downloadQueue = DownloadQueueFeature.State(serverURL: serverURL)
             offline = OfflineDownloadsFeature.State(serverURL: serverURL)
         }
 
@@ -73,9 +77,12 @@ public struct MainTabFeature {
         case downloads(DownloadsFeature.Action)
         case settings(SettingsFeature.Action)
         case uploads(UploadsFeature.Action)
+        case downloadQueue(DownloadQueueFeature.Action)
         case offline(OfflineDownloadsFeature.Action)
         case openUploadedLocation(String)
         case dismissUploadToast
+        case openDownloadsTab
+        case dismissDownloadToast
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -112,6 +119,9 @@ public struct MainTabFeature {
         Scope(state: \.uploads, action: \.uploads) {
             UploadsFeature()
         }
+        Scope(state: \.downloadQueue, action: \.downloadQueue) {
+            DownloadQueueFeature()
+        }
         Scope(state: \.offline, action: \.offline) {
             OfflineDownloadsFeature()
         }
@@ -144,6 +154,35 @@ public struct MainTabFeature {
             case let .browse(.delegate(.uploadRequested(files))),
                  let .favorites(.delegate(.uploadRequested(files))):
                 return .send(.uploads(.enqueue(files)))
+
+            case let .browse(.delegate(.downloadRequested(items))),
+                 let .favorites(.delegate(.downloadRequested(items))):
+                return .send(.downloadQueue(.enqueue(items)))
+
+            case .downloadQueue(.delegate(.itemSaved)):
+                return .merge(
+                    .send(.downloads(.refreshButtonTapped)),
+                    .send(.browse(.offlineAvailabilityChanged)),
+                    .send(.favorites(.offlineAvailabilityChanged))
+                )
+
+            case let .downloadQueue(.delegate(.queueFinished(summary))):
+                // Failures stay on the persistent failed bar with its own Retry.
+                guard summary.failedCount == 0, summary.savedCount > 0 else { return .none }
+                state.downloadToast = summary.savedCount == 1
+                    ? L10n.DownloadQueue.savedOne
+                    : L10n.DownloadQueue.savedMany(summary.savedCount)
+                return .none
+
+            case .openDownloadsTab:
+                state.downloadToast = nil
+                state.downloadQueue.isSheetPresented = false
+                state.selectedTab = .downloads
+                return .send(.downloads(.refreshButtonTapped))
+
+            case .dismissDownloadToast:
+                state.downloadToast = nil
+                return .none
 
             case let .uploads(.delegate(.queueFinished(summary))):
                 // Refetch only the folders an upload actually landed in, and only where they
@@ -269,7 +308,7 @@ public struct MainTabFeature {
             case .settings(.delegate(.removeOfflineFiles)):
                 return .send(.offline(.removeAllOfflineTapped))
 
-            case .browse, .favorites, .shared, .downloads, .settings, .uploads, .offline, .delegate:
+            case .browse, .favorites, .shared, .downloads, .settings, .uploads, .downloadQueue, .offline, .delegate:
                 return .none
             }
         }
