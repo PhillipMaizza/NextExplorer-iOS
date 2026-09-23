@@ -31,8 +31,8 @@ struct L10nTests {
     func formatAccessors() {
         #expect(L10n.ChangePassword.errorMinLength(6) == "Use at least 6 characters.")
         #expect(L10n.Browse.searchNoMatchesInFolder("vac") == "No matches for “vac”.")
-        #expect(L10n.Browse.progressDownloadingIndexed(2, 5) == "Downloading 2 of 5…")
-        #expect(L10n.Browse.downloadSavedAllTo(3, "iCloud") == "Saved 3 items to iCloud")
+        #expect(L10n.DownloadQueue.barTitleOne("movie.mkv") == "Downloading movie.mkv")
+        #expect(L10n.DownloadQueue.savedMany(3) == "3 items saved to Downloads")
     }
 
     @Test("known values match the English source")

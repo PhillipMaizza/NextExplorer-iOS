@@ -94,12 +94,6 @@ browse.searchEverywhere	Rechercher partout
 browse.searchFailed	Recherche impossible. Vérifiez votre connexion et réessayez.
 browse.progressExtracting	Extraction…
 browse.progressCompressing	Compression…
-browse.progressDownloading	Téléchargement…
-browse.progressDownloadingIndexed	Téléchargement de %1$lld sur %2$lld…
-browse.downloadSavedTo	Enregistré dans %@
-browse.downloadSavedCountTo	%1$lld éléments sur %2$lld enregistrés dans %3$@
-browse.downloadSavedAllTo	%1$lld éléments enregistrés dans %2$@
-browse.downloadBulkFailed	Impossible d'enregistrer ces éléments sur votre appareil.
 browse.offlineBannerTitle	Hors ligne
 browse.offlineBannerDetail	Affichage d'une copie enregistrée du %@
 browse.actionCopy	Copier
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Afficher les fichiers masqués
 settings.toggleRenderHTML	Afficher les pages HTML
 settings.toggleRenderMarkdown	Afficher les fichiers Markdown
 settings.toggleHaptics	Retour haptique
-settings.toggleDarkMode	Mode sombre
 settings.toggleShowThumbnails	Afficher les miniatures
 settings.toggleShowExtensions	Afficher les extensions de fichier
-settings.toggleRemoveArchives	Supprimer les archives après le téléchargement
 settings.toggleKeepClipboard	Conserver les éléments après le collage
 settings.toggleKeepClipboardSubtitle	Les éléments copiés restent prêts à coller dans un autre dossier. Les éléments déplacés sont toujours effacés.
 settings.rowDateFormat	Format de date
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	Conditions d'utilisation
 settings.rowUserManagement	Gestion des utilisateurs
 settings.rowChangePassword	Changer le mot de passe
 settings.rowServer	Serveur
-settings.storageFootnote	Le téléchargement d'un dossier le compresse d'abord en ZIP sur le serveur. Activez l'option ci-dessus pour supprimer cette archive du serveur une fois enregistrée sur votre appareil. Supprimer les téléchargements ou vider le cache n'affecte que cet appareil ; rien n'est touché sur le serveur.
+settings.storageFootnote	Les dossiers se téléchargent en ZIP, sans rien laisser sur le serveur. Supprimer les téléchargements ou vider le cache n'affecte que cet appareil ; rien n'est modifié sur le serveur.
 settings.removeAllDownloadsTitle	Supprimer tous les téléchargements ?
 settings.removeAllDownloadsConfirm	Tout supprimer
 settings.removeAllDownloadsMessage	Cela supprime tous les fichiers téléchargés de cet appareil. Ils restent sur le serveur.
@@ -604,3 +596,26 @@ offline.manageEmpty	Rien n'est téléchargé pour une utilisation hors ligne.
 offline.preferOfflineToggle	Lire les copies téléchargées
 offline.preferOfflineSubtitle	Utiliser une vidéo téléchargée au lieu de la diffuser lorsqu'elle est disponible.
 offline.tunnelSpeedNote	Accéder à votre serveur via un tunnel distant peut ralentir les téléchargements. Pour les gros fichiers, connectez-vous au même réseau et utilisez l'adresse locale de votre serveur.
+settings.rowAppearance	Apparence
+appearance.system	Système
+appearance.light	Clair
+appearance.dark	Sombre
+browse.myFiles	Mes fichiers
+browse.myFilesSubtitle	Visible uniquement par vous
+downloadQueue.navigationTitle	File de téléchargement
+downloadQueue.openDownloads	Afficher les téléchargements
+downloadQueue.emptyList	Aucun téléchargement en cours.
+downloadQueue.statusSaved	Enregistré
+downloadQueue.cancelAll	Annuler tous les téléchargements
+downloadQueue.barFailedOne	1 téléchargement a échoué
+downloadQueue.barFailedMany	%lld téléchargements ont échoué
+downloadQueue.barTitleOne	Téléchargement de %@
+downloadQueue.barTitleMany	Téléchargement de %lld éléments
+downloadQueue.savedOne	Enregistré dans Téléchargements
+downloadQueue.savedMany	%lld éléments enregistrés dans Téléchargements
+downloadQueue.bytesOf	%1$@ sur %2$@
+downloadQueue.timeLeft	%@ restantes
+browse.sectionPersonal	Personnel
+settings.sectionSupport	Assistance
+settings.rowRateApp	Noter NextExplorer
+settings.rowSupport	Aide et assistance

@@ -168,7 +168,11 @@ extension FilesService {
         let downloadedURL: URL
         let response: HTTPURLResponse
         do {
-            (downloadedURL, response) = try await networkClient.downloadWithProgress(request, onProgress)
+            (downloadedURL, response) = try await networkClient.downloadWithProgress(request) { progress in
+                if let fraction = progress.fraction {
+                    onProgress(fraction)
+                }
+            }
         } catch {
             throw Self.mapTransportError(error)
         }
@@ -181,6 +185,46 @@ extension FilesService {
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
         }
+    }
+
+    /// Deliberately bypasses the preview cache: a download the user keeps can be larger than the
+    /// whole cache budget, and parking it there first only to copy it out doubled the disk cost and
+    /// let eviction delete it before the copy. A pinned offline copy is reused with no network.
+    func downloadItem(
+        serverURL: URL,
+        item: FileItem,
+        onProgress: @Sendable @escaping (TransferProgress) -> Void
+    ) async throws -> URL {
+        if !item.isDirectory, let offline = OfflineCache.localURL(for: item) {
+            let copy = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            do {
+                try FileManager.default.copyItem(at: offline, to: copy)
+            } catch {
+                throw FilesClientError.decoding(error.localizedDescription)
+            }
+            let size = (try? copy.resourceValues(forKeys: [.fileSizeKey]).fileSize).map(Int64.init) ?? 0
+            onProgress(TransferProgress(receivedBytes: size, expectedBytes: size))
+            return copy
+        }
+        let url = serverURL.appendingPathComponent(APIPath.download)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
+        request.httpBody = try Self.encode(DownloadRawFileBody(path: item.id))
+
+        let downloadedURL: URL
+        let response: HTTPURLResponse
+        do {
+            (downloadedURL, response) = try await networkClient.downloadWithProgress(request, onProgress)
+        } catch {
+            throw Self.mapTransportError(error)
+        }
+        do {
+            try Self.validate(response)
+        } catch {
+            try? FileManager.default.removeItem(at: downloadedURL)
+            throw error
+        }
+        return downloadedURL
     }
 
     /// Streams `request`'s response to disk (never buffering it in memory — previews,
@@ -212,7 +256,7 @@ extension FilesService {
                 try Self.cacheMetaValue(for: item).write(to: metaURL, atomically: true, encoding: .utf8)
                 Self.applyCacheProtection(to: fileURL)
                 Self.applyCacheProtection(to: metaURL)
-                Self.evictPreviewCacheIfNeeded()
+                Self.evictPreviewCacheIfNeeded(protecting: directory)
                 return fileURL
             } catch {
                 throw FilesClientError.decoding(error.localizedDescription)
@@ -234,7 +278,9 @@ extension FilesService {
     /// op) so growth stays bounded within a single long session, not just across relaunches. A
     /// whole item slot (its file and `.meta`, or a single thumbnail file) is removed at once so a
     /// slot is never left half evicted.
-    static func evictPreviewCacheIfNeeded() {
+    /// `protecting` is the slot the caller just wrote: it is about to be handed back, so it is
+    /// never a candidate even when it alone is larger than the budget.
+    static func evictPreviewCacheIfNeeded(protecting protectedSlot: URL? = nil) {
         evictionLock.lock()
         defer { evictionLock.unlock() }
 
@@ -292,8 +338,12 @@ extension FilesService {
         }
 
         guard total > Self.previewCacheMaxBytes else { return }
+        let protectedPath = protectedSlot?.standardizedFileURL.path
         for slot in slots.sorted(by: { $0.modified < $1.modified }) {
             guard total > Self.previewCacheMaxBytes else { break }
+            if slot.url.standardizedFileURL.path == protectedPath {
+                continue
+            }
             try? fileManager.removeItem(at: slot.url)
             total -= slot.size
         }
@@ -302,7 +352,7 @@ extension FilesService {
     /// One subdirectory per item path, keyed by a SHA256 of the full `item.id`. A hash is
     /// injective in a way slash flattening was not (`a/b` and `a_b` both flattened to `a_b`
     /// and could serve each other's bytes on a matching size/mtime) and can never traverse.
-    private static func previewCacheDirectory(for item: FileItem, namespace: String) -> URL {
+    static func previewCacheDirectory(for item: FileItem, namespace: String) -> URL {
         let cachesDirectory = (try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
             ?? FileManager.default.temporaryDirectory
         // The active account is folded into the slot key so two accounts never serve each other's

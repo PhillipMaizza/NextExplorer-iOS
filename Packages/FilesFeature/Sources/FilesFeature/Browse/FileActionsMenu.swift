@@ -10,7 +10,6 @@ import SwiftUI
 struct FileActionsMenu: View {
     let store: StoreOf<BrowseFeature>
     let item: FileItem
-    let removeArchiveAfterDownload: Bool
     let onShare: (FileItem) -> Void
 
     var body: some View {
@@ -86,7 +85,7 @@ struct FileActionsMenu: View {
         }
         if store.access?.canDownload ?? false {
             Button {
-                store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                store.send(.downloadTapped(item))
             } label: {
                 Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
             }

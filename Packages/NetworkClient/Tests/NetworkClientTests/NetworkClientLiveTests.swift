@@ -166,10 +166,10 @@ struct NetworkClientLiveTests {
         )
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let fractions = LockIsolatedBox<[Double]>([])
+        let reports = LockIsolatedBox<[TransferProgress]>([])
         let request = URLRequest(url: URL(string: "https://example.com/api/download")!)
-        let (fileURL, response) = try await client.downloadWithProgress(request) { fraction in
-            fractions.withValue { $0.append(fraction) }
+        let (fileURL, response) = try await client.downloadWithProgress(request) { progress in
+            reports.withValue { $0.append(progress) }
         }
         defer { try? FileManager.default.removeItem(at: fileURL) }
 
@@ -177,9 +177,18 @@ struct NetworkClientLiveTests {
         // The file must outlive the call (URLSession deletes its own temp on return).
         #expect(FileManager.default.fileExists(atPath: fileURL.path))
         #expect(try Data(contentsOf: fileURL) == payload)
-        // Progress is reported and never exceeds 1.
-        let reported = fractions.value
-        #expect(reported.allSatisfy { $0 >= 0 && $0 <= 1 })
+        // Byte counts never exceed the declared total and the fraction stays within 0...1.
+        let reported = reports.value
+        #expect(reported.allSatisfy { $0.receivedBytes <= Int64(payload.count) })
+        #expect(reported.allSatisfy { ($0.fraction ?? 0) >= 0 && ($0.fraction ?? 0) <= 1 })
+    }
+
+    @Test("TransferProgress derives a fraction only when the total is known")
+    func transferProgressFraction() {
+        #expect(TransferProgress(receivedBytes: 50, expectedBytes: 200).fraction == 0.25)
+        #expect(TransferProgress(receivedBytes: 50, expectedBytes: nil).fraction == nil)
+        #expect(TransferProgress(receivedBytes: 200, expectedBytes: 200).isComplete)
+        #expect(!TransferProgress(receivedBytes: 200, expectedBytes: nil).isComplete)
     }
 
     @Test("error path: a transport failure during downloadWithProgress wraps as NetworkError")

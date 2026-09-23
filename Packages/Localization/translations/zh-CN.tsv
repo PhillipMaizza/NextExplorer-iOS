@@ -94,12 +94,6 @@ browse.searchEverywhere	在所有位置搜索
 browse.searchFailed	无法搜索。请检查连接后重试。
 browse.progressExtracting	正在解压…
 browse.progressCompressing	正在压缩…
-browse.progressDownloading	正在下载…
-browse.progressDownloadingIndexed	正在下载 %2$lld 项中的第 %1$lld 项…
-browse.downloadSavedTo	已保存到 %@
-browse.downloadSavedCountTo	已将 %2$lld 项中的 %1$lld 项保存到 %3$@
-browse.downloadSavedAllTo	已将 %1$lld 项保存到 %2$@
-browse.downloadBulkFailed	无法将这些项目保存到您的设备。
 browse.offlineBannerTitle	离线
 browse.offlineBannerDetail	正在显示来自 %@ 的已保存副本
 browse.actionCopy	拷贝
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	显示隐藏文件
 settings.toggleRenderHTML	渲染 HTML 页面
 settings.toggleRenderMarkdown	渲染 Markdown 文件
 settings.toggleHaptics	触感反馈
-settings.toggleDarkMode	深色模式
 settings.toggleShowThumbnails	显示缩略图
 settings.toggleShowExtensions	显示文件扩展名
-settings.toggleRemoveArchives	下载后移除压缩包
 settings.toggleKeepClipboard	粘贴后保留项目
 settings.toggleKeepClipboardSubtitle	拷贝的项目会保持可粘贴到其他文件夹的状态。移动的项目始终会被清除。
 settings.rowDateFormat	日期格式
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	使用条款
 settings.rowUserManagement	用户管理
 settings.rowChangePassword	更改密码
 settings.rowServer	服务器
-settings.storageFootnote	下载文件夹会先在服务器上将其压缩为 ZIP。开启上面的开关，可在保存到设备后从服务器删除该压缩包。移除下载或清除缓存仅影响此设备；服务器上的内容不会被改动。
+settings.storageFootnote	文件夹以 ZIP 形式下载，服务器上不会留下任何文件。删除下载或清除缓存只影响此设备，不会改动服务器上的任何内容。
 settings.removeAllDownloadsTitle	移除所有下载？
 settings.removeAllDownloadsConfirm	全部移除
 settings.removeAllDownloadsMessage	这会从此设备删除所有已下载的文件。它们仍保留在服务器上。
@@ -604,3 +596,26 @@ offline.manageEmpty	没有为离线使用下载任何内容。
 offline.preferOfflineToggle	播放已下载的副本
 offline.preferOfflineSubtitle	可用时使用已下载的视频而非流式播放。
 offline.tunnelSpeedNote	通过远程隧道访问服务器可能会降低下载速度。下载大文件时，请连接到同一网络并使用服务器的本地地址。
+settings.rowAppearance	外观
+appearance.system	跟随系统
+appearance.light	浅色
+appearance.dark	深色
+browse.myFiles	我的文件
+browse.myFilesSubtitle	仅你可见
+downloadQueue.navigationTitle	下载队列
+downloadQueue.openDownloads	显示下载
+downloadQueue.emptyList	没有进行中的下载。
+downloadQueue.statusSaved	已保存
+downloadQueue.cancelAll	取消所有下载
+downloadQueue.barFailedOne	1 个下载失败
+downloadQueue.barFailedMany	%lld 个下载失败
+downloadQueue.barTitleOne	正在下载 %@
+downloadQueue.barTitleMany	正在下载 %lld 个项目
+downloadQueue.savedOne	已保存到下载
+downloadQueue.savedMany	%lld 个项目已保存到下载
+downloadQueue.bytesOf	%1$@ / %2$@
+downloadQueue.timeLeft	剩余 %@
+browse.sectionPersonal	个人
+settings.sectionSupport	支持
+settings.rowRateApp	为 NextExplorer 评分
+settings.rowSupport	帮助与支持

@@ -22,7 +22,7 @@ extension NetworkClient {
             try Self.cannedDownload(for: request)
         },
         downloadWithProgress: { request, onProgress in
-            onProgress(1)
+            onProgress(TransferProgress(receivedBytes: 1, expectedBytes: 1))
             return try Self.cannedDownload(for: request)
         },
         lowPriorityDownload: { request in

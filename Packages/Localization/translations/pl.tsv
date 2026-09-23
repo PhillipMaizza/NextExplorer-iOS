@@ -94,12 +94,6 @@ browse.searchEverywhere	Szukaj wszędzie
 browse.searchFailed	Nie można wyszukać. Sprawdź połączenie i spróbuj ponownie.
 browse.progressExtracting	Wypakowywanie…
 browse.progressCompressing	Kompresowanie…
-browse.progressDownloading	Pobieranie…
-browse.progressDownloadingIndexed	Pobieranie %1$lld z %2$lld…
-browse.downloadSavedTo	Zapisano w %@
-browse.downloadSavedCountTo	Zapisano %1$lld z %2$lld elementów w %3$@
-browse.downloadSavedAllTo	Zapisano %1$lld elementów w %2$@
-browse.downloadBulkFailed	Nie można zapisać tych elementów na urządzeniu.
 browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Wyświetlanie zapisanej kopii z %@
 browse.actionCopy	Kopiuj
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Pokaż ukryte pliki
 settings.toggleRenderHTML	Renderuj strony HTML
 settings.toggleRenderMarkdown	Renderuj pliki Markdown
 settings.toggleHaptics	Wibracje
-settings.toggleDarkMode	Tryb ciemny
 settings.toggleShowThumbnails	Pokaż miniatury
 settings.toggleShowExtensions	Pokaż rozszerzenia plików
-settings.toggleRemoveArchives	Usuwaj archiwa po pobraniu
 settings.toggleKeepClipboard	Zachowaj elementy po wklejeniu
 settings.toggleKeepClipboardSubtitle	Skopiowane elementy pozostają gotowe do wklejenia do innego folderu. Przeniesione elementy są zawsze czyszczone.
 settings.rowDateFormat	Format daty
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	Warunki użytkowania
 settings.rowUserManagement	Zarządzanie użytkownikami
 settings.rowChangePassword	Zmień hasło
 settings.rowServer	Serwer
-settings.storageFootnote	Pobieranie folderu najpierw kompresuje go do ZIP na serwerze. Włącz powyższy przełącznik, aby usunąć to archiwum z serwera po zapisaniu na urządzeniu. Usuwanie pobranych plików lub czyszczenie pamięci podręcznej dotyczy tylko tego urządzenia; nic na serwerze nie zostaje naruszone.
+settings.storageFootnote	Foldery są pobierane jako ZIP i nic nie zostaje na serwerze. Usuwanie pobranych plików lub czyszczenie pamięci podręcznej dotyczy tylko tego urządzenia; na serwerze nic się nie zmienia.
 settings.removeAllDownloadsTitle	Usunąć wszystkie pobrane?
 settings.removeAllDownloadsConfirm	Usuń wszystkie
 settings.removeAllDownloadsMessage	Spowoduje to usunięcie wszystkich pobranych plików z tego urządzenia. Pozostają one na serwerze.
@@ -604,3 +596,26 @@ offline.manageEmpty	Nic nie zostało pobrane do użytku offline.
 offline.preferOfflineToggle	Odtwarzaj pobrane kopie
 offline.preferOfflineSubtitle	Używaj pobranego wideo zamiast strumieniowania, gdy jest dostępne.
 offline.tunnelSpeedNote	Łączenie się z serwerem przez zdalny tunel może spowalniać pobieranie. W przypadku dużych plików połącz się z tą samą siecią i użyj lokalnego adresu serwera.
+settings.rowAppearance	Wygląd
+appearance.system	Systemowy
+appearance.light	Jasny
+appearance.dark	Ciemny
+browse.myFiles	Moje pliki
+browse.myFilesSubtitle	Widoczne tylko dla Ciebie
+downloadQueue.navigationTitle	Kolejka pobierania
+downloadQueue.openDownloads	Pokaż pobrane
+downloadQueue.emptyList	Brak trwających pobrań.
+downloadQueue.statusSaved	Zapisano
+downloadQueue.cancelAll	Anuluj wszystkie pobierania
+downloadQueue.barFailedOne	1 pobieranie nie powiodło się
+downloadQueue.barFailedMany	Nieudane pobierania: %lld
+downloadQueue.barTitleOne	Pobieranie %@
+downloadQueue.barTitleMany	Pobieranie elementów: %lld
+downloadQueue.savedOne	Zapisano w Pobranych
+downloadQueue.savedMany	Zapisano w Pobranych elementów: %lld
+downloadQueue.bytesOf	%1$@ z %2$@
+downloadQueue.timeLeft	pozostało %@
+browse.sectionPersonal	Osobiste
+settings.sectionSupport	Pomoc
+settings.rowRateApp	Oceń NextExplorer
+settings.rowSupport	Pomoc i wsparcie
