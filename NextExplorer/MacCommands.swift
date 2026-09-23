@@ -94,7 +94,7 @@
         }
 
         private func openBrowseWindow(asTab: Bool) {
-            guard case .authenticated = store.withState(\.destination) else { return }
+            guard case .authenticated = store.destination else { return }
             openWindow(value: FolderWindowRoute(
                 path: "",
                 title: L10n.Browse.navigationTitle,
@@ -114,7 +114,7 @@
 
         /// Menu items stay visible while signed out; they simply do nothing until a session exists.
         private func send(_ action: MainTabFeature.Action) {
-            guard case .authenticated = store.withState(\.destination) else { return }
+            guard case .authenticated = store.destination else { return }
             store.send(.destination(.authenticated(.mainTab(action))))
         }
     }
