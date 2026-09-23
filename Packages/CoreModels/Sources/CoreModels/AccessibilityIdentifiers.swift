@@ -27,4 +27,9 @@ public enum AccessibilityIdentifiers {
         public static let uploadMenu = "browse.uploadMenu"
         public static let moreMenu = "browse.moreMenu"
     }
+
+    public enum Settings {
+        /// The active account row, which expands to reveal Change Password / Sign Out.
+        public static let activeAccount = "settings.activeAccount"
+    }
 }

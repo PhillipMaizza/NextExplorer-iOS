@@ -52,7 +52,6 @@ struct BrowseContentView: View {
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
-    @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
     @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
     @State private var isSortSheetPresented = false
     @State private var toastMessage: DSToastMessage?
@@ -72,6 +71,10 @@ struct BrowseContentView: View {
     /// interactively swipes-to-dismiss with the native `.zoom` morph (Twitter/Photos style),
     /// instead of a hand-rolled drag gesture.
     @Namespace private var previewTransition
+    @State private var sourceVisibility = PreviewSourceVisibility()
+    /// Whether the open cover zooms, decided once when it appears and held until it closes: the
+    /// cover itself takes the list off screen, which must not change the dismiss transition.
+    @State private var frozenCoverZoom: Bool?
     /// The image the gallery is currently showing (it swipes between siblings). Drives the
     /// cover's `.zoom` source and scrolls the matching cell into view, so dismissing after a
     /// swipe morphs back to the visible image instead of the one first tapped. `nil` until the
@@ -140,11 +143,12 @@ struct BrowseContentView: View {
                 // `isPresented`, not `item:` — so an in-place rename (which changes the item's
                 // id) updates the cover's content instead of dismissing and re-presenting it.
                 if let item = store.previewItem {
-                    PreviewZoomContainer(sourceID: galleryCurrentItemID ?? item.id, namespace: previewTransition) {
+                    let sourceID = galleryCurrentItemID ?? item.id
+                    let zooms = frozenCoverZoom ?? sourceVisibility.canZoom(from: sourceID)
+                    PreviewZoomContainer(sourceID: sourceID, namespace: previewTransition, zooms: zooms) {
                         BrowsePreviewRouter(
                             store: store,
                             item: item,
-                            removeArchiveAfterDownload: removeArchiveAfterDownload,
                             onShareTarget: { shareTarget = $0 },
                             onGalleryItemChange: { galleryCurrentItemID = $0.id }
                         )
@@ -164,6 +168,8 @@ struct BrowseContentView: View {
                     // through the reducer so the cover dismisses before the tab switches.
                     .dsToast(previewToastBinding, extraBottomInset: Constants.previewToolbarToastInset)
                     .dsToast(previewProgressToastBinding, extraBottomInset: Constants.previewToolbarToastInset)
+                    .onAppear { frozenCoverZoom = zooms }
+                    .onDisappear { frozenCoverZoom = nil }
                 }
             }
             .sheet(item: shareTargetBinding) { item in
@@ -217,6 +223,18 @@ struct BrowseContentView: View {
                     shareTarget = nil
                     // Cleared after the dismiss morph has already captured the source id.
                     galleryCurrentItemID = nil
+                }
+            }
+            .onAppear { sourceVisibility.isScreenVisible = true }
+            .onDisappear {
+                sourceVisibility.isScreenVisible = false
+                // Leaving mid open (a tab switch or a push while a slow file still loads) cancels
+                // it, like a second tap on the spinning row; the cover would otherwise appear over
+                // another screen with nothing to zoom from. An open cover also takes this view off
+                // screen, but by then its content is ready, so it is left alone.
+                if store.previewItem != nil, !isPreviewContentReady {
+                    // Next tick: a disappear driven by a reducer (a push) must not send reentrantly.
+                    Task { @MainActor in store.send(.previewDismissed) }
                 }
             }
             .task {
@@ -445,7 +463,7 @@ struct BrowseContentView: View {
                 if isDownloadActionVisible {
                     ToolbarItem(placement: .bottomBar) {
                         selectionToolbarButton(icon: IconKit.download, accessibilityLabel: L10n.Browse.actionDownload) {
-                            store.send(.bulkDownloadTapped(.documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                            store.send(.bulkDownloadTapped)
                         }
                     }
                 }
@@ -583,7 +601,7 @@ struct BrowseContentView: View {
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
                     iconSize: thumbnailSize.iconSize,
-                    matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition),
+                    matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition, visibility: sourceVisibility),
                     isOpening: isOpeningID(row.id)
                 )
             } else {
@@ -594,7 +612,7 @@ struct BrowseContentView: View {
                     thumbnailFile: searchResultThumbnailFile(row),
                     serverURL: store.serverURL,
                     showThumbnails: store.preferences.showThumbnails,
-                    matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition),
+                    matchedSource: PreviewMatchedSource(id: row.id, namespace: previewTransition, visibility: sourceVisibility),
                     isOpening: isOpeningID(row.id)
                 )
             }
@@ -630,7 +648,7 @@ struct BrowseContentView: View {
             serverURL: store.serverURL,
             showThumbnails: store.preferences.showThumbnails,
             iconSize: thumbnailSize.iconSize,
-            matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition),
+            matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition, visibility: sourceVisibility),
             isOpening: isOpening(item),
             isAvailableOffline: store.offlineItemIDs.contains(item.id)
         )
@@ -702,7 +720,7 @@ struct BrowseContentView: View {
             isFavorite: store.favoritePaths.contains(item.id),
             serverURL: store.serverURL,
             showThumbnails: store.preferences.showThumbnails,
-            matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition),
+            matchedSource: PreviewMatchedSource(id: item.id, namespace: previewTransition, visibility: sourceVisibility),
             isOpening: isOpening(item),
             isAvailableOffline: store.offlineItemIDs.contains(item.id)
         )
@@ -1003,7 +1021,6 @@ struct BrowseContentView: View {
         FileActionsMenu(
             store: store,
             item: item,
-            removeArchiveAfterDownload: removeArchiveAfterDownload,
             onShare: { shareTarget = $0 }
         )
     }
@@ -1070,14 +1087,32 @@ struct BrowseContentView: View {
         }
     }
 
+    /// Root only, outside search and select mode: the account's private folder is not a volume,
+    /// so it is not something a bulk action over the listing should touch.
+    private var showsPersonalSpace: Bool {
+        store.directoryPath.isEmpty && store.isPersonalSpaceEnabled && !store.isSearching && !store.isSelecting
+    }
+
     private var listContent: some View {
         ScrollViewReader { proxy in
             DSGroupedList {
+                if showsPersonalSpace {
+                    Section {
+                        PersonalSpaceRow { store.send(.personalSpaceTapped) }
+                            .listRowBackground(Color.backgroundSecondary)
+                    } header: {
+                        BrowseRootSectionHeader(title: L10n.Browse.sectionPersonal)
+                    }
+                }
                 Section {
                     if store.isSearching {
                         searchResultRows
                     } else {
                         folderItemRows
+                    }
+                } header: {
+                    if showsPersonalSpace {
+                        BrowseRootSectionHeader(title: L10n.Browse.locations)
                     }
                 }
                 offlineFooterRow
@@ -1121,31 +1156,20 @@ struct BrowseContentView: View {
                             .buttonStyle(DSHapticButtonStyle())
                         }
                     } else {
-                        ForEach(displayedItems) { item in
-                            Button {
-                                if store.isSelecting {
-                                    store.send(.itemSelectionToggled(item.id))
-                                } else {
-                                    handleTap(item)
+                        if showsPersonalSpace {
+                            Section {
+                                PersonalSpaceGridCell(iconSize: thumbnailSize.iconSize, cellPadding: Constants.gridCellPadding) {
+                                    store.send(.personalSpaceTapped)
                                 }
-                            } label: {
-                                gridCell(for: item)
-                                    .dsCard(padding: Constants.gridCellPadding)
-                                #if os(macOS)
-                                    .modifier(macRowDragDrop(for: item))
-                                #endif
-                                    .overlay(alignment: .topLeading) {
-                                        if store.isSelecting {
-                                            DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
-                                        }
-                                    }
+                            } header: {
+                                BrowseRootSectionHeader(title: L10n.Browse.sectionPersonal)
                             }
-                            .buttonStyle(DSHapticButtonStyle())
-                            .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
-                            .contextMenu {
-                                if !store.isSelecting {
-                                    fileActionsMenu(for: item)
-                                }
+                        }
+                        Section {
+                            gridItemCells(displayedItems)
+                        } header: {
+                            if showsPersonalSpace {
+                                BrowseRootSectionHeader(title: L10n.Browse.locations)
                             }
                         }
                     }
@@ -1279,6 +1303,37 @@ struct BrowseContentView: View {
                 store.send(.clipboardCleared, animation: .default)
             } label: {
                 Label { Text(L10n.Browse.actionClearClipboard) } icon: { IconKit.close }
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func gridItemCells(_ items: IdentifiedArrayOf<FileItem>) -> some View {
+        ForEach(items) { item in
+            Button {
+                if store.isSelecting {
+                    store.send(.itemSelectionToggled(item.id))
+                } else {
+                    handleTap(item)
+                }
+            } label: {
+                gridCell(for: item)
+                    .dsCard(padding: Constants.gridCellPadding)
+                #if os(macOS)
+                    .modifier(macRowDragDrop(for: item))
+                #endif
+                    .overlay(alignment: .topLeading) {
+                        if store.isSelecting {
+                            DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                        }
+                    }
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
+            .contextMenu {
+                if !store.isSelecting {
+                    fileActionsMenu(for: item)
+                }
             }
         }
     }

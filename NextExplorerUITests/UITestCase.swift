@@ -57,7 +57,9 @@ class UITestCase: XCTestCase {
     /// a sentinel item in that menu. XCUITest occasionally drops the gesture, so it retries once.
     func openMenu(_ open: () -> Void, until sentinel: XCUIElement, file: StaticString = #filePath, line: UInt = #line) {
         open()
-        if sentinel.appears(within: UITestTimeout.short) {
+        // Two windows before retrying: a menu that opens slowly would otherwise get a second tap
+        // on its trigger while already open, and that trigger is no longer hittable.
+        if sentinel.appears(within: UITestTimeout.short) || sentinel.appears(within: UITestTimeout.short) {
             return
         }
         open()

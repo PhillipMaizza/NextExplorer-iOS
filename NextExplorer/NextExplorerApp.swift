@@ -53,7 +53,7 @@ struct NextExplorerApp: App {
         WindowGroup {
             AppView(store: Self.store)
                 .tint(Color.accent)
-                .preferredColorScheme(hasAppearanceOverride ? (prefersDarkModeOverride ? .dark : .light) : nil)
+                .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
             #if os(macOS)
                 // A Mac window always gets the regular width sidebar layout, never the phone tab bar.
                 .environment(\.horizontalSizeClass, .regular)
@@ -75,7 +75,7 @@ struct NextExplorerApp: App {
                 if let route {
                     MacFolderWindow(route: route, mainStore: Self.store)
                         .tint(Color.accent)
-                        .preferredColorScheme(hasAppearanceOverride ? (prefersDarkModeOverride ? .dark : .light) : nil)
+                        .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
                 }
             }
             .defaultSize(width: MacWindow.folderWindowWidth, height: MacWindow.folderWindowHeight)

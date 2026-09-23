@@ -94,12 +94,6 @@ browse.searchEverywhere	Pesquisar em todo o lado
 browse.searchFailed	Não foi possível pesquisar. Verifique a ligação e tente novamente.
 browse.progressExtracting	A extrair…
 browse.progressCompressing	A comprimir…
-browse.progressDownloading	A transferir…
-browse.progressDownloadingIndexed	A transferir %1$lld de %2$lld…
-browse.downloadSavedTo	Guardado em %@
-browse.downloadSavedCountTo	Guardados %1$lld de %2$lld itens em %3$@
-browse.downloadSavedAllTo	Guardados %1$lld itens em %2$@
-browse.downloadBulkFailed	Não foi possível guardar estes itens no seu dispositivo.
 browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	A mostrar uma cópia guardada de %@
 browse.actionCopy	Copiar
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Mostrar ficheiros ocultos
 settings.toggleRenderHTML	Compor páginas HTML
 settings.toggleRenderMarkdown	Compor ficheiros Markdown
 settings.toggleHaptics	Retorno tátil
-settings.toggleDarkMode	Modo escuro
 settings.toggleShowThumbnails	Mostrar miniaturas
 settings.toggleShowExtensions	Mostrar extensões de ficheiro
-settings.toggleRemoveArchives	Remover arquivos após a transferência
 settings.toggleKeepClipboard	Manter itens após colar
 settings.toggleKeepClipboardSubtitle	Os itens copiados ficam prontos para colar noutra pasta. Os itens movidos são sempre limpos.
 settings.rowDateFormat	Formato de data
@@ -314,7 +306,7 @@ settings.rowTermsOfUse	Termos de utilização
 settings.rowUserManagement	Gestão de utilizadores
 settings.rowChangePassword	Alterar palavra-passe
 settings.rowServer	Servidor
-settings.storageFootnote	Transferir uma pasta comprime-a primeiro num ZIP no servidor. Ative o interruptor acima para eliminar esse arquivo do servidor depois de guardado no seu dispositivo. Remover transferências ou limpar a cache afeta apenas este dispositivo; nada no servidor é afetado.
+settings.storageFootnote	As pastas são baixadas como ZIP, sem deixar nada no servidor. Remover downloads ou limpar o cache afeta apenas este dispositivo; nada no servidor é alterado.
 settings.removeAllDownloadsTitle	Remover todas as transferências?
 settings.removeAllDownloadsConfirm	Remover todas
 settings.removeAllDownloadsMessage	Isto elimina todos os ficheiros transferidos deste dispositivo. Permanecem no servidor.
@@ -627,3 +619,29 @@ menu.newTab	Nova aba
 browse.actionOpenInNewWindow	Abrir em nova janela
 browse.actionOpenInNewTab	Abrir em nova aba
 select.viewAs	Visualização
+settings.rowAppearance	Aparência
+appearance.system	Sistema
+appearance.light	Claro
+appearance.dark	Escuro
+browse.myFiles	Meus arquivos
+browse.myFilesSubtitle	Visível apenas para você
+downloadQueue.navigationTitle	Fila de downloads
+downloadQueue.openDownloads	Mostrar downloads
+downloadQueue.emptyList	Nenhum download em andamento.
+downloadQueue.statusSaved	Salvo
+downloadQueue.cancelAll	Cancelar todos os downloads
+downloadQueue.barFailedOne	1 download falhou
+downloadQueue.barFailedMany	%lld downloads falharam
+downloadQueue.barTitleOne	Baixando %@
+downloadQueue.barTitleMany	Baixando %lld itens
+downloadQueue.savedOne	Salvo em Downloads
+downloadQueue.savedMany	%lld itens salvos em Downloads
+downloadQueue.bytesOf	%1$@ de %2$@
+downloadQueue.timeLeft	faltam %@
+browse.sectionPersonal	Pessoal
+browse.progressDownloading	A transferir…
+browse.progressDownloadingIndexed	A transferir %1$lld de %2$lld…
+browse.downloadSavedTo	Guardado em %@
+browse.downloadSavedCountTo	Guardados %1$lld de %2$lld itens em %3$@
+browse.downloadSavedAllTo	Guardados %1$lld itens em %2$@
+browse.downloadBulkFailed	Não foi possível guardar estes itens no seu dispositivo.

@@ -98,6 +98,7 @@ struct SettingsAccountsSection: View {
         .buttonStyle(.plain)
         .disabled(store.isSigningOut)
         .accessibilityElement(children: .combine)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Settings.activeAccount)
         .accessibilityLabel(L10n.Settings.accountActiveLabel(account.displayName, account.serverHost))
         .accessibilityAddTraits(isActiveAccountExpanded ? [.isButton, .isSelected] : .isButton)
     }

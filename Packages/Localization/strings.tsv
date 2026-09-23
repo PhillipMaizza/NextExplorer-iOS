@@ -114,12 +114,6 @@ browse.searchEverywhere	Search everywhere
 browse.searchFailed	Couldn't search. Check your connection and try again.
 browse.progressExtracting	Extracting…
 browse.progressCompressing	Compressing…
-browse.progressDownloading	Downloading…
-browse.progressDownloadingIndexed	Downloading %1$lld of %2$lld…
-browse.downloadSavedTo	Saved to %@
-browse.downloadSavedCountTo	Saved %1$lld of %2$lld items to %3$@
-browse.downloadSavedAllTo	Saved %1$lld items to %2$@
-browse.downloadBulkFailed	Couldn't save these items to your device.
 browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Showing a saved copy from %@
 
@@ -344,11 +338,9 @@ settings.toggleShowHiddenFiles	Show Hidden Files
 settings.toggleRenderHTML	Render HTML Pages
 settings.toggleRenderMarkdown	Render Markdown Files
 settings.toggleHaptics	Haptics
-settings.toggleDarkMode	Dark Mode
 settings.toggleShowThumbnails	Show Thumbnails
 settings.toggleShowExtensions	Show Filename Extensions
 settings.toggleShowTabLabels	Show Tab Labels
-settings.toggleRemoveArchives	Remove Archives After Download
 settings.toggleKeepClipboard	Keep Items After Paste
 settings.toggleKeepClipboardSubtitle	Copied items stay ready to paste into another folder. Moved items always clear.
 settings.rowDateFormat	Date Format
@@ -362,7 +354,7 @@ settings.rowTermsOfUse	Terms of Use
 settings.rowUserManagement	User Management
 settings.rowChangePassword	Change Password
 settings.rowServer	Server
-settings.storageFootnote	Downloading a folder zips it on the server first. Turn on the toggle above to delete that archive from the server once it's saved to your device. Removing downloads or clearing the cache only affects this device; nothing on the server is touched.
+settings.storageFootnote	Folders download as a zip, with nothing left behind on the server. Removing downloads or clearing the cache only affects this device; nothing on the server is touched.
 settings.removeAllDownloadsTitle	Remove All Downloads?
 settings.removeAllDownloadsConfirm	Remove All
 settings.removeAllDownloadsMessage	This deletes every downloaded file from this device. They stay on the server.
@@ -681,6 +673,13 @@ settings.rowRateApp	Rate NextExplorer
 settings.rowSupport	Help & Support
 menu.refresh	Refresh
 select.tableView	Table View
+# ---- save panel downloads (macOS) ----
+browse.progressDownloading	Downloading…
+browse.progressDownloadingIndexed	Downloading %1$lld of %2$lld…
+browse.downloadSavedTo	Saved to %@
+browse.downloadSavedCountTo	Saved %1$lld of %2$lld items to %3$@
+browse.downloadSavedAllTo	Saved %1$lld items to %2$@
+browse.downloadBulkFailed	Couldn't save these items to your device.
 # ---- open with (macOS) ----
 openWith.openIn	Open in %@
 openWith.openWith	Open With
@@ -698,3 +697,25 @@ menu.newTab	New Tab
 browse.actionOpenInNewWindow	Open in New Window
 browse.actionOpenInNewTab	Open in New Tab
 select.viewAs	View
+
+# ---- appearance, personal folder, download queue ----
+settings.rowAppearance	Appearance
+appearance.system	System
+appearance.light	Light
+appearance.dark	Dark
+browse.myFiles	My Files
+browse.myFilesSubtitle	Only visible to you
+downloadQueue.navigationTitle	Download Queue
+downloadQueue.openDownloads	Show Downloads
+downloadQueue.emptyList	No downloads in progress.
+downloadQueue.statusSaved	Saved
+downloadQueue.cancelAll	Cancel all downloads
+downloadQueue.barFailedOne	1 download failed
+downloadQueue.barFailedMany	%lld downloads failed
+downloadQueue.barTitleOne	Downloading %@
+downloadQueue.barTitleMany	Downloading %lld items
+downloadQueue.savedOne	Saved to Downloads
+downloadQueue.savedMany	%lld items saved to Downloads
+downloadQueue.bytesOf	%1$@ of %2$@
+downloadQueue.timeLeft	%@ left
+browse.sectionPersonal	Personal

@@ -94,12 +94,6 @@ browse.searchEverywhere	在所有位置搜尋
 browse.searchFailed	無法搜尋。請檢查連線後重試。
 browse.progressExtracting	正在解壓縮…
 browse.progressCompressing	正在壓縮…
-browse.progressDownloading	正在下載…
-browse.progressDownloadingIndexed	正在下載 %2$lld 個中的第 %1$lld 個…
-browse.downloadSavedTo	已儲存到 %@
-browse.downloadSavedCountTo	已將 %2$lld 個中的 %1$lld 個項目儲存到 %3$@
-browse.downloadSavedAllTo	已將 %1$lld 個項目儲存到 %2$@
-browse.downloadBulkFailed	無法將這些項目儲存到您的裝置。
 browse.offlineBannerTitle	離線
 browse.offlineBannerDetail	正在顯示來自 %@ 的已儲存副本
 browse.actionCopy	拷貝
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	顯示隱藏檔案
 settings.toggleRenderHTML	算繪 HTML 頁面
 settings.toggleRenderMarkdown	算繪 Markdown 檔案
 settings.toggleHaptics	觸覺回饋
-settings.toggleDarkMode	深色模式
 settings.toggleShowThumbnails	顯示縮覽圖
 settings.toggleShowExtensions	顯示副檔名
-settings.toggleRemoveArchives	下載後移除壓縮檔
 settings.toggleKeepClipboard	貼上後保留項目
 settings.toggleKeepClipboardSubtitle	拷貝的項目會保持可貼上到其他檔案夾的狀態。移動的項目一律會被清除。
 settings.rowDateFormat	日期格式
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	使用條款
 settings.rowUserManagement	使用者管理
 settings.rowChangePassword	更改密碼
 settings.rowServer	伺服器
-settings.storageFootnote	下載檔案夾會先在伺服器上將其壓縮為 ZIP。開啟上方的開關，可在儲存到裝置後從伺服器刪除該壓縮檔。移除下載或清除快取僅影響此裝置；伺服器上的內容不會被更動。
+settings.storageFootnote	資料夾以 ZIP 形式下載，伺服器上不會留下任何檔案。刪除下載或清除快取只會影響此裝置，不會更動伺服器上的任何內容。
 settings.removeAllDownloadsTitle	移除所有下載？
 settings.removeAllDownloadsConfirm	全部移除
 settings.removeAllDownloadsMessage	這會從此裝置刪除所有已下載的檔案。它們仍保留在伺服器上。
@@ -627,3 +619,29 @@ menu.newTab	新增標籤頁
 browse.actionOpenInNewWindow	在新視窗中打開
 browse.actionOpenInNewTab	在新標籤頁中打開
 select.viewAs	顯示方式
+settings.rowAppearance	外觀
+appearance.system	跟隨系統
+appearance.light	淺色
+appearance.dark	深色
+browse.myFiles	我的檔案
+browse.myFilesSubtitle	只有你看得到
+downloadQueue.navigationTitle	下載佇列
+downloadQueue.openDownloads	顯示下載
+downloadQueue.emptyList	沒有進行中的下載。
+downloadQueue.statusSaved	已儲存
+downloadQueue.cancelAll	取消所有下載
+downloadQueue.barFailedOne	1 個下載失敗
+downloadQueue.barFailedMany	%lld 個下載失敗
+downloadQueue.barTitleOne	正在下載 %@
+downloadQueue.barTitleMany	正在下載 %lld 個項目
+downloadQueue.savedOne	已儲存到下載
+downloadQueue.savedMany	%lld 個項目已儲存到下載
+downloadQueue.bytesOf	%1$@ / %2$@
+downloadQueue.timeLeft	剩餘 %@
+browse.sectionPersonal	個人
+browse.progressDownloading	正在下載…
+browse.progressDownloadingIndexed	正在下載 %2$lld 個中的第 %1$lld 個…
+browse.downloadSavedTo	已儲存到 %@
+browse.downloadSavedCountTo	已將 %2$lld 個中的 %1$lld 個項目儲存到 %3$@
+browse.downloadSavedAllTo	已將 %1$lld 個項目儲存到 %2$@
+browse.downloadBulkFailed	無法將這些項目儲存到您的裝置。

@@ -36,7 +36,7 @@
                 }
             }
 
-            await store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: false)) {
+            await store.send(.downloadTapped(item)) {
                 $0.isPerformingFileAction = true
             }
             await store.receive(\.downloadCancelled) {
@@ -59,7 +59,7 @@
             }
             store.exhaustivity = .off
 
-            await store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: false))
+            await store.send(.downloadTapped(item))
             await store.receive(\.downloadResponse.success) {
                 $0.lastSavedDownloadURL = target
             }
@@ -93,7 +93,7 @@
             }
             store.exhaustivity = .off
 
-            await store.send(.downloadTapped(folder, .documents, removeArchiveAfterDownload: false))
+            await store.send(.downloadTapped(folder))
             await store.receive(\.downloadResponse.success)
             #expect(try String(contentsOf: target.appendingPathComponent("a.jpg"), encoding: .utf8) == "photo")
             #expect(try String(contentsOf: target.appendingPathComponent("Day1/note.txt"), encoding: .utf8) == "note")

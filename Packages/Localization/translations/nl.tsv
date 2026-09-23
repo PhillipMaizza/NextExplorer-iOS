@@ -94,12 +94,6 @@ browse.searchEverywhere	Overal zoeken
 browse.searchFailed	Zoeken mislukt. Controleer je verbinding en probeer het opnieuw.
 browse.progressExtracting	Uitpakken…
 browse.progressCompressing	Comprimeren…
-browse.progressDownloading	Downloaden…
-browse.progressDownloadingIndexed	%1$lld van %2$lld downloaden…
-browse.downloadSavedTo	Bewaard in %@
-browse.downloadSavedCountTo	%1$lld van %2$lld items bewaard in %3$@
-browse.downloadSavedAllTo	%1$lld items bewaard in %2$@
-browse.downloadBulkFailed	Kan deze items niet op je apparaat bewaren.
 browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Bewaarde kopie van %@ wordt getoond
 browse.actionCopy	Kopiëren
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Verborgen bestanden tonen
 settings.toggleRenderHTML	HTML-pagina's weergeven
 settings.toggleRenderMarkdown	Markdown-bestanden weergeven
 settings.toggleHaptics	Haptische feedback
-settings.toggleDarkMode	Donkere modus
 settings.toggleShowThumbnails	Miniaturen tonen
 settings.toggleShowExtensions	Bestandsextensies tonen
-settings.toggleRemoveArchives	Archieven verwijderen na downloaden
 settings.toggleKeepClipboard	Items behouden na plakken
 settings.toggleKeepClipboardSubtitle	Gekopieerde items blijven klaar om in een andere map te plakken. Verplaatste items worden altijd gewist.
 settings.rowDateFormat	Datumnotatie
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	Gebruiksvoorwaarden
 settings.rowUserManagement	Gebruikersbeheer
 settings.rowChangePassword	Wachtwoord wijzigen
 settings.rowServer	Server
-settings.storageFootnote	Bij het downloaden van een map wordt deze eerst op de server tot een ZIP gecomprimeerd. Zet de schakelaar hierboven aan om dat archief van de server te verwijderen zodra het op je apparaat is bewaard. Downloads verwijderen of de cache wissen heeft alleen invloed op dit apparaat; niets op de server wordt aangeraakt.
+settings.storageFootnote	Mappen worden als ZIP gedownload, zonder iets op de server achter te laten. Downloads verwijderen of de cache wissen heeft alleen invloed op dit apparaat; op de server verandert niets.
 settings.removeAllDownloadsTitle	Alle downloads verwijderen?
 settings.removeAllDownloadsConfirm	Alles verwijderen
 settings.removeAllDownloadsMessage	Hiermee worden alle gedownloade bestanden van dit apparaat verwijderd. Ze blijven op de server.
@@ -627,3 +619,29 @@ menu.newTab	Nieuw tabblad
 browse.actionOpenInNewWindow	Open in nieuw venster
 browse.actionOpenInNewTab	Open in nieuw tabblad
 select.viewAs	Weergave
+settings.rowAppearance	Weergave
+appearance.system	Systeem
+appearance.light	Licht
+appearance.dark	Donker
+browse.myFiles	Mijn bestanden
+browse.myFilesSubtitle	Alleen zichtbaar voor jou
+downloadQueue.navigationTitle	Downloadwachtrij
+downloadQueue.openDownloads	Downloads tonen
+downloadQueue.emptyList	Geen downloads bezig.
+downloadQueue.statusSaved	Opgeslagen
+downloadQueue.cancelAll	Alle downloads annuleren
+downloadQueue.barFailedOne	1 download mislukt
+downloadQueue.barFailedMany	%lld downloads mislukt
+downloadQueue.barTitleOne	%@ downloaden
+downloadQueue.barTitleMany	%lld items downloaden
+downloadQueue.savedOne	Opgeslagen in Downloads
+downloadQueue.savedMany	%lld items opgeslagen in Downloads
+downloadQueue.bytesOf	%1$@ van %2$@
+downloadQueue.timeLeft	nog %@
+browse.sectionPersonal	Persoonlijk
+browse.progressDownloading	Downloaden…
+browse.progressDownloadingIndexed	%1$lld van %2$lld downloaden…
+browse.downloadSavedTo	Bewaard in %@
+browse.downloadSavedCountTo	%1$lld van %2$lld items bewaard in %3$@
+browse.downloadSavedAllTo	%1$lld items bewaard in %2$@
+browse.downloadBulkFailed	Kan deze items niet op je apparaat bewaren.

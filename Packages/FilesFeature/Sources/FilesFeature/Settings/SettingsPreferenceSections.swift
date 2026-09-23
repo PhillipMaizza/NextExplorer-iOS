@@ -151,15 +151,14 @@ struct DisplaySettingsSection: View {
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
     @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
-    @Environment(\.colorScheme) private var systemColorScheme
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
-    private var isDarkModeOn: Binding<Bool> {
+    private var appearance: Binding<AppearanceMode> {
         Binding(
-            get: { hasAppearanceOverride ? prefersDarkModeOverride : systemColorScheme == .dark },
-            set: { newValue in
-                hasAppearanceOverride = true
-                prefersDarkModeOverride = newValue
+            get: { AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride) },
+            set: { mode in
+                hasAppearanceOverride = mode.hasOverride
+                prefersDarkModeOverride = mode.prefersDark
             }
         )
     }
@@ -172,10 +171,27 @@ struct DisplaySettingsSection: View {
     }
 
     var body: some View {
-        if filter.anyMatch([L10n.Settings.toggleDarkMode, L10n.Settings.toggleShowThumbnails, L10n.Settings.rowThumbnailSize, L10n.Settings.toggleShowExtensions, L10n.Settings.toggleShowTabLabels]) {
+        if filter.anyMatch([L10n.Settings.rowAppearance, L10n.Settings.toggleShowThumbnails, L10n.Settings.rowThumbnailSize, L10n.Settings.toggleShowExtensions, L10n.Settings.toggleShowTabLabels]) {
             Section {
-                if filter.matches(L10n.Settings.toggleDarkMode) {
-                    DSToggleRow(title: L10n.Settings.toggleDarkMode, icon: IconKit.darkMode, isOn: isDarkModeOn)
+                if filter.matches(L10n.Settings.rowAppearance) {
+                    Picker(selection: appearance) {
+                        ForEach(AppearanceMode.allCases) { mode in
+                            Text(mode.title).tag(mode)
+                        }
+                    } label: {
+                        Label {
+                            Text(L10n.Settings.rowAppearance).type(.body2(.regular), style: .primaryOnSurface)
+                        } icon: {
+                            IconKit.darkMode
+                                .resizable()
+                                .scaledToFit()
+                                .foregroundStyle(Color.secondaryDS)
+                                .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
+                        }
+                    }
+                    .pickerStyle(.menu)
+                    .tint(Color.secondaryDS)
+                    .hapticFeedback(.selection, trigger: appearance.wrappedValue)
                 }
                 if filter.matches(L10n.Settings.toggleShowThumbnails) {
                     DSToggleRow(
@@ -226,15 +242,11 @@ struct StorageSettingsSection: View {
     let store: StoreOf<SettingsFeature>
     let filter: SettingsSearchFilter
 
-    @AppStorage(AppStorageKeys.removeArchiveAfterDownload) private var removeArchiveAfterDownload = false
     @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
 
     var body: some View {
-        if filter.anyMatch([L10n.Settings.toggleRemoveArchives, L10n.Settings.toggleKeepClipboard, L10n.Settings.rowRemoveAllDownloads, L10n.Settings.rowClearCache]) {
+        if filter.anyMatch([L10n.Settings.toggleKeepClipboard, L10n.Settings.rowRemoveAllDownloads, L10n.Settings.rowClearCache]) {
             Section {
-                if filter.matches(L10n.Settings.toggleRemoveArchives) {
-                    DSToggleRow(title: L10n.Settings.toggleRemoveArchives, icon: IconKit.archivePage, isOn: $removeArchiveAfterDownload)
-                }
                 if filter.matches(L10n.Settings.toggleKeepClipboard) {
                     DSToggleRow(
                         title: L10n.Settings.toggleKeepClipboard,
