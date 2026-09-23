@@ -326,10 +326,12 @@ struct BrowseContentView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            // The Mac table selects natively (click, Command and Shift click), so select mode
+            // is only offered in the other view modes.
             selectSortToolbar(
                 isSelecting: store.isSelecting,
                 isAllSelected: isAllSelected,
-                isSelectAvailable: !store.isSearching && store.hasDisplayedItems,
+                isSelectAvailable: !store.isSearching && store.hasDisplayedItems && viewMode != .table,
                 isGridView: viewMode == .grid,
                 onSelectModeToggled: { store.send(.selectModeToggled) },
                 onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
