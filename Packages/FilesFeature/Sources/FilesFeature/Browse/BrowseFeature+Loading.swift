@@ -80,14 +80,24 @@ extension BrowseFeature {
             state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))
             state.access = cached.access
         }
-        return .concatenate(
-            .run { send in
-                try await send(.itemsResponse(apiResult { try await filesClient.browse(serverURL, directoryPath) }))
-            },
-            .run { send in
-                let favorites = try? await filesClient.favorites(serverURL)
-                await send(.favoritesResponse(favorites ?? []))
+        let features: Effect<Action> = directoryPath.isEmpty
+            ? .run { send in
+                // Offline or an older server: keep whatever the last successful answer was.
+                guard let features = try? await filesClient.serverFeatures(serverURL) else { return }
+                await send(.serverFeaturesResponse(features))
             }
+            : .none
+        return .merge(
+            .concatenate(
+                .run { send in
+                    try await send(.itemsResponse(apiResult { try await filesClient.browse(serverURL, directoryPath) }))
+                },
+                .run { send in
+                    let favorites = try? await filesClient.favorites(serverURL)
+                    await send(.favoritesResponse(favorites ?? []))
+                }
+            ),
+            features
         )
         .cancellable(id: CancelID.load, cancelInFlight: true)
     }

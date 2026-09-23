@@ -94,12 +94,6 @@ browse.searchEverywhere	Sök överallt
 browse.searchFailed	Sökningen misslyckades. Kontrollera anslutningen och försök igen.
 browse.progressExtracting	Extraherar…
 browse.progressCompressing	Komprimerar…
-browse.progressDownloading	Laddar ner…
-browse.progressDownloadingIndexed	Laddar ner %1$lld av %2$lld…
-browse.downloadSavedTo	Sparad i %@
-browse.downloadSavedCountTo	Sparade %1$lld av %2$lld objekt i %3$@
-browse.downloadSavedAllTo	Sparade %1$lld objekt i %2$@
-browse.downloadBulkFailed	Det gick inte att spara dessa objekt på din enhet.
 browse.offlineBannerTitle	Offline
 browse.offlineBannerDetail	Visar en sparad kopia från %@
 browse.actionCopy	Kopiera
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	Visa dolda filer
 settings.toggleRenderHTML	Rendera HTML-sidor
 settings.toggleRenderMarkdown	Rendera Markdown-filer
 settings.toggleHaptics	Haptik
-settings.toggleDarkMode	Mörkt läge
 settings.toggleShowThumbnails	Visa miniatyrer
 settings.toggleShowExtensions	Visa filändelser
-settings.toggleRemoveArchives	Ta bort arkiv efter nedladdning
 settings.toggleKeepClipboard	Behåll objekt efter inklistring
 settings.toggleKeepClipboardSubtitle	Kopierade objekt förblir redo att klistras in i en annan mapp. Flyttade objekt rensas alltid.
 settings.rowDateFormat	Datumformat
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	Användarvillkor
 settings.rowUserManagement	Användarhantering
 settings.rowChangePassword	Byt lösenord
 settings.rowServer	Server
-settings.storageFootnote	Att ladda ner en mapp komprimerar den först till en ZIP på servern. Aktivera reglaget ovan för att radera det arkivet från servern när det har sparats på din enhet. Att ta bort nedladdningar eller rensa cachen påverkar bara den här enheten; inget på servern rörs.
+settings.storageFootnote	Mappar laddas ned som ZIP utan att något lämnas kvar på servern. Att ta bort nedladdningar eller rensa cachen påverkar bara den här enheten; inget på servern ändras.
 settings.removeAllDownloadsTitle	Ta bort alla nedladdningar?
 settings.removeAllDownloadsConfirm	Ta bort alla
 settings.removeAllDownloadsMessage	Detta raderar alla nedladdade filer från den här enheten. De finns kvar på servern.
@@ -604,3 +596,26 @@ offline.manageEmpty	Inget är hämtat för offlineanvändning.
 offline.preferOfflineToggle	Spela upp hämtade kopior
 offline.preferOfflineSubtitle	Använd en hämtad video i stället för att strömma när den finns.
 offline.tunnelSpeedNote	Att nå servern via en fjärrtunnel kan göra nedladdningar långsamma. Anslut till samma nätverk och använd serverns lokala adress för stora filer.
+settings.rowAppearance	Utseende
+appearance.system	System
+appearance.light	Ljust
+appearance.dark	Mörkt
+browse.myFiles	Mina filer
+browse.myFilesSubtitle	Syns bara för dig
+downloadQueue.navigationTitle	Nedladdningskö
+downloadQueue.openDownloads	Visa nedladdningar
+downloadQueue.emptyList	Inga pågående nedladdningar.
+downloadQueue.statusSaved	Sparad
+downloadQueue.cancelAll	Avbryt alla nedladdningar
+downloadQueue.barFailedOne	1 nedladdning misslyckades
+downloadQueue.barFailedMany	%lld nedladdningar misslyckades
+downloadQueue.barTitleOne	Laddar ned %@
+downloadQueue.barTitleMany	Laddar ned %lld objekt
+downloadQueue.savedOne	Sparad i Nedladdningar
+downloadQueue.savedMany	%lld objekt sparade i Nedladdningar
+downloadQueue.bytesOf	%1$@ av %2$@
+downloadQueue.timeLeft	%@ kvar
+browse.sectionPersonal	Personligt
+settings.sectionSupport	Support
+settings.rowRateApp	Betygsätt NextExplorer
+settings.rowSupport	Hjälp och support

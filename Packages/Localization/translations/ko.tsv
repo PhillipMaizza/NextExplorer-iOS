@@ -94,12 +94,6 @@ browse.searchEverywhere	모든 위치에서 검색
 browse.searchFailed	검색할 수 없습니다. 연결을 확인하고 다시 시도하세요.
 browse.progressExtracting	압축 푸는 중…
 browse.progressCompressing	압축하는 중…
-browse.progressDownloading	다운로드 중…
-browse.progressDownloadingIndexed	%2$lld개 중 %1$lld개 다운로드 중…
-browse.downloadSavedTo	%@에 저장됨
-browse.downloadSavedCountTo	%2$lld개 중 %1$lld개 항목을 %3$@에 저장함
-browse.downloadSavedAllTo	%1$lld개 항목을 %2$@에 저장함
-browse.downloadBulkFailed	이 항목을 기기에 저장할 수 없습니다.
 browse.offlineBannerTitle	오프라인
 browse.offlineBannerDetail	%@의 저장된 사본을 표시하는 중
 browse.actionCopy	복사
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	숨김 파일 표시
 settings.toggleRenderHTML	HTML 페이지 렌더링
 settings.toggleRenderMarkdown	Markdown 파일 렌더링
 settings.toggleHaptics	햅틱
-settings.toggleDarkMode	다크 모드
 settings.toggleShowThumbnails	썸네일 표시
 settings.toggleShowExtensions	파일 확장자 표시
-settings.toggleRemoveArchives	다운로드 후 압축 파일 제거
 settings.toggleKeepClipboard	붙여넣기 후 항목 유지
 settings.toggleKeepClipboardSubtitle	복사한 항목은 다른 폴더에 붙여넣을 수 있도록 유지됩니다. 이동한 항목은 항상 지워집니다.
 settings.rowDateFormat	날짜 형식
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	이용약관
 settings.rowUserManagement	사용자 관리
 settings.rowChangePassword	비밀번호 변경
 settings.rowServer	서버
-settings.storageFootnote	폴더를 다운로드하면 서버에서 먼저 ZIP으로 압축합니다. 기기에 저장된 후 서버에서 해당 압축 파일을 삭제하려면 위의 스위치를 켜세요. 다운로드 제거나 캐시 지우기는 이 기기에만 영향을 주며 서버의 데이터는 변경되지 않습니다.
+settings.storageFootnote	폴더는 ZIP으로 다운로드되며 서버에는 아무것도 남지 않습니다. 다운로드를 삭제하거나 캐시를 지워도 이 기기에만 적용되며 서버에는 영향을 주지 않습니다.
 settings.removeAllDownloadsTitle	모든 다운로드를 제거할까요?
 settings.removeAllDownloadsConfirm	모두 제거
 settings.removeAllDownloadsMessage	이 기기에서 다운로드한 모든 파일을 삭제합니다. 서버에는 남아 있습니다.
@@ -604,3 +596,26 @@ offline.manageEmpty	오프라인 사용을 위해 다운로드된 항목이 없�
 offline.preferOfflineToggle	다운로드한 사본 재생
 offline.preferOfflineSubtitle	사용 가능할 때 스트리밍 대신 다운로드한 동영상을 사용합니다.
 offline.tunnelSpeedNote	원격 터널을 통해 서버에 연결하면 다운로드가 느려질 수 있습니다. 큰 파일은 같은 네트워크에 연결한 뒤 서버의 로컬 주소를 사용하세요.
+settings.rowAppearance	화면 모드
+appearance.system	시스템
+appearance.light	라이트
+appearance.dark	다크
+browse.myFiles	내 파일
+browse.myFilesSubtitle	나만 볼 수 있음
+downloadQueue.navigationTitle	다운로드 대기열
+downloadQueue.openDownloads	다운로드 보기
+downloadQueue.emptyList	진행 중인 다운로드가 없습니다.
+downloadQueue.statusSaved	저장됨
+downloadQueue.cancelAll	모든 다운로드 취소
+downloadQueue.barFailedOne	다운로드 1개 실패
+downloadQueue.barFailedMany	다운로드 %lld개 실패
+downloadQueue.barTitleOne	%@ 다운로드 중
+downloadQueue.barTitleMany	항목 %lld개 다운로드 중
+downloadQueue.savedOne	다운로드에 저장됨
+downloadQueue.savedMany	항목 %lld개가 다운로드에 저장됨
+downloadQueue.bytesOf	%1$@ / %2$@
+downloadQueue.timeLeft	%@ 남음
+browse.sectionPersonal	개인
+settings.sectionSupport	지원
+settings.rowRateApp	NextExplorer 평가하기
+settings.rowSupport	도움말 및 지원

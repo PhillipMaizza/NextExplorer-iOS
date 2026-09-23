@@ -15,7 +15,6 @@ struct AppStorageKeysTests {
         #expect(AppStorageKeys.renderMarkdownPages == "renderMarkdownPages")
         #expect(AppStorageKeys.hapticsEnabled == "hapticsEnabled")
         #expect(AppStorageKeys.showFilenameExtensions == "showFilenameExtensions")
-        #expect(AppStorageKeys.removeArchiveAfterDownload == "removeArchiveAfterDownload")
         #expect(AppStorageKeys.keepClipboardAfterCopy == "keepClipboardAfterCopy")
         #expect(AppStorageKeys.browseViewMode == "browseViewMode")
         #expect(AppStorageKeys.favoritesViewMode == "favoritesViewMode")

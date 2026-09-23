@@ -62,8 +62,8 @@ public struct MainTabView: View {
     public var body: some View {
         shell
             .overlay(alignment: .bottom) {
-                if store.uploads.isBarVisible {
-                    uploadStatusBar
+                if isAnyTransferBarVisible {
+                    TransferStatusBars(store: store)
                         .background(
                             GeometryReader { proxy in
                                 Color.clear
@@ -80,8 +80,10 @@ public struct MainTabView: View {
             }
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isBarVisible)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.uploads.isActive)
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isBarVisible)
+            .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isActive)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: breadcrumbClearance)
-            .onChange(of: store.uploads.isBarVisible) { _, visible in
+            .onChange(of: isAnyTransferBarVisible) { _, visible in
                 $isUploadBarVisible.withLock { $0 = visible }
             }
             .sheet(isPresented: Binding(
@@ -90,11 +92,32 @@ public struct MainTabView: View {
             )) {
                 UploadsView(store: store.scope(state: \.uploads, action: \.uploads))
             }
+            .sheet(isPresented: Binding(
+                get: { store.downloadQueue.isSheetPresented },
+                set: { store.send(.downloadQueue(.sheetPresented($0))) }
+            )) {
+                DownloadQueueView(
+                    store: store.scope(state: \.downloadQueue, action: \.downloadQueue),
+                    onOpenDownloads: { store.send(.openDownloadsTab) }
+                )
+            }
             .dsToast(Binding(
                 get: { uploadToastMessage },
                 set: {
                     if $0 == nil {
                         store.send(.dismissUploadToast)
+                    }
+                }
+            ), extraBottomInset: Constants.toastTabBarClearance)
+            .dsToast(Binding(
+                get: {
+                    store.downloadToast.map { message in
+                        .success(message, actionTitle: L10n.Browse.open) { store.send(.openDownloadsTab) }
+                    }
+                },
+                set: {
+                    if $0 == nil {
+                        store.send(.dismissDownloadToast)
                     }
                 }
             ), extraBottomInset: Constants.toastTabBarClearance)
@@ -124,23 +147,8 @@ public struct MainTabView: View {
         $uploadBarHeight.withLock { $0 = height }
     }
 
-    @ViewBuilder
-    private var uploadStatusBar: some View {
-        if store.uploads.isActive {
-            UploadProgressBar(
-                title: uploadBarTitle,
-                progress: store.uploads.currentJob?.progress ?? 0,
-                onTap: { store.send(.uploads(.barTapped)) },
-                onCancelAll: { store.send(.uploads(.cancelAllTapped), animation: .default) }
-            )
-        } else {
-            UploadFailedBar(
-                count: store.uploads.failedCount,
-                onRetry: { store.send(.uploads(.retryAllFailedTapped), animation: .default) },
-                onDismiss: { store.send(.uploads(.clearFinishedTapped), animation: .default) },
-                onTap: { store.send(.uploads(.barTapped)) }
-            )
-        }
+    private var isAnyTransferBarVisible: Bool {
+        store.uploads.isBarVisible || store.downloadQueue.isBarVisible
     }
 
     /// Regular width shows the sidebar split view; compact keeps the bottom tab bar.
@@ -419,14 +427,6 @@ public struct MainTabView: View {
         default:
             return 0
         }
-    }
-
-    private var uploadBarTitle: String {
-        let uploads = store.uploads
-        if uploads.remainingCount <= 1, let name = uploads.currentJob?.fileName {
-            return L10n.Uploads.barTitleOne(name)
-        }
-        return L10n.Uploads.barTitleMany(uploads.remainingCount)
     }
 
     private var uploadToastMessage: DSToastMessage? {

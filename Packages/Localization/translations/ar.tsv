@@ -94,12 +94,6 @@ browse.searchEverywhere	البحث في كل مكان
 browse.searchFailed	تعذّر البحث. تحقق من اتصالك وأعد المحاولة.
 browse.progressExtracting	جارٍ الاستخراج…
 browse.progressCompressing	جارٍ الضغط…
-browse.progressDownloading	جارٍ التنزيل…
-browse.progressDownloadingIndexed	جارٍ تنزيل %1$lld من %2$lld…
-browse.downloadSavedTo	تم الحفظ في %@
-browse.downloadSavedCountTo	تم حفظ %1$lld من %2$lld عنصر في %3$@
-browse.downloadSavedAllTo	تم حفظ %1$lld عنصر في %2$@
-browse.downloadBulkFailed	تعذّر حفظ هذه العناصر على جهازك.
 browse.offlineBannerTitle	غير متصل
 browse.offlineBannerDetail	يتم عرض نسخة محفوظة من %@
 browse.actionCopy	نسخ
@@ -298,10 +292,8 @@ settings.toggleShowHiddenFiles	إظهار الملفات المخفية
 settings.toggleRenderHTML	عرض صفحات HTML
 settings.toggleRenderMarkdown	عرض ملفات Markdown
 settings.toggleHaptics	الاستجابة اللمسية
-settings.toggleDarkMode	الوضع الداكن
 settings.toggleShowThumbnails	إظهار الصور المصغّرة
 settings.toggleShowExtensions	إظهار امتدادات الملفات
-settings.toggleRemoveArchives	إزالة الأرشيفات بعد التنزيل
 settings.toggleKeepClipboard	الاحتفاظ بالعناصر بعد اللصق
 settings.toggleKeepClipboardSubtitle	تبقى العناصر المنسوخة جاهزة للصق في مجلد آخر. العناصر المنقولة تُمسح دائمًا.
 settings.rowDateFormat	تنسيق التاريخ
@@ -315,7 +307,7 @@ settings.rowTermsOfUse	شروط الاستخدام
 settings.rowUserManagement	إدارة المستخدمين
 settings.rowChangePassword	تغيير كلمة السر
 settings.rowServer	الخادم
-settings.storageFootnote	يؤدي تنزيل مجلد إلى ضغطه أولاً كملف ZIP على الخادم. فعّل المفتاح أعلاه لحذف ذلك الأرشيف من الخادم بمجرد حفظه على جهازك. إزالة التنزيلات أو مسح ذاكرة التخزين المؤقت يؤثر على هذا الجهاز فقط؛ لا يتأثر أي شيء على الخادم.
+settings.storageFootnote	تُنزَّل المجلدات كملف ZIP دون ترك أي شيء على الخادم. إزالة التنزيلات أو مسح ذاكرة التخزين المؤقت يؤثر على هذا الجهاز فقط؛ لا يتأثر أي شيء على الخادم.
 settings.removeAllDownloadsTitle	إزالة جميع التنزيلات؟
 settings.removeAllDownloadsConfirm	إزالة الكل
 settings.removeAllDownloadsMessage	يؤدي هذا إلى حذف كل ملف تم تنزيله من هذا الجهاز. تبقى على الخادم.
@@ -604,3 +596,26 @@ offline.manageEmpty	لا يوجد شيء تم تنزيله للاستخدام د
 offline.preferOfflineToggle	تشغيل النسخ التي جرى تنزيلها
 offline.preferOfflineSubtitle	استخدم مقطع فيديو تم تنزيله بدلاً من البث عندما يكون متاحًا.
 offline.tunnelSpeedNote	قد يؤدي الوصول إلى خادمك عبر نفق بعيد إلى إبطاء التنزيلات. للملفات الكبيرة، اتصل بالشبكة نفسها واستخدم العنوان المحلي لخادمك.
+settings.rowAppearance	المظهر
+appearance.system	النظام
+appearance.light	فاتح
+appearance.dark	داكن
+browse.myFiles	ملفاتي
+browse.myFilesSubtitle	مرئي لك فقط
+downloadQueue.navigationTitle	قائمة التنزيل
+downloadQueue.openDownloads	عرض التنزيلات
+downloadQueue.emptyList	لا توجد تنزيلات قيد التقدم.
+downloadQueue.statusSaved	تم الحفظ
+downloadQueue.cancelAll	إلغاء جميع التنزيلات
+downloadQueue.barFailedOne	فشل تنزيل واحد
+downloadQueue.barFailedMany	فشل %lld تنزيل
+downloadQueue.barTitleOne	جارٍ تنزيل %@
+downloadQueue.barTitleMany	جارٍ تنزيل %lld عنصر
+downloadQueue.savedOne	تم الحفظ في التنزيلات
+downloadQueue.savedMany	تم حفظ %lld عنصر في التنزيلات
+downloadQueue.bytesOf	%1$@ من %2$@
+downloadQueue.timeLeft	متبقٍ %@
+browse.sectionPersonal	شخصي
+settings.sectionSupport	الدعم
+settings.rowRateApp	قيّم NextExplorer
+settings.rowSupport	المساعدة والدعم

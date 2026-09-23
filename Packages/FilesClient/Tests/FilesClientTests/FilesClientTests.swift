@@ -894,6 +894,108 @@ struct FilesClientLiveTests {
         }
     }
 
+    @Test
+    func compressItemDecodesTheDoneLineOfAnNDJSONProgressStream() async throws {
+        let ndjson = """
+        {"type":"start","name":"Documents.zip"}
+        {"type":"progress","percent":0}
+        {"type":"progress","percent":100}
+        {"type":"done","success":true,"item":{"name":"Documents.zip","path":"","kind":"zip","size":157,"dateModified":"2026-09-23T15:52:27.993Z"}}
+
+        """
+        stub(statusCode: 200, body: Data(ndjson.utf8), headers: ["Content-Type": "application/x-ndjson; charset=utf-8"])
+        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+
+        let compressed = try await makeClient().compressItem(serverURL, item)
+
+        #expect(compressed.name == "Documents.zip")
+        #expect(compressed.size == 157)
+    }
+
+    @Test
+    func compressItemSurfacesTheErrorLineOfAnNDJSONStream() async throws {
+        let ndjson = """
+        {"type":"start","name":"Documents.zip"}
+        {"type":"error","message":"Disk full","code":"COMPRESS_FAILED"}
+        """
+        stub(statusCode: 200, body: Data(ndjson.utf8), headers: ["Content-Type": "application/x-ndjson"])
+        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+        await #expect(throws: FilesClientError.serverMessage(statusCode: 500, message: "Disk full")) {
+            _ = try await makeClient().compressItem(serverURL, item)
+        }
+    }
+
+    @Test
+    func extractZipDecodesTheDoneLineOfAnNDJSONProgressStream() async throws {
+        let ndjson = """
+        {"type":"start","name":"photos"}
+        {"type":"done","success":true,"item":{"name":"photos","path":"Files","kind":"directory","size":64,"dateModified":"2026-09-23T15:52:27.993Z"},"items":[]}
+        """
+        stub(statusCode: 200, body: Data(ndjson.utf8), headers: ["Content-Type": "application/x-ndjson"])
+        let archive = FileItem(name: "photos.zip", path: "Files", dateModified: Date(), size: 10, kind: "zip")
+
+        let extracted = try await makeClient().extractZip(serverURL, archive)
+
+        #expect(extracted.name == "photos")
+        #expect(extracted.isDirectory)
+    }
+
+    @Test
+    func anNDJSONStreamWithoutADoneLineIsADecodingError() throws {
+        let data = Data(#"{"type":"start","name":"x.zip"}"#.utf8)
+        #expect(throws: FilesClientError.self) {
+            _ = try FilesService.decodeArchiveOperation(FilesService.CompressItemEnvelope.self, from: data)
+        }
+    }
+
+    @Test
+    func evictionNeverDeletesTheSlotItWasAskedToProtect() throws {
+        let item = FileItem(name: "huge-\(UUID().uuidString).mkv", path: "Evict", dateModified: Date(), size: 600_000_000, kind: "mkv")
+        let slot = FilesService.previewCacheDirectory(for: item, namespace: FilesService.rawDownloadCacheNamespace)
+        try FileManager.default.createDirectory(at: slot, withIntermediateDirectories: true)
+        let fileURL = slot.appendingPathComponent(item.name)
+        FileManager.default.createFile(atPath: fileURL.path, contents: nil)
+        let handle = try FileHandle(forWritingTo: fileURL)
+        try handle.truncate(atOffset: UInt64(FilesService.previewCacheMaxBytes) + 1)
+        try handle.close()
+        defer { try? FileManager.default.removeItem(at: slot) }
+
+        FilesService.evictPreviewCacheIfNeeded(protecting: slot)
+        #expect(FileManager.default.fileExists(atPath: fileURL.path), "the file just downloaded must survive even when it alone exceeds the budget")
+
+        FilesService.evictPreviewCacheIfNeeded()
+        #expect(!FileManager.default.fileExists(atPath: fileURL.path))
+    }
+
+    // MARK: downloadItem
+
+    @Test
+    func downloadItemPostsTheFolderPathAndReturnsAFileTheCallerOwns() async throws {
+        stub(statusCode: 200, body: Data("PK-zip-bytes".utf8), headers: ["Content-Type": "application/zip"])
+        StubURLProtocol.capturedRequest = nil
+        let folder = FileItem(name: "Photos", path: "Files", dateModified: Date(), size: 0, kind: "directory")
+
+        let url = try await makeClient().downloadItem(serverURL, folder) { _ in }
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        #expect(try Data(contentsOf: url) == Data("PK-zip-bytes".utf8))
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.httpMethod == "POST")
+        #expect(request.url?.path == "/api/download")
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        let bodyJSON = try #require(try JSONSerialization.jsonObject(with: body) as? [String: String])
+        #expect(bodyJSON == ["path": "Files/Photos"])
+    }
+
+    @Test
+    func downloadItemMapsAServerErrorAndLeavesNoFileBehind() async throws {
+        stub(statusCode: 500, body: Data())
+        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 0, kind: "mkv")
+        await #expect(throws: FilesClientError.server(statusCode: 500)) {
+            _ = try await makeClient().downloadItem(serverURL, item) { _ in }
+        }
+    }
+
     // MARK: uploadFile
 
     private func makeTempFile(_ name: String, contents: String) throws -> URL {

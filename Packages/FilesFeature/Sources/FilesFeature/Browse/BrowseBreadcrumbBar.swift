@@ -76,7 +76,11 @@ struct BrowseBreadcrumbBar: View {
                     segment(title: rootTitle, path: rootPath, icon: rootIcon)
                     ForEach(pathSegments.indices, id: \.self) { index in
                         chevron
-                        segment(title: pathSegments[index], path: cumulativePath(through: index), icon: nil)
+                        segment(
+                            title: PersonalSpace.displayName(forSegment: pathSegments[index], isFirstSegment: index == 0 && rootPath.isEmpty),
+                            path: cumulativePath(through: index),
+                            icon: nil
+                        )
                     }
                     // Trailing spacer doubling as the scroll anchor: keeps the rightmost
                     // segment readable (not flush against the edge) when scrolled to the end,

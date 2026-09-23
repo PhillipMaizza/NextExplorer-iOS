@@ -71,3 +71,18 @@ struct ServerFeaturesVolumeUsageTests {
         #expect(!features.isVolumeUsageEnabled)
     }
 }
+
+@Suite("ServerFeatures personal folders")
+struct ServerFeaturesPersonalTests {
+    @Test("decodes personal.enabled")
+    func decodesFlag() throws {
+        let features = try JSONDecoder().decode(ServerFeatures.self, from: Data(#"{"personal": {"enabled": true}}"#.utf8))
+        #expect(features.isPersonalEnabled)
+    }
+
+    @Test("defaults to false when the section is absent")
+    func defaultsFalse() throws {
+        let features = try JSONDecoder().decode(ServerFeatures.self, from: Data("{}".utf8))
+        #expect(!features.isPersonalEnabled)
+    }
+}

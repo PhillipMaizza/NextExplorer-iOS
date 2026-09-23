@@ -13,7 +13,6 @@ import SwiftUI
 struct BrowsePreviewRouter: View {
     let store: StoreOf<BrowseFeature>
     let item: FileItem
-    let removeArchiveAfterDownload: Bool
     let onShareTarget: (FileItem) -> Void
     /// Only the image gallery uses this: reports the swiped-to image so the cover's `.zoom`
     /// source follows the current page. Every other branch previews a single item.
@@ -55,7 +54,7 @@ struct BrowsePreviewRouter: View {
                     store.send(.renameTapped(item))
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                    store.send(.downloadTapped(item))
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? {
                     store.send(.deleteTapped(item))
@@ -65,7 +64,7 @@ struct BrowsePreviewRouter: View {
             let onShare: (() -> Void)? = (store.access?.canShare ?? false) ? { onShareTarget(item) } : nil
             let onRename: (() -> Void)? = (store.access?.canWrite ?? false) ? { store.send(.renameTapped(item)) } : nil
             let onDownload: (() -> Void)? = (store.access?.canDownload ?? false) ? {
-                store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                store.send(.downloadTapped(item))
             } : nil
             let onDelete: (() -> Void)? = (store.access?.canDelete ?? false) ? { store.send(.deleteTapped(item)) } : nil
 
@@ -93,7 +92,7 @@ struct BrowsePreviewRouter: View {
                     store.send(.renameTapped(current))
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? { current in
-                    store.send(.downloadTapped(current, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                    store.send(.downloadTapped(current))
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? { current in
                     store.send(.deleteTapped(current))
@@ -112,7 +111,7 @@ struct BrowsePreviewRouter: View {
                     store.send(.renameTapped(item))
                 } : nil,
                 onDownload: (store.access?.canDownload ?? false) ? {
-                    store.send(.downloadTapped(item, .documents, removeArchiveAfterDownload: removeArchiveAfterDownload))
+                    store.send(.downloadTapped(item))
                 } : nil,
                 onDelete: (store.access?.canDelete ?? false) ? {
                     store.send(.deleteTapped(item))

@@ -87,7 +87,7 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(ExtractZipBody(path: item.id))
-        let envelope = try await sendReportingMessage(request, decoding: ExtractZipEnvelope.self)
+        let envelope = try await sendArchiveOperation(request, decoding: ExtractZipEnvelope.self)
         return envelope.item
     }
 
@@ -104,7 +104,7 @@ extension FilesService {
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
         }
-        let envelope = try await sendReportingMessage(request, decoding: CompressItemEnvelope.self)
+        let envelope = try await sendArchiveOperation(request, decoding: CompressItemEnvelope.self)
         return envelope.item
     }
 

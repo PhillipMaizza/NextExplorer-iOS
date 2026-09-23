@@ -5,6 +5,11 @@ import FilesClient
 import Localization
 import SwiftUI
 
+private enum Metrics {
+    /// Room under the version footer so the last rows clear the floating tab bar comfortably.
+    static let listBottomPadding: CGFloat = .space48
+}
+
 struct SettingsView: View {
     @Bindable var store: StoreOf<SettingsFeature>
 
@@ -81,10 +86,12 @@ struct SettingsView: View {
 
                 StorageSettingsSection(store: store, filter: filter)
                 OfflineSettingsSection(store: store, filter: filter)
+                SupportSettingsSection(filter: filter)
                 LegalSettingsSection(filter: filter)
                 LicensesSettingsSection(store: store, filter: filter)
             }
             .scrollContentBackground(.hidden)
+            .contentMargins(.bottom, Metrics.listBottomPadding, for: .scrollContent)
             .backgroundGradient()
             .dismissKeyboardOnTap()
             .safeAreaInset(edge: .top, spacing: 0) {

@@ -27,6 +27,8 @@ public struct BrowseTabFeature {
         /// Refetches only the screens (root or pushed) whose `directoryPath` equals `path`.
         /// Sent after an upload finishes so just the affected folder reloads.
         case refreshDirectory(path: String)
+        /// A download landed: recompute the "available offline" badges on every live screen.
+        case offlineAvailabilityChanged
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -34,6 +36,7 @@ public struct BrowseTabFeature {
             case openDownloadsTapped
             case goToSharedTab
             case uploadRequested([PendingUpload])
+            case downloadRequested([FileItem])
         }
     }
 
@@ -69,6 +72,16 @@ public struct BrowseTabFeature {
             case let .root(.delegate(.uploadRequested(files))),
                  let .path(.element(id: _, action: .delegate(.uploadRequested(files)))):
                 return .send(.delegate(.uploadRequested(files)))
+
+            case let .root(.delegate(.downloadRequested(items))),
+                 let .path(.element(id: _, action: .delegate(.downloadRequested(items)))):
+                return .send(.delegate(.downloadRequested(items)))
+
+            case .offlineAvailabilityChanged:
+                return .merge(
+                    [.send(.root(.computeOfflineAvailability))]
+                        + state.path.ids.map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) }
+                )
 
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
                 state.path.append(BrowseNavigation.screen(for: item, serverURL: state.root.serverURL))

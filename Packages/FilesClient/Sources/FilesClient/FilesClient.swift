@@ -1,6 +1,7 @@
 import CoreModels
 import DependenciesMacros
 import Foundation
+import NetworkClient
 
 @DependencyClient
 public struct FilesClient: Sendable {
@@ -104,6 +105,15 @@ public struct FilesClient: Sendable {
         _ serverURL: URL,
         _ item: FileItem,
         _ onProgress: @Sendable @escaping (_ fraction: Double) -> Void
+    ) async throws -> URL
+    /// `POST /api/download` for the Downloads queue: a file streams back verbatim, a folder as a
+    /// zip the server builds on the fly (no archive left on the server). Returns a temporary file
+    /// the caller owns and must move or delete. `onProgress` reports bytes received, with the total
+    /// when the server sends one (a streamed folder zip has none).
+    public var downloadItem: @Sendable (
+        _ serverURL: URL,
+        _ item: FileItem,
+        _ onProgress: @Sendable @escaping (_ progress: TransferProgress) -> Void
     ) async throws -> URL
     /// Drops pooled download connections so the next offline transfer opens a fresh socket. The engine
     /// calls this at the start of a run: after the app has sat idle, a reused keep alive connection may
