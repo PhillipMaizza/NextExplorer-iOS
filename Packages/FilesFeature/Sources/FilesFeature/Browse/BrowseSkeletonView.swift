@@ -27,7 +27,7 @@ struct BrowseSkeletonView: View {
     /// trailing chevron, which survive `.redacted` as gold blocks. Uniform file rows read as
     /// a clean skeleton. Built once — this view can stay mounted at zero opacity behind a
     /// crossfade, so a per-render rebuild would be wasted work.
-    private static let placeholderItems: [FileItem] = Constants.placeholderShapes.enumerated().map { index, shape in
+    static let placeholderItems: [FileItem] = Constants.placeholderShapes.enumerated().map { index, shape in
         FileItem(
             name: String(repeating: Constants.placeholderNameChar, count: shape.nameLength),
             path: "\(Constants.skeleton)\(index)",

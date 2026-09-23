@@ -17,7 +17,8 @@
         }()
     }
 
-    private enum Metrics {
+    /// Column layout shared with `MacBrowseTableSkeleton`, so loading and loaded line up.
+    enum MacBrowseTableMetrics {
         static let iconSize: CGFloat = .iconSmall
         static let nameColumnMinWidth: CGFloat = 220
         static let dateColumnWidth: CGFloat = 170
@@ -52,23 +53,23 @@
                         Text(item.name).lineLimit(1).truncationMode(.middle)
                     }
                 }
-                .width(min: Metrics.nameColumnMinWidth)
+                .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
                 TableColumn(L10n.Sort.dateModified, value: \.dateModified) { item in
                     Text(dateFormat.string(from: item.dateModified, includeTime: true))
                         .foregroundStyle(Color.secondaryDS)
                 }
-                .width(Metrics.dateColumnWidth)
+                .width(MacBrowseTableMetrics.dateColumnWidth)
                 TableColumn(L10n.Sort.size, value: \.size) { item in
                     Text(item.isDirectory ? "" : TableFormat.byteFormatter.string(fromByteCount: item.size))
                         .foregroundStyle(Color.secondaryDS)
                         .monospacedDigit()
                 }
-                .width(Metrics.sizeColumnWidth)
+                .width(MacBrowseTableMetrics.sizeColumnWidth)
                 TableColumn(L10n.Sort.kind, value: \.kind) { item in
                     Text(item.isDirectory ? L10n.FileInfo.navigationTitleFolder : item.kind.uppercased())
                         .foregroundStyle(Color.secondaryDS)
                 }
-                .width(Metrics.kindColumnWidth)
+                .width(MacBrowseTableMetrics.kindColumnWidth)
             } rows: {
                 ForEach(items) { item in
                     TableRow(item)
@@ -121,10 +122,10 @@
                     .resizable()
                     .scaledToFit()
                     .foregroundStyle(Color.accent)
-                    .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+                    .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
             } else {
                 FileTypeIcon(kind: item.kind)
-                    .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+                    .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
             }
         }
 
