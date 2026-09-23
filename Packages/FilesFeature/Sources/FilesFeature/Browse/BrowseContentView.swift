@@ -260,7 +260,12 @@ struct BrowseContentView: View {
     /// reasonable time.
     private var browsingContent: some View {
         Group {
-            if isInitialLoad {
+            if isInitialLoad, viewMode == .table {
+                #if os(macOS)
+                    MacBrowseTableSkeleton()
+                        .transition(.opacity)
+                #endif
+            } else if isInitialLoad {
                 BrowseSkeletonView(
                     isGridView: viewMode == .grid,
                     gridColumns: gridColumns,
@@ -357,10 +362,13 @@ struct BrowseContentView: View {
                     }
                 }
             ) {
-                Button {
-                    isSortSheetPresented = true
-                } label: {
-                    Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
+                // The Mac table sorts from its column headers, so only the other modes need this.
+                if viewMode != .table {
+                    Button {
+                        isSortSheetPresented = true
+                    } label: {
+                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
+                    }
                 }
             }
             #if os(iOS)
