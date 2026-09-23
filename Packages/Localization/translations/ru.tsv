@@ -609,3 +609,21 @@ menu.support	Поддержка NextExplorer
 settings.sectionSupport	Поддержка
 settings.rowRateApp	Оценить NextExplorer
 settings.rowSupport	Помощь и поддержка
+menu.refresh	Обновить
+select.tableView	Вид таблицы
+openWith.openIn	Открыть в %@
+openWith.openWith	Открыть в программе
+openWith.viewAsText	Показать как текст
+openWith.failed	Не удалось открыть этот файл.
+browse.showInFinder	Показать в Finder
+browse.actionCut	Вырезать
+browse.clipboardCutOne	%@ готов к перемещению
+browse.clipboardCutMany	Объектов готово к перемещению: %lld
+menu.enclosingFolder	Родительская папка
+common.more	Еще
+openWith.print	Напечатать…
+menu.newWindow	Новое окно
+menu.newTab	Новая вкладка
+browse.actionOpenInNewWindow	Открыть в новом окне
+browse.actionOpenInNewTab	Открыть в новой вкладке
+select.viewAs	Вид

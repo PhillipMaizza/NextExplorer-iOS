@@ -66,8 +66,11 @@ public struct DSSpinner: View {
             Circle()
                 .trim(from: 0, to: Constants.trimEnd)
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-                .rotationEffect(.degrees(isAnimating ? Constants.fullRotation : 0))
-                .animation(.linear(duration: Constants.rotationDuration).repeatForever(autoreverses: false), value: isAnimating)
+                // Scoped to the rotation alone: a value based animation also caught the spinner's
+                // first placement in a still sizing window, sliding it in from the top left.
+                .animation(.linear(duration: Constants.rotationDuration).repeatForever(autoreverses: false)) {
+                    $0.rotationEffect(.degrees(isAnimating ? Constants.fullRotation : 0))
+                }
         }
         .frame(width: diameter, height: diameter)
         .onAppear { isAnimating = true }

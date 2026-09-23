@@ -1,4 +1,3 @@
-import AppStorageKeys
 import CoreModels
 import DesignSystem
 import Localization
@@ -6,11 +5,6 @@ import SwiftUI
 
 private enum Constants {
     static let contentSpacing: CGFloat = .space24
-    static let cardSpacing: CGFloat = .space12
-    static let cardPadding: CGFloat = .space16
-    static let cardVerticalPadding: CGFloat = .space16
-    static let rowVerticalPadding: CGFloat = .space8
-    static let rowMinimumGap: CGFloat = .space32
     static let horizontalPadding: CGFloat = .space24
     static let topPadding: CGFloat = .space24
     static let bottomPadding: CGFloat = .space24
@@ -32,27 +26,6 @@ struct FileInfoSheet: View {
     let errorMessage: String?
     let onDismiss: () -> Void
 
-    @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
-    @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
-
-    private var dateFormat: DateDisplayFormat {
-        DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
-    }
-
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
-
-    private static let durationFormatter: DateComponentsFormatter = {
-        let formatter = DateComponentsFormatter()
-        formatter.allowedUnits = [.hour, .minute, .second]
-        formatter.unitsStyle = .positional
-        formatter.zeroFormattingBehavior = .dropLeading
-        return formatter
-    }()
-
     var body: some View {
         DSDynamicHeightSheet {
             content
@@ -71,113 +44,12 @@ struct FileInfoSheet: View {
             if let errorMessage {
                 DSErrorCard(errorMessage)
             } else if let metadata {
-                metadataSections(for: metadata)
+                FileInfoDetails(metadata: metadata, usage: usage)
             }
         }
         .padding(.horizontal, Constants.horizontalPadding)
         .padding(.top, Constants.topPadding)
         .padding(.bottom, Constants.bottomPadding)
-    }
-
-    @ViewBuilder
-    private func metadataSections(for metadata: FileMetadata) -> some View {
-        VStack(alignment: .leading, spacing: Constants.cardSpacing) {
-            card {
-                row(L10n.FileInfo.rowKind, kindTitle(for: metadata))
-                row(L10n.FileInfo.rowSize, Self.byteFormatter.string(fromByteCount: metadata.size))
-                row(L10n.FileInfo.rowLocation, metadata.path)
-                row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: includeTime))
-                row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: includeTime))
-            }
-
-            if let directory = metadata.directory {
-                card {
-                    row(L10n.FileInfo.rowFiles, "\(directory.fileCount)")
-                    row(L10n.FileInfo.rowFolders, "\(directory.dirCount)")
-                    row(L10n.FileInfo.rowTotalSize, Self.byteFormatter.string(fromByteCount: directory.totalSize))
-                    if directory.truncated {
-                        Text(L10n.FileInfo.partialScan)
-                            .type(.body3(.regular), style: .tertiary)
-                            .padding(.top, .space4)
-                    }
-                }
-            }
-
-            if let usage, usage.isMeaningful {
-                card {
-                    DSFieldLabel(L10n.FileInfo.sectionServerDisk, uppercased: false)
-                    DSUsageBar(fraction: usage.fraction)
-                        .padding(.vertical, .space4)
-                    Text(L10n.FileInfo.diskFreeOf(
-                        Self.byteFormatter.string(fromByteCount: usage.free),
-                        Self.byteFormatter.string(fromByteCount: usage.capacity)
-                    ))
-                    .type(.body3(.regular), style: .secondary)
-                }
-            }
-
-            if let image = metadata.image {
-                card {
-                    if let width = image.width, let height = image.height {
-                        row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
-                    }
-                    if let make = image.cameraMake, let model = image.cameraModel {
-                        row(L10n.FileInfo.rowCamera, "\(make) \(model)")
-                    } else if let model = image.cameraModel {
-                        row(L10n.FileInfo.rowCamera, model)
-                    }
-                    if let lensModel = image.lensModel {
-                        row(L10n.FileInfo.rowLens, lensModel)
-                    }
-                    if let dateTaken = image.dateTaken {
-                        row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: includeTime))
-                    }
-                    if let gps = image.gps {
-                        row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
-                    }
-                }
-            }
-
-            if let video = metadata.video {
-                card {
-                    if let width = video.width, let height = video.height {
-                        row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
-                    }
-                    if let duration = video.duration {
-                        row(L10n.FileInfo.rowDuration, Self.durationFormatter.string(from: duration) ?? "-")
-                    }
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func card(@ViewBuilder _ content: () -> some View) -> some View {
-        VStack(alignment: .leading, spacing: .space8) {
-            content()
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, Constants.cardPadding)
-        .padding(.vertical, Constants.cardVerticalPadding)
-        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusCard))
-    }
-
-    private func kindTitle(for metadata: FileMetadata) -> String {
-        metadata.isDirectory ? L10n.FileInfo.navigationTitleFolder : metadata.kind.uppercased()
-    }
-
-    private func row(_ label: String, _ value: String) -> some View {
-        HStack(spacing: Constants.rowMinimumGap) {
-            Text(label)
-                .type(.body2(.regular), style: .secondary)
-                .fixedSize(horizontal: true, vertical: false)
-            Spacer(minLength: Constants.rowMinimumGap)
-            Text(value)
-                .type(.body2(.regular), style: .primaryOnSurface)
-                .multilineTextAlignment(.trailing)
-                .lineLimit(2)
-        }
-        .padding(.vertical, Constants.rowVerticalPadding)
     }
 }
 

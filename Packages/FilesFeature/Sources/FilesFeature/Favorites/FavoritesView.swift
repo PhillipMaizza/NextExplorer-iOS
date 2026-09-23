@@ -115,6 +115,11 @@ struct FavoritesView: View {
         }
         .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
         .tint(Color.accent)
+        #if os(macOS)
+            .modifier(MacBrowseInspector(screen: store.path.ids.last.flatMap { id in
+                store.scope(state: \.path[id: id], action: \.path[id: id])
+            }))
+        #endif
     }
 
     private var rootContent: some View {
@@ -178,6 +183,7 @@ struct FavoritesView: View {
                         viewModeRaw = (viewMode == .list ? FileListViewMode.grid : .list).rawValue
                     }
                 },
+                macViewModes: .listAndGrid($viewModeRaw),
                 sortMenu: { EmptyView() }
             )
         }
@@ -286,6 +292,14 @@ struct FavoritesView: View {
                         isFirst: favorite.id == firstID,
                         isLast: favorite.id == lastID
                     )
+                    #if os(macOS)
+                    .modifier(MacFavoriteReorder(
+                        favoriteID: favorite.id,
+                        orderedIDs: favorites.map(\.id),
+                        isEnabled: store.canReorder,
+                        onMove: { store.send(.favoritesMoved($0, $1)) }
+                    ))
+                    #endif
                 }
                 .onMove(perform: store.canReorder ? { store.send(.favoritesMoved($0, $1)) } : nil)
             }

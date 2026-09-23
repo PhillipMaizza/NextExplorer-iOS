@@ -609,3 +609,21 @@ menu.support	NextExplorer-support
 settings.sectionSupport	Support
 settings.rowRateApp	Betygsätt NextExplorer
 settings.rowSupport	Hjälp och support
+menu.refresh	Uppdatera
+select.tableView	Tabellvy
+openWith.openIn	Öppna i %@
+openWith.openWith	Öppna med
+openWith.viewAsText	Visa som text
+openWith.failed	Det gick inte att öppna filen.
+browse.showInFinder	Visa i Finder
+browse.actionCut	Klipp ut
+browse.clipboardCutOne	%@ redo att flyttas
+browse.clipboardCutMany	%lld objekt redo att flyttas
+menu.enclosingFolder	Omslutande mapp
+common.more	Mer
+openWith.print	Skriv ut …
+menu.newWindow	Nytt fönster
+menu.newTab	Ny flik
+browse.actionOpenInNewWindow	Öppna i nytt fönster
+browse.actionOpenInNewTab	Öppna i ny flik
+select.viewAs	Visa

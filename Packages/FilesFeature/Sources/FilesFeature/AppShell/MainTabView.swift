@@ -69,8 +69,26 @@ public struct MainTabView: View {
         self.store = store
     }
 
+    #if os(macOS)
+        /// The window (and tab) title: the folder on screen in Browse or a pushed Favorites
+        /// folder, otherwise the section's name.
+        private var macWindowTitle: String {
+            switch store.selectedTab {
+            case .browse: store.browse.path.last?.title ?? store.browse.root.title
+            case .favorites: store.favorites.path.last?.title ?? L10n.Tab.favorites
+            case .shared: L10n.Tab.shared
+            case .downloads: L10n.Tab.downloads
+            case .settings: L10n.Tab.settings
+            }
+        }
+    #endif
+
     public var body: some View {
         shell
+        #if os(macOS)
+            .modifier(MacDockUploadStatus(remaining: store.uploads.remainingCount, progress: store.uploads.overallProgress))
+            .windowTitle(macWindowTitle)
+        #endif
             .overlay(alignment: .bottom) {
                 if store.uploads.isBarVisible {
                     uploadStatusBar
@@ -171,6 +189,11 @@ public struct MainTabView: View {
             (.downloads, L10n.Tab.downloads, IconKit.tabDownloads),
             (.settings, L10n.Tab.settings, IconKit.tabSettings),
         ]
+        #if os(macOS)
+        // Mac downloads are saved wherever the user picks in Finder, so there is no in app
+        // Downloads section to show.
+        .filter { $0.tab != .downloads }
+        #endif
     }
 
     /// One `NavigationSplitView` PER tab rather than a single split view whose detail swaps

@@ -98,6 +98,35 @@ jobs:
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO
 
+      # The same target also ships as a native macOS app; build it so a change can't quietly
+      # break the Mac side (every Mac difference sits behind #if os(macOS)).
+      - name: Build macOS app
+        run: |
+          xcodebuild build \
+            -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -destination 'generic/platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO
+
+      # The packages with macOS only code paths (Save panel downloads, AppKit views) run their
+      # suites on the Mac too.
+      - name: Test packages on macOS
+        run: |
+          set -o pipefail
+          FAIL=0
+          for pkg in DesignSystem FilesFeature; do
+            echo "::group::Test ${pkg} (macOS)"
+            if ! ( cd "Packages/${pkg}" && xcodebuild test \
+                -scheme "${pkg}" \
+                -destination 'platform=macOS' \
+                -enableCodeCoverage NO ); then
+              echo "::error::${pkg} macOS tests failed"
+              FAIL=1
+            fi
+            echo "::endgroup::"
+          done
+          exit $FAIL
+
       - name: Test packages
         run: |
           set -o pipefail

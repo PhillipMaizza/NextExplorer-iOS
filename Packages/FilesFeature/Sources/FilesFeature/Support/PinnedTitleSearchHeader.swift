@@ -43,28 +43,36 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)
 
-            if showsSearchField {
-                searchField
-            }
+            #if os(iOS)
+                if showsSearchField {
+                    searchField
+                }
+            #endif
             accessory()
         }
         .padding(.horizontal, .space16)
         .padding(.top, .space8 + extraTopPadding)
         .padding(.bottom, .space12)
-        // Solid top color behind the title/search (matches the `backgroundGradient()` top stop,
-        // so it reads seamless) so scrolled rows never bleed through the header. A short fade
-        // tail sits just below the header edge to melt into the list gradient instead of ending
-        // on a hard band.
-        .background(Color.backgroundGradientTop.ignoresSafeArea(edges: .top))
-        .background(alignment: .bottom) {
-            LinearGradient(
-                colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: .space16)
-            .offset(y: .space16)
-        }
+        #if os(macOS)
+            // A Mac searches from the toolbar's trailing field, not a field in the content that
+            // would sit on top of table headers. ⌘F (Edit menu) focuses it.
+            .modifier(MacToolbarSearch(isEnabled: showsSearchField, text: $searchText, prompt: prompt, isFocused: $isFocused))
+            .focusedSceneValue(\.focusSearchField, showsSearchField ? FocusSearchAction { isFocused = true } : nil)
+        #endif
+            // Solid top color behind the title/search (matches the `backgroundGradient()` top stop,
+            // so it reads seamless) so scrolled rows never bleed through the header. A short fade
+            // tail sits just below the header edge to melt into the list gradient instead of ending
+            // on a hard band.
+            .background(Color.backgroundGradientTop.ignoresSafeArea(edges: .top))
+            .background(alignment: .bottom) {
+                LinearGradient(
+                    colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: .space16)
+                .offset(y: .space16)
+            }
     }
 
     private var searchField: some View {
@@ -121,3 +129,35 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         ) { EmptyView() }
     }
 }
+
+#if os(macOS)
+    private struct MacToolbarSearch: ViewModifier {
+        let isEnabled: Bool
+        @Binding var text: String
+        let prompt: String
+        var isFocused: FocusState<Bool>.Binding
+
+        func body(content: Content) -> some View {
+            if isEnabled {
+                content
+                    .searchable(text: $text, placement: .toolbar, prompt: Text(prompt))
+                    .searchFocused(isFocused)
+            } else {
+                content
+            }
+        }
+    }
+
+    /// Focuses the visible screen's search field; published by `PinnedTitleSearchHeader`.
+    public struct FocusSearchAction {
+        let perform: () -> Void
+
+        public func callAsFunction() {
+            perform()
+        }
+    }
+
+    public extension FocusedValues {
+        @Entry var focusSearchField: FocusSearchAction?
+    }
+#endif

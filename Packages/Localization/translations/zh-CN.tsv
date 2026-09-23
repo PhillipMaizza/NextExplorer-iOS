@@ -609,3 +609,21 @@ menu.support	NextExplorer 支持
 settings.sectionSupport	支持
 settings.rowRateApp	为 NextExplorer 评分
 settings.rowSupport	帮助与支持
+menu.refresh	刷新
+select.tableView	表格视图
+openWith.openIn	在 %@ 中打开
+openWith.openWith	打开方式
+openWith.viewAsText	以文本查看
+openWith.failed	无法打开此文件。
+browse.showInFinder	在“访达”中显示
+browse.actionCut	剪切
+browse.clipboardCutOne	%@ 已准备移动
+browse.clipboardCutMany	%lld 个项目已准备移动
+menu.enclosingFolder	上层文件夹
+common.more	更多
+openWith.print	打印…
+menu.newWindow	新建窗口
+menu.newTab	新建标签页
+browse.actionOpenInNewWindow	在新窗口中打开
+browse.actionOpenInNewTab	在新标签页中打开
+select.viewAs	显示方式

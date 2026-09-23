@@ -58,6 +58,12 @@ struct UnsupportedFilePreviewView: View {
                     .type(.body2(.regular), style: .secondary)
                     .multilineTextAlignment(.center)
 
+                #if os(macOS)
+                    // A Mac can still hand the file to another app (Calendar for .ics, Pages or
+                    // Word for documents) or show its raw text.
+                    MacOpenWithButtons(source: systemShare)
+                #endif
+
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

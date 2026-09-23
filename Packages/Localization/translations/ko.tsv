@@ -609,3 +609,21 @@ menu.support	NextExplorer 지원
 settings.sectionSupport	지원
 settings.rowRateApp	NextExplorer 평가하기
 settings.rowSupport	도움말 및 지원
+menu.refresh	새로 고침
+select.tableView	표 보기
+openWith.openIn	%@에서 열기
+openWith.openWith	다음으로 열기
+openWith.viewAsText	텍스트로 보기
+openWith.failed	이 파일을 열 수 없습니다.
+browse.showInFinder	Finder에서 보기
+browse.actionCut	오려두기
+browse.clipboardCutOne	%@ 이동 준비됨
+browse.clipboardCutMany	%lld개 항목 이동 준비됨
+menu.enclosingFolder	상위 폴더
+common.more	더 보기
+openWith.print	프린트…
+menu.newWindow	새로운 윈도우
+menu.newTab	새로운 탭
+browse.actionOpenInNewWindow	새로운 윈도우에서 열기
+browse.actionOpenInNewTab	새로운 탭에서 열기
+select.viewAs	보기

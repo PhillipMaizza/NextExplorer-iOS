@@ -609,3 +609,21 @@ menu.support	NextExplorer-ondersteuning
 settings.sectionSupport	Ondersteuning
 settings.rowRateApp	NextExplorer beoordelen
 settings.rowSupport	Hulp en ondersteuning
+menu.refresh	Vernieuwen
+select.tableView	Tabelweergave
+openWith.openIn	Openen in %@
+openWith.openWith	Open met
+openWith.viewAsText	Als tekst weergeven
+openWith.failed	Kan dit bestand niet openen.
+browse.showInFinder	Toon in Finder
+browse.actionCut	Knip
+browse.clipboardCutOne	%@ klaar om te verplaatsen
+browse.clipboardCutMany	%lld onderdelen klaar om te verplaatsen
+menu.enclosingFolder	Bovenliggende map
+common.more	Meer
+openWith.print	Druk af…
+menu.newWindow	Nieuw venster
+menu.newTab	Nieuw tabblad
+browse.actionOpenInNewWindow	Open in nieuw venster
+browse.actionOpenInNewTab	Open in nieuw tabblad
+select.viewAs	Weergave
