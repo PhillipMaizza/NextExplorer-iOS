@@ -4,7 +4,9 @@ import DesignSystem
 import FilesClient
 import Localization
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 /// What the system-share button hands to `UIActivityViewController`: a file already on disk,
 /// or one that has to be downloaded from the server first. `.unavailable` omits the button.
@@ -60,7 +62,7 @@ private struct PreviewChrome: ViewModifier {
     func body(content: Content) -> some View {
         content
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .navigationBarBackgroundHidden()
             .toolbar {
                 if let title {
                     ToolbarItem(placement: .principal) {
@@ -164,12 +166,33 @@ struct IdentifiedURL: Identifiable {
     let url: URL
 }
 
-private struct ActivityShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
+#if os(iOS)
+    private struct ActivityShareSheet: UIViewControllerRepresentable {
+        let items: [Any]
 
-    func makeUIViewController(context _: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
+        func makeUIViewController(context _: Context) -> UIActivityViewController {
+            UIActivityViewController(activityItems: items, applicationActivities: nil)
+        }
+
+        func updateUIViewController(_: UIActivityViewController, context _: Context) {}
     }
+#else
+    /// A Mac has no activity sheet; the system share menu lives behind a `ShareLink` instead.
+    private struct ActivityShareSheet: View {
+        let items: [URL]
+        @Environment(\.dismiss) private var dismiss
 
-    func updateUIViewController(_: UIActivityViewController, context _: Context) {}
-}
+        var body: some View {
+            VStack(spacing: .space16) {
+                ForEach(items, id: \.self) { url in
+                    ShareLink(item: url) {
+                        Label(url.lastPathComponent, systemImage: "square.and.arrow.up")
+                    }
+                }
+                Button(L10n.Common.done) { dismiss() }
+                    .keyboardShortcut(.defaultAction)
+            }
+            .padding(.space24)
+        }
+    }
+#endif

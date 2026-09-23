@@ -5,20 +5,26 @@ import DesignSystem
 import FilesFeature
 import Localization
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
-/// Every screen but the image/video viewers is portrait-only — `OrientationLock` is the only
-/// way to plumb that per-screen override through, since `UIApplicationDelegate` (not the
-/// SwiftUI `App`/`WindowGroup`) is what UIKit actually consults on every rotation attempt.
-final class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(_: UIApplication, supportedInterfaceOrientationsFor _: UIWindow?) -> UIInterfaceOrientationMask {
-        OrientationLock.shared.mask
+#if os(iOS)
+    /// Every screen but the image/video viewers is portrait-only — `OrientationLock` is the only
+    /// way to plumb that per-screen override through, since `UIApplicationDelegate` (not the
+    /// SwiftUI `App`/`WindowGroup`) is what UIKit actually consults on every rotation attempt.
+    final class AppDelegate: NSObject, UIApplicationDelegate {
+        func application(_: UIApplication, supportedInterfaceOrientationsFor _: UIWindow?) -> UIInterfaceOrientationMask {
+            OrientationLock.shared.mask
+        }
     }
-}
+#endif
 
 @main
 struct NextExplorerApp: App {
-    @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    #if os(iOS)
+        @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    #endif
 
     static let store = Store(initialState: AppFeature.State()) {
         AppFeature()
@@ -48,12 +54,30 @@ struct NextExplorerApp: App {
             AppView(store: Self.store)
                 .tint(Color.accent)
                 .preferredColorScheme(hasAppearanceOverride ? (prefersDarkModeOverride ? .dark : .light) : nil)
+            #if os(macOS)
+                // A Mac window always gets the regular width sidebar layout, never the phone tab bar.
+                .environment(\.horizontalSizeClass, .regular)
+                .frame(minWidth: MacWindow.minWidth, minHeight: MacWindow.minHeight)
+            #endif
             #if DEBUG
-                .onAppear {
-                    // Under XCUITest, collapse animation durations once the window is attached.
-                    DispatchQueue.main.async { UITestSupport.applyAnimationSpeedIfNeeded() }
-                }
+            .onAppear {
+                // Under XCUITest, collapse animation durations once the window is attached.
+                DispatchQueue.main.async { UITestSupport.applyAnimationSpeedIfNeeded() }
+            }
             #endif
         }
+        #if os(macOS)
+        .defaultSize(width: MacWindow.defaultWidth, height: MacWindow.defaultHeight)
+        .commands { NextExplorerCommands() }
+        #endif
     }
 }
+
+#if os(macOS)
+    private enum MacWindow {
+        static let minWidth: CGFloat = 760
+        static let minHeight: CGFloat = 520
+        static let defaultWidth: CGFloat = 1180
+        static let defaultHeight: CGFloat = 780
+    }
+#endif

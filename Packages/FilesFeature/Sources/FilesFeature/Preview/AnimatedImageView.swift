@@ -1,6 +1,9 @@
+import DesignSystem
 import ImageIO
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     /// Hard cap on how many frames are decoded, however many the file claims. Above this the
@@ -17,25 +20,15 @@ private enum Constants {
     static let minFrameDelay: Double = 0.02
 }
 
-/// Plays an animated GIF — `AsyncImage`/SwiftUI's `Image` only ever show a GIF's first frame,
-/// with no concept of animation at all, so a real animated GIF looked identical to a still
-/// image everywhere in this app. Decodes frames via ImageIO (downsampled, frame-count and
-/// total-bitmap capped) and hands the result to a plain `UIImageView`, which animates
-/// multi-frame `UIImage`s natively.
-struct AnimatedImageView: UIViewRepresentable {
-    let fileURL: URL
-
-    func makeUIView(context _: Context) -> UIImageView {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFit
-        imageView.image = Self.decodeAnimatedImage(at: fileURL)
-        imageView.startAnimating()
-        return imageView
+/// Frame decode shared by both platforms' players: downsampled, frame count capped and total
+/// bitmap capped, so a crafted GIF can't exhaust memory.
+enum AnimatedImageDecoder {
+    struct Frames: @unchecked Sendable {
+        let images: [CGImage]
+        let duration: Double
     }
 
-    func updateUIView(_: UIImageView, context _: Context) {}
-
-    private static func decodeAnimatedImage(at url: URL) -> UIImage? {
+    static func decode(at url: URL) -> Frames? {
         // `CGImageSourceCreateWithURL` memory-maps the file rather than reading it all into a
         // resident `Data` first.
         let sourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
@@ -44,7 +37,9 @@ struct AnimatedImageView: UIViewRepresentable {
         let sourceFrameCount = CGImageSourceGetCount(source)
         guard sourceFrameCount > 1 else {
             // Not actually animated — decode the single frame, still downsampled.
-            return ImageDownsampling.image(from: url, maxPixelDimension: Constants.maxFramePixelDimension)
+            return ImageDownsampling.image(from: url, maxPixelDimension: Constants.maxFramePixelDimension)?
+                .cgImage
+                .map { Frames(images: [$0], duration: 0) }
         }
 
         let frameCount = min(sourceFrameCount, Constants.maxFrameCount)
@@ -58,12 +53,12 @@ struct AnimatedImageView: UIViewRepresentable {
             kCGImageSourceThumbnailMaxPixelSize: max(1, maxPixelDimension),
         ]
 
-        var frames: [UIImage] = []
+        var frames: [CGImage] = []
         var totalDuration: Double = 0
         var sourceIndex = 0
         while sourceIndex < sourceFrameCount, frames.count < frameCount {
             if let cgImage = CGImageSourceCreateThumbnailAtIndex(source, sourceIndex, thumbnailOptions as CFDictionary) {
-                frames.append(UIImage(cgImage: cgImage))
+                frames.append(cgImage)
                 // Scale by `stride` so subsampling doesn't speed the loop up.
                 totalDuration += frameDuration(source: source, index: sourceIndex) * Double(stride)
             }
@@ -71,7 +66,7 @@ struct AnimatedImageView: UIViewRepresentable {
         }
         guard !frames.isEmpty else { return nil }
         let duration = totalDuration > 0 ? totalDuration : Double(frames.count) * Constants.fallbackFrameDelay
-        return UIImage.animatedImage(with: frames, duration: duration)
+        return Frames(images: frames, duration: duration)
     }
 
     /// Mirrors how browsers/Apple's own GIF decoders read frame timing: prefer the
@@ -89,3 +84,29 @@ struct AnimatedImageView: UIViewRepresentable {
         return delay < Constants.minFrameDelay ? Constants.fallbackFrameDelay : delay
     }
 }
+
+#if os(iOS)
+    /// Plays an animated GIF — `AsyncImage`/SwiftUI's `Image` only ever show a GIF's first frame,
+    /// with no concept of animation at all, so a real animated GIF looked identical to a still
+    /// image everywhere in this app. Hands the decoded frames to a plain `UIImageView`, which
+    /// animates multi-frame `UIImage`s natively.
+    struct AnimatedImageView: UIViewRepresentable {
+        let fileURL: URL
+
+        func makeUIView(context _: Context) -> UIImageView {
+            let imageView = UIImageView()
+            imageView.contentMode = .scaleAspectFit
+            imageView.image = Self.decodeAnimatedImage(at: fileURL)
+            imageView.startAnimating()
+            return imageView
+        }
+
+        func updateUIView(_: UIImageView, context _: Context) {}
+
+        private static func decodeAnimatedImage(at url: URL) -> UIImage? {
+            guard let frames = AnimatedImageDecoder.decode(at: url) else { return nil }
+            guard frames.images.count > 1 else { return frames.images.first.map { UIImage(cgImage: $0) } }
+            return UIImage.animatedImage(with: frames.images.map { UIImage(cgImage: $0) }, duration: frames.duration)
+        }
+    }
+#endif

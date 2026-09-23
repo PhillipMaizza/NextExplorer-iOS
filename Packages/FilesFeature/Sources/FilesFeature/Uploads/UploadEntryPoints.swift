@@ -3,7 +3,9 @@ import DesignSystem
 import Localization
 import PhotosUI
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     static let maxPhotoUploads = 20
@@ -52,9 +54,11 @@ struct UploadPickers: ViewModifier {
                     closeAccessibilityLabel: L10n.Common.close,
                     onConfirm: {
                         isCameraDeniedAlertPresented = false
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
+                        #if os(iOS)
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                UIApplication.shared.open(url)
+                            }
+                        #endif
                     },
                     onDismiss: { isCameraDeniedAlertPresented = false }
                 )
@@ -78,6 +82,7 @@ struct UploadPickers: ViewModifier {
                 guard !items.isEmpty else { return }
                 onPhotosPicked(items)
             }
+        #if os(iOS)
             .fullScreenCover(isPresented: $isCameraPresented) {
                 CameraPicker { url in
                     isCameraPresented = false
@@ -87,6 +92,7 @@ struct UploadPickers: ViewModifier {
                 }
                 .ignoresSafeArea()
             }
+        #endif
     }
 }
 
@@ -123,19 +129,21 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
         // button, where the menu opens upward and the default order would flip.
         Menu {
             leadingActions()
-            if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                Button {
-                    Task {
-                        if await CameraAccess.resolve() {
-                            isCameraPresented = true
-                        } else {
-                            isCameraDeniedAlertPresented = true
+            #if os(iOS)
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    Button {
+                        Task {
+                            if await CameraAccess.resolve() {
+                                isCameraPresented = true
+                            } else {
+                                isCameraDeniedAlertPresented = true
+                            }
                         }
+                    } label: {
+                        Label { Text(L10n.Uploads.actionTakePhoto) } icon: { IconKit.camera }
                     }
-                } label: {
-                    Label { Text(L10n.Uploads.actionTakePhoto) } icon: { IconKit.camera }
                 }
-            }
+            #endif
             Button {
                 isPhotosPickerPresented = true
             } label: {

@@ -174,7 +174,7 @@ struct ArchiveBrowserView: View {
         } else if visibleRows.isEmpty {
             statusContent(icon: IconKit.folderFill, message: L10n.Archive.emptyFolder, tint: .secondaryDS)
         } else {
-            List(visibleRows) { row in
+            DSGroupedList(visibleRows) { row in
                 Button {
                     handleTap(row)
                 } label: {

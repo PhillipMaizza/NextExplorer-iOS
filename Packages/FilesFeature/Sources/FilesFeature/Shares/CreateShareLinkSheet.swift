@@ -3,7 +3,9 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     static let contentSpacing: CGFloat = .space24
@@ -332,7 +334,7 @@ struct CreateShareLinkSheet: View {
     }
 
     private func copy(_ string: String, as field: CopiedField) {
-        UIPasteboard.general.string = string
+        PlatformPasteboard.copy(string)
         withAnimation { copiedField = field }
         Task {
             try? await Task.sleep(for: .seconds(Constants.copyFeedbackSeconds))

@@ -42,7 +42,7 @@ struct UploadsView: View {
             EmptyStateView(icon: IconKit.upload, message: L10n.Uploads.emptyList)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List {
+            DSGroupedList {
                 ForEach(store.jobs) { job in
                     row(job)
                 }

@@ -38,7 +38,14 @@ public struct DSToggleRow: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
             }
+            #if os(macOS)
+            // Stretch the label so the switch sits at the trailing edge, as on iOS.
+            .frame(maxWidth: .infinity, alignment: .leading)
+            #endif
         }
+        #if os(macOS)
+        .toggleStyle(.switch)
+        #endif
         .tint(Color.accent)
         .hapticFeedback(.selection, trigger: isOn)
     }

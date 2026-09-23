@@ -1,8 +1,11 @@
 import ComposableArchitecture
 import CryptoKit
+import DesignSystem
 import Foundation
 import PDFKit
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     static let cacheRootDirectory = "PreviewCache"
@@ -29,12 +32,12 @@ public struct PDFThumbnailCache: Sendable {
     /// the file isn't a readable PDF.
     public var firstPageImage: @Sendable (
         _ key: String, _ maxPixel: CGFloat, _ pdfURL: URL
-    ) async -> UIImage?
+    ) async -> PlatformImage?
 
     public init(
         firstPageImage: @escaping @Sendable (
             _ key: String, _ maxPixel: CGFloat, _ pdfURL: URL
-        ) async -> UIImage?
+        ) async -> PlatformImage?
     ) {
         self.firstPageImage = firstPageImage
     }
@@ -49,7 +52,7 @@ public struct PDFThumbnailCache: Sendable {
 private actor PDFPageRenderer {
     static let shared = PDFPageRenderer()
 
-    func render(pdfAt url: URL, maxPixel: CGFloat) -> UIImage? {
+    func render(pdfAt url: URL, maxPixel: CGFloat) -> PlatformImage? {
         PDFThumbnailCache.renderFirstPage(of: url, maxPixel: maxPixel)
     }
 }
@@ -89,7 +92,7 @@ extension PDFThumbnailCache {
     /// `PDFPage.thumbnail(of:for:)`, which rasterizes at the main-screen scale — on a 3x
     /// device that is a 9x-area bitmap for the same `maxPixel`, i.e. megabytes per thumbnail
     /// held in memory. Opaque, white-backed: no alpha channel to carry around.
-    static func renderFirstPage(of url: URL, maxPixel: CGFloat) -> UIImage? {
+    static func renderFirstPage(of url: URL, maxPixel: CGFloat) -> PlatformImage? {
         guard let document = PDFDocument(url: url), let page = document.page(at: 0) else { return nil }
         let pageRect = page.bounds(for: .cropBox)
         guard pageRect.width > 0, pageRect.height > 0 else { return nil }
@@ -100,18 +103,28 @@ extension PDFThumbnailCache {
             height: (pageRect.height * scale).rounded()
         )
 
-        let format = UIGraphicsImageRendererFormat.preferred()
-        format.scale = 1
-        format.opaque = true
-        return UIGraphicsImageRenderer(size: size, format: format).image { context in
-            let cgContext = context.cgContext
-            UIColor.white.setFill()
-            cgContext.fill(CGRect(origin: .zero, size: size))
-            cgContext.translateBy(x: 0, y: size.height)
-            cgContext.scaleBy(x: scale, y: -scale)
-            cgContext.translateBy(x: -pageRect.minX, y: -pageRect.minY)
-            page.draw(with: .cropBox, to: cgContext)
-        }
+        #if os(macOS)
+            return PlatformImageRenderer.image(size: size, opaque: true) { cgContext in
+                cgContext.setFillColor(CGColor(gray: 1, alpha: 1))
+                cgContext.fill(CGRect(origin: .zero, size: size))
+                cgContext.scaleBy(x: scale, y: scale)
+                cgContext.translateBy(x: -pageRect.minX, y: -pageRect.minY)
+                page.draw(with: .cropBox, to: cgContext)
+            }
+        #else
+            let format = UIGraphicsImageRendererFormat.preferred()
+            format.scale = 1
+            format.opaque = true
+            return UIGraphicsImageRenderer(size: size, format: format).image { context in
+                let cgContext = context.cgContext
+                UIColor.white.setFill()
+                cgContext.fill(CGRect(origin: .zero, size: size))
+                cgContext.translateBy(x: 0, y: size.height)
+                cgContext.scaleBy(x: scale, y: -scale)
+                cgContext.translateBy(x: -pageRect.minX, y: -pageRect.minY)
+                page.draw(with: .cropBox, to: cgContext)
+            }
+        #endif
     }
 
     /// A cache backed by an on-disk render directory. `renderCacheDirectory` is a seam for
@@ -122,7 +135,7 @@ extension PDFThumbnailCache {
             if let renderCacheURL, let data = try? Data(contentsOf: renderCacheURL) {
                 // Force the decode here, off the caller's thread — `UIImage(data:)` alone
                 // defers it to first draw, which would land on the main thread mid-scroll.
-                return UIImage(data: data).map { $0.preparingForDisplay() ?? $0 }
+                return PlatformImage(data: data).map { $0.preparingForDisplay() ?? $0 }
             }
 
             guard let rendered = await PDFPageRenderer.shared.render(pdfAt: pdfURL, maxPixel: maxPixel) else {

@@ -26,16 +26,28 @@ struct SortToolbarButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            IconKit.sort
-                .resizable()
-                .scaledToFit()
-                .frame(width: Constants.toolbarButtonWidth, height: Constants.toolbarButtonHeight)
-                .foregroundStyle(Color.primaryDS)
-        }
-        .buttonStyle(DSHapticButtonStyle())
-        .disabled(isDisabled)
-        .accessibilityLabel(L10n.Common.sort)
+        #if os(macOS)
+            // The Mac toolbar sizes and styles its own items; a hand sized icon and custom
+            // button style made this one stand out from every other toolbar control.
+            Button(action: action) {
+                IconKit.sort
+                    .foregroundStyle(Color.accent)
+            }
+            .disabled(isDisabled)
+            .accessibilityLabel(L10n.Common.sort)
+            .help(L10n.Common.sort)
+        #else
+            Button(action: action) {
+                IconKit.sort
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.toolbarButtonWidth, height: Constants.toolbarButtonHeight)
+                    .foregroundStyle(Color.primaryDS)
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .disabled(isDisabled)
+            .accessibilityLabel(L10n.Common.sort)
+        #endif
     }
 }
 

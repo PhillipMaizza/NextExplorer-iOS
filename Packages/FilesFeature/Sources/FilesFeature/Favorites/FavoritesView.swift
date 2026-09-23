@@ -163,7 +163,7 @@ struct FavoritesView: View {
         }
         .animation(DSMotion.contentReveal, value: listPhase)
         .featureToast(error: store.actionErrorMessage)
-        .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
+        .hidesTabBar(store.isSelecting)
         .toolbar {
             selectSortToolbar(
                 isSelecting: store.isSelecting,
@@ -275,7 +275,7 @@ struct FavoritesView: View {
         let favorites = store.displayedFavorites
         let firstID = favorites.first?.id
         let lastID = favorites.last?.id
-        return List {
+        return DSGroupedList {
             if listPhase == .loading {
                 skeletonRows
             } else {
@@ -308,7 +308,7 @@ struct FavoritesView: View {
         let results = store.displayedSearchResults
         let firstID = results.first?.id
         let lastID = results.last?.id
-        return List {
+        return DSGroupedList {
             if listPhase == .loading {
                 skeletonRows
             } else {

@@ -78,7 +78,7 @@ struct TextFilePreviewView: View {
                 .background(Color.backgroundPrimary.ignoresSafeArea())
                 .navigationTitle(fileName)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .navigationBarBackgroundHidden()
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) { editToggleButton }
                     if isHTML {

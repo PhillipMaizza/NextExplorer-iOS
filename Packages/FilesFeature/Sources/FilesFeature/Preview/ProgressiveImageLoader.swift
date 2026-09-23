@@ -1,5 +1,9 @@
+import DesignSystem
+import Foundation
 @preconcurrency import ImageIO
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 /// Streams a remote image and yields it at rising quality, so a large photo fades from rough to
 /// sharp instead of blanking behind a spinner. Bytes arrive in chunks on a background delegate queue
@@ -20,7 +24,7 @@ enum ProgressiveImageLoader {
     /// Emits successively sharper frames for `url`, then finishes. Finishing with no frames means the
     /// request failed (or was cancelled); the caller keeps its low quality placeholder and, if it was
     /// a real failure, surfaces its error state.
-    static func frames(url: URL, cookies: [HTTPCookie], maxPixelDimension: CGFloat) -> AsyncStream<UIImage> {
+    static func frames(url: URL, cookies: [HTTPCookie], maxPixelDimension: CGFloat) -> AsyncStream<PlatformImage> {
         AsyncStream { continuation in
             let delegate = Delegate(maxPixelDimension: maxPixelDimension, continuation: continuation)
             let configuration = URLSessionConfiguration.ephemeral
@@ -49,7 +53,7 @@ enum ProgressiveImageLoader {
     /// never touched concurrently.
     private final class Delegate: NSObject, URLSessionDataDelegate, @unchecked Sendable {
         private let maxPixelDimension: CGFloat
-        private let continuation: AsyncStream<UIImage>.Continuation
+        private let continuation: AsyncStream<PlatformImage>.Continuation
         private let source = CGImageSourceCreateIncremental(nil)
         private var buffer = Data()
         /// New bytes since the last decode, throttled so a big file doesn't decode a thumbnail on
@@ -57,7 +61,7 @@ enum ProgressiveImageLoader {
         private var bytesSinceLastEmit = 0
         private var didFail = false
 
-        init(maxPixelDimension: CGFloat, continuation: AsyncStream<UIImage>.Continuation) {
+        init(maxPixelDimension: CGFloat, continuation: AsyncStream<PlatformImage>.Continuation) {
             self.maxPixelDimension = maxPixelDimension
             self.continuation = continuation
         }
@@ -111,7 +115,7 @@ enum ProgressiveImageLoader {
             guard let cgImage = CGImageSourceCreateThumbnailAtIndex(source, 0, options as CFDictionary) else {
                 return
             }
-            continuation.yield(UIImage(cgImage: cgImage))
+            continuation.yield(PlatformImage(cgImage: cgImage))
         }
     }
 }

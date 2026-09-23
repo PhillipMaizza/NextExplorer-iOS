@@ -24,7 +24,7 @@ private struct DSGlassModifier<S: Shape>: ViewModifier {
     func body(content: Content) -> some View {
         if reduceTransparency {
             content.background(shape.fill(Color.backgroundSecondary))
-        } else if #available(iOS 26.0, *) {
+        } else if #available(iOS 26.0, macOS 26.0, *) {
             content.glassEffect(interactive ? .regular.interactive() : .regular, in: shape)
         } else {
             content.background(shape.fill(.ultraThinMaterial))

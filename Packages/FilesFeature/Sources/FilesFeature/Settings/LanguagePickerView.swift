@@ -18,7 +18,7 @@ struct LanguagePickerView: View {
     @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
     var body: some View {
-        List {
+        DSGroupedList {
             Section {
                 row(code: "", title: L10n.Language.systemDefault, subtitle: L10n.Language.systemDefaultSubtitle)
             }

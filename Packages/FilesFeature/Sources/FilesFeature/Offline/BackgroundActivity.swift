@@ -1,4 +1,7 @@
-import UIKit
+import Foundation
+#if os(iOS)
+    import UIKit
+#endif
 
 /// Holds a UIKit background task assertion around a piece of async work, so an in-flight offline sync
 /// keeps running through the OS-granted execution window (typically ~30s) after the app is
@@ -9,32 +12,41 @@ import UIKit
 /// `URLSession` plus app relaunch handling; this is the bounded, self-contained step toward it.
 enum BackgroundActivity {
     static func run<T: Sendable>(name: String, _ work: @Sendable () async -> T) async -> T {
-        let assertion = Assertion()
-        await assertion.begin(name: name)
-        let result = await work()
-        await assertion.end()
-        return result
+        #if os(macOS)
+            let activity = ProcessInfo.processInfo.beginActivity(options: .userInitiated, reason: name)
+            defer { ProcessInfo.processInfo.endActivity(activity) }
+            return await work()
+        #else
+            let assertion = Assertion()
+            await assertion.begin(name: name)
+            let result = await work()
+            await assertion.end()
+            return result
+        #endif
     }
 
-    /// Owns the task identifier and guarantees it is ended exactly once — on completion, or from the
-    /// expiration handler if the OS reclaims the window first (ending it there avoids the app being
-    /// killed for overrunning).
-    private actor Assertion {
-        private var id: UIBackgroundTaskIdentifier = .invalid
+    #if os(iOS)
 
-        func begin(name: String) async {
-            id = await MainActor.run {
-                UIApplication.shared.beginBackgroundTask(withName: name) {
-                    Task { await self.end() }
+        /// Owns the task identifier and guarantees it is ended exactly once — on completion, or from the
+        /// expiration handler if the OS reclaims the window first (ending it there avoids the app being
+        /// killed for overrunning).
+        private actor Assertion {
+            private var id: UIBackgroundTaskIdentifier = .invalid
+
+            func begin(name: String) async {
+                id = await MainActor.run {
+                    UIApplication.shared.beginBackgroundTask(withName: name) {
+                        Task { await self.end() }
+                    }
                 }
             }
-        }
 
-        func end() async {
-            guard id != .invalid else { return }
-            let current = id
-            id = .invalid
-            await MainActor.run { UIApplication.shared.endBackgroundTask(current) }
+            func end() async {
+                guard id != .invalid else { return }
+                let current = id
+                id = .invalid
+                await MainActor.run { UIApplication.shared.endBackgroundTask(current) }
+            }
         }
-    }
+    #endif
 }

@@ -22,6 +22,16 @@ private enum Constants {
     static let sidebarSelectionOpacity: Double = 1.0
     /// Logo size in the iPad sidebar footer.
     static let sidebarFooterLogoSize: CGFloat = 40
+    /// macOS sidebar: rows get extra breathing room and the column opens wider than the
+    /// system default, since a Mac window has the space an iPad split view does not.
+    static let macSidebarRowVerticalPadding: CGFloat = .space8
+    static let macSidebarSelectionHorizontalInset: CGFloat = .space8
+    static let macSidebarIconSize: CGFloat = .iconSmall
+    static let macSidebarIconTitleSpacing: CGFloat = .space12
+    static let macSidebarRowHorizontalPadding: CGFloat = .space12
+    static let macSidebarMinWidth: CGFloat = 240
+    static let macSidebarIdealWidth: CGFloat = 280
+    static let macSidebarMaxWidth: CGFloat = 360
 }
 
 public struct MainTabView: View {
@@ -198,43 +208,81 @@ public struct MainTabView: View {
     }
 
     private var sidebar: some View {
-        List(selection: Binding(
-            get: { store.selectedTab },
-            set: {
-                if let tab = $0 {
-                    store.send(.tabSelected(tab))
+        sidebarList
+            .listStyle(.sidebar)
+            // Suppress the system's opaque accent selection capsule; each row draws its own
+            // translucent neutral pill via `listRowBackground` instead.
+            .tint(Color.clear)
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                sidebarFooter
+            }
+        #if os(macOS)
+            .navigationSplitViewColumnWidth(
+                min: Constants.macSidebarMinWidth,
+                ideal: Constants.macSidebarIdealWidth,
+                max: Constants.macSidebarMaxWidth
+            )
+        #endif
+    }
+
+    /// macOS draws its own selection shape behind a selectable sidebar row that `.tint` can't
+    /// hide, so on the Mac the rows are plain buttons and only the accent pill marks the tab.
+    @ViewBuilder
+    private var sidebarList: some View {
+        #if os(macOS)
+            List { sidebarSections }
+        #else
+            List(selection: Binding(
+                get: { store.selectedTab },
+                set: {
+                    if let tab = $0 {
+                        store.send(.tabSelected(tab))
+                    }
                 }
-            }
-        )) {
-            Section {
-                sidebarProfile
-            }
-            Section {
-                ForEach(Self.sidebarItems, id: \.tab) { item in
-                    sidebarRow(item)
-                }
-            }
+            )) { sidebarSections }
+        #endif
+    }
+
+    @ViewBuilder
+    private var sidebarSections: some View {
+        Section {
+            sidebarProfile
         }
-        .listStyle(.sidebar)
-        // Suppress the system's opaque accent selection capsule; each row draws its own
-        // translucent neutral pill via `listRowBackground` instead.
-        .tint(Color.clear)
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            sidebarFooter
+        Section {
+            ForEach(Self.sidebarItems, id: \.tab) { item in
+                sidebarRow(item)
+            }
         }
     }
 
     private func sidebarRow(_ item: (tab: MainTabFeature.Tab, title: String, icon: Image)) -> some View {
         let isSelected = store.selectedTab == item.tab
-        return Label {
-            Text(item.title)
-                .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
-        } icon: {
-            sidebarIcon(item.icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
-        }
-        .tag(item.tab)
-        .listRowBackground(sidebarSelectionBackground(isSelected: isSelected))
-        .accessibilityLabel(item.title)
+        #if os(macOS)
+            let row = Button { store.send(.tabSelected(item.tab)) } label: {
+                HStack(spacing: Constants.macSidebarIconTitleSpacing) {
+                    sidebarIcon(item.icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
+                    Text(item.title)
+                        .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
+                }
+                .padding(.vertical, Constants.macSidebarRowVerticalPadding)
+                .padding(.horizontal, Constants.macSidebarRowHorizontalPadding)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityAddTraits(isSelected ? .isSelected : [])
+        #else
+            let row = Label {
+                Text(item.title)
+                    .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
+            } icon: {
+                sidebarIcon(item.icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
+            }
+        #endif
+        return row
+            .tag(item.tab)
+            .listRowBackground(sidebarSelectionBackground(isSelected: isSelected))
+            .accessibilityLabel(item.title)
     }
 
     /// Translucent neutral selection pill: `primaryDS` at low opacity lightens the dark sidebar
@@ -245,16 +293,27 @@ public struct MainTabView: View {
             Capsule(style: .continuous)
                 .fill(Color.accent.opacity(Constants.sidebarSelectionOpacity))
                 .padding(.vertical, .space2)
+            #if os(macOS)
+                .padding(.horizontal, Constants.macSidebarSelectionHorizontalInset)
+            #endif
         } else {
             Color.clear
         }
+    }
+
+    private static var sidebarIconSize: CGFloat {
+        #if os(macOS)
+            Constants.macSidebarIconSize
+        #else
+            Constants.sidebarIconSize
+        #endif
     }
 
     private func sidebarIcon(_ image: Image, color: Color) -> some View {
         image
             .resizable()
             .scaledToFit()
-            .frame(width: Constants.sidebarIconSize, height: Constants.sidebarIconSize)
+            .frame(width: Self.sidebarIconSize, height: Self.sidebarIconSize)
             .foregroundStyle(color)
     }
 

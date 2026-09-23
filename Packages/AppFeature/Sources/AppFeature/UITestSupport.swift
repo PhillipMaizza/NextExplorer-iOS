@@ -5,7 +5,11 @@
     import FilesClient
     import FilesFeature
     import Foundation
-    import UIKit
+    #if os(iOS)
+        import UIKit
+    #elseif os(macOS)
+        import AppKit
+    #endif
 
     /// Wires a fully mocked, backend free dependency graph for XCUITest runs. The app target calls
     /// `AppFeature.prepareUITestDependencies` from its `init` before the root store is built, so the
@@ -38,11 +42,17 @@
             // setup, both on the main thread; assert that so the main actor only UIKit access is
             // legal from this nonisolated helper.
             MainActor.assumeIsolated {
-                for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
-                    for window in scene.windows {
-                        window.layer.speed = speed
+                #if os(iOS)
+                    for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
+                        for window in scene.windows {
+                            window.layer.speed = speed
+                        }
                     }
-                }
+                #elseif os(macOS)
+                    for window in NSApp.windows {
+                        window.contentView?.layer?.speed = speed
+                    }
+                #endif
             }
         }
 
@@ -313,9 +323,11 @@
             }
 
             if environment[UITestSupport.disableAnimationsFlag] == "1" {
-                MainActor.assumeIsolated {
-                    UIView.setAnimationsEnabled(false)
-                }
+                #if os(iOS)
+                    MainActor.assumeIsolated {
+                        UIView.setAnimationsEnabled(false)
+                    }
+                #endif
             }
 
             let auth = UITestSupport.Auth(rawValue: environment[UITestSupport.authKey] ?? "") ?? .loggedOut

@@ -178,7 +178,7 @@ extension OpenSourceLicense {
 
 struct LicensesView: View {
     var body: some View {
-        List(OpenSourceLicense.all) { license in
+        DSGroupedList(OpenSourceLicense.all) { license in
             NavigationLink {
                 LicenseDetailView(license: license)
             } label: {

@@ -4,7 +4,9 @@ import DesignSystem
 import Localization
 import PhotosUI
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Metrics {
     static let contentSpacing: CGFloat = .space16
@@ -54,39 +56,43 @@ struct ServerDetailsView: View {
         .navigationTitle(L10n.ServerDetails.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
-        .fullScreenCover(isPresented: $isCameraPresented) {
-            PhotoCapturePicker { image in
-                isCameraPresented = false
-                if let image {
-                    handlePicked(image)
-                }
-            }
-            .ignoresSafeArea()
-        }
-        .photosPicker(isPresented: $isGalleryPickerPresented, selection: $gallerySelection, matching: .images)
-        .onChange(of: gallerySelection) { _, item in
-            guard let item else { return }
-            gallerySelection = nil
-            Task { await loadGalleryImage(item) }
-        }
-        .sheet(isPresented: $isCameraDeniedAlertPresented) {
-            DSAlertSheet(
-                icon: IconKit.camera,
-                title: L10n.ServerDetails.cameraDeniedTitle,
-                message: L10n.ServerDetails.cameraDeniedMessage,
-                confirmTitle: L10n.Common.openSettings,
-                dismissTitle: L10n.Common.cancel,
-                closeAccessibilityLabel: L10n.Common.close,
-                onConfirm: {
-                    isCameraDeniedAlertPresented = false
-                    if let url = URL(string: UIApplication.openSettingsURLString) {
-                        UIApplication.shared.open(url)
+        #if os(iOS)
+            .fullScreenCover(isPresented: $isCameraPresented) {
+                PhotoCapturePicker { image in
+                    isCameraPresented = false
+                    if let image {
+                        handlePicked(image)
                     }
-                },
-                onDismiss: { isCameraDeniedAlertPresented = false }
-            )
-        }
-        .onAppear { store.send(.onAppear) }
+                }
+                .ignoresSafeArea()
+            }
+        #endif
+            .photosPicker(isPresented: $isGalleryPickerPresented, selection: $gallerySelection, matching: .images)
+            .onChange(of: gallerySelection) { _, item in
+                guard let item else { return }
+                gallerySelection = nil
+                Task { await loadGalleryImage(item) }
+            }
+            .sheet(isPresented: $isCameraDeniedAlertPresented) {
+                DSAlertSheet(
+                    icon: IconKit.camera,
+                    title: L10n.ServerDetails.cameraDeniedTitle,
+                    message: L10n.ServerDetails.cameraDeniedMessage,
+                    confirmTitle: L10n.Common.openSettings,
+                    dismissTitle: L10n.Common.cancel,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: {
+                        isCameraDeniedAlertPresented = false
+                        #if os(iOS)
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                UIApplication.shared.open(url)
+                            }
+                        #endif
+                    },
+                    onDismiss: { isCameraDeniedAlertPresented = false }
+                )
+            }
+            .onAppear { store.send(.onAppear) }
     }
 
     // MARK: Card
@@ -146,9 +152,11 @@ struct ServerDetailsView: View {
     /// Tapping the logo opens the source menu directly — no separate button.
     private var logoPicker: some View {
         Menu {
-            Button { requestCamera() } label: {
-                Label(L10n.ServerDetails.takePhoto, systemImage: "camera")
-            }
+            #if os(iOS)
+                Button { requestCamera() } label: {
+                    Label(L10n.ServerDetails.takePhoto, systemImage: "camera")
+                }
+            #endif
             Button { isGalleryPickerPresented = true } label: {
                 Label(L10n.ServerDetails.chooseFromGallery, systemImage: "photo.on.rectangle")
             }
@@ -189,7 +197,7 @@ struct ServerDetailsView: View {
 
     private func loadGalleryImage(_ item: PhotosPickerItem) async {
         guard let data = try? await item.loadTransferable(type: Data.self),
-              let image = UIImage(data: data)
+              let image = PlatformImage(data: data)
         else {
             store.send(.logoPickFailed)
             return
@@ -197,7 +205,7 @@ struct ServerDetailsView: View {
         handlePicked(image)
     }
 
-    private func handlePicked(_ image: UIImage) {
+    private func handlePicked(_ image: PlatformImage) {
         if let prepared = Self.prepareLogo(image) {
             store.send(.logoPicked(prepared))
         } else {
@@ -207,16 +215,25 @@ struct ServerDetailsView: View {
 
     /// Square-crop-agnostic downscale + JPEG encode, rejecting anything still over the 2 MB
     /// the server (and `ServerDetailsFeature`) cap uploads at.
-    static func prepareLogo(_ image: UIImage) -> Data? {
+    static func prepareLogo(_ image: PlatformImage) -> Data? {
         let longestEdge = max(image.size.width, image.size.height)
         let scale = longestEdge > Metrics.logoMaxPixelSize ? Metrics.logoMaxPixelSize / longestEdge : 1
         let targetSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
 
-        let format = UIGraphicsImageRendererFormat.default()
-        format.scale = 1
-        let resized = UIGraphicsImageRenderer(size: targetSize, format: format).image { _ in
-            image.draw(in: CGRect(origin: .zero, size: targetSize))
-        }
+        #if os(macOS)
+            guard let cgImage = image.cgImage,
+                  let resized = PlatformImageRenderer.image(size: targetSize, opaque: false, { context in
+                      context.interpolationQuality = .high
+                      context.draw(cgImage, in: CGRect(origin: .zero, size: targetSize))
+                  })
+            else { return nil }
+        #else
+            let format = UIGraphicsImageRendererFormat.default()
+            format.scale = 1
+            let resized = UIGraphicsImageRenderer(size: targetSize, format: format).image { _ in
+                image.draw(in: CGRect(origin: .zero, size: targetSize))
+            }
+        #endif
         guard let data = resized.jpegData(compressionQuality: Metrics.logoJPEGQuality),
               data.count <= ServerDetailsFeature.maxLogoBytes else { return nil }
         return data
@@ -244,13 +261,23 @@ private func previewStore(
 }
 
 private let previewLogoData: Data = {
-    let renderer = UIGraphicsImageRenderer(size: CGSize(width: 200, height: 200))
-    return renderer.image { ctx in
-        UIColor.systemIndigo.setFill()
-        ctx.fill(CGRect(x: 0, y: 0, width: 200, height: 200))
-        UIColor.white.setFill()
-        ctx.cgContext.fillEllipse(in: CGRect(x: 50, y: 50, width: 100, height: 100))
-    }.jpegData(compressionQuality: 0.9) ?? Data()
+    #if os(macOS)
+        let image = PlatformImageRenderer.image(size: CGSize(width: 200, height: 200), opaque: true) { context in
+            context.setFillColor(CGColor(red: 0.35, green: 0.34, blue: 0.84, alpha: 1))
+            context.fill(CGRect(x: 0, y: 0, width: 200, height: 200))
+            context.setFillColor(CGColor(gray: 1, alpha: 1))
+            context.fillEllipse(in: CGRect(x: 50, y: 50, width: 100, height: 100))
+        }
+        return image?.jpegData(compressionQuality: 0.9) ?? Data()
+    #else
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 200, height: 200))
+        return renderer.image { ctx in
+            UIColor.systemIndigo.setFill()
+            ctx.fill(CGRect(x: 0, y: 0, width: 200, height: 200))
+            UIColor.white.setFill()
+            ctx.cgContext.fillEllipse(in: CGRect(x: 50, y: 50, width: 100, height: 100))
+        }.jpegData(compressionQuality: 0.9) ?? Data()
+    #endif
 }()
 
 #Preview("Default logo") {

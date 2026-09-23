@@ -323,6 +323,10 @@ public enum L10n {
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }
+    public enum Menu {
+        public static var rateApp: String { tr("menu.rateApp") }  // "Rate NextExplorer…"
+        public static var support: String { tr("menu.support") }  // "NextExplorer Support"
+    }
     public enum Offline {
         public static func available(_ a0: CVarArg) -> String { tr("offline.available", a0) }
         public static var badgeAvailable: String { tr("offline.badgeAvailable") }  // "Available offline"
@@ -427,8 +431,10 @@ public enum L10n {
         public static var rowLanguage: String { tr("settings.rowLanguage") }  // "Language"
         public static var rowOpenSourceLicenses: String { tr("settings.rowOpenSourceLicenses") }  // "Open Source Licenses"
         public static var rowPrivacyPolicy: String { tr("settings.rowPrivacyPolicy") }  // "Privacy Policy"
+        public static var rowRateApp: String { tr("settings.rowRateApp") }  // "Rate NextExplorer"
         public static var rowRemoveAllDownloads: String { tr("settings.rowRemoveAllDownloads") }  // "Remove All Downloads"
         public static var rowServer: String { tr("settings.rowServer") }  // "Server"
+        public static var rowSupport: String { tr("settings.rowSupport") }  // "Help & Support"
         public static var rowTermsOfUse: String { tr("settings.rowTermsOfUse") }  // "Terms of Use"
         public static var rowThumbnailSize: String { tr("settings.rowThumbnailSize") }  // "Thumbnail Size"
         public static var rowThumbnails: String { tr("settings.rowThumbnails") }  // "Thumbnails"
@@ -442,6 +448,7 @@ public enum L10n {
         public static var sectionLicenses: String { tr("settings.sectionLicenses") }  // "Licenses"
         public static var sectionServerStorage: String { tr("settings.sectionServerStorage") }  // "Server Storage"
         public static var sectionStorage: String { tr("settings.sectionStorage") }  // "Storage"
+        public static var sectionSupport: String { tr("settings.sectionSupport") }  // "Support"
         public static var sectionUsers: String { tr("settings.sectionUsers") }  // "Users"
         public static func serverStorageUsed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.serverStorageUsed", a0, a1) }
         public static var signOutAlertTitle: String { tr("settings.signOutAlertTitle") }  // "Sign Out?"
