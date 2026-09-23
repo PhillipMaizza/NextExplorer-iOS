@@ -23,6 +23,16 @@ private enum Constants {
 /// scrollable content instead of trusting that propagation.
 enum BrowseBreadcrumbBarMetrics {
     static let height: CGFloat = .size48
+
+    /// On a Mac every Browse mode but grid is the table, which needs no breadcrumb bar: the
+    /// window already carries the back button and folder title.
+    static func isShown(browseViewModeRaw: String) -> Bool {
+        #if os(macOS)
+            browseViewModeRaw == FileListViewMode.grid.rawValue
+        #else
+            true
+        #endif
+    }
 }
 
 /// Mirrors the web client's own path breadcrumb ("Location"): tapping any earlier segment

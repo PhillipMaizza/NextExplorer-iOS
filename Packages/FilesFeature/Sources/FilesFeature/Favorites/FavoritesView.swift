@@ -87,6 +87,8 @@ struct FavoritesView: View {
         store.path.first?.title ?? ""
     }
 
+    @AppStorage(AppStorageKeys.browseViewMode) private var browseViewModeRaw = FileListViewMode.list.rawValue
+
     private var isTopScreenSelecting: Bool {
         store.path.last?.isSelecting ?? false
     }
@@ -99,7 +101,9 @@ struct FavoritesView: View {
                 .navigationTitle("")
         }
         .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
-            if !currentDirectoryPath.isEmpty, !isTopScreenSelecting {
+            if !currentDirectoryPath.isEmpty, !isTopScreenSelecting,
+               BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: browseViewModeRaw)
+            {
                 BrowseBreadcrumbBar(
                     directoryPath: currentDirectoryPath,
                     rootTitle: rootTitle,

@@ -1,3 +1,4 @@
+import AppStorageKeys
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -26,6 +27,8 @@ struct BrowseTabView: View {
     /// Whether the topmost pushed screen (or root, if nothing's pushed) is in select mode —
     /// used to hide the breadcrumb bar the same way the tab bar is hidden, since both are
     /// chrome around a list that select mode's bottom toolbar already replaces.
+    @AppStorage(AppStorageKeys.browseViewMode) private var browseViewModeRaw = FileListViewMode.list.rawValue
+
     private var isTopScreenSelecting: Bool {
         store.path.last?.isSelecting ?? store.root.isSelecting
     }
@@ -75,7 +78,9 @@ struct BrowseTabView: View {
 
     @ViewBuilder
     private var breadcrumbBar: some View {
-        if !currentDirectoryPath.isEmpty, !isTopScreenSelecting {
+        if !currentDirectoryPath.isEmpty, !isTopScreenSelecting,
+           BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: browseViewModeRaw)
+        {
             BrowseBreadcrumbBar(directoryPath: currentDirectoryPath) { path, title in
                 store.send(.navigateToDirectory(path: path, title: title))
             }

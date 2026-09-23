@@ -1275,7 +1275,7 @@ struct BrowseContentView: View {
     /// always empty) and the app-level upload progress bar while it's showing. Both are placed
     /// by ancestors a `List` inside a pushed `navigationDestination` doesn't reliably respect.
     private var bottomChromeClearance: CGFloat {
-        (store.directoryPath.isEmpty ? 0 : BrowseBreadcrumbBarMetrics.height)
+        (store.directoryPath.isEmpty || !BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: viewModeRaw) ? 0 : BrowseBreadcrumbBarMetrics.height)
             + (isUploadBarVisible ? uploadBarHeight + UploadBarChrome.gap : 0)
     }
 
