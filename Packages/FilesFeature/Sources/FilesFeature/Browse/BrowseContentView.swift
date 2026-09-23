@@ -363,32 +363,19 @@ struct BrowseContentView: View {
                     Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
                 }
             }
-            if !store.isSelecting, canUploadHere {
-                if #available(iOS 26.0, macOS 26.0, *) {
-                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    UploadSourceMenu(
-                        label: {
+            #if os(iOS)
+                if !store.isSelecting, canUploadHere {
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        uploadMenu {
                             IconKit.plus
                                 .foregroundStyle(Color.primaryDS)
-                        },
-                        leadingActions: {
-                            if !store.directoryPath.isEmpty {
-                                Button { store.send(.newFolderTapped) } label: {
-                                    Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
-                                }
-                            }
-                        },
-                        isFilesPickerPresented: $isFilesPickerPresented,
-                        isPhotosPickerPresented: $isPhotosPickerPresented,
-                        isCameraPresented: $isCameraPresented,
-                        isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
-                    )
-                    .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
-                    .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
+                        }
+                    }
                 }
-            }
+            #endif
         }
         .modifier(UploadPickers(
             isFilesPickerPresented: $isFilesPickerPresented,
@@ -413,31 +400,41 @@ struct BrowseContentView: View {
         .modifier(MacFinderDrop(isEnabled: canUploadHere && !store.isSelecting) { urls in
             store.send(.beginUpload(.documents(urls)))
         })
+        .overlay(alignment: .bottomTrailing) {
+            if canUploadHere, !store.isSelecting {
+                MacUploadButton { label in uploadMenu { label } }
+                    .padding(.space24)
+                    .padding(.bottom, bottomChromeClearance)
+                    .transition(.scale.combined(with: .opacity))
+            }
+        }
         #endif
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
         .hidesTabBar(store.isSelecting)
         .toolbar {
             if store.isSelecting {
-                ToolbarItem(placement: .bottomBar) {
-                    Spacer()
-                }
-                if let singleSelectedItem, store.access?.canWrite ?? false {
+                #if os(iOS)
                     ToolbarItem(placement: .bottomBar) {
+                        Spacer()
+                    }
+                #endif
+                if let singleSelectedItem, store.access?.canWrite ?? false {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.rename, accessibilityLabel: L10n.Browse.actionRename) {
                             store.send(.renameTapped(singleSelectedItem))
                         }
                     }
                 }
                 if let singleSelectedItem, store.access?.canShare ?? false {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.shareLink, accessibilityLabel: L10n.Browse.actionShare) {
                             shareTarget = singleSelectedItem
                         }
                     }
                 }
                 if isFavoriteActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(
                             icon: isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star,
                             accessibilityLabel: isEntireSelectionAlreadyFavorited ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites
@@ -447,28 +444,28 @@ struct BrowseContentView: View {
                     }
                 }
                 if isTransferActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.copy, accessibilityLabel: L10n.Browse.actionCopy) {
                             store.send(.bulkCopyTapped, animation: .default)
                         }
                     }
                 }
                 if isTransferActionVisible, store.access?.canWrite ?? false, store.access?.canDelete ?? false {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.move, accessibilityLabel: L10n.Browse.actionMove) {
                             store.send(.bulkMoveTapped, animation: .default)
                         }
                     }
                 }
                 if isDownloadActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.download, accessibilityLabel: L10n.Browse.actionDownload) {
                             store.send(.bulkDownloadTapped)
                         }
                     }
                 }
                 if isDeleteActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.delete, role: .destructive, tint: .negative, accessibilityLabel: L10n.Browse.actionDelete) {
                             store.send(.bulkDeleteTapped)
                         }
@@ -1085,6 +1082,26 @@ struct BrowseContentView: View {
         case .none:
             EmptyView()
         }
+    }
+
+    /// The toolbar's upload `+` menu; each platform supplies its own label and styling.
+    private func uploadMenu(@ViewBuilder label: @escaping () -> some View) -> some View {
+        UploadSourceMenu(
+            label: label,
+            leadingActions: {
+                if !store.directoryPath.isEmpty {
+                    Button { store.send(.newFolderTapped) } label: {
+                        Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                    }
+                }
+            },
+            isFilesPickerPresented: $isFilesPickerPresented,
+            isPhotosPickerPresented: $isPhotosPickerPresented,
+            isCameraPresented: $isCameraPresented,
+            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
+        )
+        .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
     }
 
     /// Root only, outside search and select mode: the account's private folder is not a volume,

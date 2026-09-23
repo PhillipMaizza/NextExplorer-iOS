@@ -204,10 +204,12 @@ struct FavoritesView: View {
         .hapticFeedback(.selection, trigger: store.isSelecting)
         .toolbar {
             if store.isSelecting {
-                ToolbarItem(placement: .bottomBar) {
-                    Spacer()
-                }
-                ToolbarItem(placement: .bottomBar) {
+                #if os(iOS)
+                    ToolbarItem(placement: .bottomBar) {
+                        Spacer()
+                    }
+                #endif
+                ToolbarItem(placement: .selectionBar) {
                     // Filled star, not trash: this only ever unfavorites the selection —
                     // the underlying folders/files aren't touched, so "delete" iconography
                     // would overstate what the action does.

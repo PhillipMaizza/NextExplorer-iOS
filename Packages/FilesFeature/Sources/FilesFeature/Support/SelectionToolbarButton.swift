@@ -33,17 +33,40 @@ struct SelectionToolbarButton: View {
     }
 
     var body: some View {
-        Button(role: role, action: action) {
-            icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: Constants.iconSize, height: Constants.iconSize)
-                .foregroundStyle(tint ?? Color.primaryDS)
-        }
-        .buttonStyle(DSHapticButtonStyle())
-        .disabled(isDisabled)
-        .modifier(OptionalAccessibilityLabel(label: accessibilityLabel))
-        .transition(.scale.combined(with: .opacity))
+        #if os(macOS)
+            // The Mac toolbar sizes its own glyphs; a hand sized icon looked oversized there.
+            Button(role: role, action: action) {
+                icon
+                    .foregroundStyle(tint ?? Color.primaryDS)
+            }
+            .disabled(isDisabled)
+            .help(accessibilityLabel ?? "")
+            .modifier(OptionalAccessibilityLabel(label: accessibilityLabel))
+        #else
+            Button(role: role, action: action) {
+                icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.iconSize, height: Constants.iconSize)
+                    .foregroundStyle(tint ?? Color.primaryDS)
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .disabled(isDisabled)
+            .modifier(OptionalAccessibilityLabel(label: accessibilityLabel))
+            .transition(.scale.combined(with: .opacity))
+        #endif
+    }
+}
+
+extension ToolbarItemPlacement {
+    /// Where select mode actions sit: the bottom bar on iOS; centered in the toolbar on a Mac,
+    /// which has no bottom bar.
+    static var selectionBar: ToolbarItemPlacement {
+        #if os(macOS)
+            .principal
+        #else
+            .bottomBar
+        #endif
     }
 }
 

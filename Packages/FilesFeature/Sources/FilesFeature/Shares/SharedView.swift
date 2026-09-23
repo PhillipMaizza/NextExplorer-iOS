@@ -90,7 +90,7 @@ struct SharedView: View {
             }
             .animation(.easeInOut(duration: 0.2), value: store.dataSources[store.segment])
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItem(placement: .sortControl) {
                     SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
                 }
             }
