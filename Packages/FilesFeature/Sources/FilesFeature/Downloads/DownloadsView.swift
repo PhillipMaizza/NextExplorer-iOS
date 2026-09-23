@@ -236,7 +236,8 @@ struct DownloadsView: View {
                         withAnimation {
                             viewModeRaw = (viewMode == .list ? FileListViewMode.grid : .list).rawValue
                         }
-                    }
+                    },
+                    macViewModes: .listAndGrid($viewModeRaw)
                 ) {
                     if let documentsDownloadsFolderURL {
                         Button {

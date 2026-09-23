@@ -19,6 +19,9 @@ func selectSortToolbar(
     onSelectAllToggled: @escaping () -> Void,
     onCancel: @escaping () -> Void,
     onToggleViewMode: @escaping () -> Void,
+    macViewModes: MacViewModes? = nil,
+    hasClipboardItems: Bool = false,
+    @ViewBuilder extraViewModes: () -> some View = { EmptyView() },
     @ViewBuilder clipboardMenu: () -> some View = { EmptyView() },
     @ViewBuilder sortMenu: () -> some View
 ) -> some ToolbarContent {
@@ -28,33 +31,97 @@ func selectSortToolbar(
                 IconKit.selectAll
             }
             .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabel(isAllSelected ? L10n.Select.deselectAll : L10n.Select.selectAll)
+            .accessibilityLabelWithTooltip(isAllSelected ? L10n.Select.deselectAll : L10n.Select.selectAll)
         }
         ToolbarItem(placement: .primaryAction) {
             Button(L10n.Common.cancel, action: onCancel)
                 .buttonStyle(DSHapticButtonStyle())
         }
     } else {
-        ToolbarItem(placement: .topBarTrailing) {
-            Menu {
-                clipboardMenu()
+        #if os(macOS)
+            // A Mac toolbar has room: every action the iOS "…" menu hides is a direct control.
+            ToolbarItemGroup(placement: .primaryAction) {
+                if hasClipboardItems {
+                    Menu {
+                        clipboardMenu()
+                    } label: {
+                        IconKit.paste
+                    }
+                    .accessibilityLabelWithTooltip(L10n.Browse.actionPaste)
+                }
                 if isSelectAvailable {
                     Button(action: onSelectModeToggled) {
-                        Label { Text(L10n.Common.select) } icon: { IconKit.select }
+                        IconKit.select
                     }
+                    .accessibilityLabelWithTooltip(L10n.Common.select)
                 }
                 sortMenu()
-                Button(action: onToggleViewMode) {
-                    Label {
-                        Text(isGridView ? L10n.Select.listView : L10n.Select.gridView)
-                    } icon: {
+                    .labelStyle(.iconOnly)
+                if let macViewModes {
+                    Picker(selection: macViewModes.selection) {
+                        ForEach(macViewModes.options) { option in
+                            option.icon
+                                .help(option.title)
+                                .accessibilityLabel(option.title)
+                                .tag(option.id)
+                        }
+                    } label: {
+                        Text(L10n.Select.viewAs)
+                    }
+                    .pickerStyle(.segmented)
+                    .help(L10n.Select.viewAs)
+                } else {
+                    Button(action: onToggleViewMode) {
                         isGridView ? IconKit.listBullet : IconKit.squareGrid
                     }
+                    .accessibilityLabelWithTooltip(isGridView ? L10n.Select.listView : L10n.Select.gridView)
                 }
-            } label: {
-                IconKit.moreOptions.foregroundStyle(Color.primaryDS)
             }
-            .accessibilityIdentifier(AccessibilityIdentifiers.Browse.moreMenu)
-        }
+        #else
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    clipboardMenu()
+                    if isSelectAvailable {
+                        Button(action: onSelectModeToggled) {
+                            Label { Text(L10n.Common.select) } icon: { IconKit.select }
+                        }
+                    }
+                    sortMenu()
+                    Button(action: onToggleViewMode) {
+                        Label {
+                            Text(isGridView ? L10n.Select.listView : L10n.Select.gridView)
+                        } icon: {
+                            isGridView ? IconKit.listBullet : IconKit.squareGrid
+                        }
+                    }
+                    extraViewModes()
+                } label: {
+                    IconKit.moreOptions.foregroundStyle(Color.primaryDS)
+                }
+                .accessibilityLabelWithTooltip(L10n.Common.more)
+                .accessibilityIdentifier(AccessibilityIdentifiers.Browse.moreMenu)
+            }
+        #endif
+    }
+}
+
+/// The view modes a Mac toolbar offers as a segmented picker, stored as the screen's raw
+/// view mode string.
+struct MacViewModes {
+    struct Option: Identifiable {
+        let id: String
+        let title: String
+        let icon: Image
+    }
+
+    let options: [Option]
+    let selection: Binding<String>
+
+    /// List and grid, the modes every file list screen has.
+    static func listAndGrid(_ selection: Binding<String>) -> MacViewModes {
+        MacViewModes(options: [
+            Option(id: FileListViewMode.list.rawValue, title: L10n.Select.listView, icon: IconKit.listBullet),
+            Option(id: FileListViewMode.grid.rawValue, title: L10n.Select.gridView, icon: IconKit.squareGrid),
+        ], selection: selection)
     }
 }

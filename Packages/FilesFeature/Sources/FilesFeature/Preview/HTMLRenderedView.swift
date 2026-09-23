@@ -124,6 +124,7 @@ enum RelativeAssetPath {
     }
 }
 
+@MainActor
 private struct HTMLWebView {
     let fileURL: URL
     let readAccessURL: URL

@@ -46,7 +46,20 @@ struct BrowseTabView: View {
         }
         .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
         .tint(Color.accent)
+        #if os(macOS)
+            .modifier(MacBrowseInspector(screen: visibleScreen))
+        #endif
     }
+
+    #if os(macOS)
+        /// The screen on top of the stack: the deepest pushed folder, or the root.
+        private var visibleScreen: StoreOf<BrowseFeature> {
+            if let id = store.path.ids.last, let screen = store.scope(state: \.path[id: id], action: \.path[id: id]) {
+                return screen
+            }
+            return store.scope(state: \.root, action: \.root)
+        }
+    #endif
 
     private var navigationStack: some View {
         NavigationStack(path: $store.scope(state: \.path, action: \.path)) {

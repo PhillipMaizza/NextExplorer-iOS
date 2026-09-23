@@ -14,6 +14,41 @@ enum UploadStagingLocation {
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         return directory
     }
+
+    /// Copies one picked or dropped URL into `directory`. A folder (a Mac Finder drop) expands
+    /// into its files, each named by its path under the folder ("Trip/Day 1/a.jpg"); the
+    /// server's `relativePath` recreates those subfolders at the destination.
+    static func stage(_ url: URL, into directory: URL) -> [PickedFile] {
+        let isDirectory = (try? url.resourceValues(forKeys: [.isDirectoryKey]).isDirectory) ?? false
+        guard isDirectory else {
+            return copy(url, named: url.lastPathComponent, into: directory).map { [$0] } ?? []
+        }
+        let root = url.standardizedFileURL.path + "/"
+        guard let enumerator = FileManager.default.enumerator(
+            at: url,
+            includingPropertiesForKeys: [.isRegularFileKey],
+            options: [.skipsHiddenFiles, .skipsPackageDescendants]
+        ) else { return [] }
+        var files: [PickedFile] = []
+        for case let fileURL as URL in enumerator {
+            guard (try? fileURL.resourceValues(forKeys: [.isRegularFileKey]).isRegularFile) == true else { continue }
+            let path = fileURL.standardizedFileURL.path
+            guard path.hasPrefix(root) else { continue }
+            let relativeName = url.lastPathComponent + "/" + path.dropFirst(root.count)
+            if let file = copy(fileURL, named: relativeName, into: directory) {
+                files.append(file)
+            }
+        }
+        return files
+    }
+
+    private static func copy(_ source: URL, named name: String, into directory: URL) -> PickedFile? {
+        let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(source.lastPathComponent)")
+        try? FileManager.default.removeItem(at: temp)
+        guard (try? FileManager.default.copyItem(at: source, to: temp)) != nil else { return nil }
+        let size = Int64((try? temp.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0)
+        return PickedFile(fileURL: temp, fileName: name, size: size)
+    }
 }
 
 /// Turns picker output (`fileImporter` URLs, `PhotosPickerItem`s, a camera capture) into
@@ -55,7 +90,7 @@ extension UploadStagingClient: DependencyKey {
             AsyncStream { continuation in
                 let task = Task {
                     let directory = UploadStagingLocation.directory
-                    await withTaskGroup(of: PickedFile?.self) { group in
+                    await withTaskGroup(of: [PickedFile].self) { group in
                         for url in urls {
                             group.addTask {
                                 let didAccess = url.startAccessingSecurityScopedResource()
@@ -64,16 +99,11 @@ extension UploadStagingClient: DependencyKey {
                                         url.stopAccessingSecurityScopedResource()
                                     }
                                 }
-                                let name = url.lastPathComponent
-                                let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(name)")
-                                try? FileManager.default.removeItem(at: temp)
-                                guard (try? FileManager.default.copyItem(at: url, to: temp)) != nil else { return nil }
-                                let size = Int64((try? temp.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0)
-                                return PickedFile(fileURL: temp, fileName: name, size: size)
+                                return UploadStagingLocation.stage(url, into: directory)
                             }
                         }
-                        for await file in group {
-                            if let file {
+                        for await files in group {
+                            for file in files {
                                 continuation.yield(file)
                             }
                         }

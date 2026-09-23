@@ -8,6 +8,7 @@ import SwiftUI
         static let rowVerticalPadding: CGFloat = .space12
         static let contentPadding: CGFloat = .space16
         static let cornerRadius: CGFloat = .radiusLarge
+        static let hoverOpacity: Double = 0.06
     }
 
     /// macOS has no inset grouped list style, and a grouped `Form` caps itself at a narrow
@@ -30,6 +31,7 @@ import SwiftUI
         }
 
         @Environment(\.groupedListRowVerticalPadding) private var rowVerticalPadding
+        @Environment(\.groupedListRowHover) private var highlightsRowsOnHover
 
         public var body: some View {
             ScrollView {
@@ -61,6 +63,7 @@ import SwiftUI
                                 .padding(.horizontal, Metrics.rowHorizontalPadding)
                                 .padding(.vertical, rowVerticalPadding ?? Metrics.rowVerticalPadding)
                                 .frame(maxWidth: .infinity, alignment: .leading)
+                                .modifier(RowHover(isEnabled: highlightsRowsOnHover))
                             if row.id != section.content.last?.id {
                                 Divider().padding(.leading, Metrics.rowHorizontalPadding)
                             }
@@ -77,6 +80,22 @@ import SwiftUI
             }
         }
     }
+
+    /// Full row hover fill; the card's clip shape rounds it at the first and last row.
+    private struct RowHover: ViewModifier {
+        let isEnabled: Bool
+        @State private var isHovering = false
+
+        func body(content: Content) -> some View {
+            if isEnabled {
+                content
+                    .background(Color.primaryDS.opacity(isHovering ? Metrics.hoverOpacity : 0))
+                    .onHover { isHovering = $0 }
+            } else {
+                content
+            }
+        }
+    }
 #else
     /// On iOS the grouped list is exactly a `List`, so every existing modifier and scroll
     /// behavior applies to the real list view unchanged.
@@ -85,6 +104,7 @@ import SwiftUI
 
 public extension EnvironmentValues {
     @Entry var groupedListRowVerticalPadding: CGFloat?
+    @Entry var groupedListRowHover = false
 }
 
 public extension View {
@@ -92,6 +112,12 @@ public extension View {
     /// the system list metrics.
     func groupedListRowVerticalPadding(_ padding: CGFloat) -> some View {
         environment(\.groupedListRowVerticalPadding, padding)
+    }
+
+    /// On macOS, fills a whole row (edge to edge inside its card) while the pointer is over it,
+    /// for lists whose rows are clickable items. iOS has no hover.
+    func groupedListRowHover() -> some View {
+        environment(\.groupedListRowHover, true)
     }
 }
 

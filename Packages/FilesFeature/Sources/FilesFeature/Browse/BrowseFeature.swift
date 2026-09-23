@@ -273,6 +273,9 @@ public struct BrowseFeature {
         /// Mirrors `fileActionErrorMessage`'s lifecycle — it's never explicitly cleared back to
         /// `nil` by the reducer, only ever overwritten by the next download's message.
         public var downloadSuccessMessage: String?
+        /// macOS: where the last download was saved (a file, or the folder of a bulk download),
+        /// so the success toast can show it in Finder.
+        public var lastSavedDownloadURL: URL?
         /// Item the "Get Info" sheet is showing, alongside its fetched metadata (or the
         /// still-loading/error state while `GET /api/metadata/*` is in flight).
         public var infoItem: FileItem?
@@ -410,6 +413,10 @@ public struct BrowseFeature {
         case compressResponse(Result<FileItem, FilesClientError>)
         case downloadTapped(FileItem, DownloadLocation, removeArchiveAfterDownload: Bool)
         case downloadProgressUpdated(String)
+        /// macOS: the save panel was dismissed without choosing a destination.
+        case downloadCancelled
+        /// macOS: the folder picked for a bulk download.
+        case bulkDownloadFolderChosen(URL)
         case downloadResponse(Result<DownloadResult, FilesClientError>)
         case selectModeToggled
         case itemSelectionToggled(FileItem.ID)
@@ -431,6 +438,16 @@ public struct BrowseFeature {
         case bulkMoveTapped
         case clipboardCleared
         case pasteTapped(keepItemsAfterCopy: Bool)
+        /// Keyboard driven actions for the Mac file table, acting on whatever rows are selected
+        /// there (tracked in `selectedItemIDs` without entering select mode).
+        case tableSelectionChanged(Set<FileItem.ID>)
+        case copySelectionTapped
+        case cutSelectionTapped
+        case deleteSelectionTapped
+        case renameSelectionTapped
+        case infoSelectionTapped
+        /// Mac: rows dragged onto a folder row in the same listing move into it.
+        case itemsDroppedOnFolder(ids: [FileItem.ID], folder: FileItem)
         case retryTransferTapped
         case transferConflictCheckResponse(Result<[FileItem], FilesClientError>)
         case transferConflictResolved(TransferConflictChoice?)
@@ -479,6 +496,7 @@ public struct BrowseFeature {
     @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.openURL) var openURL
     @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.saveLocationPicker) var saveLocationPicker
     // Internal (not private) so the effect helpers extracted into `BrowseFeature+*.swift`
     // can reference these cancel ids across files.
     enum CancelID: Hashable {
@@ -844,10 +862,23 @@ public struct BrowseFeature {
                 state.fileActionProgressMessage = message
                 return .none
 
+            case .downloadCancelled:
+                state.isPerformingFileAction = false
+                state.isBulkActionInFlight = false
+                state.fileActionProgressMessage = nil
+                return .none
+
+            case let .bulkDownloadFolderChosen(folder):
+                state.lastSavedDownloadURL = folder
+                return .none
+
             case let .downloadResponse(.success(result)):
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
-                state.downloadSuccessMessage = L10n.Browse.downloadSavedTo(result.location.title)
+                #if os(macOS)
+                    state.lastSavedDownloadURL = result.destinationURL
+                #endif
+                state.downloadSuccessMessage = L10n.Browse.downloadSavedTo(downloadDestinationTitle(state, location: result.location))
                 return .none
 
             case let .downloadResponse(.failure(error)):
@@ -934,9 +965,9 @@ public struct BrowseFeature {
                 state.isSelecting = false
                 state.selectedItemIDs = []
                 if savedCount == total {
-                    state.downloadSuccessMessage = L10n.Browse.downloadSavedAllTo(savedCount, location.title)
+                    state.downloadSuccessMessage = L10n.Browse.downloadSavedAllTo(savedCount, downloadDestinationTitle(state, location: location))
                 } else if savedCount > 0 {
-                    state.downloadSuccessMessage = L10n.Browse.downloadSavedCountTo(savedCount, total, location.title)
+                    state.downloadSuccessMessage = L10n.Browse.downloadSavedCountTo(savedCount, total, downloadDestinationTitle(state, location: location))
                 } else {
                     state.fileActionErrorMessage = L10n.Browse.downloadBulkFailed
                 }
@@ -1000,6 +1031,62 @@ public struct BrowseFeature {
 
             case let .pasteTapped(keepItemsAfterCopy):
                 return paste(&state, keepItemsAfterCopy: keepItemsAfterCopy)
+
+            case let .tableSelectionChanged(ids):
+                guard !state.isSelecting else { return .none }
+                state.selectedItemIDs = ids
+                // An open inspector follows the selection to the newly picked row.
+                guard state.infoItem != nil, ids.count == 1,
+                      let item = selectedItems(state).first, item.id != state.infoItem?.id
+                else { return .none }
+                return loadInfo(&state, item: item)
+
+            case .copySelectionTapped:
+                let items = selectedItems(state)
+                guard !items.isEmpty else { return .none }
+                state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .copy) }
+                state.clipboardStagedMessage = items.count == 1
+                    ? L10n.Browse.clipboardCopiedOne(items[0].name)
+                    : L10n.Browse.clipboardCopiedMany(items.count)
+                return .none
+
+            case .cutSelectionTapped:
+                let items = selectedItems(state)
+                guard !items.isEmpty, state.access?.canDelete ?? false else { return .none }
+                state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .move) }
+                state.clipboardStagedMessage = items.count == 1
+                    ? L10n.Browse.clipboardCutOne(items[0].name)
+                    : L10n.Browse.clipboardCutMany(items.count)
+                return .none
+
+            case .deleteSelectionTapped:
+                let items = selectedItems(state)
+                guard !items.isEmpty, state.access?.canDelete ?? false else { return .none }
+                return items.count == 1 ? .send(.deleteTapped(items[0])) : .send(.bulkDeleteTapped)
+
+            case .renameSelectionTapped:
+                let items = selectedItems(state)
+                guard items.count == 1, state.access?.canWrite ?? false else { return .none }
+                return .send(.renameTapped(items[0]))
+
+            case let .itemsDroppedOnFolder(ids, folder):
+                guard folder.isDirectory, state.access?.canDelete ?? false else { return .none }
+                // Never into itself or one of its own subfolders.
+                let items = state.items.filter { item in
+                    ids.contains(item.id) && item.id != folder.id && !folder.id.hasPrefix(item.id + "/")
+                }
+                return runTransfer(&state, retry: TransferRetry(
+                    items: Array(items), destination: folder.id, operation: .move, clearClipboard: false
+                ))
+
+            case .infoSelectionTapped:
+                // ⌘I toggles: pressing it again for the item already shown closes the inspector.
+                if state.infoItem != nil, state.infoItem?.id == selectedItems(state).first?.id {
+                    return .send(.infoDismissed)
+                }
+                let items = selectedItems(state)
+                guard items.count == 1 else { return .none }
+                return .send(.infoTapped(items[0]))
 
             case let .destinationPicker(.presented(.delegate(.confirmed(destination)))):
                 guard let picker = state.destinationPicker else { return .none }
@@ -1219,3 +1306,10 @@ protocol DirectoryFirstSortable {
 
 extension FileItem: DirectoryFirstSortable {}
 extension SearchResultItem: DirectoryFirstSortable {}
+
+extension BrowseFeature {
+    /// The selected rows in list order (the selection set itself is unordered).
+    func selectedItems(_ state: State) -> [FileItem] {
+        state.items.filter { state.selectedItemIDs.contains($0.id) }
+    }
+}

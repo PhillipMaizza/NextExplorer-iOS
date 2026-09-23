@@ -27,6 +27,12 @@ public struct BrowseTabFeature {
         /// Refetches only the screens (root or pushed) whose `directoryPath` equals `path`.
         /// Sent after an upload finishes so just the affected folder reloads.
         case refreshDirectory(path: String)
+        /// Menu bar commands: act on whichever folder is on screen (the top of the stack, or
+        /// the root when nothing is pushed).
+        case refreshVisibleFolder
+        case newFolderInVisibleFolder
+        /// Mac ⌘↑ / ⌘[: pop to the folder that contains the visible one.
+        case goToEnclosingFolder
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -45,6 +51,24 @@ public struct BrowseTabFeature {
         }
         Reduce { state, action in
             switch action {
+            case .goToEnclosingFolder:
+                guard let id = state.path.ids.last else { return .none }
+                state.path.pop(from: id)
+                return .none
+
+            case .refreshVisibleFolder:
+                if let id = state.path.ids.last {
+                    return .send(.path(.element(id: id, action: .refreshButtonTapped)))
+                }
+                return .send(.root(.refreshButtonTapped))
+
+            case .newFolderInVisibleFolder:
+                // Mirrors the UI: the account root is not a writable folder.
+                guard let id = state.path.ids.last,
+                      state.path[id: id]?.directoryPath.isEmpty == false
+                else { return .none }
+                return .send(.path(.element(id: id, action: .newFolderTapped)))
+
             case let .root(.delegate(.openFolder(item))):
                 state.path.append(BrowseNavigation.screen(for: item, serverURL: state.root.serverURL))
                 return .none

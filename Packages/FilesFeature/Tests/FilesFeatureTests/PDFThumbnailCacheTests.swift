@@ -1,8 +1,8 @@
+import CoreGraphics
 import DesignSystem
 @testable import FilesFeature
 import Foundation
 import Testing
-import UIKit
 
 /// Covers the two pieces of `PDFThumbnailCache` that run without a live server: rasterizing
 /// page one of a real PDF, and the short circuit that skips re-rendering on a hit.
@@ -19,12 +19,7 @@ struct PDFThumbnailCacheTests {
     private func makePDF(pageSize: CGSize) -> URL {
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("pdf-thumb-test-\(UUID().uuidString).pdf")
-        let renderer = UIGraphicsPDFRenderer(bounds: CGRect(origin: .zero, size: pageSize))
-        try? renderer.writePDF(to: url) { context in
-            context.beginPage()
-            UIColor.systemBlue.setFill()
-            context.fill(CGRect(origin: .zero, size: pageSize))
-        }
+        PDFFixture.write(to: url, pageSize: pageSize, red: 0, green: 0.48, blue: 1)
         return url
     }
 
@@ -42,7 +37,9 @@ struct PDFThumbnailCacheTests {
         #expect(abs(image.size.width - 256) < 1)
         // Rendered at an explicit scale of 1 — not the main-screen scale — so the pixel
         // buffer is exactly the point size, not 4x/9x it.
-        #expect(image.scale == 1)
+        #if os(iOS)
+            #expect(image.scale == 1)
+        #endif
         #expect(image.cgImage?.height == 512)
 
         // The page (a solid blue fill) actually landed on the canvas: sample the centre.

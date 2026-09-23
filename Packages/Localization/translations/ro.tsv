@@ -609,3 +609,21 @@ menu.support	Asistență NextExplorer
 settings.sectionSupport	Asistență
 settings.rowRateApp	Evaluează NextExplorer
 settings.rowSupport	Ajutor și asistență
+menu.refresh	Reîmprospătează
+select.tableView	Vizualizare tabel
+openWith.openIn	Deschide în %@
+openWith.openWith	Deschide cu
+openWith.viewAsText	Vezi ca text
+openWith.failed	Fișierul nu a putut fi deschis.
+browse.showInFinder	Afișează în Finder
+browse.actionCut	Taie
+browse.clipboardCutOne	%@ gata de mutat
+browse.clipboardCutMany	%lld elemente gata de mutat
+menu.enclosingFolder	Dosarul părinte
+common.more	Mai multe
+openWith.print	Tipărește…
+menu.newWindow	Fereastră nouă
+menu.newTab	Filă nouă
+browse.actionOpenInNewWindow	Deschide în fereastră nouă
+browse.actionOpenInNewTab	Deschide în filă nouă
+select.viewAs	Vizualizare

@@ -92,6 +92,14 @@ public struct UploadsFeature {
         var remainingCount: Int {
             jobs.filter { !$0.status.isTerminal }.count
         }
+
+        /// Share of the current queue that has landed, counting partial progress of the file in
+        /// flight. `nil` when nothing is queued.
+        var overallProgress: Double? {
+            guard !jobs.isEmpty else { return nil }
+            let inFlight = jobs.filter { $0.status == .uploading }.map(\.progress).reduce(0, +)
+            return (Double(completedCount) + inFlight) / Double(jobs.count)
+        }
     }
 
     public enum Action: Equatable, Sendable {

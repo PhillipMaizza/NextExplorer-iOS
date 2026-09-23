@@ -253,4 +253,65 @@ struct BrowseTabFeatureTests {
         await store.send(.root(.delegate(.goToSharedTab)))
         await store.receive(.delegate(.goToSharedTab))
     }
+
+    // MARK: Menu bar commands
+
+    private nonisolated static let readOnlyAccess = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
+
+    @Test
+    func refreshVisibleFolderRefreshesTheRootWhenNothingIsPushed() async {
+        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
+            BrowseTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: Self.readOnlyAccess, path: "") }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        // The forwarded refresh then runs the whole load cycle, covered by BrowseFeatureTests.
+        store.exhaustivity = .off
+
+        await store.send(.refreshVisibleFolder)
+        await store.receive(\.root.refreshButtonTapped)
+        await store.skipReceivedActions()
+    }
+
+    @Test
+    func refreshVisibleFolderRefreshesTheTopPushedFolder() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A"))
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B", title: "B"))
+        let store = TestStore(initialState: state) {
+            BrowseTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in BrowseResult(items: [], access: Self.readOnlyAccess, path: "A/B") }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.refreshVisibleFolder)
+        await store.receive(\.path[id: 1].refreshButtonTapped)
+        await store.skipReceivedActions()
+    }
+
+    @Test
+    func newFolderInVisibleFolderOpensTheSheetOnTheTopPushedFolder() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A"))
+        let store = TestStore(initialState: state) {
+            BrowseTabFeature()
+        }
+
+        await store.send(.newFolderInVisibleFolder)
+        await store.receive(\.path[id: 0].newFolderTapped) {
+            $0.path[id: 0]?.isNewFolderSheetPresented = true
+        }
+    }
+
+    @Test
+    func newFolderInVisibleFolderDoesNothingAtTheRoot() async {
+        let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
+            BrowseTabFeature()
+        }
+
+        await store.send(.newFolderInVisibleFolder)
+    }
 }

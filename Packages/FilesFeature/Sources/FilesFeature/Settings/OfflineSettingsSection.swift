@@ -120,11 +120,9 @@ struct OfflineSettingsSection: View {
                 .type(.body3(.regular), style: .secondary)
                 .lineLimit(1)
                 // A slow breathing fade while a sync runs, so the row reads as actively working.
-                .opacity(statusPulse ? Constants.statusPulseOpacity : 1)
-                .animation(
-                    reduceMotion ? nil : .easeInOut(duration: Constants.statusPulseDuration).repeatForever(autoreverses: true),
-                    value: statusPulse
-                )
+                .animation(reduceMotion ? nil : .easeInOut(duration: Constants.statusPulseDuration).repeatForever(autoreverses: true)) {
+                    $0.opacity(statusPulse ? Constants.statusPulseOpacity : 1)
+                }
                 .onAppear { statusPulse = true }
             if progress.phase == .preparing {
                 // No count yet while we walk the folders: an indeterminate shimmer reads as "working".

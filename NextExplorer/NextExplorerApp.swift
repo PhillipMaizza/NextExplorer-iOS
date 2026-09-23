@@ -68,7 +68,20 @@ struct NextExplorerApp: App {
         }
         #if os(macOS)
         .defaultSize(width: MacWindow.defaultWidth, height: MacWindow.defaultHeight)
-        .commands { NextExplorerCommands() }
+        .commands { NextExplorerCommands(store: Self.store) }
+        #endif
+        #if os(macOS)
+            WindowGroup(id: FolderWindowRoute.windowID, for: FolderWindowRoute.self) { $route in
+                if let route {
+                    MacFolderWindow(route: route, mainStore: Self.store)
+                        .tint(Color.accent)
+                        .preferredColorScheme(hasAppearanceOverride ? (prefersDarkModeOverride ? .dark : .light) : nil)
+                }
+            }
+            .defaultSize(width: MacWindow.folderWindowWidth, height: MacWindow.folderWindowHeight)
+            // Never reopened at launch: a restored window would come back empty (or under
+            // another account) instead of from the live session.
+            .restorationBehavior(.disabled)
         #endif
     }
 }
@@ -79,5 +92,7 @@ struct NextExplorerApp: App {
         static let minHeight: CGFloat = 520
         static let defaultWidth: CGFloat = 1180
         static let defaultHeight: CGFloat = 780
+        static let folderWindowWidth: CGFloat = 960
+        static let folderWindowHeight: CGFloat = 640
     }
 #endif

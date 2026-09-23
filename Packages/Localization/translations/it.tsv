@@ -609,3 +609,21 @@ menu.support	Supporto NextExplorer
 settings.sectionSupport	Supporto
 settings.rowRateApp	Valuta NextExplorer
 settings.rowSupport	Aiuto e supporto
+menu.refresh	Aggiorna
+select.tableView	Vista tabella
+openWith.openIn	Apri in %@
+openWith.openWith	Apri con
+openWith.viewAsText	Mostra come testo
+openWith.failed	Impossibile aprire questo file.
+browse.showInFinder	Mostra nel Finder
+browse.actionCut	Taglia
+browse.clipboardCutOne	%@ pronto da spostare
+browse.clipboardCutMany	%lld elementi pronti da spostare
+menu.enclosingFolder	Cartella superiore
+common.more	Altro
+openWith.print	Stampa…
+menu.newWindow	Nuova finestra
+menu.newTab	Nuovo pannello
+browse.actionOpenInNewWindow	Apri in una nuova finestra
+browse.actionOpenInNewTab	Apri in un nuovo pannello
+select.viewAs	Vista

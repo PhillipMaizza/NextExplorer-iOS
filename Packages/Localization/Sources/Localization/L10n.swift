@@ -34,6 +34,7 @@ public enum L10n {
         public static var actionClearClipboard: String { tr("browse.actionClearClipboard") }  // "Clear clipboard"
         public static var actionCompress: String { tr("browse.actionCompress") }  // "Compress"
         public static var actionCopy: String { tr("browse.actionCopy") }  // "Copy"
+        public static var actionCut: String { tr("browse.actionCut") }  // "Cut"
         public static var actionDelete: String { tr("browse.actionDelete") }  // "Delete"
         public static var actionDownload: String { tr("browse.actionDownload") }  // "Download"
         public static var actionExtract: String { tr("browse.actionExtract") }  // "Extract"
@@ -41,6 +42,8 @@ public enum L10n {
         public static var actionMove: String { tr("browse.actionMove") }  // "Move"
         public static var actionNewFolder: String { tr("browse.actionNewFolder") }  // "Create Folder"
         public static var actionOpenInBrowser: String { tr("browse.actionOpenInBrowser") }  // "Open in Browser"
+        public static var actionOpenInNewTab: String { tr("browse.actionOpenInNewTab") }  // "Open in New Tab"
+        public static var actionOpenInNewWindow: String { tr("browse.actionOpenInNewWindow") }  // "Open in New Window"
         public static var actionPaste: String { tr("browse.actionPaste") }  // "Paste"
         public static func actionPasteCount(_ a0: CVarArg) -> String { tr("browse.actionPasteCount", a0) }
         public static var actionPasteHere: String { tr("browse.actionPasteHere") }  // "Paste here"
@@ -52,6 +55,8 @@ public enum L10n {
         public static func clipboardCopiedMany(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedMany", a0) }
         public static func clipboardCopiedOne(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedOne", a0) }
         public static func clipboardCopyCount(_ a0: CVarArg) -> String { tr("browse.clipboardCopyCount", a0) }
+        public static func clipboardCutMany(_ a0: CVarArg) -> String { tr("browse.clipboardCutMany", a0) }
+        public static func clipboardCutOne(_ a0: CVarArg) -> String { tr("browse.clipboardCutOne", a0) }
         public static func clipboardMoveCount(_ a0: CVarArg) -> String { tr("browse.clipboardMoveCount", a0) }
         public static func deleteConfirmMany(_ a0: CVarArg) -> String { tr("browse.deleteConfirmMany", a0) }
         public static func deleteConfirmOne(_ a0: CVarArg) -> String { tr("browse.deleteConfirmOne", a0) }
@@ -95,6 +100,7 @@ public enum L10n {
         public static func searchNoMatchesInFolder(_ a0: CVarArg) -> String { tr("browse.searchNoMatchesInFolder", a0) }
         public static var searchScopeEverywhere: String { tr("browse.searchScopeEverywhere") }  // "Everywhere"
         public static var searchScopeInFolder: String { tr("browse.searchScopeInFolder") }  // "This Folder"
+        public static var showInFinder: String { tr("browse.showInFinder") }  // "Show in Finder"
         public static var transferConflictKeepBoth: String { tr("browse.transferConflictKeepBoth") }  // "Keep Both"
         public static func transferConflictMessageMany(_ a0: CVarArg) -> String { tr("browse.transferConflictMessageMany", a0) }
         public static func transferConflictMessageOne(_ a0: CVarArg) -> String { tr("browse.transferConflictMessageOne", a0) }
@@ -132,6 +138,7 @@ public enum L10n {
         public static var download: String { tr("common.download") }  // "Download"
         public static var edit: String { tr("common.edit") }  // "Edit"
         public static var logOut: String { tr("common.logOut") }  // "Log Out"
+        public static var more: String { tr("common.more") }  // "More"
         public static var never: String { tr("common.never") }  // "Never"
         public static var ok: String { tr("common.ok") }  // "OK"
         public static var openSettings: String { tr("common.openSettings") }  // "Open Settings"
@@ -324,7 +331,11 @@ public enum L10n {
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }
     public enum Menu {
+        public static var enclosingFolder: String { tr("menu.enclosingFolder") }  // "Enclosing Folder"
+        public static var newTab: String { tr("menu.newTab") }  // "New Tab"
+        public static var newWindow: String { tr("menu.newWindow") }  // "New Window"
         public static var rateApp: String { tr("menu.rateApp") }  // "Rate NextExplorer…"
+        public static var refresh: String { tr("menu.refresh") }  // "Refresh"
         public static var support: String { tr("menu.support") }  // "NextExplorer Support"
     }
     public enum Offline {
@@ -354,6 +365,13 @@ public enum L10n {
         public static var selectionTitle: String { tr("offline.selectionTitle") }  // "Download for Offline"
         public static var settingsRow: String { tr("offline.settingsRow") }  // "Download Files for Offline Use"
         public static var tunnelSpeedNote: String { tr("offline.tunnelSpeedNote") }
+    }
+    public enum OpenWith {
+        public static var failed: String { tr("openWith.failed") }  // "Couldn't open this file."
+        public static func openIn(_ a0: CVarArg) -> String { tr("openWith.openIn", a0) }
+        public static var openWith: String { tr("openWith.openWith") }  // "Open With"
+        public static var print: String { tr("openWith.print") }  // "Print…"
+        public static var viewAsText: String { tr("openWith.viewAsText") }  // "View as Text"
     }
     public enum Permissions {
         public static var applyOwnership: String { tr("permissions.applyOwnership") }  // "Apply Ownership"
@@ -386,6 +404,8 @@ public enum L10n {
         public static var gridView: String { tr("select.gridView") }  // "Grid View"
         public static var listView: String { tr("select.listView") }  // "List View"
         public static var selectAll: String { tr("select.selectAll") }  // "Select All"
+        public static var tableView: String { tr("select.tableView") }  // "Table View"
+        public static var viewAs: String { tr("select.viewAs") }  // "View"
     }
     public enum ServerDetails {
         public static var cameraDeniedMessage: String { tr("serverDetails.cameraDeniedMessage") }  // "Turn on camera access in Settings to take a photo."

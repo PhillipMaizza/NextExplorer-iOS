@@ -609,3 +609,21 @@ menu.support	NextExplorer 支援
 settings.sectionSupport	支援
 settings.rowRateApp	為 NextExplorer 評分
 settings.rowSupport	說明與支援
+menu.refresh	重新整理
+select.tableView	表格檢視
+openWith.openIn	在 %@ 中打開
+openWith.openWith	打開方式
+openWith.viewAsText	以文字檢視
+openWith.failed	無法打開此檔案。
+browse.showInFinder	在 Finder 中顯示
+browse.actionCut	剪下
+browse.clipboardCutOne	%@ 已準備移動
+browse.clipboardCutMany	%lld 個項目已準備移動
+menu.enclosingFolder	上層檔案夾
+common.more	更多
+openWith.print	列印⋯
+menu.newWindow	新增視窗
+menu.newTab	新增標籤頁
+browse.actionOpenInNewWindow	在新視窗中打開
+browse.actionOpenInNewTab	在新標籤頁中打開
+select.viewAs	顯示方式
