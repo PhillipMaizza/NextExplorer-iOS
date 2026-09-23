@@ -174,7 +174,7 @@ struct DisplaySettingsSection: View {
         if filter.anyMatch([L10n.Settings.rowAppearance, L10n.Settings.toggleShowThumbnails, L10n.Settings.rowThumbnailSize, L10n.Settings.toggleShowExtensions, L10n.Settings.toggleShowTabLabels]) {
             Section {
                 if filter.matches(L10n.Settings.rowAppearance) {
-                    Picker(selection: appearance) {
+                    DSMenuPickerRow(selection: appearance, value: appearance.wrappedValue.title) {
                         ForEach(AppearanceMode.allCases) { mode in
                             Text(mode.title).tag(mode)
                         }
@@ -189,7 +189,6 @@ struct DisplaySettingsSection: View {
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
                     }
-                    .pickerStyle(.menu)
                     .tint(Color.secondaryDS)
                     .hapticFeedback(.selection, trigger: appearance.wrappedValue)
                 }
@@ -201,7 +200,7 @@ struct DisplaySettingsSection: View {
                     )
                 }
                 if filter.matches(L10n.Settings.rowThumbnailSize) {
-                    Picker(selection: thumbnailSize) {
+                    DSMenuPickerRow(selection: thumbnailSize, value: thumbnailSize.wrappedValue.title) {
                         ForEach(ThumbnailSize.allCases) { size in
                             Text(size.title).tag(size)
                         }
@@ -216,7 +215,6 @@ struct DisplaySettingsSection: View {
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
                     }
-                    .pickerStyle(.menu)
                     .tint(Color.secondaryDS)
                     .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
                 }

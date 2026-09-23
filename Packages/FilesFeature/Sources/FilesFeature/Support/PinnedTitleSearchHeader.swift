@@ -142,6 +142,13 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
                 content
                     .searchable(text: $text, placement: .toolbar, prompt: Text(prompt))
                     .searchFocused(isFocused)
+                    // Pins the field to the trailing edge whatever else the screen puts in the
+                    // toolbar; without it a screen with only leading items packs it beside them.
+                    .toolbar {
+                        if #available(macOS 26.0, *) {
+                            ToolbarSpacer(.flexible)
+                        }
+                    }
             } else {
                 content
             }

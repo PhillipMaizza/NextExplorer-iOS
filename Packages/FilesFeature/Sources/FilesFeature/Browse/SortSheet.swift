@@ -31,7 +31,7 @@ struct SortToolbarButton: View {
             // button style made this one stand out from every other toolbar control.
             Button(action: action) {
                 IconKit.sort
-                    .foregroundStyle(Color.accent)
+                    .foregroundStyle(Color.primaryDS)
             }
             .disabled(isDisabled)
             .accessibilityLabel(L10n.Common.sort)
@@ -47,6 +47,18 @@ struct SortToolbarButton: View {
             .buttonStyle(DSHapticButtonStyle())
             .disabled(isDisabled)
             .accessibilityLabel(L10n.Common.sort)
+        #endif
+    }
+}
+
+extension ToolbarItemPlacement {
+    /// Where a screen's sort button sits: leading on a Mac, so the toolbar search field keeps
+    /// the trailing edge; trailing on iOS as before.
+    static var sortControl: ToolbarItemPlacement {
+        #if os(macOS)
+            .navigation
+        #else
+            .primaryAction
         #endif
     }
 }

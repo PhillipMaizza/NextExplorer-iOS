@@ -64,6 +64,7 @@ public enum IconKit {
     // (Arabic) so disclosure and breadcrumb chevrons point into the content the correct way.
     public static let chevronRight = Image(systemName: "chevron.forward")
     public static let chevronDown = Image(systemName: "chevron.down")
+    public static let chevronUpDown = Image(systemName: "chevron.up.chevron.down")
     public static let externalLink = Image(systemName: "arrow.up.right")
     public static let warning = Image(systemName: "exclamationmark.triangle")
     public static let darkMode = Image(systemName: "moon.fill")

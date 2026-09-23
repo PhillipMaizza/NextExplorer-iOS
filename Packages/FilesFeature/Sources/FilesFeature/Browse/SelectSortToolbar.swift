@@ -26,29 +26,40 @@ func selectSortToolbar(
     @ViewBuilder sortMenu: () -> some View
 ) -> some ToolbarContent {
     if isSelecting {
-        ToolbarItem(placement: .topBarLeading) {
-            Button(action: onSelectAllToggled) {
-                IconKit.selectAll
+        #if os(macOS)
+            // Both select mode exits sit together on the leading edge, spelled out, while the
+            // selection actions take the center.
+            ToolbarItemGroup(placement: .navigation) {
+                Button(action: onSelectAllToggled) {
+                    Label {
+                        Text(isAllSelected ? L10n.Select.deselectAll : L10n.Select.selectAll)
+                    } icon: {
+                        IconKit.selectAll
+                    }
+                    .labelStyle(.titleAndIcon)
+                }
+                Button(L10n.Common.cancel, action: onCancel)
+                    .keyboardShortcut(.cancelAction)
             }
-            .buttonStyle(DSHapticButtonStyle())
-            .accessibilityLabelWithTooltip(isAllSelected ? L10n.Select.deselectAll : L10n.Select.selectAll)
-        }
-        ToolbarItem(placement: .primaryAction) {
-            Button(L10n.Common.cancel, action: onCancel)
+        #else
+            ToolbarItem(placement: .topBarLeading) {
+                Button(action: onSelectAllToggled) {
+                    IconKit.selectAll
+                }
                 .buttonStyle(DSHapticButtonStyle())
-        }
+                .accessibilityLabelWithTooltip(isAllSelected ? L10n.Select.deselectAll : L10n.Select.selectAll)
+            }
+            ToolbarItem(placement: .primaryAction) {
+                Button(L10n.Common.cancel, action: onCancel)
+                    .buttonStyle(DSHapticButtonStyle())
+            }
+        #endif
     } else {
         #if os(macOS)
             // A Mac toolbar has room: every action the iOS "…" menu hides is a direct control.
-            ToolbarItemGroup(placement: .primaryAction) {
-                if hasClipboardItems {
-                    Menu {
-                        clipboardMenu()
-                    } label: {
-                        IconKit.paste
-                    }
-                    .accessibilityLabelWithTooltip(L10n.Browse.actionPaste)
-                }
+            // Select and Sort lead, the view controls sit centered, and the search field keeps
+            // the trailing edge to itself.
+            ToolbarItemGroup(placement: .navigation) {
                 if isSelectAvailable {
                     Button(action: onSelectModeToggled) {
                         IconKit.select
@@ -57,6 +68,16 @@ func selectSortToolbar(
                 }
                 sortMenu()
                     .labelStyle(.iconOnly)
+            }
+            ToolbarItemGroup(placement: .principal) {
+                if hasClipboardItems {
+                    Menu {
+                        clipboardMenu()
+                    } label: {
+                        IconKit.paste
+                    }
+                    .accessibilityLabelWithTooltip(L10n.Browse.actionPaste)
+                }
                 if let macViewModes {
                     Picker(selection: macViewModes.selection) {
                         ForEach(macViewModes.options) { option in
