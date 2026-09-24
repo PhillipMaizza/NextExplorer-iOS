@@ -19,6 +19,13 @@ private struct SyncRefreshFeedback: ViewModifier {
                 await onRefresh()
                 didFinishRefreshing.toggle()
             }
+        #if os(macOS)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    MacRefreshToolbarButton(onRefresh: onRefresh) { didFinishRefreshing.toggle() }
+                }
+            }
+        #endif
             .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in errorMessage == nil }
             .hapticFeedback(.error, trigger: errorMessage) { _, newValue in signalsErrorHaptic && newValue != nil }
             .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: errorMessage == nil, extraBottomInset: extraBottomInset)

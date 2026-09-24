@@ -302,6 +302,15 @@ struct BrowseContentView: View {
             await store.send(.refreshButtonTapped).finish()
             didFinishRefreshing.toggle()
         }
+        #if os(macOS)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                MacRefreshToolbarButton(onRefresh: { await store.send(.refreshButtonTapped).finish() }) {
+                    didFinishRefreshing.toggle()
+                }
+            }
+        }
+        #endif
         .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.phase.errorMessage == nil }
         .hapticFeedback(.error, trigger: store.phase.errorMessage) { _, newValue in newValue != nil }
         .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: store.phase.errorMessage == nil, extraBottomInset: bottomChromeClearance)
