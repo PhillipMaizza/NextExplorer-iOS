@@ -692,7 +692,9 @@ struct BrowseContentView: View {
                 serverURL: store.serverURL,
                 canDropOnFolders: store.access?.canDelete ?? false,
                 onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
-                contextMenu: { ids in tableContextMenu(for: ids) }
+                contextMenu: { ids in tableContextMenu(for: ids) },
+                personalSpace: showsPersonalSpace ? Self.macPersonalSpaceItem : nil,
+                onOpenPersonalSpace: { store.send(.personalSpaceTapped) }
             )
         #else
             listContent
@@ -713,6 +715,15 @@ struct BrowseContentView: View {
     #endif
 
     #if os(macOS)
+        /// The table row standing in for My Files; its id is the `personal` path it opens.
+        private static let macPersonalSpaceItem = FileItem(
+            name: PersonalSpace.rootPath,
+            path: "",
+            dateModified: .distantPast,
+            size: 0,
+            kind: "directory"
+        )
+
         /// Right click in the table: the clicked rows' actions, or the folder's own (new folder,
         /// upload) on empty space. Paste Here joins every variant while something is staged, so
         /// a full window still has somewhere to paste.

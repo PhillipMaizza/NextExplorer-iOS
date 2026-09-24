@@ -51,6 +51,10 @@
         let canDropOnFolders: Bool
         let onDropOnFolder: ([FileItem.ID], FileItem) -> Void
         @ViewBuilder let contextMenu: (Set<FileItem.ID>) -> ContextMenu
+        /// The account's private folder, pinned as the first row on the root when the server has
+        /// personal folders on. Its id is the `personal` path space, which is never a volume.
+        var personalSpace: FileItem?
+        var onOpenPersonalSpace: () -> Void = {}
 
         @Dependency(\.filesClient) private var filesClient
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
@@ -61,8 +65,14 @@
             Table(of: FileItem.self, selection: $selection, sortOrder: sortOrder) {
                 TableColumn(L10n.Sort.name, value: \.name) { item in
                     HStack(spacing: .space8) {
-                        icon(for: item)
-                        Text(item.name).lineLimit(1).truncationMode(.middle)
+                        if isPersonalSpace(item) {
+                            MacTableFolderIcon(image: IconKit.person, tint: Color.accent)
+                        } else {
+                            icon(for: item)
+                        }
+                        Text(isPersonalSpace(item) ? L10n.Browse.myFiles : item.name)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
                         if offlineItemIDs.contains(item.id) {
                             MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
                                 .accessibilityLabel(L10n.Offline.badgeAvailable)
@@ -73,7 +83,7 @@
                 }
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
                 TableColumn(L10n.Sort.dateModified, value: \.dateModified) { item in
-                    Text(dateFormat.string(from: item.dateModified, includeTime: true))
+                    Text(isPersonalSpace(item) ? "" : dateFormat.string(from: item.dateModified, includeTime: true))
                         .foregroundStyle(Color.secondaryDS)
                         .opacity(opacity(for: item))
                 }
@@ -92,6 +102,9 @@
                 }
                 .width(MacBrowseTableMetrics.kindColumnWidth)
             } rows: {
+                if let personalSpace {
+                    TableRow(personalSpace)
+                }
                 ForEach(items) { item in
                     TableRow(item)
                         .draggable(DraggedServerItem(item: item, serverURL: serverURL, filesClient: filesClient))
@@ -103,9 +116,15 @@
                 }
             }
             .contextMenu(forSelectionType: FileItem.ID.self) { ids in
-                contextMenu(ids)
+                // My Files has no file actions of its own.
+                let fileIDs = ids.filter { $0 != personalSpace?.id }
+                if fileIDs.count == ids.count || !fileIDs.isEmpty {
+                    contextMenu(fileIDs)
+                }
             } primaryAction: { ids in
-                if ids.count == 1, let item = item(for: ids.first) {
+                if ids.count == 1, ids.first == personalSpace?.id {
+                    onOpenPersonalSpace()
+                } else if ids.count == 1, let item = item(for: ids.first) {
                     onOpen(item)
                 }
             }
@@ -146,6 +165,10 @@
 
         private var dateFormat: DateDisplayFormat {
             DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
+        }
+
+        private func isPersonalSpace(_ item: FileItem) -> Bool {
+            item.id == personalSpace?.id
         }
 
         private func item(for id: FileItem.ID?) -> FileItem? {
