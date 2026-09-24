@@ -22,7 +22,7 @@
         static let iconSize: CGFloat = .iconMedium
         /// Extra room above and below each row's content, for rows taller than AppKit's default.
         static let rowVerticalPadding: CGFloat = .space4
-        static let badgeSize: CGFloat = .iconSmall
+        static let badgeSize: CGFloat = .iconXSmall
         /// Finder's look for rows staged by Cut.
         static let cutRowOpacity: Double = 0.5
         static let nameColumnMinWidth: CGFloat = 220
