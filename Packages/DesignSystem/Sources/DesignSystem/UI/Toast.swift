@@ -101,6 +101,40 @@ public struct DSToastMessage: Equatable, Identifiable {
     }
 }
 
+/// One toast on screen at a time, app wide. Every `dsToast` registers its message here; the
+/// newest shows, and a new one waits for the current one to animate out first. A message still
+/// set underneath (e.g. a persistent progress toast) comes back once the newer one clears.
+@MainActor
+@Observable
+final class DSToastPresenter {
+    static let shared = DSToastPresenter()
+
+    private(set) var visibleID: String?
+    private var requests: [(owner: UUID, id: String)] = []
+    private var swapTask: Task<Void, Never>?
+
+    func set(_ message: DSToastMessage?, owner: UUID) {
+        requests.removeAll { $0.owner == owner }
+        if let message {
+            requests.append((owner, message.id))
+        }
+        let target = requests.last?.id
+        guard target != visibleID else { return }
+        swapTask?.cancel()
+        guard visibleID != nil else {
+            visibleID = target
+            return
+        }
+        visibleID = nil
+        guard target != nil else { return }
+        swapTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(Constants.animationDuration))
+            guard !Task.isCancelled, let self else { return }
+            visibleID = requests.last?.id
+        }
+    }
+}
+
 private struct DSToastModifier: ViewModifier {
     @Binding var message: DSToastMessage?
     /// Extra clearance above the base inset — for screens that reserve their own chrome
@@ -110,51 +144,86 @@ private struct DSToastModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content.overlay(alignment: .bottom) {
-            if let message {
-                HStack(spacing: Constants.spacing) {
-                    if let icon = message.icon {
-                        icon
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: Constants.iconSize, height: Constants.iconSize)
-                    } else {
-                        DSSpinner()
-                            .tint(Color.primaryInverted)
-                    }
-                    Text(message.text).type(.body2(.semibold))
-                    if let actionTitle = message.actionTitle, let action = message.action {
-                        Button(actionTitle, action: action)
-                            .buttonStyle(DSHapticButtonStyle())
-                            .type(.body2(.bold))
-                            .underline()
-                    }
-                }
-                .foregroundStyle(Color.primaryInverted)
-                .padding(.horizontal, Constants.horizontalPadding)
-                .padding(.vertical, Constants.verticalPadding)
-                .background(Capsule().fill(message.backgroundColor))
-                .padding(.bottom, Constants.bottomInset + extraBottomInset)
-                .transition(.move(edge: .bottom).combined(with: .opacity))
-                // One VoiceOver element; spoken as a status announcement the moment it appears,
-                // since a transient toast never receives focus on its own.
-                .accessibilityElement(children: .combine)
-                .accessibilityAddTraits(.isStaticText)
-                .task(id: message.id) {
-                    AccessibilityNotification.Announcement(message.text).post()
-                    guard !message.isPersistent else { return }
-                    try? await Task.sleep(for: Constants.autoDismissDelay)
-                    self.message = nil
-                }
+            DSToastOverlay(message: $message, extraBottomInset: extraBottomInset)
+        }
+    }
+}
+
+/// A `View`, not modifier code, so the body reliably tracks `DSToastPresenter`.
+private struct DSToastOverlay: View {
+    @Binding var message: DSToastMessage?
+    let extraBottomInset: CGFloat
+
+    @State private var owner = UUID()
+    private let presenter = DSToastPresenter.shared
+
+    /// The message, only while it is the one on screen.
+    private var visibleMessage: DSToastMessage? {
+        guard let message, message.id == presenter.visibleID else { return nil }
+        return message
+    }
+
+    var body: some View {
+        ZStack(alignment: .bottom) {
+            // Keeps the overlay alive (and its lifecycle hooks firing) while nothing shows.
+            Color.clear
+                .allowsHitTesting(false)
+            if let message = visibleMessage {
+                toast(message)
             }
         }
-        .animation(.spring(duration: Constants.animationDuration), value: message)
+        .animation(.spring(duration: Constants.animationDuration), value: visibleMessage)
+        .onAppear { presenter.set(message, owner: owner) }
+        .onChange(of: message) { _, newValue in presenter.set(newValue, owner: owner) }
+        .onDisappear { presenter.set(nil, owner: owner) }
         // Persistent progress toasts (e.g. "Extracting\u{2026}") aren't errors — only the
         // auto-dismissing warning/success styles should buzz, each with its own feedback kind.
-        .hapticFeedback(.warning, trigger: message?.id) { _, newValue in
-            newValue != nil && message?.isPersistent == false && message?.isSuccess == false
+        .hapticFeedback(.warning, trigger: visibleMessage?.id) { _, newValue in
+            newValue != nil && visibleMessage?.isPersistent == false && visibleMessage?.isSuccess == false
         }
-        .hapticFeedback(.success, trigger: message?.id) { _, newValue in
-            newValue != nil && message?.isSuccess == true
+        .hapticFeedback(.success, trigger: visibleMessage?.id) { _, newValue in
+            newValue != nil && visibleMessage?.isSuccess == true
+        }
+    }
+
+    private func toast(_ message: DSToastMessage) -> some View {
+        HStack(spacing: Constants.spacing) {
+            if let icon = message.icon {
+                icon
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.iconSize, height: Constants.iconSize)
+            } else {
+                DSSpinner()
+                    .tint(Color.primaryInverted)
+            }
+            Text(message.text).type(.body2(.semibold))
+            if let actionTitle = message.actionTitle, let action = message.action {
+                Button(actionTitle, action: action)
+                    .buttonStyle(DSHapticButtonStyle())
+                    .type(.body2(.bold))
+                    .underline()
+            }
+        }
+        .foregroundStyle(Color.primaryInverted)
+        .padding(.horizontal, Constants.horizontalPadding)
+        .padding(.vertical, Constants.verticalPadding)
+        .background(Capsule().fill(message.backgroundColor))
+        .padding(.bottom, Constants.bottomInset + extraBottomInset)
+        .transition(.move(edge: .bottom).combined(with: .opacity))
+        // One VoiceOver element; spoken as a status announcement the moment it appears,
+        // since a transient toast never receives focus on its own.
+        .accessibilityElement(children: .combine)
+        .accessibilityAddTraits(.isStaticText)
+        // Starts only once the toast is on screen, so time spent waiting for an earlier one
+        // to leave never shortens this one.
+        .task(id: message.id) {
+            AccessibilityNotification.Announcement(message.text).post()
+            guard !message.isPersistent else { return }
+            try? await Task.sleep(for: Constants.autoDismissDelay)
+            // A toast swapped out early is cancelled here; clearing then would wipe its successor.
+            guard !Task.isCancelled else { return }
+            self.message = nil
         }
     }
 }
