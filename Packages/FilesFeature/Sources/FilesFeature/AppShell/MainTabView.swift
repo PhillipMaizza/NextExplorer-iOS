@@ -357,7 +357,6 @@ public struct MainTabView: View {
             MacSidebarAccountMenu(
                 store: store.scope(state: \.settings, action: \.settings),
                 onChangePassword: {
-                    store.send(.tabSelected(.settings))
                     store.send(.settings(.changePasswordButtonTapped))
                 }
             ) {

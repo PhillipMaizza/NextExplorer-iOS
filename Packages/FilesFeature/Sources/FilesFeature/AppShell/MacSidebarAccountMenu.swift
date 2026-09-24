@@ -23,7 +23,7 @@
     /// intent; the switch, add and remove work stays upstream.
     struct MacSidebarAccountMenu<Label: View>: View {
         let store: StoreOf<SettingsFeature>
-        /// Change Password opens inside Settings, so the caller switches to that section first.
+        /// Change Password opens as a window sheet, from whichever section is on screen.
         let onChangePassword: () -> Void
         @ViewBuilder let label: () -> Label
 

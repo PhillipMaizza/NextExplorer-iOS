@@ -60,6 +60,12 @@ struct SettingsView: View {
         Binding(get: { store.removeOfflineConfirmationIsPresented }, set: { _ in })
     }
 
+    /// The Mac shows Change Password as a window sheet (`AccountConfirmations`), opened from the
+    /// sidebar's account popover, so Settings never pushes it there.
+    private var changePasswordDestination: Binding<StoreOf<ChangePasswordFeature>?> {
+        AccountConfirmations.isHostedByWindow ? .constant(nil) : $store.scope(state: \.changePassword, action: \.changePassword)
+    }
+
     var body: some View {
         NavigationStack {
             DSGroupedList {
@@ -105,7 +111,7 @@ struct SettingsView: View {
                 UserManagementView(store: userManagementStore)
             }
             .navigationDestination(
-                item: $store.scope(state: \.changePassword, action: \.changePassword)
+                item: changePasswordDestination
             ) { changePasswordStore in
                 ChangePasswordView(store: changePasswordStore)
             }
