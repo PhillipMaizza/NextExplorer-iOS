@@ -12,15 +12,7 @@
         @State private var isRefreshing = false
 
         var body: some View {
-            Button {
-                guard !isRefreshing else { return }
-                isRefreshing = true
-                Task {
-                    await onRefresh()
-                    isRefreshing = false
-                    onFinished()
-                }
-            } label: {
+            Button(action: refresh) {
                 if isRefreshing {
                     DSSpinner()
                         .controlSize(.small)
@@ -31,6 +23,31 @@
             }
             .disabled(isRefreshing)
             .accessibilityLabelWithTooltip(L10n.Menu.refresh)
+            // View › Refresh (⌘R) presses this same button, so it spins and toasts alike.
+            .focusedSceneValue(\.refreshVisibleScreen, RefreshScreenAction(perform: refresh))
         }
+
+        private func refresh() {
+            guard !isRefreshing else { return }
+            isRefreshing = true
+            Task {
+                await onRefresh()
+                isRefreshing = false
+                onFinished()
+            }
+        }
+    }
+
+    /// ⌘R for the section on screen, published by its toolbar refresh button.
+    public struct RefreshScreenAction {
+        let perform: () -> Void
+
+        public func callAsFunction() {
+            perform()
+        }
+    }
+
+    public extension FocusedValues {
+        @Entry var refreshVisibleScreen: RefreshScreenAction?
     }
 #endif

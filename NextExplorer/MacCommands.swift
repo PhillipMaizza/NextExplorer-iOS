@@ -17,6 +17,8 @@
         /// Present while the file table has focus; otherwise the Edit menu edits text as usual.
         @FocusedValue(\.browseKeyboardActions) private var fileActions
         @FocusedValue(\.printPreview) private var printPreview
+        /// The visible section's toolbar refresh, so ⌘R spins and toasts like clicking it.
+        @FocusedValue(\.refreshVisibleScreen) private var refreshVisibleScreen
         @Environment(\.openWindow) private var openWindow
 
         private static let sections: [(tab: MainTabFeature.Tab, title: String, key: KeyEquivalent)] = [
@@ -80,8 +82,14 @@
                         .keyboardShortcut(section.key)
                 }
                 Divider()
-                Button(L10n.Menu.refresh) { send(.refreshSelectedTab) }
-                    .keyboardShortcut("r")
+                Button(L10n.Menu.refresh) {
+                    if let refreshVisibleScreen {
+                        refreshVisibleScreen()
+                    } else {
+                        send(.refreshSelectedTab)
+                    }
+                }
+                .keyboardShortcut("r")
                 Button(L10n.Menu.enclosingFolder) { send(.enclosingFolderRequested) }
                     .keyboardShortcut(.upArrow)
                 Button(L10n.Common.back) { send(.enclosingFolderRequested) }
