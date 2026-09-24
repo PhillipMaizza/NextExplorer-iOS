@@ -96,6 +96,7 @@ browse.actionAddToFavorites	Add to Favorites
 browse.actionRemoveFromFavorites	Remove from Favorites
 browse.actionShare	Create share link
 browse.actionDelete	Delete
+browse.actionDuplicate	Duplicate
 browse.renameTitle	Rename
 browse.renameNamePlaceholder	Name
 browse.actionNewFolder	Create Folder

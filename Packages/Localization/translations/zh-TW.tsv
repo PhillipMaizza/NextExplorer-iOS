@@ -76,6 +76,7 @@ browse.actionAddToFavorites	加入喜好項目
 browse.actionRemoveFromFavorites	從喜好項目移除
 browse.actionShare	建立共享連結
 browse.actionDelete	刪除
+browse.actionDuplicate	製作副本
 browse.renameTitle	重新命名
 browse.renameNamePlaceholder	名稱
 browse.actionNewFolder	建立檔案夾

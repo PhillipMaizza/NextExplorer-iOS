@@ -81,6 +81,37 @@ extension BrowseFeature {
         .cancellable(id: CancelID.transfer)
     }
 
+    /// A copy or move into the folder on screen: note what it created, and drop the folder's
+    /// saved listing so the refresh that follows is a full fetch rather than a revalidation.
+    func awaitArrivals(_ state: inout State, from result: TransferResult) {
+        let destination = result.destination.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        directoryCacheStore.remove(state.serverURL, destination)
+        guard destination == state.directoryPath else { return }
+        state.awaitedArrivalIDs = Set(result.items.filter { !$0.skipped }.map {
+            $0.to.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+        })
+        state.arrivalChecksLeft = Constants.arrivalRechecks
+    }
+
+    /// After a listing lands: stop waiting once every awaited item is there (or the rechecks run
+    /// out), otherwise refetch again shortly.
+    func recheckArrivals(_ state: inout State) -> Effect<Action> {
+        guard !state.awaitedArrivalIDs.isEmpty else { return .none }
+        state.awaitedArrivalIDs.subtract(state.items.ids)
+        guard !state.awaitedArrivalIDs.isEmpty, state.arrivalChecksLeft > 0 else {
+            state.awaitedArrivalIDs = []
+            state.arrivalChecksLeft = 0
+            return .none
+        }
+        state.arrivalChecksLeft -= 1
+        let clock = clock
+        return .run { send in
+            try await clock.sleep(for: Constants.arrivalRecheckDelay)
+            await send(.refreshButtonTapped)
+        }
+        .cancellable(id: CancelID.arrivalRecheck, cancelInFlight: true)
+    }
+
     /// Destination items that share a name with something inbound — minus any that *are* the
     /// inbound item (copying a file into its own folder isn't a real collision; the server
     /// just makes a numbered duplicate).

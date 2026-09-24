@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Aan favorieten toevoegen
 browse.actionRemoveFromFavorites	Uit favorieten verwijderen
 browse.actionShare	Deellink maken
 browse.actionDelete	Verwijderen
+browse.actionDuplicate	Dupliceren
 browse.renameTitle	Naam wijzigen
 browse.renameNamePlaceholder	Naam
 browse.actionNewFolder	Map maken

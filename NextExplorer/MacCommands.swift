@@ -47,6 +47,9 @@
                 Button(L10n.Browse.actionNewFolder) { send(.newFolderRequested) }
                     .keyboardShortcut("n", modifiers: [.command, .shift])
                 Divider()
+                Button(L10n.Browse.actionDuplicate) { fileActions?.duplicate() }
+                    .keyboardShortcut("d")
+                    .disabled(fileActions == nil)
                 Button(L10n.Browse.actionGetInfo) { fileActions?.getInfo() }
                     .keyboardShortcut("i")
                     .disabled(fileActions == nil)

@@ -2552,12 +2552,51 @@ struct BrowseFeatureTransferTests {
             $0.pendingTransferRetry = nil
             $0.$clipboard.withLock { $0 = nil }
             $0.transferSuccessMessage = L10n.Browse.transferCopied(1)
+            $0.awaitedArrivalIDs = ["Documents/f0"]
+            $0.arrivalChecksLeft = 3
         }
         await store.receive(.delegate(.directoryContentsChanged))
 
         #expect(captured.value?.items == [file])
         #expect(captured.value?.destination == "Documents")
         #expect(captured.value?.operation == .copy)
+    }
+
+    @Test
+    func duplicateCopiesTheSelectionIntoItsOwnFolderLettingTheServerRename() async {
+        let file = item("a.txt", path: "Documents")
+        var state = makeState()
+        state.items = [file]
+        state.selectedItemIDs = [file.id]
+        let captured = LockIsolated<(items: [FileItem], destination: String, operation: TransferOperation)?>(nil)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, items, destination, operation in
+                captured.setValue((items, destination, operation))
+                return result(destination: destination, moved: 1)
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.duplicateSelectionTapped)
+        await store.receive(\.transferResponse.success)
+        #expect(captured.value?.items == [file])
+        #expect(captured.value?.destination == "Documents")
+        #expect(captured.value?.operation == .copy)
+        #expect(store.state.clipboard == nil)
+    }
+
+    @Test
+    func duplicateDoesNothingAtTheRoot() async {
+        var state = makeState(directoryPath: "")
+        let volume = item("Files", path: "")
+        state.items = [volume]
+        state.selectedItemIDs = [volume.id]
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.duplicateSelectionTapped)
     }
 
     @Test

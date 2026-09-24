@@ -76,6 +76,7 @@ browse.actionAddToFavorites	पसंदीदा में जोड़ें
 browse.actionRemoveFromFavorites	पसंदीदा से निकालें
 browse.actionShare	साझा लिंक बनाएं
 browse.actionDelete	हटाएं
+browse.actionDuplicate	डुप्लिकेट करें
 browse.renameTitle	नाम बदलें
 browse.renameNamePlaceholder	नाम
 browse.actionNewFolder	फ़ोल्डर बनाएं

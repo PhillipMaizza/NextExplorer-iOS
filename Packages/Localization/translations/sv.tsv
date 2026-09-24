@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Lägg till i favoriter
 browse.actionRemoveFromFavorites	Ta bort från favoriter
 browse.actionShare	Skapa delningslänk
 browse.actionDelete	Radera
+browse.actionDuplicate	Duplicera
 browse.renameTitle	Byt namn
 browse.renameNamePlaceholder	Namn
 browse.actionNewFolder	Skapa mapp

@@ -104,6 +104,15 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
             #if os(macOS)
+                if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
+                    Button {
+                        store.send(.tableSelectionChanged([item.id]))
+                        store.send(.duplicateSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
+                    }
+                    .tint(.primaryDS)
+                }
                 // Stages the row for a move, as Command X does; Move still opens the picker.
                 if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                     Button {

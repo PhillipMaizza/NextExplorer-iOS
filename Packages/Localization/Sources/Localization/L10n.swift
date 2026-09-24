@@ -42,6 +42,7 @@ public enum L10n {
         public static var actionCut: String { tr("browse.actionCut") }  // "Cut"
         public static var actionDelete: String { tr("browse.actionDelete") }  // "Delete"
         public static var actionDownload: String { tr("browse.actionDownload") }  // "Download"
+        public static var actionDuplicate: String { tr("browse.actionDuplicate") }  // "Duplicate"
         public static var actionExtract: String { tr("browse.actionExtract") }  // "Extract"
         public static var actionGetInfo: String { tr("browse.actionGetInfo") }  // "Get Info"
         public static var actionMove: String { tr("browse.actionMove") }  // "Move"

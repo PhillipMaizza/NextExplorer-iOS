@@ -20,6 +20,12 @@ public struct BrowseFeature {
         /// and scans file contents with ripgrep, which is expensive, so this deliberately throttles
         /// how often it runs. The instant client side pre-fill covers perceived latency in the gap.
         static let searchDebounce: Duration = .seconds(1)
+        /// After a copy or move into the folder on screen, how many extra refetches wait for the
+        /// new items to be listed, and how far apart. A server that finishes the copy after
+        /// answering (or a listing fetched a moment too early) otherwise leaves the new
+        /// "Name (2)" missing until a manual refresh.
+        static let arrivalRechecks = 3
+        static let arrivalRecheckDelay: Duration = .milliseconds(700)
         /// Matches the backend's own default result cap.
         static let searchLimit = 100
         /// An action taken from a full-screen preview that also dismisses the cover (delete,
@@ -236,6 +242,10 @@ public struct BrowseFeature {
         /// staged clipboard is never emptied while this is non nil, so a retry always has
         /// something to act on.
         public var pendingTransferRetry: TransferRetry?
+        /// Items a copy or move into this folder created that the listing has not shown yet,
+        /// and how many more refetches may wait for them (`Constants.arrivalRechecks`).
+        public var awaitedArrivalIDs: Set<FileItem.ID> = []
+        public var arrivalChecksLeft = 0
         /// Non nil while a transfer is waiting on the user's answer to a name-collision prompt.
         public var transferConflict: TransferConflict?
         /// Set when an item is staged with "Copy"; `BrowseContentView` turns it into a brief
@@ -455,6 +465,8 @@ public struct BrowseFeature {
         case tableSelectionChanged(Set<FileItem.ID>)
         case copySelectionTapped
         case cutSelectionTapped
+        /// Copies the selection into its own folder; the server names the copies "Name (2)".
+        case duplicateSelectionTapped
         case deleteSelectionTapped
         case renameSelectionTapped
         case infoSelectionTapped
@@ -517,7 +529,7 @@ public struct BrowseFeature {
     // can reference these cancel ids across files.
     enum CancelID: Hashable {
         case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
-        case prefetchChildren, prefetchFavorites, offlineAvailability
+        case prefetchChildren, prefetchFavorites, offlineAvailability, arrivalRecheck
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
         case favorite(String)
@@ -551,6 +563,7 @@ public struct BrowseFeature {
                 state.items = IdentifiedArray(Self.sortedAlphabetically(result.items), id: \.id, uniquingIDsWith: { first, _ in first })
                 state.access = result.access
                 return .merge(
+                    recheckArrivals(&state),
                     search(&state),
                     computeOfflineAvailability(&state),
                     prefetch(
@@ -1127,6 +1140,17 @@ public struct BrowseFeature {
                     : L10n.Browse.clipboardCutMany(items.count)
                 return .none
 
+            case .duplicateSelectionTapped:
+                let items = selectedItems(state)
+                guard !items.isEmpty, !state.directoryPath.isEmpty, state.access?.canWrite ?? false else { return .none }
+                return performTransfer(&state, retry: TransferRetry(
+                    items: items,
+                    destination: state.directoryPath,
+                    operation: .copy,
+                    clearClipboard: false,
+                    resolution: .keepBoth
+                ))
+
             case .deleteSelectionTapped:
                 let items = selectedItems(state)
                 guard !items.isEmpty, state.access?.canDelete ?? false else { return .none }
@@ -1208,6 +1232,7 @@ public struct BrowseFeature {
                     state.$clipboard.withLock { $0 = nil }
                 }
                 state.transferSuccessMessage = Self.transferSuccessMessage(for: outcome)
+                awaitArrivals(&state, from: outcome.result)
                 return .send(.delegate(.directoryContentsChanged))
 
             case let .transferResponse(.failure(error)):

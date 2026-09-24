@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Aggiungi ai Preferiti
 browse.actionRemoveFromFavorites	Rimuovi dai Preferiti
 browse.actionShare	Crea link di condivisione
 browse.actionDelete	Elimina
+browse.actionDuplicate	Duplica
 browse.renameTitle	Rinomina
 browse.renameNamePlaceholder	Nome
 browse.actionNewFolder	Crea cartella

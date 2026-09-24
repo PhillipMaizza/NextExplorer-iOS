@@ -754,6 +754,15 @@ struct BrowseContentView: View {
                     Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
                 }
                 .tint(.primaryDS)
+                if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
+                    Button {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.duplicateSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
+                    }
+                    .tint(.primaryDS)
+                }
                 if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                     Button {
                         store.send(.tableSelectionChanged(ids))
@@ -785,6 +794,7 @@ struct BrowseContentView: View {
             return BrowseKeyboardActions(
                 cut: { store.send(.cutSelectionTapped) },
                 copy: { store.send(.copySelectionTapped) },
+                duplicate: { store.send(.duplicateSelectionTapped, animation: .default) },
                 paste: {
                     guard canPaste else { return }
                     store.send(.pasteTapped(keepItemsAfterCopy: keepAfterCopy), animation: .default)

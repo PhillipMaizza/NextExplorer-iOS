@@ -76,6 +76,7 @@ browse.actionAddToFavorites	즐겨찾기에 추가
 browse.actionRemoveFromFavorites	즐겨찾기에서 제거
 browse.actionShare	공유 링크 만들기
 browse.actionDelete	삭제
+browse.actionDuplicate	복제
 browse.renameTitle	이름 변경
 browse.renameNamePlaceholder	이름
 browse.actionNewFolder	폴더 만들기

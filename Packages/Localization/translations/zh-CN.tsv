@@ -76,6 +76,7 @@ browse.actionAddToFavorites	添加到收藏
 browse.actionRemoveFromFavorites	从收藏中移除
 browse.actionShare	创建共享链接
 browse.actionDelete	删除
+browse.actionDuplicate	创建副本
 browse.renameTitle	重命名
 browse.renameNamePlaceholder	名称
 browse.actionNewFolder	新建文件夹

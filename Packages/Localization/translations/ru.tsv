@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Добавить в избранное
 browse.actionRemoveFromFavorites	Убрать из избранного
 browse.actionShare	Создать ссылку для доступа
 browse.actionDelete	Удалить
+browse.actionDuplicate	Дублировать
 browse.renameTitle	Переименовать
 browse.renameNamePlaceholder	Имя
 browse.actionNewFolder	Создать папку

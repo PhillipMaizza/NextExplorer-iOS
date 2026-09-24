@@ -115,6 +115,7 @@ public enum IconKit {
     public static let people = Image(systemName: "person.2")
     public static let copy = Image(systemName: "doc.on.doc")
     public static let cut = Image(systemName: "scissors")
+    public static let duplicate = Image(systemName: "plus.square.on.square")
     /// Stage an item on the clipboard to move (the "Move" file action, paired with "Copy").
     public static let move = Image(systemName: "arrow.turn.up.right")
     /// Drop the clipboard's staged items into the current folder.

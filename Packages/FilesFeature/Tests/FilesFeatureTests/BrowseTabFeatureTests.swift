@@ -54,6 +54,66 @@ struct BrowseTabFeatureTests {
         }
     }
 
+    private func pasteScenario(listsCopyAfterFetches lag: Int) -> (BrowseTabFeature.State, TestStoreOf<BrowseTabFeature>, LockIsolated<Int>) {
+        let misc = FileItem(name: "Misc", path: "Docs", dateModified: Date(timeIntervalSince1970: 1), size: 0, kind: "directory")
+        let copy = FileItem(name: "Misc (2)", path: "Docs", dateModified: Date(timeIntervalSince1970: 2), size: 0, kind: "directory")
+        let access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
+        var docs = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        docs.items = [misc]
+        docs.phase = .loaded
+        docs.access = access
+        docs.$clipboard.withLock { $0 = FileClipboard(items: [misc], operation: .copy) }
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        state.path.append(docs)
+        let didCopy = LockIsolated(false)
+        let fetchesAfterCopy = LockIsolated(0)
+
+        let store = TestStore(initialState: state) {
+            BrowseTabFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, _, destination, _ in
+                didCopy.setValue(true)
+                return TransferResult(destination: destination, items: [.init(from: "Docs/Misc", to: "Docs/Misc (2)")])
+            }
+            $0.filesClient.browse = { _, path in
+                guard path == "Docs" else { return BrowseResult(items: [], access: access, path: path) }
+                guard didCopy.value else { return BrowseResult(items: [misc], access: access, path: path) }
+                fetchesAfterCopy.withValue { $0 += 1 }
+                let listed = fetchesAfterCopy.value > lag
+                return BrowseResult(items: listed ? [misc, copy] : [misc], access: access, path: path)
+            }
+            $0.filesClient.favorites = { _ in [] }
+            $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
+            $0.directoryCacheStore.remove = { _, _ in }
+            $0.continuousClock = ImmediateClock()
+        }
+        store.exhaustivity = .off
+        return (state, store, fetchesAfterCopy)
+    }
+
+    @Test
+    func pastingAFolderIntoItsOwnFolderShowsTheCopyWithoutARefresh() async {
+        let (_, store, _) = pasteScenario(listsCopyAfterFetches: 0)
+
+        await store.send(.path(.element(id: 0, action: .pasteTapped(keepItemsAfterCopy: false))))
+        await store.finish(timeout: .seconds(10))
+        await store.skipReceivedActions()
+        #expect(store.state.path[id: 0]?.items.map(\.name) == ["Misc", "Misc (2)"])
+        #expect(store.state.path[id: 0]?.awaitedArrivalIDs.isEmpty == true)
+    }
+
+    @Test
+    func aCopyTheServerListsLateIsRefetchedUntilItAppears() async {
+        let (_, store, fetches) = pasteScenario(listsCopyAfterFetches: 2)
+
+        await store.send(.path(.element(id: 0, action: .pasteTapped(keepItemsAfterCopy: false))))
+        await store.finish(timeout: .seconds(10))
+        await store.skipReceivedActions()
+        #expect(store.state.path[id: 0]?.items.map(\.name) == ["Misc", "Misc (2)"])
+        #expect(fetches.value == 3)
+        #expect(store.state.path[id: 0]?.awaitedArrivalIDs.isEmpty == true)
+    }
+
     // MARK: Edge cases
 
     @Test

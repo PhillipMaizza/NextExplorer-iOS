@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Adicionar aos Favoritos
 browse.actionRemoveFromFavorites	Remover dos Favoritos
 browse.actionShare	Criar ligação de partilha
 browse.actionDelete	Eliminar
+browse.actionDuplicate	Duplicar
 browse.renameTitle	Mudar o nome
 browse.renameNamePlaceholder	Nome
 browse.actionNewFolder	Criar pasta

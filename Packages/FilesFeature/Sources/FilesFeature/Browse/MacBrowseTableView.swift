@@ -240,6 +240,7 @@
     public struct BrowseKeyboardActions {
         public let cut: () -> Void
         public let copy: () -> Void
+        public let duplicate: () -> Void
         public let paste: () -> Void
         public let delete: () -> Void
         public let rename: () -> Void

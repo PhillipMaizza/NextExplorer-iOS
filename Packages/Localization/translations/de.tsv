@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Zu Favoriten hinzufügen
 browse.actionRemoveFromFavorites	Aus Favoriten entfernen
 browse.actionShare	Freigabelink erstellen
 browse.actionDelete	Löschen
+browse.actionDuplicate	Duplizieren
 browse.renameTitle	Umbenennen
 browse.renameNamePlaceholder	Name
 browse.actionNewFolder	Ordner erstellen

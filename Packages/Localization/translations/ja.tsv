@@ -76,6 +76,7 @@ browse.actionAddToFavorites	お気に入りに追加
 browse.actionRemoveFromFavorites	お気に入りから削除
 browse.actionShare	共有リンクを作成
 browse.actionDelete	削除
+browse.actionDuplicate	複製
 browse.renameTitle	名称変更
 browse.renameNamePlaceholder	名前
 browse.actionNewFolder	フォルダを作成
