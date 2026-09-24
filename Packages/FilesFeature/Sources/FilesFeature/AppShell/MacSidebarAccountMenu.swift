@@ -13,6 +13,7 @@
         static let actionIconSize: CGFloat = .iconSmall
         static let inactiveOpacity: Double = 0.5
         static let hoverOpacity: Double = 0.08
+        static let serverMinimumScale: CGFloat = 0.7
     }
 
     /// The Mac sidebar's profile header opens this account popover, so switching, adding and
@@ -67,11 +68,11 @@
                 }
                 Divider()
                     .padding(.vertical, .space4)
-                MacPopoverActionRow(title: L10n.Settings.addAccount, icon: IconKit.plus, isAccent: true) {
+                MacPopoverActionRow(title: L10n.Settings.addAccount, icon: IconKit.plus, tone: .accent) {
                     dismissThen { store.send(.addAccountTapped) }
                 }
                 MacPopoverActionRow(title: L10n.Settings.rowChangePassword, icon: IconKit.key, action: onChangePassword)
-                MacPopoverActionRow(title: L10n.Settings.signOutButton, icon: IconKit.signOut) {
+                MacPopoverActionRow(title: L10n.Settings.signOutButton, icon: IconKit.signOut, tone: .danger) {
                     dismissThen { store.send(.signOutButtonTapped) }
                 }
             }
@@ -122,9 +123,11 @@
                             .resizable()
                             .scaledToFit()
                             .frame(width: .iconXSmall, height: .iconXSmall)
+                        // Shrinks a long host to fit before falling back to truncating it.
                         Text(account.serverHost)
                             .type(.body3(.regular), style: .secondary)
                             .lineLimit(1)
+                            .minimumScaleFactor(Metrics.serverMinimumScale)
                             .truncationMode(.middle)
                     }
                     .foregroundStyle(Color.secondaryDS)
@@ -135,7 +138,7 @@
                 } else if isHovered {
                     Button(action: onSignOut) {
                         IconKit.signOut
-                            .foregroundStyle(Color.secondaryDS)
+                            .foregroundStyle(Color.negativeText)
                     }
                     .buttonStyle(.plain)
                     .accessibilityLabelWithTooltip(L10n.Settings.accountSignOut)
@@ -161,9 +164,29 @@
 
     /// An icon and title row in the popover's action list, highlighted on hover.
     private struct MacPopoverActionRow: View {
+        enum Tone {
+            case neutral, accent, danger
+
+            var textStyle: Typography.TextStyle {
+                switch self {
+                case .neutral: .primaryOnSurface
+                case .accent: .link
+                case .danger: .error
+                }
+            }
+
+            var iconColor: Color {
+                switch self {
+                case .neutral: .secondaryDS
+                case .accent: .accentText
+                case .danger: .negativeText
+                }
+            }
+        }
+
         let title: String
         let icon: Image
-        var isAccent = false
+        var tone: Tone = .neutral
         let action: () -> Void
 
         @State private var isHovered = false
@@ -176,10 +199,10 @@
                         .scaledToFit()
                         .frame(width: Metrics.actionIconSize, height: Metrics.actionIconSize)
                         .frame(width: Metrics.avatarSize)
-                    Text(title).type(.body2(.regular), style: isAccent ? .link : .primaryOnSurface)
+                    Text(title).type(.body2(.regular), style: tone.textStyle)
                     Spacer(minLength: 0)
                 }
-                .foregroundStyle(isAccent ? Color.accentText : Color.secondaryDS)
+                .foregroundStyle(tone.iconColor)
                 .padding(.horizontal, Metrics.rowPadding)
                 .padding(.vertical, .space8)
                 .background(MacPopoverHoverFill(isShown: isHovered))
