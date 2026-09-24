@@ -21,7 +21,20 @@ struct FavoritesView: View {
     @State private var pullOffset: CGFloat = 0
 
     private var viewMode: FileListViewMode {
-        FileListViewMode(rawValue: viewModeRaw) ?? .list
+        #if os(macOS)
+            .list
+        #else
+            FileListViewMode(rawValue: viewModeRaw) ?? .list
+        #endif
+    }
+
+    /// The Mac lists favorites as a table once they load; the skeleton list stands in before.
+    private var isMacTable: Bool {
+        #if os(macOS)
+            listPhase != .loading
+        #else
+            false
+        #endif
     }
 
     private var isAllSelected: Bool {
@@ -118,17 +131,18 @@ struct FavoritesView: View {
         }
         .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
         .tint(Color.accent)
-        #if os(macOS)
-            .modifier(MacBrowseInspector(screen: store.path.ids.last.flatMap { id in
-                store.scope(state: \.path[id: id], action: \.path[id: id])
-            }))
-        #endif
     }
 
     private var rootContent: some View {
         Group {
             if store.isSearching {
                 searchResultsContent
+            } else if isMacTable {
+                #if os(macOS)
+                    MacFavoritesTableView(store: store, favorites: store.displayedFavorites)
+                        .backgroundGradient()
+                        .transition(.opacity)
+                #endif
             } else if viewMode == .list {
                 listContent
             } else {
@@ -186,7 +200,6 @@ struct FavoritesView: View {
                         viewModeRaw = (viewMode == .list ? FileListViewMode.grid : .list).rawValue
                     }
                 },
-                macViewModes: .listAndGrid($viewModeRaw),
                 sortMenu: { EmptyView() }
             )
         }
@@ -296,14 +309,6 @@ struct FavoritesView: View {
                         isFirst: favorite.id == firstID,
                         isLast: favorite.id == lastID
                     )
-                    #if os(macOS)
-                    .modifier(MacFavoriteReorder(
-                        favoriteID: favorite.id,
-                        orderedIDs: favorites.map(\.id),
-                        isEnabled: store.canReorder,
-                        onMove: { store.send(.favoritesMoved($0, $1)) }
-                    ))
-                    #endif
                 }
                 .onMove(perform: store.canReorder ? { store.send(.favoritesMoved($0, $1)) } : nil)
             }

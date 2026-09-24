@@ -8,12 +8,11 @@
     private enum Metrics {
         static let iconSize: CGFloat = .size44
         static let spacing: CGFloat = .space16
-        static let minWidth: CGFloat = 260
-        static let idealWidth: CGFloat = 300
-        static let maxWidth: CGFloat = 420
+        static let width: CGFloat = 300
+        static let slideDuration: Double = 0.2
     }
 
-    /// Get Info on the Mac: a trailing inspector column instead of a sheet, so it can stay open
+    /// Get Info on the Mac: a trailing side panel instead of a sheet, so it can stay open
     /// while the selection moves (`BrowseFeature` reloads it for each newly selected row).
     struct MacFileInspector: View {
         let item: FileItem
@@ -38,7 +37,9 @@
                 }
                 .padding(Metrics.spacing)
             }
-            .inspectorColumnWidth(min: Metrics.minWidth, ideal: Metrics.idealWidth, max: Metrics.maxWidth)
+            .frame(width: Metrics.width)
+            // Kept inside the safe area so the panel starts below the toolbar, not under it.
+            .background(Color.backgroundSecondary, ignoresSafeAreaEdges: [])
         }
 
         private var header: some View {
@@ -71,21 +72,17 @@
         }
     }
 
-    /// One inspector per navigation stack, showing Get Info for whichever screen is on top.
-    /// Attaching it per screen put several inspectors (and their toolbar items) in one window.
+    /// Get Info beside a Browse screen, as a plain side panel on each screen rather than
+    /// SwiftUI's `.inspector` around the stack: wrapped around a `NavigationStack`, that stopped
+    /// showing pushes past the third folder deep.
     struct MacBrowseInspector: ViewModifier {
-        let screen: StoreOf<BrowseFeature>?
+        let screen: StoreOf<BrowseFeature>
 
         func body(content: Content) -> some View {
-            content.inspector(isPresented: Binding(
-                get: { screen?.infoItem != nil },
-                set: {
-                    if !$0 {
-                        screen?.send(.infoDismissed)
-                    }
-                }
-            )) {
-                if let screen, let item = screen.infoItem {
+            HStack(spacing: 0) {
+                content
+                if let item = screen.infoItem {
+                    Divider()
                     MacFileInspector(
                         item: item,
                         metadata: screen.infoMetadata,
@@ -93,8 +90,10 @@
                         errorMessage: screen.infoErrorMessage,
                         onClose: { screen.send(.infoDismissed) }
                     )
+                    .transition(.move(edge: .trailing))
                 }
             }
+            .animation(.easeInOut(duration: Metrics.slideDuration), value: screen.infoItem == nil)
         }
     }
 

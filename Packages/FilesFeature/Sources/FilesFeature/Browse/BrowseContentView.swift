@@ -84,11 +84,11 @@ struct BrowseContentView: View {
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
 
     private var viewMode: BrowseViewMode {
-        let mode = BrowseViewMode(rawValue: viewModeRaw) ?? .list
         #if os(macOS)
-            // The Mac table already is the list, with columns; a stored list choice opens as it.
-            return mode == .list ? .table : mode
+            // The Mac always shows the sortable column table.
+            return .table
         #else
+            let mode = BrowseViewMode(rawValue: viewModeRaw) ?? .list
             return mode == .table ? .list : mode
         #endif
     }
@@ -253,6 +253,9 @@ struct BrowseContentView: View {
                     Task { @MainActor in store.send(.computeOfflineAvailability) }
                 }
             }
+        #if os(macOS)
+            .modifier(MacBrowseInspector(screen: store))
+        #endif
     }
 
     /// Split out of `body`: with every modifier below chained directly onto the file-action
@@ -327,7 +330,7 @@ struct BrowseContentView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             // The Mac table selects natively (click, Command and Shift click), so select mode
-            // is only offered in the other view modes.
+            // and the view mode control are iOS only.
             selectSortToolbar(
                 isSelecting: store.isSelecting,
                 isAllSelected: isAllSelected,
@@ -341,10 +344,6 @@ struct BrowseContentView: View {
                         viewModeRaw = (viewMode == .grid ? BrowseViewMode.list : .grid).rawValue
                     }
                 },
-                macViewModes: MacViewModes(options: [
-                    .init(id: BrowseViewMode.grid.rawValue, title: L10n.Select.gridView, icon: IconKit.squareGrid),
-                    .init(id: BrowseViewMode.table.rawValue, title: L10n.Select.tableView, icon: IconKit.table),
-                ], selection: Binding(get: { viewMode.rawValue }, set: { viewModeRaw = $0 })),
                 hasClipboardItems: store.clipboard != nil && !store.directoryPath.isEmpty,
                 clipboardMenu: {
                     if store.clipboard != nil, !store.directoryPath.isEmpty {
@@ -676,12 +675,13 @@ struct BrowseContentView: View {
                     get: { store.selectedItemIDs },
                     set: { store.send(.tableSelectionChanged($0)) }
                 ),
+                cutItemIDs: store.clipboard?.operation == .move ? store.clipboard?.sourceItemPaths ?? [] : [],
                 onOpen: handleTap,
                 keyboardActions: tableKeyboardActions,
                 serverURL: store.serverURL,
                 canDropOnFolders: store.access?.canDelete ?? false,
                 onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
-                contextMenu: { item in fileActionsMenu(for: item) }
+                contextMenu: { ids in tableContextMenu(for: ids) }
             )
         #else
             listContent
@@ -702,6 +702,60 @@ struct BrowseContentView: View {
     #endif
 
     #if os(macOS)
+        /// Right click in the table: the clicked rows' actions, or the folder's own (new folder,
+        /// upload) on empty space. Paste Here joins every variant while something is staged, so
+        /// a full window still has somewhere to paste.
+        @ViewBuilder
+        private func tableContextMenu(for ids: Set<FileItem.ID>) -> some View {
+            let items = store.displayedItems.filter { ids.contains($0.id) }
+            if items.isEmpty {
+                if canUploadHere {
+                    if !store.directoryPath.isEmpty {
+                        Button { store.send(.newFolderTapped) } label: {
+                            Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                        }
+                        .tint(.primaryDS)
+                    }
+                    Button { isFilesPickerPresented = true } label: {
+                        Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.upload }
+                    }
+                    .tint(.primaryDS)
+                }
+            } else if items.count == 1, let item = items.first {
+                fileActionsMenu(for: item)
+            } else {
+                Button {
+                    store.send(.tableSelectionChanged(ids))
+                    store.send(.copySelectionTapped, animation: .default)
+                } label: {
+                    Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
+                }
+                .tint(.primaryDS)
+                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                    Button {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.cutSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                    }
+                    .tint(.primaryDS)
+                }
+                if store.access?.canDelete ?? false {
+                    Button(role: .destructive) {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.deleteSelectionTapped)
+                    } label: {
+                        Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+                    }
+                }
+            }
+            if store.clipboard != nil, !store.directoryPath.isEmpty {
+                Divider()
+                pasteEmptySpaceMenu
+                    .tint(.primaryDS)
+            }
+        }
+
         private var tableKeyboardActions: BrowseKeyboardActions {
             let canPaste = store.clipboard != nil && !store.directoryPath.isEmpty
             let keepAfterCopy = keepClipboardAfterCopy
