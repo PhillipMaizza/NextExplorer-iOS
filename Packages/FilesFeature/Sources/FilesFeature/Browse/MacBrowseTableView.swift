@@ -241,6 +241,9 @@
         public let cut: () -> Void
         public let copy: () -> Void
         public let duplicate: () -> Void
+        public let undo: () -> Void
+        /// Whether a file operation is waiting to be undone; otherwise ⌘Z edits text as usual.
+        public let canUndo: Bool
         public let paste: () -> Void
         public let delete: () -> Void
         public let rename: () -> Void

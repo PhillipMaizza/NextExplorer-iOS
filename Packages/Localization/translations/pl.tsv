@@ -600,6 +600,8 @@ offline.preferOfflineSubtitle	Używaj pobranego wideo zamiast strumieniowania, g
 offline.tunnelSpeedNote	Łączenie się z serwerem przez zdalny tunel może spowalniać pobieranie. W przypadku dużych plików połącz się z tą samą siecią i użyj lokalnego adresu serwera.
 menu.rateApp	Oceń NextExplorer…
 menu.support	Pomoc NextExplorer
+menu.redo	Ponów
+menu.undo	Cofnij
 settings.sectionSupport	Pomoc
 settings.rowRateApp	Oceń NextExplorer
 settings.rowSupport	Pomoc i wsparcie

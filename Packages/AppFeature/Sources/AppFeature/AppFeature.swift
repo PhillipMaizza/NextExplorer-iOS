@@ -33,6 +33,7 @@ public struct AppFeature {
         /// Cleared on every sign out so a staged copy/move never carries across into a
         /// different account's session.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var fileClipboard: FileClipboard?
+        @Shared(.inMemory(FileUndoEntry.sharedKey)) public var fileUndoStack: [FileUndoEntry] = []
         /// The signed-in account's downloads scope (server + user id), so each account's saved
         /// files stay in their own folder. Set when a session is confirmed, cleared on sign out
         /// and expiry. Read by `BrowseFeature`/`DownloadsFeature`/`SettingsFeature`.
@@ -178,6 +179,7 @@ public struct AppFeature {
 
             case let .activeAccountTornDown(next):
                 state.$fileClipboard.withLock { $0 = nil }
+                state.$fileUndoStack.withLock { $0 = [] }
                 if let next {
                     // Another account is still signed in — switch to it rather than dropping the
                     // user out to the login screen.
@@ -188,6 +190,7 @@ public struct AppFeature {
 
             case let .activateAccount(credentials):
                 state.$fileClipboard.withLock { $0 = nil }
+                state.$fileUndoStack.withLock { $0 = [] }
                 CacheAccountScope.set(credentials.accountID)
                 // Finalized once `me` confirms the user id; empty in the meantime.
                 state.$downloadScope.withLock { $0 = "" }
@@ -274,6 +277,7 @@ public struct AppFeature {
                 // hand, so no `me` round trip is needed.
                 state.addAccount = nil
                 state.$fileClipboard.withLock { $0 = nil }
+                state.$fileUndoStack.withLock { $0 = [] }
                 let accountID = serverURL.absoluteString + "|" + user.username
                 CacheAccountScope.set(accountID)
                 state.$downloadScope.withLock {
@@ -321,6 +325,7 @@ public struct AppFeature {
     /// per-session state so nothing leaks into the next sign in.
     private func teardownToLogin(_ state: inout State) -> Effect<Action> {
         state.$fileClipboard.withLock { $0 = nil }
+        state.$fileUndoStack.withLock { $0 = [] }
         state.$downloadScope.withLock { $0 = "" }
         CacheAccountScope.set("")
         state.didAuthenticateFromLogin = false

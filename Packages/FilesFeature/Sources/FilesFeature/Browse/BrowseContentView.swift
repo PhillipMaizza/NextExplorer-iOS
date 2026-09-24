@@ -795,6 +795,8 @@ struct BrowseContentView: View {
                 cut: { store.send(.cutSelectionTapped) },
                 copy: { store.send(.copySelectionTapped) },
                 duplicate: { store.send(.duplicateSelectionTapped, animation: .default) },
+                undo: { store.send(.undoTapped, animation: .default) },
+                canUndo: !store.undoStack.isEmpty,
                 paste: {
                     guard canPaste else { return }
                     store.send(.pasteTapped(keepItemsAfterCopy: keepAfterCopy), animation: .default)

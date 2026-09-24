@@ -86,6 +86,7 @@ struct BrowseTabFeatureTests {
             $0.filesClient.serverFeatures = { _ in throw FilesClientError.offline }
             $0.directoryCacheStore.remove = { _, _ in }
             $0.continuousClock = ImmediateClock()
+            $0.date = .constant(Date(timeIntervalSince1970: 3))
         }
         store.exhaustivity = .off
         return (state, store, fetchesAfterCopy)

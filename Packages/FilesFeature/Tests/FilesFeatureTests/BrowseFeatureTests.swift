@@ -1136,6 +1136,7 @@ struct BrowseFeatureTests {
             $0.isPerformingFileAction = false
             $0.renameSheetItem = nil
             $0.items = [renamed]
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(renamed, previousName: "vacation.jpg"))) }
         }
     }
 
@@ -1239,6 +1240,7 @@ struct BrowseFeatureTests {
             $0.isPerformingFileAction = false
             $0.isNewFolderSheetPresented = false
             $0.items = [existing, created]
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.created([created]))) }
         }
     }
 
@@ -1368,6 +1370,7 @@ struct BrowseFeatureTests {
             $0.renameSheetItem = nil
             $0.items = [renamed]
             $0.previewItem = renamed
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(renamed, previousName: item.name))) }
         }
     }
 

@@ -59,6 +59,16 @@
                     .keyboardShortcut("p")
                     .disabled(printPreview == nil)
             }
+            // Undo reverses the last file operation while the file table has focus and one is
+            // recorded; otherwise both items go down the responder chain (text fields, editor).
+            CommandGroup(replacing: .undoRedo) {
+                Button(L10n.Menu.undo) {
+                    perform(fileActions?.canUndo == true ? fileActions?.undo : nil, fallback: Selector(("undo:")))
+                }
+                .keyboardShortcut("z")
+                Button(L10n.Menu.redo) { NSApp.sendAction(Selector(("redo:")), to: nil, from: nil) }
+                    .keyboardShortcut("z", modifiers: [.command, .shift])
+            }
             CommandGroup(replacing: .pasteboard) {
                 Button(L10n.Browse.actionCut) { perform(fileActions?.cut, fallback: #selector(NSText.cut(_:))) }
                     .keyboardShortcut("x")

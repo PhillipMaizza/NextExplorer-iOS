@@ -222,6 +222,8 @@ public struct BrowseFeature {
         /// action follows the user across every folder. `nil` when nothing is staged. Only
         /// ever holds copies — "Move" goes through `destinationPicker`, not the clipboard.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var clipboard: FileClipboard?
+        /// App wide ⌘Z history of reversible file operations (`FileUndoEntry`).
+        @Shared(.inMemory(FileUndoEntry.sharedKey)) public var undoStack: [FileUndoEntry] = []
         /// Current account's downloads scope, so saved files land in this account's folder.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// The "Move" destination chooser, presented for a single item or a multi selection.
@@ -467,6 +469,9 @@ public struct BrowseFeature {
         case cutSelectionTapped
         /// Copies the selection into its own folder; the server names the copies "Name (2)".
         case duplicateSelectionTapped
+        /// Reverses the last recorded file operation (⌘Z).
+        case undoTapped
+        case undoResponse(Result<Bool, FilesClientError>)
         case deleteSelectionTapped
         case renameSelectionTapped
         case infoSelectionTapped
@@ -771,6 +776,8 @@ public struct BrowseFeature {
             case let .renameResponse(.success(result)):
                 state.isPerformingFileAction = false
                 state.renameSheetItem = nil
+                let previousName = state.items[id: result.originalID]?.name ?? (result.originalID as NSString).lastPathComponent
+                state.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(result.renamed, previousName: previousName))) }
                 if let index = state.items.index(id: result.originalID) {
                     state.items.remove(at: index)
                     state.items.insert(result.renamed, at: index)
@@ -803,6 +810,7 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 state.isNewFolderSheetPresented = false
                 state.items.append(folder)
+                state.$undoStack.withLock { $0.record(FileUndoEntry(.created([folder]))) }
                 syncListingCache(state)
                 return .none
 
@@ -1140,6 +1148,18 @@ public struct BrowseFeature {
                     : L10n.Browse.clipboardCutMany(items.count)
                 return .none
 
+            case .undoTapped:
+                return undo(&state)
+
+            case .undoResponse(.success):
+                state.isPerformingFileAction = false
+                return .send(.delegate(.directoryContentsChanged))
+
+            case let .undoResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionErrorMessage = error.userMessage
+                return .send(.delegate(.directoryContentsChanged))
+
             case .duplicateSelectionTapped:
                 let items = selectedItems(state)
                 guard !items.isEmpty, !state.directoryPath.isEmpty, state.access?.canWrite ?? false else { return .none }
@@ -1224,6 +1244,7 @@ public struct BrowseFeature {
                 }
 
             case let .transferResponse(.success(outcome)):
+                let sources = state.pendingTransferRetry?.items ?? []
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
                 state.pendingTransferRetry = nil
@@ -1232,6 +1253,7 @@ public struct BrowseFeature {
                     state.$clipboard.withLock { $0 = nil }
                 }
                 state.transferSuccessMessage = Self.transferSuccessMessage(for: outcome)
+                applyTransfer(&state, outcome: outcome, sources: sources)
                 awaitArrivals(&state, from: outcome.result)
                 return .send(.delegate(.directoryContentsChanged))
 

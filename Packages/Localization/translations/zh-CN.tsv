@@ -600,6 +600,8 @@ offline.preferOfflineSubtitle	可用时使用已下载的视频而非流式播�
 offline.tunnelSpeedNote	通过远程隧道访问服务器可能会降低下载速度。下载大文件时，请连接到同一网络并使用服务器的本地地址。
 menu.rateApp	为 NextExplorer 评分…
 menu.support	NextExplorer 支持
+menu.redo	重做
+menu.undo	撤销
 settings.sectionSupport	支持
 settings.rowRateApp	为 NextExplorer 评分
 settings.rowSupport	帮助与支持

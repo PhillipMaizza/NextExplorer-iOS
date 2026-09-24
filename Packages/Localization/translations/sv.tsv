@@ -600,6 +600,8 @@ offline.preferOfflineSubtitle	Använd en hämtad video i stället för att strö
 offline.tunnelSpeedNote	Att nå servern via en fjärrtunnel kan göra nedladdningar långsamma. Anslut till samma nätverk och använd serverns lokala adress för stora filer.
 menu.rateApp	Betygsätt NextExplorer…
 menu.support	NextExplorer-support
+menu.redo	Gör om
+menu.undo	Ångra
 settings.sectionSupport	Support
 settings.rowRateApp	Betygsätt NextExplorer
 settings.rowSupport	Hjälp och support

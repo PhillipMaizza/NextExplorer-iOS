@@ -600,6 +600,8 @@ offline.preferOfflineSubtitle	استخدم مقطع فيديو تم تنزيله
 offline.tunnelSpeedNote	قد يؤدي الوصول إلى خادمك عبر نفق بعيد إلى إبطاء التنزيلات. للملفات الكبيرة، اتصل بالشبكة نفسها واستخدم العنوان المحلي لخادمك.
 menu.rateApp	قيّم NextExplorer…
 menu.support	دعم NextExplorer
+menu.redo	إعادة
+menu.undo	تراجع
 settings.sectionSupport	الدعم
 settings.rowRateApp	قيّم NextExplorer
 settings.rowSupport	المساعدة والدعم

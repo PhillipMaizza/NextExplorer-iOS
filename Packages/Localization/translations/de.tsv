@@ -600,6 +600,8 @@ offline.preferOfflineSubtitle	Ein heruntergeladenes Video abspielen statt zu str
 offline.tunnelSpeedNote	Der Zugriff auf deinen Server über einen entfernten Tunnel kann Downloads verlangsamen. Verbinde dich für große Dateien mit demselben Netzwerk und verwende die lokale Adresse deines Servers.
 menu.rateApp	NextExplorer bewerten …
 menu.support	NextExplorer-Support
+menu.redo	Wiederholen
+menu.undo	Widerrufen
 settings.sectionSupport	Support
 settings.rowRateApp	NextExplorer bewerten
 settings.rowSupport	Hilfe & Support

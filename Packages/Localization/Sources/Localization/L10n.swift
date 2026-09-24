@@ -359,8 +359,10 @@ public enum L10n {
         public static var newTab: String { tr("menu.newTab") }  // "New Tab"
         public static var newWindow: String { tr("menu.newWindow") }  // "New Window"
         public static var rateApp: String { tr("menu.rateApp") }  // "Rate NextExplorer…"
+        public static var redo: String { tr("menu.redo") }  // "Redo"
         public static var refresh: String { tr("menu.refresh") }  // "Refresh"
         public static var support: String { tr("menu.support") }  // "NextExplorer Support"
+        public static var undo: String { tr("menu.undo") }  // "Undo"
     }
     public enum Offline {
         public static func available(_ a0: CVarArg) -> String { tr("offline.available", a0) }
