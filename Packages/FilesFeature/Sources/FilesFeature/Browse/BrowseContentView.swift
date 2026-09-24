@@ -686,6 +686,7 @@ struct BrowseContentView: View {
                     set: { store.send(.tableSelectionChanged($0)) }
                 ),
                 cutItemIDs: store.clipboard?.operation == .move ? store.clipboard?.sourceItemPaths ?? [] : [],
+                offlineItemIDs: store.offlineItemIDs,
                 onOpen: handleTap,
                 keyboardActions: tableKeyboardActions,
                 serverURL: store.serverURL,

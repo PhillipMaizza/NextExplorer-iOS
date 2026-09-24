@@ -22,6 +22,7 @@
         static let iconSize: CGFloat = .iconMedium
         /// Extra room above and below each row's content, for rows taller than AppKit's default.
         static let rowVerticalPadding: CGFloat = .space4
+        static let badgeSize: CGFloat = .iconSmall
         /// Finder's look for rows staged by Cut.
         static let cutRowOpacity: Double = 0.5
         static let nameColumnMinWidth: CGFloat = 220
@@ -42,6 +43,8 @@
         @Binding var selection: Set<FileItem.ID>
         /// Rows staged by Cut, drawn dimmed until pasted or cleared.
         let cutItemIDs: Set<FileItem.ID>
+        /// Items saved for offline use, badged like the iOS rows.
+        let offlineItemIDs: Set<FileItem.ID>
         let onOpen: (FileItem) -> Void
         let keyboardActions: BrowseKeyboardActions
         let serverURL: URL
@@ -60,6 +63,10 @@
                     HStack(spacing: .space8) {
                         icon(for: item)
                         Text(item.name).lineLimit(1).truncationMode(.middle)
+                        if offlineItemIDs.contains(item.id) {
+                            MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
+                                .accessibilityLabel(L10n.Offline.badgeAvailable)
+                        }
                     }
                     .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
                     .opacity(opacity(for: item))
@@ -189,6 +196,7 @@
         let image: Image
         let tint: Color
         var isFilled = true
+        var size: CGFloat = MacBrowseTableMetrics.iconSize
 
         var body: some View {
             image
@@ -196,7 +204,7 @@
                 .scaledToFit()
                 .symbolVariant(isFilled ? .fill : .none)
                 .foregroundStyle(tint)
-                .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
+                .frame(width: size, height: size)
         }
     }
 

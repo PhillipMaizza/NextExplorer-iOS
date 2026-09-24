@@ -30,7 +30,7 @@
                         )
                         Text(favorite.displayName).lineLimit(1).truncationMode(.middle)
                         if store.offlineFavoriteIDs.contains(favorite.id) {
-                            MacTableFolderIcon(image: IconKit.download, tint: Color.accent)
+                            MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
                                 .accessibilityLabel(L10n.Offline.badgeAvailable)
                         }
                     }
