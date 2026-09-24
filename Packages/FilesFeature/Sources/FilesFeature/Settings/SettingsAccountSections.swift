@@ -289,9 +289,8 @@ struct SettingsServerStorageSection: View {
     }
 }
 
-/// A small accent "Active" pill on the active account, in place of a leading checkmark. Shared by
-/// the Settings account rows and the Mac sidebar's account popover.
-struct AccountActiveBadge: View {
+/// A small accent "Active" pill on the active account, in place of a leading checkmark.
+private struct AccountActiveBadge: View {
     var body: some View {
         Text(L10n.Settings.badgeActive.uppercased())
             .type(.caption(.semibold), style: .link)

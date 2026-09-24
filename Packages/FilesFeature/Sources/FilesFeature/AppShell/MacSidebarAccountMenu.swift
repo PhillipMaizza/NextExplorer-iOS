@@ -18,8 +18,8 @@
 
     /// The Mac sidebar's profile header opens this account popover, so switching, adding and
     /// signing out never needs a trip to Settings. Each account shows who (name) and where
-    /// (server) on their own lines, like the Settings rows; the active one carries the Active
-    /// pill, the others switch on click and offer Sign Out on hover. Only emits `SettingsFeature`
+    /// (server) on their own lines, like the Settings rows; the active one is shown in full
+    /// strength, the others dimmed, switching on click and offering Sign Out on hover. Only emits `SettingsFeature`
     /// intent; the switch, add and remove work stays upstream.
     struct MacSidebarAccountMenu<Label: View>: View {
         let store: StoreOf<SettingsFeature>
@@ -102,7 +102,8 @@
         }
     }
 
-    /// One account: avatar, name above server, then the Active pill or (on hover) Sign Out.
+    /// One account: avatar, name above server, and Sign Out on hover for an inactive one. The
+    /// active account reads as current through its bold name and full strength avatar.
     private struct MacAccountRow: View {
         let account: AccountSummary
         let onSwitch: () -> Void
@@ -118,24 +119,15 @@
                     Text(account.displayName)
                         .type(.body2(account.isActive ? .bold : .regular), style: account.isActive ? .primaryOnSurface : .secondary)
                         .lineLimit(1)
-                    HStack(spacing: .space4) {
-                        IconKit.server
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: .iconXSmall, height: .iconXSmall)
-                        // Shrinks a long host to fit before falling back to truncating it.
-                        Text(account.serverHost)
-                            .type(.body3(.regular), style: .secondary)
-                            .lineLimit(1)
-                            .minimumScaleFactor(Metrics.serverMinimumScale)
-                            .truncationMode(.middle)
-                    }
-                    .foregroundStyle(Color.secondaryDS)
+                    // Shrinks a long host to fit before falling back to truncating it.
+                    Text(account.serverHost)
+                        .type(.body3(.regular), style: .secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(Metrics.serverMinimumScale)
+                        .truncationMode(.middle)
                 }
                 Spacer(minLength: 0)
-                if account.isActive {
-                    AccountActiveBadge()
-                } else if isHovered {
+                if !account.isActive, isHovered {
                     Button(action: onSignOut) {
                         IconKit.signOut
                             .foregroundStyle(Color.negativeText)
