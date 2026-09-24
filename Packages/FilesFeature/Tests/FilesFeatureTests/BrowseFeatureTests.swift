@@ -2364,41 +2364,43 @@ struct BrowseFeatureTransferTests {
         PickedFile(id: id, fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: size)
     }
 
-    @Test
-    func beginningUploadOpensTheReviewSheetAndStartsStaging() async {
-        let store = TestStore(initialState: makeState(directoryPath: "Documents")) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.uploadStaging = UploadStagingClient(
-                stageDocuments: { _ in
-                    AsyncStream<PickedFile> { continuation in
-                        continuation.yield(picked("a.jpg", id: UUID(0)))
-                        continuation.yield(picked("b.jpg", id: UUID(1)))
-                        continuation.finish()
-                    }
-                },
-                stagePhotos: { _ in AsyncStream<PickedFile> { $0.finish() } },
-                stageCameraCapture: { _ in nil },
-                discard: { _ in },
-                sweepStale: {}
-            )
-        }
-        store.exhaustivity = .off
+    #if os(iOS)
+        @Test
+        func beginningUploadOpensTheReviewSheetAndStartsStaging() async {
+            let store = TestStore(initialState: makeState(directoryPath: "Documents")) {
+                BrowseFeature()
+            } withDependencies: {
+                $0.uploadStaging = UploadStagingClient(
+                    stageDocuments: { _ in
+                        AsyncStream<PickedFile> { continuation in
+                            continuation.yield(picked("a.jpg", id: UUID(0)))
+                            continuation.yield(picked("b.jpg", id: UUID(1)))
+                            continuation.finish()
+                        }
+                    },
+                    stagePhotos: { _ in AsyncStream<PickedFile> { $0.finish() } },
+                    stageCameraCapture: { _ in nil },
+                    discard: { _ in },
+                    sweepStale: {}
+                )
+            }
+            store.exhaustivity = .off
 
-        await store.send(.beginUpload(.documents([
-            URL(fileURLWithPath: "/tmp/a.jpg"), URL(fileURLWithPath: "/tmp/b.jpg"),
-        ])))
-        #expect(store.state.uploadReview != nil)
-        #expect(store.state.uploadReview?.destination == "Documents")
+            await store.send(.beginUpload(.documents([
+                URL(fileURLWithPath: "/tmp/a.jpg"), URL(fileURLWithPath: "/tmp/b.jpg"),
+            ])))
+            #expect(store.state.uploadReview != nil)
+            #expect(store.state.uploadReview?.destination == "Documents")
 
-        await store.receive(\.uploadReview.presented.stage) {
-            $0.uploadReview?.preparingCount = 2
+            await store.receive(\.uploadReview.presented.stage) {
+                $0.uploadReview?.preparingCount = 2
+            }
+            await store.receive(\.uploadReview.presented.filePrepared)
+            await store.receive(\.uploadReview.presented.filePrepared)
+            await store.receive(\.uploadReview.presented.stagingBatchFinished)
+            #expect(store.state.uploadReview?.totalCount == 2)
         }
-        await store.receive(\.uploadReview.presented.filePrepared)
-        await store.receive(\.uploadReview.presented.filePrepared)
-        await store.receive(\.uploadReview.presented.stagingBatchFinished)
-        #expect(store.state.uploadReview?.totalCount == 2)
-    }
+    #endif
 
     @Test
     func confirmingTheReviewSheetEnqueuesWithTheChosenDestination() async {

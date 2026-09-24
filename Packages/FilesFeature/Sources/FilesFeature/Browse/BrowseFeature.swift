@@ -421,6 +421,8 @@ public struct BrowseFeature {
         case compressResponse(Result<FileItem, FilesClientError>)
         case downloadTapped(FileItem)
         #if os(macOS)
+            /// Files dropped or picked on the Mac, staged without the review sheet.
+            case directUploadStaged([PickedFile], destination: String, requested: Int)
             case downloadProgressUpdated(String)
             /// The save panel was dismissed without choosing a destination.
             case downloadCancelled
@@ -1015,11 +1017,37 @@ public struct BrowseFeature {
 
             case let .beginUpload(source):
                 guard source.count > 0 else { return .none }
+                #if os(macOS)
+                    // A Mac drop or file pick already says where the files go (the folder on
+                    // screen), so they upload straight away instead of through the review sheet.
+                    if case let .documents(urls) = source, !state.directoryPath.isEmpty {
+                        let destination = state.directoryPath
+                        let uploadStaging = uploadStaging
+                        return .run { send in
+                            var staged: [PickedFile] = []
+                            for await file in uploadStaging.stageDocuments(urls) {
+                                staged.append(file)
+                            }
+                            await send(.directUploadStaged(staged, destination: destination, requested: urls.count))
+                        }
+                    }
+                #endif
                 state.uploadReview = UploadReviewFeature.State(
                     serverURL: state.serverURL,
                     startingDestination: state.directoryPath
                 )
                 return .send(.uploadReview(.presented(.stage(source))))
+
+            #if os(macOS)
+                case let .directUploadStaged(files, destination, _):
+                    guard !files.isEmpty else {
+                        state.fileActionErrorMessage = L10n.Uploads.stagingFailed
+                        return .none
+                    }
+                    return .send(.delegate(.uploadRequested(files.map {
+                        PendingUpload(id: $0.id, fileURL: $0.fileURL, fileName: $0.fileName, destination: destination)
+                    })))
+            #endif
 
             case let .uploadReview(.presented(.delegate(.confirmed(files, destination)))):
                 state.uploadReview = nil
