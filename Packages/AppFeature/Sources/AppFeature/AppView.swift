@@ -137,7 +137,7 @@ public struct AppView: View {
             store.send(.sessionExpiryDetected)
         }
         .sheet(item: $store.scope(state: \.addAccount, action: \.addAccount)) { addAccountStore in
-            LoginFormView(store: addAccountStore, autoFocus: true)
+            LoginFormView(store: addAccountStore, autoFocus: true, floodsIntoApp: !AppView.addsAccountInDialog)
             #if os(macOS)
                 // A Mac sheet sizes to its content's ideal size, which the flexible login
                 // layout collapses to nothing; and there is no swipe down, so it needs Cancel.
@@ -149,6 +149,16 @@ public struct AppView: View {
                 }
             #endif
         }
+    }
+
+    /// The Mac adds an account in a dialog sized sheet, where the accent flood into the app has
+    /// nothing to reveal.
+    private static var addsAccountInDialog: Bool {
+        #if os(macOS)
+            true
+        #else
+            false
+        #endif
     }
 
     @ViewBuilder
