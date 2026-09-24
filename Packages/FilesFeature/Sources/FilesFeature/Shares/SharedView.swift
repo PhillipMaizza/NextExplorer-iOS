@@ -91,7 +91,21 @@ struct SharedView: View {
             .animation(.easeInOut(duration: 0.2), value: store.dataSources[store.segment])
             .toolbar {
                 ToolbarItem(placement: .sortControl) {
-                    SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
+                    #if os(macOS)
+                        MacSortMenu(
+                            options: SharedFeature.SortOption.allCases,
+                            directions: BrowseFeature.SortDirection.allCases,
+                            sortOption: store.sortOption,
+                            sortDirection: store.sortDirection,
+                            optionTitle: { $0.title },
+                            directionTitle: { $0.title },
+                            onSelectOption: { store.send(.sortOptionChanged($0)) },
+                            onSelectDirection: { store.send(.sortDirectionChanged($0)) },
+                            isDisabled: store.isCurrentSegmentEmpty
+                        )
+                    #else
+                        SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
+                    #endif
                 }
             }
             .sheet(isPresented: $isSortSheetPresented) {

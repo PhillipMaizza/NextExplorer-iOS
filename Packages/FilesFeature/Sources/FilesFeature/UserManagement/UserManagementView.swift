@@ -40,7 +40,21 @@ struct UserManagementView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                SortToolbarButton(isDisabled: store.users.isEmpty) { isSortSheetPresented = true }
+                #if os(macOS)
+                    MacSortMenu(
+                        options: UserManagementFeature.SortOption.allCases,
+                        directions: BrowseFeature.SortDirection.allCases,
+                        sortOption: store.sortOption,
+                        sortDirection: store.sortDirection,
+                        optionTitle: { $0.title },
+                        directionTitle: { $0.title },
+                        onSelectOption: { store.send(.sortOptionChanged($0)) },
+                        onSelectDirection: { store.send(.sortDirectionChanged($0)) },
+                        isDisabled: store.users.isEmpty
+                    )
+                #else
+                    SortToolbarButton(isDisabled: store.users.isEmpty) { isSortSheetPresented = true }
+                #endif
             }
             if #available(iOS 26.0, macOS 26.0, *) {
                 ToolbarSpacer(.fixed, placement: .topBarTrailing)

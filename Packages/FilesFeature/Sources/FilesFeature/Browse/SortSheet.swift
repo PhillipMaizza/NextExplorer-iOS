@@ -63,6 +63,46 @@ extension ToolbarItemPlacement {
     }
 }
 
+#if os(macOS)
+    /// The Mac counterpart of `SortToolbarButton` + `SortSheet`: a toolbar menu with the sort
+    /// fields and the direction as checkmarked items, the way Mac apps sort, instead of a sheet.
+    struct MacSortMenu<Option: Hashable, Direction: Hashable>: View {
+        let options: [Option]
+        let directions: [Direction]
+        let sortOption: Option
+        let sortDirection: Direction
+        let optionTitle: (Option) -> String
+        let directionTitle: (Direction) -> String
+        let onSelectOption: (Option) -> Void
+        let onSelectDirection: (Direction) -> Void
+        var isDisabled = false
+
+        var body: some View {
+            Menu {
+                Picker(L10n.Sort.sheetTitle, selection: Binding(get: { sortOption }, set: onSelectOption)) {
+                    ForEach(options, id: \.self) { option in
+                        Text(optionTitle(option)).tag(option)
+                    }
+                }
+                .pickerStyle(.inline)
+                Picker(L10n.Sort.sheetTitle, selection: Binding(get: { sortDirection }, set: onSelectDirection)) {
+                    ForEach(directions, id: \.self) { direction in
+                        Text(directionTitle(direction)).tag(direction)
+                    }
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            } label: {
+                IconKit.sort
+                    .foregroundStyle(Color.primaryDS)
+            }
+            .disabled(isDisabled)
+            .accessibilityLabel(L10n.Common.sort)
+            .help(L10n.Common.sort)
+        }
+    }
+#endif
+
 /// Generic "Sort by" sheet: a field picker and a direction picker as radio lists in a
 /// `DSDynamicHeightSheet`. Shared by Browse, Favorites, Downloads, Shared and User Management,
 /// generalized over whatever option and direction enum each screen sorts by.
