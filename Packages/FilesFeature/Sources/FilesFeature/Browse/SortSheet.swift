@@ -77,17 +77,22 @@ extension ToolbarItemPlacement {
         let onSelectDirection: (Direction) -> Void
         var isDisabled = false
 
+        /// Local mirrors the pickers bind to; changes go out through the callbacks in
+        /// `onChange`, so no plain closure is captured by a `Binding`'s `@Sendable` setter.
+        @State private var selectedOption: Option?
+        @State private var selectedDirection: Direction?
+
         var body: some View {
             Menu {
-                Picker(L10n.Sort.sheetTitle, selection: Binding(get: { sortOption }, set: onSelectOption)) {
+                Picker(L10n.Sort.sheetTitle, selection: $selectedOption) {
                     ForEach(options, id: \.self) { option in
-                        Text(optionTitle(option)).tag(option)
+                        Text(optionTitle(option)).tag(Optional(option))
                     }
                 }
                 .pickerStyle(.inline)
-                Picker(L10n.Sort.sheetTitle, selection: Binding(get: { sortDirection }, set: onSelectDirection)) {
+                Picker(L10n.Sort.sheetTitle, selection: $selectedDirection) {
                     ForEach(directions, id: \.self) { direction in
-                        Text(directionTitle(direction)).tag(direction)
+                        Text(directionTitle(direction)).tag(Optional(direction))
                     }
                 }
                 .pickerStyle(.inline)
@@ -99,6 +104,18 @@ extension ToolbarItemPlacement {
             .disabled(isDisabled)
             .accessibilityLabel(L10n.Common.sort)
             .help(L10n.Common.sort)
+            .onChange(of: sortOption, initial: true) { selectedOption = sortOption }
+            .onChange(of: sortDirection, initial: true) { selectedDirection = sortDirection }
+            .onChange(of: selectedOption) { _, option in
+                if let option, option != sortOption {
+                    onSelectOption(option)
+                }
+            }
+            .onChange(of: selectedDirection) { _, direction in
+                if let direction, direction != sortDirection {
+                    onSelectDirection(direction)
+                }
+            }
         }
     }
 #endif
