@@ -145,17 +145,8 @@ struct SettingsAccountsSection: View {
         }
     }
 
-    /// A small accent "Active" pill on the active account row, in place of a leading checkmark.
     private var activeBadge: some View {
-        Text(L10n.Settings.badgeActive.uppercased())
-            .type(.caption(.semibold), style: .link)
-            .padding(.horizontal, Constants.tagHorizontalPadding)
-            .padding(.vertical, Constants.tagVerticalPadding)
-            .overlay(
-                RoundedRectangle(cornerRadius: .radiusSmall)
-                    .strokeBorder(Color.accent, lineWidth: Constants.tagBorderWidth)
-            )
-            .accessibilityHidden(true)
+        AccountActiveBadge()
     }
 
     /// Self service password change (`POST /api/auth/password`), nested under the active account.
@@ -295,5 +286,21 @@ struct SettingsServerStorageSection: View {
             SettingsFormat.byteFormatter.string(fromByteCount: usage.used),
             SettingsFormat.byteFormatter.string(fromByteCount: usage.capacity)
         )
+    }
+}
+
+/// A small accent "Active" pill on the active account, in place of a leading checkmark. Shared by
+/// the Settings account rows and the Mac sidebar's account popover.
+struct AccountActiveBadge: View {
+    var body: some View {
+        Text(L10n.Settings.badgeActive.uppercased())
+            .type(.caption(.semibold), style: .link)
+            .padding(.horizontal, Constants.tagHorizontalPadding)
+            .padding(.vertical, Constants.tagVerticalPadding)
+            .overlay(
+                RoundedRectangle(cornerRadius: .radiusSmall)
+                    .strokeBorder(Color.accent, lineWidth: Constants.tagBorderWidth)
+            )
+            .accessibilityHidden(true)
     }
 }
