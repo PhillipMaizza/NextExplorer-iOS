@@ -10,6 +10,7 @@ private enum Constants {
     static let cardVerticalPadding: CGFloat = .space16
     static let rowVerticalPadding: CGFloat = .space8
     static let rowMinimumGap: CGFloat = .space32
+    static let stackedGroupVerticalPadding: CGFloat = .space4
 }
 
 /// The body of "Get Info": everything `GET /api/metadata/*` returns, as grouped cards. Shared by
@@ -115,15 +116,25 @@ struct FileInfoDetails: View {
         }
     }
 
+    /// A grouped card; in the stacked Mac panel, a plain group flush with the panel's header,
+    /// since the panel already has the card's fill.
     @ViewBuilder
     private func card(@ViewBuilder _ content: () -> some View) -> some View {
-        VStack(alignment: .leading, spacing: .space8) {
-            content()
+        if stacksValues {
+            VStack(alignment: .leading, spacing: .space8) {
+                content()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.vertical, Constants.stackedGroupVerticalPadding)
+        } else {
+            VStack(alignment: .leading, spacing: .space8) {
+                content()
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, Constants.cardPadding)
+            .padding(.vertical, Constants.cardVerticalPadding)
+            .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusCard))
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal, Constants.cardPadding)
-        .padding(.vertical, Constants.cardVerticalPadding)
-        .background(Color.backgroundSecondary, in: RoundedRectangle(cornerRadius: .radiusCard))
     }
 
     private func kindTitle(for metadata: FileMetadata) -> String {
