@@ -135,6 +135,7 @@ struct GeneralSettingsSection: View {
                                 .foregroundStyle(Color.secondaryDS)
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
+                        .fullRowHitArea()
                     }
                 }
                 #if os(iOS)
@@ -352,6 +353,7 @@ struct LegalSettingsSection: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
             }
+            .fullRowHitArea()
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle())
@@ -395,6 +397,7 @@ struct LicensesSettingsSection: View {
                                 .foregroundStyle(Color.secondaryDS)
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
+                        .fullRowHitArea()
                     }
                 }
             } header: {

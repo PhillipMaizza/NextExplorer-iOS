@@ -35,6 +35,17 @@ public extension View {
         #endif
     }
 
+    /// Makes a grouped list row's label span the row, so a click anywhere across a Mac row
+    /// (not only on its text) activates it. An iOS `List` row already does.
+    func fullRowHitArea() -> some View {
+        #if os(macOS)
+            frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
+        #else
+            self
+        #endif
+    }
+
     func zoomNavigationTransition(sourceID: some Hashable, in namespace: Namespace.ID) -> some View {
         #if os(iOS)
             navigationTransition(.zoom(sourceID: sourceID, in: namespace))

@@ -30,18 +30,19 @@ public struct DSMenuPickerRow<Selection: Hashable, Options: View, RowLabel: View
 
     public var body: some View {
         #if os(macOS)
-            HStack {
-                label
-                Spacer(minLength: .space16)
-                Menu {
-                    Picker(selection: $selection) {
-                        options
-                    } label: {
-                        label
-                    }
-                    .pickerStyle(.inline)
-                    .labelsHidden()
+            // The whole row is the menu's label, so a click anywhere across it opens the menu.
+            Menu {
+                Picker(selection: $selection) {
+                    options
                 } label: {
+                    label
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            } label: {
+                HStack {
+                    label
+                    Spacer(minLength: .space16)
                     HStack(spacing: Metrics.valueSpacing) {
                         Text(value).type(.body2(.regular), style: .secondary)
                         IconKit.chevronUpDown
@@ -49,11 +50,11 @@ public struct DSMenuPickerRow<Selection: Hashable, Options: View, RowLabel: View
                             .foregroundStyle(Color.secondaryDS)
                     }
                 }
-                .menuStyle(.button)
-                .buttonStyle(.plain)
-                .menuIndicator(.hidden)
-                .fixedSize()
+                .fullRowHitArea()
             }
+            .menuStyle(.button)
+            .buttonStyle(.plain)
+            .menuIndicator(.hidden)
         #else
             Picker(selection: $selection) {
                 options

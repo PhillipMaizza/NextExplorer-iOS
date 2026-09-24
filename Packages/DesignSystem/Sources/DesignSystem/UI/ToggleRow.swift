@@ -39,8 +39,11 @@ public struct DSToggleRow: View {
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
             }
             #if os(macOS)
-            // Stretch the label so the switch sits at the trailing edge, as on iOS.
-            .frame(maxWidth: .infinity, alignment: .leading)
+            // Stretch the label so the switch sits at the trailing edge, as on iOS, and let a
+            // click anywhere on it flip the switch: a Mac switch otherwise only takes clicks on
+            // itself.
+            .fullRowHitArea()
+            .onTapGesture { isOn.toggle() }
             #endif
         }
         #if os(macOS)

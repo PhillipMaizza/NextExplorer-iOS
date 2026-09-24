@@ -111,6 +111,7 @@ public struct DSNavigationRow: View {
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
             }
         }
+        .fullRowHitArea()
         .contentShape(Rectangle())
     }
 
