@@ -135,7 +135,7 @@ struct FileInfoDetails: View {
         if stacksValues {
             VStack(alignment: .leading, spacing: .space2) {
                 Text(label)
-                    .type(.body3(.regular), style: .secondary)
+                    .type(.body3(.semibold), style: .secondary)
                 Text(value)
                     .type(.body2(.regular), style: .primaryOnSurface)
                     .textSelection(.enabled)

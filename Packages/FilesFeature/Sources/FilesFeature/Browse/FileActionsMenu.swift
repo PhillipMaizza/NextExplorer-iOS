@@ -98,6 +98,18 @@ struct FileActionsMenu: View {
                 Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
             }
             .tint(.primaryDS)
+            #if os(macOS)
+                // Stages the row for a move, as Command X does; Move still opens the picker.
+                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                    Button {
+                        store.send(.tableSelectionChanged([item.id]))
+                        store.send(.cutSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                    }
+                    .tint(.primaryDS)
+                }
+            #endif
             if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                 Button {
                     store.send(.moveTapped(item), animation: .default)

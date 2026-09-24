@@ -19,7 +19,11 @@
 
     /// Column layout shared with `MacBrowseTableSkeleton`, so loading and loaded line up.
     enum MacBrowseTableMetrics {
-        static let iconSize: CGFloat = .iconSmall
+        static let iconSize: CGFloat = .iconMedium
+        /// Extra room above and below each row's content, for rows taller than AppKit's default.
+        static let rowVerticalPadding: CGFloat = .space4
+        /// Finder's look for rows staged by Cut.
+        static let cutRowOpacity: Double = 0.5
         static let nameColumnMinWidth: CGFloat = 220
         static let dateColumnWidth: CGFloat = 170
         static let sizeColumnWidth: CGFloat = 90
@@ -28,22 +32,27 @@
 
     /// Browse's Mac only table mode: sortable columns backed by the store's own sort, double click
     /// to open, and the same file actions menu as the list and grid. Rows arrive already sorted
-    /// by `BrowseFeature`, so a header click only forwards the new sort to the store.
+    /// by `BrowseFeature`, so a header click only forwards the new sort to the store. Right click
+    /// hands `contextMenu` the clicked rows, empty for the table's empty space.
     struct MacBrowseTableView<ContextMenu: View>: View {
         let items: IdentifiedArrayOf<FileItem>
         let sortOption: BrowseFeature.SortOption
         let sortDirection: BrowseFeature.SortDirection
         let onSortChanged: (BrowseFeature.SortOption, BrowseFeature.SortDirection) -> Void
         @Binding var selection: Set<FileItem.ID>
+        /// Rows staged by Cut, drawn dimmed until pasted or cleared.
+        let cutItemIDs: Set<FileItem.ID>
         let onOpen: (FileItem) -> Void
         let keyboardActions: BrowseKeyboardActions
         let serverURL: URL
         let canDropOnFolders: Bool
         let onDropOnFolder: ([FileItem.ID], FileItem) -> Void
-        @ViewBuilder let contextMenu: (FileItem) -> ContextMenu
+        @ViewBuilder let contextMenu: (Set<FileItem.ID>) -> ContextMenu
 
         @Dependency(\.filesClient) private var filesClient
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
+        /// The table takes focus when a folder opens, so Cut, Copy and Paste reach it at once.
+        @FocusState private var isFocused: Bool
 
         var body: some View {
             Table(of: FileItem.self, selection: $selection, sortOrder: sortOrder) {
@@ -52,22 +61,27 @@
                         icon(for: item)
                         Text(item.name).lineLimit(1).truncationMode(.middle)
                     }
+                    .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
+                    .opacity(opacity(for: item))
                 }
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
                 TableColumn(L10n.Sort.dateModified, value: \.dateModified) { item in
                     Text(dateFormat.string(from: item.dateModified, includeTime: true))
                         .foregroundStyle(Color.secondaryDS)
+                        .opacity(opacity(for: item))
                 }
                 .width(MacBrowseTableMetrics.dateColumnWidth)
                 TableColumn(L10n.Sort.size, value: \.size) { item in
                     Text(item.isDirectory ? "" : TableFormat.byteFormatter.string(fromByteCount: item.size))
                         .foregroundStyle(Color.secondaryDS)
                         .monospacedDigit()
+                        .opacity(opacity(for: item))
                 }
                 .width(MacBrowseTableMetrics.sizeColumnWidth)
                 TableColumn(L10n.Sort.kind, value: \.kind) { item in
                     Text(item.isDirectory ? L10n.FileInfo.navigationTitleFolder : item.kind.uppercased())
                         .foregroundStyle(Color.secondaryDS)
+                        .opacity(opacity(for: item))
                 }
                 .width(MacBrowseTableMetrics.kindColumnWidth)
             } rows: {
@@ -82,15 +96,20 @@
                 }
             }
             .contextMenu(forSelectionType: FileItem.ID.self) { ids in
-                if ids.count == 1, let item = item(for: ids.first) {
-                    contextMenu(item)
-                }
+                contextMenu(ids)
             } primaryAction: { ids in
                 if ids.count == 1, let item = item(for: ids.first) {
                     onOpen(item)
                 }
             }
             .scrollContentBackground(.hidden)
+            // AppKit stripes the empty space below the rows at its default row height, which
+            // never lines up with the taller rows here.
+            .alternatingRowBackgrounds(.disabled)
+            .backgroundGradient()
+            .focused($isFocused)
+            .focusEffectDisabled()
+            .onAppear { isFocused = true }
             // Finder conventions: Space previews, Return renames, Delete deletes; Edit menu
             // Cut/Copy/Paste/Select All and ⌘I reach the selection through the focused value.
             .onKeyPress(.space) {
@@ -107,6 +126,10 @@
             .focusedValue(\.browseKeyboardActions, keyboardActions)
         }
 
+        private func opacity(for item: FileItem) -> Double {
+            cutItemIDs.contains(item.id) ? MacBrowseTableMetrics.cutRowOpacity : 1
+        }
+
         private var dateFormat: DateDisplayFormat {
             DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
         }
@@ -118,11 +141,7 @@
         @ViewBuilder
         private func icon(for item: FileItem) -> some View {
             if item.isDirectory {
-                IconKit.folderFill
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(Color.accent)
-                    .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
+                MacTableFolderIcon(image: IconKit.folderFill, tint: Color.accent)
             } else {
                 FileTypeIcon(kind: item.kind)
                     .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
@@ -160,6 +179,22 @@
             case \FileItem.kind: .kind
             default: .name
             }
+        }
+    }
+
+    /// A tinted symbol sized for a table row's leading icon.
+    struct MacTableFolderIcon: View {
+        let image: Image
+        let tint: Color
+        var isFilled = true
+
+        var body: some View {
+            image
+                .resizable()
+                .scaledToFit()
+                .symbolVariant(isFilled ? .fill : .none)
+                .foregroundStyle(tint)
+                .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
         }
     }
 

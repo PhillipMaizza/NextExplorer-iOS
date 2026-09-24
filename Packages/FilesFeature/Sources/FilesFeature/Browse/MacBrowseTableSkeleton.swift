@@ -17,6 +17,7 @@
                                 .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
                             Text(item.name)
                         }
+                        .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
                     )
                 }
                 .width(min: MacBrowseTableMetrics.nameColumnMinWidth)
@@ -34,6 +35,7 @@
                 .width(MacBrowseTableMetrics.kindColumnWidth)
             }
             .scrollContentBackground(.hidden)
+            .alternatingRowBackgrounds(.disabled)
             .scrollDisabled(true)
             .backgroundGradient()
             .allowsHitTesting(false)

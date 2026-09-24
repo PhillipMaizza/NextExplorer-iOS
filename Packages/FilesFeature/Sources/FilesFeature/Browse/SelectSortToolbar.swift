@@ -19,29 +19,30 @@ func selectSortToolbar(
     onSelectAllToggled: @escaping () -> Void,
     onCancel: @escaping () -> Void,
     onToggleViewMode: @escaping () -> Void,
-    macViewModes: MacViewModes? = nil,
     hasClipboardItems: Bool = false,
     @ViewBuilder extraViewModes: () -> some View = { EmptyView() },
     @ViewBuilder clipboardMenu: () -> some View = { EmptyView() },
     @ViewBuilder sortMenu: () -> some View
 ) -> some ToolbarContent {
-    if isSelecting {
-        #if os(macOS)
-            // Both select mode exits sit together on the leading edge, spelled out, while the
-            // selection actions take the center.
-            ToolbarItemGroup(placement: .navigation) {
-                Button(action: onSelectAllToggled) {
-                    Label {
-                        Text(isAllSelected ? L10n.Select.deselectAll : L10n.Select.selectAll)
-                    } icon: {
-                        IconKit.selectAll
-                    }
-                    .labelStyle(.titleAndIcon)
+    #if os(macOS)
+        // Mac file lists are tables that select natively, so there is no select mode and
+        // no view toggle; the toolbar keeps only sort and paste.
+        ToolbarItemGroup(placement: .navigation) {
+            sortMenu()
+                .labelStyle(.iconOnly)
+        }
+        ToolbarItemGroup(placement: .principal) {
+            if hasClipboardItems {
+                Menu {
+                    clipboardMenu()
+                } label: {
+                    IconKit.paste
                 }
-                Button(L10n.Common.cancel, action: onCancel)
-                    .keyboardShortcut(.cancelAction)
+                .accessibilityLabelWithTooltip(L10n.Browse.actionPaste)
             }
-        #else
+        }
+    #else
+        if isSelecting {
             ToolbarItem(placement: .topBarLeading) {
                 Button(action: onSelectAllToggled) {
                     IconKit.selectAll
@@ -53,52 +54,7 @@ func selectSortToolbar(
                 Button(L10n.Common.cancel, action: onCancel)
                     .buttonStyle(DSHapticButtonStyle())
             }
-        #endif
-    } else {
-        #if os(macOS)
-            // A Mac toolbar has room: every action the iOS "…" menu hides is a direct control.
-            // Select and Sort lead, the view controls sit centered, and the search field keeps
-            // the trailing edge to itself.
-            ToolbarItemGroup(placement: .navigation) {
-                if isSelectAvailable {
-                    Button(action: onSelectModeToggled) {
-                        IconKit.select
-                    }
-                    .accessibilityLabelWithTooltip(L10n.Common.select)
-                }
-                sortMenu()
-                    .labelStyle(.iconOnly)
-            }
-            ToolbarItemGroup(placement: .principal) {
-                if hasClipboardItems {
-                    Menu {
-                        clipboardMenu()
-                    } label: {
-                        IconKit.paste
-                    }
-                    .accessibilityLabelWithTooltip(L10n.Browse.actionPaste)
-                }
-                if let macViewModes {
-                    Picker(selection: macViewModes.selection) {
-                        ForEach(macViewModes.options) { option in
-                            option.icon
-                                .help(option.title)
-                                .accessibilityLabel(option.title)
-                                .tag(option.id)
-                        }
-                    } label: {
-                        Text(L10n.Select.viewAs)
-                    }
-                    .pickerStyle(.segmented)
-                    .help(L10n.Select.viewAs)
-                } else {
-                    Button(action: onToggleViewMode) {
-                        isGridView ? IconKit.listBullet : IconKit.squareGrid
-                    }
-                    .accessibilityLabelWithTooltip(isGridView ? L10n.Select.listView : L10n.Select.gridView)
-                }
-            }
-        #else
+        } else {
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     clipboardMenu()
@@ -122,27 +78,6 @@ func selectSortToolbar(
                 .accessibilityLabelWithTooltip(L10n.Common.more)
                 .accessibilityIdentifier(AccessibilityIdentifiers.Browse.moreMenu)
             }
-        #endif
-    }
-}
-
-/// The view modes a Mac toolbar offers as a segmented picker, stored as the screen's raw
-/// view mode string.
-struct MacViewModes {
-    struct Option: Identifiable {
-        let id: String
-        let title: String
-        let icon: Image
-    }
-
-    let options: [Option]
-    let selection: Binding<String>
-
-    /// List and grid, the modes every file list screen has.
-    static func listAndGrid(_ selection: Binding<String>) -> MacViewModes {
-        MacViewModes(options: [
-            Option(id: FileListViewMode.list.rawValue, title: L10n.Select.listView, icon: IconKit.listBullet),
-            Option(id: FileListViewMode.grid.rawValue, title: L10n.Select.gridView, icon: IconKit.squareGrid),
-        ], selection: selection)
-    }
+        }
+    #endif
 }

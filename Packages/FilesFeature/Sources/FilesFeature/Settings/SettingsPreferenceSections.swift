@@ -163,6 +163,14 @@ struct DisplaySettingsSection: View {
         )
     }
 
+    private var isMac: Bool {
+        #if os(macOS)
+            true
+        #else
+            false
+        #endif
+    }
+
     private var thumbnailSize: Binding<ThumbnailSize> {
         Binding(
             get: { ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium },
@@ -192,14 +200,15 @@ struct DisplaySettingsSection: View {
                     .tint(Color.secondaryDS)
                     .hapticFeedback(.selection, trigger: appearance.wrappedValue)
                 }
-                if filter.matches(L10n.Settings.toggleShowThumbnails) {
+                // Mac file lists are tables with type icons, so thumbnails have nothing to show.
+                if !isMac, filter.matches(L10n.Settings.toggleShowThumbnails) {
                     DSToggleRow(
                         title: L10n.Settings.toggleShowThumbnails,
                         icon: IconKit.photo,
                         isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
                     )
                 }
-                if filter.matches(L10n.Settings.rowThumbnailSize) {
+                if !isMac, filter.matches(L10n.Settings.rowThumbnailSize) {
                     DSMenuPickerRow(selection: thumbnailSize, value: thumbnailSize.wrappedValue.title) {
                         ForEach(ThumbnailSize.allCases) { size in
                             Text(size.title).tag(size)
