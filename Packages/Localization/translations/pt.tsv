@@ -307,6 +307,7 @@ settings.rowUserManagement	Gestão de utilizadores
 settings.rowChangePassword	Alterar palavra-passe
 settings.rowServer	Servidor
 settings.storageFootnote	As pastas são baixadas como ZIP, sem deixar nada no servidor. Remover downloads ou limpar o cache afeta apenas este dispositivo; nada no servidor é alterado.
+settings.storageFootnoteMac	Limpar o cache afeta apenas este Mac; nada no servidor é alterado.
 settings.removeAllDownloadsTitle	Remover todas as transferências?
 settings.removeAllDownloadsConfirm	Remover todas
 settings.removeAllDownloadsMessage	Isto elimina todos os ficheiros transferidos deste dispositivo. Permanecem no servidor.

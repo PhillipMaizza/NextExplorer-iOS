@@ -46653,6 +46653,113 @@
         }
       }
     },
+    "settings.storageFootnoteMac": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clearing the cache only affects this Mac; nothing on the server is touched."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "مسح ذاكرة التخزين المؤقت يؤثر على هذا الـ Mac فقط؛ لا يتأثر أي شيء على الخادم."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Das Leeren des Caches betrifft nur diesen Mac; auf dem Server wird nichts berührt."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vaciar la caché solo afecta a este Mac; no se toca nada en el servidor."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vider le cache n'affecte que ce Mac ; rien n'est modifié sur le serveur."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "कैश साफ़ करने से केवल यह Mac प्रभावित होता है; सर्वर पर कुछ नहीं बदलता।"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Svuotare la cache riguarda solo questo Mac; sul server non viene toccato nulla."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "キャッシュの消去はこの Mac にのみ影響し、サーバ上のものには影響しません。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "캐시를 지워도 이 Mac에만 적용되며 서버에는 영향을 주지 않습니다."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "De cache wissen heeft alleen invloed op deze Mac; op de server verandert niets."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Czyszczenie pamięci podręcznej dotyczy tylko tego Maca; na serwerze nic się nie zmienia."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Limpar o cache afeta apenas este Mac; nada no servidor é alterado."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Golirea cache-ului afectează doar acest Mac; nimic de pe server nu este modificat."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистка кэша затрагивает только этот Mac; на сервере ничего не меняется."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Att rensa cachen påverkar bara den här Macen; inget på servern ändras."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除缓存只影响此 Mac，不会改动服务器上的任何内容。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "清除快取只會影響此 Mac，不會更動伺服器上的任何內容。"
+          }
+        }
+      }
+    },
     "settings.toggleHaptics": {
       "extractionState": "manual",
       "localizations": {

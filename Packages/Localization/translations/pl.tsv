@@ -308,6 +308,7 @@ settings.rowUserManagement	Zarządzanie użytkownikami
 settings.rowChangePassword	Zmień hasło
 settings.rowServer	Serwer
 settings.storageFootnote	Foldery są pobierane jako ZIP i nic nie zostaje na serwerze. Usuwanie pobranych plików lub czyszczenie pamięci podręcznej dotyczy tylko tego urządzenia; na serwerze nic się nie zmienia.
+settings.storageFootnoteMac	Czyszczenie pamięci podręcznej dotyczy tylko tego Maca; na serwerze nic się nie zmienia.
 settings.removeAllDownloadsTitle	Usunąć wszystkie pobrane?
 settings.removeAllDownloadsConfirm	Usuń wszystkie
 settings.removeAllDownloadsMessage	Spowoduje to usunięcie wszystkich pobranych plików z tego urządzenia. Pozostają one na serwerze.

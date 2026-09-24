@@ -308,6 +308,7 @@ settings.rowUserManagement	Benutzerverwaltung
 settings.rowChangePassword	Passwort ändern
 settings.rowServer	Server
 settings.storageFootnote	Ordner werden als ZIP geladen, ohne etwas auf dem Server zu hinterlassen. Das Entfernen von Downloads oder das Leeren des Caches betrifft nur dieses Gerät; auf dem Server wird nichts berührt.
+settings.storageFootnoteMac	Das Leeren des Caches betrifft nur diesen Mac; auf dem Server wird nichts berührt.
 settings.removeAllDownloadsTitle	Alle Downloads entfernen?
 settings.removeAllDownloadsConfirm	Alle entfernen
 settings.removeAllDownloadsMessage	Dies löscht jede geladene Datei von diesem Gerät. Sie bleiben auf dem Server.

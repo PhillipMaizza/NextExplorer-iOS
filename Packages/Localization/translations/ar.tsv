@@ -308,6 +308,7 @@ settings.rowUserManagement	إدارة المستخدمين
 settings.rowChangePassword	تغيير كلمة السر
 settings.rowServer	الخادم
 settings.storageFootnote	تُنزَّل المجلدات كملف ZIP دون ترك أي شيء على الخادم. إزالة التنزيلات أو مسح ذاكرة التخزين المؤقت يؤثر على هذا الجهاز فقط؛ لا يتأثر أي شيء على الخادم.
+settings.storageFootnoteMac	مسح ذاكرة التخزين المؤقت يؤثر على هذا الـ Mac فقط؛ لا يتأثر أي شيء على الخادم.
 settings.removeAllDownloadsTitle	إزالة جميع التنزيلات؟
 settings.removeAllDownloadsConfirm	إزالة الكل
 settings.removeAllDownloadsMessage	يؤدي هذا إلى حذف كل ملف تم تنزيله من هذا الجهاز. تبقى على الخادم.

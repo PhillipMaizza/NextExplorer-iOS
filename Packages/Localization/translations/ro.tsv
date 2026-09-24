@@ -308,6 +308,7 @@ settings.rowUserManagement	Gestionarea utilizatorilor
 settings.rowChangePassword	Schimbă parola
 settings.rowServer	Server
 settings.storageFootnote	Dosarele se descarcă ca ZIP, fără să rămână nimic pe server. Ștergerea descărcărilor sau golirea cache-ului afectează doar acest dispozitiv; nimic de pe server nu este modificat.
+settings.storageFootnoteMac	Golirea cache-ului afectează doar acest Mac; nimic de pe server nu este modificat.
 settings.removeAllDownloadsTitle	Elimini toate descărcările?
 settings.removeAllDownloadsConfirm	Elimină toate
 settings.removeAllDownloadsMessage	Aceasta șterge toate fișierele descărcate de pe acest dispozitiv. Rămân pe server.

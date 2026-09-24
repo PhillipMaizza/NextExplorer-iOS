@@ -307,6 +307,7 @@ settings.rowUserManagement	Gestione utenti
 settings.rowChangePassword	Cambia password
 settings.rowServer	Server
 settings.storageFootnote	Le cartelle si scaricano come ZIP, senza lasciare nulla sul server. Rimuovere i download o svuotare la cache riguarda solo questo dispositivo; sul server non viene toccato nulla.
+settings.storageFootnoteMac	Svuotare la cache riguarda solo questo Mac; sul server non viene toccato nulla.
 settings.removeAllDownloadsTitle	Rimuovere tutti i download?
 settings.removeAllDownloadsConfirm	Rimuovi tutto
 settings.removeAllDownloadsMessage	Questo elimina ogni file scaricato da questo dispositivo. Restano sul server.

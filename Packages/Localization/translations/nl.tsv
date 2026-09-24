@@ -308,6 +308,7 @@ settings.rowUserManagement	Gebruikersbeheer
 settings.rowChangePassword	Wachtwoord wijzigen
 settings.rowServer	Server
 settings.storageFootnote	Mappen worden als ZIP gedownload, zonder iets op de server achter te laten. Downloads verwijderen of de cache wissen heeft alleen invloed op dit apparaat; op de server verandert niets.
+settings.storageFootnoteMac	De cache wissen heeft alleen invloed op deze Mac; op de server verandert niets.
 settings.removeAllDownloadsTitle	Alle downloads verwijderen?
 settings.removeAllDownloadsConfirm	Alles verwijderen
 settings.removeAllDownloadsMessage	Hiermee worden alle gedownloade bestanden van dit apparaat verwijderd. Ze blijven op de server.

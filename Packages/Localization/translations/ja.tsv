@@ -308,6 +308,7 @@ settings.rowUserManagement	ユーザ管理
 settings.rowChangePassword	パスワードを変更
 settings.rowServer	サーバ
 settings.storageFootnote	フォルダは ZIP としてダウンロードされ、サーバには何も残りません。ダウンロードの削除やキャッシュの消去はこのデバイスにのみ影響し、サーバ上のものには影響しません。
+settings.storageFootnoteMac	キャッシュの消去はこの Mac にのみ影響し、サーバ上のものには影響しません。
 settings.removeAllDownloadsTitle	すべてのダウンロードを削除しますか？
 settings.removeAllDownloadsConfirm	すべて削除
 settings.removeAllDownloadsMessage	このデバイスからすべてのダウンロード済みファイルを削除します。サーバには残ります。

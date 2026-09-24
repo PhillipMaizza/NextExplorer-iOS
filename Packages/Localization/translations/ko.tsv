@@ -308,6 +308,7 @@ settings.rowUserManagement	사용자 관리
 settings.rowChangePassword	비밀번호 변경
 settings.rowServer	서버
 settings.storageFootnote	폴더는 ZIP으로 다운로드되며 서버에는 아무것도 남지 않습니다. 다운로드를 삭제하거나 캐시를 지워도 이 기기에만 적용되며 서버에는 영향을 주지 않습니다.
+settings.storageFootnoteMac	캐시를 지워도 이 Mac에만 적용되며 서버에는 영향을 주지 않습니다.
 settings.removeAllDownloadsTitle	모든 다운로드를 제거할까요?
 settings.removeAllDownloadsConfirm	모두 제거
 settings.removeAllDownloadsMessage	이 기기에서 다운로드한 모든 파일을 삭제합니다. 서버에는 남아 있습니다.

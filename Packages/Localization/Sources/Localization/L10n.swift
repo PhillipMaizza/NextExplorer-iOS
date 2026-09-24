@@ -500,6 +500,7 @@ public enum L10n {
         public static var signOutMessage: String { tr("settings.signOutMessage") }
         public static var signingOut: String { tr("settings.signingOut") }  // "Signing Out…"
         public static var storageFootnote: String { tr("settings.storageFootnote") }
+        public static var storageFootnoteMac: String { tr("settings.storageFootnoteMac") }
         public static var toggleHaptics: String { tr("settings.toggleHaptics") }  // "Haptics"
         public static var toggleKeepClipboard: String { tr("settings.toggleKeepClipboard") }  // "Keep Items After Paste"
         public static var toggleKeepClipboardSubtitle: String { tr("settings.toggleKeepClipboardSubtitle") }

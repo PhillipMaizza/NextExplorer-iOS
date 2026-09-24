@@ -308,6 +308,7 @@ settings.rowUserManagement	Användarhantering
 settings.rowChangePassword	Byt lösenord
 settings.rowServer	Server
 settings.storageFootnote	Mappar laddas ned som ZIP utan att något lämnas kvar på servern. Att ta bort nedladdningar eller rensa cachen påverkar bara den här enheten; inget på servern ändras.
+settings.storageFootnoteMac	Att rensa cachen påverkar bara den här Macen; inget på servern ändras.
 settings.removeAllDownloadsTitle	Ta bort alla nedladdningar?
 settings.removeAllDownloadsConfirm	Ta bort alla
 settings.removeAllDownloadsMessage	Detta raderar alla nedladdade filer från den här enheten. De finns kvar på servern.

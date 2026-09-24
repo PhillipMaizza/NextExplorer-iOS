@@ -308,6 +308,7 @@ settings.rowUserManagement	Gestion des utilisateurs
 settings.rowChangePassword	Changer le mot de passe
 settings.rowServer	Serveur
 settings.storageFootnote	Les dossiers se téléchargent en ZIP, sans rien laisser sur le serveur. Supprimer les téléchargements ou vider le cache n'affecte que cet appareil ; rien n'est modifié sur le serveur.
+settings.storageFootnoteMac	Vider le cache n'affecte que ce Mac ; rien n'est modifié sur le serveur.
 settings.removeAllDownloadsTitle	Supprimer tous les téléchargements ?
 settings.removeAllDownloadsConfirm	Tout supprimer
 settings.removeAllDownloadsMessage	Cela supprime tous les fichiers téléchargés de cet appareil. Ils restent sur le serveur.

@@ -308,6 +308,7 @@ settings.rowUserManagement	Управление пользователями
 settings.rowChangePassword	Изменить пароль
 settings.rowServer	Сервер
 settings.storageFootnote	Папки загружаются в виде ZIP, на сервере ничего не остаётся. Удаление загрузок или очистка кэша затрагивает только это устройство; на сервере ничего не меняется.
+settings.storageFootnoteMac	Очистка кэша затрагивает только этот Mac; на сервере ничего не меняется.
 settings.removeAllDownloadsTitle	Удалить все загрузки?
 settings.removeAllDownloadsConfirm	Удалить все
 settings.removeAllDownloadsMessage	Это удалит все загруженные файлы с этого устройства. Они останутся на сервере.

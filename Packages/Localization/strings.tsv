@@ -355,6 +355,7 @@ settings.rowUserManagement	User Management
 settings.rowChangePassword	Change Password
 settings.rowServer	Server
 settings.storageFootnote	Folders download as a zip, with nothing left behind on the server. Removing downloads or clearing the cache only affects this device; nothing on the server is touched.
+settings.storageFootnoteMac	Clearing the cache only affects this Mac; nothing on the server is touched.
 settings.removeAllDownloadsTitle	Remove All Downloads?
 settings.removeAllDownloadsConfirm	Remove All
 settings.removeAllDownloadsMessage	This deletes every downloaded file from this device. They stay on the server.

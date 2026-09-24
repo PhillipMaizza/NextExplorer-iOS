@@ -51,7 +51,8 @@ private func sectionHeader(_ title: String) -> some View {
 }
 
 /// Some rows are iOS only because the Mac already covers them: its file tables show type
-/// icons with date and time columns, and a copied item stays on its clipboard after pasting.
+/// icons with date and time columns, a copied item stays on its clipboard after pasting, and
+/// downloads are saved in Finder rather than kept in the app.
 private let isMac: Bool = {
     #if os(macOS)
         true
@@ -264,7 +265,7 @@ struct StorageSettingsSection: View {
                         isOn: $keepClipboardAfterCopy
                     )
                 }
-                if filter.matches(L10n.Settings.rowRemoveAllDownloads) {
+                if !isMac, filter.matches(L10n.Settings.rowRemoveAllDownloads) {
                     DSNavigationRow(
                         title: L10n.Settings.rowRemoveAllDownloads,
                         icon: IconKit.delete,
@@ -292,7 +293,7 @@ struct StorageSettingsSection: View {
                 sectionHeader(L10n.Settings.sectionStorage)
             } footer: {
                 if !filter.isActive {
-                    Text(L10n.Settings.storageFootnote)
+                    Text(isMac ? L10n.Settings.storageFootnoteMac : L10n.Settings.storageFootnote)
                         .type(.body3(.regular), style: .tertiary)
                 }
             }

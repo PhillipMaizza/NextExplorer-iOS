@@ -308,6 +308,7 @@ settings.rowUserManagement	उपयोगकर्ता प्रबंधन
 settings.rowChangePassword	पासवर्ड बदलें
 settings.rowServer	सर्वर
 settings.storageFootnote	फ़ोल्डर ZIP के रूप में डाउनलोड होते हैं, सर्वर पर कुछ भी नहीं छूटता। डाउनलोड हटाने या कैश साफ़ करने से केवल यह डिवाइस प्रभावित होता है; सर्वर पर कुछ नहीं बदलता।
+settings.storageFootnoteMac	कैश साफ़ करने से केवल यह Mac प्रभावित होता है; सर्वर पर कुछ नहीं बदलता।
 settings.removeAllDownloadsTitle	सभी डाउनलोड हटाएं?
 settings.removeAllDownloadsConfirm	सभी हटाएं
 settings.removeAllDownloadsMessage	यह इस डिवाइस से हर डाउनलोड की गई फ़ाइल हटा देता है। वे सर्वर पर बनी रहती हैं।

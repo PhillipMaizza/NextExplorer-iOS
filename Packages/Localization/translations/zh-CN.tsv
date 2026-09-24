@@ -308,6 +308,7 @@ settings.rowUserManagement	用户管理
 settings.rowChangePassword	更改密码
 settings.rowServer	服务器
 settings.storageFootnote	文件夹以 ZIP 形式下载，服务器上不会留下任何文件。删除下载或清除缓存只影响此设备，不会改动服务器上的任何内容。
+settings.storageFootnoteMac	清除缓存只影响此 Mac，不会改动服务器上的任何内容。
 settings.removeAllDownloadsTitle	移除所有下载？
 settings.removeAllDownloadsConfirm	全部移除
 settings.removeAllDownloadsMessage	这会从此设备删除所有已下载的文件。它们仍保留在服务器上。

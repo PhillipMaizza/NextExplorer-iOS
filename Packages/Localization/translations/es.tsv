@@ -307,6 +307,7 @@ settings.rowUserManagement	Gestión de usuarios
 settings.rowChangePassword	Cambiar contraseña
 settings.rowServer	Servidor
 settings.storageFootnote	Las carpetas se descargan como ZIP sin dejar nada en el servidor. Eliminar descargas o vaciar la caché solo afecta a este dispositivo; no se toca nada en el servidor.
+settings.storageFootnoteMac	Vaciar la caché solo afecta a este Mac; no se toca nada en el servidor.
 settings.removeAllDownloadsTitle	¿Eliminar todas las descargas?
 settings.removeAllDownloadsConfirm	Eliminar todo
 settings.removeAllDownloadsMessage	Esto elimina todos los archivos descargados de este dispositivo. Permanecen en el servidor.
