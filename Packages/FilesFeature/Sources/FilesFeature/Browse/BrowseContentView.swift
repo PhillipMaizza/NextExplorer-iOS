@@ -419,14 +419,6 @@ struct BrowseContentView: View {
         .modifier(MacFinderDrop(isEnabled: canUploadHere && !store.isSelecting) { urls in
             store.send(.beginUpload(.documents(urls)))
         })
-        .overlay(alignment: .bottomTrailing) {
-            if canUploadHere, !store.isSelecting {
-                MacUploadButton { label in uploadMenu { label } }
-                    .padding(.space24)
-                    .padding(.bottom, bottomChromeClearance)
-                    .transition(.scale.combined(with: .opacity))
-            }
-        }
         #endif
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)

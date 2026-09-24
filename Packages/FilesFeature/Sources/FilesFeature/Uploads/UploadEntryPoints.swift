@@ -125,6 +125,19 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     }
 
     var body: some View {
+        #if os(macOS)
+            // The Mac uploads from Finder only (a drop, or this file picker), so there is no
+            // menu to choose a source from; the leading actions are an iOS toolbar concern.
+            Button { isFilesPickerPresented = true } label: {
+                label()
+            }
+            .buttonStyle(.plain)
+        #else
+            menu
+        #endif
+    }
+
+    private var menu: some View {
         // `.menuOrder(.fixed)`: keep Take Photo first even from the review sheet's "Add more"
         // button, where the menu opens upward and the default order would flip.
         Menu {
