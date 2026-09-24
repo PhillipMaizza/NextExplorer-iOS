@@ -88,6 +88,7 @@ public struct MainTabView: View {
         #if os(macOS)
             .modifier(MacDockUploadStatus(remaining: store.uploads.remainingCount, progress: store.uploads.overallProgress))
             .windowTitle(macWindowTitle)
+            .modifier(AccountConfirmations(store: store.scope(state: \.settings, action: \.settings)))
         #endif
             .overlay(alignment: .bottom) {
                 if isAnyTransferBarVisible {
@@ -348,9 +349,31 @@ public struct MainTabView: View {
             .foregroundStyle(color)
     }
 
-    /// Signed-in identity at the top of the iPad sidebar: avatar + name + email. Read only here;
-    /// account actions (change password, sign out) stay in the Settings section.
+    /// Signed-in identity at the top of the sidebar: avatar + name + email. Read only on iPad,
+    /// where account actions stay in Settings; the Mac opens an account menu from it.
+    @ViewBuilder
     private var sidebarProfile: some View {
+        #if os(macOS)
+            MacSidebarAccountMenu(
+                store: store.scope(state: \.settings, action: \.settings),
+                onChangePassword: {
+                    store.send(.tabSelected(.settings))
+                    store.send(.settings(.changePasswordButtonTapped))
+                }
+            ) {
+                HStack(spacing: .space8) {
+                    profileSummary
+                    IconKit.chevronUpDown
+                        .foregroundStyle(Color.secondaryDS)
+                }
+                .contentShape(Rectangle())
+            }
+        #else
+            profileSummary
+        #endif
+    }
+
+    private var profileSummary: some View {
         HStack(spacing: .space12) {
             AvatarView(displayName: store.settings.displayName, size: .size44)
             VStack(alignment: .leading, spacing: .space2) {

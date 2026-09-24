@@ -45,13 +45,8 @@ struct SettingsView: View {
         return .size44
     }
 
-    /// No op setters: each confirmation sheet is dismiss disabled and only closes through one
-    /// of `DSAlertSheet`'s own buttons, which drive the reducer directly. Sign out in
-    /// particular tears down this whole authenticated scope on confirm, so a SwiftUI initiated
-    /// dismiss action would land in a dead store.
-    private var isConfirmingSignOut: Binding<Bool> {
-        Binding(get: { store.isConfirmingSignOut }, set: { _ in })
-    }
+    // No op setters: each confirmation sheet is dismiss disabled and only closes through one
+    // of `DSAlertSheet`'s own buttons, which drive the reducer directly.
 
     private var isConfirmingRemoveAllDownloads: Binding<Bool> {
         Binding(get: { store.removeAllDownloadsConfirmationIsPresented }, set: { _ in })
@@ -59,10 +54,6 @@ struct SettingsView: View {
 
     private var isConfirmingClearCache: Binding<Bool> {
         Binding(get: { store.clearCacheConfirmationIsPresented }, set: { _ in })
-    }
-
-    private var isConfirmingAccountRemoval: Binding<Bool> {
-        Binding(get: { store.accountPendingRemoval != nil }, set: { _ in })
     }
 
     private var isConfirmingRemoveOffline: Binding<Bool> {
@@ -73,7 +64,10 @@ struct SettingsView: View {
         NavigationStack {
             DSGroupedList {
                 if !filter.isActive {
-                    SettingsAccountsSection(store: store)
+                    // The Mac switches and signs out accounts from the sidebar's account menu.
+                    #if os(iOS)
+                        SettingsAccountsSection(store: store)
+                    #endif
                     SettingsProfileSection(store: store)
                 }
 
@@ -138,20 +132,8 @@ struct SettingsView: View {
             // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: isConfirmingSignOut) {
-                DSAlertSheet(
-                    icon: IconKit.signOut,
-                    title: L10n.Settings.signOutAlertTitle,
-                    message: L10n.Settings.signOutMessage,
-                    confirmTitle: L10n.Common.logOut,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    isConfirmLoading: store.isSigningOut,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.confirmSignOutTapped) },
-                    onDismiss: { store.send(.cancelSignOutTapped) }
-                )
-            }
+            // The Mac hosts these at the window level instead, for its sidebar account menu.
+            .modifier(AccountConfirmations(store: store, isEnabled: !AccountConfirmations.isHostedByWindow))
             .sheet(isPresented: isConfirmingRemoveAllDownloads) {
                 DSAlertSheet(
                     icon: IconKit.delete,
@@ -180,19 +162,6 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
-            .sheet(isPresented: isConfirmingAccountRemoval) {
-                DSAlertSheet(
-                    icon: IconKit.signOut,
-                    title: L10n.Settings.accountSignOutTitle,
-                    message: L10n.Settings.accountSignOutMessage(store.accountPendingRemoval?.displayName ?? ""),
-                    confirmTitle: L10n.Common.logOut,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.removeAccountConfirmed) },
-                    onDismiss: { store.send(.removeAccountCancelled) }
-                )
-            }
             .sheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
                 TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
             }
