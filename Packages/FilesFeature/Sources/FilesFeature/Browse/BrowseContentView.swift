@@ -1093,7 +1093,8 @@ struct BrowseContentView: View {
         FileActionsMenu(
             store: store,
             item: item,
-            onShare: { shareTarget = $0 }
+            onShare: { shareTarget = $0 },
+            onOpenWithFailed: { toastMessage = .failure($0) }
         )
     }
 

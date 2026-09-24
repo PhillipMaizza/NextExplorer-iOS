@@ -119,11 +119,16 @@
             .focused($isFocused)
             .focusEffectDisabled()
             .onAppear { isFocused = true }
-            // Finder conventions: Space previews, Return renames, Delete deletes; Edit menu
-            // Cut/Copy/Paste/Select All and ⌘I reach the selection through the focused value.
+            // Finder conventions: Space previews a file (and toggles Get Info on a folder, which a
+            // double click opens), Return renames, Delete deletes; Edit menu Cut/Copy/Paste/Select
+            // All and ⌘I reach the selection through the focused value.
             .onKeyPress(.space) {
                 guard selection.count == 1, let item = item(for: selection.first) else { return .ignored }
-                onOpen(item)
+                if item.isDirectory {
+                    keyboardActions.getInfo()
+                } else {
+                    onOpen(item)
+                }
                 return .handled
             }
             .onKeyPress(.return) {

@@ -66,6 +66,17 @@
         }
     }
 
+    /// Whether "View as Text" makes sense for a file: a text or source type, or a file with no
+    /// extension at all (README, Makefile, Dockerfile), which is almost always text.
+    enum MacRawTextSupport {
+        static func applies(toFileNamed fileName: String) -> Bool {
+            let pathExtension = (fileName as NSString).pathExtension
+            guard !pathExtension.isEmpty else { return true }
+            guard let type = UTType(filenameExtension: pathExtension) else { return false }
+            return type.conforms(to: .text) || type.conforms(to: .sourceCode)
+        }
+    }
+
     /// ⌘P for the preview on screen, published by its Open With menu.
     public struct PrintPreviewAction {
         let perform: () -> Void
@@ -99,11 +110,18 @@
         var isWorking = false
         var errorMessage: String?
         var rawText: RawTextDocument?
+        /// Reports a failure where nothing observes `errorMessage`, as from a context menu.
+        @ObservationIgnored private let onFailure: ((String) -> Void)?
 
         @ObservationIgnored @Dependency(\.filesClient) private var filesClient
 
-        init(source: SystemShareSource) {
+        init(source: SystemShareSource, onFailure: ((String) -> Void)? = nil) {
             self.source = source
+            self.onFailure = onFailure
+        }
+
+        var canViewAsText: Bool {
+            fileName.map(MacRawTextSupport.applies(toFileNamed:)) ?? false
         }
 
         var fileName: String? {
@@ -196,6 +214,7 @@
                 } catch {
                     guard !Task.isCancelled else { return }
                     errorMessage = L10n.OpenWith.failed
+                    onFailure?(L10n.OpenWith.failed)
                 }
             }
         }
@@ -240,8 +259,10 @@
                     }
                 }
                 Divider()
-                Button { model.viewAsText() } label: {
-                    Label { Text(L10n.OpenWith.viewAsText) } icon: { IconKit.document }
+                if model.canViewAsText {
+                    Button { model.viewAsText() } label: {
+                        Label { Text(L10n.OpenWith.viewAsText) } icon: { IconKit.document }
+                    }
                 }
                 if model.printKind != nil {
                     Button { model.print() } label: {
@@ -258,6 +279,42 @@
             .accessibilityLabelWithTooltip(L10n.OpenWith.openWith)
             .focusedSceneValue(\.printPreview, model.printKind == nil ? nil : PrintPreviewAction { model.print() })
             .modifier(MacOpenWithPresentation(model: model))
+        }
+    }
+
+    /// Open in the default app and Open With, for a file's right click menu in the Mac table.
+    /// The model downloads the file first; a failure goes to `onFailure` since a closed menu has
+    /// nowhere to show it.
+    struct MacOpenWithMenuItems: View {
+        let item: FileItem
+        let serverURL: URL
+        let onFailure: (String) -> Void
+
+        var body: some View {
+            let apps = MacOpenWithApp.apps(forFileNamed: item.name)
+            if let preferred = apps.preferred {
+                Button { model().open(with: nil) } label: {
+                    Label { Text(L10n.OpenWith.openIn(preferred.name)) } icon: { preferred.icon }
+                }
+                .tint(.primaryDS)
+            }
+            if !apps.all.isEmpty {
+                Menu {
+                    ForEach(apps.all) { app in
+                        Button { model().open(with: app) } label: {
+                            Label { Text(app.name) } icon: { app.icon }
+                        }
+                    }
+                } label: {
+                    Label { Text(L10n.OpenWith.openWith) } icon: { IconKit.openInApp }
+                }
+                .tint(.primaryDS)
+            }
+        }
+
+        /// A fresh model per click; its task keeps it alive until the open finishes.
+        private func model() -> MacOpenWithModel {
+            MacOpenWithModel(source: .remote(item, serverURL: serverURL), onFailure: onFailure)
         }
     }
 
@@ -289,9 +346,11 @@
                     .menuStyle(.button)
                     .controlSize(.large)
                 }
-                Button(L10n.OpenWith.viewAsText) { model.viewAsText() }
-                    .buttonStyle(.plain)
-                    .foregroundStyle(Color.accentText)
+                if model.canViewAsText {
+                    Button(L10n.OpenWith.viewAsText) { model.viewAsText() }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(Color.accentText)
+                }
             }
             .frame(maxWidth: Metrics.buttonMaxWidth)
             .modifier(MacOpenWithPresentation(model: model))

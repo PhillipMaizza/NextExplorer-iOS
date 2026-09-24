@@ -14,6 +14,8 @@ struct FileActionsMenu: View {
     let store: StoreOf<BrowseFeature>
     let item: FileItem
     let onShare: (FileItem) -> Void
+    /// Where a failed Mac "Open With" reports, since the menu has closed by then.
+    var onOpenWithFailed: (String) -> Void = { _ in }
 
     #if os(macOS)
         @Environment(\.openWindow) private var openWindow
@@ -34,6 +36,9 @@ struct FileActionsMenu: View {
                     Label { Text(L10n.Browse.actionOpenInNewTab) } icon: { IconKit.newTab }
                 }
                 .tint(.primaryDS)
+                Divider()
+            } else {
+                MacOpenWithMenuItems(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
                 Divider()
             }
         #endif
