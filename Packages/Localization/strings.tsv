@@ -666,6 +666,37 @@ offline.manageEmpty	Nothing is downloaded for offline use.
 offline.preferOfflineToggle	Play downloaded copies
 offline.preferOfflineSubtitle	Use a downloaded video instead of streaming when it's available.
 offline.tunnelSpeedNote	Reaching your server through a remote tunnel can slow downloads. For large files, connect to the same network and use your server's local address.
+menu.rateApp	Rate NextExplorer…
+menu.support	NextExplorer Support
+settings.sectionSupport	Support
+settings.rowRateApp	Rate NextExplorer
+settings.rowSupport	Help & Support
+menu.refresh	Refresh
+select.tableView	Table View
+# ---- save panel downloads (macOS) ----
+browse.progressDownloading	Downloading…
+browse.progressDownloadingIndexed	Downloading %1$lld of %2$lld…
+browse.downloadSavedTo	Saved to %@
+browse.downloadSavedCountTo	Saved %1$lld of %2$lld items to %3$@
+browse.downloadSavedAllTo	Saved %1$lld items to %2$@
+browse.downloadBulkFailed	Couldn't save these items to your device.
+# ---- open with (macOS) ----
+openWith.openIn	Open in %@
+openWith.openWith	Open With
+openWith.viewAsText	View as Text
+openWith.failed	Couldn't open this file.
+browse.showInFinder	Show in Finder
+browse.actionCut	Cut
+browse.clipboardCutOne	%@ ready to move
+browse.clipboardCutMany	%lld items ready to move
+menu.enclosingFolder	Enclosing Folder
+common.more	More
+openWith.print	Print…
+menu.newWindow	New Window
+menu.newTab	New Tab
+browse.actionOpenInNewWindow	Open in New Window
+browse.actionOpenInNewTab	Open in New Tab
+select.viewAs	View
 
 # ---- appearance, personal folder, download queue ----
 settings.rowAppearance	Appearance
@@ -688,6 +719,3 @@ downloadQueue.savedMany	%lld items saved to Downloads
 downloadQueue.bytesOf	%1$@ of %2$@
 downloadQueue.timeLeft	%@ left
 browse.sectionPersonal	Personal
-settings.sectionSupport	Support
-settings.rowRateApp	Rate NextExplorer
-settings.rowSupport	Help & Support

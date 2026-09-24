@@ -596,6 +596,29 @@ offline.manageEmpty	Rien n'est téléchargé pour une utilisation hors ligne.
 offline.preferOfflineToggle	Lire les copies téléchargées
 offline.preferOfflineSubtitle	Utiliser une vidéo téléchargée au lieu de la diffuser lorsqu'elle est disponible.
 offline.tunnelSpeedNote	Accéder à votre serveur via un tunnel distant peut ralentir les téléchargements. Pour les gros fichiers, connectez-vous au même réseau et utilisez l'adresse locale de votre serveur.
+menu.rateApp	Noter NextExplorer…
+menu.support	Assistance NextExplorer
+settings.sectionSupport	Assistance
+settings.rowRateApp	Noter NextExplorer
+settings.rowSupport	Aide et assistance
+menu.refresh	Actualiser
+select.tableView	Vue tableau
+openWith.openIn	Ouvrir dans %@
+openWith.openWith	Ouvrir avec
+openWith.viewAsText	Afficher en texte
+openWith.failed	Impossible d’ouvrir ce fichier.
+browse.showInFinder	Afficher dans le Finder
+browse.actionCut	Couper
+browse.clipboardCutOne	%@ prêt à être déplacé
+browse.clipboardCutMany	%lld éléments prêts à être déplacés
+menu.enclosingFolder	Dossier parent
+common.more	Plus
+openWith.print	Imprimer…
+menu.newWindow	Nouvelle fenêtre
+menu.newTab	Nouvel onglet
+browse.actionOpenInNewWindow	Ouvrir dans une nouvelle fenêtre
+browse.actionOpenInNewTab	Ouvrir dans un nouvel onglet
+select.viewAs	Présentation
 settings.rowAppearance	Apparence
 appearance.system	Système
 appearance.light	Clair
@@ -616,6 +639,9 @@ downloadQueue.savedMany	%lld éléments enregistrés dans Téléchargements
 downloadQueue.bytesOf	%1$@ sur %2$@
 downloadQueue.timeLeft	%@ restantes
 browse.sectionPersonal	Personnel
-settings.sectionSupport	Assistance
-settings.rowRateApp	Noter NextExplorer
-settings.rowSupport	Aide et assistance
+browse.progressDownloading	Téléchargement…
+browse.progressDownloadingIndexed	Téléchargement de %1$lld sur %2$lld…
+browse.downloadSavedTo	Enregistré dans %@
+browse.downloadSavedCountTo	%1$lld éléments sur %2$lld enregistrés dans %3$@
+browse.downloadSavedAllTo	%1$lld éléments enregistrés dans %2$@
+browse.downloadBulkFailed	Impossible d'enregistrer ces éléments sur votre appareil.

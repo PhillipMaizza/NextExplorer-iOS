@@ -1,7 +1,9 @@
 import AVFoundation
 import DesignSystem
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     static let playBadgeFraction: CGFloat = 0.4
@@ -20,13 +22,13 @@ struct VideoThumbnailView: View {
     let url: URL
     let size: CGFloat
 
-    @State private var frame: UIImage?
+    @State private var frame: PlatformImage?
     @State private var didFail = false
 
     var body: some View {
         ZStack {
             if let frame {
-                Image(uiImage: frame)
+                Image(platformImage: frame)
                     .resizable()
                     .scaledToFill()
             } else if didFail {
@@ -55,11 +57,11 @@ struct VideoThumbnailView: View {
         }
     }
 
-    private static func firstFrame(of url: URL, maxPixelSize: CGFloat) async -> UIImage? {
+    private static func firstFrame(of url: URL, maxPixelSize: CGFloat) async -> PlatformImage? {
         let generator = AVAssetImageGenerator(asset: AVURLAsset(url: url))
         generator.appliesPreferredTrackTransform = true
         generator.maximumSize = CGSize(width: maxPixelSize, height: maxPixelSize)
         guard let cgImage = try? await generator.image(at: Constants.frameTime).image else { return nil }
-        return UIImage(cgImage: cgImage)
+        return PlatformImage(cgImage: cgImage)
     }
 }

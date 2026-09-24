@@ -1575,57 +1575,60 @@ struct BrowseFeatureTests {
 
     // MARK: File actions — download
 
-    @Test
-    func downloadTappedHandsTheItemToTheAppDownloadQueue() async {
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 1_600_000_000, kind: "mkv")
+    // iOS hands downloads to the app queue; macOS saves via a panel, see MacDownloadTests.
+    #if os(iOS)
+        @Test
+        func downloadTappedHandsTheItemToTheAppDownloadQueue() async {
+            let serverURL = URL(string: "https://example.com")!
+            let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 1_600_000_000, kind: "mkv")
 
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")) {
-            BrowseFeature()
+            let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")) {
+                BrowseFeature()
+            }
+
+            await store.send(.downloadTapped(item))
+            await store.receive(.delegate(.downloadRequested([item])))
         }
 
-        await store.send(.downloadTapped(item))
-        await store.receive(.delegate(.downloadRequested([item])))
-    }
+        @Test
+        func downloadTappedFromAPreviewAlsoConfirmsWithAToast() async {
+            let serverURL = URL(string: "https://example.com")!
+            let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 0, kind: "mkv")
+            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
+            state.previewItem = item
 
-    @Test
-    func downloadTappedFromAPreviewAlsoConfirmsWithAToast() async {
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 0, kind: "mkv")
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
-        state.previewItem = item
+            let store = TestStore(initialState: state) {
+                BrowseFeature()
+            }
 
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
+            await store.send(.downloadTapped(item)) {
+                $0.downloadSuccessMessage = "Downloading movie.mkv"
+            }
+            await store.receive(.delegate(.downloadRequested([item])))
         }
 
-        await store.send(.downloadTapped(item)) {
-            $0.downloadSuccessMessage = "Downloading movie.mkv"
-        }
-        await store.receive(.delegate(.downloadRequested([item])))
-    }
+        @Test
+        func bulkDownloadTappedQueuesTheSelectionInListingOrderAndLeavesSelectMode() async {
+            let serverURL = URL(string: "https://example.com")!
+            let folder = FileItem(name: "Photos", path: "Files", dateModified: Date(), size: 0, kind: "directory")
+            let file = FileItem(name: "notes.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
+            let other = FileItem(name: "skip.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
+            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
+            state.items = [folder, file, other]
+            state.isSelecting = true
+            state.selectedItemIDs = [file.id, folder.id]
 
-    @Test
-    func bulkDownloadTappedQueuesTheSelectionInListingOrderAndLeavesSelectMode() async {
-        let serverURL = URL(string: "https://example.com")!
-        let folder = FileItem(name: "Photos", path: "Files", dateModified: Date(), size: 0, kind: "directory")
-        let file = FileItem(name: "notes.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
-        let other = FileItem(name: "skip.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
-        state.items = [folder, file, other]
-        state.isSelecting = true
-        state.selectedItemIDs = [file.id, folder.id]
+            let store = TestStore(initialState: state) {
+                BrowseFeature()
+            }
 
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
+            await store.send(.bulkDownloadTapped) {
+                $0.isSelecting = false
+                $0.selectedItemIDs = []
+            }
+            await store.receive(.delegate(.downloadRequested([folder, file])))
         }
-
-        await store.send(.bulkDownloadTapped) {
-            $0.isSelecting = false
-            $0.selectedItemIDs = []
-        }
-        await store.receive(.delegate(.downloadRequested([folder, file])))
-    }
+    #endif
 
     @Test
     func bulkDownloadWithNothingSelectedDoesNothing() async {

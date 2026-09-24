@@ -80,14 +80,14 @@ private struct ArchiveImagePreviewView: View {
                 }
                 .navigationTitle(fileName)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .navigationBarBackgroundHidden()
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
                             .accessibilityLabel(L10n.Common.close)
                     }
                 }
-                .toolbar(areControlsHidden ? .hidden : .visible, for: .navigationBar)
+                .hidesNavigationBar(areControlsHidden)
                 .statusBarHidden(areControlsHidden)
         }
     }
@@ -149,7 +149,7 @@ private struct ArchiveTextEntryPreviewView: View {
                 .backgroundGradient()
                 .navigationTitle(item.name)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .navigationBarBackgroundHidden()
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }

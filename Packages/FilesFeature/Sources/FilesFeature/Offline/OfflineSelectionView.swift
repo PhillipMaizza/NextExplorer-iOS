@@ -81,7 +81,7 @@ struct OfflineSelectionView: View {
             EmptyStateView(icon: IconKit.folder, message: L10n.Offline.selectionEmpty)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List {
+            DSGroupedList {
                 ForEach(store.items) { item in
                     OfflineSelectionRow(
                         item: item,

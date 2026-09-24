@@ -596,6 +596,29 @@ offline.manageEmpty	Er is niets gedownload voor offline gebruik.
 offline.preferOfflineToggle	Gedownloade kopieën afspelen
 offline.preferOfflineSubtitle	Een gedownloade video gebruiken in plaats van streamen wanneer die beschikbaar is.
 offline.tunnelSpeedNote	Toegang tot je server via een externe tunnel kan downloads vertragen. Verbind voor grote bestanden met hetzelfde netwerk en gebruik het lokale adres van je server.
+menu.rateApp	NextExplorer beoordelen…
+menu.support	NextExplorer-ondersteuning
+settings.sectionSupport	Ondersteuning
+settings.rowRateApp	NextExplorer beoordelen
+settings.rowSupport	Hulp en ondersteuning
+menu.refresh	Vernieuwen
+select.tableView	Tabelweergave
+openWith.openIn	Openen in %@
+openWith.openWith	Open met
+openWith.viewAsText	Als tekst weergeven
+openWith.failed	Kan dit bestand niet openen.
+browse.showInFinder	Toon in Finder
+browse.actionCut	Knip
+browse.clipboardCutOne	%@ klaar om te verplaatsen
+browse.clipboardCutMany	%lld onderdelen klaar om te verplaatsen
+menu.enclosingFolder	Bovenliggende map
+common.more	Meer
+openWith.print	Druk af…
+menu.newWindow	Nieuw venster
+menu.newTab	Nieuw tabblad
+browse.actionOpenInNewWindow	Open in nieuw venster
+browse.actionOpenInNewTab	Open in nieuw tabblad
+select.viewAs	Weergave
 settings.rowAppearance	Weergave
 appearance.system	Systeem
 appearance.light	Licht
@@ -616,6 +639,9 @@ downloadQueue.savedMany	%lld items opgeslagen in Downloads
 downloadQueue.bytesOf	%1$@ van %2$@
 downloadQueue.timeLeft	nog %@
 browse.sectionPersonal	Persoonlijk
-settings.sectionSupport	Ondersteuning
-settings.rowRateApp	NextExplorer beoordelen
-settings.rowSupport	Hulp en ondersteuning
+browse.progressDownloading	Downloaden…
+browse.progressDownloadingIndexed	%1$lld van %2$lld downloaden…
+browse.downloadSavedTo	Bewaard in %@
+browse.downloadSavedCountTo	%1$lld van %2$lld items bewaard in %3$@
+browse.downloadSavedAllTo	%1$lld items bewaard in %2$@
+browse.downloadBulkFailed	Kan deze items niet op je apparaat bewaren.

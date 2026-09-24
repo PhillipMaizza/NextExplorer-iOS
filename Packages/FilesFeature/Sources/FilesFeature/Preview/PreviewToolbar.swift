@@ -4,7 +4,9 @@ import DesignSystem
 import FilesClient
 import Localization
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 /// What the system-share button hands to `UIActivityViewController`: a file already on disk,
 /// or one that has to be downloaded from the server first. `.unavailable` omits the button.
@@ -60,39 +62,46 @@ private struct PreviewChrome: ViewModifier {
     func body(content: Content) -> some View {
         content
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.hidden, for: .navigationBar)
+            .navigationBarBackgroundHidden()
             .toolbar {
                 if let title {
                     ToolbarItem(placement: .principal) {
                         Text(title).lineLimit(1).truncationMode(.middle)
                     }
                 }
+                #if os(macOS)
+                    if hasSystemShare {
+                        ToolbarItem(placement: .primaryAction) {
+                            MacOpenWithMenu(source: systemShare)
+                        }
+                    }
+                #endif
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { onClose() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
-                        .accessibilityLabel(L10n.PreviewToolbar.close)
+                        .accessibilityLabelWithTooltip(L10n.PreviewToolbar.close)
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     if hasSystemShare {
-                        SystemShareButton(source: systemShare)
+                        SystemShareButton(source: systemShare, onShareLink: onShareLink)
                     }
                     if let onShareLink {
                         Button { onShareLink() } label: { IconKit.shareLink.foregroundStyle(Color.primaryDS) }
-                            .accessibilityLabel(L10n.PreviewToolbar.createShareLink)
+                            .accessibilityLabelWithTooltip(L10n.PreviewToolbar.createShareLink)
                     }
                     if let onRename {
                         Button { onRename() } label: { IconKit.rename.foregroundStyle(Color.primaryDS) }
-                            .accessibilityLabel(L10n.PreviewToolbar.rename)
+                            .accessibilityLabelWithTooltip(L10n.PreviewToolbar.rename)
                     }
                     if let onDownload {
                         Button { onDownload() } label: { IconKit.download.foregroundStyle(Color.primaryDS) }
-                            .accessibilityLabel(L10n.PreviewToolbar.download)
+                            .accessibilityLabelWithTooltip(L10n.PreviewToolbar.download)
                     }
                     if onDelete != nil {
                         Spacer()
                     }
                     if let onDelete {
                         Button { onDelete() } label: { IconKit.delete.foregroundStyle(Color.negative) }
-                            .accessibilityLabel(L10n.PreviewToolbar.delete)
+                            .accessibilityLabelWithTooltip(L10n.PreviewToolbar.delete)
                     }
                 }
             }
@@ -104,9 +113,14 @@ private struct PreviewChrome: ViewModifier {
 /// downloads a server file to the cache first, showing a spinner while it does.
 struct SystemShareButton: View {
     let source: SystemShareSource
+    /// Offered next to the file share on macOS, where the share step is a sheet anyway.
+    var onShareLink: (() -> Void)?
 
     @Dependency(\.filesClient) private var filesClient
     @State private var shareURL: IdentifiedURL?
+    /// Set when the Mac share sheet's "Create share link" was chosen; the link sheet opens only
+    /// after the share sheet has finished dismissing, so the two never overlap.
+    @State private var isShareLinkPending = false
     @State private var isPreparing = false
     @State private var didFail = false
 
@@ -128,11 +142,26 @@ struct SystemShareButton: View {
                 IconKit.share.foregroundStyle(didFail ? Color.negative : Color.primaryDS)
             }
         }
-        .accessibilityLabel(L10n.PreviewToolbar.share)
+        .accessibilityLabelWithTooltip(L10n.PreviewToolbar.share)
         .disabled(isDisabled)
-        .sheet(item: $shareURL) { wrapped in
-            ActivityShareSheet(items: [wrapped.url])
-        }
+        #if os(macOS)
+            .sheet(item: $shareURL, onDismiss: openPendingShareLink) { wrapped in
+                ActivityShareSheet(
+                    items: [wrapped.url],
+                    onCreateShareLink: onShareLink.map { _ in { isShareLinkPending = true } }
+                )
+            }
+        #else
+            .sheet(item: $shareURL) { wrapped in
+                ActivityShareSheet(items: [wrapped.url])
+            }
+        #endif
+    }
+
+    private func openPendingShareLink() {
+        guard isShareLinkPending else { return }
+        isShareLinkPending = false
+        onShareLink?()
     }
 
     private func prepare() {
@@ -164,12 +193,61 @@ struct IdentifiedURL: Identifiable {
     let url: URL
 }
 
-private struct ActivityShareSheet: UIViewControllerRepresentable {
-    let items: [Any]
+#if os(iOS)
+    private struct ActivityShareSheet: UIViewControllerRepresentable {
+        let items: [Any]
 
-    func makeUIViewController(context _: Context) -> UIActivityViewController {
-        UIActivityViewController(activityItems: items, applicationActivities: nil)
+        func makeUIViewController(context _: Context) -> UIActivityViewController {
+            UIActivityViewController(activityItems: items, applicationActivities: nil)
+        }
+
+        func updateUIViewController(_: UIActivityViewController, context _: Context) {}
+    }
+#else
+    /// A Mac has no activity sheet: the file share goes through `ShareLink` (the native share
+    /// menu), next to creating a NextExplorer share link for the same file.
+    private struct ActivityShareSheet: View {
+        let items: [URL]
+        var onCreateShareLink: (() -> Void)?
+        @Environment(\.dismiss) private var dismiss
+
+        var body: some View {
+            VStack(spacing: .space16) {
+                ForEach(items, id: \.self) { url in
+                    Text(url.lastPathComponent)
+                        .type(.body1(.semibold), style: .primaryOnSurface)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                    ShareLink(item: url) {
+                        Label { Text(L10n.PreviewToolbar.share) } icon: { IconKit.share }
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(Color.accent)
+                    .controlSize(.large)
+                }
+                if let onCreateShareLink {
+                    Button {
+                        onCreateShareLink()
+                        dismiss()
+                    } label: {
+                        Label { Text(L10n.PreviewToolbar.createShareLink) } icon: { IconKit.shareLink }
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.bordered)
+                    .controlSize(.large)
+                }
+                Button(L10n.Common.done) { dismiss() }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(Color.secondaryDS)
+                    .keyboardShortcut(.cancelAction)
+            }
+            .padding(.space24)
+            .frame(width: Metrics.macShareSheetWidth)
+        }
     }
 
-    func updateUIViewController(_: UIActivityViewController, context _: Context) {}
-}
+    private enum Metrics {
+        static let macShareSheetWidth: CGFloat = 360
+    }
+#endif

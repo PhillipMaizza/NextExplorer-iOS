@@ -2,7 +2,9 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 /// Shared metrics for the two rows that make up one share on the Shared tab. They live in
 /// separate `List` rows (header + detail) on purpose: a header row whose height never changes
@@ -355,7 +357,7 @@ struct SharedLinkDetailRow: View {
     }
 
     private func copy(_ string: String, label: String) {
-        UIPasteboard.general.string = string
+        PlatformPasteboard.copy(string)
         onCopied(label)
     }
 
@@ -399,7 +401,7 @@ private struct SharedLinkCardPreview: View {
     private let url = URL(string: "https://cloud.phillipmaizza.com")!
 
     var body: some View {
-        List {
+        DSGroupedList {
             Section {
                 SharedLinkHeaderRow(
                     share: share, serverURL: url, isByMe: isByMe, isExpired: isExpired,

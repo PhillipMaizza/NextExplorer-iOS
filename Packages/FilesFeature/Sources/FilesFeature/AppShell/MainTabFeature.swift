@@ -57,6 +57,11 @@ public struct MainTabFeature {
 
     public enum Action: Sendable {
         case tabSelected(Tab)
+        /// Mac menu bar commands: refresh whatever the selected tab shows, and create a folder
+        /// in the visible Browse folder (only while Browse is the selected tab).
+        case refreshSelectedTab
+        case newFolderRequested
+        case enclosingFolderRequested
         /// Sent when the scene becomes active again after being backgrounded — `BrowseTabFeature`
         /// re-fetches the current folder and every pushed subfolder, since `BrowseFeature.onAppear`
         /// deliberately no-ops once a folder already has items loaded.
@@ -125,6 +130,26 @@ public struct MainTabFeature {
             case let .tabSelected(tab):
                 state.selectedTab = tab
                 return .none
+
+            case .refreshSelectedTab:
+                switch state.selectedTab {
+                case .browse: return .send(.browse(.refreshVisibleFolder))
+                case .favorites: return .send(.favorites(.refreshButtonTapped))
+                case .shared: return .send(.shared(.refreshRequested))
+                case .downloads: return .send(.downloads(.refreshButtonTapped))
+                case .settings: return .none
+                }
+
+            case .newFolderRequested:
+                guard state.selectedTab == .browse else { return .none }
+                return .send(.browse(.newFolderInVisibleFolder))
+
+            case .enclosingFolderRequested:
+                switch state.selectedTab {
+                case .browse: return .send(.browse(.goToEnclosingFolder))
+                case .favorites: return .send(.favorites(.goToEnclosingFolder))
+                case .shared, .downloads, .settings: return .none
+                }
 
             case let .browse(.delegate(.uploadRequested(files))),
                  let .favorites(.delegate(.uploadRequested(files))):

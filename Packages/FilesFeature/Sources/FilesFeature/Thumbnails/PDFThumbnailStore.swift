@@ -1,8 +1,11 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import Foundation
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     /// Don't fetch or rasterize page one of PDFs past this size — a huge scanned document
@@ -36,7 +39,7 @@ final class PDFThumbnailStore {
     enum State {
         /// Being fetched/rendered (or not asked for yet). The cell shows a loading placeholder.
         case loading
-        case ready(UIImage)
+        case ready(PlatformImage)
         /// Too large, or fetched but not a readable PDF. The cell shows the plain PDF icon.
         case unavailable
 

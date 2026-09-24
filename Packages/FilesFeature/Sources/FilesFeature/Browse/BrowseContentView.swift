@@ -6,9 +6,13 @@ import FilesClient
 import Localization
 import PhotosUI
 import SwiftUI
+#if os(macOS)
+    import AppKit
+#endif
 
 private enum BrowseViewMode: String {
-    case list, grid
+    /// `table` is the Mac only sortable column view.
+    case list, grid, table
 }
 
 private enum Constants {
@@ -80,7 +84,13 @@ struct BrowseContentView: View {
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
 
     private var viewMode: BrowseViewMode {
-        BrowseViewMode(rawValue: viewModeRaw) ?? .list
+        #if os(macOS)
+            // The Mac always shows the sortable column table.
+            return .table
+        #else
+            let mode = BrowseViewMode(rawValue: viewModeRaw) ?? .list
+            return mode == .table ? .list : mode
+        #endif
     }
 
     private var thumbnailSize: ThumbnailSize {
@@ -122,9 +132,11 @@ struct BrowseContentView: View {
             .sheet(item: $store.scope(state: \.uploadReview, action: \.uploadReview)) { reviewStore in
                 UploadReviewView(store: reviewStore)
             }
+        #if os(iOS)
             .sheet(item: infoPhaseBinding) { phase in
                 infoSheetContent(for: phase)
             }
+        #endif
             .sheet(item: $store.scope(state: \.permissions, action: \.permissions)) { permissionsStore in
                 PermissionsSheet(store: permissionsStore)
             }
@@ -175,11 +187,21 @@ struct BrowseContentView: View {
             }
             .onChange(of: store.downloadSuccessMessage) { _, newValue in
                 guard let newValue else { return }
-                let inPreview = store.previewItem != nil
-                toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
-                    // From a preview, close the cover first, then switch tabs after a settle.
-                    store.send(inPreview ? .openDownloadsFromPreview : .delegate(.openDownloadsTapped))
-                }
+                #if os(macOS)
+                    // A Mac download lands where the user chose; the toast reveals it there.
+                    let savedURL = store.lastSavedDownloadURL
+                    toastMessage = .success(newValue, actionTitle: L10n.Browse.showInFinder) {
+                        if let savedURL {
+                            NSWorkspace.shared.activateFileViewerSelecting([savedURL])
+                        }
+                    }
+                #else
+                    let inPreview = store.previewItem != nil
+                    toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
+                        // From a preview, close the cover first, then switch tabs after a settle.
+                        store.send(inPreview ? .openDownloadsFromPreview : .delegate(.openDownloadsTapped))
+                    }
+                #endif
             }
             .onChange(of: store.transferSuccessMessage) { _, newValue in
                 guard let newValue else { return }
@@ -231,6 +253,9 @@ struct BrowseContentView: View {
                     Task { @MainActor in store.send(.computeOfflineAvailability) }
                 }
             }
+        #if os(macOS)
+            .modifier(MacBrowseInspector(screen: store))
+        #endif
     }
 
     /// Split out of `body`: with every modifier below chained directly onto the file-action
@@ -238,14 +263,22 @@ struct BrowseContentView: View {
     /// reasonable time.
     private var browsingContent: some View {
         Group {
-            if isInitialLoad {
+            if isInitialLoad, viewMode == .table {
+                #if os(macOS)
+                    MacBrowseTableSkeleton()
+                        .transition(.opacity)
+                #endif
+            } else if isInitialLoad {
                 BrowseSkeletonView(
                     isGridView: viewMode == .grid,
                     gridColumns: gridColumns,
                     iconSize: thumbnailSize.iconSize
                 )
                 .transition(.opacity)
-            } else if viewMode == .list {
+            } else if viewMode == .table, !store.isSelecting {
+                tableContent
+                    .transition(.opacity)
+            } else if viewMode != .grid {
                 listContent
                     .transition(.opacity)
             } else {
@@ -296,19 +329,22 @@ struct BrowseContentView: View {
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            // The Mac table selects natively (click, Command and Shift click), so select mode
+            // and the view mode control are iOS only.
             selectSortToolbar(
                 isSelecting: store.isSelecting,
                 isAllSelected: isAllSelected,
-                isSelectAvailable: !store.isSearching && store.hasDisplayedItems,
+                isSelectAvailable: !store.isSearching && store.hasDisplayedItems && viewMode != .table,
                 isGridView: viewMode == .grid,
                 onSelectModeToggled: { store.send(.selectModeToggled) },
                 onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
                 onCancel: { store.send(.selectModeToggled) },
                 onToggleViewMode: {
                     withAnimation {
-                        viewModeRaw = (viewMode == .list ? BrowseViewMode.grid : .list).rawValue
+                        viewModeRaw = (viewMode == .grid ? BrowseViewMode.list : .grid).rawValue
                     }
                 },
+                hasClipboardItems: store.clipboard != nil && !store.directoryPath.isEmpty,
                 clipboardMenu: {
                     if store.clipboard != nil, !store.directoryPath.isEmpty {
                         Section {
@@ -327,38 +363,28 @@ struct BrowseContentView: View {
                     }
                 }
             ) {
-                Button {
-                    isSortSheetPresented = true
-                } label: {
-                    Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
+                // The Mac table sorts from its column headers, so only the other modes need this.
+                if viewMode != .table {
+                    Button {
+                        isSortSheetPresented = true
+                    } label: {
+                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
+                    }
                 }
             }
-            if !store.isSelecting, canUploadHere {
-                if #available(iOS 26.0, *) {
-                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    UploadSourceMenu(
-                        label: {
+            #if os(iOS)
+                if !store.isSelecting, canUploadHere {
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        uploadMenu {
                             IconKit.plus
                                 .foregroundStyle(Color.primaryDS)
-                        },
-                        leadingActions: {
-                            if !store.directoryPath.isEmpty {
-                                Button { store.send(.newFolderTapped) } label: {
-                                    Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
-                                }
-                            }
-                        },
-                        isFilesPickerPresented: $isFilesPickerPresented,
-                        isPhotosPickerPresented: $isPhotosPickerPresented,
-                        isCameraPresented: $isCameraPresented,
-                        isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
-                    )
-                    .accessibilityLabel(L10n.Uploads.menuTitle)
-                    .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
+                        }
+                    }
                 }
-            }
+            #endif
         }
         .modifier(UploadPickers(
             isFilesPickerPresented: $isFilesPickerPresented,
@@ -379,30 +405,45 @@ struct BrowseContentView: View {
                 store.send(.beginUpload(.camera(url)))
             }
         ))
+        #if os(macOS)
+        .modifier(MacFinderDrop(isEnabled: canUploadHere && !store.isSelecting) { urls in
+            store.send(.beginUpload(.documents(urls)))
+        })
+        .overlay(alignment: .bottomTrailing) {
+            if canUploadHere, !store.isSelecting {
+                MacUploadButton { label in uploadMenu { label } }
+                    .padding(.space24)
+                    .padding(.bottom, bottomChromeClearance)
+                    .transition(.scale.combined(with: .opacity))
+            }
+        }
+        #endif
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
-        .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
+        .hidesTabBar(store.isSelecting)
         .toolbar {
             if store.isSelecting {
-                ToolbarItem(placement: .bottomBar) {
-                    Spacer()
-                }
-                if let singleSelectedItem, store.access?.canWrite ?? false {
+                #if os(iOS)
                     ToolbarItem(placement: .bottomBar) {
+                        Spacer()
+                    }
+                #endif
+                if let singleSelectedItem, store.access?.canWrite ?? false {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.rename, accessibilityLabel: L10n.Browse.actionRename) {
                             store.send(.renameTapped(singleSelectedItem))
                         }
                     }
                 }
                 if let singleSelectedItem, store.access?.canShare ?? false {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.shareLink, accessibilityLabel: L10n.Browse.actionShare) {
                             shareTarget = singleSelectedItem
                         }
                     }
                 }
                 if isFavoriteActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(
                             icon: isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star,
                             accessibilityLabel: isEntireSelectionAlreadyFavorited ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites
@@ -412,28 +453,28 @@ struct BrowseContentView: View {
                     }
                 }
                 if isTransferActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.copy, accessibilityLabel: L10n.Browse.actionCopy) {
                             store.send(.bulkCopyTapped, animation: .default)
                         }
                     }
                 }
                 if isTransferActionVisible, store.access?.canWrite ?? false, store.access?.canDelete ?? false {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.move, accessibilityLabel: L10n.Browse.actionMove) {
                             store.send(.bulkMoveTapped, animation: .default)
                         }
                     }
                 }
                 if isDownloadActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.download, accessibilityLabel: L10n.Browse.actionDownload) {
                             store.send(.bulkDownloadTapped)
                         }
                     }
                 }
                 if isDeleteActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.delete, role: .destructive, tint: .negative, accessibilityLabel: L10n.Browse.actionDelete) {
                             store.send(.bulkDeleteTapped)
                         }
@@ -618,6 +659,121 @@ struct BrowseContentView: View {
             isAvailableOffline: store.offlineItemIDs.contains(item.id)
         )
     }
+
+    @ViewBuilder
+    private var tableContent: some View {
+        #if os(macOS)
+            MacBrowseTableView(
+                items: store.displayedItems,
+                sortOption: store.sortOption,
+                sortDirection: store.sortDirection,
+                onSortChanged: { option, direction in
+                    store.send(.sortOptionChanged(option))
+                    store.send(.sortDirectionChanged(direction))
+                },
+                selection: Binding(
+                    get: { store.selectedItemIDs },
+                    set: { store.send(.tableSelectionChanged($0)) }
+                ),
+                cutItemIDs: store.clipboard?.operation == .move ? store.clipboard?.sourceItemPaths ?? [] : [],
+                onOpen: handleTap,
+                keyboardActions: tableKeyboardActions,
+                serverURL: store.serverURL,
+                canDropOnFolders: store.access?.canDelete ?? false,
+                onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
+                contextMenu: { ids in tableContextMenu(for: ids) }
+            )
+        #else
+            listContent
+        #endif
+    }
+
+    #if os(macOS)
+        /// Drag a row out (Finder, or onto a folder here) and let folder rows take drops.
+        private func macRowDragDrop(for item: FileItem) -> MacRowDragDrop {
+            MacRowDragDrop(
+                item: item,
+                serverURL: store.serverURL,
+                canDrag: !store.isSelecting,
+                canDropHere: !store.isSelecting && (store.access?.canDelete ?? false),
+                onDrop: { ids in store.send(.itemsDroppedOnFolder(ids: ids, folder: item)) }
+            )
+        }
+    #endif
+
+    #if os(macOS)
+        /// Right click in the table: the clicked rows' actions, or the folder's own (new folder,
+        /// upload) on empty space. Paste Here joins every variant while something is staged, so
+        /// a full window still has somewhere to paste.
+        @ViewBuilder
+        private func tableContextMenu(for ids: Set<FileItem.ID>) -> some View {
+            let items = store.displayedItems.filter { ids.contains($0.id) }
+            if items.isEmpty {
+                if canUploadHere {
+                    if !store.directoryPath.isEmpty {
+                        Button { store.send(.newFolderTapped) } label: {
+                            Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                        }
+                        .tint(.primaryDS)
+                    }
+                    Button { isFilesPickerPresented = true } label: {
+                        Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.upload }
+                    }
+                    .tint(.primaryDS)
+                }
+            } else if items.count == 1, let item = items.first {
+                fileActionsMenu(for: item)
+            } else {
+                Button {
+                    store.send(.tableSelectionChanged(ids))
+                    store.send(.copySelectionTapped, animation: .default)
+                } label: {
+                    Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
+                }
+                .tint(.primaryDS)
+                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                    Button {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.cutSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                    }
+                    .tint(.primaryDS)
+                }
+                if store.access?.canDelete ?? false {
+                    Button(role: .destructive) {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.deleteSelectionTapped)
+                    } label: {
+                        Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+                    }
+                }
+            }
+            if store.clipboard != nil, !store.directoryPath.isEmpty {
+                Divider()
+                pasteEmptySpaceMenu
+                    .tint(.primaryDS)
+            }
+        }
+
+        private var tableKeyboardActions: BrowseKeyboardActions {
+            let canPaste = store.clipboard != nil && !store.directoryPath.isEmpty
+            let keepAfterCopy = keepClipboardAfterCopy
+            return BrowseKeyboardActions(
+                cut: { store.send(.cutSelectionTapped) },
+                copy: { store.send(.copySelectionTapped) },
+                paste: {
+                    guard canPaste else { return }
+                    store.send(.pasteTapped(keepItemsAfterCopy: keepAfterCopy), animation: .default)
+                },
+                delete: { store.send(.deleteSelectionTapped) },
+                rename: { store.send(.renameSelectionTapped) },
+                selectAll: { store.send(.tableSelectionChanged(Set(store.displayedItems.map(\.id)))) },
+                getInfo: { store.send(.infoSelectionTapped) },
+                canPaste: canPaste
+            )
+        }
+    #endif
 
     private func listRowCell(for item: FileItem) -> some View {
         FileRowView(
@@ -992,6 +1148,26 @@ struct BrowseContentView: View {
         }
     }
 
+    /// The toolbar's upload `+` menu; each platform supplies its own label and styling.
+    private func uploadMenu(@ViewBuilder label: @escaping () -> some View) -> some View {
+        UploadSourceMenu(
+            label: label,
+            leadingActions: {
+                if !store.directoryPath.isEmpty {
+                    Button { store.send(.newFolderTapped) } label: {
+                        Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                    }
+                }
+            },
+            isFilesPickerPresented: $isFilesPickerPresented,
+            isPhotosPickerPresented: $isPhotosPickerPresented,
+            isCameraPresented: $isCameraPresented,
+            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
+        )
+        .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
+    }
+
     /// Root only, outside search and select mode: the account's private folder is not a volume,
     /// so it is not something a bulk action over the listing should touch.
     private var showsPersonalSpace: Bool {
@@ -1000,7 +1176,7 @@ struct BrowseContentView: View {
 
     private var listContent: some View {
         ScrollViewReader { proxy in
-            List {
+            DSGroupedList {
                 if showsPersonalSpace {
                     Section {
                         PersonalSpaceRow { store.send(.personalSpaceTapped) }
@@ -1024,6 +1200,7 @@ struct BrowseContentView: View {
                 pasteTargetRow
             }
             .listStyle(.insetGrouped)
+            .groupedListRowHover()
             .scrollContentBackground(.hidden)
             // Scrolling the results dismisses the search keyboard, the expected gesture when the
             // results fill the screen and tapping a row would navigate rather than just defocus.
@@ -1154,7 +1331,7 @@ struct BrowseContentView: View {
     /// always empty) and the app-level upload progress bar while it's showing. Both are placed
     /// by ancestors a `List` inside a pushed `navigationDestination` doesn't reliably respect.
     private var bottomChromeClearance: CGFloat {
-        (store.directoryPath.isEmpty ? 0 : BrowseBreadcrumbBarMetrics.height)
+        (store.directoryPath.isEmpty || !BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: viewModeRaw) ? 0 : BrowseBreadcrumbBarMetrics.height)
             + (isUploadBarVisible ? uploadBarHeight + UploadBarChrome.gap : 0)
     }
 
@@ -1177,7 +1354,7 @@ struct BrowseContentView: View {
         .tint(.primaryDS)
         .frame(maxWidth: Constants.emptyUploadButtonMaxWidth)
         .padding(.horizontal, Constants.emptyUploadButtonHPadding)
-        .accessibilityLabel(L10n.Uploads.menuTitle)
+        .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
     }
 
     /// Whether the current folder is a legitimate paste target for the staged clipboard —
@@ -1223,6 +1400,9 @@ struct BrowseContentView: View {
             } label: {
                 gridCell(for: item)
                     .dsCard(padding: Constants.gridCellPadding)
+                #if os(macOS)
+                    .modifier(macRowDragDrop(for: item))
+                #endif
                     .overlay(alignment: .topLeading) {
                         if store.isSelecting {
                             DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
@@ -1260,6 +1440,10 @@ struct BrowseContentView: View {
                     }
                     listRowCell(for: item)
                 }
+                #if os(macOS)
+                // On the label, not the row chain: that chain is at the type checker's limit.
+                .modifier(macRowDragDrop(for: item))
+                #endif
             }
             .buttonStyle(DSHapticButtonStyle())
             .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))

@@ -6,6 +6,8 @@ import Localization
 import SwiftUI
 
 private enum Metrics {
+    /// Settings rows are sparser than file rows, so on macOS they get a little more height.
+    static let macRowVerticalPadding: CGFloat = .space16
     /// Room under the version footer so the last rows clear the floating tab bar comfortably.
     static let listBottomPadding: CGFloat = .space48
 }
@@ -37,7 +39,7 @@ struct SettingsView: View {
         if horizontalSizeClass == .regular {
             return 0
         }
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, macOS 26.0, *) {
             return .size44 + .space8 + .space2
         }
         return .size44
@@ -69,7 +71,7 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationStack {
-            List {
+            DSGroupedList {
                 if !filter.isActive {
                     SettingsAccountsSection(store: store)
                     SettingsProfileSection(store: store)
@@ -90,6 +92,7 @@ struct SettingsView: View {
                 LegalSettingsSection(filter: filter)
                 LicensesSettingsSection(store: store, filter: filter)
             }
+            .groupedListRowVerticalPadding(Metrics.macRowVerticalPadding)
             .scrollContentBackground(.hidden)
             .contentMargins(.bottom, Metrics.listBottomPadding, for: .scrollContent)
             .backgroundGradient()

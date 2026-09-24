@@ -306,6 +306,79 @@ struct MainTabFeatureTests {
         }
     }
 
+    // MARK: Menu bar commands
+
+    @Test
+    func refreshSelectedTabRefreshesTheDownloadsTabWhenItIsSelected() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .downloads
+        let store = TestStore(initialState: state) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.localDownloadStore.list = { _ in [] }
+        }
+
+        await store.send(.refreshSelectedTab)
+        await store.receive(\.downloads.refreshButtonTapped) {
+            $0.downloads.phase = .loading
+        }
+        await store.receive(\.downloads.downloadsResponse.success) {
+            $0.downloads.phase = .loaded
+        }
+    }
+
+    @Test
+    func refreshSelectedTabRoutesToTheVisibleBrowseFolder() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
+            }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        // The forwarded refresh runs Browse's load cycle, covered by BrowseFeatureTests.
+        store.exhaustivity = .off
+
+        await store.send(.refreshSelectedTab)
+        await store.receive(\.browse.refreshVisibleFolder)
+        await store.receive(\.browse.root.refreshButtonTapped)
+        await store.skipReceivedActions()
+    }
+
+    @Test
+    func refreshSelectedTabDoesNothingOnSettings() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .settings
+        let store = TestStore(initialState: state) {
+            MainTabFeature()
+        }
+
+        await store.send(.refreshSelectedTab)
+    }
+
+    @Test
+    func newFolderRequestedIsIgnoredOutsideBrowse() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .favorites
+        let store = TestStore(initialState: state) {
+            MainTabFeature()
+        }
+
+        await store.send(.newFolderRequested)
+    }
+
+    @Test
+    func newFolderRequestedForwardsToBrowse() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        }
+
+        await store.send(.newFolderRequested)
+        // At the Browse root there is no writable folder, so the chain ends there.
+        await store.receive(\.browse.newFolderInVisibleFolder)
+    }
+
     @Test
     func downloadRequestedFromBrowseEnqueuesIntoTheAppWideDownloadQueue() async {
         let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(timeIntervalSince1970: 1), size: 1, kind: "mkv")

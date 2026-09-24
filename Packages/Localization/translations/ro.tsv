@@ -596,6 +596,29 @@ offline.manageEmpty	Nu este nimic descărcat pentru utilizare offline.
 offline.preferOfflineToggle	Redă copiile descărcate
 offline.preferOfflineSubtitle	Folosește un videoclip descărcat în loc de streaming când este disponibil.
 offline.tunnelSpeedNote	Accesarea serverului printr-un tunel la distanță poate încetini descărcările. Pentru fișiere mari, conectează-te la aceeași rețea și folosește adresa locală a serverului.
+menu.rateApp	Evaluează NextExplorer…
+menu.support	Asistență NextExplorer
+settings.sectionSupport	Asistență
+settings.rowRateApp	Evaluează NextExplorer
+settings.rowSupport	Ajutor și asistență
+menu.refresh	Reîmprospătează
+select.tableView	Vizualizare tabel
+openWith.openIn	Deschide în %@
+openWith.openWith	Deschide cu
+openWith.viewAsText	Vezi ca text
+openWith.failed	Fișierul nu a putut fi deschis.
+browse.showInFinder	Afișează în Finder
+browse.actionCut	Taie
+browse.clipboardCutOne	%@ gata de mutat
+browse.clipboardCutMany	%lld elemente gata de mutat
+menu.enclosingFolder	Dosarul părinte
+common.more	Mai multe
+openWith.print	Tipărește…
+menu.newWindow	Fereastră nouă
+menu.newTab	Filă nouă
+browse.actionOpenInNewWindow	Deschide în fereastră nouă
+browse.actionOpenInNewTab	Deschide în filă nouă
+select.viewAs	Vizualizare
 settings.rowAppearance	Aspect
 appearance.system	Sistem
 appearance.light	Luminos
@@ -616,6 +639,9 @@ downloadQueue.savedMany	%lld elemente salvate în Descărcări
 downloadQueue.bytesOf	%1$@ din %2$@
 downloadQueue.timeLeft	%@ rămase
 browse.sectionPersonal	Personal
-settings.sectionSupport	Asistență
-settings.rowRateApp	Evaluează NextExplorer
-settings.rowSupport	Ajutor și asistență
+browse.progressDownloading	Se descarcă…
+browse.progressDownloadingIndexed	Se descarcă %1$lld din %2$lld…
+browse.downloadSavedTo	Salvat în %@
+browse.downloadSavedCountTo	Salvate %1$lld din %2$lld elemente în %3$@
+browse.downloadSavedAllTo	Salvate %1$lld elemente în %2$@
+browse.downloadBulkFailed	Nu s-au putut salva aceste elemente pe dispozitiv.

@@ -596,6 +596,29 @@ offline.manageEmpty	オフライン用にダウンロードされたものはあ
 offline.preferOfflineToggle	ダウンロードしたコピーを再生
 offline.preferOfflineSubtitle	利用可能な場合はストリーミングの代わりにダウンロードした動画を使用します。
 offline.tunnelSpeedNote	リモートトンネル経由でサーバーに接続するとダウンロードが遅くなることがあります。大きなファイルの場合は、同じネットワークに接続してサーバーのローカルアドレスを使用してください。
+menu.rateApp	NextExplorerを評価…
+menu.support	NextExplorerサポート
+settings.sectionSupport	サポート
+settings.rowRateApp	NextExplorerを評価
+settings.rowSupport	ヘルプとサポート
+menu.refresh	更新
+select.tableView	テーブル表示
+openWith.openIn	%@で開く
+openWith.openWith	このアプリケーションで開く
+openWith.viewAsText	テキストとして表示
+openWith.failed	このファイルを開けませんでした。
+browse.showInFinder	Finderに表示
+browse.actionCut	カット
+browse.clipboardCutOne	%@を移動する準備ができました
+browse.clipboardCutMany	%lld項目を移動する準備ができました
+menu.enclosingFolder	内包しているフォルダ
+common.more	その他
+openWith.print	プリント…
+menu.newWindow	新規ウインドウ
+menu.newTab	新規タブ
+browse.actionOpenInNewWindow	新規ウインドウで開く
+browse.actionOpenInNewTab	新規タブで開く
+select.viewAs	表示
 settings.rowAppearance	外観
 appearance.system	システム
 appearance.light	ライト
@@ -616,6 +639,9 @@ downloadQueue.savedMany	%lld 個の項目をダウンロードに保存しまし
 downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	残り %@
 browse.sectionPersonal	個人
-settings.sectionSupport	サポート
-settings.rowRateApp	NextExplorerを評価
-settings.rowSupport	ヘルプとサポート
+browse.progressDownloading	ダウンロード中…
+browse.progressDownloadingIndexed	%2$lld 件中 %1$lld 件をダウンロード中…
+browse.downloadSavedTo	%@ に保存しました
+browse.downloadSavedCountTo	%2$lld 件中 %1$lld 件を %3$@ に保存しました
+browse.downloadSavedAllTo	%1$lld 件を %2$@ に保存しました
+browse.downloadBulkFailed	これらの項目をデバイスに保存できませんでした。

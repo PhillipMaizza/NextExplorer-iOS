@@ -31,11 +31,9 @@ struct EmptyStateView: View {
                 .scaledToFit()
                 .foregroundColor(.secondaryDS)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
-                .scaleEffect(isPulsing ? Constants.pulseScale : 1)
-                .animation(
-                    reduceMotion ? nil : .easeInOut(duration: Constants.pulseDuration).repeatForever(autoreverses: true),
-                    value: isPulsing
-                )
+                .animation(reduceMotion ? nil : .easeInOut(duration: Constants.pulseDuration).repeatForever(autoreverses: true)) {
+                    $0.scaleEffect(isPulsing ? Constants.pulseScale : 1)
+                }
             Text(message).type(.body1(.regular), style: .secondary)
             if let retry {
                 RetryLinkButton(action: retry)
@@ -43,10 +41,13 @@ struct EmptyStateView: View {
         }
         .padding(.horizontal, .space16)
         .multilineTextAlignment(.center)
-        // Gentle fade + rise on first appear, then start the breathing loop.
-        .opacity(hasAppeared || reduceMotion ? 1 : 0)
-        .offset(y: hasAppeared || reduceMotion ? 0 : .space8)
-        .animation(.easeOut(duration: Constants.appearDuration), value: hasAppeared)
+        // Gentle fade + rise on first appear, then start the breathing loop. Scoped animations
+        // (not value based) so the view's first layout is never animated along with them.
+        .animation(.easeOut(duration: Constants.appearDuration)) {
+            $0
+                .opacity(hasAppeared || reduceMotion ? 1 : 0)
+                .offset(y: hasAppeared || reduceMotion ? 0 : .space8)
+        }
         .onAppear {
             hasAppeared = true
             isPulsing = true

@@ -34,7 +34,11 @@ private struct ShimmerModifier: ViewModifier {
                             endPoint: .trailing
                         )
                         .frame(width: bandWidth)
-                        .offset(x: phase * (proxy.size.width + bandWidth))
+                        // Only the sweep is animated: `withAnimation` around the whole view also
+                        // animated its first layout, sliding skeletons in from the top left.
+                        .animation(.linear(duration: Constants.sweepDuration).repeatForever(autoreverses: false)) {
+                            $0.offset(x: phase * (proxy.size.width + bandWidth))
+                        }
                         .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)
                     }
                     .mask(content)
@@ -42,11 +46,7 @@ private struct ShimmerModifier: ViewModifier {
                     .allowsHitTesting(false)
                 }
             }
-            .onAppear {
-                withAnimation(.linear(duration: Constants.sweepDuration).repeatForever(autoreverses: false)) {
-                    phase = 1
-                }
-            }
+            .onAppear { phase = 1 }
     }
 }
 

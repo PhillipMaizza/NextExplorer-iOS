@@ -596,6 +596,29 @@ offline.manageEmpty	没有为离线使用下载任何内容。
 offline.preferOfflineToggle	播放已下载的副本
 offline.preferOfflineSubtitle	可用时使用已下载的视频而非流式播放。
 offline.tunnelSpeedNote	通过远程隧道访问服务器可能会降低下载速度。下载大文件时，请连接到同一网络并使用服务器的本地地址。
+menu.rateApp	为 NextExplorer 评分…
+menu.support	NextExplorer 支持
+settings.sectionSupport	支持
+settings.rowRateApp	为 NextExplorer 评分
+settings.rowSupport	帮助与支持
+menu.refresh	刷新
+select.tableView	表格视图
+openWith.openIn	在 %@ 中打开
+openWith.openWith	打开方式
+openWith.viewAsText	以文本查看
+openWith.failed	无法打开此文件。
+browse.showInFinder	在“访达”中显示
+browse.actionCut	剪切
+browse.clipboardCutOne	%@ 已准备移动
+browse.clipboardCutMany	%lld 个项目已准备移动
+menu.enclosingFolder	上层文件夹
+common.more	更多
+openWith.print	打印…
+menu.newWindow	新建窗口
+menu.newTab	新建标签页
+browse.actionOpenInNewWindow	在新窗口中打开
+browse.actionOpenInNewTab	在新标签页中打开
+select.viewAs	显示方式
 settings.rowAppearance	外观
 appearance.system	跟随系统
 appearance.light	浅色
@@ -616,6 +639,9 @@ downloadQueue.savedMany	%lld 个项目已保存到下载
 downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	剩余 %@
 browse.sectionPersonal	个人
-settings.sectionSupport	支持
-settings.rowRateApp	为 NextExplorer 评分
-settings.rowSupport	帮助与支持
+browse.progressDownloading	正在下载…
+browse.progressDownloadingIndexed	正在下载 %2$lld 项中的第 %1$lld 项…
+browse.downloadSavedTo	已保存到 %@
+browse.downloadSavedCountTo	已将 %2$lld 项中的 %1$lld 项保存到 %3$@
+browse.downloadSavedAllTo	已将 %1$lld 项保存到 %2$@
+browse.downloadBulkFailed	无法将这些项目保存到您的设备。

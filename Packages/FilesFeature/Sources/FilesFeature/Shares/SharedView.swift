@@ -47,17 +47,26 @@ struct SharedView: View {
                 .padding(.top, Constants.segmentedControlTopPadding)
                 .padding(.bottom, Constants.segmentedControlBottomPadding)
 
-                TabView(selection: segment) {
-                    ForEach(SharedFeature.Segment.allCases, id: \.self) { pageSegment in
-                        SharedSegmentList(
-                            store: store,
-                            segment: pageSegment,
-                            onToast: { toastMessage = $0 }
-                        )
-                        .tag(pageSegment)
+                #if os(macOS)
+                    SharedSegmentList(
+                        store: store,
+                        segment: store.segment,
+                        onToast: { toastMessage = $0 }
+                    )
+                    .id(store.segment)
+                #else
+                    TabView(selection: segment) {
+                        ForEach(SharedFeature.Segment.allCases, id: \.self) { pageSegment in
+                            SharedSegmentList(
+                                store: store,
+                                segment: pageSegment,
+                                onToast: { toastMessage = $0 }
+                            )
+                            .tag(pageSegment)
+                        }
                     }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                #endif
             }
             .backgroundGradient()
             // Title lives in the pinned header (see `PinnedTitleSearchHeader`), which also keeps
@@ -81,7 +90,7 @@ struct SharedView: View {
             }
             .animation(.easeInOut(duration: 0.2), value: store.dataSources[store.segment])
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItem(placement: .sortControl) {
                     SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
                 }
             }

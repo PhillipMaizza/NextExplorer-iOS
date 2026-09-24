@@ -350,7 +350,7 @@ public struct OfflineDownloadsFeature {
     /// Depth first walk of the pinned roots into a flat list of files. Directories are expanded via
     /// `browse`; a folder that fails to list is skipped rather than aborting the whole run, so one
     /// unreadable subfolder doesn't sink an otherwise good sync.
-    private static func enumerate(
+    static func enumerate(
         roots: [FileItem], serverURL: URL, filesClient: FilesClient
     ) async throws -> [FileItem] {
         var files: [FileItem] = []

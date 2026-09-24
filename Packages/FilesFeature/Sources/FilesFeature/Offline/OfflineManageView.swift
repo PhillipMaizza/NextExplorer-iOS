@@ -25,7 +25,7 @@ struct OfflineManageView: View {
                 EmptyStateView(icon: IconKit.cloud, message: L10n.Offline.manageEmpty)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                List {
+                DSGroupedList {
                     Section {
                         ForEach(Array(store.usages.enumerated()), id: \.element.id) { index, usage in
                             OfflineManageRow(usage: usage, appearIndex: index) {
@@ -89,9 +89,16 @@ private struct OfflineManageRow: View {
                 .monospacedDigit()
         }
         .swipeActions(edge: .trailing) {
-            Button(role: .destructive, action: onRemove) {
-                Label(L10n.Common.remove, systemImage: "trash")
-            }
+            removeButton
+        }
+        #if os(macOS)
+        .contextMenu { removeButton }
+        #endif
+    }
+
+    private var removeButton: some View {
+        Button(role: .destructive, action: onRemove) {
+            Label(L10n.Common.remove, systemImage: "trash")
         }
     }
 

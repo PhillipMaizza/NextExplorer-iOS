@@ -124,11 +124,12 @@ enum RelativeAssetPath {
     }
 }
 
-private struct HTMLWebView: UIViewRepresentable {
+@MainActor
+private struct HTMLWebView {
     let fileURL: URL
     let readAccessURL: URL
 
-    func makeUIView(context: Context) -> WKWebView {
+    fileprivate func makeWebView(coordinator: Coordinator) -> WKWebView {
         // The rendered content is an untrusted file from the user's server (or an archive).
         // JavaScript is disabled so a hostile page can't read neighbouring files off disk or
         // exfiltrate them; the navigation delegate pins navigation to the local file and
@@ -139,15 +140,15 @@ private struct HTMLWebView: UIViewRepresentable {
         // the JS-off + navigation-blocked guarantees were somehow bypassed.
         configuration.websiteDataStore = .nonPersistent()
         let webView = WKWebView(frame: .zero, configuration: configuration)
-        webView.navigationDelegate = context.coordinator
+        webView.navigationDelegate = coordinator
         webView.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)
         return webView
     }
 
-    func updateUIView(_ uiView: WKWebView, context: Context) {
-        guard context.coordinator.lastLoadedURL != fileURL else { return }
-        context.coordinator.lastLoadedURL = fileURL
-        uiView.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)
+    fileprivate func updateWebView(_ webView: WKWebView, coordinator: Coordinator) {
+        guard coordinator.lastLoadedURL != fileURL else { return }
+        coordinator.lastLoadedURL = fileURL
+        webView.loadFileURL(fileURL, allowingReadAccessTo: readAccessURL)
     }
 
     func makeCoordinator() -> Coordinator {
@@ -169,3 +170,25 @@ private struct HTMLWebView: UIViewRepresentable {
         }
     }
 }
+
+#if os(iOS)
+    extension HTMLWebView: UIViewRepresentable {
+        func makeUIView(context: Context) -> WKWebView {
+            makeWebView(coordinator: context.coordinator)
+        }
+
+        func updateUIView(_ uiView: WKWebView, context: Context) {
+            updateWebView(uiView, coordinator: context.coordinator)
+        }
+    }
+#else
+    extension HTMLWebView: NSViewRepresentable {
+        func makeNSView(context: Context) -> WKWebView {
+            makeWebView(coordinator: context.coordinator)
+        }
+
+        func updateNSView(_ nsView: WKWebView, context: Context) {
+            updateWebView(nsView, coordinator: context.coordinator)
+        }
+    }
+#endif

@@ -596,6 +596,29 @@ offline.manageEmpty	沒有為離線使用下載任何內容。
 offline.preferOfflineToggle	播放已下載的副本
 offline.preferOfflineSubtitle	可用時使用已下載的影片而非串流播放。
 offline.tunnelSpeedNote	透過遠端通道存取伺服器可能會拖慢下載速度。下載大型檔案時，請連線到相同網路並使用伺服器的本機位址。
+menu.rateApp	為 NextExplorer 評分…
+menu.support	NextExplorer 支援
+settings.sectionSupport	支援
+settings.rowRateApp	為 NextExplorer 評分
+settings.rowSupport	說明與支援
+menu.refresh	重新整理
+select.tableView	表格檢視
+openWith.openIn	在 %@ 中打開
+openWith.openWith	打開方式
+openWith.viewAsText	以文字檢視
+openWith.failed	無法打開此檔案。
+browse.showInFinder	在 Finder 中顯示
+browse.actionCut	剪下
+browse.clipboardCutOne	%@ 已準備移動
+browse.clipboardCutMany	%lld 個項目已準備移動
+menu.enclosingFolder	上層檔案夾
+common.more	更多
+openWith.print	列印⋯
+menu.newWindow	新增視窗
+menu.newTab	新增標籤頁
+browse.actionOpenInNewWindow	在新視窗中打開
+browse.actionOpenInNewTab	在新標籤頁中打開
+select.viewAs	顯示方式
 settings.rowAppearance	外觀
 appearance.system	跟隨系統
 appearance.light	淺色
@@ -616,6 +639,9 @@ downloadQueue.savedMany	%lld 個項目已儲存到下載
 downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	剩餘 %@
 browse.sectionPersonal	個人
-settings.sectionSupport	支援
-settings.rowRateApp	為 NextExplorer 評分
-settings.rowSupport	說明與支援
+browse.progressDownloading	正在下載…
+browse.progressDownloadingIndexed	正在下載 %2$lld 個中的第 %1$lld 個…
+browse.downloadSavedTo	已儲存到 %@
+browse.downloadSavedCountTo	已將 %2$lld 個中的 %1$lld 個項目儲存到 %3$@
+browse.downloadSavedAllTo	已將 %1$lld 個項目儲存到 %2$@
+browse.downloadBulkFailed	無法將這些項目儲存到您的裝置。

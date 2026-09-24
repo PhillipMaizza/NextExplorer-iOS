@@ -75,7 +75,7 @@ struct DestinationPickerView: View {
             }
             .searchable(
                 text: $store.searchQuery.sending(\.searchQueryChanged),
-                placement: .navigationBarDrawer(displayMode: .always),
+                placement: .pinned,
                 prompt: L10n.Common.search
             )
             .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -114,7 +114,7 @@ struct DestinationPickerView: View {
             EmptyStateView(icon: IconKit.folder, message: L10n.Browse.destinationPickerNoFolders)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List {
+            DSGroupedList {
                 ForEach(store.folders) { folder in
                     Button {
                         store.send(.folderTapped(folder))
@@ -136,7 +136,7 @@ struct DestinationPickerView: View {
             EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List {
+            DSGroupedList {
                 ForEach(store.searchResults ?? []) { result in
                     Button {
                         store.send(.searchResultTapped(result))

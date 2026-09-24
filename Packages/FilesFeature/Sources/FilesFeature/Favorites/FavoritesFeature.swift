@@ -124,6 +124,8 @@ public struct FavoritesFeature {
         case bulkRemoveConfirmed
         case bulkRemoveResponse([String])
         case path(StackActionOf<BrowseFeature>)
+        /// Mac ⌘↑ / ⌘[: pop to the folder that contains the visible one.
+        case goToEnclosingFolder
         case navigateToDirectory(path: String, title: String)
         /// Re-fetches every pushed subfolder currently on the live navigation stack — sent
         /// when the app becomes active again after being backgrounded.
@@ -165,6 +167,11 @@ public struct FavoritesFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .goToEnclosingFolder:
+                guard let id = state.path.ids.last else { return .none }
+                state.path.pop(from: id)
+                return .none
+
             case .onAppear:
                 // Always refresh the offline badges (cheap disk read) so the cached first-frame
                 // favorites are flagged even when the list itself needn't reload.

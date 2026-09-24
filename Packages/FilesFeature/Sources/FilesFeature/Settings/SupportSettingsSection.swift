@@ -68,14 +68,14 @@ struct SupportSettingsSection: View {
 }
 
 #Preview("Support section") {
-    List {
+    DSGroupedList {
         SupportSettingsSection(filter: SettingsSearchFilter(query: ""))
     }
     .listStyle(.insetGrouped)
 }
 
 #Preview("Support section, no match") {
-    List {
+    DSGroupedList {
         SupportSettingsSection(filter: SettingsSearchFilter(query: "zzz"))
     }
     .listStyle(.insetGrouped)

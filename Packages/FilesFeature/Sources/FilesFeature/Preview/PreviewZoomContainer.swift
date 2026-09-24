@@ -77,7 +77,7 @@ struct PreviewZoomContainer<ID: Hashable, Content: View>: View {
     var body: some View {
         if zooms {
             framedContent
-                .navigationTransition(.zoom(sourceID: sourceID, in: namespace))
+                .zoomNavigationTransition(sourceID: sourceID, in: namespace)
         } else {
             framedContent
         }

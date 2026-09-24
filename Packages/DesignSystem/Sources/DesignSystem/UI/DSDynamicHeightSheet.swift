@@ -1,5 +1,9 @@
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#elseif os(macOS)
+    import AppKit
+#endif
 
 /// Wraps `content` in a `ScrollView` and self-measures it to drive `presentationDetents`,
 /// matching FreeNow's own `DSUIDynamicHeightDialogSheet`: measuring and feeding a height into
@@ -49,14 +53,18 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     /// and wrong under multitasking; the active window scene's own screen is the current one.
     @MainActor
     private static var screenHeight: CGFloat {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first(where: { $0.activationState == .foregroundActive })?
-            .screen.bounds.height
-            ?? UIApplication.shared.connectedScenes
-            .compactMap { ($0 as? UIWindowScene)?.screen.bounds.height }
-            .first
-            ?? 800
+        #if os(macOS)
+            NSApp.keyWindow?.screen?.visibleFrame.height ?? NSScreen.main?.visibleFrame.height ?? 800
+        #else
+            UIApplication.shared.connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first(where: { $0.activationState == .foregroundActive })?
+                .screen.bounds.height
+                ?? UIApplication.shared.connectedScenes
+                .compactMap { ($0 as? UIWindowScene)?.screen.bounds.height }
+                .first
+                ?? 800
+        #endif
     }
 
     private var capHeight: CGFloat? {
@@ -102,13 +110,15 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
             )
         }
         .scrollDisabled(!isOverflowing && !isKeyboardVisible)
-        .scrollDismissesKeyboard(.interactively)
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-            isKeyboardVisible = true
-        }
-        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-            isKeyboardVisible = false
-        }
+        #if os(iOS)
+            .scrollDismissesKeyboard(.interactively)
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+                isKeyboardVisible = true
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+                isKeyboardVisible = false
+            }
+        #endif
     }
 
     public var body: some View {

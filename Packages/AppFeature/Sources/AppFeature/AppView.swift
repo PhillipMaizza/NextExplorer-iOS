@@ -138,6 +138,16 @@ public struct AppView: View {
         }
         .sheet(item: $store.scope(state: \.addAccount, action: \.addAccount)) { addAccountStore in
             LoginFormView(store: addAccountStore, autoFocus: true)
+            #if os(macOS)
+                // A Mac sheet sizes to its content's ideal size, which the flexible login
+                // layout collapses to nothing; and there is no swipe down, so it needs Cancel.
+                .frame(width: MacAddAccountSheet.width, height: MacAddAccountSheet.height)
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(L10n.Common.cancel) { store.send(.addAccount(.dismiss)) }
+                    }
+                }
+            #endif
         }
     }
 
@@ -198,3 +208,10 @@ public struct AppView: View {
         }
     )
 }
+
+#if os(macOS)
+    private enum MacAddAccountSheet {
+        static let width: CGFloat = 520
+        static let height: CGFloat = 640
+    }
+#endif

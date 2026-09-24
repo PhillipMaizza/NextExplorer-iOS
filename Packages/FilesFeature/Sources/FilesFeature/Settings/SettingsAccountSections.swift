@@ -130,11 +130,18 @@ struct SettingsAccountsSection: View {
         .accessibilityLabel(L10n.Settings.accountLabel(account.displayName, account.serverHost))
         .accessibilityAddTraits(.isButton)
         .swipeActions(edge: .trailing) {
-            Button(role: .destructive) {
-                store.send(.removeAccountTapped(account))
-            } label: {
-                Label(L10n.Settings.accountSignOut, systemImage: "rectangle.portrait.and.arrow.right")
-            }
+            removeAccountButton(account)
+        }
+        #if os(macOS)
+        .contextMenu { removeAccountButton(account) }
+        #endif
+    }
+
+    private func removeAccountButton(_ account: AccountSummary) -> some View {
+        Button(role: .destructive) {
+            store.send(.removeAccountTapped(account))
+        } label: {
+            Label(L10n.Settings.accountSignOut, systemImage: "rectangle.portrait.and.arrow.right")
         }
     }
 

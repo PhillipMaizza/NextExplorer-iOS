@@ -596,6 +596,29 @@ offline.manageEmpty	Nic nie zostało pobrane do użytku offline.
 offline.preferOfflineToggle	Odtwarzaj pobrane kopie
 offline.preferOfflineSubtitle	Używaj pobranego wideo zamiast strumieniowania, gdy jest dostępne.
 offline.tunnelSpeedNote	Łączenie się z serwerem przez zdalny tunel może spowalniać pobieranie. W przypadku dużych plików połącz się z tą samą siecią i użyj lokalnego adresu serwera.
+menu.rateApp	Oceń NextExplorer…
+menu.support	Pomoc NextExplorer
+settings.sectionSupport	Pomoc
+settings.rowRateApp	Oceń NextExplorer
+settings.rowSupport	Pomoc i wsparcie
+menu.refresh	Odśwież
+select.tableView	Widok tabeli
+openWith.openIn	Otwórz w %@
+openWith.openWith	Otwórz za pomocą
+openWith.viewAsText	Pokaż jako tekst
+openWith.failed	Nie można otworzyć tego pliku.
+browse.showInFinder	Pokaż w Finderze
+browse.actionCut	Wytnij
+browse.clipboardCutOne	%@ gotowe do przeniesienia
+browse.clipboardCutMany	%lld elementów gotowych do przeniesienia
+menu.enclosingFolder	Folder nadrzędny
+common.more	Więcej
+openWith.print	Drukuj…
+menu.newWindow	Nowe okno
+menu.newTab	Nowa karta
+browse.actionOpenInNewWindow	Otwórz w nowym oknie
+browse.actionOpenInNewTab	Otwórz w nowej karcie
+select.viewAs	Widok
 settings.rowAppearance	Wygląd
 appearance.system	Systemowy
 appearance.light	Jasny
@@ -616,6 +639,9 @@ downloadQueue.savedMany	Zapisano w Pobranych elementów: %lld
 downloadQueue.bytesOf	%1$@ z %2$@
 downloadQueue.timeLeft	pozostało %@
 browse.sectionPersonal	Osobiste
-settings.sectionSupport	Pomoc
-settings.rowRateApp	Oceń NextExplorer
-settings.rowSupport	Pomoc i wsparcie
+browse.progressDownloading	Pobieranie…
+browse.progressDownloadingIndexed	Pobieranie %1$lld z %2$lld…
+browse.downloadSavedTo	Zapisano w %@
+browse.downloadSavedCountTo	Zapisano %1$lld z %2$lld elementów w %3$@
+browse.downloadSavedAllTo	Zapisano %1$lld elementów w %2$@
+browse.downloadBulkFailed	Nie można zapisać tych elementów na urządzeniu.

@@ -58,13 +58,14 @@ public enum IconKit {
     public static let search = Image(systemName: "magnifyingglass")
     public static let star = Image(systemName: "star")
     public static let starFill = Image(systemName: "star.fill")
+    public static let help = Image(systemName: "questionmark.circle")
     public static let gearshape = Image(systemName: "gearshape")
     // `.forward`, not `.right`: the semantic variant auto mirrors under a right to left layout
     // (Arabic) so disclosure and breadcrumb chevrons point into the content the correct way.
     public static let chevronRight = Image(systemName: "chevron.forward")
     public static let chevronDown = Image(systemName: "chevron.down")
+    public static let chevronUpDown = Image(systemName: "chevron.up.chevron.down")
     public static let externalLink = Image(systemName: "arrow.up.right")
-    public static let help = Image(systemName: "questionmark.circle")
     public static let warning = Image(systemName: "exclamationmark.triangle")
     public static let darkMode = Image(systemName: "moon.fill")
     public static let signOut = Image(systemName: "rectangle.portrait.and.arrow.right")
@@ -80,6 +81,11 @@ public enum IconKit {
     public static let server = Image(systemName: "macpro.gen3.server")
     public static let listBullet = Image(systemName: "list.bullet")
     public static let squareGrid = Image(systemName: "square.grid.2x2")
+    public static let table = Image(systemName: "tablecells")
+    public static let openInApp = Image(systemName: "arrow.up.forward.app")
+    public static let print = Image(systemName: "printer")
+    public static let newWindow = Image(systemName: "macwindow")
+    public static let newTab = Image(systemName: "plus.square.on.square")
     public static let sort = Image(systemName: "arrow.up.arrow.down")
     public static let sortAscending = Image(systemName: "arrow.up")
     public static let sortDescending = Image(systemName: "arrow.down")
@@ -108,6 +114,7 @@ public enum IconKit {
     public static let link = Image(systemName: "link")
     public static let people = Image(systemName: "person.2")
     public static let copy = Image(systemName: "doc.on.doc")
+    public static let cut = Image(systemName: "scissors")
     /// Stage an item on the clipboard to move (the "Move" file action, paired with "Copy").
     public static let move = Image(systemName: "arrow.turn.up.right")
     /// Drop the clipboard's staged items into the current folder.

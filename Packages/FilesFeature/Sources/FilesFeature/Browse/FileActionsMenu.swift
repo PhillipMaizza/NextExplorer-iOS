@@ -3,6 +3,9 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
+#if os(macOS)
+    import AppKit
+#endif
 
 /// The `…` / long-press action menu for one file or folder, shared by the Browse list rows and
 /// grid cells. Sends straight into `BrowseFeature`; the one piece of view-local state it can't
@@ -12,7 +15,28 @@ struct FileActionsMenu: View {
     let item: FileItem
     let onShare: (FileItem) -> Void
 
+    #if os(macOS)
+        @Environment(\.openWindow) private var openWindow
+    #endif
+
     var body: some View {
+        #if os(macOS)
+            if item.isDirectory {
+                Button {
+                    openWindow(value: FolderWindowRoute(path: item.id, title: item.name))
+                } label: {
+                    Label { Text(L10n.Browse.actionOpenInNewWindow) } icon: { IconKit.newWindow }
+                }
+                .tint(.primaryDS)
+                Button {
+                    openWindow(value: FolderWindowRoute(path: item.id, title: item.name, tabHostWindowNumber: NSApp.keyWindow?.windowNumber))
+                } label: {
+                    Label { Text(L10n.Browse.actionOpenInNewTab) } icon: { IconKit.newTab }
+                }
+                .tint(.primaryDS)
+                Divider()
+            }
+        #endif
         // Explicit `.tint`: the Browse tree runs under `.tint(Color.accent)`, which would
         // otherwise cascade into the menu and color every icon/label gold instead of the
         // system's normal label color — only Delete should stand out, in red.
@@ -74,6 +98,18 @@ struct FileActionsMenu: View {
                 Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
             }
             .tint(.primaryDS)
+            #if os(macOS)
+                // Stages the row for a move, as Command X does; Move still opens the picker.
+                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                    Button {
+                        store.send(.tableSelectionChanged([item.id]))
+                        store.send(.cutSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                    }
+                    .tint(.primaryDS)
+                }
+            #endif
             if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                 Button {
                     store.send(.moveTapped(item), animation: .default)

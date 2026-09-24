@@ -127,9 +127,11 @@ struct GeneralSettingsSection: View {
                         }
                     }
                 }
-                if filter.matches(L10n.Settings.toggleHaptics) {
-                    DSToggleRow(title: L10n.Settings.toggleHaptics, icon: IconKit.haptics, isOn: $hapticsEnabled)
-                }
+                #if os(iOS)
+                    if filter.matches(L10n.Settings.toggleHaptics) {
+                        DSToggleRow(title: L10n.Settings.toggleHaptics, icon: IconKit.haptics, isOn: $hapticsEnabled)
+                    }
+                #endif
             } header: {
                 sectionHeader(L10n.Settings.sectionGeneral)
             }
@@ -161,6 +163,14 @@ struct DisplaySettingsSection: View {
         )
     }
 
+    private var isMac: Bool {
+        #if os(macOS)
+            true
+        #else
+            false
+        #endif
+    }
+
     private var thumbnailSize: Binding<ThumbnailSize> {
         Binding(
             get: { ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium },
@@ -172,7 +182,7 @@ struct DisplaySettingsSection: View {
         if filter.anyMatch([L10n.Settings.rowAppearance, L10n.Settings.toggleShowThumbnails, L10n.Settings.rowThumbnailSize, L10n.Settings.toggleShowExtensions, L10n.Settings.toggleShowTabLabels]) {
             Section {
                 if filter.matches(L10n.Settings.rowAppearance) {
-                    Picker(selection: appearance) {
+                    DSMenuPickerRow(selection: appearance, value: appearance.wrappedValue.title) {
                         ForEach(AppearanceMode.allCases) { mode in
                             Text(mode.title).tag(mode)
                         }
@@ -187,19 +197,19 @@ struct DisplaySettingsSection: View {
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
                     }
-                    .pickerStyle(.menu)
                     .tint(Color.secondaryDS)
                     .hapticFeedback(.selection, trigger: appearance.wrappedValue)
                 }
-                if filter.matches(L10n.Settings.toggleShowThumbnails) {
+                // Mac file lists are tables with type icons, so thumbnails have nothing to show.
+                if !isMac, filter.matches(L10n.Settings.toggleShowThumbnails) {
                     DSToggleRow(
                         title: L10n.Settings.toggleShowThumbnails,
                         icon: IconKit.photo,
                         isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
                     )
                 }
-                if filter.matches(L10n.Settings.rowThumbnailSize) {
-                    Picker(selection: thumbnailSize) {
+                if !isMac, filter.matches(L10n.Settings.rowThumbnailSize) {
+                    DSMenuPickerRow(selection: thumbnailSize, value: thumbnailSize.wrappedValue.title) {
                         ForEach(ThumbnailSize.allCases) { size in
                             Text(size.title).tag(size)
                         }
@@ -214,7 +224,6 @@ struct DisplaySettingsSection: View {
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
                     }
-                    .pickerStyle(.menu)
                     .tint(Color.secondaryDS)
                     .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
                 }

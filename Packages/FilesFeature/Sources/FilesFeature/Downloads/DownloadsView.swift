@@ -114,7 +114,7 @@ struct DownloadsView: View {
     }
 
     private var listContent: some View {
-        List {
+        DSGroupedList {
             if listPhase == .loading {
                 skeletonRows
             } else {
@@ -254,7 +254,7 @@ struct DownloadsView: View {
             }
             .hapticFeedback(.selection, trigger: viewModeRaw)
             .hapticFeedback(.selection, trigger: store.isSelecting)
-            .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
+            .hidesTabBar(store.isSelecting)
             .toolbar {
                 if store.isSelecting {
                     ToolbarItem(placement: .bottomBar) {

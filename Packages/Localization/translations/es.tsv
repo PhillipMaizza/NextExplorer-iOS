@@ -596,6 +596,29 @@ offline.manageEmpty	No hay nada descargado para uso sin conexión.
 offline.preferOfflineToggle	Reproducir copias descargadas
 offline.preferOfflineSubtitle	Usar un vídeo descargado en lugar de transmitirlo cuando esté disponible.
 offline.tunnelSpeedNote	Acceder a tu servidor a través de un túnel remoto puede ralentizar las descargas. Para archivos grandes, conéctate a la misma red y usa la dirección local de tu servidor.
+menu.rateApp	Valorar NextExplorer…
+menu.support	Soporte de NextExplorer
+settings.sectionSupport	Soporte
+settings.rowRateApp	Valorar NextExplorer
+settings.rowSupport	Ayuda y soporte
+menu.refresh	Actualizar
+select.tableView	Vista de tabla
+openWith.openIn	Abrir en %@
+openWith.openWith	Abrir con
+openWith.viewAsText	Ver como texto
+openWith.failed	No se pudo abrir este archivo.
+browse.showInFinder	Mostrar en el Finder
+browse.actionCut	Cortar
+browse.clipboardCutOne	%@ listo para mover
+browse.clipboardCutMany	%lld elementos listos para mover
+menu.enclosingFolder	Carpeta contenedora
+common.more	Más
+openWith.print	Imprimir…
+menu.newWindow	Nueva ventana
+menu.newTab	Nueva pestaña
+browse.actionOpenInNewWindow	Abrir en una ventana nueva
+browse.actionOpenInNewTab	Abrir en una pestaña nueva
+select.viewAs	Visualización
 settings.rowAppearance	Apariencia
 appearance.system	Sistema
 appearance.light	Claro
@@ -616,6 +639,9 @@ downloadQueue.savedMany	%lld elementos guardados en Descargas
 downloadQueue.bytesOf	%1$@ de %2$@
 downloadQueue.timeLeft	quedan %@
 browse.sectionPersonal	Personal
-settings.sectionSupport	Soporte
-settings.rowRateApp	Valorar NextExplorer
-settings.rowSupport	Ayuda y soporte
+browse.progressDownloading	Descargando…
+browse.progressDownloadingIndexed	Descargando %1$lld de %2$lld…
+browse.downloadSavedTo	Guardado en %@
+browse.downloadSavedCountTo	Se guardaron %1$lld de %2$lld elementos en %3$@
+browse.downloadSavedAllTo	Se guardaron %1$lld elementos en %2$@
+browse.downloadBulkFailed	No se pudieron guardar estos elementos en tu dispositivo.

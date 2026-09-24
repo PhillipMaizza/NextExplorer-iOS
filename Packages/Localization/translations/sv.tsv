@@ -596,6 +596,29 @@ offline.manageEmpty	Inget är hämtat för offlineanvändning.
 offline.preferOfflineToggle	Spela upp hämtade kopior
 offline.preferOfflineSubtitle	Använd en hämtad video i stället för att strömma när den finns.
 offline.tunnelSpeedNote	Att nå servern via en fjärrtunnel kan göra nedladdningar långsamma. Anslut till samma nätverk och använd serverns lokala adress för stora filer.
+menu.rateApp	Betygsätt NextExplorer…
+menu.support	NextExplorer-support
+settings.sectionSupport	Support
+settings.rowRateApp	Betygsätt NextExplorer
+settings.rowSupport	Hjälp och support
+menu.refresh	Uppdatera
+select.tableView	Tabellvy
+openWith.openIn	Öppna i %@
+openWith.openWith	Öppna med
+openWith.viewAsText	Visa som text
+openWith.failed	Det gick inte att öppna filen.
+browse.showInFinder	Visa i Finder
+browse.actionCut	Klipp ut
+browse.clipboardCutOne	%@ redo att flyttas
+browse.clipboardCutMany	%lld objekt redo att flyttas
+menu.enclosingFolder	Omslutande mapp
+common.more	Mer
+openWith.print	Skriv ut …
+menu.newWindow	Nytt fönster
+menu.newTab	Ny flik
+browse.actionOpenInNewWindow	Öppna i nytt fönster
+browse.actionOpenInNewTab	Öppna i ny flik
+select.viewAs	Visa
 settings.rowAppearance	Utseende
 appearance.system	System
 appearance.light	Ljust
@@ -616,6 +639,9 @@ downloadQueue.savedMany	%lld objekt sparade i Nedladdningar
 downloadQueue.bytesOf	%1$@ av %2$@
 downloadQueue.timeLeft	%@ kvar
 browse.sectionPersonal	Personligt
-settings.sectionSupport	Support
-settings.rowRateApp	Betygsätt NextExplorer
-settings.rowSupport	Hjälp och support
+browse.progressDownloading	Laddar ner…
+browse.progressDownloadingIndexed	Laddar ner %1$lld av %2$lld…
+browse.downloadSavedTo	Sparad i %@
+browse.downloadSavedCountTo	Sparade %1$lld av %2$lld objekt i %3$@
+browse.downloadSavedAllTo	Sparade %1$lld objekt i %2$@
+browse.downloadBulkFailed	Det gick inte att spara dessa objekt på din enhet.

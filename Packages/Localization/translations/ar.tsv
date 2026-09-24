@@ -596,6 +596,29 @@ offline.manageEmpty	لا يوجد شيء تم تنزيله للاستخدام د
 offline.preferOfflineToggle	تشغيل النسخ التي جرى تنزيلها
 offline.preferOfflineSubtitle	استخدم مقطع فيديو تم تنزيله بدلاً من البث عندما يكون متاحًا.
 offline.tunnelSpeedNote	قد يؤدي الوصول إلى خادمك عبر نفق بعيد إلى إبطاء التنزيلات. للملفات الكبيرة، اتصل بالشبكة نفسها واستخدم العنوان المحلي لخادمك.
+menu.rateApp	قيّم NextExplorer…
+menu.support	دعم NextExplorer
+settings.sectionSupport	الدعم
+settings.rowRateApp	قيّم NextExplorer
+settings.rowSupport	المساعدة والدعم
+menu.refresh	تحديث
+select.tableView	عرض الجدول
+openWith.openIn	فتح في %@
+openWith.openWith	فتح باستخدام
+openWith.viewAsText	عرض كنص
+openWith.failed	تعذّر فتح هذا الملف.
+browse.showInFinder	إظهار في Finder
+browse.actionCut	قص
+browse.clipboardCutOne	‏%@ جاهز للنقل
+browse.clipboardCutMany	‏%lld عنصرًا جاهزًا للنقل
+menu.enclosingFolder	المجلد الحاوي
+common.more	المزيد
+openWith.print	طباعة…
+menu.newWindow	نافذة جديدة
+menu.newTab	علامة تبويب جديدة
+browse.actionOpenInNewWindow	فتح في نافذة جديدة
+browse.actionOpenInNewTab	فتح في علامة تبويب جديدة
+select.viewAs	العرض
 settings.rowAppearance	المظهر
 appearance.system	النظام
 appearance.light	فاتح
@@ -616,6 +639,9 @@ downloadQueue.savedMany	تم حفظ %lld عنصر في التنزيلات
 downloadQueue.bytesOf	%1$@ من %2$@
 downloadQueue.timeLeft	متبقٍ %@
 browse.sectionPersonal	شخصي
-settings.sectionSupport	الدعم
-settings.rowRateApp	قيّم NextExplorer
-settings.rowSupport	المساعدة والدعم
+browse.progressDownloading	جارٍ التنزيل…
+browse.progressDownloadingIndexed	جارٍ تنزيل %1$lld من %2$lld…
+browse.downloadSavedTo	تم الحفظ في %@
+browse.downloadSavedCountTo	تم حفظ %1$lld من %2$lld عنصر في %3$@
+browse.downloadSavedAllTo	تم حفظ %1$lld عنصر في %2$@
+browse.downloadBulkFailed	تعذّر حفظ هذه العناصر على جهازك.
