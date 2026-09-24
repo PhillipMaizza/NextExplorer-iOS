@@ -12,21 +12,47 @@ public extension AuthClient {
     ) -> AuthClient {
         let localAuthService = LocalAuthService(networkClient: networkClient)
         let cookieStore = SessionCookieStore(keychainClient: keychainClient, cookieStorage: cookieStorage)
+        // `HTTPCookieStorage` blocks its caller on an internal queue that runs at Default QoS, so a
+        // user initiated caller waiting on it is a priority inversion (a Thread Performance Checker
+        // hang risk). Every cookie store call runs on this queue, pinned to that same QoS, and is
+        // awaited instead. Serial, so the Keychain read, modify, write of the account set never
+        // interleaves either.
+        let cookieQueue = DispatchQueue(label: "com.phillipmaizza.nextexplorer.session-cookies", qos: .default)
 
         @Sendable
-        func captureAndPersist(serverURL: URL, authMode: AuthMode, cookieName: String, username: String?) throws {
-            guard let credentials = cookieStore.capture(
-                serverURL: serverURL,
-                authMode: authMode,
-                cookieName: cookieName,
-                username: username
-            ) else {
-                throw AuthClientError.sessionCookieMissing
+        func onCookieQueue<T: Sendable>(_ work: @escaping @Sendable () -> T) async -> T {
+            await withCheckedContinuation { continuation in
+                cookieQueue.async(qos: .default, flags: .enforceQoS) {
+                    continuation.resume(returning: work())
+                }
             }
-            do {
-                try cookieStore.persist(credentials)
-            } catch {
-                throw AuthClientError.keychain(String(describing: error))
+        }
+
+        @Sendable
+        func onCookieQueue<T: Sendable>(_ work: @escaping @Sendable () throws -> T) async throws -> T {
+            try await withCheckedThrowingContinuation { continuation in
+                cookieQueue.async(qos: .default, flags: .enforceQoS) {
+                    continuation.resume(with: Result { try work() })
+                }
+            }
+        }
+
+        @Sendable
+        func captureAndPersist(serverURL: URL, authMode: AuthMode, cookieName: String, username: String?) async throws {
+            try await onCookieQueue {
+                guard let credentials = cookieStore.capture(
+                    serverURL: serverURL,
+                    authMode: authMode,
+                    cookieName: cookieName,
+                    username: username
+                ) else {
+                    throw AuthClientError.sessionCookieMissing
+                }
+                do {
+                    try cookieStore.persist(credentials)
+                } catch {
+                    throw AuthClientError.keychain(String(describing: error))
+                }
             }
         }
 
@@ -36,7 +62,7 @@ public extension AuthClient {
             },
             login: { serverURL, identifier, password in
                 let user = try await localAuthService.login(serverURL: serverURL, identifier: identifier, password: password)
-                try captureAndPersist(
+                try await captureAndPersist(
                     serverURL: serverURL,
                     authMode: .local,
                     cookieName: AuthClientConfiguration.CookieName.local,
@@ -79,7 +105,7 @@ public extension AuthClient {
                 )
                 // The bridge issues a normal local session cookie, so capture it exactly as the
                 // password path does — just tagged `.oidc` for provenance.
-                try captureAndPersist(
+                try await captureAndPersist(
                     serverURL: serverURL,
                     authMode: .oidc,
                     cookieName: AuthClientConfiguration.CookieName.local,
@@ -94,31 +120,36 @@ public extension AuthClient {
                 try? await localAuthService.logout(serverURL: serverURL)
             },
             restoreSession: {
-                guard let credentials = cookieStore.activeCredentials() else { return nil }
-                cookieStore.install(credentials)
-                return credentials
+                await onCookieQueue {
+                    guard let credentials = cookieStore.activeCredentials() else { return nil }
+                    cookieStore.install(credentials)
+                    return credentials
+                }
             },
             listSessions: {
-                cookieStore.allSessions()
+                await onCookieQueue { cookieStore.allSessions() }
             },
             activeAccountID: {
-                cookieStore.activeCredentials()?.accountID
+                await onCookieQueue { cookieStore.activeCredentials()?.accountID }
             },
             switchAccount: { accountID in
-                cookieStore.setActive(id: accountID)
+                await onCookieQueue { cookieStore.setActive(id: accountID) }
             },
             removeAccount: { accountID in
                 // Best-effort server logout of the account being removed, then drop it locally.
-                if let serverURL = cookieStore.allSessions().first(where: { $0.accountID == accountID })?.serverBaseURL {
+                let serverURL = await onCookieQueue {
+                    cookieStore.allSessions().first(where: { $0.accountID == accountID })?.serverBaseURL
+                }
+                if let serverURL {
                     try? await localAuthService.logout(serverURL: serverURL)
                 }
-                return cookieStore.remove(id: accountID)
+                return await onCookieQueue { cookieStore.remove(id: accountID) }
             },
             clearActiveSession: {
-                cookieStore.clearActive()
+                await onCookieQueue { cookieStore.clearActive() }
             },
             clearAllSessions: {
-                cookieStore.clearAll()
+                await onCookieQueue { cookieStore.clearAll() }
             }
         )
     }
