@@ -50,6 +50,16 @@ private func sectionHeader(_ title: String) -> some View {
         .accessibilityAddTraits(.isHeader)
 }
 
+/// Some rows are iOS only because the Mac already covers them: its file tables show type
+/// icons with date and time columns, and a copied item stays on its clipboard after pasting.
+private let isMac: Bool = {
+    #if os(macOS)
+        true
+    #else
+        false
+    #endif
+}()
+
 // MARK: General
 
 struct GeneralSettingsSection: View {
@@ -89,7 +99,7 @@ struct GeneralSettingsSection: View {
                 if filter.matches(L10n.Settings.toggleRenderMarkdown) {
                     DSToggleRow(title: L10n.Settings.toggleRenderMarkdown, icon: IconKit.textformat, isOn: $renderMarkdownPages)
                 }
-                if filter.matches(L10n.Settings.rowDateFormat) {
+                if !isMac, filter.matches(L10n.Settings.rowDateFormat) {
                     NavigationLink {
                         DateFormatPickerView(selection: dateFormat)
                     } label: {
@@ -163,14 +173,6 @@ struct DisplaySettingsSection: View {
         )
     }
 
-    private var isMac: Bool {
-        #if os(macOS)
-            true
-        #else
-            false
-        #endif
-    }
-
     private var thumbnailSize: Binding<ThumbnailSize> {
         Binding(
             get: { ThumbnailSize(rawValue: thumbnailSizeRaw) ?? .medium },
@@ -200,7 +202,6 @@ struct DisplaySettingsSection: View {
                     .tint(Color.secondaryDS)
                     .hapticFeedback(.selection, trigger: appearance.wrappedValue)
                 }
-                // Mac file lists are tables with type icons, so thumbnails have nothing to show.
                 if !isMac, filter.matches(L10n.Settings.toggleShowThumbnails) {
                     DSToggleRow(
                         title: L10n.Settings.toggleShowThumbnails,
@@ -254,7 +255,7 @@ struct StorageSettingsSection: View {
     var body: some View {
         if filter.anyMatch([L10n.Settings.toggleKeepClipboard, L10n.Settings.rowRemoveAllDownloads, L10n.Settings.rowClearCache]) {
             Section {
-                if filter.matches(L10n.Settings.toggleKeepClipboard) {
+                if !isMac, filter.matches(L10n.Settings.toggleKeepClipboard) {
                     DSToggleRow(
                         title: L10n.Settings.toggleKeepClipboard,
                         subtitle: L10n.Settings.toggleKeepClipboardSubtitle,

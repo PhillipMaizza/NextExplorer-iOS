@@ -52,7 +52,7 @@ struct BrowseContentView: View {
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
-    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
+    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopyPreference = false
     @State private var isSortSheetPresented = false
     @State private var toastMessage: DSToastMessage?
     /// The item whose "Create Share Link" sheet is open (from the context menu or the
@@ -82,6 +82,15 @@ struct BrowseContentView: View {
     @State private var galleryCurrentItemID: String?
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
+
+    /// A Mac keeps a copied item on the clipboard after pasting, as Finder does; iOS asks.
+    private var keepClipboardAfterCopy: Bool {
+        #if os(macOS)
+            true
+        #else
+            keepClipboardAfterCopyPreference
+        #endif
+    }
 
     private var viewMode: BrowseViewMode {
         #if os(macOS)
