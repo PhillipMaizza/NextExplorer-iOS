@@ -64,6 +64,8 @@
             }
             .scrollContentBackground(.hidden)
             .alternatingRowBackgrounds(.disabled)
+            // The table's scroll view otherwise draws its header material up under the pinned title.
+            .clipped()
             .focused($isFocused)
             .focusEffectDisabled()
             .onAppear { isFocused = true }

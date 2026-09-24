@@ -28,6 +28,9 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     /// Whether to render the search field. A screen that only needs the pinned large title
     /// without filtering (Settings) passes `false`.
     var showsSearchField: Bool = true
+    /// Whether the short fade below the header melts into scrolling content. A Mac table keeps
+    /// its column headers pinned right below, where the fade would only tint them.
+    var fadesIntoContent: Bool = true
     /// Rendered below the search field, e.g. a search-scope segmented control plus type filter
     /// chips while searching.
     @ViewBuilder var accessory: () -> Accessory
@@ -65,13 +68,15 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             // on a hard band.
             .background(Color.backgroundGradientTop.ignoresSafeArea(edges: .top))
             .background(alignment: .bottom) {
-                LinearGradient(
-                    colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: .space16)
-                .offset(y: .space16)
+                if fadesIntoContent {
+                    LinearGradient(
+                        colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: .space16)
+                    .offset(y: .space16)
+                }
             }
     }
 
@@ -118,14 +123,16 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         searchText: Binding<String>,
         prompt: String = L10n.Common.search,
         extraTopPadding: CGFloat = 0,
-        showsSearchField: Bool = true
+        showsSearchField: Bool = true,
+        fadesIntoContent: Bool = true
     ) {
         self.init(
             title: title,
             searchText: searchText,
             prompt: prompt,
             extraTopPadding: extraTopPadding,
-            showsSearchField: showsSearchField
+            showsSearchField: showsSearchField,
+            fadesIntoContent: fadesIntoContent
         ) { EmptyView() }
     }
 }

@@ -308,7 +308,8 @@ struct BrowseContentView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : displayTitle,
-                searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                searchText: $store.searchQuery.sending(\.searchQueryChanged),
+                fadesIntoContent: viewMode != .table
             ) {
                 if store.isSearching {
                     DSSegmentedControl(
