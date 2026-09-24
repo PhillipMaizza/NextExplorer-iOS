@@ -191,7 +191,7 @@
                         .scaledToFit()
                         .frame(width: Metrics.actionIconSize, height: Metrics.actionIconSize)
                         .frame(width: Metrics.avatarSize)
-                    Text(title).type(.body2(.regular), style: tone.textStyle)
+                    Text(title).type(.body2(tone == .danger ? .semibold : .regular), style: tone.textStyle)
                     Spacer(minLength: 0)
                 }
                 .foregroundStyle(tone.iconColor)
