@@ -89,6 +89,21 @@ extension FilesService {
         return try await send(request, decoding: [Volume].self)
     }
 
+    /// The Browse root built from `GET /api/volumes`, the list the web home page shows. With
+    /// `USER_VOLUMES` on, a non admin is refused `GET /api/browse/` ("You do not have access to
+    /// this volume", `backend/src/services/accessManager.js`) because the root itself is no
+    /// assigned volume; each volume's `path` (the label for an assignment) is what browsing
+    /// into it takes. The root holds nothing of its own, so it offers nothing but reading.
+    func volumeRoot(serverURL: URL) async throws -> BrowseResult {
+        let items = try await volumes(serverURL: serverURL).map { volume in
+            FileItem(name: volume.path, path: "", dateModified: FileItem.unknownDate, size: 0, kind: FileItem.directoryKind)
+        }
+        let access = FileAccess(
+            canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: false
+        )
+        return BrowseResult(items: items, access: access, path: "")
+    }
+
     /// `GET /api/browse/*`. An empty path browses the root and must still end in a
     /// trailing slash (`/api/browse/`); non-empty paths are split and each segment
     /// percent-encoded individually so names containing `/`-unsafe characters survive.
