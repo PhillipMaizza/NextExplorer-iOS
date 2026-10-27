@@ -105,7 +105,7 @@ struct FileRowView: View {
         name = item.name
         self.isAvailableOffline = isAvailableOffline
         isDirectory = item.isDirectory
-        dateModified = item.dateModified
+        dateModified = item.hasKnownDate ? item.dateModified : nil
         size = item.isDirectory ? nil : item.size
         customSubtitle = nil
         lineLabel = nil

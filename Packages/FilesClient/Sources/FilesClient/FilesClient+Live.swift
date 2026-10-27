@@ -12,6 +12,17 @@ public extension FilesClient {
         let service = FilesService(networkClient: networkClient)
 
         @Sendable func resolveBrowse(serverURL: URL, path: String, lowPriority: Bool) async throws -> BrowseResult {
+            do {
+                return try await resolveDirectory(serverURL: serverURL, path: path, lowPriority: lowPriority)
+            } catch FilesClientError.server(statusCode: 404) where path.isEmpty {
+                // USER_VOLUMES refuses a non admin the root itself; the volumes list is the root then.
+                let result = try await service.volumeRoot(serverURL: serverURL)
+                directoryCacheStore.write(serverURL: serverURL, path: path, result: result, etag: nil, fetchedAt: now())
+                return result
+            }
+        }
+
+        @Sendable func resolveDirectory(serverURL: URL, path: String, lowPriority: Bool) async throws -> BrowseResult {
             let cached = directoryCacheStore.read(serverURL: serverURL, path: path)
             let outcome = try await service.browse(
                 serverURL: serverURL, path: path, ifNoneMatch: cached?.etag, lowPriority: lowPriority

@@ -12,8 +12,18 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
     public let kind: String
     public let supportsThumbnail: Bool
 
+    public static let directoryKind = "directory"
+
+    /// Stands in for a date the server never sent (a volume from `GET /api/volumes` has none);
+    /// rows leave the date out rather than print it.
+    public static let unknownDate = Date.distantPast
+
     public var isDirectory: Bool {
-        kind == "directory"
+        kind == Self.directoryKind
+    }
+
+    public var hasKnownDate: Bool {
+        dateModified != Self.unknownDate
     }
 
     public var id: String {
