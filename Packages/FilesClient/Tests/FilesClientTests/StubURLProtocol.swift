@@ -13,6 +13,8 @@ final class StubURLProtocol: URLProtocol {
     }
 
     nonisolated(unsafe) static var stub: Stub?
+    /// Per URL path answers that win over `stub`, for flows that make more than one request.
+    nonisolated(unsafe) static var pathStubs: [String: Stub] = [:]
     nonisolated(unsafe) static var failure: URLError?
     /// Last intercepted request, for tests asserting on URL/method/body construction.
     nonisolated(unsafe) static var capturedRequest: URLRequest?
@@ -47,7 +49,7 @@ final class StubURLProtocol: URLProtocol {
             client?.urlProtocol(self, didFailWithError: failure)
             return
         }
-        guard let stub = Self.stub, let url = request.url else {
+        guard let url = request.url, let stub = Self.pathStubs[url.path] ?? Self.stub else {
             client?.urlProtocol(self, didFailWithError: URLError(.badURL))
             return
         }
