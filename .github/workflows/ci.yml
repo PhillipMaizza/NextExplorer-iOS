@@ -23,11 +23,13 @@ concurrency:
 jobs:
   build-and-test:
     name: Build and test
-    runs-on: macos-15
+    # GitHub's Xcode 27 image (macOS 27): matches local development and builds TCA's macros with
+    # Apple's prebuilt swift-syntax instead of compiling it on every run.
+    runs-on: xcode-27
     timeout-minutes: 90
 
     env:
-      SIM_DEVICE: iPhone 16
+      SIM_DEVICE: iPhone 17
       # The package test runs share one DerivedData and one SwiftPM checkout folder, so TCA and
       # swift-syntax (its macros) compile once instead of once per package. Both live outside the
       # repo so the linters never scan them.
@@ -71,12 +73,11 @@ jobs:
           key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
           restore-keys: spm-${{ runner.os }}-
 
-      # The app builds against the latest SDK; if a specific Xcode is needed,
-      # pin xcode-version to it here.
+      # Same Xcode build as local development (27.1, 27A9275).
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '27.1'
 
       - name: Show toolchain
         run: |
@@ -133,13 +134,15 @@ jobs:
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests'))
-    runs-on: macos-15
+    # GitHub's Xcode 27 image (macOS 27): matches local development and builds TCA's macros with
+    # Apple's prebuilt swift-syntax instead of compiling it on every run.
+    runs-on: xcode-27
     # Headroom for the one automatic retry below: a simulator launch flake can hang the first
     # attempt for a while before it fails, so a retry must still fit inside the budget.
     timeout-minutes: 90
 
     env:
-      SIM_DEVICE: iPhone 16
+      SIM_DEVICE: iPhone 17
 
     steps:
       - name: Checkout
@@ -148,7 +151,7 @@ jobs:
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '27.1'
 
       - name: Trust Swift package macros
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
