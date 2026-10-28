@@ -19,6 +19,7 @@ default_platform(:ios)
 PROJECT = "NextExplorer.xcodeproj".freeze
 PBXPROJ = "#{PROJECT}/project.pbxproj".freeze
 SCHEME = "NextExplorer".freeze
+COPYRIGHT_HOLDER = "Phillip Maizza".freeze
 DEFAULT_DEVICE = "iPhone 17 Pro".freeze
 
 # Same set as CI. Keychain is left out: its tests need an entitled app host (errSecMissingEntitlement
@@ -162,13 +163,36 @@ platform :ios do
     # Review needs a processed build, so this upload waits for processing.
     upload_to_testflight(api_key: api_key, ipa: ipa, changelog: testflight_notes(version: version))
 
+    submit(version: version, build: build_number, commit: head,
+           manual_release: options[:manual_release], phased: options[:phased])
+
+    sh("git", "switch", "main")
+  end
+
+  desc "Submit an uploaded, processed build for review, then tag v<version> and publish the GitHub"
+  desc "Release. `release` ends with this; run it alone to resume a release that stopped after upload."
+  desc "Options: version, build, commit (to tag; default the release/<version> branch), manual_release,"
+  desc "phased"
+  lane :submit do |options|
+    version = options[:version] || UI.user_error!("Pass version:")
+    build_number = options[:build] || UI.user_error!("Pass build:")
+    sh("git", "fetch", "--quiet", "origin")
+    commit = options[:commit] || sh("git", "rev-parse", "origin/release/#{version}", log: false).strip
+
+    # Store text stays in App Store Connect, except what an update can't be submitted without:
+    # What's New (the version's user facing notes) and the copyright year.
+    whats_new = release_notes(version).gsub(/^- /, "• ")
+    UI.user_error!("No user facing notes for #{version}; nothing to put in What's New") if whats_new.empty?
+
     upload_to_app_store(
-      api_key: api_key,
+      api_key: asc_api_key,
       app_version: version,
       build_number: build_number,
       skip_binary_upload: true,
-      skip_metadata: true,
       skip_screenshots: true,
+      skip_metadata: false,
+      release_notes: { "en-US" => whats_new },
+      copyright: "#{Time.now.year} #{COPYRIGHT_HOLDER}",
       submit_for_review: true,
       automatic_release: options[:manual_release] != true,
       phased_release: options[:phased] == true,
@@ -178,14 +202,12 @@ platform :ios do
     )
 
     tag = release_tag(version)
-    add_git_tag(tag: tag, message: "#{version} (#{build_number}) submitted for review")
+    add_git_tag(tag: tag, commit: commit, message: "#{version} (#{build_number}) submitted for review")
     push_git_tags(tag: tag)
     with_gh do
       sh("gh", "release", "create", tag, "--verify-tag", "--title", version,
          "--notes", release_notes(version, links: true))
     end
-
-    sh("git", "switch", "main")
     UI.success("#{version} (#{build_number}) submitted for review and tagged #{tag}")
   end
 
