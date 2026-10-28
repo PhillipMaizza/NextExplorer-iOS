@@ -106,7 +106,8 @@ platform :ios do
 
   desc "Release from main: tag check, unit tests, cut release/<version>, upload, submit for review,"
   desc "tag v<version>, then open an auto merging bump/<next> PR on main."
-  desc "Options: phased (7 day phased rollout, default false), bump (patch, minor, major; default patch)"
+  desc "Goes live automatically once approved. Options: manual_release (hold for a manual release,"
+  desc "default false), phased (7 day phased rollout, default false), bump (patch, minor, major)"
   lane :release do |options|
     ensure_git_status_clean
     ensure_git_branch(branch: "^main$")
@@ -135,7 +136,7 @@ platform :ios do
       skip_metadata: true,
       skip_screenshots: true,
       submit_for_review: true,
-      automatic_release: false,
+      automatic_release: options[:manual_release] != true,
       phased_release: options[:phased] == true,
       force: true,
       precheck_include_in_app_purchases: false,

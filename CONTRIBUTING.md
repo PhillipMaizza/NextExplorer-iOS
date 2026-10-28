@@ -88,7 +88,7 @@ Lanes (`bundle exec fastlane <lane>`):
 - `ui_tests`: the XCUITest suite. Options `device:`, `only_testing:"SettingsUITests,SharedUITests"`.
 - `beta`: Release archive uploaded to TestFlight.
 - `release_dry_run`: tag check, unit tests and a Release archive, nothing uploaded.
-- `release`: from a clean, up to date `main`. Refuses if `v<version>` is already tagged, runs the unit tests, cuts and pushes `release/<version>`, uploads, waits for processing, submits for review (manual release once approved; `phased:true` for a 7 day phased rollout), tags and pushes `v<version>`, then runs `bump`. Store text and screenshots stay in App Store Connect.
+- `release`: from a clean, up to date `main`. Refuses if `v<version>` is already tagged, runs the unit tests, cuts and pushes `release/<version>`, uploads, waits for processing, submits for review and releases automatically once approved (`manual_release:true` to hold it, `phased:true` for a 7 day phased rollout), tags and pushes `v<version>`, then runs `bump`. Store text and screenshots stay in App Store Connect.
 - `bump`: from `main`, opens a `bump/<next version>` PR that raises `MARKETING_VERSION` and merges itself once CI passes. Option `type:` `patch` (default), `minor` or `major`; `release` takes the same as `bump:`.
 
 Uploads carry that version's `gen-changelog.py` notes as TestFlight's "What to Test". The build number is the git commit count, stamped at build time, so it never needs bumping.
