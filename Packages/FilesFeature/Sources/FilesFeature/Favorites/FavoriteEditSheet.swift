@@ -95,7 +95,6 @@ struct FavoriteEditSheet: View {
         }
     }
 
-    @ViewBuilder
     private func section(
         _ title: String,
         error: String? = nil,

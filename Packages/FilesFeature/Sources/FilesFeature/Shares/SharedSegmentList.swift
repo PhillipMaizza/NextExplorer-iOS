@@ -96,7 +96,6 @@ struct SharedSegmentList: View {
         )
     }
 
-    @ViewBuilder
     private var skeletonRows: some View {
         Section {
             ForEach(Array(Self.placeholderShares.enumerated()), id: \.element.id) { index, share in

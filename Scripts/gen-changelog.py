@@ -1,20 +1,24 @@
 #!/usr/bin/env python3
-"""Generate CHANGELOG.md from the git history of main.
+"""Generate the changelog from the git history of main.
 
 Every PR lands on main as one commit (`NXTIOS-XXXX: summary (#N)`, or a merge commit for the
-early ones) and every release PR bumps MARKETING_VERSION, so the history already says what
-shipped in which version. This walks main's first parent history, reads the app's
-MARKETING_VERSION at each commit, and groups the PRs by it, newest version first.
+early ones), and `fastlane release` tags each shipped version `v<version>` on main. This walks
+main's first parent history: the commits up to a release tag belong to that version, and the
+commits after the newest tag to the upcoming one. History older than the first tag predates
+tagging; there every release PR bumped MARKETING_VERSION, so those commits group by the
+MARKETING_VERSION they carried.
 
-  python3 Scripts/gen-changelog.py               rewrite CHANGELOG.md
-  python3 Scripts/gen-changelog.py --notes 1.0.5 print plain notes for one version (TestFlight)
+  python3 Scripts/gen-changelog.py                       full changelog as Markdown (stdout)
+  python3 Scripts/gen-changelog.py --notes 1.0.6         notes for one version (TestFlight)
+  python3 Scripts/gen-changelog.py --notes 1.0.6 --links same, with (#PR) references (GitHub Release)
 
-Version bumps and dependency pin updates are left out.
+Only what users notice is kept. A title is split into its comma separated clauses and the
+technical ones (tests, CI, lint, tooling, refactors, dependency pins, docs) are dropped; a PR
+with nothing user facing left is left out entirely.
 """
 import argparse, pathlib, re, subprocess, sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
-CHANGELOG = ROOT / "CHANGELOG.md"
 # Project paths over time (the project was renamed once).
 PBXPROJ_PATHS = ("NextExplorer.xcodeproj/project.pbxproj", "NetxExplorer.xcodeproj/project.pbxproj")
 REPO_URL = "https://github.com/PhillipMaizza/NextExplorer-iOS"
@@ -22,11 +26,21 @@ REPO_URL = "https://github.com/PhillipMaizza/NextExplorer-iOS"
 NOTES_LIMIT = 4000
 
 SKIP = re.compile(r"^(bump version|update package\.resolved)|^initial commit$", re.IGNORECASE)
+TECHNICAL = re.compile(
+    r"\b(tests?|ui ?tests?|xcuitests?|ci|lint|linting|swiftformat|swiftlint|flakes?|flaky|de-?flake|"
+    r"fastlane|lanes?|changelog|releases?|refactor\w*|dedup\w*|state machines?|import sort|"
+    r"package\.resolved|pins?|dependenc(y|ies)|readme|contributing|license|workflows?|"
+    r"build[- ]phase|instrument\w*|warnings?|docs?|dto|dataphase|domain split|reorg|"
+    r"main[- ]thread|bool clusters?|typography rename)\b",
+    re.IGNORECASE,
+)
 MERGE_PR = re.compile(r"^Merge pull request #(\d+)")
 TRAILING_PR = re.compile(r"\s*\(#(\d+)\)\s*$")
-TICKET = re.compile(r"^NXTIOS-\d+:\s*")
+TICKET = re.compile(r"^NXTIOS-\d+(?:/\d+)*:\s*")
 VERSION_MENTION = re.compile(r",?\s*\bv\d+(?:\.\d+)+\b")
 MARKETING_VERSION = re.compile(r"MARKETING_VERSION = ([0-9.]+);")
+RELEASE_TAG = re.compile(r"^v(\d+(?:\.\d+)+)$")
+UPCOMING = "Unreleased"
 
 
 def git(*args):
@@ -74,19 +88,52 @@ def entry(subject, body):
     text = VERSION_MENTION.sub("", TICKET.sub("", subject)).strip().rstrip(",.")
     if not text or SKIP.search(text):
         return None
+    text = user_facing(text)
+    if not text:
+        return None
     # Capitalize, but leave words like "iPhone" alone.
     if text[0].islower() and not (len(text) > 1 and text[1].isupper()):
         text = text[0].upper() + text[1:]
     return text, pr
 
 
-def releases(ref):
-    """[(version, date, [(text, pr)])], newest version first."""
+def release_tags():
+    """{commit: version} for every `v<version>` tag."""
+    tags = {}
+    for line in git("tag", "--list", "v*", "--format=%(objectname) %(*objectname) %(refname:short)").splitlines():
+        parts = line.split()
+        name = parts[-1]
+        match = RELEASE_TAG.match(name)
+        if match:
+            # Annotated tags point at a tag object; the peeled commit is the second field.
+            commit = parts[1] if len(parts) == 3 else parts[0]
+            tags[commit] = match.group(1)
+    return tags
+
+
+def user_facing(title):
+    """The title's user facing clauses, or "" when every clause is technical."""
+    parts = re.split(r",|\s\+\s", title)
+    clauses = [re.sub(r"^(and|plus)\s+", "", part.strip(), flags=re.IGNORECASE) for part in parts]
+    kept = [clause for clause in clauses if clause and not TECHNICAL.search(clause)]
+    return ", ".join(kept)
+
+
+def releases(ref, upcoming=UPCOMING):
+    """[(version, date, [(text, pr)])], newest first; untagged commits first under `upcoming`."""
     log = git("log", "--first-parent", "--format=%H%x1f%cs%x1f%s%x1f%b%x1e", ref)
+    tags = release_tags()
+    oldest = min(tags, key=lambda commit: version_key(tags[commit])) if tags else None
     cache, groups, order = {}, {}, []
+    current = upcoming
+    in_tagged_era = bool(tags)
     for record in filter(None, (r.strip("\n") for r in log.split("\x1e"))):
         commit, date, subject, body = record.split("\x1f", 3)
-        version = app_version(commit, cache)
+        if commit in tags:
+            current = tags[commit]
+        if commit == oldest:
+            in_tagged_era = False
+        version = current if in_tagged_era else app_version(commit, cache)
         made = entry(subject, body)
         if version is None or made is None:
             continue
@@ -94,7 +141,6 @@ def releases(ref):
             groups[version] = {"date": date, "entries": []}
             order.append(version)
         groups[version]["entries"].append(made)
-    order.sort(key=version_key, reverse=True)
     return [(v, groups[v]["date"], groups[v]["entries"]) for v in order]
 
 
@@ -102,7 +148,7 @@ def markdown(history):
     out = [
         "# Changelog",
         "",
-        "Generated from the git history of `main` by `Scripts/gen-changelog.py`; do not edit by hand.",
+        "Generated from the git history of `main` by `Scripts/gen-changelog.py`.",
         "",
     ]
     for version, date, entries in history:
@@ -114,10 +160,10 @@ def markdown(history):
     return "\n".join(out)
 
 
-def notes(history, version):
+def notes(history, version, links=False):
     for candidate, _, entries in history:
         if candidate == version:
-            text = "\n".join(f"- {text}" for text, _ in entries)
+            text = "\n".join(f"- {text}" + (f" (#{pr})" if links and pr else "") for text, pr in entries)
             return text[:NOTES_LIMIT]
     return ""
 
@@ -126,13 +172,17 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--notes", metavar="VERSION", help="print plain notes for one version")
     parser.add_argument("--ref", default="HEAD", help="history to read (default HEAD)")
+    parser.add_argument("--upcoming", default=UPCOMING, help="title for commits after the newest tag")
+    parser.add_argument("--links", action="store_true", help="append (#PR) references to --notes")
     args = parser.parse_args()
-    history = releases(args.ref)
+    # Notes for a version not tagged yet are the commits since the newest tag.
+    tagged = set(release_tags().values())
+    upcoming = args.notes if args.notes and args.notes not in tagged else args.upcoming
+    history = releases(args.ref, upcoming=upcoming)
     if args.notes:
-        print(notes(history, args.notes))
+        print(notes(history, args.notes, links=args.links))
         return
-    CHANGELOG.write_text(markdown(history))
-    print(f"Wrote {CHANGELOG.relative_to(ROOT)} ({len(history)} versions)")
+    print(markdown(history))
 
 
 if __name__ == "__main__":

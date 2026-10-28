@@ -136,6 +136,10 @@ public struct AppView: View {
             guard didExpire else { return }
             store.send(.sessionExpiryDetected)
         }
+        // "Open in NextExplorer" from another app's share sheet (Info.plist document types).
+        .onOpenURL { url in
+            store.send(.incomingFiles([url]))
+        }
         .sheet(
             item: $store.scope(state: \.addAccount, action: \.addAccount),
             onDismiss: { store.send(.addAccountSheetDismissed) }
@@ -144,7 +148,6 @@ public struct AppView: View {
         }
     }
 
-    @ViewBuilder
     private var destinationContent: some View {
         Group {
             switch store.destination {

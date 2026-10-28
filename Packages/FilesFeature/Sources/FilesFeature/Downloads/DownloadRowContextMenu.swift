@@ -44,8 +44,7 @@ struct DownloadRowContextMenu: View {
     /// `nil` for `.cache`-location downloads, which are app-private and never show up in
     /// Files regardless of scheme.
     private var filesAppURL: URL? {
-        guard download.location == .documents else { return nil }
-        guard var components = URLComponents(url: download.url, resolvingAgainstBaseURL: false) else { return nil }
+        guard download.location == .documents, var components = URLComponents(url: download.url, resolvingAgainstBaseURL: false) else { return nil }
         components.scheme = "shareddocuments"
         return components.url
     }

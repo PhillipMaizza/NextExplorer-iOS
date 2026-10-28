@@ -1212,7 +1212,6 @@ struct BrowseContentView: View {
         }
     }
 
-    @ViewBuilder
     private func gridItemCells(_ items: IdentifiedArrayOf<FileItem>) -> some View {
         ForEach(items) { item in
             Button {
@@ -1324,7 +1323,6 @@ struct BrowseContentView: View {
         }
     }
 
-    @ViewBuilder
     private var noResultsState: some View {
         VStack(spacing: Constants.emptyStateSpacing) {
             IconKit.search

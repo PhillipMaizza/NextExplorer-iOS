@@ -108,7 +108,12 @@ class UITestCase: XCTestCase {
     static let fastAnimationSpeed: Double = 12
 
     @discardableResult
-    func launchApp(auth: Auth = .loggedIn, scenario: Scenario = .normal, animationSpeed: Double = UITestCase.fastAnimationSpeed) -> XCUIApplication {
+    func launchApp(
+        auth: Auth = .loggedIn,
+        scenario: Scenario = .normal,
+        animationSpeed: Double = UITestCase.fastAnimationSpeed,
+        landscape: Bool = false
+    ) -> XCUIApplication {
         let app = XCUIApplication()
         app.launchEnvironment["UITEST_MOCK"] = "1"
         app.launchEnvironment["UITEST_AUTH"] = auth.rawValue
@@ -121,6 +126,9 @@ class UITestCase: XCTestCase {
             app.launchEnvironment["UITEST_ANIM_SPEED"] = String(animationSpeed)
         } else {
             app.launchEnvironment["UITEST_DISABLE_ANIMATIONS"] = "1"
+        }
+        if landscape {
+            app.launchEnvironment["UITEST_ORIENTATION"] = "landscape"
         }
         // Force English so localized visible text the tests match on is deterministic.
         app.launchArguments += ["-AppleLanguages", "(en)", "-AppleLocale", "en_US"]

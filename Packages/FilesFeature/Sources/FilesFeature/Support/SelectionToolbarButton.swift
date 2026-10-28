@@ -52,7 +52,6 @@ struct SelectionToolbarButton: View {
 private struct OptionalAccessibilityLabel: ViewModifier {
     let label: String?
 
-    @ViewBuilder
     func body(content: Content) -> some View {
         if let label {
             content.accessibilityLabel(label)

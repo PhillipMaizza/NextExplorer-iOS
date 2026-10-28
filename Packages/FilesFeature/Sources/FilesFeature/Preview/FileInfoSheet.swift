@@ -79,7 +79,6 @@ struct FileInfoSheet: View {
         .padding(.bottom, Constants.bottomPadding)
     }
 
-    @ViewBuilder
     private func metadataSections(for metadata: FileMetadata) -> some View {
         VStack(alignment: .leading, spacing: Constants.cardSpacing) {
             card {
@@ -151,7 +150,6 @@ struct FileInfoSheet: View {
         }
     }
 
-    @ViewBuilder
     private func card(@ViewBuilder _ content: () -> some View) -> some View {
         VStack(alignment: .leading, spacing: .space8) {
             content()
