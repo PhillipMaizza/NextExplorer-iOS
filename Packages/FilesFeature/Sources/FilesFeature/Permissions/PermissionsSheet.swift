@@ -44,7 +44,6 @@ struct PermissionsSheet: View {
         .task { store.send(.onAppear) }
     }
 
-    @ViewBuilder
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
             if let loadError = store.phase.errorMessage {

@@ -263,7 +263,6 @@ struct FavoritesView: View {
     /// title). Shine suppressed under Reduce Motion.
     private static let skeletonNames = [6, 12, 4, 9, 15, 7, 11, 5, 13, 8].map { String(repeating: "M", count: $0) }
 
-    @ViewBuilder
     private var skeletonRows: some View {
         ForEach(Self.skeletonNames, id: \.self) { name in
             FileRowView(name: name, isDirectory: true)
@@ -273,7 +272,6 @@ struct FavoritesView: View {
         }
     }
 
-    @ViewBuilder
     private var skeletonCells: some View {
         ForEach(Self.skeletonNames, id: \.self) { name in
             GridCellView(name: name, isDirectory: true)
@@ -373,7 +371,6 @@ struct FavoritesView: View {
         .dismissKeyboardOnTap()
     }
 
-    @ViewBuilder
     private var favoriteCells: some View {
         ForEach(store.displayedFavorites) { favorite in
             FavoriteGridCell(store: store, favorite: favorite)

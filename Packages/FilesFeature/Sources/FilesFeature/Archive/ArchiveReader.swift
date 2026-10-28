@@ -131,8 +131,8 @@ enum ArchiveReader {
 
     static func open(fileURL: URL, kind: String) throws -> ArchiveSource {
         switch kind.lowercased() {
-        case "zip": return try ArchiveSource(.zip(ZIPFoundation.Archive(url: fileURL, accessMode: .read)))
-        case "rar": return try ArchiveSource(.rar(Unrar.Archive(fileURL: fileURL)))
+        case "zip": try ArchiveSource(.zip(ZIPFoundation.Archive(url: fileURL, accessMode: .read)))
+        case "rar": try ArchiveSource(.rar(Unrar.Archive(fileURL: fileURL)))
         default: throw ArchiveReaderError.unsupportedFormat
         }
     }

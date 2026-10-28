@@ -2,6 +2,7 @@
     import AuthClient
     import ComposableArchitecture
     import CoreModels
+    import DesignSystem
     import FilesClient
     import FilesFeature
     import Foundation
@@ -20,12 +21,16 @@
     /// * `UITEST_DISABLE_ANIMATIONS=1` freezes UIKit animations so flood/focus transitions can't flake a tap.
     /// * `UITEST_ANIM_SPEED=<n>`      runs every CoreAnimation (UIKit + SwiftUI) at n× so transitions
     ///                                 still play but collapse in duration.
+    /// * `UITEST_ORIENTATION=landscape`  rotates the window to landscape after launch. The iPhone Duo
+    ///                                 simulator ignores `XCUIDevice` rotation; only foldables (and
+    ///                                 media viewers) allow landscape, so elsewhere it is a no op.
     public enum UITestSupport {
         public static let mockFlag = "UITEST_MOCK"
         public static let authKey = "UITEST_AUTH"
         public static let scenarioKey = "UITEST_SCENARIO"
         public static let disableAnimationsFlag = "UITEST_DISABLE_ANIMATIONS"
         public static let animationSpeedKey = "UITEST_ANIM_SPEED"
+        public static let orientationKey = "UITEST_ORIENTATION"
 
         /// Scales every window's layer time so both UIKit and SwiftUI animations finish near
         /// instantly, while their completion handlers and transition code still run. A no op unless
@@ -42,6 +47,17 @@
                     for window in scene.windows {
                         window.layer.speed = speed
                     }
+                }
+            }
+        }
+
+        /// Called with `applyAnimationSpeedIfNeeded`; waits a moment so the hinge has already
+        /// unlocked rotation on a foldable.
+        public static func applyOrientationIfNeeded(from environment: [String: String] = ProcessInfo.processInfo.environment) {
+            guard environment[mockFlag] == "1", environment[orientationKey] == "landscape" else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                MainActor.assumeIsolated {
+                    ActiveWindowScene.current?.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight)) { _ in }
                 }
             }
         }

@@ -52,7 +52,10 @@ struct NextExplorerApp: App {
             #if DEBUG
                 .onAppear {
                     // Under XCUITest, collapse animation durations once the window is attached.
-                    DispatchQueue.main.async { UITestSupport.applyAnimationSpeedIfNeeded() }
+                    DispatchQueue.main.async {
+                        UITestSupport.applyAnimationSpeedIfNeeded()
+                        UITestSupport.applyOrientationIfNeeded()
+                    }
                 }
             #endif
         }

@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import CryptoKit
 @testable import FilesFeature
 import Foundation
 import Testing
@@ -118,8 +119,6 @@ struct ThumbnailCacheTests {
         #expect(callCount.value == 1)
     }
 }
-
-import CryptoKit
 
 private func sha256Hex(of string: String) -> String {
     let digest = SHA256.hash(data: Data(string.utf8))

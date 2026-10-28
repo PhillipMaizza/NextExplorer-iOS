@@ -60,7 +60,7 @@ Helpers under `Scripts/`. Two drive localization. The `Localization` package is 
 
 - **`gen-l10n.py`** regenerates the `Localization` package from its human-edited source. `Packages/Localization/strings.tsv` (one `key<TAB>English` per line) is the source of truth; the script rewrites `Localizable.xcstrings` and the two-level `L10n.swift` accessors, folds in each `translations/<lang>.tsv`, falls back to English for missing keys, and re-checks placeholder integrity. Run it after any string change: `python3 Scripts/gen-l10n.py`.
 - **`machine-translate.py`** fills `translations/<lang>.tsv` for the non-hand-authored languages via deep-translator's keyless MyMemory backend. Format specifiers (`%@`, `%lld`, `%1$@`, ...) are masked before translation and restored after, so none are dropped; per-string failures fall back to English. Its output is always re-validated by `gen-l10n.py`.
-- **`gen-changelog.py`** rewrites `CHANGELOG.md` from the history of `main`: every PR lands as one commit and every release PR bumps `MARKETING_VERSION`, so the script groups PR titles by the version they shipped in. Run `python3 Scripts/gen-changelog.py` in a release PR; never edit `CHANGELOG.md` by hand. `--notes <version>` prints one version's notes, which the fastlane lanes upload as TestFlight's "What to Test".
+- **`gen-changelog.py`** builds release notes from the history of `main`: every PR lands as one commit, and each release is tagged `v<version>`, so PR titles group by the release they shipped in (history before the first tag groups by the `MARKETING_VERSION` it carried). Only user facing changes are kept: title clauses about tests, CI, tooling, refactors or docs are dropped, so **write PR titles as what a user would notice** and put internal work in its own clause. `--notes <version>` prints one version's notes (TestFlight "What to Test", GitHub Release with `--links`); with no option it prints the whole changelog as Markdown.
 
 ## Naming and style
 
@@ -79,19 +79,19 @@ Helpers under `Scripts/`. Two drive localization. The `Localization` package is 
 Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile` (Ruby version in `.ruby-version`). Run `bundle install` once.
 
 - Create an App Store Connect API key (Users and Access › Integrations, App Manager role) and keep the `.p8` outside the repo, e.g. `~/.appstoreconnect/private_keys/`.
-- Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`, and optionally `GH_USER` (the `gh` account that opens the bump PR).
-- The repo needs **Allow auto-merge** enabled (Settings › General) for the bump PR to merge itself.
+- Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`, and optionally `GH_USER` (the `gh` account used for the CI check and the GitHub Release).
+
+Versions come from git tags, never from a commit. A release ships the next version after the newest `v<version>` tag (patch by default) by passing `MARKETING_VERSION` to the archive, then tags it; the project's own `MARKETING_VERSION` only matters for local builds. The build number is the git commit count, stamped at build time.
 
 Lanes (`bundle exec fastlane <lane>`):
 
 - `unit_tests`: every package's tests on the simulator, same set as CI. Option `device:"iPhone Duo"`.
 - `ui_tests`: the XCUITest suite. Options `device:`, `only_testing:"SettingsUITests,SharedUITests"`.
-- `beta`: Release archive uploaded to TestFlight.
+- `beta`: the upcoming version's Release archive, uploaded to TestFlight.
 - `release_dry_run`: tag check, unit tests and a Release archive, nothing uploaded.
-- `release`: from a clean, up to date `main`. Refuses if `v<version>` is already tagged, runs the unit tests, cuts and pushes `release/<version>`, uploads, waits for processing, submits for review and releases automatically once approved (`manual_release:true` to hold it, `phased:true` for a 7 day phased rollout), tags and pushes `v<version>`, then runs `bump`. Store text and screenshots stay in App Store Connect.
-- `bump`: from `main`, opens a `bump/<next version>` PR that raises `MARKETING_VERSION` and merges itself once CI passes. Option `type:` `patch` (default), `minor` or `major`; `release` takes the same as `bump:`.
+- `release`: from a clean, up to date `main`. Refuses if the version is already tagged; skips the local unit tests when CI's Build and test already passed on that commit; cuts and pushes `release/<version>`; uploads and waits for processing; submits for review and releases automatically once approved (`manual_release:true` holds it, `phased:true` rolls out over 7 days); tags `v<version>` and publishes a GitHub Release with the notes. Options `bump:` (`patch`, `minor`, `major`) or `version:`. Store text and screenshots stay in App Store Connect.
 
-Uploads carry that version's `gen-changelog.py` notes as TestFlight's "What to Test". The build number is the git commit count, stamped at build time, so it never needs bumping.
+Uploads carry the version's `gen-changelog.py` notes as TestFlight's "What to Test".
 
 ## Questions
 

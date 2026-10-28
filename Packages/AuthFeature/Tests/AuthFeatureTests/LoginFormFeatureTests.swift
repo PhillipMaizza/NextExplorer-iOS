@@ -294,14 +294,18 @@ struct LoginFormFeatureTests {
 
     @Test("a server with no auth methods at all surfaces a readable message")
     func noAuthMethodsEnabled() async {
+        let clock = TestClock()
         let store = TestStore(initialState: LoginFormFeature.State(host: "nextexplorer.example.com")) {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.fetchStatus = { _ in AuthStatus(localEnabled: false, oidcEnabled: false) }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.testConnectionResponse.success) {
             $0.connectionPhase = .failure
             $0.authStatus = AuthStatus(localEnabled: false, oidcEnabled: false)
@@ -385,14 +389,18 @@ struct LoginFormFeatureTests {
 
     @Test("unexpected error: transport failure during test connection is wrapped, not propagated raw")
     func transportFailureDuringTestConnection() async {
+        let clock = TestClock()
         let store = TestStore(initialState: LoginFormFeature.State(host: "nextexplorer.example.com")) {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.fetchStatus = { _ in throw AuthClientError.network("offline") }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.testConnectionResponse.failure) {
             $0.connectionPhase = .failure
             $0.errorMessage = L10n.Login.errorUnreachable
@@ -514,6 +522,7 @@ struct LoginFormFeatureTests {
 
     @Test("unexpected error: invalid credentials surfaces a readable message")
     func invalidCredentialsSurfacesMessage() async {
+        let clock = TestClock()
         let store = TestStore(
             initialState: LoginFormFeature.State(
                 host: "nextexplorer.example.com",
@@ -525,12 +534,15 @@ struct LoginFormFeatureTests {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.login = { _, _, _ in throw AuthClientError.invalidCredentials }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting
         }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.submitFailed) {
             $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorInvalidCredentials
@@ -547,6 +559,7 @@ struct LoginFormFeatureTests {
 
     @Test("unexpected error: rate limiting (429, or a lockout the server reports as 429) surfaces a readable message")
     func rateLimitedLoginSurfacesMessage() async {
+        let clock = TestClock()
         let store = TestStore(
             initialState: LoginFormFeature.State(
                 host: "nextexplorer.example.com",
@@ -558,12 +571,15 @@ struct LoginFormFeatureTests {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.login = { _, _, _ in throw AuthClientError.rateLimited }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting
         }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.submitFailed) {
             $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorRateLimited
@@ -581,6 +597,7 @@ struct LoginFormFeatureTests {
 
     @Test("unexpected error: a 5xx server status surfaces a server-problem message with the code, not a decode/address error")
     func serverErrorStatusSurfacesMessage() async {
+        let clock = TestClock()
         let store = TestStore(
             initialState: LoginFormFeature.State(
                 host: "nextexplorer.example.com",
@@ -592,12 +609,15 @@ struct LoginFormFeatureTests {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.login = { _, _, _ in throw AuthClientError.server(statusCode: 503) }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting
         }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.submitFailed) {
             $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorServer(503)

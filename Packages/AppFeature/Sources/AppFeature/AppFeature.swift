@@ -36,6 +36,7 @@ public struct AppFeature {
         /// Cleared on every sign out so a staged copy/move never carries across into a
         /// different account's session.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var fileClipboard: FileClipboard?
+        @Shared(.inMemory(SharedFileInbox.sharedKey)) public var sharedFileInbox: [URL] = []
         /// The signed-in account's downloads scope (server + user id), so each account's saved
         /// files stay in their own folder. Set when a session is confirmed, cleared on sign out
         /// and expiry. Read by `BrowseFeature`/`DownloadsFeature`/`SettingsFeature`.
@@ -70,6 +71,8 @@ public struct AppFeature {
         case accountsRefreshed([AccountSummary])
         case addAccount(PresentationAction<LoginFormFeature.Action>)
         case addAccountSheetDismissed
+        /// Files opened in the app from another app's share sheet.
+        case incomingFiles([URL])
         case destination(Destination.Action)
     }
 
@@ -284,6 +287,14 @@ public struct AppFeature {
                 state.pendingAddedAccount = AddedAccount(user: user, serverURL: serverURL)
                 state.addAccount = nil
                 return .none
+
+            case let .incomingFiles(urls):
+                let files = urls.filter(\.isFileURL)
+                guard !files.isEmpty else { return .none }
+                state.$sharedFileInbox.withLock { $0.append(contentsOf: files) }
+                // Signed in: hand them over now. Otherwise the tab shell drains the inbox on mount.
+                guard case .authenticated = state.destination else { return .none }
+                return .send(.destination(.authenticated(.mainTab(.sharedFilesArrived))))
 
             case .addAccountSheetDismissed:
                 // Login already persisted and activated the new account; adopt it without a cache

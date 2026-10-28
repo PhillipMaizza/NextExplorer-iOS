@@ -12,8 +12,7 @@ import StoreKit
 public enum TipTransactionObserver {
     public static func run() async {
         for await update in Transaction.updates {
-            guard case let .verified(transaction) = update else { continue }
-            guard TipProductID.all.contains(transaction.productID) else { continue }
+            guard case let .verified(transaction) = update, TipProductID.all.contains(transaction.productID) else { continue }
             await transaction.finish()
         }
     }
