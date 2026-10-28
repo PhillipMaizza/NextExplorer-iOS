@@ -84,8 +84,10 @@ struct BrowseScreen {
         app.buttons[L10n.Common.retry].firstMatch
     }
 
+    /// The preview's close button, by its SF Symbol identifier: on iPhone Duo the toolbar items
+    /// live in the vertical bar, outside the navigation bar element.
     var previewBackButton: XCUIElement {
-        app.navigationBars.buttons.firstMatch
+        app.buttons["xmark"].firstMatch
     }
 
     /// A file or folder row's name label.
@@ -298,8 +300,10 @@ struct SettingsScreen {
         app.buttons[L10n.Common.logOut].firstMatch
     }
 
-    var pushedBackButton: XCUIElement {
-        app.navigationBars.buttons.firstMatch
+    /// Only the language picker shows this subtitle, so it proves the push. A back button query
+    /// would miss on iPhone Duo, whose navigation items live in the vertical bar.
+    var languagePickerSystemDefaultSubtitle: XCUIElement {
+        app.staticTexts[L10n.Language.systemDefaultSubtitle]
     }
 
     /// Multi-server switcher: the Accounts section header and the "Add Account" row.

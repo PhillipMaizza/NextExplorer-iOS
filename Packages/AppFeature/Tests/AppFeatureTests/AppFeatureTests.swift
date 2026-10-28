@@ -243,6 +243,12 @@ struct AppFeatureTests {
         await store.send(.addAccount(.presented(.delegate(.authenticated(newUser, newServer)))))
         store.assert {
             $0.addAccount = nil
+            $0.pendingAddedAccount = AppFeature.AddedAccount(user: newUser, serverURL: newServer)
+        }
+        // The new account is adopted only once the sheet has fully dismissed.
+        await store.send(.addAccountSheetDismissed)
+        store.assert {
+            $0.pendingAddedAccount = nil
             $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: newServer, user: newUser))
         }
         await store.finish()
