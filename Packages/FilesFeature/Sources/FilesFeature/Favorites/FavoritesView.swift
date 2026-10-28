@@ -12,6 +12,7 @@ private enum Constants {
 
 struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
     @AppStorage(AppStorageKeys.favoritesViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
     /// A finished offline download can change which favorites are available offline, so refresh
     /// the badges when it completes (mirrors `BrowseContentView`).
@@ -97,23 +98,36 @@ struct FavoritesView: View {
         } destination: { store in
             BrowseContentView(store: store)
                 .navigationTitle("")
+                // See `BrowseTabView`: a split view detail drops what wraps the stack.
+                .overlay(alignment: .bottom) {
+                    if isSplitViewDetail {
+                        breadcrumbBar
+                    }
+                }
         }
         .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) {
-            if !currentDirectoryPath.isEmpty, !isTopScreenSelecting {
-                BrowseBreadcrumbBar(
-                    directoryPath: currentDirectoryPath,
-                    rootTitle: rootTitle,
-                    rootPath: rootDirectoryPath,
-                    rootIcon: IconKit.folderFill,
-                    containerCrumb: (L10n.Favorites.navigationTitle, "", IconKit.starFill)
-                ) { path, title in
-                    store.send(.navigateToDirectory(path: path, title: title))
-                }
-                .transition(.move(edge: .bottom).combined(with: .opacity))
+            if !isSplitViewDetail {
+                breadcrumbBar
             }
         }
         .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
         .tint(Color.accent)
+    }
+
+    @ViewBuilder
+    private var breadcrumbBar: some View {
+        if !currentDirectoryPath.isEmpty, !isTopScreenSelecting {
+            BrowseBreadcrumbBar(
+                directoryPath: currentDirectoryPath,
+                rootTitle: rootTitle,
+                rootPath: rootDirectoryPath,
+                rootIcon: IconKit.folderFill,
+                containerCrumb: (L10n.Favorites.navigationTitle, "", IconKit.starFill)
+            ) { path, title in
+                store.send(.navigateToDirectory(path: path, title: title))
+            }
+            .transition(.move(edge: .bottom).combined(with: .opacity))
+        }
     }
 
     private var rootContent: some View {
@@ -138,7 +152,7 @@ struct FavoritesView: View {
                 DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
                     .padding(.horizontal, .space16)
                     .padding(.vertical, .space8)
-                    .background(Color.backgroundPrimary)
+                    .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
         }
@@ -163,6 +177,7 @@ struct FavoritesView: View {
         .animation(DSMotion.contentReveal, value: listPhase)
         .featureToast(error: store.actionErrorMessage)
         .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
+        .prefersToolbarItemsInVerticalBar()
         .toolbar {
             selectSortToolbar(
                 isSelecting: store.isSelecting,
@@ -180,7 +195,7 @@ struct FavoritesView: View {
                 sortMenu: { EmptyView() }
             )
         }
-        .sheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
+        .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
             FavoriteEditSheet(store: editStore, onClose: { store.send(.editSheet(.dismiss)) })
         }
         // A tapped file result opens directly in this cover (no folder navigation); the host
@@ -216,7 +231,7 @@ struct FavoritesView: View {
                 }
             }
         }
-        .sheet(isPresented: bulkRemoveConfirmationBinding) {
+        .dsSheet(isPresented: bulkRemoveConfirmationBinding) {
             DSAlertSheet(
                 icon: IconKit.unfavorite,
                 title: bulkRemoveConfirmationTitle,

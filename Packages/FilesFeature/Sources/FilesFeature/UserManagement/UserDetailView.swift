@@ -52,10 +52,10 @@ struct UserDetailView: View {
         .backgroundGradient()
         .navigationTitle(store.detailUser?.displayName ?? store.detailUser?.username ?? L10n.UserDetail.fallbackName)
         .navigationBarTitleDisplayMode(.inline)
-        .sheet(isPresented: volumeSheetPresented) {
+        .dsSheet(isPresented: volumeSheetPresented) {
             VolumeAssignSheet(store: store)
         }
-        .sheet(isPresented: removeVolumeAlertPresented) {
+        .dsSheet(isPresented: removeVolumeAlertPresented) {
             DSAlertSheet(
                 icon: IconKit.drive,
                 title: L10n.UserDetail.removeVolumeTitle,
@@ -68,7 +68,7 @@ struct UserDetailView: View {
                 onDismiss: { store.send(.removeVolumeCancelled) }
             )
         }
-        .sheet(isPresented: deleteAlertPresented) {
+        .dsSheet(isPresented: deleteAlertPresented) {
             DSAlertSheet(
                 icon: IconKit.delete,
                 title: L10n.UserDetail.removeUserTitle,

@@ -6,6 +6,8 @@ import SwiftUI
 private enum Constants {
     /// Cross fade for the clear button appearing with text.
     static let fieldAnimationDuration: Double = 0.15
+    /// Height of the fade tail under the header.
+    static let fadeHeight: CGFloat = .space16
 }
 
 /// A large title and an always-visible search field pinned ABOVE the scrolling list, instead of
@@ -54,7 +56,8 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
         // Solid top color behind the title/search (matches the `backgroundGradient()` top stop,
         // so it reads seamless) so scrolled rows never bleed through the header. A short fade
         // tail sits just below the header edge to melt into the list gradient instead of ending
-        // on a hard band.
+        // on a hard band. The tail's height is reserved as bottom padding, so at rest the content
+        // starts below the fade and only rows scrolled up pass under it.
         .background(Color.backgroundGradientTop.ignoresSafeArea(edges: .top))
         .background(alignment: .bottom) {
             LinearGradient(
@@ -62,9 +65,11 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: .space16)
-            .offset(y: .space16)
+            .frame(height: Constants.fadeHeight)
+            .offset(y: Constants.fadeHeight)
+            .allowsHitTesting(false)
         }
+        .padding(.bottom, Constants.fadeHeight)
     }
 
     private var searchField: some View {
