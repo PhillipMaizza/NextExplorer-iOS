@@ -90,22 +90,6 @@ jobs:
       - name: Trust Swift package macros
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
 
-      - name: Resolve package dependencies
-        run: |
-          xcodebuild -project NextExplorer.xcodeproj \
-            -scheme NextExplorer \
-            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
-            -resolvePackageDependencies
-
-      - name: Build app
-        run: |
-          xcodebuild build \
-            -project NextExplorer.xcodeproj \
-            -scheme NextExplorer \
-            -destination 'generic/platform=iOS Simulator' \
-            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
-            CODE_SIGNING_ALLOWED=NO
-
       - name: Test packages
         run: |
           set -o pipefail
@@ -128,6 +112,19 @@ jobs:
             echo "::endgroup::"
           done
           exit $FAIL
+
+      # Runs after the package tests, on the same DerivedData and destination, so it reuses the
+      # dependencies they compiled instead of building them again. Packages first: a package that
+      # resolves right after the app has resolved the shared checkouts can fail to resolve.
+      - name: Build app
+        run: |
+          xcodebuild build \
+            -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            CODE_SIGNING_ALLOWED=NO
 
   ui-test:
     name: UI tests
