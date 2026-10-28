@@ -73,6 +73,17 @@ Two helpers under `Scripts/` drive localization. The `Localization` package is g
 - Run the relevant unit and package tests (`Product > Test`, or `xcodebuild test` against a matching simulator) and make sure they pass.
 - Confirm strings are localized, there are no magic numbers, and the app builds cleanly before opening the PR.
 
+## Releasing
+
+Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile` (Ruby version in `.ruby-version`). Run `bundle install` once.
+
+- Create an App Store Connect API key (Users and Access › Integrations, App Manager role) and keep the `.p8` outside the repo, e.g. `~/.appstoreconnect/private_keys/`.
+- Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`.
+- `bundle exec fastlane beta` builds a Release archive and uploads it to TestFlight.
+- `bundle exec fastlane release` builds, uploads, waits for processing, then submits the version for App Store review (manual release once approved). Store text and screenshots stay in App Store Connect.
+
+Both lanes require a clean git tree. The build number is the git commit count (stamped at build time) and the version is `MARKETING_VERSION`, so bump the version before releasing.
+
 ## Questions
 
 Open an issue or reach out through the [support site](https://phillipmaizza.com/nextexplorer). Happy to help you get oriented.

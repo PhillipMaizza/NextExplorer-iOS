@@ -67,3 +67,13 @@ GoogleService-Info.plist
 # Claude working-context notes — not project documentation, stays local
 CLAUDE.md
 .claude/
+
+# fastlane
+vendor/bundle/
+.bundle/
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/README.md
+fastlane/screenshots/
+fastlane/test_output/
+*.p8
