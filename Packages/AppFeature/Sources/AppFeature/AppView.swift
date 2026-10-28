@@ -148,7 +148,6 @@ public struct AppView: View {
         }
     }
 
-    @ViewBuilder
     private var destinationContent: some View {
         Group {
             switch store.destination {

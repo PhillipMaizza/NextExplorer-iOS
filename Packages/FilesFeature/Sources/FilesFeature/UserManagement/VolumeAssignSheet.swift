@@ -97,7 +97,6 @@ struct VolumeAssignSheet: View {
         }
     }
 
-    @ViewBuilder
     private func directoryBrowser(selectedPath: String) -> some View {
         VStack(alignment: .leading, spacing: .space8) {
             if let listing {

@@ -481,7 +481,6 @@ public struct LoginFormView: View {
         .accessibilityIdentifier(AccessibilityIdentifiers.Login.testConnectionButton)
     }
 
-    @ViewBuilder
     private var testConnectionButtonLabel: some View {
         ZStack {
             switch store.connectionPhase {

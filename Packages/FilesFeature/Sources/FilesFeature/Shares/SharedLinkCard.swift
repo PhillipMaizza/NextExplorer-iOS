@@ -217,7 +217,6 @@ struct SharedLinkDetailRow: View {
     /// "Shared with" — a globe + label for `anyone`; for specific users, the label row plus a
     /// full-width wrapping strip showing every recipient as its own colored chip (a `+N` chip
     /// covers any recipients whose name hasn't resolved yet).
-    @ViewBuilder
     private var sharedWithRow: some View {
         VStack(alignment: .leading, spacing: .space8) {
             HStack(alignment: .top, spacing: .space8) {
@@ -242,7 +241,6 @@ struct SharedLinkDetailRow: View {
     /// Every recipient as its own chip, each in a stable per-name color, laid out on a single
     /// horizontal row that scrolls when the names overflow. Any recipients whose display name
     /// hasn't loaded collapse into a trailing neutral `+N`.
-    @ViewBuilder
     private func recipientChips(names: [String], unnamed: Int) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: .space4) {

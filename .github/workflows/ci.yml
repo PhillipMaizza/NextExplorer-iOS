@@ -61,8 +61,8 @@ jobs:
       # CI on its own; bump these together with the local tools.
       - name: Install SwiftFormat and SwiftLint
         env:
-          SWIFTFORMAT_VERSION: "0.63.0"
-          SWIFTLINT_VERSION: "0.63.2"
+          SWIFTFORMAT_VERSION: "0.64.4"
+          SWIFTLINT_VERSION: "0.65.1"
         run: |
           set -euo pipefail
           BIN="${RUNNER_TEMP}/lint-bin"

@@ -84,7 +84,7 @@ struct StreamingPreviewView: View {
                 // playing now": the latter would bring the poster back over a paused frame.
                 if item.isVideo, item.supportsThumbnail, !hasStartedPlaying {
                     ThumbnailImage(serverURL: serverURL, path: item.id, signature: item.cacheSignature, fallbackIcon: IconKit.document, iconTint: Color.secondaryDS)
-                        .aspectRatio(contentMode: .fit)
+                        .scaledToFit()
                         .background(Color.black)
                         .ignoresSafeArea()
                         .allowsHitTesting(false)
