@@ -1,15 +1,16 @@
 name: CI
 
-# Builds the app and runs the Swift package test suites on every pull request
-# to main and on pushes to main, so a contributor sees a green or red check
+# Lints, builds the app and runs the Swift package test suites on every pull request to main,
+# and on pushes to main, so a contributor sees a green or red check
 # before anyone reviews the change.
 #
-# The XCUITest suite is heavier (boots a simulator, cold launches the app per
-# test) so it runs on pushes to main only, not on every pull request.
+# The XCUITest suite is heavier (boots a simulator, cold launches the app per test) so it runs on
+# pushes to main, on demand, and on pull requests labelled `ui-tests`.
 
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, labeled]
   push:
     branches: [main]
   # Manual trigger so the heavier UI test job can be run on any branch on demand.
@@ -20,31 +21,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
-    name: Lint and format
-    runs-on: macos-15
-    timeout-minutes: 15
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
-
-      - name: Install SwiftFormat and SwiftLint
-        run: brew install swiftformat swiftlint
-
-      - name: SwiftFormat (check only)
-        run: swiftformat . --lint
-
-      - name: SwiftLint
-        run: swiftlint lint --quiet
-
   build-and-test:
     name: Build and test
     runs-on: macos-15
-    # Package tests plus the app build now take 45 to 60 minutes on the hosted runner.
     timeout-minutes: 90
 
     env:
       SIM_DEVICE: iPhone 16
+      # The package test runs share one DerivedData and one SwiftPM checkout folder, so TCA and
+      # swift-syntax (its macros) compile once instead of once per package. Both live outside the
+      # repo so the linters never scan them.
+      DERIVED_DATA: ${{ github.workspace }}/../DerivedData
+      SPM_CHECKOUTS: ${{ github.workspace }}/../SourcePackages
       # Package test suites, discovered under Packages/<name>/Tests.
       # Keychain is intentionally omitted: its tests hit the real Security framework, which
       # returns errSecMissingEntitlement (-34018) for a standalone SwiftPM test bundle on the
@@ -65,6 +53,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      # Lint shares this job instead of queueing for a second macOS runner.
+      - name: Install SwiftFormat and SwiftLint
+        run: brew install swiftformat swiftlint
+
+      - name: SwiftFormat (check only)
+        run: swiftformat . --lint
+
+      - name: SwiftLint
+        run: swiftlint lint --quiet
+
+      - name: Cache SwiftPM checkouts
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.SPM_CHECKOUTS }}
+          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-
 
       # The app builds against the latest SDK; if a specific Xcode is needed,
       # pin xcode-version to it here.
@@ -89,6 +94,7 @@ jobs:
         run: |
           xcodebuild -project NextExplorer.xcodeproj \
             -scheme NextExplorer \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             -resolvePackageDependencies
 
       - name: Build app
@@ -97,6 +103,7 @@ jobs:
             -project NextExplorer.xcodeproj \
             -scheme NextExplorer \
             -destination 'generic/platform=iOS Simulator' \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             CODE_SIGNING_ALLOWED=NO
 
       - name: Test packages
@@ -112,6 +119,8 @@ jobs:
             if ! ( cd "Packages/${pkg}" && xcodebuild test \
                 -scheme "${pkg}" \
                 -destination "${DEST}" \
+                -derivedDataPath "${DERIVED_DATA}" \
+                -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
                 -enableCodeCoverage NO ); then
               echo "::error::${pkg} tests failed"
               FAIL=1
@@ -122,10 +131,11 @@ jobs:
 
   ui-test:
     name: UI tests
-    # Push events only fire on merges to main (PRs use the pull_request event), so this keeps the
-    # slow XCUITest suite off automatic branch/PR runs. workflow_dispatch lets it be run by hand on
-    # any branch from the Actions tab.
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+    # Merges to main, manual runs from the Actions tab, and pull requests labelled `ui-tests`.
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests'))
     runs-on: macos-15
     # Headroom for the one automatic retry below: a simulator launch flake can hang the first
     # attempt for a while before it fails, so a retry must still fit inside the budget.
