@@ -56,10 +56,11 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 
 ## Scripts
 
-Two helpers under `Scripts/` drive localization. The `Localization` package is generated, so localization changes flow through these, not by editing `Localizable.xcstrings` or `L10n.swift` directly.
+Helpers under `Scripts/`. Two drive localization. The `Localization` package is generated, so localization changes flow through these, not by editing `Localizable.xcstrings` or `L10n.swift` directly.
 
 - **`gen-l10n.py`** regenerates the `Localization` package from its human-edited source. `Packages/Localization/strings.tsv` (one `key<TAB>English` per line) is the source of truth; the script rewrites `Localizable.xcstrings` and the two-level `L10n.swift` accessors, folds in each `translations/<lang>.tsv`, falls back to English for missing keys, and re-checks placeholder integrity. Run it after any string change: `python3 Scripts/gen-l10n.py`.
 - **`machine-translate.py`** fills `translations/<lang>.tsv` for the non-hand-authored languages via deep-translator's keyless MyMemory backend. Format specifiers (`%@`, `%lld`, `%1$@`, ...) are masked before translation and restored after, so none are dropped; per-string failures fall back to English. Its output is always re-validated by `gen-l10n.py`.
+- **`gen-changelog.py`** rewrites `CHANGELOG.md` from the history of `main`: every PR lands as one commit and every release PR bumps `MARKETING_VERSION`, so the script groups PR titles by the version they shipped in. Run `python3 Scripts/gen-changelog.py` in a release PR; never edit `CHANGELOG.md` by hand. `--notes <version>` prints one version's notes, which the fastlane lanes upload as TestFlight's "What to Test".
 
 ## Naming and style
 
@@ -82,7 +83,7 @@ Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile`
 - `bundle exec fastlane beta` builds a Release archive and uploads it to TestFlight.
 - `bundle exec fastlane release` builds, uploads, waits for processing, then submits the version for App Store review (manual release once approved). Store text and screenshots stay in App Store Connect.
 
-Both lanes require a clean git tree. The build number is the git commit count (stamped at build time) and the version is `MARKETING_VERSION`, so bump the version before releasing.
+Both lanes upload that version's `gen-changelog.py` notes as TestFlight's "What to Test", and require a clean git tree. The build number is the git commit count (stamped at build time) and the version is `MARKETING_VERSION`, so bump the version before releasing.
 
 ## Questions
 
