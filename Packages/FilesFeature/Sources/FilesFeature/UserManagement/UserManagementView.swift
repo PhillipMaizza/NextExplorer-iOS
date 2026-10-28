@@ -38,6 +38,7 @@ struct UserManagementView: View {
         // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .prefersToolbarItemsInVerticalBar()
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 SortToolbarButton(isDisabled: store.users.isEmpty) { isSortSheetPresented = true }
@@ -57,13 +58,13 @@ struct UserManagementView: View {
         .navigationDestination(isPresented: detailPresented) {
             UserDetailView(store: store)
         }
-        .sheet(isPresented: createSheetPresented) {
+        .dsSheet(isPresented: createSheetPresented) {
             CreateUserSheet(store: store)
         }
-        .sheet(isPresented: passwordSheetPresented) {
+        .dsSheet(isPresented: passwordSheetPresented) {
             SetPasswordSheet(store: store)
         }
-        .sheet(isPresented: $isSortSheetPresented) {
+        .dsSheet(isPresented: $isSortSheetPresented) {
             SortSheet(
                 options: UserManagementFeature.SortOption.allCases,
                 directions: BrowseFeature.SortDirection.allCases,

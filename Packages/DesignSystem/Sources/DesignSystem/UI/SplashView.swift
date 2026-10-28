@@ -62,6 +62,10 @@ public struct SplashView: View {
             mark
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        // Centered on the full screen, like the launch storyboard's mark. Safe areas differ
+        // between the two (iPhone Duo's vertical bar only appears once the app is up), so
+        // centering in either one makes the mark jump at the handoff.
+        .ignoresSafeArea()
         .backgroundGradient()
         .opacity(fade)
         .task { await run() }

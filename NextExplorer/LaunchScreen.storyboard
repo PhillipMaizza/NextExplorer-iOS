@@ -30,8 +30,8 @@
                         <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
                         <color key="backgroundColor" name="BackgroundGradientTop"/>
                         <constraints>
-                            <constraint firstItem="gAQ-3h-0Pa" firstAttribute="centerX" secondItem="Bcu-3y-fUS" secondAttribute="centerX" id="8Yb-Y2-94c"/>
-                            <constraint firstItem="gAQ-3h-0Pa" firstAttribute="centerY" secondItem="Bcu-3y-fUS" secondAttribute="centerY" id="gEJ-od-Lav"/>
+                            <constraint firstItem="gAQ-3h-0Pa" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="8Yb-Y2-94c"/>
+                            <constraint firstItem="gAQ-3h-0Pa" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="gEJ-od-Lav"/>
                             <constraint firstItem="grD-t4-1en" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="wq1-3n-5aZ"/>
                             <constraint firstItem="grD-t4-1en" firstAttribute="trailing" secondItem="Ze5-6b-2t3" secondAttribute="trailing" id="rV2-8h-2bK"/>
                             <constraint firstItem="grD-t4-1en" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="pT7-9k-3cM"/>

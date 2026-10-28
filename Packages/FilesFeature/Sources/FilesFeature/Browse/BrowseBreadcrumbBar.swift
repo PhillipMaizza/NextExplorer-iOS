@@ -92,7 +92,9 @@ struct BrowseBreadcrumbBar: View {
                 .padding(.vertical, Constants.verticalPadding)
             }
             .frame(height: BrowseBreadcrumbBarMetrics.height)
-            .background(Color.backgroundSecondary)
+            // Bottom only: on iPhone Duo the side safe area is the vertical bar, which the strip
+            // must stop at rather than run under.
+            .background(Color.backgroundSecondary, ignoresSafeAreaEdges: .bottom)
             // The path is always visible at the trailing edge — deep breadcrumbs otherwise
             // stay scrolled to "Home" after navigating into a new folder, hiding exactly the
             // segment that just changed.

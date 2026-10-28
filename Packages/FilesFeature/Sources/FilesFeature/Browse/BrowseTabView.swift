@@ -12,7 +12,7 @@ private enum Constants {
 
 struct BrowseTabView: View {
     @Bindable var store: StoreOf<BrowseTabFeature>
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     /// The topmost screen's path — one `BrowseBreadcrumbBar` instance living here, above the
     /// whole `NavigationStack`, rather than one recreated inside every pushed `BrowseContentView`
@@ -32,13 +32,12 @@ struct BrowseTabView: View {
 
     var body: some View {
         Group {
-            if horizontalSizeClass == .regular {
-                // In a NavigationSplitView detail the pushed List doesn't respect an ancestor
-                // bottom safeAreaInset and paints over it, so the bar flashes then hides behind
-                // the list. An overlay stays above the content instead; `BrowseContentView`
-                // already reserves the same height at the bottom of its own scroll content.
+            if isSplitViewDetail {
+                // A NavigationSplitView detail drops whatever wraps its NavigationStack (an
+                // ancestor safeAreaInset gets painted over, an overlay never renders on iOS 27),
+                // so there each screen carries the bar itself. `BrowseContentView` already
+                // reserves the same height at the bottom of its own scroll content.
                 navigationStack
-                    .overlay(alignment: .bottom) { breadcrumbBar }
             } else {
                 navigationStack
                     .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) { breadcrumbBar }
@@ -54,9 +53,18 @@ struct BrowseTabView: View {
             // `PinnedTitleSearchHeader`), so the nav bar carries only the back button + actions.
             BrowseContentView(store: store.scope(state: \.root, action: \.root))
                 .navigationTitle("")
+                .overlay(alignment: .bottom) { splitBreadcrumbBar }
         } destination: { store in
             BrowseContentView(store: store)
                 .navigationTitle("")
+                .overlay(alignment: .bottom) { splitBreadcrumbBar }
+        }
+    }
+
+    @ViewBuilder
+    private var splitBreadcrumbBar: some View {
+        if isSplitViewDetail {
+            breadcrumbBar
         }
     }
 

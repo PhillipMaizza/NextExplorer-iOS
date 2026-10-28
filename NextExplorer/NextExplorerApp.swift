@@ -48,6 +48,7 @@ struct NextExplorerApp: App {
             AppView(store: Self.store)
                 .tint(Color.accent)
                 .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
+                .observesFoldableHinge()
             #if DEBUG
                 .onAppear {
                     // Under XCUITest, collapse animation durations once the window is attached.
