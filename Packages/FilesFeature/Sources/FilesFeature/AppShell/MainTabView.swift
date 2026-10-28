@@ -138,6 +138,8 @@ public struct MainTabView: View {
                 // while the switch action is still reducing. Yield first so the send lands on the
                 // next tick, never reentrantly during that action (TCA forbids reentrant sends).
                 await Task.yield()
+                // Files shared in before this shell mounted (cold launch, or while signed out).
+                store.send(.sharedFilesArrived)
                 await store.send(.observeConnectivity).finish()
             }
     }
