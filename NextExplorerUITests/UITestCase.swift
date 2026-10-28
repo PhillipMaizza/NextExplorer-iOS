@@ -46,11 +46,33 @@ class UITestCase: XCTestCase {
     /// XCUITest can drop the first tap under load, so it retries the tap once before failing.
     func selectTab(_ tab: XCUIElement, until sentinel: XCUIElement, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertTrue(tab.waitToAppear(UITestTimeout.standard, "Tab should exist", file: file, line: line))
-        tab.tap()
+        tapCenter(of: tab)
         if !sentinel.appears(within: UITestTimeout.short) {
-            tab.tap()
+            tapCenter(of: tab)
             XCTAssertTrue(sentinel.waitToAppear(UITestTimeout.standard, "Tab content should appear", file: file, line: line))
         }
+    }
+
+    /// Taps the element's center by coordinate. On iPhone Duo the tabs sit in the vertical bar and
+    /// XCUITest treats the lowest ones as needing a scroll into view; the accessibility scroll it
+    /// attempts never returns, hanging the test. A coordinate tap skips that step.
+    /// The frame is read once and tapped as an absolute point from the app root, so the element
+    /// is not re-resolved mid tap (an element coordinate can come back infinite under load).
+    func tapCenter(of element: XCUIElement, in app: XCUIApplication = XCUIApplication(), file: StaticString = #filePath, line: UInt = #line) {
+        // The frame can still be empty while the bar lays out; never fall back to `tap()`, which
+        // is the hanging scroll path.
+        var frame = element.frame
+        for _ in 0 ..< 10 where frame.isEmpty || frame.isInfinite {
+            usleep(200_000)
+            frame = element.frame
+        }
+        guard !frame.isEmpty, !frame.isInfinite else {
+            XCTFail("\(element) has no on screen frame to tap", file: file, line: line)
+            return
+        }
+        app.coordinate(withNormalizedOffset: .zero)
+            .withOffset(CGVector(dx: frame.midX, dy: frame.midY))
+            .tap()
     }
 
     /// Runs a gesture that should open a menu (a long press or a menu button tap), then waits for
@@ -92,8 +114,10 @@ class UITestCase: XCTestCase {
         app.launchEnvironment["UITEST_AUTH"] = auth.rawValue
         app.launchEnvironment["UITEST_SCENARIO"] = scenario.rawValue
         // A speed multiplier keeps transitions running (so their code is exercised) but collapses
-        // their duration; 0 falls back to hard freezing UIKit animations.
-        if animationSpeed > 0 {
+        // their duration; 0 falls back to hard freezing UIKit animations. iPhone Duo (two screens)
+        // always freezes: there a sped up layer left XCUITest's pre event idle wait hanging on
+        // roughly one test in five.
+        if animationSpeed > 0, XCUIScreen.screens.count < 2 {
             app.launchEnvironment["UITEST_ANIM_SPEED"] = String(animationSpeed)
         } else {
             app.launchEnvironment["UITEST_DISABLE_ANIMATIONS"] = "1"
@@ -155,6 +179,9 @@ extension XCUIElement {
     /// Clears any existing text then types the given string. Assumes the field is tappable.
     func clearAndType(_ text: String) {
         tap()
+        // An already focused field keeps the caret where the tap landed, possibly mid text, which
+        // left a tail behind the deletes ("__uitest_fail__2"). Park it at the trailing edge first.
+        coordinate(withNormalizedOffset: CGVector(dx: 0.95, dy: 0.5)).tap()
         if let existing = value as? String, !existing.isEmpty {
             let deletes = String(repeating: XCUIKeyboardKey.delete.rawValue, count: existing.count)
             typeText(deletes)
