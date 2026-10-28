@@ -58,10 +58,16 @@ class UITestCase: XCTestCase {
     /// attempts never returns, hanging the test. A coordinate tap skips that step.
     /// The frame is read once and tapped as an absolute point from the app root, so the element
     /// is not re-resolved mid tap (an element coordinate can come back infinite under load).
-    func tapCenter(of element: XCUIElement, in app: XCUIApplication = XCUIApplication()) {
-        let frame = element.frame
+    func tapCenter(of element: XCUIElement, in app: XCUIApplication = XCUIApplication(), file: StaticString = #filePath, line: UInt = #line) {
+        // The frame can still be empty while the bar lays out; never fall back to `tap()`, which
+        // is the hanging scroll path.
+        var frame = element.frame
+        for _ in 0 ..< 10 where frame.isEmpty || frame.isInfinite {
+            usleep(200_000)
+            frame = element.frame
+        }
         guard !frame.isEmpty, !frame.isInfinite else {
-            element.tap()
+            XCTFail("\(element) has no on screen frame to tap", file: file, line: line)
             return
         }
         app.coordinate(withNormalizedOffset: .zero)
@@ -108,8 +114,10 @@ class UITestCase: XCTestCase {
         app.launchEnvironment["UITEST_AUTH"] = auth.rawValue
         app.launchEnvironment["UITEST_SCENARIO"] = scenario.rawValue
         // A speed multiplier keeps transitions running (so their code is exercised) but collapses
-        // their duration; 0 falls back to hard freezing UIKit animations.
-        if animationSpeed > 0 {
+        // their duration; 0 falls back to hard freezing UIKit animations. iPhone Duo (two screens)
+        // always freezes: there a sped up layer left XCUITest's pre event idle wait hanging on
+        // roughly one test in five.
+        if animationSpeed > 0, XCUIScreen.screens.count < 2 {
             app.launchEnvironment["UITEST_ANIM_SPEED"] = String(animationSpeed)
         } else {
             app.launchEnvironment["UITEST_DISABLE_ANIMATIONS"] = "1"
