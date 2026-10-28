@@ -15,9 +15,10 @@ struct ServerLogoThumbnail: View {
 
     @State private var fetched: UIImage?
     @State private var overrideImage: UIImage?
+    @Environment(\.displayScale) private var displayScale
 
     private var maxPixelDimension: CGFloat {
-        size * UIScreen.main.scale
+        size * displayScale
     }
 
     var body: some View {

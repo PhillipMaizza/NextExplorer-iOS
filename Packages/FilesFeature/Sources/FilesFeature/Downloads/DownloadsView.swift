@@ -255,6 +255,7 @@ struct DownloadsView: View {
             .hapticFeedback(.selection, trigger: viewModeRaw)
             .hapticFeedback(.selection, trigger: store.isSelecting)
             .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
+            .prefersToolbarItemsInVerticalBar()
             .toolbar {
                 if store.isSelecting {
                     ToolbarItem(placement: .bottomBar) {
@@ -280,7 +281,7 @@ struct DownloadsView: View {
                     }
                 }
             }
-            .sheet(isPresented: $isSortSheetPresented) {
+            .dsSheet(isPresented: $isSortSheetPresented) {
                 SortSheet(
                     options: DownloadsFeature.SortOption.allCases,
                     directions: BrowseFeature.SortDirection.allCases,
@@ -295,7 +296,7 @@ struct DownloadsView: View {
                     onDismiss: { isSortSheetPresented = false }
                 )
             }
-            .sheet(isPresented: deleteConfirmationBinding) {
+            .dsSheet(isPresented: deleteConfirmationBinding) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: deleteConfirmationTitle,
@@ -311,7 +312,7 @@ struct DownloadsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-            .sheet(isPresented: bulkDeleteConfirmationBinding) {
+            .dsSheet(isPresented: bulkDeleteConfirmationBinding) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: bulkDeleteConfirmationTitle,
@@ -325,7 +326,7 @@ struct DownloadsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
-            .sheet(item: renameItemBinding) { item in
+            .dsSheet(item: renameItemBinding) { item in
                 NameInputSheet(
                     icon: IconKit.rename,
                     title: L10n.Browse.renameTitle,

@@ -49,4 +49,7 @@ public extension CGFloat {
     static let borderWidthHairline: CGFloat = 1.0
     /// 2pt — a focused field's accent border, thicker than the resting hairline.
     static let borderWidthFocused: CGFloat = 2.0
+
+    /// 480pt, the widest a `dsSheet` card grows on iPhone Duo.
+    static let sheetCardMaxWidth: CGFloat = 480.0
 }

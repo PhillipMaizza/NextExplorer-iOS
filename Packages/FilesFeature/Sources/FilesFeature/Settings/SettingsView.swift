@@ -26,7 +26,7 @@ struct SettingsView: View {
         SettingsSearchFilter(query: settingsSearch)
     }
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     /// Top padding for the pinned title, so it lines up with the other tabs. Those carry a
     /// toolbar button that reserves nav bar height; Settings has none, so it pads to match.
@@ -34,7 +34,7 @@ struct SettingsView: View {
     /// measured against the Downloads tab title. On iPad (the split view detail) there's no such
     /// reserved nav bar, so the padding is just dead space above the title.
     private var titleTopPadding: CGFloat {
-        if horizontalSizeClass == .regular {
+        if isSplitViewDetail {
             return 0
         }
         if #available(iOS 26.0, *) {
@@ -135,7 +135,7 @@ struct SettingsView: View {
             // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: isConfirmingSignOut) {
+            .dsSheet(isPresented: isConfirmingSignOut) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
                     title: L10n.Settings.signOutAlertTitle,
@@ -149,7 +149,7 @@ struct SettingsView: View {
                     onDismiss: { store.send(.cancelSignOutTapped) }
                 )
             }
-            .sheet(isPresented: isConfirmingRemoveAllDownloads) {
+            .dsSheet(isPresented: isConfirmingRemoveAllDownloads) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Settings.removeAllDownloadsTitle,
@@ -163,7 +163,7 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
-            .sheet(isPresented: isConfirmingClearCache) {
+            .dsSheet(isPresented: isConfirmingClearCache) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Settings.clearCacheTitle,
@@ -177,7 +177,7 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
-            .sheet(isPresented: isConfirmingAccountRemoval) {
+            .dsSheet(isPresented: isConfirmingAccountRemoval) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
                     title: L10n.Settings.accountSignOutTitle,
@@ -190,13 +190,13 @@ struct SettingsView: View {
                     onDismiss: { store.send(.removeAccountCancelled) }
                 )
             }
-            .sheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
+            .dsSheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
                 TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
             }
             .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
                 OfflineSelectionView(store: selectionStore)
             }
-            .sheet(isPresented: isConfirmingRemoveOffline) {
+            .dsSheet(isPresented: isConfirmingRemoveOffline) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Offline.removeConfirmTitle,
