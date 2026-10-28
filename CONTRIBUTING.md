@@ -79,11 +79,19 @@ Helpers under `Scripts/`. Two drive localization. The `Localization` package is 
 Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile` (Ruby version in `.ruby-version`). Run `bundle install` once.
 
 - Create an App Store Connect API key (Users and Access › Integrations, App Manager role) and keep the `.p8` outside the repo, e.g. `~/.appstoreconnect/private_keys/`.
-- Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`.
-- `bundle exec fastlane beta` builds a Release archive and uploads it to TestFlight.
-- `bundle exec fastlane release` builds, uploads, waits for processing, then submits the version for App Store review (manual release once approved). Store text and screenshots stay in App Store Connect.
+- Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`, and optionally `GH_USER` (the `gh` account that opens the bump PR).
+- The repo needs **Allow auto-merge** enabled (Settings › General) for the bump PR to merge itself.
 
-Both lanes upload that version's `gen-changelog.py` notes as TestFlight's "What to Test", and require a clean git tree. The build number is the git commit count (stamped at build time) and the version is `MARKETING_VERSION`, so bump the version before releasing.
+Lanes (`bundle exec fastlane <lane>`):
+
+- `unit_tests`: every package's tests on the simulator, same set as CI. Option `device:"iPhone Duo"`.
+- `ui_tests`: the XCUITest suite. Options `device:`, `only_testing:"SettingsUITests,SharedUITests"`.
+- `beta`: Release archive uploaded to TestFlight.
+- `release_dry_run`: tag check, unit tests and a Release archive, nothing uploaded.
+- `release`: from a clean, up to date `main`. Refuses if `v<version>` is already tagged, runs the unit tests, cuts and pushes `release/<version>`, uploads, waits for processing, submits for review (manual release once approved; `phased:true` for a 7 day phased rollout), tags and pushes `v<version>`, then runs `bump`. Store text and screenshots stay in App Store Connect.
+- `bump`: from `main`, opens a `bump/<next version>` PR that raises `MARKETING_VERSION` and merges itself once CI passes. Option `type:` `patch` (default), `minor` or `major`; `release` takes the same as `bump:`.
+
+Uploads carry that version's `gen-changelog.py` notes as TestFlight's "What to Test". The build number is the git commit count, stamped at build time, so it never needs bumping.
 
 ## Questions
 
