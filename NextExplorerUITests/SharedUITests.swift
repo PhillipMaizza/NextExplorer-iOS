@@ -21,7 +21,7 @@ final class SharedUITests: UITestCase {
         let shared = SharedScreen(app: app)
         selectTab(TabBar(app: app).shared, until: shared.byMeSegment)
 
-        shared.withMeSegment.tap()
+        tapCenter(of: shared.withMeSegment)
         XCTAssertTrue(shared.item(ShareFixture.withMe).waitToAppear(), "With me should list shares others sent")
     }
 

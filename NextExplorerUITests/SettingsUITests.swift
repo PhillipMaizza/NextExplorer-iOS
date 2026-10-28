@@ -20,8 +20,7 @@ final class SettingsUITests: UITestCase {
         XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Language row should be reachable")
         settings.languageRow.tap()
 
-        // The language screen pushes with its own navigation bar; a back button proves the push.
-        XCTAssertTrue(settings.pushedBackButton.waitToAppear(), "Tapping Language should push its picker")
+        XCTAssertTrue(settings.languagePickerSystemDefaultSubtitle.waitToAppear(), "Tapping Language should push its picker")
     }
 
     func testOpenThumbnailSettings() {

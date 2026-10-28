@@ -40,7 +40,8 @@ jobs:
   build-and-test:
     name: Build and test
     runs-on: macos-15
-    timeout-minutes: 60
+    # Package tests plus the app build now take 45 to 60 minutes on the hosted runner.
+    timeout-minutes: 90
 
     env:
       SIM_DEVICE: iPhone 16
