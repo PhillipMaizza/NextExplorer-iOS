@@ -56,9 +56,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      # Lint shares this job instead of queueing for a second macOS runner.
+      # Lint shares this job instead of queueing for a second macOS runner. Pinned to the versions
+      # used locally (release binaries, not Homebrew's latest), so a rule added upstream can't fail
+      # CI on its own; bump these together with the local tools.
       - name: Install SwiftFormat and SwiftLint
-        run: brew install swiftformat swiftlint
+        env:
+          SWIFTFORMAT_VERSION: "0.63.0"
+          SWIFTLINT_VERSION: "0.63.2"
+        run: |
+          set -euo pipefail
+          BIN="${RUNNER_TEMP}/lint-bin"
+          mkdir -p "${BIN}"
+          curl -sSfL "https://github.com/nicklockwood/SwiftFormat/releases/download/${SWIFTFORMAT_VERSION}/swiftformat.zip" -o "${RUNNER_TEMP}/swiftformat.zip"
+          curl -sSfL "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip" -o "${RUNNER_TEMP}/swiftlint.zip"
+          unzip -o -q "${RUNNER_TEMP}/swiftformat.zip" -d "${BIN}"
+          unzip -o -q "${RUNNER_TEMP}/swiftlint.zip" -d "${BIN}"
+          chmod +x "${BIN}/swiftformat" "${BIN}/swiftlint"
+          echo "${BIN}" >> "${GITHUB_PATH}"
+          "${BIN}/swiftformat" --version
+          "${BIN}/swiftlint" version
 
       - name: SwiftFormat (check only)
         run: swiftformat . --lint
