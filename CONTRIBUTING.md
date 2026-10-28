@@ -56,10 +56,11 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 
 ## Scripts
 
-Two helpers under `Scripts/` drive localization. The `Localization` package is generated, so localization changes flow through these, not by editing `Localizable.xcstrings` or `L10n.swift` directly.
+Helpers under `Scripts/`. Two drive localization. The `Localization` package is generated, so localization changes flow through these, not by editing `Localizable.xcstrings` or `L10n.swift` directly.
 
 - **`gen-l10n.py`** regenerates the `Localization` package from its human-edited source. `Packages/Localization/strings.tsv` (one `key<TAB>English` per line) is the source of truth; the script rewrites `Localizable.xcstrings` and the two-level `L10n.swift` accessors, folds in each `translations/<lang>.tsv`, falls back to English for missing keys, and re-checks placeholder integrity. Run it after any string change: `python3 Scripts/gen-l10n.py`.
 - **`machine-translate.py`** fills `translations/<lang>.tsv` for the non-hand-authored languages via deep-translator's keyless MyMemory backend. Format specifiers (`%@`, `%lld`, `%1$@`, ...) are masked before translation and restored after, so none are dropped; per-string failures fall back to English. Its output is always re-validated by `gen-l10n.py`.
+- **`gen-changelog.py`** rewrites `CHANGELOG.md` from the history of `main`: every PR lands as one commit and every release PR bumps `MARKETING_VERSION`, so the script groups PR titles by the version they shipped in. Run `python3 Scripts/gen-changelog.py` in a release PR; never edit `CHANGELOG.md` by hand. `--notes <version>` prints one version's notes, which the fastlane lanes upload as TestFlight's "What to Test".
 
 ## Naming and style
 
@@ -72,6 +73,25 @@ Two helpers under `Scripts/` drive localization. The `Localization` package is g
 - Build and run every change on the QA simulator: **iPhone 17 Pro, iOS 27**. Use it for builds, package tests and any visual QA pass.
 - Run the relevant unit and package tests (`Product > Test`, or `xcodebuild test` against a matching simulator) and make sure they pass.
 - Confirm strings are localized, there are no magic numbers, and the app builds cleanly before opening the PR.
+
+## Releasing
+
+Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile` (Ruby version in `.ruby-version`). Run `bundle install` once.
+
+- Create an App Store Connect API key (Users and Access › Integrations, App Manager role) and keep the `.p8` outside the repo, e.g. `~/.appstoreconnect/private_keys/`.
+- Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`, and optionally `GH_USER` (the `gh` account that opens the bump PR).
+- The repo needs **Allow auto-merge** enabled (Settings › General) for the bump PR to merge itself.
+
+Lanes (`bundle exec fastlane <lane>`):
+
+- `unit_tests`: every package's tests on the simulator, same set as CI. Option `device:"iPhone Duo"`.
+- `ui_tests`: the XCUITest suite. Options `device:`, `only_testing:"SettingsUITests,SharedUITests"`.
+- `beta`: Release archive uploaded to TestFlight.
+- `release_dry_run`: tag check, unit tests and a Release archive, nothing uploaded.
+- `release`: from a clean, up to date `main`. Refuses if `v<version>` is already tagged, runs the unit tests, cuts and pushes `release/<version>`, uploads, waits for processing, submits for review and releases automatically once approved (`manual_release:true` to hold it, `phased:true` for a 7 day phased rollout), tags and pushes `v<version>`, then runs `bump`. Store text and screenshots stay in App Store Connect.
+- `bump`: from `main`, opens a `bump/<next version>` PR that raises `MARKETING_VERSION` and merges itself once CI passes. Option `type:` `patch` (default), `minor` or `major`; `release` takes the same as `bump:`.
+
+Uploads carry that version's `gen-changelog.py` notes as TestFlight's "What to Test". The build number is the git commit count, stamped at build time, so it never needs bumping.
 
 ## Questions
 
