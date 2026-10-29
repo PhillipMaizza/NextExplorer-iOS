@@ -188,11 +188,8 @@
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
 
-            // The sidebar profile opens a native menu, exposed as a menu button.
-            app.menuButtons.matching(NSPredicate(format: "label == %@ OR title == %@", L10n.Settings.sectionAccounts, L10n.Settings.sectionAccounts))
-                .firstMatch
-                .click()
-            let signOut = app.menuItems[L10n.MacSettings.signOut]
+            app.labeledButton(L10n.Settings.sectionAccounts).click()
+            let signOut = app.labeledButton(L10n.Settings.signOutButton)
             XCTAssertTrue(signOut.waitToAppear(), "The account menu should offer Sign Out")
             signOut.click()
 
