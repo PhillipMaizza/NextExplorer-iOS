@@ -46,14 +46,17 @@ struct SharedView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                DSSegmentedControl(
-                    options: SharedFeature.Segment.allCases,
-                    selection: segment,
-                    label: { $0.title }
-                )
-                .padding(.horizontal, Constants.segmentedControlHorizontalPadding)
-                .padding(.top, Constants.segmentedControlTopPadding)
-                .padding(.bottom, Constants.segmentedControlBottomPadding)
+                // The Mac picks the segment from a native control in the toolbar instead.
+                #if os(iOS)
+                    DSSegmentedControl(
+                        options: SharedFeature.Segment.allCases,
+                        selection: segment,
+                        label: { $0.title }
+                    )
+                    .padding(.horizontal, Constants.segmentedControlHorizontalPadding)
+                    .padding(.top, Constants.segmentedControlTopPadding)
+                    .padding(.bottom, Constants.segmentedControlBottomPadding)
+                #endif
 
                 #if os(macOS)
                     MacSharedTableView(
@@ -104,6 +107,19 @@ struct SharedView: View {
                 .toolbar {
                     ToolbarItem(placement: .sortControl) {
                         SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
+                    }
+                }
+            #else
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Picker(L10n.Shared.navigationTitle, selection: segment) {
+                            ForEach(SharedFeature.Segment.allCases, id: \.self) { segment in
+                                Text(segment.title).tag(segment)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+                        .fixedSize()
                     }
                 }
             #endif

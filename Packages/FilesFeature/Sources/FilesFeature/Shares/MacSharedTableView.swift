@@ -195,7 +195,8 @@
                 if share.isDirectory {
                     MacTableFolderIcon(image: IconKit.folderFill, tint: Color.accent)
                 } else {
-                    FileTypeIcon(kind: (share.displayName as NSString).pathExtension)
+                    // A custom label often drops the extension; the shared file's own name keeps it.
+                    FileTypeIcon(kind: ((share.sourceName ?? share.sourcePath ?? share.displayName) as NSString).pathExtension)
                         .frame(width: MacBrowseTableMetrics.iconSize, height: MacBrowseTableMetrics.iconSize)
                 }
             }
