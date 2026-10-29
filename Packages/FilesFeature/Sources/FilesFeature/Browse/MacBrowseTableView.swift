@@ -5,7 +5,6 @@
     import DesignSystem
     import FilesClient
     import Localization
-    import QuickLook
     import SwiftUI
 
     /// Generic views can't hold static stored properties, so the shared formatter lives here.
@@ -65,8 +64,9 @@
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         /// The table takes focus when a folder opens, so Cut, Copy and Paste reach it at once.
         @FocusState private var isFocused: Bool
-        /// The local copy Quick Look is showing, fetched through the preview cache.
-        @State private var quickLookURL: URL?
+        /// The system Quick Look panel, showing a local copy fetched through the preview cache.
+        @State private var quickLookPanel = MacQuickLookPanel()
+        @State private var isQuickLooking = false
         @State private var quickLookTask: Task<Void, Never>?
 
         var body: some View {
@@ -157,17 +157,16 @@
                 guard selection.count == 1, let item = item(for: selection.first) else { return .ignored }
                 if item.isDirectory {
                     keyboardActions.getInfo()
-                } else if quickLookURL != nil {
+                } else if quickLookPanel.isVisible {
                     closeQuickLook()
                 } else {
                     quickLook(item)
                 }
                 return .handled
             }
-            .quickLookPreview($quickLookURL)
             // Like Finder, an open Quick Look follows the selection.
             .onChange(of: selection) { _, newSelection in
-                guard quickLookURL != nil else { return }
+                guard isQuickLooking, quickLookPanel.isVisible else { return }
                 if newSelection.count == 1, let item = item(for: newSelection.first), !item.isDirectory {
                     quickLook(item)
                 } else {
@@ -184,6 +183,7 @@
         }
 
         private func quickLook(_ item: FileItem) {
+            isQuickLooking = true
             quickLookTask?.cancel()
             quickLookTask = Task {
                 // The preview endpoint only serves the types the web app previews; anything else
@@ -193,14 +193,28 @@
                 } else {
                     try? await filesClient.downloadRawFile(serverURL, item)
                 }
-                guard let url, !Task.isCancelled else { return }
-                quickLookURL = url
+                guard let url, !Task.isCancelled, isQuickLooking else { return }
+                quickLookPanel.show(url, onMove: moveQuickLookSelection) {
+                    isQuickLooking = false
+                    quickLookTask?.cancel()
+                }
             }
         }
 
         private func closeQuickLook() {
+            isQuickLooking = false
             quickLookTask?.cancel()
-            quickLookURL = nil
+            quickLookPanel.close()
+        }
+
+        /// Up and Down in the Quick Look panel: select the previous or next file in the table,
+        /// skipping folders, and the panel follows the selection.
+        private func moveQuickLookSelection(by offset: Int) {
+            let files = items.filter { !$0.isDirectory }
+            guard let current = selection.first,
+                  let index = files.firstIndex(where: { $0.id == current }),
+                  files.indices.contains(index + offset) else { return }
+            selection = [files[index + offset].id]
         }
 
         private func opacity(for item: FileItem) -> Double {
