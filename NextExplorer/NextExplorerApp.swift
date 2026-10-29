@@ -36,6 +36,11 @@ struct NextExplorerApp: App {
     @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
 
     init() {
+        #if os(macOS)
+            // No window restores (each scene opts out), and leftover saved state from a crash,
+            // Force Quit or test run made AppKit restore nothing, so no window opened at all.
+            UserDefaults.standard.register(defaults: ["ApplePersistenceIgnoreState": true])
+        #endif
         #if DEBUG
             // Swap in the fully mocked, backend free dependency graph when launched by XCUITest.
             // A no op in every normal launch. Runs before the root store is first built in `body`.
@@ -72,6 +77,8 @@ struct NextExplorerApp: App {
         }
         #if os(macOS)
         .defaultSize(width: MacWindow.defaultWidth, height: MacWindow.defaultHeight)
+        // The session comes from the store, so the main window always opens fresh.
+        .restorationBehavior(.disabled)
         .commands { NextExplorerCommands(store: Self.store) }
         #endif
         #if os(macOS)

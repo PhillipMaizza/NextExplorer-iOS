@@ -20,13 +20,7 @@ private struct SyncRefreshFeedback: ViewModifier {
                 didFinishRefreshing.toggle()
             }
         #if os(macOS)
-            .toolbar {
-                // Navigation placement shares one glass capsule with Back on a pushed screen;
-                // as a separate primary action the system drew it there without any background.
-                ToolbarItem(placement: .navigation) {
-                    MacRefreshToolbarButton(onRefresh: onRefresh) { didFinishRefreshing.toggle() }
-                }
-            }
+            .macToolbarRefresh(onRefresh: onRefresh) { didFinishRefreshing.toggle() }
         #endif
             .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in errorMessage == nil }
             .hapticFeedback(.error, trigger: errorMessage) { _, newValue in signalsErrorHaptic && newValue != nil }

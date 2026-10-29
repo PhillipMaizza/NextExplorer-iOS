@@ -284,7 +284,8 @@ struct BrowseContentView: View {
                     iconSize: thumbnailSize.iconSize
                 )
                 .transition(.opacity)
-            } else if viewMode == .table, !store.isSelecting {
+            } else if viewMode == .table, !store.isSelecting, !store.isSearching {
+                // Search results render as the list (scope chips, match lines), as Favorites does.
                 tableContent
                     .transition(.opacity)
             } else if viewMode != .grid {
@@ -303,13 +304,8 @@ struct BrowseContentView: View {
             didFinishRefreshing.toggle()
         }
         #if os(macOS)
-        .toolbar {
-            // See `SyncRefreshFeedback`: shares Back's glass capsule on a pushed screen.
-            ToolbarItem(placement: .navigation) {
-                MacRefreshToolbarButton(onRefresh: { await store.send(.refreshButtonTapped).finish() }) {
-                    didFinishRefreshing.toggle()
-                }
-            }
+        .macToolbarRefresh(onRefresh: { await store.send(.refreshButtonTapped).finish() }) {
+            didFinishRefreshing.toggle()
         }
         #endif
         .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.phase.errorMessage == nil }

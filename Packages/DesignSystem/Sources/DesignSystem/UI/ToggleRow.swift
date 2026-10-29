@@ -48,6 +48,9 @@ public struct DSToggleRow: View {
         }
         #if os(macOS)
         .toggleStyle(.switch)
+        // The tappable label above is its own element on the Mac, which left the switch
+        // itself without a name for VoiceOver.
+        .accessibilityLabel(title)
         #endif
         .tint(Color.accent)
         .hapticFeedback(.selection, trigger: isOn)
