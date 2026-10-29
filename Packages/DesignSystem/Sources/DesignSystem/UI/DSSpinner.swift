@@ -60,6 +60,27 @@ public struct DSSpinner: View {
     }
 
     public var body: some View {
+        #if os(macOS)
+            // The Mac uses its own spinner, sized to the matching control size.
+            ProgressView()
+                .controlSize(macControlSize)
+                .accessibilityLabel(accessibilityLabel)
+        #else
+            ringSpinner
+        #endif
+    }
+
+    #if os(macOS)
+        private var macControlSize: ControlSize {
+            switch size {
+            case .small: .small
+            case .regular: .regular
+            case .large: .large
+            }
+        }
+    #endif
+
+    private var ringSpinner: some View {
         ZStack {
             Circle()
                 .stroke(color.opacity(Constants.trackOpacity), lineWidth: lineWidth)

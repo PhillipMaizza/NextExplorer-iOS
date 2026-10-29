@@ -1,4 +1,5 @@
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -25,6 +26,21 @@ struct EmptyStateView: View {
     @State private var hasAppeared = false
 
     var body: some View {
+        #if os(macOS)
+            // The Mac's own empty state, with Retry as a button under the message.
+            ContentUnavailableView {
+                Label { Text(message) } icon: { icon }
+            } actions: {
+                if let retry {
+                    Button(L10n.Common.retry, action: retry)
+                }
+            }
+        #else
+            phoneBody
+        #endif
+    }
+
+    private var phoneBody: some View {
         VStack(spacing: Constants.spacing) {
             icon
                 .resizable()
