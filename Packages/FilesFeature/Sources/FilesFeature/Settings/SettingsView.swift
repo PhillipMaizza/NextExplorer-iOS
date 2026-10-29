@@ -67,155 +67,213 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            DSGroupedList {
-                if !filter.isActive {
-                    // The Mac switches and signs out accounts from the sidebar's account menu.
-                    #if os(iOS)
-                        SettingsAccountsSection(store: store)
-                    #endif
-                    SettingsProfileSection(store: store)
-                }
-
-                GeneralSettingsSection(store: store, filter: filter)
-                DisplaySettingsSection(store: store, filter: filter)
-
-                if !filter.isActive {
-                    SettingsUsersSection(store: store)
-                    SettingsServerAdminSection(store: store)
-                    SettingsServerStorageSection(store: store)
-                }
-
-                StorageSettingsSection(store: store, filter: filter)
-                OfflineSettingsSection(store: store, filter: filter)
-                SupportSettingsSection(filter: filter)
-                LegalSettingsSection(filter: filter)
-                LicensesSettingsSection(store: store, filter: filter)
+        root
+            .tint(Color.accent)
+            .dsToast(userManagementToastBinding)
+            .dsToast(tipToastBinding)
+            .onChange(of: store.userManagement?.toast) { _, toast in
+                guard let toast else { return }
+                userManagementToast = .success(toast)
             }
-            .groupedListRowVerticalPadding(Metrics.macRowVerticalPadding)
-            .scrollContentBackground(.hidden)
-            .contentMargins(.bottom, Metrics.listBottomPadding, for: .scrollContent)
-            .backgroundGradient()
-            .dismissKeyboardOnTap()
-            #if os(iOS)
-                .safeAreaInset(edge: .top, spacing: 0) {
-                    PinnedTitleSearchHeader(
-                        title: L10n.Settings.navigationTitle,
-                        searchText: $settingsSearch,
-                        extraTopPadding: titleTopPadding,
-                        showsSearchField: false
-                    )
+            .onChange(of: store.tipToast) { _, message in
+                guard let message else { return }
+                tipToast = .success(message)
+                store.send(.tipToastShown)
+            }
+    }
+
+    private var root: some View {
+        #if os(macOS)
+            // The Mac's Settings window: native toolbar tabs, each its own navigation stack.
+            windowChrome(TabView {
+                macTab(L10n.Settings.sectionGeneral, icon: IconKit.gearshape) {
+                    serverDetailsDestination(settingsList {
+                        SettingsProfileSection(store: store)
+                        GeneralSettingsSection(store: store, filter: filter)
+                        DisplaySettingsSection(store: store, filter: filter)
+                    })
                 }
-            #endif
-                .navigationDestination(
-                    item: $store.scope(state: \.userManagement, action: \.userManagement)
-                ) { userManagementStore in
-                    UserManagementView(store: userManagementStore)
+                macTab(L10n.Settings.sectionStorage, icon: IconKit.size) {
+                    offlineDestination(settingsList {
+                        StorageSettingsSection(store: store, filter: filter)
+                        OfflineSettingsSection(store: store, filter: filter)
+                    })
                 }
-                .navigationDestination(
-                    item: changePasswordDestination
-                ) { changePasswordStore in
-                    ChangePasswordView(store: changePasswordStore)
-                }
-                .navigationDestination(
-                    item: $store.scope(state: \.serverDetails, action: \.serverDetails)
-                ) { serverDetailsStore in
-                    ServerDetailsView(store: serverDetailsStore)
-                }
-                .navigationDestination(
-                    item: $store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings)
-                ) { thumbnailStore in
-                    ThumbnailSettingsView(store: thumbnailStore)
-                }
-                .navigationDestination(
-                    item: $store.scope(state: \.accessRules, action: \.accessRules)
-                ) { accessRulesStore in
-                    AccessRulesView(store: accessRulesStore)
-                }
-                .navigationDestination(
-                    item: $store.scope(state: \.offlineManage, action: \.offlineManage)
-                ) { manageStore in
-                    OfflineManageView(store: manageStore)
-                }
-            #if os(macOS)
-                // The Settings window names itself; it has no pinned header.
-                .navigationTitle(L10n.Settings.navigationTitle)
-            #else
-                // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
-                .navigationTitle("")
-            #endif
-                .navigationBarTitleDisplayMode(.inline)
-                // The Mac hosts these at the window level instead, for its sidebar account menu.
-                .modifier(AccountConfirmations(store: store, isEnabled: !AccountConfirmations.isHostedByWindow))
-                .dsAlert(isPresented: isConfirmingRemoveAllDownloads) {
-                    DSAlertSheet(
-                        icon: IconKit.delete,
-                        title: L10n.Settings.removeAllDownloadsTitle,
-                        message: L10n.Settings.removeAllDownloadsMessage,
-                        confirmTitle: L10n.Settings.removeAllDownloadsConfirm,
-                        dismissTitle: L10n.Common.cancel,
-                        role: .destructive,
-                        closeAccessibilityLabel: L10n.Common.close,
-                        onConfirm: { store.send(.removeAllDownloadsConfirmed) },
-                        onDismiss: { store.send(.removeAllDownloadsCancelled) }
-                    )
-                }
-                .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
-                .dsAlert(isPresented: isConfirmingClearCache) {
-                    DSAlertSheet(
-                        icon: IconKit.delete,
-                        title: L10n.Settings.clearCacheTitle,
-                        message: L10n.Settings.clearCacheMessage,
-                        confirmTitle: L10n.Settings.clearCacheConfirm,
-                        dismissTitle: L10n.Common.cancel,
-                        role: .destructive,
-                        closeAccessibilityLabel: L10n.Common.close,
-                        onConfirm: { store.send(.clearCacheConfirmed) },
-                        onDismiss: { store.send(.clearCacheCancelled) }
-                    )
-                }
-                .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
-                .dsSheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
-                    TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
-                }
-                .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
-                    OfflineSelectionView(store: selectionStore)
-                }
-                .dsAlert(isPresented: isConfirmingRemoveOffline) {
-                    DSAlertSheet(
-                        icon: IconKit.delete,
-                        title: L10n.Offline.removeConfirmTitle,
-                        message: L10n.Offline.removeConfirmMessage,
-                        confirmTitle: L10n.Offline.removeConfirm,
-                        dismissTitle: L10n.Common.cancel,
-                        role: .destructive,
-                        closeAccessibilityLabel: L10n.Common.close,
-                        onConfirm: { store.send(.removeOfflineConfirmed) },
-                        onDismiss: { store.send(.removeOfflineCancelled) }
-                    )
-                }
-                .hapticFeedback(.warning, trigger: store.removeOfflineConfirmationIsPresented)
-                .task {
-                    store.send(.onAppear)
-                }
-                .onChange(of: store.offlineProgress.phase) { _, phase in
-                    if phase == .completed {
-                        store.send(.refreshOfflineSize)
+                if store.user.isAdmin {
+                    macTab(L10n.Settings.sectionAdmin, icon: IconKit.people) {
+                        adminDestinations(settingsList {
+                            SettingsUsersSection(store: store)
+                            SettingsServerAdminSection(store: store)
+                            SettingsServerStorageSection(store: store)
+                        })
                     }
                 }
+                macTab(L10n.Settings.sectionInfo, icon: IconKit.info) {
+                    settingsList {
+                        SupportSettingsSection(filter: filter)
+                        LegalSettingsSection(filter: filter)
+                        LicensesSettingsSection(store: store, filter: filter)
+                    }
+                }
+            })
+        #else
+            NavigationStack {
+                windowChrome(
+                    adminDestinations(offlineDestination(serverDetailsDestination(changePasswordDestinationView(
+                        settingsList {
+                            if !filter.isActive {
+                                SettingsAccountsSection(store: store)
+                                SettingsProfileSection(store: store)
+                            }
+
+                            GeneralSettingsSection(store: store, filter: filter)
+                            DisplaySettingsSection(store: store, filter: filter)
+
+                            if !filter.isActive {
+                                SettingsUsersSection(store: store)
+                                SettingsServerAdminSection(store: store)
+                                SettingsServerStorageSection(store: store)
+                            }
+
+                            StorageSettingsSection(store: store, filter: filter)
+                            OfflineSettingsSection(store: store, filter: filter)
+                            SupportSettingsSection(filter: filter)
+                            LegalSettingsSection(filter: filter)
+                            LicensesSettingsSection(store: store, filter: filter)
+                        }
+                    ))))
+                )
+            }
+        #endif
+    }
+
+    /// The grouped list every Settings page shares, with its title.
+    private func settingsList(@ViewBuilder _ sections: () -> some View) -> some View {
+        DSGroupedList {
+            sections()
         }
-        .tint(Color.accent)
-        .dsToast(userManagementToastBinding)
-        .dsToast(tipToastBinding)
-        .onChange(of: store.userManagement?.toast) { _, toast in
-            guard let toast else { return }
-            userManagementToast = .success(toast)
+        .groupedListRowVerticalPadding(Metrics.macRowVerticalPadding)
+        .scrollContentBackground(.hidden)
+        .contentMargins(.bottom, Metrics.listBottomPadding, for: .scrollContent)
+        .backgroundGradient()
+        .dismissKeyboardOnTap()
+        #if os(iOS)
+            .safeAreaInset(edge: .top, spacing: 0) {
+                PinnedTitleSearchHeader(
+                    title: L10n.Settings.navigationTitle,
+                    searchText: $settingsSearch,
+                    extraTopPadding: titleTopPadding,
+                    showsSearchField: false
+                )
+            }
+            // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
+            .navigationTitle("")
+            .navigationBarTitleDisplayMode(.inline)
+        #else
+            // The Settings window names itself; it has no pinned header.
+            .navigationTitle(L10n.Settings.navigationTitle)
+        #endif
+    }
+
+    #if os(macOS)
+        private func macTab(_ title: String, icon: Image, @ViewBuilder content: () -> some View) -> some View {
+            NavigationStack { content() }
+                .tabItem { Label { Text(title) } icon: { icon } }
         }
-        .onChange(of: store.tipToast) { _, message in
-            guard let message else { return }
-            tipToast = .success(message)
-            store.send(.tipToastShown)
+    #endif
+
+    private func serverDetailsDestination(_ content: some View) -> some View {
+        content.navigationDestination(item: $store.scope(state: \.serverDetails, action: \.serverDetails)) { serverDetailsStore in
+            ServerDetailsView(store: serverDetailsStore)
         }
+    }
+
+    private func changePasswordDestinationView(_ content: some View) -> some View {
+        content.navigationDestination(item: changePasswordDestination) { changePasswordStore in
+            ChangePasswordView(store: changePasswordStore)
+        }
+    }
+
+    private func offlineDestination(_ content: some View) -> some View {
+        content.navigationDestination(item: $store.scope(state: \.offlineManage, action: \.offlineManage)) { manageStore in
+            OfflineManageView(store: manageStore)
+        }
+    }
+
+    private func adminDestinations(_ content: some View) -> some View {
+        content
+            .navigationDestination(item: $store.scope(state: \.userManagement, action: \.userManagement)) { userManagementStore in
+                UserManagementView(store: userManagementStore)
+            }
+            .navigationDestination(item: $store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings)) { thumbnailStore in
+                ThumbnailSettingsView(store: thumbnailStore)
+            }
+            .navigationDestination(item: $store.scope(state: \.accessRules, action: \.accessRules)) { accessRulesStore in
+                AccessRulesView(store: accessRulesStore)
+            }
+    }
+
+    /// Confirmations, sheets and the load task, attached once around the whole Settings UI.
+    private func windowChrome(_ content: some View) -> some View {
+        content
+            // The Mac hosts these at the window level instead, for its sidebar account menu.
+            .modifier(AccountConfirmations(store: store, isEnabled: !AccountConfirmations.isHostedByWindow))
+            .dsAlert(isPresented: isConfirmingRemoveAllDownloads) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: L10n.Settings.removeAllDownloadsTitle,
+                    message: L10n.Settings.removeAllDownloadsMessage,
+                    confirmTitle: L10n.Settings.removeAllDownloadsConfirm,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.removeAllDownloadsConfirmed) },
+                    onDismiss: { store.send(.removeAllDownloadsCancelled) }
+                )
+            }
+            .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
+            .dsAlert(isPresented: isConfirmingClearCache) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: L10n.Settings.clearCacheTitle,
+                    message: L10n.Settings.clearCacheMessage,
+                    confirmTitle: L10n.Settings.clearCacheConfirm,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.clearCacheConfirmed) },
+                    onDismiss: { store.send(.clearCacheCancelled) }
+                )
+            }
+            .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
+            .dsSheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
+                TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
+            }
+            .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
+                OfflineSelectionView(store: selectionStore)
+            }
+            .dsAlert(isPresented: isConfirmingRemoveOffline) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: L10n.Offline.removeConfirmTitle,
+                    message: L10n.Offline.removeConfirmMessage,
+                    confirmTitle: L10n.Offline.removeConfirm,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.removeOfflineConfirmed) },
+                    onDismiss: { store.send(.removeOfflineCancelled) }
+                )
+            }
+            .hapticFeedback(.warning, trigger: store.removeOfflineConfirmationIsPresented)
+            .task {
+                store.send(.onAppear)
+            }
+            .onChange(of: store.offlineProgress.phase) { _, phase in
+                if phase == .completed {
+                    store.send(.refreshOfflineSize)
+                }
+            }
     }
 
     private var tipToastBinding: Binding<DSToastMessage?> {
