@@ -650,3 +650,18 @@ browse.downloadSavedTo	Guardado en %@
 browse.downloadSavedCountTo	Se guardaron %1$lld de %2$lld elementos en %3$@
 browse.downloadSavedAllTo	Se guardaron %1$lld elementos en %2$@
 browse.downloadBulkFailed	No se pudieron guardar estos elementos en tu dispositivo.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Añadir cuenta…
+macSettings.changePassword	Cambiar contraseña…
+macSettings.signOut	Cerrar sesión…
+macSettings.switchAccount	Cambiar a esta cuenta
+macSettings.username	Nombre de usuario
+macSettings.email	Correo electrónico
+macSettings.role	Rol
+macSettings.roleAdmin	Administrador
+macSettings.roleUser	Usuario
+macSettings.status	Estado
+macSettings.statusSignedIn	Sesión iniciada
+macSettings.manage	Gestionar…
+macSettings.cache	Caché
+macSettings.support	Ayuda y soporte…

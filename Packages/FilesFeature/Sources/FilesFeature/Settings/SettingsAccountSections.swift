@@ -33,19 +33,8 @@ struct SettingsAccountsSection: View {
     let store: StoreOf<SettingsFeature>
     @State private var isActiveAccountExpanded = false
 
-    /// The active account. Falls back to one synthesized from the signed-in user + server when the
-    /// shared account list hasn't been populated yet (a fresh mount before the switcher refresh, or
-    /// a preview), so the active-account row, password change and sign out are always present.
     private var activeAccount: AccountSummary {
-        if let active = store.accounts.first(where: \.isActive) {
-            return active
-        }
-        return AccountSummary(
-            id: store.serverURL.absoluteString + "|" + store.user.username,
-            username: store.displayName,
-            serverURL: store.serverURL,
-            isActive: true
-        )
+        store.activeAccount
     }
 
     var body: some View {
@@ -178,6 +167,23 @@ struct SettingsAccountsSection: View {
             store.send(.addAccountTapped)
         }
         .disabled(store.isSigningOut)
+    }
+}
+
+extension SettingsFeature.State {
+    /// The active account. Falls back to one synthesized from the signed-in user + server when the
+    /// shared account list hasn't been populated yet (a fresh mount before the switcher refresh, or
+    /// a preview), so the active-account row, password change and sign out are always present.
+    var activeAccount: AccountSummary {
+        if let active = accounts.first(where: \.isActive) {
+            return active
+        }
+        return AccountSummary(
+            id: serverURL.absoluteString + "|" + user.username,
+            username: displayName,
+            serverURL: serverURL,
+            isActive: true
+        )
     }
 }
 

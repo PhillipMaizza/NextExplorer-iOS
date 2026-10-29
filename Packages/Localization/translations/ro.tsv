@@ -650,3 +650,18 @@ browse.downloadSavedTo	Salvat în %@
 browse.downloadSavedCountTo	Salvate %1$lld din %2$lld elemente în %3$@
 browse.downloadSavedAllTo	Salvate %1$lld elemente în %2$@
 browse.downloadBulkFailed	Nu s-au putut salva aceste elemente pe dispozitiv.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Adaugă cont…
+macSettings.changePassword	Schimbă parola…
+macSettings.signOut	Deconectare…
+macSettings.switchAccount	Comută la acest cont
+macSettings.username	Nume de utilizator
+macSettings.email	E-mail
+macSettings.role	Rol
+macSettings.roleAdmin	Administrator
+macSettings.roleUser	Utilizator
+macSettings.status	Stare
+macSettings.statusSignedIn	Conectat
+macSettings.manage	Gestionează…
+macSettings.cache	Cache
+macSettings.support	Ajutor și asistență…

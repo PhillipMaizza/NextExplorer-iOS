@@ -650,3 +650,18 @@ browse.downloadSavedTo	Salvato in %@
 browse.downloadSavedCountTo	Salvati %1$lld di %2$lld elementi in %3$@
 browse.downloadSavedAllTo	Salvati %1$lld elementi in %2$@
 browse.downloadBulkFailed	Impossibile salvare questi elementi sul dispositivo.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Aggiungi account…
+macSettings.changePassword	Cambia password…
+macSettings.signOut	Esci…
+macSettings.switchAccount	Passa a questo account
+macSettings.username	Nome utente
+macSettings.email	Email
+macSettings.role	Ruolo
+macSettings.roleAdmin	Amministratore
+macSettings.roleUser	Utente
+macSettings.status	Stato
+macSettings.statusSignedIn	Accesso eseguito
+macSettings.manage	Gestisci…
+macSettings.cache	Cache
+macSettings.support	Aiuto e supporto…

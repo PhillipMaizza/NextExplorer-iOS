@@ -650,3 +650,18 @@ browse.downloadSavedTo	Zapisano w %@
 browse.downloadSavedCountTo	Zapisano %1$lld z %2$lld elementów w %3$@
 browse.downloadSavedAllTo	Zapisano %1$lld elementów w %2$@
 browse.downloadBulkFailed	Nie można zapisać tych elementów na urządzeniu.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Dodaj konto…
+macSettings.changePassword	Zmień hasło…
+macSettings.signOut	Wyloguj…
+macSettings.switchAccount	Przełącz na to konto
+macSettings.username	Nazwa użytkownika
+macSettings.email	E-mail
+macSettings.role	Rola
+macSettings.roleAdmin	Administrator
+macSettings.roleUser	Użytkownik
+macSettings.status	Stan
+macSettings.statusSignedIn	Zalogowano
+macSettings.manage	Zarządzaj…
+macSettings.cache	Pamięć podręczna
+macSettings.support	Pomoc i wsparcie…

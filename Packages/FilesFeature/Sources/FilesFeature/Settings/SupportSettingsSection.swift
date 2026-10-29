@@ -10,6 +10,8 @@ private enum Constants {
 /// Hosted pages the app links to outside Settings' legal rows.
 public enum AppLinks {
     public static let support = URL(string: "https://phillipmaizza.com/nextexplorer")!
+    static let privacy = URL(string: "https://phillipmaizza.com/nextexplorer/privacy.html")!
+    static let terms = URL(string: "https://phillipmaizza.com/nextexplorer/terms.html")!
 }
 
 /// Rate the app through the native App Store prompt, and reach the support site.

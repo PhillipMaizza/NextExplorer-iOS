@@ -650,3 +650,18 @@ browse.downloadSavedTo	Sparad i %@
 browse.downloadSavedCountTo	Sparade %1$lld av %2$lld objekt i %3$@
 browse.downloadSavedAllTo	Sparade %1$lld objekt i %2$@
 browse.downloadBulkFailed	Det gick inte att spara dessa objekt på din enhet.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Lägg till konto…
+macSettings.changePassword	Ändra lösenord…
+macSettings.signOut	Logga ut…
+macSettings.switchAccount	Byt till det här kontot
+macSettings.username	Användarnamn
+macSettings.email	E-post
+macSettings.role	Roll
+macSettings.roleAdmin	Administratör
+macSettings.roleUser	Användare
+macSettings.status	Status
+macSettings.statusSignedIn	Inloggad
+macSettings.manage	Hantera…
+macSettings.cache	Cache
+macSettings.support	Hjälp och support…

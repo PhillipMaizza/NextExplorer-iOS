@@ -650,3 +650,18 @@ browse.downloadSavedTo	Enregistré dans %@
 browse.downloadSavedCountTo	%1$lld éléments sur %2$lld enregistrés dans %3$@
 browse.downloadSavedAllTo	%1$lld éléments enregistrés dans %2$@
 browse.downloadBulkFailed	Impossible d'enregistrer ces éléments sur votre appareil.
+macSettings.labelFormat	%@ :
+macSettings.addAccount	Ajouter un compte…
+macSettings.changePassword	Modifier le mot de passe…
+macSettings.signOut	Se déconnecter…
+macSettings.switchAccount	Passer à ce compte
+macSettings.username	Nom d’utilisateur
+macSettings.email	E-mail
+macSettings.role	Rôle
+macSettings.roleAdmin	Administrateur
+macSettings.roleUser	Utilisateur
+macSettings.status	État
+macSettings.statusSignedIn	Connecté
+macSettings.manage	Gérer…
+macSettings.cache	Cache
+macSettings.support	Aide et assistance…

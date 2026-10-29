@@ -354,6 +354,23 @@ public enum L10n {
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }
+    public enum MacSettings {
+        public static var addAccount: String { tr("macSettings.addAccount") }  // "Add Account…"
+        public static var cache: String { tr("macSettings.cache") }  // "Cache"
+        public static var changePassword: String { tr("macSettings.changePassword") }  // "Change Password…"
+        public static var email: String { tr("macSettings.email") }  // "Email"
+        public static func labelFormat(_ a0: CVarArg) -> String { tr("macSettings.labelFormat", a0) }
+        public static var manage: String { tr("macSettings.manage") }  // "Manage…"
+        public static var role: String { tr("macSettings.role") }  // "Role"
+        public static var roleAdmin: String { tr("macSettings.roleAdmin") }  // "Administrator"
+        public static var roleUser: String { tr("macSettings.roleUser") }  // "User"
+        public static var signOut: String { tr("macSettings.signOut") }  // "Sign Out…"
+        public static var status: String { tr("macSettings.status") }  // "Status"
+        public static var statusSignedIn: String { tr("macSettings.statusSignedIn") }  // "Signed In"
+        public static var support: String { tr("macSettings.support") }  // "Help & Support…"
+        public static var switchAccount: String { tr("macSettings.switchAccount") }  // "Switch to This Account"
+        public static var username: String { tr("macSettings.username") }  // "Username"
+    }
     public enum Menu {
         public static var about: String { tr("menu.about") }  // "About NextExplorer"
         public static var enclosingFolder: String { tr("menu.enclosingFolder") }  // "Enclosing Folder"

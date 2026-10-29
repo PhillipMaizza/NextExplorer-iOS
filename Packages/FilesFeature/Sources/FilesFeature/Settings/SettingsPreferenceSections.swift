@@ -309,20 +309,14 @@ struct LegalSettingsSection: View {
 
     @Environment(\.openURL) private var openURL
 
-    /// Hosted alongside the app's site. Update these if the pages move.
-    private enum Links {
-        static let privacy = "https://phillipmaizza.com/nextexplorer/privacy.html"
-        static let terms = "https://phillipmaizza.com/nextexplorer/terms.html"
-    }
-
     var body: some View {
         if filter.anyMatch([L10n.Settings.rowPrivacyPolicy, L10n.Settings.rowTermsOfUse]) {
             Section {
                 if filter.matches(L10n.Settings.rowPrivacyPolicy) {
-                    legalRow(title: L10n.Settings.rowPrivacyPolicy, icon: IconKit.shield, link: Links.privacy)
+                    legalRow(title: L10n.Settings.rowPrivacyPolicy, icon: IconKit.shield, link: AppLinks.privacy)
                 }
                 if filter.matches(L10n.Settings.rowTermsOfUse) {
-                    legalRow(title: L10n.Settings.rowTermsOfUse, icon: IconKit.document, link: Links.terms)
+                    legalRow(title: L10n.Settings.rowTermsOfUse, icon: IconKit.document, link: AppLinks.terms)
                 }
             } header: {
                 sectionHeader(L10n.Settings.sectionLegal)
@@ -331,11 +325,9 @@ struct LegalSettingsSection: View {
         }
     }
 
-    private func legalRow(title: String, icon: Image, link: String) -> some View {
+    private func legalRow(title: String, icon: Image, link: URL) -> some View {
         Button {
-            if let url = URL(string: link) {
-                openURL(url)
-            }
+            openURL(link)
         } label: {
             Label {
                 HStack {

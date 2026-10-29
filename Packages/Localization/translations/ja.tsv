@@ -650,3 +650,18 @@ browse.downloadSavedTo	%@ に保存しました
 browse.downloadSavedCountTo	%2$lld 件中 %1$lld 件を %3$@ に保存しました
 browse.downloadSavedAllTo	%1$lld 件を %2$@ に保存しました
 browse.downloadBulkFailed	これらの項目をデバイスに保存できませんでした。
+macSettings.labelFormat	%@：
+macSettings.addAccount	アカウントを追加…
+macSettings.changePassword	パスワードを変更…
+macSettings.signOut	サインアウト…
+macSettings.switchAccount	このアカウントに切り替える
+macSettings.username	ユーザー名
+macSettings.email	メール
+macSettings.role	役割
+macSettings.roleAdmin	管理者
+macSettings.roleUser	ユーザー
+macSettings.status	状態
+macSettings.statusSignedIn	サインイン済み
+macSettings.manage	管理…
+macSettings.cache	キャッシュ
+macSettings.support	ヘルプとサポート…

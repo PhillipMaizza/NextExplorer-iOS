@@ -650,3 +650,18 @@ browse.downloadSavedTo	تم الحفظ في %@
 browse.downloadSavedCountTo	تم حفظ %1$lld من %2$lld عنصر في %3$@
 browse.downloadSavedAllTo	تم حفظ %1$lld عنصر في %2$@
 browse.downloadBulkFailed	تعذّر حفظ هذه العناصر على جهازك.
+macSettings.labelFormat	%@:
+macSettings.addAccount	إضافة حساب…
+macSettings.changePassword	تغيير كلمة المرور…
+macSettings.signOut	تسجيل الخروج…
+macSettings.switchAccount	التبديل إلى هذا الحساب
+macSettings.username	اسم المستخدم
+macSettings.email	البريد الإلكتروني
+macSettings.role	الدور
+macSettings.roleAdmin	مسؤول
+macSettings.roleUser	مستخدم
+macSettings.status	الحالة
+macSettings.statusSignedIn	مسجّل الدخول
+macSettings.manage	إدارة…
+macSettings.cache	ذاكرة التخزين المؤقت
+macSettings.support	المساعدة والدعم…

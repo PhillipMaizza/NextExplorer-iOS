@@ -1,78 +1,83 @@
 #if os(macOS)
+    import AppKit
     import DesignSystem
     import Localization
+    import StoreKit
     import SwiftUI
 
     private enum Metrics {
-        static let width: CGFloat = 420
-        static let height: CGFloat = 660
-        static let logoSize: CGFloat = 72
-        static let headerSpacing: CGFloat = .space8
-        static let headerTopPadding: CGFloat = .space24
-        static let rowIconSize: CGFloat = .iconSmall
+        static let iconSize: CGFloat = 128
+        static let columnSpacing: CGFloat = .space32
+        static let infoSpacing: CGFloat = .space8
+        static let linkSpacing: CGFloat = .space4
+        static let sectionSpacing: CGFloat = .space24
+        static let padding: CGFloat = .space32
+        static let width: CGFloat = 520
+        static let licensesWidth: CGFloat = 520
+        static let licensesHeight: CGFloat = 600
     }
 
-    /// The Mac's About NextExplorer window (app menu): who made it, the version, and the
-    /// support, legal and license links the Settings window no longer carries.
+    /// The Mac's About NextExplorer window (app menu): the app icon beside its name, version and
+    /// links, with the credits underneath, like a native Mac app's About pane.
     public struct MacAboutView: View {
         public static let windowID = "about"
+
+        @Environment(\.requestReview) private var requestReview
+        @Environment(\.openURL) private var openURL
+        @State private var isShowingLicenses = false
 
         public init() {}
 
         public var body: some View {
-            NavigationStack {
-                DSGroupedList {
-                    Section {
-                        header
-                    }
-                    SupportSettingsSection(filter: SettingsSearchFilter(query: ""))
-                    LegalSettingsSection(filter: SettingsSearchFilter(query: ""))
-                    Section {
-                        NavigationLink {
-                            LicensesView()
-                        } label: {
-                            Label {
-                                Text(L10n.Settings.rowOpenSourceLicenses).type(.body2(.regular), style: .primaryOnSurface)
-                            } icon: {
-                                IconKit.document
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundStyle(Color.secondaryDS)
-                                    .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
-                            }
-                            .fullRowHitArea()
-                        }
-                    } header: {
-                        DSFieldLabel(L10n.Settings.sectionLicenses)
-                            .accessibilityAddTraits(.isHeader)
-                    }
+            VStack(spacing: Metrics.sectionSpacing) {
+                HStack(alignment: .top, spacing: Metrics.columnSpacing) {
+                    Image(nsImage: NSApplication.shared.applicationIconImage)
+                        .resizable()
+                        .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+                        .accessibilityHidden(true)
+                    info
                 }
-                .groupedListUsesNativeForm()
-                .scrollContentBackground(.hidden)
-                .backgroundGradient()
-                .navigationTitle(L10n.Menu.about)
+                Text(L10n.Settings.creditsMadeBy)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
             }
-            .frame(width: Metrics.width, height: Metrics.height)
-            .tint(Color.accent)
+            .padding(Metrics.padding)
+            .frame(width: Metrics.width)
+            .sheet(isPresented: $isShowingLicenses) {
+                NavigationStack {
+                    LicensesView()
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button(L10n.Common.close) { isShowingLicenses = false }
+                            }
+                        }
+                }
+                .frame(width: Metrics.licensesWidth, height: Metrics.licensesHeight)
+            }
         }
 
-        private var header: some View {
-            VStack(spacing: Metrics.headerSpacing) {
-                IconKit.logo
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Metrics.logoSize, height: Metrics.logoSize)
-                    .accessibilityHidden(true)
+        private var info: some View {
+            VStack(alignment: .leading, spacing: Metrics.infoSpacing) {
                 Text(Self.appName)
-                    .type(.headline3, style: .primaryOnSurface)
+                    .font(.title2.weight(.semibold))
                 Text(Self.versionText)
-                    .type(.body3(.regular), style: .tertiary)
-                Text(L10n.Settings.creditsMadeBy)
-                    .type(.body3(.regular), style: .tertiary)
+                    .foregroundStyle(.secondary)
+                    .textSelection(.enabled)
+                VStack(alignment: .leading, spacing: Metrics.linkSpacing) {
+                    Button(L10n.Settings.rowOpenSourceLicenses) { isShowingLicenses = true }
+                    Button(L10n.Settings.rowPrivacyPolicy) { openURL(AppLinks.privacy) }
+                    Button(L10n.Settings.rowTermsOfUse) { openURL(AppLinks.terms) }
+                }
+                .buttonStyle(.link)
+                .padding(.vertical, Metrics.infoSpacing)
+                HStack {
+                    Button(L10n.MacSettings.support) { openURL(AppLinks.support) }
+                    Button(L10n.Settings.rowRateApp) { requestReview() }
+                }
+                .controlSize(.large)
             }
-            .multilineTextAlignment(.center)
-            .frame(maxWidth: .infinity)
-            .padding(.top, Metrics.headerTopPadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
 
         private static var appName: String {

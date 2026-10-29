@@ -650,3 +650,18 @@ browse.downloadSavedTo	Сохранено в %@
 browse.downloadSavedCountTo	Сохранено %1$lld из %2$lld объектов в %3$@
 browse.downloadSavedAllTo	Сохранено объектов: %1$lld в %2$@
 browse.downloadBulkFailed	Не удалось сохранить эти объекты на устройство.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Добавить аккаунт…
+macSettings.changePassword	Изменить пароль…
+macSettings.signOut	Выйти…
+macSettings.switchAccount	Переключиться на этот аккаунт
+macSettings.username	Имя пользователя
+macSettings.email	Эл. почта
+macSettings.role	Роль
+macSettings.roleAdmin	Администратор
+macSettings.roleUser	Пользователь
+macSettings.status	Статус
+macSettings.statusSignedIn	Вход выполнен
+macSettings.manage	Управлять…
+macSettings.cache	Кэш
+macSettings.support	Помощь и поддержка…

@@ -650,3 +650,18 @@ browse.downloadSavedTo	Gesichert in %@
 browse.downloadSavedCountTo	%1$lld von %2$lld Objekten in %3$@ gesichert
 browse.downloadSavedAllTo	%1$lld Objekte in %2$@ gesichert
 browse.downloadBulkFailed	Diese Objekte konnten nicht auf deinem Gerät gesichert werden.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Account hinzufügen …
+macSettings.changePassword	Passwort ändern …
+macSettings.signOut	Abmelden …
+macSettings.switchAccount	Zu diesem Account wechseln
+macSettings.username	Benutzername
+macSettings.email	E-Mail
+macSettings.role	Rolle
+macSettings.roleAdmin	Administrator
+macSettings.roleUser	Benutzer
+macSettings.status	Status
+macSettings.statusSignedIn	Angemeldet
+macSettings.manage	Verwalten …
+macSettings.cache	Cache
+macSettings.support	Hilfe & Support …

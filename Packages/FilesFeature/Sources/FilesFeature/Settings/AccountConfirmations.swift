@@ -18,6 +18,25 @@ struct AccountConfirmations: ViewModifier {
     let store: StoreOf<SettingsFeature>
     var isEnabled = true
 
+    #if os(macOS)
+        /// The main window and the Settings window both host these; the one that was active when
+        /// the prompt was raised shows it, so it never appears twice or behind the wrong window.
+        @Environment(\.appearsActive) private var appearsActive
+        @State private var ownsPrompt = false
+    #endif
+
+    private var isPromptPending: Bool {
+        store.isConfirmingSignOut || store.accountPendingRemoval != nil || store.changePassword != nil
+    }
+
+    private var showsPrompts: Bool {
+        #if os(macOS)
+            isEnabled && ownsPrompt
+        #else
+            isEnabled
+        #endif
+    }
+
     static var isHostedByWindow: Bool {
         #if os(macOS)
             true
@@ -30,7 +49,7 @@ struct AccountConfirmations: ViewModifier {
     private var changePasswordSheet: Binding<StoreOf<ChangePasswordFeature>?> {
         Binding(
             get: {
-                guard isEnabled, Self.isHostedByWindow else { return nil }
+                guard showsPrompts, Self.isHostedByWindow else { return nil }
                 return store.scope(state: \.changePassword, action: \.changePassword.presented)
             },
             set: { newValue in
@@ -54,7 +73,7 @@ struct AccountConfirmations: ViewModifier {
                 }
                 .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
             }
-            .dsAlert(isPresented: Binding(get: { isEnabled && store.isConfirmingSignOut }, set: { _ in })) {
+            .dsAlert(isPresented: Binding(get: { showsPrompts && store.isConfirmingSignOut }, set: { _ in })) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
                     title: L10n.Settings.signOutAlertTitle,
@@ -68,7 +87,7 @@ struct AccountConfirmations: ViewModifier {
                     onDismiss: { store.send(.cancelSignOutTapped) }
                 )
             }
-            .dsAlert(isPresented: Binding(get: { isEnabled && store.accountPendingRemoval != nil }, set: { _ in })) {
+            .dsAlert(isPresented: Binding(get: { showsPrompts && store.accountPendingRemoval != nil }, set: { _ in })) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
                     title: L10n.Settings.accountSignOutTitle,
@@ -81,5 +100,10 @@ struct AccountConfirmations: ViewModifier {
                     onDismiss: { store.send(.removeAccountCancelled) }
                 )
             }
+        #if os(macOS)
+            .onChange(of: isPromptPending) { _, pending in
+                ownsPrompt = pending && appearsActive
+            }
+        #endif
     }
 }

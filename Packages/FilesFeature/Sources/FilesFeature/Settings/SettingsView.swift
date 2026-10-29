@@ -67,7 +67,9 @@ struct SettingsView: View {
 
     var body: some View {
         root
+        #if os(iOS)
             .tint(Color.accent)
+        #endif
             .dsToast(userManagementToastBinding)
             .onChange(of: store.userManagement?.toast) { _, toast in
                 guard let toast else { return }
@@ -77,36 +79,7 @@ struct SettingsView: View {
 
     private var root: some View {
         #if os(macOS)
-            // The Mac's Settings window: native toolbar tabs, each its own navigation stack. The
-            // support, legal and license links live in About NextExplorer instead.
-            windowChrome(TabView {
-                macTab(L10n.Settings.sectionGeneral, icon: IconKit.gearshape) {
-                    settingsList {
-                        GeneralSettingsSection(store: store, filter: filter)
-                        DisplaySettingsSection(store: store, filter: filter)
-                    }
-                }
-                if store.user.isAdmin {
-                    macTab(L10n.Settings.rowServer, icon: IconKit.server) {
-                        serverTab
-                    }
-                }
-                macTab(L10n.Settings.sectionStorage, icon: IconKit.size) {
-                    offlineDestination(settingsList {
-                        StorageSettingsSection(store: store, filter: filter)
-                        OfflineSettingsSection(store: store, filter: filter)
-                    })
-                }
-                if store.user.isAdmin {
-                    macTab(L10n.Settings.sectionAdmin, icon: IconKit.people) {
-                        adminDestinations(settingsList {
-                            SettingsUsersSection(store: store)
-                            SettingsServerAdminSection(store: store)
-                            SettingsServerStorageSection(store: store)
-                        })
-                    }
-                }
-            })
+            windowChrome(MacSettingsRoot(store: store))
         #else
             NavigationStack {
                 windowChrome(
@@ -166,24 +139,6 @@ struct SettingsView: View {
         #endif
     }
 
-    #if os(macOS)
-        /// The server form itself, already editable with its save button, rather than a row
-        /// pushing it.
-        @ViewBuilder
-        private var serverTab: some View {
-            if let serverDetailsStore = store.scope(state: \.serverDetails, action: \.serverDetails.presented) {
-                ServerDetailsView(store: serverDetailsStore)
-            } else {
-                Color.clear.onAppear { store.send(.serverDetailsButtonTapped) }
-            }
-        }
-
-        private func macTab(_ title: String, icon: Image, @ViewBuilder content: () -> some View) -> some View {
-            NavigationStack { content() }
-                .tabItem { Label { Text(title) } icon: { icon } }
-        }
-    #endif
-
     private func serverDetailsDestination(_ content: some View) -> some View {
         content.navigationDestination(item: $store.scope(state: \.serverDetails, action: \.serverDetails)) { serverDetailsStore in
             ServerDetailsView(store: serverDetailsStore)
@@ -218,8 +173,9 @@ struct SettingsView: View {
     /// Confirmations, sheets and the load task, attached once around the whole Settings UI.
     private func windowChrome(_ content: some View) -> some View {
         content
-            // The Mac hosts these at the window level instead, for its sidebar account menu.
-            .modifier(AccountConfirmations(store: store, isEnabled: !AccountConfirmations.isHostedByWindow))
+            // On the Mac the main window hosts these too, for its sidebar account menu; whichever
+            // window raised a prompt shows it.
+            .modifier(AccountConfirmations(store: store))
             .dsAlert(isPresented: isConfirmingRemoveAllDownloads) {
                 DSAlertSheet(
                     icon: IconKit.delete,

@@ -724,3 +724,18 @@ downloadQueue.savedMany	%lld items saved to Downloads
 downloadQueue.bytesOf	%1$@ of %2$@
 downloadQueue.timeLeft	%@ left
 browse.sectionPersonal	Personal
+macSettings.labelFormat	%@:
+macSettings.addAccount	Add Account…
+macSettings.changePassword	Change Password…
+macSettings.signOut	Sign Out…
+macSettings.switchAccount	Switch to This Account
+macSettings.username	Username
+macSettings.email	Email
+macSettings.role	Role
+macSettings.roleAdmin	Administrator
+macSettings.roleUser	User
+macSettings.status	Status
+macSettings.statusSignedIn	Signed In
+macSettings.manage	Manage…
+macSettings.cache	Cache
+macSettings.support	Help & Support…

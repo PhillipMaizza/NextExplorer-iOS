@@ -650,3 +650,18 @@ browse.downloadSavedTo	%@에 저장됨
 browse.downloadSavedCountTo	%2$lld개 중 %1$lld개 항목을 %3$@에 저장함
 browse.downloadSavedAllTo	%1$lld개 항목을 %2$@에 저장함
 browse.downloadBulkFailed	이 항목을 기기에 저장할 수 없습니다.
+macSettings.labelFormat	%@:
+macSettings.addAccount	계정 추가…
+macSettings.changePassword	암호 변경…
+macSettings.signOut	로그아웃…
+macSettings.switchAccount	이 계정으로 전환
+macSettings.username	사용자 이름
+macSettings.email	이메일
+macSettings.role	역할
+macSettings.roleAdmin	관리자
+macSettings.roleUser	사용자
+macSettings.status	상태
+macSettings.statusSignedIn	로그인됨
+macSettings.manage	관리…
+macSettings.cache	캐시
+macSettings.support	도움말 및 지원…

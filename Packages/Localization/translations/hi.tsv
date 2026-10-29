@@ -650,3 +650,18 @@ browse.downloadSavedTo	%@ में सहेजा गया
 browse.downloadSavedCountTo	%2$lld में से %1$lld आइटम %3$@ में सहेजे गए
 browse.downloadSavedAllTo	%1$lld आइटम %2$@ में सहेजे गए
 browse.downloadBulkFailed	इन आइटम को आपके डिवाइस पर सहेज नहीं सके।
+macSettings.labelFormat	%@:
+macSettings.addAccount	खाता जोड़ें…
+macSettings.changePassword	पासवर्ड बदलें…
+macSettings.signOut	साइन आउट करें…
+macSettings.switchAccount	इस खाते पर स्विच करें
+macSettings.username	उपयोगकर्ता नाम
+macSettings.email	ईमेल
+macSettings.role	भूमिका
+macSettings.roleAdmin	व्यवस्थापक
+macSettings.roleUser	उपयोगकर्ता
+macSettings.status	स्थिति
+macSettings.statusSignedIn	साइन इन है
+macSettings.manage	प्रबंधित करें…
+macSettings.cache	कैश
+macSettings.support	सहायता और समर्थन…

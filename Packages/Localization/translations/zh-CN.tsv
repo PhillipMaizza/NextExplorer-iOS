@@ -650,3 +650,18 @@ browse.downloadSavedTo	已保存到 %@
 browse.downloadSavedCountTo	已将 %2$lld 项中的 %1$lld 项保存到 %3$@
 browse.downloadSavedAllTo	已将 %1$lld 项保存到 %2$@
 browse.downloadBulkFailed	无法将这些项目保存到您的设备。
+macSettings.labelFormat	%@：
+macSettings.addAccount	添加账户…
+macSettings.changePassword	更改密码…
+macSettings.signOut	退出登录…
+macSettings.switchAccount	切换到此账户
+macSettings.username	用户名
+macSettings.email	电子邮件
+macSettings.role	角色
+macSettings.roleAdmin	管理员
+macSettings.roleUser	用户
+macSettings.status	状态
+macSettings.statusSignedIn	已登录
+macSettings.manage	管理…
+macSettings.cache	缓存
+macSettings.support	帮助与支持…

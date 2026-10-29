@@ -650,3 +650,18 @@ browse.downloadSavedTo	已儲存到 %@
 browse.downloadSavedCountTo	已將 %2$lld 個中的 %1$lld 個項目儲存到 %3$@
 browse.downloadSavedAllTo	已將 %1$lld 個項目儲存到 %2$@
 browse.downloadBulkFailed	無法將這些項目儲存到您的裝置。
+macSettings.labelFormat	%@：
+macSettings.addAccount	新增帳號…
+macSettings.changePassword	更改密碼…
+macSettings.signOut	登出…
+macSettings.switchAccount	切換到此帳號
+macSettings.username	使用者名稱
+macSettings.email	電子郵件
+macSettings.role	角色
+macSettings.roleAdmin	管理員
+macSettings.roleUser	使用者
+macSettings.status	狀態
+macSettings.statusSignedIn	已登入
+macSettings.manage	管理…
+macSettings.cache	快取
+macSettings.support	幫助與支援…

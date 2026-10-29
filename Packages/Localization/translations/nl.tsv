@@ -650,3 +650,18 @@ browse.downloadSavedTo	Bewaard in %@
 browse.downloadSavedCountTo	%1$lld van %2$lld items bewaard in %3$@
 browse.downloadSavedAllTo	%1$lld items bewaard in %2$@
 browse.downloadBulkFailed	Kan deze items niet op je apparaat bewaren.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Account toevoegen…
+macSettings.changePassword	Wachtwoord wijzigen…
+macSettings.signOut	Afmelden…
+macSettings.switchAccount	Naar dit account overschakelen
+macSettings.username	Gebruikersnaam
+macSettings.email	E-mail
+macSettings.role	Rol
+macSettings.roleAdmin	Beheerder
+macSettings.roleUser	Gebruiker
+macSettings.status	Status
+macSettings.statusSignedIn	Aangemeld
+macSettings.manage	Beheer…
+macSettings.cache	Cache
+macSettings.support	Hulp en ondersteuning…
