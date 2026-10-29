@@ -17,6 +17,32 @@ struct UploadsView: View {
     @Bindable var store: StoreOf<UploadsFeature>
 
     var body: some View {
+        #if os(macOS)
+            MacTransferQueueSheet(
+                title: L10n.Uploads.navigationTitle,
+                rows: store.jobs.map { job in
+                    MacTransferRow(id: job.id, name: job.fileName, status: {
+                        switch job.status {
+                        case .queued: .waiting
+                        case .uploading: .running(progress: job.progress, detail: nil)
+                        case .completed: .done(destinationLabel(job.destination))
+                        case let .failed(message): .failed(message)
+                        }
+                    }())
+                },
+                emptyMessage: L10n.Uploads.emptyList,
+                canClear: store.hasClearableJobs,
+                onCancel: { store.send(.cancelJobTapped(id: $0), animation: .default) },
+                onRetry: { store.send(.retryTapped(id: $0), animation: .default) },
+                onClear: { store.send(.clearFinishedTapped, animation: .default) },
+                onClose: { store.send(.sheetPresented(false)) }
+            )
+        #else
+            phoneBody
+        #endif
+    }
+
+    private var phoneBody: some View {
         NavigationStack {
             content
                 .navigationTitle(L10n.Uploads.navigationTitle)
