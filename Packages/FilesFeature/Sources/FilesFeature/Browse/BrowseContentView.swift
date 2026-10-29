@@ -811,7 +811,17 @@ struct BrowseContentView: View {
                 rename: { store.send(.renameSelectionTapped) },
                 selectAll: { store.send(.tableSelectionChanged(Set(store.displayedItems.map(\.id)))) },
                 getInfo: { store.send(.infoSelectionTapped) },
-                canPaste: canPaste
+                canPaste: canPaste,
+                open: {
+                    guard store.selectedItemIDs.count == 1,
+                          let item = store.displayedItems.first(where: { store.selectedItemIDs.contains($0.id) }) else { return }
+                    handleTap(item)
+                },
+                copyPath: {
+                    let paths = store.displayedItems.filter { store.selectedItemIDs.contains($0.id) }.map(\.id)
+                    guard !paths.isEmpty else { return }
+                    PlatformPasteboard.copy(paths.joined(separator: "\n"))
+                }
             )
         }
     #endif

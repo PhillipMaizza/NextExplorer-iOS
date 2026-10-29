@@ -178,6 +178,12 @@
                 keyboardActions.rename()
                 return .handled
             }
+            // Finder's ⌘↓ opens the selection.
+            .onKeyPress(.downArrow, phases: .down) { press in
+                guard press.modifiers == .command, selection.count == 1 else { return .ignored }
+                keyboardActions.open()
+                return .handled
+            }
             .onDeleteCommand { keyboardActions.delete() }
             .focusedValue(\.browseKeyboardActions, keyboardActions)
         }
@@ -367,6 +373,10 @@
         public let selectAll: () -> Void
         public let getInfo: () -> Void
         public let canPaste: Bool
+        /// File ▸ Open (⌘O, ⌘↓): opens the one selected item.
+        public var open: () -> Void = {}
+        /// Edit ▸ Copy Path (⌥⌘C): the selection's server paths, one per line.
+        public var copyPath: () -> Void = {}
     }
 
     /// The visible Browse screen's sort, for the View menu's Sort By.

@@ -21,6 +21,8 @@ public struct MainTabFeature {
     @ObservableState
     public struct State: Equatable {
         public var selectedTab: Tab = .browse
+        /// The Mac Go to Folder dialog is open.
+        public var isGoToFolderPresented = false
         public var browse: BrowseTabFeature.State
         public var favorites: FavoritesFeature.State
         public var shared: SharedFeature.State
@@ -63,6 +65,11 @@ public struct MainTabFeature {
         case refreshSelectedTab
         case newFolderRequested
         case enclosingFolderRequested
+        /// Mac Go menu: Forward (⌘]) and Go to Folder (⇧⌘G).
+        case forwardRequested
+        case goToFolderPrompted
+        case goToFolderDismissed
+        case goToFolderRequested(String)
         /// Sent when the scene becomes active again after being backgrounded — `BrowseTabFeature`
         /// re-fetches the current folder and every pushed subfolder, since `BrowseFeature.onAppear`
         /// deliberately no-ops once a folder already has items loaded.
@@ -146,6 +153,25 @@ public struct MainTabFeature {
             case .newFolderRequested:
                 guard state.selectedTab == .browse else { return .none }
                 return .send(.browse(.newFolderInVisibleFolder))
+
+            case .forwardRequested:
+                guard state.selectedTab == .browse else { return .none }
+                return .send(.browse(.goForward))
+
+            case .goToFolderPrompted:
+                state.isGoToFolderPresented = true
+                return .none
+
+            case .goToFolderDismissed:
+                state.isGoToFolderPresented = false
+                return .none
+
+            case let .goToFolderRequested(rawPath):
+                state.isGoToFolderPresented = false
+                let path = rawPath.trimmingCharacters(in: CharacterSet(charactersIn: "/ ").union(.whitespacesAndNewlines))
+                guard !path.isEmpty else { return .none }
+                state.selectedTab = .browse
+                return .send(.browse(.navigateToDirectory(path: path, title: (path as NSString).lastPathComponent)))
 
             case .enclosingFolderRequested:
                 switch state.selectedTab {

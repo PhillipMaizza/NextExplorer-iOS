@@ -51,6 +51,9 @@
                 Button(L10n.Browse.actionDuplicate) { fileActions?.duplicate() }
                     .keyboardShortcut("d")
                     .disabled(fileActions == nil)
+                Button(L10n.Browse.open) { fileActions?.open() }
+                    .keyboardShortcut("o")
+                    .disabled(fileActions == nil)
                 Button(L10n.Browse.actionGetInfo) { fileActions?.getInfo() }
                     .keyboardShortcut("i")
                     .disabled(fileActions == nil)
@@ -85,6 +88,9 @@
                     .keyboardShortcut("a")
             }
             CommandGroup(after: .pasteboard) {
+                Button(L10n.Menu.copyPath) { fileActions?.copyPath() }
+                    .keyboardShortcut("c", modifiers: [.command, .option])
+                    .disabled(fileActions == nil)
                 Divider()
                 Button(L10n.Common.search) { focusSearchField?() }
                     .keyboardShortcut("f")
@@ -109,8 +115,13 @@
             CommandMenu(L10n.Menu.go) {
                 Button(L10n.Common.back) { send(.enclosingFolderRequested) }
                     .keyboardShortcut("[")
+                Button(L10n.Menu.forward) { send(.forwardRequested) }
+                    .keyboardShortcut("]")
                 Button(L10n.Menu.enclosingFolder) { send(.enclosingFolderRequested) }
                     .keyboardShortcut(.upArrow)
+                Divider()
+                Button(L10n.Menu.goToFolder) { send(.goToFolderPrompted) }
+                    .keyboardShortcut("g", modifiers: [.command, .shift])
                 Divider()
                 ForEach(Self.sections, id: \.tab) { section in
                     Button(section.title) { send(.tabSelected(section.tab)) }

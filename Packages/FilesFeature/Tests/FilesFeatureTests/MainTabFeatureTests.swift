@@ -38,6 +38,23 @@ struct MainTabFeatureTests {
     // MARK: Edge cases
 
     @Test
+    func goToFolderOpensTheTrimmedPathInBrowse() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .shared
+        let store = TestStore(initialState: state) { MainTabFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.goToFolderPrompted) {
+            $0.isGoToFolderPresented = true
+        }
+        await store.send(.goToFolderRequested(" /Documents/Reports/ ")) {
+            $0.isGoToFolderPresented = false
+            $0.selectedTab = .browse
+        }
+        await store.receive(\.browse.navigateToDirectory)
+    }
+
+    @Test
     func initialStateDefaultsToTheBrowseTab() {
         let state = MainTabFeature.State(serverURL: serverURL, user: user)
         #expect(state.selectedTab == .browse)

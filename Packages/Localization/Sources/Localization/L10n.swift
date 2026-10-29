@@ -401,8 +401,12 @@ public enum L10n {
     public enum Menu {
         public static var about: String { tr("menu.about") }  // "About NextExplorer"
         public static var activity: String { tr("menu.activity") }  // "Transfers"
+        public static var copyPath: String { tr("menu.copyPath") }  // "Copy Path"
         public static var enclosingFolder: String { tr("menu.enclosingFolder") }  // "Enclosing Folder"
+        public static var forward: String { tr("menu.forward") }  // "Forward"
         public static var go: String { tr("menu.go") }  // "Go"
+        public static var goToFolder: String { tr("menu.goToFolder") }  // "Go to Folder…"
+        public static var goToFolderTitle: String { tr("menu.goToFolderTitle") }  // "Go to the folder:"
         public static var newTab: String { tr("menu.newTab") }  // "New Tab"
         public static var newWindow: String { tr("menu.newWindow") }  // "New Window"
         public static var rateApp: String { tr("menu.rateApp") }  // "Rate NextExplorer…"

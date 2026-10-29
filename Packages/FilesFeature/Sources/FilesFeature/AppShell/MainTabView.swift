@@ -93,6 +93,16 @@ public struct MainTabView: View {
             .windowTitle(macWindowTitle)
             .modifier(AccountConfirmations(store: store.scope(state: \.settings, action: \.settings)))
             .modifier(TipJarPresentation(store: store.scope(state: \.settings, action: \.settings)))
+            .sheet(isPresented: Binding(get: { store.isGoToFolderPresented }, set: {
+                if !$0 {
+                    store.send(.goToFolderDismissed)
+                }
+            })) {
+                MacGoToFolderSheet(
+                    onGo: { store.send(.goToFolderRequested($0)) },
+                    onCancel: { store.send(.goToFolderDismissed) }
+                )
+            }
             .modifier(MacTransferNotifications(
                 uploadsRemaining: store.uploads.remainingCount,
                 uploadsFailed: store.uploads.failedCount,

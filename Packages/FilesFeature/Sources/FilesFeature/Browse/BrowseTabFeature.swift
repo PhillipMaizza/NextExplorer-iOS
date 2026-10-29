@@ -11,6 +11,9 @@ public struct BrowseTabFeature {
     public struct State: Equatable {
         public var root: BrowseFeature.State
         public var path = StackState<BrowseFeature.State>()
+        /// Folders left by going back, nearest last, so Forward (⌘]) can reopen them. Any
+        /// other navigation clears it, as in Finder.
+        public var forwardStack: [BrowseFeature.State] = []
 
         public init(serverURL: URL) {
             root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
@@ -33,6 +36,8 @@ public struct BrowseTabFeature {
         case newFolderInVisibleFolder
         /// Mac ⌘↑ / ⌘[: pop to the folder that contains the visible one.
         case goToEnclosingFolder
+        /// Mac ⌘]: reopen the folder last left by going back.
+        case goForward
         /// A download landed: recompute the "available offline" badges on every live screen.
         case offlineAvailabilityChanged
         /// Files another app shared in, handed to the topmost screen.
@@ -58,6 +63,9 @@ public struct BrowseTabFeature {
             switch action {
             case .goToEnclosingFolder:
                 guard let id = state.path.ids.last else { return .none }
+                if let screen = state.path[id: id] {
+                    state.forwardStack.append(screen)
+                }
                 state.path.pop(from: id)
                 return .none
 
@@ -74,7 +82,21 @@ public struct BrowseTabFeature {
                 else { return .none }
                 return .send(.path(.element(id: id, action: .newFolderTapped)))
 
+            case .goForward:
+                guard let screen = state.forwardStack.popLast() else { return .none }
+                state.path.append(screen)
+                return .none
+
+            case let .path(.popFrom(id)):
+                // Leaving with the toolbar's Back: everything from `id` up can come back with
+                // Forward, the nearest level first.
+                guard let start = state.path.ids.firstIndex(of: id) else { return .none }
+                let popped = state.path.ids[start...].compactMap { state.path[id: $0] }
+                state.forwardStack.append(contentsOf: popped.reversed())
+                return .none
+
             case let .root(.delegate(.openFolder(item))):
+                state.forwardStack = []
                 state.path.append(BrowseNavigation.screen(for: item, serverURL: state.root.serverURL))
                 return .none
 
@@ -116,6 +138,7 @@ public struct BrowseTabFeature {
                 )
 
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
+                state.forwardStack = []
                 state.path.append(BrowseNavigation.screen(for: item, serverURL: state.root.serverURL))
                 return .none
 
@@ -129,6 +152,7 @@ public struct BrowseTabFeature {
                 return .send(.delegate(.openDownloadsTapped))
 
             case let .navigateToDirectory(path, title):
+                state.forwardStack = []
                 BrowseNavigation.jump(to: path, title: title, serverURL: state.root.serverURL, stack: &state.path)
                 return .none
 

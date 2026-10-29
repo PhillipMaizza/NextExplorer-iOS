@@ -122,7 +122,40 @@ struct BrowseKeyboardActionsTests {
         let store = TestStore(initialState: state) { BrowseTabFeature() }
 
         await store.send(.goToEnclosingFolder) {
+            let left = $0.path.last
             $0.path.removeLast()
+            $0.forwardStack = left.map { [$0] } ?? []
+        }
+    }
+
+    @Test
+    func forwardReopensTheFolderLeftByGoingBack() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        let folderA = BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A")
+        state.path.append(folderA)
+        let store = TestStore(initialState: state) { BrowseTabFeature() }
+
+        await store.send(.goToEnclosingFolder) {
+            $0.path.removeLast()
+            $0.forwardStack = [folderA]
+        }
+        await store.send(.goForward) {
+            $0.forwardStack = []
+            $0.path.append(folderA)
+        }
+        // Nothing left to go forward to.
+        await store.send(.goForward)
+    }
+
+    @Test
+    func navigatingSomewhereNewClearsForward() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        state.forwardStack = [BrowseFeature.State(serverURL: serverURL, directoryPath: "A", title: "A")]
+        let store = TestStore(initialState: state) { BrowseTabFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.navigateToDirectory(path: "B", title: "B")) {
+            $0.forwardStack = []
         }
     }
 
