@@ -10,6 +10,8 @@ private enum Constants {
     static let backIconSize: CGFloat = .iconSmall
     static let rowIconSize: CGFloat = .iconMedium
     static let statusSpacing: CGFloat = .space16
+    static let macRowIconSize: CGFloat = .iconSmall
+    static let macSizeColumnWidth: CGFloat = 90
 }
 
 /// One row of the current folder level within `ArchiveBrowserView` — directories are
@@ -174,18 +176,57 @@ struct ArchiveBrowserView: View {
         } else if visibleRows.isEmpty {
             statusContent(icon: IconKit.folderFill, message: L10n.Archive.emptyFolder, tint: .secondaryDS)
         } else {
-            DSGroupedList(visibleRows) { row in
-                Button {
-                    handleTap(row)
-                } label: {
-                    rowContent(row)
+            #if os(macOS)
+                macTable
+            #else
+                DSGroupedList(visibleRows) { row in
+                    Button {
+                        handleTap(row)
+                    } label: {
+                        rowContent(row)
+                    }
+                    .listRowBackground(Color.backgroundSecondary)
                 }
-                .listRowBackground(Color.backgroundSecondary)
-            }
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
+            #endif
         }
     }
+
+    #if os(macOS)
+        /// The archive's current folder as a native table, like the Browse table: double click
+        /// opens a folder or previews a file.
+        private var macTable: some View {
+            Table(visibleRows) {
+                TableColumn(L10n.Sort.name) { row in
+                    HStack(spacing: .space8) {
+                        if row.isDirectory {
+                            Image(systemName: "folder.fill").foregroundStyle(Color.accent)
+                        } else {
+                            FileTypeIcon(kind: (row.name as NSString).pathExtension)
+                                .frame(width: Constants.macRowIconSize, height: Constants.macRowIconSize)
+                                .matchedTransitionSource(id: row.name, in: entryTransition)
+                        }
+                        Text(row.name).lineLimit(1).truncationMode(.middle)
+                        if extractingRow == row.name {
+                            ProgressView().controlSize(.small)
+                        }
+                    }
+                }
+                TableColumn(L10n.Sort.size) { row in
+                    Text(row.size.map { Self.byteFormatter.string(fromByteCount: Int64($0)) } ?? "")
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+                .width(Constants.macSizeColumnWidth)
+            }
+            .contextMenu(forSelectionType: ArchiveRow.ID.self, menu: { _ in }, primaryAction: { ids in
+                if let id = ids.first, let row = visibleRows.first(where: { $0.id == id }) {
+                    handleTap(row)
+                }
+            })
+        }
+    #endif
 
     private func rowContent(_ row: ArchiveRow) -> some View {
         HStack(spacing: Constants.rowSpacing) {
