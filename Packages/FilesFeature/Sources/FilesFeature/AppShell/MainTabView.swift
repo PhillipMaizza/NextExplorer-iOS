@@ -167,6 +167,8 @@ public struct MainTabView: View {
                 // while the switch action is still reducing. Yield first so the send lands on the
                 // next tick, never reentrantly during that action (TCA forbids reentrant sends).
                 await Task.yield()
+                // Files shared in before this shell mounted (cold launch, or while signed out).
+                store.send(.sharedFilesArrived)
                 await store.send(.observeConnectivity).finish()
             }
     }
@@ -234,6 +236,7 @@ public struct MainTabView: View {
             sidebar
         } detail: {
             detail()
+                .environment(\.isSplitViewDetail, true)
         }
         .navigationSplitViewStyle(.balanced)
         .tint(Color.accent)
@@ -259,7 +262,6 @@ public struct MainTabView: View {
 
     /// macOS draws its own selection shape behind a selectable sidebar row that `.tint` can't
     /// hide, so on the Mac the rows are plain buttons and only the accent pill marks the tab.
-    @ViewBuilder
     private var sidebarList: some View {
         #if os(macOS)
             List { sidebarSections }
@@ -351,7 +353,6 @@ public struct MainTabView: View {
 
     /// Signed-in identity at the top of the sidebar: avatar + name + email. Read only on iPad,
     /// where account actions stay in Settings; the Mac opens an account menu from it.
-    @ViewBuilder
     private var sidebarProfile: some View {
         #if os(macOS)
             MacSidebarAccountMenu(
@@ -557,4 +558,10 @@ public struct MainTabView: View {
             $0.filesClient = .previewValue
         }
     )
+}
+
+extension EnvironmentValues {
+    /// True inside the `MainTabView` split view detail. Read this rather than the size class:
+    /// on iPhone Duo open the detail column is narrow enough to report compact.
+    @Entry var isSplitViewDetail = false
 }

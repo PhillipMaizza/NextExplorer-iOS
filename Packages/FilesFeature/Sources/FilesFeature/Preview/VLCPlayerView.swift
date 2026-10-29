@@ -2,12 +2,12 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
+import VLCKitSPM
 #if os(iOS)
     import UIKit
 #elseif os(macOS)
     import AppKit
 #endif
-import VLCKitSPM
 
 /// Full-screen player for the video/audio containers and codecs AVFoundation can't decode
 /// (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma), backed by libvlc via VLCKit — parity

@@ -311,6 +311,44 @@ struct FilesClientLiveTests {
     }
 
     @Test
+    func browseOfTheRootFallsBackToTheVolumesListWhenTheRootIsRefused() async throws {
+        defer { StubURLProtocol.pathStubs = [:] }
+        let volumesJSON = Data("""
+        [
+            { "name": "center-projekt", "path": "center-projekt", "kind": "volume", "accessMode": "readwrite" },
+            { "name": "k9", "path": "k9", "kind": "volume", "accessMode": "readonly" }
+        ]
+        """.utf8)
+        let notFound = Data(#"{"error":{"message":"You do not have access to this volume"}}"#.utf8)
+        StubURLProtocol.failure = nil
+        StubURLProtocol.stub = nil
+        StubURLProtocol.pathStubs = [
+            "/api/browse": .init(statusCode: 404, headers: ["Content-Type": "application/json"], body: notFound),
+            "/api/volumes": .init(statusCode: 200, headers: ["Content-Type": "application/json"], body: volumesJSON),
+        ]
+        let store = DirectoryCacheStore.inMemory()
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: store
+        )
+
+        let result = try await client.browse(serverURL, "")
+
+        #expect(result.items.map(\.name) == ["center-projekt", "k9"])
+        #expect(result.items.allSatisfy { $0.isDirectory && $0.path.isEmpty && !$0.hasKnownDate })
+        #expect(result.access.canWrite == false)
+        #expect(store.read(serverURL: serverURL, path: "")?.items.map(\.name) == ["center-projekt", "k9"])
+    }
+
+    @Test
+    func browseOfASubfolderDoesNotFallBackToTheVolumesListOnA404() async {
+        stub(statusCode: 404, body: Data())
+        await #expect(throws: FilesClientError.server(statusCode: 404)) {
+            try await makeClient().browse(serverURL, "k9/missing")
+        }
+    }
+
+    @Test
     func searchOmitsPathAndLimitQueryItemsWhenNotProvided() async throws {
         stub(statusCode: 200, body: #"{"items": []}"#.data(using: .utf8)!)
         StubURLProtocol.capturedRequest = nil

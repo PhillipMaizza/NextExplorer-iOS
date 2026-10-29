@@ -112,10 +112,10 @@ public extension NetworkClient {
             return (stableURL, httpResponse)
         }
 
-        /// Stream to a temp file rather than `session.data(for:)` so response size is bounded
-        /// by disk, not resident memory; then size-check before loading it in. This path only
-        /// ever carries JSON control responses — file-sized payloads use `download` — so the
-        /// extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
+        // Stream to a temp file rather than `session.data(for:)` so response size is bounded
+        // by disk, not resident memory; then size-check before loading it in. This path only
+        // ever carries JSON control responses — file-sized payloads use `download` — so the
+        // extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
         @Sendable func sendInMemory(
             _ request: URLRequest, using inMemorySession: URLSession
         ) async throws -> (Data, HTTPURLResponse) {

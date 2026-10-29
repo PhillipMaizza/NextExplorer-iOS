@@ -9,6 +9,10 @@ import Testing
 @MainActor
 @Suite("LoginFormFeature")
 struct LoginFormFeatureTests {
+    /// CI's shared macOS runners can take well over TCA's default 1 second to deliver an effect's
+    /// action, which failed tests that pass locally. A real hang still fails, just later.
+    static let receiveTimeout: Duration = .seconds(10)
+
     private let user = User(id: "1", username: "phillip", email: nil, roles: [])
 
     // MARK: - URL normalization (edge cases)
@@ -116,6 +120,7 @@ struct LoginFormFeatureTests {
     @Test("edge case: a pathological paste into the fields is truncated, never stored whole")
     func fieldsAreLengthCapped() async {
         let store = TestStore(initialState: LoginFormFeature.State()) { LoginFormFeature() }
+        store.timeout = Self.receiveTimeout
         store.exhaustivity = .off
 
         await store.send(.hostChanged(String(repeating: "a", count: 5000)))
@@ -138,6 +143,7 @@ struct LoginFormFeatureTests {
             $0.authClient.fetchStatus = { _ in AuthStatus(localEnabled: true, oidcEnabled: false) }
             $0.continuousClock = ImmediateClock()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
         await store.receive(\.testConnectionResponse.success) {
@@ -152,6 +158,7 @@ struct LoginFormFeatureTests {
     @Test("the scheme picker follows what's typed: digit ⇒ http, hostname ⇒ https, prefix wins")
     func schemeFollowsHost() async {
         let store = TestStore(initialState: LoginFormFeature.State()) { LoginFormFeature() }
+        store.timeout = Self.receiveTimeout
         store.exhaustivity = .off
 
         await store.send(.hostChanged("192.168.1.50:3000")) { $0.scheme = .http }
@@ -164,6 +171,7 @@ struct LoginFormFeatureTests {
     @Test("a manual scheme pick sticks while typing, until the field is cleared")
     func manualSchemePickSticks() async {
         let store = TestStore(initialState: LoginFormFeature.State()) { LoginFormFeature() }
+        store.timeout = Self.receiveTimeout
         store.exhaustivity = .off
 
         // User forces http for a LAN hostname.
@@ -190,6 +198,7 @@ struct LoginFormFeatureTests {
         ) {
             LoginFormFeature()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.hostChanged("nextexplorer.example.com/changed")) {
             $0.host = "nextexplorer.example.com/changed"
@@ -208,6 +217,7 @@ struct LoginFormFeatureTests {
             $0.continuousClock = clock
             $0.authClient.fetchStatus = { _ in AuthStatus(localEnabled: true, oidcEnabled: false) }
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
 
@@ -235,6 +245,7 @@ struct LoginFormFeatureTests {
         ) {
             LoginFormFeature()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.backButtonTapped) {
             $0.currentPage = .server
@@ -255,6 +266,7 @@ struct LoginFormFeatureTests {
             }
             $0.continuousClock = clock
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.testConnectionButtonTapped) {
             $0.connectionPhase = .failure
@@ -281,6 +293,7 @@ struct LoginFormFeatureTests {
             $0.authClient.fetchStatus = { _ in AuthStatus(localEnabled: false, oidcEnabled: true) }
             $0.continuousClock = ImmediateClock()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
         await store.receive(\.testConnectionResponse.success) {
@@ -294,14 +307,19 @@ struct LoginFormFeatureTests {
 
     @Test("a server with no auth methods at all surfaces a readable message")
     func noAuthMethodsEnabled() async {
+        let clock = TestClock()
         let store = TestStore(initialState: LoginFormFeature.State(host: "nextexplorer.example.com")) {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.fetchStatus = { _ in AuthStatus(localEnabled: false, oidcEnabled: false) }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.testConnectionResponse.success) {
             $0.connectionPhase = .failure
             $0.authStatus = AuthStatus(localEnabled: false, oidcEnabled: false)
@@ -331,6 +349,7 @@ struct LoginFormFeatureTests {
             $0.authClient.loginOIDC = { [user] _ in user }
             $0.continuousClock = ImmediateClock()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
         await store.receive(\.oidcResponse) { $0.oidcPhase = .success }
@@ -352,6 +371,7 @@ struct LoginFormFeatureTests {
             $0.authClient.loginOIDC = { _ in throw AuthClientError.oidcCancelled }
             $0.continuousClock = ImmediateClock()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
         await store.receive(\.oidcResponse) { $0.oidcPhase = .idle }
@@ -372,6 +392,7 @@ struct LoginFormFeatureTests {
             $0.authClient.loginOIDC = { _ in throw AuthClientError.oidcFailed("boom") }
             $0.continuousClock = ImmediateClock()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.ssoButtonTapped) { $0.oidcPhase = .authenticating }
         await store.receive(\.oidcResponse) {
@@ -385,14 +406,19 @@ struct LoginFormFeatureTests {
 
     @Test("unexpected error: transport failure during test connection is wrapped, not propagated raw")
     func transportFailureDuringTestConnection() async {
+        let clock = TestClock()
         let store = TestStore(initialState: LoginFormFeature.State(host: "nextexplorer.example.com")) {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.fetchStatus = { _ in throw AuthClientError.network("offline") }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.testConnectionResponse.failure) {
             $0.connectionPhase = .failure
             $0.errorMessage = L10n.Login.errorUnreachable
@@ -414,6 +440,7 @@ struct LoginFormFeatureTests {
             $0.authClient.fetchStatus = { _ in throw AuthClientError.network("offline") }
             $0.continuousClock = clock
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
         await clock.advance(by: .seconds(0.3))
@@ -457,6 +484,7 @@ struct LoginFormFeatureTests {
             }
             $0.continuousClock = ImmediateClock()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting
@@ -479,6 +507,7 @@ struct LoginFormFeatureTests {
                 throw AuthClientError.invalidCredentials
             }
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped)
     }
@@ -501,6 +530,7 @@ struct LoginFormFeatureTests {
             }
             $0.continuousClock = ImmediateClock()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped) {
             $0.errorMessage = L10n.Login.errorInvalidEmail
@@ -514,6 +544,7 @@ struct LoginFormFeatureTests {
 
     @Test("unexpected error: invalid credentials surfaces a readable message")
     func invalidCredentialsSurfacesMessage() async {
+        let clock = TestClock()
         let store = TestStore(
             initialState: LoginFormFeature.State(
                 host: "nextexplorer.example.com",
@@ -525,12 +556,16 @@ struct LoginFormFeatureTests {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.login = { _, _, _ in throw AuthClientError.invalidCredentials }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting
         }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.submitFailed) {
             $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorInvalidCredentials
@@ -547,6 +582,7 @@ struct LoginFormFeatureTests {
 
     @Test("unexpected error: rate limiting (429, or a lockout the server reports as 429) surfaces a readable message")
     func rateLimitedLoginSurfacesMessage() async {
+        let clock = TestClock()
         let store = TestStore(
             initialState: LoginFormFeature.State(
                 host: "nextexplorer.example.com",
@@ -558,12 +594,16 @@ struct LoginFormFeatureTests {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.login = { _, _, _ in throw AuthClientError.rateLimited }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting
         }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.submitFailed) {
             $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorRateLimited
@@ -581,6 +621,7 @@ struct LoginFormFeatureTests {
 
     @Test("unexpected error: a 5xx server status surfaces a server-problem message with the code, not a decode/address error")
     func serverErrorStatusSurfacesMessage() async {
+        let clock = TestClock()
         let store = TestStore(
             initialState: LoginFormFeature.State(
                 host: "nextexplorer.example.com",
@@ -592,12 +633,16 @@ struct LoginFormFeatureTests {
             LoginFormFeature()
         } withDependencies: {
             $0.authClient.login = { _, _, _ in throw AuthClientError.server(statusCode: 503) }
-            $0.continuousClock = ImmediateClock()
+            $0.continuousClock = clock
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting
         }
+        // TestClock fires the response, the revert and the error dismiss in deadline order;
+        // ImmediateClock collapsed them to t=0 and they could arrive out of order under load.
+        await clock.advance(by: .seconds(5))
         await store.receive(\.submitFailed) {
             $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorServer(503)
@@ -630,6 +675,7 @@ struct LoginFormFeatureTests {
             }
             $0.continuousClock = ImmediateClock()
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting
@@ -670,6 +716,7 @@ struct LoginFormFeatureTests {
             }
             $0.continuousClock = clock
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting
@@ -707,6 +754,7 @@ struct LoginFormFeatureTests {
             $0.authClient.login = { _, _, _ in throw AuthClientError.sessionCookieMissing }
             $0.continuousClock = clock
         }
+        store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped) {
             $0.submitPhase = .submitting

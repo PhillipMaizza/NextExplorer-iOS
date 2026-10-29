@@ -38,6 +38,7 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     /// sheet. While the keyboard is up, unlock scrolling (even if the content otherwise fits)
     /// so SwiftUI's own keyboard inset can scroll the field back into view.
     @State private var isKeyboardVisible = false
+    @Environment(\.isDSCardSheet) private var isCardSheet
 
     public init(
         maxHeightFraction: CGFloat? = nil,
@@ -49,21 +50,14 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
         self.footer = footer()
     }
 
-    /// Height of the screen the app is actually on. `UIScreen.main` is deprecated on iOS 18
-    /// and wrong under multitasking; the active window scene's own screen is the current one.
+    /// Height of the window the app is actually in. `UIScreen.main` is deprecated on iOS 18
+    /// and wrong under multitasking or on a foldable's other panel.
     @MainActor
     private static var screenHeight: CGFloat {
         #if os(macOS)
             NSApp.keyWindow?.screen?.visibleFrame.height ?? NSScreen.main?.visibleFrame.height ?? 800
         #else
-            UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .first(where: { $0.activationState == .foregroundActive })?
-                .screen.bounds.height
-                ?? UIApplication.shared.connectedScenes
-                .compactMap { ($0 as? UIWindowScene)?.screen.bounds.height }
-                .first
-                ?? 800
+            ActiveWindowScene.bounds?.height ?? 800
         #endif
     }
 
@@ -137,6 +131,9 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
                 measuredContent
             }
         }
+        // A system sheet sizes itself from the detents; a `dsSheet` card has no detents, so it
+        // caps its own height (the scroll view would otherwise fill the screen).
+        .frame(maxHeight: isCardSheet ? resolvedHeight : nil)
         .background(Color.backgroundPrimary)
         .presentationDetents(detents)
         .presentationDragIndicator(maxHeightFraction == nil ? .hidden : .visible)

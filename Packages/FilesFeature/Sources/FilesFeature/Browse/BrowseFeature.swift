@@ -455,6 +455,8 @@ public struct BrowseFeature {
         case bulkFavoriteResponse(BulkFavoriteToggleResult)
         case bulkDownloadTapped
         case beginUpload(UploadReviewFeature.PickSource)
+        /// Files another app shared in: opens the upload review here, or adds them to one already open.
+        case receiveSharedFiles([URL])
         case uploadReview(PresentationAction<UploadReviewFeature.Action>)
         case copyTapped(FileItem)
         case moveTapped(FileItem)
@@ -1069,6 +1071,17 @@ public struct BrowseFeature {
                         PendingUpload(id: $0.id, fileURL: $0.fileURL, fileName: $0.fileName, destination: destination)
                     })))
             #endif
+
+            case let .receiveSharedFiles(urls):
+                guard !urls.isEmpty else { return .none }
+                if state.uploadReview != nil {
+                    return .send(.uploadReview(.presented(.stage(.documents(urls)))))
+                }
+                // An open preview would cover the review sheet.
+                if state.previewItem != nil {
+                    return .concatenate(.send(.previewDismissed), .send(.beginUpload(.documents(urls))))
+                }
+                return .send(.beginUpload(.documents(urls)))
 
             case let .uploadReview(.presented(.delegate(.confirmed(files, destination)))):
                 state.uploadReview = nil

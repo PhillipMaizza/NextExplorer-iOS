@@ -136,7 +136,14 @@ public struct AppView: View {
             guard didExpire else { return }
             store.send(.sessionExpiryDetected)
         }
-        .sheet(item: $store.scope(state: \.addAccount, action: \.addAccount)) { addAccountStore in
+        // "Open in NextExplorer" from another app's share sheet (Info.plist document types).
+        .onOpenURL { url in
+            store.send(.incomingFiles([url]))
+        }
+        .sheet(
+            item: $store.scope(state: \.addAccount, action: \.addAccount),
+            onDismiss: { store.send(.addAccountSheetDismissed) }
+        ) { addAccountStore in
             LoginFormView(store: addAccountStore, autoFocus: true, floodsIntoApp: !AppView.addsAccountInDialog)
             #if os(macOS)
                 // A Mac sheet sizes to its content's ideal size, which the flexible login
@@ -161,7 +168,6 @@ public struct AppView: View {
         #endif
     }
 
-    @ViewBuilder
     private var destinationContent: some View {
         Group {
             switch store.destination {

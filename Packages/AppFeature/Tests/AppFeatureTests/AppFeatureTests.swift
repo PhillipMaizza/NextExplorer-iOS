@@ -221,6 +221,48 @@ struct AppFeatureTests {
         }
     }
 
+    @Test("happy path: files shared in while signed out wait in the inbox")
+    func incomingFilesWhileSignedOutAreQueued() async {
+        let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
+        let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
+            AppFeature()
+        }
+
+        await store.send(.incomingFiles([scan])) {
+            $0.$sharedFileInbox.withLock { $0 = [scan] }
+        }
+        store.state.$sharedFileInbox.withLock { $0 = [] }
+    }
+
+    @Test("happy path: files shared in while signed in go straight to the tab shell")
+    func incomingFilesWhileSignedInAreHandedOver() async {
+        let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
+        let user = User(id: "1", username: "phillip", email: nil, roles: [])
+        let store = TestStore(
+            initialState: AppFeature.State(
+                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
+            )
+        ) {
+            AppFeature()
+        }
+        store.exhaustivity = .off
+
+        await store.send(.incomingFiles([scan]))
+        await store.receive(\.destination.authenticated.mainTab.sharedFilesArrived)
+        #expect(store.state.sharedFileInbox.isEmpty)
+        await store.skipReceivedActions()
+        await store.skipInFlightEffects()
+    }
+
+    @Test("edge case: a non file URL is ignored")
+    func incomingNonFileURLIsIgnored() async {
+        let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
+            AppFeature()
+        }
+
+        await store.send(.incomingFiles([URL(string: "https://example.com/doc.pdf")!]))
+    }
+
     @Test("happy path: adding an account adopts it without clearing existing caches")
     func addAccountAdoptsWithoutClearingCache() async {
         let user = User(id: "1", username: "phillip", email: nil, roles: [])
@@ -243,6 +285,12 @@ struct AppFeatureTests {
         await store.send(.addAccount(.presented(.delegate(.authenticated(newUser, newServer)))))
         store.assert {
             $0.addAccount = nil
+            $0.pendingAddedAccount = AppFeature.AddedAccount(user: newUser, serverURL: newServer)
+        }
+        // The new account is adopted only once the sheet has fully dismissed.
+        await store.send(.addAccountSheetDismissed)
+        store.assert {
+            $0.pendingAddedAccount = nil
             $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: newServer, user: newUser))
         }
         await store.finish()

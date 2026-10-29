@@ -20,7 +20,6 @@ private struct DSGlassModifier<S: Shape>: ViewModifier {
     let shape: S
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
 
-    @ViewBuilder
     func body(content: Content) -> some View {
         if reduceTransparency {
             content.background(shape.fill(Color.backgroundSecondary))

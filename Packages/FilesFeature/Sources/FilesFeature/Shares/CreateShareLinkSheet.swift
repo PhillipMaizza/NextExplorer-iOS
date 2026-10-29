@@ -67,7 +67,6 @@ struct CreateShareLinkSheet: View {
         .task { store.send(.onAppear) }
     }
 
-    @ViewBuilder
     private var footerButtons: some View {
         DSSheetFooter {
             if store.createdShare != nil {

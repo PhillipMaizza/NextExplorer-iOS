@@ -28,7 +28,7 @@ struct SettingsView: View {
         SettingsSearchFilter(query: settingsSearch)
     }
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     /// Top padding for the pinned title, so it lines up with the other tabs. Those carry a
     /// toolbar button that reserves nav bar height; Settings has none, so it pads to match.
@@ -36,7 +36,7 @@ struct SettingsView: View {
     /// measured against the Downloads tab title. On iPad (the split view detail) there's no such
     /// reserved nav bar, so the padding is just dead space above the title.
     private var titleTopPadding: CGFloat {
-        if horizontalSizeClass == .regular {
+        if isSplitViewDetail {
             return 0
         }
         if #available(iOS 26.0, macOS 26.0, *) {
@@ -140,7 +140,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             // The Mac hosts these at the window level instead, for its sidebar account menu.
             .modifier(AccountConfirmations(store: store, isEnabled: !AccountConfirmations.isHostedByWindow))
-            .sheet(isPresented: isConfirmingRemoveAllDownloads) {
+            .dsSheet(isPresented: isConfirmingRemoveAllDownloads) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Settings.removeAllDownloadsTitle,
@@ -154,7 +154,7 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
-            .sheet(isPresented: isConfirmingClearCache) {
+            .dsSheet(isPresented: isConfirmingClearCache) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Settings.clearCacheTitle,
@@ -168,13 +168,13 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
-            .sheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
+            .dsSheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
                 TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
             }
             .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
                 OfflineSelectionView(store: selectionStore)
             }
-            .sheet(isPresented: isConfirmingRemoveOffline) {
+            .dsSheet(isPresented: isConfirmingRemoveOffline) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Offline.removeConfirmTitle,

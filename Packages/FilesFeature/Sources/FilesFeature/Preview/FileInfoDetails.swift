@@ -44,7 +44,6 @@ struct FileInfoDetails: View {
         return formatter
     }()
 
-    @ViewBuilder
     var body: some View {
         VStack(alignment: .leading, spacing: Constants.cardSpacing) {
             card {

@@ -35,6 +35,8 @@ public struct BrowseTabFeature {
         case goToEnclosingFolder
         /// A download landed: recompute the "available offline" badges on every live screen.
         case offlineAvailabilityChanged
+        /// Files another app shared in, handed to the topmost screen.
+        case receiveSharedFiles([URL])
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -85,6 +87,12 @@ public struct BrowseTabFeature {
             case .root(.delegate(.directoryContentsChanged)),
                  .path(.element(id: _, action: .delegate(.directoryContentsChanged))):
                 return .send(.syncPathStack)
+
+            case let .receiveSharedFiles(urls):
+                if let id = state.path.ids.last {
+                    return .send(.path(.element(id: id, action: .receiveSharedFiles(urls))))
+                }
+                return .send(.root(.receiveSharedFiles(urls)))
 
             case .root(.delegate(.openDownloadsTapped)):
                 return .send(.delegate(.openDownloadsTapped))

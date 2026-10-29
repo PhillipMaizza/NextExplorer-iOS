@@ -34,6 +34,7 @@ public struct MainTabFeature {
         /// Shared offline progress, reset when a fresh session mounts so a previous account's
         /// finished run never lingers on the new account's Settings screen.
         @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) public var offlineProgress = OfflineDownloadProgress()
+        @Shared(.inMemory(SharedFileInbox.sharedKey)) public var sharedFileInbox: [URL] = []
         public var uploadToast: UploadToast?
         /// The "saved to Downloads" confirmation once the download queue drains.
         public var downloadToast: String?
@@ -68,6 +69,8 @@ public struct MainTabFeature {
         case appBecameActive
         /// Long-lived subscription to reachability, started once from the view's `.task`.
         case observeConnectivity
+        /// Drains `SharedFileInbox` into an upload review on the Browse tab.
+        case sharedFilesArrived
         /// The connection came back — refresh the list tabs so their offline "saved copy"
         /// banners clear and they show live data without a manual pull.
         case connectivityRestored
@@ -150,6 +153,13 @@ public struct MainTabFeature {
                 case .favorites: return .send(.favorites(.goToEnclosingFolder))
                 case .shared, .downloads, .settings: return .none
                 }
+
+            case .sharedFilesArrived:
+                let urls = state.sharedFileInbox
+                guard !urls.isEmpty else { return .none }
+                state.$sharedFileInbox.withLock { $0 = [] }
+                state.selectedTab = .browse
+                return .send(.browse(.receiveSharedFiles(urls)))
 
             case let .browse(.delegate(.uploadRequested(files))),
                  let .favorites(.delegate(.uploadRequested(files))):

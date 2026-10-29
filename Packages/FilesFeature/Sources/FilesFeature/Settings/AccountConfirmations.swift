@@ -54,7 +54,7 @@ struct AccountConfirmations: ViewModifier {
                 }
                 .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
             }
-            .sheet(isPresented: Binding(get: { isEnabled && store.isConfirmingSignOut }, set: { _ in })) {
+            .dsSheet(isPresented: Binding(get: { isEnabled && store.isConfirmingSignOut }, set: { _ in })) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
                     title: L10n.Settings.signOutAlertTitle,
@@ -68,7 +68,7 @@ struct AccountConfirmations: ViewModifier {
                     onDismiss: { store.send(.cancelSignOutTapped) }
                 )
             }
-            .sheet(isPresented: Binding(get: { isEnabled && store.accountPendingRemoval != nil }, set: { _ in })) {
+            .dsSheet(isPresented: Binding(get: { isEnabled && store.accountPendingRemoval != nil }, set: { _ in })) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
                     title: L10n.Settings.accountSignOutTitle,

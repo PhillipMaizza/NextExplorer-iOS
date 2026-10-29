@@ -163,7 +163,7 @@ struct DisplaySettingsSection: View {
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
     @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
     @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     private var appearance: Binding<AppearanceMode> {
         Binding(
@@ -235,7 +235,7 @@ struct DisplaySettingsSection: View {
                 }
                 // Tab labels only exist on the bottom tab bar (compact). iPad uses the sidebar,
                 // so the toggle is meaningless there.
-                if horizontalSizeClass != .regular, filter.matches(L10n.Settings.toggleShowTabLabels) {
+                if !isSplitViewDetail, filter.matches(L10n.Settings.toggleShowTabLabels) {
                     DSToggleRow(title: L10n.Settings.toggleShowTabLabels, icon: IconKit.tabBrowse, isOn: $showTabLabels)
                 }
             } header: {
@@ -366,7 +366,7 @@ struct LegalSettingsSection: View {
 struct LicensesSettingsSection: View {
     @Bindable var store: StoreOf<SettingsFeature>
     let filter: SettingsSearchFilter
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     private var appVersionText: String {
         let info = Bundle.main.infoDictionary
@@ -408,7 +408,7 @@ struct LicensesSettingsSection: View {
                     VStack(spacing: .space16) {
                         // On iPad the logo + version live in the sidebar footer instead, so this
                         // section only carries the credits there; compact keeps the full block.
-                        if horizontalSizeClass != .regular {
+                        if !isSplitViewDetail {
                             VStack(spacing: Constants.versionLogoSpacing) {
                                 IconKit.logo
                                     .resizable()

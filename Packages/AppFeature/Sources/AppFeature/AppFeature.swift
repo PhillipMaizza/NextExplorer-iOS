@@ -22,6 +22,9 @@ public struct AppFeature {
         public var destination: Destination.State
         /// Login sheet for adding another server while already signed in (multi-server).
         @Presents public var addAccount: LoginFormFeature.State?
+        /// An account the add account sheet just signed in, adopted once the sheet has fully
+        /// dismissed (`addAccountSheetDismissed`).
+        public var pendingAddedAccount: AddedAccount?
         /// `true` only when the current authenticated session was reached by the user tapping
         /// the login button this launch — drives `AppView`'s zoom-from-the-button presentation.
         /// A restored/optimistic session (cold launch) leaves this `false` so the app just
@@ -34,6 +37,7 @@ public struct AppFeature {
         /// different account's session.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var fileClipboard: FileClipboard?
         @Shared(.inMemory(FileUndoEntry.sharedKey)) public var fileUndoStack: [FileUndoEntry] = []
+        @Shared(.inMemory(SharedFileInbox.sharedKey)) public var sharedFileInbox: [URL] = []
         /// The signed-in account's downloads scope (server + user id), so each account's saved
         /// files stay in their own folder. Set when a session is confirmed, cleared on sign out
         /// and expiry. Read by `BrowseFeature`/`DownloadsFeature`/`SettingsFeature`.
@@ -67,7 +71,15 @@ public struct AppFeature {
         case activateAccount(SessionCredentials)
         case accountsRefreshed([AccountSummary])
         case addAccount(PresentationAction<LoginFormFeature.Action>)
+        case addAccountSheetDismissed
+        /// Files opened in the app from another app's share sheet.
+        case incomingFiles([URL])
         case destination(Destination.Action)
+    }
+
+    public struct AddedAccount: Equatable {
+        public let user: User
+        public let serverURL: URL
     }
 
     @Dependency(\.authClient) var authClient
@@ -272,10 +284,29 @@ public struct AppFeature {
                 return .none
 
             case let .addAccount(.presented(.delegate(.authenticated(user, serverURL)))):
+                // Remounting the app while the sheet was still dismissing left the sheet's
+                // presentation container over the new tree, swallowing every tap. Dismiss first,
+                // adopt from `addAccountSheetDismissed`.
+                state.pendingAddedAccount = AddedAccount(user: user, serverURL: serverURL)
+                state.addAccount = nil
+                return .none
+
+            case let .incomingFiles(urls):
+                let files = urls.filter(\.isFileURL)
+                guard !files.isEmpty else { return .none }
+                state.$sharedFileInbox.withLock { $0.append(contentsOf: files) }
+                // Signed in: hand them over now. Otherwise the tab shell drains the inbox on mount.
+                guard case .authenticated = state.destination else { return .none }
+                return .send(.destination(.authenticated(.mainTab(.sharedFilesArrived))))
+
+            case .addAccountSheetDismissed:
                 // Login already persisted and activated the new account; adopt it without a cache
                 // wipe so the accounts already signed in keep their caches. The real user is in
                 // hand, so no `me` round trip is needed.
-                state.addAccount = nil
+                guard let added = state.pendingAddedAccount else { return .none }
+                state.pendingAddedAccount = nil
+                let user = added.user
+                let serverURL = added.serverURL
                 state.$fileClipboard.withLock { $0 = nil }
                 state.$fileUndoStack.withLock { $0 = [] }
                 let accountID = serverURL.absoluteString + "|" + user.username
@@ -330,6 +361,7 @@ public struct AppFeature {
         CacheAccountScope.set("")
         state.didAuthenticateFromLogin = false
         state.addAccount = nil
+        state.pendingAddedAccount = nil
         withAnimation {
             state.destination = .unauthenticated(.init())
         }

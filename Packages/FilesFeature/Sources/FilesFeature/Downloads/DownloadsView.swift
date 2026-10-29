@@ -134,7 +134,6 @@ struct DownloadsView: View {
     /// Redacted `FileRowView` stand-ins that sit in the *same* `List` as the real rows (never a
     /// separate scroll container — that fights the nav bar's large-title tracking). The shine
     /// is suppressed under Reduce Motion.
-    @ViewBuilder
     private var skeletonRows: some View {
         ForEach(Array(Constants.skeletonRows.enumerated()), id: \.offset) { _, row in
             FileRowView(name: row.name, isDirectory: false, subtitle: row.subtitle, kind: "")
@@ -144,7 +143,6 @@ struct DownloadsView: View {
         }
     }
 
-    @ViewBuilder
     private var skeletonCells: some View {
         ForEach(Array(Constants.skeletonRows.enumerated()), id: \.offset) { _, row in
             GridCellView(name: row.name, isDirectory: false, kind: "")
@@ -171,7 +169,6 @@ struct DownloadsView: View {
         .dismissKeyboardOnTap()
     }
 
-    @ViewBuilder
     private var downloadCells: some View {
         ForEach(store.displayedDownloads) { download in
             DownloadGridCell(
@@ -255,6 +252,7 @@ struct DownloadsView: View {
             .hapticFeedback(.selection, trigger: viewModeRaw)
             .hapticFeedback(.selection, trigger: store.isSelecting)
             .hidesTabBar(store.isSelecting)
+            .prefersToolbarItemsInVerticalBar()
             .toolbar {
                 if store.isSelecting {
                     ToolbarItem(placement: .bottomBar) {
@@ -280,7 +278,7 @@ struct DownloadsView: View {
                     }
                 }
             }
-            .sheet(isPresented: $isSortSheetPresented) {
+            .dsSheet(isPresented: $isSortSheetPresented) {
                 SortSheet(
                     options: DownloadsFeature.SortOption.allCases,
                     directions: BrowseFeature.SortDirection.allCases,
@@ -295,7 +293,7 @@ struct DownloadsView: View {
                     onDismiss: { isSortSheetPresented = false }
                 )
             }
-            .sheet(isPresented: deleteConfirmationBinding) {
+            .dsSheet(isPresented: deleteConfirmationBinding) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: deleteConfirmationTitle,
@@ -311,7 +309,7 @@ struct DownloadsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-            .sheet(isPresented: bulkDeleteConfirmationBinding) {
+            .dsSheet(isPresented: bulkDeleteConfirmationBinding) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: bulkDeleteConfirmationTitle,
@@ -325,7 +323,7 @@ struct DownloadsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
-            .sheet(item: renameItemBinding) { item in
+            .dsSheet(item: renameItemBinding) { item in
                 NameInputSheet(
                     icon: IconKit.rename,
                     title: L10n.Browse.renameTitle,

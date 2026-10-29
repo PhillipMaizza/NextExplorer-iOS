@@ -1,0 +1,270 @@
+require "shellwords"
+
+default_platform(:ios)
+
+# App Store Connect API key, read from the environment (put them in fastlane/.env, which is
+# git ignored):
+#   ASC_KEY_ID     key ID shown next to the key in App Store Connect
+#   ASC_ISSUER_ID  issuer ID shown above the keys list
+#   ASC_KEY_PATH   absolute path to the downloaded AuthKey_<ID>.p8, kept outside the repo
+# Optional:
+#   GH_USER        gh account for the CI status check and the GitHub Release, when several are
+#                  logged in
+#
+# Versions come from git tags, never from a commit: `release` ships the next version after the
+# newest `v<version>` tag (patch by default) by passing MARKETING_VERSION to the archive, then
+# tags it. Before the first tag it ships the project's MARKETING_VERSION. The build number
+# needs no bump either: the app target stamps CFBundleVersion with the git commit count.
+
+PROJECT = "NextExplorer.xcodeproj".freeze
+PBXPROJ = "#{PROJECT}/project.pbxproj".freeze
+SCHEME = "NextExplorer".freeze
+COPYRIGHT_HOLDER = "Phillip Maizza".freeze
+DEFAULT_DEVICE = "iPhone 17 Pro".freeze
+
+
+# Kept between runs so only what changed recompiles. Outside the repo so the linters never scan
+# them.
+UNIT_TEST_DERIVED_DATA = File.expand_path("~/Library/Developer/Xcode/DerivedData/NextExplorer-unit-tests").freeze
+UNIT_TEST_CHECKOUTS = File.expand_path("~/Library/Developer/Xcode/DerivedData/NextExplorer-unit-tests-checkouts").freeze
+
+def repo_root
+  @repo_root ||= `git rev-parse --show-toplevel`.strip
+end
+
+def destination(device)
+  "platform=iOS Simulator,name=#{device || DEFAULT_DEVICE},OS=latest"
+end
+
+def marketing_version
+  versions = File.read(File.join(repo_root, PBXPROJ)).scan(/MARKETING_VERSION = ([0-9.]+);/).flatten
+  versions.max_by { |version| Gem::Version.new(version) }
+end
+
+def next_version(version, type)
+  major, minor, patch = (version.split(".").map(&:to_i) + [0, 0, 0]).first(3)
+  case type.to_s
+  when "major" then "#{major + 1}.0.0"
+  when "minor" then "#{major}.#{minor + 1}.0"
+  when "patch", "" then "#{major}.#{minor}.#{patch + 1}"
+  else UI.user_error!("Unknown bump type '#{type}', use patch, minor or major")
+  end
+end
+
+def release_tag(version)
+  "v#{version}"
+end
+
+def latest_released_version
+  `git -C #{repo_root.shellescape} tag --list 'v*'`.split
+    .map { |tag| tag.delete_prefix("v") }
+    .grep(/\A\d+(\.\d+)+\z/)
+    .max_by { |version| Gem::Version.new(version) }
+end
+
+# Options: version (explicit), bump (patch, minor, major; default patch).
+def upcoming_version(options)
+  return options[:version].to_s if options[:version]
+  latest = latest_released_version
+  latest ? next_version(latest, options[:bump]) : marketing_version
+end
+
+platform :ios do
+  desc "Run every package's unit tests in one build, as CI does (options: device)"
+  lane :unit_tests do |options|
+    # PackageTests.xcworkspace exposes each local package's test target to one scheme; see ci.yml.
+    sh("cd #{repo_root.shellescape} && xcodebuild test -quiet " \
+       "-workspace PackageTests.xcworkspace -scheme PackageTests " \
+       "-destination #{destination(options[:device]).shellescape} -enableCodeCoverage NO " \
+       "-derivedDataPath #{UNIT_TEST_DERIVED_DATA.shellescape} " \
+       "-clonedSourcePackagesDirPath #{UNIT_TEST_CHECKOUTS.shellescape}")
+    UI.success("Unit tests passed")
+  end
+
+  desc "Run the XCUITest suite (options: device, only_testing: comma separated classes)"
+  lane :ui_tests do |options|
+    only_testing = options[:only_testing].to_s.split(",").map(&:strip).reject(&:empty?)
+    run_tests(
+      project: PROJECT,
+      scheme: SCHEME,
+      destination: destination(options[:device]),
+      only_testing: only_testing.empty? ? ["NextExplorerUITests"] : only_testing.map { |name| "NextExplorerUITests/#{name}" },
+      result_bundle: true,
+      output_directory: "build/fastlane/ui-tests",
+      parallel_testing: false,
+      xcargs: "ENABLE_DEBUG_DYLIB=NO -test-timeouts-enabled YES " \
+              "-default-test-execution-time-allowance 90 -maximum-test-execution-time-allowance 150"
+    )
+  end
+
+  desc "Build and upload to TestFlight"
+  lane :beta do |options|
+    ensure_git_status_clean
+    sh("git", "fetch", "--tags", "--quiet", "origin")
+    version = upcoming_version(options)
+    api_key = asc_api_key
+    ipa = build_release(version: version)
+    upload_to_testflight(
+      api_key: api_key,
+      ipa: ipa,
+      changelog: testflight_notes(version: version),
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Run the unit tests and build a Release archive, without uploading anything"
+  lane :release_dry_run do |options|
+    ensure_git_status_clean
+    sh("git", "fetch", "--tags", "--quiet", "origin")
+    version = upcoming_version(options)
+    ensure_version_unreleased(version: version)
+    unit_tests(device: DEFAULT_DEVICE)
+    build_release(version: version)
+    UI.success("Would release #{version}")
+  end
+
+  desc "Release from main: next version after the newest v* tag, unit tests, cut release/<version>,"
+  desc "upload, submit for review, tag v<version>. Goes live automatically once approved."
+  desc "Options: bump (patch, minor, major; default patch), version (explicit), manual_release"
+  desc "(hold for a manual release), phased (7 day phased rollout)"
+  lane :release do |options|
+    ensure_git_status_clean
+    ensure_git_branch(branch: "^main$")
+    sh("git", "pull", "--ff-only", "origin", "main")
+
+    sh("git", "fetch", "--tags", "--quiet", "origin")
+    version = upcoming_version(options)
+    ensure_version_unreleased(version: version)
+    head = sh("git", "rev-parse", "HEAD", log: false).strip
+    if ci_passed?(head)
+      UI.message("Build and test already passed in CI on #{head[0, 7]}; skipping the local unit tests")
+    else
+      unit_tests(device: DEFAULT_DEVICE)
+    end
+
+    release_branch = "release/#{version}"
+    sh("git", "switch", "-c", release_branch)
+    sh("git", "push", "-u", "origin", release_branch)
+
+    api_key = asc_api_key
+    ipa = build_release(version: version)
+    build_number = get_ipa_info_plist_value(ipa: ipa, key: "CFBundleVersion")
+
+    # Review needs a processed build, so this upload waits for processing.
+    upload_to_testflight(api_key: api_key, ipa: ipa, changelog: testflight_notes(version: version))
+
+    submit(version: version, build: build_number, commit: head,
+           manual_release: options[:manual_release], phased: options[:phased])
+
+    sh("git", "switch", "main")
+  end
+
+  desc "Submit an uploaded, processed build for review, then tag v<version> and publish the GitHub"
+  desc "Release. `release` ends with this; run it alone to resume a release that stopped after upload."
+  desc "Options: version, build, commit (to tag; default the release/<version> branch), manual_release,"
+  desc "phased"
+  lane :submit do |options|
+    version = options[:version] || UI.user_error!("Pass version:")
+    build_number = options[:build] || UI.user_error!("Pass build:")
+    sh("git", "fetch", "--quiet", "origin")
+    commit = options[:commit] || sh("git", "rev-parse", "origin/release/#{version}", log: false).strip
+
+    # Store text stays in App Store Connect, except what an update can't be submitted without:
+    # What's New (the version's user facing notes) and the copyright year.
+    whats_new = release_notes(version).gsub(/^- /, "• ")
+    UI.user_error!("No user facing notes for #{version}; nothing to put in What's New") if whats_new.empty?
+
+    upload_to_app_store(
+      api_key: asc_api_key,
+      app_version: version,
+      build_number: build_number,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: false,
+      release_notes: { "en-US" => whats_new },
+      copyright: "#{Time.now.year} #{COPYRIGHT_HOLDER}",
+      submit_for_review: true,
+      automatic_release: options[:manual_release] != true,
+      phased_release: options[:phased] == true,
+      force: true,
+      precheck_include_in_app_purchases: false,
+      submission_information: { add_id_info_uses_idfa: false }
+    )
+
+    tag = release_tag(version)
+    add_git_tag(tag: tag, commit: commit, message: "#{version} (#{build_number}) submitted for review")
+    push_git_tags(tag: tag)
+    with_gh do
+      sh("gh", "release", "create", tag, "--verify-tag", "--title", version,
+         "--notes", release_notes(version, links: true))
+    end
+    UI.success("#{version} (#{build_number}) submitted for review and tagged #{tag}")
+  end
+
+  # A version is released once its tag exists, locally or on origin.
+  private_lane :ensure_version_unreleased do |options|
+    tag = release_tag(options[:version])
+    if git_tag_exists(tag: tag, remote: true)
+      UI.user_error!("#{tag} is already released")
+    end
+  end
+
+  # "What to Test", generated from main's history for the version (Scripts/gen-changelog.py).
+  private_lane :testflight_notes do |options|
+    notes = release_notes(options[:version])
+    notes.empty? ? nil : notes
+  end
+
+  private_lane :asc_api_key do
+    app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_filepath: ENV.fetch("ASC_KEY_PATH")
+    )
+  end
+
+  # Automatic signing; the API key lets xcodebuild create or refresh the distribution
+  # certificate and profile without an Xcode account signed in.
+  private_lane :build_release do |options|
+    build_app(
+      project: PROJECT,
+      scheme: SCHEME,
+      configuration: "Release",
+      export_method: "app-store",
+      output_directory: "build/fastlane",
+      clean: true,
+      xcargs: [
+        "MARKETING_VERSION=#{options[:version]}",
+        "-allowProvisioningUpdates",
+        "-authenticationKeyPath #{ENV.fetch('ASC_KEY_PATH').shellescape}",
+        "-authenticationKeyID #{ENV.fetch('ASC_KEY_ID')}",
+        "-authenticationKeyIssuerID #{ENV.fetch('ASC_ISSUER_ID')}"
+      ].join(" ")
+    )
+  end
+end
+
+def release_notes(version, links: false)
+  script = File.join(repo_root, "Scripts/gen-changelog.py")
+  args = ["python3", script, "--notes", version]
+  args << "--links" if links
+  Fastlane::Actions.sh(*args, log: false).strip
+end
+
+# Whether the required "Build and test" check passed on `sha` in CI. Any doubt (no run, gh
+# missing, API error) answers false, so the local unit tests run instead.
+def ci_passed?(sha)
+  with_gh do
+    conclusions = `gh api "repos/{owner}/{repo}/commits/#{sha}/check-runs" --jq '.check_runs[] | select(.name == "Build and test") | .conclusion' 2>/dev/null`
+    $?.success? && conclusions.split.include?("success")
+  end
+end
+
+# Runs the block with GH_TOKEN for GH_USER when set, so gh acts as the repo owner.
+def with_gh
+  previous = ENV["GH_TOKEN"]
+  ENV["GH_TOKEN"] = `gh auth token --user #{ENV['GH_USER'].shellescape}`.strip if ENV["GH_USER"]
+  yield
+ensure
+  ENV["GH_TOKEN"] = previous
+end

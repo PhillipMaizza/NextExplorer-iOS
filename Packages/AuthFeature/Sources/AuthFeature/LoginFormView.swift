@@ -483,7 +483,7 @@ public struct LoginFormView: View {
         // Get the Local Network permission alert out of the way while the user is still
         // typing the address, not the moment they hit "Test connection".
         .onAppear { LocalNetworkPrimer.prime() }
-        .sheet(isPresented: $isServerInfoPresented) {
+        .dsSheet(isPresented: $isServerInfoPresented) {
             ServerInfoSheet(onClose: { isServerInfoPresented = false })
         }
     }
@@ -509,7 +509,6 @@ public struct LoginFormView: View {
         .accessibilityIdentifier(AccessibilityIdentifiers.Login.testConnectionButton)
     }
 
-    @ViewBuilder
     private var testConnectionButtonLabel: some View {
         ZStack {
             switch store.connectionPhase {

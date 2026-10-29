@@ -138,15 +138,15 @@ struct BrowseContentView: View {
             .sheet(item: $store.scope(state: \.destinationPicker, action: \.destinationPicker)) { pickerStore in
                 DestinationPickerView(store: pickerStore)
             }
-            .sheet(item: $store.scope(state: \.uploadReview, action: \.uploadReview)) { reviewStore in
+            .dsSheet(item: $store.scope(state: \.uploadReview, action: \.uploadReview)) { reviewStore in
                 UploadReviewView(store: reviewStore)
             }
         #if os(iOS)
-            .sheet(item: infoPhaseBinding) { phase in
+            .dsSheet(item: infoPhaseBinding) { phase in
                 infoSheetContent(for: phase)
             }
         #endif
-            .sheet(item: $store.scope(state: \.permissions, action: \.permissions)) { permissionsStore in
+            .dsSheet(item: $store.scope(state: \.permissions, action: \.permissions)) { permissionsStore in
                 PermissionsSheet(store: permissionsStore)
             }
             .fullScreenCover(isPresented: previewPresentedBinding) {
@@ -163,13 +163,13 @@ struct BrowseContentView: View {
                             onGalleryItemChange: { galleryCurrentItemID = $0.id }
                         )
                     }
-                    .sheet(isPresented: isDeletingFromPreviewBinding) {
+                    .dsSheet(isPresented: isDeletingFromPreviewBinding) {
                         deleteConfirmationSheet(dismissingPreview: true)
                     }
-                    .sheet(item: renameItemFromPreviewBinding) { renameTarget in
+                    .dsSheet(item: renameItemFromPreviewBinding) { renameTarget in
                         renameSheet(renameTarget)
                     }
-                    .sheet(item: shareTargetFromPreviewBinding) { shareItem in
+                    .dsSheet(item: shareTargetFromPreviewBinding) { shareItem in
                         createShareLinkSheet(for: shareItem, fromPreview: true)
                     }
                     .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
@@ -182,7 +182,7 @@ struct BrowseContentView: View {
                     .onDisappear { frozenCoverZoom = nil }
                 }
             }
-            .sheet(item: shareTargetBinding) { item in
+            .dsSheet(item: shareTargetBinding) { item in
                 createShareLinkSheet(for: item, fromPreview: false)
             }
             .dsToast(listToastBinding, extraBottomInset: bottomChromeClearance)
@@ -432,6 +432,7 @@ struct BrowseContentView: View {
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
         .hidesTabBar(store.isSelecting)
+        .prefersToolbarItemsInVerticalBar()
         .toolbar {
             if store.isSelecting {
                 #if os(iOS)
@@ -497,7 +498,7 @@ struct BrowseContentView: View {
             .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
             value: store.selectedItemIDs
         )
-        .sheet(isPresented: bulkDeleteConfirmationBinding) {
+        .dsSheet(isPresented: bulkDeleteConfirmationBinding) {
             DSAlertSheet(
                 icon: IconKit.delete,
                 title: bulkDeleteConfirmationTitle,
@@ -511,7 +512,7 @@ struct BrowseContentView: View {
             )
         }
         .hapticFeedback(.warning, trigger: store.bulkDeleteConfirmationIsPresented)
-        .sheet(isPresented: $isSortSheetPresented) {
+        .dsSheet(isPresented: $isSortSheetPresented) {
             SortSheet(
                 options: BrowseFeature.SortOption.allCases,
                 directions: BrowseFeature.SortDirection.allCases,
@@ -526,10 +527,10 @@ struct BrowseContentView: View {
                 onDismiss: { isSortSheetPresented = false }
             )
         }
-        .sheet(item: renameItemBinding) { item in
+        .dsSheet(item: renameItemBinding) { item in
             renameSheet(item)
         }
-        .sheet(isPresented: newFolderSheetBinding) {
+        .dsSheet(isPresented: newFolderSheetBinding) {
             NameInputSheet(
                 icon: IconKit.folder,
                 title: L10n.Browse.newFolderTitle,
@@ -540,11 +541,11 @@ struct BrowseContentView: View {
                 onCancel: { store.send(.newFolderCancelled) }
             )
         }
-        .sheet(isPresented: isDeletingBinding) {
+        .dsSheet(isPresented: isDeletingBinding) {
             deleteConfirmationSheet(dismissingPreview: false)
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-        .sheet(isPresented: transferConflictBinding) {
+        .dsSheet(isPresented: transferConflictBinding) {
             DSAlertSheet(
                 icon: IconKit.warning,
                 title: L10n.Browse.transferConflictTitle,
@@ -671,7 +672,6 @@ struct BrowseContentView: View {
         )
     }
 
-    @ViewBuilder
     private var tableContent: some View {
         #if os(macOS)
             MacBrowseTableView(
@@ -1424,7 +1424,6 @@ struct BrowseContentView: View {
         }
     }
 
-    @ViewBuilder
     private func gridItemCells(_ items: IdentifiedArrayOf<FileItem>) -> some View {
         ForEach(items) { item in
             Button {
@@ -1543,7 +1542,6 @@ struct BrowseContentView: View {
         }
     }
 
-    @ViewBuilder
     private var noResultsState: some View {
         VStack(spacing: Constants.emptyStateSpacing) {
             IconKit.search

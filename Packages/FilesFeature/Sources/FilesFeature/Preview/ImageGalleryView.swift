@@ -110,6 +110,9 @@ struct ImageGalleryView: View {
             TabView(selection: $selection) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                     ImageGalleryPage(item: item, serverURL: serverURL, isNear: isNear(index))
+                        // Without this each page stops at the safe area while the pager steps by
+                        // the full width, so on iPhone Duo's inner panel the next image peeks in.
+                        .ignoresSafeArea()
                         .tag(item.id)
                 }
             }
@@ -223,12 +226,14 @@ private struct ImageGalleryPage: View {
     @Dependency(\.filesClient) private var filesClient
     @Dependency(\.offlineFileStore) private var offlineFileStore
 
+    @Environment(\.displayScale) private var displayScale
+
     /// Decode ceiling for a still image. Generous enough that `ZoomableScrollView`'s 4x zoom
-    /// still looks sharp, without ever holding a full 48MP bitmap resident. Read from
-    /// `UIScreen` on the main actor inside `.task`, not a nonisolated static.
+    /// still looks sharp, without ever holding a full 48MP bitmap resident. Sized off the
+    /// window the app is in, which on iPhone Duo is whichever panel is showing.
     @MainActor private var maxPixelDimension: CGFloat {
-        let screen = PlatformScreen.bounds
-        return max(screen.width, screen.height) * PlatformScreen.scale * 2
+        let bounds = PlatformScreen.bounds
+        return max(bounds.width, bounds.height) * displayScale * 2
     }
 
     /// The blurred thumbnail placeholder shows only before any frame has decoded, so a page never

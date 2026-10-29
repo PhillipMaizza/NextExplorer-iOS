@@ -53,9 +53,9 @@ public extension DependencyValues {
 }
 
 #if os(macOS)
+    @MainActor
     private extension NSSavePanel {
         /// A sheet on the front window when there is one, otherwise a standalone panel.
-        @MainActor
         func present() async -> URL? {
             let response = if let window = NSApp.keyWindow {
                 await beginSheetModal(for: window)

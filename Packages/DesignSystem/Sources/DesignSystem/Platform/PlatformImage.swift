@@ -70,17 +70,9 @@ public enum PlatformImageRenderer {
 public enum PlatformScreen {
     public static var bounds: CGRect {
         #if os(iOS)
-            UIScreen.main.bounds
+            ActiveWindowScene.bounds ?? .zero
         #else
             NSScreen.main?.frame ?? .zero
-        #endif
-    }
-
-    public static var scale: CGFloat {
-        #if os(iOS)
-            UIScreen.main.scale
-        #else
-            NSScreen.main?.backingScaleFactor ?? 2
         #endif
     }
 }

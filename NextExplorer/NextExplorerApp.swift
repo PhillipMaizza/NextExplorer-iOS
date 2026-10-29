@@ -54,6 +54,7 @@ struct NextExplorerApp: App {
             AppView(store: Self.store)
                 .tint(Color.accent)
                 .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
+                .observesFoldableHinge()
             #if os(macOS)
                 // A Mac window always gets the regular width sidebar layout, never the phone tab bar.
                 .environment(\.horizontalSizeClass, .regular)
@@ -62,7 +63,10 @@ struct NextExplorerApp: App {
             #if DEBUG
             .onAppear {
                 // Under XCUITest, collapse animation durations once the window is attached.
-                DispatchQueue.main.async { UITestSupport.applyAnimationSpeedIfNeeded() }
+                DispatchQueue.main.async {
+                    UITestSupport.applyAnimationSpeedIfNeeded()
+                    UITestSupport.applyOrientationIfNeeded()
+                }
             }
             #endif
         }

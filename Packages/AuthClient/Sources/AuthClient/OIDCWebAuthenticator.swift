@@ -48,15 +48,17 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
         }
     }
 
+    /// Anchors on the foreground scene's key window. A scene less `UIWindow()` is deprecated
+    /// since iOS 26, so it is only the last resort when no scene is connected at all.
     func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
         #if os(macOS)
             return NSApp.keyWindow ?? NSApp.windows.first ?? ASPresentationAnchor()
         #else
-            let window = UIApplication.shared.connectedScenes
-                .compactMap { $0 as? UIWindowScene }
-                .flatMap(\.windows)
-                .first { $0.isKeyWindow }
-            return window ?? ASPresentationAnchor()
+            let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+            guard let scene = scenes.first(where: { $0.activationState == .foregroundActive }) ?? scenes.first else {
+                return ASPresentationAnchor()
+            }
+            return scene.keyWindow ?? UIWindow(windowScene: scene)
         #endif
     }
 }

@@ -24,8 +24,8 @@ final class BrowsePreviewUITests: UITestCase {
         let app = launchApp(auth: .loggedIn, scenario: .normal)
         let browse = BrowseScreen(app: app)
         XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
-        browse.item(Fixture.file).tap()
-        XCTAssertTrue(browse.previewBackButton.waitToAppear(), "Opening a file should present a preview screen")
+        // The first tap after launch is occasionally dropped, so retry once (see `openMenu`).
+        openMenu({ browse.item(Fixture.file).tap() }, until: browse.previewBackButton)
     }
 
     func testEmptyStateWhenNoItems() {

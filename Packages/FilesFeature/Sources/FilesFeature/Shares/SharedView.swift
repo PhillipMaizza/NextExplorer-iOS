@@ -84,11 +84,12 @@ struct SharedView: View {
                     DSInfoCard(L10n.Browse.offlineBannerDetail(OfflineRelativeTime.string(from: fetchedAt)))
                         .padding(.horizontal, .space16)
                         .padding(.vertical, .space8)
-                        .background(Color.backgroundPrimary)
+                        .background(Color.backgroundPrimary, ignoresSafeAreaEdges: .bottom)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
             }
             .animation(.easeInOut(duration: 0.2), value: store.dataSources[store.segment])
+            .prefersToolbarItemsInVerticalBar()
             .toolbar {
                 ToolbarItem(placement: .sortControl) {
                     #if os(macOS)
@@ -108,7 +109,7 @@ struct SharedView: View {
                     #endif
                 }
             }
-            .sheet(isPresented: $isSortSheetPresented) {
+            .dsSheet(isPresented: $isSortSheetPresented) {
                 SortSheet(
                     options: SharedFeature.SortOption.allCases,
                     directions: BrowseFeature.SortDirection.allCases,
@@ -123,10 +124,10 @@ struct SharedView: View {
                     onDismiss: { isSortSheetPresented = false }
                 )
             }
-            .sheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
+            .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
                 EditShareSheet(store: editStore)
             }
-            .sheet(isPresented: deleteConfirmationBinding) {
+            .dsSheet(isPresented: deleteConfirmationBinding) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Shared.deleteTitle,

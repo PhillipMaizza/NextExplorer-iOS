@@ -1,35 +1,70 @@
 name: CI
 
-# Builds the app and runs the Swift package test suites on every pull request
-# to main and on pushes to main, so a contributor sees a green or red check
+# Lints, builds the app and runs the Swift package test suites on every pull request to main,
+# and on pushes to main, so a contributor sees a green or red check
 # before anyone reviews the change.
 #
-# The XCUITest suite is heavier (boots a simulator, cold launches the app per
-# test) so it runs on pushes to main only, not on every pull request.
+# The XCUITest suite is heavier (boots a simulator, cold launches the app per test) so it runs on
+# pushes to main, on demand, and on pull requests labelled `ui-tests`.
 
 on:
   pull_request:
     branches: [main]
+    types: [opened, synchronize, reopened, labeled]
   push:
     branches: [main]
   # Manual trigger so the heavier UI test job can be run on any branch on demand.
   workflow_dispatch:
 
+# A new push to a pull request cancels its older run; runs on main always finish, so each one
+# saves its DerivedData cache and runs the UI tests.
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  lint:
-    name: Lint and format
-    runs-on: macos-15
-    timeout-minutes: 15
+  build-and-test:
+    name: Build and test
+    # GitHub's Xcode 27 image (macOS 27): matches local development and builds TCA's macros with
+    # Apple's prebuilt swift-syntax instead of compiling it on every run.
+    runs-on: xcode-27
+    timeout-minutes: 90
+
+    env:
+      SIM_DEVICE: iPhone 17
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
+      # One DerivedData and one SwiftPM checkout folder shared by every build in the job, so each
+      # dependency compiles once; DerivedData is also cached between runs (saved from main,
+      # restored everywhere). Both sit in runner.temp, outside the repo so the linters never scan
+      # them: actions/cache rejects paths containing "..", and runner.temp only exists inside steps.
+      - name: Set build folders
+        run: |
+          echo "DERIVED_DATA=${RUNNER_TEMP}/DerivedData" >> "${GITHUB_ENV}"
+          echo "SPM_CHECKOUTS=${RUNNER_TEMP}/SourcePackages" >> "${GITHUB_ENV}"
+
+      # Lint shares this job instead of queueing for a second macOS runner. Pinned to the versions
+      # used locally (release binaries, not Homebrew's latest), so a rule added upstream can't fail
+      # CI on its own; bump these together with the local tools.
       - name: Install SwiftFormat and SwiftLint
-        run: brew install swiftformat swiftlint
+        env:
+          SWIFTFORMAT_VERSION: "0.64.4"
+          SWIFTLINT_VERSION: "0.65.1"
+        run: |
+          set -euo pipefail
+          BIN="${RUNNER_TEMP}/lint-bin"
+          mkdir -p "${BIN}"
+          curl -sSfL "https://github.com/nicklockwood/SwiftFormat/releases/download/${SWIFTFORMAT_VERSION}/swiftformat.zip" -o "${RUNNER_TEMP}/swiftformat.zip"
+          curl -sSfL "https://github.com/realm/SwiftLint/releases/download/${SWIFTLINT_VERSION}/portable_swiftlint.zip" -o "${RUNNER_TEMP}/swiftlint.zip"
+          unzip -o -q "${RUNNER_TEMP}/swiftformat.zip" -d "${BIN}"
+          unzip -o -q "${RUNNER_TEMP}/swiftlint.zip" -d "${BIN}"
+          chmod +x "${BIN}/swiftformat" "${BIN}/swiftlint"
+          echo "${BIN}" >> "${GITHUB_PATH}"
+          "${BIN}/swiftformat" --version
+          "${BIN}/swiftlint" version
 
       - name: SwiftFormat (check only)
         run: swiftformat . --lint
@@ -37,40 +72,35 @@ jobs:
       - name: SwiftLint
         run: swiftlint lint --quiet
 
-  build-and-test:
-    name: Build and test
-    runs-on: macos-15
-    timeout-minutes: 60
+      - name: Dependency pins match the app
+        run: python3 Scripts/sync-package-pins.py --check
 
-    env:
-      SIM_DEVICE: iPhone 16
-      # Package test suites, discovered under Packages/<name>/Tests.
-      # Keychain is intentionally omitted: its tests hit the real Security framework, which
-      # returns errSecMissingEntitlement (-34018) for a standalone SwiftPM test bundle on the
-      # simulator (no app host / keychain-access-group entitlement). They pass only inside an
-      # entitled app host, so they run locally in Xcode, not in this package-by-package CI.
-      TEST_PACKAGES: >-
-        CoreModels
-        NetworkClient
-        AuthClient
-        FilesClient
-        Localization
-        DesignSystem
-        AuthFeature
-        FilesFeature
-        AppStorageKeys
-        AppFeature
+      - name: Restore SwiftPM checkouts
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.SPM_CHECKOUTS }}
+          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v5
+      # Same Xcode build as local development (27.1, 27A9275).
+      # Build output from the latest main run: only what changed recompiles. Keyed on the Xcode
+      # build and the resolved dependencies; restore keys fall back to the closest older entry.
+      - name: Restore DerivedData
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            ${{ env.DERIVED_DATA }}
+            !${{ env.DERIVED_DATA }}/Logs
+            !${{ env.DERIVED_DATA }}/Index.noindex
+          key: deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
+          restore-keys: |
+            deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-
+            deriveddata-xcode27.1-
 
-      # The app builds against the latest SDK; if a specific Xcode is needed,
-      # pin xcode-version to it here.
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '27.1'
 
       - name: Show toolchain
         run: |
@@ -84,18 +114,33 @@ jobs:
       - name: Trust Swift package macros
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
 
-      - name: Resolve package dependencies
+      # Every package's tests in one build and one run, through the PackageTests scheme of the
+      # CI only PackageTests.xcworkspace (local packages only expose their test targets to a
+      # scheme inside a workspace). Keychain is left out: its tests hit the real Security
+      # framework, which returns errSecMissingEntitlement (-34018) without an entitled app host,
+      # so they run locally. Coverage is off; it only made the test host spam
+      # "Failed to write file default.profraw".
+      - name: Test packages
         run: |
-          xcodebuild -project NextExplorer.xcodeproj \
-            -scheme NextExplorer \
-            -resolvePackageDependencies
+          xcodebuild test \
+            -workspace PackageTests.xcworkspace \
+            -scheme PackageTests \
+            -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -enableCodeCoverage NO
 
+      # Runs after the package tests, on the same DerivedData and destination, so it reuses the
+      # dependencies they compiled instead of building them again. Packages first: a package that
+      # resolves right after the app has resolved the shared checkouts can fail to resolve.
       - name: Build app
         run: |
           xcodebuild build \
             -project NextExplorer.xcodeproj \
             -scheme NextExplorer \
-            -destination 'generic/platform=iOS Simulator' \
+            -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             CODE_SIGNING_ALLOWED=NO
 
       # The same target also ships as a native macOS app; build it so a change can't quietly
@@ -106,70 +151,94 @@ jobs:
             -project NextExplorer.xcodeproj \
             -scheme NextExplorer \
             -destination 'generic/platform=macOS' \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             CODE_SIGNING_ALLOWED=NO
 
-      # The packages with macOS only code paths (Save panel downloads, AppKit views) run their
-      # suites on the Mac too.
+      # The package suites again on the Mac, for the macOS only code paths (Save panel
+      # downloads, AppKit views).
       - name: Test packages on macOS
         run: |
-          set -o pipefail
-          FAIL=0
-          for pkg in DesignSystem FilesFeature; do
-            echo "::group::Test ${pkg} (macOS)"
-            if ! ( cd "Packages/${pkg}" && xcodebuild test \
-                -scheme "${pkg}" \
-                -destination 'platform=macOS' \
-                -enableCodeCoverage NO ); then
-              echo "::error::${pkg} macOS tests failed"
-              FAIL=1
-            fi
-            echo "::endgroup::"
-          done
-          exit $FAIL
+          xcodebuild test \
+            -workspace PackageTests.xcworkspace \
+            -scheme PackageTests \
+            -destination 'platform=macOS' \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -enableCodeCoverage NO
 
-      - name: Test packages
-        run: |
-          set -o pipefail
-          DEST="platform=iOS Simulator,name=${SIM_DEVICE},OS=latest"
-          echo "Test destination: ${DEST}"
-          FAIL=0
-          for pkg in ${TEST_PACKAGES}; do
-            echo "::group::Test ${pkg}"
-            # Coverage is not collected in CI; disabling it stops the sandboxed test host
-            # spamming "LLVM Profile Error: Failed to write file default.profraw".
-            if ! ( cd "Packages/${pkg}" && xcodebuild test \
-                -scheme "${pkg}" \
-                -destination "${DEST}" \
-                -enableCodeCoverage NO ); then
-              echo "::error::${pkg} tests failed"
-              FAIL=1
-            fi
-            echo "::endgroup::"
-          done
-          exit $FAIL
+      # Only main saves: GitHub scopes a pull request's cache to that pull request, so a save
+      # there helps nobody else, and main's copy is what every pull request restores.
+      - name: Save SwiftPM checkouts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ env.SPM_CHECKOUTS }}
+          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+
+      - name: Save DerivedData
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            ${{ env.DERIVED_DATA }}
+            !${{ env.DERIVED_DATA }}/Logs
+            !${{ env.DERIVED_DATA }}/Index.noindex
+          key: deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
 
   ui-test:
     name: UI tests
-    # Push events only fire on merges to main (PRs use the pull_request event), so this keeps the
-    # slow XCUITest suite off automatic branch/PR runs. workflow_dispatch lets it be run by hand on
-    # any branch from the Actions tab.
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-    runs-on: macos-15
+    # Merges to main, manual runs from the Actions tab, and pull requests labelled `ui-tests`.
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests'))
+    # GitHub's Xcode 27 image (macOS 27): matches local development and builds TCA's macros with
+    # Apple's prebuilt swift-syntax instead of compiling it on every run.
+    runs-on: xcode-27
     # Headroom for the one automatic retry below: a simulator launch flake can hang the first
     # attempt for a while before it fails, so a retry must still fit inside the budget.
     timeout-minutes: 90
 
     env:
-      SIM_DEVICE: iPhone 16
+      SIM_DEVICE: iPhone 17
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
+
+      # One DerivedData and one SwiftPM checkout folder shared by every build in the job, so each
+      # dependency compiles once; DerivedData is also cached between runs (saved from main,
+      # restored everywhere). Both sit in runner.temp, outside the repo so the linters never scan
+      # them: actions/cache rejects paths containing "..", and runner.temp only exists inside steps.
+      - name: Set build folders
+        run: |
+          echo "DERIVED_DATA=${RUNNER_TEMP}/DerivedData" >> "${GITHUB_ENV}"
+          echo "SPM_CHECKOUTS=${RUNNER_TEMP}/SourcePackages" >> "${GITHUB_ENV}"
+
+      - name: Restore SwiftPM checkouts
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.SPM_CHECKOUTS }}
+          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      - name: Restore DerivedData
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            ${{ env.DERIVED_DATA }}
+            !${{ env.DERIVED_DATA }}/Logs
+            !${{ env.DERIVED_DATA }}/Index.noindex
+          key: deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
+          restore-keys: |
+            deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-
+            deriveddata-xcode27.1-
 
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
-          xcode-version: latest-stable
+          xcode-version: '27.1'
 
       - name: Trust Swift package macros
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
@@ -178,6 +247,7 @@ jobs:
         run: |
           xcodebuild -project NextExplorer.xcodeproj \
             -scheme NextExplorer \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             -resolvePackageDependencies
 
       - name: Install xcbeautify
@@ -215,6 +285,8 @@ jobs:
               -project NextExplorer.xcodeproj \
               -scheme NextExplorer \
               -destination "${DEST}" \
+              -derivedDataPath "${DERIVED_DATA}" \
+              -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
               -enableCodeCoverage NO \
               -resultBundlePath TestResults.xcresult \
               -only-testing:NextExplorerUITests \
@@ -230,7 +302,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: uitest-results
           path: TestResults.xcresult
