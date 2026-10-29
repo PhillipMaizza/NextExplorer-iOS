@@ -76,7 +76,7 @@
             XCTAssertTrue(text("Reports", in: app).waitToAppear(), "The new folder should appear in the table")
         }
 
-        func testRenameFromTheContextMenu() {
+        func testRenameInPlaceFromTheContextMenu() {
             let app = launchApp()
             openDocuments(in: app)
 
@@ -84,11 +84,13 @@
             XCTAssertTrue(app.menuItems[L10n.Browse.actionRename].waitToAppear(), "Right click should offer Rename")
             app.menuItems[L10n.Browse.actionRename].click()
 
-            let field = app.textFields[L10n.Browse.renameNamePlaceholder]
-            XCTAssertTrue(field.waitToAppear(), "Rename should present the name sheet")
+            // The name cell turns into a text field in place, Finder style, with no sheet.
+            let field = app.outlines.textFields.firstMatch
+            XCTAssertTrue(field.waitToAppear(), "Rename should edit the name in the table")
             field.clearAndType("todo.txt")
-            app.labeledButton(L10n.Common.save).click()
+            app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
 
+            XCTAssertTrue(field.waitToVanish(), "Return should finish the rename")
             XCTAssertTrue(text("todo.txt", in: app).waitToAppear(), "The renamed file should appear in the table")
         }
 
@@ -155,10 +157,12 @@
             XCTAssertTrue(text(L10n.EditShare.title, in: app).waitToAppear(), "Edit should open the edit share sheet")
         }
 
-        func testSettingsToggleFlips() {
+        func testSettingsWindowToggleFlips() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
-            app.labeledButton(L10n.Tab.settings).click()
+            focusWindow(app)
+            // Settings lives in its own window on the Mac, opened from the app menu.
+            app.typeKey(",", modifierFlags: .command)
 
             let toggle = app.descendants(matching: .any)
                 .matching(NSPredicate(format: "(elementType == %d OR elementType == %d) AND label == %@",
@@ -166,6 +170,11 @@
                                       XCUIElement.ElementType.checkBox.rawValue,
                                       L10n.Settings.toggleShowHiddenFiles))
                 .firstMatch
+            // A fresh launch can drop the first ⌘, while its menu bar is still settling.
+            if !toggle.appears(within: UITestTimeout.short) {
+                focusWindow(app)
+                app.typeKey(",", modifierFlags: .command)
+            }
             XCTAssertTrue(toggle.waitToAppear(), "Settings should show the hidden files toggle")
             let before = toggle.value as? Int
             toggle.click()
@@ -179,8 +188,11 @@
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
 
-            app.labeledButton(L10n.Settings.sectionAccounts).click()
-            let signOut = app.labeledButton(L10n.Settings.signOutButton)
+            // The sidebar profile opens a native menu, exposed as a menu button.
+            app.menuButtons.matching(NSPredicate(format: "label == %@ OR title == %@", L10n.Settings.sectionAccounts, L10n.Settings.sectionAccounts))
+                .firstMatch
+                .click()
+            let signOut = app.menuItems[L10n.MacSettings.signOut]
             XCTAssertTrue(signOut.waitToAppear(), "The account menu should offer Sign Out")
             signOut.click()
 

@@ -41,11 +41,15 @@
             MacSettingsPane {
                 Section(L10n.Settings.sectionGeneral) {
                     Toggle(L10n.Settings.toggleShowHiddenFiles, isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles))
+                        .accessibilityLabel(L10n.Settings.toggleShowHiddenFiles)
                     Toggle(L10n.Settings.toggleShowExtensions, isOn: $showFilenameExtensions)
+                        .accessibilityLabel(L10n.Settings.toggleShowExtensions)
                 }
                 Section(L10n.Settings.sectionDisplay) {
                     Toggle(L10n.Settings.toggleRenderHTML, isOn: $renderHTMLPages)
+                        .accessibilityLabel(L10n.Settings.toggleRenderHTML)
                     Toggle(L10n.Settings.toggleRenderMarkdown, isOn: $renderMarkdownPages)
+                        .accessibilityLabel(L10n.Settings.toggleRenderMarkdown)
                     Picker(L10n.Settings.rowAppearance, selection: appearance) {
                         ForEach(AppearanceMode.allCases) { mode in
                             Text(mode.title).tag(mode)

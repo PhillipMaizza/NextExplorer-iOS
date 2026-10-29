@@ -57,7 +57,8 @@
                 }
                 Button(L10n.MacSettings.signOut, role: .destructive) { store.send(.signOutButtonTapped) }
             } label: {
-                label()
+                // One element for VoiceOver, named by the menu, instead of one per piece.
+                label().accessibilityElement(children: .combine)
             }
             .menuStyle(.button)
             .buttonStyle(.plain)

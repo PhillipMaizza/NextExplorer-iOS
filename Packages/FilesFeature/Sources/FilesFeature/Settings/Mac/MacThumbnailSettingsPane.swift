@@ -36,6 +36,7 @@
                     Toggle(isOn: $store.draft.isEnabled.sending(\.enabledChanged)) {
                         MacRowTitle(title: L10n.ThumbnailSettings.enable, subtitle: L10n.ThumbnailSettings.enableHelp)
                     }
+                    .accessibilityLabel(L10n.ThumbnailSettings.enable)
                 } footer: {
                     MacSectionFooter(L10n.ThumbnailSettings.subtitle)
                 }

@@ -289,7 +289,12 @@
 
         @State private var name: String
         @State private var isFinished = false
+        @State private var appearedAt = Date()
         @FocusState private var isFocused: Bool
+
+        /// Right after the context menu closes, focus bounces back to the table once; a loss
+        /// this early takes focus back instead of ending the rename.
+        private static let focusSettleInterval: TimeInterval = 0.6
 
         init(originalName: String, onCommit: @escaping (String) -> Void, onCancel: @escaping () -> Void) {
             self.originalName = originalName
@@ -303,11 +308,17 @@
                 .labelsHidden()
                 .textFieldStyle(.roundedBorder)
                 .focused($isFocused)
-                .onAppear { isFocused = true }
+                .onAppear {
+                    appearedAt = Date()
+                    isFocused = true
+                }
                 .onSubmit { finish(commit: true) }
                 .onExitCommand { finish(commit: false) }
                 .onChange(of: isFocused) { _, focused in
-                    if !focused {
+                    guard !focused else { return }
+                    if Date().timeIntervalSince(appearedAt) < Self.focusSettleInterval {
+                        isFocused = true
+                    } else {
                         finish(commit: true)
                     }
                 }

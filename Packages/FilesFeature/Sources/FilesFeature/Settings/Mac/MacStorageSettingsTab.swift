@@ -86,6 +86,7 @@
                 Toggle(isOn: $preferOfflineMedia) {
                     MacRowTitle(title: L10n.Offline.preferOfflineToggle, subtitle: L10n.Offline.preferOfflineSubtitle)
                 }
+                .accessibilityLabel(L10n.Offline.preferOfflineToggle)
                 LabeledContent(L10n.Offline.manageTitle) {
                     Text(SettingsFormat.byteFormatter.string(fromByteCount: store.offlineSize)).monospacedDigit()
                 }
