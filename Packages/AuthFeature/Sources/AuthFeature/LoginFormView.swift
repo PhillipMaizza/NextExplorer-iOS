@@ -396,23 +396,12 @@ public struct LoginFormView: View {
                 .padding(.horizontal, .space16)
 
                 VStack(spacing: .space24) {
-                    #if os(macOS)
-                        Picker(selection: Binding(get: { store.scheme }, set: { store.send(.schemeChanged($0)) })) {
-                            ForEach(LoginFormFeature.URLScheme.allCases) { Text($0.displayName).tag($0) }
-                        } label: {
-                            EmptyView()
-                        }
-                        .labelsHidden()
-                        .pickerStyle(.segmented)
-                        .fixedSize()
-                    #else
-                        DSSegmentedControl(
-                            options: LoginFormFeature.URLScheme.allCases,
-                            selection: Binding(get: { store.scheme }, set: { store.send(.schemeChanged($0)) }),
-                            alwaysUsesPill: true,
-                            label: \.displayName
-                        )
-                    #endif
+                    DSSegmentedControl(
+                        options: LoginFormFeature.URLScheme.allCases,
+                        selection: Binding(get: { store.scheme }, set: { store.send(.schemeChanged($0)) }),
+                        alwaysUsesPill: true,
+                        label: \.displayName
+                    )
 
                     // The picker also moves on its own: typing a leading digit (an IP) or an
                     // `http://` prefix flips it to http. See `LoginFormFeature.inferredScheme`.
@@ -422,14 +411,9 @@ public struct LoginFormView: View {
                     ) {
                         EmptyView()
                     }
-                    #if os(macOS)
-                    .textFieldStyle(.roundedBorder)
-                    .controlSize(.large)
-                    #else
                     .roundedFieldStyle(height: .size56)
                     .type(.body1(.regular))
                     .tint(Color.accent)
-                    #endif
                     .autocorrectionDisabled()
                     .textInputAutocapitalization(.never)
                     .keyboardType(.URL)
@@ -506,21 +490,6 @@ public struct LoginFormView: View {
     }
 
     private var testConnectionButton: some View {
-        #if os(macOS)
-            MacLoginButton(
-                title: L10n.Login.testConnection,
-                isWorking: store.connectionPhase == .testing,
-                isProminent: true,
-                action: submitTestConnection
-            )
-            .disabled(store.connectionPhase != .idle)
-            .accessibilityIdentifier(AccessibilityIdentifiers.Login.testConnectionButton)
-        #else
-            phoneTestConnectionButton
-        #endif
-    }
-
-    private var phoneTestConnectionButton: some View {
         let isCollapsed = store.connectionPhase != .idle
         return DSAnimatedButton(
             phase: store.connectionPhase,
@@ -608,13 +577,7 @@ public struct LoginFormView: View {
                         // After the fields on purpose: a conditional sibling *above* them shifts
                         // their position in the container and drops the keyboard's AutoFill session.
                         if store.scheme == .http {
-                            #if os(macOS)
-                                Label(L10n.Login.plaintextWarning, systemImage: "exclamationmark.triangle")
-                                    .font(.callout)
-                                    .foregroundStyle(.secondary)
-                            #else
-                                DSInfoCard(L10n.Login.plaintextWarning)
-                            #endif
+                            DSInfoCard(L10n.Login.plaintextWarning)
                         }
 
                         continueButton
@@ -652,30 +615,6 @@ public struct LoginFormView: View {
     }
 
     private var identifierField: some View {
-        #if os(macOS)
-            MacLoginField(label: L10n.Login.emailField, shakeTrigger: identifierShakeTrigger, isInvalid: isIdentifierFieldInvalid) {
-                TextField(
-                    text: Binding(get: { store.identifier }, set: { store.send(.identifierChanged($0)) }),
-                    prompt: Text(verbatim: "name@company.com")
-                ) {
-                    EmptyView()
-                }
-                .textContentType(.username)
-                .autocorrectionDisabled()
-                .accessibilityIdentifier(AccessibilityIdentifiers.Login.emailField)
-                .focused($focusedField, equals: .identifier)
-                .task {
-                    try? await Task.sleep(for: Constants.identifierAutoFocusDelay)
-                    guard !Task.isCancelled else { return }
-                    focusedField = .identifier
-                }
-            }
-        #else
-            phoneIdentifierField
-        #endif
-    }
-
-    private var phoneIdentifierField: some View {
         DSFieldContainer(label: L10n.Login.emailField, icon: IconKit.person, shakeTrigger: identifierShakeTrigger, isInvalid: isIdentifierFieldInvalid) {
             // Native `prompt:` rather than a ZStack placeholder overlay: a sibling view stacked
             // on the field is a documented AutoFill target-resolution hazard.
@@ -704,27 +643,6 @@ public struct LoginFormView: View {
     }
 
     private var passwordField: some View {
-        #if os(macOS)
-            // The Mac keeps one secure field: its password AutoFill and the Keychain need no
-            // reveal toggle, and a single field keeps the AutoFill pairing unambiguous.
-            MacLoginField(label: L10n.Login.passwordField, shakeTrigger: passwordShakeTrigger, isInvalid: isPasswordFieldInvalid) {
-                SecureField(
-                    text: Binding(get: { store.password }, set: { store.send(.passwordChanged($0)) }),
-                    prompt: Text(Constants.maskedPasswordPlaceholder)
-                ) {
-                    EmptyView()
-                }
-                .textContentType(.password)
-                .accessibilityIdentifier(AccessibilityIdentifiers.Login.passwordField)
-                .focused($focusedField, equals: .password)
-                .onSubmit(submitCredentials)
-            }
-        #else
-            phonePasswordField
-        #endif
-    }
-
-    private var phonePasswordField: some View {
         DSFieldContainer(label: L10n.Login.passwordField, icon: IconKit.lock, shakeTrigger: passwordShakeTrigger, isInvalid: isPasswordFieldInvalid) {
             HStack(spacing: .space8) {
                 // Both fields stay mounted at all times: swapping SecureField/TextField in and
@@ -787,27 +705,6 @@ public struct LoginFormView: View {
     }
 
     private var continueButton: some View {
-        #if os(macOS)
-            MacLoginButton(
-                title: L10n.Login.submit,
-                isWorking: store.submitPhase == .submitting || store.submitPhase == .success,
-                isProminent: true,
-                action: submitCredentials
-            )
-            .disabled(!isSubmitLocalEnabled || store.submitPhase != .idle)
-            .accessibilityIdentifier(AccessibilityIdentifiers.Login.submitButton)
-            // The accent flood into the app still grows from where the button sits.
-            .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .named(Constants.rootSpace)) }) { newFrame in
-                if newFrame != .zero {
-                    submitButtonRect = newFrame
-                }
-            }
-        #else
-            phoneContinueButton
-        #endif
-    }
-
-    private var phoneContinueButton: some View {
         let phase = store.submitPhase
         let isCollapsed = phase != .idle
         return DSAnimatedButton(
@@ -865,26 +762,6 @@ public struct LoginFormView: View {
     }
 
     private var ssoButton: some View {
-        #if os(macOS)
-            MacLoginButton(
-                title: L10n.Login.ssoButton,
-                systemImage: "person.crop.circle",
-                isWorking: store.oidcPhase != .idle,
-                isProminent: false,
-                action: submitSSO
-            )
-            .disabled(store.oidcPhase != .idle)
-            .onGeometryChange(for: CGRect.self, of: { $0.frame(in: .named(Constants.rootSpace)) }) { newFrame in
-                if newFrame != .zero {
-                    ssoButtonRect = newFrame
-                }
-            }
-        #else
-            phoneSSOButton
-        #endif
-    }
-
-    private var phoneSSOButton: some View {
         let phase = store.oidcPhase
         let isCollapsed = phase != .idle
         return DSAnimatedButton(
