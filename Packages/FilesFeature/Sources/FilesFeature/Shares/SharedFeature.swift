@@ -256,12 +256,17 @@ public struct SharedFeature {
             case let .expiryTick(now):
                 // Advancing `now` re-renders the whole list. Only do it when a share actually
                 // crosses its expiry in this interval, so a quiet list stays still between ticks.
+                // The first tick always lands: it arrives before the first load, and shares that
+                // load already expired must read as expired then, not on the next tick.
                 let previousNow = state.now
                 let crossesExpiry: (Share) -> Bool = { share in
                     guard let expiresAt = share.expiresAt else { return false }
                     return expiresAt > previousNow && expiresAt <= now
                 }
-                guard state.byMe.contains(where: crossesExpiry) || state.withMe.contains(where: crossesExpiry) else {
+                guard previousNow == .distantPast
+                    || state.byMe.contains(where: crossesExpiry)
+                    || state.withMe.contains(where: crossesExpiry)
+                else {
                     return .none
                 }
                 state.now = now
