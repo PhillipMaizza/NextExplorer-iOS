@@ -118,10 +118,25 @@ public enum Typography {
             }
         }
 
+        #if os(macOS)
+            /// The Mac's own text style for each tier. Its system sizes run smaller than the
+            /// phone's (body is 13pt), so the tiers follow them instead of the iOS point sizes.
+            private var macTextStyle: Font.TextStyle {
+                switch self {
+                case .display, .headline1: .largeTitle
+                case .headline2: .title
+                case .headline3, .label1: .title2
+                case .headline4, .subtitle1, .label2: .title3
+                case .subtitle2, .body1, .body2, .label3: .body
+                case .body3, .label4: .callout
+                case .caption: .caption
+                }
+            }
+        #endif
+
         public func font() -> Font {
             #if os(macOS)
-                // The Mac reads in its own system font (San Francisco), at the same sizes.
-                return .system(size: size)
+                return .system(macTextStyle)
             #else
                 _ = Self.fontsRegistered
                 return .custom(Self.familyName, size: size, relativeTo: relativeTextStyle)
