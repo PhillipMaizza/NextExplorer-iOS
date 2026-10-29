@@ -104,6 +104,9 @@
                         Text(share.displayName)
                             .lineLimit(1)
                             .truncationMode(.middle)
+                        if !isLoading, store.state.isExpired(share) {
+                            ExpiredBadge()
+                        }
                     }
                     .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
                     .modifier(PlaceholderCell(isActive: isLoading))
@@ -270,6 +273,18 @@
             case \Share.createdAt: .dateShared
             default: .name
             }
+        }
+    }
+
+    /// The red tag iOS shows on an expired link's header, beside the name.
+    private struct ExpiredBadge: View {
+        var body: some View {
+            Text(L10n.Shared.badgeExpired.uppercased())
+                .type(.caption(.semibold), style: .error)
+                .padding(.horizontal, SharedLinkMetrics.badgeHorizontalPadding)
+                .padding(.vertical, SharedLinkMetrics.badgeVerticalPadding)
+                .background(RoundedRectangle(cornerRadius: .radiusXSmall).fill(Color.negative.opacity(0.15)))
+                .fixedSize()
         }
     }
 
