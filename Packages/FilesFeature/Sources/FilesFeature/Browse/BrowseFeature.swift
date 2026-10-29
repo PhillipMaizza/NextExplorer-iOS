@@ -435,6 +435,8 @@ public struct BrowseFeature {
         #if os(macOS)
             /// Files dropped or picked on the Mac, staged without the review sheet.
             case directUploadStaged([PickedFile], destination: String, requested: Int)
+            /// Files opened from Finder name no folder, so they always go through the review sheet.
+            case reviewUpload(UploadReviewFeature.PickSource)
             case downloadProgressUpdated(String)
             /// The save panel was dismissed without choosing a destination.
             case downloadCancelled
@@ -1055,13 +1057,12 @@ public struct BrowseFeature {
                         }
                     }
                 #endif
-                state.uploadReview = UploadReviewFeature.State(
-                    serverURL: state.serverURL,
-                    startingDestination: state.directoryPath
-                )
-                return .send(.uploadReview(.presented(.stage(source))))
+                return openUploadReview(source, state: &state)
 
             #if os(macOS)
+                case let .reviewUpload(source):
+                    return openUploadReview(source, state: &state)
+
                 case let .directUploadStaged(files, destination, _):
                     guard !files.isEmpty else {
                         state.fileActionErrorMessage = L10n.Uploads.stagingFailed
@@ -1079,9 +1080,9 @@ public struct BrowseFeature {
                 }
                 // An open preview would cover the review sheet.
                 if state.previewItem != nil {
-                    return .concatenate(.send(.previewDismissed), .send(.beginUpload(.documents(urls))))
+                    return .concatenate(.send(.previewDismissed), .send(Self.sharedFilesUpload(urls)))
                 }
-                return .send(.beginUpload(.documents(urls)))
+                return .send(Self.sharedFilesUpload(urls))
 
             case let .uploadReview(.presented(.delegate(.confirmed(files, destination)))):
                 state.uploadReview = nil
@@ -1436,6 +1437,22 @@ extension FileItem: DirectoryFirstSortable {}
 extension SearchResultItem: DirectoryFirstSortable {}
 
 extension BrowseFeature {
+    private func openUploadReview(_ source: UploadReviewFeature.PickSource, state: inout State) -> Effect<Action> {
+        state.uploadReview = UploadReviewFeature.State(
+            serverURL: state.serverURL,
+            startingDestination: state.directoryPath
+        )
+        return .send(.uploadReview(.presented(.stage(source))))
+    }
+
+    private static func sharedFilesUpload(_ urls: [URL]) -> Action {
+        #if os(macOS)
+            .reviewUpload(.documents(urls))
+        #else
+            .beginUpload(.documents(urls))
+        #endif
+    }
+
     /// The selected rows in list order (the selection set itself is unordered).
     func selectedItems(_ state: State) -> [FileItem] {
         state.items.filter { state.selectedItemIDs.contains($0.id) }
