@@ -204,9 +204,7 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
-        #if os(iOS)
             .modifier(TipJarPresentation(store: store))
-        #endif
             .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
                 #if os(macOS)
                     MacOfflineSelectionSheet(store: selectionStore)

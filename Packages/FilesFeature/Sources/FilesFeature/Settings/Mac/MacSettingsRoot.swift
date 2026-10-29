@@ -137,7 +137,7 @@
                     Color.clear.onAppear { store.send(.thumbnailSettingsButtonTapped) }
                 }
             case .about:
-                MacAboutContent()
+                MacAboutContent { store.send(.tipJarButtonTapped) }
                     .padding(.space32)
                     .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             case .accessRules:

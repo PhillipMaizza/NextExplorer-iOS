@@ -4,7 +4,7 @@
     import Localization
     import SwiftUI
 
-    /// The General tab: what the file tables show, and the app's appearance and language.
+    /// The General pane: what the file tables show, and the app's appearance and language.
     struct MacGeneralSettingsTab: View {
         @Bindable var store: StoreOf<SettingsFeature>
 
@@ -38,29 +38,27 @@
         }
 
         var body: some View {
-            MacSettingsForm {
-                MacSettingsRow(L10n.Settings.sectionGeneral) {
+            MacSettingsPane {
+                Section(L10n.Settings.sectionGeneral) {
                     Toggle(L10n.Settings.toggleShowHiddenFiles, isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles))
                     Toggle(L10n.Settings.toggleShowExtensions, isOn: $showFilenameExtensions)
                 }
-                MacSettingsRow(L10n.Settings.sectionDisplay) {
+                Section(L10n.Settings.sectionDisplay) {
                     Toggle(L10n.Settings.toggleRenderHTML, isOn: $renderHTMLPages)
                     Toggle(L10n.Settings.toggleRenderMarkdown, isOn: $renderMarkdownPages)
-                }
-                Picker(L10n.MacSettings.labelFormat(L10n.Settings.rowAppearance), selection: appearance) {
-                    ForEach(AppearanceMode.allCases) { mode in
-                        Text(mode.title).tag(mode)
+                    Picker(L10n.Settings.rowAppearance, selection: appearance) {
+                        ForEach(AppearanceMode.allCases) { mode in
+                            Text(mode.title).tag(mode)
+                        }
+                    }
+                    Picker(L10n.Settings.rowLanguage, selection: language) {
+                        Text(L10n.Language.systemDefault).tag("")
+                        Divider()
+                        ForEach(LocalizationOverride.supportedLanguages, id: \.self) { code in
+                            Text(LocalizationOverride.displayName(for: code)).tag(code)
+                        }
                     }
                 }
-                .fixedSize()
-                Picker(L10n.MacSettings.labelFormat(L10n.Settings.rowLanguage), selection: language) {
-                    Text(L10n.Language.systemDefault).tag("")
-                    Divider()
-                    ForEach(LocalizationOverride.supportedLanguages, id: \.self) { code in
-                        Text(LocalizationOverride.displayName(for: code)).tag(code)
-                    }
-                }
-                .fixedSize()
             }
         }
     }

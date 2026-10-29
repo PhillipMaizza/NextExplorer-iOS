@@ -10,7 +10,50 @@
         static let noteSpacing: CGFloat = .space2
     }
 
-    /// A Settings tab laid out like a native Mac preferences pane: right aligned labels ending
+    /// A Settings pane in the System Settings style: rounded grouped sections, each row a label
+    /// with its value or control at the trailing edge, notes as section footers.
+    struct MacSettingsPane<Content: View>: View {
+        @ViewBuilder let content: () -> Content
+
+        var body: some View {
+            Form {
+                content()
+            }
+            .formStyle(.grouped)
+        }
+    }
+
+    /// A grouped section footer: explanatory lines in the secondary color.
+    struct MacSectionFooter: View {
+        let lines: [String]
+
+        init(_ lines: String...) {
+            self.lines = lines
+        }
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: Metrics.noteSpacing) {
+                ForEach(lines, id: \.self) { Text($0) }
+            }
+            .font(.callout)
+            .foregroundStyle(.secondary)
+        }
+    }
+
+    /// A row title with a secondary line under it, for grouped rows that need explaining.
+    struct MacRowTitle: View {
+        let title: String
+        let subtitle: String
+
+        var body: some View {
+            VStack(alignment: .leading, spacing: Metrics.noteSpacing) {
+                Text(title)
+                Text(subtitle).font(.callout).foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    /// A label column form, as Mac dialogs (sheets) lay out their fields: right aligned labels ending
     /// in a colon, with the checkboxes, pickers and buttons in a column beside them.
     struct MacSettingsForm<Content: View>: View {
         @ViewBuilder let content: () -> Content

@@ -34,6 +34,9 @@
     /// The app icon beside its name, version and links, with the credits underneath, like a
     /// native Mac app's About pane.
     struct MacAboutContent: View {
+        /// Opens the tip jar; the About window has no signed in session to buy with.
+        var onTip: (() -> Void)?
+
         @Environment(\.requestReview) private var requestReview
         @Environment(\.openURL) private var openURL
         @State private var isShowingLicenses = false
@@ -48,10 +51,19 @@
                     info
                 }
                 .fixedSize()
-                Text(L10n.Settings.creditsMadeBy)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .multilineTextAlignment(.center)
+                VStack(spacing: .space4) {
+                    Text(L10n.Settings.creditsMadeBy)
+                        .foregroundStyle(.secondary)
+                    if let onTip {
+                        Button(action: onTip) {
+                            Text(L10n.Settings.creditsLikeApp + " ").foregroundStyle(.secondary)
+                                + Text(L10n.Settings.creditsBuyCoffee).fontWeight(.semibold).foregroundStyle(Color.accent)
+                        }
+                        .buttonStyle(.plain)
+                    }
+                }
+                .font(.callout)
+                .multilineTextAlignment(.center)
             }
             .sheet(isPresented: $isShowingLicenses) {
                 VStack(spacing: 0) {

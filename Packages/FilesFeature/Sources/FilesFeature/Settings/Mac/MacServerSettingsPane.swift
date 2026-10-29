@@ -8,8 +8,7 @@
     import UniformTypeIdentifiers
 
     private enum Metrics {
-        static let logoSize: CGFloat = 64
-        static let fieldWidth: CGFloat = 280
+        static let logoSize: CGFloat = 40
     }
 
     /// The Server pane: the server's name and icon, edited in place, with Update Server under
@@ -19,30 +18,28 @@
         @State private var isChoosingIcon = false
 
         var body: some View {
-            MacSettingsForm {
-                MacSettingsRow(L10n.MacSettings.icon) {
-                    HStack(spacing: .space12) {
-                        ServerLogoThumbnail(
-                            branding: store.branding,
-                            serverURL: store.serverURL,
-                            size: Metrics.logoSize,
-                            overrideImageData: store.pendingLogoData
-                        )
-                        Button(L10n.ServerDetails.changeLogo + "…") { isChoosingIcon = true }
+            MacSettingsPane {
+                Section {
+                    LabeledContent(L10n.MacSettings.icon) {
+                        HStack(spacing: .space12) {
+                            ServerLogoThumbnail(
+                                branding: store.branding,
+                                serverURL: store.serverURL,
+                                size: Metrics.logoSize,
+                                overrideImageData: store.pendingLogoData
+                            )
+                            Button(L10n.ServerDetails.changeLogo + "…") { isChoosingIcon = true }
+                        }
                     }
-                }
-                MacSettingsRow(L10n.ServerDetails.nameLabel) {
                     TextField(L10n.ServerDetails.nameLabel, text: $store.nameDraft.sending(\.nameChanged), prompt: Text(L10n.ServerDetails.namePlaceholder))
-                        .labelsHidden()
-                        .textFieldStyle(.roundedBorder)
-                        .frame(maxWidth: Metrics.fieldWidth)
                     if store.nameError == .empty {
                         Text(L10n.ServerDetails.nameErrorEmpty).foregroundStyle(Color.negativeText)
                     }
-                }
-                MacSettingsRow(L10n.ServerDetails.urlLabel) {
-                    Text(store.serverURL.absoluteString).textSelection(.enabled)
-                    MacSettingsNote(L10n.ServerDetails.urlFootnote)
+                    LabeledContent(L10n.ServerDetails.urlLabel) {
+                        Text(store.serverURL.absoluteString).textSelection(.enabled)
+                    }
+                } footer: {
+                    MacSectionFooter(L10n.ServerDetails.urlFootnote)
                 }
                 if let error = store.errorMessage {
                     Text(error).foregroundStyle(Color.negativeText)

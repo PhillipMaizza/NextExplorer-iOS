@@ -6,6 +6,10 @@
     import Localization
     import SwiftUI
 
+    private enum Metrics {
+        static let usageBarWidth: CGFloat = 160
+    }
+
     /// The Storage pane: the local cache, the files kept for offline use, and the server's disks.
     struct MacStorageSettingsTab: View {
         let store: StoreOf<SettingsFeature>
@@ -16,22 +20,28 @@
         }
 
         var body: some View {
-            MacSettingsForm {
-                MacSettingsRow(L10n.MacSettings.cache) {
-                    HStack {
-                        Text(SettingsFormat.byteFormatter.string(fromByteCount: store.cacheSize))
-                        Spacer()
-                        Button(L10n.Settings.rowClearCache + "…") { store.send(.clearCacheTapped) }
-                            .disabled(store.isClearingCache || store.cacheSize == 0)
+            MacSettingsPane {
+                Section {
+                    LabeledContent(L10n.MacSettings.cache) {
+                        HStack {
+                            Text(SettingsFormat.byteFormatter.string(fromByteCount: store.cacheSize))
+                                .monospacedDigit()
+                            Button(L10n.Settings.rowClearCache + "…") { store.send(.clearCacheTapped) }
+                                .disabled(store.isClearingCache || store.cacheSize == 0)
+                        }
                     }
-                    MacSettingsNote(L10n.Settings.storageFootnoteMac)
+                } footer: {
+                    MacSectionFooter(L10n.Settings.storageFootnoteMac)
                 }
-                MacSettingsRow(L10n.Offline.sectionTitle) {
-                    offlineContent
-                    MacSettingsNote(footnote, L10n.Offline.tunnelSpeedNote)
+                Section {
+                    offlineRows
+                } header: {
+                    Text(L10n.Offline.sectionTitle)
+                } footer: {
+                    MacSectionFooter(footnote, L10n.Offline.tunnelSpeedNote)
                 }
                 if store.isVolumeUsageEnabled, !store.serverUsage.isEmpty {
-                    MacSettingsRow(L10n.Settings.sectionServerStorage) {
+                    Section(L10n.Settings.sectionServerStorage) {
                         ForEach(store.serverUsage) { row in
                             volumeUsage(row)
                         }
@@ -41,20 +51,14 @@
         }
 
         private func volumeUsage(_ row: SettingsFeature.VolumeUsage) -> some View {
-            VStack(alignment: .leading, spacing: .space4) {
-                HStack {
-                    Text(row.volume.name)
-                    Spacer()
-                    if let usage = row.usage, usage.isMeaningful {
-                        Text(usageCaption(usage))
-                            .foregroundStyle(.secondary)
-                            .monospacedDigit()
-                    } else if row.usage == nil {
-                        ProgressView().controlSize(.small)
-                    }
-                }
+            LabeledContent(row.volume.name) {
                 if let usage = row.usage, usage.isMeaningful {
-                    ProgressView(value: usage.fraction)
+                    VStack(alignment: .trailing, spacing: .space4) {
+                        Text(usageCaption(usage)).monospacedDigit()
+                        ProgressView(value: usage.fraction).frame(width: Metrics.usageBarWidth)
+                    }
+                } else if row.usage == nil {
+                    ProgressView().controlSize(.small)
                 }
             }
         }
@@ -67,35 +71,35 @@
         }
 
         @ViewBuilder
-        private var offlineContent: some View {
+        private var offlineRows: some View {
             if progress.isActive {
                 MacOfflineProgress(progress: progress) { store.send(.cancelOfflineDownloadTapped) }
             } else {
-                HStack {
-                    Button(L10n.Offline.settingsRow + "…") { store.send(.offlineDownloadButtonTapped) }
-                    if store.offlineSize > 0 {
-                        Button(L10n.Offline.manageRow) { store.send(.offlineManageButtonTapped) }
-                    }
+                LabeledContent(L10n.Offline.settingsRow) {
+                    Button(L10n.Offline.selectionDownload + "…") { store.send(.offlineDownloadButtonTapped) }
                 }
             }
             if case let .failed(message) = progress.phase {
                 Text(message).foregroundStyle(Color.negativeText)
             }
             if !progress.isActive, store.offlineSize > 0 {
-                HStack {
-                    Button(L10n.Offline.resyncRow) { store.send(.resyncOfflineTapped) }
-                    Button(L10n.Offline.removeRow + "…") { store.send(.removeOfflineTapped) }
+                Toggle(isOn: $preferOfflineMedia) {
+                    MacRowTitle(title: L10n.Offline.preferOfflineToggle, subtitle: L10n.Offline.preferOfflineSubtitle)
                 }
-                Toggle(L10n.Offline.preferOfflineToggle, isOn: $preferOfflineMedia)
-                MacSettingsNote(L10n.Offline.preferOfflineSubtitle)
+                LabeledContent(L10n.Offline.manageTitle) {
+                    Text(SettingsFormat.byteFormatter.string(fromByteCount: store.offlineSize)).monospacedDigit()
+                }
+                HStack {
+                    Button(L10n.Offline.manageRow) { store.send(.offlineManageButtonTapped) }
+                    Button(L10n.Offline.resyncRow) { store.send(.resyncOfflineTapped) }
+                    Spacer()
+                    Button(L10n.Offline.removeRow + "…", role: .destructive) { store.send(.removeOfflineTapped) }
+                }
             }
         }
 
         private var footnote: String {
-            if store.offlineSize > 0 {
-                return L10n.Offline.available(SettingsFormat.byteFormatter.string(fromByteCount: store.offlineSize))
-            }
-            return L10n.Offline.footnote
+            L10n.Offline.footnote
         }
     }
 

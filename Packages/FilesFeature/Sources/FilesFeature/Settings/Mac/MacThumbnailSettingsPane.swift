@@ -31,35 +31,43 @@
         }
 
         private var form: some View {
-            MacSettingsForm {
-                MacSettingsRow(L10n.ThumbnailSettings.navigationTitle) {
-                    Toggle(L10n.ThumbnailSettings.enable, isOn: $store.draft.isEnabled.sending(\.enabledChanged))
-                    MacSettingsNote(L10n.ThumbnailSettings.subtitle, L10n.ThumbnailSettings.enableHelp)
+            MacSettingsPane {
+                Section {
+                    Toggle(isOn: $store.draft.isEnabled.sending(\.enabledChanged)) {
+                        MacRowTitle(title: L10n.ThumbnailSettings.enable, subtitle: L10n.ThumbnailSettings.enableHelp)
+                    }
+                } footer: {
+                    MacSectionFooter(L10n.ThumbnailSettings.subtitle)
                 }
-                Group {
-                    MacSettingsRow(L10n.ThumbnailSettings.quality) {
+                Section {
+                    numberRow(L10n.ThumbnailSettings.quality, help: L10n.ThumbnailSettings.qualityHelp) {
                         MacNumberStepper(value: store.draft.quality, range: ThumbnailSettings.qualityRange, step: 5) {
                             store.send(.qualityChanged($0))
                         }
-                        MacSettingsNote(L10n.ThumbnailSettings.qualityHelp)
                     }
-                    MacSettingsRow(L10n.ThumbnailSettings.maxDimension) {
+                    numberRow(L10n.ThumbnailSettings.maxDimension, help: L10n.ThumbnailSettings.maxDimensionHelp) {
                         MacNumberStepper(value: store.draft.size, range: ThumbnailSettings.sizeRange, step: 8, unit: "px") {
                             store.send(.sizeChanged($0))
                         }
-                        MacSettingsNote(L10n.ThumbnailSettings.maxDimensionHelp)
                     }
-                    MacSettingsRow(L10n.ThumbnailSettings.concurrency) {
+                    numberRow(L10n.ThumbnailSettings.concurrency, help: L10n.ThumbnailSettings.concurrencyHelp) {
                         MacNumberStepper(value: store.draft.concurrency, range: ThumbnailSettings.concurrencyRange, step: 1) {
                             store.send(.concurrencyChanged($0))
                         }
-                        MacSettingsNote(L10n.ThumbnailSettings.concurrencyHelp)
                     }
                 }
                 .disabled(!store.draft.isEnabled)
                 if let error = store.errorMessage ?? store.phase.errorMessage {
                     Text(error).foregroundStyle(Color.negativeText)
                 }
+            }
+        }
+
+        private func numberRow(_ title: String, help: String, @ViewBuilder control: () -> some View) -> some View {
+            LabeledContent {
+                control()
+            } label: {
+                MacRowTitle(title: title, subtitle: help)
             }
         }
     }
