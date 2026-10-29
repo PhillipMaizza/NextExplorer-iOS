@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Packages/CoreModels">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/NetworkClient">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/AuthClient">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/FilesClient">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/Localization">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/DesignSystem">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/AuthFeature">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/FilesFeature">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/AppStorageKeys">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/AppFeature">
+   </FileRef>
+</Workspace>

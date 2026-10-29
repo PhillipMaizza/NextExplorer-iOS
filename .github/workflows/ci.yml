@@ -30,27 +30,11 @@ jobs:
 
     env:
       SIM_DEVICE: iPhone 17
-      # The package test runs share one DerivedData and one SwiftPM checkout folder, so TCA and
-      # swift-syntax (its macros) compile once instead of once per package. Both live outside the
-      # repo so the linters never scan them.
+      # The package tests and the app build share one DerivedData and one SwiftPM checkout folder,
+      # so every dependency compiles once. Both live outside the repo so the linters never scan
+      # them. DerivedData is also cached between runs (saved from main, restored everywhere).
       DERIVED_DATA: ${{ github.workspace }}/../DerivedData
       SPM_CHECKOUTS: ${{ github.workspace }}/../SourcePackages
-      # Package test suites, discovered under Packages/<name>/Tests.
-      # Keychain is intentionally omitted: its tests hit the real Security framework, which
-      # returns errSecMissingEntitlement (-34018) for a standalone SwiftPM test bundle on the
-      # simulator (no app host / keychain-access-group entitlement). They pass only inside an
-      # entitled app host, so they run locally in Xcode, not in this package-by-package CI.
-      TEST_PACKAGES: >-
-        CoreModels
-        NetworkClient
-        AuthClient
-        FilesClient
-        Localization
-        DesignSystem
-        AuthFeature
-        FilesFeature
-        AppStorageKeys
-        AppFeature
 
     steps:
       - name: Checkout
@@ -90,6 +74,20 @@ jobs:
           restore-keys: spm-${{ runner.os }}-
 
       # Same Xcode build as local development (27.1, 27A9275).
+      # Build output from the latest main run: only what changed recompiles. Keyed on the Xcode
+      # build and the resolved dependencies; restore keys fall back to the closest older entry.
+      - name: Restore DerivedData
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ env.DERIVED_DATA }}
+            !${{ env.DERIVED_DATA }}/Logs
+            !${{ env.DERIVED_DATA }}/Index.noindex
+          key: deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
+          restore-keys: |
+            deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-
+            deriveddata-xcode27.1-
+
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -107,28 +105,21 @@ jobs:
       - name: Trust Swift package macros
         run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
 
+      # Every package's tests in one build and one run, through the PackageTests scheme of the
+      # CI only PackageTests.xcworkspace (local packages only expose their test targets to a
+      # scheme inside a workspace). Keychain is left out: its tests hit the real Security
+      # framework, which returns errSecMissingEntitlement (-34018) without an entitled app host,
+      # so they run locally. Coverage is off; it only made the test host spam
+      # "Failed to write file default.profraw".
       - name: Test packages
         run: |
-          set -o pipefail
-          DEST="platform=iOS Simulator,name=${SIM_DEVICE},OS=latest"
-          echo "Test destination: ${DEST}"
-          FAIL=0
-          for pkg in ${TEST_PACKAGES}; do
-            echo "::group::Test ${pkg}"
-            # Coverage is not collected in CI; disabling it stops the sandboxed test host
-            # spamming "LLVM Profile Error: Failed to write file default.profraw".
-            if ! ( cd "Packages/${pkg}" && xcodebuild test \
-                -scheme "${pkg}" \
-                -destination "${DEST}" \
-                -derivedDataPath "${DERIVED_DATA}" \
-                -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
-                -enableCodeCoverage NO ); then
-              echo "::error::${pkg} tests failed"
-              FAIL=1
-            fi
-            echo "::endgroup::"
-          done
-          exit $FAIL
+          xcodebuild test \
+            -workspace PackageTests.xcworkspace \
+            -scheme PackageTests \
+            -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -enableCodeCoverage NO
 
       # Runs after the package tests, on the same DerivedData and destination, so it reuses the
       # dependencies they compiled instead of building them again. Packages first: a package that
@@ -142,6 +133,18 @@ jobs:
             -derivedDataPath "${DERIVED_DATA}" \
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             CODE_SIGNING_ALLOWED=NO
+
+      # Only main saves, so pull requests reuse main's build output without each uploading
+      # several gigabytes of their own.
+      - name: Save DerivedData
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            ${{ env.DERIVED_DATA }}
+            !${{ env.DERIVED_DATA }}/Logs
+            !${{ env.DERIVED_DATA }}/Index.noindex
+          key: deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
 
   ui-test:
     name: UI tests
