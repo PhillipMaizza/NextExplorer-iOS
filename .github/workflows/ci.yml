@@ -16,9 +16,11 @@ on:
   # Manual trigger so the heavier UI test job can be run on any branch on demand.
   workflow_dispatch:
 
+# A new push to a pull request cancels its older run; runs on main always finish, so each one
+# saves its DerivedData cache and runs the UI tests.
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build-and-test:
@@ -65,6 +67,9 @@ jobs:
 
       - name: SwiftLint
         run: swiftlint lint --quiet
+
+      - name: Dependency pins match the app
+        run: python3 Scripts/sync-package-pins.py --check
 
       - name: Cache SwiftPM checkouts
         uses: actions/cache@v4
@@ -162,10 +167,32 @@ jobs:
 
     env:
       SIM_DEVICE: iPhone 17
+      # Same folders and caches as Build and test, restored only: unchanged code doesn't recompile.
+      DERIVED_DATA: ${{ github.workspace }}/../DerivedData
+      SPM_CHECKOUTS: ${{ github.workspace }}/../SourcePackages
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      - name: Restore SwiftPM checkouts
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.SPM_CHECKOUTS }}
+          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      - name: Restore DerivedData
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            ${{ env.DERIVED_DATA }}
+            !${{ env.DERIVED_DATA }}/Logs
+            !${{ env.DERIVED_DATA }}/Index.noindex
+          key: deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
+          restore-keys: |
+            deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-
+            deriveddata-xcode27.1-
 
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
@@ -179,6 +206,7 @@ jobs:
         run: |
           xcodebuild -project NextExplorer.xcodeproj \
             -scheme NextExplorer \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             -resolvePackageDependencies
 
       - name: Install xcbeautify
@@ -216,6 +244,8 @@ jobs:
               -project NextExplorer.xcodeproj \
               -scheme NextExplorer \
               -destination "${DEST}" \
+              -derivedDataPath "${DERIVED_DATA}" \
+              -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
               -enableCodeCoverage NO \
               -resultBundlePath TestResults.xcresult \
               -only-testing:NextExplorerUITests \
