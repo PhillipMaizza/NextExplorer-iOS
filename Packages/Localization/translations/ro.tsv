@@ -674,3 +674,11 @@ uploads.notifyDone	Încărcări finalizate
 uploads.notifyBody	%lld fișiere încărcate
 downloadQueue.notifyDone	Descărcări finalizate
 fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versiuni
+fileInfo.versionsNone	Nicio versiune anterioară
+fileInfo.versionRestore	Restaurează…
+fileInfo.restoreTitle	Restaurezi această versiune?
+fileInfo.restoreMessage	Fișierul revine la starea din %@. Conținutul actual este păstrat ca versiune.
+fileInfo.restoreConfirm	Restaurează
+fileInfo.sectionSharing	Partajare
+fileInfo.notShared	Niciun link de partajare

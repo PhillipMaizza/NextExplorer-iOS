@@ -748,3 +748,11 @@ uploads.notifyDone	Uploads finished
 uploads.notifyBody	%lld files uploaded
 downloadQueue.notifyDone	Downloads finished
 fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versions
+fileInfo.versionsNone	No earlier versions
+fileInfo.versionRestore	Restore…
+fileInfo.restoreTitle	Restore this version?
+fileInfo.restoreMessage	The file goes back to how it was on %@. What it holds now is kept as a version.
+fileInfo.restoreConfirm	Restore
+fileInfo.sectionSharing	Sharing
+fileInfo.notShared	No share links

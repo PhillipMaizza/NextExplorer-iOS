@@ -674,3 +674,11 @@ uploads.notifyDone	Wysyłanie zakończone
 uploads.notifyBody	Wysłano plików: %lld
 downloadQueue.notifyDone	Pobieranie zakończone
 fileInfo.rowSoftware	Oprogramowanie
+fileInfo.sectionVersions	Wersje
+fileInfo.versionsNone	Brak wcześniejszych wersji
+fileInfo.versionRestore	Przywróć…
+fileInfo.restoreTitle	Przywrócić tę wersję?
+fileInfo.restoreMessage	Plik wróci do stanu z %@. Jego obecna zawartość zostanie zachowana jako wersja.
+fileInfo.restoreConfirm	Przywróć
+fileInfo.sectionSharing	Udostępnianie
+fileInfo.notShared	Brak linków udostępniania

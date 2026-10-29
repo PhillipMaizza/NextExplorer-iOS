@@ -18,6 +18,7 @@ enum APIPath {
     static let permissions = "api/permissions"
     static let permissionsChmod = "api/permissions/chmod"
     static let permissionsChown = "api/permissions/chown"
+    static let versions = "api/versions"
     static let thumbnails = "api/thumbnails"
     static let preview = "api/preview"
     static let raw = "api/raw"

@@ -674,3 +674,11 @@ uploads.notifyDone	上傳完成
 uploads.notifyBody	已上傳 %lld 個檔案
 downloadQueue.notifyDone	下載完成
 fileInfo.rowSoftware	軟體
+fileInfo.sectionVersions	版本
+fileInfo.versionsNone	沒有較早的版本
+fileInfo.versionRestore	回復…
+fileInfo.restoreTitle	回復此版本？
+fileInfo.restoreMessage	檔案將回到 %@ 時的狀態。目前的內容會保留為一個版本。
+fileInfo.restoreConfirm	回復
+fileInfo.sectionSharing	共享
+fileInfo.notShared	沒有共享連結

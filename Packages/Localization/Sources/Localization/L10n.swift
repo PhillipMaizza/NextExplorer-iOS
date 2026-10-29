@@ -279,7 +279,11 @@ public enum L10n {
     public enum FileInfo {
         public static func diskFreeOf(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("fileInfo.diskFreeOf", a0, a1) }
         public static var navigationTitleFolder: String { tr("fileInfo.navigationTitleFolder") }  // "Folder"
+        public static var notShared: String { tr("fileInfo.notShared") }  // "No share links"
         public static var partialScan: String { tr("fileInfo.partialScan") }  // "Counted a partial scan — this folder is very large."
+        public static var restoreConfirm: String { tr("fileInfo.restoreConfirm") }  // "Restore"
+        public static func restoreMessage(_ a0: CVarArg) -> String { tr("fileInfo.restoreMessage", a0) }
+        public static var restoreTitle: String { tr("fileInfo.restoreTitle") }  // "Restore this version?"
         public static var rowCamera: String { tr("fileInfo.rowCamera") }  // "Camera"
         public static var rowDateCreated: String { tr("fileInfo.rowDateCreated") }  // "Date Created"
         public static var rowDateModified: String { tr("fileInfo.rowDateModified") }  // "Date Modified"
@@ -295,6 +299,10 @@ public enum L10n {
         public static var rowSoftware: String { tr("fileInfo.rowSoftware") }  // "Software"
         public static var rowTotalSize: String { tr("fileInfo.rowTotalSize") }  // "Total Size"
         public static var sectionServerDisk: String { tr("fileInfo.sectionServerDisk") }  // "Server Disk"
+        public static var sectionSharing: String { tr("fileInfo.sectionSharing") }  // "Sharing"
+        public static var sectionVersions: String { tr("fileInfo.sectionVersions") }  // "Versions"
+        public static var versionRestore: String { tr("fileInfo.versionRestore") }  // "Restore…"
+        public static var versionsNone: String { tr("fileInfo.versionsNone") }  // "No earlier versions"
     }
     public enum Filter {
         public static var all: String { tr("filter.all") }  // "All Types"

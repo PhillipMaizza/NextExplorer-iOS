@@ -674,3 +674,11 @@ uploads.notifyDone	업로드 완료
 uploads.notifyBody	파일 %lld개 업로드됨
 downloadQueue.notifyDone	다운로드 완료
 fileInfo.rowSoftware	소프트웨어
+fileInfo.sectionVersions	버전
+fileInfo.versionsNone	이전 버전 없음
+fileInfo.versionRestore	복원…
+fileInfo.restoreTitle	이 버전을 복원할까요?
+fileInfo.restoreMessage	파일이 %@의 상태로 돌아갑니다. 현재 내용은 버전으로 보관됩니다.
+fileInfo.restoreConfirm	복원
+fileInfo.sectionSharing	공유
+fileInfo.notShared	공유 링크 없음

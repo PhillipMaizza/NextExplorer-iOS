@@ -263,7 +263,7 @@ struct BrowseContentView: View {
                 }
             }
         #if os(macOS)
-            .modifier(MacBrowseInspector(screen: store))
+            .modifier(MacBrowseInspector(screen: store) { shareTarget = $0 })
         #endif
     }
 

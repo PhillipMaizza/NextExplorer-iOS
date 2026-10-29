@@ -25,11 +25,24 @@
         /// While the Permissions dialog is open; closing it reloads the section.
         var isEditingPermissions = false
         let onEditPermissions: () -> Void
+        /// `nil` for a file: only folders can be favorites.
+        var isFavorite: Bool?
+        var onToggleFavorite: () -> Void = {}
+        /// Opens Create Share Link; `nil` without the right to share.
+        var onShare: (() -> Void)?
+        /// After a version is restored, so the listing picks up the restored file.
+        var onRestored: () -> Void = {}
         let onClose: () -> Void
 
         @Dependency(\.filesClient) private var filesClient
         /// Owner, group and mode come from the permissions endpoint, which metadata leaves out.
         @State private var permissions: FilePermissions?
+        /// This item's own share links, from the caller's shared by me list.
+        @State private var shares: [Share]?
+        /// Older servers have no versions route; the section stays hidden then.
+        @State private var versions: FileVersionHistory?
+        @State private var versionToRestore: FileVersion?
+        @State private var restoreError: String?
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
 
@@ -46,6 +59,20 @@
                     Text(errorMessage).foregroundStyle(Color.negativeText)
                 } else if let metadata {
                     details(metadata)
+                    if let isFavorite {
+                        Section {
+                            HStack {
+                                Spacer()
+                                Button(isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites, action: onToggleFavorite)
+                            }
+                        }
+                    }
+                    if let shares {
+                        MacInspectorSharingSection(shares: shares, serverURL: serverURL, onShare: onShare)
+                    }
+                    if let versions, versions.enabled || !versions.versions.isEmpty {
+                        MacInspectorVersionsSection(history: versions, errorMessage: restoreError) { versionToRestore = $0 }
+                    }
                     permissionsSection
                 } else {
                     ProgressView().frame(maxWidth: .infinity)
@@ -58,6 +85,48 @@
                 let loaded = try? await filesClient.fetchPermissions(serverURL, item.id)
                 guard !Task.isCancelled else { return }
                 permissions = loaded
+            }
+            .task(id: item.id) {
+                shares = nil
+                versions = nil
+                restoreError = nil
+                async let links = try? filesClient.mySharedLinks(serverURL)
+                async let history = item.isDirectory ? nil : try? filesClient.fetchVersions(serverURL, item.id)
+                let (loadedLinks, loadedHistory) = await (links, history)
+                guard !Task.isCancelled else { return }
+                // The server stores the path without leading or trailing slashes.
+                let path = item.id.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+                shares = loadedLinks?.filter { $0.sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) == path }
+                versions = loadedHistory
+            }
+            .alert(L10n.FileInfo.restoreTitle, isPresented: Binding(get: { versionToRestore != nil }, set: {
+                if !$0 {
+                    versionToRestore = nil
+                }
+            })) {
+                Button(L10n.FileInfo.restoreConfirm) {
+                    if let versionToRestore {
+                        restore(versionToRestore)
+                    }
+                }
+                Button(L10n.Common.cancel, role: .cancel) {}
+            } message: {
+                if let versionToRestore {
+                    Text(L10n.FileInfo.restoreMessage(MacInspectorVersionsSection.date(versionToRestore.modifiedAt)))
+                }
+            }
+        }
+
+        private func restore(_ version: FileVersion) {
+            Task {
+                do {
+                    try await filesClient.restoreVersion(serverURL, item.id, version.id)
+                    restoreError = nil
+                    versions = try? await filesClient.fetchVersions(serverURL, item.id)
+                    onRestored()
+                } catch {
+                    restoreError = (error as? FilesClientError)?.userMessage ?? error.localizedDescription
+                }
             }
         }
 
@@ -213,6 +282,7 @@
     /// showing pushes past the third folder deep.
     struct MacBrowseInspector: ViewModifier {
         let screen: StoreOf<BrowseFeature>
+        var onShare: (FileItem) -> Void = { _ in }
 
         func body(content: Content) -> some View {
             HStack(spacing: 0) {
@@ -227,6 +297,10 @@
                         serverURL: screen.serverURL,
                         isEditingPermissions: screen.permissions != nil,
                         onEditPermissions: { screen.send(.permissionsTapped(item)) },
+                        isFavorite: item.isDirectory ? screen.favoritePaths.contains(item.id) : nil,
+                        onToggleFavorite: { screen.send(.favoriteToggleButtonTapped(item)) },
+                        onShare: (screen.access?.canShare ?? false) ? { onShare(item) } : nil,
+                        onRestored: { screen.send(.refreshButtonTapped) },
                         onClose: { screen.send(.infoDismissed) }
                     )
                     .transition(.move(edge: .trailing))

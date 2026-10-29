@@ -75,6 +75,19 @@ public extension FilesClient {
         },
         changePermissions: { _, _, _, _ in },
         changeOwnership: { _, _, _, _ in },
+        fetchVersions: { _, _ in
+            let hour: TimeInterval = 3600
+            return FileVersionHistory(
+                enabled: true,
+                versions: [
+                    FileVersion(id: "v2", size: 18_400, modifiedAt: Date().addingTimeInterval(-hour * 3), capturedAt: Date().addingTimeInterval(-hour * 2), author: .init(label: "phillip")),
+                    FileVersion(id: "v1", size: 16_100, modifiedAt: Date().addingTimeInterval(-hour * 50), capturedAt: Date().addingTimeInterval(-hour * 49), author: .init(label: "phillip"), label: "Before edits", pinned: true),
+                ],
+                totalBytes: 34_500,
+                rights: .init(see: true, download: true, restore: true, remove: true)
+            )
+        },
+        restoreVersion: { _, _, _ in },
         thumbnailURL: { _, _ in nil },
         previewFile: { _, item in
             let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Previews-Preview", isDirectory: true)

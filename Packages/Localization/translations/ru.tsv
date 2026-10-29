@@ -674,3 +674,11 @@ uploads.notifyDone	Загрузка на сервер завершена
 uploads.notifyBody	Загружено файлов: %lld
 downloadQueue.notifyDone	Загрузки завершены
 fileInfo.rowSoftware	Программа
+fileInfo.sectionVersions	Версии
+fileInfo.versionsNone	Нет более ранних версий
+fileInfo.versionRestore	Восстановить…
+fileInfo.restoreTitle	Восстановить эту версию?
+fileInfo.restoreMessage	Файл вернётся к состоянию на %@. Текущее содержимое сохранится как версия.
+fileInfo.restoreConfirm	Восстановить
+fileInfo.sectionSharing	Общий доступ
+fileInfo.notShared	Нет ссылок общего доступа

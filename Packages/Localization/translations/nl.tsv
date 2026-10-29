@@ -674,3 +674,11 @@ uploads.notifyDone	Uploads voltooid
 uploads.notifyBody	%lld bestanden geüpload
 downloadQueue.notifyDone	Downloads voltooid
 fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versies
+fileInfo.versionsNone	Geen eerdere versies
+fileInfo.versionRestore	Zet terug…
+fileInfo.restoreTitle	Deze versie terugzetten?
+fileInfo.restoreMessage	Het bestand gaat terug naar hoe het was op %@. De huidige inhoud blijft bewaard als versie.
+fileInfo.restoreConfirm	Zet terug
+fileInfo.sectionSharing	Delen
+fileInfo.notShared	Geen deellinks

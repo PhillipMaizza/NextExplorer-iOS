@@ -133,6 +133,12 @@ public extension FilesClient {
             changeOwnership: { serverURL, path, owner, group in
                 try await service.changeOwnership(serverURL: serverURL, path: path, owner: owner, group: group)
             },
+            fetchVersions: { serverURL, path in
+                try await service.fetchVersions(serverURL: serverURL, path: path)
+            },
+            restoreVersion: { serverURL, path, versionID in
+                try await service.restoreVersion(serverURL: serverURL, path: path, versionID: versionID)
+            },
             thumbnailURL: { serverURL, path in
                 try await service.thumbnailURL(serverURL: serverURL, path: path)
             },

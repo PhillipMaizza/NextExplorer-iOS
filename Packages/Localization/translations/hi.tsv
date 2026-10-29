@@ -674,3 +674,11 @@ uploads.notifyDone	अपलोड पूरे हुए
 uploads.notifyBody	%lld फ़ाइलें अपलोड हुईं
 downloadQueue.notifyDone	डाउनलोड पूरे हुए
 fileInfo.rowSoftware	सॉफ़्टवेयर
+fileInfo.sectionVersions	संस्करण
+fileInfo.versionsNone	कोई पिछला संस्करण नहीं
+fileInfo.versionRestore	पुनर्स्थापित करें…
+fileInfo.restoreTitle	यह संस्करण पुनर्स्थापित करें?
+fileInfo.restoreMessage	फ़ाइल %@ की स्थिति में लौट आएगी। इसकी मौजूदा सामग्री एक संस्करण के रूप में रखी जाएगी।
+fileInfo.restoreConfirm	पुनर्स्थापित करें
+fileInfo.sectionSharing	साझाकरण
+fileInfo.notShared	कोई साझा लिंक नहीं

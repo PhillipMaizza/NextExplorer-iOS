@@ -674,3 +674,11 @@ uploads.notifyDone	Envios concluídos
 uploads.notifyBody	%lld arquivos enviados
 downloadQueue.notifyDone	Downloads concluídos
 fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versões
+fileInfo.versionsNone	Nenhuma versão anterior
+fileInfo.versionRestore	Restaurar…
+fileInfo.restoreTitle	Restaurar esta versão?
+fileInfo.restoreMessage	O arquivo volta a como estava em %@. O conteúdo atual é mantido como uma versão.
+fileInfo.restoreConfirm	Restaurar
+fileInfo.sectionSharing	Compartilhamento
+fileInfo.notShared	Nenhum link compartilhado

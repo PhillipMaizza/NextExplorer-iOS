@@ -1249,4 +1249,51 @@ struct FilesClientLiveTests {
             _ = try await makeClient().updateAccessRules(serverURL, [])
         }
     }
+
+    /// Shape of `listVersions` in backend/src/services/versions/index.js.
+    private let versionsJSON = """
+    {
+        "enabled": true,
+        "file": { "name": "notes.txt", "path": "Docs/notes.txt", "size": 20, "modifiedAt": "2026-10-28T10:00:00.000Z", "author": null, "source": null },
+        "versions": [
+            {
+                "id": "v2", "size": 18, "modifiedAt": "2026-10-27T09:30:00.000Z", "capturedAt": "2026-10-27T09:31:00.000Z",
+                "author": { "id": "u1", "label": "Phillip" }, "source": "editor", "label": null,
+                "pinned": false, "aside": false, "available": true
+            },
+            {
+                "id": "v1", "size": 12, "modifiedAt": "2026-10-20T08:00:00Z", "capturedAt": "2026-10-20T08:00:05Z",
+                "author": null, "source": "upload", "label": "Draft", "pinned": true, "aside": false, "available": false
+            }
+        ],
+        "totalBytes": 30,
+        "rights": { "see": true, "download": true, "restore": false, "remove": false }
+    }
+    """
+
+    @Test
+    func fetchVersionsSendsThePathAsAQueryAndDecodesTheHistory() async throws {
+        stub(statusCode: 200, body: Data(versionsJSON.utf8))
+        StubURLProtocol.capturedRequest = nil
+        let history = try await makeClient().fetchVersions(serverURL, "Docs/notes.txt")
+        let requestURL = try #require(StubURLProtocol.capturedRequest?.url)
+        #expect(requestURL.path == "/api/versions")
+        #expect(URLComponents(url: requestURL, resolvingAgainstBaseURL: false)?.queryItems == [URLQueryItem(name: "path", value: "Docs/notes.txt")])
+        #expect(history.enabled)
+        #expect(history.versions.map(\.id) == ["v2", "v1"])
+        #expect(history.versions[0].author?.label == "Phillip")
+        #expect(history.versions[1].label == "Draft")
+        #expect(history.versions[1].available == false)
+        #expect(!history.rights.restore)
+    }
+
+    @Test
+    func restoreVersionPostsThePathToTheVersionRoute() async throws {
+        stub(statusCode: 200, body: Data(#"{"status":"restored","path":"Docs/notes.txt"}"#.utf8))
+        StubURLProtocol.capturedRequest = nil
+        try await makeClient().restoreVersion(serverURL, "Docs/notes.txt", "v1")
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.url?.path == "/api/versions/v1/restore")
+        #expect(request.httpMethod == "POST")
+    }
 }

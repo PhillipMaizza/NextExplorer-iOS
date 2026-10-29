@@ -674,3 +674,11 @@ uploads.notifyDone	アップロード完了
 uploads.notifyBody	%lld 個のファイルをアップロードしました
 downloadQueue.notifyDone	ダウンロード完了
 fileInfo.rowSoftware	ソフトウェア
+fileInfo.sectionVersions	バージョン
+fileInfo.versionsNone	以前のバージョンはありません
+fileInfo.versionRestore	復元…
+fileInfo.restoreTitle	このバージョンを復元しますか？
+fileInfo.restoreMessage	ファイルは %@ の状態に戻ります。現在の内容はバージョンとして保持されます。
+fileInfo.restoreConfirm	復元
+fileInfo.sectionSharing	共有
+fileInfo.notShared	共有リンクはありません

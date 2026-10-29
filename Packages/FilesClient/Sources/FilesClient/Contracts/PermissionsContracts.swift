@@ -3,6 +3,10 @@ import Foundation
 
 /// Wire types for the Permissions endpoints. See `FilesService+Permissions.swift`.
 extension FilesService {
+    struct VersionPathBody: Encodable {
+        let path: String
+    }
+
     struct ChmodBody: Encodable {
         let path: String
         let mode: String

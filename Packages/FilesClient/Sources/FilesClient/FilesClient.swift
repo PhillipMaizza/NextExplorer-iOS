@@ -85,6 +85,12 @@ public struct FilesClient: Sendable {
     public var changeOwnership: @Sendable (
         _ serverURL: URL, _ path: String, _ owner: String?, _ group: String?
     ) async throws -> Void
+    /// `GET /api/versions?path=` (`backend/src/routes/versions.js`): the file's saved versions,
+    /// newest first, and the caller's rights over them. Older servers have no such route.
+    public var fetchVersions: @Sendable (_ serverURL: URL, _ path: String) async throws -> FileVersionHistory
+    /// `POST /api/versions/:id/restore` with `{ path }`: puts the file back as that version had
+    /// it; what it held becomes a version itself.
+    public var restoreVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String) async throws -> Void
     public var thumbnailURL: @Sendable (_ serverURL: URL, _ path: String) async throws -> URL?
     public var previewFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     /// `previewFile` served over a low priority session with a capped connection pool, for

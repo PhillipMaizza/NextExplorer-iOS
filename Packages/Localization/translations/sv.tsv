@@ -674,3 +674,11 @@ uploads.notifyDone	Uppladdningar klara
 uploads.notifyBody	%lld filer uppladdade
 downloadQueue.notifyDone	Hämtningar klara
 fileInfo.rowSoftware	Programvara
+fileInfo.sectionVersions	Versioner
+fileInfo.versionsNone	Inga tidigare versioner
+fileInfo.versionRestore	Återställ…
+fileInfo.restoreTitle	Återställa den här versionen?
+fileInfo.restoreMessage	Filen återgår till hur den var %@. Det nuvarande innehållet sparas som en version.
+fileInfo.restoreConfirm	Återställ
+fileInfo.sectionSharing	Delning
+fileInfo.notShared	Inga delningslänkar

@@ -674,3 +674,11 @@ uploads.notifyDone	اكتمل الرفع
 uploads.notifyBody	تم رفع %lld ملف
 downloadQueue.notifyDone	اكتمل التنزيل
 fileInfo.rowSoftware	البرنامج
+fileInfo.sectionVersions	الإصدارات
+fileInfo.versionsNone	لا توجد إصدارات سابقة
+fileInfo.versionRestore	استعادة…
+fileInfo.restoreTitle	استعادة هذا الإصدار؟
+fileInfo.restoreMessage	يعود الملف إلى ما كان عليه في %@. يُحفظ محتواه الحالي كإصدار.
+fileInfo.restoreConfirm	استعادة
+fileInfo.sectionSharing	المشاركة
+fileInfo.notShared	لا توجد روابط مشاركة

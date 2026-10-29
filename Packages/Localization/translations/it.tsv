@@ -674,3 +674,11 @@ uploads.notifyDone	Caricamenti completati
 uploads.notifyBody	%lld file caricati
 downloadQueue.notifyDone	Download completati
 fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versioni
+fileInfo.versionsNone	Nessuna versione precedente
+fileInfo.versionRestore	Ripristina…
+fileInfo.restoreTitle	Ripristinare questa versione?
+fileInfo.restoreMessage	Il file torna com'era il %@. Il contenuto attuale viene conservato come versione.
+fileInfo.restoreConfirm	Ripristina
+fileInfo.sectionSharing	Condivisione
+fileInfo.notShared	Nessun link di condivisione
