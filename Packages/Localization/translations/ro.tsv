@@ -673,3 +673,4 @@ menu.showAll	Afișează tot
 uploads.notifyDone	Încărcări finalizate
 uploads.notifyBody	%lld fișiere încărcate
 downloadQueue.notifyDone	Descărcări finalizate
+fileInfo.rowSoftware	Software

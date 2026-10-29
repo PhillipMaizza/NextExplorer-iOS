@@ -130,6 +130,9 @@
                     if let lensModel = image.lensModel {
                         row(L10n.FileInfo.rowLens, lensModel)
                     }
+                    if let software = image.software {
+                        row(L10n.FileInfo.rowSoftware, software)
+                    }
                     if let dateTaken = image.dateTaken {
                         row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: includeTime))
                     }

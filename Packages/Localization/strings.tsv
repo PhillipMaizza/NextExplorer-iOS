@@ -747,3 +747,4 @@ menu.showAll	Show All
 uploads.notifyDone	Uploads finished
 uploads.notifyBody	%lld files uploaded
 downloadQueue.notifyDone	Downloads finished
+fileInfo.rowSoftware	Software

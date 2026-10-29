@@ -673,3 +673,4 @@ menu.showAll	Mostrar todo
 uploads.notifyDone	Subidas terminadas
 uploads.notifyBody	%lld archivos subidos
 downloadQueue.notifyDone	Descargas terminadas
+fileInfo.rowSoftware	Software

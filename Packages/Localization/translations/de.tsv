@@ -673,3 +673,4 @@ menu.showAll	Alle anzeigen
 uploads.notifyDone	Uploads abgeschlossen
 uploads.notifyBody	%lld Dateien hochgeladen
 downloadQueue.notifyDone	Downloads abgeschlossen
+fileInfo.rowSoftware	Software

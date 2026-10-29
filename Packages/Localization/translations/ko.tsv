@@ -673,3 +673,4 @@ menu.showAll	모두 보기
 uploads.notifyDone	업로드 완료
 uploads.notifyBody	파일 %lld개 업로드됨
 downloadQueue.notifyDone	다운로드 완료
+fileInfo.rowSoftware	소프트웨어

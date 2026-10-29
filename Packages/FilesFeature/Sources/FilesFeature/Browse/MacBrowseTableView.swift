@@ -186,7 +186,14 @@
         private func quickLook(_ item: FileItem) {
             quickLookTask?.cancel()
             quickLookTask = Task {
-                guard let url = try? await filesClient.previewFile(serverURL, item), !Task.isCancelled else { return }
+                // The preview endpoint only serves the types the web app previews; anything else
+                // comes down whole, so Quick Look can show it too.
+                let url: URL? = if let preview = try? await filesClient.previewFile(serverURL, item) {
+                    preview
+                } else {
+                    try? await filesClient.downloadRawFile(serverURL, item)
+                }
+                guard let url, !Task.isCancelled else { return }
                 quickLookURL = url
             }
         }

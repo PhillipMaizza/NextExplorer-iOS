@@ -84,8 +84,8 @@ struct ImageGalleryView: View {
     }
 
     #if os(macOS)
-        /// A Mac has no swipe pager: the current image fills the window and the arrow keys step
-        /// through the set.
+        /// A Mac has no swipe pager: the current image fills the window, and the preview router's
+        /// arrow keys step through the folder (images, videos and the rest alike).
         private var pager: some View {
             Group {
                 if let index = items.firstIndex(where: { $0.id == selection }) {
@@ -93,17 +93,6 @@ struct ImageGalleryView: View {
                         .id(items[index].id)
                 }
             }
-            .focusable()
-            .focusEffectDisabled()
-            .onKeyPress(.leftArrow) { step(by: -1) }
-            .onKeyPress(.rightArrow) { step(by: 1) }
-        }
-
-        private func step(by offset: Int) -> KeyPress.Result {
-            guard let index = items.firstIndex(where: { $0.id == selection }),
-                  items.indices.contains(index + offset) else { return .ignored }
-            selection = items[index + offset].id
-            return .handled
         }
     #else
         private var pager: some View {

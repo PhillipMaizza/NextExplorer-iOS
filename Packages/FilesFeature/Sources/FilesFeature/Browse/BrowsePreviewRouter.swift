@@ -41,7 +41,39 @@ struct BrowsePreviewRouter: View {
         return offlineFileStore.localURLIgnoringStaleness(item)
     }
 
+    #if os(macOS)
+        @FocusState private var isFocused: Bool
+    #endif
+
     var body: some View {
+        #if os(macOS)
+            // Like Quick Look, the arrow keys step through the folder's files. Each step rebuilds
+            // the preview for the new file, so the image gallery starts on it too.
+            routed
+                .id(item.id)
+                .focusable()
+                .focusEffectDisabled()
+                .focused($isFocused)
+                .onAppear { isFocused = true }
+                .onKeyPress(.leftArrow) { step(by: -1) }
+                .onKeyPress(.rightArrow) { step(by: 1) }
+        #else
+            routed
+        #endif
+    }
+
+    #if os(macOS)
+        private func step(by offset: Int) -> KeyPress.Result {
+            let files = store.displayedItems.filter { !$0.isDirectory }
+            guard let index = files.firstIndex(where: { $0.id == item.id }),
+                  files.indices.contains(index + offset) else { return .ignored }
+            store.send(.rowTapped(files[index + offset]))
+            return .handled
+        }
+    #endif
+
+    @ViewBuilder
+    private var routed: some View {
         if item.isUnsupportedForPreview {
             UnsupportedFilePreviewView(
                 item: item,

@@ -673,3 +673,4 @@ menu.showAll	顯示全部
 uploads.notifyDone	上傳完成
 uploads.notifyBody	已上傳 %lld 個檔案
 downloadQueue.notifyDone	下載完成
+fileInfo.rowSoftware	軟體

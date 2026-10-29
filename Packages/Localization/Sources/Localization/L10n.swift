@@ -292,6 +292,7 @@ public enum L10n {
         public static var rowLens: String { tr("fileInfo.rowLens") }  // "Lens"
         public static var rowLocation: String { tr("fileInfo.rowLocation") }  // "Location"
         public static var rowSize: String { tr("fileInfo.rowSize") }  // "Size"
+        public static var rowSoftware: String { tr("fileInfo.rowSoftware") }  // "Software"
         public static var rowTotalSize: String { tr("fileInfo.rowTotalSize") }  // "Total Size"
         public static var sectionServerDisk: String { tr("fileInfo.sectionServerDisk") }  // "Server Disk"
     }

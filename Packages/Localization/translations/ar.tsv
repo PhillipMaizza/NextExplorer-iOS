@@ -673,3 +673,4 @@ menu.showAll	عرض الكل
 uploads.notifyDone	اكتمل الرفع
 uploads.notifyBody	تم رفع %lld ملف
 downloadQueue.notifyDone	اكتمل التنزيل
+fileInfo.rowSoftware	البرنامج

@@ -673,3 +673,4 @@ menu.showAll	すべて表示
 uploads.notifyDone	アップロード完了
 uploads.notifyBody	%lld 個のファイルをアップロードしました
 downloadQueue.notifyDone	ダウンロード完了
+fileInfo.rowSoftware	ソフトウェア

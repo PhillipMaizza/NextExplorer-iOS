@@ -673,3 +673,4 @@ menu.showAll	Показать все
 uploads.notifyDone	Загрузка на сервер завершена
 uploads.notifyBody	Загружено файлов: %lld
 downloadQueue.notifyDone	Загрузки завершены
+fileInfo.rowSoftware	Программа

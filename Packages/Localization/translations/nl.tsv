@@ -673,3 +673,4 @@ menu.showAll	Toon alles
 uploads.notifyDone	Uploads voltooid
 uploads.notifyBody	%lld bestanden geüpload
 downloadQueue.notifyDone	Downloads voltooid
+fileInfo.rowSoftware	Software
