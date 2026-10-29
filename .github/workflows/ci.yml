@@ -34,9 +34,10 @@ jobs:
       SIM_DEVICE: iPhone 17
       # The package tests and the app build share one DerivedData and one SwiftPM checkout folder,
       # so every dependency compiles once. Both live outside the repo so the linters never scan
-      # them. DerivedData is also cached between runs (saved from main, restored everywhere).
-      DERIVED_DATA: ${{ github.workspace }}/../DerivedData
-      SPM_CHECKOUTS: ${{ github.workspace }}/../SourcePackages
+      # them (runner.temp: actions/cache rejects paths containing ..). DerivedData is also cached
+      # between runs (saved from main, restored everywhere).
+      DERIVED_DATA: ${{ runner.temp }}/DerivedData
+      SPM_CHECKOUTS: ${{ runner.temp }}/SourcePackages
 
     steps:
       - name: Checkout
@@ -168,8 +169,8 @@ jobs:
     env:
       SIM_DEVICE: iPhone 17
       # Same folders and caches as Build and test, restored only: unchanged code doesn't recompile.
-      DERIVED_DATA: ${{ github.workspace }}/../DerivedData
-      SPM_CHECKOUTS: ${{ github.workspace }}/../SourcePackages
+      DERIVED_DATA: ${{ runner.temp }}/DerivedData
+      SPM_CHECKOUTS: ${{ runner.temp }}/SourcePackages
 
     steps:
       - name: Checkout
