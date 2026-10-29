@@ -93,6 +93,13 @@ struct NextExplorerApp: App {
             // Never reopened at launch: a restored window would come back empty (or under
             // another account) instead of from the live session.
             .restorationBehavior(.disabled)
+
+            // The native Settings window; SwiftUI adds NextExplorer > Settings… (⌘,) for it.
+            Settings {
+                MacSettingsWindow(mainStore: Self.store)
+                    .tint(Color.accent)
+                    .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
+            }
         #endif
     }
 }

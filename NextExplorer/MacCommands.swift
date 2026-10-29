@@ -25,16 +25,11 @@
             (.browse, L10n.Tab.browse, "1"),
             (.favorites, L10n.Tab.favorites, "2"),
             (.shared, L10n.Tab.shared, "3"),
-            (.settings, L10n.Tab.settings, "4"),
         ]
 
         var body: some Commands {
             CommandGroup(after: .appInfo) {
                 RateAppButton()
-            }
-            CommandGroup(replacing: .appSettings) {
-                Button(L10n.Tab.settings + "…") { send(.tabSelected(.settings)) }
-                    .keyboardShortcut(",")
             }
             // New Window / New Tab open lightweight Browse windows (MacFolderWindow); the main
             // window stays the only one owning uploads, sync and the session.

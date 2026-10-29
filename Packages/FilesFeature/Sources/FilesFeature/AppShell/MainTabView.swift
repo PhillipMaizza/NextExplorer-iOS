@@ -202,8 +202,8 @@ public struct MainTabView: View {
         ]
         #if os(macOS)
         // Mac downloads are saved wherever the user picks in Finder, so there is no in app
-        // Downloads section to show.
-        .filter { $0.tab != .downloads }
+        // Downloads section to show; Settings has its own window (⌘,).
+        .filter { $0.tab != .downloads && $0.tab != .settings }
         #endif
     }
 

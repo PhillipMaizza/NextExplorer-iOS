@@ -32,8 +32,21 @@ import SwiftUI
 
         @Environment(\.groupedListRowVerticalPadding) private var rowVerticalPadding
         @Environment(\.groupedListRowHover) private var highlightsRowsOnHover
+        @Environment(\.groupedListUsesNativeForm) private var usesNativeForm
 
         public var body: some View {
+            if usesNativeForm {
+                // A narrow window (Settings) reads best as the system's own grouped form.
+                Form { content }
+                    .formStyle(.grouped)
+                    .buttonStyle(.plain)
+                    .toggleStyle(.switch)
+            } else {
+                cardList
+            }
+        }
+
+        private var cardList: some View {
             ScrollView {
                 LazyVStack(alignment: .leading, spacing: Metrics.sectionSpacing) {
                     ForEach(sections: content) { section in
@@ -105,6 +118,7 @@ import SwiftUI
 public extension EnvironmentValues {
     @Entry var groupedListRowVerticalPadding: CGFloat?
     @Entry var groupedListRowHover = false
+    @Entry var groupedListUsesNativeForm = false
 }
 
 public extension View {
@@ -118,6 +132,12 @@ public extension View {
     /// for lists whose rows are clickable items. iOS has no hover.
     func groupedListRowHover() -> some View {
         environment(\.groupedListRowHover, true)
+    }
+
+    /// On macOS, renders every `DSGroupedList` below as a native grouped `Form`, for a window
+    /// as narrow as the Settings window. iOS lists are unaffected.
+    func groupedListUsesNativeForm() -> some View {
+        environment(\.groupedListUsesNativeForm, true)
     }
 }
 
