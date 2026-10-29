@@ -6,9 +6,6 @@
 
     private enum Metrics {
         static let sidebarWidth: CGFloat = 200
-        static let iconSize: CGFloat = 22
-        static let iconGlyphSize: CGFloat = 12
-        static let iconCornerRadius: CGFloat = 5
     }
 
     /// One page of the Mac Settings window's sidebar.
@@ -20,6 +17,7 @@
         case users
         case thumbnails
         case accessRules
+        case about
 
         var id: String {
             rawValue
@@ -27,6 +25,7 @@
 
         static let everyone: [Self] = [.accounts, .general, .storage]
         static let admin: [Self] = [.server, .users, .thumbnails, .accessRules]
+        static let app: [Self] = [.about]
 
         var title: String {
             switch self {
@@ -37,42 +36,33 @@
             case .users: L10n.Settings.sectionUsers
             case .thumbnails: L10n.Settings.rowThumbnails
             case .accessRules: L10n.Settings.rowAccessRules
+            case .about: L10n.Settings.sectionInfo
             }
         }
 
         var systemImage: String {
             switch self {
-            case .accounts: "person.crop.circle.fill"
-            case .general: "gearshape.fill"
-            case .storage: "internaldrive.fill"
+            case .accounts: "person.crop.circle"
+            case .general: "gearshape"
+            case .storage: "internaldrive"
             case .server: "server.rack"
-            case .users: "person.2.fill"
-            case .thumbnails: "photo.fill"
-            case .accessRules: "lock.shield.fill"
-            }
-        }
-
-        var iconColor: Color {
-            switch self {
-            case .accounts: .blue
-            case .general: .gray
-            case .storage: .gray
-            case .server: .indigo
-            case .users: .blue
-            case .thumbnails: .orange
-            case .accessRules: .green
+            case .users: "person.2"
+            case .thumbnails: "photo"
+            case .accessRules: "lock.shield"
+            case .about: "info.circle"
             }
         }
     }
 
     /// The Mac Settings window, laid out like Xcode's and System Settings': a sidebar of
-    /// categories, each opening its own pane. The admin pages follow under their own heading.
+    /// categories, each opening its own pane. The admin pages follow as their own group, then
+    /// the app's own info.
     struct MacSettingsRoot: View {
         @Bindable var store: StoreOf<SettingsFeature>
         @SceneStorage("macSettingsCategory") private var selection: MacSettingsCategory = .general
 
         private var visibleSelection: MacSettingsCategory {
-            store.user.isAdmin || MacSettingsCategory.everyone.contains(selection) ? selection : .general
+            store.user.isAdmin || !MacSettingsCategory.admin.contains(selection) ? selection : .general
         }
 
         var body: some View {
@@ -86,9 +76,12 @@
                         ForEach(MacSettingsCategory.everyone) { sidebarRow($0) }
                     }
                     if store.user.isAdmin {
-                        Section(L10n.Settings.sectionAdmin) {
+                        Section {
                             ForEach(MacSettingsCategory.admin) { sidebarRow($0) }
                         }
+                    }
+                    Section {
+                        ForEach(MacSettingsCategory.app) { sidebarRow($0) }
                     }
                 }
                 .navigationSplitViewColumnWidth(Metrics.sidebarWidth)
@@ -105,15 +98,13 @@
             }
         }
 
+        /// Xcode style: an outline glyph in the app accent, white on the selected row.
         private func sidebarRow(_ category: MacSettingsCategory) -> some View {
             Label {
                 Text(category.title)
             } icon: {
                 Image(systemName: category.systemImage)
-                    .font(.system(size: Metrics.iconGlyphSize, weight: .semibold))
-                    .foregroundStyle(.white)
-                    .frame(width: Metrics.iconSize, height: Metrics.iconSize)
-                    .background(category.iconColor.gradient, in: RoundedRectangle(cornerRadius: Metrics.iconCornerRadius, style: .continuous))
+                    .foregroundStyle(category == visibleSelection ? Color.white : Color.accent)
             }
             .tag(category)
         }
@@ -129,25 +120,29 @@
                 MacStorageSettingsTab(store: store)
             case .server:
                 if let detailStore = store.scope(state: \.serverDetails, action: \.serverDetails.presented) {
-                    ServerDetailsView(store: detailStore)
+                    MacServerSettingsPane(store: detailStore)
                 } else {
                     Color.clear.onAppear { store.send(.serverDetailsButtonTapped) }
                 }
             case .users:
                 if let detailStore = store.scope(state: \.userManagement, action: \.userManagement.presented) {
-                    UserManagementView(store: detailStore)
+                    MacUsersSettingsPane(store: detailStore)
                 } else {
                     Color.clear.onAppear { store.send(.userManagementButtonTapped) }
                 }
             case .thumbnails:
                 if let detailStore = store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings.presented) {
-                    ThumbnailSettingsView(store: detailStore)
+                    MacThumbnailSettingsPane(store: detailStore)
                 } else {
                     Color.clear.onAppear { store.send(.thumbnailSettingsButtonTapped) }
                 }
+            case .about:
+                MacAboutContent()
+                    .padding(.space32)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             case .accessRules:
                 if let detailStore = store.scope(state: \.accessRules, action: \.accessRules.presented) {
-                    AccessRulesView(store: detailStore)
+                    MacAccessRulesPane(store: detailStore)
                 } else {
                     Color.clear.onAppear { store.send(.accessRulesButtonTapped) }
                 }

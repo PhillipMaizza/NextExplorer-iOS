@@ -17,18 +17,28 @@
         static let licensesHeight: CGFloat = 600
     }
 
-    /// The Mac's About NextExplorer window (app menu): the app icon beside its name, version and
-    /// links, with the credits underneath, like a native Mac app's About pane.
+    /// The Mac's About NextExplorer window (app menu). It works signed out too, unlike the
+    /// Settings window, which shows the same content as its Info pane.
     public struct MacAboutView: View {
         public static let windowID = "about"
-
-        @Environment(\.requestReview) private var requestReview
-        @Environment(\.openURL) private var openURL
-        @State private var isShowingLicenses = false
 
         public init() {}
 
         public var body: some View {
+            MacAboutContent()
+                .padding(Metrics.padding)
+                .frame(width: Metrics.width)
+        }
+    }
+
+    /// The app icon beside its name, version and links, with the credits underneath, like a
+    /// native Mac app's About pane.
+    struct MacAboutContent: View {
+        @Environment(\.requestReview) private var requestReview
+        @Environment(\.openURL) private var openURL
+        @State private var isShowingLicenses = false
+
+        var body: some View {
             VStack(spacing: Metrics.sectionSpacing) {
                 HStack(alignment: .top, spacing: Metrics.columnSpacing) {
                     Image(nsImage: NSApplication.shared.applicationIconImage)
@@ -37,13 +47,12 @@
                         .accessibilityHidden(true)
                     info
                 }
+                .fixedSize()
                 Text(L10n.Settings.creditsMadeBy)
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
             }
-            .padding(Metrics.padding)
-            .frame(width: Metrics.width)
             .sheet(isPresented: $isShowingLicenses) {
                 NavigationStack {
                     LicensesView()
@@ -77,7 +86,6 @@
                 }
                 .controlSize(.large)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
         }
 
         private static var appName: String {

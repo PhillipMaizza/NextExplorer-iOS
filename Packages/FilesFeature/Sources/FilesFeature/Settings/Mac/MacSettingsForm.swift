@@ -61,7 +61,68 @@
             }
             .font(.callout)
             .foregroundStyle(.secondary)
-            .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    /// The save button a pane's edits wait for, pinned under the form at the trailing edge, with
+    /// Return as its shortcut.
+    struct MacSettingsSaveBar: ViewModifier {
+        let title: String
+        let isSaving: Bool
+        let isEnabled: Bool
+        let action: () -> Void
+
+        func body(content: Content) -> some View {
+            content.safeAreaInset(edge: .bottom, spacing: 0) {
+                HStack(spacing: Metrics.rowSpacing) {
+                    Spacer()
+                    if isSaving {
+                        ProgressView().controlSize(.small)
+                    }
+                    Button(title, action: action)
+                        .buttonStyle(.borderedProminent)
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(!isEnabled)
+                }
+                .padding(.horizontal, Metrics.horizontalPadding)
+                .padding(.vertical, Metrics.verticalPadding / 2)
+                .background(.bar)
+                .overlay(alignment: .top) { Divider() }
+            }
+        }
+    }
+
+    extension View {
+        func macSettingsSaveBar(_ title: String, isSaving: Bool, isEnabled: Bool, action: @escaping () -> Void) -> some View {
+            modifier(MacSettingsSaveBar(title: title, isSaving: isSaving, isEnabled: isEnabled, action: action))
+        }
+    }
+
+    /// A number field with its stepper, like the Mac's own preference panes.
+    struct MacNumberStepper: View {
+        let value: Int
+        let range: ClosedRange<Int>
+        let step: Int
+        var unit: String?
+        let onChange: (Int) -> Void
+
+        private var binding: Binding<Int> {
+            Binding(get: { value }, set: { onChange(min(max($0, range.lowerBound), range.upperBound)) })
+        }
+
+        var body: some View {
+            HStack(spacing: .space4) {
+                TextField("", value: binding, format: .number)
+                    .labelsHidden()
+                    .multilineTextAlignment(.trailing)
+                    .monospacedDigit()
+                    .frame(width: 64)
+                Stepper("", value: binding, in: range, step: step)
+                    .labelsHidden()
+                if let unit {
+                    Text(unit).foregroundStyle(.secondary)
+                }
+            }
         }
     }
 

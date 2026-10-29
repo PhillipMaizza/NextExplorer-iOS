@@ -359,8 +359,10 @@ public enum L10n {
         public static var cache: String { tr("macSettings.cache") }  // "Cache"
         public static var changePassword: String { tr("macSettings.changePassword") }  // "Change Password…"
         public static var email: String { tr("macSettings.email") }  // "Email"
+        public static var icon: String { tr("macSettings.icon") }  // "Icon"
         public static func labelFormat(_ a0: CVarArg) -> String { tr("macSettings.labelFormat", a0) }
         public static var manage: String { tr("macSettings.manage") }  // "Manage…"
+        public static var permission: String { tr("macSettings.permission") }  // "Permission"
         public static var role: String { tr("macSettings.role") }  // "Role"
         public static var roleAdmin: String { tr("macSettings.roleAdmin") }  // "Administrator"
         public static var roleUser: String { tr("macSettings.roleUser") }  // "User"

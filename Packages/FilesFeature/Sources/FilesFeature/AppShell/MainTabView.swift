@@ -37,6 +37,9 @@ private enum Constants {
 public struct MainTabView: View {
     @Bindable var store: StoreOf<MainTabFeature>
     @Environment(\.scenePhase) private var scenePhase
+    #if os(macOS)
+        @Environment(\.openSettings) private var openSettings
+    #endif
     /// `.onChange(of: scenePhase)` doesn't fire for the *initial* value, but iOS commonly
     /// still transitions `.inactive` → `.active` once shortly after a cold launch, once this
     /// view has already mounted — that transition would otherwise fire `.appBecameActive` and
@@ -203,7 +206,7 @@ public struct MainTabView: View {
         ]
         #if os(macOS)
         // Mac downloads are saved wherever the user picks in Finder, so there is no in app
-        // Downloads section to show; Settings has its own window (⌘,).
+        // Downloads section to show; Settings has its own window (⌘,), opened by its own row.
         .filter { $0.tab != .downloads && $0.tab != .settings }
         #endif
     }
@@ -287,22 +290,41 @@ public struct MainTabView: View {
             ForEach(Self.sidebarItems, id: \.tab) { item in
                 sidebarRow(item)
             }
+            #if os(macOS)
+                macSettingsRow
+            #endif
         }
     }
+
+    #if os(macOS)
+        /// Settings is its own window on the Mac, so this row opens it instead of selecting a tab.
+        private var macSettingsRow: some View {
+            Button { openSettings() } label: {
+                macSidebarLabel(title: L10n.Tab.settings, icon: IconKit.tabSettings, isSelected: false)
+            }
+            .buttonStyle(.plain)
+            .listRowBackground(Color.clear)
+            .accessibilityLabel(L10n.Tab.settings)
+        }
+
+        private func macSidebarLabel(title: String, icon: Image, isSelected: Bool) -> some View {
+            HStack(spacing: Constants.macSidebarIconTitleSpacing) {
+                sidebarIcon(icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
+                Text(title)
+                    .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
+            }
+            .padding(.vertical, Constants.macSidebarRowVerticalPadding)
+            .padding(.horizontal, Constants.macSidebarRowHorizontalPadding)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+    #endif
 
     private func sidebarRow(_ item: (tab: MainTabFeature.Tab, title: String, icon: Image)) -> some View {
         let isSelected = store.selectedTab == item.tab
         #if os(macOS)
             let row = Button { store.send(.tabSelected(item.tab)) } label: {
-                HStack(spacing: Constants.macSidebarIconTitleSpacing) {
-                    sidebarIcon(item.icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
-                    Text(item.title)
-                        .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
-                }
-                .padding(.vertical, Constants.macSidebarRowVerticalPadding)
-                .padding(.horizontal, Constants.macSidebarRowHorizontalPadding)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .contentShape(Rectangle())
+                macSidebarLabel(title: item.title, icon: item.icon, isSelected: isSelected)
             }
             .buttonStyle(.plain)
             .accessibilityAddTraits(isSelected ? .isSelected : [])

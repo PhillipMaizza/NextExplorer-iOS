@@ -35,6 +35,10 @@ struct NextExplorerApp: App {
     @AppStorage(AppStorageKeys.appearanceOverrideSet) private var hasAppearanceOverride = false
     @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
 
+    private var appearanceMode: AppearanceMode {
+        AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride)
+    }
+
     init() {
         #if os(macOS)
             // No window restores (each scene opts out), and leftover saved state from a crash,
@@ -58,7 +62,7 @@ struct NextExplorerApp: App {
         WindowGroup {
             AppView(store: Self.store)
                 .tint(Color.accent)
-                .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
+                .appAppearance(appearanceMode)
                 .observesFoldableHinge()
             #if os(macOS)
                 // A Mac window always gets the regular width sidebar layout, never the phone tab bar.
@@ -86,7 +90,7 @@ struct NextExplorerApp: App {
                 if let route {
                     MacFolderWindow(route: route, mainStore: Self.store)
                         .tint(Color.accent)
-                        .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
+                        .appAppearance(appearanceMode)
                 }
             }
             .defaultSize(width: MacWindow.folderWindowWidth, height: MacWindow.folderWindowHeight)
@@ -96,7 +100,7 @@ struct NextExplorerApp: App {
 
             Window(L10n.Menu.about, id: MacAboutView.windowID) {
                 MacAboutView()
-                    .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
+                    .appAppearance(appearanceMode)
             }
             .windowResizability(.contentSize)
             .restorationBehavior(.disabled)
@@ -104,8 +108,7 @@ struct NextExplorerApp: App {
             // The native Settings window; SwiftUI adds NextExplorer > Settings… (⌘,) for it.
             Settings {
                 MacSettingsWindow(mainStore: Self.store)
-                    .tint(Color.accent)
-                    .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
+                    .appAppearance(appearanceMode)
             }
         #endif
     }
@@ -121,3 +124,22 @@ struct NextExplorerApp: App {
         static let folderWindowHeight: CGFloat = 640
     }
 #endif
+
+private extension View {
+    /// The Light, Dark or System choice from Settings. The Mac sets it app wide through AppKit:
+    /// SwiftUI's `preferredColorScheme(nil)` never returns an open window to the system look,
+    /// which left parts of a window stuck on the previous one.
+    func appAppearance(_ mode: AppearanceMode) -> some View {
+        #if os(macOS)
+            onChange(of: mode, initial: true) { _, mode in
+                NSApp.appearance = switch mode {
+                case .system: nil
+                case .light: NSAppearance(named: .aqua)
+                case .dark: NSAppearance(named: .darkAqua)
+                }
+            }
+        #else
+            preferredColorScheme(mode.colorScheme)
+        #endif
+    }
+}
