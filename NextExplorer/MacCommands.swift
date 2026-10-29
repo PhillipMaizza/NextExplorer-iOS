@@ -2,6 +2,7 @@
     import AppFeature
     import AppKit
     import ComposableArchitecture
+    import CoreModels
     import FilesFeature
     import Localization
     import StoreKit
@@ -19,6 +20,7 @@
         @FocusedValue(\.printPreview) private var printPreview
         /// The visible section's toolbar refresh, so ⌘R spins and toasts like clicking it.
         @FocusedValue(\.refreshVisibleScreen) private var refreshVisibleScreen
+        @FocusedValue(\.browseViewOptions) private var viewOptions
         @Environment(\.openWindow) private var openWindow
 
         private static let sections: [(tab: MainTabFeature.Tab, title: String, key: KeyEquivalent)] = [
@@ -89,10 +91,9 @@
                     .disabled(focusSearchField == nil)
             }
             CommandGroup(before: .sidebar) {
-                ForEach(Self.sections, id: \.tab) { section in
-                    Button(section.title) { send(.tabSelected(section.tab)) }
-                        .keyboardShortcut(section.key)
-                }
+                sortMenu
+                Toggle(L10n.Settings.toggleShowHiddenFiles, isOn: showHiddenFiles)
+                    .keyboardShortcut(".", modifiers: [.command, .shift])
                 Divider()
                 Button(L10n.Menu.refresh) {
                     if let refreshVisibleScreen {
@@ -102,15 +103,55 @@
                     }
                 }
                 .keyboardShortcut("r")
-                Button(L10n.Menu.enclosingFolder) { send(.enclosingFolderRequested) }
-                    .keyboardShortcut(.upArrow)
+                Divider()
+            }
+            // Finder's Go menu: up a level, back, and the sidebar sections.
+            CommandMenu(L10n.Menu.go) {
                 Button(L10n.Common.back) { send(.enclosingFolderRequested) }
                     .keyboardShortcut("[")
+                Button(L10n.Menu.enclosingFolder) { send(.enclosingFolderRequested) }
+                    .keyboardShortcut(.upArrow)
                 Divider()
+                ForEach(Self.sections, id: \.tab) { section in
+                    Button(section.title) { send(.tabSelected(section.tab)) }
+                        .keyboardShortcut(section.key)
+                }
             }
             CommandGroup(replacing: .help) {
                 SupportButton()
             }
+        }
+
+        /// Sort By for the visible Browse screen, with a checkmark on the current choice.
+        private var sortMenu: some View {
+            Menu(L10n.Sort.sheetTitle) {
+                Picker(L10n.Sort.sheetTitle, selection: Binding(
+                    get: { viewOptions?.sortOption ?? .name },
+                    set: { viewOptions?.setSortOption($0) }
+                )) {
+                    ForEach(BrowseFeature.SortOption.allCases, id: \.self) { Text($0.menuTitle).tag($0) }
+                }
+                .pickerStyle(.inline)
+                Picker(L10n.Sort.sheetTitle, selection: Binding(
+                    get: { viewOptions?.sortDirection ?? .ascending },
+                    set: { viewOptions?.setSortDirection($0) }
+                )) {
+                    ForEach(BrowseFeature.SortDirection.allCases, id: \.self) { Text($0.menuTitle).tag($0) }
+                }
+                .pickerStyle(.inline)
+            }
+            .disabled(viewOptions == nil)
+        }
+
+        /// The signed in account's Show Hidden Files preference, the same one Settings edits.
+        private var showHiddenFiles: Binding<Bool> {
+            Binding(
+                get: {
+                    guard case let .authenticated(session) = store.destination else { return false }
+                    return session.mainTab.settings.preferences.showHiddenFiles
+                },
+                set: { send(.settings(.setShowHiddenFiles($0))) }
+            )
         }
 
         private func openBrowseWindow(asTab: Bool) {

@@ -337,7 +337,28 @@
         public let canPaste: Bool
     }
 
+    /// The visible Browse screen's sort, for the View menu's Sort By.
+    public struct BrowseViewOptions {
+        public let sortOption: BrowseFeature.SortOption
+        public let sortDirection: BrowseFeature.SortDirection
+        public let setSortOption: (BrowseFeature.SortOption) -> Void
+        public let setSortDirection: (BrowseFeature.SortDirection) -> Void
+    }
+
+    public extension BrowseFeature.SortOption {
+        var menuTitle: String {
+            title
+        }
+    }
+
+    public extension BrowseFeature.SortDirection {
+        var menuTitle: String {
+            title
+        }
+    }
+
     public extension FocusedValues {
         @Entry var browseKeyboardActions: BrowseKeyboardActions?
+        @Entry var browseViewOptions: BrowseViewOptions?
     }
 #endif

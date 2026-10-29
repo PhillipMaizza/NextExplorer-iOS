@@ -376,6 +376,7 @@ public enum L10n {
     public enum Menu {
         public static var about: String { tr("menu.about") }  // "About NextExplorer"
         public static var enclosingFolder: String { tr("menu.enclosingFolder") }  // "Enclosing Folder"
+        public static var go: String { tr("menu.go") }  // "Go"
         public static var newTab: String { tr("menu.newTab") }  // "New Tab"
         public static var newWindow: String { tr("menu.newWindow") }  // "New Window"
         public static var rateApp: String { tr("menu.rateApp") }  // "Rate NextExplorer…"

@@ -697,6 +697,12 @@ struct BrowseContentView: View {
                 personalSpace: showsPersonalSpace ? Self.macPersonalSpaceItem : nil,
                 onOpenPersonalSpace: { store.send(.personalSpaceTapped) }
             )
+            .focusedSceneValue(\.browseViewOptions, BrowseViewOptions(
+                sortOption: store.sortOption,
+                sortDirection: store.sortDirection,
+                setSortOption: { store.send(.sortOptionChanged($0)) },
+                setSortDirection: { store.send(.sortDirectionChanged($0)) }
+            ))
         #else
             listContent
         #endif
