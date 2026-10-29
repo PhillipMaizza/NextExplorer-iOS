@@ -35,7 +35,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       # One DerivedData and one SwiftPM checkout folder shared by every build in the job, so each
       # dependency compiles once; DerivedData is also cached between runs (saved from main,
@@ -75,8 +75,8 @@ jobs:
       - name: Dependency pins match the app
         run: python3 Scripts/sync-package-pins.py --check
 
-      - name: Cache SwiftPM checkouts
-        uses: actions/cache@v4
+      - name: Restore SwiftPM checkouts
+        uses: actions/cache/restore@v6
         with:
           path: ${{ env.SPM_CHECKOUTS }}
           key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
@@ -86,7 +86,7 @@ jobs:
       # Build output from the latest main run: only what changed recompiles. Keyed on the Xcode
       # build and the resolved dependencies; restore keys fall back to the closest older entry.
       - name: Restore DerivedData
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             ${{ env.DERIVED_DATA }}
@@ -143,11 +143,18 @@ jobs:
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             CODE_SIGNING_ALLOWED=NO
 
-      # Only main saves, so pull requests reuse main's build output without each uploading
-      # several gigabytes of their own.
+      # Only main saves: GitHub scopes a pull request's cache to that pull request, so a save
+      # there helps nobody else, and main's copy is what every pull request restores.
+      - name: Save SwiftPM checkouts
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ env.SPM_CHECKOUTS }}
+          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+
       - name: Save DerivedData
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: |
             ${{ env.DERIVED_DATA }}
@@ -174,7 +181,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
 
       # One DerivedData and one SwiftPM checkout folder shared by every build in the job, so each
       # dependency compiles once; DerivedData is also cached between runs (saved from main,
@@ -186,14 +193,14 @@ jobs:
           echo "SPM_CHECKOUTS=${RUNNER_TEMP}/SourcePackages" >> "${GITHUB_ENV}"
 
       - name: Restore SwiftPM checkouts
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: ${{ env.SPM_CHECKOUTS }}
           key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
           restore-keys: spm-${{ runner.os }}-
 
       - name: Restore DerivedData
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: |
             ${{ env.DERIVED_DATA }}
@@ -271,7 +278,7 @@ jobs:
 
       - name: Upload test results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: uitest-results
           path: TestResults.xcresult
