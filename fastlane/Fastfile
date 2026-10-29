@@ -21,15 +21,9 @@ PBXPROJ = "#{PROJECT}/project.pbxproj".freeze
 SCHEME = "NextExplorer".freeze
 DEFAULT_DEVICE = "iPhone 17 Pro".freeze
 
-# Same set as CI. Keychain is left out: its tests need an entitled app host (errSecMissingEntitlement
-# as a standalone package on the simulator).
-TEST_PACKAGES = %w[
-  CoreModels NetworkClient AuthClient FilesClient Localization DesignSystem
-  AuthFeature FilesFeature AppStorageKeys AppFeature
-].freeze
 
-# Shared by every package's test run so TCA and swift-syntax compile once, as in CI. Outside the
-# repo so the linters never scan them.
+# Kept between runs so only what changed recompiles. Outside the repo so the linters never scan
+# them.
 UNIT_TEST_DERIVED_DATA = File.expand_path("~/Library/Developer/Xcode/DerivedData/NextExplorer-unit-tests").freeze
 UNIT_TEST_CHECKOUTS = File.expand_path("~/Library/Developer/Xcode/DerivedData/NextExplorer-unit-tests-checkouts").freeze
 
@@ -75,19 +69,15 @@ def upcoming_version(options)
 end
 
 platform :ios do
-  desc "Run every package's unit tests on the simulator (options: device)"
+  desc "Run every package's unit tests in one build, as CI does (options: device)"
   lane :unit_tests do |options|
-    failed = []
-    TEST_PACKAGES.each do |package|
-      directory = File.join(repo_root, "Packages", package)
-      sh("cd #{directory.shellescape} && xcodebuild test -quiet -scheme #{package} " \
-         "-destination #{destination(options[:device]).shellescape} -enableCodeCoverage NO " \
-         "-derivedDataPath #{UNIT_TEST_DERIVED_DATA.shellescape} " \
-         "-clonedSourcePackagesDirPath #{UNIT_TEST_CHECKOUTS.shellescape}",
-         error_callback: ->(_) { failed << package })
-    end
-    UI.user_error!("Unit tests failed in: #{failed.join(', ')}") unless failed.empty?
-    UI.success("Unit tests passed in #{TEST_PACKAGES.count} packages")
+    # PackageTests.xcworkspace exposes each local package's test target to one scheme; see ci.yml.
+    sh("cd #{repo_root.shellescape} && xcodebuild test -quiet " \
+       "-workspace PackageTests.xcworkspace -scheme PackageTests " \
+       "-destination #{destination(options[:device]).shellescape} -enableCodeCoverage NO " \
+       "-derivedDataPath #{UNIT_TEST_DERIVED_DATA.shellescape} " \
+       "-clonedSourcePackagesDirPath #{UNIT_TEST_CHECKOUTS.shellescape}")
+    UI.success("Unit tests passed")
   end
 
   desc "Run the XCUITest suite (options: device, only_testing: comma separated classes)"
