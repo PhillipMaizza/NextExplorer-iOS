@@ -235,7 +235,7 @@ struct DisplaySettingsSection: View {
                 }
                 // Tab labels only exist on the bottom tab bar (compact). iPad uses the sidebar,
                 // so the toggle is meaningless there.
-                if !isSplitViewDetail, filter.matches(L10n.Settings.toggleShowTabLabels) {
+                if !isMac, !isSplitViewDetail, filter.matches(L10n.Settings.toggleShowTabLabels) {
                     DSToggleRow(title: L10n.Settings.toggleShowTabLabels, icon: IconKit.tabBrowse, isOn: $showTabLabels)
                 }
             } header: {

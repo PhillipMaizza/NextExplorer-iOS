@@ -65,6 +65,7 @@ public struct DSFieldContainer<Content: View>: View {
 public struct DSFieldLabel: View {
     private let text: String
     private let isUppercased: Bool
+    @Environment(\.groupedListUsesNativeForm) private var usesNativeForm
 
     public init(_ text: String, uppercased: Bool = true) {
         self.text = text
@@ -72,9 +73,14 @@ public struct DSFieldLabel: View {
     }
 
     public var body: some View {
-        Text(text)
-            .type(.body3(.semibold), style: .secondary)
-            .textCase(isUppercased ? .uppercase : nil)
+        if usesNativeForm {
+            // A native grouped form styles its own section headers.
+            Text(text)
+        } else {
+            Text(text)
+                .type(.body3(.semibold), style: .secondary)
+                .textCase(isUppercased ? .uppercase : nil)
+        }
     }
 }
 
