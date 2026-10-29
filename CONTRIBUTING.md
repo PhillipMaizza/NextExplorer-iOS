@@ -56,10 +56,11 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 
 ## Scripts
 
-Helpers under `Scripts/`. Two drive localization. The `Localization` package is generated, so localization changes flow through these, not by editing `Localizable.xcstrings` or `L10n.swift` directly.
+Helpers under `Scripts/`. Two drive localization; the others keep dependency pins aligned and build release notes. The `Localization` package is generated, so localization changes flow through these, not by editing `Localizable.xcstrings` or `L10n.swift` directly.
 
 - **`gen-l10n.py`** regenerates the `Localization` package from its human-edited source. `Packages/Localization/strings.tsv` (one `key<TAB>English` per line) is the source of truth; the script rewrites `Localizable.xcstrings` and the two-level `L10n.swift` accessors, folds in each `translations/<lang>.tsv`, falls back to English for missing keys, and re-checks placeholder integrity. Run it after any string change: `python3 Scripts/gen-l10n.py`.
 - **`machine-translate.py`** fills `translations/<lang>.tsv` for the non-hand-authored languages via deep-translator's keyless MyMemory backend. Format specifiers (`%@`, `%lld`, `%1$@`, ...) are masked before translation and restored after, so none are dropped; per-string failures fall back to English. Its output is always re-validated by `gen-l10n.py`.
+- **`sync-package-pins.py`** keeps every local package's `Package.resolved` (and the CI only `PackageTests.xcworkspace`) on the app's dependency versions, so a package's tests run against what ships. Run it after changing dependencies in Xcode; CI runs it with `--check` and fails on drift.
 - **`gen-changelog.py`** builds release notes from the history of `main`: every PR lands as one commit, and each release is tagged `v<version>`, so PR titles group by the release they shipped in (history before the first tag groups by the `MARKETING_VERSION` it carried). Only user facing changes are kept: title clauses about tests, CI, tooling, refactors or docs are dropped, so **write PR titles as what a user would notice** and put internal work in its own clause. `--notes <version>` prints one version's notes (TestFlight "What to Test", GitHub Release with `--links`); with no option it prints the whole changelog as Markdown.
 
 ## Naming and style
