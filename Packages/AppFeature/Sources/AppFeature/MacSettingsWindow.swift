@@ -29,6 +29,7 @@
             }
             // Like the main window, never the compact (phone) layout and its phone only options.
             .environment(\.horizontalSizeClass, .regular)
+            .modifier(AddAccountSheet(store: mainStore))
             .frame(width: Metrics.width)
             .frame(minHeight: Metrics.minHeight, idealHeight: Metrics.idealHeight)
             .onChange(of: mainStore.currentAccountID) { _, newValue in

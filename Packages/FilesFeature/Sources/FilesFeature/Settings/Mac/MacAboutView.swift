@@ -13,8 +13,8 @@
         static let sectionSpacing: CGFloat = .space24
         static let padding: CGFloat = .space32
         static let width: CGFloat = 520
-        static let licensesWidth: CGFloat = 520
-        static let licensesHeight: CGFloat = 600
+        static let licensesWidth: CGFloat = 680
+        static let licensesHeight: CGFloat = 520
     }
 
     /// The Mac's About NextExplorer window (app menu). It works signed out too, unlike the
@@ -54,13 +54,15 @@
                     .multilineTextAlignment(.center)
             }
             .sheet(isPresented: $isShowingLicenses) {
-                NavigationStack {
-                    LicensesView()
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button(L10n.Common.close) { isShowingLicenses = false }
-                            }
-                        }
+                VStack(spacing: 0) {
+                    MacLicensesView()
+                    Divider()
+                    HStack {
+                        Spacer()
+                        Button(L10n.Common.close) { isShowingLicenses = false }
+                            .keyboardShortcut(.defaultAction)
+                    }
+                    .padding(Metrics.infoSpacing * 2)
                 }
                 .frame(width: Metrics.licensesWidth, height: Metrics.licensesHeight)
             }

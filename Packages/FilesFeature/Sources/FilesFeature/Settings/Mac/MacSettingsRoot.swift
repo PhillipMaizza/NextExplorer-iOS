@@ -91,7 +91,7 @@
                     pane(visibleSelection)
                         .navigationTitle(visibleSelection.title)
                         .navigationDestination(item: $store.scope(state: \.offlineManage, action: \.offlineManage)) { manageStore in
-                            OfflineManageView(store: manageStore)
+                            MacOfflineManagePane(store: manageStore)
                         }
                 }
                 .id(visibleSelection)

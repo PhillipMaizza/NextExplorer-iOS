@@ -38,26 +38,26 @@
                     store.send(.userTapped(firstID))
                 }
             }
-            .dsSheet(isPresented: Binding(get: { store.createSheet != nil }, set: {
+            .sheet(isPresented: Binding(get: { store.createSheet != nil }, set: {
                 if !$0 {
                     store.send(.createSheetDismissed)
                 }
             })) {
-                CreateUserSheet(store: store)
+                MacCreateUserSheet(store: store)
             }
-            .dsSheet(isPresented: Binding(get: { store.passwordSheet != nil }, set: {
+            .sheet(isPresented: Binding(get: { store.passwordSheet != nil }, set: {
                 if !$0 {
                     store.send(.passwordSheetDismissed)
                 }
             })) {
-                SetPasswordSheet(store: store)
+                MacSetPasswordSheet(store: store)
             }
-            .dsSheet(isPresented: Binding(get: { store.volumeSheet != nil }, set: {
+            .sheet(isPresented: Binding(get: { store.volumeSheet != nil }, set: {
                 if !$0 {
                     store.send(.volumeSheetDismissed)
                 }
             })) {
-                VolumeAssignSheet(store: store)
+                MacVolumeAssignSheet(store: store)
             }
             .dsAlert(isPresented: Binding(get: { store.volumeToRemove != nil }, set: { _ in })) {
                 DSAlertSheet(

@@ -208,7 +208,11 @@ struct SettingsView: View {
             .modifier(TipJarPresentation(store: store))
         #endif
             .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
-                OfflineSelectionView(store: selectionStore)
+                #if os(macOS)
+                    MacOfflineSelectionSheet(store: selectionStore)
+                #else
+                    OfflineSelectionView(store: selectionStore)
+                #endif
             }
             .dsAlert(isPresented: isConfirmingRemoveOffline) {
                 DSAlertSheet(

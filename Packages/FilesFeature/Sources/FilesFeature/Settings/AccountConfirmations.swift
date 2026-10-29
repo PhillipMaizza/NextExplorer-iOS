@@ -63,15 +63,14 @@ struct AccountConfirmations: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(item: changePasswordSheet) { passwordStore in
-                NavigationStack {
-                    ChangePasswordView(store: passwordStore)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button(L10n.Common.close) { store.send(.changePassword(.dismiss)) }
-                            }
-                        }
-                }
-                .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
+                #if os(macOS)
+                    MacChangePasswordSheet(store: passwordStore) { store.send(.changePassword(.dismiss)) }
+                #else
+                    NavigationStack {
+                        ChangePasswordView(store: passwordStore)
+                    }
+                    .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
+                #endif
             }
             .dsAlert(isPresented: Binding(get: { showsPrompts && store.isConfirmingSignOut }, set: { _ in })) {
                 DSAlertSheet(

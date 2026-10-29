@@ -140,32 +140,7 @@ public struct AppView: View {
         .onOpenURL { url in
             store.send(.incomingFiles([url]))
         }
-        .sheet(
-            item: $store.scope(state: \.addAccount, action: \.addAccount),
-            onDismiss: { store.send(.addAccountSheetDismissed) }
-        ) { addAccountStore in
-            LoginFormView(store: addAccountStore, autoFocus: true, floodsIntoApp: !AppView.addsAccountInDialog)
-            #if os(macOS)
-                // A Mac sheet sizes to its content's ideal size, which the flexible login
-                // layout collapses to nothing; and there is no swipe down, so it needs Cancel.
-                .frame(width: MacAddAccountSheet.width, height: MacAddAccountSheet.height)
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button(L10n.Common.cancel) { store.send(.addAccount(.dismiss)) }
-                    }
-                }
-            #endif
-        }
-    }
-
-    /// The Mac adds an account in a dialog sized sheet, where the accent flood into the app has
-    /// nothing to reveal.
-    private static var addsAccountInDialog: Bool {
-        #if os(macOS)
-            true
-        #else
-            false
-        #endif
+        .modifier(AddAccountSheet(store: store))
     }
 
     private var destinationContent: some View {
@@ -224,10 +199,3 @@ public struct AppView: View {
         }
     )
 }
-
-#if os(macOS)
-    private enum MacAddAccountSheet {
-        static let width: CGFloat = 520
-        static let height: CGFloat = 640
-    }
-#endif
