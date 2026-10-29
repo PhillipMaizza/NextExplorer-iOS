@@ -691,6 +691,9 @@ struct BrowseContentView: View {
                 canDropOnFolders: store.access?.canDelete ?? false,
                 onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
                 contextMenu: { ids in tableContextMenu(for: ids) },
+                renamingItemID: renamesInTable ? store.renameSheetItem?.id : nil,
+                onRenameCommit: { store.send(.renameConfirmed($0)) },
+                onRenameCancel: { store.send(.renameCancelled) },
                 personalSpace: showsPersonalSpace ? Self.macPersonalSpaceItem : nil,
                 onOpenPersonalSpace: { store.send(.personalSpaceTapped) }
             )
@@ -926,9 +929,18 @@ struct BrowseContentView: View {
     /// Drives the rename `NameInputSheet`; a swipe down dismiss routes back through the reducer
     /// so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
     /// Split like the delete confirmation so it presents over whichever surface is frontmost.
+    /// The Mac folder table renames in place; search results and previews keep the sheet.
+    private var renamesInTable: Bool {
+        #if os(macOS)
+            store.previewItem == nil && !store.isSearching
+        #else
+            false
+        #endif
+    }
+
     private var renameItemBinding: Binding<FileItem?> {
         Binding(
-            get: { store.previewItem == nil ? store.renameSheetItem : nil },
+            get: { store.previewItem == nil && !renamesInTable ? store.renameSheetItem : nil },
             set: {
                 if $0 == nil {
                     store.send(.renameCancelled)

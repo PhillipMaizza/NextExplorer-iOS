@@ -51,6 +51,10 @@
         let canDropOnFolders: Bool
         let onDropOnFolder: ([FileItem.ID], FileItem) -> Void
         @ViewBuilder let contextMenu: (Set<FileItem.ID>) -> ContextMenu
+        /// The row being renamed in place, Finder style, instead of through a sheet.
+        var renamingItemID: FileItem.ID?
+        var onRenameCommit: (String) -> Void = { _ in }
+        var onRenameCancel: () -> Void = {}
         /// The account's private folder, pinned as the first row on the root when the server has
         /// personal folders on. Its id is the `personal` path space, which is never a volume.
         var personalSpace: FileItem?
@@ -70,9 +74,13 @@
                         } else {
                             icon(for: item)
                         }
-                        Text(isPersonalSpace(item) ? L10n.Browse.myFiles : item.name)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
+                        if item.id == renamingItemID {
+                            InlineRenameField(originalName: item.name, onCommit: onRenameCommit, onCancel: onRenameCancel)
+                        } else {
+                            Text(isPersonalSpace(item) ? L10n.Browse.myFiles : item.name)
+                                .lineLimit(1)
+                                .truncationMode(.middle)
+                        }
                         if offlineItemIDs.contains(item.id) {
                             MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
                                 .accessibilityLabel(L10n.Offline.badgeAvailable)
@@ -218,6 +226,51 @@
             case \FileItem.size: .size
             case \FileItem.kind: .kind
             default: .name
+            }
+        }
+    }
+
+    /// The name cell while renaming: Return or clicking away commits, Esc cancels. An unchanged
+    /// or invalid name cancels instead of asking the server.
+    private struct InlineRenameField: View {
+        let originalName: String
+        let onCommit: (String) -> Void
+        let onCancel: () -> Void
+
+        @State private var name: String
+        @State private var isFinished = false
+        @FocusState private var isFocused: Bool
+
+        init(originalName: String, onCommit: @escaping (String) -> Void, onCancel: @escaping () -> Void) {
+            self.originalName = originalName
+            self.onCommit = onCommit
+            self.onCancel = onCancel
+            _name = State(initialValue: originalName)
+        }
+
+        var body: some View {
+            TextField(L10n.Browse.renameNamePlaceholder, text: $name)
+                .labelsHidden()
+                .textFieldStyle(.roundedBorder)
+                .focused($isFocused)
+                .onAppear { isFocused = true }
+                .onSubmit { finish(commit: true) }
+                .onExitCommand { finish(commit: false) }
+                .onChange(of: isFocused) { _, focused in
+                    if !focused {
+                        finish(commit: true)
+                    }
+                }
+        }
+
+        private func finish(commit: Bool) {
+            guard !isFinished else { return }
+            isFinished = true
+            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+            if commit, trimmed != originalName, FileNameValidation.isAcceptable(trimmed: trimmed) {
+                onCommit(trimmed)
+            } else {
+                onCancel()
             }
         }
     }
