@@ -139,6 +139,18 @@ public extension FilesClient {
             restoreVersion: { serverURL, path, versionID in
                 try await service.restoreVersion(serverURL: serverURL, path: path, versionID: versionID)
             },
+            downloadVersion: { serverURL, path, versionID, destination in
+                try await service.downloadVersion(serverURL: serverURL, path: path, versionID: versionID, to: destination)
+            },
+            copyVersion: { serverURL, path, versionID, destination in
+                try await service.copyVersion(serverURL: serverURL, path: path, versionID: versionID, destination: destination)
+            },
+            updateVersion: { serverURL, path, versionID, label, pinned in
+                try await service.updateVersion(serverURL: serverURL, path: path, versionID: versionID, label: label, pinned: pinned)
+            },
+            deleteVersions: { serverURL, path, ids, all in
+                try await service.deleteVersions(serverURL: serverURL, path: path, ids: ids, all: all)
+            },
             thumbnailURL: { serverURL, path in
                 try await service.thumbnailURL(serverURL: serverURL, path: path)
             },

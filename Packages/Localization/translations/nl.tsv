@@ -682,3 +682,17 @@ fileInfo.restoreMessage	Het bestand gaat terug naar hoe het was op %@. De huidig
 fileInfo.restoreConfirm	Zet terug
 fileInfo.sectionSharing	Delen
 fileInfo.notShared	Geen deellinks
+fileInfo.versionActions	Versieacties
+fileInfo.versionDownload	Download…
+fileInfo.versionSaveCopy	Bewaar als kopie
+fileInfo.versionRename	Wijzig naam…
+fileInfo.renameTitle	Wijzig versienaam
+fileInfo.renamePlaceholder	Versienaam
+fileInfo.versionPin	Bewaar deze versie
+fileInfo.versionUnpin	Bewaar deze versie niet meer
+fileInfo.versionKept	Bewaard
+fileInfo.versionDelete	Verwijder…
+fileInfo.deleteTitle	Deze versie verwijderen?
+fileInfo.deleteAll	Verwijder alle versies…
+fileInfo.deleteAllTitle	Alle versies verwijderen?
+fileInfo.deleteMessage	Verwijderde versies zijn voorgoed weg. Het bestand zelf blijft zoals het is.

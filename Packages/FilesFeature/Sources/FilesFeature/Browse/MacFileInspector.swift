@@ -28,6 +28,8 @@
         /// `nil` for a file: only folders can be favorites.
         var isFavorite: Bool?
         var onToggleFavorite: () -> Void = {}
+        /// This item's own share links; `nil` until the list has loaded.
+        var shares: [Share]?
         /// Opens Create Share Link; `nil` without the right to share.
         var onShare: (() -> Void)?
         /// After a version is restored, so the listing picks up the restored file.
@@ -37,12 +39,7 @@
         @Dependency(\.filesClient) private var filesClient
         /// Owner, group and mode come from the permissions endpoint, which metadata leaves out.
         @State private var permissions: FilePermissions?
-        /// This item's own share links, from the caller's shared by me list.
-        @State private var shares: [Share]?
-        /// Older servers have no versions route; the section stays hidden then.
-        @State private var versions: FileVersionHistory?
-        @State private var versionToRestore: FileVersion?
-        @State private var restoreError: String?
+        @State private var versions = MacVersionsModel()
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
 
@@ -70,8 +67,8 @@
                     if let shares {
                         MacInspectorSharingSection(shares: shares, serverURL: serverURL, onShare: onShare)
                     }
-                    if let versions, versions.enabled || !versions.versions.isEmpty {
-                        MacInspectorVersionsSection(history: versions, errorMessage: restoreError) { versionToRestore = $0 }
+                    if let history = versions.history, history.enabled || !history.versions.isEmpty {
+                        MacInspectorVersionsSection(model: versions, history: history)
                     }
                     permissionsSection
                 } else {
@@ -87,47 +84,10 @@
                 permissions = loaded
             }
             .task(id: item.id) {
-                shares = nil
-                versions = nil
-                restoreError = nil
-                async let links = try? filesClient.mySharedLinks(serverURL)
-                async let history = item.isDirectory ? nil : try? filesClient.fetchVersions(serverURL, item.id)
-                let (loadedLinks, loadedHistory) = await (links, history)
-                guard !Task.isCancelled else { return }
-                // The server stores the path without leading or trailing slashes.
-                let path = item.id.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-                shares = loadedLinks?.filter { $0.sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) == path }
-                versions = loadedHistory
+                versions.onFilesChanged = onRestored
+                await versions.load(item: item, serverURL: serverURL)
             }
-            .alert(L10n.FileInfo.restoreTitle, isPresented: Binding(get: { versionToRestore != nil }, set: {
-                if !$0 {
-                    versionToRestore = nil
-                }
-            })) {
-                Button(L10n.FileInfo.restoreConfirm) {
-                    if let versionToRestore {
-                        restore(versionToRestore)
-                    }
-                }
-                Button(L10n.Common.cancel, role: .cancel) {}
-            } message: {
-                if let versionToRestore {
-                    Text(L10n.FileInfo.restoreMessage(MacInspectorVersionsSection.date(versionToRestore.modifiedAt)))
-                }
-            }
-        }
-
-        private func restore(_ version: FileVersion) {
-            Task {
-                do {
-                    try await filesClient.restoreVersion(serverURL, item.id, version.id)
-                    restoreError = nil
-                    versions = try? await filesClient.fetchVersions(serverURL, item.id)
-                    onRestored()
-                } catch {
-                    restoreError = (error as? FilesClientError)?.userMessage ?? error.localizedDescription
-                }
-            }
+            .modifier(MacVersionsDialogs(model: versions))
         }
 
         private var header: some View {
@@ -272,6 +232,11 @@
         }()
     }
 
+    private struct SharesLoad: Hashable {
+        let isOpen: Bool
+        let revision: Int
+    }
+
     private struct PermissionsLoad: Hashable {
         let path: String
         let isEditing: Bool
@@ -283,6 +248,19 @@
     struct MacBrowseInspector: ViewModifier {
         let screen: StoreOf<BrowseFeature>
         var onShare: (FileItem) -> Void = { _ in }
+
+        @Dependency(\.filesClient) private var filesClient
+        /// Bumped whenever a share link is created or edited anywhere in the app.
+        @Shared(.inMemory(SharedFeature.revisionKey)) private var shareLinksRevision = 0
+        /// The caller's shared by me links, loaded once while the panel is open rather than for
+        /// every selection; each item shows its own from this list.
+        @State private var sharedLinks: [Share]?
+
+        private func shares(for item: FileItem) -> [Share]? {
+            // The server stores the path without leading or trailing slashes.
+            let path = item.id.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            return sharedLinks?.filter { $0.sourcePath?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) == path }
+        }
 
         func body(content: Content) -> some View {
             HStack(spacing: 0) {
@@ -299,6 +277,7 @@
                         onEditPermissions: { screen.send(.permissionsTapped(item)) },
                         isFavorite: item.isDirectory ? screen.favoritePaths.contains(item.id) : nil,
                         onToggleFavorite: { screen.send(.favoriteToggleButtonTapped(item)) },
+                        shares: shares(for: item),
                         onShare: (screen.access?.canShare ?? false) ? { onShare(item) } : nil,
                         onRestored: { screen.send(.refreshButtonTapped) },
                         onClose: { screen.send(.infoDismissed) }
@@ -307,6 +286,12 @@
                 }
             }
             .animation(.easeInOut(duration: Metrics.slideDuration), value: screen.infoItem == nil)
+            .task(id: SharesLoad(isOpen: screen.infoItem != nil, revision: shareLinksRevision)) {
+                guard screen.infoItem != nil else { return }
+                let links = try? await filesClient.mySharedLinks(screen.serverURL)
+                guard !Task.isCancelled else { return }
+                sharedLinks = links
+            }
         }
     }
 

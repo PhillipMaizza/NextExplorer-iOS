@@ -682,3 +682,17 @@ fileInfo.restoreMessage	Die Datei wird auf den Stand vom %@ zurückgesetzt. Der 
 fileInfo.restoreConfirm	Wiederherstellen
 fileInfo.sectionSharing	Freigabe
 fileInfo.notShared	Keine Freigabelinks
+fileInfo.versionActions	Versionsaktionen
+fileInfo.versionDownload	Laden …
+fileInfo.versionSaveCopy	Als Kopie sichern
+fileInfo.versionRename	Umbenennen …
+fileInfo.renameTitle	Version umbenennen
+fileInfo.renamePlaceholder	Versionsname
+fileInfo.versionPin	Diese Version behalten
+fileInfo.versionUnpin	Diese Version nicht mehr behalten
+fileInfo.versionKept	Behalten
+fileInfo.versionDelete	Löschen …
+fileInfo.deleteTitle	Diese Version löschen?
+fileInfo.deleteAll	Alle Versionen löschen …
+fileInfo.deleteAllTitle	Alle Versionen löschen?
+fileInfo.deleteMessage	Gelöschte Versionen sind endgültig weg. Die Datei selbst bleibt unverändert.

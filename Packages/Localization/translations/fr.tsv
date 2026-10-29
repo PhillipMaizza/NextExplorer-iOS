@@ -682,3 +682,17 @@ fileInfo.restoreMessage	Le fichier revient à son état du %@. Son contenu actue
 fileInfo.restoreConfirm	Restaurer
 fileInfo.sectionSharing	Partage
 fileInfo.notShared	Aucun lien de partage
+fileInfo.versionActions	Actions de version
+fileInfo.versionDownload	Télécharger…
+fileInfo.versionSaveCopy	Enregistrer une copie
+fileInfo.versionRename	Renommer…
+fileInfo.renameTitle	Renommer la version
+fileInfo.renamePlaceholder	Nom de la version
+fileInfo.versionPin	Conserver cette version
+fileInfo.versionUnpin	Ne plus conserver cette version
+fileInfo.versionKept	Conservée
+fileInfo.versionDelete	Supprimer…
+fileInfo.deleteTitle	Supprimer cette version ?
+fileInfo.deleteAll	Supprimer toutes les versions…
+fileInfo.deleteAllTitle	Supprimer toutes les versions ?
+fileInfo.deleteMessage	Les versions supprimées le sont définitivement. Le fichier lui-même reste tel quel.

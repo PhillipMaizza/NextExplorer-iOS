@@ -682,3 +682,17 @@ fileInfo.restoreMessage	Файл вернётся к состоянию на %@.
 fileInfo.restoreConfirm	Восстановить
 fileInfo.sectionSharing	Общий доступ
 fileInfo.notShared	Нет ссылок общего доступа
+fileInfo.versionActions	Действия с версией
+fileInfo.versionDownload	Загрузить…
+fileInfo.versionSaveCopy	Сохранить как копию
+fileInfo.versionRename	Переименовать…
+fileInfo.renameTitle	Переименовать версию
+fileInfo.renamePlaceholder	Название версии
+fileInfo.versionPin	Хранить эту версию
+fileInfo.versionUnpin	Не хранить эту версию
+fileInfo.versionKept	Хранится
+fileInfo.versionDelete	Удалить…
+fileInfo.deleteTitle	Удалить эту версию?
+fileInfo.deleteAll	Удалить все версии…
+fileInfo.deleteAllTitle	Удалить все версии?
+fileInfo.deleteMessage	Удалённые версии исчезают навсегда. Сам файл остаётся как есть.

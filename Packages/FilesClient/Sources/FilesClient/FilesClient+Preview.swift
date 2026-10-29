@@ -88,6 +88,12 @@ public extension FilesClient {
             )
         },
         restoreVersion: { _, _, _ in },
+        downloadVersion: { _, _, _, _ in },
+        copyVersion: { _, path, _, _ in path },
+        updateVersion: { _, _, versionID, label, pinned in
+            FileVersion(id: versionID, size: 0, modifiedAt: Date(), capturedAt: Date(), label: label, pinned: pinned ?? false)
+        },
+        deleteVersions: { _, _, _, _ in },
         thumbnailURL: { _, _ in nil },
         previewFile: { _, item in
             let directory = FileManager.default.temporaryDirectory.appendingPathComponent("Previews-Preview", isDirectory: true)

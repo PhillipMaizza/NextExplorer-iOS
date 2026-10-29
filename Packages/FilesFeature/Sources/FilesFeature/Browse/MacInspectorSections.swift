@@ -41,12 +41,11 @@
         }
     }
 
-    /// Get Info's Versions section: the file's saved versions, newest first, each with Restore…
-    /// when the caller may restore and the version's storage is still there.
+    /// Get Info's Versions section: the file's saved versions, newest first, each with a menu of
+    /// what the caller's rights allow, and Delete All Versions under them.
     struct MacInspectorVersionsSection: View {
+        let model: MacVersionsModel
         let history: FileVersionHistory
-        let errorMessage: String?
-        let onRestore: (FileVersion) -> Void
 
         var body: some View {
             Section {
@@ -55,14 +54,25 @@
                 }
                 ForEach(history.versions) { version in
                     LabeledContent {
-                        if history.rights.restore, version.available != false {
-                            Button(L10n.FileInfo.versionRestore) { onRestore(version) }
+                        HStack(spacing: .space4) {
+                            if version.pinned {
+                                Image(systemName: "pin.fill")
+                                    .foregroundStyle(.secondary)
+                                    .accessibilityLabel(L10n.FileInfo.versionKept)
+                            }
+                            actionsMenu(version)
                         }
                     } label: {
-                        MacRowTitle(title: version.label ?? Self.date(version.modifiedAt), subtitle: subtitle(for: version))
+                        MacRowTitle(title: version.label ?? MacVersionsModel.date(version.modifiedAt), subtitle: subtitle(for: version))
                     }
                 }
-                if let errorMessage {
+                if history.rights.remove, !history.versions.isEmpty {
+                    HStack {
+                        Spacer()
+                        Button(L10n.FileInfo.deleteAll, role: .destructive) { model.isConfirmingDeleteAll = true }
+                    }
+                }
+                if let errorMessage = model.errorMessage {
                     Text(errorMessage).foregroundStyle(Color.negativeText)
                 }
             } header: {
@@ -70,20 +80,47 @@
             }
         }
 
+        private func actionsMenu(_ version: FileVersion) -> some View {
+            let isAvailable = version.available != false
+            return Menu {
+                if history.rights.restore {
+                    Button(L10n.FileInfo.versionRestore) { model.versionToRestore = version }
+                        .disabled(!isAvailable)
+                }
+                if history.rights.download {
+                    Button(L10n.FileInfo.versionDownload) { model.download(version) }
+                        .disabled(!isAvailable)
+                    Button(L10n.FileInfo.versionSaveCopy) { model.saveCopy(version) }
+                        .disabled(!isAvailable)
+                }
+                if history.rights.restore {
+                    Divider()
+                    Button(L10n.FileInfo.versionRename) { model.beginRename(version) }
+                    Button(version.pinned ? L10n.FileInfo.versionUnpin : L10n.FileInfo.versionPin) { model.togglePin(version) }
+                }
+                if history.rights.remove {
+                    Divider()
+                    Button(L10n.FileInfo.versionDelete, role: .destructive) { model.versionToDelete = version }
+                }
+            } label: {
+                Image(systemName: "ellipsis.circle")
+            }
+            .menuStyle(.borderlessButton)
+            .menuIndicator(.hidden)
+            .fixedSize()
+            .accessibilityLabel(L10n.FileInfo.versionActions)
+        }
+
         private func subtitle(for version: FileVersion) -> String {
             var parts: [String] = []
             if version.label != nil {
-                parts.append(Self.date(version.modifiedAt))
+                parts.append(MacVersionsModel.date(version.modifiedAt))
             }
             if let author = version.author?.label {
                 parts.append(author)
             }
             parts.append(SettingsFormat.byteFormatter.string(fromByteCount: version.size))
             return parts.joined(separator: " · ")
-        }
-
-        static func date(_ date: Date) -> String {
-            date.formatted(date: .abbreviated, time: .shortened)
         }
     }
 #endif

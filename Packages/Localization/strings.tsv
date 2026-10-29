@@ -756,3 +756,17 @@ fileInfo.restoreMessage	The file goes back to how it was on %@. What it holds no
 fileInfo.restoreConfirm	Restore
 fileInfo.sectionSharing	Sharing
 fileInfo.notShared	No share links
+fileInfo.versionActions	Version actions
+fileInfo.versionDownload	Download…
+fileInfo.versionSaveCopy	Save as Copy
+fileInfo.versionRename	Rename…
+fileInfo.renameTitle	Rename Version
+fileInfo.renamePlaceholder	Version name
+fileInfo.versionPin	Keep This Version
+fileInfo.versionUnpin	Stop Keeping This Version
+fileInfo.versionKept	Kept
+fileInfo.versionDelete	Delete…
+fileInfo.deleteTitle	Delete this version?
+fileInfo.deleteAll	Delete All Versions…
+fileInfo.deleteAllTitle	Delete all versions?
+fileInfo.deleteMessage	Deleted versions are gone for good. The file itself stays as it is.

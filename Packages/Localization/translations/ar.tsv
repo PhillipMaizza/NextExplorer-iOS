@@ -682,3 +682,17 @@ fileInfo.restoreMessage	يعود الملف إلى ما كان عليه في %@.
 fileInfo.restoreConfirm	استعادة
 fileInfo.sectionSharing	المشاركة
 fileInfo.notShared	لا توجد روابط مشاركة
+fileInfo.versionActions	إجراءات الإصدار
+fileInfo.versionDownload	تنزيل…
+fileInfo.versionSaveCopy	حفظ كنسخة
+fileInfo.versionRename	إعادة تسمية…
+fileInfo.renameTitle	إعادة تسمية الإصدار
+fileInfo.renamePlaceholder	اسم الإصدار
+fileInfo.versionPin	الاحتفاظ بهذا الإصدار
+fileInfo.versionUnpin	إيقاف الاحتفاظ بهذا الإصدار
+fileInfo.versionKept	محفوظ
+fileInfo.versionDelete	حذف…
+fileInfo.deleteTitle	حذف هذا الإصدار؟
+fileInfo.deleteAll	حذف كل الإصدارات…
+fileInfo.deleteAllTitle	حذف كل الإصدارات؟
+fileInfo.deleteMessage	تُحذف الإصدارات نهائيًا. يبقى الملف نفسه كما هو.

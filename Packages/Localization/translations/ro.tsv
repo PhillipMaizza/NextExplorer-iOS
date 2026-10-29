@@ -682,3 +682,17 @@ fileInfo.restoreMessage	Fișierul revine la starea din %@. Conținutul actual es
 fileInfo.restoreConfirm	Restaurează
 fileInfo.sectionSharing	Partajare
 fileInfo.notShared	Niciun link de partajare
+fileInfo.versionActions	Acțiuni versiune
+fileInfo.versionDownload	Descarcă…
+fileInfo.versionSaveCopy	Salvează ca copie
+fileInfo.versionRename	Redenumește…
+fileInfo.renameTitle	Redenumește versiunea
+fileInfo.renamePlaceholder	Numele versiunii
+fileInfo.versionPin	Păstrează această versiune
+fileInfo.versionUnpin	Nu mai păstra această versiune
+fileInfo.versionKept	Păstrată
+fileInfo.versionDelete	Șterge…
+fileInfo.deleteTitle	Ștergi această versiune?
+fileInfo.deleteAll	Șterge toate versiunile…
+fileInfo.deleteAllTitle	Ștergi toate versiunile?
+fileInfo.deleteMessage	Versiunile șterse dispar definitiv. Fișierul rămâne neschimbat.

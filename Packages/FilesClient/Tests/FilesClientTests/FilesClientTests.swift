@@ -1296,4 +1296,54 @@ struct FilesClientLiveTests {
         #expect(request.url?.path == "/api/versions/v1/restore")
         #expect(request.httpMethod == "POST")
     }
+
+    private func capturedJSON() throws -> [String: Any] {
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        return try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
+    }
+
+    @Test
+    func copyVersionPostsTheDestinationAndReturnsTheNewPath() async throws {
+        stub(statusCode: 200, body: Data(#"{"path":"Docs/notes (v1).txt","name":"notes (v1).txt"}"#.utf8))
+        let newPath = try await makeClient().copyVersion(serverURL, "Docs/notes.txt", "v1", "Docs")
+        #expect(newPath == "Docs/notes (v1).txt")
+        #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/versions/v1/copy")
+        let json = try capturedJSON()
+        #expect(json["path"] as? String == "Docs/notes.txt")
+        #expect(json["destination"] as? String == "Docs")
+    }
+
+    @Test
+    func updateVersionLeavesOutTheFieldsNotBeingChanged() async throws {
+        let version = #"{"id":"v1","size":12,"modifiedAt":"2026-10-20T08:00:00Z","capturedAt":"2026-10-20T08:00:05Z","author":null,"label":null,"pinned":true,"available":true}"#
+        stub(statusCode: 200, body: Data(version.utf8))
+        let updated = try await makeClient().updateVersion(serverURL, "Docs/notes.txt", "v1", nil, true)
+        #expect(updated.pinned)
+        #expect(StubURLProtocol.capturedRequest?.httpMethod == "PATCH")
+        let json = try capturedJSON()
+        #expect(json["pinned"] as? Bool == true)
+        #expect(json["label"] == nil)
+    }
+
+    @Test
+    func deleteAllVersionsSendsAllWithoutIDs() async throws {
+        stub(statusCode: 200, body: Data(#"{"items":[],"deleted":2}"#.utf8))
+        try await makeClient().deleteVersions(serverURL, "Docs/notes.txt", [], true)
+        #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/versions/delete")
+        let json = try capturedJSON()
+        #expect(json["all"] as? Bool == true)
+        #expect(json["ids"] == nil)
+    }
+
+    @Test
+    func downloadVersionReadsTheContentRouteIntoTheDestination() async throws {
+        stub(statusCode: 200, body: Data("old text".utf8))
+        let destination = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+        defer { try? FileManager.default.removeItem(at: destination) }
+        try await makeClient().downloadVersion(serverURL, "Docs/notes.txt", "v1", destination)
+        let url = try #require(StubURLProtocol.capturedRequest?.url)
+        #expect(url.path == "/api/versions/v1/content")
+        #expect(url.query?.contains("path=Docs/notes.txt") == true)
+        #expect(try String(contentsOf: destination, encoding: .utf8) == "old text")
+    }
 }

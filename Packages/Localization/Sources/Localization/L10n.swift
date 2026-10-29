@@ -277,10 +277,16 @@ public enum L10n {
         public static var reorderFailed: String { tr("favorites.reorderFailed") }  // "Couldn't save the new order."
     }
     public enum FileInfo {
+        public static var deleteAll: String { tr("fileInfo.deleteAll") }  // "Delete All Versions…"
+        public static var deleteAllTitle: String { tr("fileInfo.deleteAllTitle") }  // "Delete all versions?"
+        public static var deleteMessage: String { tr("fileInfo.deleteMessage") }
+        public static var deleteTitle: String { tr("fileInfo.deleteTitle") }  // "Delete this version?"
         public static func diskFreeOf(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("fileInfo.diskFreeOf", a0, a1) }
         public static var navigationTitleFolder: String { tr("fileInfo.navigationTitleFolder") }  // "Folder"
         public static var notShared: String { tr("fileInfo.notShared") }  // "No share links"
         public static var partialScan: String { tr("fileInfo.partialScan") }  // "Counted a partial scan — this folder is very large."
+        public static var renamePlaceholder: String { tr("fileInfo.renamePlaceholder") }  // "Version name"
+        public static var renameTitle: String { tr("fileInfo.renameTitle") }  // "Rename Version"
         public static var restoreConfirm: String { tr("fileInfo.restoreConfirm") }  // "Restore"
         public static func restoreMessage(_ a0: CVarArg) -> String { tr("fileInfo.restoreMessage", a0) }
         public static var restoreTitle: String { tr("fileInfo.restoreTitle") }  // "Restore this version?"
@@ -301,7 +307,15 @@ public enum L10n {
         public static var sectionServerDisk: String { tr("fileInfo.sectionServerDisk") }  // "Server Disk"
         public static var sectionSharing: String { tr("fileInfo.sectionSharing") }  // "Sharing"
         public static var sectionVersions: String { tr("fileInfo.sectionVersions") }  // "Versions"
+        public static var versionActions: String { tr("fileInfo.versionActions") }  // "Version actions"
+        public static var versionDelete: String { tr("fileInfo.versionDelete") }  // "Delete…"
+        public static var versionDownload: String { tr("fileInfo.versionDownload") }  // "Download…"
+        public static var versionKept: String { tr("fileInfo.versionKept") }  // "Kept"
+        public static var versionPin: String { tr("fileInfo.versionPin") }  // "Keep This Version"
+        public static var versionRename: String { tr("fileInfo.versionRename") }  // "Rename…"
         public static var versionRestore: String { tr("fileInfo.versionRestore") }  // "Restore…"
+        public static var versionSaveCopy: String { tr("fileInfo.versionSaveCopy") }  // "Save as Copy"
+        public static var versionUnpin: String { tr("fileInfo.versionUnpin") }  // "Stop Keeping This Version"
         public static var versionsNone: String { tr("fileInfo.versionsNone") }  // "No earlier versions"
     }
     public enum Filter {

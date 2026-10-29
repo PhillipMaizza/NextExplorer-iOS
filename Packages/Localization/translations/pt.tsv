@@ -682,3 +682,17 @@ fileInfo.restoreMessage	O arquivo volta a como estava em %@. O conteúdo atual �
 fileInfo.restoreConfirm	Restaurar
 fileInfo.sectionSharing	Compartilhamento
 fileInfo.notShared	Nenhum link compartilhado
+fileInfo.versionActions	Ações da versão
+fileInfo.versionDownload	Baixar…
+fileInfo.versionSaveCopy	Salvar como cópia
+fileInfo.versionRename	Renomear…
+fileInfo.renameTitle	Renomear versão
+fileInfo.renamePlaceholder	Nome da versão
+fileInfo.versionPin	Manter esta versão
+fileInfo.versionUnpin	Deixar de manter esta versão
+fileInfo.versionKept	Mantida
+fileInfo.versionDelete	Apagar…
+fileInfo.deleteTitle	Apagar esta versão?
+fileInfo.deleteAll	Apagar todas as versões…
+fileInfo.deleteAllTitle	Apagar todas as versões?
+fileInfo.deleteMessage	As versões apagadas somem para sempre. O arquivo em si continua como está.

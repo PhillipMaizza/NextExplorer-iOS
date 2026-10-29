@@ -682,3 +682,17 @@ fileInfo.restoreMessage	파일이 %@의 상태로 돌아갑니다. 현재 내용
 fileInfo.restoreConfirm	복원
 fileInfo.sectionSharing	공유
 fileInfo.notShared	공유 링크 없음
+fileInfo.versionActions	버전 작업
+fileInfo.versionDownload	다운로드…
+fileInfo.versionSaveCopy	사본으로 저장
+fileInfo.versionRename	이름 변경…
+fileInfo.renameTitle	버전 이름 변경
+fileInfo.renamePlaceholder	버전 이름
+fileInfo.versionPin	이 버전 보관
+fileInfo.versionUnpin	이 버전 보관 중지
+fileInfo.versionKept	보관됨
+fileInfo.versionDelete	삭제…
+fileInfo.deleteTitle	이 버전을 삭제할까요?
+fileInfo.deleteAll	모든 버전 삭제…
+fileInfo.deleteAllTitle	모든 버전을 삭제할까요?
+fileInfo.deleteMessage	삭제한 버전은 영구히 사라집니다. 파일 자체는 그대로 유지됩니다.

@@ -682,3 +682,17 @@ fileInfo.restoreMessage	Plik wróci do stanu z %@. Jego obecna zawartość zosta
 fileInfo.restoreConfirm	Przywróć
 fileInfo.sectionSharing	Udostępnianie
 fileInfo.notShared	Brak linków udostępniania
+fileInfo.versionActions	Działania wersji
+fileInfo.versionDownload	Pobierz…
+fileInfo.versionSaveCopy	Zapisz jako kopię
+fileInfo.versionRename	Zmień nazwę…
+fileInfo.renameTitle	Zmień nazwę wersji
+fileInfo.renamePlaceholder	Nazwa wersji
+fileInfo.versionPin	Zachowaj tę wersję
+fileInfo.versionUnpin	Przestań zachowywać tę wersję
+fileInfo.versionKept	Zachowana
+fileInfo.versionDelete	Usuń…
+fileInfo.deleteTitle	Usunąć tę wersję?
+fileInfo.deleteAll	Usuń wszystkie wersje…
+fileInfo.deleteAllTitle	Usunąć wszystkie wersje?
+fileInfo.deleteMessage	Usunięte wersje znikają na zawsze. Sam plik pozostaje bez zmian.

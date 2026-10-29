@@ -682,3 +682,17 @@ fileInfo.restoreMessage	文件将恢复到 %@ 时的状态。当前内容会保�
 fileInfo.restoreConfirm	恢复
 fileInfo.sectionSharing	共享
 fileInfo.notShared	没有共享链接
+fileInfo.versionActions	版本操作
+fileInfo.versionDownload	下载…
+fileInfo.versionSaveCopy	存储为副本
+fileInfo.versionRename	重新命名…
+fileInfo.renameTitle	重新命名版本
+fileInfo.renamePlaceholder	版本名称
+fileInfo.versionPin	保留此版本
+fileInfo.versionUnpin	不再保留此版本
+fileInfo.versionKept	已保留
+fileInfo.versionDelete	删除…
+fileInfo.deleteTitle	删除此版本？
+fileInfo.deleteAll	删除所有版本…
+fileInfo.deleteAllTitle	删除所有版本？
+fileInfo.deleteMessage	删除的版本无法恢复。文件本身保持不变。

@@ -682,3 +682,17 @@ fileInfo.restoreMessage	ファイルは %@ の状態に戻ります。現在の�
 fileInfo.restoreConfirm	復元
 fileInfo.sectionSharing	共有
 fileInfo.notShared	共有リンクはありません
+fileInfo.versionActions	バージョンの操作
+fileInfo.versionDownload	ダウンロード…
+fileInfo.versionSaveCopy	コピーとして保存
+fileInfo.versionRename	名前を変更…
+fileInfo.renameTitle	バージョン名を変更
+fileInfo.renamePlaceholder	バージョン名
+fileInfo.versionPin	このバージョンを保持
+fileInfo.versionUnpin	このバージョンの保持をやめる
+fileInfo.versionKept	保持
+fileInfo.versionDelete	削除…
+fileInfo.deleteTitle	このバージョンを削除しますか？
+fileInfo.deleteAll	すべてのバージョンを削除…
+fileInfo.deleteAllTitle	すべてのバージョンを削除しますか？
+fileInfo.deleteMessage	削除したバージョンは元に戻せません。ファイル自体はそのままです。

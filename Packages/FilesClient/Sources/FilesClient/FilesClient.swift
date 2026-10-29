@@ -91,6 +91,16 @@ public struct FilesClient: Sendable {
     /// `POST /api/versions/:id/restore` with `{ path }`: puts the file back as that version had
     /// it; what it held becomes a version itself.
     public var restoreVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String) async throws -> Void
+    /// `GET /api/versions/:id/content?path=`, saved to `destination`.
+    public var downloadVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String, _ destination: URL) async throws -> Void
+    /// `POST /api/versions/:id/copy`: a new file in the `destination` folder; returns its path.
+    public var copyVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String, _ destination: String) async throws -> String
+    /// `PATCH /api/versions/:id`: a nil `label` or `pinned` is left as it is; `""` clears the label.
+    public var updateVersion: @Sendable (
+        _ serverURL: URL, _ path: String, _ versionID: String, _ label: String?, _ pinned: Bool?
+    ) async throws -> FileVersion
+    /// `POST /api/versions/delete`: the given versions, or every one when `all`. The file stays.
+    public var deleteVersions: @Sendable (_ serverURL: URL, _ path: String, _ ids: [String], _ all: Bool) async throws -> Void
     public var thumbnailURL: @Sendable (_ serverURL: URL, _ path: String) async throws -> URL?
     public var previewFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     /// `previewFile` served over a low priority session with a capped connection pool, for

@@ -682,3 +682,17 @@ fileInfo.restoreMessage	फ़ाइल %@ की स्थिति में �
 fileInfo.restoreConfirm	पुनर्स्थापित करें
 fileInfo.sectionSharing	साझाकरण
 fileInfo.notShared	कोई साझा लिंक नहीं
+fileInfo.versionActions	संस्करण कार्रवाइयाँ
+fileInfo.versionDownload	डाउनलोड करें…
+fileInfo.versionSaveCopy	प्रति के रूप में सहेजें
+fileInfo.versionRename	नाम बदलें…
+fileInfo.renameTitle	संस्करण का नाम बदलें
+fileInfo.renamePlaceholder	संस्करण का नाम
+fileInfo.versionPin	यह संस्करण रखें
+fileInfo.versionUnpin	यह संस्करण रखना बंद करें
+fileInfo.versionKept	रखा गया
+fileInfo.versionDelete	हटाएँ…
+fileInfo.deleteTitle	यह संस्करण हटाएँ?
+fileInfo.deleteAll	सभी संस्करण हटाएँ…
+fileInfo.deleteAllTitle	सभी संस्करण हटाएँ?
+fileInfo.deleteMessage	हटाए गए संस्करण हमेशा के लिए चले जाते हैं। फ़ाइल वैसी ही रहती है।
