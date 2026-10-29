@@ -668,6 +668,7 @@ offline.manageEmpty	Nothing is downloaded for offline use.
 offline.preferOfflineToggle	Play downloaded copies
 offline.preferOfflineSubtitle	Use a downloaded video instead of streaming when it's available.
 offline.tunnelSpeedNote	Reaching your server through a remote tunnel can slow downloads. For large files, connect to the same network and use your server's local address.
+menu.about	About NextExplorer
 menu.rateApp	Rate NextExplorer…
 menu.support	NextExplorer Support
 menu.redo	Redo

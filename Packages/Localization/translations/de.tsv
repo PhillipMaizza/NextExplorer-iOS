@@ -598,6 +598,7 @@ offline.manageEmpty	Nichts ist für die Offline-Nutzung heruntergeladen.
 offline.preferOfflineToggle	Heruntergeladene Kopien abspielen
 offline.preferOfflineSubtitle	Ein heruntergeladenes Video abspielen statt zu streamen, wenn es verfügbar ist.
 offline.tunnelSpeedNote	Der Zugriff auf deinen Server über einen entfernten Tunnel kann Downloads verlangsamen. Verbinde dich für große Dateien mit demselben Netzwerk und verwende die lokale Adresse deines Servers.
+menu.about	Über NextExplorer
 menu.rateApp	NextExplorer bewerten …
 menu.support	NextExplorer-Support
 menu.redo	Wiederholen

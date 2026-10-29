@@ -89,6 +89,7 @@ public struct MainTabView: View {
             .modifier(MacDockUploadStatus(remaining: store.uploads.remainingCount, progress: store.uploads.overallProgress))
             .windowTitle(macWindowTitle)
             .modifier(AccountConfirmations(store: store.scope(state: \.settings, action: \.settings)))
+            .modifier(TipJarPresentation(store: store.scope(state: \.settings, action: \.settings)))
         #endif
             .overlay(alignment: .bottom) {
                 if isAnyTransferBarVisible {
@@ -392,9 +393,9 @@ public struct MainTabView: View {
         .padding(.vertical, .space4)
     }
 
-    /// App identity footer pinned to the bottom of the iPad sidebar: logo + marketing version.
-    /// The interactive credits ("made by" / buy a coffee) stay in the Settings detail, where
-    /// the tip jar sheet is presented.
+    /// App identity footer pinned to the bottom of the sidebar: logo + marketing version. On iPad
+    /// the interactive credits stay in the Settings detail, where the tip jar sheet is presented;
+    /// the Mac adds the coffee link here and hosts the tip jar on its main window.
     private var sidebarFooter: some View {
         VStack(spacing: .space8) {
             IconKit.logo
@@ -403,6 +404,18 @@ public struct MainTabView: View {
                 .frame(width: Constants.sidebarFooterLogoSize, height: Constants.sidebarFooterLogoSize)
             Text(appVersionText)
                 .type(.body3(.regular), style: .tertiary)
+            #if os(macOS)
+                // The Mac's Settings window has no credits block, so the tip jar starts here.
+                Button {
+                    store.send(.settings(.tipJarButtonTapped))
+                } label: {
+                    (Text(L10n.Settings.creditsLikeApp + " ").fontWeight(.regular)
+                        + Text(L10n.Settings.creditsBuyCoffee).fontWeight(.bold).foregroundColor(.accent))
+                        .type(.body3(.regular), style: .tertiary)
+                        .multilineTextAlignment(.center)
+                }
+                .buttonStyle(.plain)
+            #endif
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, .space16)

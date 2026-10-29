@@ -355,6 +355,7 @@ public enum L10n {
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }
     public enum Menu {
+        public static var about: String { tr("menu.about") }  // "About NextExplorer"
         public static var enclosingFolder: String { tr("menu.enclosingFolder") }  // "Enclosing Folder"
         public static var newTab: String { tr("menu.newTab") }  // "New Tab"
         public static var newWindow: String { tr("menu.newWindow") }  // "New Window"

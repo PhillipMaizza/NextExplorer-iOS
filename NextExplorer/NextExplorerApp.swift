@@ -94,6 +94,13 @@ struct NextExplorerApp: App {
             // another account) instead of from the live session.
             .restorationBehavior(.disabled)
 
+            Window(L10n.Menu.about, id: MacAboutView.windowID) {
+                MacAboutView()
+                    .preferredColorScheme(AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride).colorScheme)
+            }
+            .windowResizability(.contentSize)
+            .restorationBehavior(.disabled)
+
             // The native Settings window; SwiftUI adds NextExplorer > Settings… (⌘,) for it.
             Settings {
                 MacSettingsWindow(mainStore: Self.store)

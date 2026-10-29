@@ -28,6 +28,10 @@
         ]
 
         var body: some Commands {
+            // About NextExplorer opens the app's own About window (credits and links).
+            CommandGroup(replacing: .appInfo) {
+                Button(L10n.Menu.about) { openWindow(id: MacAboutView.windowID) }
+            }
             CommandGroup(after: .appInfo) {
                 RateAppButton()
             }

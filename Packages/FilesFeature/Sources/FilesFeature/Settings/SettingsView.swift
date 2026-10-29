@@ -20,7 +20,6 @@ struct SettingsView: View {
     /// here, above every `.navigationDestination`, is the only spot a bottom overlay isn't
     /// occluded by a pushed screen, so those two views don't each need their own.
     @State private var userManagementToast: DSToastMessage?
-    @State private var tipToast: DSToastMessage?
     /// View-local filter for the settings list — no reducer state needed, it only hides rows.
     @State private var settingsSearch = ""
 
@@ -70,21 +69,16 @@ struct SettingsView: View {
         root
             .tint(Color.accent)
             .dsToast(userManagementToastBinding)
-            .dsToast(tipToastBinding)
             .onChange(of: store.userManagement?.toast) { _, toast in
                 guard let toast else { return }
                 userManagementToast = .success(toast)
-            }
-            .onChange(of: store.tipToast) { _, message in
-                guard let message else { return }
-                tipToast = .success(message)
-                store.send(.tipToastShown)
             }
     }
 
     private var root: some View {
         #if os(macOS)
-            // The Mac's Settings window: native toolbar tabs, each its own navigation stack.
+            // The Mac's Settings window: native toolbar tabs, each its own navigation stack. The
+            // support, legal and license links live in About NextExplorer instead.
             windowChrome(TabView {
                 macTab(L10n.Settings.sectionGeneral, icon: IconKit.gearshape) {
                     settingsList {
@@ -110,13 +104,6 @@ struct SettingsView: View {
                             SettingsServerAdminSection(store: store)
                             SettingsServerStorageSection(store: store)
                         })
-                    }
-                }
-                macTab(L10n.Settings.sectionInfo, icon: IconKit.info) {
-                    settingsList {
-                        SupportSettingsSection(filter: filter)
-                        LegalSettingsSection(filter: filter)
-                        LicensesSettingsSection(store: store, filter: filter)
                     }
                 }
             })
@@ -261,9 +248,9 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
-            .dsSheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
-                TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
-            }
+        #if os(iOS)
+            .modifier(TipJarPresentation(store: store))
+        #endif
             .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
                 OfflineSelectionView(store: selectionStore)
             }
@@ -289,10 +276,6 @@ struct SettingsView: View {
                     store.send(.refreshOfflineSize)
                 }
             }
-    }
-
-    private var tipToastBinding: Binding<DSToastMessage?> {
-        Binding(get: { tipToast }, set: { tipToast = $0 })
     }
 
     private var userManagementToastBinding: Binding<DSToastMessage?> {
