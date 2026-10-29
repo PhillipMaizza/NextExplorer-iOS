@@ -6,17 +6,13 @@
     import SwiftUI
 
     private enum Metrics {
-        static let padding: CGFloat = .space24
-        static let spacing: CGFloat = .space12
-        static let recursiveColumnWidth: CGFloat = 150
-        static let permissionColumnWidth: CGFloat = 150
+        static let permissionWidth: CGFloat = 130
     }
 
-    /// The Folder Access Rules pane: the rules as an editable table, with add and remove under
-    /// it and the save button below.
+    /// The Folder Access Rules pane: one grouped row per rule, Add Rule under them, and the save
+    /// button below.
     struct MacAccessRulesPane: View {
         let store: StoreOf<AccessRulesFeature>
-        @State private var selection: AccessRule.ID?
 
         var body: some View {
             Group {
@@ -39,85 +35,62 @@
         }
 
         private var content: some View {
-            VStack(alignment: .leading, spacing: Metrics.spacing) {
-                MacSettingsNote(L10n.AccessRules.subtitle)
-                VStack(spacing: 0) {
-                    table
-                    Divider()
-                    addRemoveBar
+            MacSettingsPane {
+                Section {
+                    if store.drafts.isEmpty, store.phase != .loading {
+                        MacRowTitle(title: L10n.AccessRules.empty, subtitle: L10n.AccessRules.emptyHint)
+                    }
+                    ForEach(store.drafts) { rule in
+                        ruleRow(rule)
+                    }
+                    HStack {
+                        Spacer()
+                        Button(L10n.AccessRules.addRule) { store.send(.addRuleTapped, animation: .default) }
+                    }
+                } footer: {
+                    MacSectionFooter(L10n.AccessRules.subtitle)
                 }
-                .border(Color(nsColor: .separatorColor))
                 if let error = store.errorMessage ?? store.phase.errorMessage {
                     Text(error).foregroundStyle(Color.negativeText)
                 }
             }
-            .padding(Metrics.padding)
         }
 
-        private var table: some View {
-            Table(store.drafts, selection: $selection) {
-                TableColumn(L10n.AccessRules.pathLabel) { rule in
-                    TextField(L10n.AccessRules.pathPlaceholder, text: Binding(
-                        get: { store.drafts[id: rule.id]?.path ?? "" },
-                        set: { store.send(.pathChanged(id: rule.id, $0)) }
-                    ))
-                    .textFieldStyle(.plain)
+        /// One rule on a row: its path, whether it reaches subfolders, the permission, and remove.
+        private func ruleRow(_ rule: AccessRule) -> some View {
+            HStack(spacing: .space12) {
+                TextField(L10n.AccessRules.pathLabel, text: Binding(
+                    get: { store.drafts[id: rule.id]?.path ?? "" },
+                    set: { store.send(.pathChanged(id: rule.id, $0)) }
+                ), prompt: Text(L10n.AccessRules.pathPlaceholder))
+                    .labelsHidden()
+                    .textFieldStyle(.roundedBorder)
                     .autocorrectionDisabled()
-                }
-                TableColumn(L10n.AccessRules.recursive) { rule in
-                    Toggle(L10n.AccessRules.recursive, isOn: Binding(
-                        get: { store.drafts[id: rule.id]?.isRecursive ?? false },
-                        set: { store.send(.recursiveToggled(id: rule.id, $0)) }
-                    ))
-                    .labelsHidden()
-                }
-                .width(Metrics.recursiveColumnWidth)
-                TableColumn(L10n.MacSettings.permission) { rule in
-                    Picker(L10n.MacSettings.permission, selection: Binding(
-                        get: { store.drafts[id: rule.id]?.permission ?? .readWrite },
-                        set: { store.send(.permissionChanged(id: rule.id, $0)) }
-                    )) {
-                        ForEach(AccessRule.Permission.allCases, id: \.self) { permission in
-                            Text(Self.permissionLabel(permission)).tag(permission)
-                        }
-                    }
-                    .labelsHidden()
-                }
-                .width(Metrics.permissionColumnWidth)
-            }
-            .overlay {
-                if store.drafts.isEmpty, store.phase != .loading {
-                    VStack(spacing: .space4) {
-                        Text(L10n.AccessRules.empty)
-                        Text(L10n.AccessRules.emptyHint).font(.callout).foregroundStyle(.secondary)
+                Toggle(L10n.AccessRules.recursive, isOn: Binding(
+                    get: { store.drafts[id: rule.id]?.isRecursive ?? false },
+                    set: { store.send(.recursiveToggled(id: rule.id, $0)) }
+                ))
+                .toggleStyle(.checkbox)
+                .fixedSize()
+                Picker(L10n.MacSettings.permission, selection: Binding(
+                    get: { store.drafts[id: rule.id]?.permission ?? .readWrite },
+                    set: { store.send(.permissionChanged(id: rule.id, $0)) }
+                )) {
+                    ForEach(AccessRule.Permission.allCases, id: \.self) { permission in
+                        Text(Self.permissionLabel(permission)).tag(permission)
                     }
                 }
-            }
-        }
-
-        /// The Mac's add and remove pair under a list.
-        private var addRemoveBar: some View {
-            HStack(spacing: 0) {
-                Button { store.send(.addRuleTapped) } label: {
-                    Image(systemName: "plus").frame(width: 24, height: 20)
-                }
-                .accessibilityLabel(L10n.AccessRules.addRule)
-                Divider().frame(height: 16)
-                Button {
-                    if let selection {
-                        store.send(.removeRule(id: selection))
-                        self.selection = nil
-                    }
+                .labelsHidden()
+                .frame(width: Metrics.permissionWidth)
+                Button(role: .destructive) {
+                    store.send(.removeRule(id: rule.id), animation: .default)
                 } label: {
-                    Image(systemName: "minus").frame(width: 24, height: 20)
+                    Image(systemName: "minus.circle.fill")
                 }
-                .disabled(selection == nil)
+                .buttonStyle(.borderless)
+                .foregroundStyle(Color.negativeText)
                 .accessibilityLabel(L10n.AccessRules.remove)
-                Spacer()
             }
-            .buttonStyle(.borderless)
-            .padding(.horizontal, .space4)
-            .padding(.vertical, .space2)
         }
 
         static func permissionLabel(_ permission: AccessRule.Permission) -> String {

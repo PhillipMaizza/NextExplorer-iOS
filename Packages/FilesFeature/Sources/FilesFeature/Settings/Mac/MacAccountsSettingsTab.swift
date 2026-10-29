@@ -8,14 +8,10 @@
     private enum Metrics {
         static let listWidth: CGFloat = 220
         static let rowAvatarSize: CGFloat = .size32
-        static let detailAvatarSize: CGFloat = 64
+        static let detailAvatarSize: CGFloat = 48
         static let statusDotSize: CGFloat = 10
         static let rowStatusDotSize: CGFloat = 9
         static let rowSpacing: CGFloat = .space8
-        static let detailSpacing: CGFloat = .space16
-        static let gridColumnSpacing: CGFloat = .space12
-        static let gridRowSpacing: CGFloat = .space8
-        static let detailTopPadding: CGFloat = .space32
         static let footerPadding: CGFloat = .space8
     }
 
@@ -105,22 +101,29 @@
         let account: AccountSummary
 
         var body: some View {
-            VStack(spacing: Metrics.detailSpacing) {
-                AvatarView(displayName: account.displayName, size: Metrics.detailAvatarSize)
-                Text(account.displayName)
-                    .font(.title3.weight(.semibold))
-                Grid(alignment: .leading, horizontalSpacing: Metrics.gridColumnSpacing, verticalSpacing: Metrics.gridRowSpacing) {
-                    detailRow(L10n.Settings.rowServer) { Text(account.serverHost).textSelection(.enabled) }
-                    detailRow(L10n.MacSettings.username) { Text(account.username).textSelection(.enabled) }
+            MacSettingsPane {
+                Section {
+                    HStack(spacing: .space12) {
+                        AvatarView(displayName: account.displayName, size: Metrics.detailAvatarSize)
+                        VStack(alignment: .leading) {
+                            Text(account.displayName).font(.title3.weight(.semibold))
+                            Text(account.serverHost).foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                    }
+                }
+                Section {
+                    LabeledContent(L10n.Settings.rowServer) { Text(account.serverHost).textSelection(.enabled) }
+                    LabeledContent(L10n.MacSettings.username) { Text(account.username).textSelection(.enabled) }
                     if account.isActive {
                         if let email = store.user.email, !email.isEmpty {
-                            detailRow(L10n.MacSettings.email) { Text(email).textSelection(.enabled) }
+                            LabeledContent(L10n.MacSettings.email) { Text(email).textSelection(.enabled) }
                         }
-                        detailRow(L10n.MacSettings.role) {
+                        LabeledContent(L10n.MacSettings.role) {
                             Text(store.user.isAdmin ? L10n.MacSettings.roleAdmin : L10n.MacSettings.roleUser)
                         }
                     }
-                    detailRow(L10n.MacSettings.status) {
+                    LabeledContent(L10n.MacSettings.status) {
                         HStack(spacing: .space4) {
                             if account.isActive {
                                 StatusDot(size: Metrics.statusDotSize)
@@ -128,36 +131,22 @@
                             Text(account.isActive ? L10n.Settings.badgeActive : L10n.MacSettings.statusSignedIn)
                         }
                     }
-                    GridRow {
-                        Color.clear.gridCellUnsizedAxes([.horizontal, .vertical])
-                        actions
+                }
+                Section {
+                    HStack {
+                        if account.isActive {
+                            Button(L10n.MacSettings.changePassword) { store.send(.changePasswordButtonTapped) }
+                        } else {
+                            Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
+                        }
+                        Spacer()
+                        Button(L10n.MacSettings.signOut, role: .destructive) {
+                            store.send(account.isActive ? .signOutButtonTapped : .removeAccountTapped(account))
+                        }
                     }
+                    .disabled(store.isSigningOut)
                 }
             }
-            .padding(.top, Metrics.detailTopPadding)
-            .padding(.horizontal, Metrics.detailSpacing)
-        }
-
-        private func detailRow(_ label: String, @ViewBuilder value: () -> some View) -> some View {
-            GridRow {
-                Text(label)
-                    .fontWeight(.semibold)
-                    .gridColumnAlignment(.trailing)
-                value()
-            }
-        }
-
-        private var actions: some View {
-            VStack(alignment: .leading, spacing: Metrics.gridRowSpacing) {
-                if account.isActive {
-                    Button(L10n.MacSettings.changePassword) { store.send(.changePasswordButtonTapped) }
-                    Button(L10n.MacSettings.signOut) { store.send(.signOutButtonTapped) }
-                } else {
-                    Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
-                    Button(L10n.MacSettings.signOut) { store.send(.removeAccountTapped(account)) }
-                }
-            }
-            .disabled(store.isSigningOut)
         }
     }
 
