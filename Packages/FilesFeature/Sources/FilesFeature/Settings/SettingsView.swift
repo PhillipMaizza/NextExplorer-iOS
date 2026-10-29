@@ -87,11 +87,15 @@ struct SettingsView: View {
             // The Mac's Settings window: native toolbar tabs, each its own navigation stack.
             windowChrome(TabView {
                 macTab(L10n.Settings.sectionGeneral, icon: IconKit.gearshape) {
-                    serverDetailsDestination(settingsList {
-                        SettingsProfileSection(store: store)
+                    settingsList {
                         GeneralSettingsSection(store: store, filter: filter)
                         DisplaySettingsSection(store: store, filter: filter)
-                    })
+                    }
+                }
+                if store.user.isAdmin {
+                    macTab(L10n.Settings.rowServer, icon: IconKit.server) {
+                        serverTab
+                    }
                 }
                 macTab(L10n.Settings.sectionStorage, icon: IconKit.size) {
                     offlineDestination(settingsList {
@@ -176,6 +180,17 @@ struct SettingsView: View {
     }
 
     #if os(macOS)
+        /// The server form itself, already editable with its save button, rather than a row
+        /// pushing it.
+        @ViewBuilder
+        private var serverTab: some View {
+            if let serverDetailsStore = store.scope(state: \.serverDetails, action: \.serverDetails.presented) {
+                ServerDetailsView(store: serverDetailsStore)
+            } else {
+                Color.clear.onAppear { store.send(.serverDetailsButtonTapped) }
+            }
+        }
+
         private func macTab(_ title: String, icon: Image, @ViewBuilder content: () -> some View) -> some View {
             NavigationStack { content() }
                 .tabItem { Label { Text(title) } icon: { icon } }
