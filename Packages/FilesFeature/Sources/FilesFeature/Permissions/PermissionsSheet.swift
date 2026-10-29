@@ -24,6 +24,14 @@ struct PermissionsSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
+        #if os(macOS)
+            MacPermissionsSheet(store: store)
+        #else
+            phoneBody
+        #endif
+    }
+
+    private var phoneBody: some View {
         DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(

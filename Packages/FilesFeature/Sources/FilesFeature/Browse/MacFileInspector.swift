@@ -3,6 +3,7 @@
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
+    import FilesClient
     import Localization
     import SwiftUI
 
@@ -20,8 +21,15 @@
         let metadata: FileMetadata?
         let usage: StorageUsage?
         let errorMessage: String?
+        let serverURL: URL
+        /// While the Permissions dialog is open; closing it reloads the section.
+        var isEditingPermissions = false
+        let onEditPermissions: () -> Void
         let onClose: () -> Void
 
+        @Dependency(\.filesClient) private var filesClient
+        /// Owner, group and mode come from the permissions endpoint, which metadata leaves out.
+        @State private var permissions: FilePermissions?
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
 
@@ -38,12 +46,19 @@
                     Text(errorMessage).foregroundStyle(Color.negativeText)
                 } else if let metadata {
                     details(metadata)
+                    permissionsSection
                 } else {
                     ProgressView().frame(maxWidth: .infinity)
                 }
             }
             .formStyle(.grouped)
             .frame(width: Metrics.width)
+            .task(id: PermissionsLoad(path: item.id, isEditing: isEditingPermissions)) {
+                permissions = nil
+                let loaded = try? await filesClient.fetchPermissions(serverURL, item.id)
+                guard !Task.isCancelled else { return }
+                permissions = loaded
+            }
         }
 
         private var header: some View {
@@ -135,6 +150,33 @@
             }
         }
 
+        /// Like Finder's Sharing & Permissions: who owns it and the mode, with Edit opening the
+        /// full Permissions dialog. Left out when the server doesn't report permissions.
+        @ViewBuilder
+        private var permissionsSection: some View {
+            if let permissions {
+                Section(L10n.Permissions.title) {
+                    row(L10n.Permissions.fieldOwner, permissions.owner)
+                    row(L10n.Permissions.fieldGroup, permissions.group)
+                    row(L10n.Permissions.sectionMode, Self.modeString(permissions.mode))
+                    HStack {
+                        Spacer()
+                        Button(L10n.Common.edit + "…", action: onEditPermissions)
+                    }
+                }
+            }
+        }
+
+        /// `rw-r--r-- (644)` from a raw stat mode.
+        private static func modeString(_ mode: Int) -> String {
+            let bits = mode & 0o777
+            let symbols = ["r", "w", "x"]
+            let text = (0 ..< 9).map { index in
+                bits & (1 << (8 - index)) != 0 ? symbols[index % 3] : "-"
+            }.joined()
+            return "\(text) (\(String(bits, radix: 8)))"
+        }
+
         private func row(_ label: String, _ value: String) -> some View {
             LabeledContent(label) {
                 Text(value)
@@ -158,6 +200,11 @@
         }()
     }
 
+    private struct PermissionsLoad: Hashable {
+        let path: String
+        let isEditing: Bool
+    }
+
     /// Get Info beside a Browse screen, as a plain side panel on each screen rather than
     /// SwiftUI's `.inspector` around the stack: wrapped around a `NavigationStack`, that stopped
     /// showing pushes past the third folder deep.
@@ -174,6 +221,9 @@
                         metadata: screen.infoMetadata,
                         usage: screen.infoUsage,
                         errorMessage: screen.infoErrorMessage,
+                        serverURL: screen.serverURL,
+                        isEditingPermissions: screen.permissions != nil,
+                        onEditPermissions: { screen.send(.permissionsTapped(item)) },
                         onClose: { screen.send(.infoDismissed) }
                     )
                     .transition(.move(edge: .trailing))
@@ -186,7 +236,8 @@
     #Preview("Loading") {
         MacFileInspector(
             item: FileItem(name: "report.pdf", path: "Docs", dateModified: Date(), size: 2_400_000, kind: "pdf"),
-            metadata: nil, usage: nil, errorMessage: nil, onClose: {}
+            metadata: nil, usage: nil, errorMessage: nil,
+            serverURL: URL(fileURLWithPath: "/"), onEditPermissions: {}, onClose: {}
         )
     }
 
@@ -197,14 +248,16 @@
                 path: "Docs/report.pdf", name: "report.pdf", kind: "pdf", size: 2_400_000,
                 dateModified: Date(), dateCreated: Date().addingTimeInterval(-86_400)
             ),
-            usage: nil, errorMessage: nil, onClose: {}
+            usage: nil, errorMessage: nil,
+            serverURL: URL(fileURLWithPath: "/"), onEditPermissions: {}, onClose: {}
         )
     }
 
     #Preview("Error") {
         MacFileInspector(
             item: FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory"),
-            metadata: nil, usage: nil, errorMessage: "Couldn't reach the server.", onClose: {}
+            metadata: nil, usage: nil, errorMessage: "Couldn't reach the server.",
+            serverURL: URL(fileURLWithPath: "/"), onEditPermissions: {}, onClose: {}
         )
     }
 #endif
