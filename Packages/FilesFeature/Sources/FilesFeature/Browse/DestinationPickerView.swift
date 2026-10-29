@@ -32,7 +32,11 @@ struct DestinationPickerView: View {
     }
 
     var body: some View {
-        NavigationStack { pickerBody }
+        #if os(macOS)
+            MacDestinationPickerSheet(store: store, title: navigationTitle, confirmTitle: confirmLabel)
+        #else
+            NavigationStack { pickerBody }
+        #endif
     }
 
     private var pickerBody: some View {
