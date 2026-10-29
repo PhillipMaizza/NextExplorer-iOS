@@ -97,105 +97,112 @@ struct SettingsView: View {
             .contentMargins(.bottom, Metrics.listBottomPadding, for: .scrollContent)
             .backgroundGradient()
             .dismissKeyboardOnTap()
-            .safeAreaInset(edge: .top, spacing: 0) {
-                PinnedTitleSearchHeader(
-                    title: L10n.Settings.navigationTitle,
-                    searchText: $settingsSearch,
-                    extraTopPadding: titleTopPadding,
-                    showsSearchField: false
-                )
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.userManagement, action: \.userManagement)
-            ) { userManagementStore in
-                UserManagementView(store: userManagementStore)
-            }
-            .navigationDestination(
-                item: changePasswordDestination
-            ) { changePasswordStore in
-                ChangePasswordView(store: changePasswordStore)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.serverDetails, action: \.serverDetails)
-            ) { serverDetailsStore in
-                ServerDetailsView(store: serverDetailsStore)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings)
-            ) { thumbnailStore in
-                ThumbnailSettingsView(store: thumbnailStore)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.accessRules, action: \.accessRules)
-            ) { accessRulesStore in
-                AccessRulesView(store: accessRulesStore)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.offlineManage, action: \.offlineManage)
-            ) { manageStore in
-                OfflineManageView(store: manageStore)
-            }
-            // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
-            .navigationTitle("")
-            .navigationBarTitleDisplayMode(.inline)
-            // The Mac hosts these at the window level instead, for its sidebar account menu.
-            .modifier(AccountConfirmations(store: store, isEnabled: !AccountConfirmations.isHostedByWindow))
-            .dsAlert(isPresented: isConfirmingRemoveAllDownloads) {
-                DSAlertSheet(
-                    icon: IconKit.delete,
-                    title: L10n.Settings.removeAllDownloadsTitle,
-                    message: L10n.Settings.removeAllDownloadsMessage,
-                    confirmTitle: L10n.Settings.removeAllDownloadsConfirm,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.removeAllDownloadsConfirmed) },
-                    onDismiss: { store.send(.removeAllDownloadsCancelled) }
-                )
-            }
-            .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
-            .dsAlert(isPresented: isConfirmingClearCache) {
-                DSAlertSheet(
-                    icon: IconKit.delete,
-                    title: L10n.Settings.clearCacheTitle,
-                    message: L10n.Settings.clearCacheMessage,
-                    confirmTitle: L10n.Settings.clearCacheConfirm,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.clearCacheConfirmed) },
-                    onDismiss: { store.send(.clearCacheCancelled) }
-                )
-            }
-            .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
-            .dsSheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
-                TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
-            }
-            .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
-                OfflineSelectionView(store: selectionStore)
-            }
-            .dsAlert(isPresented: isConfirmingRemoveOffline) {
-                DSAlertSheet(
-                    icon: IconKit.delete,
-                    title: L10n.Offline.removeConfirmTitle,
-                    message: L10n.Offline.removeConfirmMessage,
-                    confirmTitle: L10n.Offline.removeConfirm,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.removeOfflineConfirmed) },
-                    onDismiss: { store.send(.removeOfflineCancelled) }
-                )
-            }
-            .hapticFeedback(.warning, trigger: store.removeOfflineConfirmationIsPresented)
-            .task {
-                store.send(.onAppear)
-            }
-            .onChange(of: store.offlineProgress.phase) { _, phase in
-                if phase == .completed {
-                    store.send(.refreshOfflineSize)
+            #if os(iOS)
+                .safeAreaInset(edge: .top, spacing: 0) {
+                    PinnedTitleSearchHeader(
+                        title: L10n.Settings.navigationTitle,
+                        searchText: $settingsSearch,
+                        extraTopPadding: titleTopPadding,
+                        showsSearchField: false
+                    )
                 }
-            }
+            #endif
+                .navigationDestination(
+                    item: $store.scope(state: \.userManagement, action: \.userManagement)
+                ) { userManagementStore in
+                    UserManagementView(store: userManagementStore)
+                }
+                .navigationDestination(
+                    item: changePasswordDestination
+                ) { changePasswordStore in
+                    ChangePasswordView(store: changePasswordStore)
+                }
+                .navigationDestination(
+                    item: $store.scope(state: \.serverDetails, action: \.serverDetails)
+                ) { serverDetailsStore in
+                    ServerDetailsView(store: serverDetailsStore)
+                }
+                .navigationDestination(
+                    item: $store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings)
+                ) { thumbnailStore in
+                    ThumbnailSettingsView(store: thumbnailStore)
+                }
+                .navigationDestination(
+                    item: $store.scope(state: \.accessRules, action: \.accessRules)
+                ) { accessRulesStore in
+                    AccessRulesView(store: accessRulesStore)
+                }
+                .navigationDestination(
+                    item: $store.scope(state: \.offlineManage, action: \.offlineManage)
+                ) { manageStore in
+                    OfflineManageView(store: manageStore)
+                }
+            #if os(macOS)
+                // The Settings window names itself; it has no pinned header.
+                .navigationTitle(L10n.Settings.navigationTitle)
+            #else
+                // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
+                .navigationTitle("")
+            #endif
+                .navigationBarTitleDisplayMode(.inline)
+                // The Mac hosts these at the window level instead, for its sidebar account menu.
+                .modifier(AccountConfirmations(store: store, isEnabled: !AccountConfirmations.isHostedByWindow))
+                .dsAlert(isPresented: isConfirmingRemoveAllDownloads) {
+                    DSAlertSheet(
+                        icon: IconKit.delete,
+                        title: L10n.Settings.removeAllDownloadsTitle,
+                        message: L10n.Settings.removeAllDownloadsMessage,
+                        confirmTitle: L10n.Settings.removeAllDownloadsConfirm,
+                        dismissTitle: L10n.Common.cancel,
+                        role: .destructive,
+                        closeAccessibilityLabel: L10n.Common.close,
+                        onConfirm: { store.send(.removeAllDownloadsConfirmed) },
+                        onDismiss: { store.send(.removeAllDownloadsCancelled) }
+                    )
+                }
+                .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
+                .dsAlert(isPresented: isConfirmingClearCache) {
+                    DSAlertSheet(
+                        icon: IconKit.delete,
+                        title: L10n.Settings.clearCacheTitle,
+                        message: L10n.Settings.clearCacheMessage,
+                        confirmTitle: L10n.Settings.clearCacheConfirm,
+                        dismissTitle: L10n.Common.cancel,
+                        role: .destructive,
+                        closeAccessibilityLabel: L10n.Common.close,
+                        onConfirm: { store.send(.clearCacheConfirmed) },
+                        onDismiss: { store.send(.clearCacheCancelled) }
+                    )
+                }
+                .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
+                .dsSheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
+                    TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
+                }
+                .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
+                    OfflineSelectionView(store: selectionStore)
+                }
+                .dsAlert(isPresented: isConfirmingRemoveOffline) {
+                    DSAlertSheet(
+                        icon: IconKit.delete,
+                        title: L10n.Offline.removeConfirmTitle,
+                        message: L10n.Offline.removeConfirmMessage,
+                        confirmTitle: L10n.Offline.removeConfirm,
+                        dismissTitle: L10n.Common.cancel,
+                        role: .destructive,
+                        closeAccessibilityLabel: L10n.Common.close,
+                        onConfirm: { store.send(.removeOfflineConfirmed) },
+                        onDismiss: { store.send(.removeOfflineCancelled) }
+                    )
+                }
+                .hapticFeedback(.warning, trigger: store.removeOfflineConfirmationIsPresented)
+                .task {
+                    store.send(.onAppear)
+                }
+                .onChange(of: store.offlineProgress.phase) { _, phase in
+                    if phase == .completed {
+                        store.send(.refreshOfflineSize)
+                    }
+                }
         }
         .tint(Color.accent)
         .dsToast(userManagementToastBinding)

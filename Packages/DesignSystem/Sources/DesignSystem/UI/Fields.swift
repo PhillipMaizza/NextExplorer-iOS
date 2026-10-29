@@ -74,8 +74,9 @@ public struct DSFieldLabel: View {
 
     public var body: some View {
         if usesNativeForm {
-            // A native grouped form styles its own section headers.
+            // A native grouped form's header: the app's type, in sentence case.
             Text(text)
+                .type(.body2(.semibold), style: .secondary)
         } else {
             Text(text)
                 .type(.body3(.semibold), style: .secondary)

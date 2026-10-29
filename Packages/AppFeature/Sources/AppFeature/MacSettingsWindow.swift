@@ -5,8 +5,8 @@
 
     private enum Metrics {
         static let width: CGFloat = 640
-        static let minHeight: CGFloat = 480
-        static let idealHeight: CGFloat = 640
+        static let minHeight: CGFloat = 600
+        static let idealHeight: CGFloat = 680
     }
 
     /// Content of the Mac's Settings window. It shows the signed in session's settings and

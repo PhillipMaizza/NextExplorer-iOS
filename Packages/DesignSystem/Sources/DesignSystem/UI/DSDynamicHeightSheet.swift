@@ -103,15 +103,21 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
                 }
             )
         }
+        #if os(macOS)
+        // A Mac sheet can't outgrow its window, so its content always scrolls when the
+        // window is shorter than it.
+        .scrollDisabled(false)
+        #else
         .scrollDisabled(!isOverflowing && !isKeyboardVisible)
+        #endif
         #if os(iOS)
-            .scrollDismissesKeyboard(.interactively)
-            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
-                isKeyboardVisible = true
-            }
-            .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
-                isKeyboardVisible = false
-            }
+        .scrollDismissesKeyboard(.interactively)
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
+            isKeyboardVisible = true
+        }
+        .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
+            isKeyboardVisible = false
+        }
         #endif
     }
 
