@@ -1,4 +1,5 @@
 #if os(macOS)
+    import AppStorageKeys
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
@@ -7,13 +8,13 @@
 
     private enum Metrics {
         static let iconSize: CGFloat = .size44
-        static let spacing: CGFloat = .space16
         static let width: CGFloat = 300
         static let slideDuration: Double = 0.2
     }
 
     /// Get Info on the Mac: a trailing side panel instead of a sheet, so it can stay open
-    /// while the selection moves (`BrowseFeature` reloads it for each newly selected row).
+    /// while the selection moves (`BrowseFeature` reloads it for each newly selected row). Laid
+    /// out like Finder's inspector, in native grouped sections.
     struct MacFileInspector: View {
         let item: FileItem
         let metadata: FileMetadata?
@@ -21,55 +22,140 @@
         let errorMessage: String?
         let onClose: () -> Void
 
+        @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
+        @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
+
+        private var dateFormat: DateDisplayFormat {
+            DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
+        }
+
         var body: some View {
-            ScrollView {
-                VStack(alignment: .leading, spacing: Metrics.spacing) {
+            Form {
+                Section {
                     header
-                    if let errorMessage {
-                        DSErrorCard(errorMessage)
-                    } else if let metadata {
-                        FileInfoDetails(metadata: metadata, usage: usage, stacksValues: true)
-                    } else {
-                        DSSpinner()
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, .space24)
-                    }
                 }
-                .padding(Metrics.spacing)
+                if let errorMessage {
+                    Text(errorMessage).foregroundStyle(Color.negativeText)
+                } else if let metadata {
+                    details(metadata)
+                } else {
+                    ProgressView().frame(maxWidth: .infinity)
+                }
             }
+            .formStyle(.grouped)
             .frame(width: Metrics.width)
-            // Kept inside the safe area so the panel starts below the toolbar, not under it.
-            .background(Color.backgroundSecondary, ignoresSafeAreaEdges: [])
         }
 
         private var header: some View {
-            VStack(alignment: .leading, spacing: .space8) {
+            HStack(alignment: .top, spacing: .space12) {
+                Group {
+                    if item.isDirectory {
+                        Image(systemName: "folder.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundStyle(Color.accent)
+                    } else {
+                        FileTypeIcon(kind: item.kind)
+                    }
+                }
+                .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+                Text(item.name)
+                    .font(.headline)
+                    .lineLimit(3)
+                    .textSelection(.enabled)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 // Close lives in the panel, not the window toolbar, so the inspector never adds
                 // toolbar items of its own.
-                HStack {
-                    Spacer()
-                    Button(action: onClose) { IconKit.close }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(Color.secondaryDS)
-                        .accessibilityLabelWithTooltip(L10n.Common.close)
-                        .keyboardShortcut(.cancelAction)
+                Button(action: onClose) { Image(systemName: "xmark.circle.fill") }
+                    .buttonStyle(.borderless)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabelWithTooltip(L10n.Common.close)
+                    .keyboardShortcut(.cancelAction)
+            }
+        }
+
+        @ViewBuilder
+        private func details(_ metadata: FileMetadata) -> some View {
+            Section {
+                row(L10n.FileInfo.rowKind, metadata.isDirectory ? L10n.FileInfo.navigationTitleFolder : metadata.kind.uppercased())
+                row(L10n.FileInfo.rowSize, Self.bytes(metadata.size))
+                row(L10n.FileInfo.rowLocation, metadata.path)
+                row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: includeTime))
+                row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: includeTime))
+            }
+            if let directory = metadata.directory {
+                Section {
+                    row(L10n.FileInfo.rowFiles, "\(directory.fileCount)")
+                    row(L10n.FileInfo.rowFolders, "\(directory.dirCount)")
+                    row(L10n.FileInfo.rowTotalSize, Self.bytes(directory.totalSize))
+                } footer: {
+                    if directory.truncated {
+                        Text(L10n.FileInfo.partialScan).font(.callout).foregroundStyle(.secondary)
+                    }
                 }
-                if item.isDirectory {
-                    IconKit.folderFill
-                        .resizable()
-                        .scaledToFit()
-                        .foregroundStyle(Color.accent)
-                        .frame(width: Metrics.iconSize, height: Metrics.iconSize)
-                } else {
-                    FileTypeIcon(kind: item.kind)
-                        .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+            }
+            if let usage, usage.isMeaningful {
+                Section(L10n.FileInfo.sectionServerDisk) {
+                    VStack(alignment: .leading, spacing: .space4) {
+                        ProgressView(value: usage.fraction)
+                        Text(L10n.FileInfo.diskFreeOf(Self.bytes(usage.free), Self.bytes(usage.capacity)))
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                    }
                 }
-                Text(item.name)
-                    .type(.headline3, style: .primaryOnSurface)
-                    .lineLimit(3)
+            }
+            if let image = metadata.image {
+                Section {
+                    if let width = image.width, let height = image.height {
+                        row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
+                    }
+                    if let model = image.cameraModel {
+                        row(L10n.FileInfo.rowCamera, [image.cameraMake, model].compactMap(\.self).joined(separator: " "))
+                    }
+                    if let lensModel = image.lensModel {
+                        row(L10n.FileInfo.rowLens, lensModel)
+                    }
+                    if let dateTaken = image.dateTaken {
+                        row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: includeTime))
+                    }
+                    if let gps = image.gps {
+                        row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
+                    }
+                }
+            }
+            if let video = metadata.video {
+                Section {
+                    if let width = video.width, let height = video.height {
+                        row(L10n.FileInfo.rowDimensions, "\(width) × \(height)")
+                    }
+                    if let duration = video.duration {
+                        row(L10n.FileInfo.rowDuration, Self.durationFormatter.string(from: duration) ?? "-")
+                    }
+                }
+            }
+        }
+
+        private func row(_ label: String, _ value: String) -> some View {
+            LabeledContent(label) {
+                Text(value)
+                    .lineLimit(2)
+                    .truncationMode(.middle)
+                    .multilineTextAlignment(.trailing)
                     .textSelection(.enabled)
             }
         }
+
+        private static func bytes(_ count: Int64) -> String {
+            SettingsFormat.byteFormatter.string(fromByteCount: count)
+        }
+
+        private static let durationFormatter: DateComponentsFormatter = {
+            let formatter = DateComponentsFormatter()
+            formatter.allowedUnits = [.hour, .minute, .second]
+            formatter.unitsStyle = .positional
+            formatter.zeroFormattingBehavior = .dropLeading
+            return formatter
+        }()
     }
 
     /// Get Info beside a Browse screen, as a plain side panel on each screen rather than

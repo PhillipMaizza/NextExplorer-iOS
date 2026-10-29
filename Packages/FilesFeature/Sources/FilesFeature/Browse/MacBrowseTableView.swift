@@ -5,6 +5,7 @@
     import DesignSystem
     import FilesClient
     import Localization
+    import QuickLook
     import SwiftUI
 
     /// Generic views can't hold static stored properties, so the shared formatter lives here.
@@ -64,6 +65,9 @@
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
         /// The table takes focus when a folder opens, so Cut, Copy and Paste reach it at once.
         @FocusState private var isFocused: Bool
+        /// The local copy Quick Look is showing, fetched through the preview cache.
+        @State private var quickLookURL: URL?
+        @State private var quickLookTask: Task<Void, Never>?
 
         var body: some View {
             Table(of: FileItem.self, selection: $selection, sortOrder: sortOrder) {
@@ -146,17 +150,29 @@
             .focused($isFocused)
             .focusEffectDisabled()
             .onAppear { isFocused = true }
-            // Finder conventions: Space previews a file (and toggles Get Info on a folder, which a
-            // double click opens), Return renames, Delete deletes; Edit menu Cut/Copy/Paste/Select
+            // Finder conventions: Space toggles Quick Look on a file (and Get Info on a folder, which
+            // a double click opens), Return renames, Delete deletes; Edit menu Cut/Copy/Paste/Select
             // All and ⌘I reach the selection through the focused value.
             .onKeyPress(.space) {
                 guard selection.count == 1, let item = item(for: selection.first) else { return .ignored }
                 if item.isDirectory {
                     keyboardActions.getInfo()
+                } else if quickLookURL != nil {
+                    closeQuickLook()
                 } else {
-                    onOpen(item)
+                    quickLook(item)
                 }
                 return .handled
+            }
+            .quickLookPreview($quickLookURL)
+            // Like Finder, an open Quick Look follows the selection.
+            .onChange(of: selection) { _, newSelection in
+                guard quickLookURL != nil else { return }
+                if newSelection.count == 1, let item = item(for: newSelection.first), !item.isDirectory {
+                    quickLook(item)
+                } else {
+                    closeQuickLook()
+                }
             }
             .onKeyPress(.return) {
                 guard selection.count == 1 else { return .ignored }
@@ -165,6 +181,19 @@
             }
             .onDeleteCommand { keyboardActions.delete() }
             .focusedValue(\.browseKeyboardActions, keyboardActions)
+        }
+
+        private func quickLook(_ item: FileItem) {
+            quickLookTask?.cancel()
+            quickLookTask = Task {
+                guard let url = try? await filesClient.previewFile(serverURL, item), !Task.isCancelled else { return }
+                quickLookURL = url
+            }
+        }
+
+        private func closeQuickLook() {
+            quickLookTask?.cancel()
+            quickLookURL = nil
         }
 
         private func opacity(for item: FileItem) -> Double {
