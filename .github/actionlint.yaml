@@ -1,0 +1,4 @@
+# GitHub's Xcode 27 preview image (see ci.yml) is not in actionlint's built in label list yet.
+self-hosted-runner:
+  labels:
+    - xcode-27
