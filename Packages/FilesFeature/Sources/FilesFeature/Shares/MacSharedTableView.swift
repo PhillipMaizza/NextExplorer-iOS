@@ -179,6 +179,10 @@
                     }
                 }
             }
+            // The system share menu: AirDrop, Messages, Mail and the rest.
+            if let url = URL(string: share.shareLink(serverURL: store.serverURL)) {
+                ShareLink(item: url) { Text(L10n.Common.share) }
+            }
             Divider()
             Button(L10n.Common.edit) { store.send(.editTapped(share)) }
             Button(L10n.Common.delete, role: .destructive) { store.send(.deleteTapped(share)) }

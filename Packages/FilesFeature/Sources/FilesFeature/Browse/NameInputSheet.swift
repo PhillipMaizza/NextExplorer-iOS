@@ -55,6 +55,36 @@ struct NameInputSheet: View {
     }
 
     var body: some View {
+        #if os(macOS)
+            macBody
+        #else
+            phoneBody
+        #endif
+    }
+
+    #if os(macOS)
+        /// A native Mac dialog: the field, its error, then Cancel and the confirm button.
+        private var macBody: some View {
+            MacFormSheet(
+                title: title,
+                confirmTitle: confirmTitle,
+                isConfirmEnabled: FileNameValidation.isAcceptable(trimmed: trimmedName),
+                isWorking: isBusy,
+                onCancel: onCancel,
+                onConfirm: submit
+            ) {
+                TextField(placeholder, text: $name, prompt: Text(placeholder))
+                    .labelsHidden()
+                    .focused($isFieldFocused)
+                    .autocorrectionDisabled()
+                    .onSubmit(submit)
+                MacFieldError(message: validationError)
+            }
+            .task { isFieldFocused = true }
+        }
+    #endif
+
+    private var phoneBody: some View {
         DSDynamicHeightSheet {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(icon: icon, title: title, closeAccessibilityLabel: L10n.Common.close, onClose: onCancel)

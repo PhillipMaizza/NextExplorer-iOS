@@ -17,7 +17,11 @@
         var isConfirmEnabled = true
         var isWorking = false
         var errorMessage: String?
-        var cancelTitle = L10n.Common.cancel
+        /// `nil` hides Cancel, for a sheet whose only way out is its confirm button.
+        var cancelTitle: String? = L10n.Common.cancel
+        /// An extra button left of Cancel, such as "View in Shared".
+        var secondaryTitle: String?
+        var onSecondary: () -> Void = {}
         var width: CGFloat = Metrics.width
         let onCancel: () -> Void
         let onConfirm: () -> Void
@@ -38,8 +42,13 @@
                     if isWorking {
                         ProgressView().controlSize(.small)
                     }
-                    Button(cancelTitle, action: onCancel)
-                        .keyboardShortcut(.cancelAction)
+                    if let secondaryTitle {
+                        Button(secondaryTitle, action: onSecondary)
+                    }
+                    if let cancelTitle {
+                        Button(cancelTitle, action: onCancel)
+                            .keyboardShortcut(.cancelAction)
+                    }
                     Button(confirmTitle, action: onConfirm)
                         .keyboardShortcut(.defaultAction)
                         .disabled(!isConfirmEnabled || isWorking)

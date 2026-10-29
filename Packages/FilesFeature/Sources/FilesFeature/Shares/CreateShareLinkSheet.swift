@@ -45,6 +45,14 @@ struct CreateShareLinkSheet: View {
     private enum CopiedField: Equatable { case shareLink, directLink }
 
     var body: some View {
+        #if os(macOS)
+            MacCreateShareLinkSheet(store: store, onViewShares: onViewShares)
+        #else
+            phoneBody
+        #endif
+    }
+
+    private var phoneBody: some View {
         DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(
