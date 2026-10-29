@@ -382,6 +382,7 @@ public enum L10n {
         public static var addAccount: String { tr("macSettings.addAccount") }  // "Add Account…"
         public static var cache: String { tr("macSettings.cache") }  // "Cache"
         public static var changePassword: String { tr("macSettings.changePassword") }  // "Change Password…"
+        public static var choose: String { tr("macSettings.choose") }  // "Choose…"
         public static var email: String { tr("macSettings.email") }  // "Email"
         public static var icon: String { tr("macSettings.icon") }  // "Icon"
         public static func labelFormat(_ a0: CVarArg) -> String { tr("macSettings.labelFormat", a0) }

@@ -205,56 +205,69 @@ struct UploadReviewView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    var body: some View {
-        DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
-            content
-        } footer: {
-            footer
-        }
-        .interactiveDismissDisabled(!store.files.isEmpty || store.isPreparing)
-        .dsAlert(isPresented: isConfirmingCancel) {
-            DSAlertSheet(
-                icon: IconKit.delete,
-                title: L10n.Uploads.discardTitle,
-                message: L10n.Uploads.discardMessage,
-                confirmTitle: L10n.Uploads.discardConfirm,
-                dismissTitle: L10n.Common.cancel,
-                role: .destructive,
-                closeAccessibilityLabel: L10n.Common.close,
-                onConfirm: { store.send(.confirmCancelTapped) },
-                onDismiss: { store.send(.cancelConfirmationDismissed) }
+    private var sheetBody: some View {
+        #if os(macOS)
+            MacUploadReviewSheet(
+                store: store,
+                title: title,
+                isServerConnectionInsecure: isServerConnectionInsecure,
+                onAddFiles: { isFilesPickerPresented = true }
             )
-        }
-        .sheet(item: $store.scope(state: \.folderPicker, action: \.folderPicker)) { pickerStore in
-            DestinationPickerView(store: pickerStore)
-        }
-        .fullScreenCover(item: $previewSelection) { selection in
-            PickedFilePreview(
-                urls: store.files.map(\.fileURL),
-                names: store.files.map(\.fileName),
-                initialIndex: store.files.firstIndex(where: { $0.id == selection.id }) ?? 0,
-                onClose: { previewSelection = nil }
-            )
-        }
-        .modifier(UploadPickers(
-            isFilesPickerPresented: $isFilesPickerPresented,
-            isPhotosPickerPresented: $isPhotosPickerPresented,
-            isCameraPresented: $isCameraPresented,
-            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented,
-            photosSelection: $photosSelection,
-            onDocumentsPicked: { urls in
-                guard !urls.isEmpty else { return }
-                store.send(.stage(.documents(urls)))
-            },
-            onPhotosPicked: { items in
-                guard !items.isEmpty else { return }
-                store.send(.stage(.photos(items)))
-                photosSelection = []
-            },
-            onCameraCaptured: { url in
-                store.send(.stage(.camera(url)))
+        #else
+            DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+                content
+            } footer: {
+                footer
             }
-        ))
+        #endif
+    }
+
+    var body: some View {
+        sheetBody
+            .interactiveDismissDisabled(!store.files.isEmpty || store.isPreparing)
+            .dsAlert(isPresented: isConfirmingCancel) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: L10n.Uploads.discardTitle,
+                    message: L10n.Uploads.discardMessage,
+                    confirmTitle: L10n.Uploads.discardConfirm,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.confirmCancelTapped) },
+                    onDismiss: { store.send(.cancelConfirmationDismissed) }
+                )
+            }
+            .sheet(item: $store.scope(state: \.folderPicker, action: \.folderPicker)) { pickerStore in
+                DestinationPickerView(store: pickerStore)
+            }
+            .fullScreenCover(item: $previewSelection) { selection in
+                PickedFilePreview(
+                    urls: store.files.map(\.fileURL),
+                    names: store.files.map(\.fileName),
+                    initialIndex: store.files.firstIndex(where: { $0.id == selection.id }) ?? 0,
+                    onClose: { previewSelection = nil }
+                )
+            }
+            .modifier(UploadPickers(
+                isFilesPickerPresented: $isFilesPickerPresented,
+                isPhotosPickerPresented: $isPhotosPickerPresented,
+                isCameraPresented: $isCameraPresented,
+                isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented,
+                photosSelection: $photosSelection,
+                onDocumentsPicked: { urls in
+                    guard !urls.isEmpty else { return }
+                    store.send(.stage(.documents(urls)))
+                },
+                onPhotosPicked: { items in
+                    guard !items.isEmpty else { return }
+                    store.send(.stage(.photos(items)))
+                    photosSelection = []
+                },
+                onCameraCaptured: { url in
+                    store.send(.stage(.camera(url)))
+                }
+            ))
     }
 }
 
