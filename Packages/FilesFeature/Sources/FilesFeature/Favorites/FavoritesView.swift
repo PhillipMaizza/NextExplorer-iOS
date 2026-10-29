@@ -257,7 +257,7 @@ struct FavoritesView: View {
                 }
             }
         }
-        .dsSheet(isPresented: bulkRemoveConfirmationBinding) {
+        .dsAlert(isPresented: bulkRemoveConfirmationBinding) {
             DSAlertSheet(
                 icon: IconKit.unfavorite,
                 title: bulkRemoveConfirmationTitle,

@@ -55,7 +55,7 @@ struct UserDetailView: View {
         .dsSheet(isPresented: volumeSheetPresented) {
             VolumeAssignSheet(store: store)
         }
-        .dsSheet(isPresented: removeVolumeAlertPresented) {
+        .dsAlert(isPresented: removeVolumeAlertPresented) {
             DSAlertSheet(
                 icon: IconKit.drive,
                 title: L10n.UserDetail.removeVolumeTitle,
@@ -68,7 +68,7 @@ struct UserDetailView: View {
                 onDismiss: { store.send(.removeVolumeCancelled) }
             )
         }
-        .dsSheet(isPresented: deleteAlertPresented) {
+        .dsAlert(isPresented: deleteAlertPresented) {
             DSAlertSheet(
                 icon: IconKit.delete,
                 title: L10n.UserDetail.removeUserTitle,

@@ -141,7 +141,7 @@ struct SharedView: View {
                 .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
                     EditShareSheet(store: editStore)
                 }
-                .dsSheet(isPresented: deleteConfirmationBinding) {
+                .dsAlert(isPresented: deleteConfirmationBinding) {
                     DSAlertSheet(
                         icon: IconKit.delete,
                         title: L10n.Shared.deleteTitle,

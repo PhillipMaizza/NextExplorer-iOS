@@ -35,17 +35,17 @@ public struct DSAlertSheet: View {
     }
 
     private let icon: Image
-    private let title: String
-    private let message: String?
-    private let confirmTitle: String
-    private let dismissTitle: String
-    private let neutralTitle: String?
-    private let role: Role
+    let title: String
+    let message: String?
+    let confirmTitle: String
+    let dismissTitle: String
+    let neutralTitle: String?
+    let role: Role
     private let isConfirmLoading: Bool
     private let closeAccessibilityLabel: String
-    private let onConfirm: () -> Void
-    private let onNeutral: (() -> Void)?
-    private let onDismiss: () -> Void
+    let onConfirm: () -> Void
+    let onNeutral: (() -> Void)?
+    let onDismiss: () -> Void
 
     public init(
         icon: Image,

@@ -293,7 +293,7 @@ struct DownloadsView: View {
                     onDismiss: { isSortSheetPresented = false }
                 )
             }
-            .dsSheet(isPresented: deleteConfirmationBinding) {
+            .dsAlert(isPresented: deleteConfirmationBinding) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: deleteConfirmationTitle,
@@ -309,7 +309,7 @@ struct DownloadsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-            .dsSheet(isPresented: bulkDeleteConfirmationBinding) {
+            .dsAlert(isPresented: bulkDeleteConfirmationBinding) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: bulkDeleteConfirmationTitle,

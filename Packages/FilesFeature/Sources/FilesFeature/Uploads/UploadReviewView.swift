@@ -212,7 +212,7 @@ struct UploadReviewView: View {
             footer
         }
         .interactiveDismissDisabled(!store.files.isEmpty || store.isPreparing)
-        .dsSheet(isPresented: isConfirmingCancel) {
+        .dsAlert(isPresented: isConfirmingCancel) {
             DSAlertSheet(
                 icon: IconKit.delete,
                 title: L10n.Uploads.discardTitle,

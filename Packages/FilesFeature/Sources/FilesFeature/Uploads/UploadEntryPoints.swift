@@ -44,7 +44,7 @@ struct UploadPickers: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .dsSheet(isPresented: $isCameraDeniedAlertPresented) {
+            .dsAlert(isPresented: $isCameraDeniedAlertPresented) {
                 DSAlertSheet(
                     icon: IconKit.camera,
                     title: L10n.Uploads.cameraDeniedTitle,

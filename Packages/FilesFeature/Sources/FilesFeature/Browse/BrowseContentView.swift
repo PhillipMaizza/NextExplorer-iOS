@@ -163,7 +163,7 @@ struct BrowseContentView: View {
                             onGalleryItemChange: { galleryCurrentItemID = $0.id }
                         )
                     }
-                    .dsSheet(isPresented: isDeletingFromPreviewBinding) {
+                    .dsAlert(isPresented: isDeletingFromPreviewBinding) {
                         deleteConfirmationSheet(dismissingPreview: true)
                     }
                     .dsSheet(item: renameItemFromPreviewBinding) { renameTarget in
@@ -495,7 +495,7 @@ struct BrowseContentView: View {
             .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
             value: store.selectedItemIDs
         )
-        .dsSheet(isPresented: bulkDeleteConfirmationBinding) {
+        .dsAlert(isPresented: bulkDeleteConfirmationBinding) {
             DSAlertSheet(
                 icon: IconKit.delete,
                 title: bulkDeleteConfirmationTitle,
@@ -538,11 +538,11 @@ struct BrowseContentView: View {
                 onCancel: { store.send(.newFolderCancelled) }
             )
         }
-        .dsSheet(isPresented: isDeletingBinding) {
+        .dsAlert(isPresented: isDeletingBinding) {
             deleteConfirmationSheet(dismissingPreview: false)
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-        .dsSheet(isPresented: transferConflictBinding) {
+        .dsAlert(isPresented: transferConflictBinding) {
             DSAlertSheet(
                 icon: IconKit.warning,
                 title: L10n.Browse.transferConflictTitle,
@@ -989,7 +989,7 @@ struct BrowseContentView: View {
         store.previewItem.map { ($0.isImage || $0.isRawImage) && !$0.isSVG } ?? false
     }
 
-    private func deleteConfirmationSheet(dismissingPreview: Bool) -> some View {
+    private func deleteConfirmationSheet(dismissingPreview: Bool) -> DSAlertSheet {
         DSAlertSheet(
             icon: IconKit.delete,
             title: deleteConfirmationTitle,

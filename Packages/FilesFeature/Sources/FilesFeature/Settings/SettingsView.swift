@@ -140,7 +140,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             // The Mac hosts these at the window level instead, for its sidebar account menu.
             .modifier(AccountConfirmations(store: store, isEnabled: !AccountConfirmations.isHostedByWindow))
-            .dsSheet(isPresented: isConfirmingRemoveAllDownloads) {
+            .dsAlert(isPresented: isConfirmingRemoveAllDownloads) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Settings.removeAllDownloadsTitle,
@@ -154,7 +154,7 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
-            .dsSheet(isPresented: isConfirmingClearCache) {
+            .dsAlert(isPresented: isConfirmingClearCache) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Settings.clearCacheTitle,
@@ -174,7 +174,7 @@ struct SettingsView: View {
             .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
                 OfflineSelectionView(store: selectionStore)
             }
-            .dsSheet(isPresented: isConfirmingRemoveOffline) {
+            .dsAlert(isPresented: isConfirmingRemoveOffline) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Offline.removeConfirmTitle,

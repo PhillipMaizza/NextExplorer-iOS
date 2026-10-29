@@ -73,7 +73,7 @@ struct ServerDetailsView: View {
                 gallerySelection = nil
                 Task { await loadGalleryImage(item) }
             }
-            .dsSheet(isPresented: $isCameraDeniedAlertPresented) {
+            .dsAlert(isPresented: $isCameraDeniedAlertPresented) {
                 DSAlertSheet(
                     icon: IconKit.camera,
                     title: L10n.ServerDetails.cameraDeniedTitle,
