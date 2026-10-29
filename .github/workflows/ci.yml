@@ -32,16 +32,19 @@ jobs:
 
     env:
       SIM_DEVICE: iPhone 17
-      # The package tests and the app build share one DerivedData and one SwiftPM checkout folder,
-      # so every dependency compiles once. Both live outside the repo so the linters never scan
-      # them (runner.temp: actions/cache rejects paths containing ..). DerivedData is also cached
-      # between runs (saved from main, restored everywhere).
-      DERIVED_DATA: ${{ runner.temp }}/DerivedData
-      SPM_CHECKOUTS: ${{ runner.temp }}/SourcePackages
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      # One DerivedData and one SwiftPM checkout folder shared by every build in the job, so each
+      # dependency compiles once; DerivedData is also cached between runs (saved from main,
+      # restored everywhere). Both sit in runner.temp, outside the repo so the linters never scan
+      # them: actions/cache rejects paths containing "..", and runner.temp only exists inside steps.
+      - name: Set build folders
+        run: |
+          echo "DERIVED_DATA=${RUNNER_TEMP}/DerivedData" >> "${GITHUB_ENV}"
+          echo "SPM_CHECKOUTS=${RUNNER_TEMP}/SourcePackages" >> "${GITHUB_ENV}"
 
       # Lint shares this job instead of queueing for a second macOS runner. Pinned to the versions
       # used locally (release binaries, not Homebrew's latest), so a rule added upstream can't fail
@@ -168,13 +171,19 @@ jobs:
 
     env:
       SIM_DEVICE: iPhone 17
-      # Same folders and caches as Build and test, restored only: unchanged code doesn't recompile.
-      DERIVED_DATA: ${{ runner.temp }}/DerivedData
-      SPM_CHECKOUTS: ${{ runner.temp }}/SourcePackages
 
     steps:
       - name: Checkout
         uses: actions/checkout@v5
+
+      # One DerivedData and one SwiftPM checkout folder shared by every build in the job, so each
+      # dependency compiles once; DerivedData is also cached between runs (saved from main,
+      # restored everywhere). Both sit in runner.temp, outside the repo so the linters never scan
+      # them: actions/cache rejects paths containing "..", and runner.temp only exists inside steps.
+      - name: Set build folders
+        run: |
+          echo "DERIVED_DATA=${RUNNER_TEMP}/DerivedData" >> "${GITHUB_ENV}"
+          echo "SPM_CHECKOUTS=${RUNNER_TEMP}/SourcePackages" >> "${GITHUB_ENV}"
 
       - name: Restore SwiftPM checkouts
         uses: actions/cache/restore@v4
