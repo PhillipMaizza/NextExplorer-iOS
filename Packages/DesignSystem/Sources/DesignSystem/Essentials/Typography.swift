@@ -119,8 +119,13 @@ public enum Typography {
         }
 
         public func font() -> Font {
-            _ = Self.fontsRegistered
-            return .custom(Self.familyName, size: size, relativeTo: relativeTextStyle)
+            #if os(macOS)
+                // The Mac reads in its own system font (San Francisco), at the same sizes.
+                return .system(size: size)
+            #else
+                _ = Self.fontsRegistered
+                return .custom(Self.familyName, size: size, relativeTo: relativeTextStyle)
+            #endif
         }
     }
 
