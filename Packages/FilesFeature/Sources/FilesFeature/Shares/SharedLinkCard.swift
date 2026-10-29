@@ -337,21 +337,12 @@ struct SharedLinkDetailRow: View {
         return Self.expiryFormatter.string(from: expiresAt)
     }
 
-    private var baseURLString: String {
-        if let scheme = serverURL.scheme, let host = serverURL.host {
-            let port = serverURL.port.map { ":\($0)" } ?? ""
-            return "\(scheme)://\(host)\(port)"
-        }
-        return serverURL.absoluteString
-    }
-
     private var shareLinkString: String {
-        "\(baseURLString)/share/\(share.shareToken)"
+        share.shareLink(serverURL: serverURL)
     }
 
     private var directLinkString: String {
-        let base = "\(baseURLString)/api/share/\(share.shareToken)/file"
-        return directLinkMode == .auto ? base : "\(base)?mode=\(directLinkMode.rawValue)"
+        share.directLink(serverURL: serverURL, mode: directLinkMode)
     }
 
     private func copy(_ string: String, label: String) {

@@ -86,8 +86,8 @@ struct SharedSegmentList: View {
     }
 
     /// Redacted collapsed `SharedLinkCard` stand-ins that sit in the *same* grouped `List` as
-    /// the real rows. Shine suppressed under Reduce Motion.
-    private static let placeholderShares: [Share] = Constants.skeletonNameLengths.enumerated().map { index, length in
+    /// the real rows (and the Mac table's skeleton rows). Shine suppressed under Reduce Motion.
+    static let placeholderShares: [Share] = Constants.skeletonNameLengths.enumerated().map { index, length in
         Share(
             id: "skeleton/\(index)", shareToken: "MMMMMMMMMM", ownerId: "skeleton",
             sourcePath: String(repeating: "M", count: length), isDirectory: index.isMultiple(of: 2),
