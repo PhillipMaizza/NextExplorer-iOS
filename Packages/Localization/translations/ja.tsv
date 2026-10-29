@@ -668,3 +668,8 @@ macSettings.support	ヘルプとサポート…
 macSettings.permission	アクセス権
 macSettings.icon	アイコン
 menu.go	移動
+menu.activity	転送
+menu.showAll	すべて表示
+uploads.notifyDone	アップロード完了
+uploads.notifyBody	%lld 個のファイルをアップロードしました
+downloadQueue.notifyDone	ダウンロード完了

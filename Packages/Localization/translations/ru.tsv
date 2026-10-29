@@ -668,3 +668,8 @@ macSettings.support	Помощь и поддержка…
 macSettings.permission	Доступ
 macSettings.icon	Значок
 menu.go	Переход
+menu.activity	Передачи
+menu.showAll	Показать все
+uploads.notifyDone	Загрузка на сервер завершена
+uploads.notifyBody	Загружено файлов: %lld
+downloadQueue.notifyDone	Загрузки завершены

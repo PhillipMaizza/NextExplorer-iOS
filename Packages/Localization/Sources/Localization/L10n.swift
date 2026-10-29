@@ -213,6 +213,7 @@ public enum L10n {
         public static var cancelAll: String { tr("downloadQueue.cancelAll") }  // "Cancel all downloads"
         public static var emptyList: String { tr("downloadQueue.emptyList") }  // "No downloads in progress."
         public static var navigationTitle: String { tr("downloadQueue.navigationTitle") }  // "Download Queue"
+        public static var notifyDone: String { tr("downloadQueue.notifyDone") }  // "Downloads finished"
         public static var openDownloads: String { tr("downloadQueue.openDownloads") }  // "Show Downloads"
         public static func savedMany(_ a0: CVarArg) -> String { tr("downloadQueue.savedMany", a0) }
         public static var savedOne: String { tr("downloadQueue.savedOne") }  // "Saved to Downloads"
@@ -375,6 +376,7 @@ public enum L10n {
     }
     public enum Menu {
         public static var about: String { tr("menu.about") }  // "About NextExplorer"
+        public static var activity: String { tr("menu.activity") }  // "Transfers"
         public static var enclosingFolder: String { tr("menu.enclosingFolder") }  // "Enclosing Folder"
         public static var go: String { tr("menu.go") }  // "Go"
         public static var newTab: String { tr("menu.newTab") }  // "New Tab"
@@ -382,6 +384,7 @@ public enum L10n {
         public static var rateApp: String { tr("menu.rateApp") }  // "Rate NextExplorer…"
         public static var redo: String { tr("menu.redo") }  // "Redo"
         public static var refresh: String { tr("menu.refresh") }  // "Refresh"
+        public static var showAll: String { tr("menu.showAll") }  // "Show All"
         public static var support: String { tr("menu.support") }  // "NextExplorer Support"
         public static var undo: String { tr("menu.undo") }  // "Undo"
     }
@@ -645,6 +648,8 @@ public enum L10n {
         public static var failedGeneric: String { tr("uploads.failedGeneric") }  // "Couldn't upload this file."
         public static var menuTitle: String { tr("uploads.menuTitle") }  // "Upload"
         public static var navigationTitle: String { tr("uploads.navigationTitle") }  // "Uploads"
+        public static func notifyBody(_ a0: CVarArg) -> String { tr("uploads.notifyBody", a0) }
+        public static var notifyDone: String { tr("uploads.notifyDone") }  // "Uploads finished"
         public static var retryAll: String { tr("uploads.retryAll") }  // "Retry all"
         public static var reviewAddMore: String { tr("uploads.reviewAddMore") }  // "Add more files"
         public static var reviewChooseFolder: String { tr("uploads.reviewChooseFolder") }  // "Choose a folder"

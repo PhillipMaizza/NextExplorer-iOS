@@ -668,3 +668,8 @@ macSettings.support	Hulp en ondersteuning…
 macSettings.permission	Toegang
 macSettings.icon	Symbool
 menu.go	Ga
+menu.activity	Overdrachten
+menu.showAll	Toon alles
+uploads.notifyDone	Uploads voltooid
+uploads.notifyBody	%lld bestanden geüpload
+downloadQueue.notifyDone	Downloads voltooid

@@ -668,3 +668,8 @@ macSettings.support	Hilfe & Support …
 macSettings.permission	Berechtigung
 macSettings.icon	Symbol
 menu.go	Gehe zu
+menu.activity	Übertragungen
+menu.showAll	Alle anzeigen
+uploads.notifyDone	Uploads abgeschlossen
+uploads.notifyBody	%lld Dateien hochgeladen
+downloadQueue.notifyDone	Downloads abgeschlossen

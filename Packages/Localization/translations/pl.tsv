@@ -668,3 +668,8 @@ macSettings.support	Pomoc i wsparcie…
 macSettings.permission	Uprawnienie
 macSettings.icon	Ikona
 menu.go	Idź
+menu.activity	Transfery
+menu.showAll	Pokaż wszystko
+uploads.notifyDone	Wysyłanie zakończone
+uploads.notifyBody	Wysłano plików: %lld
+downloadQueue.notifyDone	Pobieranie zakończone

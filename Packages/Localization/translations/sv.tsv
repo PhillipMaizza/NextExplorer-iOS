@@ -668,3 +668,8 @@ macSettings.support	Hjälp och support…
 macSettings.permission	Behörighet
 macSettings.icon	Symbol
 menu.go	Gå
+menu.activity	Överföringar
+menu.showAll	Visa alla
+uploads.notifyDone	Uppladdningar klara
+uploads.notifyBody	%lld filer uppladdade
+downloadQueue.notifyDone	Hämtningar klara

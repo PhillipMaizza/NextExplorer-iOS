@@ -93,9 +93,15 @@ public struct MainTabView: View {
             .windowTitle(macWindowTitle)
             .modifier(AccountConfirmations(store: store.scope(state: \.settings, action: \.settings)))
             .modifier(TipJarPresentation(store: store.scope(state: \.settings, action: \.settings)))
+            .modifier(MacTransferNotifications(
+                uploadsRemaining: store.uploads.remainingCount,
+                uploadsFailed: store.uploads.failedCount,
+                downloadsRemaining: store.downloadQueue.remainingCount,
+                downloadsFailed: store.downloadQueue.failedCount
+            ))
         #endif
             .overlay(alignment: .bottom) {
-                if isAnyTransferBarVisible {
+                if showsTransferBars {
                     TransferStatusBars(store: store)
                         .background(
                             GeometryReader { proxy in
@@ -116,7 +122,7 @@ public struct MainTabView: View {
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isBarVisible)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: store.downloadQueue.isActive)
             .animation(.easeInOut(duration: Constants.barAnimationDuration), value: breadcrumbClearance)
-            .onChange(of: isAnyTransferBarVisible) { _, visible in
+            .onChange(of: showsTransferBars) { _, visible in
                 $isUploadBarVisible.withLock { $0 = visible }
             }
             .sheet(isPresented: Binding(
@@ -186,6 +192,15 @@ public struct MainTabView: View {
         store.uploads.isBarVisible || store.downloadQueue.isBarVisible
     }
 
+    /// The floating transfer bars; the Mac shows a toolbar activity button instead.
+    private var showsTransferBars: Bool {
+        #if os(macOS)
+            false
+        #else
+            isAnyTransferBarVisible
+        #endif
+    }
+
     /// Regular width shows the sidebar split view; compact keeps the bottom tab bar.
     @ViewBuilder
     private var shell: some View {
@@ -244,6 +259,15 @@ public struct MainTabView: View {
         }
         .navigationSplitViewStyle(.balanced)
         .tint(Color.accent)
+        #if os(macOS)
+            .toolbar {
+                if isAnyTransferBarVisible {
+                    ToolbarItem(id: "transfers", placement: .primaryAction) {
+                        MacTransferActivityButton(store: store)
+                    }
+                }
+            }
+        #endif
     }
 
     private var sidebar: some View {

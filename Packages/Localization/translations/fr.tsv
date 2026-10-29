@@ -668,3 +668,8 @@ macSettings.support	Aide et assistance…
 macSettings.permission	Autorisation
 macSettings.icon	Icône
 menu.go	Aller
+menu.activity	Transferts
+menu.showAll	Tout afficher
+uploads.notifyDone	Envois terminés
+uploads.notifyBody	%lld fichiers envoyés
+downloadQueue.notifyDone	Téléchargements terminés

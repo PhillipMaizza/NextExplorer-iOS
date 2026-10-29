@@ -668,3 +668,8 @@ macSettings.support	المساعدة والدعم…
 macSettings.permission	الإذن
 macSettings.icon	الأيقونة
 menu.go	انتقال
+menu.activity	عمليات النقل
+menu.showAll	عرض الكل
+uploads.notifyDone	اكتمل الرفع
+uploads.notifyBody	تم رفع %lld ملف
+downloadQueue.notifyDone	اكتمل التنزيل

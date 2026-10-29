@@ -668,3 +668,8 @@ macSettings.support	Ayuda y soporte…
 macSettings.permission	Permiso
 macSettings.icon	Icono
 menu.go	Ir
+menu.activity	Transferencias
+menu.showAll	Mostrar todo
+uploads.notifyDone	Subidas terminadas
+uploads.notifyBody	%lld archivos subidos
+downloadQueue.notifyDone	Descargas terminadas

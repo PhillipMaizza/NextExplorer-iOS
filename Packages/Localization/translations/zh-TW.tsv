@@ -668,3 +668,8 @@ macSettings.support	幫助與支援…
 macSettings.permission	權限
 macSettings.icon	圖示
 menu.go	前往
+menu.activity	傳輸
+menu.showAll	顯示全部
+uploads.notifyDone	上傳完成
+uploads.notifyBody	已上傳 %lld 個檔案
+downloadQueue.notifyDone	下載完成

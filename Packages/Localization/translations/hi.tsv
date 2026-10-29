@@ -668,3 +668,8 @@ macSettings.support	सहायता और समर्थन…
 macSettings.permission	अनुमति
 macSettings.icon	आइकन
 menu.go	जाएँ
+menu.activity	स्थानांतरण
+menu.showAll	सभी दिखाएँ
+uploads.notifyDone	अपलोड पूरे हुए
+uploads.notifyBody	%lld फ़ाइलें अपलोड हुईं
+downloadQueue.notifyDone	डाउनलोड पूरे हुए

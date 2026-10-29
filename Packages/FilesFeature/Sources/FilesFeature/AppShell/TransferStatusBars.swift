@@ -67,7 +67,7 @@ struct TransferStatusBars: View {
         }
     }
 
-    private var downloadBarTitle: String {
+    var downloadBarTitle: String {
         let queue = store.downloadQueue
         if queue.remainingCount <= 1, let name = queue.currentJob?.fileName {
             return L10n.DownloadQueue.barTitleOne(name)
@@ -75,7 +75,7 @@ struct TransferStatusBars: View {
         return L10n.DownloadQueue.barTitleMany(queue.remainingCount)
     }
 
-    private var uploadBarTitle: String {
+    var uploadBarTitle: String {
         let uploads = store.uploads
         if uploads.remainingCount <= 1, let name = uploads.currentJob?.fileName {
             return L10n.Uploads.barTitleOne(name)
