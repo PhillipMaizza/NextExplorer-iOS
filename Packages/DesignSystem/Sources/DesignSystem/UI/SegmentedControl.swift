@@ -23,13 +23,52 @@ public struct DSSegmentedControl<Option: Hashable>: View {
         "pill"
     }
 
-    public init(options: [Option], selection: Binding<Option>, label: @escaping (Option) -> String) {
+    private let alwaysUsesPill: Bool
+
+    /// The Mac shows a native segmented control unless `alwaysUsesPill` is set, for a branded
+    /// screen (the login card) that keeps the accent pill everywhere.
+    public init(
+        options: [Option],
+        selection: Binding<Option>,
+        alwaysUsesPill: Bool = false,
+        label: @escaping (Option) -> String
+    ) {
         self.options = options
         _selection = selection
+        self.alwaysUsesPill = alwaysUsesPill
         self.label = label
     }
 
     public var body: some View {
+        #if os(macOS)
+            if alwaysUsesPill {
+                pillControl
+            } else {
+                nativeControl
+            }
+        #else
+            pillControl
+        #endif
+    }
+
+    #if os(macOS)
+        /// The native control at its natural size, not the full width pill.
+        private var nativeControl: some View {
+            Picker(selection: $selection) {
+                ForEach(options, id: \.self) { option in
+                    Text(label(option)).tag(option)
+                }
+            } label: {
+                EmptyView()
+            }
+            .pickerStyle(.segmented)
+            .labelsHidden()
+            .fixedSize()
+            .frame(maxWidth: .infinity, alignment: .leading)
+        }
+    #endif
+
+    private var pillControl: some View {
         HStack(spacing: .space4) {
             ForEach(options, id: \.self) { option in
                 let isSelected = option == selection

@@ -399,6 +399,7 @@ public struct LoginFormView: View {
                     DSSegmentedControl(
                         options: LoginFormFeature.URLScheme.allCases,
                         selection: Binding(get: { store.scheme }, set: { store.send(.schemeChanged($0)) }),
+                        alwaysUsesPill: true,
                         label: \.displayName
                     )
 
