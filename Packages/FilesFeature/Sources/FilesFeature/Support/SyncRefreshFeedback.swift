@@ -21,7 +21,9 @@ private struct SyncRefreshFeedback: ViewModifier {
             }
         #if os(macOS)
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
+                // Navigation placement shares one glass capsule with Back on a pushed screen;
+                // as a separate primary action the system drew it there without any background.
+                ToolbarItem(placement: .navigation) {
                     MacRefreshToolbarButton(onRefresh: onRefresh) { didFinishRefreshing.toggle() }
                 }
             }

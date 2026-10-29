@@ -304,7 +304,8 @@ struct BrowseContentView: View {
         }
         #if os(macOS)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            // See `SyncRefreshFeedback`: shares Back's glass capsule on a pushed screen.
+            ToolbarItem(placement: .navigation) {
                 MacRefreshToolbarButton(onRefresh: { await store.send(.refreshButtonTapped).finish() }) {
                     didFinishRefreshing.toggle()
                 }
