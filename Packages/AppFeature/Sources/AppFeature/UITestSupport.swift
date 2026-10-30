@@ -183,7 +183,12 @@
                 client.search = { _, _, query, _ in
                     let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmed.isEmpty else { return [] }
-                    return [
+                    // Like the server, names in the folder that match come first, so a folder
+                    // found by search stays in the results and can be opened from there.
+                    let nameMatches = store.current()
+                        .filter { $0.name.localizedCaseInsensitiveContains(trimmed) }
+                        .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file") }
+                    return nameMatches + [
                         SearchResultItem(name: searchHitName, path: "Documents/\(searchHitName)", kind: "txt", matchLine: trimmed, matchLineNumber: 1),
                         SearchResultItem(name: "Meeting Notes.md", path: "Documents/Meeting Notes.md", kind: "md"),
                         // A mixed type hit so a filter chip test can prove it narrows the results.
