@@ -29,7 +29,7 @@ SKIP = re.compile(r"^(bump version|update package\.resolved)|^initial commit$", 
 TECHNICAL = re.compile(
     r"\b(tests?|ui ?tests?|xcuitests?|ci|lint|linting|swiftformat|swiftlint|flakes?|flaky|de-?flake|"
     r"fastlane|lanes?|changelog|releases?|refactor\w*|dedup\w*|state machines?|import sort|"
-    r"package\.resolved|pins?|dependenc(y|ies)|readme|contributing|license|workflows?|"
+    r"package\.resolved|pins?|dependenc(y|ies)|swiftpm|node \d+ actions|readme|contributing|license|workflows?|"
     r"build[- ]phase|instrument\w*|warnings?|docs?|dto|dataphase|domain split|reorg|"
     r"main[- ]thread|bool clusters?|typography rename)\b",
     re.IGNORECASE,

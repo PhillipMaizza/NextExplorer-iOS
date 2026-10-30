@@ -240,6 +240,7 @@ platform :ios do
     UI.success("#{version} (#{build_number}) for #{platforms.join(' and ')} submitted for review and tagged #{tag}")
   end
 
+  # The target builds for iOS and the Mac, so gym needs the sdk to know which package to export.
   # Automatic signing; the API key lets xcodebuild create or refresh the distribution
   # certificate and profile without an Xcode account signed in.
   private_lane :build_release do |options|
@@ -247,6 +248,8 @@ platform :ios do
       project: PROJECT,
       scheme: SCHEME,
       configuration: "Release",
+      sdk: "iphoneos",
+      destination: "generic/platform=iOS",
       export_method: "app-store",
       output_directory: "build/fastlane",
       clean: true,
@@ -292,6 +295,7 @@ private_lane :build_mac_release do |options|
     project: PROJECT,
     scheme: SCHEME,
     configuration: "Release",
+    sdk: "macosx",
     destination: "generic/platform=macOS",
     export_method: "app-store",
     output_directory: "build/fastlane/mac",
