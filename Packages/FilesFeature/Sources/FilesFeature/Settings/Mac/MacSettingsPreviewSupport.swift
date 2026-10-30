@@ -1,4 +1,4 @@
-#if os(macOS) && DEBUG
+#if os(macOS)
     import CoreModels
     import Foundation
 
