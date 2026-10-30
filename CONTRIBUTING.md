@@ -81,6 +81,7 @@ Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile`
 
 - Create an App Store Connect API key (Users and Access › Integrations, App Manager role) and keep the `.p8` outside the repo, e.g. `~/.appstoreconnect/private_keys/`.
 - Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`, and optionally `GH_USER` (the `gh` account used for the CI check and the GitHub Release).
+- Once per Mac, for the Mac App Store package: an App Manager key can't create its certificate or profile. In Xcode, Settings › Accounts › Manage Certificates › **+** › Mac Installer Distribution; then archive the app for Any Mac and choose Distribute App › Custom › App Store Connect › **Export** (not Upload, which would spend a build number), which creates the Mac App Store profile.
 
 Versions come from git tags. A release ships the next version after the newest `v<version>` tag (patch by default) by passing `MARKETING_VERSION` to the archive, then tags it. To plan a minor or major, set the project's `MARKETING_VERSION` ahead of the newest tag: a release without `bump:` or `version:` then ships that version. The build number is the git commit count, stamped at build time.
 

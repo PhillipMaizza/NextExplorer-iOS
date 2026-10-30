@@ -150,6 +150,8 @@ enum UITestTimeout {
     /// A tighter budget used when asserting something should NOT appear, so a negative check
     /// doesn't stall the suite.
     static let short: TimeInterval = 3
+    /// How often `appears(within:)` looks again.
+    static let pollInterval: TimeInterval = 0.25
 }
 
 extension XCUIElement {
@@ -164,7 +166,16 @@ extension XCUIElement {
     /// Returns whether the element exists within the budget, without asserting. Use for negative
     /// checks (`XCTAssertFalse(element.appears(within:))`).
     func appears(within timeout: TimeInterval = UITestTimeout.short) -> Bool {
-        waitForExistence(timeout: timeout)
+        // Polled rather than `waitForExistence`: a timed out wait makes XCTest collect failure
+        // triage diagnostics (about 20 s on a CI runner) even when not appearing is the answer.
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if exists {
+                return true
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(UITestTimeout.pollInterval))
+        }
+        return exists
     }
 
     /// Waits for the element to stop existing (e.g. a sheet dismissing on success).
