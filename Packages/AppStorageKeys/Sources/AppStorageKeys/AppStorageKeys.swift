@@ -38,9 +38,6 @@ public enum AppStorageKeys {
     /// Per-tab list/grid choice; the value is that tab's own `…ViewMode.rawValue`.
     public static let browseViewMode = "browseViewMode"
     public static let favoritesViewMode = "favoritesViewMode"
-    /// The Mac Favorites table's Sort By: manual (the user's own order), name or location.
-    public static let favoritesSortOption = "favoritesSortOption"
-    public static let favoritesSortDirection = "favoritesSortDirection"
     public static let downloadsViewMode = "downloadsViewMode"
 
     /// Preferences reset to their defaults on sign out, so a new session on this device starts
@@ -49,7 +46,6 @@ public enum AppStorageKeys {
     /// haptics), is deliberately left untouched.
     public static let sessionScopedKeys: [String] = [
         browseViewMode, favoritesViewMode, downloadsViewMode,
-        favoritesSortOption, favoritesSortDirection,
         thumbnailSize, showFilenameExtensions, showTabLabels,
         renderHTMLPages, renderMarkdownPages,
         keepClipboardAfterCopy,
