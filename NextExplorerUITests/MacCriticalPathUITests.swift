@@ -37,6 +37,8 @@
         func testSidebarSectionsAndShortcuts() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
+            // The first click on an inactive window only activates it.
+            focusWindow(app)
 
             sidebarItem(L10n.Tab.shared, in: app).click()
             XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear(), "Shared should list the links shared by me")
@@ -212,6 +214,7 @@
         func testSharedSegmentsAndEditFromTheContextMenu() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
+            focusWindow(app)
             sidebarItem(L10n.Tab.shared, in: app).click()
             XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear())
 
