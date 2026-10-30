@@ -5,7 +5,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let sidebarWidth: CGFloat = 200
+        static let sidebarWidth: CGFloat = 240
     }
 
     /// One page of the Mac Settings window's sidebar.
@@ -152,6 +152,6 @@
 
     #Preview("Settings window") {
         MacSettingsRoot(store: Store(initialState: .macPreview) { SettingsFeature() })
-            .frame(width: 760, height: 520)
+            .frame(width: 920, height: 560)
     }
 #endif

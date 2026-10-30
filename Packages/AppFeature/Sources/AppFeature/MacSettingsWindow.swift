@@ -5,7 +5,7 @@
     import SwiftUI
 
     private enum Metrics {
-        static let width: CGFloat = 880
+        static let width: CGFloat = 920
         static let minHeight: CGFloat = 480
         static let idealHeight: CGFloat = 560
     }
