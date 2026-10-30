@@ -17,7 +17,7 @@ public struct FilesClient: Sendable {
     public var prefetchDirectory: @Sendable (_ serverURL: URL, _ path: String) async -> Void
     public var search: @Sendable (
         _ serverURL: URL, _ path: String, _ query: String, _ limit: Int?
-    ) async throws -> [SearchResultItem]
+    ) async throws -> SearchPage
     public var favorites: @Sendable (_ serverURL: URL) async throws -> [Favorite]
     public var addFavorite: @Sendable (_ serverURL: URL, _ path: String) async throws -> Favorite
     public var removeFavorite: @Sendable (_ serverURL: URL, _ path: String) async throws -> Void
@@ -253,4 +253,7 @@ public extension FilesClient {
     /// The shortest term `GET /api/search` accepts (`MIN_TERM_LENGTH` in backend
     /// `routes/search.js`); a shorter one answers 400, so callers never send it.
     static let minimumSearchTermLength = 3
+    /// How far Show more widens a search, as the web client steps it (`LIMIT_STEPS` in
+    /// `SearchResultsView.vue`); the last step is the backend's own `MAX_LIMIT`.
+    static let searchLimitSteps = [100, 300, 500]
 }

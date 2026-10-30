@@ -6,6 +6,7 @@
 
     private enum Metrics {
         static let locationColumnMinWidth: CGFloat = 200
+        static let matchColumnMinWidth: CGFloat = 90
     }
 
     /// Browse search results as a Mac table, like the folder it searches: the name with the
@@ -46,6 +47,12 @@
                         .foregroundStyle(.secondary)
                 }
                 .width(min: Metrics.locationColumnMinWidth)
+                TableColumn(L10n.Browse.searchMatchColumn) { result in
+                    Text(matchDescription(result))
+                        .lineLimit(1)
+                        .foregroundStyle(.secondary)
+                }
+                .width(min: Metrics.matchColumnMinWidth)
             }
             .contextMenu(forSelectionType: SearchResultItem.ID.self, menu: { _ in }, primaryAction: { ids in
                 guard ids.count == 1, let result = results.first(where: { $0.id == ids.first }) else { return }
@@ -53,6 +60,13 @@
             })
             .scrollContentBackground(.hidden)
             .alternatingRowBackgrounds(.disabled)
+        }
+
+        /// The web client's label, with the matched line when there is one: "Contents, Line 12".
+        private func matchDescription(_ result: SearchResultItem) -> String {
+            [result.matchKind?.title, searchResultLineLabel(result)]
+                .compactMap(\.self)
+                .joined(separator: ", ")
         }
 
         private func icon(for result: SearchResultItem) -> some View {
@@ -71,13 +85,21 @@
     #Preview("Results") {
         MacSearchResultsTable(
             results: [
-                SearchResultItem(name: "Trips", path: "Photos", kind: "dir"),
-                SearchResultItem(name: "Beach.jpg", path: "Photos/Trips", kind: "file"),
-                SearchResultItem(name: "Quarterly Report.txt", path: "Documents", kind: "file", matchLine: "    vacation budget", matchLineNumber: 12),
+                SearchResultItem(name: "Trips", path: "Photos", kind: "dir", isNameMatch: true),
+                SearchResultItem(name: "Beach.jpg", path: "Photos/Trips", kind: "file", isNameMatch: true, isContentMatch: true),
+                SearchResultItem(
+                    name: "Quarterly Report.txt", path: "Documents", kind: "file",
+                    matchLine: "    vacation budget", matchLineNumber: 12, isNameMatch: false, isContentMatch: true
+                ),
             ],
             favoritePaths: ["Photos/Trips"],
             onOpen: { _ in }
         )
         .previewCanvas(.table)
+    }
+
+    #Preview("Empty") {
+        MacSearchResultsTable(results: [], favoritePaths: [], onOpen: { _ in })
+            .previewCanvas(.table)
     }
 #endif

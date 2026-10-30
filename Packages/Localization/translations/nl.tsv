@@ -521,6 +521,14 @@ browse.nameErrorReserved	Die naam is niet toegestaan.
 browse.nameErrorSeparators	Een naam mag geen / of \ bevatten.
 browse.searchMatchLine	Regel %1$lld: %2$@
 browse.searchMatchLineLabel	Regel %lld
+browse.searchTooShort	Typ minstens %lld tekens om in submappen en bestandsinhoud te zoeken.
+browse.searchStoppedEarly	De zoekopdracht is gestopt bij de tijdslimiet. Dit zijn de resultaten die tot nu toe zijn gevonden.
+browse.searchFirstOnly	Eerste %lld resultaten. Verfijn de zoekopdracht om meer te zien.
+browse.searchShowMore	Meer tonen
+browse.searchMatchColumn	Overeenkomst
+browse.searchMatchedByName	Naam
+browse.searchMatchedByContent	Inhoud
+browse.searchMatchedByBoth	Naam en inhoud
 createShare.errorPasswordRequired	Voer een wachtwoord in of schakel wachtwoordbeveiliging uit.
 filter.sheetTitle	Filteren op type
 filter.button	Filteren

@@ -521,6 +521,14 @@ browse.nameErrorReserved	Acest nume nu este permis.
 browse.nameErrorSeparators	Un nume nu poate conține / sau \.
 browse.searchMatchLine	Linia %1$lld: %2$@
 browse.searchMatchLineLabel	Linia %lld
+browse.searchTooShort	Tastează cel puțin %lld caractere pentru a căuta în subfoldere și în conținutul fișierelor.
+browse.searchStoppedEarly	Căutarea s-a oprit la limita de timp. Acestea sunt rezultatele găsite până acum.
+browse.searchFirstOnly	Primele %lld rezultate. Restrânge căutarea pentru a vedea mai multe.
+browse.searchShowMore	Afișează mai multe
+browse.searchMatchColumn	Potrivire
+browse.searchMatchedByName	Nume
+browse.searchMatchedByContent	Conținut
+browse.searchMatchedByBoth	Nume și conținut
 createShare.errorPasswordRequired	Introdu o parolă sau dezactivează protecția cu parolă.
 filter.sheetTitle	Filtrează după tip
 filter.button	Filtrează

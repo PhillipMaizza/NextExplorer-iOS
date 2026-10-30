@@ -14,6 +14,7 @@ extension BrowseFeature {
         guard !query.isEmpty else {
             state.searchResults = nil
             state.isSearchingRemotely = false
+            state.searchShortfall = nil
             state.selectedSearchCategories = []
             return .cancel(id: CancelID.search)
         }
@@ -33,10 +34,17 @@ extension BrowseFeature {
         // The server only searches from three characters on; until then the instant matches stand.
         guard query.count >= FilesClient.minimumSearchTermLength else {
             state.isSearchingRemotely = false
+            state.searchShortfall = nil
             return .cancel(id: CancelID.search)
         }
         state.isSearchingRemotely = true
+        return fetchSearchResults(state, isDebounced: true)
+    }
 
+    /// The server search on its own, without the instant pre-fill: Show more widens the answer
+    /// already on screen rather than starting over from the local matches.
+    func fetchSearchResults(_ state: State, isDebounced: Bool) -> Effect<Action> {
+        let query = state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         // Both scopes hit the same recursive, content aware backend endpoint; only the base path
         // differs. "This Folder" scopes to the current directory (its whole subtree); "Everywhere"
         // searches from the root.
@@ -44,11 +52,14 @@ extension BrowseFeature {
         let serverURL = state.serverURL
         let filesClient = filesClient
         let clock = clock
+        let limit = state.searchLimit
 
         return .run { send in
-            try await clock.sleep(for: Constants.searchDebounce)
+            if isDebounced {
+                try await clock.sleep(for: Constants.searchDebounce)
+            }
             try await send(.searchResultsResponse(apiResult {
-                try await filesClient.search(serverURL, scopePath, query, Constants.searchLimit)
+                try await filesClient.search(serverURL, scopePath, query, limit)
             }))
         }
         .cancellable(id: CancelID.search, cancelInFlight: true)
@@ -69,6 +80,24 @@ extension BrowseFeature {
                 path: (favoritePath as NSString).deletingLastPathComponent,
                 kind: isDirectory ? "dir" : "file"
             )
+        }
+    }
+}
+
+/// The two ways a search answer can be short of the whole truth, as the web client says them.
+public enum SearchShortfall: Equatable, Sendable {
+    /// The search hit its time budget: these are the results found so far.
+    case stoppedEarly
+    /// The page is full; there may be more past the first `count`.
+    case firstOnly(count: Int)
+
+    init?(_ page: SearchPage) {
+        if page.isTruncated {
+            self = .stoppedEarly
+        } else if page.isComplete {
+            return nil
+        } else {
+            self = .firstOnly(count: page.limit ?? page.items.count)
         }
     }
 }

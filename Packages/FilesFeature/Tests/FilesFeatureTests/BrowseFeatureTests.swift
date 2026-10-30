@@ -854,6 +854,104 @@ struct BrowseFeatureTests {
         }
     }
 
+    @Test
+    func searchKeepsTheServerRankingAndShowMoreWidensIt() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.searchScope = .everywhere
+        let closest = SearchResultItem(name: "zeta", path: "", kind: "dir", isNameMatch: true)
+        let content = SearchResultItem(name: "alpha.txt", path: "Docs", kind: "file", matchLine: "zeta", matchLineNumber: 3, isContentMatch: true)
+        let more = SearchResultItem(name: "beta.txt", path: "Docs", kind: "file", isContentMatch: true)
+        let limits = LockIsolated<[Int?]>([])
+        let clock = TestClock()
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, limit in
+                limits.withValue { $0.append(limit) }
+                return limit == 100
+                    ? SearchPage(items: [closest, content], isComplete: false, limit: 100)
+                    : SearchPage(items: [closest, content, more], limit: 300)
+            }
+        }
+
+        await store.send(.searchQueryChanged("zeta")) {
+            $0.searchQuery = "zeta"
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [closest, content]
+            $0.searchShortfall = .firstOnly(count: 100)
+        }
+        #expect(store.state.canShowMoreSearchResults)
+
+        // Widens straight away, no debounce, and keeps the results on screen meanwhile.
+        await store.send(.searchShowMoreTapped) {
+            $0.searchLimit = 300
+            $0.isSearchingRemotely = true
+        }
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [closest, content, more]
+            $0.searchShortfall = nil
+        }
+        #expect(limits.value == [100, 300])
+
+        // A new query starts over from the first step.
+        await store.send(.searchQueryChanged("zetas")) {
+            $0.searchQuery = "zetas"
+            $0.searchLimit = 100
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await store.skipInFlightEffects()
+    }
+
+    @Test
+    func aSearchStoppedAtItsTimeLimitSaysSo() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.searchScope = .everywhere
+        let hit = SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "file", isNameMatch: true)
+        let clock = TestClock()
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in SearchPage(items: [hit], isTruncated: true, isComplete: true, limit: 100) }
+        }
+
+        await store.send(.searchQueryChanged("vac")) {
+            $0.searchQuery = "vac"
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [hit]
+            $0.searchShortfall = .stoppedEarly
+        }
+        #expect(!store.state.canShowMoreSearchResults)
+    }
+
+    @Test
+    func aTermTooShortForTheServerIsFlagged() {
+        var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
+        state.searchQuery = " p "
+        #expect(state.isSearchTermTooShort)
+        state.searchQuery = "pay"
+        #expect(!state.isSearchTermTooShort)
+        state.searchQuery = ""
+        #expect(!state.isSearchTermTooShort)
+    }
+
     // MARK: - Edge cases
 
     @Test

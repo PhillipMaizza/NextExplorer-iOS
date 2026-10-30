@@ -232,7 +232,7 @@ public struct DestinationPickerFeature {
         return .run { send in
             try await clock.sleep(for: Constants.searchDebounce)
             try await send(.searchResultsResponse(apiResult {
-                try await filesClient.search(serverURL, scope, query, Constants.searchLimit)
+                try await filesClient.search(serverURL, scope, query, Constants.searchLimit).items
             }))
         }
         .cancellable(id: CancelID.search, cancelInFlight: true)

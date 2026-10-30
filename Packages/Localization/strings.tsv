@@ -616,6 +616,14 @@ browse.nameErrorReserved	That name isn't allowed.
 browse.nameErrorSeparators	A name can't contain / or \.
 browse.searchMatchLine	Line %1$lld: %2$@
 browse.searchMatchLineLabel	Line %lld
+browse.searchTooShort	Type at least %lld characters to search subfolders and file contents.
+browse.searchStoppedEarly	The search stopped at its time limit. These are the results found so far.
+browse.searchFirstOnly	First %lld results. Narrow the search to see more.
+browse.searchShowMore	Show More
+browse.searchMatchColumn	Match
+browse.searchMatchedByName	Name
+browse.searchMatchedByContent	Contents
+browse.searchMatchedByBoth	Name and Contents
 createShare.errorPasswordRequired	Enter a password or turn off password protection.
 login.errorServer	The server ran into a problem (error %lld). Please try again later.
 # ---- filter by type ----

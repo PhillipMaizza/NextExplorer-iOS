@@ -692,6 +692,10 @@ struct BrowseContentView: View {
                     favoritePaths: store.favoritePaths,
                     onOpen: { store.send(.searchResultTapped($0)) }
                 )
+                if let message = searchStatusMessage {
+                    Divider()
+                    searchStatusFooter(message)
+                }
             }
             .backgroundGradient()
         #endif
@@ -1286,6 +1290,12 @@ struct BrowseContentView: View {
                         BrowseRootSectionHeader(title: L10n.Browse.locations)
                     }
                 }
+                if store.isSearching, let message = searchStatusMessage {
+                    searchStatusFooter(message)
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
                 offlineFooterRow
                 pasteTargetRow
             }
@@ -1354,6 +1364,9 @@ struct BrowseContentView: View {
                     .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
                     value: store.displayedSearchResults
                 )
+                if store.isSearching, let message = searchStatusMessage {
+                    searchStatusFooter(message)
+                }
                 offlineFooter
                 pasteTargetArea
             }
@@ -1381,6 +1394,18 @@ struct BrowseContentView: View {
                 .listRowSeparator(.hidden)
                 .contextMenu { pasteEmptySpaceMenu }
         }
+    }
+
+    private var searchStatusMessage: String? {
+        SearchStatusFooter.message(isTooShort: store.isSearchTermTooShort, shortfall: store.searchShortfall)
+    }
+
+    private func searchStatusFooter(_ message: String) -> some View {
+        SearchStatusFooter(
+            message: message,
+            canShowMore: store.canShowMoreSearchResults && !store.isSearchingRemotely,
+            onShowMore: { store.send(.searchShowMoreTapped) }
+        )
     }
 
     /// "Showing a saved copy" notice, rendered as a footer below the last row/cell of the
@@ -1600,8 +1625,12 @@ struct BrowseContentView: View {
         #if os(macOS)
             ContentUnavailableView {
                 Label { Text(L10n.Browse.searchNoMatchesInFolder(store.searchQuery)) } icon: { IconKit.search }
+            } description: {
+                if store.isSearchTermTooShort {
+                    Text(SearchStatusFooter.tooShortMessage)
+                }
             } actions: {
-                if store.searchScope == .thisFolder {
+                if store.searchScope == .thisFolder, !store.isSearchTermTooShort {
                     Button(L10n.Browse.searchEverywhere) { store.send(.searchScopeChanged(.everywhere)) }
                 }
             }
@@ -1619,7 +1648,11 @@ struct BrowseContentView: View {
                 .frame(width: Constants.emptyStateIconSize, height: Constants.emptyStateIconSize)
             Text(L10n.Browse.searchNoMatchesInFolder(store.searchQuery))
                 .type(.body1(.semibold), style: .secondary)
-            if store.searchScope == .thisFolder {
+            if store.isSearchTermTooShort {
+                Text(SearchStatusFooter.tooShortMessage)
+                    .type(.body3(.regular), style: .secondary)
+                    .multilineTextAlignment(.center)
+            } else if store.searchScope == .thisFolder {
                 DSButton(L10n.Browse.searchEverywhere,
                          icon: IconKit.search,
                          style: .secondary,

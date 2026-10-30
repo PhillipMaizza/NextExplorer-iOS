@@ -520,6 +520,14 @@ browse.nameErrorReserved	Esse nome não é permitido.
 browse.nameErrorSeparators	Um nome não pode conter / ou \.
 browse.searchMatchLine	Linha %1$lld: %2$@
 browse.searchMatchLineLabel	Linha %lld
+browse.searchTooShort	Digite pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos arquivos.
+browse.searchStoppedEarly	A pesquisa parou no limite de tempo. Estes são os resultados encontrados até agora.
+browse.searchFirstOnly	Primeiros %lld resultados. Refine a pesquisa para ver mais.
+browse.searchShowMore	Mostrar mais
+browse.searchMatchColumn	Correspondência
+browse.searchMatchedByName	Nome
+browse.searchMatchedByContent	Conteúdo
+browse.searchMatchedByBoth	Nome e conteúdo
 createShare.errorPasswordRequired	Introduza uma palavra-passe ou desative a proteção por palavra-passe.
 filter.sheetTitle	Filtrar por tipo
 filter.button	Filtrar

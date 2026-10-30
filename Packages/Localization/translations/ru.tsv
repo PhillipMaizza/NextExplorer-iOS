@@ -521,6 +521,14 @@ browse.nameErrorReserved	Это имя недопустимо.
 browse.nameErrorSeparators	Имя не может содержать / или \.
 browse.searchMatchLine	Строка %1$lld: %2$@
 browse.searchMatchLineLabel	Строка %lld
+browse.searchTooShort	Введите не менее %lld символов, чтобы искать во вложенных папках и содержимом файлов.
+browse.searchStoppedEarly	Поиск остановлен по истечении лимита времени. Вот результаты, найденные на данный момент.
+browse.searchFirstOnly	Первые результаты: %lld. Уточните запрос, чтобы увидеть больше.
+browse.searchShowMore	Показать ещё
+browse.searchMatchColumn	Совпадение
+browse.searchMatchedByName	Имя
+browse.searchMatchedByContent	Содержимое
+browse.searchMatchedByBoth	Имя и содержимое
 createShare.errorPasswordRequired	Введите пароль или отключите защиту паролем.
 filter.sheetTitle	Фильтр по типу
 filter.button	Фильтр

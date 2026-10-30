@@ -520,6 +520,14 @@ browse.nameErrorReserved	Quel nome non è consentito.
 browse.nameErrorSeparators	Un nome non può contenere / o \.
 browse.searchMatchLine	Riga %1$lld: %2$@
 browse.searchMatchLineLabel	Riga %lld
+browse.searchTooShort	Digita almeno %lld caratteri per cercare nelle sottocartelle e nel contenuto dei file.
+browse.searchStoppedEarly	La ricerca si è fermata al limite di tempo. Questi sono i risultati trovati finora.
+browse.searchFirstOnly	Primi %lld risultati. Restringi la ricerca per vederne altri.
+browse.searchShowMore	Mostra altri
+browse.searchMatchColumn	Corrispondenza
+browse.searchMatchedByName	Nome
+browse.searchMatchedByContent	Contenuto
+browse.searchMatchedByBoth	Nome e contenuto
 createShare.errorPasswordRequired	Inserisci una password o disattiva la protezione con password.
 filter.sheetTitle	Filtra per tipo
 filter.button	Filtra

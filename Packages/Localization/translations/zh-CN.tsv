@@ -521,6 +521,14 @@ browse.nameErrorReserved	该名称不允许使用。
 browse.nameErrorSeparators	名称不能包含 / 或 \。
 browse.searchMatchLine	第 %1$lld 行：%2$@
 browse.searchMatchLineLabel	第 %lld 行
+browse.searchTooShort	至少输入 %lld 个字符以搜索子文件夹和文件内容。
+browse.searchStoppedEarly	搜索已达到时间限制而停止。以下是目前找到的结果。
+browse.searchFirstOnly	前 %lld 个结果。缩小搜索范围以查看更多。
+browse.searchShowMore	显示更多
+browse.searchMatchColumn	匹配
+browse.searchMatchedByName	名称
+browse.searchMatchedByContent	内容
+browse.searchMatchedByBoth	名称和内容
 createShare.errorPasswordRequired	请输入密码或关闭密码保护。
 filter.sheetTitle	按类型筛选
 filter.button	筛选

@@ -521,6 +521,14 @@ browse.nameErrorReserved	その名前は使用できません。
 browse.nameErrorSeparators	名前に / または \ を含めることはできません。
 browse.searchMatchLine	%1$lld 行目: %2$@
 browse.searchMatchLineLabel	%lld 行目
+browse.searchTooShort	サブフォルダとファイルの内容を検索するには、%lld 文字以上入力してください。
+browse.searchStoppedEarly	検索は制限時間で停止しました。これまでに見つかった結果です。
+browse.searchFirstOnly	最初の %lld 件の結果です。さらに表示するには検索を絞り込んでください。
+browse.searchShowMore	さらに表示
+browse.searchMatchColumn	一致
+browse.searchMatchedByName	名前
+browse.searchMatchedByContent	内容
+browse.searchMatchedByBoth	名前と内容
 createShare.errorPasswordRequired	パスワードを入力するか、パスワード保護をオフにしてください。
 filter.sheetTitle	タイプで絞り込む
 filter.button	絞り込む

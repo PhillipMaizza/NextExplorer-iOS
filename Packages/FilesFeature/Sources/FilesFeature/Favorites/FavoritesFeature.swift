@@ -520,7 +520,7 @@ public struct FavoritesFeature {
             let outcomes = try await withThrowingTaskGroup(of: Result<[SearchResultItem], FilesClientError>.self) { group in
                 for path in favoritePaths {
                     group.addTask {
-                        try await apiResult { try await filesClient.search(serverURL, path, query, Constants.searchLimit) }
+                        try await apiResult { try await filesClient.search(serverURL, path, query, Constants.searchLimit).items }
                     }
                 }
                 var acc: [Result<[SearchResultItem], FilesClientError>] = []

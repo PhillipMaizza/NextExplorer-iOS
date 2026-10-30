@@ -103,11 +103,19 @@ public enum L10n {
         public static var scopeThisFolder: String { tr("browse.scopeThisFolder") }  // "This Folder"
         public static var searchEverywhere: String { tr("browse.searchEverywhere") }  // "Search everywhere"
         public static var searchFailed: String { tr("browse.searchFailed") }  // "Couldn't search. Check your connection and try again."
+        public static func searchFirstOnly(_ a0: CVarArg) -> String { tr("browse.searchFirstOnly", a0) }
+        public static var searchMatchColumn: String { tr("browse.searchMatchColumn") }  // "Match"
         public static func searchMatchLine(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.searchMatchLine", a0, a1) }
         public static func searchMatchLineLabel(_ a0: CVarArg) -> String { tr("browse.searchMatchLineLabel", a0) }
+        public static var searchMatchedByBoth: String { tr("browse.searchMatchedByBoth") }  // "Name and Contents"
+        public static var searchMatchedByContent: String { tr("browse.searchMatchedByContent") }  // "Contents"
+        public static var searchMatchedByName: String { tr("browse.searchMatchedByName") }  // "Name"
         public static func searchNoMatchesInFolder(_ a0: CVarArg) -> String { tr("browse.searchNoMatchesInFolder", a0) }
         public static var searchScopeEverywhere: String { tr("browse.searchScopeEverywhere") }  // "Everywhere"
         public static var searchScopeInFolder: String { tr("browse.searchScopeInFolder") }  // "This Folder"
+        public static var searchShowMore: String { tr("browse.searchShowMore") }  // "Show More"
+        public static var searchStoppedEarly: String { tr("browse.searchStoppedEarly") }
+        public static func searchTooShort(_ a0: CVarArg) -> String { tr("browse.searchTooShort", a0) }
         public static var sectionPersonal: String { tr("browse.sectionPersonal") }  // "Personal"
         public static var showInFinder: String { tr("browse.showInFinder") }  // "Show in Finder"
         public static var transferConflictKeepBoth: String { tr("browse.transferConflictKeepBoth") }  // "Keep Both"

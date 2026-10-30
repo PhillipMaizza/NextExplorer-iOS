@@ -375,7 +375,34 @@ struct FilesClientLiveTests {
     func searchWithAnEmptyQueryStillSendsTheRequest() async throws {
         stub(statusCode: 200, body: #"{"items": []}"#.data(using: .utf8)!)
         let results = try await makeClient().search(serverURL, "", "", nil)
-        #expect(results.isEmpty)
+        #expect(results.items.isEmpty)
+    }
+
+    @Test
+    func searchKeepsTheServerOrderAndSaysWhyItFallsShort() async throws {
+        let body = #"""
+        {"items": [
+          {"name": "zeta.txt", "path": "Docs", "kind": "file", "matchedName": true, "matchedContent": false},
+          {"name": "alpha.txt", "path": "Docs", "kind": "file", "matchLine": "zeta here", "matchLineNumber": 4,
+           "matchedName": false, "matchedContent": true}
+        ], "truncated": false, "limit": 2, "complete": false}
+        """#
+        stub(statusCode: 200, body: body.data(using: .utf8)!)
+        let page = try await makeClient().search(serverURL, "", "zeta", 2)
+        #expect(page.items.map(\.name) == ["zeta.txt", "alpha.txt"])
+        #expect(page.items.map(\.matchKind) == [.name, .contents])
+        #expect(!page.isTruncated)
+        #expect(!page.isComplete)
+        #expect(page.limit == 2)
+    }
+
+    @Test
+    func searchFromAnOlderServerReadsAsComplete() async throws {
+        stub(statusCode: 200, body: #"{"items": [{"name": "a", "path": "", "kind": "dir"}]}"#.data(using: .utf8)!)
+        let page = try await makeClient().search(serverURL, "", "abc", nil)
+        #expect(page.isComplete)
+        #expect(!page.isTruncated)
+        #expect(page.items.first?.matchKind == nil)
     }
 
     @Test

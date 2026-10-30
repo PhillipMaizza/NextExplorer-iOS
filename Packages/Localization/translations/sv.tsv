@@ -521,6 +521,14 @@ browse.nameErrorReserved	Det namnet är inte tillåtet.
 browse.nameErrorSeparators	Ett namn får inte innehålla / eller \.
 browse.searchMatchLine	Rad %1$lld: %2$@
 browse.searchMatchLineLabel	Rad %lld
+browse.searchTooShort	Skriv minst %lld tecken för att söka i undermappar och filinnehåll.
+browse.searchStoppedEarly	Sökningen stoppades vid tidsgränsen. Det här är resultaten som hittats hittills.
+browse.searchFirstOnly	Första %lld resultaten. Begränsa sökningen för att se fler.
+browse.searchShowMore	Visa fler
+browse.searchMatchColumn	Träff
+browse.searchMatchedByName	Namn
+browse.searchMatchedByContent	Innehåll
+browse.searchMatchedByBoth	Namn och innehåll
 createShare.errorPasswordRequired	Ange ett lösenord eller stäng av lösenordsskydd.
 filter.sheetTitle	Filtrera efter typ
 filter.button	Filtrera

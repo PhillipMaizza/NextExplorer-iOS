@@ -521,6 +521,14 @@ browse.nameErrorReserved	هذا الاسم غير مسموح به.
 browse.nameErrorSeparators	لا يمكن أن يحتوي الاسم على / أو \.
 browse.searchMatchLine	السطر %1$lld: %2$@
 browse.searchMatchLineLabel	السطر %lld
+browse.searchTooShort	اكتب %lld أحرف على الأقل للبحث في المجلدات الفرعية ومحتوى الملفات.
+browse.searchStoppedEarly	توقف البحث عند حده الزمني. هذه هي النتائج التي عُثر عليها حتى الآن.
+browse.searchFirstOnly	أول %lld نتيجة. ضيّق البحث لرؤية المزيد.
+browse.searchShowMore	عرض المزيد
+browse.searchMatchColumn	التطابق
+browse.searchMatchedByName	الاسم
+browse.searchMatchedByContent	المحتوى
+browse.searchMatchedByBoth	الاسم والمحتوى
 createShare.errorPasswordRequired	أدخل كلمة سر أو أوقف الحماية بكلمة سر.
 filter.sheetTitle	التصفية حسب النوع
 filter.button	تصفية

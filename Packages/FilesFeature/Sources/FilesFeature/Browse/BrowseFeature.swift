@@ -26,8 +26,6 @@ public struct BrowseFeature {
         /// "Name (2)" missing until a manual refresh.
         static let arrivalRechecks = 3
         static let arrivalRecheckDelay: Duration = .milliseconds(700)
-        /// Matches the backend's own default result cap.
-        static let searchLimit = 100
         /// An action taken from a full-screen preview that also dismisses the cover (delete,
         /// "Open" on the download toast, "View in Shared") waits this long before it runs, so the
         /// cover finishes dismissing first and the effect: a row sliding out, a tab switch:
@@ -212,6 +210,12 @@ public struct BrowseFeature {
         /// otherwise a result shows only if its category is in the set. Only relevant while
         /// searching, and pruned to the categories actually present as results change.
         public var selectedSearchCategories: Set<FileCategory> = []
+        /// How many results the search asks for; Show more steps it through
+        /// `FilesClient.searchLimitSteps`, and a new query or scope starts over.
+        public var searchLimit = FilesClient.searchLimitSteps[0]
+        /// Why the latest server answer may be short of the whole truth, said rather than left
+        /// to look like everything.
+        public var searchShortfall: SearchShortfall?
         public var sortOption: SortOption = .name
         public var sortDirection: SortDirection = .ascending
         /// Read live from the same in-memory key `SettingsFeature` writes, so toggling
@@ -325,6 +329,17 @@ public struct BrowseFeature {
 
         public var isSearching: Bool { !searchQuery.isEmpty }
 
+        /// Typed, but too short for the server to search; only the instant matches show.
+        public var isSearchTermTooShort: Bool {
+            let count = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count
+            return count > 0 && count < FilesClient.minimumSearchTermLength
+        }
+
+        public var canShowMoreSearchResults: Bool {
+            guard case .firstOnly = searchShortfall else { return false }
+            return searchLimit < (FilesClient.searchLimitSteps.last ?? searchLimit)
+        }
+
         /// `items`, folders first, with hidden entries dropped unless the preference is on
         /// and sorted by `sortOption`.
         public var displayedItems: IdentifiedArrayOf<FileItem> {
@@ -401,7 +416,8 @@ public struct BrowseFeature {
         case searchCategoryToggled(FileCategory)
         case searchFilterCleared
         case searchResultTapped(SearchResultItem)
-        case searchResultsResponse(Result<[SearchResultItem], FilesClientError>)
+        case searchShowMoreTapped
+        case searchResultsResponse(Result<SearchPage, FilesClientError>)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
         case renameTapped(FileItem)
@@ -660,11 +676,19 @@ public struct BrowseFeature {
                 // and refetch, flashing the list. Only act on a real text change.
                 guard query != state.searchQuery else { return .none }
                 state.searchQuery = query
+                state.searchLimit = FilesClient.searchLimitSteps[0]
                 return search(&state)
 
             case let .searchScopeChanged(scope):
                 state.searchScope = scope
+                state.searchLimit = FilesClient.searchLimitSteps[0]
                 return search(&state)
+
+            case .searchShowMoreTapped:
+                guard state.canShowMoreSearchResults else { return .none }
+                state.searchLimit = FilesClient.searchLimitSteps.first { $0 > state.searchLimit } ?? state.searchLimit
+                state.isSearchingRemotely = true
+                return fetchSearchResults(state, isDebounced: false)
 
             case let .searchCategoryToggled(category):
                 if state.selectedSearchCategories.contains(category) {
@@ -703,9 +727,12 @@ public struct BrowseFeature {
                 )
                 return .send(.rowTapped(item))
 
-            case let .searchResultsResponse(.success(results)):
+            case let .searchResultsResponse(.success(page)):
                 state.isSearchingRemotely = false
-                state.searchResults = IdentifiedArray(Self.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
+                // The server ranks its answer (names first, closest first, then contents by
+                // relevance), so it stays in that order.
+                state.searchResults = IdentifiedArray(page.items, id: \.id, uniquingIDsWith: { first, _ in first })
+                state.searchShortfall = SearchShortfall(page)
                 // Drop any selected category the new results no longer contain, so the filter
                 // can't strand the list on an empty set the sheet doesn't even offer.
                 state.selectedSearchCategories.formIntersection(Set(state.availableSearchCategories))
@@ -714,6 +741,7 @@ public struct BrowseFeature {
             case let .searchResultsResponse(.failure(error)):
                 state.isSearchingRemotely = false
                 state.searchResults = []
+                state.searchShortfall = nil
                 // Surface it, otherwise a network blip during a search is indistinguishable from
                 // a genuine empty result.
                 state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : L10n.Browse.searchFailed

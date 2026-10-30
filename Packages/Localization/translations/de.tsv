@@ -521,6 +521,14 @@ browse.nameErrorReserved	Dieser Name ist nicht zulässig.
 browse.nameErrorSeparators	Ein Name darf kein / oder \ enthalten.
 browse.searchMatchLine	Zeile %1$lld: %2$@
 browse.searchMatchLineLabel	Zeile %lld
+browse.searchTooShort	Gib mindestens %lld Zeichen ein, um Unterordner und Dateiinhalte zu durchsuchen.
+browse.searchStoppedEarly	Die Suche wurde am Zeitlimit beendet. Das sind die bisher gefundenen Ergebnisse.
+browse.searchFirstOnly	Erste %lld Ergebnisse. Grenze die Suche ein, um mehr zu sehen.
+browse.searchShowMore	Mehr anzeigen
+browse.searchMatchColumn	Treffer
+browse.searchMatchedByName	Name
+browse.searchMatchedByContent	Inhalt
+browse.searchMatchedByBoth	Name und Inhalt
 createShare.errorPasswordRequired	Gib ein Passwort ein oder deaktiviere den Passwortschutz.
 filter.sheetTitle	Nach Typ filtern
 filter.button	Filtern

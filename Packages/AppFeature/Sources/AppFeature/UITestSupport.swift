@@ -187,13 +187,16 @@
                     // found by search stays in the results and can be opened from there.
                     let nameMatches = store.current()
                         .filter { $0.name.localizedCaseInsensitiveContains(trimmed) }
-                        .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file") }
-                    return nameMatches + [
-                        SearchResultItem(name: searchHitName, path: "Documents/\(searchHitName)", kind: "txt", matchLine: trimmed, matchLineNumber: 1),
+                        .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file", isNameMatch: true) }
+                    return SearchPage(items: nameMatches + [
+                        SearchResultItem(
+                            name: searchHitName, path: "Documents/\(searchHitName)", kind: "txt",
+                            matchLine: trimmed, matchLineNumber: 1, isContentMatch: true
+                        ),
                         SearchResultItem(name: "Meeting Notes.md", path: "Documents/Meeting Notes.md", kind: "md"),
                         // A mixed type hit so a filter chip test can prove it narrows the results.
                         SearchResultItem(name: imageSearchHitName, path: "Documents/\(imageSearchHitName)", kind: "jpg"),
-                    ]
+                    ])
                 }
             case .empty:
                 client.browse = { _, path in

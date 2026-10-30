@@ -521,6 +521,14 @@ browse.nameErrorReserved	Ta nazwa jest niedozwolona.
 browse.nameErrorSeparators	Nazwa nie może zawierać / ani \.
 browse.searchMatchLine	Wiersz %1$lld: %2$@
 browse.searchMatchLineLabel	Wiersz %lld
+browse.searchTooShort	Wpisz co najmniej %lld znaki, aby przeszukać podfoldery i zawartość plików.
+browse.searchStoppedEarly	Wyszukiwanie zatrzymało się na limicie czasu. Oto wyniki znalezione do tej pory.
+browse.searchFirstOnly	Pierwsze wyniki: %lld. Zawęź wyszukiwanie, aby zobaczyć więcej.
+browse.searchShowMore	Pokaż więcej
+browse.searchMatchColumn	Dopasowanie
+browse.searchMatchedByName	Nazwa
+browse.searchMatchedByContent	Zawartość
+browse.searchMatchedByBoth	Nazwa i zawartość
 createShare.errorPasswordRequired	Wprowadź hasło lub wyłącz ochronę hasłem.
 filter.sheetTitle	Filtruj według typu
 filter.button	Filtruj
