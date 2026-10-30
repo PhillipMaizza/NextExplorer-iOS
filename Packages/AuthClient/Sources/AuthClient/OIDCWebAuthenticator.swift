@@ -20,7 +20,9 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
             let session = ASWebAuthenticationSession(
                 url: url,
                 callbackURLScheme: callbackURLScheme
-            ) { callbackURL, error in
+            ) { @Sendable callbackURL, error in
+                // Nonisolated on purpose: the Mac calls this on a background queue, where a
+                // main actor closure (inferred from the class) traps the isolation check.
                 if let error {
                     if let asError = error as? ASWebAuthenticationSessionError,
                        asError.code == .canceledLogin

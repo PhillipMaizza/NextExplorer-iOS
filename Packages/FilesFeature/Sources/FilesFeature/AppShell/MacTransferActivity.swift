@@ -191,7 +191,8 @@
         }
 
         private func requestAuthorization() {
-            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in }
+            // Nonisolated: the callback arrives on a background queue.
+            UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { @Sendable _, _ in }
         }
 
         private func notify(title: String, body: String) {
