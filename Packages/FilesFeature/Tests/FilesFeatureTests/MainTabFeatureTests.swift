@@ -55,6 +55,33 @@ struct MainTabFeatureTests {
     }
 
     @Test
+    func openedFoldersFillRecentFoldersNewestFirstWithoutRepeats() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) { MainTabFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.browse(.navigateToDirectory(path: "Documents", title: "Documents")))
+        await store.send(.browse(.navigateToDirectory(path: "Photos/Trip", title: "Trip")))
+        await store.send(.browse(.navigateToDirectory(path: "Documents", title: "Documents")))
+        #expect(store.state.recentFolders == ["Documents", "Photos/Trip"])
+
+        await store.send(.recentFoldersCleared) {
+            $0.recentFolders = []
+        }
+    }
+
+    @Test
+    func recentFoldersKeepOnlyTheNewestTen() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) { MainTabFeature() }
+        store.exhaustivity = .off
+
+        for index in 0 ..< 12 {
+            await store.send(.browse(.navigateToDirectory(path: "Folder\(index)", title: "Folder\(index)")))
+        }
+        #expect(store.state.recentFolders.count == MainTabFeature.recentFoldersLimit)
+        #expect(store.state.recentFolders.first == "Folder11")
+    }
+
+    @Test
     func initialStateDefaultsToTheBrowseTab() {
         let state = MainTabFeature.State(serverURL: serverURL, user: user)
         #expect(state.selectedTab == .browse)

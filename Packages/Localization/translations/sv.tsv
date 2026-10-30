@@ -701,3 +701,5 @@ menu.forward	Framåt
 menu.goToFolder	Gå till mapp…
 menu.goToFolderTitle	Gå till mappen:
 menu.copyPath	Kopiera sökväg
+menu.recentFolders	Senaste mappar
+menu.clearRecent	Rensa menyn

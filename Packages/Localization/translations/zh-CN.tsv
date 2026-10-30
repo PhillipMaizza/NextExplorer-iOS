@@ -701,3 +701,5 @@ menu.forward	前进
 menu.goToFolder	前往文件夹…
 menu.goToFolderTitle	前往文件夹：
 menu.copyPath	拷贝路径
+menu.recentFolders	最近使用的文件夹
+menu.clearRecent	清除菜单

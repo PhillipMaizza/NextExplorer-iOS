@@ -701,3 +701,5 @@ menu.forward	Avanti
 menu.goToFolder	Vai alla cartella…
 menu.goToFolderTitle	Vai alla cartella:
 menu.copyPath	Copia percorso
+menu.recentFolders	Cartelle recenti
+menu.clearRecent	Cancella menu

@@ -701,3 +701,5 @@ menu.forward	Вперед
 menu.goToFolder	Переход к папке…
 menu.goToFolderTitle	Перейти к папке:
 menu.copyPath	Скопировать путь
+menu.recentFolders	Недавние папки
+menu.clearRecent	Очистить меню

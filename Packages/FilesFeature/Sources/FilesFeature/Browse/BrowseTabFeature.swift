@@ -18,6 +18,11 @@ public struct BrowseTabFeature {
         public init(serverURL: URL) {
             root = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: L10n.Browse.navigationTitle)
         }
+
+        /// The server path of the folder on screen; empty at the volume root.
+        public var currentDirectoryPath: String {
+            path.last?.directoryPath ?? root.directoryPath
+        }
     }
 
     public enum Action: Equatable, Sendable {

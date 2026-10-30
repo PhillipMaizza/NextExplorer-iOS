@@ -701,3 +701,5 @@ menu.forward	Înainte
 menu.goToFolder	Mergi la dosar…
 menu.goToFolderTitle	Mergi la dosarul:
 menu.copyPath	Copiază calea
+menu.recentFolders	Dosare recente
+menu.clearRecent	Golește meniul

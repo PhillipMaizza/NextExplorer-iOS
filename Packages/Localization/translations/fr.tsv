@@ -701,3 +701,5 @@ menu.forward	En avant
 menu.goToFolder	Aller au dossier…
 menu.goToFolderTitle	Aller au dossier :
 menu.copyPath	Copier le chemin
+menu.recentFolders	Dossiers récents
+menu.clearRecent	Effacer le menu

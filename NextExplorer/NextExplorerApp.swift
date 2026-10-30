@@ -24,6 +24,8 @@ import SwiftUI
 struct NextExplorerApp: App {
     #if os(iOS)
         @UIApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    #else
+        @NSApplicationDelegateAdaptor(MacAppDelegate.self) private var appDelegate
     #endif
 
     static let store = Store(initialState: AppFeature.State()) {

@@ -701,3 +701,5 @@ menu.forward	Avançar
 menu.goToFolder	Ir para a pasta…
 menu.goToFolderTitle	Ir para a pasta:
 menu.copyPath	Copiar caminho
+menu.recentFolders	Pastas recentes
+menu.clearRecent	Limpar menu

@@ -122,6 +122,7 @@
                 Divider()
                 Button(L10n.Menu.goToFolder) { send(.goToFolderPrompted) }
                     .keyboardShortcut("g", modifiers: [.command, .shift])
+                recentFoldersMenu
                 Divider()
                 ForEach(Self.sections, id: \.tab) { section in
                     Button(section.title) { send(.tabSelected(section.tab)) }
@@ -131,6 +132,23 @@
             CommandGroup(replacing: .help) {
                 SupportButton()
             }
+        }
+
+        private var recentFolders: [String] {
+            guard case let .authenticated(session) = store.destination else { return [] }
+            return session.mainTab.recentFolders
+        }
+
+        /// Finder's Go ▸ Recent Folders: the folders opened in Browse this session.
+        private var recentFoldersMenu: some View {
+            Menu(L10n.Menu.recentFolders) {
+                ForEach(recentFolders, id: \.self) { path in
+                    Button((path as NSString).lastPathComponent) { send(.goToFolderRequested(path)) }
+                }
+                Divider()
+                Button(L10n.Menu.clearRecent) { send(.recentFoldersCleared) }
+            }
+            .disabled(recentFolders.isEmpty)
         }
 
         /// Sort By for the visible Browse screen, with a checkmark on the current choice.

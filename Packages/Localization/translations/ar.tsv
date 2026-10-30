@@ -701,3 +701,5 @@ menu.forward	إلى الأمام
 menu.goToFolder	انتقال إلى مجلد…
 menu.goToFolderTitle	الانتقال إلى المجلد:
 menu.copyPath	نسخ المسار
+menu.recentFolders	المجلدات الأخيرة
+menu.clearRecent	مسح القائمة
