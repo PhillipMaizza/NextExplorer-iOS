@@ -28,7 +28,8 @@ extension BrowseFeature {
         let preliminary = state.items
             .filter { SearchMatch.matches(query: query, in: $0.name) }
             .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file") }
-        state.searchResults = IdentifiedArray(Self.sortedAlphabetically(preliminary), id: \.id, uniquingIDsWith: { first, _ in first })
+        let results = preliminary + Self.favoriteMatches(state, query: query)
+        state.searchResults = IdentifiedArray(Self.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
         state.isSearchingRemotely = true
 
         // Both scopes hit the same recursive, content aware backend endpoint; only the base path
@@ -46,5 +47,23 @@ extension BrowseFeature {
             }))
         }
         .cancellable(id: CancelID.search, cancelInFlight: true)
+    }
+
+    /// Favorites whose name matches, inside the search scope, so a favorite is there to open
+    /// the moment it is typed instead of after the backend answers. Favorites are folders (the
+    /// Favorites tab opens every one as a directory), unless the loaded folder says otherwise.
+    static func favoriteMatches(_ state: State, query: String) -> [SearchResultItem] {
+        let scope = state.searchScope == .everywhere ? "" : state.directoryPath
+        return state.favoritePaths.compactMap { favoritePath in
+            guard scope.isEmpty || favoritePath.hasPrefix(scope + "/") else { return nil }
+            let name = (favoritePath as NSString).lastPathComponent
+            guard SearchMatch.matches(query: query, in: name) else { return nil }
+            let isDirectory = state.items[id: favoritePath]?.isDirectory ?? true
+            return SearchResultItem(
+                name: name,
+                path: (favoritePath as NSString).deletingLastPathComponent,
+                kind: isDirectory ? "dir" : "file"
+            )
+        }
     }
 }

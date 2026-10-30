@@ -603,6 +603,41 @@ struct BrowseFeatureTests {
     }
 
     @Test
+    func matchingFavoritesShowInstantlyWithinTheScope() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
+        state.favoritePaths = ["Photos/Trips/Vacation 2024", "Work/Vacation Plans", "Photos/Album"]
+        let clock = TestClock()
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in [] }
+        }
+
+        // "This Folder": only the favorite under Photos, ready to open before the backend answers.
+        await store.send(.searchQueryChanged("vac")) {
+            $0.searchQuery = "vac"
+            $0.searchResults = [SearchResultItem(name: "Vacation 2024", path: "Photos/Trips", kind: "dir")]
+            $0.isSearchingRemotely = true
+        }
+        // "Everywhere": every matching favorite.
+        await store.send(.searchScopeChanged(.everywhere)) {
+            $0.searchScope = .everywhere
+            $0.searchResults = [
+                SearchResultItem(name: "Vacation 2024", path: "Photos/Trips", kind: "dir"),
+                SearchResultItem(name: "Vacation Plans", path: "Work", kind: "dir"),
+            ]
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = []
+        }
+    }
+
+    @Test
     func reSendingTheSameQueryIsANoOpSoResultsDoNotFlash() async {
         let serverURL = URL(string: "https://example.com")!
         let deepHit = SearchResultItem(name: "vacation-2.jpg", path: "Photos/Trips", kind: "file")
