@@ -74,7 +74,7 @@ public struct LoginFormView: View {
     private let autoFocus: Bool
     /// Whether a successful sign in floods the screen with accent into the app. Off where the
     /// form is a dialog (the Mac Add Account sheet), which simply closes instead.
-    private let floodsIntoApp: Bool
+    private let shouldFloodIntoApp: Bool
     /// Submit button's rect in this view's own space — the seed for the sign-in circle that
     /// floods the screen with accent (à la TKSubmitTransition, scaling the button itself).
     @State private var submitButtonRect: CGRect = .zero
@@ -108,10 +108,10 @@ public struct LoginFormView: View {
     /// Drives the "What is a server?" info sheet from the `(i)` beside the server-page title.
     @State private var isServerInfoPresented = false
 
-    public init(store: StoreOf<LoginFormFeature>, autoFocus: Bool = true, floodsIntoApp: Bool = true) {
+    public init(store: StoreOf<LoginFormFeature>, autoFocus: Bool = true, shouldFloodIntoApp: Bool = true) {
         self.store = store
         self.autoFocus = autoFocus
-        self.floodsIntoApp = floodsIntoApp
+        self.shouldFloodIntoApp = shouldFloodIntoApp
     }
 
     /// A Mac has no on screen keyboard, so there is no dismiss animation to wait out before submitting.
@@ -205,7 +205,7 @@ public struct LoginFormView: View {
         .background(loginBackground)
         .coordinateSpace(.named(Constants.rootSpace))
         .overlay {
-            if floodsIntoApp, !reduceMotion, store.submitPhase == .success, submitButtonRect != .zero {
+            if shouldFloodIntoApp, !reduceMotion, store.submitPhase == .success, submitButtonRect != .zero {
                 Circle()
                     .fill(Color.accent)
                     .frame(width: submitButtonRect.height, height: submitButtonRect.height)
@@ -218,7 +218,7 @@ public struct LoginFormView: View {
                     .position(x: submitButtonRect.midX, y: submitButtonRect.midY)
                     .allowsHitTesting(false)
             }
-            if floodsIntoApp, !reduceMotion, store.oidcPhase == .success, ssoButtonRect != .zero {
+            if shouldFloodIntoApp, !reduceMotion, store.oidcPhase == .success, ssoButtonRect != .zero {
                 // Same TKSubmitTransition flood, seeded from the SSO button so an SSO sign-in
                 // grows into the app exactly like a password one, rather than snapping in.
                 Circle()
@@ -399,7 +399,7 @@ public struct LoginFormView: View {
                     DSSegmentedControl(
                         options: LoginFormFeature.URLScheme.allCases,
                         selection: Binding(get: { store.scheme }, set: { store.send(.schemeChanged($0)) }),
-                        alwaysUsesPill: true,
+                        shouldAlwaysUsePill: true,
                         label: \.displayName
                     )
 

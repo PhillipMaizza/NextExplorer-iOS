@@ -168,7 +168,7 @@ struct FavoritesView: View {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
-                fadesIntoContent: !isMacTable
+                shouldFadeIntoContent: !isMacTable
             )
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {

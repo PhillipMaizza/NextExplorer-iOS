@@ -21,13 +21,13 @@ struct BrowsePreviewRouter: View {
     @Dependency(\.offlineFileStore) private var offlineFileStore
     /// When on, a fully downloaded copy plays locally even online; off streams when online and uses
     /// the local copy only as an offline fallback.
-    @AppStorage(AppStorageKeys.preferOfflineMedia) private var preferOfflineMedia = true
+    @AppStorage(AppStorageKeys.preferOfflineMedia) private var shouldPreferOfflineMedia = true
 
     /// The primary source: with "prefer offline copies" on, a fully downloaded pinned copy (its
     /// `dateModified|size` staleness key proves it is complete and current) plays locally even online.
     /// Otherwise the Range-seekable preview stream, so online playback streams the fresh file.
     private func playbackURL(for item: FileItem) -> URL? {
-        if preferOfflineMedia, let complete = offlineFileStore.localURL(item) {
+        if shouldPreferOfflineMedia, let complete = offlineFileStore.localURL(item) {
             return complete
         }
         return FilesClient.previewURL(serverURL: store.serverURL, item: item)

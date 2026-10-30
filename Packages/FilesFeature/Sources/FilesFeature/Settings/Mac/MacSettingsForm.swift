@@ -159,7 +159,7 @@
                     .labelsHidden()
                     .multilineTextAlignment(.trailing)
                     .monospacedDigit()
-                    .frame(width: 64)
+                    .frame(width: .size64)
                 Stepper("", value: binding, in: range, step: step)
                     .labelsHidden()
                 if let unit {

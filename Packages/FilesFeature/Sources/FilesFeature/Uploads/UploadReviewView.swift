@@ -158,7 +158,7 @@ struct UploadReviewView: View {
                 Text(L10n.Uploads.reviewSectionSize)
                     .type(.body2(.regular), style: .primaryOnSurface)
                 Spacer()
-                Text(UploadReviewFormat.byteFormatter.string(fromByteCount: store.totalSize))
+                Text(FileSizeFormat.string(store.totalSize))
                     .type(.body2(.regular), style: .secondary)
             }
         }

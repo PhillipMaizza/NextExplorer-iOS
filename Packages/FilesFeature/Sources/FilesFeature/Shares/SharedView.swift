@@ -35,7 +35,7 @@ struct SharedView: View {
         Binding(get: { store.deleteConfirmationShare != nil }, set: { _ in })
     }
 
-    private static var showsTable: Bool {
+    private static var shouldShowTable: Bool {
         #if os(macOS)
             true
         #else
@@ -88,7 +88,7 @@ struct SharedView: View {
                 PinnedTitleSearchHeader(
                     title: L10n.Shared.navigationTitle,
                     searchText: $store.searchQuery.sending(\.searchQueryChanged),
-                    fadesIntoContent: !Self.showsTable
+                    shouldFadeIntoContent: !Self.shouldShowTable
                 )
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {

@@ -1,6 +1,8 @@
 #if os(macOS)
     import AppKit
     import ComposableArchitecture
+    import CoreModels
+    import DesignSystem
     import Localization
     import SwiftUI
     import UserNotifications
@@ -9,6 +11,8 @@
         static let popoverWidth: CGFloat = 340
         static let ringSize: CGFloat = 16
         static let ringLineWidth: CGFloat = 2.5
+        /// The progress ring sits just outside the glyph.
+        static let ringFrameSize: CGFloat = ringSize + .size6
     }
 
     /// Uploads and downloads on the Mac: a toolbar button with a progress ring, like Safari's
@@ -35,14 +39,14 @@
         var body: some View {
             Button { isShowingPopover.toggle() } label: {
                 ZStack {
-                    Image(systemName: hasFailures && progress == nil ? "exclamationmark.circle" : "arrow.up.arrow.down.circle")
-                        .foregroundStyle(hasFailures && progress == nil ? Color.red : Color.primary)
+                    (hasFailures && progress == nil ? IconKit.error : IconKit.transfers)
+                        .foregroundStyle(hasFailures && progress == nil ? Color.negativeText : Color.primary)
                     if let progress {
                         Circle()
                             .trim(from: 0, to: progress)
                             .stroke(Color.accentColor, style: StrokeStyle(lineWidth: Metrics.ringLineWidth, lineCap: .round))
                             .rotationEffect(.degrees(-90))
-                            .frame(width: Metrics.ringSize + 6, height: Metrics.ringSize + 6)
+                            .frame(width: Metrics.ringFrameSize, height: Metrics.ringFrameSize)
                     }
                 }
             }
@@ -64,7 +68,7 @@
             VStack(alignment: .leading, spacing: .space12) {
                 if store.uploads.isBarVisible {
                     queueRow(
-                        icon: "arrow.up.circle",
+                        icon: IconKit.upload,
                         isActive: store.uploads.isActive,
                         title: titles.uploadBarTitle,
                         progress: store.uploads.overallProgress,
@@ -82,7 +86,7 @@
                 if store.downloadQueue.isBarVisible {
                     let queue = store.downloadQueue
                     queueRow(
-                        icon: "arrow.down.circle",
+                        icon: IconKit.download,
                         isActive: queue.isActive,
                         title: titles.downloadBarTitle,
                         progress: queue.currentJob?.progress,
@@ -101,7 +105,7 @@
 
         // swiftlint:disable:next function_parameter_count
         private func queueRow(
-            icon: String,
+            icon: Image,
             isActive: Bool,
             title: String,
             progress: Double?,
@@ -116,8 +120,8 @@
                 Label {
                     Text(isActive ? title : failedLabel).lineLimit(1).truncationMode(.middle)
                 } icon: {
-                    Image(systemName: isActive ? icon : "exclamationmark.circle")
-                        .foregroundStyle(isActive ? Color.accentColor : Color.red)
+                    (isActive ? icon : IconKit.error)
+                        .foregroundStyle(isActive ? Color.accentColor : Color.negativeText)
                 }
                 if isActive {
                     if let progress {
@@ -199,5 +203,24 @@
             let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
             UNUserNotificationCenter.current().add(request)
         }
+    }
+
+    @MainActor
+    private func transferPreviewStore() -> StoreOf<MainTabFeature> {
+        Store(initialState: MainTabFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com")
+        )) { MainTabFeature() } withDependencies: { $0.filesClient = .previewValue }
+    }
+
+    #Preview("Activity button") {
+        MacTransferActivityButton(store: transferPreviewStore())
+            .padding(.space24)
+    }
+
+    #Preview("Notifications") {
+        Text(verbatim: "Finished transfers notify while the app is in the background")
+            .padding(.space24)
+            .modifier(MacTransferNotifications(uploadsRemaining: 0, uploadsFailed: 0, downloadsRemaining: 0, downloadsFailed: 0))
     }
 #endif

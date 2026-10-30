@@ -1,9 +1,9 @@
 #if os(iOS)
     import UIKit
 
-    /// The app is portrait-only everywhere except while an image or video viewer is on screen.
+    /// The app is portrait only everywhere except while an image or video viewer is on screen.
     /// `AppDelegate.application(_:supportedInterfaceOrientationsFor:)` reads `mask` on every
-    /// rotation attempt; there's no other hook to plumb a per-screen orientation override through
+    /// rotation attempt; there's no other hook to plumb a per screen orientation override through
     /// a plain SwiftUI `App`/`WindowGroup`, so this is a deliberate shared mutable singleton
     /// rather than something threaded through the view hierarchy.
     ///
@@ -38,7 +38,7 @@
             requestUpdate()
         }
 
-        /// Call from a media viewer's `.onDisappear` — restores the default every other screen
+        /// Call from a media viewer's `.onDisappear`: restores the default every other screen
         /// relies on (portrait, or every orientation on a foldable).
         public func lock() {
             mask = defaultMask
@@ -47,7 +47,7 @@
 
         /// `UIViewController.attemptRotationToDeviceOrientation()` (a type method with no notion
         /// of "which screen") was deprecated in iOS 16 in favor of asking the specific visible
-        /// view controller to re-check. There's no SwiftUI hook for "the current one," so this
+        /// view controller to recheck. There's no SwiftUI hook for "the current one," so this
         /// walks the key window's controller chain to find it.
         private func requestUpdate() {
             var controller = ActiveWindowScene.current?.keyWindow?.rootViewController

@@ -114,7 +114,7 @@
                     .textSelection(.enabled)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 Button(copied == url ? L10n.Common.copied : L10n.Common.copy) { copy(url) }
-                ShareLink(item: url) { Image(systemName: "square.and.arrow.up") }
+                ShareLink(item: url) { IconKit.share }
                     .accessibilityLabel(L10n.Common.share)
             }
         }
@@ -173,5 +173,21 @@
                 )
             }
         }
+    }
+
+    #Preview("Create") {
+        MacCreateShareLinkSheet(store: Store(initialState: CreateShareLinkFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            itemName: "Electricity",
+            itemPath: "Documents/Bills",
+            isDirectory: true
+        )) { CreateShareLinkFeature() } withDependencies: { $0.filesClient = .previewValue })
+    }
+
+    #Preview("Edit") {
+        MacEditShareSheet(store: Store(initialState: EditShareFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            share: .previewCard(hasPassword: true, expiresAt: Date().addingTimeInterval(86_400 * 7))
+        )) { EditShareFeature() } withDependencies: { $0.filesClient = .previewValue })
     }
 #endif

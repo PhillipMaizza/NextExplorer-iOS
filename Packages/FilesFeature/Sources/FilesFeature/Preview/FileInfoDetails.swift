@@ -21,20 +21,14 @@ struct FileInfoDetails: View {
     var usage: StorageUsage?
     /// Label above value instead of side by side: the narrow Mac inspector column has no room
     /// for both on one line.
-    var stacksValues = false
+    var shouldStackValues = false
 
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
-    @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
+    @AppStorage(AppStorageKeys.includeTimeInDates) private var shouldIncludeTime = false
 
     private var dateFormat: DateDisplayFormat {
         DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
     }
-
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
 
     private static let durationFormatter: DateComponentsFormatter = {
         let formatter = DateComponentsFormatter()
@@ -48,17 +42,17 @@ struct FileInfoDetails: View {
         VStack(alignment: .leading, spacing: Constants.cardSpacing) {
             card {
                 row(L10n.FileInfo.rowKind, kindTitle(for: metadata))
-                row(L10n.FileInfo.rowSize, Self.byteFormatter.string(fromByteCount: metadata.size))
+                row(L10n.FileInfo.rowSize, FileSizeFormat.string(metadata.size))
                 row(L10n.FileInfo.rowLocation, metadata.path)
-                row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: includeTime))
-                row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: includeTime))
+                row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: shouldIncludeTime))
+                row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: shouldIncludeTime))
             }
 
             if let directory = metadata.directory {
                 card {
                     row(L10n.FileInfo.rowFiles, "\(directory.fileCount)")
                     row(L10n.FileInfo.rowFolders, "\(directory.dirCount)")
-                    row(L10n.FileInfo.rowTotalSize, Self.byteFormatter.string(fromByteCount: directory.totalSize))
+                    row(L10n.FileInfo.rowTotalSize, FileSizeFormat.string(directory.totalSize))
                     if directory.truncated {
                         Text(L10n.FileInfo.partialScan)
                             .type(.body3(.regular), style: .tertiary)
@@ -73,8 +67,8 @@ struct FileInfoDetails: View {
                     DSUsageBar(fraction: usage.fraction)
                         .padding(.vertical, .space4)
                     Text(L10n.FileInfo.diskFreeOf(
-                        Self.byteFormatter.string(fromByteCount: usage.free),
-                        Self.byteFormatter.string(fromByteCount: usage.capacity)
+                        FileSizeFormat.string(usage.free),
+                        FileSizeFormat.string(usage.capacity)
                     ))
                     .type(.body3(.regular), style: .secondary)
                 }
@@ -94,7 +88,7 @@ struct FileInfoDetails: View {
                         row(L10n.FileInfo.rowLens, lensModel)
                     }
                     if let dateTaken = image.dateTaken {
-                        row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: includeTime))
+                        row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: shouldIncludeTime))
                     }
                     if let gps = image.gps {
                         row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
@@ -119,7 +113,7 @@ struct FileInfoDetails: View {
     /// since the panel already has the card's fill.
     @ViewBuilder
     private func card(@ViewBuilder _ content: () -> some View) -> some View {
-        if stacksValues {
+        if shouldStackValues {
             VStack(alignment: .leading, spacing: .space8) {
                 content()
             }
@@ -142,7 +136,7 @@ struct FileInfoDetails: View {
 
     @ViewBuilder
     private func row(_ label: String, _ value: String) -> some View {
-        if stacksValues {
+        if shouldStackValues {
             VStack(alignment: .leading, spacing: .space2) {
                 Text(label)
                     .type(.body3(.semibold), style: .secondary)

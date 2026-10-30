@@ -58,16 +58,21 @@
         }
 
         private func loadIcon(at url: URL) {
-            let scoped = url.startAccessingSecurityScopedResource()
-            defer {
-                if scoped {
-                    url.stopAccessingSecurityScopedResource()
+            Task {
+                let data = await Task.detached(priority: .userInitiated) { () -> Data? in
+                    let scoped = url.startAccessingSecurityScopedResource()
+                    defer {
+                        if scoped {
+                            url.stopAccessingSecurityScopedResource()
+                        }
+                    }
+                    return NSImage(contentsOf: url).flatMap(ServerDetailsView.prepareLogo)
+                }.value
+                if let data {
+                    store.send(.logoPicked(data))
+                } else {
+                    store.send(.logoPickFailed)
                 }
-            }
-            if let image = NSImage(contentsOf: url), let data = ServerDetailsView.prepareLogo(image) {
-                store.send(.logoPicked(data))
-            } else {
-                store.send(.logoPickFailed)
             }
         }
     }

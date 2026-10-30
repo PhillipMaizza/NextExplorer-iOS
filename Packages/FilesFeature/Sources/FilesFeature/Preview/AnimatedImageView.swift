@@ -86,10 +86,10 @@ enum AnimatedImageDecoder {
 }
 
 #if os(iOS)
-    /// Plays an animated GIF — `AsyncImage`/SwiftUI's `Image` only ever show a GIF's first frame,
+    /// Plays an animated GIF; `AsyncImage`/SwiftUI's `Image` only ever show a GIF's first frame,
     /// with no concept of animation at all, so a real animated GIF looked identical to a still
     /// image everywhere in this app. Hands the decoded frames to a plain `UIImageView`, which
-    /// animates multi-frame `UIImage`s natively.
+    /// animates multi frame `UIImage`s natively.
     struct AnimatedImageView: UIViewRepresentable {
         let fileURL: URL
 

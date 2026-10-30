@@ -6,6 +6,8 @@
         static let barHeight: CGFloat = 10
         static let barInset: CGFloat = 12
         static let barBottom: CGFloat = 8
+        /// The empty track dims the icon under it, so the accent fill reads on any icon color.
+        static let trackOpacity: CGFloat = 0.5
     }
 
     /// Upload progress on the Dock icon: a badge with the files still to go and a bar under the
@@ -49,12 +51,18 @@
                 width: bounds.width - Metrics.barInset * 2,
                 height: Metrics.barHeight
             )
-            NSColor.black.withAlphaComponent(0.5).setFill()
+            NSColor.black.withAlphaComponent(Metrics.trackOpacity).setFill()
             NSBezierPath(roundedRect: track, xRadius: track.height / 2, yRadius: track.height / 2).fill()
             var fill = track
             fill.size.width = track.width * min(max(progress, 0), 1)
             NSColor.controlAccentColor.setFill()
             NSBezierPath(roundedRect: fill, xRadius: fill.height / 2, yRadius: fill.height / 2).fill()
         }
+    }
+
+    #Preview("Idle") {
+        Text(verbatim: "No uploads running")
+            .padding(.space24)
+            .modifier(MacDockUploadStatus(remaining: 0, progress: nil))
     }
 #endif

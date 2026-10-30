@@ -130,8 +130,8 @@ private struct ArchiveTextEntryPreviewView: View {
     @State private var content: String?
     @State private var renderedMarkdownHTML = ""
     @State private var loadErrorMessage: String?
-    @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
-    @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
+    @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
+    @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
 
     private var isHTML: Bool {
         let lowercaseKind = item.kind.lowercased()
@@ -193,9 +193,9 @@ private struct ArchiveTextEntryPreviewView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let content {
-            if isHTML, renderHTMLPages {
+            if isHTML, shouldRenderHTMLPages {
                 HTMLRenderedView(cacheKey: item.id, html: content, resolveAsset: resolveAsset)
-            } else if isMarkdown, renderMarkdownPages {
+            } else if isMarkdown, shouldRenderMarkdownPages {
                 HTMLRenderedView(cacheKey: item.id, html: renderedMarkdownHTML, resolveAsset: resolveAsset)
             } else {
                 CodeEditorView(kind: item.kind, text: .constant(content), isEditable: false)

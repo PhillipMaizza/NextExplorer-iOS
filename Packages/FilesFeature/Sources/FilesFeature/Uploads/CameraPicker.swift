@@ -3,7 +3,7 @@
     import UIKit
     import UniformTypeIdentifiers
 
-    /// Thin `UIImagePickerController` wrapper pinned to the camera — SwiftUI has no native camera
+    /// Thin `UIImagePickerController` wrapper pinned to the camera; SwiftUI has no native camera
     /// capture. Offers both capture modes so the system camera shows its Photo/Video switch;
     /// `allowsEditing` gives the built in trim/crop step after the shot. Hands back a file written
     /// into `UploadStagingLocation` (a JPEG for a photo, the recorded movie for a video), or nil

@@ -27,7 +27,7 @@ enum BackgroundActivity {
 
     #if os(iOS)
 
-        /// Owns the task identifier and guarantees it is ended exactly once — on completion, or from the
+        /// Owns the task identifier and guarantees it is ended exactly once: on completion, or from the
         /// expiration handler if the OS reclaims the window first (ending it there avoids the app being
         /// killed for overrunning).
         private actor Assertion {

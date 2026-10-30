@@ -50,7 +50,7 @@ extension FilesService {
     func updateVersion(serverURL: URL, path: String, versionID: String, label: String?, pinned: Bool?) async throws -> FileVersion {
         var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, nil), method: .patch)
         request.setJSONContentType()
-        request.httpBody = try Self.encode(VersionUpdateBody(path: path, label: label, pinned: pinned))
+        request.httpBody = try Self.encode(VersionUpdateBody(path: path, label: label, isPinned: pinned))
         return try await sendReportingMessage(request, decoding: FileVersion.self)
     }
 
@@ -58,7 +58,7 @@ extension FilesService {
     func deleteVersions(serverURL: URL, path: String, ids: [String]?, all: Bool) async throws {
         var request = Self.makeRequest(url: serverURL.appendingPathComponent(APIPath.versions).appendingPathComponent("delete"), method: .post)
         request.setJSONContentType()
-        request.httpBody = try Self.encode(VersionDeleteBody(path: path, ids: all ? nil : ids, all: all))
+        request.httpBody = try Self.encode(VersionDeleteBody(path: path, ids: all ? nil : ids, isAll: all))
         let (data, response) = try await performSend(request)
         try Self.validateReportingMessage(data, response)
     }

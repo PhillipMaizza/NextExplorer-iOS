@@ -8,19 +8,19 @@
     struct MacGeneralSettingsTab: View {
         @Bindable var store: StoreOf<SettingsFeature>
 
-        @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
-        @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
-        @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
+        @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
+        @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
+        @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
         @AppStorage(AppStorageKeys.appearanceOverrideSet) private var hasAppearanceOverride = false
-        @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
+        @AppStorage(AppStorageKeys.prefersDarkMode) private var isDarkAppearanceOverride = false
         @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
         private var appearance: Binding<AppearanceMode> {
             Binding(
-                get: { AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride) },
+                get: { AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: isDarkAppearanceOverride) },
                 set: { mode in
                     hasAppearanceOverride = mode.hasOverride
-                    prefersDarkModeOverride = mode.prefersDark
+                    isDarkAppearanceOverride = mode.prefersDark
                 }
             )
         }
@@ -42,13 +42,13 @@
                 Section(L10n.Settings.sectionGeneral) {
                     Toggle(L10n.Settings.toggleShowHiddenFiles, isOn: $store.preferences.showHiddenFiles.sending(\.setShowHiddenFiles))
                         .accessibilityLabel(L10n.Settings.toggleShowHiddenFiles)
-                    Toggle(L10n.Settings.toggleShowExtensions, isOn: $showFilenameExtensions)
+                    Toggle(L10n.Settings.toggleShowExtensions, isOn: $shouldShowFilenameExtensions)
                         .accessibilityLabel(L10n.Settings.toggleShowExtensions)
                 }
                 Section(L10n.Settings.sectionDisplay) {
-                    Toggle(L10n.Settings.toggleRenderHTML, isOn: $renderHTMLPages)
+                    Toggle(L10n.Settings.toggleRenderHTML, isOn: $shouldRenderHTMLPages)
                         .accessibilityLabel(L10n.Settings.toggleRenderHTML)
-                    Toggle(L10n.Settings.toggleRenderMarkdown, isOn: $renderMarkdownPages)
+                    Toggle(L10n.Settings.toggleRenderMarkdown, isOn: $shouldRenderMarkdownPages)
                         .accessibilityLabel(L10n.Settings.toggleRenderMarkdown)
                     Picker(L10n.Settings.rowAppearance, selection: appearance) {
                         ForEach(AppearanceMode.allCases) { mode in

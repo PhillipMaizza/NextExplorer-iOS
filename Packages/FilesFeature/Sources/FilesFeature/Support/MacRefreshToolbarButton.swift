@@ -74,4 +74,12 @@
     public extension FocusedValues {
         @Entry var refreshVisibleScreen: RefreshScreenAction?
     }
+
+    #Preview {
+        NavigationStack {
+            Text(verbatim: "Folder contents")
+                .frame(width: 400, height: 240)
+                .macToolbarRefresh(onRefresh: { try? await Task.sleep(for: .seconds(2)) }, onFinished: {})
+        }
+    }
 #endif

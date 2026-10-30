@@ -154,11 +154,11 @@ struct ServerDetailsView: View {
         Menu {
             #if os(iOS)
                 Button { requestCamera() } label: {
-                    Label(L10n.ServerDetails.takePhoto, systemImage: "camera")
+                    Label { Text(L10n.ServerDetails.takePhoto) } icon: { IconKit.camera }
                 }
             #endif
             Button { isGalleryPickerPresented = true } label: {
-                Label(L10n.ServerDetails.chooseFromGallery, systemImage: "photo.on.rectangle")
+                Label { Text(L10n.ServerDetails.chooseFromGallery) } icon: { IconKit.photoLibrary }
             }
         } label: {
             ServerLogoThumbnail(
@@ -174,7 +174,7 @@ struct ServerDetailsView: View {
     }
 
     private var logoBadge: some View {
-        Image(systemName: "camera.fill")
+        IconKit.cameraFill
             .resizable().scaledToFit()
             .frame(width: Metrics.logoBadgeIcon, height: Metrics.logoBadgeIcon)
             .foregroundStyle(Color.white)
@@ -196,17 +196,26 @@ struct ServerDetailsView: View {
     }
 
     private func loadGalleryImage(_ item: PhotosPickerItem) async {
-        guard let data = try? await item.loadTransferable(type: Data.self),
-              let image = PlatformImage(data: data)
-        else {
+        guard let data = try? await item.loadTransferable(type: Data.self) else {
             store.send(.logoPickFailed)
             return
         }
-        handlePicked(image)
+        let prepared = await Task.detached(priority: .userInitiated) {
+            PlatformImage(data: data).flatMap(Self.prepareLogo)
+        }.value
+        guard !Task.isCancelled else { return }
+        send(prepared)
     }
 
     private func handlePicked(_ image: PlatformImage) {
-        if let prepared = Self.prepareLogo(image) {
+        Task {
+            let prepared = await Task.detached(priority: .userInitiated) { Self.prepareLogo(image) }.value
+            send(prepared)
+        }
+    }
+
+    private func send(_ prepared: Data?) {
+        if let prepared {
             store.send(.logoPicked(prepared))
         } else {
             store.send(.logoPickFailed)
@@ -215,7 +224,8 @@ struct ServerDetailsView: View {
 
     /// Square-crop-agnostic downscale + JPEG encode, rejecting anything still over the 2 MB
     /// the server (and `ServerDetailsFeature`) cap uploads at.
-    static func prepareLogo(_ image: PlatformImage) -> Data? {
+    /// Runs off the main actor: it decodes and redraws the whole image.
+    nonisolated static func prepareLogo(_ image: PlatformImage) -> Data? {
         let longestEdge = max(image.size.width, image.size.height)
         let scale = longestEdge > Metrics.logoMaxPixelSize ? Metrics.logoMaxPixelSize / longestEdge : 1
         let targetSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)

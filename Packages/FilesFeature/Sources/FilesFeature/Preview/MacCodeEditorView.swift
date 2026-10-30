@@ -3,13 +3,13 @@
     import SwiftUI
 
     private enum Constants {
-        /// Pause after the last keystroke before re-highlighting, so typing never waits on a parse.
+        /// Pause after the last keystroke before rehighlighting, so typing never waits on a parse.
         static let rehighlightDelay: Duration = .milliseconds(300)
     }
 
     /// macOS counterpart of the Runestone backed editor: Runestone is UIKit only, so the Mac uses a
     /// monospaced `NSTextView` with the same inputs, colored by `MacSyntaxHighlighter` running the
-    /// same tree-sitter grammars off the main actor.
+    /// same tree sitter grammars off the main actor.
     struct CodeEditorView: NSViewRepresentable {
         let kind: String
         @Binding var text: String

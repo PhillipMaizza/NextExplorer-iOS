@@ -1,5 +1,6 @@
 #if os(macOS)
     import ComposableArchitecture
+    import CoreModels
     import FilesFeature
     import SwiftUI
 
@@ -38,5 +39,9 @@
                 }
             }
         }
+    }
+
+    #Preview("Signed in") {
+        MacSettingsWindow(mainStore: .previewSignedIn())
     }
 #endif

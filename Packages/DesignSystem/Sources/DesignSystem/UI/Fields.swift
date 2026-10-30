@@ -65,7 +65,7 @@ public struct DSFieldContainer<Content: View>: View {
 public struct DSFieldLabel: View {
     private let text: String
     private let isUppercased: Bool
-    @Environment(\.groupedListUsesNativeForm) private var usesNativeForm
+    @Environment(\.isGroupedListNativeForm) private var isNativeForm
 
     public init(_ text: String, uppercased: Bool = true) {
         self.text = text
@@ -73,7 +73,7 @@ public struct DSFieldLabel: View {
     }
 
     public var body: some View {
-        if usesNativeForm {
+        if isNativeForm {
             // A native grouped form's header: the app's type, in sentence case.
             Text(text)
                 .type(.body2(.semibold), style: .secondary)

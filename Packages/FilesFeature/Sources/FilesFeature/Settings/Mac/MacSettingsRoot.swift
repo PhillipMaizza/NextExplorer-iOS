@@ -40,16 +40,16 @@
             }
         }
 
-        var systemImage: String {
+        var icon: Image {
             switch self {
-            case .accounts: "person.crop.circle"
-            case .general: "gearshape"
-            case .storage: "internaldrive"
-            case .server: "server.rack"
-            case .users: "person.2"
-            case .thumbnails: "photo"
-            case .accessRules: "lock.shield"
-            case .about: "info.circle"
+            case .accounts: IconKit.account
+            case .general: IconKit.gearshape
+            case .storage: IconKit.storage
+            case .server: IconKit.serverRack
+            case .users: IconKit.people
+            case .thumbnails: IconKit.photo
+            case .accessRules: IconKit.accessRules
+            case .about: IconKit.info
             }
         }
     }
@@ -103,7 +103,7 @@
             Label {
                 Text(category.title)
             } icon: {
-                Image(systemName: category.systemImage)
+                category.icon
                     .foregroundStyle(category == visibleSelection ? Color.white : Color.accent)
             }
             .tag(category)

@@ -4,7 +4,7 @@
 
     /// Camera capture pinned to stills, with the system crop step, handing back a `UIImage`.
     /// Separate from `CameraPicker` (which also does video and stages files for the upload flow)
-    /// because the server-logo picker only wants a single square-ish photo in memory.
+    /// because the server logo picker only wants a single roughly square photo in memory.
     struct PhotoCapturePicker: UIViewControllerRepresentable {
         let onCapture: (UIImage?) -> Void
 

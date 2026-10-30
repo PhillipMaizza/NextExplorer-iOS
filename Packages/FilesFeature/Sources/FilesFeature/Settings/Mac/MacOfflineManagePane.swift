@@ -1,5 +1,6 @@
 #if os(macOS)
     import ComposableArchitecture
+    import DesignSystem
     import FilesClient
     import Localization
     import SwiftUI
@@ -21,19 +22,15 @@
                     table
                     Divider()
                     HStack(spacing: 0) {
-                        Button { removeSelection() } label: {
-                            Image(systemName: "minus").frame(width: 24, height: 20)
-                        }
-                        .buttonStyle(.borderless)
-                        .disabled(selection.isEmpty)
-                        .accessibilityLabel(L10n.Common.remove)
+                        MacTableBarButton(icon: IconKit.minus, label: L10n.Common.remove) { removeSelection() }
+                            .disabled(selection.isEmpty)
                         Spacer()
                     }
                     .padding(.horizontal, .space4)
                     .padding(.vertical, .space2)
                 }
                 .border(Color(nsColor: .separatorColor))
-                MacSettingsNote(L10n.Offline.available(SettingsFormat.byteFormatter.string(fromByteCount: store.totalBytes)))
+                MacSettingsNote(L10n.Offline.available(FileSizeFormat.string(store.totalBytes)))
             }
             .padding(Metrics.padding)
             .navigationTitle(L10n.Offline.manageTitle)
@@ -43,18 +40,13 @@
         private var table: some View {
             Table(store.usages, selection: $selection) {
                 TableColumn(L10n.Sort.name) { usage in
-                    Label {
-                        Text(Self.name(usage)).lineLimit(1)
-                    } icon: {
-                        Image(systemName: usage.root.isDirectory ? "folder.fill" : "doc")
-                            .foregroundStyle(usage.root.isDirectory ? Color.accentColor : .secondary)
-                    }
+                    MacItemLabel(name: Self.name(usage), isDirectory: usage.root.isDirectory)
                 }
                 TableColumn(L10n.FileInfo.rowLocation) { usage in
                     Text(usage.root.path).foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
                 }
                 TableColumn(L10n.Sort.size) { usage in
-                    Text(SettingsFormat.byteFormatter.string(fromByteCount: usage.sizeBytes))
+                    Text(FileSizeFormat.string(usage.sizeBytes))
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
@@ -88,5 +80,20 @@
             let last = (usage.root.path as NSString).lastPathComponent
             return last.isEmpty ? usage.root.path : last
         }
+    }
+
+    #Preview("Items") {
+        var state = OfflineManageFeature.State()
+        state.usages = [
+            OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: "Documents", isDirectory: true), sizeBytes: 45_000_000),
+            OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: "Photos/trip.jpg", isDirectory: false), sizeBytes: 3_200_000),
+        ]
+        return MacOfflineManagePane(store: Store(initialState: state) { OfflineManageFeature() })
+            .frame(width: 580, height: 420)
+    }
+
+    #Preview("Empty") {
+        MacOfflineManagePane(store: Store(initialState: OfflineManageFeature.State()) { OfflineManageFeature() })
+            .frame(width: 580, height: 420)
     }
 #endif

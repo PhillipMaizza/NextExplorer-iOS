@@ -1,6 +1,7 @@
 #if os(macOS)
     import AppKit
     import ComposableArchitecture
+    import CoreModels
     import DesignSystem
     import FilesFeature
     import SwiftUI
@@ -83,7 +84,7 @@
 
         private final class JoinerView: NSView {
             private let hostWindowNumber: Int?
-            private var didJoin = false
+            private var hasJoined = false
 
             init(hostWindowNumber: Int?) {
                 self.hostWindowNumber = hostWindowNumber
@@ -97,10 +98,10 @@
 
             override func viewDidMoveToWindow() {
                 super.viewDidMoveToWindow()
-                guard !didJoin, let window, let hostWindowNumber,
+                guard !hasJoined, let window, let hostWindowNumber,
                       let host = NSApp.window(withWindowNumber: hostWindowNumber), host != window
                 else { return }
-                didJoin = true
+                hasJoined = true
                 // Deferred out of the layout pass this callback runs in: regrouping windows
                 // mid pass lets SwiftUI replay a toolbar update and AppKit rejects the
                 // duplicate item.
@@ -111,5 +112,9 @@
                 }
             }
         }
+    }
+
+    #Preview("Folder") {
+        MacFolderWindow(route: FolderWindowRoute(path: "Documents", title: "Documents"), mainStore: .previewSignedIn())
     }
 #endif

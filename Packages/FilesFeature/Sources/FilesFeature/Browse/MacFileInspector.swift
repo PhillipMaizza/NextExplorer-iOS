@@ -41,7 +41,7 @@
         @State private var permissions: FilePermissions?
         @State private var versions = MacVersionsModel()
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
-        @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
+        @AppStorage(AppStorageKeys.includeTimeInDates) private var shouldIncludeTime = false
 
         private var dateFormat: DateDisplayFormat {
             DateDisplayFormat(rawValue: dateFormatRaw) ?? .system
@@ -67,7 +67,7 @@
                     if let shares {
                         MacInspectorSharingSection(shares: shares, serverURL: serverURL, onShare: onShare)
                     }
-                    if let history = versions.history, history.enabled || !history.versions.isEmpty {
+                    if let history = versions.history, history.isEnabled || !history.versions.isEmpty {
                         MacInspectorVersionsSection(model: versions, history: history)
                     }
                     permissionsSection
@@ -94,7 +94,7 @@
             HStack(alignment: .top, spacing: .space12) {
                 Group {
                     if item.isDirectory {
-                        Image(systemName: "folder.fill")
+                        IconKit.folderFill
                             .resizable()
                             .scaledToFit()
                             .foregroundStyle(Color.accent)
@@ -110,7 +110,7 @@
                     .frame(maxWidth: .infinity, alignment: .leading)
                 // Close lives in the panel, not the window toolbar, so the inspector never adds
                 // toolbar items of its own.
-                Button(action: onClose) { Image(systemName: "xmark.circle.fill") }
+                Button(action: onClose) { IconKit.closeCircle }
                     .buttonStyle(.borderless)
                     .foregroundStyle(.secondary)
                     .accessibilityLabelWithTooltip(L10n.Common.close)
@@ -124,8 +124,8 @@
                 row(L10n.FileInfo.rowKind, metadata.isDirectory ? L10n.FileInfo.navigationTitleFolder : metadata.kind.uppercased())
                 row(L10n.FileInfo.rowSize, Self.bytes(metadata.size))
                 row(L10n.FileInfo.rowLocation, metadata.path)
-                row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: includeTime))
-                row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: includeTime))
+                row(L10n.FileInfo.rowDateModified, dateFormat.string(from: metadata.dateModified, includeTime: shouldIncludeTime))
+                row(L10n.FileInfo.rowDateCreated, dateFormat.string(from: metadata.dateCreated, includeTime: shouldIncludeTime))
             }
             if let directory = metadata.directory {
                 Section {
@@ -163,7 +163,7 @@
                         row(L10n.FileInfo.rowSoftware, software)
                     }
                     if let dateTaken = image.dateTaken {
-                        row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: includeTime))
+                        row(L10n.FileInfo.rowDateTaken, dateFormat.string(from: dateTaken, includeTime: shouldIncludeTime))
                     }
                     if let gps = image.gps {
                         row(L10n.FileInfo.rowLocation, String(format: "%.4f, %.4f", gps.lat, gps.lon))
@@ -199,7 +199,7 @@
             }
         }
 
-        /// `rw-r--r-- (644)` from a raw stat mode.
+        /// The Unix permission string and octal mode from a raw stat mode.
         private static func modeString(_ mode: Int) -> String {
             let bits = mode & 0o777
             let symbols = ["r", "w", "x"]
@@ -220,7 +220,7 @@
         }
 
         private static func bytes(_ count: Int64) -> String {
-            SettingsFormat.byteFormatter.string(fromByteCount: count)
+            FileSizeFormat.string(count)
         }
 
         private static let durationFormatter: DateComponentsFormatter = {

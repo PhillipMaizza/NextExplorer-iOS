@@ -36,15 +36,6 @@ struct SettingsSearchFilter {
 }
 
 @MainActor
-enum SettingsFormat {
-    static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
-}
-
-@MainActor
 private func sectionHeader(_ title: String) -> some View {
     DSFieldLabel(title)
         .accessibilityAddTraits(.isHeader)
@@ -68,8 +59,8 @@ struct GeneralSettingsSection: View {
     let filter: SettingsSearchFilter
 
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
-    @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
-    @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
+    @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
+    @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
     @AppStorage(AppStorageKeys.hapticsEnabled) private var hapticsEnabled = true
     @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
@@ -95,10 +86,10 @@ struct GeneralSettingsSection: View {
                     )
                 }
                 if filter.matches(L10n.Settings.toggleRenderHTML) {
-                    DSToggleRow(title: L10n.Settings.toggleRenderHTML, icon: IconKit.web, isOn: $renderHTMLPages)
+                    DSToggleRow(title: L10n.Settings.toggleRenderHTML, icon: IconKit.web, isOn: $shouldRenderHTMLPages)
                 }
                 if filter.matches(L10n.Settings.toggleRenderMarkdown) {
-                    DSToggleRow(title: L10n.Settings.toggleRenderMarkdown, icon: IconKit.textformat, isOn: $renderMarkdownPages)
+                    DSToggleRow(title: L10n.Settings.toggleRenderMarkdown, icon: IconKit.textformat, isOn: $shouldRenderMarkdownPages)
                 }
                 if !isMac, filter.matches(L10n.Settings.rowDateFormat) {
                     NavigationLink {
@@ -159,18 +150,18 @@ struct DisplaySettingsSection: View {
     let filter: SettingsSearchFilter
 
     @AppStorage(AppStorageKeys.appearanceOverrideSet) private var hasAppearanceOverride = false
-    @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
+    @AppStorage(AppStorageKeys.prefersDarkMode) private var isDarkAppearanceOverride = false
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
-    @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
+    @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
     @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
     @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     private var appearance: Binding<AppearanceMode> {
         Binding(
-            get: { AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride) },
+            get: { AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: isDarkAppearanceOverride) },
             set: { mode in
                 hasAppearanceOverride = mode.hasOverride
-                prefersDarkModeOverride = mode.prefersDark
+                isDarkAppearanceOverride = mode.prefersDark
             }
         )
     }
@@ -231,7 +222,7 @@ struct DisplaySettingsSection: View {
                     .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
                 }
                 if filter.matches(L10n.Settings.toggleShowExtensions) {
-                    DSToggleRow(title: L10n.Settings.toggleShowExtensions, icon: IconKit.tag, isOn: $showFilenameExtensions)
+                    DSToggleRow(title: L10n.Settings.toggleShowExtensions, icon: IconKit.tag, isOn: $shouldShowFilenameExtensions)
                 }
                 // Tab labels only exist on the bottom tab bar (compact). iPad uses the sidebar,
                 // so the toggle is meaningless there.
@@ -252,7 +243,7 @@ struct StorageSettingsSection: View {
     let store: StoreOf<SettingsFeature>
     let filter: SettingsSearchFilter
 
-    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
+    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var shouldKeepClipboardAfterCopy = false
 
     var body: some View {
         if filter.anyMatch([L10n.Settings.toggleKeepClipboard, L10n.Settings.rowRemoveAllDownloads, L10n.Settings.rowClearCache]) {
@@ -262,14 +253,14 @@ struct StorageSettingsSection: View {
                         title: L10n.Settings.toggleKeepClipboard,
                         subtitle: L10n.Settings.toggleKeepClipboardSubtitle,
                         icon: IconKit.paste,
-                        isOn: $keepClipboardAfterCopy
+                        isOn: $shouldKeepClipboardAfterCopy
                     )
                 }
                 if !isMac, filter.matches(L10n.Settings.rowRemoveAllDownloads) {
                     DSNavigationRow(
                         title: L10n.Settings.rowRemoveAllDownloads,
                         icon: IconKit.delete,
-                        accessory: .detail(SettingsFormat.byteFormatter.string(fromByteCount: store.downloadsSize)),
+                        accessory: .detail(FileSizeFormat.string(store.downloadsSize)),
                         role: .accent
                     ) {
                         store.send(.removeAllDownloadsTapped)
@@ -281,7 +272,7 @@ struct StorageSettingsSection: View {
                     DSNavigationRow(
                         title: L10n.Settings.rowClearCache,
                         icon: IconKit.delete,
-                        accessory: .detail(SettingsFormat.byteFormatter.string(fromByteCount: store.cacheSize)),
+                        accessory: .detail(FileSizeFormat.string(store.cacheSize)),
                         role: .accent
                     ) {
                         store.send(.clearCacheTapped)

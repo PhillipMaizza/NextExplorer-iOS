@@ -25,12 +25,6 @@ struct UnsupportedFilePreviewView: View {
     var onDownload: (() -> Void)?
     var onDelete: (() -> Void)?
 
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
-
     private var typeText: String {
         item.kind.isEmpty ? L10n.UnsupportedPreview.genericType : item.kind.uppercased()
     }
@@ -50,7 +44,7 @@ struct UnsupportedFilePreviewView: View {
                         .lineLimit(3)
                     Text(typeText)
                         .type(.body2(.regular), style: .secondary)
-                    Text(Self.byteFormatter.string(fromByteCount: item.size))
+                    Text(FileSizeFormat.string(item.size))
                         .type(.body2(.regular), style: .secondary)
                 }
 

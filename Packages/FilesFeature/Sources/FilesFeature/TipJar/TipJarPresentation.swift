@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import CoreModels
 import DesignSystem
 import SwiftUI
 
@@ -11,23 +12,22 @@ struct TipJarPresentation: ViewModifier {
     @State private var tipToast: DSToastMessage?
 
     #if os(macOS)
-        @Environment(\.appearsActive) private var appearsActive
-        @State private var ownsSheet = false
+        @State private var isSheetOwner = false
         /// Kept past the sheet closing, since the thank you toast follows the purchase.
-        @State private var ownsToast = false
+        @State private var isToastOwner = false
     #endif
 
-    private var showsSheet: Bool {
+    private var shouldShowSheet: Bool {
         #if os(macOS)
-            ownsSheet
+            isSheetOwner
         #else
             true
         #endif
     }
 
-    private var showsToast: Bool {
+    private var shouldShowToast: Bool {
         #if os(macOS)
-            ownsToast
+            isToastOwner
         #else
             true
         #endif
@@ -35,7 +35,7 @@ struct TipJarPresentation: ViewModifier {
 
     private var tipJarStore: Binding<StoreOf<TipJarFeature>?> {
         Binding(
-            get: { showsSheet ? store.scope(state: \.tipJar, action: \.tipJar.presented) : nil },
+            get: { shouldShowSheet ? store.scope(state: \.tipJar, action: \.tipJar.presented) : nil },
             set: { newValue in
                 if newValue == nil, store.tipJar != nil {
                     store.send(.tipJar(.dismiss))
@@ -51,17 +51,28 @@ struct TipJarPresentation: ViewModifier {
             }
             .dsToast($tipToast)
             .onChange(of: store.tipToast) { _, message in
-                guard let message, showsToast else { return }
+                guard let message, shouldShowToast else { return }
                 tipToast = .success(message)
                 store.send(.tipToastShown)
             }
         #if os(macOS)
-            .onChange(of: store.tipJar != nil) { _, pending in
-                ownsSheet = pending && appearsActive
-                if pending {
-                    ownsToast = ownsSheet
+            .onWindowPromptChange(of: store.tipJar != nil) { isPending, isOwner in
+                isSheetOwner = isOwner
+                if isPending {
+                    isToastOwner = isOwner
                 }
             }
         #endif
     }
+}
+
+#Preview("Tip jar") {
+    var state = SettingsFeature.State(
+        serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+        user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com")
+    )
+    state.tipJar = TipJarFeature.State()
+    return Color.clear
+        .frame(width: 600, height: 600)
+        .modifier(TipJarPresentation(store: Store(initialState: state) { SettingsFeature() }))
 }

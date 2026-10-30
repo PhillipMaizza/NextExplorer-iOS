@@ -60,7 +60,7 @@
         final class Coordinator: NSObject {
             let hostingView: NSHostingView<Content>
             var onZoomChange: (Bool) -> Void
-            private var lastReportedIsZoomed = false
+            private var isLastReportedZoomed = false
             private var observer: NSObjectProtocol?
 
             init(hostingView: NSHostingView<Content>, onZoomChange: @escaping (Bool) -> Void) {
@@ -97,10 +97,18 @@
 
             private func reportZoom(of scrollView: NSScrollView, target: CGFloat? = nil) {
                 let isZoomed = (target ?? scrollView.magnification) > scrollView.minMagnification
-                guard isZoomed != lastReportedIsZoomed else { return }
-                lastReportedIsZoomed = isZoomed
+                guard isZoomed != isLastReportedZoomed else { return }
+                isLastReportedZoomed = isZoomed
                 onZoomChange(isZoomed)
             }
         }
+    }
+
+    #Preview {
+        ZoomableScrollView {
+            LinearGradient(colors: [.orange, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .frame(width: 800, height: 600)
+        }
+        .frame(width: 400, height: 300)
     }
 #endif

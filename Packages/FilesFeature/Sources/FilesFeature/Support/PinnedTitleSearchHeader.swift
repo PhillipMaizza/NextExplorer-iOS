@@ -32,7 +32,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     var showsSearchField: Bool = true
     /// Whether the short fade below the header melts into scrolling content. A Mac table keeps
     /// its column headers pinned right below, where the fade would only tint them.
-    var fadesIntoContent: Bool = true
+    var shouldFadeIntoContent: Bool = true
     /// Rendered below the search field, e.g. a search-scope segmented control plus type filter
     /// chips while searching.
     @ViewBuilder var accessory: () -> Accessory
@@ -71,7 +71,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
             // starts below the fade and only rows scrolled up pass under it.
             .background(Color.backgroundGradientTop.ignoresSafeArea(edges: .top))
             .background(alignment: .bottom) {
-                if fadesIntoContent {
+                if shouldFadeIntoContent {
                     LinearGradient(
                         colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
                         startPoint: .top,
@@ -82,7 +82,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                     .allowsHitTesting(false)
                 }
             }
-            .padding(.bottom, fadesIntoContent ? Constants.fadeHeight : 0)
+            .padding(.bottom, shouldFadeIntoContent ? Constants.fadeHeight : 0)
     }
 
     private var searchField: some View {
@@ -129,7 +129,7 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         prompt: String = L10n.Common.search,
         extraTopPadding: CGFloat = 0,
         showsSearchField: Bool = true,
-        fadesIntoContent: Bool = true
+        shouldFadeIntoContent: Bool = true
     ) {
         self.init(
             title: title,
@@ -137,7 +137,7 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
             prompt: prompt,
             extraTopPadding: extraTopPadding,
             showsSearchField: showsSearchField,
-            fadesIntoContent: fadesIntoContent
+            shouldFadeIntoContent: shouldFadeIntoContent
         ) { EmptyView() }
     }
 }

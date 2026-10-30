@@ -35,6 +35,8 @@
         public static let disableAnimationsFlag = "UITEST_DISABLE_ANIMATIONS"
         public static let animationSpeedKey = "UITEST_ANIM_SPEED"
         public static let orientationKey = "UITEST_ORIENTATION"
+        /// How long the hinge needs to unlock rotation on a foldable before landscape is requested.
+        private static let orientationDelay: TimeInterval = 1
 
         /// Scales every window's layer time so both UIKit and SwiftUI animations finish near
         /// instantly, while their completion handlers and transition code still run. A no op unless
@@ -66,7 +68,7 @@
         public static func applyOrientationIfNeeded(from environment: [String: String] = ProcessInfo.processInfo.environment) {
             #if os(iOS)
                 guard environment[mockFlag] == "1", environment[orientationKey] == "landscape" else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + orientationDelay) {
                     MainActor.assumeIsolated {
                         ActiveWindowScene.current?.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight)) { _ in }
                     }

@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
@@ -21,17 +22,16 @@ struct AccountConfirmations: ViewModifier {
     #if os(macOS)
         /// The main window and the Settings window both host these; the one that was active when
         /// the prompt was raised shows it, so it never appears twice or behind the wrong window.
-        @Environment(\.appearsActive) private var appearsActive
-        @State private var ownsPrompt = false
+        @State private var isPromptOwner = false
     #endif
 
     private var isPromptPending: Bool {
         store.isConfirmingSignOut || store.accountPendingRemoval != nil || store.changePassword != nil
     }
 
-    private var showsPrompts: Bool {
+    private var shouldShowPrompts: Bool {
         #if os(macOS)
-            isEnabled && ownsPrompt
+            isEnabled && isPromptOwner
         #else
             isEnabled
         #endif
@@ -49,7 +49,7 @@ struct AccountConfirmations: ViewModifier {
     private var changePasswordSheet: Binding<StoreOf<ChangePasswordFeature>?> {
         Binding(
             get: {
-                guard showsPrompts, Self.isHostedByWindow else { return nil }
+                guard shouldShowPrompts, Self.isHostedByWindow else { return nil }
                 return store.scope(state: \.changePassword, action: \.changePassword.presented)
             },
             set: { newValue in
@@ -72,7 +72,7 @@ struct AccountConfirmations: ViewModifier {
                     .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
                 #endif
             }
-            .dsAlert(isPresented: Binding(get: { showsPrompts && store.isConfirmingSignOut }, set: { _ in })) {
+            .dsAlert(isPresented: Binding(get: { shouldShowPrompts && store.isConfirmingSignOut }, set: { _ in })) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
                     title: L10n.Settings.signOutAlertTitle,
@@ -86,7 +86,7 @@ struct AccountConfirmations: ViewModifier {
                     onDismiss: { store.send(.cancelSignOutTapped) }
                 )
             }
-            .dsAlert(isPresented: Binding(get: { showsPrompts && store.accountPendingRemoval != nil }, set: { _ in })) {
+            .dsAlert(isPresented: Binding(get: { shouldShowPrompts && store.accountPendingRemoval != nil }, set: { _ in })) {
                 DSAlertSheet(
                     icon: IconKit.signOut,
                     title: L10n.Settings.accountSignOutTitle,
@@ -100,9 +100,29 @@ struct AccountConfirmations: ViewModifier {
                 )
             }
         #if os(macOS)
-            .onChange(of: isPromptPending) { _, pending in
-                ownsPrompt = pending && appearsActive
+            .onWindowPromptChange(of: isPromptPending) { _, isOwner in
+                isPromptOwner = isOwner
             }
         #endif
     }
+}
+
+@MainActor
+private func confirmationsPreview(_ mutate: (inout SettingsFeature.State) -> Void) -> some View {
+    var state = SettingsFeature.State(
+        serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+        user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe")
+    )
+    mutate(&state)
+    return Color.clear
+        .frame(width: 600, height: 600)
+        .modifier(AccountConfirmations(store: Store(initialState: state) { SettingsFeature() } withDependencies: { $0.filesClient = .previewValue }))
+}
+
+#Preview("Sign out") {
+    confirmationsPreview { $0.isConfirmingSignOut = true }
+}
+
+#Preview("Change password") {
+    confirmationsPreview { $0.changePassword = ChangePasswordFeature.State(serverURL: $0.serverURL) }
 }

@@ -91,11 +91,11 @@
                     }
                 }
             case let .done(text):
-                Label(text, systemImage: "checkmark.circle.fill")
+                Label { Text(text) } icon: { IconKit.checkmarkCircleFill }
                     .foregroundStyle(.secondary)
                     .lineLimit(1)
             case let .failed(message):
-                Label(message, systemImage: "exclamationmark.circle.fill")
+                Label { Text(message) } icon: { IconKit.errorFill }
                     .foregroundStyle(Color.negativeText)
                     .lineLimit(1)
             }
@@ -117,5 +117,32 @@
             let type = UTType(filenameExtension: (name as NSString).pathExtension) ?? .data
             return NSWorkspace.shared.icon(for: type)
         }
+    }
+
+    @MainActor
+    private func queuePreview(_ rows: [MacTransferRow]) -> some View {
+        MacTransferQueueSheet(
+            title: "Uploads",
+            rows: rows,
+            emptyMessage: "No uploads",
+            canClear: !rows.isEmpty,
+            onCancel: { _ in },
+            onRetry: { _ in },
+            onClear: {},
+            onClose: {}
+        )
+    }
+
+    #Preview("Queue") {
+        queuePreview([
+            MacTransferRow(id: UUID(), name: "beach.jpg", status: .running(progress: 0.42, detail: "1.2 MB of 2.8 MB")),
+            MacTransferRow(id: UUID(), name: "itinerary.pdf", status: .waiting),
+            MacTransferRow(id: UUID(), name: "notes.txt", status: .done("Uploaded")),
+            MacTransferRow(id: UUID(), name: "movie.mkv", status: .failed("The connection was lost.")),
+        ])
+    }
+
+    #Preview("Empty") {
+        queuePreview([])
     }
 #endif

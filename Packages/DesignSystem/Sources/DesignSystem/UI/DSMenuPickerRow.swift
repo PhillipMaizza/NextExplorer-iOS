@@ -46,7 +46,10 @@ public struct DSMenuPickerRow<Selection: Hashable, Options: View, RowLabel: View
                     HStack(spacing: Metrics.valueSpacing) {
                         Text(value).type(.body2(.regular), style: .secondary)
                         IconKit.chevronUpDown
-                            .font(.system(size: Metrics.chevronSize, weight: .semibold))
+                            .resizable()
+                            .scaledToFit()
+                            .fontWeight(.semibold)
+                            .frame(width: Metrics.chevronSize, height: Metrics.chevronSize)
                             .foregroundStyle(Color.secondaryDS)
                     }
                 }
@@ -74,12 +77,12 @@ public struct DSMenuPickerRow<Selection: Hashable, Options: View, RowLabel: View
             DSMenuPickerRow(selection: $appearance, value: appearance) {
                 ForEach(["System", "Light", "Dark"], id: \.self) { Text($0).tag($0) }
             } label: {
-                Label("Appearance", systemImage: "moon.fill")
+                Label { Text(verbatim: "Appearance") } icon: { IconKit.darkMode }
             }
             DSMenuPickerRow(selection: $size, value: size) {
                 ForEach(["Small", "Medium", "Large"], id: \.self) { Text($0).tag($0) }
             } label: {
-                Label("Thumbnail Size", systemImage: "square.grid.2x2")
+                Label { Text(verbatim: "Thumbnail Size") } icon: { IconKit.squareGrid }
             }
         }
     }

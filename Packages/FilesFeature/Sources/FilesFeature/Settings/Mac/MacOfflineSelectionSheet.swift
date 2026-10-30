@@ -34,16 +34,12 @@
         }
 
         private var header: some View {
-            HStack(spacing: .space8) {
-                Button { store.send(.backTapped) } label: { Image(systemName: "chevron.left") }
-                    .disabled(!store.canNavigateBack)
-                    .accessibilityLabel(L10n.Common.back)
-                Text(store.directoryPath.isEmpty ? L10n.Offline.selectionTitle : store.directoryPath)
-                    .font(.headline)
-                    .lineLimit(1)
-                    .truncationMode(.head)
-                Spacer()
-            }
+            MacSheetHeader(
+                title: L10n.Offline.selectionTitle,
+                subtitle: store.directoryPath,
+                canGoBack: store.canNavigateBack,
+                onBack: { store.send(.backTapped) }
+            )
             .padding(Metrics.padding)
         }
 
@@ -60,13 +56,8 @@
                 }
                 .width(Metrics.checkColumnWidth)
                 TableColumn(L10n.Sort.name) { item in
-                    Label {
-                        Text(item.name).lineLimit(1)
-                    } icon: {
-                        Image(systemName: item.isDirectory ? "folder.fill" : "doc")
-                            .foregroundStyle(item.isDirectory ? Color.accentColor : .secondary)
-                    }
-                    .opacity(store.state.isAlreadyOffline(item) ? Metrics.alreadyOfflineOpacity : 1)
+                    MacItemLabel(name: item.name, isDirectory: item.isDirectory)
+                        .opacity(store.state.isAlreadyOffline(item) ? Metrics.alreadyOfflineOpacity : 1)
                 }
                 TableColumn(L10n.Sort.size) { item in
                     Text(sizeText(item))
@@ -101,41 +92,46 @@
         }
 
         private var footer: some View {
-            HStack(spacing: .space8) {
+            MacDialogButtons(
+                confirmTitle: L10n.Offline.selectionDownload,
+                isConfirmEnabled: store.canConfirm && !isOverFreeSpace,
+                onCancel: { store.send(.cancelTapped) },
+                onConfirm: { store.send(.confirmTapped) }
+            ) {
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(L10n.MacSettings.labelFormat(L10n.Offline.selectionEstimate) + " " + estimateText)
                         .monospacedDigit()
-                    if exceedsFreeSpace {
+                    if isOverFreeSpace {
                         Text(L10n.Offline.selectionInsufficientSpace).font(.callout).foregroundStyle(Color.negativeText)
                     }
                 }
-                Spacer()
-                Button(L10n.Common.cancel) { store.send(.cancelTapped) }
-                    .keyboardShortcut(.cancelAction)
-                Button(L10n.Offline.selectionDownload) { store.send(.confirmTapped) }
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(!store.canConfirm || exceedsFreeSpace)
             }
             .padding(Metrics.padding)
         }
 
         private func sizeText(_ item: FileItem) -> String {
             if item.isDirectory {
-                return store.folderSizes[item.id].map { SettingsFormat.byteFormatter.string(fromByteCount: $0) } ?? "--"
+                return store.folderSizes[item.id].map { FileSizeFormat.string($0) } ?? "--"
             }
-            return SettingsFormat.byteFormatter.string(fromByteCount: item.size)
+            return FileSizeFormat.string(item.size)
         }
 
         private var estimateText: String {
-            let size = SettingsFormat.byteFormatter.string(fromByteCount: store.estimatedBytes)
+            let size = FileSizeFormat.string(store.estimatedBytes)
             return store.isEstimating ? "\(size)…" : size
         }
 
         /// `nil` free space (unknown) never blocks a download it can't size.
-        private var exceedsFreeSpace: Bool {
+        private var isOverFreeSpace: Bool {
             let values = try? URL(fileURLWithPath: NSHomeDirectory()).resourceValues(forKeys: [.volumeAvailableCapacityForImportantUsageKey])
             let free = values?.volumeAvailableCapacityForImportantUsage ?? .max
             return !store.isEstimating && store.estimatedBytes > free
         }
+    }
+
+    #Preview {
+        MacOfflineSelectionSheet(store: Store(initialState: OfflineSelectionFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
+        )) { OfflineSelectionFeature() } withDependencies: { $0.filesClient = .previewValue })
     }
 #endif

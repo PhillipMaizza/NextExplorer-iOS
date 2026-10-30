@@ -85,7 +85,7 @@
                 Button(role: .destructive) {
                     store.send(.removeRule(id: rule.id), animation: .default)
                 } label: {
-                    Image(systemName: "minus.circle.fill")
+                    IconKit.removeCircle
                 }
                 .buttonStyle(.borderless)
                 .foregroundStyle(Color.negativeText)

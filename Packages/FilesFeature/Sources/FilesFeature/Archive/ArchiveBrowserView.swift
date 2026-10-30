@@ -201,7 +201,7 @@ struct ArchiveBrowserView: View {
                 TableColumn(L10n.Sort.name) { row in
                     HStack(spacing: .space8) {
                         if row.isDirectory {
-                            Image(systemName: "folder.fill").foregroundStyle(Color.accent)
+                            IconKit.folderFill.foregroundStyle(Color.accent)
                         } else {
                             FileTypeIcon(kind: (row.name as NSString).pathExtension)
                                 .frame(width: Constants.macRowIconSize, height: Constants.macRowIconSize)
@@ -214,7 +214,7 @@ struct ArchiveBrowserView: View {
                     }
                 }
                 TableColumn(L10n.Sort.size) { row in
-                    Text(row.size.map { Self.byteFormatter.string(fromByteCount: Int64($0)) } ?? "")
+                    Text(row.size.map { FileSizeFormat.string(Int64($0)) } ?? "")
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
@@ -246,7 +246,7 @@ struct ArchiveBrowserView: View {
             if extractingRow == row.name {
                 DSSpinner(size: .small)
             } else if let size = row.size {
-                Text(Self.byteFormatter.string(fromByteCount: Int64(size)))
+                Text(FileSizeFormat.string(Int64(size)))
                     .type(.body3(.regular), style: .secondary)
             }
             if row.isDirectory {
@@ -371,12 +371,6 @@ struct ArchiveBrowserView: View {
             .appendingPathComponent("ArchiveBrowser", isDirectory: true)
             .appendingPathComponent(item.id.replacingOccurrences(of: "/", with: "_"), isDirectory: true)
     }
-
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
 }
 
 #Preview("Loading") {

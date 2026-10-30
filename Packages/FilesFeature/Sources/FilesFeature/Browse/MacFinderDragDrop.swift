@@ -145,4 +145,16 @@
         static let dropOutlineInset: CGFloat = .space8
         static let folderOutlineWidth: CGFloat = 2
     }
+
+    #Preview {
+        let folder = FileItem(name: "Projects", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let file = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 1_024, kind: "pdf")
+        return List {
+            Label { Text(folder.name) } icon: { IconKit.folderFill }
+                .modifier(MacFolderDropTarget(folder: folder, isEnabled: true) { _ in })
+            Label { Text(file.name) } icon: { IconKit.document }
+                .modifier(MacFileDrag(item: file, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), isEnabled: true))
+        }
+        .frame(width: 320, height: 160)
+    }
 #endif

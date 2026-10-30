@@ -21,7 +21,7 @@ private enum Constants {
 struct OfflineSettingsSection: View {
     let store: StoreOf<SettingsFeature>
     let filter: SettingsSearchFilter
-    @AppStorage(AppStorageKeys.preferOfflineMedia) private var preferOfflineMedia = true
+    @AppStorage(AppStorageKeys.preferOfflineMedia) private var shouldPreferOfflineMedia = true
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var statusPulse = false
 
@@ -58,7 +58,7 @@ struct OfflineSettingsSection: View {
                         DSNavigationRow(
                             title: L10n.Offline.manageRow,
                             icon: IconKit.cloud,
-                            accessory: .detail(SettingsFormat.byteFormatter.string(fromByteCount: store.offlineSize))
+                            accessory: .detail(FileSizeFormat.string(store.offlineSize))
                         ) {
                             store.send(.offlineManageButtonTapped)
                         }
@@ -77,14 +77,14 @@ struct OfflineSettingsSection: View {
                             title: L10n.Offline.preferOfflineToggle,
                             subtitle: L10n.Offline.preferOfflineSubtitle,
                             icon: IconKit.play,
-                            isOn: $preferOfflineMedia
+                            isOn: $shouldPreferOfflineMedia
                         )
                     }
                     if filter.matches(L10n.Offline.removeRow) {
                         DSNavigationRow(
                             title: L10n.Offline.removeRow,
                             icon: IconKit.delete,
-                            accessory: .detail(SettingsFormat.byteFormatter.string(fromByteCount: store.offlineSize)),
+                            accessory: .detail(FileSizeFormat.string(store.offlineSize)),
                             role: .accent
                         ) {
                             store.send(.removeOfflineTapped)
@@ -109,7 +109,7 @@ struct OfflineSettingsSection: View {
 
     private var footerText: String {
         if progress.phase == .completed, store.offlineSize > 0 {
-            return L10n.Offline.available(SettingsFormat.byteFormatter.string(fromByteCount: store.offlineSize))
+            return L10n.Offline.available(FileSizeFormat.string(store.offlineSize))
         }
         return L10n.Offline.footnote
     }

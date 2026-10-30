@@ -13,7 +13,7 @@
     /// The Storage pane: the local cache, the files kept for offline use, and the server's disks.
     struct MacStorageSettingsTab: View {
         let store: StoreOf<SettingsFeature>
-        @AppStorage(AppStorageKeys.preferOfflineMedia) private var preferOfflineMedia = true
+        @AppStorage(AppStorageKeys.preferOfflineMedia) private var shouldPreferOfflineMedia = true
 
         private var progress: OfflineDownloadProgress {
             store.offlineProgress
@@ -24,7 +24,7 @@
                 Section {
                     LabeledContent(L10n.MacSettings.cache) {
                         HStack {
-                            Text(SettingsFormat.byteFormatter.string(fromByteCount: store.cacheSize))
+                            Text(FileSizeFormat.string(store.cacheSize))
                                 .monospacedDigit()
                             Button(L10n.Settings.rowClearCache + "…") { store.send(.clearCacheTapped) }
                                 .disabled(store.isClearingCache || store.cacheSize == 0)
@@ -65,8 +65,8 @@
 
         private func usageCaption(_ usage: StorageUsage) -> String {
             L10n.Settings.serverStorageUsed(
-                SettingsFormat.byteFormatter.string(fromByteCount: usage.used),
-                SettingsFormat.byteFormatter.string(fromByteCount: usage.capacity)
+                FileSizeFormat.string(usage.used),
+                FileSizeFormat.string(usage.capacity)
             )
         }
 
@@ -83,12 +83,12 @@
                 Text(message).foregroundStyle(Color.negativeText)
             }
             if !progress.isActive, store.offlineSize > 0 {
-                Toggle(isOn: $preferOfflineMedia) {
+                Toggle(isOn: $shouldPreferOfflineMedia) {
                     MacRowTitle(title: L10n.Offline.preferOfflineToggle, subtitle: L10n.Offline.preferOfflineSubtitle)
                 }
                 .accessibilityLabel(L10n.Offline.preferOfflineToggle)
                 LabeledContent(L10n.Offline.manageTitle) {
-                    Text(SettingsFormat.byteFormatter.string(fromByteCount: store.offlineSize)).monospacedDigit()
+                    Text(FileSizeFormat.string(store.offlineSize)).monospacedDigit()
                 }
                 HStack {
                     Button(L10n.Offline.manageRow) { store.send(.offlineManageButtonTapped) }

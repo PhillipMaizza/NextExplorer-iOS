@@ -106,4 +106,41 @@
             }
         }
     }
+
+    @MainActor
+    private func shareFieldsPreview(target: ShareTarget, usersPhase: DataPhase = .loaded) -> some View {
+        Form {
+            MacShareFormFields(
+                itemName: "Electricity",
+                sourcePath: "Documents/Bills",
+                label: .constant(""),
+                accessMode: .constant(.readonly),
+                target: .constant(target),
+                users: User.previewManagedUsers,
+                selectedUserIDs: [],
+                usersPhase: usersPhase,
+                onToggleUser: { _ in },
+                isPasswordOn: .constant(true),
+                password: .constant(""),
+                passwordPrompt: "Required",
+                isExpiryOn: .constant(false),
+                expiresAt: .constant(Date())
+            )
+        }
+        .formStyle(.columns)
+        .padding(.space24)
+        .frame(width: 520)
+    }
+
+    #Preview("Anyone") {
+        shareFieldsPreview(target: .anyone)
+    }
+
+    #Preview("Users") {
+        shareFieldsPreview(target: .users)
+    }
+
+    #Preview("Users loading") {
+        shareFieldsPreview(target: .users, usersPhase: .loading)
+    }
 #endif

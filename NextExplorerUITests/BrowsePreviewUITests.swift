@@ -17,7 +17,7 @@
             XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
             browse.item(Fixture.folder).tap()
             // The fixture returns the same items at every depth, so the listing stays populated after
-            // pushing a folder — proof the navigation resolved rather than dead ended.
+            // pushing a folder: proof the navigation resolved rather than dead ended.
             XCTAssertTrue(browse.item(Fixture.file).waitToAppear(), "Navigating into a folder should load its contents")
         }
 

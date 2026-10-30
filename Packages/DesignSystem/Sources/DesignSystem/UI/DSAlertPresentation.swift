@@ -34,3 +34,21 @@ public extension View {
         }
     }
 #endif
+
+#Preview {
+    Color.clear
+        .frame(width: 400, height: 300)
+        .dsAlert(isPresented: .constant(true)) {
+            DSAlertSheet(
+                icon: IconKit.delete,
+                title: "Delete “report.pdf”?",
+                message: "This cannot be undone.",
+                confirmTitle: "Delete",
+                dismissTitle: "Cancel",
+                role: .destructive,
+                closeAccessibilityLabel: "Close",
+                onConfirm: {},
+                onDismiss: {}
+            )
+        }
+}

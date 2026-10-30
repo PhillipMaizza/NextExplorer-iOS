@@ -19,7 +19,7 @@ let package = Package(
         // test trait) — it ships in swift-dependencies, which TCA already pulls in transitively.
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.0"),
         .package(url: "https://github.com/simonbs/TreeSitterLanguages", from: "0.1.10"),
-        // Runestone's own tree-sitter; the macOS editor drives it directly (Runestone is UIKit only).
+        // Runestone's own tree sitter; the macOS editor drives it directly (Runestone is UIKit only).
         .package(url: "https://github.com/tree-sitter/tree-sitter", .upToNextMinor(from: "0.20.9")),
         .package(url: "https://github.com/weichsel/ZIPFoundation", from: "0.9.19"),
         .package(url: "https://github.com/mtgto/Unrar.swift", from: "0.5.4"),

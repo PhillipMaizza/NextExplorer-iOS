@@ -69,7 +69,7 @@
 
         func togglePin(_ version: FileVersion) {
             perform { client, serverURL, path in
-                _ = try await client.updateVersion(serverURL, path, version.id, nil, !version.pinned)
+                _ = try await client.updateVersion(serverURL, path, version.id, nil, !version.isPinned)
             }
         }
 
@@ -123,7 +123,7 @@
             date.formatted(date: .abbreviated, time: .shortened)
         }
 
-        /// "report (2026-10-27 09-30).pdf", like the server's own name for a copy.
+        /// The file name with the capture date and time appended, like the server's own name for a copy.
         private static func copyName(for fileName: String, version: FileVersion) -> String {
             let base = (fileName as NSString).deletingPathExtension
             let ext = (fileName as NSString).pathExtension
@@ -173,5 +173,13 @@
                 }
             })
         }
+    }
+
+    #Preview("Delete all confirmation") {
+        let model = MacVersionsModel()
+        model.isConfirmingDeleteAll = true
+        return Text(verbatim: "report.pdf")
+            .frame(width: 320, height: 200)
+            .modifier(MacVersionsDialogs(model: model))
     }
 #endif

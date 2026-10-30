@@ -5,27 +5,39 @@ import Foundation
 /// and what the caller may do with them.
 public struct FileVersionHistory: Decodable, Equatable, Sendable {
     /// Whether the server keeps versions at all (`versions.enabled` in its settings).
-    public let enabled: Bool
+    public let isEnabled: Bool
     public let versions: [FileVersion]
     public let totalBytes: Int64
     public let rights: Rights
 
-    public struct Rights: Decodable, Equatable, Sendable {
-        public let see: Bool
-        public let download: Bool
-        public let restore: Bool
-        public let remove: Bool
+    private enum CodingKeys: String, CodingKey {
+        case versions, totalBytes, rights
+        case isEnabled = "enabled"
+    }
 
-        public init(see: Bool, download: Bool, restore: Bool, remove: Bool) {
-            self.see = see
-            self.download = download
-            self.restore = restore
-            self.remove = remove
+    public struct Rights: Decodable, Equatable, Sendable {
+        public let canSee: Bool
+        public let canDownload: Bool
+        public let canRestore: Bool
+        public let canRemove: Bool
+
+        private enum CodingKeys: String, CodingKey {
+            case canSee = "see"
+            case canDownload = "download"
+            case canRestore = "restore"
+            case canRemove = "remove"
+        }
+
+        public init(canSee: Bool, canDownload: Bool, canRestore: Bool, canRemove: Bool) {
+            self.canSee = canSee
+            self.canDownload = canDownload
+            self.canRestore = canRestore
+            self.canRemove = canRemove
         }
     }
 
-    public init(enabled: Bool, versions: [FileVersion], totalBytes: Int64, rights: Rights) {
-        self.enabled = enabled
+    public init(isEnabled: Bool, versions: [FileVersion], totalBytes: Int64, rights: Rights) {
+        self.isEnabled = isEnabled
         self.versions = versions
         self.totalBytes = totalBytes
         self.rights = rights
@@ -42,9 +54,15 @@ public struct FileVersion: Decodable, Equatable, Identifiable, Sendable {
     public let capturedAt: Date
     public let author: Author?
     public let label: String?
-    public let pinned: Bool
+    public let isPinned: Bool
     /// `false` once the storage holding it is gone; `nil` when the server didn't say.
-    public let available: Bool?
+    public let isAvailable: Bool?
+
+    private enum CodingKeys: String, CodingKey {
+        case id, size, modifiedAt, capturedAt, author, label
+        case isPinned = "pinned"
+        case isAvailable = "available"
+    }
 
     public struct Author: Decodable, Equatable, Sendable {
         public let label: String?
@@ -61,8 +79,8 @@ public struct FileVersion: Decodable, Equatable, Identifiable, Sendable {
         capturedAt: Date,
         author: Author? = nil,
         label: String? = nil,
-        pinned: Bool = false,
-        available: Bool? = true
+        isPinned: Bool = false,
+        isAvailable: Bool? = true
     ) {
         self.id = id
         self.size = size
@@ -70,7 +88,7 @@ public struct FileVersion: Decodable, Equatable, Identifiable, Sendable {
         self.capturedAt = capturedAt
         self.author = author
         self.label = label
-        self.pinned = pinned
-        self.available = available
+        self.isPinned = isPinned
+        self.isAvailable = isAvailable
     }
 }

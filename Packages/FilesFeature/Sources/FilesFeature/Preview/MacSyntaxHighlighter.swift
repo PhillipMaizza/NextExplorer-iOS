@@ -47,7 +47,7 @@
     import TreeSitterYAML
     import TreeSitterYAMLQueries
 
-    /// A tree-sitter grammar plus its highlight queries. TypeScript, TSX, SCSS and C++ layer their
+    /// A tree sitter grammar plus its highlight queries. TypeScript, TSX, SCSS and C++ layer their
     /// queries over the language they extend, the same way Runestone composes them on iOS.
     struct MacSyntaxLanguage: @unchecked Sendable {
         let language: UnsafePointer<TSLanguage>?
@@ -108,7 +108,7 @@
                     ts_parser_parse_string_encoding(
                         parser, nil,
                         UnsafeRawPointer(base).assumingMemoryBound(to: CChar.self),
-                        UInt32(buffer.count * 2),
+                        UInt32(buffer.count * MemoryLayout<UInt16>.size),
                         TSInputEncodingUTF16
                     )
                 }

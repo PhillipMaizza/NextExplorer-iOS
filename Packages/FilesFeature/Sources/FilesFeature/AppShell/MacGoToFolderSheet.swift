@@ -26,4 +26,8 @@
             .task { isFocused = true }
         }
     }
+
+    #Preview {
+        MacGoToFolderSheet(onGo: { _ in }, onCancel: {})
+    }
 #endif

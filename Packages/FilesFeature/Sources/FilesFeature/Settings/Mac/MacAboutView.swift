@@ -74,7 +74,7 @@
                         Button(L10n.Common.close) { isShowingLicenses = false }
                             .keyboardShortcut(.defaultAction)
                     }
-                    .padding(Metrics.infoSpacing * 2)
+                    .padding(.space16)
                 }
                 .frame(width: Metrics.licensesWidth, height: Metrics.licensesHeight)
             }

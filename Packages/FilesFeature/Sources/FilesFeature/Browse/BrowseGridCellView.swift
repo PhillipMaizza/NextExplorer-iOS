@@ -44,7 +44,7 @@ struct GridCellView: View {
     /// cell's bottom-trailing corner (not over the icon) and the preview holds off until ready.
     var isOpening: Bool = false
     var isAvailableOffline: Bool = false
-    @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
+    @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
 
     /// `thumbnailFile` opts a caller with only a name/kind (a search hit) into the same thumbnail
     /// rendering a browse tile gets. Server thumbnails still need the file to report
@@ -109,7 +109,7 @@ struct GridCellView: View {
     }
 
     private var displayName: String {
-        displayFileName(name, isDirectory: isDirectory, showExtension: showFilenameExtensions)
+        displayFileName(name, isDirectory: isDirectory, showExtension: shouldShowFilenameExtensions)
     }
 
     private var isEligibleForThumbnail: Bool {

@@ -1,5 +1,7 @@
 import AuthFeature
 import ComposableArchitecture
+import CoreModels
+import DesignSystem
 import Localization
 import SwiftUI
 
@@ -17,13 +19,12 @@ struct AddAccountSheet: ViewModifier {
     let store: StoreOf<AppFeature>
 
     #if os(macOS)
-        @Environment(\.appearsActive) private var appearsActive
-        @State private var ownsSheet = false
+        @State private var isSheetOwner = false
     #endif
 
-    private var showsSheet: Bool {
+    private var shouldShowSheet: Bool {
         #if os(macOS)
-            ownsSheet
+            isSheetOwner
         #else
             true
         #endif
@@ -31,7 +32,7 @@ struct AddAccountSheet: ViewModifier {
 
     /// The Mac adds an account in a dialog sized sheet, where the accent flood into the app has
     /// nothing to reveal.
-    private var addsAccountInDialog: Bool {
+    private var shouldAddAccountInDialog: Bool {
         #if os(macOS)
             true
         #else
@@ -41,7 +42,7 @@ struct AddAccountSheet: ViewModifier {
 
     private var sheetStore: Binding<StoreOf<LoginFormFeature>?> {
         Binding(
-            get: { showsSheet ? store.scope(state: \.addAccount, action: \.addAccount.presented) : nil },
+            get: { shouldShowSheet ? store.scope(state: \.addAccount, action: \.addAccount.presented) : nil },
             set: { newValue in
                 if newValue == nil, store.addAccount != nil {
                     store.send(.addAccount(.dismiss))
@@ -53,7 +54,7 @@ struct AddAccountSheet: ViewModifier {
     func body(content: Content) -> some View {
         content
             .sheet(item: sheetStore, onDismiss: { store.send(.addAccountSheetDismissed) }) { addAccountStore in
-                LoginFormView(store: addAccountStore, autoFocus: true, floodsIntoApp: !addsAccountInDialog)
+                LoginFormView(store: addAccountStore, autoFocus: true, shouldFloodIntoApp: !shouldAddAccountInDialog)
                 #if os(macOS)
                     // A Mac sheet sizes to its content's ideal size, which the flexible login
                     // layout collapses to nothing; and there is no swipe down, so it needs Cancel.
@@ -66,9 +67,15 @@ struct AddAccountSheet: ViewModifier {
                 #endif
             }
         #if os(macOS)
-            .onChange(of: store.addAccount != nil) { _, pending in
-                ownsSheet = pending && appearsActive
+            .onWindowPromptChange(of: store.addAccount != nil) { _, isOwner in
+                isSheetOwner = isOwner
             }
         #endif
     }
+}
+
+#Preview("Add account") {
+    Color.clear
+        .frame(width: 600, height: 700)
+        .modifier(AddAccountSheet(store: .previewSignedIn(addAccount: true)))
 }

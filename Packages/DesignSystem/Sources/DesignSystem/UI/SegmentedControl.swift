@@ -23,25 +23,25 @@ public struct DSSegmentedControl<Option: Hashable>: View {
         "pill"
     }
 
-    private let alwaysUsesPill: Bool
+    private let shouldAlwaysUsePill: Bool
 
-    /// The Mac shows a native segmented control unless `alwaysUsesPill` is set, for a branded
+    /// The Mac shows a native segmented control unless `shouldAlwaysUsePill` is set, for a branded
     /// screen (the login card) that keeps the accent pill everywhere.
     public init(
         options: [Option],
         selection: Binding<Option>,
-        alwaysUsesPill: Bool = false,
+        shouldAlwaysUsePill: Bool = false,
         label: @escaping (Option) -> String
     ) {
         self.options = options
         _selection = selection
-        self.alwaysUsesPill = alwaysUsesPill
+        self.shouldAlwaysUsePill = shouldAlwaysUsePill
         self.label = label
     }
 
     public var body: some View {
         #if os(macOS)
-            if alwaysUsesPill {
+            if shouldAlwaysUsePill {
                 pillControl
             } else {
                 nativeControl

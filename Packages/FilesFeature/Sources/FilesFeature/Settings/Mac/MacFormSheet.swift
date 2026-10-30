@@ -37,22 +37,16 @@
                 if let errorMessage {
                     Text(errorMessage).foregroundStyle(Color.negativeText)
                 }
-                HStack(spacing: .space8) {
-                    Spacer()
-                    if isWorking {
-                        ProgressView().controlSize(.small)
-                    }
-                    if let secondaryTitle {
-                        Button(secondaryTitle, action: onSecondary)
-                    }
-                    if let cancelTitle {
-                        Button(cancelTitle, action: onCancel)
-                            .keyboardShortcut(.cancelAction)
-                    }
-                    Button(confirmTitle, action: onConfirm)
-                        .keyboardShortcut(.defaultAction)
-                        .disabled(!isConfirmEnabled || isWorking)
-                }
+                MacDialogButtons(
+                    confirmTitle: confirmTitle,
+                    isConfirmEnabled: isConfirmEnabled,
+                    isWorking: isWorking,
+                    cancelTitle: cancelTitle,
+                    secondaryTitle: secondaryTitle,
+                    onSecondary: onSecondary,
+                    onCancel: onCancel,
+                    onConfirm: onConfirm
+                )
             }
             .padding(Metrics.padding)
             .frame(width: width)

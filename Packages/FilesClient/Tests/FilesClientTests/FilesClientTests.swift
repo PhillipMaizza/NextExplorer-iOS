@@ -1279,12 +1279,12 @@ struct FilesClientLiveTests {
         let requestURL = try #require(StubURLProtocol.capturedRequest?.url)
         #expect(requestURL.path == "/api/versions")
         #expect(URLComponents(url: requestURL, resolvingAgainstBaseURL: false)?.queryItems == [URLQueryItem(name: "path", value: "Docs/notes.txt")])
-        #expect(history.enabled)
+        #expect(history.isEnabled)
         #expect(history.versions.map(\.id) == ["v2", "v1"])
         #expect(history.versions[0].author?.label == "Phillip")
         #expect(history.versions[1].label == "Draft")
-        #expect(history.versions[1].available == false)
-        #expect(!history.rights.restore)
+        #expect(history.versions[1].isAvailable == false)
+        #expect(!history.rights.canRestore)
     }
 
     @Test
@@ -1318,7 +1318,7 @@ struct FilesClientLiveTests {
         let version = #"{"id":"v1","size":12,"modifiedAt":"2026-10-20T08:00:00Z","capturedAt":"2026-10-20T08:00:05Z","author":null,"label":null,"pinned":true,"available":true}"#
         stub(statusCode: 200, body: Data(version.utf8))
         let updated = try await makeClient().updateVersion(serverURL, "Docs/notes.txt", "v1", nil, true)
-        #expect(updated.pinned)
+        #expect(updated.isPinned)
         #expect(StubURLProtocol.capturedRequest?.httpMethod == "PATCH")
         let json = try capturedJSON()
         #expect(json["pinned"] as? Bool == true)

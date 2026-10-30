@@ -31,11 +31,11 @@ import SwiftUI
         }
 
         @Environment(\.groupedListRowVerticalPadding) private var rowVerticalPadding
-        @Environment(\.groupedListRowHover) private var highlightsRowsOnHover
-        @Environment(\.groupedListUsesNativeForm) private var usesNativeForm
+        @Environment(\.isGroupedListRowHoverEnabled) private var isRowHoverEnabled
+        @Environment(\.isGroupedListNativeForm) private var isNativeForm
 
         public var body: some View {
-            if usesNativeForm {
+            if isNativeForm {
                 // A narrow window (Settings) reads best as the system's own grouped form.
                 Form { content }
                     .formStyle(.grouped)
@@ -76,7 +76,7 @@ import SwiftUI
                                 .padding(.horizontal, Metrics.rowHorizontalPadding)
                                 .padding(.vertical, rowVerticalPadding ?? Metrics.rowVerticalPadding)
                                 .frame(maxWidth: .infinity, alignment: .leading)
-                                .modifier(RowHover(isEnabled: highlightsRowsOnHover))
+                                .modifier(RowHover(isEnabled: isRowHoverEnabled))
                             if row.id != section.content.last?.id {
                                 Divider().padding(.leading, Metrics.rowHorizontalPadding)
                             }
@@ -117,8 +117,8 @@ import SwiftUI
 
 public extension EnvironmentValues {
     @Entry var groupedListRowVerticalPadding: CGFloat?
-    @Entry var groupedListRowHover = false
-    @Entry var groupedListUsesNativeForm = false
+    @Entry var isGroupedListRowHoverEnabled = false
+    @Entry var isGroupedListNativeForm = false
 }
 
 public extension View {
@@ -131,13 +131,13 @@ public extension View {
     /// On macOS, fills a whole row (edge to edge inside its card) while the pointer is over it,
     /// for lists whose rows are clickable items. iOS has no hover.
     func groupedListRowHover() -> some View {
-        environment(\.groupedListRowHover, true)
+        environment(\.isGroupedListRowHoverEnabled, true)
     }
 
     /// On macOS, renders every `DSGroupedList` below as a native grouped `Form`, for a window
     /// as narrow as the Settings window. iOS lists are unaffected.
     func groupedListUsesNativeForm() -> some View {
-        environment(\.groupedListUsesNativeForm, true)
+        environment(\.isGroupedListNativeForm, true)
     }
 }
 
@@ -145,12 +145,12 @@ public extension View {
     DSGroupedList {
         Section("Folders") {
             ForEach(["Files", "Photos", "Music"], id: \.self) { name in
-                Label(name, systemImage: "folder.fill")
+                Label { Text(name) } icon: { IconKit.folderFill }
             }
         }
         Section("Documents") {
             ForEach(["Report.pdf", "Notes.txt"], id: \.self) { name in
-                Label(name, systemImage: "doc")
+                Label { Text(name) } icon: { IconKit.document }
             }
         }
     }

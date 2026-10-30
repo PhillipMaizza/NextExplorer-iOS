@@ -78,7 +78,7 @@ public enum DesignSystemFonts {
     #if os(iOS)
 
         /// Figtree is a variable font registered as one family at its default (Light)
-        /// instance. UIKit has no `.fontWeight()`-style modifier, so a specific weight has
+        /// instance. UIKit has no `.fontWeight()` style modifier, so a specific weight has
         /// to be dialed in directly on the `wght` variation axis.
         private static func weightedFont(size: CGFloat, weight: CGFloat) -> UIFont {
             guard UIFont(name: familyName, size: size) != nil else {

@@ -130,7 +130,7 @@ struct SettingsAccountsSection: View {
         Button(role: .destructive) {
             store.send(.removeAccountTapped(account))
         } label: {
-            Label(L10n.Settings.accountSignOut, systemImage: "rectangle.portrait.and.arrow.right")
+            Label { Text(L10n.Settings.accountSignOut) } icon: { IconKit.signOut }
         }
     }
 
@@ -171,9 +171,9 @@ struct SettingsAccountsSection: View {
 }
 
 extension SettingsFeature.State {
-    /// The active account. Falls back to one synthesized from the signed-in user + server when the
+    /// The active account. Falls back to one synthesized from the signed in user + server when the
     /// shared account list hasn't been populated yet (a fresh mount before the switcher refresh, or
-    /// a preview), so the active-account row, password change and sign out are always present.
+    /// a preview), so the active account row, password change and sign out are always present.
     var activeAccount: AccountSummary {
         if let active = accounts.first(where: \.isActive) {
             return active
@@ -289,8 +289,8 @@ struct SettingsServerStorageSection: View {
 
     private func usageCaption(_ usage: StorageUsage) -> String {
         L10n.Settings.serverStorageUsed(
-            SettingsFormat.byteFormatter.string(fromByteCount: usage.used),
-            SettingsFormat.byteFormatter.string(fromByteCount: usage.capacity)
+            FileSizeFormat.string(usage.used),
+            FileSizeFormat.string(usage.capacity)
         )
     }
 }

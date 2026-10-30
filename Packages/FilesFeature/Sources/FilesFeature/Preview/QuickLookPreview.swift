@@ -2,7 +2,7 @@
     import QuickLook
     import SwiftUI
 
-    /// Thin `QLPreviewController` wrapper — the first UIKit-representable in this codebase.
+    /// Thin `QLPreviewController` wrapper: the first UIKit representable in this codebase.
     /// Takes one or more local file URLs (see `FilesClient.previewFile`): `QLPreviewController`
     /// reads each file's extension to pick the right renderer (image, PDF, text, office docs, ...),
     /// which only works reliably against a local file, not a remote URL. With more than one URL
@@ -39,7 +39,7 @@
         }
 
         func updateUIViewController(_ uiViewController: QLPreviewController, context: Context) {
-            // Guard against reloading on every SwiftUI re-render (an unrelated state change
+            // Guard against reloading on every SwiftUI rerender (an unrelated state change
             // elsewhere in the hosting view would otherwise reset QuickLook's scroll/zoom state).
             guard context.coordinator.urls != urls else { return }
             context.coordinator.urls = urls
@@ -68,7 +68,7 @@
         }
     }
 
-    /// KVO on `QLPreviewController.currentPreviewItemIndex` — the only signal the built in
+    /// KVO on `QLPreviewController.currentPreviewItemIndex`, the only signal the built in
     /// controller gives that the user swiped to another page. Kept as its own plain `NSObject`,
     /// deliberately not the `@MainActor` `QLPreviewControllerDataSource` coordinator, so the
     /// nonisolated `observeValue` override can touch this object's own state without an unchecked

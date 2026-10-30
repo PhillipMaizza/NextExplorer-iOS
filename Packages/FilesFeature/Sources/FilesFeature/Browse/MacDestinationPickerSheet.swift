@@ -27,14 +27,12 @@
                 content
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 Divider()
-                HStack {
-                    Spacer()
-                    Button(L10n.Common.cancel) { store.send(.cancelTapped) }
-                        .keyboardShortcut(.cancelAction)
-                    Button(confirmTitle) { store.send(.confirmTapped) }
-                        .keyboardShortcut(.defaultAction)
-                        .disabled(!store.canConfirm)
-                }
+                MacDialogButtons(
+                    confirmTitle: confirmTitle,
+                    isConfirmEnabled: store.canConfirm,
+                    onCancel: { store.send(.cancelTapped) },
+                    onConfirm: { store.send(.confirmTapped) }
+                )
                 .padding(Metrics.padding)
             }
             .frame(width: Metrics.width, height: Metrics.height)
@@ -42,21 +40,12 @@
         }
 
         private var header: some View {
-            HStack(spacing: .space8) {
-                Button { store.send(.backTapped) } label: { Image(systemName: "chevron.left") }
-                    .disabled(!store.canNavigateBack)
-                    .accessibilityLabel(L10n.Common.back)
-                VStack(alignment: .leading, spacing: 0) {
-                    Text(title).font(.headline)
-                    if !store.directoryPath.isEmpty {
-                        Text(store.directoryPath)
-                            .font(.callout)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                            .truncationMode(.head)
-                    }
-                }
-                Spacer()
+            MacSheetHeader(
+                title: title,
+                subtitle: store.directoryPath,
+                canGoBack: store.canNavigateBack,
+                onBack: { store.send(.backTapped) }
+            ) {
                 TextField(L10n.Common.search, text: $store.searchQuery.sending(\.searchQueryChanged), prompt: Text(L10n.Common.search))
                     .labelsHidden()
                     .textFieldStyle(.roundedBorder)
@@ -74,7 +63,7 @@
                     ContentUnavailableView.search(text: store.searchQuery)
                 } else {
                     List(store.searchResults ?? []) { result in
-                        folderRow(result.name, subtitle: result.path.isEmpty ? nil : result.path)
+                        MacItemLabel(name: result.name, subtitle: result.path.isEmpty ? nil : result.path, isDirectory: true)
                             .contentShape(Rectangle())
                             .onTapGesture(count: 2) { store.send(.searchResultTapped(result)) }
                     }
@@ -87,24 +76,33 @@
                 EmptyStateView(icon: IconKit.folder, message: L10n.Browse.destinationPickerNoFolders)
             } else {
                 List(store.folders) { folder in
-                    folderRow(folder.name, subtitle: nil)
+                    MacItemLabel(name: folder.name, isDirectory: true)
                         .contentShape(Rectangle())
                         .onTapGesture(count: 2) { store.send(.folderTapped(folder)) }
                 }
             }
         }
+    }
 
-        private func folderRow(_ name: String, subtitle: String?) -> some View {
-            Label {
-                VStack(alignment: .leading) {
-                    Text(name).lineLimit(1)
-                    if let subtitle {
-                        Text(subtitle).font(.callout).foregroundStyle(.secondary).lineLimit(1).truncationMode(.head)
-                    }
-                }
-            } icon: {
-                Image(systemName: "folder.fill").foregroundStyle(Color.accent)
-            }
-        }
+    #Preview("Move") {
+        MacDestinationPickerSheet(
+            store: Store(initialState: DestinationPickerFeature.State(
+                serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+                items: [FileItem(name: "report.pdf", path: "Documents", dateModified: Date(), size: 1_024, kind: "pdf")]
+            )) { DestinationPickerFeature() } withDependencies: { $0.filesClient = .previewValue },
+            title: "Move “report.pdf”",
+            confirmTitle: "Move"
+        )
+    }
+
+    #Preview("Upload") {
+        MacDestinationPickerSheet(
+            store: Store(initialState: DestinationPickerFeature.State(
+                serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+                uploadStartingAt: "Documents"
+            )) { DestinationPickerFeature() } withDependencies: { $0.filesClient = .previewValue },
+            title: "Upload To",
+            confirmTitle: "Choose"
+        )
     }
 #endif

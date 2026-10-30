@@ -24,7 +24,7 @@
     import TreeSitterTypeScriptRunestone
     import TreeSitterYAMLRunestone
 
-    /// Maps a `FileItem.kind` extension to the `TreeSitterLanguage` that renders it correctly —
+    /// Maps a `FileItem.kind` extension to the `TreeSitterLanguage` that renders it correctly:
     /// the same curated set of code kinds `FileTypeIcon`'s badge table dedicates a color to.
     /// `nil` falls back to plain, unhighlighted text (still fully editable).
     enum CodeEditorLanguage {
@@ -58,7 +58,7 @@
     }
 
     /// Wraps Runestone's `TextView` (a `UIScrollView` subclass, not a `UITextView`) to get real
-    /// tree-sitter syntax highlighting for code/text kinds — plain SwiftUI `TextEditor` has no
+    /// tree sitter syntax highlighting for code/text kinds; plain SwiftUI `TextEditor` has no
     /// concept of syntax highlighting at all.
     struct CodeEditorView: UIViewRepresentable {
         let kind: String
@@ -78,10 +78,10 @@
         func updateUIView(_ uiView: TextView, context: Context) {
             uiView.isEditable = isEditable
             // Reapply the document only when the bound text diverges from what the editor itself
-            // last reported, i.e. a genuine external change (first load, a reload, a save-driven
-            // content swap) — never our own echoed keystrokes, and never mid-scroll. Applying it
+            // last reported, i.e. a genuine external change (first load, a reload, a save driven
+            // content swap), never our own echoed keystrokes, and never mid scroll. Applying it
             // through `setState` (below) rather than the raw `text` setter is what keeps Runestone's
-            // line manager consistent; a bare `uiView.text = text` here would leave it half-built and
+            // line manager consistent; a bare `uiView.text = text` here would leave it half built and
             // blank the document on the next lazy relayout a scroll triggers.
             guard context.coordinator.lastReportedText != text else { return }
             context.coordinator.applyDocument(text: text, kind: kind, to: uiView)
@@ -104,7 +104,7 @@
             /// mutating the document.
             private(set) var lastReportedText: String
             private var isApplyingDocument = false
-            /// Bumped on every apply so a slower off-main parse from a superseded apply can't land its
+            /// Bumped on every apply so a slower off main parse from a superseded apply can't land its
             /// `setState` after a newer one and overwrite the current document.
             private var applyGeneration = 0
 
@@ -113,8 +113,8 @@
                 lastReportedText = text.wrappedValue
             }
 
-            /// Sets the whole document via `setState` — the only Runestone-sanctioned way to load
-            /// content and the tree-sitter parse together. `TextViewState`'s parse runs off the main
+            /// Sets the whole document via `setState`: the only Runestone sanctioned way to load
+            /// content and the tree sitter parse together. `TextViewState`'s parse runs off the main
             /// thread so a large file doesn't freeze the UI on open; `StateBox` carries the non
             /// Sendable state back across.
             func applyDocument(text newText: String, kind: String, to view: TextView) {
@@ -127,7 +127,7 @@
                         let language = CodeEditorLanguage.language(forKind: kind)
                         return StateBox(state: language.map { TextViewState(text: newText, language: $0) } ?? TextViewState(text: newText))
                     }.value
-                    // A newer apply superseded this one while it parsed — drop its stale result and
+                    // A newer apply superseded this one while it parsed; drop its stale result and
                     // leave `isApplyingDocument` for the newer apply to clear.
                     guard generation == applyGeneration else { return }
                     view.setState(box.state)
@@ -136,9 +136,9 @@
             }
 
             /// `textViewDidChange` is a `nonisolated` protocol requirement (Runestone doesn't
-            /// annotate it `@MainActor`), so a `@MainActor` method can't satisfy it directly —
+            /// annotate it `@MainActor`), so a `@MainActor` method can't satisfy it directly:
             /// but UIKit only ever calls delegate methods on the main thread, so hopping in with
-            /// `assumeIsolated` is safe and lets us still touch the main-actor-isolated `text`.
+            /// `assumeIsolated` is safe and lets us still touch the main actor isolated `text`.
             nonisolated func textViewDidChange(_ textView: TextView) {
                 MainActor.assumeIsolated {
                     // Ignore the change callbacks Runestone fires while we apply a document (and any

@@ -105,4 +105,29 @@
             ]
         }
     }
+
+    @MainActor
+    private func permissionsPreview(_ permissions: FilePermissions?, isDirectory: Bool = false) -> some View {
+        let item = FileItem(name: isDirectory ? "Projects" : "report.pdf", path: "", dateModified: Date(), size: 1_024, kind: isDirectory ? "directory" : "pdf")
+        var state = PermissionsFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), item: item)
+        if let permissions {
+            state.permissions = permissions
+            state.grid = permissions.grid
+            state.ownerDraft = permissions.owner
+            state.groupDraft = permissions.group
+        }
+        return MacPermissionsSheet(store: Store(initialState: state) { PermissionsFeature() } withDependencies: { $0.filesClient = .previewValue })
+    }
+
+    #Preview("File") {
+        permissionsPreview(FilePermissions(path: "report.pdf", mode: 0o100_644, owner: "phillip", group: "staff", uid: 501, gid: 20, isDirectory: false))
+    }
+
+    #Preview("Folder") {
+        permissionsPreview(FilePermissions(path: "Projects", mode: 0o40_755, owner: "phillip", group: "staff", uid: 501, gid: 20, isDirectory: true), isDirectory: true)
+    }
+
+    #Preview("Loading") {
+        permissionsPreview(nil)
+    }
 #endif

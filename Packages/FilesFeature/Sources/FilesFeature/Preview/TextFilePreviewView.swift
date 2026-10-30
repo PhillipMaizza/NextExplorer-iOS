@@ -36,8 +36,8 @@ struct TextFilePreviewView: View {
     @State private var renderedMarkdownHTML = ""
     @State private var isEditing = false
     @State private var savedToast: DSToastMessage?
-    @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
-    @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
+    @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
+    @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
     @Environment(\.openURL) private var openURL
     @Dependency(\.filesClient) private var filesClient
 
@@ -163,11 +163,11 @@ struct TextFilePreviewView: View {
         } else if isLoading {
             DSSpinner()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if isHTML, renderHTMLPages, !isEditing {
+        } else if isHTML, shouldRenderHTMLPages, !isEditing {
             // "Render HTML Pages" in Settings — editing always drops back to code (there's no
             // in-place editor for a rendered page), regardless of this setting.
             HTMLRenderedView(cacheKey: item.id, html: currentText, resolveAsset: resolveServerAsset)
-        } else if isMarkdown, renderMarkdownPages, !isEditing {
+        } else if isMarkdown, shouldRenderMarkdownPages, !isEditing {
             // "Render Markdown Files" in Settings — same rendering pipeline as HTML, fed
             // compiled-to-HTML Markdown instead of the raw source.
             HTMLRenderedView(cacheKey: item.id, html: renderedMarkdownHTML, resolveAsset: resolveServerAsset)

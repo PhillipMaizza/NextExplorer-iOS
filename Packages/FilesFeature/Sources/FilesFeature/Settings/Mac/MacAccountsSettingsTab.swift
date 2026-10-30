@@ -158,7 +158,7 @@
             Circle()
                 .fill(Color.positive)
                 .frame(width: size, height: size)
-                .overlay(Circle().strokeBorder(Color(nsColor: .windowBackgroundColor), lineWidth: 1.5))
+                .overlay(Circle().strokeBorder(Color(nsColor: .windowBackgroundColor), lineWidth: .borderWidthFocused))
                 .accessibilityHidden(true)
         }
     }

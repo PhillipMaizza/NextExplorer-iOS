@@ -41,7 +41,7 @@
                         }
                     }
                     MacSettingsRow(L10n.Uploads.reviewSectionSize) {
-                        Text(UploadReviewFormat.byteFormatter.string(fromByteCount: store.totalSize))
+                        Text(FileSizeFormat.string(store.totalSize))
                             .monospacedDigit()
                     }
                 }
@@ -50,13 +50,11 @@
                     filesTable
                     Divider()
                     HStack(spacing: 0) {
-                        Button { onAddFiles() } label: { Image(systemName: "plus").frame(width: 24, height: 20) }
+                        MacTableBarButton(icon: IconKit.plus, label: L10n.Uploads.reviewAddMore) { onAddFiles() }
                             .disabled(store.isPreparing)
-                            .accessibilityLabel(L10n.Uploads.reviewAddMore)
-                        Divider().frame(height: 16)
-                        Button { removeSelection() } label: { Image(systemName: "minus").frame(width: 24, height: 20) }
+                        MacTableBarDivider()
+                        MacTableBarButton(icon: IconKit.minus, label: L10n.Common.remove) { removeSelection() }
                             .disabled(selection.isEmpty)
-                            .accessibilityLabel(L10n.Common.remove)
                         Spacer()
                         if store.isPreparing {
                             ProgressView().controlSize(.small)
@@ -74,14 +72,12 @@
                 if store.stagingFailed, store.files.isEmpty {
                     Text(L10n.Uploads.stagingFailed).foregroundStyle(Color.negativeText)
                 }
-                HStack {
-                    Spacer()
-                    Button(L10n.Common.cancel) { store.send(.cancelTapped) }
-                        .keyboardShortcut(.cancelAction)
-                    Button(L10n.Uploads.reviewUploadButton) { store.send(.uploadTapped) }
-                        .keyboardShortcut(.defaultAction)
-                        .disabled(!store.canUpload)
-                }
+                MacDialogButtons(
+                    confirmTitle: L10n.Uploads.reviewUploadButton,
+                    isConfirmEnabled: store.canUpload,
+                    onCancel: { store.send(.cancelTapped) },
+                    onConfirm: { store.send(.uploadTapped) }
+                )
             }
             .padding(.space24)
             .frame(width: Metrics.width)
@@ -95,11 +91,11 @@
                     } icon: {
                         Image(nsImage: NSWorkspace.shared.icon(forFile: file.fileURL.path))
                             .resizable()
-                            .frame(width: 16, height: 16)
+                            .frame(width: .iconSmall, height: .iconSmall)
                     }
                 }
                 TableColumn(L10n.Sort.size) { file in
-                    Text(UploadReviewFormat.byteFormatter.string(fromByteCount: file.size))
+                    Text(FileSizeFormat.string(file.size))
                         .foregroundStyle(.secondary)
                         .monospacedDigit()
                 }
@@ -113,7 +109,7 @@
         }
 
         private func notice(_ text: String) -> some View {
-            Label(text, systemImage: "exclamationmark.triangle")
+            Label { Text(text) } icon: { IconKit.warning }
                 .font(.callout)
                 .foregroundStyle(.secondary)
         }
@@ -128,5 +124,42 @@
                 store.send(.removeFileTapped(id: id), animation: .default)
             }
         }
+    }
+
+    @MainActor
+    private func uploadReviewPreview(_ state: UploadReviewFeature.State, isInsecure: Bool = false) -> some View {
+        MacUploadReviewSheet(
+            store: Store(initialState: state) { UploadReviewFeature() },
+            title: "Upload 3 Items",
+            isServerConnectionInsecure: isInsecure,
+            onAddFiles: {}
+        )
+    }
+
+    #Preview("Ready") {
+        uploadReviewPreview(UploadReviewFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            files: [
+                PickedFile(fileURL: URL(fileURLWithPath: "/tmp/beach.jpg"), fileName: "beach.jpg", size: 2_400_000),
+                PickedFile(fileURL: URL(fileURLWithPath: "/tmp/itinerary.pdf"), fileName: "itinerary.pdf", size: 180_000),
+            ],
+            startingDestination: "Documents/Trips"
+        ))
+    }
+
+    #Preview("Preparing") {
+        uploadReviewPreview(UploadReviewFeature.State(
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            startingDestination: "",
+            preparingCount: 3
+        ))
+    }
+
+    #Preview("Insecure server") {
+        uploadReviewPreview(UploadReviewFeature.State(
+            serverURL: URL(string: "http://192.168.1.10") ?? URL(fileURLWithPath: "/"),
+            files: [PickedFile(fileURL: URL(fileURLWithPath: "/tmp/notes.txt"), fileName: "notes.txt", size: 1_200)],
+            startingDestination: "Documents"
+        ), isInsecure: true)
     }
 #endif

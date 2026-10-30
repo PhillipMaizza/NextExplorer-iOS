@@ -12,7 +12,7 @@
     /// `TabView` paging and swipe to dismiss keep their gestures until the user actually zooms in.
     ///
     /// `onZoomChange` fires whenever the content crosses between "fits" (`zoomScale == minimum`)
-    /// and "zoomed in" — the parent uses it to suspend its own swipe-to-dismiss drag while the
+    /// and "zoomed in": the parent uses it to suspend its own swipe to dismiss drag while the
     /// user is panning around a magnified image.
     struct ZoomableScrollView<Content: View>: UIViewRepresentable {
         private let content: Content
@@ -69,7 +69,7 @@
         final class Coordinator: NSObject, UIScrollViewDelegate {
             let hostingController: UIHostingController<Content>
             var onZoomChange: (Bool) -> Void
-            private var lastReportedIsZoomed = false
+            private var isLastReportedZoomed = false
 
             init(hostingController: UIHostingController<Content>, onZoomChange: @escaping (Bool) -> Void) {
                 self.hostingController = hostingController
@@ -83,8 +83,8 @@
             func scrollViewDidZoom(_ scrollView: UIScrollView) {
                 let isZoomed = scrollView.zoomScale > scrollView.minimumZoomScale
                 scrollView.isScrollEnabled = isZoomed
-                guard isZoomed != lastReportedIsZoomed else { return }
-                lastReportedIsZoomed = isZoomed
+                guard isZoomed != isLastReportedZoomed else { return }
+                isLastReportedZoomed = isZoomed
                 let notify = onZoomChange
                 DispatchQueue.main.async { notify(isZoomed) }
             }

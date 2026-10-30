@@ -140,4 +140,17 @@ public enum IconKit {
     public static let filterFill = Image(systemName: "line.3.horizontal.decrease.circle.fill")
     public static let film = Image(systemName: "film")
     public static let music = Image(systemName: "music.note")
+    public static let minus = Image(systemName: "minus")
+    public static let removeCircle = Image(systemName: "minus.circle.fill")
+    public static let pinFill = Image(systemName: "pin.fill")
+    public static let error = Image(systemName: "exclamationmark.circle")
+    public static let errorFill = Image(systemName: "exclamationmark.circle.fill")
+    public static let transfers = Image(systemName: "arrow.up.arrow.down.circle")
+    public static let photoLibrary = Image(systemName: "photo.on.rectangle")
+    public static let cameraFill = Image(systemName: "camera.fill")
+    public static let account = Image(systemName: "person.crop.circle")
+    /// The Settings Storage category; `size` is the same drive glyph meaning a file's size.
+    public static let storage = Image(systemName: "internaldrive")
+    public static let serverRack = Image(systemName: "server.rack")
+    public static let accessRules = Image(systemName: "lock.shield")
 }

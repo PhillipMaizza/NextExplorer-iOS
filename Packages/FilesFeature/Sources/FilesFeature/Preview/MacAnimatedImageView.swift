@@ -42,4 +42,9 @@
             return min(frames.images.count - 1, Int(progress * Double(frames.images.count)))
         }
     }
+
+    #Preview {
+        AnimatedImageView(fileURL: URL(fileURLWithPath: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/GenericDocumentIcon.icns"))
+            .frame(width: 400, height: 300)
+    }
 #endif

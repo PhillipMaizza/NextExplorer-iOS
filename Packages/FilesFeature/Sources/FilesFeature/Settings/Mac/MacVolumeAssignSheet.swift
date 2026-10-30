@@ -1,6 +1,7 @@
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
+    import DesignSystem
     import FilesClient
     import Localization
     import SwiftUI
@@ -17,8 +18,7 @@
         @Dependency(\.filesClient) private var filesClient
 
         @State private var listing: AdminDirectoryListing?
-        @State private var isBrowsing = false
-        @State private var browseError: String?
+        @State private var browsePhase: DataPhase = .idle
         /// The folder being listed; `nil` is the server's volume root. A `.task(id:)` key, so
         /// opening folders quickly cancels the listing before the next.
         @State private var browsePath: String?
@@ -72,7 +72,7 @@
         private func browser(selectedPath: String) -> some View {
             VStack(alignment: .leading, spacing: .space4) {
                 HStack {
-                    Button { browsePath = listing?.parent } label: { Image(systemName: "chevron.left") }
+                    Button { browsePath = listing?.parent } label: { IconKit.back }
                         .disabled(listing?.parent == nil)
                         .accessibilityLabel(L10n.UserDetail.directoryPickerGoUp)
                     Text(listing?.current ?? "")
@@ -90,7 +90,7 @@
                     }
                 })) {
                     ForEach(listing?.directories ?? [], id: \.path) { directory in
-                        Label(directory.name, systemImage: "folder").tag(directory.path)
+                        Label { Text(directory.name) } icon: { IconKit.folder }.tag(directory.path)
                     }
                 }
                 .contextMenu(forSelectionType: String.self, menu: { _ in }, primaryAction: { paths in
@@ -101,9 +101,9 @@
                 .listStyle(.bordered(alternatesRowBackgrounds: true))
                 .frame(height: Metrics.browserHeight)
                 .overlay {
-                    if isBrowsing, listing == nil {
+                    if browsePhase == .loading, listing == nil {
                         ProgressView()
-                    } else if let browseError {
+                    } else if let browseError = browsePhase.errorMessage {
                         Text(browseError).foregroundStyle(.secondary).padding()
                     }
                 }
@@ -111,17 +111,40 @@
         }
 
         private func loadDirectories(path: String?) async {
-            isBrowsing = true
-            browseError = nil
-            defer { isBrowsing = false }
+            browsePhase = .loading
             do {
                 let next = try await filesClient.browseAdminDirectories(store.serverURL, path)
                 guard !Task.isCancelled else { return }
                 listing = next
+                browsePhase = .loaded
             } catch {
                 guard !Task.isCancelled else { return }
-                browseError = (error as? FilesClientError)?.userMessage ?? L10n.UserDetail.directoryPickerFailed
+                browsePhase = .failed((error as? FilesClientError)?.userMessage ?? L10n.UserDetail.directoryPickerFailed)
             }
         }
+    }
+
+    @MainActor
+    private func volumeSheetPreview(editing volumeID: String? = nil, error: String? = nil) -> some View {
+        var state = UserManagementFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
+        var sheet = UserManagementFeature.VolumeSheetState(userID: "u2", editingVolumeID: volumeID)
+        sheet.label = volumeID == nil ? "" : "Media"
+        sheet.selectedPath = volumeID == nil ? "" : "/mnt/media"
+        sheet.errorMessage = error
+        state.volumeSheet = sheet
+        return MacVolumeAssignSheet(store: Store(initialState: state) { UserManagementFeature() })
+            .dependency(\.filesClient, .previewValue)
+    }
+
+    #Preview("Assign") {
+        volumeSheetPreview()
+    }
+
+    #Preview("Edit") {
+        volumeSheetPreview(editing: "v1")
+    }
+
+    #Preview("Error") {
+        volumeSheetPreview(editing: "v1", error: "The folder no longer exists.")
     }
 #endif

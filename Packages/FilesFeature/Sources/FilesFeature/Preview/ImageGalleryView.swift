@@ -111,12 +111,12 @@ struct ImageGalleryView: View {
 
     var body: some View {
         NavigationStack {
-            // Full-bleed on every edge: the bars float over the image, so toggling them
-            // never resizes or reflows the content — the image stays perfectly still
+            // Full bleed on every edge: the bars float over the image, so toggling them
+            // never resizes or reflows the content; the image stays perfectly still
             // while the chrome fades, matching the Photos viewer.
             pager
                 .ignoresSafeArea()
-                // A rename changes the current image's id (it's path-derived); deleting one drops
+                // A rename changes the current image's id (it's path derived); deleting one drops
                 // it. Close if that emptied the gallery, otherwise hold the same slot so a dangling
                 // `selection` lands on the neighbour.
                 .onChange(of: items) { oldItems, newItems in
@@ -131,8 +131,8 @@ struct ImageGalleryView: View {
                 .onChange(of: selection) { _, _ in currentItem.map(onCurrentItemChange) }
                 .contentShape(Rectangle())
                 // A short fade, nothing more. The earlier lag was this animation fighting the
-                // content reflow when the bars resized the image — now that the image is
-                // full-bleed and never moves, only the chrome itself crossfades.
+                // content reflow when the bars resized the image; now that the image is
+                // full bleed and never moves, only the chrome itself crossfades.
                 .onTapGesture {
                     withAnimation(.easeInOut(duration: Constants.controlsFadeDuration)) {
                         areControlsHidden.toggle()

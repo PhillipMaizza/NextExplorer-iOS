@@ -49,14 +49,8 @@ struct FileRowView: View {
     /// Read live so an already-visible row updates immediately when the user changes the
     /// date format in Settings, rather than only on the next fetch.
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
-    @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
-    @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
-
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
+    @AppStorage(AppStorageKeys.includeTimeInDates) private var shouldIncludeTime = false
+    @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
 
     /// `thumbnailFile` opts a caller with only a name/kind (a search hit, which carries no size or
     /// modified date) into the same thumbnail rendering a browse row gets, while keeping a custom
@@ -133,9 +127,9 @@ struct FileRowView: View {
             return customSubtitle
         }
         guard let dateModified else { return nil }
-        let dateText = dateFormat.string(from: dateModified, includeTime: includeTime)
+        let dateText = dateFormat.string(from: dateModified, includeTime: shouldIncludeTime)
         guard let size else { return dateText }
-        return "\(Self.byteFormatter.string(fromByteCount: size)) • \(dateText)"
+        return "\(FileSizeFormat.string(size)) • \(dateText)"
     }
 
     private var isHidden: Bool {
@@ -143,7 +137,7 @@ struct FileRowView: View {
     }
 
     private var displayName: String {
-        displayFileName(name, isDirectory: isDirectory, showExtension: showFilenameExtensions)
+        displayFileName(name, isDirectory: isDirectory, showExtension: shouldShowFilenameExtensions)
     }
 
     private var isEligibleForThumbnail: Bool {

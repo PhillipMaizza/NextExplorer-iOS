@@ -16,24 +16,30 @@ extension FilesService {
     struct VersionUpdateBody: Encodable {
         let path: String
         let label: String?
-        let pinned: Bool?
+        let isPinned: Bool?
 
         func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(path, forKey: .path)
             try container.encodeIfPresent(label, forKey: .label)
-            try container.encodeIfPresent(pinned, forKey: .pinned)
+            try container.encodeIfPresent(isPinned, forKey: .isPinned)
         }
 
         private enum CodingKeys: String, CodingKey {
-            case path, label, pinned
+            case path, label
+            case isPinned = "pinned"
         }
     }
 
     struct VersionDeleteBody: Encodable {
         let path: String
         let ids: [String]?
-        let all: Bool
+        let isAll: Bool
+
+        private enum CodingKeys: String, CodingKey {
+            case path, ids
+            case isAll = "all"
+        }
     }
 
     struct VersionCopyResponse: Decodable {

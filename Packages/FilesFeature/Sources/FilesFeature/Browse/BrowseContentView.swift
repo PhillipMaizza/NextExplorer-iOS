@@ -52,7 +52,7 @@ struct BrowseContentView: View {
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
-    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopyPreference = false
+    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var shouldKeepClipboardPreference = false
     @State private var isSortSheetPresented = false
     @State private var toastMessage: DSToastMessage?
     /// The item whose "Create Share Link" sheet is open (from the context menu or the
@@ -84,11 +84,11 @@ struct BrowseContentView: View {
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
 
     /// A Mac keeps a copied item on the clipboard after pasting, as Finder does; iOS asks.
-    private var keepClipboardAfterCopy: Bool {
+    private var shouldKeepClipboardAfterCopy: Bool {
         #if os(macOS)
             true
         #else
-            keepClipboardAfterCopyPreference
+            shouldKeepClipboardPreference
         #endif
     }
 
@@ -324,7 +324,7 @@ struct BrowseContentView: View {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : displayTitle,
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
-                fadesIntoContent: viewMode != .table
+                shouldFadeIntoContent: viewMode != .table
             ) {
                 if store.isSearching {
                     DSSegmentedControl(
@@ -365,7 +365,7 @@ struct BrowseContentView: View {
                     if store.clipboard != nil, !store.directoryPath.isEmpty {
                         Section {
                             Button {
-                                store.send(.pasteTapped(keepItemsAfterCopy: keepClipboardAfterCopy), animation: .default)
+                                store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboardAfterCopy), animation: .default)
                             } label: {
                                 Label { Text(pasteActionTitle) } icon: { IconKit.paste }
                             }
@@ -691,7 +691,7 @@ struct BrowseContentView: View {
                 canDropOnFolders: store.access?.canDelete ?? false,
                 onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
                 contextMenu: { ids in tableContextMenu(for: ids) },
-                renamingItemID: renamesInTable ? store.renameSheetItem?.id : nil,
+                renamingItemID: shouldRenameInTable ? store.renameSheetItem?.id : nil,
                 onRenameCommit: { store.send(.renameConfirmed($0)) },
                 onRenameCancel: { store.send(.renameCancelled) },
                 personalSpace: showsPersonalSpace ? Self.macPersonalSpaceItem : nil,
@@ -796,7 +796,7 @@ struct BrowseContentView: View {
 
         private var tableKeyboardActions: BrowseKeyboardActions {
             let canPaste = store.clipboard != nil && !store.directoryPath.isEmpty
-            let keepAfterCopy = keepClipboardAfterCopy
+            let keepAfterCopy = shouldKeepClipboardAfterCopy
             return BrowseKeyboardActions(
                 cut: { store.send(.cutSelectionTapped) },
                 copy: { store.send(.copySelectionTapped) },
@@ -946,7 +946,7 @@ struct BrowseContentView: View {
     /// so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
     /// Split like the delete confirmation so it presents over whichever surface is frontmost.
     /// The Mac folder table renames in place; search results and previews keep the sheet.
-    private var renamesInTable: Bool {
+    private var shouldRenameInTable: Bool {
         #if os(macOS)
             store.previewItem == nil && !store.isSearching
         #else
@@ -956,7 +956,7 @@ struct BrowseContentView: View {
 
     private var renameItemBinding: Binding<FileItem?> {
         Binding(
-            get: { store.previewItem == nil && !renamesInTable ? store.renameSheetItem : nil },
+            get: { store.previewItem == nil && !shouldRenameInTable ? store.renameSheetItem : nil },
             set: {
                 if $0 == nil {
                     store.send(.renameCancelled)
@@ -1436,7 +1436,7 @@ struct BrowseContentView: View {
     private var pasteEmptySpaceMenu: some View {
         if store.clipboard != nil, !store.directoryPath.isEmpty {
             Button {
-                store.send(.pasteTapped(keepItemsAfterCopy: keepClipboardAfterCopy), animation: .default)
+                store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboardAfterCopy), animation: .default)
             } label: {
                 Label { Text(L10n.Browse.actionPasteHere) } icon: { IconKit.paste }
             }

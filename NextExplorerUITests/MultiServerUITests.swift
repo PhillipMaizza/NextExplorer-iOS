@@ -1,8 +1,8 @@
 #if os(iOS)
     import XCTest
 
-    /// Critical path: the multi-server account switcher in Settings. Presence of the switcher, opening
-    /// the add-account login sheet, and adding a second server so it appears alongside the first — all
+    /// Critical path: the multi server account switcher in Settings. Presence of the switcher, opening
+    /// the add account login sheet, and adding a second server so it appears alongside the first: all
     /// against the stateful mocked auth client.
     final class MultiServerUITests: UITestCase {
         func testSwitcherShowsActiveAccountAndAddRow() {

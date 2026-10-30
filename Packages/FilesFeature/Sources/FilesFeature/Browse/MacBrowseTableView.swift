@@ -7,16 +7,6 @@
     import Localization
     import SwiftUI
 
-    /// Generic views can't hold static stored properties, so the shared formatter lives here.
-    @MainActor
-    private enum TableFormat {
-        static let byteFormatter: ByteCountFormatter = {
-            let formatter = ByteCountFormatter()
-            formatter.countStyle = .file
-            return formatter
-        }()
-    }
-
     /// Column layout shared with `MacBrowseTableSkeleton`, so loading and loaded line up.
     enum MacBrowseTableMetrics {
         static let iconSize: CGFloat = .iconMedium
@@ -79,7 +69,7 @@
                             icon(for: item)
                         }
                         if item.id == renamingItemID {
-                            InlineRenameField(originalName: item.name, onCommit: onRenameCommit, onCancel: onRenameCancel)
+                            MacInlineRenameField(originalName: item.name, onCommit: onRenameCommit, onCancel: onRenameCancel)
                         } else {
                             Text(isPersonalSpace(item) ? L10n.Browse.myFiles : item.name)
                                 .lineLimit(1)
@@ -101,7 +91,7 @@
                 }
                 .width(MacBrowseTableMetrics.dateColumnWidth)
                 TableColumn(L10n.Sort.size, value: \.size) { item in
-                    Text(item.isDirectory ? "" : TableFormat.byteFormatter.string(fromByteCount: item.size))
+                    Text(item.isDirectory ? "" : FileSizeFormat.string(item.size))
                         .foregroundStyle(Color.secondaryDS)
                         .monospacedDigit()
                         .opacity(opacity(for: item))
@@ -286,121 +276,28 @@
         }
     }
 
-    /// The name cell while renaming: Return or clicking away commits, Esc cancels. An unchanged
-    /// or invalid name cancels instead of asking the server.
-    private struct InlineRenameField: View {
-        let originalName: String
-        let onCommit: (String) -> Void
-        let onCancel: () -> Void
-
-        @State private var name: String
-        @State private var isFinished = false
-        @State private var appearedAt = Date()
-        @FocusState private var isFocused: Bool
-
-        /// Right after the context menu closes, focus bounces back to the table once; a loss
-        /// this early takes focus back instead of ending the rename.
-        private static let focusSettleInterval: TimeInterval = 0.6
-
-        init(originalName: String, onCommit: @escaping (String) -> Void, onCancel: @escaping () -> Void) {
-            self.originalName = originalName
-            self.onCommit = onCommit
-            self.onCancel = onCancel
-            _name = State(initialValue: originalName)
-        }
-
-        var body: some View {
-            TextField(L10n.Browse.renameNamePlaceholder, text: $name)
-                .labelsHidden()
-                .textFieldStyle(.roundedBorder)
-                .focused($isFocused)
-                .onAppear {
-                    appearedAt = Date()
-                    isFocused = true
-                }
-                .onSubmit { finish(commit: true) }
-                .onExitCommand { finish(commit: false) }
-                .onChange(of: isFocused) { _, focused in
-                    guard !focused else { return }
-                    if Date().timeIntervalSince(appearedAt) < Self.focusSettleInterval {
-                        isFocused = true
-                    } else {
-                        finish(commit: true)
-                    }
-                }
-        }
-
-        private func finish(commit: Bool) {
-            guard !isFinished else { return }
-            isFinished = true
-            let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            if commit, trimmed != originalName, FileNameValidation.isAcceptable(trimmed: trimmed) {
-                onCommit(trimmed)
-            } else {
-                onCancel()
-            }
-        }
-    }
-
-    /// A tinted symbol sized for a table row's leading icon.
-    struct MacTableFolderIcon: View {
-        let image: Image
-        let tint: Color
-        var isFilled = true
-        var size: CGFloat = MacBrowseTableMetrics.iconSize
-
-        var body: some View {
-            image
-                .resizable()
-                .scaledToFit()
-                .symbolVariant(isFilled ? .fill : .none)
-                .foregroundStyle(tint)
-                .frame(width: size, height: size)
-        }
-    }
-
-    /// What the Edit and File menus can do to the focused file table's selection.
-    public struct BrowseKeyboardActions {
-        public let cut: () -> Void
-        public let copy: () -> Void
-        public let duplicate: () -> Void
-        public let undo: () -> Void
-        /// Whether a file operation is waiting to be undone; otherwise ⌘Z edits text as usual.
-        public let canUndo: Bool
-        public let paste: () -> Void
-        public let delete: () -> Void
-        public let rename: () -> Void
-        public let selectAll: () -> Void
-        public let getInfo: () -> Void
-        public let canPaste: Bool
-        /// File ▸ Open (⌘O, ⌘↓): opens the one selected item.
-        public var open: () -> Void = {}
-        /// Edit ▸ Copy Path (⌥⌘C): the selection's server paths, one per line.
-        public var copyPath: () -> Void = {}
-    }
-
-    /// The visible Browse screen's sort, for the View menu's Sort By.
-    public struct BrowseViewOptions {
-        public let sortOption: BrowseFeature.SortOption
-        public let sortDirection: BrowseFeature.SortDirection
-        public let setSortOption: (BrowseFeature.SortOption) -> Void
-        public let setSortDirection: (BrowseFeature.SortDirection) -> Void
-    }
-
-    public extension BrowseFeature.SortOption {
-        var menuTitle: String {
-            title
-        }
-    }
-
-    public extension BrowseFeature.SortDirection {
-        var menuTitle: String {
-            title
-        }
-    }
-
-    public extension FocusedValues {
-        @Entry var browseKeyboardActions: BrowseKeyboardActions?
-        @Entry var browseViewOptions: BrowseViewOptions?
+    #Preview("Table") {
+        @Previewable @State var selection: Set<FileItem.ID> = []
+        let items: IdentifiedArrayOf<FileItem> = [
+            FileItem(name: "Projects", path: "", dateModified: Date(), size: 0, kind: "directory"),
+            FileItem(name: "report.pdf", path: "", dateModified: Date().addingTimeInterval(-86_400), size: 182_000, kind: "pdf"),
+            FileItem(name: "beach.jpg", path: "", dateModified: Date().addingTimeInterval(-86_400 * 9), size: 2_400_000, kind: "jpg"),
+        ]
+        MacBrowseTableView(
+            items: items,
+            sortOption: .name,
+            sortDirection: .ascending,
+            onSortChanged: { _, _ in },
+            selection: $selection,
+            cutItemIDs: [],
+            offlineItemIDs: [items[1].id],
+            onOpen: { _ in },
+            keyboardActions: .preview,
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            canDropOnFolders: true,
+            onDropOnFolder: { _, _ in },
+            contextMenu: { _ in EmptyView() }
+        )
+        .frame(width: 900, height: 300)
     }
 #endif

@@ -10,8 +10,8 @@ import SwiftUI
 #endif
 
 #if os(iOS)
-    /// Every screen but the image/video viewers is portrait-only — `OrientationLock` is the only
-    /// way to plumb that per-screen override through, since `UIApplicationDelegate` (not the
+    /// Every screen but the image/video viewers is portrait only; `OrientationLock` is the only
+    /// way to plumb that per screen override through, since `UIApplicationDelegate` (not the
     /// SwiftUI `App`/`WindowGroup`) is what UIKit actually consults on every rotation attempt.
     final class AppDelegate: NSObject, UIApplicationDelegate {
         func application(_: UIApplication, supportedInterfaceOrientationsFor _: UIWindow?) -> UIInterfaceOrientationMask {
@@ -33,10 +33,10 @@ struct NextExplorerApp: App {
     /// Mirrors the same keys `SettingsView`'s Dark Mode toggle writes. Until the user
     /// overrides it, no override is applied here and the app just follows the system.
     @AppStorage(AppStorageKeys.appearanceOverrideSet) private var hasAppearanceOverride = false
-    @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
+    @AppStorage(AppStorageKeys.prefersDarkMode) private var isDarkAppearanceOverride = false
 
     private var appearanceMode: AppearanceMode {
-        AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride)
+        AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: isDarkAppearanceOverride)
     }
 
     init() {

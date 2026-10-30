@@ -57,4 +57,9 @@
             view.close()
         }
     }
+
+    #Preview {
+        QuickLookPreview(url: URL(fileURLWithPath: "/System/Library/CoreServices/SystemVersion.plist"))
+            .frame(width: 520, height: 400)
+    }
 #endif

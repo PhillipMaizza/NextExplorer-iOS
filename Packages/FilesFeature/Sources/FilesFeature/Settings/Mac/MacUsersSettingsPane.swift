@@ -100,11 +100,9 @@
                 .overlay { listOverlay }
                 Divider()
                 HStack {
-                    Button { store.send(.createUserTapped) } label: {
-                        Image(systemName: "plus")
+                    MacTableBarButton(icon: IconKit.plus, label: L10n.UserManagement.createUser) {
+                        store.send(.createUserTapped)
                     }
-                    .buttonStyle(.borderless)
-                    .accessibilityLabel(L10n.UserManagement.createUser)
                     Spacer()
                     MacSortMenu(
                         options: UserManagementFeature.SortOption.allCases,

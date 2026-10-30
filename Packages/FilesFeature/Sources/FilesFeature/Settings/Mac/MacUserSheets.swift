@@ -138,4 +138,39 @@
             store.confirmError == .mismatch ? L10n.ChangePassword.errorMismatch : nil
         }
     }
+
+    @MainActor
+    private func userSheetsState() -> UserManagementFeature.State {
+        UserManagementFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
+    }
+
+    #Preview("Create user") {
+        var state = userSheetsState()
+        state.createSheet = UserManagementFeature.CreateUserState()
+        return MacCreateUserSheet(store: Store(initialState: state) { UserManagementFeature() })
+    }
+
+    #Preview("Create user error") {
+        var state = userSheetsState()
+        var sheet = UserManagementFeature.CreateUserState()
+        sheet.email = "jane@example.com"
+        sheet.errorMessage = "A user with this email already exists."
+        state.createSheet = sheet
+        return MacCreateUserSheet(store: Store(initialState: state) { UserManagementFeature() })
+    }
+
+    #Preview("Set password") {
+        var state = userSheetsState()
+        state.passwordSheet = UserManagementFeature.PasswordSheetState(userID: "u2", userLabel: "Jane Doe", hasExistingPassword: true)
+        return MacSetPasswordSheet(store: Store(initialState: state) { UserManagementFeature() })
+    }
+
+    #Preview("Change password") {
+        MacChangePasswordSheet(
+            store: Store(initialState: ChangePasswordFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"))) {
+                ChangePasswordFeature()
+            },
+            onClose: {}
+        )
+    }
 #endif

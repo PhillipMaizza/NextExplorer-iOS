@@ -46,8 +46,8 @@ public extension View {
 
         /// Installs the recognizer from `didMoveToWindow` rather than `updateUIView`: the window is
         /// guaranteed present exactly when this fires, whereas `updateUIView` is not guaranteed to run
-        /// again after the view first lands in a window — if it didn't, the recognizer was never
-        /// installed and tap to dismiss silently did nothing. Also re-attaches if the view moves to a
+        /// again after the view first lands in a window; if it didn't, the recognizer was never
+        /// installed and tap to dismiss silently did nothing. Also reattaches if the view moves to a
         /// different window and detaches when it leaves one.
         final class InstallerView: UIView {
             weak var coordinator: Coordinator?

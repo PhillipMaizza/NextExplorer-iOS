@@ -9,14 +9,8 @@ import SwiftUI
 /// concurrency-safe, rule #10 §17).
 @MainActor
 enum DownloadFormatting {
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
-
     static func subtitle(for download: LocalDownload) -> String {
-        "\(byteFormatter.string(fromByteCount: download.size)) • \(download.location.title)"
+        "\(FileSizeFormat.string(download.size)) • \(download.location.title)"
     }
 }
 

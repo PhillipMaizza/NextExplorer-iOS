@@ -164,4 +164,13 @@
                 .autocorrectionDisabled()
         }
     }
+
+    #Preview("User") {
+        var state = UserManagementFeature.State(serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
+        state.users = IdentifiedArray(uniqueElements: User.previewManagedUsers)
+        state.phase = .loaded
+        let user = User.previewManagedUsers.last ?? User(id: "u2", username: "jane", email: "jane@example.com")
+        return MacUserDetailForm(store: Store(initialState: state) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue }, user: user)
+            .frame(width: 600, height: 520)
+    }
 #endif
