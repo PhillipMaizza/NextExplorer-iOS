@@ -338,33 +338,33 @@
         .previewCard(expiresAt: Date().addingTimeInterval(-3600)),
     ]
 
-    #Preview("Shared table — by me") {
+    #Preview("Shared table: by me") {
         sharedTablePreview {
             $0.byMe = IdentifiedArray(uniqueElements: previewTableShares)
             $0.phases[.byMe] = .loaded
         }
     }
 
-    #Preview("Shared table — with me") {
+    #Preview("Shared table: with me") {
         sharedTablePreview(segment: .withMe) {
             $0.withMe = IdentifiedArray(uniqueElements: [.previewCard(sourcePath: nil)])
             $0.phases[.withMe] = .loaded
         }
     }
 
-    #Preview("Shared table — loading") {
+    #Preview("Shared table: loading") {
         sharedTablePreview { $0.phases[.byMe] = .loading }
     }
 
-    #Preview("Shared table — empty") {
+    #Preview("Shared table: empty") {
         sharedTablePreview { $0.phases[.byMe] = .loaded }
     }
 
-    #Preview("Shared table — error") {
+    #Preview("Shared table: error") {
         sharedTablePreview { $0.phases[.byMe] = .failed(L10n.EmptyState.loadFailed) }
     }
 
-    #Preview("Shared table — no search results") {
+    #Preview("Shared table: no search results") {
         sharedTablePreview {
             $0.byMe = IdentifiedArray(uniqueElements: previewTableShares)
             $0.phases[.byMe] = .loaded

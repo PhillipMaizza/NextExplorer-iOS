@@ -42,7 +42,7 @@ struct FavoritesView: View {
         !store.displayedFavorites.isEmpty && store.selectedFavoriteIDs.count == store.displayedFavorites.count
     }
 
-    /// The one screen state, derived from the store — skeleton until the first response lands
+    /// The one screen state, derived from the store: skeleton until the first response lands
     /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
     /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
     private var listPhase: ListPhase {
@@ -82,15 +82,15 @@ struct FavoritesView: View {
         L10n.Favorites.removeConfirm(store.selectedFavoriteIDs.count)
     }
 
-    /// The topmost pushed screen's path — mirrors `BrowseTabView`'s persistent breadcrumb
+    /// The topmost pushed screen's path: mirrors `BrowseTabView`'s persistent breadcrumb
     /// bar, since browsing into a favorited folder now stays inside this tab (pushing
     /// `BrowseFeature` screens) instead of jumping to Browse.
     private var currentDirectoryPath: String {
         store.path.last?.directoryPath ?? ""
     }
 
-    /// The favorited folder itself — the *first* pushed screen, regardless of how deep
-    /// `path` currently goes — anchors the breadcrumb instead of the true server root:
+    /// The favorited folder itself: the *first* pushed screen, regardless of how deep
+    /// `path` currently goes: anchors the breadcrumb instead of the true server root:
     /// browsing from Favorites is scoped to that one subtree, so server "Home" isn't
     /// reachable from here at all.
     private var rootDirectoryPath: String {
@@ -126,7 +126,7 @@ struct FavoritesView: View {
             }
         }
         .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
-        .tint(Color.accent)
+        .platformAccentTint()
     }
 
     @ViewBuilder
@@ -243,7 +243,7 @@ struct FavoritesView: View {
                     }
                 #endif
                 ToolbarItem(placement: .selectionBar) {
-                    // Filled star, not trash: this only ever unfavorites the selection —
+                    // Filled star, not trash: this only ever unfavorites the selection:
                     // the underlying folders/files aren't touched, so "delete" iconography
                     // would overstate what the action does.
                     SelectionToolbarButton(
@@ -285,7 +285,7 @@ struct FavoritesView: View {
     }
 
     /// Redacted `FileRowView` / `GridCellView` stand-ins that sit in the *same* `List` / grid
-    /// as the real rows — never a separate scroll container (that fights the nav bar's large
+    /// as the real rows: never a separate scroll container (that fights the nav bar's large
     /// title). Shine suppressed under Reduce Motion.
     private static let skeletonNames = [6, 12, 4, 9, 15, 7, 11, 5, 13, 8].map { String(repeating: "M", count: $0) }
 
@@ -308,7 +308,7 @@ struct FavoritesView: View {
     }
 
     private var listContent: some View {
-        // Bound once — the separator checks below would otherwise re-filter the list per row.
+        // Bound once: the separator checks below would otherwise re-filter the list per row.
         let favorites = store.displayedFavorites
         let firstID = favorites.first?.id
         let lastID = favorites.last?.id
@@ -332,7 +332,7 @@ struct FavoritesView: View {
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
-        // Only spring row diffs once the list is the content — during the skeleton→content
+        // Only spring row diffs once the list is the content: during the skeleton→content
         // swap the outer `.animation(value: listPhase)` owns the cross-fade alone, so the two
         // don't run the same transition twice.
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)

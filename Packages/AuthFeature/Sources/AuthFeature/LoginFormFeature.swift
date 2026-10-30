@@ -5,7 +5,7 @@ import Foundation
 import Localization
 
 private enum Constants {
-    /// A real homelab call can resolve near-instantly on a warm connection — hold the
+    /// A real homelab call can resolve near-instantly on a warm connection: hold the
     /// spinner up briefly so the loading animation is actually visible.
     static let minimumSpinnerDuration: Duration = .seconds(0.25)
     /// How long the green checkmark stays on screen before auto-advancing to credentials.
@@ -64,7 +64,7 @@ public struct LoginFormFeature {
         case failure
     }
 
-    /// The credentials-page submit button's morph state — full pill (`idle`), collapsed
+    /// The credentials-page submit button's morph state: full pill (`idle`), collapsed
     /// spinner (`submitting`), collapsed checkmark (`success`, held briefly so it reads before
     /// the app zooms in), collapsed X (`failure`, then re-expands to `idle`). Mirrors
     /// `ConnectionPhase`'s role for the server-page button.
@@ -85,7 +85,7 @@ public struct LoginFormFeature {
         case success
     }
 
-    /// Which credential field(s) should shake/red-border for the current `errorMessage` — a
+    /// Which credential field(s) should shake/red-border for the current `errorMessage`: a
     /// locally-rejected non-email only implicates the email field, while a server-rejected
     /// email/password implicates both (the server never says which one was actually wrong).
     public enum InvalidFieldScope: Equatable, Sendable {
@@ -99,7 +99,7 @@ public struct LoginFormFeature {
         public var connectionPhase: ConnectionPhase
         public var scheme: URLScheme
         public var host: String
-        /// The host last typed for the *other* scheme — swapped back in on `schemeChanged`
+        /// The host last typed for the *other* scheme: swapped back in on `schemeChanged`
         /// so toggling https/http doesn't lose what was typed on either side.
         var savedOtherSchemeHost: String = ""
         /// Set once the user taps the scheme picker themselves, so typing doesn't then move it
@@ -150,7 +150,7 @@ public struct LoginFormFeature {
         }
 
         /// Any edit to the server URL, or pressing back, invalidates whatever the last
-        /// Test Connection call found — the whole handshake starts over.
+        /// Test Connection call found: the whole handshake starts over.
         mutating func resetConnection() {
             currentPage = .server
             connectionPhase = .idle
@@ -219,7 +219,7 @@ public struct LoginFormFeature {
                 } else if !state.schemeWasSetByUser, let first = trimmed.first {
                     // A leading digit is an IP (a homelab box, so http); a hostname is a
                     // public server (so https). A LAN hostname that needs http is the one
-                    // case the user fixes with the picker — and then it sticks.
+                    // case the user fixes with the picker: and then it sticks.
                     state.scheme = first.isNumber ? .http : .https
                 }
                 state.resetConnection()
@@ -344,7 +344,7 @@ public struct LoginFormFeature {
                 state.errorMessage = Self.message(for: error)
                 state.invalidFieldsScope = (error == .invalidCredentials) ? .identifierAndPassword : nil
                 // `.sessionCookieMissing` means the sign-in itself completed but the app
-                // couldn't pick up a session from it — not a typo the user can just retry past.
+                // couldn't pick up a session from it: not a typo the user can just retry past.
                 // It stays on screen until the next submit attempt or navigation reset clears
                 // it, instead of silently vanishing after a few seconds.
                 guard error != .sessionCookieMissing else {
@@ -396,7 +396,7 @@ public struct LoginFormFeature {
     /// Cancels every in-flight network/timer effect this feature can have running.
     /// Called whenever the user abandons the current handshake (edits the host/scheme,
     /// or backs out) so a stale response can never land on a screen the user has since
-    /// moved on from — e.g. an old Test Connection call auto-advancing to credentials
+    /// moved on from: e.g. an old Test Connection call auto-advancing to credentials
     /// after the user has already typed a different host.
     static func cancelInFlightWork() -> Effect<Action> {
         .merge(
@@ -411,7 +411,7 @@ public struct LoginFormFeature {
     }
 
     /// After a failed Test Connection, the button briefly shows a red X, then re-expands to
-    /// the idle "Test connection" label so the user can retry — `errorMessage` stays set and
+    /// the idle "Test connection" label so the user can retry: `errorMessage` stays set and
     /// visible independent of this, so the failure reason doesn't disappear along with it.
     static func scheduleRevertToIdle(_ clock: any Clock<Duration>) -> Effect<Action> {
         .run { send in
@@ -441,7 +441,7 @@ public struct LoginFormFeature {
         .cancellable(id: CancelID.errorDismiss, cancelInFlight: true)
     }
 
-    /// Basic shape check (`x@y.z`) — the server is the real source of truth on whether the
+    /// Basic shape check (`x@y.z`): the server is the real source of truth on whether the
     /// address exists, this only catches "clearly not an email" before spending a network call.
     /// Shares the one regex in `CredentialRules` so login and user management stay in lockstep.
     static func isValidEmail(_ text: String) -> Bool {
@@ -471,7 +471,7 @@ public struct LoginFormFeature {
         guard !text.isEmpty else { return nil }
 
         // Peel off an optional `:port`. A bracketed IPv6 literal keeps its inner colons; a
-        // bare host may carry at most one colon, the port separator — anything else (an
+        // bare host may carry at most one colon, the port separator: anything else (an
         // unbracketed IPv6, a stray colon) is rejected rather than guessed at.
         var hostPart = text
         var portPart: Substring?
@@ -501,7 +501,7 @@ public struct LoginFormFeature {
         var components = URLComponents()
         components.scheme = scheme.rawValue
         // Foundation does not auto-bracket an IPv6 literal, and an unbracketed one yields a
-        // malformed URL — so re-wrap it before handing the host back to URLComponents.
+        // malformed URL: so re-wrap it before handing the host back to URLComponents.
         components.host = hostPart.contains(":") ? "[\(hostPart)]" : hostPart
         components.port = portPart.flatMap { Int($0) }
         guard let url = components.url else { return nil }

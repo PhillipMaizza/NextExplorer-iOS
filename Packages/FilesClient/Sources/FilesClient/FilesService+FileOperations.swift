@@ -4,7 +4,7 @@ import NetworkClient
 
 extension FilesService {
     /// `POST /api/files/rename`, confirmed against `backend/src/routes/files/rename.js`:
-    /// `path` is the item's *parent* directory, `name` its current name — matching `FileItem`'s
+    /// `path` is the item's *parent* directory, `name` its current name: matching `FileItem`'s
     /// own `path`/`name` fields exactly, so the whole item can be forwarded unchanged.
     func renameItem(serverURL: URL, item: FileItem, newName: String) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.filesRename)
@@ -30,7 +30,7 @@ extension FilesService {
 
     /// `POST /api/editor` / `PUT /api/editor`, confirmed against `backend/src/routes/editor.js`:
     /// the real text view/edit path for anything `GET /api/preview` won't serve (415s on
-    /// everything outside images/RAW/video/audio/pdf) — plain text, markdown, code, config
+    /// everything outside images/RAW/video/audio/pdf): plain text, markdown, code, config
     /// files. The server itself enforces a size cap (1MB default) and sniffs for binary
     /// content, surfacing either as a plain validation error this maps to `.server(statusCode:)`.
     func fetchTextContent(serverURL: URL, path: String) async throws -> String {
@@ -80,7 +80,7 @@ extension FilesService {
 
     /// `POST /api/files/zip/extract`, confirmed against `backend/src/routes/zip.js`: unpacks
     /// the archive into a *new* sibling folder (named after the zip, deduped if taken) and
-    /// returns that folder as an item — there's no listing-only/peek-inside endpoint, and only
+    /// returns that folder as an item: there's no listing-only/peek-inside endpoint, and only
     /// `.zip` is supported server-side (`.rar`/`.7z`/etc. 415 with "Only .zip archives...").
     func extractZip(serverURL: URL, item: FileItem) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.zipExtract)
@@ -126,7 +126,7 @@ extension FilesService {
     }
 
     /// `DELETE /api/files`, confirmed against `backend/src/routes/files/delete.js` and
-    /// `fileTransferService.resolveDeleteTargets`: each item is `{path, name}` — again exactly
+    /// `fileTransferService.resolveDeleteTargets`: each item is `{path, name}`; again exactly
     /// `FileItem`'s own fields, `kind` included as the server's fallback for already-missing items.
     func deleteItems(serverURL: URL, items: [FileItem]) async throws {
         let url = serverURL.appendingPathComponent(APIPath.files)
@@ -144,7 +144,7 @@ extension FilesService {
 
     /// `POST /api/files/copy` and `POST /api/files/move`, confirmed against
     /// `backend/src/routes/files/transfer.js` and `services/fileTransferService.js`:
-    /// `{ items: [{ path, name }], destination }` — `path`/`name` are `FileItem`'s own fields,
+    /// `{ items: [{ path, name }], destination }`; `path`/`name` are `FileItem`'s own fields,
     /// same as rename/delete. Name collisions in the destination are resolved server side
     /// (`findAvailableName`). A validation failure (empty destination, source missing, a
     /// folder moved into itself) comes back with a message worth surfacing verbatim.

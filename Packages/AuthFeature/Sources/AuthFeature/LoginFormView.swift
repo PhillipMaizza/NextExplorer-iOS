@@ -55,7 +55,7 @@ private enum Constants {
     static let rootSpace = "loginRoot"
     /// How long the collapsed submit button's accent circle takes to flood the screen.
     static let submitFloodDuration: Double = 0.34
-    /// Scale that circle reaches — a `.size48` button circle blown up past the far corner of
+    /// Scale that circle reaches: a `.size48` button circle blown up past the far corner of
     /// any phone from wherever the button sits.
     static let submitFloodScale: CGFloat = 34
     static let dividerOpacity: Double = 0.35
@@ -69,13 +69,13 @@ public struct LoginFormView: View {
     }
 
     @Bindable var store: StoreOf<LoginFormFeature>
-    /// `false` while the launch splash still covers the screen — auto-focusing the host field
+    /// `false` while the launch splash still covers the screen: auto-focusing the host field
     /// then would slide the keyboard up over the splash.
     private let autoFocus: Bool
     /// Whether a successful sign in floods the screen with accent into the app. Off where the
     /// form is a dialog (the Mac Add Account sheet), which simply closes instead.
     private let shouldFloodIntoApp: Bool
-    /// Submit button's rect in this view's own space — the seed for the sign-in circle that
+    /// Submit button's rect in this view's own space: the seed for the sign-in circle that
     /// floods the screen with accent (à la TKSubmitTransition, scaling the button itself).
     @State private var submitButtonRect: CGRect = .zero
     /// Scale of that flooding circle: 1 == exactly the collapsed button, grows to cover.
@@ -102,7 +102,7 @@ public struct LoginFormView: View {
     @State private var isPasswordFieldInvalid = false
     @FocusState private var focusedField: Field?
     /// Server-page scroll height, only to floor the centered content's `minHeight`. The
-    /// credentials page deliberately has no such geometry read over its fields — an
+    /// credentials page deliberately has no such geometry read over its fields: an
     /// `.onGeometryChange` / `GeometryReader` ancestor is a documented AutoFill hazard.
     @State private var serverScrollHeight: CGFloat = 0
     /// Drives the "What is a server?" info sheet from the `(i)` beside the server-page title.
@@ -805,7 +805,7 @@ public struct LoginFormView: View {
     }
 }
 
-/// Split out of `LoginFormView.body` — inlining these three `.hapticFeedback` calls alongside
+/// Split out of `LoginFormView.body`: inlining these three `.hapticFeedback` calls alongside
 /// everything else already chained onto the root `ZStack` pushed the compiler's type-checker
 /// past a reasonable time budget.
 private struct LoginHapticsModifier: ViewModifier {

@@ -27,7 +27,7 @@ extension FilesService {
         return try await sendReportingMessage(request, decoding: Favorite.self)
     }
 
-    /// `PATCH /api/favorites/reorder`: `{ order: [id, ...] }` — every id, once. Returns the
+    /// `PATCH /api/favorites/reorder`: `{ order: [id, ...] }`; every id, once. Returns the
     /// full list in the new order.
     func reorderFavorites(serverURL: URL, orderedIDs: [String]) async throws -> [Favorite] {
         let url = serverURL.appendingPathComponent(APIPath.favoritesReorder)

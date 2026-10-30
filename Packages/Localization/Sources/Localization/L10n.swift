@@ -15,9 +15,9 @@ public enum L10n {
         public static var pathLabel: String { tr("accessRules.pathLabel") }  // "Path"
         public static var pathPlaceholder: String { tr("accessRules.pathPlaceholder") }  // "Documents/Reports"
         public static var permissionHidden: String { tr("accessRules.permissionHidden") }  // "Hidden"
-        public static var permissionReadOnly: String { tr("accessRules.permissionReadOnly") }  // "Read only"
-        public static var permissionReadWrite: String { tr("accessRules.permissionReadWrite") }  // "Read & write"
-        public static var recursive: String { tr("accessRules.recursive") }  // "Apply to subfolders"
+        public static var permissionReadOnly: String { tr("accessRules.permissionReadOnly") }  // "Read Only"
+        public static var permissionReadWrite: String { tr("accessRules.permissionReadWrite") }  // "Read & Write"
+        public static var recursive: String { tr("accessRules.recursive") }  // "Apply to Subfolders"
         public static var remove: String { tr("accessRules.remove") }  // "Remove"
         public static var saveButton: String { tr("accessRules.saveButton") }  // "Save Changes"
         public static var subtitle: String { tr("accessRules.subtitle") }  // "Override read and write access for specific paths."
@@ -87,7 +87,7 @@ public enum L10n {
         public static var navigationTitle: String { tr("browse.navigationTitle") }  // "Browse"
         public static var newFolderConfirm: String { tr("browse.newFolderConfirm") }  // "Create"
         public static var newFolderPlaceholder: String { tr("browse.newFolderPlaceholder") }  // "Folder name"
-        public static var newFolderTitle: String { tr("browse.newFolderTitle") }  // "New folder"
+        public static var newFolderTitle: String { tr("browse.newFolderTitle") }  // "New Folder"
         public static func offlineBannerDetail(_ a0: CVarArg) -> String { tr("browse.offlineBannerDetail", a0) }
         public static var offlineBannerTitle: String { tr("browse.offlineBannerTitle") }  // "Offline"
         public static var open: String { tr("browse.open") }  // "Open"
@@ -125,9 +125,9 @@ public enum L10n {
         public static func errorMinLength(_ a0: CVarArg) -> String { tr("changePassword.errorMinLength", a0) }
         public static var errorMismatch: String { tr("changePassword.errorMismatch") }  // "Passwords don't match."
         public static var fieldConfirmPassword: String { tr("changePassword.fieldConfirmPassword") }  // "Re-enter new password"
-        public static var fieldConfirmPasswordLabel: String { tr("changePassword.fieldConfirmPasswordLabel") }  // "Confirm new password"
-        public static var fieldCurrentPassword: String { tr("changePassword.fieldCurrentPassword") }  // "Current password"
-        public static var fieldNewPasswordLabel: String { tr("changePassword.fieldNewPasswordLabel") }  // "New password"
+        public static var fieldConfirmPasswordLabel: String { tr("changePassword.fieldConfirmPasswordLabel") }  // "Confirm New Password"
+        public static var fieldCurrentPassword: String { tr("changePassword.fieldCurrentPassword") }  // "Current Password"
+        public static var fieldNewPasswordLabel: String { tr("changePassword.fieldNewPasswordLabel") }  // "New Password"
         public static func fieldNewPasswordPrompt(_ a0: CVarArg) -> String { tr("changePassword.fieldNewPasswordPrompt", a0) }
         public static var intro: String { tr("changePassword.intro") }
         public static var navigationTitle: String { tr("changePassword.navigationTitle") }  // "Change Password"
@@ -284,7 +284,7 @@ public enum L10n {
         public static func diskFreeOf(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("fileInfo.diskFreeOf", a0, a1) }
         public static var navigationTitleFolder: String { tr("fileInfo.navigationTitleFolder") }  // "Folder"
         public static var notShared: String { tr("fileInfo.notShared") }  // "No share links"
-        public static var partialScan: String { tr("fileInfo.partialScan") }  // "Counted a partial scan — this folder is very large."
+        public static var partialScan: String { tr("fileInfo.partialScan") }  // "Counted a partial scan: this folder is very large."
         public static var renamePlaceholder: String { tr("fileInfo.renamePlaceholder") }  // "Version name"
         public static var renameTitle: String { tr("fileInfo.renameTitle") }  // "Rename Version"
         public static var restoreConfirm: String { tr("fileInfo.restoreConfirm") }  // "Restore"
@@ -428,7 +428,7 @@ public enum L10n {
         public static var manageRow: String { tr("offline.manageRow") }  // "Manage Offline Files"
         public static var manageTitle: String { tr("offline.manageTitle") }  // "Offline Files"
         public static var preferOfflineSubtitle: String { tr("offline.preferOfflineSubtitle") }
-        public static var preferOfflineToggle: String { tr("offline.preferOfflineToggle") }  // "Play downloaded copies"
+        public static var preferOfflineToggle: String { tr("offline.preferOfflineToggle") }  // "Play Downloaded Copies"
         public static var preparing: String { tr("offline.preparing") }  // "Preparing…"
         public static func progressCount(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("offline.progressCount", a0, a1) }
         public static var removeConfirm: String { tr("offline.removeConfirm") }  // "Remove"
@@ -439,7 +439,7 @@ public enum L10n {
         public static var sectionTitle: String { tr("offline.sectionTitle") }  // "Offline"
         public static var selectionDownload: String { tr("offline.selectionDownload") }  // "Download"
         public static var selectionEmpty: String { tr("offline.selectionEmpty") }  // "This folder is empty."
-        public static var selectionEstimate: String { tr("offline.selectionEstimate") }  // "Estimated download"
+        public static var selectionEstimate: String { tr("offline.selectionEstimate") }  // "Estimated Download"
         public static var selectionInsufficientSpace: String { tr("offline.selectionInsufficientSpace") }  // "Not enough free space on this device"
         public static var selectionLoadFailed: String { tr("offline.selectionLoadFailed") }  // "This folder couldn't be loaded."
         public static var selectionTitle: String { tr("offline.selectionTitle") }  // "Download for Offline"
@@ -626,9 +626,9 @@ public enum L10n {
     public enum ThumbnailSettings {
         public static var concurrency: String { tr("thumbnailSettings.concurrency") }  // "Concurrency"
         public static var concurrencyHelp: String { tr("thumbnailSettings.concurrencyHelp") }  // "How many thumbnails the server builds at once."
-        public static var enable: String { tr("thumbnailSettings.enable") }  // "Generate thumbnails"
+        public static var enable: String { tr("thumbnailSettings.enable") }  // "Generate Thumbnails"
         public static var enableHelp: String { tr("thumbnailSettings.enableHelp") }  // "Turn off to serve full images everywhere instead."
-        public static var maxDimension: String { tr("thumbnailSettings.maxDimension") }  // "Max dimension"
+        public static var maxDimension: String { tr("thumbnailSettings.maxDimension") }  // "Max Dimension"
         public static var maxDimensionHelp: String { tr("thumbnailSettings.maxDimensionHelp") }  // "Longest edge of a generated thumbnail, in pixels."
         public static var navigationTitle: String { tr("thumbnailSettings.navigationTitle") }  // "Thumbnails"
         public static var quality: String { tr("thumbnailSettings.quality") }  // "Quality"
@@ -704,11 +704,11 @@ public enum L10n {
         public static var directoryPickerFailed: String { tr("userDetail.directoryPickerFailed") }  // "Couldn't list directories."
         public static var directoryPickerGoUp: String { tr("userDetail.directoryPickerGoUp") }  // "Go up one directory"
         public static func directoryPickerOpen(_ a0: CVarArg) -> String { tr("userDetail.directoryPickerOpen", a0) }
-        public static var directoryPickerUseThis: String { tr("userDetail.directoryPickerUseThis") }  // "Use this directory"
+        public static var directoryPickerUseThis: String { tr("userDetail.directoryPickerUseThis") }  // "Use This Directory"
         public static var fallbackName: String { tr("userDetail.fallbackName") }  // "User"
         public static var passwordHasLocal: String { tr("userDetail.passwordHasLocal") }  // "This user signs in with an email and password."
         public static var passwordReset: String { tr("userDetail.passwordReset") }  // "Reset Password"
-        public static var passwordSSOOnly: String { tr("userDetail.passwordSSOOnly") }  // "This user has no local password — SSO only."
+        public static var passwordSSOOnly: String { tr("userDetail.passwordSSOOnly") }  // "This user has no local password and signs in with SSO only."
         public static var passwordSet: String { tr("userDetail.passwordSet") }  // "Set Password"
         public static var profileDisplayNameField: String { tr("userDetail.profileDisplayNameField") }  // "Display Name"
         public static var profileDisplayNamePlaceholder: String { tr("userDetail.profileDisplayNamePlaceholder") }  // "Display name"
@@ -753,7 +753,7 @@ public enum L10n {
         public static var createEmailField: String { tr("userManagement.createEmailField") }  // "Email"
         public static var createEmailPlaceholder: String { tr("userManagement.createEmailPlaceholder") }  // "name@example.com"
         public static var createGrantAdminSubtitle: String { tr("userManagement.createGrantAdminSubtitle") }  // "Full control over files, shares and users."
-        public static var createGrantAdminToggle: String { tr("userManagement.createGrantAdminToggle") }  // "Grant admin access"
+        public static var createGrantAdminToggle: String { tr("userManagement.createGrantAdminToggle") }  // "Grant Admin Access"
         public static var createNavigationTitle: String { tr("userManagement.createNavigationTitle") }  // "Create User"
         public static var createPasswordField: String { tr("userManagement.createPasswordField") }  // "Password"
         public static func createPasswordPlaceholder(_ a0: CVarArg) -> String { tr("userManagement.createPasswordPlaceholder", a0) }
@@ -772,7 +772,7 @@ public enum L10n {
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("userManagement.noSearchMatches", a0) }
         public static var searchPrompt: String { tr("userManagement.searchPrompt") }  // "Search users"
         public static var setPasswordNavigationTitle: String { tr("userManagement.setPasswordNavigationTitle") }  // "Password"
-        public static var setPasswordNewField: String { tr("userManagement.setPasswordNewField") }  // "New password"
+        public static var setPasswordNewField: String { tr("userManagement.setPasswordNewField") }  // "New Password"
         public static func setPasswordPlaceholder(_ a0: CVarArg) -> String { tr("userManagement.setPasswordPlaceholder", a0) }
         public static func setPasswordResetIntro(_ a0: CVarArg) -> String { tr("userManagement.setPasswordResetIntro", a0) }
         public static var setPasswordResetTitle: String { tr("userManagement.setPasswordResetTitle") }  // "Reset Password"

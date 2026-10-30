@@ -10,7 +10,7 @@ private enum Constants {
     static let animationDuration: Double = 0.3
 }
 
-/// A brief message overlaid at the bottom of the screen — either a self-dismissing warning
+/// A brief message overlaid at the bottom of the screen: either a self-dismissing warning
 /// (e.g. "Unsupported file type") or a persistent progress indicator (e.g. "Extracting…")
 /// that stays until whoever's driving it clears the binding themselves.
 public struct DSToastMessage: Equatable, Identifiable {
@@ -19,17 +19,17 @@ public struct DSToastMessage: Equatable, Identifiable {
     public let text: String
     public let backgroundColor: Color
     public let isPersistent: Bool
-    /// Distinguishes a success confirmation from a warning — both are brief and
+    /// Distinguishes a success confirmation from a warning: both are brief and
     /// auto-dismissing, but only one should play a success haptic instead of a warning one.
     fileprivate let isSuccess: Bool
-    /// An optional trailing action button (e.g. "Open"). Not part of `Equatable` — the
+    /// An optional trailing action button (e.g. "Open"). Not part of `Equatable`: the
     /// custom `==` below only compares `id`, so a closure here doesn't need to conform.
     public let actionTitle: String?
     public let action: (() -> Void)?
 
     /// A brief, auto-dismissing warning-style toast.
     public init(icon: Image, text: String) {
-        // A fresh id per instance, not derived from `text` — `.task(id:)` below only restarts
+        // A fresh id per instance, not derived from `text`: `.task(id:)` below only restarts
         // the auto-dismiss timer when `id` changes, so two identical-text toasts triggered
         // back-to-back (e.g. tapping two different unsupported files in a row) need distinct
         // ids or the second tap's toast silently inherits whatever time was left on the
@@ -44,7 +44,7 @@ public struct DSToastMessage: Equatable, Identifiable {
         action = nil
     }
 
-    /// A persistent progress toast — no auto-dismiss timer at all, since there's no fixed
+    /// A persistent progress toast: no auto-dismiss timer at all, since there's no fixed
     /// duration for e.g. an archive extract/compress to know in advance. Stays until the
     /// caller's own state (driving the binding) clears it.
     public static func progress(_ text: String) -> DSToastMessage {
@@ -52,13 +52,13 @@ public struct DSToastMessage: Equatable, Identifiable {
     }
 
     /// A brief, auto-dismissing success confirmation (e.g. "Saved to Documents"). `actionTitle`/
-    /// `action` add a trailing button (e.g. "Open") — omit both for a plain confirmation.
+    /// `action` add a trailing button (e.g. "Open"): omit both for a plain confirmation.
     public static func success(_ text: String, actionTitle: String? = nil, action: (() -> Void)? = nil) -> DSToastMessage {
         DSToastMessage(successText: text, actionTitle: actionTitle, action: action)
     }
 
     /// A brief, auto-dismissing failure toast (warning icon, `.negative` background) with an
-    /// optional trailing action — e.g. "Retry" on a copy/move that didn't go through.
+    /// optional trailing action: e.g. "Retry" on a copy/move that didn't go through.
     public static func failure(_ text: String, actionTitle: String? = nil, action: (() -> Void)? = nil) -> DSToastMessage {
         DSToastMessage(failureText: text, actionTitle: actionTitle, action: action)
     }
@@ -137,7 +137,7 @@ final class DSToastPresenter {
 
 private struct DSToastModifier: ViewModifier {
     @Binding var message: DSToastMessage?
-    /// Extra clearance above the base inset — for screens that reserve their own chrome
+    /// Extra clearance above the base inset: for screens that reserve their own chrome
     /// (e.g. a breadcrumb bar) at the bottom via `safeAreaInset`, which this overlay would
     /// otherwise sit on top of rather than above.
     var extraBottomInset: CGFloat = 0
@@ -176,7 +176,7 @@ private struct DSToastOverlay: View {
         .onAppear { presenter.set(message, owner: owner) }
         .onChange(of: message) { _, newValue in presenter.set(newValue, owner: owner) }
         .onDisappear { presenter.set(nil, owner: owner) }
-        // Persistent progress toasts (e.g. "Extracting\u{2026}") aren't errors — only the
+        // Persistent progress toasts (e.g. "Extracting\u{2026}") aren't errors: only the
         // auto-dismissing warning/success styles should buzz, each with its own feedback kind.
         .hapticFeedback(.warning, trigger: visibleMessage?.id) { _, newValue in
             newValue != nil && visibleMessage?.isPersistent == false && visibleMessage?.isSuccess == false

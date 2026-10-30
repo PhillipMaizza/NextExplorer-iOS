@@ -20,7 +20,7 @@ struct SettingsView: View {
     /// here, above every `.navigationDestination`, is the only spot a bottom overlay isn't
     /// occluded by a pushed screen, so those two views don't each need their own.
     @State private var userManagementToast: DSToastMessage?
-    /// View-local filter for the settings list — no reducer state needed, it only hides rows.
+    /// View-local filter for the settings list: no reducer state needed, it only hides rows.
     @State private var settingsSearch = ""
 
     private var filter: SettingsSearchFilter {
@@ -274,7 +274,7 @@ private func settingsPreview(
     settingsPreview()
 }
 
-#Preview("Accounts — multiple") {
+#Preview("Accounts: multiple") {
     @Shared(.inMemory(AccountSummary.sharedKey)) var accounts: [AccountSummary] = []
     $accounts.withLock {
         $0 = [
@@ -285,13 +285,13 @@ private func settingsPreview(
     return settingsPreview()
 }
 
-#Preview("Server storage — off") {
+#Preview("Server storage: off") {
     settingsPreview {
         $0.serverFeatures = { _ in ServerFeatures(isVolumeUsageEnabled: false) }
     }
 }
 
-#Preview("Server storage — loading") {
+#Preview("Server storage: loading") {
     settingsPreview {
         $0.fetchUsage = { _, _ in
             try? await Task.sleep(for: .seconds(30))
@@ -300,7 +300,7 @@ private func settingsPreview(
     }
 }
 
-#Preview("Server storage — filling up") {
+#Preview("Server storage: filling up") {
     settingsPreview {
         $0.fetchUsage = { _, path in
             StorageUsage(path: path, size: 78_000_000_000, free: 22_000_000_000, total: 100_000_000_000)
@@ -308,7 +308,7 @@ private func settingsPreview(
     }
 }
 
-#Preview("Server storage — nearly full") {
+#Preview("Server storage: nearly full") {
     settingsPreview {
         $0.fetchUsage = { _, path in
             StorageUsage(path: path, size: 96_000_000_000, free: 4_000_000_000, total: 100_000_000_000)

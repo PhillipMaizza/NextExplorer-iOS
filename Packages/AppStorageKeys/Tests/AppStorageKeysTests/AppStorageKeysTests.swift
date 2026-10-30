@@ -1,7 +1,7 @@
 @testable import AppStorageKeys
 import Testing
 
-/// The key strings are a storage contract — changing one silently orphans every existing
+/// The key strings are a storage contract: changing one silently orphans every existing
 /// user's saved preference. This pins them so a rename can't happen by accident.
 @Suite("AppStorageKeys")
 struct AppStorageKeysTests {

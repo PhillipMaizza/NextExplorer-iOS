@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Central catalog of the app's SF Symbols: one name per icon, spelled once, so call
 /// sites never type a raw `Image(systemName:)` string. Named for what the icon *means* at
-/// its call site(s) wherever there's one clear meaning (e.g. `download`, `search`) — a few
+/// its call site(s) wherever there's one clear meaning (e.g. `download`, `search`): a few
 /// (`folder`/`folderFill`, `star`/`starFill`, `document`, `tag`, `calendar`, ...) stay literal
 /// because they're genuinely reused across unrelated meanings (a directory icon, a tab icon,
 /// and a "this is a folder" row glyph, for instance), where a single semantic name would be
@@ -23,7 +23,7 @@ public enum IconKit {
     public static let logo = Image("logo", bundle: .module)
 
     /// Static vector artwork exported from Symbols.app (Template rendering, single scale),
-    /// not `Image(systemName:)` — `Tab(value:)`'s automatic outline/filled swap by selection
+    /// not `Image(systemName:)`; `Tab(value:)`'s automatic outline/filled swap by selection
     /// does not hold on iOS 26+'s "Liquid Glass" tab bar, which renders every tab icon filled
     /// regardless of API or symbol variant used (verified on a real iOS 27 device). `MainTabView`
     /// picks the outline/filled pair explicitly by selection state instead.

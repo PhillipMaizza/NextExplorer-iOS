@@ -13,7 +13,7 @@ private enum Constants {
     /// Per-frame ceiling before the decoded-bytes budget tightens it further.
     static let maxFramePixelDimension: CGFloat = 1024
     /// Ceiling on the total decoded bitmap held for playback (~4 bytes/px). A backstop against
-    /// a huge or deliberately crafted "GIF" — a real animated GIF is far under this. Frames
+    /// a huge or deliberately crafted "GIF": a real animated GIF is far under this. Frames
     /// are downsampled so `frameCount * dimension^2 * 4` stays within it.
     static let maxDecodedBytes = 256 * 1024 * 1024
     static let fallbackFrameDelay: Double = 0.1
@@ -36,7 +36,7 @@ enum AnimatedImageDecoder {
 
         let sourceFrameCount = CGImageSourceGetCount(source)
         guard sourceFrameCount > 1 else {
-            // Not actually animated — decode the single frame, still downsampled.
+            // Not actually animated: decode the single frame, still downsampled.
             return ImageDownsampling.image(from: url, maxPixelDimension: Constants.maxFramePixelDimension)?
                 .cgImage
                 .map { Frames(images: [$0], duration: 0) }

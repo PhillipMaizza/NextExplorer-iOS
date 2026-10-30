@@ -23,9 +23,9 @@ struct BrowseSkeletonView: View {
     let gridColumns: [GridItem]
     let iconSize: CGFloat
 
-    /// All plain files — a redacted directory row keeps its accent tinted folder glyph and
+    /// All plain files: a redacted directory row keeps its accent tinted folder glyph and
     /// trailing chevron, which survive `.redacted` as gold blocks. Uniform file rows read as
-    /// a clean skeleton. Built once — this view can stay mounted at zero opacity behind a
+    /// a clean skeleton. Built once: this view can stay mounted at zero opacity behind a
     /// crossfade, so a per-render rebuild would be wasted work.
     static let placeholderItems: [FileItem] = Constants.placeholderShapes.enumerated().map { index, shape in
         FileItem(

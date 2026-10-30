@@ -24,10 +24,10 @@ private struct AuthenticatedIdentity: Hashable {
 public struct AppView: View {
     @Bindable var store: StoreOf<AppFeature>
     /// The launch splash sits on top of `destinationContent` and removes itself once its own
-    /// animation has cleared — the reducer flips `destination` the moment auth resolves, the
+    /// animation has cleared: the reducer flips `destination` the moment auth resolves, the
     /// splash just holds the frame until then.
     @State private var isSplashPresented = true
-    /// Flipped the moment the splash commits to its exit, while it still covers the screen —
+    /// Flipped the moment the splash commits to its exit, while it still covers the screen:
     /// the authenticated tree mounts then (not after the splash is gone) so its wing-opening
     /// reveal uncovers the real Browse screen with its skeleton, not a blank frame.
     @State private var splashIsExiting = false
@@ -173,7 +173,7 @@ public struct AppView: View {
                     AuthenticatedView(store: scopedStore)
                         // Keying on the active account too means switching accounts remounts the
                         // authenticated tree, so the swap cross-fades instead of updating in place.
-                        // A plain quick fade (not the zoom reveal) — the switch should feel light.
+                        // A plain quick fade (not the zoom reveal): the switch should feel light.
                         // The TCA store state survives the identity change.
                         .id(AuthenticatedIdentity(splashPresented: isSplashPresented, accountID: store.currentAccountID))
                         .transition(.opacity)

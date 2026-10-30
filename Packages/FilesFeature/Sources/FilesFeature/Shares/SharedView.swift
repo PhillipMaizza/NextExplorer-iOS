@@ -190,11 +190,11 @@ private func sharedPreview(
     })
 }
 
-#Preview("By me — content") {
+#Preview("By me: content") {
     sharedPreview()
 }
 
-#Preview("Empty — With me") {
+#Preview("Empty: With me") {
     sharedPreview(configureClient: { $0.sharedWithMeLinks = { _ in [] } })
 }
 

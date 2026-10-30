@@ -30,7 +30,7 @@ public struct BrowseTabFeature {
         case path(StackActionOf<BrowseFeature>)
         case navigateToDirectory(path: String, title: String)
         /// Re-fetches the root folder and every pushed subfolder currently on the live
-        /// navigation stack — sent when the app becomes active again after being backgrounded.
+        /// navigation stack: sent when the app becomes active again after being backgrounded.
         case syncPathStack
         /// Refetches only the screens (root or pushed) whose `directoryPath` equals `path`.
         /// Sent after an upload finishes so just the affected folder reloads.

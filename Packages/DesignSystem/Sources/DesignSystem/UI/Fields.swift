@@ -58,7 +58,7 @@ public struct DSFieldContainer<Content: View>: View {
     }
 }
 
-/// The label above a form field or section — small, semibold, `secondaryDS` — so every
+/// The label above a form field or section, small, semibold, `secondaryDS`, so every
 /// labelled field and section across the app reads the same. Uppercased by default for
 /// section headers; pass `uppercased: false` for a form whose labels would otherwise shout.
 /// `DSFieldContainer` on the login screen keeps its own larger label by design.
@@ -126,7 +126,7 @@ public struct DSTextField: View {
     }
 }
 
-/// `DSTextField` for secret entry — same box and text treatment over a `SecureField`.
+/// `DSTextField` for secret entry: same box and text treatment over a `SecureField`.
 public struct DSSecureField: View {
     private let title: String
     @Binding private var text: String
@@ -181,7 +181,7 @@ public struct DSSecureField: View {
 }
 
 /// A placeholder `Text` that's guaranteed to render in `Color.secondaryDS` regardless of its
-/// content — `Text("literal")` resolves to the `LocalizedStringKey` initializer, which
+/// content: `Text("literal")` resolves to the `LocalizedStringKey` initializer, which
 /// auto-detects and linkifies email/URL-shaped literals (blue, underlined) no matter what
 /// `.foregroundStyle` says. `Text(verbatim:)` skips that parsing entirely.
 public struct DSPlaceholderText: View {

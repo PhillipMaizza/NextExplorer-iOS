@@ -11,11 +11,11 @@ private enum Constants {
 }
 
 /// "Get Info" sheet for a single file/folder: everything `GET /api/metadata/*` actually
-/// returns (`backend/src/routes/metadata.js`) — there's no owner/group/permissions data
+/// returns (`backend/src/routes/metadata.js`): there's no owner/group/permissions data
 /// anywhere in that response, so this deliberately doesn't show fields the real server
 /// can't back up.
 ///
-/// Deliberately presented only once the fetch has actually resolved (success or failure) —
+/// Deliberately presented only once the fetch has actually resolved (success or failure):
 /// see `BrowseContentView.InfoSheetPhase` and `FileInfoLoadingSheet`, which is shown instead
 /// while the fetch is still in flight.
 struct FileInfoSheet: View {
@@ -94,7 +94,7 @@ struct FileInfoSheet: View {
         }
 }
 
-#Preview("Folder with server disk — filling up") {
+#Preview("Folder with server disk: filling up") {
     Color.clear
         .sheet(isPresented: .constant(true)) {
             FileInfoSheet(
@@ -111,7 +111,7 @@ struct FileInfoSheet: View {
         }
 }
 
-#Preview("Folder with server disk — nearly full") {
+#Preview("Folder with server disk: nearly full") {
     Color.clear
         .sheet(isPresented: .constant(true)) {
             FileInfoSheet(

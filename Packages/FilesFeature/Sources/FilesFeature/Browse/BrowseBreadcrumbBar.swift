@@ -8,7 +8,7 @@ private enum Constants {
     static let verticalPadding: CGFloat = .space16
     static let chevronSize: CGFloat = .iconXSmall
     static let fullOpacity: Double = 1.0
-    /// Empty width after the last segment (also the scroll anchor) — keeps the current
+    /// Empty width after the last segment (also the scroll anchor): keeps the current
     /// folder's name off the very edge when the bar is scrolled to its trailing end.
     static let trailingInset: CGFloat = .space16
 }
@@ -17,7 +17,7 @@ private enum Constants {
 /// list/grid can explicitly reserve the same amount of bottom scroll-content inset. The bar is
 /// placed via `BrowseTabView`'s `.safeAreaInset` on the *ancestor* `NavigationStack`, but a
 /// `List` inside a pushed `navigationDestination` (which is every screen the bar is actually
-/// visible on — the root screen's `directoryPath` is always empty) doesn't reliably extend its
+/// visible on: the root screen's `directoryPath` is always empty) doesn't reliably extend its
 /// own scroll extent to respect that ancestor inset, letting the last row scroll out from
 /// behind the bar. `BrowseContentView` reserves this same height directly on its own
 /// scrollable content instead of trusting that propagation.
@@ -40,11 +40,11 @@ enum BrowseBreadcrumbBarMetrics {
 /// popping the navigation stack one folder at a time.
 ///
 /// `rootPath`/`rootTitle`/`rootIcon` default to true server root ("Home") for Browse, but
-/// Favorites overrides them to the favorited folder itself — browsing there is scoped to
+/// Favorites overrides them to the favorited folder itself: browsing there is scoped to
 /// that subtree, so the leftmost crumb should anchor on the favorite, not imply a tap on it
 /// would leave the tab (server-root "Home" isn't reachable from inside Favorites at all).
 ///
-/// `containerCrumb` prepends one more crumb *before* the root — Favorites uses it for the
+/// `containerCrumb` prepends one more crumb *before* the root: Favorites uses it for the
 /// tab's own list screen ("Favorites", `path` ""), so there's always a crumb that leaves the
 /// favorited folder entirely instead of the leftmost tap just re-opening that same folder.
 struct BrowseBreadcrumbBar: View {
@@ -55,7 +55,7 @@ struct BrowseBreadcrumbBar: View {
     var containerCrumb: (title: String, path: String, icon: Image?)?
     let onSegmentTapped: (_ path: String, _ title: String) -> Void
 
-    /// `directoryPath` with `rootPath` stripped off the front — segments are only ever
+    /// `directoryPath` with `rootPath` stripped off the front: segments are only ever
     /// rendered/tapped relative to the configured root.
     private var relativeDirectoryPath: String {
         guard !rootPath.isEmpty, directoryPath.hasPrefix(rootPath) else { return directoryPath }
@@ -71,7 +71,7 @@ struct BrowseBreadcrumbBar: View {
     }
 
     /// A fixed id for the trailing edge of the bar (rather than tagging the last real
-    /// segment) — `ScrollViewReader` needs some anchor to scroll to, and this way there's
+    /// segment): `ScrollViewReader` needs some anchor to scroll to, and this way there's
     /// always exactly one, even at the root with no path segments at all.
     private static let trailingAnchorID = "trailing"
 
@@ -105,7 +105,7 @@ struct BrowseBreadcrumbBar: View {
             // Bottom only: on iPhone Duo the side safe area is the vertical bar, which the strip
             // must stop at rather than run under.
             .background(Color.backgroundSecondary, ignoresSafeAreaEdges: .bottom)
-            // The path is always visible at the trailing edge — deep breadcrumbs otherwise
+            // The path is always visible at the trailing edge: deep breadcrumbs otherwise
             // stay scrolled to "Home" after navigating into a new folder, hiding exactly the
             // segment that just changed.
             .onAppear { proxy.scrollTo(Self.trailingAnchorID, anchor: .trailing) }
@@ -172,7 +172,7 @@ struct BrowseBreadcrumbBar: View {
     BrowseBreadcrumbBar(directoryPath: "Photos/Vacation/2024/Summer/Beach") { _, _ in }
 }
 
-#Preview("Favorites — container crumb") {
+#Preview("Favorites: container crumb") {
     BrowseBreadcrumbBar(
         directoryPath: "Media/Photos/Vacation/2024",
         rootTitle: "Photos",

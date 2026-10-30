@@ -1,4 +1,4 @@
-# NextExplorer — Русский (ru). key<TAB>value.
+# NextExplorer: Русский (ru). key<TAB>value.
 common.cancel	Отмена
 common.save	Сохранить
 common.edit	Изменить
@@ -254,7 +254,7 @@ thumbnailSettings.subtitle	Управляйте тем, как сервер со
 thumbnailSettings.enable	Создавать миниатюры
 thumbnailSettings.enableHelp	Отключите, чтобы везде показывать полные изображения.
 thumbnailSettings.quality	Качество
-thumbnailSettings.qualityHelp	Выше — лучше выглядит и занимает больше места.
+thumbnailSettings.qualityHelp	Чем выше, тем лучше выглядит и больше места занимает.
 thumbnailSettings.maxDimension	Максимальный размер
 thumbnailSettings.maxDimensionHelp	Самая длинная сторона создаваемой миниатюры, в пикселях.
 thumbnailSettings.concurrency	Параллельность

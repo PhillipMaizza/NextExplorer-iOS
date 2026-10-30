@@ -11,7 +11,7 @@ public struct MainTabFeature {
     }
 
     /// The "Upload complete" toast shown app-wide once the queue drains. `openDestination` is
-    /// the folder to jump to when the user taps "Open" — `nil` hides that button (they're
+    /// the folder to jump to when the user taps "Open": `nil` hides that button (they're
     /// already looking at it, or nothing succeeded).
     public struct UploadToast: Equatable, Sendable {
         public var message: String
@@ -75,7 +75,7 @@ public struct MainTabFeature {
         case goToFolderDismissed
         case goToFolderRequested(String)
         case recentFoldersCleared
-        /// Sent when the scene becomes active again after being backgrounded — `BrowseTabFeature`
+        /// Sent when the scene becomes active again after being backgrounded: `BrowseTabFeature`
         /// re-fetches the current folder and every pushed subfolder, since `BrowseFeature.onAppear`
         /// deliberately no-ops once a folder already has items loaded.
         case appBecameActive
@@ -83,7 +83,7 @@ public struct MainTabFeature {
         case observeConnectivity
         /// Drains `SharedFileInbox` into an upload review on the Browse tab.
         case sharedFilesArrived
-        /// The connection came back — refresh the list tabs so their offline "saved copy"
+        /// The connection came back: refresh the list tabs so their offline "saved copy"
         /// banners clear and they show live data without a manual pull.
         case connectivityRestored
         case browse(BrowseTabFeature.Action)
@@ -229,7 +229,7 @@ public struct MainTabFeature {
 
                 case let .uploads(.delegate(.queueFinished(summary))):
                     // Refetch only the folders an upload actually landed in, and only where they
-                    // are on screen — `refreshDirectory` does nothing for a path nothing is showing.
+                    // are on screen: `refreshDirectory` does nothing for a path nothing is showing.
                     var effects: [Effect<Action>] = []
                     for path in summary.changedPaths {
                         effects.append(.send(.browse(.refreshDirectory(path: path))))

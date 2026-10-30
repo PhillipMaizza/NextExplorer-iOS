@@ -970,7 +970,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Read only"
+            "value": "Read Only"
           }
         },
         "ar": {
@@ -1077,7 +1077,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Read & write"
+            "value": "Read & Write"
           }
         },
         "ar": {
@@ -1184,7 +1184,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Apply to subfolders"
+            "value": "Apply to Subfolders"
           }
         },
         "ar": {
@@ -8032,7 +8032,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "New folder"
+            "value": "New Folder"
           }
         },
         "ar": {
@@ -11884,7 +11884,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Confirm new password"
+            "value": "Confirm New Password"
           }
         },
         "ar": {
@@ -11991,7 +11991,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Current password"
+            "value": "Current Password"
           }
         },
         "ar": {
@@ -12098,7 +12098,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "New password"
+            "value": "New Password"
           }
         },
         "ar": {
@@ -26329,7 +26329,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Counted a partial scan — this folder is very large."
+            "value": "Counted a partial scan: this folder is very large."
           }
         },
         "ar": {
@@ -40025,7 +40025,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Play downloaded copies"
+            "value": "Play Downloaded Copies"
           }
         },
         "ar": {
@@ -41202,7 +41202,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Estimated download"
+            "value": "Estimated Download"
           }
         },
         "ar": {
@@ -46659,7 +46659,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "The address where your NextExplorer instance is installed — to change it, sign out and add the server again."
+            "value": "The address where your NextExplorer instance is installed. To change it, sign out and add the server again."
           }
         },
         "ar": {
@@ -58643,7 +58643,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Generate thumbnails"
+            "value": "Generate Thumbnails"
           }
         },
         "ar": {
@@ -58857,7 +58857,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Max dimension"
+            "value": "Max Dimension"
           }
         },
         "ar": {
@@ -59363,7 +59363,7 @@
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Выше — лучше выглядит и занимает больше места."
+            "value": "Чем выше, тем лучше выглядит и больше места занимает."
           }
         },
         "sv": {
@@ -65919,7 +65919,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Use this directory"
+            "value": "Use This Directory"
           }
         },
         "ar": {
@@ -66347,7 +66347,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "This user has no local password — SSO only."
+            "value": "This user has no local password and signs in with SSO only."
           }
         },
         "ar": {
@@ -70948,7 +70948,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Grant admin access"
+            "value": "Grant Admin Access"
           }
         },
         "ar": {
@@ -72981,7 +72981,7 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "New password"
+            "value": "New Password"
           }
         },
         "ar": {

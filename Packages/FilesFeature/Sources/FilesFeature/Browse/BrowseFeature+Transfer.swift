@@ -25,7 +25,7 @@ extension BrowseFeature {
         guard retry.resolution == .ask else { return performTransfer(&state, retry: retry) }
 
         // Paste always targets the folder that's already on screen, so its listing is right
-        // here in `state.items` — no round trip. A picker move can land anywhere else, so
+        // here in `state.items`: no round trip. A picker move can land anywhere else, so
         // that case asks the server for the destination listing.
         if retry.destination == state.directoryPath {
             return resolveTransfer(&state, retry: retry, colliding: Self.collidingItems(for: retry, in: Array(state.items)))
@@ -112,7 +112,7 @@ extension BrowseFeature {
         .cancellable(id: CancelID.arrivalRecheck, cancelInFlight: true)
     }
 
-    /// Destination items that share a name with something inbound — minus any that *are* the
+    /// Destination items that share a name with something inbound: minus any that *are* the
     /// inbound item (copying a file into its own folder isn't a real collision; the server
     /// just makes a numbered duplicate).
     static func collidingItems(for retry: TransferRetry, in destinationItems: [FileItem]) -> [FileItem] {

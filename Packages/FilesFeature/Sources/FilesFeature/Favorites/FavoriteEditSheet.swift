@@ -24,7 +24,7 @@ private enum Metrics {
     static let macSwatchRing: CGFloat = 1.5
 }
 
-/// Edit a favorite's name, icon and colour — the iOS counterpart of the web
+/// Edit a favorite's name, icon and colour: the iOS counterpart of the web
 /// `FavoriteEditDialog.vue`. The favorite's path is fixed and shown read only.
 struct FavoriteEditSheet: View {
     @Bindable var store: StoreOf<FavoriteEditFeature>
@@ -227,7 +227,7 @@ struct FavoriteEditSheet: View {
         Button(action: action) {
             RoundedRectangle(cornerRadius: .radiusSmall)
                 .fill(fill)
-                // Selection is an inset `primaryInverted` border on the swatch itself — one
+                // Selection is an inset `primaryInverted` border on the swatch itself: one
                 // colour that reads against every fill in both appearances, matching the icon
                 // grid's selected cell. Idle swatches keep the faint hairline.
                 .overlay(

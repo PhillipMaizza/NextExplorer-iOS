@@ -21,7 +21,7 @@ enum SystemShareSource {
 /// The chrome every full-screen media preview shares: an inline title, a top-trailing close,
 /// and a bottom action bar (system share, create-share-link, download, delete). These are
 /// plain `.toolbar` items inside the caller's `NavigationStack`, so the OS gives them Liquid
-/// Glass, correct sizing/spacing, safe-area insets and accessibility for free — the preview
+/// Glass, correct sizing/spacing, safe-area insets and accessibility for free: the preview
 /// only supplies the actions.
 extension View {
     func previewChrome(
@@ -63,7 +63,9 @@ private struct PreviewChrome: ViewModifier {
 
     func body(content: Content) -> some View {
         #if os(macOS)
-            content.toolbar { macToolbar }
+            // A sheet on the Mac shows no NavigationStack toolbar, so the chrome is a bar of its
+            // own across the top, like Preview's title bar.
+            content.safeAreaInset(edge: .top, spacing: 0) { macBar }
         #else
             content
                 .navigationBarTitleDisplayMode(.inline)
@@ -107,25 +109,23 @@ private struct PreviewChrome: ViewModifier {
     }
 
     #if os(macOS)
-        /// A native window toolbar, like Preview's: plain system glyphs, the title in the middle,
-        /// Esc to close, and Delete marked destructive.
-        @ToolbarContentBuilder
-        private var macToolbar: some ToolbarContent {
-            if let title {
-                ToolbarItem(placement: .principal) {
-                    Text(title).font(.headline).lineLimit(1).truncationMode(.middle)
-                }
-            }
-            ToolbarItem(placement: .navigation) {
+        /// Close (Esc) on the leading edge, the file name in the middle, the actions trailing in
+        /// plain system glyphs, Delete marked destructive.
+        private var macBar: some View {
+            HStack(spacing: .space8) {
                 Button(action: onClose) {
                     Label { Text(L10n.PreviewToolbar.close) } icon: { IconKit.close }
                 }
                 .keyboardShortcut(.cancelAction)
                 .help(L10n.PreviewToolbar.close)
-            }
-            ToolbarItemGroup(placement: .primaryAction) {
+                Spacer(minLength: .space8)
+                if let title {
+                    Text(title).font(.headline).lineLimit(1).truncationMode(.middle)
+                }
+                Spacer(minLength: .space8)
                 if hasSystemShare {
                     MacOpenWithMenu(source: systemShare)
+                        .fixedSize()
                     SystemShareButton(source: systemShare)
                 }
                 if let onShareLink {
@@ -141,6 +141,12 @@ private struct PreviewChrome: ViewModifier {
                     macButton(L10n.PreviewToolbar.delete, icon: IconKit.delete, role: .destructive, action: onDelete)
                 }
             }
+            .labelStyle(.iconOnly)
+            .buttonStyle(.borderless)
+            .padding(.horizontal, .space12)
+            .padding(.vertical, .space8)
+            .background(.bar)
+            .overlay(alignment: .bottom) { Divider() }
         }
 
         private func macButton(_ title: String, icon: Image, role: ButtonRole? = nil, action: @escaping () -> Void) -> some View {

@@ -15,7 +15,7 @@ private enum Metrics {
 }
 
 /// "Buy me a coffee" tip jar: a short note and three consumable tiers, each row `emoji · title
-/// —— price`, the tapped row's price swapping to a spinner while StoreKit runs. A gift, nothing
+/// : price`, the tapped row's price swapping to a spinner while StoreKit runs. A gift, nothing
 /// is unlocked.
 struct TipJarSheet: View {
     @Bindable var store: StoreOf<TipJarFeature>

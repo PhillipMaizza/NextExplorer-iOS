@@ -28,7 +28,7 @@ struct SettingsSearchFilter {
         query.isEmpty || label.localizedCaseInsensitiveContains(query)
     }
 
-    /// True when the query is empty or at least one of `labels` matches — used to drop a whole
+    /// True when the query is empty or at least one of `labels` matches: used to drop a whole
     /// section (and its header) once none of its rows match.
     func anyMatch(_ labels: [String]) -> Bool {
         labels.contains(where: matches)

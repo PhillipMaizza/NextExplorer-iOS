@@ -11,13 +11,8 @@ private enum Constants {
     static let sidebarSelectionOpacity: Double = 1.0
     /// Logo size in the iPad sidebar footer.
     static let sidebarFooterLogoSize: CGFloat = 40
-    /// macOS sidebar: rows get extra breathing room and the column opens wider than the
-    /// system default, since a Mac window has the space an iPad split view does not.
-    static let macSidebarRowVerticalPadding: CGFloat = .space8
-    static let macSidebarSelectionHorizontalInset: CGFloat = .space8
-    static let macSidebarIconSize: CGFloat = .iconSmall
-    static let macSidebarIconTitleSpacing: CGFloat = .space12
-    static let macSidebarRowHorizontalPadding: CGFloat = .space12
+    /// The Mac sidebar column opens wider than the system default, since a Mac window has the
+    /// space an iPad split view does not.
     static let macSidebarMinWidth: CGFloat = 240
     static let macSidebarIdealWidth: CGFloat = 280
     static let macSidebarMaxWidth: CGFloat = 360
@@ -49,9 +44,12 @@ struct MainTabSidebar: View {
     var body: some View {
         sidebarList
             .listStyle(.sidebar)
+        #if os(iOS)
             // Suppress the system's opaque accent selection capsule; each row draws its own
-            // translucent neutral pill via `listRowBackground` instead.
+            // translucent neutral pill via `listRowBackground` instead. The Mac keeps the
+            // system's own sidebar selection.
             .tint(Color.clear)
+        #endif
             .safeAreaInset(edge: .bottom, spacing: 0) {
                 sidebarFooter
             }
@@ -64,21 +62,15 @@ struct MainTabSidebar: View {
         #endif
     }
 
-    /// macOS draws its own selection shape behind a selectable sidebar row that `.tint` can't
-    /// hide, so on the Mac the rows are plain buttons and only the accent pill marks the tab.
     private var sidebarList: some View {
-        #if os(macOS)
-            List { sidebarSections }
-        #else
-            List(selection: Binding(
-                get: { store.selectedTab },
-                set: {
-                    if let tab = $0 {
-                        store.send(.tabSelected(tab))
-                    }
+        List(selection: Binding(
+            get: { store.selectedTab },
+            set: {
+                if let tab = $0 {
+                    store.send(.tabSelected(tab))
                 }
-            )) { sidebarSections }
-        #endif
+            }
+        )) { sidebarSections }
     }
 
     @ViewBuilder
@@ -100,46 +92,50 @@ struct MainTabSidebar: View {
         /// Settings is its own window on the Mac, so this row opens it instead of selecting a tab.
         private var macSettingsRow: some View {
             Button { openSettings() } label: {
-                macSidebarLabel(title: L10n.Tab.settings, icon: IconKit.tabSettings, isSelected: false)
+                Label { Text(L10n.Tab.settings) } icon: { Self.macIcon(for: .settings).foregroundStyle(Color.accent) }
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .listRowBackground(Color.clear)
             .accessibilityLabel(L10n.Tab.settings)
         }
 
-        private func macSidebarLabel(title: String, icon: Image, isSelected: Bool) -> some View {
-            HStack(spacing: Constants.macSidebarIconTitleSpacing) {
-                sidebarIcon(icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
-                Text(title)
-                    .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
+        /// The tab bar artwork is drawn for iOS tab bars; the Mac sidebar uses system symbols
+        /// at the standard sidebar size instead.
+        private static func macIcon(for tab: MainTabFeature.Tab) -> Image {
+            switch tab {
+            case .browse: IconKit.folder
+            case .favorites: IconKit.star
+            case .shared: IconKit.shareLink
+            case .downloads: IconKit.download
+            case .settings: IconKit.gearshape
             }
-            .padding(.vertical, Constants.macSidebarRowVerticalPadding)
-            .padding(.horizontal, Constants.macSidebarRowHorizontalPadding)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
         }
     #endif
 
+    @ViewBuilder
     private func sidebarRow(_ item: (tab: MainTabFeature.Tab, title: String, icon: Image)) -> some View {
-        let isSelected = store.selectedTab == item.tab
         #if os(macOS)
-            let row = Button { store.send(.tabSelected(item.tab)) } label: {
-                macSidebarLabel(title: item.title, icon: item.icon, isSelected: isSelected)
+            // The system sidebar row with the Settings sidebar's glyphs: system symbols in the
+            // accent, white on the selected row.
+            Label { Text(item.title) } icon: {
+                Self.macIcon(for: item.tab)
+                    .foregroundStyle(store.selectedTab == item.tab ? Color.white : Color.accent)
             }
-            .buttonStyle(.plain)
-            .accessibilityAddTraits(isSelected ? .isSelected : [])
+            .tag(item.tab)
+            .accessibilityLabel(item.title)
         #else
-            let row = Label {
+            let isSelected = store.selectedTab == item.tab
+            Label {
                 Text(item.title)
                     .type(.body1(isSelected ? .semibold : .regular), style: isSelected ? .primaryOnSurface : .secondary)
             } icon: {
                 sidebarIcon(item.icon, color: isSelected ? Color.primaryDS : Color.secondaryDS)
             }
-        #endif
-        return row
             .tag(item.tab)
             .listRowBackground(sidebarSelectionBackground(isSelected: isSelected))
             .accessibilityLabel(item.title)
+        #endif
     }
 
     /// Translucent neutral selection pill: `primaryDS` at low opacity lightens the dark sidebar
@@ -150,20 +146,13 @@ struct MainTabSidebar: View {
             Capsule(style: .continuous)
                 .fill(Color.accent.opacity(Constants.sidebarSelectionOpacity))
                 .padding(.vertical, .space2)
-            #if os(macOS)
-                .padding(.horizontal, Constants.macSidebarSelectionHorizontalInset)
-            #endif
         } else {
             Color.clear
         }
     }
 
     private static var sidebarIconSize: CGFloat {
-        #if os(macOS)
-            Constants.macSidebarIconSize
-        #else
-            Constants.sidebarIconSize
-        #endif
+        Constants.sidebarIconSize
     }
 
     private func sidebarIcon(_ image: Image, color: Color) -> some View {

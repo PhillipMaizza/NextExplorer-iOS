@@ -35,7 +35,7 @@ public extension URLRequest {
         httpMethod = method.rawValue
     }
 
-    /// `Content-Type: application/json` — the pair repeated before every JSON body.
+    /// `Content-Type: application/json`; the pair repeated before every JSON body.
     mutating func setJSONContentType() {
         setValue(MIMEType.json, forHTTPHeaderField: HTTPHeaderField.contentType)
     }

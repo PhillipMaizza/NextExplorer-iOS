@@ -29,10 +29,10 @@ struct FileRowView: View {
     let thumbnailSignature: String
     let serverURL: URL?
     let showThumbnails: Bool
-    /// The full item, when built from one — needed for the on device PDF first page render,
+    /// The full item, when built from one: needed for the on device PDF first page render,
     /// which fetches the file through `filesClient.previewFileLowPriority`.
     private let file: FileItem?
-    /// When set, replaces the folder/file-type glyph — used by the Favorites list to show a
+    /// When set, replaces the folder/file-type glyph: used by the Favorites list to show a
     /// favorite's custom icon, weight and colour.
     var customIcon: Image?
     var customIconTint: Color?
@@ -40,10 +40,10 @@ struct FileRowView: View {
     /// When set, the leading thumbnail/icon is the source the preview cover's `.zoom`
     /// transition grows from and shrinks back to.
     var matchedSource: PreviewMatchedSource?
-    /// True while this file's content is downloading after a tap — the row shows a trailing
+    /// True while this file's content is downloading after a tap: the row shows a trailing
     /// spinner and the full-screen preview holds off until it's ready.
     var isOpening: Bool = false
-    /// True when this item is downloaded (or covered by a pinned folder) for offline use — the row
+    /// True when this item is downloaded (or covered by a pinned folder) for offline use: the row
     /// shows a small offline badge so the user can tell what's available without a connection.
     var isAvailableOffline: Bool = false
     /// Read live so an already-visible row updates immediately when the user changes the
@@ -212,7 +212,7 @@ struct FileRowView: View {
         .contentShape(Rectangle())
         .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)
         .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isAvailableOffline)
-        // Only favoriting buzzes — un-favoriting isn't a "win" worth celebrating the same way.
+        // Only favoriting buzzes: un-favoriting isn't a "win" worth celebrating the same way.
         .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
     }
 
@@ -301,7 +301,7 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
 
 #Preview("Thumbnails on") {
     // `.previewValue`'s `thumbnailURL` always resolves to `nil`, so this renders the same
-    // fallback icon as any other file — it documents/exercises the code path rather than
+    // fallback icon as any other file: it documents/exercises the code path rather than
     // showing an actual image.
     FileRowView(
         item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),

@@ -1,5 +1,5 @@
 # Xcode
-## User settings — machine-local, never shared
+## User settings: machine local, never shared
 xcuserdata/
 *.xcuserstate
 *.xcuserdatad/
@@ -49,7 +49,7 @@ Carthage/Build/
 # macOS
 .DS_Store
 
-# Secrets / local config — never commit
+# Secrets / local config: never commit
 *.env
 .env.*
 *.pem
@@ -64,7 +64,7 @@ GoogleService-Info.plist
 # Simulator/device logs
 *.crash
 
-# Claude working-context notes — not project documentation, stays local
+# Claude working context notes: not project documentation, stays local
 CLAUDE.md
 .claude/
 

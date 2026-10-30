@@ -31,14 +31,14 @@
             login.passwordField.clearAndType("hunter2")
             login.submitButton.click()
 
-            XCTAssertTrue(app.labeledButton(L10n.Tab.browse).waitToAppear(), "A successful login should reveal the sidebar")
+            XCTAssertTrue(sidebarItem(L10n.Tab.browse, in: app).waitToAppear(), "A successful login should reveal the sidebar")
         }
 
         func testSidebarSectionsAndShortcuts() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
 
-            app.labeledButton(L10n.Tab.shared).click()
+            sidebarItem(L10n.Tab.shared, in: app).click()
             XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear(), "Shared should list the links shared by me")
 
             app.typeKey("2", modifierFlags: .command)
@@ -56,11 +56,11 @@
             let app = launchApp()
             openDocuments(in: app)
 
-            app.labeledButton(L10n.Tab.shared).click()
+            sidebarItem(L10n.Tab.shared, in: app).click()
             XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear(), "Shared should replace Browse")
-            app.labeledButton(L10n.Tab.favorites).click()
+            sidebarItem(L10n.Tab.favorites, in: app).click()
             XCTAssertTrue(app.buttons[L10n.FileInfo.rowLocation].waitToAppear(), "Favorites should replace Shared")
-            app.labeledButton(L10n.Tab.browse).click()
+            sidebarItem(L10n.Tab.browse, in: app).click()
 
             XCTAssertTrue(text(Fixture.file, in: app).waitToAppear(), "Browse should come back on the folder it had open")
             XCTAssertTrue(backButton(in: app).waitToAppear(), "The opened folder should still have Back")
@@ -176,7 +176,7 @@
         func testSharedSegmentsAndEditFromTheContextMenu() {
             let app = launchApp()
             XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
-            app.labeledButton(L10n.Tab.shared).click()
+            sidebarItem(L10n.Tab.shared, in: app).click()
             XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear())
 
             segment(L10n.Shared.segmentWithMe, in: app).click()
@@ -243,6 +243,11 @@
         /// Text on screen, matched by label or value: table cells expose their text as a value.
         private func text(_ string: String, in app: XCUIApplication) -> XCUIElement {
             app.staticTexts.matching(NSPredicate(format: "label == %@ OR value == %@", string, string)).firstMatch
+        }
+
+        /// A section in the main window's sidebar, a native selectable list row on the Mac.
+        private func sidebarItem(_ title: String, in app: XCUIApplication) -> XCUIElement {
+            app.outlines.cells.staticTexts.matching(NSPredicate(format: "label == %@ OR value == %@", title, title)).firstMatch
         }
 
         private func backButton(in app: XCUIApplication) -> XCUIElement {

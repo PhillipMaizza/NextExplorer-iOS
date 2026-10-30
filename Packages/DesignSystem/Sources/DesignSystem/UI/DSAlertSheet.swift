@@ -13,7 +13,7 @@ private enum Constants {
 /// scrolling `content`, and whose footer stacks the confirm action on top, an optional
 /// `neutralTitle` middle action, then the dismiss.
 ///
-/// It disables interactive (swipe) dismissal — like an alert it only closes through one of
+/// It disables interactive (swipe) dismissal: like an alert it only closes through one of
 /// its own buttons, so give the presenting binding a no op setter and derive its getter from
 /// feature state. While `isConfirmLoading` is true every control but the confirm spinner
 /// locks. `closeAccessibilityLabel` / `dismissTitle` default to English; localized call sites
@@ -89,7 +89,7 @@ public struct DSAlertSheet: View {
                     closeAccessibilityLabel: closeAccessibilityLabel,
                     onClose: onDismiss
                 )
-                // While the confirm action runs, its spinner is the only live control — the
+                // While the confirm action runs, its spinner is the only live control: the
                 // close chip locks so the prompt can't be dismissed out from under the work.
                 .disabled(isConfirmLoading)
 

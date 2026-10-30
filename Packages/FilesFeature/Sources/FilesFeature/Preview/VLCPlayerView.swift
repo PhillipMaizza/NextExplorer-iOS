@@ -10,7 +10,7 @@ import VLCKitSPM
 #endif
 
 /// Full-screen player for the video/audio containers and codecs AVFoundation can't decode
-/// (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma), backed by libvlc via VLCKit — parity
+/// (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma), backed by libvlc via VLCKit: parity
 /// with the web client's player. `StreamingPreviewView` (AVPlayer) still handles the natively
 /// decodable formats.
 ///
@@ -230,7 +230,7 @@ private struct VLCPlaybackControls: View {
     }
 }
 
-/// Seek bar that jumps on tap and follows a drag — `DragGesture(minimumDistance: 0)` fires on
+/// Seek bar that jumps on tap and follows a drag: `DragGesture(minimumDistance: 0)` fires on
 /// both, unlike SwiftUI's `Slider` which only seeks when the thumb itself is dragged. The seek is
 /// committed continuously; `setScrubbing` freezes incoming time updates so the thumb doesn't fight
 /// the finger.

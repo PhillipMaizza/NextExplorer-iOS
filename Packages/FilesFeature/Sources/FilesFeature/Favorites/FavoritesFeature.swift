@@ -39,14 +39,14 @@ public struct FavoritesFeature {
         public var searchPhase: DataPhase = .idle
         @Presents public var editSheet: FavoriteEditFeature.State?
         /// A `BrowseFeature` scoped to a search hit's parent folder, presented as a full screen
-        /// preview cover over the results — so tapping a file result opens it directly (no visible
+        /// preview cover over the results: so tapping a file result opens it directly (no visible
         /// folder navigation) and dismissing returns straight to the results. Reuses Browse's whole
         /// preview subsystem rather than duplicating it.
         @Presents public var previewHost: BrowseFeature.State?
         public var isSelecting = false
         public var selectedFavoriteIDs: Set<Favorite.ID> = []
         public var bulkRemoveConfirmationIsPresented = false
-        /// Browsing into a favorited folder pushes here, same shape as `BrowseTabFeature` —
+        /// Browsing into a favorited folder pushes here, same shape as `BrowseTabFeature`:
         /// this keeps navigation inside the Favorites tab rather than jumping to Browse.
         public var path = StackState<BrowseFeature.State>()
 
@@ -67,7 +67,7 @@ public struct FavoritesFeature {
             }
         }
 
-        /// Favorites are shown in the user's own order (`position`, drag to reorder) — the
+        /// Favorites are shown in the user's own order (`position`, drag to reorder): the
         /// only transform here is the search filter. `favorites` is kept in `position` order
         /// by `load` and every reorder response.
         public var displayedFavorites: [Favorite] {
@@ -127,7 +127,7 @@ public struct FavoritesFeature {
         /// Mac ⌘↑ / ⌘[: pop to the folder that contains the visible one.
         case goToEnclosingFolder
         case navigateToDirectory(path: String, title: String)
-        /// Re-fetches every pushed subfolder currently on the live navigation stack — sent
+        /// Re-fetches every pushed subfolder currently on the live navigation stack: sent
         /// when the app becomes active again after being backgrounded.
         case syncPathStack
         /// Refetches only the pushed screens whose `directoryPath` equals `path`. Sent after
@@ -277,7 +277,7 @@ public struct FavoritesFeature {
 
             case .reorderResponse(.failure):
                 state.actionErrorMessage = L10n.Favorites.reorderFailed
-                // The optimistic move may be out of sync with the server now — refetch the
+                // The optimistic move may be out of sync with the server now: refetch the
                 // authoritative order.
                 return load(&state)
 
@@ -536,7 +536,7 @@ public struct FavoritesFeature {
                 return nil
             }.first
             // Surface an error (retryable) only when nothing came back and at least one favorite
-            // failed — a partial success still shows its hits.
+            // failed: a partial success still shows its hits.
             if hits.isEmpty, let firstFailure {
                 await send(.fileSearchResponse(.failure(firstFailure)))
             } else {

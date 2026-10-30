@@ -11,7 +11,7 @@ private enum Constants {
     static let maxPhotoUploads = 20
 }
 
-/// Camera permission resolved *before* presenting `UIImagePickerController` — presenting it
+/// Camera permission resolved *before* presenting `UIImagePickerController`: presenting it
 /// first shows the system prompt mid transition and the camera stalls behind it. Returns
 /// `true` when the picker may be shown, `false` when the caller should surface the denied
 /// alert instead.
@@ -30,7 +30,7 @@ enum CameraAccess {
 }
 
 /// The three upload pickers (camera / Photos / Files) plus the camera denied alert, with no
-/// UI of its own — the trigger (a toolbar `+`, an "Add more" row) lives at the call site and
+/// UI of its own: the trigger (a toolbar `+`, an "Add more" row) lives at the call site and
 /// flips these bindings. Shared by `UploadEntryPoints` and `UploadReviewView`.
 struct UploadPickers: ViewModifier {
     @Binding var isFilesPickerPresented: Bool
@@ -96,11 +96,11 @@ struct UploadPickers: ViewModifier {
     }
 }
 
-/// Take Photo or Video / Upload from Gallery / Upload from Files — the shared menu behind both
+/// Take Photo or Video / Upload from Gallery / Upload from Files: the shared menu behind both
 /// the browse `+` and the review sheet's "Add more files" row.
 struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     private let label: () -> MenuLabel
-    /// Extra items above the upload sources — the browse `+` slots "Create Folder" here; the
+    /// Extra items above the upload sources: the browse `+` slots "Create Folder" here; the
     /// review sheet's "Add more" leaves it empty.
     private let leadingActions: () -> LeadingActions
     @Binding private var isFilesPickerPresented: Bool

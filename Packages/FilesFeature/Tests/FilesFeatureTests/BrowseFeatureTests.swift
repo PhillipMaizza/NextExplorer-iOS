@@ -168,7 +168,7 @@ struct BrowseFeatureTests {
     func rowTappedOnAnUnplayableStreamableContainerPresentsTheUnsupportedPreview() async {
         let serverURL = URL(string: "https://example.com")!
         // `.webm` is `isStreamableMedia` (a video kind) but not `isNativelyPlayable`
-        // (AVFoundation can't decode VP8/VP9) — regression test for a bug where `rowTapped`
+        // (AVFoundation can't decode VP8/VP9): regression test for a bug where `rowTapped`
         // guarded on `isPreviewable || isBrowsableArchive` instead of
         // `!isUnsupportedForPreview`, letting this slip through to `StreamingPreviewView`
         // with a URL it can't actually play. It now lands on `UnsupportedFilePreviewView`.
@@ -184,7 +184,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnANonBrowsableArchivePresentsTheUnsupportedPreview() async {
         let serverURL = URL(string: "https://example.com")!
-        // `.zip`/`.rar` are `isBrowsableArchive` (see the dedicated test for those) — this
+        // `.zip`/`.rar` are `isBrowsableArchive` (see the dedicated test for those): this
         // covers an archive kind neither `ZIPFoundation` nor `Unrar.swift` can list.
         let file = FileItem(name: "bundle.7z", path: "", dateModified: Date(), size: 10, kind: "7z")
 
@@ -208,7 +208,7 @@ struct BrowseFeatureTests {
 
         // Never emits `.openFolder` for a non-directory; sets `previewItem` immediately so
         // the viewer presents right away, and fetches text (not streamed, not downloaded via
-        // `previewFile` — `.txt` isn't `isStreamableMedia` or `isPreviewableViaDownload`) in
+        // `previewFile`: `.txt` isn't `isStreamableMedia` or `isPreviewableViaDownload`) in
         // the background.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
@@ -317,7 +317,7 @@ struct BrowseFeatureTests {
         }
 
         // No `filesClient.downloadRawFile`/`previewFile` override: a call here would crash
-        // with "Unimplemented" — `ArchiveBrowserView` downloads and parses the archive itself.
+        // with "Unimplemented": `ArchiveBrowserView` downloads and parses the archive itself.
         await store.send(.rowTapped(archive)) {
             $0.previewItem = archive
         }
@@ -337,7 +337,7 @@ struct BrowseFeatureTests {
 
         // Unlike raster images (which set `previewItem` and load themselves in the gallery,
         // no reducer-driven fetch), SVGs go through the same download+QuickLook path as PDFs
-        // — `UIImage`/`AsyncImage` can't rasterize them.
+        // `UIImage`/`AsyncImage` can't rasterize them.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
             $0.previewPhase = .loading
@@ -404,7 +404,7 @@ struct BrowseFeatureTests {
         }
 
         // No `filesClient.previewFile` override: a call here would crash with "Unimplemented"
-        // — `.docx` isn't in `PREVIEWABLE_EXTENSIONS`, so it must go through
+        // `.docx` isn't in `PREVIEWABLE_EXTENSIONS`, so it must go through
         // `downloadRawFile` (`POST /api/files/download`), not `GET /api/preview`.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
@@ -849,7 +849,7 @@ struct BrowseFeatureTests {
         await store.receive(.delegate(.openPath(path: "Docs", title: "Docs")))
     }
 
-    // MARK: File actions — context menu routing
+    // MARK: File actions; context menu routing
 
     @Test
     func renameTappedSetsTheRenameSheetItem() async {
@@ -935,7 +935,7 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — favorite toggle
+    // MARK: File actions; favorite toggle
 
     @Test
     func anInPlaceMutationWritesTheCorrectedListingThroughToTheCache() async {
@@ -995,7 +995,7 @@ struct BrowseFeatureTests {
     @Test
     func favoriteToggleOnAFileIsANoOpBecauseOnlyFoldersCanBeFavorited() async {
         // The real server 400s (`favoritesService.validatePath`) on anything that isn't a
-        // directory — this mirrors that restriction client-side rather than round-tripping
+        // directory: this mirrors that restriction client-side rather than round-tripping
         // to discover it.
         let serverURL = URL(string: "https://example.com")!
         let file = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
@@ -1064,7 +1064,7 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — rename
+    // MARK: File actions; rename
 
     @Test
     func renameCancelledClearsTheRenameSheetItem() async {
@@ -1184,7 +1184,7 @@ struct BrowseFeatureTests {
         #expect(store.state.previewItem?.kind == "mp4")
     }
 
-    // MARK: File actions — new folder
+    // MARK: File actions; new folder
 
     @Test
     func newFolderTappedOpensTheSheetAndCancelledClosesIt() async {
@@ -1266,7 +1266,7 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — delete
+    // MARK: File actions; delete
 
     @Test
     func deleteCancelledClearsTheDeleteConfirmationItemAndShareImpactCheck() async {
@@ -1466,7 +1466,7 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — extract/compress
+    // MARK: File actions; extract/compress
 
     @Test
     func extractZipTappedAddsTheExtractedFolderOnSuccess() async {
@@ -1576,7 +1576,7 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — download
+    // MARK: File actions; download
 
     // iOS hands downloads to the app queue; macOS saves via a panel, see MacDownloadTests.
     #if os(iOS)
@@ -1926,7 +1926,7 @@ struct BrowseFeatureTests {
         await store.send(.bulkFavoriteTapped)
     }
 
-    // MARK: File actions — get info
+    // MARK: File actions; get info
 
     @Test
     func infoTappedOnAFolderFetchesMetadataAndServerDiskUsage() async {

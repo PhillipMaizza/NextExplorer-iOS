@@ -219,7 +219,7 @@ struct FavoritesFeatureTests {
     func openPathDelegateFromAPushedScreenForwardsToNavigateToDirectory() async {
         // Exhaustivity off: the freshly-pushed `BrowseFeature.State` gets a `StackElementID`
         // that isn't reproducible from inside a `receive`-triggered assertion closure (`send`
-        // gets special generator snapshotting from TCA, `receive` doesn't) — asserting the
+        // gets special generator snapshotting from TCA, `receive` doesn't): asserting the
         // resulting path's content is what actually matters here.
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
@@ -660,7 +660,7 @@ struct FavoritesFeatureTests {
             $0.filesClient.favorites = { _ in [favorite] }
         }
 
-        // A `.failed` phase is retryable — coming back to the tab kicks a fresh load.
+        // A `.failed` phase is retryable: coming back to the tab kicks a fresh load.
         await store.send(.onAppear) {
             $0.phase = .loading
         }

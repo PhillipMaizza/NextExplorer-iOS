@@ -8,7 +8,7 @@ private enum Constants {
 
 /// Full-screen container for non-streamable files (images, PDFs, documents, ...): shows a
 /// spinner while `FilesClient.previewFile` downloads, then `QuickLookPreview` once it's
-/// ready. Unlike `FileInfoSheet`, there's no `presentationDetents`-resize problem here —
+/// ready. Unlike `FileInfoSheet`, there's no `presentationDetents`-resize problem here:
 /// `fullScreenCover` is always full-screen regardless of content, so the loading state can
 /// live inside the same cover without needing a separate sheet identity to swap to.
 struct FilePreviewContainerView: View {

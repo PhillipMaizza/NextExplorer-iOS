@@ -21,7 +21,7 @@ extension FilesService {
         try Self.validate(response)
     }
 
-    /// `GET /api/settings` — extracts the admin-only `thumbnails` + `access.rules`. A
+    /// `GET /api/settings`: extracts the admin-only `thumbnails` + `access.rules`. A
     /// non-admin session just gets no such keys, decoded as nil / empty.
     func fetchSystemSettings(serverURL: URL) async throws -> SystemSettings {
         let url = serverURL.appendingPathComponent(APIPath.settings)
@@ -69,7 +69,7 @@ extension FilesService {
         return echoed.accessRules
     }
 
-    /// `GET /api/branding` (`backend/src/routes/settings.js`) — unauthenticated, returns the
+    /// `GET /api/branding` (`backend/src/routes/settings.js`): unauthenticated, returns the
     /// branding object directly (not enveloped).
     func fetchBranding(serverURL: URL) async throws -> Branding {
         let url = serverURL.appendingPathComponent(APIPath.branding)
@@ -96,7 +96,7 @@ extension FilesService {
         return branding
     }
 
-    /// `POST /api/settings/upload-logo` — a single `logo` multipart part. The whole payload is
+    /// `POST /api/settings/upload-logo`: a single `logo` multipart part. The whole payload is
     /// small (≤2 MB, enforced client and server side), so the envelope is built in memory
     /// rather than streamed from disk like `uploadFile`.
     func uploadServerLogo(serverURL: URL, jpegData: Data) async throws -> String {

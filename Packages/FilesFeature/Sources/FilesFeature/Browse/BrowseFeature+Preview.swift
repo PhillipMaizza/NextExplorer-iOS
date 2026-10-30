@@ -22,7 +22,7 @@ extension BrowseFeature {
         .cancellable(id: CancelID.info, cancelInFlight: true)
     }
 
-    /// Only reached for non-streamable items — `rowTapped` already set `state.previewItem`
+    /// Only reached for non-streamable items: `rowTapped` already set `state.previewItem`
     /// and skipped this for video/audio, which play live instead of downloading.
     func loadPreview(_ state: inout State, item: FileItem) -> Effect<Action> {
         state.previewFileURL = nil
@@ -31,7 +31,7 @@ extension BrowseFeature {
         let filesClient = filesClient
         return .run { send in
             try await send(.previewFileResponse(apiResult {
-                // Word docs aren't in `PREVIEWABLE_EXTENSIONS` — `GET /api/preview` 415s them,
+                // Word docs aren't in `PREVIEWABLE_EXTENSIONS`: `GET /api/preview` 415s them,
                 // so they come down via the unrestricted download endpoint instead.
                 item.isOfficeDocument
                     ? try await filesClient.downloadRawFile(serverURL, item)

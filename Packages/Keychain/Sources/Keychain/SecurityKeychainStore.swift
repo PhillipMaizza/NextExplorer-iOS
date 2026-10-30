@@ -1,7 +1,7 @@
 import Foundation
 import Security
 
-/// Thin wrapper over `Security`'s generic-password item calls. Not a singleton — callers
+/// Thin wrapper over `Security`'s generic-password item calls. Not a singleton: callers
 /// construct one with an explicit `KeychainConfiguration` and hand it to `KeychainClient`.
 struct SecurityKeychainStore: Sendable {
     let configuration: KeychainConfiguration

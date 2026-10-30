@@ -7,11 +7,11 @@ import os
 ///
 /// Opening a UDP socket to the limited-broadcast address and sending one datagram is enough
 /// for the system to class the app as a local-network client and prompt. The datagram goes
-/// nowhere useful — port 9 is discard — it exists only to touch the network.
+/// nowhere useful, port 9 is discard, it exists only to touch the network.
 enum LocalNetworkPrimer {
     private static let connection = OSAllocatedUnfairLock<NWConnection?>(initialState: nil)
 
-    /// Safe to call repeatedly — only the first call does anything.
+    /// Safe to call repeatedly: only the first call does anything.
     static func prime() {
         connection.withLock { existing in
             guard existing == nil else { return }

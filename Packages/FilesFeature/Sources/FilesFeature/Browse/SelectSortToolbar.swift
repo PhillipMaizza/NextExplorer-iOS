@@ -5,8 +5,8 @@ import SwiftUI
 
 /// The "Select / Sort / Grid-List" toolbar chrome shared by Browse, Favorites, and Downloads:
 /// the ellipsis menu with a "Select" entry, the top-left Select All/Deselect All button plus
-/// trailing Cancel once selecting, and the grid/list toggle. What differs per screen — the
-/// sort menu's actual options, and what shows in the bottom bar while selecting — stays with
+/// trailing Cancel once selecting, and the grid/list toggle. What differs per screen: the
+/// sort menu's actual options, and what shows in the bottom bar while selecting: stays with
 /// each caller rather than being forced into this shared shape.
 @MainActor
 @ToolbarContentBuilder

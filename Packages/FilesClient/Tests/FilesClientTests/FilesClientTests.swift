@@ -115,7 +115,7 @@ struct FilesClientLiveTests {
         #expect(preferences == UserPreferences(showHiddenFiles: true, showThumbnails: true))
     }
 
-    // MARK: Error path — HTTP status mapping
+    // MARK: Error path; HTTP status mapping
 
     @Test
     func browseMaps401ToSessionExpired() async throws {
@@ -288,7 +288,7 @@ struct FilesClientLiveTests {
         #expect(store.read(serverURL: serverURL, path: "docs/sub") == nil)
     }
 
-    // MARK: Edge cases — request construction
+    // MARK: Edge cases; request construction
 
     @Test
     func browsePercentEncodesPathSegmentsWithSpecialCharacters() async throws {
@@ -764,7 +764,7 @@ struct FilesClientLiveTests {
 
     /// A distinct name per call (`UUID`-suffixed) keeps each test's cache slot
     /// (`Library/Caches/PreviewCache/<item.id>`) isolated from every other test and from any
-    /// prior run — the cache is real, persistent disk state, not reset between test runs.
+    /// prior run: the cache is real, persistent disk state, not reset between test runs.
     private func uniquePreviewItem(name: String, path: String = "", kind: String = "txt") -> FileItem {
         let uniqueName = "\(UUID().uuidString)-\(name)"
         return FileItem(name: uniqueName, path: path, dateModified: Date(), size: 0, kind: kind)
@@ -843,7 +843,7 @@ struct FilesClientLiveTests {
     @Test
     func extractZipHitsPlainAPIExtractPathNotAPIFilesExtract() async throws {
         // Regression coverage for a real bug this session: the endpoint is
-        // `POST /api/files/zip/extract` (zip.js's own route path, mounted at plain `/api`) —
+        // `POST /api/files/zip/extract` (zip.js's own route path, mounted at plain `/api`):
         // easy to get subtly wrong the same way `downloadRawFile` originally was.
         let json = #"{"success": true, "item": {"name": "bundle", "path": "", "dateModified": "2024-01-01T00:00:00.000Z", "size": 0, "kind": "directory"}}"#
         stub(statusCode: 201, body: json.data(using: .utf8)!)
@@ -874,7 +874,7 @@ struct FilesClientLiveTests {
 
     @Test
     func downloadRawFileHitsPlainAPIDownloadNotAPIFilesDownload() async throws {
-        // Regression coverage: this endpoint's real path is `POST /api/download` — the
+        // Regression coverage: this endpoint's real path is `POST /api/download`; the
         // backend file lives at `routes/files/download.js` but is mounted at plain `/api` in
         // `routes/index.js`, not `/api/files`. Got this wrong once already (silent 404s on
         // every zip/rar/doc/docx preview until caught by live testing, not this test suite).

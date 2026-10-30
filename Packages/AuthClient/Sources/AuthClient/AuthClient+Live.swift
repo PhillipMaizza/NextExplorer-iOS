@@ -104,7 +104,7 @@ public extension AuthClient {
                     codeVerifier: pkce.verifier
                 )
                 // The bridge issues a normal local session cookie, so capture it exactly as the
-                // password path does — just tagged `.oidc` for provenance.
+                // password path does: just tagged `.oidc` for provenance.
                 try await captureAndPersist(
                     serverURL: serverURL,
                     authMode: .oidc,

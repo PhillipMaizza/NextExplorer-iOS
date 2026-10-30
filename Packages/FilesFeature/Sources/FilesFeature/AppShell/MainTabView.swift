@@ -23,14 +23,14 @@ public struct MainTabView: View {
     @Environment(\.scenePhase) private var scenePhase
     /// `.onChange(of: scenePhase)` doesn't fire for the *initial* value, but iOS commonly
     /// still transitions `.inactive` → `.active` once shortly after a cold launch, once this
-    /// view has already mounted — that transition would otherwise fire `.appBecameActive` and
+    /// view has already mounted: that transition would otherwise fire `.appBecameActive` and
     /// stomp on whatever `onAppear` just loaded. This tracks past the first activation so only
     /// a genuine later background→active resume triggers a sync.
     @State private var hasBecomeActiveBefore = false
     /// Tabs whose content has actually been selected at least once. A non-Browse `Tab` builds
     /// its `NavigationStack` off screen while the launch splash still covers the window, and
     /// UIKit lays that nav bar out at the wrong size and never revisits it (large title stuck
-    /// inline until a manual tab switch forces a relayout — the NXTIOS-0018 bug class). Gating
+    /// inline until a manual tab switch forces a relayout: the NXTIOS-0018 bug class). Gating
     /// each tab's body on first selection defers the first layout pass to when the tab is
     /// actually on screen.
     @State private var visitedTabs: Set<MainTabFeature.Tab> = [.browse]
@@ -174,7 +174,7 @@ public struct MainTabView: View {
     /// view detail and then replacing it with another section's stack traps in
     /// `NavigationColumnState.boundPathChange` (EXC_BREAKPOINT) on the switch. Each `switch`
     /// branch is a distinct `NavigationSplitView` type, so changing tab tears the whole split
-    /// view down and builds the next one fresh — the detail's bound path is never rebound in
+    /// view down and builds the next one fresh: the detail's bound path is never rebound in
     /// place. The shared `MainTabSidebar` + `columnVisibility` keep the sidebar (and its show/hide
     /// toggle) identical across tabs; TCA store state lives outside the view tree and survives.
     @ViewBuilder
@@ -230,7 +230,7 @@ public struct MainTabView: View {
                 .environment(\.isSplitViewDetail, true)
         }
         .navigationSplitViewStyle(.balanced)
-        .tint(Color.accent)
+        .platformAccentTint()
         #if os(macOS)
             .toolbar {
                 if isAnyTransferBarVisible {
@@ -342,7 +342,7 @@ public struct MainTabView: View {
             .scaledToFit()
     }
 
-    /// Whether the current tab is showing a `BrowseBreadcrumbBar` right now — the upload bar
+    /// Whether the current tab is showing a `BrowseBreadcrumbBar` right now: the upload bar
     /// has to sit above it. Mirrors `BrowseTabView` / `FavoritesView`'s own visibility rule.
     private var breadcrumbClearance: CGFloat {
         switch store.selectedTab {

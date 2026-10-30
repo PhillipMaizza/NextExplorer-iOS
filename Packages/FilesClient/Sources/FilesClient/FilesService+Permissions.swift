@@ -23,7 +23,7 @@ extension FilesService {
         try Self.validateReportingMessage(data, response)
     }
 
-    /// `POST /api/permissions/chown`: `{ path, owner?, group? }` — a nil field is omitted, and
+    /// `POST /api/permissions/chown`: `{ path, owner?, group? }`; a nil field is omitted, and
     /// the server rejects a body carrying neither.
     func changeOwnership(serverURL: URL, path: String, owner: String?, group: String?) async throws {
         let url = serverURL.appendingPathComponent(APIPath.permissionsChown)

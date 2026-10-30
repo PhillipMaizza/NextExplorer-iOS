@@ -4,7 +4,7 @@ import Testing
 
 @Suite("DSShakeEffect")
 struct ShakeEffectTests {
-    // `ProjectionTransform.m31`/`m32` hold the affine translation (tx/ty) components —
+    // `ProjectionTransform.m31`/`m32` hold the affine translation (tx/ty) components:
     // there's no `.tx`/`.ty` accessor directly on `ProjectionTransform`.
 
     @Test("zero animatableData produces no translation")

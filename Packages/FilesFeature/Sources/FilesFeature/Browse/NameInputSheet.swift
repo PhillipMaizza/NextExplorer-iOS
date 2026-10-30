@@ -10,7 +10,7 @@ private enum Constants {
 
 /// A one field name entry sheet shared by "Create Folder" and "Rename": a `DSDynamicHeightSheet`
 /// with a single text field and a confirm button, sizing to its own content. The draft lives
-/// in this view's own `@State` rather than the store — a `TextField` bound through a TCA
+/// in this view's own `@State` rather than the store: a `TextField` bound through a TCA
 /// `.sending` binding dropped keystrokes. `onConfirm` gets the raw text; the reducer trims and
 /// decides whether the name actually changed.
 struct NameInputSheet: View {

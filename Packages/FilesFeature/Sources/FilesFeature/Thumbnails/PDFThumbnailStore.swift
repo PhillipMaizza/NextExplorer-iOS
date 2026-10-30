@@ -8,11 +8,11 @@ import Foundation
 #endif
 
 private enum Constants {
-    /// Don't fetch or rasterize page one of PDFs past this size — a huge scanned document
+    /// Don't fetch or rasterize page one of PDFs past this size: a huge scanned document
     /// isn't worth the bandwidth or the render cost for a list thumbnail.
     static let maxSourceBytes: Int64 = 40 * 1_024 * 1_024
     /// Longest side of the render, in pixels. Sized for the biggest grid cell at ~3x, no
-    /// more — these are list thumbnails, and every extra pixel is ~4 bytes per image held.
+    /// more: these are list thumbnails, and every extra pixel is ~4 bytes per image held.
     static let renderPixel: CGFloat = 320
     /// The fetch runs at this priority so it yields to whatever the user is interacting with.
     static let fetchPriority: TaskPriority = .utility
@@ -23,7 +23,7 @@ private enum Constants {
 
 /// Process-wide store of PDF first-page thumbnails, keyed by `PDFThumbnailCache.cacheKey`.
 ///
-/// Each key gets an `Entry` — a tiny `@Observable` box holding just that key's `State`. A
+/// Each key gets an `Entry`: a tiny `@Observable` box holding just that key's `State`. A
 /// cell observes only its own entry, so one thumbnail resolving redraws one cell, not the
 /// whole visible grid.
 ///
@@ -99,14 +99,14 @@ final class PDFThumbnailStore {
         Task(priority: Constants.fetchPriority) { [weak self] in
             defer { self?.inFlight.remove(key) }
             guard let pdfURL = try? await filesClient.previewFileLowPriority(serverURL, item) else {
-                // Cancelled or a transient network failure — leave the entry in `loading` so
+                // Cancelled or a transient network failure: leave the entry in `loading` so
                 // the next appearance of a cell with this key tries again.
                 return
             }
             if let image = await cache.firstPageImage(key, Constants.renderPixel, pdfURL) {
                 entry.state = .ready(image)
             } else {
-                // Downloaded, but PDFKit couldn't open it — it won't get better on a retry.
+                // Downloaded, but PDFKit couldn't open it: it won't get better on a retry.
                 entry.state = .unavailable
             }
         }

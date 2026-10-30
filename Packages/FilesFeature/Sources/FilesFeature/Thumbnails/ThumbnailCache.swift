@@ -4,7 +4,7 @@ import Foundation
 
 /// Disk-backed cache for thumbnail image bytes, keyed by the thumbnail's own URL. Safe to key
 /// on the URL alone (rather than the source file's `dateModified`/`size`, which aren't
-/// available here) because the server itself bakes a content hash into that URL — see
+/// available here) because the server itself bakes a content hash into that URL: see
 /// `FilesService.thumbnailURL`'s doc comment: a changed file gets a *different* URL, so a
 /// stale cache entry can't outlive the content it was fetched for. Lives under the same
 /// `Library/Caches/PreviewCache` root `PreviewCacheStore` reports on/clears, so "Clear Cache"

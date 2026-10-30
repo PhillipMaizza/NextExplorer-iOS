@@ -4,7 +4,7 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// One page of the Shared tab's paged `TabView` — the grouped list of shares for a single
+/// One page of the Shared tab's paged `TabView`: the grouped list of shares for a single
 /// segment, with its own skeleton, empty/error overlay and pull-to-refresh. Reads only its
 /// segment's slice of the store so a swipe reveals real content, not the active segment's.
 struct SharedSegmentList: View {
@@ -193,26 +193,26 @@ private let previewByMeShares: [Share] = [
     .previewCard(expiresAt: Date().addingTimeInterval(-3600)),
 ]
 
-#Preview("Segment — content") {
+#Preview("Segment: content") {
     segmentListPreview {
         $0.byMe = IdentifiedArray(uniqueElements: previewByMeShares)
         $0.phases[.byMe] = .loaded
     }
 }
 
-#Preview("Segment — loading") {
+#Preview("Segment: loading") {
     segmentListPreview { $0.phases[.byMe] = .loading }
 }
 
-#Preview("Segment — empty") {
+#Preview("Segment: empty") {
     segmentListPreview { $0.phases[.byMe] = .loaded }
 }
 
-#Preview("Segment — error") {
+#Preview("Segment: error") {
     segmentListPreview { $0.phases[.byMe] = .failed(L10n.EmptyState.loadFailed) }
 }
 
-#Preview("Segment — no search results") {
+#Preview("Segment: no search results") {
     segmentListPreview {
         $0.byMe = IdentifiedArray(uniqueElements: previewByMeShares)
         $0.phases[.byMe] = .loaded

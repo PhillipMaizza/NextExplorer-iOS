@@ -20,10 +20,10 @@ import SwiftUI
 ///   scrolls under a pinned `footer` and `.large` becomes reachable. For sheets whose content
 ///   changes while open (the upload review list).
 ///
-/// Either way there are no per-piece pixel estimates — the rendered content (and footer) is
+/// Either way there are no per-piece pixel estimates: the rendered content (and footer) is
 /// the source of truth, so it stays correct under Dynamic Type and long labels.
 public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
-    /// Ignore capped-mode measurement changes smaller than this — sub-point relayout churn
+    /// Ignore capped-mode measurement changes smaller than this: sub-point relayout churn
     /// (an icon mid `.contentTransition`) shouldn't re-propose a detent.
     private static var changeThreshold: CGFloat {
         1
@@ -65,7 +65,7 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
         maxHeightFraction.map { Self.screenHeight * $0 }
     }
 
-    /// How tall the scrolling content may be before it has to scroll — the cap less the
+    /// How tall the scrolling content may be before it has to scroll: the cap less the
     /// always-visible footer.
     private var contentAllowance: CGFloat? {
         capHeight.map { max(0, $0 - footerHeight) }
@@ -146,7 +146,7 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     }
 
     /// Fixed mode locks `contentHeight` on the first non-zero reading and ignores every later
-    /// change — row count never changes there, so later fluctuation is incidental relayout
+    /// change: row count never changes there, so later fluctuation is incidental relayout
     /// that made the sheet visibly bounce. Capped mode tracks meaningful changes so the sheet
     /// follows its content.
     private func updateContentHeight(_ measured: CGFloat) {

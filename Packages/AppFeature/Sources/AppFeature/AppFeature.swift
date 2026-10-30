@@ -26,7 +26,7 @@ public struct AppFeature {
         /// dismissed (`addAccountSheetDismissed`).
         public var pendingAddedAccount: AddedAccount?
         /// `true` only when the current authenticated session was reached by the user tapping
-        /// the login button this launch — drives `AppView`'s zoom-from-the-button presentation.
+        /// the login button this launch: drives `AppView`'s zoom-from-the-button presentation.
         /// A restored/optimistic session (cold launch) leaves this `false` so the app just
         /// cross-fades in behind the splash instead.
         public var didAuthenticateFromLogin = false
@@ -193,7 +193,7 @@ public struct AppFeature {
                 state.$fileClipboard.withLock { $0 = nil }
                 state.$fileUndoStack.withLock { $0 = [] }
                 if let next {
-                    // Another account is still signed in — switch to it rather than dropping the
+                    // Another account is still signed in: switch to it rather than dropping the
                     // user out to the login screen.
                     return .send(.activateAccount(next))
                 }
@@ -271,7 +271,7 @@ public struct AppFeature {
                     // The last account was signed out.
                     return teardownToLogin(&state)
                 }
-                // Removing a non-active account leaves the active one unchanged — just refresh the
+                // Removing a non-active account leaves the active one unchanged: just refresh the
                 // switcher list, keep the UI where it is.
                 if credentials.accountID == state.currentAccountID {
                     return refreshAccounts

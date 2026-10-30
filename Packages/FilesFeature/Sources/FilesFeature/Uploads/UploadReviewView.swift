@@ -17,7 +17,7 @@ private enum Constants {
     static let verticalPadding: CGFloat = .space24
     static let enabledOpacity: Double = 1
     static let disabledOpacity: Double = 0.35
-    /// The sheet fits its content but never exceeds this fraction of the screen — past that
+    /// The sheet fits its content but never exceeds this fraction of the screen: past that
     /// the file list scrolls and `.large` is a drag away.
     static let maxHeightFraction: CGFloat = 0.9
 }
@@ -47,7 +47,7 @@ struct UploadReviewView: View {
             .frame(width: .iconSmall, height: .iconSmall)
     }
 
-    /// "Add more files" — opens the same camera / Photos / Files menu the browse `+` uses,
+    /// "Add more files": opens the same camera / Photos / Files menu the browse `+` uses,
     /// streaming the new pick into this same sheet. A clear, dashed outline button that sits
     /// in the bottom bar above Upload (not a list cell, which would clip its border). Disabled
     /// mid preparation so two picks can't overlap.
@@ -86,7 +86,7 @@ struct UploadReviewView: View {
     }
 
     /// The whole sheet as one measured stack (header, the destination + size rows, the file
-    /// list, then the two buttons) so `DSDynamicHeightSheet` sizes to exactly this — no
+    /// list, then the two buttons) so `DSDynamicHeightSheet` sizes to exactly this: no
     /// per-piece height guesses.
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {

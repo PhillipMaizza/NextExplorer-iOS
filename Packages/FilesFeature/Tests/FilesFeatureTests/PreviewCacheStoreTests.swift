@@ -3,7 +3,7 @@ import Foundation
 import Testing
 
 /// Exercises `PreviewCacheStore.liveValue` against the real filesystem, same spirit as
-/// `LocalDownloadStoreTests` — the whole point is verifying actual on-disk behavior.
+/// `LocalDownloadStoreTests`: the whole point is verifying actual on-disk behavior.
 /// `.serialized`: every test here shares one real directory (`size`/`clear` operate on the
 /// whole cache root, not a per-test-unique file), so running them concurrently races.
 /// `SerializedPreviewCacheAccess`: also keeps it from overlapping other suites that touch

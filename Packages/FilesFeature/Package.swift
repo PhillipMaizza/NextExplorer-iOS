@@ -16,7 +16,7 @@ let package = Package(
         .package(path: "../Localization"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
         // Direct pin so the test target can reach `DependenciesTestSupport` (the `.dependencies`
-        // test trait) — it ships in swift-dependencies, which TCA already pulls in transitively.
+        // test trait): it ships in swift-dependencies, which TCA already pulls in transitively.
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.9.0"),
         .package(url: "https://github.com/simonbs/TreeSitterLanguages", from: "0.1.10"),
         // Runestone's own tree sitter; the macOS editor drives it directly (Runestone is UIKit only).
@@ -24,11 +24,11 @@ let package = Package(
         .package(url: "https://github.com/weichsel/ZIPFoundation", from: "0.9.19"),
         .package(url: "https://github.com/mtgto/Unrar.swift", from: "0.5.4"),
         // libvlc (VideoLAN) as a binary xcframework, for the video/audio containers and codecs
-        // AVFoundation can't decode (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma) —
+        // AVFoundation can't decode (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma):
         // parity with the web client's player.
         .package(url: "https://github.com/tylerjonesio/vlckit-spm", exact: "3.6.0"),
         // No semver release tags exist (Apple ties this one to Swift toolchain snapshot tags
-        // instead) — pinned to an exact commit on `main` rather than a moving branch, so this
+        // instead): pinned to an exact commit on `main` rather than a moving branch, so this
         // stays fully reproducible.
         .package(url: "https://github.com/apple/swift-markdown", revision: "27b7fc1a19068bcea3d2072db0ce86360d1400ed"),
     ],
@@ -43,14 +43,14 @@ let package = Package(
                 "DesignSystem",
                 "Localization",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
-                // Client-side archive listing (`ArchiveBrowserView`) — the server has no
+                // Client-side archive listing (`ArchiveBrowserView`): the server has no
                 // listing-only endpoint (`POST /api/files/zip/extract` fully unpacks to disk),
                 // so reading a .zip/.rar's contents happens entirely on-device instead.
                 .product(name: "ZIPFoundation", package: "ZIPFoundation"),
                 .product(name: "Unrar", package: "Unrar.swift"),
                 .product(name: "VLCKitSPM", package: "vlckit-spm"),
                 .product(name: "Markdown", package: "swift-markdown"),
-                // Curated to the code/text kinds `FileTypeIcon`'s badge table already covers —
+                // Curated to the code/text kinds `FileTypeIcon`'s badge table already covers:
                 // TreeSitterLanguages has 70+, most of which this app never encounters.
                 .product(name: "TreeSitterJSONRunestone", package: "TreeSitterLanguages", condition: .when(platforms: [.iOS])),
                 .product(name: "TreeSitterJavaScriptRunestone", package: "TreeSitterLanguages", condition: .when(platforms: [.iOS])),

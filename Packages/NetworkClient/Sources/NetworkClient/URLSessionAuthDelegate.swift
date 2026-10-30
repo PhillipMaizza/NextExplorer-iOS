@@ -1,7 +1,7 @@
 import Foundation
 
 /// `@unchecked Sendable`: holds only an immutable `let` (itself `Sendable`) and the two
-/// challenge handlers just forward to it, so it is safe to share across sessions — the live
+/// challenge handlers just forward to it, so it is safe to share across sessions: the live
 /// `NetworkClient` gives the interactive and the low-priority `URLSession` the same instance,
 /// and each delivers callbacks on its own queue.
 final class URLSessionAuthDelegate: NSObject, URLSessionDelegate, URLSessionTaskDelegate, @unchecked Sendable {

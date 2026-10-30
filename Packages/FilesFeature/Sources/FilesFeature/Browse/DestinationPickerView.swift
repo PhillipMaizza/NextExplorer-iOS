@@ -9,7 +9,7 @@ private enum Constants {
     static let chevronSize: CGFloat = .iconSmall
 }
 
-/// The folder chooser for "Move" and "Upload" — a modal sheet either way (for Upload it sits
+/// The folder chooser for "Move" and "Upload": a modal sheet either way (for Upload it sits
 /// over the review sheet). Drills the same folder tree as Browse (folders only), hands the
 /// chosen path back on confirm. Grouped list, checkmark to confirm, the same breadcrumb bar
 /// Browse uses.

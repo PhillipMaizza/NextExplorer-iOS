@@ -37,14 +37,14 @@ public struct FilesClient: Sendable {
     public var updatePreference: @Sendable (
         _ serverURL: URL, _ key: UserPreferenceKey, _ value: Bool
     ) async throws -> Void
-    /// `GET /api/branding` — the server's app name + logo, unauthenticated.
+    /// `GET /api/branding`: the server's app name + logo, unauthenticated.
     public var fetchBranding: @Sendable (_ serverURL: URL) async throws -> Branding
     /// `PATCH /api/settings` with `{ branding: {...} }` (admin only; the server 403s a
     /// non-admin). Returns the branding as the server stored it.
     public var updateBranding: @Sendable (
         _ serverURL: URL, _ appName: String, _ appLogoUrl: String
     ) async throws -> Branding
-    /// `POST /api/settings/upload-logo` (admin) — one JPEG in a `logo` multipart field,
+    /// `POST /api/settings/upload-logo` (admin): one JPEG in a `logo` multipart field,
     /// ≤2 MB. Returns the server-relative URL of the stored logo, to be persisted via
     /// `updateBranding`.
     public var uploadServerLogo: @Sendable (_ serverURL: URL, _ jpegData: Data) async throws -> String
@@ -52,7 +52,7 @@ public struct FilesClient: Sendable {
         _ serverURL: URL, _ item: FileItem, _ newName: String
     ) async throws -> FileItem
     /// `POST /api/files/folder` (`backend/src/routes/files/folder.js`): creates a subfolder in
-    /// `path`, the parent directory's relative path — the server rejects an empty one ("Cannot
+    /// `path`, the parent directory's relative path: the server rejects an empty one ("Cannot
     /// create folders in the root path"). A blank `name` becomes "Untitled Folder" server side
     /// and a name collision is auto suffixed rather than erroring. Returns the created folder.
     public var createFolder: @Sendable (
@@ -136,7 +136,7 @@ public struct FilesClient: Sendable {
     /// be dead and would otherwise stall the first file until it times out.
     public var flushDownloadConnections: @Sendable () async -> Void
     /// `POST /api/upload` (`backend/src/routes/upload.js`): one `multipart/form-data` request
-    /// per file — `uploadTo` = destination directory, `relativePath` = `fileName`, `filedata` =
+    /// per file: `uploadTo` = destination directory, `relativePath` = `fileName`, `filedata` =
     /// the file at `fileURL`. `destination` must not be empty (the server rejects the root).
     /// The request is first assembled into a temporary multipart envelope on disk (one extra
     /// copy of the payload), then streamed from that file, so nothing buffers the whole file
@@ -163,7 +163,7 @@ public struct FilesClient: Sendable {
     public var deleteShareLink: @Sendable (_ serverURL: URL, _ shareID: String) async throws -> Void
     /// `GET /api/users/shareable`: every user except the caller, for a user specific share.
     public var shareableUsers: @Sendable (_ serverURL: URL) async throws -> [User]
-    /// `GET /api/share/<token>/info` — public metadata for a share link a recipient was sent.
+    /// `GET /api/share/<token>/info`: public metadata for a share link a recipient was sent.
     /// Unauthenticated; a bad token 404s.
     public var resolveShareLink: @Sendable (_ serverURL: URL, _ token: String) async throws -> ShareInfo
 
@@ -239,7 +239,7 @@ public extension FilesClient {
         return components?.url
     }
 
-    /// `GET /api/raw?path=...` — the file served verbatim (`text/plain`, `nosniff`). Handed to
+    /// `GET /api/raw?path=...`: the file served verbatim (`text/plain`, `nosniff`). Handed to
     /// Safari for "Open in Browser": the server has no rendered-HTML endpoint, and cookie auth
     /// means Safari may hit a login page first (or 401 if the server requires auth).
     static func rawFileURL(serverURL: URL, item: FileItem) -> URL? {

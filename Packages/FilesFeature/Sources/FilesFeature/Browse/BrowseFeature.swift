@@ -16,7 +16,7 @@ public struct BrowseFeature {
     /// helpers. Nested (not a file private top level enum) so those extensions can see it.
     enum Constants {
         /// Gate before the recursive backend search fires, so a burst of keystrokes collapses to one
-        /// request (superseded ones are cancelled). 1s, matching the web client — the backend recurses
+        /// request (superseded ones are cancelled). 1s, matching the web client: the backend recurses
         /// and scans file contents with ripgrep, which is expensive, so this deliberately throttles
         /// how often it runs. The instant client side pre-fill covers perceived latency in the gap.
         static let searchDebounce: Duration = .seconds(1)
@@ -30,7 +30,7 @@ public struct BrowseFeature {
         static let searchLimit = 100
         /// An action taken from a full-screen preview that also dismisses the cover (delete,
         /// "Open" on the download toast, "View in Shared") waits this long before it runs, so the
-        /// cover finishes dismissing first and the effect — a row sliding out, a tab switch —
+        /// cover finishes dismissing first and the effect: a row sliding out, a tab switch:
         /// plays on the list the user is now looking at, not mid transition.
         static let previewActionSettleDelay: Duration = .milliseconds(350)
     }
@@ -109,7 +109,7 @@ public struct BrowseFeature {
     }
 
     /// State of the `POST /api/files/delete-impact` lookup that runs while a delete
-    /// confirmation is on screen. `.unavailable` means the check itself failed — the delete
+    /// confirmation is on screen. `.unavailable` means the check itself failed: the delete
     /// still proceeds, the server still removes any linked shares, the alert just can't say
     /// how many.
     public enum DeleteImpactCheck: Equatable, Sendable {
@@ -163,7 +163,7 @@ public struct BrowseFeature {
     /// A pending transfer that's blocked on the user answering a name-collision prompt.
     public struct TransferConflict: Equatable, Sendable {
         public let retry: TransferRetry
-        /// The destination items that share a name with something being transferred — deleted
+        /// The destination items that share a name with something being transferred: deleted
         /// first if the user picks "Replace".
         public let collidingItems: [FileItem]
         public var count: Int { collidingItems.count }
@@ -220,7 +220,7 @@ public struct BrowseFeature {
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
         /// App wide "Copy" staging, shared under `FileClipboard.sharedKey` so the Paste
         /// action follows the user across every folder. `nil` when nothing is staged. Only
-        /// ever holds copies — "Move" goes through `destinationPicker`, not the clipboard.
+        /// ever holds copies: "Move" goes through `destinationPicker`, not the clipboard.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var clipboard: FileClipboard?
         /// App wide ⌘Z history of reversible file operations (`FileUndoEntry`).
         @Shared(.inMemory(FileUndoEntry.sharedKey)) public var undoStack: [FileUndoEntry] = []
@@ -228,11 +228,11 @@ public struct BrowseFeature {
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// The "Move" destination chooser, presented for a single item or a multi selection.
         @Presents public var destinationPicker: DestinationPickerFeature.State?
-        /// The review sheet shown after files are picked from the `+` menu — file list,
+        /// The review sheet shown after files are picked from the `+` menu: file list,
         /// destination folder, total size, Upload button. On confirm its files become
         /// `PendingUpload`s handed up to the app wide queue.
         @Presents public var uploadReview: UploadReviewFeature.State?
-        /// The "Permissions" sheet for a single item — view/chmod/chown via `/api/permissions`.
+        /// The "Permissions" sheet for a single item: view/chmod/chown via `/api/permissions`.
         @Presents public var permissions: PermissionsFeature.State?
         /// Set once a transfer finishes; `BrowseContentView` turns this into a success toast,
         /// mirroring `downloadSuccessMessage`'s lifecycle.
@@ -254,7 +254,7 @@ public struct BrowseFeature {
         /// "<name> copied" toast.
         public var clipboardStagedMessage: String?
         /// Item currently being renamed via the native rename alert. The in-progress text
-        /// itself lives in `BrowseContentView`'s own `@State`, not here — a `.alert`'s
+        /// itself lives in `BrowseContentView`'s own `@State`, not here: a `.alert`'s
         /// `TextField` bound through a TCA `.sending` binding didn't reliably propagate
         /// keystrokes back out, so `renameConfirmed` is sent the final text directly instead.
         public var renameSheetItem: FileItem?
@@ -263,19 +263,19 @@ public struct BrowseFeature {
         public var isNewFolderSheetPresented = false
         /// Item awaiting a destructive confirmation before `deleteConfirmed` actually deletes it.
         public var deleteConfirmationItem: FileItem?
-        /// Share-link fallout of the pending delete, single or bulk — only one confirmation is
+        /// Share-link fallout of the pending delete, single or bulk: only one confirmation is
         /// ever on screen at once, so one field covers both. Filled in by `delete-impact` while
         /// the alert is up; reset to `.idle` when the alert is dismissed.
         public var deleteImpactCheck: DeleteImpactCheck = .idle
         public var isPerformingFileAction = false
         public var fileActionErrorMessage: String?
-        /// Whether the list/grid is in multi-select mode — toggled from the toolbar, not tied
+        /// Whether the list/grid is in multi-select mode: toggled from the toolbar, not tied
         /// to any particular item. `selectedItemIDs` is always cleared when this flips off.
         public var isSelecting = false
         public var selectedItemIDs: Set<FileItem.ID> = []
         public var isBulkActionInFlight = false
         public var bulkDeleteConfirmationIsPresented = false
-        /// Drives a persistent progress toast — `nil` when no extract/compress/download is
+        /// Drives a persistent progress toast: `nil` when no extract/compress/download is
         /// running. Rename/delete don't set this: they're fast enough, and already have their
         /// own alert-driven confirm flow, that a progress indicator would just flicker.
         public var fileActionProgressMessage: String?
@@ -291,7 +291,7 @@ public struct BrowseFeature {
         public var infoItem: FileItem?
         public var infoMetadata: FileMetadata?
         /// Server disk usage for `infoItem` when it's a directory and the endpoint returned
-        /// real figures — drives the Get Info sheet's "Server disk" section.
+        /// real figures: drives the Get Info sheet's "Server disk" section.
         public var infoUsage: StorageUsage?
         /// The `GET /api/metadata/*` load lifecycle for the Get Info sheet. `isLoadingInfoMetadata`
         /// / `infoErrorMessage` are derived from it (rule #8: one phase, not a bool + error pair).
@@ -300,7 +300,7 @@ public struct BrowseFeature {
         public var infoErrorMessage: String? { infoPhase.errorMessage }
         /// Item being downloaded for the QuickLook viewer (tapping a file), alongside the
         /// local temp file `previewFile` produces once `GET /api/preview` finishes. Only
-        /// used for PDFs — images/RAW load themselves per-page in the gallery view, and
+        /// used for PDFs: images/RAW load themselves per-page in the gallery view, and
         /// video/audio stream directly, neither going through this at all.
         public var previewItem: FileItem?
         public var previewFileURL: URL?
@@ -310,7 +310,7 @@ public struct BrowseFeature {
         public var isLoadingPreview: Bool { previewPhase == .loading }
         public var previewErrorMessage: String? { previewPhase.errorMessage }
         /// Text content for `previewItem` when it's neither previewable-via-download nor
-        /// streamable (anything `GET /api/preview` 415s on) — fetched/saved via the real
+        /// streamable (anything `GET /api/preview` 415s on): fetched/saved via the real
         /// `/api/editor` endpoint, the server's actual text view+edit path.
         public var textContent: String?
         /// The `/api/editor` read lifecycle. A save is a separate mutation (`isSavingTextContent`
@@ -319,7 +319,7 @@ public struct BrowseFeature {
         public var isSavingTextContent = false
         public var textSaveError: String?
         public var isLoadingTextContent: Bool { textPhase == .loading }
-        /// A load failure (from `textPhase`) or a save failure (`textSaveError`) — they never
+        /// A load failure (from `textPhase`) or a save failure (`textSaveError`): they never
         /// coexist, so one accessor drives the editor's error surface as before.
         public var textEditorErrorMessage: String? { textPhase.errorMessage ?? textSaveError }
 
@@ -353,7 +353,7 @@ public struct BrowseFeature {
         }
 
         /// The categories actually present in the current (hidden filtered) results, in display
-        /// order — the rows the filter sheet offers. Independent of the current selection, so
+        /// order: the rows the filter sheet offers. Independent of the current selection, so
         /// toggling a category off doesn't make it vanish from the sheet.
         public var availableSearchCategories: [FileCategory] {
             guard let searchResults else { return [] }
@@ -507,7 +507,7 @@ public struct BrowseFeature {
             case openPath(path: String, title: String)
             case favoritesChanged
             /// Files the user picked from the `+` menu, each already carrying its destination
-            /// folder — bubbled up to `MainTabFeature`'s app-wide upload queue.
+            /// folder: bubbled up to `MainTabFeature`'s app-wide upload queue.
             case uploadRequested([PendingUpload])
             /// Items handed to `MainTabFeature`'s app wide download queue.
             case downloadRequested([FileItem])
@@ -515,10 +515,10 @@ public struct BrowseFeature {
             /// the whole live navigation stack so both the source and destination listings
             /// reflect the new state.
             case directoryContentsChanged
-            /// The "Open" button on the download-success toast — switches to the Downloads
+            /// The "Open" button on the download-success toast: switches to the Downloads
             /// tab so the user can see where the file landed.
             case openDownloadsTapped
-            /// "View in Shared" on the created-share-link sheet — switches to the Shared tab.
+            /// "View in Shared" on the created-share-link sheet: switches to the Shared tab.
             case goToSharedTab
         }
     }
@@ -550,7 +550,7 @@ public struct BrowseFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                // Guard on the phase, not `items.isEmpty` — a folder that is genuinely empty
+                // Guard on the phase, not `items.isEmpty`: a folder that is genuinely empty
                 // would otherwise re-fetch on every return to it. A failed load stays put too
                 // (retry is the refresh button), so only `.idle` triggers a fetch.
                 guard state.phase == .idle else { return .none }
@@ -628,13 +628,13 @@ public struct BrowseFeature {
             case let .rowTapped(item):
                 guard item.isDirectory else {
                     // Google Drive stub files (`.gsheet`, `.gdoc`, …) link out to a real
-                    // Google document — open that, don't show the JSON stub.
+                    // Google document: open that, don't show the JSON stub.
                     if item.isGoogleDocsPointer {
                         return openGoogleDocsPointer(serverURL: state.serverURL, item: item)
                     }
                     // Sets `previewItem` unconditionally so the viewer presents immediately.
                     // - Files the app has no viewer for (archives it can't browse, known
-                    //   binaries, undecodable video) get `UnsupportedFilePreviewView` — the
+                    //   binaries, undecodable video) get `UnsupportedFilePreviewView`: the
                     //   name/type/size + download/share actions, no fetch.
                     // - Streamable media (video/audio) plays live from `FilesClient.previewURL`.
                     // - Images/RAW load themselves per-page in the gallery view.
@@ -685,7 +685,7 @@ public struct BrowseFeature {
                 // Search results only carry `dir`/`file` for `kind`, so rebuild the extension
                 // from the name and hand a real `FileItem` to the same preview routing a
                 // browse row tap uses. `dateModified`/`size` are unknown here, so the preview
-                // cache treats it as fresh and re-fetches — fine for an occasional tap.
+                // cache treats it as fresh and re-fetches: fine for an occasional tap.
                 let ext = (result.name as NSString).pathExtension.lowercased()
                 let item = FileItem(
                     name: result.name,
@@ -786,7 +786,7 @@ public struct BrowseFeature {
                     state.items.remove(at: index)
                     state.items.insert(result.renamed, at: index)
                 }
-                // A rename from a preview keeps the cover up — repoint it at the renamed item
+                // A rename from a preview keeps the cover up: repoint it at the renamed item
                 // so its title/actions follow.
                 if state.previewItem?.id == result.originalID {
                     state.previewItem = result.renamed
@@ -1092,7 +1092,7 @@ public struct BrowseFeature {
                 })))
 
             case .uploadReview(.presented(.delegate(.cancelled))):
-                // Discard whatever staging already copied — those files are never uploaded now.
+                // Discard whatever staging already copied: those files are never uploaded now.
                 let staged = state.uploadReview?.files.map(\.fileURL) ?? []
                 state.uploadReview = nil
                 guard !staged.isEmpty else { return .none }
@@ -1239,7 +1239,7 @@ public struct BrowseFeature {
                 case let .success(destinationItems):
                     return resolveTransfer(&state, retry: retry, colliding: Self.collidingItems(for: retry, in: destinationItems))
                 case .failure:
-                    // The listing failed — fall back to the server's safe auto-rename rather
+                    // The listing failed: fall back to the server's safe auto-rename rather
                     // than blocking the transfer on a check we couldn't run.
                     return performTransfer(&state, retry: retry.resolved(.keepBoth))
                 }
@@ -1304,7 +1304,7 @@ public struct BrowseFeature {
                 return .none
 
             case let .infoUsageResponse(.success(usage)):
-                // Kept only when the server actually reported disk figures — a denied path
+                // Kept only when the server actually reported disk figures: a denied path
                 // answers all zeros, which the "Server disk" section shouldn't show.
                 state.infoUsage = usage.isMeaningful ? usage : nil
                 return .none
@@ -1349,7 +1349,7 @@ public struct BrowseFeature {
                 case let .success(url):
                     return .run { [openURL] _ in await openURL(url) }
                 case .failure:
-                    // Couldn't read the stub or it had no usable link — fall back to showing
+                    // Couldn't read the stub or it had no usable link: fall back to showing
                     // it in the text viewer rather than leaving the tap dead.
                     state.previewItem = item
                     return loadTextContent(&state, item: item)

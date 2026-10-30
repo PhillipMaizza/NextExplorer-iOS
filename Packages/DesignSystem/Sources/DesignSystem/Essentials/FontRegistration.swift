@@ -18,7 +18,7 @@ private enum Constants {
 }
 
 public enum DesignSystemFonts {
-    /// The registered family name — also the `font-family` to name in any CSS that wants to
+    /// The registered family name: also the `font-family` to name in any CSS that wants to
     /// match the app (see `MarkdownRenderer`).
     public static let familyName = "Figtree"
 
@@ -28,7 +28,7 @@ public enum DesignSystemFonts {
     /// only sees fonts in the main app bundle, so this has to happen at runtime instead.
     ///
     /// `NextExplorerApp.init()` calls this eagerly, and `Typography.TextType.fontsRegistered`
-    /// also calls it lazily on first use (for Xcode previews, which never run `init()`) — in a
+    /// also calls it lazily on first use (for Xcode previews, which never run `init()`): in a
     /// real app run both fire, possibly concurrently. Backed by a `static let` rather than a
     /// hand-rolled bool guard so the once-only registration is the compiler-guaranteed atomic
     /// lazy-init Swift already provides, instead of an unsynchronized flag.

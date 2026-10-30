@@ -129,7 +129,7 @@ struct SharedFeatureTests {
             $0.withMe = [withMeShare]
         }
 
-        // Already loaded — TestStore would flag any unexpected reload effect/action here.
+        // Already loaded: TestStore would flag any unexpected reload effect/action here.
         await store.send(.segmentChanged(.byMe)) { $0.segment = .byMe }
     }
 

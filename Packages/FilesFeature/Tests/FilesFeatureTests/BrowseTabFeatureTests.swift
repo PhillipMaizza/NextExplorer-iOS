@@ -135,7 +135,7 @@ struct BrowseTabFeatureTests {
     func openPathDelegateFromTheRootForwardsToNavigateToDirectory() async {
         // Exhaustivity off: the pushed `BrowseFeature.State` gets a fresh `StackElementID`
         // whose exact value isn't reproducible in a `receive`-triggered assertion closure
-        // (unlike `send`, TCA's test generator snapshotting doesn't line the two up here) —
+        // (unlike `send`, TCA's test generator snapshotting doesn't line the two up here):
         // asserting the resulting path's content is what actually matters.
         let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
             BrowseTabFeature()

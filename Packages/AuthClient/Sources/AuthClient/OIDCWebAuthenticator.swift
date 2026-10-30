@@ -6,7 +6,7 @@ import Foundation
     import AppKit
 #endif
 
-/// Runs the OIDC leg in an `ASWebAuthenticationSession` — the only iOS web context that
+/// Runs the OIDC leg in an `ASWebAuthenticationSession`: the only iOS web context that
 /// supports passkeys/WebAuthn (system credential store) while still handing the app the
 /// final custom scheme callback URL. A plain `WKWebView` can capture cookies but blocks
 /// passkeys; Safari/`SFSafariViewController` supports passkeys but never returns control,

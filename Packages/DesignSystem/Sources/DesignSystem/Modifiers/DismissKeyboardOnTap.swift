@@ -5,7 +5,7 @@ import SwiftUI
 
 public extension View {
     /// Resigns the first responder (dismisses the keyboard) when the user taps anywhere over
-    /// this view — e.g. tapping the empty space of a list while a search field is focused.
+    /// this view: e.g. tapping the empty space of a list while a search field is focused.
     ///
     /// Backed by a window level `UITapGestureRecognizer` with `cancelsTouchesInView = false`
     /// rather than a SwiftUI `simultaneousGesture(TapGesture())`: attaching a tap gesture (even

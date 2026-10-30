@@ -2,7 +2,7 @@ import Foundation
 import Localization
 
 /// User-facing date formatting choice, persisted locally (`AppStorageKeys.dateDisplayFormat`)
-/// rather than through `UserPreferences`/`GET|PATCH /api/settings` — purely a client display
+/// rather than through `UserPreferences`/`GET|PATCH /api/settings`: purely a client display
 /// preference the real server has no concept of, same as `browseViewMode`.
 public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
     case system
@@ -33,13 +33,13 @@ public enum DateDisplayFormat: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Today, rendered in this format — shown as a subtitle in the picker so the user sees
+    /// Today, rendered in this format: shown as a subtitle in the picker so the user sees
     /// what the abbreviated pattern actually looks like before picking it.
     public func example(includeTime: Bool = false) -> String {
         string(from: Date(), includeTime: includeTime)
     }
 
-    /// Every case but `.system` is a fixed literal pattern by design — the whole point of
+    /// Every case but `.system` is a fixed literal pattern by design: the whole point of
     /// picking one is to *not* follow the device's locale. `string(from:)` runs once per
     /// visible row, so the formatters are built once and cached (behind a lock, since Swift
     /// Testing runs cases in parallel) rather than reallocated on every call.

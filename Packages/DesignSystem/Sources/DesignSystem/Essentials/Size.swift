@@ -45,9 +45,9 @@ public extension CGFloat {
     /// 96dp
     static let size96: CGFloat = 96.0
 
-    /// 1pt — the standard hairline stroke width for control borders (buttons, fields).
+    /// 1pt: the standard hairline stroke width for control borders (buttons, fields).
     static let borderWidthHairline: CGFloat = 1.0
-    /// 2pt — a focused field's accent border, thicker than the resting hairline.
+    /// 2pt: a focused field's accent border, thicker than the resting hairline.
     static let borderWidthFocused: CGFloat = 2.0
 
     /// 480pt, the widest a `dsSheet` card grows on iPhone Duo.

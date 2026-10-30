@@ -30,7 +30,7 @@ private enum Constants {
 }
 
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
-/// one tapped — mirrors browsing a real photo gallery instead of dismissing back to the list
+/// one tapped: mirrors browsing a real photo gallery instead of dismissing back to the list
 /// between each image. Every page reuses `FilesClient.previewFile`'s on-disk cache (see
 /// `FilesService.previewFile`), so revisiting an already-viewed image in the same session
 /// never re-hits the server.
@@ -38,7 +38,7 @@ struct ImageGalleryView: View {
     let items: [FileItem]
     let serverURL: URL
     let onDismiss: () -> Void
-    /// Toolbar actions on the current image — routed back to `BrowseFeature` by the caller.
+    /// Toolbar actions on the current image: routed back to `BrowseFeature` by the caller.
     /// `nil` hides the button (e.g. no delete permission).
     private let onShare: ((FileItem) -> Void)?
     private let onRename: ((FileItem) -> Void)?
@@ -249,7 +249,7 @@ private struct ImageGalleryPage: View {
 
             switch phase {
             case let .gif(url):
-                // GIFs play their real animation via `AnimatedImageView` — a decoded still would
+                // GIFs play their real animation via `AnimatedImageView`: a decoded still would
                 // only ever show the first frame.
                 ZoomableScrollView(onZoomChange: onZoomChange) { AnimatedImageView(fileURL: url) }
             case let .streaming(uiImage), let .loaded(uiImage):

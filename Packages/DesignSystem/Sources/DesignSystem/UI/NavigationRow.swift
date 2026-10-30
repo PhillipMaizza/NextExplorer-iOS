@@ -11,14 +11,14 @@ private enum Constants {
 
 /// A tappable settings-style row: a leading icon, a title, and a trailing accessory
 /// (disclosure chevron, a trailing detail string, or nothing). The whole row width is the
-/// hit target — the shape every `Button`-driven Settings row shares, so taps land the same
+/// hit target: the shape every `Button`-driven Settings row shares, so taps land the same
 /// way on every one of them.
 ///
 /// For a switch use `DSToggleRow`; for a plain push segue a `NavigationLink` in a `List` is
 /// already full width and needs nothing from here.
 public struct DSNavigationRow: View {
     public enum Accessory {
-        /// Disclosure chevron — the row pushes a screen.
+        /// Disclosure chevron: the row pushes a screen.
         case chevron
         /// A trailing secondary string (a size, a current value) and no chevron.
         case detail(String)
@@ -27,7 +27,7 @@ public struct DSNavigationRow: View {
 
     public enum Role {
         case standard
-        /// Accent-tinted title and icon — a soft-destructive action (clear cache, ...).
+        /// Accent-tinted title and icon: a soft-destructive action (clear cache, ...).
         case accent
         /// Error-red title and icon.
         case destructive

@@ -15,7 +15,7 @@ private enum Constants {
 }
 
 /// Full-screen stand-in for a file the app has no viewer for (`FileItem.isUnsupportedForPreview`)
-/// — a font, a disk image, a `.webm` AVFoundation can't decode. Mirrors the Files app: the
+/// a font, a disk image, a `.webm` AVFoundation can't decode. Mirrors the Files app: the
 /// file's icon, name, type and size centered on screen, a `DSInfoCard` saying it can't be
 /// opened, and whatever of the shared `previewChrome` action bar the caller wires up. On the
 /// browse tab that's the full set (share / share link / rename / download / delete); inside

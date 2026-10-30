@@ -63,7 +63,7 @@ struct SettingsFeatureTests {
             $0.previewCacheStore.size = { 0 }
         }
         // `onAppear` merges three independent effects (preferences fetch, downloads check,
-        // cache-size check) — their completion order isn't guaranteed, so this asserts final
+        // cache-size check): their completion order isn't guaranteed, so this asserts final
         // state rather than a specific receive order.
         store.exhaustivity = .off
 
@@ -113,7 +113,7 @@ struct SettingsFeatureTests {
         // No `filesClient` dependency overridden: a network call here would crash with
         // "Unimplemented", proving the guard really does skip a concurrent preferences fetch
         // (the downloads/cache checks aren't guarded the same way, since they're cheap and
-        // local — their receive order isn't guaranteed, so assert final state instead).
+        // local: their receive order isn't guaranteed, so assert final state instead).
         store.exhaustivity = .off
 
         await store.send(.onAppear)
@@ -161,7 +161,7 @@ struct SettingsFeatureTests {
         #expect(store.state.isVolumeUsageEnabled)
         #expect(store.state.serverUsage.map(\.volume.path) == ["media", "home"])
         #expect(store.state.serverUsage[id: "media"]?.usage?.used == 40)
-        // `home` came back all zeros — still stored, the view decides not to draw a bar.
+        // `home` came back all zeros: still stored, the view decides not to draw a bar.
         #expect(store.state.serverUsage[id: "home"]?.usage?.isMeaningful == false)
     }
 

@@ -231,7 +231,7 @@ private func previewListState(
     }
 }
 
-#Preview("Search — no results") {
+#Preview("Search: no results") {
     NavigationStack {
         UserManagementView(store: Store(
             initialState: previewListState {

@@ -46,7 +46,7 @@ public struct PDFThumbnailCache: Sendable {
 /// Serializes PDF rasterization. `PDFDocument`/`PDFPage` and the CoreGraphics PDF stack are
 /// not guaranteed safe to drive concurrently even from separate instances, and one-at-a-time
 /// keeps a folder of PDFs from pegging every core on an older device. `render` has no `await`
-/// inside, so the actor runs each call to completion before the next — true serialization,
+/// inside, so the actor runs each call to completion before the next: true serialization,
 /// no reentrancy. Downloads stay parallel (their own capped `URLSession`), which is the slow
 /// part anyway.
 private actor PDFPageRenderer {
@@ -89,7 +89,7 @@ extension PDFThumbnailCache {
     /// Rasterizes page one of the PDF at `url`, scaled so its longest side is `maxPixel`.
     ///
     /// Renders through `UIGraphicsImageRenderer` at an explicit scale of 1 rather than
-    /// `PDFPage.thumbnail(of:for:)`, which rasterizes at the main-screen scale — on a 3x
+    /// `PDFPage.thumbnail(of:for:)`, which rasterizes at the main-screen scale; on a 3x
     /// device that is a 9x-area bitmap for the same `maxPixel`, i.e. megabytes per thumbnail
     /// held in memory. Opaque, white-backed: no alpha channel to carry around.
     static func renderFirstPage(of url: URL, maxPixel: CGFloat) -> PlatformImage? {
@@ -128,12 +128,12 @@ extension PDFThumbnailCache {
     }
 
     /// A cache backed by an on-disk render directory. `renderCacheDirectory` is a seam for
-    /// tests — production uses `defaultRenderCacheDirectory`.
+    /// tests: production uses `defaultRenderCacheDirectory`.
     static func live(renderCacheDirectory: URL?) -> PDFThumbnailCache {
         PDFThumbnailCache { key, maxPixel, pdfURL in
             let renderCacheURL = renderCacheDirectory.map { renderCacheFileURL(in: $0, for: key) }
             if let renderCacheURL, let data = try? Data(contentsOf: renderCacheURL) {
-                // Force the decode here, off the caller's thread — `UIImage(data:)` alone
+                // Force the decode here, off the caller's thread: `UIImage(data:)` alone
                 // defers it to first draw, which would land on the main thread mid-scroll.
                 return PlatformImage(data: data).map { $0.preparingForDisplay() ?? $0 }
             }

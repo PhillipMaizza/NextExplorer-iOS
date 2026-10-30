@@ -149,7 +149,7 @@ struct ServerDetailsView: View {
         }
     }
 
-    /// Tapping the logo opens the source menu directly — no separate button.
+    /// Tapping the logo opens the source menu directly: no separate button.
     private var logoPicker: some View {
         Menu {
             #if os(iOS)
@@ -307,7 +307,7 @@ private let previewLogoData: Data = {
     NavigationStack { ServerDetailsView(store: previewStore()) }
 }
 
-#Preview("Photo picked — dirty") {
+#Preview("Photo picked: dirty") {
     NavigationStack {
         ServerDetailsView(store: previewStore {
             $0.nameDraft = "Rivendell Cloud"

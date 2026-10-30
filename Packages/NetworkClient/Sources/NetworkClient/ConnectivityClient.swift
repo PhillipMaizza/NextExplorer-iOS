@@ -24,7 +24,7 @@ extension ConnectivityClient: DependencyKey {
         return ConnectivityClient(isOnline: { monitor.currentIsOnline }, events: { monitor.stream() })
     }()
 
-    /// Always online, no events — matches the existing "assume connected" behavior in tests.
+    /// Always online, no events: matches the existing "assume connected" behavior in tests.
     public static let testValue = ConnectivityClient(
         isOnline: { true },
         events: { AsyncStream { _ in } }

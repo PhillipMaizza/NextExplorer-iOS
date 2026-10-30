@@ -84,7 +84,9 @@
                         ForEach(MacSettingsCategory.app) { sidebarRow($0) }
                     }
                 }
-                .navigationSplitViewColumnWidth(Metrics.sidebarWidth)
+                // A single width is only an ideal AppKit was free to shrink; pinning all three
+                // keeps the category names from truncating.
+                .navigationSplitViewColumnWidth(min: Metrics.sidebarWidth, ideal: Metrics.sidebarWidth, max: Metrics.sidebarWidth)
                 .toolbar(removing: .sidebarToggle)
             } detail: {
                 NavigationStack {

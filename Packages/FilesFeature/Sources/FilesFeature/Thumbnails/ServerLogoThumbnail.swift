@@ -7,7 +7,7 @@ import SwiftUI
 
 /// The server's logo as a circle: the branding image once it loads, `IconKit.server`
 /// until then / on failure / when no custom logo is set. Fetches `branding.appLogoUrl` with a
-/// plain `URLSession` request — one small image, re-fetched when the URL changes.
+/// plain `URLSession` request: one small image, re-fetched when the URL changes.
 struct ServerLogoThumbnail: View {
     let branding: Branding
     let serverURL: URL

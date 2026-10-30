@@ -4,7 +4,7 @@ import FilesClient
 import Foundation
 import Localization
 
-/// Drives the "Create Share Link" sheet (`CreateShareLinkSheet`) — mirrors the web client's
+/// Drives the "Create Share Link" sheet (`CreateShareLinkSheet`): mirrors the web client's
 /// `ShareDialog.vue`. Two phases in one state: the form, then the created-link confirmation
 /// (`createdShare != nil`). Verified request/response shapes: [[share-link-api]].
 @Reducer
@@ -39,7 +39,7 @@ public struct CreateShareLinkFeature {
         public var shareableUsers: IdentifiedArrayOf<User> = []
         public var selectedUserIDs: Set<User.ID> = []
         public var usersPhase: DataPhase = .idle
-        /// Shared with `SharedFeature` — bumping it makes the Shared tab reload.
+        /// Shared with `SharedFeature`: bumping it makes the Shared tab reload.
         @Shared(.inMemory(SharedFeature.revisionKey)) var shareLinksRevision = 0
 
         public init(serverURL: URL, itemName: String, itemPath: String, isDirectory: Bool, now: Date = Date()) {
@@ -51,7 +51,7 @@ public struct CreateShareLinkFeature {
             expiresAt = now.addingTimeInterval(defaultExpiryDays * 24 * 60 * 60)
         }
 
-        /// Full logical path of the shared item — parent path plus name, matching the
+        /// Full logical path of the shared item: parent path plus name, matching the
         /// server's `sourcePath` expectation.
         public var sourcePath: String {
             itemPath.isEmpty ? itemName : "\(itemPath)/\(itemName)"

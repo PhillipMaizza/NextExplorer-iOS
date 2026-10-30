@@ -17,7 +17,7 @@ private enum Constants {
     static let maxHeightFraction: CGFloat = 0.9
 }
 
-/// The "Edit Share Link" sheet — `PUT /api/shares/:id`. Mirrors `CreateShareLinkSheet`'s
+/// The "Edit Share Link" sheet: `PUT /api/shares/:id`. Mirrors `CreateShareLinkSheet`'s
 /// form; the shared path is fixed and the password is keep / change / remove since its
 /// current value can't be read back.
 struct EditShareSheet: View {

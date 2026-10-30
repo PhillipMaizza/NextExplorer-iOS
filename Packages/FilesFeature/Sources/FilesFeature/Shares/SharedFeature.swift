@@ -8,7 +8,7 @@ import SwiftUI
 
 /// The "Shared" tab: a segmented view over share links the user created ("By me") and
 /// links others granted them ("With me"). Backed by `GET /api/shares` and
-/// `GET /api/shares/shared-with-me` — see [[share-link-api]]. Deleting is owner-only, so
+/// `GET /api/shares/shared-with-me`: see [[share-link-api]]. Deleting is owner-only, so
 /// it's offered on the "By me" list only.
 @Reducer
 public struct SharedFeature {
@@ -171,7 +171,7 @@ public struct SharedFeature {
             return (all, active, expired)
         }
 
-        /// No shares in the current segment at all (before search) — drives the empty state.
+        /// No shares in the current segment at all (before search): drives the empty state.
         public var isCurrentSegmentEmpty: Bool {
             isEmpty(for: segment)
         }
@@ -207,7 +207,7 @@ public struct SharedFeature {
             return .users(names: names, unnamed: ids.count - names.count)
         }
 
-        /// Owner display name for a "With me" share — the recipient payload only carries
+        /// Owner display name for a "With me" share: the recipient payload only carries
         /// `ownerId`, resolved against the shareable-users list.
         public func sharedByLabel(for share: Share) -> String {
             userNames[share.ownerId] ?? L10n.Shared.sharedByUnknown
@@ -425,7 +425,7 @@ public struct SharedFeature {
         ListCache.save(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, value: Array(shares))
     }
 
-    /// Best-effort — recipient names are a nicety, not worth surfacing an error for.
+    /// Best-effort: recipient names are a nicety, not worth surfacing an error for.
     private func loadUsers(_ state: State) -> Effect<Action> {
         let serverURL = state.serverURL
         let filesClient = filesClient

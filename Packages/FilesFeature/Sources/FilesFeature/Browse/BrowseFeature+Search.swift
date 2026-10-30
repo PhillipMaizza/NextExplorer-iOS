@@ -20,7 +20,7 @@ extension BrowseFeature {
 
         // Instant client side pre-fill from the already loaded folder, so results appear the
         // moment the user types while the recursive backend search runs. These are name matches
-        // in the current folder only — a subset of what either scope's backend search returns, so
+        // in the current folder only: a subset of what either scope's backend search returns, so
         // the authoritative response only ever adds to them (subfolders + content matches).
         // Deliberately does NOT prune `selectedSearchCategories`: the pre-fill sees only this
         // folder, so a selected category the backend subtree contains but this folder lacks would

@@ -56,7 +56,7 @@ struct KeychainClientTests {
         #expect(loaded == Data())
     }
 
-    @Test("edge case: keys are scoped per service — the same account key in a different service does not collide")
+    @Test("edge case: keys are scoped per service: the same account key in a different service does not collide")
     func keysAreScopedPerService() throws {
         let serviceA = KeychainConfiguration(service: "app.nextplorer.tests.\(UUID().uuidString)")
         let serviceB = KeychainConfiguration(service: "app.nextplorer.tests.\(UUID().uuidString)")

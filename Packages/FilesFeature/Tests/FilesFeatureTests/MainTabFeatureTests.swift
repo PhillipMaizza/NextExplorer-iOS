@@ -214,7 +214,7 @@ struct MainTabFeatureTests {
     @Test
     func favoritesChangedFromFavoritesRefreshesTheFavoritesTab() async {
         // A favorite toggled from a pushed browse screen *inside* the Favorites tab bubbles
-        // up through `FavoritesFeature`'s own delegate — this refreshes the same tab's root
+        // up through `FavoritesFeature`'s own delegate: this refreshes the same tab's root
         // list, not Browse's.
         let favorite = Favorite(id: "1", path: "Photos", label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
 
@@ -318,7 +318,7 @@ struct MainTabFeatureTests {
         }
         store.exhaustivity = .off
 
-        // Upload landed in a folder nobody is looking at — nothing refetches.
+        // Upload landed in a folder nobody is looking at: nothing refetches.
         let summary = UploadsFeature.FinishSummary(
             uploadedCount: 1, failedCount: 0, lastDestination: "Archive/2026", changedPaths: ["Archive/2026"]
         )

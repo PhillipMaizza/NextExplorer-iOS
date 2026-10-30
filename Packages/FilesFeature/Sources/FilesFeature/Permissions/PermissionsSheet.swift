@@ -16,7 +16,7 @@ private enum Constants {
     static let maxHeightFraction: CGFloat = 0.9
 }
 
-/// The "Permissions" sheet — `GET /api/permissions/*` to view, `POST /api/permissions/chmod`
+/// The "Permissions" sheet: `GET /api/permissions/*` to view, `POST /api/permissions/chmod`
 /// and `/chown` to change. A 3×3 read/write/execute grid maps to the octal mode; owner and
 /// group are free-text (chown usually needs root, so a failure is shown, not hidden).
 struct PermissionsSheet: View {

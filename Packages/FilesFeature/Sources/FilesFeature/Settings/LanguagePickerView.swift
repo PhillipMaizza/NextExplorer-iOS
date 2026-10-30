@@ -12,7 +12,7 @@ private enum Constants {
 
 /// Pushed from Settings' "Language" row: "System Default" plus every supported UI language shown
 /// by its own name (endonym). Writing the choice to `AppStorageKeys.appLanguage` is all that's
-/// needed — the app root observes it, points `LocalizationOverride` at the chosen language and
+/// needed: the app root observes it, points `LocalizationOverride` at the chosen language and
 /// rebuilds, so the switch takes effect live without a relaunch.
 struct LanguagePickerView: View {
     @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""

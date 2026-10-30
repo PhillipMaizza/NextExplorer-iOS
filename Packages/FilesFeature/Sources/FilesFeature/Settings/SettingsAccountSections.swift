@@ -255,7 +255,7 @@ struct SettingsServerAdminSection: View {
 
 // MARK: Server storage
 
-/// One disk-usage bar per volume — iOS's take on the web client's volume list. Only
+/// One disk-usage bar per volume: iOS's take on the web client's volume list. Only
 /// present when the server reports `volumeUsage.enabled` and has returned volumes.
 struct SettingsServerStorageSection: View {
     let store: StoreOf<SettingsFeature>

@@ -35,7 +35,7 @@ struct PDFThumbnailCacheTests {
         // Longest side scaled to maxPixel, aspect kept (portrait: 256 x 512).
         #expect(abs(image.size.height - 512) < 1)
         #expect(abs(image.size.width - 256) < 1)
-        // Rendered at an explicit scale of 1 — not the main-screen scale — so the pixel
+        // Rendered at an explicit scale of 1, not the main-screen scale, so the pixel
         // buffer is exactly the point size, not 4x/9x it.
         #if os(iOS)
             #expect(image.scale == 1)

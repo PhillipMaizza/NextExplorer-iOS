@@ -100,7 +100,7 @@ browse.actionDuplicate	Duplicate
 browse.renameTitle	Rename
 browse.renameNamePlaceholder	Name
 browse.actionNewFolder	Create Folder
-browse.newFolderTitle	New folder
+browse.newFolderTitle	New Folder
 browse.newFolderPlaceholder	Folder name
 browse.newFolderConfirm	Create
 browse.deleteConfirmTitle	Delete?
@@ -291,11 +291,11 @@ editShare.savedToast	Share link updated
 # ---- admin: thumbnails ----
 thumbnailSettings.navigationTitle	Thumbnails
 thumbnailSettings.subtitle	Control how the server generates image thumbnails for every client.
-thumbnailSettings.enable	Generate thumbnails
+thumbnailSettings.enable	Generate Thumbnails
 thumbnailSettings.enableHelp	Turn off to serve full images everywhere instead.
 thumbnailSettings.quality	Quality
 thumbnailSettings.qualityHelp	Higher looks better and uses more space.
-thumbnailSettings.maxDimension	Max dimension
+thumbnailSettings.maxDimension	Max Dimension
 thumbnailSettings.maxDimensionHelp	Longest edge of a generated thumbnail, in pixels.
 thumbnailSettings.concurrency	Concurrency
 thumbnailSettings.concurrencyHelp	How many thumbnails the server builds at once.
@@ -310,9 +310,9 @@ accessRules.empty	No access rules configured.
 accessRules.emptyHint	Add a rule to override access for a path.
 accessRules.pathLabel	Path
 accessRules.pathPlaceholder	Documents/Reports
-accessRules.recursive	Apply to subfolders
-accessRules.permissionReadWrite	Read & write
-accessRules.permissionReadOnly	Read only
+accessRules.recursive	Apply to Subfolders
+accessRules.permissionReadWrite	Read & Write
+accessRules.permissionReadOnly	Read Only
 accessRules.permissionHidden	Hidden
 accessRules.remove	Remove
 accessRules.unavailable	Access rules are only available to administrators.
@@ -392,7 +392,7 @@ serverDetails.nameLabel	Server Name
 serverDetails.namePlaceholder	Explorer
 serverDetails.nameErrorEmpty	Server name can't be empty.
 serverDetails.urlLabel	Server URL
-serverDetails.urlFootnote	The address where your NextExplorer instance is installed — to change it, sign out and add the server again.
+serverDetails.urlFootnote	The address where your NextExplorer instance is installed. To change it, sign out and add the server again.
 serverDetails.updateButton	Update Server
 serverDetails.savedMessage	Server details updated.
 serverDetails.logoErrorTooLarge	That image is too large. Pick one under 2 MB.
@@ -425,7 +425,7 @@ fileInfo.rowCamera	Camera
 fileInfo.rowLens	Lens
 fileInfo.rowDateTaken	Date Taken
 fileInfo.rowDuration	Duration
-fileInfo.partialScan	Counted a partial scan — this folder is very large.
+fileInfo.partialScan	Counted a partial scan: this folder is very large.
 
 # ---- permissions ----
 permissions.title	Permissions
@@ -477,11 +477,11 @@ userManagement.createUsernameField	Username (optional)
 userManagement.createUsernamePlaceholder	Derived from email
 userManagement.createPasswordField	Password
 userManagement.createPasswordPlaceholder	At least %lld characters
-userManagement.createGrantAdminToggle	Grant admin access
+userManagement.createGrantAdminToggle	Grant Admin Access
 userManagement.createGrantAdminSubtitle	Full control over files, shares and users.
 userManagement.createSubmit	Create User
 userManagement.setPasswordNavigationTitle	Password
-userManagement.setPasswordNewField	New password
+userManagement.setPasswordNewField	New Password
 userManagement.setPasswordPlaceholder	At least %lld characters
 userManagement.setPasswordResetTitle	Reset Password
 userManagement.setPasswordSetTitle	Set Password
@@ -519,7 +519,7 @@ userDetail.roleAdminSubtitle	Full control over files, shares and users.
 userDetail.roleAdminLocked	Administrators can't be demoted from the app.
 userDetail.roleGrantAdmin	Grant Admin
 userDetail.passwordHasLocal	This user signs in with an email and password.
-userDetail.passwordSSOOnly	This user has no local password — SSO only.
+userDetail.passwordSSOOnly	This user has no local password and signs in with SSO only.
 userDetail.passwordReset	Reset Password
 userDetail.passwordSet	Set Password
 userDetail.ssoNone	No linked SSO providers.
@@ -547,7 +547,7 @@ userDetail.volumeSheetSaveNew	Assign Volume
 userDetail.volumeSheetTitleEdit	Edit Volume
 userDetail.volumeSheetTitleNew	Assign Volume
 userDetail.directoryPickerGoUp	Go up one directory
-userDetail.directoryPickerUseThis	Use this directory
+userDetail.directoryPickerUseThis	Use This Directory
 userDetail.directoryPickerOpen	Open %@
 userDetail.directoryPickerFailed	Couldn't list directories.
 
@@ -585,9 +585,9 @@ error.forbidden	You don't have permission to do that.
 # ---- change password ----
 changePassword.navigationTitle	Change Password
 changePassword.intro	Change the password you use to sign in with your email address. You'll stay signed in on this device.
-changePassword.fieldCurrentPassword	Current password
-changePassword.fieldNewPasswordLabel	New password
-changePassword.fieldConfirmPasswordLabel	Confirm new password
+changePassword.fieldCurrentPassword	Current Password
+changePassword.fieldNewPasswordLabel	New Password
+changePassword.fieldConfirmPasswordLabel	Confirm New Password
 changePassword.fieldConfirmPassword	Re-enter new password
 changePassword.fieldNewPasswordPrompt	At least %lld characters
 changePassword.submitButton	Update Password
@@ -657,7 +657,7 @@ offline.downloadFailed	The offline download couldn't be completed.
 offline.selectionTitle	Download for Offline
 offline.selectionEmpty	This folder is empty.
 offline.selectionLoadFailed	This folder couldn't be loaded.
-offline.selectionEstimate	Estimated download
+offline.selectionEstimate	Estimated Download
 offline.selectionDownload	Download
 offline.selectionInsufficientSpace	Not enough free space on this device
 offline.resyncRow	Update Offline Files
@@ -665,7 +665,7 @@ offline.badgeAvailable	Available offline
 offline.manageRow	Manage Offline Files
 offline.manageTitle	Offline Files
 offline.manageEmpty	Nothing is downloaded for offline use.
-offline.preferOfflineToggle	Play downloaded copies
+offline.preferOfflineToggle	Play Downloaded Copies
 offline.preferOfflineSubtitle	Use a downloaded video instead of streaming when it's available.
 offline.tunnelSpeedNote	Reaching your server through a remote tunnel can slow downloads. For large files, connect to the same network and use your server's local address.
 menu.about	About NextExplorer

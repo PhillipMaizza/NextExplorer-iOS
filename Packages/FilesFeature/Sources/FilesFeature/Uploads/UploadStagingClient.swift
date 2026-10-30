@@ -53,7 +53,7 @@ enum UploadStagingLocation {
 
 /// Turns picker output (`fileImporter` URLs, `PhotosPickerItem`s, a camera capture) into
 /// `PickedFile`s copied to `UploadStagingLocation`, and deletes those copies once they've been
-/// uploaded, cancelled, or cleared. Small and specific to the upload flow on purpose — it is
+/// uploaded, cancelled, or cleared. Small and specific to the upload flow on purpose: it is
 /// not a general file system abstraction.
 ///
 /// `stageDocuments` / `stagePhotos` return an `AsyncStream` so the review sheet fills in file
@@ -65,7 +65,7 @@ public struct UploadStagingClient: Sendable {
     public var stagePhotos: @Sendable (_ items: [PhotosPickerItem]) -> AsyncStream<PickedFile>
     public var stageCameraCapture: @Sendable (_ url: URL) async -> PickedFile?
     public var discard: @Sendable (_ urls: [URL]) async -> Void
-    /// Deletes staged files old enough that no queue or review sheet can still need them —
+    /// Deletes staged files old enough that no queue or review sheet can still need them:
     /// the catch all for a temp file orphaned by a staging run cancelled mid copy.
     public var sweepStale: @Sendable () async -> Void
 

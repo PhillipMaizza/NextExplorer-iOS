@@ -54,7 +54,7 @@ struct DownloadsView: View {
         return components.url
     }
 
-    /// The one screen state, derived from the store — skeleton until the first response lands
+    /// The one screen state, derived from the store: skeleton until the first response lands
     /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
     /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
     private var listPhase: ListPhase {
@@ -95,7 +95,7 @@ struct DownloadsView: View {
 
     @ViewBuilder
     private var downloadRows: some View {
-        // Bound once — `displayedDownloads` filters + sorts on every read, and the separator
+        // Bound once: `displayedDownloads` filters + sorts on every read, and the separator
         // checks below would otherwise re-derive it per row.
         let downloads = store.displayedDownloads
         let firstID = downloads.first?.id
@@ -126,13 +126,13 @@ struct DownloadsView: View {
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
-        // Only spring row diffs once the list is the content — during the skeleton→content
+        // Only spring row diffs once the list is the content: during the skeleton→content
         // swap the outer `.animation(value: listPhase)` owns the cross-fade alone.
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedDownloads)
     }
 
     /// Redacted `FileRowView` stand-ins that sit in the *same* `List` as the real rows (never a
-    /// separate scroll container — that fights the nav bar's large-title tracking). The shine
+    /// separate scroll container: that fights the nav bar's large-title tracking). The shine
     /// is suppressed under Reduce Motion.
     private var skeletonRows: some View {
         ForEach(Array(Constants.skeletonRows.enumerated()), id: \.offset) { _, row in
@@ -298,7 +298,7 @@ struct DownloadsView: View {
                     icon: IconKit.delete,
                     title: deleteConfirmationTitle,
                     // Distinguishes this from every other delete confirmation in the app, which
-                    // deletes on the server — this one only ever touches the local copy.
+                    // deletes on the server: this one only ever touches the local copy.
                     message: L10n.Downloads.deleteSingleMessage,
                     confirmTitle: L10n.Common.delete,
                     dismissTitle: L10n.Common.cancel,

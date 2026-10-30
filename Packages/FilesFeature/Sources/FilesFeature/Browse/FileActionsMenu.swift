@@ -44,7 +44,7 @@ struct FileActionsMenu: View {
         #endif
         // Explicit `.tint`: the Browse tree runs under `.tint(Color.accent)`, which would
         // otherwise cascade into the menu and color every icon/label gold instead of the
-        // system's normal label color — only Delete should stand out, in red.
+        // system's normal label color: only Delete should stand out, in red.
         Button {
             store.send(.infoTapped(item))
         } label: {
@@ -74,7 +74,7 @@ struct FileActionsMenu: View {
             .tint(.primaryDS)
         }
         if store.access?.canWrite ?? false {
-            // Extract only offers `.zip` — the server's own extract route 415s anything else
+            // Extract only offers `.zip`: the server's own extract route 415s anything else
             // ("Only .zip archives are supported"), `.rar` included despite this app being
             // able to browse rar contents client-side.
             if item.kind.lowercased() == "zip" {
@@ -141,7 +141,7 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
         }
-        // Only folders can be favorited — the server 400s on anything else.
+        // Only folders can be favorited: the server 400s on anything else.
         if item.isDirectory {
             Button {
                 store.send(.favoriteToggleButtonTapped(item))
