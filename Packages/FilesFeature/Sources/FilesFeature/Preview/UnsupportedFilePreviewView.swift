@@ -2,6 +2,10 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
+#if os(macOS)
+    import AppKit
+    import UniformTypeIdentifiers
+#endif
 
 private enum Constants {
     static let iconSize: CGFloat = .size64
@@ -31,6 +35,40 @@ struct UnsupportedFilePreviewView: View {
 
     var body: some View {
         NavigationStack {
+            content
+                .previewChrome(
+                    title: item.name,
+                    systemShare: systemShare,
+                    onShareLink: onShareLink,
+                    onRename: onRename,
+                    onDownload: onDownload,
+                    onDelete: onDelete,
+                    onClose: onDismiss
+                )
+        }
+    }
+
+    private var content: some View {
+        #if os(macOS)
+            // Finder's look for a file Quick Look can't show: its real icon, name and details,
+            // then the apps that can open it.
+            ContentUnavailableView {
+                Label {
+                    Text(item.name)
+                } icon: {
+                    Image(nsImage: NSWorkspace.shared.icon(for: UTType(filenameExtension: item.kind) ?? .data))
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Constants.iconSize, height: Constants.iconSize)
+                }
+            } description: {
+                Text(verbatim: [typeText, FileSizeFormat.string(item.size)].joined(separator: " · "))
+                    + Text(verbatim: "\n")
+                    + Text(L10n.UnsupportedPreview.cannotOpen)
+            } actions: {
+                MacOpenWithButtons(source: systemShare)
+            }
+        #else
             VStack(spacing: Constants.contentSpacing) {
                 Spacer()
 
@@ -52,27 +90,12 @@ struct UnsupportedFilePreviewView: View {
                     .type(.body2(.regular), style: .secondary)
                     .multilineTextAlignment(.center)
 
-                #if os(macOS)
-                    // A Mac can still hand the file to another app (Calendar for .ics, Pages or
-                    // Word for documents) or show its raw text.
-                    MacOpenWithButtons(source: systemShare)
-                #endif
-
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(.horizontal, Constants.horizontalPadding)
             .backgroundGradient()
-            .previewChrome(
-                title: item.name,
-                systemShare: systemShare,
-                onShareLink: onShareLink,
-                onRename: onRename,
-                onDownload: onDownload,
-                onDelete: onDelete,
-                onClose: onDismiss
-            )
-        }
+        #endif
     }
 }
 
@@ -81,5 +104,20 @@ struct UnsupportedFilePreviewView: View {
         item: FileItem(name: "test_X24504889T2", path: "", dateModified: Date(), size: 6_144, kind: "dat"),
         systemShare: .unavailable,
         onDismiss: {}
+    )
+}
+
+#Preview("Remote file") {
+    UnsupportedFilePreviewView(
+        item: FileItem(name: "invite.ics", path: "Documents", dateModified: Date(), size: 2_048, kind: "ics"),
+        systemShare: .remote(
+            FileItem(name: "invite.ics", path: "Documents", dateModified: Date(), size: 2_048, kind: "ics"),
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
+        ),
+        onDismiss: {},
+        onShareLink: {},
+        onRename: {},
+        onDownload: {},
+        onDelete: {}
     )
 }

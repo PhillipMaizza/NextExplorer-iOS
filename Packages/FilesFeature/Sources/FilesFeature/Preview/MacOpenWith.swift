@@ -17,6 +17,8 @@
         static let rawTextByteLimit = 2 * 1024 * 1024
         static let buttonSpacing: CGFloat = .space12
         static let buttonMaxWidth: CGFloat = 320
+        /// The spinner sits just outside the buttons while the file downloads.
+        static let workingIndicatorOffset: CGFloat = .space32
     }
 
     /// An installed app Launch Services says can open a file type.
@@ -331,9 +333,13 @@
             let apps = model.fileName.map(MacOpenWithApp.apps(forFileNamed:))
             VStack(spacing: Metrics.buttonSpacing) {
                 if let preferred = apps?.preferred {
-                    DSButton(L10n.OpenWith.openIn(preferred.name), style: .primary, isLoading: model.isWorking) {
-                        model.open(with: nil)
+                    Button { model.open(with: nil) } label: {
+                        Label { Text(L10n.OpenWith.openIn(preferred.name)) } icon: { preferred.icon }
+                            .frame(maxWidth: .infinity)
                     }
+                    .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
+                    .disabled(model.isWorking)
                 }
                 if let all = apps?.all, all.count > 1 {
                     Menu(L10n.OpenWith.openWith) {
@@ -348,11 +354,15 @@
                 }
                 if model.canViewAsText {
                     Button(L10n.OpenWith.viewAsText) { model.viewAsText() }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(Color.accentText)
+                        .buttonStyle(.link)
                 }
             }
             .frame(maxWidth: Metrics.buttonMaxWidth)
+            .overlay(alignment: .trailing) {
+                if model.isWorking {
+                    ProgressView().controlSize(.small).offset(x: Metrics.workingIndicatorOffset)
+                }
+            }
             .modifier(MacOpenWithPresentation(model: model))
         }
     }
