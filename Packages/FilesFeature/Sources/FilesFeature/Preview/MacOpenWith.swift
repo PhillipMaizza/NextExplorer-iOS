@@ -42,6 +42,8 @@
         private static func app(at url: URL) -> MacOpenWithApp {
             let name = FileManager.default.displayName(atPath: url.path)
             let icon = NSWorkspace.shared.icon(forFile: url.path)
+            // Menu sized, like the app icons in Finder's Open With menu.
+            icon.size = NSSize(width: Metrics.appIconSize, height: Metrics.appIconSize)
             return MacOpenWithApp(
                 url: url,
                 name: (name as NSString).deletingPathExtension,

@@ -56,6 +56,7 @@
             .contextMenu(forSelectionType: Favorite.ID.self) { ids in
                 if ids.count == 1, let favorite = favorite(for: ids.first) {
                     FavoriteRowContextMenu(store: store, favorite: favorite)
+                        .labelStyle(.titleAndIcon)
                 }
             } primaryAction: { ids in
                 if ids.count == 1, let favorite = favorite(for: ids.first) {

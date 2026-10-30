@@ -53,7 +53,10 @@
                 .width(Metrics.sizeColumnWidth)
             }
             .contextMenu(forSelectionType: OfflinePinnedRootUsage.ID.self) { ids in
-                Button(L10n.Common.remove, role: .destructive) { remove(ids) }
+                Button(role: .destructive) { remove(ids) } label: {
+                    Label { Text(L10n.Common.remove) } icon: { IconKit.delete }
+                }
+                .labelStyle(.titleAndIcon)
             }
             .onDeleteCommand { removeSelection() }
             .overlay {

@@ -128,7 +128,9 @@
                 // My Files has no file actions of its own.
                 let fileIDs = ids.filter { $0 != personalSpace?.id }
                 if fileIDs.count == ids.count || !fileIDs.isEmpty {
+                    // A Mac menu shows only the title of a Label unless asked for the icon.
                     contextMenu(fileIDs)
+                        .labelStyle(.titleAndIcon)
                 }
             } primaryAction: { ids in
                 // AppKit runs the primary action for Return as well as a double click; Finder

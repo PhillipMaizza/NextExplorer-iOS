@@ -154,6 +154,7 @@
             .contextMenu(forSelectionType: Share.ID.self) { ids in
                 if isByMe, ids.count == 1, let share = share(for: ids.first) {
                     menu(for: share)
+                        .labelStyle(.titleAndIcon)
                 }
             } primaryAction: { ids in
                 if isByMe, ids.count == 1, let share = share(for: ids.first) {
@@ -164,11 +165,13 @@
 
         @ViewBuilder
         private func menu(for share: Share) -> some View {
-            Menu(L10n.Common.copy) {
-                Button(L10n.Shared.actionShareLink) {
+            Menu {
+                Button {
                     copy(share.shareLink(serverURL: store.serverURL), label: L10n.Shared.copiedShareLink)
+                } label: {
+                    Label { Text(L10n.Shared.actionShareLink) } icon: { IconKit.shareLink }
                 }
-                Menu(share.isDirectory ? L10n.Shared.actionFolderLink : L10n.Shared.actionFileLink) {
+                Menu {
                     ForEach(DirectLinkMode.allCases) { mode in
                         Button(mode.title) {
                             copy(
@@ -177,15 +180,25 @@
                             )
                         }
                     }
+                } label: {
+                    Label { Text(share.isDirectory ? L10n.Shared.actionFolderLink : L10n.Shared.actionFileLink) } icon: { IconKit.link }
                 }
+            } label: {
+                Label { Text(L10n.Common.copy) } icon: { IconKit.copy }
             }
             // The system share menu: AirDrop, Messages, Mail and the rest.
             if let url = URL(string: share.shareLink(serverURL: store.serverURL)) {
-                ShareLink(item: url) { Text(L10n.Common.share) }
+                ShareLink(item: url) {
+                    Label { Text(L10n.Common.share) } icon: { IconKit.share }
+                }
             }
             Divider()
-            Button(L10n.Common.edit) { store.send(.editTapped(share)) }
-            Button(L10n.Common.delete, role: .destructive) { store.send(.deleteTapped(share)) }
+            Button { store.send(.editTapped(share)) } label: {
+                Label { Text(L10n.Common.edit) } icon: { IconKit.rename }
+            }
+            Button(role: .destructive) { store.send(.deleteTapped(share)) } label: {
+                Label { Text(L10n.Common.delete) } icon: { IconKit.delete }
+            }
         }
 
         private func secondaryText(_ text: String, for share: Share) -> some View {
