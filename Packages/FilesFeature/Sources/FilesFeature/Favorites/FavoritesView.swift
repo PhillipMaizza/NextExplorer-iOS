@@ -14,6 +14,18 @@ struct FavoritesView: View {
     @Bindable var store: StoreOf<FavoritesFeature>
     @Environment(\.isSplitViewDetail) private var isSplitViewDetail
     @AppStorage(AppStorageKeys.favoritesViewMode) private var viewModeRaw = FileListViewMode.list.rawValue
+    #if os(macOS)
+        @AppStorage(AppStorageKeys.favoritesSortOption) private var macSortOptionRaw = FavoritesSortOption.manual.rawValue
+        @AppStorage(AppStorageKeys.favoritesSortDirection) private var macSortDirectionRaw = BrowseFeature.SortDirection.ascending.rawValue
+
+        private var macSortOption: FavoritesSortOption {
+            FavoritesSortOption(rawValue: macSortOptionRaw) ?? .manual
+        }
+
+        private var macSortDirection: BrowseFeature.SortDirection {
+            BrowseFeature.SortDirection(rawValue: macSortDirectionRaw) ?? .ascending
+        }
+    #endif
     /// A finished offline download can change which favorites are available offline, so refresh
     /// the badges when it completes (mirrors `BrowseContentView`).
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
@@ -153,9 +165,28 @@ struct FavoritesView: View {
                 searchResultsContent
             } else if isMacTable {
                 #if os(macOS)
-                    MacFavoritesTableView(store: store, favorites: store.displayedFavorites)
-                        .backgroundGradient()
-                        .transition(.opacity)
+                    MacFavoritesTableView(
+                        store: store,
+                        favorites: macSortOption.sorted(store.displayedFavorites, direction: macSortDirection),
+                        isReorderEnabled: macSortOption == .manual
+                    )
+                    .backgroundGradient()
+                    .transition(.opacity)
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            MacSortMenu(
+                                options: FavoritesSortOption.allCases,
+                                directions: BrowseFeature.SortDirection.allCases,
+                                sortOption: macSortOption,
+                                sortDirection: macSortDirection,
+                                optionTitle: { $0.title },
+                                directionTitle: { $0.title },
+                                onSelectOption: { macSortOptionRaw = $0.rawValue },
+                                onSelectDirection: { macSortDirectionRaw = $0.rawValue },
+                                isDisabled: store.displayedFavorites.isEmpty
+                            )
+                        }
+                    }
                 #endif
             } else if viewMode == .list {
                 listContent

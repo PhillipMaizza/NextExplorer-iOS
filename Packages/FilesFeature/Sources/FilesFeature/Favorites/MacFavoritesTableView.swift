@@ -15,6 +15,8 @@
     struct MacFavoritesTableView: View {
         let store: StoreOf<FavoritesFeature>
         let favorites: [Favorite]
+        /// Dragging rows reorders only while the table shows the manual order.
+        var isReorderEnabled = true
 
         @State private var selection: Set<Favorite.ID> = []
         @FocusState private var isFocused: Bool
@@ -102,6 +104,7 @@
         private func move(_ draggedID: String?, onto targetID: String) {
             let orderedIDs = favorites.map(\.id)
             guard store.canReorder,
+                  isReorderEnabled,
                   let draggedID,
                   draggedID != targetID,
                   let source = orderedIDs.firstIndex(of: draggedID),

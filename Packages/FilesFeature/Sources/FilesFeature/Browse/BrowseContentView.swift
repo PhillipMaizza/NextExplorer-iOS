@@ -704,6 +704,22 @@ struct BrowseContentView: View {
                 personalSpace: showsPersonalSpace ? Self.macPersonalSpaceItem : nil,
                 onOpenPersonalSpace: { store.send(.personalSpaceTapped) }
             )
+            .toolbar {
+                // The column headers sort too; this is the toolbar's Sort By, like Finder's.
+                ToolbarItem(placement: .primaryAction) {
+                    MacSortMenu(
+                        options: BrowseFeature.SortOption.allCases,
+                        directions: BrowseFeature.SortDirection.allCases,
+                        sortOption: store.sortOption,
+                        sortDirection: store.sortDirection,
+                        optionTitle: { $0.title },
+                        directionTitle: { $0.title },
+                        onSelectOption: { store.send(.sortOptionChanged($0)) },
+                        onSelectDirection: { store.send(.sortDirectionChanged($0)) },
+                        isDisabled: !store.hasDisplayedItems
+                    )
+                }
+            }
             .focusedSceneValue(\.browseViewOptions, BrowseViewOptions(
                 sortOption: store.sortOption,
                 sortDirection: store.sortDirection,

@@ -607,6 +607,7 @@ public enum L10n {
         public static var email: String { tr("sort.email") }  // "Email"
         public static var expiration: String { tr("sort.expiration") }  // "Expiration"
         public static var kind: String { tr("sort.kind") }  // "Kind"
+        public static var manual: String { tr("sort.manual") }  // "Manual"
         public static var name: String { tr("sort.name") }  // "Name"
         public static var sheetTitle: String { tr("sort.sheetTitle") }  // "Sort By"
         public static var size: String { tr("sort.size") }  // "Size"
