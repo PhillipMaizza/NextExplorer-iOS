@@ -84,7 +84,7 @@ Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile`
 
 Versions come from git tags. A release ships the next version after the newest `v<version>` tag (patch by default) by passing `MARKETING_VERSION` to the archive, then tags it. To plan a minor or major, set the project's `MARKETING_VERSION` ahead of the newest tag (as for 1.1.0): a release without `bump:` or `version:` then ships that version. The build number is the git commit count, stamped at build time.
 
-Lanes (`bundle exec fastlane <lane>`):
+iOS lanes (`bundle exec fastlane ios <lane>`, `ios` is the default platform):
 
 - `unit_tests`: every package's tests on the simulator, same set as CI. Option `device:"iPhone Duo"`.
 - `ui_tests`: the XCUITest suite. Options `device:`, `only_testing:"SettingsUITests,SharedUITests"`.
@@ -93,6 +93,17 @@ Lanes (`bundle exec fastlane <lane>`):
 - `release`: from a clean, up to date `main`. Refuses if the version is already tagged; skips the local unit tests when CI's Build and test already passed on that commit; cuts and pushes `release/<version>`; uploads and waits for processing; submits for review and releases automatically once approved (`manual_release:true` holds it, `phased:true` rolls out over 7 days); tags `v<version>` and publishes a GitHub Release with the notes. Options `bump:` (`patch`, `minor`, `major`) or `version:`. Store text and screenshots stay in App Store Connect.
 
 Uploads carry the version's `gen-changelog.py` notes as TestFlight's "What to Test".
+
+The Mac app is the same target and ships the same version from the same commit. Mac lanes (`bundle exec fastlane mac <lane>`):
+
+- `unit_tests`: every package's tests on the Mac.
+- `ui_tests`: the Mac XCUITest suite (`MacCriticalPathUITests`). It drives the real app, so leave the Mac alone while it runs.
+- `beta`: the upcoming version as a Mac App Store package, uploaded to TestFlight for macOS.
+- `release_dry_run`: Mac unit tests and the Mac App Store package, nothing uploaded.
+- `release`: after `ios release`. Builds the `v<version>` commit (the newest tag by default, or `version:`), uploads it, waits for processing and submits the macOS version with the same What's New (`manual_release:true`, `phased:true` as on iOS). It makes no new tag or branch.
+- `submit`: resumes a Mac release that stopped after the upload (`version:`, `build:`).
+
+Before the first Mac release, once in App Store Connect: add the macOS platform to the app (the same bundle ID makes it a universal purchase, so the tip jar carries over), then fill in its screenshots, description and review notes. The package is signed with a Mac Installer Distribution certificate; if the first `mac` build cannot find or create one, create it once in Certificates, Identifiers & Profiles.
 
 ## Questions
 

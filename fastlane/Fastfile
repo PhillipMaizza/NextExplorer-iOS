@@ -16,6 +16,11 @@ default_platform(:ios)
 # MARKETING_VERSION ahead of that tag is a planned minor or major and ships as is; so does the
 # project's version before the first tag. The build number needs no bump: the app target
 # stamps CFBundleVersion with the git commit count.
+#
+# The Mac app is the same target and ships the same version from the same commit: run
+# `fastlane ios release` first (it cuts release/<version> and tags v<version>), then
+# `fastlane mac release`, which builds the tagged commit as a Mac App Store package and
+# submits the macOS version with the same What's New.
 
 PROJECT = "NextExplorer.xcodeproj".freeze
 PBXPROJ = "#{PROJECT}/project.pbxproj".freeze
@@ -206,28 +211,6 @@ platform :ios do
     UI.success("#{version} (#{build_number}) submitted for review and tagged #{tag}")
   end
 
-  # A version is released once its tag exists, locally or on origin.
-  private_lane :ensure_version_unreleased do |options|
-    tag = release_tag(options[:version])
-    if git_tag_exists(tag: tag, remote: true)
-      UI.user_error!("#{tag} is already released")
-    end
-  end
-
-  # "What to Test", generated from main's history for the version (Scripts/gen-changelog.py).
-  private_lane :testflight_notes do |options|
-    notes = release_notes(options[:version])
-    notes.empty? ? nil : notes
-  end
-
-  private_lane :asc_api_key do
-    app_store_connect_api_key(
-      key_id: ENV.fetch("ASC_KEY_ID"),
-      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
-      key_filepath: ENV.fetch("ASC_KEY_PATH")
-    )
-  end
-
   # Automatic signing; the API key lets xcodebuild create or refresh the distribution
   # certificate and profile without an Xcode account signed in.
   private_lane :build_release do |options|
@@ -237,6 +220,159 @@ platform :ios do
       configuration: "Release",
       export_method: "app-store",
       output_directory: "build/fastlane",
+      clean: true,
+      xcargs: [
+        "MARKETING_VERSION=#{options[:version]}",
+        "-allowProvisioningUpdates",
+        "-authenticationKeyPath #{ENV.fetch('ASC_KEY_PATH').shellescape}",
+        "-authenticationKeyID #{ENV.fetch('ASC_KEY_ID')}",
+        "-authenticationKeyIssuerID #{ENV.fetch('ASC_ISSUER_ID')}"
+      ].join(" ")
+    )
+  end
+end
+
+# Shared by both platforms.
+
+# A version is released once its tag exists, locally or on origin.
+private_lane :ensure_version_unreleased do |options|
+  tag = release_tag(options[:version])
+  if git_tag_exists(tag: tag, remote: true)
+    UI.user_error!("#{tag} is already released")
+  end
+end
+
+# "What to Test", generated from main's history for the version (Scripts/gen-changelog.py).
+private_lane :testflight_notes do |options|
+  notes = release_notes(options[:version])
+  notes.empty? ? nil : notes
+end
+
+private_lane :asc_api_key do
+  app_store_connect_api_key(
+    key_id: ENV.fetch("ASC_KEY_ID"),
+    issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+    key_filepath: ENV.fetch("ASC_KEY_PATH")
+  )
+end
+
+platform :mac do
+  desc "Run every package's unit tests on the Mac, as CI does"
+  lane :unit_tests do
+    sh("cd #{repo_root.shellescape} && xcodebuild test -quiet " \
+       "-workspace PackageTests.xcworkspace -scheme PackageTests " \
+       "-destination 'platform=macOS' -enableCodeCoverage NO " \
+       "-derivedDataPath #{UNIT_TEST_DERIVED_DATA.shellescape}-mac " \
+       "-clonedSourcePackagesDirPath #{UNIT_TEST_CHECKOUTS.shellescape}")
+    UI.success("Mac unit tests passed")
+  end
+
+  desc "Run the Mac XCUITest suite. It drives the real app and its windows, so leave the Mac alone"
+  desc "while it runs."
+  lane :ui_tests do
+    run_tests(
+      project: PROJECT,
+      scheme: SCHEME,
+      destination: "platform=macOS",
+      only_testing: ["NextExplorerUITests/MacCriticalPathUITests"],
+      result_bundle: true,
+      output_directory: "build/fastlane/mac-ui-tests",
+      parallel_testing: false
+    )
+  end
+
+  desc "Build the Mac App Store package and upload it to TestFlight (options: version, bump)"
+  lane :beta do |options|
+    ensure_git_status_clean
+    sh("git", "fetch", "--tags", "--quiet", "origin")
+    version = upcoming_version(options)
+    api_key = asc_api_key
+    pkg = build_mac_release(version: version)
+    upload_to_testflight(
+      api_key: api_key,
+      pkg: pkg,
+      app_platform: "osx",
+      changelog: testflight_notes(version: version),
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Run the Mac unit tests and build the Mac App Store package, without uploading anything"
+  lane :release_dry_run do |options|
+    ensure_git_status_clean
+    sh("git", "fetch", "--tags", "--quiet", "origin")
+    version = upcoming_version(options)
+    unit_tests
+    build_mac_release(version: version)
+    UI.success("Would release #{version} for the Mac")
+  end
+
+  desc "Ship the Mac app for a version iOS already released: builds the v<version> commit, uploads,"
+  desc "submits the macOS version for review. Options: version (default the newest v* tag),"
+  desc "manual_release, phased"
+  lane :release do |options|
+    ensure_git_status_clean
+    sh("git", "fetch", "--tags", "--quiet", "origin")
+    version = (options[:version] || latest_released_version || UI.user_error!("No v* tag yet; run `fastlane ios release` first")).to_s
+    tag = release_tag(version)
+    UI.user_error!("#{tag} does not exist; run `fastlane ios release` for #{version} first") unless git_tag_exists(tag: tag, remote: true)
+
+    previous = sh("git", "rev-parse", "--abbrev-ref", "HEAD", log: false).strip
+    sh("git", "switch", "--detach", tag)
+    begin
+      api_key = asc_api_key
+      pkg = build_mac_release(version: version)
+      # The app target stamps CFBundleVersion with the commit count, as on iOS.
+      build_number = sh("git", "rev-list", "--count", "HEAD", log: false).strip
+
+      # Review needs a processed build, so this upload waits for processing.
+      upload_to_testflight(api_key: api_key, pkg: pkg, app_platform: "osx", changelog: testflight_notes(version: version))
+
+      submit(version: version, build: build_number,
+             manual_release: options[:manual_release], phased: options[:phased])
+    ensure
+      sh("git", "switch", previous)
+    end
+  end
+
+  desc "Submit an uploaded, processed Mac build for review with the version's What's New. `release`"
+  desc "ends with this; run it alone to resume. Options: version, build, manual_release, phased"
+  lane :submit do |options|
+    version = options[:version] || UI.user_error!("Pass version:")
+    build_number = options[:build] || UI.user_error!("Pass build:")
+    whats_new = release_notes(version).gsub(/^- /, "• ")
+    UI.user_error!("No user facing notes for #{version}; nothing to put in What's New") if whats_new.empty?
+
+    upload_to_app_store(
+      api_key: asc_api_key,
+      platform: "osx",
+      app_version: version,
+      build_number: build_number,
+      skip_binary_upload: true,
+      skip_screenshots: true,
+      skip_metadata: false,
+      release_notes: { "en-US" => whats_new },
+      copyright: "#{Time.now.year} #{COPYRIGHT_HOLDER}",
+      submit_for_review: true,
+      automatic_release: options[:manual_release] != true,
+      phased_release: options[:phased] == true,
+      force: true,
+      precheck_include_in_app_purchases: false,
+      submission_information: { add_id_info_uses_idfa: false }
+    )
+    UI.success("#{version} (#{build_number}) for the Mac submitted for review")
+  end
+
+  # The Mac App Store wants an installer package, signed with a Mac Installer Distribution
+  # certificate; automatic signing refreshes the profiles through the API key.
+  private_lane :build_mac_release do |options|
+    build_mac_app(
+      project: PROJECT,
+      scheme: SCHEME,
+      configuration: "Release",
+      destination: "generic/platform=macOS",
+      export_method: "app-store",
+      output_directory: "build/fastlane/mac",
       clean: true,
       xcargs: [
         "MARKETING_VERSION=#{options[:version]}",
