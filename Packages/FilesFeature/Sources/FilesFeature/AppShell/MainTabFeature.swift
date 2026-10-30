@@ -142,8 +142,8 @@ public struct MainTabFeature {
             Reduce { state, action in
                 guard !Self.isSectionTeardownPop(action, selectedTab: state.selectedTab) else { return .none }
                 return .merge(
-                    browse.reduce(into: &state, action: action),
-                    favorites.reduce(into: &state, action: action)
+                    browse._reduce(into: &state, action: action),
+                    favorites._reduce(into: &state, action: action)
                 )
             }
             Scope(state: \.shared, action: \.shared) {
