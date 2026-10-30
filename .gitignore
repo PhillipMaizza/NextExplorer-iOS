@@ -77,3 +77,6 @@ fastlane/README.md
 fastlane/screenshots/
 fastlane/test_output/
 *.p8
+
+# direnv
+.envrc
