@@ -6,7 +6,7 @@ name: CI
 #
 # The XCUITest suites (iPhone on a simulator, and the Mac app) are heavier (they cold launch the
 # app per test) so they run on pushes to main, on demand, and on pull requests labelled `ui-tests`.
-# The iPhone suite is split across three runners so it takes a third of the time.
+# The iPhone suite is built once in Build and test and split across three runners that only run it.
 
 on:
   pull_request:
@@ -189,6 +189,40 @@ jobs:
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             CODE_SIGNING_ALLOWED=NO
 
+      # When the UI tests run, their bundle is built here once, on the app this job just built,
+      # and handed to the three shards, which only run it. Same triggers as the shards.
+      - name: Build UI tests
+        id: uitests
+        if: >-
+          github.event_name == 'push' ||
+          github.event_name == 'workflow_dispatch' ||
+          (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests'))
+        run: |
+          set -euo pipefail
+          xcodebuild build-for-testing \
+            -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}"
+          # Only what the .xctestrun runs (it refers to them relative to itself), not the debug
+          # symbols and package test bundles that make the folder about a gigabyte.
+          cd "${DERIVED_DATA}/Build/Products"
+          tar -czf "${RUNNER_TEMP}/ui-test-products.tgz" \
+            ./*iphonesimulator*.xctestrun \
+            Debug-iphonesimulator/NextExplorer.app \
+            Debug-iphonesimulator/NextExplorerUITests-Runner.app \
+            Debug-iphonesimulator/PackageFrameworks
+          ls -lh "${RUNNER_TEMP}/ui-test-products.tgz"
+
+      - name: Upload UI test build
+        if: steps.uitests.outcome == 'success'
+        uses: actions/upload-artifact@v7
+        with:
+          name: ui-test-products
+          path: ${{ runner.temp }}/ui-test-products.tgz
+          retention-days: 1
+
       # Only main saves: GitHub scopes a pull request's cache to that pull request, so a save
       # there helps nobody else, and main's copy is what every pull request restores.
       - name: Save SwiftPM checkouts
@@ -292,17 +326,15 @@ jobs:
 
   ui-test:
     name: UI tests (${{ matrix.shard.name }})
-    needs: changes
+    needs: [changes, build-and-test]
     # Merges to main, manual runs from the Actions tab, and pull requests labelled `ui-tests`.
     if: >-
       needs.changes.outputs.code == 'true' && (
       github.event_name == 'push' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests')))
-    # GitHub's Xcode 27 image (macOS 27): matches local development and builds TCA's macros with
-    # Apple's prebuilt swift-syntax instead of compiling it on every run.
     runs-on: xcode-27
-    timeout-minutes: 60
+    timeout-minutes: 45
 
     # Three runners, each with about a third of the suite by measured time. The last one runs
     # every class the first two skip, so a new test class always runs somewhere.
@@ -340,51 +372,28 @@ jobs:
       SIM_DEVICE: iPhone 17
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      # One DerivedData and one SwiftPM checkout folder shared by every build in the job, so each
-      # dependency compiles once; DerivedData is also cached between runs (saved from main,
-      # restored everywhere). Both sit in runner.temp, outside the repo so the linters never scan
-      # them: actions/cache rejects paths containing "..", and runner.temp only exists inside steps.
-      - name: Set build folders
-        run: |
-          echo "DERIVED_DATA=${RUNNER_TEMP}/DerivedData" >> "${GITHUB_ENV}"
-          echo "SPM_CHECKOUTS=${RUNNER_TEMP}/SourcePackages" >> "${GITHUB_ENV}"
-
-      - name: Restore SwiftPM checkouts
-        uses: actions/cache/restore@v6
-        with:
-          path: ${{ env.SPM_CHECKOUTS }}
-          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
-          restore-keys: spm-${{ runner.os }}-
-
-      - name: Restore DerivedData
-        uses: actions/cache/restore@v6
-        with:
-          path: |
-            ${{ env.DERIVED_DATA }}
-            !${{ env.DERIVED_DATA }}/Logs
-            !${{ env.DERIVED_DATA }}/Index.noindex
-          key: deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
-          restore-keys: |
-            deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-
-            deriveddata-xcode27.1-
-
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '27.1'
 
-      - name: Trust Swift package macros
-        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+      - name: Download UI test build
+        uses: actions/download-artifact@v7
+        with:
+          name: ui-test-products
+          path: ${{ runner.temp }}
 
-      - name: Resolve package dependencies
+      - name: Unpack UI test build
         run: |
-          xcodebuild -project NextExplorer.xcodeproj \
-            -scheme NextExplorer \
-            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
-            -resolvePackageDependencies
+          set -euo pipefail
+          PRODUCTS="${RUNNER_TEMP}/Products"
+          mkdir -p "${PRODUCTS}"
+          tar -C "${PRODUCTS}" -xzf "${RUNNER_TEMP}/ui-test-products.tgz"
+          XCTESTRUN=$(find "${PRODUCTS}" -maxdepth 1 -name '*iphonesimulator*.xctestrun' | head -1)
+          if [ -z "${XCTESTRUN}" ]; then
+            echo "No .xctestrun in the UI test build"; exit 1
+          fi
+          echo "XCTESTRUN=${XCTESTRUN}" >> "${GITHUB_ENV}"
 
       - name: Install xcbeautify
         run: brew install xcbeautify
@@ -426,13 +435,9 @@ jobs:
           DEST="platform=iOS Simulator,id=${SIM_UDID}"
           echo "UI test destination: ${DEST}"
           # shellcheck disable=SC2086
-          xcodebuild test \
-            -project NextExplorer.xcodeproj \
-            -scheme NextExplorer \
+          xcodebuild test-without-building \
+            -xctestrun "${XCTESTRUN}" \
             -destination "${DEST}" \
-            -derivedDataPath "${DERIVED_DATA}" \
-            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
-            -enableCodeCoverage NO \
             -resultBundlePath TestResults.xcresult \
             -parallel-testing-enabled NO \
             -retry-tests-on-failure -test-iterations 2 -test-repetition-relaunch-enabled YES \
