@@ -143,27 +143,61 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
 }
 
 #if os(macOS)
+    /// Browse's search scope and type filter in the Mac's own form: a scope bar under the
+    /// toolbar while searching, and the type filters as tokens in the search field.
+    struct MacSearchFilters {
+        let scope: Binding<BrowseFeature.SearchScope>
+        let categories: Binding<[FileCategory]>
+        let availableCategories: [FileCategory]
+    }
+
+    extension EnvironmentValues {
+        @Entry var macSearchFilters: MacSearchFilters?
+    }
+
     private struct MacToolbarSearch: ViewModifier {
         let isEnabled: Bool
         @Binding var text: String
         let prompt: String
         var isFocused: FocusState<Bool>.Binding
+        @Environment(\.macSearchFilters) private var filters
 
         func body(content: Content) -> some View {
-            if isEnabled {
+            if !isEnabled {
                 content
-                    .searchable(text: $text, placement: .toolbar, prompt: Text(prompt))
-                    .searchFocused(isFocused)
-                    // Pins the field to the trailing edge whatever else the screen puts in the
-                    // toolbar; without it a screen with only leading items packs it beside them.
-                    .toolbar {
-                        if #available(macOS 26.0, *) {
-                            ToolbarSpacer(.flexible)
+            } else if let filters {
+                pinned(
+                    content
+                        .searchable(
+                            text: $text,
+                            tokens: filters.categories,
+                            suggestedTokens: .constant(filters.availableCategories.filter { !filters.categories.wrappedValue.contains($0) }),
+                            placement: .toolbar,
+                            prompt: Text(prompt)
+                        ) { category in
+                            Label { Text(category.title) } icon: { category.icon }
                         }
-                    }
+                        .searchScopes(filters.scope, activation: .onSearchPresentation) {
+                            ForEach(BrowseFeature.SearchScope.allCases, id: \.self) { scope in
+                                Text(scope.title).tag(scope)
+                            }
+                        }
+                )
             } else {
-                content
+                pinned(content.searchable(text: $text, placement: .toolbar, prompt: Text(prompt)))
             }
+        }
+
+        private func pinned(_ searchable: some View) -> some View {
+            searchable
+                .searchFocused(isFocused)
+                // Pins the field to the trailing edge whatever else the screen puts in the
+                // toolbar; without it a screen with only leading items packs it beside them.
+                .toolbar {
+                    if #available(macOS 26.0, *) {
+                        ToolbarSpacer(.flexible)
+                    }
+                }
         }
     }
 

@@ -326,22 +326,28 @@ struct BrowseContentView: View {
                 searchText: $store.searchQuery.sending(\.searchQueryChanged),
                 shouldFadeIntoContent: viewMode != .table
             ) {
-                if store.isSearching {
-                    DSSegmentedControl(
-                        options: BrowseFeature.SearchScope.allCases,
-                        selection: $store.searchScope.sending(\.searchScopeChanged),
-                        label: { $0.title }
-                    )
-                    if !store.availableSearchCategories.isEmpty {
-                        SearchFilterChips(
-                            availableCategories: store.availableSearchCategories,
-                            selectedCategories: store.selectedSearchCategories,
-                            onToggle: { store.send(.searchCategoryToggled($0)) },
-                            onSelectAll: { store.send(.searchFilterCleared) }
+                // The Mac shows these natively, as a scope bar and search field tokens.
+                #if os(iOS)
+                    if store.isSearching {
+                        DSSegmentedControl(
+                            options: BrowseFeature.SearchScope.allCases,
+                            selection: $store.searchScope.sending(\.searchScopeChanged),
+                            label: { $0.title }
                         )
+                        if !store.availableSearchCategories.isEmpty {
+                            SearchFilterChips(
+                                availableCategories: store.availableSearchCategories,
+                                selectedCategories: store.selectedSearchCategories,
+                                onToggle: { store.send(.searchCategoryToggled($0)) },
+                                onSelectAll: { store.send(.searchFilterCleared) }
+                            )
+                        }
                     }
-                }
+                #endif
             }
+            #if os(macOS)
+            .environment(\.macSearchFilters, macSearchFilters)
+            #endif
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -942,10 +948,27 @@ struct BrowseContentView: View {
         }
     }
 
-    /// Drives the rename `NameInputSheet`; a swipe down dismiss routes back through the reducer
-    /// so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
-    /// Split like the delete confirmation so it presents over whichever surface is frontmost.
-    /// The Mac folder table renames in place; search results and previews keep the sheet.
+    // Drives the rename `NameInputSheet`; a swipe down dismiss routes back through the reducer
+    // so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
+    // Split like the delete confirmation so it presents over whichever surface is frontmost.
+    // The Mac folder table renames in place; search results and previews keep the sheet.
+    #if os(macOS)
+        private var macSearchFilters: MacSearchFilters {
+            MacSearchFilters(
+                scope: $store.searchScope.sending(\.searchScopeChanged),
+                categories: Binding(
+                    get: { FileCategory.allCases.filter(store.selectedSearchCategories.contains) },
+                    set: { tokens in
+                        for category in store.selectedSearchCategories.symmetricDifference(tokens) {
+                            store.send(.searchCategoryToggled(category))
+                        }
+                    }
+                ),
+                availableCategories: store.availableSearchCategories
+            )
+        }
+    #endif
+
     private var shouldRenameInTable: Bool {
         #if os(macOS)
             store.previewItem == nil && !store.isSearching
