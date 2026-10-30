@@ -6,7 +6,7 @@ name: CI
 #
 # The XCUITest suites (iPhone on a simulator, and the Mac app) are heavier (they cold launch the
 # app per test) so they run on pushes to main, on demand, and on pull requests labelled `ui-tests`.
-# The iPhone suite is built once and split across four runners that only run it.
+# The iPhone suite is built once and split across three runners that only run it.
 
 on:
   pull_request:
@@ -404,37 +404,36 @@ jobs:
     runs-on: xcode-27
     timeout-minutes: 45
 
-    # Four runners, each with about a quarter of the suite by measured class time. The last one
-    # runs every class the others skip, so a new test class always runs somewhere.
+    # Three runners, each with about a third of the suite by measured class time (about eight
+    # minutes of tests each when run one at a time). The last one runs every class the others
+    # skip, so a new test class always runs somewhere.
     strategy:
       fail-fast: false
       matrix:
         shard:
-          - name: 1 of 4
+          - name: 1 of 3
+            only: >-
+              -only-testing:NextExplorerUITests/AuthFlowUITests
+              -only-testing:NextExplorerUITests/MutationUITests
+              -only-testing:NextExplorerUITests/SettingsUITests
+          - name: 2 of 3
             only: >-
               -only-testing:NextExplorerUITests/FileActionsUITests
-          - name: 2 of 4
-            only: >-
-              -only-testing:NextExplorerUITests/MutationUITests
               -only-testing:NextExplorerUITests/MultiServerUITests
-              -only-testing:NextExplorerUITests/SessionExpiryUITests
-          - name: 3 of 4
-            only: >-
-              -only-testing:NextExplorerUITests/SettingsUITests
-              -only-testing:NextExplorerUITests/AuthFlowUITests
-              -only-testing:NextExplorerUITests/SearchUITests
-              -only-testing:NextExplorerUITests/BrowseToolbarUITests
-          - name: 4 of 4
+              -only-testing:NextExplorerUITests/MultiSelectClipboardUITests
+              -only-testing:NextExplorerUITests/EditorUITests
+              -only-testing:NextExplorerUITests/DownloadsUITests
+          - name: 3 of 3
             only: >-
               -only-testing:NextExplorerUITests
-              -skip-testing:NextExplorerUITests/FileActionsUITests
-              -skip-testing:NextExplorerUITests/MutationUITests
-              -skip-testing:NextExplorerUITests/MultiServerUITests
-              -skip-testing:NextExplorerUITests/SessionExpiryUITests
-              -skip-testing:NextExplorerUITests/SettingsUITests
               -skip-testing:NextExplorerUITests/AuthFlowUITests
-              -skip-testing:NextExplorerUITests/SearchUITests
-              -skip-testing:NextExplorerUITests/BrowseToolbarUITests
+              -skip-testing:NextExplorerUITests/MutationUITests
+              -skip-testing:NextExplorerUITests/SettingsUITests
+              -skip-testing:NextExplorerUITests/FileActionsUITests
+              -skip-testing:NextExplorerUITests/MultiServerUITests
+              -skip-testing:NextExplorerUITests/MultiSelectClipboardUITests
+              -skip-testing:NextExplorerUITests/EditorUITests
+              -skip-testing:NextExplorerUITests/DownloadsUITests
 
     env:
       SIM_DEVICE: iPhone 17
@@ -444,6 +443,30 @@ jobs:
         uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: '27.1'
+
+      - name: Start booting the simulator
+        # Started before the download so the boot (one to two minutes) overlaps it; the tests wait
+        # for it to finish below. Pin the destination to a concrete UDID and fully boot it before
+        # xcodebuild attaches.
+        # The recurring CI failure was a cold launch race ("Failed to send signal 19 to process")
+        # where xcodebuild could not SIGSTOP/resume the app on a not yet ready simulator; booting
+        # first and waiting for bootstatus avoids it.
+        run: |
+          set -euo pipefail
+          # Exact name on the newest iOS runtime: a plain name filter also matches "iPhone 17e".
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, os, sys
+          name = os.environ["SIM_DEVICE"]
+          devices = json.load(sys.stdin)["devices"]
+          runtimes = sorted((r for r in devices if ".iOS-" in r), reverse=True)
+          print(next((d["udid"] for r in runtimes for d in devices[r] if d["name"] == name), ""))
+          ')
+          if [ -z "${UDID}" ]; then
+            echo "No available '${SIM_DEVICE}' simulator on this runner"; exit 1
+          fi
+          echo "SIM_UDID=${UDID}" >> "${GITHUB_ENV}"
+          echo "Booting ${SIM_DEVICE} (${UDID})"
+          xcrun simctl boot "${UDID}" || true
 
       - name: Download UI test build
         uses: actions/download-artifact@v7
@@ -466,28 +489,8 @@ jobs:
       - name: Install xcbeautify
         run: brew install xcbeautify
 
-      - name: Boot simulator
-        # Pin the destination to a concrete UDID and fully boot it before xcodebuild attaches.
-        # The recurring CI failure was a cold launch race ("Failed to send signal 19 to process")
-        # where xcodebuild could not SIGSTOP/resume the app on a not yet ready simulator; booting
-        # first and waiting for bootstatus avoids it.
-        run: |
-          set -euo pipefail
-          # Exact name on the newest iOS runtime: a plain name filter also matches "iPhone 17e".
-          UDID=$(xcrun simctl list devices available -j | python3 -c '
-          import json, os, sys
-          name = os.environ["SIM_DEVICE"]
-          devices = json.load(sys.stdin)["devices"]
-          runtimes = sorted((r for r in devices if ".iOS-" in r), reverse=True)
-          print(next((d["udid"] for r in runtimes for d in devices[r] if d["name"] == name), ""))
-          ')
-          if [ -z "${UDID}" ]; then
-            echo "No available '${SIM_DEVICE}' simulator on this runner"; exit 1
-          fi
-          echo "SIM_UDID=${UDID}" >> "${GITHUB_ENV}"
-          echo "Booting ${SIM_DEVICE} (${UDID})"
-          xcrun simctl boot "${UDID}" || true
-          xcrun simctl bootstatus "${UDID}" -b
+      - name: Wait for the simulator
+        run: xcrun simctl bootstatus "${SIM_UDID}" -b
 
       - name: Run XCUITests
         # One simulator, no parallel clones: the scheme marks the UI tests parallelizable, which
