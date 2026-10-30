@@ -92,7 +92,7 @@ struct MainTabSidebar: View {
         /// Settings is its own window on the Mac, so this row opens it instead of selecting a tab.
         private var macSettingsRow: some View {
             Button { openSettings() } label: {
-                Label { Text(L10n.Tab.settings) } icon: { Self.macIcon(for: .settings).foregroundStyle(Color.accent) }
+                Label { Text(L10n.Tab.settings) } icon: { MacSidebarIcon(image: Self.macIcon(for: .settings)) }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .contentShape(Rectangle())
             }
@@ -116,11 +116,9 @@ struct MainTabSidebar: View {
     @ViewBuilder
     private func sidebarRow(_ item: (tab: MainTabFeature.Tab, title: String, icon: Image)) -> some View {
         #if os(macOS)
-            // The system sidebar row with the Settings sidebar's glyphs: system symbols in the
-            // accent, white on the selected row.
+            // The system sidebar row with the Settings sidebar's glyphs.
             Label { Text(item.title) } icon: {
-                Self.macIcon(for: item.tab)
-                    .foregroundStyle(store.selectedTab == item.tab ? Color.white : Color.accent)
+                MacSidebarIcon(image: Self.macIcon(for: item.tab))
             }
             .tag(item.tab)
             .accessibilityLabel(item.title)

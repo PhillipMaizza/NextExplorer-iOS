@@ -100,13 +100,12 @@
             }
         }
 
-        /// Xcode style: an outline glyph in the app accent, white on the selected row.
+        /// Xcode style: an outline glyph in the app accent, white on the emphasized selection.
         private func sidebarRow(_ category: MacSettingsCategory) -> some View {
             Label {
                 Text(category.title)
             } icon: {
-                category.icon
-                    .foregroundStyle(category == visibleSelection ? Color.white : Color.accent)
+                MacSidebarIcon(image: category.icon)
             }
             .tag(category)
         }
