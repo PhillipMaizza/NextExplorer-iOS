@@ -82,7 +82,7 @@ Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile`
 - Create an App Store Connect API key (Users and Access › Integrations, App Manager role) and keep the `.p8` outside the repo, e.g. `~/.appstoreconnect/private_keys/`.
 - Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`, and optionally `GH_USER` (the `gh` account used for the CI check and the GitHub Release).
 
-Versions come from git tags, never from a commit. A release ships the next version after the newest `v<version>` tag (patch by default) by passing `MARKETING_VERSION` to the archive, then tags it; the project's own `MARKETING_VERSION` only matters for local builds. The build number is the git commit count, stamped at build time.
+Versions come from git tags. A release ships the next version after the newest `v<version>` tag (patch by default) by passing `MARKETING_VERSION` to the archive, then tags it. To plan a minor or major, set the project's `MARKETING_VERSION` ahead of the newest tag (as for 1.1.0): a release without `bump:` or `version:` then ships that version. The build number is the git commit count, stamped at build time.
 
 Lanes (`bundle exec fastlane <lane>`):
 

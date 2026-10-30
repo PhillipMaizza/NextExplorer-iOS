@@ -11,10 +11,11 @@ default_platform(:ios)
 #   GH_USER        gh account for the CI status check and the GitHub Release, when several are
 #                  logged in
 #
-# Versions come from git tags, never from a commit: `release` ships the next version after the
-# newest `v<version>` tag (patch by default) by passing MARKETING_VERSION to the archive, then
-# tags it. Before the first tag it ships the project's MARKETING_VERSION. The build number
-# needs no bump either: the app target stamps CFBundleVersion with the git commit count.
+# Versions come from git tags: `release` ships the next version after the newest `v<version>`
+# tag (patch by default) by passing MARKETING_VERSION to the archive, then tags it. A project
+# MARKETING_VERSION ahead of that tag is a planned minor or major and ships as is; so does the
+# project's version before the first tag. The build number needs no bump: the app target
+# stamps CFBundleVersion with the git commit count.
 
 PROJECT = "NextExplorer.xcodeproj".freeze
 PBXPROJ = "#{PROJECT}/project.pbxproj".freeze
@@ -62,11 +63,15 @@ def latest_released_version
     .max_by { |version| Gem::Version.new(version) }
 end
 
-# Options: version (explicit), bump (patch, minor, major; default patch).
+# Options: version (explicit), bump (patch, minor, major; default patch, or the project's
+# MARKETING_VERSION when it is already ahead of the newest tag).
 def upcoming_version(options)
   return options[:version].to_s if options[:version]
   latest = latest_released_version
-  latest ? next_version(latest, options[:bump]) : marketing_version
+  return marketing_version unless latest
+  planned = marketing_version
+  return planned if options[:bump].nil? && Gem::Version.new(planned) > Gem::Version.new(latest)
+  next_version(latest, options[:bump])
 end
 
 platform :ios do
