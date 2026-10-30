@@ -396,8 +396,14 @@ jobs:
         # first and waiting for bootstatus avoids it.
         run: |
           set -euo pipefail
-          UDID=$(xcrun simctl list devices available "${SIM_DEVICE}" \
-            | grep -Eo '\(([0-9A-F-]{36})\)' | tr -d '()' | head -1 || true)
+          # Exact name on the newest iOS runtime: a plain name filter also matches "iPhone 17e".
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, os, sys
+          name = os.environ["SIM_DEVICE"]
+          devices = json.load(sys.stdin)["devices"]
+          runtimes = sorted((r for r in devices if ".iOS-" in r), reverse=True)
+          print(next((d["udid"] for r in runtimes for d in devices[r] if d["name"] == name), ""))
+          ')
           if [ -z "${UDID}" ]; then
             echo "No available '${SIM_DEVICE}' simulator on this runner"; exit 1
           fi
@@ -407,8 +413,10 @@ jobs:
           xcrun simctl bootstatus "${UDID}" -b
 
       - name: Run XCUITests
-        # A failing test runs once more in a fresh test runner, so a launch flake is retried on
-        # its own instead of rerunning the whole shard; a real failure fails both attempts.
+        # One simulator, no parallel clones: the scheme marks the UI tests parallelizable, which
+        # suits a laptop, but clones on a runner's few cores timed out evaluating UI queries. The
+        # shards are the parallelism here. A failing test runs once more in a fresh test runner,
+        # so a launch flake is retried on its own; a real failure fails both attempts.
         # Output runs through xcbeautify so a failing test surfaces as a GitHub annotation instead
         # of a raw xcodebuild dump, and the .xcresult is uploaded below for offline inspection.
         env:
@@ -426,6 +434,7 @@ jobs:
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             -enableCodeCoverage NO \
             -resultBundlePath TestResults.xcresult \
+            -parallel-testing-enabled NO \
             -retry-tests-on-failure -test-iterations 2 -test-repetition-relaunch-enabled YES \
             ${SHARD_TESTS} \
             | xcbeautify --renderer github-actions
@@ -514,6 +523,7 @@ jobs:
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             -enableCodeCoverage NO \
             -resultBundlePath MacTestResults.xcresult \
+            -parallel-testing-enabled NO \
             -retry-tests-on-failure -test-iterations 2 -test-repetition-relaunch-enabled YES \
             -only-testing:NextExplorerUITests/MacCriticalPathUITests \
             CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= \
