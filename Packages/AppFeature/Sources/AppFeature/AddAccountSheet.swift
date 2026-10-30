@@ -76,6 +76,6 @@ struct AddAccountSheet: ViewModifier {
 
 #Preview("Add account") {
     Color.clear
-        .frame(width: 600, height: 700)
+        .previewCanvas(.sheet)
         .modifier(AddAccountSheet(store: .previewSignedIn(addAccount: true)))
 }

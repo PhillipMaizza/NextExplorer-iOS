@@ -34,6 +34,9 @@
                 .onAppear {
                     appearedAt = Date()
                     isFocused = true
+                    // Started by Return, the table takes focus back once it finishes handling
+                    // the key; asking again on the next turn of the run loop lands after that.
+                    DispatchQueue.main.async { isFocused = true }
                 }
                 .onSubmit { finish(commit: true) }
                 .onExitCommand { finish(commit: false) }
@@ -62,6 +65,6 @@
     #Preview("Renaming") {
         MacInlineRenameField(originalName: "report.pdf", onCommit: { _ in }, onCancel: {})
             .padding(.space16)
-            .frame(width: 320)
+            .previewCanvasWidth(.control)
     }
 #endif

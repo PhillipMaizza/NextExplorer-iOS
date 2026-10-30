@@ -129,7 +129,7 @@
         }
         .formStyle(.columns)
         .padding(.space24)
-        .frame(width: 520)
+        .previewCanvasWidth(.sheet)
     }
 
     #Preview("Anyone") {

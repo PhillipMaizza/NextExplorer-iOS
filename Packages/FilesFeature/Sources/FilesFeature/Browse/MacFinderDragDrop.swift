@@ -155,6 +155,6 @@
             Label { Text(file.name) } icon: { IconKit.document }
                 .modifier(MacFileDrag(item: file, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), isEnabled: true))
         }
-        .frame(width: 320, height: 160)
+        .previewCanvas(.control)
     }
 #endif

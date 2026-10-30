@@ -115,7 +115,7 @@ private func confirmationsPreview(_ mutate: (inout SettingsFeature.State) -> Voi
     )
     mutate(&state)
     return Color.clear
-        .frame(width: 600, height: 600)
+        .previewCanvas(.sheet)
         .modifier(AccountConfirmations(store: Store(initialState: state) { SettingsFeature() } withDependencies: { $0.filesClient = .previewValue }))
 }
 

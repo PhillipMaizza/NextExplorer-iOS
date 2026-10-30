@@ -2,6 +2,7 @@
     import AppKit
     import CoreModels
     import Dependencies
+    import DesignSystem
     import FilesClient
     import Localization
     import Observation
@@ -179,7 +180,7 @@
         let model = MacVersionsModel()
         model.isConfirmingDeleteAll = true
         return Text(verbatim: "report.pdf")
-            .frame(width: 320, height: 200)
+            .previewCanvas(.inspector)
             .modifier(MacVersionsDialogs(model: model))
     }
 #endif

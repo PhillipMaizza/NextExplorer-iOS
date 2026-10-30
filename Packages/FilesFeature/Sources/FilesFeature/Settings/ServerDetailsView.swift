@@ -270,23 +270,36 @@ private func previewStore(
     }
 }
 
+/// A sample logo for the previews: an indigo square with a white dot in the middle.
+private enum PreviewLogo {
+    static let side: CGFloat = 200
+    static let dotInset: CGFloat = side / 4
+    static var bounds: CGRect {
+        CGRect(x: 0, y: 0, width: side, height: side)
+    }
+
+    static var dot: CGRect {
+        bounds.insetBy(dx: dotInset, dy: dotInset)
+    }
+}
+
 private let previewLogoData: Data = {
     #if os(macOS)
-        let image = PlatformImageRenderer.image(size: CGSize(width: 200, height: 200), opaque: true) { context in
-            context.setFillColor(CGColor(red: 0.35, green: 0.34, blue: 0.84, alpha: 1))
-            context.fill(CGRect(x: 0, y: 0, width: 200, height: 200))
-            context.setFillColor(CGColor(gray: 1, alpha: 1))
-            context.fillEllipse(in: CGRect(x: 50, y: 50, width: 100, height: 100))
+        let image = PlatformImageRenderer.image(size: PreviewLogo.bounds.size, opaque: true) { context in
+            context.setFillColor(NSColor.systemIndigo.cgColor)
+            context.fill(PreviewLogo.bounds)
+            context.setFillColor(NSColor.white.cgColor)
+            context.fillEllipse(in: PreviewLogo.dot)
         }
-        return image?.jpegData(compressionQuality: 0.9) ?? Data()
+        return image?.jpegData(compressionQuality: Metrics.logoJPEGQuality) ?? Data()
     #else
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 200, height: 200))
+        let renderer = UIGraphicsImageRenderer(size: PreviewLogo.bounds.size)
         return renderer.image { ctx in
             UIColor.systemIndigo.setFill()
-            ctx.fill(CGRect(x: 0, y: 0, width: 200, height: 200))
+            ctx.fill(PreviewLogo.bounds)
             UIColor.white.setFill()
-            ctx.cgContext.fillEllipse(in: CGRect(x: 50, y: 50, width: 100, height: 100))
-        }.jpegData(compressionQuality: 0.9) ?? Data()
+            ctx.cgContext.fillEllipse(in: PreviewLogo.dot)
+        }.jpegData(compressionQuality: Metrics.logoJPEGQuality) ?? Data()
     #endif
 }()
 

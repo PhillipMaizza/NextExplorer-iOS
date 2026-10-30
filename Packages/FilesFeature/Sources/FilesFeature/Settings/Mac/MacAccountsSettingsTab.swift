@@ -172,6 +172,6 @@
             ]
         }
         return MacAccountsSettingsTab(store: Store(initialState: .macPreview) { SettingsFeature() })
-            .frame(width: 640, height: 460)
+            .previewCanvas(.settingsPane)
     }
 #endif

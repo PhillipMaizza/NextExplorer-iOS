@@ -73,6 +73,6 @@ struct TipJarPresentation: ViewModifier {
     )
     state.tipJar = TipJarFeature.State()
     return Color.clear
-        .frame(width: 600, height: 600)
+        .previewCanvas(.sheet)
         .modifier(TipJarPresentation(store: Store(initialState: state) { SettingsFeature() }))
 }

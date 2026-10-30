@@ -56,6 +56,6 @@
         FolderWindowView(store: Store(initialState: FolderWindowFeature.State(
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
         )) { FolderWindowFeature(forward: { _ in }) } withDependencies: { $0.filesClient = .previewValue })
-            .frame(width: 800, height: 500)
+            .previewCanvas(.window)
     }
 #endif

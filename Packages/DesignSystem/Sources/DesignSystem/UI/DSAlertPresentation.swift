@@ -37,7 +37,7 @@ public extension View {
 
 #Preview {
     Color.clear
-        .frame(width: 400, height: 300)
+        .previewCanvas(.dialog)
         .dsAlert(isPresented: .constant(true)) {
             DSAlertSheet(
                 icon: IconKit.delete,

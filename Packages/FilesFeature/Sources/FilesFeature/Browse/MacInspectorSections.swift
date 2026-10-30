@@ -133,7 +133,7 @@
             )
         }
         .formStyle(.grouped)
-        .frame(width: 320, height: 300)
+        .previewCanvas(.inspector)
     }
 
     #Preview("Not shared") {
@@ -141,7 +141,7 @@
             MacInspectorSharingSection(shares: [], serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), onShare: {})
         }
         .formStyle(.grouped)
-        .frame(width: 320, height: 200)
+        .previewCanvas(.inspector)
     }
 
     #Preview("Versions") {
@@ -159,6 +159,6 @@
             MacInspectorVersionsSection(model: MacVersionsModel(), history: history)
         }
         .formStyle(.grouped)
-        .frame(width: 320, height: 320)
+        .previewCanvas(.inspector)
     }
 #endif

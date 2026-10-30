@@ -24,6 +24,6 @@
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
             user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [UserRole.admin])
         )) { MainTabFeature() } withDependencies: { $0.filesClient = .previewValue })
-            .frame(width: 920, height: 560)
+            .previewCanvas(.settingsWindow)
     }
 #endif

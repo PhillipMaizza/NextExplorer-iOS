@@ -85,6 +85,6 @@
         state.draft = ThumbnailSettings()
         state.phase = .loaded
         return MacThumbnailSettingsPane(store: Store(initialState: state) { ThumbnailSettingsFeature() })
-            .frame(width: 580, height: 480)
+            .previewCanvas(.settingsPane)
     }
 #endif

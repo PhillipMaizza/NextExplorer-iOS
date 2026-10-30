@@ -1,5 +1,6 @@
 #if os(macOS)
     import AppKit
+    import DesignSystem
     import SwiftUI
 
     private enum Constants {
@@ -107,8 +108,8 @@
     #Preview {
         ZoomableScrollView {
             LinearGradient(colors: [.orange, .purple], startPoint: .topLeading, endPoint: .bottomTrailing)
-                .frame(width: 800, height: 600)
+                .previewCanvas(.window)
         }
-        .frame(width: 400, height: 300)
+        .previewCanvas(.dialog)
     }
 #endif

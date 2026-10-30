@@ -89,11 +89,11 @@
             OfflinePinnedRootUsage(root: OfflinePinnedRoot(path: "Photos/trip.jpg", isDirectory: false), sizeBytes: 3_200_000),
         ]
         return MacOfflineManagePane(store: Store(initialState: state) { OfflineManageFeature() })
-            .frame(width: 580, height: 420)
+            .previewCanvas(.settingsPane)
     }
 
     #Preview("Empty") {
         MacOfflineManagePane(store: Store(initialState: OfflineManageFeature.State()) { OfflineManageFeature() })
-            .frame(width: 580, height: 420)
+            .previewCanvas(.settingsPane)
     }
 #endif

@@ -1,4 +1,5 @@
 #if os(macOS)
+    import DesignSystem
     import Localization
     import SwiftUI
 
@@ -43,6 +44,6 @@
     }
 
     #Preview("Licenses") {
-        MacLicensesView().frame(width: 640, height: 480)
+        MacLicensesView().previewCanvas(.settingsPane)
     }
 #endif

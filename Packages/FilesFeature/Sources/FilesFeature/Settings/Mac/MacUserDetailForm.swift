@@ -171,6 +171,6 @@
         state.phase = .loaded
         let user = User.previewManagedUsers.last ?? User(id: "u2", username: "jane", email: "jane@example.com")
         return MacUserDetailForm(store: Store(initialState: state) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue }, user: user)
-            .frame(width: 600, height: 520)
+            .previewCanvas(.settingsPane)
     }
 #endif

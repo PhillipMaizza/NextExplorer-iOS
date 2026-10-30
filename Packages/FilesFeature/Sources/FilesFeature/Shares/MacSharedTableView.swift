@@ -329,7 +329,7 @@
         }
         return MacSharedTableView(store: store, segment: segment, onToast: { _ in })
             .backgroundGradient()
-            .frame(width: 900, height: 400)
+            .previewCanvas(.table)
     }
 
     private let previewTableShares: [Share] = [

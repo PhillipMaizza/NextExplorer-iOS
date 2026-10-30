@@ -34,6 +34,6 @@
             Spacer()
         }
         .padding(.space8)
-        .frame(width: 240)
+        .previewCanvasWidth(.control)
     }
 #endif

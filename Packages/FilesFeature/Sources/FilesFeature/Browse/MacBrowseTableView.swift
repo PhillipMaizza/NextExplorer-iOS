@@ -1,4 +1,5 @@
 #if os(macOS)
+    import AppKit
     import AppStorageKeys
     import ComposableArchitecture
     import CoreModels
@@ -130,7 +131,13 @@
                     contextMenu(fileIDs)
                 }
             } primaryAction: { ids in
-                if ids.count == 1, ids.first == personalSpace?.id {
+                // AppKit runs the primary action for Return as well as a double click; Finder
+                // renames on Return, so a key press renames and only a click opens.
+                if NSApp.currentEvent?.type == .keyDown {
+                    if ids.count == 1, ids.first != personalSpace?.id {
+                        keyboardActions.rename()
+                    }
+                } else if ids.count == 1, ids.first == personalSpace?.id {
                     onOpenPersonalSpace()
                 } else if ids.count == 1, let item = item(for: ids.first) {
                     onOpen(item)
@@ -168,11 +175,6 @@
                 } else {
                     closeQuickLook()
                 }
-            }
-            .onKeyPress(.return) {
-                guard selection.count == 1 else { return .ignored }
-                keyboardActions.rename()
-                return .handled
             }
             // Finder's ⌘↓ opens the selection.
             .onKeyPress(.downArrow, phases: .down) { press in
@@ -305,6 +307,6 @@
             onDropOnFolder: { _, _ in },
             contextMenu: { _ in EmptyView() }
         )
-        .frame(width: 900, height: 300)
+        .previewCanvas(.table)
     }
 #endif

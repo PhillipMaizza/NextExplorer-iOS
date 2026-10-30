@@ -184,6 +184,6 @@
         state.users = IdentifiedArray(uniqueElements: User.previewManagedUsers)
         state.phase = .loaded
         return MacUsersSettingsPane(store: Store(initialState: state) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
-            .frame(width: 600, height: 520)
+            .previewCanvas(.settingsPane)
     }
 #endif

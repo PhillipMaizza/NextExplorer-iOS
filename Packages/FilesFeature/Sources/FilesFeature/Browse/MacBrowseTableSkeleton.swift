@@ -56,6 +56,6 @@
 
     #Preview("Table skeleton") {
         MacBrowseTableSkeleton()
-            .frame(width: 900, height: 500)
+            .previewCanvas(.window)
     }
 #endif

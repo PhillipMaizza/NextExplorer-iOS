@@ -1,4 +1,5 @@
 #if os(macOS)
+    import DesignSystem
     import Quartz
     import SwiftUI
 
@@ -60,6 +61,6 @@
 
     #Preview {
         QuickLookPreview(url: URL(fileURLWithPath: "/System/Library/CoreServices/SystemVersion.plist"))
-            .frame(width: 520, height: 400)
+            .previewCanvas(.dialog)
     }
 #endif

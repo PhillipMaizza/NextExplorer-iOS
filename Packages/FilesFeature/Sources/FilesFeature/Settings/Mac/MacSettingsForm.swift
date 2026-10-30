@@ -173,6 +173,6 @@
                 MacSettingsNote("Applies to every window.")
             }
         }
-        .frame(width: 640, height: 300)
+        .previewCanvas(.settingsPane)
     }
 #endif

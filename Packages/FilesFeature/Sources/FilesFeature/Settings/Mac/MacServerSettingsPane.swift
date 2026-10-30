@@ -82,6 +82,6 @@
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
             branding: Branding(appName: "Rivendell Cloud", appLogoUrl: Branding.defaultLogoPath)
         )) { ServerDetailsFeature() } withDependencies: { $0.filesClient = .previewValue })
-            .frame(width: 580, height: 420)
+            .previewCanvas(.settingsPane)
     }
 #endif

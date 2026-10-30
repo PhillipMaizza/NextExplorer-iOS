@@ -123,6 +123,6 @@
                 Favorite(id: "2", path: "/Photos/2026", label: nil, icon: "star", color: "blue", position: 1, createdAt: Date(), updatedAt: Date()),
             ]
         )
-        .frame(width: 700, height: 300)
+        .previewCanvas(.table)
     }
 #endif

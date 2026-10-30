@@ -74,7 +74,7 @@
     #Preview {
         NavigationStack {
             Text(verbatim: "Folder contents")
-                .frame(width: 400, height: 240)
+                .previewCanvas(.dialog)
                 .macToolbarRefresh(onRefresh: { try? await Task.sleep(for: .seconds(2)) }, onFinished: {})
         }
     }

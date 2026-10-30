@@ -152,6 +152,6 @@
 
     #Preview("Settings window") {
         MacSettingsRoot(store: Store(initialState: .macPreview) { SettingsFeature() })
-            .frame(width: 920, height: 560)
+            .previewCanvas(.settingsWindow)
     }
 #endif

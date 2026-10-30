@@ -54,7 +54,7 @@
 
     #Preview {
         Text(verbatim: "Browse")
-            .frame(width: 600, height: 400)
+            .previewCanvas(.window)
             .modifier(MacMainWindowChrome(store: Store(initialState: MainTabFeature.State(
                 serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
                 user: User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com")

@@ -124,12 +124,12 @@
     #Preview("Header") {
         VStack(spacing: .space16) {
             MacSheetHeader(title: "Move “report.pdf”", subtitle: "Documents/Reports", canGoBack: true, onBack: {}) {
-                TextField("Search", text: .constant("")).textFieldStyle(.roundedBorder).frame(width: 160)
+                TextField("Search", text: .constant("")).textFieldStyle(.roundedBorder)
             }
             MacSheetHeader(title: "Choose Items", canGoBack: false, onBack: {})
         }
         .padding(.space16)
-        .frame(width: 520)
+        .previewCanvasWidth(.sheet)
     }
 
     #Preview("Buttons") {
@@ -141,7 +141,7 @@
             }
         }
         .padding(.space16)
-        .frame(width: 520)
+        .previewCanvasWidth(.sheet)
     }
 
     #Preview("Item labels") {
@@ -150,6 +150,6 @@
             MacItemLabel(name: "Reports", subtitle: "Documents/Work", isDirectory: true)
             MacItemLabel(name: "notes.txt", isDirectory: false)
         }
-        .frame(width: 320, height: 160)
+        .previewCanvas(.control)
     }
 #endif

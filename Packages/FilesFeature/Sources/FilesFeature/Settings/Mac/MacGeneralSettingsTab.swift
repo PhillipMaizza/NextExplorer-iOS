@@ -69,6 +69,6 @@
 
     #Preview("General") {
         MacGeneralSettingsTab(store: Store(initialState: .macPreview) { SettingsFeature() })
-            .frame(width: 640, height: 400)
+            .previewCanvas(.settingsPane)
     }
 #endif

@@ -112,6 +112,6 @@
         state.drafts = IdentifiedArray(uniqueElements: rules)
         state.phase = .loaded
         return MacAccessRulesPane(store: Store(initialState: state) { AccessRulesFeature() })
-            .frame(width: 580, height: 420)
+            .previewCanvas(.settingsPane)
     }
 #endif

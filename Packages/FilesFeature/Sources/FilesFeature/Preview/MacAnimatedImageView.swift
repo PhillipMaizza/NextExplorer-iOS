@@ -1,4 +1,5 @@
 #if os(macOS)
+    import DesignSystem
     import SwiftUI
 
     /// macOS GIF player: decodes the capped frame set off the main actor, then steps through it on
@@ -45,6 +46,6 @@
 
     #Preview {
         AnimatedImageView(fileURL: URL(fileURLWithPath: "/System/Library/CoreServices/CoreTypes.bundle/Contents/Resources/GenericDocumentIcon.icns"))
-            .frame(width: 400, height: 300)
+            .previewCanvas(.dialog)
     }
 #endif
