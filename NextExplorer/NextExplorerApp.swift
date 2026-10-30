@@ -91,7 +91,6 @@ struct NextExplorerApp: App {
             WindowGroup(id: FolderWindowRoute.windowID, for: FolderWindowRoute.self) { $route in
                 if let route {
                     MacFolderWindow(route: route, mainStore: Self.store)
-                        .tint(Color.accent)
                         .appAppearance(appearanceMode)
                 }
             }

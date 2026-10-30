@@ -3,13 +3,13 @@ import SwiftUI
 /// Bar and transition modifiers whose targets only exist on iOS. On iOS each forwards to the
 /// exact system call; on macOS, where there is no navigation, tab or bottom bar, it is a no op.
 public extension View {
-    /// The app accent on iOS. The Mac keeps the system accent, so its selections, buttons and
-    /// sheets match every other Mac app.
+    /// The app accent on iOS. The Mac resets to the system accent (undoing the app accent its
+    /// login screen sets above), so its selections, buttons and sheets match every other Mac app.
     func platformAccentTint() -> some View {
         #if os(iOS)
             tint(Color.accent)
         #else
-            self
+            tint(nil)
         #endif
     }
 
