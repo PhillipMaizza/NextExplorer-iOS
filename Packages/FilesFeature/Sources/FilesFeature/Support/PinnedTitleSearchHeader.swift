@@ -40,6 +40,22 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
+        #if os(macOS)
+            // Like Finder, the Mac names the folder in the window title (`windowTitle`), so the
+            // content keeps only the accessory, if any, and the search lives in the toolbar.
+            VStack(spacing: 0) {
+                accessory()
+            }
+            .frame(maxWidth: .infinity)
+            // ⌘F (Edit menu) focuses the toolbar's trailing search field.
+            .modifier(MacToolbarSearch(isEnabled: showsSearchField, text: $searchText, prompt: prompt, isFocused: $isFocused))
+            .focusedSceneValue(\.focusSearchField, showsSearchField ? FocusSearchAction { isFocused = true } : nil)
+        #else
+            header
+        #endif
+    }
+
+    private var header: some View {
         VStack(alignment: .leading, spacing: .space12) {
             Text(title)
                 .type(.headline2, style: .primaryOnSurface)
@@ -48,41 +64,33 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .accessibilityAddTraits(.isHeader)
 
-            #if os(iOS)
-                if showsSearchField {
-                    searchField
-                }
-            #endif
+            if showsSearchField {
+                searchField
+            }
             accessory()
         }
         .padding(.horizontal, .space16)
         .padding(.top, .space8 + extraTopPadding)
         .padding(.bottom, .space12)
-        #if os(macOS)
-            // A Mac searches from the toolbar's trailing field, not a field in the content that
-            // would sit on top of table headers. ⌘F (Edit menu) focuses it.
-            .modifier(MacToolbarSearch(isEnabled: showsSearchField, text: $searchText, prompt: prompt, isFocused: $isFocused))
-            .focusedSceneValue(\.focusSearchField, showsSearchField ? FocusSearchAction { isFocused = true } : nil)
-        #endif
-            // Solid top color behind the title/search (matches the `backgroundGradient()` top stop,
-            // so it reads seamless) so scrolled rows never bleed through the header. A short fade
-            // tail sits just below the header edge to melt into the list gradient instead of ending
-            // on a hard band. The tail's height is reserved as bottom padding, so at rest the content
-            // starts below the fade and only rows scrolled up pass under it.
-            .background(Color.backgroundGradientTop.ignoresSafeArea(edges: .top))
-            .background(alignment: .bottom) {
-                if shouldFadeIntoContent {
-                    LinearGradient(
-                        colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: Constants.fadeHeight)
-                    .offset(y: Constants.fadeHeight)
-                    .allowsHitTesting(false)
-                }
+        // Solid top color behind the title/search (matches the `backgroundGradient()` top stop,
+        // so it reads seamless) so scrolled rows never bleed through the header. A short fade
+        // tail sits just below the header edge to melt into the list gradient instead of ending
+        // on a hard band. The tail's height is reserved as bottom padding, so at rest the content
+        // starts below the fade and only rows scrolled up pass under it.
+        .background(Color.backgroundGradientTop.ignoresSafeArea(edges: .top))
+        .background(alignment: .bottom) {
+            if shouldFadeIntoContent {
+                LinearGradient(
+                    colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: Constants.fadeHeight)
+                .offset(y: Constants.fadeHeight)
+                .allowsHitTesting(false)
             }
-            .padding(.bottom, shouldFadeIntoContent ? Constants.fadeHeight : 0)
+        }
+        .padding(.bottom, shouldFadeIntoContent ? Constants.fadeHeight : 0)
     }
 
     private var searchField: some View {

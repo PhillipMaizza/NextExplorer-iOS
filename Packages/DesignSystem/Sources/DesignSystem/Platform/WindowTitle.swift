@@ -3,8 +3,8 @@
     import SwiftUI
 
     public extension View {
-        /// Sets the hosting window's title, which is also what its tab shows. For screens that
-        /// hide the system navigation title in favor of their own pinned header.
+        /// Sets the hosting window's title, shown in its toolbar like Finder's folder name and on
+        /// its tab. For screens that leave the system navigation title empty.
         func windowTitle(_ title: String) -> some View {
             background(WindowTitleSetter(title: title))
         }
@@ -49,12 +49,7 @@
             }
 
             private func apply() {
-                guard let window else { return }
-                // The screen already shows its own large title; the window title only names the tab.
-                if window.titleVisibility != .hidden {
-                    window.titleVisibility = .hidden
-                }
-                guard window.title != title else { return }
+                guard let window, window.title != title else { return }
                 window.title = title
             }
         }
