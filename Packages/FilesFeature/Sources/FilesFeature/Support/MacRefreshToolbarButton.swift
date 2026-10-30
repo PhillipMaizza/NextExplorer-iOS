@@ -48,17 +48,13 @@
         let action: () -> Void
 
         var body: some View {
+            // A plain system glyph like Safari's reload; while it runs the button just dims
+            // instead of swapping in a spinner.
             Button(action: action) {
-                if isRefreshing {
-                    DSSpinner()
-                        .controlSize(.small)
-                } else {
-                    IconKit.retry
-                        .foregroundStyle(Color.primaryDS)
-                }
+                Label { Text(L10n.Menu.refresh) } icon: { IconKit.retry }
             }
             .disabled(isRefreshing)
-            .accessibilityLabelWithTooltip(L10n.Menu.refresh)
+            .help(L10n.Menu.refresh)
         }
     }
 

@@ -179,19 +179,48 @@ public struct MainTabView: View {
     /// toggle) identical across tabs; TCA store state lives outside the view tree and survives.
     @ViewBuilder
     private var splitView: some View {
-        switch store.selectedTab {
-        case .browse:
-            split { BrowseTabView(store: store.scope(state: \.browse, action: \.browse)) }
-        case .favorites:
-            split { FavoritesView(store: store.scope(state: \.favorites, action: \.favorites)) }
-        case .shared:
-            split { SharedView(store: store.scope(state: \.shared, action: \.shared)) }
-        case .downloads:
-            split { DownloadsView(store: store.scope(state: \.downloads, action: \.downloads)) }
-        case .settings:
-            split { SettingsView(store: store.scope(state: \.settings, action: \.settings)) }
-        }
+        #if os(macOS)
+            // The Mac keeps ONE split view: rebuilding it per section also rebuilt the window
+            // toolbar, so the sidebar toggle animated back in on every switch. Only the detail
+            // changes, under a new identity per section, so a section's bound path is torn down
+            // with its stack rather than rebound in place.
+            split {
+                sectionDetail
+                    .id(store.selectedTab)
+            }
+        #else
+            switch store.selectedTab {
+            case .browse:
+                split { BrowseTabView(store: store.scope(state: \.browse, action: \.browse)) }
+            case .favorites:
+                split { FavoritesView(store: store.scope(state: \.favorites, action: \.favorites)) }
+            case .shared:
+                split { SharedView(store: store.scope(state: \.shared, action: \.shared)) }
+            case .downloads:
+                split { DownloadsView(store: store.scope(state: \.downloads, action: \.downloads)) }
+            case .settings:
+                split { SettingsView(store: store.scope(state: \.settings, action: \.settings)) }
+            }
+        #endif
     }
+
+    #if os(macOS)
+        @ViewBuilder
+        private var sectionDetail: some View {
+            switch store.selectedTab {
+            case .browse:
+                BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
+            case .favorites:
+                FavoritesView(store: store.scope(state: \.favorites, action: \.favorites))
+            case .shared:
+                SharedView(store: store.scope(state: \.shared, action: \.shared))
+            case .downloads:
+                DownloadsView(store: store.scope(state: \.downloads, action: \.downloads))
+            case .settings:
+                SettingsView(store: store.scope(state: \.settings, action: \.settings))
+            }
+        }
+    #endif
 
     private func split(@ViewBuilder detail: () -> some View) -> some View {
         NavigationSplitView(columnVisibility: $columnVisibility) {

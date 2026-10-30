@@ -30,7 +30,7 @@
             }
             .overlay {
                 if store.phase == .loading, store.loaded == nil, !store.isUnavailable {
-                    ProgressView()
+                    ProgressView().controlSize(.small)
                 }
             }
             .onAppear { store.send(.onAppear) }

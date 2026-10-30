@@ -80,7 +80,7 @@
         @ViewBuilder
         private var overlay: some View {
             if store.phase == .loading, store.items.isEmpty {
-                ProgressView()
+                ProgressView().controlSize(.small)
             } else if let errorMessage = store.phase.errorMessage {
                 VStack(spacing: .space8) {
                     Text(errorMessage).foregroundStyle(.secondary)

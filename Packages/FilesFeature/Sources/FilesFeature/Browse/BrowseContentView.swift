@@ -1591,6 +1591,20 @@ struct BrowseContentView: View {
     }
 
     private var noResultsState: some View {
+        #if os(macOS)
+            ContentUnavailableView {
+                Label { Text(L10n.Browse.searchNoMatchesInFolder(store.searchQuery)) } icon: { IconKit.search }
+            } actions: {
+                if store.searchScope == .thisFolder {
+                    Button(L10n.Browse.searchEverywhere) { store.send(.searchScopeChanged(.everywhere)) }
+                }
+            }
+        #else
+            iOSNoResultsState
+        #endif
+    }
+
+    private var iOSNoResultsState: some View {
         VStack(spacing: Constants.emptyStateSpacing) {
             IconKit.search
                 .resizable()

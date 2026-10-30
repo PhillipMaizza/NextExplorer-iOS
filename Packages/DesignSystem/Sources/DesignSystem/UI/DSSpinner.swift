@@ -61,7 +61,8 @@ public struct DSSpinner: View {
 
     public var body: some View {
         #if os(macOS)
-            // The Mac uses its own spinner, sized to the matching control size.
+            // The Mac uses its own spinner one control size down: AppKit's regular spinner is
+            // 32pt, far bigger than the iOS ring it stands in for.
             ProgressView()
                 .controlSize(macControlSize)
                 .accessibilityLabel(accessibilityLabel)
@@ -73,9 +74,9 @@ public struct DSSpinner: View {
     #if os(macOS)
         private var macControlSize: ControlSize {
             switch size {
-            case .small: .small
-            case .regular: .regular
-            case .large: .large
+            case .small: .mini
+            case .regular: .small
+            case .large: .regular
             }
         }
     #endif

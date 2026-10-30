@@ -125,7 +125,7 @@
         @ViewBuilder
         private var listOverlay: some View {
             if store.phase == .loading, store.users.isEmpty {
-                ProgressView()
+                ProgressView().controlSize(.small)
             } else if let error = store.phase.errorMessage, store.users.isEmpty {
                 VStack(spacing: .space8) {
                     Text(error).foregroundStyle(.secondary).multilineTextAlignment(.center)

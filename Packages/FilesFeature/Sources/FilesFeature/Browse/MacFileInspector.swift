@@ -72,7 +72,7 @@
                     }
                     permissionsSection
                 } else {
-                    ProgressView().frame(maxWidth: .infinity)
+                    ProgressView().controlSize(.small).frame(maxWidth: .infinity)
                 }
             }
             .formStyle(.grouped)

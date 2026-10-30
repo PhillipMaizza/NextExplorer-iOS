@@ -102,7 +102,7 @@
                 .frame(height: Metrics.browserHeight)
                 .overlay {
                     if browsePhase == .loading, listing == nil {
-                        ProgressView()
+                        ProgressView().controlSize(.small)
                     } else if let browseError = browsePhase.errorMessage {
                         Text(browseError).foregroundStyle(.secondary).padding()
                     }

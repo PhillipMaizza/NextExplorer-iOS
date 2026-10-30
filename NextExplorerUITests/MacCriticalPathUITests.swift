@@ -50,6 +50,22 @@
             XCTAssertTrue(text(Fixture.imageFile, in: app).waitToAppear(), "⌘1 should return to Browse")
         }
 
+        /// The split view stays put across sections; a folder opened in Browse survives a round
+        /// trip through other sections without the pushed path trapping.
+        func testSwitchingSectionsKeepsTheOpenFolder() {
+            let app = launchApp()
+            openDocuments(in: app)
+
+            app.labeledButton(L10n.Tab.shared).click()
+            XCTAssertTrue(text(Self.byMeShare, in: app).waitToAppear(), "Shared should replace Browse")
+            app.labeledButton(L10n.Tab.favorites).click()
+            XCTAssertTrue(app.buttons[L10n.FileInfo.rowLocation].waitToAppear(), "Favorites should replace Shared")
+            app.labeledButton(L10n.Tab.browse).click()
+
+            XCTAssertTrue(text(Fixture.file, in: app).waitToAppear(), "Browse should come back on the folder it had open")
+            XCTAssertTrue(backButton(in: app).waitToAppear(), "The opened folder should still have Back")
+        }
+
         func testDoubleClickOpensAFolderAndBackReturns() {
             let app = launchApp()
             openDocuments(in: app)

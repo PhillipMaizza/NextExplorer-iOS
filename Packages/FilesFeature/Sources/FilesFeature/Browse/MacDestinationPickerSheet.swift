@@ -58,7 +58,7 @@
         private var content: some View {
             if !store.searchQuery.isEmpty {
                 if store.isSearching, store.searchResults?.isEmpty ?? true {
-                    ProgressView()
+                    ProgressView().controlSize(.small)
                 } else if let results = store.searchResults, results.isEmpty {
                     ContentUnavailableView.search(text: store.searchQuery)
                 } else {
@@ -69,7 +69,7 @@
                     }
                 }
             } else if store.phase == .loading, store.folders.isEmpty {
-                ProgressView()
+                ProgressView().controlSize(.small)
             } else if let errorMessage = store.phase.errorMessage {
                 EmptyStateView(icon: IconKit.warning, message: errorMessage) { store.send(.retryTapped) }
             } else if store.folders.isEmpty {
