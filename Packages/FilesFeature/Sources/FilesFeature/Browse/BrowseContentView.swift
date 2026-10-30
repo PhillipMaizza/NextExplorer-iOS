@@ -347,9 +347,6 @@ struct BrowseContentView: View {
                     }
                 #endif
             }
-            #if os(macOS)
-            .environment(\.macSearchFilters, macSearchFilters)
-            #endif
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -681,11 +678,21 @@ struct BrowseContentView: View {
     @ViewBuilder
     private var searchTableContent: some View {
         #if os(macOS)
-            MacSearchResultsTable(
-                results: store.displayedSearchResults.map(Array.init) ?? [],
-                favoritePaths: store.favoritePaths,
-                onOpen: { store.send(.searchResultTapped($0)) }
-            )
+            VStack(spacing: 0) {
+                MacSearchScopeBar(
+                    scope: $store.searchScope.sending(\.searchScopeChanged),
+                    availableCategories: store.availableSearchCategories,
+                    selectedCategories: store.selectedSearchCategories,
+                    onToggle: { store.send(.searchCategoryToggled($0)) },
+                    onShowAll: { store.send(.searchFilterCleared) }
+                )
+                Divider()
+                MacSearchResultsTable(
+                    results: store.displayedSearchResults.map(Array.init) ?? [],
+                    favoritePaths: store.favoritePaths,
+                    onOpen: { store.send(.searchResultTapped($0)) }
+                )
+            }
             .backgroundGradient()
         #endif
     }
@@ -964,27 +971,10 @@ struct BrowseContentView: View {
         }
     }
 
-    // Drives the rename `NameInputSheet`; a swipe down dismiss routes back through the reducer
-    // so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
-    // Split like the delete confirmation so it presents over whichever surface is frontmost.
-    // The Mac folder table renames in place; search results and previews keep the sheet.
-    #if os(macOS)
-        private var macSearchFilters: MacSearchFilters {
-            MacSearchFilters(
-                scope: $store.searchScope.sending(\.searchScopeChanged),
-                categories: Binding(
-                    get: { FileCategory.allCases.filter(store.selectedSearchCategories.contains) },
-                    set: { tokens in
-                        for category in store.selectedSearchCategories.symmetricDifference(tokens) {
-                            store.send(.searchCategoryToggled(category))
-                        }
-                    }
-                ),
-                availableCategories: store.availableSearchCategories
-            )
-        }
-    #endif
-
+    /// Drives the rename `NameInputSheet`; a swipe down dismiss routes back through the reducer
+    /// so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
+    /// Split like the delete confirmation so it presents over whichever surface is frontmost.
+    /// The Mac folder table renames in place; search results and previews keep the sheet.
     private var shouldRenameInTable: Bool {
         #if os(macOS)
             store.previewItem == nil && !store.isSearching

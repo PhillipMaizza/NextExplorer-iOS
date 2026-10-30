@@ -680,7 +680,13 @@ public struct BrowseFeature {
 
             case let .searchResultTapped(result):
                 guard !result.isDirectory else {
-                    return .send(.delegate(.openPath(path: result.id, title: result.name)))
+                    // Opening a folder ends the search, as in Finder, so the search never carries
+                    // into the folder it opens.
+                    state.searchQuery = ""
+                    return .merge(
+                        search(&state),
+                        .send(.delegate(.openPath(path: result.id, title: result.name)))
+                    )
                 }
                 // Search results only carry `dir`/`file` for `kind`, so rebuild the extension
                 // from the name and hand a real `FileItem` to the same preview routing a

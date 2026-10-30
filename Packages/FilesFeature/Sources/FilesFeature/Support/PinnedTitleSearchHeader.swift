@@ -151,47 +151,19 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
 }
 
 #if os(macOS)
-    /// Browse's search scope and type filter in the Mac's own form: a scope bar under the
-    /// toolbar while searching, and the type filters as tokens in the search field.
-    struct MacSearchFilters {
-        let scope: Binding<BrowseFeature.SearchScope>
-        let categories: Binding<[FileCategory]>
-        let availableCategories: [FileCategory]
-    }
-
-    extension EnvironmentValues {
-        @Entry var macSearchFilters: MacSearchFilters?
-    }
-
     private struct MacToolbarSearch: ViewModifier {
         let isEnabled: Bool
         @Binding var text: String
         let prompt: String
         var isFocused: FocusState<Bool>.Binding
-        @Environment(\.macSearchFilters) private var filters
 
         func body(content: Content) -> some View {
             if !isEnabled {
                 content
-            } else if let filters {
-                pinned(
-                    content
-                        .searchable(
-                            text: $text,
-                            tokens: filters.categories,
-                            suggestedTokens: .constant(filters.availableCategories.filter { !filters.categories.wrappedValue.contains($0) }),
-                            placement: .toolbar,
-                            prompt: Text(prompt)
-                        ) { category in
-                            Label { Text(category.title) } icon: { category.icon }
-                        }
-                        .searchScopes(filters.scope, activation: .onSearchPresentation) {
-                            ForEach(BrowseFeature.SearchScope.allCases, id: \.self) { scope in
-                                Text(scope.title).tag(scope)
-                            }
-                        }
-                )
             } else {
+                // A plain field: tokens and search scopes attached here rebuilt or covered it on
+                // the first keystroke and took its focus. Browse puts its scope and kind filter in
+                // a bar above the results instead, as Finder does.
                 pinned(content.searchable(text: $text, placement: .toolbar, prompt: Text(prompt)))
             }
         }

@@ -898,6 +898,27 @@ struct BrowseFeatureTests {
     }
 
     @Test
+    func openingAFolderFromSearchEndsTheSearch() async {
+        let serverURL = URL(string: "https://example.com")!
+        let result = SearchResultItem(name: "Payslips", path: "", kind: "dir")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.searchQuery = "pay"
+        state.searchResults = [result]
+        state.isSearchingRemotely = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.searchResultTapped(result)) {
+            $0.searchQuery = ""
+            $0.searchResults = nil
+            $0.isSearchingRemotely = false
+        }
+        await store.receive(.delegate(.openPath(path: "Payslips", title: "Payslips")))
+    }
+
+    @Test
     func searchResultTappedOnADirectoryAtTheRootBuildsThePathFromAnEmptyParent() async {
         let serverURL = URL(string: "https://example.com")!
         let result = SearchResultItem(name: "Docs", path: "", kind: "dir")
