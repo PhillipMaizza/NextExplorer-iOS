@@ -11,6 +11,10 @@ MARKETING_VERSION they carried.
   python3 Scripts/gen-changelog.py                       full changelog as Markdown (stdout)
   python3 Scripts/gen-changelog.py --notes 1.0.6         notes for one version (TestFlight)
   python3 Scripts/gen-changelog.py --notes 1.0.6 --links same, with (#PR) references (GitHub Release)
+  python3 Scripts/gen-changelog.py --platform mac --notes 1.0.1   the Mac app's notes, from mac-v tags
+
+The Mac app has its own versions and `mac-v<version>` tags. It has no untagged history of its
+own: everything before its first tag belongs to that first Mac release.
 
 Only what users notice is kept. A title is split into its comma separated clauses and the
 technical ones (tests, CI, lint, tooling, refactors, dependency pins, docs) are dropped; a PR
@@ -39,7 +43,8 @@ TRAILING_PR = re.compile(r"\s*\(#(\d+)\)\s*$")
 TICKET = re.compile(r"^NXTIOS-\d+(?:/\d+)*:\s*")
 VERSION_MENTION = re.compile(r",?\s*\bv\d+(?:\.\d+)+\b")
 MARKETING_VERSION = re.compile(r"MARKETING_VERSION = ([0-9.]+);")
-RELEASE_TAG = re.compile(r"^v(\d+(?:\.\d+)+)$")
+# Release tag prefix per platform: iOS ships `v1.0.6`, the Mac `mac-v1.0.0`.
+TAG_PREFIXES = {"ios": "v", "mac": "mac-v"}
 UPCOMING = "Unreleased"
 
 
@@ -97,13 +102,15 @@ def entry(subject, body):
     return text, pr
 
 
-def release_tags():
-    """{commit: version} for every `v<version>` tag."""
+def release_tags(platform="ios"):
+    """{commit: version} for every release tag of `platform`."""
+    prefix = TAG_PREFIXES[platform]
+    pattern = re.compile(rf"^{re.escape(prefix)}(\d+(?:\.\d+)+)$")
     tags = {}
-    for line in git("tag", "--list", "v*", "--format=%(objectname) %(*objectname) %(refname:short)").splitlines():
+    for line in git("tag", "--list", f"{prefix}*", "--format=%(objectname) %(*objectname) %(refname:short)").splitlines():
         parts = line.split()
         name = parts[-1]
-        match = RELEASE_TAG.match(name)
+        match = pattern.match(name)
         if match:
             # Annotated tags point at a tag object; the peeled commit is the second field.
             commit = parts[1] if len(parts) == 3 else parts[0]
@@ -119,19 +126,20 @@ def user_facing(title):
     return ", ".join(kept)
 
 
-def releases(ref, upcoming=UPCOMING):
+def releases(ref, upcoming=UPCOMING, platform="ios"):
     """[(version, date, [(text, pr)])], newest first; untagged commits first under `upcoming`."""
     log = git("log", "--first-parent", "--format=%H%x1f%cs%x1f%s%x1f%b%x1e", ref)
-    tags = release_tags()
+    tags = release_tags(platform)
     oldest = min(tags, key=lambda commit: version_key(tags[commit])) if tags else None
     cache, groups, order = {}, {}, []
     current = upcoming
-    in_tagged_era = bool(tags)
+    # The Mac never left a pre tag era: its first release carries everything before it.
+    in_tagged_era = bool(tags) or platform == "mac"
     for record in filter(None, (r.strip("\n") for r in log.split("\x1e"))):
         commit, date, subject, body = record.split("\x1f", 3)
         if commit in tags:
             current = tags[commit]
-        if commit == oldest:
+        if commit == oldest and platform == "ios":
             in_tagged_era = False
         version = current if in_tagged_era else app_version(commit, cache)
         made = entry(subject, body)
@@ -174,11 +182,12 @@ def main():
     parser.add_argument("--ref", default="HEAD", help="history to read (default HEAD)")
     parser.add_argument("--upcoming", default=UPCOMING, help="title for commits after the newest tag")
     parser.add_argument("--links", action="store_true", help="append (#PR) references to --notes")
+    parser.add_argument("--platform", choices=sorted(TAG_PREFIXES), default="ios", help="which app's tags to read")
     args = parser.parse_args()
     # Notes for a version not tagged yet are the commits since the newest tag.
-    tagged = set(release_tags().values())
+    tagged = set(release_tags(args.platform).values())
     upcoming = args.notes if args.notes and args.notes not in tagged else args.upcoming
-    history = releases(args.ref, upcoming=upcoming)
+    history = releases(args.ref, upcoming=upcoming, platform=args.platform)
     if args.notes:
         print(notes(history, args.notes, links=args.links))
         return

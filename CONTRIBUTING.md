@@ -82,7 +82,7 @@ Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile`
 - Create an App Store Connect API key (Users and Access › Integrations, App Manager role) and keep the `.p8` outside the repo, e.g. `~/.appstoreconnect/private_keys/`.
 - Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`, and optionally `GH_USER` (the `gh` account used for the CI check and the GitHub Release).
 
-Versions come from git tags. A release ships the next version after the newest `v<version>` tag (patch by default) by passing `MARKETING_VERSION` to the archive, then tags it. To plan a minor or major, set the project's `MARKETING_VERSION` ahead of the newest tag (as for 1.1.0): a release without `bump:` or `version:` then ships that version. The build number is the git commit count, stamped at build time.
+Versions come from git tags. A release ships the next version after the newest `v<version>` tag (patch by default) by passing `MARKETING_VERSION` to the archive, then tags it. To plan a minor or major, set the project's `MARKETING_VERSION` ahead of the newest tag: a release without `bump:` or `version:` then ships that version. The build number is the git commit count, stamped at build time.
 
 iOS lanes (`bundle exec fastlane ios <lane>`, `ios` is the default platform):
 
@@ -94,14 +94,16 @@ iOS lanes (`bundle exec fastlane ios <lane>`, `ios` is the default platform):
 
 Uploads carry the version's `gen-changelog.py` notes as TestFlight's "What to Test".
 
-The Mac app is the same target and ships the same version from the same commit. Mac lanes (`bundle exec fastlane mac <lane>`):
+The Mac app is the same target with its own version line: the project's `MARKETING_VERSION[sdk=macosx*]` (1.0.0 for the first Mac release), `mac-v<version>` tags and `release/mac-<version>` branches, released independently of iOS. Mac lanes (`bundle exec fastlane mac <lane>`):
 
 - `unit_tests`: every package's tests on the Mac.
 - `ui_tests`: the Mac XCUITest suite (`MacCriticalPathUITests`). It drives the real app, so leave the Mac alone while it runs.
-- `beta`: the upcoming version as a Mac App Store package, uploaded to TestFlight for macOS.
-- `release_dry_run`: Mac unit tests and the Mac App Store package, nothing uploaded.
-- `release`: after `ios release`. Builds the `v<version>` commit (the newest tag by default, or `version:`), uploads it, waits for processing and submits the macOS version with the same What's New (`manual_release:true`, `phased:true` as on iOS). It makes no new tag or branch.
+- `beta`: the upcoming Mac version as a Mac App Store package, uploaded to TestFlight for macOS.
+- `release_dry_run`: tag check, Mac unit tests and the Mac App Store package, nothing uploaded.
+- `release`: works like the iOS one from a clean, up to date `main`: next version after the newest `mac-v*` tag, cuts `release/mac-<version>`, uploads, submits the macOS version and tags `mac-v<version>` with a GitHub Release. The first Mac version has no What's New. Same options as iOS.
 - `submit`: resumes a Mac release that stopped after the upload (`version:`, `build:`).
+
+`gen-changelog.py --platform mac` gives the Mac notes from the `mac-v*` tags.
 
 Before the first Mac release, once in App Store Connect: add the macOS platform to the app (the same bundle ID makes it a universal purchase, so the tip jar carries over), then fill in its screenshots, description and review notes. The package is signed with a Mac Installer Distribution certificate; if the first `mac` build cannot find or create one, create it once in Certificates, Identifiers & Profiles.
 
