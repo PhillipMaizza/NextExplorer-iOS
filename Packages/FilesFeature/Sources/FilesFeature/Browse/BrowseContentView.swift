@@ -691,6 +691,7 @@ struct BrowseContentView: View {
                 ),
                 cutItemIDs: store.clipboard?.operation == .move ? store.clipboard?.sourceItemPaths ?? [] : [],
                 offlineItemIDs: store.offlineItemIDs,
+                favoriteItemIDs: store.favoritePaths,
                 onOpen: handleTap,
                 keyboardActions: tableKeyboardActions,
                 serverURL: store.serverURL,

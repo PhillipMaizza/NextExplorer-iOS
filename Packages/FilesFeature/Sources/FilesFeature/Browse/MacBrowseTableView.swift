@@ -35,6 +35,8 @@
         let cutItemIDs: Set<FileItem.ID>
         /// Items saved for offline use, badged like the iOS rows.
         let offlineItemIDs: Set<FileItem.ID>
+        /// Favorited items, starred like the iOS rows.
+        var favoriteItemIDs: Set<FileItem.ID> = []
         let onOpen: (FileItem) -> Void
         let keyboardActions: BrowseKeyboardActions
         let serverURL: URL
@@ -78,6 +80,10 @@
                         if offlineItemIDs.contains(item.id) {
                             MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
                                 .accessibilityLabel(L10n.Offline.badgeAvailable)
+                        }
+                        if favoriteItemIDs.contains(item.id) {
+                            MacTableFolderIcon(image: IconKit.starFill, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
+                                .accessibilityLabel(L10n.Favorites.accessibilityBadge)
                         }
                     }
                     .padding(.vertical, MacBrowseTableMetrics.rowVerticalPadding)
@@ -291,6 +297,7 @@
             selection: $selection,
             cutItemIDs: [],
             offlineItemIDs: [items[1].id],
+            favoriteItemIDs: [items[0].id, items[1].id],
             onOpen: { _ in },
             keyboardActions: .preview,
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
