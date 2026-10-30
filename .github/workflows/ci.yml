@@ -6,7 +6,7 @@ name: CI
 #
 # The XCUITest suites (iPhone on a simulator, and the Mac app) are heavier (they cold launch the
 # app per test) so they run on pushes to main, on demand, and on pull requests labelled `ui-tests`.
-# The iPhone suite is built once in Build and test and split across three runners that only run it.
+# The iPhone suite is built once and split across four runners that only run it.
 
 on:
   pull_request:
@@ -82,6 +82,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # Full history, for the commit times below.
+          fetch-depth: 0
+
+      # Xcode decides what to recompile from modification times; a fresh checkout stamps every
+      # file with the clone time, which made the cached DerivedData recompile every package.
+      - name: Restore file times
+        run: python3 Scripts/ci-restore-mtimes.py
 
       # One DerivedData and one SwiftPM checkout folder shared by every build in the job, so each
       # dependency compiles once; DerivedData is also cached between runs (saved from main,
@@ -189,40 +197,6 @@ jobs:
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             CODE_SIGNING_ALLOWED=NO
 
-      # When the UI tests run, their bundle is built here once, on the app this job just built,
-      # and handed to the three shards, which only run it. Same triggers as the shards.
-      - name: Build UI tests
-        id: uitests
-        if: >-
-          github.event_name == 'push' ||
-          github.event_name == 'workflow_dispatch' ||
-          (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests'))
-        run: |
-          set -euo pipefail
-          xcodebuild build-for-testing \
-            -project NextExplorer.xcodeproj \
-            -scheme NextExplorer \
-            -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
-            -derivedDataPath "${DERIVED_DATA}" \
-            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}"
-          # Only what the .xctestrun runs (it refers to them relative to itself), not the debug
-          # symbols and package test bundles that make the folder about a gigabyte.
-          cd "${DERIVED_DATA}/Build/Products"
-          tar -czf "${RUNNER_TEMP}/ui-test-products.tgz" \
-            ./*iphonesimulator*.xctestrun \
-            Debug-iphonesimulator/NextExplorer.app \
-            Debug-iphonesimulator/NextExplorerUITests-Runner.app \
-            Debug-iphonesimulator/PackageFrameworks
-          ls -lh "${RUNNER_TEMP}/ui-test-products.tgz"
-
-      - name: Upload UI test build
-        if: steps.uitests.outcome == 'success'
-        uses: actions/upload-artifact@v7
-        with:
-          name: ui-test-products
-          path: ${{ runner.temp }}/ui-test-products.tgz
-          retention-days: 1
-
       # Only main saves: GitHub scopes a pull request's cache to that pull request, so a save
       # there helps nobody else, and main's copy is what every pull request restores.
       - name: Save SwiftPM checkouts
@@ -253,6 +227,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # Full history, for the commit times below.
+          fetch-depth: 0
+
+      # Xcode decides what to recompile from modification times; a fresh checkout stamps every
+      # file with the clone time, which made the cached DerivedData recompile every package.
+      - name: Restore file times
+        run: python3 Scripts/ci-restore-mtimes.py
 
       - name: Set build folders
         run: |
@@ -324,9 +306,95 @@ jobs:
             !${{ env.DERIVED_DATA }}/Index.noindex
           key: deriveddata-mac-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
 
+  # The iPhone UI tests, built once beside Build and test (not after its package tests) and handed
+  # to the shards, which only run them.
+  ui-test-build:
+    name: UI test build
+    needs: changes
+    if: >-
+      needs.changes.outputs.code == 'true' && (
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests')))
+    runs-on: xcode-27
+    timeout-minutes: 45
+
+    env:
+      SIM_DEVICE: iPhone 17
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # Full history, for the commit times below.
+          fetch-depth: 0
+
+      # Xcode decides what to recompile from modification times; a fresh checkout stamps every
+      # file with the clone time, which made the cached DerivedData recompile every package.
+      - name: Restore file times
+        run: python3 Scripts/ci-restore-mtimes.py
+
+      - name: Set build folders
+        run: |
+          echo "DERIVED_DATA=${RUNNER_TEMP}/DerivedData" >> "${GITHUB_ENV}"
+          echo "SPM_CHECKOUTS=${RUNNER_TEMP}/SourcePackages" >> "${GITHUB_ENV}"
+
+      - name: Restore SwiftPM checkouts
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.SPM_CHECKOUTS }}
+          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      - name: Restore DerivedData
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            ${{ env.DERIVED_DATA }}
+            !${{ env.DERIVED_DATA }}/Logs
+            !${{ env.DERIVED_DATA }}/Index.noindex
+          key: deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
+          restore-keys: |
+            deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-
+            deriveddata-xcode27.1-
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '27.1'
+
+      - name: Trust Swift package macros
+        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+
+      - name: Build UI tests
+        run: |
+          set -euo pipefail
+          xcodebuild build-for-testing \
+            -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -destination "platform=iOS Simulator,name=${SIM_DEVICE},OS=latest" \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}"
+          # Only what the .xctestrun runs (it refers to them relative to itself), not the debug
+          # symbols and package test bundles that make the folder about a gigabyte.
+          cd "${DERIVED_DATA}/Build/Products"
+          tar -czf "${RUNNER_TEMP}/ui-test-products.tgz" \
+            ./*iphonesimulator*.xctestrun \
+            Debug-iphonesimulator/NextExplorer.app \
+            Debug-iphonesimulator/NextExplorerUITests-Runner.app \
+            Debug-iphonesimulator/PackageFrameworks
+          ls -lh "${RUNNER_TEMP}/ui-test-products.tgz"
+
+      - name: Upload UI test build
+        uses: actions/upload-artifact@v7
+        with:
+          name: ui-test-products
+          path: ${{ runner.temp }}/ui-test-products.tgz
+          retention-days: 1
+
   ui-test:
     name: UI tests (${{ matrix.shard.name }})
-    needs: [changes, build-and-test]
+    needs: [changes, ui-test-build]
     # Merges to main, manual runs from the Actions tab, and pull requests labelled `ui-tests`.
     if: >-
       needs.changes.outputs.code == 'true' && (
@@ -336,37 +404,37 @@ jobs:
     runs-on: xcode-27
     timeout-minutes: 45
 
-    # Three runners, each with about a third of the suite by measured time. The last one runs
-    # every class the first two skip, so a new test class always runs somewhere.
+    # Four runners, each with about a quarter of the suite by measured class time. The last one
+    # runs every class the others skip, so a new test class always runs somewhere.
     strategy:
       fail-fast: false
       matrix:
         shard:
-          - name: 1 of 3
+          - name: 1 of 4
             only: >-
               -only-testing:NextExplorerUITests/FileActionsUITests
-              -only-testing:NextExplorerUITests/SharedUITests
-              -only-testing:NextExplorerUITests/EditorUITests
-              -only-testing:NextExplorerUITests/DownloadsUITests
-          - name: 2 of 3
+          - name: 2 of 4
             only: >-
               -only-testing:NextExplorerUITests/MutationUITests
               -only-testing:NextExplorerUITests/MultiServerUITests
-              -only-testing:NextExplorerUITests/BrowsePreviewUITests
-              -only-testing:NextExplorerUITests/FavoritesUITests
               -only-testing:NextExplorerUITests/SessionExpiryUITests
-          - name: 3 of 3
+          - name: 3 of 4
+            only: >-
+              -only-testing:NextExplorerUITests/SettingsUITests
+              -only-testing:NextExplorerUITests/AuthFlowUITests
+              -only-testing:NextExplorerUITests/SearchUITests
+              -only-testing:NextExplorerUITests/BrowseToolbarUITests
+          - name: 4 of 4
             only: >-
               -only-testing:NextExplorerUITests
               -skip-testing:NextExplorerUITests/FileActionsUITests
-              -skip-testing:NextExplorerUITests/SharedUITests
-              -skip-testing:NextExplorerUITests/EditorUITests
-              -skip-testing:NextExplorerUITests/DownloadsUITests
               -skip-testing:NextExplorerUITests/MutationUITests
               -skip-testing:NextExplorerUITests/MultiServerUITests
-              -skip-testing:NextExplorerUITests/BrowsePreviewUITests
-              -skip-testing:NextExplorerUITests/FavoritesUITests
               -skip-testing:NextExplorerUITests/SessionExpiryUITests
+              -skip-testing:NextExplorerUITests/SettingsUITests
+              -skip-testing:NextExplorerUITests/AuthFlowUITests
+              -skip-testing:NextExplorerUITests/SearchUITests
+              -skip-testing:NextExplorerUITests/BrowseToolbarUITests
 
     env:
       SIM_DEVICE: iPhone 17
@@ -467,6 +535,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # Full history, for the commit times below.
+          fetch-depth: 0
+
+      # Xcode decides what to recompile from modification times; a fresh checkout stamps every
+      # file with the clone time, which made the cached DerivedData recompile every package.
+      - name: Restore file times
+        run: python3 Scripts/ci-restore-mtimes.py
 
       - name: Set build folders
         run: |
