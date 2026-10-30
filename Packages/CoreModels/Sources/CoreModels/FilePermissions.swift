@@ -36,7 +36,7 @@ public enum PermissionRight: CaseIterable, Hashable, Sendable {
 /// `backend/src/routes/permissions.js`. `mode` is the raw `stat` integer (file-type bits
 /// included, e.g. `33188`); the POSIX permission triad is `mode & 0o777`. `owner`/`group`
 /// are resolved names where the server could look them up, otherwise the numeric id as a
-/// string. This is the only endpoint that exposes ownership at all — `/api/metadata`
+/// string. This is the only endpoint that exposes ownership at all: `/api/metadata`
 /// deliberately omits it.
 public struct FilePermissions: Decodable, Equatable, Sendable {
     public let path: String
@@ -70,7 +70,7 @@ public struct FilePermissions: Decodable, Equatable, Sendable {
         mode & 0o777
     }
 
-    /// Three-digit, zero-padded octal — the exact shape `POST /api/permissions/chmod`
+    /// Three-digit, zero-padded octal: the exact shape `POST /api/permissions/chmod`
     /// requires (`/^[0-7]{3}$/`).
     public var octalString: String {
         let raw = String(permissionBits, radix: 8)

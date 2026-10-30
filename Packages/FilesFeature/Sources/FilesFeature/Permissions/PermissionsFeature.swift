@@ -3,7 +3,7 @@ import CoreModels
 import FilesClient
 import Foundation
 
-/// Drives the "Permissions" sheet (`PermissionsSheet`) for one file or folder — view the
+/// Drives the "Permissions" sheet (`PermissionsSheet`) for one file or folder: view the
 /// POSIX mode / owner / group from `GET /api/permissions/*`, then chmod and chown via
 /// `POST /api/permissions/{chmod,chown}`. Every successful write re-fetches so the grid
 /// reflects what actually stuck (a recursive `chmod -R` is best-effort server side).

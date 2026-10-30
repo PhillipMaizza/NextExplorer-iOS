@@ -10,9 +10,11 @@ private enum Constants {
     static let backIconSize: CGFloat = .iconSmall
     static let rowIconSize: CGFloat = .iconMedium
     static let statusSpacing: CGFloat = .space16
+    static let macRowIconSize: CGFloat = .iconSmall
+    static let macSizeColumnWidth: CGFloat = 90
 }
 
-/// One row of the current folder level within `ArchiveBrowserView` — directories are
+/// One row of the current folder level within `ArchiveBrowserView`: directories are
 /// synthesized from entry path prefixes (most archives don't include explicit directory
 /// entries for every intermediate folder), not just the ones the archive lists directly.
 private struct ArchiveRow: Identifiable {
@@ -37,7 +39,7 @@ private struct ArchiveEntryPreview: Identifiable, Equatable {
     }
 }
 
-/// Result of a background entry extraction — `tooLarge` is split out so the user gets a
+/// Result of a background entry extraction: `tooLarge` is split out so the user gets a
 /// "too large to open" message rather than the generic open failure.
 private enum ArchiveExtractionOutcome: Sendable {
     case success
@@ -46,15 +48,15 @@ private enum ArchiveExtractionOutcome: Sendable {
 }
 
 /// Full-screen client-side browser for `.zip`/`.rar` contents (`FileItem.isBrowsableArchive`)
-/// — downloads the archive once via `FilesClient.downloadRawFile`, then navigates its entry
+/// downloads the archive once via `FilesClient.downloadRawFile`, then navigates its entry
 /// list like a real folder tree, entirely in memory. Google-Drive-style "open and see what's
 /// inside," without the server ever fully extracting anything to disk. Files inside are
-/// previewable the same way top-level files are — see `ArchiveEntryPreviewView`.
+/// previewable the same way top-level files are: see `ArchiveEntryPreviewView`.
 struct ArchiveBrowserView: View {
     let item: FileItem
     let serverURL: URL
     /// When set, the archive is already on disk (an archive extracted from *inside* another
-    /// archive — a nested .zip/.rar) and this file is browsed directly instead of downloading
+    /// archive: a nested .zip/.rar) and this file is browsed directly instead of downloading
     /// from the server. Owned by the parent browser; never deleted here.
     var localFileURL: URL?
     let onDismiss: () -> Void
@@ -65,7 +67,7 @@ struct ArchiveBrowserView: View {
     @State private var errorMessage: String?
     @State private var isLoading = true
     @State private var previewingEntry: ArchiveEntryPreview?
-    /// Name of the row whose entry is currently being extracted off the main thread — drives
+    /// Name of the row whose entry is currently being extracted off the main thread: drives
     /// its trailing spinner and blocks a second concurrent extraction.
     @State private var extractingRow: String?
     @State private var toastMessage: DSToastMessage?
@@ -133,7 +135,7 @@ struct ArchiveBrowserView: View {
                 }
         }
         .dsToast($toastMessage)
-        // A real cover, nested inside the archive's own `.fullScreenCover` — the entry
+        // A real cover, nested inside the archive's own `.fullScreenCover`: the entry
         // preview morphs from its row and swipes back to it (`.zoom`), and dismissing it
         // lands back in the archive listing rather than closing everything.
         .fullScreenCover(item: $previewingEntry) { entry in
@@ -153,7 +155,7 @@ struct ArchiveBrowserView: View {
         // Navigating a folder abandons any in-flight extraction the user walked away from.
         .onChange(of: currentPath) { _, _ in extractingRow = nil }
         // Closing the browser purges this archive's extracted entries and resolved assets from
-        // `tmp` — otherwise the last opened entry of every archive ever browsed lingers there
+        // `tmp`: otherwise the last opened entry of every archive ever browsed lingers there
         // until the OS purges under pressure. Skipped while an extraction is still running so we
         // never delete a file out from under an in-flight write.
         .onDisappear {
@@ -174,18 +176,57 @@ struct ArchiveBrowserView: View {
         } else if visibleRows.isEmpty {
             statusContent(icon: IconKit.folderFill, message: L10n.Archive.emptyFolder, tint: .secondaryDS)
         } else {
-            List(visibleRows) { row in
-                Button {
-                    handleTap(row)
-                } label: {
-                    rowContent(row)
+            #if os(macOS)
+                macTable
+            #else
+                DSGroupedList(visibleRows) { row in
+                    Button {
+                        handleTap(row)
+                    } label: {
+                        rowContent(row)
+                    }
+                    .listRowBackground(Color.backgroundSecondary)
                 }
-                .listRowBackground(Color.backgroundSecondary)
-            }
-            .listStyle(.insetGrouped)
-            .scrollContentBackground(.hidden)
+                .listStyle(.insetGrouped)
+                .scrollContentBackground(.hidden)
+            #endif
         }
     }
+
+    #if os(macOS)
+        /// The archive's current folder as a native table, like the Browse table: double click
+        /// opens a folder or previews a file.
+        private var macTable: some View {
+            Table(visibleRows) {
+                TableColumn(L10n.Sort.name) { row in
+                    HStack(spacing: .space8) {
+                        if row.isDirectory {
+                            IconKit.folderFill.foregroundStyle(Color.accent)
+                        } else {
+                            FileTypeIcon(kind: (row.name as NSString).pathExtension)
+                                .frame(width: Constants.macRowIconSize, height: Constants.macRowIconSize)
+                                .matchedTransitionSource(id: row.name, in: entryTransition)
+                        }
+                        Text(row.name).lineLimit(1).truncationMode(.middle)
+                        if extractingRow == row.name {
+                            ProgressView().controlSize(.small)
+                        }
+                    }
+                }
+                TableColumn(L10n.Sort.size) { row in
+                    Text(row.size.map { FileSizeFormat.string(Int64($0)) } ?? "")
+                        .foregroundStyle(.secondary)
+                        .monospacedDigit()
+                }
+                .width(Constants.macSizeColumnWidth)
+            }
+            .contextMenu(forSelectionType: ArchiveRow.ID.self, menu: { _ in }, primaryAction: { ids in
+                if let id = ids.first, let row = visibleRows.first(where: { $0.id == id }) {
+                    handleTap(row)
+                }
+            })
+        }
+    #endif
 
     private func rowContent(_ row: ArchiveRow) -> some View {
         HStack(spacing: Constants.rowSpacing) {
@@ -205,7 +246,7 @@ struct ArchiveBrowserView: View {
             if extractingRow == row.name {
                 DSSpinner(size: .small)
             } else if let size = row.size {
-                Text(Self.byteFormatter.string(fromByteCount: Int64(size)))
+                Text(FileSizeFormat.string(Int64(size)))
                     .type(.body3(.regular), style: .secondary)
             }
             if row.isDirectory {
@@ -256,7 +297,7 @@ struct ArchiveBrowserView: View {
         }
         extractingRow = rowName
         Task {
-            // Off the main thread — a multi-gigabyte entry (a large video, or an unsupported
+            // Off the main thread: a multi-gigabyte entry (a large video, or an unsupported
             // binary opened just to be shared) would otherwise freeze the UI while it unpacks.
             let outcome = await Task.detached(priority: .userInitiated) { () -> ArchiveExtractionOutcome in
                 try? FileManager.default.removeItem(at: destination)
@@ -286,7 +327,7 @@ struct ArchiveBrowserView: View {
     }
 
     /// Resolves and extracts a sibling asset referenced by an in-archive HTML/Markdown file
-    /// (e.g. `style.css` next to `page.html`) from the same open archive — the archive
+    /// (e.g. `style.css` next to `page.html`) from the same open archive: the archive
     /// equivalent of `TextFilePreviewView.resolveServerAsset`.
     private func resolveAsset(_ relativePath: String, relativeTo directory: String) async -> URL? {
         guard let source, let resolved = RelativeAssetPath.resolve(relativePath, relativeTo: directory) else { return nil }
@@ -330,12 +371,6 @@ struct ArchiveBrowserView: View {
             .appendingPathComponent("ArchiveBrowser", isDirectory: true)
             .appendingPathComponent(item.id.replacingOccurrences(of: "/", with: "_"), isDirectory: true)
     }
-
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
 }
 
 #Preview("Loading") {

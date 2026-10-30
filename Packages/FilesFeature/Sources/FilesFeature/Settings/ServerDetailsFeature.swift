@@ -4,7 +4,7 @@ import FilesClient
 import Foundation
 import Localization
 
-/// An admin editing the server's branding — app name and logo — via `PATCH /api/settings`
+/// An admin editing the server's branding, app name and logo, via `PATCH /api/settings`
 /// (and `POST /api/settings/upload-logo` for a new image). Mirrors the web client's
 /// `SettingsBranding.vue`. Reached from the server row in Settings; non-admins never get here.
 ///
@@ -24,7 +24,7 @@ public struct ServerDetailsFeature {
     @ObservableState
     public struct State: Equatable {
         public let serverURL: URL
-        /// Branding as last known from the server — the baseline the form edits against.
+        /// Branding as last known from the server: the baseline the form edits against.
         public var branding: Branding
         public var nameDraft: String
         /// A picked-but-unsaved logo, already downscaled and JPEG encoded by the view.
@@ -47,7 +47,7 @@ public struct ServerDetailsFeature {
             !trimmedName.isEmpty && trimmedName.count <= ServerDetailsFeature.maxNameLength
         }
 
-        /// Shown under the field once it's been cleared — the draft starts as the current
+        /// Shown under the field once it's been cleared: the draft starts as the current
         /// name, so an empty value is always a deliberate edit, not "not filled in yet".
         var nameError: NameError? {
             trimmedName.isEmpty ? .empty : nil

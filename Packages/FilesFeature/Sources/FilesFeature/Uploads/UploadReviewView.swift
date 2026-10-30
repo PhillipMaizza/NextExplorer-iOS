@@ -17,7 +17,7 @@ private enum Constants {
     static let verticalPadding: CGFloat = .space24
     static let enabledOpacity: Double = 1
     static let disabledOpacity: Double = 0.35
-    /// The sheet fits its content but never exceeds this fraction of the screen — past that
+    /// The sheet fits its content but never exceeds this fraction of the screen: past that
     /// the file list scrolls and `.large` is a drag away.
     static let maxHeightFraction: CGFloat = 0.9
 }
@@ -47,7 +47,7 @@ struct UploadReviewView: View {
             .frame(width: .iconSmall, height: .iconSmall)
     }
 
-    /// "Add more files" — opens the same camera / Photos / Files menu the browse `+` uses,
+    /// "Add more files": opens the same camera / Photos / Files menu the browse `+` uses,
     /// streaming the new pick into this same sheet. A clear, dashed outline button that sits
     /// in the bottom bar above Upload (not a list cell, which would clip its border). Disabled
     /// mid preparation so two picks can't overlap.
@@ -86,7 +86,7 @@ struct UploadReviewView: View {
     }
 
     /// The whole sheet as one measured stack (header, the destination + size rows, the file
-    /// list, then the two buttons) so `DSDynamicHeightSheet` sizes to exactly this — no
+    /// list, then the two buttons) so `DSDynamicHeightSheet` sizes to exactly this: no
     /// per-piece height guesses.
     private var content: some View {
         VStack(alignment: .leading, spacing: Constants.contentSpacing) {
@@ -158,7 +158,7 @@ struct UploadReviewView: View {
                 Text(L10n.Uploads.reviewSectionSize)
                     .type(.body2(.regular), style: .primaryOnSurface)
                 Spacer()
-                Text(UploadReviewFormat.byteFormatter.string(fromByteCount: store.totalSize))
+                Text(FileSizeFormat.string(store.totalSize))
                     .type(.body2(.regular), style: .secondary)
             }
         }
@@ -205,56 +205,69 @@ struct UploadReviewView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    var body: some View {
-        DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
-            content
-        } footer: {
-            footer
-        }
-        .interactiveDismissDisabled(!store.files.isEmpty || store.isPreparing)
-        .dsSheet(isPresented: isConfirmingCancel) {
-            DSAlertSheet(
-                icon: IconKit.delete,
-                title: L10n.Uploads.discardTitle,
-                message: L10n.Uploads.discardMessage,
-                confirmTitle: L10n.Uploads.discardConfirm,
-                dismissTitle: L10n.Common.cancel,
-                role: .destructive,
-                closeAccessibilityLabel: L10n.Common.close,
-                onConfirm: { store.send(.confirmCancelTapped) },
-                onDismiss: { store.send(.cancelConfirmationDismissed) }
+    private var sheetBody: some View {
+        #if os(macOS)
+            MacUploadReviewSheet(
+                store: store,
+                title: title,
+                isServerConnectionInsecure: isServerConnectionInsecure,
+                onAddFiles: { isFilesPickerPresented = true }
             )
-        }
-        .sheet(item: $store.scope(state: \.folderPicker, action: \.folderPicker)) { pickerStore in
-            DestinationPickerView(store: pickerStore)
-        }
-        .fullScreenCover(item: $previewSelection) { selection in
-            PickedFilePreview(
-                urls: store.files.map(\.fileURL),
-                names: store.files.map(\.fileName),
-                initialIndex: store.files.firstIndex(where: { $0.id == selection.id }) ?? 0,
-                onClose: { previewSelection = nil }
-            )
-        }
-        .modifier(UploadPickers(
-            isFilesPickerPresented: $isFilesPickerPresented,
-            isPhotosPickerPresented: $isPhotosPickerPresented,
-            isCameraPresented: $isCameraPresented,
-            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented,
-            photosSelection: $photosSelection,
-            onDocumentsPicked: { urls in
-                guard !urls.isEmpty else { return }
-                store.send(.stage(.documents(urls)))
-            },
-            onPhotosPicked: { items in
-                guard !items.isEmpty else { return }
-                store.send(.stage(.photos(items)))
-                photosSelection = []
-            },
-            onCameraCaptured: { url in
-                store.send(.stage(.camera(url)))
+        #else
+            DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
+                content
+            } footer: {
+                footer
             }
-        ))
+        #endif
+    }
+
+    var body: some View {
+        sheetBody
+            .interactiveDismissDisabled(!store.files.isEmpty || store.isPreparing)
+            .dsAlert(isPresented: isConfirmingCancel) {
+                DSAlertSheet(
+                    icon: IconKit.delete,
+                    title: L10n.Uploads.discardTitle,
+                    message: L10n.Uploads.discardMessage,
+                    confirmTitle: L10n.Uploads.discardConfirm,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.confirmCancelTapped) },
+                    onDismiss: { store.send(.cancelConfirmationDismissed) }
+                )
+            }
+            .sheet(item: $store.scope(state: \.folderPicker, action: \.folderPicker)) { pickerStore in
+                DestinationPickerView(store: pickerStore)
+            }
+            .fullScreenCover(item: $previewSelection) { selection in
+                PickedFilePreview(
+                    urls: store.files.map(\.fileURL),
+                    names: store.files.map(\.fileName),
+                    initialIndex: store.files.firstIndex(where: { $0.id == selection.id }) ?? 0,
+                    onClose: { previewSelection = nil }
+                )
+            }
+            .modifier(UploadPickers(
+                isFilesPickerPresented: $isFilesPickerPresented,
+                isPhotosPickerPresented: $isPhotosPickerPresented,
+                isCameraPresented: $isCameraPresented,
+                isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented,
+                photosSelection: $photosSelection,
+                onDocumentsPicked: { urls in
+                    guard !urls.isEmpty else { return }
+                    store.send(.stage(.documents(urls)))
+                },
+                onPhotosPicked: { items in
+                    guard !items.isEmpty else { return }
+                    store.send(.stage(.photos(items)))
+                    photosSelection = []
+                },
+                onCameraCaptured: { url in
+                    store.send(.stage(.camera(url)))
+                }
+            ))
     }
 }
 

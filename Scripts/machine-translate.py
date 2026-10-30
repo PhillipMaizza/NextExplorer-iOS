@@ -43,7 +43,7 @@ def read_en():
 
 
 def mask(value):
-    """Replace each format specifier with a `{n}` token — MyMemory preserves these verbatim across
+    """Replace each format specifier with a `{n}` token; MyMemory preserves these verbatim across
     every language and may reorder them, which the id-based restore below handles correctly."""
     specs = []
 
@@ -86,7 +86,7 @@ def translate_lang(code, entries):
     translator = MyMemoryTranslator(source="en-GB", target=MYMEMORY[code])
     existing = load_existing(code)
     cache = {}
-    lines = [f"# NextExplorer — {code}. Machine-translated (MyMemory) via Scripts/machine-translate.py."]
+    lines = [f"# NextExplorer: {code}. Machine-translated (MyMemory) via Scripts/machine-translate.py."]
     done = 0
     failed = 0
     for key, value in entries:

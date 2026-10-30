@@ -46,6 +46,7 @@ struct AccessRulesView: View {
                     }
                     .disabled(!store.isSaveEnabled)
                     .padding(.top, .space4)
+                    .formActionAlignment()
                 }
             }
             .padding(.horizontal, Metrics.horizontalPadding)

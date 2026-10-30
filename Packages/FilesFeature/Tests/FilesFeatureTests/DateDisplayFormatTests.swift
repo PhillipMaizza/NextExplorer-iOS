@@ -49,7 +49,7 @@ struct DateDisplayFormatTests {
 
     @Test
     func systemFormatProducesANonEmptyLocalizedString() {
-        // Locale-dependent by design (`.medium` date style) — just guard against a blank
+        // Locale-dependent by design (`.medium` date style): just guard against a blank
         // or crashing formatter rather than pinning an exact string.
         #expect(!DateDisplayFormat.system.string(from: date).isEmpty)
     }

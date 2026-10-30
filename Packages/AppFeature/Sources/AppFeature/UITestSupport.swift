@@ -6,7 +6,11 @@
     import FilesClient
     import FilesFeature
     import Foundation
-    import UIKit
+    #if os(iOS)
+        import UIKit
+    #elseif os(macOS)
+        import AppKit
+    #endif
 
     /// Wires a fully mocked, backend free dependency graph for XCUITest runs. The app target calls
     /// `AppFeature.prepareUITestDependencies` from its `init` before the root store is built, so the
@@ -31,6 +35,8 @@
         public static let disableAnimationsFlag = "UITEST_DISABLE_ANIMATIONS"
         public static let animationSpeedKey = "UITEST_ANIM_SPEED"
         public static let orientationKey = "UITEST_ORIENTATION"
+        /// How long the hinge needs to unlock rotation on a foldable before landscape is requested.
+        private static let orientationDelay: TimeInterval = 1
 
         /// Scales every window's layer time so both UIKit and SwiftUI animations finish near
         /// instantly, while their completion handlers and transition code still run. A no op unless
@@ -43,23 +49,31 @@
             // setup, both on the main thread; assert that so the main actor only UIKit access is
             // legal from this nonisolated helper.
             MainActor.assumeIsolated {
-                for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
-                    for window in scene.windows {
-                        window.layer.speed = speed
+                #if os(iOS)
+                    for case let scene as UIWindowScene in UIApplication.shared.connectedScenes {
+                        for window in scene.windows {
+                            window.layer.speed = speed
+                        }
                     }
-                }
+                #elseif os(macOS)
+                    for window in NSApp.windows {
+                        window.contentView?.layer?.speed = speed
+                    }
+                #endif
             }
         }
 
         /// Called with `applyAnimationSpeedIfNeeded`; waits a moment so the hinge has already
         /// unlocked rotation on a foldable.
         public static func applyOrientationIfNeeded(from environment: [String: String] = ProcessInfo.processInfo.environment) {
-            guard environment[mockFlag] == "1", environment[orientationKey] == "landscape" else { return }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                MainActor.assumeIsolated {
-                    ActiveWindowScene.current?.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight)) { _ in }
+            #if os(iOS)
+                guard environment[mockFlag] == "1", environment[orientationKey] == "landscape" else { return }
+                DispatchQueue.main.asyncAfter(deadline: .now() + orientationDelay) {
+                    MainActor.assumeIsolated {
+                        ActiveWindowScene.current?.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight)) { _ in }
+                    }
                 }
-            }
+            #endif
         }
 
         public static let serverURL = URL(string: "https://nextexplorer.example.com")!
@@ -169,12 +183,20 @@
                 client.search = { _, _, query, _ in
                     let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmed.isEmpty else { return [] }
-                    return [
-                        SearchResultItem(name: searchHitName, path: "Documents/\(searchHitName)", kind: "txt", matchLine: trimmed, matchLineNumber: 1),
+                    // Like the server, names in the folder that match come first, so a folder
+                    // found by search stays in the results and can be opened from there.
+                    let nameMatches = store.current()
+                        .filter { $0.name.localizedCaseInsensitiveContains(trimmed) }
+                        .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file", isNameMatch: true) }
+                    return SearchPage(items: nameMatches + [
+                        SearchResultItem(
+                            name: searchHitName, path: "Documents/\(searchHitName)", kind: "txt",
+                            matchLine: trimmed, matchLineNumber: 1, isContentMatch: true
+                        ),
                         SearchResultItem(name: "Meeting Notes.md", path: "Documents/Meeting Notes.md", kind: "md"),
                         // A mixed type hit so a filter chip test can prove it narrows the results.
                         SearchResultItem(name: imageSearchHitName, path: "Documents/\(imageSearchHitName)", kind: "jpg"),
-                    ]
+                    ])
                 }
             case .empty:
                 client.browse = { _, path in
@@ -329,9 +351,11 @@
             }
 
             if environment[UITestSupport.disableAnimationsFlag] == "1" {
-                MainActor.assumeIsolated {
-                    UIView.setAnimationsEnabled(false)
-                }
+                #if os(iOS)
+                    MainActor.assumeIsolated {
+                        UIView.setAnimationsEnabled(false)
+                    }
+                #endif
             }
 
             let auth = UITestSupport.Auth(rawValue: environment[UITestSupport.authKey] ?? "") ?? .loggedOut

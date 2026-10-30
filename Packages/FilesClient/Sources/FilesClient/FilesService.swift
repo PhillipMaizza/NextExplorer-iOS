@@ -12,7 +12,7 @@ import NetworkClient
 /// this file holds only the shared request plumbing they all build on.
 struct FilesService: Sendable {
     let networkClient: NetworkClient
-    /// De-duplicates concurrent downloads that target the same cache file — e.g. a PDF's
+    /// De-duplicates concurrent downloads that target the same cache file: e.g. a PDF's
     /// background thumbnail fetch and a tap-to-open of the same file. Without it both would
     /// download the bytes and then race on the `moveItem` into the shared slot.
     let downloadCoordinator = PreviewDownloadCoordinator()
@@ -170,7 +170,7 @@ struct FilesService: Sendable {
 
     /// Appends each `/`-separated segment of `path` to `base` as its own path component, so
     /// each is percent-encoded individually and a name with `/`-unsafe characters survives.
-    /// An empty `path` yields `base` with a trailing slash — several wildcard routes
+    /// An empty `path` yields `base` with a trailing slash: several wildcard routes
     /// (`/api/browse/`, `/api/usage/`) need that to mean "the root". Shared by every
     /// `/api/<route>/*` wildcard-path endpoint.
     static func appendingPathSegments(of path: String, to base: URL) -> URL {

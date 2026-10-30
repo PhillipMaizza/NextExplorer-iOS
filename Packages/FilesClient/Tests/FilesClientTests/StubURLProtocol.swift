@@ -4,7 +4,7 @@ import Foundation
 /// test-only sources, so this intentionally mirrors `NetworkClient/Tests/.../StubURLProtocol.swift`.
 ///
 /// Safe only because `FilesClientLiveTests` (the only suite that touches these statics) is
-/// declared `@Suite(.serialized)` — tests never run concurrently against this shared state.
+/// declared `@Suite(.serialized)`: tests never run concurrently against this shared state.
 final class StubURLProtocol: URLProtocol {
     struct Stub {
         let statusCode: Int

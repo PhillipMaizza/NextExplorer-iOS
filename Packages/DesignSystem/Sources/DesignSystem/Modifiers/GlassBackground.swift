@@ -2,8 +2,8 @@ import SwiftUI
 
 public extension View {
     /// Liquid Glass on iOS 26, frosted `.ultraThinMaterial` fallback below it. For floating
-    /// controls that sit over arbitrary content — full-screen preview toolbars, close-button
-    /// chips — where the system toolbar can't reach (custom `fullScreenCover` with its own
+    /// controls that sit over arbitrary content: full-screen preview toolbars, close-button
+    /// chips: where the system toolbar can't reach (custom `fullScreenCover` with its own
     /// swipe-to-dismiss). Pass `interactive: true` on a tappable control so the glass reacts
     /// to touch the way system glass buttons do.
     ///
@@ -23,7 +23,7 @@ private struct DSGlassModifier<S: Shape>: ViewModifier {
     func body(content: Content) -> some View {
         if reduceTransparency {
             content.background(shape.fill(Color.backgroundSecondary))
-        } else if #available(iOS 26.0, *) {
+        } else if #available(iOS 26.0, macOS 26.0, *) {
             content.glassEffect(interactive ? .regular.interactive() : .regular, in: shape)
         } else {
             content.background(shape.fill(.ultraThinMaterial))

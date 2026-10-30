@@ -1,8 +1,12 @@
 import AuthenticationServices
 import Foundation
-import UIKit
+#if os(iOS)
+    import UIKit
+#elseif os(macOS)
+    import AppKit
+#endif
 
-/// Runs the OIDC leg in an `ASWebAuthenticationSession` — the only iOS web context that
+/// Runs the OIDC leg in an `ASWebAuthenticationSession`: the only iOS web context that
 /// supports passkeys/WebAuthn (system credential store) while still handing the app the
 /// final custom scheme callback URL. A plain `WKWebView` can capture cookies but blocks
 /// passkeys; Safari/`SFSafariViewController` supports passkeys but never returns control,
@@ -16,7 +20,9 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
             let session = ASWebAuthenticationSession(
                 url: url,
                 callbackURLScheme: callbackURLScheme
-            ) { callbackURL, error in
+            ) { @Sendable callbackURL, error in
+                // Nonisolated on purpose: the Mac calls this on a background queue, where a
+                // main actor closure (inferred from the class) traps the isolation check.
                 if let error {
                     if let asError = error as? ASWebAuthenticationSessionError,
                        asError.code == .canceledLogin
@@ -47,10 +53,14 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
     /// Anchors on the foreground scene's key window. A scene less `UIWindow()` is deprecated
     /// since iOS 26, so it is only the last resort when no scene is connected at all.
     func presentationAnchor(for _: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
-        guard let scene = scenes.first(where: { $0.activationState == .foregroundActive }) ?? scenes.first else {
-            return ASPresentationAnchor()
-        }
-        return scene.keyWindow ?? UIWindow(windowScene: scene)
+        #if os(macOS)
+            return NSApp.keyWindow ?? NSApp.windows.first ?? ASPresentationAnchor()
+        #else
+            let scenes = UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }
+            guard let scene = scenes.first(where: { $0.activationState == .foregroundActive }) ?? scenes.first else {
+                return ASPresentationAnchor()
+            }
+            return scene.keyWindow ?? UIWindow(windowScene: scene)
+        #endif
     }
 }

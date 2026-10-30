@@ -10,7 +10,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
     public var cookieDomain: String
     public var cookiePath: String
     public var cookieIsSecure: Bool
-    /// `nil` when the server issued a session-scoped cookie with no explicit Expires/Max-Age —
+    /// `nil` when the server issued a session-scoped cookie with no explicit Expires/Max-Age:
     /// liveness is then determined solely by calling `/api/auth/me`, never by local clock math.
     public var expiresAt: Date?
     public var username: String?
@@ -55,7 +55,7 @@ public struct SessionCredentials: Codable, Equatable, Sendable {
             .path: cookiePath,
         ]
         // `HTTPCookiePropertyKey.secure`'s mere PRESENCE marks the cookie secure, regardless
-        // of its string value — it must be omitted entirely to produce a non-secure cookie.
+        // of its string value: it must be omitted entirely to produce a non-secure cookie.
         if cookieIsSecure {
             properties[.secure] = "TRUE"
         }

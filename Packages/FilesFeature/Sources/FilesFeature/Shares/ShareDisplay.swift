@@ -1,4 +1,5 @@
 import CoreModels
+import Foundation
 import Localization
 
 /// Presentation titles for the share enums. Kept out of `CoreModels` so the model layer
@@ -29,5 +30,26 @@ extension DirectLinkMode {
         case .raw: L10n.DirectLinkMode.raw
         case .download: L10n.DirectLinkMode.download
         }
+    }
+}
+
+/// The two links a share hands out, as the web builds them: the share page and the direct
+/// file (or folder zip) endpoint.
+extension Share {
+    func shareLink(serverURL: URL) -> String {
+        "\(Self.origin(of: serverURL))/share/\(shareToken)"
+    }
+
+    func directLink(serverURL: URL, mode: DirectLinkMode) -> String {
+        let base = "\(Self.origin(of: serverURL))/api/share/\(shareToken)/file"
+        return mode == .auto ? base : "\(base)?mode=\(mode.rawValue)"
+    }
+
+    private static func origin(of serverURL: URL) -> String {
+        if let scheme = serverURL.scheme, let host = serverURL.host {
+            let port = serverURL.port.map { ":\($0)" } ?? ""
+            return "\(scheme)://\(host)\(port)"
+        }
+        return serverURL.absoluteString
     }
 }

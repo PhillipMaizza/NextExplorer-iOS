@@ -2,7 +2,7 @@ import SwiftUI
 
 public extension Color {
     /// Hand-tuned categorical swatches for labelling distinct entities (recipient names,
-    /// tags) — each one stays legible as both a chip tint (~15% alpha fill) and the chip's
+    /// tags): each one stays legible as both a chip tint (~15% alpha fill) and the chip's
     /// text color in light and dark mode. Not derived from the accent/neutral ramps: those
     /// only span one hue, so adjacent chips wouldn't read as different.
     static let categoricalPalette: [Color] = [
@@ -16,7 +16,7 @@ public extension Color {
         Color(red: 0.33, green: 0.60, blue: 0.80),
     ]
 
-    /// Stable palette entry for `key` — the same string always maps to the same swatch, so a
+    /// Stable palette entry for `key`: the same string always maps to the same swatch, so a
     /// person keeps their color across rows and app launches. Rolls its own hash: `Hashable`
     /// is seeded per process and would hand out a different color every launch.
     static func categorical(for key: String) -> Color {

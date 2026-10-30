@@ -7,7 +7,7 @@ extension FilesService {
         let path: String
     }
 
-    /// All three keys are always written — `null` included — so the server (which skips
+    /// All three keys are always written, `null` included, so the server (which skips
     /// `undefined` keys) actually clears a removed label or colour rather than keeping the old one.
     struct UpdateFavoriteBody: Encodable {
         let label: String?

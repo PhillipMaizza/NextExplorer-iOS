@@ -115,7 +115,7 @@ struct FilesClientLiveTests {
         #expect(preferences == UserPreferences(showHiddenFiles: true, showThumbnails: true))
     }
 
-    // MARK: Error path — HTTP status mapping
+    // MARK: Error path; HTTP status mapping
 
     @Test
     func browseMaps401ToSessionExpired() async throws {
@@ -288,7 +288,7 @@ struct FilesClientLiveTests {
         #expect(store.read(serverURL: serverURL, path: "docs/sub") == nil)
     }
 
-    // MARK: Edge cases — request construction
+    // MARK: Edge cases; request construction
 
     @Test
     func browsePercentEncodesPathSegmentsWithSpecialCharacters() async throws {
@@ -375,7 +375,34 @@ struct FilesClientLiveTests {
     func searchWithAnEmptyQueryStillSendsTheRequest() async throws {
         stub(statusCode: 200, body: #"{"items": []}"#.data(using: .utf8)!)
         let results = try await makeClient().search(serverURL, "", "", nil)
-        #expect(results.isEmpty)
+        #expect(results.items.isEmpty)
+    }
+
+    @Test
+    func searchKeepsTheServerOrderAndSaysWhyItFallsShort() async throws {
+        let body = #"""
+        {"items": [
+          {"name": "zeta.txt", "path": "Docs", "kind": "file", "matchedName": true, "matchedContent": false},
+          {"name": "alpha.txt", "path": "Docs", "kind": "file", "matchLine": "zeta here", "matchLineNumber": 4,
+           "matchedName": false, "matchedContent": true}
+        ], "truncated": false, "limit": 2, "complete": false}
+        """#
+        stub(statusCode: 200, body: body.data(using: .utf8)!)
+        let page = try await makeClient().search(serverURL, "", "zeta", 2)
+        #expect(page.items.map(\.name) == ["zeta.txt", "alpha.txt"])
+        #expect(page.items.map(\.matchKind) == [.name, .contents])
+        #expect(!page.isTruncated)
+        #expect(!page.isComplete)
+        #expect(page.limit == 2)
+    }
+
+    @Test
+    func searchFromAnOlderServerReadsAsComplete() async throws {
+        stub(statusCode: 200, body: #"{"items": [{"name": "a", "path": "", "kind": "dir"}]}"#.data(using: .utf8)!)
+        let page = try await makeClient().search(serverURL, "", "abc", nil)
+        #expect(page.isComplete)
+        #expect(!page.isTruncated)
+        #expect(page.items.first?.matchKind == nil)
     }
 
     @Test
@@ -764,7 +791,7 @@ struct FilesClientLiveTests {
 
     /// A distinct name per call (`UUID`-suffixed) keeps each test's cache slot
     /// (`Library/Caches/PreviewCache/<item.id>`) isolated from every other test and from any
-    /// prior run — the cache is real, persistent disk state, not reset between test runs.
+    /// prior run: the cache is real, persistent disk state, not reset between test runs.
     private func uniquePreviewItem(name: String, path: String = "", kind: String = "txt") -> FileItem {
         let uniqueName = "\(UUID().uuidString)-\(name)"
         return FileItem(name: uniqueName, path: path, dateModified: Date(), size: 0, kind: kind)
@@ -843,7 +870,7 @@ struct FilesClientLiveTests {
     @Test
     func extractZipHitsPlainAPIExtractPathNotAPIFilesExtract() async throws {
         // Regression coverage for a real bug this session: the endpoint is
-        // `POST /api/files/zip/extract` (zip.js's own route path, mounted at plain `/api`) —
+        // `POST /api/files/zip/extract` (zip.js's own route path, mounted at plain `/api`):
         // easy to get subtly wrong the same way `downloadRawFile` originally was.
         let json = #"{"success": true, "item": {"name": "bundle", "path": "", "dateModified": "2024-01-01T00:00:00.000Z", "size": 0, "kind": "directory"}}"#
         stub(statusCode: 201, body: json.data(using: .utf8)!)
@@ -874,7 +901,7 @@ struct FilesClientLiveTests {
 
     @Test
     func downloadRawFileHitsPlainAPIDownloadNotAPIFilesDownload() async throws {
-        // Regression coverage: this endpoint's real path is `POST /api/download` — the
+        // Regression coverage: this endpoint's real path is `POST /api/download`; the
         // backend file lives at `routes/files/download.js` but is mounted at plain `/api` in
         // `routes/index.js`, not `/api/files`. Got this wrong once already (silent 404s on
         // every zip/rar/doc/docx preview until caught by live testing, not this test suite).
@@ -1248,5 +1275,102 @@ struct FilesClientLiveTests {
         await #expect(throws: FilesClientError.forbidden(message: "Admin access required for system settings.")) {
             _ = try await makeClient().updateAccessRules(serverURL, [])
         }
+    }
+
+    /// Shape of `listVersions` in backend/src/services/versions/index.js.
+    private let versionsJSON = """
+    {
+        "enabled": true,
+        "file": { "name": "notes.txt", "path": "Docs/notes.txt", "size": 20, "modifiedAt": "2026-10-28T10:00:00.000Z", "author": null, "source": null },
+        "versions": [
+            {
+                "id": "v2", "size": 18, "modifiedAt": "2026-10-27T09:30:00.000Z", "capturedAt": "2026-10-27T09:31:00.000Z",
+                "author": { "id": "u1", "label": "Phillip" }, "source": "editor", "label": null,
+                "pinned": false, "aside": false, "available": true
+            },
+            {
+                "id": "v1", "size": 12, "modifiedAt": "2026-10-20T08:00:00Z", "capturedAt": "2026-10-20T08:00:05Z",
+                "author": null, "source": "upload", "label": "Draft", "pinned": true, "aside": false, "available": false
+            }
+        ],
+        "totalBytes": 30,
+        "rights": { "see": true, "download": true, "restore": false, "remove": false }
+    }
+    """
+
+    @Test
+    func fetchVersionsSendsThePathAsAQueryAndDecodesTheHistory() async throws {
+        stub(statusCode: 200, body: Data(versionsJSON.utf8))
+        StubURLProtocol.capturedRequest = nil
+        let history = try await makeClient().fetchVersions(serverURL, "Docs/notes.txt")
+        let requestURL = try #require(StubURLProtocol.capturedRequest?.url)
+        #expect(requestURL.path == "/api/versions")
+        #expect(URLComponents(url: requestURL, resolvingAgainstBaseURL: false)?.queryItems == [URLQueryItem(name: "path", value: "Docs/notes.txt")])
+        #expect(history.isEnabled)
+        #expect(history.versions.map(\.id) == ["v2", "v1"])
+        #expect(history.versions[0].author?.label == "Phillip")
+        #expect(history.versions[1].label == "Draft")
+        #expect(history.versions[1].isAvailable == false)
+        #expect(!history.rights.canRestore)
+    }
+
+    @Test
+    func restoreVersionPostsThePathToTheVersionRoute() async throws {
+        stub(statusCode: 200, body: Data(#"{"status":"restored","path":"Docs/notes.txt"}"#.utf8))
+        StubURLProtocol.capturedRequest = nil
+        try await makeClient().restoreVersion(serverURL, "Docs/notes.txt", "v1")
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.url?.path == "/api/versions/v1/restore")
+        #expect(request.httpMethod == "POST")
+    }
+
+    private func capturedJSON() throws -> [String: Any] {
+        let body = try #require(StubURLProtocol.capturedRequestBody)
+        return try #require(try JSONSerialization.jsonObject(with: body) as? [String: Any])
+    }
+
+    @Test
+    func copyVersionPostsTheDestinationAndReturnsTheNewPath() async throws {
+        stub(statusCode: 200, body: Data(#"{"path":"Docs/notes (v1).txt","name":"notes (v1).txt"}"#.utf8))
+        let newPath = try await makeClient().copyVersion(serverURL, "Docs/notes.txt", "v1", "Docs")
+        #expect(newPath == "Docs/notes (v1).txt")
+        #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/versions/v1/copy")
+        let json = try capturedJSON()
+        #expect(json["path"] as? String == "Docs/notes.txt")
+        #expect(json["destination"] as? String == "Docs")
+    }
+
+    @Test
+    func updateVersionLeavesOutTheFieldsNotBeingChanged() async throws {
+        let version = #"{"id":"v1","size":12,"modifiedAt":"2026-10-20T08:00:00Z","capturedAt":"2026-10-20T08:00:05Z","author":null,"label":null,"pinned":true,"available":true}"#
+        stub(statusCode: 200, body: Data(version.utf8))
+        let updated = try await makeClient().updateVersion(serverURL, "Docs/notes.txt", "v1", nil, true)
+        #expect(updated.isPinned)
+        #expect(StubURLProtocol.capturedRequest?.httpMethod == "PATCH")
+        let json = try capturedJSON()
+        #expect(json["pinned"] as? Bool == true)
+        #expect(json["label"] == nil)
+    }
+
+    @Test
+    func deleteAllVersionsSendsAllWithoutIDs() async throws {
+        stub(statusCode: 200, body: Data(#"{"items":[],"deleted":2}"#.utf8))
+        try await makeClient().deleteVersions(serverURL, "Docs/notes.txt", [], true)
+        #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/versions/delete")
+        let json = try capturedJSON()
+        #expect(json["all"] as? Bool == true)
+        #expect(json["ids"] == nil)
+    }
+
+    @Test
+    func downloadVersionReadsTheContentRouteIntoTheDestination() async throws {
+        stub(statusCode: 200, body: Data("old text".utf8))
+        let destination = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+        defer { try? FileManager.default.removeItem(at: destination) }
+        try await makeClient().downloadVersion(serverURL, "Docs/notes.txt", "v1", destination)
+        let url = try #require(StubURLProtocol.capturedRequest?.url)
+        #expect(url.path == "/api/versions/v1/content")
+        #expect(url.query?.contains("path=Docs/notes.txt") == true)
+        #expect(try String(contentsOf: destination, encoding: .utf8) == "old text")
     }
 }

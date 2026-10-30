@@ -1,4 +1,4 @@
-# NextExplorer — 日本語 (ja). key<TAB>value.
+# NextExplorer: 日本語 (ja). key<TAB>value.
 common.cancel	キャンセル
 common.save	保存
 common.edit	編集
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	お気に入りに追加
 browse.actionRemoveFromFavorites	お気に入りから削除
 browse.actionShare	共有リンクを作成
 browse.actionDelete	削除
+browse.actionDuplicate	複製
 browse.renameTitle	名称変更
 browse.renameNamePlaceholder	名前
 browse.actionNewFolder	フォルダを作成
@@ -308,6 +309,7 @@ settings.rowUserManagement	ユーザ管理
 settings.rowChangePassword	パスワードを変更
 settings.rowServer	サーバ
 settings.storageFootnote	フォルダは ZIP としてダウンロードされ、サーバには何も残りません。ダウンロードの削除やキャッシュの消去はこのデバイスにのみ影響し、サーバ上のものには影響しません。
+settings.storageFootnoteMac	キャッシュの消去はこの Mac にのみ影響し、サーバ上のものには影響しません。
 settings.removeAllDownloadsTitle	すべてのダウンロードを削除しますか？
 settings.removeAllDownloadsConfirm	すべて削除
 settings.removeAllDownloadsMessage	このデバイスからすべてのダウンロード済みファイルを削除します。サーバには残ります。
@@ -519,6 +521,14 @@ browse.nameErrorReserved	その名前は使用できません。
 browse.nameErrorSeparators	名前に / または \ を含めることはできません。
 browse.searchMatchLine	%1$lld 行目: %2$@
 browse.searchMatchLineLabel	%lld 行目
+browse.searchTooShort	サブフォルダとファイルの内容を検索するには、%lld 文字以上入力してください。
+browse.searchStoppedEarly	検索は制限時間で停止しました。これまでに見つかった結果です。
+browse.searchFirstOnly	最初の %lld 件の結果です。さらに表示するには検索を絞り込んでください。
+browse.searchShowMore	さらに表示
+browse.searchMatchColumn	一致
+browse.searchMatchedByName	名前
+browse.searchMatchedByContent	内容
+browse.searchMatchedByBoth	名前と内容
 createShare.errorPasswordRequired	パスワードを入力するか、パスワード保護をオフにしてください。
 filter.sheetTitle	タイプで絞り込む
 filter.button	絞り込む
@@ -596,6 +606,32 @@ offline.manageEmpty	オフライン用にダウンロードされたものはあ
 offline.preferOfflineToggle	ダウンロードしたコピーを再生
 offline.preferOfflineSubtitle	利用可能な場合はストリーミングの代わりにダウンロードした動画を使用します。
 offline.tunnelSpeedNote	リモートトンネル経由でサーバーに接続するとダウンロードが遅くなることがあります。大きなファイルの場合は、同じネットワークに接続してサーバーのローカルアドレスを使用してください。
+menu.about	NextExplorerについて
+menu.rateApp	NextExplorerを評価…
+menu.support	NextExplorerサポート
+menu.redo	やり直す
+menu.undo	取り消す
+settings.sectionSupport	サポート
+settings.rowRateApp	NextExplorerを評価
+settings.rowSupport	ヘルプとサポート
+menu.refresh	更新
+select.tableView	テーブル表示
+openWith.openIn	%@で開く
+openWith.openWith	このアプリケーションで開く
+openWith.viewAsText	テキストとして表示
+openWith.failed	このファイルを開けませんでした。
+browse.showInFinder	Finderに表示
+browse.actionCut	カット
+browse.clipboardCutOne	%@を移動する準備ができました
+browse.clipboardCutMany	%lld項目を移動する準備ができました
+menu.enclosingFolder	内包しているフォルダ
+common.more	その他
+openWith.print	プリント…
+menu.newWindow	新規ウインドウ
+menu.newTab	新規タブ
+browse.actionOpenInNewWindow	新規ウインドウで開く
+browse.actionOpenInNewTab	新規タブで開く
+select.viewAs	表示
 settings.rowAppearance	外観
 appearance.system	システム
 appearance.light	ライト
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld 個の項目をダウンロードに保存しまし
 downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	残り %@
 browse.sectionPersonal	個人
-settings.sectionSupport	サポート
-settings.rowRateApp	NextExplorerを評価
-settings.rowSupport	ヘルプとサポート
+browse.progressDownloading	ダウンロード中…
+browse.progressDownloadingIndexed	%2$lld 件中 %1$lld 件をダウンロード中…
+browse.downloadSavedTo	%@ に保存しました
+browse.downloadSavedCountTo	%2$lld 件中 %1$lld 件を %3$@ に保存しました
+browse.downloadSavedAllTo	%1$lld 件を %2$@ に保存しました
+browse.downloadBulkFailed	これらの項目をデバイスに保存できませんでした。
+macSettings.labelFormat	%@：
+macSettings.addAccount	アカウントを追加…
+macSettings.changePassword	パスワードを変更…
+macSettings.signOut	サインアウト…
+macSettings.switchAccount	このアカウントに切り替える
+macSettings.username	ユーザー名
+macSettings.email	メール
+macSettings.role	役割
+macSettings.roleAdmin	管理者
+macSettings.roleUser	ユーザー
+macSettings.status	状態
+macSettings.statusSignedIn	サインイン済み
+macSettings.manage	管理…
+macSettings.cache	キャッシュ
+macSettings.support	ヘルプとサポート…
+macSettings.permission	アクセス権
+macSettings.icon	アイコン
+menu.go	移動
+menu.activity	転送
+menu.showAll	すべて表示
+uploads.notifyDone	アップロード完了
+uploads.notifyBody	%lld 個のファイルをアップロードしました
+downloadQueue.notifyDone	ダウンロード完了
+fileInfo.rowSoftware	ソフトウェア
+fileInfo.sectionVersions	バージョン
+fileInfo.versionsNone	以前のバージョンはありません
+fileInfo.versionRestore	復元…
+fileInfo.restoreTitle	このバージョンを復元しますか？
+fileInfo.restoreMessage	ファイルは %@ の状態に戻ります。現在の内容はバージョンとして保持されます。
+fileInfo.restoreConfirm	復元
+fileInfo.sectionSharing	共有
+fileInfo.notShared	共有リンクはありません
+fileInfo.versionActions	バージョンの操作
+fileInfo.versionDownload	ダウンロード…
+fileInfo.versionSaveCopy	コピーとして保存
+fileInfo.versionRename	名前を変更…
+fileInfo.renameTitle	バージョン名を変更
+fileInfo.renamePlaceholder	バージョン名
+fileInfo.versionPin	このバージョンを保持
+fileInfo.versionUnpin	このバージョンの保持をやめる
+fileInfo.versionKept	保持
+fileInfo.versionDelete	削除…
+fileInfo.deleteTitle	このバージョンを削除しますか？
+fileInfo.deleteAll	すべてのバージョンを削除…
+fileInfo.deleteAllTitle	すべてのバージョンを削除しますか？
+fileInfo.deleteMessage	削除したバージョンは元に戻せません。ファイル自体はそのままです。
+macSettings.choose	選択…
+menu.forward	進む
+menu.goToFolder	フォルダへ移動…
+menu.goToFolderTitle	フォルダへ移動:
+menu.copyPath	パスをコピー
+menu.recentFolders	最近使ったフォルダ
+menu.clearRecent	メニューを消去

@@ -159,7 +159,7 @@ struct ServerDetailsFeatureTests {
         #expect(store.state.nameError == .empty)
         #expect(store.state.isSaveEnabled == false)
 
-        await store.send(.updateTapped) // guarded — no state change, no effect
+        await store.send(.updateTapped) // guarded: no state change, no effect
     }
 
     @Test

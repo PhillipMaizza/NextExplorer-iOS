@@ -2,7 +2,7 @@ import DesignSystem
 import Foundation
 import Localization
 
-/// User-facing grid thumbnail size, persisted locally (`AppStorageKeys.thumbnailSize`) — a
+/// User-facing grid thumbnail size, persisted locally (`AppStorageKeys.thumbnailSize`): a
 /// purely client display preference the real server has no concept of, same as
 /// `DateDisplayFormat`/`browseViewMode`.
 public enum ThumbnailSize: String, CaseIterable, Identifiable, Sendable {
@@ -22,7 +22,7 @@ public enum ThumbnailSize: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
-    /// Minimum width of a grid column — drives how many tiles fit per row.
+    /// Minimum width of a grid column: drives how many tiles fit per row.
     public var gridItemMinWidth: CGFloat {
         switch self {
         case .small: 76

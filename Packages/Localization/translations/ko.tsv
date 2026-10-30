@@ -1,4 +1,4 @@
-# NextExplorer — 한국어 (ko). key<TAB>value.
+# NextExplorer: 한국어 (ko). key<TAB>value.
 common.cancel	취소
 common.save	저장
 common.edit	편집
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	즐겨찾기에 추가
 browse.actionRemoveFromFavorites	즐겨찾기에서 제거
 browse.actionShare	공유 링크 만들기
 browse.actionDelete	삭제
+browse.actionDuplicate	복제
 browse.renameTitle	이름 변경
 browse.renameNamePlaceholder	이름
 browse.actionNewFolder	폴더 만들기
@@ -308,6 +309,7 @@ settings.rowUserManagement	사용자 관리
 settings.rowChangePassword	비밀번호 변경
 settings.rowServer	서버
 settings.storageFootnote	폴더는 ZIP으로 다운로드되며 서버에는 아무것도 남지 않습니다. 다운로드를 삭제하거나 캐시를 지워도 이 기기에만 적용되며 서버에는 영향을 주지 않습니다.
+settings.storageFootnoteMac	캐시를 지워도 이 Mac에만 적용되며 서버에는 영향을 주지 않습니다.
 settings.removeAllDownloadsTitle	모든 다운로드를 제거할까요?
 settings.removeAllDownloadsConfirm	모두 제거
 settings.removeAllDownloadsMessage	이 기기에서 다운로드한 모든 파일을 삭제합니다. 서버에는 남아 있습니다.
@@ -519,6 +521,14 @@ browse.nameErrorReserved	해당 이름은 허용되지 않습니다.
 browse.nameErrorSeparators	이름에는 / 또는 \를 포함할 수 없습니다.
 browse.searchMatchLine	%1$lld번째 줄: %2$@
 browse.searchMatchLineLabel	%lld번째 줄
+browse.searchTooShort	하위 폴더와 파일 내용을 검색하려면 %lld자 이상 입력하세요.
+browse.searchStoppedEarly	검색이 시간 제한에 도달해 중단되었습니다. 지금까지 찾은 결과입니다.
+browse.searchFirstOnly	처음 %lld개 결과입니다. 더 보려면 검색 범위를 좁히세요.
+browse.searchShowMore	더 보기
+browse.searchMatchColumn	일치
+browse.searchMatchedByName	이름
+browse.searchMatchedByContent	내용
+browse.searchMatchedByBoth	이름 및 내용
 createShare.errorPasswordRequired	비밀번호를 입력하거나 비밀번호 보호를 끄세요.
 filter.sheetTitle	유형별 필터
 filter.button	필터
@@ -596,6 +606,32 @@ offline.manageEmpty	오프라인 사용을 위해 다운로드된 항목이 없�
 offline.preferOfflineToggle	다운로드한 사본 재생
 offline.preferOfflineSubtitle	사용 가능할 때 스트리밍 대신 다운로드한 동영상을 사용합니다.
 offline.tunnelSpeedNote	원격 터널을 통해 서버에 연결하면 다운로드가 느려질 수 있습니다. 큰 파일은 같은 네트워크에 연결한 뒤 서버의 로컬 주소를 사용하세요.
+menu.about	NextExplorer에 관하여
+menu.rateApp	NextExplorer 평가하기…
+menu.support	NextExplorer 지원
+menu.redo	실행 복귀
+menu.undo	실행 취소
+settings.sectionSupport	지원
+settings.rowRateApp	NextExplorer 평가하기
+settings.rowSupport	도움말 및 지원
+menu.refresh	새로 고침
+select.tableView	표 보기
+openWith.openIn	%@에서 열기
+openWith.openWith	다음으로 열기
+openWith.viewAsText	텍스트로 보기
+openWith.failed	이 파일을 열 수 없습니다.
+browse.showInFinder	Finder에서 보기
+browse.actionCut	오려두기
+browse.clipboardCutOne	%@ 이동 준비됨
+browse.clipboardCutMany	%lld개 항목 이동 준비됨
+menu.enclosingFolder	상위 폴더
+common.more	더 보기
+openWith.print	프린트…
+menu.newWindow	새로운 윈도우
+menu.newTab	새로운 탭
+browse.actionOpenInNewWindow	새로운 윈도우에서 열기
+browse.actionOpenInNewTab	새로운 탭에서 열기
+select.viewAs	보기
 settings.rowAppearance	화면 모드
 appearance.system	시스템
 appearance.light	라이트
@@ -616,6 +652,62 @@ downloadQueue.savedMany	항목 %lld개가 다운로드에 저장됨
 downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	%@ 남음
 browse.sectionPersonal	개인
-settings.sectionSupport	지원
-settings.rowRateApp	NextExplorer 평가하기
-settings.rowSupport	도움말 및 지원
+browse.progressDownloading	다운로드 중…
+browse.progressDownloadingIndexed	%2$lld개 중 %1$lld개 다운로드 중…
+browse.downloadSavedTo	%@에 저장됨
+browse.downloadSavedCountTo	%2$lld개 중 %1$lld개 항목을 %3$@에 저장함
+browse.downloadSavedAllTo	%1$lld개 항목을 %2$@에 저장함
+browse.downloadBulkFailed	이 항목을 기기에 저장할 수 없습니다.
+macSettings.labelFormat	%@:
+macSettings.addAccount	계정 추가…
+macSettings.changePassword	암호 변경…
+macSettings.signOut	로그아웃…
+macSettings.switchAccount	이 계정으로 전환
+macSettings.username	사용자 이름
+macSettings.email	이메일
+macSettings.role	역할
+macSettings.roleAdmin	관리자
+macSettings.roleUser	사용자
+macSettings.status	상태
+macSettings.statusSignedIn	로그인됨
+macSettings.manage	관리…
+macSettings.cache	캐시
+macSettings.support	도움말 및 지원…
+macSettings.permission	권한
+macSettings.icon	아이콘
+menu.go	이동
+menu.activity	전송
+menu.showAll	모두 보기
+uploads.notifyDone	업로드 완료
+uploads.notifyBody	파일 %lld개 업로드됨
+downloadQueue.notifyDone	다운로드 완료
+fileInfo.rowSoftware	소프트웨어
+fileInfo.sectionVersions	버전
+fileInfo.versionsNone	이전 버전 없음
+fileInfo.versionRestore	복원…
+fileInfo.restoreTitle	이 버전을 복원할까요?
+fileInfo.restoreMessage	파일이 %@의 상태로 돌아갑니다. 현재 내용은 버전으로 보관됩니다.
+fileInfo.restoreConfirm	복원
+fileInfo.sectionSharing	공유
+fileInfo.notShared	공유 링크 없음
+fileInfo.versionActions	버전 작업
+fileInfo.versionDownload	다운로드…
+fileInfo.versionSaveCopy	사본으로 저장
+fileInfo.versionRename	이름 변경…
+fileInfo.renameTitle	버전 이름 변경
+fileInfo.renamePlaceholder	버전 이름
+fileInfo.versionPin	이 버전 보관
+fileInfo.versionUnpin	이 버전 보관 중지
+fileInfo.versionKept	보관됨
+fileInfo.versionDelete	삭제…
+fileInfo.deleteTitle	이 버전을 삭제할까요?
+fileInfo.deleteAll	모든 버전 삭제…
+fileInfo.deleteAllTitle	모든 버전을 삭제할까요?
+fileInfo.deleteMessage	삭제한 버전은 영구히 사라집니다. 파일 자체는 그대로 유지됩니다.
+macSettings.choose	선택…
+menu.forward	앞으로
+menu.goToFolder	폴더로 이동…
+menu.goToFolderTitle	폴더로 이동:
+menu.copyPath	경로 복사
+menu.recentFolders	최근 폴더
+menu.clearRecent	메뉴 지우기

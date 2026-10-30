@@ -40,7 +40,7 @@ public struct OfflineDownloadsFeature {
         /// Manual "Update Offline Files": re-walk the pinned roots and download only the new/changed
         /// files. Shows progress and a completion even when nothing needed downloading.
         case resyncTapped
-        /// Automatic sync on app open / foreground / reconnect: same as `resyncTapped` but silent —
+        /// Automatic sync on app open / foreground / reconnect: same as `resyncTapped` but silent:
         /// it only surfaces progress if there is actually something new to download, so a launch with
         /// nothing changed shows nothing. `force` bypasses the foreground throttle (used on reconnect).
         case autoSync(force: Bool)
@@ -350,7 +350,7 @@ public struct OfflineDownloadsFeature {
     /// Depth first walk of the pinned roots into a flat list of files. Directories are expanded via
     /// `browse`; a folder that fails to list is skipped rather than aborting the whole run, so one
     /// unreadable subfolder doesn't sink an otherwise good sync.
-    private static func enumerate(
+    static func enumerate(
         roots: [FileItem], serverURL: URL, filesClient: FilesClient
     ) async throws -> [FileItem] {
         var files: [FileItem] = []

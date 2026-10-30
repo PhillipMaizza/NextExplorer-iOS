@@ -2,6 +2,10 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
+#if os(macOS)
+    import AppKit
+    import UniformTypeIdentifiers
+#endif
 
 private enum Constants {
     static let iconSize: CGFloat = .size64
@@ -11,7 +15,7 @@ private enum Constants {
 }
 
 /// Full-screen stand-in for a file the app has no viewer for (`FileItem.isUnsupportedForPreview`)
-/// — a font, a disk image, a `.webm` AVFoundation can't decode. Mirrors the Files app: the
+/// a font, a disk image, a `.webm` AVFoundation can't decode. Mirrors the Files app: the
 /// file's icon, name, type and size centered on screen, a `DSInfoCard` saying it can't be
 /// opened, and whatever of the shared `previewChrome` action bar the caller wires up. On the
 /// browse tab that's the full set (share / share link / rename / download / delete); inside
@@ -25,18 +29,46 @@ struct UnsupportedFilePreviewView: View {
     var onDownload: (() -> Void)?
     var onDelete: (() -> Void)?
 
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
-
     private var typeText: String {
         item.kind.isEmpty ? L10n.UnsupportedPreview.genericType : item.kind.uppercased()
     }
 
     var body: some View {
         NavigationStack {
+            content
+                .previewChrome(
+                    title: item.name,
+                    systemShare: systemShare,
+                    onShareLink: onShareLink,
+                    onRename: onRename,
+                    onDownload: onDownload,
+                    onDelete: onDelete,
+                    onClose: onDismiss
+                )
+        }
+    }
+
+    private var content: some View {
+        #if os(macOS)
+            // Finder's look for a file Quick Look can't show: its real icon, name and details,
+            // then the apps that can open it.
+            ContentUnavailableView {
+                Label {
+                    Text(item.name)
+                } icon: {
+                    Image(nsImage: NSWorkspace.shared.icon(for: UTType(filenameExtension: item.kind) ?? .data))
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: Constants.iconSize, height: Constants.iconSize)
+                }
+            } description: {
+                Text(verbatim: [typeText, FileSizeFormat.string(item.size)].joined(separator: " · "))
+                    + Text(verbatim: "\n")
+                    + Text(L10n.UnsupportedPreview.cannotOpen)
+            } actions: {
+                MacOpenWithButtons(source: systemShare)
+            }
+        #else
             VStack(spacing: Constants.contentSpacing) {
                 Spacer()
 
@@ -50,7 +82,7 @@ struct UnsupportedFilePreviewView: View {
                         .lineLimit(3)
                     Text(typeText)
                         .type(.body2(.regular), style: .secondary)
-                    Text(Self.byteFormatter.string(fromByteCount: item.size))
+                    Text(FileSizeFormat.string(item.size))
                         .type(.body2(.regular), style: .secondary)
                 }
 
@@ -63,16 +95,7 @@ struct UnsupportedFilePreviewView: View {
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .padding(.horizontal, Constants.horizontalPadding)
             .backgroundGradient()
-            .previewChrome(
-                title: item.name,
-                systemShare: systemShare,
-                onShareLink: onShareLink,
-                onRename: onRename,
-                onDownload: onDownload,
-                onDelete: onDelete,
-                onClose: onDismiss
-            )
-        }
+        #endif
     }
 }
 
@@ -81,5 +104,20 @@ struct UnsupportedFilePreviewView: View {
         item: FileItem(name: "test_X24504889T2", path: "", dateModified: Date(), size: 6_144, kind: "dat"),
         systemShare: .unavailable,
         onDismiss: {}
+    )
+}
+
+#Preview("Remote file") {
+    UnsupportedFilePreviewView(
+        item: FileItem(name: "invite.ics", path: "Documents", dateModified: Date(), size: 2_048, kind: "ics"),
+        systemShare: .remote(
+            FileItem(name: "invite.ics", path: "Documents", dateModified: Date(), size: 2_048, kind: "ics"),
+            serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/")
+        ),
+        onDismiss: {},
+        onShareLink: {},
+        onRename: {},
+        onDownload: {},
+        onDelete: {}
     )
 }

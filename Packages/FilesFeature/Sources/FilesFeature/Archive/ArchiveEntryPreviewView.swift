@@ -8,12 +8,12 @@ private enum Constants {
     static let statusSpacing: CGFloat = .space16
     /// Chrome crossfade when tapping a full-screen archive image, matching `ImageGalleryView`.
     static let chromeFadeDuration: Double = 0.22
-    /// A text/markdown entry is only ever read this far in for preview — an archive can hold a
+    /// A text/markdown entry is only ever read this far in for preview: an archive can hold a
     /// multi-gigabyte "text" file, and `String(contentsOf:)` would pull all of it into memory.
     static let maxTextPreviewBytes = 5 * 1024 * 1024
 }
 
-/// Preview for a file extracted from inside an archive — deliberately mirrors, rather than
+/// Preview for a file extracted from inside an archive: deliberately mirrors, rather than
 /// reuses, `BrowsePreviewRouter`'s branching: that one is wired to `BrowseFeature`'s
 /// store-driven fetch/save actions, which don't apply here (no server path to save back to,
 /// content already sits fully extracted on disk).
@@ -26,7 +26,7 @@ struct ArchiveEntryPreviewView: View {
 
     var body: some View {
         if item.isUnsupportedForPreview {
-            // Same Files-app style screen as the browse tab, minus the server actions — only
+            // Same Files-app style screen as the browse tab, minus the server actions: only
             // system-sharing the already-extracted file applies to an archive entry.
             UnsupportedFilePreviewView(item: item, systemShare: .local(fileURL), onDismiss: onDismiss)
         } else if item.isBrowsableArchive {
@@ -57,7 +57,7 @@ struct ArchiveEntryPreviewView: View {
     }
 }
 
-/// Full-screen image viewer for an archive entry — mirrors `ImageGalleryView`'s single-page
+/// Full-screen image viewer for an archive entry: mirrors `ImageGalleryView`'s single-page
 /// behavior (`ZoomableScrollView`, full-bleed, tap toggles the chrome) but reads straight
 /// from the already-extracted local file rather than the server.
 private struct ArchiveImagePreviewView: View {
@@ -80,14 +80,14 @@ private struct ArchiveImagePreviewView: View {
                 }
                 .navigationTitle(fileName)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .navigationBarBackgroundHidden()
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
                             .accessibilityLabel(L10n.Common.close)
                     }
                 }
-                .toolbar(areControlsHidden ? .hidden : .visible, for: .navigationBar)
+                .hidesNavigationBar(areControlsHidden)
                 .statusBarHidden(areControlsHidden)
         }
     }
@@ -118,7 +118,7 @@ private struct ArchiveImagePreviewView: View {
     }
 }
 
-/// Read-only text/code viewer for an archive entry — no save action exists (there's nothing
+/// Read-only text/code viewer for an archive entry: no save action exists (there's nothing
 /// to save back into: the archive isn't re-written), so unlike `TextFilePreviewView` this has
 /// no edit toggle at all.
 private struct ArchiveTextEntryPreviewView: View {
@@ -130,8 +130,8 @@ private struct ArchiveTextEntryPreviewView: View {
     @State private var content: String?
     @State private var renderedMarkdownHTML = ""
     @State private var loadErrorMessage: String?
-    @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
-    @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
+    @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
+    @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
 
     private var isHTML: Bool {
         let lowercaseKind = item.kind.lowercased()
@@ -149,7 +149,7 @@ private struct ArchiveTextEntryPreviewView: View {
                 .backgroundGradient()
                 .navigationTitle(item.name)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .navigationBarBackgroundHidden()
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
@@ -158,7 +158,7 @@ private struct ArchiveTextEntryPreviewView: View {
                 }
         }
         .task {
-            // Read + (for Markdown) render off the main actor — a multi-megabyte entry would
+            // Read + (for Markdown) render off the main actor: a multi-megabyte entry would
             // otherwise block the UI while it decodes and parses. Memoized once here rather
             // than inline from `body_`, which would re-parse on every unrelated re-render.
             let shouldRenderMarkdown = isMarkdown
@@ -193,9 +193,9 @@ private struct ArchiveTextEntryPreviewView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else if let content {
-            if isHTML, renderHTMLPages {
+            if isHTML, shouldRenderHTMLPages {
                 HTMLRenderedView(cacheKey: item.id, html: content, resolveAsset: resolveAsset)
-            } else if isMarkdown, renderMarkdownPages {
+            } else if isMarkdown, shouldRenderMarkdownPages {
                 HTMLRenderedView(cacheKey: item.id, html: renderedMarkdownHTML, resolveAsset: resolveAsset)
             } else {
                 CodeEditorView(kind: item.kind, text: .constant(content), isEditable: false)

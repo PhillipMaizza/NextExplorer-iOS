@@ -9,7 +9,7 @@ private enum Constants {
 }
 
 /// A full-width inline notice: a leading `info` glyph and an attention-styled message on an
-/// amber-tinted rounded background. The calmer sibling of `DSErrorCard` — for a heads-up the
+/// amber-tinted rounded background. The calmer sibling of `DSErrorCard`: for a heads-up the
 /// user should read but that isn't a failure (an insecure connection, a caveat about a
 /// setting).
 public struct DSInfoCard: View {

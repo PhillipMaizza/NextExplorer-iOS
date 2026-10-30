@@ -1,4 +1,4 @@
-/// Mirrors `GET /api/auth/status` — which auth methods this NextExplorer server has
+/// Mirrors `GET /api/auth/status`: which auth methods this NextExplorer server has
 /// enabled. Confirmed nested shape: `{ strategies: { local, oidc }, ... }`.
 public struct AuthStatus: Codable, Equatable, Sendable {
     public let localEnabled: Bool

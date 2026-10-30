@@ -3,7 +3,7 @@ import CoreModels
 import Foundation
 
 /// One file sitting in the user-visible `Documents/Downloads` or `Caches/Downloads` folder,
-/// as surfaced by the Downloads tab. Deleting it here only removes this local copy — it
+/// as surfaced by the Downloads tab. Deleting it here only removes this local copy: it
 /// never touches the server, unlike every other delete action in the app.
 public struct LocalDownload: Equatable, Identifiable, Sendable {
     public let url: URL
@@ -25,8 +25,8 @@ public struct LocalDownload: Equatable, Identifiable, Sendable {
     }
 }
 
-/// Copies an already-fetched file — wherever `FilesClient.downloadRawFile` left it, inside
-/// the app's internal dedup'd preview cache (`Library/Caches/PreviewCache/...`) — into a
+/// Copies an already-fetched file: wherever `FilesClient.downloadRawFile` left it, inside
+/// the app's internal dedup'd preview cache (`Library/Caches/PreviewCache/...`): into a
 /// folder the user can actually find and manage: `Documents/Downloads` or `Caches/Downloads`,
 /// per the "Download Location" setting. Deliberately separate from that internal cache
 /// directory, which is purely an implementation detail the user has no visibility into.
@@ -35,13 +35,13 @@ public struct LocalDownloadStore: Sendable {
     /// into its own subfolder and can't see another account's files on a shared device. An empty
     /// scope maps to the unscoped legacy folder.
     public var save: @Sendable (_ sourceURL: URL, _ fileName: String, _ location: DownloadLocation, _ scope: String) throws -> URL
-    /// Both `Documents/Downloads` and `Caches/Downloads` — the user's "Download Location"
+    /// Both `Documents/Downloads` and `Caches/Downloads`: the user's "Download Location"
     /// preference can change over time, so past downloads under the other location would
     /// otherwise silently disappear from the Downloads tab. Scoped to one account (see `save`).
     public var list: @Sendable (_ scope: String) throws -> [LocalDownload]
     public var delete: @Sendable (_ url: URL) throws -> Void
     /// Renames the local copy in place (same folder), returning its new URL. Local only, like
-    /// `delete` — the server file is never touched.
+    /// `delete`: the server file is never touched.
     public var rename: @Sendable (_ url: URL, _ newName: String) throws -> URL
 
     public init(
@@ -116,7 +116,7 @@ extension LocalDownloadStore: DependencyKey {
             let fileManager = FileManager.default
             let downloadsDirectory = try downloadsDirectory(for: location, scope: scope, create: true)
             try fileManager.createDirectory(at: downloadsDirectory, withIntermediateDirectories: true)
-            // `fileName` originates from the server's `FileItem.name` — keep a hostile `../`
+            // `fileName` originates from the server's `FileItem.name`: keep a hostile `../`
             // from landing the copy outside the Downloads folder.
             let safeName = SafeFileName.component(fileName)
             // Two different server files that happen to share a name must not clobber each

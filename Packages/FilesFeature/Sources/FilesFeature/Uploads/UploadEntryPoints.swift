@@ -3,13 +3,15 @@ import DesignSystem
 import Localization
 import PhotosUI
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     static let maxPhotoUploads = 20
 }
 
-/// Camera permission resolved *before* presenting `UIImagePickerController` — presenting it
+/// Camera permission resolved *before* presenting `UIImagePickerController`: presenting it
 /// first shows the system prompt mid transition and the camera stalls behind it. Returns
 /// `true` when the picker may be shown, `false` when the caller should surface the denied
 /// alert instead.
@@ -28,7 +30,7 @@ enum CameraAccess {
 }
 
 /// The three upload pickers (camera / Photos / Files) plus the camera denied alert, with no
-/// UI of its own — the trigger (a toolbar `+`, an "Add more" row) lives at the call site and
+/// UI of its own: the trigger (a toolbar `+`, an "Add more" row) lives at the call site and
 /// flips these bindings. Shared by `UploadEntryPoints` and `UploadReviewView`.
 struct UploadPickers: ViewModifier {
     @Binding var isFilesPickerPresented: Bool
@@ -42,7 +44,7 @@ struct UploadPickers: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .dsSheet(isPresented: $isCameraDeniedAlertPresented) {
+            .dsAlert(isPresented: $isCameraDeniedAlertPresented) {
                 DSAlertSheet(
                     icon: IconKit.camera,
                     title: L10n.Uploads.cameraDeniedTitle,
@@ -52,9 +54,11 @@ struct UploadPickers: ViewModifier {
                     closeAccessibilityLabel: L10n.Common.close,
                     onConfirm: {
                         isCameraDeniedAlertPresented = false
-                        if let url = URL(string: UIApplication.openSettingsURLString) {
-                            UIApplication.shared.open(url)
-                        }
+                        #if os(iOS)
+                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                UIApplication.shared.open(url)
+                            }
+                        #endif
                     },
                     onDismiss: { isCameraDeniedAlertPresented = false }
                 )
@@ -78,6 +82,7 @@ struct UploadPickers: ViewModifier {
                 guard !items.isEmpty else { return }
                 onPhotosPicked(items)
             }
+        #if os(iOS)
             .fullScreenCover(isPresented: $isCameraPresented) {
                 CameraPicker { url in
                     isCameraPresented = false
@@ -87,14 +92,15 @@ struct UploadPickers: ViewModifier {
                 }
                 .ignoresSafeArea()
             }
+        #endif
     }
 }
 
-/// Take Photo or Video / Upload from Gallery / Upload from Files — the shared menu behind both
+/// Take Photo or Video / Upload from Gallery / Upload from Files: the shared menu behind both
 /// the browse `+` and the review sheet's "Add more files" row.
 struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     private let label: () -> MenuLabel
-    /// Extra items above the upload sources — the browse `+` slots "Create Folder" here; the
+    /// Extra items above the upload sources: the browse `+` slots "Create Folder" here; the
     /// review sheet's "Add more" leaves it empty.
     private let leadingActions: () -> LeadingActions
     @Binding private var isFilesPickerPresented: Bool
@@ -119,23 +125,38 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     }
 
     var body: some View {
+        #if os(macOS)
+            // The Mac uploads from Finder only (a drop, or this file picker), so there is no
+            // menu to choose a source from; the leading actions are an iOS toolbar concern.
+            Button { isFilesPickerPresented = true } label: {
+                label()
+            }
+            .buttonStyle(.plain)
+        #else
+            menu
+        #endif
+    }
+
+    private var menu: some View {
         // `.menuOrder(.fixed)`: keep Take Photo first even from the review sheet's "Add more"
         // button, where the menu opens upward and the default order would flip.
         Menu {
             leadingActions()
-            if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                Button {
-                    Task {
-                        if await CameraAccess.resolve() {
-                            isCameraPresented = true
-                        } else {
-                            isCameraDeniedAlertPresented = true
+            #if os(iOS)
+                if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                    Button {
+                        Task {
+                            if await CameraAccess.resolve() {
+                                isCameraPresented = true
+                            } else {
+                                isCameraDeniedAlertPresented = true
+                            }
                         }
+                    } label: {
+                        Label { Text(L10n.Uploads.actionTakePhoto) } icon: { IconKit.camera }
                     }
-                } label: {
-                    Label { Text(L10n.Uploads.actionTakePhoto) } icon: { IconKit.camera }
                 }
-            }
+            #endif
             Button {
                 isPhotosPickerPresented = true
             } label: {

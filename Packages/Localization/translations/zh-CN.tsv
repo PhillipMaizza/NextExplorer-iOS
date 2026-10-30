@@ -1,4 +1,4 @@
-# NextExplorer — 简体中文 (zh-CN). key<TAB>value.
+# NextExplorer: 简体中文 (zh-CN). key<TAB>value.
 common.cancel	取消
 common.save	保存
 common.edit	编辑
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	添加到收藏
 browse.actionRemoveFromFavorites	从收藏中移除
 browse.actionShare	创建共享链接
 browse.actionDelete	删除
+browse.actionDuplicate	创建副本
 browse.renameTitle	重命名
 browse.renameNamePlaceholder	名称
 browse.actionNewFolder	新建文件夹
@@ -308,6 +309,7 @@ settings.rowUserManagement	用户管理
 settings.rowChangePassword	更改密码
 settings.rowServer	服务器
 settings.storageFootnote	文件夹以 ZIP 形式下载，服务器上不会留下任何文件。删除下载或清除缓存只影响此设备，不会改动服务器上的任何内容。
+settings.storageFootnoteMac	清除缓存只影响此 Mac，不会改动服务器上的任何内容。
 settings.removeAllDownloadsTitle	移除所有下载？
 settings.removeAllDownloadsConfirm	全部移除
 settings.removeAllDownloadsMessage	这会从此设备删除所有已下载的文件。它们仍保留在服务器上。
@@ -519,6 +521,14 @@ browse.nameErrorReserved	该名称不允许使用。
 browse.nameErrorSeparators	名称不能包含 / 或 \。
 browse.searchMatchLine	第 %1$lld 行：%2$@
 browse.searchMatchLineLabel	第 %lld 行
+browse.searchTooShort	至少输入 %lld 个字符以搜索子文件夹和文件内容。
+browse.searchStoppedEarly	搜索已达到时间限制而停止。以下是目前找到的结果。
+browse.searchFirstOnly	前 %lld 个结果。缩小搜索范围以查看更多。
+browse.searchShowMore	显示更多
+browse.searchMatchColumn	匹配
+browse.searchMatchedByName	名称
+browse.searchMatchedByContent	内容
+browse.searchMatchedByBoth	名称和内容
 createShare.errorPasswordRequired	请输入密码或关闭密码保护。
 filter.sheetTitle	按类型筛选
 filter.button	筛选
@@ -596,6 +606,32 @@ offline.manageEmpty	没有为离线使用下载任何内容。
 offline.preferOfflineToggle	播放已下载的副本
 offline.preferOfflineSubtitle	可用时使用已下载的视频而非流式播放。
 offline.tunnelSpeedNote	通过远程隧道访问服务器可能会降低下载速度。下载大文件时，请连接到同一网络并使用服务器的本地地址。
+menu.about	关于 NextExplorer
+menu.rateApp	为 NextExplorer 评分…
+menu.support	NextExplorer 支持
+menu.redo	重做
+menu.undo	撤销
+settings.sectionSupport	支持
+settings.rowRateApp	为 NextExplorer 评分
+settings.rowSupport	帮助与支持
+menu.refresh	刷新
+select.tableView	表格视图
+openWith.openIn	在 %@ 中打开
+openWith.openWith	打开方式
+openWith.viewAsText	以文本查看
+openWith.failed	无法打开此文件。
+browse.showInFinder	在“访达”中显示
+browse.actionCut	剪切
+browse.clipboardCutOne	%@ 已准备移动
+browse.clipboardCutMany	%lld 个项目已准备移动
+menu.enclosingFolder	上层文件夹
+common.more	更多
+openWith.print	打印…
+menu.newWindow	新建窗口
+menu.newTab	新建标签页
+browse.actionOpenInNewWindow	在新窗口中打开
+browse.actionOpenInNewTab	在新标签页中打开
+select.viewAs	显示方式
 settings.rowAppearance	外观
 appearance.system	跟随系统
 appearance.light	浅色
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld 个项目已保存到下载
 downloadQueue.bytesOf	%1$@ / %2$@
 downloadQueue.timeLeft	剩余 %@
 browse.sectionPersonal	个人
-settings.sectionSupport	支持
-settings.rowRateApp	为 NextExplorer 评分
-settings.rowSupport	帮助与支持
+browse.progressDownloading	正在下载…
+browse.progressDownloadingIndexed	正在下载 %2$lld 项中的第 %1$lld 项…
+browse.downloadSavedTo	已保存到 %@
+browse.downloadSavedCountTo	已将 %2$lld 项中的 %1$lld 项保存到 %3$@
+browse.downloadSavedAllTo	已将 %1$lld 项保存到 %2$@
+browse.downloadBulkFailed	无法将这些项目保存到您的设备。
+macSettings.labelFormat	%@：
+macSettings.addAccount	添加账户…
+macSettings.changePassword	更改密码…
+macSettings.signOut	退出登录…
+macSettings.switchAccount	切换到此账户
+macSettings.username	用户名
+macSettings.email	电子邮件
+macSettings.role	角色
+macSettings.roleAdmin	管理员
+macSettings.roleUser	用户
+macSettings.status	状态
+macSettings.statusSignedIn	已登录
+macSettings.manage	管理…
+macSettings.cache	缓存
+macSettings.support	帮助与支持…
+macSettings.permission	权限
+macSettings.icon	图标
+menu.go	前往
+menu.activity	传输
+menu.showAll	显示全部
+uploads.notifyDone	上传完成
+uploads.notifyBody	已上传 %lld 个文件
+downloadQueue.notifyDone	下载完成
+fileInfo.rowSoftware	软件
+fileInfo.sectionVersions	版本
+fileInfo.versionsNone	没有更早的版本
+fileInfo.versionRestore	恢复…
+fileInfo.restoreTitle	恢复此版本？
+fileInfo.restoreMessage	文件将恢复到 %@ 时的状态。当前内容会保留为一个版本。
+fileInfo.restoreConfirm	恢复
+fileInfo.sectionSharing	共享
+fileInfo.notShared	没有共享链接
+fileInfo.versionActions	版本操作
+fileInfo.versionDownload	下载…
+fileInfo.versionSaveCopy	存储为副本
+fileInfo.versionRename	重新命名…
+fileInfo.renameTitle	重新命名版本
+fileInfo.renamePlaceholder	版本名称
+fileInfo.versionPin	保留此版本
+fileInfo.versionUnpin	不再保留此版本
+fileInfo.versionKept	已保留
+fileInfo.versionDelete	删除…
+fileInfo.deleteTitle	删除此版本？
+fileInfo.deleteAll	删除所有版本…
+fileInfo.deleteAllTitle	删除所有版本？
+fileInfo.deleteMessage	删除的版本无法恢复。文件本身保持不变。
+macSettings.choose	选取…
+menu.forward	前进
+menu.goToFolder	前往文件夹…
+menu.goToFolderTitle	前往文件夹：
+menu.copyPath	拷贝路径
+menu.recentFolders	最近使用的文件夹
+menu.clearRecent	清除菜单

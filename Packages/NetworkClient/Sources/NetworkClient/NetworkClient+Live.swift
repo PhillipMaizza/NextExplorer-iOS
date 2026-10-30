@@ -3,12 +3,12 @@ import Foundation
 
 private enum Constants {
     /// A dead or far-away server shouldn't hang an interactive request for the URLSession
-    /// default of 60s — the launch session check and every tap has to give up sooner.
+    /// default of 60s: the launch session check and every tap has to give up sooner.
     static let interactiveRequestTimeout: TimeInterval = 15
     /// Opportunistic page fetches (PDF thumbnails) can be genuinely slow; let them run to
     /// the URLSession default rather than sharing the interactive budget.
     static let lowPriorityRequestTimeout: TimeInterval = 60
-    /// Connection cap for the low priority session — small, so however many fetches the UI
+    /// Connection cap for the low priority session: small, so however many fetches the UI
     /// kicks off they never take slots from the main session's 6 per host interactive pool.
     static let lowPriorityMaxConnectionsPerHost = 2
     /// File downloads (previews, offline sync) stream to disk and can take a long time: a big file,
@@ -28,7 +28,7 @@ private enum Constants {
 
 public extension NetworkClient {
     /// Ceiling on a response buffered by `send`. The `send` path exists only for JSON control
-    /// responses (listings, share lists, editor content) — anything file-sized goes through
+    /// responses (listings, share lists, editor content): anything file-sized goes through
     /// `download`, which streams to disk. 32 MB is far above any legitimate JSON payload while
     /// still cutting off a hostile server trying to exhaust memory here.
     static let defaultMaxInMemoryResponseBytes = 32 * 1024 * 1024
@@ -54,7 +54,7 @@ public extension NetworkClient {
         // A second session for opportunistic background fetches (PDF thumbnail page
         // downloads). Its own connection pool, capped low, so however many the UI kicks off
         // they can't take slots from the main session's interactive traffic. Deliberately
-        // NOT `networkServiceType = .background` — that lets the system defer requests
+        // NOT `networkServiceType = .background`: that lets the system defer requests
         // indefinitely, even in the foreground, so thumbnails would just never appear.
         let lowPriorityConfiguration = URLSessionConfiguration.default
         lowPriorityConfiguration.httpCookieStorage = cookieStorage
@@ -114,7 +114,7 @@ public extension NetworkClient {
 
         // Stream to a temp file rather than `session.data(for:)` so response size is bounded
         // by disk, not resident memory; then size-check before loading it in. This path only
-        // ever carries JSON control responses — file-sized payloads use `download` — so the
+        // ever carries JSON control responses, file-sized payloads use `download`, so the
         // extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
         @Sendable func sendInMemory(
             _ request: URLRequest, using inMemorySession: URLSession

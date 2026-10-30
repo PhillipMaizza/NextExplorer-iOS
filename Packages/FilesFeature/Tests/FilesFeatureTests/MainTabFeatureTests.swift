@@ -38,6 +38,50 @@ struct MainTabFeatureTests {
     // MARK: Edge cases
 
     @Test
+    func goToFolderOpensTheTrimmedPathInBrowse() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .shared
+        let store = TestStore(initialState: state) { MainTabFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.goToFolderPrompted) {
+            $0.isGoToFolderPresented = true
+        }
+        await store.send(.goToFolderRequested(" /Documents/Reports/ ")) {
+            $0.isGoToFolderPresented = false
+            $0.selectedTab = .browse
+        }
+        await store.receive(\.browse.navigateToDirectory)
+    }
+
+    @Test
+    func openedFoldersFillRecentFoldersNewestFirstWithoutRepeats() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) { MainTabFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.browse(.navigateToDirectory(path: "Documents", title: "Documents")))
+        await store.send(.browse(.navigateToDirectory(path: "Photos/Trip", title: "Trip")))
+        await store.send(.browse(.navigateToDirectory(path: "Documents", title: "Documents")))
+        #expect(store.state.recentFolders == ["Documents", "Photos/Trip"])
+
+        await store.send(.recentFoldersCleared) {
+            $0.recentFolders = []
+        }
+    }
+
+    @Test
+    func recentFoldersKeepOnlyTheNewestTen() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) { MainTabFeature() }
+        store.exhaustivity = .off
+
+        for index in 0 ..< 12 {
+            await store.send(.browse(.navigateToDirectory(path: "Folder\(index)", title: "Folder\(index)")))
+        }
+        #expect(store.state.recentFolders.count == MainTabFeature.recentFoldersLimit)
+        #expect(store.state.recentFolders.first == "Folder11")
+    }
+
+    @Test
     func initialStateDefaultsToTheBrowseTab() {
         let state = MainTabFeature.State(serverURL: serverURL, user: user)
         #expect(state.selectedTab == .browse)
@@ -170,7 +214,7 @@ struct MainTabFeatureTests {
     @Test
     func favoritesChangedFromFavoritesRefreshesTheFavoritesTab() async {
         // A favorite toggled from a pushed browse screen *inside* the Favorites tab bubbles
-        // up through `FavoritesFeature`'s own delegate — this refreshes the same tab's root
+        // up through `FavoritesFeature`'s own delegate: this refreshes the same tab's root
         // list, not Browse's.
         let favorite = Favorite(id: "1", path: "Photos", label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
 
@@ -274,7 +318,7 @@ struct MainTabFeatureTests {
         }
         store.exhaustivity = .off
 
-        // Upload landed in a folder nobody is looking at — nothing refetches.
+        // Upload landed in a folder nobody is looking at: nothing refetches.
         let summary = UploadsFeature.FinishSummary(
             uploadedCount: 1, failedCount: 0, lastDestination: "Archive/2026", changedPaths: ["Archive/2026"]
         )
@@ -304,6 +348,79 @@ struct MainTabFeatureTests {
             $0.downloads.phase = .loaded
             $0.downloads.downloads = [download]
         }
+    }
+
+    // MARK: Menu bar commands
+
+    @Test
+    func refreshSelectedTabRefreshesTheDownloadsTabWhenItIsSelected() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .downloads
+        let store = TestStore(initialState: state) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.localDownloadStore.list = { _ in [] }
+        }
+
+        await store.send(.refreshSelectedTab)
+        await store.receive(\.downloads.refreshButtonTapped) {
+            $0.downloads.phase = .loading
+        }
+        await store.receive(\.downloads.downloadsResponse.success) {
+            $0.downloads.phase = .loaded
+        }
+    }
+
+    @Test
+    func refreshSelectedTabRoutesToTheVisibleBrowseFolder() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        } withDependencies: {
+            $0.filesClient.browse = { _, _ in
+                BrowseResult(items: [], access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true), path: "")
+            }
+            $0.filesClient.favorites = { _ in [] }
+        }
+        // The forwarded refresh runs Browse's load cycle, covered by BrowseFeatureTests.
+        store.exhaustivity = .off
+
+        await store.send(.refreshSelectedTab)
+        await store.receive(\.browse.refreshVisibleFolder)
+        await store.receive(\.browse.root.refreshButtonTapped)
+        await store.skipReceivedActions()
+    }
+
+    @Test
+    func refreshSelectedTabDoesNothingOnSettings() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .settings
+        let store = TestStore(initialState: state) {
+            MainTabFeature()
+        }
+
+        await store.send(.refreshSelectedTab)
+    }
+
+    @Test
+    func newFolderRequestedIsIgnoredOutsideBrowse() async {
+        var state = MainTabFeature.State(serverURL: serverURL, user: user)
+        state.selectedTab = .favorites
+        let store = TestStore(initialState: state) {
+            MainTabFeature()
+        }
+
+        await store.send(.newFolderRequested)
+    }
+
+    @Test
+    func newFolderRequestedForwardsToBrowse() async {
+        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
+            MainTabFeature()
+        }
+
+        await store.send(.newFolderRequested)
+        // At the Browse root there is no writable folder, so the chain ends there.
+        await store.receive(\.browse.newFolderInVisibleFolder)
     }
 
     @Test
@@ -385,4 +502,37 @@ struct MainTabFeatureTests {
         await store.receive(\.browse.offlineAvailabilityChanged)
         await store.receive(\.favorites.offlineAvailabilityChanged)
     }
+
+    // MARK: Mac sections
+
+    #if os(macOS)
+        @Test
+        func aFolderStackPopWhileAnotherSectionIsShownIsIgnored() async {
+            var state = MainTabFeature.State(serverURL: serverURL, user: user)
+            state.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents"))
+            state.selectedTab = .shared
+            let id = state.browse.path.ids[0]
+            let store = TestStore(initialState: state) {
+                MainTabFeature()
+            }
+
+            await store.send(.browse(.path(.popFrom(id: id))))
+        }
+
+        @Test
+        func backInTheVisibleBrowseStillPopsAndOffersForward() async {
+            var state = MainTabFeature.State(serverURL: serverURL, user: user)
+            let documents = BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents")
+            state.browse.path.append(documents)
+            let id = state.browse.path.ids[0]
+            let store = TestStore(initialState: state) {
+                MainTabFeature()
+            }
+
+            await store.send(.browse(.path(.popFrom(id: id)))) {
+                $0.browse.path = StackState()
+                $0.browse.forwardStack = [documents]
+            }
+        }
+    #endif
 }

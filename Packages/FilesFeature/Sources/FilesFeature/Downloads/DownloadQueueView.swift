@@ -20,6 +20,32 @@ struct DownloadQueueView: View {
     @Environment(\.locale) private var locale
 
     var body: some View {
+        #if os(macOS)
+            MacTransferQueueSheet(
+                title: L10n.DownloadQueue.navigationTitle,
+                rows: store.jobs.map { job in
+                    MacTransferRow(id: job.id, name: job.fileName, status: {
+                        switch job.status {
+                        case .queued: .waiting
+                        case .downloading: .running(progress: job.progress, detail: DownloadProgressText.detail(for: job, locale: locale))
+                        case .completed: .done(savedLabel(job))
+                        case let .failed(message): .failed(message)
+                        }
+                    }())
+                },
+                emptyMessage: L10n.DownloadQueue.emptyList,
+                canClear: store.hasClearableJobs,
+                onCancel: { store.send(.cancelJobTapped(id: $0), animation: .default) },
+                onRetry: { store.send(.retryTapped(id: $0), animation: .default) },
+                onClear: { store.send(.clearFinishedTapped, animation: .default) },
+                onClose: { store.send(.sheetPresented(false)) }
+            )
+        #else
+            phoneBody
+        #endif
+    }
+
+    private var phoneBody: some View {
         NavigationStack {
             content
                 .navigationTitle(L10n.DownloadQueue.navigationTitle)

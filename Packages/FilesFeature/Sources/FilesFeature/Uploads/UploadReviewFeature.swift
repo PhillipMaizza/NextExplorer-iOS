@@ -6,7 +6,7 @@ import SwiftUI
 
 /// The sheet shown after files are picked, before they're queued: the file list, the
 /// destination folder (tap to push the folder picker), the total size, and the Upload button.
-/// It never uploads — confirming hands `(files, destination)` up to `BrowseFeature`.
+/// It never uploads: confirming hands `(files, destination)` up to `BrowseFeature`.
 ///
 /// The sheet is presented *immediately* on pick and fills in as files are materialized by
 /// `UploadStagingClient` (copied out of the picker, photos read into memory). Staging runs as
@@ -36,15 +36,15 @@ public struct UploadReviewFeature {
         /// Files still being copied out of the picker. `files` grows as each lands.
         public var preparingCount: Int
         /// `true` when the last staging batch produced nothing and there's nothing else
-        /// pending — the sheet stays open showing an error rather than vanishing.
+        /// pending: the sheet stays open showing an error rather than vanishing.
         public var stagingFailed = false
         /// How many picked items failed to copy out of the picker across this session. Surfaced
         /// as a warning so the user knows fewer files arrived than they selected.
         public var skippedCount = 0
-        /// `""` means no folder chosen yet (the pick started at the root) — Upload stays
+        /// `""` means no folder chosen yet (the pick started at the root): Upload stays
         /// disabled until the user picks one.
         public var destination: String
-        /// Drives the "Discard upload?" confirmation — raised when the user tries to close the
+        /// Drives the "Discard upload?" confirmation: raised when the user tries to close the
         /// sheet while it still holds staged files.
         public var isConfirmingCancel = false
         @Presents public var folderPicker: DestinationPickerFeature.State?

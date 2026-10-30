@@ -1,7 +1,7 @@
 import SwiftUI
 
 /// Bridges the backend's favorite `icon` string (a Heroicon component name, optionally
-/// `"<variant>:Name"`, default `"outline:StarIcon"` — `FAVORITES_DEFAULT_ICON`) to an SF
+/// `"<variant>:Name"`, default `"outline:StarIcon"`; `FAVORITES_DEFAULT_ICON`) to an SF
 /// Symbol for display, and back: the picker writes the same bare names the web client uses
 /// (`frontend/src/components/FavoriteEditDialog.vue`'s `ICON_NAMES`), so a favorite shows
 /// the matching glyph on both platforms.

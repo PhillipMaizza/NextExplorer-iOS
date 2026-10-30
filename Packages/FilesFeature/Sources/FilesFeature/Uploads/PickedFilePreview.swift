@@ -3,7 +3,7 @@ import SwiftUI
 
 /// Full screen preview for a staged file, opened from its row thumbnail. Goes through
 /// `QuickLook`, which swipes across the whole batch starting on the tapped file. Wrapped in a
-/// `NavigationStack` so `previewChrome` can hang a close button off it — `QLPreviewController`
+/// `NavigationStack` so `previewChrome` can hang a close button off it: `QLPreviewController`
 /// only draws its own Done bar when UIKit presents it directly, not through a representable.
 struct PickedFilePreview: View {
     let urls: [URL]

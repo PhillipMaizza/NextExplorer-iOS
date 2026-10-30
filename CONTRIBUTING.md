@@ -82,17 +82,28 @@ Releases go out with [fastlane](https://fastlane.tools), pinned in the `Gemfile`
 - Create an App Store Connect API key (Users and Access › Integrations, App Manager role) and keep the `.p8` outside the repo, e.g. `~/.appstoreconnect/private_keys/`.
 - Put its details in `fastlane/.env` (git ignored): `ASC_KEY_ID`, `ASC_ISSUER_ID`, `ASC_KEY_PATH`, and optionally `GH_USER` (the `gh` account used for the CI check and the GitHub Release).
 
-Versions come from git tags, never from a commit. A release ships the next version after the newest `v<version>` tag (patch by default) by passing `MARKETING_VERSION` to the archive, then tags it; the project's own `MARKETING_VERSION` only matters for local builds. The build number is the git commit count, stamped at build time.
+Versions come from git tags. A release ships the next version after the newest `v<version>` tag (patch by default) by passing `MARKETING_VERSION` to the archive, then tags it. To plan a minor or major, set the project's `MARKETING_VERSION` ahead of the newest tag: a release without `bump:` or `version:` then ships that version. The build number is the git commit count, stamped at build time.
 
-Lanes (`bundle exec fastlane <lane>`):
+iPhone, iPad and Mac are one target and share one version: a release ships both apps from the same commit under one tag.
+
+Lanes (`bundle exec fastlane <lane>`, `ios` is the default platform):
 
 - `unit_tests`: every package's tests on the simulator, same set as CI. Option `device:"iPhone Duo"`.
 - `ui_tests`: the XCUITest suite. Options `device:`, `only_testing:"SettingsUITests,SharedUITests"`.
 - `beta`: the upcoming version's Release archive, uploaded to TestFlight.
-- `release_dry_run`: tag check, unit tests and a Release archive, nothing uploaded.
-- `release`: from a clean, up to date `main`. Refuses if the version is already tagged; skips the local unit tests when CI's Build and test already passed on that commit; cuts and pushes `release/<version>`; uploads and waits for processing; submits for review and releases automatically once approved (`manual_release:true` holds it, `phased:true` rolls out over 7 days); tags `v<version>` and publishes a GitHub Release with the notes. Options `bump:` (`patch`, `minor`, `major`) or `version:`. Store text and screenshots stay in App Store Connect.
+- `release_dry_run`: tag check, unit tests, and the Release iPhone/iPad app and Mac package, nothing uploaded. Option `platforms:` as below.
+- `release`: from a clean, up to date `main`. Refuses if the version is already tagged; skips the local unit tests when CI's Build and test already passed on that commit; cuts and pushes `release/<version>`; builds and uploads both apps and waits for processing; submits both for review and releases automatically once approved (`manual_release:true` holds it, `phased:true` rolls out over 7 days); tags `v<version>` and publishes a GitHub Release with the notes. Options `bump:` (`patch`, `minor`, `major`) or `version:`. Store text and screenshots stay in App Store Connect. `platforms:ios` or `platforms:mac` ships only that app (the other skips the version). The Mac's first version (1.1.0) goes out without What's New.
 
 Uploads carry the version's `gen-changelog.py` notes as TestFlight's "What to Test".
+
+Mac only lanes (`bundle exec fastlane mac <lane>`):
+
+- `unit_tests`: every package's tests on the Mac.
+- `ui_tests`: the Mac XCUITest suite (`MacCriticalPathUITests`). It drives the real app, so leave the Mac alone while it runs.
+- `beta`: the upcoming version as a Mac App Store package, uploaded to TestFlight for macOS.
+- `release_dry_run`: Mac unit tests and the Mac App Store package, nothing uploaded.
+
+Before the first Mac release, once in App Store Connect: add the macOS platform to the app (the same bundle ID makes it a universal purchase, so the tip jar carries over), then fill in its screenshots, description and review notes. The package is signed with a Mac Installer Distribution certificate; if the first `mac` build cannot find or create one, create it once in Certificates, Identifiers & Profiles.
 
 ## Questions
 

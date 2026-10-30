@@ -15,12 +15,12 @@ private enum Constants {
 /// at a glance rather than requiring the user to decode it themselves.
 struct DateFormatPickerView: View {
     @Binding var selection: DateDisplayFormat
-    @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
+    @AppStorage(AppStorageKeys.includeTimeInDates) private var shouldIncludeTime = false
 
     var body: some View {
-        List {
+        DSGroupedList {
             Section {
-                DSToggleRow(title: L10n.Settings.dateFormatShowTime, icon: IconKit.time, isOn: $includeTime)
+                DSToggleRow(title: L10n.Settings.dateFormatShowTime, icon: IconKit.time, isOn: $shouldIncludeTime)
             }
             .listRowBackground(Color.backgroundSecondary)
 
@@ -32,7 +32,7 @@ struct DateFormatPickerView: View {
                         HStack {
                             VStack(alignment: .leading, spacing: Constants.rowSpacing) {
                                 Text(format.title).type(.body1(.regular), style: .primaryOnSurface)
-                                Text(format.example(includeTime: includeTime)).type(.body3(.regular), style: .secondary)
+                                Text(format.example(includeTime: shouldIncludeTime)).type(.body3(.regular), style: .secondary)
                             }
                             Spacer()
                             if format == selection {

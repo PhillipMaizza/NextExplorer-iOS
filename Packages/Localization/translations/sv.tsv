@@ -1,4 +1,4 @@
-# NextExplorer — Svenska (sv). key<TAB>value.
+# NextExplorer: Svenska (sv). key<TAB>value.
 common.cancel	Avbryt
 common.save	Spara
 common.edit	Redigera
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Lägg till i favoriter
 browse.actionRemoveFromFavorites	Ta bort från favoriter
 browse.actionShare	Skapa delningslänk
 browse.actionDelete	Radera
+browse.actionDuplicate	Duplicera
 browse.renameTitle	Byt namn
 browse.renameNamePlaceholder	Namn
 browse.actionNewFolder	Skapa mapp
@@ -308,6 +309,7 @@ settings.rowUserManagement	Användarhantering
 settings.rowChangePassword	Byt lösenord
 settings.rowServer	Server
 settings.storageFootnote	Mappar laddas ned som ZIP utan att något lämnas kvar på servern. Att ta bort nedladdningar eller rensa cachen påverkar bara den här enheten; inget på servern ändras.
+settings.storageFootnoteMac	Att rensa cachen påverkar bara den här Macen; inget på servern ändras.
 settings.removeAllDownloadsTitle	Ta bort alla nedladdningar?
 settings.removeAllDownloadsConfirm	Ta bort alla
 settings.removeAllDownloadsMessage	Detta raderar alla nedladdade filer från den här enheten. De finns kvar på servern.
@@ -519,6 +521,14 @@ browse.nameErrorReserved	Det namnet är inte tillåtet.
 browse.nameErrorSeparators	Ett namn får inte innehålla / eller \.
 browse.searchMatchLine	Rad %1$lld: %2$@
 browse.searchMatchLineLabel	Rad %lld
+browse.searchTooShort	Skriv minst %lld tecken för att söka i undermappar och filinnehåll.
+browse.searchStoppedEarly	Sökningen stoppades vid tidsgränsen. Det här är resultaten som hittats hittills.
+browse.searchFirstOnly	Första %lld resultaten. Begränsa sökningen för att se fler.
+browse.searchShowMore	Visa fler
+browse.searchMatchColumn	Träff
+browse.searchMatchedByName	Namn
+browse.searchMatchedByContent	Innehåll
+browse.searchMatchedByBoth	Namn och innehåll
 createShare.errorPasswordRequired	Ange ett lösenord eller stäng av lösenordsskydd.
 filter.sheetTitle	Filtrera efter typ
 filter.button	Filtrera
@@ -596,6 +606,32 @@ offline.manageEmpty	Inget är hämtat för offlineanvändning.
 offline.preferOfflineToggle	Spela upp hämtade kopior
 offline.preferOfflineSubtitle	Använd en hämtad video i stället för att strömma när den finns.
 offline.tunnelSpeedNote	Att nå servern via en fjärrtunnel kan göra nedladdningar långsamma. Anslut till samma nätverk och använd serverns lokala adress för stora filer.
+menu.about	Om NextExplorer
+menu.rateApp	Betygsätt NextExplorer…
+menu.support	NextExplorer-support
+menu.redo	Gör om
+menu.undo	Ångra
+settings.sectionSupport	Support
+settings.rowRateApp	Betygsätt NextExplorer
+settings.rowSupport	Hjälp och support
+menu.refresh	Uppdatera
+select.tableView	Tabellvy
+openWith.openIn	Öppna i %@
+openWith.openWith	Öppna med
+openWith.viewAsText	Visa som text
+openWith.failed	Det gick inte att öppna filen.
+browse.showInFinder	Visa i Finder
+browse.actionCut	Klipp ut
+browse.clipboardCutOne	%@ redo att flyttas
+browse.clipboardCutMany	%lld objekt redo att flyttas
+menu.enclosingFolder	Omslutande mapp
+common.more	Mer
+openWith.print	Skriv ut …
+menu.newWindow	Nytt fönster
+menu.newTab	Ny flik
+browse.actionOpenInNewWindow	Öppna i nytt fönster
+browse.actionOpenInNewTab	Öppna i ny flik
+select.viewAs	Visa
 settings.rowAppearance	Utseende
 appearance.system	System
 appearance.light	Ljust
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld objekt sparade i Nedladdningar
 downloadQueue.bytesOf	%1$@ av %2$@
 downloadQueue.timeLeft	%@ kvar
 browse.sectionPersonal	Personligt
-settings.sectionSupport	Support
-settings.rowRateApp	Betygsätt NextExplorer
-settings.rowSupport	Hjälp och support
+browse.progressDownloading	Laddar ner…
+browse.progressDownloadingIndexed	Laddar ner %1$lld av %2$lld…
+browse.downloadSavedTo	Sparad i %@
+browse.downloadSavedCountTo	Sparade %1$lld av %2$lld objekt i %3$@
+browse.downloadSavedAllTo	Sparade %1$lld objekt i %2$@
+browse.downloadBulkFailed	Det gick inte att spara dessa objekt på din enhet.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Lägg till konto…
+macSettings.changePassword	Ändra lösenord…
+macSettings.signOut	Logga ut…
+macSettings.switchAccount	Byt till det här kontot
+macSettings.username	Användarnamn
+macSettings.email	E-post
+macSettings.role	Roll
+macSettings.roleAdmin	Administratör
+macSettings.roleUser	Användare
+macSettings.status	Status
+macSettings.statusSignedIn	Inloggad
+macSettings.manage	Hantera…
+macSettings.cache	Cache
+macSettings.support	Hjälp och support…
+macSettings.permission	Behörighet
+macSettings.icon	Symbol
+menu.go	Gå
+menu.activity	Överföringar
+menu.showAll	Visa alla
+uploads.notifyDone	Uppladdningar klara
+uploads.notifyBody	%lld filer uppladdade
+downloadQueue.notifyDone	Hämtningar klara
+fileInfo.rowSoftware	Programvara
+fileInfo.sectionVersions	Versioner
+fileInfo.versionsNone	Inga tidigare versioner
+fileInfo.versionRestore	Återställ…
+fileInfo.restoreTitle	Återställa den här versionen?
+fileInfo.restoreMessage	Filen återgår till hur den var %@. Det nuvarande innehållet sparas som en version.
+fileInfo.restoreConfirm	Återställ
+fileInfo.sectionSharing	Delning
+fileInfo.notShared	Inga delningslänkar
+fileInfo.versionActions	Versionsåtgärder
+fileInfo.versionDownload	Hämta…
+fileInfo.versionSaveCopy	Spara som kopia
+fileInfo.versionRename	Byt namn…
+fileInfo.renameTitle	Byt namn på version
+fileInfo.renamePlaceholder	Versionsnamn
+fileInfo.versionPin	Behåll den här versionen
+fileInfo.versionUnpin	Sluta behålla den här versionen
+fileInfo.versionKept	Behålls
+fileInfo.versionDelete	Radera…
+fileInfo.deleteTitle	Radera den här versionen?
+fileInfo.deleteAll	Radera alla versioner…
+fileInfo.deleteAllTitle	Radera alla versioner?
+fileInfo.deleteMessage	Raderade versioner försvinner för gott. Själva filen förblir som den är.
+macSettings.choose	Välj…
+menu.forward	Framåt
+menu.goToFolder	Gå till mapp…
+menu.goToFolderTitle	Gå till mappen:
+menu.copyPath	Kopiera sökväg
+menu.recentFolders	Senaste mappar
+menu.clearRecent	Rensa menyn

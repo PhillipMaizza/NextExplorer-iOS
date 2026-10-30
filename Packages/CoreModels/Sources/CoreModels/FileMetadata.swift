@@ -3,7 +3,7 @@ import Foundation
 /// Mirrors `GET /api/metadata/*`, confirmed against `backend/src/routes/metadata.js`. Unlike
 /// `FileItem`, `path` here is the item's *own full* logical path (`resolved.relativePath`),
 /// not its parent directory. There is no owner/group/permissions data anywhere in this
-/// response — the real server simply doesn't expose OS-level file ownership, only what's
+/// response: the real server simply doesn't expose OS-level file ownership, only what's
 /// below.
 public struct FileMetadata: Codable, Equatable, Sendable {
     public let path: String

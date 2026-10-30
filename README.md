@@ -2,17 +2,18 @@
 
 <img src="Screenshots/icon.png" width="120" alt="NextExplorer app icon" />
 
-# NextExplorer for iOS
+# NextExplorer
 
 **Every file, right where you left it.**
 
-A fast, private, native file browser for your own self-hosted server.
-Browse, preview, search and share. Your files stay between your device and the server you choose.
+A fast, private, native file browser for iPhone, iPad and Mac, for your own self-hosted server.
+Browse, preview, search and share. Your files stay between your devices and the server you choose.
 
 <br/>
 
-![Platform](https://img.shields.io/badge/platform-iPhone%20%7C%20iPad-blue)
+![Platform](https://img.shields.io/badge/platform-iPhone%20%7C%20iPad%20%7C%20Mac-blue)
 ![iOS](https://img.shields.io/badge/iOS-18%2B-black?logo=apple)
+![macOS](https://img.shields.io/badge/macOS-15%2B-black?logo=apple)
 ![Swift](https://img.shields.io/badge/Swift-5-orange?logo=swift&logoColor=white)
 ![Architecture](https://img.shields.io/badge/architecture-SwiftUI%20%2B%20TCA-purple)
 ![Languages](https://img.shields.io/badge/localized-17%20languages-green)
@@ -50,6 +51,16 @@ Straight from the app on iPhone.
 
 </div>
 
+And on the Mac, a real Mac app: sidebar, Finder style tables, Quick Look, drag and drop, menus, shortcuts and multiple windows.
+
+<div align="center">
+
+| Browse | Sharing |
+|:---:|:---:|
+| <img src="Screenshots/mac-browse.jpg" width="420" alt="Browsing a server on the Mac" /> | <img src="Screenshots/mac-shared.jpg" width="420" alt="Share links on the Mac" /> |
+
+</div>
+
 
 ## Features
 
@@ -60,6 +71,7 @@ Straight from the app on iPhone.
 - **Works offline.** A saved-copy view keeps your recent folders readable when the connection drops, then refreshes when you are back.
 - **Everyone's app.** 17 languages with full right-to-left support, plus complete VoiceOver and Dynamic Type accessibility.
 - **iPhone and iPad.** Universal layout with a split-view sidebar on larger screens.
+- **A real Mac app.** Sortable tables, Quick Look, Get Info with version history, drag and drop with Finder, menus, shortcuts, tabs and windows.
 
 
 <details>
@@ -67,7 +79,7 @@ Straight from the app on iPhone.
 
 <br/>
 
-Native iOS 18+, SwiftUI, and [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture). No storyboards driving the app, no UIKit view controllers behind the screens, no third-party analytics. The app is split into focused Swift packages under `Packages/`:
+Native iOS 18+ and macOS 15+, SwiftUI, and [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture). No storyboards driving the app, no UIKit view controllers behind the screens, no third-party analytics. The app is split into focused Swift packages under `Packages/`:
 
 | Package | Responsibility |
 |---|---|

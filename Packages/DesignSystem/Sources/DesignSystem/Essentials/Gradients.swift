@@ -1,10 +1,10 @@
 import SwiftUI
 
 public extension Color {
-    /// Top-leading stop of `LinearGradient.backgroundPrimary` — near `backgroundPrimary`
+    /// Top-leading stop of `LinearGradient.backgroundPrimary`: near `backgroundPrimary`
     /// with a faint accent tint.
     static let backgroundGradientTop = Color("BackgroundGradientTop", bundle: .module)
-    /// Bottom-trailing stop of `LinearGradient.backgroundPrimary` — same tint, pushed further
+    /// Bottom-trailing stop of `LinearGradient.backgroundPrimary`: same tint, pushed further
     /// toward `accent` for a subtle warm glow.
     static let backgroundGradientBottom = Color("BackgroundGradientBottom", bundle: .module)
 }
@@ -19,7 +19,7 @@ public extension LinearGradient {
         endPoint: .bottomTrailing
     )
 
-    /// The accent color into a lighter tint of itself — for accent surfaces/borders that want
+    /// The accent color into a lighter tint of itself: for accent surfaces/borders that want
     /// a little depth instead of a flat `Color.accent` fill.
     static let accent = LinearGradient(
         colors: [.accent, .accent.mix(with: .white, by: 0.3)],

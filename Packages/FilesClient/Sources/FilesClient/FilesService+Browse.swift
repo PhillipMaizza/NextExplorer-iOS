@@ -33,7 +33,7 @@ extension FilesService {
         }
     }
 
-    func search(serverURL: URL, path: String, query: String, limit: Int?) async throws -> [SearchResultItem] {
+    func search(serverURL: URL, path: String, query: String, limit: Int?) async throws -> SearchPage {
         var components = URLComponents(url: serverURL.appendingPathComponent(APIPath.search), resolvingAgainstBaseURL: false)
         var queryItems = [URLQueryItem(name: QueryKey.query, value: query)]
         if !path.isEmpty {
@@ -48,7 +48,12 @@ extension FilesService {
         }
         let request = Self.makeRequest(url: url, method: .get)
         let envelope = try await send(request, decoding: SearchEnvelope.self)
-        return envelope.items
+        return SearchPage(
+            items: envelope.items,
+            isTruncated: envelope.truncated ?? false,
+            isComplete: envelope.complete ?? true,
+            limit: envelope.limit
+        )
     }
 
     /// `GET /api/thumbnails/*`, confirmed against `backend/src/routes/thumbnails.js`: returns

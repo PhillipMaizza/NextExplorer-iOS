@@ -45,7 +45,7 @@ struct SessionCredentialsTests {
     @Test("edge case: a non-secure cookie stays non-secure after reconstruction")
     func reconstructsNonSecureHTTPCookie() throws {
         // Regression test: HTTPCookiePropertyKey.secure's mere PRESENCE marks a cookie
-        // secure regardless of its value — previously this always produced isSecure == true,
+        // secure regardless of its value: previously this always produced isSecure == true,
         // which would have silently broken plain-HTTP homelab logins.
         let credentials = SessionCredentials(
             serverBaseURL: URL(string: "http://192.168.1.50:3000")!,

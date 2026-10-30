@@ -1,4 +1,4 @@
-# NextExplorer — Português (pt). key<TAB>value.
+# NextExplorer: Português (pt). key<TAB>value.
 common.cancel	Cancelar
 common.save	Guardar
 common.edit	Editar
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Adicionar aos Favoritos
 browse.actionRemoveFromFavorites	Remover dos Favoritos
 browse.actionShare	Criar ligação de partilha
 browse.actionDelete	Eliminar
+browse.actionDuplicate	Duplicar
 browse.renameTitle	Mudar o nome
 browse.renameNamePlaceholder	Nome
 browse.actionNewFolder	Criar pasta
@@ -307,6 +308,7 @@ settings.rowUserManagement	Gestão de utilizadores
 settings.rowChangePassword	Alterar palavra-passe
 settings.rowServer	Servidor
 settings.storageFootnote	As pastas são baixadas como ZIP, sem deixar nada no servidor. Remover downloads ou limpar o cache afeta apenas este dispositivo; nada no servidor é alterado.
+settings.storageFootnoteMac	Limpar o cache afeta apenas este Mac; nada no servidor é alterado.
 settings.removeAllDownloadsTitle	Remover todas as transferências?
 settings.removeAllDownloadsConfirm	Remover todas
 settings.removeAllDownloadsMessage	Isto elimina todos os ficheiros transferidos deste dispositivo. Permanecem no servidor.
@@ -518,6 +520,14 @@ browse.nameErrorReserved	Esse nome não é permitido.
 browse.nameErrorSeparators	Um nome não pode conter / ou \.
 browse.searchMatchLine	Linha %1$lld: %2$@
 browse.searchMatchLineLabel	Linha %lld
+browse.searchTooShort	Digite pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos arquivos.
+browse.searchStoppedEarly	A pesquisa parou no limite de tempo. Estes são os resultados encontrados até agora.
+browse.searchFirstOnly	Primeiros %lld resultados. Refine a pesquisa para ver mais.
+browse.searchShowMore	Mostrar mais
+browse.searchMatchColumn	Correspondência
+browse.searchMatchedByName	Nome
+browse.searchMatchedByContent	Conteúdo
+browse.searchMatchedByBoth	Nome e conteúdo
 createShare.errorPasswordRequired	Introduza uma palavra-passe ou desative a proteção por palavra-passe.
 filter.sheetTitle	Filtrar por tipo
 filter.button	Filtrar
@@ -596,6 +606,32 @@ offline.manageEmpty	Nada foi baixado para uso offline.
 offline.preferOfflineToggle	Reproduzir cópias baixadas
 offline.preferOfflineSubtitle	Usar um vídeo baixado em vez de transmitir quando estiver disponível.
 offline.tunnelSpeedNote	Aceder ao teu servidor através de um túnel remoto pode tornar as transferências lentas. Para ficheiros grandes, liga-te à mesma rede e usa o endereço local do servidor.
+menu.about	Sobre o NextExplorer
+menu.rateApp	Avaliar o NextExplorer…
+menu.support	Suporte do NextExplorer
+menu.redo	Refazer
+menu.undo	Desfazer
+settings.sectionSupport	Suporte
+settings.rowRateApp	Avaliar o NextExplorer
+settings.rowSupport	Ajuda e suporte
+menu.refresh	Atualizar
+select.tableView	Visualização em tabela
+openWith.openIn	Abrir no %@
+openWith.openWith	Abrir com
+openWith.viewAsText	Ver como texto
+openWith.failed	Não foi possível abrir este arquivo.
+browse.showInFinder	Mostrar no Finder
+browse.actionCut	Recortar
+browse.clipboardCutOne	%@ pronto para mover
+browse.clipboardCutMany	%lld itens prontos para mover
+menu.enclosingFolder	Pasta superior
+common.more	Mais
+openWith.print	Imprimir…
+menu.newWindow	Nova janela
+menu.newTab	Nova aba
+browse.actionOpenInNewWindow	Abrir em nova janela
+browse.actionOpenInNewTab	Abrir em nova aba
+select.viewAs	Visualização
 settings.rowAppearance	Aparência
 appearance.system	Sistema
 appearance.light	Claro
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld itens salvos em Downloads
 downloadQueue.bytesOf	%1$@ de %2$@
 downloadQueue.timeLeft	faltam %@
 browse.sectionPersonal	Pessoal
-settings.sectionSupport	Suporte
-settings.rowRateApp	Avaliar o NextExplorer
-settings.rowSupport	Ajuda e suporte
+browse.progressDownloading	A transferir…
+browse.progressDownloadingIndexed	A transferir %1$lld de %2$lld…
+browse.downloadSavedTo	Guardado em %@
+browse.downloadSavedCountTo	Guardados %1$lld de %2$lld itens em %3$@
+browse.downloadSavedAllTo	Guardados %1$lld itens em %2$@
+browse.downloadBulkFailed	Não foi possível guardar estes itens no seu dispositivo.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Adicionar conta…
+macSettings.changePassword	Alterar senha…
+macSettings.signOut	Sair…
+macSettings.switchAccount	Mudar para esta conta
+macSettings.username	Nome de usuário
+macSettings.email	E-mail
+macSettings.role	Função
+macSettings.roleAdmin	Administrador
+macSettings.roleUser	Usuário
+macSettings.status	Status
+macSettings.statusSignedIn	Conectado
+macSettings.manage	Gerenciar…
+macSettings.cache	Cache
+macSettings.support	Ajuda e suporte…
+macSettings.permission	Permissão
+macSettings.icon	Ícone
+menu.go	Ir
+menu.activity	Transferências
+menu.showAll	Mostrar tudo
+uploads.notifyDone	Envios concluídos
+uploads.notifyBody	%lld arquivos enviados
+downloadQueue.notifyDone	Downloads concluídos
+fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versões
+fileInfo.versionsNone	Nenhuma versão anterior
+fileInfo.versionRestore	Restaurar…
+fileInfo.restoreTitle	Restaurar esta versão?
+fileInfo.restoreMessage	O arquivo volta a como estava em %@. O conteúdo atual é mantido como uma versão.
+fileInfo.restoreConfirm	Restaurar
+fileInfo.sectionSharing	Compartilhamento
+fileInfo.notShared	Nenhum link compartilhado
+fileInfo.versionActions	Ações da versão
+fileInfo.versionDownload	Baixar…
+fileInfo.versionSaveCopy	Salvar como cópia
+fileInfo.versionRename	Renomear…
+fileInfo.renameTitle	Renomear versão
+fileInfo.renamePlaceholder	Nome da versão
+fileInfo.versionPin	Manter esta versão
+fileInfo.versionUnpin	Deixar de manter esta versão
+fileInfo.versionKept	Mantida
+fileInfo.versionDelete	Apagar…
+fileInfo.deleteTitle	Apagar esta versão?
+fileInfo.deleteAll	Apagar todas as versões…
+fileInfo.deleteAllTitle	Apagar todas as versões?
+fileInfo.deleteMessage	As versões apagadas somem para sempre. O arquivo em si continua como está.
+macSettings.choose	Escolher…
+menu.forward	Avançar
+menu.goToFolder	Ir para a pasta…
+menu.goToFolderTitle	Ir para a pasta:
+menu.copyPath	Copiar caminho
+menu.recentFolders	Pastas recentes
+menu.clearRecent	Limpar menu

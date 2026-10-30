@@ -283,4 +283,22 @@ struct UploadsFeatureTests {
             $0.isSheetPresented = false
         }
     }
+
+    @Test
+    func overallProgressCountsFinishedFilesAndTheOneInFlight() {
+        var state = UploadsFeature.State(serverURL: URL(string: "https://example.com")!)
+        #expect(state.overallProgress == nil)
+
+        var inFlight = job("b.txt", id: UUID(), status: .uploading)
+        inFlight.progress = 0.5
+        state.jobs = [
+            job("a.txt", id: UUID(), status: .completed),
+            inFlight,
+            job("c.txt", id: UUID(), status: .queued),
+            job("d.txt", id: UUID(), status: .queued),
+        ]
+
+        #expect(state.overallProgress == 1.5 / 4)
+        #expect(state.remainingCount == 3)
+    }
 }

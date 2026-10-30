@@ -6,9 +6,13 @@ import FilesClient
 import Localization
 import PhotosUI
 import SwiftUI
+#if os(macOS)
+    import AppKit
+#endif
 
 private enum BrowseViewMode: String {
-    case list, grid
+    /// `table` is the Mac only sortable column view.
+    case list, grid, table
 }
 
 private enum Constants {
@@ -22,7 +26,7 @@ private enum Constants {
     static let listDiffSpringResponse: Double = 0.35
     static let listDiffSpringDamping: Double = 0.8
     static let overlayCrossfadeDuration: Double = 0.2
-    /// Skeleton to loaded content crossfade — a touch longer than the overlay swap so the
+    /// Skeleton to loaded content crossfade: a touch longer than the overlay swap so the
     /// placeholder visibly resolves into the real rows rather than blinking out.
     static let contentRevealDuration: Double = 0.3
     /// Height of the invisible long-press paste target past the last row.
@@ -32,7 +36,7 @@ private enum Constants {
     static let emptyUploadButtonHPadding: CGFloat = .space24
     /// Keeps the empty folder's dashed upload button from spanning an iPad's full width.
     static let emptyUploadButtonMaxWidth: CGFloat = 360
-    /// Placeholder date/size for a search hit's thumbnail item — a search result carries neither,
+    /// Placeholder date/size for a search hit's thumbnail item: a search result carries neither,
     /// and fixed values keep its thumbnail cache key steady across renders.
     static let searchThumbnailPlaceholderDate = Date(timeIntervalSince1970: 0)
     static let searchThumbnailPlaceholderSize: Int64 = 0
@@ -48,14 +52,14 @@ struct BrowseContentView: View {
     @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) private var offlineProgress = OfflineDownloadProgress()
     @AppStorage(AppStorageKeys.browseViewMode) private var viewModeRaw = BrowseViewMode.list.rawValue
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
-    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
+    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var shouldKeepClipboardPreference = false
     @State private var isSortSheetPresented = false
     @State private var toastMessage: DSToastMessage?
     /// The item whose "Create Share Link" sheet is open (from the context menu or the
-    /// selection toolbar). Local view state, not routed through `BrowseFeature` — the sheet
+    /// selection toolbar). Local view state, not routed through `BrowseFeature`: the sheet
     /// owns its own ad-hoc `CreateShareLinkFeature` store.
     @State private var shareTarget: FileItem?
-    /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger — the
+    /// Flipped once a pull-to-refresh completes, purely as a `.hapticFeedback` trigger: the
     /// value itself is meaningless, only the fact that it just changed matters.
     @State private var didFinishRefreshing = false
     @State private var isFilesPickerPresented = false
@@ -79,8 +83,23 @@ struct BrowseContentView: View {
     @Shared(.inMemory(UploadBarChrome.visibilityKey)) private var isUploadBarVisible = false
     @Shared(.inMemory(UploadBarChrome.heightKey)) private var uploadBarHeight = UploadBarChrome.fallbackHeight
 
+    /// A Mac keeps a copied item on the clipboard after pasting, as Finder does; iOS asks.
+    private var shouldKeepClipboardAfterCopy: Bool {
+        #if os(macOS)
+            true
+        #else
+            shouldKeepClipboardPreference
+        #endif
+    }
+
     private var viewMode: BrowseViewMode {
-        BrowseViewMode(rawValue: viewModeRaw) ?? .list
+        #if os(macOS)
+            // The Mac always shows the sortable column table.
+            return .table
+        #else
+            let mode = BrowseViewMode(rawValue: viewModeRaw) ?? .list
+            return mode == .table ? .list : mode
+        #endif
     }
 
     private var thumbnailSize: ThumbnailSize {
@@ -100,7 +119,7 @@ struct BrowseContentView: View {
 
     private func handleTap(_ item: FileItem) {
         // A second tap while the row spinner is up cancels the in-flight open (a slow fetch
-        // has no other way out — the cover isn't presented yet).
+        // has no other way out: the cover isn't presented yet).
         if isOpening(item) {
             store.send(.previewDismissed)
             return
@@ -109,7 +128,7 @@ struct BrowseContentView: View {
     }
 
     /// Search results only report `dir`/`file` for kind, so derive a real extension from the
-    /// file name for the row icon — the same thing `searchResultTapped` hands the preview.
+    /// file name for the row icon: the same thing `searchResultTapped` hands the preview.
     private func searchResultKind(_ result: SearchResultItem) -> String {
         result.isDirectory ? result.kind : (result.name as NSString).pathExtension.lowercased()
     }
@@ -122,14 +141,16 @@ struct BrowseContentView: View {
             .dsSheet(item: $store.scope(state: \.uploadReview, action: \.uploadReview)) { reviewStore in
                 UploadReviewView(store: reviewStore)
             }
+        #if os(iOS)
             .dsSheet(item: infoPhaseBinding) { phase in
                 infoSheetContent(for: phase)
             }
+        #endif
             .dsSheet(item: $store.scope(state: \.permissions, action: \.permissions)) { permissionsStore in
                 PermissionsSheet(store: permissionsStore)
             }
             .fullScreenCover(isPresented: previewPresentedBinding) {
-                // `isPresented`, not `item:` — so an in-place rename (which changes the item's
+                // `isPresented`, not `item:`; so an in-place rename (which changes the item's
                 // id) updates the cover's content instead of dismissing and re-presenting it.
                 if let item = store.previewItem {
                     let sourceID = galleryCurrentItemID ?? item.id
@@ -142,7 +163,7 @@ struct BrowseContentView: View {
                             onGalleryItemChange: { galleryCurrentItemID = $0.id }
                         )
                     }
-                    .dsSheet(isPresented: isDeletingFromPreviewBinding) {
+                    .dsAlert(isPresented: isDeletingFromPreviewBinding) {
                         deleteConfirmationSheet(dismissingPreview: true)
                     }
                     .dsSheet(item: renameItemFromPreviewBinding) { renameTarget in
@@ -167,7 +188,7 @@ struct BrowseContentView: View {
             .dsToast(listToastBinding, extraBottomInset: bottomChromeClearance)
             .dsToast(listProgressToastBinding, extraBottomInset: bottomChromeClearance)
             // `fileActionErrorMessage` (rename/delete/extract/compress failures) was set on
-            // `State` but never actually read by any view — silently swallowed. Mirrored into
+            // `State` but never actually read by any view: silently swallowed. Mirrored into
             // the same toast the unsupported-file-type warning uses.
             .onChange(of: store.fileActionErrorMessage) { _, newValue in
                 guard let newValue else { return }
@@ -175,11 +196,21 @@ struct BrowseContentView: View {
             }
             .onChange(of: store.downloadSuccessMessage) { _, newValue in
                 guard let newValue else { return }
-                let inPreview = store.previewItem != nil
-                toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
-                    // From a preview, close the cover first, then switch tabs after a settle.
-                    store.send(inPreview ? .openDownloadsFromPreview : .delegate(.openDownloadsTapped))
-                }
+                #if os(macOS)
+                    // A Mac download lands where the user chose; the toast reveals it there.
+                    let savedURL = store.lastSavedDownloadURL
+                    toastMessage = .success(newValue, actionTitle: L10n.Browse.showInFinder) {
+                        if let savedURL {
+                            NSWorkspace.shared.activateFileViewerSelecting([savedURL])
+                        }
+                    }
+                #else
+                    let inPreview = store.previewItem != nil
+                    toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
+                        // From a preview, close the cover first, then switch tabs after a settle.
+                        store.send(inPreview ? .openDownloadsFromPreview : .delegate(.openDownloadsTapped))
+                    }
+                #endif
             }
             .onChange(of: store.transferSuccessMessage) { _, newValue in
                 guard let newValue else { return }
@@ -231,6 +262,9 @@ struct BrowseContentView: View {
                     Task { @MainActor in store.send(.computeOfflineAvailability) }
                 }
             }
+        #if os(macOS)
+            .modifier(MacBrowseInspector(screen: store) { shareTarget = $0 })
+        #endif
     }
 
     /// Split out of `body`: with every modifier below chained directly onto the file-action
@@ -238,14 +272,25 @@ struct BrowseContentView: View {
     /// reasonable time.
     private var browsingContent: some View {
         Group {
-            if isInitialLoad {
+            if isInitialLoad, viewMode == .table {
+                #if os(macOS)
+                    MacBrowseTableSkeleton()
+                        .transition(.opacity)
+                #endif
+            } else if isInitialLoad {
                 BrowseSkeletonView(
                     isGridView: viewMode == .grid,
                     gridColumns: gridColumns,
                     iconSize: thumbnailSize.iconSize
                 )
                 .transition(.opacity)
-            } else if viewMode == .list {
+            } else if viewMode == .table, !store.isSelecting, !store.isSearching {
+                tableContent
+                    .transition(.opacity)
+            } else if viewMode == .table, store.isSearching {
+                searchTableContent
+                    .transition(.opacity)
+            } else if viewMode != .grid {
                 listContent
                     .transition(.opacity)
             } else {
@@ -255,11 +300,16 @@ struct BrowseContentView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.easeInOut(duration: Constants.contentRevealDuration), value: isInitialLoad)
-        .tint(Color.accent)
+        .platformAccentTint()
         .refreshable {
             await store.send(.refreshButtonTapped).finish()
             didFinishRefreshing.toggle()
         }
+        #if os(macOS)
+        .macToolbarRefresh(onRefresh: { await store.send(.refreshButtonTapped).finish() }) {
+            didFinishRefreshing.toggle()
+        }
+        #endif
         .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.phase.errorMessage == nil }
         .hapticFeedback(.error, trigger: store.phase.errorMessage) { _, newValue in newValue != nil }
         .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: store.phase.errorMessage == nil, extraBottomInset: bottomChromeClearance)
@@ -275,45 +325,52 @@ struct BrowseContentView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedItemIDs.count) : displayTitle,
-                searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                searchText: $store.searchQuery.sending(\.searchQueryChanged),
+                shouldFadeIntoContent: viewMode != .table
             ) {
-                if store.isSearching {
-                    DSSegmentedControl(
-                        options: BrowseFeature.SearchScope.allCases,
-                        selection: $store.searchScope.sending(\.searchScopeChanged),
-                        label: { $0.title }
-                    )
-                    if !store.availableSearchCategories.isEmpty {
-                        SearchFilterChips(
-                            availableCategories: store.availableSearchCategories,
-                            selectedCategories: store.selectedSearchCategories,
-                            onToggle: { store.send(.searchCategoryToggled($0)) },
-                            onSelectAll: { store.send(.searchFilterCleared) }
+                // The Mac shows these natively, as a scope bar and search field tokens.
+                #if os(iOS)
+                    if store.isSearching {
+                        DSSegmentedControl(
+                            options: BrowseFeature.SearchScope.allCases,
+                            selection: $store.searchScope.sending(\.searchScopeChanged),
+                            label: { $0.title }
                         )
+                        if !store.availableSearchCategories.isEmpty {
+                            SearchFilterChips(
+                                availableCategories: store.availableSearchCategories,
+                                selectedCategories: store.selectedSearchCategories,
+                                onToggle: { store.send(.searchCategoryToggled($0)) },
+                                onSelectAll: { store.send(.searchFilterCleared) }
+                            )
+                        }
                     }
-                }
+                #endif
             }
         }
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            // The Mac table selects natively (click, Command and Shift click), so select mode
+            // and the view mode control are iOS only.
             selectSortToolbar(
                 isSelecting: store.isSelecting,
                 isAllSelected: isAllSelected,
-                isSelectAvailable: !store.isSearching && store.hasDisplayedItems,
+                isSelectAvailable: !store.isSearching && store.hasDisplayedItems && viewMode != .table,
                 isGridView: viewMode == .grid,
                 onSelectModeToggled: { store.send(.selectModeToggled) },
                 onSelectAllToggled: { store.send(isAllSelected ? .deselectAllTapped : .selectAllTapped) },
                 onCancel: { store.send(.selectModeToggled) },
                 onToggleViewMode: {
                     withAnimation {
-                        viewModeRaw = (viewMode == .list ? BrowseViewMode.grid : .list).rawValue
+                        viewModeRaw = (viewMode == .grid ? BrowseViewMode.list : .grid).rawValue
                     }
                 },
+                hasClipboardItems: store.clipboard != nil && !store.directoryPath.isEmpty,
                 clipboardMenu: {
                     if store.clipboard != nil, !store.directoryPath.isEmpty {
                         Section {
                             Button {
-                                store.send(.pasteTapped(keepItemsAfterCopy: keepClipboardAfterCopy), animation: .default)
+                                store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboardAfterCopy), animation: .default)
                             } label: {
                                 Label { Text(pasteActionTitle) } icon: { IconKit.paste }
                             }
@@ -327,38 +384,28 @@ struct BrowseContentView: View {
                     }
                 }
             ) {
-                Button {
-                    isSortSheetPresented = true
-                } label: {
-                    Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
+                // The Mac table sorts from its column headers, so only the other modes need this.
+                if viewMode != .table {
+                    Button {
+                        isSortSheetPresented = true
+                    } label: {
+                        Label { Text(L10n.Common.sort) } icon: { IconKit.sort }
+                    }
                 }
             }
-            if !store.isSelecting, canUploadHere {
-                if #available(iOS 26.0, *) {
-                    ToolbarSpacer(.fixed, placement: .topBarTrailing)
-                }
-                ToolbarItem(placement: .topBarTrailing) {
-                    UploadSourceMenu(
-                        label: {
+            #if os(iOS)
+                if !store.isSelecting, canUploadHere {
+                    if #available(iOS 26.0, *) {
+                        ToolbarSpacer(.fixed, placement: .topBarTrailing)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        uploadMenu {
                             IconKit.plus
                                 .foregroundStyle(Color.primaryDS)
-                        },
-                        leadingActions: {
-                            if !store.directoryPath.isEmpty {
-                                Button { store.send(.newFolderTapped) } label: {
-                                    Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
-                                }
-                            }
-                        },
-                        isFilesPickerPresented: $isFilesPickerPresented,
-                        isPhotosPickerPresented: $isPhotosPickerPresented,
-                        isCameraPresented: $isCameraPresented,
-                        isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
-                    )
-                    .accessibilityLabel(L10n.Uploads.menuTitle)
-                    .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
+                        }
+                    }
                 }
-            }
+            #endif
         }
         .modifier(UploadPickers(
             isFilesPickerPresented: $isFilesPickerPresented,
@@ -379,31 +426,38 @@ struct BrowseContentView: View {
                 store.send(.beginUpload(.camera(url)))
             }
         ))
+        #if os(macOS)
+        .modifier(MacFinderDrop(isEnabled: canUploadHere && !store.isSelecting) { urls in
+            store.send(.beginUpload(.documents(urls)))
+        })
+        #endif
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
-        .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
+        .hidesTabBar(store.isSelecting)
         .prefersToolbarItemsInVerticalBar()
         .toolbar {
             if store.isSelecting {
-                ToolbarItem(placement: .bottomBar) {
-                    Spacer()
-                }
-                if let singleSelectedItem, store.access?.canWrite ?? false {
+                #if os(iOS)
                     ToolbarItem(placement: .bottomBar) {
+                        Spacer()
+                    }
+                #endif
+                if let singleSelectedItem, store.access?.canWrite ?? false {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.rename, accessibilityLabel: L10n.Browse.actionRename) {
                             store.send(.renameTapped(singleSelectedItem))
                         }
                     }
                 }
                 if let singleSelectedItem, store.access?.canShare ?? false {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.shareLink, accessibilityLabel: L10n.Browse.actionShare) {
                             shareTarget = singleSelectedItem
                         }
                     }
                 }
                 if isFavoriteActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(
                             icon: isEntireSelectionAlreadyFavorited ? IconKit.starFill : IconKit.star,
                             accessibilityLabel: isEntireSelectionAlreadyFavorited ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites
@@ -413,28 +467,28 @@ struct BrowseContentView: View {
                     }
                 }
                 if isTransferActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.copy, accessibilityLabel: L10n.Browse.actionCopy) {
                             store.send(.bulkCopyTapped, animation: .default)
                         }
                     }
                 }
                 if isTransferActionVisible, store.access?.canWrite ?? false, store.access?.canDelete ?? false {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.move, accessibilityLabel: L10n.Browse.actionMove) {
                             store.send(.bulkMoveTapped, animation: .default)
                         }
                     }
                 }
                 if isDownloadActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.download, accessibilityLabel: L10n.Browse.actionDownload) {
                             store.send(.bulkDownloadTapped)
                         }
                     }
                 }
                 if isDeleteActionVisible {
-                    ToolbarItem(placement: .bottomBar) {
+                    ToolbarItem(placement: .selectionBar) {
                         selectionToolbarButton(icon: IconKit.delete, role: .destructive, tint: .negative, accessibilityLabel: L10n.Browse.actionDelete) {
                             store.send(.bulkDeleteTapped)
                         }
@@ -446,7 +500,7 @@ struct BrowseContentView: View {
             .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
             value: store.selectedItemIDs
         )
-        .dsSheet(isPresented: bulkDeleteConfirmationBinding) {
+        .dsAlert(isPresented: bulkDeleteConfirmationBinding) {
             DSAlertSheet(
                 icon: IconKit.delete,
                 title: bulkDeleteConfirmationTitle,
@@ -489,11 +543,11 @@ struct BrowseContentView: View {
                 onCancel: { store.send(.newFolderCancelled) }
             )
         }
-        .dsSheet(isPresented: isDeletingBinding) {
+        .dsAlert(isPresented: isDeletingBinding) {
             deleteConfirmationSheet(dismissingPreview: false)
         }
         .hapticFeedback(.warning, trigger: store.deleteConfirmationItem)
-        .dsSheet(isPresented: transferConflictBinding) {
+        .dsAlert(isPresented: transferConflictBinding) {
             DSAlertSheet(
                 icon: IconKit.warning,
                 title: L10n.Browse.transferConflictTitle,
@@ -523,7 +577,7 @@ struct BrowseContentView: View {
     }
 
     /// Whether the tapped file has loaded enough to present its cover. The download/editor
-    /// previews (PDF, office docs, text) hold the cover — and show a row spinner — until their
+    /// previews (PDF, office docs, text) hold the cover, and show a row spinner, until their
     /// fetch lands; gallery, streaming, archives and the unsupported screen are ready at once.
     /// Branch order mirrors `previewContent(for:)`.
     private var isPreviewContentReady: Bool {
@@ -555,7 +609,7 @@ struct BrowseContentView: View {
     }
 
     /// Search hits and browse rows share an `id` scheme (`path/name`), so `searchResultTapped`
-    /// builds a `FileItem` whose id matches the hit — the `.zoom` source and the opening
+    /// builds a `FileItem` whose id matches the hit: the `.zoom` source and the opening
     /// spinner can key off the same value.
     private func searchResultCell(row: SearchResultItem, grid: Bool) -> some View {
         Group {
@@ -604,7 +658,7 @@ struct BrowseContentView: View {
         )
     }
 
-    /// Extracted from the grid/list `ForEach` bodies — inlining the full cell (with the
+    /// Extracted from the grid/list `ForEach` bodies: inlining the full cell (with the
     /// `matchedSource` / `isOpening` args) tipped those already-large expressions past the
     /// type-checker's budget.
     private func gridCell(for item: FileItem) -> some View {
@@ -620,6 +674,191 @@ struct BrowseContentView: View {
         )
     }
 
+    /// Search results on the Mac table, in a table of their own.
+    @ViewBuilder
+    private var searchTableContent: some View {
+        #if os(macOS)
+            VStack(spacing: 0) {
+                MacSearchScopeBar(
+                    scope: $store.searchScope.sending(\.searchScopeChanged),
+                    availableCategories: store.availableSearchCategories,
+                    selectedCategories: store.selectedSearchCategories,
+                    onToggle: { store.send(.searchCategoryToggled($0)) },
+                    onShowAll: { store.send(.searchFilterCleared) }
+                )
+                Divider()
+                MacSearchResultsTable(
+                    results: store.displayedSearchResults.map(Array.init) ?? [],
+                    favoritePaths: store.favoritePaths,
+                    onOpen: { store.send(.searchResultTapped($0)) }
+                )
+                if let message = searchStatusMessage {
+                    Divider()
+                    searchStatusFooter(message)
+                }
+            }
+            .backgroundGradient()
+        #endif
+    }
+
+    private var tableContent: some View {
+        #if os(macOS)
+            MacBrowseTableView(
+                items: store.displayedItems,
+                sortOption: store.sortOption,
+                sortDirection: store.sortDirection,
+                onSortChanged: { option, direction in
+                    store.send(.sortOptionChanged(option))
+                    store.send(.sortDirectionChanged(direction))
+                },
+                selection: Binding(
+                    get: { store.selectedItemIDs },
+                    set: { store.send(.tableSelectionChanged($0)) }
+                ),
+                cutItemIDs: store.clipboard?.operation == .move ? store.clipboard?.sourceItemPaths ?? [] : [],
+                offlineItemIDs: store.offlineItemIDs,
+                favoriteItemIDs: store.favoritePaths,
+                onOpen: handleTap,
+                keyboardActions: tableKeyboardActions,
+                serverURL: store.serverURL,
+                canDropOnFolders: store.access?.canDelete ?? false,
+                onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
+                contextMenu: { ids in tableContextMenu(for: ids) },
+                renamingItemID: shouldRenameInTable ? store.renameSheetItem?.id : nil,
+                onRenameCommit: { store.send(.renameConfirmed($0)) },
+                onRenameCancel: { store.send(.renameCancelled) },
+                personalSpace: showsPersonalSpace ? Self.macPersonalSpaceItem : nil,
+                onOpenPersonalSpace: { store.send(.personalSpaceTapped) }
+            )
+            .focusedSceneValue(\.browseViewOptions, BrowseViewOptions(
+                sortOption: store.sortOption,
+                sortDirection: store.sortDirection,
+                setSortOption: { store.send(.sortOptionChanged($0)) },
+                setSortDirection: { store.send(.sortDirectionChanged($0)) }
+            ))
+        #else
+            listContent
+        #endif
+    }
+
+    #if os(macOS)
+        /// Drag a row out (Finder, or onto a folder here) and let folder rows take drops.
+        private func macRowDragDrop(for item: FileItem) -> MacRowDragDrop {
+            MacRowDragDrop(
+                item: item,
+                serverURL: store.serverURL,
+                canDrag: !store.isSelecting,
+                canDropHere: !store.isSelecting && (store.access?.canDelete ?? false),
+                onDrop: { ids in store.send(.itemsDroppedOnFolder(ids: ids, folder: item)) }
+            )
+        }
+    #endif
+
+    #if os(macOS)
+        /// The table row standing in for My Files; its id is the `personal` path it opens.
+        private static let macPersonalSpaceItem = FileItem(
+            name: PersonalSpace.rootPath,
+            path: "",
+            dateModified: .distantPast,
+            size: 0,
+            kind: "directory"
+        )
+
+        /// Right click in the table: the clicked rows' actions, or the folder's own (new folder,
+        /// upload) on empty space. Paste Here joins every variant while something is staged, so
+        /// a full window still has somewhere to paste.
+        @ViewBuilder
+        private func tableContextMenu(for ids: Set<FileItem.ID>) -> some View {
+            let items = store.displayedItems.filter { ids.contains($0.id) }
+            if items.isEmpty {
+                if canUploadHere {
+                    if !store.directoryPath.isEmpty {
+                        Button { store.send(.newFolderTapped) } label: {
+                            Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                        }
+                        .tint(.primaryDS)
+                    }
+                    Button { isFilesPickerPresented = true } label: {
+                        Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.upload }
+                    }
+                    .tint(.primaryDS)
+                }
+            } else if items.count == 1, let item = items.first {
+                fileActionsMenu(for: item)
+            } else {
+                Button {
+                    store.send(.tableSelectionChanged(ids))
+                    store.send(.copySelectionTapped, animation: .default)
+                } label: {
+                    Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
+                }
+                .tint(.primaryDS)
+                if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
+                    Button {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.duplicateSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
+                    }
+                    .tint(.primaryDS)
+                }
+                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                    Button {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.cutSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                    }
+                    .tint(.primaryDS)
+                }
+                if store.access?.canDelete ?? false {
+                    Button(role: .destructive) {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.deleteSelectionTapped)
+                    } label: {
+                        Label { Text(L10n.Browse.actionDelete) } icon: { IconKit.delete }
+                    }
+                }
+            }
+            if store.clipboard != nil, !store.directoryPath.isEmpty {
+                Divider()
+                pasteEmptySpaceMenu
+                    .tint(.primaryDS)
+            }
+        }
+
+        private var tableKeyboardActions: BrowseKeyboardActions {
+            let canPaste = store.clipboard != nil && !store.directoryPath.isEmpty
+            let keepAfterCopy = shouldKeepClipboardAfterCopy
+            return BrowseKeyboardActions(
+                cut: { store.send(.cutSelectionTapped) },
+                copy: { store.send(.copySelectionTapped) },
+                duplicate: { store.send(.duplicateSelectionTapped, animation: .default) },
+                undo: { store.send(.undoTapped, animation: .default) },
+                canUndo: !store.undoStack.isEmpty,
+                paste: {
+                    guard canPaste else { return }
+                    store.send(.pasteTapped(keepItemsAfterCopy: keepAfterCopy), animation: .default)
+                },
+                delete: { store.send(.deleteSelectionTapped) },
+                rename: { store.send(.renameSelectionTapped) },
+                selectAll: { store.send(.tableSelectionChanged(Set(store.displayedItems.map(\.id)))) },
+                getInfo: { store.send(.infoSelectionTapped) },
+                canPaste: canPaste,
+                open: {
+                    guard store.selectedItemIDs.count == 1,
+                          let item = store.displayedItems.first(where: { store.selectedItemIDs.contains($0.id) }) else { return }
+                    handleTap(item)
+                },
+                copyPath: {
+                    let paths = store.displayedItems.filter { store.selectedItemIDs.contains($0.id) }.map(\.id)
+                    guard !paths.isEmpty else { return }
+                    PlatformPasteboard.copy(paths.joined(separator: "\n"))
+                }
+            )
+        }
+    #endif
+
     private func listRowCell(for item: FileItem) -> some View {
         FileRowView(
             item: item,
@@ -634,7 +873,7 @@ struct BrowseContentView: View {
 
     /// Toasts split by surface: while a preview cover is up, its toasts render over the cover,
     /// otherwise over the list. One `toastMessage`/`fileActionProgressMessage` still drives
-    /// both — only the visible one is bound.
+    /// both: only the visible one is bound.
     private var listToastBinding: Binding<DSToastMessage?> {
         Binding(get: { store.previewItem == nil ? toastMessage : nil }, set: { toastMessage = $0 })
     }
@@ -644,7 +883,7 @@ struct BrowseContentView: View {
     }
 
     /// Read-only from the store's perspective: `fileActionProgressMessage` clears itself once
-    /// the extract/compress effect resolves, so there's nothing for the view to write back —
+    /// the extract/compress effect resolves, so there's nothing for the view to write back:
     /// the toast has no auto-dismiss timer to fire early either (`DSToastMessage.progress`
     /// sets `isPersistent`), so the setter is genuinely never called in practice.
     private var listProgressToastBinding: Binding<DSToastMessage?> {
@@ -687,7 +926,7 @@ struct BrowseContentView: View {
 
     /// Distinct identities for "still loading" vs. "have a result", so swapping between the
     /// two (once the fetch resolves) is a genuinely fresh sheet presentation rather than an
-    /// in-place content change — see `FileInfoLoadingSheet`'s doc comment for why that
+    /// in-place content change: see `FileInfoLoadingSheet`'s doc comment for why that
     /// matters for getting the right height.
     private enum InfoSheetPhase: Identifiable, Equatable {
         case loading(FileItem)
@@ -739,9 +978,18 @@ struct BrowseContentView: View {
     /// Drives the rename `NameInputSheet`; a swipe down dismiss routes back through the reducer
     /// so `renameSheetItem` clears. The reducer also nils it itself on a completed rename.
     /// Split like the delete confirmation so it presents over whichever surface is frontmost.
+    /// The Mac folder table renames in place; search results and previews keep the sheet.
+    private var shouldRenameInTable: Bool {
+        #if os(macOS)
+            store.previewItem == nil && !store.isSearching
+        #else
+            false
+        #endif
+    }
+
     private var renameItemBinding: Binding<FileItem?> {
         Binding(
-            get: { store.previewItem == nil ? store.renameSheetItem : nil },
+            get: { store.previewItem == nil && !shouldRenameInTable ? store.renameSheetItem : nil },
             set: {
                 if $0 == nil {
                     store.send(.renameCancelled)
@@ -802,7 +1050,7 @@ struct BrowseContentView: View {
         store.previewItem.map { ($0.isImage || $0.isRawImage) && !$0.isSVG } ?? false
     }
 
-    private func deleteConfirmationSheet(dismissingPreview: Bool) -> some View {
+    private func deleteConfirmationSheet(dismissingPreview: Bool) -> DSAlertSheet {
         DSAlertSheet(
             icon: IconKit.delete,
             title: deleteConfirmationTitle,
@@ -864,7 +1112,7 @@ struct BrowseContentView: View {
         store.hasDisplayedItems && store.selectedItemIDs.count == store.displayedItemCount
     }
 
-    /// Rename only makes sense for a single target — `nil` (hiding the toolbar icon) for
+    /// Rename only makes sense for a single target: `nil` (hiding the toolbar icon) for
     /// zero or multiple selected items.
     private var singleSelectedItem: FileItem? {
         guard store.selectedItemIDs.count == 1, let id = store.selectedItemIDs.first else { return nil }
@@ -872,7 +1120,7 @@ struct BrowseContentView: View {
     }
 
     /// Only directories can be favorited, so a selection mixing a file in with a folder has
-    /// no well-defined bulk target — the icon disappears entirely rather than silently
+    /// no well-defined bulk target: the icon disappears entirely rather than silently
     /// ignoring the file, which a merely-disabled icon would leave ambiguous.
     private var isFavoriteActionVisible: Bool {
         !store.selectedItemIDs.isEmpty && store.selectedItemIDs.allSatisfy { id in
@@ -894,7 +1142,7 @@ struct BrowseContentView: View {
         !store.selectedItemIDs.isEmpty && (store.access?.canDelete ?? false)
     }
 
-    /// Copy/Move from the selection toolbar — available whenever anything is selected, except
+    /// Copy/Move from the selection toolbar: available whenever anything is selected, except
     /// for a lone root location (same rule the single-item context menu enforces via
     /// `isSoleRootLocation`). Copy needs no permission; the Move button adds a
     /// `canWrite && canDelete` gate at its site.
@@ -927,11 +1175,12 @@ struct BrowseContentView: View {
         FileActionsMenu(
             store: store,
             item: item,
-            onShare: { shareTarget = $0 }
+            onShare: { shareTarget = $0 },
+            onOpenWithFailed: { toastMessage = .failure($0) }
         )
     }
 
-    /// Which branch of `overlayStateContent` is currently showing — a plain discriminant so
+    /// Which branch of `overlayStateContent` is currently showing: a plain discriminant so
     /// the overlay can cross-fade between states instead of hard-cutting between them.
     private enum OverlayState: Hashable {
         case none, error, empty, searching, noResults
@@ -952,7 +1201,7 @@ struct BrowseContentView: View {
             .empty
         } else if store.isSearching, store.isSearchingRemotely, store.displayedSearchResults?.isEmpty ?? true {
             // A recursive backend search is in flight with nothing to show yet (the client
-            // pre-fill found no local matches) — spin rather than flash "no results".
+            // pre-fill found no local matches): spin rather than flash "no results".
             .searching
         } else if store.isSearching, let results = store.displayedSearchResults, results.isEmpty {
             .noResults
@@ -993,6 +1242,26 @@ struct BrowseContentView: View {
         }
     }
 
+    /// The toolbar's upload `+` menu; each platform supplies its own label and styling.
+    private func uploadMenu(@ViewBuilder label: @escaping () -> some View) -> some View {
+        UploadSourceMenu(
+            label: label,
+            leadingActions: {
+                if !store.directoryPath.isEmpty {
+                    Button { store.send(.newFolderTapped) } label: {
+                        Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                    }
+                }
+            },
+            isFilesPickerPresented: $isFilesPickerPresented,
+            isPhotosPickerPresented: $isPhotosPickerPresented,
+            isCameraPresented: $isCameraPresented,
+            isCameraDeniedAlertPresented: $isCameraDeniedAlertPresented
+        )
+        .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
+        .accessibilityIdentifier(AccessibilityIdentifiers.Browse.uploadMenu)
+    }
+
     /// Root only, outside search and select mode: the account's private folder is not a volume,
     /// so it is not something a bulk action over the listing should touch.
     private var showsPersonalSpace: Bool {
@@ -1001,7 +1270,7 @@ struct BrowseContentView: View {
 
     private var listContent: some View {
         ScrollViewReader { proxy in
-            List {
+            DSGroupedList {
                 if showsPersonalSpace {
                     Section {
                         PersonalSpaceRow { store.send(.personalSpaceTapped) }
@@ -1021,10 +1290,17 @@ struct BrowseContentView: View {
                         BrowseRootSectionHeader(title: L10n.Browse.locations)
                     }
                 }
+                if store.isSearching, let message = searchStatusMessage {
+                    searchStatusFooter(message)
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(Color.clear)
+                        .listRowSeparator(.hidden)
+                }
                 offlineFooterRow
                 pasteTargetRow
             }
             .listStyle(.insetGrouped)
+            .groupedListRowHover()
             .scrollContentBackground(.hidden)
             // Scrolling the results dismisses the search keyboard, the expected gesture when the
             // results fill the screen and tapping a row would navigate rather than just defocus.
@@ -1088,6 +1364,9 @@ struct BrowseContentView: View {
                     .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
                     value: store.displayedSearchResults
                 )
+                if store.isSearching, let message = searchStatusMessage {
+                    searchStatusFooter(message)
+                }
                 offlineFooter
                 pasteTargetArea
             }
@@ -1099,7 +1378,7 @@ struct BrowseContentView: View {
         }
     }
 
-    /// Invisible long-press target filling the space past the last row — a plain
+    /// Invisible long-press target filling the space past the last row: a plain
     /// `.contextMenu` on the whole list/scroll container lifts a snapshot of the entire list
     /// on long-press, which reads as the list jumping. Scoping it to this transparent trailing
     /// area keeps the list itself still. Present only while something is staged, so an empty
@@ -1115,6 +1394,18 @@ struct BrowseContentView: View {
                 .listRowSeparator(.hidden)
                 .contextMenu { pasteEmptySpaceMenu }
         }
+    }
+
+    private var searchStatusMessage: String? {
+        SearchStatusFooter.message(isTooShort: store.isSearchTermTooShort, shortfall: store.searchShortfall)
+    }
+
+    private func searchStatusFooter(_ message: String) -> some View {
+        SearchStatusFooter(
+            message: message,
+            canShowMore: store.canShowMoreSearchResults && !store.isSearchingRemotely,
+            onShowMore: { store.send(.searchShowMoreTapped) }
+        )
     }
 
     /// "Showing a saved copy" notice, rendered as a footer below the last row/cell of the
@@ -1151,16 +1442,16 @@ struct BrowseContentView: View {
     }
 
     /// Bottom scroll clearance for the chrome floating under this list: the breadcrumb bar
-    /// (`BrowseTabView`/`FavoritesView`, pushed screens only — the root's `directoryPath` is
+    /// (`BrowseTabView`/`FavoritesView`, pushed screens only: the root's `directoryPath` is
     /// always empty) and the app-level upload progress bar while it's showing. Both are placed
     /// by ancestors a `List` inside a pushed `navigationDestination` doesn't reliably respect.
     private var bottomChromeClearance: CGFloat {
-        (store.directoryPath.isEmpty ? 0 : BrowseBreadcrumbBarMetrics.height)
+        (store.directoryPath.isEmpty || !BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: viewModeRaw) ? 0 : BrowseBreadcrumbBarMetrics.height)
             + (isUploadBarVisible ? uploadBarHeight + UploadBarChrome.gap : 0)
     }
 
     /// Gates the `+` upload menu on the folder's own `FileAccess.canUpload`. Defaults to
-    /// allowed while access is still loading — the first browse response fills it in.
+    /// allowed while access is still loading: the first browse response fills it in.
     private var canUploadHere: Bool {
         store.access?.canUpload ?? true
     }
@@ -1178,10 +1469,10 @@ struct BrowseContentView: View {
         .tint(.primaryDS)
         .frame(maxWidth: Constants.emptyUploadButtonMaxWidth)
         .padding(.horizontal, Constants.emptyUploadButtonHPadding)
-        .accessibilityLabel(L10n.Uploads.menuTitle)
+        .accessibilityLabelWithTooltip(L10n.Uploads.menuTitle)
     }
 
-    /// Whether the current folder is a legitimate paste target for the staged clipboard —
+    /// Whether the current folder is a legitimate paste target for the staged clipboard:
     /// gates the "Paste" action in the `…` menu.
     private var canPasteIntoCurrentFolder: Bool {
         store.clipboard?.canPaste(into: store.directoryPath, canWrite: store.access?.canWrite ?? false) ?? false
@@ -1193,13 +1484,13 @@ struct BrowseContentView: View {
         return count <= 1 ? L10n.Browse.actionPaste : L10n.Browse.actionPasteCount(count)
     }
 
-    /// Long-press menu for the empty space in the list/grid — only present while something is
+    /// Long-press menu for the empty space in the list/grid: only present while something is
     /// staged, so an empty menu never opens. Mirrors the `…` menu's paste/clear pair.
     @ViewBuilder
     private var pasteEmptySpaceMenu: some View {
         if store.clipboard != nil, !store.directoryPath.isEmpty {
             Button {
-                store.send(.pasteTapped(keepItemsAfterCopy: keepClipboardAfterCopy), animation: .default)
+                store.send(.pasteTapped(keepItemsAfterCopy: shouldKeepClipboardAfterCopy), animation: .default)
             } label: {
                 Label { Text(L10n.Browse.actionPasteHere) } icon: { IconKit.paste }
             }
@@ -1223,6 +1514,9 @@ struct BrowseContentView: View {
             } label: {
                 gridCell(for: item)
                     .dsCard(padding: Constants.gridCellPadding)
+                #if os(macOS)
+                    .modifier(macRowDragDrop(for: item))
+                #endif
                     .overlay(alignment: .topLeading) {
                         if store.isSelecting {
                             DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
@@ -1241,7 +1535,7 @@ struct BrowseContentView: View {
 
     @ViewBuilder
     private var folderItemRows: some View {
-        // `store.displayedItems` filters + sorts on every read — bind it once here rather than
+        // `store.displayedItems` filters + sorts on every read: bind it once here rather than
         // re-deriving it per row (the separator checks below alone made it O(n^2 log n)).
         let items = store.displayedItems
         let firstItemID = items.first?.id
@@ -1260,6 +1554,10 @@ struct BrowseContentView: View {
                     }
                     listRowCell(for: item)
                 }
+                #if os(macOS)
+                // On the label, not the row chain: that chain is at the type checker's limit.
+                .modifier(macRowDragDrop(for: item))
+                #endif
             }
             .buttonStyle(DSHapticButtonStyle())
             .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
@@ -1281,7 +1579,7 @@ struct BrowseContentView: View {
                         .tint(.negative)
                         .accessibilityLabel(L10n.Common.delete)
                     }
-                    // Only folders can be favorited — the server 400s on anything else.
+                    // Only folders can be favorited: the server 400s on anything else.
                     if item.isDirectory {
                         Button {
                             store.send(.favoriteToggleButtonTapped(item))
@@ -1324,6 +1622,24 @@ struct BrowseContentView: View {
     }
 
     private var noResultsState: some View {
+        #if os(macOS)
+            ContentUnavailableView {
+                Label { Text(L10n.Browse.searchNoMatchesInFolder(store.searchQuery)) } icon: { IconKit.search }
+            } description: {
+                if store.isSearchTermTooShort {
+                    Text(SearchStatusFooter.tooShortMessage)
+                }
+            } actions: {
+                if store.searchScope == .thisFolder, !store.isSearchTermTooShort {
+                    Button(L10n.Browse.searchEverywhere) { store.send(.searchScopeChanged(.everywhere)) }
+                }
+            }
+        #else
+            iOSNoResultsState
+        #endif
+    }
+
+    private var iOSNoResultsState: some View {
         VStack(spacing: Constants.emptyStateSpacing) {
             IconKit.search
                 .resizable()
@@ -1332,7 +1648,11 @@ struct BrowseContentView: View {
                 .frame(width: Constants.emptyStateIconSize, height: Constants.emptyStateIconSize)
             Text(L10n.Browse.searchNoMatchesInFolder(store.searchQuery))
                 .type(.body1(.semibold), style: .secondary)
-            if store.searchScope == .thisFolder {
+            if store.isSearchTermTooShort {
+                Text(SearchStatusFooter.tooShortMessage)
+                    .type(.body3(.regular), style: .secondary)
+                    .multilineTextAlignment(.center)
+            } else if store.searchScope == .thisFolder {
                 DSButton(L10n.Browse.searchEverywhere,
                          icon: IconKit.search,
                          style: .secondary,
@@ -1384,32 +1704,32 @@ private let browsePreviewEmptyAccess = FileAccess(
     canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true
 )
 
-#Preview("Browse — content") {
+#Preview("Browse: content") {
     browsePreview(mutateState: { $0.items = IdentifiedArray(uniqueElements: browsePreviewItems) })
 }
 
-#Preview("Browse — loading") {
+#Preview("Browse: loading") {
     browsePreview(mutateState: { $0.phase = .loading })
 }
 
-#Preview("Browse — empty folder") {
+#Preview("Browse: empty folder") {
     browsePreview(
         configureClient: { $0.browse = { _, path in BrowseResult(items: [], access: browsePreviewEmptyAccess, path: path) } }
     )
 }
 
-#Preview("Browse — error") {
+#Preview("Browse: error") {
     browsePreview(mutateState: { $0.phase = .failed(L10n.EmptyState.loadFailed) })
 }
 
-#Preview("Browse — no search results") {
+#Preview("Browse: no search results") {
     browsePreview(mutateState: {
         $0.searchQuery = "vacation"
         $0.searchResults = []
     })
 }
 
-#Preview("Browse — searching everywhere") {
+#Preview("Browse: searching everywhere") {
     browsePreview(mutateState: {
         $0.searchQuery = "vacation"
         $0.searchScope = .everywhere
@@ -1417,7 +1737,7 @@ private let browsePreviewEmptyAccess = FileAccess(
     })
 }
 
-#Preview("Browse — delete alert, linked shares") {
+#Preview("Browse: delete alert, linked shares") {
     browsePreview(mutateState: {
         $0.items = IdentifiedArray(uniqueElements: browsePreviewItems)
         $0.deleteConfirmationItem = browsePreviewItems[1]
@@ -1425,7 +1745,7 @@ private let browsePreviewEmptyAccess = FileAccess(
     })
 }
 
-#Preview("Browse — delete alert, share check unavailable") {
+#Preview("Browse: delete alert, share check unavailable") {
     browsePreview(mutateState: {
         $0.items = IdentifiedArray(uniqueElements: browsePreviewItems)
         $0.deleteConfirmationItem = browsePreviewItems[1]

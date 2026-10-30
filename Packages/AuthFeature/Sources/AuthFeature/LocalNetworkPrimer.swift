@@ -7,12 +7,20 @@ import os
 ///
 /// Opening a UDP socket to the limited-broadcast address and sending one datagram is enough
 /// for the system to class the app as a local-network client and prompt. The datagram goes
-/// nowhere useful — port 9 is discard — it exists only to touch the network.
+/// nowhere useful, port 9 is discard, it exists only to touch the network.
 enum LocalNetworkPrimer {
     private static let connection = OSAllocatedUnfairLock<NWConnection?>(initialState: nil)
 
-    /// Safe to call repeatedly — only the first call does anything.
+    /// Safe to call repeatedly: only the first call does anything.
     static func prime() {
+        #if DEBUG
+            // The mocked UI test graph never touches the network, and on a fresh Mac the system
+            // alert would sit over the window and take every keystroke the tests type.
+            // `UITestSupport.mockFlag`, which this package cannot import.
+            if ProcessInfo.processInfo.environment["UITEST_MOCK"] == "1" {
+                return
+            }
+        #endif
         connection.withLock { existing in
             guard existing == nil else { return }
 

@@ -1,4 +1,4 @@
-# NextExplorer — Italiano (it). key<TAB>value.
+# NextExplorer: Italiano (it). key<TAB>value.
 common.cancel	Annulla
 common.save	Salva
 common.edit	Modifica
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Aggiungi ai Preferiti
 browse.actionRemoveFromFavorites	Rimuovi dai Preferiti
 browse.actionShare	Crea link di condivisione
 browse.actionDelete	Elimina
+browse.actionDuplicate	Duplica
 browse.renameTitle	Rinomina
 browse.renameNamePlaceholder	Nome
 browse.actionNewFolder	Crea cartella
@@ -307,6 +308,7 @@ settings.rowUserManagement	Gestione utenti
 settings.rowChangePassword	Cambia password
 settings.rowServer	Server
 settings.storageFootnote	Le cartelle si scaricano come ZIP, senza lasciare nulla sul server. Rimuovere i download o svuotare la cache riguarda solo questo dispositivo; sul server non viene toccato nulla.
+settings.storageFootnoteMac	Svuotare la cache riguarda solo questo Mac; sul server non viene toccato nulla.
 settings.removeAllDownloadsTitle	Rimuovere tutti i download?
 settings.removeAllDownloadsConfirm	Rimuovi tutto
 settings.removeAllDownloadsMessage	Questo elimina ogni file scaricato da questo dispositivo. Restano sul server.
@@ -518,6 +520,14 @@ browse.nameErrorReserved	Quel nome non è consentito.
 browse.nameErrorSeparators	Un nome non può contenere / o \.
 browse.searchMatchLine	Riga %1$lld: %2$@
 browse.searchMatchLineLabel	Riga %lld
+browse.searchTooShort	Digita almeno %lld caratteri per cercare nelle sottocartelle e nel contenuto dei file.
+browse.searchStoppedEarly	La ricerca si è fermata al limite di tempo. Questi sono i risultati trovati finora.
+browse.searchFirstOnly	Primi %lld risultati. Restringi la ricerca per vederne altri.
+browse.searchShowMore	Mostra altri
+browse.searchMatchColumn	Corrispondenza
+browse.searchMatchedByName	Nome
+browse.searchMatchedByContent	Contenuto
+browse.searchMatchedByBoth	Nome e contenuto
 createShare.errorPasswordRequired	Inserisci una password o disattiva la protezione con password.
 filter.sheetTitle	Filtra per tipo
 filter.button	Filtra
@@ -596,6 +606,32 @@ offline.manageEmpty	Nessun elemento è scaricato per l'uso offline.
 offline.preferOfflineToggle	Riproduci le copie scaricate
 offline.preferOfflineSubtitle	Usa un video scaricato invece dello streaming quando è disponibile.
 offline.tunnelSpeedNote	Raggiungere il server tramite un tunnel remoto può rallentare i download. Per i file di grandi dimensioni, collegati alla stessa rete e usa l'indirizzo locale del server.
+menu.about	Informazioni su NextExplorer
+menu.rateApp	Valuta NextExplorer…
+menu.support	Supporto NextExplorer
+menu.redo	Ripristina
+menu.undo	Annulla
+settings.sectionSupport	Supporto
+settings.rowRateApp	Valuta NextExplorer
+settings.rowSupport	Aiuto e supporto
+menu.refresh	Aggiorna
+select.tableView	Vista tabella
+openWith.openIn	Apri in %@
+openWith.openWith	Apri con
+openWith.viewAsText	Mostra come testo
+openWith.failed	Impossibile aprire questo file.
+browse.showInFinder	Mostra nel Finder
+browse.actionCut	Taglia
+browse.clipboardCutOne	%@ pronto da spostare
+browse.clipboardCutMany	%lld elementi pronti da spostare
+menu.enclosingFolder	Cartella superiore
+common.more	Altro
+openWith.print	Stampa…
+menu.newWindow	Nuova finestra
+menu.newTab	Nuovo pannello
+browse.actionOpenInNewWindow	Apri in una nuova finestra
+browse.actionOpenInNewTab	Apri in un nuovo pannello
+select.viewAs	Vista
 settings.rowAppearance	Aspetto
 appearance.system	Sistema
 appearance.light	Chiaro
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld elementi salvati in Download
 downloadQueue.bytesOf	%1$@ di %2$@
 downloadQueue.timeLeft	%@ rimanenti
 browse.sectionPersonal	Personale
-settings.sectionSupport	Supporto
-settings.rowRateApp	Valuta NextExplorer
-settings.rowSupport	Aiuto e supporto
+browse.progressDownloading	Download…
+browse.progressDownloadingIndexed	Download di %1$lld di %2$lld…
+browse.downloadSavedTo	Salvato in %@
+browse.downloadSavedCountTo	Salvati %1$lld di %2$lld elementi in %3$@
+browse.downloadSavedAllTo	Salvati %1$lld elementi in %2$@
+browse.downloadBulkFailed	Impossibile salvare questi elementi sul dispositivo.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Aggiungi account…
+macSettings.changePassword	Cambia password…
+macSettings.signOut	Esci…
+macSettings.switchAccount	Passa a questo account
+macSettings.username	Nome utente
+macSettings.email	Email
+macSettings.role	Ruolo
+macSettings.roleAdmin	Amministratore
+macSettings.roleUser	Utente
+macSettings.status	Stato
+macSettings.statusSignedIn	Accesso eseguito
+macSettings.manage	Gestisci…
+macSettings.cache	Cache
+macSettings.support	Aiuto e supporto…
+macSettings.permission	Permesso
+macSettings.icon	Icona
+menu.go	Vai
+menu.activity	Trasferimenti
+menu.showAll	Mostra tutto
+uploads.notifyDone	Caricamenti completati
+uploads.notifyBody	%lld file caricati
+downloadQueue.notifyDone	Download completati
+fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versioni
+fileInfo.versionsNone	Nessuna versione precedente
+fileInfo.versionRestore	Ripristina…
+fileInfo.restoreTitle	Ripristinare questa versione?
+fileInfo.restoreMessage	Il file torna com'era il %@. Il contenuto attuale viene conservato come versione.
+fileInfo.restoreConfirm	Ripristina
+fileInfo.sectionSharing	Condivisione
+fileInfo.notShared	Nessun link di condivisione
+fileInfo.versionActions	Azioni versione
+fileInfo.versionDownload	Scarica…
+fileInfo.versionSaveCopy	Salva come copia
+fileInfo.versionRename	Rinomina…
+fileInfo.renameTitle	Rinomina versione
+fileInfo.renamePlaceholder	Nome della versione
+fileInfo.versionPin	Conserva questa versione
+fileInfo.versionUnpin	Non conservare più questa versione
+fileInfo.versionKept	Conservata
+fileInfo.versionDelete	Elimina…
+fileInfo.deleteTitle	Eliminare questa versione?
+fileInfo.deleteAll	Elimina tutte le versioni…
+fileInfo.deleteAllTitle	Eliminare tutte le versioni?
+fileInfo.deleteMessage	Le versioni eliminate spariscono per sempre. Il file resta com'è.
+macSettings.choose	Scegli…
+menu.forward	Avanti
+menu.goToFolder	Vai alla cartella…
+menu.goToFolderTitle	Vai alla cartella:
+menu.copyPath	Copia percorso
+menu.recentFolders	Cartelle recenti
+menu.clearRecent	Cancella menu

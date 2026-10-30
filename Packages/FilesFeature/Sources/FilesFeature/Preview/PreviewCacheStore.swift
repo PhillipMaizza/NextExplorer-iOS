@@ -1,10 +1,10 @@
 import ComposableArchitecture
 import Foundation
 
-/// Reports on and clears `Library/Caches/PreviewCache` — the internal, dedup'd cache
+/// Reports on and clears `Library/Caches/PreviewCache`: the internal, dedup'd cache
 /// `FilesClient`'s `previewFile`/`downloadRawFile` already write into (see
 /// `FilesService.previewCacheDirectory`). That path convention is duplicated here rather than
-/// exposed from `FilesClient`, which is exclusively the server-communication layer — this is a
+/// exposed from `FilesClient`, which is exclusively the server-communication layer: this is a
 /// local-filesystem-only concern, same reasoning as `LocalDownloadStore`.
 public struct PreviewCacheStore: Sendable {
     public var size: @Sendable () throws -> Int64

@@ -40,7 +40,7 @@ struct DownloadRowContextMenu: View {
     }
 
     /// Deep-links the Files app straight to this file (`LSSupportsOpeningDocumentsInPlace`/
-    /// `UIFileSharingEnabled`, set in Info.plist, expose the app's Documents folder there) —
+    /// `UIFileSharingEnabled`, set in Info.plist, expose the app's Documents folder there):
     /// `nil` for `.cache`-location downloads, which are app-private and never show up in
     /// Files regardless of scheme.
     private var filesAppURL: URL? {

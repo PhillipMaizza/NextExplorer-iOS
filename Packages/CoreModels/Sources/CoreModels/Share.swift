@@ -1,7 +1,7 @@
 import Foundation
 
 /// Whether a share grants write access. Mirrors the server's `access_mode`
-/// (`['readonly', 'readwrite']`) — confirmed against `backend/src/services/sharesService.js`.
+/// (`['readonly', 'readwrite']`): confirmed against `backend/src/services/sharesService.js`.
 public enum ShareAccessMode: String, Codable, Sendable, CaseIterable, Hashable {
     case readonly
     case readwrite
@@ -46,7 +46,7 @@ public struct Share: Codable, Equatable, Identifiable, Sendable {
     public let label: String?
     public let downloadCount: Int
     public let lastAccessedAt: Date?
-    /// The users a `.users` share is granted to — the owner-side lists (`GET /api/shares`,
+    /// The users a `.users` share is granted to: the owner-side lists (`GET /api/shares`,
     /// `GET /api/shares/:id`) add this; nil for `.anyone` shares and the recipient list.
     public let permittedUserIds: [String]?
     public let createdAt: Date
@@ -209,7 +209,7 @@ public struct CreateShareLinkRequest: Equatable, Sendable {
 /// Body for `PUT /api/shares/:id` (`backend/src/routes/shares.js` → `sharesService.updateShare`).
 /// The server applies each key that's present (`'key' in body`) and leaves the rest, so the
 /// only field that needs care is the password: sending a string sets a new one, `null` removes
-/// it, and *omitting the key* keeps whatever's already there — the current value can't be read
+/// it, and *omitting the key* keeps whatever's already there: the current value can't be read
 /// back (only a hash exists server side).
 public struct UpdateShareRequest: Equatable, Sendable {
     public var label: String?
@@ -221,11 +221,11 @@ public struct UpdateShareRequest: Equatable, Sendable {
     public var password: PasswordChange
 
     public enum PasswordChange: Equatable, Sendable {
-        /// Don't touch the current password — the `password` key is left out entirely.
+        /// Don't touch the current password: the `password` key is left out entirely.
         case keep
-        /// Clear the password — sends `password: null`.
+        /// Clear the password: sends `password: null`.
         case remove
-        /// Replace it — sends `password: "<value>"`.
+        /// Replace it: sends `password: "<value>"`.
         case set(String)
     }
 

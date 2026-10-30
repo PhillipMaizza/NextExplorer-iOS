@@ -1,4 +1,4 @@
-# NextExplorer — Русский (ru). key<TAB>value.
+# NextExplorer: Русский (ru). key<TAB>value.
 common.cancel	Отмена
 common.save	Сохранить
 common.edit	Изменить
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Добавить в избранное
 browse.actionRemoveFromFavorites	Убрать из избранного
 browse.actionShare	Создать ссылку для доступа
 browse.actionDelete	Удалить
+browse.actionDuplicate	Дублировать
 browse.renameTitle	Переименовать
 browse.renameNamePlaceholder	Имя
 browse.actionNewFolder	Создать папку
@@ -253,7 +254,7 @@ thumbnailSettings.subtitle	Управляйте тем, как сервер со
 thumbnailSettings.enable	Создавать миниатюры
 thumbnailSettings.enableHelp	Отключите, чтобы везде показывать полные изображения.
 thumbnailSettings.quality	Качество
-thumbnailSettings.qualityHelp	Выше — лучше выглядит и занимает больше места.
+thumbnailSettings.qualityHelp	Чем выше, тем лучше выглядит и больше места занимает.
 thumbnailSettings.maxDimension	Максимальный размер
 thumbnailSettings.maxDimensionHelp	Самая длинная сторона создаваемой миниатюры, в пикселях.
 thumbnailSettings.concurrency	Параллельность
@@ -308,6 +309,7 @@ settings.rowUserManagement	Управление пользователями
 settings.rowChangePassword	Изменить пароль
 settings.rowServer	Сервер
 settings.storageFootnote	Папки загружаются в виде ZIP, на сервере ничего не остаётся. Удаление загрузок или очистка кэша затрагивает только это устройство; на сервере ничего не меняется.
+settings.storageFootnoteMac	Очистка кэша затрагивает только этот Mac; на сервере ничего не меняется.
 settings.removeAllDownloadsTitle	Удалить все загрузки?
 settings.removeAllDownloadsConfirm	Удалить все
 settings.removeAllDownloadsMessage	Это удалит все загруженные файлы с этого устройства. Они останутся на сервере.
@@ -519,6 +521,14 @@ browse.nameErrorReserved	Это имя недопустимо.
 browse.nameErrorSeparators	Имя не может содержать / или \.
 browse.searchMatchLine	Строка %1$lld: %2$@
 browse.searchMatchLineLabel	Строка %lld
+browse.searchTooShort	Введите не менее %lld символов, чтобы искать во вложенных папках и содержимом файлов.
+browse.searchStoppedEarly	Поиск остановлен по истечении лимита времени. Вот результаты, найденные на данный момент.
+browse.searchFirstOnly	Первые результаты: %lld. Уточните запрос, чтобы увидеть больше.
+browse.searchShowMore	Показать ещё
+browse.searchMatchColumn	Совпадение
+browse.searchMatchedByName	Имя
+browse.searchMatchedByContent	Содержимое
+browse.searchMatchedByBoth	Имя и содержимое
 createShare.errorPasswordRequired	Введите пароль или отключите защиту паролем.
 filter.sheetTitle	Фильтр по типу
 filter.button	Фильтр
@@ -596,6 +606,32 @@ offline.manageEmpty	Ничего не загружено для офлайн-д�
 offline.preferOfflineToggle	Воспроизводить загруженные копии
 offline.preferOfflineSubtitle	Использовать загруженное видео вместо потоковой передачи, когда оно доступно.
 offline.tunnelSpeedNote	Доступ к серверу через удалённый туннель может замедлить загрузки. Для больших файлов подключитесь к той же сети и используйте локальный адрес сервера.
+menu.about	О программе NextExplorer
+menu.rateApp	Оценить NextExplorer…
+menu.support	Поддержка NextExplorer
+menu.redo	Повторить
+menu.undo	Отменить
+settings.sectionSupport	Поддержка
+settings.rowRateApp	Оценить NextExplorer
+settings.rowSupport	Помощь и поддержка
+menu.refresh	Обновить
+select.tableView	Вид таблицы
+openWith.openIn	Открыть в %@
+openWith.openWith	Открыть в программе
+openWith.viewAsText	Показать как текст
+openWith.failed	Не удалось открыть этот файл.
+browse.showInFinder	Показать в Finder
+browse.actionCut	Вырезать
+browse.clipboardCutOne	%@ готов к перемещению
+browse.clipboardCutMany	Объектов готово к перемещению: %lld
+menu.enclosingFolder	Родительская папка
+common.more	Еще
+openWith.print	Напечатать…
+menu.newWindow	Новое окно
+menu.newTab	Новая вкладка
+browse.actionOpenInNewWindow	Открыть в новом окне
+browse.actionOpenInNewTab	Открыть в новой вкладке
+select.viewAs	Вид
 settings.rowAppearance	Оформление
 appearance.system	Системное
 appearance.light	Светлое
@@ -616,6 +652,62 @@ downloadQueue.savedMany	Сохранено в Загрузках элемент�
 downloadQueue.bytesOf	%1$@ из %2$@
 downloadQueue.timeLeft	осталось %@
 browse.sectionPersonal	Личное
-settings.sectionSupport	Поддержка
-settings.rowRateApp	Оценить NextExplorer
-settings.rowSupport	Помощь и поддержка
+browse.progressDownloading	Загрузка…
+browse.progressDownloadingIndexed	Загрузка %1$lld из %2$lld…
+browse.downloadSavedTo	Сохранено в %@
+browse.downloadSavedCountTo	Сохранено %1$lld из %2$lld объектов в %3$@
+browse.downloadSavedAllTo	Сохранено объектов: %1$lld в %2$@
+browse.downloadBulkFailed	Не удалось сохранить эти объекты на устройство.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Добавить аккаунт…
+macSettings.changePassword	Изменить пароль…
+macSettings.signOut	Выйти…
+macSettings.switchAccount	Переключиться на этот аккаунт
+macSettings.username	Имя пользователя
+macSettings.email	Эл. почта
+macSettings.role	Роль
+macSettings.roleAdmin	Администратор
+macSettings.roleUser	Пользователь
+macSettings.status	Статус
+macSettings.statusSignedIn	Вход выполнен
+macSettings.manage	Управлять…
+macSettings.cache	Кэш
+macSettings.support	Помощь и поддержка…
+macSettings.permission	Доступ
+macSettings.icon	Значок
+menu.go	Переход
+menu.activity	Передачи
+menu.showAll	Показать все
+uploads.notifyDone	Загрузка на сервер завершена
+uploads.notifyBody	Загружено файлов: %lld
+downloadQueue.notifyDone	Загрузки завершены
+fileInfo.rowSoftware	Программа
+fileInfo.sectionVersions	Версии
+fileInfo.versionsNone	Нет более ранних версий
+fileInfo.versionRestore	Восстановить…
+fileInfo.restoreTitle	Восстановить эту версию?
+fileInfo.restoreMessage	Файл вернётся к состоянию на %@. Текущее содержимое сохранится как версия.
+fileInfo.restoreConfirm	Восстановить
+fileInfo.sectionSharing	Общий доступ
+fileInfo.notShared	Нет ссылок общего доступа
+fileInfo.versionActions	Действия с версией
+fileInfo.versionDownload	Загрузить…
+fileInfo.versionSaveCopy	Сохранить как копию
+fileInfo.versionRename	Переименовать…
+fileInfo.renameTitle	Переименовать версию
+fileInfo.renamePlaceholder	Название версии
+fileInfo.versionPin	Хранить эту версию
+fileInfo.versionUnpin	Не хранить эту версию
+fileInfo.versionKept	Хранится
+fileInfo.versionDelete	Удалить…
+fileInfo.deleteTitle	Удалить эту версию?
+fileInfo.deleteAll	Удалить все версии…
+fileInfo.deleteAllTitle	Удалить все версии?
+fileInfo.deleteMessage	Удалённые версии исчезают навсегда. Сам файл остаётся как есть.
+macSettings.choose	Выбрать…
+menu.forward	Вперед
+menu.goToFolder	Переход к папке…
+menu.goToFolderTitle	Перейти к папке:
+menu.copyPath	Скопировать путь
+menu.recentFolders	Недавние папки
+menu.clearRecent	Очистить меню

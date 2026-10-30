@@ -1,7 +1,7 @@
 import Foundation
 
 /// Server branding: the app name and logo an admin sets under Settings. Confirmed against
-/// `backend/src/services/settingsService.js`'s `sanitizeBranding` — `GET /api/branding`
+/// `backend/src/services/settingsService.js`'s `sanitizeBranding`: `GET /api/branding`
 /// returns this unauthenticated, `PATCH /api/settings` (admin) updates it.
 ///
 /// The server also stores `showPoweredBy`; this app has no footer for it, so it's neither

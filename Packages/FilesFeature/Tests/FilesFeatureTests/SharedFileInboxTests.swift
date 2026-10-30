@@ -52,7 +52,12 @@ struct SharedFileInboxTests {
         }
         await store.receive(\.browse.receiveSharedFiles)
         await store.receive(\.browse.root.receiveSharedFiles)
-        await store.receive(\.browse.root.beginUpload)
+        #if os(macOS)
+            // The Mac sends Finder files to the review sheet, not the direct upload a drop gets.
+            await store.receive(\.browse.root.reviewUpload)
+        #else
+            await store.receive(\.browse.root.beginUpload)
+        #endif
         await store.receive(\.browse.root.uploadReview.presented.stagingBatchFinished)
         #expect(store.state.browse.root.uploadReview?.files.map(\.fileName) == ["Scan.pdf"])
     }
@@ -118,7 +123,11 @@ struct SharedFileInboxTests {
         await store.receive(\.previewDismissed) {
             $0.previewItem = nil
         }
-        await store.receive(\.beginUpload)
+        #if os(macOS)
+            await store.receive(\.reviewUpload)
+        #else
+            await store.receive(\.beginUpload)
+        #endif
         #expect(store.state.uploadReview != nil)
     }
 }

@@ -99,7 +99,7 @@ struct FavoriteEditFeatureTests {
         #expect(store.state.nameError == .empty)
         #expect(store.state.isSaveEnabled == false)
 
-        await store.send(.saveTapped) // guarded — no effect
+        await store.send(.saveTapped) // guarded: no effect
     }
 
     @Test

@@ -3,7 +3,7 @@ import Foundation
 import Testing
 
 /// Exercises `LocalDownloadStore.liveValue` against the real filesystem (the simulator's own
-/// sandboxed Documents/Caches directories) — same spirit as `KeychainClientTests` hitting the
+/// sandboxed Documents/Caches directories): same spirit as `KeychainClientTests` hitting the
 /// real Security framework rather than a mock, since the whole point is verifying actual
 /// on-disk behavior.
 ///

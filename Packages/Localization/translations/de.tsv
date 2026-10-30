@@ -1,4 +1,4 @@
-# NextExplorer — Deutsch (de). key<TAB>value.
+# NextExplorer: Deutsch (de). key<TAB>value.
 common.cancel	Abbrechen
 common.save	Sichern
 common.edit	Bearbeiten
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Zu Favoriten hinzufügen
 browse.actionRemoveFromFavorites	Aus Favoriten entfernen
 browse.actionShare	Freigabelink erstellen
 browse.actionDelete	Löschen
+browse.actionDuplicate	Duplizieren
 browse.renameTitle	Umbenennen
 browse.renameNamePlaceholder	Name
 browse.actionNewFolder	Ordner erstellen
@@ -308,6 +309,7 @@ settings.rowUserManagement	Benutzerverwaltung
 settings.rowChangePassword	Passwort ändern
 settings.rowServer	Server
 settings.storageFootnote	Ordner werden als ZIP geladen, ohne etwas auf dem Server zu hinterlassen. Das Entfernen von Downloads oder das Leeren des Caches betrifft nur dieses Gerät; auf dem Server wird nichts berührt.
+settings.storageFootnoteMac	Das Leeren des Caches betrifft nur diesen Mac; auf dem Server wird nichts berührt.
 settings.removeAllDownloadsTitle	Alle Downloads entfernen?
 settings.removeAllDownloadsConfirm	Alle entfernen
 settings.removeAllDownloadsMessage	Dies löscht jede geladene Datei von diesem Gerät. Sie bleiben auf dem Server.
@@ -519,6 +521,14 @@ browse.nameErrorReserved	Dieser Name ist nicht zulässig.
 browse.nameErrorSeparators	Ein Name darf kein / oder \ enthalten.
 browse.searchMatchLine	Zeile %1$lld: %2$@
 browse.searchMatchLineLabel	Zeile %lld
+browse.searchTooShort	Gib mindestens %lld Zeichen ein, um Unterordner und Dateiinhalte zu durchsuchen.
+browse.searchStoppedEarly	Die Suche wurde am Zeitlimit beendet. Das sind die bisher gefundenen Ergebnisse.
+browse.searchFirstOnly	Erste %lld Ergebnisse. Grenze die Suche ein, um mehr zu sehen.
+browse.searchShowMore	Mehr anzeigen
+browse.searchMatchColumn	Treffer
+browse.searchMatchedByName	Name
+browse.searchMatchedByContent	Inhalt
+browse.searchMatchedByBoth	Name und Inhalt
 createShare.errorPasswordRequired	Gib ein Passwort ein oder deaktiviere den Passwortschutz.
 filter.sheetTitle	Nach Typ filtern
 filter.button	Filtern
@@ -596,6 +606,32 @@ offline.manageEmpty	Nichts ist für die Offline-Nutzung heruntergeladen.
 offline.preferOfflineToggle	Heruntergeladene Kopien abspielen
 offline.preferOfflineSubtitle	Ein heruntergeladenes Video abspielen statt zu streamen, wenn es verfügbar ist.
 offline.tunnelSpeedNote	Der Zugriff auf deinen Server über einen entfernten Tunnel kann Downloads verlangsamen. Verbinde dich für große Dateien mit demselben Netzwerk und verwende die lokale Adresse deines Servers.
+menu.about	Über NextExplorer
+menu.rateApp	NextExplorer bewerten …
+menu.support	NextExplorer-Support
+menu.redo	Wiederholen
+menu.undo	Widerrufen
+settings.sectionSupport	Support
+settings.rowRateApp	NextExplorer bewerten
+settings.rowSupport	Hilfe & Support
+menu.refresh	Aktualisieren
+select.tableView	Tabellenansicht
+openWith.openIn	In %@ öffnen
+openWith.openWith	Öffnen mit
+openWith.viewAsText	Als Text anzeigen
+openWith.failed	Diese Datei konnte nicht geöffnet werden.
+browse.showInFinder	Im Finder zeigen
+browse.actionCut	Ausschneiden
+browse.clipboardCutOne	%@ zum Verschieben bereit
+browse.clipboardCutMany	%lld Objekte zum Verschieben bereit
+menu.enclosingFolder	Übergeordneter Ordner
+common.more	Mehr
+openWith.print	Drucken …
+menu.newWindow	Neues Fenster
+menu.newTab	Neuer Tab
+browse.actionOpenInNewWindow	In neuem Fenster öffnen
+browse.actionOpenInNewTab	In neuem Tab öffnen
+select.viewAs	Darstellung
 settings.rowAppearance	Erscheinungsbild
 appearance.system	System
 appearance.light	Hell
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld Objekte in Downloads gespeichert
 downloadQueue.bytesOf	%1$@ von %2$@
 downloadQueue.timeLeft	noch %@
 browse.sectionPersonal	Persönlich
-settings.sectionSupport	Support
-settings.rowRateApp	NextExplorer bewerten
-settings.rowSupport	Hilfe & Support
+browse.progressDownloading	Wird geladen…
+browse.progressDownloadingIndexed	%1$lld von %2$lld wird geladen…
+browse.downloadSavedTo	Gesichert in %@
+browse.downloadSavedCountTo	%1$lld von %2$lld Objekten in %3$@ gesichert
+browse.downloadSavedAllTo	%1$lld Objekte in %2$@ gesichert
+browse.downloadBulkFailed	Diese Objekte konnten nicht auf deinem Gerät gesichert werden.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Account hinzufügen …
+macSettings.changePassword	Passwort ändern …
+macSettings.signOut	Abmelden …
+macSettings.switchAccount	Zu diesem Account wechseln
+macSettings.username	Benutzername
+macSettings.email	E-Mail
+macSettings.role	Rolle
+macSettings.roleAdmin	Administrator
+macSettings.roleUser	Benutzer
+macSettings.status	Status
+macSettings.statusSignedIn	Angemeldet
+macSettings.manage	Verwalten …
+macSettings.cache	Cache
+macSettings.support	Hilfe & Support …
+macSettings.permission	Berechtigung
+macSettings.icon	Symbol
+menu.go	Gehe zu
+menu.activity	Übertragungen
+menu.showAll	Alle anzeigen
+uploads.notifyDone	Uploads abgeschlossen
+uploads.notifyBody	%lld Dateien hochgeladen
+downloadQueue.notifyDone	Downloads abgeschlossen
+fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versionen
+fileInfo.versionsNone	Keine früheren Versionen
+fileInfo.versionRestore	Wiederherstellen …
+fileInfo.restoreTitle	Diese Version wiederherstellen?
+fileInfo.restoreMessage	Die Datei wird auf den Stand vom %@ zurückgesetzt. Der aktuelle Inhalt bleibt als Version erhalten.
+fileInfo.restoreConfirm	Wiederherstellen
+fileInfo.sectionSharing	Freigabe
+fileInfo.notShared	Keine Freigabelinks
+fileInfo.versionActions	Versionsaktionen
+fileInfo.versionDownload	Laden …
+fileInfo.versionSaveCopy	Als Kopie sichern
+fileInfo.versionRename	Umbenennen …
+fileInfo.renameTitle	Version umbenennen
+fileInfo.renamePlaceholder	Versionsname
+fileInfo.versionPin	Diese Version behalten
+fileInfo.versionUnpin	Diese Version nicht mehr behalten
+fileInfo.versionKept	Behalten
+fileInfo.versionDelete	Löschen …
+fileInfo.deleteTitle	Diese Version löschen?
+fileInfo.deleteAll	Alle Versionen löschen …
+fileInfo.deleteAllTitle	Alle Versionen löschen?
+fileInfo.deleteMessage	Gelöschte Versionen sind endgültig weg. Die Datei selbst bleibt unverändert.
+macSettings.choose	Auswählen …
+menu.forward	Vorwärts
+menu.goToFolder	Gehe zum Ordner …
+menu.goToFolderTitle	Gehe zum Ordner:
+menu.copyPath	Pfad kopieren
+menu.recentFolders	Benutzte Ordner
+menu.clearRecent	Menü löschen

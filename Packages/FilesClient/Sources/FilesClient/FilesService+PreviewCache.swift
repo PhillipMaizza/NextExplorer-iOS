@@ -9,7 +9,7 @@ extension FilesService {
     static let rawPreviewFileExtension = "jpg"
     /// `previewCacheNamespace` / `rawDownloadCacheNamespace` keep `previewFile`
     /// (`GET /api/preview`) and `downloadRawFile` (`POST /api/download`) from ever sharing a
-    /// cache entry for the same item — two different endpoints, nothing guarantees identical
+    /// cache entry for the same item: two different endpoints, nothing guarantees identical
     /// bytes for every kind that uses both (RAW images already diverge one direction).
     static let previewCacheNamespace = "preview"
     static let rawDownloadCacheNamespace = "download"
@@ -61,7 +61,7 @@ extension FilesService {
         try await fetchPreviewFile(serverURL: serverURL, item: item, lowPriority: false)
     }
 
-    /// `previewFile` served over the low priority session — for opportunistic fetches (PDF
+    /// `previewFile` served over the low priority session: for opportunistic fetches (PDF
     /// first page thumbnails) that must not compete with interactive traffic. Same cache
     /// slot, so a later tap-to-open reuses the download and a cache hit here returns with no
     /// network.
@@ -101,10 +101,10 @@ extension FilesService {
     }
 
     /// `POST /api/download`, confirmed against `backend/src/routes/files/download.js` mounted
-    /// at plain `/api` (not `/api/files`) in `backend/src/routes/index.js` — easy to get wrong
+    /// at plain `/api` (not `/api/files`) in `backend/src/routes/index.js`: easy to get wrong
     /// by pattern-matching the file's own path (`routes/files/download.js`) instead of its
     /// actual mount point.
-    /// unlike `GET /api/preview`, this isn't restricted to `PREVIEWABLE_EXTENSIONS` — a single
+    /// unlike `GET /api/preview`, this isn't restricted to `PREVIEWABLE_EXTENSIONS`: a single
     /// non-directory target streams back as the raw file (`res.download`), whatever its kind.
     /// That's what makes client-side archive browsing (`ZIPFoundation`/`Unrar.swift`) possible
     /// at all: the server has no listing-only endpoint, so the whole archive has to come down
@@ -227,7 +227,7 @@ extension FilesService {
         return downloadedURL
     }
 
-    /// Streams `request`'s response to disk (never buffering it in memory — previews,
+    /// Streams `request`'s response to disk (never buffering it in memory: previews,
     /// downloads and whole archives can be very large) and lands it at `fileURL` with a
     /// staleness sidecar, or returns the existing cache entry untouched. Concurrent calls for
     /// the same `fileURL` share a single download via `downloadCoordinator`.
@@ -370,7 +370,7 @@ extension FilesService {
 
     /// `POST /api/upload`, confirmed against `backend/src/routes/upload.js` +
     /// `services/uploadService.js`. One `multipart/form-data` request per file: the text
-    /// fields (`uploadTo`, `relativePath`) MUST precede the `filedata` part — multer's custom
+    /// fields (`uploadTo`, `relativePath`) MUST precede the `filedata` part: multer's custom
     /// storage reads `req.body` inside `_handleFile`, so a file part that arrives first sees an
     /// empty body. The whole request is first written to a temporary multipart envelope on
     /// disk (one extra copy of the payload), then streamed from that file, so the upload never

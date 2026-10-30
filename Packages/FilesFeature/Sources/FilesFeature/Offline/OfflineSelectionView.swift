@@ -81,7 +81,7 @@ struct OfflineSelectionView: View {
             EmptyStateView(icon: IconKit.folder, message: L10n.Offline.selectionEmpty)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List {
+            DSGroupedList {
                 ForEach(store.items) { item in
                     OfflineSelectionRow(
                         item: item,
@@ -104,7 +104,7 @@ struct OfflineSelectionView: View {
         return values?.volumeAvailableCapacityForImportantUsage ?? .max
     }
 
-    private var exceedsFreeSpace: Bool {
+    private var isOverFreeSpace: Bool {
         !store.isEstimating && store.estimatedBytes > deviceFreeBytes
     }
 
@@ -120,7 +120,7 @@ struct OfflineSelectionView: View {
                         .monospacedDigit()
                         .multilineTextAlignment(.trailing)
                 }
-                if exceedsFreeSpace {
+                if isOverFreeSpace {
                     Text(L10n.Offline.selectionInsufficientSpace)
                         .type(.body3(.regular), style: .error)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -129,7 +129,7 @@ struct OfflineSelectionView: View {
                     L10n.Offline.selectionDownload,
                     action: { store.send(.confirmTapped) }
                 )
-                .disabled(!store.canConfirm || exceedsFreeSpace)
+                .disabled(!store.canConfirm || isOverFreeSpace)
             }
         }
     }

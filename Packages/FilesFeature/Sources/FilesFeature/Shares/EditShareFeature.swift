@@ -4,7 +4,7 @@ import FilesClient
 import Foundation
 import Localization
 
-/// Drives the "Edit Share Link" sheet (`EditShareSheet`) — the counterpart of
+/// Drives the "Edit Share Link" sheet (`EditShareSheet`): the counterpart of
 /// `CreateShareLinkFeature` for an existing share, saving via `PUT /api/shares/:id`. The
 /// shared path can't change; the password's current value is never shown (only a hash
 /// exists server side), so the field is keep / change / remove.

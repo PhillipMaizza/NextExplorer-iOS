@@ -5,6 +5,9 @@ import Foundation
 extension FilesService {
     struct SearchEnvelope: Decodable {
         let items: [SearchResultItem]
+        let truncated: Bool?
+        let limit: Int?
+        let complete: Bool?
     }
 
     struct ThumbnailEnvelope: Decodable {

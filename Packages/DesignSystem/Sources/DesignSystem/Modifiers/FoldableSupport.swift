@@ -1,5 +1,7 @@
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 // iPhone Duo APIs ship in the iOS 27.1 SDK (SwiftUI 8.0.85, UIKit 9127.0.85). Older SDKs, CI
 // included, compile these modifiers as pass throughs.
@@ -22,7 +24,7 @@ public extension View {
 
 private struct FoldableHingeObserver: ViewModifier {
     func body(content: Content) -> some View {
-        #if canImport(SwiftUI, _version: 8.0.85)
+        #if os(iOS) && canImport(SwiftUI, _version: 8.0.85)
             if #available(iOS 27.1, *) {
                 content.onHingeChange { _, context in
                     if context.hinge != nil {

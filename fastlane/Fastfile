@@ -11,15 +11,23 @@ default_platform(:ios)
 #   GH_USER        gh account for the CI status check and the GitHub Release, when several are
 #                  logged in
 #
-# Versions come from git tags, never from a commit: `release` ships the next version after the
-# newest `v<version>` tag (patch by default) by passing MARKETING_VERSION to the archive, then
-# tags it. Before the first tag it ships the project's MARKETING_VERSION. The build number
-# needs no bump either: the app target stamps CFBundleVersion with the git commit count.
+# Versions come from git tags: `release` ships the next version after the newest `v<version>`
+# tag (patch by default) by passing MARKETING_VERSION to the archive, then tags it. A project
+# MARKETING_VERSION ahead of that tag is a planned minor or major and ships as is; so does the
+# project's version before the first tag. The build number needs no bump: the app target
+# stamps CFBundleVersion with the git commit count.
+#
+# iOS and the Mac are the same target and share one version: `release` builds both from the
+# same release branch, submits both and tags once (`platforms:ios` or `platforms:mac` ships
+# only one; the other skips that version).
 
 PROJECT = "NextExplorer.xcodeproj".freeze
 PBXPROJ = "#{PROJECT}/project.pbxproj".freeze
 SCHEME = "NextExplorer".freeze
 COPYRIGHT_HOLDER = "Phillip Maizza".freeze
+# The Mac app's first App Store version: a platform's first version has no What's New.
+FIRST_MAC_VERSION = "1.1.0".freeze
+PLATFORMS = %w[ios mac].freeze
 DEFAULT_DEVICE = "iPhone 17 Pro".freeze
 
 
@@ -51,6 +59,15 @@ def next_version(version, type)
   end
 end
 
+# `platforms:"ios,mac"` (the default) as a list, refusing anything else.
+def release_platforms(options)
+  platforms = (options[:platforms] || PLATFORMS.join(",")).to_s.split(",").map(&:strip).reject(&:empty?).uniq
+  unknown = platforms - PLATFORMS
+  UI.user_error!("Unknown platforms #{unknown.join(', ')}; use ios, mac or ios,mac") unless unknown.empty?
+  UI.user_error!("Pass at least one platform") if platforms.empty?
+  platforms
+end
+
 def release_tag(version)
   "v#{version}"
 end
@@ -62,11 +79,15 @@ def latest_released_version
     .max_by { |version| Gem::Version.new(version) }
 end
 
-# Options: version (explicit), bump (patch, minor, major; default patch).
+# Options: version (explicit), bump (patch, minor, major; default patch, or the project's
+# MARKETING_VERSION when it is already ahead of the newest tag).
 def upcoming_version(options)
   return options[:version].to_s if options[:version]
   latest = latest_released_version
-  latest ? next_version(latest, options[:bump]) : marketing_version
+  return marketing_version unless latest
+  planned = marketing_version
+  return planned if options[:bump].nil? && Gem::Version.new(planned) > Gem::Version.new(latest)
+  next_version(latest, options[:bump])
 end
 
 platform :ios do
@@ -112,20 +133,24 @@ platform :ios do
     )
   end
 
-  desc "Run the unit tests and build a Release archive, without uploading anything"
+  desc "Run the unit tests and build the Release iPhone/iPad app and Mac package, without uploading"
+  desc "anything. Options: platforms (ios,mac by default), bump, version"
   lane :release_dry_run do |options|
     ensure_git_status_clean
     sh("git", "fetch", "--tags", "--quiet", "origin")
+    platforms = release_platforms(options)
     version = upcoming_version(options)
     ensure_version_unreleased(version: version)
     unit_tests(device: DEFAULT_DEVICE)
-    build_release(version: version)
-    UI.success("Would release #{version}")
+    build_release(version: version) if platforms.include?("ios")
+    build_mac_release(version: version) if platforms.include?("mac")
+    UI.success("Would release #{version} for #{platforms.join(' and ')}")
   end
 
-  desc "Release from main: next version after the newest v* tag, unit tests, cut release/<version>,"
-  desc "upload, submit for review, tag v<version>. Goes live automatically once approved."
-  desc "Options: bump (patch, minor, major; default patch), version (explicit), manual_release"
+  desc "Release iOS and the Mac from main: next version after the newest v* tag, unit tests, cut"
+  desc "release/<version>, upload both, submit both for review, tag v<version>. Goes live"
+  desc "automatically once approved. Options: platforms (ios,mac by default; one of them ships only"
+  desc "that app), bump (patch, minor, major; default patch), version (explicit), manual_release"
   desc "(hold for a manual release), phased (7 day phased rollout)"
   lane :release do |options|
     ensure_git_status_clean
@@ -133,6 +158,7 @@ platform :ios do
     sh("git", "pull", "--ff-only", "origin", "main")
 
     sh("git", "fetch", "--tags", "--quiet", "origin")
+    platforms = release_platforms(options)
     version = upcoming_version(options)
     ensure_version_unreleased(version: version)
     head = sh("git", "rev-parse", "HEAD", log: false).strip
@@ -147,22 +173,29 @@ platform :ios do
     sh("git", "push", "-u", "origin", release_branch)
 
     api_key = asc_api_key
-    ipa = build_release(version: version)
-    build_number = get_ipa_info_plist_value(ipa: ipa, key: "CFBundleVersion")
+    # Both apps stamp CFBundleVersion with the commit count, so they share a build number.
+    build_number = sh("git", "rev-list", "--count", "HEAD", log: false).strip
+    notes = testflight_notes(version: version)
+    # Review needs a processed build, so each upload waits for processing.
+    if platforms.include?("ios")
+      ipa = build_release(version: version)
+      upload_to_testflight(api_key: api_key, ipa: ipa, changelog: notes)
+    end
+    if platforms.include?("mac")
+      pkg = build_mac_release(version: version)
+      upload_to_testflight(api_key: api_key, pkg: pkg, app_platform: "osx", changelog: notes)
+    end
 
-    # Review needs a processed build, so this upload waits for processing.
-    upload_to_testflight(api_key: api_key, ipa: ipa, changelog: testflight_notes(version: version))
-
-    submit(version: version, build: build_number, commit: head,
+    submit(version: version, build: build_number, commit: head, platforms: platforms.join(","),
            manual_release: options[:manual_release], phased: options[:phased])
 
     sh("git", "switch", "main")
   end
 
-  desc "Submit an uploaded, processed build for review, then tag v<version> and publish the GitHub"
+  desc "Submit uploaded, processed builds for review, then tag v<version> and publish the GitHub"
   desc "Release. `release` ends with this; run it alone to resume a release that stopped after upload."
-  desc "Options: version, build, commit (to tag; default the release/<version> branch), manual_release,"
-  desc "phased"
+  desc "Options: version, build, commit (to tag; default the release/<version> branch), platforms"
+  desc "(ios,mac by default), manual_release, phased"
   lane :submit do |options|
     version = options[:version] || UI.user_error!("Pass version:")
     build_number = options[:build] || UI.user_error!("Pass build:")
@@ -174,55 +207,40 @@ platform :ios do
     whats_new = release_notes(version).gsub(/^- /, "• ")
     UI.user_error!("No user facing notes for #{version}; nothing to put in What's New") if whats_new.empty?
 
-    upload_to_app_store(
-      api_key: asc_api_key,
-      app_version: version,
-      build_number: build_number,
-      skip_binary_upload: true,
-      skip_screenshots: true,
-      skip_metadata: false,
-      release_notes: { "en-US" => whats_new },
-      copyright: "#{Time.now.year} #{COPYRIGHT_HOLDER}",
-      submit_for_review: true,
-      automatic_release: options[:manual_release] != true,
-      phased_release: options[:phased] == true,
-      force: true,
-      precheck_include_in_app_purchases: false,
-      submission_information: { add_id_info_uses_idfa: false }
-    )
+    platforms = release_platforms(options)
+    platforms.each do |platform|
+      # The Mac app's first version has no What's New to fill in.
+      first_version = platform == "mac" && version == FIRST_MAC_VERSION
+      upload_to_app_store(
+        api_key: asc_api_key,
+        platform: platform == "mac" ? "osx" : "ios",
+        app_version: version,
+        build_number: build_number,
+        skip_binary_upload: true,
+        skip_screenshots: true,
+        skip_metadata: false,
+        release_notes: first_version ? nil : { "en-US" => whats_new },
+        copyright: "#{Time.now.year} #{COPYRIGHT_HOLDER}",
+        submit_for_review: true,
+        automatic_release: options[:manual_release] != true,
+        phased_release: options[:phased] == true,
+        force: true,
+        precheck_include_in_app_purchases: false,
+        submission_information: { add_id_info_uses_idfa: false }
+      )
+    end
 
     tag = release_tag(version)
-    add_git_tag(tag: tag, commit: commit, message: "#{version} (#{build_number}) submitted for review")
+    add_git_tag(tag: tag, commit: commit, message: "#{version} (#{build_number}) for #{platforms.join(' and ')} submitted for review")
     push_git_tags(tag: tag)
     with_gh do
       sh("gh", "release", "create", tag, "--verify-tag", "--title", version,
          "--notes", release_notes(version, links: true))
     end
-    UI.success("#{version} (#{build_number}) submitted for review and tagged #{tag}")
+    UI.success("#{version} (#{build_number}) for #{platforms.join(' and ')} submitted for review and tagged #{tag}")
   end
 
-  # A version is released once its tag exists, locally or on origin.
-  private_lane :ensure_version_unreleased do |options|
-    tag = release_tag(options[:version])
-    if git_tag_exists(tag: tag, remote: true)
-      UI.user_error!("#{tag} is already released")
-    end
-  end
-
-  # "What to Test", generated from main's history for the version (Scripts/gen-changelog.py).
-  private_lane :testflight_notes do |options|
-    notes = release_notes(options[:version])
-    notes.empty? ? nil : notes
-  end
-
-  private_lane :asc_api_key do
-    app_store_connect_api_key(
-      key_id: ENV.fetch("ASC_KEY_ID"),
-      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
-      key_filepath: ENV.fetch("ASC_KEY_PATH")
-    )
-  end
-
+  # The target builds for iOS and the Mac, so gym needs the sdk to know which package to export.
   # Automatic signing; the API key lets xcodebuild create or refresh the distribution
   # certificate and profile without an Xcode account signed in.
   private_lane :build_release do |options|
@@ -230,6 +248,8 @@ platform :ios do
       project: PROJECT,
       scheme: SCHEME,
       configuration: "Release",
+      sdk: "iphoneos",
+      destination: "generic/platform=iOS",
       export_method: "app-store",
       output_directory: "build/fastlane",
       clean: true,
@@ -242,6 +262,105 @@ platform :ios do
       ].join(" ")
     )
   end
+end
+
+# Shared by both platforms.
+
+# A version is released once its tag exists, locally or on origin.
+private_lane :ensure_version_unreleased do |options|
+  tag = release_tag(options[:version])
+  if git_tag_exists(tag: tag, remote: true)
+    UI.user_error!("#{tag} is already released")
+  end
+end
+
+# "What to Test", generated from main's history for the version (Scripts/gen-changelog.py).
+private_lane :testflight_notes do |options|
+  notes = release_notes(options[:version])
+  notes.empty? ? nil : notes
+end
+
+private_lane :asc_api_key do
+  app_store_connect_api_key(
+    key_id: ENV.fetch("ASC_KEY_ID"),
+    issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+    key_filepath: ENV.fetch("ASC_KEY_PATH")
+  )
+end
+
+# The Mac App Store wants an installer package, signed with a Mac Installer Distribution
+# certificate; automatic signing refreshes the profiles through the API key.
+private_lane :build_mac_release do |options|
+  build_mac_app(
+    project: PROJECT,
+    scheme: SCHEME,
+    configuration: "Release",
+    sdk: "macosx",
+    destination: "generic/platform=macOS",
+    export_method: "app-store",
+    output_directory: "build/fastlane/mac",
+    clean: true,
+    xcargs: [
+      "MARKETING_VERSION=#{options[:version]}",
+      "-allowProvisioningUpdates",
+      "-authenticationKeyPath #{ENV.fetch('ASC_KEY_PATH').shellescape}",
+      "-authenticationKeyID #{ENV.fetch('ASC_KEY_ID')}",
+      "-authenticationKeyIssuerID #{ENV.fetch('ASC_ISSUER_ID')}"
+    ].join(" ")
+  )
+end
+
+platform :mac do
+  desc "Run every package's unit tests on the Mac, as CI does"
+  lane :unit_tests do
+    sh("cd #{repo_root.shellescape} && xcodebuild test -quiet " \
+       "-workspace PackageTests.xcworkspace -scheme PackageTests " \
+       "-destination 'platform=macOS' -enableCodeCoverage NO " \
+       "-derivedDataPath #{UNIT_TEST_DERIVED_DATA.shellescape}-mac " \
+       "-clonedSourcePackagesDirPath #{UNIT_TEST_CHECKOUTS.shellescape}")
+    UI.success("Mac unit tests passed")
+  end
+
+  desc "Run the Mac XCUITest suite. It drives the real app and its windows, so leave the Mac alone"
+  desc "while it runs."
+  lane :ui_tests do
+    run_tests(
+      project: PROJECT,
+      scheme: SCHEME,
+      destination: "platform=macOS",
+      only_testing: ["NextExplorerUITests/MacCriticalPathUITests"],
+      result_bundle: true,
+      output_directory: "build/fastlane/mac-ui-tests",
+      parallel_testing: false
+    )
+  end
+
+  desc "Build the Mac App Store package and upload it to TestFlight (options: version, bump)"
+  lane :beta do |options|
+    ensure_git_status_clean
+    sh("git", "fetch", "--tags", "--quiet", "origin")
+    version = upcoming_version(options)
+    api_key = asc_api_key
+    pkg = build_mac_release(version: version)
+    upload_to_testflight(
+      api_key: api_key,
+      pkg: pkg,
+      app_platform: "osx",
+      changelog: testflight_notes(version: version),
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Run the Mac unit tests and build the Mac App Store package, without uploading anything"
+  lane :release_dry_run do |options|
+    ensure_git_status_clean
+    sh("git", "fetch", "--tags", "--quiet", "origin")
+    version = upcoming_version(options)
+    unit_tests
+    build_mac_release(version: version)
+    UI.success("Would release #{version} for the Mac")
+  end
+
 end
 
 def release_notes(version, links: false)

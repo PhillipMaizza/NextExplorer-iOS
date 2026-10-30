@@ -388,7 +388,7 @@ extension OfflineFileStore: DependencyKey {
         setLastAutoSyncAt: { OfflineCache.setLastAutoSyncAt($0) }
     )
 
-    /// No pinned files, no manifest — tests that exercise the offline read path inject a seeded
+    /// No pinned files, no manifest: tests that exercise the offline read path inject a seeded
     /// variant instead (see `.inMemory`).
     public static let testValue = OfflineFileStore(
         localURL: { _ in nil },

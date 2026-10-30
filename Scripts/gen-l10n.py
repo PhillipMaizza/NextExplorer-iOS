@@ -22,7 +22,7 @@ TRANSLATIONS = PKG / "translations"
 # fall back to the English source automatically at lookup time.
 # The web app ships de/es/fr/hi/it/ko/pl/ro/ru/sv/zh-CN/zh-TW; nl, pt, ja and ar are added beyond
 # that set (Portuguese + main European per request, plus Japanese and Arabic as major world
-# languages — Arabic is right to left and exercises the RTL layout path).
+# languages: Arabic is right to left and exercises the RTL layout path).
 LANGUAGES = ["ar", "de", "es", "fr", "hi", "it", "ja", "ko", "nl", "pl", "pt", "ro", "ru", "sv", "zh-CN", "zh-TW"]
 
 
@@ -51,7 +51,7 @@ def parse():
 
 
 def _format_tokens(value):
-    """The multiset of printf specifiers in a string, e.g. %@ %lld %1$@ — order-insensitive so a
+    """The multiset of printf specifiers in a string, e.g. %@ %lld %1$@, order insensitive so a
     language may reorder arguments (positional %n$@) but must keep the same set."""
     return sorted(re.findall(r"%(?:\d+\$)?(?:@|lld|ld|d|lf|f)", value))
 

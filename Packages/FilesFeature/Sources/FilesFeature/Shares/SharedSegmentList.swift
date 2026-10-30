@@ -4,7 +4,7 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// One page of the Shared tab's paged `TabView` — the grouped list of shares for a single
+/// One page of the Shared tab's paged `TabView`: the grouped list of shares for a single
 /// segment, with its own skeleton, empty/error overlay and pull-to-refresh. Reads only its
 /// segment's slice of the store so a swipe reveals real content, not the active segment's.
 struct SharedSegmentList: View {
@@ -53,7 +53,7 @@ struct SharedSegmentList: View {
         // One filter+sort pass shared by both sections and the diff animation, rather than
         // three independent derivations (each ran the localized sort) per render.
         let partition = store.state.displayedSharesPartition(for: segment)
-        return List {
+        return DSGroupedList {
             if listPhase == .loading {
                 skeletonRows
             } else {
@@ -86,8 +86,8 @@ struct SharedSegmentList: View {
     }
 
     /// Redacted collapsed `SharedLinkCard` stand-ins that sit in the *same* grouped `List` as
-    /// the real rows. Shine suppressed under Reduce Motion.
-    private static let placeholderShares: [Share] = Constants.skeletonNameLengths.enumerated().map { index, length in
+    /// the real rows (and the Mac table's skeleton rows). Shine suppressed under Reduce Motion.
+    static let placeholderShares: [Share] = Constants.skeletonNameLengths.enumerated().map { index, length in
         Share(
             id: "skeleton/\(index)", shareToken: "MMMMMMMMMM", ownerId: "skeleton",
             sourcePath: String(repeating: "M", count: length), isDirectory: index.isMultiple(of: 2),
@@ -193,26 +193,26 @@ private let previewByMeShares: [Share] = [
     .previewCard(expiresAt: Date().addingTimeInterval(-3600)),
 ]
 
-#Preview("Segment — content") {
+#Preview("Segment: content") {
     segmentListPreview {
         $0.byMe = IdentifiedArray(uniqueElements: previewByMeShares)
         $0.phases[.byMe] = .loaded
     }
 }
 
-#Preview("Segment — loading") {
+#Preview("Segment: loading") {
     segmentListPreview { $0.phases[.byMe] = .loading }
 }
 
-#Preview("Segment — empty") {
+#Preview("Segment: empty") {
     segmentListPreview { $0.phases[.byMe] = .loaded }
 }
 
-#Preview("Segment — error") {
+#Preview("Segment: error") {
     segmentListPreview { $0.phases[.byMe] = .failed(L10n.EmptyState.loadFailed) }
 }
 
-#Preview("Segment — no search results") {
+#Preview("Segment: no search results") {
     segmentListPreview {
         $0.byMe = IdentifiedArray(uniqueElements: previewByMeShares)
         $0.phases[.byMe] = .loaded

@@ -21,13 +21,13 @@ struct BrowsePreviewRouter: View {
     @Dependency(\.offlineFileStore) private var offlineFileStore
     /// When on, a fully downloaded copy plays locally even online; off streams when online and uses
     /// the local copy only as an offline fallback.
-    @AppStorage(AppStorageKeys.preferOfflineMedia) private var preferOfflineMedia = true
+    @AppStorage(AppStorageKeys.preferOfflineMedia) private var shouldPreferOfflineMedia = true
 
     /// The primary source: with "prefer offline copies" on, a fully downloaded pinned copy (its
     /// `dateModified|size` staleness key proves it is complete and current) plays locally even online.
     /// Otherwise the Range-seekable preview stream, so online playback streams the fresh file.
     private func playbackURL(for item: FileItem) -> URL? {
-        if preferOfflineMedia, let complete = offlineFileStore.localURL(item) {
+        if shouldPreferOfflineMedia, let complete = offlineFileStore.localURL(item) {
             return complete
         }
         return FilesClient.previewURL(serverURL: store.serverURL, item: item)
@@ -41,7 +41,39 @@ struct BrowsePreviewRouter: View {
         return offlineFileStore.localURLIgnoringStaleness(item)
     }
 
+    #if os(macOS)
+        @FocusState private var isFocused: Bool
+    #endif
+
     var body: some View {
+        #if os(macOS)
+            // Like Quick Look, the arrow keys step through the folder's files. Each step rebuilds
+            // the preview for the new file, so the image gallery starts on it too.
+            routed
+                .id(item.id)
+                .focusable()
+                .focusEffectDisabled()
+                .focused($isFocused)
+                .onAppear { isFocused = true }
+                .onKeyPress(.leftArrow) { step(by: -1) }
+                .onKeyPress(.rightArrow) { step(by: 1) }
+        #else
+            routed
+        #endif
+    }
+
+    #if os(macOS)
+        private func step(by offset: Int) -> KeyPress.Result {
+            let files = store.displayedItems.filter { !$0.isDirectory }
+            guard let index = files.firstIndex(where: { $0.id == item.id }),
+                  files.indices.contains(index + offset) else { return .ignored }
+            store.send(.rowTapped(files[index + offset]))
+            return .handled
+        }
+    #endif
+
+    @ViewBuilder
+    private var routed: some View {
         if item.isUnsupportedForPreview {
             UnsupportedFilePreviewView(
                 item: item,

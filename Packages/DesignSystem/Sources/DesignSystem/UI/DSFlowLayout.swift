@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Left-to-right wrapping layout — lays each subview after the previous one on the same row
+/// Left-to-right wrapping layout: lays each subview after the previous one on the same row
 /// until it no longer fits the proposed width, then drops to the next row. For chip/tag
 /// groups whose count isn't known ahead of time.
 public struct DSFlowLayout: Layout {

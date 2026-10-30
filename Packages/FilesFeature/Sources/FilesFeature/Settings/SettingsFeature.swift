@@ -52,7 +52,7 @@ public struct SettingsFeature {
         public var removeAllDownloadsConfirmationIsPresented = false
         public var isRemovingAllDownloads = false
         /// Checked independently of the Downloads tab's own state (which may never have
-        /// loaded, if the user hasn't visited that tab this session) — this is what actually
+        /// loaded, if the user hasn't visited that tab this session): this is what actually
         /// disables "Remove All Downloads" until there's proof there's nothing to remove.
         public var hasDownloads = true
         public var downloadsSize: Int64 = 0
@@ -67,7 +67,7 @@ public struct SettingsFeature {
         /// reflects a run started here even after the user navigated away and back.
         @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) public var offlineProgress = OfflineDownloadProgress()
 
-        /// Server disk usage, one row per volume — the iOS take on the web client's volume
+        /// Server disk usage, one row per volume: the iOS take on the web client's volume
         /// list. Only populated (and only shown) when `GET /api/features` reports
         /// `volumeUsage.enabled`.
         public var isVolumeUsageEnabled = false
@@ -149,7 +149,7 @@ public struct SettingsFeature {
 
         public enum Delegate: Equatable, Sendable {
             case signOutButtonTapped
-            /// Every local download was just deleted — `MainTabFeature` clears the
+            /// Every local download was just deleted: `MainTabFeature` clears the
             /// Downloads tab's list without waiting for it to re-scan the (now empty) disk.
             case allDownloadsRemoved
             /// Multi-server switcher intent, handled upstream where `authClient` lives.

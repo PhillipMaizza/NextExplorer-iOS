@@ -33,19 +33,8 @@ struct SettingsAccountsSection: View {
     let store: StoreOf<SettingsFeature>
     @State private var isActiveAccountExpanded = false
 
-    /// The active account. Falls back to one synthesized from the signed-in user + server when the
-    /// shared account list hasn't been populated yet (a fresh mount before the switcher refresh, or
-    /// a preview), so the active-account row, password change and sign out are always present.
     private var activeAccount: AccountSummary {
-        if let active = store.accounts.first(where: \.isActive) {
-            return active
-        }
-        return AccountSummary(
-            id: store.serverURL.absoluteString + "|" + store.user.username,
-            username: store.displayName,
-            serverURL: store.serverURL,
-            isActive: true
-        )
+        store.activeAccount
     }
 
     var body: some View {
@@ -130,25 +119,23 @@ struct SettingsAccountsSection: View {
         .accessibilityLabel(L10n.Settings.accountLabel(account.displayName, account.serverHost))
         .accessibilityAddTraits(.isButton)
         .swipeActions(edge: .trailing) {
-            Button(role: .destructive) {
-                store.send(.removeAccountTapped(account))
-            } label: {
-                Label(L10n.Settings.accountSignOut, systemImage: "rectangle.portrait.and.arrow.right")
-            }
+            removeAccountButton(account)
+        }
+        #if os(macOS)
+        .contextMenu { removeAccountButton(account) }
+        #endif
+    }
+
+    private func removeAccountButton(_ account: AccountSummary) -> some View {
+        Button(role: .destructive) {
+            store.send(.removeAccountTapped(account))
+        } label: {
+            Label { Text(L10n.Settings.accountSignOut) } icon: { IconKit.signOut }
         }
     }
 
-    /// A small accent "Active" pill on the active account row, in place of a leading checkmark.
     private var activeBadge: some View {
-        Text(L10n.Settings.badgeActive.uppercased())
-            .type(.caption(.semibold), style: .link)
-            .padding(.horizontal, Constants.tagHorizontalPadding)
-            .padding(.vertical, Constants.tagVerticalPadding)
-            .overlay(
-                RoundedRectangle(cornerRadius: .radiusSmall)
-                    .strokeBorder(Color.accent, lineWidth: Constants.tagBorderWidth)
-            )
-            .accessibilityHidden(true)
+        AccountActiveBadge()
     }
 
     /// Self service password change (`POST /api/auth/password`), nested under the active account.
@@ -180,6 +167,23 @@ struct SettingsAccountsSection: View {
             store.send(.addAccountTapped)
         }
         .disabled(store.isSigningOut)
+    }
+}
+
+extension SettingsFeature.State {
+    /// The active account. Falls back to one synthesized from the signed in user + server when the
+    /// shared account list hasn't been populated yet (a fresh mount before the switcher refresh, or
+    /// a preview), so the active account row, password change and sign out are always present.
+    var activeAccount: AccountSummary {
+        if let active = accounts.first(where: \.isActive) {
+            return active
+        }
+        return AccountSummary(
+            id: serverURL.absoluteString + "|" + user.username,
+            username: displayName,
+            serverURL: serverURL,
+            isActive: true
+        )
     }
 }
 
@@ -251,7 +255,7 @@ struct SettingsServerAdminSection: View {
 
 // MARK: Server storage
 
-/// One disk-usage bar per volume — iOS's take on the web client's volume list. Only
+/// One disk-usage bar per volume: iOS's take on the web client's volume list. Only
 /// present when the server reports `volumeUsage.enabled` and has returned volumes.
 struct SettingsServerStorageSection: View {
     let store: StoreOf<SettingsFeature>
@@ -285,8 +289,23 @@ struct SettingsServerStorageSection: View {
 
     private func usageCaption(_ usage: StorageUsage) -> String {
         L10n.Settings.serverStorageUsed(
-            SettingsFormat.byteFormatter.string(fromByteCount: usage.used),
-            SettingsFormat.byteFormatter.string(fromByteCount: usage.capacity)
+            FileSizeFormat.string(usage.used),
+            FileSizeFormat.string(usage.capacity)
         )
+    }
+}
+
+/// A small accent "Active" pill on the active account, in place of a leading checkmark.
+private struct AccountActiveBadge: View {
+    var body: some View {
+        Text(L10n.Settings.badgeActive.uppercased())
+            .type(.caption(.semibold), style: .link)
+            .padding(.horizontal, Constants.tagHorizontalPadding)
+            .padding(.vertical, Constants.tagVerticalPadding)
+            .overlay(
+                RoundedRectangle(cornerRadius: .radiusSmall)
+                    .strokeBorder(Color.accent, lineWidth: Constants.tagBorderWidth)
+            )
+            .accessibilityHidden(true)
     }
 }

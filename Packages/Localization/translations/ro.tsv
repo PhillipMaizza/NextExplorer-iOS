@@ -1,4 +1,4 @@
-# NextExplorer — Română (ro). key<TAB>value.
+# NextExplorer: Română (ro). key<TAB>value.
 common.cancel	Anulează
 common.save	Salvează
 common.edit	Editează
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Adaugă la favorite
 browse.actionRemoveFromFavorites	Elimină de la favorite
 browse.actionShare	Creează link de partajare
 browse.actionDelete	Șterge
+browse.actionDuplicate	Duplică
 browse.renameTitle	Redenumește
 browse.renameNamePlaceholder	Nume
 browse.actionNewFolder	Creează dosar
@@ -308,6 +309,7 @@ settings.rowUserManagement	Gestionarea utilizatorilor
 settings.rowChangePassword	Schimbă parola
 settings.rowServer	Server
 settings.storageFootnote	Dosarele se descarcă ca ZIP, fără să rămână nimic pe server. Ștergerea descărcărilor sau golirea cache-ului afectează doar acest dispozitiv; nimic de pe server nu este modificat.
+settings.storageFootnoteMac	Golirea cache-ului afectează doar acest Mac; nimic de pe server nu este modificat.
 settings.removeAllDownloadsTitle	Elimini toate descărcările?
 settings.removeAllDownloadsConfirm	Elimină toate
 settings.removeAllDownloadsMessage	Aceasta șterge toate fișierele descărcate de pe acest dispozitiv. Rămân pe server.
@@ -519,6 +521,14 @@ browse.nameErrorReserved	Acest nume nu este permis.
 browse.nameErrorSeparators	Un nume nu poate conține / sau \.
 browse.searchMatchLine	Linia %1$lld: %2$@
 browse.searchMatchLineLabel	Linia %lld
+browse.searchTooShort	Tastează cel puțin %lld caractere pentru a căuta în subfoldere și în conținutul fișierelor.
+browse.searchStoppedEarly	Căutarea s-a oprit la limita de timp. Acestea sunt rezultatele găsite până acum.
+browse.searchFirstOnly	Primele %lld rezultate. Restrânge căutarea pentru a vedea mai multe.
+browse.searchShowMore	Afișează mai multe
+browse.searchMatchColumn	Potrivire
+browse.searchMatchedByName	Nume
+browse.searchMatchedByContent	Conținut
+browse.searchMatchedByBoth	Nume și conținut
 createShare.errorPasswordRequired	Introdu o parolă sau dezactivează protecția cu parolă.
 filter.sheetTitle	Filtrează după tip
 filter.button	Filtrează
@@ -596,6 +606,32 @@ offline.manageEmpty	Nu este nimic descărcat pentru utilizare offline.
 offline.preferOfflineToggle	Redă copiile descărcate
 offline.preferOfflineSubtitle	Folosește un videoclip descărcat în loc de streaming când este disponibil.
 offline.tunnelSpeedNote	Accesarea serverului printr-un tunel la distanță poate încetini descărcările. Pentru fișiere mari, conectează-te la aceeași rețea și folosește adresa locală a serverului.
+menu.about	Despre NextExplorer
+menu.rateApp	Evaluează NextExplorer…
+menu.support	Asistență NextExplorer
+menu.redo	Refă
+menu.undo	Anulează
+settings.sectionSupport	Asistență
+settings.rowRateApp	Evaluează NextExplorer
+settings.rowSupport	Ajutor și asistență
+menu.refresh	Reîmprospătează
+select.tableView	Vizualizare tabel
+openWith.openIn	Deschide în %@
+openWith.openWith	Deschide cu
+openWith.viewAsText	Vezi ca text
+openWith.failed	Fișierul nu a putut fi deschis.
+browse.showInFinder	Afișează în Finder
+browse.actionCut	Taie
+browse.clipboardCutOne	%@ gata de mutat
+browse.clipboardCutMany	%lld elemente gata de mutat
+menu.enclosingFolder	Dosarul părinte
+common.more	Mai multe
+openWith.print	Tipărește…
+menu.newWindow	Fereastră nouă
+menu.newTab	Filă nouă
+browse.actionOpenInNewWindow	Deschide în fereastră nouă
+browse.actionOpenInNewTab	Deschide în filă nouă
+select.viewAs	Vizualizare
 settings.rowAppearance	Aspect
 appearance.system	Sistem
 appearance.light	Luminos
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld elemente salvate în Descărcări
 downloadQueue.bytesOf	%1$@ din %2$@
 downloadQueue.timeLeft	%@ rămase
 browse.sectionPersonal	Personal
-settings.sectionSupport	Asistență
-settings.rowRateApp	Evaluează NextExplorer
-settings.rowSupport	Ajutor și asistență
+browse.progressDownloading	Se descarcă…
+browse.progressDownloadingIndexed	Se descarcă %1$lld din %2$lld…
+browse.downloadSavedTo	Salvat în %@
+browse.downloadSavedCountTo	Salvate %1$lld din %2$lld elemente în %3$@
+browse.downloadSavedAllTo	Salvate %1$lld elemente în %2$@
+browse.downloadBulkFailed	Nu s-au putut salva aceste elemente pe dispozitiv.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Adaugă cont…
+macSettings.changePassword	Schimbă parola…
+macSettings.signOut	Deconectare…
+macSettings.switchAccount	Comută la acest cont
+macSettings.username	Nume de utilizator
+macSettings.email	E-mail
+macSettings.role	Rol
+macSettings.roleAdmin	Administrator
+macSettings.roleUser	Utilizator
+macSettings.status	Stare
+macSettings.statusSignedIn	Conectat
+macSettings.manage	Gestionează…
+macSettings.cache	Cache
+macSettings.support	Ajutor și asistență…
+macSettings.permission	Permisiune
+macSettings.icon	Pictogramă
+menu.go	Mergi
+menu.activity	Transferuri
+menu.showAll	Afișează tot
+uploads.notifyDone	Încărcări finalizate
+uploads.notifyBody	%lld fișiere încărcate
+downloadQueue.notifyDone	Descărcări finalizate
+fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versiuni
+fileInfo.versionsNone	Nicio versiune anterioară
+fileInfo.versionRestore	Restaurează…
+fileInfo.restoreTitle	Restaurezi această versiune?
+fileInfo.restoreMessage	Fișierul revine la starea din %@. Conținutul actual este păstrat ca versiune.
+fileInfo.restoreConfirm	Restaurează
+fileInfo.sectionSharing	Partajare
+fileInfo.notShared	Niciun link de partajare
+fileInfo.versionActions	Acțiuni versiune
+fileInfo.versionDownload	Descarcă…
+fileInfo.versionSaveCopy	Salvează ca copie
+fileInfo.versionRename	Redenumește…
+fileInfo.renameTitle	Redenumește versiunea
+fileInfo.renamePlaceholder	Numele versiunii
+fileInfo.versionPin	Păstrează această versiune
+fileInfo.versionUnpin	Nu mai păstra această versiune
+fileInfo.versionKept	Păstrată
+fileInfo.versionDelete	Șterge…
+fileInfo.deleteTitle	Ștergi această versiune?
+fileInfo.deleteAll	Șterge toate versiunile…
+fileInfo.deleteAllTitle	Ștergi toate versiunile?
+fileInfo.deleteMessage	Versiunile șterse dispar definitiv. Fișierul rămâne neschimbat.
+macSettings.choose	Alege…
+menu.forward	Înainte
+menu.goToFolder	Mergi la dosar…
+menu.goToFolderTitle	Mergi la dosarul:
+menu.copyPath	Copiază calea
+menu.recentFolders	Dosare recente
+menu.clearRecent	Golește meniul

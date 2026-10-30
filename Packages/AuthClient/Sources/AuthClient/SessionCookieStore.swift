@@ -7,7 +7,7 @@ import Keychain
 /// outgoing requests), and the `StoredSessions` value the rest of AuthClient works with.
 ///
 /// Multi-server: every signed-in account's credentials are kept in the Keychain at once, with one
-/// marked active. Only the active account's cookie is installed into `HTTPCookieStorage` — accounts
+/// marked active. Only the active account's cookie is installed into `HTTPCookieStorage`: accounts
 /// on the same server share a cookie name/domain/path and cannot coexist there, so switching
 /// reinstalls the target's cookie. Switching never re-authenticates.
 struct SessionCookieStore: Sendable {

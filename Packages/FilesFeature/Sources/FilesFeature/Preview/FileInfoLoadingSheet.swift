@@ -11,13 +11,13 @@ private enum Constants {
     static let progressVerticalPadding: CGFloat = .space24
 }
 
-/// Shown the instant "Get Info" is tapped, while `GET /api/metadata/*` is still in flight —
+/// Shown the instant "Get Info" is tapped, while `GET /api/metadata/*` is still in flight:
 /// a separate, deliberately tiny sheet rather than a loading branch inside `FileInfoSheet`
 /// itself: iOS doesn't reliably honor a `presentationDetents` change on an already-presented
 /// sheet (see `DSDynamicHeightSheet`), so growing one sheet from "spinner" to "full metadata"
 /// gets stuck at the wrong height. Swapping to a *different* sheet identity once the fetch
-/// resolves (`BrowseContentView.infoPhaseBinding`) gets a fresh presentation — and a fresh,
-/// correctly-measured height — instead.
+/// resolves (`BrowseContentView.infoPhaseBinding`) gets a fresh presentation: and a fresh,
+/// correctly-measured height: instead.
 struct FileInfoLoadingSheet: View {
     let item: FileItem
     let onDismiss: () -> Void

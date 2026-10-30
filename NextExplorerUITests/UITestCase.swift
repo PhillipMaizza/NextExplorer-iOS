@@ -94,7 +94,11 @@ class UITestCase: XCTestCase {
     func scrollTo(_ element: XCUIElement, in app: XCUIApplication, maxSwipes: Int = 6) -> Bool {
         var swipes = 0
         while !element.exists, swipes < maxSwipes {
-            app.swipeUp()
+            #if os(iOS)
+                app.swipeUp()
+            #else
+                app.scroll(byDeltaX: 0, deltaY: -Self.macScrollStep)
+            #endif
             swipes += 1
         }
         return element.exists
@@ -106,6 +110,8 @@ class UITestCase: XCTestCase {
     /// animation (flood/focus/zoom/comet included) uniformly, so transition code still runs but
     /// finishes near instantly. Real time is 1.0; 0 hard freezes UIKit animations.
     static let fastAnimationSpeed: Double = 12
+    /// How far one `scrollTo` step scrolls on the Mac, which has no swipe.
+    static let macScrollStep: CGFloat = 300
 
     @discardableResult
     func launchApp(
@@ -197,3 +203,18 @@ extension XCUIElement {
         typeText(text)
     }
 }
+
+#if os(macOS)
+    /// The Mac clicks where iOS taps, so the shared helpers and screens read the same on both.
+    extension XCUIElement {
+        func tap() {
+            click()
+        }
+    }
+
+    extension XCUICoordinate {
+        func tap() {
+            click()
+        }
+    }
+#endif

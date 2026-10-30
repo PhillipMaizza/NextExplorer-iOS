@@ -37,6 +37,7 @@ struct ProfileTabView: View {
                 }
                 .disabled(!store.isProfileSaveEnabled)
                 .padding(.top, .space4)
+                .formActionAlignment()
             }
 
             Card(L10n.UserDetail.sectionRoles) {

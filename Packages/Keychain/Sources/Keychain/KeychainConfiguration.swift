@@ -19,7 +19,7 @@ public enum KeychainAccessibility: Sendable {
 public struct KeychainConfiguration: Sendable {
     public var service: String
     /// Unset for v1 (single app, no extensions). Passing a shared app-group identifier here
-    /// later — for a Files-app Document Provider or Share Extension — is a one-line change,
+    /// later, for a Files-app Document Provider or Share Extension, is a one-line change,
     /// not a redesign: every query already routes through this configuration.
     public var accessGroup: String?
     public var accessible: KeychainAccessibility

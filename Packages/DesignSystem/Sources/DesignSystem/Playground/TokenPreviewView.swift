@@ -38,7 +38,7 @@ private struct TypographyPreviewView: View {
         VStack(alignment: .leading, spacing: .space16) {
             ForEach(rows, id: \.name) { row in
                 VStack(alignment: .leading, spacing: .space4) {
-                    Text("The quick brown fox — 0123456789")
+                    Text("The quick brown fox: 0123456789")
                         .type(row.type, style: .primaryOnSurface)
                     Text("\(row.name)  \(Int(row.type.size))pt  \(String(describing: row.type.weight))")
                         .type(.label1, style: .secondary)
