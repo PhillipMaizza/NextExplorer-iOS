@@ -5,6 +5,12 @@
     import Localization
     import SwiftUI
 
+    private enum Metrics {
+        static let sizeStep = 8
+        static let qualityStep = 5
+        static let concurrencyStep = 1
+    }
+
     /// The Thumbnails pane: the server's thumbnail generation, edited in place and saved with
     /// the button under the form.
     struct MacThumbnailSettingsPane: View {
@@ -42,17 +48,17 @@
                 }
                 Section {
                     numberRow(L10n.ThumbnailSettings.quality, help: L10n.ThumbnailSettings.qualityHelp) {
-                        MacNumberStepper(value: store.draft.quality, range: ThumbnailSettings.qualityRange, step: 5) {
+                        MacNumberStepper(value: store.draft.quality, range: ThumbnailSettings.qualityRange, step: Metrics.qualityStep) {
                             store.send(.qualityChanged($0))
                         }
                     }
                     numberRow(L10n.ThumbnailSettings.maxDimension, help: L10n.ThumbnailSettings.maxDimensionHelp) {
-                        MacNumberStepper(value: store.draft.size, range: ThumbnailSettings.sizeRange, step: 8, unit: "px") {
+                        MacNumberStepper(value: store.draft.size, range: ThumbnailSettings.sizeRange, step: Metrics.sizeStep) {
                             store.send(.sizeChanged($0))
                         }
                     }
                     numberRow(L10n.ThumbnailSettings.concurrency, help: L10n.ThumbnailSettings.concurrencyHelp) {
-                        MacNumberStepper(value: store.draft.concurrency, range: ThumbnailSettings.concurrencyRange, step: 1) {
+                        MacNumberStepper(value: store.draft.concurrency, range: ThumbnailSettings.concurrencyRange, step: Metrics.concurrencyStep) {
                             store.send(.concurrencyChanged($0))
                         }
                     }

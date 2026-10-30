@@ -146,7 +146,6 @@
         let value: Int
         let range: ClosedRange<Int>
         let step: Int
-        var unit: String?
         let onChange: (Int) -> Void
 
         private var binding: Binding<Int> {
@@ -162,9 +161,6 @@
                     .frame(width: .size64)
                 Stepper("", value: binding, in: range, step: step)
                     .labelsHidden()
-                if let unit {
-                    Text(unit).foregroundStyle(.secondary)
-                }
             }
         }
     }
