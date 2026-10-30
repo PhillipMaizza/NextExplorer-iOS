@@ -115,14 +115,36 @@ public struct MainTabFeature {
 
     public init() {}
 
+    /// The Mac builds one split view per section, and a section's folder stack writes an empty
+    /// path back as it is torn down. That pop is not the user's (Back only works on screen), so it
+    /// is dropped and the open folder survives a trip through another section.
+    static func isSectionTeardownPop(_ action: Action, selectedTab: Tab) -> Bool {
+        #if os(macOS)
+            switch action {
+            case .browse(.path(.popFrom)): selectedTab != .browse
+            case .favorites(.path(.popFrom)): selectedTab != .favorites
+            default: false
+            }
+        #else
+            false
+        #endif
+    }
+
     public var body: some ReducerOf<Self> {
         // Combined so the Recent Folders `onChange` also sees navigation done inside Browse.
         CombineReducers {
-            Scope(state: \.browse, action: \.browse) {
+            let browse = Scope<State, Action, BrowseTabFeature>(state: \.browse, action: \.browse) {
                 BrowseTabFeature()
             }
-            Scope(state: \.favorites, action: \.favorites) {
+            let favorites = Scope<State, Action, FavoritesFeature>(state: \.favorites, action: \.favorites) {
                 FavoritesFeature()
+            }
+            Reduce { state, action in
+                guard !Self.isSectionTeardownPop(action, selectedTab: state.selectedTab) else { return .none }
+                return .merge(
+                    browse.reduce(into: &state, action: action),
+                    favorites.reduce(into: &state, action: action)
+                )
             }
             Scope(state: \.shared, action: \.shared) {
                 SharedFeature()

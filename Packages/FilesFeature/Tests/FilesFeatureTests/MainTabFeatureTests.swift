@@ -502,4 +502,37 @@ struct MainTabFeatureTests {
         await store.receive(\.browse.offlineAvailabilityChanged)
         await store.receive(\.favorites.offlineAvailabilityChanged)
     }
+
+    // MARK: Mac sections
+
+    #if os(macOS)
+        @Test
+        func aFolderStackPopWhileAnotherSectionIsShownIsIgnored() async {
+            var state = MainTabFeature.State(serverURL: serverURL, user: user)
+            state.browse.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents"))
+            state.selectedTab = .shared
+            let id = state.browse.path.ids[0]
+            let store = TestStore(initialState: state) {
+                MainTabFeature()
+            }
+
+            await store.send(.browse(.path(.popFrom(id: id))))
+        }
+
+        @Test
+        func backInTheVisibleBrowseStillPopsAndOffersForward() async {
+            var state = MainTabFeature.State(serverURL: serverURL, user: user)
+            let documents = BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents")
+            state.browse.path.append(documents)
+            let id = state.browse.path.ids[0]
+            let store = TestStore(initialState: state) {
+                MainTabFeature()
+            }
+
+            await store.send(.browse(.path(.popFrom(id: id)))) {
+                $0.browse.path = StackState()
+                $0.browse.forwardStack = [documents]
+            }
+        }
+    #endif
 }
