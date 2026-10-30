@@ -3,7 +3,7 @@ import Unrar
 import ZIPFoundation
 
 /// One entry inside a `.zip`/`.rar`, normalized across both underlying libraries' own
-/// `Entry` types — `path` is the entry's full path within the archive (e.g. `"a/b/c.txt"`),
+/// `Entry` types: `path` is the entry's full path within the archive (e.g. `"a/b/c.txt"`),
 /// same shape whether it came from `ZIPFoundation` or `Unrar.swift`.
 struct ArchiveEntry: Sendable {
     let path: String
@@ -19,14 +19,14 @@ enum ArchiveReaderError: Error {
 
 /// Keeps the archive open (`ZIPFoundation.Archive` holds a live file handle; `Unrar.Archive`
 /// re-opens per call but this still avoids re-downloading) for the lifetime of
-/// `ArchiveBrowserView`, so opening an entry for preview — including sibling asset lookups for
-/// an in-archive HTML/Markdown render — never re-fetches the archive itself. `rarEntries` is a
-/// cache, not part of the "source" concept — `Unrar.Archive.entries()` fully re-parses the
+/// `ArchiveBrowserView`, so opening an entry for preview: including sibling asset lookups for
+/// an in-archive HTML/Markdown render: never re-fetches the archive itself. `rarEntries` is a
+/// cache, not part of the "source" concept: `Unrar.Archive.entries()` fully re-parses the
 /// archive's header list on every call, so without this, previewing an HTML file with N
 /// sibling assets inside a `.rar` would re-parse the whole archive N+1 times.
 /// `@unchecked Sendable`: `ZIPFoundation.Archive` / `Unrar.Archive` aren't thread-safe and
 /// `cachedRarEntries` is mutable, so every access to the underlying handles goes through
-/// `lock` — `entries()`, `extract(_:to:)` and the `rarEntries()` cache are all serialized by
+/// `lock`: `entries()`, `extract(_:to:)` and the `rarEntries()` cache are all serialized by
 /// the type itself rather than by a caller-side gating convention.
 final class ArchiveSource: @unchecked Sendable {
     let kind: Kind
@@ -93,7 +93,7 @@ final class ArchiveSource: @unchecked Sendable {
             var written: UInt64 = 0
             var overflowed = false
             // `Unrar`'s handler can't throw, so once the running count passes the ceiling we stop
-            // writing and report afterward — the decoder keeps running but nothing more hits disk.
+            // writing and report afterward: the decoder keeps running but nothing more hits disk.
             try archive.extract(entry) { chunk, _ in
                 guard !overflowed else { return }
                 written += UInt64(chunk.count)
@@ -120,7 +120,7 @@ final class ArchiveSource: @unchecked Sendable {
     }
 }
 
-/// Reads a downloaded archive's contents entirely on-device — there's no server endpoint for
+/// Reads a downloaded archive's contents entirely on-device: there's no server endpoint for
 /// this (`POST /api/files/zip/extract` only fully unpacks to disk), so this is the only way
 /// to show what's inside without materializing every archive a user taps.
 enum ArchiveReader {

@@ -1,4 +1,4 @@
-# NextExplorer — हिन्दी (hi). key<TAB>value.
+# NextExplorer: हिन्दी (hi). key<TAB>value.
 common.cancel	रद्द करें
 common.save	सहेजें
 common.edit	संपादित करें
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	पसंदीदा में जोड़ें
 browse.actionRemoveFromFavorites	पसंदीदा से निकालें
 browse.actionShare	साझा लिंक बनाएं
 browse.actionDelete	हटाएं
+browse.actionDuplicate	डुप्लिकेट करें
 browse.renameTitle	नाम बदलें
 browse.renameNamePlaceholder	नाम
 browse.actionNewFolder	फ़ोल्डर बनाएं
@@ -308,6 +309,7 @@ settings.rowUserManagement	उपयोगकर्ता प्रबंधन
 settings.rowChangePassword	पासवर्ड बदलें
 settings.rowServer	सर्वर
 settings.storageFootnote	फ़ोल्डर ZIP के रूप में डाउनलोड होते हैं, सर्वर पर कुछ भी नहीं छूटता। डाउनलोड हटाने या कैश साफ़ करने से केवल यह डिवाइस प्रभावित होता है; सर्वर पर कुछ नहीं बदलता।
+settings.storageFootnoteMac	कैश साफ़ करने से केवल यह Mac प्रभावित होता है; सर्वर पर कुछ नहीं बदलता।
 settings.removeAllDownloadsTitle	सभी डाउनलोड हटाएं?
 settings.removeAllDownloadsConfirm	सभी हटाएं
 settings.removeAllDownloadsMessage	यह इस डिवाइस से हर डाउनलोड की गई फ़ाइल हटा देता है। वे सर्वर पर बनी रहती हैं।
@@ -519,6 +521,14 @@ browse.nameErrorReserved	वह नाम अनुमत नहीं है।
 browse.nameErrorSeparators	नाम में / या \ नहीं हो सकता।
 browse.searchMatchLine	पंक्ति %1$lld: %2$@
 browse.searchMatchLineLabel	पंक्ति %lld
+browse.searchTooShort	सबफ़ोल्डर और फ़ाइलों की सामग्री में खोजने के लिए कम से कम %lld अक्षर लिखें।
+browse.searchStoppedEarly	खोज अपनी समय सीमा पर रुक गई। अब तक मिले परिणाम ये हैं।
+browse.searchFirstOnly	पहले %lld परिणाम। और देखने के लिए खोज सीमित करें।
+browse.searchShowMore	और दिखाएँ
+browse.searchMatchColumn	मिलान
+browse.searchMatchedByName	नाम
+browse.searchMatchedByContent	सामग्री
+browse.searchMatchedByBoth	नाम और सामग्री
 createShare.errorPasswordRequired	एक पासवर्ड दर्ज करें या पासवर्ड सुरक्षा बंद करें।
 filter.sheetTitle	प्रकार के अनुसार फ़िल्टर करें
 filter.button	फ़िल्टर
@@ -596,6 +606,32 @@ offline.manageEmpty	ऑफ़लाइन उपयोग के लिए क�
 offline.preferOfflineToggle	डाउनलोड की गई कॉपी चलाएँ
 offline.preferOfflineSubtitle	उपलब्ध होने पर स्ट्रीम करने के बजाय डाउनलोड किया गया वीडियो उपयोग करें।
 offline.tunnelSpeedNote	किसी रिमोट टनल के ज़रिए अपने सर्वर तक पहुँचने से डाउनलोड धीमे हो सकते हैं। बड़ी फ़ाइलों के लिए, उसी नेटवर्क से कनेक्ट करें और अपने सर्वर का लोकल पता इस्तेमाल करें।
+menu.about	NextExplorer के बारे में
+menu.rateApp	NextExplorer को रेट करें…
+menu.support	NextExplorer सहायता
+menu.redo	फिर से करें
+menu.undo	पहले जैसा करें
+settings.sectionSupport	सहायता
+settings.rowRateApp	NextExplorer को रेट करें
+settings.rowSupport	सहायता और समर्थन
+menu.refresh	रीफ़्रेश करें
+select.tableView	तालिका दृश्य
+openWith.openIn	%@ में खोलें
+openWith.openWith	इसके साथ खोलें
+openWith.viewAsText	टेक्स्ट के रूप में देखें
+openWith.failed	यह फ़ाइल नहीं खुल सकी।
+browse.showInFinder	Finder में दिखाएँ
+browse.actionCut	काटें
+browse.clipboardCutOne	%@ ले जाने के लिए तैयार
+browse.clipboardCutMany	%lld आइटम ले जाने के लिए तैयार
+menu.enclosingFolder	मूल फ़ोल्डर
+common.more	और
+openWith.print	प्रिंट करें…
+menu.newWindow	नई विंडो
+menu.newTab	नया टैब
+browse.actionOpenInNewWindow	नई विंडो में खोलें
+browse.actionOpenInNewTab	नए टैब में खोलें
+select.viewAs	दृश्य
 settings.rowAppearance	रूप-रंग
 appearance.system	सिस्टम
 appearance.light	लाइट
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld आइटम डाउनलोड में सह
 downloadQueue.bytesOf	%2$@ में से %1$@
 downloadQueue.timeLeft	%@ बाकी
 browse.sectionPersonal	व्यक्तिगत
-settings.sectionSupport	सहायता
-settings.rowRateApp	NextExplorer को रेट करें
-settings.rowSupport	सहायता और समर्थन
+browse.progressDownloading	डाउनलोड हो रहा है…
+browse.progressDownloadingIndexed	%2$lld में से %1$lld डाउनलोड हो रहा है…
+browse.downloadSavedTo	%@ में सहेजा गया
+browse.downloadSavedCountTo	%2$lld में से %1$lld आइटम %3$@ में सहेजे गए
+browse.downloadSavedAllTo	%1$lld आइटम %2$@ में सहेजे गए
+browse.downloadBulkFailed	इन आइटम को आपके डिवाइस पर सहेज नहीं सके।
+macSettings.labelFormat	%@:
+macSettings.addAccount	खाता जोड़ें…
+macSettings.changePassword	पासवर्ड बदलें…
+macSettings.signOut	साइन आउट करें…
+macSettings.switchAccount	इस खाते पर स्विच करें
+macSettings.username	उपयोगकर्ता नाम
+macSettings.email	ईमेल
+macSettings.role	भूमिका
+macSettings.roleAdmin	व्यवस्थापक
+macSettings.roleUser	उपयोगकर्ता
+macSettings.status	स्थिति
+macSettings.statusSignedIn	साइन इन है
+macSettings.manage	प्रबंधित करें…
+macSettings.cache	कैश
+macSettings.support	सहायता और समर्थन…
+macSettings.permission	अनुमति
+macSettings.icon	आइकन
+menu.go	जाएँ
+menu.activity	स्थानांतरण
+menu.showAll	सभी दिखाएँ
+uploads.notifyDone	अपलोड पूरे हुए
+uploads.notifyBody	%lld फ़ाइलें अपलोड हुईं
+downloadQueue.notifyDone	डाउनलोड पूरे हुए
+fileInfo.rowSoftware	सॉफ़्टवेयर
+fileInfo.sectionVersions	संस्करण
+fileInfo.versionsNone	कोई पिछला संस्करण नहीं
+fileInfo.versionRestore	पुनर्स्थापित करें…
+fileInfo.restoreTitle	यह संस्करण पुनर्स्थापित करें?
+fileInfo.restoreMessage	फ़ाइल %@ की स्थिति में लौट आएगी। इसकी मौजूदा सामग्री एक संस्करण के रूप में रखी जाएगी।
+fileInfo.restoreConfirm	पुनर्स्थापित करें
+fileInfo.sectionSharing	साझाकरण
+fileInfo.notShared	कोई साझा लिंक नहीं
+fileInfo.versionActions	संस्करण कार्रवाइयाँ
+fileInfo.versionDownload	डाउनलोड करें…
+fileInfo.versionSaveCopy	प्रति के रूप में सहेजें
+fileInfo.versionRename	नाम बदलें…
+fileInfo.renameTitle	संस्करण का नाम बदलें
+fileInfo.renamePlaceholder	संस्करण का नाम
+fileInfo.versionPin	यह संस्करण रखें
+fileInfo.versionUnpin	यह संस्करण रखना बंद करें
+fileInfo.versionKept	रखा गया
+fileInfo.versionDelete	हटाएँ…
+fileInfo.deleteTitle	यह संस्करण हटाएँ?
+fileInfo.deleteAll	सभी संस्करण हटाएँ…
+fileInfo.deleteAllTitle	सभी संस्करण हटाएँ?
+fileInfo.deleteMessage	हटाए गए संस्करण हमेशा के लिए चले जाते हैं। फ़ाइल वैसी ही रहती है।
+macSettings.choose	चुनें…
+menu.forward	आगे
+menu.goToFolder	फ़ोल्डर पर जाएँ…
+menu.goToFolderTitle	फ़ोल्डर पर जाएँ:
+menu.copyPath	पथ कॉपी करें
+menu.recentFolders	हाल के फ़ोल्डर
+menu.clearRecent	मेनू साफ़ करें

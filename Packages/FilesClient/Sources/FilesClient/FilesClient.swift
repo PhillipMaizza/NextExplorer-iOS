@@ -17,7 +17,7 @@ public struct FilesClient: Sendable {
     public var prefetchDirectory: @Sendable (_ serverURL: URL, _ path: String) async -> Void
     public var search: @Sendable (
         _ serverURL: URL, _ path: String, _ query: String, _ limit: Int?
-    ) async throws -> [SearchResultItem]
+    ) async throws -> SearchPage
     public var favorites: @Sendable (_ serverURL: URL) async throws -> [Favorite]
     public var addFavorite: @Sendable (_ serverURL: URL, _ path: String) async throws -> Favorite
     public var removeFavorite: @Sendable (_ serverURL: URL, _ path: String) async throws -> Void
@@ -37,14 +37,14 @@ public struct FilesClient: Sendable {
     public var updatePreference: @Sendable (
         _ serverURL: URL, _ key: UserPreferenceKey, _ value: Bool
     ) async throws -> Void
-    /// `GET /api/branding` — the server's app name + logo, unauthenticated.
+    /// `GET /api/branding`: the server's app name + logo, unauthenticated.
     public var fetchBranding: @Sendable (_ serverURL: URL) async throws -> Branding
     /// `PATCH /api/settings` with `{ branding: {...} }` (admin only; the server 403s a
     /// non-admin). Returns the branding as the server stored it.
     public var updateBranding: @Sendable (
         _ serverURL: URL, _ appName: String, _ appLogoUrl: String
     ) async throws -> Branding
-    /// `POST /api/settings/upload-logo` (admin) — one JPEG in a `logo` multipart field,
+    /// `POST /api/settings/upload-logo` (admin): one JPEG in a `logo` multipart field,
     /// ≤2 MB. Returns the server-relative URL of the stored logo, to be persisted via
     /// `updateBranding`.
     public var uploadServerLogo: @Sendable (_ serverURL: URL, _ jpegData: Data) async throws -> String
@@ -52,7 +52,7 @@ public struct FilesClient: Sendable {
         _ serverURL: URL, _ item: FileItem, _ newName: String
     ) async throws -> FileItem
     /// `POST /api/files/folder` (`backend/src/routes/files/folder.js`): creates a subfolder in
-    /// `path`, the parent directory's relative path — the server rejects an empty one ("Cannot
+    /// `path`, the parent directory's relative path: the server rejects an empty one ("Cannot
     /// create folders in the root path"). A blank `name` becomes "Untitled Folder" server side
     /// and a name collision is auto suffixed rather than erroring. Returns the created folder.
     public var createFolder: @Sendable (
@@ -85,6 +85,22 @@ public struct FilesClient: Sendable {
     public var changeOwnership: @Sendable (
         _ serverURL: URL, _ path: String, _ owner: String?, _ group: String?
     ) async throws -> Void
+    /// `GET /api/versions?path=` (`backend/src/routes/versions.js`): the file's saved versions,
+    /// newest first, and the caller's rights over them. Older servers have no such route.
+    public var fetchVersions: @Sendable (_ serverURL: URL, _ path: String) async throws -> FileVersionHistory
+    /// `POST /api/versions/:id/restore` with `{ path }`: puts the file back as that version had
+    /// it; what it held becomes a version itself.
+    public var restoreVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String) async throws -> Void
+    /// `GET /api/versions/:id/content?path=`, saved to `destination`.
+    public var downloadVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String, _ destination: URL) async throws -> Void
+    /// `POST /api/versions/:id/copy`: a new file in the `destination` folder; returns its path.
+    public var copyVersion: @Sendable (_ serverURL: URL, _ path: String, _ versionID: String, _ destination: String) async throws -> String
+    /// `PATCH /api/versions/:id`: a nil `label` or `pinned` is left as it is; `""` clears the label.
+    public var updateVersion: @Sendable (
+        _ serverURL: URL, _ path: String, _ versionID: String, _ label: String?, _ pinned: Bool?
+    ) async throws -> FileVersion
+    /// `POST /api/versions/delete`: the given versions, or every one when `all`. The file stays.
+    public var deleteVersions: @Sendable (_ serverURL: URL, _ path: String, _ ids: [String], _ all: Bool) async throws -> Void
     public var thumbnailURL: @Sendable (_ serverURL: URL, _ path: String) async throws -> URL?
     public var previewFile: @Sendable (_ serverURL: URL, _ item: FileItem) async throws -> URL
     /// `previewFile` served over a low priority session with a capped connection pool, for
@@ -120,7 +136,7 @@ public struct FilesClient: Sendable {
     /// be dead and would otherwise stall the first file until it times out.
     public var flushDownloadConnections: @Sendable () async -> Void
     /// `POST /api/upload` (`backend/src/routes/upload.js`): one `multipart/form-data` request
-    /// per file — `uploadTo` = destination directory, `relativePath` = `fileName`, `filedata` =
+    /// per file: `uploadTo` = destination directory, `relativePath` = `fileName`, `filedata` =
     /// the file at `fileURL`. `destination` must not be empty (the server rejects the root).
     /// The request is first assembled into a temporary multipart envelope on disk (one extra
     /// copy of the payload), then streamed from that file, so nothing buffers the whole file
@@ -147,7 +163,7 @@ public struct FilesClient: Sendable {
     public var deleteShareLink: @Sendable (_ serverURL: URL, _ shareID: String) async throws -> Void
     /// `GET /api/users/shareable`: every user except the caller, for a user specific share.
     public var shareableUsers: @Sendable (_ serverURL: URL) async throws -> [User]
-    /// `GET /api/share/<token>/info` — public metadata for a share link a recipient was sent.
+    /// `GET /api/share/<token>/info`: public metadata for a share link a recipient was sent.
     /// Unauthenticated; a bad token 404s.
     public var resolveShareLink: @Sendable (_ serverURL: URL, _ token: String) async throws -> ShareInfo
 
@@ -223,7 +239,7 @@ public extension FilesClient {
         return components?.url
     }
 
-    /// `GET /api/raw?path=...` — the file served verbatim (`text/plain`, `nosniff`). Handed to
+    /// `GET /api/raw?path=...`: the file served verbatim (`text/plain`, `nosniff`). Handed to
     /// Safari for "Open in Browser": the server has no rendered-HTML endpoint, and cookie auth
     /// means Safari may hit a login page first (or 401 if the server requires auth).
     static func rawFileURL(serverURL: URL, item: FileItem) -> URL? {
@@ -231,4 +247,13 @@ public extension FilesClient {
         components?.queryItems = [URLQueryItem(name: QueryKey.path, value: item.id)]
         return components?.url
     }
+}
+
+public extension FilesClient {
+    /// The shortest term `GET /api/search` accepts (`MIN_TERM_LENGTH` in backend
+    /// `routes/search.js`); a shorter one answers 400, so callers never send it.
+    static let minimumSearchTermLength = 3
+    /// How far Show more widens a search, as the web client steps it (`LIMIT_STEPS` in
+    /// `SearchResultsView.vue`); the last step is the backend's own `MAX_LIMIT`.
+    static let searchLimitSteps = [100, 300, 500]
 }

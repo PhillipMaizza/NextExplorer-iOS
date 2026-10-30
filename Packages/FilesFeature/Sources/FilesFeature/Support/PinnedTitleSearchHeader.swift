@@ -30,6 +30,9 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     /// Whether to render the search field. A screen that only needs the pinned large title
     /// without filtering (Settings) passes `false`.
     var showsSearchField: Bool = true
+    /// Whether the short fade below the header melts into scrolling content. A Mac table keeps
+    /// its column headers pinned right below, where the fade would only tint them.
+    var shouldFadeIntoContent: Bool = true
     /// Rendered below the search field, e.g. a search-scope segmented control plus type filter
     /// chips while searching.
     @ViewBuilder var accessory: () -> Accessory
@@ -37,6 +40,22 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
     @FocusState private var isFocused: Bool
 
     var body: some View {
+        #if os(macOS)
+            // Like Finder, the Mac names the folder in the window title (`windowTitle`), so the
+            // content keeps only the accessory, if any, and the search lives in the toolbar.
+            VStack(spacing: 0) {
+                accessory()
+            }
+            .frame(maxWidth: .infinity)
+            // ⌘F (Edit menu) focuses the toolbar's trailing search field.
+            .modifier(MacToolbarSearch(isEnabled: showsSearchField, text: $searchText, prompt: prompt, isFocused: $isFocused))
+            .focusedSceneValue(\.focusSearchField, showsSearchField ? FocusSearchAction { isFocused = true } : nil)
+        #else
+            header
+        #endif
+    }
+
+    private var header: some View {
         VStack(alignment: .leading, spacing: .space12) {
             Text(title)
                 .type(.headline2, style: .primaryOnSurface)
@@ -60,16 +79,18 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
         // starts below the fade and only rows scrolled up pass under it.
         .background(Color.backgroundGradientTop.ignoresSafeArea(edges: .top))
         .background(alignment: .bottom) {
-            LinearGradient(
-                colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
-            .frame(height: Constants.fadeHeight)
-            .offset(y: Constants.fadeHeight)
-            .allowsHitTesting(false)
+            if shouldFadeIntoContent {
+                LinearGradient(
+                    colors: [Color.backgroundGradientTop, Color.backgroundGradientTop.opacity(0)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: Constants.fadeHeight)
+                .offset(y: Constants.fadeHeight)
+                .allowsHitTesting(false)
+            }
         }
-        .padding(.bottom, Constants.fadeHeight)
+        .padding(.bottom, shouldFadeIntoContent ? Constants.fadeHeight : 0)
     }
 
     private var searchField: some View {
@@ -115,14 +136,61 @@ extension PinnedTitleSearchHeader where Accessory == EmptyView {
         searchText: Binding<String>,
         prompt: String = L10n.Common.search,
         extraTopPadding: CGFloat = 0,
-        showsSearchField: Bool = true
+        showsSearchField: Bool = true,
+        shouldFadeIntoContent: Bool = true
     ) {
         self.init(
             title: title,
             searchText: searchText,
             prompt: prompt,
             extraTopPadding: extraTopPadding,
-            showsSearchField: showsSearchField
+            showsSearchField: showsSearchField,
+            shouldFadeIntoContent: shouldFadeIntoContent
         ) { EmptyView() }
     }
 }
+
+#if os(macOS)
+    private struct MacToolbarSearch: ViewModifier {
+        let isEnabled: Bool
+        @Binding var text: String
+        let prompt: String
+        var isFocused: FocusState<Bool>.Binding
+
+        func body(content: Content) -> some View {
+            if !isEnabled {
+                content
+            } else {
+                // A plain field: tokens and search scopes attached here rebuilt or covered it on
+                // the first keystroke and took its focus. Browse puts its scope and kind filter in
+                // a bar above the results instead, as Finder does.
+                pinned(content.searchable(text: $text, placement: .toolbar, prompt: Text(prompt)))
+            }
+        }
+
+        private func pinned(_ searchable: some View) -> some View {
+            searchable
+                .searchFocused(isFocused)
+                // Pins the field to the trailing edge whatever else the screen puts in the
+                // toolbar; without it a screen with only leading items packs it beside them.
+                .toolbar {
+                    if #available(macOS 26.0, *) {
+                        ToolbarSpacer(.flexible)
+                    }
+                }
+        }
+    }
+
+    /// Focuses the visible screen's search field; published by `PinnedTitleSearchHeader`.
+    public struct FocusSearchAction {
+        let perform: () -> Void
+
+        public func callAsFunction() {
+            perform()
+        }
+    }
+
+    public extension FocusedValues {
+        @Entry var focusSearchField: FocusSearchAction?
+    }
+#endif

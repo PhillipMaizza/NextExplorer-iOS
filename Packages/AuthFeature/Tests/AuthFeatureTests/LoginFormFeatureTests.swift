@@ -79,7 +79,7 @@ struct LoginFormFeatureTests {
     func ipv6HostHandling() {
         #expect(LoginFormFeature.normalizedURL(scheme: .http, host: "[::1]:3000")?.absoluteString == "http://[::1]:3000")
         #expect(LoginFormFeature.normalizedURL(scheme: .https, host: "[2001:db8::1]")?.absoluteString == "https://[2001:db8::1]")
-        // Unbracketed IPv6 is ambiguous with the port separator — rejected rather than guessed.
+        // Unbracketed IPv6 is ambiguous with the port separator: rejected rather than guessed.
         #expect(LoginFormFeature.normalizedURL(scheme: .https, host: "fe80::1") == nil)
     }
 
@@ -228,7 +228,7 @@ struct LoginFormFeatureTests {
         }
 
         // Letting time pass must NOT deliver a stale `testConnectionResponse` or
-        // auto-advance to credentials — the effect was cancelled, not just ignored.
+        // auto-advance to credentials: the effect was cancelled, not just ignored.
         await clock.advance(by: .seconds(5))
         await store.finish()
     }
@@ -607,7 +607,7 @@ struct LoginFormFeatureTests {
         await store.receive(\.submitFailed) {
             $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorRateLimited
-            // A rate limit says nothing about which field was wrong — unlike
+            // A rate limit says nothing about which field was wrong: unlike
             // `.invalidCredentials`, it must not red-border the fields.
             $0.invalidFieldsScope = nil
         }
@@ -657,7 +657,7 @@ struct LoginFormFeatureTests {
         }
     }
 
-    @Test("edge case: whitespace-only password is rejected by the disabled Continue button, but the reducer itself has no client-side password check — a blank/whitespace password still reaches the server, which is the sole source of truth on password validity")
+    @Test("edge case: whitespace-only password is rejected by the disabled Continue button, but the reducer itself has no client-side password check: a blank/whitespace password still reaches the server, which is the sole source of truth on password validity")
     func whitespaceOnlyPasswordStillReachesServer() async {
         let store = TestStore(
             initialState: LoginFormFeature.State(
@@ -690,7 +690,7 @@ struct LoginFormFeatureTests {
     func doubleSubmitCancelsFirstInFlightLogin() async {
         let clock = TestClock()
         // Each `authClient.login` invocation records its own call index into `completedCalls`
-        // only if it runs to completion — a cancelled invocation never appends. Two flat booleans
+        // only if it runs to completion: a cancelled invocation never appends. Two flat booleans
         // would be indistinguishable between the first and second call since both share this one
         // mock closure.
         let nextCallIndex = LockIsolated(0)
@@ -733,12 +733,12 @@ struct LoginFormFeatureTests {
         await clock.advance(by: .seconds(1))
         await store.receive(\.delegate)
 
-        // Only the second call (index 1) ever reaches completion — the first was cancelled
+        // Only the second call (index 1) ever reaches completion: the first was cancelled
         // mid-sleep and never appends.
         #expect(completedCalls.value == [1])
     }
 
-    @Test("regression: sessionCookieMissing does not auto-dismiss — it signals a real failure, not a typo to retry")
+    @Test("regression: sessionCookieMissing does not auto-dismiss: it signals a real failure, not a typo to retry")
     func sessionCookieMissingDoesNotAutoDismiss() async {
         let clock = TestClock()
         let store = TestStore(
@@ -764,13 +764,13 @@ struct LoginFormFeatureTests {
             $0.submitPhase = .failure
             $0.errorMessage = L10n.Login.errorIncomplete
         }
-        // The button still re-expands so the user can retry — only the message is sticky.
+        // The button still re-expands so the user can retry: only the message is sticky.
         await clock.advance(by: .seconds(1))
         await store.receive(\.revertSubmitToIdle) {
             $0.submitPhase = .idle
         }
 
-        // Well past the usual 4-second auto-dismiss — the message must still be showing.
+        // Well past the usual 4-second auto-dismiss: the message must still be showing.
         await clock.advance(by: .seconds(30))
         #expect(store.state.errorMessage == L10n.Login.errorIncomplete)
     }

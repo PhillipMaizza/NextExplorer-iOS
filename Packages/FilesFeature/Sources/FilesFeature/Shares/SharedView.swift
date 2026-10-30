@@ -35,29 +35,49 @@ struct SharedView: View {
         Binding(get: { store.deleteConfirmationShare != nil }, set: { _ in })
     }
 
+    private static var shouldShowTable: Bool {
+        #if os(macOS)
+            true
+        #else
+            false
+        #endif
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-                DSSegmentedControl(
-                    options: SharedFeature.Segment.allCases,
-                    selection: segment,
-                    label: { $0.title }
-                )
-                .padding(.horizontal, Constants.segmentedControlHorizontalPadding)
-                .padding(.top, Constants.segmentedControlTopPadding)
-                .padding(.bottom, Constants.segmentedControlBottomPadding)
+                // The Mac picks the segment from a native control in the toolbar instead.
+                #if os(iOS)
+                    DSSegmentedControl(
+                        options: SharedFeature.Segment.allCases,
+                        selection: segment,
+                        label: { $0.title }
+                    )
+                    .padding(.horizontal, Constants.segmentedControlHorizontalPadding)
+                    .padding(.top, Constants.segmentedControlTopPadding)
+                    .padding(.bottom, Constants.segmentedControlBottomPadding)
+                #endif
 
-                TabView(selection: segment) {
-                    ForEach(SharedFeature.Segment.allCases, id: \.self) { pageSegment in
-                        SharedSegmentList(
-                            store: store,
-                            segment: pageSegment,
-                            onToast: { toastMessage = $0 }
-                        )
-                        .tag(pageSegment)
+                #if os(macOS)
+                    MacSharedTableView(
+                        store: store,
+                        segment: store.segment,
+                        onToast: { toastMessage = $0 }
+                    )
+                    .id(store.segment)
+                #else
+                    TabView(selection: segment) {
+                        ForEach(SharedFeature.Segment.allCases, id: \.self) { pageSegment in
+                            SharedSegmentList(
+                                store: store,
+                                segment: pageSegment,
+                                onToast: { toastMessage = $0 }
+                            )
+                            .tag(pageSegment)
+                        }
                     }
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
+                    .tabViewStyle(.page(indexDisplayMode: .never))
+                #endif
             }
             .backgroundGradient()
             // Title lives in the pinned header (see `PinnedTitleSearchHeader`), which also keeps
@@ -67,7 +87,8 @@ struct SharedView: View {
             .safeAreaInset(edge: .top, spacing: 0) {
                 PinnedTitleSearchHeader(
                     title: L10n.Shared.navigationTitle,
-                    searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                    searchText: $store.searchQuery.sending(\.searchQueryChanged),
+                    shouldFadeIntoContent: !Self.shouldShowTable
                 )
             }
             .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -81,57 +102,73 @@ struct SharedView: View {
             }
             .animation(.easeInOut(duration: 0.2), value: store.dataSources[store.segment])
             .prefersToolbarItemsInVerticalBar()
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
+            // The Mac table sorts from its column headers instead.
+            #if os(iOS)
+                .toolbar {
+                    ToolbarItem(placement: .sortControl) {
+                        SortToolbarButton(isDisabled: store.isCurrentSegmentEmpty) { isSortSheetPresented = true }
+                    }
                 }
-            }
-            .dsSheet(isPresented: $isSortSheetPresented) {
-                SortSheet(
-                    options: SharedFeature.SortOption.allCases,
-                    directions: BrowseFeature.SortDirection.allCases,
-                    sortOption: store.sortOption,
-                    sortDirection: store.sortDirection,
-                    optionIcon: { $0.icon },
-                    optionTitle: { $0.title },
-                    directionIcon: { $0.icon },
-                    directionTitle: { $0.title },
-                    onSelectOption: { store.send(.sortOptionChanged($0)) },
-                    onSelectDirection: { store.send(.sortDirectionChanged($0)) },
-                    onDismiss: { isSortSheetPresented = false }
-                )
-            }
-            .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
-                EditShareSheet(store: editStore)
-            }
-            .dsSheet(isPresented: deleteConfirmationBinding) {
-                DSAlertSheet(
-                    icon: IconKit.delete,
-                    title: L10n.Shared.deleteTitle,
-                    message: L10n.Shared.deleteMessage,
-                    confirmTitle: L10n.Common.delete,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.deleteConfirmed) },
-                    onDismiss: { store.send(.deleteCancelled) }
-                )
-            }
-            .hapticFeedback(.warning, trigger: store.deleteConfirmationShare != nil)
-            .dsToast($toastMessage)
-            .task { store.send(.onAppear) }
-            .task {
-                while !Task.isCancelled {
-                    store.send(.expiryTick(Date()))
-                    try? await Task.sleep(for: .seconds(Constants.expiryCheckInterval))
+            #else
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Picker(L10n.Shared.navigationTitle, selection: segment) {
+                            ForEach(SharedFeature.Segment.allCases, id: \.self) { segment in
+                                Text(segment.title).tag(segment)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+                        .labelsHidden()
+                        .fixedSize()
+                    }
                 }
-            }
-            .onChange(of: store.externalRevision) { _, _ in store.send(.externalRevisionChanged) }
-            .onChange(of: store.actionErrorMessage) { _, newValue in
-                if let newValue {
-                    toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue)
+            #endif
+                .dsSheet(isPresented: $isSortSheetPresented) {
+                    SortSheet(
+                        options: SharedFeature.SortOption.allCases,
+                        directions: BrowseFeature.SortDirection.allCases,
+                        sortOption: store.sortOption,
+                        sortDirection: store.sortDirection,
+                        optionIcon: { $0.icon },
+                        optionTitle: { $0.title },
+                        directionIcon: { $0.icon },
+                        directionTitle: { $0.title },
+                        onSelectOption: { store.send(.sortOptionChanged($0)) },
+                        onSelectDirection: { store.send(.sortDirectionChanged($0)) },
+                        onDismiss: { isSortSheetPresented = false }
+                    )
                 }
-            }
+                .dsSheet(item: $store.scope(state: \.editSheet, action: \.editSheet)) { editStore in
+                    EditShareSheet(store: editStore)
+                }
+                .dsAlert(isPresented: deleteConfirmationBinding) {
+                    DSAlertSheet(
+                        icon: IconKit.delete,
+                        title: L10n.Shared.deleteTitle,
+                        message: L10n.Shared.deleteMessage,
+                        confirmTitle: L10n.Common.delete,
+                        dismissTitle: L10n.Common.cancel,
+                        role: .destructive,
+                        closeAccessibilityLabel: L10n.Common.close,
+                        onConfirm: { store.send(.deleteConfirmed) },
+                        onDismiss: { store.send(.deleteCancelled) }
+                    )
+                }
+                .hapticFeedback(.warning, trigger: store.deleteConfirmationShare != nil)
+                .dsToast($toastMessage)
+                .task { store.send(.onAppear) }
+                .task {
+                    while !Task.isCancelled {
+                        store.send(.expiryTick(Date()))
+                        try? await Task.sleep(for: .seconds(Constants.expiryCheckInterval))
+                    }
+                }
+                .onChange(of: store.externalRevision) { _, _ in store.send(.externalRevisionChanged) }
+                .onChange(of: store.actionErrorMessage) { _, newValue in
+                    if let newValue {
+                        toastMessage = DSToastMessage(icon: IconKit.warning, text: newValue)
+                    }
+                }
         }
         .tint(Color.accent)
     }
@@ -153,11 +190,11 @@ private func sharedPreview(
     })
 }
 
-#Preview("By me — content") {
+#Preview("By me: content") {
     sharedPreview()
 }
 
-#Preview("Empty — With me") {
+#Preview("Empty: With me") {
     sharedPreview(configureClient: { $0.sharedWithMeLinks = { _ in [] } })
 }
 

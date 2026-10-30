@@ -60,14 +60,39 @@ public struct DSSpinner: View {
     }
 
     public var body: some View {
+        #if os(macOS)
+            // The Mac uses its own spinner one control size down: AppKit's regular spinner is
+            // 32pt, far bigger than the iOS ring it stands in for.
+            ProgressView()
+                .controlSize(macControlSize)
+                .accessibilityLabel(accessibilityLabel)
+        #else
+            ringSpinner
+        #endif
+    }
+
+    #if os(macOS)
+        private var macControlSize: ControlSize {
+            switch size {
+            case .small: .mini
+            case .regular: .small
+            case .large: .regular
+            }
+        }
+    #endif
+
+    private var ringSpinner: some View {
         ZStack {
             Circle()
                 .stroke(color.opacity(Constants.trackOpacity), lineWidth: lineWidth)
             Circle()
                 .trim(from: 0, to: Constants.trimEnd)
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
-                .rotationEffect(.degrees(isAnimating ? Constants.fullRotation : 0))
-                .animation(.linear(duration: Constants.rotationDuration).repeatForever(autoreverses: false), value: isAnimating)
+                // Scoped to the rotation alone: a value based animation also caught the spinner's
+                // first placement in a still sizing window, sliding it in from the top left.
+                .animation(.linear(duration: Constants.rotationDuration).repeatForever(autoreverses: false)) {
+                    $0.rotationEffect(.degrees(isAnimating ? Constants.fullRotation : 0))
+                }
         }
         .frame(width: diameter, height: diameter)
         .onAppear { isAnimating = true }

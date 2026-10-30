@@ -24,7 +24,7 @@ public struct DSShakeEffect: GeometryEffect {
 }
 
 public extension View {
-    /// Shakes horizontally once each time `trigger` changes — increment it under
+    /// Shakes horizontally once each time `trigger` changes: increment it under
     /// `withAnimation` (e.g. on a validation failure) to play a shake burst.
     func shake(trigger: CGFloat) -> some View {
         modifier(DSShakeEffect(animatableData: trigger))

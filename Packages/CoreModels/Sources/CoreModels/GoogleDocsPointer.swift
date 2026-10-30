@@ -1,7 +1,7 @@
 import Foundation
 
 /// The small JSON stub files Google Drive's desktop sync writes in place of a native Google
-/// Docs / Sheets / Slides document — `{"url": "https://docs.google.com/…", "resource_id": …}`.
+/// Docs / Sheets / Slides document: `{"url": "https://docs.google.com/…", "resource_id": …}`.
 /// Tapping one should send the user out to that URL (the Google app if installed, otherwise
 /// the browser), not render the JSON in the text viewer.
 public enum GoogleDocsPointer {
@@ -16,7 +16,7 @@ public enum GoogleDocsPointer {
     }
 
     /// The link a stub file points at, or `nil` if the contents don't parse or the `url`
-    /// isn't http(s) — the caller then falls back to showing the file as text.
+    /// isn't http(s): the caller then falls back to showing the file as text.
     public static func targetURL(fromContents contents: String) -> URL? {
         guard let data = contents.data(using: .utf8),
               let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],

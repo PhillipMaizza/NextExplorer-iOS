@@ -4,8 +4,8 @@ name: CI
 # and on pushes to main, so a contributor sees a green or red check
 # before anyone reviews the change.
 #
-# The XCUITest suite is heavier (boots a simulator, cold launches the app per test) so it runs on
-# pushes to main, on demand, and on pull requests labelled `ui-tests`.
+# The XCUITest suites (iPhone on a simulator, and the Mac app) are heavier (they cold launch the
+# app per test) so they run on pushes to main, on demand, and on pull requests labelled `ui-tests`.
 
 on:
   pull_request:
@@ -142,6 +142,33 @@ jobs:
             -derivedDataPath "${DERIVED_DATA}" \
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             CODE_SIGNING_ALLOWED=NO
+
+      # The same target also ships as a native macOS app; build it so a change can't quietly
+      # break the Mac side (every Mac difference sits behind #if os(macOS)). Release, as the Mac
+      # App Store archive is: code that only compiles in Debug (a DEBUG gated helper used by a
+      # #Preview, which Release still compiles) once broke only the release build.
+      - name: Build macOS app (Release)
+        run: |
+          xcodebuild build \
+            -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            CODE_SIGNING_ALLOWED=NO
+
+      # The package suites again on the Mac, for the macOS only code paths (Save panel
+      # downloads, AppKit views).
+      - name: Test packages on macOS
+        run: |
+          xcodebuild test \
+            -workspace PackageTests.xcworkspace \
+            -scheme PackageTests \
+            -destination 'platform=macOS' \
+            -derivedDataPath "${DERIVED_DATA}" \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -enableCodeCoverage NO
 
       # Only main saves: GitHub scopes a pull request's cache to that pull request, so a save
       # there helps nobody else, and main's copy is what every pull request restores.
@@ -282,4 +309,98 @@ jobs:
         with:
           name: uitest-results
           path: TestResults.xcresult
+          if-no-files-found: ignore
+
+  mac-ui-test:
+    name: Mac UI tests
+    # Same triggers as the iPhone UI tests.
+    if: >-
+      github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'ui-tests'))
+    runs-on: xcode-27
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set build folders
+        run: |
+          echo "DERIVED_DATA=${RUNNER_TEMP}/DerivedData" >> "${GITHUB_ENV}"
+          echo "SPM_CHECKOUTS=${RUNNER_TEMP}/SourcePackages" >> "${GITHUB_ENV}"
+
+      - name: Restore SwiftPM checkouts
+        uses: actions/cache/restore@v6
+        with:
+          path: ${{ env.SPM_CHECKOUTS }}
+          key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
+          restore-keys: spm-${{ runner.os }}-
+
+      - name: Restore DerivedData
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            ${{ env.DERIVED_DATA }}
+            !${{ env.DERIVED_DATA }}/Logs
+            !${{ env.DERIVED_DATA }}/Index.noindex
+          key: deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-${{ github.sha }}
+          restore-keys: |
+            deriveddata-xcode27.1-${{ hashFiles('**/Package.resolved') }}-
+            deriveddata-xcode27.1-
+
+      - name: Select Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '27.1'
+
+      - name: Trust Swift package macros
+        run: defaults write com.apple.dt.Xcode IDESkipMacroFingerprintValidation -bool YES
+
+      # A Mac UI test drives the real app through accessibility, which macOS only allows once UI
+      # automation is enabled for the session; a runner never shows the prompt to approve it.
+      - name: Allow UI automation
+        run: sudo automationmodetool enable-automationmode-without-authentication
+
+      - name: Resolve package dependencies
+        run: |
+          xcodebuild -project NextExplorer.xcodeproj \
+            -scheme NextExplorer \
+            -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+            -resolvePackageDependencies
+
+      - name: Install xcbeautify
+        run: brew install xcbeautify
+
+      - name: Run Mac XCUITests
+        # Ad hoc signed: the app and its test runner only need to launch on this runner. One
+        # automatic retry, as for the iPhone suite, so a launch flake does not fail the run while a
+        # real failure still fails both attempts.
+        run: |
+          set -o pipefail
+          run_tests() {
+            rm -rf MacTestResults.xcresult
+            xcodebuild test \
+              -project NextExplorer.xcodeproj \
+              -scheme NextExplorer \
+              -destination 'platform=macOS' \
+              -derivedDataPath "${DERIVED_DATA}" \
+              -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
+              -enableCodeCoverage NO \
+              -resultBundlePath MacTestResults.xcresult \
+              -only-testing:NextExplorerUITests/MacCriticalPathUITests \
+              CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= \
+              | xcbeautify --renderer github-actions
+          }
+          if ! run_tests; then
+            echo "::warning::Mac UI tests failed on the first attempt. Retrying once."
+            run_tests
+          fi
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mac-uitest-results
+          path: MacTestResults.xcresult
           if-no-files-found: ignore

@@ -129,7 +129,7 @@ struct SharedFeatureTests {
             $0.withMe = [withMeShare]
         }
 
-        // Already loaded — TestStore would flag any unexpected reload effect/action here.
+        // Already loaded: TestStore would flag any unexpected reload effect/action here.
         await store.send(.segmentChanged(.byMe)) { $0.segment = .byMe }
     }
 
@@ -230,6 +230,18 @@ struct SharedFeatureTests {
     }
 
     // MARK: Error paths
+
+    @Test
+    func theFirstExpiryTickSetsTheClockBeforeAnySharesLoad() async {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let store = TestStore(initialState: SharedFeature.State(serverURL: serverURL)) {
+            SharedFeature()
+        }
+
+        await store.send(.expiryTick(now)) { $0.now = now }
+        // A later tick with nothing crossing its expiry leaves the list still.
+        await store.send(.expiryTick(now.addingTimeInterval(30)))
+    }
 
     @Test
     func aLoadFailureSurfacesAReadableMessage() async {

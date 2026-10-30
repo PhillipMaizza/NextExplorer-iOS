@@ -2,11 +2,11 @@ import SwiftUI
 
 /// Shadow tiers for surfaces that should read as raised above the background. Values are
 /// ported directly from FreeNow's `Elevations.swift` (two stacked shadow layers, dark navy
-/// base color) — a tight, discreet lift rather than a broad, soft glow.
+/// base color): a tight, discreet lift rather than a broad, soft glow.
 public enum Elevation: CaseIterable {
     /// No shadow.
     case level0
-    /// Subtlest lift — floating buttons.
+    /// Subtlest lift: floating buttons.
     case level1
     /// Cards, sticky bars, menus.
     case level4

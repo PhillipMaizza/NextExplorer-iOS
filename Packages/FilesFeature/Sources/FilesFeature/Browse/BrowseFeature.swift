@@ -16,15 +16,19 @@ public struct BrowseFeature {
     /// helpers. Nested (not a file private top level enum) so those extensions can see it.
     enum Constants {
         /// Gate before the recursive backend search fires, so a burst of keystrokes collapses to one
-        /// request (superseded ones are cancelled). 1s, matching the web client — the backend recurses
+        /// request (superseded ones are cancelled). 1s, matching the web client: the backend recurses
         /// and scans file contents with ripgrep, which is expensive, so this deliberately throttles
         /// how often it runs. The instant client side pre-fill covers perceived latency in the gap.
         static let searchDebounce: Duration = .seconds(1)
-        /// Matches the backend's own default result cap.
-        static let searchLimit = 100
+        /// After a copy or move into the folder on screen, how many extra refetches wait for the
+        /// new items to be listed, and how far apart. A server that finishes the copy after
+        /// answering (or a listing fetched a moment too early) otherwise leaves the new
+        /// "Name (2)" missing until a manual refresh.
+        static let arrivalRechecks = 3
+        static let arrivalRecheckDelay: Duration = .milliseconds(700)
         /// An action taken from a full-screen preview that also dismisses the cover (delete,
         /// "Open" on the download toast, "View in Shared") waits this long before it runs, so the
-        /// cover finishes dismissing first and the effect — a row sliding out, a tab switch —
+        /// cover finishes dismissing first and the effect: a row sliding out, a tab switch:
         /// plays on the list the user is now looking at, not mid transition.
         static let previewActionSettleDelay: Duration = .milliseconds(350)
     }
@@ -103,7 +107,7 @@ public struct BrowseFeature {
     }
 
     /// State of the `POST /api/files/delete-impact` lookup that runs while a delete
-    /// confirmation is on screen. `.unavailable` means the check itself failed — the delete
+    /// confirmation is on screen. `.unavailable` means the check itself failed: the delete
     /// still proceeds, the server still removes any linked shares, the alert just can't say
     /// how many.
     public enum DeleteImpactCheck: Equatable, Sendable {
@@ -157,7 +161,7 @@ public struct BrowseFeature {
     /// A pending transfer that's blocked on the user answering a name-collision prompt.
     public struct TransferConflict: Equatable, Sendable {
         public let retry: TransferRetry
-        /// The destination items that share a name with something being transferred — deleted
+        /// The destination items that share a name with something being transferred: deleted
         /// first if the user picks "Replace".
         public let collidingItems: [FileItem]
         public var count: Int { collidingItems.count }
@@ -206,6 +210,12 @@ public struct BrowseFeature {
         /// otherwise a result shows only if its category is in the set. Only relevant while
         /// searching, and pruned to the categories actually present as results change.
         public var selectedSearchCategories: Set<FileCategory> = []
+        /// How many results the search asks for; Show more steps it through
+        /// `FilesClient.searchLimitSteps`, and a new query or scope starts over.
+        public var searchLimit = FilesClient.searchLimitSteps[0]
+        /// Why the latest server answer may be short of the whole truth, said rather than left
+        /// to look like everything.
+        public var searchShortfall: SearchShortfall?
         public var sortOption: SortOption = .name
         public var sortDirection: SortDirection = .ascending
         /// Read live from the same in-memory key `SettingsFeature` writes, so toggling
@@ -214,17 +224,19 @@ public struct BrowseFeature {
         @Shared(.inMemory("userPreferences")) public var preferences = UserPreferences()
         /// App wide "Copy" staging, shared under `FileClipboard.sharedKey` so the Paste
         /// action follows the user across every folder. `nil` when nothing is staged. Only
-        /// ever holds copies — "Move" goes through `destinationPicker`, not the clipboard.
+        /// ever holds copies: "Move" goes through `destinationPicker`, not the clipboard.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var clipboard: FileClipboard?
+        /// App wide ⌘Z history of reversible file operations (`FileUndoEntry`).
+        @Shared(.inMemory(FileUndoEntry.sharedKey)) public var undoStack: [FileUndoEntry] = []
         /// Current account's downloads scope, so saved files land in this account's folder.
         @Shared(.inMemory(DownloadAccountScope.sharedKey)) public var downloadScope = ""
         /// The "Move" destination chooser, presented for a single item or a multi selection.
         @Presents public var destinationPicker: DestinationPickerFeature.State?
-        /// The review sheet shown after files are picked from the `+` menu — file list,
+        /// The review sheet shown after files are picked from the `+` menu: file list,
         /// destination folder, total size, Upload button. On confirm its files become
         /// `PendingUpload`s handed up to the app wide queue.
         @Presents public var uploadReview: UploadReviewFeature.State?
-        /// The "Permissions" sheet for a single item — view/chmod/chown via `/api/permissions`.
+        /// The "Permissions" sheet for a single item: view/chmod/chown via `/api/permissions`.
         @Presents public var permissions: PermissionsFeature.State?
         /// Set once a transfer finishes; `BrowseContentView` turns this into a success toast,
         /// mirroring `downloadSuccessMessage`'s lifecycle.
@@ -236,13 +248,17 @@ public struct BrowseFeature {
         /// staged clipboard is never emptied while this is non nil, so a retry always has
         /// something to act on.
         public var pendingTransferRetry: TransferRetry?
+        /// Items a copy or move into this folder created that the listing has not shown yet,
+        /// and how many more refetches may wait for them (`Constants.arrivalRechecks`).
+        public var awaitedArrivalIDs: Set<FileItem.ID> = []
+        public var arrivalChecksLeft = 0
         /// Non nil while a transfer is waiting on the user's answer to a name-collision prompt.
         public var transferConflict: TransferConflict?
         /// Set when an item is staged with "Copy"; `BrowseContentView` turns it into a brief
         /// "<name> copied" toast.
         public var clipboardStagedMessage: String?
         /// Item currently being renamed via the native rename alert. The in-progress text
-        /// itself lives in `BrowseContentView`'s own `@State`, not here — a `.alert`'s
+        /// itself lives in `BrowseContentView`'s own `@State`, not here: a `.alert`'s
         /// `TextField` bound through a TCA `.sending` binding didn't reliably propagate
         /// keystrokes back out, so `renameConfirmed` is sent the final text directly instead.
         public var renameSheetItem: FileItem?
@@ -251,19 +267,19 @@ public struct BrowseFeature {
         public var isNewFolderSheetPresented = false
         /// Item awaiting a destructive confirmation before `deleteConfirmed` actually deletes it.
         public var deleteConfirmationItem: FileItem?
-        /// Share-link fallout of the pending delete, single or bulk — only one confirmation is
+        /// Share-link fallout of the pending delete, single or bulk: only one confirmation is
         /// ever on screen at once, so one field covers both. Filled in by `delete-impact` while
         /// the alert is up; reset to `.idle` when the alert is dismissed.
         public var deleteImpactCheck: DeleteImpactCheck = .idle
         public var isPerformingFileAction = false
         public var fileActionErrorMessage: String?
-        /// Whether the list/grid is in multi-select mode — toggled from the toolbar, not tied
+        /// Whether the list/grid is in multi-select mode: toggled from the toolbar, not tied
         /// to any particular item. `selectedItemIDs` is always cleared when this flips off.
         public var isSelecting = false
         public var selectedItemIDs: Set<FileItem.ID> = []
         public var isBulkActionInFlight = false
         public var bulkDeleteConfirmationIsPresented = false
-        /// Drives a persistent progress toast — `nil` when no extract/compress/download is
+        /// Drives a persistent progress toast: `nil` when no extract/compress/download is
         /// running. Rename/delete don't set this: they're fast enough, and already have their
         /// own alert-driven confirm flow, that a progress indicator would just flicker.
         public var fileActionProgressMessage: String?
@@ -271,12 +287,15 @@ public struct BrowseFeature {
         /// bar; `BrowseContentView` turns it into a toast with an Open action. Never cleared by the
         /// reducer, only overwritten by the next one.
         public var downloadSuccessMessage: String?
+        /// macOS: where the last download was saved (a file, or the folder of a bulk download),
+        /// so the success toast can show it in Finder.
+        public var lastSavedDownloadURL: URL?
         /// Item the "Get Info" sheet is showing, alongside its fetched metadata (or the
         /// still-loading/error state while `GET /api/metadata/*` is in flight).
         public var infoItem: FileItem?
         public var infoMetadata: FileMetadata?
         /// Server disk usage for `infoItem` when it's a directory and the endpoint returned
-        /// real figures — drives the Get Info sheet's "Server disk" section.
+        /// real figures: drives the Get Info sheet's "Server disk" section.
         public var infoUsage: StorageUsage?
         /// The `GET /api/metadata/*` load lifecycle for the Get Info sheet. `isLoadingInfoMetadata`
         /// / `infoErrorMessage` are derived from it (rule #8: one phase, not a bool + error pair).
@@ -285,7 +304,7 @@ public struct BrowseFeature {
         public var infoErrorMessage: String? { infoPhase.errorMessage }
         /// Item being downloaded for the QuickLook viewer (tapping a file), alongside the
         /// local temp file `previewFile` produces once `GET /api/preview` finishes. Only
-        /// used for PDFs — images/RAW load themselves per-page in the gallery view, and
+        /// used for PDFs: images/RAW load themselves per-page in the gallery view, and
         /// video/audio stream directly, neither going through this at all.
         public var previewItem: FileItem?
         public var previewFileURL: URL?
@@ -295,7 +314,7 @@ public struct BrowseFeature {
         public var isLoadingPreview: Bool { previewPhase == .loading }
         public var previewErrorMessage: String? { previewPhase.errorMessage }
         /// Text content for `previewItem` when it's neither previewable-via-download nor
-        /// streamable (anything `GET /api/preview` 415s on) — fetched/saved via the real
+        /// streamable (anything `GET /api/preview` 415s on): fetched/saved via the real
         /// `/api/editor` endpoint, the server's actual text view+edit path.
         public var textContent: String?
         /// The `/api/editor` read lifecycle. A save is a separate mutation (`isSavingTextContent`
@@ -304,11 +323,22 @@ public struct BrowseFeature {
         public var isSavingTextContent = false
         public var textSaveError: String?
         public var isLoadingTextContent: Bool { textPhase == .loading }
-        /// A load failure (from `textPhase`) or a save failure (`textSaveError`) — they never
+        /// A load failure (from `textPhase`) or a save failure (`textSaveError`): they never
         /// coexist, so one accessor drives the editor's error surface as before.
         public var textEditorErrorMessage: String? { textPhase.errorMessage ?? textSaveError }
 
         public var isSearching: Bool { !searchQuery.isEmpty }
+
+        /// Typed, but too short for the server to search; only the instant matches show.
+        public var isSearchTermTooShort: Bool {
+            let count = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count
+            return count > 0 && count < FilesClient.minimumSearchTermLength
+        }
+
+        public var canShowMoreSearchResults: Bool {
+            guard case .firstOnly = searchShortfall else { return false }
+            return searchLimit < (FilesClient.searchLimitSteps.last ?? searchLimit)
+        }
 
         /// `items`, folders first, with hidden entries dropped unless the preference is on
         /// and sorted by `sortOption`.
@@ -338,7 +368,7 @@ public struct BrowseFeature {
         }
 
         /// The categories actually present in the current (hidden filtered) results, in display
-        /// order — the rows the filter sheet offers. Independent of the current selection, so
+        /// order: the rows the filter sheet offers. Independent of the current selection, so
         /// toggling a category off doesn't make it vanish from the sheet.
         public var availableSearchCategories: [FileCategory] {
             guard let searchResults else { return [] }
@@ -386,7 +416,8 @@ public struct BrowseFeature {
         case searchCategoryToggled(FileCategory)
         case searchFilterCleared
         case searchResultTapped(SearchResultItem)
-        case searchResultsResponse(Result<[SearchResultItem], FilesClientError>)
+        case searchShowMoreTapped
+        case searchResultsResponse(Result<SearchPage, FilesClientError>)
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(SortDirection)
         case renameTapped(FileItem)
@@ -417,6 +448,19 @@ public struct BrowseFeature {
         case compressTapped(FileItem)
         case compressResponse(Result<FileItem, FilesClientError>)
         case downloadTapped(FileItem)
+        #if os(macOS)
+            /// Files dropped or picked on the Mac, staged without the review sheet.
+            case directUploadStaged([PickedFile], destination: String, requested: Int)
+            /// Files opened from Finder name no folder, so they always go through the review sheet.
+            case reviewUpload(UploadReviewFeature.PickSource)
+            case downloadProgressUpdated(String)
+            /// The save panel was dismissed without choosing a destination.
+            case downloadCancelled
+            /// The folder picked for a bulk download.
+            case bulkDownloadFolderChosen(URL)
+            case downloadResponse(Result<URL, FilesClientError>)
+            case bulkDownloadResponse(savedCount: Int, total: Int)
+        #endif
         case selectModeToggled
         case itemSelectionToggled(FileItem.ID)
         case selectAllTapped
@@ -438,6 +482,21 @@ public struct BrowseFeature {
         case bulkMoveTapped
         case clipboardCleared
         case pasteTapped(keepItemsAfterCopy: Bool)
+        /// Keyboard driven actions for the Mac file table, acting on whatever rows are selected
+        /// there (tracked in `selectedItemIDs` without entering select mode).
+        case tableSelectionChanged(Set<FileItem.ID>)
+        case copySelectionTapped
+        case cutSelectionTapped
+        /// Copies the selection into its own folder; the server names the copies "Name (2)".
+        case duplicateSelectionTapped
+        /// Reverses the last recorded file operation (⌘Z).
+        case undoTapped
+        case undoResponse(Result<Bool, FilesClientError>)
+        case deleteSelectionTapped
+        case renameSelectionTapped
+        case infoSelectionTapped
+        /// Mac: rows dragged onto a folder row in the same listing move into it.
+        case itemsDroppedOnFolder(ids: [FileItem.ID], folder: FileItem)
         case retryTransferTapped
         case transferConflictCheckResponse(Result<[FileItem], FilesClientError>)
         case transferConflictResolved(TransferConflictChoice?)
@@ -464,7 +523,7 @@ public struct BrowseFeature {
             case openPath(path: String, title: String)
             case favoritesChanged
             /// Files the user picked from the `+` menu, each already carrying its destination
-            /// folder — bubbled up to `MainTabFeature`'s app-wide upload queue.
+            /// folder: bubbled up to `MainTabFeature`'s app-wide upload queue.
             case uploadRequested([PendingUpload])
             /// Items handed to `MainTabFeature`'s app wide download queue.
             case downloadRequested([FileItem])
@@ -472,10 +531,10 @@ public struct BrowseFeature {
             /// the whole live navigation stack so both the source and destination listings
             /// reflect the new state.
             case directoryContentsChanged
-            /// The "Open" button on the download-success toast — switches to the Downloads
+            /// The "Open" button on the download-success toast: switches to the Downloads
             /// tab so the user can see where the file landed.
             case openDownloadsTapped
-            /// "View in Shared" on the created-share-link sheet — switches to the Shared tab.
+            /// "View in Shared" on the created-share-link sheet: switches to the Shared tab.
             case goToSharedTab
         }
     }
@@ -490,11 +549,12 @@ public struct BrowseFeature {
     @Dependency(\.uploadStaging) var uploadStaging
     @Dependency(\.openURL) var openURL
     @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.saveLocationPicker) var saveLocationPicker
     // Internal (not private) so the effect helpers extracted into `BrowseFeature+*.swift`
     // can reference these cancel ids across files.
     enum CancelID: Hashable {
         case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
-        case prefetchChildren, prefetchFavorites, offlineAvailability
+        case prefetchChildren, prefetchFavorites, offlineAvailability, arrivalRecheck
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
         case favorite(String)
@@ -506,7 +566,7 @@ public struct BrowseFeature {
         Reduce { state, action in
             switch action {
             case .onAppear:
-                // Guard on the phase, not `items.isEmpty` — a folder that is genuinely empty
+                // Guard on the phase, not `items.isEmpty`: a folder that is genuinely empty
                 // would otherwise re-fetch on every return to it. A failed load stays put too
                 // (retry is the refresh button), so only `.idle` triggers a fetch.
                 guard state.phase == .idle else { return .none }
@@ -528,6 +588,7 @@ public struct BrowseFeature {
                 state.items = IdentifiedArray(Self.sortedAlphabetically(result.items), id: \.id, uniquingIDsWith: { first, _ in first })
                 state.access = result.access
                 return .merge(
+                    recheckArrivals(&state),
                     search(&state),
                     computeOfflineAvailability(&state),
                     prefetch(
@@ -583,13 +644,13 @@ public struct BrowseFeature {
             case let .rowTapped(item):
                 guard item.isDirectory else {
                     // Google Drive stub files (`.gsheet`, `.gdoc`, …) link out to a real
-                    // Google document — open that, don't show the JSON stub.
+                    // Google document: open that, don't show the JSON stub.
                     if item.isGoogleDocsPointer {
                         return openGoogleDocsPointer(serverURL: state.serverURL, item: item)
                     }
                     // Sets `previewItem` unconditionally so the viewer presents immediately.
                     // - Files the app has no viewer for (archives it can't browse, known
-                    //   binaries, undecodable video) get `UnsupportedFilePreviewView` — the
+                    //   binaries, undecodable video) get `UnsupportedFilePreviewView`: the
                     //   name/type/size + download/share actions, no fetch.
                     // - Streamable media (video/audio) plays live from `FilesClient.previewURL`.
                     // - Images/RAW load themselves per-page in the gallery view.
@@ -615,11 +676,19 @@ public struct BrowseFeature {
                 // and refetch, flashing the list. Only act on a real text change.
                 guard query != state.searchQuery else { return .none }
                 state.searchQuery = query
+                state.searchLimit = FilesClient.searchLimitSteps[0]
                 return search(&state)
 
             case let .searchScopeChanged(scope):
                 state.searchScope = scope
+                state.searchLimit = FilesClient.searchLimitSteps[0]
                 return search(&state)
+
+            case .searchShowMoreTapped:
+                guard state.canShowMoreSearchResults else { return .none }
+                state.searchLimit = FilesClient.searchLimitSteps.first { $0 > state.searchLimit } ?? state.searchLimit
+                state.isSearchingRemotely = true
+                return fetchSearchResults(state, isDebounced: false)
 
             case let .searchCategoryToggled(category):
                 if state.selectedSearchCategories.contains(category) {
@@ -635,12 +704,18 @@ public struct BrowseFeature {
 
             case let .searchResultTapped(result):
                 guard !result.isDirectory else {
-                    return .send(.delegate(.openPath(path: result.id, title: result.name)))
+                    // Opening a folder ends the search, as in Finder, so the search never carries
+                    // into the folder it opens.
+                    state.searchQuery = ""
+                    return .merge(
+                        search(&state),
+                        .send(.delegate(.openPath(path: result.id, title: result.name)))
+                    )
                 }
                 // Search results only carry `dir`/`file` for `kind`, so rebuild the extension
                 // from the name and hand a real `FileItem` to the same preview routing a
                 // browse row tap uses. `dateModified`/`size` are unknown here, so the preview
-                // cache treats it as fresh and re-fetches — fine for an occasional tap.
+                // cache treats it as fresh and re-fetches: fine for an occasional tap.
                 let ext = (result.name as NSString).pathExtension.lowercased()
                 let item = FileItem(
                     name: result.name,
@@ -652,9 +727,12 @@ public struct BrowseFeature {
                 )
                 return .send(.rowTapped(item))
 
-            case let .searchResultsResponse(.success(results)):
+            case let .searchResultsResponse(.success(page)):
                 state.isSearchingRemotely = false
-                state.searchResults = IdentifiedArray(Self.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
+                // The server ranks its answer (names first, closest first, then contents by
+                // relevance), so it stays in that order.
+                state.searchResults = IdentifiedArray(page.items, id: \.id, uniquingIDsWith: { first, _ in first })
+                state.searchShortfall = SearchShortfall(page)
                 // Drop any selected category the new results no longer contain, so the filter
                 // can't strand the list on an empty set the sheet doesn't even offer.
                 state.selectedSearchCategories.formIntersection(Set(state.availableSearchCategories))
@@ -663,6 +741,7 @@ public struct BrowseFeature {
             case let .searchResultsResponse(.failure(error)):
                 state.isSearchingRemotely = false
                 state.searchResults = []
+                state.searchShortfall = nil
                 // Surface it, otherwise a network blip during a search is indistinguishable from
                 // a genuine empty result.
                 state.fileActionErrorMessage = error == .sessionExpired ? error.userMessage : L10n.Browse.searchFailed
@@ -735,11 +814,13 @@ public struct BrowseFeature {
             case let .renameResponse(.success(result)):
                 state.isPerformingFileAction = false
                 state.renameSheetItem = nil
+                let previousName = state.items[id: result.originalID]?.name ?? (result.originalID as NSString).lastPathComponent
+                state.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(result.renamed, previousName: previousName))) }
                 if let index = state.items.index(id: result.originalID) {
                     state.items.remove(at: index)
                     state.items.insert(result.renamed, at: index)
                 }
-                // A rename from a preview keeps the cover up — repoint it at the renamed item
+                // A rename from a preview keeps the cover up: repoint it at the renamed item
                 // so its title/actions follow.
                 if state.previewItem?.id == result.originalID {
                     state.previewItem = result.renamed
@@ -767,6 +848,7 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 state.isNewFolderSheetPresented = false
                 state.items.append(folder)
+                state.$undoStack.withLock { $0.record(FileUndoEntry(.created([folder]))) }
                 syncListingCache(state)
                 return .none
 
@@ -860,10 +942,57 @@ public struct BrowseFeature {
                 return .none
 
             case let .downloadTapped(item):
-                if state.previewItem != nil {
-                    state.downloadSuccessMessage = L10n.DownloadQueue.barTitleOne(item.name)
+                #if os(macOS)
+                    // A Mac saves where the user says, through the save panel, not the queue.
+                    return startDownload(&state, item: item)
+                #else
+                    if state.previewItem != nil {
+                        state.downloadSuccessMessage = L10n.DownloadQueue.barTitleOne(item.name)
+                    }
+                    return .send(.delegate(.downloadRequested([item])))
+                #endif
+
+        #if os(macOS)
+            case let .downloadProgressUpdated(message):
+                state.fileActionProgressMessage = message
+                return .none
+
+            case .downloadCancelled:
+                state.isPerformingFileAction = false
+                state.isBulkActionInFlight = false
+                state.fileActionProgressMessage = nil
+                return .none
+
+            case let .bulkDownloadFolderChosen(folder):
+                state.lastSavedDownloadURL = folder
+                return .none
+
+            case let .downloadResponse(.success(destination)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.lastSavedDownloadURL = destination
+                state.downloadSuccessMessage = L10n.Browse.downloadSavedTo(savedDownloadFolderName(destination))
+                return .none
+
+            case let .downloadResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionProgressMessage = nil
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case let .bulkDownloadResponse(savedCount, total):
+                state.isBulkActionInFlight = false
+                state.fileActionProgressMessage = nil
+                let folderName = state.lastSavedDownloadURL.map(savedDownloadFolderName) ?? ""
+                if savedCount == total {
+                    state.downloadSuccessMessage = L10n.Browse.downloadSavedAllTo(savedCount, folderName)
+                } else if savedCount > 0 {
+                    state.downloadSuccessMessage = L10n.Browse.downloadSavedCountTo(savedCount, total, folderName)
+                } else {
+                    state.fileActionErrorMessage = L10n.Browse.downloadBulkFailed
                 }
-                return .send(.delegate(.downloadRequested([item])))
+                return .none
+        #endif
 
             case .selectModeToggled:
                 state.isSelecting.toggle()
@@ -939,15 +1068,44 @@ public struct BrowseFeature {
                 guard !targets.isEmpty else { return .none }
                 state.isSelecting = false
                 state.selectedItemIDs = []
-                return .send(.delegate(.downloadRequested(Array(targets))))
+                #if os(macOS)
+                    return startBulkDownload(&state, targets: Array(targets))
+                #else
+                    return .send(.delegate(.downloadRequested(Array(targets))))
+                #endif
 
             case let .beginUpload(source):
                 guard source.count > 0 else { return .none }
-                state.uploadReview = UploadReviewFeature.State(
-                    serverURL: state.serverURL,
-                    startingDestination: state.directoryPath
-                )
-                return .send(.uploadReview(.presented(.stage(source))))
+                #if os(macOS)
+                    // A Mac drop or file pick already says where the files go (the folder on
+                    // screen), so they upload straight away instead of through the review sheet.
+                    if case let .documents(urls) = source, !state.directoryPath.isEmpty {
+                        let destination = state.directoryPath
+                        let uploadStaging = uploadStaging
+                        return .run { send in
+                            var staged: [PickedFile] = []
+                            for await file in uploadStaging.stageDocuments(urls) {
+                                staged.append(file)
+                            }
+                            await send(.directUploadStaged(staged, destination: destination, requested: urls.count))
+                        }
+                    }
+                #endif
+                return openUploadReview(source, state: &state)
+
+            #if os(macOS)
+                case let .reviewUpload(source):
+                    return openUploadReview(source, state: &state)
+
+                case let .directUploadStaged(files, destination, _):
+                    guard !files.isEmpty else {
+                        state.fileActionErrorMessage = L10n.Uploads.stagingFailed
+                        return .none
+                    }
+                    return .send(.delegate(.uploadRequested(files.map {
+                        PendingUpload(id: $0.id, fileURL: $0.fileURL, fileName: $0.fileName, destination: destination)
+                    })))
+            #endif
 
             case let .receiveSharedFiles(urls):
                 guard !urls.isEmpty else { return .none }
@@ -956,9 +1114,9 @@ public struct BrowseFeature {
                 }
                 // An open preview would cover the review sheet.
                 if state.previewItem != nil {
-                    return .concatenate(.send(.previewDismissed), .send(.beginUpload(.documents(urls))))
+                    return .concatenate(.send(.previewDismissed), .send(Self.sharedFilesUpload(urls)))
                 }
-                return .send(.beginUpload(.documents(urls)))
+                return .send(Self.sharedFilesUpload(urls))
 
             case let .uploadReview(.presented(.delegate(.confirmed(files, destination)))):
                 state.uploadReview = nil
@@ -968,7 +1126,7 @@ public struct BrowseFeature {
                 })))
 
             case .uploadReview(.presented(.delegate(.cancelled))):
-                // Discard whatever staging already copied — those files are never uploaded now.
+                // Discard whatever staging already copied: those files are never uploaded now.
                 let staged = state.uploadReview?.files.map(\.fileURL) ?? []
                 state.uploadReview = nil
                 guard !staged.isEmpty else { return .none }
@@ -1011,6 +1169,85 @@ public struct BrowseFeature {
             case let .pasteTapped(keepItemsAfterCopy):
                 return paste(&state, keepItemsAfterCopy: keepItemsAfterCopy)
 
+            case let .tableSelectionChanged(ids):
+                guard !state.isSelecting else { return .none }
+                state.selectedItemIDs = ids
+                // An open inspector follows the selection to the newly picked row.
+                guard state.infoItem != nil, ids.count == 1,
+                      let item = selectedItems(state).first, item.id != state.infoItem?.id
+                else { return .none }
+                return loadInfo(&state, item: item)
+
+            case .copySelectionTapped:
+                let items = selectedItems(state)
+                guard !items.isEmpty else { return .none }
+                state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .copy) }
+                state.clipboardStagedMessage = items.count == 1
+                    ? L10n.Browse.clipboardCopiedOne(items[0].name)
+                    : L10n.Browse.clipboardCopiedMany(items.count)
+                return .none
+
+            case .cutSelectionTapped:
+                let items = selectedItems(state)
+                guard !items.isEmpty, state.access?.canDelete ?? false else { return .none }
+                state.$clipboard.withLock { $0 = FileClipboard(items: items, operation: .move) }
+                state.clipboardStagedMessage = items.count == 1
+                    ? L10n.Browse.clipboardCutOne(items[0].name)
+                    : L10n.Browse.clipboardCutMany(items.count)
+                return .none
+
+            case .undoTapped:
+                return undo(&state)
+
+            case .undoResponse(.success):
+                state.isPerformingFileAction = false
+                return .send(.delegate(.directoryContentsChanged))
+
+            case let .undoResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                state.fileActionErrorMessage = error.userMessage
+                return .send(.delegate(.directoryContentsChanged))
+
+            case .duplicateSelectionTapped:
+                let items = selectedItems(state)
+                guard !items.isEmpty, !state.directoryPath.isEmpty, state.access?.canWrite ?? false else { return .none }
+                return performTransfer(&state, retry: TransferRetry(
+                    items: items,
+                    destination: state.directoryPath,
+                    operation: .copy,
+                    clearClipboard: false,
+                    resolution: .keepBoth
+                ))
+
+            case .deleteSelectionTapped:
+                let items = selectedItems(state)
+                guard !items.isEmpty, state.access?.canDelete ?? false else { return .none }
+                return items.count == 1 ? .send(.deleteTapped(items[0])) : .send(.bulkDeleteTapped)
+
+            case .renameSelectionTapped:
+                let items = selectedItems(state)
+                guard items.count == 1, state.access?.canWrite ?? false else { return .none }
+                return .send(.renameTapped(items[0]))
+
+            case let .itemsDroppedOnFolder(ids, folder):
+                guard folder.isDirectory, state.access?.canDelete ?? false else { return .none }
+                // Never into itself or one of its own subfolders.
+                let items = state.items.filter { item in
+                    ids.contains(item.id) && item.id != folder.id && !folder.id.hasPrefix(item.id + "/")
+                }
+                return runTransfer(&state, retry: TransferRetry(
+                    items: Array(items), destination: folder.id, operation: .move, clearClipboard: false
+                ))
+
+            case .infoSelectionTapped:
+                // ⌘I toggles: pressing it again for the item already shown closes the inspector.
+                if state.infoItem != nil, state.infoItem?.id == selectedItems(state).first?.id {
+                    return .send(.infoDismissed)
+                }
+                let items = selectedItems(state)
+                guard items.count == 1 else { return .none }
+                return .send(.infoTapped(items[0]))
+
             case let .destinationPicker(.presented(.delegate(.confirmed(destination)))):
                 guard let picker = state.destinationPicker else { return .none }
                 let items = picker.items
@@ -1036,7 +1273,7 @@ public struct BrowseFeature {
                 case let .success(destinationItems):
                     return resolveTransfer(&state, retry: retry, colliding: Self.collidingItems(for: retry, in: destinationItems))
                 case .failure:
-                    // The listing failed — fall back to the server's safe auto-rename rather
+                    // The listing failed: fall back to the server's safe auto-rename rather
                     // than blocking the transfer on a check we couldn't run.
                     return performTransfer(&state, retry: retry.resolved(.keepBoth))
                 }
@@ -1055,6 +1292,7 @@ public struct BrowseFeature {
                 }
 
             case let .transferResponse(.success(outcome)):
+                let sources = state.pendingTransferRetry?.items ?? []
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
                 state.pendingTransferRetry = nil
@@ -1063,6 +1301,8 @@ public struct BrowseFeature {
                     state.$clipboard.withLock { $0 = nil }
                 }
                 state.transferSuccessMessage = Self.transferSuccessMessage(for: outcome)
+                applyTransfer(&state, outcome: outcome, sources: sources)
+                awaitArrivals(&state, from: outcome.result)
                 return .send(.delegate(.directoryContentsChanged))
 
             case let .transferResponse(.failure(error)):
@@ -1098,7 +1338,7 @@ public struct BrowseFeature {
                 return .none
 
             case let .infoUsageResponse(.success(usage)):
-                // Kept only when the server actually reported disk figures — a denied path
+                // Kept only when the server actually reported disk figures: a denied path
                 // answers all zeros, which the "Server disk" section shouldn't show.
                 state.infoUsage = usage.isMeaningful ? usage : nil
                 return .none
@@ -1143,7 +1383,7 @@ public struct BrowseFeature {
                 case let .success(url):
                     return .run { [openURL] _ in await openURL(url) }
                 case .failure:
-                    // Couldn't read the stub or it had no usable link — fall back to showing
+                    // Couldn't read the stub or it had no usable link: fall back to showing
                     // it in the text viewer rather than leaving the tap dead.
                     state.previewItem = item
                     return loadTextContent(&state, item: item)
@@ -1229,3 +1469,26 @@ protocol DirectoryFirstSortable {
 
 extension FileItem: DirectoryFirstSortable {}
 extension SearchResultItem: DirectoryFirstSortable {}
+
+extension BrowseFeature {
+    private func openUploadReview(_ source: UploadReviewFeature.PickSource, state: inout State) -> Effect<Action> {
+        state.uploadReview = UploadReviewFeature.State(
+            serverURL: state.serverURL,
+            startingDestination: state.directoryPath
+        )
+        return .send(.uploadReview(.presented(.stage(source))))
+    }
+
+    private static func sharedFilesUpload(_ urls: [URL]) -> Action {
+        #if os(macOS)
+            .reviewUpload(.documents(urls))
+        #else
+            .beginUpload(.documents(urls))
+        #endif
+    }
+
+    /// The selected rows in list order (the selection set itself is unordered).
+    func selectedItems(_ state: State) -> [FileItem] {
+        state.items.filter { state.selectedItemIDs.contains($0.id) }
+    }
+}

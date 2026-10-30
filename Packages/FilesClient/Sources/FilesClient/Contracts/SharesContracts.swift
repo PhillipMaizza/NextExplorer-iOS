@@ -14,7 +14,7 @@ extension FilesService {
     }
 
     /// Body for `PUT /api/shares/:id`. `label` / `expiresAt` are always written (`null`
-    /// included — that's how the server clears them); `userIds` only when it's a users-share;
+    /// included: that's how the server clears them); `userIds` only when it's a users-share;
     /// `password` only when the caller is actually changing or removing it.
     struct UpdateShareBody: Encodable {
         let label: String?

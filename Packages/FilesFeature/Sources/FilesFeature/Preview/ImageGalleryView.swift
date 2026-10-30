@@ -4,7 +4,9 @@ import DesignSystem
 import FilesClient
 import Localization
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     static let statusSpacing: CGFloat = .space16
@@ -28,7 +30,7 @@ private enum Constants {
 }
 
 /// Swipeable full-screen viewer for every image/RAW photo in the current folder, not just the
-/// one tapped — mirrors browsing a real photo gallery instead of dismissing back to the list
+/// one tapped: mirrors browsing a real photo gallery instead of dismissing back to the list
 /// between each image. Every page reuses `FilesClient.previewFile`'s on-disk cache (see
 /// `FilesService.previewFile`), so revisiting an already-viewed image in the same session
 /// never re-hits the server.
@@ -36,7 +38,7 @@ struct ImageGalleryView: View {
     let items: [FileItem]
     let serverURL: URL
     let onDismiss: () -> Void
-    /// Toolbar actions on the current image — routed back to `BrowseFeature` by the caller.
+    /// Toolbar actions on the current image: routed back to `BrowseFeature` by the caller.
     /// `nil` hides the button (e.g. no delete permission).
     private let onShare: ((FileItem) -> Void)?
     private let onRename: ((FileItem) -> Void)?
@@ -81,11 +83,19 @@ struct ImageGalleryView: View {
         currentItem?.name ?? ""
     }
 
-    var body: some View {
-        NavigationStack {
-            // Full-bleed on every edge: the bars float over the image, so toggling them
-            // never resizes or reflows the content — the image stays perfectly still
-            // while the chrome fades, matching the Photos viewer.
+    #if os(macOS)
+        /// A Mac has no swipe pager: the current image fills the window, and the preview router's
+        /// arrow keys step through the folder (images, videos and the rest alike).
+        private var pager: some View {
+            Group {
+                if let index = items.firstIndex(where: { $0.id == selection }) {
+                    ImageGalleryPage(item: items[index], serverURL: serverURL, isNear: true)
+                        .id(items[index].id)
+                }
+            }
+        }
+    #else
+        private var pager: some View {
             TabView(selection: $selection) {
                 ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                     ImageGalleryPage(item: item, serverURL: serverURL, isNear: isNear(index))
@@ -96,41 +106,50 @@ struct ImageGalleryView: View {
                 }
             }
             .tabViewStyle(.page(indexDisplayMode: items.count > 1 && !areControlsHidden ? .always : .never))
-            .ignoresSafeArea()
-            // A rename changes the current image's id (it's path-derived); deleting one drops
-            // it. Close if that emptied the gallery, otherwise hold the same slot so a dangling
-            // `selection` lands on the neighbour.
-            .onChange(of: items) { oldItems, newItems in
-                if newItems.isEmpty {
-                    onDismiss(); return
+        }
+    #endif
+
+    var body: some View {
+        NavigationStack {
+            // Full bleed on every edge: the bars float over the image, so toggling them
+            // never resizes or reflows the content; the image stays perfectly still
+            // while the chrome fades, matching the Photos viewer.
+            pager
+                .ignoresSafeArea()
+                // A rename changes the current image's id (it's path derived); deleting one drops
+                // it. Close if that emptied the gallery, otherwise hold the same slot so a dangling
+                // `selection` lands on the neighbour.
+                .onChange(of: items) { oldItems, newItems in
+                    if newItems.isEmpty {
+                        onDismiss(); return
+                    }
+                    guard !newItems.contains(where: { $0.id == selection }) else { return }
+                    let slot = oldItems.firstIndex { $0.id == selection } ?? 0
+                    selection = (newItems.indices.contains(slot) ? newItems[slot] : newItems[newItems.count - 1]).id
                 }
-                guard !newItems.contains(where: { $0.id == selection }) else { return }
-                let slot = oldItems.firstIndex { $0.id == selection } ?? 0
-                selection = (newItems.indices.contains(slot) ? newItems[slot] : newItems[newItems.count - 1]).id
-            }
-            // Keep the caller's zoom source and list scroll aligned with the page swiped to.
-            .onChange(of: selection) { _, _ in currentItem.map(onCurrentItemChange) }
-            .contentShape(Rectangle())
-            // A short fade, nothing more. The earlier lag was this animation fighting the
-            // content reflow when the bars resized the image — now that the image is
-            // full-bleed and never moves, only the chrome itself crossfades.
-            .onTapGesture {
-                withAnimation(.easeInOut(duration: Constants.controlsFadeDuration)) {
-                    areControlsHidden.toggle()
+                // Keep the caller's zoom source and list scroll aligned with the page swiped to.
+                .onChange(of: selection) { _, _ in currentItem.map(onCurrentItemChange) }
+                .contentShape(Rectangle())
+                // A short fade, nothing more. The earlier lag was this animation fighting the
+                // content reflow when the bars resized the image; now that the image is
+                // full bleed and never moves, only the chrome itself crossfades.
+                .onTapGesture {
+                    withAnimation(.easeInOut(duration: Constants.controlsFadeDuration)) {
+                        areControlsHidden.toggle()
+                    }
                 }
-            }
-            .previewChrome(
-                title: currentName,
-                systemShare: currentItem.map { .remote($0, serverURL: serverURL) } ?? .unavailable,
-                onShareLink: currentItemAction(onShare),
-                onRename: currentItemAction(onRename),
-                onDownload: currentItemAction(onDownload),
-                onDelete: currentItemAction(onDelete),
-                onClose: onDismiss
-            )
-            .toolbar(areControlsHidden ? .hidden : .visible, for: .navigationBar)
-            .toolbar(areControlsHidden ? .hidden : .visible, for: .bottomBar)
-            .statusBarHidden(areControlsHidden)
+                .previewChrome(
+                    title: currentName,
+                    systemShare: currentItem.map { .remote($0, serverURL: serverURL) } ?? .unavailable,
+                    onShareLink: currentItemAction(onShare),
+                    onRename: currentItemAction(onRename),
+                    onDownload: currentItemAction(onDownload),
+                    onDelete: currentItemAction(onDelete),
+                    onClose: onDismiss
+                )
+                .hidesNavigationBar(areControlsHidden)
+                .hidesBottomBar(areControlsHidden)
+                .statusBarHidden(areControlsHidden)
         }
         .onAppear { OrientationLock.shared.unlock() }
         .onDisappear { OrientationLock.shared.lock() }
@@ -155,12 +174,12 @@ struct ImageGalleryView: View {
 /// the view animates off the derived `hasImage` / `isFinal` instead.
 private enum GalleryImagePhase {
     case loading
-    case streaming(UIImage)
-    case loaded(UIImage)
+    case streaming(PlatformImage)
+    case loaded(PlatformImage)
     case gif(URL)
     case failed(String)
 
-    var displayImage: UIImage? {
+    var displayImage: PlatformImage? {
         switch self {
         case let .streaming(image), let .loaded(image): image
         default: nil
@@ -202,7 +221,7 @@ private struct ImageGalleryPage: View {
     /// still looks sharp, without ever holding a full 48MP bitmap resident. Sized off the
     /// window the app is in, which on iPhone Duo is whichever panel is showing.
     @MainActor private var maxPixelDimension: CGFloat {
-        let bounds = ActiveWindowScene.bounds ?? .zero
+        let bounds = PlatformScreen.bounds
         return max(bounds.width, bounds.height) * displayScale * 2
     }
 
@@ -230,12 +249,12 @@ private struct ImageGalleryPage: View {
 
             switch phase {
             case let .gif(url):
-                // GIFs play their real animation via `AnimatedImageView` — a decoded still would
+                // GIFs play their real animation via `AnimatedImageView`: a decoded still would
                 // only ever show the first frame.
                 ZoomableScrollView(onZoomChange: onZoomChange) { AnimatedImageView(fileURL: url) }
             case let .streaming(uiImage), let .loaded(uiImage):
                 ZoomableScrollView(onZoomChange: onZoomChange) {
-                    Image(uiImage: uiImage).resizable().scaledToFit()
+                    Image(platformImage: uiImage).resizable().scaledToFit()
                 }
                 .transition(.opacity)
                 // Settle from a slight scale to 1 the moment the final image lands.
@@ -298,7 +317,7 @@ private struct ImageGalleryPage: View {
             return
         }
         let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
-        var lastFrame: UIImage?
+        var lastFrame: PlatformImage?
         for await frame in ProgressiveImageLoader.frames(url: url, cookies: cookies, maxPixelDimension: target) {
             if Task.isCancelled {
                 return

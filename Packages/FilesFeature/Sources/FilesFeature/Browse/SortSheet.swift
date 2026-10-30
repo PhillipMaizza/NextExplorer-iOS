@@ -26,18 +26,99 @@ struct SortToolbarButton: View {
     let action: () -> Void
 
     var body: some View {
-        Button(action: action) {
-            IconKit.sort
-                .resizable()
-                .scaledToFit()
-                .frame(width: Constants.toolbarButtonWidth, height: Constants.toolbarButtonHeight)
-                .foregroundStyle(Color.primaryDS)
-        }
-        .buttonStyle(DSHapticButtonStyle())
-        .disabled(isDisabled)
-        .accessibilityLabel(L10n.Common.sort)
+        #if os(macOS)
+            // The Mac toolbar sizes and styles its own items; a hand sized icon and custom
+            // button style made this one stand out from every other toolbar control.
+            Button(action: action) {
+                IconKit.sort
+                    .foregroundStyle(Color.primaryDS)
+            }
+            .disabled(isDisabled)
+            .accessibilityLabel(L10n.Common.sort)
+            .help(L10n.Common.sort)
+        #else
+            Button(action: action) {
+                IconKit.sort
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: Constants.toolbarButtonWidth, height: Constants.toolbarButtonHeight)
+                    .foregroundStyle(Color.primaryDS)
+            }
+            .buttonStyle(DSHapticButtonStyle())
+            .disabled(isDisabled)
+            .accessibilityLabel(L10n.Common.sort)
+        #endif
     }
 }
+
+extension ToolbarItemPlacement {
+    /// Where a screen's sort button sits: leading on a Mac, so the toolbar search field keeps
+    /// the trailing edge; trailing on iOS as before.
+    static var sortControl: ToolbarItemPlacement {
+        #if os(macOS)
+            .navigation
+        #else
+            .primaryAction
+        #endif
+    }
+}
+
+#if os(macOS)
+    /// The Mac counterpart of `SortToolbarButton` + `SortSheet`: a toolbar menu with the sort
+    /// fields and the direction as checkmarked items, the way Mac apps sort, instead of a sheet.
+    struct MacSortMenu<Option: Hashable, Direction: Hashable>: View {
+        let options: [Option]
+        let directions: [Direction]
+        let sortOption: Option
+        let sortDirection: Direction
+        let optionTitle: (Option) -> String
+        let directionTitle: (Direction) -> String
+        let onSelectOption: (Option) -> Void
+        let onSelectDirection: (Direction) -> Void
+        var isDisabled = false
+
+        /// Local mirrors the pickers bind to; changes go out through the callbacks in
+        /// `onChange`, so no plain closure is captured by a `Binding`'s `@Sendable` setter.
+        @State private var selectedOption: Option?
+        @State private var selectedDirection: Direction?
+
+        var body: some View {
+            Menu {
+                Picker(L10n.Sort.sheetTitle, selection: $selectedOption) {
+                    ForEach(options, id: \.self) { option in
+                        Text(optionTitle(option)).tag(Optional(option))
+                    }
+                }
+                .pickerStyle(.inline)
+                Picker(L10n.Sort.sheetTitle, selection: $selectedDirection) {
+                    ForEach(directions, id: \.self) { direction in
+                        Text(directionTitle(direction)).tag(Optional(direction))
+                    }
+                }
+                .pickerStyle(.inline)
+                .labelsHidden()
+            } label: {
+                IconKit.sort
+                    .foregroundStyle(Color.primaryDS)
+            }
+            .disabled(isDisabled)
+            .accessibilityLabel(L10n.Common.sort)
+            .help(L10n.Common.sort)
+            .onChange(of: sortOption, initial: true) { selectedOption = sortOption }
+            .onChange(of: sortDirection, initial: true) { selectedDirection = sortDirection }
+            .onChange(of: selectedOption) { _, option in
+                if let option, option != sortOption {
+                    onSelectOption(option)
+                }
+            }
+            .onChange(of: selectedDirection) { _, direction in
+                if let direction, direction != sortDirection {
+                    onSelectDirection(direction)
+                }
+            }
+        }
+    }
+#endif
 
 /// Generic "Sort by" sheet: a field picker and a direction picker as radio lists in a
 /// `DSDynamicHeightSheet`. Shared by Browse, Favorites, Downloads, Shared and User Management,

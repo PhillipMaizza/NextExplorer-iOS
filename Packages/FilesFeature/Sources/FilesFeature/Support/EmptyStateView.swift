@@ -1,4 +1,5 @@
 import DesignSystem
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -25,17 +26,30 @@ struct EmptyStateView: View {
     @State private var hasAppeared = false
 
     var body: some View {
+        #if os(macOS)
+            // The Mac's own empty state, with Retry as a button under the message.
+            ContentUnavailableView {
+                Label { Text(message) } icon: { icon }
+            } actions: {
+                if let retry {
+                    Button(L10n.Common.retry, action: retry)
+                }
+            }
+        #else
+            phoneBody
+        #endif
+    }
+
+    private var phoneBody: some View {
         VStack(spacing: Constants.spacing) {
             icon
                 .resizable()
                 .scaledToFit()
                 .foregroundColor(.secondaryDS)
                 .frame(width: Constants.iconSize, height: Constants.iconSize)
-                .scaleEffect(isPulsing ? Constants.pulseScale : 1)
-                .animation(
-                    reduceMotion ? nil : .easeInOut(duration: Constants.pulseDuration).repeatForever(autoreverses: true),
-                    value: isPulsing
-                )
+                .animation(reduceMotion ? nil : .easeInOut(duration: Constants.pulseDuration).repeatForever(autoreverses: true)) {
+                    $0.scaleEffect(isPulsing ? Constants.pulseScale : 1)
+                }
             Text(message).type(.body1(.regular), style: .secondary)
             if let retry {
                 RetryLinkButton(action: retry)
@@ -43,10 +57,13 @@ struct EmptyStateView: View {
         }
         .padding(.horizontal, .space16)
         .multilineTextAlignment(.center)
-        // Gentle fade + rise on first appear, then start the breathing loop.
-        .opacity(hasAppeared || reduceMotion ? 1 : 0)
-        .offset(y: hasAppeared || reduceMotion ? 0 : .space8)
-        .animation(.easeOut(duration: Constants.appearDuration), value: hasAppeared)
+        // Gentle fade + rise on first appear, then start the breathing loop. Scoped animations
+        // (not value based) so the view's first layout is never animated along with them.
+        .animation(.easeOut(duration: Constants.appearDuration)) {
+            $0
+                .opacity(hasAppeared || reduceMotion ? 1 : 0)
+                .offset(y: hasAppeared || reduceMotion ? 0 : .space8)
+        }
         .onAppear {
             hasAppeared = true
             isPulsing = true

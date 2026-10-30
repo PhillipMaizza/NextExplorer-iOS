@@ -3,7 +3,11 @@ import Foundation
 /// A coarse file type bucket derived from the `kind` the backend sends (a lowercased extension,
 /// or `"directory"`). The backend has no category field of its own, so this is the client side
 /// grouping used by the search type filter. `allCases` is ordered for display.
-public enum FileCategory: String, CaseIterable, Sendable, Hashable {
+public enum FileCategory: String, CaseIterable, Sendable, Hashable, Identifiable {
+    public var id: Self {
+        self
+    }
+
     case folder
     case image
     case video

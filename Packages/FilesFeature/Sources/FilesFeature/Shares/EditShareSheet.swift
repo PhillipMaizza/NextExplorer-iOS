@@ -17,7 +17,7 @@ private enum Constants {
     static let maxHeightFraction: CGFloat = 0.9
 }
 
-/// The "Edit Share Link" sheet — `PUT /api/shares/:id`. Mirrors `CreateShareLinkSheet`'s
+/// The "Edit Share Link" sheet: `PUT /api/shares/:id`. Mirrors `CreateShareLinkSheet`'s
 /// form; the shared path is fixed and the password is keep / change / remove since its
 /// current value can't be read back.
 struct EditShareSheet: View {
@@ -25,6 +25,14 @@ struct EditShareSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
+        #if os(macOS)
+            MacEditShareSheet(store: store)
+        #else
+            phoneBody
+        #endif
+    }
+
+    private var phoneBody: some View {
         DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(

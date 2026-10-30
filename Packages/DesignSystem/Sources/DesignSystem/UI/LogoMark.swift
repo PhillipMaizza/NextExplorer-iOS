@@ -11,7 +11,7 @@ private enum LogoGeometry {
         let bottom: Color
     }
 
-    /// Warm palette, the mark's own — not theme tokens.
+    /// Warm palette, the mark's own: not theme tokens.
     private static let light = Color(red: 0xFE / 255, green: 0xCB / 255, blue: 0x50 / 255)
     private static let lightLow = Color(red: 0xF9 / 255, green: 0xB5 / 255, blue: 0x4B / 255)
     private static let deep = Color(red: 0xF8 / 255, green: 0xBA / 255, blue: 0x37 / 255)
@@ -68,9 +68,9 @@ private struct Wing: View {
 
 /// The app mark. Three flourish inputs, all `0` at rest so `DSLogoMark()` is the plain static
 /// logo:
-/// * `spin` (0…1) — one full 3D turn about the vertical axis.
-/// * `flap` (−1…1) — the two wings pivot on the centre spine, like a butterfly.
-/// * `part` (0…1) — the wings slide apart and fade, opening onto whatever is behind.
+/// * `spin` (0…1): one full 3D turn about the vertical axis.
+/// * `flap` (−1…1): the two wings pivot on the centre spine, like a butterfly.
+/// * `part` (0…1): the wings slide apart and fade, opening onto whatever is behind.
 public struct DSLogoMark: View {
     private let spin: Double
     private let flap: Double

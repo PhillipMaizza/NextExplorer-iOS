@@ -31,11 +31,11 @@ public struct DestinationPickerFeature {
         /// a close button into a back button.
         public var navigationHistory: [String] = []
         public var folders: IdentifiedArrayOf<FileItem> = []
-        /// Access of the folder currently shown — gates "Upload here".
+        /// Access of the folder currently shown: gates "Upload here".
         public var currentAccess: FileAccess?
         public var phase: DataPhase = .idle
         /// Searches folders recursively under `directoryPath` (`/api/search`, directories
-        /// only) — cleared whenever the shown folder changes.
+        /// only): cleared whenever the shown folder changes.
         public var searchQuery = ""
         /// Non nil once a search has run for the current query; folders found anywhere under
         /// `directoryPath`, not just the current level.
@@ -73,7 +73,7 @@ public struct DestinationPickerFeature {
             case .move:
                 FileClipboard(items: items, operation: .move).canPaste(into: directoryPath, canWrite: true)
             case .upload:
-                // `nil` while the folder's listing is still loading — confirm stays disabled
+                // `nil` while the folder's listing is still loading: confirm stays disabled
                 // until the server says uploads are allowed here.
                 !directoryPath.isEmpty && (currentAccess?.canUpload ?? false)
             }
@@ -87,10 +87,10 @@ public struct DestinationPickerFeature {
         case searchResultsResponse(Result<[SearchResultItem], FilesClientError>)
         case searchResultTapped(SearchResultItem)
         case folderTapped(FileItem)
-        /// A breadcrumb segment tap — jump straight to `path` (same behavior as the bottom
+        /// A breadcrumb segment tap: jump straight to `path` (same behavior as the bottom
         /// `BrowseBreadcrumbBar`).
         case breadcrumbTapped(path: String)
-        /// Leading toolbar button while `canNavigateBack` — pops one level off the drill path.
+        /// Leading toolbar button while `canNavigateBack`: pops one level off the drill path.
         case backTapped
         case retryTapped
         case confirmTapped
@@ -217,7 +217,8 @@ public struct DestinationPickerFeature {
 
     /// Recursive folder search scoped to the subtree under `directoryPath`, debounced.
     private func search(_ state: inout State) -> Effect<Action> {
-        guard !state.searchQuery.isEmpty else {
+        // The server only searches from three characters on.
+        guard state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count >= FilesClient.minimumSearchTermLength else {
             state.searchResults = nil
             state.isSearching = false
             return .cancel(id: CancelID.search)
@@ -231,7 +232,7 @@ public struct DestinationPickerFeature {
         return .run { send in
             try await clock.sleep(for: Constants.searchDebounce)
             try await send(.searchResultsResponse(apiResult {
-                try await filesClient.search(serverURL, scope, query, Constants.searchLimit)
+                try await filesClient.search(serverURL, scope, query, Constants.searchLimit).items
             }))
         }
         .cancellable(id: CancelID.search, cancelInFlight: true)

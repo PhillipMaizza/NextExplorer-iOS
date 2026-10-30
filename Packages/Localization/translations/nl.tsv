@@ -1,4 +1,4 @@
-# NextExplorer — Nederlands (nl). key<TAB>value.
+# NextExplorer: Nederlands (nl). key<TAB>value.
 common.cancel	Annuleren
 common.save	Bewaren
 common.edit	Wijzigen
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Aan favorieten toevoegen
 browse.actionRemoveFromFavorites	Uit favorieten verwijderen
 browse.actionShare	Deellink maken
 browse.actionDelete	Verwijderen
+browse.actionDuplicate	Dupliceren
 browse.renameTitle	Naam wijzigen
 browse.renameNamePlaceholder	Naam
 browse.actionNewFolder	Map maken
@@ -308,6 +309,7 @@ settings.rowUserManagement	Gebruikersbeheer
 settings.rowChangePassword	Wachtwoord wijzigen
 settings.rowServer	Server
 settings.storageFootnote	Mappen worden als ZIP gedownload, zonder iets op de server achter te laten. Downloads verwijderen of de cache wissen heeft alleen invloed op dit apparaat; op de server verandert niets.
+settings.storageFootnoteMac	De cache wissen heeft alleen invloed op deze Mac; op de server verandert niets.
 settings.removeAllDownloadsTitle	Alle downloads verwijderen?
 settings.removeAllDownloadsConfirm	Alles verwijderen
 settings.removeAllDownloadsMessage	Hiermee worden alle gedownloade bestanden van dit apparaat verwijderd. Ze blijven op de server.
@@ -519,6 +521,14 @@ browse.nameErrorReserved	Die naam is niet toegestaan.
 browse.nameErrorSeparators	Een naam mag geen / of \ bevatten.
 browse.searchMatchLine	Regel %1$lld: %2$@
 browse.searchMatchLineLabel	Regel %lld
+browse.searchTooShort	Typ minstens %lld tekens om in submappen en bestandsinhoud te zoeken.
+browse.searchStoppedEarly	De zoekopdracht is gestopt bij de tijdslimiet. Dit zijn de resultaten die tot nu toe zijn gevonden.
+browse.searchFirstOnly	Eerste %lld resultaten. Verfijn de zoekopdracht om meer te zien.
+browse.searchShowMore	Meer tonen
+browse.searchMatchColumn	Overeenkomst
+browse.searchMatchedByName	Naam
+browse.searchMatchedByContent	Inhoud
+browse.searchMatchedByBoth	Naam en inhoud
 createShare.errorPasswordRequired	Voer een wachtwoord in of schakel wachtwoordbeveiliging uit.
 filter.sheetTitle	Filteren op type
 filter.button	Filteren
@@ -596,6 +606,32 @@ offline.manageEmpty	Er is niets gedownload voor offline gebruik.
 offline.preferOfflineToggle	Gedownloade kopieën afspelen
 offline.preferOfflineSubtitle	Een gedownloade video gebruiken in plaats van streamen wanneer die beschikbaar is.
 offline.tunnelSpeedNote	Toegang tot je server via een externe tunnel kan downloads vertragen. Verbind voor grote bestanden met hetzelfde netwerk en gebruik het lokale adres van je server.
+menu.about	Over NextExplorer
+menu.rateApp	NextExplorer beoordelen…
+menu.support	NextExplorer-ondersteuning
+menu.redo	Opnieuw
+menu.undo	Herstel
+settings.sectionSupport	Ondersteuning
+settings.rowRateApp	NextExplorer beoordelen
+settings.rowSupport	Hulp en ondersteuning
+menu.refresh	Vernieuwen
+select.tableView	Tabelweergave
+openWith.openIn	Openen in %@
+openWith.openWith	Open met
+openWith.viewAsText	Als tekst weergeven
+openWith.failed	Kan dit bestand niet openen.
+browse.showInFinder	Toon in Finder
+browse.actionCut	Knip
+browse.clipboardCutOne	%@ klaar om te verplaatsen
+browse.clipboardCutMany	%lld onderdelen klaar om te verplaatsen
+menu.enclosingFolder	Bovenliggende map
+common.more	Meer
+openWith.print	Druk af…
+menu.newWindow	Nieuw venster
+menu.newTab	Nieuw tabblad
+browse.actionOpenInNewWindow	Open in nieuw venster
+browse.actionOpenInNewTab	Open in nieuw tabblad
+select.viewAs	Weergave
 settings.rowAppearance	Weergave
 appearance.system	Systeem
 appearance.light	Licht
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld items opgeslagen in Downloads
 downloadQueue.bytesOf	%1$@ van %2$@
 downloadQueue.timeLeft	nog %@
 browse.sectionPersonal	Persoonlijk
-settings.sectionSupport	Ondersteuning
-settings.rowRateApp	NextExplorer beoordelen
-settings.rowSupport	Hulp en ondersteuning
+browse.progressDownloading	Downloaden…
+browse.progressDownloadingIndexed	%1$lld van %2$lld downloaden…
+browse.downloadSavedTo	Bewaard in %@
+browse.downloadSavedCountTo	%1$lld van %2$lld items bewaard in %3$@
+browse.downloadSavedAllTo	%1$lld items bewaard in %2$@
+browse.downloadBulkFailed	Kan deze items niet op je apparaat bewaren.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Account toevoegen…
+macSettings.changePassword	Wachtwoord wijzigen…
+macSettings.signOut	Afmelden…
+macSettings.switchAccount	Naar dit account overschakelen
+macSettings.username	Gebruikersnaam
+macSettings.email	E-mail
+macSettings.role	Rol
+macSettings.roleAdmin	Beheerder
+macSettings.roleUser	Gebruiker
+macSettings.status	Status
+macSettings.statusSignedIn	Aangemeld
+macSettings.manage	Beheer…
+macSettings.cache	Cache
+macSettings.support	Hulp en ondersteuning…
+macSettings.permission	Toegang
+macSettings.icon	Symbool
+menu.go	Ga
+menu.activity	Overdrachten
+menu.showAll	Toon alles
+uploads.notifyDone	Uploads voltooid
+uploads.notifyBody	%lld bestanden geüpload
+downloadQueue.notifyDone	Downloads voltooid
+fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versies
+fileInfo.versionsNone	Geen eerdere versies
+fileInfo.versionRestore	Zet terug…
+fileInfo.restoreTitle	Deze versie terugzetten?
+fileInfo.restoreMessage	Het bestand gaat terug naar hoe het was op %@. De huidige inhoud blijft bewaard als versie.
+fileInfo.restoreConfirm	Zet terug
+fileInfo.sectionSharing	Delen
+fileInfo.notShared	Geen deellinks
+fileInfo.versionActions	Versieacties
+fileInfo.versionDownload	Download…
+fileInfo.versionSaveCopy	Bewaar als kopie
+fileInfo.versionRename	Wijzig naam…
+fileInfo.renameTitle	Wijzig versienaam
+fileInfo.renamePlaceholder	Versienaam
+fileInfo.versionPin	Bewaar deze versie
+fileInfo.versionUnpin	Bewaar deze versie niet meer
+fileInfo.versionKept	Bewaard
+fileInfo.versionDelete	Verwijder…
+fileInfo.deleteTitle	Deze versie verwijderen?
+fileInfo.deleteAll	Verwijder alle versies…
+fileInfo.deleteAllTitle	Alle versies verwijderen?
+fileInfo.deleteMessage	Verwijderde versies zijn voorgoed weg. Het bestand zelf blijft zoals het is.
+macSettings.choose	Kies…
+menu.forward	Vooruit
+menu.goToFolder	Ga naar map…
+menu.goToFolderTitle	Ga naar de map:
+menu.copyPath	Kopieer pad
+menu.recentFolders	Recente mappen
+menu.clearRecent	Wis menu

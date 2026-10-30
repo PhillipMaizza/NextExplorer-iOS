@@ -9,14 +9,8 @@ import SwiftUI
 /// concurrency-safe, rule #10 §17).
 @MainActor
 enum DownloadFormatting {
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
-
     static func subtitle(for download: LocalDownload) -> String {
-        "\(byteFormatter.string(fromByteCount: download.size)) • \(download.location.title)"
+        "\(FileSizeFormat.string(download.size)) • \(download.location.title)"
     }
 }
 
@@ -49,7 +43,7 @@ struct DownloadListRow: View {
             )
         } trailingSwipe: {
             if !store.isSelecting {
-                // No `role: .destructive` — a destructive-role swipe button makes `List`
+                // No `role: .destructive`; a destructive-role swipe button makes `List`
                 // collapse the row itself the moment it's tapped, before the confirmation
                 // alert is answered. On Cancel the row is already gone, and the next data
                 // update crashes the collection view with a section-count mismatch.
@@ -67,7 +61,7 @@ struct DownloadListRow: View {
                 }
                 .tint(.positive)
                 .accessibilityLabel(L10n.Browse.actionRename)
-                // The plain system share sheet — local downloads have no server-side
+                // The plain system share sheet: local downloads have no server-side
                 // sharing semantics to worry about, unlike Browse's items.
                 ShareLink(item: download.url) {
                     IconKit.share
@@ -143,7 +137,7 @@ private extension LocalDownload {
 #Preview("List row") {
     let store = Store(initialState: DownloadsFeature.State()) { DownloadsFeature() }
     return DownloadRowPreview { namespace in
-        List {
+        DSGroupedList {
             DownloadListRow(store: store, download: .preview, namespace: namespace, openURL: OpenURLAction { _ in .handled }, isFirst: true, isLast: true, onPreview: {})
         }
         .listStyle(.insetGrouped)

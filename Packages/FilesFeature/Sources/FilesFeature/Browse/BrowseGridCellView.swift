@@ -30,7 +30,7 @@ struct GridCellView: View {
     let serverURL: URL?
     let showThumbnails: Bool
     let iconSize: CGFloat
-    /// The full item, when built from one — needed for the on device PDF first page render,
+    /// The full item, when built from one: needed for the on device PDF first page render,
     /// which fetches the file through `filesClient.previewFileLowPriority`.
     private let file: FileItem?
     /// Favorites grid: a favorite's custom icon, weight + colour in place of the folder glyph.
@@ -40,11 +40,11 @@ struct GridCellView: View {
     /// When set, the icon/thumbnail is the source the preview cover's `.zoom` transition
     /// grows from and shrinks back to.
     var matchedSource: PreviewMatchedSource?
-    /// True while this file's content is downloading after a tap — a small spinner sits in the
+    /// True while this file's content is downloading after a tap: a small spinner sits in the
     /// cell's bottom-trailing corner (not over the icon) and the preview holds off until ready.
     var isOpening: Bool = false
     var isAvailableOffline: Bool = false
-    @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
+    @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
 
     /// `thumbnailFile` opts a caller with only a name/kind (a search hit) into the same thumbnail
     /// rendering a browse tile gets. Server thumbnails still need the file to report
@@ -109,7 +109,7 @@ struct GridCellView: View {
     }
 
     private var displayName: String {
-        displayFileName(name, isDirectory: isDirectory, showExtension: showFilenameExtensions)
+        displayFileName(name, isDirectory: isDirectory, showExtension: shouldShowFilenameExtensions)
     }
 
     private var isEligibleForThumbnail: Bool {
@@ -166,7 +166,7 @@ struct GridCellView: View {
                 }
                 .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)
                 .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isAvailableOffline)
-                // Only favoriting buzzes — un-favoriting isn't a "win" worth celebrating the same way.
+                // Only favoriting buzzes: un-favoriting isn't a "win" worth celebrating the same way.
                 .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
             Text(displayName)
                 .type(.body2(.semibold), style: isHidden ? .tertiary : .primaryOnSurface)
@@ -238,7 +238,7 @@ struct GridCellView: View {
 
 #Preview("Thumbnails on") {
     // `.previewValue`'s `thumbnailURL` always resolves to `nil`, so this renders the same
-    // fallback icon as any other file — it documents/exercises the code path rather than
+    // fallback icon as any other file: it documents/exercises the code path rather than
     // showing an actual image.
     GridCellView(
         item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),

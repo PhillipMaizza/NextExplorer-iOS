@@ -38,8 +38,8 @@ enum ListPhase: Equatable {
 }
 
 /// A list feature's data-loading lifecycle, held in the reducer `State` in place of a spread
-/// of `isLoading` / `hasLoaded` / `errorMessage` bools. The view maps this — together with
-/// whether the data is empty and whether a search is active — onto a `ListPhase`.
+/// of `isLoading` / `hasLoaded` / `errorMessage` bools. The view maps this: together with
+/// whether the data is empty and whether a search is active: onto a `ListPhase`.
 public enum DataPhase: Equatable, Sendable {
     /// Never loaded. The only state `onAppear` kicks a fetch from.
     case idle
@@ -50,7 +50,7 @@ public enum DataPhase: Equatable, Sendable {
     /// The first load failed with nothing to fall back to.
     case failed(String)
 
-    /// True once any load has resolved — a later failure over already loaded data stays
+    /// True once any load has resolved: a later failure over already loaded data stays
     /// `.loaded` and toasts instead, so this only goes back to false on an explicit reload.
     public var hasLoaded: Bool {
         switch self {
@@ -82,7 +82,7 @@ public enum DataPhase: Equatable, Sendable {
 /// The centred message for a list's `.error` / `.empty` / `.noResults` states. Rendered as an
 /// `.overlay` on the list, but fed the list's live pull-to-refresh drag (`pullOffset`) so it
 /// translates with the rubber-band instead of staying pinned while the list stretches under
-/// it. Each message stays mounted at zero opacity — a phase flip that lands mid-layout can't
+/// it. Each message stays mounted at zero opacity: a phase flip that lands mid-layout can't
 /// then drag one in from a corner. The caller owns the cross-fade
 /// (`.animation(_:value: listPhase)` around the `Group { list }.overlay { … }`).
 struct ListStateOverlay: View {

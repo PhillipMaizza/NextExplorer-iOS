@@ -22,14 +22,27 @@ struct FavoritesView: View {
     @State private var pullOffset: CGFloat = 0
 
     private var viewMode: FileListViewMode {
-        FileListViewMode(rawValue: viewModeRaw) ?? .list
+        #if os(macOS)
+            .list
+        #else
+            FileListViewMode(rawValue: viewModeRaw) ?? .list
+        #endif
+    }
+
+    /// The Mac lists favorites as a table once they load; the skeleton list stands in before.
+    private var isMacTable: Bool {
+        #if os(macOS)
+            listPhase != .loading
+        #else
+            false
+        #endif
     }
 
     private var isAllSelected: Bool {
         !store.displayedFavorites.isEmpty && store.selectedFavoriteIDs.count == store.displayedFavorites.count
     }
 
-    /// The one screen state, derived from the store — skeleton until the first response lands
+    /// The one screen state, derived from the store: skeleton until the first response lands
     /// (`store.phase`), then error / empty / no-results / the list. `phase.errorMessage` is
     /// non nil only on a first load failure with nothing to show, so it needs no empty guard.
     private var listPhase: ListPhase {
@@ -69,15 +82,15 @@ struct FavoritesView: View {
         L10n.Favorites.removeConfirm(store.selectedFavoriteIDs.count)
     }
 
-    /// The topmost pushed screen's path — mirrors `BrowseTabView`'s persistent breadcrumb
+    /// The topmost pushed screen's path: mirrors `BrowseTabView`'s persistent breadcrumb
     /// bar, since browsing into a favorited folder now stays inside this tab (pushing
     /// `BrowseFeature` screens) instead of jumping to Browse.
     private var currentDirectoryPath: String {
         store.path.last?.directoryPath ?? ""
     }
 
-    /// The favorited folder itself — the *first* pushed screen, regardless of how deep
-    /// `path` currently goes — anchors the breadcrumb instead of the true server root:
+    /// The favorited folder itself: the *first* pushed screen, regardless of how deep
+    /// `path` currently goes: anchors the breadcrumb instead of the true server root:
     /// browsing from Favorites is scoped to that one subtree, so server "Home" isn't
     /// reachable from here at all.
     private var rootDirectoryPath: String {
@@ -87,6 +100,8 @@ struct FavoritesView: View {
     private var rootTitle: String {
         store.path.first?.title ?? ""
     }
+
+    @AppStorage(AppStorageKeys.browseViewMode) private var browseViewModeRaw = FileListViewMode.list.rawValue
 
     private var isTopScreenSelecting: Bool {
         store.path.last?.isSelecting ?? false
@@ -111,12 +126,14 @@ struct FavoritesView: View {
             }
         }
         .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
-        .tint(Color.accent)
+        .platformAccentTint()
     }
 
     @ViewBuilder
     private var breadcrumbBar: some View {
-        if !currentDirectoryPath.isEmpty, !isTopScreenSelecting {
+        if !currentDirectoryPath.isEmpty, !isTopScreenSelecting,
+           BrowseBreadcrumbBarMetrics.isShown(browseViewModeRaw: browseViewModeRaw)
+        {
             BrowseBreadcrumbBar(
                 directoryPath: currentDirectoryPath,
                 rootTitle: rootTitle,
@@ -134,6 +151,12 @@ struct FavoritesView: View {
         Group {
             if store.isSearching {
                 searchResultsContent
+            } else if isMacTable {
+                #if os(macOS)
+                    MacFavoritesTableView(store: store, favorites: store.displayedFavorites)
+                        .backgroundGradient()
+                        .transition(.opacity)
+                #endif
             } else if viewMode == .list {
                 listContent
             } else {
@@ -144,7 +167,8 @@ struct FavoritesView: View {
         .safeAreaInset(edge: .top, spacing: 0) {
             PinnedTitleSearchHeader(
                 title: store.isSelecting ? L10n.Common.selectedCount(store.selectedFavoriteIDs.count) : L10n.Favorites.navigationTitle,
-                searchText: $store.searchQuery.sending(\.searchQueryChanged)
+                searchText: $store.searchQuery.sending(\.searchQueryChanged),
+                shouldFadeIntoContent: !isMacTable
             )
         }
         .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -176,7 +200,7 @@ struct FavoritesView: View {
         }
         .animation(DSMotion.contentReveal, value: listPhase)
         .featureToast(error: store.actionErrorMessage)
-        .toolbar(store.isSelecting ? .hidden : .automatic, for: .tabBar)
+        .hidesTabBar(store.isSelecting)
         .prefersToolbarItemsInVerticalBar()
         .toolbar {
             selectSortToolbar(
@@ -213,11 +237,13 @@ struct FavoritesView: View {
         .hapticFeedback(.selection, trigger: store.isSelecting)
         .toolbar {
             if store.isSelecting {
-                ToolbarItem(placement: .bottomBar) {
-                    Spacer()
-                }
-                ToolbarItem(placement: .bottomBar) {
-                    // Filled star, not trash: this only ever unfavorites the selection —
+                #if os(iOS)
+                    ToolbarItem(placement: .bottomBar) {
+                        Spacer()
+                    }
+                #endif
+                ToolbarItem(placement: .selectionBar) {
+                    // Filled star, not trash: this only ever unfavorites the selection:
                     // the underlying folders/files aren't touched, so "delete" iconography
                     // would overstate what the action does.
                     SelectionToolbarButton(
@@ -231,7 +257,7 @@ struct FavoritesView: View {
                 }
             }
         }
-        .dsSheet(isPresented: bulkRemoveConfirmationBinding) {
+        .dsAlert(isPresented: bulkRemoveConfirmationBinding) {
             DSAlertSheet(
                 icon: IconKit.unfavorite,
                 title: bulkRemoveConfirmationTitle,
@@ -259,7 +285,7 @@ struct FavoritesView: View {
     }
 
     /// Redacted `FileRowView` / `GridCellView` stand-ins that sit in the *same* `List` / grid
-    /// as the real rows — never a separate scroll container (that fights the nav bar's large
+    /// as the real rows: never a separate scroll container (that fights the nav bar's large
     /// title). Shine suppressed under Reduce Motion.
     private static let skeletonNames = [6, 12, 4, 9, 15, 7, 11, 5, 13, 8].map { String(repeating: "M", count: $0) }
 
@@ -282,11 +308,11 @@ struct FavoritesView: View {
     }
 
     private var listContent: some View {
-        // Bound once — the separator checks below would otherwise re-filter the list per row.
+        // Bound once: the separator checks below would otherwise re-filter the list per row.
         let favorites = store.displayedFavorites
         let firstID = favorites.first?.id
         let lastID = favorites.last?.id
-        return List {
+        return DSGroupedList {
             if listPhase == .loading {
                 skeletonRows
             } else {
@@ -306,7 +332,7 @@ struct FavoritesView: View {
         .backgroundGradient()
         .scrollPullOffset($pullOffset)
         .dismissKeyboardOnTap()
-        // Only spring row diffs once the list is the content — during the skeleton→content
+        // Only spring row diffs once the list is the content: during the skeleton→content
         // swap the outer `.animation(value: listPhase)` owns the cross-fade alone, so the two
         // don't run the same transition twice.
         .animation(listPhase == .content ? DSMotion.listDiff : nil, value: store.displayedFavorites)
@@ -319,7 +345,7 @@ struct FavoritesView: View {
         let results = store.displayedSearchResults
         let firstID = results.first?.id
         let lastID = results.last?.id
-        return List {
+        return DSGroupedList {
             if listPhase == .loading {
                 skeletonRows
             } else {

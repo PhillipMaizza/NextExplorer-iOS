@@ -1,10 +1,10 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
-import UIKit
 
 @MainActor
 @Suite(.serialized)
@@ -20,12 +20,7 @@ struct PDFThumbnailStoreTests {
     private func makePDF() -> URL {
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("pdf-store-test-\(UUID().uuidString).pdf")
-        let renderer = UIGraphicsPDFRenderer(bounds: CGRect(x: 0, y: 0, width: 120, height: 160))
-        try? renderer.writePDF(to: url) { context in
-            context.beginPage()
-            UIColor.systemTeal.setFill()
-            context.fill(CGRect(x: 0, y: 0, width: 120, height: 160))
-        }
+        PDFFixture.write(to: url, pageSize: CGSize(width: 120, height: 160), red: 0.19, green: 0.69, blue: 0.78)
         return url
     }
 
@@ -48,7 +43,7 @@ struct PDFThumbnailStoreTests {
         return entry
     }
 
-    private func waitForReady(_ entry: PDFThumbnailStore.Entry) async -> UIImage? {
+    private func waitForReady(_ entry: PDFThumbnailStore.Entry) async -> PlatformImage? {
         for _ in 0 ..< 40 {
             if case let .ready(image) = entry.state {
                 return image

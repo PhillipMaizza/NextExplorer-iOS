@@ -1,5 +1,9 @@
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#elseif os(macOS)
+    import AppKit
+#endif
 
 /// Wraps `content` in a `ScrollView` and self-measures it to drive `presentationDetents`,
 /// matching FreeNow's own `DSUIDynamicHeightDialogSheet`: measuring and feeding a height into
@@ -16,10 +20,10 @@ import UIKit
 ///   scrolls under a pinned `footer` and `.large` becomes reachable. For sheets whose content
 ///   changes while open (the upload review list).
 ///
-/// Either way there are no per-piece pixel estimates — the rendered content (and footer) is
+/// Either way there are no per-piece pixel estimates: the rendered content (and footer) is
 /// the source of truth, so it stays correct under Dynamic Type and long labels.
 public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
-    /// Ignore capped-mode measurement changes smaller than this — sub-point relayout churn
+    /// Ignore capped-mode measurement changes smaller than this: sub-point relayout churn
     /// (an icon mid `.contentTransition`) shouldn't re-propose a detent.
     private static var changeThreshold: CGFloat {
         1
@@ -50,14 +54,18 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     /// and wrong under multitasking or on a foldable's other panel.
     @MainActor
     private static var screenHeight: CGFloat {
-        ActiveWindowScene.bounds?.height ?? 800
+        #if os(macOS)
+            NSApp.keyWindow?.screen?.visibleFrame.height ?? NSScreen.main?.visibleFrame.height ?? 800
+        #else
+            ActiveWindowScene.bounds?.height ?? 800
+        #endif
     }
 
     private var capHeight: CGFloat? {
         maxHeightFraction.map { Self.screenHeight * $0 }
     }
 
-    /// How tall the scrolling content may be before it has to scroll — the cap less the
+    /// How tall the scrolling content may be before it has to scroll: the cap less the
     /// always-visible footer.
     private var contentAllowance: CGFloat? {
         capHeight.map { max(0, $0 - footerHeight) }
@@ -95,7 +103,14 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
                 }
             )
         }
+        #if os(macOS)
+        // A Mac sheet can't outgrow its window, so its content always scrolls when the
+        // window is shorter than it.
+        .scrollDisabled(false)
+        #else
         .scrollDisabled(!isOverflowing && !isKeyboardVisible)
+        #endif
+        #if os(iOS)
         .scrollDismissesKeyboard(.interactively)
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillShowNotification)) { _ in
             isKeyboardVisible = true
@@ -103,6 +118,7 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
         .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardWillHideNotification)) { _ in
             isKeyboardVisible = false
         }
+        #endif
     }
 
     public var body: some View {
@@ -130,7 +146,7 @@ public struct DSDynamicHeightSheet<Content: View, Footer: View>: View {
     }
 
     /// Fixed mode locks `contentHeight` on the first non-zero reading and ignores every later
-    /// change — row count never changes there, so later fluctuation is incidental relayout
+    /// change: row count never changes there, so later fluctuation is incidental relayout
     /// that made the sheet visibly bounce. Capped mode tracks meaningful changes so the sheet
     /// follows its content.
     private func updateContentHeight(_ measured: CGFloat) {

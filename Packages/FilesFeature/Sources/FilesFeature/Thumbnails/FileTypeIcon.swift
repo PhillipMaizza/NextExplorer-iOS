@@ -15,7 +15,7 @@ private enum Constants {
 }
 
 /// A colored text badge for an extension the web app dedicates a distinct color to
-/// (`frontend/src/icons/FileIcon.vue`'s `badge` switch) — kept as raw hex to match that
+/// (`frontend/src/icons/FileIcon.vue`'s `badge` switch): kept as raw hex to match that
 /// source 1:1 rather than re-deriving DS semantic colors for ~50 one-off brand colors.
 private struct FileBadge {
     let label: String
@@ -25,7 +25,7 @@ private struct FileBadge {
 
 private extension FileItem {
     /// Mirrors the web client's per-extension badge table exactly (`FileIcon.vue`'s `badge`
-    /// computed property) — same labels, same hex colors — so a `.py` file looks the same
+    /// computed property), same labels, same hex colors, so a `.py` file looks the same
     /// shade of blue here as it does on the web.
     static func badge(forKind kind: String) -> FileBadge? {
         switch kind.lowercased() {
@@ -92,7 +92,7 @@ private extension FileItem {
     }
 }
 
-/// A page silhouette with a folded top-right corner — the same base shape the web app's
+/// A page silhouette with a folded top-right corner: the same base shape the web app's
 /// `FileBadgeIcon.vue`/`txt-icon.vue`/etc. all share, just as a native `Shape` instead of a
 /// literal SVG path.
 private struct FilePageShape: Shape {
@@ -123,7 +123,7 @@ private struct FilePageShape: Shape {
 }
 
 /// A real per-file-type icon: a page silhouette with a colored bottom banner showing the
-/// extension itself (Google Drive's file-icon style — every kind reads its own format, not
+/// extension itself (Google Drive's file-icon style: every kind reads its own format, not
 /// just a generic category glyph), falling back to a plain page for extensions with no
 /// dedicated color.
 struct FileTypeIcon: View {

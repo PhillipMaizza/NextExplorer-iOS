@@ -3,7 +3,9 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     static let contentSpacing: CGFloat = .space24
@@ -19,7 +21,7 @@ private enum Constants {
     static let userAvatarSize: CGFloat = .size32
     static let copyFeedbackSeconds: Double = 2
     static let maxHeightFraction: CGFloat = 0.9
-    /// Password / expiration fields fade in and out under their toggle. Opacity only — a
+    /// Password / expiration fields fade in and out under their toggle. Opacity only: a
     /// height-interpolating transition (`.move`/`.scale`) makes the capped `DSDynamicHeightSheet`
     /// re-measure and re-propose its detent every frame, which reads as lag.
     static var fieldReveal: AnyTransition {
@@ -29,7 +31,7 @@ private enum Constants {
     static let fieldRevealAnimation: Animation = .easeInOut(duration: 0.2)
 }
 
-/// The "Create Share Link" sheet — mirrors the web client's `ShareDialog.vue`, in the app's
+/// The "Create Share Link" sheet: mirrors the web client's `ShareDialog.vue`, in the app's
 /// design-system idiom. Two phases: the form, then (`store.createdShare != nil`) the
 /// created-link confirmation.
 struct CreateShareLinkSheet: View {
@@ -43,6 +45,14 @@ struct CreateShareLinkSheet: View {
     private enum CopiedField: Equatable { case shareLink, directLink }
 
     var body: some View {
+        #if os(macOS)
+            MacCreateShareLinkSheet(store: store, onViewShares: onViewShares)
+        #else
+            phoneBody
+        #endif
+    }
+
+    private var phoneBody: some View {
         DSDynamicHeightSheet(maxHeightFraction: Constants.maxHeightFraction) {
             VStack(alignment: .leading, spacing: Constants.contentSpacing) {
                 DSSheetHeader(
@@ -331,7 +341,7 @@ struct CreateShareLinkSheet: View {
     }
 
     private func copy(_ string: String, as field: CopiedField) {
-        UIPasteboard.general.string = string
+        PlatformPasteboard.copy(string)
         withAnimation { copiedField = field }
         Task {
             try? await Task.sleep(for: .seconds(Constants.copyFeedbackSeconds))

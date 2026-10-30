@@ -15,9 +15,9 @@ public enum L10n {
         public static var pathLabel: String { tr("accessRules.pathLabel") }  // "Path"
         public static var pathPlaceholder: String { tr("accessRules.pathPlaceholder") }  // "Documents/Reports"
         public static var permissionHidden: String { tr("accessRules.permissionHidden") }  // "Hidden"
-        public static var permissionReadOnly: String { tr("accessRules.permissionReadOnly") }  // "Read only"
-        public static var permissionReadWrite: String { tr("accessRules.permissionReadWrite") }  // "Read & write"
-        public static var recursive: String { tr("accessRules.recursive") }  // "Apply to subfolders"
+        public static var permissionReadOnly: String { tr("accessRules.permissionReadOnly") }  // "Read Only"
+        public static var permissionReadWrite: String { tr("accessRules.permissionReadWrite") }  // "Read & Write"
+        public static var recursive: String { tr("accessRules.recursive") }  // "Apply to Subfolders"
         public static var remove: String { tr("accessRules.remove") }  // "Remove"
         public static var saveButton: String { tr("accessRules.saveButton") }  // "Save Changes"
         public static var subtitle: String { tr("accessRules.subtitle") }  // "Override read and write access for specific paths."
@@ -39,13 +39,17 @@ public enum L10n {
         public static var actionClearClipboard: String { tr("browse.actionClearClipboard") }  // "Clear clipboard"
         public static var actionCompress: String { tr("browse.actionCompress") }  // "Compress"
         public static var actionCopy: String { tr("browse.actionCopy") }  // "Copy"
+        public static var actionCut: String { tr("browse.actionCut") }  // "Cut"
         public static var actionDelete: String { tr("browse.actionDelete") }  // "Delete"
         public static var actionDownload: String { tr("browse.actionDownload") }  // "Download"
+        public static var actionDuplicate: String { tr("browse.actionDuplicate") }  // "Duplicate"
         public static var actionExtract: String { tr("browse.actionExtract") }  // "Extract"
         public static var actionGetInfo: String { tr("browse.actionGetInfo") }  // "Get Info"
         public static var actionMove: String { tr("browse.actionMove") }  // "Move"
         public static var actionNewFolder: String { tr("browse.actionNewFolder") }  // "Create Folder"
         public static var actionOpenInBrowser: String { tr("browse.actionOpenInBrowser") }  // "Open in Browser"
+        public static var actionOpenInNewTab: String { tr("browse.actionOpenInNewTab") }  // "Open in New Tab"
+        public static var actionOpenInNewWindow: String { tr("browse.actionOpenInNewWindow") }  // "Open in New Window"
         public static var actionPaste: String { tr("browse.actionPaste") }  // "Paste"
         public static func actionPasteCount(_ a0: CVarArg) -> String { tr("browse.actionPasteCount", a0) }
         public static var actionPasteHere: String { tr("browse.actionPasteHere") }  // "Paste here"
@@ -57,6 +61,8 @@ public enum L10n {
         public static func clipboardCopiedMany(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedMany", a0) }
         public static func clipboardCopiedOne(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedOne", a0) }
         public static func clipboardCopyCount(_ a0: CVarArg) -> String { tr("browse.clipboardCopyCount", a0) }
+        public static func clipboardCutMany(_ a0: CVarArg) -> String { tr("browse.clipboardCutMany", a0) }
+        public static func clipboardCutOne(_ a0: CVarArg) -> String { tr("browse.clipboardCutOne", a0) }
         public static func clipboardMoveCount(_ a0: CVarArg) -> String { tr("browse.clipboardMoveCount", a0) }
         public static func deleteConfirmMany(_ a0: CVarArg) -> String { tr("browse.deleteConfirmMany", a0) }
         public static func deleteConfirmOne(_ a0: CVarArg) -> String { tr("browse.deleteConfirmOne", a0) }
@@ -69,6 +75,10 @@ public enum L10n {
         public static var destinationPickerLoadFailed: String { tr("browse.destinationPickerLoadFailed") }  // "Couldn't load folders."
         public static var destinationPickerMoveTitle: String { tr("browse.destinationPickerMoveTitle") }  // "Move to…"
         public static var destinationPickerNoFolders: String { tr("browse.destinationPickerNoFolders") }  // "No folders here"
+        public static var downloadBulkFailed: String { tr("browse.downloadBulkFailed") }  // "Couldn't save these items to your device."
+        public static func downloadSavedAllTo(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.downloadSavedAllTo", a0, a1) }
+        public static func downloadSavedCountTo(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("browse.downloadSavedCountTo", a0, a1, a2) }
+        public static func downloadSavedTo(_ a0: CVarArg) -> String { tr("browse.downloadSavedTo", a0) }
         public static var locations: String { tr("browse.locations") }  // "Locations"
         public static var myFiles: String { tr("browse.myFiles") }  // "My Files"
         public static var myFilesSubtitle: String { tr("browse.myFilesSubtitle") }  // "Only visible to you"
@@ -77,12 +87,14 @@ public enum L10n {
         public static var navigationTitle: String { tr("browse.navigationTitle") }  // "Browse"
         public static var newFolderConfirm: String { tr("browse.newFolderConfirm") }  // "Create"
         public static var newFolderPlaceholder: String { tr("browse.newFolderPlaceholder") }  // "Folder name"
-        public static var newFolderTitle: String { tr("browse.newFolderTitle") }  // "New folder"
+        public static var newFolderTitle: String { tr("browse.newFolderTitle") }  // "New Folder"
         public static func offlineBannerDetail(_ a0: CVarArg) -> String { tr("browse.offlineBannerDetail", a0) }
         public static var offlineBannerTitle: String { tr("browse.offlineBannerTitle") }  // "Offline"
         public static var open: String { tr("browse.open") }  // "Open"
         public static var progressCompressing: String { tr("browse.progressCompressing") }  // "Compressing…"
         public static var progressCopying: String { tr("browse.progressCopying") }  // "Copying…"
+        public static var progressDownloading: String { tr("browse.progressDownloading") }  // "Downloading…"
+        public static func progressDownloadingIndexed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.progressDownloadingIndexed", a0, a1) }
         public static var progressExtracting: String { tr("browse.progressExtracting") }  // "Extracting…"
         public static var progressMoving: String { tr("browse.progressMoving") }  // "Moving…"
         public static var renameNamePlaceholder: String { tr("browse.renameNamePlaceholder") }  // "Name"
@@ -91,12 +103,21 @@ public enum L10n {
         public static var scopeThisFolder: String { tr("browse.scopeThisFolder") }  // "This Folder"
         public static var searchEverywhere: String { tr("browse.searchEverywhere") }  // "Search everywhere"
         public static var searchFailed: String { tr("browse.searchFailed") }  // "Couldn't search. Check your connection and try again."
+        public static func searchFirstOnly(_ a0: CVarArg) -> String { tr("browse.searchFirstOnly", a0) }
+        public static var searchMatchColumn: String { tr("browse.searchMatchColumn") }  // "Match"
         public static func searchMatchLine(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.searchMatchLine", a0, a1) }
         public static func searchMatchLineLabel(_ a0: CVarArg) -> String { tr("browse.searchMatchLineLabel", a0) }
+        public static var searchMatchedByBoth: String { tr("browse.searchMatchedByBoth") }  // "Name and Contents"
+        public static var searchMatchedByContent: String { tr("browse.searchMatchedByContent") }  // "Contents"
+        public static var searchMatchedByName: String { tr("browse.searchMatchedByName") }  // "Name"
         public static func searchNoMatchesInFolder(_ a0: CVarArg) -> String { tr("browse.searchNoMatchesInFolder", a0) }
         public static var searchScopeEverywhere: String { tr("browse.searchScopeEverywhere") }  // "Everywhere"
         public static var searchScopeInFolder: String { tr("browse.searchScopeInFolder") }  // "This Folder"
+        public static var searchShowMore: String { tr("browse.searchShowMore") }  // "Show More"
+        public static var searchStoppedEarly: String { tr("browse.searchStoppedEarly") }
+        public static func searchTooShort(_ a0: CVarArg) -> String { tr("browse.searchTooShort", a0) }
         public static var sectionPersonal: String { tr("browse.sectionPersonal") }  // "Personal"
+        public static var showInFinder: String { tr("browse.showInFinder") }  // "Show in Finder"
         public static var transferConflictKeepBoth: String { tr("browse.transferConflictKeepBoth") }  // "Keep Both"
         public static func transferConflictMessageMany(_ a0: CVarArg) -> String { tr("browse.transferConflictMessageMany", a0) }
         public static func transferConflictMessageOne(_ a0: CVarArg) -> String { tr("browse.transferConflictMessageOne", a0) }
@@ -112,9 +133,9 @@ public enum L10n {
         public static func errorMinLength(_ a0: CVarArg) -> String { tr("changePassword.errorMinLength", a0) }
         public static var errorMismatch: String { tr("changePassword.errorMismatch") }  // "Passwords don't match."
         public static var fieldConfirmPassword: String { tr("changePassword.fieldConfirmPassword") }  // "Re-enter new password"
-        public static var fieldConfirmPasswordLabel: String { tr("changePassword.fieldConfirmPasswordLabel") }  // "Confirm new password"
-        public static var fieldCurrentPassword: String { tr("changePassword.fieldCurrentPassword") }  // "Current password"
-        public static var fieldNewPasswordLabel: String { tr("changePassword.fieldNewPasswordLabel") }  // "New password"
+        public static var fieldConfirmPasswordLabel: String { tr("changePassword.fieldConfirmPasswordLabel") }  // "Confirm New Password"
+        public static var fieldCurrentPassword: String { tr("changePassword.fieldCurrentPassword") }  // "Current Password"
+        public static var fieldNewPasswordLabel: String { tr("changePassword.fieldNewPasswordLabel") }  // "New Password"
         public static func fieldNewPasswordPrompt(_ a0: CVarArg) -> String { tr("changePassword.fieldNewPasswordPrompt", a0) }
         public static var intro: String { tr("changePassword.intro") }
         public static var navigationTitle: String { tr("changePassword.navigationTitle") }  // "Change Password"
@@ -134,6 +155,7 @@ public enum L10n {
         public static var download: String { tr("common.download") }  // "Download"
         public static var edit: String { tr("common.edit") }  // "Edit"
         public static var logOut: String { tr("common.logOut") }  // "Log Out"
+        public static var more: String { tr("common.more") }  // "More"
         public static var never: String { tr("common.never") }  // "Never"
         public static var ok: String { tr("common.ok") }  // "OK"
         public static var openSettings: String { tr("common.openSettings") }  // "Open Settings"
@@ -199,6 +221,7 @@ public enum L10n {
         public static var cancelAll: String { tr("downloadQueue.cancelAll") }  // "Cancel all downloads"
         public static var emptyList: String { tr("downloadQueue.emptyList") }  // "No downloads in progress."
         public static var navigationTitle: String { tr("downloadQueue.navigationTitle") }  // "Download Queue"
+        public static var notifyDone: String { tr("downloadQueue.notifyDone") }  // "Downloads finished"
         public static var openDownloads: String { tr("downloadQueue.openDownloads") }  // "Show Downloads"
         public static func savedMany(_ a0: CVarArg) -> String { tr("downloadQueue.savedMany", a0) }
         public static var savedOne: String { tr("downloadQueue.savedOne") }  // "Saved to Downloads"
@@ -262,9 +285,19 @@ public enum L10n {
         public static var reorderFailed: String { tr("favorites.reorderFailed") }  // "Couldn't save the new order."
     }
     public enum FileInfo {
+        public static var deleteAll: String { tr("fileInfo.deleteAll") }  // "Delete All Versions…"
+        public static var deleteAllTitle: String { tr("fileInfo.deleteAllTitle") }  // "Delete all versions?"
+        public static var deleteMessage: String { tr("fileInfo.deleteMessage") }
+        public static var deleteTitle: String { tr("fileInfo.deleteTitle") }  // "Delete this version?"
         public static func diskFreeOf(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("fileInfo.diskFreeOf", a0, a1) }
         public static var navigationTitleFolder: String { tr("fileInfo.navigationTitleFolder") }  // "Folder"
-        public static var partialScan: String { tr("fileInfo.partialScan") }  // "Counted a partial scan — this folder is very large."
+        public static var notShared: String { tr("fileInfo.notShared") }  // "No share links"
+        public static var partialScan: String { tr("fileInfo.partialScan") }  // "Counted a partial scan: this folder is very large."
+        public static var renamePlaceholder: String { tr("fileInfo.renamePlaceholder") }  // "Version name"
+        public static var renameTitle: String { tr("fileInfo.renameTitle") }  // "Rename Version"
+        public static var restoreConfirm: String { tr("fileInfo.restoreConfirm") }  // "Restore"
+        public static func restoreMessage(_ a0: CVarArg) -> String { tr("fileInfo.restoreMessage", a0) }
+        public static var restoreTitle: String { tr("fileInfo.restoreTitle") }  // "Restore this version?"
         public static var rowCamera: String { tr("fileInfo.rowCamera") }  // "Camera"
         public static var rowDateCreated: String { tr("fileInfo.rowDateCreated") }  // "Date Created"
         public static var rowDateModified: String { tr("fileInfo.rowDateModified") }  // "Date Modified"
@@ -277,8 +310,21 @@ public enum L10n {
         public static var rowLens: String { tr("fileInfo.rowLens") }  // "Lens"
         public static var rowLocation: String { tr("fileInfo.rowLocation") }  // "Location"
         public static var rowSize: String { tr("fileInfo.rowSize") }  // "Size"
+        public static var rowSoftware: String { tr("fileInfo.rowSoftware") }  // "Software"
         public static var rowTotalSize: String { tr("fileInfo.rowTotalSize") }  // "Total Size"
         public static var sectionServerDisk: String { tr("fileInfo.sectionServerDisk") }  // "Server Disk"
+        public static var sectionSharing: String { tr("fileInfo.sectionSharing") }  // "Sharing"
+        public static var sectionVersions: String { tr("fileInfo.sectionVersions") }  // "Versions"
+        public static var versionActions: String { tr("fileInfo.versionActions") }  // "Version actions"
+        public static var versionDelete: String { tr("fileInfo.versionDelete") }  // "Delete…"
+        public static var versionDownload: String { tr("fileInfo.versionDownload") }  // "Download…"
+        public static var versionKept: String { tr("fileInfo.versionKept") }  // "Kept"
+        public static var versionPin: String { tr("fileInfo.versionPin") }  // "Keep This Version"
+        public static var versionRename: String { tr("fileInfo.versionRename") }  // "Rename…"
+        public static var versionRestore: String { tr("fileInfo.versionRestore") }  // "Restore…"
+        public static var versionSaveCopy: String { tr("fileInfo.versionSaveCopy") }  // "Save as Copy"
+        public static var versionUnpin: String { tr("fileInfo.versionUnpin") }  // "Stop Keeping This Version"
+        public static var versionsNone: String { tr("fileInfo.versionsNone") }  // "No earlier versions"
     }
     public enum Filter {
         public static var all: String { tr("filter.all") }  // "All Types"
@@ -340,6 +386,46 @@ public enum L10n {
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
     }
+    public enum MacSettings {
+        public static var addAccount: String { tr("macSettings.addAccount") }  // "Add Account…"
+        public static var cache: String { tr("macSettings.cache") }  // "Cache"
+        public static var changePassword: String { tr("macSettings.changePassword") }  // "Change Password…"
+        public static var choose: String { tr("macSettings.choose") }  // "Choose…"
+        public static var email: String { tr("macSettings.email") }  // "Email"
+        public static var icon: String { tr("macSettings.icon") }  // "Icon"
+        public static func labelFormat(_ a0: CVarArg) -> String { tr("macSettings.labelFormat", a0) }
+        public static var manage: String { tr("macSettings.manage") }  // "Manage…"
+        public static var permission: String { tr("macSettings.permission") }  // "Permission"
+        public static var role: String { tr("macSettings.role") }  // "Role"
+        public static var roleAdmin: String { tr("macSettings.roleAdmin") }  // "Administrator"
+        public static var roleUser: String { tr("macSettings.roleUser") }  // "User"
+        public static var signOut: String { tr("macSettings.signOut") }  // "Sign Out…"
+        public static var status: String { tr("macSettings.status") }  // "Status"
+        public static var statusSignedIn: String { tr("macSettings.statusSignedIn") }  // "Signed In"
+        public static var support: String { tr("macSettings.support") }  // "Help & Support…"
+        public static var switchAccount: String { tr("macSettings.switchAccount") }  // "Switch to This Account"
+        public static var username: String { tr("macSettings.username") }  // "Username"
+    }
+    public enum Menu {
+        public static var about: String { tr("menu.about") }  // "About NextExplorer"
+        public static var activity: String { tr("menu.activity") }  // "Transfers"
+        public static var clearRecent: String { tr("menu.clearRecent") }  // "Clear Menu"
+        public static var copyPath: String { tr("menu.copyPath") }  // "Copy Path"
+        public static var enclosingFolder: String { tr("menu.enclosingFolder") }  // "Enclosing Folder"
+        public static var forward: String { tr("menu.forward") }  // "Forward"
+        public static var go: String { tr("menu.go") }  // "Go"
+        public static var goToFolder: String { tr("menu.goToFolder") }  // "Go to Folder…"
+        public static var goToFolderTitle: String { tr("menu.goToFolderTitle") }  // "Go to the folder:"
+        public static var newTab: String { tr("menu.newTab") }  // "New Tab"
+        public static var newWindow: String { tr("menu.newWindow") }  // "New Window"
+        public static var rateApp: String { tr("menu.rateApp") }  // "Rate NextExplorer…"
+        public static var recentFolders: String { tr("menu.recentFolders") }  // "Recent Folders"
+        public static var redo: String { tr("menu.redo") }  // "Redo"
+        public static var refresh: String { tr("menu.refresh") }  // "Refresh"
+        public static var showAll: String { tr("menu.showAll") }  // "Show All"
+        public static var support: String { tr("menu.support") }  // "NextExplorer Support"
+        public static var undo: String { tr("menu.undo") }  // "Undo"
+    }
     public enum Offline {
         public static func available(_ a0: CVarArg) -> String { tr("offline.available", a0) }
         public static var badgeAvailable: String { tr("offline.badgeAvailable") }  // "Available offline"
@@ -350,7 +436,7 @@ public enum L10n {
         public static var manageRow: String { tr("offline.manageRow") }  // "Manage Offline Files"
         public static var manageTitle: String { tr("offline.manageTitle") }  // "Offline Files"
         public static var preferOfflineSubtitle: String { tr("offline.preferOfflineSubtitle") }
-        public static var preferOfflineToggle: String { tr("offline.preferOfflineToggle") }  // "Play downloaded copies"
+        public static var preferOfflineToggle: String { tr("offline.preferOfflineToggle") }  // "Play Downloaded Copies"
         public static var preparing: String { tr("offline.preparing") }  // "Preparing…"
         public static func progressCount(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("offline.progressCount", a0, a1) }
         public static var removeConfirm: String { tr("offline.removeConfirm") }  // "Remove"
@@ -361,12 +447,19 @@ public enum L10n {
         public static var sectionTitle: String { tr("offline.sectionTitle") }  // "Offline"
         public static var selectionDownload: String { tr("offline.selectionDownload") }  // "Download"
         public static var selectionEmpty: String { tr("offline.selectionEmpty") }  // "This folder is empty."
-        public static var selectionEstimate: String { tr("offline.selectionEstimate") }  // "Estimated download"
+        public static var selectionEstimate: String { tr("offline.selectionEstimate") }  // "Estimated Download"
         public static var selectionInsufficientSpace: String { tr("offline.selectionInsufficientSpace") }  // "Not enough free space on this device"
         public static var selectionLoadFailed: String { tr("offline.selectionLoadFailed") }  // "This folder couldn't be loaded."
         public static var selectionTitle: String { tr("offline.selectionTitle") }  // "Download for Offline"
         public static var settingsRow: String { tr("offline.settingsRow") }  // "Download Files for Offline Use"
         public static var tunnelSpeedNote: String { tr("offline.tunnelSpeedNote") }
+    }
+    public enum OpenWith {
+        public static var failed: String { tr("openWith.failed") }  // "Couldn't open this file."
+        public static func openIn(_ a0: CVarArg) -> String { tr("openWith.openIn", a0) }
+        public static var openWith: String { tr("openWith.openWith") }  // "Open With"
+        public static var print: String { tr("openWith.print") }  // "Print…"
+        public static var viewAsText: String { tr("openWith.viewAsText") }  // "View as Text"
     }
     public enum Permissions {
         public static var applyOwnership: String { tr("permissions.applyOwnership") }  // "Apply Ownership"
@@ -399,6 +492,8 @@ public enum L10n {
         public static var gridView: String { tr("select.gridView") }  // "Grid View"
         public static var listView: String { tr("select.listView") }  // "List View"
         public static var selectAll: String { tr("select.selectAll") }  // "Select All"
+        public static var tableView: String { tr("select.tableView") }  // "Table View"
+        public static var viewAs: String { tr("select.viewAs") }  // "View"
     }
     public enum ServerDetails {
         public static var cameraDeniedMessage: String { tr("serverDetails.cameraDeniedMessage") }  // "Turn on camera access in Settings to take a photo."
@@ -470,6 +565,7 @@ public enum L10n {
         public static var signOutMessage: String { tr("settings.signOutMessage") }
         public static var signingOut: String { tr("settings.signingOut") }  // "Signing Out…"
         public static var storageFootnote: String { tr("settings.storageFootnote") }
+        public static var storageFootnoteMac: String { tr("settings.storageFootnoteMac") }
         public static var toggleHaptics: String { tr("settings.toggleHaptics") }  // "Haptics"
         public static var toggleKeepClipboard: String { tr("settings.toggleKeepClipboard") }  // "Keep Items After Paste"
         public static var toggleKeepClipboardSubtitle: String { tr("settings.toggleKeepClipboardSubtitle") }
@@ -538,9 +634,9 @@ public enum L10n {
     public enum ThumbnailSettings {
         public static var concurrency: String { tr("thumbnailSettings.concurrency") }  // "Concurrency"
         public static var concurrencyHelp: String { tr("thumbnailSettings.concurrencyHelp") }  // "How many thumbnails the server builds at once."
-        public static var enable: String { tr("thumbnailSettings.enable") }  // "Generate thumbnails"
+        public static var enable: String { tr("thumbnailSettings.enable") }  // "Generate Thumbnails"
         public static var enableHelp: String { tr("thumbnailSettings.enableHelp") }  // "Turn off to serve full images everywhere instead."
-        public static var maxDimension: String { tr("thumbnailSettings.maxDimension") }  // "Max dimension"
+        public static var maxDimension: String { tr("thumbnailSettings.maxDimension") }  // "Max Dimension"
         public static var maxDimensionHelp: String { tr("thumbnailSettings.maxDimensionHelp") }  // "Longest edge of a generated thumbnail, in pixels."
         public static var navigationTitle: String { tr("thumbnailSettings.navigationTitle") }  // "Thumbnails"
         public static var quality: String { tr("thumbnailSettings.quality") }  // "Quality"
@@ -590,6 +686,8 @@ public enum L10n {
         public static var failedGeneric: String { tr("uploads.failedGeneric") }  // "Couldn't upload this file."
         public static var menuTitle: String { tr("uploads.menuTitle") }  // "Upload"
         public static var navigationTitle: String { tr("uploads.navigationTitle") }  // "Uploads"
+        public static func notifyBody(_ a0: CVarArg) -> String { tr("uploads.notifyBody", a0) }
+        public static var notifyDone: String { tr("uploads.notifyDone") }  // "Uploads finished"
         public static var retryAll: String { tr("uploads.retryAll") }  // "Retry all"
         public static var reviewAddMore: String { tr("uploads.reviewAddMore") }  // "Add more files"
         public static var reviewChooseFolder: String { tr("uploads.reviewChooseFolder") }  // "Choose a folder"
@@ -614,11 +712,11 @@ public enum L10n {
         public static var directoryPickerFailed: String { tr("userDetail.directoryPickerFailed") }  // "Couldn't list directories."
         public static var directoryPickerGoUp: String { tr("userDetail.directoryPickerGoUp") }  // "Go up one directory"
         public static func directoryPickerOpen(_ a0: CVarArg) -> String { tr("userDetail.directoryPickerOpen", a0) }
-        public static var directoryPickerUseThis: String { tr("userDetail.directoryPickerUseThis") }  // "Use this directory"
+        public static var directoryPickerUseThis: String { tr("userDetail.directoryPickerUseThis") }  // "Use This Directory"
         public static var fallbackName: String { tr("userDetail.fallbackName") }  // "User"
         public static var passwordHasLocal: String { tr("userDetail.passwordHasLocal") }  // "This user signs in with an email and password."
         public static var passwordReset: String { tr("userDetail.passwordReset") }  // "Reset Password"
-        public static var passwordSSOOnly: String { tr("userDetail.passwordSSOOnly") }  // "This user has no local password — SSO only."
+        public static var passwordSSOOnly: String { tr("userDetail.passwordSSOOnly") }  // "This user has no local password and signs in with SSO only."
         public static var passwordSet: String { tr("userDetail.passwordSet") }  // "Set Password"
         public static var profileDisplayNameField: String { tr("userDetail.profileDisplayNameField") }  // "Display Name"
         public static var profileDisplayNamePlaceholder: String { tr("userDetail.profileDisplayNamePlaceholder") }  // "Display name"
@@ -663,7 +761,7 @@ public enum L10n {
         public static var createEmailField: String { tr("userManagement.createEmailField") }  // "Email"
         public static var createEmailPlaceholder: String { tr("userManagement.createEmailPlaceholder") }  // "name@example.com"
         public static var createGrantAdminSubtitle: String { tr("userManagement.createGrantAdminSubtitle") }  // "Full control over files, shares and users."
-        public static var createGrantAdminToggle: String { tr("userManagement.createGrantAdminToggle") }  // "Grant admin access"
+        public static var createGrantAdminToggle: String { tr("userManagement.createGrantAdminToggle") }  // "Grant Admin Access"
         public static var createNavigationTitle: String { tr("userManagement.createNavigationTitle") }  // "Create User"
         public static var createPasswordField: String { tr("userManagement.createPasswordField") }  // "Password"
         public static func createPasswordPlaceholder(_ a0: CVarArg) -> String { tr("userManagement.createPasswordPlaceholder", a0) }
@@ -682,7 +780,7 @@ public enum L10n {
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("userManagement.noSearchMatches", a0) }
         public static var searchPrompt: String { tr("userManagement.searchPrompt") }  // "Search users"
         public static var setPasswordNavigationTitle: String { tr("userManagement.setPasswordNavigationTitle") }  // "Password"
-        public static var setPasswordNewField: String { tr("userManagement.setPasswordNewField") }  // "New password"
+        public static var setPasswordNewField: String { tr("userManagement.setPasswordNewField") }  // "New Password"
         public static func setPasswordPlaceholder(_ a0: CVarArg) -> String { tr("userManagement.setPasswordPlaceholder", a0) }
         public static func setPasswordResetIntro(_ a0: CVarArg) -> String { tr("userManagement.setPasswordResetIntro", a0) }
         public static var setPasswordResetTitle: String { tr("userManagement.setPasswordResetTitle") }  // "Reset Password"

@@ -45,7 +45,7 @@ extension BrowseFeature {
                 var result = Set<String>()
                 for item in items {
                     // A pinned root, or anything (folder OR file) sitting under one, is available
-                    // offline — so browsing into a downloaded folder shows the icon on its files
+                    // offline: so browsing into a downloaded folder shows the icon on its files
                     // too, not just the folder.
                     let coveredByPin = pinnedPaths.contains { $0 == item.id || item.id.hasPrefix($0 + "/") }
                     if item.isDirectory {

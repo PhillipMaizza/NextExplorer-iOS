@@ -1,4 +1,4 @@
-# NextExplorer — العربية (ar). key<TAB>value. لغة تُكتب من اليمين إلى اليسار.
+# NextExplorer: العربية (ar). key<TAB>value. لغة تُكتب من اليمين إلى اليسار.
 common.cancel	إلغاء
 common.save	حفظ
 common.edit	تحرير
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	إضافة إلى المفضلة
 browse.actionRemoveFromFavorites	إزالة من المفضلة
 browse.actionShare	إنشاء رابط مشاركة
 browse.actionDelete	حذف
+browse.actionDuplicate	تكرار
 browse.renameTitle	إعادة تسمية
 browse.renameNamePlaceholder	الاسم
 browse.actionNewFolder	إنشاء مجلد
@@ -308,6 +309,7 @@ settings.rowUserManagement	إدارة المستخدمين
 settings.rowChangePassword	تغيير كلمة السر
 settings.rowServer	الخادم
 settings.storageFootnote	تُنزَّل المجلدات كملف ZIP دون ترك أي شيء على الخادم. إزالة التنزيلات أو مسح ذاكرة التخزين المؤقت يؤثر على هذا الجهاز فقط؛ لا يتأثر أي شيء على الخادم.
+settings.storageFootnoteMac	مسح ذاكرة التخزين المؤقت يؤثر على هذا الـ Mac فقط؛ لا يتأثر أي شيء على الخادم.
 settings.removeAllDownloadsTitle	إزالة جميع التنزيلات؟
 settings.removeAllDownloadsConfirm	إزالة الكل
 settings.removeAllDownloadsMessage	يؤدي هذا إلى حذف كل ملف تم تنزيله من هذا الجهاز. تبقى على الخادم.
@@ -519,6 +521,14 @@ browse.nameErrorReserved	هذا الاسم غير مسموح به.
 browse.nameErrorSeparators	لا يمكن أن يحتوي الاسم على / أو \.
 browse.searchMatchLine	السطر %1$lld: %2$@
 browse.searchMatchLineLabel	السطر %lld
+browse.searchTooShort	اكتب %lld أحرف على الأقل للبحث في المجلدات الفرعية ومحتوى الملفات.
+browse.searchStoppedEarly	توقف البحث عند حده الزمني. هذه هي النتائج التي عُثر عليها حتى الآن.
+browse.searchFirstOnly	أول %lld نتيجة. ضيّق البحث لرؤية المزيد.
+browse.searchShowMore	عرض المزيد
+browse.searchMatchColumn	التطابق
+browse.searchMatchedByName	الاسم
+browse.searchMatchedByContent	المحتوى
+browse.searchMatchedByBoth	الاسم والمحتوى
 createShare.errorPasswordRequired	أدخل كلمة سر أو أوقف الحماية بكلمة سر.
 filter.sheetTitle	التصفية حسب النوع
 filter.button	تصفية
@@ -596,6 +606,32 @@ offline.manageEmpty	لا يوجد شيء تم تنزيله للاستخدام د
 offline.preferOfflineToggle	تشغيل النسخ التي جرى تنزيلها
 offline.preferOfflineSubtitle	استخدم مقطع فيديو تم تنزيله بدلاً من البث عندما يكون متاحًا.
 offline.tunnelSpeedNote	قد يؤدي الوصول إلى خادمك عبر نفق بعيد إلى إبطاء التنزيلات. للملفات الكبيرة، اتصل بالشبكة نفسها واستخدم العنوان المحلي لخادمك.
+menu.about	حول NextExplorer
+menu.rateApp	قيّم NextExplorer…
+menu.support	دعم NextExplorer
+menu.redo	إعادة
+menu.undo	تراجع
+settings.sectionSupport	الدعم
+settings.rowRateApp	قيّم NextExplorer
+settings.rowSupport	المساعدة والدعم
+menu.refresh	تحديث
+select.tableView	عرض الجدول
+openWith.openIn	فتح في %@
+openWith.openWith	فتح باستخدام
+openWith.viewAsText	عرض كنص
+openWith.failed	تعذّر فتح هذا الملف.
+browse.showInFinder	إظهار في Finder
+browse.actionCut	قص
+browse.clipboardCutOne	‏%@ جاهز للنقل
+browse.clipboardCutMany	‏%lld عنصرًا جاهزًا للنقل
+menu.enclosingFolder	المجلد الحاوي
+common.more	المزيد
+openWith.print	طباعة…
+menu.newWindow	نافذة جديدة
+menu.newTab	علامة تبويب جديدة
+browse.actionOpenInNewWindow	فتح في نافذة جديدة
+browse.actionOpenInNewTab	فتح في علامة تبويب جديدة
+select.viewAs	العرض
 settings.rowAppearance	المظهر
 appearance.system	النظام
 appearance.light	فاتح
@@ -616,6 +652,62 @@ downloadQueue.savedMany	تم حفظ %lld عنصر في التنزيلات
 downloadQueue.bytesOf	%1$@ من %2$@
 downloadQueue.timeLeft	متبقٍ %@
 browse.sectionPersonal	شخصي
-settings.sectionSupport	الدعم
-settings.rowRateApp	قيّم NextExplorer
-settings.rowSupport	المساعدة والدعم
+browse.progressDownloading	جارٍ التنزيل…
+browse.progressDownloadingIndexed	جارٍ تنزيل %1$lld من %2$lld…
+browse.downloadSavedTo	تم الحفظ في %@
+browse.downloadSavedCountTo	تم حفظ %1$lld من %2$lld عنصر في %3$@
+browse.downloadSavedAllTo	تم حفظ %1$lld عنصر في %2$@
+browse.downloadBulkFailed	تعذّر حفظ هذه العناصر على جهازك.
+macSettings.labelFormat	%@:
+macSettings.addAccount	إضافة حساب…
+macSettings.changePassword	تغيير كلمة المرور…
+macSettings.signOut	تسجيل الخروج…
+macSettings.switchAccount	التبديل إلى هذا الحساب
+macSettings.username	اسم المستخدم
+macSettings.email	البريد الإلكتروني
+macSettings.role	الدور
+macSettings.roleAdmin	مسؤول
+macSettings.roleUser	مستخدم
+macSettings.status	الحالة
+macSettings.statusSignedIn	مسجّل الدخول
+macSettings.manage	إدارة…
+macSettings.cache	ذاكرة التخزين المؤقت
+macSettings.support	المساعدة والدعم…
+macSettings.permission	الإذن
+macSettings.icon	الأيقونة
+menu.go	انتقال
+menu.activity	عمليات النقل
+menu.showAll	عرض الكل
+uploads.notifyDone	اكتمل الرفع
+uploads.notifyBody	تم رفع %lld ملف
+downloadQueue.notifyDone	اكتمل التنزيل
+fileInfo.rowSoftware	البرنامج
+fileInfo.sectionVersions	الإصدارات
+fileInfo.versionsNone	لا توجد إصدارات سابقة
+fileInfo.versionRestore	استعادة…
+fileInfo.restoreTitle	استعادة هذا الإصدار؟
+fileInfo.restoreMessage	يعود الملف إلى ما كان عليه في %@. يُحفظ محتواه الحالي كإصدار.
+fileInfo.restoreConfirm	استعادة
+fileInfo.sectionSharing	المشاركة
+fileInfo.notShared	لا توجد روابط مشاركة
+fileInfo.versionActions	إجراءات الإصدار
+fileInfo.versionDownload	تنزيل…
+fileInfo.versionSaveCopy	حفظ كنسخة
+fileInfo.versionRename	إعادة تسمية…
+fileInfo.renameTitle	إعادة تسمية الإصدار
+fileInfo.renamePlaceholder	اسم الإصدار
+fileInfo.versionPin	الاحتفاظ بهذا الإصدار
+fileInfo.versionUnpin	إيقاف الاحتفاظ بهذا الإصدار
+fileInfo.versionKept	محفوظ
+fileInfo.versionDelete	حذف…
+fileInfo.deleteTitle	حذف هذا الإصدار؟
+fileInfo.deleteAll	حذف كل الإصدارات…
+fileInfo.deleteAllTitle	حذف كل الإصدارات؟
+fileInfo.deleteMessage	تُحذف الإصدارات نهائيًا. يبقى الملف نفسه كما هو.
+macSettings.choose	اختيار…
+menu.forward	إلى الأمام
+menu.goToFolder	انتقال إلى مجلد…
+menu.goToFolderTitle	الانتقال إلى المجلد:
+menu.copyPath	نسخ المسار
+menu.recentFolders	المجلدات الأخيرة
+menu.clearRecent	مسح القائمة

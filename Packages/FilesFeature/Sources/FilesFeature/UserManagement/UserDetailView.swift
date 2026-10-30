@@ -55,7 +55,7 @@ struct UserDetailView: View {
         .dsSheet(isPresented: volumeSheetPresented) {
             VolumeAssignSheet(store: store)
         }
-        .dsSheet(isPresented: removeVolumeAlertPresented) {
+        .dsAlert(isPresented: removeVolumeAlertPresented) {
             DSAlertSheet(
                 icon: IconKit.drive,
                 title: L10n.UserDetail.removeVolumeTitle,
@@ -68,7 +68,7 @@ struct UserDetailView: View {
                 onDismiss: { store.send(.removeVolumeCancelled) }
             )
         }
-        .dsSheet(isPresented: deleteAlertPresented) {
+        .dsAlert(isPresented: deleteAlertPresented) {
             DSAlertSheet(
                 icon: IconKit.delete,
                 title: L10n.UserDetail.removeUserTitle,
@@ -150,7 +150,7 @@ private func previewDetailState(
     return state
 }
 
-#Preview("Detail — profile") {
+#Preview("Detail: profile") {
     NavigationStack {
         UserDetailView(store: Store(initialState: previewDetailState(userID: "u2")) {
             UserManagementFeature()
@@ -158,7 +158,7 @@ private func previewDetailState(
     }
 }
 
-#Preview("Detail — security (SSO only)") {
+#Preview("Detail: security (SSO only)") {
     NavigationStack {
         UserDetailView(store: Store(initialState: previewDetailState(userID: "u3", tab: .security)) {
             UserManagementFeature()
@@ -166,7 +166,7 @@ private func previewDetailState(
     }
 }
 
-#Preview("Detail — volumes") {
+#Preview("Detail: volumes") {
     NavigationStack {
         UserDetailView(store: Store(initialState: previewDetailState(userID: "u2", tab: .volumes) {
             $0.volumes = IdentifiedArray(uniqueElements: UserVolume.previewVolumes(userID: "u2"))
@@ -175,7 +175,7 @@ private func previewDetailState(
     }
 }
 
-#Preview("Detail — volumes loading") {
+#Preview("Detail: volumes loading") {
     NavigationStack {
         UserDetailView(store: Store(initialState: previewDetailState(userID: "u2", tab: .volumes) {
             $0.volumesPhase = .loading
@@ -183,7 +183,7 @@ private func previewDetailState(
     }
 }
 
-#Preview("Detail — admin viewing self") {
+#Preview("Detail: admin viewing self") {
     NavigationStack {
         UserDetailView(store: Store(initialState: previewDetailState(userID: "u1", volumesEnabled: false)) {
             UserManagementFeature()
@@ -191,7 +191,7 @@ private func previewDetailState(
     }
 }
 
-#Preview("Detail — error banner") {
+#Preview("Detail: error banner") {
     NavigationStack {
         UserDetailView(store: Store(initialState: previewDetailState(userID: "u2") {
             $0.detailErrorMessage = "Email already in use."

@@ -1,49 +1,51 @@
-import XCTest
+#if os(iOS)
+    import XCTest
 
-/// Critical path: the Settings tab renders and its controls respond. The mocked preferences and
-/// system settings back every row.
-final class SettingsUITests: UITestCase {
-    func testSettingsTabShowsContent() {
-        let app = launchApp(auth: .loggedIn)
-        let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+    /// Critical path: the Settings tab renders and its controls respond. The mocked preferences and
+    /// system settings back every row.
+    final class SettingsUITests: UITestCase {
+        func testSettingsTabShowsContent() {
+            let app = launchApp(auth: .loggedIn)
+            let settings = SettingsScreen(app: app)
+            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-        XCTAssertTrue(settings.addAccountRow.waitToAppear(), "Settings should expose the Accounts section")
-        XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Settings should list its General rows")
+            XCTAssertTrue(settings.addAccountRow.waitToAppear(), "Settings should expose the Accounts section")
+            XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Settings should list its General rows")
+        }
+
+        func testOpenLanguagePicker() {
+            let app = launchApp(auth: .loggedIn)
+            let settings = SettingsScreen(app: app)
+            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+
+            XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Language row should be reachable")
+            settings.languageRow.tap()
+
+            XCTAssertTrue(settings.languagePickerSystemDefaultSubtitle.waitToAppear(), "Tapping Language should push its picker")
+        }
+
+        func testOpenThumbnailSettings() {
+            let app = launchApp(auth: .loggedIn)
+            let settings = SettingsScreen(app: app)
+            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+
+            // The admin section sits below the fold; the List only materializes it once scrolled near.
+            XCTAssertTrue(scrollTo(settings.thumbnailsRow, in: app), "Admin settings should expose the Thumbnails row")
+            settings.thumbnailsRow.tap()
+            XCTAssertTrue(settings.thumbnailSettingsTitle.waitToAppear(), "Thumbnails should push its settings screen")
+        }
+
+        func testTipJarSheetOpens() {
+            let app = launchApp(auth: .loggedIn)
+            let settings = SettingsScreen(app: app)
+            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
+
+            // The tip button lives in the version footer at the very bottom of the List.
+            XCTAssertTrue(scrollTo(settings.tipButton, in: app), "The version footer should offer a tip button")
+            settings.tipButton.tap()
+
+            // The purchase itself is a StoreKit system flow; assert only that the sheet presents.
+            XCTAssertTrue(settings.tipJarTitle.waitToAppear(), "Tapping the tip prompt should present the tip jar")
+        }
     }
-
-    func testOpenLanguagePicker() {
-        let app = launchApp(auth: .loggedIn)
-        let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
-
-        XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Language row should be reachable")
-        settings.languageRow.tap()
-
-        XCTAssertTrue(settings.languagePickerSystemDefaultSubtitle.waitToAppear(), "Tapping Language should push its picker")
-    }
-
-    func testOpenThumbnailSettings() {
-        let app = launchApp(auth: .loggedIn)
-        let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
-
-        // The admin section sits below the fold; the List only materializes it once scrolled near.
-        XCTAssertTrue(scrollTo(settings.thumbnailsRow, in: app), "Admin settings should expose the Thumbnails row")
-        settings.thumbnailsRow.tap()
-        XCTAssertTrue(settings.thumbnailSettingsTitle.waitToAppear(), "Thumbnails should push its settings screen")
-    }
-
-    func testTipJarSheetOpens() {
-        let app = launchApp(auth: .loggedIn)
-        let settings = SettingsScreen(app: app)
-        selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
-
-        // The tip button lives in the version footer at the very bottom of the List.
-        XCTAssertTrue(scrollTo(settings.tipButton, in: app), "The version footer should offer a tip button")
-        settings.tipButton.tap()
-
-        // The purchase itself is a StoreKit system flow; assert only that the sheet presents.
-        XCTAssertTrue(settings.tipJarTitle.waitToAppear(), "Tapping the tip prompt should present the tip jar")
-    }
-}
+#endif

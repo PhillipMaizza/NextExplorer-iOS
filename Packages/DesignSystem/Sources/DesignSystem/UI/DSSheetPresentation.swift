@@ -54,7 +54,7 @@ private struct DSSheetModifier<SheetContent: View>: ViewModifier {
                 onDismiss: onDismiss,
                 content: sheetContent
             )
-            .fullScreenCover(isPresented: $card.coverBinding { isPresented = false }, onDismiss: onDismiss) {
+            .fullScreenCover(isPresented: $card.coverBinding(mirroringTo: $isPresented), onDismiss: onDismiss) {
                 DSCardSheetHost(isCardShown: $card.isCardShown, onBackgroundTap: { isPresented = false }) {
                     sheetContent()
                 }
@@ -82,7 +82,7 @@ private struct DSItemSheetModifier<Item: Identifiable, SheetContent: View>: View
                 onDismiss: onDismiss,
                 content: sheetContent
             )
-            .fullScreenCover(isPresented: $card.coverBinding { item = nil }, onDismiss: onDismiss) {
+            .fullScreenCover(isPresented: $card.coverBinding(mirroringTo: isItemPresented), onDismiss: onDismiss) {
                 DSCardSheetHost(isCardShown: $card.isCardShown, onBackgroundTap: { item = nil }) {
                     if let shownItem {
                         sheetContent(shownItem)
@@ -96,6 +96,14 @@ private struct DSItemSheetModifier<Item: Identifiable, SheetContent: View>: View
                 }
                 DSCardSheetState.update($card, presented: item != nil)
             }
+    }
+
+    private var isItemPresented: Binding<Bool> {
+        Binding(get: { item != nil }, set: { presented in
+            if !presented {
+                item = nil
+            }
+        })
     }
 }
 
@@ -133,15 +141,16 @@ private struct DSCardSheetState {
 
 private extension Binding where Value == DSCardSheetState {
     /// The cover's own binding. A view inside calling `dismiss()` removes the cover directly;
-    /// mirror that back to the caller's binding so the two never disagree.
-    func coverBinding(onSystemDismiss: @escaping () -> Void) -> Binding<Bool> {
+    /// mirror that back to the caller's binding so the two never disagree. A binding rather than
+    /// a closure, since the setter is `@Sendable` and a binding is safe to capture there.
+    func coverBinding(mirroringTo caller: Binding<Bool>) -> Binding<Bool> {
         Binding<Bool>(
             get: { wrappedValue.isCoverPresented },
             set: { isPresented in
                 wrappedValue.isCoverPresented = isPresented
                 if !isPresented {
                     wrappedValue.isCardShown = false
-                    onSystemDismiss()
+                    caller.wrappedValue = false
                 }
             }
         )

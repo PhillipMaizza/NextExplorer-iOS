@@ -10,7 +10,7 @@ private enum Constants {
     static let statusSpacing: CGFloat = .space16
 }
 
-/// Full-screen viewer/editor for plain-text and code files — the only "edit docs" scope the
+/// Full-screen viewer/editor for plain-text and code files: the only "edit docs" scope the
 /// user confirmed. The real `/api/preview` endpoint only serves images/RAW/video/audio/PDF,
 /// so these kinds never go through `FilesClient.previewFile`; content comes from
 /// `GET /api/editor` as raw text and saves back via `PUT /api/editor` instead.
@@ -36,8 +36,8 @@ struct TextFilePreviewView: View {
     @State private var renderedMarkdownHTML = ""
     @State private var isEditing = false
     @State private var savedToast: DSToastMessage?
-    @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
-    @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
+    @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
+    @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
     @Environment(\.openURL) private var openURL
     @Dependency(\.filesClient) private var filesClient
 
@@ -64,7 +64,7 @@ struct TextFilePreviewView: View {
     }
 
     /// Downloads a same-folder asset (`downloadRawFile` has no extension restriction, unlike
-    /// `previewFile`'s `GET /api/preview`) — shared by both the HTML and Markdown render
+    /// `previewFile`'s `GET /api/preview`): shared by both the HTML and Markdown render
     /// paths, since both ultimately go through the same `HTMLRenderedView`.
     private func resolveServerAsset(relativePath: String) async -> URL? {
         guard let resolved = RelativeAssetPath.resolve(relativePath, relativeTo: item.path) else { return nil }
@@ -78,7 +78,7 @@ struct TextFilePreviewView: View {
                 .background(Color.backgroundPrimary.ignoresSafeArea())
                 .navigationTitle(fileName)
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.hidden, for: .navigationBar)
+                .navigationBarBackgroundHidden()
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) { editToggleButton }
                     if isHTML {
@@ -163,16 +163,16 @@ struct TextFilePreviewView: View {
         } else if isLoading {
             DSSpinner()
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if isHTML, renderHTMLPages, !isEditing {
-            // "Render HTML Pages" in Settings — editing always drops back to code (there's no
+        } else if isHTML, shouldRenderHTMLPages, !isEditing {
+            // "Render HTML Pages" in Settings: editing always drops back to code (there's no
             // in-place editor for a rendered page), regardless of this setting.
             HTMLRenderedView(cacheKey: item.id, html: currentText, resolveAsset: resolveServerAsset)
-        } else if isMarkdown, renderMarkdownPages, !isEditing {
-            // "Render Markdown Files" in Settings — same rendering pipeline as HTML, fed
+        } else if isMarkdown, shouldRenderMarkdownPages, !isEditing {
+            // "Render Markdown Files" in Settings: same rendering pipeline as HTML, fed
             // compiled-to-HTML Markdown instead of the raw source.
             HTMLRenderedView(cacheKey: item.id, html: renderedMarkdownHTML, resolveAsset: resolveServerAsset)
         } else {
-            // Real tree-sitter syntax highlighting (Runestone) — kept visible whether or not
+            // Real tree-sitter syntax highlighting (Runestone): kept visible whether or not
             // `isEditing` is on, not just while actively editing, since highlighting helps
             // reading just as much as writing.
             CodeEditorView(kind: kind, text: editorText, isEditable: isEditing)

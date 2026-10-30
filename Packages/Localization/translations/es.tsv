@@ -1,4 +1,4 @@
-# NextExplorer — Español (es). key<TAB>value. Generado a partir de la fuente en inglés.
+# NextExplorer: Español (es). key<TAB>value. Generado a partir de la fuente en inglés.
 common.cancel	Cancelar
 common.save	Guardar
 common.edit	Editar
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Añadir a Favoritos
 browse.actionRemoveFromFavorites	Quitar de Favoritos
 browse.actionShare	Crear enlace de compartición
 browse.actionDelete	Eliminar
+browse.actionDuplicate	Duplicar
 browse.renameTitle	Renombrar
 browse.renameNamePlaceholder	Nombre
 browse.actionNewFolder	Crear carpeta
@@ -307,6 +308,7 @@ settings.rowUserManagement	Gestión de usuarios
 settings.rowChangePassword	Cambiar contraseña
 settings.rowServer	Servidor
 settings.storageFootnote	Las carpetas se descargan como ZIP sin dejar nada en el servidor. Eliminar descargas o vaciar la caché solo afecta a este dispositivo; no se toca nada en el servidor.
+settings.storageFootnoteMac	Vaciar la caché solo afecta a este Mac; no se toca nada en el servidor.
 settings.removeAllDownloadsTitle	¿Eliminar todas las descargas?
 settings.removeAllDownloadsConfirm	Eliminar todo
 settings.removeAllDownloadsMessage	Esto elimina todos los archivos descargados de este dispositivo. Permanecen en el servidor.
@@ -518,6 +520,14 @@ browse.nameErrorReserved	Ese nombre no está permitido.
 browse.nameErrorSeparators	Un nombre no puede contener / o \.
 browse.searchMatchLine	Línea %1$lld: %2$@
 browse.searchMatchLineLabel	Línea %lld
+browse.searchTooShort	Escribe al menos %lld caracteres para buscar en subcarpetas y en el contenido de los archivos.
+browse.searchStoppedEarly	La búsqueda se detuvo al alcanzar su límite de tiempo. Estos son los resultados encontrados hasta ahora.
+browse.searchFirstOnly	Primeros %lld resultados. Acota la búsqueda para ver más.
+browse.searchShowMore	Mostrar más
+browse.searchMatchColumn	Coincidencia
+browse.searchMatchedByName	Nombre
+browse.searchMatchedByContent	Contenido
+browse.searchMatchedByBoth	Nombre y contenido
 createShare.errorPasswordRequired	Introduce una contraseña o desactiva la protección con contraseña.
 filter.sheetTitle	Filtrar por tipo
 filter.button	Filtrar
@@ -596,6 +606,32 @@ offline.manageEmpty	No hay nada descargado para uso sin conexión.
 offline.preferOfflineToggle	Reproducir copias descargadas
 offline.preferOfflineSubtitle	Usar un vídeo descargado en lugar de transmitirlo cuando esté disponible.
 offline.tunnelSpeedNote	Acceder a tu servidor a través de un túnel remoto puede ralentizar las descargas. Para archivos grandes, conéctate a la misma red y usa la dirección local de tu servidor.
+menu.about	Acerca de NextExplorer
+menu.rateApp	Valorar NextExplorer…
+menu.support	Soporte de NextExplorer
+menu.redo	Rehacer
+menu.undo	Deshacer
+settings.sectionSupport	Soporte
+settings.rowRateApp	Valorar NextExplorer
+settings.rowSupport	Ayuda y soporte
+menu.refresh	Actualizar
+select.tableView	Vista de tabla
+openWith.openIn	Abrir en %@
+openWith.openWith	Abrir con
+openWith.viewAsText	Ver como texto
+openWith.failed	No se pudo abrir este archivo.
+browse.showInFinder	Mostrar en el Finder
+browse.actionCut	Cortar
+browse.clipboardCutOne	%@ listo para mover
+browse.clipboardCutMany	%lld elementos listos para mover
+menu.enclosingFolder	Carpeta contenedora
+common.more	Más
+openWith.print	Imprimir…
+menu.newWindow	Nueva ventana
+menu.newTab	Nueva pestaña
+browse.actionOpenInNewWindow	Abrir en una ventana nueva
+browse.actionOpenInNewTab	Abrir en una pestaña nueva
+select.viewAs	Visualización
 settings.rowAppearance	Apariencia
 appearance.system	Sistema
 appearance.light	Claro
@@ -616,6 +652,62 @@ downloadQueue.savedMany	%lld elementos guardados en Descargas
 downloadQueue.bytesOf	%1$@ de %2$@
 downloadQueue.timeLeft	quedan %@
 browse.sectionPersonal	Personal
-settings.sectionSupport	Soporte
-settings.rowRateApp	Valorar NextExplorer
-settings.rowSupport	Ayuda y soporte
+browse.progressDownloading	Descargando…
+browse.progressDownloadingIndexed	Descargando %1$lld de %2$lld…
+browse.downloadSavedTo	Guardado en %@
+browse.downloadSavedCountTo	Se guardaron %1$lld de %2$lld elementos en %3$@
+browse.downloadSavedAllTo	Se guardaron %1$lld elementos en %2$@
+browse.downloadBulkFailed	No se pudieron guardar estos elementos en tu dispositivo.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Añadir cuenta…
+macSettings.changePassword	Cambiar contraseña…
+macSettings.signOut	Cerrar sesión…
+macSettings.switchAccount	Cambiar a esta cuenta
+macSettings.username	Nombre de usuario
+macSettings.email	Correo electrónico
+macSettings.role	Rol
+macSettings.roleAdmin	Administrador
+macSettings.roleUser	Usuario
+macSettings.status	Estado
+macSettings.statusSignedIn	Sesión iniciada
+macSettings.manage	Gestionar…
+macSettings.cache	Caché
+macSettings.support	Ayuda y soporte…
+macSettings.permission	Permiso
+macSettings.icon	Icono
+menu.go	Ir
+menu.activity	Transferencias
+menu.showAll	Mostrar todo
+uploads.notifyDone	Subidas terminadas
+uploads.notifyBody	%lld archivos subidos
+downloadQueue.notifyDone	Descargas terminadas
+fileInfo.rowSoftware	Software
+fileInfo.sectionVersions	Versiones
+fileInfo.versionsNone	No hay versiones anteriores
+fileInfo.versionRestore	Restaurar…
+fileInfo.restoreTitle	¿Restaurar esta versión?
+fileInfo.restoreMessage	El archivo vuelve a como estaba el %@. Su contenido actual se guarda como una versión.
+fileInfo.restoreConfirm	Restaurar
+fileInfo.sectionSharing	Compartir
+fileInfo.notShared	No hay enlaces compartidos
+fileInfo.versionActions	Acciones de versión
+fileInfo.versionDownload	Descargar…
+fileInfo.versionSaveCopy	Guardar como copia
+fileInfo.versionRename	Renombrar…
+fileInfo.renameTitle	Renombrar versión
+fileInfo.renamePlaceholder	Nombre de la versión
+fileInfo.versionPin	Conservar esta versión
+fileInfo.versionUnpin	Dejar de conservar esta versión
+fileInfo.versionKept	Conservada
+fileInfo.versionDelete	Eliminar…
+fileInfo.deleteTitle	¿Eliminar esta versión?
+fileInfo.deleteAll	Eliminar todas las versiones…
+fileInfo.deleteAllTitle	¿Eliminar todas las versiones?
+fileInfo.deleteMessage	Las versiones eliminadas desaparecen para siempre. El archivo se queda como está.
+macSettings.choose	Elegir…
+menu.forward	Adelante
+menu.goToFolder	Ir a la carpeta…
+menu.goToFolderTitle	Ir a la carpeta:
+menu.copyPath	Copiar ruta
+menu.recentFolders	Carpetas recientes
+menu.clearRecent	Borrar menú

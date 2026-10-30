@@ -27,7 +27,7 @@ struct DownloadsFeatureTests {
             $0.localDownloadStore.list = { _ in [download] }
         }
 
-        // The initial scan is local and synchronous — `onAppear` fills the list inline, no
+        // The initial scan is local and synchronous: `onAppear` fills the list inline, no
         // async response.
         await store.send(.onAppear) {
             $0.phase = .loaded

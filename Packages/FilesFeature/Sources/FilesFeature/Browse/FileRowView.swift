@@ -29,10 +29,10 @@ struct FileRowView: View {
     let thumbnailSignature: String
     let serverURL: URL?
     let showThumbnails: Bool
-    /// The full item, when built from one — needed for the on device PDF first page render,
+    /// The full item, when built from one: needed for the on device PDF first page render,
     /// which fetches the file through `filesClient.previewFileLowPriority`.
     private let file: FileItem?
-    /// When set, replaces the folder/file-type glyph — used by the Favorites list to show a
+    /// When set, replaces the folder/file-type glyph: used by the Favorites list to show a
     /// favorite's custom icon, weight and colour.
     var customIcon: Image?
     var customIconTint: Color?
@@ -40,23 +40,17 @@ struct FileRowView: View {
     /// When set, the leading thumbnail/icon is the source the preview cover's `.zoom`
     /// transition grows from and shrinks back to.
     var matchedSource: PreviewMatchedSource?
-    /// True while this file's content is downloading after a tap — the row shows a trailing
+    /// True while this file's content is downloading after a tap: the row shows a trailing
     /// spinner and the full-screen preview holds off until it's ready.
     var isOpening: Bool = false
-    /// True when this item is downloaded (or covered by a pinned folder) for offline use — the row
+    /// True when this item is downloaded (or covered by a pinned folder) for offline use: the row
     /// shows a small offline badge so the user can tell what's available without a connection.
     var isAvailableOffline: Bool = false
     /// Read live so an already-visible row updates immediately when the user changes the
     /// date format in Settings, rather than only on the next fetch.
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
-    @AppStorage(AppStorageKeys.includeTimeInDates) private var includeTime = false
-    @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
-
-    private static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
+    @AppStorage(AppStorageKeys.includeTimeInDates) private var shouldIncludeTime = false
+    @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
 
     /// `thumbnailFile` opts a caller with only a name/kind (a search hit, which carries no size or
     /// modified date) into the same thumbnail rendering a browse row gets, while keeping a custom
@@ -133,9 +127,9 @@ struct FileRowView: View {
             return customSubtitle
         }
         guard let dateModified else { return nil }
-        let dateText = dateFormat.string(from: dateModified, includeTime: includeTime)
+        let dateText = dateFormat.string(from: dateModified, includeTime: shouldIncludeTime)
         guard let size else { return dateText }
-        return "\(Self.byteFormatter.string(fromByteCount: size)) • \(dateText)"
+        return "\(FileSizeFormat.string(size)) • \(dateText)"
     }
 
     private var isHidden: Bool {
@@ -143,7 +137,7 @@ struct FileRowView: View {
     }
 
     private var displayName: String {
-        displayFileName(name, isDirectory: isDirectory, showExtension: showFilenameExtensions)
+        displayFileName(name, isDirectory: isDirectory, showExtension: shouldShowFilenameExtensions)
     }
 
     private var isEligibleForThumbnail: Bool {
@@ -218,7 +212,7 @@ struct FileRowView: View {
         .contentShape(Rectangle())
         .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isFavorite)
         .animation(.spring(response: Constants.favoriteSpringResponse, dampingFraction: Constants.favoriteSpringDamping), value: isAvailableOffline)
-        // Only favoriting buzzes — un-favoriting isn't a "win" worth celebrating the same way.
+        // Only favoriting buzzes: un-favoriting isn't a "win" worth celebrating the same way.
         .hapticFeedback(.success, trigger: isFavorite) { _, isFavorite in isFavorite }
     }
 
@@ -307,7 +301,7 @@ func displayFileName(_ name: String, isDirectory: Bool, showExtension: Bool) -> 
 
 #Preview("Thumbnails on") {
     // `.previewValue`'s `thumbnailURL` always resolves to `nil`, so this renders the same
-    // fallback icon as any other file — it documents/exercises the code path rather than
+    // fallback icon as any other file: it documents/exercises the code path rather than
     // showing an actual image.
     FileRowView(
         item: FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),

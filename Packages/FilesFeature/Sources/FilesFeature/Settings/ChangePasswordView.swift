@@ -63,6 +63,7 @@ struct ChangePasswordView: View {
                 }
                 .disabled(!store.isSubmitEnabled)
                 .padding(.top, .space4)
+                .formActionAlignment()
             }
             .padding(.horizontal, Metrics.horizontalPadding)
             .padding(.vertical, Metrics.contentSpacing)

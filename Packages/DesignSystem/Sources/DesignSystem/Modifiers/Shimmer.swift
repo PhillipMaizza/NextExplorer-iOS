@@ -9,7 +9,7 @@ private enum Constants {
 
 public extension View {
     /// Holds the view at a low resting opacity and sweeps a soft highlight band across it,
-    /// left to right, forever — a loading skeleton. Pair with `.redacted(reason: .placeholder)`
+    /// left to right, forever: a loading skeleton. Pair with `.redacted(reason: .placeholder)`
     /// so real content collapses to plain bars first. Under Reduce Motion the sweep is dropped
     /// and only the resting ghost remains.
     func shimmering() -> some View {
@@ -34,7 +34,11 @@ private struct ShimmerModifier: ViewModifier {
                             endPoint: .trailing
                         )
                         .frame(width: bandWidth)
-                        .offset(x: phase * (proxy.size.width + bandWidth))
+                        // Only the sweep is animated: `withAnimation` around the whole view also
+                        // animated its first layout, sliding skeletons in from the top left.
+                        .animation(.linear(duration: Constants.sweepDuration).repeatForever(autoreverses: false)) {
+                            $0.offset(x: phase * (proxy.size.width + bandWidth))
+                        }
                         .frame(width: proxy.size.width, height: proxy.size.height, alignment: .leading)
                     }
                     .mask(content)
@@ -42,11 +46,7 @@ private struct ShimmerModifier: ViewModifier {
                     .allowsHitTesting(false)
                 }
             }
-            .onAppear {
-                withAnimation(.linear(duration: Constants.sweepDuration).repeatForever(autoreverses: false)) {
-                    phase = 1
-                }
-            }
+            .onAppear { phase = 1 }
     }
 }
 

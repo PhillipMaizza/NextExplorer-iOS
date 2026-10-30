@@ -13,7 +13,7 @@ struct PermissionsFeatureTests {
         FileItem(name: name, path: path, dateModified: Date(), size: 10, kind: kind)
     }
 
-    /// `stat` mode 33261 = `0o100755` — a regular file with `rwxr-xr-x`.
+    /// `stat` mode 33261 = `0o100755`: a regular file with `rwxr-xr-x`.
     private func permissions(
         path: String = "Documents/report.pdf",
         mode: Int = 0o100_755,

@@ -4,15 +4,6 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-@MainActor
-enum UploadReviewFormat {
-    static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
-}
-
 /// One staged file in the upload review list: tappable thumbnail (opens the QuickLook batch
 /// preview), name + size, and a remove button.
 struct UploadFileRow: View {
@@ -39,7 +30,7 @@ struct UploadFileRow: View {
                     .type(.body2(.regular), style: .primaryOnSurface)
                     .lineLimit(1)
                     .truncationMode(.middle)
-                Text(UploadReviewFormat.byteFormatter.string(fromByteCount: file.size))
+                Text(FileSizeFormat.string(file.size))
                     .type(.body3(.regular), style: .secondary)
             }
             Spacer(minLength: Metrics.rowSpacing)

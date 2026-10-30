@@ -26,7 +26,7 @@ public struct AppFeature {
         /// dismissed (`addAccountSheetDismissed`).
         public var pendingAddedAccount: AddedAccount?
         /// `true` only when the current authenticated session was reached by the user tapping
-        /// the login button this launch — drives `AppView`'s zoom-from-the-button presentation.
+        /// the login button this launch: drives `AppView`'s zoom-from-the-button presentation.
         /// A restored/optimistic session (cold launch) leaves this `false` so the app just
         /// cross-fades in behind the splash instead.
         public var didAuthenticateFromLogin = false
@@ -36,6 +36,7 @@ public struct AppFeature {
         /// Cleared on every sign out so a staged copy/move never carries across into a
         /// different account's session.
         @Shared(.inMemory(FileClipboard.sharedKey)) public var fileClipboard: FileClipboard?
+        @Shared(.inMemory(FileUndoEntry.sharedKey)) public var fileUndoStack: [FileUndoEntry] = []
         @Shared(.inMemory(SharedFileInbox.sharedKey)) public var sharedFileInbox: [URL] = []
         /// The signed-in account's downloads scope (server + user id), so each account's saved
         /// files stay in their own folder. Set when a session is confirmed, cleared on sign out
@@ -190,8 +191,9 @@ public struct AppFeature {
 
             case let .activeAccountTornDown(next):
                 state.$fileClipboard.withLock { $0 = nil }
+                state.$fileUndoStack.withLock { $0 = [] }
                 if let next {
-                    // Another account is still signed in — switch to it rather than dropping the
+                    // Another account is still signed in: switch to it rather than dropping the
                     // user out to the login screen.
                     return .send(.activateAccount(next))
                 }
@@ -200,6 +202,7 @@ public struct AppFeature {
 
             case let .activateAccount(credentials):
                 state.$fileClipboard.withLock { $0 = nil }
+                state.$fileUndoStack.withLock { $0 = [] }
                 CacheAccountScope.set(credentials.accountID)
                 // Finalized once `me` confirms the user id; empty in the meantime.
                 state.$downloadScope.withLock { $0 = "" }
@@ -268,7 +271,7 @@ public struct AppFeature {
                     // The last account was signed out.
                     return teardownToLogin(&state)
                 }
-                // Removing a non-active account leaves the active one unchanged — just refresh the
+                // Removing a non-active account leaves the active one unchanged: just refresh the
                 // switcher list, keep the UI where it is.
                 if credentials.accountID == state.currentAccountID {
                     return refreshAccounts
@@ -305,6 +308,7 @@ public struct AppFeature {
                 let user = added.user
                 let serverURL = added.serverURL
                 state.$fileClipboard.withLock { $0 = nil }
+                state.$fileUndoStack.withLock { $0 = [] }
                 let accountID = serverURL.absoluteString + "|" + user.username
                 CacheAccountScope.set(accountID)
                 state.$downloadScope.withLock {
@@ -352,6 +356,7 @@ public struct AppFeature {
     /// per-session state so nothing leaks into the next sign in.
     private func teardownToLogin(_ state: inout State) -> Effect<Action> {
         state.$fileClipboard.withLock { $0 = nil }
+        state.$fileUndoStack.withLock { $0 = [] }
         state.$downloadScope.withLock { $0 = "" }
         CacheAccountScope.set("")
         state.didAuthenticateFromLogin = false

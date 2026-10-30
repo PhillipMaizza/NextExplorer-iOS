@@ -124,7 +124,7 @@ private extension Favorite {
             serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
         )
     ) { FavoritesFeature() }
-    return List {
+    return DSGroupedList {
         FavoriteListRow(store: store, favorite: .preview, isFirst: true, isLast: false)
         FavoriteListRow(store: store, favorite: .preview, isFirst: false, isLast: true)
     }

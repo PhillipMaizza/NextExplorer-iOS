@@ -10,7 +10,7 @@ extension FilesService {
     }
 
     /// A nil `owner`/`group` is left out by the synthesized encoder (`encodeIfPresent`), which
-    /// is exactly what the server wants — it treats a missing key as "leave this unchanged".
+    /// is exactly what the server wants: it treats a missing key as "leave this unchanged".
     struct ChownBody: Encodable {
         let path: String
         let owner: String?

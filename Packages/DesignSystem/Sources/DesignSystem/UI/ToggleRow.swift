@@ -38,7 +38,20 @@ public struct DSToggleRow: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.iconSize, height: Constants.iconSize)
             }
+            #if os(macOS)
+            // Stretch the label so the switch sits at the trailing edge, as on iOS, and let a
+            // click anywhere on it flip the switch: a Mac switch otherwise only takes clicks on
+            // itself.
+            .fullRowHitArea()
+            .onTapGesture { isOn.toggle() }
+            #endif
         }
+        #if os(macOS)
+        .toggleStyle(.switch)
+        // The tappable label above is its own element on the Mac, which left the switch
+        // itself without a name for VoiceOver.
+        .accessibilityLabel(title)
+        #endif
         .tint(Color.accent)
         .hapticFeedback(.selection, trigger: isOn)
     }

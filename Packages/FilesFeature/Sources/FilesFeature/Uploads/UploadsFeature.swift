@@ -87,10 +87,18 @@ public struct UploadsFeature {
             jobs.contains { $0.status.isTerminal }
         }
 
-        /// Files still waiting or in flight — the only count the bar shows, so it stays honest
+        /// Files still waiting or in flight: the only count the bar shows, so it stays honest
         /// even when a second batch is enqueued before the first drains.
         var remainingCount: Int {
             jobs.filter { !$0.status.isTerminal }.count
+        }
+
+        /// Share of the current queue that has landed, counting partial progress of the file in
+        /// flight. `nil` when nothing is queued.
+        var overallProgress: Double? {
+            guard !jobs.isEmpty else { return nil }
+            let inFlight = jobs.filter { $0.status == .uploading }.map(\.progress).reduce(0, +)
+            return (Double(completedCount) + inFlight) / Double(jobs.count)
         }
     }
 
@@ -100,7 +108,7 @@ public struct UploadsFeature {
         /// connection dropped while suspended) are requeued, as is any job still `.uploading`
         /// well past a plausible transfer time, which means it wedged on a half open
         /// connection. A job that is `.uploading` and recent is left alone to finish or fail
-        /// on its own — restarting a healthy transfer from zero risks duplicating the file on
+        /// on its own: restarting a healthy transfer from zero risks duplicating the file on
         /// the server, which the backend has no idempotency key to prevent. Also sweeps stale
         /// staging temp files.
         case appResumed
@@ -297,7 +305,7 @@ public struct UploadsFeature {
                         }
                     }
                 } catch {
-                    // Cancelled (`apiResult` rethrows cancellation) — send no response.
+                    // Cancelled (`apiResult` rethrows cancellation): send no response.
                     result = nil
                 }
                 continuation.finish()

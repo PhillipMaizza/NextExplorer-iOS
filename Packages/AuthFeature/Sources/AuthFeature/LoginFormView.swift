@@ -47,12 +47,15 @@ private enum Constants {
     /// UIKit's own keyboard animation duration) before starting the morph gives each its own
     /// beat, so the spinner is actually visible.
     static let keyboardDismissDuration: Duration = .seconds(0.25)
+    static let macButtonHiddenScale: CGFloat = 0.9
+    static let macButtonPopDuration: Double = 0.3
+    static let macButtonPopBounce: Double = 0.35
     /// Named coordinate space the submit button's rect is measured in, so the flood circle
     /// positions against the same origin regardless of scroll offset.
     static let rootSpace = "loginRoot"
     /// How long the collapsed submit button's accent circle takes to flood the screen.
     static let submitFloodDuration: Double = 0.34
-    /// Scale that circle reaches — a `.size48` button circle blown up past the far corner of
+    /// Scale that circle reaches: a `.size48` button circle blown up past the far corner of
     /// any phone from wherever the button sits.
     static let submitFloodScale: CGFloat = 34
     static let dividerOpacity: Double = 0.35
@@ -66,10 +69,13 @@ public struct LoginFormView: View {
     }
 
     @Bindable var store: StoreOf<LoginFormFeature>
-    /// `false` while the launch splash still covers the screen — auto-focusing the host field
+    /// `false` while the launch splash still covers the screen: auto-focusing the host field
     /// then would slide the keyboard up over the splash.
     private let autoFocus: Bool
-    /// Submit button's rect in this view's own space — the seed for the sign-in circle that
+    /// Whether a successful sign in floods the screen with accent into the app. Off where the
+    /// form is a dialog (the Mac Add Account sheet), which simply closes instead.
+    private let shouldFloodIntoApp: Bool
+    /// Submit button's rect in this view's own space: the seed for the sign-in circle that
     /// floods the screen with accent (à la TKSubmitTransition, scaling the button itself).
     @State private var submitButtonRect: CGRect = .zero
     /// Scale of that flooding circle: 1 == exactly the collapsed button, grows to cover.
@@ -96,15 +102,25 @@ public struct LoginFormView: View {
     @State private var isPasswordFieldInvalid = false
     @FocusState private var focusedField: Field?
     /// Server-page scroll height, only to floor the centered content's `minHeight`. The
-    /// credentials page deliberately has no such geometry read over its fields — an
+    /// credentials page deliberately has no such geometry read over its fields: an
     /// `.onGeometryChange` / `GeometryReader` ancestor is a documented AutoFill hazard.
     @State private var serverScrollHeight: CGFloat = 0
     /// Drives the "What is a server?" info sheet from the `(i)` beside the server-page title.
     @State private var isServerInfoPresented = false
 
-    public init(store: StoreOf<LoginFormFeature>, autoFocus: Bool = true) {
+    public init(store: StoreOf<LoginFormFeature>, autoFocus: Bool = true, shouldFloodIntoApp: Bool = true) {
         self.store = store
         self.autoFocus = autoFocus
+        self.shouldFloodIntoApp = shouldFloodIntoApp
+    }
+
+    /// A Mac has no on screen keyboard, so there is no dismiss animation to wait out before submitting.
+    private static var hasSoftwareKeyboard: Bool {
+        #if os(iOS)
+            true
+        #else
+            false
+        #endif
     }
 
     private var isSubmitLocalEnabled: Bool {
@@ -115,7 +131,7 @@ public struct LoginFormView: View {
     /// waits out its dismiss animation first so it doesn't fight the button's collapse-to-circle
     /// morph for the same beat (see `Constants.keyboardDismissDuration`).
     private func submitTestConnection() {
-        let wasKeyboardVisible = focusedField != nil
+        let wasKeyboardVisible = Self.hasSoftwareKeyboard && focusedField != nil
         focusedField = nil
         guard wasKeyboardVisible else {
             store.send(.testConnectionButtonTapped)
@@ -132,7 +148,7 @@ public struct LoginFormView: View {
     /// keyboard first so its dismiss reflow doesn't shift the submit button mid collapse (and
     /// mid sign-in reveal), which reads as the circle starting off-center and stuttering.
     private func submitCredentials() {
-        let wasKeyboardVisible = focusedField != nil
+        let wasKeyboardVisible = Self.hasSoftwareKeyboard && focusedField != nil
         focusedField = nil
         guard wasKeyboardVisible else {
             store.send(.continueButtonTapped)
@@ -149,7 +165,7 @@ public struct LoginFormView: View {
     /// before `.ssoButtonTapped` presents the web sheet, otherwise the keyboard stays up
     /// underneath (and behind) the ASWebAuthenticationSession sheet.
     private func submitSSO() {
-        let wasKeyboardVisible = focusedField != nil
+        let wasKeyboardVisible = Self.hasSoftwareKeyboard && focusedField != nil
         focusedField = nil
         guard wasKeyboardVisible else {
             store.send(.ssoButtonTapped)
@@ -189,7 +205,7 @@ public struct LoginFormView: View {
         .background(loginBackground)
         .coordinateSpace(.named(Constants.rootSpace))
         .overlay {
-            if !reduceMotion, store.submitPhase == .success, submitButtonRect != .zero {
+            if shouldFloodIntoApp, !reduceMotion, store.submitPhase == .success, submitButtonRect != .zero {
                 Circle()
                     .fill(Color.accent)
                     .frame(width: submitButtonRect.height, height: submitButtonRect.height)
@@ -202,7 +218,7 @@ public struct LoginFormView: View {
                     .position(x: submitButtonRect.midX, y: submitButtonRect.midY)
                     .allowsHitTesting(false)
             }
-            if !reduceMotion, store.oidcPhase == .success, ssoButtonRect != .zero {
+            if shouldFloodIntoApp, !reduceMotion, store.oidcPhase == .success, ssoButtonRect != .zero {
                 // Same TKSubmitTransition flood, seeded from the SSO button so an SSO sign-in
                 // grows into the app exactly like a password one, rather than snapping in.
                 Circle()
@@ -383,6 +399,7 @@ public struct LoginFormView: View {
                     DSSegmentedControl(
                         options: LoginFormFeature.URLScheme.allCases,
                         selection: Binding(get: { store.scheme }, set: { store.send(.schemeChanged($0)) }),
+                        shouldAlwaysUsePill: true,
                         label: \.displayName
                     )
 
@@ -434,11 +451,23 @@ public struct LoginFormView: View {
                         .transition(.opacity)
                 }
 
-                if !store.host.isEmpty {
+                #if os(macOS)
+                    // No keyboard reflow on a Mac: the slot is always reserved, so the button
+                    // pops in place without shifting anything around it.
                     testConnectionButton
                         .padding(.horizontal, .space24)
-                        .transition(.opacity.combined(with: .move(edge: .bottom)))
-                }
+                        .opacity(store.host.isEmpty ? 0 : 1)
+                        .scaleEffect(store.host.isEmpty ? Constants.macButtonHiddenScale : 1)
+                        .allowsHitTesting(!store.host.isEmpty)
+                        .accessibilityHidden(store.host.isEmpty)
+                        .animation(.spring(duration: Constants.macButtonPopDuration, bounce: Constants.macButtonPopBounce), value: store.host.isEmpty)
+                #else
+                    if !store.host.isEmpty {
+                        testConnectionButton
+                            .padding(.horizontal, .space24)
+                            .transition(.opacity.combined(with: .move(edge: .bottom)))
+                    }
+                #endif
 
                 Spacer(minLength: .space48)
             }
@@ -776,7 +805,7 @@ public struct LoginFormView: View {
     }
 }
 
-/// Split out of `LoginFormView.body` — inlining these three `.hapticFeedback` calls alongside
+/// Split out of `LoginFormView.body`: inlining these three `.hapticFeedback` calls alongside
 /// everything else already chained onto the root `ZStack` pushed the compiler's type-checker
 /// past a reasonable time budget.
 private struct LoginHapticsModifier: ViewModifier {

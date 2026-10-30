@@ -9,7 +9,7 @@ private enum Constants {
     static let chevronSize: CGFloat = .iconSmall
 }
 
-/// The folder chooser for "Move" and "Upload" — a modal sheet either way (for Upload it sits
+/// The folder chooser for "Move" and "Upload": a modal sheet either way (for Upload it sits
 /// over the review sheet). Drills the same folder tree as Browse (folders only), hands the
 /// chosen path back on confirm. Grouped list, checkmark to confirm, the same breadcrumb bar
 /// Browse uses.
@@ -32,7 +32,11 @@ struct DestinationPickerView: View {
     }
 
     var body: some View {
-        NavigationStack { pickerBody }
+        #if os(macOS)
+            MacDestinationPickerSheet(store: store, title: navigationTitle, confirmTitle: confirmLabel)
+        #else
+            NavigationStack { pickerBody }
+        #endif
     }
 
     private var pickerBody: some View {
@@ -75,7 +79,7 @@ struct DestinationPickerView: View {
             }
             .searchable(
                 text: $store.searchQuery.sending(\.searchQueryChanged),
-                placement: .navigationBarDrawer(displayMode: .always),
+                placement: .pinned,
                 prompt: L10n.Common.search
             )
             .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -114,7 +118,7 @@ struct DestinationPickerView: View {
             EmptyStateView(icon: IconKit.folder, message: L10n.Browse.destinationPickerNoFolders)
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List {
+            DSGroupedList {
                 ForEach(store.folders) { folder in
                     Button {
                         store.send(.folderTapped(folder))
@@ -136,7 +140,7 @@ struct DestinationPickerView: View {
             EmptyStateView(icon: IconKit.search, message: L10n.EmptyState.noSearchMatches(store.searchQuery))
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
         } else {
-            List {
+            DSGroupedList {
                 ForEach(store.searchResults ?? []) { result in
                     Button {
                         store.send(.searchResultTapped(result))

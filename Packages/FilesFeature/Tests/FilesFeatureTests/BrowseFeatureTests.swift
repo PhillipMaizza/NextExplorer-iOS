@@ -168,7 +168,7 @@ struct BrowseFeatureTests {
     func rowTappedOnAnUnplayableStreamableContainerPresentsTheUnsupportedPreview() async {
         let serverURL = URL(string: "https://example.com")!
         // `.webm` is `isStreamableMedia` (a video kind) but not `isNativelyPlayable`
-        // (AVFoundation can't decode VP8/VP9) — regression test for a bug where `rowTapped`
+        // (AVFoundation can't decode VP8/VP9): regression test for a bug where `rowTapped`
         // guarded on `isPreviewable || isBrowsableArchive` instead of
         // `!isUnsupportedForPreview`, letting this slip through to `StreamingPreviewView`
         // with a URL it can't actually play. It now lands on `UnsupportedFilePreviewView`.
@@ -184,7 +184,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnANonBrowsableArchivePresentsTheUnsupportedPreview() async {
         let serverURL = URL(string: "https://example.com")!
-        // `.zip`/`.rar` are `isBrowsableArchive` (see the dedicated test for those) — this
+        // `.zip`/`.rar` are `isBrowsableArchive` (see the dedicated test for those): this
         // covers an archive kind neither `ZIPFoundation` nor `Unrar.swift` can list.
         let file = FileItem(name: "bundle.7z", path: "", dateModified: Date(), size: 10, kind: "7z")
 
@@ -208,7 +208,7 @@ struct BrowseFeatureTests {
 
         // Never emits `.openFolder` for a non-directory; sets `previewItem` immediately so
         // the viewer presents right away, and fetches text (not streamed, not downloaded via
-        // `previewFile` — `.txt` isn't `isStreamableMedia` or `isPreviewableViaDownload`) in
+        // `previewFile`: `.txt` isn't `isStreamableMedia` or `isPreviewableViaDownload`) in
         // the background.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
@@ -317,7 +317,7 @@ struct BrowseFeatureTests {
         }
 
         // No `filesClient.downloadRawFile`/`previewFile` override: a call here would crash
-        // with "Unimplemented" — `ArchiveBrowserView` downloads and parses the archive itself.
+        // with "Unimplemented": `ArchiveBrowserView` downloads and parses the archive itself.
         await store.send(.rowTapped(archive)) {
             $0.previewItem = archive
         }
@@ -337,7 +337,7 @@ struct BrowseFeatureTests {
 
         // Unlike raster images (which set `previewItem` and load themselves in the gallery,
         // no reducer-driven fetch), SVGs go through the same download+QuickLook path as PDFs
-        // — `UIImage`/`AsyncImage` can't rasterize them.
+        // `UIImage`/`AsyncImage` can't rasterize them.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
             $0.previewPhase = .loading
@@ -404,7 +404,7 @@ struct BrowseFeatureTests {
         }
 
         // No `filesClient.previewFile` override: a call here would crash with "Unimplemented"
-        // — `.docx` isn't in `PREVIEWABLE_EXTENSIONS`, so it must go through
+        // `.docx` isn't in `PREVIEWABLE_EXTENSIONS`, so it must go through
         // `downloadRawFile` (`POST /api/files/download`), not `GET /api/preview`.
         await store.send(.rowTapped(file)) {
             $0.previewItem = file
@@ -603,6 +603,66 @@ struct BrowseFeatureTests {
     }
 
     @Test
+    func queriesShorterThanTheServerMinimumKeepTheInstantMatchesWithoutASearchRequest() async {
+        let serverURL = URL(string: "https://example.com")!
+        let loaded = FileItem(name: "Payslips", path: "", dateModified: Date(), size: 0, kind: "directory")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Files")
+        state.items = [loaded]
+        let clock = TestClock()
+        let calls = LockIsolated(0)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in calls.withValue { $0 += 1 }; return [] }
+        }
+
+        // The backend answers 400 under three characters, so the instant match is all there is.
+        await store.send(.searchQueryChanged("pa")) {
+            $0.searchQuery = "pa"
+            $0.searchResults = [SearchResultItem(name: "Payslips", path: "", kind: "dir")]
+        }
+        await clock.advance(by: .seconds(2))
+        #expect(calls.value == 0)
+    }
+
+    @Test
+    func matchingFavoritesShowInstantlyWithinTheScope() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
+        state.favoritePaths = ["Photos/Trips/Vacation 2024", "Work/Vacation Plans", "Photos/Album"]
+        let clock = TestClock()
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in [] }
+        }
+
+        // "This Folder": only the favorite under Photos, ready to open before the backend answers.
+        await store.send(.searchQueryChanged("vac")) {
+            $0.searchQuery = "vac"
+            $0.searchResults = [SearchResultItem(name: "Vacation 2024", path: "Photos/Trips", kind: "dir")]
+            $0.isSearchingRemotely = true
+        }
+        // "Everywhere": every matching favorite.
+        await store.send(.searchScopeChanged(.everywhere)) {
+            $0.searchScope = .everywhere
+            $0.searchResults = [
+                SearchResultItem(name: "Vacation 2024", path: "Photos/Trips", kind: "dir"),
+                SearchResultItem(name: "Vacation Plans", path: "Work", kind: "dir"),
+            ]
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = []
+        }
+    }
+
+    @Test
     func reSendingTheSameQueryIsANoOpSoResultsDoNotFlash() async {
         let serverURL = URL(string: "https://example.com")!
         let deepHit = SearchResultItem(name: "vacation-2.jpg", path: "Photos/Trips", kind: "file")
@@ -732,8 +792,9 @@ struct BrowseFeatureTests {
         }
         store.exhaustivity = .off
 
-        await store.send(.searchQueryChanged("v"))
-        await store.send(.searchQueryChanged("va"))
+        // Both at least the server's three characters, so both would really be sent.
+        await store.send(.searchQueryChanged("vac"))
+        await store.send(.searchQueryChanged("vaca"))
         await clock.advance(by: .seconds(1))
         await store.receive(\.searchResultsResponse.success)
         #expect(calls.value == 1)
@@ -793,6 +854,104 @@ struct BrowseFeatureTests {
         }
     }
 
+    @Test
+    func searchKeepsTheServerRankingAndShowMoreWidensIt() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.searchScope = .everywhere
+        let closest = SearchResultItem(name: "zeta", path: "", kind: "dir", isNameMatch: true)
+        let content = SearchResultItem(name: "alpha.txt", path: "Docs", kind: "file", matchLine: "zeta", matchLineNumber: 3, isContentMatch: true)
+        let more = SearchResultItem(name: "beta.txt", path: "Docs", kind: "file", isContentMatch: true)
+        let limits = LockIsolated<[Int?]>([])
+        let clock = TestClock()
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, limit in
+                limits.withValue { $0.append(limit) }
+                return limit == 100
+                    ? SearchPage(items: [closest, content], isComplete: false, limit: 100)
+                    : SearchPage(items: [closest, content, more], limit: 300)
+            }
+        }
+
+        await store.send(.searchQueryChanged("zeta")) {
+            $0.searchQuery = "zeta"
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [closest, content]
+            $0.searchShortfall = .firstOnly(count: 100)
+        }
+        #expect(store.state.canShowMoreSearchResults)
+
+        // Widens straight away, no debounce, and keeps the results on screen meanwhile.
+        await store.send(.searchShowMoreTapped) {
+            $0.searchLimit = 300
+            $0.isSearchingRemotely = true
+        }
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [closest, content, more]
+            $0.searchShortfall = nil
+        }
+        #expect(limits.value == [100, 300])
+
+        // A new query starts over from the first step.
+        await store.send(.searchQueryChanged("zetas")) {
+            $0.searchQuery = "zetas"
+            $0.searchLimit = 100
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await store.skipInFlightEffects()
+    }
+
+    @Test
+    func aSearchStoppedAtItsTimeLimitSaysSo() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.searchScope = .everywhere
+        let hit = SearchResultItem(name: "vacation.jpg", path: "Photos", kind: "file", isNameMatch: true)
+        let clock = TestClock()
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in SearchPage(items: [hit], isTruncated: true, isComplete: true, limit: 100) }
+        }
+
+        await store.send(.searchQueryChanged("vac")) {
+            $0.searchQuery = "vac"
+            $0.searchResults = []
+            $0.isSearchingRemotely = true
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.searchResultsResponse.success) {
+            $0.isSearchingRemotely = false
+            $0.searchResults = [hit]
+            $0.searchShortfall = .stoppedEarly
+        }
+        #expect(!store.state.canShowMoreSearchResults)
+    }
+
+    @Test
+    func aTermTooShortForTheServerIsFlagged() {
+        var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
+        state.searchQuery = " p "
+        #expect(state.isSearchTermTooShort)
+        state.searchQuery = "pay"
+        #expect(!state.isSearchTermTooShort)
+        state.searchQuery = ""
+        #expect(!state.isSearchTermTooShort)
+    }
+
     // MARK: - Edge cases
 
     @Test
@@ -837,6 +996,27 @@ struct BrowseFeatureTests {
     }
 
     @Test
+    func openingAFolderFromSearchEndsTheSearch() async {
+        let serverURL = URL(string: "https://example.com")!
+        let result = SearchResultItem(name: "Payslips", path: "", kind: "dir")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.searchQuery = "pay"
+        state.searchResults = [result]
+        state.isSearchingRemotely = true
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        }
+
+        await store.send(.searchResultTapped(result)) {
+            $0.searchQuery = ""
+            $0.searchResults = nil
+            $0.isSearchingRemotely = false
+        }
+        await store.receive(.delegate(.openPath(path: "Payslips", title: "Payslips")))
+    }
+
+    @Test
     func searchResultTappedOnADirectoryAtTheRootBuildsThePathFromAnEmptyParent() async {
         let serverURL = URL(string: "https://example.com")!
         let result = SearchResultItem(name: "Docs", path: "", kind: "dir")
@@ -849,7 +1029,7 @@ struct BrowseFeatureTests {
         await store.receive(.delegate(.openPath(path: "Docs", title: "Docs")))
     }
 
-    // MARK: File actions — context menu routing
+    // MARK: File actions; context menu routing
 
     @Test
     func renameTappedSetsTheRenameSheetItem() async {
@@ -935,7 +1115,7 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — favorite toggle
+    // MARK: File actions; favorite toggle
 
     @Test
     func anInPlaceMutationWritesTheCorrectedListingThroughToTheCache() async {
@@ -995,7 +1175,7 @@ struct BrowseFeatureTests {
     @Test
     func favoriteToggleOnAFileIsANoOpBecauseOnlyFoldersCanBeFavorited() async {
         // The real server 400s (`favoritesService.validatePath`) on anything that isn't a
-        // directory — this mirrors that restriction client-side rather than round-tripping
+        // directory: this mirrors that restriction client-side rather than round-tripping
         // to discover it.
         let serverURL = URL(string: "https://example.com")!
         let file = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
@@ -1064,7 +1244,7 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — rename
+    // MARK: File actions; rename
 
     @Test
     func renameCancelledClearsTheRenameSheetItem() async {
@@ -1136,6 +1316,7 @@ struct BrowseFeatureTests {
             $0.isPerformingFileAction = false
             $0.renameSheetItem = nil
             $0.items = [renamed]
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(renamed, previousName: "vacation.jpg"))) }
         }
     }
 
@@ -1183,7 +1364,7 @@ struct BrowseFeatureTests {
         #expect(store.state.previewItem?.kind == "mp4")
     }
 
-    // MARK: File actions — new folder
+    // MARK: File actions; new folder
 
     @Test
     func newFolderTappedOpensTheSheetAndCancelledClosesIt() async {
@@ -1239,6 +1420,7 @@ struct BrowseFeatureTests {
             $0.isPerformingFileAction = false
             $0.isNewFolderSheetPresented = false
             $0.items = [existing, created]
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.created([created]))) }
         }
     }
 
@@ -1264,7 +1446,7 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — delete
+    // MARK: File actions; delete
 
     @Test
     func deleteCancelledClearsTheDeleteConfirmationItemAndShareImpactCheck() async {
@@ -1368,6 +1550,7 @@ struct BrowseFeatureTests {
             $0.renameSheetItem = nil
             $0.items = [renamed]
             $0.previewItem = renamed
+            $0.$undoStack.withLock { $0.record(FileUndoEntry(.renamed(renamed, previousName: item.name))) }
         }
     }
 
@@ -1463,7 +1646,7 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — extract/compress
+    // MARK: File actions; extract/compress
 
     @Test
     func extractZipTappedAddsTheExtractedFolderOnSuccess() async {
@@ -1573,59 +1756,62 @@ struct BrowseFeatureTests {
         }
     }
 
-    // MARK: File actions — download
+    // MARK: File actions; download
 
-    @Test
-    func downloadTappedHandsTheItemToTheAppDownloadQueue() async {
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 1_600_000_000, kind: "mkv")
+    // iOS hands downloads to the app queue; macOS saves via a panel, see MacDownloadTests.
+    #if os(iOS)
+        @Test
+        func downloadTappedHandsTheItemToTheAppDownloadQueue() async {
+            let serverURL = URL(string: "https://example.com")!
+            let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 1_600_000_000, kind: "mkv")
 
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")) {
-            BrowseFeature()
+            let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")) {
+                BrowseFeature()
+            }
+
+            await store.send(.downloadTapped(item))
+            await store.receive(.delegate(.downloadRequested([item])))
         }
 
-        await store.send(.downloadTapped(item))
-        await store.receive(.delegate(.downloadRequested([item])))
-    }
+        @Test
+        func downloadTappedFromAPreviewAlsoConfirmsWithAToast() async {
+            let serverURL = URL(string: "https://example.com")!
+            let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 0, kind: "mkv")
+            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
+            state.previewItem = item
 
-    @Test
-    func downloadTappedFromAPreviewAlsoConfirmsWithAToast() async {
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 0, kind: "mkv")
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
-        state.previewItem = item
+            let store = TestStore(initialState: state) {
+                BrowseFeature()
+            }
 
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
+            await store.send(.downloadTapped(item)) {
+                $0.downloadSuccessMessage = "Downloading movie.mkv"
+            }
+            await store.receive(.delegate(.downloadRequested([item])))
         }
 
-        await store.send(.downloadTapped(item)) {
-            $0.downloadSuccessMessage = "Downloading movie.mkv"
-        }
-        await store.receive(.delegate(.downloadRequested([item])))
-    }
+        @Test
+        func bulkDownloadTappedQueuesTheSelectionInListingOrderAndLeavesSelectMode() async {
+            let serverURL = URL(string: "https://example.com")!
+            let folder = FileItem(name: "Photos", path: "Files", dateModified: Date(), size: 0, kind: "directory")
+            let file = FileItem(name: "notes.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
+            let other = FileItem(name: "skip.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
+            var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
+            state.items = [folder, file, other]
+            state.isSelecting = true
+            state.selectedItemIDs = [file.id, folder.id]
 
-    @Test
-    func bulkDownloadTappedQueuesTheSelectionInListingOrderAndLeavesSelectMode() async {
-        let serverURL = URL(string: "https://example.com")!
-        let folder = FileItem(name: "Photos", path: "Files", dateModified: Date(), size: 0, kind: "directory")
-        let file = FileItem(name: "notes.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
-        let other = FileItem(name: "skip.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
-        state.items = [folder, file, other]
-        state.isSelecting = true
-        state.selectedItemIDs = [file.id, folder.id]
+            let store = TestStore(initialState: state) {
+                BrowseFeature()
+            }
 
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
+            await store.send(.bulkDownloadTapped) {
+                $0.isSelecting = false
+                $0.selectedItemIDs = []
+            }
+            await store.receive(.delegate(.downloadRequested([folder, file])))
         }
-
-        await store.send(.bulkDownloadTapped) {
-            $0.isSelecting = false
-            $0.selectedItemIDs = []
-        }
-        await store.receive(.delegate(.downloadRequested([folder, file])))
-    }
+    #endif
 
     @Test
     func bulkDownloadWithNothingSelectedDoesNothing() async {
@@ -1920,7 +2106,7 @@ struct BrowseFeatureTests {
         await store.send(.bulkFavoriteTapped)
     }
 
-    // MARK: File actions — get info
+    // MARK: File actions; get info
 
     @Test
     func infoTappedOnAFolderFetchesMetadataAndServerDiskUsage() async {
@@ -2361,41 +2547,43 @@ struct BrowseFeatureTransferTests {
         PickedFile(id: id, fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: size)
     }
 
-    @Test
-    func beginningUploadOpensTheReviewSheetAndStartsStaging() async {
-        let store = TestStore(initialState: makeState(directoryPath: "Documents")) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.uploadStaging = UploadStagingClient(
-                stageDocuments: { _ in
-                    AsyncStream<PickedFile> { continuation in
-                        continuation.yield(picked("a.jpg", id: UUID(0)))
-                        continuation.yield(picked("b.jpg", id: UUID(1)))
-                        continuation.finish()
-                    }
-                },
-                stagePhotos: { _ in AsyncStream<PickedFile> { $0.finish() } },
-                stageCameraCapture: { _ in nil },
-                discard: { _ in },
-                sweepStale: {}
-            )
-        }
-        store.exhaustivity = .off
+    #if os(iOS)
+        @Test
+        func beginningUploadOpensTheReviewSheetAndStartsStaging() async {
+            let store = TestStore(initialState: makeState(directoryPath: "Documents")) {
+                BrowseFeature()
+            } withDependencies: {
+                $0.uploadStaging = UploadStagingClient(
+                    stageDocuments: { _ in
+                        AsyncStream<PickedFile> { continuation in
+                            continuation.yield(picked("a.jpg", id: UUID(0)))
+                            continuation.yield(picked("b.jpg", id: UUID(1)))
+                            continuation.finish()
+                        }
+                    },
+                    stagePhotos: { _ in AsyncStream<PickedFile> { $0.finish() } },
+                    stageCameraCapture: { _ in nil },
+                    discard: { _ in },
+                    sweepStale: {}
+                )
+            }
+            store.exhaustivity = .off
 
-        await store.send(.beginUpload(.documents([
-            URL(fileURLWithPath: "/tmp/a.jpg"), URL(fileURLWithPath: "/tmp/b.jpg"),
-        ])))
-        #expect(store.state.uploadReview != nil)
-        #expect(store.state.uploadReview?.destination == "Documents")
+            await store.send(.beginUpload(.documents([
+                URL(fileURLWithPath: "/tmp/a.jpg"), URL(fileURLWithPath: "/tmp/b.jpg"),
+            ])))
+            #expect(store.state.uploadReview != nil)
+            #expect(store.state.uploadReview?.destination == "Documents")
 
-        await store.receive(\.uploadReview.presented.stage) {
-            $0.uploadReview?.preparingCount = 2
+            await store.receive(\.uploadReview.presented.stage) {
+                $0.uploadReview?.preparingCount = 2
+            }
+            await store.receive(\.uploadReview.presented.filePrepared)
+            await store.receive(\.uploadReview.presented.filePrepared)
+            await store.receive(\.uploadReview.presented.stagingBatchFinished)
+            #expect(store.state.uploadReview?.totalCount == 2)
         }
-        await store.receive(\.uploadReview.presented.filePrepared)
-        await store.receive(\.uploadReview.presented.filePrepared)
-        await store.receive(\.uploadReview.presented.stagingBatchFinished)
-        #expect(store.state.uploadReview?.totalCount == 2)
-    }
+    #endif
 
     @Test
     func confirmingTheReviewSheetEnqueuesWithTheChosenDestination() async {
@@ -2547,12 +2735,51 @@ struct BrowseFeatureTransferTests {
             $0.pendingTransferRetry = nil
             $0.$clipboard.withLock { $0 = nil }
             $0.transferSuccessMessage = L10n.Browse.transferCopied(1)
+            $0.awaitedArrivalIDs = ["Documents/f0"]
+            $0.arrivalChecksLeft = 3
         }
         await store.receive(.delegate(.directoryContentsChanged))
 
         #expect(captured.value?.items == [file])
         #expect(captured.value?.destination == "Documents")
         #expect(captured.value?.operation == .copy)
+    }
+
+    @Test
+    func duplicateCopiesTheSelectionIntoItsOwnFolderLettingTheServerRename() async {
+        let file = item("a.txt", path: "Documents")
+        var state = makeState()
+        state.items = [file]
+        state.selectedItemIDs = [file.id]
+        let captured = LockIsolated<(items: [FileItem], destination: String, operation: TransferOperation)?>(nil)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.transferItems = { _, items, destination, operation in
+                captured.setValue((items, destination, operation))
+                return result(destination: destination, moved: 1)
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.duplicateSelectionTapped)
+        await store.receive(\.transferResponse.success)
+        #expect(captured.value?.items == [file])
+        #expect(captured.value?.destination == "Documents")
+        #expect(captured.value?.operation == .copy)
+        #expect(store.state.clipboard == nil)
+    }
+
+    @Test
+    func duplicateDoesNothingAtTheRoot() async {
+        var state = makeState(directoryPath: "")
+        let volume = item("Files", path: "")
+        state.items = [volume]
+        state.selectedItemIDs = [volume.id]
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.duplicateSelectionTapped)
     }
 
     @Test

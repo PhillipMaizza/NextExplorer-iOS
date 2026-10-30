@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Central catalog of the app's SF Symbols: one name per icon, spelled once, so call
 /// sites never type a raw `Image(systemName:)` string. Named for what the icon *means* at
-/// its call site(s) wherever there's one clear meaning (e.g. `download`, `search`) — a few
+/// its call site(s) wherever there's one clear meaning (e.g. `download`, `search`): a few
 /// (`folder`/`folderFill`, `star`/`starFill`, `document`, `tag`, `calendar`, ...) stay literal
 /// because they're genuinely reused across unrelated meanings (a directory icon, a tab icon,
 /// and a "this is a folder" row glyph, for instance), where a single semantic name would be
@@ -23,7 +23,7 @@ public enum IconKit {
     public static let logo = Image("logo", bundle: .module)
 
     /// Static vector artwork exported from Symbols.app (Template rendering, single scale),
-    /// not `Image(systemName:)` — `Tab(value:)`'s automatic outline/filled swap by selection
+    /// not `Image(systemName:)`; `Tab(value:)`'s automatic outline/filled swap by selection
     /// does not hold on iOS 26+'s "Liquid Glass" tab bar, which renders every tab icon filled
     /// regardless of API or symbol variant used (verified on a real iOS 27 device). `MainTabView`
     /// picks the outline/filled pair explicitly by selection state instead.
@@ -58,13 +58,14 @@ public enum IconKit {
     public static let search = Image(systemName: "magnifyingglass")
     public static let star = Image(systemName: "star")
     public static let starFill = Image(systemName: "star.fill")
+    public static let help = Image(systemName: "questionmark.circle")
     public static let gearshape = Image(systemName: "gearshape")
     // `.forward`, not `.right`: the semantic variant auto mirrors under a right to left layout
     // (Arabic) so disclosure and breadcrumb chevrons point into the content the correct way.
     public static let chevronRight = Image(systemName: "chevron.forward")
     public static let chevronDown = Image(systemName: "chevron.down")
+    public static let chevronUpDown = Image(systemName: "chevron.up.chevron.down")
     public static let externalLink = Image(systemName: "arrow.up.right")
-    public static let help = Image(systemName: "questionmark.circle")
     public static let warning = Image(systemName: "exclamationmark.triangle")
     public static let darkMode = Image(systemName: "moon.fill")
     public static let signOut = Image(systemName: "rectangle.portrait.and.arrow.right")
@@ -80,6 +81,11 @@ public enum IconKit {
     public static let server = Image(systemName: "macpro.gen3.server")
     public static let listBullet = Image(systemName: "list.bullet")
     public static let squareGrid = Image(systemName: "square.grid.2x2")
+    public static let table = Image(systemName: "tablecells")
+    public static let openInApp = Image(systemName: "arrow.up.forward.app")
+    public static let print = Image(systemName: "printer")
+    public static let newWindow = Image(systemName: "macwindow")
+    public static let newTab = Image(systemName: "plus.square.on.square")
     public static let sort = Image(systemName: "arrow.up.arrow.down")
     public static let sortAscending = Image(systemName: "arrow.up")
     public static let sortDescending = Image(systemName: "arrow.down")
@@ -108,6 +114,8 @@ public enum IconKit {
     public static let link = Image(systemName: "link")
     public static let people = Image(systemName: "person.2")
     public static let copy = Image(systemName: "doc.on.doc")
+    public static let cut = Image(systemName: "scissors")
+    public static let duplicate = Image(systemName: "plus.square.on.square")
     /// Stage an item on the clipboard to move (the "Move" file action, paired with "Copy").
     public static let move = Image(systemName: "arrow.turn.up.right")
     /// Drop the clipboard's staged items into the current folder.
@@ -132,4 +140,17 @@ public enum IconKit {
     public static let filterFill = Image(systemName: "line.3.horizontal.decrease.circle.fill")
     public static let film = Image(systemName: "film")
     public static let music = Image(systemName: "music.note")
+    public static let minus = Image(systemName: "minus")
+    public static let removeCircle = Image(systemName: "minus.circle.fill")
+    public static let pinFill = Image(systemName: "pin.fill")
+    public static let error = Image(systemName: "exclamationmark.circle")
+    public static let errorFill = Image(systemName: "exclamationmark.circle.fill")
+    public static let transfers = Image(systemName: "arrow.up.arrow.down.circle")
+    public static let photoLibrary = Image(systemName: "photo.on.rectangle")
+    public static let cameraFill = Image(systemName: "camera.fill")
+    public static let account = Image(systemName: "person.crop.circle")
+    /// The Settings Storage category; `size` is the same drive glyph meaning a file's size.
+    public static let storage = Image(systemName: "internaldrive")
+    public static let serverRack = Image(systemName: "server.rack")
+    public static let accessRules = Image(systemName: "lock.shield")
 }

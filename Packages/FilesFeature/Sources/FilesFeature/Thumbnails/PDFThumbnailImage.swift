@@ -3,7 +3,9 @@ import CoreModels
 import DesignSystem
 import FilesClient
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 private enum Constants {
     /// PDF's file kind, for the `FileTypeIcon` fallback.
@@ -57,7 +59,7 @@ struct PDFThumbnailImage: View {
     private func content(state: PDFThumbnailStore.State) -> some View {
         switch state {
         case let .ready(image):
-            Image(uiImage: image)
+            Image(platformImage: image)
                 .resizable()
                 .scaledToFit()
                 .clipShape(RoundedRectangle(cornerRadius: Constants.cornerRadius))

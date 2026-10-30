@@ -11,7 +11,7 @@ struct UserManagementView: View {
     @State private var isSortSheetPresented = false
 
     var body: some View {
-        List {
+        DSGroupedList {
             Section {
                 ForEach(store.displayedUsers) { user in
                     Button {
@@ -41,9 +41,23 @@ struct UserManagementView: View {
         .prefersToolbarItemsInVerticalBar()
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                SortToolbarButton(isDisabled: store.users.isEmpty) { isSortSheetPresented = true }
+                #if os(macOS)
+                    MacSortMenu(
+                        options: UserManagementFeature.SortOption.allCases,
+                        directions: BrowseFeature.SortDirection.allCases,
+                        sortOption: store.sortOption,
+                        sortDirection: store.sortDirection,
+                        optionTitle: { $0.title },
+                        directionTitle: { $0.title },
+                        onSelectOption: { store.send(.sortOptionChanged($0)) },
+                        onSelectDirection: { store.send(.sortDirectionChanged($0)) },
+                        isDisabled: store.users.isEmpty
+                    )
+                #else
+                    SortToolbarButton(isDisabled: store.users.isEmpty) { isSortSheetPresented = true }
+                #endif
             }
-            if #available(iOS 26.0, *) {
+            if #available(iOS 26.0, macOS 26.0, *) {
                 ToolbarSpacer(.fixed, placement: .topBarTrailing)
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -217,7 +231,7 @@ private func previewListState(
     }
 }
 
-#Preview("Search — no results") {
+#Preview("Search: no results") {
     NavigationStack {
         UserManagementView(store: Store(
             initialState: previewListState {

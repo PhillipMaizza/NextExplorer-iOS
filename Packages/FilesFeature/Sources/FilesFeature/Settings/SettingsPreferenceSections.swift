@@ -28,20 +28,11 @@ struct SettingsSearchFilter {
         query.isEmpty || label.localizedCaseInsensitiveContains(query)
     }
 
-    /// True when the query is empty or at least one of `labels` matches — used to drop a whole
+    /// True when the query is empty or at least one of `labels` matches: used to drop a whole
     /// section (and its header) once none of its rows match.
     func anyMatch(_ labels: [String]) -> Bool {
         labels.contains(where: matches)
     }
-}
-
-@MainActor
-enum SettingsFormat {
-    static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
 }
 
 @MainActor
@@ -50,6 +41,17 @@ private func sectionHeader(_ title: String) -> some View {
         .accessibilityAddTraits(.isHeader)
 }
 
+/// Some rows are iOS only because the Mac already covers them: its file tables show type
+/// icons with date and time columns, a copied item stays on its clipboard after pasting, and
+/// downloads are saved in Finder rather than kept in the app.
+private let isMac: Bool = {
+    #if os(macOS)
+        true
+    #else
+        false
+    #endif
+}()
+
 // MARK: General
 
 struct GeneralSettingsSection: View {
@@ -57,8 +59,8 @@ struct GeneralSettingsSection: View {
     let filter: SettingsSearchFilter
 
     @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
-    @AppStorage(AppStorageKeys.renderHTMLPages) private var renderHTMLPages = false
-    @AppStorage(AppStorageKeys.renderMarkdownPages) private var renderMarkdownPages = false
+    @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
+    @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
     @AppStorage(AppStorageKeys.hapticsEnabled) private var hapticsEnabled = true
     @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
@@ -84,12 +86,12 @@ struct GeneralSettingsSection: View {
                     )
                 }
                 if filter.matches(L10n.Settings.toggleRenderHTML) {
-                    DSToggleRow(title: L10n.Settings.toggleRenderHTML, icon: IconKit.web, isOn: $renderHTMLPages)
+                    DSToggleRow(title: L10n.Settings.toggleRenderHTML, icon: IconKit.web, isOn: $shouldRenderHTMLPages)
                 }
                 if filter.matches(L10n.Settings.toggleRenderMarkdown) {
-                    DSToggleRow(title: L10n.Settings.toggleRenderMarkdown, icon: IconKit.textformat, isOn: $renderMarkdownPages)
+                    DSToggleRow(title: L10n.Settings.toggleRenderMarkdown, icon: IconKit.textformat, isOn: $shouldRenderMarkdownPages)
                 }
-                if filter.matches(L10n.Settings.rowDateFormat) {
+                if !isMac, filter.matches(L10n.Settings.rowDateFormat) {
                     NavigationLink {
                         DateFormatPickerView(selection: dateFormat)
                     } label: {
@@ -125,11 +127,14 @@ struct GeneralSettingsSection: View {
                                 .foregroundStyle(Color.secondaryDS)
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
+                        .fullRowHitArea()
                     }
                 }
-                if filter.matches(L10n.Settings.toggleHaptics) {
-                    DSToggleRow(title: L10n.Settings.toggleHaptics, icon: IconKit.haptics, isOn: $hapticsEnabled)
-                }
+                #if os(iOS)
+                    if filter.matches(L10n.Settings.toggleHaptics) {
+                        DSToggleRow(title: L10n.Settings.toggleHaptics, icon: IconKit.haptics, isOn: $hapticsEnabled)
+                    }
+                #endif
             } header: {
                 sectionHeader(L10n.Settings.sectionGeneral)
             }
@@ -145,18 +150,18 @@ struct DisplaySettingsSection: View {
     let filter: SettingsSearchFilter
 
     @AppStorage(AppStorageKeys.appearanceOverrideSet) private var hasAppearanceOverride = false
-    @AppStorage(AppStorageKeys.prefersDarkMode) private var prefersDarkModeOverride = false
+    @AppStorage(AppStorageKeys.prefersDarkMode) private var isDarkAppearanceOverride = false
     @AppStorage(AppStorageKeys.thumbnailSize) private var thumbnailSizeRaw = ThumbnailSize.medium.rawValue
-    @AppStorage(AppStorageKeys.showFilenameExtensions) private var showFilenameExtensions = true
+    @AppStorage(AppStorageKeys.showFilenameExtensions) private var shouldShowFilenameExtensions = true
     @AppStorage(AppStorageKeys.showTabLabels) private var showTabLabels = false
     @Environment(\.isSplitViewDetail) private var isSplitViewDetail
 
     private var appearance: Binding<AppearanceMode> {
         Binding(
-            get: { AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: prefersDarkModeOverride) },
+            get: { AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: isDarkAppearanceOverride) },
             set: { mode in
                 hasAppearanceOverride = mode.hasOverride
-                prefersDarkModeOverride = mode.prefersDark
+                isDarkAppearanceOverride = mode.prefersDark
             }
         )
     }
@@ -172,7 +177,7 @@ struct DisplaySettingsSection: View {
         if filter.anyMatch([L10n.Settings.rowAppearance, L10n.Settings.toggleShowThumbnails, L10n.Settings.rowThumbnailSize, L10n.Settings.toggleShowExtensions, L10n.Settings.toggleShowTabLabels]) {
             Section {
                 if filter.matches(L10n.Settings.rowAppearance) {
-                    Picker(selection: appearance) {
+                    DSMenuPickerRow(selection: appearance, value: appearance.wrappedValue.title) {
                         ForEach(AppearanceMode.allCases) { mode in
                             Text(mode.title).tag(mode)
                         }
@@ -187,19 +192,18 @@ struct DisplaySettingsSection: View {
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
                     }
-                    .pickerStyle(.menu)
                     .tint(Color.secondaryDS)
                     .hapticFeedback(.selection, trigger: appearance.wrappedValue)
                 }
-                if filter.matches(L10n.Settings.toggleShowThumbnails) {
+                if !isMac, filter.matches(L10n.Settings.toggleShowThumbnails) {
                     DSToggleRow(
                         title: L10n.Settings.toggleShowThumbnails,
                         icon: IconKit.photo,
                         isOn: $store.preferences.showThumbnails.sending(\.setShowThumbnails)
                     )
                 }
-                if filter.matches(L10n.Settings.rowThumbnailSize) {
-                    Picker(selection: thumbnailSize) {
+                if !isMac, filter.matches(L10n.Settings.rowThumbnailSize) {
+                    DSMenuPickerRow(selection: thumbnailSize, value: thumbnailSize.wrappedValue.title) {
                         ForEach(ThumbnailSize.allCases) { size in
                             Text(size.title).tag(size)
                         }
@@ -214,16 +218,15 @@ struct DisplaySettingsSection: View {
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
                     }
-                    .pickerStyle(.menu)
                     .tint(Color.secondaryDS)
                     .hapticFeedback(.selection, trigger: thumbnailSizeRaw)
                 }
                 if filter.matches(L10n.Settings.toggleShowExtensions) {
-                    DSToggleRow(title: L10n.Settings.toggleShowExtensions, icon: IconKit.tag, isOn: $showFilenameExtensions)
+                    DSToggleRow(title: L10n.Settings.toggleShowExtensions, icon: IconKit.tag, isOn: $shouldShowFilenameExtensions)
                 }
                 // Tab labels only exist on the bottom tab bar (compact). iPad uses the sidebar,
                 // so the toggle is meaningless there.
-                if !isSplitViewDetail, filter.matches(L10n.Settings.toggleShowTabLabels) {
+                if !isMac, !isSplitViewDetail, filter.matches(L10n.Settings.toggleShowTabLabels) {
                     DSToggleRow(title: L10n.Settings.toggleShowTabLabels, icon: IconKit.tabBrowse, isOn: $showTabLabels)
                 }
             } header: {
@@ -240,24 +243,24 @@ struct StorageSettingsSection: View {
     let store: StoreOf<SettingsFeature>
     let filter: SettingsSearchFilter
 
-    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var keepClipboardAfterCopy = false
+    @AppStorage(AppStorageKeys.keepClipboardAfterCopy) private var shouldKeepClipboardAfterCopy = false
 
     var body: some View {
         if filter.anyMatch([L10n.Settings.toggleKeepClipboard, L10n.Settings.rowRemoveAllDownloads, L10n.Settings.rowClearCache]) {
             Section {
-                if filter.matches(L10n.Settings.toggleKeepClipboard) {
+                if !isMac, filter.matches(L10n.Settings.toggleKeepClipboard) {
                     DSToggleRow(
                         title: L10n.Settings.toggleKeepClipboard,
                         subtitle: L10n.Settings.toggleKeepClipboardSubtitle,
                         icon: IconKit.paste,
-                        isOn: $keepClipboardAfterCopy
+                        isOn: $shouldKeepClipboardAfterCopy
                     )
                 }
-                if filter.matches(L10n.Settings.rowRemoveAllDownloads) {
+                if !isMac, filter.matches(L10n.Settings.rowRemoveAllDownloads) {
                     DSNavigationRow(
                         title: L10n.Settings.rowRemoveAllDownloads,
                         icon: IconKit.delete,
-                        accessory: .detail(SettingsFormat.byteFormatter.string(fromByteCount: store.downloadsSize)),
+                        accessory: .detail(FileSizeFormat.string(store.downloadsSize)),
                         role: .accent
                     ) {
                         store.send(.removeAllDownloadsTapped)
@@ -269,7 +272,7 @@ struct StorageSettingsSection: View {
                     DSNavigationRow(
                         title: L10n.Settings.rowClearCache,
                         icon: IconKit.delete,
-                        accessory: .detail(SettingsFormat.byteFormatter.string(fromByteCount: store.cacheSize)),
+                        accessory: .detail(FileSizeFormat.string(store.cacheSize)),
                         role: .accent
                     ) {
                         store.send(.clearCacheTapped)
@@ -281,7 +284,7 @@ struct StorageSettingsSection: View {
                 sectionHeader(L10n.Settings.sectionStorage)
             } footer: {
                 if !filter.isActive {
-                    Text(L10n.Settings.storageFootnote)
+                    Text(isMac ? L10n.Settings.storageFootnoteMac : L10n.Settings.storageFootnote)
                         .type(.body3(.regular), style: .tertiary)
                 }
             }
@@ -297,20 +300,14 @@ struct LegalSettingsSection: View {
 
     @Environment(\.openURL) private var openURL
 
-    /// Hosted alongside the app's site. Update these if the pages move.
-    private enum Links {
-        static let privacy = "https://phillipmaizza.com/nextexplorer/privacy.html"
-        static let terms = "https://phillipmaizza.com/nextexplorer/terms.html"
-    }
-
     var body: some View {
         if filter.anyMatch([L10n.Settings.rowPrivacyPolicy, L10n.Settings.rowTermsOfUse]) {
             Section {
                 if filter.matches(L10n.Settings.rowPrivacyPolicy) {
-                    legalRow(title: L10n.Settings.rowPrivacyPolicy, icon: IconKit.shield, link: Links.privacy)
+                    legalRow(title: L10n.Settings.rowPrivacyPolicy, icon: IconKit.shield, link: AppLinks.privacy)
                 }
                 if filter.matches(L10n.Settings.rowTermsOfUse) {
-                    legalRow(title: L10n.Settings.rowTermsOfUse, icon: IconKit.document, link: Links.terms)
+                    legalRow(title: L10n.Settings.rowTermsOfUse, icon: IconKit.document, link: AppLinks.terms)
                 }
             } header: {
                 sectionHeader(L10n.Settings.sectionLegal)
@@ -319,11 +316,9 @@ struct LegalSettingsSection: View {
         }
     }
 
-    private func legalRow(title: String, icon: Image, link: String) -> some View {
+    private func legalRow(title: String, icon: Image, link: URL) -> some View {
         Button {
-            if let url = URL(string: link) {
-                openURL(url)
-            }
+            openURL(link)
         } label: {
             Label {
                 HStack {
@@ -342,6 +337,7 @@ struct LegalSettingsSection: View {
                     .foregroundStyle(Color.secondaryDS)
                     .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
             }
+            .fullRowHitArea()
         }
         .buttonStyle(.plain)
         .contentShape(Rectangle())
@@ -385,6 +381,7 @@ struct LicensesSettingsSection: View {
                                 .foregroundStyle(Color.secondaryDS)
                                 .frame(width: Constants.rowIconSize, height: Constants.rowIconSize)
                         }
+                        .fullRowHitArea()
                     }
                 }
             } header: {

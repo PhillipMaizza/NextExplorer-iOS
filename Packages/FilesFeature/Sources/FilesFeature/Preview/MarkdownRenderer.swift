@@ -1,12 +1,12 @@
 import DesignSystem
 import Markdown
 
-/// Converts Markdown to HTML for the "Render Markdown Files" setting — `swift-markdown` only
+/// Converts Markdown to HTML for the "Render Markdown Files" setting: `swift-markdown` only
 /// parses to an AST, it doesn't ship an HTML renderer, so this walks the tree itself. The
 /// resulting HTML feeds straight into `HTMLRenderedView`, the same component "Render HTML
 /// Pages" uses, so relative image references resolve the same way relative CSS/JS does there.
 ///
-/// Deliberately doesn't conform to `MarkupVisitor` — its `visit`/`accept` requirements take
+/// Deliberately doesn't conform to `MarkupVisitor`: its `visit`/`accept` requirements take
 /// `inout Self`, which forces every recursive call site to hold the visitor in a mutable `var`
 /// binding, including `self` inside the visitor's own methods (a `let`-bound `self`, which
 /// every instance method has). A plain type-switch sidesteps that entirely.
@@ -30,7 +30,7 @@ enum MarkdownRenderer {
     /// Without an explicit charset WebKit guesses Latin-1 for a bare fragment and mangles every
     /// non-ASCII byte (em dashes turn into "\u{00E2}\u{20AC}\u{201D}"). The rest is just enough
     /// to make the page readable in the app's own font (Figtree, pulled from Google Fonts by
-    /// the `<link>` in the head — falls back to the system stack offline), with sane width and
+    /// the `<link>` in the head: falls back to the system stack offline), with sane width and
     /// visible table borders. `body`'s `font-family` is the lowest-specificity rule in the
     /// document, so a `<style>` block inside the Markdown source still wins the cascade.
     private static let documentCSS = """

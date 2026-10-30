@@ -2,7 +2,9 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
-import UIKit
+#if os(iOS)
+    import UIKit
+#endif
 
 /// Shared metrics for the two rows that make up one share on the Shared tab. They live in
 /// separate `List` rows (header + detail) on purpose: a header row whose height never changes
@@ -28,13 +30,13 @@ enum SharedLinkMetrics {
     static let actionIconSize: CGFloat = .iconSmall
     static let badgeHorizontalPadding: CGFloat = .space8
     static let badgeVerticalPadding: CGFloat = .space2
-    /// Recipient chip inner padding — roomier than the expired badge so names breathe.
+    /// Recipient chip inner padding: roomier than the expired badge so names breathe.
     static let chipHorizontalPadding: CGFloat = .space12
     static let chipVerticalPadding: CGFloat = .space4
-    /// Chip tint strength — the recipient's categorical color at low alpha behind its name.
+    /// Chip tint strength: the recipient's categorical color at low alpha behind its name.
     static let chipFillOpacity: Double = 0.16
     static let deletingOpacity: Double = 0.4
-    /// Expired links mute the info rows — but never the actions, which stay usable
+    /// Expired links mute the info rows: but never the actions, which stay usable
     /// (delete) or at least fully legible.
     static let expiredInfoOpacity: Double = 0.55
 }
@@ -98,7 +100,7 @@ struct SharedLinkHeaderRow: View {
     }
 
     /// Folder glyph for directory shares, a real thumbnail for a by-me image share, otherwise
-    /// a per-format `FileTypeIcon` keyed off the shared item's own extension — same treatment
+    /// a per-format `FileTypeIcon` keyed off the shared item's own extension: same treatment
     /// the Browse list gives a file row.
     @ViewBuilder
     private var shareIcon: some View {
@@ -120,7 +122,7 @@ struct SharedLinkHeaderRow: View {
         }
     }
 
-    /// Full server path for a by-me image share — the only case a real thumbnail is
+    /// Full server path for a by-me image share: the only case a real thumbnail is
     /// reachable: shared-with-me links carry only the leaf name, and non-image kinds have no
     /// server thumbnail to fetch.
     private var thumbnailPath: String? {
@@ -169,7 +171,7 @@ struct SharedLinkDetailRow: View {
 
     /// "By me": full metadata + the direct-link mode picker + copy/delete actions. Web keeps
     /// expired shares fully usable for the owner (the link just stops working server-side),
-    /// so nothing here dims or disables on expiry — the header badge is the only signal.
+    /// so nothing here dims or disables on expiry: the header badge is the only signal.
     private var ownerBody: some View {
         VStack(alignment: .leading, spacing: .space8) {
             sharedWithRow
@@ -201,7 +203,7 @@ struct SharedLinkDetailRow: View {
         .padding(.bottom, Metrics.padding)
     }
 
-    /// "With me": read-only — no link, no mode picker, no delete, matching the web
+    /// "With me": read-only; no link, no mode picker, no delete, matching the web
     /// `SharedWithMeView`. Just who shared it, the access level, and the expiry.
     private var recipientBody: some View {
         VStack(alignment: .leading, spacing: .space8) {
@@ -214,7 +216,7 @@ struct SharedLinkDetailRow: View {
         .padding(.bottom, Metrics.padding)
     }
 
-    /// "Shared with" — a globe + label for `anyone`; for specific users, the label row plus a
+    /// "Shared with": a globe + label for `anyone`; for specific users, the label row plus a
     /// full-width wrapping strip showing every recipient as its own colored chip (a `+N` chip
     /// covers any recipients whose name hasn't resolved yet).
     private var sharedWithRow: some View {
@@ -310,7 +312,7 @@ struct SharedLinkDetailRow: View {
     }
 
     /// Filled pill for the copy/delete actions. `tint` is `.accent` or `.negative`. Stays
-    /// full opacity even when disabled (an expired link's copy buttons) — it just stops
+    /// full opacity even when disabled (an expired link's copy buttons): it just stops
     /// responding; `copy()` guards the action too.
     private func pillAction(_ icon: Image, _ title: String, tint: Color, isEnabled: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -335,25 +337,16 @@ struct SharedLinkDetailRow: View {
         return Self.expiryFormatter.string(from: expiresAt)
     }
 
-    private var baseURLString: String {
-        if let scheme = serverURL.scheme, let host = serverURL.host {
-            let port = serverURL.port.map { ":\($0)" } ?? ""
-            return "\(scheme)://\(host)\(port)"
-        }
-        return serverURL.absoluteString
-    }
-
     private var shareLinkString: String {
-        "\(baseURLString)/share/\(share.shareToken)"
+        share.shareLink(serverURL: serverURL)
     }
 
     private var directLinkString: String {
-        let base = "\(baseURLString)/api/share/\(share.shareToken)/file"
-        return directLinkMode == .auto ? base : "\(base)?mode=\(directLinkMode.rawValue)"
+        share.directLink(serverURL: serverURL, mode: directLinkMode)
     }
 
     private func copy(_ string: String, label: String) {
-        UIPasteboard.general.string = string
+        PlatformPasteboard.copy(string)
         onCopied(label)
     }
 
@@ -397,7 +390,7 @@ private struct SharedLinkCardPreview: View {
     private let url = URL(string: "https://cloud.phillipmaizza.com")!
 
     var body: some View {
-        List {
+        DSGroupedList {
             Section {
                 SharedLinkHeaderRow(
                     share: share, serverURL: url, isByMe: isByMe, isExpired: isExpired,
@@ -426,11 +419,11 @@ private struct SharedLinkCardPreview: View {
     }
 }
 
-#Preview("Card — collapsed / expanded") {
+#Preview("Card: collapsed / expanded") {
     SharedLinkCardPreview(share: .previewCard(isDirectory: true))
 }
 
-#Preview("Card — users") {
+#Preview("Card: users") {
     SharedLinkCardPreview(
         share: .previewCard(target: .users),
         audience: .users(names: ["Jamie Rivera", "Sam Okafor", "Jeremy Brown", "Dana Lee"], unnamed: 1),
@@ -438,14 +431,14 @@ private struct SharedLinkCardPreview: View {
     )
 }
 
-#Preview("Card — expiry") {
+#Preview("Card: expiry") {
     SharedLinkCardPreview(share: .previewCard(expiresAt: Date().addingTimeInterval(86_400 * 3)), startExpanded: true)
 }
 
-#Preview("Card — expired") {
+#Preview("Card: expired") {
     SharedLinkCardPreview(share: .previewCard(expiresAt: Date().addingTimeInterval(-3600)), isExpired: true, startExpanded: true)
 }
 
-#Preview("Card — with me") {
+#Preview("Card: with me") {
     SharedLinkCardPreview(share: .previewCard(sourcePath: nil), isByMe: false, sharedByText: "Alex Kim", startExpanded: true)
 }

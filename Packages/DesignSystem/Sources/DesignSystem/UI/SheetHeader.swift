@@ -15,7 +15,7 @@ private enum Constants {
 ///
 /// Place it as the first child of the sheet's content stack; the stack's own spacing then
 /// separates the header from the first field. Full-screen covers over media use
-/// `DSCloseButton` (frosted) instead — this is for opaque card sheets only.
+/// `DSCloseButton` (frosted) instead: this is for opaque card sheets only.
 ///
 /// `closeAccessibilityLabel` defaults to the English "Close"; localized call sites pass
 /// their own `L10n` string so DesignSystem stays free of an app copy dependency.

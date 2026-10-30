@@ -3,6 +3,9 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
+#if os(macOS)
+    import AppKit
+#endif
 
 /// The `…` / long-press action menu for one file or folder, shared by the Browse list rows and
 /// grid cells. Sends straight into `BrowseFeature`; the one piece of view-local state it can't
@@ -11,11 +14,37 @@ struct FileActionsMenu: View {
     let store: StoreOf<BrowseFeature>
     let item: FileItem
     let onShare: (FileItem) -> Void
+    /// Where a failed Mac "Open With" reports, since the menu has closed by then.
+    var onOpenWithFailed: (String) -> Void = { _ in }
+
+    #if os(macOS)
+        @Environment(\.openWindow) private var openWindow
+    #endif
 
     var body: some View {
+        #if os(macOS)
+            if item.isDirectory {
+                Button {
+                    openWindow(value: FolderWindowRoute(path: item.id, title: item.name))
+                } label: {
+                    Label { Text(L10n.Browse.actionOpenInNewWindow) } icon: { IconKit.newWindow }
+                }
+                .tint(.primaryDS)
+                Button {
+                    openWindow(value: FolderWindowRoute(path: item.id, title: item.name, tabHostWindowNumber: NSApp.keyWindow?.windowNumber))
+                } label: {
+                    Label { Text(L10n.Browse.actionOpenInNewTab) } icon: { IconKit.newTab }
+                }
+                .tint(.primaryDS)
+                Divider()
+            } else {
+                MacOpenWithMenuItems(item: item, serverURL: store.serverURL, onFailure: onOpenWithFailed)
+                Divider()
+            }
+        #endif
         // Explicit `.tint`: the Browse tree runs under `.tint(Color.accent)`, which would
         // otherwise cascade into the menu and color every icon/label gold instead of the
-        // system's normal label color — only Delete should stand out, in red.
+        // system's normal label color: only Delete should stand out, in red.
         Button {
             store.send(.infoTapped(item))
         } label: {
@@ -45,7 +74,7 @@ struct FileActionsMenu: View {
             .tint(.primaryDS)
         }
         if store.access?.canWrite ?? false {
-            // Extract only offers `.zip` — the server's own extract route 415s anything else
+            // Extract only offers `.zip`: the server's own extract route 415s anything else
             // ("Only .zip archives are supported"), `.rar` included despite this app being
             // able to browse rar contents client-side.
             if item.kind.lowercased() == "zip" {
@@ -74,6 +103,27 @@ struct FileActionsMenu: View {
                 Label { Text(L10n.Browse.actionCopy) } icon: { IconKit.copy }
             }
             .tint(.primaryDS)
+            #if os(macOS)
+                if store.access?.canWrite ?? false, !store.directoryPath.isEmpty {
+                    Button {
+                        store.send(.tableSelectionChanged([item.id]))
+                        store.send(.duplicateSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionDuplicate) } icon: { IconKit.duplicate }
+                    }
+                    .tint(.primaryDS)
+                }
+                // Stages the row for a move, as Command X does; Move still opens the picker.
+                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                    Button {
+                        store.send(.tableSelectionChanged([item.id]))
+                        store.send(.cutSelectionTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                    }
+                    .tint(.primaryDS)
+                }
+            #endif
             if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
                 Button {
                     store.send(.moveTapped(item), animation: .default)
@@ -91,7 +141,7 @@ struct FileActionsMenu: View {
             }
             .tint(.primaryDS)
         }
-        // Only folders can be favorited — the server 400s on anything else.
+        // Only folders can be favorited: the server 400s on anything else.
         if item.isDirectory {
             Button {
                 store.send(.favoriteToggleButtonTapped(item))

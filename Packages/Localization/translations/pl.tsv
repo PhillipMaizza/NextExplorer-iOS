@@ -1,4 +1,4 @@
-# NextExplorer — Polski (pl). key<TAB>value.
+# NextExplorer: Polski (pl). key<TAB>value.
 common.cancel	Anuluj
 common.save	Zapisz
 common.edit	Edytuj
@@ -76,6 +76,7 @@ browse.actionAddToFavorites	Dodaj do ulubionych
 browse.actionRemoveFromFavorites	Usuń z ulubionych
 browse.actionShare	Utwórz link do udostępniania
 browse.actionDelete	Usuń
+browse.actionDuplicate	Duplikuj
 browse.renameTitle	Zmień nazwę
 browse.renameNamePlaceholder	Nazwa
 browse.actionNewFolder	Utwórz folder
@@ -308,6 +309,7 @@ settings.rowUserManagement	Zarządzanie użytkownikami
 settings.rowChangePassword	Zmień hasło
 settings.rowServer	Serwer
 settings.storageFootnote	Foldery są pobierane jako ZIP i nic nie zostaje na serwerze. Usuwanie pobranych plików lub czyszczenie pamięci podręcznej dotyczy tylko tego urządzenia; na serwerze nic się nie zmienia.
+settings.storageFootnoteMac	Czyszczenie pamięci podręcznej dotyczy tylko tego Maca; na serwerze nic się nie zmienia.
 settings.removeAllDownloadsTitle	Usunąć wszystkie pobrane?
 settings.removeAllDownloadsConfirm	Usuń wszystkie
 settings.removeAllDownloadsMessage	Spowoduje to usunięcie wszystkich pobranych plików z tego urządzenia. Pozostają one na serwerze.
@@ -519,6 +521,14 @@ browse.nameErrorReserved	Ta nazwa jest niedozwolona.
 browse.nameErrorSeparators	Nazwa nie może zawierać / ani \.
 browse.searchMatchLine	Wiersz %1$lld: %2$@
 browse.searchMatchLineLabel	Wiersz %lld
+browse.searchTooShort	Wpisz co najmniej %lld znaki, aby przeszukać podfoldery i zawartość plików.
+browse.searchStoppedEarly	Wyszukiwanie zatrzymało się na limicie czasu. Oto wyniki znalezione do tej pory.
+browse.searchFirstOnly	Pierwsze wyniki: %lld. Zawęź wyszukiwanie, aby zobaczyć więcej.
+browse.searchShowMore	Pokaż więcej
+browse.searchMatchColumn	Dopasowanie
+browse.searchMatchedByName	Nazwa
+browse.searchMatchedByContent	Zawartość
+browse.searchMatchedByBoth	Nazwa i zawartość
 createShare.errorPasswordRequired	Wprowadź hasło lub wyłącz ochronę hasłem.
 filter.sheetTitle	Filtruj według typu
 filter.button	Filtruj
@@ -596,6 +606,32 @@ offline.manageEmpty	Nic nie zostało pobrane do użytku offline.
 offline.preferOfflineToggle	Odtwarzaj pobrane kopie
 offline.preferOfflineSubtitle	Używaj pobranego wideo zamiast strumieniowania, gdy jest dostępne.
 offline.tunnelSpeedNote	Łączenie się z serwerem przez zdalny tunel może spowalniać pobieranie. W przypadku dużych plików połącz się z tą samą siecią i użyj lokalnego adresu serwera.
+menu.about	O programie NextExplorer
+menu.rateApp	Oceń NextExplorer…
+menu.support	Pomoc NextExplorer
+menu.redo	Ponów
+menu.undo	Cofnij
+settings.sectionSupport	Pomoc
+settings.rowRateApp	Oceń NextExplorer
+settings.rowSupport	Pomoc i wsparcie
+menu.refresh	Odśwież
+select.tableView	Widok tabeli
+openWith.openIn	Otwórz w %@
+openWith.openWith	Otwórz za pomocą
+openWith.viewAsText	Pokaż jako tekst
+openWith.failed	Nie można otworzyć tego pliku.
+browse.showInFinder	Pokaż w Finderze
+browse.actionCut	Wytnij
+browse.clipboardCutOne	%@ gotowe do przeniesienia
+browse.clipboardCutMany	%lld elementów gotowych do przeniesienia
+menu.enclosingFolder	Folder nadrzędny
+common.more	Więcej
+openWith.print	Drukuj…
+menu.newWindow	Nowe okno
+menu.newTab	Nowa karta
+browse.actionOpenInNewWindow	Otwórz w nowym oknie
+browse.actionOpenInNewTab	Otwórz w nowej karcie
+select.viewAs	Widok
 settings.rowAppearance	Wygląd
 appearance.system	Systemowy
 appearance.light	Jasny
@@ -616,6 +652,62 @@ downloadQueue.savedMany	Zapisano w Pobranych elementów: %lld
 downloadQueue.bytesOf	%1$@ z %2$@
 downloadQueue.timeLeft	pozostało %@
 browse.sectionPersonal	Osobiste
-settings.sectionSupport	Pomoc
-settings.rowRateApp	Oceń NextExplorer
-settings.rowSupport	Pomoc i wsparcie
+browse.progressDownloading	Pobieranie…
+browse.progressDownloadingIndexed	Pobieranie %1$lld z %2$lld…
+browse.downloadSavedTo	Zapisano w %@
+browse.downloadSavedCountTo	Zapisano %1$lld z %2$lld elementów w %3$@
+browse.downloadSavedAllTo	Zapisano %1$lld elementów w %2$@
+browse.downloadBulkFailed	Nie można zapisać tych elementów na urządzeniu.
+macSettings.labelFormat	%@:
+macSettings.addAccount	Dodaj konto…
+macSettings.changePassword	Zmień hasło…
+macSettings.signOut	Wyloguj…
+macSettings.switchAccount	Przełącz na to konto
+macSettings.username	Nazwa użytkownika
+macSettings.email	E-mail
+macSettings.role	Rola
+macSettings.roleAdmin	Administrator
+macSettings.roleUser	Użytkownik
+macSettings.status	Stan
+macSettings.statusSignedIn	Zalogowano
+macSettings.manage	Zarządzaj…
+macSettings.cache	Pamięć podręczna
+macSettings.support	Pomoc i wsparcie…
+macSettings.permission	Uprawnienie
+macSettings.icon	Ikona
+menu.go	Idź
+menu.activity	Transfery
+menu.showAll	Pokaż wszystko
+uploads.notifyDone	Wysyłanie zakończone
+uploads.notifyBody	Wysłano plików: %lld
+downloadQueue.notifyDone	Pobieranie zakończone
+fileInfo.rowSoftware	Oprogramowanie
+fileInfo.sectionVersions	Wersje
+fileInfo.versionsNone	Brak wcześniejszych wersji
+fileInfo.versionRestore	Przywróć…
+fileInfo.restoreTitle	Przywrócić tę wersję?
+fileInfo.restoreMessage	Plik wróci do stanu z %@. Jego obecna zawartość zostanie zachowana jako wersja.
+fileInfo.restoreConfirm	Przywróć
+fileInfo.sectionSharing	Udostępnianie
+fileInfo.notShared	Brak linków udostępniania
+fileInfo.versionActions	Działania wersji
+fileInfo.versionDownload	Pobierz…
+fileInfo.versionSaveCopy	Zapisz jako kopię
+fileInfo.versionRename	Zmień nazwę…
+fileInfo.renameTitle	Zmień nazwę wersji
+fileInfo.renamePlaceholder	Nazwa wersji
+fileInfo.versionPin	Zachowaj tę wersję
+fileInfo.versionUnpin	Przestań zachowywać tę wersję
+fileInfo.versionKept	Zachowana
+fileInfo.versionDelete	Usuń…
+fileInfo.deleteTitle	Usunąć tę wersję?
+fileInfo.deleteAll	Usuń wszystkie wersje…
+fileInfo.deleteAllTitle	Usunąć wszystkie wersje?
+fileInfo.deleteMessage	Usunięte wersje znikają na zawsze. Sam plik pozostaje bez zmian.
+macSettings.choose	Wybierz…
+menu.forward	Dalej
+menu.goToFolder	Idź do folderu…
+menu.goToFolderTitle	Idź do folderu:
+menu.copyPath	Kopiuj ścieżkę
+menu.recentFolders	Ostatnie foldery
+menu.clearRecent	Wyczyść menu

@@ -7,7 +7,7 @@ import Localization
 import SwiftUI
 
 /// The "Downloads" tab: everything `LocalDownloadStore` has saved into
-/// `Documents/Downloads`/`Caches/Downloads`. Deleting here is local-only — it never touches
+/// `Documents/Downloads`/`Caches/Downloads`. Deleting here is local-only: it never touches
 /// the server, unlike every other delete action in the app (`BrowseFeature`'s `deleteTapped`).
 @Reducer
 public struct DownloadsFeature {
@@ -59,7 +59,7 @@ public struct DownloadsFeature {
 
         public init() {}
 
-        /// Client-side filter + sort, same shape as `BrowseFeature.displayedItems` — search
+        /// Client-side filter + sort, same shape as `BrowseFeature.displayedItems`: search
         /// only ever matches against already-downloaded file names, never the server.
         public var displayedDownloads: [LocalDownload] {
             let matches = searchQuery.isEmpty

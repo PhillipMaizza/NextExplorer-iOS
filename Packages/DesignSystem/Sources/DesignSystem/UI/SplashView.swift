@@ -18,8 +18,8 @@ private enum Constants {
     static let maxOnScreen: Double = 10
 }
 
-/// The launch splash. Picks up where `LaunchScreen.storyboard` leaves off — the app mark
-/// still on the launch gradient — twirls it once in 3D, sweeps a shine across it, then (once
+/// The launch splash. Picks up where `LaunchScreen.storyboard` leaves off: the app mark
+/// still on the launch gradient: twirls it once in 3D, sweeps a shine across it, then (once
 /// `isReady`) gives it two quick butterfly flaps and opens the wings apart, sliding them off
 /// while the gradient fades to reveal whatever is behind. `onFinished` fires when it clears.
 ///
@@ -31,7 +31,7 @@ public struct SplashView: View {
     private let onFinished: () -> Void
 
     /// `onExitStarted` fires the instant the splash commits to leaving, while it still fully
-    /// covers the screen — the moment for the caller to mount whatever is behind it, so the
+    /// covers the screen: the moment for the caller to mount whatever is behind it, so the
     /// wing-opening reveal uncovers real content rather than a blank frame. `onFinished`
     /// fires once it has cleared.
     public init(
@@ -50,7 +50,7 @@ public struct SplashView: View {
     @State private var shine: CGFloat = -1
     @State private var fade: Double = 1
 
-    /// `@State` mirrors so the exit trigger only ever reads live values — a captured `isReady`
+    /// `@State` mirrors so the exit trigger only ever reads live values: a captured `isReady`
     /// inside `.task` goes stale and would strand the splash on screen.
     @State private var readyLatch = false
     @State private var didSettle = false
@@ -145,7 +145,7 @@ public struct SplashView: View {
     SplashView(isReady: false, onFinished: {})
 }
 
-#Preview("Ready — butterfly opens") {
+#Preview("Ready: butterfly opens") {
     ZStack {
         Color.clear.backgroundGradient().ignoresSafeArea()
         SplashView(isReady: true, onFinished: {})

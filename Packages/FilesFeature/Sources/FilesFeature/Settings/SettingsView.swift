@@ -6,6 +6,8 @@ import Localization
 import SwiftUI
 
 private enum Metrics {
+    /// Settings rows are sparser than file rows, so on macOS they get a little more height.
+    static let macRowVerticalPadding: CGFloat = .space16
     /// Room under the version footer so the last rows clear the floating tab bar comfortably.
     static let listBottomPadding: CGFloat = .space48
 }
@@ -18,8 +20,7 @@ struct SettingsView: View {
     /// here, above every `.navigationDestination`, is the only spot a bottom overlay isn't
     /// occluded by a pushed screen, so those two views don't each need their own.
     @State private var userManagementToast: DSToastMessage?
-    @State private var tipToast: DSToastMessage?
-    /// View-local filter for the settings list — no reducer state needed, it only hides rows.
+    /// View-local filter for the settings list: no reducer state needed, it only hides rows.
     @State private var settingsSearch = ""
 
     private var filter: SettingsSearchFilter {
@@ -37,19 +38,14 @@ struct SettingsView: View {
         if isSplitViewDetail {
             return 0
         }
-        if #available(iOS 26.0, *) {
+        if #available(iOS 26.0, macOS 26.0, *) {
             return .size44 + .space8 + .space2
         }
         return .size44
     }
 
-    /// No op setters: each confirmation sheet is dismiss disabled and only closes through one
-    /// of `DSAlertSheet`'s own buttons, which drive the reducer directly. Sign out in
-    /// particular tears down this whole authenticated scope on confirm, so a SwiftUI initiated
-    /// dismiss action would land in a dead store.
-    private var isConfirmingSignOut: Binding<Bool> {
-        Binding(get: { store.isConfirmingSignOut }, set: { _ in })
-    }
+    // No op setters: each confirmation sheet is dismiss disabled and only closes through one
+    // of `DSAlertSheet`'s own buttons, which drive the reducer directly.
 
     private var isConfirmingRemoveAllDownloads: Binding<Bool> {
         Binding(get: { store.removeAllDownloadsConfirmationIsPresented }, set: { _ in })
@@ -59,41 +55,73 @@ struct SettingsView: View {
         Binding(get: { store.clearCacheConfirmationIsPresented }, set: { _ in })
     }
 
-    private var isConfirmingAccountRemoval: Binding<Bool> {
-        Binding(get: { store.accountPendingRemoval != nil }, set: { _ in })
-    }
-
     private var isConfirmingRemoveOffline: Binding<Bool> {
         Binding(get: { store.removeOfflineConfirmationIsPresented }, set: { _ in })
     }
 
+    /// The Mac shows Change Password as a window sheet (`AccountConfirmations`), opened from the
+    /// sidebar's account popover, so Settings never pushes it there.
+    private var changePasswordDestination: Binding<StoreOf<ChangePasswordFeature>?> {
+        AccountConfirmations.isHostedByWindow ? .constant(nil) : $store.scope(state: \.changePassword, action: \.changePassword)
+    }
+
     var body: some View {
-        NavigationStack {
-            List {
-                if !filter.isActive {
-                    SettingsAccountsSection(store: store)
-                    SettingsProfileSection(store: store)
-                }
-
-                GeneralSettingsSection(store: store, filter: filter)
-                DisplaySettingsSection(store: store, filter: filter)
-
-                if !filter.isActive {
-                    SettingsUsersSection(store: store)
-                    SettingsServerAdminSection(store: store)
-                    SettingsServerStorageSection(store: store)
-                }
-
-                StorageSettingsSection(store: store, filter: filter)
-                OfflineSettingsSection(store: store, filter: filter)
-                SupportSettingsSection(filter: filter)
-                LegalSettingsSection(filter: filter)
-                LicensesSettingsSection(store: store, filter: filter)
+        root
+        #if os(iOS)
+            .tint(Color.accent)
+        #endif
+            .dsToast(userManagementToastBinding)
+            .onChange(of: store.userManagement?.toast) { _, toast in
+                guard let toast else { return }
+                userManagementToast = .success(toast)
             }
-            .scrollContentBackground(.hidden)
-            .contentMargins(.bottom, Metrics.listBottomPadding, for: .scrollContent)
-            .backgroundGradient()
-            .dismissKeyboardOnTap()
+    }
+
+    private var root: some View {
+        #if os(macOS)
+            windowChrome(MacSettingsRoot(store: store))
+        #else
+            NavigationStack {
+                windowChrome(
+                    adminDestinations(offlineDestination(serverDetailsDestination(changePasswordDestinationView(
+                        settingsList {
+                            if !filter.isActive {
+                                SettingsAccountsSection(store: store)
+                                SettingsProfileSection(store: store)
+                            }
+
+                            GeneralSettingsSection(store: store, filter: filter)
+                            DisplaySettingsSection(store: store, filter: filter)
+
+                            if !filter.isActive {
+                                SettingsUsersSection(store: store)
+                                SettingsServerAdminSection(store: store)
+                                SettingsServerStorageSection(store: store)
+                            }
+
+                            StorageSettingsSection(store: store, filter: filter)
+                            OfflineSettingsSection(store: store, filter: filter)
+                            SupportSettingsSection(filter: filter)
+                            LegalSettingsSection(filter: filter)
+                            LicensesSettingsSection(store: store, filter: filter)
+                        }
+                    ))))
+                )
+            }
+        #endif
+    }
+
+    /// The grouped list every Settings page shares, with its title.
+    private func settingsList(@ViewBuilder _ sections: () -> some View) -> some View {
+        DSGroupedList {
+            sections()
+        }
+        .groupedListRowVerticalPadding(Metrics.macRowVerticalPadding)
+        .scrollContentBackground(.hidden)
+        .contentMargins(.bottom, Metrics.listBottomPadding, for: .scrollContent)
+        .backgroundGradient()
+        .dismissKeyboardOnTap()
+        #if os(iOS)
             .safeAreaInset(edge: .top, spacing: 0) {
                 PinnedTitleSearchHeader(
                     title: L10n.Settings.navigationTitle,
@@ -102,54 +130,53 @@ struct SettingsView: View {
                     showsSearchField: false
                 )
             }
-            .navigationDestination(
-                item: $store.scope(state: \.userManagement, action: \.userManagement)
-            ) { userManagementStore in
-                UserManagementView(store: userManagementStore)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.changePassword, action: \.changePassword)
-            ) { changePasswordStore in
-                ChangePasswordView(store: changePasswordStore)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.serverDetails, action: \.serverDetails)
-            ) { serverDetailsStore in
-                ServerDetailsView(store: serverDetailsStore)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings)
-            ) { thumbnailStore in
-                ThumbnailSettingsView(store: thumbnailStore)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.accessRules, action: \.accessRules)
-            ) { accessRulesStore in
-                AccessRulesView(store: accessRulesStore)
-            }
-            .navigationDestination(
-                item: $store.scope(state: \.offlineManage, action: \.offlineManage)
-            ) { manageStore in
-                OfflineManageView(store: manageStore)
-            }
             // Title lives in the pinned header (see `PinnedTitleSearchHeader`).
             .navigationTitle("")
             .navigationBarTitleDisplayMode(.inline)
-            .dsSheet(isPresented: isConfirmingSignOut) {
-                DSAlertSheet(
-                    icon: IconKit.signOut,
-                    title: L10n.Settings.signOutAlertTitle,
-                    message: L10n.Settings.signOutMessage,
-                    confirmTitle: L10n.Common.logOut,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    isConfirmLoading: store.isSigningOut,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.confirmSignOutTapped) },
-                    onDismiss: { store.send(.cancelSignOutTapped) }
-                )
+        #else
+            // The Settings window names itself; it has no pinned header.
+            .navigationTitle(L10n.Settings.navigationTitle)
+        #endif
+    }
+
+    private func serverDetailsDestination(_ content: some View) -> some View {
+        content.navigationDestination(item: $store.scope(state: \.serverDetails, action: \.serverDetails)) { serverDetailsStore in
+            ServerDetailsView(store: serverDetailsStore)
+        }
+    }
+
+    private func changePasswordDestinationView(_ content: some View) -> some View {
+        content.navigationDestination(item: changePasswordDestination) { changePasswordStore in
+            ChangePasswordView(store: changePasswordStore)
+        }
+    }
+
+    private func offlineDestination(_ content: some View) -> some View {
+        content.navigationDestination(item: $store.scope(state: \.offlineManage, action: \.offlineManage)) { manageStore in
+            OfflineManageView(store: manageStore)
+        }
+    }
+
+    private func adminDestinations(_ content: some View) -> some View {
+        content
+            .navigationDestination(item: $store.scope(state: \.userManagement, action: \.userManagement)) { userManagementStore in
+                UserManagementView(store: userManagementStore)
             }
-            .dsSheet(isPresented: isConfirmingRemoveAllDownloads) {
+            .navigationDestination(item: $store.scope(state: \.thumbnailSettings, action: \.thumbnailSettings)) { thumbnailStore in
+                ThumbnailSettingsView(store: thumbnailStore)
+            }
+            .navigationDestination(item: $store.scope(state: \.accessRules, action: \.accessRules)) { accessRulesStore in
+                AccessRulesView(store: accessRulesStore)
+            }
+    }
+
+    /// Confirmations, sheets and the load task, attached once around the whole Settings UI.
+    private func windowChrome(_ content: some View) -> some View {
+        content
+            // On the Mac the main window hosts these too, for its sidebar account menu; whichever
+            // window raised a prompt shows it.
+            .modifier(AccountConfirmations(store: store))
+            .dsAlert(isPresented: isConfirmingRemoveAllDownloads) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Settings.removeAllDownloadsTitle,
@@ -163,7 +190,7 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.removeAllDownloadsConfirmationIsPresented)
-            .dsSheet(isPresented: isConfirmingClearCache) {
+            .dsAlert(isPresented: isConfirmingClearCache) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Settings.clearCacheTitle,
@@ -177,26 +204,15 @@ struct SettingsView: View {
                 )
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
-            .dsSheet(isPresented: isConfirmingAccountRemoval) {
-                DSAlertSheet(
-                    icon: IconKit.signOut,
-                    title: L10n.Settings.accountSignOutTitle,
-                    message: L10n.Settings.accountSignOutMessage(store.accountPendingRemoval?.displayName ?? ""),
-                    confirmTitle: L10n.Common.logOut,
-                    dismissTitle: L10n.Common.cancel,
-                    role: .destructive,
-                    closeAccessibilityLabel: L10n.Common.close,
-                    onConfirm: { store.send(.removeAccountConfirmed) },
-                    onDismiss: { store.send(.removeAccountCancelled) }
-                )
-            }
-            .dsSheet(item: $store.scope(state: \.tipJar, action: \.tipJar)) { tipStore in
-                TipJarSheet(store: tipStore) { store.send(.tipJar(.dismiss)) }
-            }
+            .modifier(TipJarPresentation(store: store))
             .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
-                OfflineSelectionView(store: selectionStore)
+                #if os(macOS)
+                    MacOfflineSelectionSheet(store: selectionStore)
+                #else
+                    OfflineSelectionView(store: selectionStore)
+                #endif
             }
-            .dsSheet(isPresented: isConfirmingRemoveOffline) {
+            .dsAlert(isPresented: isConfirmingRemoveOffline) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.Offline.removeConfirmTitle,
@@ -218,23 +234,6 @@ struct SettingsView: View {
                     store.send(.refreshOfflineSize)
                 }
             }
-        }
-        .tint(Color.accent)
-        .dsToast(userManagementToastBinding)
-        .dsToast(tipToastBinding)
-        .onChange(of: store.userManagement?.toast) { _, toast in
-            guard let toast else { return }
-            userManagementToast = .success(toast)
-        }
-        .onChange(of: store.tipToast) { _, message in
-            guard let message else { return }
-            tipToast = .success(message)
-            store.send(.tipToastShown)
-        }
-    }
-
-    private var tipToastBinding: Binding<DSToastMessage?> {
-        Binding(get: { tipToast }, set: { tipToast = $0 })
     }
 
     private var userManagementToastBinding: Binding<DSToastMessage?> {
@@ -275,7 +274,7 @@ private func settingsPreview(
     settingsPreview()
 }
 
-#Preview("Accounts — multiple") {
+#Preview("Accounts: multiple") {
     @Shared(.inMemory(AccountSummary.sharedKey)) var accounts: [AccountSummary] = []
     $accounts.withLock {
         $0 = [
@@ -286,13 +285,13 @@ private func settingsPreview(
     return settingsPreview()
 }
 
-#Preview("Server storage — off") {
+#Preview("Server storage: off") {
     settingsPreview {
         $0.serverFeatures = { _ in ServerFeatures(isVolumeUsageEnabled: false) }
     }
 }
 
-#Preview("Server storage — loading") {
+#Preview("Server storage: loading") {
     settingsPreview {
         $0.fetchUsage = { _, _ in
             try? await Task.sleep(for: .seconds(30))
@@ -301,7 +300,7 @@ private func settingsPreview(
     }
 }
 
-#Preview("Server storage — filling up") {
+#Preview("Server storage: filling up") {
     settingsPreview {
         $0.fetchUsage = { _, path in
             StorageUsage(path: path, size: 78_000_000_000, free: 22_000_000_000, total: 100_000_000_000)
@@ -309,7 +308,7 @@ private func settingsPreview(
     }
 }
 
-#Preview("Server storage — nearly full") {
+#Preview("Server storage: nearly full") {
     settingsPreview {
         $0.fetchUsage = { _, path in
             StorageUsage(path: path, size: 96_000_000_000, free: 4_000_000_000, total: 100_000_000_000)

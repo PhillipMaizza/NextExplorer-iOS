@@ -7,12 +7,6 @@ import SwiftUI
 
 private enum Constants {
     static let rowIconSize: CGFloat = .iconMedium
-
-    @MainActor static let byteFormatter: ByteCountFormatter = {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .file
-        return formatter
-    }()
 }
 
 /// The "Manage Offline Files" screen: one row per pinned root with its size and a swipe-to-remove.
@@ -25,7 +19,7 @@ struct OfflineManageView: View {
                 EmptyStateView(icon: IconKit.cloud, message: L10n.Offline.manageEmpty)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
             } else {
-                List {
+                DSGroupedList {
                     Section {
                         ForEach(Array(store.usages.enumerated()), id: \.element.id) { index, usage in
                             OfflineManageRow(usage: usage, appearIndex: index) {
@@ -33,7 +27,7 @@ struct OfflineManageView: View {
                             }
                         }
                     } footer: {
-                        Text(L10n.Offline.available(Constants.byteFormatter.string(fromByteCount: store.totalBytes)))
+                        Text(L10n.Offline.available(FileSizeFormat.string(store.totalBytes)))
                             .type(.body3(.regular), style: .tertiary)
                     }
                     .listRowBackground(Color.backgroundSecondary)
@@ -84,14 +78,21 @@ private struct OfflineManageRow: View {
                 }
             }
             Spacer()
-            Text(Constants.byteFormatter.string(fromByteCount: usage.sizeBytes))
+            Text(FileSizeFormat.string(usage.sizeBytes))
                 .type(.body3(.regular), style: .tertiary)
                 .monospacedDigit()
         }
         .swipeActions(edge: .trailing) {
-            Button(role: .destructive, action: onRemove) {
-                Label(L10n.Common.remove, systemImage: "trash")
-            }
+            removeButton
+        }
+        #if os(macOS)
+        .contextMenu { removeButton }
+        #endif
+    }
+
+    private var removeButton: some View {
+        Button(role: .destructive, action: onRemove) {
+            Label { Text(L10n.Common.remove) } icon: { IconKit.delete }
         }
     }
 

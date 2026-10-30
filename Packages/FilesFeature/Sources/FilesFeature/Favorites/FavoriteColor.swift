@@ -26,7 +26,7 @@ enum FavoriteColor {
         Swatch(hex: "#d873fb", fill: 0xD873FB),
     ]
 
-    /// The colour a favorite's icon is tinted with. `nil` when no colour is set — the caller
+    /// The colour a favorite's icon is tinted with. `nil` when no colour is set: the caller
     /// falls back to `Color.accent`.
     static func resolve(_ hex: String?) -> Color? {
         guard let hex = hex?.trimmingCharacters(in: .whitespacesAndNewlines), !hex.isEmpty else { return nil }
