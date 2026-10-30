@@ -603,6 +603,31 @@ struct BrowseFeatureTests {
     }
 
     @Test
+    func queriesShorterThanTheServerMinimumKeepTheInstantMatchesWithoutASearchRequest() async {
+        let serverURL = URL(string: "https://example.com")!
+        let loaded = FileItem(name: "Payslips", path: "", dateModified: Date(), size: 0, kind: "directory")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Files")
+        state.items = [loaded]
+        let clock = TestClock()
+        let calls = LockIsolated(0)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.search = { _, _, _, _ in calls.withValue { $0 += 1 }; return [] }
+        }
+
+        // The backend answers 400 under three characters, so the instant match is all there is.
+        await store.send(.searchQueryChanged("pa")) {
+            $0.searchQuery = "pa"
+            $0.searchResults = [SearchResultItem(name: "Payslips", path: "", kind: "dir")]
+        }
+        await clock.advance(by: .seconds(2))
+        #expect(calls.value == 0)
+    }
+
+    @Test
     func matchingFavoritesShowInstantlyWithinTheScope() async {
         let serverURL = URL(string: "https://example.com")!
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
@@ -767,8 +792,9 @@ struct BrowseFeatureTests {
         }
         store.exhaustivity = .off
 
-        await store.send(.searchQueryChanged("v"))
-        await store.send(.searchQueryChanged("va"))
+        // Both at least the server's three characters, so both would really be sent.
+        await store.send(.searchQueryChanged("vac"))
+        await store.send(.searchQueryChanged("vaca"))
         await clock.advance(by: .seconds(1))
         await store.receive(\.searchResultsResponse.success)
         #expect(calls.value == 1)

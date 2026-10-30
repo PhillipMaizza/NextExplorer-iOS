@@ -217,7 +217,8 @@ public struct DestinationPickerFeature {
 
     /// Recursive folder search scoped to the subtree under `directoryPath`, debounced.
     private func search(_ state: inout State) -> Effect<Action> {
-        guard !state.searchQuery.isEmpty else {
+        // The server only searches from three characters on.
+        guard state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines).count >= FilesClient.minimumSearchTermLength else {
             state.searchResults = nil
             state.isSearching = false
             return .cancel(id: CancelID.search)

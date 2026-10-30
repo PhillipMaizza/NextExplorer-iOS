@@ -248,3 +248,9 @@ public extension FilesClient {
         return components?.url
     }
 }
+
+public extension FilesClient {
+    /// The shortest term `GET /api/search` accepts (`MIN_TERM_LENGTH` in backend
+    /// `routes/search.js`); a shorter one answers 400, so callers never send it.
+    static let minimumSearchTermLength = 3
+}

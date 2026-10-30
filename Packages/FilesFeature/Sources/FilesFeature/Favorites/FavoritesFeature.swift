@@ -497,7 +497,8 @@ public struct FavoritesFeature {
     /// authoritative for the ones that answered.
     private func favoriteSearch(_ state: inout State) -> Effect<Action> {
         let query = state.searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !query.isEmpty else {
+        // The server only searches from three characters on.
+        guard query.count >= FilesClient.minimumSearchTermLength else {
             state.fileSearchResults = nil
             state.searchPhase = .idle
             return .cancel(id: CancelID.search)

@@ -30,6 +30,11 @@ extension BrowseFeature {
             .map { SearchResultItem(name: $0.name, path: $0.path, kind: $0.isDirectory ? "dir" : "file") }
         let results = preliminary + Self.favoriteMatches(state, query: query)
         state.searchResults = IdentifiedArray(Self.sortedAlphabetically(results), id: \.id, uniquingIDsWith: { first, _ in first })
+        // The server only searches from three characters on; until then the instant matches stand.
+        guard query.count >= FilesClient.minimumSearchTermLength else {
+            state.isSearchingRemotely = false
+            return .cancel(id: CancelID.search)
+        }
         state.isSearchingRemotely = true
 
         // Both scopes hit the same recursive, content aware backend endpoint; only the base path
