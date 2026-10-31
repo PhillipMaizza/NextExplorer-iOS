@@ -711,3 +711,13 @@ menu.goToFolderTitle	Vai alla cartella:
 menu.copyPath	Copia percorso
 menu.recentFolders	Cartelle recenti
 menu.clearRecent	Cancella menu
+common.loading	Caricamento…
+browse.quickLookUnavailable	Quick Look non è disponibile per questo tipo di file.
+browse.quickLookTooLarge	Questo file è troppo grande per Quick Look.
+menu.zoomIn	Ingrandisci
+menu.zoomOut	Riduci
+menu.zoomToFit	Adatta alla finestra
+media.play	Riproduci
+media.pause	Pausa
+media.position	Posizione di riproduzione
+media.positionValue	%1$@ di %2$@

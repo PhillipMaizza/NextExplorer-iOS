@@ -25,9 +25,11 @@
 
         private func update() {
             let dockTile = NSApp.dockTile
-            dockTile.badgeLabel = remaining > 0 ? "\(remaining)" : nil
+            dockTile.badgeLabel = remaining > 0 ? remaining.formatted() : nil
             if let progress, remaining > 0 {
-                let view = dockTile.contentView as? DockProgressView ?? DockProgressView()
+                // A view made without a frame draws into an empty rect, so it gets the tile's size.
+                let view = dockTile.contentView as? DockProgressView
+                    ?? DockProgressView(frame: NSRect(origin: .zero, size: dockTile.size))
                 view.progress = progress
                 dockTile.contentView = view
             } else {

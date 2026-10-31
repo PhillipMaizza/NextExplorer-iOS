@@ -49,6 +49,9 @@ public struct FavoritesFeature {
         /// Browsing into a favorited folder pushes here, same shape as `BrowseTabFeature`:
         /// this keeps navigation inside the Favorites tab rather than jumping to Browse.
         public var path = StackState<BrowseFeature.State>()
+        /// Folders left by going back, nearest last, so Forward (⌘]) can reopen them. Opening
+        /// anything else clears it, as in Finder.
+        public var forwardStack: [BrowseFeature.State] = []
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
@@ -124,8 +127,13 @@ public struct FavoritesFeature {
         case bulkRemoveConfirmed
         case bulkRemoveResponse([String])
         case path(StackActionOf<BrowseFeature>)
-        /// Mac ⌘↑ / ⌘[: pop to the folder that contains the visible one.
+        /// Mac ⌘[: leave the visible folder for the screen under it.
+        case goBack
+        /// Mac ⌘↑: open the folder that contains the visible one, back to the list from a
+        /// favorite's own folder.
         case goToEnclosingFolder
+        /// Mac ⌘]: reopen the folder last left by going back.
+        case goForward
         case navigateToDirectory(path: String, title: String)
         /// Re-fetches every pushed subfolder currently on the live navigation stack: sent
         /// when the app becomes active again after being backgrounded.
@@ -167,9 +175,20 @@ public struct FavoritesFeature {
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .goBack:
+                state.goBack()
+                return .none
+
             case .goToEnclosingFolder:
-                guard let id = state.path.ids.last else { return .none }
-                state.path.pop(from: id)
+                state.goToEnclosingFolder(serverURL: state.serverURL, isFirstScreenTop: true)
+                return .none
+
+            case .goForward:
+                state.goForward()
+                return .none
+
+            case let .path(.popFrom(id)):
+                state.recordPop(from: id)
                 return .none
 
             case .onAppear:
@@ -217,6 +236,7 @@ public struct FavoritesFeature {
                 return .none
 
             case let .rowTapped(favorite):
+                state.forwardStack = []
                 state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: favorite.path, title: favorite.displayName))
                 return .none
 
@@ -316,6 +336,7 @@ public struct FavoritesFeature {
                 // scoped to the file's parent, seed `previewItem` so the cover has content on the
                 // first frame, then let `rowTapped` fetch it. `result.path` is the parent dir.
                 guard !result.isDirectory else {
+                    state.forwardStack = []
                     state.path.append(BrowseFeature.State(serverURL: state.serverURL, directoryPath: result.id, title: result.name))
                     return .none
                 }
@@ -393,6 +414,7 @@ public struct FavoritesFeature {
                 return .none
 
             case let .path(.element(id: _, action: .delegate(.openFolder(item)))):
+                state.forwardStack = []
                 state.path.append(BrowseNavigation.screen(for: item, serverURL: state.serverURL))
                 return .none
 
@@ -418,6 +440,7 @@ public struct FavoritesFeature {
                 return .merge(state.path.ids.map { .send(.path(.element(id: $0, action: .computeOfflineAvailability))) })
 
             case let .navigateToDirectory(path, title):
+                state.forwardStack = []
                 BrowseNavigation.jump(to: path, title: title, serverURL: state.serverURL, stack: &state.path)
                 return .none
 

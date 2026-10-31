@@ -711,3 +711,13 @@ menu.goToFolderTitle	Idź do folderu:
 menu.copyPath	Kopiuj ścieżkę
 menu.recentFolders	Ostatnie foldery
 menu.clearRecent	Wyczyść menu
+common.loading	Wczytywanie…
+browse.quickLookUnavailable	Szybki podgląd nie jest dostępny dla tego typu pliku.
+browse.quickLookTooLarge	Ten plik jest za duży na Szybki podgląd.
+menu.zoomIn	Powiększ
+menu.zoomOut	Pomniejsz
+menu.zoomToFit	Dopasuj do okna
+media.play	Odtwórz
+media.pause	Wstrzymaj
+media.position	Pozycja odtwarzania
+media.positionValue	%1$@ z %2$@

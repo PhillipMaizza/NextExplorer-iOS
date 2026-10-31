@@ -28,7 +28,7 @@
             }
             .overlay {
                 if store.phase == .loading, store.loaded == nil, !store.isUnavailable {
-                    ProgressView().controlSize(.small)
+                    MacSpinner()
                 }
             }
             .onAppear { store.send(.onAppear) }
@@ -89,7 +89,7 @@
                 }
                 .buttonStyle(.borderless)
                 .foregroundStyle(Color.negativeText)
-                .accessibilityLabel(L10n.AccessRules.remove)
+                .accessibilityLabelWithTooltip(L10n.AccessRules.remove)
             }
         }
 

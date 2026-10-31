@@ -785,3 +785,13 @@ menu.goToFolderTitle	Go to the folder:
 menu.copyPath	Copy Path
 menu.recentFolders	Recent Folders
 menu.clearRecent	Clear Menu
+common.loading	Loading…
+browse.quickLookUnavailable	Quick Look isn't available for this file type.
+browse.quickLookTooLarge	This file is too large for Quick Look.
+menu.zoomIn	Zoom In
+menu.zoomOut	Zoom Out
+menu.zoomToFit	Zoom to Fit
+media.play	Play
+media.pause	Pause
+media.position	Playback Position
+media.positionValue	%1$@ of %2$@

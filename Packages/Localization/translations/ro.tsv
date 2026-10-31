@@ -711,3 +711,13 @@ menu.goToFolderTitle	Mergi la dosarul:
 menu.copyPath	Copiază calea
 menu.recentFolders	Dosare recente
 menu.clearRecent	Golește meniul
+common.loading	Se încarcă…
+browse.quickLookUnavailable	Previzualizarea rapidă nu este disponibilă pentru acest tip de fișier.
+browse.quickLookTooLarge	Acest fișier este prea mare pentru previzualizarea rapidă.
+menu.zoomIn	Mărește
+menu.zoomOut	Micșorează
+menu.zoomToFit	Potrivește în fereastră
+media.play	Redă
+media.pause	Pauză
+media.position	Poziția redării
+media.positionValue	%1$@ din %2$@

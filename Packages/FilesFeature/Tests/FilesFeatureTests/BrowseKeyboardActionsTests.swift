@@ -166,6 +166,33 @@ struct BrowseKeyboardActionsTests {
         await store.send(.goToEnclosingFolder)
     }
 
+    @Test
+    func backLeavesTheVisibleScreenAndOffersForward() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        let deep = BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B/C", title: "C")
+        state.path.append(deep)
+        let store = TestStore(initialState: state) { BrowseTabFeature() }
+
+        await store.send(.goBack) {
+            $0.path.removeLast()
+            $0.forwardStack = [deep]
+        }
+    }
+
+    @Test
+    func enclosingFolderAfterAJumpOpensTheParentInPlace() async {
+        var state = BrowseTabFeature.State(serverURL: serverURL)
+        state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B/C", title: "C"))
+        state.forwardStack = [BrowseFeature.State(serverURL: serverURL, directoryPath: "X", title: "X")]
+        let store = TestStore(initialState: state) { BrowseTabFeature() }
+
+        await store.send(.goToEnclosingFolder) {
+            $0.path.removeLast()
+            $0.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "A/B", title: "B"))
+            $0.forwardStack = []
+        }
+    }
+
     // MARK: Drag onto a folder
 
     private nonisolated func folder(_ name: String, path: String = "Docs") -> FileItem {
@@ -228,6 +255,7 @@ struct BrowseKeyboardActionsTests {
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
+            $0.continuousClock = ImmediateClock()
             $0.filesClient.fetchMetadata = { _, path in
                 FileMetadata(path: path, name: "b.txt", kind: "txt", size: 0, dateModified: Date(timeIntervalSince1970: 1), dateCreated: Date(timeIntervalSince1970: 1))
             }
@@ -240,6 +268,31 @@ struct BrowseKeyboardActionsTests {
             $0.infoItem = b
         }
         await store.skipReceivedActions()
+    }
+
+    @Test
+    func anInspectorFollowingQuickSelectionChangesOnlyLoadsTheRowItSettlesOn() async {
+        let a = item("a.txt"), b = item("b.txt"), c = item("c.txt")
+        var state = makeState(items: [a, b, c], selected: [a], access: access())
+        state.infoItem = a
+        let clock = TestClock()
+        let fetched = LockIsolated<[String]>([])
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.continuousClock = clock
+            $0.filesClient.fetchMetadata = { _, path in
+                fetched.withValue { $0.append(path) }
+                return FileMetadata(path: path, name: "c.txt", kind: "txt", size: 0, dateModified: Date(timeIntervalSince1970: 1), dateCreated: Date(timeIntervalSince1970: 1))
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.tableSelectionChanged([b.id]))
+        await store.send(.tableSelectionChanged([c.id]))
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.infoMetadataResponse)
+        #expect(fetched.value == [c.id])
     }
 
     @Test

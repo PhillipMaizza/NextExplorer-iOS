@@ -35,6 +35,8 @@
             }
             .buttonStyle(.plain)
             .accessibilityLabel(L10n.Settings.sectionAccounts)
+            // The label is the signed in identity; VoiceOver reads it as the button's value.
+            .accessibilityValue(store.displayName)
             .popover(isPresented: $isPresented, arrowEdge: .bottom) {
                 MacAccountPopover(store: store) { action in
                     isPresented = false
@@ -150,6 +152,12 @@
                 ? L10n.Settings.accountActiveLabel(account.displayName, account.serverHost)
                 : L10n.Settings.accountLabel(account.displayName, account.serverHost))
             .accessibilityAddTraits(account.isActive ? .isSelected : .isButton)
+            // The tap gesture is pointer only; VoiceOver's press switches like a click does.
+            .accessibilityAction {
+                if !account.isActive {
+                    onSwitch()
+                }
+            }
             .accessibilityAction(named: L10n.Settings.accountSignOut, onSignOut)
         }
     }

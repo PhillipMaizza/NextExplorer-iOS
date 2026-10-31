@@ -711,3 +711,13 @@ menu.goToFolderTitle	الانتقال إلى المجلد:
 menu.copyPath	نسخ المسار
 menu.recentFolders	المجلدات الأخيرة
 menu.clearRecent	مسح القائمة
+common.loading	جارٍ التحميل…
+browse.quickLookUnavailable	المعاينة السريعة غير متاحة لهذا النوع من الملفات.
+browse.quickLookTooLarge	هذا الملف كبير جدًا على المعاينة السريعة.
+menu.zoomIn	تكبير
+menu.zoomOut	تصغير
+menu.zoomToFit	ملاءمة النافذة
+media.play	تشغيل
+media.pause	إيقاف مؤقت
+media.position	موضع التشغيل
+media.positionValue	%1$@ من %2$@

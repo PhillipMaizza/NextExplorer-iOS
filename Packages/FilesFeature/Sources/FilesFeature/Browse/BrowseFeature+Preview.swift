@@ -4,19 +4,28 @@ import FilesClient
 import Foundation
 
 extension BrowseFeature {
-    func loadInfo(_ state: inout State, item: FileItem) -> Effect<Action> {
+    /// `settle` holds the requests back a moment, for an inspector following the selection: arrow
+    /// keys skipping past rows then never ask the server for each one (a folder's size is a scan).
+    func loadInfo(_ state: inout State, item: FileItem, settle: Duration? = nil) -> Effect<Action> {
         state.infoItem = item
         state.infoMetadata = nil
         state.infoUsage = nil
         state.infoPhase = .loading
         let serverURL = state.serverURL
         let filesClient = filesClient
+        let clock = clock
         let path = item.id
         let metadata = Effect<Action>.run { send in
+            if let settle {
+                try await clock.sleep(for: settle)
+            }
             try await send(.infoMetadataResponse(apiResult { try await filesClient.fetchMetadata(serverURL, path) }))
         }
         guard item.isDirectory else { return metadata.cancellable(id: CancelID.info, cancelInFlight: true) }
         return .merge(metadata, .run { send in
+            if let settle {
+                try await clock.sleep(for: settle)
+            }
             try await send(.infoUsageResponse(apiResult { try await filesClient.fetchUsage(serverURL, path) }))
         })
         .cancellable(id: CancelID.info, cancelInFlight: true)
