@@ -444,30 +444,6 @@ jobs:
         with:
           xcode-version: '27.1'
 
-      - name: Start booting the simulator
-        # Started before the download so the boot (one to two minutes) overlaps it; the tests wait
-        # for it to finish below. Pin the destination to a concrete UDID and fully boot it before
-        # xcodebuild attaches.
-        # The recurring CI failure was a cold launch race ("Failed to send signal 19 to process")
-        # where xcodebuild could not SIGSTOP/resume the app on a not yet ready simulator; booting
-        # first and waiting for bootstatus avoids it.
-        run: |
-          set -euo pipefail
-          # Exact name on the newest iOS runtime: a plain name filter also matches "iPhone 17e".
-          UDID=$(xcrun simctl list devices available -j | python3 -c '
-          import json, os, sys
-          name = os.environ["SIM_DEVICE"]
-          devices = json.load(sys.stdin)["devices"]
-          runtimes = sorted((r for r in devices if ".iOS-" in r), reverse=True)
-          print(next((d["udid"] for r in runtimes for d in devices[r] if d["name"] == name), ""))
-          ')
-          if [ -z "${UDID}" ]; then
-            echo "No available '${SIM_DEVICE}' simulator on this runner"; exit 1
-          fi
-          echo "SIM_UDID=${UDID}" >> "${GITHUB_ENV}"
-          echo "Booting ${SIM_DEVICE} (${UDID})"
-          xcrun simctl boot "${UDID}" || true
-
       - name: Download UI test build
         uses: actions/download-artifact@v7
         with:
@@ -489,8 +465,30 @@ jobs:
       - name: Install xcbeautify
         run: brew install xcbeautify
 
-      - name: Wait for the simulator
-        run: xcrun simctl bootstatus "${SIM_UDID}" -b
+      - name: Boot simulator
+        # After the download, not during it: on a runner's few cores a booting simulator slowed the
+        # download and unpack by minutes. Pin the destination to a concrete UDID and fully boot it
+        # before xcodebuild attaches.
+        # The recurring CI failure was a cold launch race ("Failed to send signal 19 to process")
+        # where xcodebuild could not SIGSTOP/resume the app on a not yet ready simulator; booting
+        # first and waiting for bootstatus avoids it.
+        run: |
+          set -euo pipefail
+          # Exact name on the newest iOS runtime: a plain name filter also matches "iPhone 17e".
+          UDID=$(xcrun simctl list devices available -j | python3 -c '
+          import json, os, sys
+          name = os.environ["SIM_DEVICE"]
+          devices = json.load(sys.stdin)["devices"]
+          runtimes = sorted((r for r in devices if ".iOS-" in r), reverse=True)
+          print(next((d["udid"] for r in runtimes for d in devices[r] if d["name"] == name), ""))
+          ')
+          if [ -z "${UDID}" ]; then
+            echo "No available '${SIM_DEVICE}' simulator on this runner"; exit 1
+          fi
+          echo "SIM_UDID=${UDID}" >> "${GITHUB_ENV}"
+          echo "Booting ${SIM_DEVICE} (${UDID})"
+          xcrun simctl boot "${UDID}" || true
+          xcrun simctl bootstatus "${UDID}" -b
 
       - name: Run XCUITests
         # One simulator, no parallel clones: the scheme marks the UI tests parallelizable, which
