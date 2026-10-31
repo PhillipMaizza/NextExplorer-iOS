@@ -36,6 +36,19 @@
             store.uploads.failedCount + store.downloadQueue.failedCount > 0
         }
 
+        private var accessibilityStatus: String {
+            if let progress {
+                return progress.formatted(.percent.precision(.fractionLength(0)))
+            }
+            if store.uploads.failedCount > 0 {
+                return TransferFailureText.uploads(store.uploads.failedCount)
+            }
+            if store.downloadQueue.failedCount > 0 {
+                return TransferFailureText.downloads(store.downloadQueue.failedCount)
+            }
+            return ""
+        }
+
         var body: some View {
             Button { isShowingPopover.toggle() } label: {
                 ZStack {
@@ -51,6 +64,8 @@
                 }
             }
             .accessibilityLabelWithTooltip(L10n.Menu.activity)
+            // The ring and the error glyph only show it, so VoiceOver hears the same state.
+            .accessibilityValue(accessibilityStatus)
             .popover(isPresented: $isShowingPopover, arrowEdge: .bottom) {
                 MacTransferActivityPopover(store: store)
             }
@@ -72,7 +87,7 @@
                         isActive: store.uploads.isActive,
                         title: titles.uploadBarTitle,
                         progress: store.uploads.overallProgress,
-                        failedLabel: store.uploads.failedCount == 1 ? L10n.Uploads.barFailedOne : L10n.Uploads.barFailedMany(store.uploads.failedCount),
+                        failedLabel: TransferFailureText.uploads(store.uploads.failedCount),
                         cancelTitle: L10n.Uploads.cancelAll,
                         onCancel: { store.send(.uploads(.cancelAllTapped)) },
                         onRetry: { store.send(.uploads(.retryAllFailedTapped)) },
@@ -90,7 +105,7 @@
                         isActive: queue.isActive,
                         title: titles.downloadBarTitle,
                         progress: queue.currentJob?.progress,
-                        failedLabel: queue.failedCount == 1 ? L10n.DownloadQueue.barFailedOne : L10n.DownloadQueue.barFailedMany(queue.failedCount),
+                        failedLabel: TransferFailureText.downloads(queue.failedCount),
                         cancelTitle: L10n.DownloadQueue.cancelAll,
                         onCancel: { store.send(.downloadQueue(.cancelAllTapped)) },
                         onRetry: { store.send(.downloadQueue(.retryAllFailedTapped)) },
@@ -145,6 +160,17 @@
         }
     }
 
+    /// "1 upload failed" or "N uploads failed", and the same for downloads.
+    private enum TransferFailureText {
+        static func uploads(_ count: Int) -> String {
+            count == 1 ? L10n.Uploads.barFailedOne : L10n.Uploads.barFailedMany(count)
+        }
+
+        static func downloads(_ count: Int) -> String {
+            count == 1 ? L10n.DownloadQueue.barFailedOne : L10n.DownloadQueue.barFailedMany(count)
+        }
+    }
+
     /// A system notification when the upload or download queue finishes while the app is in
     /// the background, so a long transfer needs no watching.
     struct MacTransferNotifications: ViewModifier {
@@ -161,7 +187,7 @@
                 .onChange(of: uploadsRemaining) { old, new in
                     uploadBatch = finished(old: old, new: new, batch: uploadBatch) { count in
                         notify(
-                            title: uploadsFailed > 0 ? L10n.Uploads.barFailedMany(uploadsFailed) : L10n.Uploads.notifyDone,
+                            title: uploadsFailed > 0 ? TransferFailureText.uploads(uploadsFailed) : L10n.Uploads.notifyDone,
                             body: L10n.Uploads.notifyBody(count)
                         )
                     }
@@ -169,7 +195,7 @@
                 .onChange(of: downloadsRemaining) { old, new in
                     downloadBatch = finished(old: old, new: new, batch: downloadBatch) { count in
                         notify(
-                            title: downloadsFailed > 0 ? L10n.DownloadQueue.barFailedMany(downloadsFailed) : L10n.DownloadQueue.notifyDone,
+                            title: downloadsFailed > 0 ? TransferFailureText.downloads(downloadsFailed) : L10n.DownloadQueue.notifyDone,
                             body: count == 1 ? L10n.DownloadQueue.savedOne : L10n.DownloadQueue.savedMany(count)
                         )
                     }

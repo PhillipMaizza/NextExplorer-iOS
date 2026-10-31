@@ -54,6 +54,10 @@
             .menuStyle(.button)
             .labelStyle(.titleAndIcon)
             .fixedSize()
+            // The filled glyph alone says a filter is on; VoiceOver hears which kinds.
+            .accessibilityValue(selectedCategories.isEmpty
+                ? L10n.Filter.all
+                : availableCategories.filter(selectedCategories.contains).map(\.title).formatted(.list(type: .and)))
         }
     }
 

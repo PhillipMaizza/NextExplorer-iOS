@@ -711,3 +711,13 @@ menu.goToFolderTitle	फ़ोल्डर पर जाएँ:
 menu.copyPath	पथ कॉपी करें
 menu.recentFolders	हाल के फ़ोल्डर
 menu.clearRecent	मेनू साफ़ करें
+common.loading	लोड हो रहा है…
+browse.quickLookUnavailable	इस फ़ाइल प्रकार के लिए क्विक लुक उपलब्ध नहीं है।
+browse.quickLookTooLarge	यह फ़ाइल क्विक लुक के लिए बहुत बड़ी है।
+menu.zoomIn	ज़ूम इन
+menu.zoomOut	ज़ूम आउट
+menu.zoomToFit	विंडो में फ़िट करें
+media.play	चलाएँ
+media.pause	रोकें
+media.position	प्लेबैक स्थिति
+media.positionValue	%2$@ में से %1$@

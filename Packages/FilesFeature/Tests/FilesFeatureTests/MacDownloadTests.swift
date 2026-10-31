@@ -4,6 +4,7 @@
     import FilesClient
     @testable import FilesFeature
     import Foundation
+    import Localization
     import Testing
 
     @MainActor
@@ -97,6 +98,66 @@
             await store.receive(\.downloadResponse.success)
             #expect(try String(contentsOf: target.appendingPathComponent("a.jpg"), encoding: .utf8) == "photo")
             #expect(try String(contentsOf: target.appendingPathComponent("Day1/note.txt"), encoding: .utf8) == "note")
+        }
+
+        @Test
+        func aFailedFolderSaveKeepsTheFolderAlreadyThere() async throws {
+            let folder = FileItem(name: "Trip", path: "", dateModified: Date(), size: 0, kind: "directory")
+            let photo = FileItem(name: "a.jpg", path: "Trip", dateModified: Date(), size: 1, kind: "jpg")
+            let target = try temporaryFolder().appendingPathComponent("Trip")
+            try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
+            let kept = try cachedFile("keep.txt", contents: "keep", in: target)
+            let access = access
+
+            let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Home")) {
+                BrowseFeature()
+            } withDependencies: {
+                $0.saveLocationPicker.chooseFile = { _ in target }
+                $0.filesClient.browse = { _, path in BrowseResult(items: [photo], access: access, path: path) }
+                $0.filesClient.downloadRawFile = { _, _ in throw URLError(.networkConnectionLost) }
+            }
+            store.exhaustivity = .off
+
+            await store.send(.downloadTapped(folder))
+            await store.receive(\.downloadResponse.failure)
+            #expect(try String(contentsOf: kept, encoding: .utf8) == "keep")
+        }
+
+        @Test
+        func aSavedFolderReplacesTheOneThere() async throws {
+            let folder = FileItem(name: "Trip", path: "", dateModified: Date(), size: 0, kind: "directory")
+            let photo = FileItem(name: "a.jpg", path: "Trip", dateModified: Date(), size: 1, kind: "jpg")
+            let photoData = try cachedFile("a.jpg", contents: "photo", in: temporaryFolder())
+            let target = try temporaryFolder().appendingPathComponent("Trip")
+            try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
+            let stale = try cachedFile("old.txt", contents: "old", in: target)
+            let access = access
+
+            let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Home")) {
+                BrowseFeature()
+            } withDependencies: {
+                $0.saveLocationPicker.chooseFile = { _ in target }
+                $0.filesClient.browse = { _, path in BrowseResult(items: [photo], access: access, path: path) }
+                $0.filesClient.downloadRawFile = { _, _ in photoData }
+            }
+            store.exhaustivity = .off
+
+            await store.send(.downloadTapped(folder))
+            await store.receive(\.downloadResponse.success)
+            #expect(try String(contentsOf: target.appendingPathComponent("a.jpg"), encoding: .utf8) == "photo")
+            #expect(!FileManager.default.fileExists(atPath: stale.path))
+        }
+
+        @Test
+        func spaceRefusesArchivesAndLargeFilesUnlessSavedOffline() {
+            let archive = FileItem(name: "backup.7z", path: "", dateModified: Date(), size: 10, kind: "7z")
+            let movie = FileItem(name: "movie.mp4", path: "", dateModified: Date(), size: MacQuickLookPolicy.byteLimit + 1, kind: "mp4")
+            let photo = FileItem(name: "a.jpg", path: "", dateModified: Date(), size: 1_000, kind: "jpg")
+
+            #expect(MacQuickLookPolicy.refusal(for: archive, isSavedOffline: false) == L10n.Browse.quickLookUnavailable)
+            #expect(MacQuickLookPolicy.refusal(for: movie, isSavedOffline: false) == L10n.Browse.quickLookTooLarge)
+            #expect(MacQuickLookPolicy.refusal(for: movie, isSavedOffline: true) == nil)
+            #expect(MacQuickLookPolicy.refusal(for: photo, isSavedOffline: false) == nil)
         }
     }
 #endif

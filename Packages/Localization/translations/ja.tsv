@@ -711,3 +711,13 @@ menu.goToFolderTitle	フォルダへ移動:
 menu.copyPath	パスをコピー
 menu.recentFolders	最近使ったフォルダ
 menu.clearRecent	メニューを消去
+common.loading	読み込み中…
+browse.quickLookUnavailable	このファイルの種類ではクイックルックを使用できません。
+browse.quickLookTooLarge	このファイルはクイックルックで表示するには大きすぎます。
+menu.zoomIn	拡大
+menu.zoomOut	縮小
+menu.zoomToFit	ウインドウに合わせる
+media.play	再生
+media.pause	一時停止
+media.position	再生位置
+media.positionValue	%1$@ / %2$@

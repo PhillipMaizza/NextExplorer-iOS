@@ -52,6 +52,8 @@
         /// personal folders on. Its id is the `personal` path space, which is never a volume.
         var personalSpace: FileItem?
         var onOpenPersonalSpace: () -> Void = {}
+        /// Space on a file Quick Look can't show: the reason, for the screen's toast.
+        var onQuickLookUnavailable: (String) -> Void = { _ in }
 
         @Dependency(\.filesClient) private var filesClient
         @AppStorage(AppStorageKeys.dateDisplayFormat) private var dateFormatRaw = DateDisplayFormat.system.rawValue
@@ -77,6 +79,9 @@
                             Text(isPersonalSpace(item) ? L10n.Browse.myFiles : item.name)
                                 .lineLimit(1)
                                 .truncationMode(.middle)
+                                // A cut row is only dimmed on screen; VoiceOver says so in words.
+                                // On the name alone, never the rename field, whose value is its text.
+                                .accessibilityValue(cutItemIDs.contains(item.id) ? L10n.Browse.actionCut : "")
                         }
                         if offlineItemIDs.contains(item.id) {
                             MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)
@@ -155,6 +160,9 @@
             .focused($isFocused)
             .focusEffectDisabled()
             .onAppear { isFocused = true }
+            // The panel is the app's shared one; leaving the folder must not leave it showing a
+            // file from here, or a download running for it.
+            .onDisappear(perform: closeQuickLook)
             // Finder conventions: Space toggles Quick Look on a file (and Get Info on a folder, which
             // a double click opens), Return renames, Delete deletes; Edit menu Cut/Copy/Paste/Select
             // All and ⌘I reach the selection through the focused value.
@@ -178,17 +186,30 @@
                     closeQuickLook()
                 }
             }
-            // Finder's ⌘↓ opens the selection.
-            .onKeyPress(.downArrow, phases: .down) { press in
-                guard press.modifiers == .command, selection.count == 1 else { return .ignored }
-                keyboardActions.open()
-                return .handled
+            // Finder's ⌘↓ opens the selection. A key equivalent, since the table takes arrow
+            // keys before `onKeyPress` sees them; live only while the table has focus.
+            .background {
+                Button(L10n.Browse.open) {
+                    if selection.count == 1 {
+                        keyboardActions.open()
+                    }
+                }
+                .keyboardShortcut(.downArrow, modifiers: .command)
+                .disabled(!isFocused)
+                .opacity(0)
+                .allowsHitTesting(false)
+                .accessibilityHidden(true)
             }
             .onDeleteCommand { keyboardActions.delete() }
             .focusedValue(\.browseKeyboardActions, keyboardActions)
         }
 
         private func quickLook(_ item: FileItem) {
+            if let reason = MacQuickLookPolicy.refusal(for: item, isSavedOffline: offlineItemIDs.contains(item.id)) {
+                closeQuickLook()
+                onQuickLookUnavailable(reason)
+                return
+            }
             isQuickLooking = true
             quickLookTask?.cancel()
             quickLookTask = Task {
@@ -210,6 +231,7 @@
         private func closeQuickLook() {
             isQuickLooking = false
             quickLookTask?.cancel()
+            quickLookTask = nil
             quickLookPanel.close()
         }
 
@@ -236,7 +258,7 @@
         }
 
         private func item(for id: FileItem.ID?) -> FileItem? {
-            items.first { $0.id == id }
+            id.flatMap { items[id: $0] }
         }
 
         private func icon(for item: FileItem) -> some View {

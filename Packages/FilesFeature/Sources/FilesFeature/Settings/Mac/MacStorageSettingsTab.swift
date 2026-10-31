@@ -58,7 +58,7 @@
                         ProgressView(value: usage.fraction).frame(width: Metrics.usageBarWidth)
                     }
                 } else if row.usage == nil {
-                    ProgressView().controlSize(.small)
+                    MacSpinner()
                 }
             }
         }

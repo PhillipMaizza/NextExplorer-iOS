@@ -31,6 +31,8 @@ public struct BrowseFeature {
         /// cover finishes dismissing first and the effect: a row sliding out, a tab switch:
         /// plays on the list the user is now looking at, not mid transition.
         static let previewActionSettleDelay: Duration = .milliseconds(350)
+        /// How long the Mac inspector waits on a newly selected row before loading it.
+        static let inspectorFollowDelay: Duration = .milliseconds(200)
     }
 
     /// Where `.searchable`'s scope bar points the search request. "This Folder" is
@@ -1176,7 +1178,7 @@ public struct BrowseFeature {
                 guard state.infoItem != nil, ids.count == 1,
                       let item = selectedItems(state).first, item.id != state.infoItem?.id
                 else { return .none }
-                return loadInfo(&state, item: item)
+                return loadInfo(&state, item: item, settle: Constants.inspectorFollowDelay)
 
             case .copySelectionTapped:
                 let items = selectedItems(state)

@@ -28,6 +28,8 @@
                             tint: FavoriteColor.resolve(favorite.color) ?? Color.accent,
                             isFilled: FavoriteIcon.isFilled(favorite.icon)
                         )
+                        // Decorative: a symbol's own name ("star", "house") is not the favorite's.
+                        .accessibilityHidden(true)
                         Text(favorite.displayName).lineLimit(1).truncationMode(.middle)
                         if store.offlineFavoriteIDs.contains(favorite.id) {
                             MacTableFolderIcon(image: IconKit.download, tint: Color.accent, size: MacBrowseTableMetrics.badgeSize)

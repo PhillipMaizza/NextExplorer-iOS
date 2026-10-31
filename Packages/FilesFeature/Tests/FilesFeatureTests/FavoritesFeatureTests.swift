@@ -762,4 +762,21 @@ struct FavoritesFeatureTests {
         await clock.advance(by: .seconds(1))
         await store.finish()
     }
+
+    @Test
+    func enclosingFolderFromAFavoritesOwnFolderReturnsToTheListAndForwardReopensIt() async {
+        var state = FavoritesFeature.State(serverURL: serverURL)
+        let folder = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs/Work", title: "Work")
+        state.path.append(folder)
+        let store = TestStore(initialState: state) { FavoritesFeature() }
+
+        await store.send(.goToEnclosingFolder) {
+            $0.path.removeLast()
+            $0.forwardStack = [folder]
+        }
+        await store.send(.goForward) {
+            $0.forwardStack = []
+            $0.path.append(folder)
+        }
+    }
 }

@@ -27,22 +27,29 @@
         /// After a change that touches the file or its folder, so the listing refreshes.
         @ObservationIgnored var onFilesChanged: () -> Void = {}
 
-        /// Older servers have no versions route; `history` stays nil and the section hidden.
-        func load(item: FileItem, serverURL: URL) async {
+        /// Older servers have no versions route; `history` stays nil and the section hidden. The
+        /// previous file's history clears at once, so nothing acts on it during `settle`.
+        func load(item: FileItem, serverURL: URL, settle: Duration = .zero) async {
             self.item = item
             self.serverURL = serverURL
             history = nil
             errorMessage = nil
             guard !item.isDirectory else { return }
+            if settle > .zero {
+                try? await Task.sleep(for: settle)
+                guard !Task.isCancelled else { return }
+            }
             let loaded = try? await filesClient.fetchVersions(serverURL, item.id)
             guard !Task.isCancelled, self.item?.id == item.id else { return }
             history = loaded
         }
 
-        func restoreConfirmed() {
-            guard let version = versionToRestore else { return }
+        /// The confirmations hand their version in: an alert may clear its binding before the
+        /// button's action runs.
+        @discardableResult
+        func restoreConfirmed(_ version: FileVersion) -> Task<Void, Never>? {
             versionToRestore = nil
-            perform(changesFiles: true) { client, serverURL, path in
+            return perform(changesFiles: true) { client, serverURL, path in
                 try await client.restoreVersion(serverURL, path, version.id)
             }
         }
@@ -59,8 +66,7 @@
             versionToRename = version
         }
 
-        func renameConfirmed() {
-            guard let version = versionToRename else { return }
+        func renameConfirmed(_ version: FileVersion) {
             versionToRename = nil
             let label = renameDraft.trimmingCharacters(in: .whitespacesAndNewlines)
             perform { client, serverURL, path in
@@ -74,8 +80,7 @@
             }
         }
 
-        func deleteConfirmed() {
-            guard let version = versionToDelete else { return }
+        func deleteConfirmed(_ version: FileVersion) {
             versionToDelete = nil
             perform { client, serverURL, path in
                 try await client.deleteVersions(serverURL, path, [version.id], false)
@@ -100,21 +105,29 @@
             }
         }
 
+        /// Runs one change, then reloads the history. The task is handed back for tests to await.
+        @discardableResult
         private func perform(
             changesFiles: Bool = false,
             _ operation: @escaping @Sendable (FilesClient, URL, String) async throws -> Void
-        ) {
-            guard let serverURL, let item else { return }
+        ) -> Task<Void, Never>? {
+            guard let serverURL, let item else { return nil }
             let client = filesClient
-            Task {
+            let onFilesChanged = onFilesChanged
+            return Task {
                 do {
                     try await operation(client, serverURL, item.id)
-                    errorMessage = nil
-                    history = try? await client.fetchVersions(serverURL, item.id)
                     if changesFiles {
                         onFilesChanged()
                     }
+                    let refreshed = try? await client.fetchVersions(serverURL, item.id)
+                    // The selection may have moved on while this ran; never paint this file's
+                    // history over the next one's.
+                    guard self.item?.id == item.id else { return }
+                    errorMessage = nil
+                    history = refreshed
                 } catch {
+                    guard self.item?.id == item.id else { return }
                     errorMessage = (error as? FilesClientError)?.userMessage ?? error.localizedDescription
                 }
             }
@@ -140,23 +153,21 @@
 
         func body(content: Content) -> some View {
             content
-                .alert(L10n.FileInfo.restoreTitle, isPresented: isPresented(\.versionToRestore)) {
-                    Button(L10n.FileInfo.restoreConfirm) { model.restoreConfirmed() }
+                .alert(L10n.FileInfo.restoreTitle, isPresented: isPresented(\.versionToRestore), presenting: model.versionToRestore) { version in
+                    Button(L10n.FileInfo.restoreConfirm) { model.restoreConfirmed(version) }
                     Button(L10n.Common.cancel, role: .cancel) {}
-                } message: {
-                    if let version = model.versionToRestore {
-                        Text(L10n.FileInfo.restoreMessage(MacVersionsModel.date(version.modifiedAt)))
-                    }
+                } message: { version in
+                    Text(L10n.FileInfo.restoreMessage(MacVersionsModel.date(version.modifiedAt)))
                 }
-                .alert(L10n.FileInfo.renameTitle, isPresented: isPresented(\.versionToRename)) {
+                .alert(L10n.FileInfo.renameTitle, isPresented: isPresented(\.versionToRename), presenting: model.versionToRename) { version in
                     TextField(L10n.FileInfo.renamePlaceholder, text: $model.renameDraft)
-                    Button(L10n.Common.save) { model.renameConfirmed() }
+                    Button(L10n.Common.save) { model.renameConfirmed(version) }
                     Button(L10n.Common.cancel, role: .cancel) {}
                 }
-                .alert(L10n.FileInfo.deleteTitle, isPresented: isPresented(\.versionToDelete)) {
-                    Button(L10n.Common.delete, role: .destructive) { model.deleteConfirmed() }
+                .alert(L10n.FileInfo.deleteTitle, isPresented: isPresented(\.versionToDelete), presenting: model.versionToDelete) { version in
+                    Button(L10n.Common.delete, role: .destructive) { model.deleteConfirmed(version) }
                     Button(L10n.Common.cancel, role: .cancel) {}
-                } message: {
+                } message: { _ in
                     Text(L10n.FileInfo.deleteMessage)
                 }
                 .alert(L10n.FileInfo.deleteAllTitle, isPresented: $model.isConfirmingDeleteAll) {

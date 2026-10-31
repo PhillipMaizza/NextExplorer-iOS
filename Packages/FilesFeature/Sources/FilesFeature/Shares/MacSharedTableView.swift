@@ -15,6 +15,7 @@
         static let dateColumnMinWidth: CGFloat = 120
         static let dateColumnIdealWidth: CGFloat = 160
         static let deletingOpacity: Double = 0.4
+        static let expiredBadgeFillOpacity: Double = 0.15
     }
 
     /// One Shared segment as a Mac table, matching Browse's: sortable columns backed by the
@@ -68,6 +69,9 @@
                 // The table's scroll view otherwise draws its header material up under the pinned title.
                 .clipped()
                 .allowsHitTesting(!isLoading)
+                // The placeholder rows carry made up names; VoiceOver skips them, as it does
+                // Browse's skeleton table.
+                .accessibilityHidden(isLoading)
                 .focused($isFocused)
                 .focusEffectDisabled()
                 .onAppear { isFocused = true }
@@ -137,7 +141,7 @@
                 TableColumn(L10n.Shared.metaExpiration, value: \.expirySortDate) { share in
                     Text(expiryText(for: share))
                         .lineLimit(1)
-                        .foregroundStyle(store.state.isExpired(share) ? Color.negative : Color.secondaryDS)
+                        .foregroundStyle(store.state.isExpired(share) ? Color.negativeText : Color.secondaryDS)
                         .modifier(PlaceholderCell(isActive: isLoading))
                         .opacity(opacity(for: share))
                 }
@@ -300,8 +304,10 @@
                 .type(.caption(.semibold), style: .error)
                 .padding(.horizontal, SharedLinkMetrics.badgeHorizontalPadding)
                 .padding(.vertical, SharedLinkMetrics.badgeVerticalPadding)
-                .background(RoundedRectangle(cornerRadius: .radiusXSmall).fill(Color.negative.opacity(0.15)))
+                .background(RoundedRectangle(cornerRadius: .radiusXSmall).fill(Color.negative.opacity(Metrics.expiredBadgeFillOpacity)))
                 .fixedSize()
+                // Read as the word, not spelled out as capitals.
+                .accessibilityLabel(L10n.Shared.badgeExpired)
         }
     }
 

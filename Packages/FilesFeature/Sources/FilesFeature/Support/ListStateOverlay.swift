@@ -96,26 +96,33 @@ struct ListStateOverlay: View {
 
     var body: some View {
         ZStack {
+            // Each state stays mounted so the swap crossfades; a hidden one is also hidden from
+            // VoiceOver, which otherwise reads every message over the loaded list.
             EmptyStateView(
                 icon: IconKit.warning,
                 message: errorMessage ?? "",
                 retry: onRetry
             )
-            .opacity(
-                phase == .error && errorMessage != nil ? 1 : 0
-            )
+            .shown(phase == .error && errorMessage != nil)
 
             EmptyStateView(icon: emptyIcon, message: emptyMessage)
-                .opacity(phase == .empty ? 1 : 0)
+                .shown(phase == .empty)
 
             EmptyStateView(icon: IconKit.search, message: noResultsMessage)
-                .opacity(phase == .noResults ? 1 : 0)
+                .shown(phase == .noResults)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .offset(y: pullOffset)
         // Let list-row taps through whenever the list itself is on screen; capture them (and
         // keep the retry button live) only while a placeholder is up.
         .allowsHitTesting(phase.isPlaceholder)
+    }
+}
+
+private extension View {
+    func shown(_ isShown: Bool) -> some View {
+        opacity(isShown ? 1 : 0)
+            .accessibilityHidden(!isShown)
     }
 }
 

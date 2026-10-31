@@ -49,7 +49,34 @@
         public var body: some View {
             BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
                 .windowTitle(store.browse.path.last?.title ?? store.browse.root.title)
+                .focusedSceneValue(\.folderWindowCommands, FolderWindowCommands { store.send(.browse($0)) })
         }
+    }
+
+    /// The Go menu and New Folder for an extra Browse window, so with that window in front they
+    /// act on it rather than on the main window.
+    public struct FolderWindowCommands {
+        let send: (BrowseTabFeature.Action) -> Void
+
+        public func back() {
+            send(.goBack)
+        }
+
+        public func forward() {
+            send(.goForward)
+        }
+
+        public func enclosingFolder() {
+            send(.goToEnclosingFolder)
+        }
+
+        public func newFolder() {
+            send(.newFolderInVisibleFolder)
+        }
+    }
+
+    public extension FocusedValues {
+        @Entry var folderWindowCommands: FolderWindowCommands?
     }
 
     #Preview {

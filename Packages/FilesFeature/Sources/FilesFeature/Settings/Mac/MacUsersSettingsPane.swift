@@ -125,7 +125,7 @@
         @ViewBuilder
         private var listOverlay: some View {
             if store.phase == .loading, store.users.isEmpty {
-                ProgressView().controlSize(.small)
+                MacSpinner()
             } else if let error = store.phase.errorMessage, store.users.isEmpty {
                 VStack(spacing: .space8) {
                     Text(error).foregroundStyle(.secondary).multilineTextAlignment(.center)
@@ -144,10 +144,10 @@
         private var detail: some View {
             if let user = store.detailUser {
                 MacUserDetailForm(store: store, user: user)
-            } else if !store.users.isEmpty || store.phase != .loading {
+            } else if store.users.isEmpty, store.phase != .loading {
+                // Only when there is truly nobody: a transparent copy would still be read aloud.
                 Text(L10n.UserManagement.emptyList)
                     .foregroundStyle(.secondary)
-                    .opacity(store.users.isEmpty ? 1 : 0)
             }
         }
     }

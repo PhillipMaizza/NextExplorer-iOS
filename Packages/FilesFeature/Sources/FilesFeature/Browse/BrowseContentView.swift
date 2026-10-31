@@ -728,7 +728,8 @@ struct BrowseContentView: View {
                 onRenameCommit: { store.send(.renameConfirmed($0)) },
                 onRenameCancel: { store.send(.renameCancelled) },
                 personalSpace: showsPersonalSpace ? Self.macPersonalSpaceItem : nil,
-                onOpenPersonalSpace: { store.send(.personalSpaceTapped) }
+                onOpenPersonalSpace: { store.send(.personalSpaceTapped) },
+                onQuickLookUnavailable: { toastMessage = DSToastMessage(icon: IconKit.warning, text: $0) }
             )
             .focusedSceneValue(\.browseViewOptions, BrowseViewOptions(
                 sortOption: store.sortOption,

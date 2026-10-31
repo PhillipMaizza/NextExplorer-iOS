@@ -73,21 +73,24 @@
             }
             let files = try await OfflineDownloadsFeature.enumerate(roots: [item], serverURL: serverURL, filesClient: filesClient)
             let fileManager = FileManager.default
-            if fileManager.fileExists(atPath: destination.path) {
-                try fileManager.removeItem(at: destination)
-            }
-            try fileManager.createDirectory(at: destination, withIntermediateDirectories: true)
+            // The tree is built in a scratch folder and only replaces `destination` once every
+            // file is down, so a failed or cancelled save never costs the folder already there.
+            let staging = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+            defer { try? fileManager.removeItem(at: staging) }
+            try fileManager.createDirectory(at: staging, withIntermediateDirectories: true)
             let rootPrefix = item.id + "/"
             for (index, file) in files.enumerated() {
                 try Task.checkCancellation()
                 await send?(.downloadProgressUpdated(L10n.Browse.progressDownloadingIndexed(index + 1, files.count)))
                 let relativePath = file.id.hasPrefix(rootPrefix) ? String(file.id.dropFirst(rootPrefix.count)) : file.name
                 // Server names are untrusted: never let one escape the chosen folder.
-                guard let target = SafeDestination.within(destination, relativePath) else { continue }
+                guard let target = SafeDestination.within(staging, relativePath) else { continue }
                 try fileManager.createDirectory(at: target.deletingLastPathComponent(), withIntermediateDirectories: true)
                 let cachedURL = try await filesClient.downloadRawFile(serverURL, file)
                 try MacDownloadSaving.copy(cachedURL, to: target)
             }
+            try Task.checkCancellation()
+            try MacDownloadSaving.move(staging, to: destination)
         }
 
         /// The folder a success toast names: the chosen folder itself, or the one holding a file.

@@ -711,3 +711,13 @@ menu.goToFolderTitle	Ga naar de map:
 menu.copyPath	Kopieer pad
 menu.recentFolders	Recente mappen
 menu.clearRecent	Wis menu
+common.loading	Laden…
+browse.quickLookUnavailable	Snelle weergave is niet beschikbaar voor dit bestandstype.
+browse.quickLookTooLarge	Dit bestand is te groot voor Snelle weergave.
+menu.zoomIn	Zoom in
+menu.zoomOut	Zoom uit
+menu.zoomToFit	Passend in venster
+media.play	Speel af
+media.pause	Pauzeer
+media.position	Afspeelpositie
+media.positionValue	%1$@ van %2$@

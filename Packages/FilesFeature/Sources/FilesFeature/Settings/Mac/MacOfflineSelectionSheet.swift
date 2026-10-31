@@ -47,7 +47,8 @@
             Table(store.items, selection: $highlighted) {
                 TableColumn("") { item in
                     let isOffline = store.state.isAlreadyOffline(item)
-                    Toggle(L10n.Common.select, isOn: Binding(
+                    // Named after its row, so VoiceOver says which item the checkbox selects.
+                    Toggle(item.name, isOn: Binding(
                         get: { store.state.isSelected(item) || isOffline },
                         set: { _ in store.send(.selectionToggled(item)) }
                     ))
@@ -80,7 +81,7 @@
         @ViewBuilder
         private var overlay: some View {
             if store.phase == .loading, store.items.isEmpty {
-                ProgressView().controlSize(.small)
+                MacSpinner()
             } else if let errorMessage = store.phase.errorMessage {
                 VStack(spacing: .space8) {
                     Text(errorMessage).foregroundStyle(.secondary)

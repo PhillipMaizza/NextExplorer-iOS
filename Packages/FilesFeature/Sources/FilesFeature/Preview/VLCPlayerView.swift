@@ -19,9 +19,13 @@ import VLCKitSPM
 /// is passed explicitly as an `:http-cookie` option or the stream 401s. Archive entries pass a
 /// local file URL, which needs no cookie.
 private enum VLCPlaybackConstants {
-    /// libvlc network cache depth for remote streams. Deeper than the shallow default so large videos
-    /// buffer and seek smoothly.
-    static let networkCachingMilliseconds = 3000
+    static let controlsFadeDuration: Double = 0.2
+    /// Idle time before the controls fade while playing, like AVPlayer's chrome.
+    static let controlsAutoHideDelay: Duration = .seconds(3)
+    static let playButtonShadowRadius: CGFloat = 8
+    static let trackOpacity: Double = 0.3
+    /// One VoiceOver swipe on the scrubber moves playback this far.
+    static let accessibilitySeekSeconds: Double = 10
 }
 
 struct VLCPlayerView: View {
@@ -87,7 +91,7 @@ struct VLCPlayerView: View {
                     VLCPlaybackControls(controller: controller)
                         .opacity(controlsVisible ? 1 : 0)
                         .allowsHitTesting(controlsVisible)
-                        .animation(.easeInOut(duration: 0.2), value: controlsVisible)
+                        .animation(.easeInOut(duration: VLCPlaybackConstants.controlsFadeDuration), value: controlsVisible)
                 }
             }
             .previewChrome(
@@ -107,6 +111,15 @@ struct VLCPlayerView: View {
                 controlsVisible = true; autoHideTask?.cancel()
             }
         }
+        #if os(macOS)
+        // Space plays and pauses, as in QuickTime; the arrows keep stepping through the folder.
+        .focusable()
+        .focusEffectDisabled()
+        .onKeyPress(.space) {
+            controller.togglePlayPause()
+            return .handled
+        }
+        #endif
         .onAppear {
             if item.isVideo {
                 OrientationLock.shared.unlock()
@@ -137,7 +150,7 @@ struct VLCPlayerView: View {
     private func scheduleAutoHide() {
         autoHideTask?.cancel()
         autoHideTask = Task { @MainActor in
-            try? await Task.sleep(for: .seconds(3))
+            try? await Task.sleep(for: VLCPlaybackConstants.controlsAutoHideDelay)
             guard !Task.isCancelled, controller.isPlaying else { return }
             controlsVisible = false
         }
@@ -205,8 +218,9 @@ private struct VLCPlaybackControls: View {
                     (controller.isPlaying ? IconKit.pause : IconKit.play)
                         .font(.system(size: .size44, weight: .bold))
                         .foregroundStyle(.white)
-                        .shadow(radius: 8)
+                        .shadow(radius: VLCPlaybackConstants.playButtonShadowRadius)
                 }
+                .accessibilityLabelWithTooltip(controller.isPlaying ? L10n.Media.pause : L10n.Media.play)
             }
 
             Spacer()
@@ -248,7 +262,7 @@ private struct VLCScrubBar: View {
 
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(Color.white.opacity(0.3))
+                    .fill(Color.white.opacity(VLCPlaybackConstants.trackOpacity))
                     .frame(height: trackHeight)
 
                 Capsule()
@@ -272,101 +286,21 @@ private struct VLCScrubBar: View {
             )
         }
         .frame(height: hitHeight)
+        // A drag only bar for the pointer; VoiceOver hears where playback is and swipes to seek.
+        .accessibilityElement()
+        .accessibilityLabel(L10n.Media.position)
+        .accessibilityValue(L10n.Media.positionValue(controller.elapsedText, controller.durationText))
+        .accessibilityAdjustableAction { direction in
+            switch direction {
+            case .increment: controller.seek(by: VLCPlaybackConstants.accessibilitySeekSeconds)
+            case .decrement: controller.seek(by: -VLCPlaybackConstants.accessibilitySeekSeconds)
+            @unknown default: break
+            }
+        }
     }
 }
 
-/// Bridges `VLCMediaPlayer` (delegate/KVO, ObjC) into observable SwiftUI state and owns the
-/// player for the view's lifetime. `@MainActor`, so it's `Sendable`: libvlc fires its delegate
-/// callbacks on a background thread, and each hops back to the main actor before touching the
-/// player or published state.
-@MainActor
-final class VLCPlaybackController: NSObject, ObservableObject, VLCMediaPlayerDelegate {
-    let player = VLCMediaPlayer()
-
-    @Published var isPlaying = false
-    @Published var isBuffering = true
-    @Published var hasError = false
-    @Published var position: Float = 0
-    @Published var elapsedText = "0:00"
-    @Published var durationText = "0:00"
-
-    /// While the user drags the scrubber, ignore incoming time updates so the thumb doesn't
-    /// fight the drag.
-    private var isScrubbing = false
-
-    override init() {
-        super.init()
-        player.delegate = self
-    }
-
-    /// Point the player at the media and start playback. Remote URLs get the session cookie and a
-    /// network cache so seeking/buffering behaves; local files (archive entries) need neither.
-    func start(url: URL) {
-        let media = VLCMedia(url: url)
-        if !url.isFileURL {
-            // A deeper network cache smooths playback and seeking on large remote streams, where
-            // the default was too shallow and stuttered.
-            media.addOption(":network-caching=\(VLCPlaybackConstants.networkCachingMilliseconds)")
-            media.addOption(":http-reconnect")
-            // libvlc has no `:http-cookie` option; its http access reads only the per-media
-            // cookie jar, which must be populated before play(). Feed each session cookie as a
-            // Set-Cookie value scoped to the request host.
-            let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
-            if let host = url.host {
-                for cookie in cookies {
-                    media.storeCookie("\(cookie.name)=\(cookie.value)", forHost: host, path: cookie.path)
-                }
-            }
-        }
-        player.media = media
-        player.play()
-    }
-
-    func stop() {
-        player.stop()
-    }
-
-    func togglePlayPause() {
-        if player.isPlaying {
-            player.pause()
-        } else {
-            player.play()
-        }
-    }
-
-    func setScrubbing(_ scrubbing: Bool) {
-        isScrubbing = scrubbing
-    }
-
-    func scrub(to value: Float) {
-        position = value
-        player.position = value
-    }
-
-    // MARK: VLCMediaPlayerDelegate
-
-    @objc nonisolated func mediaPlayerStateChanged(_: Notification) {
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            isPlaying = player.isPlaying
-            isBuffering = player.state == .buffering || player.state == .opening
-            hasError = player.state == .error
-            if hasError {
-                isBuffering = false
-            }
-            durationText = player.media?.length.stringValue ?? durationText
-        }
-    }
-
-    @objc nonisolated func mediaPlayerTimeChanged(_: Notification) {
-        Task { @MainActor [weak self] in
-            guard let self, !isScrubbing else { return }
-            position = player.position
-            elapsedText = player.time.stringValue
-            durationText = player.media?.length.stringValue ?? durationText
-            if isBuffering {
-                isBuffering = false
-            }
-        }
-    }
+#Preview("Controls") {
+    VLCPlaybackControls(controller: VLCPlaybackController())
+        .background(Color.black)
 }

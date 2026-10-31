@@ -711,3 +711,13 @@ menu.goToFolderTitle	Ir para a pasta:
 menu.copyPath	Copiar caminho
 menu.recentFolders	Pastas recentes
 menu.clearRecent	Limpar menu
+common.loading	Carregando…
+browse.quickLookUnavailable	A Visualização Rápida não está disponível para este tipo de arquivo.
+browse.quickLookTooLarge	Este arquivo é grande demais para a Visualização Rápida.
+menu.zoomIn	Ampliar
+menu.zoomOut	Reduzir
+menu.zoomToFit	Ajustar à janela
+media.play	Reproduzir
+media.pause	Pausar
+media.position	Posição de reprodução
+media.positionValue	%1$@ de %2$@

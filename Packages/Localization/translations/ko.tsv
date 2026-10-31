@@ -711,3 +711,13 @@ menu.goToFolderTitle	폴더로 이동:
 menu.copyPath	경로 복사
 menu.recentFolders	최근 폴더
 menu.clearRecent	메뉴 지우기
+common.loading	불러오는 중…
+browse.quickLookUnavailable	이 파일 유형에서는 훑어보기를 사용할 수 없습니다.
+browse.quickLookTooLarge	이 파일은 너무 커서 훑어보기로 볼 수 없습니다.
+menu.zoomIn	확대
+menu.zoomOut	축소
+menu.zoomToFit	윈도우에 맞추기
+media.play	재생
+media.pause	일시 정지
+media.position	재생 위치
+media.positionValue	%1$@ / %2$@

@@ -59,7 +59,7 @@
                 leading()
                 Spacer()
                 if isWorking {
-                    ProgressView().controlSize(.small)
+                    MacSpinner()
                 }
                 if let secondaryTitle {
                     Button(secondaryTitle, action: onSecondary)
@@ -96,6 +96,15 @@
                 onCancel: onCancel,
                 onConfirm: onConfirm
             ) { EmptyView() }
+        }
+    }
+
+    /// The small native spinner Mac dialogs and panes show while they work, named for VoiceOver.
+    struct MacSpinner: View {
+        var body: some View {
+            ProgressView()
+                .controlSize(.small)
+                .accessibilityLabel(L10n.Common.loading)
         }
     }
 
@@ -142,6 +151,11 @@
         }
         .padding(.space16)
         .previewCanvasWidth(.sheet)
+    }
+
+    #Preview("Spinner") {
+        MacSpinner()
+            .padding(.space16)
     }
 
     #Preview("Item labels") {

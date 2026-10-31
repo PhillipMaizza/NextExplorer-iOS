@@ -9,11 +9,12 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../AppStorageKeys"),
+        .package(path: "../Localization"),
     ],
     targets: [
         .target(
             name: "DesignSystem",
-            dependencies: ["AppStorageKeys"],
+            dependencies: ["AppStorageKeys", "Localization"],
             resources: [
                 .process("Resources/Colors.xcassets"),
                 .process("Resources/Images.xcassets"),

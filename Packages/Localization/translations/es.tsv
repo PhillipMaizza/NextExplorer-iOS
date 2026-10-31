@@ -711,3 +711,13 @@ menu.goToFolderTitle	Ir a la carpeta:
 menu.copyPath	Copiar ruta
 menu.recentFolders	Carpetas recientes
 menu.clearRecent	Borrar menú
+common.loading	Cargando…
+browse.quickLookUnavailable	Vista rápida no está disponible para este tipo de archivo.
+browse.quickLookTooLarge	Este archivo es demasiado grande para Vista rápida.
+menu.zoomIn	Ampliar
+menu.zoomOut	Reducir
+menu.zoomToFit	Ajustar a la ventana
+media.play	Reproducir
+media.pause	Pausar
+media.position	Posición de reproducción
+media.positionValue	%1$@ de %2$@

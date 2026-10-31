@@ -711,3 +711,13 @@ menu.goToFolderTitle	Aller au dossier :
 menu.copyPath	Copier le chemin
 menu.recentFolders	Dossiers récents
 menu.clearRecent	Effacer le menu
+common.loading	Chargement…
+browse.quickLookUnavailable	Coup d’œil n’est pas disponible pour ce type de fichier.
+browse.quickLookTooLarge	Ce fichier est trop volumineux pour Coup d’œil.
+menu.zoomIn	Zoom avant
+menu.zoomOut	Zoom arrière
+menu.zoomToFit	Ajuster à la fenêtre
+media.play	Lire
+media.pause	Pause
+media.position	Position de lecture
+media.positionValue	%1$@ sur %2$@

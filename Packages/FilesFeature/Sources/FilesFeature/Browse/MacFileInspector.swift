@@ -11,6 +11,9 @@
         static let iconSize: CGFloat = .size44
         static let width: CGFloat = 300
         static let slideDuration: Double = 0.2
+        /// Matches `BrowseFeature`'s follow delay: rows skipped past with the arrow keys never
+        /// load their permissions or versions.
+        static let followDelay: Duration = .milliseconds(200)
     }
 
     /// Get Info on the Mac: a trailing side panel instead of a sheet, so it can stay open
@@ -72,20 +75,22 @@
                     }
                     permissionsSection
                 } else {
-                    ProgressView().controlSize(.small).frame(maxWidth: .infinity)
+                    MacSpinner().frame(maxWidth: .infinity)
                 }
             }
             .formStyle(.grouped)
             .frame(width: Metrics.width)
             .task(id: PermissionsLoad(path: item.id, isEditing: isEditingPermissions)) {
                 permissions = nil
+                try? await Task.sleep(for: Metrics.followDelay)
+                guard !Task.isCancelled else { return }
                 let loaded = try? await filesClient.fetchPermissions(serverURL, item.id)
                 guard !Task.isCancelled else { return }
                 permissions = loaded
             }
             .task(id: item.id) {
                 versions.onFilesChanged = onRestored
-                await versions.load(item: item, serverURL: serverURL)
+                await versions.load(item: item, serverURL: serverURL, settle: Metrics.followDelay)
             }
             .modifier(MacVersionsDialogs(model: versions))
         }
@@ -129,8 +134,8 @@
             }
             if let directory = metadata.directory {
                 Section {
-                    row(L10n.FileInfo.rowFiles, "\(directory.fileCount)")
-                    row(L10n.FileInfo.rowFolders, "\(directory.dirCount)")
+                    row(L10n.FileInfo.rowFiles, directory.fileCount.formatted())
+                    row(L10n.FileInfo.rowFolders, directory.dirCount.formatted())
                     row(L10n.FileInfo.rowTotalSize, Self.bytes(directory.totalSize))
                 } footer: {
                     if directory.truncated {

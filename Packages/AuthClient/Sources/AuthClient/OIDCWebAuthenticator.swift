@@ -15,7 +15,18 @@ import Foundation
 final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationContextProviding {
     private var session: ASWebAuthenticationSession?
 
+    /// A cancelled sign in (the login screen closed or the task torn down) cancels the web
+    /// session, which answers the continuation with `canceledLogin`; a finished session is let go.
     func authenticate(url: URL, callbackURLScheme: String) async throws -> URL {
+        defer { session = nil }
+        return try await withTaskCancellationHandler {
+            try await start(url: url, callbackURLScheme: callbackURLScheme)
+        } onCancel: {
+            Task { @MainActor [weak self] in self?.session?.cancel() }
+        }
+    }
+
+    private func start(url: URL, callbackURLScheme: String) async throws -> URL {
         try await withCheckedThrowingContinuation { continuation in
             let session = ASWebAuthenticationSession(
                 url: url,
@@ -46,6 +57,9 @@ final class OIDCWebAuthenticator: NSObject, ASWebAuthenticationPresentationConte
             self.session = session
             if !session.start() {
                 continuation.resume(throwing: AuthClientError.oidcFailed("could not start web session"))
+            } else if Task.isCancelled {
+                // Cancelled before the session existed, so the handler had nothing to cancel.
+                session.cancel()
             }
         }
     }

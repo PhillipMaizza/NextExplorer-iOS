@@ -74,7 +74,7 @@
                 HStack {
                     Button { browsePath = listing?.parent } label: { IconKit.back }
                         .disabled(listing?.parent == nil)
-                        .accessibilityLabel(L10n.UserDetail.directoryPickerGoUp)
+                        .accessibilityLabelWithTooltip(L10n.UserDetail.directoryPickerGoUp)
                     Text(listing?.current ?? "")
                         .lineLimit(1)
                         .truncationMode(.head)
@@ -102,7 +102,7 @@
                 .frame(height: Metrics.browserHeight)
                 .overlay {
                     if browsePhase == .loading, listing == nil {
-                        ProgressView().controlSize(.small)
+                        MacSpinner()
                     } else if let browseError = browsePhase.errorMessage {
                         Text(browseError).foregroundStyle(.secondary).padding()
                     }

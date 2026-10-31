@@ -711,3 +711,13 @@ menu.goToFolderTitle	Gehe zum Ordner:
 menu.copyPath	Pfad kopieren
 menu.recentFolders	Benutzte Ordner
 menu.clearRecent	Menü löschen
+common.loading	Wird geladen…
+browse.quickLookUnavailable	Übersicht ist für diesen Dateityp nicht verfügbar.
+browse.quickLookTooLarge	Diese Datei ist zu groß für die Übersicht.
+menu.zoomIn	Vergrößern
+menu.zoomOut	Verkleinern
+menu.zoomToFit	An Fenster anpassen
+media.play	Wiedergeben
+media.pause	Pausieren
+media.position	Wiedergabeposition
+media.positionValue	%1$@ von %2$@

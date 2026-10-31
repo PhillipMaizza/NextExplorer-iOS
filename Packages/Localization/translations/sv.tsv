@@ -711,3 +711,13 @@ menu.goToFolderTitle	Gå till mappen:
 menu.copyPath	Kopiera sökväg
 menu.recentFolders	Senaste mappar
 menu.clearRecent	Rensa menyn
+common.loading	Läser in…
+browse.quickLookUnavailable	Snabbtitt är inte tillgängligt för den här filtypen.
+browse.quickLookTooLarge	Filen är för stor för Snabbtitt.
+menu.zoomIn	Zooma in
+menu.zoomOut	Zooma ut
+menu.zoomToFit	Anpassa till fönster
+media.play	Spela upp
+media.pause	Pausa
+media.position	Uppspelningsposition
+media.positionValue	%1$@ av %2$@

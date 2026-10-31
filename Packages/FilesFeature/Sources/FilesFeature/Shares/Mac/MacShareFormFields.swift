@@ -80,7 +80,7 @@
         private var userPicker: some View {
             if usersPhase == .loading {
                 HStack {
-                    ProgressView().controlSize(.small)
+                    MacSpinner()
                     Text(L10n.CreateShare.loadingUsers).foregroundStyle(.secondary)
                 }
             } else if users.isEmpty {

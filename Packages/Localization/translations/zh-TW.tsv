@@ -711,3 +711,13 @@ menu.goToFolderTitle	前往檔案夾：
 menu.copyPath	拷貝路徑
 menu.recentFolders	最近使用的檔案夾
 menu.clearRecent	清除選單
+common.loading	載入中…
+browse.quickLookUnavailable	此檔案類型無法使用快速查看。
+browse.quickLookTooLarge	此檔案太大，無法快速查看。
+menu.zoomIn	放大
+menu.zoomOut	縮小
+menu.zoomToFit	縮放至符合視窗
+media.play	播放
+media.pause	暫停
+media.position	播放位置
+media.positionValue	%1$@ / %2$@

@@ -16,6 +16,9 @@ private enum Constants {
     static let breadcrumbClearance: CGFloat = BrowseBreadcrumbBarMetrics.height + .space8
     /// Lifts the "upload complete" toast clear of the tab bar.
     static let toastTabBarClearance: CGFloat = 56
+    /// Coming back to the app refetches every open folder and checks offline pins. A Mac user
+    /// switches apps all day, so there it waits this long since the last time.
+    static let macActiveSyncInterval: TimeInterval = 30
 }
 
 public struct MainTabView: View {
@@ -27,6 +30,7 @@ public struct MainTabView: View {
     /// stomp on whatever `onAppear` just loaded. This tracks past the first activation so only
     /// a genuine later background→active resume triggers a sync.
     @State private var hasBecomeActiveBefore = false
+    @State private var lastActiveSync = Date.distantPast
     /// Tabs whose content has actually been selected at least once. A non-Browse `Tab` builds
     /// its `NavigationStack` off screen while the launch splash still covers the window, and
     /// UIKit lays that nav bar out at the wrong size and never revisits it (large title stuck
@@ -126,8 +130,13 @@ public struct MainTabView: View {
                 guard newPhase == .active else { return }
                 guard hasBecomeActiveBefore else {
                     hasBecomeActiveBefore = true
+                    lastActiveSync = Date()
                     return
                 }
+                #if os(macOS)
+                    guard Date().timeIntervalSince(lastActiveSync) >= Constants.macActiveSyncInterval else { return }
+                #endif
+                lastActiveSync = Date()
                 store.send(.appBecameActive)
             }
             .task {

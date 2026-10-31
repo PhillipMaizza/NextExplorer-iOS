@@ -211,6 +211,7 @@ struct MainTabSidebar: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: Constants.sidebarFooterLogoSize, height: Constants.sidebarFooterLogoSize)
+                .accessibilityHidden(true)
             Text(appVersionText)
                 .type(.body3(.regular), style: .tertiary)
             #if os(macOS)

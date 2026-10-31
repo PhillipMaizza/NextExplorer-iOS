@@ -77,6 +77,15 @@ public extension DependencyValues {
             try fileManager.copyItem(at: source, to: destination)
         }
 
+        /// Puts a finished download in place, replacing whatever the save panel agreed to replace.
+        static func move(_ source: URL, to destination: URL) throws {
+            let fileManager = FileManager.default
+            if fileManager.fileExists(atPath: destination.path) {
+                try fileManager.removeItem(at: destination)
+            }
+            try fileManager.moveItem(at: source, to: destination)
+        }
+
         /// A name in `folder` that doesn't clash with anything already there ("name 2.ext").
         static func uniqueDestination(in folder: URL, fileName: String) -> URL {
             let base = (fileName as NSString).deletingPathExtension
