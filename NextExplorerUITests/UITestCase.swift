@@ -46,11 +46,15 @@ class UITestCase: XCTestCase {
     /// XCUITest can drop the first tap under load, so it retries the tap once before failing.
     func selectTab(_ tab: XCUIElement, until sentinel: XCUIElement, file: StaticString = #filePath, line: UInt = #line) {
         XCTAssertTrue(tab.waitToAppear(UITestTimeout.standard, "Tab should exist", file: file, line: line))
-        tapCenter(of: tab)
-        if !sentinel.appears(within: UITestTimeout.short) {
+        // A tap can land while the app is still remounting (adding an account rebuilds it), so a
+        // few tries before the final wait.
+        for _ in 0 ..< UITestTimeout.tabTapAttempts {
             tapCenter(of: tab)
-            XCTAssertTrue(sentinel.waitToAppear(UITestTimeout.standard, "Tab content should appear", file: file, line: line))
+            if sentinel.appears(within: UITestTimeout.short) {
+                return
+            }
         }
+        XCTAssertTrue(sentinel.waitToAppear(UITestTimeout.standard, "Tab content should appear", file: file, line: line))
     }
 
     /// Taps the element's center by coordinate. On iPhone Duo the tabs sit in the vertical bar and
@@ -150,6 +154,10 @@ enum UITestTimeout {
     /// A tighter budget used when asserting something should NOT appear, so a negative check
     /// doesn't stall the suite.
     static let short: TimeInterval = 3
+    /// How often `appears(within:)` looks again.
+    static let pollInterval: TimeInterval = 0.25
+    /// Taps `selectTab` tries before its final wait.
+    static let tabTapAttempts = 3
 }
 
 extension XCUIElement {
@@ -164,7 +172,16 @@ extension XCUIElement {
     /// Returns whether the element exists within the budget, without asserting. Use for negative
     /// checks (`XCTAssertFalse(element.appears(within:))`).
     func appears(within timeout: TimeInterval = UITestTimeout.short) -> Bool {
-        waitForExistence(timeout: timeout)
+        // Polled rather than `waitForExistence`: a timed out wait makes XCTest collect failure
+        // triage diagnostics (about 20 s on a CI runner) even when not appearing is the answer.
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if exists {
+                return true
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(UITestTimeout.pollInterval))
+        }
+        return exists
     }
 
     /// Waits for the element to stop existing (e.g. a sheet dismissing on success).

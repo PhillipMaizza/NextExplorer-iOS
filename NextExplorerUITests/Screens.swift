@@ -72,8 +72,11 @@ struct BrowseScreen {
         app.textFields[AccessibilityIdentifiers.Search.field]
     }
 
+    /// The one on screen: right after a push the folder underneath still has its own in the
+    /// hierarchy, and tapping an ambiguous query fails.
     var uploadMenu: XCUIElement {
-        app.buttons[AccessibilityIdentifiers.Browse.uploadMenu]
+        let matches = app.buttons.matching(identifier: AccessibilityIdentifiers.Browse.uploadMenu)
+        return matches.allElementsBoundByIndex.first { $0.isHittable } ?? matches.firstMatch
     }
 
     var emptyStateMessage: XCUIElement {
