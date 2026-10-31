@@ -251,10 +251,16 @@ private struct ImageGalleryPage: View {
             case let .gif(url):
                 // GIFs play their real animation via `AnimatedImageView`: a decoded still would
                 // only ever show the first frame.
-                ZoomableScrollView(onZoomChange: onZoomChange) { AnimatedImageView(fileURL: url) }
+                ZoomableScrollView(onZoomChange: onZoomChange) {
+                    AnimatedImageView(fileURL: url)
+                        .accessibilityElement()
+                        .accessibilityLabel(item.name)
+                        .accessibilityAddTraits(.isImage)
+                }
             case let .streaming(uiImage), let .loaded(uiImage):
                 ZoomableScrollView(onZoomChange: onZoomChange) {
                     Image(platformImage: uiImage).resizable().scaledToFit()
+                        .accessibilityLabel(item.name)
                 }
                 .transition(.opacity)
                 // Settle from a slight scale to 1 the moment the final image lands.
@@ -269,6 +275,9 @@ private struct ImageGalleryPage: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .animation(.easeOut(duration: Constants.imageFadeDuration), value: phase.hasImage)
         .task(id: "\(item.id)\u{0}\(isNear)") { await load() }
+        #if os(macOS)
+            .modifier(MacPreviewZoom())
+        #endif
     }
 
     @MainActor

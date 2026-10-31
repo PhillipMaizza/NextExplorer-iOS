@@ -57,7 +57,7 @@
                             .disabled(selection.isEmpty)
                         Spacer()
                         if store.isPreparing {
-                            ProgressView().controlSize(.small)
+                            MacSpinner()
                             Text(L10n.Uploads.reviewPreparing(store.preparingCount))
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
@@ -89,9 +89,10 @@
                     Label {
                         Text(file.fileName).lineLimit(1).truncationMode(.middle)
                     } icon: {
-                        Image(nsImage: NSWorkspace.shared.icon(forFile: file.fileURL.path))
+                        Image(nsImage: MacFileTypeIcon.image(forFileName: file.fileName))
                             .resizable()
                             .frame(width: .iconSmall, height: .iconSmall)
+                            .accessibilityHidden(true)
                     }
                 }
                 TableColumn(L10n.Sort.size) { file in

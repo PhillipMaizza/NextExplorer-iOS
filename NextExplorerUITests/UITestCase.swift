@@ -37,9 +37,25 @@ class UITestCase: XCTestCase {
         case sessionExpired
     }
 
+    #if os(macOS)
+        /// Puts back the keyboard layout `KeyboardLayout.useUS` replaced for this test.
+        private var restoreKeyboardLayout: (() -> Void)?
+    #endif
+
     override func setUp() {
         super.setUp()
         continueAfterFailure = false
+        #if os(macOS)
+            restoreKeyboardLayout = KeyboardLayout.useUS()
+        #endif
+    }
+
+    override func tearDown() {
+        #if os(macOS)
+            restoreKeyboardLayout?()
+            restoreKeyboardLayout = nil
+        #endif
+        super.tearDown()
     }
 
     /// Taps a tab bar tab, waiting until a sentinel element on that tab appears. Tab switching in

@@ -1,10 +1,20 @@
 import Foundation
 import Security
 
+/// One place items are kept, so the Mac can move them between two keychains.
+protocol KeychainStore: Sendable {
+    func save(key: String, data: Data) throws
+    func load(key: String) throws -> Data?
+    func delete(key: String) throws
+}
+
 /// Thin wrapper over `Security`'s generic-password item calls. Not a singleton: callers
 /// construct one with an explicit `KeychainConfiguration` and hand it to `KeychainClient`.
-struct SecurityKeychainStore: Sendable {
+struct SecurityKeychainStore: KeychainStore {
     let configuration: KeychainConfiguration
+    /// macOS only: the data protection keychain (the iOS style one, device bound, no access
+    /// prompts) instead of the legacy file keychain. iOS only has the former.
+    var usesDataProtectionKeychain = false
 
     func save(key: String, data: Data) throws {
         var query = baseQuery(for: key)
@@ -62,6 +72,9 @@ struct SecurityKeychainStore: Sendable {
         ]
         if let accessGroup = configuration.accessGroup {
             query[kSecAttrAccessGroup] = accessGroup
+        }
+        if usesDataProtectionKeychain {
+            query[kSecUseDataProtectionKeychain] = true
         }
         return query
     }

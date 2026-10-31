@@ -39,7 +39,9 @@ public struct BrowseTabFeature {
         /// the root when nothing is pushed).
         case refreshVisibleFolder
         case newFolderInVisibleFolder
-        /// Mac ⌘↑ / ⌘[: pop to the folder that contains the visible one.
+        /// Mac ⌘[: leave the visible folder for the screen under it.
+        case goBack
+        /// Mac ⌘↑: open the folder that contains the visible one.
         case goToEnclosingFolder
         /// Mac ⌘]: reopen the folder last left by going back.
         case goForward
@@ -66,12 +68,12 @@ public struct BrowseTabFeature {
         }
         Reduce { state, action in
             switch action {
+            case .goBack:
+                state.goBack()
+                return .none
+
             case .goToEnclosingFolder:
-                guard let id = state.path.ids.last else { return .none }
-                if let screen = state.path[id: id] {
-                    state.forwardStack.append(screen)
-                }
-                state.path.pop(from: id)
+                state.goToEnclosingFolder(serverURL: state.root.serverURL)
                 return .none
 
             case .refreshVisibleFolder:
@@ -88,16 +90,11 @@ public struct BrowseTabFeature {
                 return .send(.path(.element(id: id, action: .newFolderTapped)))
 
             case .goForward:
-                guard let screen = state.forwardStack.popLast() else { return .none }
-                state.path.append(screen)
+                state.goForward()
                 return .none
 
             case let .path(.popFrom(id)):
-                // Leaving with the toolbar's Back: everything from `id` up can come back with
-                // Forward, the nearest level first.
-                guard let start = state.path.ids.firstIndex(of: id) else { return .none }
-                let popped = state.path.ids[start...].compactMap { state.path[id: $0] }
-                state.forwardStack.append(contentsOf: popped.reversed())
+                state.recordPop(from: id)
                 return .none
 
             case let .root(.delegate(.openFolder(item))):

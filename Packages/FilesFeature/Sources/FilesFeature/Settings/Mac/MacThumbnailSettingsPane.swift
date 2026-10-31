@@ -30,7 +30,7 @@
             }
             .overlay {
                 if store.phase == .loading, store.loaded == nil, !store.isUnavailable {
-                    ProgressView().controlSize(.small)
+                    MacSpinner()
                 }
             }
             .onAppear { store.send(.onAppear) }
@@ -48,17 +48,17 @@
                 }
                 Section {
                     numberRow(L10n.ThumbnailSettings.quality, help: L10n.ThumbnailSettings.qualityHelp) {
-                        MacNumberStepper(value: store.draft.quality, range: ThumbnailSettings.qualityRange, step: Metrics.qualityStep) {
+                        MacNumberStepper(label: L10n.ThumbnailSettings.quality, value: store.draft.quality, range: ThumbnailSettings.qualityRange, step: Metrics.qualityStep) {
                             store.send(.qualityChanged($0))
                         }
                     }
                     numberRow(L10n.ThumbnailSettings.maxDimension, help: L10n.ThumbnailSettings.maxDimensionHelp) {
-                        MacNumberStepper(value: store.draft.size, range: ThumbnailSettings.sizeRange, step: Metrics.sizeStep) {
+                        MacNumberStepper(label: L10n.ThumbnailSettings.maxDimension, value: store.draft.size, range: ThumbnailSettings.sizeRange, step: Metrics.sizeStep) {
                             store.send(.sizeChanged($0))
                         }
                     }
                     numberRow(L10n.ThumbnailSettings.concurrency, help: L10n.ThumbnailSettings.concurrencyHelp) {
-                        MacNumberStepper(value: store.draft.concurrency, range: ThumbnailSettings.concurrencyRange, step: Metrics.concurrencyStep) {
+                        MacNumberStepper(label: L10n.ThumbnailSettings.concurrency, value: store.draft.concurrency, range: ThumbnailSettings.concurrencyRange, step: Metrics.concurrencyStep) {
                             store.send(.concurrencyChanged($0))
                         }
                     }

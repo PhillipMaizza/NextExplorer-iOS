@@ -711,3 +711,13 @@ menu.goToFolderTitle	Перейти к папке:
 menu.copyPath	Скопировать путь
 menu.recentFolders	Недавние папки
 menu.clearRecent	Очистить меню
+common.loading	Загрузка…
+browse.quickLookUnavailable	Быстрый просмотр недоступен для этого типа файлов.
+browse.quickLookTooLarge	Этот файл слишком велик для быстрого просмотра.
+menu.zoomIn	Увеличить
+menu.zoomOut	Уменьшить
+menu.zoomToFit	По размеру окна
+media.play	Воспроизвести
+media.pause	Пауза
+media.position	Позиция воспроизведения
+media.positionValue	%1$@ из %2$@

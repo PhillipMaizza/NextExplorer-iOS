@@ -1,9 +1,7 @@
 #if os(macOS)
-    import AppKit
     import DesignSystem
     import Localization
     import SwiftUI
-    import UniformTypeIdentifiers
 
     private enum Metrics {
         static let width: CGFloat = 560
@@ -47,9 +45,10 @@
                         Label {
                             Text(row.name).lineLimit(1).truncationMode(.middle)
                         } icon: {
-                            Image(nsImage: Self.icon(for: row.name))
+                            Image(nsImage: MacFileTypeIcon.image(forFileName: row.name))
                                 .resizable()
                                 .frame(width: Metrics.iconSize, height: Metrics.iconSize)
+                                .accessibilityHidden(true)
                         }
                     }
                     TableColumn(L10n.MacSettings.status) { row in status(row.status) }
@@ -111,11 +110,6 @@
             case .done:
                 EmptyView()
             }
-        }
-
-        private static func icon(for name: String) -> NSImage {
-            let type = UTType(filenameExtension: (name as NSString).pathExtension) ?? .data
-            return NSWorkspace.shared.icon(for: type)
         }
     }
 

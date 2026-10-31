@@ -13,12 +13,15 @@
     }
 
     /// Move to and Upload to as a native Mac dialog: the folder being looked at with Back and a
-    /// search field, its folders in a list (double click to open one), then Cancel and the
+    /// search field, its folders in a list (double click or Return opens one), then Cancel and the
     /// confirm button for the folder on screen.
     struct MacDestinationPickerSheet: View {
         @Bindable var store: StoreOf<DestinationPickerFeature>
         let title: String
         let confirmTitle: String
+
+        @State private var selectedFolderID: FileItem.ID?
+        @State private var selectedResultID: SearchResultItem.ID?
 
         var body: some View {
             VStack(spacing: 0) {
@@ -36,6 +39,15 @@
                 .padding(Metrics.padding)
             }
             .frame(width: Metrics.width, height: Metrics.height)
+            // Finder's ⌘↓ opens the selected folder. A key equivalent reaches it before the list
+            // takes the arrow key; Return stays the dialog's confirm button.
+            .background {
+                Button(L10n.Browse.open, action: openSelection)
+                    .keyboardShortcut(.downArrow, modifiers: .command)
+                    .opacity(0)
+                    .allowsHitTesting(false)
+                    .accessibilityHidden(true)
+            }
             .task { store.send(.onAppear) }
         }
 
@@ -58,28 +70,45 @@
         private var content: some View {
             if !store.searchQuery.isEmpty {
                 if store.isSearching, store.searchResults?.isEmpty ?? true {
-                    ProgressView().controlSize(.small)
+                    MacSpinner()
                 } else if let results = store.searchResults, results.isEmpty {
                     ContentUnavailableView.search(text: store.searchQuery)
                 } else {
-                    List(store.searchResults ?? []) { result in
+                    // Selectable rows: a double click or Return opens one, and VoiceOver can too.
+                    List(store.searchResults ?? [], selection: $selectedResultID) { result in
                         MacItemLabel(name: result.name, subtitle: result.path.isEmpty ? nil : result.path, isDirectory: true)
-                            .contentShape(Rectangle())
-                            .onTapGesture(count: 2) { store.send(.searchResultTapped(result)) }
+                            .accessibilityAction(named: L10n.Browse.open) { store.send(.searchResultTapped(result)) }
                     }
+                    .contextMenu(forSelectionType: SearchResultItem.ID.self, menu: { _ in }, primaryAction: { ids in
+                        guard let id = ids.first, let result = store.searchResults?[id: id] else { return }
+                        store.send(.searchResultTapped(result))
+                    })
                 }
             } else if store.phase == .loading, store.folders.isEmpty {
-                ProgressView().controlSize(.small)
+                MacSpinner()
             } else if let errorMessage = store.phase.errorMessage {
                 EmptyStateView(icon: IconKit.warning, message: errorMessage) { store.send(.retryTapped) }
             } else if store.folders.isEmpty {
                 EmptyStateView(icon: IconKit.folder, message: L10n.Browse.destinationPickerNoFolders)
             } else {
-                List(store.folders) { folder in
+                List(store.folders, selection: $selectedFolderID) { folder in
                     MacItemLabel(name: folder.name, isDirectory: true)
-                        .contentShape(Rectangle())
-                        .onTapGesture(count: 2) { store.send(.folderTapped(folder)) }
+                        .accessibilityAction(named: L10n.Browse.open) { store.send(.folderTapped(folder)) }
                 }
+                .contextMenu(forSelectionType: FileItem.ID.self, menu: { _ in }, primaryAction: { ids in
+                    guard let id = ids.first, let folder = store.folders[id: id] else { return }
+                    store.send(.folderTapped(folder))
+                })
+            }
+        }
+
+        private func openSelection() {
+            if !store.searchQuery.isEmpty {
+                if let id = selectedResultID, let result = store.searchResults?[id: id] {
+                    store.send(.searchResultTapped(result))
+                }
+            } else if let id = selectedFolderID, let folder = store.folders[id: id] {
+                store.send(.folderTapped(folder))
             }
         }
     }

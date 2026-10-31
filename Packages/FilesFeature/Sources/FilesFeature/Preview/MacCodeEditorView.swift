@@ -48,6 +48,11 @@
             Coordinator(text: $text)
         }
 
+        /// A closed editor stops any pending rehighlight rather than parsing text nobody sees.
+        static func dismantleNSView(_: NSScrollView, coordinator: Coordinator) {
+            coordinator.cancelHighlighting()
+        }
+
         @MainActor
         final class Coordinator: NSObject, NSTextViewDelegate {
             private let text: Binding<String>
@@ -93,6 +98,11 @@
                     guard !Task.isCancelled, let self, requested == generation else { return }
                     apply(spans, expectedText: snapshot)
                 }
+            }
+
+            func cancelHighlighting() {
+                highlightTask?.cancel()
+                highlightTask = nil
             }
 
             /// Colors only: text, selection and undo history are left alone.

@@ -209,7 +209,7 @@ struct ArchiveBrowserView: View {
                         }
                         Text(row.name).lineLimit(1).truncationMode(.middle)
                         if extractingRow == row.name {
-                            ProgressView().controlSize(.small)
+                            MacSpinner()
                         }
                     }
                 }

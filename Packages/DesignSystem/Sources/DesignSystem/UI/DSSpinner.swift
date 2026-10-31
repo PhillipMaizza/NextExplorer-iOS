@@ -1,3 +1,4 @@
+import Localization
 import SwiftUI
 
 private enum Constants {
@@ -33,9 +34,9 @@ public struct DSSpinner: View {
     private let color: Color
     private let accessibilityLabel: String
 
-    /// `accessibilityLabel` defaults to the English "Loading"; localized call sites pass their own
-    /// `L10n` string so this component stays free of an app copy dependency.
-    public init(size: Size = .regular, color: Color = .accent, accessibilityLabel: String = "Loading") {
+    /// `accessibilityLabel` defaults to the localized "Loading…"; a call site with something more
+    /// specific to say passes its own.
+    public init(size: Size = .regular, color: Color = .accent, accessibilityLabel: String = L10n.Common.loading) {
         self.size = size
         self.color = color
         self.accessibilityLabel = accessibilityLabel

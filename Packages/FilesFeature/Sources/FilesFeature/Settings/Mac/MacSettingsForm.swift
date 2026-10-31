@@ -120,7 +120,7 @@
                 HStack(spacing: Metrics.rowSpacing) {
                     Spacer()
                     if isSaving {
-                        ProgressView().controlSize(.small)
+                        MacSpinner()
                     }
                     Button(title, action: action)
                         .buttonStyle(.borderedProminent)
@@ -143,6 +143,8 @@
 
     /// A number field with its stepper, like the Mac's own preference panes.
     struct MacNumberStepper: View {
+        /// Spoken for both the field and the stepper, which show no label of their own.
+        let label: String
         let value: Int
         let range: ClosedRange<Int>
         let step: Int
@@ -154,12 +156,12 @@
 
         var body: some View {
             HStack(spacing: .space4) {
-                TextField("", value: binding, format: .number)
+                TextField(label, value: binding, format: .number)
                     .labelsHidden()
                     .multilineTextAlignment(.trailing)
                     .monospacedDigit()
                     .frame(width: .size64)
-                Stepper("", value: binding, in: range, step: step)
+                Stepper(label, value: binding, in: range, step: step)
                     .labelsHidden()
             }
         }

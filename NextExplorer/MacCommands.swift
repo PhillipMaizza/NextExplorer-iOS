@@ -21,6 +21,10 @@
         /// The visible section's toolbar refresh, so ⌘R spins and toasts like clicking it.
         @FocusedValue(\.refreshVisibleScreen) private var refreshVisibleScreen
         @FocusedValue(\.browseViewOptions) private var viewOptions
+        /// Present while an image preview is on screen.
+        @FocusedValue(\.previewZoom) private var previewZoom
+        /// Present while an extra Browse window is in front; the Go menu then moves that window.
+        @FocusedValue(\.folderWindowCommands) private var folderWindow
         @Environment(\.openWindow) private var openWindow
 
         private static let sections: [(tab: MainTabFeature.Tab, title: String, key: KeyEquivalent)] = [
@@ -45,7 +49,7 @@
                 Button(L10n.Menu.newTab) { openBrowseWindow(asTab: true) }
                     .keyboardShortcut("t")
                 Divider()
-                Button(L10n.Browse.actionNewFolder) { send(.newFolderRequested) }
+                Button(L10n.Browse.actionNewFolder) { sendToFrontWindow({ $0.newFolder() }, otherwise: .newFolderRequested) }
                     .keyboardShortcut("n", modifiers: [.command, .shift])
                 Divider()
                 Button(L10n.Browse.actionDuplicate) { fileActions?.duplicate() }
@@ -110,14 +114,24 @@
                 }
                 .keyboardShortcut("r")
                 Divider()
+                Button(L10n.Menu.zoomIn) { previewZoom?.zoomIn() }
+                    .keyboardShortcut("+")
+                    .disabled(previewZoom == nil)
+                Button(L10n.Menu.zoomOut) { previewZoom?.zoomOut() }
+                    .keyboardShortcut("-")
+                    .disabled(previewZoom == nil)
+                Button(L10n.Menu.zoomToFit) { previewZoom?.zoomToFit() }
+                    .keyboardShortcut("0")
+                    .disabled(previewZoom == nil)
+                Divider()
             }
             // Finder's Go menu: up a level, back, and the sidebar sections.
             CommandMenu(L10n.Menu.go) {
-                Button(L10n.Common.back) { send(.enclosingFolderRequested) }
+                Button(L10n.Common.back) { sendToFrontWindow({ $0.back() }, otherwise: .backRequested) }
                     .keyboardShortcut("[")
-                Button(L10n.Menu.forward) { send(.forwardRequested) }
+                Button(L10n.Menu.forward) { sendToFrontWindow({ $0.forward() }, otherwise: .forwardRequested) }
                     .keyboardShortcut("]")
-                Button(L10n.Menu.enclosingFolder) { send(.enclosingFolderRequested) }
+                Button(L10n.Menu.enclosingFolder) { sendToFrontWindow({ $0.enclosingFolder() }, otherwise: .enclosingFolderRequested) }
                     .keyboardShortcut(.upArrow)
                 Divider()
                 Button(L10n.Menu.goToFolder) { send(.goToFolderPrompted) }
@@ -199,6 +213,15 @@
                 fileAction()
             } else {
                 NSApp.sendAction(fallback, to: nil, from: nil)
+            }
+        }
+
+        /// An extra Browse window in front gets the command; otherwise the main window does.
+        private func sendToFrontWindow(_ folderAction: (FolderWindowCommands) -> Void, otherwise action: MainTabFeature.Action) {
+            if let folderWindow {
+                folderAction(folderWindow)
+            } else {
+                send(action)
             }
         }
 

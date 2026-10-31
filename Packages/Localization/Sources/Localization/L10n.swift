@@ -97,6 +97,8 @@ public enum L10n {
         public static func progressDownloadingIndexed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.progressDownloadingIndexed", a0, a1) }
         public static var progressExtracting: String { tr("browse.progressExtracting") }  // "Extracting…"
         public static var progressMoving: String { tr("browse.progressMoving") }  // "Moving…"
+        public static var quickLookTooLarge: String { tr("browse.quickLookTooLarge") }  // "This file is too large for Quick Look."
+        public static var quickLookUnavailable: String { tr("browse.quickLookUnavailable") }  // "Quick Look isn't available for this file type."
         public static var renameNamePlaceholder: String { tr("browse.renameNamePlaceholder") }  // "Name"
         public static var renameTitle: String { tr("browse.renameTitle") }  // "Rename"
         public static var scopeEverywhere: String { tr("browse.scopeEverywhere") }  // "Everywhere"
@@ -154,6 +156,7 @@ public enum L10n {
         public static var done: String { tr("common.done") }  // "Done"
         public static var download: String { tr("common.download") }  // "Download"
         public static var edit: String { tr("common.edit") }  // "Edit"
+        public static var loading: String { tr("common.loading") }  // "Loading…"
         public static var logOut: String { tr("common.logOut") }  // "Log Out"
         public static var more: String { tr("common.more") }  // "More"
         public static var never: String { tr("common.never") }  // "Never"
@@ -406,6 +409,12 @@ public enum L10n {
         public static var switchAccount: String { tr("macSettings.switchAccount") }  // "Switch to This Account"
         public static var username: String { tr("macSettings.username") }  // "Username"
     }
+    public enum Media {
+        public static var pause: String { tr("media.pause") }  // "Pause"
+        public static var play: String { tr("media.play") }  // "Play"
+        public static var position: String { tr("media.position") }  // "Playback Position"
+        public static func positionValue(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("media.positionValue", a0, a1) }
+    }
     public enum Menu {
         public static var about: String { tr("menu.about") }  // "About NextExplorer"
         public static var activity: String { tr("menu.activity") }  // "Transfers"
@@ -425,6 +434,9 @@ public enum L10n {
         public static var showAll: String { tr("menu.showAll") }  // "Show All"
         public static var support: String { tr("menu.support") }  // "NextExplorer Support"
         public static var undo: String { tr("menu.undo") }  // "Undo"
+        public static var zoomIn: String { tr("menu.zoomIn") }  // "Zoom In"
+        public static var zoomOut: String { tr("menu.zoomOut") }  // "Zoom Out"
+        public static var zoomToFit: String { tr("menu.zoomToFit") }  // "Zoom to Fit"
     }
     public enum Offline {
         public static func available(_ a0: CVarArg) -> String { tr("offline.available", a0) }

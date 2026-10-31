@@ -6,6 +6,68 @@
     private enum Constants {
         static let maximumZoomScale: CGFloat = 4
         static let doubleTapZoomScale: CGFloat = 2.5
+        /// Each Zoom In or Zoom Out multiplies or divides the magnification by this much.
+        static let zoomStepFactor: CGFloat = 1.25
+    }
+
+    /// One step of View ▸ Zoom In, Zoom Out or Zoom to Fit.
+    enum MacZoomStep {
+        case zoomIn, zoomOut, fit
+    }
+
+    /// Drives the `ZoomableScrollView` on screen from outside it: the View menu's zoom items and
+    /// VoiceOver's zoom action reach the scroll view through this.
+    @MainActor
+    final class MacZoomController {
+        private var handler: ((MacZoomStep) -> Void)?
+
+        func attach(_ handler: @escaping (MacZoomStep) -> Void) {
+            self.handler = handler
+        }
+
+        func zoom(_ step: MacZoomStep) {
+            handler?(step)
+        }
+    }
+
+    extension EnvironmentValues {
+        @Entry var macZoomController: MacZoomController?
+    }
+
+    /// ⌘+, ⌘− and ⌘0 for the image preview on screen, published by `MacPreviewZoom`.
+    public struct PreviewZoomActions {
+        let perform: (MacZoomStep) -> Void
+
+        public func zoomIn() {
+            perform(.zoomIn)
+        }
+
+        public func zoomOut() {
+            perform(.zoomOut)
+        }
+
+        public func zoomToFit() {
+            perform(.fit)
+        }
+    }
+
+    public extension FocusedValues {
+        @Entry var previewZoom: PreviewZoomActions?
+    }
+
+    /// Gives a zoomable preview keyboard zoom (the View menu items) and VoiceOver's zoom action,
+    /// so zooming never needs a trackpad pinch or a double click.
+    struct MacPreviewZoom: ViewModifier {
+        @State private var controller = MacZoomController()
+
+        func body(content: Content) -> some View {
+            content
+                .environment(\.macZoomController, controller)
+                .focusedSceneValue(\.previewZoom, PreviewZoomActions { controller.zoom($0) })
+                .accessibilityZoomAction { action in
+                    controller.zoom(action.direction == .zoomIn ? .zoomIn : .zoomOut)
+                }
+        }
     }
 
     /// macOS counterpart of the `UIScrollView` zoom container: `NSScrollView` magnification gives
@@ -45,16 +107,29 @@
             scrollView.addGestureRecognizer(doubleClick)
 
             context.coordinator.observeMagnification(of: scrollView)
+            attachController(context.environment.macZoomController, to: scrollView, coordinator: context.coordinator)
             return scrollView
         }
 
-        func updateNSView(_: NSScrollView, context: Context) {
+        func updateNSView(_ scrollView: NSScrollView, context: Context) {
             context.coordinator.onZoomChange = onZoomChange
             context.coordinator.hostingView.rootView = content
+            attachController(context.environment.macZoomController, to: scrollView, coordinator: context.coordinator)
+        }
+
+        private func attachController(_ controller: MacZoomController?, to scrollView: NSScrollView, coordinator: Coordinator) {
+            controller?.attach { [weak coordinator, weak scrollView] step in
+                guard let coordinator, let scrollView else { return }
+                coordinator.zoom(step, in: scrollView)
+            }
         }
 
         func makeCoordinator() -> Coordinator {
             Coordinator(hostingView: NSHostingView(rootView: content), onZoomChange: onZoomChange)
+        }
+
+        static func dismantleNSView(_: NSScrollView, coordinator: Coordinator) {
+            coordinator.stopObserving()
         }
 
         @MainActor
@@ -80,6 +155,32 @@
                         self?.reportZoom(of: scrollView)
                     }
                 }
+            }
+
+            /// A block observer stays registered (and retained) until removed, so the preview that
+            /// closes takes it down with it.
+            func stopObserving() {
+                if let observer {
+                    NotificationCenter.default.removeObserver(observer)
+                }
+                observer = nil
+            }
+
+            /// A menu or VoiceOver zoom step, centered on what is on screen; instant under Reduce Motion.
+            func zoom(_ step: MacZoomStep, in scrollView: NSScrollView) {
+                let target = switch step {
+                case .zoomIn: min(scrollView.magnification * Constants.zoomStepFactor, scrollView.maxMagnification)
+                case .zoomOut: max(scrollView.magnification / Constants.zoomStepFactor, scrollView.minMagnification)
+                case .fit: scrollView.minMagnification
+                }
+                let visible = scrollView.contentView.bounds
+                let center = NSPoint(x: visible.midX, y: visible.midY)
+                if NSWorkspace.shared.accessibilityDisplayShouldReduceMotion {
+                    scrollView.setMagnification(target, centeredAt: center)
+                } else {
+                    scrollView.animator().setMagnification(target, centeredAt: center)
+                }
+                reportZoom(of: scrollView, target: target)
             }
 
             @objc func handleDoubleClick(_ recognizer: NSClickGestureRecognizer) {

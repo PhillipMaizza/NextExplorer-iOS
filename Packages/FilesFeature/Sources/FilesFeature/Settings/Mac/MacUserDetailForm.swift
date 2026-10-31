@@ -72,7 +72,7 @@
                 HStack {
                     Spacer()
                     if store.isSavingProfile {
-                        ProgressView().controlSize(.small)
+                        MacSpinner()
                     }
                     Button(L10n.UserDetail.profileSave) { store.send(.saveProfileTapped) }
                         .disabled(!store.isProfileSaveEnabled)
@@ -84,7 +84,7 @@
             Section(L10n.UserDetail.sectionRoles) {
                 LabeledContent {
                     if store.isUpdatingRoles {
-                        ProgressView().controlSize(.small)
+                        MacSpinner()
                     } else if !user.isAdmin {
                         Button(L10n.UserDetail.roleGrantAdmin) { store.send(.grantAdminTapped) }
                     }
@@ -125,7 +125,7 @@
         private var volumesSection: some View {
             Section {
                 if store.volumesPhase == .loading {
-                    ProgressView().controlSize(.small)
+                    MacSpinner()
                 } else if store.volumes.isEmpty {
                     Text(L10n.UserDetail.volumesNone).foregroundStyle(.secondary)
                 } else {

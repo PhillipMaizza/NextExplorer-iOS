@@ -26,7 +26,7 @@
                 onConfirm: { store.send(.applyModeTapped) }
             ) {
                 if store.phase == .loading, store.permissions == nil {
-                    ProgressView().controlSize(.small).frame(maxWidth: .infinity)
+                    MacSpinner().frame(maxWidth: .infinity)
                 } else if store.permissions == nil, store.phase.errorMessage != nil {
                     Button(L10n.Common.retry) { store.send(.onAppear) }
                 } else {

@@ -188,13 +188,15 @@ struct SystemShareButton: View {
             Button(action: prepare) {
                 Label { Text(L10n.PreviewToolbar.share) } icon: {
                     if isPreparing {
-                        ProgressView().controlSize(.small)
+                        MacSpinner()
                     } else {
                         IconKit.share.foregroundStyle(didFail ? Color.negativeText : Color.primary)
                     }
                 }
             }
             .help(L10n.PreviewToolbar.share)
+            // The red glyph alone says the file couldn't be fetched; VoiceOver hears it too.
+            .accessibilityValue(didFail ? L10n.OpenWith.failed : "")
             .disabled(isDisabled)
             .background(MacViewAnchorView(anchor: anchor))
             .onChange(of: shareURL?.id) { _, _ in
@@ -211,6 +213,7 @@ struct SystemShareButton: View {
                 }
             }
             .accessibilityLabelWithTooltip(L10n.PreviewToolbar.share)
+            .accessibilityValue(didFail ? L10n.OpenWith.failed : "")
             .disabled(isDisabled)
             .sheet(item: $shareURL) { wrapped in
                 ActivityShareSheet(items: [wrapped.url])
