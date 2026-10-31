@@ -78,8 +78,20 @@
 
         // MARK: Go menu
 
-        /// Go ▸ Back leaves the folder and Go ▸ Forward brings it back. Clicked rather than typed:
-        /// ⌘[ and ⌘] sit on different keys outside the US layout.
+        /// ⌘[ leaves the folder and ⌘] brings it back.
+        func testBackAndForwardShortcuts() {
+            let app = launchApp()
+            openDocuments(in: app)
+
+            app.typeKey("[", modifierFlags: .command)
+            XCTAssertTrue(backButton(in: app).waitToVanish(), "⌘[ should return to the root")
+
+            app.typeKey("]", modifierFlags: .command)
+            XCTAssertTrue(backButton(in: app).waitToAppear(), "⌘] should reopen the folder left by going back")
+            XCTAssertTrue(text(Fixture.file, in: app).waitToAppear(), "The reopened folder should list its files")
+        }
+
+        /// The same through the Go menu.
         func testGoMenuBackAndForward() {
             let app = launchApp()
             openDocuments(in: app)
