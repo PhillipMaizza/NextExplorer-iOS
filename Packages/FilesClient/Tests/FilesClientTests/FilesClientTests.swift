@@ -64,6 +64,26 @@ struct FilesClientLiveTests {
     }
 
     @Test
+    func browsePreservesListingWhenAnOutsideSymlinkHasNullSize() async throws {
+        var body = try #require(JSONSerialization.jsonObject(with: browseResultJSON) as? [String: Any])
+        var items = try #require(body["items"] as? [[String: Any]])
+        var entry = try #require(items.first)
+        entry["name"] = "outside-link"
+        entry["kind"] = "unknown"
+        entry["size"] = NSNull()
+        entry["link"] = "outside"
+        items.append(entry)
+        body["items"] = items
+        stub(statusCode: 200, body: try JSONSerialization.data(withJSONObject: body))
+
+        let result = try await makeClient().browse(serverURL, "Home")
+
+        #expect(result.items.map(\.name) == ["Docs", "outside-link"])
+        #expect(result.items.last?.size == 0)
+        #expect(result.access.canRead)
+    }
+
+    @Test
     func browseDecodesFractionalSecondISO8601Dates() async throws {
         stub(statusCode: 200, body: browseResultJSON)
         let formatter = ISO8601DateFormatter()

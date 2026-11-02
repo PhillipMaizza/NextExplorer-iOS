@@ -236,7 +236,9 @@ public struct FileItem: Codable, Equatable, Identifiable, Sendable {
         name = try container.decode(String.self, forKey: .name)
         path = try container.decode(String.self, forKey: .path)
         dateModified = try container.decode(Date.self, forKey: .dateModified)
-        size = try container.decode(Int64.self, forKey: .size)
+        // Outside symlinks have a null size in NextExplorer 4.x listings.
+        // Keep the entry browsable using zero as the fallback in the numeric size model.
+        size = try container.decodeIfPresent(Int64.self, forKey: .size) ?? 0
         kind = try container.decode(String.self, forKey: .kind)
         supportsThumbnail = try container.decodeIfPresent(Bool.self, forKey: .supportsThumbnail) ?? false
     }
