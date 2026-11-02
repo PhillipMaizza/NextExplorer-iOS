@@ -4,6 +4,24 @@ import Testing
 
 @Suite("FileItem decoding")
 struct FileItemDecodingTests {
+    @Test("null or missing size does not prevent decoding", arguments: [#", "size": null"#, ""])
+    func unavailableSizeDefaultsToZero(sizeField: String) throws {
+        let json = """
+        {"name": "outside-link", "path": "Home", "dateModified": 1800000000, "kind": "unknown", "link": "outside"\(sizeField)}
+        """
+        let item = try JSONDecoder().decode(FileItem.self, from: Data(json.utf8))
+        #expect(item.size == 0)
+        #expect(item.id == "Home/outside-link")
+    }
+
+    @Test("invalid size types still fail to decode")
+    func invalidSizeThrows() {
+        let json = #"{"name": "entry", "path": "Home", "dateModified": 1800000000, "size": "invalid", "kind": "unknown"}"#
+        #expect(throws: DecodingError.self) {
+            _ = try JSONDecoder().decode(FileItem.self, from: Data(json.utf8))
+        }
+    }
+
     @Test("decodes a full directory listing entry")
     func decodesFullEntry() throws {
         let json = #"""
