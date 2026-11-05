@@ -721,3 +721,10 @@ media.play	Speel af
 media.pause	Pauzeer
 media.position	Afspeelpositie
 media.positionValue	%1$@ van %2$@
+menu.quitTransfersTitle	NextExplorer stoppen?
+menu.quitTransfersMessage	Er lopen nog uploads of downloads. Als je nu stopt, worden ze afgebroken.
+menu.quitTransfersConfirm	Stop
+textPreview.unsavedTitle	Wijzigingen in ‘%@’ bewaren?
+textPreview.unsavedMessage	Je wijzigingen gaan verloren als je ze niet bewaart.
+textPreview.dontSave	Niet bewaren
+browse.showInEnclosingFolder	Toon in bovenliggende map

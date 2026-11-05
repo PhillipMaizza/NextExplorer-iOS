@@ -721,3 +721,10 @@ media.play	Воспроизвести
 media.pause	Пауза
 media.position	Позиция воспроизведения
 media.positionValue	%1$@ из %2$@
+menu.quitTransfersTitle	Завершить NextExplorer?
+menu.quitTransfersMessage	Загрузки на сервер или скачивания ещё выполняются. Если завершить сейчас, они будут остановлены.
+menu.quitTransfersConfirm	Завершить
+textPreview.unsavedTitle	Сохранить изменения в «%@»?
+textPreview.unsavedMessage	Если не сохранить изменения, они будут потеряны.
+textPreview.dontSave	Не сохранять
+browse.showInEnclosingFolder	Показать в папке

@@ -721,3 +721,10 @@ media.play	Reproduzir
 media.pause	Pausar
 media.position	Posição de reprodução
 media.positionValue	%1$@ de %2$@
+menu.quitTransfersTitle	Encerrar o NextExplorer?
+menu.quitTransfersMessage	Ainda há envios ou downloads em andamento. Encerrar agora irá interrompê-los.
+menu.quitTransfersConfirm	Encerrar
+textPreview.unsavedTitle	Salvar alterações em “%@”?
+textPreview.unsavedMessage	Suas alterações serão perdidas se você não salvá-las.
+textPreview.dontSave	Não Salvar
+browse.showInEnclosingFolder	Mostrar na Pasta Contentora

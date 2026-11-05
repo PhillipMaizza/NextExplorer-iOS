@@ -721,3 +721,10 @@ media.play	Redă
 media.pause	Pauză
 media.position	Poziția redării
 media.positionValue	%1$@ din %2$@
+menu.quitTransfersTitle	Închizi NextExplorer?
+menu.quitTransfersMessage	Încărcările sau descărcările sunt încă în curs. Dacă închizi acum, se vor opri.
+menu.quitTransfersConfirm	Închide
+textPreview.unsavedTitle	Salvezi modificările din „%@”?
+textPreview.unsavedMessage	Modificările se pierd dacă nu le salvezi.
+textPreview.dontSave	Nu salva
+browse.showInEnclosingFolder	Arată în dosarul părinte

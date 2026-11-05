@@ -12,7 +12,8 @@
         var body: some View {
             Group {
                 if let frames, frames.images.count > 1 {
-                    TimelineView(.animation) { timeline in
+                    // Ticks once per frame, not at the display's refresh rate.
+                    TimelineView(.animation(minimumInterval: frames.duration / Double(frames.images.count))) { timeline in
                         frameImage(frames.images[frameIndex(at: timeline.date, in: frames)])
                     }
                 } else if let frame = frames?.images.first {

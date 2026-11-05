@@ -721,3 +721,10 @@ media.play	Lire
 media.pause	Pause
 media.position	Position de lecture
 media.positionValue	%1$@ sur %2$@
+menu.quitTransfersTitle	Quitter NextExplorer ?
+menu.quitTransfersMessage	Des envois ou des téléchargements sont encore en cours. Quitter maintenant les interrompra.
+menu.quitTransfersConfirm	Quitter
+textPreview.unsavedTitle	Enregistrer les modifications de « %@ » ?
+textPreview.unsavedMessage	Vos modifications seront perdues si vous ne les enregistrez pas.
+textPreview.dontSave	Ne pas enregistrer
+browse.showInEnclosingFolder	Afficher dans le dossier parent

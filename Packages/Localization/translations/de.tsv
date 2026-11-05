@@ -721,3 +721,10 @@ media.play	Wiedergeben
 media.pause	Pausieren
 media.position	Wiedergabeposition
 media.positionValue	%1$@ von %2$@
+menu.quitTransfersTitle	NextExplorer beenden?
+menu.quitTransfersMessage	Uploads oder Downloads laufen noch. Wenn du jetzt beendest, werden sie abgebrochen.
+menu.quitTransfersConfirm	Beenden
+textPreview.unsavedTitle	Änderungen an „%@“ sichern?
+textPreview.unsavedMessage	Deine Änderungen gehen verloren, wenn du sie nicht sicherst.
+textPreview.dontSave	Nicht sichern
+browse.showInEnclosingFolder	Im umgebenden Ordner zeigen

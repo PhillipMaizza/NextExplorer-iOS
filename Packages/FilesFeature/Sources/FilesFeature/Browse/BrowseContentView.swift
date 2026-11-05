@@ -6,9 +6,6 @@ import FilesClient
 import Localization
 import PhotosUI
 import SwiftUI
-#if os(macOS)
-    import AppKit
-#endif
 
 private enum BrowseViewMode: String {
     /// `table` is the Mac only sortable column view.
@@ -196,21 +193,11 @@ struct BrowseContentView: View {
             }
             .onChange(of: store.downloadSuccessMessage) { _, newValue in
                 guard let newValue else { return }
-                #if os(macOS)
-                    // A Mac download lands where the user chose; the toast reveals it there.
-                    let savedURL = store.lastSavedDownloadURL
-                    toastMessage = .success(newValue, actionTitle: L10n.Browse.showInFinder) {
-                        if let savedURL {
-                            NSWorkspace.shared.activateFileViewerSelecting([savedURL])
-                        }
-                    }
-                #else
-                    let inPreview = store.previewItem != nil
-                    toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
-                        // From a preview, close the cover first, then switch tabs after a settle.
-                        store.send(inPreview ? .openDownloadsFromPreview : .delegate(.openDownloadsTapped))
-                    }
-                #endif
+                let inPreview = store.previewItem != nil
+                toastMessage = .success(newValue, actionTitle: L10n.Browse.open) {
+                    // From a preview, close the cover first, then switch tabs after a settle.
+                    store.send(inPreview ? .openDownloadsFromPreview : .delegate(.openDownloadsTapped))
+                }
             }
             .onChange(of: store.transferSuccessMessage) { _, newValue in
                 guard let newValue else { return }
@@ -427,9 +414,14 @@ struct BrowseContentView: View {
             }
         ))
         #if os(macOS)
-        .modifier(MacFinderDrop(isEnabled: canUploadHere && !store.isSelecting) { urls in
-            store.send(.beginUpload(.documents(urls)))
-        })
+        .modifier(MacFinderDrop(
+            isEnabled: canUploadHere && !store.isSelecting,
+            onDrop: { urls in store.send(.beginUpload(.documents(urls))) },
+            onDropItems: { items in
+                guard !store.directoryPath.isEmpty else { return }
+                store.send(.itemsDroppedFromOtherWindow(items, destination: store.directoryPath))
+            }
+        ))
         #endif
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
@@ -690,7 +682,8 @@ struct BrowseContentView: View {
                 MacSearchResultsTable(
                     results: store.displayedSearchResults.map(Array.init) ?? [],
                     favoritePaths: store.favoritePaths,
-                    onOpen: { store.send(.searchResultTapped($0)) }
+                    onOpen: { store.send(.searchResultTapped($0)) },
+                    onShowInFolder: { store.send(.searchResultEnclosingFolderTapped($0)) }
                 )
                 if let message = searchStatusMessage {
                     Divider()
@@ -723,6 +716,11 @@ struct BrowseContentView: View {
                 serverURL: store.serverURL,
                 canDropOnFolders: store.access?.canDelete ?? false,
                 onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
+                onDropForeignItemsOnFolder: { items, folder in
+                    store.send(.itemsDroppedFromOtherWindow(items, destination: folder.id))
+                },
+                canUploadToFolders: canUploadHere,
+                onFilesDroppedOnFolder: { urls, folder in store.send(.filesDroppedOnFolder(urls, folder: folder)) },
                 contextMenu: { ids in tableContextMenu(for: ids) },
                 renamingItemID: shouldRenameInTable ? store.renameSheetItem?.id : nil,
                 onRenameCommit: { store.send(.renameConfirmed($0)) },
@@ -809,6 +807,39 @@ struct BrowseContentView: View {
                         store.send(.cutSelectionTapped, animation: .default)
                     } label: {
                         Label { Text(L10n.Browse.actionCut) } icon: { IconKit.cut }
+                    }
+                    .tint(.primaryDS)
+                }
+                if store.access?.canWrite ?? false, store.access?.canDelete ?? false {
+                    Button {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.bulkMoveTapped, animation: .default)
+                    } label: {
+                        Label { Text(L10n.Browse.actionMove) } icon: { IconKit.move }
+                    }
+                    .tint(.primaryDS)
+                }
+                // Select mode's bulk bar is iOS only, so the Mac's several row actions live here.
+                if store.access?.canDownload ?? false {
+                    Button {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.bulkDownloadTapped)
+                    } label: {
+                        Label { Text(L10n.Browse.actionDownload) } icon: { IconKit.download }
+                    }
+                    .tint(.primaryDS)
+                }
+                if items.allSatisfy(\.isDirectory) {
+                    let isAllFavorite = items.allSatisfy { store.favoritePaths.contains($0.id) }
+                    Button {
+                        store.send(.tableSelectionChanged(ids))
+                        store.send(.bulkFavoriteTapped)
+                    } label: {
+                        Label {
+                            Text(isAllFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites)
+                        } icon: {
+                            isAllFavorite ? IconKit.starFill : IconKit.star
+                        }
                     }
                     .tint(.primaryDS)
                 }

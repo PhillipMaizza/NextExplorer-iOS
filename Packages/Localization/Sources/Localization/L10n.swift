@@ -119,6 +119,7 @@ public enum L10n {
         public static var searchStoppedEarly: String { tr("browse.searchStoppedEarly") }
         public static func searchTooShort(_ a0: CVarArg) -> String { tr("browse.searchTooShort", a0) }
         public static var sectionPersonal: String { tr("browse.sectionPersonal") }  // "Personal"
+        public static var showInEnclosingFolder: String { tr("browse.showInEnclosingFolder") }  // "Show in Enclosing Folder"
         public static var showInFinder: String { tr("browse.showInFinder") }  // "Show in Finder"
         public static var transferConflictKeepBoth: String { tr("browse.transferConflictKeepBoth") }  // "Keep Both"
         public static func transferConflictMessageMany(_ a0: CVarArg) -> String { tr("browse.transferConflictMessageMany", a0) }
@@ -427,6 +428,9 @@ public enum L10n {
         public static var goToFolderTitle: String { tr("menu.goToFolderTitle") }  // "Go to the folder:"
         public static var newTab: String { tr("menu.newTab") }  // "New Tab"
         public static var newWindow: String { tr("menu.newWindow") }  // "New Window"
+        public static var quitTransfersConfirm: String { tr("menu.quitTransfersConfirm") }  // "Quit"
+        public static var quitTransfersMessage: String { tr("menu.quitTransfersMessage") }
+        public static var quitTransfersTitle: String { tr("menu.quitTransfersTitle") }  // "Quit NextExplorer?"
         public static var rateApp: String { tr("menu.rateApp") }  // "Rate NextExplorer…"
         public static var recentFolders: String { tr("menu.recentFolders") }  // "Recent Folders"
         public static var redo: String { tr("menu.redo") }  // "Redo"
@@ -640,8 +644,11 @@ public enum L10n {
         public static var shared: String { tr("tab.shared") }  // "Shared"
     }
     public enum TextPreview {
+        public static var dontSave: String { tr("textPreview.dontSave") }  // "Don't Save"
         public static var loadFailed: String { tr("textPreview.loadFailed") }
         public static var saved: String { tr("textPreview.saved") }  // "Saved"
+        public static var unsavedMessage: String { tr("textPreview.unsavedMessage") }  // "Your changes are lost if you don't save them."
+        public static func unsavedTitle(_ a0: CVarArg) -> String { tr("textPreview.unsavedTitle", a0) }
     }
     public enum ThumbnailSettings {
         public static var concurrency: String { tr("thumbnailSettings.concurrency") }  // "Concurrency"

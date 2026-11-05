@@ -48,10 +48,12 @@
                 .width(min: Metrics.locationColumnMinWidth)
             } rows: {
                 ForEach(favorites) { favorite in
+                    // The app's own private drag type: a plain string would drop the id as text
+                    // into other apps, and accept any text dragged in.
                     TableRow(favorite)
-                        .draggable(favorite.id)
-                        .dropDestination(for: String.self) { droppedIDs in
-                            move(droppedIDs.first, onto: favorite.id)
+                        .draggable(ServerItemReference(id: favorite.id))
+                        .dropDestination(for: ServerItemReference.self) { references in
+                            move(references.first?.id, onto: favorite.id)
                         }
                 }
             }

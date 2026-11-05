@@ -11,6 +11,17 @@ import Foundation
 /// A true "downloads continue indefinitely while suspended" experience would need a background
 /// `URLSession` plus app relaunch handling; this is the bounded, self-contained step toward it.
 enum BackgroundActivity {
+    /// A user's upload or download: on the Mac the system must not idle sleep or nap the app
+    /// partway through it, as Safari keeps a download going. iOS runs it as is; its transfer
+    /// queues already resume when the app comes back.
+    static func whileTransferring(name: String, _ work: @Sendable () async -> Void) async {
+        #if os(macOS)
+            await run(name: name, work)
+        #else
+            await work()
+        #endif
+    }
+
     static func run<T: Sendable>(name: String, _ work: @Sendable () async -> T) async -> T {
         #if os(macOS)
             let activity = ProcessInfo.processInfo.beginActivity(options: .userInitiated, reason: name)

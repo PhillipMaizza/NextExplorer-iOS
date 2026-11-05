@@ -1,5 +1,6 @@
 #if os(macOS)
     import AppKit
+    import Dependencies
     import Foundation
     import TreeSitter
     import TreeSitterBash
@@ -116,9 +117,7 @@
             guard let tree else { return [] }
             defer { ts_tree_delete(tree) }
 
-            let source = language.queryURLs
-                .compactMap { try? String(contentsOf: $0, encoding: .utf8) }
-                .joined(separator: "\n")
+            let source = querySource(for: language.queryURLs)
             var errorOffset: UInt32 = 0
             var errorType = TSQueryErrorNone
             let query = source.withCString { pointer in
@@ -151,6 +150,19 @@
         }
 
         /// Xcode like palette from system colors, so it adapts to light and dark mode.
+        /// The query files ship in the bundle and never change, so each set is read from disk
+        /// once rather than on every rehighlight while typing.
+        private static let querySources = LockIsolated<[[URL]: String]>([:])
+
+        private static func querySource(for urls: [URL]) -> String {
+            if let cached = querySources.value[urls] {
+                return cached
+            }
+            let source = urls.compactMap { try? String(contentsOf: $0, encoding: .utf8) }.joined(separator: "\n")
+            querySources.withValue { $0[urls] = source }
+            return source
+        }
+
         static func color(forCapture capture: String) -> NSColor? {
             let root = capture.split(separator: ".").first.map(String.init) ?? capture
             switch root {

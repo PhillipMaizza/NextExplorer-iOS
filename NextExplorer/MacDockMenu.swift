@@ -3,9 +3,10 @@
     import AppKit
     import ComposableArchitecture
     import FilesFeature
+    import Localization
 
     /// The Dock icon's menu: the folders opened recently in Browse, like Finder's, each one
-    /// reopening in the main window.
+    /// reopening in the main window. Also asks before quitting mid transfer.
     final class MacAppDelegate: NSObject, NSApplicationDelegate {
         @MainActor
         func applicationDockMenu(_: NSApplication) -> NSMenu? {
@@ -20,6 +21,21 @@
                 menu.addItem(item)
             }
             return menu
+        }
+
+        /// Like Safari with downloads running: quitting mid transfer asks first, since it stops
+        /// every upload and download in flight.
+        @MainActor
+        func applicationShouldTerminate(_: NSApplication) -> NSApplication.TerminateReply {
+            guard case let .authenticated(session) = NextExplorerApp.store.destination,
+                  session.mainTab.hasTransfersInFlight
+            else { return .terminateNow }
+            let alert = NSAlert()
+            alert.messageText = L10n.Menu.quitTransfersTitle
+            alert.informativeText = L10n.Menu.quitTransfersMessage
+            alert.addButton(withTitle: L10n.Menu.quitTransfersConfirm)
+            alert.addButton(withTitle: L10n.Common.cancel)
+            return alert.runModal() == .alertFirstButtonReturn ? .terminateNow : .terminateCancel
         }
 
         @MainActor @objc

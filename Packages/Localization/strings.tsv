@@ -455,6 +455,9 @@ archive.entryTooLarge	This item is too large to open.
 gallery.loadFailed	Couldn't load this image.
 textPreview.saved	Saved
 textPreview.loadFailed	Couldn't load this file. Check your connection and try again.
+textPreview.unsavedTitle	Save changes to “%@”?
+textPreview.unsavedMessage	Your changes are lost if you don't save them.
+textPreview.dontSave	Don't Save
 
 # ---- user management ----
 userManagement.navigationTitle	User Management
@@ -699,6 +702,7 @@ openWith.openWith	Open With
 openWith.viewAsText	View as Text
 openWith.failed	Couldn't open this file.
 browse.showInFinder	Show in Finder
+browse.showInEnclosingFolder	Show in Enclosing Folder
 browse.actionCut	Cut
 browse.clipboardCutOne	%@ ready to move
 browse.clipboardCutMany	%lld items ready to move
@@ -791,6 +795,9 @@ browse.quickLookTooLarge	This file is too large for Quick Look.
 menu.zoomIn	Zoom In
 menu.zoomOut	Zoom Out
 menu.zoomToFit	Zoom to Fit
+menu.quitTransfersTitle	Quit NextExplorer?
+menu.quitTransfersMessage	Uploads or downloads are still in progress. Quitting now stops them.
+menu.quitTransfersConfirm	Quit
 media.play	Play
 media.pause	Pause
 media.position	Playback Position

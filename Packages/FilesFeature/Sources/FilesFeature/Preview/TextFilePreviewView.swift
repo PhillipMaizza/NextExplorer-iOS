@@ -36,6 +36,23 @@ struct TextFilePreviewView: View {
     @State private var renderedMarkdownHTML = ""
     @State private var isEditing = false
     @State private var savedToast: DSToastMessage?
+    /// Closing with edits not yet saved: asking first, then (Save) closing once the save lands.
+    @State private var closeFlow = CloseFlow.idle
+
+    private enum CloseFlow: Equatable {
+        case idle
+        case confirming
+        case savingThenClosing
+    }
+
+    private var isConfirmingClose: Binding<Bool> {
+        Binding(get: { closeFlow == .confirming }, set: { isShown in
+            if !isShown, closeFlow == .confirming {
+                closeFlow = .idle
+            }
+        })
+    }
+
     @AppStorage(AppStorageKeys.renderHTMLPages) private var shouldRenderHTMLPages = false
     @AppStorage(AppStorageKeys.renderMarkdownPages) private var shouldRenderMarkdownPages = false
     @Environment(\.openURL) private var openURL
@@ -45,6 +62,19 @@ struct TextFilePreviewView: View {
     /// loaded `content` verbatim.
     private var currentText: String {
         draft ?? content ?? ""
+    }
+
+    private var hasUnsavedChanges: Bool {
+        isEditing && draft != nil && draft != content
+    }
+
+    /// Close asks first when there are edits, like any document editor, instead of dropping them.
+    private func requestClose() {
+        if hasUnsavedChanges {
+            closeFlow = .confirming
+        } else {
+            onDismiss()
+        }
     }
 
     /// Editor binding: reads `currentText` (so the first render already has the full document),
@@ -73,49 +103,95 @@ struct TextFilePreviewView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            editorBody
-                .background(Color.backgroundPrimary.ignoresSafeArea())
-                .navigationTitle(fileName)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarBackgroundHidden()
-                .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) { editToggleButton }
-                    if isHTML {
-                        ToolbarItem(placement: .topBarTrailing) { openInBrowserButton }
-                    }
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
-                            .accessibilityLabel(L10n.Common.close)
+        chrome
+            .dsToast($savedToast)
+            .dsAlert(isPresented: isConfirmingClose) {
+                DSAlertSheet(
+                    icon: IconKit.rename,
+                    title: L10n.TextPreview.unsavedTitle(fileName),
+                    message: L10n.TextPreview.unsavedMessage,
+                    confirmTitle: L10n.Common.save,
+                    dismissTitle: L10n.Common.cancel,
+                    neutralTitle: L10n.TextPreview.dontSave,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: {
+                        closeFlow = .savingThenClosing
+                        onSave(currentText)
+                    },
+                    onNeutral: {
+                        closeFlow = .idle
+                        onDismiss()
+                    },
+                    onDismiss: { closeFlow = .idle }
+                )
+            }
+            // A new document (first load, or the reload after a save) discards any stale edit buffer so
+            // the editor follows the authoritative `content` again.
+            .onChange(of: content) { _, _ in draft = nil }
+            // `MarkdownRenderer.html` parses the whole document; run it off the main thread so a
+            // large Markdown file doesn't freeze the UI on open. `.task(id:)` cancels a superseded
+            // render, so a fast content change can't land a stale HTML string.
+            .task(id: content) {
+                guard isMarkdown else {
+                    renderedMarkdownHTML = ""
+                    return
+                }
+                let source = content ?? ""
+                let html = await Task.detached(priority: .userInitiated) {
+                    MarkdownRenderer.html(from: source)
+                }.value
+                if !Task.isCancelled {
+                    renderedMarkdownHTML = html
+                }
+            }
+            .onChange(of: isSaving) { wasSaving, nowSaving in
+                guard wasSaving, !nowSaving else { return }
+                let shouldClose = closeFlow == .savingThenClosing
+                closeFlow = .idle
+                if errorMessage == nil {
+                    savedToast = .success(L10n.TextPreview.saved)
+                    isEditing = false
+                    if shouldClose {
+                        onDismiss()
                     }
                 }
-        }
-        .dsToast($savedToast)
-        // A new document (first load, or the reload after a save) discards any stale edit buffer so
-        // the editor follows the authoritative `content` again.
-        .onChange(of: content) { _, _ in draft = nil }
-        // `MarkdownRenderer.html` parses the whole document; run it off the main thread so a
-        // large Markdown file doesn't freeze the UI on open. `.task(id:)` cancels a superseded
-        // render, so a fast content change can't land a stale HTML string.
-        .task(id: content) {
-            guard isMarkdown else {
-                renderedMarkdownHTML = ""
-                return
             }
-            let source = content ?? ""
-            let html = await Task.detached(priority: .userInitiated) {
-                MarkdownRenderer.html(from: source)
-            }.value
-            if !Task.isCancelled {
-                renderedMarkdownHTML = html
+    }
+
+    private var chrome: some View {
+        #if os(macOS)
+            // A Mac sheet has no navigation toolbar: Close, Edit and Save sit in the preview bar,
+            // and ⌘S saves while editing, like any Mac editor.
+            editorBody
+                .background(Color.backgroundPrimary.ignoresSafeArea())
+                .macPreviewBar(title: fileName, onClose: requestClose) {
+                    EmptyView()
+                } trailing: {
+                    if isHTML {
+                        openInBrowserButton
+                    }
+                    editToggleButton
+                        .keyboardShortcut(isEditing ? KeyboardShortcut("s") : nil)
+                }
+        #else
+            NavigationStack {
+                editorBody
+                    .background(Color.backgroundPrimary.ignoresSafeArea())
+                    .navigationTitle(fileName)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarBackgroundHidden()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) { editToggleButton }
+                        if isHTML {
+                            ToolbarItem(placement: .topBarTrailing) { openInBrowserButton }
+                        }
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button { requestClose() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
+                                .accessibilityLabel(L10n.Common.close)
+                        }
+                    }
             }
-        }
-        .onChange(of: isSaving) { wasSaving, nowSaving in
-            if wasSaving, !nowSaving, errorMessage == nil {
-                savedToast = .success(L10n.TextPreview.saved)
-                isEditing = false
-            }
-        }
+        #endif
     }
 
     /// Leading nav-bar item: toggles the Runestone editor between read-only and editable; the
@@ -129,7 +205,7 @@ struct TextFilePreviewView: View {
                 (isEditing ? IconKit.checkmark : IconKit.rename)
                     .foregroundStyle(Color.primaryDS)
             }
-            .accessibilityLabel(isEditing ? L10n.Common.save : L10n.Common.edit)
+            .accessibilityLabelWithTooltip(isEditing ? L10n.Common.save : L10n.Common.edit)
         }
     }
 
@@ -144,7 +220,7 @@ struct TextFilePreviewView: View {
             } label: {
                 IconKit.web.foregroundStyle(Color.primaryDS)
             }
-            .accessibilityLabel(L10n.Browse.actionOpenInBrowser)
+            .accessibilityLabelWithTooltip(L10n.Browse.actionOpenInBrowser)
         }
     }
 
@@ -175,7 +251,11 @@ struct TextFilePreviewView: View {
             // Real tree-sitter syntax highlighting (Runestone): kept visible whether or not
             // `isEditing` is on, not just while actively editing, since highlighting helps
             // reading just as much as writing.
-            CodeEditorView(kind: kind, text: editorText, isEditable: isEditing)
+            #if os(macOS)
+                CodeEditorView(kind: kind, text: editorText, isEditable: isEditing, onEscape: requestClose)
+            #else
+                CodeEditorView(kind: kind, text: editorText, isEditable: isEditing)
+            #endif
         }
     }
 

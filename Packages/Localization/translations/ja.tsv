@@ -721,3 +721,10 @@ media.play	再生
 media.pause	一時停止
 media.position	再生位置
 media.positionValue	%1$@ / %2$@
+menu.quitTransfersTitle	NextExplorerを終了しますか？
+menu.quitTransfersMessage	アップロードまたはダウンロードが進行中です。今終了すると停止します。
+menu.quitTransfersConfirm	終了
+textPreview.unsavedTitle	“%@”への変更を保存しますか？
+textPreview.unsavedMessage	保存しないと変更内容は失われます。
+textPreview.dontSave	保存しない
+browse.showInEnclosingFolder	親フォルダに表示

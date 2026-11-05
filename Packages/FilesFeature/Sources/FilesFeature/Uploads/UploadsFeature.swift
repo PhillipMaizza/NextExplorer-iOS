@@ -274,9 +274,11 @@ public struct UploadsFeature {
         return .run { _ in await uploadStaging.discard(urls) }
     }
 
+    static let activityName = "NextExplorer upload"
+
     private func upload(_ job: UploadJob, serverURL: URL) -> Effect<Action> {
         let filesClient = filesClient
-        return .run { send in
+        return .run { send in await BackgroundActivity.whileTransferring(name: Self.activityName) {
             let (progress, continuation) = AsyncStream<Double>.makeStream()
             // Throttle the callbacks (URLSession fires many) so each one does not force a full
             // state diff or view update.
@@ -314,7 +316,7 @@ public struct UploadsFeature {
             }
             guard let result else { return }
             await send(.uploadResponse(id: job.id, result))
-        }
+        } }
         .cancellable(id: CancelID.job(job.id))
     }
 

@@ -10,14 +10,13 @@ private enum Constants {
     static let backIconSize: CGFloat = .iconSmall
     static let rowIconSize: CGFloat = .iconMedium
     static let statusSpacing: CGFloat = .space16
-    static let macRowIconSize: CGFloat = .iconSmall
-    static let macSizeColumnWidth: CGFloat = 90
 }
 
 /// One row of the current folder level within `ArchiveBrowserView`: directories are
 /// synthesized from entry path prefixes (most archives don't include explicit directory
 /// entries for every intermediate folder), not just the ones the archive lists directly.
-private struct ArchiveRow: Identifiable {
+/// One row of the archive's current folder: a file, or a folder its entries imply.
+struct ArchiveRow: Identifiable {
     let name: String
     let isDirectory: Bool
     let size: UInt64?
@@ -106,65 +105,85 @@ struct ArchiveBrowserView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        chrome
+            .dsToast($toastMessage)
+            // A real cover, nested inside the archive's own `.fullScreenCover`: the entry
+            // preview morphs from its row and swipes back to it (`.zoom`), and dismissing it
+            // lands back in the archive listing rather than closing everything.
+            .fullScreenCover(item: $previewingEntry) { entry in
+                PreviewZoomContainer(sourceID: entry.sourceID, namespace: entryTransition) {
+                    ArchiveEntryPreviewView(
+                        item: entry.item,
+                        fileURL: entry.fileURL,
+                        serverURL: serverURL,
+                        resolveAsset: { relativePath in await resolveAsset(relativePath, relativeTo: entry.item.path) },
+                        onDismiss: { previewingEntry = nil }
+                    )
+                }
+            }
+            .task {
+                await load()
+            }
+            // Navigating a folder abandons any in flight extraction the user walked away from.
+            .onChange(of: currentPath) { _, _ in extractingRow = nil }
+            // Closing the browser purges this archive's extracted entries and resolved assets from
+            // `tmp`: otherwise the last opened entry of every archive ever browsed lingers there
+            // until the OS purges under pressure. Skipped while an extraction is still running so we
+            // never delete a file out from under an in flight write.
+            .onDisappear {
+                guard extractingRow == nil else { return }
+                let directory = Self.temporaryDirectory(for: item)
+                Task.detached(priority: .utility) { [directory] in
+                    try? FileManager.default.removeItem(at: directory)
+                }
+            }
+    }
+
+    private var chrome: some View {
+        #if os(macOS)
+            // A Mac sheet has no navigation toolbar: Close and the folder Back sit in the bar,
+            // and ⌘[ goes up a folder as in Finder.
             content
                 .backgroundGradient()
-                .navigationTitle(title)
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
+                .macPreviewBar(title: title, onClose: onDismiss) {
                     if !currentPath.isEmpty {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button {
-                                currentPath.removeLast()
-                            } label: {
-                                IconKit.back
-                                    .resizable()
-                                    .scaledToFit()
-                                    .foregroundStyle(Color.primaryDS)
-                                    .frame(width: Constants.backIconSize, height: Constants.backIconSize)
-                            }
-                            .accessibilityLabel(L10n.Common.back)
+                        Button { currentPath.removeLast() } label: {
+                            Label { Text(L10n.Common.back) } icon: { IconKit.back }
                         }
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button { onDismiss() } label: {
-                            IconKit.close.foregroundStyle(Color.primaryDS)
-                        }
-                        .accessibilityLabel(L10n.Common.close)
+                        .keyboardShortcut("[")
+                        .help(L10n.Common.back)
                     }
                 }
-        }
-        .dsToast($toastMessage)
-        // A real cover, nested inside the archive's own `.fullScreenCover`: the entry
-        // preview morphs from its row and swipes back to it (`.zoom`), and dismissing it
-        // lands back in the archive listing rather than closing everything.
-        .fullScreenCover(item: $previewingEntry) { entry in
-            PreviewZoomContainer(sourceID: entry.sourceID, namespace: entryTransition) {
-                ArchiveEntryPreviewView(
-                    item: entry.item,
-                    fileURL: entry.fileURL,
-                    serverURL: serverURL,
-                    resolveAsset: { relativePath in await resolveAsset(relativePath, relativeTo: entry.item.path) },
-                    onDismiss: { previewingEntry = nil }
-                )
+        #else
+            NavigationStack {
+                content
+                    .backgroundGradient()
+                    .navigationTitle(title)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        if !currentPath.isEmpty {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button {
+                                    currentPath.removeLast()
+                                } label: {
+                                    IconKit.back
+                                        .resizable()
+                                        .scaledToFit()
+                                        .foregroundStyle(Color.primaryDS)
+                                        .frame(width: Constants.backIconSize, height: Constants.backIconSize)
+                                }
+                                .accessibilityLabel(L10n.Common.back)
+                            }
+                        }
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button { onDismiss() } label: {
+                                IconKit.close.foregroundStyle(Color.primaryDS)
+                            }
+                            .accessibilityLabel(L10n.Common.close)
+                        }
+                    }
             }
-        }
-        .task {
-            await load()
-        }
-        // Navigating a folder abandons any in-flight extraction the user walked away from.
-        .onChange(of: currentPath) { _, _ in extractingRow = nil }
-        // Closing the browser purges this archive's extracted entries and resolved assets from
-        // `tmp`: otherwise the last opened entry of every archive ever browsed lingers there
-        // until the OS purges under pressure. Skipped while an extraction is still running so we
-        // never delete a file out from under an in-flight write.
-        .onDisappear {
-            guard extractingRow == nil else { return }
-            let directory = Self.temporaryDirectory(for: item)
-            Task.detached(priority: .utility) { [directory] in
-                try? FileManager.default.removeItem(at: directory)
-            }
-        }
+        #endif
     }
 
     @ViewBuilder
@@ -177,7 +196,7 @@ struct ArchiveBrowserView: View {
             statusContent(icon: IconKit.folderFill, message: L10n.Archive.emptyFolder, tint: .secondaryDS)
         } else {
             #if os(macOS)
-                macTable
+                ArchiveMacTable(rows: visibleRows, extractingRow: extractingRow, entryTransition: entryTransition, onOpen: handleTap)
             #else
                 DSGroupedList(visibleRows) { row in
                     Button {
@@ -192,41 +211,6 @@ struct ArchiveBrowserView: View {
             #endif
         }
     }
-
-    #if os(macOS)
-        /// The archive's current folder as a native table, like the Browse table: double click
-        /// opens a folder or previews a file.
-        private var macTable: some View {
-            Table(visibleRows) {
-                TableColumn(L10n.Sort.name) { row in
-                    HStack(spacing: .space8) {
-                        if row.isDirectory {
-                            IconKit.folderFill.foregroundStyle(Color.accent)
-                        } else {
-                            FileTypeIcon(kind: (row.name as NSString).pathExtension)
-                                .frame(width: Constants.macRowIconSize, height: Constants.macRowIconSize)
-                                .matchedTransitionSource(id: row.name, in: entryTransition)
-                        }
-                        Text(row.name).lineLimit(1).truncationMode(.middle)
-                        if extractingRow == row.name {
-                            MacSpinner()
-                        }
-                    }
-                }
-                TableColumn(L10n.Sort.size) { row in
-                    Text(row.size.map { FileSizeFormat.string(Int64($0)) } ?? "")
-                        .foregroundStyle(.secondary)
-                        .monospacedDigit()
-                }
-                .width(Constants.macSizeColumnWidth)
-            }
-            .contextMenu(forSelectionType: ArchiveRow.ID.self, menu: { _ in }, primaryAction: { ids in
-                if let id = ids.first, let row = visibleRows.first(where: { $0.id == id }) {
-                    handleTap(row)
-                }
-            })
-        }
-    #endif
 
     private func rowContent(_ row: ArchiveRow) -> some View {
         HStack(spacing: Constants.rowSpacing) {

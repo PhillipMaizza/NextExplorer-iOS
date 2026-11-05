@@ -41,11 +41,16 @@ public struct DownloadQueueFeature {
         public var startedAt: Date?
         /// Average rate since the transfer started, steadier for an estimate than an instant rate.
         public var bytesPerSecond: Double?
+        /// Mac: where the user chose to save it in Finder; `nil` saves into the Downloads tab.
+        public var saveTarget: DownloadSaveRequest.Target?
+        /// Mac: where a finished save landed, for Show in Finder.
+        public var savedURL: URL?
 
-        public init(id: UUID, item: FileItem, status: Status) {
+        public init(id: UUID, item: FileItem, status: Status, saveTarget: DownloadSaveRequest.Target? = nil) {
             self.id = id
             self.item = item
             self.status = status
+            self.saveTarget = saveTarget
         }
 
         public var progress: Double? {
@@ -61,9 +66,10 @@ public struct DownloadQueueFeature {
             return max(Double(expectedBytes - receivedBytes), 0) / bytesPerSecond
         }
 
-        /// What the saved file is called: folders arrive as `<name>.zip`.
+        /// What the saved file is called: folders arrive as `<name>.zip`, except a Mac save,
+        /// which recreates the folder itself.
         public var fileName: String {
-            item.isDirectory ? "\(item.name).\(Constants.folderArchiveExtension)" : item.name
+            item.isDirectory && saveTarget == nil ? "\(item.name).\(Constants.folderArchiveExtension)" : item.name
         }
     }
 
@@ -71,6 +77,8 @@ public struct DownloadQueueFeature {
     public struct FinishSummary: Equatable, Sendable {
         public var savedCount: Int
         public var failedCount: Int
+        /// Mac: the last item saved in Finder, which the confirmation names and reveals.
+        public var lastSavedURL: URL?
     }
 
     @ObservableState
@@ -107,10 +115,21 @@ public struct DownloadQueueFeature {
         var remainingCount: Int {
             jobs.filter { !$0.status.isTerminal }.count
         }
+
+        var savedCount: Int {
+            jobs.filter { $0.status == .completed }.count
+        }
+
+        /// Mac: the last finished save's location in Finder.
+        var lastSavedURL: URL? {
+            jobs.last { $0.status == .completed && $0.savedURL != nil }?.savedURL
+        }
     }
 
     public enum Action: Equatable, Sendable {
         case enqueue([FileItem])
+        /// Mac: items to save where the user chose in Finder.
+        case enqueueSaves([DownloadSaveRequest])
         case startNextIfIdle
         case progress(id: UUID, TransferProgress)
         case downloadResponse(id: UUID, Result<URL, FilesClientError>)
@@ -157,6 +176,16 @@ public struct DownloadQueueFeature {
                 }
                 return .send(.startNextIfIdle)
 
+            case let .enqueueSaves(requests):
+                guard !requests.isEmpty else { return .none }
+                if !state.isActive {
+                    state.jobs.removeAll { $0.status.isTerminal }
+                }
+                for request in requests {
+                    state.jobs.append(DownloadJob(id: uuid(), item: request.item, status: .queued, saveTarget: request.target))
+                }
+                return .send(.startNextIfIdle)
+
             case .startNextIfIdle:
                 guard state.currentJob == nil,
                       let next = state.jobs.first(where: { $0.status == .queued })
@@ -182,8 +211,11 @@ public struct DownloadQueueFeature {
                 guard state.jobs[id: id] != nil else { return .none }
                 var saved: Effect<Action> = .none
                 switch result {
-                case .success:
+                case let .success(url):
                     state.jobs[id: id]?.status = .completed
+                    if state.jobs[id: id]?.saveTarget != nil {
+                        state.jobs[id: id]?.savedURL = url
+                    }
                     saved = .send(.delegate(.itemSaved))
                 case let .failure(error):
                     state.jobs[id: id]?.status = .failed(Self.message(for: error))
@@ -245,7 +277,7 @@ public struct DownloadQueueFeature {
     private func download(_ job: DownloadJob, serverURL: URL, scope: String) -> Effect<Action> {
         let filesClient = filesClient
         let localDownloadStore = localDownloadStore
-        return .run { send in
+        return .run { send in await BackgroundActivity.whileTransferring(name: Self.activityName) {
             let (progress, continuation) = AsyncStream<TransferProgress>.makeStream(bufferingPolicy: .bufferingNewest(1))
 
             let result = await withTaskGroup(
@@ -263,6 +295,17 @@ public struct DownloadQueueFeature {
                         // (never retried automatically) until the inactivity timeout, surfacing as
                         // "couldn't reach the server". Start every item on a fresh connection.
                         await filesClient.flushDownloadConnections()
+                        #if os(macOS)
+                            if let target = job.saveTarget {
+                                return try await MacDownloadSaving.save(
+                                    DownloadSaveRequest(item: job.item, target: target),
+                                    serverURL: serverURL,
+                                    filesClient: filesClient
+                                ) { update in
+                                    continuation.yield(update)
+                                }
+                            }
+                        #endif
                         let temporaryURL = try await filesClient.downloadItem(serverURL, job.item) { update in
                             continuation.yield(update)
                         }
@@ -283,9 +326,11 @@ public struct DownloadQueueFeature {
             }
             guard let result, !Task.isCancelled else { return }
             await send(.downloadResponse(id: job.id, result))
-        }
+        } }
         .cancellable(id: CancelID.job(job.id))
     }
+
+    static let activityName = "NextExplorer download"
 
     private static func message(for error: FilesClientError) -> String {
         switch error {
@@ -308,7 +353,8 @@ private extension DownloadQueueFeature.State {
     var finishSummary: DownloadQueueFeature.FinishSummary {
         DownloadQueueFeature.FinishSummary(
             savedCount: jobs.filter { $0.status == .completed }.count,
-            failedCount: jobs.filter(\.status.isFailed).count
+            failedCount: jobs.filter(\.status.isFailed).count,
+            lastSavedURL: lastSavedURL
         )
     }
 }

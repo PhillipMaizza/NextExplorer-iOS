@@ -178,7 +178,7 @@
                 }
                 .padding(.space16)
                 Divider()
-                CodeEditorView(kind: "txt", text: .constant(document.text), isEditable: false)
+                CodeEditorView(kind: "txt", text: .constant(document.text), isEditable: false) { dismiss() }
             }
             .frame(width: Metrics.rawTextSheetWidth, height: Metrics.rawTextSheetHeight)
         }

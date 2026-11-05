@@ -116,6 +116,8 @@ public struct FavoritesFeature {
         case searchQueryChanged(String)
         case fileSearchResponse(Result<[SearchResultItem], FilesClientError>)
         case searchRetryTapped
+        /// "View in Shared" after creating a link from a search result's preview.
+        case viewSharesFromPreviewTapped
         case searchResultTapped(SearchResultItem)
         case previewHost(PresentationAction<BrowseFeature.Action>)
         case selectModeToggled
@@ -151,6 +153,7 @@ public struct FavoritesFeature {
             case goToSharedTab
             case uploadRequested([PendingUpload])
             case downloadRequested([FileItem])
+            case saveRequested([DownloadSaveRequest])
         }
     }
 
@@ -358,10 +361,27 @@ public struct FavoritesFeature {
                  let .previewHost(.presented(.delegate(.downloadRequested(items)))):
                 return .send(.delegate(.downloadRequested(items)))
 
+            case let .path(.element(id: _, action: .delegate(.saveRequested(requests)))),
+                 let .previewHost(.presented(.delegate(.saveRequested(requests)))):
+                return .send(.delegate(.saveRequested(requests)))
+
             case .previewHost(.presented(.previewDismissed)):
                 // Closing the file preview tears the whole host down, returning to the results.
                 state.previewHost = nil
                 return .none
+
+            case .viewSharesFromPreviewTapped:
+                state.previewHost = nil
+                return .send(.delegate(.goToSharedTab))
+
+            case .previewHost(.presented(.renameResponse(.success))):
+                // The preview follows the new name; the results behind it search again so they do too.
+                return .send(.searchRetryTapped)
+
+            case .previewHost(.presented(.deleteResponse(.success))):
+                // The previewed file is gone: back to the results, which search again without it.
+                state.previewHost = nil
+                return .send(.searchRetryTapped)
 
             case .previewHost:
                 return .none

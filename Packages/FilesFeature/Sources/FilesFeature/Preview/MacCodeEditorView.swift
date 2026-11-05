@@ -14,6 +14,9 @@
         let kind: String
         @Binding var text: String
         let isEditable: Bool
+        /// Esc in the text: the text view would otherwise take it for word completion, so the
+        /// preview's Close (and its save prompt) never heard it.
+        var onEscape: (() -> Void)?
 
         func makeNSView(context: Context) -> NSScrollView {
             let scrollView = NSTextView.scrollableTextView()
@@ -31,6 +34,7 @@
             textView.isEditable = isEditable
             textView.string = text
             context.coordinator.lastReportedText = text
+            context.coordinator.onEscape = onEscape
             context.coordinator.attach(textView, kind: kind)
             return scrollView
         }
@@ -38,6 +42,7 @@
         func updateNSView(_ scrollView: NSScrollView, context: Context) {
             guard let textView = scrollView.documentView as? NSTextView else { return }
             textView.isEditable = isEditable
+            context.coordinator.onEscape = onEscape
             guard context.coordinator.lastReportedText != text else { return }
             context.coordinator.lastReportedText = text
             textView.string = text
@@ -57,6 +62,7 @@
         final class Coordinator: NSObject, NSTextViewDelegate {
             private let text: Binding<String>
             var lastReportedText: String
+            var onEscape: (() -> Void)?
             private weak var textView: NSTextView?
             private var language: MacSyntaxLanguage?
             private var highlightTask: Task<Void, Never>?
@@ -72,6 +78,12 @@
                 self.textView = textView
                 language = MacSyntaxLanguage.forKind(kind)
                 highlight(after: nil)
+            }
+
+            func textView(_: NSTextView, doCommandBy selector: Selector) -> Bool {
+                guard selector == #selector(NSResponder.cancelOperation(_:)), let onEscape else { return false }
+                onEscape()
+                return true
             }
 
             func textDidChange(_ notification: Notification) {

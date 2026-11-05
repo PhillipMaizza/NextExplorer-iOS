@@ -69,6 +69,16 @@ private struct ArchiveImagePreviewView: View {
     @State private var areControlsHidden = false
 
     var body: some View {
+        #if os(macOS)
+            // A Mac sheet has no navigation toolbar, so Close sits in the preview bar.
+            imageContent
+                .macPreviewBar(title: fileName, onClose: onDismiss)
+        #else
+            iOSBody
+        #endif
+    }
+
+    private var iOSBody: some View {
         NavigationStack {
             imageContent
                 .ignoresSafeArea()
@@ -143,41 +153,52 @@ private struct ArchiveTextEntryPreviewView: View {
         return lowercaseKind == "md" || lowercaseKind == "markdown"
     }
 
-    var body: some View {
-        NavigationStack {
+    private var chrome: some View {
+        #if os(macOS)
+            // A Mac sheet has no navigation toolbar, so Close sits in the preview bar.
             body_
                 .backgroundGradient()
-                .navigationTitle(item.name)
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationBarBackgroundHidden()
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
-                            .accessibilityLabel(L10n.Common.close)
+                .macPreviewBar(title: item.name, onClose: onDismiss)
+        #else
+            NavigationStack {
+                body_
+                    .backgroundGradient()
+                    .navigationTitle(item.name)
+                    .navigationBarTitleDisplayMode(.inline)
+                    .navigationBarBackgroundHidden()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button { onDismiss() } label: { IconKit.close.foregroundStyle(Color.primaryDS) }
+                                .accessibilityLabel(L10n.Common.close)
+                        }
                     }
-                }
-        }
-        .task {
-            // Read + (for Markdown) render off the main actor: a multi-megabyte entry would
-            // otherwise block the UI while it decodes and parses. Memoized once here rather
-            // than inline from `body_`, which would re-parse on every unrelated re-render.
-            let shouldRenderMarkdown = isMarkdown
-            let loaded: (text: String, markdownHTML: String)? = await Task.detached(priority: .userInitiated) {
-                guard let handle = try? FileHandle(forReadingFrom: fileURL) else { return nil }
-                defer { try? handle.close() }
-                let data = (try? handle.read(upToCount: Constants.maxTextPreviewBytes)) ?? Data()
-                // A prefix read can slice a multi-byte character; `String(decoding:as:)`
-                // substitutes U+FFFD rather than failing the whole preview.
-                let text = String(decoding: data, as: UTF8.self)
-                return (text, shouldRenderMarkdown ? MarkdownRenderer.html(from: text) : "")
-            }.value
-            guard let loaded else {
-                loadErrorMessage = L10n.Archive.openFailed
-                return
             }
-            content = loaded.text
-            renderedMarkdownHTML = loaded.markdownHTML
-        }
+        #endif
+    }
+
+    var body: some View {
+        chrome
+            .task {
+                // Read + (for Markdown) render off the main actor: a multi megabyte entry would
+                // otherwise block the UI while it decodes and parses. Memoized once here rather
+                // than inline from `body_`, which would reparse on every unrelated rerender.
+                let shouldRenderMarkdown = isMarkdown
+                let loaded: (text: String, markdownHTML: String)? = await Task.detached(priority: .userInitiated) {
+                    guard let handle = try? FileHandle(forReadingFrom: fileURL) else { return nil }
+                    defer { try? handle.close() }
+                    let data = (try? handle.read(upToCount: Constants.maxTextPreviewBytes)) ?? Data()
+                    // A prefix read can slice a multibyte character; `String(decoding:as:)`
+                    // substitutes U+FFFD rather than failing the whole preview.
+                    let text = String(decoding: data, as: UTF8.self)
+                    return (text, shouldRenderMarkdown ? MarkdownRenderer.html(from: text) : "")
+                }.value
+                guard let loaded else {
+                    loadErrorMessage = L10n.Archive.openFailed
+                    return
+                }
+                content = loaded.text
+                renderedMarkdownHTML = loaded.markdownHTML
+            }
     }
 
     @ViewBuilder
@@ -198,7 +219,11 @@ private struct ArchiveTextEntryPreviewView: View {
             } else if isMarkdown, shouldRenderMarkdownPages {
                 HTMLRenderedView(cacheKey: item.id, html: renderedMarkdownHTML, resolveAsset: resolveAsset)
             } else {
-                CodeEditorView(kind: item.kind, text: .constant(content), isEditable: false)
+                #if os(macOS)
+                    CodeEditorView(kind: item.kind, text: .constant(content), isEditable: false, onEscape: onDismiss)
+                #else
+                    CodeEditorView(kind: item.kind, text: .constant(content), isEditable: false)
+                #endif
             }
         } else {
             DSSpinner().frame(maxWidth: .infinity, maxHeight: .infinity)
