@@ -2,10 +2,6 @@ import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
-#if os(macOS)
-    import AppKit
-    import UniformTypeIdentifiers
-#endif
 
 private enum Constants {
     static let iconSize: CGFloat = .size64
@@ -56,7 +52,7 @@ struct UnsupportedFilePreviewView: View {
                 Label {
                     Text(item.name)
                 } icon: {
-                    Image(nsImage: NSWorkspace.shared.icon(for: UTType(filenameExtension: item.kind) ?? .data))
+                    Image(nsImage: MacFileTypeIcon.image(forFileName: item.name))
                         .resizable()
                         .scaledToFit()
                         .frame(width: Constants.iconSize, height: Constants.iconSize)

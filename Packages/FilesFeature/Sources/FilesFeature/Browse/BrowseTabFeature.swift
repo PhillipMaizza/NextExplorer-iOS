@@ -57,6 +57,7 @@ public struct BrowseTabFeature {
             case goToSharedTab
             case uploadRequested([PendingUpload])
             case downloadRequested([FileItem])
+            case saveRequested([DownloadSaveRequest])
         }
     }
 
@@ -132,6 +133,10 @@ public struct BrowseTabFeature {
             case let .root(.delegate(.downloadRequested(items))),
                  let .path(.element(id: _, action: .delegate(.downloadRequested(items)))):
                 return .send(.delegate(.downloadRequested(items)))
+
+            case let .root(.delegate(.saveRequested(requests))),
+                 let .path(.element(id: _, action: .delegate(.saveRequested(requests)))):
+                return .send(.delegate(.saveRequested(requests)))
 
             case .offlineAvailabilityChanged:
                 return .merge(

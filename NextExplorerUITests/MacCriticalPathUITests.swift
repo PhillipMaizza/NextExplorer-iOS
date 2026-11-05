@@ -1,4 +1,5 @@
 #if os(macOS)
+    import CoreModels
     import Localization
     import XCTest
 
@@ -248,6 +249,24 @@
             XCTAssertTrue(text("todo.txt", in: app).waitToAppear(), "The renamed file should appear in the table")
         }
 
+        /// While renaming in place, ⌘A selects the name's text, not every file in the table.
+        func testSelectAllWhileRenamingEditsTheName() {
+            let app = launchApp()
+            openDocuments(in: app)
+
+            text(Fixture.file, in: app).click()
+            app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
+            let field = app.outlines.textFields.firstMatch
+            XCTAssertTrue(field.waitToAppear(), "Return should rename the selected file in place")
+            let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == true"), object: field)
+            XCTAssertEqual(XCTWaiter().wait(for: [focused], timeout: UITestTimeout.short), .completed)
+            app.typeKey("a", modifierFlags: .command)
+            field.typeText("todo.txt")
+            app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
+            XCTAssertTrue(field.waitToVanish(), "Return in the field should finish the rename")
+            XCTAssertTrue(text("todo.txt", in: app).waitToAppear(), "⌘A then typing should replace the whole name")
+        }
+
         func testDeleteKeyAsksBeforeDeleting() {
             let app = launchApp()
             openDocuments(in: app)
@@ -262,7 +281,104 @@
             XCTAssertTrue(text(Fixture.file, in: app).waitToVanish(), "The confirmed file should leave the table")
         }
 
+        /// Space on a file opens the system Quick Look panel; Space again closes it, as in Finder.
+        func testSpaceOnAFileTogglesQuickLook() {
+            let app = launchApp()
+            let file = text(Fixture.file, in: app)
+            XCTAssertTrue(file.waitToAppear())
+            file.waitToBeHittable()
+            file.click()
+            let windowsBefore = app.windows.count
+            app.typeKey(XCUIKeyboardKey.space, modifierFlags: [])
+            let opened = XCTNSPredicateExpectation(predicate: NSPredicate(format: "count > %d", windowsBefore), object: app.windows)
+            XCTAssertEqual(XCTWaiter().wait(for: [opened], timeout: UITestTimeout.standard), .completed, "Space should open Quick Look")
+            app.typeKey(XCUIKeyboardKey.space, modifierFlags: [])
+            let closed = XCTNSPredicateExpectation(predicate: NSPredicate(format: "count == %d", windowsBefore), object: app.windows)
+            XCTAssertEqual(XCTWaiter().wait(for: [closed], timeout: UITestTimeout.standard), .completed, "Space again should close Quick Look")
+        }
+
+        /// A text preview is a sheet with its own Close and Edit, and Esc closes it.
+        func testTextPreviewHasCloseAndEditAndEscCloses() {
+            let app = launchApp()
+            let file = text(Fixture.file, in: app)
+            XCTAssertTrue(file.waitToAppear())
+            file.waitToBeHittable()
+            file.doubleClick()
+            let sheet = app.sheets.firstMatch
+            XCTAssertTrue(sheet.waitToAppear(), "Double click should open the preview")
+            XCTAssertTrue(sheet.buttons.matching(NSPredicate(format: "label == %@", L10n.PreviewToolbar.close)).firstMatch.waitToAppear(), "The preview needs a Close button")
+            XCTAssertTrue(sheet.buttons.matching(NSPredicate(format: "label == %@", L10n.Common.edit)).firstMatch.waitToAppear(), "A text preview needs Edit")
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+            XCTAssertTrue(sheet.waitToVanish(), "Esc should close the preview")
+        }
+
+        /// Several selected rows offer Move and Download, which the Mac has no select mode for.
+        func testSeveralSelectedRowsOfferMoveAndDownload() {
+            let app = launchApp()
+            let file = text(Fixture.file, in: app)
+            let image = text(Fixture.imageFile, in: app)
+            XCTAssertTrue(file.waitToAppear())
+            file.waitToBeHittable()
+            file.click()
+            XCUIElement.perform(withKeyModifiers: .command) { image.click() }
+            image.rightClick()
+            XCTAssertTrue(app.menuItems[L10n.Browse.actionDownload].waitToAppear(), "Several rows should offer Download")
+            XCTAssertTrue(app.menuItems[L10n.Browse.actionMove].exists, "Several rows should offer Move")
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+        }
+
+        /// Closing an edited text file asks to save; Don't Save closes without saving.
+        func testClosingAnEditedTextFileAsksToSave() {
+            let app = launchApp()
+            let file = text(Fixture.file, in: app)
+            XCTAssertTrue(file.waitToAppear())
+            file.waitToBeHittable()
+            file.doubleClick()
+            let sheet = app.sheets.firstMatch
+            XCTAssertTrue(sheet.waitToAppear(), "Double click should open the preview")
+            let edit = sheet.buttons.matching(NSPredicate(format: "label == %@", L10n.Common.edit)).firstMatch
+            XCTAssertTrue(edit.waitToAppear())
+            edit.click()
+            let editor = sheet.textViews.firstMatch
+            XCTAssertTrue(editor.waitToAppear(), "Edit should make the text editable")
+            editor.click()
+            editor.typeText("changed")
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+
+            let dontSave = app.windows.buttons.matching(NSPredicate(format: "label == %@ OR title == %@", L10n.TextPreview.dontSave, L10n.TextPreview.dontSave)).firstMatch
+            XCTAssertTrue(dontSave.waitToAppear(), "Closing with unsaved edits should ask to save")
+            dontSave.click()
+            XCTAssertTrue(sheet.waitToVanish(), "Don't Save should close the preview")
+        }
+
+        /// A file's right click menu starts with Open, as in Finder.
+        func testFileContextMenuStartsWithOpen() {
+            let app = launchApp()
+            let file = text(Fixture.file, in: app)
+            XCTAssertTrue(file.waitToAppear())
+            file.rightClick()
+            XCTAssertTrue(app.menuItems[L10n.Browse.open].waitToAppear(), "The file menu should offer Open")
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+        }
+
         // MARK: Search, refresh
+
+        /// A search result's Show in Enclosing Folder ends the search and opens where it lives.
+        func testShowInEnclosingFolderFromSearch() {
+            let app = launchApp()
+            openDocuments(in: app)
+            app.typeKey("f", modifierFlags: .command)
+            app.typeText("notes")
+
+            let hit = app.outlines.cells.staticTexts.matching(NSPredicate(format: "label == %@ OR value == %@", Fixture.file, Fixture.file)).firstMatch
+            XCTAssertTrue(hit.waitToAppear(), "The file should be among the search results")
+            hit.rightClick()
+            let show = app.menuItems[L10n.Browse.showInEnclosingFolder]
+            XCTAssertTrue(show.waitToAppear(), "A search result should offer Show in Enclosing Folder")
+            show.click()
+            XCTAssertTrue(backButton(in: app).waitToVanish(), "Its folder (the root) should open")
+            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear(), "The folder's listing should show, not search results")
+        }
 
         func testFindFocusesTheToolbarSearch() {
             let app = launchApp()
@@ -373,6 +489,47 @@
             let flipped = NSPredicate(format: "value != %@", NSNumber(value: before ?? 0))
             let expectation = XCTNSPredicateExpectation(predicate: flipped, object: toggle)
             XCTAssertEqual(XCTWaiter().wait(for: [expectation], timeout: UITestTimeout.standard), .completed, "Clicking should flip the toggle")
+        }
+
+        /// Picking another language in Settings rebuilds the Settings window in it, not only
+        /// the main window.
+        func testLanguageChangeReachesTheSettingsWindow() {
+            LocalizationOverride.apply("de")
+            let germanGeneral = L10n.Settings.sectionGeneral
+            LocalizationOverride.apply(nil)
+            let app = launchApp()
+            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
+            focusWindow(app)
+            app.typeKey(",", modifierFlags: .command)
+            let picker = app.popUpButtons[AccessibilityIdentifiers.Settings.languagePicker]
+            if !picker.appears(within: UITestTimeout.short) {
+                focusWindow(app)
+                app.typeKey(",", modifierFlags: .command)
+            }
+            XCTAssertTrue(picker.waitToAppear(), "Settings should show the language picker")
+            picker.click()
+            let german = app.menuItems[LocalizationOverride.displayName(for: "de")]
+            XCTAssertTrue(german.waitToAppear())
+            german.click()
+            XCTAssertTrue(text(germanGeneral, in: app).waitToAppear(), "The Settings window should switch to the new language")
+        }
+
+        /// The licenses sheet in About closes with Esc like any Mac dialog.
+        func testEscClosesTheLicensesSheet() {
+            let app = launchApp()
+            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear())
+            focusWindow(app)
+            app.menuBars.menuItems.matching(NSPredicate(format: "title == %@", L10n.Menu.about)).firstMatch.click()
+            // A link styled button: AppKit may expose it as a link rather than a button.
+            let licenses = app.windows.descendants(matching: .any)
+                .matching(NSPredicate(format: "label == %@ OR title == %@", L10n.Settings.rowOpenSourceLicenses, L10n.Settings.rowOpenSourceLicenses))
+                .firstMatch
+            XCTAssertTrue(licenses.waitToAppear(), "About should offer the licenses")
+            licenses.click()
+            let sheet = app.sheets.firstMatch
+            XCTAssertTrue(sheet.waitToAppear(), "Licenses should open as a sheet")
+            app.typeKey(XCUIKeyboardKey.escape, modifierFlags: [])
+            XCTAssertTrue(sheet.waitToVanish(), "Esc should close the licenses")
         }
 
         func testSignOutFromTheAccountMenu() {

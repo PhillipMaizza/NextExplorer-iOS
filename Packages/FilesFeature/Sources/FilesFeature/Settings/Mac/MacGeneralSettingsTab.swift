@@ -1,6 +1,7 @@
 #if os(macOS)
     import AppStorageKeys
     import ComposableArchitecture
+    import CoreModels
     import Localization
     import SwiftUI
 
@@ -62,6 +63,7 @@
                             Text(LocalizationOverride.displayName(for: code)).tag(code)
                         }
                     }
+                    .accessibilityIdentifier(AccessibilityIdentifiers.Settings.languagePicker)
                 }
             }
         }

@@ -19,11 +19,22 @@
 
         public enum Action {
             case browse(BrowseTabFeature.Action)
+            /// Another window changed folders this one may show.
+            case otherWindowChanged(FolderContentsChange)
+            /// Go ▸ Go to Folder… with this window in front.
+            case goToFolderRequested(String)
         }
 
-        private let forward: @Sendable (BrowseTabFeature.Action.Delegate) async -> Void
+        /// What this window hands the main window.
+        public enum Forwarded: Equatable, Sendable {
+            case browse(BrowseTabFeature.Action.Delegate)
+            /// A change finished here, for the main window and the other windows to reload.
+            case folderChanged(FolderContentsChange)
+        }
 
-        public init(forward: @escaping @Sendable (BrowseTabFeature.Action.Delegate) async -> Void) {
+        private let forward: @Sendable (Forwarded) async -> Void
+
+        public init(forward: @escaping @Sendable (Forwarded) async -> Void) {
             self.forward = forward
         }
 
@@ -31,16 +42,27 @@
             Scope(state: \.browse, action: \.browse) {
                 BrowseTabFeature()
             }
-            Reduce { _, action in
-                guard case let .browse(.delegate(delegate)) = action else { return .none }
+            Reduce { state, action in
                 let forward = forward
-                return .run { _ in await forward(delegate) }
+                switch action {
+                case let .browse(.delegate(delegate)):
+                    return .run { _ in await forward(.browse(delegate)) }
+                case let .browse(browseAction):
+                    guard let change = BrowseTabFeature.folderContentsChange(after: browseAction, in: state.browse) else { return .none }
+                    return .run { _ in await forward(.folderChanged(change)) }
+                case let .otherWindowChanged(change):
+                    return BrowseTabFeature.refresh(for: change).map(Action.browse)
+                case let .goToFolderRequested(rawPath):
+                    guard let path = MainTabFeature.goToFolderPath(rawPath) else { return .none }
+                    return .send(.browse(.navigateToDirectory(path: path, title: (path as NSString).lastPathComponent)))
+                }
             }
         }
     }
 
     public struct FolderWindowView: View {
         let store: StoreOf<FolderWindowFeature>
+        @State private var isGoToFolderPresented = false
 
         public init(store: StoreOf<FolderWindowFeature>) {
             self.store = store
@@ -49,7 +71,19 @@
         public var body: some View {
             BrowseTabView(store: store.scope(state: \.browse, action: \.browse))
                 .windowTitle(store.browse.path.last?.title ?? store.browse.root.title)
-                .focusedSceneValue(\.folderWindowCommands, FolderWindowCommands { store.send(.browse($0)) })
+                .focusedSceneValue(\.folderWindowCommands, FolderWindowCommands(
+                    send: { store.send(.browse($0)) },
+                    showGoToFolder: { isGoToFolderPresented = true }
+                ))
+                .sheet(isPresented: $isGoToFolderPresented) {
+                    MacGoToFolderSheet(
+                        onGo: { path in
+                            isGoToFolderPresented = false
+                            store.send(.goToFolderRequested(path))
+                        },
+                        onCancel: { isGoToFolderPresented = false }
+                    )
+                }
         }
     }
 
@@ -57,6 +91,7 @@
     /// act on it rather than on the main window.
     public struct FolderWindowCommands {
         let send: (BrowseTabFeature.Action) -> Void
+        var showGoToFolder: () -> Void = {}
 
         public func back() {
             send(.goBack)
@@ -72,6 +107,10 @@
 
         public func newFolder() {
             send(.newFolderInVisibleFolder)
+        }
+
+        public func goToFolder() {
+            showGoToFolder()
         }
     }
 

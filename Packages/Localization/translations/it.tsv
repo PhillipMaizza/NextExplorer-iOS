@@ -721,3 +721,10 @@ media.play	Riproduci
 media.pause	Pausa
 media.position	Posizione di riproduzione
 media.positionValue	%1$@ di %2$@
+menu.quitTransfersTitle	Uscire da NextExplorer?
+menu.quitTransfersMessage	Ci sono ancora caricamenti o download in corso. Uscendo ora verranno interrotti.
+menu.quitTransfersConfirm	Esci
+textPreview.unsavedTitle	Salvare le modifiche a “%@”?
+textPreview.unsavedMessage	Se non le salvi, le modifiche andranno perse.
+textPreview.dontSave	Non salvare
+browse.showInEnclosingFolder	Mostra nella cartella che lo contiene

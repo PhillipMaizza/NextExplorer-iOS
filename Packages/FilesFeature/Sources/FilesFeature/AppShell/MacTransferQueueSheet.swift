@@ -71,6 +71,8 @@
             }
             .padding(.space24)
             .frame(width: Metrics.width, height: Metrics.height)
+            // Esc closes it like any Mac dialog; Done keeps Return.
+            .onExitCommand(perform: onClose)
         }
 
         @ViewBuilder

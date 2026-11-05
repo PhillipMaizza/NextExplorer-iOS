@@ -721,3 +721,10 @@ media.play	चलाएँ
 media.pause	रोकें
 media.position	प्लेबैक स्थिति
 media.positionValue	%2$@ में से %1$@
+menu.quitTransfersTitle	NextExplorer बंद करें?
+menu.quitTransfersMessage	अपलोड या डाउनलोड अभी भी चल रहे हैं। अभी बंद करने पर वे रुक जाएँगे।
+menu.quitTransfersConfirm	बंद करें
+textPreview.unsavedTitle	“%@” में बदलाव सहेजें?
+textPreview.unsavedMessage	अगर आप सहेजते नहीं हैं, तो आपके बदलाव खो जाएँगे।
+textPreview.dontSave	न सहेजें
+browse.showInEnclosingFolder	मूल फ़ोल्डर में दिखाएँ

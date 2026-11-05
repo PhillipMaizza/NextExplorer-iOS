@@ -45,9 +45,12 @@
                 }
                 .modifier(MacTransferNotifications(
                     uploadsRemaining: store.uploads.remainingCount,
+                    uploadsCompleted: store.uploads.completedCount,
                     uploadsFailed: store.uploads.failedCount,
                     downloadsRemaining: store.downloadQueue.remainingCount,
-                    downloadsFailed: store.downloadQueue.failedCount
+                    downloadsSaved: store.downloadQueue.savedCount,
+                    downloadsFailed: store.downloadQueue.failedCount,
+                    lastSavedURL: store.downloadQueue.lastSavedURL
                 ))
         }
     }

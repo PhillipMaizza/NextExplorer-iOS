@@ -98,6 +98,20 @@
                 }
                 .id(visibleSelection)
             }
+            // A pane left behind (another category, or the window closed) is released, so coming
+            // back loads it fresh: the Users list otherwise kept showing what it first loaded.
+            .onChange(of: visibleSelection) { previous, _ in release(previous) }
+            .onDisappear { release(visibleSelection) }
+        }
+
+        private func release(_ category: MacSettingsCategory) {
+            switch category {
+            case .server: store.send(.adminPaneLeft(.server))
+            case .users: store.send(.adminPaneLeft(.users))
+            case .thumbnails: store.send(.adminPaneLeft(.thumbnails))
+            case .accessRules: store.send(.adminPaneLeft(.accessRules))
+            case .accounts, .general, .storage, .about: break
+            }
         }
 
         /// Xcode style: an outline glyph in the app accent, white on the emphasized selection.

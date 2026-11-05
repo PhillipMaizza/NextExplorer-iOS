@@ -74,7 +74,7 @@ struct FilesClientLiveTests {
         entry["link"] = "outside"
         items.append(entry)
         body["items"] = items
-        stub(statusCode: 200, body: try JSONSerialization.data(withJSONObject: body))
+        try stub(statusCode: 200, body: JSONSerialization.data(withJSONObject: body))
 
         let result = try await makeClient().browse(serverURL, "Home")
 

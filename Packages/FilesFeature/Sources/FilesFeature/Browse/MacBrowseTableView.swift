@@ -43,6 +43,11 @@
         let serverURL: URL
         let canDropOnFolders: Bool
         let onDropOnFolder: ([FileItem.ID], FileItem) -> Void
+        /// Rows from another Browse window dropped on a folder row, which this table doesn't list.
+        var onDropForeignItemsOnFolder: ([FileItem], FileItem) -> Void = { _, _ in }
+        /// Finder files dropped on a folder row upload into it; `false` where uploads aren't allowed.
+        var canUploadToFolders = false
+        var onFilesDroppedOnFolder: ([URL], FileItem) -> Void = { _, _ in }
         @ViewBuilder let contextMenu: (Set<FileItem.ID>) -> ContextMenu
         /// The row being renamed in place, Finder style, instead of through a sheet.
         var renamingItemID: FileItem.ID?
@@ -122,10 +127,32 @@
                 ForEach(items) { item in
                     TableRow(item)
                         .draggable(DraggedServerItem(item: item, serverURL: serverURL, filesClient: filesClient))
-                        .dropDestination(for: ServerItemReference.self) { references in
-                            let ids = references.map(\.id).filter { $0 != item.id }
-                            guard canDropOnFolders, item.isDirectory, !ids.isEmpty else { return }
-                            onDropOnFolder(ids, item)
+                        .dropDestination(for: MacRowDrop.self) { drops in
+                            guard item.isDirectory else { return }
+                            var ids: [FileItem.ID] = []
+                            var foreign: [FileItem] = []
+                            var files: [URL] = []
+                            for drop in drops {
+                                switch drop {
+                                case let .item(reference) where reference.id != item.id:
+                                    if items[id: reference.id] != nil {
+                                        ids.append(reference.id)
+                                    } else if let dragged = reference.item {
+                                        foreign.append(dragged)
+                                    }
+                                case let .file(url) where url.isFileURL: files.append(url)
+                                default: break
+                                }
+                            }
+                            if canDropOnFolders, !ids.isEmpty {
+                                onDropOnFolder(ids, item)
+                            }
+                            if !foreign.isEmpty {
+                                onDropForeignItemsOnFolder(foreign, item)
+                            }
+                            if canUploadToFolders, !files.isEmpty {
+                                onFilesDroppedOnFolder(files, item)
+                            }
                         }
                 }
             }
@@ -167,7 +194,7 @@
             // a double click opens), Return renames, Delete deletes; Edit menu Cut/Copy/Paste/Select
             // All and ⌘I reach the selection through the focused value.
             .onKeyPress(.space) {
-                guard selection.count == 1, let item = item(for: selection.first) else { return .ignored }
+                guard renamingItemID == nil, selection.count == 1, let item = item(for: selection.first) else { return .ignored }
                 if item.isDirectory {
                     keyboardActions.getInfo()
                 } else if quickLookPanel.isVisible {
@@ -177,15 +204,17 @@
                 }
                 return .handled
             }
-            // Like Finder, an open Quick Look follows the selection.
+            // Like Finder, an open Quick Look follows the selection, also while its first file is
+            // still coming down (the panel is not up yet).
             .onChange(of: selection) { _, newSelection in
-                guard isQuickLooking, quickLookPanel.isVisible else { return }
+                guard isQuickLooking else { return }
                 if newSelection.count == 1, let item = item(for: newSelection.first), !item.isDirectory {
                     quickLook(item)
                 } else {
                     closeQuickLook()
                 }
             }
+            .background(MacQuickLookResponderAnchor(responder: quickLookPanel.responder))
             // Finder's ⌘↓ opens the selection. A key equivalent, since the table takes arrow
             // keys before `onKeyPress` sees them; live only while the table has focus.
             .background {
@@ -200,8 +229,14 @@
                 .allowsHitTesting(false)
                 .accessibilityHidden(true)
             }
-            .onDeleteCommand { keyboardActions.delete() }
-            .focusedValue(\.browseKeyboardActions, keyboardActions)
+            .onDeleteCommand {
+                if renamingItemID == nil {
+                    keyboardActions.delete()
+                }
+            }
+            // While a name is being edited in place its field has focus inside the table, so the
+            // Edit menu (⌘A, ⌘C, ⌘V, ⌘Z, ⌘⌫) must edit that text, not act on the files.
+            .focusedValue(\.browseKeyboardActions, renamingItemID == nil ? keyboardActions : nil)
         }
 
         private func quickLook(_ item: FileItem) {

@@ -92,6 +92,11 @@ public struct SettingsFeature {
         }
     }
 
+    /// The admin pages the Mac Settings window shows as panes of their own.
+    public enum AdminPane: Equatable, Sendable {
+        case server, users, thumbnails, accessRules
+    }
+
     public enum Action: Sendable {
         case onAppear
         case userManagementButtonTapped
@@ -104,6 +109,9 @@ public struct SettingsFeature {
         case thumbnailSettings(PresentationAction<ThumbnailSettingsFeature.Action>)
         case accessRulesButtonTapped
         case accessRules(PresentationAction<AccessRulesFeature.Action>)
+        /// The Mac Settings window left an admin pane (another category, or the window closed):
+        /// it is released so coming back loads it fresh.
+        case adminPaneLeft(AdminPane)
         case offlineDownloadButtonTapped
         case offlineSelection(PresentationAction<OfflineSelectionFeature.Action>)
         case offlineManageButtonTapped
@@ -222,6 +230,15 @@ public struct SettingsFeature {
             return .none
 
         case .accessRules:
+            return .none
+
+        case let .adminPaneLeft(pane):
+            switch pane {
+            case .server: state.serverDetails = nil
+            case .users: state.userManagement = nil
+            case .thumbnails: state.thumbnailSettings = nil
+            case .accessRules: state.accessRules = nil
+            }
             return .none
 
         case .offlineDownloadButtonTapped:

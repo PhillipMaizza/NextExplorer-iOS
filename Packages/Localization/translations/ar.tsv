@@ -721,3 +721,10 @@ media.play	تشغيل
 media.pause	إيقاف مؤقت
 media.position	موضع التشغيل
 media.positionValue	%1$@ من %2$@
+menu.quitTransfersTitle	هل تريد إنهاء NextExplorer؟
+menu.quitTransfersMessage	لا تزال عمليات الرفع أو التنزيل جارية. سيؤدي الإنهاء الآن إلى إيقافها.
+menu.quitTransfersConfirm	إنهاء
+textPreview.unsavedTitle	هل تريد حفظ التغييرات في “%@”؟
+textPreview.unsavedMessage	ستفقد تغييراتك إذا لم تحفظها.
+textPreview.dontSave	عدم الحفظ
+browse.showInEnclosingFolder	إظهار في المجلد الحاوي

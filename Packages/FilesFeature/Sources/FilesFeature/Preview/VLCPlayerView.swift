@@ -39,6 +39,11 @@ struct VLCPlayerView: View {
     private let onDelete: (() -> Void)?
 
     @StateObject private var controller = VLCPlaybackController()
+    #if os(macOS)
+        /// The preview router focuses itself first; the player takes focus after it so Space
+        /// reaches it, while the arrow keys still bubble up to the router.
+        @FocusState private var isKeyboardFocused: Bool
+    #endif
     @State private var controlsVisible = true
     @State private var autoHideTask: Task<Void, Never>?
 
@@ -115,6 +120,8 @@ struct VLCPlayerView: View {
         // Space plays and pauses, as in QuickTime; the arrows keep stepping through the folder.
         .focusable()
         .focusEffectDisabled()
+        .focused($isKeyboardFocused)
+        .task { isKeyboardFocused = true }
         .onKeyPress(.space) {
             controller.togglePlayPause()
             return .handled

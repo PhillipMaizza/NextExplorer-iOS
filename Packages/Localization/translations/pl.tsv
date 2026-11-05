@@ -721,3 +721,10 @@ media.play	Odtwórz
 media.pause	Wstrzymaj
 media.position	Pozycja odtwarzania
 media.positionValue	%1$@ z %2$@
+menu.quitTransfersTitle	Zakończyć NextExplorer?
+menu.quitTransfersMessage	Przesyłanie lub pobieranie nadal trwa. Zakończenie teraz je przerwie.
+menu.quitTransfersConfirm	Zakończ
+textPreview.unsavedTitle	Zachować zmiany w „%@”?
+textPreview.unsavedMessage	Jeśli ich nie zachowasz, zmiany zostaną utracone.
+textPreview.dontSave	Nie zachowuj
+browse.showInEnclosingFolder	Pokaż w folderze nadrzędnym

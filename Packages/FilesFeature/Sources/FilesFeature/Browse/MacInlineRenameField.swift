@@ -4,7 +4,7 @@
     import SwiftUI
 
     /// The name cell while renaming: Return or clicking away commits, Esc cancels. An unchanged
-    /// or invalid name cancels instead of asking the server.
+    /// or empty name cancels; an invalid one goes on so the screen can say why it was refused.
     struct MacInlineRenameField: View {
         let originalName: String
         let onCommit: (String) -> Void
@@ -54,7 +54,7 @@
             guard !isFinished else { return }
             isFinished = true
             let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
-            if commit, trimmed != originalName, FileNameValidation.isAcceptable(trimmed: trimmed) {
+            if commit, trimmed != originalName, !trimmed.isEmpty {
                 onCommit(trimmed)
             } else {
                 onCancel()

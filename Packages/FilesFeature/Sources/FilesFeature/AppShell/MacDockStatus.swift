@@ -8,6 +8,8 @@
         static let barBottom: CGFloat = 8
         /// The empty track dims the icon under it, so the accent fill reads on any icon color.
         static let trackOpacity: CGFloat = 0.5
+        /// The bar redraws only when it moves by a whole percent, not on every received chunk.
+        static let progressSteps: Double = 100
     }
 
     /// Upload progress on the Dock icon: a badge with the files still to go and a bar under the
@@ -17,16 +19,36 @@
         let remaining: Int
         let progress: Double?
 
+        /// The progress in whole percents: the Dock tile redraws far less often than uploads
+        /// report bytes.
+        private var steppedProgress: Double? {
+            progress.map(Self.stepped)
+        }
+
+        static func stepped(_ progress: Double) -> Double {
+            (progress * Metrics.progressSteps).rounded() / Metrics.progressSteps
+        }
+
         func body(content: Content) -> some View {
             content
                 .onChange(of: remaining, initial: true) { _, _ in update() }
-                .onChange(of: progress) { _, _ in update() }
+                .onChange(of: steppedProgress) { _, _ in update() }
+                // Signing out or switching accounts mid upload tears this window's shell down
+                // before the queue drains; the Dock must not keep a badge for it.
+                .onDisappear { Self.clear() }
+        }
+
+        private static func clear() {
+            let dockTile = NSApp.dockTile
+            dockTile.badgeLabel = nil
+            dockTile.contentView = nil
+            dockTile.display()
         }
 
         private func update() {
             let dockTile = NSApp.dockTile
             dockTile.badgeLabel = remaining > 0 ? remaining.formatted() : nil
-            if let progress, remaining > 0 {
+            if let progress = steppedProgress, remaining > 0 {
                 // A view made without a frame draws into an empty rect, so it gets the tile's size.
                 let view = dockTile.contentView as? DockProgressView
                     ?? DockProgressView(frame: NSRect(origin: .zero, size: dockTile.size))

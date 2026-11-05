@@ -23,6 +23,13 @@ struct FileActionsMenu: View {
 
     var body: some View {
         #if os(macOS)
+            // Finder's context menu starts with Open: the folder, or the in app preview.
+            Button {
+                store.send(.rowTapped(item))
+            } label: {
+                Label { Text(L10n.Browse.open) } icon: { item.isDirectory ? IconKit.folder : IconKit.document }
+            }
+            .tint(.primaryDS)
             if item.isDirectory {
                 Button {
                     openWindow(value: FolderWindowRoute(path: item.id, title: item.name))
