@@ -289,9 +289,6 @@ public struct BrowseFeature {
         /// bar; `BrowseContentView` turns it into a toast with an Open action. Never cleared by the
         /// reducer, only overwritten by the next one.
         public var downloadSuccessMessage: String?
-        /// macOS: where the last download was saved (a file, or the folder of a bulk download),
-        /// so the success toast can show it in Finder.
-        public var lastSavedDownloadURL: URL?
         /// Item the "Get Info" sheet is showing, alongside its fetched metadata (or the
         /// still-loading/error state while `GET /api/metadata/*` is in flight).
         public var infoItem: FileItem?
@@ -455,13 +452,12 @@ public struct BrowseFeature {
             case directUploadStaged([PickedFile], destination: String, requested: Int)
             /// Files opened from Finder name no folder, so they always go through the review sheet.
             case reviewUpload(UploadReviewFeature.PickSource)
-            case downloadProgressUpdated(String)
-            /// The save panel was dismissed without choosing a destination.
-            case downloadCancelled
-            /// The folder picked for a bulk download.
-            case bulkDownloadFolderChosen(URL)
-            case downloadResponse(Result<URL, FilesClientError>)
-            case bulkDownloadResponse(savedCount: Int, total: Int)
+            /// Finder files dropped on a folder row of the Mac table.
+            case filesDroppedOnFolder([URL], folder: FileItem)
+            /// A search result's Show in Enclosing Folder: ends the search and opens its folder.
+            case searchResultEnclosingFolderTapped(SearchResultItem)
+            /// Rows dragged in from another Browse window, moved into `destination`.
+            case itemsDroppedFromOtherWindow([FileItem], destination: String)
         #endif
         case selectModeToggled
         case itemSelectionToggled(FileItem.ID)
@@ -529,6 +525,8 @@ public struct BrowseFeature {
             case uploadRequested([PendingUpload])
             /// Items handed to `MainTabFeature`'s app wide download queue.
             case downloadRequested([FileItem])
+            /// Mac: items placed in Finder through the save panel, for the same queue.
+            case saveRequested([DownloadSaveRequest])
             /// A copy/move just changed what's on the server. `BrowseTabFeature` re-fetches
             /// the whole live navigation stack so both the source and destination listings
             /// reflect the new state.
@@ -828,6 +826,10 @@ public struct BrowseFeature {
                     state.previewItem = result.renamed
                 }
                 syncListingCache(state)
+                // The Mac inspector follows the rename instead of showing the old path.
+                if state.infoItem?.id == result.originalID {
+                    return loadInfo(&state, item: result.renamed)
+                }
                 return .none
 
             case let .renameResponse(.failure(error)):
@@ -945,7 +947,7 @@ public struct BrowseFeature {
 
             case let .downloadTapped(item):
                 #if os(macOS)
-                    // A Mac saves where the user says, through the save panel, not the queue.
+                    // A Mac saves where the user says, through the save panel, then the queue saves it there.
                     return startDownload(&state, item: item)
                 #else
                     if state.previewItem != nil {
@@ -953,48 +955,6 @@ public struct BrowseFeature {
                     }
                     return .send(.delegate(.downloadRequested([item])))
                 #endif
-
-        #if os(macOS)
-            case let .downloadProgressUpdated(message):
-                state.fileActionProgressMessage = message
-                return .none
-
-            case .downloadCancelled:
-                state.isPerformingFileAction = false
-                state.isBulkActionInFlight = false
-                state.fileActionProgressMessage = nil
-                return .none
-
-            case let .bulkDownloadFolderChosen(folder):
-                state.lastSavedDownloadURL = folder
-                return .none
-
-            case let .downloadResponse(.success(destination)):
-                state.isPerformingFileAction = false
-                state.fileActionProgressMessage = nil
-                state.lastSavedDownloadURL = destination
-                state.downloadSuccessMessage = L10n.Browse.downloadSavedTo(savedDownloadFolderName(destination))
-                return .none
-
-            case let .downloadResponse(.failure(error)):
-                state.isPerformingFileAction = false
-                state.fileActionProgressMessage = nil
-                state.fileActionErrorMessage = error.userMessage
-                return .none
-
-            case let .bulkDownloadResponse(savedCount, total):
-                state.isBulkActionInFlight = false
-                state.fileActionProgressMessage = nil
-                let folderName = state.lastSavedDownloadURL.map(savedDownloadFolderName) ?? ""
-                if savedCount == total {
-                    state.downloadSuccessMessage = L10n.Browse.downloadSavedAllTo(savedCount, folderName)
-                } else if savedCount > 0 {
-                    state.downloadSuccessMessage = L10n.Browse.downloadSavedCountTo(savedCount, total, folderName)
-                } else {
-                    state.fileActionErrorMessage = L10n.Browse.downloadBulkFailed
-                }
-                return .none
-        #endif
 
             case .selectModeToggled:
                 state.isSelecting.toggle()
@@ -1082,20 +1042,35 @@ public struct BrowseFeature {
                     // A Mac drop or file pick already says where the files go (the folder on
                     // screen), so they upload straight away instead of through the review sheet.
                     if case let .documents(urls) = source, !state.directoryPath.isEmpty {
-                        let destination = state.directoryPath
-                        let uploadStaging = uploadStaging
-                        return .run { send in
-                            var staged: [PickedFile] = []
-                            for await file in uploadStaging.stageDocuments(urls) {
-                                staged.append(file)
-                            }
-                            await send(.directUploadStaged(staged, destination: destination, requested: urls.count))
-                        }
+                        return stageDirectUpload(urls, destination: state.directoryPath)
                     }
                 #endif
                 return openUploadReview(source, state: &state)
 
             #if os(macOS)
+                case let .searchResultEnclosingFolderTapped(result):
+                    state.searchQuery = ""
+                    let title = result.path.isEmpty ? L10n.Browse.navigationTitle : (result.path as NSString).lastPathComponent
+                    return .merge(
+                        search(&state),
+                        .send(.delegate(.openPath(path: result.path, title: title)))
+                    )
+
+                case let .itemsDroppedFromOtherWindow(dropped, destination):
+                    guard state.access?.canWrite ?? false else { return .none }
+                    // Not where they already are, and never into themselves or their own subfolders.
+                    let items = dropped.filter { item in
+                        item.path != destination && item.id != destination && !destination.hasPrefix(item.id + "/")
+                    }
+                    return runTransfer(&state, retry: TransferRetry(
+                        items: items, destination: destination, operation: .move, clearClipboard: false
+                    ))
+
+                case let .filesDroppedOnFolder(urls, folder):
+                    // Finder files dropped on a folder row go into that folder, as in Finder.
+                    guard folder.isDirectory, !urls.isEmpty, state.access?.canUpload ?? false else { return .none }
+                    return stageDirectUpload(urls, destination: folder.id)
+
                 case let .reviewUpload(source):
                     return openUploadReview(source, state: &state)
 
@@ -1420,6 +1395,18 @@ public struct BrowseFeature {
         }
         .ifLet(\.$permissions, action: \.permissions) {
             PermissionsFeature()
+        }
+        // An inspector open on an item that left this folder (deleted, moved away, gone in a
+        // refresh) closes, rather than offering actions on a path that no longer exists.
+        .onChange(of: \.items) { _, items in
+            Reduce { state, _ in
+                guard let shown = state.infoItem, items[id: shown.id] == nil else { return .none }
+                state.infoItem = nil
+                state.infoMetadata = nil
+                state.infoUsage = nil
+                state.infoPhase = .idle
+                return .cancel(id: CancelID.info)
+            }
         }
     }
 

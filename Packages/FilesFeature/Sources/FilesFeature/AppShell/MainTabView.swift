@@ -5,6 +5,9 @@ import DesignSystem
 import FilesClient
 import Localization
 import SwiftUI
+#if os(macOS)
+    import AppKit
+#endif
 
 private enum Constants {
     static let barAnimationDuration: Double = 0.2
@@ -113,7 +116,15 @@ public struct MainTabView: View {
             .dsToast(Binding(
                 get: {
                     store.downloadToast.map { message in
-                        .success(message, actionTitle: L10n.Browse.open) { store.send(.openDownloadsTab) }
+                        #if os(macOS)
+                            // A Mac save lands in Finder, where the action reveals it.
+                            if let savedURL = store.lastSavedDownloadURL {
+                                return .success(message, actionTitle: L10n.Browse.showInFinder) {
+                                    NSWorkspace.shared.activateFileViewerSelecting([savedURL])
+                                }
+                            }
+                        #endif
+                        return .success(message, actionTitle: L10n.Browse.open) { store.send(.openDownloadsTab) }
                     }
                 },
                 set: {

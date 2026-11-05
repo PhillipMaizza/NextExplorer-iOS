@@ -101,6 +101,7 @@ struct NextExplorerApp: App {
 
             Window(L10n.Menu.about, id: MacAboutView.windowID) {
                 MacAboutView()
+                    .followsAppLanguage()
                     .appAppearance(appearanceMode)
             }
             .windowResizability(.contentSize)
@@ -109,6 +110,7 @@ struct NextExplorerApp: App {
             // The native Settings window; SwiftUI adds NextExplorer > Settings… (⌘,) for it.
             Settings {
                 MacSettingsWindow(mainStore: Self.store)
+                    .followsAppLanguage()
                     .appAppearance(appearanceMode)
             }
         #endif

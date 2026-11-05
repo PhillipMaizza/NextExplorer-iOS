@@ -351,7 +351,7 @@ public struct OfflineDownloadsFeature {
     /// `browse`; a folder that fails to list is skipped rather than aborting the whole run, so one
     /// unreadable subfolder doesn't sink an otherwise good sync.
     static func enumerate(
-        roots: [FileItem], serverURL: URL, filesClient: FilesClient
+        roots: [FileItem], serverURL: URL, filesClient: FilesClient, skipsUnreadableFolders: Bool = true
     ) async throws -> [FileItem] {
         var files: [FileItem] = []
         var seen = Set<String>()
@@ -374,8 +374,12 @@ public struct OfflineDownloadsFeature {
             func fill() {
                 while active < Constants.maxConcurrentBrowses, let dir = queue.popLast() {
                     // A folder that fails to list is skipped (empty), not fatal, so one unreadable
-                    // subfolder doesn't sink an otherwise good sync.
-                    group.addTask { await (try? filesClient.browse(serverURL, dir.id))?.items ?? [] }
+                    // subfolder doesn't sink an otherwise good sync. A save the user asked for
+                    // passes false and fails instead of quietly leaving files out.
+                    group.addTask {
+                        guard skipsUnreadableFolders else { return try await filesClient.browse(serverURL, dir.id).items }
+                        return await (try? filesClient.browse(serverURL, dir.id))?.items ?? []
+                    }
                     active += 1
                 }
             }

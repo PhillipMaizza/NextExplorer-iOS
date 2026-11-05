@@ -77,6 +77,8 @@
                     .padding(.space16)
                 }
                 .frame(width: Metrics.licensesWidth, height: Metrics.licensesHeight)
+                // Esc closes it like any Mac dialog; Close keeps Return.
+                .onExitCommand { isShowingLicenses = false }
             }
         }
 

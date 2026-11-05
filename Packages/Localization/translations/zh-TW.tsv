@@ -721,3 +721,10 @@ media.play	播放
 media.pause	暫停
 media.position	播放位置
 media.positionValue	%1$@ / %2$@
+menu.quitTransfersTitle	要結束 NextExplorer 嗎？
+menu.quitTransfersMessage	上傳或下載仍在進行中。現在結束將會停止它們。
+menu.quitTransfersConfirm	結束
+textPreview.unsavedTitle	要儲存對「%@」的變更嗎？
+textPreview.unsavedMessage	如果不儲存，你的變更將會遺失。
+textPreview.dontSave	不要儲存
+browse.showInEnclosingFolder	在所在資料夾中顯示

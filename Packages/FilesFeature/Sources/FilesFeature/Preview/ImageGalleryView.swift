@@ -199,7 +199,7 @@ private enum GalleryImagePhase {
     }
 }
 
-private struct ImageGalleryPage: View {
+struct ImageGalleryPage: View {
     let item: FileItem
     let serverURL: URL
     /// When false (page is outside the retain window) the decoded bitmap is dropped so a large
@@ -222,8 +222,27 @@ private struct ImageGalleryPage: View {
     /// window the app is in, which on iPhone Duo is whichever panel is showing.
     @MainActor private var maxPixelDimension: CGFloat {
         let bounds = PlatformScreen.bounds
-        return max(bounds.width, bounds.height) * displayScale * 2
+        return Self.decodeTarget(screenLongSide: max(bounds.width, bounds.height), scale: displayScale)
     }
+
+    /// The screen in pixels with 2x zoom room. On a Mac a 5K screen asks for about 12000 px,
+    /// a full resolution decode of almost any photo; the cap keeps one page's bitmap near
+    /// 250 MB at most.
+    static func decodeTarget(screenLongSide: CGFloat, scale: CGFloat) -> CGFloat {
+        let target = screenLongSide * scale * zoomHeadroom
+        #if os(macOS)
+            return min(target, macMaxPixelDimension)
+        #else
+            return target
+        #endif
+    }
+
+    /// Decoded past the screen so a zoomed in image stays sharp.
+    static let zoomHeadroom: CGFloat = 2
+
+    #if os(macOS)
+        static let macMaxPixelDimension: CGFloat = 8192
+    #endif
 
     /// The blurred thumbnail placeholder shows only before any frame has decoded, so a page never
     /// blanks to a spinner. Once even a rough streaming frame is up, it covers the placeholder.

@@ -32,6 +32,12 @@ extension BrowseFeature {
             state.renameSheetItem = nil
             return .none
         }
+        // The sheet blocks these already; the Mac's in place rename reports them like Finder.
+        if let reason = FileNameValidation.errorMessage(forTrimmed: trimmedName) {
+            state.renameSheetItem = nil
+            state.fileActionErrorMessage = reason
+            return .none
+        }
         state.isPerformingFileAction = true
         let serverURL = state.serverURL
         let filesClient = filesClient

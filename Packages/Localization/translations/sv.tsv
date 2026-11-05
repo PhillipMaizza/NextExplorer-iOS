@@ -721,3 +721,10 @@ media.play	Spela upp
 media.pause	Pausa
 media.position	Uppspelningsposition
 media.positionValue	%1$@ av %2$@
+menu.quitTransfersTitle	Avsluta NextExplorer?
+menu.quitTransfersMessage	Uppladdningar eller hämtningar pågår fortfarande. Om du avslutar nu stoppas de.
+menu.quitTransfersConfirm	Avsluta
+textPreview.unsavedTitle	Spara ändringarna i ”%@”?
+textPreview.unsavedMessage	Dina ändringar går förlorade om du inte sparar dem.
+textPreview.dontSave	Spara inte
+browse.showInEnclosingFolder	Visa i överordnad mapp

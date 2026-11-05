@@ -112,17 +112,9 @@ private struct PreviewChrome: ViewModifier {
         /// Close (Esc) on the leading edge, the file name in the middle, the actions trailing in
         /// plain system glyphs, Delete marked destructive.
         private var macBar: some View {
-            HStack(spacing: .space8) {
-                Button(action: onClose) {
-                    Label { Text(L10n.PreviewToolbar.close) } icon: { IconKit.close }
-                }
-                .keyboardShortcut(.cancelAction)
-                .help(L10n.PreviewToolbar.close)
-                Spacer(minLength: .space8)
-                if let title {
-                    Text(title).font(.headline).lineLimit(1).truncationMode(.middle)
-                }
-                Spacer(minLength: .space8)
+            MacPreviewBar(title: title, onClose: onClose) {
+                EmptyView()
+            } trailing: {
                 if hasSystemShare {
                     MacOpenWithMenu(source: systemShare)
                         .fixedSize()
@@ -141,12 +133,6 @@ private struct PreviewChrome: ViewModifier {
                     macButton(L10n.PreviewToolbar.delete, icon: IconKit.delete, role: .destructive, action: onDelete)
                 }
             }
-            .labelStyle(.iconOnly)
-            .buttonStyle(.borderless)
-            .padding(.horizontal, .space12)
-            .padding(.vertical, .space8)
-            .background(.bar)
-            .overlay(alignment: .bottom) { Divider() }
         }
 
         private func macButton(_ title: String, icon: Image, role: ButtonRole? = nil, action: @escaping () -> Void) -> some View {

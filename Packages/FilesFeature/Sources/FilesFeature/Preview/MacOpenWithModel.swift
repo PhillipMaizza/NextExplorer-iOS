@@ -12,6 +12,9 @@
         static let appIconSize: CGFloat = 16
         /// "View as Text" is for a quick look at the bytes, not for loading a disk image into memory.
         static let rawTextByteLimit = 2 * 1024 * 1024
+        /// Apps found for a type are reused this long, so a right click never waits on Launch
+        /// Services, yet an app installed meanwhile soon shows up.
+        static let appLookupLifetime: TimeInterval = 60
     }
 
     struct MacOpenWithApp: Identifiable {
@@ -22,12 +25,24 @@
             url
         }
 
+        typealias Lookup = (preferred: MacOpenWithApp?, all: [MacOpenWithApp])
+
+        @MainActor private static var lookups: [String: (date: Date, apps: Lookup)] = [:]
+
+        /// Every candidate app's icon comes from Launch Services, so one lookup per file type
+        /// is kept for a minute rather than repeated for each menu.
         @MainActor
-        static func apps(forFileNamed fileName: String) -> (preferred: MacOpenWithApp?, all: [MacOpenWithApp]) {
+        static func apps(forFileNamed fileName: String) -> Lookup {
             let type = UTType(filenameExtension: (fileName as NSString).pathExtension) ?? .data
+            let now = Date()
+            if let cached = lookups[type.identifier], now.timeIntervalSince(cached.date) < Metrics.appLookupLifetime {
+                return cached.apps
+            }
             let workspace = NSWorkspace.shared
             let all = workspace.urlsForApplications(toOpen: type).map(app(at:))
-            return (workspace.urlForApplication(toOpen: type).map(app(at:)), all)
+            let found: Lookup = (workspace.urlForApplication(toOpen: type).map(app(at:)), all)
+            lookups[type.identifier] = (now, found)
+            return found
         }
 
         @MainActor
@@ -86,6 +101,50 @@
         @Entry var printPreview: PrintPreviewAction?
     }
 
+    /// Where Open With copies go: inside the preview cache folder, so Clear Cache and every
+    /// sign out remove them, but outside the folders its eviction trims, so a file another app
+    /// has open is never deleted under it.
+    enum MacOpenWithCopy {
+        static let directoryName = "open-with"
+
+        static func make(from source: URL, named name: String) async throws -> URL {
+            try await Task.detached(priority: .userInitiated) {
+                let fileManager = FileManager.default
+                let caches = try fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+                let root = caches
+                    .appendingPathComponent("PreviewCache", isDirectory: true)
+                    .appendingPathComponent(directoryName, isDirectory: true)
+                removeStaleCopies(in: root, now: Date())
+                let folder = root.appendingPathComponent(UUID().uuidString, isDirectory: true)
+                try fileManager.createDirectory(at: folder, withIntermediateDirectories: true)
+                let copy = folder.appendingPathComponent(SafeFileName.component(name))
+                try fileManager.copyItem(at: source, to: copy)
+                try fileManager.setAttributes([.posixPermissions: lockedPermissions], ofItemAtPath: copy.path)
+                return copy
+            }.value
+        }
+
+        /// Read only for everyone: the other app opens it as a locked document.
+        static let lockedPermissions = 0o444
+
+        /// A copy kept this long is assumed done with; older ones go the next time a file is
+        /// opened elsewhere, so repeated opens never pile up on disk.
+        static let staleCopyLifetime: TimeInterval = 24 * 60 * 60
+
+        static func removeStaleCopies(in root: URL, now: Date) {
+            let fileManager = FileManager.default
+            guard let folders = try? fileManager.contentsOfDirectory(
+                at: root, includingPropertiesForKeys: [.creationDateKey], options: [.skipsHiddenFiles]
+            ) else { return }
+            for folder in folders {
+                let created = (try? folder.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? now
+                if now.timeIntervalSince(created) > staleCopyLifetime {
+                    try? fileManager.removeItem(at: folder)
+                }
+            }
+        }
+    }
+
     /// Carries a parsed PDF back from the detached load; only touched on the main actor after.
     private struct PDFBox: @unchecked Sendable {
         let document: PDFDocument
@@ -133,8 +192,14 @@
             }
         }
 
+        /// Hands another app a locked copy of its own: the server never replaces a file on upload
+        /// (it saves "name (1)" instead), so edits made elsewhere could not reach it. Locked, the
+        /// other app says so instead of saving somewhere nobody looks, and the cache or an
+        /// offline copy is never changed behind the app's back.
         func open(with app: MacOpenWithApp?) {
-            run { url in
+            let name = fileName
+            run { cachedURL in
+                let url = try await MacOpenWithCopy.make(from: cachedURL, named: name ?? cachedURL.lastPathComponent)
                 if let app {
                     _ = try await NSWorkspace.shared.open([url], withApplicationAt: app.url, configuration: NSWorkspace.OpenConfiguration())
                 } else if !NSWorkspace.shared.open(url) {

@@ -14,7 +14,7 @@ Browse, preview, search and share. Your files stay between your devices and the 
 ![Platform](https://img.shields.io/badge/platform-iPhone%20%7C%20iPad%20%7C%20Mac-blue)
 ![iOS](https://img.shields.io/badge/iOS-18%2B-black?logo=apple)
 ![macOS](https://img.shields.io/badge/macOS-15%2B-black?logo=apple)
-![Swift](https://img.shields.io/badge/Swift-5-orange?logo=swift&logoColor=white)
+![Swift](https://img.shields.io/badge/Swift-6-orange?logo=swift&logoColor=white)
 ![Architecture](https://img.shields.io/badge/architecture-SwiftUI%20%2B%20TCA-purple)
 ![Languages](https://img.shields.io/badge/localized-17%20languages-green)
 ![Accessibility](https://img.shields.io/badge/a11y-VoiceOver%20%2B%20Dynamic%20Type-teal)
@@ -68,10 +68,12 @@ And on the Mac, a real Mac app: sidebar, Finder style tables, Quick Look, drag a
 - **Find it fast.** Search by name or full text across every folder, then filter by type to jump straight to what you need.
 - **Favorites & sharing.** Star what you reach for, share files by link, and see what others shared with you, all in one place.
 - **Sign in your way.** Username and password, or single sign-on and passkeys through your own identity provider.
-- **Works offline.** A saved-copy view keeps your recent folders readable when the connection drops, then refreshes when you are back.
+- **Uploads & downloads.** Queued uploads and downloads with progress, retry and cancel; send files to NextExplorer from any other app's share sheet.
+- **Works offline.** Keep chosen folders on the device to open with no connection, and a saved-copy view keeps your recent folders readable when the connection drops, then refreshes when you are back.
+- **Several accounts.** Sign in to more than one server and switch between them; each account's files and caches stay separate. Your own private My Files space when the server offers one.
 - **Everyone's app.** 17 languages with full right-to-left support, plus complete VoiceOver and Dynamic Type accessibility.
 - **iPhone and iPad.** Universal layout with a split-view sidebar on larger screens.
-- **A real Mac app.** Sortable tables, Quick Look, Get Info with version history, drag and drop with Finder, menus, shortcuts, tabs and windows.
+- **A real Mac app.** Sortable tables, Quick Look, Get Info with version history, drag and drop with Finder and between windows, menus, shortcuts, tabs and windows that stay in sync, and downloads saved anywhere you choose in Finder.
 
 
 <details>
@@ -106,15 +108,15 @@ Some choices worth calling out:
 
 <br/>
 
-1. Install Xcode 16 or later.
+1. Install Xcode 27 (what CI builds with; the code needs the iOS and macOS 26 SDKs or later).
 2. Clone the repo:
    ```sh
    git clone git@github.com:PhillipMaizza/NextExplorer-iOS.git
    cd NextExplorer-iOS
    ```
-3. Open `NextExplorer.xcodeproj`, pick the **NextExplorer** scheme and an iOS 18+ simulator or device, then Run.
+3. Open `NextExplorer.xcodeproj`, pick the **NextExplorer** scheme and an iOS 18+ simulator or device, or **My Mac** (macOS 15+), then Run.
 
-Swift Package Manager resolves every dependency on first build; nothing to install by hand. Run the tests with `Product > Test`, or `xcodebuild test` against a matching simulator.
+Swift Package Manager resolves every dependency on first build; nothing to install by hand. Every package's tests run through the `PackageTests` scheme of `PackageTests.xcworkspace` (on a simulator or on the Mac), or `bundle exec fastlane unit_tests`; the XCUITest suites run from the app scheme. See [`CONTRIBUTING.md`](CONTRIBUTING.md) for the exact commands.
 
 To try it against real data you need a compatible self-hosted server and an account on it.
 

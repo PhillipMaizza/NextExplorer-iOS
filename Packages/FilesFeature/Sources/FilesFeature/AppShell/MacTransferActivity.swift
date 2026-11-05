@@ -74,6 +74,7 @@
 
     private struct MacTransferActivityPopover: View {
         let store: StoreOf<MainTabFeature>
+        @Environment(\.dismiss) private var dismiss
 
         private var titles: TransferStatusBars {
             TransferStatusBars(store: store)
@@ -92,7 +93,7 @@
                         onCancel: { store.send(.uploads(.cancelAllTapped)) },
                         onRetry: { store.send(.uploads(.retryAllFailedTapped)) },
                         onClear: { store.send(.uploads(.clearFinishedTapped)) },
-                        onShowAll: { store.send(.uploads(.barTapped)) }
+                        onShowAll: { showAll(.uploads(.barTapped)) }
                     )
                 }
                 if store.uploads.isBarVisible, store.downloadQueue.isBarVisible {
@@ -110,12 +111,18 @@
                         onCancel: { store.send(.downloadQueue(.cancelAllTapped)) },
                         onRetry: { store.send(.downloadQueue(.retryAllFailedTapped)) },
                         onClear: { store.send(.downloadQueue(.clearFinishedTapped)) },
-                        onShowAll: { store.send(.downloadQueue(.barTapped)) }
+                        onShowAll: { showAll(.downloadQueue(.barTapped)) }
                     )
                 }
             }
             .padding(.space16)
             .frame(width: Metrics.popoverWidth)
+        }
+
+        /// The queue opens as a window sheet, so the popover closes first rather than hang over it.
+        private func showAll(_ action: MainTabFeature.Action) {
+            dismiss()
+            store.send(action)
         }
 
         // swiftlint:disable:next function_parameter_count
@@ -175,45 +182,55 @@
     /// the background, so a long transfer needs no watching.
     struct MacTransferNotifications: ViewModifier {
         let uploadsRemaining: Int
+        let uploadsCompleted: Int
         let uploadsFailed: Int
         let downloadsRemaining: Int
+        let downloadsSaved: Int
         let downloadsFailed: Int
-
-        @State private var uploadBatch = 0
-        @State private var downloadBatch = 0
+        /// Where the last save landed in Finder, which the downloads notification names.
+        var lastSavedURL: URL?
 
         func body(content: Content) -> some View {
             content
                 .onChange(of: uploadsRemaining) { old, new in
-                    uploadBatch = finished(old: old, new: new, batch: uploadBatch) { count in
-                        notify(
-                            title: uploadsFailed > 0 ? TransferFailureText.uploads(uploadsFailed) : L10n.Uploads.notifyDone,
-                            body: L10n.Uploads.notifyBody(count)
-                        )
-                    }
+                    guard drained(old: old, new: new), uploadsCompleted + uploadsFailed > 0 else { return }
+                    notify(
+                        title: uploadsFailed > 0 ? TransferFailureText.uploads(uploadsFailed) : L10n.Uploads.notifyDone,
+                        body: L10n.Uploads.notifyBody(uploadsCompleted)
+                    )
                 }
                 .onChange(of: downloadsRemaining) { old, new in
-                    downloadBatch = finished(old: old, new: new, batch: downloadBatch) { count in
-                        notify(
-                            title: downloadsFailed > 0 ? TransferFailureText.downloads(downloadsFailed) : L10n.DownloadQueue.notifyDone,
-                            body: count == 1 ? L10n.DownloadQueue.savedOne : L10n.DownloadQueue.savedMany(count)
-                        )
-                    }
+                    guard drained(old: old, new: new), downloadsSaved + downloadsFailed > 0 else { return }
+                    notify(
+                        title: downloadsFailed > 0 ? TransferFailureText.downloads(downloadsFailed) : L10n.DownloadQueue.notifyDone,
+                        body: downloadsBody
+                    )
                 }
         }
 
-        /// Tracks the largest queue seen this run; once it drains, reports that many and resets.
-        private func finished(old: Int, new: Int, batch: Int, onDone: (Int) -> Void) -> Int {
-            if new > 0 {
-                if old == 0 {
-                    requestAuthorization()
-                }
-                return max(batch, new)
+        private var downloadsBody: String {
+            if let lastSavedURL {
+                return MainTabFeature.macSavedMessage(count: downloadsSaved, lastSavedURL: lastSavedURL)
             }
-            if old > 0, batch > 0 {
-                onDone(batch)
+            return downloadsSaved == 1 ? L10n.DownloadQueue.savedOne : L10n.DownloadQueue.savedMany(downloadsSaved)
+        }
+
+        /// Asks for permission when a queue starts; true once it drains. The finished counts
+        /// cover the whole run, since a queue drops its finished items only when a new run
+        /// starts, so items added midway are counted too.
+        private func drained(old: Int, new: Int) -> Bool {
+            if Self.didStart(old: old, new: new) {
+                requestAuthorization()
             }
-            return 0
+            return Self.didDrain(old: old, new: new)
+        }
+
+        static func didStart(old: Int, new: Int) -> Bool {
+            old == 0 && new > 0
+        }
+
+        static func didDrain(old: Int, new: Int) -> Bool {
+            old > 0 && new == 0
         }
 
         private func requestAuthorization() {
@@ -248,6 +265,9 @@
     #Preview("Notifications") {
         Text(verbatim: "Finished transfers notify while the app is in the background")
             .padding(.space24)
-            .modifier(MacTransferNotifications(uploadsRemaining: 0, uploadsFailed: 0, downloadsRemaining: 0, downloadsFailed: 0))
+            .modifier(MacTransferNotifications(
+                uploadsRemaining: 0, uploadsCompleted: 0, uploadsFailed: 0,
+                downloadsRemaining: 0, downloadsSaved: 0, downloadsFailed: 0
+            ))
     }
 #endif

@@ -44,6 +44,12 @@ public struct MainTabFeature {
         public var uploadToast: UploadToast?
         /// The "saved to Downloads" confirmation once the download queue drains.
         public var downloadToast: String?
+        #if os(macOS)
+            /// Where the last Mac save landed, revealed by the confirmation's Show in Finder.
+            public var lastSavedDownloadURL: URL?
+            /// The latest folder change, for the extra Browse windows to reload.
+            public var folderWindowSync = FolderWindowSync()
+        #endif
 
         public init(serverURL: URL, user: User) {
             browse = BrowseTabFeature.State(serverURL: serverURL)
@@ -53,6 +59,12 @@ public struct MainTabFeature {
             uploads = UploadsFeature.State(serverURL: serverURL)
             downloadQueue = DownloadQueueFeature.State(serverURL: serverURL)
             offline = OfflineDownloadsFeature.State(serverURL: serverURL)
+        }
+
+        /// An upload or download the user started is still running, so quitting would stop it.
+        /// Offline sync is left out: it resumes on its own.
+        public var hasTransfersInFlight: Bool {
+            uploads.isActive || downloadQueue.isActive
         }
 
         /// The folder currently on screen in the Browse tab (root or the deepest pushed
@@ -76,6 +88,11 @@ public struct MainTabFeature {
         case goToFolderDismissed
         case goToFolderRequested(String)
         case recentFoldersCleared
+        #if os(macOS)
+            /// An extra Browse window changed these folders; the main window and the other
+            /// windows reload what they show of them.
+            case folderWindowChanged(FolderContentsChange, origin: UUID)
+        #endif
         /// Sent when the scene becomes active again after being backgrounded: `BrowseTabFeature`
         /// re-fetches the current folder and every pushed subfolder, since `BrowseFeature.onAppear`
         /// deliberately no-ops once a folder already has items loaded.
@@ -208,8 +225,7 @@ public struct MainTabFeature {
 
                 case let .goToFolderRequested(rawPath):
                     state.isGoToFolderPresented = false
-                    let path = rawPath.trimmingCharacters(in: CharacterSet(charactersIn: "/ ").union(.whitespacesAndNewlines))
-                    guard !path.isEmpty else { return .none }
+                    guard let path = Self.goToFolderPath(rawPath) else { return .none }
                     state.selectedTab = .browse
                     return .send(.browse(.navigateToDirectory(path: path, title: (path as NSString).lastPathComponent)))
 
@@ -235,6 +251,10 @@ public struct MainTabFeature {
                      let .favorites(.delegate(.downloadRequested(items))):
                     return .send(.downloadQueue(.enqueue(items)))
 
+                case let .browse(.delegate(.saveRequested(requests))),
+                     let .favorites(.delegate(.saveRequested(requests))):
+                    return .send(.downloadQueue(.enqueueSaves(requests)))
+
                 case .downloadQueue(.delegate(.itemSaved)):
                     return .merge(
                         .send(.downloads(.refreshButtonTapped)),
@@ -245,6 +265,14 @@ public struct MainTabFeature {
                 case let .downloadQueue(.delegate(.queueFinished(summary))):
                     // Failures stay on the persistent failed bar with its own Retry.
                     guard summary.failedCount == 0, summary.savedCount > 0 else { return .none }
+                    #if os(macOS)
+                        // A Mac save lands where the user chose in Finder, not in a Downloads tab.
+                        if let savedURL = summary.lastSavedURL {
+                            state.lastSavedDownloadURL = savedURL
+                            state.downloadToast = Self.macSavedMessage(count: summary.savedCount, lastSavedURL: savedURL)
+                            return .none
+                        }
+                    #endif
                     state.downloadToast = summary.savedCount == 1
                         ? L10n.DownloadQueue.savedOne
                         : L10n.DownloadQueue.savedMany(summary.savedCount)
@@ -388,10 +416,24 @@ public struct MainTabFeature {
                     state.recentFolders = []
                     return .none
 
+                #if os(macOS)
+                    case let .folderWindowChanged(change, origin):
+                        state.folderWindowSync.broadcast(change, from: origin)
+                        return .merge(
+                            BrowseTabFeature.refresh(for: change).map(Action.browse),
+                            FavoritesFeature.refresh(for: change).map(Action.favorites)
+                        )
+                #endif
+
                 case .browse, .favorites, .shared, .downloads, .settings, .uploads, .downloadQueue, .offline, .delegate:
                     return .none
                 }
             }
+            #if os(macOS)
+                Reduce { state, action in
+                    Self.syncFolderWindows(&state, after: action)
+                }
+            #endif
         }
         .onChange(of: \.browse.currentDirectoryPath) { _, path in
             Reduce { state, _ in
@@ -406,4 +448,11 @@ public struct MainTabFeature {
 
     /// As many as Finder's Recent Folders menu keeps by default.
     static let recentFoldersLimit = 10
+
+    /// A typed Go to Folder path as the server names it, without surrounding slashes or spaces;
+    /// `nil` when nothing is left.
+    static func goToFolderPath(_ rawPath: String) -> String? {
+        let path = rawPath.trimmingCharacters(in: CharacterSet(charactersIn: "/ ").union(.whitespacesAndNewlines))
+        return path.isEmpty ? nil : path
+    }
 }

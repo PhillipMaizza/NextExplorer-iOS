@@ -14,9 +14,34 @@
 
     struct ServerItemReference: Codable, Transferable {
         let id: String
+        /// The dragged row itself, so another Browse window, which does not list it, can move it.
+        var item: FileItem?
 
         static var transferRepresentation: some TransferRepresentation {
             CodableRepresentation(contentType: .nextExplorerItem)
+        }
+    }
+
+    /// What a folder row of the table takes: rows of this app (moved inside it) or files from
+    /// Finder (uploaded into it).
+    enum MacRowDrop: Transferable {
+        case item(ServerItemReference)
+        case file(URL)
+
+        static var transferRepresentation: some TransferRepresentation {
+            ProxyRepresentation(importing: { (reference: ServerItemReference) in MacRowDrop.item(reference) })
+            ProxyRepresentation(importing: { (url: URL) in MacRowDrop.file(url) })
+        }
+
+        var fileURL: URL? {
+            guard case let .file(url) = self, url.isFileURL else { return nil }
+            return url
+        }
+
+        /// A row dragged from this app that carried its item.
+        var item: FileItem? {
+            guard case let .item(reference) = self else { return nil }
+            return reference.item
         }
     }
 
@@ -42,7 +67,7 @@
     extension DraggedServerItem {
         init(item: FileItem, serverURL: URL, filesClient: FilesClient) {
             self.init(
-                reference: ServerItemReference(id: item.id),
+                reference: ServerItemReference(id: item.id, item: item),
                 fileName: item.name,
                 isDirectory: item.isDirectory
             ) {
@@ -113,20 +138,28 @@
         }
     }
 
-    /// Accepts files dropped from Finder and hands them to the regular upload flow, outlining the
-    /// folder while a drop hovers over it.
+    /// Accepts files dropped from Finder and hands them to the regular upload flow, and rows
+    /// dragged in from another Browse window, which move here. Outlines the folder while a drop
+    /// hovers over it.
     struct MacFinderDrop: ViewModifier {
         let isEnabled: Bool
         let onDrop: ([URL]) -> Void
+        var onDropItems: ([FileItem]) -> Void = { _ in }
 
         @State private var isTargeted = false
 
         func body(content: Content) -> some View {
             content
-                .dropDestination(for: URL.self) { urls, _ in
-                    let files = urls.filter(\.isFileURL)
-                    guard isEnabled, !files.isEmpty else { return false }
-                    onDrop(files)
+                .dropDestination(for: MacRowDrop.self) { drops, _ in
+                    let files = drops.compactMap(\.fileURL)
+                    let items = drops.compactMap(\.item)
+                    guard isEnabled, !files.isEmpty || !items.isEmpty else { return false }
+                    if !files.isEmpty {
+                        onDrop(files)
+                    }
+                    if !items.isEmpty {
+                        onDropItems(items)
+                    }
                     return true
                 } isTargeted: { isTargeted = isEnabled && $0 }
                 .overlay {

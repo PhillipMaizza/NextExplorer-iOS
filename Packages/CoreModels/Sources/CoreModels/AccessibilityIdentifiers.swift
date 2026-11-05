@@ -31,5 +31,7 @@ public enum AccessibilityIdentifiers {
     public enum Settings {
         /// The active account row, which expands to reveal Change Password / Sign Out.
         public static let activeAccount = "settings.activeAccount"
+        /// The app language picker in the Mac Settings window.
+        public static let languagePicker = "settings.languagePicker"
     }
 }

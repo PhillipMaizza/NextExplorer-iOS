@@ -721,3 +721,10 @@ media.play	재생
 media.pause	일시 정지
 media.position	재생 위치
 media.positionValue	%1$@ / %2$@
+menu.quitTransfersTitle	NextExplorer를 종료하시겠습니까?
+menu.quitTransfersMessage	업로드 또는 다운로드가 아직 진행 중입니다. 지금 종료하면 중단됩니다.
+menu.quitTransfersConfirm	종료
+textPreview.unsavedTitle	“%@”의 변경 사항을 저장하시겠습니까?
+textPreview.unsavedMessage	저장하지 않으면 변경 사항이 사라집니다.
+textPreview.dontSave	저장 안 함
+browse.showInEnclosingFolder	상위 폴더에서 보기

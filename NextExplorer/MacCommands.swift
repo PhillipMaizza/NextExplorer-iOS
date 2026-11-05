@@ -1,6 +1,7 @@
 #if os(macOS)
     import AppFeature
     import AppKit
+    import AppStorageKeys
     import ComposableArchitecture
     import CoreModels
     import FilesFeature
@@ -26,17 +27,24 @@
         /// Present while an extra Browse window is in front; the Go menu then moves that window.
         @FocusedValue(\.folderWindowCommands) private var folderWindow
         @Environment(\.openWindow) private var openWindow
+        /// Read by `body`, so every menu title is rebuilt in a newly chosen language.
+        @AppStorage(AppStorageKeys.appLanguage) private var appLanguage = ""
 
-        private static let sections: [(tab: MainTabFeature.Tab, title: String, key: KeyEquivalent)] = [
-            (.browse, L10n.Tab.browse, "1"),
-            (.favorites, L10n.Tab.favorites, "2"),
-            (.shared, L10n.Tab.shared, "3"),
-        ]
+        /// Computed, not stored: the titles must follow a language change.
+        private static var sections: [(tab: MainTabFeature.Tab, title: String, key: KeyEquivalent)] {
+            [
+                (.browse, L10n.Tab.browse, "1"),
+                (.favorites, L10n.Tab.favorites, "2"),
+                (.shared, L10n.Tab.shared, "3"),
+            ]
+        }
 
         var body: some Commands {
             // About NextExplorer opens the app's own About window (credits and links).
             CommandGroup(replacing: .appInfo) {
                 Button(L10n.Menu.about) { openWindow(id: MacAboutView.windowID) }
+                    // Reading the language here rebuilds every menu in a newly chosen one.
+                    .id(appLanguage)
             }
             CommandGroup(after: .appInfo) {
                 RateAppButton()
@@ -134,7 +142,7 @@
                 Button(L10n.Menu.enclosingFolder) { sendToFrontWindow({ $0.enclosingFolder() }, otherwise: .enclosingFolderRequested) }
                     .keyboardShortcut(.upArrow)
                 Divider()
-                Button(L10n.Menu.goToFolder) { send(.goToFolderPrompted) }
+                Button(L10n.Menu.goToFolder) { sendToFrontWindow({ $0.goToFolder() }, otherwise: .goToFolderPrompted) }
                     .keyboardShortcut("g", modifiers: [.command, .shift])
                 recentFoldersMenu
                 Divider()

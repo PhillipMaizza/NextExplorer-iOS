@@ -20,6 +20,8 @@ struct FavoritesView: View {
     /// How far the list is pulled below rest, fed to the empty/error overlay so it follows the
     /// pull-to-refresh rubber-band instead of staying pinned.
     @State private var pullOffset: CGFloat = 0
+    /// The file a search result preview asked to share.
+    @State private var previewShareTarget: FileItem?
 
     private var viewMode: FileListViewMode {
         #if os(macOS)
@@ -229,8 +231,13 @@ struct FavoritesView: View {
                 BrowsePreviewRouter(
                     store: hostStore,
                     item: previewItem,
-                    onShareTarget: { _ in }
+                    onShareTarget: { previewShareTarget = $0 }
                 )
+                .modifier(FavoritesPreviewHostActions(
+                    host: hostStore,
+                    shareTarget: $previewShareTarget,
+                    onViewShares: { store.send(.viewSharesFromPreviewTapped) }
+                ))
             }
         }
         .hapticFeedback(.selection, trigger: viewModeRaw)
