@@ -1,4 +1,4 @@
-# Contributing to NextExplorer for iOS
+# Contributing to NextExplorer for iPhone, iPad and Mac
 
 Thanks for taking a look. This guide covers how the project is built and the conventions every change follows. They are not stylistic preferences; they keep the app fast, private and account-safe, and a PR that follows them is far quicker to review.
 
@@ -7,7 +7,7 @@ Thanks for taking a look. This guide covers how the project is built and the con
 1. Install Xcode 27 (what CI builds with; the code needs the iOS and macOS 26 SDKs or later).
 2. Fork and clone the repo, then open `NextExplorer.xcodeproj`.
 3. Swift Package Manager resolves dependencies on first build. No extra tooling.
-4. Build and run on an iOS 18+ simulator or device. To exercise the app end to end you need a compatible self-hosted server and an account on it.
+4. Build and run the **NextExplorer** scheme on an iOS 18+ simulator or device, or on **My Mac** (macOS 15+). To exercise the app end to end you need a compatible self-hosted server and an account on it.
 
 ## Source of truth
 
@@ -79,7 +79,8 @@ Helpers under `Scripts/`. Two drive localization; the others keep dependency pin
   xcodebuild test -workspace PackageTests.xcworkspace -scheme PackageTests -destination 'platform=macOS'
   ```
   `bundle exec fastlane unit_tests` runs the first. The XCUITest suites run from the **NextExplorer** scheme (`fastlane ui_tests` on iOS; `-only-testing:NextExplorerUITests/MacCriticalPathUITests` with `-destination 'platform=macOS'` on the Mac, which drives the real pointer and keyboard).
-- Confirm strings are localized, there are no magic numbers, and the app builds cleanly before opening the PR.
+- Lint as CI does (its Lint job gates `main`): `swiftformat . --lint` and `swiftlint`, with the versions CI pins (SwiftFormat 0.64.4, SwiftLint 0.65.1) and the repo's `.swiftformat` and `.swiftlint.yml`. Imports are sorted, so a new import goes in its alphabetical slot.
+- Confirm strings are localized, there are no magic numbers, and the app builds cleanly for both iOS and the Mac before opening the PR.
 
 ## Releasing
 
@@ -110,7 +111,7 @@ Mac only lanes (`bundle exec fastlane mac <lane>`):
 - `beta`: the upcoming version as a Mac App Store package, uploaded to TestFlight for macOS.
 - `release_dry_run`: Mac unit tests and the Mac App Store package, nothing uploaded.
 
-Before the first Mac release, once in App Store Connect: add the macOS platform to the app (the same bundle ID makes it a universal purchase, so the tip jar carries over), then fill in its screenshots, description and review notes. The package is signed with a Mac Installer Distribution certificate; if the first `mac` build cannot find or create one, create it once in Certificates, Identifiers & Profiles.
+The Mac app shares the iOS app's App Store record (same bundle ID, a universal purchase, so the tip jar carries over); it first shipped with 1.1.0. Its package is signed with a Mac Installer Distribution certificate; on a new release Mac, create it once as described above.
 
 ## Questions
 
