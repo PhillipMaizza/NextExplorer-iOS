@@ -4,7 +4,7 @@ Thanks for taking a look. This guide covers how the project is built and the con
 
 ## Getting set up
 
-1. Install Xcode 16 or later.
+1. Install Xcode 27 (what CI builds with; the code needs the iOS and macOS 26 SDKs or later).
 2. Fork and clone the repo, then open `NextExplorer.xcodeproj`.
 3. Swift Package Manager resolves dependencies on first build. No extra tooling.
 4. Build and run on an iOS 18+ simulator or device. To exercise the app end to end you need a compatible self-hosted server and an account on it.
@@ -21,7 +21,7 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 
 ## Architecture
 
-- Native iOS 18+, SwiftUI, and [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) (`@Reducer`, `@ObservableState`, `TestStore`).
+- Native iOS 18+ and macOS 15+ from one target, SwiftUI, and [The Composable Architecture](https://github.com/pointfreeco/swift-composable-architecture) (`@Reducer`, `@ObservableState`, `TestStore`).
 - Follow the existing architecture and preserve dependency direction. Reuse existing infrastructure and TCA dependencies rather than adding parallel ones. No unrelated refactors in a feature PR.
 
 ### State modelling
@@ -73,7 +73,12 @@ Helpers under `Scripts/`. Two drive localization; the others keep dependency pin
 ## Build and test before you push
 
 - Build and run every change on the QA simulator: **iPhone 17 Pro, iOS 27**. Use it for builds, package tests and any visual QA pass.
-- Run the relevant unit and package tests (`Product > Test`, or `xcodebuild test` against a matching simulator) and make sure they pass.
+- Run every package's tests, on the QA simulator and, for Mac changes, on the Mac, and make sure they pass:
+  ```sh
+  xcodebuild test -workspace PackageTests.xcworkspace -scheme PackageTests -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+  xcodebuild test -workspace PackageTests.xcworkspace -scheme PackageTests -destination 'platform=macOS'
+  ```
+  `bundle exec fastlane unit_tests` runs the first. The XCUITest suites run from the **NextExplorer** scheme (`fastlane ui_tests` on iOS; `-only-testing:NextExplorerUITests/MacCriticalPathUITests` with `-destination 'platform=macOS'` on the Mac, which drives the real pointer and keyboard).
 - Confirm strings are localized, there are no magic numbers, and the app builds cleanly before opening the PR.
 
 ## Releasing
