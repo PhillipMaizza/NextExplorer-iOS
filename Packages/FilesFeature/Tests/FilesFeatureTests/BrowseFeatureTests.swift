@@ -1488,10 +1488,12 @@ struct BrowseFeatureTests {
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
         state.isNewFileSheetPresented = true
         let requested = LockIsolated<(String, String)?>(nil)
+        let clock = TestClock()
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
+            $0.continuousClock = clock
             $0.filesClient.createFile = { _, path, name in
                 requested.setValue((path, name))
                 return created
@@ -1508,6 +1510,9 @@ struct BrowseFeatureTests {
             $0.isNewFileSheetPresented = false
             $0.items = [created]
         }
+        // Opens only once the New File sheet has finished closing.
+        #expect(store.state.previewItem == nil)
+        await clock.advance(by: .milliseconds(350))
         await store.receive(\.rowTapped)
         #expect(store.state.previewItem == created)
         #expect(store.state.newlyCreatedFileID == created.id)

@@ -907,9 +907,15 @@ public struct BrowseFeature {
                 state.items.append(file)
                 state.$undoStack.withLock { $0.record(FileUndoEntry(.created([file]))) }
                 syncListingCache(state)
-                // Straight into the editor: an empty file is only ever made to be written in.
+                // Straight into the editor: an empty file is only ever made to be written in. After
+                // the sheet has gone, since a cover presented mid dismissal can be dropped on iOS.
                 state.newlyCreatedFileID = file.id
-                return .send(.rowTapped(file))
+                let clock = self.clock
+                return .run { send in
+                    try await clock.sleep(for: Constants.previewActionSettleDelay)
+                    await send(.rowTapped(file))
+                }
+                .cancellable(id: CancelID.previewDeferredAction, cancelInFlight: true)
 
             case let .newFileResponse(.failure(error)):
                 state.isPerformingFileAction = false

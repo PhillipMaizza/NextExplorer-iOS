@@ -51,6 +51,28 @@ extension ClientCertificateFeature.Status {
     }
 }
 
+#Preview("Loading") {
+    List {
+        SettingsClientCertificateRow(store: .settingsPreview(status: .loading))
+    }
+}
+
+#Preview("Expiring soon") {
+    List {
+        SettingsClientCertificateRow(store: .settingsPreview(status: .installed(.init(
+            subject: "Phillip iPhone", expiresAt: Date().addingTimeInterval(3 * 24 * 60 * 60)
+        ))))
+    }
+}
+
+#Preview("Expired") {
+    List {
+        SettingsClientCertificateRow(store: .settingsPreview(status: .installed(.init(
+            subject: "Phillip iPhone", expiresAt: Date().addingTimeInterval(-24 * 60 * 60)
+        ))))
+    }
+}
+
 private extension StoreOf<SettingsFeature> {
     static func settingsPreview(status: ClientCertificateFeature.Status) -> StoreOf<SettingsFeature> {
         var state = SettingsFeature.State(
