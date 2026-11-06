@@ -1,6 +1,7 @@
 import AVKit
 import CoreModels
 import DesignSystem
+import NetworkClient
 import SwiftUI
 
 /// Full-screen video/audio player for `FileItem.isStreamableMedia` files that AVFoundation can
@@ -28,6 +29,9 @@ struct StreamingPreviewView: View {
     @State private var hasStartedPlaying = false
     @State private var timeControlStatus: AVPlayer.TimeControlStatus = .paused
     @State private var didReportFailure = false
+    /// Set when the stream goes through `ClientCertificateAssetLoader` (an mTLS server); kept so
+    /// the loader outlives each view update and is torn down when the player goes away.
+    @State private var assetLoader: ClientCertificateAssetLoader?
 
     init(
         item: FileItem,
@@ -57,8 +61,17 @@ struct StreamingPreviewView: View {
             player = AVPlayer(url: url)
         } else {
             let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
-            let asset = AVURLAsset(url: url, options: [AVURLAssetHTTPCookiesKey: cookies])
-            player = AVPlayer(playerItem: AVPlayerItem(asset: asset))
+            if ClientIdentityStore.shared.hasCertificate(for: url),
+               let loader = ClientCertificateAssetLoader(
+                   remoteURL: url, cookies: cookies, fileExtension: (item.name as NSString).pathExtension
+               )
+            {
+                player = AVPlayer(playerItem: AVPlayerItem(asset: loader.asset))
+                _assetLoader = State(initialValue: loader)
+            } else {
+                let asset = AVURLAsset(url: url, options: [AVURLAssetHTTPCookiesKey: cookies])
+                player = AVPlayer(playerItem: AVPlayerItem(asset: asset))
+            }
         }
         // Let AVFoundation manage rebuffering so playback resumes automatically after a stall
         // instead of sitting paused, which is the main "buggy" symptom on a large stream.
@@ -143,6 +156,7 @@ struct StreamingPreviewView: View {
                 OrientationLock.shared.lock()
             }
             player.pause()
+            assetLoader?.invalidate()
             #if os(iOS)
                 Task.detached(priority: .userInitiated) {
                     try? AVAudioSession.sharedInstance().setCategory(.ambient)
