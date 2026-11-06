@@ -31,6 +31,16 @@ public final class ClientCertificateChallengeHandler: @unchecked Sendable {
 
     public static let shared = ClientCertificateChallengeHandler(store: .shared)
 
+    /// Drops the sessions' pooled connections whenever a certificate changes, so the next
+    /// request handshakes with the new identity (or none) instead of reusing the old one.
+    func flushOnCertificateChange(_ sessions: [URLSession]) {
+        store.addChangeObserver { [sessions = sessions.map(WeakSession.init)] in
+            for session in sessions {
+                session.value?.flush {}
+            }
+        }
+    }
+
     /// Returns `nil` for any challenge that is not a client certificate request, so the caller
     /// falls through to its own handling (server trust).
     public func handle(_ challenge: URLAuthenticationChallenge) -> (URLSession.AuthChallengeDisposition, URLCredential?)? {
@@ -56,9 +66,41 @@ public final class ClientCertificateChallengeHandler: @unchecked Sendable {
         return outcome
     }
 
+    /// nginx with `ssl_verify_client on` does not drop the handshake: it answers 400 with a page
+    /// naming the certificate problem. Only that page counts, so a genuine 400 from the server
+    /// behind the proxy is never mistaken for a certificate refusal.
+    func certificateError(status: Int, bodyPrefix: @autoclosure () -> Data, url: URL?) -> NetworkError? {
+        guard status == 400 else { return nil }
+        let text = String(decoding: bodyPrefix().prefix(Self.proxyPageScanBytes), as: UTF8.self).lowercased()
+        if text.contains("no required ssl certificate was sent") {
+            return .clientCertificateRequired
+        }
+        guard text.contains("ssl certificate error") else { return nil }
+        return recentOutcome(for: url) == .missing ? .clientCertificateRequired : .clientCertificateRejected
+    }
+
+    private static let proxyPageScanBytes = 4096
+
+    /// The server answered, so the handshake went through: a later drop on this origin is a real
+    /// outage (offline fallback applies), not the certificate.
+    func recordResponse(for url: URL?) {
+        guard let url, let origin = ClientCertificateOrigin(url: url) else { return }
+        lock.lock()
+        outcomes[origin] = nil
+        lock.unlock()
+    }
+
     private func record(_ outcome: Outcome, for origin: ClientCertificateOrigin) {
         lock.lock()
         outcomes[origin] = (outcome, now())
         lock.unlock()
+    }
+}
+
+private struct WeakSession: @unchecked Sendable {
+    weak var value: URLSession?
+
+    init(_ value: URLSession) {
+        self.value = value
     }
 }

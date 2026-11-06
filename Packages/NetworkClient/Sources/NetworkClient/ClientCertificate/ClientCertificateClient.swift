@@ -13,6 +13,8 @@ public struct ClientCertificateClient: Sendable {
         _ origin: ClientCertificateOrigin
     ) async throws -> ClientCertificateSummary
     public var remove: @Sendable (_ origin: ClientCertificateOrigin) async -> Void
+    /// Removes every certificate except those for the given servers (an empty set removes all).
+    public var removeAll: @Sendable (_ except: Set<ClientCertificateOrigin>) async -> Void
 }
 
 public extension ClientCertificateClient {
@@ -28,6 +30,9 @@ public extension ClientCertificateClient {
             },
             remove: { origin in
                 await Task.detached(priority: .userInitiated) { store.remove(for: origin) }.value
+            },
+            removeAll: { keep in
+                await Task.detached(priority: .userInitiated) { store.removeAll(except: keep) }.value
             }
         )
     }
@@ -42,7 +47,8 @@ public extension ClientCertificateClient {
                 storage.withValue { $0[origin] = summary }
                 return summary
             },
-            remove: { origin in storage.withValue { $0[origin] = nil } }
+            remove: { origin in storage.withValue { $0[origin] = nil } },
+            removeAll: { keep in storage.withValue { $0 = $0.filter { keep.contains($0.key) } } }
         )
     }
 }

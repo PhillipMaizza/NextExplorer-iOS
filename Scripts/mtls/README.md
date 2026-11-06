@@ -27,7 +27,11 @@ Local, in front of the public demo server:
 ```bash
 node Scripts/mtls/proxy.mjs                                   # https://localhost:8443, certificate required
 node Scripts/mtls/proxy.mjs https://nextexplorer.phillipmaizza.com 8443 optional
+node Scripts/mtls/proxy.mjs https://nextexplorer.phillipmaizza.com 8443 nginx   # nginx style 400 pages
+HOST=0.0.0.0 node Scripts/mtls/proxy.mjs   # reachable from a phone on the LAN too
 ```
+
+It listens on this Mac only by default, so nobody else on the network reaches the demo through it.
 
 Homelab: `https://192.168.1.187:3662` is a Caddy gateway (`client_auth require_and_verify`) in
 front of the demo instance, LAN only. Its certificates live in `/srv/nextexplorer-mtls/certs`

@@ -55,33 +55,53 @@ extension SecCertificate: @retroactive @unchecked Sendable {}
 /// refuses any handshake without a client certificate issued by the dev CA, and answers
 /// every request that gets through with `200 ok`.
 final class MutualTLSTestServer: @unchecked Sendable {
+    enum Mode {
+        /// Caddy, Traefik, Envoy: the handshake fails without an acceptable certificate.
+        case requireAtHandshake
+        /// nginx `ssl_verify_client on`: the handshake completes and the request gets a 400 page.
+        case nginxErrorPage
+    }
+
     private let listener: NWListener
     private let queue = DispatchQueue(label: "MutualTLSTestServer")
+    private let mode: Mode
+    private let anchor: SecCertificate
 
-    init() throws {
+    init(mode: Mode = .requireAtHandshake) throws {
+        self.mode = mode
         let serverIdentity = try PKCS12Identity.decode(
             MutualTLSFixtures.data("server", "p12"), passphrase: MutualTLSFixtures.passphrase
         )
         let anchor = try MutualTLSFixtures.certificateAuthority()
+        self.anchor = anchor
         let tls = NWProtocolTLS.Options()
         let options = tls.securityProtocolOptions
         guard let localIdentity = sec_identity_create(serverIdentity.identity) else {
             throw CocoaError(.fileReadCorruptFile)
         }
         sec_protocol_options_set_local_identity(options, localIdentity)
-        sec_protocol_options_set_peer_authentication_required(options, true)
-        sec_protocol_options_set_verify_block(options, { _, trust, complete in
-            let secTrust = sec_trust_copy_ref(trust).takeRetainedValue()
-            complete(MutualTLSFixtures.evaluate(secTrust, anchor: anchor))
-        }, queue)
+        switch mode {
+        case .requireAtHandshake:
+            sec_protocol_options_set_peer_authentication_required(options, true)
+            sec_protocol_options_set_verify_block(options, { _, trust, complete in
+                let secTrust = sec_trust_copy_ref(trust).takeRetainedValue()
+                complete(MutualTLSFixtures.evaluate(secTrust, anchor: anchor))
+            }, queue)
+        case .nginxErrorPage:
+            // Network.framework has no optional client authentication, so this asks for a
+            // certificate and accepts any, then answers like nginx. The "none sent" page is covered
+            // by the page recognition test and the nginx mode of `Scripts/mtls/proxy.mjs`.
+            sec_protocol_options_set_peer_authentication_required(options, true)
+            sec_protocol_options_set_verify_block(options, { _, _, complete in complete(true) }, queue)
+        }
         listener = try NWListener(using: NWParameters(tls: tls), on: .any)
     }
 
     /// Starts listening and returns the base URL once the port is bound.
     func start() async throws -> URL {
-        listener.newConnectionHandler = { [queue] connection in
+        listener.newConnectionHandler = { [queue, mode, anchor] connection in
             connection.start(queue: queue)
-            Self.serve(connection)
+            Self.serve(connection, mode: mode, anchor: anchor)
         }
         let port: UInt16 = try await withCheckedThrowingContinuation { continuation in
             let resumed = LockedFlag()
@@ -108,7 +128,7 @@ final class MutualTLSTestServer: @unchecked Sendable {
         listener.cancel()
     }
 
-    private static func serve(_ connection: NWConnection, buffer: Data = Data()) {
+    private static func serve(_ connection: NWConnection, mode: Mode, anchor: SecCertificate, buffer: Data = Data()) {
         connection.receive(minimumIncompleteLength: 1, maximumLength: 16384) { data, _, isComplete, error in
             var received = buffer
             if let data {
@@ -119,14 +139,45 @@ final class MutualTLSTestServer: @unchecked Sendable {
                 return
             }
             guard received.range(of: Data("\r\n\r\n".utf8)) != nil else {
-                serve(connection, buffer: received)
+                serve(connection, mode: mode, anchor: anchor, buffer: received)
                 return
             }
-            let response = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok"
+            let response = switch mode {
+            case .requireAtHandshake: okResponse
+            case .nginxErrorPage: nginxResponse(for: connection, anchor: anchor)
+            }
             connection.send(content: Data(response.utf8), completion: .contentProcessed { _ in
                 connection.cancel()
             })
         }
+    }
+}
+
+extension MutualTLSTestServer {
+    static let okResponse = "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 2\r\nConnection: close\r\n\r\nok"
+
+    /// The pages nginx serves for `ssl_verify_client on`, verbatim titles included.
+    static func nginxResponse(for connection: NWConnection, anchor: SecCertificate) -> String {
+        guard
+            let metadata = connection.metadata(definition: NWProtocolTLS.definition) as? NWProtocolTLS.Metadata
+        else { return okResponse }
+        var chain: [SecCertificate] = []
+        sec_protocol_metadata_access_peer_certificate_chain(metadata.securityProtocolMetadata) { certificate in
+            chain.append(sec_certificate_copy_ref(certificate).takeRetainedValue())
+        }
+        let title: String
+        if chain.isEmpty {
+            title = "400 No required SSL certificate was sent"
+        } else {
+            var trust: SecTrust?
+            SecTrustCreateWithCertificates(chain as CFArray, SecPolicyCreateBasicX509(), &trust)
+            guard let trust, !MutualTLSFixtures.evaluate(trust, anchor: anchor) else { return okResponse }
+            title = "400 The SSL certificate error"
+        }
+        let body = "<html><head><title>\(title)</title></head><body><center><h1>400 Bad Request</h1></center>"
+            + "<center>\(title.dropFirst(4))</center><hr><center>nginx</center></body></html>"
+        return "HTTP/1.1 400 Bad Request\r\nContent-Type: text/html\r\nContent-Length: \(body.utf8.count)\r\n"
+            + "Connection: close\r\n\r\n\(body)"
     }
 }
 

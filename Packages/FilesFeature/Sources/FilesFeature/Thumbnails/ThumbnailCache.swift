@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CryptoKit
 import Foundation
+import NetworkClient
 
 /// Disk-backed cache for thumbnail image bytes, keyed by the thumbnail's own URL. Safe to key
 /// on the URL alone (rather than the source file's `dateModified`/`size`, which aren't
@@ -66,50 +67,58 @@ extension ThumbnailCache: DependencyKey {
 
     private static let resolutionRecordSeparator = "\u{0}"
 
-    public static let liveValue = ThumbnailCache(
-        data: { url in
-            let fileURL = try cacheFileURL(for: url)
-            if let cached = try? Data(contentsOf: fileURL) {
-                return cached
-            }
-            // Stream to a temp file rather than buffering. `thumbnailURL` can fall back to a
-            // full size preview, so accumulating the response in memory (worse, byte by byte)
-            // burned seconds of CPU and stalled the UI. `download` streams on URLSession's own
-            // threads and cancels cleanly when the owning view's `.task` is torn down.
-            let (downloadedURL, response) = try await URLSession.shared.download(from: url)
-            defer { try? FileManager.default.removeItem(at: downloadedURL) }
-            guard let httpResponse = response as? HTTPURLResponse, 200 ..< 300 ~= httpResponse.statusCode else {
-                throw URLError(.badServerResponse)
-            }
-            let downloadedSize = (try? downloadedURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
-            guard downloadedSize <= maxResponseBytes else {
-                throw URLError(.dataLengthExceedsMaximum)
-            }
-            try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-            try? FileManager.default.removeItem(at: fileURL)
-            try FileManager.default.moveItem(at: downloadedURL, to: fileURL)
-            return try Data(contentsOf: fileURL)
-        },
-        resolvedURL: { path, signature, resolve in
-            let recordURL = try? resolutionRecordURL(for: path)
-            if let recordURL,
-               let record = try? String(contentsOf: recordURL, encoding: .utf8)
-            {
-                let parts = record.components(separatedBy: resolutionRecordSeparator)
-                if parts.count == 2, parts[0] == signature {
-                    return parts[1].isEmpty ? nil : URL(string: parts[1])
+    public static var liveValue: ThumbnailCache {
+        @Dependency(\.networkClient) var networkClient
+        return live(networkClient: networkClient)
+    }
+
+    static func live(networkClient: NetworkClient) -> ThumbnailCache {
+        ThumbnailCache(
+            data: { url in
+                let fileURL = try cacheFileURL(for: url)
+                if let cached = try? Data(contentsOf: fileURL) {
+                    return cached
                 }
-            }
-            let resolved = await resolve()
-            if let recordURL {
-                try? FileManager.default.createDirectory(at: recordURL.deletingLastPathComponent(), withIntermediateDirectories: true)
-                try? "\(signature)\(resolutionRecordSeparator)\(resolved?.absoluteString ?? "")"
-                    .write(to: recordURL, atomically: true, encoding: .utf8)
-            }
-            return resolved
-        },
-        clearMemory: { ThumbnailMemoryCache.removeAll() }
-    )
+                // Stream to a temp file rather than buffering. `thumbnailURL` can fall back to a
+                // full size preview, so accumulating the response in memory (worse, byte by byte)
+                // burned seconds of CPU and stalled the UI. The low priority `NetworkClient` session
+                // streams to disk, cancels cleanly when the owning view's `.task` is torn down, keeps
+                // no HTTP cache and presents the server's client certificate (mTLS).
+                let (downloadedURL, httpResponse) = try await networkClient.lowPriorityDownload(URLRequest(url: url))
+                defer { try? FileManager.default.removeItem(at: downloadedURL) }
+                guard 200 ..< 300 ~= httpResponse.statusCode else {
+                    throw URLError(.badServerResponse)
+                }
+                let downloadedSize = (try? downloadedURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
+                guard downloadedSize <= maxResponseBytes else {
+                    throw URLError(.dataLengthExceedsMaximum)
+                }
+                try FileManager.default.createDirectory(at: fileURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                try? FileManager.default.removeItem(at: fileURL)
+                try FileManager.default.moveItem(at: downloadedURL, to: fileURL)
+                return try Data(contentsOf: fileURL)
+            },
+            resolvedURL: { path, signature, resolve in
+                let recordURL = try? resolutionRecordURL(for: path)
+                if let recordURL,
+                   let record = try? String(contentsOf: recordURL, encoding: .utf8)
+                {
+                    let parts = record.components(separatedBy: resolutionRecordSeparator)
+                    if parts.count == 2, parts[0] == signature {
+                        return parts[1].isEmpty ? nil : URL(string: parts[1])
+                    }
+                }
+                let resolved = await resolve()
+                if let recordURL {
+                    try? FileManager.default.createDirectory(at: recordURL.deletingLastPathComponent(), withIntermediateDirectories: true)
+                    try? "\(signature)\(resolutionRecordSeparator)\(resolved?.absoluteString ?? "")"
+                        .write(to: recordURL, atomically: true, encoding: .utf8)
+                }
+                return resolved
+            },
+            clearMemory: { ThumbnailMemoryCache.removeAll() }
+        )
+    }
 
     public static let testValue = ThumbnailCache(
         data: { _ in throw Unimplemented() },

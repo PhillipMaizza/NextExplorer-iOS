@@ -3,10 +3,13 @@
 // every request to an upstream NextExplorer server (the demo instance by default).
 //
 //   node proxy.mjs [upstream] [port] [mode]
+//   HOST=0.0.0.0 node proxy.mjs ...   also listen on the LAN (default: this Mac only)
 //
 // mode: "require" (default) rejects the handshake without a valid certificate,
 //       "optional" asks for one but lets anonymous clients through,
-//       "off" serves plain TLS with no certificate request at all.
+//       "off" serves plain TLS with no certificate request at all,
+//       "nginx" behaves like nginx ssl_verify_client on: the handshake always completes and a
+//       missing or untrusted certificate gets nginx's 400 page instead.
 import fs from 'node:fs';
 import http from 'node:http';
 import https from 'node:https';
@@ -29,6 +32,15 @@ const server = https.createServer(
     rejectUnauthorized: mode === 'require',
   },
   (req, res) => {
+    if (mode === 'nginx' && !req.socket.authorized) {
+      const presented = Object.keys(req.socket.getPeerCertificate() ?? {}).length > 0;
+      const title = presented ? '400 The SSL certificate error' : '400 No required SSL certificate was sent';
+      console.log(`${title} ${req.method} ${req.url}`);
+      res.writeHead(400, { 'content-type': 'text/html' });
+      res.end(`<html><head><title>${title}</title></head><body><center><h1>400 Bad Request</h1></center>`
+        + `<center>${title.slice(4)}</center><hr><center>nginx</center></body></html>`);
+      return;
+    }
     const peer = req.socket.getPeerCertificate();
     const who = req.socket.authorized ? peer.subject?.CN : 'anonymous';
     const headers = { ...req.headers, host: upstream.host };
@@ -63,6 +75,7 @@ server.on('tlsClientError', (error, socket) => {
   console.log(`handshake rejected from ${socket.remoteAddress}: ${error.code ?? error.message}`);
 });
 
-server.listen(port, '0.0.0.0', () => {
-  console.log(`mTLS proxy (${mode}) on https://localhost:${port} -> ${upstream.origin}`);
+const host = process.env.HOST ?? '127.0.0.1';
+server.listen(port, host, () => {
+  console.log(`mTLS proxy (${mode}) on https://${host}:${port} -> ${upstream.origin}`);
 });

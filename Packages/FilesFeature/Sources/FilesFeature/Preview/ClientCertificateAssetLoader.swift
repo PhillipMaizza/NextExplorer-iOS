@@ -20,6 +20,8 @@ final class ClientCertificateAssetLoader: NSObject, @unchecked Sendable {
         /// whole file for a request that starts later.
         var bytesToSkip: Int64
         let requestedOffset: Int64
+        /// Bytes still owed to a bounded request; `nil` for one that reads to the end.
+        var remaining: Int64?
     }
 
     let asset: AVURLAsset
@@ -74,13 +76,13 @@ final class ClientCertificateAssetLoader: NSObject, @unchecked Sendable {
         toEnd ? "bytes=\(offset)-" : "bytes=\(offset)-\(offset + Int64(length) - 1)"
     }
 
-    /// The total length after the slash of a partial response's range header, else the body length
-    /// of a plain 200.
+    /// The file size: the number after the slash of a partial response's range header (`*` means
+    /// unknown, and a partial body's own length is never the file size), else the body length of
+    /// a plain 200.
     static func totalLength(of response: HTTPURLResponse) -> Int64? {
-        if let range = response.value(forHTTPHeaderField: "Content-Range"),
-           let total = range.split(separator: "/").last.flatMap({ Int64($0) })
-        {
-            return total
+        if response.statusCode == 206 {
+            let range = response.value(forHTTPHeaderField: "Content-Range")
+            return range?.split(separator: "/").last.flatMap { Int64($0) }
         }
         return response.expectedContentLength > 0 ? response.expectedContentLength : nil
     }
@@ -107,8 +109,10 @@ extension ClientCertificateAssetLoader: AVAssetResourceLoaderDelegate {
             request.setValue(value, forHTTPHeaderField: field)
         }
         var offset: Int64 = 0
+        var remaining: Int64?
         if let dataRequest = loadingRequest.dataRequest {
             offset = dataRequest.requestedOffset
+            remaining = dataRequest.requestsAllDataToEndOfResource ? nil : Int64(dataRequest.requestedLength)
             request.setValue(
                 Self.rangeHeader(
                     offset: offset,
@@ -119,7 +123,9 @@ extension ClientCertificateAssetLoader: AVAssetResourceLoaderDelegate {
             )
         }
         let task = activeSession().dataTask(with: request)
-        pending[task.taskIdentifier] = Pending(loadingRequest: loadingRequest, bytesToSkip: 0, requestedOffset: offset)
+        pending[task.taskIdentifier] = Pending(
+            loadingRequest: loadingRequest, bytesToSkip: 0, requestedOffset: offset, remaining: remaining
+        )
         task.resume()
         return true
     }
@@ -156,7 +162,9 @@ extension ClientCertificateAssetLoader: URLSessionDataDelegate {
         }
         if let info = entry.loadingRequest.contentInformationRequest {
             info.contentType = Self.contentType(mimeType: http.mimeType, fileExtension: fileExtension)
-            info.contentLength = Self.totalLength(of: http) ?? 0
+            if let total = Self.totalLength(of: http) {
+                info.contentLength = total
+            }
             info.isByteRangeAccessSupported = http.statusCode == 206
         }
         if http.statusCode == 200 {
@@ -173,11 +181,25 @@ extension ClientCertificateAssetLoader: URLSessionDataDelegate {
             let skipped = min(Int64(chunk.count), entry.bytesToSkip)
             chunk = chunk.dropFirst(Int(skipped))
             entry.bytesToSkip -= skipped
-            pending[dataTask.taskIdentifier] = entry
+        }
+        // A server that ignored the range sends more than was asked for: answer exactly the
+        // requested bytes, then end the request instead of streaming the rest of the file.
+        if let remaining = entry.remaining, Int64(chunk.count) > remaining {
+            chunk = chunk.prefix(Int(remaining))
         }
         if !chunk.isEmpty {
             entry.loadingRequest.dataRequest?.respond(with: chunk)
         }
+        if let remaining = entry.remaining {
+            entry.remaining = remaining - Int64(chunk.count)
+        }
+        if entry.remaining == 0 {
+            pending[dataTask.taskIdentifier] = nil
+            entry.loadingRequest.finishLoading()
+            dataTask.cancel()
+            return
+        }
+        pending[dataTask.taskIdentifier] = entry
     }
 
     func urlSession(_: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {

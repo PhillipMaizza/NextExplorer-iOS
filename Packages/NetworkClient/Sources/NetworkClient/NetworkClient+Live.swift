@@ -36,6 +36,13 @@ public extension NetworkClient {
     /// up any a crash left behind (`SessionScratchStore`).
     static let downloadTemporaryFilePrefix = "download-"
 
+    /// The first few kilobytes of a downloaded body, enough to recognize a proxy's error page.
+    internal static func prefix(of fileURL: URL) -> Data {
+        guard let handle = try? FileHandle(forReadingFrom: fileURL) else { return Data() }
+        defer { try? handle.close() }
+        return (try? handle.read(upToCount: 4096)) ?? Data()
+    }
+
     static func live(
         trustEvaluator: ServerTrustEvaluating = DefaultServerTrustEvaluator(),
         certificates: ClientCertificateChallengeHandler = .shared,
@@ -94,6 +101,8 @@ public extension NetworkClient {
             configuration: downloadConfiguration, delegate: delegate, delegateQueue: nil
         )
 
+        certificates.flushOnCertificateChange([session, lowPrioritySession, downloadSession])
+
         @Sendable func streamToFile(
             _ request: URLRequest, using downloadSession: URLSession
         ) async throws -> (URL, HTTPURLResponse) {
@@ -108,6 +117,13 @@ public extension NetworkClient {
                 try? FileManager.default.removeItem(at: temporaryURL)
                 throw NetworkError.invalidResponse
             }
+            if let error = certificates.certificateError(
+                status: httpResponse.statusCode, bodyPrefix: NetworkClient.prefix(of: temporaryURL), url: request.url
+            ) {
+                try? FileManager.default.removeItem(at: temporaryURL)
+                throw error
+            }
+            certificates.recordResponse(for: request.url)
             // `session.download` deletes its temp file the moment this closure returns, so
             // move it somewhere the caller controls before handing the URL back.
             let stableURL = FileManager.default.temporaryDirectory
@@ -139,6 +155,12 @@ public extension NetworkClient {
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw NetworkError.invalidResponse
             }
+            if let error = certificates.certificateError(
+                status: httpResponse.statusCode, bodyPrefix: NetworkClient.prefix(of: temporaryURL), url: request.url
+            ) {
+                throw error
+            }
+            certificates.recordResponse(for: request.url)
             let byteCount = (try? temporaryURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
             guard byteCount <= maxInMemoryResponseBytes else {
                 throw NetworkError.responseTooLarge
@@ -171,6 +193,10 @@ public extension NetworkClient {
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NetworkError.invalidResponse
                 }
+                if let error = certificates.certificateError(status: httpResponse.statusCode, bodyPrefix: data, url: request.url) {
+                    throw error
+                }
+                certificates.recordResponse(for: request.url)
                 return (data, httpResponse)
             },
             download: { request in
@@ -197,6 +223,13 @@ public extension NetworkClient {
                                 continuation.resume(throwing: NetworkError.invalidResponse)
                                 return
                             }
+                            if let error = certificates.certificateError(
+                                status: httpResponse.statusCode, bodyPrefix: NetworkClient.prefix(of: temporaryURL), url: request.url
+                            ) {
+                                continuation.resume(throwing: error)
+                                return
+                            }
+                            certificates.recordResponse(for: request.url)
                             // The system deletes `temporaryURL` the instant this returns, so move it
                             // synchronously to a stable location the caller owns.
                             let stableURL = FileManager.default.temporaryDirectory

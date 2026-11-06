@@ -66,6 +66,43 @@ struct ClientCertificateTests {
         }
     }
 
+    @Test("nginx's own 400 pages are recognized")
+    func nginxPages() {
+        let handler = ClientCertificateChallengeHandler(store: ClientIdentityStore(keychain: .inMemory()))
+        let url = URL(string: "https://example.com/")!
+        let missing = Data("<html><head><title>400 No required SSL certificate was sent</title>".utf8)
+        let refused = Data("<html><head><title>400 The SSL certificate error</title>".utf8)
+        #expect(handler.certificateError(status: 400, bodyPrefix: missing, url: url) == .clientCertificateRequired)
+        #expect(handler.certificateError(status: 400, bodyPrefix: refused, url: url) == .clientCertificateRejected)
+    }
+
+    @Test("nginx: an untrusted certificate's 400 page reads as rejected, a valid one gets through")
+    func nginxRejectedAndValid() async throws {
+        let server = try MutualTLSTestServer(mode: .nginxErrorPage)
+        let baseURL = try await server.start()
+        defer { server.stop() }
+        let rogueStore = ClientIdentityStore(keychain: .inMemory())
+        try install("rogue-client", in: rogueStore, for: baseURL)
+        await #expect(throws: NetworkError.clientCertificateRejected) {
+            try await request(makeClient(store: rogueStore), baseURL)
+        }
+
+        let store = ClientIdentityStore(keychain: .inMemory())
+        try install("client", in: store, for: baseURL)
+        let (_, response) = try await request(makeClient(store: store), baseURL)
+        #expect(response.statusCode == 200)
+    }
+
+    @Test("A real 400 from the server is never taken for a certificate refusal")
+    func ordinary400() {
+        let handler = ClientCertificateChallengeHandler(store: ClientIdentityStore(keychain: .inMemory()))
+        let url = URL(string: "https://example.com/api/files")!
+        _ = handler.handle(ClientCertificateChallengeFixture.make(host: "example.com", port: 443))
+        let json = Data(#"{"error":"Name is required"}"#.utf8)
+        #expect(handler.certificateError(status: 400, bodyPrefix: json, url: url) == nil)
+        #expect(handler.certificateError(status: 200, bodyPrefix: Data("ssl certificate error".utf8), url: url) == nil)
+    }
+
     @Test("Downloads present the certificate too")
     func downloadPresentsCertificate() async throws {
         let server = try MutualTLSTestServer()
@@ -118,6 +155,28 @@ struct ClientCertificateTests {
         #expect(ClientIdentityStore(keychain: keychain).summary(for: origin) == nil)
     }
 
+    @Test("Signing out removes every certificate except those for servers still signed in")
+    func removeAllExcept() throws {
+        let keychain = KeychainClient.inMemory()
+        let store = ClientIdentityStore(keychain: keychain)
+        let kept = ClientCertificateOrigin(host: "a.example.com", port: 443)
+        let dropped = ClientCertificateOrigin(host: "b.example.com", port: 8443)
+        for origin in [kept, dropped] {
+            try store.install(pkcs12: MutualTLSFixtures.data("client", "p12"), passphrase: MutualTLSFixtures.passphrase, for: origin)
+        }
+        #expect(ClientIdentityStore(keychain: keychain).installedOrigins() == [kept, dropped])
+
+        store.removeAll(except: [kept])
+        #expect(store.summary(for: dropped) == nil)
+        #expect(store.summary(for: kept) != nil)
+
+        store.removeAll(except: [])
+        let relaunched = ClientIdentityStore(keychain: keychain)
+        #expect(relaunched.installedOrigins().isEmpty)
+        #expect(relaunched.summary(for: kept) == nil)
+        #expect(try keychain.load(kept.keychainKey) == nil)
+    }
+
     @Test("Origins use the scheme default port when the URL has none")
     func origins() {
         #expect(ClientCertificateOrigin(url: URL(string: "https://Example.com")!) == ClientCertificateOrigin(host: "example.com", port: 443))
@@ -144,6 +203,10 @@ struct ClientCertificateTests {
         #expect(NetworkError.from(dropped, url: URL(string: "https://other.example.com")!, certificates: handler) == .offline)
 
         clock.advance(by: 60)
+        #expect(NetworkError.from(dropped, url: url, certificates: handler) == .offline)
+
+        _ = handler.handle(ClientCertificateChallengeFixture.make(host: "example.com", port: 443))
+        handler.recordResponse(for: url)
         #expect(NetworkError.from(dropped, url: url, certificates: handler) == .offline)
     }
 

@@ -26,6 +26,7 @@ public final class ClientIdentityStore: @unchecked Sendable {
     private let keychain: KeychainClient
     private let lock = NSLock()
     private var entries: [ClientCertificateOrigin: Entry] = [:]
+    private var changeObservers: [@Sendable () -> Void] = []
 
     public init(keychain: KeychainClient) {
         self.keychain = keychain
@@ -47,13 +48,74 @@ public final class ClientIdentityStore: @unchecked Sendable {
         } catch {
             throw .storage
         }
+        updateIndex { $0.insert(origin) }
         setEntry(.stored(record, decoded), for: origin)
+        notifyChange()
         return record.summary
     }
 
+    /// Every origin with a certificate stored, kept beside the records so they can all be found
+    /// and removed at a session boundary (the keychain wrapper has no way to list its items).
+    public func installedOrigins() -> Set<ClientCertificateOrigin> {
+        lock.lock()
+        defer { lock.unlock() }
+        return loadIndex()
+    }
+
+    /// Removes every certificate except those for `keep`: the servers an account is still
+    /// signed in to. Signing out of the last account passes an empty set, so the next person to
+    /// use the device can't reach an mTLS server with the previous user's identity.
+    public func removeAll(except keep: Set<ClientCertificateOrigin>) {
+        for origin in installedOrigins().subtracting(keep) {
+            remove(for: origin)
+        }
+    }
+
+    /// A failed keychain delete leaves the certificate in place, so the caller reading the summary
+    /// back sees the truth instead of a "None" that would come back on the next launch.
     public func remove(for origin: ClientCertificateOrigin) {
-        try? keychain.delete(origin.keychainKey)
+        guard (try? keychain.delete(origin.keychainKey)) != nil else { return }
+        updateIndex { $0.remove(origin) }
         setEntry(.missing, for: origin)
+        notifyChange()
+    }
+
+    private static let indexKey = "clientIdentity.index"
+
+    /// Call with `lock` held.
+    private func loadIndex() -> Set<ClientCertificateOrigin> {
+        guard
+            let data = try? keychain.load(Self.indexKey),
+            let origins = try? JSONDecoder().decode(Set<ClientCertificateOrigin>.self, from: data)
+        else { return [] }
+        return origins
+    }
+
+    private func updateIndex(_ change: (inout Set<ClientCertificateOrigin>) -> Void) {
+        lock.lock()
+        defer { lock.unlock() }
+        var origins = loadIndex()
+        change(&origins)
+        if origins.isEmpty {
+            try? keychain.delete(Self.indexKey)
+        } else if let data = try? JSONEncoder().encode(origins) {
+            try? keychain.save(Self.indexKey, data)
+        }
+    }
+
+    /// Called after a certificate is installed, replaced or removed. Sessions use it to drop
+    /// their pooled connections, which stay authenticated with the identity they opened with.
+    func addChangeObserver(_ observer: @escaping @Sendable () -> Void) {
+        lock.lock()
+        changeObservers.append(observer)
+        lock.unlock()
+    }
+
+    private func notifyChange() {
+        lock.lock()
+        let observers = changeObservers
+        lock.unlock()
+        observers.forEach { $0() }
     }
 
     /// Cheap enough for a view to ask: no key derivation, at most one keychain read per origin.

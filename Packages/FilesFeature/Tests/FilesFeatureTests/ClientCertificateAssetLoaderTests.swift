@@ -20,6 +20,10 @@ struct ClientCertificateAssetLoaderTests {
         #expect(ClientCertificateAssetLoader.totalLength(of: partial) == 52_428_800)
         let full = try #require(HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: ["Content-Length": "1234"]))
         #expect(ClientCertificateAssetLoader.totalLength(of: full) == 1234)
+        let unknown = try #require(HTTPURLResponse(url: url, statusCode: 206, httpVersion: nil, headerFields: [
+            "Content-Range": "bytes 0-1/*", "Content-Length": "2",
+        ]))
+        #expect(ClientCertificateAssetLoader.totalLength(of: unknown) == nil)
     }
 
     @Test("A generic MIME type falls back to the file extension")

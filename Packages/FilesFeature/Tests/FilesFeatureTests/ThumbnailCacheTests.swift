@@ -2,6 +2,7 @@ import ComposableArchitecture
 import CryptoKit
 @testable import FilesFeature
 import Foundation
+import NetworkClient
 import Testing
 
 /// `ThumbnailCache.liveValue` hits the real filesystem for its cache layer; its network leg
@@ -10,7 +11,8 @@ import Testing
 /// remembers a thumbnail-URL resolution across calls.
 @Suite(.serialized, SerializedPreviewCacheAccess())
 struct ThumbnailCacheTests {
-    private let store = ThumbnailCache.liveValue
+    /// A `NetworkClient` with no endpoints: any network call these cache tests make is an issue.
+    private let store = ThumbnailCache.live(networkClient: NetworkClient())
 
     private func cacheDirectory() throws -> URL {
         let cachesDirectory = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -51,6 +53,24 @@ struct ThumbnailCacheTests {
 
         #expect(keyA != keyB)
         #expect(directory.appendingPathComponent(keyA) != directory.appendingPathComponent(keyB))
+    }
+
+    @Test("A miss downloads through NetworkClient, so an mTLS server's thumbnails present the certificate")
+    func missGoesThroughNetworkClient() async throws {
+        let requested = LockIsolated<URL?>(nil)
+        var network = NetworkClient()
+        network.lowPriorityDownload = { request in
+            requested.setValue(request.url)
+            let file = FileManager.default.temporaryDirectory.appendingPathComponent("download-\(UUID().uuidString)")
+            try Data("thumb".utf8).write(to: file)
+            return (file, HTTPURLResponse(url: request.url!, statusCode: 200, httpVersion: nil, headerFields: nil)!)
+        }
+        let url = URL(string: "https://example.com/static/thumbnails/\(UUID().uuidString).webp")!
+
+        let data = try await ThumbnailCache.live(networkClient: network).data(url)
+
+        #expect(data == Data("thumb".utf8))
+        #expect(requested.value == url)
     }
 
     // MARK: resolvedURL (remembers the `GET /api/thumbnails` resolution across app launches)
