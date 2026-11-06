@@ -87,9 +87,8 @@ public struct LoginFormFeature {
         case success
     }
 
-    /// Which credential field(s) should shake/red-border for the current `errorMessage`: a
-    /// locally-rejected non-email only implicates the email field, while a server-rejected
-    /// email/password implicates both (the server never says which one was actually wrong).
+    /// The server whose TLS layer refused the app over its client certificate, and whether one was
+    /// presented and refused (Manage) or none was installed (Add).
     public struct CertificatePrompt: Equatable, Sendable {
         public var origin: ClientCertificateOrigin
         public var isRejected: Bool
@@ -100,6 +99,9 @@ public struct LoginFormFeature {
         }
     }
 
+    /// Which credential field(s) should shake/red-border for the current `errorMessage`: a
+    /// locally-rejected non-email only implicates the email field, while a server-rejected
+    /// email/password implicates both (the server never says which one was actually wrong).
     public enum InvalidFieldScope: Equatable, Sendable {
         case identifier
         case identifierAndPassword
@@ -288,6 +290,7 @@ public struct LoginFormFeature {
 
             case let .testConnectionResponse(.success(status)):
                 state.authStatus = status
+                state.certificatePrompt = nil
                 let clock = clock
                 guard status.localEnabled || status.oidcEnabled else {
                     state.connectionPhase = .failure
@@ -502,9 +505,7 @@ public struct LoginFormFeature {
         .cancellable(id: CancelID.errorDismiss, cancelInFlight: true)
     }
 
-    /// Basic shape check (`x@y.z`): the server is the real source of truth on whether the
-    /// address exists, this only catches "clearly not an email" before spending a network call.
-    /// Shares the one regex in `CredentialRules` so login and user management stay in lockstep.
+    /// Drops a typed `http://` or `https://` so the scheme picker alone decides the scheme.
     static func strippingSchemePrefix(_ host: String) -> String {
         let trimmed = host.trimmingCharacters(in: .whitespaces)
         for prefix in ["https://", "http://"] where trimmed.lowercased().hasPrefix(prefix) {
@@ -513,6 +514,9 @@ public struct LoginFormFeature {
         return host
     }
 
+    /// Basic shape check (`x@y.z`): the server is the real source of truth on whether the
+    /// address exists, this only catches "clearly not an email" before spending a network call.
+    /// Shares the one regex in `CredentialRules` so login and user management stay in lockstep.
     static func isValidEmail(_ text: String) -> Bool {
         CredentialRules.isEmailShaped(text)
     }

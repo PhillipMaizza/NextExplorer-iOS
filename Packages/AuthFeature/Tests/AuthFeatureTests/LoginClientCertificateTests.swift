@@ -92,6 +92,28 @@ struct LoginClientCertificateTests {
         await store.receive(\.advanceToCredentials) { $0.currentPage = .credentials }
     }
 
+    @Test("A connection test that later succeeds drops the certificate offer")
+    func successClearsPrompt() async {
+        let status = AuthStatus(localEnabled: true, oidcEnabled: false)
+        let store = TestStore(
+            initialState: LoginFormFeature.State(
+                connectionPhase: .testing,
+                host: "files.example.com:8443",
+                certificatePrompt: .init(origin: origin, isRejected: false)
+            )
+        ) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.continuousClock = TestClock()
+        }
+        store.exhaustivity = .off
+
+        await store.send(.testConnectionResponse(.success(status))) {
+            $0.certificatePrompt = nil
+        }
+        await store.skipInFlightEffects()
+    }
+
     @Test("Editing the address drops the certificate offer")
     func hostChangeClearsPrompt() async {
         let store = TestStore(
