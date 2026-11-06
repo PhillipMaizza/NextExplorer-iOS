@@ -1,4 +1,5 @@
 import AuthClient
+import ClientCertificateFeature
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -451,6 +452,15 @@ public struct LoginFormView: View {
                         .transition(.opacity)
                 }
 
+                if let prompt = store.certificatePrompt {
+                    LoginCertificateButton(isRejected: prompt.isRejected) {
+                        focusedField = nil
+                        store.send(.clientCertificateButtonTapped)
+                    }
+                    .padding(.horizontal, .space24)
+                    .transition(.opacity)
+                }
+
                 #if os(macOS)
                     // No keyboard reflow on a Mac: the slot is always reserved, so the button
                     // pops in place without shifting anything around it.
@@ -486,6 +496,9 @@ public struct LoginFormView: View {
         .onAppear { LocalNetworkPrimer.prime() }
         .dsSheet(isPresented: $isServerInfoPresented) {
             ServerInfoSheet(onClose: { isServerInfoPresented = false })
+        }
+        .dsSheet(item: $store.scope(state: \.clientCertificate, action: \.clientCertificate)) { certificateStore in
+            ClientCertificateSheet(store: certificateStore)
         }
     }
 

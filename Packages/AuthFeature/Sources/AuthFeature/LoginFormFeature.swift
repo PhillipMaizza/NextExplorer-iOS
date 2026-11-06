@@ -1,8 +1,10 @@
 import AuthClient
+import ClientCertificateFeature
 import ComposableArchitecture
 import CoreModels
 import Foundation
 import Localization
+import NetworkClient
 
 private enum Constants {
     /// A real homelab call can resolve near-instantly on a warm connection: hold the
@@ -88,6 +90,16 @@ public struct LoginFormFeature {
     /// Which credential field(s) should shake/red-border for the current `errorMessage`: a
     /// locally-rejected non-email only implicates the email field, while a server-rejected
     /// email/password implicates both (the server never says which one was actually wrong).
+    public struct CertificatePrompt: Equatable, Sendable {
+        public var origin: ClientCertificateOrigin
+        public var isRejected: Bool
+
+        public init(origin: ClientCertificateOrigin, isRejected: Bool) {
+            self.origin = origin
+            self.isRejected = isRejected
+        }
+    }
+
     public enum InvalidFieldScope: Equatable, Sendable {
         case identifier
         case identifierAndPassword
@@ -115,6 +127,11 @@ public struct LoginFormFeature {
         public var errorMessage: String?
         public var invalidFieldsScope: InvalidFieldScope?
         public var authStatus: AuthStatus?
+        /// Set when the server's TLS layer turned the app away over its client certificate, so
+        /// the server page offers the certificate sheet until the address changes. Outlives the
+        /// self clearing `errorMessage` on purpose: the user needs time to go find the file.
+        public var certificatePrompt: CertificatePrompt?
+        @Presents public var clientCertificate: ClientCertificateFeature.State?
 
         public init(
             currentPage: Page = .server,
@@ -128,7 +145,9 @@ public struct LoginFormFeature {
             oidcPhase: OIDCPhase = .idle,
             errorMessage: String? = nil,
             invalidFieldsScope: InvalidFieldScope? = nil,
-            authStatus: AuthStatus? = nil
+            authStatus: AuthStatus? = nil,
+            certificatePrompt: CertificatePrompt? = nil,
+            clientCertificate: ClientCertificateFeature.State? = nil
         ) {
             self.currentPage = currentPage
             self.connectionPhase = connectionPhase
@@ -143,6 +162,8 @@ public struct LoginFormFeature {
             self.errorMessage = errorMessage
             self.invalidFieldsScope = invalidFieldsScope
             self.authStatus = authStatus
+            self.certificatePrompt = certificatePrompt
+            self.clientCertificate = clientCertificate
         }
 
         public var isSubmitting: Bool {
@@ -159,6 +180,7 @@ public struct LoginFormFeature {
             authStatus = nil
             errorMessage = nil
             invalidFieldsScope = nil
+            certificatePrompt = nil
         }
     }
 
@@ -180,6 +202,8 @@ public struct LoginFormFeature {
         case submitFailed(AuthClientError)
         case ssoButtonTapped
         case oidcResponse(Result<User, AuthClientError>, URL)
+        case clientCertificateButtonTapped
+        case clientCertificate(PresentationAction<ClientCertificateFeature.Action>)
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -280,6 +304,7 @@ public struct LoginFormFeature {
                 state.connectionPhase = .failure
                 state.authStatus = nil
                 state.errorMessage = Self.message(for: error)
+                state.certificatePrompt = Self.certificatePrompt(for: error, scheme: state.scheme, host: state.host)
                 return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock))
 
             case .revertToIdle:
@@ -387,10 +412,45 @@ public struct LoginFormFeature {
                 state.errorMessage = Self.message(for: error)
                 return Self.scheduleErrorDismiss(clock)
 
+            case .clientCertificateButtonTapped:
+                guard let prompt = state.certificatePrompt else { return .none }
+                state.clientCertificate = ClientCertificateFeature.State(origin: prompt.origin)
+                return .none
+
+            case .clientCertificate(.presented(.delegate(.installed))):
+                state.clientCertificate = nil
+                state.certificatePrompt = nil
+                return .send(.testConnectionButtonTapped)
+
+            case .clientCertificate:
+                return .none
+
             case .delegate:
                 return .none
             }
         }
+        .ifLet(\.$clientCertificate, action: \.clientCertificate) {
+            ClientCertificateFeature()
+        }
+    }
+
+    /// The origin the certificate sheet is for, when `error` is a handshake refused over the
+    /// client certificate. The same normalization as the connection test, so the certificate is
+    /// stored under exactly the host and port the app connects to.
+    static func certificatePrompt(for error: AuthClientError, scheme: URLScheme, host: String) -> CertificatePrompt? {
+        let isRejected: Bool
+        switch error {
+        case .clientCertificateRequired: isRejected = false
+        case .clientCertificateRejected: isRejected = true
+        default: return nil
+        }
+        guard
+            let url = normalizedURL(scheme: scheme, host: host),
+            let origin = ClientCertificateOrigin(url: url)
+        else {
+            return nil
+        }
+        return CertificatePrompt(origin: origin, isRejected: isRejected)
     }
 
     /// Cancels every in-flight network/timer effect this feature can have running.
@@ -564,6 +624,8 @@ public struct LoginFormFeature {
         case let .server(statusCode): L10n.Login.errorServer(statusCode)
         case .noAuthMethodsEnabled: L10n.Login.errorNoAuthMethods
         case .rateLimited: L10n.Login.errorRateLimited
+        case .clientCertificateRequired: L10n.Login.errorClientCertificateRequired
+        case .clientCertificateRejected: L10n.Login.errorClientCertificateRejected
         case .oidcCancelled: L10n.Login.errorSso
         case .oidcFailed: L10n.Login.errorSso
         }

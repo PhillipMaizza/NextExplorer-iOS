@@ -40,74 +40,6 @@
         }
     }
 
-    /// The trailing buttons of a Mac dialog: an optional spinner and extra button, Cancel (Esc)
-    /// and the confirm button (Return), with any leading content such as a size estimate.
-    struct MacDialogButtons<Leading: View>: View {
-        let confirmTitle: String
-        var isConfirmEnabled = true
-        var isWorking = false
-        /// `nil` hides Cancel, for a dialog whose only way out is its confirm button.
-        var cancelTitle: String? = L10n.Common.cancel
-        var secondaryTitle: String?
-        var onSecondary: () -> Void = {}
-        let onCancel: () -> Void
-        let onConfirm: () -> Void
-        @ViewBuilder var leading: () -> Leading
-
-        var body: some View {
-            HStack(spacing: .space8) {
-                leading()
-                Spacer()
-                if isWorking {
-                    MacSpinner()
-                }
-                if let secondaryTitle {
-                    Button(secondaryTitle, action: onSecondary)
-                }
-                if let cancelTitle {
-                    Button(cancelTitle, action: onCancel)
-                        .keyboardShortcut(.cancelAction)
-                }
-                Button(confirmTitle, action: onConfirm)
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(!isConfirmEnabled || isWorking)
-            }
-        }
-    }
-
-    extension MacDialogButtons where Leading == EmptyView {
-        init(
-            confirmTitle: String,
-            isConfirmEnabled: Bool = true,
-            isWorking: Bool = false,
-            cancelTitle: String? = L10n.Common.cancel,
-            secondaryTitle: String? = nil,
-            onSecondary: @escaping () -> Void = {},
-            onCancel: @escaping () -> Void,
-            onConfirm: @escaping () -> Void
-        ) {
-            self.init(
-                confirmTitle: confirmTitle,
-                isConfirmEnabled: isConfirmEnabled,
-                isWorking: isWorking,
-                cancelTitle: cancelTitle,
-                secondaryTitle: secondaryTitle,
-                onSecondary: onSecondary,
-                onCancel: onCancel,
-                onConfirm: onConfirm
-            ) { EmptyView() }
-        }
-    }
-
-    /// The small native spinner Mac dialogs and panes show while they work, named for VoiceOver.
-    struct MacSpinner: View {
-        var body: some View {
-            ProgressView()
-                .controlSize(.small)
-                .accessibilityLabel(L10n.Common.loading)
-        }
-    }
-
     /// A file or folder name with its icon, for Mac tables and lists: the accent folder or the
     /// secondary document glyph, and an optional path under the name.
     struct MacItemLabel: View {
@@ -139,23 +71,6 @@
         }
         .padding(.space16)
         .previewCanvasWidth(.sheet)
-    }
-
-    #Preview("Buttons") {
-        VStack(spacing: .space16) {
-            MacDialogButtons(confirmTitle: "Move", onCancel: {}, onConfirm: {})
-            MacDialogButtons(confirmTitle: "Save", isWorking: true, onCancel: {}, onConfirm: {})
-            MacDialogButtons(confirmTitle: "Download", isConfirmEnabled: false, onCancel: {}, onConfirm: {}) {
-                Text(verbatim: "Estimated size: 45 MB").monospacedDigit()
-            }
-        }
-        .padding(.space16)
-        .previewCanvasWidth(.sheet)
-    }
-
-    #Preview("Spinner") {
-        MacSpinner()
-            .padding(.space16)
     }
 
     #Preview("Item labels") {
