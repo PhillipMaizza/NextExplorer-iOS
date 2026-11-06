@@ -9,6 +9,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../AppStorageKeys"),
+        .package(path: "../ClientCertificateFeature"),
         .package(path: "../CoreModels"),
         .package(path: "../FilesClient"),
         .package(path: "../NetworkClient"),
@@ -37,6 +38,7 @@ let package = Package(
             name: "FilesFeature",
             dependencies: [
                 "AppStorageKeys",
+                "ClientCertificateFeature",
                 "CoreModels",
                 "FilesClient",
                 "NetworkClient",
@@ -126,7 +128,9 @@ let package = Package(
             name: "FilesFeatureTests",
             dependencies: [
                 "FilesFeature",
+                .product(name: "ClientCertificateFeature", package: "ClientCertificateFeature"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
+                .product(name: "NetworkClient", package: "NetworkClient"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
             ],

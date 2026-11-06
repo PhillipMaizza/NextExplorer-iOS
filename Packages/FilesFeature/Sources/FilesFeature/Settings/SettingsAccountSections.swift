@@ -205,6 +205,7 @@ struct SettingsProfileSection: View {
             } else {
                 DSNavigationRow(title: L10n.Settings.rowServer, icon: IconKit.server, accessory: .none)
             }
+            SettingsClientCertificateRow(store: store)
         }
         .listRowBackground(Color.backgroundSecondary)
     }
