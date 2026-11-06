@@ -186,6 +186,36 @@ struct LoginFormFeatureTests {
         await store.send(.hostChanged("example.com")) { $0.scheme = .https }
     }
 
+    @Test("regression: picking https after typing an IP keeps the address")
+    func switchingSchemeKeepsHost() async {
+        let store = TestStore(initialState: LoginFormFeature.State()) { LoginFormFeature() }
+        store.timeout = Self.receiveTimeout
+
+        await store.send(.hostChanged("192.168.1.187:3662")) {
+            $0.host = "192.168.1.187:3662"
+            $0.scheme = .http
+        }
+        await store.send(.schemeChanged(.https)) {
+            $0.scheme = .https
+            $0.schemeWasSetByUser = true
+        }
+        await store.send(.hostChanged("192.168.1.187:36621")) { $0.host = "192.168.1.187:36621" }
+        #expect(store.state.scheme == .https)
+    }
+
+    @Test("regression: a typed scheme prefix gives way to the picker")
+    func switchingSchemeDropsTypedPrefix() async {
+        let store = TestStore(initialState: LoginFormFeature.State()) { LoginFormFeature() }
+        store.timeout = Self.receiveTimeout
+        store.exhaustivity = .off
+
+        await store.send(.hostChanged("http://box.local:8080")) { $0.scheme = .http }
+        await store.send(.schemeChanged(.https)) {
+            $0.host = "box.local:8080"
+            $0.scheme = .https
+        }
+    }
+
     @Test("edge case: changing the host after a successful test re-locks the form")
     func changingHostClearsAuthStatus() async {
         let store = TestStore(

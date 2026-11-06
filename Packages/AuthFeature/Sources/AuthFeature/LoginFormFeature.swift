@@ -111,9 +111,6 @@ public struct LoginFormFeature {
         public var connectionPhase: ConnectionPhase
         public var scheme: URLScheme
         public var host: String
-        /// The host last typed for the *other* scheme: swapped back in on `schemeChanged`
-        /// so toggling https/http doesn't lose what was typed on either side.
-        var savedOtherSchemeHost: String = ""
         /// Set once the user taps the scheme picker themselves, so typing doesn't then move it
         /// back under them. Cleared when the host is emptied or an explicit `http(s)://` is typed.
         var schemeWasSetByUser: Bool = false
@@ -153,7 +150,6 @@ public struct LoginFormFeature {
             self.connectionPhase = connectionPhase
             self.scheme = scheme
             self.host = host
-            savedOtherSchemeHost = ""
             self.identifier = identifier
             self.password = password
             self.isPasswordVisible = isPasswordVisible
@@ -220,9 +216,10 @@ public struct LoginFormFeature {
         Reduce { state, action in
             switch action {
             case let .schemeChanged(scheme):
-                let previousHost = state.host
-                state.host = state.savedOtherSchemeHost
-                state.savedOtherSchemeHost = previousHost
+                // The address stays as typed: an IP infers http, and someone whose server wants
+                // https on that IP (an mTLS proxy) taps https and keeps going. A typed prefix
+                // would contradict the picker, so it goes.
+                state.host = Self.strippingSchemePrefix(state.host)
                 state.scheme = scheme
                 state.schemeWasSetByUser = true
                 state.resetConnection()
@@ -504,6 +501,14 @@ public struct LoginFormFeature {
     /// Basic shape check (`x@y.z`): the server is the real source of truth on whether the
     /// address exists, this only catches "clearly not an email" before spending a network call.
     /// Shares the one regex in `CredentialRules` so login and user management stay in lockstep.
+    static func strippingSchemePrefix(_ host: String) -> String {
+        let trimmed = host.trimmingCharacters(in: .whitespaces)
+        for prefix in ["https://", "http://"] where trimmed.lowercased().hasPrefix(prefix) {
+            return String(trimmed.dropFirst(prefix.count))
+        }
+        return host
+    }
+
     static func isValidEmail(_ text: String) -> Bool {
         CredentialRules.isEmailShaped(text)
     }
