@@ -52,6 +52,11 @@ final class ClientCertificateAssetLoader: NSObject, @unchecked Sendable {
         queue.async { [self] in
             session?.invalidateAndCancel()
             session = nil
+            // Answered, not just dropped: a player that comes back asks for these ranges again
+            // instead of waiting on them forever.
+            for request in pending.values where !request.loadingRequest.isFinished && !request.loadingRequest.isCancelled {
+                request.loadingRequest.finishLoading(with: URLError(.cancelled))
+            }
             pending.removeAll()
         }
     }
