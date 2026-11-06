@@ -88,6 +88,7 @@ public struct AppFeature {
     @Dependency(\.previewCacheStore) var previewCacheStore
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.sessionScratchStore) var sessionScratchStore
 
     public init() {}
 
@@ -254,11 +255,13 @@ public struct AppFeature {
                 )
                 let previewCacheStore = previewCacheStore
                 let offlineFileStore = offlineFileStore
+                let sessionScratchStore = sessionScratchStore
                 return .merge(
                     refreshAccounts,
                     .run { _ in
                         try? previewCacheStore.clear()
                         offlineFileStore.removeAll()
+                        sessionScratchStore.purge()
                     }
                 )
 
@@ -371,6 +374,7 @@ public struct AppFeature {
         let previewCacheStore = previewCacheStore
         let thumbnailCache = thumbnailCache
         let offlineFileStore = offlineFileStore
+        let sessionScratchStore = sessionScratchStore
         AppStorageKeys.resetSessionPreferences()
         return .merge(
             refreshAccounts,
@@ -381,6 +385,7 @@ public struct AppFeature {
                 try? previewCacheStore.clear()
                 thumbnailCache.clearMemory()
                 offlineFileStore.removeAll()
+                sessionScratchStore.purge()
             }
         )
     }

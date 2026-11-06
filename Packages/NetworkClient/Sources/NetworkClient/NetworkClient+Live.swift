@@ -44,6 +44,9 @@ public extension NetworkClient {
         maxInMemoryResponseBytes: Int = NetworkClient.defaultMaxInMemoryResponseBytes
     ) -> NetworkClient {
         let configuration = URLSessionConfiguration.default
+        // No HTTP cache: the app keeps its own caches, which are cleared at every session boundary.
+        // `URLCache.shared` is not, so a response stored there could outlive the account it was for.
+        configuration.urlCache = nil
         configuration.httpCookieStorage = cookieStorage
         configuration.httpCookieAcceptPolicy = .always
         configuration.httpShouldSetCookies = true
@@ -61,6 +64,7 @@ public extension NetworkClient {
         // NOT `networkServiceType = .background`: that lets the system defer requests
         // indefinitely, even in the foreground, so thumbnails would just never appear.
         let lowPriorityConfiguration = URLSessionConfiguration.default
+        lowPriorityConfiguration.urlCache = nil
         lowPriorityConfiguration.httpCookieStorage = cookieStorage
         lowPriorityConfiguration.httpCookieAcceptPolicy = .always
         lowPriorityConfiguration.httpShouldSetCookies = true
@@ -78,6 +82,7 @@ public extension NetworkClient {
         // transfer isn't killed by the interactive 15s budget. This was the cause of "downloads are
         // hyper slow": on the main session, large downloads timed out at 15s and retried in a loop.
         let downloadConfiguration = URLSessionConfiguration.default
+        downloadConfiguration.urlCache = nil
         downloadConfiguration.httpCookieStorage = cookieStorage
         downloadConfiguration.httpCookieAcceptPolicy = .always
         downloadConfiguration.httpShouldSetCookies = true

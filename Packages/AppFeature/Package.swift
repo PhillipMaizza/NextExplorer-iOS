@@ -38,6 +38,8 @@ let package = Package(
             name: "AppFeatureTests",
             dependencies: [
                 "AppFeature",
+                .product(name: "FilesClient", package: "FilesClient"),
+                .product(name: "FilesFeature", package: "FilesFeature"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
