@@ -100,6 +100,10 @@ struct VLCPlayerView: View {
                             .foregroundStyle(.white)
                             .multilineTextAlignment(.center)
                             .padding(.horizontal, .space24)
+                        if isBlockedByClientCertificate, let onDownload {
+                            DSButton(L10n.Common.download, icon: IconKit.download, style: .primary, action: onDownload)
+                                .fixedSize()
+                        }
                     }
                 } else {
                     VLCPlaybackControls(controller: controller)
