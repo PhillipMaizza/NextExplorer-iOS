@@ -762,3 +762,4 @@ clientCertificate.removeTitle	Удалить сертификат?
 clientCertificate.removeMessage	NextExplorer больше не будет предъявлять его серверу %@. Если сервер его требует, приложение не сможет подключиться, пока вы снова не добавите сертификат.
 clientCertificate.removeConfirm	Удалить
 clientCertificate.expiredWarning	Срок действия сертификата истёк. Скорее всего, сервер его отклонит.
+clientCertificate.errorRemove	Не удалось удалить сертификат с этого устройства.

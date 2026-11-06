@@ -762,3 +762,4 @@ clientCertificate.removeTitle	要移除证书吗？
 clientCertificate.removeMessage	NextExplorer 将不再向 %@ 出示此证书。如果该服务器要求证书，在您重新添加证书之前，App 将无法连接。
 clientCertificate.removeConfirm	移除
 clientCertificate.expiredWarning	此证书已过期。服务器很可能会拒绝它。
+clientCertificate.errorRemove	无法从此设备移除证书。

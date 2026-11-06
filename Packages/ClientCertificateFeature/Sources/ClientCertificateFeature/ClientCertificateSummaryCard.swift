@@ -46,6 +46,7 @@ extension ClientCertificateFeature.Failure {
         case .noIdentity: L10n.ClientCertificate.errorNoIdentity
         case .storage: L10n.ClientCertificate.errorStorage
         case .unreadable: L10n.ClientCertificate.errorUnreadable
+        case .removal: L10n.ClientCertificate.errorRemove
         }
     }
 }

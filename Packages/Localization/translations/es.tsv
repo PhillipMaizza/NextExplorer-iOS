@@ -762,3 +762,4 @@ clientCertificate.removeTitle	¿Eliminar el certificado?
 clientCertificate.removeMessage	NextExplorer dejará de presentarlo a %@. Si ese servidor lo exige, la app no podrá conectarse hasta que vuelvas a añadir un certificado.
 clientCertificate.removeConfirm	Eliminar
 clientCertificate.expiredWarning	Este certificado ha caducado. Es probable que el servidor lo rechace.
+clientCertificate.errorRemove	No se ha podido eliminar el certificado de este dispositivo.

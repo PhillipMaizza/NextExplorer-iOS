@@ -6,6 +6,7 @@ import CoreModels
 import FilesClient
 import FilesFeature
 import Foundation
+import NetworkClient
 import SwiftUI
 
 @Reducer
@@ -89,6 +90,7 @@ public struct AppFeature {
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.sessionScratchStore) var sessionScratchStore
+    @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     public init() {}
 
@@ -196,7 +198,7 @@ public struct AppFeature {
                 if let next {
                     // Another account is still signed in: switch to it rather than dropping the
                     // user out to the login screen.
-                    return .send(.activateAccount(next))
+                    return .merge(.send(.activateAccount(next)), pruneClientCertificates)
                 }
                 // Last account gone: full teardown to the login screen.
                 return teardownToLogin(&state)
@@ -261,7 +263,7 @@ public struct AppFeature {
                     .run { _ in
                         try? previewCacheStore.clear()
                         offlineFileStore.removeAll()
-                        sessionScratchStore.purge()
+                        sessionScratchStore.purge(.keepingActiveTransfers)
                     }
                 )
 
@@ -277,11 +279,11 @@ public struct AppFeature {
                 // Removing a non-active account leaves the active one unchanged: just refresh the
                 // switcher list, keep the UI where it is.
                 if credentials.accountID == state.currentAccountID {
-                    return refreshAccounts
+                    return .merge(refreshAccounts, pruneClientCertificates)
                 }
                 // Switched accounts (or signed the active one out and fell through to the next):
                 // mount the new account without clearing caches, so both accounts' caches survive.
-                return .send(.activateAccount(credentials))
+                return .merge(.send(.activateAccount(credentials)), pruneClientCertificates)
 
             case .destination:
                 return .none
@@ -334,6 +336,18 @@ public struct AppFeature {
         }
     }
 
+    /// Removes the client certificates of servers no remaining account is signed in to, so an
+    /// account that leaves the device takes its mTLS identity with it.
+    private var pruneClientCertificates: Effect<Action> {
+        let authClient = authClient
+        let clientCertificateClient = clientCertificateClient
+        return .run { _ in
+            let sessions = await authClient.listSessions()
+            let keep = Set(sessions.compactMap { ClientCertificateOrigin(url: $0.serverBaseURL) })
+            await clientCertificateClient.removeAll(keep)
+        }
+    }
+
     /// Rebuilds the published account list from the current stored sessions.
     private var refreshAccounts: Effect<Action> {
         let authClient = authClient
@@ -375,6 +389,7 @@ public struct AppFeature {
         let thumbnailCache = thumbnailCache
         let offlineFileStore = offlineFileStore
         let sessionScratchStore = sessionScratchStore
+        let clientCertificateClient = clientCertificateClient
         AppStorageKeys.resetSessionPreferences()
         return .merge(
             refreshAccounts,
@@ -385,7 +400,8 @@ public struct AppFeature {
                 try? previewCacheStore.clear()
                 thumbnailCache.clearMemory()
                 offlineFileStore.removeAll()
-                sessionScratchStore.purge()
+                sessionScratchStore.purge(.everything)
+                await clientCertificateClient.removeAll([])
             }
         )
     }

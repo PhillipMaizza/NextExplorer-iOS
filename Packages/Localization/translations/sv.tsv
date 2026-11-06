@@ -762,3 +762,4 @@ clientCertificate.removeTitle	Ta bort certifikatet?
 clientCertificate.removeMessage	NextExplorer slutar visa upp det för %@. Om servern kräver ett kan appen inte ansluta förrän du lägger till ett certifikat igen.
 clientCertificate.removeConfirm	Ta bort
 clientCertificate.expiredWarning	Certifikatet har gått ut. Servern kommer troligen att avvisa det.
+clientCertificate.errorRemove	Det gick inte att ta bort certifikatet från den här enheten.

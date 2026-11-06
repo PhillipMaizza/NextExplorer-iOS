@@ -151,6 +151,7 @@ public enum L10n {
         public static var chooseFile: String { tr("clientCertificate.chooseFile") }  // "Choose File"
         public static var errorInvalidFile: String { tr("clientCertificate.errorInvalidFile") }  // "This isn't a valid .p12 or .pfx certificate file."
         public static var errorNoIdentity: String { tr("clientCertificate.errorNoIdentity") }
+        public static var errorRemove: String { tr("clientCertificate.errorRemove") }  // "Couldn't remove the certificate from this device."
         public static var errorStorage: String { tr("clientCertificate.errorStorage") }  // "Couldn't save the certificate on this device."
         public static var errorUnreadable: String { tr("clientCertificate.errorUnreadable") }  // "Couldn't read that file."
         public static var errorWrongPassword: String { tr("clientCertificate.errorWrongPassword") }  // "That password doesn't unlock this file."

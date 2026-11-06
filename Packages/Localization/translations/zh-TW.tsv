@@ -762,3 +762,4 @@ clientCertificate.removeTitle	要移除憑證嗎？
 clientCertificate.removeMessage	NextExplorer 將不再向 %@ 出示此憑證。若該伺服器要求憑證，在你重新加入憑證之前，App 將無法連線。
 clientCertificate.removeConfirm	移除
 clientCertificate.expiredWarning	此憑證已過期。伺服器很可能會拒絕它。
+clientCertificate.errorRemove	無法從此裝置移除憑證。

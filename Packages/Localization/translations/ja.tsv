@@ -762,3 +762,4 @@ clientCertificate.removeTitle	証明書を削除しますか?
 clientCertificate.removeMessage	NextExplorer は %@ にこの証明書を提示しなくなります。サーバが証明書を必要とする場合、証明書を再度追加するまでアプリは接続できません。
 clientCertificate.removeConfirm	削除
 clientCertificate.expiredWarning	この証明書は期限切れです。サーバに拒否される可能性があります。
+clientCertificate.errorRemove	このデバイスから証明書を削除できませんでした。

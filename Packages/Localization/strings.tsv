@@ -830,6 +830,7 @@ clientCertificate.errorInvalidFile	This isn't a valid .p12 or .pfx certificate f
 clientCertificate.errorNoIdentity	This file has no private key. Export the certificate together with its key.
 clientCertificate.errorStorage	Couldn't save the certificate on this device.
 clientCertificate.errorUnreadable	Couldn't read that file.
+clientCertificate.errorRemove	Couldn't remove the certificate from this device.
 clientCertificate.removeTitle	Remove certificate?
 clientCertificate.removeMessage	NextExplorer will stop presenting it to %@. If that server requires one, the app can't connect until you add a certificate again.
 clientCertificate.removeConfirm	Remove

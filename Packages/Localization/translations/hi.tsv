@@ -762,3 +762,4 @@ clientCertificate.removeTitle	सर्टिफ़िकेट हटाएँ?
 clientCertificate.removeMessage	NextExplorer इसे %@ को दिखाना बंद कर देगा। अगर उस सर्वर को इसकी ज़रूरत है, तो जब तक आप फिर से सर्टिफ़िकेट नहीं जोड़ते, ऐप कनेक्ट नहीं कर पाएगा।
 clientCertificate.removeConfirm	हटाएँ
 clientCertificate.expiredWarning	यह सर्टिफ़िकेट समाप्त हो चुका है। सर्वर शायद इसे अस्वीकार कर देगा।
+clientCertificate.errorRemove	इस डिवाइस से सर्टिफ़िकेट हटाया नहीं जा सका।

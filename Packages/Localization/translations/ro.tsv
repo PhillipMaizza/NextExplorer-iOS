@@ -762,3 +762,4 @@ clientCertificate.removeTitle	Elimini certificatul?
 clientCertificate.removeMessage	NextExplorer nu îl va mai prezenta serverului %@. Dacă serverul cere unul, aplicația nu se poate conecta până nu adaugi din nou un certificat.
 clientCertificate.removeConfirm	Elimină
 clientCertificate.expiredWarning	Acest certificat a expirat. Probabil serverul îl va refuza.
+clientCertificate.errorRemove	Certificatul nu a putut fi eliminat de pe acest dispozitiv.

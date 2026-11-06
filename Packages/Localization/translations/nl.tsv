@@ -762,3 +762,4 @@ clientCertificate.removeTitle	Certificaat verwijderen?
 clientCertificate.removeMessage	NextExplorer toont het niet meer aan %@. Als die server er een vereist, kan de app geen verbinding maken totdat je opnieuw een certificaat toevoegt.
 clientCertificate.removeConfirm	Verwijder
 clientCertificate.expiredWarning	Dit certificaat is verlopen. De server zal het waarschijnlijk weigeren.
+clientCertificate.errorRemove	Kan het certificaat niet van dit apparaat verwijderen.

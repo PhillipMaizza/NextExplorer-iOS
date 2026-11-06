@@ -171,6 +171,25 @@ struct ClientCertificateFeatureTests {
         #expect(removed.value == origin)
     }
 
+    @Test("A removal the keychain refused keeps showing the certificate, with an error")
+    func failedRemoval() async {
+        let store = TestStore(
+            initialState: ClientCertificateFeature.State(origin: origin, status: .installed(summary), isConfirmingRemoval: true)
+        ) {
+            ClientCertificateFeature()
+        } withDependencies: { [origin, summary] in
+            $0.clientCertificateClient = .inMemory([origin: summary])
+            $0.clientCertificateClient.remove = { _ in }
+        }
+
+        await store.send(.removeConfirmed) {
+            $0.isConfirmingRemoval = false
+        }
+        await store.receive(\.removeFinished) {
+            $0.importPhase = .failed(.removal)
+        }
+    }
+
     @Test("Discarding a picked file returns to the overview")
     func discardFile() async {
         let store = TestStore(

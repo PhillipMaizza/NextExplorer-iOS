@@ -24,6 +24,7 @@ public struct ClientCertificateFeature {
         case noIdentity
         case storage
         case unreadable
+        case removal
 
         init(_ error: ClientCertificateImportError) {
             switch error {
@@ -116,7 +117,7 @@ public struct ClientCertificateFeature {
         case removeTapped
         case removeCancelled
         case removeConfirmed
-        case removeFinished
+        case removeFinished(stillInstalled: ClientCertificateSummary?)
         case closeTapped
         case delegate(Delegate)
 
@@ -228,10 +229,15 @@ public struct ClientCertificateFeature {
                 let origin = state.origin
                 return .run { [client = clientCertificateClient] send in
                     await client.remove(origin)
-                    await send(.removeFinished)
+                    await send(.removeFinished(stillInstalled: client.summary(origin)))
                 }
 
-            case .removeFinished:
+            case let .removeFinished(stillInstalled):
+                if let stillInstalled {
+                    state.status = .installed(stillInstalled)
+                    state.importPhase = .failed(.removal)
+                    return .none
+                }
                 state.status = .empty
                 return .send(.delegate(.removed))
 

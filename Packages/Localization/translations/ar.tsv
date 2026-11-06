@@ -762,3 +762,4 @@ clientCertificate.removeTitle	إزالة الشهادة؟
 clientCertificate.removeMessage	سيتوقف NextExplorer عن تقديمها إلى %@. إذا كان هذا الخادم يتطلب شهادة، فلن يتمكن التطبيق من الاتصال حتى تضيف شهادة مرة أخرى.
 clientCertificate.removeConfirm	إزالة
 clientCertificate.expiredWarning	انتهت صلاحية هذه الشهادة. من المرجح أن يرفضها الخادم.
+clientCertificate.errorRemove	تعذّرت إزالة الشهادة من هذا الجهاز.

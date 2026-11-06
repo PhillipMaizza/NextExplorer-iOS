@@ -762,3 +762,4 @@ clientCertificate.removeTitle	인증서를 제거하시겠습니까?
 clientCertificate.removeMessage	NextExplorer가 더 이상 %@에 이 인증서를 제시하지 않습니다. 서버에서 인증서를 요구하면 인증서를 다시 추가할 때까지 앱이 연결할 수 없습니다.
 clientCertificate.removeConfirm	제거
 clientCertificate.expiredWarning	이 인증서는 만료되었습니다. 서버에서 거부할 가능성이 높습니다.
+clientCertificate.errorRemove	이 기기에서 인증서를 제거할 수 없습니다.
