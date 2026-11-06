@@ -121,7 +121,11 @@ let package = Package(
                 .product(name: "TreeSitterSwift", package: "TreeSitterLanguages", condition: .when(platforms: [.macOS])),
                 .product(name: "TreeSitterSwiftQueries", package: "TreeSitterLanguages", condition: .when(platforms: [.macOS])),
             ],
-            swiftSettings: [.swiftLanguageMode(.v6)]
+            swiftSettings: [.swiftLanguageMode(.v6)],
+            // SwiftUI's VideoPlayer wraps AVKit's player view, but on macOS 27 its overlay no
+            // longer loads AVKit itself and nothing links it automatically: opening a video
+            // crashed unless something else had loaded AVKit first.
+            linkerSettings: [.linkedFramework("AVKit")]
         ),
         .testTarget(
             name: "FilesFeatureTests",
