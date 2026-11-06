@@ -50,7 +50,12 @@ struct SessionScratchStoreTests {
         let html = root.appendingPathComponent(SessionScratchLocation.htmlPreview)
         try fileManager.createDirectory(at: html, withIntermediateDirectories: true)
 
+        let envelope = root.appendingPathComponent("\(SessionScratchLocation.uploadEnvelopePrefix)live.multipart")
+        try Data("uploading".utf8).write(to: envelope)
+
         SessionScratchStore.live(temporaryDirectory: root).purge(.keepingActiveTransfers)
+
+        #expect(fileManager.fileExists(atPath: envelope.path))
 
         #expect(fileManager.fileExists(atPath: uploads.appendingPathComponent("photo.jpg").path))
         #expect(fileManager.fileExists(atPath: inFlight.path))

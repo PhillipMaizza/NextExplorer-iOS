@@ -14,9 +14,9 @@ public struct SessionScratchStore: Sendable {
     public enum Scope: Equatable, Sendable {
         /// Sign out and session expiry: every upload is torn down with the session.
         case everything
-        /// A fresh sign in: the new session is already mounting, so it may be staging files shared
-        /// into the app while signed out or streaming its first thumbnails to `download-` files.
-        /// Those stay; the sign out before it emptied them anyway.
+        /// A fresh sign in: the new session is already mounting, so it may be staging and uploading
+        /// files shared into the app while signed out, or streaming its first thumbnails to
+        /// temporary download files. Those stay; the sign out before it emptied them anyway.
         case keepingActiveTransfers
     }
 
@@ -41,10 +41,10 @@ public extension SessionScratchStore {
             for name in folders {
                 try? fileManager.removeItem(at: temporaryDirectory.appendingPathComponent(name, isDirectory: true))
             }
-            var prefixes = [SessionScratchLocation.uploadEnvelopePrefix]
-            if scope == .everything {
-                prefixes.append(NetworkClient.downloadTemporaryFilePrefix)
-            }
+            // Upload envelopes and download bodies may belong to the session that is starting.
+            let prefixes = scope == .everything
+                ? [SessionScratchLocation.uploadEnvelopePrefix, NetworkClient.downloadTemporaryFilePrefix]
+                : []
             let entries = (try? fileManager.contentsOfDirectory(at: temporaryDirectory, includingPropertiesForKeys: nil)) ?? []
             for entry in entries where prefixes.contains(where: entry.lastPathComponent.hasPrefix) {
                 try? fileManager.removeItem(at: entry)
