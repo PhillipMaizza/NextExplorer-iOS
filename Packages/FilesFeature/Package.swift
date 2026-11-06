@@ -28,10 +28,9 @@ let package = Package(
         // AVFoundation can't decode (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma):
         // parity with the web client's player.
         .package(url: "https://github.com/tylerjonesio/vlckit-spm", exact: "3.6.0"),
-        // No semver release tags exist (Apple ties this one to Swift toolchain snapshot tags
-        // instead): pinned to an exact commit on `main` rather than a moving branch, so this
-        // stays fully reproducible.
-        .package(url: "https://github.com/apple/swift-markdown", revision: "27b7fc1a19068bcea3d2072db0ce86360d1400ed"),
+        // Releases follow the Swift toolchain (0.9 shipped with Swift 6.4), cut on a release
+        // branch with a proper semver tag.
+        .package(url: "https://github.com/apple/swift-markdown", from: "0.9.0"),
     ],
     targets: [
         .target(
