@@ -5,6 +5,10 @@
     import NetworkClient
     import SwiftUI
 
+    private enum Metrics {
+        static let rowSpacing: CGFloat = .space12
+    }
+
     /// The Mac dialog: server, current certificate and, once a file is chosen, its password.
     /// Return installs (or opens the file picker), Esc closes, Remove sits left of Cancel.
     struct ClientCertificateMacForm: View {
@@ -13,6 +17,7 @@
         var body: some View {
             MacFormSheet(
                 title: L10n.ClientCertificate.title,
+                message: L10n.ClientCertificate.intro,
                 confirmTitle: confirmTitle,
                 isConfirmEnabled: store.pendingFile == nil ? store.status != .loading : store.canInstall,
                 isWorking: store.isImporting,
@@ -23,19 +28,19 @@
                 onCancel: { store.send(.closeTapped) },
                 onConfirm: confirmAction
             ) {
-                Text(L10n.ClientCertificate.intro)
-                    .foregroundStyle(.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
                 LabeledContent(L10n.ClientCertificate.serverLabel) {
                     Text(store.serverName).textSelection(.enabled)
                 }
+                .padding(.bottom, Metrics.rowSpacing)
                 LabeledContent(L10n.ClientCertificate.certificateLabel) {
                     ClientCertificateSummaryLines(summary: store.installedSummary)
                 }
+                .padding(.bottom, Metrics.rowSpacing)
                 if let file = store.pendingFile {
                     LabeledContent(L10n.ClientCertificate.fileLabel) {
                         Text(file.name).lineLimit(1).truncationMode(.middle)
                     }
+                    .padding(.bottom, Metrics.rowSpacing)
                     SecureField(
                         L10n.ClientCertificate.passwordLabel,
                         text: $store.passphrase.sending(\.passphraseChanged),

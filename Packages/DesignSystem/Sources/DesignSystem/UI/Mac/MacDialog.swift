@@ -6,6 +6,7 @@
         public static let width: CGFloat = 480
         static let padding: CGFloat = .space24
         static let spacing: CGFloat = .space16
+        static let messageSpacing: CGFloat = .space8
     }
 
     private typealias Metrics = MacFormSheetMetrics
@@ -14,6 +15,8 @@
     /// (Esc) and the confirm button (Return) at the trailing edge.
     public struct MacFormSheet<Content: View>: View {
         let title: String
+        /// Explanatory text under the title, across the full width of the sheet.
+        var message: String?
         let confirmTitle: String
         var isConfirmEnabled = true
         var isWorking = false
@@ -30,6 +33,7 @@
 
         public init(
             title: String,
+            message: String? = nil,
             confirmTitle: String,
             isConfirmEnabled: Bool = true,
             isWorking: Bool = false,
@@ -43,6 +47,7 @@
             @ViewBuilder content: @escaping () -> Content
         ) {
             self.title = title
+            self.message = message
             self.confirmTitle = confirmTitle
             self.isConfirmEnabled = isConfirmEnabled
             self.isWorking = isWorking
@@ -58,7 +63,14 @@
 
         public var body: some View {
             VStack(alignment: .leading, spacing: Metrics.spacing) {
-                Text(title).font(.headline)
+                VStack(alignment: .leading, spacing: Metrics.messageSpacing) {
+                    Text(title).font(.headline)
+                    if let message {
+                        Text(message)
+                            .foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                }
                 Form {
                     content()
                 }
