@@ -728,3 +728,37 @@ textPreview.unsavedTitle	Spara ändringarna i ”%@”?
 textPreview.unsavedMessage	Dina ändringar går förlorade om du inte sparar dem.
 textPreview.dontSave	Spara inte
 browse.showInEnclosingFolder	Visa i överordnad mapp
+error.clientCertificateRequired	Den här servern kräver ett klientcertifikat. Lägg till ett i Inställningar.
+error.clientCertificateRejected	Servern avvisade ditt klientcertifikat.
+login.errorClientCertificateRequired	Den här servern ber om ett klientcertifikat.
+login.errorClientCertificateRejected	Servern avvisade det här klientcertifikatet.
+login.addClientCertificate	Lägg till certifikat
+login.manageClientCertificate	Hantera certifikat
+settings.clientCertificate	Klientcertifikat
+settings.clientCertificateNone	Inget
+media.clientCertificateUnsupported	Det här formatet kan inte strömmas från en server som ber om ett klientcertifikat. Hämta filen för att spela upp den.
+clientCertificate.title	Klientcertifikat
+clientCertificate.intro	Vissa servrar släpper bara in enheter som visar upp ett klientcertifikat (mTLS). Välj den .p12- eller .pfx-fil du fick för den här servern.
+clientCertificate.serverLabel	Server
+clientCertificate.certificateLabel	Certifikat
+clientCertificate.none	Inget certifikat installerat
+clientCertificate.issuedBy	Utfärdat av %@
+clientCertificate.expires	Upphör %@
+clientCertificate.expired	Upphörde %@
+clientCertificate.chooseFile	Välj fil
+clientCertificate.replace	Ersätt certifikat
+clientCertificate.remove	Ta bort certifikat
+clientCertificate.install	Installera
+clientCertificate.fileLabel	Fil
+clientCertificate.passwordLabel	Fillösenord
+clientCertificate.passwordPrompt	Lösenordet som filen exporterades med
+clientCertificate.chooseAnother	Välj en annan fil
+clientCertificate.errorWrongPassword	Det lösenordet låser inte upp filen.
+clientCertificate.errorInvalidFile	Det här är ingen giltig .p12- eller .pfx-certifikatfil.
+clientCertificate.errorNoIdentity	Filen saknar privat nyckel. Exportera certifikatet tillsammans med nyckeln.
+clientCertificate.errorStorage	Det gick inte att spara certifikatet på den här enheten.
+clientCertificate.errorUnreadable	Det gick inte att läsa filen.
+clientCertificate.removeTitle	Ta bort certifikatet?
+clientCertificate.removeMessage	NextExplorer slutar visa upp det för %@. Om servern kräver ett kan appen inte ansluta förrän du lägger till ett certifikat igen.
+clientCertificate.removeConfirm	Ta bort
+clientCertificate.expiredWarning	Certifikatet har gått ut. Servern kommer troligen att avvisa det.

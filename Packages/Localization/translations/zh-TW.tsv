@@ -728,3 +728,37 @@ textPreview.unsavedTitle	要儲存對「%@」的變更嗎？
 textPreview.unsavedMessage	如果不儲存，你的變更將會遺失。
 textPreview.dontSave	不要儲存
 browse.showInEnclosingFolder	在所在資料夾中顯示
+error.clientCertificateRequired	此伺服器需要用戶端憑證。請在「設定」中加入。
+error.clientCertificateRejected	伺服器拒絕了你的用戶端憑證。
+login.errorClientCertificateRequired	此伺服器要求提供用戶端憑證。
+login.errorClientCertificateRejected	伺服器拒絕了此用戶端憑證。
+login.addClientCertificate	加入憑證
+login.manageClientCertificate	管理憑證
+settings.clientCertificate	用戶端憑證
+settings.clientCertificateNone	無
+media.clientCertificateUnsupported	無法從要求用戶端憑證的伺服器串流播放此格式。請下載檔案後播放。
+clientCertificate.title	用戶端憑證
+clientCertificate.intro	有些伺服器只允許出示用戶端憑證 (mTLS) 的裝置存取。請選擇為此伺服器提供給你的 .p12 或 .pfx 檔案。
+clientCertificate.serverLabel	伺服器
+clientCertificate.certificateLabel	憑證
+clientCertificate.none	未安裝憑證
+clientCertificate.issuedBy	簽發者：%@
+clientCertificate.expires	到期：%@
+clientCertificate.expired	已於 %@ 過期
+clientCertificate.chooseFile	選擇檔案
+clientCertificate.replace	取代憑證
+clientCertificate.remove	移除憑證
+clientCertificate.install	安裝
+clientCertificate.fileLabel	檔案
+clientCertificate.passwordLabel	檔案密碼
+clientCertificate.passwordPrompt	匯出檔案時使用的密碼
+clientCertificate.chooseAnother	選擇其他檔案
+clientCertificate.errorWrongPassword	此密碼無法解鎖該檔案。
+clientCertificate.errorInvalidFile	這不是有效的 .p12 或 .pfx 憑證檔案。
+clientCertificate.errorNoIdentity	此檔案沒有私密金鑰。請將憑證連同金鑰一起匯出。
+clientCertificate.errorStorage	無法在此裝置上儲存憑證。
+clientCertificate.errorUnreadable	無法讀取該檔案。
+clientCertificate.removeTitle	要移除憑證嗎？
+clientCertificate.removeMessage	NextExplorer 將不再向 %@ 出示此憑證。若該伺服器要求憑證，在你重新加入憑證之前，App 將無法連線。
+clientCertificate.removeConfirm	移除
+clientCertificate.expiredWarning	此憑證已過期。伺服器很可能會拒絕它。

@@ -728,3 +728,37 @@ textPreview.unsavedTitle	Zachować zmiany w „%@”?
 textPreview.unsavedMessage	Jeśli ich nie zachowasz, zmiany zostaną utracone.
 textPreview.dontSave	Nie zachowuj
 browse.showInEnclosingFolder	Pokaż w folderze nadrzędnym
+error.clientCertificateRequired	Ten serwer wymaga certyfikatu klienta. Dodaj go w Ustawieniach.
+error.clientCertificateRejected	Serwer odrzucił Twój certyfikat klienta.
+login.errorClientCertificateRequired	Ten serwer prosi o certyfikat klienta.
+login.errorClientCertificateRejected	Serwer odrzucił ten certyfikat klienta.
+login.addClientCertificate	Dodaj certyfikat
+login.manageClientCertificate	Zarządzaj certyfikatem
+settings.clientCertificate	Certyfikat klienta
+settings.clientCertificateNone	Brak
+media.clientCertificateUnsupported	Tego formatu nie można strumieniować z serwera, który prosi o certyfikat klienta. Pobierz plik, aby go odtworzyć.
+clientCertificate.title	Certyfikat klienta
+clientCertificate.intro	Niektóre serwery wpuszczają tylko urządzenia, które przedstawią certyfikat klienta (mTLS). Wybierz plik .p12 lub .pfx otrzymany dla tego serwera.
+clientCertificate.serverLabel	Serwer
+clientCertificate.certificateLabel	Certyfikat
+clientCertificate.none	Brak zainstalowanego certyfikatu
+clientCertificate.issuedBy	Wystawiony przez %@
+clientCertificate.expires	Wygasa %@
+clientCertificate.expired	Wygasł %@
+clientCertificate.chooseFile	Wybierz plik
+clientCertificate.replace	Zastąp certyfikat
+clientCertificate.remove	Usuń certyfikat
+clientCertificate.install	Zainstaluj
+clientCertificate.fileLabel	Plik
+clientCertificate.passwordLabel	Hasło pliku
+clientCertificate.passwordPrompt	Hasło użyte przy eksporcie pliku
+clientCertificate.chooseAnother	Wybierz inny plik
+clientCertificate.errorWrongPassword	To hasło nie odblokowuje tego pliku.
+clientCertificate.errorInvalidFile	To nie jest prawidłowy plik certyfikatu .p12 ani .pfx.
+clientCertificate.errorNoIdentity	Ten plik nie zawiera klucza prywatnego. Wyeksportuj certyfikat razem z kluczem.
+clientCertificate.errorStorage	Nie udało się zapisać certyfikatu na tym urządzeniu.
+clientCertificate.errorUnreadable	Nie udało się odczytać pliku.
+clientCertificate.removeTitle	Usunąć certyfikat?
+clientCertificate.removeMessage	NextExplorer przestanie go przedstawiać serwerowi %@. Jeśli ten serwer go wymaga, aplikacja nie połączy się, dopóki ponownie nie dodasz certyfikatu.
+clientCertificate.removeConfirm	Usuń
+clientCertificate.expiredWarning	Ten certyfikat wygasł. Serwer prawdopodobnie go odrzuci.

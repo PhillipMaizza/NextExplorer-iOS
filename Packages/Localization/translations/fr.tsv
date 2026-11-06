@@ -728,3 +728,37 @@ textPreview.unsavedTitle	Enregistrer les modifications de « %@ » ?
 textPreview.unsavedMessage	Vos modifications seront perdues si vous ne les enregistrez pas.
 textPreview.dontSave	Ne pas enregistrer
 browse.showInEnclosingFolder	Afficher dans le dossier parent
+error.clientCertificateRequired	Ce serveur exige un certificat client. Ajoutez-en un dans Réglages.
+error.clientCertificateRejected	Le serveur a refusé votre certificat client.
+login.errorClientCertificateRequired	Ce serveur demande un certificat client.
+login.errorClientCertificateRejected	Le serveur a refusé ce certificat client.
+login.addClientCertificate	Ajouter un certificat
+login.manageClientCertificate	Gérer le certificat
+settings.clientCertificate	Certificat client
+settings.clientCertificateNone	Aucun
+media.clientCertificateUnsupported	Ce format ne peut pas être lu en streaming depuis un serveur qui demande un certificat client. Téléchargez le fichier pour le lire.
+clientCertificate.title	Certificat client
+clientCertificate.intro	Certains serveurs n’acceptent que les appareils qui présentent un certificat client (mTLS). Choisissez le fichier .p12 ou .pfx qui vous a été fourni pour ce serveur.
+clientCertificate.serverLabel	Serveur
+clientCertificate.certificateLabel	Certificat
+clientCertificate.none	Aucun certificat installé
+clientCertificate.issuedBy	Émis par %@
+clientCertificate.expires	Expire le %@
+clientCertificate.expired	Expiré le %@
+clientCertificate.chooseFile	Choisir un fichier
+clientCertificate.replace	Remplacer le certificat
+clientCertificate.remove	Supprimer le certificat
+clientCertificate.install	Installer
+clientCertificate.fileLabel	Fichier
+clientCertificate.passwordLabel	Mot de passe du fichier
+clientCertificate.passwordPrompt	Le mot de passe utilisé lors de l’exportation du fichier
+clientCertificate.chooseAnother	Choisir un autre fichier
+clientCertificate.errorWrongPassword	Ce mot de passe ne déverrouille pas ce fichier.
+clientCertificate.errorInvalidFile	Ce n’est pas un fichier de certificat .p12 ou .pfx valide.
+clientCertificate.errorNoIdentity	Ce fichier ne contient pas de clé privée. Exportez le certificat avec sa clé.
+clientCertificate.errorStorage	Impossible d’enregistrer le certificat sur cet appareil.
+clientCertificate.errorUnreadable	Impossible de lire ce fichier.
+clientCertificate.removeTitle	Supprimer le certificat ?
+clientCertificate.removeMessage	NextExplorer ne le présentera plus à %@. Si ce serveur en exige un, l’app ne pourra pas se connecter tant que vous n’aurez pas ajouté un nouveau certificat.
+clientCertificate.removeConfirm	Supprimer
+clientCertificate.expiredWarning	Ce certificat a expiré. Le serveur va probablement le refuser.

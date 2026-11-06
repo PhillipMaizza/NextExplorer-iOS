@@ -145,6 +145,33 @@ public enum L10n {
         public static var submitButton: String { tr("changePassword.submitButton") }  // "Update Password"
         public static var success: String { tr("changePassword.success") }  // "Your password has been updated."
     }
+    public enum ClientCertificate {
+        public static var certificateLabel: String { tr("clientCertificate.certificateLabel") }  // "Certificate"
+        public static var chooseAnother: String { tr("clientCertificate.chooseAnother") }  // "Choose Another File"
+        public static var chooseFile: String { tr("clientCertificate.chooseFile") }  // "Choose File"
+        public static var errorInvalidFile: String { tr("clientCertificate.errorInvalidFile") }  // "This isn't a valid .p12 or .pfx certificate file."
+        public static var errorNoIdentity: String { tr("clientCertificate.errorNoIdentity") }
+        public static var errorStorage: String { tr("clientCertificate.errorStorage") }  // "Couldn't save the certificate on this device."
+        public static var errorUnreadable: String { tr("clientCertificate.errorUnreadable") }  // "Couldn't read that file."
+        public static var errorWrongPassword: String { tr("clientCertificate.errorWrongPassword") }  // "That password doesn't unlock this file."
+        public static func expired(_ a0: CVarArg) -> String { tr("clientCertificate.expired", a0) }
+        public static var expiredWarning: String { tr("clientCertificate.expiredWarning") }
+        public static func expires(_ a0: CVarArg) -> String { tr("clientCertificate.expires", a0) }
+        public static var fileLabel: String { tr("clientCertificate.fileLabel") }  // "File"
+        public static var install: String { tr("clientCertificate.install") }  // "Install"
+        public static var intro: String { tr("clientCertificate.intro") }
+        public static func issuedBy(_ a0: CVarArg) -> String { tr("clientCertificate.issuedBy", a0) }
+        public static var none: String { tr("clientCertificate.none") }  // "No certificate installed"
+        public static var passwordLabel: String { tr("clientCertificate.passwordLabel") }  // "File Password"
+        public static var passwordPrompt: String { tr("clientCertificate.passwordPrompt") }  // "The password the file was exported with"
+        public static var remove: String { tr("clientCertificate.remove") }  // "Remove Certificate"
+        public static var removeConfirm: String { tr("clientCertificate.removeConfirm") }  // "Remove"
+        public static func removeMessage(_ a0: CVarArg) -> String { tr("clientCertificate.removeMessage", a0) }
+        public static var removeTitle: String { tr("clientCertificate.removeTitle") }  // "Remove certificate?"
+        public static var replace: String { tr("clientCertificate.replace") }  // "Replace Certificate"
+        public static var serverLabel: String { tr("clientCertificate.serverLabel") }  // "Server"
+        public static var title: String { tr("clientCertificate.title") }  // "Client Certificate"
+    }
     public enum Common {
         public static var back: String { tr("common.back") }  // "Back"
         public static var cancel: String { tr("common.cancel") }  // "Cancel"
@@ -258,6 +285,8 @@ public enum L10n {
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("emptyState.noSearchMatches", a0) }
     }
     public enum Error {
+        public static var clientCertificateRejected: String { tr("error.clientCertificateRejected") }  // "The server refused your client certificate."
+        public static var clientCertificateRequired: String { tr("error.clientCertificateRequired") }  // "This server needs a client certificate. Add one in Settings."
         public static var decoding: String { tr("error.decoding") }  // "Server responded unexpectedly."
         public static var forbidden: String { tr("error.forbidden") }  // "You don't have permission to do that."
         public static var network: String { tr("error.network") }  // "Couldn't reach the server."
@@ -360,7 +389,10 @@ public enum L10n {
         public static var sectionSoftware: String { tr("licenses.sectionSoftware") }  // "Software"
     }
     public enum Login {
+        public static var addClientCertificate: String { tr("login.addClientCertificate") }  // "Add Certificate"
         public static var emailField: String { tr("login.emailField") }  // "Email"
+        public static var errorClientCertificateRejected: String { tr("login.errorClientCertificateRejected") }  // "The server refused this client certificate."
+        public static var errorClientCertificateRequired: String { tr("login.errorClientCertificateRequired") }  // "This server asks for a client certificate."
         public static var errorDecoding: String { tr("login.errorDecoding") }
         public static var errorIncomplete: String { tr("login.errorIncomplete") }  // "Sign-in didn't complete. Please try again."
         public static var errorInvalidCredentials: String { tr("login.errorInvalidCredentials") }  // "Incorrect username or password."
@@ -376,6 +408,7 @@ public enum L10n {
         public static var errorUnexpectedResponse: String { tr("login.errorUnexpectedResponse") }  // "Unexpected response from server."
         public static var errorUnreachable: String { tr("login.errorUnreachable") }
         public static var hidePassword: String { tr("login.hidePassword") }  // "Hide Password"
+        public static var manageClientCertificate: String { tr("login.manageClientCertificate") }  // "Manage Certificate"
         public static var orDivider: String { tr("login.orDivider") }  // "or"
         public static var passwordField: String { tr("login.passwordField") }  // "Password"
         public static var plaintextWarning: String { tr("login.plaintextWarning") }
@@ -411,6 +444,7 @@ public enum L10n {
         public static var username: String { tr("macSettings.username") }  // "Username"
     }
     public enum Media {
+        public static var clientCertificateUnsupported: String { tr("media.clientCertificateUnsupported") }
         public static var pause: String { tr("media.pause") }  // "Pause"
         public static var play: String { tr("media.play") }  // "Play"
         public static var position: String { tr("media.position") }  // "Playback Position"
@@ -539,6 +573,8 @@ public enum L10n {
         public static var clearCacheConfirm: String { tr("settings.clearCacheConfirm") }  // "Clear"
         public static var clearCacheMessage: String { tr("settings.clearCacheMessage") }
         public static var clearCacheTitle: String { tr("settings.clearCacheTitle") }  // "Clear Cache?"
+        public static var clientCertificate: String { tr("settings.clientCertificate") }  // "Client Certificate"
+        public static var clientCertificateNone: String { tr("settings.clientCertificateNone") }  // "None"
         public static var creditsBuyCoffee: String { tr("settings.creditsBuyCoffee") }  // "Buy me a coffee ☕️"
         public static var creditsLikeApp: String { tr("settings.creditsLikeApp") }  // "Like the app?"
         public static var creditsMadeBy: String { tr("settings.creditsMadeBy") }  // "Made with ❤️ by Phillip Maizza"

@@ -728,3 +728,37 @@ textPreview.unsavedTitle	“%@”의 변경 사항을 저장하시겠습니까?
 textPreview.unsavedMessage	저장하지 않으면 변경 사항이 사라집니다.
 textPreview.dontSave	저장 안 함
 browse.showInEnclosingFolder	상위 폴더에서 보기
+error.clientCertificateRequired	이 서버에는 클라이언트 인증서가 필요합니다. 설정에서 추가하세요.
+error.clientCertificateRejected	서버가 클라이언트 인증서를 거부했습니다.
+login.errorClientCertificateRequired	이 서버가 클라이언트 인증서를 요청합니다.
+login.errorClientCertificateRejected	서버가 이 클라이언트 인증서를 거부했습니다.
+login.addClientCertificate	인증서 추가
+login.manageClientCertificate	인증서 관리
+settings.clientCertificate	클라이언트 인증서
+settings.clientCertificateNone	없음
+media.clientCertificateUnsupported	클라이언트 인증서를 요청하는 서버에서는 이 형식을 스트리밍할 수 없습니다. 파일을 다운로드하여 재생하세요.
+clientCertificate.title	클라이언트 인증서
+clientCertificate.intro	일부 서버는 클라이언트 인증서(mTLS)를 제시하는 기기만 허용합니다. 이 서버용으로 받은 .p12 또는 .pfx 파일을 선택하세요.
+clientCertificate.serverLabel	서버
+clientCertificate.certificateLabel	인증서
+clientCertificate.none	설치된 인증서 없음
+clientCertificate.issuedBy	발급자: %@
+clientCertificate.expires	만료일: %@
+clientCertificate.expired	만료됨: %@
+clientCertificate.chooseFile	파일 선택
+clientCertificate.replace	인증서 교체
+clientCertificate.remove	인증서 제거
+clientCertificate.install	설치
+clientCertificate.fileLabel	파일
+clientCertificate.passwordLabel	파일 암호
+clientCertificate.passwordPrompt	파일을 내보낼 때 사용한 암호
+clientCertificate.chooseAnother	다른 파일 선택
+clientCertificate.errorWrongPassword	이 암호로는 파일을 열 수 없습니다.
+clientCertificate.errorInvalidFile	유효한 .p12 또는 .pfx 인증서 파일이 아닙니다.
+clientCertificate.errorNoIdentity	이 파일에는 개인 키가 없습니다. 인증서를 키와 함께 내보내세요.
+clientCertificate.errorStorage	이 기기에 인증서를 저장할 수 없습니다.
+clientCertificate.errorUnreadable	파일을 읽을 수 없습니다.
+clientCertificate.removeTitle	인증서를 제거하시겠습니까?
+clientCertificate.removeMessage	NextExplorer가 더 이상 %@에 이 인증서를 제시하지 않습니다. 서버에서 인증서를 요구하면 인증서를 다시 추가할 때까지 앱이 연결할 수 없습니다.
+clientCertificate.removeConfirm	제거
+clientCertificate.expiredWarning	이 인증서는 만료되었습니다. 서버에서 거부할 가능성이 높습니다.

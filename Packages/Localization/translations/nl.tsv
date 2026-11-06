@@ -728,3 +728,37 @@ textPreview.unsavedTitle	Wijzigingen in ‘%@’ bewaren?
 textPreview.unsavedMessage	Je wijzigingen gaan verloren als je ze niet bewaart.
 textPreview.dontSave	Niet bewaren
 browse.showInEnclosingFolder	Toon in bovenliggende map
+error.clientCertificateRequired	Deze server heeft een clientcertificaat nodig. Voeg er een toe in Instellingen.
+error.clientCertificateRejected	De server heeft je clientcertificaat geweigerd.
+login.errorClientCertificateRequired	Deze server vraagt om een clientcertificaat.
+login.errorClientCertificateRejected	De server heeft dit clientcertificaat geweigerd.
+login.addClientCertificate	Certificaat toevoegen
+login.manageClientCertificate	Certificaat beheren
+settings.clientCertificate	Clientcertificaat
+settings.clientCertificateNone	Geen
+media.clientCertificateUnsupported	Dit formaat kan niet worden gestreamd vanaf een server die om een clientcertificaat vraagt. Download het bestand om het af te spelen.
+clientCertificate.title	Clientcertificaat
+clientCertificate.intro	Sommige servers laten alleen apparaten toe die een clientcertificaat tonen (mTLS). Kies het .p12- of .pfx-bestand dat je voor deze server hebt gekregen.
+clientCertificate.serverLabel	Server
+clientCertificate.certificateLabel	Certificaat
+clientCertificate.none	Geen certificaat geïnstalleerd
+clientCertificate.issuedBy	Uitgegeven door %@
+clientCertificate.expires	Verloopt op %@
+clientCertificate.expired	Verlopen op %@
+clientCertificate.chooseFile	Kies bestand
+clientCertificate.replace	Certificaat vervangen
+clientCertificate.remove	Certificaat verwijderen
+clientCertificate.install	Installeer
+clientCertificate.fileLabel	Bestand
+clientCertificate.passwordLabel	Bestandswachtwoord
+clientCertificate.passwordPrompt	Het wachtwoord waarmee het bestand is geëxporteerd
+clientCertificate.chooseAnother	Kies een ander bestand
+clientCertificate.errorWrongPassword	Met dat wachtwoord gaat dit bestand niet open.
+clientCertificate.errorInvalidFile	Dit is geen geldig .p12- of .pfx-certificaatbestand.
+clientCertificate.errorNoIdentity	Dit bestand bevat geen privésleutel. Exporteer het certificaat samen met de sleutel.
+clientCertificate.errorStorage	Kan het certificaat niet bewaren op dit apparaat.
+clientCertificate.errorUnreadable	Kan dat bestand niet lezen.
+clientCertificate.removeTitle	Certificaat verwijderen?
+clientCertificate.removeMessage	NextExplorer toont het niet meer aan %@. Als die server er een vereist, kan de app geen verbinding maken totdat je opnieuw een certificaat toevoegt.
+clientCertificate.removeConfirm	Verwijder
+clientCertificate.expiredWarning	Dit certificaat is verlopen. De server zal het waarschijnlijk weigeren.

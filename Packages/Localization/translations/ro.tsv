@@ -728,3 +728,37 @@ textPreview.unsavedTitle	Salvezi modificările din „%@”?
 textPreview.unsavedMessage	Modificările se pierd dacă nu le salvezi.
 textPreview.dontSave	Nu salva
 browse.showInEnclosingFolder	Arată în dosarul părinte
+error.clientCertificateRequired	Acest server are nevoie de un certificat de client. Adaugă unul în Configurări.
+error.clientCertificateRejected	Serverul a refuzat certificatul tău de client.
+login.errorClientCertificateRequired	Acest server cere un certificat de client.
+login.errorClientCertificateRejected	Serverul a refuzat acest certificat de client.
+login.addClientCertificate	Adaugă certificat
+login.manageClientCertificate	Gestionează certificatul
+settings.clientCertificate	Certificat de client
+settings.clientCertificateNone	Niciunul
+media.clientCertificateUnsupported	Acest format nu poate fi redat în streaming de pe un server care cere un certificat de client. Descarcă fișierul pentru a-l reda.
+clientCertificate.title	Certificat de client
+clientCertificate.intro	Unele servere permit accesul doar dispozitivelor care prezintă un certificat de client (mTLS). Alege fișierul .p12 sau .pfx primit pentru acest server.
+clientCertificate.serverLabel	Server
+clientCertificate.certificateLabel	Certificat
+clientCertificate.none	Niciun certificat instalat
+clientCertificate.issuedBy	Emis de %@
+clientCertificate.expires	Expiră pe %@
+clientCertificate.expired	A expirat pe %@
+clientCertificate.chooseFile	Alege fișierul
+clientCertificate.replace	Înlocuiește certificatul
+clientCertificate.remove	Elimină certificatul
+clientCertificate.install	Instalează
+clientCertificate.fileLabel	Fișier
+clientCertificate.passwordLabel	Parola fișierului
+clientCertificate.passwordPrompt	Parola cu care a fost exportat fișierul
+clientCertificate.chooseAnother	Alege alt fișier
+clientCertificate.errorWrongPassword	Această parolă nu deblochează fișierul.
+clientCertificate.errorInvalidFile	Acesta nu este un fișier de certificat .p12 sau .pfx valid.
+clientCertificate.errorNoIdentity	Acest fișier nu conține o cheie privată. Exportă certificatul împreună cu cheia sa.
+clientCertificate.errorStorage	Certificatul nu a putut fi salvat pe acest dispozitiv.
+clientCertificate.errorUnreadable	Fișierul nu a putut fi citit.
+clientCertificate.removeTitle	Elimini certificatul?
+clientCertificate.removeMessage	NextExplorer nu îl va mai prezenta serverului %@. Dacă serverul cere unul, aplicația nu se poate conecta până nu adaugi din nou un certificat.
+clientCertificate.removeConfirm	Elimină
+clientCertificate.expiredWarning	Acest certificat a expirat. Probabil serverul îl va refuza.

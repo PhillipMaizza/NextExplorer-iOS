@@ -728,3 +728,37 @@ textPreview.unsavedTitle	“%@”への変更を保存しますか？
 textPreview.unsavedMessage	保存しないと変更内容は失われます。
 textPreview.dontSave	保存しない
 browse.showInEnclosingFolder	親フォルダに表示
+error.clientCertificateRequired	このサーバにはクライアント証明書が必要です。設定で追加してください。
+error.clientCertificateRejected	サーバがクライアント証明書を拒否しました。
+login.errorClientCertificateRequired	このサーバはクライアント証明書を要求しています。
+login.errorClientCertificateRejected	サーバがこのクライアント証明書を拒否しました。
+login.addClientCertificate	証明書を追加
+login.manageClientCertificate	証明書を管理
+settings.clientCertificate	クライアント証明書
+settings.clientCertificateNone	なし
+media.clientCertificateUnsupported	クライアント証明書を要求するサーバからは、この形式をストリーミング再生できません。ファイルをダウンロードして再生してください。
+clientCertificate.title	クライアント証明書
+clientCertificate.intro	クライアント証明書 (mTLS) を提示したデバイスだけを受け入れるサーバがあります。このサーバ用に受け取った .p12 または .pfx ファイルを選択してください。
+clientCertificate.serverLabel	サーバ
+clientCertificate.certificateLabel	証明書
+clientCertificate.none	証明書はインストールされていません
+clientCertificate.issuedBy	発行者: %@
+clientCertificate.expires	有効期限: %@
+clientCertificate.expired	期限切れ: %@
+clientCertificate.chooseFile	ファイルを選択
+clientCertificate.replace	証明書を置き換える
+clientCertificate.remove	証明書を削除
+clientCertificate.install	インストール
+clientCertificate.fileLabel	ファイル
+clientCertificate.passwordLabel	ファイルのパスワード
+clientCertificate.passwordPrompt	ファイルを書き出したときのパスワード
+clientCertificate.chooseAnother	別のファイルを選択
+clientCertificate.errorWrongPassword	このパスワードではファイルのロックを解除できません。
+clientCertificate.errorInvalidFile	有効な .p12 または .pfx 証明書ファイルではありません。
+clientCertificate.errorNoIdentity	このファイルには秘密鍵が含まれていません。証明書を鍵と一緒に書き出してください。
+clientCertificate.errorStorage	このデバイスに証明書を保存できませんでした。
+clientCertificate.errorUnreadable	ファイルを読み込めませんでした。
+clientCertificate.removeTitle	証明書を削除しますか?
+clientCertificate.removeMessage	NextExplorer は %@ にこの証明書を提示しなくなります。サーバが証明書を必要とする場合、証明書を再度追加するまでアプリは接続できません。
+clientCertificate.removeConfirm	削除
+clientCertificate.expiredWarning	この証明書は期限切れです。サーバに拒否される可能性があります。
