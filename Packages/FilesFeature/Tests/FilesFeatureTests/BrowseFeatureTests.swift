@@ -1510,6 +1510,9 @@ struct BrowseFeatureTests {
         }
         await store.receive(\.rowTapped)
         #expect(store.state.previewItem == created)
+        #expect(store.state.newlyCreatedFileID == created.id)
+        await store.send(.previewDismissed)
+        #expect(store.state.newlyCreatedFileID == nil)
         #expect(requested.value?.0 == "Docs")
         #expect(requested.value?.1 == "notes.txt")
     }

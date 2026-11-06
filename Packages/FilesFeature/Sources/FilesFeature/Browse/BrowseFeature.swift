@@ -271,6 +271,9 @@ public struct BrowseFeature {
         /// Extra file types this server's text editor opens (`EDITOR_EXTENSIONS`), loaded when the
         /// New File sheet opens; the defaults apply until then or when the server can't be asked.
         public var newFileServerExtensions: [String] = []
+        /// The file New File just made, so its preview opens straight into the editor; cleared
+        /// when that preview closes.
+        public var newlyCreatedFileID: FileItem.ID?
         /// Item awaiting a destructive confirmation before `deleteConfirmed` actually deletes it.
         public var deleteConfirmationItem: FileItem?
         /// Share-link fallout of the pending delete, single or bulk: only one confirmation is
@@ -905,6 +908,7 @@ public struct BrowseFeature {
                 state.$undoStack.withLock { $0.record(FileUndoEntry(.created([file]))) }
                 syncListingCache(state)
                 // Straight into the editor: an empty file is only ever made to be written in.
+                state.newlyCreatedFileID = file.id
                 return .send(.rowTapped(file))
 
             case let .newFileResponse(.failure(error)):
@@ -1374,6 +1378,7 @@ public struct BrowseFeature {
                 return .none
 
             case .previewDismissed:
+                state.newlyCreatedFileID = nil
                 state.previewItem = nil
                 state.previewFileURL = nil
                 state.previewPhase = .idle
