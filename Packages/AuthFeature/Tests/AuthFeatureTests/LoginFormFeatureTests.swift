@@ -186,6 +186,17 @@ struct LoginFormFeatureTests {
         await store.send(.hostChanged("example.com")) { $0.scheme = .https }
     }
 
+    @Test("regression: the field reporting the same address again doesn't cancel a connection test")
+    func unchangedHostKeepsTestRunning() async {
+        let store = TestStore(initialState: LoginFormFeature.State(connectionPhase: .testing, host: "nextexplorer.example.com")) {
+            LoginFormFeature()
+        }
+        store.timeout = Self.receiveTimeout
+
+        await store.send(.hostChanged("nextexplorer.example.com"))
+        #expect(store.state.connectionPhase == .testing)
+    }
+
     @Test("regression: picking https after typing an IP keeps the address")
     func switchingSchemeKeepsHost() async {
         let store = TestStore(initialState: LoginFormFeature.State()) { LoginFormFeature() }

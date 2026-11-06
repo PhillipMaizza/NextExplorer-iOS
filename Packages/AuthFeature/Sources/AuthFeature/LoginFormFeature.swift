@@ -227,6 +227,10 @@ public struct LoginFormFeature {
 
             case let .hostChanged(rawText):
                 let text = String(rawText.prefix(Constants.maxHostInputLength))
+                // The Mac text field reports its text again when the window's state changes, with
+                // nothing edited. Treating that as a new address would cancel a connection test in
+                // flight and drop the certificate offer.
+                guard text != state.host else { return .none }
                 state.host = text
                 let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
                 if trimmed.isEmpty {
