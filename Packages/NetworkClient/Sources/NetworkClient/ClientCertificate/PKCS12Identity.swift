@@ -60,7 +60,9 @@ struct PKCS12Identity: @unchecked Sendable {
         return URLCredential(
             identity: identity,
             certificates: intermediates.isEmpty ? nil : intermediates,
-            persistence: .forSession
+            // Never cached by URLSession: every handshake asks the store again, so a removed or
+            // replaced certificate is never presented from a cache.
+            persistence: .none
         )
     }
 }

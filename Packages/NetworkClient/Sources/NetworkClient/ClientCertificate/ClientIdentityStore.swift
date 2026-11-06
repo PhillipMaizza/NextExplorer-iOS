@@ -26,7 +26,14 @@ public final class ClientIdentityStore: @unchecked Sendable {
     private let keychain: KeychainClient
     private let lock = NSLock()
     private var entries: [ClientCertificateOrigin: Entry] = [:]
-    private var changeObservers: [@Sendable () -> Void] = []
+    private var changeObservers: [@Sendable (Change) -> Void] = []
+
+    enum Change {
+        /// One certificate was installed, replaced or removed.
+        case changed
+        /// Every certificate is gone (the last account signed out).
+        case allRemoved
+    }
 
     public init(keychain: KeychainClient) {
         self.keychain = keychain
@@ -50,7 +57,7 @@ public final class ClientIdentityStore: @unchecked Sendable {
         }
         updateIndex { $0.insert(origin) }
         setEntry(.stored(record, decoded), for: origin)
-        notifyChange()
+        notifyChange(.changed)
         return record.summary
     }
 
@@ -66,8 +73,12 @@ public final class ClientIdentityStore: @unchecked Sendable {
     /// signed in to. Signing out of the last account passes an empty set, so the next person to
     /// use the device can't reach an mTLS server with the previous user's identity.
     public func removeAll(except keep: Set<ClientCertificateOrigin>) {
-        for origin in installedOrigins().subtracting(keep) {
+        let removing = installedOrigins().subtracting(keep)
+        for origin in removing {
             remove(for: origin)
+        }
+        if keep.isEmpty, !removing.isEmpty {
+            notifyChange(.allRemoved)
         }
     }
 
@@ -77,7 +88,7 @@ public final class ClientIdentityStore: @unchecked Sendable {
         guard (try? keychain.delete(origin.keychainKey)) != nil else { return }
         updateIndex { $0.remove(origin) }
         setEntry(.missing, for: origin)
-        notifyChange()
+        notifyChange(.changed)
     }
 
     private static let indexKey = "clientIdentity.index"
@@ -105,17 +116,17 @@ public final class ClientIdentityStore: @unchecked Sendable {
 
     /// Called after a certificate is installed, replaced or removed. Sessions use it to drop
     /// their pooled connections, which stay authenticated with the identity they opened with.
-    func addChangeObserver(_ observer: @escaping @Sendable () -> Void) {
+    func addChangeObserver(_ observer: @escaping @Sendable (Change) -> Void) {
         lock.lock()
         changeObservers.append(observer)
         lock.unlock()
     }
 
-    private func notifyChange() {
+    private func notifyChange(_ change: Change) {
         lock.lock()
         let observers = changeObservers
         lock.unlock()
-        observers.forEach { $0() }
+        observers.forEach { $0(change) }
     }
 
     /// Cheap enough for a view to ask: no key derivation, at most one keychain read per origin.
@@ -154,7 +165,11 @@ public final class ClientIdentityStore: @unchecked Sendable {
         if let cached {
             return cached
         }
-        let loaded = loadFromKeychain(origin)
+        guard let loaded = loadFromKeychain(origin) else {
+            // The keychain could not be read just now (before first unlock, a transient error):
+            // answer "none" for this handshake but ask again next time instead of caching it.
+            return .missing
+        }
         // An install or remove that landed while the keychain was being read wins.
         lock.lock()
         defer { lock.unlock() }
@@ -165,11 +180,16 @@ public final class ClientIdentityStore: @unchecked Sendable {
         return loaded
     }
 
-    private func loadFromKeychain(_ origin: ClientCertificateOrigin) -> Entry {
-        guard
-            let data = try? keychain.load(origin.keychainKey),
-            let record = try? JSONDecoder().decode(Record.self, from: data)
-        else {
+    /// `nil` when the keychain itself failed; `.missing` only when it answered "no such item"
+    /// (or held a record that no longer decodes).
+    private func loadFromKeychain(_ origin: ClientCertificateOrigin) -> Entry? {
+        let data: Data?
+        do {
+            data = try keychain.load(origin.keychainKey)
+        } catch {
+            return nil
+        }
+        guard let data, let record = try? JSONDecoder().decode(Record.self, from: data) else {
             return .missing
         }
         return .stored(record, nil)

@@ -106,7 +106,7 @@ struct SessionBoundaryWipeTests {
         #expect(log.certificatesWiped)
     }
 
-    @Test("An expired session with no other account wipes every store")
+    @Test("An expired session with no other account wipes every store but keeps the certificate")
     func expiry() async {
         let log = WipeLog()
         let store = TestStore(
@@ -122,7 +122,7 @@ struct SessionBoundaryWipeTests {
         await store.finish()
 
         #expect(log.isComplete, "not wiped: \(Set(Store.allCases.map(\.rawValue)).subtracting(log.wiped.value))")
-        #expect(log.certificatesWiped)
+        #expect(!log.certificatesWiped, "an expired session keeps the certificate the user installed")
     }
 
     @Test("Removing an account drops certificates for servers no remaining account uses")

@@ -151,6 +151,7 @@ public struct ClientCertificateFeature {
                 return .none
 
             case .chooseFileTapped:
+                guard !state.isImporting else { return .none }
                 state.isFileImporterPresented = true
                 return .none
 
@@ -183,6 +184,9 @@ public struct ClientCertificateFeature {
                 return .none
 
             case .discardFileTapped:
+                // An import in flight finishes in the keychain whatever happens here, so the sheet
+                // waits for it rather than pretending it was abandoned.
+                guard !state.isImporting else { return .none }
                 state.pendingFile = nil
                 state.passphrase = ""
                 state.importPhase = .idle
@@ -242,6 +246,7 @@ public struct ClientCertificateFeature {
                 return .send(.delegate(.removed))
 
             case .closeTapped:
+                guard !state.isImporting else { return .none }
                 return .run { [dismiss] _ in await dismiss() }
 
             case .delegate:

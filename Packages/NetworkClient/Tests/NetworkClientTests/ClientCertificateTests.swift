@@ -220,6 +220,50 @@ struct ClientCertificateTests {
         _ = handler.handle(ClientCertificateChallengeFixture.make(host: "example.com", port: 443))
         handler.recordResponse(for: url)
         #expect(NetworkError.from(dropped, url: url, certificates: handler) == .offline)
+
+        // A server that has answered keeps reading drops as the network, even right after the
+        // next handshake on a fresh connection.
+        _ = handler.handle(ClientCertificateChallengeFixture.make(host: "example.com", port: 443))
+        #expect(NetworkError.from(dropped, url: url, certificates: handler) == .offline)
+    }
+
+    @Test("A certificate change makes a refused handshake count again")
+    func verificationResetsOnChange() throws {
+        let store = ClientIdentityStore(keychain: .inMemory())
+        let handler = ClientCertificateChallengeHandler(store: store)
+        let url = URL(string: "https://example.com/api")!
+        _ = handler.handle(ClientCertificateChallengeFixture.make(host: "example.com", port: 443))
+        handler.recordResponse(for: url)
+
+        let origin = ClientCertificateOrigin(host: "example.com", port: 443)
+        try store.install(pkcs12: MutualTLSFixtures.data("client", "p12"), passphrase: MutualTLSFixtures.passphrase, for: origin)
+        _ = handler.handle(ClientCertificateChallengeFixture.make(host: "example.com", port: 443))
+        #expect(NetworkError.from(URLError(.networkConnectionLost), url: url, certificates: handler) == .clientCertificateRejected)
+    }
+
+    @Test("A keychain that can't be read right now is asked again, not remembered as empty")
+    func transientKeychainErrorIsNotCached() throws {
+        let failing = FailureSwitch()
+        let backing = KeychainClient.inMemory()
+        let keychain = KeychainClient(
+            save: { try backing.save($0, $1) },
+            load: { key in
+                if failing.isOn {
+                    throw KeychainError.unexpectedStatus(-25308)
+                }
+                return try backing.load(key)
+            },
+            delete: { try backing.delete($0) }
+        )
+        let origin = ClientCertificateOrigin(host: "example.com", port: 443)
+        try ClientIdentityStore(keychain: backing).install(
+            pkcs12: MutualTLSFixtures.data("client", "p12"), passphrase: MutualTLSFixtures.passphrase, for: origin
+        )
+        let store = ClientIdentityStore(keychain: keychain)
+
+        #expect(store.summary(for: origin) == nil)
+        failing.isOn = false
+        #expect(store.summary(for: origin)?.subject == "Dev Client")
     }
 
     @Test("Server trust challenges are left to the trust evaluator")
@@ -229,6 +273,16 @@ struct ClientCertificateTests {
             host: "example.com", port: 443, method: NSURLAuthenticationMethodServerTrust
         )
         #expect(handler.handle(challenge) == nil)
+    }
+}
+
+private final class FailureSwitch: @unchecked Sendable {
+    private let lock = NSLock()
+    private var value = true
+
+    var isOn: Bool {
+        get { lock.withLock { value } }
+        set { lock.withLock { value = newValue } }
     }
 }
 

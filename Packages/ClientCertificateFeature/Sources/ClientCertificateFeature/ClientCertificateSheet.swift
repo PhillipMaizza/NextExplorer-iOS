@@ -25,6 +25,7 @@ public struct ClientCertificateSheet: View {
 
     public var body: some View {
         content
+            .interactiveDismissDisabled(store.isImporting)
             .onAppear { store.send(.onAppear) }
             .fileImporter(
                 isPresented: $store.isFileImporterPresented.sending(\.fileImporterPresentationChanged),

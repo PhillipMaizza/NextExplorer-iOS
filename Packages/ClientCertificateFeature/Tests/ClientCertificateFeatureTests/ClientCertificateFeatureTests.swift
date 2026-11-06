@@ -190,6 +190,19 @@ struct ClientCertificateFeatureTests {
         }
     }
 
+    @Test("Closing, discarding or picking again waits while an import is running")
+    func busyWhileImporting() async {
+        let store = TestStore(
+            initialState: ClientCertificateFeature.State(origin: origin, status: .empty, pendingFile: file, importPhase: .importing)
+        ) {
+            ClientCertificateFeature()
+        }
+
+        await store.send(.closeTapped)
+        await store.send(.discardFileTapped)
+        await store.send(.chooseFileTapped)
+    }
+
     @Test("Discarding a picked file returns to the overview")
     func discardFile() async {
         let store = TestStore(

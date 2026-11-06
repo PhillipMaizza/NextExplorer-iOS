@@ -23,20 +23,30 @@ public final class ClientCertificateChallengeHandler: @unchecked Sendable {
     private let now: @Sendable () -> Date
     private let lock = NSLock()
     private var outcomes: [ClientCertificateOrigin: (Outcome, Date)] = [:]
+    /// Origins that have answered since the certificate last changed: the handshake works there,
+    /// so a dropped connection is the network, never the certificate.
+    private var verified: Set<ClientCertificateOrigin> = []
 
     public init(store: ClientIdentityStore, now: @escaping @Sendable () -> Date = { Date() }) {
         self.store = store
         self.now = now
+        store.addChangeObserver { [weak self] _ in self?.forgetVerified() }
     }
 
     public static let shared = ClientCertificateChallengeHandler(store: .shared)
 
     /// Drops the sessions' pooled connections whenever a certificate changes, so the next
     /// request handshakes with the new identity (or none) instead of reusing the old one.
+    /// When every certificate is removed (the last account signed out) the sessions are reset
+    /// instead: that also forgets their TLS session tickets, so a resumed connection can't carry
+    /// the previous user's identity. Reset clears cookies too, which signing out does anyway.
     func flushOnCertificateChange(_ sessions: [URLSession]) {
-        store.addChangeObserver { [sessions = sessions.map(WeakSession.init)] in
+        store.addChangeObserver { [sessions = sessions.map(WeakSession.init)] change in
             for session in sessions {
-                session.value?.flush {}
+                switch change {
+                case .changed: session.value?.flush {}
+                case .allRemoved: session.value?.reset {}
+                }
             }
         }
     }
@@ -60,7 +70,11 @@ public final class ClientCertificateChallengeHandler: @unchecked Sendable {
         guard let url, let origin = ClientCertificateOrigin(url: url) else { return nil }
         lock.lock()
         defer { lock.unlock() }
-        guard let (outcome, date) = outcomes[origin], now().timeIntervalSince(date) <= Self.attributionWindow else {
+        guard
+            !verified.contains(origin),
+            let (outcome, date) = outcomes[origin],
+            now().timeIntervalSince(date) <= Self.attributionWindow
+        else {
             return nil
         }
         return outcome
@@ -87,6 +101,13 @@ public final class ClientCertificateChallengeHandler: @unchecked Sendable {
         guard let url, let origin = ClientCertificateOrigin(url: url) else { return }
         lock.lock()
         outcomes[origin] = nil
+        verified.insert(origin)
+        lock.unlock()
+    }
+
+    private func forgetVerified() {
+        lock.lock()
+        verified.removeAll()
         lock.unlock()
     }
 
