@@ -81,10 +81,11 @@ extension ThumbnailCache: DependencyKey {
                 }
                 // Stream to a temp file rather than buffering. `thumbnailURL` can fall back to a
                 // full size preview, so accumulating the response in memory (worse, byte by byte)
-                // burned seconds of CPU and stalled the UI. The low priority `NetworkClient` session
+                // burned seconds of CPU and stalled the UI. `NetworkClient`'s download session
                 // streams to disk, cancels cleanly when the owning view's `.task` is torn down, keeps
-                // no HTTP cache and presents the server's client certificate (mTLS).
-                let (downloadedURL, httpResponse) = try await networkClient.lowPriorityDownload(URLRequest(url: url))
+                // no HTTP cache and presents the server's client certificate (mTLS). Not the low
+                // priority session: its two connection cap would fill a grid two at a time.
+                let (downloadedURL, httpResponse) = try await networkClient.download(URLRequest(url: url))
                 defer { try? FileManager.default.removeItem(at: downloadedURL) }
                 guard 200 ..< 300 ~= httpResponse.statusCode else {
                     throw URLError(.badServerResponse)

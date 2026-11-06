@@ -59,7 +59,7 @@ struct ThumbnailCacheTests {
     func missGoesThroughNetworkClient() async throws {
         let requested = LockIsolated<URL?>(nil)
         var network = NetworkClient()
-        network.lowPriorityDownload = { request in
+        network.download = { request in
             requested.setValue(request.url)
             let file = FileManager.default.temporaryDirectory.appendingPathComponent("download-\(UUID().uuidString)")
             try Data("thumb".utf8).write(to: file)

@@ -49,7 +49,7 @@ struct VLCPlayerView: View {
     @State private var autoHideTask: Task<Void, Never>?
     /// libvlc runs its own HTTP stack, which can't present a TLS client certificate, so a server
     /// behind mTLS would just drop the stream. Say so up front instead of a generic failure.
-    @State private var isBlockedByClientCertificate: Bool
+    @State private var isBlockedByClientCertificate = false
 
     init(
         item: FileItem,
@@ -69,9 +69,6 @@ struct VLCPlayerView: View {
         self.onRename = onRename
         self.onDownload = onDownload
         self.onDelete = onDelete
-        _isBlockedByClientCertificate = State(
-            initialValue: !url.isFileURL && ClientIdentityStore.shared.hasCertificate(for: url)
-        )
     }
 
     var body: some View {
@@ -144,6 +141,8 @@ struct VLCPlayerView: View {
             if item.isVideo {
                 OrientationLock.shared.unlock()
             }
+            // Checked once here, not in init: SwiftUI rebuilds the struct on every parent update.
+            isBlockedByClientCertificate = !url.isFileURL && ClientIdentityStore.shared.hasCertificate(for: url)
             guard !isBlockedByClientCertificate else { return }
             controller.start(url: url)
             scheduleAutoHide()
