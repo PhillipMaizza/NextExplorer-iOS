@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer は %@ にこの証明書を提示�
 clientCertificate.removeConfirm	削除
 clientCertificate.expiredWarning	この証明書は期限切れです。サーバに拒否される可能性があります。
 clientCertificate.errorRemove	このデバイスから証明書を削除できませんでした。
+login.usingClientCertificate	クライアント証明書 %@ を使用中
+login.changeClientCertificate	変更
+login.ssoClientCertificateNote	シングルサインオンは Safari で開くため、このアプリのクライアント証明書を使用できません。パスワードでサインインするか、このデバイスに証明書をインストールしてシングルサインオンを使用してください。
+settings.clientCertificateExpired	期限切れ
+settings.clientCertificateExpiresSoon	まもなく期限切れ
+clientCertificate.expiringSoonWarning	この証明書は %@ に期限切れになります。それまでに新しい証明書を依頼してください。

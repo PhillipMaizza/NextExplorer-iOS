@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer przestanie go przedstawiać serwero
 clientCertificate.removeConfirm	Usuń
 clientCertificate.expiredWarning	Ten certyfikat wygasł. Serwer prawdopodobnie go odrzuci.
 clientCertificate.errorRemove	Nie udało się usunąć certyfikatu z tego urządzenia.
+login.usingClientCertificate	Używany certyfikat klienta: %@
+login.changeClientCertificate	Zmień
+login.ssoClientCertificateNote	Logowanie jednokrotne otwiera się w Safari, które nie może użyć certyfikatu klienta tej aplikacji. Zaloguj się hasłem lub zainstaluj certyfikat na tym urządzeniu, aby korzystać z logowania jednokrotnego.
+settings.clientCertificateExpired	Wygasł
+settings.clientCertificateExpiresSoon	Wkrótce wygaśnie
+clientCertificate.expiringSoonWarning	Ten certyfikat wygasa %@. Poproś o nowy przed tym terminem.

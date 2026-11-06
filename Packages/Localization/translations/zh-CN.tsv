@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer 将不再向 %@ 出示此证书。�
 clientCertificate.removeConfirm	移除
 clientCertificate.expiredWarning	此证书已过期。服务器很可能会拒绝它。
 clientCertificate.errorRemove	无法从此设备移除证书。
+login.usingClientCertificate	正在使用客户端证书 %@
+login.changeClientCertificate	更改
+login.ssoClientCertificateNote	单点登录会在 Safari 中打开，而 Safari 无法使用此 App 的客户端证书。请使用密码登录，或在此设备上安装证书以使用单点登录。
+settings.clientCertificateExpired	已过期
+settings.clientCertificateExpiresSoon	即将过期
+clientCertificate.expiringSoonWarning	此证书将于 %@ 过期。请在此之前申请新的证书。

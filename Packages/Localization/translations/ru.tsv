@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer больше не будет пре
 clientCertificate.removeConfirm	Удалить
 clientCertificate.expiredWarning	Срок действия сертификата истёк. Скорее всего, сервер его отклонит.
 clientCertificate.errorRemove	Не удалось удалить сертификат с этого устройства.
+login.usingClientCertificate	Используется клиентский сертификат %@
+login.changeClientCertificate	Изменить
+login.ssoClientCertificateNote	Единый вход открывается в Safari, который не может использовать клиентский сертификат этого приложения. Войдите с паролем или установите сертификат на это устройство, чтобы пользоваться единым входом.
+settings.clientCertificateExpired	Истёк
+settings.clientCertificateExpiresSoon	Скоро истечёт
+clientCertificate.expiringSoonWarning	Срок действия этого сертификата истекает %@. Запросите новый заранее.

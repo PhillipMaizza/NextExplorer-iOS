@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer nu îl va mai prezenta serverului %
 clientCertificate.removeConfirm	Elimină
 clientCertificate.expiredWarning	Acest certificat a expirat. Probabil serverul îl va refuza.
 clientCertificate.errorRemove	Certificatul nu a putut fi eliminat de pe acest dispozitiv.
+login.usingClientCertificate	Se folosește certificatul de client %@
+login.changeClientCertificate	Schimbă
+login.ssoClientCertificateNote	Autentificarea unică se deschide în Safari, care nu poate folosi certificatul de client al aplicației. Conectează-te cu parola sau instalează certificatul pe acest dispozitiv pentru a folosi autentificarea unică.
+settings.clientCertificateExpired	Expirat
+settings.clientCertificateExpiresSoon	Expiră curând
+clientCertificate.expiringSoonWarning	Acest certificat expiră pe %@. Cere unul nou înainte de această dată.

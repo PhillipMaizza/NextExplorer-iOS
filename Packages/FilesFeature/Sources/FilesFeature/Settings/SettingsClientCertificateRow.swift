@@ -13,7 +13,7 @@ struct SettingsClientCertificateRow: View {
         DSNavigationRow(
             title: L10n.Settings.clientCertificate,
             icon: IconKit.accessRules,
-            accessory: .detail(store.clientCertificateStatus.settingsDetail)
+            accessory: .detail(store.clientCertificateStatus.settingsDetail())
         ) {
             store.send(.clientCertificateButtonTapped)
         }
@@ -23,11 +23,18 @@ struct SettingsClientCertificateRow: View {
 
 extension ClientCertificateFeature.Status {
     /// The value beside the Settings row: the certificate's name, "None", or blank while loading.
-    var settingsDetail: String {
+    /// A certificate that has expired or will within two weeks says so instead of its name, so
+    /// the user notices before the server starts refusing it.
+    func settingsDetail(now: Date = Date()) -> String {
         switch self {
         case .loading: ""
         case .empty: L10n.Settings.clientCertificateNone
-        case let .installed(summary): summary.subject
+        case let .installed(summary):
+            switch summary.expiry(now: now) {
+            case .valid: summary.subject
+            case .expiringSoon: L10n.Settings.clientCertificateExpiresSoon
+            case .expired: L10n.Settings.clientCertificateExpired
+            }
         }
     }
 }

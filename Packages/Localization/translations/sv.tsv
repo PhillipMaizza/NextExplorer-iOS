@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer slutar visa upp det för %@. Om ser
 clientCertificate.removeConfirm	Ta bort
 clientCertificate.expiredWarning	Certifikatet har gått ut. Servern kommer troligen att avvisa det.
 clientCertificate.errorRemove	Det gick inte att ta bort certifikatet från den här enheten.
+login.usingClientCertificate	Använder klientcertifikatet %@
+login.changeClientCertificate	Ändra
+login.ssoClientCertificateNote	Enkel inloggning öppnas i Safari, som inte kan använda appens klientcertifikat. Logga in med ditt lösenord eller installera certifikatet på den här enheten för att använda enkel inloggning.
+settings.clientCertificateExpired	Har gått ut
+settings.clientCertificateExpiresSoon	Går snart ut
+clientCertificate.expiringSoonWarning	Certifikatet går ut %@. Be om ett nytt innan dess.

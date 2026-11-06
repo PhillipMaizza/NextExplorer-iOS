@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer legt es %@ nicht mehr vor. Verlangt
 clientCertificate.removeConfirm	Entfernen
 clientCertificate.expiredWarning	Dieses Zertifikat ist abgelaufen. Der Server wird es wahrscheinlich ablehnen.
 clientCertificate.errorRemove	Das Zertifikat konnte nicht von diesem Gerät entfernt werden.
+login.usingClientCertificate	Client-Zertifikat %@ wird verwendet
+login.changeClientCertificate	Ändern
+login.ssoClientCertificateNote	Single Sign-on öffnet sich in Safari, das das Client-Zertifikat dieser App nicht verwenden kann. Melde dich mit deinem Passwort an oder installiere das Zertifikat auf diesem Gerät, um Single Sign-on zu nutzen.
+settings.clientCertificateExpired	Abgelaufen
+settings.clientCertificateExpiresSoon	Läuft bald ab
+clientCertificate.expiringSoonWarning	Dieses Zertifikat läuft am %@ ab. Fordere vorher ein neues an.

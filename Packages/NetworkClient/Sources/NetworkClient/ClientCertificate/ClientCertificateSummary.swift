@@ -13,9 +13,26 @@ public struct ClientCertificateSummary: Equatable, Sendable, Codable {
         self.expiresAt = expiresAt
     }
 
+    public enum Expiry: Equatable, Sendable {
+        case valid
+        /// Within `expiryWarningWindow` of expiring: time to ask for a new one.
+        case expiringSoon
+        case expired
+    }
+
+    /// Two weeks: enough notice to get a new certificate before the server starts refusing it.
+    public static let expiryWarningWindow: TimeInterval = 14 * 24 * 60 * 60
+
     public func isExpired(now: Date) -> Bool {
-        guard let expiresAt else { return false }
-        return expiresAt <= now
+        expiry(now: now) == .expired
+    }
+
+    public func expiry(now: Date) -> Expiry {
+        guard let expiresAt else { return .valid }
+        if expiresAt <= now {
+            return .expired
+        }
+        return expiresAt.timeIntervalSince(now) <= Self.expiryWarningWindow ? .expiringSoon : .valid
     }
 }
 

@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer toont het niet meer aan %@. Als die
 clientCertificate.removeConfirm	Verwijder
 clientCertificate.expiredWarning	Dit certificaat is verlopen. De server zal het waarschijnlijk weigeren.
 clientCertificate.errorRemove	Kan het certificaat niet van dit apparaat verwijderen.
+login.usingClientCertificate	Clientcertificaat %@ in gebruik
+login.changeClientCertificate	Wijzig
+login.ssoClientCertificateNote	Eenmalige aanmelding opent in Safari, dat het clientcertificaat van deze app niet kan gebruiken. Log in met je wachtwoord of installeer het certificaat op dit apparaat om eenmalige aanmelding te gebruiken.
+settings.clientCertificateExpired	Verlopen
+settings.clientCertificateExpiresSoon	Verloopt binnenkort
+clientCertificate.expiringSoonWarning	Dit certificaat verloopt op %@. Vraag vóór die datum een nieuw aan.

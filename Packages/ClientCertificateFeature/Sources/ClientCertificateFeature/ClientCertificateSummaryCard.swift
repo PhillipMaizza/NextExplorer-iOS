@@ -38,6 +38,37 @@ struct ClientCertificateSummaryLines: View {
     }
 }
 
+/// Says what to do about a certificate that has expired or will within two weeks; nothing for
+/// one that is fine. Shared by the sheet on both platforms.
+public struct ClientCertificateExpiryWarning: View {
+    let summary: ClientCertificateSummary?
+    var now = Date()
+
+    public init(summary: ClientCertificateSummary?, now: Date = Date()) {
+        self.summary = summary
+        self.now = now
+    }
+
+    public var body: some View {
+        if let summary, let text = Self.text(for: summary, now: now) {
+            Text(text)
+                .type(.body3(.regular), style: .warning)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+    }
+
+    static func text(for summary: ClientCertificateSummary, now: Date) -> String? {
+        switch summary.expiry(now: now) {
+        case .valid:
+            nil
+        case .expiringSoon:
+            summary.expiresAt.map { L10n.ClientCertificate.expiringSoonWarning($0.formatted(date: .abbreviated, time: .omitted)) }
+        case .expired:
+            L10n.ClientCertificate.expiredWarning
+        }
+    }
+}
+
 extension ClientCertificateFeature.Failure {
     var message: String {
         switch self {
@@ -75,6 +106,16 @@ extension ClientCertificateSummary {
     ClientCertificateSummaryLines(summary: .previewExpired)
         .dsCard()
         .padding(.space24)
+}
+
+#Preview("Expiring soon") {
+    let summary = ClientCertificateSummary(subject: "Phillip iPhone", expiresAt: Date().addingTimeInterval(5 * 24 * 60 * 60))
+    VStack(alignment: .leading, spacing: .space8) {
+        ClientCertificateSummaryLines(summary: summary)
+        ClientCertificateExpiryWarning(summary: summary)
+    }
+    .dsCard()
+    .padding(.space24)
 }
 
 #Preview("None") {

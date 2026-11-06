@@ -33,7 +33,10 @@
                 }
                 .padding(.bottom, Metrics.rowSpacing)
                 LabeledContent(L10n.ClientCertificate.certificateLabel) {
-                    ClientCertificateSummaryLines(summary: store.installedSummary)
+                    VStack(alignment: .leading, spacing: .space4) {
+                        ClientCertificateSummaryLines(summary: store.installedSummary)
+                        ClientCertificateExpiryWarning(summary: store.installedSummary)
+                    }
                 }
                 .padding(.bottom, Metrics.rowSpacing)
                 if let file = store.pendingFile {

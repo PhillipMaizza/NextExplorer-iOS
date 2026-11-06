@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer 將不再向 %@ 出示此憑證。�
 clientCertificate.removeConfirm	移除
 clientCertificate.expiredWarning	此憑證已過期。伺服器很可能會拒絕它。
 clientCertificate.errorRemove	無法從此裝置移除憑證。
+login.usingClientCertificate	正在使用用戶端憑證 %@
+login.changeClientCertificate	更改
+login.ssoClientCertificateNote	單一登入會在 Safari 中開啟，而 Safari 無法使用此 App 的用戶端憑證。請使用密碼登入，或在此裝置上安裝憑證以使用單一登入。
+settings.clientCertificateExpired	已過期
+settings.clientCertificateExpiresSoon	即將過期
+clientCertificate.expiringSoonWarning	此憑證將於 %@ 過期。請在此之前申請新的憑證。

@@ -763,3 +763,9 @@ clientCertificate.removeMessage	O NextExplorer deixará de o apresentar a %@. Se
 clientCertificate.removeConfirm	Remover
 clientCertificate.expiredWarning	Este certificado expirou. É provável que o servidor o recuse.
 clientCertificate.errorRemove	Não foi possível remover o certificado deste dispositivo.
+login.usingClientCertificate	A usar o certificado de cliente %@
+login.changeClientCertificate	Alterar
+login.ssoClientCertificateNote	O início de sessão único abre no Safari, que não consegue usar o certificado de cliente desta app. Inicie sessão com a palavra-passe ou instale o certificado neste dispositivo para usar o início de sessão único.
+settings.clientCertificateExpired	Expirado
+settings.clientCertificateExpiresSoon	Expira em breve
+clientCertificate.expiringSoonWarning	Este certificado expira a %@. Peça um novo antes dessa data.

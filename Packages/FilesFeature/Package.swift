@@ -133,6 +133,7 @@ let package = Package(
                 "FilesFeature",
                 .product(name: "ClientCertificateFeature", package: "ClientCertificateFeature"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
+                .product(name: "Localization", package: "Localization"),
                 .product(name: "NetworkClient", package: "NetworkClient"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "DependenciesTestSupport", package: "swift-dependencies"),

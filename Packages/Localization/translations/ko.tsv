@@ -763,3 +763,9 @@ clientCertificate.removeMessage	NextExplorer가 더 이상 %@에 이 인증서�
 clientCertificate.removeConfirm	제거
 clientCertificate.expiredWarning	이 인증서는 만료되었습니다. 서버에서 거부할 가능성이 높습니다.
 clientCertificate.errorRemove	이 기기에서 인증서를 제거할 수 없습니다.
+login.usingClientCertificate	클라이언트 인증서 %@ 사용 중
+login.changeClientCertificate	변경
+login.ssoClientCertificateNote	통합 인증은 Safari에서 열리며, Safari는 이 앱의 클라이언트 인증서를 사용할 수 없습니다. 암호로 로그인하거나 이 기기에 인증서를 설치하여 통합 인증을 사용하세요.
+settings.clientCertificateExpired	만료됨
+settings.clientCertificateExpiresSoon	곧 만료
+clientCertificate.expiringSoonWarning	이 인증서는 %@에 만료됩니다. 그 전에 새 인증서를 요청하세요.

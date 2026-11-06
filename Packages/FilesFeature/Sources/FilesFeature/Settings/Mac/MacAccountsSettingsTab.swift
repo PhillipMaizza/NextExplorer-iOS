@@ -124,7 +124,7 @@
                         }
                         LabeledContent(L10n.Settings.clientCertificate) {
                             HStack(spacing: .space8) {
-                                Text(store.clientCertificateStatus.settingsDetail).foregroundStyle(.secondary)
+                                Text(store.clientCertificateStatus.settingsDetail()).foregroundStyle(.secondary)
                                 Button(L10n.Login.manageClientCertificate) { store.send(.clientCertificateButtonTapped) }
                             }
                         }

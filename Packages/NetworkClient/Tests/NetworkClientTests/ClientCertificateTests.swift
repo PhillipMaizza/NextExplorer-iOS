@@ -177,6 +177,18 @@ struct ClientCertificateTests {
         #expect(try keychain.load(kept.keychainKey) == nil)
     }
 
+    @Test("Expiry: valid, a warning in the last two weeks, then expired")
+    func expiry() {
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let day: TimeInterval = 24 * 60 * 60
+        #expect(ClientCertificateSummary(subject: "a").expiry(now: now) == .valid)
+        #expect(ClientCertificateSummary(subject: "a", expiresAt: now + 30 * day).expiry(now: now) == .valid)
+        #expect(ClientCertificateSummary(subject: "a", expiresAt: now + 14 * day).expiry(now: now) == .expiringSoon)
+        #expect(ClientCertificateSummary(subject: "a", expiresAt: now + 60).expiry(now: now) == .expiringSoon)
+        #expect(ClientCertificateSummary(subject: "a", expiresAt: now).expiry(now: now) == .expired)
+        #expect(ClientCertificateSummary(subject: "a", expiresAt: now - day).isExpired(now: now))
+    }
+
     @Test("Origins use the scheme default port when the URL has none")
     func origins() {
         #expect(ClientCertificateOrigin(url: URL(string: "https://Example.com")!) == ClientCertificateOrigin(host: "example.com", port: 443))

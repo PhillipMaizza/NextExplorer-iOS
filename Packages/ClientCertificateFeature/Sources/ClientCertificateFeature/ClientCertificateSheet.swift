@@ -84,10 +84,7 @@ public struct ClientCertificateSheet: View {
                 section(L10n.ClientCertificate.certificateLabel) {
                     VStack(alignment: .leading, spacing: .space8) {
                         ClientCertificateSummaryLines(summary: store.installedSummary)
-                        if let summary = store.installedSummary, summary.isExpired(now: Date()) {
-                            Text(L10n.ClientCertificate.expiredWarning)
-                                .type(.body3(.regular), style: .warning)
-                        }
+                        ClientCertificateExpiryWarning(summary: store.installedSummary)
                     }
                     .dsCard()
                 }

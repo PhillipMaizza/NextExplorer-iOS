@@ -15195,6 +15195,113 @@
         }
       }
     },
+    "clientCertificate.expiringSoonWarning": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This certificate expires on %@. Ask for a new one before then."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تنتهي صلاحية هذه الشهادة في %@. اطلب شهادة جديدة قبل ذلك."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dieses Zertifikat läuft am %@ ab. Fordere vorher ein neues an."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este certificado caduca el %@. Pide uno nuevo antes de esa fecha."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce certificat expire le %@. Demandez-en un nouveau avant cette date."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "यह सर्टिफ़िकेट %@ को समाप्त होगा। उससे पहले नया माँग लें।"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Questo certificato scade il %@. Richiedine uno nuovo prima di allora."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この証明書は %@ に期限切れになります。それまでに新しい証明書を依頼してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "이 인증서는 %@에 만료됩니다. 그 전에 새 인증서를 요청하세요."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dit certificaat verloopt op %@. Vraag vóór die datum een nieuw aan."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ten certyfikat wygasa %@. Poproś o nowy przed tym terminem."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Este certificado expira a %@. Peça um novo antes dessa data."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acest certificat expiră pe %@. Cere unul nou înainte de această dată."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Срок действия этого сертификата истекает %@. Запросите новый заранее."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certifikatet går ut %@. Be om ett nytt innan dess."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此证书将于 %@ 过期。请在此之前申请新的证书。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "此憑證將於 %@ 過期。請在此之前申請新的憑證。"
+          }
+        }
+      }
+    },
     "clientCertificate.fileLabel": {
       "extractionState": "manual",
       "localizations": {
@@ -36488,6 +36595,113 @@
         }
       }
     },
+    "login.changeClientCertificate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Change"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تغيير"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändern"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambiar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "बदलें"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cambia"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "変更"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "변경"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wijzig"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zmień"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alterar"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schimbă"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Изменить"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ändra"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更改"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "更改"
+          }
+        }
+      }
+    },
     "login.emailField": {
       "extractionState": "manual",
       "localizations": {
@@ -39698,6 +39912,113 @@
         }
       }
     },
+    "login.ssoClientCertificateNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Single sign-on opens in Safari, which can't use this app's client certificate. Sign in with your password, or install the certificate on this device to use single sign-on."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يُفتح تسجيل الدخول الموحد في Safari، الذي لا يمكنه استخدام شهادة العميل الخاصة بهذا التطبيق. سجّل الدخول بكلمة السر، أو ثبّت الشهادة على هذا الجهاز لاستخدام تسجيل الدخول الموحد."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Single Sign-on öffnet sich in Safari, das das Client-Zertifikat dieser App nicht verwenden kann. Melde dich mit deinem Passwort an oder installiere das Zertifikat auf diesem Gerät, um Single Sign-on zu nutzen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "El inicio de sesión único se abre en Safari, que no puede usar el certificado de cliente de esta app. Inicia sesión con tu contraseña o instala el certificado en este dispositivo para usar el inicio de sesión único."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’authentification unique s’ouvre dans Safari, qui ne peut pas utiliser le certificat client de cette app. Connectez-vous avec votre mot de passe, ou installez le certificat sur cet appareil pour utiliser l’authentification unique."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "सिंगल साइन-ऑन Safari में खुलता है, जो इस ऐप का क्लाइंट सर्टिफ़िकेट इस्तेमाल नहीं कर सकता। अपने पासवर्ड से साइन इन करें, या सिंगल साइन-ऑन के लिए इस डिवाइस पर सर्टिफ़िकेट इंस्टॉल करें।"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il single sign-on si apre in Safari, che non può usare il certificato client di questa app. Accedi con la password oppure installa il certificato su questo dispositivo per usare il single sign-on."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "シングルサインオンは Safari で開くため、このアプリのクライアント証明書を使用できません。パスワードでサインインするか、このデバイスに証明書をインストールしてシングルサインオンを使用してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "통합 인증은 Safari에서 열리며, Safari는 이 앱의 클라이언트 인증서를 사용할 수 없습니다. 암호로 로그인하거나 이 기기에 인증서를 설치하여 통합 인증을 사용하세요."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Eenmalige aanmelding opent in Safari, dat het clientcertificaat van deze app niet kan gebruiken. Log in met je wachtwoord of installeer het certificaat op dit apparaat om eenmalige aanmelding te gebruiken."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logowanie jednokrotne otwiera się w Safari, które nie może użyć certyfikatu klienta tej aplikacji. Zaloguj się hasłem lub zainstaluj certyfikat na tym urządzeniu, aby korzystać z logowania jednokrotnego."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "O início de sessão único abre no Safari, que não consegue usar o certificado de cliente desta app. Inicie sessão com a palavra-passe ou instale o certificado neste dispositivo para usar o início de sessão único."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autentificarea unică se deschide în Safari, care nu poate folosi certificatul de client al aplicației. Conectează-te cu parola sau instalează certificatul pe acest dispozitiv pentru a folosi autentificarea unică."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Единый вход открывается в Safari, который не может использовать клиентский сертификат этого приложения. Войдите с паролем или установите сертификат на это устройство, чтобы пользоваться единым входом."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enkel inloggning öppnas i Safari, som inte kan använda appens klientcertifikat. Logga in med ditt lösenord eller installera certifikatet på den här enheten för att använda enkel inloggning."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "单点登录会在 Safari 中打开，而 Safari 无法使用此 App 的客户端证书。请使用密码登录，或在此设备上安装证书以使用单点登录。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "單一登入會在 Safari 中開啟，而 Safari 無法使用此 App 的用戶端憑證。請使用密碼登入，或在此裝置上安裝憑證以使用單一登入。"
+          }
+        }
+      }
+    },
     "login.submit": {
       "extractionState": "manual",
       "localizations": {
@@ -39908,6 +40229,113 @@
           "stringUnit": {
             "state": "translated",
             "value": "測試連線"
+          }
+        }
+      }
+    },
+    "login.usingClientCertificate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Using client certificate %@"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "يتم استخدام شهادة العميل %@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Client-Zertifikat %@ wird verwendet"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usando el certificado de cliente %@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certificat client utilisé : %@"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "क्लाइंट सर्टिफ़िकेट %@ इस्तेमाल हो रहा है"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Certificato client in uso: %@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "クライアント証明書 %@ を使用中"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "클라이언트 인증서 %@ 사용 중"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clientcertificaat %@ in gebruik"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Używany certyfikat klienta: %@"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A usar o certificado de cliente %@"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Se folosește certificatul de client %@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Используется клиентский сертификат %@"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Använder klientcertifikatet %@"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在使用客户端证书 %@"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "正在使用用戶端憑證 %@"
           }
         }
       }
@@ -54032,6 +54460,220 @@
           "stringUnit": {
             "state": "translated",
             "value": "用戶端憑證"
+          }
+        }
+      }
+    },
+    "settings.clientCertificateExpired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expired"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "منتهية الصلاحية"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abgelaufen"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caducado"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expiré"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "समाप्त"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scaduto"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "期限切れ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "만료됨"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verlopen"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wygasł"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expirado"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expirat"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Истёк"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Har gått ut"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已过期"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "已過期"
+          }
+        }
+      }
+    },
+    "settings.clientCertificateExpiresSoon": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expires soon"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "تنتهي قريبًا"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Läuft bald ab"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Caduca pronto"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expire bientôt"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "जल्द समाप्त होगा"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scade presto"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "まもなく期限切れ"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "곧 만료"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verloopt binnenkort"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Wkrótce wygaśnie"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expira em breve"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expiră curând"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скоро истечёт"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Går snart ut"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "即将过期"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "即將過期"
           }
         }
       }

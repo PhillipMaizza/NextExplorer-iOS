@@ -158,6 +158,7 @@ public enum L10n {
         public static func expired(_ a0: CVarArg) -> String { tr("clientCertificate.expired", a0) }
         public static var expiredWarning: String { tr("clientCertificate.expiredWarning") }
         public static func expires(_ a0: CVarArg) -> String { tr("clientCertificate.expires", a0) }
+        public static func expiringSoonWarning(_ a0: CVarArg) -> String { tr("clientCertificate.expiringSoonWarning", a0) }
         public static var fileLabel: String { tr("clientCertificate.fileLabel") }  // "File"
         public static var install: String { tr("clientCertificate.install") }  // "Install"
         public static var intro: String { tr("clientCertificate.intro") }
@@ -391,6 +392,7 @@ public enum L10n {
     }
     public enum Login {
         public static var addClientCertificate: String { tr("login.addClientCertificate") }  // "Add Certificate"
+        public static var changeClientCertificate: String { tr("login.changeClientCertificate") }  // "Change"
         public static var emailField: String { tr("login.emailField") }  // "Email"
         public static var errorClientCertificateRejected: String { tr("login.errorClientCertificateRejected") }  // "The server refused this client certificate."
         public static var errorClientCertificateRequired: String { tr("login.errorClientCertificateRequired") }  // "This server asks for a client certificate."
@@ -421,8 +423,10 @@ public enum L10n {
         public static var serverQuestion: String { tr("login.serverQuestion") }  // "Where's your instance of NextExplorer?"
         public static var showPassword: String { tr("login.showPassword") }  // "Show Password"
         public static var ssoButton: String { tr("login.ssoButton") }  // "Sign in with SSO"
+        public static var ssoClientCertificateNote: String { tr("login.ssoClientCertificateNote") }
         public static var submit: String { tr("login.submit") }  // "Log In"
         public static var testConnection: String { tr("login.testConnection") }  // "Test connection"
+        public static func usingClientCertificate(_ a0: CVarArg) -> String { tr("login.usingClientCertificate", a0) }
     }
     public enum MacSettings {
         public static var addAccount: String { tr("macSettings.addAccount") }  // "Add Account…"
@@ -575,6 +579,8 @@ public enum L10n {
         public static var clearCacheMessage: String { tr("settings.clearCacheMessage") }
         public static var clearCacheTitle: String { tr("settings.clearCacheTitle") }  // "Clear Cache?"
         public static var clientCertificate: String { tr("settings.clientCertificate") }  // "Client Certificate"
+        public static var clientCertificateExpired: String { tr("settings.clientCertificateExpired") }  // "Expired"
+        public static var clientCertificateExpiresSoon: String { tr("settings.clientCertificateExpiresSoon") }  // "Expires soon"
         public static var clientCertificateNone: String { tr("settings.clientCertificateNone") }  // "None"
         public static var creditsBuyCoffee: String { tr("settings.creditsBuyCoffee") }  // "Buy me a coffee ☕️"
         public static var creditsLikeApp: String { tr("settings.creditsLikeApp") }  // "Like the app?"

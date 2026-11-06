@@ -5,6 +5,7 @@ import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import Localization
 import NetworkClient
 import Testing
 
@@ -64,8 +65,14 @@ struct SettingsClientCertificateTests {
 
     @Test("The row value reads the certificate name, None, or nothing while loading")
     func rowDetail() {
-        #expect(ClientCertificateFeature.Status.loading.settingsDetail.isEmpty)
-        #expect(ClientCertificateFeature.Status.installed(summary).settingsDetail == "Dev Client")
-        #expect(!ClientCertificateFeature.Status.empty.settingsDetail.isEmpty)
+        let now = Date(timeIntervalSince1970: 1_800_000_000)
+        let day: TimeInterval = 24 * 60 * 60
+        #expect(ClientCertificateFeature.Status.loading.settingsDetail(now: now).isEmpty)
+        #expect(ClientCertificateFeature.Status.installed(summary).settingsDetail(now: now) == "Dev Client")
+        #expect(!ClientCertificateFeature.Status.empty.settingsDetail(now: now).isEmpty)
+        let soon = ClientCertificateSummary(subject: "Dev Client", expiresAt: now + 3 * day)
+        #expect(ClientCertificateFeature.Status.installed(soon).settingsDetail(now: now) == L10n.Settings.clientCertificateExpiresSoon)
+        let expired = ClientCertificateSummary(subject: "Dev Client", expiresAt: now - day)
+        #expect(ClientCertificateFeature.Status.installed(expired).settingsDetail(now: now) == L10n.Settings.clientCertificateExpired)
     }
 }
