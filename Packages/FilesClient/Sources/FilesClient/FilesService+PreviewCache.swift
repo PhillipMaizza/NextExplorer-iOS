@@ -196,7 +196,8 @@ extension FilesService {
         onProgress: @Sendable @escaping (TransferProgress) -> Void
     ) async throws -> URL {
         if !item.isDirectory, let offline = OfflineCache.localURL(for: item) {
-            let copy = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            let copy = FileManager.default.temporaryDirectory
+                .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
             do {
                 try FileManager.default.copyItem(at: offline, to: copy)
             } catch {
@@ -385,7 +386,7 @@ extension FilesService {
     ) async throws -> FileItem {
         let boundary = "Boundary-\(UUID().uuidString)"
         let envelopeURL = FileManager.default.temporaryDirectory
-            .appendingPathComponent("upload-\(UUID().uuidString).multipart")
+            .appendingPathComponent("\(SessionScratchLocation.uploadEnvelopePrefix)\(UUID().uuidString).multipart")
         defer { try? FileManager.default.removeItem(at: envelopeURL) }
 
         do {

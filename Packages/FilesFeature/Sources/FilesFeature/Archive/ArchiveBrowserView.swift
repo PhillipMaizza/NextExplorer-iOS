@@ -352,7 +352,7 @@ struct ArchiveBrowserView: View {
 
     private static func temporaryDirectory(for item: FileItem) -> URL {
         FileManager.default.temporaryDirectory
-            .appendingPathComponent("ArchiveBrowser", isDirectory: true)
+            .appendingPathComponent(SessionScratchLocation.archiveBrowser, isDirectory: true)
             .appendingPathComponent(item.id.replacingOccurrences(of: "/", with: "_"), isDirectory: true)
     }
 }

@@ -98,6 +98,20 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ClientCertificateFeatureTests"
+               BuildableName = "ClientCertificateFeatureTests"
+               BlueprintName = "ClientCertificateFeatureTests"
+               ReferencedContainer = "container:Packages/ClientCertificateFeature">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "AuthFeatureTests"
                BuildableName = "AuthFeatureTests"
                BlueprintName = "AuthFeatureTests"
@@ -214,6 +228,16 @@
                BuildableName = "DesignSystemTests"
                BlueprintName = "DesignSystemTests"
                ReferencedContainer = "container:Packages/DesignSystem">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ClientCertificateFeatureTests"
+               BuildableName = "ClientCertificateFeatureTests"
+               BlueprintName = "ClientCertificateFeatureTests"
+               ReferencedContainer = "container:Packages/ClientCertificateFeature">
             </BuildableReference>
          </TestableReference>
          <TestableReference

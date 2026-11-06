@@ -23,7 +23,6 @@ private enum Constants {
     /// dropped: 60s bounds how long such a dead connection stalls before failing, instead of hanging
     /// for minutes. Connections are also flushed before each batch (see `flushDownloadConnections`).
     static let downloadRequestTimeout: TimeInterval = 60
-    static let downloadTempFilePrefix = "download-"
 }
 
 public extension NetworkClient {
@@ -33,13 +32,28 @@ public extension NetworkClient {
     /// still cutting off a hostile server trying to exhaust memory here.
     static let defaultMaxInMemoryResponseBytes = 32 * 1024 * 1024
 
+    /// Names the temporary files `download` streams bodies into, so a session boundary can sweep
+    /// up any a crash left behind (`SessionScratchStore`).
+    static let downloadTemporaryFilePrefix = "download-"
+
+    /// The first few kilobytes of a downloaded body, enough to recognize a proxy's error page.
+    internal static func prefix(of fileURL: URL) -> Data {
+        guard let handle = try? FileHandle(forReadingFrom: fileURL) else { return Data() }
+        defer { try? handle.close() }
+        return (try? handle.read(upToCount: 4096)) ?? Data()
+    }
+
     static func live(
         trustEvaluator: ServerTrustEvaluating = DefaultServerTrustEvaluator(),
+        certificates: ClientCertificateChallengeHandler = .shared,
         cookieStorage: HTTPCookieStorage = .shared,
         protocolClasses: [AnyClass] = [],
         maxInMemoryResponseBytes: Int = NetworkClient.defaultMaxInMemoryResponseBytes
     ) -> NetworkClient {
         let configuration = URLSessionConfiguration.default
+        // No HTTP cache: the app keeps its own caches, which are cleared at every session boundary.
+        // `URLCache.shared` is not, so a response stored there could outlive the account it was for.
+        configuration.urlCache = nil
         configuration.httpCookieStorage = cookieStorage
         configuration.httpCookieAcceptPolicy = .always
         configuration.httpShouldSetCookies = true
@@ -48,8 +62,8 @@ public extension NetworkClient {
             configuration.protocolClasses = protocolClasses
         }
 
-        let delegate = URLSessionAuthDelegate(trustEvaluator: trustEvaluator)
-        let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        let delegate = URLSessionAuthDelegate(trustEvaluator: trustEvaluator, certificates: certificates)
+        let session = ReplaceableSession(configuration: configuration, delegate: delegate)
 
         // A second session for opportunistic background fetches (PDF thumbnail page
         // downloads). Its own connection pool, capped low, so however many the UI kicks off
@@ -57,6 +71,7 @@ public extension NetworkClient {
         // NOT `networkServiceType = .background`: that lets the system defer requests
         // indefinitely, even in the foreground, so thumbnails would just never appear.
         let lowPriorityConfiguration = URLSessionConfiguration.default
+        lowPriorityConfiguration.urlCache = nil
         lowPriorityConfiguration.httpCookieStorage = cookieStorage
         lowPriorityConfiguration.httpCookieAcceptPolicy = .always
         lowPriorityConfiguration.httpShouldSetCookies = true
@@ -65,15 +80,14 @@ public extension NetworkClient {
         if !protocolClasses.isEmpty {
             lowPriorityConfiguration.protocolClasses = protocolClasses
         }
-        let lowPrioritySession = URLSession(
-            configuration: lowPriorityConfiguration, delegate: delegate, delegateQueue: nil
-        )
+        let lowPrioritySession = ReplaceableSession(configuration: lowPriorityConfiguration, delegate: delegate)
 
         // A dedicated session for file downloads (previews, offline sync). Same cookie jar and trust
         // handling as the main session, but a generous request (inactivity) timeout so a large or slow
         // transfer isn't killed by the interactive 15s budget. This was the cause of "downloads are
         // hyper slow": on the main session, large downloads timed out at 15s and retried in a loop.
         let downloadConfiguration = URLSessionConfiguration.default
+        downloadConfiguration.urlCache = nil
         downloadConfiguration.httpCookieStorage = cookieStorage
         downloadConfiguration.httpCookieAcceptPolicy = .always
         downloadConfiguration.httpShouldSetCookies = true
@@ -81,28 +95,35 @@ public extension NetworkClient {
         if !protocolClasses.isEmpty {
             downloadConfiguration.protocolClasses = protocolClasses
         }
-        let downloadSession = URLSession(
-            configuration: downloadConfiguration, delegate: delegate, delegateQueue: nil
-        )
+        let downloadSession = ReplaceableSession(configuration: downloadConfiguration, delegate: delegate)
+
+        certificates.replaceOnCertificateChange([session, lowPrioritySession, downloadSession])
 
         @Sendable func streamToFile(
-            _ request: URLRequest, using downloadSession: URLSession
+            _ request: URLRequest, using downloadSession: ReplaceableSession
         ) async throws -> (URL, HTTPURLResponse) {
             let temporaryURL: URL
             let response: URLResponse
             do {
-                (temporaryURL, response) = try await downloadSession.download(for: request)
+                (temporaryURL, response) = try await downloadSession.current.download(for: request)
             } catch {
-                throw NetworkError.from(error)
+                throw NetworkError.from(error, url: request.url, certificates: certificates)
             }
             guard let httpResponse = response as? HTTPURLResponse else {
                 try? FileManager.default.removeItem(at: temporaryURL)
                 throw NetworkError.invalidResponse
             }
+            if let error = certificates.certificateError(
+                status: httpResponse.statusCode, bodyPrefix: NetworkClient.prefix(of: temporaryURL), url: request.url
+            ) {
+                try? FileManager.default.removeItem(at: temporaryURL)
+                throw error
+            }
+            certificates.recordResponse(for: request.url)
             // `session.download` deletes its temp file the moment this closure returns, so
             // move it somewhere the caller controls before handing the URL back.
             let stableURL = FileManager.default.temporaryDirectory
-                .appendingPathComponent("\(Constants.downloadTempFilePrefix)\(UUID().uuidString)")
+                .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
             do {
                 try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
             } catch {
@@ -117,19 +138,25 @@ public extension NetworkClient {
         // ever carries JSON control responses, file-sized payloads use `download`, so the
         // extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
         @Sendable func sendInMemory(
-            _ request: URLRequest, using inMemorySession: URLSession
+            _ request: URLRequest, using inMemorySession: ReplaceableSession
         ) async throws -> (Data, HTTPURLResponse) {
             let temporaryURL: URL
             let response: URLResponse
             do {
-                (temporaryURL, response) = try await inMemorySession.download(for: request)
+                (temporaryURL, response) = try await inMemorySession.current.download(for: request)
             } catch {
-                throw NetworkError.from(error)
+                throw NetworkError.from(error, url: request.url, certificates: certificates)
             }
             defer { try? FileManager.default.removeItem(at: temporaryURL) }
             guard let httpResponse = response as? HTTPURLResponse else {
                 throw NetworkError.invalidResponse
             }
+            if let error = certificates.certificateError(
+                status: httpResponse.statusCode, bodyPrefix: NetworkClient.prefix(of: temporaryURL), url: request.url
+            ) {
+                throw error
+            }
+            certificates.recordResponse(for: request.url)
             let byteCount = (try? temporaryURL.resourceValues(forKeys: [.fileSizeKey]).fileSize) ?? 0
             guard byteCount <= maxInMemoryResponseBytes else {
                 throw NetworkError.responseTooLarge
@@ -151,17 +178,21 @@ public extension NetworkClient {
                     // A dedicated delegate for progress only. It carries no challenge method,
                     // so connection level challenges (server trust) are handled by
                     // `URLSessionAuthDelegate`'s session level callback.
-                    (data, response) = try await session.upload(
+                    (data, response) = try await session.current.upload(
                         for: request,
                         fromFile: bodyFileURL,
                         delegate: UploadProgressDelegate(onProgress: onProgress)
                     )
                 } catch {
-                    throw NetworkError.from(error)
+                    throw NetworkError.from(error, url: request.url, certificates: certificates)
                 }
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NetworkError.invalidResponse
                 }
+                if let error = certificates.certificateError(status: httpResponse.statusCode, bodyPrefix: data, url: request.url) {
+                    throw error
+                }
+                certificates.recordResponse(for: request.url)
                 return (data, httpResponse)
             },
             download: { request in
@@ -178,20 +209,27 @@ public extension NetworkClient {
                         // backpressure to the socket, which throttled the transfer. Progress instead
                         // comes from the task's own `NSProgress` via KVO, which never touches that
                         // queue. Server trust still falls through to the session `URLSessionAuthDelegate`.
-                        let task = downloadSession.downloadTask(with: request) { temporaryURL, response, error in
+                        let task = downloadSession.current.downloadTask(with: request) { temporaryURL, response, error in
                             observationBox.invalidate()
                             if let error {
-                                continuation.resume(throwing: NetworkError.from(error))
+                                continuation.resume(throwing: NetworkError.from(error, url: request.url, certificates: certificates))
                                 return
                             }
                             guard let temporaryURL, let httpResponse = response as? HTTPURLResponse else {
                                 continuation.resume(throwing: NetworkError.invalidResponse)
                                 return
                             }
+                            if let error = certificates.certificateError(
+                                status: httpResponse.statusCode, bodyPrefix: NetworkClient.prefix(of: temporaryURL), url: request.url
+                            ) {
+                                continuation.resume(throwing: error)
+                                return
+                            }
+                            certificates.recordResponse(for: request.url)
                             // The system deletes `temporaryURL` the instant this returns, so move it
                             // synchronously to a stable location the caller owns.
                             let stableURL = FileManager.default.temporaryDirectory
-                                .appendingPathComponent("\(Constants.downloadTempFilePrefix)\(UUID().uuidString)")
+                                .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
                             do {
                                 try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
                                 continuation.resume(returning: (stableURL, httpResponse))
@@ -227,7 +265,7 @@ public extension NetworkClient {
             },
             flushDownloadConnections: {
                 await withCheckedContinuation { continuation in
-                    downloadSession.flush { continuation.resume() }
+                    downloadSession.current.flush { continuation.resume() }
                 }
             }
         )

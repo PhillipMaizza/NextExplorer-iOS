@@ -1,4 +1,5 @@
 import DesignSystem
+import FilesClient
 import SwiftUI
 import WebKit
 
@@ -44,7 +45,7 @@ struct HTMLRenderedView: View {
 
     private func prepare() async {
         let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("HTMLPreview", isDirectory: true)
+            .appendingPathComponent(SessionScratchLocation.htmlPreview, isDirectory: true)
             .appendingPathComponent(cacheKey.replacingOccurrences(of: "/", with: "_"), isDirectory: true)
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         // Always `.html`, never `fileName`'s real extension: `loadFileURL` has WebKit infer

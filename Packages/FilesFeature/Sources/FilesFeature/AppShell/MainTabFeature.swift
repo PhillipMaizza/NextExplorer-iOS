@@ -80,6 +80,7 @@ public struct MainTabFeature {
         /// in the visible Browse folder (only while Browse is the selected tab).
         case refreshSelectedTab
         case newFolderRequested
+        case newFileRequested
         /// Mac Go menu: Back (⌘[), Enclosing Folder (⌘↑), Forward (⌘]) and Go to Folder (⇧⌘G).
         case backRequested
         case enclosingFolderRequested
@@ -128,6 +129,7 @@ public struct MainTabFeature {
     }
 
     @Dependency(\.connectivity) var connectivity
+    @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     private enum CancelID { case connectivity }
 
@@ -200,6 +202,10 @@ public struct MainTabFeature {
                 case .newFolderRequested:
                     guard state.selectedTab == .browse else { return .none }
                     return .send(.browse(.newFolderInVisibleFolder))
+
+                case .newFileRequested:
+                    guard state.selectedTab == .browse else { return .none }
+                    return .send(.browse(.newFileInVisibleFolder))
 
                 case .backRequested:
                     switch state.selectedTab {
@@ -344,8 +350,17 @@ public struct MainTabFeature {
                     // First value is the current state (ignored); refresh only on a real
                     // offline -> online transition.
                     let connectivity = connectivity
+                    let clientCertificateClient = clientCertificateClient
+                    let certificateOrigin = ClientCertificateOrigin(url: state.browse.root.serverURL)
                     return .merge(
                         .send(.offline(.autoSync(force: false))),
+                        // Loads this server's client certificate record off the main actor once, so
+                        // the video views can check for it from memory when they open.
+                        .run { _ in
+                            if let certificateOrigin {
+                                _ = await clientCertificateClient.summary(certificateOrigin)
+                            }
+                        },
                         .run { send in
                             var wasOnline = true
                             for await online in connectivity.events() {

@@ -26,6 +26,8 @@ struct TextFilePreviewView: View {
     let onSave: (String) -> Void
     let onRetry: () -> Void
     let onDismiss: () -> Void
+    /// A file the user just created opens ready to type, once; any other file opens to read.
+    var startsEditing = false
 
     /// The edit buffer, `nil` until the user first types. While `nil`, the editor reads `content`
     /// directly, so a freshly mounted `CodeEditorView` gets the full document on its very first
@@ -128,6 +130,11 @@ struct TextFilePreviewView: View {
             // A new document (first load, or the reload after a save) discards any stale edit buffer so
             // the editor follows the authoritative `content` again.
             .onChange(of: content) { _, _ in draft = nil }
+            .onAppear {
+                if startsEditing {
+                    isEditing = true
+                }
+            }
             // `MarkdownRenderer.html` parses the whole document; run it off the main thread so a
             // large Markdown file doesn't freeze the UI on open. `.task(id:)` cancels a superseded
             // render, so a fast content change can't land a stale HTML string.

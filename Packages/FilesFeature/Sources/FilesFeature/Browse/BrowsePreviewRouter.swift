@@ -161,7 +161,8 @@ struct BrowsePreviewRouter: View {
                 isSaving: store.isSavingTextContent,
                 onSave: { store.send(.textSaveTapped($0)) },
                 onRetry: { store.send(.textContentRetryTapped) },
-                onDismiss: { store.send(.previewDismissed) }
+                onDismiss: { store.send(.previewDismissed) },
+                startsEditing: store.newlyCreatedFileID == item.id
             )
         }
     }

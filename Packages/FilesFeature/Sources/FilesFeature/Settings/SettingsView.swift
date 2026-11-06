@@ -1,3 +1,4 @@
+import ClientCertificateFeature
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -176,6 +177,9 @@ struct SettingsView: View {
             // On the Mac the main window hosts these too, for its sidebar account menu; whichever
             // window raised a prompt shows it.
             .modifier(AccountConfirmations(store: store))
+            .dsSheet(item: $store.scope(state: \.clientCertificate, action: \.clientCertificate)) { certificateStore in
+                ClientCertificateSheet(store: certificateStore)
+            }
             .dsAlert(isPresented: isConfirmingRemoveAllDownloads) {
                 DSAlertSheet(
                     icon: IconKit.delete,

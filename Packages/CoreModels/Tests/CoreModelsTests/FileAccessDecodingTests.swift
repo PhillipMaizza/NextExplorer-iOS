@@ -30,4 +30,31 @@ struct FileAccessDecodingTests {
             _ = try JSONDecoder().decode(FileAccess.self, from: Data(json.utf8))
         }
     }
+
+    @Test("Creating files and folders is answered apart from uploading")
+    func decodesCreatePermissions() throws {
+        let json = #"{"canRead": true, "canWrite": true, "canUpload": true, "canDelete": false, "canShare": false, "canDownload": true, "canCreateFolder": true, "canCreateFile": false}"#
+        let access = try JSONDecoder().decode(FileAccess.self, from: Data(json.utf8))
+        #expect(access.canUpload)
+        #expect(access.canCreateFolder)
+        #expect(!access.canCreateFile)
+    }
+
+    @Test("A server or saved listing without the create flags falls back to the upload flag")
+    func createPermissionsFallBackToUpload() throws {
+        let json = #"{"canRead": true, "canWrite": false, "canUpload": false, "canDelete": false, "canShare": false, "canDownload": true}"#
+        let access = try JSONDecoder().decode(FileAccess.self, from: Data(json.utf8))
+        #expect(!access.canCreateFile)
+        #expect(!access.canCreateFolder)
+    }
+
+    @Test("A listing saved for offline use keeps the create flags")
+    func roundTrips() throws {
+        let access = FileAccess(
+            canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true,
+            canCreateFolder: false, canCreateFile: true
+        )
+        let decoded = try JSONDecoder().decode(FileAccess.self, from: JSONEncoder().encode(access))
+        #expect(decoded == access)
+    }
 }

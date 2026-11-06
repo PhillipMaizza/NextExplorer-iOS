@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import FilesClient
 import Foundation
 import PhotosUI
 import SwiftUI
@@ -10,7 +11,7 @@ import SwiftUI
 enum UploadStagingLocation {
     static var directory: URL {
         let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("PendingUploads", isDirectory: true)
+            .appendingPathComponent(SessionScratchLocation.pendingUploads, isDirectory: true)
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         return directory
     }

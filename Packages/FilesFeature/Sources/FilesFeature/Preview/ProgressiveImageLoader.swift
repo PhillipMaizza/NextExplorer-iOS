@@ -1,6 +1,7 @@
 import DesignSystem
 import Foundation
 @preconcurrency import ImageIO
+import NetworkClient
 #if os(iOS)
     import UIKit
 #endif
@@ -91,6 +92,14 @@ enum ProgressiveImageLoader {
                 bytesSinceLastEmit = 0
                 emitThumbnail()
             }
+        }
+
+        /// A server behind mTLS asks this ephemeral session for the client certificate too; it
+        /// gets the same answer as every `NetworkClient` session. Server trust stays the system's.
+        func urlSession(
+            _: URLSession, task _: URLSessionTask, didReceive challenge: URLAuthenticationChallenge
+        ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
+            ClientCertificateChallengeHandler.shared.handle(challenge) ?? (.performDefaultHandling, nil)
         }
 
         func urlSession(_: URLSession, task _: URLSessionTask, didCompleteWithError error: Error?) {

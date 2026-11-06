@@ -56,6 +56,23 @@ struct FilesClientLiveTests {
     // MARK: Happy path
 
     @Test
+    func createFilePostsTheParentAndNameAndDecodesTheItem() async throws {
+        let body = Data(#"{"success":true,"item":{"name":"notes.txt","path":"Docs","dateModified":"2024-01-01T00:00:00.000Z","size":0,"kind":"txt"}}"#.utf8)
+        stub(statusCode: 201, body: body)
+
+        let item = try await makeClient().createFile(serverURL, "Docs", "notes.txt")
+
+        #expect(item.name == "notes.txt")
+        #expect(item.path == "Docs")
+        let request = try #require(StubURLProtocol.capturedRequest)
+        #expect(request.httpMethod == "POST")
+        #expect(request.url?.path == "/api/files/file")
+        let sent = try #require(StubURLProtocol.capturedRequestBody)
+        let json = try #require(JSONSerialization.jsonObject(with: sent) as? [String: String])
+        #expect(json == ["path": "Docs", "name": "notes.txt"])
+    }
+
+    @Test
     func browseDecodesASuccessfulResponse() async throws {
         stub(statusCode: 200, body: browseResultJSON)
         let result = try await makeClient().browse(serverURL, "")

@@ -323,7 +323,7 @@ public struct UploadsFeature {
     private static func message(for error: FilesClientError) -> String {
         switch error {
         case let .serverMessage(_, message): message
-        case .sessionExpired, .rateLimited: error.userMessage
+        case .sessionExpired, .rateLimited, .clientCertificateRequired, .clientCertificateRejected: error.userMessage
         default: L10n.Uploads.failedGeneric
         }
     }

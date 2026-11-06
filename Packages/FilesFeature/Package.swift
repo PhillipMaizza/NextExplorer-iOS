@@ -9,6 +9,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../AppStorageKeys"),
+        .package(path: "../ClientCertificateFeature"),
         .package(path: "../CoreModels"),
         .package(path: "../FilesClient"),
         .package(path: "../NetworkClient"),
@@ -27,16 +28,16 @@ let package = Package(
         // AVFoundation can't decode (avi, webm, mkv, wmv, flv, mpg, mpeg; ogg, opus, wma):
         // parity with the web client's player.
         .package(url: "https://github.com/tylerjonesio/vlckit-spm", exact: "3.6.0"),
-        // No semver release tags exist (Apple ties this one to Swift toolchain snapshot tags
-        // instead): pinned to an exact commit on `main` rather than a moving branch, so this
-        // stays fully reproducible.
-        .package(url: "https://github.com/apple/swift-markdown", revision: "27b7fc1a19068bcea3d2072db0ce86360d1400ed"),
+        // Releases follow the Swift toolchain (0.9 shipped with Swift 6.4), cut on a release
+        // branch with a proper semver tag.
+        .package(url: "https://github.com/apple/swift-markdown", from: "0.9.0"),
     ],
     targets: [
         .target(
             name: "FilesFeature",
             dependencies: [
                 "AppStorageKeys",
+                "ClientCertificateFeature",
                 "CoreModels",
                 "FilesClient",
                 "NetworkClient",
@@ -120,13 +121,20 @@ let package = Package(
                 .product(name: "TreeSitterSwift", package: "TreeSitterLanguages", condition: .when(platforms: [.macOS])),
                 .product(name: "TreeSitterSwiftQueries", package: "TreeSitterLanguages", condition: .when(platforms: [.macOS])),
             ],
-            swiftSettings: [.swiftLanguageMode(.v6)]
+            swiftSettings: [.swiftLanguageMode(.v6)],
+            // SwiftUI's VideoPlayer wraps AVKit's player view, but on macOS 27 its overlay no
+            // longer loads AVKit itself and nothing links it automatically: opening a video
+            // crashed unless something else had loaded AVKit first.
+            linkerSettings: [.linkedFramework("AVKit")]
         ),
         .testTarget(
             name: "FilesFeatureTests",
             dependencies: [
                 "FilesFeature",
+                .product(name: "ClientCertificateFeature", package: "ClientCertificateFeature"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
+                .product(name: "Localization", package: "Localization"),
+                .product(name: "NetworkClient", package: "NetworkClient"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
             ],

@@ -24,7 +24,7 @@ struct StreamingPreviewView: View {
     private let onDownload: (() -> Void)?
     private let onDelete: (() -> Void)?
 
-    @State private var player: AVPlayer
+    @State private var playback: StreamingPlayback
     @State private var hasStartedPlaying = false
     @State private var timeControlStatus: AVPlayer.TimeControlStatus = .paused
     @State private var didReportFailure = false
@@ -49,21 +49,12 @@ struct StreamingPreviewView: View {
         self.onRename = onRename
         self.onDownload = onDownload
         self.onDelete = onDelete
-        // A local file needs no cookie. `AVPlayer(url:)` does NOT send cookies from
-        // `HTTPCookieStorage.shared`, so for the remote stream the session cookie the server auths
-        // `GET /api/preview` with never goes out and the stream 401s. Pass the matching cookies.
-        let player: AVPlayer
-        if url.isFileURL {
-            player = AVPlayer(url: url)
-        } else {
-            let cookies = HTTPCookieStorage.shared.cookies(for: url) ?? []
-            let asset = AVURLAsset(url: url, options: [AVURLAssetHTTPCookiesKey: cookies])
-            player = AVPlayer(playerItem: AVPlayerItem(asset: asset))
-        }
-        // Let AVFoundation manage rebuffering so playback resumes automatically after a stall
-        // instead of sitting paused, which is the main "buggy" symptom on a large stream.
-        player.automaticallyWaitsToMinimizeStalling = true
-        _player = State(initialValue: player)
+        // Only describes what to play: the player itself is built once, by the view SwiftUI keeps.
+        _playback = State(initialValue: StreamingPlayback(url: url, fileExtension: (item.name as NSString).pathExtension))
+    }
+
+    private var player: AVPlayer {
+        playback.player
     }
 
     /// The spinner shows while the player is waiting to fill its buffer, and before the first frame
@@ -143,6 +134,7 @@ struct StreamingPreviewView: View {
                 OrientationLock.shared.lock()
             }
             player.pause()
+            playback.tearDown()
             #if os(iOS)
                 Task.detached(priority: .userInitiated) {
                     try? AVAudioSession.sharedInstance().setCategory(.ambient)

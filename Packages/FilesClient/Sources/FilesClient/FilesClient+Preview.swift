@@ -38,6 +38,9 @@ public extension FilesClient {
         createFolder: { _, path, name in
             FileItem(name: name.isEmpty ? "Untitled Folder" : name, path: path, dateModified: Date(), size: 0, kind: "directory")
         },
+        createFile: { _, path, name in
+            FileItem(name: name.isEmpty ? "Untitled.txt" : name, path: path, dateModified: Date(), size: 0, kind: (name as NSString).pathExtension.lowercased())
+        },
         deleteImpact: { _, _ in DeleteImpact(shareCount: 0) },
         deleteItems: { _, _ in },
         transferItems: { _, items, destination, _ in

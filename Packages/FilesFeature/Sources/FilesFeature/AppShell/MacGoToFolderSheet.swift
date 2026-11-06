@@ -1,4 +1,5 @@
 #if os(macOS)
+    import DesignSystem
     import Localization
     import SwiftUI
 

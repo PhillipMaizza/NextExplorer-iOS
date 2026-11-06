@@ -381,7 +381,7 @@ struct BrowseContentView: View {
                 }
             }
             #if os(iOS)
-                if !store.isSelecting, canUploadHere {
+                if !store.isSelecting, canAddHere {
                     if #available(iOS 26.0, *) {
                         ToolbarSpacer(.fixed, placement: .topBarTrailing)
                     }
@@ -533,6 +533,21 @@ struct BrowseContentView: View {
                 isBusy: store.isPerformingFileAction,
                 onConfirm: { store.send(.newFolderConfirmed($0)) },
                 onCancel: { store.send(.newFolderCancelled) }
+            )
+        }
+        .dsSheet(isPresented: newFileSheetBinding) {
+            NameInputSheet(
+                icon: IconKit.newFile,
+                title: L10n.Browse.newFileTitle,
+                placeholder: L10n.Browse.newFilePlaceholder,
+                confirmTitle: L10n.Browse.newFolderConfirm,
+                isBusy: store.isPerformingFileAction,
+                additionalRule: { [extensions = store.newFileServerExtensions] name in
+                    EditableTextFiles.isEditable(name: name, serverExtensions: extensions) ? nil : L10n.Browse.newFileTypeHint
+                },
+                capitalizesWords: false,
+                onConfirm: { store.send(.newFileConfirmed($0)) },
+                onCancel: { store.send(.newFileCancelled) }
             )
         }
         .dsAlert(isPresented: isDeletingBinding) {
@@ -770,13 +785,19 @@ struct BrowseContentView: View {
         private func tableContextMenu(for ids: Set<FileItem.ID>) -> some View {
             let items = store.displayedItems.filter { ids.contains($0.id) }
             if items.isEmpty {
-                if canUploadHere {
-                    if !store.directoryPath.isEmpty {
-                        Button { store.send(.newFolderTapped) } label: {
-                            Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
-                        }
-                        .tint(.primaryDS)
+                if !store.directoryPath.isEmpty, canCreateFolderHere {
+                    Button { store.send(.newFolderTapped) } label: {
+                        Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
                     }
+                    .tint(.primaryDS)
+                }
+                if !store.directoryPath.isEmpty, canCreateFileHere {
+                    Button { store.send(.newFileTapped) } label: {
+                        Label { Text(L10n.Browse.actionNewFile) } icon: { IconKit.newFile }
+                    }
+                    .tint(.primaryDS)
+                }
+                if canUploadHere {
                     Button { isFilesPickerPresented = true } label: {
                         Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.upload }
                     }
@@ -1054,6 +1075,17 @@ struct BrowseContentView: View {
         )
     }
 
+    private var newFileSheetBinding: Binding<Bool> {
+        Binding(
+            get: { store.isNewFileSheetPresented },
+            set: {
+                if !$0 {
+                    store.send(.newFileCancelled)
+                }
+            }
+        )
+    }
+
     private var newFolderSheetBinding: Binding<Bool> {
         Binding(
             get: { store.isNewFolderSheetPresented },
@@ -1280,11 +1312,19 @@ struct BrowseContentView: View {
             label: label,
             leadingActions: {
                 if !store.directoryPath.isEmpty {
-                    Button { store.send(.newFolderTapped) } label: {
-                        Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                    if canCreateFolderHere {
+                        Button { store.send(.newFolderTapped) } label: {
+                            Label { Text(L10n.Browse.actionNewFolder) } icon: { IconKit.folder }
+                        }
+                    }
+                    if canCreateFileHere {
+                        Button { store.send(.newFileTapped) } label: {
+                            Label { Text(L10n.Browse.actionNewFile) } icon: { IconKit.newFile }
+                        }
                     }
                 }
             },
+            includesUploadSources: canUploadHere,
             isFilesPickerPresented: $isFilesPickerPresented,
             isPhotosPickerPresented: $isPhotosPickerPresented,
             isCameraPresented: $isCameraPresented,
@@ -1486,6 +1526,19 @@ struct BrowseContentView: View {
     /// allowed while access is still loading: the first browse response fills it in.
     private var canUploadHere: Bool {
         store.access?.canUpload ?? true
+    }
+
+    private var canCreateFileHere: Bool {
+        store.access?.canCreateFile ?? true
+    }
+
+    private var canCreateFolderHere: Bool {
+        store.access?.canCreateFolder ?? true
+    }
+
+    /// The `+` appears when anything can be added here: an upload, a new folder or a new file.
+    private var canAddHere: Bool {
+        canUploadHere || (!store.directoryPath.isEmpty && (canCreateFileHere || canCreateFolderHere))
     }
 
     /// The empty folder's call to action: the same camera / Photos / Files menu as the `+`,

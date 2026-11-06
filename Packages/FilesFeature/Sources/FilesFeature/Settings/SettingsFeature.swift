@@ -1,8 +1,10 @@
+import ClientCertificateFeature
 import ComposableArchitecture
 import CoreModels
 import FilesClient
 import Foundation
 import Localization
+import NetworkClient
 
 /// Account info, the two `user_settings` preferences that affect anything this app has
 /// built (`showHiddenFiles`, `showThumbnails`, see `UserPreferences`), and sign out.
@@ -29,6 +31,9 @@ public struct SettingsFeature {
         @Presents public var offlineSelection: OfflineSelectionFeature.State?
         @Presents public var offlineManage: OfflineManageFeature.State?
         @Presents public var tipJar: TipJarFeature.State?
+        @Presents public var clientCertificate: ClientCertificateFeature.State?
+        /// The client certificate presented to this account's server, shown on its Settings row.
+        public var clientCertificateStatus: ClientCertificateFeature.Status = .loading
         /// One shot signal: set when a tip completes so the view can raise the thank you toast,
         /// cleared by `tipToastShown`.
         public var tipToast: String?
@@ -125,6 +130,9 @@ public struct SettingsFeature {
         case offlineSizeResponse(Int64)
         case tipJarButtonTapped
         case tipJar(PresentationAction<TipJarFeature.Action>)
+        case clientCertificateButtonTapped
+        case clientCertificateStatusLoaded(ClientCertificateSummary?)
+        case clientCertificate(PresentationAction<ClientCertificateFeature.Action>)
         case tipToastShown
         case brandingResponse(Result<Branding, FilesClientError>)
         case serverFeaturesResponse(ServerFeatures)
@@ -181,6 +189,7 @@ public struct SettingsFeature {
     @Dependency(\.directoryCacheStore) var directoryCacheStore
     @Dependency(\.jsonCacheStore) var jsonCacheStore
     @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize }
 
@@ -308,6 +317,26 @@ public struct SettingsFeature {
         case .tipJar:
             return .none
 
+        case .clientCertificateButtonTapped:
+            guard let origin = ClientCertificateOrigin(url: state.serverURL) else { return .none }
+            state.clientCertificate = ClientCertificateFeature.State(origin: origin, status: state.clientCertificateStatus)
+            return .none
+
+        case let .clientCertificateStatusLoaded(summary):
+            state.clientCertificateStatus = summary.map(ClientCertificateFeature.Status.installed) ?? .empty
+            return .none
+
+        case let .clientCertificate(.presented(.delegate(.installed(summary)))):
+            state.clientCertificateStatus = .installed(summary)
+            return .none
+
+        case .clientCertificate(.presented(.delegate(.removed))):
+            state.clientCertificateStatus = .empty
+            return .none
+
+        case .clientCertificate:
+            return .none
+
         case .tipToastShown:
             state.tipToast = nil
             return .none
@@ -373,8 +402,14 @@ public struct SettingsFeature {
             let checkOfflineSize = Effect<Action>.run { send in
                 await send(.offlineSizeResponse(offlineFileStore.totalSizeBytes()))
             }
+            let clientCertificateClient = clientCertificateClient
+            let certificateOrigin = ClientCertificateOrigin(url: state.serverURL)
+            let checkClientCertificate = Effect<Action>.run { send in
+                guard let certificateOrigin else { return }
+                await send(.clientCertificateStatusLoaded(clientCertificateClient.summary(certificateOrigin)))
+            }
             guard !state.isLoadingPreferences else {
-                return .merge(checkDownloads, checkCacheSize, checkOfflineSize)
+                return .merge(checkDownloads, checkCacheSize, checkOfflineSize, checkClientCertificate)
             }
             state.isLoadingPreferences = true
             let serverURL = state.serverURL
@@ -383,6 +418,7 @@ public struct SettingsFeature {
                 checkDownloads,
                 checkCacheSize,
                 checkOfflineSize,
+                checkClientCertificate,
                 .run { send in
                     try await send(.brandingResponse(apiResult { try await filesClient.fetchBranding(serverURL) }))
                 },
@@ -548,6 +584,9 @@ public struct SettingsFeature {
             }
             .ifLet(\.$offlineManage, action: \.offlineManage) {
                 OfflineManageFeature()
+            }
+            .ifLet(\.$clientCertificate, action: \.clientCertificate) {
+                ClientCertificateFeature()
             }
             .ifLet(\.$tipJar, action: \.tipJar) {
                 TipJarFeature()

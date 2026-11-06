@@ -1,6 +1,7 @@
 import CoreModels
 import DesignSystem
 import Localization
+import NetworkClient
 import SwiftUI
 import VLCKitSPM
 #if os(iOS)
@@ -46,6 +47,9 @@ struct VLCPlayerView: View {
     #endif
     @State private var controlsVisible = true
     @State private var autoHideTask: Task<Void, Never>?
+    /// libvlc runs its own HTTP stack, which can't present a TLS client certificate, so a server
+    /// behind mTLS would just drop the stream. Say so up front instead of a generic failure.
+    @State private var isBlockedByClientCertificate = false
 
     init(
         item: FileItem,
@@ -83,14 +87,20 @@ struct VLCPlayerView: View {
                     .onTapGesture { toggleControls() }
                     .ignoresSafeArea()
 
-                if controller.hasError {
+                if controller.hasError || isBlockedByClientCertificate {
                     VStack(spacing: .space12) {
                         IconKit.warning
                             .font(.system(size: .size44, weight: .regular))
                             .foregroundStyle(.white)
-                        Text(L10n.Archive.openFailed)
+                        Text(isBlockedByClientCertificate ? L10n.Media.clientCertificateUnsupported : L10n.Archive.openFailed)
                             .type(.body2(.regular))
                             .foregroundStyle(.white)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, .space24)
+                        if isBlockedByClientCertificate, let onDownload {
+                            DSButton(L10n.Common.download, icon: IconKit.download, style: .primary, action: onDownload)
+                                .fixedSize()
+                        }
                     }
                 } else {
                     VLCPlaybackControls(controller: controller)
@@ -131,6 +141,9 @@ struct VLCPlayerView: View {
             if item.isVideo {
                 OrientationLock.shared.unlock()
             }
+            // Checked once here, not in init: SwiftUI rebuilds the struct on every parent update.
+            isBlockedByClientCertificate = !url.isFileURL && ClientIdentityStore.shared.hasCertificate(for: url)
+            guard !isBlockedByClientCertificate else { return }
             controller.start(url: url)
             scheduleAutoHide()
         }

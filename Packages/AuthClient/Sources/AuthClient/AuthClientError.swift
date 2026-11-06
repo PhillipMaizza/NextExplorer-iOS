@@ -17,4 +17,8 @@ public enum AuthClientError: Error, Equatable, Sendable {
     /// account lockout (the server converts a 423 lockout into a 429 RateLimitError
     /// before it ever reaches the client; confirmed against `backend/src/routes/auth.js`).
     case rateLimited
+    /// The server's TLS layer wants a client certificate and none is installed for it.
+    case clientCertificateRequired
+    /// The installed client certificate was refused by the server.
+    case clientCertificateRejected
 }

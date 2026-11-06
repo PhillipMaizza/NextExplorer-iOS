@@ -6,6 +6,7 @@ import CoreModels
 import FilesClient
 import FilesFeature
 import Foundation
+import NetworkClient
 import SwiftUI
 
 @Reducer
@@ -88,6 +89,8 @@ public struct AppFeature {
     @Dependency(\.previewCacheStore) var previewCacheStore
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.sessionScratchStore) var sessionScratchStore
+    @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     public init() {}
 
@@ -198,7 +201,9 @@ public struct AppFeature {
                     return .send(.activateAccount(next))
                 }
                 // Last account gone: full teardown to the login screen.
-                return teardownToLogin(&state)
+                // The session ran out; nobody chose to leave, so the client certificate the user
+                // installed stays and the login screen can still reach the server.
+                return teardownToLogin(&state, removesClientCertificates: false)
 
             case let .activateAccount(credentials):
                 state.$fileClipboard.withLock { $0 = nil }
@@ -254,12 +259,17 @@ public struct AppFeature {
                 )
                 let previewCacheStore = previewCacheStore
                 let offlineFileStore = offlineFileStore
+                let sessionScratchStore = sessionScratchStore
                 return .merge(
                     refreshAccounts,
                     .run { _ in
                         try? previewCacheStore.clear()
                         offlineFileStore.removeAll()
-                    }
+                        sessionScratchStore.purge(.keepingActiveTransfers)
+                    },
+                    // A session that ran out kept its certificate for the login screen; once
+                    // someone signs in, only the servers with an account keep theirs.
+                    pruneClientCertificates(keeping: serverURL)
                 )
 
             case .destination(.authenticated(.delegate(.addAccountRequested))):
@@ -269,16 +279,19 @@ public struct AppFeature {
             case let .destination(.authenticated(.delegate(.activeAccountChanged(credentials)))):
                 guard let credentials else {
                     // The last account was signed out.
-                    return teardownToLogin(&state)
+                    return teardownToLogin(&state, removesClientCertificates: true)
                 }
                 // Removing a non-active account leaves the active one unchanged: just refresh the
                 // switcher list, keep the UI where it is.
+                // While Add Account is open its certificate has no stored session yet, so pruning
+                // waits for the sheet (`addAccountSheetDismissed`).
+                let prune = state.addAccount == nil ? pruneClientCertificates() : .none
                 if credentials.accountID == state.currentAccountID {
-                    return refreshAccounts
+                    return .merge(refreshAccounts, prune)
                 }
                 // Switched accounts (or signed the active one out and fell through to the next):
                 // mount the new account without clearing caches, so both accounts' caches survive.
-                return .send(.activateAccount(credentials))
+                return .merge(.send(.activateAccount(credentials)), prune)
 
             case .destination:
                 return .none
@@ -320,7 +333,7 @@ public struct AppFeature {
                         AuthenticatedFeature.State(serverURL: serverURL, user: user)
                     )
                 }
-                return refreshAccounts
+                return .merge(refreshAccounts, pruneClientCertificates(keeping: serverURL))
 
             case .addAccount:
                 return .none
@@ -328,6 +341,23 @@ public struct AppFeature {
         }
         .ifLet(\.$addAccount, action: \.addAccount) {
             LoginFormFeature()
+        }
+    }
+
+    /// Removes the client certificates of servers no remaining account is signed in to, so an
+    /// account that leaves the device takes its mTLS identity with it.
+    /// `serverURL` is the server just signed in to, kept even before its session shows up in
+    /// the stored list.
+    private func pruneClientCertificates(keeping serverURL: URL? = nil) -> Effect<Action> {
+        let authClient = authClient
+        let clientCertificateClient = clientCertificateClient
+        return .run { _ in
+            let sessions = await authClient.listSessions()
+            var keep = Set(sessions.compactMap { ClientCertificateOrigin(url: $0.serverBaseURL) })
+            if let serverURL, let origin = ClientCertificateOrigin(url: serverURL) {
+                keep.insert(origin)
+            }
+            await clientCertificateClient.removeAll(keep)
         }
     }
 
@@ -354,7 +384,7 @@ public struct AppFeature {
 
     /// Full teardown to the login screen: no account left signed in. Clears every cache and
     /// per-session state so nothing leaks into the next sign in.
-    private func teardownToLogin(_ state: inout State) -> Effect<Action> {
+    private func teardownToLogin(_ state: inout State, removesClientCertificates: Bool) -> Effect<Action> {
         state.$fileClipboard.withLock { $0 = nil }
         state.$fileUndoStack.withLock { $0 = [] }
         state.$downloadScope.withLock { $0 = "" }
@@ -371,6 +401,8 @@ public struct AppFeature {
         let previewCacheStore = previewCacheStore
         let thumbnailCache = thumbnailCache
         let offlineFileStore = offlineFileStore
+        let sessionScratchStore = sessionScratchStore
+        let clientCertificateClient = clientCertificateClient
         AppStorageKeys.resetSessionPreferences()
         return .merge(
             refreshAccounts,
@@ -381,6 +413,10 @@ public struct AppFeature {
                 try? previewCacheStore.clear()
                 thumbnailCache.clearMemory()
                 offlineFileStore.removeAll()
+                sessionScratchStore.purge(.everything)
+                if removesClientCertificates {
+                    await clientCertificateClient.removeAll([])
+                }
             }
         )
     }

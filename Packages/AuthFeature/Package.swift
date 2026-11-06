@@ -10,6 +10,8 @@ let package = Package(
     dependencies: [
         .package(path: "../CoreModels"),
         .package(path: "../AuthClient"),
+        .package(path: "../ClientCertificateFeature"),
+        .package(path: "../NetworkClient"),
         .package(path: "../DesignSystem"),
         .package(path: "../Localization"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
@@ -20,7 +22,9 @@ let package = Package(
             dependencies: [
                 "CoreModels",
                 "AuthClient",
+                "ClientCertificateFeature",
                 "DesignSystem",
+                "NetworkClient",
                 "Localization",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
@@ -30,6 +34,8 @@ let package = Package(
             name: "AuthFeatureTests",
             dependencies: [
                 "AuthFeature",
+                "ClientCertificateFeature",
+                "NetworkClient",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]

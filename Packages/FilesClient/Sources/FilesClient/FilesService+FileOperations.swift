@@ -28,6 +28,15 @@ extension FilesService {
         return envelope.item
     }
 
+    func createFile(serverURL: URL, path: String, name: String) async throws -> FileItem {
+        let url = serverURL.appendingPathComponent(APIPath.filesFile)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
+        request.httpBody = try Self.encode(CreateFolderBody(path: path, name: name))
+        let envelope = try await sendReportingMessage(request, decoding: CreateFolderEnvelope.self)
+        return envelope.item
+    }
+
     /// `POST /api/editor` / `PUT /api/editor`, confirmed against `backend/src/routes/editor.js`:
     /// the real text view/edit path for anything `GET /api/preview` won't serve (415s on
     /// everything outside images/RAW/video/audio/pdf): plain text, markdown, code, config
