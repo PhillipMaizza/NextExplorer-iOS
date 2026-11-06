@@ -266,7 +266,10 @@ public struct AppFeature {
                         try? previewCacheStore.clear()
                         offlineFileStore.removeAll()
                         sessionScratchStore.purge(.keepingActiveTransfers)
-                    }
+                    },
+                    // A session that ran out kept its certificate for the login screen; once
+                    // someone signs in, only the servers with an account keep theirs.
+                    pruneClientCertificates(keeping: serverURL)
                 )
 
             case .destination(.authenticated(.delegate(.addAccountRequested))):
@@ -280,12 +283,15 @@ public struct AppFeature {
                 }
                 // Removing a non-active account leaves the active one unchanged: just refresh the
                 // switcher list, keep the UI where it is.
+                // While Add Account is open its certificate has no stored session yet, so pruning
+                // waits for the sheet (`addAccountSheetDismissed`).
+                let prune = state.addAccount == nil ? pruneClientCertificates() : .none
                 if credentials.accountID == state.currentAccountID {
-                    return .merge(refreshAccounts, pruneClientCertificates)
+                    return .merge(refreshAccounts, prune)
                 }
                 // Switched accounts (or signed the active one out and fell through to the next):
                 // mount the new account without clearing caches, so both accounts' caches survive.
-                return .merge(.send(.activateAccount(credentials)), pruneClientCertificates)
+                return .merge(.send(.activateAccount(credentials)), prune)
 
             case .destination:
                 return .none
@@ -327,7 +333,7 @@ public struct AppFeature {
                         AuthenticatedFeature.State(serverURL: serverURL, user: user)
                     )
                 }
-                return refreshAccounts
+                return .merge(refreshAccounts, pruneClientCertificates(keeping: serverURL))
 
             case .addAccount:
                 return .none
@@ -340,12 +346,17 @@ public struct AppFeature {
 
     /// Removes the client certificates of servers no remaining account is signed in to, so an
     /// account that leaves the device takes its mTLS identity with it.
-    private var pruneClientCertificates: Effect<Action> {
+    /// `serverURL` is the server just signed in to, kept even before its session shows up in
+    /// the stored list.
+    private func pruneClientCertificates(keeping serverURL: URL? = nil) -> Effect<Action> {
         let authClient = authClient
         let clientCertificateClient = clientCertificateClient
         return .run { _ in
             let sessions = await authClient.listSessions()
-            let keep = Set(sessions.compactMap { ClientCertificateOrigin(url: $0.serverBaseURL) })
+            var keep = Set(sessions.compactMap { ClientCertificateOrigin(url: $0.serverBaseURL) })
+            if let serverURL, let origin = ClientCertificateOrigin(url: serverURL) {
+                keep.insert(origin)
+            }
             await clientCertificateClient.removeAll(keep)
         }
     }

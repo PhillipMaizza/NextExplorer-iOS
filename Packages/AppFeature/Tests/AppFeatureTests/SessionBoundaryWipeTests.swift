@@ -1,5 +1,6 @@
 @testable import AppFeature
 import AuthClient
+import AuthFeature
 import ComposableArchitecture
 import CoreModels
 import FilesClient
@@ -155,5 +156,54 @@ struct SessionBoundaryWipeTests {
         await store.finish()
 
         #expect(kept.value == [ClientCertificateOrigin(host: "other.example.com", port: 8443)])
+    }
+
+    @Test("A fresh sign in keeps only the certificates of servers with an account")
+    func freshSignInPrunesLeftoverCertificates() async {
+        let kept = LockIsolated<Set<ClientCertificateOrigin>?>(nil)
+        let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
+            AppFeature()
+        } withDependencies: {
+            recordWipes(WipeLog(), into: &$0)
+            $0.clientCertificateClient.removeAll = { kept.setValue($0) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.destination(.unauthenticated(.delegate(.authenticated(user, serverURL)))))
+        await store.finish()
+
+        #expect(kept.value == [ClientCertificateOrigin(host: "files.example.com", port: 443)])
+    }
+
+    @Test("Certificates are not pruned while Add Account is open, so its new certificate survives")
+    func noPruneWhileAddingAccount() async {
+        let other = SessionCredentials(
+            serverBaseURL: URL(string: "https://other.example.com")!,
+            authMode: .local,
+            cookieName: "connect.sid",
+            cookieValue: "abc",
+            cookieDomain: "other.example.com",
+            cookiePath: "/",
+            cookieIsSecure: true,
+            expiresAt: nil,
+            username: "phillip"
+        )
+        let pruned = LockIsolated(false)
+        var state = AppFeature.State(destination: .authenticated(.init(serverURL: serverURL, user: user)))
+        state.addAccount = LoginFormFeature.State()
+        let store = TestStore(initialState: state) {
+            AppFeature()
+        } withDependencies: {
+            $0.authClient.listSessions = { [] }
+            $0.authClient.activeAccountID = { other.accountID }
+            $0.authClient.me = { [user] _ in user }
+            $0.clientCertificateClient.removeAll = { _ in pruned.setValue(true) }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(other)))))
+        await store.finish()
+
+        #expect(!pruned.value)
     }
 }

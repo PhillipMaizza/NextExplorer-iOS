@@ -40,6 +40,7 @@ let package = Package(
             name: "AppFeatureTests",
             dependencies: [
                 "AppFeature",
+                .product(name: "AuthFeature", package: "AuthFeature"),
                 .product(name: "FilesClient", package: "FilesClient"),
                 .product(name: "FilesFeature", package: "FilesFeature"),
                 .product(name: "NetworkClient", package: "NetworkClient"),
