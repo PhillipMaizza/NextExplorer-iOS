@@ -14,6 +14,8 @@ extension FilesService {
         let item: FileItem
     }
 
+    /// The body of both `POST /api/files/folder` and `POST /api/files/file`: the parent folder
+    /// and the new item's name.
     struct CreateFolderBody: Encodable {
         let path: String
         let name: String

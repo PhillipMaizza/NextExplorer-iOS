@@ -267,6 +267,10 @@ public struct BrowseFeature {
         /// Whether the "New folder" name sheet is open. Like rename, the draft text lives in
         /// `BrowseContentView`'s own `@State`; `newFolderConfirmed` carries the final name.
         public var isNewFolderSheetPresented = false
+        public var isNewFileSheetPresented = false
+        /// Extra file types this server's text editor opens (`EDITOR_EXTENSIONS`), loaded when the
+        /// New File sheet opens; the defaults apply until then or when the server can't be asked.
+        public var newFileServerExtensions: [String] = []
         /// Item awaiting a destructive confirmation before `deleteConfirmed` actually deletes it.
         public var deleteConfirmationItem: FileItem?
         /// Share-link fallout of the pending delete, single or bulk: only one confirmation is
@@ -435,6 +439,11 @@ public struct BrowseFeature {
         case newFolderCancelled
         case newFolderConfirmed(String)
         case newFolderResponse(Result<FileItem, FilesClientError>)
+        case newFileTapped
+        case newFileCancelled
+        case newFileConfirmed(String)
+        case newFileExtensionsLoaded([String])
+        case newFileResponse(Result<FileItem, FilesClientError>)
         case deleteCancelled
         case deleteConfirmed
         /// Confirm came from a full-screen preview: dismiss the cover, then delete after a
@@ -554,7 +563,7 @@ public struct BrowseFeature {
     // can reference these cancel ids across files.
     enum CancelID: Hashable {
         case search, transfer, googleDocsPointer, deleteImpact, load, preview, info, previewDeferredAction
-        case prefetchChildren, prefetchFavorites, offlineAvailability, arrivalRecheck
+        case prefetchChildren, prefetchFavorites, offlineAvailability, arrivalRecheck, newFileExtensions
         /// Per path, so spamming one item's star collapses to a single in flight toggle
         /// (the latest tap wins) while other items toggle independently.
         case favorite(String)
@@ -838,6 +847,9 @@ public struct BrowseFeature {
                 return .none
 
             case .newFolderTapped:
+                // The menu hides it where the folder refuses new folders; a keyboard shortcut
+                // must not get past that either.
+                guard state.access?.canCreateFolder ?? true else { return .none }
                 state.isNewFolderSheetPresented = true
                 return .none
 
@@ -860,6 +872,44 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 // Keep the sheet open (mirrors rename) so a server rejection (a name taken, a
                 // permission) leaves the typed name in place for the user to correct and retry.
+                state.fileActionErrorMessage = error.userMessage
+                return .none
+
+            case .newFileTapped:
+                guard state.access?.canCreateFile ?? true else { return .none }
+                state.isNewFileSheetPresented = true
+                let serverURL = state.serverURL
+                let filesClient = filesClient
+                return .run { send in
+                    if let extensions = try? await filesClient.serverFeatures(serverURL).editorExtensions, !extensions.isEmpty {
+                        await send(.newFileExtensionsLoaded(extensions))
+                    }
+                }
+                .cancellable(id: CancelID.newFileExtensions, cancelInFlight: true)
+
+            case .newFileCancelled:
+                state.isNewFileSheetPresented = false
+                return .cancel(id: CancelID.newFileExtensions)
+
+            case let .newFileExtensionsLoaded(extensions):
+                state.newFileServerExtensions = extensions
+                return .none
+
+            case let .newFileConfirmed(name):
+                return confirmNewFile(&state, name: name)
+
+            case let .newFileResponse(.success(file)):
+                state.isPerformingFileAction = false
+                state.isNewFileSheetPresented = false
+                state.items.append(file)
+                state.$undoStack.withLock { $0.record(FileUndoEntry(.created([file]))) }
+                syncListingCache(state)
+                // Straight into the editor: an empty file is only ever made to be written in.
+                return .send(.rowTapped(file))
+
+            case let .newFileResponse(.failure(error)):
+                state.isPerformingFileAction = false
+                // The sheet stays open with the typed name, as for a new folder.
                 state.fileActionErrorMessage = error.userMessage
                 return .none
 

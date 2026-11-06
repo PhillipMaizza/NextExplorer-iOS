@@ -109,6 +109,10 @@
             send(.newFolderInVisibleFolder)
         }
 
+        public func newFile() {
+            send(.newFileInVisibleFolder)
+        }
+
         public func goToFolder() {
             showGoToFolder()
         }

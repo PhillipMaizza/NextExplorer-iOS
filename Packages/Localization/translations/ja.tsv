@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	シングルサインオンは Safari で開く�
 settings.clientCertificateExpired	期限切れ
 settings.clientCertificateExpiresSoon	まもなく期限切れ
 clientCertificate.expiringSoonWarning	この証明書は %@ に期限切れになります。それまでに新しい証明書を依頼してください。
+browse.actionNewFile	ファイルを作成
+browse.newFileTitle	新規ファイル
+browse.newFileTypeHint	.txt、.md、.js など、エディタで開けるファイル形式を使用してください。
+browse.newFilePlaceholder	notes.txt

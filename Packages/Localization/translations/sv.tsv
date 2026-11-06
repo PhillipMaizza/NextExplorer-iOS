@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	Enkel inloggning öppnas i Safari, som inte kan a
 settings.clientCertificateExpired	Har gått ut
 settings.clientCertificateExpiresSoon	Går snart ut
 clientCertificate.expiringSoonWarning	Certifikatet går ut %@. Be om ett nytt innan dess.
+browse.actionNewFile	Skapa fil
+browse.newFileTitle	Ny fil
+browse.newFileTypeHint	Använd en filtyp som redigeraren kan öppna, till exempel .txt, .md eller .js.
+browse.newFilePlaceholder	notes.txt

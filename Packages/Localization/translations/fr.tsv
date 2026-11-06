@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	L’authentification unique s’ouvre dans Safari
 settings.clientCertificateExpired	Expiré
 settings.clientCertificateExpiresSoon	Expire bientôt
 clientCertificate.expiringSoonWarning	Ce certificat expire le %@. Demandez-en un nouveau avant cette date.
+browse.actionNewFile	Créer un fichier
+browse.newFileTitle	Nouveau fichier
+browse.newFileTypeHint	Utilisez un type de fichier que l’éditeur peut ouvrir, comme .txt, .md ou .js.
+browse.newFilePlaceholder	notes.txt

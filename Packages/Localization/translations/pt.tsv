@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	O início de sessão único abre no Safari, que n
 settings.clientCertificateExpired	Expirado
 settings.clientCertificateExpiresSoon	Expira em breve
 clientCertificate.expiringSoonWarning	Este certificado expira a %@. Peça um novo antes dessa data.
+browse.actionNewFile	Criar ficheiro
+browse.newFileTitle	Novo ficheiro
+browse.newFileTypeHint	Use um tipo de ficheiro que o editor consiga abrir, como .txt, .md ou .js.
+browse.newFilePlaceholder	notes.txt

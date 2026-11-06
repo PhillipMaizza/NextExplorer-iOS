@@ -103,6 +103,10 @@ browse.actionNewFolder	Create Folder
 browse.newFolderTitle	New Folder
 browse.newFolderPlaceholder	Folder name
 browse.newFolderConfirm	Create
+browse.actionNewFile	Create File
+browse.newFileTitle	New File
+browse.newFilePlaceholder	notes.txt
+browse.newFileTypeHint	Use a file type the editor can open, such as .txt, .md or .js.
 browse.deleteConfirmTitle	Delete?
 browse.deleteConfirmOne	Delete “%@”?
 browse.deleteConfirmMany	Delete %lld items?

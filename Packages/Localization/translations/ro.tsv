@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	Autentificarea unică se deschide în Safari, car
 settings.clientCertificateExpired	Expirat
 settings.clientCertificateExpiresSoon	Expiră curând
 clientCertificate.expiringSoonWarning	Acest certificat expiră pe %@. Cere unul nou înainte de această dată.
+browse.actionNewFile	Creează fișier
+browse.newFileTitle	Fișier nou
+browse.newFileTypeHint	Folosește un tip de fișier pe care editorul îl poate deschide, cum ar fi .txt, .md sau .js.
+browse.newFilePlaceholder	notes.txt

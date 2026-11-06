@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	Единый вход открывается в S
 settings.clientCertificateExpired	Истёк
 settings.clientCertificateExpiresSoon	Скоро истечёт
 clientCertificate.expiringSoonWarning	Срок действия этого сертификата истекает %@. Запросите новый заранее.
+browse.actionNewFile	Создать файл
+browse.newFileTitle	Новый файл
+browse.newFileTypeHint	Используйте тип файла, который открывает редактор, например .txt, .md или .js.
+browse.newFilePlaceholder	notes.txt

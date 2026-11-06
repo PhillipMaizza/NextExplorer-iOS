@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	Logowanie jednokrotne otwiera się w Safari, któ
 settings.clientCertificateExpired	Wygasł
 settings.clientCertificateExpiresSoon	Wkrótce wygaśnie
 clientCertificate.expiringSoonWarning	Ten certyfikat wygasa %@. Poproś o nowy przed tym terminem.
+browse.actionNewFile	Utwórz plik
+browse.newFileTitle	Nowy plik
+browse.newFileTypeHint	Użyj typu pliku, który edytor potrafi otworzyć, np. .txt, .md lub .js.
+browse.newFilePlaceholder	notes.txt

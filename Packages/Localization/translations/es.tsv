@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	El inicio de sesión único se abre en Safari, qu
 settings.clientCertificateExpired	Caducado
 settings.clientCertificateExpiresSoon	Caduca pronto
 clientCertificate.expiringSoonWarning	Este certificado caduca el %@. Pide uno nuevo antes de esa fecha.
+browse.actionNewFile	Crear archivo
+browse.newFileTitle	Nuevo archivo
+browse.newFileTypeHint	Usa un tipo de archivo que el editor pueda abrir, como .txt, .md o .js.
+browse.newFilePlaceholder	notes.txt

@@ -80,6 +80,7 @@ public struct MainTabFeature {
         /// in the visible Browse folder (only while Browse is the selected tab).
         case refreshSelectedTab
         case newFolderRequested
+        case newFileRequested
         /// Mac Go menu: Back (⌘[), Enclosing Folder (⌘↑), Forward (⌘]) and Go to Folder (⇧⌘G).
         case backRequested
         case enclosingFolderRequested
@@ -201,6 +202,10 @@ public struct MainTabFeature {
                 case .newFolderRequested:
                     guard state.selectedTab == .browse else { return .none }
                     return .send(.browse(.newFolderInVisibleFolder))
+
+                case .newFileRequested:
+                    guard state.selectedTab == .browse else { return .none }
+                    return .send(.browse(.newFileInVisibleFolder))
 
                 case .backRequested:
                     switch state.selectedTab {

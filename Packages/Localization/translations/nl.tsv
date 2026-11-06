@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	Eenmalige aanmelding opent in Safari, dat het cli
 settings.clientCertificateExpired	Verlopen
 settings.clientCertificateExpiresSoon	Verloopt binnenkort
 clientCertificate.expiringSoonWarning	Dit certificaat verloopt op %@. Vraag vóór die datum een nieuw aan.
+browse.actionNewFile	Bestand maken
+browse.newFileTitle	Nieuw bestand
+browse.newFileTypeHint	Gebruik een bestandstype dat de editor kan openen, zoals .txt, .md of .js.
+browse.newFilePlaceholder	notes.txt

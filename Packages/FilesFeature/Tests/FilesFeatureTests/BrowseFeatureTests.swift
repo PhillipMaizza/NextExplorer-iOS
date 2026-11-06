@@ -1446,6 +1446,105 @@ struct BrowseFeatureTests {
         }
     }
 
+    @Test
+    func newFileTappedPresentsTheSheetAndLoadsTheServersExtraFileTypes() async {
+        let serverURL = URL(string: "https://example.com")!
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.serverFeatures = { _ in ServerFeatures(editorExtensions: ["sql"]) }
+        }
+
+        await store.send(.newFileTapped) {
+            $0.isNewFileSheetPresented = true
+        }
+        await store.receive(\.newFileExtensionsLoaded) {
+            $0.newFileServerExtensions = ["sql"]
+        }
+        await store.send(.newFileCancelled) {
+            $0.isNewFileSheetPresented = false
+        }
+    }
+
+    @Test
+    func newFileAndNewFolderDoNothingWhereTheFolderRefusesThem() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Shared/Drop", title: "Drop")
+        // An upload only share: uploads allowed, new files and folders refused.
+        state.access = FileAccess(
+            canRead: true, canWrite: false, canUpload: true, canDelete: false, canShare: false, canDownload: false,
+            canCreateFolder: false, canCreateFile: false
+        )
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.newFileTapped)
+        await store.send(.newFolderTapped)
+    }
+
+    @Test
+    func newFileConfirmedCreatesTheFileAndOpensIt() async {
+        let serverURL = URL(string: "https://example.com")!
+        let created = FileItem(name: "notes.txt", path: "Docs", dateModified: Date(), size: 0, kind: "txt")
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.isNewFileSheetPresented = true
+        let requested = LockIsolated<(String, String)?>(nil)
+
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.createFile = { _, path, name in
+                requested.setValue((path, name))
+                return created
+            }
+            $0.filesClient.fetchTextContent = { _, _ in "" }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.newFileConfirmed("  notes.txt  ")) {
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.newFileResponse.success) {
+            $0.isPerformingFileAction = false
+            $0.isNewFileSheetPresented = false
+            $0.items = [created]
+        }
+        await store.receive(\.rowTapped)
+        #expect(store.state.previewItem == created)
+        #expect(requested.value?.0 == "Docs")
+        #expect(requested.value?.1 == "notes.txt")
+    }
+
+    @Test
+    func newFileConfirmedRefusesAFileTheEditorCannotOpen() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.isNewFileSheetPresented = true
+        let store = TestStore(initialState: state) { BrowseFeature() }
+
+        await store.send(.newFileConfirmed("photo.jpg"))
+        await store.send(.newFileConfirmed("Makefile"))
+    }
+
+    @Test
+    func newFileFailureKeepsTheSheetOpenWithAReadableError() async {
+        let serverURL = URL(string: "https://example.com")!
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
+        state.isNewFileSheetPresented = true
+        let store = TestStore(initialState: state) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.filesClient.createFile = { _, _, _ in throw FilesClientError.forbidden(message: nil) }
+        }
+
+        await store.send(.newFileConfirmed("notes.md")) {
+            $0.isPerformingFileAction = true
+        }
+        await store.receive(\.newFileResponse.failure) {
+            $0.isPerformingFileAction = false
+            $0.fileActionErrorMessage = FilesClientError.forbidden(message: nil).userMessage
+        }
+    }
+
     // MARK: File actions; delete
 
     @Test

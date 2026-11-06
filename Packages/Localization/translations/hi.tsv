@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	सिंगल साइन-ऑन Safari मे
 settings.clientCertificateExpired	समाप्त
 settings.clientCertificateExpiresSoon	जल्द समाप्त होगा
 clientCertificate.expiringSoonWarning	यह सर्टिफ़िकेट %@ को समाप्त होगा। उससे पहले नया माँग लें।
+browse.actionNewFile	फ़ाइल बनाएँ
+browse.newFileTitle	नई फ़ाइल
+browse.newFileTypeHint	ऐसा फ़ाइल प्रकार इस्तेमाल करें जिसे एडिटर खोल सके, जैसे .txt, .md या .js।
+browse.newFilePlaceholder	notes.txt

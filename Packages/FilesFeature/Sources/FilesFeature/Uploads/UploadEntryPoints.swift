@@ -103,6 +103,9 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     /// Extra items above the upload sources: the browse `+` slots "Create Folder" here; the
     /// review sheet's "Add more" leaves it empty.
     private let leadingActions: () -> LeadingActions
+    /// `false` in a folder that allows creating files or folders but not uploading: the menu
+    /// then offers only the leading actions.
+    private let includesUploadSources: Bool
     @Binding private var isFilesPickerPresented: Bool
     @Binding private var isPhotosPickerPresented: Bool
     @Binding private var isCameraPresented: Bool
@@ -111,6 +114,7 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     init(
         @ViewBuilder label: @escaping () -> MenuLabel,
         @ViewBuilder leadingActions: @escaping () -> LeadingActions,
+        includesUploadSources: Bool = true,
         isFilesPickerPresented: Binding<Bool>,
         isPhotosPickerPresented: Binding<Bool>,
         isCameraPresented: Binding<Bool>,
@@ -118,6 +122,7 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
     ) {
         self.label = label
         self.leadingActions = leadingActions
+        self.includesUploadSources = includesUploadSources
         _isFilesPickerPresented = isFilesPickerPresented
         _isPhotosPickerPresented = isPhotosPickerPresented
         _isCameraPresented = isCameraPresented
@@ -142,35 +147,42 @@ struct UploadSourceMenu<MenuLabel: View, LeadingActions: View>: View {
         // button, where the menu opens upward and the default order would flip.
         Menu {
             leadingActions()
-            #if os(iOS)
-                if UIImagePickerController.isSourceTypeAvailable(.camera) {
-                    Button {
-                        Task {
-                            if await CameraAccess.resolve() {
-                                isCameraPresented = true
-                            } else {
-                                isCameraDeniedAlertPresented = true
-                            }
-                        }
-                    } label: {
-                        Label { Text(L10n.Uploads.actionTakePhoto) } icon: { IconKit.camera }
-                    }
-                }
-            #endif
-            Button {
-                isPhotosPickerPresented = true
-            } label: {
-                Label { Text(L10n.Uploads.actionUploadFromPhotos) } icon: { IconKit.photo }
-            }
-            Button {
-                isFilesPickerPresented = true
-            } label: {
-                Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.folder }
+            if includesUploadSources {
+                uploadSources
             }
         } label: {
             label()
         }
         .menuOrder(.fixed)
+    }
+
+    @ViewBuilder
+    private var uploadSources: some View {
+        #if os(iOS)
+            if UIImagePickerController.isSourceTypeAvailable(.camera) {
+                Button {
+                    Task {
+                        if await CameraAccess.resolve() {
+                            isCameraPresented = true
+                        } else {
+                            isCameraDeniedAlertPresented = true
+                        }
+                    }
+                } label: {
+                    Label { Text(L10n.Uploads.actionTakePhoto) } icon: { IconKit.camera }
+                }
+            }
+        #endif
+        Button {
+            isPhotosPickerPresented = true
+        } label: {
+            Label { Text(L10n.Uploads.actionUploadFromPhotos) } icon: { IconKit.photo }
+        }
+        Button {
+            isFilesPickerPresented = true
+        } label: {
+            Label { Text(L10n.Uploads.actionUploadFromFiles) } icon: { IconKit.folder }
+        }
     }
 }
 

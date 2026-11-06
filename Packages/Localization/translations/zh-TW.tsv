@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	單一登入會在 Safari 中開啟，而 Safari 
 settings.clientCertificateExpired	已過期
 settings.clientCertificateExpiresSoon	即將過期
 clientCertificate.expiringSoonWarning	此憑證將於 %@ 過期。請在此之前申請新的憑證。
+browse.actionNewFile	建立檔案
+browse.newFileTitle	新增檔案
+browse.newFileTypeHint	請使用編輯器可開啟的檔案類型，例如 .txt、.md 或 .js。
+browse.newFilePlaceholder	notes.txt

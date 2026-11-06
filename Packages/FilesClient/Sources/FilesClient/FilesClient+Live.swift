@@ -107,6 +107,9 @@ public extension FilesClient {
             createFolder: { serverURL, path, name in
                 try await service.createFolder(serverURL: serverURL, path: path, name: name)
             },
+            createFile: { serverURL, path, name in
+                try await service.createFile(serverURL: serverURL, path: path, name: name)
+            },
             deleteImpact: { serverURL, items in
                 try await service.deleteImpact(serverURL: serverURL, items: items)
             },

@@ -40,6 +40,7 @@ enum APIPath {
 
     static let filesRename = "api/files/rename"
     static let filesFolder = "api/files/folder"
+    static let filesFile = "api/files/file"
     static let filesDeleteImpact = "api/files/delete-impact"
     static let files = "api/files"
     static let filesCopy = "api/files/copy"

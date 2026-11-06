@@ -58,6 +58,13 @@ public struct FilesClient: Sendable {
     public var createFolder: @Sendable (
         _ serverURL: URL, _ path: String, _ name: String
     ) async throws -> FileItem
+    /// `POST /api/files/file` (`backend/src/routes/files/file.js`): creates an empty file named
+    /// `name` (any extension) in `path`, which must not be the root. The server opens it
+    /// exclusively, so it never overwrites: a taken name comes back as "name 2.ext". Needs the
+    /// folder's create file permission. Returns the created file.
+    public var createFile: @Sendable (
+        _ serverURL: URL, _ path: String, _ name: String
+    ) async throws -> FileItem
     /// `POST /api/files/delete-impact`: how many share links deleting `items` would break.
     /// A warning source for the delete confirmation; the delete itself is never gated on it.
     public var deleteImpact: @Sendable (_ serverURL: URL, _ items: [FileItem]) async throws -> DeleteImpact

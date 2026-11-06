@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	يُفتح تسجيل الدخول الموحد �
 settings.clientCertificateExpired	منتهية الصلاحية
 settings.clientCertificateExpiresSoon	تنتهي قريبًا
 clientCertificate.expiringSoonWarning	تنتهي صلاحية هذه الشهادة في %@. اطلب شهادة جديدة قبل ذلك.
+browse.actionNewFile	إنشاء ملف
+browse.newFileTitle	ملف جديد
+browse.newFileTypeHint	استخدم نوع ملف يمكن للمحرر فتحه، مثل .txt أو .md أو .js.
+browse.newFilePlaceholder	notes.txt

@@ -46,6 +46,7 @@ public enum L10n {
         public static var actionExtract: String { tr("browse.actionExtract") }  // "Extract"
         public static var actionGetInfo: String { tr("browse.actionGetInfo") }  // "Get Info"
         public static var actionMove: String { tr("browse.actionMove") }  // "Move"
+        public static var actionNewFile: String { tr("browse.actionNewFile") }  // "Create File"
         public static var actionNewFolder: String { tr("browse.actionNewFolder") }  // "Create Folder"
         public static var actionOpenInBrowser: String { tr("browse.actionOpenInBrowser") }  // "Open in Browser"
         public static var actionOpenInNewTab: String { tr("browse.actionOpenInNewTab") }  // "Open in New Tab"
@@ -85,6 +86,9 @@ public enum L10n {
         public static var nameErrorReserved: String { tr("browse.nameErrorReserved") }  // "That name isn't allowed."
         public static var nameErrorSeparators: String { tr("browse.nameErrorSeparators") }  // "A name can't contain / or \."
         public static var navigationTitle: String { tr("browse.navigationTitle") }  // "Browse"
+        public static var newFilePlaceholder: String { tr("browse.newFilePlaceholder") }  // "notes.txt"
+        public static var newFileTitle: String { tr("browse.newFileTitle") }  // "New File"
+        public static var newFileTypeHint: String { tr("browse.newFileTypeHint") }
         public static var newFolderConfirm: String { tr("browse.newFolderConfirm") }  // "Create"
         public static var newFolderPlaceholder: String { tr("browse.newFolderPlaceholder") }  // "Folder name"
         public static var newFolderTitle: String { tr("browse.newFolderTitle") }  // "New Folder"

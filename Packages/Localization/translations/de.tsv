@@ -769,3 +769,7 @@ login.ssoClientCertificateNote	Single Sign-on öffnet sich in Safari, das das Cl
 settings.clientCertificateExpired	Abgelaufen
 settings.clientCertificateExpiresSoon	Läuft bald ab
 clientCertificate.expiringSoonWarning	Dieses Zertifikat läuft am %@ ab. Fordere vorher ein neues an.
+browse.actionNewFile	Datei erstellen
+browse.newFileTitle	Neue Datei
+browse.newFileTypeHint	Verwende einen Dateityp, den der Editor öffnen kann, etwa .txt, .md oder .js.
+browse.newFilePlaceholder	notes.txt
