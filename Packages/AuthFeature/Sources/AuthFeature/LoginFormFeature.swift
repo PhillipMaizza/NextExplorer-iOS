@@ -32,6 +32,7 @@ public struct LoginFormFeature {
     /// abandoned can never land its result (or an auto-advance) on the current screen.
     private enum CancelID {
         case connectionTest
+        case certificateLookup
         case successAdvance
         case failureRevert
         case errorDismiss
@@ -130,6 +131,9 @@ public struct LoginFormFeature {
         /// the server page offers the certificate sheet until the address changes. Outlives the
         /// self clearing `errorMessage` on purpose: the user needs time to go find the file.
         public var certificatePrompt: CertificatePrompt?
+        /// The client certificate the app presents to the server being tested, shown with a Change
+        /// link so a wrong file can be swapped without waiting for an error.
+        public var certificateInUse: ClientCertificateSummary?
         @Presents public var clientCertificate: ClientCertificateFeature.State?
 
         public init(
@@ -146,6 +150,7 @@ public struct LoginFormFeature {
             invalidFieldsScope: InvalidFieldScope? = nil,
             authStatus: AuthStatus? = nil,
             certificatePrompt: CertificatePrompt? = nil,
+            certificateInUse: ClientCertificateSummary? = nil,
             clientCertificate: ClientCertificateFeature.State? = nil
         ) {
             self.currentPage = currentPage
@@ -161,6 +166,7 @@ public struct LoginFormFeature {
             self.invalidFieldsScope = invalidFieldsScope
             self.authStatus = authStatus
             self.certificatePrompt = certificatePrompt
+            self.certificateInUse = certificateInUse
             self.clientCertificate = clientCertificate
         }
 
@@ -179,6 +185,7 @@ public struct LoginFormFeature {
             errorMessage = nil
             invalidFieldsScope = nil
             certificatePrompt = nil
+            certificateInUse = nil
         }
     }
 
@@ -201,6 +208,8 @@ public struct LoginFormFeature {
         case ssoButtonTapped
         case oidcResponse(Result<User, AuthClientError>, URL)
         case clientCertificateButtonTapped
+        case changeClientCertificateTapped
+        case certificateInUseLoaded(ClientCertificateSummary)
         case clientCertificate(PresentationAction<ClientCertificateFeature.Action>)
         case delegate(Delegate)
 
@@ -211,6 +220,7 @@ public struct LoginFormFeature {
 
     @Dependency(\.authClient) var authClient
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     public init() {}
 
@@ -298,18 +308,21 @@ public struct LoginFormFeature {
                     return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock))
                 }
                 state.connectionPhase = .success
-                return .run { send in
-                    try await clock.sleep(for: Constants.successDisplayDuration)
-                    await send(.advanceToCredentials)
-                }
-                .cancellable(id: CancelID.successAdvance, cancelInFlight: true)
+                return .merge(
+                    .run { send in
+                        try await clock.sleep(for: Constants.successDisplayDuration)
+                        await send(.advanceToCredentials)
+                    }
+                    .cancellable(id: CancelID.successAdvance, cancelInFlight: true),
+                    lookUpCertificateInUse(state)
+                )
 
             case let .testConnectionResponse(.failure(error)):
                 state.connectionPhase = .failure
                 state.authStatus = nil
                 state.errorMessage = Self.message(for: error)
                 state.certificatePrompt = Self.certificatePrompt(for: error, scheme: state.scheme, host: state.host)
-                return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock))
+                return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock), lookUpCertificateInUse(state))
 
             case .revertToIdle:
                 state.connectionPhase = .idle
@@ -421,10 +434,30 @@ public struct LoginFormFeature {
                 state.clientCertificate = ClientCertificateFeature.State(origin: prompt.origin)
                 return .none
 
-            case .clientCertificate(.presented(.delegate(.installed))):
+            case let .clientCertificate(.presented(.delegate(.installed(summary)))):
                 state.clientCertificate = nil
                 state.certificatePrompt = nil
+                state.certificateInUse = summary
                 return .send(.testConnectionButtonTapped)
+
+            case .clientCertificate(.presented(.delegate(.removed))):
+                state.certificateInUse = nil
+                return .none
+
+            case .changeClientCertificateTapped:
+                guard
+                    let url = Self.normalizedURL(scheme: state.scheme, host: state.host),
+                    let origin = ClientCertificateOrigin(url: url)
+                else { return .none }
+                state.clientCertificate = ClientCertificateFeature.State(
+                    origin: origin,
+                    status: state.certificateInUse.map(ClientCertificateFeature.Status.installed) ?? .loading
+                )
+                return .none
+
+            case let .certificateInUseLoaded(summary):
+                state.certificateInUse = summary
+                return .none
 
             case .clientCertificate:
                 return .none
@@ -436,6 +469,21 @@ public struct LoginFormFeature {
         .ifLet(\.$clientCertificate, action: \.clientCertificate) {
             ClientCertificateFeature()
         }
+    }
+
+    /// Finds the certificate presented to the server being tested. Sends only when there is one,
+    /// so a server without mTLS adds nothing to the flow.
+    private func lookUpCertificateInUse(_ state: State) -> Effect<Action> {
+        guard
+            let url = Self.normalizedURL(scheme: state.scheme, host: state.host),
+            let origin = ClientCertificateOrigin(url: url)
+        else { return .none }
+        return .run { [client = clientCertificateClient] send in
+            if let summary = await client.summary(origin) {
+                await send(.certificateInUseLoaded(summary))
+            }
+        }
+        .cancellable(id: CancelID.certificateLookup, cancelInFlight: true)
     }
 
     /// The origin the certificate sheet is for, when `error` is a handshake refused over the
@@ -470,7 +518,8 @@ public struct LoginFormFeature {
             .cancel(id: CancelID.errorDismiss),
             .cancel(id: CancelID.submit),
             .cancel(id: CancelID.submitRevert),
-            .cancel(id: CancelID.oidc)
+            .cancel(id: CancelID.oidc),
+            .cancel(id: CancelID.certificateLookup)
         )
     }
 

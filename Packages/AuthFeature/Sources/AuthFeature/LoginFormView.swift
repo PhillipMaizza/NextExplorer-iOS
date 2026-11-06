@@ -459,6 +459,13 @@ public struct LoginFormView: View {
                     }
                     .padding(.horizontal, .space24)
                     .transition(.opacity)
+                } else if let summary = store.certificateInUse {
+                    LoginCertificateStatus(summary: summary) {
+                        focusedField = nil
+                        store.send(.changeClientCertificateTapped)
+                    }
+                    .padding(.horizontal, .space24)
+                    .transition(.opacity)
                 }
 
                 #if os(macOS)
@@ -583,6 +590,13 @@ public struct LoginFormView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: .space24) {
+                    if let summary = store.certificateInUse {
+                        LoginCertificateStatus(summary: summary) {
+                            focusedField = nil
+                            store.send(.changeClientCertificateTapped)
+                        }
+                    }
+
                     if store.authStatus?.localEnabled == true {
                         identifierField
                         passwordField
@@ -601,6 +615,11 @@ public struct LoginFormView: View {
                             orDivider
                         }
                         ssoButton
+                        if store.certificateInUse != nil {
+                            Text(L10n.Login.ssoClientCertificateNote)
+                                .type(.body3(.regular), style: .secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                     }
 
                     if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {

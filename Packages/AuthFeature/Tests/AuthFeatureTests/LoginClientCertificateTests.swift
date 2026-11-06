@@ -81,6 +81,7 @@ struct LoginClientCertificateTests {
         await store.send(.clientCertificate(.presented(.delegate(.installed(summary))))) {
             $0.clientCertificate = nil
             $0.certificatePrompt = nil
+            $0.certificateInUse = summary
         }
         await store.receive(\.testConnectionButtonTapped) { $0.connectionPhase = .testing }
         await clock.advance(by: .seconds(0.3))
@@ -114,6 +115,39 @@ struct LoginClientCertificateTests {
         await store.skipInFlightEffects()
     }
 
+    @Test("A server with a certificate in use shows it, and Change opens the sheet for it")
+    func certificateInUseAndChange() async {
+        let clock = TestClock()
+        let summary = ClientCertificateSummary(subject: "Dev Client")
+        let status = AuthStatus(localEnabled: true, oidcEnabled: false)
+        let store = TestStore(initialState: LoginFormFeature.State(host: "files.example.com:8443")) {
+            LoginFormFeature()
+        } withDependencies: { [origin] in
+            $0.authClient.fetchStatus = { _ in status }
+            $0.continuousClock = clock
+            $0.clientCertificateClient = .inMemory([origin: summary])
+        }
+        store.timeout = LoginFormFeatureTests.receiveTimeout
+
+        await store.send(.testConnectionButtonTapped) { $0.connectionPhase = .testing }
+        await clock.advance(by: .seconds(0.3))
+        await store.receive(\.testConnectionResponse.success) {
+            $0.connectionPhase = .success
+            $0.authStatus = status
+        }
+        await store.receive(\.certificateInUseLoaded) {
+            $0.certificateInUse = summary
+        }
+        await store.send(.changeClientCertificateTapped) {
+            $0.clientCertificate = ClientCertificateFeature.State(origin: origin, status: .installed(summary))
+        }
+        await store.send(.clientCertificate(.presented(.delegate(.removed)))) {
+            $0.certificateInUse = nil
+        }
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.advanceToCredentials) { $0.currentPage = .credentials }
+    }
+
     @Test("Editing the address drops the certificate offer")
     func hostChangeClearsPrompt() async {
         let store = TestStore(
@@ -129,6 +163,7 @@ struct LoginClientCertificateTests {
             $0.host = "files.example.com:844"
             $0.certificatePrompt = nil
         }
+        #expect(store.state.certificateInUse == nil)
     }
 
     @Test("An ordinary failure never offers a certificate")
