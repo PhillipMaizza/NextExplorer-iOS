@@ -35,18 +35,14 @@ public final class ClientCertificateChallengeHandler: @unchecked Sendable {
 
     public static let shared = ClientCertificateChallengeHandler(store: .shared)
 
-    /// Drops the sessions' pooled connections whenever a certificate changes, so the next
-    /// request handshakes with the new identity (or none) instead of reusing the old one.
-    /// When every certificate is removed (the last account signed out) the sessions are reset
-    /// instead: that also forgets their TLS session tickets, so a resumed connection can't carry
-    /// the previous user's identity. Reset clears cookies too, which signing out does anyway.
-    func flushOnCertificateChange(_ sessions: [URLSession]) {
+    /// Swaps every session for a new one whenever a certificate changes, so the next request
+    /// handshakes with the new identity (or none). Flushing is not enough: a flushed session
+    /// resumes its cached TLS session and the server still sees the old identity. When every
+    /// certificate is removed (the last account signed out) running requests are cancelled too.
+    func replaceOnCertificateChange(_ sessions: [ReplaceableSession]) {
         store.addChangeObserver { [sessions = sessions.map(WeakSession.init)] change in
             for session in sessions {
-                switch change {
-                case .changed: session.value?.flush {}
-                case .allRemoved: session.value?.reset {}
-                }
+                session.value?.replace(cancelsRunningTasks: change == .allRemoved)
             }
         }
     }
@@ -68,13 +64,19 @@ public final class ClientCertificateChallengeHandler: @unchecked Sendable {
 
     func recentOutcome(for url: URL?) -> Outcome? {
         guard let url, let origin = ClientCertificateOrigin(url: url) else { return nil }
+        // Read before taking `lock`: the store has its own lock and calls back into this one.
+        let isExpired = store.summary(for: origin)?.isExpired(now: now()) == true
         lock.lock()
         defer { lock.unlock() }
         guard
-            !verified.contains(origin),
             let (outcome, date) = outcomes[origin],
             now().timeIntervalSince(date) <= Self.attributionWindow
         else {
+            return nil
+        }
+        // A certificate that expired since the origin last answered is the likely reason a fresh
+        // handshake failed, so it still counts there.
+        if verified.contains(origin), !(outcome == .presented && isExpired) {
             return nil
         }
         return outcome
@@ -119,9 +121,9 @@ public final class ClientCertificateChallengeHandler: @unchecked Sendable {
 }
 
 private struct WeakSession: @unchecked Sendable {
-    weak var value: URLSession?
+    weak var value: ReplaceableSession?
 
-    init(_ value: URLSession) {
+    init(_ value: ReplaceableSession) {
         self.value = value
     }
 }

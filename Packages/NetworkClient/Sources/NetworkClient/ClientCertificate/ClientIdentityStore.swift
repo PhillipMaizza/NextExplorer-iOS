@@ -55,7 +55,13 @@ public final class ClientIdentityStore: @unchecked Sendable {
         } catch {
             throw .storage
         }
-        updateIndex { $0.insert(origin) }
+        do {
+            try updateIndex { $0.insert(origin) }
+        } catch {
+            // Unindexed, signing out could not find it to remove it: refuse the install instead.
+            try? keychain.delete(origin.keychainKey)
+            throw .storage
+        }
         setEntry(.stored(record, decoded), for: origin)
         notifyChange(.changed)
         return record.summary
@@ -63,10 +69,19 @@ public final class ClientIdentityStore: @unchecked Sendable {
 
     /// Every origin with a certificate stored, kept beside the records so they can all be found
     /// and removed at a session boundary (the keychain wrapper has no way to list its items).
+    /// Also counts every origin this process has looked up, so a keychain that can't be read at
+    /// that moment never hides a certificate from removal.
     public func installedOrigins() -> Set<ClientCertificateOrigin> {
         lock.lock()
         defer { lock.unlock() }
-        return loadIndex()
+        let known = entries.compactMap { origin, entry in
+            if case .stored = entry {
+                origin
+            } else {
+                nil
+            }
+        }
+        return ((try? loadIndex()) ?? []).union(known)
     }
 
     /// Removes every certificate except those for `keep`: the servers an account is still
@@ -86,7 +101,7 @@ public final class ClientIdentityStore: @unchecked Sendable {
     /// back sees the truth instead of a "None" that would come back on the next launch.
     public func remove(for origin: ClientCertificateOrigin) {
         guard (try? keychain.delete(origin.keychainKey)) != nil else { return }
-        updateIndex { $0.remove(origin) }
+        try? updateIndex { $0.remove(origin) }
         setEntry(.missing, for: origin)
         notifyChange(.changed)
     }
@@ -94,23 +109,22 @@ public final class ClientIdentityStore: @unchecked Sendable {
     private static let indexKey = "clientIdentity.index"
 
     /// Call with `lock` held.
-    private func loadIndex() -> Set<ClientCertificateOrigin> {
-        guard
-            let data = try? keychain.load(Self.indexKey),
-            let origins = try? JSONDecoder().decode(Set<ClientCertificateOrigin>.self, from: data)
-        else { return [] }
-        return origins
+    /// Call with `lock` held. Throws when the keychain can't be read, so an update never
+    /// overwrites the real index with an empty one.
+    private func loadIndex() throws -> Set<ClientCertificateOrigin> {
+        guard let data = try keychain.load(Self.indexKey) else { return [] }
+        return (try? JSONDecoder().decode(Set<ClientCertificateOrigin>.self, from: data)) ?? []
     }
 
-    private func updateIndex(_ change: (inout Set<ClientCertificateOrigin>) -> Void) {
+    private func updateIndex(_ change: (inout Set<ClientCertificateOrigin>) -> Void) throws {
         lock.lock()
         defer { lock.unlock() }
-        var origins = loadIndex()
+        var origins = try loadIndex()
         change(&origins)
         if origins.isEmpty {
-            try? keychain.delete(Self.indexKey)
-        } else if let data = try? JSONEncoder().encode(origins) {
-            try? keychain.save(Self.indexKey, data)
+            try keychain.delete(Self.indexKey)
+        } else {
+            try keychain.save(Self.indexKey, JSONEncoder().encode(origins))
         }
     }
 

@@ -63,7 +63,7 @@ public extension NetworkClient {
         }
 
         let delegate = URLSessionAuthDelegate(trustEvaluator: trustEvaluator, certificates: certificates)
-        let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
+        let session = ReplaceableSession(configuration: configuration, delegate: delegate)
 
         // A second session for opportunistic background fetches (PDF thumbnail page
         // downloads). Its own connection pool, capped low, so however many the UI kicks off
@@ -80,9 +80,7 @@ public extension NetworkClient {
         if !protocolClasses.isEmpty {
             lowPriorityConfiguration.protocolClasses = protocolClasses
         }
-        let lowPrioritySession = URLSession(
-            configuration: lowPriorityConfiguration, delegate: delegate, delegateQueue: nil
-        )
+        let lowPrioritySession = ReplaceableSession(configuration: lowPriorityConfiguration, delegate: delegate)
 
         // A dedicated session for file downloads (previews, offline sync). Same cookie jar and trust
         // handling as the main session, but a generous request (inactivity) timeout so a large or slow
@@ -97,19 +95,17 @@ public extension NetworkClient {
         if !protocolClasses.isEmpty {
             downloadConfiguration.protocolClasses = protocolClasses
         }
-        let downloadSession = URLSession(
-            configuration: downloadConfiguration, delegate: delegate, delegateQueue: nil
-        )
+        let downloadSession = ReplaceableSession(configuration: downloadConfiguration, delegate: delegate)
 
-        certificates.flushOnCertificateChange([session, lowPrioritySession, downloadSession])
+        certificates.replaceOnCertificateChange([session, lowPrioritySession, downloadSession])
 
         @Sendable func streamToFile(
-            _ request: URLRequest, using downloadSession: URLSession
+            _ request: URLRequest, using downloadSession: ReplaceableSession
         ) async throws -> (URL, HTTPURLResponse) {
             let temporaryURL: URL
             let response: URLResponse
             do {
-                (temporaryURL, response) = try await downloadSession.download(for: request)
+                (temporaryURL, response) = try await downloadSession.current.download(for: request)
             } catch {
                 throw NetworkError.from(error, url: request.url, certificates: certificates)
             }
@@ -142,12 +138,12 @@ public extension NetworkClient {
         // ever carries JSON control responses, file-sized payloads use `download`, so the
         // extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
         @Sendable func sendInMemory(
-            _ request: URLRequest, using inMemorySession: URLSession
+            _ request: URLRequest, using inMemorySession: ReplaceableSession
         ) async throws -> (Data, HTTPURLResponse) {
             let temporaryURL: URL
             let response: URLResponse
             do {
-                (temporaryURL, response) = try await inMemorySession.download(for: request)
+                (temporaryURL, response) = try await inMemorySession.current.download(for: request)
             } catch {
                 throw NetworkError.from(error, url: request.url, certificates: certificates)
             }
@@ -182,7 +178,7 @@ public extension NetworkClient {
                     // A dedicated delegate for progress only. It carries no challenge method,
                     // so connection level challenges (server trust) are handled by
                     // `URLSessionAuthDelegate`'s session level callback.
-                    (data, response) = try await session.upload(
+                    (data, response) = try await session.current.upload(
                         for: request,
                         fromFile: bodyFileURL,
                         delegate: UploadProgressDelegate(onProgress: onProgress)
@@ -213,7 +209,7 @@ public extension NetworkClient {
                         // backpressure to the socket, which throttled the transfer. Progress instead
                         // comes from the task's own `NSProgress` via KVO, which never touches that
                         // queue. Server trust still falls through to the session `URLSessionAuthDelegate`.
-                        let task = downloadSession.downloadTask(with: request) { temporaryURL, response, error in
+                        let task = downloadSession.current.downloadTask(with: request) { temporaryURL, response, error in
                             observationBox.invalidate()
                             if let error {
                                 continuation.resume(throwing: NetworkError.from(error, url: request.url, certificates: certificates))
@@ -269,7 +265,7 @@ public extension NetworkClient {
             },
             flushDownloadConnections: {
                 await withCheckedContinuation { continuation in
-                    downloadSession.flush { continuation.resume() }
+                    downloadSession.current.flush { continuation.resume() }
                 }
             }
         )

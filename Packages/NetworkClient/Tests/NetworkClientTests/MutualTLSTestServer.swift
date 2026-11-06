@@ -66,9 +66,13 @@ final class MutualTLSTestServer: @unchecked Sendable {
     private let queue = DispatchQueue(label: "MutualTLSTestServer")
     private let mode: Mode
     private let anchor: SecCertificate
+    /// Keeps each connection open for further requests, like a real proxy, so a test can tell
+    /// whether the client reused a connection opened with an old identity.
+    private let keepsConnectionsOpen: Bool
 
-    init(mode: Mode = .requireAtHandshake) throws {
+    init(mode: Mode = .requireAtHandshake, keepsConnectionsOpen: Bool = false) throws {
         self.mode = mode
+        self.keepsConnectionsOpen = keepsConnectionsOpen
         let serverIdentity = try PKCS12Identity.decode(
             MutualTLSFixtures.data("server", "p12"), passphrase: MutualTLSFixtures.passphrase
         )
@@ -99,9 +103,9 @@ final class MutualTLSTestServer: @unchecked Sendable {
 
     /// Starts listening and returns the base URL once the port is bound.
     func start() async throws -> URL {
-        listener.newConnectionHandler = { [queue, mode, anchor] connection in
+        listener.newConnectionHandler = { [queue, mode, anchor, keepsConnectionsOpen] connection in
             connection.start(queue: queue)
-            Self.serve(connection, mode: mode, anchor: anchor)
+            Self.serve(connection, mode: mode, anchor: anchor, keepsOpen: keepsConnectionsOpen)
         }
         let port: UInt16 = try await withCheckedThrowingContinuation { continuation in
             let resumed = LockedFlag()
@@ -128,7 +132,9 @@ final class MutualTLSTestServer: @unchecked Sendable {
         listener.cancel()
     }
 
-    private static func serve(_ connection: NWConnection, mode: Mode, anchor: SecCertificate, buffer: Data = Data()) {
+    private static func serve(
+        _ connection: NWConnection, mode: Mode, anchor: SecCertificate, keepsOpen: Bool, buffer: Data = Data()
+    ) {
         connection.receive(minimumIncompleteLength: 1, maximumLength: 16384) { data, _, isComplete, error in
             var received = buffer
             if let data {
@@ -139,15 +145,22 @@ final class MutualTLSTestServer: @unchecked Sendable {
                 return
             }
             guard received.range(of: Data("\r\n\r\n".utf8)) != nil else {
-                serve(connection, mode: mode, anchor: anchor, buffer: received)
+                serve(connection, mode: mode, anchor: anchor, keepsOpen: keepsOpen, buffer: received)
                 return
             }
-            let response = switch mode {
+            var response = switch mode {
             case .requireAtHandshake: okResponse
             case .nginxErrorPage: nginxResponse(for: connection, anchor: anchor)
             }
+            if keepsOpen {
+                response = response.replacingOccurrences(of: "Connection: close", with: "Connection: keep-alive")
+            }
             connection.send(content: Data(response.utf8), completion: .contentProcessed { _ in
-                connection.cancel()
+                if keepsOpen {
+                    serve(connection, mode: mode, anchor: anchor, keepsOpen: true)
+                } else {
+                    connection.cancel()
+                }
             })
         }
     }

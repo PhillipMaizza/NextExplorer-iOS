@@ -93,6 +93,41 @@ struct ClientCertificateTests {
         #expect(response.statusCode == 200)
     }
 
+    @Test("nginx: replacing a refused certificate is used on the very next request")
+    func nginxReplacedCertificateSameClient() async throws {
+        let server = try MutualTLSTestServer(mode: .nginxErrorPage, keepsConnectionsOpen: true)
+        let baseURL = try await server.start()
+        defer { server.stop() }
+        let store = ClientIdentityStore(keychain: .inMemory())
+        let client = try makeClient(store: store)
+        try install("rogue-client", in: store, for: baseURL)
+        await #expect(throws: NetworkError.clientCertificateRejected) {
+            try await request(client, baseURL)
+        }
+
+        try install("client", in: store, for: baseURL)
+        let (_, response) = try await request(client, baseURL)
+        #expect(response.statusCode == 200)
+    }
+
+    @Test("A removed certificate is not presented again while other servers keep theirs")
+    func removedCertificateNotReused() async throws {
+        let server = try MutualTLSTestServer(mode: .nginxErrorPage, keepsConnectionsOpen: true)
+        let baseURL = try await server.start()
+        defer { server.stop() }
+        let store = ClientIdentityStore(keychain: .inMemory())
+        let client = try makeClient(store: store)
+        try install("client", in: store, for: baseURL)
+        try install("client", in: store, for: #require(URL(string: "https://other.example:8443")))
+        let (_, first) = try await request(client, baseURL)
+        #expect(first.statusCode == 200)
+
+        try store.remove(for: #require(ClientCertificateOrigin(url: baseURL)))
+        await #expect(throws: NetworkError.clientCertificateRequired) {
+            try await request(client, baseURL)
+        }
+    }
+
     @Test("A real 400 from the server is never taken for a certificate refusal")
     func ordinary400() {
         let handler = ClientCertificateChallengeHandler(store: ClientIdentityStore(keychain: .inMemory()))
@@ -241,6 +276,28 @@ struct ClientCertificateTests {
         #expect(NetworkError.from(URLError(.networkConnectionLost), url: url, certificates: handler) == .clientCertificateRejected)
     }
 
+    @Test("A certificate that expired mid session is blamed when the next handshake fails")
+    func expiredCertificateCountsOnVerifiedOrigin() throws {
+        let clock = MutableClock()
+        let store = ClientIdentityStore(keychain: .inMemory())
+        let handler = ClientCertificateChallengeHandler(store: store, now: { clock.now })
+        let url = URL(string: "https://example.com/api")!
+        let origin = ClientCertificateOrigin(host: "example.com", port: 443)
+        let summary = try store.install(
+            pkcs12: MutualTLSFixtures.data("client", "p12"), passphrase: MutualTLSFixtures.passphrase, for: origin
+        )
+        let expiresAt = try #require(summary.expiresAt)
+        clock.advance(by: expiresAt.timeIntervalSince(clock.now) - 3600)
+        _ = handler.handle(ClientCertificateChallengeFixture.make(host: "example.com", port: 443))
+        handler.recordResponse(for: url)
+        _ = handler.handle(ClientCertificateChallengeFixture.make(host: "example.com", port: 443))
+        #expect(NetworkError.from(URLError(.networkConnectionLost), url: url, certificates: handler) == .offline)
+
+        clock.advance(by: 3600 + 60)
+        _ = handler.handle(ClientCertificateChallengeFixture.make(host: "example.com", port: 443))
+        #expect(NetworkError.from(URLError(.networkConnectionLost), url: url, certificates: handler) == .clientCertificateRejected)
+    }
+
     @Test("A keychain that can't be read right now is asked again, not remembered as empty")
     func transientKeychainErrorIsNotCached() throws {
         let failing = FailureSwitch()
@@ -264,6 +321,31 @@ struct ClientCertificateTests {
         #expect(store.summary(for: origin) == nil)
         failing.isOn = false
         #expect(store.summary(for: origin)?.subject == "Dev Client")
+    }
+
+    @Test("A certificate whose index can't be saved is refused, so signing out can always find it")
+    func indexFailureRefusesInstall() throws {
+        let backing = KeychainClient.inMemory()
+        let keychain = KeychainClient(
+            save: { key, data in
+                if key == "clientIdentity.index" {
+                    throw KeychainError.unexpectedStatus(-25308)
+                }
+                try backing.save(key, data)
+            },
+            load: { try backing.load($0) },
+            delete: { try backing.delete($0) }
+        )
+        let store = ClientIdentityStore(keychain: keychain)
+        let origin = ClientCertificateOrigin(host: "example.com", port: 443)
+
+        #expect(throws: ClientCertificateImportError.storage) {
+            try store.install(
+                pkcs12: MutualTLSFixtures.data("client", "p12"), passphrase: MutualTLSFixtures.passphrase, for: origin
+            )
+        }
+        #expect(try backing.load(origin.keychainKey) == nil)
+        #expect(store.summary(for: origin) == nil)
     }
 
     @Test("Server trust challenges are left to the trust evaluator")
