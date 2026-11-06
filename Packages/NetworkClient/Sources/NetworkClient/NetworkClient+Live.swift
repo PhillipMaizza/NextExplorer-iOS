@@ -23,7 +23,6 @@ private enum Constants {
     /// dropped: 60s bounds how long such a dead connection stalls before failing, instead of hanging
     /// for minutes. Connections are also flushed before each batch (see `flushDownloadConnections`).
     static let downloadRequestTimeout: TimeInterval = 60
-    static let downloadTempFilePrefix = "download-"
 }
 
 public extension NetworkClient {
@@ -33,8 +32,13 @@ public extension NetworkClient {
     /// still cutting off a hostile server trying to exhaust memory here.
     static let defaultMaxInMemoryResponseBytes = 32 * 1024 * 1024
 
+    /// Names the temporary files `download` streams bodies into, so a session boundary can sweep
+    /// up any a crash left behind (`SessionScratchStore`).
+    static let downloadTemporaryFilePrefix = "download-"
+
     static func live(
         trustEvaluator: ServerTrustEvaluating = DefaultServerTrustEvaluator(),
+        certificates: ClientCertificateChallengeHandler = .shared,
         cookieStorage: HTTPCookieStorage = .shared,
         protocolClasses: [AnyClass] = [],
         maxInMemoryResponseBytes: Int = NetworkClient.defaultMaxInMemoryResponseBytes
@@ -48,7 +52,7 @@ public extension NetworkClient {
             configuration.protocolClasses = protocolClasses
         }
 
-        let delegate = URLSessionAuthDelegate(trustEvaluator: trustEvaluator)
+        let delegate = URLSessionAuthDelegate(trustEvaluator: trustEvaluator, certificates: certificates)
         let session = URLSession(configuration: configuration, delegate: delegate, delegateQueue: nil)
 
         // A second session for opportunistic background fetches (PDF thumbnail page
@@ -93,7 +97,7 @@ public extension NetworkClient {
             do {
                 (temporaryURL, response) = try await downloadSession.download(for: request)
             } catch {
-                throw NetworkError.from(error)
+                throw NetworkError.from(error, url: request.url, certificates: certificates)
             }
             guard let httpResponse = response as? HTTPURLResponse else {
                 try? FileManager.default.removeItem(at: temporaryURL)
@@ -102,7 +106,7 @@ public extension NetworkClient {
             // `session.download` deletes its temp file the moment this closure returns, so
             // move it somewhere the caller controls before handing the URL back.
             let stableURL = FileManager.default.temporaryDirectory
-                .appendingPathComponent("\(Constants.downloadTempFilePrefix)\(UUID().uuidString)")
+                .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
             do {
                 try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
             } catch {
@@ -124,7 +128,7 @@ public extension NetworkClient {
             do {
                 (temporaryURL, response) = try await inMemorySession.download(for: request)
             } catch {
-                throw NetworkError.from(error)
+                throw NetworkError.from(error, url: request.url, certificates: certificates)
             }
             defer { try? FileManager.default.removeItem(at: temporaryURL) }
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -157,7 +161,7 @@ public extension NetworkClient {
                         delegate: UploadProgressDelegate(onProgress: onProgress)
                     )
                 } catch {
-                    throw NetworkError.from(error)
+                    throw NetworkError.from(error, url: request.url, certificates: certificates)
                 }
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NetworkError.invalidResponse
@@ -181,7 +185,7 @@ public extension NetworkClient {
                         let task = downloadSession.downloadTask(with: request) { temporaryURL, response, error in
                             observationBox.invalidate()
                             if let error {
-                                continuation.resume(throwing: NetworkError.from(error))
+                                continuation.resume(throwing: NetworkError.from(error, url: request.url, certificates: certificates))
                                 return
                             }
                             guard let temporaryURL, let httpResponse = response as? HTTPURLResponse else {
@@ -191,7 +195,7 @@ public extension NetworkClient {
                             // The system deletes `temporaryURL` the instant this returns, so move it
                             // synchronously to a stable location the caller owns.
                             let stableURL = FileManager.default.temporaryDirectory
-                                .appendingPathComponent("\(Constants.downloadTempFilePrefix)\(UUID().uuidString)")
+                                .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
                             do {
                                 try FileManager.default.moveItem(at: temporaryURL, to: stableURL)
                                 continuation.resume(returning: (stableURL, httpResponse))

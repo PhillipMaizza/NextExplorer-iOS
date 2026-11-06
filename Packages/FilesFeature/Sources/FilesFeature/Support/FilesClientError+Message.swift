@@ -12,6 +12,8 @@ extension FilesClientError {
         case .decoding: L10n.Error.decoding
         case let .server(statusCode): L10n.Error.server(statusCode)
         case let .serverMessage(_, message): message
+        case .clientCertificateRequired: L10n.Error.clientCertificateRequired
+        case .clientCertificateRejected: L10n.Error.clientCertificateRejected
         }
     }
 }

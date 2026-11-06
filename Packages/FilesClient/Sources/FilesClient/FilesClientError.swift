@@ -13,4 +13,8 @@ public enum FilesClientError: Error, Equatable, Sendable {
     /// verbatim (admin user management endpoints: "Cannot remove the last admin.", etc.).
     case serverMessage(statusCode: Int, message: String)
     case rateLimited
+    /// The server demands a TLS client certificate and none is installed for it.
+    case clientCertificateRequired
+    /// The installed client certificate was refused by the server.
+    case clientCertificateRejected
 }
