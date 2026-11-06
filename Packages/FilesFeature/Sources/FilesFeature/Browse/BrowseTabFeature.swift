@@ -39,6 +39,7 @@ public struct BrowseTabFeature {
         /// the root when nothing is pushed).
         case refreshVisibleFolder
         case newFolderInVisibleFolder
+        case newFileInVisibleFolder
         /// Mac ⌘[: leave the visible folder for the screen under it.
         case goBack
         /// Mac ⌘↑: open the folder that contains the visible one.
@@ -89,6 +90,12 @@ public struct BrowseTabFeature {
                       state.path[id: id]?.directoryPath.isEmpty == false
                 else { return .none }
                 return .send(.path(.element(id: id, action: .newFolderTapped)))
+
+            case .newFileInVisibleFolder:
+                guard let id = state.path.ids.last,
+                      state.path[id: id]?.directoryPath.isEmpty == false
+                else { return .none }
+                return .send(.path(.element(id: id, action: .newFileTapped)))
 
             case .goForward:
                 state.goForward()

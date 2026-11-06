@@ -1,5 +1,7 @@
+import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import NetworkClient
 import SwiftUI
 #if os(iOS)
     import UIKit
@@ -18,6 +20,7 @@ struct ServerLogoThumbnail: View {
     @State private var fetched: PlatformImage?
     @State private var overrideImage: PlatformImage?
     @Environment(\.displayScale) private var displayScale
+    @Dependency(\.networkClient) private var networkClient
 
     private var maxPixelDimension: CGFloat {
         size * displayScale
@@ -66,7 +69,10 @@ struct ServerLogoThumbnail: View {
             fetched = nil
             return
         }
-        guard let (data, _) = try? await URLSession.shared.data(from: url) else { return }
+        guard
+            let (data, response) = try? await networkClient.send(URLRequest(url: url)),
+            200 ..< 300 ~= response.statusCode
+        else { return }
         let target = maxPixelDimension
         let image = await Task.detached(priority: .utility) {
             ImageDownsampling.image(from: data, maxPixelDimension: target)

@@ -67,6 +67,26 @@ extension BrowseFeature {
         }
     }
 
+    /// Only names the text editor opens get through (the sheet already checks; this guards the
+    /// action itself), since the new file opens in the editor straight away.
+    func confirmNewFile(_ state: inout State, name: String) -> Effect<Action> {
+        guard !state.isPerformingFileAction else { return .none }
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard
+            FileNameValidation.isAcceptable(trimmed: trimmedName),
+            EditableTextFiles.isEditable(name: trimmedName, serverExtensions: state.newFileServerExtensions)
+        else { return .none }
+        state.isPerformingFileAction = true
+        let serverURL = state.serverURL
+        let directoryPath = state.directoryPath
+        let filesClient = filesClient
+        return .run { send in
+            try await send(.newFileResponse(apiResult {
+                try await filesClient.createFile(serverURL, directoryPath, trimmedName)
+            }))
+        }
+    }
+
     func checkDeleteImpact(_ state: inout State, items: [FileItem]) -> Effect<Action> {
         guard !items.isEmpty else { return .none }
         let serverURL = state.serverURL

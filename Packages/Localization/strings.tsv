@@ -103,6 +103,10 @@ browse.actionNewFolder	Create Folder
 browse.newFolderTitle	New Folder
 browse.newFolderPlaceholder	Folder name
 browse.newFolderConfirm	Create
+browse.actionNewFile	Create File
+browse.newFileTitle	New File
+browse.newFilePlaceholder	notes.txt
+browse.newFileTypeHint	Use a file type the editor can open, such as .txt, .md or .js.
 browse.deleteConfirmTitle	Delete?
 browse.deleteConfirmOne	Delete “%@”?
 browse.deleteConfirmMany	Delete %lld items?
@@ -584,6 +588,8 @@ error.offline	You're offline. Connect to the internet and try again.
 error.decoding	Server responded unexpectedly.
 error.server	Server error (%lld).
 error.forbidden	You don't have permission to do that.
+error.clientCertificateRequired	This server needs a client certificate. Add one in Settings.
+error.clientCertificateRejected	The server refused your client certificate.
 
 # ---- change password ----
 changePassword.navigationTitle	Change Password
@@ -613,6 +619,8 @@ login.ssoButton	Sign in with SSO
 login.orDivider	or
 login.errorSso	Single sign-on didn't complete. Please try again.
 login.errorNoAuthMethods	This server has no sign-in methods enabled.
+login.errorClientCertificateRequired	This server asks for a client certificate.
+login.errorClientCertificateRejected	The server refused this client certificate.
 
 # ---- restored keys (were present in generated catalog but missing from tsv) ----
 browse.nameErrorReserved	That name isn't allowed.
@@ -802,3 +810,42 @@ media.play	Play
 media.pause	Pause
 media.position	Playback Position
 media.positionValue	%1$@ of %2$@
+media.clientCertificateUnsupported	This format can't stream from a server that asks for a client certificate. Download the file to play it.
+
+# Client certificates (mTLS)
+clientCertificate.title	Client Certificate
+clientCertificate.intro	Some servers only let in devices that present a client certificate (mTLS). Choose the .p12 or .pfx file you were given for this server.
+clientCertificate.serverLabel	Server
+clientCertificate.certificateLabel	Certificate
+clientCertificate.none	No certificate installed
+clientCertificate.issuedBy	Issued by %@
+clientCertificate.expires	Expires %@
+clientCertificate.expired	Expired %@
+clientCertificate.chooseFile	Choose File
+clientCertificate.replace	Replace Certificate
+clientCertificate.remove	Remove Certificate
+clientCertificate.install	Install
+clientCertificate.fileLabel	File
+clientCertificate.passwordLabel	File Password
+clientCertificate.passwordPrompt	The password the file was exported with
+clientCertificate.chooseAnother	Choose Another File
+clientCertificate.errorWrongPassword	That password doesn't unlock this file.
+clientCertificate.errorInvalidFile	This isn't a valid .p12 or .pfx certificate file.
+clientCertificate.errorNoIdentity	This file has no private key. Export the certificate together with its key.
+clientCertificate.errorStorage	Couldn't save the certificate on this device.
+clientCertificate.errorUnreadable	Couldn't read that file.
+clientCertificate.errorRemove	Couldn't remove the certificate from this device.
+clientCertificate.removeTitle	Remove certificate?
+clientCertificate.removeMessage	NextExplorer will stop presenting it to %@. If that server requires one, the app can't connect until you add a certificate again.
+clientCertificate.removeConfirm	Remove
+clientCertificate.expiredWarning	This certificate has expired. The server will likely refuse it.
+login.addClientCertificate	Add Certificate
+login.manageClientCertificate	Manage Certificate
+settings.clientCertificate	Client Certificate
+settings.clientCertificateNone	None
+login.usingClientCertificate	Using client certificate %@
+login.changeClientCertificate	Change
+login.ssoClientCertificateNote	Single sign-on opens in Safari, which can't use this app's client certificate. Sign in with your password, or install the certificate on this device to use single sign-on.
+settings.clientCertificateExpired	Expired
+settings.clientCertificateExpiresSoon	Expires soon
+clientCertificate.expiringSoonWarning	This certificate expires on %@. Ask for a new one before then.

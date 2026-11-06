@@ -1,4 +1,5 @@
 import AuthClient
+import ClientCertificateFeature
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
@@ -451,6 +452,22 @@ public struct LoginFormView: View {
                         .transition(.opacity)
                 }
 
+                if let prompt = store.certificatePrompt {
+                    LoginCertificateButton(isRejected: prompt.isRejected) {
+                        focusedField = nil
+                        store.send(.clientCertificateButtonTapped)
+                    }
+                    .padding(.horizontal, .space24)
+                    .transition(.opacity)
+                } else if let summary = store.certificateInUse {
+                    LoginCertificateStatus(summary: summary) {
+                        focusedField = nil
+                        store.send(.changeClientCertificateTapped)
+                    }
+                    .padding(.horizontal, .space24)
+                    .transition(.opacity)
+                }
+
                 #if os(macOS)
                     // No keyboard reflow on a Mac: the slot is always reserved, so the button
                     // pops in place without shifting anything around it.
@@ -486,6 +503,9 @@ public struct LoginFormView: View {
         .onAppear { LocalNetworkPrimer.prime() }
         .dsSheet(isPresented: $isServerInfoPresented) {
             ServerInfoSheet(onClose: { isServerInfoPresented = false })
+        }
+        .dsSheet(item: $store.scope(state: \.clientCertificate, action: \.clientCertificate)) { certificateStore in
+            ClientCertificateSheet(store: certificateStore)
         }
     }
 
@@ -570,6 +590,13 @@ public struct LoginFormView: View {
 
             ScrollView {
                 VStack(alignment: .leading, spacing: .space24) {
+                    if let summary = store.certificateInUse {
+                        LoginCertificateStatus(summary: summary) {
+                            focusedField = nil
+                            store.send(.changeClientCertificateTapped)
+                        }
+                    }
+
                     if store.authStatus?.localEnabled == true {
                         identifierField
                         passwordField
@@ -588,6 +615,11 @@ public struct LoginFormView: View {
                             orDivider
                         }
                         ssoButton
+                        if store.certificateInUse != nil {
+                            Text(L10n.Login.ssoClientCertificateNote)
+                                .type(.body3(.regular), style: .secondary)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
                     }
 
                     if let errorMessage = displayedErrorMessage, !errorMessage.isEmpty {

@@ -122,6 +122,12 @@
                         LabeledContent(L10n.MacSettings.role) {
                             Text(store.user.isAdmin ? L10n.MacSettings.roleAdmin : L10n.MacSettings.roleUser)
                         }
+                        LabeledContent(L10n.Settings.clientCertificate) {
+                            HStack(spacing: .space8) {
+                                Text(store.clientCertificateStatus.settingsDetail()).foregroundStyle(.secondary)
+                                Button(L10n.Login.manageClientCertificate) { store.send(.clientCertificateButtonTapped) }
+                            }
+                        }
                     }
                     LabeledContent(L10n.MacSettings.status) {
                         HStack(spacing: .space4) {

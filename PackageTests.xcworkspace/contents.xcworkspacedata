@@ -20,6 +20,9 @@
       location = "group:Packages/DesignSystem">
    </FileRef>
    <FileRef
+      location = "group:Packages/ClientCertificateFeature">
+   </FileRef>
+   <FileRef
       location = "group:Packages/AuthFeature">
    </FileRef>
    <FileRef

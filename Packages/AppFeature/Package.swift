@@ -16,6 +16,7 @@ let package = Package(
         .package(path: "../FilesClient"),
         .package(path: "../FilesFeature"),
         .package(path: "../Localization"),
+        .package(path: "../NetworkClient"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
     ],
     targets: [
@@ -30,6 +31,7 @@ let package = Package(
                 "FilesClient",
                 "FilesFeature",
                 "Localization",
+                "NetworkClient",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
@@ -38,6 +40,10 @@ let package = Package(
             name: "AppFeatureTests",
             dependencies: [
                 "AppFeature",
+                .product(name: "AuthFeature", package: "AuthFeature"),
+                .product(name: "FilesClient", package: "FilesClient"),
+                .product(name: "FilesFeature", package: "FilesFeature"),
+                .product(name: "NetworkClient", package: "NetworkClient"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]

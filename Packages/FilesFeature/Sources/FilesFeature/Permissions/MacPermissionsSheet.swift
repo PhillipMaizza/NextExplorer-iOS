@@ -1,6 +1,7 @@
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
+    import DesignSystem
     import Localization
     import SwiftUI
 

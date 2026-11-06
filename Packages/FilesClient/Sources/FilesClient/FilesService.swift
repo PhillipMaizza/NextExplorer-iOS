@@ -106,10 +106,12 @@ struct FilesService: Sendable {
     /// `.offline` classification `NetworkClient` already made so callers can fall back to a
     /// cached copy instead of showing a generic network failure.
     static func mapTransportError(_ error: Error) -> FilesClientError {
-        if let networkError = error as? NetworkError, networkError == .offline {
-            return .offline
+        switch error as? NetworkError {
+        case .offline: .offline
+        case .clientCertificateRequired: .clientCertificateRequired
+        case .clientCertificateRejected: .clientCertificateRejected
+        default: .network(String(describing: error))
         }
-        return .network(String(describing: error))
     }
 
     static func validate(_ response: HTTPURLResponse) throws {

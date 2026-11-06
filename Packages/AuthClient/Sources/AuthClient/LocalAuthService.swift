@@ -80,6 +80,10 @@ struct LocalAuthService: Sendable {
     private func performSend(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
         do {
             return try await networkClient.send(request)
+        } catch NetworkError.clientCertificateRequired {
+            throw AuthClientError.clientCertificateRequired
+        } catch NetworkError.clientCertificateRejected {
+            throw AuthClientError.clientCertificateRejected
         } catch {
             throw AuthClientError.network(String(describing: error))
         }

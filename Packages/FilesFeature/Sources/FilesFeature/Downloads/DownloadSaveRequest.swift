@@ -63,7 +63,8 @@ public struct DownloadSaveRequest: Equatable, Sendable {
             let totalBytes = files.reduce(Int64(0)) { $0 + max($1.size, 0) }
             let expectedBytes = totalBytes > 0 ? totalBytes : nil
             let fileManager = FileManager.default
-            let staging = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+            let staging = fileManager.temporaryDirectory
+                .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)", isDirectory: true)
             defer { try? fileManager.removeItem(at: staging) }
             try local { try fileManager.createDirectory(at: staging, withIntermediateDirectories: true) }
             let rootPrefix = item.id + "/"

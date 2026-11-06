@@ -1,3 +1,4 @@
+import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
@@ -8,7 +9,7 @@ private enum Constants {
     static let verticalPadding: CGFloat = .space24
 }
 
-/// A one field name entry sheet shared by "Create Folder" and "Rename": a `DSDynamicHeightSheet`
+/// A one field name entry sheet shared by "Create Folder", "Create File" and "Rename": a `DSDynamicHeightSheet`
 /// with a single text field and a confirm button, sizing to its own content. The draft lives
 /// in this view's own `@State` rather than the store: a `TextField` bound through a TCA
 /// `.sending` binding dropped keystrokes. `onConfirm` gets the raw text; the reducer trims and
@@ -19,6 +20,10 @@ struct NameInputSheet: View {
     let placeholder: String
     let confirmTitle: String
     let isBusy: Bool
+    /// A rule on top of the file name rules, such as "an extension the editor opens" for a new
+    /// file: returns why the trimmed name can't be used, or `nil`.
+    let additionalRule: ((String) -> String?)?
+    let capitalizesWords: Bool
     let onConfirm: (String) -> Void
     let onCancel: () -> Void
 
@@ -32,6 +37,8 @@ struct NameInputSheet: View {
         confirmTitle: String,
         initialName: String = "",
         isBusy: Bool,
+        additionalRule: ((String) -> String?)? = nil,
+        capitalizesWords: Bool = true,
         onConfirm: @escaping (String) -> Void,
         onCancel: @escaping () -> Void
     ) {
@@ -40,6 +47,8 @@ struct NameInputSheet: View {
         self.placeholder = placeholder
         self.confirmTitle = confirmTitle
         self.isBusy = isBusy
+        self.additionalRule = additionalRule
+        self.capitalizesWords = capitalizesWords
         self.onConfirm = onConfirm
         self.onCancel = onCancel
         _name = State(initialValue: initialName)
@@ -51,7 +60,14 @@ struct NameInputSheet: View {
 
     /// Inline reason the current name can't be used (a path separator, a reserved name), or `nil`.
     private var validationError: String? {
-        FileNameValidation.errorMessage(forTrimmed: trimmedName)
+        if let error = FileNameValidation.errorMessage(forTrimmed: trimmedName) {
+            return error
+        }
+        return trimmedName.isEmpty ? nil : additionalRule?(trimmedName)
+    }
+
+    private var canSubmit: Bool {
+        FileNameValidation.isAcceptable(trimmed: trimmedName) && additionalRule?(trimmedName) == nil
     }
 
     var body: some View {
@@ -68,7 +84,7 @@ struct NameInputSheet: View {
             MacFormSheet(
                 title: title,
                 confirmTitle: confirmTitle,
-                isConfirmEnabled: FileNameValidation.isAcceptable(trimmed: trimmedName),
+                isConfirmEnabled: canSubmit,
                 isWorking: isBusy,
                 onCancel: onCancel,
                 onConfirm: submit
@@ -90,7 +106,7 @@ struct NameInputSheet: View {
                 DSSheetHeader(icon: icon, title: title, closeAccessibilityLabel: L10n.Common.close, onClose: onCancel)
                 VStack(alignment: .leading, spacing: .space8) {
                     DSTextField(placeholder, text: $name, focused: $isFieldFocused)
-                        .textInputAutocapitalization(.words)
+                        .textInputAutocapitalization(capitalizesWords ? .words : .never)
                         .autocorrectionDisabled()
                         .submitLabel(.done)
                         .onSubmit(submit)
@@ -103,7 +119,7 @@ struct NameInputSheet: View {
                 }
                 .animation(.easeInOut(duration: 0.15), value: validationError)
                 DSButton(confirmTitle, style: .primary, isLoading: isBusy, action: submit)
-                    .disabled(!FileNameValidation.isAcceptable(trimmed: trimmedName))
+                    .disabled(!canSubmit)
             }
             .padding(.horizontal, Constants.horizontalPadding)
             .padding(.vertical, Constants.verticalPadding)
@@ -112,7 +128,7 @@ struct NameInputSheet: View {
     }
 
     private func submit() {
-        guard FileNameValidation.isAcceptable(trimmed: trimmedName), !isBusy else { return }
+        guard canSubmit, !isBusy else { return }
         onConfirm(name)
     }
 }
@@ -125,6 +141,23 @@ struct NameInputSheet: View {
             placeholder: "Folder name",
             confirmTitle: "Create",
             isBusy: false,
+            onConfirm: { _ in },
+            onCancel: {}
+        )
+    }
+}
+
+#Preview("Create file") {
+    Color.clear.sheet(isPresented: .constant(true)) {
+        NameInputSheet(
+            icon: IconKit.newFile,
+            title: "New File",
+            placeholder: "notes.txt",
+            confirmTitle: "Create",
+            initialName: "photo.jpg",
+            isBusy: false,
+            additionalRule: { EditableTextFiles.isEditable(name: $0) ? nil : "Use a file type the editor can open, such as .txt, .md or .js." },
+            capitalizesWords: false,
             onConfirm: { _ in },
             onCancel: {}
         )

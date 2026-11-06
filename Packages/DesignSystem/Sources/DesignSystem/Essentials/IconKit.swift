@@ -55,6 +55,7 @@ public enum IconKit {
     public static let folder = Image(systemName: "folder")
     public static let folderFill = Image(systemName: "folder.fill")
     public static let document = Image(systemName: "doc")
+    public static let newFile = Image(systemName: "doc.badge.plus")
     public static let search = Image(systemName: "magnifyingglass")
     public static let star = Image(systemName: "star")
     public static let starFill = Image(systemName: "star.fill")

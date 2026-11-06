@@ -728,3 +728,48 @@ textPreview.unsavedTitle	Сохранить изменения в «%@»?
 textPreview.unsavedMessage	Если не сохранить изменения, они будут потеряны.
 textPreview.dontSave	Не сохранять
 browse.showInEnclosingFolder	Показать в папке
+error.clientCertificateRequired	Этому серверу нужен клиентский сертификат. Добавьте его в Настройках.
+error.clientCertificateRejected	Сервер отклонил ваш клиентский сертификат.
+login.errorClientCertificateRequired	Этот сервер запрашивает клиентский сертификат.
+login.errorClientCertificateRejected	Сервер отклонил этот клиентский сертификат.
+login.addClientCertificate	Добавить сертификат
+login.manageClientCertificate	Управлять сертификатом
+settings.clientCertificate	Клиентский сертификат
+settings.clientCertificateNone	Нет
+media.clientCertificateUnsupported	Этот формат нельзя воспроизвести потоком с сервера, который запрашивает клиентский сертификат. Скачайте файл, чтобы воспроизвести его.
+clientCertificate.title	Клиентский сертификат
+clientCertificate.intro	Некоторые серверы пускают только устройства с клиентским сертификатом (mTLS). Выберите файл .p12 или .pfx, который вам выдали для этого сервера.
+clientCertificate.serverLabel	Сервер
+clientCertificate.certificateLabel	Сертификат
+clientCertificate.none	Сертификат не установлен
+clientCertificate.issuedBy	Выдан: %@
+clientCertificate.expires	Действует до %@
+clientCertificate.expired	Истёк %@
+clientCertificate.chooseFile	Выбрать файл
+clientCertificate.replace	Заменить сертификат
+clientCertificate.remove	Удалить сертификат
+clientCertificate.install	Установить
+clientCertificate.fileLabel	Файл
+clientCertificate.passwordLabel	Пароль файла
+clientCertificate.passwordPrompt	Пароль, с которым файл был экспортирован
+clientCertificate.chooseAnother	Выбрать другой файл
+clientCertificate.errorWrongPassword	Этот пароль не подходит к файлу.
+clientCertificate.errorInvalidFile	Это не файл сертификата .p12 или .pfx.
+clientCertificate.errorNoIdentity	В файле нет закрытого ключа. Экспортируйте сертификат вместе с ключом.
+clientCertificate.errorStorage	Не удалось сохранить сертификат на этом устройстве.
+clientCertificate.errorUnreadable	Не удалось прочитать файл.
+clientCertificate.removeTitle	Удалить сертификат?
+clientCertificate.removeMessage	NextExplorer больше не будет предъявлять его серверу %@. Если сервер его требует, приложение не сможет подключиться, пока вы снова не добавите сертификат.
+clientCertificate.removeConfirm	Удалить
+clientCertificate.expiredWarning	Срок действия сертификата истёк. Скорее всего, сервер его отклонит.
+clientCertificate.errorRemove	Не удалось удалить сертификат с этого устройства.
+login.usingClientCertificate	Используется клиентский сертификат %@
+login.changeClientCertificate	Изменить
+login.ssoClientCertificateNote	Единый вход открывается в Safari, который не может использовать клиентский сертификат этого приложения. Войдите с паролем или установите сертификат на это устройство, чтобы пользоваться единым входом.
+settings.clientCertificateExpired	Истёк
+settings.clientCertificateExpiresSoon	Скоро истечёт
+clientCertificate.expiringSoonWarning	Срок действия этого сертификата истекает %@. Запросите новый заранее.
+browse.actionNewFile	Создать файл
+browse.newFileTitle	Новый файл
+browse.newFileTypeHint	Используйте тип файла, который открывает редактор, например .txt, .md или .js.
+browse.newFilePlaceholder	notes.txt

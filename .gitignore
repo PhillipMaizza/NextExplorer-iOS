@@ -55,6 +55,8 @@ Carthage/Build/
 *.pem
 *.p12
 *.mobileprovision
+# Throwaway localhost identities for the in process mTLS tests (Scripts/mtls/certs.sh), not secrets.
+!Packages/NetworkClient/Tests/NetworkClientTests/Fixtures/*.p12
 *.cer
 *secrets*.swift
 *Secrets*.swift

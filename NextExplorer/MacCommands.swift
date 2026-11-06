@@ -59,6 +59,8 @@
                 Divider()
                 Button(L10n.Browse.actionNewFolder) { sendToFrontWindow({ $0.newFolder() }, otherwise: .newFolderRequested) }
                     .keyboardShortcut("n", modifiers: [.command, .shift])
+                Button(L10n.Browse.actionNewFile) { sendToFrontWindow({ $0.newFile() }, otherwise: .newFileRequested) }
+                    .keyboardShortcut("n", modifiers: [.command, .option])
                 Divider()
                 Button(L10n.Browse.actionDuplicate) { fileActions?.duplicate() }
                     .keyboardShortcut("d")

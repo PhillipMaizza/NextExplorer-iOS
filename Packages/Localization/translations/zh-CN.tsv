@@ -728,3 +728,48 @@ textPreview.unsavedTitle	要存储对“%@”的更改吗？
 textPreview.unsavedMessage	如果不存储，你的更改将会丢失。
 textPreview.dontSave	不存储
 browse.showInEnclosingFolder	在所在文件夹中显示
+error.clientCertificateRequired	此服务器需要客户端证书。请在“设置”中添加。
+error.clientCertificateRejected	服务器拒绝了您的客户端证书。
+login.errorClientCertificateRequired	此服务器要求提供客户端证书。
+login.errorClientCertificateRejected	服务器拒绝了此客户端证书。
+login.addClientCertificate	添加证书
+login.manageClientCertificate	管理证书
+settings.clientCertificate	客户端证书
+settings.clientCertificateNone	无
+media.clientCertificateUnsupported	无法从要求客户端证书的服务器流式播放此格式。请下载文件后播放。
+clientCertificate.title	客户端证书
+clientCertificate.intro	有些服务器只允许出示客户端证书 (mTLS) 的设备访问。请选择为此服务器提供给您的 .p12 或 .pfx 文件。
+clientCertificate.serverLabel	服务器
+clientCertificate.certificateLabel	证书
+clientCertificate.none	未安装证书
+clientCertificate.issuedBy	颁发者：%@
+clientCertificate.expires	到期：%@
+clientCertificate.expired	已于 %@ 过期
+clientCertificate.chooseFile	选取文件
+clientCertificate.replace	替换证书
+clientCertificate.remove	移除证书
+clientCertificate.install	安装
+clientCertificate.fileLabel	文件
+clientCertificate.passwordLabel	文件密码
+clientCertificate.passwordPrompt	导出文件时使用的密码
+clientCertificate.chooseAnother	选取其他文件
+clientCertificate.errorWrongPassword	此密码无法解锁该文件。
+clientCertificate.errorInvalidFile	这不是有效的 .p12 或 .pfx 证书文件。
+clientCertificate.errorNoIdentity	此文件没有私钥。请将证书连同私钥一起导出。
+clientCertificate.errorStorage	无法在此设备上存储证书。
+clientCertificate.errorUnreadable	无法读取该文件。
+clientCertificate.removeTitle	要移除证书吗？
+clientCertificate.removeMessage	NextExplorer 将不再向 %@ 出示此证书。如果该服务器要求证书，在您重新添加证书之前，App 将无法连接。
+clientCertificate.removeConfirm	移除
+clientCertificate.expiredWarning	此证书已过期。服务器很可能会拒绝它。
+clientCertificate.errorRemove	无法从此设备移除证书。
+login.usingClientCertificate	正在使用客户端证书 %@
+login.changeClientCertificate	更改
+login.ssoClientCertificateNote	单点登录会在 Safari 中打开，而 Safari 无法使用此 App 的客户端证书。请使用密码登录，或在此设备上安装证书以使用单点登录。
+settings.clientCertificateExpired	已过期
+settings.clientCertificateExpiresSoon	即将过期
+clientCertificate.expiringSoonWarning	此证书将于 %@ 过期。请在此之前申请新的证书。
+browse.actionNewFile	创建文件
+browse.newFileTitle	新建文件
+browse.newFileTypeHint	请使用编辑器可以打开的文件类型，例如 .txt、.md 或 .js。
+browse.newFilePlaceholder	notes.txt
