@@ -65,6 +65,30 @@ struct MacKeychainStore: KeychainStore {
         }
     }
 
+    /// Moves everything still in the legacy keychain across, without waiting for each item to be
+    /// read. A copy already in the data protection keychain is newer, so it is never overwritten
+    /// (the stale legacy copy goes). Any failure leaves that item where it is. Returns how many moved.
+    @discardableResult
+    func migrateAll() -> Int {
+        guard let keys = try? legacy.allKeys() else { return 0 }
+        var moved = 0
+        for key in keys {
+            guard let data = try? legacy.load(key: key) else { continue }
+            do {
+                if try modern.load(key: key) == nil {
+                    try modern.save(key: key, data: data)
+                    moved += 1
+                }
+            } catch let error where Self.isMissingEntitlement(error) {
+                return moved
+            } catch {
+                continue
+            }
+            try? legacy.delete(key: key)
+        }
+        return moved
+    }
+
     static func isMissingEntitlement(_ error: any Error) -> Bool {
         (error as? KeychainError) == .unexpectedStatus(errSecMissingEntitlement)
     }

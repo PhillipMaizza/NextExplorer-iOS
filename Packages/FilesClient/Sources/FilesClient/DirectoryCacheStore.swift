@@ -32,6 +32,10 @@ public struct DirectoryCacheStore: Sendable {
     public var clearAll: @Sendable () -> Void
     /// Total bytes currently on disk, for a settings display.
     public var totalSizeBytes: @Sendable () -> Int64
+    /// Drops only the entries of one account scope, for removing a single account while others
+    /// stay signed in.
+    public var clearScope: @Sendable (_ scope: String) -> Void
+    var bindToScope: (@Sendable (_ scope: String) -> DirectoryCacheStore)?
 
     public init(
         read: @escaping @Sendable (URL, String) -> CachedDirectory?,
@@ -40,8 +44,12 @@ public struct DirectoryCacheStore: Sendable {
         touch: @escaping @Sendable (URL, String, String?, Date) -> Void,
         remove: @escaping @Sendable (URL, String) -> Void,
         clearAll: @escaping @Sendable () -> Void,
-        totalSizeBytes: @escaping @Sendable () -> Int64
+        totalSizeBytes: @escaping @Sendable () -> Int64,
+        clearScope: @escaping @Sendable (String) -> Void = { _ in },
+        bindToScope: (@Sendable (String) -> DirectoryCacheStore)? = nil
     ) {
+        self.clearScope = clearScope
+        self.bindToScope = bindToScope
         self.read = read
         self.lastWrittenAt = lastWrittenAt
         self.write = write
@@ -72,11 +80,21 @@ public extension DirectoryCacheStore {
     func remove(serverURL: URL, path: String) {
         remove(serverURL, path)
     }
+
+    func clear(scope: String) {
+        clearScope(scope)
+    }
+
+    /// A view of this store pinned to `scope`, so an async request can read and write the
+    /// namespace that was active when it started even if the active account changes meanwhile.
+    func bound(to scope: String) -> DirectoryCacheStore {
+        bindToScope?(scope) ?? self
+    }
 }
 
 extension DirectoryCacheStore: DependencyKey {
     private enum Constants {
-        static let directoryName = "DirectoryCache"
+        static let directoryName = CacheLayout.directoryCacheName
         static let fileExtension = "json"
         static let maxEntries = 4000
         static let maxTotalBytes: Int64 = 40 * 1024 * 1024
@@ -139,22 +157,24 @@ extension DirectoryCacheStore: DependencyKey {
             return url
         }()
 
-        private func fileURL(serverURL: URL, path: String) -> URL? {
+        private func fileURL(scope: String, serverURL: URL, path: String) -> URL? {
             guard let directory else { return nil }
-            let normalizedPath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            let normalizedPath = path.trimmingCharacters(in: CacheLayout.pathTrimCharacters)
             // The active account is folded into the key so several signed-in accounts keep
             // separate entries and a switch reads the right account's cache without a wipe.
-            let key = "\(CacheAccountScope.current)\n\(serverURL.absoluteString)\n\(normalizedPath)"
+            let key = CacheLayout.key(scope, serverURL.absoluteString, normalizedPath)
             let digest = SHA256.hash(data: Data(key.utf8))
             let name = digest.map { String(format: "%02x", $0) }.joined()
-            return directory.appendingPathComponent(name).appendingPathExtension(Constants.fileExtension)
+            return directory
+                .appendingPathComponent(CacheAccountScope.scopedFileName(name, scope: scope))
+                .appendingPathExtension(Constants.fileExtension)
         }
 
-        func read(serverURL: URL, path: String) -> CachedDirectory? {
+        func read(scope: String, serverURL: URL, path: String) -> CachedDirectory? {
             lock.lock()
             defer { lock.unlock() }
             guard
-                let fileURL = fileURL(serverURL: serverURL, path: path),
+                let fileURL = fileURL(scope: scope, serverURL: serverURL, path: path),
                 let data = try? Data(contentsOf: fileURL),
                 let cached = try? JSONDecoder.cache.decode(CachedDirectory.self, from: data)
             else { return nil }
@@ -165,17 +185,17 @@ extension DirectoryCacheStore: DependencyKey {
             return cached
         }
 
-        func lastWrittenAt(serverURL: URL, path: String) -> Date? {
+        func lastWrittenAt(scope: String, serverURL: URL, path: String) -> Date? {
             lock.lock()
             defer { lock.unlock() }
-            guard let fileURL = fileURL(serverURL: serverURL, path: path) else { return nil }
+            guard let fileURL = fileURL(scope: scope, serverURL: serverURL, path: path) else { return nil }
             return try? fileURL.resourceValues(forKeys: [.contentModificationDateKey]).contentModificationDate
         }
 
-        func write(serverURL: URL, path: String, result: BrowseResult, etag: String?, fetchedAt: Date) {
+        func write(scope: String, serverURL: URL, path: String, result: BrowseResult, etag: String?, fetchedAt: Date) {
             lock.lock()
             defer { lock.unlock() }
-            guard let fileURL = fileURL(serverURL: serverURL, path: path) else { return }
+            guard let fileURL = fileURL(scope: scope, serverURL: serverURL, path: path) else { return }
             // A folder too large to cache cheaply: drop any earlier copy so a stale listing
             // can't linger, and skip the write. Checked on item count first (free) then on
             // encoded size (the real gate, since name lengths vary).
@@ -199,11 +219,11 @@ extension DirectoryCacheStore: DependencyKey {
             evictIfNeeded()
         }
 
-        func touch(serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
+        func touch(scope: String, serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
             lock.lock()
             defer { lock.unlock() }
             guard
-                let fileURL = fileURL(serverURL: serverURL, path: path),
+                let fileURL = fileURL(scope: scope, serverURL: serverURL, path: path),
                 let data = try? Data(contentsOf: fileURL),
                 let current = try? JSONDecoder.cache.decode(CachedDirectory.self, from: data),
                 current.etag == expectedETag
@@ -219,10 +239,10 @@ extension DirectoryCacheStore: DependencyKey {
             try? encoded.write(to: fileURL, options: .atomic)
         }
 
-        func remove(serverURL: URL, path: String) {
+        func remove(scope: String, serverURL: URL, path: String) {
             lock.lock()
             defer { lock.unlock() }
-            guard let fileURL = fileURL(serverURL: serverURL, path: path) else { return }
+            guard let fileURL = fileURL(scope: scope, serverURL: serverURL, path: path) else { return }
             try? fileManager.removeItem(at: fileURL)
         }
 
@@ -233,6 +253,15 @@ extension DirectoryCacheStore: DependencyKey {
             let entries = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
             for entry in entries {
                 try? fileManager.removeItem(at: entry)
+            }
+        }
+
+        func clear(scope: String) {
+            lock.lock()
+            defer { lock.unlock() }
+            let prefix = CacheAccountScope.namePrefix(for: scope)
+            for entry in entriesByAge() where entry.url.lastPathComponent.hasPrefix(prefix) {
+                try? fileManager.removeItem(at: entry.url)
             }
         }
 
@@ -278,20 +307,25 @@ extension DirectoryCacheStore: DependencyKey {
             }
         }
 
-        func asStore() -> DirectoryCacheStore {
-            DirectoryCacheStore(
-                read: { self.read(serverURL: $0, path: $1) },
-                lastWrittenAt: { self.lastWrittenAt(serverURL: $0, path: $1) },
-                write: { self.write(serverURL: $0, path: $1, result: $2, etag: $3, fetchedAt: $4) },
-                touch: { self.touch(serverURL: $0, path: $1, expectedETag: $2, fetchedAt: $3) },
-                remove: { self.remove(serverURL: $0, path: $1) },
+        func asStore(scope pinnedScope: String? = nil) -> DirectoryCacheStore {
+            @Sendable func resolved() -> String {
+                pinnedScope ?? CacheAccountScope.current
+            }
+            return DirectoryCacheStore(
+                read: { self.read(scope: resolved(), serverURL: $0, path: $1) },
+                lastWrittenAt: { self.lastWrittenAt(scope: resolved(), serverURL: $0, path: $1) },
+                write: { self.write(scope: resolved(), serverURL: $0, path: $1, result: $2, etag: $3, fetchedAt: $4) },
+                touch: { self.touch(scope: resolved(), serverURL: $0, path: $1, expectedETag: $2, fetchedAt: $3) },
+                remove: { self.remove(scope: resolved(), serverURL: $0, path: $1) },
                 clearAll: { self.clearAll() },
-                totalSizeBytes: { self.totalSizeBytes() }
+                totalSizeBytes: { self.totalSizeBytes() },
+                clearScope: { self.clear(scope: $0) },
+                bindToScope: { self.asStore(scope: $0) }
             )
         }
     }
 
-    /// A real on-disk store rooted under `rootDirectory` instead of Application Support, so
+    /// A real on disk store rooted under `rootDirectory` instead of Application Support, so
     /// tests can exercise persistence and eviction in a temp directory.
     static func onDisk(
         rootDirectory: URL? = nil,
@@ -320,17 +354,25 @@ extension DirectoryCacheStore: DependencyKey {
         totalSizeBytes: { 0 }
     )
 
-    /// An in-memory store for tests: reads see prior writes, keyed on `(server, normalized path)`.
-    public static func inMemory() -> DirectoryCacheStore {
-        let box = InMemoryBox()
-        return DirectoryCacheStore(
-            read: { box.read(serverURL: $0, path: $1) },
-            lastWrittenAt: { box.read(serverURL: $0, path: $1)?.fetchedAt },
-            write: { box.write(serverURL: $0, path: $1, result: $2, etag: $3, fetchedAt: $4) },
-            touch: { box.touch(serverURL: $0, path: $1, expectedETag: $2, fetchedAt: $3) },
-            remove: { box.remove(serverURL: $0, path: $1) },
+    /// An in memory store for tests: reads see prior writes. Unbound calls use `scope`, not the process
+    /// wide scope, so parallel tests never see each other's entries. `FilesClient.live` binds its
+    /// `activeScope()`, so a store seeded directly is visible to a live client whose scope source returns
+    /// the same value (the default `""` matches a test that never sets a scope).
+    public static func inMemory(scope: String = "") -> DirectoryCacheStore {
+        inMemory(box: InMemoryBox(), scope: scope)
+    }
+
+    private static func inMemory(box: InMemoryBox, scope: String) -> DirectoryCacheStore {
+        DirectoryCacheStore(
+            read: { box.read(scope: scope, serverURL: $0, path: $1) },
+            lastWrittenAt: { box.read(scope: scope, serverURL: $0, path: $1)?.fetchedAt },
+            write: { box.write(scope: scope, serverURL: $0, path: $1, result: $2, etag: $3, fetchedAt: $4) },
+            touch: { box.touch(scope: scope, serverURL: $0, path: $1, expectedETag: $2, fetchedAt: $3) },
+            remove: { box.remove(scope: scope, serverURL: $0, path: $1) },
             clearAll: { box.clearAll() },
-            totalSizeBytes: { 0 }
+            totalSizeBytes: { 0 },
+            clearScope: { box.clear(scope: $0) },
+            bindToScope: { inMemory(box: box, scope: $0) }
         )
     }
 
@@ -338,34 +380,40 @@ extension DirectoryCacheStore: DependencyKey {
         private let lock = NSLock()
         private var entries: [String: CachedDirectory] = [:]
 
-        private func key(_ serverURL: URL, _ path: String) -> String {
-            "\(serverURL.absoluteString)\n\(path.trimmingCharacters(in: CharacterSet(charactersIn: "/")))"
+        private func key(_ scope: String, _ serverURL: URL, _ path: String) -> String {
+            CacheLayout.key(scope, serverURL.absoluteString, path.trimmingCharacters(in: CacheLayout.pathTrimCharacters))
         }
 
-        func read(serverURL: URL, path: String) -> CachedDirectory? {
+        func read(scope: String, serverURL: URL, path: String) -> CachedDirectory? {
             lock.lock(); defer { lock.unlock() }
-            return entries[key(serverURL, path)]
+            return entries[key(scope, serverURL, path)]
         }
 
-        func write(serverURL: URL, path: String, result: BrowseResult, etag: String?, fetchedAt: Date) {
+        func write(scope: String, serverURL: URL, path: String, result: BrowseResult, etag: String?, fetchedAt: Date) {
             lock.lock(); defer { lock.unlock() }
-            entries[key(serverURL, path)] = CachedDirectory(
+            entries[key(scope, serverURL, path)] = CachedDirectory(
                 path: result.path, items: result.items, access: result.access, fetchedAt: fetchedAt, etag: etag
             )
         }
 
-        func touch(serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
+        func touch(scope: String, serverURL: URL, path: String, expectedETag: String?, fetchedAt: Date) {
             lock.lock(); defer { lock.unlock() }
-            let entryKey = key(serverURL, path)
+            let entryKey = key(scope, serverURL, path)
             guard let current = entries[entryKey], current.etag == expectedETag else { return }
             entries[entryKey] = CachedDirectory(
                 path: current.path, items: current.items, access: current.access, fetchedAt: fetchedAt, etag: current.etag
             )
         }
 
-        func remove(serverURL: URL, path: String) {
+        func remove(scope: String, serverURL: URL, path: String) {
             lock.lock(); defer { lock.unlock() }
-            entries[key(serverURL, path)] = nil
+            entries[key(scope, serverURL, path)] = nil
+        }
+
+        func clear(scope: String) {
+            lock.lock(); defer { lock.unlock() }
+            let prefix = CacheLayout.keyPrefix(for: scope)
+            entries = entries.filter { !$0.key.hasPrefix(prefix) }
         }
 
         func clearAll() {

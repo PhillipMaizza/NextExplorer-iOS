@@ -7,6 +7,7 @@ struct NetworkClientLiveTests {
     init() {
         StubURLProtocol.stub = nil
         StubURLProtocol.failure = nil
+        StubURLProtocol.lastRequest = nil
     }
 
     @Test("returns the response body and HTTPURLResponse on success")
@@ -199,6 +200,45 @@ struct NetworkClientLiveTests {
         let request = URLRequest(url: URL(string: "https://example.com/api/download")!)
         await #expect(throws: NetworkError.self) {
             _ = try await client.downloadWithProgress(request) { _ in }
+        }
+    }
+
+    private var timeoutURL: URL {
+        URL(string: "https://example.com/api/files/transfer") ?? URL(filePath: "/")
+    }
+
+    @Test
+    func liveSendMapsAMutationTimeoutToTimedOut() async {
+        StubURLProtocol.failure = URLError(.timedOut)
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+        var request = URLRequest(url: timeoutURL, method: .post)
+        request.httpBody = Data()
+
+        await #expect(throws: NetworkError.timedOut) {
+            _ = try await client.send(NetworkClient.markingAsMutation(request))
+        }
+    }
+
+    @Test
+    func liveSendStillMapsAReadTimeoutToOffline() async {
+        StubURLProtocol.failure = URLError(.timedOut)
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+
+        await #expect(throws: NetworkError.offline) {
+            _ = try await client.send(URLRequest(url: timeoutURL))
+        }
+    }
+
+    @Test
+    func liveUploadMapsATimeoutWhileTheServerFinalizesToTimedOut() async throws {
+        StubURLProtocol.failure = URLError(.timedOut)
+        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
+        let body = FileManager.default.temporaryDirectory.appendingPathComponent("timeout-upload-\(UUID().uuidString)")
+        try Data("body".utf8).write(to: body)
+        defer { try? FileManager.default.removeItem(at: body) }
+
+        await #expect(throws: NetworkError.timedOut) {
+            _ = try await client.upload(URLRequest(url: timeoutURL, method: .post), body) { _ in }
         }
     }
 }

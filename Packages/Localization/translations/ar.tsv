@@ -462,6 +462,8 @@ userDetail.removeVolumeTitle	إزالة وحدة التخزين؟
 userDetail.removeVolumeMessage	تم إلغاء تعيين %@ من هذا المستخدم. لا يتأثر الدليل نفسه.
 userDetail.removeUserTitle	إزالة المستخدم؟
 userDetail.removeUserMessage	يفقد %@ الوصول فورًا. لا تُحذف ملفاته على الخادم.
+userDetail.grantAdminTitle	منح صلاحيات المسؤول؟
+userDetail.grantAdminMessage	%@ سيصبح مسؤولاً بتحكم كامل في الملفات والمشاركات والمستخدمين. لا يمكن إزالة صلاحيات المسؤول من التطبيق.
 userDetail.volumeSheetLabelField	التسمية
 userDetail.volumeSheetLabelPlaceholder	تسمية وحدة التخزين
 userDetail.volumeSheetAccessMode	وضع الوصول
@@ -604,6 +606,7 @@ offline.manageRow	إدارة الملفات دون اتصال
 offline.manageTitle	الملفات دون اتصال
 offline.manageEmpty	لا يوجد شيء تم تنزيله للاستخدام دون اتصال.
 offline.preferOfflineToggle	تشغيل النسخ التي جرى تنزيلها
+offline.pinRemoved	لم يعد %@ موجودًا على الخادم وتمت إزالته من الملفات دون اتصال
 offline.preferOfflineSubtitle	استخدم مقطع فيديو تم تنزيله بدلاً من البث عندما يكون متاحًا.
 offline.tunnelSpeedNote	قد يؤدي الوصول إلى خادمك عبر نفق بعيد إلى إبطاء التنزيلات. للملفات الكبيرة، اتصل بالشبكة نفسها واستخدم العنوان المحلي لخادمك.
 menu.about	حول NextExplorer
@@ -785,9 +788,49 @@ shareUpload.signedOut	سجّل الدخول إلى NextExplorer أولًا، ث�
 shareUpload.nothingToUpload	لا يوجد هنا ما يمكن لـ NextExplorer رفعه.
 shareUpload.failed	تعذّر تجهيز الملفات للرفع.
 shareUpload.notificationDoneTitle	اكتمل الرفع
-shareUpload.notificationDoneBody	تم رفع %lld ملفات إلى ”%@“.
 shareUpload.notificationFailedTitle	لم يتم رفع بعض الملفات
-shareUpload.notificationFailedBody	تعذّر رفع %lld من %lld ملفات. شاركها مرة أخرى لإعادة المحاولة.
+shareUpload.notificationDoneBody#zero	تم رفع %lld ملف إلى «%@».
+shareUpload.notificationDoneBody#one	تم رفع %lld ملف إلى «%@».
+shareUpload.notificationDoneBody#two	تم رفع %lld ملفين إلى «%@».
+shareUpload.notificationDoneBody#few	تم رفع %lld ملفات إلى «%@».
+shareUpload.notificationDoneBody#many	تم رفع %lld ملفًا إلى «%@».
+shareUpload.notificationDoneBody#other	تم رفع %lld ملف إلى «%@».
+shareUpload.notificationAllFailedTitle	فشل الرفع
+shareUpload.failureUnauthorized#zero	لم يتم رفع %lld ملف. سجّل الدخول مرة أخرى ثم أعد المحاولة.
+shareUpload.failureUnauthorized#one	لم يتم رفع %lld ملف. سجّل الدخول مرة أخرى ثم أعد المحاولة.
+shareUpload.failureUnauthorized#two	لم يتم رفع %lld ملفين. سجّل الدخول مرة أخرى ثم أعد المحاولة.
+shareUpload.failureUnauthorized#few	لم يتم رفع %lld ملفات. سجّل الدخول مرة أخرى ثم أعد المحاولة.
+shareUpload.failureUnauthorized#many	لم يتم رفع %lld ملفًا. سجّل الدخول مرة أخرى ثم أعد المحاولة.
+shareUpload.failureUnauthorized#other	لم يتم رفع %lld ملف. سجّل الدخول مرة أخرى ثم أعد المحاولة.
+shareUpload.failureForbidden#zero	لم يتم رفع %lld ملف. ليست لديك صلاحية إضافة ملفات إلى هذا المجلد.
+shareUpload.failureForbidden#one	لم يتم رفع %lld ملف. ليست لديك صلاحية إضافة ملفات إلى هذا المجلد.
+shareUpload.failureForbidden#two	لم يتم رفع %lld ملفين. ليست لديك صلاحية إضافة ملفات إلى هذا المجلد.
+shareUpload.failureForbidden#few	لم يتم رفع %lld ملفات. ليست لديك صلاحية إضافة ملفات إلى هذا المجلد.
+shareUpload.failureForbidden#many	لم يتم رفع %lld ملفًا. ليست لديك صلاحية إضافة ملفات إلى هذا المجلد.
+shareUpload.failureForbidden#other	لم يتم رفع %lld ملف. ليست لديك صلاحية إضافة ملفات إلى هذا المجلد.
+shareUpload.failureServerFull#zero	لم يتم رفع %lld ملف. نفدت مساحة التخزين على الخادم.
+shareUpload.failureServerFull#one	لم يتم رفع %lld ملف. نفدت مساحة التخزين على الخادم.
+shareUpload.failureServerFull#two	لم يتم رفع %lld ملفين. نفدت مساحة التخزين على الخادم.
+shareUpload.failureServerFull#few	لم يتم رفع %lld ملفات. نفدت مساحة التخزين على الخادم.
+shareUpload.failureServerFull#many	لم يتم رفع %lld ملفًا. نفدت مساحة التخزين على الخادم.
+shareUpload.failureServerFull#other	لم يتم رفع %lld ملف. نفدت مساحة التخزين على الخادم.
+shareUpload.failureNetwork#zero	لم يتم رفع %lld ملف. فشل الاتصال. أعد المحاولة عند عودة الاتصال بالإنترنت.
+shareUpload.failureNetwork#one	لم يتم رفع %lld ملف. فشل الاتصال. أعد المحاولة عند عودة الاتصال بالإنترنت.
+shareUpload.failureNetwork#two	لم يتم رفع %lld ملفين. فشل الاتصال. أعد المحاولة عند عودة الاتصال بالإنترنت.
+shareUpload.failureNetwork#few	لم يتم رفع %lld ملفات. فشل الاتصال. أعد المحاولة عند عودة الاتصال بالإنترنت.
+shareUpload.failureNetwork#many	لم يتم رفع %lld ملفًا. فشل الاتصال. أعد المحاولة عند عودة الاتصال بالإنترنت.
+shareUpload.failureNetwork#other	لم يتم رفع %lld ملف. فشل الاتصال. أعد المحاولة عند عودة الاتصال بالإنترنت.
+shareUpload.failureOther#zero	تعذّر رفع %lld ملف.
+shareUpload.failureOther#one	تعذّر رفع %lld ملف.
+shareUpload.failureOther#two	تعذّر رفع %lld ملفين.
+shareUpload.failureOther#few	تعذّر رفع %lld ملفات.
+shareUpload.failureOther#many	تعذّر رفع %lld ملفًا.
+shareUpload.failureOther#other	تعذّر رفع %lld ملف.
+shareUpload.notificationRetry	إعادة المحاولة
+shareUpload.notificationHiddenPreview	افتح NextExplorer لمعرفة نتيجة الرفع.
+shareUpload.retryFailedTitle	تعذّرت إعادة المحاولة
+shareUpload.retryFailedBody	افتح NextExplorer وشارك الملفات مرة أخرى.
+shareUpload.insufficientSpace	لا توجد مساحة خالية كافية على هذا الجهاز لتجهيز هذه الملفات للرفع.
 settings.uploadDefaultsRow	الملفات المُشارَكة
 settings.uploadDefaultsFolder	المجلد الافتراضي
 settings.uploadDefaultsFolderNone	السؤال في كل مرة
@@ -795,3 +838,36 @@ settings.uploadDefaultsWithoutAsking	الرفع دون سؤال
 settings.uploadDefaultsFooter	تبدأ الصور والملفات التي تشاركها مع NextExplorer من التطبيقات الأخرى في هذا المجلد. عند تفعيل الرفع دون سؤال، تُرفع إليه مباشرة.
 settings.uploadDefaultsClear	السؤال في كل مرة
 common.change	تغيير
+shareUpload.sessionUnreadable	تعذّر على NextExplorer قراءة تسجيل دخولك على هذا الجهاز. افتح NextExplorer مرة واحدة ثم شارك مرة أخرى.
+shareUpload.keepOpen	أبقِ هذه النافذة مفتوحة حتى ينتهي التحضير.
+shareUpload.checking	جارٍ التحقق من الاتصال بـ %@…
+shareUpload.openApp	فتح NextExplorer
+shareUpload.openAppInstructions	افتح NextExplorer من الشاشة الرئيسية ثم شارك مرة أخرى.
+shareUpload.certificateRequired	يحتاج هذا الخادم إلى شهادة عميل. افتح NextExplorer وأضف واحدة في الإعدادات ثم شارك مرة أخرى.
+shareUpload.certificateRejected	رفض الخادم شهادة العميل الخاصة بك. افتح NextExplorer واستبدلها في الإعدادات ثم شارك مرة أخرى.
+shareUpload.defaultFolderUnavailable	لم يعد مجلدك الافتراضي متاحًا. اختر مجلدًا آخر.
+shareUpload.failedItemsHeader	تعذّر تحضير هذه الملفات:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	جاهز للرفع: %lld
+shareUpload.uploadReady	رفع الملفات الجاهزة
+shareUpload.retryFailed	إعادة محاولة الملفات الفاشلة
+shareUpload.fallbackItemName	الملف %lld
+shareUpload.causeCannotRead	تعذّرت قراءته.
+shareUpload.causeNotEnoughSpace	لا توجد مساحة فارغة كافية على هذا الجهاز.
+shareUpload.causeUnknown	تعذّر تحضيره.
+shareUpload.folderHint	يفتح أداة اختيار المجلد.
+shareUpload.accountHint	اختر الحساب الذي سيستلم الملفات.
+error.timedOut	استغرق الخادم وقتًا طويلًا للرد. قد يكتمل الإجراء مع ذلك.
+error.changedOnServer	تم تغيير هذا الملف على الخادم بعد أن فتحته.
+textPreview.conflictTitle	تم تغيير «%@» على الخادم
+textPreview.conflictMessage	استبدله بنسختك، أو أعد تحميل الملف وتجاهل تعديلاتك. تبقى النسخة المستبدلة في سجل إصدارات الملف.
+textPreview.conflictOverwrite	استبدال
+textPreview.conflictReload	إعادة التحميل
+offline.waitingForNetwork	سيتم التنزيل عند عودتك إلى الاتصال
+browse.bulkFavoriteFailed	فشل %1$lld من %2$lld
+shareUpload.livePhotoNote	تُرفع صور Live Photos مع مقطع الفيديو المتحرك الخاص بها.
+shareUpload.retrySignInBody	سجّل الدخول إلى NextExplorer، ثم اضغط على «إعادة المحاولة» مرة أخرى.
+shareUpload.causeFolder	لا يمكن مشاركة المجلدات. شارك الملفات الموجودة بداخلها بدلًا من ذلك.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	%lld أخرى
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

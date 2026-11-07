@@ -86,7 +86,7 @@ extension BrowseFeature {
     /// saved listing so the refresh that follows is a full fetch rather than a revalidation.
     func awaitArrivals(_ state: inout State, from result: TransferResult) {
         let destination = result.destination.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
-        directoryCacheStore.remove(state.serverURL, destination)
+        directoryCacheStore.bound(to: state.cacheScope).remove(state.serverURL, destination)
         guard destination == state.directoryPath else { return }
         state.awaitedArrivalIDs = Set(result.items.filter { !$0.skipped }.map {
             $0.to.trimmingCharacters(in: CharacterSet(charactersIn: "/"))

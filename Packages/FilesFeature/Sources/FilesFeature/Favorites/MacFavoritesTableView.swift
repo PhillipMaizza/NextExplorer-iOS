@@ -51,9 +51,10 @@
                     // The app's own private drag type: a plain string would drop the id as text
                     // into other apps, and accept any text dragged in.
                     TableRow(favorite)
-                        .draggable(ServerItemReference(id: favorite.id))
+                        .draggable(ServerItemReference(id: favorite.id, origin: .current(serverURL: store.serverURL, scope: store.cacheScope)))
                         .dropDestination(for: ServerItemReference.self) { references in
-                            move(references.first?.id, onto: favorite.id)
+                            let receiver = DragOrigin.current(serverURL: store.serverURL, scope: store.cacheScope)
+                            move(references.first { $0.origin == receiver }?.id, onto: favorite.id)
                         }
                 }
             }

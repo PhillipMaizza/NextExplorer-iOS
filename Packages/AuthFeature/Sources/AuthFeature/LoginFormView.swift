@@ -597,7 +597,7 @@ public struct LoginFormView: View {
                         }
                     }
 
-                    if store.authStatus?.localEnabled == true {
+                    if store.authStatus?.isLocalEnabled == true {
                         identifierField
                         passwordField
 
@@ -610,8 +610,8 @@ public struct LoginFormView: View {
                         continueButton
                     }
 
-                    if store.authStatus?.oidcEnabled == true {
-                        if store.authStatus?.localEnabled == true {
+                    if store.authStatus?.isOIDCEnabled == true {
+                        if store.authStatus?.isLocalEnabled == true {
                             orDivider
                         }
                         ssoButton

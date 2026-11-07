@@ -98,6 +98,7 @@ struct FavoritesFeatureTests {
 
         await store.send(.onAppear)
         await store.receive(\.favoritesResponse.failure)
+        await store.receive(\.offlineFavoritesResolved)
 
         #expect(store.state.favorites.map(\.id) == ["1"])
         #expect(store.state.phase == .loaded)

@@ -18,8 +18,8 @@ import SwiftUI
 
 #if os(macOS)
     private enum Metrics {
-        /// The share sheet's fixed size (a zero size showed nothing at all). The form fills it:
-        /// header at the top, buttons at the bottom.
+        /// The size before the form has measured itself (a zero size showed nothing at all). The
+        /// form then reports its own height, which the sheet follows.
         static let initialSize = NSSize(width: 460, height: 320)
     }
 #endif
@@ -28,6 +28,9 @@ import SwiftUI
 /// `ShareUploadView`, which hands the files to the background uploader.
 final class ShareViewController: PlatformViewController {
     private var store: StoreOf<ShareUploadFeature>?
+    #if os(macOS)
+        private var sizeObservation: NSKeyValueObservation?
+    #endif
 
     #if os(macOS)
         override func loadView() {
@@ -44,10 +47,18 @@ final class ShareViewController: PlatformViewController {
             ShareUploadFeature()
                 .onClose { [weak self] completed in self?.close(completed: completed) }
         } withDependencies: {
+            ShareExtensionDependencies.configure(&$0)
             $0.sharedItems = .live(providers: providers)
         }
         self.store = store
         let host = PlatformHostingController(rootView: ShareUploadView(store: store))
+        #if os(macOS)
+            host.sizingOptions = [.preferredContentSize]
+            sizeObservation = host.observe(\.preferredContentSize, options: [.new]) { [weak self] _, change in
+                guard let controller = self, let size = change.newValue, size.width > 0, size.height > 0 else { return }
+                Task { @MainActor in controller.preferredContentSize = size }
+            }
+        #endif
         addChild(host)
         host.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(host.view)
@@ -59,12 +70,25 @@ final class ShareViewController: PlatformViewController {
         ])
     }
 
-    private func close(completed: Bool) {
-        if completed {
-            extensionContext?.completeRequest(returningItems: nil)
-        } else {
-            extensionContext?.cancelRequest(withError: CocoaError(.userCancelled))
+    #if os(iOS)
+        override func viewDidDisappear(_ animated: Bool) {
+            super.viewDidDisappear(animated)
+            store?.send(.viewDisappeared)
         }
+    #else
+        override func viewDidDisappear() {
+            super.viewDidDisappear()
+            store?.send(.viewDisappeared)
+        }
+    #endif
+
+    private lazy var closer = ExtensionCloser(
+        complete: { [weak self] in self?.extensionContext?.completeRequest(returningItems: nil) },
+        cancel: { [weak self] in self?.extensionContext?.cancelRequest(withError: CocoaError(.userCancelled)) }
+    )
+
+    private func close(completed: Bool) {
+        closer.close(completed: completed)
     }
 }
 

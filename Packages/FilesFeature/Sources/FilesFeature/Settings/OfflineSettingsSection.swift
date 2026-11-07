@@ -1,5 +1,6 @@
 import AppStorageKeys
 import ComposableArchitecture
+import CoreModels
 import DesignSystem
 import Localization
 import SwiftUI
@@ -33,15 +34,20 @@ struct OfflineSettingsSection: View {
         if filter.anyMatch([L10n.Offline.settingsRow, L10n.Offline.manageRow, L10n.Offline.resyncRow, L10n.Offline.preferOfflineToggle, L10n.Offline.removeRow]) {
             Section {
                 if filter.matches(L10n.Offline.settingsRow) {
-                    DSNavigationRow(
-                        title: L10n.Offline.settingsRow,
-                        icon: IconKit.download,
-                        accessory: .chevron
-                    ) {
-                        store.send(.offlineDownloadButtonTapped)
+                    VStack(alignment: .leading, spacing: .space4) {
+                        DSNavigationRow(
+                            title: L10n.Offline.settingsRow,
+                            icon: IconKit.download,
+                            accessory: .chevron
+                        ) {
+                            store.send(.offlineDownloadButtonTapped)
+                        }
+                        .disabled(progress.isActive)
+                        .opacity(progress.isActive ? Constants.disabledOpacity : Constants.fullOpacity)
+                        if progress.phase == .waitingForNetwork {
+                            OfflineWaitingNote(onResync: store.offlineSize > 0 ? { store.send(.resyncOfflineTapped) } : nil)
+                        }
                     }
-                    .disabled(progress.isActive)
-                    .opacity(progress.isActive ? Constants.disabledOpacity : Constants.fullOpacity)
                 }
 
                 if progress.isActive {
@@ -161,4 +167,48 @@ struct OfflineSettingsSection: View {
             L10n.Offline.preparing
         }
     }
+}
+
+private enum PreviewFixture {
+    static let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
+    static let user = User(id: "preview-user", username: "jdoe", email: "jane.doe@example.com", displayName: "Jane Doe", roles: [])
+    static let offlineSizeBytes: Int64 = 48_000_000
+    static let filesTotal = 12
+    static let filesDone = 5
+}
+
+private func offlinePreviewStore(
+    phase: OfflineDownloadProgress.Phase, offlineSize: Int64 = PreviewFixture.offlineSizeBytes
+) -> StoreOf<SettingsFeature> {
+    @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) var progress = OfflineDownloadProgress()
+    $progress.withLock {
+        $0.phase = phase
+        $0.filesTotal = PreviewFixture.filesTotal
+        $0.filesDone = PreviewFixture.filesDone
+        $0.unitsDone = Double(PreviewFixture.filesDone)
+        $0.currentName = "report.pdf"
+    }
+    var state = SettingsFeature.State(serverURL: PreviewFixture.serverURL, user: PreviewFixture.user)
+    state.offlineSize = offlineSize
+    return Store(initialState: state) { SettingsFeature() }
+}
+
+#Preview("Offline: idle") {
+    List { OfflineSettingsSection(store: offlinePreviewStore(phase: .idle), filter: SettingsSearchFilter(query: "")) }
+}
+
+#Preview("Offline: nothing downloaded") {
+    List { OfflineSettingsSection(store: offlinePreviewStore(phase: .idle, offlineSize: 0), filter: SettingsSearchFilter(query: "")) }
+}
+
+#Preview("Offline: downloading") {
+    List { OfflineSettingsSection(store: offlinePreviewStore(phase: .downloading), filter: SettingsSearchFilter(query: "")) }
+}
+
+#Preview("Offline: waiting for network") {
+    List { OfflineSettingsSection(store: offlinePreviewStore(phase: .waitingForNetwork), filter: SettingsSearchFilter(query: "")) }
+}
+
+#Preview("Offline: failed") {
+    List { OfflineSettingsSection(store: offlinePreviewStore(phase: .failed("The server could not be reached.")), filter: SettingsSearchFilter(query: "")) }
 }

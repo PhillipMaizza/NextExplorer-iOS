@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CryptoKit
 import DesignSystem
+import FilesClient
 import Foundation
 import PDFKit
 #if os(iOS)
@@ -8,8 +9,8 @@ import PDFKit
 #endif
 
 private enum Constants {
-    static let cacheRootDirectory = "PreviewCache"
-    static let renderCacheDirectory = "pdf-thumbnails"
+    static let cacheRootDirectory = CacheLayout.previewCacheName
+    static let renderCacheDirectory = CacheLayout.pdfThumbnailsDirectoryName
     static let renderCacheFileExtension = "jpg"
     /// Thumbnails don't need lossless; JPEG is far cheaper to encode and decode and a
     /// fraction of the disk footprint.
@@ -82,7 +83,7 @@ extension PDFThumbnailCache {
 
     static func renderCacheFileURL(in directory: URL, for key: String) -> URL {
         directory
-            .appendingPathComponent(hexDigest(of: key))
+            .appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: key)))
             .appendingPathExtension(Constants.renderCacheFileExtension)
     }
 

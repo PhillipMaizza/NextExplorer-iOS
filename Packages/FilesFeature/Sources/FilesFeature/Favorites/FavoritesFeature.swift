@@ -10,6 +10,8 @@ public struct FavoritesFeature {
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
+        /// The account scope the saved list is filed under, captured when this state was created.
+        let cacheScope: String
         public var favorites: IdentifiedArrayOf<Favorite> = []
         /// The load lifecycle: `.idle` → `.loading` → `.loaded` / `.failed`. Drives the
         /// skeleton (`.loading` with no data) and the full screen error (`.failed`).
@@ -56,6 +58,8 @@ public struct FavoritesFeature {
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
+            @Dependency(\.cacheScope) var cacheScopeSource
+            cacheScope = cacheScopeSource.current()
             // Paint the last saved copy synchronously at construction, so the very first frame of
             // the Favorites tab already shows the cached list instead of a skeleton. Without this
             // the cache is only painted from `onAppear` (a `.task`, so it runs after the first
@@ -64,7 +68,7 @@ public struct FavoritesFeature {
             // `onAppear` still refetches (stale-while-revalidate); `dataSource` stays `.live` so an
             // online refetch doesn't flash a "saved copy" banner.
             @Dependency(\.jsonCacheStore) var jsonCacheStore
-            if let cached = ListCache.load(jsonCacheStore, FavoritesFeature.cacheNamespace, serverURL: serverURL, as: [Favorite].self) {
+            if let cached = ListCache.load(jsonCacheStore, FavoritesFeature.cacheNamespace, serverURL: serverURL, scope: cacheScope, as: [Favorite].self) {
                 favorites = IdentifiedArray(
                     cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first }
                 )
@@ -104,6 +108,10 @@ public struct FavoritesFeature {
         case onAppear
         case refreshButtonTapped
         case favoritesResponse(Result<[Favorite], FilesClientError>)
+        /// The saved list read off the main actor after an offline failure, `nil` when none is stored.
+        case offlineFavoritesResolved(cached: [Favorite]?, fetchedAt: Date?, error: FilesClientError)
+        /// The saved list read off the main actor to paint a first load.
+        case cachedFavoritesPainted([Favorite])
         /// Recompute which favorites are available offline (a pinned root, or under one).
         case computeOfflineAvailability
         case offlineAvailabilityComputed(Set<Favorite.ID>)
@@ -165,7 +173,7 @@ public struct FavoritesFeature {
     @Dependency(\.date) var date
 
     /// Cache namespace for this tab's saved offline copy.
-    private static let cacheNamespace = "favorites"
+    static let cacheNamespace = "favorites"
 
     private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search, offlineAvailability }
 
@@ -221,22 +229,26 @@ public struct FavoritesFeature {
 
             case let .favoritesResponse(.failure(error)):
                 // Offline with a saved copy: show it under a banner rather than an error screen.
-                if error == .offline,
-                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, as: [Favorite].self)
-                {
-                    state.phase = .loaded
-                    state.favorites = IdentifiedArray(cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
-                    state.dataSource = .cached(fetchedAt: cached.fetchedAt)
-                    return computeOfflineAvailability(&state)
+                guard error == .offline else { return failLoad(&state, error) }
+                let jsonCacheStore = jsonCacheStore
+                let serverURL = state.serverURL
+                let cacheScope = state.cacheScope
+                return .run { send in
+                    let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: serverURL, scope: cacheScope, as: [Favorite].self)
+                    await send(.offlineFavoritesResolved(cached: cached?.value, fetchedAt: cached?.fetchedAt, error: error))
                 }
-                // A full screen error only when there's nothing to blank; a failure over an
-                // already populated list stays `.loaded` and toasts instead.
-                if state.favorites.isEmpty {
-                    state.phase = .failed(error.userMessage)
-                } else {
-                    state.phase = .loaded
-                    state.actionErrorMessage = error.userMessage
-                }
+                .cancellable(id: CancelID.load)
+
+            case let .offlineFavoritesResolved(cached, fetchedAt, error):
+                guard let cached, let fetchedAt else { return failLoad(&state, error) }
+                state.phase = .loaded
+                state.favorites = IdentifiedArray(cached.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+                state.dataSource = .cached(fetchedAt: fetchedAt)
+                return computeOfflineAvailability(&state)
+
+            case let .cachedFavoritesPainted(cached):
+                guard state.phase == .loading, state.favorites.isEmpty else { return .none }
+                state.favorites = IdentifiedArray(cached.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
                 return .none
 
             case let .rowTapped(favorite):
@@ -489,22 +501,44 @@ public struct FavoritesFeature {
         }
     }
 
+    /// A full screen error only when there's nothing to blank; a failure over an already populated
+    /// list stays `.loaded` and toasts instead.
+    private func failLoad(_ state: inout State, _ error: FilesClientError) -> Effect<Action> {
+        if state.favorites.isEmpty {
+            state.phase = .failed(error.userMessage)
+        } else {
+            state.phase = .loaded
+            state.actionErrorMessage = error.userMessage
+        }
+        return .none
+    }
+
     private func load(_ state: inout State) -> Effect<Action> {
-        // Paint the last saved copy immediately on a first load so there's no skeleton flash
-        // while the fetch runs (stale-while-revalidate). A successful fetch silently replaces it;
-        // only a failed one (offline) surfaces the "saved copy" banner, so `dataSource` stays
-        // `.live` here.
-        if !state.phase.hasLoaded, state.favorites.isEmpty,
-           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, as: [Favorite].self)
-        {
-            state.favorites = IdentifiedArray(cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+        // Paint the last saved copy on a first load so there's no skeleton flash while the fetch runs
+        // (stale while revalidate). A successful fetch silently replaces it; only a failed one
+        // (offline) surfaces the "saved copy" banner, so `dataSource` stays `.live` here. The disk
+        // read runs beside the fetch, off the main actor, and is dropped if the fetch won.
+        let paint: Effect<Action>
+        if !state.phase.hasLoaded, state.favorites.isEmpty {
+            let jsonCacheStore = jsonCacheStore
+            let serverURL = state.serverURL
+            let cacheScope = state.cacheScope
+            paint = .run { send in
+                guard let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: serverURL, scope: cacheScope, as: [Favorite].self) else { return }
+                await send(.cachedFavoritesPainted(cached.value))
+            }
+        } else {
+            paint = .none
         }
         state.phase = .loading
         let serverURL = state.serverURL
         let filesClient = filesClient
-        return .run { send in
-            try await send(.favoritesResponse(apiResult { try await filesClient.favorites(serverURL) }))
-        }
+        return .merge(
+            paint,
+            .run { send in
+                try await send(.favoritesResponse(apiResult { try await filesClient.favorites(serverURL) }))
+            }
+        )
         .cancellable(id: CancelID.load, cancelInFlight: true)
     }
 
@@ -594,7 +628,7 @@ public struct FavoritesFeature {
     /// Persists the current list as this tab's offline copy, keeping it in sync after a load or
     /// an in-place mutation.
     private func syncCache(_ state: State) {
-        ListCache.save(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, value: Array(state.favorites))
+        ListCache.save(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, scope: state.cacheScope, value: Array(state.favorites))
     }
 
     /// Best-effort, matching the sign-out flow's philosophy: one failure shouldn't block

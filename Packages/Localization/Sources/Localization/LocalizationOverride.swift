@@ -32,29 +32,48 @@ public enum LocalizationOverride {
     /// races the switch.
     private static let state = OSAllocatedUnfairLock(initialState: Override())
 
+    /// A language that applies to the current task only, so a test or a one off formatting can read
+    /// another language without touching the process wide choice other work is using.
+    @TaskLocal private static var scopedLanguage: String?
+
+    /// Runs `operation` with every lookup on this task resolved in `language`.
+    public static func withLanguage<T>(_ language: String, operation: () throws -> T) rethrows -> T {
+        try $scopedLanguage.withValue(language, operation: operation)
+    }
+
+    private static func resources(for language: String) -> Override? {
+        guard let path = Bundle.module.path(forResource: language, ofType: "lproj"), let resolved = Bundle(path: path) else {
+            return nil
+        }
+        return Override(bundle: resolved, locale: Locale(identifier: language))
+    }
+
     /// Bundle every `tr()` lookup resolves through. The chosen language's `.lproj`, or `.module`.
     public static var bundle: Bundle {
-        (state.withLock { $0.bundle }) ?? .module
+        if let scopedLanguage, let scoped = resources(for: scopedLanguage) {
+            return scoped.bundle ?? .module
+        }
+        return (state.withLock { $0.bundle }) ?? .module
     }
 
     /// Locale used to format interpolated numbers/dates in `tr(_:_ :)`. Follows the override so a
     /// switched language also formats its arguments in that locale, not the device's.
     public static var locale: Locale {
-        (state.withLock { $0.locale }) ?? .current
+        if let scopedLanguage, let scoped = resources(for: scopedLanguage) {
+            return scoped.locale ?? .current
+        }
+        return (state.withLock { $0.locale }) ?? .current
     }
 
     /// Point lookups at `language`'s compiled resources. `nil`, `"en"` with no bundle, or an
     /// unknown code clears the override (system language). Safe to call from any thread; the caller
     /// is responsible for refreshing the UI (the app rebinds `\.locale` at its root).
     public static func apply(_ language: String?) {
-        guard let language,
-              let path = Bundle.module.path(forResource: language, ofType: "lproj"),
-              let resolved = Bundle(path: path)
-        else {
+        guard let language, let resolved = resources(for: language) else {
             state.withLock { $0 = Override() }
             return
         }
-        state.withLock { $0 = Override(bundle: resolved, locale: Locale(identifier: language)) }
+        state.withLock { $0 = resolved }
     }
 
     /// Whether a language reads right to left, so the UI can flip `\.layoutDirection`. Arabic (`ar`)

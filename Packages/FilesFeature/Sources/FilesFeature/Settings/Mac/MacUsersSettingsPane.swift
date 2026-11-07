@@ -72,11 +72,24 @@
                     onDismiss: { store.send(.removeVolumeCancelled) }
                 )
             }
+            .dsAlert(isPresented: Binding(get: { store.userToGrantAdmin != nil }, set: { _ in })) {
+                DSAlertSheet(
+                    icon: IconKit.shield,
+                    title: L10n.UserDetail.grantAdminTitle,
+                    message: store.userToGrantAdmin.map { L10n.UserDetail.grantAdminMessage($0.displayLabel) },
+                    confirmTitle: L10n.UserDetail.roleGrantAdmin,
+                    dismissTitle: L10n.Common.cancel,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.grantAdminConfirmed) },
+                    onDismiss: { store.send(.grantAdminCancelled) }
+                )
+            }
             .dsAlert(isPresented: Binding(get: { store.userToDelete != nil }, set: { _ in })) {
                 DSAlertSheet(
                     icon: IconKit.delete,
                     title: L10n.UserDetail.removeUserTitle,
-                    message: store.userToDelete.map { L10n.UserDetail.removeUserMessage($0.displayName ?? $0.username) },
+                    message: store.userToDelete.map { L10n.UserDetail.removeUserMessage($0.displayLabel) },
                     confirmTitle: L10n.Common.remove,
                     dismissTitle: L10n.Common.cancel,
                     role: .destructive,
@@ -157,9 +170,9 @@
 
         var body: some View {
             HStack(spacing: Metrics.rowSpacing) {
-                AvatarView(displayName: user.displayName ?? user.username, size: Metrics.avatarSize)
+                AvatarView(displayName: user.displayLabel, size: Metrics.avatarSize)
                 VStack(alignment: .leading) {
-                    Text(user.displayName ?? user.username).lineLimit(1)
+                    Text(user.displayLabel).lineLimit(1)
                     if let email = user.email {
                         Text(email)
                             .font(.callout)
@@ -183,6 +196,15 @@
         var state = UserManagementFeature.State(serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
         state.users = IdentifiedArray(uniqueElements: User.previewManagedUsers)
         state.phase = .loaded
+        return MacUsersSettingsPane(store: Store(initialState: state) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
+            .previewCanvas(.settingsPane)
+    }
+
+    #Preview("Users: grant admin alert") {
+        var state = UserManagementFeature.State(serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"), currentUserID: "u1")
+        state.users = IdentifiedArray(uniqueElements: User.previewManagedUsers)
+        state.phase = .loaded
+        state.userToGrantAdmin = User.previewManagedUsers.first
         return MacUsersSettingsPane(store: Store(initialState: state) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
             .previewCanvas(.settingsPane)
     }

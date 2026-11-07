@@ -6,6 +6,14 @@ protocol KeychainStore: Sendable {
     func save(key: String, data: Data) throws
     func load(key: String) throws -> Data?
     func delete(key: String) throws
+    /// Every key held in this store's service and access group.
+    func allKeys() throws -> [String]
+}
+
+extension KeychainStore {
+    func allKeys() throws -> [String] {
+        []
+    }
 }
 
 /// Thin wrapper over `Security`'s generic-password item calls. Not a singleton: callers
@@ -64,12 +72,33 @@ struct SecurityKeychainStore: KeychainStore {
         }
     }
 
-    private func baseQuery(for key: String) -> [CFString: Any] {
+    func allKeys() throws -> [String] {
+        var query = baseQuery(for: nil)
+        query[kSecReturnAttributes] = true
+        query[kSecMatchLimit] = kSecMatchLimitAll
+
+        var result: CFTypeRef?
+        let status = SecItemCopyMatching(query as CFDictionary, &result)
+        if status == errSecItemNotFound {
+            return []
+        }
+        guard status == errSecSuccess else {
+            throw KeychainError.unexpectedStatus(status)
+        }
+        guard let items = result as? [[CFString: Any]] else {
+            throw KeychainError.unexpectedItemFormat
+        }
+        return items.compactMap { $0[kSecAttrAccount] as? String }
+    }
+
+    private func baseQuery(for key: String?) -> [CFString: Any] {
         var query: [CFString: Any] = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrService: configuration.service,
-            kSecAttrAccount: key,
         ]
+        if let key {
+            query[kSecAttrAccount] = key
+        }
         if let accessGroup = configuration.accessGroup {
             query[kSecAttrAccessGroup] = accessGroup
         }

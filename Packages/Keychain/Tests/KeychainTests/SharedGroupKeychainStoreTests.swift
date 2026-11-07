@@ -43,6 +43,14 @@ struct SharedGroupKeychainStoreTests {
             }
         }
 
+        func allKeys() throws -> [String] {
+            try check()
+            return keychain.lock.withLock {
+                guard let group else { return [] }
+                return keychain.groups[group].map { Array($0.keys).sorted() } ?? []
+            }
+        }
+
         func delete(key: String) throws {
             try check()
             keychain.lock.withLock {
@@ -112,5 +120,71 @@ struct SharedGroupKeychainStoreTests {
 
         #expect(keychain.contents("app")["session"] == session)
         #expect(try store.load(key: "session") == session)
+    }
+
+    @Test("eager migration moves every item from the app's group without a read")
+    func migrateAllMovesEverything() {
+        let keychain = FakeKeychain()
+        keychain.groups["app"] = ["storedSessions": session, "certificate.index": Data("index".utf8)]
+        let store = makeStore(keychain)
+
+        #expect(store.migrateAll() == 2)
+
+        #expect(keychain.contents("shared")["storedSessions"] == session)
+        #expect(keychain.contents("shared")["certificate.index"] == Data("index".utf8))
+        #expect(keychain.contents("app").isEmpty)
+    }
+
+    @Test("eager migration never overwrites a newer item in the shared group")
+    func migrateAllKeepsNewerSharedItem() {
+        let keychain = FakeKeychain()
+        let newer = Data("newer".utf8)
+        keychain.groups = ["shared": ["storedSessions": newer], "app": ["storedSessions": session]]
+
+        #expect(makeStore(keychain).migrateAll() == 0)
+
+        #expect(keychain.contents("shared")["storedSessions"] == newer)
+        #expect(keychain.contents("app").isEmpty, "the stale copy goes so only one credential copy remains")
+    }
+
+    @Test("eager migration is a no-op when nothing is left, and safe to repeat")
+    func migrateAllIsIdempotent() {
+        let keychain = FakeKeychain()
+        keychain.groups["app"] = ["storedSessions": session]
+        let store = makeStore(keychain)
+
+        #expect(store.migrateAll() == 1)
+        #expect(store.migrateAll() == 0)
+        #expect(keychain.contents("shared")["storedSessions"] == session)
+    }
+
+    @Test("eager migration leaves items alone in a build without the sharing entitlement")
+    func migrateAllWithoutEntitlement() {
+        let keychain = FakeKeychain()
+        keychain.sharedIsMissingEntitlement = true
+        keychain.groups["app"] = ["storedSessions": session]
+
+        #expect(makeStore(keychain).migrateAll() == 0)
+
+        #expect(keychain.contents("app")["storedSessions"] == session)
+    }
+
+    @Test("eager migration without a known previous group does nothing")
+    func migrateAllWithoutPreviousGroup() {
+        let keychain = FakeKeychain()
+        keychain.groups["app"] = ["storedSessions": session]
+        let store = SharedGroupKeychainStore(
+            shared: GroupStore(keychain: keychain, group: "shared"),
+            anyGroup: GroupStore(keychain: keychain, group: nil),
+            previousGroup: nil
+        )
+
+        #expect(store.migrateAll() == 0)
+        #expect(keychain.contents("app")["storedSessions"] == session)
+    }
+
+    @Test("the launch hook does nothing in a build without the sharing entitlement")
+    func launchHookIsANoOpWithoutSharing() {
+        #expect(KeychainClient.migrateToSharedGroupIfNeeded() == 0)
     }
 }

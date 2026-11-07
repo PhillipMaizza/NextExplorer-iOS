@@ -28,8 +28,12 @@ public struct UserManagementFeature {
         case grantRole
         /// Delete for the open detail user, cancelled with the detail.
         case deleteUser
-        /// Volume assign, update and remove for the open detail user, cancelled with the detail.
-        case volumeMutation
+        /// Volume assign and update for the open detail user, cancelled with the detail. Separate
+        /// from `volumeRemoval` so removing a volume can't cancel a save whose sheet is spinning.
+        case volumeSave
+        /// Removal of one volume, cancelled with the detail. Per volume so confirming the same one twice
+        /// runs a single DELETE (the second would 404) while two different volumes both complete.
+        case volumeRemoval(String)
         /// Create user sheet submission.
         case createUser
         /// Set password sheet submission.
@@ -172,9 +176,16 @@ public struct UserManagementFeature {
         /// volumes from hitting the endpoint again on every tab switch.
         public var volumesPhase: DataPhase = .idle
         public var volumeToRemove: UserVolume?
+        /// Volumes whose DELETE is in flight. A second confirm for one of them is ignored: cancelling
+        /// the first request only stops listening for it, so the server could apply it and then 404 the
+        /// second.
+        public var removingVolumeIDs: Set<String> = []
 
-        // Confirmations and sheets.
+        /// Confirmations and sheets.
         public var userToDelete: User?
+        /// Pending "Grant Admin" confirmation. The server refuses to demote an admin, so the
+        /// grant is irreversible from the app and always asks first.
+        public var userToGrantAdmin: User?
         public var createSheet: CreateUserState?
         public var passwordSheet: PasswordSheetState?
         public var volumeSheet: VolumeSheetState?
@@ -273,6 +284,8 @@ public struct UserManagementFeature {
         case profileResponse(Result<User, FilesClientError>)
 
         case grantAdminTapped
+        case grantAdminCancelled
+        case grantAdminConfirmed
         case rolesResponse(Result<User, FilesClientError>)
 
         case deleteUserTapped(User)
@@ -391,15 +404,19 @@ public struct UserManagementFeature {
                 state.detailErrorMessage = nil
                 state.isSavingProfile = false
                 state.isUpdatingRoles = false
+                state.userToGrantAdmin = nil
+                state.volumeSheet?.isSubmitting = false
                 if state.volumesPhase == .loading {
                     state.volumesPhase = .idle
                 }
                 return .merge(
-                    .cancel(id: CancelID.saveProfile),
-                    .cancel(id: CancelID.grantRole),
-                    .cancel(id: CancelID.deleteUser),
-                    .cancel(id: CancelID.volumeMutation),
-                    .cancel(id: CancelID.volumes)
+                    [
+                        .cancel(id: CancelID.saveProfile),
+                        .cancel(id: CancelID.grantRole),
+                        .cancel(id: CancelID.deleteUser),
+                        .cancel(id: CancelID.volumeSave),
+                        .cancel(id: CancelID.volumes),
+                    ] + state.volumes.map { .cancel(id: CancelID.volumeRemoval($0.id)) }
                 )
 
             case let .detailTabChanged(tab):
@@ -465,6 +482,17 @@ public struct UserManagementFeature {
 
             case .grantAdminTapped:
                 guard let user = state.detailUser, !user.isAdmin, !state.isUpdatingRoles else { return .none }
+                state.userToGrantAdmin = user
+                return .none
+
+            case .grantAdminCancelled:
+                state.userToGrantAdmin = nil
+                return .none
+
+            case .grantAdminConfirmed:
+                guard let user = state.userToGrantAdmin else { return .none }
+                state.userToGrantAdmin = nil
+                guard !user.isAdmin, !state.isUpdatingRoles else { return .none }
                 state.isUpdatingRoles = true
                 state.detailErrorMessage = nil
                 let request = UpdateUserRequest(roles: (Set(user.roles).union([UserRole.admin])).sorted())
@@ -582,7 +610,7 @@ public struct UserManagementFeature {
                 guard let user = state.detailUser else { return .none }
                 state.passwordSheet = PasswordSheetState(
                     userID: user.id,
-                    userLabel: user.displayName ?? user.username,
+                    userLabel: user.displayLabel,
                     hasExistingPassword: user.hasLocalPassword
                 )
                 return .none
@@ -676,7 +704,7 @@ public struct UserManagementFeature {
                         )
                     }))
                 }
-                .cancellable(id: CancelID.volumeMutation, cancelInFlight: true)
+                .cancellable(id: CancelID.volumeSave, cancelInFlight: true)
 
             case let .volumeResponse(.success(volume)):
                 state.volumeSheet = nil
@@ -700,6 +728,7 @@ public struct UserManagementFeature {
             case .removeVolumeConfirmed:
                 guard let volume = state.volumeToRemove else { return .none }
                 state.volumeToRemove = nil
+                guard state.removingVolumeIDs.insert(volume.id).inserted else { return .none }
                 let serverURL = state.serverURL
                 let filesClient = filesClient
                 return .run { send in
@@ -708,14 +737,16 @@ public struct UserManagementFeature {
                         return true
                     }))
                 }
-                .cancellable(id: CancelID.volumeMutation, cancelInFlight: true)
+                .cancellable(id: CancelID.volumeRemoval(volume.id))
 
             case let .removeVolumeResponse(id, .success):
+                state.removingVolumeIDs.remove(id)
                 state.volumes.remove(id: id)
                 state.toast = L10n.UserManagement.toastVolumeRemoved
                 return .none
 
-            case let .removeVolumeResponse(_, .failure(error)):
+            case let .removeVolumeResponse(id, .failure(error)):
+                state.removingVolumeIDs.remove(id)
                 state.detailErrorMessage = error.userMessage
                 return .none
 
@@ -786,5 +817,5 @@ private extension String {
 /// The name the list sorts and groups by: the display name if the server has one, else the
 /// username, which is always present.
 private func sortName(_ user: User) -> String {
-    user.displayName ?? user.username
+    user.displayLabel
 }

@@ -59,6 +59,7 @@ public struct DSSheetHeader: View {
                         .frame(width: Constants.closeIconSize, height: Constants.closeIconSize)
                         .padding(Constants.closeButtonPadding)
                         .background(Circle().fill(Color.backgroundSecondary))
+                        .dsMinimumHitTarget()
                 }
                 .buttonStyle(DSHapticButtonStyle())
                 .accessibilityLabel(closeAccessibilityLabel)

@@ -462,6 +462,8 @@ userDetail.removeVolumeTitle	Ta bort volym?
 userDetail.removeVolumeMessage	%@ avtilldelas från den här användaren. Själva katalogen rörs inte.
 userDetail.removeUserTitle	Ta bort användare?
 userDetail.removeUserMessage	%@ förlorar åtkomsten omedelbart. Deras filer på servern raderas inte.
+userDetail.grantAdminTitle	Ge administratörsbehörighet?
+userDetail.grantAdminMessage	%@ blir administratör med full kontroll över filer, delningar och användare. Administratörer kan inte nedgraderas från appen.
 userDetail.volumeSheetLabelField	Etikett
 userDetail.volumeSheetLabelPlaceholder	Volymetikett
 userDetail.volumeSheetAccessMode	Åtkomstläge
@@ -604,6 +606,7 @@ offline.manageRow	Hantera offlinefiler
 offline.manageTitle	Offlinefiler
 offline.manageEmpty	Inget är hämtat för offlineanvändning.
 offline.preferOfflineToggle	Spela upp hämtade kopior
+offline.pinRemoved	%@ finns inte längre på servern och har tagits bort från offlinefiler
 offline.preferOfflineSubtitle	Använd en hämtad video i stället för att strömma när den finns.
 offline.tunnelSpeedNote	Att nå servern via en fjärrtunnel kan göra nedladdningar långsamma. Anslut till samma nätverk och använd serverns lokala adress för stora filer.
 menu.about	Om NextExplorer
@@ -785,9 +788,25 @@ shareUpload.signedOut	Logga in i NextExplorer först och dela sedan igen.
 shareUpload.nothingToUpload	Det finns inget här som NextExplorer kan ladda upp.
 shareUpload.failed	Filerna kunde inte förberedas för uppladdning.
 shareUpload.notificationDoneTitle	Uppladdningen är klar
-shareUpload.notificationDoneBody	%lld filer uppladdade till ”%@”.
 shareUpload.notificationFailedTitle	Vissa filer laddades inte upp
-shareUpload.notificationFailedBody	%lld av %lld filer kunde inte laddas upp. Dela dem igen för att försöka på nytt.
+shareUpload.notificationDoneBody#one	%lld fil uppladdad till ”%@”.
+shareUpload.notificationDoneBody#other	%lld filer uppladdade till ”%@”.
+shareUpload.notificationAllFailedTitle	Uppladdningen misslyckades
+shareUpload.failureUnauthorized#one	%lld fil laddades inte upp. Logga in igen och försök sedan på nytt.
+shareUpload.failureUnauthorized#other	%lld filer laddades inte upp. Logga in igen och försök sedan på nytt.
+shareUpload.failureForbidden#one	%lld fil laddades inte upp. Du har inte behörighet att lägga till filer i den mappen.
+shareUpload.failureForbidden#other	%lld filer laddades inte upp. Du har inte behörighet att lägga till filer i den mappen.
+shareUpload.failureServerFull#one	%lld fil laddades inte upp. Servern har slut på lagringsutrymme.
+shareUpload.failureServerFull#other	%lld filer laddades inte upp. Servern har slut på lagringsutrymme.
+shareUpload.failureNetwork#one	%lld fil laddades inte upp. Anslutningen misslyckades. Försök igen när du är online igen.
+shareUpload.failureNetwork#other	%lld filer laddades inte upp. Anslutningen misslyckades. Försök igen när du är online igen.
+shareUpload.failureOther#one	%lld fil kunde inte laddas upp.
+shareUpload.failureOther#other	%lld filer kunde inte laddas upp.
+shareUpload.notificationRetry	Försök igen
+shareUpload.notificationHiddenPreview	Öppna NextExplorer för att se hur uppladdningen gick.
+shareUpload.retryFailedTitle	Det gick inte att försöka igen
+shareUpload.retryFailedBody	Öppna NextExplorer och dela filerna igen.
+shareUpload.insufficientSpace	Det finns inte tillräckligt med ledigt utrymme på den här enheten för att förbereda filerna för uppladdning.
 settings.uploadDefaultsRow	Delade filer
 settings.uploadDefaultsFolder	Standardmapp
 settings.uploadDefaultsFolderNone	Fråga varje gång
@@ -795,3 +814,36 @@ settings.uploadDefaultsWithoutAsking	Ladda upp utan att fråga
 settings.uploadDefaultsFooter	Bilder och filer du delar till NextExplorer från andra appar börjar i den här mappen. Med Ladda upp utan att fråga påslaget hamnar de direkt där.
 settings.uploadDefaultsClear	Fråga varje gång
 common.change	Ändra
+shareUpload.sessionUnreadable	NextExplorer kunde inte läsa din inloggning på den här enheten. Öppna NextExplorer en gång och dela sedan igen.
+shareUpload.keepOpen	Låt det här vara öppet tills förberedelsen är klar.
+shareUpload.checking	Kontrollerar anslutningen till %@…
+shareUpload.openApp	Öppna NextExplorer
+shareUpload.openAppInstructions	Öppna NextExplorer från hemskärmen och dela sedan igen.
+shareUpload.certificateRequired	Den här servern kräver ett klientcertifikat. Öppna NextExplorer, lägg till ett i Inställningar och dela sedan igen.
+shareUpload.certificateRejected	Servern avvisade ditt klientcertifikat. Öppna NextExplorer, byt ut det i Inställningar och dela sedan igen.
+shareUpload.defaultFolderUnavailable	Din standardmapp är inte längre tillgänglig. Välj en annan mapp.
+shareUpload.failedItemsHeader	De här filerna kunde inte förberedas:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	Redo att ladda upp: %lld
+shareUpload.uploadReady	Ladda upp klara filer
+shareUpload.retryFailed	Försök igen med misslyckade filer
+shareUpload.fallbackItemName	Fil %lld
+shareUpload.causeCannotRead	Den kunde inte läsas.
+shareUpload.causeNotEnoughSpace	Det finns inte tillräckligt med ledigt utrymme på den här enheten.
+shareUpload.causeUnknown	Den kunde inte förberedas.
+shareUpload.folderHint	Öppnar mappväljaren.
+shareUpload.accountHint	Välj vilket konto som får filerna.
+error.timedOut	Servern svarade för långsamt. Åtgärden kan ändå slutföras.
+error.changedOnServer	Den här filen ändrades på servern efter att du öppnade den.
+textPreview.conflictTitle	”%@” ändrades på servern
+textPreview.conflictMessage	Skriv över den med din version, eller läs in filen igen och förkasta dina ändringar. Den ersatta versionen finns kvar i filens versionshistorik.
+textPreview.conflictOverwrite	Skriv över
+textPreview.conflictReload	Läs in igen
+offline.waitingForNetwork	Laddas ned när du är online igen
+browse.bulkFavoriteFailed	%1$lld av %2$lld misslyckades
+shareUpload.livePhotoNote	Live Photos laddas upp med sin rörelsevideo.
+shareUpload.retrySignInBody	Logga in i NextExplorer och tryck sedan på ”Försök igen” en gång till.
+shareUpload.causeFolder	Mappar kan inte delas. Dela filerna i dem i stället.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	%lld till
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

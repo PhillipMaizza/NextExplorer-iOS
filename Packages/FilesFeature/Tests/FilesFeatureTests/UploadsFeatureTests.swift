@@ -20,11 +20,13 @@ struct UploadsFeatureTests {
     }
 
     private nonisolated func job(
-        _ name: String, id: UUID, status: UploadsFeature.UploadJob.Status
+        _ name: String, id: UUID, status: UploadsFeature.UploadJob.Status,
+        isTransportFailure: Bool = false, autoRetryCount: Int = 0
     ) -> UploadsFeature.UploadJob {
         UploadsFeature.UploadJob(
             id: id, fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name,
-            destination: "Inbox", progress: status == .completed ? 1 : 0, status: status
+            destination: "Inbox", progress: status == .completed ? 1 : 0, status: status,
+            isTransportFailure: isTransportFailure, autoRetryCount: autoRetryCount
         )
     }
 
@@ -201,7 +203,7 @@ struct UploadsFeatureTests {
         var state = UploadsFeature.State(serverURL: serverURL)
         state.jobs = [
             job("a.txt", id: UUID(0), status: .uploading),
-            job("b.txt", id: UUID(1), status: .failed("connection lost")),
+            job("b.txt", id: UUID(1), status: .failed("connection lost"), isTransportFailure: true),
             job("c.txt", id: UUID(2), status: .completed),
             job("d.txt", id: UUID(3), status: .queued),
         ]
@@ -215,6 +217,7 @@ struct UploadsFeatureTests {
 
         await store.send(.appResumed) {
             $0.jobs[id: UUID(1)]?.status = .queued
+            $0.jobs[id: UUID(1)]?.autoRetryCount = 1
         }
         // The genuinely uploading job is untouched; the completed one stays; the failed one
         // is requeued but the active upload still holds the slot.
@@ -241,11 +244,263 @@ struct UploadsFeatureTests {
         await store.send(.appResumed) {
             $0.jobs[id: UUID(0)]?.status = .queued
             $0.jobs[id: UUID(0)]?.progress = 0
+            $0.jobs[id: UUID(0)]?.autoRetryCount = 1
         }
         await store.receive(\.startNextIfIdle) {
             $0.jobs[id: UUID(0)]?.status = .uploading
             $0.jobs[id: UUID(0)]?.startedAt = now
         }
+    }
+
+    @Test(arguments: [FilesClientError.offline, .network("lost")])
+    func appResumedRequeuesTransportFailures(error: FilesClientError) async {
+        let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.filesClient.uploadFile = { _, _, _, _, _ in throw error }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.enqueue([pending("a.txt", id: UUID(0))]))
+        await store.receive(\.uploadResponse)
+        #expect(store.state.jobs[id: UUID(0)]?.isTransportFailure == true)
+
+        await store.send(.appResumed)
+        #expect(store.state.jobs[id: UUID(0)]?.autoRetryCount == 1)
+        await store.receive(\.startNextIfIdle)
+        await store.skipReceivedActions()
+    }
+
+    @Test(arguments: [
+        FilesClientError.server(statusCode: 413),
+        .serverMessage(statusCode: 507, message: "Quota exceeded"),
+        .forbidden(message: nil),
+        .server(statusCode: 400),
+        .decoding("source missing"),
+        .sessionExpired,
+    ])
+    func appResumedNeverRequeuesPermanentFailures(error: FilesClientError) async {
+        let attempts = LockIsolated(0)
+        let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.filesClient.uploadFile = { _, _, _, _, _ in
+                attempts.withValue { $0 += 1 }
+                throw error
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.enqueue([pending("a.txt", id: UUID(0))]))
+        await store.receive(\.uploadResponse)
+        await store.send(.appResumed)
+
+        guard case .failed = store.state.jobs[id: UUID(0)]?.status else {
+            Issue.record("job should stay failed")
+            return
+        }
+        #expect(store.state.jobs[id: UUID(0)]?.autoRetryCount == 0)
+        #expect(attempts.value == 1)
+    }
+
+    @Test
+    func appResumedDoesNotRequeueAJobWhoseSourceWasDeleted() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        state.jobs = [job("gone.txt", id: UUID(0), status: .failed("offline"), isTransportFailure: true)]
+        let store = TestStore(initialState: state) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.uploadStaging.sourceExists = { _ in false }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.appResumed)
+
+        #expect(store.state.jobs[id: UUID(0)]?.status == .failed("offline"))
+        #expect(store.state.jobs[id: UUID(0)]?.isTransportFailure == false)
+    }
+
+    @Test
+    func aTimedOutUploadIsNeverRequeuedAutomaticallyBecauseTheServerMayHaveStoredIt() async {
+        let attempts = LockIsolated(0)
+        let store = TestStore(initialState: UploadsFeature.State(serverURL: serverURL)) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.filesClient.uploadFile = { _, _, _, _, _ in
+                attempts.withValue { $0 += 1 }
+                throw FilesClientError.timedOut
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.enqueue([pending("a.txt", id: UUID(0))]))
+        await store.receive(\.uploadResponse)
+        await store.send(.appResumed)
+
+        #expect(store.state.jobs[id: UUID(0)]?.isTransportFailure == false)
+        #expect(store.state.jobs[id: UUID(0)]?.autoRetryCount == 0)
+        #expect(attempts.value == 1)
+        await store.send(.retryTapped(id: UUID(0)))
+        await store.receive(\.startNextIfIdle)
+        await store.skipReceivedActions()
+        #expect(attempts.value == 2)
+    }
+
+    @Test
+    func aWedgedUploadAtTheRetryCapFailsAndAnnouncesTheDrainedQueue() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        var wedged = job("a.txt", id: UUID(0), status: .uploading, autoRetryCount: 3)
+        wedged.startedAt = now.addingTimeInterval(-600)
+        state.jobs = [wedged]
+        let store = TestStore(initialState: state) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+        }
+        store.exhaustivity = .off
+
+        await store.send(.appResumed)
+        await store.receive(.delegate(.queueFinished(summary(uploaded: 0, failed: 1, lastDestination: nil, changedPaths: []))))
+
+        #expect(store.state.jobs[id: UUID(0)]?.status == .failed(L10n.Uploads.failedGeneric))
+        #expect(store.state.jobs[id: UUID(0)]?.autoRetryCount == 3)
+    }
+
+    @Test
+    func aFailedJobAtTheRetryCapKeepsItsRealError() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        state.jobs = [job("a.txt", id: UUID(0), status: .failed("Quota exceeded"), isTransportFailure: true, autoRetryCount: 3)]
+        let store = TestStore(initialState: state) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+        }
+        store.exhaustivity = .off
+
+        await store.send(.appResumed)
+
+        #expect(store.state.jobs[id: UUID(0)]?.status == .failed("Quota exceeded"))
+        #expect(store.state.jobs[id: UUID(0)]?.isTransportFailure == false)
+    }
+
+    @Test
+    func appResumedStopsRequeueingOnceTheRetryCapIsReached() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        state.jobs = [job("a.txt", id: UUID(0), status: .failed("offline"), isTransportFailure: true, autoRetryCount: 3)]
+        let store = TestStore(initialState: state) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+        }
+        store.exhaustivity = .off
+
+        await store.send(.appResumed)
+
+        guard case .failed = store.state.jobs[id: UUID(0)]?.status else {
+            Issue.record("job should stay failed at the cap")
+            return
+        }
+        #expect(store.state.jobs[id: UUID(0)]?.autoRetryCount == 3)
+    }
+
+    @Test
+    func manualRetryResetsTheAutomaticRetryCounter() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        state.jobs = [job("a.txt", id: UUID(0), status: .failed("offline"), isTransportFailure: true, autoRetryCount: 3)]
+        let store = TestStore(initialState: state) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.filesClient.uploadFile = { _, _, _, _, _ in try await Task.never() }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.retryTapped(id: UUID(0)))
+        #expect(store.state.jobs[id: UUID(0)]?.autoRetryCount == 0)
+        await store.receive(\.startNextIfIdle)
+        await store.send(.cancelAllTapped)
+    }
+
+    @Test
+    func cancellingTheLastPendingJobAfterSomeFinishedStillReportsTheFinishedFiles() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        state.jobs = [
+            job("a.txt", id: UUID(0), status: .completed),
+            job("b.txt", id: UUID(1), status: .uploading),
+        ]
+        let store = TestStore(initialState: state) { UploadsFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.cancelJobTapped(id: UUID(1)))
+        await store.receive(.delegate(.queueFinished(
+            summary(uploaded: 1, failed: 0, lastDestination: "Inbox", changedPaths: ["Inbox"])
+        )))
+    }
+
+    @Test
+    func cancellingAJobWhileOthersStillRunDoesNotAnnounceTheQueueFinished() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        state.jobs = [
+            job("a.txt", id: UUID(0), status: .completed),
+            job("b.txt", id: UUID(1), status: .uploading),
+            job("c.txt", id: UUID(2), status: .queued),
+        ]
+        let store = TestStore(initialState: state) {
+            UploadsFeature()
+        } withDependencies: {
+            $0.date = .constant(now)
+            $0.filesClient.uploadFile = { _, _, _, _, _ in try await Task.never() }
+        }
+
+        await store.send(.cancelJobTapped(id: UUID(1))) {
+            $0.jobs[id: UUID(1)] = nil
+        }
+        await store.receive(\.startNextIfIdle) {
+            $0.jobs[id: UUID(2)]?.status = .uploading
+            $0.jobs[id: UUID(2)]?.startedAt = now
+        }
+        await store.send(.cancelAllTapped) {
+            $0.jobs.removeAll()
+        }
+        await store.receive(.delegate(.queueFinished(
+            summary(uploaded: 1, failed: 0, lastDestination: "Inbox", changedPaths: ["Inbox"])
+        )))
+    }
+
+    @Test
+    func cancelAllWithFinishedFilesReportsThemAndWithNothingFinishedStaysQuiet() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        state.jobs = [
+            job("a.txt", id: UUID(0), status: .completed),
+            job("b.txt", id: UUID(1), status: .uploading),
+            job("c.txt", id: UUID(2), status: .queued),
+        ]
+        let store = TestStore(initialState: state) { UploadsFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.cancelAllTapped)
+        await store.receive(.delegate(.queueFinished(
+            summary(uploaded: 1, failed: 0, lastDestination: "Inbox", changedPaths: ["Inbox"])
+        )))
+        #expect(store.state.jobs.isEmpty)
+
+        var quiet = UploadsFeature.State(serverURL: serverURL)
+        quiet.jobs = [job("d.txt", id: UUID(3), status: .uploading)]
+        let quietStore = TestStore(initialState: quiet) { UploadsFeature() }
+        await quietStore.send(.cancelAllTapped) { $0.jobs.removeAll() }
+    }
+
+    @Test
+    func clearingAnAlreadyAnnouncedQueueDoesNotAnnounceItAgain() async {
+        var state = UploadsFeature.State(serverURL: serverURL)
+        state.jobs = [job("a.txt", id: UUID(0), status: .completed)]
+        let store = TestStore(initialState: state) { UploadsFeature() }
+
+        await store.send(.cancelAllTapped) { $0.jobs.removeAll() }
     }
 
     @Test

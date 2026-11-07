@@ -40,6 +40,12 @@ public struct UploadsFeature {
         /// When the job last entered `.uploading`. Used only to spot a job that has been
         /// "uploading" implausibly long across a background/resume so it can be restarted.
         public var startedAt: Date?
+        /// Whether the last failure was a transport one (offline, network) that a foreground retry can
+        /// fix. Server rejections, local errors and a timeout (the server may have stored the file, so
+        /// a retry could duplicate it) never are: those wait for a manual retry.
+        public var isTransportFailure = false
+        /// Automatic foreground requeues so far, capped so a job that keeps failing stops retrying.
+        public var autoRetryCount = 0
     }
 
     /// Reported to the parent when the queue drains: what to toast, and which folders to
@@ -140,6 +146,7 @@ public struct UploadsFeature {
         /// wedged (a half open connection that never surfaced an error) and restarted. Well
         /// past any realistic single file transfer that a foreground `URLSession` would keep.
         static let wedgedUploadAge: TimeInterval = 300
+        static let maxAutoRetries = 3
     }
 
     public init() {}
@@ -168,17 +175,35 @@ public struct UploadsFeature {
                 // still "uploading" long past any real transfer, which means it wedged.
                 let cutoff = date.now.addingTimeInterval(-Constants.wedgedUploadAge)
                 let stalled = state.jobs.filter { job in
-                    job.status.isFailed
+                    (job.status.isFailed && job.isTransportFailure)
                         || (job.status == .uploading && (job.startedAt ?? date.now) < cutoff)
                 }
                 guard !stalled.isEmpty else { return sweep }
                 var effects: [Effect<Action>] = [sweep]
+                var didRequeue = false
+                var didNewlyFail = false
                 for job in stalled {
+                    effects.append(.cancel(id: CancelID.job(job.id)))
+                    guard job.autoRetryCount < Constants.maxAutoRetries, uploadStaging.sourceExists(job.fileURL) else {
+                        // A failed job keeps the error it really failed with; only a wedged upload, which
+                        // never produced one, gets the generic message.
+                        if !job.status.isFailed {
+                            state.jobs[id: job.id]?.status = .failed(L10n.Uploads.failedGeneric)
+                            didNewlyFail = true
+                        }
+                        state.jobs[id: job.id]?.isTransportFailure = false
+                        continue
+                    }
                     state.jobs[id: job.id]?.status = .queued
                     state.jobs[id: job.id]?.progress = 0
-                    effects.append(.cancel(id: CancelID.job(job.id)))
+                    state.jobs[id: job.id]?.autoRetryCount += 1
+                    didRequeue = true
                 }
-                effects.append(.send(.startNextIfIdle))
+                effects.append(didRequeue ? .send(.startNextIfIdle) : .none)
+                // A wedged upload that is given up on has no response to announce the drained queue.
+                if didNewlyFail, !state.isActive {
+                    effects.append(.send(.delegate(.queueFinished(state.finishSummary))))
+                }
                 return .merge(effects)
 
             case .startNextIfIdle:
@@ -204,6 +229,7 @@ public struct UploadsFeature {
                     discardEffect = discard([job.fileURL])
                 case let .failure(error):
                     state.jobs[id: id]?.status = .failed(Self.message(for: error))
+                    state.jobs[id: id]?.isTransportFailure = Self.isTransportFailure(error)
                 }
 
                 if state.jobs.contains(where: { $0.status == .queued }) {
@@ -213,27 +239,38 @@ public struct UploadsFeature {
 
             case let .cancelJobTapped(id):
                 let stagedURL = state.jobs[id: id]?.fileURL
+                let wasPending = state.jobs[id: id].map { !$0.status.isTerminal } ?? false
                 state.jobs.remove(id: id)
                 if state.jobs.isEmpty {
                     state.isSheetPresented = false
                 }
+                // Cancelling the last pending job means no upload response will announce the
+                // drain, so files that already landed still need their folder refresh and toast.
+                let finished: Effect<Action> = wasPending && !state.isActive && state.completedCount > 0
+                    ? .send(.delegate(.queueFinished(state.finishSummary)))
+                    : .none
                 return .merge(
                     .cancel(id: CancelID.job(id)),
                     discard(stagedURL.map { [$0] } ?? []),
-                    .send(.startNextIfIdle)
+                    .send(.startNextIfIdle),
+                    finished
                 )
 
             case .cancelAllTapped:
                 let stagedURLs = state.jobs.map(\.fileURL)
                 let cancels = state.jobs.map { Effect<Action>.cancel(id: CancelID.job($0.id)) }
+                let finished: Effect<Action> = state.isActive && state.completedCount > 0
+                    ? .send(.delegate(.queueFinished(state.finishSummary)))
+                    : .none
                 state.jobs.removeAll()
                 state.isSheetPresented = false
-                return .merge(cancels + [discard(stagedURLs)])
+                return .merge(cancels + [discard(stagedURLs), finished])
 
             case let .retryTapped(id):
                 guard case .failed = state.jobs[id: id]?.status else { return .none }
                 state.jobs[id: id]?.status = .queued
                 state.jobs[id: id]?.progress = 0
+                state.jobs[id: id]?.autoRetryCount = 0
                 return .send(.startNextIfIdle)
 
             case .retryAllFailedTapped:
@@ -242,6 +279,7 @@ public struct UploadsFeature {
                 for job in failed {
                     state.jobs[id: job.id]?.status = .queued
                     state.jobs[id: job.id]?.progress = 0
+                    state.jobs[id: job.id]?.autoRetryCount = 0
                 }
                 return .send(.startNextIfIdle)
 
@@ -319,6 +357,13 @@ public struct UploadsFeature {
             await send(.uploadResponse(id: job.id, result))
         } }
         .cancellable(id: CancelID.job(job.id))
+    }
+
+    private static func isTransportFailure(_ error: FilesClientError) -> Bool {
+        switch error {
+        case .offline, .network: true
+        default: false
+        }
     }
 
     private static func message(for error: FilesClientError) -> String {

@@ -10,8 +10,8 @@ struct AuthStatusDecodingTests {
         {"requiresSetup": false, "strategies": {"local": true, "oidc": false}, "authEnabled": true}
         """#
         let status = try JSONDecoder().decode(AuthStatus.self, from: Data(json.utf8))
-        #expect(status.localEnabled == true)
-        #expect(status.oidcEnabled == false)
+        #expect(status.isLocalEnabled == true)
+        #expect(status.isOIDCEnabled == false)
     }
 
     @Test("edge case: extra unrelated top-level fields are ignored")
@@ -20,7 +20,7 @@ struct AuthStatusDecodingTests {
         {"strategies": {"local": false, "oidc": true}, "authMode": "both", "authenticated": false, "user": null}
         """#
         let status = try JSONDecoder().decode(AuthStatus.self, from: Data(json.utf8))
-        #expect(status.localEnabled == false)
-        #expect(status.oidcEnabled == true)
+        #expect(status.isLocalEnabled == false)
+        #expect(status.isOIDCEnabled == true)
     }
 }

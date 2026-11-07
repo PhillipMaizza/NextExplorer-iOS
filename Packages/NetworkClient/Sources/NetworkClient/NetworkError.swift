@@ -6,6 +6,10 @@ public enum NetworkError: Error, Equatable, Sendable {
     /// unreachable, or the request timed out before any response. Distinct from `.transport`
     /// so callers can fall back to cached content rather than surfacing a generic failure.
     case offline
+    /// A request marked with `NetworkClient.markingAsMutation`, or an upload, went quiet for longer than its
+    /// budget. Unlike `.offline` the server may well have received it and still be working, so the
+    /// outcome is unknown: callers refetch instead of assuming the action failed.
+    case timedOut
     case invalidResponse
     /// The response body exceeded `NetworkClient.maxInMemoryResponseBytes`: refused before it
     /// could be fully buffered, so a hostile or misbehaving server can't drive the app out of
@@ -26,6 +30,7 @@ extension NetworkError {
     static func from(
         _ error: Error,
         url: URL? = nil,
+        isMutation: Bool = false,
         certificates: ClientCertificateChallengeHandler? = nil
     ) -> NetworkError {
         guard let urlError = error as? URLError else {
@@ -41,6 +46,9 @@ extension NetworkError {
         }
         if certificateDropCodes.contains(urlError.code), let outcome = certificates?.recentOutcome(for: url ?? urlError.failingURL) {
             return outcome == .missing ? .clientCertificateRequired : .clientCertificateRejected
+        }
+        if urlError.code == .timedOut, isMutation {
+            return .timedOut
         }
         if offlineCodes.contains(urlError.code) {
             return .offline

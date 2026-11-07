@@ -26,6 +26,29 @@ private enum Constants {
 }
 
 public extension NetworkClient {
+    /// Inactivity budget for a mutation or an upload. A single shot server operation (move, copy,
+    /// delete, compress, extract) sends no bytes until the server finishes, and an upload sends none
+    /// while the server finalizes after the body, so the interactive 15s would cut off work that is
+    /// still running.
+    static let mutationRequestTimeout: TimeInterval = 300
+
+    /// Marks a request as a server side mutation (transfer, delete, compress, extract, rename,
+    /// upload) by giving it the long budget, unless the caller already asked for a longer one. The
+    /// method does not decide this: an editor read is a POST and login is a POST, and both must keep
+    /// the interactive budget and the `.offline` mapping.
+    static func markingAsMutation(_ request: URLRequest) -> URLRequest {
+        var request = request
+        request.timeoutInterval = max(request.timeoutInterval, mutationRequestTimeout)
+        return request
+    }
+
+    /// True for a request that went through `markingAsMutation`.
+    static func isMutation(_ request: URLRequest) -> Bool {
+        request.timeoutInterval >= mutationRequestTimeout
+    }
+}
+
+public extension NetworkClient {
     /// Ceiling on a response buffered by `send`. The `send` path exists only for JSON control
     /// responses (listings, share lists, editor content): anything file-sized goes through
     /// `download`, which streams to disk. 32 MB is far above any legitimate JSON payload while
@@ -138,14 +161,15 @@ public extension NetworkClient {
         // ever carries JSON control responses, file-sized payloads use `download`, so the
         // extra temp-file round-trip is a sub-millisecond cost on a KB-scale body.
         @Sendable func sendInMemory(
-            _ request: URLRequest, using inMemorySession: ReplaceableSession
+            _ originalRequest: URLRequest, using inMemorySession: ReplaceableSession
         ) async throws -> (Data, HTTPURLResponse) {
+            let request = originalRequest
             let temporaryURL: URL
             let response: URLResponse
             do {
                 (temporaryURL, response) = try await inMemorySession.current.download(for: request)
             } catch {
-                throw NetworkError.from(error, url: request.url, certificates: certificates)
+                throw NetworkError.from(error, url: request.url, isMutation: NetworkClient.isMutation(request), certificates: certificates)
             }
             defer { try? FileManager.default.removeItem(at: temporaryURL) }
             guard let httpResponse = response as? HTTPURLResponse else {
@@ -171,7 +195,8 @@ public extension NetworkClient {
         return NetworkClient(
             send: { try await sendInMemory($0, using: session) },
             lowPrioritySend: { try await sendInMemory($0, using: lowPrioritySession) },
-            upload: { request, bodyFileURL, onProgress in
+            upload: { originalRequest, bodyFileURL, onProgress in
+                let request = NetworkClient.markingAsMutation(originalRequest)
                 let data: Data
                 let response: URLResponse
                 do {
@@ -184,7 +209,7 @@ public extension NetworkClient {
                         delegate: UploadProgressDelegate(onProgress: onProgress)
                     )
                 } catch {
-                    throw NetworkError.from(error, url: request.url, certificates: certificates)
+                    throw NetworkError.from(error, url: request.url, isMutation: true, certificates: certificates)
                 }
                 guard let httpResponse = response as? HTTPURLResponse else {
                     throw NetworkError.invalidResponse

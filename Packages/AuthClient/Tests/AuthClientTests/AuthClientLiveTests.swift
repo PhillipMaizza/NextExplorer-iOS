@@ -43,8 +43,8 @@ struct AuthClientLiveTests {
             return try (body, response(statusCode: 200, url: url))
         }
         let status = try await client.fetchStatus(serverURL)
-        #expect(status.localEnabled == true)
-        #expect(status.oidcEnabled == false)
+        #expect(status.isLocalEnabled == true)
+        #expect(status.isOIDCEnabled == false)
     }
 
     @Test("fetchStatus edge case: malformed body throws decoding error")
@@ -320,12 +320,57 @@ struct AuthClientLiveTests {
         try await client.logout(serverURL)
     }
 
-    @Test("logout edge case: server unreachable is swallowed (best-effort)")
+    @Test("logout edge case: server unreachable is swallowed (best-effort) and the local session is left to removeAccount")
     func logoutServerUnreachableIsBestEffort() async throws {
-        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: .inMemory()) { _ in
+        let cookieStorage = makeCookieStorage()
+        let keychainClient = KeychainClient.inMemory()
+        let credentials = try localCredentials()
+        let store = SessionCookieStore(keychainClient: keychainClient, cookieStorage: cookieStorage)
+        try store.persist(credentials)
+        let attempts = RecordedPaths()
+        let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { request in
+            attempts.add(request.url?.path ?? "")
             throw NetworkError.transport("offline")
         }
+
         try await client.logout(serverURL)
+
+        #expect(attempts.paths.count == 1, "the server was asked once and the failure was swallowed")
+        #expect(attempts.paths.first?.contains("logout") == true)
+        #expect(store.activeCredentials() == credentials, "logout is server side only: removing the account is what clears it locally")
+    }
+
+    @Test("removeAccount edge case: an unreachable server still clears the session and cookie locally")
+    func removeAccountServerUnreachableStillClearsLocally() async throws {
+        let cookieStorage = makeCookieStorage()
+        let keychainClient = KeychainClient.inMemory()
+        let credentials = try localCredentials()
+        let store = SessionCookieStore(keychainClient: keychainClient, cookieStorage: cookieStorage)
+        try store.persist(credentials)
+        let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { _ in
+            throw NetworkError.transport("offline")
+        }
+
+        let next = await client.removeAccount(credentials.accountID)
+
+        #expect(next == nil)
+        #expect(store.activeCredentials() == nil)
+        #expect(store.allSessions().isEmpty)
+        #expect(cookieStorage.cookies(for: serverURL)?.isEmpty ?? true)
+    }
+
+    private func localCredentials() throws -> SessionCredentials {
+        try SessionCredentials(
+            serverBaseURL: serverURL,
+            authMode: .local,
+            cookieName: AuthClientConfiguration.CookieName.local,
+            cookieValue: "abc123",
+            cookieDomain: #require(serverURL.host),
+            cookiePath: "/",
+            cookieIsSecure: false,
+            expiresAt: nil,
+            username: "phillip"
+        )
     }
 
     // MARK: - removeAccount
@@ -367,5 +412,177 @@ struct AuthClientLiveTests {
         #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: URL(string: "https://elsewhere.example.com/api/auth/status")))
         #expect(!LocalAuthService.redirectsToHTTPS(requested: URL(string: "https://files.example.com")!, answered: URL(string: "https://files.example.com")))
         #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: nil))
+    }
+
+    @Test(
+        "The port the server answered on is kept only when it is not the default https port",
+        arguments: [
+            ("http://files.example.com:8080/api/auth/status", "https://files.example.com/api/auth/status", nil as Int?),
+            ("http://files.example.com:8080/api/auth/status", "https://files.example.com:443/api/auth/status", nil as Int?),
+            ("http://files.example.com:8080/api/auth/status", "https://files.example.com:9443/api/auth/status", 9443),
+            ("http://files.example.com:8443/api/auth/status", "https://files.example.com:8443/api/auth/status", 8443),
+            ("http://files.example.com/api/auth/status", "https://files.example.com/api/auth/status", nil as Int?),
+        ]
+    )
+    func redirectedPort(requested: String, answered: String, expected: Int?) throws {
+        let requestedURL = try #require(URL(string: requested))
+        let answeredURL = try #require(URL(string: answered))
+        #expect(LocalAuthService.redirectsToHTTPS(requested: requestedURL, answered: answeredURL))
+        #expect(LocalAuthService.answeredPort(answeredURL) == expected)
+    }
+
+    @Test("A missing answered URL has no port to carry")
+    func noAnsweredURLHasNoPort() {
+        #expect(LocalAuthService.answeredPort(nil) == nil)
+    }
+
+    @Test("fetchStatus reports the port of the https address that answered an http one")
+    func fetchStatusCarriesTheAnsweredPort() async throws {
+        let client = makeClient(cookieStorage: makeCookieStorage()) { request in
+            let url = try #require(request.url)
+            let host = try #require(url.host)
+            let answered = try #require(URL(string: "https://\(host):9443/api/auth/status"))
+            let body = Data(#"{"strategies":{"local":true,"oidc":false}}"#.utf8)
+            return try (body, response(statusCode: 200, url: answered))
+        }
+        let requested = try #require(URL(string: "http://files.example.com:8080"))
+        let status = try await client.fetchStatus(requested)
+        #expect(status.redirectsToHTTPS)
+        #expect(status.redirectedPort == 9443)
+    }
+
+    @Test("fetchStatus without a redirect carries no port")
+    func fetchStatusWithoutRedirectHasNoPort() async throws {
+        let client = makeClient(cookieStorage: makeCookieStorage()) { request in
+            let url = try #require(request.url)
+            let body = Data(#"{"strategies":{"local":true,"oidc":false}}"#.utf8)
+            return try (body, response(statusCode: 200, url: url))
+        }
+        let status = try await client.fetchStatus(serverURL)
+        #expect(!status.redirectsToHTTPS)
+        #expect(status.redirectedPort == nil)
+    }
+
+    // MARK: loadSession
+
+    private func credentials() throws -> SessionCredentials {
+        try SessionCredentials(
+            serverBaseURL: serverURL,
+            authMode: .local,
+            cookieName: AuthClientConfiguration.CookieName.local,
+            cookieValue: "abc123",
+            cookieDomain: #require(serverURL.host),
+            cookiePath: "/",
+            cookieIsSecure: false,
+            expiresAt: nil,
+            username: "phillip"
+        )
+    }
+
+    private func okHandler() -> @Sendable (URLRequest) async throws -> (Data, HTTPURLResponse) {
+        { request in
+            let url = try #require(request.url)
+            let response = try #require(HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil))
+            return (Data(), response)
+        }
+    }
+
+    @Test("loadSession returns nil when nothing is stored, which is a signed out user")
+    func loadSessionWithNothingStored() async throws {
+        let client = makeClient(cookieStorage: makeCookieStorage(), handler: okHandler())
+        #expect(try await client.loadSession() == nil)
+    }
+
+    @Test("loadSession returns the active account and installs its cookie")
+    func loadSessionReturnsTheActiveAccount() async throws {
+        let keychain = KeychainClient.inMemory()
+        let stored = try credentials()
+        try SessionCookieStore(keychainClient: keychain, cookieStorage: makeCookieStorage()).persist(stored)
+        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychain, handler: okHandler())
+
+        #expect(try await client.loadSession() == stored)
+    }
+
+    @Test("loadSession throws a keychain error when the keychain can't be read, instead of looking signed out")
+    func loadSessionKeychainReadFailure() async throws {
+        struct StubKeychainError: Error {}
+        let unreadable = KeychainClient(
+            save: { _, _ in },
+            load: { _ in throw StubKeychainError() },
+            delete: { _ in }
+        )
+        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: unreadable, handler: okHandler())
+
+        do {
+            _ = try await client.loadSession()
+            Issue.record("expected loadSession to throw")
+        } catch AuthClientError.keychain {
+            // expected
+        }
+        #expect(await client.restoreSession() == nil, "the old call still reads as no account")
+    }
+
+    @Test("listSessionsOrThrow returns every stored account")
+    func listSessionsOrThrowReturnsTheStoredAccounts() async throws {
+        let keychain = KeychainClient.inMemory()
+        let stored = try credentials()
+        try SessionCookieStore(keychainClient: keychain, cookieStorage: makeCookieStorage()).persist(stored)
+        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychain, handler: okHandler())
+
+        #expect(try await client.listSessionsOrThrow() == [stored])
+    }
+
+    @Test("listSessionsOrThrow is empty for an empty keychain but throws for an unreadable one, where listSessions looks empty")
+    func listSessionsOrThrowSeparatesEmptyFromUnreadable() async throws {
+        struct StubKeychainError: Error {}
+        let empty = makeClient(cookieStorage: makeCookieStorage(), handler: okHandler())
+        #expect(try await empty.listSessionsOrThrow().isEmpty)
+
+        let unreadable = KeychainClient(
+            save: { _, _ in },
+            load: { _ in throw StubKeychainError() },
+            delete: { _ in }
+        )
+        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: unreadable, handler: okHandler())
+        #expect(await client.listSessions().isEmpty)
+        await #expect(throws: AuthClientError.self) {
+            _ = try await client.listSessionsOrThrow()
+        }
+    }
+
+    @Test("loadSession throws when the stored blob can't be decoded")
+    func loadSessionCorruptBlob() async throws {
+        let keychain = KeychainClient.inMemory()
+        try keychain.save("storedSessions", Data("not json".utf8))
+        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: keychain, handler: okHandler())
+
+        await #expect(throws: AuthClientError.self) {
+            _ = try await client.loadSession()
+        }
+    }
+
+    @Test("the launch keychain migration is harmless in a build without the sharing entitlement")
+    func launchMigrationIsANoOpWithoutSharing() throws {
+        let keychain = KeychainClient.inMemory()
+        let stored = try credentials()
+        try SessionCookieStore(keychainClient: keychain, cookieStorage: makeCookieStorage()).persist(stored)
+
+        AuthClient.migrateKeychainIfNeeded()
+
+        #expect(SessionCookieStore(keychainClient: keychain, cookieStorage: makeCookieStorage()).activeCredentials() == stored)
+    }
+}
+
+/// The request paths a fake network saw, safe to write from the network closure.
+private final class RecordedPaths: @unchecked Sendable {
+    private let lock = NSLock()
+    private var stored: [String] = []
+
+    var paths: [String] {
+        lock.withLock { stored }
+    }
+
+    func add(_ path: String) {
+        lock.withLock { stored.append(path) }
     }
 }

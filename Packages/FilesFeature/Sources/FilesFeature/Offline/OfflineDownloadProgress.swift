@@ -11,6 +11,9 @@ public struct OfflineDownloadProgress: Equatable, Sendable {
         case preparing
         case downloading
         case completed
+        /// The pinned folders could not be listed, so nothing was downloaded yet and the next sync
+        /// will fetch them once the server is reachable.
+        case waitingForNetwork
         case failed(String)
     }
 

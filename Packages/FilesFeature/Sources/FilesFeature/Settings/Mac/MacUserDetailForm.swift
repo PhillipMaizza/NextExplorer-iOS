@@ -42,9 +42,9 @@
 
         private var header: some View {
             HStack(spacing: Metrics.headerSpacing) {
-                AvatarView(displayName: user.displayName ?? user.username, size: Metrics.avatarSize)
+                AvatarView(displayName: user.displayLabel, size: Metrics.avatarSize)
                 VStack(alignment: .leading) {
-                    Text(user.displayName ?? user.username)
+                    Text(user.displayLabel)
                         .font(.title3.weight(.semibold))
                         .lineLimit(1)
                     if let email = user.email {
