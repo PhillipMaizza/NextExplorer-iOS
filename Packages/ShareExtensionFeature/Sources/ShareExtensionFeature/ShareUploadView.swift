@@ -120,21 +120,20 @@ struct ShareUploadAccountMenu: View {
     var body: some View {
         if store.canChooseAccount {
             Menu {
-                ForEach(store.accounts, id: \.accountID) { account in
-                    Button {
-                        store.send(.accountSelected(account.accountID))
-                    } label: {
-                        if account.accountID == store.credentials?.accountID {
-                            Label {
-                                Text(ShareUploadFeature.State.name(for: account))
-                            } icon: {
-                                IconKit.checkmark
-                            }
-                        } else {
-                            Text(ShareUploadFeature.State.name(for: account))
+                Picker(L10n.ShareUpload.accountLabel, selection: Binding(
+                    get: { store.credentials?.accountID ?? "" },
+                    set: { store.send(.accountSelected($0)) }
+                )) {
+                    // Title and subtitle lines: a long server name no longer breaks mid word.
+                    ForEach(store.accounts, id: \.accountID) { account in
+                        VStack {
+                            Text(account.username ?? account.serverBaseURL.host() ?? "")
+                            Text(account.serverBaseURL.host() ?? "")
                         }
+                        .tag(account.accountID)
                     }
                 }
+                .pickerStyle(.inline)
             } label: {
                 HStack(spacing: .space8) {
                     Text(store.accountName).type(.body2(.regular)).lineLimit(1).truncationMode(.middle)
