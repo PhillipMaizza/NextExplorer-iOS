@@ -116,12 +116,17 @@
             )
         }
 
-        static func authClient(_ auth: Auth) -> AuthClient {
+        static func authClient(_ auth: Auth, expiry: MockSessionExpiry = MockSessionExpiry()) -> AuthClient {
             var client = AuthClient.previewValue
             // A stateful account set so the multi-server switcher behaves for real in UI tests:
             // adding a server appends a row, switching/removing update the active account.
             let sessions = MockSessionStore(seed: auth == .loggedOut ? [] : [credentials()])
-            client.me = { _ in user }
+            client.me = { _ in
+                if expiry.isRejected {
+                    throw AuthClientError.sessionExpired
+                }
+                return user
+            }
             client.login = { serverURL, identifier, _ in
                 sessions.upsert(credentials(serverURL: serverURL, username: identifier))
                 return user
@@ -150,7 +155,7 @@
             return client
         }
 
-        static func filesClient(_ scenario: Scenario) -> FilesClient {
+        static func filesClient(_ scenario: Scenario, expiry: MockSessionExpiry = MockSessionExpiry()) -> FilesClient {
             var client = FilesClient.previewValue
             switch scenario {
             case .normal:
@@ -211,7 +216,10 @@
                 client.browse = { _, _ in throw FilesClientError.network("UITest injected failure") }
                 client.search = { _, _, _, _ in throw FilesClientError.network("UITest injected failure") }
             case .sessionExpired:
-                client.browse = { _, _ in throw FilesClientError.sessionExpired }
+                client.browse = { _, _ in
+                    expiry.reject()
+                    throw FilesClientError.sessionExpired
+                }
             }
             return client
         }
@@ -229,6 +237,23 @@
             FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 2_400_000, kind: "jpg", supportsThumbnail: true),
             FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 1_024, kind: "txt"),
         ]
+    }
+
+    /// Flips once the server "rejects" the session, so the auth client's `me` check agrees with a 401
+    /// that a request already answered. Launch validation passes first, as it does in the field.
+    final class MockSessionExpiry: @unchecked Sendable {
+        private let lock = NSLock()
+        private var rejected = false
+
+        var isRejected: Bool {
+            lock.lock(); defer { lock.unlock() }
+            return rejected
+        }
+
+        func reject() {
+            lock.lock(); defer { lock.unlock() }
+            rejected = true
+        }
     }
 
     /// A tiny mutable directory backing the `.normal` files client, so a mutation a UI test drives
@@ -362,9 +387,10 @@
             let auth = UITestSupport.Auth(rawValue: environment[UITestSupport.authKey] ?? "") ?? .loggedOut
             let scenario = UITestSupport.Scenario(rawValue: environment[UITestSupport.scenarioKey] ?? "") ?? .normal
 
+            let expiry = MockSessionExpiry()
             prepareDependencies {
-                $0.authClient = UITestSupport.authClient(auth)
-                $0.filesClient = UITestSupport.filesClient(scenario)
+                $0.authClient = UITestSupport.authClient(auth, expiry: expiry)
+                $0.filesClient = UITestSupport.filesClient(scenario, expiry: expiry)
                 $0.directoryCacheStore = .inMemory()
                 $0.jsonCacheStore = .inMemory()
                 $0.previewCacheStore = .testValue
