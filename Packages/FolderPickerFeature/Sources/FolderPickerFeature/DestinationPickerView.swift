@@ -13,8 +13,12 @@ private enum Constants {
 /// over the review sheet). Drills the same folder tree as Browse (folders only), hands the
 /// chosen path back on confirm. Grouped list, checkmark to confirm, the same breadcrumb bar
 /// Browse uses.
-struct DestinationPickerView: View {
+public struct DestinationPickerView: View {
     @Bindable var store: StoreOf<DestinationPickerFeature>
+
+    public init(store: StoreOf<DestinationPickerFeature>) {
+        self.store = store
+    }
 
     private var navigationTitle: String {
         guard store.directoryPath.isEmpty else {
@@ -31,7 +35,7 @@ struct DestinationPickerView: View {
             : L10n.Browse.destinationPickerConfirmMove
     }
 
-    var body: some View {
+    public var body: some View {
         #if os(macOS)
             MacDestinationPickerSheet(store: store, title: navigationTitle, confirmTitle: confirmLabel)
         #else

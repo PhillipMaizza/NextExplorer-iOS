@@ -773,3 +773,24 @@ browse.actionNewFile	إنشاء ملف
 browse.newFileTitle	ملف جديد
 browse.newFileTypeHint	استخدم نوع ملف يمكن للمحرر فتحه، مثل .txt أو .md أو .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	الرفع إلى NextExplorer
+shareUpload.itemCount	الملفات المراد رفعها: %lld
+shareUpload.accountLabel	الحساب
+shareUpload.folderLabel	المجلد
+shareUpload.folderChoose	اختيار مجلد
+shareUpload.upload	رفع
+shareUpload.preparing	جارٍ تجهيز %lld من %lld…
+shareUpload.started	جارٍ الرفع في الخلفية. سيصلك إشعار عند الانتهاء.
+shareUpload.signedOut	سجّل الدخول إلى NextExplorer أولًا، ثم شارك مرة أخرى.
+shareUpload.nothingToUpload	لا يوجد هنا ما يمكن لـ NextExplorer رفعه.
+shareUpload.failed	تعذّر تجهيز الملفات للرفع.
+shareUpload.notificationDoneTitle	اكتمل الرفع
+shareUpload.notificationDoneBody	تم رفع %lld ملفات إلى ”%@“.
+shareUpload.notificationFailedTitle	لم يتم رفع بعض الملفات
+shareUpload.notificationFailedBody	تعذّر رفع %lld من %lld ملفات. شاركها مرة أخرى لإعادة المحاولة.
+settings.uploadDefaultsRow	الملفات المُشارَكة
+settings.uploadDefaultsFolder	المجلد الافتراضي
+settings.uploadDefaultsFolderNone	السؤال في كل مرة
+settings.uploadDefaultsWithoutAsking	الرفع دون سؤال
+settings.uploadDefaultsFooter	تبدأ الصور والملفات التي تشاركها مع NextExplorer من التطبيقات الأخرى في هذا المجلد. عند تفعيل الرفع دون سؤال، تُرفع إليه مباشرة.
+settings.uploadDefaultsClear	السؤال في كل مرة

@@ -389,17 +389,15 @@ extension FilesService {
             .appendingPathComponent("\(SessionScratchLocation.uploadEnvelopePrefix)\(UUID().uuidString).multipart")
         defer { try? FileManager.default.removeItem(at: envelopeURL) }
 
+        let request: URLRequest
         do {
-            try Self.writeMultipartEnvelope(
-                to: envelopeURL, boundary: boundary, fileURL: fileURL,
-                fileName: fileName, destination: destination
+            request = try UploadRequest.make(
+                serverURL: serverURL, fileURL: fileURL, fileName: fileName,
+                destination: destination, envelopeURL: envelopeURL, boundary: boundary
             )
         } catch {
             throw FilesClientError.decoding(error.localizedDescription)
         }
-
-        var request = Self.makeRequest(url: serverURL.appendingPathComponent(APIPath.upload), method: .post)
-        request.setValue(MIMEType.multipartFormData(boundary: boundary), forHTTPHeaderField: HTTPHeaderField.contentType)
 
         let data: Data
         let response: HTTPURLResponse
@@ -408,50 +406,6 @@ extension FilesService {
         } catch {
             throw Self.mapTransportError(error)
         }
-        try Self.validateReportingMessage(data, response)
-
-        let uploaded: [FileItem]
-        do {
-            uploaded = try Self.makeDecoder().decode([FileItem].self, from: data)
-        } catch {
-            throw FilesClientError.decoding(error.localizedDescription)
-        }
-        guard let file = uploaded.first else {
-            throw FilesClientError.decoding("Upload response was empty.")
-        }
-        return file
-    }
-
-    private static func writeMultipartEnvelope(
-        to url: URL, boundary: String, fileURL: URL, fileName: String, destination: String
-    ) throws {
-        FileManager.default.createFile(atPath: url.path, contents: nil)
-        let handle = try FileHandle(forWritingTo: url)
-        defer { try? handle.close() }
-
-        func writeField(_ name: String, _ value: String) throws {
-            let part = "--\(boundary)\r\nContent-Disposition: form-data; name=\"\(name)\"\r\n\r\n\(value)\r\n"
-            try handle.write(contentsOf: Data(part.utf8))
-        }
-
-        try writeField(MultipartField.uploadDestination, destination)
-        try writeField(MultipartField.relativePath, fileName)
-
-        // The server takes the stored name from the `relativePath` field, not this header, but
-        // a raw `"` or CR/LF here would still break the multipart framing.
-        let headerFileName = fileName
-            .replacingOccurrences(of: "\"", with: "'")
-            .replacingOccurrences(of: "\r", with: " ")
-            .replacingOccurrences(of: "\n", with: " ")
-        let header = "--\(boundary)\r\nContent-Disposition: form-data; name=\"\(MultipartField.fileData)\"; filename=\"\(headerFileName)\"\r\nContent-Type: \(MIMEType.octetStream)\r\n\r\n"
-        try handle.write(contentsOf: Data(header.utf8))
-
-        let input = try FileHandle(forReadingFrom: fileURL)
-        defer { try? input.close() }
-        while let chunk = try input.read(upToCount: 1_048_576), !chunk.isEmpty {
-            try handle.write(contentsOf: chunk)
-        }
-
-        try handle.write(contentsOf: Data("\r\n--\(boundary)--\r\n".utf8))
+        return try UploadRequest.decodeResponse(data, response)
     }
 }

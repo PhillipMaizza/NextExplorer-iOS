@@ -1,4 +1,3 @@
-import DesignSystem
 import Localization
 import SwiftUI
 
@@ -16,16 +15,22 @@ private enum Constants {
 /// search results states. Pass `retry` for the error case, since an empty error list often
 /// can't be pulled to refresh and needs its own button. `BrowseContentView`'s no search
 /// results state composes this with its own trailing "Search everywhere" content instead.
-struct EmptyStateView: View {
+public struct EmptyStateView: View {
     let icon: Image
     let message: String
     var retry: (() -> Void)?
+
+    public init(icon: Image, message: String, retry: (() -> Void)? = nil) {
+        self.icon = icon
+        self.message = message
+        self.retry = retry
+    }
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isPulsing = false
     @State private var hasAppeared = false
 
-    var body: some View {
+    public var body: some View {
         #if os(macOS)
             // The Mac's own empty state, with Retry as a button under the message.
             ContentUnavailableView {

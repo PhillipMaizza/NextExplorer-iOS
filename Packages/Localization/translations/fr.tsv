@@ -773,3 +773,24 @@ browse.actionNewFile	Créer un fichier
 browse.newFileTitle	Nouveau fichier
 browse.newFileTypeHint	Utilisez un type de fichier que l’éditeur peut ouvrir, comme .txt, .md ou .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	Envoyer vers NextExplorer
+shareUpload.itemCount	Fichiers à envoyer : %lld
+shareUpload.accountLabel	Compte
+shareUpload.folderLabel	Dossier
+shareUpload.folderChoose	Choisir un dossier
+shareUpload.upload	Envoyer
+shareUpload.preparing	Préparation de %lld sur %lld…
+shareUpload.started	Envoi en arrière-plan. Vous recevrez une notification une fois terminé.
+shareUpload.signedOut	Connectez-vous d’abord à NextExplorer, puis partagez à nouveau.
+shareUpload.nothingToUpload	Rien ici ne peut être envoyé par NextExplorer.
+shareUpload.failed	Les fichiers n’ont pas pu être préparés pour l’envoi.
+shareUpload.notificationDoneTitle	Envoi terminé
+shareUpload.notificationDoneBody	%lld fichiers envoyés dans « %@ ».
+shareUpload.notificationFailedTitle	Certains fichiers n’ont pas été envoyés
+shareUpload.notificationFailedBody	%lld fichiers sur %lld n’ont pas pu être envoyés. Partagez-les à nouveau pour réessayer.
+settings.uploadDefaultsRow	Fichiers partagés
+settings.uploadDefaultsFolder	Dossier par défaut
+settings.uploadDefaultsFolderNone	Demander à chaque fois
+settings.uploadDefaultsWithoutAsking	Envoyer sans demander
+settings.uploadDefaultsFooter	Les photos et fichiers que vous partagez avec NextExplorer depuis d’autres apps commencent dans ce dossier. Avec Envoyer sans demander, ils y sont envoyés directement.
+settings.uploadDefaultsClear	Demander à chaque fois

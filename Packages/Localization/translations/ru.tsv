@@ -773,3 +773,24 @@ browse.actionNewFile	Создать файл
 browse.newFileTitle	Новый файл
 browse.newFileTypeHint	Используйте тип файла, который открывает редактор, например .txt, .md или .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	Загрузить в NextExplorer
+shareUpload.itemCount	Файлов к загрузке: %lld
+shareUpload.accountLabel	Аккаунт
+shareUpload.folderLabel	Папка
+shareUpload.folderChoose	Выбрать папку
+shareUpload.upload	Загрузить
+shareUpload.preparing	Подготовка %lld из %lld…
+shareUpload.started	Загрузка в фоне. Вы получите уведомление, когда всё будет готово.
+shareUpload.signedOut	Сначала войдите в NextExplorer, затем поделитесь снова.
+shareUpload.nothingToUpload	Здесь нет ничего, что NextExplorer может загрузить.
+shareUpload.failed	Не удалось подготовить файлы к загрузке.
+shareUpload.notificationDoneTitle	Загрузка завершена
+shareUpload.notificationDoneBody	Загружено файлов: %lld в «%@».
+shareUpload.notificationFailedTitle	Некоторые файлы не загрузились
+shareUpload.notificationFailedBody	Не удалось загрузить %lld из %lld файлов. Поделитесь ими снова, чтобы повторить.
+settings.uploadDefaultsRow	Общие файлы
+settings.uploadDefaultsFolder	Папка по умолчанию
+settings.uploadDefaultsFolderNone	Спрашивать каждый раз
+settings.uploadDefaultsWithoutAsking	Загружать без вопросов
+settings.uploadDefaultsFooter	Фото и файлы, которыми вы делитесь с NextExplorer из других приложений, начинают с этой папки. Если включено «Загружать без вопросов», они сразу загружаются туда.
+settings.uploadDefaultsClear	Спрашивать каждый раз

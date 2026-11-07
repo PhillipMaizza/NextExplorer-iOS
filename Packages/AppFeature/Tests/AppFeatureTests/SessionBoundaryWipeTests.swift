@@ -90,12 +90,14 @@ struct SessionBoundaryWipeTests {
     @Test("Signing the last account out wipes every store")
     func lastSignOut() async {
         let log = WipeLog()
+        let cancelledShares = LockIsolated<Set<String>?>(nil)
         let store = TestStore(
             initialState: AppFeature.State(destination: .authenticated(.init(serverURL: serverURL, user: user)))
         ) {
             AppFeature()
         } withDependencies: {
             recordWipes(log, into: &$0)
+            $0.shareUploads.cancel = { cancelledShares.setValue($0) }
         }
         store.exhaustivity = .off
 
@@ -105,6 +107,7 @@ struct SessionBoundaryWipeTests {
         #expect(log.isComplete, "not wiped: \(Set(Store.allCases.map(\.rawValue)).subtracting(log.wiped.value))")
         #expect(log.scratchScope.value == .everything)
         #expect(log.certificatesWiped)
+        #expect(cancelledShares.value == [], "pending share uploads are cancelled with the session")
     }
 
     @Test("An expired session with no other account wipes every store but keeps the certificate")

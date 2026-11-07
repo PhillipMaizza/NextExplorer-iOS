@@ -2,8 +2,10 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import FolderPickerFeature
 import Foundation
 import Localization
+import ShareUploads
 import SwiftUI
 
 /// One directory listing. The root browse screen and every pushed subfolder are the
@@ -459,9 +461,10 @@ public struct BrowseFeature {
         case compressTapped(FileItem)
         case compressResponse(Result<FileItem, FilesClientError>)
         case downloadTapped(FileItem)
+        /// Files staged without the review sheet: a Mac drop or pick, or files shared from another
+        /// app when Settings says to upload them to the default folder without asking.
+        case directUploadStaged([PickedFile], destination: String, requested: Int)
         #if os(macOS)
-            /// Files dropped or picked on the Mac, staged without the review sheet.
-            case directUploadStaged([PickedFile], destination: String, requested: Int)
             /// Files opened from Finder name no folder, so they always go through the review sheet.
             case reviewUpload(UploadReviewFeature.PickSource)
             /// Finder files dropped on a folder row of the Mac table.
@@ -485,6 +488,8 @@ public struct BrowseFeature {
         case beginUpload(UploadReviewFeature.PickSource)
         /// Files another app shared in: opens the upload review here, or adds them to one already open.
         case receiveSharedFiles([URL])
+        /// Shared files that go through the review sheet, starting in Settings' default folder.
+        case reviewSharedFiles([URL], startingAt: String?)
         case uploadReview(PresentationAction<UploadReviewFeature.Action>)
         case copyTapped(FileItem)
         case moveTapped(FileItem)
@@ -559,6 +564,7 @@ public struct BrowseFeature {
     @Dependency(\.date) var date
     @Dependency(\.localDownloadStore) var localDownloadStore
     @Dependency(\.uploadStaging) var uploadStaging
+    @Dependency(\.uploadDefaults) var uploadDefaults
     @Dependency(\.openURL) var openURL
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.saveLocationPicker) var saveLocationPicker
@@ -1134,26 +1140,37 @@ public struct BrowseFeature {
                 case let .reviewUpload(source):
                     return openUploadReview(source, state: &state)
 
-                case let .directUploadStaged(files, destination, _):
-                    guard !files.isEmpty else {
-                        state.fileActionErrorMessage = L10n.Uploads.stagingFailed
-                        return .none
-                    }
-                    return .send(.delegate(.uploadRequested(files.map {
-                        PendingUpload(id: $0.id, fileURL: $0.fileURL, fileName: $0.fileName, destination: destination)
-                    })))
             #endif
+
+            case let .directUploadStaged(files, destination, _):
+                guard !files.isEmpty else {
+                    state.fileActionErrorMessage = L10n.Uploads.stagingFailed
+                    return .none
+                }
+                return .send(.delegate(.uploadRequested(files.map {
+                    PendingUpload(id: $0.id, fileURL: $0.fileURL, fileName: $0.fileName, destination: destination)
+                })))
 
             case let .receiveSharedFiles(urls):
                 guard !urls.isEmpty else { return .none }
+                // Settings > Shared Files: a default folder with Upload Without Asking takes them
+                // straight there, no sheet.
+                let defaults = uploadDefaults.loadActive()
+                if let folder = defaults.directFolder {
+                    return stageDirectUpload(urls, destination: folder)
+                }
                 if state.uploadReview != nil {
                     return .send(.uploadReview(.presented(.stage(.documents(urls)))))
                 }
+                let review = Action.reviewSharedFiles(urls, startingAt: defaults.folderPath)
                 // An open preview would cover the review sheet.
                 if state.previewItem != nil {
-                    return .concatenate(.send(.previewDismissed), .send(Self.sharedFilesUpload(urls)))
+                    return .concatenate(.send(.previewDismissed), .send(review))
                 }
-                return .send(Self.sharedFilesUpload(urls))
+                return .send(review)
+
+            case let .reviewSharedFiles(urls, startingAt):
+                return openUploadReview(.documents(urls), startingAt: startingAt, state: &state)
 
             case let .uploadReview(.presented(.delegate(.confirmed(files, destination)))):
                 state.uploadReview = nil
@@ -1521,20 +1538,28 @@ extension FileItem: DirectoryFirstSortable {}
 extension SearchResultItem: DirectoryFirstSortable {}
 
 extension BrowseFeature {
-    private func openUploadReview(_ source: UploadReviewFeature.PickSource, state: inout State) -> Effect<Action> {
+    private func openUploadReview(
+        _ source: UploadReviewFeature.PickSource,
+        startingAt folder: String? = nil,
+        state: inout State
+    ) -> Effect<Action> {
         state.uploadReview = UploadReviewFeature.State(
             serverURL: state.serverURL,
-            startingDestination: state.directoryPath
+            startingDestination: folder.flatMap { $0.isEmpty ? nil : $0 } ?? state.directoryPath
         )
         return .send(.uploadReview(.presented(.stage(source))))
     }
 
-    private static func sharedFilesUpload(_ urls: [URL]) -> Action {
-        #if os(macOS)
-            .reviewUpload(.documents(urls))
-        #else
-            .beginUpload(.documents(urls))
-        #endif
+    /// Stages the files and uploads them to `destination` straight away, no review sheet.
+    func stageDirectUpload(_ urls: [URL], destination: String) -> Effect<Action> {
+        let uploadStaging = uploadStaging
+        return .run { send in
+            var staged: [PickedFile] = []
+            for await file in uploadStaging.stageDocuments(urls) {
+                staged.append(file)
+            }
+            await send(.directUploadStaged(staged, destination: destination, requested: urls.count))
+        }
     }
 
     /// The selected rows in list order (the selection set itself is unordered).

@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+import FolderPickerFeature
 import Foundation
 
 /// An admin editing the server's path-scoped access rules via `PATCH /api/settings`. Mirrors

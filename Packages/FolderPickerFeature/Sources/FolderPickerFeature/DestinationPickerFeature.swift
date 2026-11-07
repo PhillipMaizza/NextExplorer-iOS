@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import DesignSystem
 import FilesClient
 import Foundation
 import Localization
@@ -123,12 +124,12 @@ public struct DestinationPickerFeature {
                 state.phase = .loaded
                 state.currentAccess = result.access
                 state.folders = IdentifiedArray(
-                    uniqueElements: BrowseFeature.sortedAlphabetically(result.items.filter(\.isDirectory))
+                    uniqueElements: result.items.filter(\.isDirectory).sorted(by: Self.byName)
                 )
                 return .none
 
             case let .foldersResponse(.failure(error)):
-                state.phase = .failed(error == .sessionExpired ? error.userMessage : L10n.Browse.destinationPickerLoadFailed)
+                state.phase = .failed(error == .sessionExpired ? L10n.Error.sessionExpired : L10n.Browse.destinationPickerLoadFailed)
                 return .none
 
             case let .searchQueryChanged(query):
@@ -138,7 +139,7 @@ public struct DestinationPickerFeature {
             case let .searchResultsResponse(.success(results)):
                 state.isSearching = false
                 state.searchResults = IdentifiedArray(
-                    uniqueElements: BrowseFeature.sortedAlphabetically(results.filter(\.isDirectory))
+                    uniqueElements: results.filter(\.isDirectory).sorted(by: Self.byName)
                 )
                 return .none
 
@@ -198,6 +199,10 @@ public struct DestinationPickerFeature {
         }
     }
 
+    private static func byName(_ lhs: some FolderNamed, _ rhs: some FolderNamed) -> Bool {
+        lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
+    }
+
     private func load(_ state: inout State) -> Effect<Action> {
         state.phase = .loading
         state.isSearching = false
@@ -238,3 +243,11 @@ public struct DestinationPickerFeature {
         .cancellable(id: CancelID.search, cancelInFlight: true)
     }
 }
+
+/// Folder listings and folder search results, both sorted by name in the picker.
+protocol FolderNamed {
+    var name: String { get }
+}
+
+extension FileItem: FolderNamed {}
+extension SearchResultItem: FolderNamed {}

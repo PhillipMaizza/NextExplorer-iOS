@@ -638,10 +638,33 @@ public enum L10n {
         public static var toggleShowHiddenFiles: String { tr("settings.toggleShowHiddenFiles") }  // "Show Hidden Files"
         public static var toggleShowTabLabels: String { tr("settings.toggleShowTabLabels") }  // "Show Tab Labels"
         public static var toggleShowThumbnails: String { tr("settings.toggleShowThumbnails") }  // "Show Thumbnails"
+        public static var uploadDefaultsClear: String { tr("settings.uploadDefaultsClear") }  // "Ask Each Time"
+        public static var uploadDefaultsFolder: String { tr("settings.uploadDefaultsFolder") }  // "Default Folder"
+        public static var uploadDefaultsFolderNone: String { tr("settings.uploadDefaultsFolderNone") }  // "Ask Each Time"
+        public static var uploadDefaultsFooter: String { tr("settings.uploadDefaultsFooter") }
+        public static var uploadDefaultsRow: String { tr("settings.uploadDefaultsRow") }  // "Shared Files"
+        public static var uploadDefaultsWithoutAsking: String { tr("settings.uploadDefaultsWithoutAsking") }  // "Upload Without Asking"
     }
     public enum ShareTarget {
         public static var anyone: String { tr("shareTarget.anyone") }  // "Anyone with link"
         public static var users: String { tr("shareTarget.users") }  // "Specific users"
+    }
+    public enum ShareUpload {
+        public static var accountLabel: String { tr("shareUpload.accountLabel") }  // "Account"
+        public static var failed: String { tr("shareUpload.failed") }  // "The files couldn't be prepared for upload."
+        public static var folderChoose: String { tr("shareUpload.folderChoose") }  // "Choose a Folder"
+        public static var folderLabel: String { tr("shareUpload.folderLabel") }  // "Folder"
+        public static func itemCount(_ a0: CVarArg) -> String { tr("shareUpload.itemCount", a0) }
+        public static var nothingToUpload: String { tr("shareUpload.nothingToUpload") }  // "There's nothing here NextExplorer can upload."
+        public static func notificationDoneBody(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.notificationDoneBody", a0, a1) }
+        public static var notificationDoneTitle: String { tr("shareUpload.notificationDoneTitle") }  // "Upload finished"
+        public static func notificationFailedBody(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.notificationFailedBody", a0, a1) }
+        public static var notificationFailedTitle: String { tr("shareUpload.notificationFailedTitle") }  // "Some files didn't upload"
+        public static func preparing(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.preparing", a0, a1) }
+        public static var signedOut: String { tr("shareUpload.signedOut") }  // "Sign in to NextExplorer first, then share again."
+        public static var started: String { tr("shareUpload.started") }
+        public static var title: String { tr("shareUpload.title") }  // "Upload to NextExplorer"
+        public static var upload: String { tr("shareUpload.upload") }  // "Upload"
     }
     public enum Shared {
         public static var actionFileLink: String { tr("shared.actionFileLink") }  // "File link"

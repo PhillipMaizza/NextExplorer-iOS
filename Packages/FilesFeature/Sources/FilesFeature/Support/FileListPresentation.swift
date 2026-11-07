@@ -120,3 +120,15 @@ struct SelectableGridCell<Content: View, Menu: View>: View {
         .contextMenu { menu }
     }
 }
+
+extension BrowseBreadcrumbBarMetrics {
+    /// On a Mac every Browse mode but grid is the table, which needs no breadcrumb bar: the
+    /// window already carries the back button and folder title.
+    static func isShown(browseViewModeRaw: String) -> Bool {
+        #if os(macOS)
+            browseViewModeRaw == FileListViewMode.grid.rawValue
+        #else
+            true
+        #endif
+    }
+}

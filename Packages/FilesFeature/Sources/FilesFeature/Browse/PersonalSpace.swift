@@ -2,18 +2,6 @@ import DesignSystem
 import Localization
 import SwiftUI
 
-/// The account's private folder when the server has personal folders on. The backend reaches it
-/// through the logical `personal` path space (`parsePathSpace` in `backend/src/utils/pathUtils.js`)
-/// and never lists it among the volumes, so the root screen offers it as its own entry.
-enum PersonalSpace {
-    static let rootPath = "personal"
-
-    /// A breadcrumb or title for a path segment: the leading `personal` reads as "My Files".
-    static func displayName(forSegment segment: String, isFirstSegment: Bool) -> String {
-        isFirstSegment && segment == rootPath ? L10n.Browse.myFiles : segment
-    }
-}
-
 /// "Personal" and "Locations" headings on the Browse root, shown only when the personal space
 /// sits above the volumes so the two kinds of folder read as separate groups.
 struct BrowseRootSectionHeader: View {

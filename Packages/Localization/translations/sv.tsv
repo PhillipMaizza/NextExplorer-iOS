@@ -773,3 +773,24 @@ browse.actionNewFile	Skapa fil
 browse.newFileTitle	Ny fil
 browse.newFileTypeHint	Använd en filtyp som redigeraren kan öppna, till exempel .txt, .md eller .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	Ladda upp till NextExplorer
+shareUpload.itemCount	Filer att ladda upp: %lld
+shareUpload.accountLabel	Konto
+shareUpload.folderLabel	Mapp
+shareUpload.folderChoose	Välj en mapp
+shareUpload.upload	Ladda upp
+shareUpload.preparing	Förbereder %lld av %lld…
+shareUpload.started	Laddar upp i bakgrunden. Du får en notis när det är klart.
+shareUpload.signedOut	Logga in i NextExplorer först och dela sedan igen.
+shareUpload.nothingToUpload	Det finns inget här som NextExplorer kan ladda upp.
+shareUpload.failed	Filerna kunde inte förberedas för uppladdning.
+shareUpload.notificationDoneTitle	Uppladdningen är klar
+shareUpload.notificationDoneBody	%lld filer uppladdade till ”%@”.
+shareUpload.notificationFailedTitle	Vissa filer laddades inte upp
+shareUpload.notificationFailedBody	%lld av %lld filer kunde inte laddas upp. Dela dem igen för att försöka på nytt.
+settings.uploadDefaultsRow	Delade filer
+settings.uploadDefaultsFolder	Standardmapp
+settings.uploadDefaultsFolderNone	Fråga varje gång
+settings.uploadDefaultsWithoutAsking	Ladda upp utan att fråga
+settings.uploadDefaultsFooter	Bilder och filer du delar till NextExplorer från andra appar börjar i den här mappen. Med Ladda upp utan att fråga påslaget hamnar de direkt där.
+settings.uploadDefaultsClear	Fråga varje gång

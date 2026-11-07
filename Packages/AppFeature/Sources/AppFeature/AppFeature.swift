@@ -7,6 +7,7 @@ import FilesClient
 import FilesFeature
 import Foundation
 import NetworkClient
+import ShareUploads
 import SwiftUI
 
 @Reducer
@@ -31,7 +32,7 @@ public struct AppFeature {
         /// A restored/optimistic session (cold launch) leaves this `false` so the app just
         /// cross-fades in behind the splash instead.
         public var didAuthenticateFromLogin = false
-        /// Tripped by `apiResult` (in FilesFeature) the moment any authenticated request
+        /// Tripped by `apiResult` (FolderPickerFeature) the moment any authenticated request
         /// answers 401. Watched by `AppView`, which sends `sessionExpiryDetected`.
         @Shared(.inMemory(SessionExpiry.sharedKey)) public var sessionDidExpire = false
         /// Cleared on every sign out so a staged copy/move never carries across into a
@@ -91,6 +92,8 @@ public struct AppFeature {
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.sessionScratchStore) var sessionScratchStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
+    @Dependency(\.uploadDefaults) var uploadDefaults
+    @Dependency(\.shareUploads) var shareUploads
 
     public init() {}
 
@@ -351,6 +354,8 @@ public struct AppFeature {
     private func pruneClientCertificates(keeping serverURL: URL? = nil) -> Effect<Action> {
         let authClient = authClient
         let clientCertificateClient = clientCertificateClient
+        let uploadDefaults = uploadDefaults
+        let shareUploads = shareUploads
         return .run { _ in
             let sessions = await authClient.listSessions()
             var keep = Set(sessions.compactMap { ClientCertificateOrigin(url: $0.serverBaseURL) })
@@ -358,6 +363,10 @@ public struct AppFeature {
                 keep.insert(origin)
             }
             await clientCertificateClient.removeAll(keep)
+            // A signed out account's default upload folder and pending share uploads go with it.
+            let signedIn = Set(sessions.map(\.accountID))
+            uploadDefaults.retain(signedIn)
+            shareUploads.cancel(signedIn)
         }
     }
 
@@ -403,6 +412,8 @@ public struct AppFeature {
         let offlineFileStore = offlineFileStore
         let sessionScratchStore = sessionScratchStore
         let clientCertificateClient = clientCertificateClient
+        let uploadDefaults = uploadDefaults
+        let shareUploads = shareUploads
         AppStorageKeys.resetSessionPreferences()
         return .merge(
             refreshAccounts,
@@ -416,6 +427,8 @@ public struct AppFeature {
                 sessionScratchStore.purge(.everything)
                 if removesClientCertificates {
                     await clientCertificateClient.removeAll([])
+                    uploadDefaults.retain([])
+                    shareUploads.cancel([])
                 }
             }
         )

@@ -3,6 +3,7 @@ import CoreModels
 import DependenciesTestSupport
 import FilesClient
 @testable import FilesFeature
+import FolderPickerFeature
 import Foundation
 import Localization
 import Testing

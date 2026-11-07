@@ -773,3 +773,24 @@ browse.actionNewFile	फ़ाइल बनाएँ
 browse.newFileTitle	नई फ़ाइल
 browse.newFileTypeHint	ऐसा फ़ाइल प्रकार इस्तेमाल करें जिसे एडिटर खोल सके, जैसे .txt, .md या .js।
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	NextExplorer पर अपलोड करें
+shareUpload.itemCount	अपलोड करने के लिए फ़ाइलें: %lld
+shareUpload.accountLabel	खाता
+shareUpload.folderLabel	फ़ोल्डर
+shareUpload.folderChoose	फ़ोल्डर चुनें
+shareUpload.upload	अपलोड करें
+shareUpload.preparing	%lld/%lld तैयार हो रही है…
+shareUpload.started	बैकग्राउंड में अपलोड हो रहा है। पूरा होने पर आपको सूचना मिलेगी।
+shareUpload.signedOut	पहले NextExplorer में साइन इन करें, फिर दोबारा शेयर करें।
+shareUpload.nothingToUpload	यहाँ ऐसा कुछ नहीं है जिसे NextExplorer अपलोड कर सके।
+shareUpload.failed	फ़ाइलें अपलोड के लिए तैयार नहीं हो सकीं।
+shareUpload.notificationDoneTitle	अपलोड पूरा हुआ
+shareUpload.notificationDoneBody	%lld फ़ाइलें “%@” में अपलोड हुईं।
+shareUpload.notificationFailedTitle	कुछ फ़ाइलें अपलोड नहीं हुईं
+shareUpload.notificationFailedBody	%lld/%lld फ़ाइलें अपलोड नहीं हो सकीं। दोबारा कोशिश करने के लिए उन्हें फिर से शेयर करें।
+settings.uploadDefaultsRow	शेयर की गई फ़ाइलें
+settings.uploadDefaultsFolder	डिफ़ॉल्ट फ़ोल्डर
+settings.uploadDefaultsFolderNone	हर बार पूछें
+settings.uploadDefaultsWithoutAsking	बिना पूछे अपलोड करें
+settings.uploadDefaultsFooter	दूसरे ऐप्स से NextExplorer पर शेयर की गई फ़ोटो और फ़ाइलें इसी फ़ोल्डर से शुरू होती हैं। बिना पूछे अपलोड करें चालू होने पर वे सीधे यहीं अपलोड होती हैं।
+settings.uploadDefaultsClear	हर बार पूछें

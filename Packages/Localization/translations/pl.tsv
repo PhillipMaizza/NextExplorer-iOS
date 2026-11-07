@@ -773,3 +773,24 @@ browse.actionNewFile	Utwórz plik
 browse.newFileTitle	Nowy plik
 browse.newFileTypeHint	Użyj typu pliku, który edytor potrafi otworzyć, np. .txt, .md lub .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	Prześlij do NextExplorer
+shareUpload.itemCount	Pliki do przesłania: %lld
+shareUpload.accountLabel	Konto
+shareUpload.folderLabel	Folder
+shareUpload.folderChoose	Wybierz folder
+shareUpload.upload	Prześlij
+shareUpload.preparing	Przygotowywanie %lld z %lld…
+shareUpload.started	Przesyłanie w tle. Otrzymasz powiadomienie po zakończeniu.
+shareUpload.signedOut	Najpierw zaloguj się w NextExplorer, a potem udostępnij ponownie.
+shareUpload.nothingToUpload	Nie ma tu nic, co NextExplorer mógłby przesłać.
+shareUpload.failed	Nie udało się przygotować plików do przesłania.
+shareUpload.notificationDoneTitle	Przesyłanie zakończone
+shareUpload.notificationDoneBody	Przesłano plików: %lld do „%@”.
+shareUpload.notificationFailedTitle	Niektóre pliki nie zostały przesłane
+shareUpload.notificationFailedBody	Nie udało się przesłać %lld z %lld plików. Udostępnij je ponownie, aby spróbować jeszcze raz.
+settings.uploadDefaultsRow	Udostępnione pliki
+settings.uploadDefaultsFolder	Folder domyślny
+settings.uploadDefaultsFolderNone	Pytaj za każdym razem
+settings.uploadDefaultsWithoutAsking	Przesyłaj bez pytania
+settings.uploadDefaultsFooter	Zdjęcia i pliki udostępniane do NextExplorer z innych aplikacji trafiają najpierw do tego folderu. Gdy włączysz Przesyłaj bez pytania, zostaną przesłane prosto tam.
+settings.uploadDefaultsClear	Pytaj za każdym razem

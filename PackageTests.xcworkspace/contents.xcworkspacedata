@@ -26,6 +26,15 @@
       location = "group:Packages/AuthFeature">
    </FileRef>
    <FileRef
+      location = "group:Packages/FolderPickerFeature">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/ShareUploads">
+   </FileRef>
+   <FileRef
+      location = "group:Packages/ShareExtensionFeature">
+   </FileRef>
+   <FileRef
       location = "group:Packages/FilesFeature">
    </FileRef>
    <FileRef

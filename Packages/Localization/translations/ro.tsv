@@ -773,3 +773,24 @@ browse.actionNewFile	Creează fișier
 browse.newFileTitle	Fișier nou
 browse.newFileTypeHint	Folosește un tip de fișier pe care editorul îl poate deschide, cum ar fi .txt, .md sau .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	Încarcă în NextExplorer
+shareUpload.itemCount	Fișiere de încărcat: %lld
+shareUpload.accountLabel	Cont
+shareUpload.folderLabel	Dosar
+shareUpload.folderChoose	Alege un dosar
+shareUpload.upload	Încarcă
+shareUpload.preparing	Se pregătește %lld din %lld…
+shareUpload.started	Se încarcă în fundal. Vei primi o notificare când se termină.
+shareUpload.signedOut	Conectează-te mai întâi în NextExplorer, apoi partajează din nou.
+shareUpload.nothingToUpload	Nu există nimic aici pe care NextExplorer să-l poată încărca.
+shareUpload.failed	Fișierele nu au putut fi pregătite pentru încărcare.
+shareUpload.notificationDoneTitle	Încărcare finalizată
+shareUpload.notificationDoneBody	%lld fișiere încărcate în „%@”.
+shareUpload.notificationFailedTitle	Unele fișiere nu s-au încărcat
+shareUpload.notificationFailedBody	%lld din %lld fișiere nu au putut fi încărcate. Partajează-le din nou pentru a reîncerca.
+settings.uploadDefaultsRow	Fișiere partajate
+settings.uploadDefaultsFolder	Dosar implicit
+settings.uploadDefaultsFolderNone	Întreabă de fiecare dată
+settings.uploadDefaultsWithoutAsking	Încarcă fără să întrebe
+settings.uploadDefaultsFooter	Fotografiile și fișierele pe care le partajezi cu NextExplorer din alte aplicații pornesc din acest dosar. Cu Încarcă fără să întrebe activat, ajung direct acolo.
+settings.uploadDefaultsClear	Întreabă de fiecare dată

@@ -17,6 +17,7 @@ let package = Package(
         .package(path: "../FilesFeature"),
         .package(path: "../Localization"),
         .package(path: "../NetworkClient"),
+        .package(path: "../ShareUploads"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
     ],
     targets: [
@@ -32,6 +33,7 @@ let package = Package(
                 "FilesFeature",
                 "Localization",
                 "NetworkClient",
+                "ShareUploads",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
