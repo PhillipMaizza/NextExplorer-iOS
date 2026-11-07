@@ -59,9 +59,6 @@ final class ShareViewController: PlatformViewController {
         ])
     }
 
-    #if os(macOS)
-    #endif
-
     private func close(completed: Bool) {
         if completed {
             extensionContext?.completeRequest(returningItems: nil)

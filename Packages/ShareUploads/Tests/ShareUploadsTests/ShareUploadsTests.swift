@@ -145,16 +145,41 @@ struct ShareUploadsTests {
         #expect(!FileManager.default.fileExists(atPath: staying.path), "the last sign out leaves nothing staged")
     }
 
-    @Test("A batch staged but never started is cleaned up at launch")
+    @Test("An old batch staged but never started is cleaned up at launch")
     func unstartedBatchIsCleanedUp() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let directory = root.appendingPathComponent(UUID().uuidString, isDirectory: true)
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        try Data("half written".utf8).write(to: directory.appendingPathComponent("x.multipart"))
+        let directory = try makeUnstartedBatch(in: root)
+        try FileManager.default.setAttributes(
+            [.modificationDate: Date().addingTimeInterval(-BackgroundUploader.staleAge - 60)],
+            ofItemAtPath: directory.path
+        )
 
         BackgroundUploader(root: root, notifier: UploadNotifier { _ in }).reconnectPending()
 
         #expect(!FileManager.default.fileExists(atPath: directory.path))
+    }
+
+    @Test("A batch another process is still staging survives the launch cleanup")
+    func recentUnstartedBatchIsKept() throws {
+        let root = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let directory = try makeUnstartedBatch(in: root)
+
+        BackgroundUploader(root: root, notifier: UploadNotifier { _ in }).reconnectPending()
+
+        #expect(FileManager.default.fileExists(atPath: directory.path))
+    }
+
+    @Test("A folder that cannot be read counts as stale")
+    func missingFolderIsStale() {
+        #expect(BackgroundUploader.isStale(URL(fileURLWithPath: "/nonexistent/\(UUID().uuidString)")))
+    }
+
+    private func makeUnstartedBatch(in root: URL) throws -> URL {
+        let directory = root.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try Data("half written".utf8).write(to: directory.appendingPathComponent("x.multipart"))
+        return directory
     }
 }

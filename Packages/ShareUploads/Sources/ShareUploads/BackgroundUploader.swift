@@ -110,12 +110,23 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         for id in pendingBatchIDs() {
             let directory = root.appendingPathComponent(id, isDirectory: true)
             guard Manifest.load(from: directory) != nil else {
-                // Staged but never started (the extension went away mid preparation).
-                try? FileManager.default.removeItem(at: directory)
+                // Staged but never started (the extension went away mid preparation). A recent one
+                // may still be filling in another process, so only old leftovers go.
+                if Self.isStale(directory) {
+                    try? FileManager.default.removeItem(at: directory)
+                }
                 continue
             }
             _ = session(for: Self.identifierPrefix + id)
         }
+    }
+
+    static let staleAge: TimeInterval = 60 * 60
+
+    static func isStale(_ directory: URL, now: Date = Date()) -> Bool {
+        let values = try? directory.resourceValues(forKeys: [.contentModificationDateKey])
+        guard let modified = values?.contentModificationDate else { return true }
+        return now.timeIntervalSince(modified) > staleAge
     }
 
     /// Signing out: stops every pending upload of an account not in `accountIDs` (all of them on
@@ -183,7 +194,10 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         ))
         try? FileManager.default.removeItem(at: directory)
         session.finishTasksAndInvalidate()
-        lock.withLock { sessions[session.configuration.identifier ?? ""] = nil }
+        lock.withLock {
+            sessions[session.configuration.identifier ?? ""] = nil
+            bodies[batchID] = nil
+        }
     }
 }
 
@@ -201,6 +215,15 @@ extension BackgroundUploader: URLSessionDataDelegate {
         _ session: URLSession, task _: URLSessionTask, didReceive challenge: URLAuthenticationChallenge
     ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
         await urlSession(session, didReceive: challenge)
+    }
+
+    /// The upload endpoint never redirects. Following one would resend the session cookie (a header
+    /// set by hand survives redirects) and the file to wherever it points, so the upload fails instead.
+    public func urlSession(
+        _: URLSession, task _: URLSessionTask, willPerformHTTPRedirection _: HTTPURLResponse,
+        newRequest _: URLRequest, completionHandler: @escaping @Sendable (URLRequest?) -> Void
+    ) {
+        completionHandler(nil)
     }
 
     public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
