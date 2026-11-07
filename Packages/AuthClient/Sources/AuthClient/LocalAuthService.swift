@@ -8,7 +8,23 @@ struct LocalAuthService: Sendable {
 
     func status(serverURL: URL) async throws -> AuthStatus {
         let request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.status, method: .get)
-        return try await send(request, decoding: AuthStatus.self)
+        let (data, response) = try await performSend(request)
+        try Self.validate(response, unauthorizedError: .sessionExpired)
+        var status: AuthStatus
+        do {
+            status = try JSONDecoder().decode(AuthStatus.self, from: data)
+        } catch {
+            throw AuthClientError.decoding(error.localizedDescription)
+        }
+        status.redirectsToHTTPS = Self.redirectsToHTTPS(requested: serverURL, answered: response.url)
+        return status
+    }
+
+    static func redirectsToHTTPS(requested: URL, answered: URL?) -> Bool {
+        guard let answered, requested.scheme?.lowercased() == "http", answered.scheme?.lowercased() == "https" else {
+            return false
+        }
+        return requested.host()?.lowercased() == answered.host()?.lowercased()
     }
 
     func login(serverURL: URL, identifier: String, password: String) async throws -> User {

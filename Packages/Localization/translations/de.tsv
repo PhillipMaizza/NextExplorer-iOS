@@ -773,3 +773,25 @@ browse.actionNewFile	Datei erstellen
 browse.newFileTitle	Neue Datei
 browse.newFileTypeHint	Verwende einen Dateityp, den der Editor öffnen kann, etwa .txt, .md oder .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	In NextExplorer hochladen
+shareUpload.itemCount	Hochzuladende Dateien: %lld
+shareUpload.accountLabel	Konto
+shareUpload.folderLabel	Ordner
+shareUpload.folderChoose	Ordner auswählen
+shareUpload.upload	Hochladen
+shareUpload.preparing	%lld von %lld wird vorbereitet…
+shareUpload.started	Wird im Hintergrund hochgeladen. Du bekommst eine Mitteilung, sobald es fertig ist.
+shareUpload.signedOut	Melde dich zuerst in NextExplorer an und teile dann erneut.
+shareUpload.nothingToUpload	Hier ist nichts, was NextExplorer hochladen kann.
+shareUpload.failed	Die Dateien konnten nicht für den Upload vorbereitet werden.
+shareUpload.notificationDoneTitle	Upload abgeschlossen
+shareUpload.notificationDoneBody	%lld Dateien nach „%@“ hochgeladen.
+shareUpload.notificationFailedTitle	Einige Dateien wurden nicht hochgeladen
+shareUpload.notificationFailedBody	%lld von %lld Dateien konnten nicht hochgeladen werden. Teile sie erneut, um es noch einmal zu versuchen.
+settings.uploadDefaultsRow	Geteilte Dateien
+settings.uploadDefaultsFolder	Standardordner
+settings.uploadDefaultsFolderNone	Jedes Mal fragen
+settings.uploadDefaultsWithoutAsking	Ohne Nachfrage hochladen
+settings.uploadDefaultsFooter	Fotos und Dateien, die du aus anderen Apps mit NextExplorer teilst, beginnen in diesem Ordner. Mit „Ohne Nachfrage hochladen“ werden sie direkt dorthin hochgeladen.
+settings.uploadDefaultsClear	Jedes Mal fragen
+common.change	Ändern

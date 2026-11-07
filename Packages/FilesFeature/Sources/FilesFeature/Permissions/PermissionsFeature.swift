@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+import FolderPickerFeature
 import Foundation
 
 /// Drives the "Permissions" sheet (`PermissionsSheet`) for one file or folder: view the

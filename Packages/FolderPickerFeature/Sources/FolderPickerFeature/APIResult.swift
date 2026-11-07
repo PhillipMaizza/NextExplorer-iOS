@@ -1,23 +1,17 @@
 import ComposableArchitecture
+import CoreModels
 import FilesClient
 import Foundation
 
-public enum SessionExpiry {
-    /// Set to `true` by `apiResult` when an authenticated endpoint answers 401. `AppFeature`
-    /// watches it, drops to the login screen, clears the session, then resets the flag. An
-    /// in memory flag rather than delegate plumbing, since every effect already routes its
-    /// errors through `apiResult`.
-    public static let sharedKey = "sessionDidExpire"
-}
-
-/// Runs a throwing async call and boxes the outcome, mapping anything that isn't already a
+/// Shared by every feature that calls the server (Browse and the rest of FilesFeature, the
+/// folder picker, the Share Extension). Runs a throwing async call and boxes the outcome, mapping anything that isn't already a
 /// `FilesClientError` to `.network`. Replaces the per effect `do/catch` that would otherwise
 /// repeat verbatim. A `.sessionExpired` (401) additionally trips `SessionExpiry`.
 ///
 ///     return .run { send in
 ///         await send(.itemsResponse(await apiResult { try await filesClient.browse(url, path) }))
 ///     }
-func apiResult<T>(_ operation: () async throws -> T) async throws -> Result<T, FilesClientError> {
+public func apiResult<T>(_ operation: () async throws -> T) async throws -> Result<T, FilesClientError> {
     do {
         return try await .success(operation())
     } catch {

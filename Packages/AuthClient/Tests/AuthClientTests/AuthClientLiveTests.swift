@@ -358,4 +358,14 @@ struct AuthClientLiveTests {
         #expect(store.activeCredentials() == nil)
         #expect(cookieStorage.cookies(for: serverURL)?.isEmpty ?? true)
     }
+
+    @Test("Only an http address answered from https on the same host counts as upgraded")
+    func redirectToHTTPS() {
+        let http = URL(string: "http://files.example.com/api/auth/status")!
+        #expect(LocalAuthService.redirectsToHTTPS(requested: http, answered: URL(string: "https://files.example.com/api/auth/status")))
+        #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: http))
+        #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: URL(string: "https://elsewhere.example.com/api/auth/status")))
+        #expect(!LocalAuthService.redirectsToHTTPS(requested: URL(string: "https://files.example.com")!, answered: URL(string: "https://files.example.com")))
+        #expect(!LocalAuthService.redirectsToHTTPS(requested: http, answered: nil))
+    }
 }

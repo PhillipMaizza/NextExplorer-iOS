@@ -1,4 +1,3 @@
-import DesignSystem
 import Foundation
 import Localization
 import SwiftUI
@@ -21,18 +20,8 @@ private enum Constants {
 /// own scroll extent to respect that ancestor inset, letting the last row scroll out from
 /// behind the bar. `BrowseContentView` reserves this same height directly on its own
 /// scrollable content instead of trusting that propagation.
-enum BrowseBreadcrumbBarMetrics {
-    static let height: CGFloat = .size48
-
-    /// On a Mac every Browse mode but grid is the table, which needs no breadcrumb bar: the
-    /// window already carries the back button and folder title.
-    static func isShown(browseViewModeRaw: String) -> Bool {
-        #if os(macOS)
-            browseViewModeRaw == FileListViewMode.grid.rawValue
-        #else
-            true
-        #endif
-    }
+public enum BrowseBreadcrumbBarMetrics {
+    public static let height: CGFloat = .size48
 }
 
 /// Mirrors the web client's own path breadcrumb ("Location"): tapping any earlier segment
@@ -47,13 +36,29 @@ enum BrowseBreadcrumbBarMetrics {
 /// `containerCrumb` prepends one more crumb *before* the root: Favorites uses it for the
 /// tab's own list screen ("Favorites", `path` ""), so there's always a crumb that leaves the
 /// favorited folder entirely instead of the leftmost tap just re-opening that same folder.
-struct BrowseBreadcrumbBar: View {
+public struct BrowseBreadcrumbBar: View {
     let directoryPath: String
     var rootTitle: String = L10n.Browse.locations
     var rootPath: String = ""
     var rootIcon: Image? = IconKit.drive
     var containerCrumb: (title: String, path: String, icon: Image?)?
     let onSegmentTapped: (_ path: String, _ title: String) -> Void
+
+    public init(
+        directoryPath: String,
+        rootTitle: String = L10n.Browse.locations,
+        rootPath: String = "",
+        rootIcon: Image? = IconKit.drive,
+        containerCrumb: (title: String, path: String, icon: Image?)? = nil,
+        onSegmentTapped: @escaping (_ path: String, _ title: String) -> Void
+    ) {
+        self.directoryPath = directoryPath
+        self.rootTitle = rootTitle
+        self.rootPath = rootPath
+        self.rootIcon = rootIcon
+        self.containerCrumb = containerCrumb
+        self.onSegmentTapped = onSegmentTapped
+    }
 
     /// `directoryPath` with `rootPath` stripped off the front: segments are only ever
     /// rendered/tapped relative to the configured root.
@@ -75,7 +80,7 @@ struct BrowseBreadcrumbBar: View {
     /// always exactly one, even at the root with no path segments at all.
     private static let trailingAnchorID = "trailing"
 
-    var body: some View {
+    public var body: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: Constants.segmentSpacing) {
@@ -180,4 +185,16 @@ struct BrowseBreadcrumbBar: View {
         rootIcon: IconKit.folderFill,
         containerCrumb: ("Favorites", "", IconKit.starFill)
     ) { _, _ in }
+}
+
+/// The account's private folder when the server has personal folders on. The backend reaches it
+/// through the logical `personal` path space (`parsePathSpace` in `backend/src/utils/pathUtils.js`)
+/// and never lists it among the volumes, so the root screen offers it as its own entry.
+public enum PersonalSpace {
+    public static let rootPath = "personal"
+
+    /// A breadcrumb or title for a path segment: the leading `personal` reads as "My Files".
+    public static func displayName(forSegment segment: String, isFirstSegment: Bool) -> String {
+        isFirstSegment && segment == rootPath ? L10n.Browse.myFiles : segment
+    }
 }

@@ -2,6 +2,7 @@
     import ComposableArchitecture
     import CoreModels
     import DesignSystem
+    import FolderPickerFeature
     import Localization
     import SwiftUI
 
@@ -138,6 +139,9 @@
                         }
                     }
                 }
+                if account.isActive {
+                    MacUploadDefaultsSection(store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults))
+                }
                 Section {
                     HStack {
                         if account.isActive {
@@ -152,6 +156,10 @@
                     }
                     .disabled(store.isSigningOut)
                 }
+            }
+            // On the pane, not its section: a sheet attached inside a form section may not present.
+            .sheet(item: Bindable(store).scope(state: \.uploadDefaults.folderPicker, action: \.uploadDefaults.folderPicker)) { pickerStore in
+                DestinationPickerView(store: pickerStore)
             }
         }
     }

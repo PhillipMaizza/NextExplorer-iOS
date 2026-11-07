@@ -849,3 +849,26 @@ login.ssoClientCertificateNote	Single sign-on opens in Safari, which can't use t
 settings.clientCertificateExpired	Expired
 settings.clientCertificateExpiresSoon	Expires soon
 clientCertificate.expiringSoonWarning	This certificate expires on %@. Ask for a new one before then.
+# Share Extension and the default folder for files shared from other apps
+shareUpload.title	Upload to NextExplorer
+shareUpload.itemCount	Files to upload: %lld
+shareUpload.accountLabel	Account
+shareUpload.folderLabel	Folder
+shareUpload.folderChoose	Choose a Folder
+shareUpload.upload	Upload
+shareUpload.preparing	Preparing %lld of %lld…
+shareUpload.started	Uploading in the background. You'll get a notification when it's done.
+shareUpload.signedOut	Sign in to NextExplorer first, then share again.
+shareUpload.nothingToUpload	There's nothing here NextExplorer can upload.
+shareUpload.failed	The files couldn't be prepared for upload.
+shareUpload.notificationDoneTitle	Upload finished
+shareUpload.notificationDoneBody	%lld files uploaded to “%@”.
+shareUpload.notificationFailedTitle	Some files didn't upload
+shareUpload.notificationFailedBody	%lld of %lld files couldn't be uploaded. Share them again to retry.
+settings.uploadDefaultsRow	Shared Files
+settings.uploadDefaultsFolder	Default Folder
+settings.uploadDefaultsFolderNone	Ask Each Time
+settings.uploadDefaultsWithoutAsking	Upload Without Asking
+settings.uploadDefaultsFooter	Photos and files you share to NextExplorer from other apps start in this folder. With Upload Without Asking on, they upload straight there.
+settings.uploadDefaultsClear	Ask Each Time
+common.change	Change

@@ -773,3 +773,25 @@ browse.actionNewFile	Bestand maken
 browse.newFileTitle	Nieuw bestand
 browse.newFileTypeHint	Gebruik een bestandstype dat de editor kan openen, zoals .txt, .md of .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	Uploaden naar NextExplorer
+shareUpload.itemCount	Te uploaden bestanden: %lld
+shareUpload.accountLabel	Account
+shareUpload.folderLabel	Map
+shareUpload.folderChoose	Kies een map
+shareUpload.upload	Upload
+shareUpload.preparing	%lld van %lld voorbereiden…
+shareUpload.started	Uploaden op de achtergrond. Je krijgt een melding als het klaar is.
+shareUpload.signedOut	Log eerst in bij NextExplorer en deel dan opnieuw.
+shareUpload.nothingToUpload	Er is hier niets dat NextExplorer kan uploaden.
+shareUpload.failed	De bestanden konden niet worden voorbereid voor upload.
+shareUpload.notificationDoneTitle	Upload voltooid
+shareUpload.notificationDoneBody	%lld bestanden geüpload naar ‘%@’.
+shareUpload.notificationFailedTitle	Sommige bestanden zijn niet geüpload
+shareUpload.notificationFailedBody	%lld van %lld bestanden konden niet worden geüpload. Deel ze opnieuw om het nog eens te proberen.
+settings.uploadDefaultsRow	Gedeelde bestanden
+settings.uploadDefaultsFolder	Standaardmap
+settings.uploadDefaultsFolderNone	Elke keer vragen
+settings.uploadDefaultsWithoutAsking	Uploaden zonder te vragen
+settings.uploadDefaultsFooter	Foto’s en bestanden die je vanuit andere apps met NextExplorer deelt, beginnen in deze map. Met Uploaden zonder te vragen aan gaan ze er direct naartoe.
+settings.uploadDefaultsClear	Elke keer vragen
+common.change	Wijzig

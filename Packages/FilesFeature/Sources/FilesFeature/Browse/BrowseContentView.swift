@@ -3,6 +3,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import FolderPickerFeature
 import Localization
 import PhotosUI
 import SwiftUI

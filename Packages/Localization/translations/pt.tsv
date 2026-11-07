@@ -773,3 +773,25 @@ browse.actionNewFile	Criar ficheiro
 browse.newFileTitle	Novo ficheiro
 browse.newFileTypeHint	Use um tipo de ficheiro que o editor consiga abrir, como .txt, .md ou .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	Enviar para o NextExplorer
+shareUpload.itemCount	Arquivos para enviar: %lld
+shareUpload.accountLabel	Conta
+shareUpload.folderLabel	Pasta
+shareUpload.folderChoose	Escolher uma pasta
+shareUpload.upload	Enviar
+shareUpload.preparing	Preparando %lld de %lld…
+shareUpload.started	Enviando em segundo plano. Você receberá uma notificação quando terminar.
+shareUpload.signedOut	Entre no NextExplorer primeiro e compartilhe de novo.
+shareUpload.nothingToUpload	Não há nada aqui que o NextExplorer possa enviar.
+shareUpload.failed	Não foi possível preparar os arquivos para envio.
+shareUpload.notificationDoneTitle	Envio concluído
+shareUpload.notificationDoneBody	%lld arquivos enviados para “%@”.
+shareUpload.notificationFailedTitle	Alguns arquivos não foram enviados
+shareUpload.notificationFailedBody	Não foi possível enviar %lld de %lld arquivos. Compartilhe-os de novo para tentar outra vez.
+settings.uploadDefaultsRow	Arquivos compartilhados
+settings.uploadDefaultsFolder	Pasta padrão
+settings.uploadDefaultsFolderNone	Perguntar sempre
+settings.uploadDefaultsWithoutAsking	Enviar sem perguntar
+settings.uploadDefaultsFooter	Fotos e arquivos que você compartilha com o NextExplorer a partir de outros apps começam nesta pasta. Com Enviar sem perguntar ativado, eles vão direto para lá.
+settings.uploadDefaultsClear	Perguntar sempre
+common.change	Alterar
