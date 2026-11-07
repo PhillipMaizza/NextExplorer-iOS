@@ -17,6 +17,28 @@ import SwiftUI
         func application(_: UIApplication, supportedInterfaceOrientationsFor _: UIWindow?) -> UIInterfaceOrientationMask {
             OrientationLock.shared.mask
         }
+
+        /// Uploads started from the Share Extension finish here when the extension is long gone.
+        func application(
+            _: UIApplication,
+            handleEventsForBackgroundURLSession identifier: String,
+            completionHandler: @escaping () -> Void
+        ) {
+            let completion = UncheckedCompletion(completionHandler)
+            if !BackgroundUploadEvents.handle(sessionIdentifier: identifier, completion: { completion.run() }) {
+                completionHandler()
+            }
+        }
+    }
+
+    /// UIKit calls the background session completion handler on the main thread; it is not
+    /// marked `Sendable`, so it travels in this box.
+    private struct UncheckedCompletion: @unchecked Sendable {
+        let run: () -> Void
+
+        init(_ run: @escaping () -> Void) {
+            self.run = run
+        }
     }
 #endif
 
@@ -58,6 +80,8 @@ struct NextExplorerApp: App {
         LocalizationOverride.apply(saved.isEmpty ? nil : saved)
         DesignSystemFonts.registerAll()
         DesignSystemFonts.applyGlobalAppearance()
+        // Share uploads that ran or finished while the app was closed get cleaned up and reported.
+        BackgroundUploadEvents.reconnectPending()
     }
 
     var body: some Scene {

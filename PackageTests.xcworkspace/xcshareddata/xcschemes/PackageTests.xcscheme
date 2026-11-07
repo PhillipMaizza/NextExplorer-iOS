@@ -112,6 +112,48 @@
             buildForAnalyzing = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ShareExtensionFeatureTests"
+               BuildableName = "ShareExtensionFeatureTests"
+               BlueprintName = "ShareExtensionFeatureTests"
+               ReferencedContainer = "container:Packages/ShareExtensionFeature">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ShareUploadsTests"
+               BuildableName = "ShareUploadsTests"
+               BlueprintName = "ShareUploadsTests"
+               ReferencedContainer = "container:Packages/ShareUploads">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FolderPickerFeatureTests"
+               BuildableName = "FolderPickerFeatureTests"
+               BlueprintName = "FolderPickerFeatureTests"
+               ReferencedContainer = "container:Packages/FolderPickerFeature">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "AuthFeatureTests"
                BuildableName = "AuthFeatureTests"
                BlueprintName = "AuthFeatureTests"
@@ -238,6 +280,36 @@
                BuildableName = "ClientCertificateFeatureTests"
                BlueprintName = "ClientCertificateFeatureTests"
                ReferencedContainer = "container:Packages/ClientCertificateFeature">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ShareExtensionFeatureTests"
+               BuildableName = "ShareExtensionFeatureTests"
+               BlueprintName = "ShareExtensionFeatureTests"
+               ReferencedContainer = "container:Packages/ShareExtensionFeature">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "ShareUploadsTests"
+               BuildableName = "ShareUploadsTests"
+               BlueprintName = "ShareUploadsTests"
+               ReferencedContainer = "container:Packages/ShareUploads">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "FolderPickerFeatureTests"
+               BuildableName = "FolderPickerFeatureTests"
+               BlueprintName = "FolderPickerFeatureTests"
+               ReferencedContainer = "container:Packages/FolderPickerFeature">
             </BuildableReference>
          </TestableReference>
          <TestableReference

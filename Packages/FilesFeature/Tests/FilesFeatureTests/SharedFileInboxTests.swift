@@ -3,6 +3,7 @@ import CoreModels
 import DependenciesTestSupport
 @testable import FilesFeature
 import Foundation
+import ShareUploads
 import Testing
 
 /// Files opened in the app from another app's share sheet: the inbox drains into an upload review
@@ -52,12 +53,8 @@ struct SharedFileInboxTests {
         }
         await store.receive(\.browse.receiveSharedFiles)
         await store.receive(\.browse.root.receiveSharedFiles)
-        #if os(macOS)
-            // The Mac sends Finder files to the review sheet, not the direct upload a drop gets.
-            await store.receive(\.browse.root.reviewUpload)
-        #else
-            await store.receive(\.browse.root.beginUpload)
-        #endif
+        // Finder or Files hands over no folder, so they go to the review sheet.
+        await store.receive(\.browse.root.reviewSharedFiles)
         await store.receive(\.browse.root.uploadReview.presented.stagingBatchFinished)
         #expect(store.state.browse.root.uploadReview?.files.map(\.fileName) == ["Scan.pdf"])
     }
@@ -123,11 +120,61 @@ struct SharedFileInboxTests {
         await store.receive(\.previewDismissed) {
             $0.previewItem = nil
         }
-        #if os(macOS)
-            await store.receive(\.reviewUpload)
-        #else
-            await store.receive(\.beginUpload)
-        #endif
+        await store.receive(\.reviewSharedFiles)
         #expect(store.state.uploadReview != nil)
+    }
+
+    // MARK: Settings > Shared Files
+
+    @Test
+    func theReviewStartsInTheDefaultFolder() async {
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.uploadStaging = Self.staging(["Scan.pdf"])
+            $0.uploadDefaults = .inMemory(["account": UploadDefaults(folderPath: "Inbox/Scans")], activeAccountID: "account")
+        }
+        store.exhaustivity = .off
+
+        await store.send(.receiveSharedFiles([scan]))
+        await store.receive(\.reviewSharedFiles)
+        #expect(store.state.uploadReview?.destination == "Inbox/Scans")
+    }
+
+    @Test
+    func uploadWithoutAskingSkipsTheReview() async {
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.uploadStaging = Self.staging(["Scan.pdf"])
+            $0.uploadDefaults = .inMemory(
+                ["account": UploadDefaults(folderPath: "Inbox/Scans", shouldUploadWithoutAsking: true)],
+                activeAccountID: "account"
+            )
+        }
+        store.exhaustivity = .off
+
+        await store.send(.receiveSharedFiles([scan]))
+        await store.receive(\.directUploadStaged)
+        await store.receive(\.delegate)
+        #expect(store.state.uploadReview == nil)
+    }
+
+    @Test
+    func anotherAccountsDefaultFolderIsNeverUsed() async {
+        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Documents", title: "Documents")) {
+            BrowseFeature()
+        } withDependencies: {
+            $0.uploadStaging = Self.staging(["Scan.pdf"])
+            $0.uploadDefaults = .inMemory(
+                ["someone else": UploadDefaults(folderPath: "Theirs", shouldUploadWithoutAsking: true)],
+                activeAccountID: "me"
+            )
+        }
+        store.exhaustivity = .off
+
+        await store.send(.receiveSharedFiles([scan]))
+        await store.receive(\.reviewSharedFiles)
+        #expect(store.state.uploadReview?.destination == "Documents")
     }
 }

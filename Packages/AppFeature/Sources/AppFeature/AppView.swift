@@ -176,7 +176,14 @@ public struct AppView: View {
                         // A plain quick fade (not the zoom reveal): the switch should feel light.
                         // The TCA store state survives the identity change.
                         .id(AuthenticatedIdentity(splashPresented: isSplashPresented, accountID: store.currentAccountID))
+                    #if os(macOS)
+                        // No cross fade on the Mac: the window has one toolbar, and with the old and
+                        // new split views on screen together the new one laid its items out as if
+                        // the sidebar were hidden, over the account header.
+                        .transition(.identity)
+                    #else
                         .transition(.opacity)
+                    #endif
                 }
             }
         }

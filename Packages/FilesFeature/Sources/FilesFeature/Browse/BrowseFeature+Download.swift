@@ -16,18 +16,6 @@
             }
         }
 
-        /// A drop or pick names its folder already, so it uploads straight away, no review sheet.
-        func stageDirectUpload(_ urls: [URL], destination: String) -> Effect<Action> {
-            let uploadStaging = uploadStaging
-            return .run { send in
-                var staged: [PickedFile] = []
-                for await file in uploadStaging.stageDocuments(urls) {
-                    staged.append(file)
-                }
-                await send(.directUploadStaged(staged, destination: destination, requested: urls.count))
-            }
-        }
-
         func startBulkDownload(_: inout State, targets: [FileItem]) -> Effect<Action> {
             guard !targets.isEmpty else { return .none }
             let saveLocationPicker = saveLocationPicker

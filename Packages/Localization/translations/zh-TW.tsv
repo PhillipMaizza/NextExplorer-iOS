@@ -773,3 +773,25 @@ browse.actionNewFile	建立檔案
 browse.newFileTitle	新增檔案
 browse.newFileTypeHint	請使用編輯器可開啟的檔案類型，例如 .txt、.md 或 .js。
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	上傳至 NextExplorer
+shareUpload.itemCount	要上傳的檔案：%lld
+shareUpload.accountLabel	帳號
+shareUpload.folderLabel	資料夾
+shareUpload.folderChoose	選擇資料夾
+shareUpload.upload	上傳
+shareUpload.preparing	正在準備第 %lld 個，共 %lld 個…
+shareUpload.started	正在背景上傳。完成後你會收到通知。
+shareUpload.signedOut	請先登入 NextExplorer，然後再次分享。
+shareUpload.nothingToUpload	這裡沒有 NextExplorer 可以上傳的內容。
+shareUpload.failed	無法準備要上傳的檔案。
+shareUpload.notificationDoneTitle	上傳完成
+shareUpload.notificationDoneBody	已將 %lld 個檔案上傳至「%@」。
+shareUpload.notificationFailedTitle	部分檔案未上傳
+shareUpload.notificationFailedBody	%lld 個檔案（共 %lld 個）無法上傳。請再次分享以重試。
+settings.uploadDefaultsRow	分享的檔案
+settings.uploadDefaultsFolder	預設資料夾
+settings.uploadDefaultsFolderNone	每次詢問
+settings.uploadDefaultsWithoutAsking	上傳時不詢問
+settings.uploadDefaultsFooter	你從其他 App 分享到 NextExplorer 的照片與檔案會從這個資料夾開始。開啟「上傳時不詢問」後，它們會直接上傳到這裡。
+settings.uploadDefaultsClear	每次詢問
+common.change	更改

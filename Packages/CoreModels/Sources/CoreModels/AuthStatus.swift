@@ -3,10 +3,15 @@
 public struct AuthStatus: Codable, Equatable, Sendable {
     public let localEnabled: Bool
     public let oidcEnabled: Bool
+    /// The http address answered from https on the same host (a redirect). Signing in must then
+    /// go to https directly: a redirected sign in loses its body, and the password would have
+    /// crossed the network unencrypted first. Not part of the server's JSON.
+    public var redirectsToHTTPS = false
 
-    public init(localEnabled: Bool, oidcEnabled: Bool) {
+    public init(localEnabled: Bool, oidcEnabled: Bool, redirectsToHTTPS: Bool = false) {
         self.localEnabled = localEnabled
         self.oidcEnabled = oidcEnabled
+        self.redirectsToHTTPS = redirectsToHTTPS
     }
 
     private enum CodingKeys: String, CodingKey {

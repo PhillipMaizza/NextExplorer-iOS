@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+import FolderPickerFeature
 import Foundation
 
 /// Editing one favorite's name, icon and colour via `PATCH /api/favorites/:id`, mirroring

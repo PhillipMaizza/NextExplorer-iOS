@@ -773,3 +773,25 @@ browse.actionNewFile	ファイルを作成
 browse.newFileTitle	新規ファイル
 browse.newFileTypeHint	.txt、.md、.js など、エディタで開けるファイル形式を使用してください。
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	NextExplorerにアップロード
+shareUpload.itemCount	アップロードするファイル：%lld
+shareUpload.accountLabel	アカウント
+shareUpload.folderLabel	フォルダ
+shareUpload.folderChoose	フォルダを選択
+shareUpload.upload	アップロード
+shareUpload.preparing	%lld/%lld を準備中…
+shareUpload.started	バックグラウンドでアップロードしています。完了すると通知が届きます。
+shareUpload.signedOut	先にNextExplorerにサインインしてから、もう一度共有してください。
+shareUpload.nothingToUpload	NextExplorerでアップロードできるものがありません。
+shareUpload.failed	ファイルをアップロード用に準備できませんでした。
+shareUpload.notificationDoneTitle	アップロード完了
+shareUpload.notificationDoneBody	%lld 個のファイルを「%@」にアップロードしました。
+shareUpload.notificationFailedTitle	一部のファイルをアップロードできませんでした
+shareUpload.notificationFailedBody	%lld/%lld 個のファイルをアップロードできませんでした。もう一度共有して再試行してください。
+settings.uploadDefaultsRow	共有されたファイル
+settings.uploadDefaultsFolder	デフォルトのフォルダ
+settings.uploadDefaultsFolderNone	毎回確認
+settings.uploadDefaultsWithoutAsking	確認せずにアップロード
+settings.uploadDefaultsFooter	ほかのアプリからNextExplorerに共有した写真やファイルは、このフォルダから始まります。「確認せずにアップロード」をオンにすると、そのままここにアップロードされます。
+settings.uploadDefaultsClear	毎回確認
+common.change	変更

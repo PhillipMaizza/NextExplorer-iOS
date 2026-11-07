@@ -773,3 +773,25 @@ browse.actionNewFile	Crear archivo
 browse.newFileTitle	Nuevo archivo
 browse.newFileTypeHint	Usa un tipo de archivo que el editor pueda abrir, como .txt, .md o .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	Subir a NextExplorer
+shareUpload.itemCount	Archivos para subir: %lld
+shareUpload.accountLabel	Cuenta
+shareUpload.folderLabel	Carpeta
+shareUpload.folderChoose	Elegir una carpeta
+shareUpload.upload	Subir
+shareUpload.preparing	Preparando %lld de %lld…
+shareUpload.started	Subiendo en segundo plano. Recibirás una notificación cuando termine.
+shareUpload.signedOut	Primero inicia sesión en NextExplorer y vuelve a compartir.
+shareUpload.nothingToUpload	Aquí no hay nada que NextExplorer pueda subir.
+shareUpload.failed	No se pudieron preparar los archivos para subirlos.
+shareUpload.notificationDoneTitle	Subida completada
+shareUpload.notificationDoneBody	%lld archivos subidos a «%@».
+shareUpload.notificationFailedTitle	Algunos archivos no se subieron
+shareUpload.notificationFailedBody	No se pudieron subir %lld de %lld archivos. Vuelve a compartirlos para reintentarlo.
+settings.uploadDefaultsRow	Archivos compartidos
+settings.uploadDefaultsFolder	Carpeta predeterminada
+settings.uploadDefaultsFolderNone	Preguntar cada vez
+settings.uploadDefaultsWithoutAsking	Subir sin preguntar
+settings.uploadDefaultsFooter	Las fotos y archivos que compartes con NextExplorer desde otras apps empiezan en esta carpeta. Con Subir sin preguntar activado, se suben directamente allí.
+settings.uploadDefaultsClear	Preguntar cada vez
+common.change	Cambiar

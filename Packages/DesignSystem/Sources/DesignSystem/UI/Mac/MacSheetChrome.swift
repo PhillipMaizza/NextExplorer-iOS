@@ -1,11 +1,10 @@
 #if os(macOS)
-    import DesignSystem
     import Localization
     import SwiftUI
 
     /// The top of a Mac folder browsing sheet: a back button, the title with the current path
     /// under it, and optional trailing controls such as a search field.
-    struct MacSheetHeader<Trailing: View>: View {
+    public struct MacSheetHeader<Trailing: View>: View {
         let title: String
         var subtitle: String?
         let canGoBack: Bool
@@ -13,7 +12,23 @@
         let onBack: () -> Void
         @ViewBuilder var trailing: () -> Trailing
 
-        var body: some View {
+        public init(
+            title: String,
+            subtitle: String? = nil,
+            canGoBack: Bool,
+            backLabel: String = L10n.Common.back,
+            onBack: @escaping () -> Void,
+            @ViewBuilder trailing: @escaping () -> Trailing
+        ) {
+            self.title = title
+            self.subtitle = subtitle
+            self.canGoBack = canGoBack
+            self.backLabel = backLabel
+            self.onBack = onBack
+            self.trailing = trailing
+        }
+
+        public var body: some View {
             HStack(spacing: .space8) {
                 Button(action: onBack) { IconKit.back }
                     .disabled(!canGoBack)
@@ -34,7 +49,7 @@
         }
     }
 
-    extension MacSheetHeader where Trailing == EmptyView {
+    public extension MacSheetHeader where Trailing == EmptyView {
         init(title: String, subtitle: String? = nil, canGoBack: Bool, backLabel: String = L10n.Common.back, onBack: @escaping () -> Void) {
             self.init(title: title, subtitle: subtitle, canGoBack: canGoBack, backLabel: backLabel, onBack: onBack) { EmptyView() }
         }
@@ -42,12 +57,18 @@
 
     /// A file or folder name with its icon, for Mac tables and lists: the accent folder or the
     /// secondary document glyph, and an optional path under the name.
-    struct MacItemLabel: View {
+    public struct MacItemLabel: View {
         let name: String
         var subtitle: String?
         let isDirectory: Bool
 
-        var body: some View {
+        public init(name: String, subtitle: String? = nil, isDirectory: Bool) {
+            self.name = name
+            self.subtitle = subtitle
+            self.isDirectory = isDirectory
+        }
+
+        public var body: some View {
             Label {
                 VStack(alignment: .leading) {
                     Text(name).lineLimit(1).truncationMode(.middle)

@@ -2,6 +2,7 @@ import ClientCertificateFeature
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+import FolderPickerFeature
 import Foundation
 import Localization
 import NetworkClient
@@ -34,6 +35,8 @@ public struct SettingsFeature {
         @Presents public var clientCertificate: ClientCertificateFeature.State?
         /// The client certificate presented to this account's server, shown on its Settings row.
         public var clientCertificateStatus: ClientCertificateFeature.Status = .loading
+        /// Where files shared from other apps go for this account.
+        public var uploadDefaults: UploadDefaultsFeature.State
         /// One shot signal: set when a tip completes so the view can raise the thank you toast,
         /// cleared by `tipToastShown`.
         public var tipToast: String?
@@ -85,6 +88,10 @@ public struct SettingsFeature {
         public init(serverURL: URL, user: User) {
             self.serverURL = serverURL
             self.user = user
+            uploadDefaults = UploadDefaultsFeature.State(
+                serverURL: serverURL,
+                accountID: serverURL.absoluteString + "|" + user.username
+            )
         }
     }
 
@@ -133,6 +140,7 @@ public struct SettingsFeature {
         case clientCertificateButtonTapped
         case clientCertificateStatusLoaded(ClientCertificateSummary?)
         case clientCertificate(PresentationAction<ClientCertificateFeature.Action>)
+        case uploadDefaults(UploadDefaultsFeature.Action)
         case tipToastShown
         case brandingResponse(Result<Branding, FilesClientError>)
         case serverFeaturesResponse(ServerFeatures)
@@ -334,7 +342,7 @@ public struct SettingsFeature {
             state.clientCertificateStatus = .empty
             return .none
 
-        case .clientCertificate:
+        case .clientCertificate, .uploadDefaults:
             return .none
 
         case .tipToastShown:
@@ -408,8 +416,9 @@ public struct SettingsFeature {
                 guard let certificateOrigin else { return }
                 await send(.clientCertificateStatusLoaded(clientCertificateClient.summary(certificateOrigin)))
             }
+            let loadUploadDefaults = Effect<Action>.send(.uploadDefaults(.onAppear))
             guard !state.isLoadingPreferences else {
-                return .merge(checkDownloads, checkCacheSize, checkOfflineSize, checkClientCertificate)
+                return .merge(checkDownloads, checkCacheSize, checkOfflineSize, checkClientCertificate, loadUploadDefaults)
             }
             state.isLoadingPreferences = true
             let serverURL = state.serverURL
@@ -419,6 +428,7 @@ public struct SettingsFeature {
                 checkCacheSize,
                 checkOfflineSize,
                 checkClientCertificate,
+                loadUploadDefaults,
                 .run { send in
                     try await send(.brandingResponse(apiResult { try await filesClient.fetchBranding(serverURL) }))
                 },
@@ -563,6 +573,9 @@ public struct SettingsFeature {
     }
 
     public var body: some ReducerOf<Self> {
+        Scope(state: \.uploadDefaults, action: \.uploadDefaults) {
+            UploadDefaultsFeature()
+        }
         Reduce(core(into:action:))
             .ifLet(\.$userManagement, action: \.userManagement) {
                 UserManagementFeature()

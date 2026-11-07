@@ -73,9 +73,16 @@ struct SecurityKeychainStore: KeychainStore {
         if let accessGroup = configuration.accessGroup {
             query[kSecAttrAccessGroup] = accessGroup
         }
-        if usesDataProtectionKeychain {
-            query[kSecUseDataProtectionKeychain] = true
-        }
+        #if os(macOS)
+            // Always explicit on the Mac: with keychain access groups in the entitlements, a query
+            // that leaves this out goes to the data protection keychain too, so clearing the legacy
+            // copy after a save deleted the item that had just been saved there.
+            query[kSecUseDataProtectionKeychain] = usesDataProtectionKeychain
+        #else
+            if usesDataProtectionKeychain {
+                query[kSecUseDataProtectionKeychain] = true
+            }
+        #endif
         return query
     }
 }

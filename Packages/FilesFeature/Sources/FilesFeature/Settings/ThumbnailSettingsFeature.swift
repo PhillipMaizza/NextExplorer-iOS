@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+import FolderPickerFeature
 import Foundation
 
 /// An admin editing the server's thumbnail generation config via `PATCH /api/settings`.

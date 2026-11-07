@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 @testable import FilesFeature
+import FolderPickerFeature
 import Foundation
 import Testing
 

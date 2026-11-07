@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import DesignSystem
+import FolderPickerFeature
 import Foundation
 import Localization
 import PhotosUI

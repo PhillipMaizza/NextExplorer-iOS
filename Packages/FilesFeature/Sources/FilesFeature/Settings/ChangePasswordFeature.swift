@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+import FolderPickerFeature
 import Foundation
 
 /// The signed in user changing their own local password via `POST /api/auth/password`,

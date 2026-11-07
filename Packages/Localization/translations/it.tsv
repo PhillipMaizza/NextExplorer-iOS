@@ -773,3 +773,25 @@ browse.actionNewFile	Crea file
 browse.newFileTitle	Nuovo file
 browse.newFileTypeHint	Usa un tipo di file che l’editor può aprire, come .txt, .md o .js.
 browse.newFilePlaceholder	notes.txt
+shareUpload.title	Carica su NextExplorer
+shareUpload.itemCount	File da caricare: %lld
+shareUpload.accountLabel	Account
+shareUpload.folderLabel	Cartella
+shareUpload.folderChoose	Scegli una cartella
+shareUpload.upload	Carica
+shareUpload.preparing	Preparazione di %lld di %lld…
+shareUpload.started	Caricamento in background. Riceverai una notifica al termine.
+shareUpload.signedOut	Accedi prima a NextExplorer, poi condividi di nuovo.
+shareUpload.nothingToUpload	Qui non c’è niente che NextExplorer possa caricare.
+shareUpload.failed	Non è stato possibile preparare i file per il caricamento.
+shareUpload.notificationDoneTitle	Caricamento completato
+shareUpload.notificationDoneBody	%lld file caricati in “%@”.
+shareUpload.notificationFailedTitle	Alcuni file non sono stati caricati
+shareUpload.notificationFailedBody	Non è stato possibile caricare %lld file su %lld. Condividili di nuovo per riprovare.
+settings.uploadDefaultsRow	File condivisi
+settings.uploadDefaultsFolder	Cartella predefinita
+settings.uploadDefaultsFolderNone	Chiedi ogni volta
+settings.uploadDefaultsWithoutAsking	Carica senza chiedere
+settings.uploadDefaultsFooter	Le foto e i file che condividi con NextExplorer da altre app partono da questa cartella. Con Carica senza chiedere attivo, vengono caricati direttamente lì.
+settings.uploadDefaultsClear	Chiedi ogni volta
+common.change	Cambia
