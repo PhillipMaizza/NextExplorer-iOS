@@ -462,6 +462,8 @@ userDetail.removeVolumeTitle	Удалить том?
 userDetail.removeVolumeMessage	%@ отвязывается от этого пользователя. Сам каталог не затрагивается.
 userDetail.removeUserTitle	Удалить пользователя?
 userDetail.removeUserMessage	%@ немедленно теряет доступ. Его файлы на сервере не удаляются.
+userDetail.grantAdminTitle	Предоставить права администратора?
+userDetail.grantAdminMessage	%@ станет администратором с полным контролем над файлами, общим доступом и пользователями. Из приложения нельзя лишить прав администратора.
 userDetail.volumeSheetLabelField	Метка
 userDetail.volumeSheetLabelPlaceholder	Метка тома
 userDetail.volumeSheetAccessMode	Режим доступа
@@ -604,6 +606,7 @@ offline.manageRow	Управление офлайн-файлами
 offline.manageTitle	Офлайн-файлы
 offline.manageEmpty	Ничего не загружено для офлайн-доступа.
 offline.preferOfflineToggle	Воспроизводить загруженные копии
+offline.pinRemoved	%@ больше не существует на сервере и удалено из офлайн-файлов
 offline.preferOfflineSubtitle	Использовать загруженное видео вместо потоковой передачи, когда оно доступно.
 offline.tunnelSpeedNote	Доступ к серверу через удалённый туннель может замедлить загрузки. Для больших файлов подключитесь к той же сети и используйте локальный адрес сервера.
 menu.about	О программе NextExplorer
@@ -785,9 +788,37 @@ shareUpload.signedOut	Сначала войдите в NextExplorer, затем 
 shareUpload.nothingToUpload	Здесь нет ничего, что NextExplorer может загрузить.
 shareUpload.failed	Не удалось подготовить файлы к загрузке.
 shareUpload.notificationDoneTitle	Загрузка завершена
-shareUpload.notificationDoneBody	Загружено файлов: %lld в «%@».
 shareUpload.notificationFailedTitle	Некоторые файлы не загрузились
-shareUpload.notificationFailedBody	Не удалось загрузить %lld из %lld файлов. Поделитесь ими снова, чтобы повторить.
+shareUpload.notificationDoneBody#one	Загружен %lld файл в «%@».
+shareUpload.notificationDoneBody#few	Загружено %lld файла в «%@».
+shareUpload.notificationDoneBody#many	Загружено %lld файлов в «%@».
+shareUpload.notificationDoneBody#other	Загружено %lld файла в «%@».
+shareUpload.notificationAllFailedTitle	Не удалось загрузить
+shareUpload.failureUnauthorized#one	%lld файл не загружен. Войдите снова и повторите попытку.
+shareUpload.failureUnauthorized#few	%lld файла не загружены. Войдите снова и повторите попытку.
+shareUpload.failureUnauthorized#many	%lld файлов не загружено. Войдите снова и повторите попытку.
+shareUpload.failureUnauthorized#other	%lld файла не загружено. Войдите снова и повторите попытку.
+shareUpload.failureForbidden#one	%lld файл не загружен. У вас нет разрешения добавлять файлы в эту папку.
+shareUpload.failureForbidden#few	%lld файла не загружены. У вас нет разрешения добавлять файлы в эту папку.
+shareUpload.failureForbidden#many	%lld файлов не загружено. У вас нет разрешения добавлять файлы в эту папку.
+shareUpload.failureForbidden#other	%lld файла не загружено. У вас нет разрешения добавлять файлы в эту папку.
+shareUpload.failureServerFull#one	%lld файл не загружен. На сервере закончилось место.
+shareUpload.failureServerFull#few	%lld файла не загружены. На сервере закончилось место.
+shareUpload.failureServerFull#many	%lld файлов не загружено. На сервере закончилось место.
+shareUpload.failureServerFull#other	%lld файла не загружено. На сервере закончилось место.
+shareUpload.failureNetwork#one	%lld файл не загружен. Не удалось подключиться. Повторите, когда появится сеть.
+shareUpload.failureNetwork#few	%lld файла не загружены. Не удалось подключиться. Повторите, когда появится сеть.
+shareUpload.failureNetwork#many	%lld файлов не загружено. Не удалось подключиться. Повторите, когда появится сеть.
+shareUpload.failureNetwork#other	%lld файла не загружено. Не удалось подключиться. Повторите, когда появится сеть.
+shareUpload.failureOther#one	%lld файл не удалось загрузить.
+shareUpload.failureOther#few	%lld файла не удалось загрузить.
+shareUpload.failureOther#many	%lld файлов не удалось загрузить.
+shareUpload.failureOther#other	%lld файла не удалось загрузить.
+shareUpload.notificationRetry	Повторить
+shareUpload.notificationHiddenPreview	Откройте NextExplorer, чтобы узнать результат загрузки.
+shareUpload.retryFailedTitle	Не удалось повторить
+shareUpload.retryFailedBody	Откройте NextExplorer и отправьте файлы снова.
+shareUpload.insufficientSpace	На этом устройстве недостаточно свободного места, чтобы подготовить эти файлы к загрузке.
 settings.uploadDefaultsRow	Общие файлы
 settings.uploadDefaultsFolder	Папка по умолчанию
 settings.uploadDefaultsFolderNone	Спрашивать каждый раз
@@ -795,3 +826,36 @@ settings.uploadDefaultsWithoutAsking	Загружать без вопросов
 settings.uploadDefaultsFooter	Фото и файлы, которыми вы делитесь с NextExplorer из других приложений, начинают с этой папки. Если включено «Загружать без вопросов», они сразу загружаются туда.
 settings.uploadDefaultsClear	Спрашивать каждый раз
 common.change	Изменить
+shareUpload.sessionUnreadable	NextExplorer не смог прочитать ваш вход на этом устройстве. Откройте NextExplorer один раз, затем поделитесь снова.
+shareUpload.keepOpen	Не закрывайте это окно, пока подготовка не завершится.
+shareUpload.checking	Проверка соединения с %@…
+shareUpload.openApp	Открыть NextExplorer
+shareUpload.openAppInstructions	Откройте NextExplorer с экрана «Домой», затем поделитесь снова.
+shareUpload.certificateRequired	Этому серверу нужен клиентский сертификат. Откройте NextExplorer, добавьте его в настройках, затем поделитесь снова.
+shareUpload.certificateRejected	Сервер отклонил ваш клиентский сертификат. Откройте NextExplorer, замените его в настройках, затем поделитесь снова.
+shareUpload.defaultFolderUnavailable	Папка по умолчанию больше недоступна. Выберите другую папку.
+shareUpload.failedItemsHeader	Не удалось подготовить эти файлы:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	Готово к загрузке: %lld
+shareUpload.uploadReady	Загрузить готовые файлы
+shareUpload.retryFailed	Повторить для неудавшихся файлов
+shareUpload.fallbackItemName	Файл %lld
+shareUpload.causeCannotRead	Его не удалось прочитать.
+shareUpload.causeNotEnoughSpace	На этом устройстве недостаточно свободного места.
+shareUpload.causeUnknown	Его не удалось подготовить.
+shareUpload.folderHint	Открывает выбор папки.
+shareUpload.accountHint	Выберите, какая учётная запись получит файлы.
+error.timedOut	Сервер слишком долго не отвечал. Действие всё равно может завершиться.
+error.changedOnServer	Этот файл был изменён на сервере после того, как вы его открыли.
+textPreview.conflictTitle	«%@» изменён на сервере
+textPreview.conflictMessage	Перезапишите его своей версией или перезагрузите файл и отмените свои правки. Заменённая версия останется в истории версий файла.
+textPreview.conflictOverwrite	Перезаписать
+textPreview.conflictReload	Перезагрузить
+offline.waitingForNetwork	Будет загружено, когда вы снова будете в сети
+browse.bulkFavoriteFailed	Не удалось: %1$lld из %2$lld
+shareUpload.livePhotoNote	Live Photos загружаются вместе с видео движения.
+shareUpload.retrySignInBody	Войдите в NextExplorer, затем снова нажмите «Повторить».
+shareUpload.causeFolder	Папки нельзя отправлять. Поделитесь файлами внутри них.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	ещё %lld
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

@@ -17,7 +17,19 @@ struct LocalAuthService: Sendable {
             throw AuthClientError.decoding(error.localizedDescription)
         }
         status.redirectsToHTTPS = Self.redirectsToHTTPS(requested: serverURL, answered: response.url)
+        if status.redirectsToHTTPS {
+            status.redirectedPort = Self.answeredPort(response.url)
+        }
         return status
+    }
+
+    private static let defaultHTTPSPort = 443
+
+    /// The port to keep when the server answered from https: the one it answered on, or `nil` for
+    /// the default, so a redirect from `http://host:8080` to `https://host` does not keep `:8080`.
+    static func answeredPort(_ answered: URL?) -> Int? {
+        guard let port = answered?.port, port != defaultHTTPSPort else { return nil }
+        return port
     }
 
     static func redirectsToHTTPS(requested: URL, answered: URL?) -> Bool {

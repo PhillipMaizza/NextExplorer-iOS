@@ -462,6 +462,8 @@ userDetail.removeVolumeTitle	Volume entfernen?
 userDetail.removeVolumeMessage	%@ wird von diesem Benutzer entfernt. Das Verzeichnis selbst wird nicht berührt.
 userDetail.removeUserTitle	Benutzer entfernen?
 userDetail.removeUserMessage	%@ verliert sofort den Zugriff. Seine Dateien auf dem Server werden nicht gelöscht.
+userDetail.grantAdminTitle	Administratorrechte erteilen?
+userDetail.grantAdminMessage	%@ wird Administrator mit voller Kontrolle über Dateien, Freigaben und Benutzer. Administratoren können in der App nicht herabgestuft werden.
 userDetail.volumeSheetLabelField	Bezeichnung
 userDetail.volumeSheetLabelPlaceholder	Volume-Bezeichnung
 userDetail.volumeSheetAccessMode	Zugriffsmodus
@@ -604,6 +606,7 @@ offline.manageRow	Offline-Dateien verwalten
 offline.manageTitle	Offline-Dateien
 offline.manageEmpty	Nichts ist für die Offline-Nutzung heruntergeladen.
 offline.preferOfflineToggle	Heruntergeladene Kopien abspielen
+offline.pinRemoved	%@ existiert auf dem Server nicht mehr und wurde aus den Offline-Dateien entfernt
 offline.preferOfflineSubtitle	Ein heruntergeladenes Video abspielen statt zu streamen, wenn es verfügbar ist.
 offline.tunnelSpeedNote	Der Zugriff auf deinen Server über einen entfernten Tunnel kann Downloads verlangsamen. Verbinde dich für große Dateien mit demselben Netzwerk und verwende die lokale Adresse deines Servers.
 menu.about	Über NextExplorer
@@ -785,9 +788,25 @@ shareUpload.signedOut	Melde dich zuerst in NextExplorer an und teile dann erneut
 shareUpload.nothingToUpload	Hier ist nichts, was NextExplorer hochladen kann.
 shareUpload.failed	Die Dateien konnten nicht für den Upload vorbereitet werden.
 shareUpload.notificationDoneTitle	Upload abgeschlossen
-shareUpload.notificationDoneBody	%lld Dateien nach „%@“ hochgeladen.
 shareUpload.notificationFailedTitle	Einige Dateien wurden nicht hochgeladen
-shareUpload.notificationFailedBody	%lld von %lld Dateien konnten nicht hochgeladen werden. Teile sie erneut, um es noch einmal zu versuchen.
+shareUpload.notificationDoneBody#one	%lld Datei nach „%@“ hochgeladen.
+shareUpload.notificationDoneBody#other	%lld Dateien nach „%@“ hochgeladen.
+shareUpload.notificationAllFailedTitle	Upload fehlgeschlagen
+shareUpload.failureUnauthorized#one	%lld Datei wurde nicht hochgeladen. Melde dich erneut an und versuche es noch einmal.
+shareUpload.failureUnauthorized#other	%lld Dateien wurden nicht hochgeladen. Melde dich erneut an und versuche es noch einmal.
+shareUpload.failureForbidden#one	%lld Datei wurde nicht hochgeladen. Du hast keine Berechtigung, Dateien zu diesem Ordner hinzuzufügen.
+shareUpload.failureForbidden#other	%lld Dateien wurden nicht hochgeladen. Du hast keine Berechtigung, Dateien zu diesem Ordner hinzuzufügen.
+shareUpload.failureServerFull#one	%lld Datei wurde nicht hochgeladen. Auf dem Server ist kein Speicherplatz mehr frei.
+shareUpload.failureServerFull#other	%lld Dateien wurden nicht hochgeladen. Auf dem Server ist kein Speicherplatz mehr frei.
+shareUpload.failureNetwork#one	%lld Datei wurde nicht hochgeladen. Die Verbindung ist fehlgeschlagen. Versuche es erneut, wenn du wieder online bist.
+shareUpload.failureNetwork#other	%lld Dateien wurden nicht hochgeladen. Die Verbindung ist fehlgeschlagen. Versuche es erneut, wenn du wieder online bist.
+shareUpload.failureOther#one	%lld Datei konnte nicht hochgeladen werden.
+shareUpload.failureOther#other	%lld Dateien konnten nicht hochgeladen werden.
+shareUpload.notificationRetry	Erneut versuchen
+shareUpload.notificationHiddenPreview	Öffne NextExplorer, um das Ergebnis deines Uploads zu sehen.
+shareUpload.retryFailedTitle	Erneuter Versuch nicht möglich
+shareUpload.retryFailedBody	Öffne NextExplorer und teile die Dateien erneut.
+shareUpload.insufficientSpace	Auf diesem Gerät ist nicht genug freier Speicherplatz, um diese Dateien für den Upload vorzubereiten.
 settings.uploadDefaultsRow	Geteilte Dateien
 settings.uploadDefaultsFolder	Standardordner
 settings.uploadDefaultsFolderNone	Jedes Mal fragen
@@ -795,3 +814,36 @@ settings.uploadDefaultsWithoutAsking	Ohne Nachfrage hochladen
 settings.uploadDefaultsFooter	Fotos und Dateien, die du aus anderen Apps mit NextExplorer teilst, beginnen in diesem Ordner. Mit „Ohne Nachfrage hochladen“ werden sie direkt dorthin hochgeladen.
 settings.uploadDefaultsClear	Jedes Mal fragen
 common.change	Ändern
+shareUpload.sessionUnreadable	NextExplorer konnte deine Anmeldung auf diesem Gerät nicht lesen. Öffne NextExplorer einmal und teile dann erneut.
+shareUpload.keepOpen	Lass dieses Fenster geöffnet, bis die Vorbereitung abgeschlossen ist.
+shareUpload.checking	Verbindung zu %@ wird geprüft…
+shareUpload.openApp	NextExplorer öffnen
+shareUpload.openAppInstructions	Öffne NextExplorer auf dem Home-Bildschirm und teile dann erneut.
+shareUpload.certificateRequired	Dieser Server benötigt ein Clientzertifikat. Öffne NextExplorer, füge in den Einstellungen eines hinzu und teile dann erneut.
+shareUpload.certificateRejected	Der Server hat dein Clientzertifikat abgelehnt. Öffne NextExplorer, ersetze es in den Einstellungen und teile dann erneut.
+shareUpload.defaultFolderUnavailable	Dein Standardordner ist nicht mehr verfügbar. Wähle einen anderen Ordner.
+shareUpload.failedItemsHeader	Diese Dateien konnten nicht vorbereitet werden:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	Bereit zum Hochladen: %lld
+shareUpload.uploadReady	Bereite Dateien hochladen
+shareUpload.retryFailed	Fehlgeschlagene Dateien erneut versuchen
+shareUpload.fallbackItemName	Datei %lld
+shareUpload.causeCannotRead	Sie konnte nicht gelesen werden.
+shareUpload.causeNotEnoughSpace	Auf diesem Gerät ist nicht genug freier Speicher vorhanden.
+shareUpload.causeUnknown	Sie konnte nicht vorbereitet werden.
+shareUpload.folderHint	Öffnet die Ordnerauswahl.
+shareUpload.accountHint	Wähle aus, welches Konto die Dateien erhält.
+error.timedOut	Der Server hat zu lange nicht geantwortet. Die Aktion wird möglicherweise trotzdem abgeschlossen.
+error.changedOnServer	Diese Datei wurde auf dem Server geändert, nachdem du sie geöffnet hast.
+textPreview.conflictTitle	„%@“ wurde auf dem Server geändert
+textPreview.conflictMessage	Überschreibe sie mit deiner Version oder lade die Datei neu und verwirf deine Änderungen. Die ersetzte Version bleibt im Versionsverlauf der Datei.
+textPreview.conflictOverwrite	Überschreiben
+textPreview.conflictReload	Neu laden
+offline.waitingForNetwork	Wird geladen, sobald du wieder online bist
+browse.bulkFavoriteFailed	%1$lld von %2$lld fehlgeschlagen
+shareUpload.livePhotoNote	Live Photos werden mit ihrem Bewegungsvideo hochgeladen.
+shareUpload.retrySignInBody	Melde dich in NextExplorer an und tippe dann erneut auf „Erneut versuchen“.
+shareUpload.causeFolder	Ordner können nicht geteilt werden. Teile stattdessen die Dateien darin.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	%lld weitere
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

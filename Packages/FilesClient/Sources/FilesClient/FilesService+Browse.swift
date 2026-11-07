@@ -5,11 +5,11 @@ import NetworkClient
 extension FilesService {
     /// A conditional `GET /api/browse/*`. `ifNoneMatch` is the `ETag` from a previously cached
     /// listing; the server answers `304` (`.notModified`) when the directory is unchanged,
-    /// sparing the transfer and the decode. `lowPriority` routes the request through the
+    /// sparing the transfer and the decode. `isLowPriority` routes the request through the
     /// capped background session for prefetch. `.reloadIgnoringLocalCacheData` keeps
     /// URLSession's own cache out of the way so the app's cache stays authoritative.
     func browse(
-        serverURL: URL, path: String, ifNoneMatch: String?, lowPriority: Bool = false
+        serverURL: URL, path: String, ifNoneMatch: String?, isLowPriority: Bool = false
     ) async throws -> BrowseFetchOutcome {
         let url = Self.browseURL(serverURL: serverURL, path: path)
         var request = Self.makeRequest(url: url, method: .get)
@@ -18,7 +18,7 @@ extension FilesService {
             request.setValue(ifNoneMatch, forHTTPHeaderField: HTTPHeaderField.ifNoneMatch)
         }
 
-        let (data, response) = try await performSend(request, lowPriority: lowPriority)
+        let (data, response) = try await performSend(request, isLowPriority: isLowPriority)
         let etag = response.value(forHTTPHeaderField: HTTPHeaderField.etag)
 
         if response.statusCode == 304 {

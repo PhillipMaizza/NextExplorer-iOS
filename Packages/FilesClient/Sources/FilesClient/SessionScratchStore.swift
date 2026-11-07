@@ -4,7 +4,7 @@ import Foundation
 import NetworkClient
 
 /// The app's scratch files in `tmp`: archive entries extracted for preview, rendered HTML and
-/// Markdown previews, files staged for upload, upload envelopes, and download bodies a caller never
+/// Markdown previews, files staged for upload, files dropped on a window, upload envelopes, and download bodies a caller never
 /// moved (a crash mid transfer). Each owner cleans up after itself, but a kill or a crash leaves
 /// them behind, and they hold one account's file contents. Purged at every session boundary with
 /// the cache stores, so nothing survives into the next sign in. The shared HTTP cache goes too:
@@ -27,6 +27,7 @@ public enum SessionScratchLocation {
     public static let archiveBrowser = "ArchiveBrowser"
     public static let htmlPreview = "HTMLPreview"
     public static let pendingUploads = "PendingUploads"
+    public static let droppedFiles = "DroppedFiles"
     public static let uploadEnvelopePrefix = "upload-"
 }
 
@@ -34,7 +35,9 @@ public extension SessionScratchStore {
     static func live(temporaryDirectory: URL = FileManager.default.temporaryDirectory) -> SessionScratchStore {
         SessionScratchStore(purge: { scope in
             let fileManager = FileManager.default
-            var folders = [SessionScratchLocation.archiveBrowser, SessionScratchLocation.htmlPreview]
+            var folders = [
+                SessionScratchLocation.archiveBrowser, SessionScratchLocation.htmlPreview, SessionScratchLocation.droppedFiles,
+            ]
             if scope == .everything {
                 folders.append(SessionScratchLocation.pendingUploads)
             }

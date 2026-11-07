@@ -145,6 +145,50 @@ struct SessionCookieStoreTests {
         #expect(try keychainClient.load("storedSessions") != nil)
     }
 
+    @Test("a corrupt stored blob with no legacy session throws instead of reading as signed out")
+    func corruptBlobWithoutLegacyThrows() throws {
+        let keychainClient = KeychainClient.inMemory()
+        try keychainClient.save("storedSessions", Data("not valid json".utf8))
+        let store = makeStore(keychainClient: keychainClient)
+
+        #expect(throws: (any Error).self) { try store.loadStoredOrThrow() }
+        #expect(try keychainClient.load("storedSessions") == Data("not valid json".utf8), "the blob is left as it was")
+    }
+
+    @Test("a corrupt stored blob is replaced only by a valid legacy session")
+    func corruptBlobWithValidLegacyMigrates() throws {
+        let keychainClient = KeychainClient.inMemory()
+        try keychainClient.save("storedSessions", Data("not valid json".utf8))
+        let legacy = try credentials(serverURL: uniqueServerURL(), value: "legacy", username: "phillip")
+        try keychainClient.save("currentSession", JSONEncoder().encode(legacy))
+        let store = makeStore(keychainClient: keychainClient)
+
+        #expect(try store.loadStoredOrThrow().active?.cookieValue == "legacy")
+        #expect(try keychainClient.load("currentSession") == nil)
+    }
+
+    @Test("a corrupt stored blob with a corrupt legacy session still throws")
+    func corruptBlobWithCorruptLegacyThrows() throws {
+        let keychainClient = KeychainClient.inMemory()
+        try keychainClient.save("storedSessions", Data("not valid json".utf8))
+        try keychainClient.save("currentSession", Data("also broken".utf8))
+
+        #expect(throws: (any Error).self) { try makeStore(keychainClient: keychainClient).loadStoredOrThrow() }
+    }
+
+    @Test("the legacy key stays when the migrated set could not be saved")
+    func legacyKeptWhenSaveFails() throws {
+        let inner = KeychainClient.inMemory()
+        let legacy = try credentials(serverURL: uniqueServerURL(), value: "legacy", username: "phillip")
+        try inner.save("currentSession", JSONEncoder().encode(legacy))
+        var failing = inner
+        failing.save = { _, _ in throw CocoaError(.fileWriteUnknown) }
+        let store = makeStore(keychainClient: failing)
+
+        #expect(try store.loadStoredOrThrow().active?.cookieValue == "legacy")
+        #expect(try inner.load("currentSession") != nil)
+    }
+
     // MARK: - multi-account switch / remove
 
     @Test("two accounts coexist; setActive switches the active one and installs its cookie")

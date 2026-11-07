@@ -67,4 +67,20 @@ struct SessionScratchStoreTests {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent("scratch-empty-\(UUID().uuidString)")
         SessionScratchStore.live(temporaryDirectory: root).purge(.everything)
     }
+
+    @Test("Dropped file copies are purged on every kind of session boundary")
+    func purgeRemovesDroppedFileCopies() throws {
+        let fileManager = FileManager.default
+        for scope in [SessionScratchStore.Scope.everything, .keepingActiveTransfers] {
+            let root = fileManager.temporaryDirectory.appendingPathComponent("scratch-drop-\(UUID().uuidString)", isDirectory: true)
+            defer { try? fileManager.removeItem(at: root) }
+            let dropped = root.appendingPathComponent(SessionScratchLocation.droppedFiles).appendingPathComponent(UUID().uuidString)
+            try fileManager.createDirectory(at: dropped, withIntermediateDirectories: true)
+            try Data("secret".utf8).write(to: dropped.appendingPathComponent("a.txt"))
+
+            SessionScratchStore.live(temporaryDirectory: root).purge(scope)
+
+            #expect(!fileManager.fileExists(atPath: dropped.deletingLastPathComponent().path))
+        }
+    }
 }

@@ -20,11 +20,11 @@ struct UserRow: View {
 
     var body: some View {
         HStack(spacing: Metrics.rowSpacing) {
-            AvatarView(displayName: user.displayName ?? user.username, size: Metrics.avatarSize)
+            AvatarView(displayName: user.displayLabel, size: Metrics.avatarSize)
 
             VStack(alignment: .leading, spacing: .space2) {
                 HStack(spacing: .space8) {
-                    Text(user.displayName ?? user.username)
+                    Text(user.displayLabel)
                         .type(.body2(.semibold), style: .primaryOnSurface)
                         .lineLimit(1)
                     if user.isAdmin {

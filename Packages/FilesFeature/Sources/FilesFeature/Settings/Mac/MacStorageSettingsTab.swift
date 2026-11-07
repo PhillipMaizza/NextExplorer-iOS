@@ -8,6 +8,7 @@
 
     private enum Metrics {
         static let usageBarWidth: CGFloat = 160
+        static let previewOfflineSizeBytes: Int64 = 48_000_000
     }
 
     /// The Storage pane: the local cache, the files kept for offline use, and the server's disks.
@@ -75,8 +76,13 @@
             if progress.isActive {
                 MacOfflineProgress(progress: progress) { store.send(.cancelOfflineDownloadTapped) }
             } else {
-                LabeledContent(L10n.Offline.settingsRow) {
-                    Button(L10n.Offline.selectionDownload + "…") { store.send(.offlineDownloadButtonTapped) }
+                VStack(alignment: .leading, spacing: .space4) {
+                    LabeledContent(L10n.Offline.settingsRow) {
+                        Button(L10n.Offline.selectionDownload + "…") { store.send(.offlineDownloadButtonTapped) }
+                    }
+                    if progress.phase == .waitingForNetwork {
+                        OfflineWaitingNote(onResync: store.offlineSize > 0 ? { store.send(.resyncOfflineTapped) } : nil)
+                    }
                 }
             }
             if case let .failed(message) = progress.phase {
@@ -140,6 +146,15 @@
 
     #Preview("Storage") {
         MacStorageSettingsTab(store: Store(initialState: .macPreview) { SettingsFeature() })
+            .previewCanvas(.settingsPane)
+    }
+
+    #Preview("Storage: offline waiting for network") {
+        @Shared(.inMemory(OfflineDownloadProgress.sharedKey)) var progress = OfflineDownloadProgress()
+        $progress.withLock { $0.phase = .waitingForNetwork }
+        var state = SettingsFeature.State.macPreview
+        state.offlineSize = Metrics.previewOfflineSizeBytes
+        return MacStorageSettingsTab(store: Store(initialState: state) { SettingsFeature() })
             .previewCanvas(.settingsPane)
     }
 #endif

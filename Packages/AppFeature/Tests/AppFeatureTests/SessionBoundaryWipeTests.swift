@@ -64,6 +64,7 @@ struct SessionBoundaryWipeTests {
             }
         }
         values.authClient.listSessions = { [] }
+        values.authClient.listSessionsOrThrow = { [] }
         values.authClient.activeAccountID = { nil }
         values.authClient.clearAllSessions = {}
         values.authClient.clearActiveSession = { nil }
@@ -119,10 +120,12 @@ struct SessionBoundaryWipeTests {
             AppFeature()
         } withDependencies: {
             recordWipes(log, into: &$0)
+            $0.authClient.me = { _ in throw AuthClientError.sessionExpired }
         }
         store.exhaustivity = .off
 
         await store.send(.sessionExpiryDetected)
+        await store.receive(\.sessionExpiryConfirmed)
         await store.finish()
 
         #expect(log.isComplete, "not wiped: \(Set(Store.allCases.map(\.rawValue)).subtracting(log.wiped.value))")
@@ -149,6 +152,7 @@ struct SessionBoundaryWipeTests {
             AppFeature()
         } withDependencies: {
             $0.authClient.listSessions = { [remaining] }
+            $0.authClient.listSessionsOrThrow = { [remaining] }
             $0.authClient.activeAccountID = { remaining.accountID }
             $0.clientCertificateClient.removeAll = { kept.setValue($0) }
             $0.authClient.me = { [user] _ in user }

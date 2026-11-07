@@ -1,12 +1,17 @@
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
+    import Dependencies
     import DesignSystem
     import Localization
     import SwiftUI
 
     private enum Metrics {
         static let width: CGFloat = 460
+        static let singleLine = 1
+        static let failureLineLimit = 2
+        static let minHeight: CGFloat = 240
+        static let failureListMaxHeight: CGFloat = 96
         static let logoSize: CGFloat = .size40
         static let iconWidth: CGFloat = .size20
         static let rowPadding: CGFloat = .space12
@@ -16,32 +21,57 @@
     }
 
     /// The Mac share sheet: the app mark and what is being sent, the account and folder in one
-    /// grouped box, any problem as a tinted notice, then Cancel (Esc) and Upload (Return).
+    /// grouped box, any problem as a tinted notice, then Cancel (Esc) and Upload (Return). It is
+    /// as tall as its content needs, so a long notice in German or Russian, or two accounts, never
+    /// clips.
     struct ShareUploadMacView: View {
         let store: StoreOf<ShareUploadFeature>
+        @Dependency(\.openApp) private var openApp
 
         var body: some View {
             VStack(alignment: .leading, spacing: .space16) {
                 header
-                if store.credentials != nil, store.canChooseAccount || [.checking, .ready, .preparing, .started].contains(store.phase) {
+                if store.credentials != nil, store.canChooseAccount || store.shouldShowDetails {
                     details
                 }
-                Spacer(minLength: 0)
                 if let notice {
                     ShareUploadMacNotice(notice: notice)
                 }
-                MacDialogButtons(
-                    confirmTitle: L10n.ShareUpload.upload,
-                    isConfirmEnabled: store.canUpload,
-                    isWorking: store.phase == .preparing || store.phase == .checking,
-                    cancelTitle: store.phase == .started ? L10n.Common.close : L10n.Common.cancel,
-                    onCancel: { store.send(.cancelTapped) },
-                    onConfirm: { store.send(.uploadTapped) }
-                )
+                if store.phase == .preparing || store.phase == .handingOff {
+                    preparingProgress
+                }
+                if !store.failures.isEmpty, store.phase == .partiallyPrepared || store.phase == .failed {
+                    failureList
+                }
+                buttons
             }
             .padding(.space24)
             .frame(width: Metrics.width)
-            .frame(maxHeight: .infinity, alignment: .top)
+            .frame(minHeight: Metrics.minHeight, alignment: .top)
+            .fixedSize(horizontal: false, vertical: true)
+        }
+
+        private var buttons: some View {
+            let primary = store.state.primaryAction(canOpenApp: openApp.isAvailable)
+            let secondary = store.state.secondaryAction(canOpenApp: openApp.isAvailable)
+            return MacDialogButtons(
+                confirmTitle: primary?.title,
+                isConfirmEnabled: primary != .upload || store.canUpload,
+                isWorking: store.isWorking,
+                cancelTitle: store.phase == .started ? L10n.Common.close : L10n.Common.cancel,
+                secondaryTitle: secondary?.title,
+                onSecondary: {
+                    if let secondary {
+                        store.send(secondary.action)
+                    }
+                },
+                onCancel: { store.send(.cancelTapped) },
+                onConfirm: {
+                    if let primary {
+                        store.send(primary.action)
+                    }
+                }
+            )
         }
 
         private var header: some View {
@@ -50,7 +80,11 @@
                 VStack(alignment: .leading, spacing: .space2) {
                     Text(L10n.ShareUpload.title).font(.title3.weight(.semibold))
                     if let subtitle {
-                        Text(subtitle).foregroundStyle(.secondary)
+                        Text(subtitle).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
+                    }
+                    if store.livePhotoCount > 0, store.phase == .ready || store.phase == .checking {
+                        Text(L10n.ShareUpload.livePhotoNote).font(.callout).foregroundStyle(.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
@@ -58,10 +92,40 @@
 
         private var subtitle: String? {
             switch store.phase {
-            case .checking, .ready: L10n.ShareUpload.itemCount(store.itemCount)
-            case .preparing: L10n.ShareUpload.preparing(min(store.preparedCount + 1, store.itemCount), store.itemCount)
-            case .loading, .started, .signedOut, .nothingToUpload, .failed, .certificateRequired, .certificateRejected: nil
+            case .ready: L10n.ShareUpload.itemCount(store.itemCount)
+            case .checking: L10n.ShareUpload.checking(store.serverName)
+            case .preparing, .handingOff: L10n.ShareUpload.preparing(store.preparingStep, store.preparingTotal)
+            case .partiallyPrepared: L10n.ShareUpload.readyCount(store.stagedCount)
+            case .loading, .started, .signedOut, .sessionUnreadable, .nothingToUpload, .failed, .certificateRequired, .certificateRejected: nil
             }
+        }
+
+        private var preparingProgress: some View {
+            VStack(alignment: .leading, spacing: .space4) {
+                ProgressView(value: store.preparationFraction)
+                Text(L10n.ShareUpload.keepOpen).font(.callout).foregroundStyle(.secondary)
+            }
+            .accessibilityElement(children: .combine)
+        }
+
+        private var failureList: some View {
+            VStack(alignment: .leading, spacing: .space4) {
+                Text(L10n.ShareUpload.failedItemsHeader).font(.callout.weight(.semibold))
+                ScrollView {
+                    VStack(alignment: .leading, spacing: .space4) {
+                        ForEach(store.failures) { failure in
+                            Text(failure.line)
+                                .font(.callout)
+                                .foregroundStyle(.secondary)
+                                .lineLimit(Metrics.failureLineLimit)
+                                .truncationMode(.middle)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                    }
+                }
+                .frame(maxHeight: Metrics.failureListMaxHeight)
+            }
+            .accessibilityElement(children: .contain)
         }
 
         private var details: some View {
@@ -77,22 +141,37 @@
                             }
                         }
                         .labelsHidden()
-                        .fixedSize()
+                        .frame(maxWidth: .infinity, alignment: .trailing)
+                        .accessibilityLabel(L10n.ShareUpload.accountLabel)
+                        .accessibilityValue(store.accountName)
+                        .accessibilityHint(L10n.ShareUpload.accountHint)
+                        .help(store.accountName)
                     } else {
-                        Text(store.accountName).lineLimit(1).truncationMode(.middle)
+                        Text(store.accountName)
+                            .lineLimit(Metrics.singleLine)
+                            .truncationMode(.middle)
+                            .help(store.accountName)
+                            .accessibilityLabel(L10n.ShareUpload.accountLabel)
+                            .accessibilityValue(store.accountName)
                     }
                 }
-                if [.checking, .ready, .preparing, .started].contains(store.phase) {
+                if store.shouldShowDetails {
                     Divider().padding(.leading, Metrics.rowPadding + Metrics.iconWidth + .space8)
                     ShareUploadMacRow(icon: IconKit.folderFill, label: L10n.ShareUpload.folderLabel) {
                         HStack(spacing: .space8) {
                             if !store.destination.isEmpty {
-                                Text(store.destination).lineLimit(1).truncationMode(.head)
+                                Text(store.destination)
+                                    .lineLimit(Metrics.singleLine)
+                                    .truncationMode(.middle)
+                                    .help(store.destination)
                             }
                             Button(store.destination.isEmpty ? L10n.ShareUpload.folderChoose : L10n.Common.change) {
                                 store.send(.chooseFolderTapped)
                             }
                             .disabled(store.phase != .ready)
+                            .accessibilityLabel(L10n.ShareUpload.folderLabel)
+                            .accessibilityValue(store.destination.isEmpty ? L10n.ShareUpload.folderChoose : store.destination)
+                            .accessibilityHint(L10n.ShareUpload.folderHint)
                         }
                     }
                 }
@@ -105,11 +184,13 @@
             switch store.phase {
             case .started: .done(L10n.ShareUpload.started)
             case .signedOut: .problem(L10n.ShareUpload.signedOut)
+            case .sessionUnreadable: .problem(L10n.ShareUpload.sessionUnreadable)
             case .nothingToUpload: .problem(L10n.ShareUpload.nothingToUpload)
             case .failed: .problem(L10n.ShareUpload.failed)
-            case .certificateRequired: .problem(L10n.Error.clientCertificateRequired)
-            case .certificateRejected: .problem(L10n.Error.clientCertificateRejected)
-            case .loading, .checking, .ready, .preparing: nil
+            case .certificateRequired: .problem(L10n.ShareUpload.certificateRequired)
+            case .certificateRejected: .problem(L10n.ShareUpload.certificateRejected)
+            case .ready where store.notice == .defaultFolderUnavailable: .problem(L10n.ShareUpload.defaultFolderUnavailable)
+            case .loading, .checking, .ready, .preparing, .handingOff, .partiallyPrepared: nil
             }
         }
     }
@@ -125,7 +206,7 @@
                 icon
                     .foregroundStyle(Color.accentText)
                     .frame(width: Metrics.iconWidth)
-                Text(label).foregroundStyle(.secondary)
+                Text(label).foregroundStyle(.secondary).fixedSize()
                 Spacer(minLength: .space16)
                 value()
             }
@@ -174,10 +255,22 @@
     #Preview("Ready") { ShareUploadMacView(store: .preview(.ready)) }
     #Preview("Two accounts") { ShareUploadMacView(store: .preview(.ready, accounts: 2)) }
     #Preview("No folder yet") { ShareUploadMacView(store: .preview(.ready, destination: "")) }
+    #Preview("Live Photos") { ShareUploadMacView(store: .preview(.ready, livePhotos: 3)) }
+    #Preview("Long folder path") {
+        ShareUploadMacView(store: .preview(.ready, destination: "Photos/Family/2026/Summer holiday in the mountains/Day three"))
+    }
+
+    #Preview("Default folder gone") { ShareUploadMacView(store: .preview(.ready, destination: "", notice: .defaultFolderUnavailable)) }
     #Preview("Checking") { ShareUploadMacView(store: .preview(.checking)) }
     #Preview("Preparing") { ShareUploadMacView(store: .preview(.preparing)) }
+    #Preview("Handing off") { ShareUploadMacView(store: .preview(.handingOff)) }
+    #Preview("Partly prepared") { ShareUploadMacView(store: .preview(.partiallyPrepared)) }
+    #Preview("Failed") { ShareUploadMacView(store: .preview(.failed)) }
     #Preview("Started") { ShareUploadMacView(store: .preview(.started)) }
     #Preview("Signed out") { ShareUploadMacView(store: .preview(.signedOut)) }
+    #Preview("Session unreadable") { ShareUploadMacView(store: .preview(.sessionUnreadable)) }
+    #Preview("Nothing to upload") { ShareUploadMacView(store: .preview(.nothingToUpload)) }
+    #Preview("Certificate required") { ShareUploadMacView(store: .preview(.certificateRequired)) }
     #Preview("Certificate refused") { ShareUploadMacView(store: .preview(.certificateRejected)) }
     #Preview("Row") {
         ShareUploadMacRow(icon: IconKit.folderFill, label: "Folder") { Text("Photos/2026") }

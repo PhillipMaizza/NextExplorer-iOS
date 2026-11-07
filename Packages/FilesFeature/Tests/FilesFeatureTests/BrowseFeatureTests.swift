@@ -38,7 +38,9 @@ struct BrowseFeatureTests {
             $0.items = [item]
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
-        await store.receive(\.favoritesResponse)
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
         await store.receive(\.offlineAvailabilityComputed)
     }
 
@@ -60,7 +62,9 @@ struct BrowseFeatureTests {
         await store.receive(\.itemsResponse.failure) {
             $0.phase = .failed(FilesClientError.sessionExpired.userMessage)
         }
-        await store.receive(\.favoritesResponse)
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
     }
 
     @Test
@@ -134,7 +138,9 @@ struct BrowseFeatureTests {
             $0.items = [refreshed]
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
-        await store.receive(\.favoritesResponse)
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
         await store.receive(\.offlineAvailabilityComputed)
     }
 
@@ -432,10 +438,10 @@ struct BrowseFeatureTests {
         }
 
         await store.send(.textSaveTapped("hello world")) {
-            $0.isSavingTextContent = true
+            $0.savingTexts = ["notes.txt": "hello world"]
         }
-        await store.receive(\.textSaveResponse.success) {
-            $0.isSavingTextContent = false
+        await store.receive(\.textSaveResponse) {
+            $0.savingTexts = [:]
             $0.textContent = "hello world"
         }
     }
@@ -455,10 +461,10 @@ struct BrowseFeatureTests {
         }
 
         await store.send(.textSaveTapped("hello world")) {
-            $0.isSavingTextContent = true
+            $0.savingTexts = ["notes.txt": "hello world"]
         }
-        await store.receive(\.textSaveResponse.failure) {
-            $0.isSavingTextContent = false
+        await store.receive(\.textSaveResponse) {
+            $0.savingTexts = [:]
             $0.textSaveError = FilesClientError.server(statusCode: 500).userMessage
         }
     }
@@ -523,6 +529,7 @@ struct BrowseFeatureTests {
 
         await store.send(.favoritesResponse([favorite])) {
             $0.favoritePaths = ["Documents"]
+            $0.hasLoadedFavorites = true
         }
         await store.finish()
     }
@@ -539,6 +546,7 @@ struct BrowseFeatureTests {
 
         await store.send(.favoritesResponse([])) {
             $0.favoritePaths = []
+            $0.hasLoadedFavorites = true
         }
     }
 
@@ -980,7 +988,9 @@ struct BrowseFeatureTests {
             $0.items = []
             $0.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
         }
-        await store.receive(\.favoritesResponse)
+        await store.receive(\.favoritesResponse) {
+            $0.hasLoadedFavorites = true
+        }
     }
 
     @Test
@@ -1152,8 +1162,10 @@ struct BrowseFeatureTests {
         let dir = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
         let clock = TestClock()
         let completions = LockIsolated(0)
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.hasLoadedFavorites = true
 
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+        let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.addFavorite = { _, path in
@@ -1193,7 +1205,9 @@ struct BrowseFeatureTests {
         let serverURL = URL(string: "https://example.com")!
         let item = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
 
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.hasLoadedFavorites = true
+        let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.addFavorite = { _, path in
@@ -1214,6 +1228,7 @@ struct BrowseFeatureTests {
         let item = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.favoritePaths = ["Vacation"]
+        state.hasLoadedFavorites = true
 
         let store = TestStore(initialState: state) {
             BrowseFeature()
@@ -1233,7 +1248,9 @@ struct BrowseFeatureTests {
         let serverURL = URL(string: "https://example.com")!
         let item = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
 
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
+        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
+        state.hasLoadedFavorites = true
+        let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.addFavorite = { _, _ in throw FilesClientError.server(statusCode: 500) }
@@ -2165,6 +2182,7 @@ struct BrowseFeatureTests {
         var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
         state.items = [folder, alreadyFavorited, file]
         state.favoritePaths = [alreadyFavorited.id]
+        state.hasLoadedFavorites = true
         state.isSelecting = true
         state.selectedItemIDs = [folder.id, alreadyFavorited.id, file.id]
 
@@ -3168,18 +3186,16 @@ struct BrowseFeatureTransferTests {
             }
         }
 
-        await store.send(.onAppear) {
-            $0.phase = .loading
-            $0.items = [cachedItem]
-            $0.access = Self.offlineAccess
-        }
-        await store.receive(\.itemsResponse.failure) {
-            $0.phase = .loaded
-            $0.dataSource = .cached(fetchedAt: fetchedAt)
-        }
-        await store.receive(\.favoritesResponse)
-        await store.receive(\.offlineAvailabilityComputed)
+        store.exhaustivity = .off
 
+        await store.send(.onAppear)
+        await store.receive(\.offlineListingResolved)
+        await store.finish()
+
+        #expect(store.state.phase == .loaded)
+        #expect(store.state.items.map(\.name) == ["Saved"])
+        #expect(store.state.dataSource == .cached(fetchedAt: fetchedAt))
+        #expect(!store.state.isShowingCachePaint)
         #expect(store.state.phase.errorMessage == nil)
     }
 
@@ -3195,13 +3211,13 @@ struct BrowseFeatureTransferTests {
             $0.directoryCacheStore.read = { _, _ in nil }
         }
 
-        await store.send(.onAppear) {
-            $0.phase = .loading
-        }
-        await store.receive(\.itemsResponse.failure) {
-            $0.phase = .failed(FilesClientError.offline.userMessage)
-        }
-        await store.receive(\.favoritesResponse)
+        store.exhaustivity = .off
+
+        await store.send(.onAppear)
+        await store.receive(\.offlineListingResolved)
+        await store.finish()
+
+        #expect(store.state.phase == .failed(FilesClientError.offline.userMessage))
     }
 
     @Test
@@ -3223,20 +3239,14 @@ struct BrowseFeatureTransferTests {
             }
         }
 
-        await store.send(.onAppear) {
-            $0.phase = .loading
-            $0.items = [cachedItem]
-            $0.access = Self.offlineAccess
-        }
-        #expect(store.state.dataSource == .live)
+        store.exhaustivity = .off
 
-        await store.receive(\.itemsResponse.success) {
-            $0.phase = .loaded
-            $0.items = [freshItem]
-        }
-        await store.receive(\.favoritesResponse)
-        await store.receive(\.offlineAvailabilityComputed)
+        await store.send(.onAppear)
+        await store.receive(\.itemsResponse.success)
+        await store.finish()
 
+        #expect(store.state.items.map(\.name) == ["New"])
+        #expect(!store.state.isShowingCachePaint)
         #expect(store.state.dataSource == .live)
     }
 

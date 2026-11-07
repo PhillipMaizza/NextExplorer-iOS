@@ -42,7 +42,7 @@ select.deselectAll	選択をすべて解除
 select.listView	リスト表示
 select.gridView	グリッド表示
 emptyState.folderEmpty	このフォルダは空です。
-emptyState.loadFailed	サーバに接続できませんでした。
+emptyState.loadFailed	サーバーに接続できませんでした。
 emptyState.noSearchMatches	「%@」の結果がありません。
 accessMode.readonly	読み出しのみ
 accessMode.readwrite	読み書き
@@ -148,8 +148,8 @@ downloads.emptyList	「ブラウズ」からダウンロードしたファイル
 downloads.deleteConfirmTitle	削除しますか？
 downloads.deleteConfirmOne	「%@」を削除しますか？
 downloads.deleteConfirmMany	%lld 個のファイルを削除しますか？
-downloads.deleteSingleMessage	ローカルコピーのみを削除します。ファイルはサーバに残ります。
-downloads.deleteBulkMessage	ローカルコピーのみを削除します。ファイルはサーバに残ります。
+downloads.deleteSingleMessage	ローカルコピーのみを削除します。ファイルはサーバーに残ります。
+downloads.deleteBulkMessage	ローカルコピーのみを削除します。ファイルはサーバーに残ります。
 downloads.errorNameExists	同じ名前のファイルが既に存在します。
 downloads.errorInvalidName	その名前は使用できません。
 downloads.errorMissing	そのファイルは見つからなくなりました。
@@ -175,7 +175,7 @@ uploads.reviewUploadButton	アップロード
 uploads.reviewPreparing	%lld 件を準備中…
 uploads.reviewAddMore	ファイルをさらに追加
 uploads.reviewPreviewFile	%@ をプレビュー
-uploads.reviewInsecureNetworkNotice	http で接続しています。このサーバがホームネットワークのみにある場合、そのネットワークから離れるとアップロードは機能しません。
+uploads.reviewInsecureNetworkNotice	http で接続しています。このサーバーがホームネットワークのみにある場合、そのネットワークから離れるとアップロードは機能しません。
 uploads.stagingFailed	それらのファイルを追加できませんでした。再試行してください。
 uploads.stagingSkipped	%lld 項目を準備できず、除外されました。
 uploads.discardTitle	アップロードを破棄しますか？
@@ -250,7 +250,7 @@ editShare.save	変更を保存
 editShare.passwordKeepHint	現在のパスワードを保持するには空のままにします
 editShare.savedToast	共有リンクを更新しました
 thumbnailSettings.navigationTitle	サムネール
-thumbnailSettings.subtitle	サーバがすべてのクライアント向けに画像サムネールを生成する方法を制御します。
+thumbnailSettings.subtitle	サーバーがすべてのクライアント向けに画像サムネールを生成する方法を制御します。
 thumbnailSettings.enable	サムネールを生成
 thumbnailSettings.enableHelp	オフにすると、代わりにすべての場所でフル画像を提供します。
 thumbnailSettings.quality	品質
@@ -258,7 +258,7 @@ thumbnailSettings.qualityHelp	高いほど見栄えが良くなり、容量も�
 thumbnailSettings.maxDimension	最大寸法
 thumbnailSettings.maxDimensionHelp	生成されるサムネールの最長辺（ピクセル単位）。
 thumbnailSettings.concurrency	同時実行数
-thumbnailSettings.concurrencyHelp	サーバが一度に生成するサムネールの数。
+thumbnailSettings.concurrencyHelp	サーバーが一度に生成するサムネールの数。
 thumbnailSettings.unavailable	サムネール設定は管理者のみが利用できます。
 thumbnailSettings.saveButton	変更を保存
 accessRules.navigationTitle	フォルダアクセスルール
@@ -282,7 +282,7 @@ settings.appVersion	v. %1$@ (b. %2$@)
 settings.sectionGeneral	一般
 settings.sectionDisplay	表示
 settings.sectionStorage	ストレージ
-settings.sectionServerStorage	サーバストレージ
+settings.sectionServerStorage	サーバーストレージ
 settings.serverStorageUsed	%2$@ 中 %1$@
 settings.sectionLicenses	ライセンス
 settings.sectionLegal	法律
@@ -307,32 +307,32 @@ settings.rowPrivacyPolicy	プライバシーポリシー
 settings.rowTermsOfUse	利用規約
 settings.rowUserManagement	ユーザ管理
 settings.rowChangePassword	パスワードを変更
-settings.rowServer	サーバ
-settings.storageFootnote	フォルダは ZIP としてダウンロードされ、サーバには何も残りません。ダウンロードの削除やキャッシュの消去はこのデバイスにのみ影響し、サーバ上のものには影響しません。
-settings.storageFootnoteMac	キャッシュの消去はこの Mac にのみ影響し、サーバ上のものには影響しません。
+settings.rowServer	サーバー
+settings.storageFootnote	フォルダは ZIP としてダウンロードされ、サーバーには何も残りません。ダウンロードの削除やキャッシュの消去はこのデバイスにのみ影響し、サーバー上のものには影響しません。
+settings.storageFootnoteMac	キャッシュの消去はこの Mac にのみ影響し、サーバー上のものには影響しません。
 settings.removeAllDownloadsTitle	すべてのダウンロードを削除しますか？
 settings.removeAllDownloadsConfirm	すべて削除
-settings.removeAllDownloadsMessage	このデバイスからすべてのダウンロード済みファイルを削除します。サーバには残ります。
+settings.removeAllDownloadsMessage	このデバイスからすべてのダウンロード済みファイルを削除します。サーバーには残ります。
 settings.clearCacheTitle	キャッシュを消去しますか？
 settings.clearCacheConfirm	消去
-settings.clearCacheMessage	オフラインで使用するキャッシュ済みのプレビュー、サムネール、保存済みフォルダリストを消去します。サーバ上のものには影響しません。
+settings.clearCacheMessage	オフラインで使用するキャッシュ済みのプレビュー、サムネール、保存済みフォルダリストを消去します。サーバー上のものには影響しません。
 settings.signOutAlertTitle	サインアウトしますか？
 settings.signOutMessage	ファイルにアクセスするには再度サインインする必要があります。
 settings.signOutButton	サインアウト
 settings.signingOut	サインアウト中…
 settings.dateFormatNavigationTitle	日付形式
 settings.dateFormatShowTime	時刻を表示
-serverDetails.navigationTitle	サーバ
+serverDetails.navigationTitle	サーバー
 serverDetails.changeLogo	アイコンを変更
 serverDetails.takePhoto	写真を撮る
 serverDetails.chooseFromGallery	ギャラリーからアップロード
-serverDetails.nameLabel	サーバ名
+serverDetails.nameLabel	サーバー名
 serverDetails.namePlaceholder	Explorer
-serverDetails.nameErrorEmpty	サーバ名は空にできません。
-serverDetails.urlLabel	サーバ URL
-serverDetails.urlFootnote	NextExplorer インスタンスがインストールされているアドレスです。変更するには、サインアウトしてサーバを再度追加してください。
-serverDetails.updateButton	サーバを更新
-serverDetails.savedMessage	サーバの詳細を更新しました。
+serverDetails.nameErrorEmpty	サーバー名は空にできません。
+serverDetails.urlLabel	サーバー URL
+serverDetails.urlFootnote	NextExplorer インスタンスがインストールされているアドレスです。変更するには、サインアウトしてサーバーを再度追加してください。
+serverDetails.updateButton	サーバーを更新
+serverDetails.savedMessage	サーバーの詳細を更新しました。
 serverDetails.logoErrorTooLarge	その画像は大きすぎます。2 MB 未満のものを選択してください。
 serverDetails.cameraDeniedTitle	カメラへのアクセスがオフ
 serverDetails.cameraDeniedMessage	写真を撮るには、設定でカメラへのアクセスをオンにしてください。
@@ -352,7 +352,7 @@ fileInfo.rowDateCreated	作成日
 fileInfo.rowFiles	ファイル
 fileInfo.rowFolders	フォルダ
 fileInfo.rowTotalSize	合計サイズ
-fileInfo.sectionServerDisk	サーバディスク
+fileInfo.sectionServerDisk	サーバーディスク
 fileInfo.diskFreeOf	%2$@ 中 %1$@ が空き
 fileInfo.rowDimensions	寸法
 fileInfo.rowCamera	カメラ
@@ -368,7 +368,7 @@ permissions.applyPermissions	アクセス権を適用
 permissions.sectionOwnership	所有権
 permissions.fieldOwner	所有者
 permissions.fieldGroup	グループ
-permissions.ownershipNote	所有権の変更には通常、サーバ上の root または管理者権限が必要です。
+permissions.ownershipNote	所有権の変更には通常、サーバー上の root または管理者権限が必要です。
 permissions.applyOwnership	所有権を適用
 permissions.scopeOwner	所有者
 permissions.scopeGroup	グループ
@@ -389,7 +389,7 @@ userManagement.createUser	ユーザを作成
 userManagement.badgeAdmin	管理者
 userManagement.emptyList	まだユーザはいません。
 userManagement.noSearchMatches	「%@」に一致するユーザはいません。
-userManagement.loadFailed	サーバに接続できませんでした。
+userManagement.loadFailed	サーバーに接続できませんでした。
 userManagement.sortType	タイプ
 userManagement.sortName	名前
 userManagement.sortEmail	メール
@@ -450,7 +450,7 @@ userDetail.ssoNone	リンクされた SSO プロバイダはありません。
 userDetail.ssoBadge	SSO
 userDetail.ssoLinked	リンク済み
 userDetail.dangerZoneTitle	危険な操作
-userDetail.dangerZoneSubtitle	ユーザを削除すると、そのアクセス権はすぐに取り消されます。サーバ上でそのユーザが所有するファイルは削除されません。
+userDetail.dangerZoneSubtitle	ユーザを削除すると、そのアクセス権はすぐに取り消されます。サーバー上でそのユーザが所有するファイルは削除されません。
 userDetail.dangerZoneRemoveUser	ユーザを削除
 userDetail.volumesNone	割り当て済みのボリュームはありません。
 userDetail.volumesNoneSubtitle	このユーザはデフォルトの共有スペースのみを表示できます。
@@ -461,7 +461,9 @@ userDetail.volumeRemoveAccessibility	%@ を削除
 userDetail.removeVolumeTitle	ボリュームを削除しますか？
 userDetail.removeVolumeMessage	%@ はこのユーザから割り当て解除されます。ディレクトリ自体には影響しません。
 userDetail.removeUserTitle	ユーザを削除しますか？
-userDetail.removeUserMessage	%@ はすぐにアクセス権を失います。サーバ上のファイルは削除されません。
+userDetail.removeUserMessage	%@ はすぐにアクセス権を失います。サーバー上のファイルは削除されません。
+userDetail.grantAdminTitle	管理者権限を付与しますか？
+userDetail.grantAdminMessage	%@ は、ファイル、共有、ユーザを完全に管理できる管理者になります。管理者の権限はアプリから取り消せません。
 userDetail.volumeSheetLabelField	ラベル
 userDetail.volumeSheetLabelPlaceholder	ボリュームラベル
 userDetail.volumeSheetAccessMode	アクセスモード
@@ -488,10 +490,10 @@ login.submit	ログイン
 login.plaintextWarning	この接続は暗号化されていません。パスワードとセッションはローカルネットワーク上を平文で送信されます。
 error.sessionExpired	セッションの有効期限が切れました。再度サインインしてください。
 error.rateLimited	リクエストが多すぎます。しばらくしてから再試行してください。
-error.network	サーバに接続できませんでした。
+error.network	サーバーに接続できませんでした。
 error.offline	オフラインです。インターネットに接続して再試行してください。
-error.decoding	サーバから予期しない応答がありました。
-error.server	サーバエラー (%lld)。
+error.decoding	サーバーから予期しない応答がありました。
+error.server	サーバーエラー (%lld)。
 error.forbidden	この操作を行う権限がありません。
 changePassword.navigationTitle	パスワードを変更
 changePassword.intro	メールアドレスでサインインする際に使うパスワードを変更します。このデバイスではサインインしたままになります。
@@ -504,19 +506,19 @@ changePassword.submitButton	パスワードを更新
 changePassword.success	パスワードを更新しました。
 changePassword.errorMinLength	%lld 文字以上を使用してください。
 changePassword.errorMismatch	パスワードが一致しません。
-login.portHint	ポートを追加してください（例: :3000）。ほとんどのホームラボサーバは通常のポート 80 で待ち受けていません。
-login.errorInvalidServer	有効なサーバアドレスを入力してください。
+login.portHint	ポートを追加してください（例: :3000）。ほとんどのホームラボサーバーは通常のポート 80 で待ち受けていません。
+login.errorInvalidServer	有効なサーバーアドレスを入力してください。
 login.errorInvalidEmail	有効なメールアドレスを入力してください。
 login.errorInvalidCredentials	ユーザ名またはパスワードが正しくありません。
 login.errorSessionExpired	セッションの有効期限が切れました。再度サインインしてください。
 login.errorIncomplete	サインインが完了しませんでした。再試行してください。
-login.errorUnreachable	そのサーバに接続できませんでした。アドレスを確認して再試行してください。
-login.errorUnexpectedResponse	サーバから予期しない応答がありました。
+login.errorUnreachable	そのサーバーに接続できませんでした。アドレスを確認して再試行してください。
+login.errorUnexpectedResponse	サーバーから予期しない応答がありました。
 login.errorKeychain	このデバイスにセッションを保存できませんでした。
-login.errorDecoding	サーバから予期しない応答がありました。アドレスを確認して再試行してください。
-login.errorNoLocalAuth	このサーバではユーザ名/パスワードによるサインインが有効になっていません。
+login.errorDecoding	サーバーから予期しない応答がありました。アドレスを確認して再試行してください。
+login.errorNoLocalAuth	このサーバーではユーザ名/パスワードによるサインインが有効になっていません。
 login.errorRateLimited	試行回数が多すぎます。数分待ってから再試行してください。
-login.errorServer	サーバで問題が発生しました（エラー %lld）。後で再試行してください。
+login.errorServer	サーバーで問題が発生しました（エラー %lld）。後で再試行してください。
 browse.nameErrorReserved	その名前は使用できません。
 browse.nameErrorSeparators	名前に / または \ を含めることはできません。
 browse.searchMatchLine	%1$lld 行目: %2$@
@@ -604,6 +606,7 @@ offline.manageRow	オフラインファイルを管理
 offline.manageTitle	オフラインファイル
 offline.manageEmpty	オフライン用にダウンロードされたものはありません。
 offline.preferOfflineToggle	ダウンロードしたコピーを再生
+offline.pinRemoved	%@ はサーバー上に存在しなくなったため、オフラインファイルから削除されました
 offline.preferOfflineSubtitle	利用可能な場合はストリーミングの代わりにダウンロードした動画を使用します。
 offline.tunnelSpeedNote	リモートトンネル経由でサーバーに接続するとダウンロードが遅くなることがあります。大きなファイルの場合は、同じネットワークに接続してサーバーのローカルアドレスを使用してください。
 menu.about	NextExplorerについて
@@ -728,18 +731,18 @@ textPreview.unsavedTitle	“%@”への変更を保存しますか？
 textPreview.unsavedMessage	保存しないと変更内容は失われます。
 textPreview.dontSave	保存しない
 browse.showInEnclosingFolder	親フォルダに表示
-error.clientCertificateRequired	このサーバにはクライアント証明書が必要です。設定で追加してください。
-error.clientCertificateRejected	サーバがクライアント証明書を拒否しました。
-login.errorClientCertificateRequired	このサーバはクライアント証明書を要求しています。
-login.errorClientCertificateRejected	サーバがこのクライアント証明書を拒否しました。
+error.clientCertificateRequired	このサーバーにはクライアント証明書が必要です。設定で追加してください。
+error.clientCertificateRejected	サーバーがクライアント証明書を拒否しました。
+login.errorClientCertificateRequired	このサーバーはクライアント証明書を要求しています。
+login.errorClientCertificateRejected	サーバーがこのクライアント証明書を拒否しました。
 login.addClientCertificate	証明書を追加
 login.manageClientCertificate	証明書を管理
 settings.clientCertificate	クライアント証明書
 settings.clientCertificateNone	なし
-media.clientCertificateUnsupported	クライアント証明書を要求するサーバからは、この形式をストリーミング再生できません。ファイルをダウンロードして再生してください。
+media.clientCertificateUnsupported	クライアント証明書を要求するサーバーからは、この形式をストリーミング再生できません。ファイルをダウンロードして再生してください。
 clientCertificate.title	クライアント証明書
-clientCertificate.intro	クライアント証明書 (mTLS) を提示したデバイスだけを受け入れるサーバがあります。このサーバ用に受け取った .p12 または .pfx ファイルを選択してください。
-clientCertificate.serverLabel	サーバ
+clientCertificate.intro	クライアント証明書 (mTLS) を提示したデバイスだけを受け入れるサーバーがあります。このサーバー用に受け取った .p12 または .pfx ファイルを選択してください。
+clientCertificate.serverLabel	サーバー
 clientCertificate.certificateLabel	証明書
 clientCertificate.none	証明書はインストールされていません
 clientCertificate.issuedBy	発行者: %@
@@ -759,9 +762,9 @@ clientCertificate.errorNoIdentity	このファイルには秘密鍵が含まれ�
 clientCertificate.errorStorage	このデバイスに証明書を保存できませんでした。
 clientCertificate.errorUnreadable	ファイルを読み込めませんでした。
 clientCertificate.removeTitle	証明書を削除しますか?
-clientCertificate.removeMessage	NextExplorer は %@ にこの証明書を提示しなくなります。サーバが証明書を必要とする場合、証明書を再度追加するまでアプリは接続できません。
+clientCertificate.removeMessage	NextExplorer は %@ にこの証明書を提示しなくなります。サーバーが証明書を必要とする場合、証明書を再度追加するまでアプリは接続できません。
 clientCertificate.removeConfirm	削除
-clientCertificate.expiredWarning	この証明書は期限切れです。サーバに拒否される可能性があります。
+clientCertificate.expiredWarning	この証明書は期限切れです。サーバーに拒否される可能性があります。
 clientCertificate.errorRemove	このデバイスから証明書を削除できませんでした。
 login.usingClientCertificate	クライアント証明書 %@ を使用中
 login.changeClientCertificate	変更
@@ -785,9 +788,19 @@ shareUpload.signedOut	先にNextExplorerにサインインしてから、もう�
 shareUpload.nothingToUpload	NextExplorerでアップロードできるものがありません。
 shareUpload.failed	ファイルをアップロード用に準備できませんでした。
 shareUpload.notificationDoneTitle	アップロード完了
-shareUpload.notificationDoneBody	%lld 個のファイルを「%@」にアップロードしました。
 shareUpload.notificationFailedTitle	一部のファイルをアップロードできませんでした
-shareUpload.notificationFailedBody	%lld/%lld 個のファイルをアップロードできませんでした。もう一度共有して再試行してください。
+shareUpload.notificationDoneBody#other	%lld 個のファイルを「%@」にアップロードしました。
+shareUpload.notificationAllFailedTitle	アップロードに失敗しました
+shareUpload.failureUnauthorized#other	%lld 個のファイルをアップロードできませんでした。もう一度サインインしてから、再試行してください。
+shareUpload.failureForbidden#other	%lld 個のファイルをアップロードできませんでした。このフォルダにファイルを追加する権限がありません。
+shareUpload.failureServerFull#other	%lld 個のファイルをアップロードできませんでした。サーバーの空き容量がありません。
+shareUpload.failureNetwork#other	%lld 個のファイルをアップロードできませんでした。接続に失敗しました。オンラインに戻ってから再試行してください。
+shareUpload.failureOther#other	%lld 個のファイルをアップロードできませんでした。
+shareUpload.notificationRetry	再試行
+shareUpload.notificationHiddenPreview	NextExplorerを開いて、アップロードの結果を確認してください。
+shareUpload.retryFailedTitle	再試行できませんでした
+shareUpload.retryFailedBody	NextExplorerを開いて、ファイルをもう一度共有してください。
+shareUpload.insufficientSpace	このデバイスの空き容量が足りないため、ファイルをアップロード用に準備できません。
 settings.uploadDefaultsRow	共有されたファイル
 settings.uploadDefaultsFolder	デフォルトのフォルダ
 settings.uploadDefaultsFolderNone	毎回確認
@@ -795,3 +808,36 @@ settings.uploadDefaultsWithoutAsking	確認せずにアップロード
 settings.uploadDefaultsFooter	ほかのアプリからNextExplorerに共有した写真やファイルは、このフォルダから始まります。「確認せずにアップロード」をオンにすると、そのままここにアップロードされます。
 settings.uploadDefaultsClear	毎回確認
 common.change	変更
+shareUpload.sessionUnreadable	このデバイスでNextExplorerのサインイン情報を読み取れませんでした。NextExplorerを一度開いてから、もう一度共有してください。
+shareUpload.keepOpen	準備が終わるまでこの画面を開いたままにしてください。
+shareUpload.checking	%@への接続を確認しています…
+shareUpload.openApp	NextExplorerを開く
+shareUpload.openAppInstructions	ホーム画面からNextExplorerを開き、もう一度共有してください。
+shareUpload.certificateRequired	このサーバーにはクライアント証明書が必要です。NextExplorerを開き、設定で追加してから、もう一度共有してください。
+shareUpload.certificateRejected	サーバーがクライアント証明書を拒否しました。NextExplorerを開き、設定で置き換えてから、もう一度共有してください。
+shareUpload.defaultFolderUnavailable	デフォルトのフォルダは利用できなくなりました。別のフォルダを選んでください。
+shareUpload.failedItemsHeader	次のファイルを準備できませんでした:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	アップロード準備完了: %lld
+shareUpload.uploadReady	準備できたファイルをアップロード
+shareUpload.retryFailed	失敗したファイルを再試行
+shareUpload.fallbackItemName	ファイル %lld
+shareUpload.causeCannotRead	読み取れませんでした。
+shareUpload.causeNotEnoughSpace	このデバイスの空き容量が足りません。
+shareUpload.causeUnknown	準備できませんでした。
+shareUpload.folderHint	フォルダ選択を開きます。
+shareUpload.accountHint	ファイルを受け取るアカウントを選びます。
+error.timedOut	サーバーの応答に時間がかかりすぎました。操作はそのまま完了する場合があります。
+error.changedOnServer	このファイルは、開いた後にサーバー上で変更されました。
+textPreview.conflictTitle	「%@」がサーバーで変更されました
+textPreview.conflictMessage	自分のバージョンで上書きするか、ファイルを再読み込みして編集内容を破棄してください。置き換えられたバージョンはファイルのバージョン履歴に残ります。
+textPreview.conflictOverwrite	上書き
+textPreview.conflictReload	再読み込み
+offline.waitingForNetwork	オンラインに戻るとダウンロードされます
+browse.bulkFavoriteFailed	%2$lld件中%1$lld件が失敗しました
+shareUpload.livePhotoNote	Live Photosは動画部分も一緒にアップロードされます。
+shareUpload.retrySignInBody	NextExplorerにサインインしてから、もう一度「再試行」をタップしてください。
+shareUpload.causeFolder	フォルダは共有できません。代わりに中のファイルを共有してください。
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	ほか %lld 件
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

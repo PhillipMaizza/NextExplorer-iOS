@@ -1,4 +1,5 @@
 import ComposableArchitecture
+import FilesClient
 import Foundation
 
 /// Reports on and clears `Library/Caches/PreviewCache`: the internal, dedup'd cache
@@ -9,10 +10,18 @@ import Foundation
 public struct PreviewCacheStore: Sendable {
     public var size: @Sendable () throws -> Int64
     public var clear: @Sendable () throws -> Void
+    /// Removes only one account's downloaded preview and raw bytes, for removing an account while
+    /// others stay signed in.
+    public var clearAccount: @Sendable (_ scope: String) -> Void
 
-    public init(size: @escaping @Sendable () throws -> Int64, clear: @escaping @Sendable () throws -> Void) {
+    public init(
+        size: @escaping @Sendable () throws -> Int64,
+        clear: @escaping @Sendable () throws -> Void,
+        clearAccount: @escaping @Sendable (String) -> Void = { _ in }
+    ) {
         self.size = size
         self.clear = clear
+        self.clearAccount = clearAccount
     }
 }
 
@@ -44,7 +53,8 @@ extension PreviewCacheStore: DependencyKey {
         clear: {
             guard let cacheDirectory, FileManager.default.fileExists(atPath: cacheDirectory.path) else { return }
             try FileManager.default.removeItem(at: cacheDirectory)
-        }
+        },
+        clearAccount: { CacheAccountScope.clearPreviewCache(scope: $0) }
     )
 
     public static let testValue = PreviewCacheStore(

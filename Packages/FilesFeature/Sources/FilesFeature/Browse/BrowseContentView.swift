@@ -416,6 +416,8 @@ struct BrowseContentView: View {
         ))
         #if os(macOS)
         .modifier(MacFinderDrop(
+            serverURL: store.serverURL,
+            scope: store.cacheScope,
             isEnabled: canUploadHere && !store.isSelecting,
             onDrop: { urls in store.send(.beginUpload(.documents(urls))) },
             onDropItems: { items in
@@ -423,6 +425,8 @@ struct BrowseContentView: View {
                 store.send(.itemsDroppedFromOtherWindow(items, destination: store.directoryPath))
             }
         ))
+        #else
+        .modifier(IOSBrowseBackgroundDragDrop(store: store))
         #endif
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
@@ -457,6 +461,7 @@ struct BrowseContentView: View {
                         ) {
                             store.send(.bulkFavoriteTapped)
                         }
+                        .disabled(!store.hasLoadedFavorites)
                     }
                 }
                 if isTransferActionVisible {
@@ -730,6 +735,7 @@ struct BrowseContentView: View {
                 onOpen: handleTap,
                 keyboardActions: tableKeyboardActions,
                 serverURL: store.serverURL,
+                scope: store.cacheScope,
                 canDropOnFolders: store.access?.canDelete ?? false,
                 onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
                 onDropForeignItemsOnFolder: { items, folder in
@@ -762,6 +768,7 @@ struct BrowseContentView: View {
             MacRowDragDrop(
                 item: item,
                 serverURL: store.serverURL,
+                scope: store.cacheScope,
                 canDrag: !store.isSelecting,
                 canDropHere: !store.isSelecting && (store.access?.canDelete ?? false),
                 onDrop: { ids in store.send(.itemsDroppedOnFolder(ids: ids, folder: item)) }
@@ -864,6 +871,7 @@ struct BrowseContentView: View {
                         }
                     }
                     .tint(.primaryDS)
+                    .disabled(!store.hasLoadedFavorites)
                 }
                 if store.access?.canDelete ?? false {
                     Button(role: .destructive) {
@@ -1602,6 +1610,8 @@ struct BrowseContentView: View {
                     .dsCard(padding: Constants.gridCellPadding)
                 #if os(macOS)
                     .modifier(macRowDragDrop(for: item))
+                #else
+                    .modifier(IOSBrowseItemDragDrop(store: store, item: item))
                 #endif
                     .overlay(alignment: .topLeading) {
                         if store.isSelecting {
@@ -1643,6 +1653,8 @@ struct BrowseContentView: View {
                 #if os(macOS)
                 // On the label, not the row chain: that chain is at the type checker's limit.
                 .modifier(macRowDragDrop(for: item))
+                #else
+                .modifier(IOSBrowseItemDragDrop(store: store, item: item))
                 #endif
             }
             .buttonStyle(DSHapticButtonStyle())
@@ -1673,6 +1685,7 @@ struct BrowseContentView: View {
                             store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
                         }
                         .tint(.accent)
+                        .disabled(!store.hasLoadedFavorites)
                         .accessibilityLabel(store.favoritePaths.contains(item.id) ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites)
                     }
                     if store.access?.canWrite ?? false {

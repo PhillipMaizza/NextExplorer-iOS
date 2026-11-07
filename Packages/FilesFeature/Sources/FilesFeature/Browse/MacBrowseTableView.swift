@@ -41,6 +41,7 @@
         let onOpen: (FileItem) -> Void
         let keyboardActions: BrowseKeyboardActions
         let serverURL: URL
+        let scope: String
         let canDropOnFolders: Bool
         let onDropOnFolder: ([FileItem.ID], FileItem) -> Void
         /// Rows from another Browse window dropped on a folder row, which this table doesn't list.
@@ -126,18 +127,19 @@
                 }
                 ForEach(items) { item in
                     TableRow(item)
-                        .draggable(DraggedServerItem(item: item, serverURL: serverURL, filesClient: filesClient))
+                        .draggable(DraggedServerItem(item: item, serverURL: serverURL, scope: scope, filesClient: filesClient))
                         .dropDestination(for: MacRowDrop.self) { drops in
                             guard item.isDirectory else { return }
                             var ids: [FileItem.ID] = []
                             var foreign: [FileItem] = []
                             var files: [URL] = []
+                            let receiver = DragOrigin.current(serverURL: serverURL, scope: scope)
                             for drop in drops {
                                 switch drop {
-                                case let .item(reference) where reference.id != item.id:
+                                case let .item(reference) where reference.id != item.id && reference.origin == receiver:
                                     if items[id: reference.id] != nil {
                                         ids.append(reference.id)
-                                    } else if let dragged = reference.item {
+                                    } else if let dragged = reference.item, DropPathValidation.isSafe(dragged) {
                                         foreign.append(dragged)
                                     }
                                 case let .file(url) where url.isFileURL: files.append(url)
@@ -362,6 +364,7 @@
             onOpen: { _ in },
             keyboardActions: .preview,
             serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"),
+            scope: "preview",
             canDropOnFolders: true,
             onDropOnFolder: { _, _ in },
             contextMenu: { _ in EmptyView() }

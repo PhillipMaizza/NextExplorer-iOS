@@ -461,6 +461,8 @@ userDetail.removeVolumeTitle	¿Quitar el volumen?
 userDetail.removeVolumeMessage	%@ se desasigna de este usuario. El directorio en sí no se toca.
 userDetail.removeUserTitle	¿Eliminar usuario?
 userDetail.removeUserMessage	%@ pierde el acceso de inmediato. Sus archivos en el servidor no se eliminan.
+userDetail.grantAdminTitle	¿Conceder permisos de administrador?
+userDetail.grantAdminMessage	%@ pasará a ser administrador con control total sobre archivos, recursos compartidos y usuarios. Los administradores no pueden ser degradados desde la app.
 userDetail.volumeSheetLabelField	Etiqueta
 userDetail.volumeSheetLabelPlaceholder	Etiqueta del volumen
 userDetail.volumeSheetAccessMode	Modo de acceso
@@ -604,6 +606,7 @@ offline.manageRow	Gestionar archivos sin conexión
 offline.manageTitle	Archivos sin conexión
 offline.manageEmpty	No hay nada descargado para uso sin conexión.
 offline.preferOfflineToggle	Reproducir copias descargadas
+offline.pinRemoved	%@ ya no existe en el servidor y se quitó de los archivos sin conexión
 offline.preferOfflineSubtitle	Usar un vídeo descargado en lugar de transmitirlo cuando esté disponible.
 offline.tunnelSpeedNote	Acceder a tu servidor a través de un túnel remoto puede ralentizar las descargas. Para archivos grandes, conéctate a la misma red y usa la dirección local de tu servidor.
 menu.about	Acerca de NextExplorer
@@ -785,9 +788,25 @@ shareUpload.signedOut	Primero inicia sesión en NextExplorer y vuelve a comparti
 shareUpload.nothingToUpload	Aquí no hay nada que NextExplorer pueda subir.
 shareUpload.failed	No se pudieron preparar los archivos para subirlos.
 shareUpload.notificationDoneTitle	Subida completada
-shareUpload.notificationDoneBody	%lld archivos subidos a «%@».
 shareUpload.notificationFailedTitle	Algunos archivos no se subieron
-shareUpload.notificationFailedBody	No se pudieron subir %lld de %lld archivos. Vuelve a compartirlos para reintentarlo.
+shareUpload.notificationDoneBody#one	%lld archivo subido a «%@».
+shareUpload.notificationDoneBody#other	%lld archivos subidos a «%@».
+shareUpload.notificationAllFailedTitle	Error al subir
+shareUpload.failureUnauthorized#one	%lld archivo no se subió. Vuelve a iniciar sesión y reinténtalo.
+shareUpload.failureUnauthorized#other	%lld archivos no se subieron. Vuelve a iniciar sesión y reinténtalo.
+shareUpload.failureForbidden#one	%lld archivo no se subió. No tienes permiso para añadir archivos a esa carpeta.
+shareUpload.failureForbidden#other	%lld archivos no se subieron. No tienes permiso para añadir archivos a esa carpeta.
+shareUpload.failureServerFull#one	%lld archivo no se subió. El servidor se ha quedado sin espacio.
+shareUpload.failureServerFull#other	%lld archivos no se subieron. El servidor se ha quedado sin espacio.
+shareUpload.failureNetwork#one	%lld archivo no se subió. Falló la conexión. Reinténtalo cuando vuelvas a tener conexión.
+shareUpload.failureNetwork#other	%lld archivos no se subieron. Falló la conexión. Reinténtalo cuando vuelvas a tener conexión.
+shareUpload.failureOther#one	%lld archivo no se pudo subir.
+shareUpload.failureOther#other	%lld archivos no se pudieron subir.
+shareUpload.notificationRetry	Reintentar
+shareUpload.notificationHiddenPreview	Abre NextExplorer para ver cómo fue la subida.
+shareUpload.retryFailedTitle	No se pudo reintentar
+shareUpload.retryFailedBody	Abre NextExplorer y vuelve a compartir los archivos.
+shareUpload.insufficientSpace	No hay suficiente espacio libre en este dispositivo para preparar estos archivos para subirlos.
 settings.uploadDefaultsRow	Archivos compartidos
 settings.uploadDefaultsFolder	Carpeta predeterminada
 settings.uploadDefaultsFolderNone	Preguntar cada vez
@@ -795,3 +814,36 @@ settings.uploadDefaultsWithoutAsking	Subir sin preguntar
 settings.uploadDefaultsFooter	Las fotos y archivos que compartes con NextExplorer desde otras apps empiezan en esta carpeta. Con Subir sin preguntar activado, se suben directamente allí.
 settings.uploadDefaultsClear	Preguntar cada vez
 common.change	Cambiar
+shareUpload.sessionUnreadable	NextExplorer no pudo leer tu inicio de sesión en este dispositivo. Abre NextExplorer una vez y vuelve a compartir.
+shareUpload.keepOpen	Mantén esto abierto hasta que termine la preparación.
+shareUpload.checking	Comprobando la conexión con %@…
+shareUpload.openApp	Abrir NextExplorer
+shareUpload.openAppInstructions	Abre NextExplorer desde la pantalla de inicio y vuelve a compartir.
+shareUpload.certificateRequired	Este servidor necesita un certificado de cliente. Abre NextExplorer, añade uno en Ajustes y vuelve a compartir.
+shareUpload.certificateRejected	El servidor rechazó tu certificado de cliente. Abre NextExplorer, reemplázalo en Ajustes y vuelve a compartir.
+shareUpload.defaultFolderUnavailable	Tu carpeta predeterminada ya no está disponible. Elige otra carpeta.
+shareUpload.failedItemsHeader	No se pudieron preparar estos archivos:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	Listos para subir: %lld
+shareUpload.uploadReady	Subir archivos listos
+shareUpload.retryFailed	Reintentar archivos fallidos
+shareUpload.fallbackItemName	Archivo %lld
+shareUpload.causeCannotRead	No se pudo leer.
+shareUpload.causeNotEnoughSpace	No hay suficiente espacio libre en este dispositivo.
+shareUpload.causeUnknown	No se pudo preparar.
+shareUpload.folderHint	Abre el selector de carpetas.
+shareUpload.accountHint	Elige qué cuenta recibe los archivos.
+error.timedOut	El servidor tardó demasiado en responder. Es posible que la acción aún se complete.
+error.changedOnServer	Este archivo se modificó en el servidor después de abrirlo.
+textPreview.conflictTitle	«%@» cambió en el servidor
+textPreview.conflictMessage	Sobrescríbelo con tu versión o recarga el archivo y descarta tus cambios. La versión reemplazada permanece en el historial de versiones del archivo.
+textPreview.conflictOverwrite	Sobrescribir
+textPreview.conflictReload	Recargar
+offline.waitingForNetwork	Se descargará cuando vuelvas a estar en línea
+browse.bulkFavoriteFailed	%1$lld de %2$lld fallaron
+shareUpload.livePhotoNote	Las Live Photos se suben con su vídeo de movimiento.
+shareUpload.retrySignInBody	Inicia sesión en NextExplorer y vuelve a pulsar «Reintentar».
+shareUpload.causeFolder	No se pueden compartir carpetas. Comparte los archivos que contienen.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	%lld más
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
