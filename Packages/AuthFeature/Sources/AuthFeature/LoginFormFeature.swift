@@ -301,6 +301,11 @@ public struct LoginFormFeature {
             case let .testConnectionResponse(.success(status)):
                 state.authStatus = status
                 state.certificatePrompt = nil
+                // The server sent http to https: sign in there directly, or the password is lost
+                // in the redirect (and would travel unencrypted first).
+                if status.redirectsToHTTPS {
+                    state.scheme = .https
+                }
                 let clock = clock
                 guard status.localEnabled || status.oidcEnabled else {
                     state.connectionPhase = .failure
