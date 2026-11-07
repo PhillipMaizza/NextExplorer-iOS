@@ -22,8 +22,8 @@ struct SettingsUploadDefaultsSection: View {
                     title: L10n.Settings.uploadDefaultsWithoutAsking,
                     icon: IconKit.upload,
                     isOn: Binding(
-                        get: { store.defaults.uploadsWithoutAsking },
-                        set: { store.send(.uploadsWithoutAskingChanged($0)) }
+                        get: { store.defaults.shouldUploadWithoutAsking },
+                        set: { store.send(.shouldUploadWithoutAskingChanged($0)) }
                     )
                 )
                 .disabled(!store.hasFolder)
@@ -59,7 +59,7 @@ struct SettingsUploadDefaultsSection: View {
 extension StoreOf<UploadDefaultsFeature> {
     static func uploadDefaultsPreview(folder: String? = nil, withoutAsking: Bool = false) -> StoreOf<UploadDefaultsFeature> {
         var state = UploadDefaultsFeature.State(serverURL: URL(string: "https://files.example.com")!, accountID: "preview")
-        state.defaults = .init(folderPath: folder, uploadsWithoutAsking: withoutAsking)
+        state.defaults = .init(folderPath: folder, shouldUploadWithoutAsking: withoutAsking)
         return Store(initialState: state) { EmptyReducer() }
     }
 }

@@ -4,21 +4,21 @@ import FilesClient
 import Foundation
 
 /// Where files shared to NextExplorer from other apps go, per account: the Share Extension and
-/// "Open in NextExplorer" both start in `folderPath`, and with `uploadsWithoutAsking` they upload
+/// "Open in NextExplorer" both start in `folderPath`, and with `shouldUploadWithoutAsking` they upload
 /// straight there. Uploads started inside the app keep going to the folder on screen.
 public struct UploadDefaults: Codable, Equatable, Sendable {
     /// A server path, never the root (the server refuses uploads there). `nil`: ask every time.
     public var folderPath: String?
-    public var uploadsWithoutAsking: Bool
+    public var shouldUploadWithoutAsking: Bool
 
-    public init(folderPath: String? = nil, uploadsWithoutAsking: Bool = false) {
+    public init(folderPath: String? = nil, shouldUploadWithoutAsking: Bool = false) {
         self.folderPath = folderPath
-        self.uploadsWithoutAsking = uploadsWithoutAsking
+        self.shouldUploadWithoutAsking = shouldUploadWithoutAsking
     }
 
     /// The folder to upload to without asking, when both are set.
     public var directFolder: String? {
-        guard uploadsWithoutAsking, let folderPath, !folderPath.isEmpty else { return nil }
+        guard shouldUploadWithoutAsking, let folderPath, !folderPath.isEmpty else { return nil }
         return folderPath
     }
 }

@@ -31,7 +31,7 @@ struct ShareUploadsTests {
         defer { defaults.removePersistentDomain(forName: suite) }
         let client = UploadDefaultsClient.live(defaults: defaults)
 
-        client.save("a", UploadDefaults(folderPath: "Photos", uploadsWithoutAsking: true))
+        client.save("a", UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true))
         client.save("b", UploadDefaults(folderPath: "Docs"))
 
         #expect(client.load("a").directFolder == "Photos")
@@ -44,10 +44,10 @@ struct ShareUploadsTests {
 
     @Test("A folder is never uploaded to without asking unless both settings are on")
     func directFolderNeedsBoth() {
-        #expect(UploadDefaults(folderPath: nil, uploadsWithoutAsking: true).directFolder == nil)
-        #expect(UploadDefaults(folderPath: "", uploadsWithoutAsking: true).directFolder == nil)
-        #expect(UploadDefaults(folderPath: "Photos", uploadsWithoutAsking: false).directFolder == nil)
-        #expect(UploadDefaults(folderPath: "Photos", uploadsWithoutAsking: true).directFolder == "Photos")
+        #expect(UploadDefaults(folderPath: nil, shouldUploadWithoutAsking: true).directFolder == nil)
+        #expect(UploadDefaults(folderPath: "", shouldUploadWithoutAsking: true).directFolder == nil)
+        #expect(UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: false).directFolder == nil)
+        #expect(UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true).directFolder == "Photos")
     }
 
     @Test("The original file type is asked for: HEIC before its JPEG copy, a video before a still")
@@ -110,8 +110,8 @@ struct ShareUploadsTests {
         try manifest.save(in: directory)
 
         #expect(Manifest.load(from: directory) == manifest)
-        #expect(Manifest.record(index: 1, succeeded: false, in: directory) == [1: false])
-        #expect(Manifest.record(index: 0, succeeded: true, in: directory) == [0: true, 1: false])
+        #expect(Manifest.record(index: 1, didSucceed: false, in: directory) == [1: false])
+        #expect(Manifest.record(index: 0, didSucceed: true, in: directory) == [0: true, 1: false])
     }
 
     @Test("Only this app's upload sessions are claimed on wake up")

@@ -25,8 +25,8 @@
                 Toggle(
                     L10n.Settings.uploadDefaultsWithoutAsking,
                     isOn: Binding(
-                        get: { store.defaults.uploadsWithoutAsking },
-                        set: { store.send(.uploadsWithoutAskingChanged($0)) }
+                        get: { store.defaults.shouldUploadWithoutAsking },
+                        set: { store.send(.shouldUploadWithoutAskingChanged($0)) }
                     )
                 )
                 .disabled(!store.hasFolder)

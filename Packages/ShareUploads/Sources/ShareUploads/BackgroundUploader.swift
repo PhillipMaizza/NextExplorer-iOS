@@ -166,14 +166,14 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         guard let batchID = batchID(of: session), let index = task.taskDescription.flatMap(Int.init) else { return }
         let directory = root.appendingPathComponent(batchID, isDirectory: true)
         let body = lock.withLock { bodies[batchID]?.removeValue(forKey: task.taskIdentifier) } ?? Data()
-        let succeeded: Bool = if error == nil, let response = task.response as? HTTPURLResponse {
+        let didSucceed: Bool = if error == nil, let response = task.response as? HTTPURLResponse {
             (try? UploadRequest.decodeResponse(body, response)) != nil
         } else {
             false
         }
         guard let manifest = Manifest.load(from: directory), manifest.envelopes.indices.contains(index) else { return }
         try? FileManager.default.removeItem(at: directory.appendingPathComponent(manifest.envelopes[index]))
-        let results = Manifest.record(index: index, succeeded: succeeded, in: directory)
+        let results = Manifest.record(index: index, didSucceed: didSucceed, in: directory)
         guard results.count >= manifest.fileNames.count else { return }
         let failed = manifest.fileNames.indices.filter { results[$0] == false }.map { manifest.fileNames[$0] }
         notifier.batchFinished(BatchOutcome(
@@ -297,10 +297,10 @@ struct Manifest: Codable, Equatable {
     }
 
     /// Records one upload's result and returns every result so far, by file index.
-    static func record(index: Int, succeeded: Bool, in directory: URL) -> [Int: Bool] {
+    static func record(index: Int, didSucceed: Bool, in directory: URL) -> [Int: Bool] {
         let folder = directory.appendingPathComponent(resultsFolder, isDirectory: true)
         try? FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
-        try? Data((succeeded ? "1" : "0").utf8).write(to: folder.appendingPathComponent(String(index)), options: .atomic)
+        try? Data((didSucceed ? "1" : "0").utf8).write(to: folder.appendingPathComponent(String(index)), options: .atomic)
         let names = (try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? []
         var results: [Int: Bool] = [:]
         for name in names {

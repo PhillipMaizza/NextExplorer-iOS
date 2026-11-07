@@ -31,7 +31,7 @@ public struct UploadDefaultsFeature {
         case onAppear
         case chooseFolderTapped
         case askEachTimeTapped
-        case uploadsWithoutAskingChanged(Bool)
+        case shouldUploadWithoutAskingChanged(Bool)
         case folderPicker(PresentationAction<DestinationPickerFeature.Action>)
     }
 
@@ -69,9 +69,9 @@ public struct UploadDefaultsFeature {
                 state.defaults = UploadDefaults()
                 return save(state)
 
-            case let .uploadsWithoutAskingChanged(isOn):
+            case let .shouldUploadWithoutAskingChanged(isOn):
                 guard state.hasFolder || !isOn else { return .none }
-                state.defaults.uploadsWithoutAsking = isOn
+                state.defaults.shouldUploadWithoutAsking = isOn
                 return save(state)
             }
         }

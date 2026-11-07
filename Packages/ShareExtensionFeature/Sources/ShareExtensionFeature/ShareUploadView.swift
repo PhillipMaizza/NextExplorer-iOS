@@ -227,3 +227,24 @@ extension SessionCredentials {
 #Preview("Failed") { ShareUploadView(store: .preview(.failed)) }
 #Preview("Certificate required") { ShareUploadView(store: .preview(.certificateRequired)) }
 #Preview("Certificate refused") { ShareUploadView(store: .preview(.certificateRejected)) }
+
+#Preview("Status, every phase") {
+    VStack(alignment: .leading, spacing: .space16) {
+        ForEach(
+            [ShareUploadFeature.Phase.loading, .checking, .ready, .preparing, .started, .signedOut, .nothingToUpload, .failed, .certificateRequired, .certificateRejected],
+            id: \.self
+        ) { phase in
+            ShareUploadStatus(store: .preview(phase))
+        }
+    }
+    .padding(.space24)
+}
+
+#Preview("Folder button") {
+    VStack(spacing: .space16) {
+        ShareUploadFolderButton(store: .preview(.ready))
+        ShareUploadFolderButton(store: .preview(.ready, destination: ""))
+        ShareUploadFolderButton(store: .preview(.preparing))
+    }
+    .padding(.space24)
+}

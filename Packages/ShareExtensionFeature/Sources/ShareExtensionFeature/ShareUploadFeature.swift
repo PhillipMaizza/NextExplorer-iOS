@@ -16,7 +16,7 @@ public struct ShareUploadFeature {
         static let closeDelay: Duration = .seconds(1.5)
     }
 
-    public enum Phase: Equatable, Sendable {
+    public enum Phase: Hashable, Sendable {
         case loading
         /// Signed in; checking the server answers before anything can be uploaded.
         case checking
@@ -42,7 +42,7 @@ public struct ShareUploadFeature {
         /// `""` until a folder is chosen: the server refuses uploads to the root.
         public var destination = ""
         /// Settings' "Upload Without Asking" for this account: uploads once the connection checks out.
-        public var uploadsWithoutAsking = false
+        public var shouldUploadWithoutAsking = false
         @Presents public var folderPicker: DestinationPickerFeature.State?
 
         public init() {}
@@ -123,7 +123,7 @@ public struct ShareUploadFeature {
                 }
                 state.credentials = credentials
                 state.destination = defaults.folderPath ?? ""
-                state.uploadsWithoutAsking = defaults.directFolder != nil
+                state.shouldUploadWithoutAsking = defaults.directFolder != nil
                 state.phase = .checking
                 // Checked before anything is staged, the one tap path included: an expired session
                 // or a certificate problem would otherwise leave the uploads failing in the background.
@@ -150,7 +150,7 @@ public struct ShareUploadFeature {
                 switch check {
                 case .usable:
                     state.phase = .ready
-                    return state.uploadsWithoutAsking ? .send(.uploadTapped) : .none
+                    return state.shouldUploadWithoutAsking ? .send(.uploadTapped) : .none
                 case .signedOut:
                     state.phase = .signedOut
                 case .certificateRequired:

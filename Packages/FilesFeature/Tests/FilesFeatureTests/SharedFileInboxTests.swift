@@ -148,7 +148,7 @@ struct SharedFileInboxTests {
         } withDependencies: {
             $0.uploadStaging = Self.staging(["Scan.pdf"])
             $0.uploadDefaults = .inMemory(
-                ["account": UploadDefaults(folderPath: "Inbox/Scans", uploadsWithoutAsking: true)],
+                ["account": UploadDefaults(folderPath: "Inbox/Scans", shouldUploadWithoutAsking: true)],
                 activeAccountID: "account"
             )
         }
@@ -167,7 +167,7 @@ struct SharedFileInboxTests {
         } withDependencies: {
             $0.uploadStaging = Self.staging(["Scan.pdf"])
             $0.uploadDefaults = .inMemory(
-                ["someone else": UploadDefaults(folderPath: "Theirs", uploadsWithoutAsking: true)],
+                ["someone else": UploadDefaults(folderPath: "Theirs", shouldUploadWithoutAsking: true)],
                 activeAccountID: "me"
             )
         }

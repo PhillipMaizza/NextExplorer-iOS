@@ -58,7 +58,7 @@ struct ShareUploadFeatureTests {
     func uploadsStraightAwayWhenTheDefaultFolderSaysSo() async {
         let uploaded = LockIsolated<(String, Int)?>(nil)
         let clock = TestClock()
-        let store = store(defaults: UploadDefaults(folderPath: "Photos", uploadsWithoutAsking: true), uploaded: uploaded, clock: clock)
+        let store = store(defaults: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true), uploaded: uploaded, clock: clock)
 
         await store.send(.onAppear)
         await store.receive(\.sessionLoaded)
@@ -180,7 +180,7 @@ struct ShareUploadFeatureTests {
             }
             $0.authClient.restoreSession = { .preview }
             $0.authClient.me = { _ in throw error }
-            $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos", uploadsWithoutAsking: true)])
+            $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true)])
         }
         store.exhaustivity = .off
         await store.send(.onAppear)
@@ -205,7 +205,7 @@ struct ShareUploadFeatureTests {
             }
             $0.authClient.restoreSession = { .preview }
             $0.authClient.me = { _ in throw AuthClientError.network("offline") }
-            $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos", uploadsWithoutAsking: true)])
+            $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true)])
             $0.continuousClock = ImmediateClock()
         }
         store.exhaustivity = .off
