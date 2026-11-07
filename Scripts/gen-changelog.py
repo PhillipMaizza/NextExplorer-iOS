@@ -12,9 +12,12 @@ MARKETING_VERSION they carried.
   python3 Scripts/gen-changelog.py --notes 1.0.6         notes for one version (TestFlight)
   python3 Scripts/gen-changelog.py --notes 1.0.6 --links same, with (#PR) references (GitHub Release)
 
-Only what users notice is kept. A title is split into its comma separated clauses and the
-technical ones (tests, CI, lint, tooling, refactors, dependency pins, docs) are dropped; a PR
-with nothing user facing left is left out entirely.
+Notes speak to users. A title is split into its comma separated clauses; the technical ones
+(tests, CI, lint, tooling, refactors, dependency pins, docs) and the maintenance ones (fixes,
+audits, crashes, hardening, performance) are not listed one by one but folded into a single
+closing line, GENERIC_NOTE, so a version made only of such work still gets a note. A title that
+opens with a fix or an audit ("Fixes from a QA pass over X, Y") is folded whole, since the rest
+only lists what was fixed. Version numbers in titles are dropped.
 """
 import argparse, pathlib, re, subprocess, sys
 
@@ -26,6 +29,7 @@ REPO_URL = "https://github.com/PhillipMaizza/NextExplorer-iOS"
 NOTES_LIMIT = 4000
 
 SKIP = re.compile(r"^(bump version|update package\.resolved)|^initial commit$", re.IGNORECASE)
+GENERIC_NOTE = "Bug fixes and improvements"
 TECHNICAL = re.compile(
     r"\b(tests?|ui ?tests?|xcuitests?|ci|lint|linting|swiftformat|swiftlint|flakes?|flaky|de-?flake|"
     r"fastlane|lanes?|changelog|releases?|refactor\w*|dedup\w*|state machines?|import sort|"
@@ -34,10 +38,18 @@ TECHNICAL = re.compile(
     r"main[- ]thread|bool clusters?|typography rename)\b",
     re.IGNORECASE,
 )
+# Maintenance users only notice as "it works better": folded into GENERIC_NOTE.
+MAINTENANCE = re.compile(
+    r"\b(fix\w*|bugs?|bugfix\w*|crash\w*|regressions?|qa pass|audit\w*|harden\w*|stabili\w*|"
+    r"reliab\w*|leaks?|polish\w*|clean ?up|optimi[sz]\w*|performance|tweaks?|again|no longer)\b",
+    re.IGNORECASE,
+)
+# A first clause like this means the rest of the title only lists what was fixed.
+FIX_TITLE = re.compile(r"^(fix\w*|bugs?|bugfix\w*)\b|\b(qa pass|audit\w*)\b", re.IGNORECASE)
 MERGE_PR = re.compile(r"^Merge pull request #(\d+)")
 TRAILING_PR = re.compile(r"\s*\(#(\d+)\)\s*$")
 TICKET = re.compile(r"^NXTIOS-\d+(?:/\d+)*:\s*")
-VERSION_MENTION = re.compile(r",?\s*\bv\d+(?:\.\d+)+\b")
+VERSION_MENTION = re.compile(r",?\s*\b(?:version\s+)?v?\d+(?:\.\d+)+\b", re.IGNORECASE)
 MARKETING_VERSION = re.compile(r"MARKETING_VERSION = ([0-9.]+);")
 RELEASE_TAG = re.compile(r"^v(\d+(?:\.\d+)+)$")
 UPCOMING = "Unreleased"
@@ -73,7 +85,10 @@ def app_version(commit, cache):
 
 
 def entry(subject, body):
-    """(text, PR number) for one main commit, or None when it is left out."""
+    """(text, PR number, folded) for one main commit, or None when it is skipped.
+
+    text is the user facing part ("" when nothing is left); folded says some of the title went
+    into GENERIC_NOTE."""
     pr = None
     merge = MERGE_PR.match(subject)
     if merge:
@@ -88,13 +103,13 @@ def entry(subject, body):
     text = VERSION_MENTION.sub("", TICKET.sub("", subject)).strip().rstrip(",.")
     if not text or SKIP.search(text):
         return None
-    text = user_facing(text)
+    text, folded = user_facing(text)
     if not text:
-        return None
+        return "", pr, folded
     # Capitalize, but leave words like "iPhone" alone.
     if text[0].islower() and not (len(text) > 1 and text[1].isupper()):
         text = text[0].upper() + text[1:]
-    return text, pr
+    return text, pr, folded
 
 
 def release_tags():
@@ -111,16 +126,25 @@ def release_tags():
     return tags
 
 
+def folds(clause):
+    return bool(TECHNICAL.search(clause) or MAINTENANCE.search(clause))
+
+
 def user_facing(title):
-    """The title's user facing clauses, or "" when every clause is technical."""
+    """(the title's user facing clauses joined, whether any clause was folded)."""
     parts = re.split(r",|\s\+\s", title)
     clauses = [re.sub(r"^(and|plus)\s+", "", part.strip(), flags=re.IGNORECASE) for part in parts]
-    kept = [clause for clause in clauses if clause and not TECHNICAL.search(clause)]
-    return ", ".join(kept)
+    clauses = [clause for clause in clauses if clause]
+    if clauses and FIX_TITLE.search(clauses[0]):
+        return "", True
+    kept = [clause for clause in clauses if not folds(clause)]
+    return ", ".join(kept), len(kept) < len(clauses)
 
 
 def releases(ref, upcoming=UPCOMING):
-    """[(version, date, [(text, pr)])], newest first; untagged commits first under `upcoming`."""
+    """[(version, date, [(text, [pr])])], newest first; untagged commits first under `upcoming`.
+
+    Each version ends with GENERIC_NOTE, carrying the PRs folded into it, when any were."""
     log = git("log", "--first-parent", "--format=%H%x1f%cs%x1f%s%x1f%b%x1e", ref)
     tags = release_tags()
     oldest = min(tags, key=lambda commit: version_key(tags[commit])) if tags else None
@@ -138,10 +162,22 @@ def releases(ref, upcoming=UPCOMING):
         if version is None or made is None:
             continue
         if version not in groups:
-            groups[version] = {"date": date, "entries": []}
+            groups[version] = {"date": date, "entries": [], "folded": []}
             order.append(version)
-        groups[version]["entries"].append(made)
-    return [(v, groups[v]["date"], groups[v]["entries"]) for v in order]
+        text, pr, folded = made
+        group = groups[version]
+        if text:
+            group["entries"].append((text, [pr] if pr else []))
+        if folded:
+            group["folded"].append(pr)
+    history = []
+    for version in order:
+        group = groups[version]
+        entries = list(group["entries"])
+        if group["folded"]:
+            entries.append((GENERIC_NOTE, [pr for pr in group["folded"] if pr]))
+        history.append((version, group["date"], entries))
+    return history
 
 
 def markdown(history):
@@ -153,9 +189,9 @@ def markdown(history):
     ]
     for version, date, entries in history:
         out += [f"## {version} ({date})", ""]
-        for text, pr in entries:
-            link = f" ([#{pr}]({REPO_URL}/pull/{pr}))" if pr else ""
-            out.append(f"- {text}{link}")
+        for text, prs in entries:
+            links = ", ".join(f"[#{pr}]({REPO_URL}/pull/{pr})" for pr in prs)
+            out.append(f"- {text}" + (f" ({links})" if links else ""))
         out.append("")
     return "\n".join(out)
 
@@ -163,7 +199,10 @@ def markdown(history):
 def notes(history, version, links=False):
     for candidate, _, entries in history:
         if candidate == version:
-            text = "\n".join(f"- {text}" + (f" (#{pr})" if links and pr else "") for text, pr in entries)
+            text = "\n".join(
+                f"- {text}" + (f" ({', '.join(f'#{pr}' for pr in prs)})" if links and prs else "")
+                for text, prs in entries
+            )
             return text[:NOTES_LIMIT]
     return ""
 

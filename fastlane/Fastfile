@@ -31,9 +31,10 @@ COPYRIGHT_HOLDER = "Phillip Maizza".freeze
 FIRST_MAC_VERSION = "1.1.0".freeze
 PLATFORMS = %w[ios mac].freeze
 DEFAULT_DEVICE = "iPhone 17 Pro".freeze
-# Every TestFlight upload goes to the internal and the external testers. An external group's first
-# build of a version goes through Beta App Review before testers get it.
-TESTFLIGHT_DEFAULT_GROUPS = ["Testers", "External Testers"].freeze
+# Every TestFlight upload goes to the external testers; an external group's first build of a version
+# goes through Beta App Review before testers get it. The internal group already receives every
+# build on its own, and App Store Connect refuses to assign one to it.
+TESTFLIGHT_DEFAULT_GROUPS = ["External Testers"].freeze
 
 
 # Kept between runs so only what changed recompiles. Outside the repo so the linters never scan
@@ -123,7 +124,7 @@ platform :ios do
     )
   end
 
-  desc "TestFlight only: build iOS and the Mac and hand both to the internal and external testers."
+  desc "TestFlight only: build iOS and the Mac and hand both to the external testers."
   desc "Nothing goes to App Review and nothing is tagged. Options: platforms (ios,mac by default),"
   desc "bump, version"
   lane :beta do |options|
@@ -150,7 +151,7 @@ platform :ios do
   end
 
   desc "Release iOS and the Mac from main: next version after the newest v* tag, unit tests, cut"
-  desc "release/<version>, upload both to TestFlight (internal and external testers), submit"
+  desc "release/<version>, upload both to TestFlight (external testers), submit"
   desc "both for App Review, tag v<version>. Goes live"
   desc "automatically once approved. Options: platforms (ios,mac by default; one of them ships only"
   desc "that app), bump (patch, minor, major; default patch), version (explicit), manual_release"
