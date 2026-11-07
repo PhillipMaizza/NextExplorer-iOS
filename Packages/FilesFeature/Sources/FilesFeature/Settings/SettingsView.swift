@@ -3,6 +3,7 @@ import ComposableArchitecture
 import CoreModels
 import DesignSystem
 import FilesClient
+import FolderPickerFeature
 import Localization
 import SwiftUI
 
@@ -100,6 +101,10 @@ struct SettingsView: View {
                                 SettingsServerStorageSection(store: store)
                             }
 
+                            SettingsUploadDefaultsSection(
+                                store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults),
+                                filter: filter
+                            )
                             StorageSettingsSection(store: store, filter: filter)
                             OfflineSettingsSection(store: store, filter: filter)
                             SupportSettingsSection(filter: filter)
@@ -209,6 +214,10 @@ struct SettingsView: View {
             }
             .hapticFeedback(.warning, trigger: store.clearCacheConfirmationIsPresented)
             .modifier(TipJarPresentation(store: store))
+            // Here rather than on its section: a sheet attached inside a `List` section may not present.
+            .sheet(item: $store.scope(state: \.uploadDefaults.folderPicker, action: \.uploadDefaults.folderPicker)) { pickerStore in
+                DestinationPickerView(store: pickerStore)
+            }
             .sheet(item: $store.scope(state: \.offlineSelection, action: \.offlineSelection)) { selectionStore in
                 #if os(macOS)
                     MacOfflineSelectionSheet(store: selectionStore)
