@@ -594,7 +594,9 @@ jobs:
 
       - name: Run Mac XCUITests
         # Ad hoc signed: the app and its test runner only need to launch on this runner. A failing
-        # test runs once more on its own, as in the iPhone shards.
+        # test runs once more on its own, as in the iPhone shards. No entitlements file: its App
+        # Group and keychain groups need a provisioning profile, and macOS refuses to launch an ad
+        # hoc app that claims them. The sandbox still comes from the build settings.
         run: |
           set -o pipefail
           xcodebuild test \
@@ -609,6 +611,7 @@ jobs:
             -retry-tests-on-failure -test-iterations 2 -test-repetition-relaunch-enabled YES \
             -only-testing:NextExplorerUITests/MacCriticalPathUITests \
             CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= \
+            CODE_SIGN_ENTITLEMENTS= \
             | xcbeautify --renderer github-actions
 
       - name: Upload test results
