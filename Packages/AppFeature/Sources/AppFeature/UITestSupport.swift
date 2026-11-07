@@ -387,7 +387,7 @@
             let auth = UITestSupport.Auth(rawValue: environment[UITestSupport.authKey] ?? "") ?? .loggedOut
             let scenario = UITestSupport.Scenario(rawValue: environment[UITestSupport.scenarioKey] ?? "") ?? .normal
 
-            let expiry = UITestSupport.MockSessionExpiry()
+            let expiry = MockSessionExpiry()
             prepareDependencies {
                 $0.authClient = UITestSupport.authClient(auth, expiry: expiry)
                 $0.filesClient = UITestSupport.filesClient(scenario, expiry: expiry)
