@@ -6,6 +6,12 @@ import Security
 /// own group: an item still there moves across the first time it is read, the same way
 /// `MacKeychainStore` moves legacy items. A build without the sharing entitlement (unsigned
 /// local, CI and test builds) keeps using the app's own group.
+///
+/// Downgrading is a deliberate trade off. Once an item has moved, the app's own group no longer
+/// holds it, so reinstalling release 1.1.2 over a newer one finds nothing there and asks for a
+/// sign in. Keeping the old copy would leave a second credential copy in the keychain for as long
+/// as the app is installed, and signing out of the newer release could not reach it from the
+/// extension's group. A forced sign in after a downgrade is accepted over that.
 struct SharedGroupKeychainStore: KeychainStore {
     /// The shared access group.
     let shared: any KeychainStore
@@ -44,6 +50,35 @@ struct SharedGroupKeychainStore: KeychainStore {
 
     func delete(key: String) throws {
         try anyGroup.delete(key: key)
+    }
+
+    func allKeys() throws -> [String] {
+        try shared.allKeys()
+    }
+
+    /// Moves everything still in the app's own group across, without waiting for each item to be
+    /// read. The extension only sees the shared group, so an item the app has not read since the
+    /// update would look like a missing session to it. A copy already in the shared group is
+    /// newer, so it is never overwritten. Returns how many items moved.
+    @discardableResult
+    func migrateAll() -> Int {
+        guard let previousGroup, let keys = try? previousGroup.allKeys() else { return 0 }
+        var moved = 0
+        for key in keys {
+            guard let data = try? previousGroup.load(key: key) else { continue }
+            do {
+                if try shared.load(key: key) == nil {
+                    try shared.save(key: key, data: data)
+                    moved += 1
+                }
+            } catch let error where MacKeychainStore.isMissingEntitlement(error) {
+                return moved
+            } catch {
+                continue
+            }
+            try? previousGroup.delete(key: key)
+        }
+        return moved
     }
 }
 

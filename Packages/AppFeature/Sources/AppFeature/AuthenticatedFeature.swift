@@ -21,7 +21,11 @@ public struct AuthenticatedFeature {
 
         /// This account's stable identity, matching `SessionCredentials.accountID`.
         var accountID: String {
-            serverURL.absoluteString + "|" + user.username
+            Self.accountID(serverURL: serverURL, username: user.username)
+        }
+
+        static func accountID(serverURL: URL, username: String) -> String {
+            [serverURL.absoluteString, username].joined(separator: Constants.accountIDSeparator)
         }
     }
 
@@ -43,6 +47,29 @@ public struct AuthenticatedFeature {
     }
 
     @Dependency(\.authClient) var authClient
+    @Dependency(\.directoryCacheStore) var directoryCacheStore
+    @Dependency(\.jsonCacheStore) var jsonCacheStore
+    @Dependency(\.previewCacheStore) var previewCacheStore
+    @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.thumbnailCache) var thumbnailCache
+    @Dependency(\.textEditorETagStore) var textEditorETagStore
+    @Dependency(\.pendingAccountWipes) var pendingAccountWipes
+
+    private var accountCacheWipe: AccountCacheWipe {
+        AccountCacheWipe(
+            directoryCacheStore: directoryCacheStore,
+            jsonCacheStore: jsonCacheStore,
+            previewCacheStore: previewCacheStore,
+            offlineFileStore: offlineFileStore,
+            thumbnailCache: thumbnailCache,
+            textEditorETagStore: textEditorETagStore,
+            pendingWipes: pendingAccountWipes
+        )
+    }
+
+    private enum Constants {
+        static let accountIDSeparator = "|"
+    }
 
     public init() {}
 
@@ -54,13 +81,17 @@ public struct AuthenticatedFeature {
             switch action {
             case .mainTab(.delegate(.signOutButtonTapped)):
                 // The top "Sign Out" signs the ACTIVE account out and hands off to the next
-                // remaining account, if any. Cache/preference teardown for a full sign out is done
-                // by `AppFeature` once the delegate below reports no account is left.
+                // remaining account, if any. This account's cached data is removed here; the full
+                // teardown (every store, preferences) is done by `AppFeature` once the delegate
+                // below reports no account is left.
                 state.mainTab.settings.isSigningOut = true
                 let accountID = state.accountID
                 let authClient = authClient
+                let accountCacheWipe = accountCacheWipe
                 return .run { send in
+                    accountCacheWipe.markPending(accountID)
                     let next = await authClient.removeAccount(accountID)
+                    accountCacheWipe.wipe(accountID)
                     await send(.accountChangeResolved(next))
                 }
 
@@ -73,8 +104,11 @@ public struct AuthenticatedFeature {
 
             case let .mainTab(.delegate(.removeAccount(accountID))):
                 let authClient = authClient
+                let accountCacheWipe = accountCacheWipe
                 return .run { send in
+                    accountCacheWipe.markPending(accountID)
                     let next = await authClient.removeAccount(accountID)
+                    accountCacheWipe.wipe(accountID)
                     await send(.accountChangeResolved(next))
                 }
 

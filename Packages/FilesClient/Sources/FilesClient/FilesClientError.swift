@@ -7,6 +7,12 @@ public enum FilesClientError: Error, Equatable, Sendable {
     /// No usable connection to the server (offline, host unreachable, or timed out before any
     /// response). Callers that hold a cached copy should serve it instead of surfacing this.
     case offline
+    /// A mutation or upload got no answer within its budget. The server may still have done the
+    /// work, so callers refetch rather than assume it failed.
+    case timedOut
+    /// A text file was changed on the server after the editor opened it, so saving now would
+    /// silently replace those changes.
+    case changedOnServer
     case decoding(String)
     case server(statusCode: Int)
     /// A non 2xx response whose body carried a human readable message worth surfacing

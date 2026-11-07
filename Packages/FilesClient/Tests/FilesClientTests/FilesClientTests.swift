@@ -1,4 +1,5 @@
 import CoreModels
+import Dependencies
 @testable import FilesClient
 import Foundation
 import NetworkClient
@@ -12,7 +13,7 @@ struct FilesClientTests {
     }
 }
 
-// MARK: - Live wire-format / error-mapping tests
+// MARK: Live wire format and error mapping tests
 
 /// Exercises `FilesService` through `FilesClient.live` against a stubbed `URLSession`, so
 /// HTTP status mapping and JSON decoding are verified against a real `NetworkClient`, not
@@ -222,6 +223,29 @@ struct FilesClientLiveTests {
         let cached = store.read(serverURL: serverURL, path: "docs")
         #expect(cached?.items.map(\.name) == result.items.map(\.name))
         #expect(cached?.fetchedAt == Date(timeIntervalSince1970: 42))
+    }
+
+    @Test
+    func lateResponseWritesTheScopeCapturedAtRequestStart() async throws {
+        stub(statusCode: 200, body: browseResultJSON)
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("late-write-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: root) }
+        let store = DirectoryCacheStore.onDisk(rootDirectory: root)
+        let activeScope = LockIsolated("account-a")
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: store,
+            now: {
+                activeScope.setValue("account-b")
+                return Date(timeIntervalSince1970: 7)
+            },
+            activeScope: { activeScope.value }
+        )
+
+        _ = try await client.browse(serverURL, "docs")
+
+        #expect(store.bound(to: "account-a").read(serverURL: serverURL, path: "docs") != nil)
+        #expect(store.bound(to: "account-b").read(serverURL: serverURL, path: "docs") == nil)
     }
 
     @Test
@@ -1149,8 +1173,8 @@ struct FilesClientLiveTests {
         let body = try #require(StubURLProtocol.capturedRequestBody)
         let bodyString = try #require(String(data: body, encoding: .utf8))
         #expect(bodyString.contains("filename=\"we'ir d.txt\""))
-        // The unescaped name still rides the `relativePath` field verbatim for the server.
-        #expect(bodyString.contains("name=\"relativePath\"\r\n\r\nwe\"ir\nd.txt\r\n"))
+        // The `relativePath` field keeps the quote for the server but never carries a line break.
+        #expect(bodyString.contains("name=\"relativePath\"\r\n\r\nwe\"ir d.txt\r\n"))
     }
 
     @Test
@@ -1409,5 +1433,457 @@ struct FilesClientLiveTests {
         #expect(url.path == "/api/versions/v1/content")
         #expect(url.query?.contains("path=Docs/notes.txt") == true)
         #expect(try String(contentsOf: destination, encoding: .utf8) == "old text")
+    }
+}
+
+// MARK: Timeouts and editor conflicts
+
+extension FilesClientLiveTests {
+    private func resetStubs() {
+        StubURLProtocol.stub = nil
+        StubURLProtocol.failure = nil
+        StubURLProtocol.pathStubs = [:]
+        StubURLProtocol.methodStubs = [:]
+        StubURLProtocol.requests = []
+    }
+
+    private func editorStub(statusCode: Int, etag: String? = nil, body: String = "{}") -> StubURLProtocol.Stub {
+        var headers = ["Content-Type": "application/json"]
+        if let etag {
+            headers["ETag"] = etag
+        }
+        return .init(statusCode: statusCode, headers: headers, body: Data(body.utf8))
+    }
+
+    @Test
+    func aTimedOutMutationSurfacesAsTimedOutNotOffline() async {
+        resetStubs()
+        StubURLProtocol.failure = URLError(.timedOut)
+        let item = FileItem(name: "a.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")
+
+        await #expect(throws: FilesClientError.timedOut) {
+            try await makeClient().deleteItems(serverURL, [item])
+        }
+        resetStubs()
+    }
+
+    @Test
+    func aTimedOutReadStillSurfacesAsOffline() async {
+        resetStubs()
+        StubURLProtocol.failure = URLError(.timedOut)
+
+        await #expect(throws: FilesClientError.offline) {
+            _ = try await makeClient().browse(serverURL, "Docs")
+        }
+        resetStubs()
+    }
+
+    @Test
+    func savingAnUnchangedFileRevalidatesWithTheOpenETagThenWrites() async throws {
+        resetStubs()
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: 304)
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v2""#, body: #"{"success":true}"#)
+        let client = makeClient()
+
+        _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+        try await client.saveTextContent(serverURL, "Docs/n.txt", "new")
+        try await client.saveTextContent(serverURL, "Docs/n.txt", "newer")
+
+        let checks = StubURLProtocol.requests.filter { $0.httpMethod == "HEAD" }
+        #expect(checks.map { $0.value(forHTTPHeaderField: "If-None-Match") } == [#"W/"v1""#, #"W/"v2""#])
+        #expect(checks.first?.url?.query == "path=Docs/n.txt")
+        #expect(StubURLProtocol.requests.filter { $0.httpMethod == "PUT" }.count == 2)
+        resetStubs()
+    }
+
+    @Test
+    func savingAFileChangedOnTheServerThrowsOnceThenOverwrites() async throws {
+        resetStubs()
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: 200, etag: #"W/"other""#, body: #"{"content":"theirs"}"#)
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+        let client = makeClient()
+        _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+
+        await #expect(throws: FilesClientError.changedOnServer) {
+            try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+        }
+        #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "PUT" })
+
+        try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+        #expect(StubURLProtocol.requests.filter { $0.httpMethod == "PUT" }.count == 1)
+        resetStubs()
+    }
+
+    @Test
+    func aFileDeletedOrRenamedOnTheServerIsAConflictThenOverwrites() async throws {
+        resetStubs()
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: 404)
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+        let client = makeClient()
+        _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+
+        await #expect(throws: FilesClientError.changedOnServer) {
+            try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+        }
+        #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "PUT" })
+
+        try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+        #expect(StubURLProtocol.requests.filter { $0.httpMethod == "PUT" }.count == 1)
+        resetStubs()
+    }
+
+    @Test(arguments: [400, 413, 415, 422])
+    func aClientErrorOnTheHeadPreflightIsInconclusiveSoItPromptsInsteadOfOverwriting(status: Int) async throws {
+        resetStubs()
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: status)
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+        let client = makeClient()
+        _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+
+        await #expect(throws: FilesClientError.changedOnServer) {
+            try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+        }
+        #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "PUT" })
+        resetStubs()
+    }
+
+    @Test
+    func aSessionExpiredOnTheHeadPreflightSurfacesAsSessionExpiredNotAConflict() async throws {
+        resetStubs()
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: 401)
+        let client = makeClient()
+        _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+
+        await #expect(throws: FilesClientError.sessionExpired) {
+            try await client.saveTextContent(serverURL, "Docs/n.txt", "mine")
+        }
+        #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "PUT" })
+        resetStubs()
+    }
+
+    @Test
+    func aNewFileWithNoKnownETagIsSavedWithoutAPreflight() async throws {
+        resetStubs()
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+
+        try await makeClient().saveTextContent(serverURL, "Docs/new.txt", "mine")
+
+        #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "HEAD" })
+        #expect(StubURLProtocol.requests.filter { $0.httpMethod == "PUT" }.count == 1)
+        resetStubs()
+    }
+
+    @Test
+    func theSaveAndVersionDeleteWritesGetTheLongMutationBudgetAndTimeOutAsTimedOut() async throws {
+        resetStubs()
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+        StubURLProtocol.methodStubs["POST /api/versions/delete"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+        let client = makeClient()
+
+        try await client.saveTextContent(serverURL, "Docs/new.txt", "mine")
+        try await client.deleteVersions(serverURL, "Docs/new.txt", ["v1"], false)
+        try await client.deleteVersions(serverURL, "Docs/new.txt", [], true)
+
+        let editorSave = StubURLProtocol.requests.first { $0.httpMethod == "PUT" && $0.url?.path == "/api/editor" }
+        let deletes = StubURLProtocol.requests.filter { $0.url?.path == "/api/versions/delete" }
+        #expect(editorSave?.timeoutInterval == NetworkClient.mutationRequestTimeout)
+        #expect(deletes.count == 2)
+        #expect(deletes.allSatisfy { $0.timeoutInterval == NetworkClient.mutationRequestTimeout })
+
+        StubURLProtocol.failure = URLError(.timedOut)
+        await #expect(throws: FilesClientError.timedOut) {
+            try await client.saveTextContent(serverURL, "Docs/new.txt", "mine")
+        }
+        await #expect(throws: FilesClientError.timedOut) {
+            try await client.deleteVersions(serverURL, "Docs/new.txt", [], true)
+        }
+        resetStubs()
+    }
+
+    @Test
+    func onlyServerSideMutationsGetTheLongBudgetWhileReadsAndPostedReadsKeepTheInteractiveOne() async throws {
+        resetStubs()
+        let item = FileItem(name: "n.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["DELETE /api/files"] = editorStub(statusCode: 200, body: "{}")
+        StubURLProtocol.methodStubs["POST /api/files/move"] = editorStub(
+            statusCode: 200, body: #"{"success":true,"destination":"Other","items":[]}"#
+        )
+        StubURLProtocol.methodStubs["GET /api/browse/Docs"] = editorStub(statusCode: 200, body: #"{"items":[],"access":{"canRead":true,"canWrite":false,"canUpload":false,"canDelete":false,"canShare":false,"canDownload":true},"path":"Docs"}"#)
+        let client = makeClient()
+
+        _ = try await client.fetchTextContent(serverURL, item.id)
+        _ = try await client.browse(serverURL, "Docs")
+        try await client.deleteItems(serverURL, [item])
+        _ = try await client.transferItems(serverURL, [item], "Other", .move)
+
+        func timeout(_ method: String, _ path: String) -> TimeInterval? {
+            StubURLProtocol.requests.first { $0.httpMethod == method && $0.url?.path == path }?.timeoutInterval
+        }
+        let interactive = URLRequest(url: serverURL).timeoutInterval
+        #expect(timeout("POST", "/api/editor") == interactive)
+        #expect(timeout("GET", "/api/browse/Docs") == interactive)
+        #expect(timeout("DELETE", "/api/files") == NetworkClient.mutationRequestTimeout)
+        #expect(timeout("POST", "/api/files/move") == NetworkClient.mutationRequestTimeout)
+        resetStubs()
+    }
+
+    @Test
+    func aStalledDownloadFallsBackToThePinnedOfflineCopyBecauseItIsOfflineNotTimedOut() async throws {
+        resetStubs()
+        let scope = "offline-fallback-\(UUID().uuidString)"
+        defer { OfflineCache.removeScope(scope) }
+        let pinned = FileItem(name: "n.bin", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "bin")
+        let changedOnServer = FileItem(name: "n.bin", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 2, kind: "bin")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("pin-src-\(UUID().uuidString)")
+        try Data("x".utf8).write(to: source)
+        _ = try OfflineCache.store(downloadedURL: source, item: pinned, scope: scope)
+        StubURLProtocol.failure = URLError(.timedOut)
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: .testValue,
+            activeScope: { scope }
+        )
+
+        let url = try await client.downloadRawFile(serverURL, changedOnServer)
+
+        #expect(url == OfflineCache.localURL(forPath: pinned.id, scope: scope))
+        resetStubs()
+    }
+
+    private func pinnedTextClient(scope: String, bytes: Data) throws -> FilesClient {
+        let pinned = FileItem(name: "n.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: Int64(bytes.count), kind: "txt")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("pin-text-\(UUID().uuidString)")
+        try bytes.write(to: source)
+        _ = try OfflineCache.store(downloadedURL: source, item: pinned, scope: scope)
+        StubURLProtocol.failure = URLError(.timedOut)
+        return FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: .testValue,
+            activeScope: { scope }
+        )
+    }
+
+    @Test
+    func anOfflineTextReadUsesThePinnedCopyOfTheCapturedScopeNotTheGlobalOne() async throws {
+        resetStubs()
+        let scope = "offline-text-\(UUID().uuidString)"
+        defer { OfflineCache.removeScope(scope) }
+        let client = try pinnedTextClient(scope: scope, bytes: Data("pinned text".utf8))
+
+        #expect(try await client.fetchTextContent(serverURL, "Docs/n.txt") == "pinned text")
+        resetStubs()
+    }
+
+    @Test
+    func anOfflineTextReadRefusesAPinnedCopyAboveTheBackendEditorCap() async throws {
+        resetStubs()
+        let scope = "offline-text-\(UUID().uuidString)"
+        defer { OfflineCache.removeScope(scope) }
+        let cap = FilesService.EditorLimits.maxFileSizeBytes
+        let client = try pinnedTextClient(scope: scope, bytes: Data(repeating: UInt8(ascii: "a"), count: cap + 1))
+
+        await #expect(throws: FilesClientError.offline) {
+            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+        }
+        resetStubs()
+    }
+
+    @Test
+    func anOfflineTextReadAcceptsAPinnedCopyExactlyAtTheCap() async throws {
+        resetStubs()
+        let scope = "offline-text-\(UUID().uuidString)"
+        defer { OfflineCache.removeScope(scope) }
+        let cap = FilesService.EditorLimits.maxFileSizeBytes
+        let client = try pinnedTextClient(scope: scope, bytes: Data(repeating: UInt8(ascii: "a"), count: cap))
+
+        #expect(try await client.fetchTextContent(serverURL, "Docs/n.txt").utf8.count == cap)
+        resetStubs()
+    }
+
+    @Test
+    func anOfflineTextReadRefusesBinaryBytesWithNulInsteadOfOpeningGarbage() async throws {
+        resetStubs()
+        let scope = "offline-text-\(UUID().uuidString)"
+        defer { OfflineCache.removeScope(scope) }
+        let client = try pinnedTextClient(scope: scope, bytes: Data([0x89, 0x50, 0x4E, 0x47, 0x00, 0x01, 0x02, 0x00, 0xFF]))
+
+        await #expect(throws: FilesClientError.offline) {
+            _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+        }
+        resetStubs()
+    }
+
+    @Test
+    func aTimedOutEditorReadIsOfflineNotATimedOutMutation() async {
+        resetStubs()
+        StubURLProtocol.failure = URLError(.timedOut)
+
+        await #expect(throws: FilesClientError.offline) {
+            _ = try await makeClient().fetchTextContent(serverURL, "Docs/n.txt")
+        }
+        resetStubs()
+    }
+
+    @Test
+    func theConflictCheckIsAHeadRequestSoTheBodyIsNeverDownloaded() async throws {
+        resetStubs()
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: 304)
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+        let client = makeClient()
+        _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+
+        try await client.saveTextContent(serverURL, "Docs/n.txt", "new")
+
+        #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "GET" })
+        #expect(StubURLProtocol.requests.contains { $0.httpMethod == "HEAD" })
+        resetStubs()
+    }
+
+    @Test
+    func theBackendETagFormatIsReplayedVerbatimInIfNoneMatch() async throws {
+        let backendETag = #"W/"1a2b-3c-lq9z8a1b2c3-lq9z8a9z8y7-t2""#
+        resetStubs()
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: backendETag, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: 304)
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, etag: backendETag, body: #"{"success":true}"#)
+        let client = makeClient()
+        _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+
+        try await client.saveTextContent(serverURL, "Docs/n.txt", "new")
+
+        let head = StubURLProtocol.requests.first { $0.httpMethod == "HEAD" }
+        #expect(head?.value(forHTTPHeaderField: "If-None-Match") == backendETag)
+        resetStubs()
+    }
+
+    @Test
+    func theConflictCheckPercentEncodesPlusAmpersandHashPercentAndSpace() async throws {
+        resetStubs()
+        let path = "Docs/a+b & c#d%e.txt"
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: 304)
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+        let client = makeClient()
+        _ = try await client.fetchTextContent(serverURL, path)
+
+        try await client.saveTextContent(serverURL, path, "new")
+
+        let head = StubURLProtocol.requests.first { $0.httpMethod == "HEAD" }
+        #expect(head?.url?.query == "path=Docs/a%2Bb%20%26%20c%23d%25e.txt")
+        resetStubs()
+    }
+
+    @Test
+    func aSaveWithoutAnETagInTheAnswerLeavesTheNextSaveUnchecked() async throws {
+        resetStubs()
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: 304)
+        StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+        let client = makeClient()
+        _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+
+        try await client.saveTextContent(serverURL, "Docs/n.txt", "one")
+        try await client.saveTextContent(serverURL, "Docs/n.txt", "two")
+
+        #expect(StubURLProtocol.requests.filter { $0.httpMethod == "HEAD" }.count == 1)
+        resetStubs()
+    }
+
+    @Test
+    func renamingMovingOrDeletingForgetsTheStoredETag() async throws {
+        let item = FileItem(name: "n.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")
+        let renamed = #"{"item":{"name":"m.txt","path":"Docs","dateModified":"2024-01-01T00:00:00.000Z","size":1,"kind":"txt"}}"#
+        let transferred = #"{"success":true,"destination":"Other","items":[]}"#
+        let serverURL = serverURL
+        let cases: [(String, @Sendable (FilesClient) async throws -> Void)] = [
+            ("rename", { _ = try await $0.renameItem(serverURL, item, "m.txt") }),
+            ("move", { _ = try await $0.transferItems(serverURL, [item], "Other", .move) }),
+            ("delete", { try await $0.deleteItems(serverURL, [item]) }),
+        ]
+        for (name, operation) in cases {
+            resetStubs()
+            StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+            StubURLProtocol.methodStubs["POST /api/files/rename"] = editorStub(statusCode: 200, body: renamed)
+            StubURLProtocol.methodStubs["POST /api/files/move"] = editorStub(statusCode: 200, body: transferred)
+            StubURLProtocol.methodStubs["DELETE /api/files"] = editorStub(statusCode: 200, body: "{}")
+            StubURLProtocol.methodStubs["HEAD /api/editor"] = editorStub(statusCode: 304)
+            StubURLProtocol.methodStubs["PUT /api/editor"] = editorStub(statusCode: 200, body: #"{"success":true}"#)
+            let client = makeClient()
+            _ = try await client.fetchTextContent(serverURL, item.id)
+
+            try await operation(client)
+            try await client.saveTextContent(serverURL, item.id, "x")
+
+            #expect(!StubURLProtocol.requests.contains { $0.httpMethod == "HEAD" }, "\(name) must drop the stored ETag")
+        }
+        resetStubs()
+    }
+
+    @Test
+    func editorETagsAreFiledUnderTheScopeTheOperationStartedIn() async throws {
+        resetStubs()
+        let store = TextEditorETagStore()
+        let scopeBox = ScopeBox("scope-a")
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: .testValue,
+            textEditorETags: store,
+            activeScope: { scopeBox.value }
+        )
+        StubURLProtocol.methodStubs["POST /api/editor"] = editorStub(statusCode: 200, etag: #"W/"v1""#, body: #"{"content":"hi"}"#)
+        _ = try await client.fetchTextContent(serverURL, "Docs/n.txt")
+
+        let keyA = TextEditorETagStore.key(scope: "scope-a", serverURL: serverURL, path: "Docs/n.txt")
+        let keyB = TextEditorETagStore.key(scope: "scope-b", serverURL: serverURL, path: "Docs/n.txt")
+        #expect(store.etag(for: keyA) == #"W/"v1""#)
+        #expect(store.etag(for: keyB) == nil)
+        store.clear(scope: "scope-a")
+        #expect(store.etag(for: keyA) == nil)
+        resetStubs()
+    }
+
+    @Test
+    func aDirectlySeededInMemoryStoreIsVisibleToALiveClientUnderTheSameNonEmptyScope() async throws {
+        resetStubs()
+        let scope = "scope-seeded"
+        let store = DirectoryCacheStore.inMemory(scope: scope)
+        let seeded = BrowseResult(
+            items: [FileItem(name: "cached.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "txt")],
+            access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
+            path: "Docs"
+        )
+        store.write(serverURL: serverURL, path: "Docs", result: seeded, etag: #"W/"v1""#, fetchedAt: Date(timeIntervalSince1970: 0))
+        StubURLProtocol.stub = .init(statusCode: 304, headers: [:], body: Data())
+        let client = FilesClient.live(
+            networkClient: .live(protocolClasses: [StubURLProtocol.self]),
+            directoryCacheStore: store,
+            activeScope: { scope }
+        )
+
+        let browsed = try await client.browse(serverURL, "Docs")
+
+        #expect(browsed.items.map(\.name) == ["cached.txt"])
+        resetStubs()
+    }
+}
+
+private final class ScopeBox: @unchecked Sendable {
+    private let lock = NSLock()
+    private var scope: String
+
+    init(_ scope: String) {
+        self.scope = scope
+    }
+
+    var value: String {
+        get { lock.withLock { scope } }
+        set { lock.withLock { scope = newValue } }
     }
 }

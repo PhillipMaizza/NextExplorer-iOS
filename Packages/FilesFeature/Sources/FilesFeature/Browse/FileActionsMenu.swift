@@ -160,6 +160,7 @@ struct FileActionsMenu: View {
                 }
             }
             .tint(.primaryDS)
+            .disabled(!store.hasLoadedFavorites)
         }
         if store.access?.canShare ?? false {
             Button {

@@ -131,6 +131,64 @@ struct LoginClientCertificateTests {
         await store.skipInFlightEffects()
     }
 
+    @Test(
+        "A redirect to https carries the answered port, not the typed one",
+        arguments: [
+            ("files.example.com:8080", nil as Int?, "files.example.com"),
+            ("files.example.com:8080", 9443, "files.example.com:9443"),
+            ("files.example.com:8443", 8443, "files.example.com:8443"),
+            ("files.example.com", nil as Int?, "files.example.com"),
+            ("files.example.com", 8443, "files.example.com:8443"),
+            ("http://files.example.com:8080/path", nil as Int?, "files.example.com"),
+            ("[::1]:8080", 9443, "[::1]:9443"),
+            ("192.168.1.5:3000", nil as Int?, "192.168.1.5"),
+        ]
+    )
+    func httpRedirectCarriesThePort(typed: String, answeredPort: Int?, expected: String) async {
+        let status = AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: true, redirectedPort: answeredPort)
+        let store = TestStore(initialState: LoginFormFeature.State(connectionPhase: .testing, host: typed)) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.continuousClock = TestClock()
+        }
+        store.exhaustivity = .off
+        await store.send(.schemeChanged(.http))
+        await store.send(.testConnectionResponse(.success(status)))
+        #expect(store.state.scheme == .https)
+        #expect(store.state.host == expected)
+        await store.skipInFlightEffects()
+    }
+
+    @Test("Without a redirect the typed host and port stay as they are")
+    func noRedirectKeepsTheTypedAddress() async {
+        let status = AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: false, redirectedPort: 9443)
+        let store = TestStore(initialState: LoginFormFeature.State(connectionPhase: .testing, host: "files.example.com:8080")) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.continuousClock = TestClock()
+        }
+        store.exhaustivity = .off
+        await store.send(.schemeChanged(.http))
+        await store.send(.testConnectionResponse(.success(status)))
+        #expect(store.state.scheme == .http)
+        #expect(store.state.host == "files.example.com:8080")
+        await store.skipInFlightEffects()
+    }
+
+    @Test("A redirect on a host that isn't a valid address leaves the field alone")
+    func redirectOnAnInvalidHostKeepsIt() async {
+        let status = AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: true, redirectedPort: 9443)
+        let store = TestStore(initialState: LoginFormFeature.State(connectionPhase: .testing, host: "not a host")) {
+            LoginFormFeature()
+        } withDependencies: {
+            $0.continuousClock = TestClock()
+        }
+        store.exhaustivity = .off
+        await store.send(.testConnectionResponse(.success(status)))
+        #expect(store.state.host == "not a host")
+        await store.skipInFlightEffects()
+    }
+
     @Test("A server with a certificate in use shows it, and Change opens the sheet for it")
     func certificateInUseAndChange() async {
         let clock = TestClock()

@@ -63,7 +63,10 @@ struct NextExplorerApp: App {
         AppearanceMode(hasOverride: hasAppearanceOverride, prefersDark: isDarkAppearanceOverride)
     }
 
+    @Environment(\.scenePhase) private var scenePhase
+
     init() {
+        LaunchMigrations.start()
         #if os(macOS)
             // No window restores (each scene opts out), and leftover saved state from a crash,
             // Force Quit or test run made AppKit restore nothing, so no window opened at all.
@@ -80,13 +83,20 @@ struct NextExplorerApp: App {
         LocalizationOverride.apply(saved.isEmpty ? nil : saved)
         DesignSystemFonts.registerAll()
         DesignSystemFonts.applyGlobalAppearance()
-        // Share uploads that ran or finished while the app was closed get cleaned up and reported.
-        BackgroundUploadEvents.reconnectPending()
+        BackgroundUploadEvents.installNotificationHandling()
+        Task.detached { await BackgroundUploadEvents.reconnectPending() }
     }
 
     var body: some Scene {
         WindowGroup {
             AppView(store: Self.store)
+                // Share uploads that ran or finished while the app was closed or in the background
+                // get cleaned up and reported each time the app comes to the front.
+                .onChange(of: scenePhase, initial: true) { _, phase in
+                    guard phase == .active else { return }
+                    BackgroundUploadEvents.startPeriodicReconnect()
+                    Task.detached { await BackgroundUploadEvents.sceneDidBecomeActive() }
+                }
                 .tint(Color.accent)
                 .appAppearance(appearanceMode)
                 .observesFoldableHinge()

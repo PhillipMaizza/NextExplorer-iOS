@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import Dependencies
 import DesignSystem
 import FolderPickerFeature
 import Localization
@@ -9,11 +10,13 @@ private enum Metrics {
     static let contentSpacing: CGFloat = .space24
     static let sectionSpacing: CGFloat = .space8
     static let padding: CGFloat = .space24
+    static let singleLine = 1
 }
 
 /// The Share Extension's screen. A design system card on iPhone and iPad, a native form on the Mac.
 public struct ShareUploadView: View {
     @Bindable var store: StoreOf<ShareUploadFeature>
+    @Dependency(\.openApp) private var openApp
 
     public init(store: StoreOf<ShareUploadFeature>) {
         self.store = store
@@ -46,12 +49,12 @@ public struct ShareUploadView: View {
                         onClose: { store.send(.cancelTapped) }
                     )
                     ShareUploadStatus(store: store)
-                    if store.credentials != nil, store.canChooseAccount || [.checking, .ready, .preparing, .started].contains(store.phase) {
+                    if store.credentials != nil, store.canChooseAccount || store.shouldShowDetails {
                         section(L10n.ShareUpload.accountLabel) {
                             ShareUploadAccountMenu(store: store)
                         }
                     }
-                    if store.credentials != nil, [.checking, .ready, .preparing, .started].contains(store.phase) {
+                    if store.credentials != nil, store.shouldShowDetails {
                         section(L10n.ShareUpload.folderLabel) {
                             ShareUploadFolderButton(store: store)
                         }
@@ -59,12 +62,9 @@ public struct ShareUploadView: View {
                 }
                 .padding(Metrics.padding)
             }
-            if [.checking, .ready, .preparing].contains(store.phase) {
+            if store.state.hasActions(canOpenApp: openApp.isAvailable) {
                 DSSheetFooter {
-                    DSButton(L10n.ShareUpload.upload, style: .primary, isLoading: store.phase == .preparing) {
-                        store.send(.uploadTapped)
-                    }
-                    .disabled(!store.canUpload)
+                    ShareUploadActions(store: store)
                 }
             }
         }
@@ -77,39 +77,6 @@ public struct ShareUploadView: View {
             content()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-}
-
-/// The line under the title: how many files, or why nothing can be uploaded.
-struct ShareUploadStatus: View {
-    let store: StoreOf<ShareUploadFeature>
-
-    var body: some View {
-        switch store.phase {
-        case .loading:
-            DSSpinner().frame(maxWidth: .infinity)
-        case .signedOut:
-            DSErrorCard(L10n.ShareUpload.signedOut)
-        case .nothingToUpload:
-            DSErrorCard(L10n.ShareUpload.nothingToUpload)
-        case .failed:
-            DSErrorCard(L10n.ShareUpload.failed)
-        case .certificateRequired:
-            DSErrorCard(L10n.Error.clientCertificateRequired)
-        case .certificateRejected:
-            DSErrorCard(L10n.Error.clientCertificateRejected)
-        case .checking, .ready:
-            Text(L10n.ShareUpload.itemCount(store.itemCount)).type(.body2(.regular), style: .secondary)
-        case .preparing:
-            Text(L10n.ShareUpload.preparing(min(store.preparedCount + 1, store.itemCount), store.itemCount))
-                .type(.body2(.regular), style: .secondary)
-        case .started:
-            Label {
-                Text(L10n.ShareUpload.started).type(.body2(.regular))
-            } icon: {
-                IconKit.checkmark.foregroundStyle(Color.positiveText)
-            }
-        }
     }
 }
 
@@ -136,15 +103,24 @@ struct ShareUploadAccountMenu: View {
                 .pickerStyle(.inline)
             } label: {
                 HStack(spacing: .space8) {
-                    Text(store.accountName).type(.body2(.regular)).lineLimit(1).truncationMode(.middle)
+                    Text(store.accountName).type(.body2(.regular)).lineLimit(Metrics.singleLine).truncationMode(.middle)
                     Spacer()
                     IconKit.chevronUpDown.foregroundStyle(Color.secondaryDS)
                 }
                 .dsCard()
             }
             .buttonStyle(DSHapticButtonStyle())
+            .accessibilityLabel(L10n.ShareUpload.accountLabel)
+            .accessibilityValue(store.accountName)
+            .accessibilityHint(L10n.ShareUpload.accountHint)
         } else {
-            Text(store.accountName).type(.body2(.regular)).frame(maxWidth: .infinity, alignment: .leading).dsCard()
+            Text(store.accountName)
+                .type(.body2(.regular))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .dsCard()
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(L10n.ShareUpload.accountLabel)
+                .accessibilityValue(store.accountName)
         }
     }
 }
@@ -161,7 +137,7 @@ struct ShareUploadFolderButton: View {
                 IconKit.folderFill.foregroundStyle(Color.accentText)
                 Text(store.destination.isEmpty ? L10n.ShareUpload.folderChoose : store.destination)
                     .type(.body2(.regular), style: store.destination.isEmpty ? .secondary : .primaryOnSurface)
-                    .lineLimit(1)
+                    .lineLimit(Metrics.singleLine)
                     .truncationMode(.head)
                 Spacer()
                 IconKit.chevronRight.foregroundStyle(Color.secondaryDS)
@@ -170,74 +146,82 @@ struct ShareUploadFolderButton: View {
         }
         .buttonStyle(DSHapticButtonStyle())
         .disabled(store.phase != .ready)
+        .accessibilityLabel(L10n.ShareUpload.folderLabel)
+        .accessibilityValue(store.destination.isEmpty ? L10n.ShareUpload.folderChoose : store.destination)
+        .accessibilityHint(L10n.ShareUpload.folderHint)
     }
 }
 
 extension StoreOf<ShareUploadFeature> {
-    static func preview(_ phase: ShareUploadFeature.Phase, destination: String = "Photos/2026", accounts: Int = 1) -> StoreOf<ShareUploadFeature> {
+    static func preview(
+        _ phase: ShareUploadFeature.Phase,
+        destination: String = "Photos/2026",
+        accounts: Int = 1,
+        notice: ShareUploadFeature.Notice? = nil,
+        failures: [ItemFailure] = [],
+        livePhotos: Int = 0
+    ) -> StoreOf<ShareUploadFeature> {
         var state = ShareUploadFeature.State()
         state.accounts = Array([SessionCredentials.preview, .previewSecond].prefix(accounts))
         state.phase = phase
         state.itemCount = 12
-        state.preparedCount = 4
+        state.livePhotoCount = livePhotos
+        state.preparingTotal = 12
+        state.progress = PreparationProgress(completed: 4, fraction: 0.4)
+        state.stagedCount = 9
+        state.failures = phase == .failed || phase == .partiallyPrepared ? (failures.isEmpty ? ItemFailure.previews : failures) : []
+        state.notice = notice
         state.destination = destination
-        if phase != .signedOut {
+        if phase != .signedOut, phase != .sessionUnreadable {
             state.credentials = .preview
         }
         return Store(initialState: state) { EmptyReducer() }
     }
 }
 
-extension SessionCredentials {
-    static let previewSecond = SessionCredentials(
-        serverBaseURL: URL(string: "https://home.example.org")!,
-        authMode: .local,
-        cookieName: "connect.sid",
-        cookieValue: "preview",
-        cookieDomain: "home.example.org",
-        cookiePath: "/",
-        cookieIsSecure: true,
-        expiresAt: nil,
-        username: "family"
-    )
+private enum PreviewConstants {
+    static let firstHost = "files.example.com"
+    static let secondHost = "home.example.org"
+    static let cookieName = "connect.sid"
+    static let cookieValue = "preview"
+    static let cookiePath = "/"
+}
 
-    static let preview = SessionCredentials(
-        serverBaseURL: URL(string: "https://files.example.com")!,
-        authMode: .local,
-        cookieName: "connect.sid",
-        cookieValue: "preview",
-        cookieDomain: "files.example.com",
-        cookiePath: "/",
-        cookieIsSecure: true,
-        expiresAt: nil,
-        username: "phillip"
-    )
+extension SessionCredentials {
+    private static func previewAccount(host: String, username: String) -> SessionCredentials {
+        SessionCredentials(
+            serverBaseURL: URL(string: "https://\(host)") ?? URL(fileURLWithPath: PreviewConstants.cookiePath),
+            authMode: .local,
+            cookieName: PreviewConstants.cookieName,
+            cookieValue: PreviewConstants.cookieValue,
+            cookieDomain: host,
+            cookiePath: PreviewConstants.cookiePath,
+            cookieIsSecure: true,
+            expiresAt: nil,
+            username: username
+        )
+    }
+
+    static let previewSecond = previewAccount(host: PreviewConstants.secondHost, username: "family")
+    static let preview = previewAccount(host: PreviewConstants.firstHost, username: "phillip")
 }
 
 #Preview("Ready") { ShareUploadView(store: .preview(.ready)) }
 #Preview("Two accounts") { ShareUploadView(store: .preview(.ready, accounts: 2)) }
 #Preview("No folder yet") { ShareUploadView(store: .preview(.ready, destination: "")) }
 #Preview("Preparing") { ShareUploadView(store: .preview(.preparing)) }
+#Preview("Handing off") { ShareUploadView(store: .preview(.handingOff)) }
 #Preview("Started") { ShareUploadView(store: .preview(.started)) }
 #Preview("Loading") { ShareUploadView(store: .preview(.loading)) }
 #Preview("Checking the server") { ShareUploadView(store: .preview(.checking)) }
+#Preview("Partly prepared") { ShareUploadView(store: .preview(.partiallyPrepared)) }
 #Preview("Signed out") { ShareUploadView(store: .preview(.signedOut)) }
+#Preview("Session unreadable") { ShareUploadView(store: .preview(.sessionUnreadable)) }
 #Preview("Nothing to upload") { ShareUploadView(store: .preview(.nothingToUpload)) }
 #Preview("Failed") { ShareUploadView(store: .preview(.failed)) }
 #Preview("Certificate required") { ShareUploadView(store: .preview(.certificateRequired)) }
 #Preview("Certificate refused") { ShareUploadView(store: .preview(.certificateRejected)) }
-
-#Preview("Status, every phase") {
-    VStack(alignment: .leading, spacing: .space16) {
-        ForEach(
-            [ShareUploadFeature.Phase.loading, .checking, .ready, .preparing, .started, .signedOut, .nothingToUpload, .failed, .certificateRequired, .certificateRejected],
-            id: \.self
-        ) { phase in
-            ShareUploadStatus(store: .preview(phase))
-        }
-    }
-    .padding(.space24)
-}
+#Preview("Default folder gone") { ShareUploadView(store: .preview(.ready, destination: "", notice: .defaultFolderUnavailable)) }
 
 #Preview("Account menu") {
     VStack(spacing: .space16) {

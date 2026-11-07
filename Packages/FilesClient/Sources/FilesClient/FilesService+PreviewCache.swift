@@ -4,22 +4,26 @@ import Foundation
 import NetworkClient
 
 extension FilesService {
-    static let previewCacheRootDirectory = "PreviewCache"
+    static let previewCacheRootDirectory = CacheLayout.previewCacheName
     static let cacheMetaSidecarName = ".meta"
     static let rawPreviewFileExtension = "jpg"
     /// `previewCacheNamespace` / `rawDownloadCacheNamespace` keep `previewFile`
     /// (`GET /api/preview`) and `downloadRawFile` (`POST /api/download`) from ever sharing a
     /// cache entry for the same item: two different endpoints, nothing guarantees identical
     /// bytes for every kind that uses both (RAW images already diverge one direction).
-    static let previewCacheNamespace = "preview"
-    static let rawDownloadCacheNamespace = "download"
+    static let previewCacheNamespace = CacheLayout.previewNamespaceName
+    static let rawDownloadCacheNamespace = CacheLayout.rawDownloadNamespaceName
     /// Flat subdirectory of thumbnail image bytes written by `FilesFeature`'s `ThumbnailCache`
     /// under this same `PreviewCache` root. Kept in sync with `ThumbnailCache`'s own
     /// `previewCacheSubdirectory("thumbnails")`; the two live in different packages, so the name
     /// is duplicated deliberately. Included in eviction so thumbnails (each up to the 32 MB
     /// response cap when `thumbnailURL` falls back to a full preview) can't grow the cache
     /// without bound.
-    static let thumbnailCacheSubdirectory = "thumbnails"
+    static let thumbnailCacheSubdirectory = CacheLayout.thumbnailsDirectoryName
+    /// Flat subdirectories written by `FilesFeature` whose file names start with the account prefix
+    /// (`CacheAccountScope.scopedFileName`): thumbnail bytes, remembered thumbnail URLs and
+    /// rendered PDF first pages.
+    static let flatScopedCacheSubdirectories = CacheLayout.flatScopedDirectories
 
     /// Total byte ceiling for the on disk preview + raw download cache. Without it the cache
     /// only ever grows (each previewed/downloaded file is added, never reclaimed) and can fill
@@ -33,8 +37,10 @@ extension FilesService {
     /// (`rawPreviewService`) whatever the original extension, so they're stored with a
     /// matching name or QuickLook's extension-based UTI detection tries to render JPEG bytes
     /// as e.g. `.nef` and fails.
-    private func previewCacheSlot(for item: FileItem) -> (directory: URL, fileURL: URL, metaURL: URL) {
-        let directory = Self.previewCacheDirectory(for: item, namespace: Self.previewCacheNamespace)
+    private func previewCacheSlot(
+        for item: FileItem, scope: String
+    ) -> (directory: URL, fileURL: URL, metaURL: URL) {
+        let directory = Self.previewCacheDirectory(for: item, namespace: Self.previewCacheNamespace, scope: scope)
         let safeName = SafeFileName.component(item.name)
         let fileName = item.isRawImage ? "\(safeName).\(Self.rawPreviewFileExtension)" : safeName
         return (
@@ -47,7 +53,11 @@ extension FilesService {
     /// The already-downloaded preview file for `item`, or `nil` when it isn't cached (or the
     /// cache entry is stale). Pure disk check, no network.
     func cachedPreviewFileURL(item: FileItem) -> URL? {
-        let slot = previewCacheSlot(for: item)
+        cachedPreviewFileURL(item: item, scope: activeScope())
+    }
+
+    private func cachedPreviewFileURL(item: FileItem, scope: String) -> URL? {
+        let slot = previewCacheSlot(for: item, scope: scope)
         guard FileManager.default.fileExists(atPath: slot.fileURL.path),
               let cachedMeta = try? String(contentsOf: slot.metaURL, encoding: .utf8),
               cachedMeta == Self.cacheMetaValue(for: item)
@@ -70,18 +80,21 @@ extension FilesService {
     }
 
     private func fetchPreviewFile(serverURL: URL, item: FileItem, lowPriority: Bool) async throws -> URL {
+        // The scope is pinned here so a response that lands after an account switch is still written
+        // to the account that asked for it.
+        let scope = activeScope()
         // A durable offline pin wins over the ephemeral preview cache: it is the same file, never
         // evicted, and lets the preview open with no network at all.
-        if let offline = OfflineCache.localURL(for: item) {
+        if let offline = OfflineCache.localURL(for: item, scope: scope) {
             return offline
         }
-        if let cached = cachedPreviewFileURL(item: item) {
+        if let cached = cachedPreviewFileURL(item: item, scope: scope) {
             return cached
         }
         guard let url = FilesClient.previewURL(serverURL: serverURL, item: item) else {
             throw FilesClientError.decoding("Could not build preview URL.")
         }
-        let slot = previewCacheSlot(for: item)
+        let slot = previewCacheSlot(for: item, scope: scope)
         let request = Self.makeRequest(url: url, method: .get)
         do {
             return try await downloadToCache(
@@ -93,7 +106,7 @@ extension FilesService {
             // placeholder `FileItem` with no real size/date): serve any pinned copy for this path as
             // a last resort rather than failing. Only when genuinely offline, never masking a real
             // server error or a changed file while online.
-            if let fallback = OfflineCache.localURL(forPath: item.id) {
+            if let fallback = OfflineCache.localURL(forPath: item.id, scope: scope) {
                 return fallback
             }
             throw error
@@ -111,10 +124,11 @@ extension FilesService {
     /// first. Reuses `previewFile`'s cache layout (same staleness key) but under its own
     /// `namespace`, so the two endpoints never share a cache slot for the same item.
     func downloadRawFile(serverURL: URL, item: FileItem) async throws -> URL {
-        if let offline = OfflineCache.localURL(for: item) {
+        let scope = activeScope()
+        if let offline = OfflineCache.localURL(for: item, scope: scope) {
             return offline
         }
-        let directory = Self.previewCacheDirectory(for: item, namespace: Self.rawDownloadCacheNamespace)
+        let directory = Self.previewCacheDirectory(for: item, namespace: Self.rawDownloadCacheNamespace, scope: scope)
         let fileURL = directory.appendingPathComponent(SafeFileName.component(item.name))
         let metaURL = directory.appendingPathComponent(Self.cacheMetaSidecarName)
 
@@ -132,7 +146,7 @@ extension FilesService {
         do {
             return try await downloadToCache(request, directory: directory, fileURL: fileURL, metaURL: metaURL, item: item)
         } catch let error as FilesClientError where error == .offline {
-            if let fallback = OfflineCache.localURL(forPath: item.id) {
+            if let fallback = OfflineCache.localURL(forPath: item.id, scope: scope) {
                 return fallback
             }
             throw error
@@ -154,10 +168,11 @@ extension FilesService {
         item: FileItem,
         onProgress: @Sendable @escaping (Double) -> Void = { _ in }
     ) async throws -> URL {
-        if let existing = OfflineCache.localURL(for: item) {
+        let scope = activeScope()
+        if let existing = OfflineCache.localURL(for: item, scope: scope) {
             return existing
         }
-        guard OfflineCache.slot(for: item, create: true) != nil else {
+        guard OfflineCache.slot(for: item, create: true, scope: scope) != nil else {
             throw FilesClientError.decoding("Could not open the offline store.")
         }
         let url = serverURL.appendingPathComponent(APIPath.download)
@@ -179,7 +194,7 @@ extension FilesService {
         defer { try? FileManager.default.removeItem(at: downloadedURL) }
         try Self.validate(response)
         do {
-            return try OfflineCache.store(downloadedURL: downloadedURL, item: item)
+            return try OfflineCache.store(downloadedURL: downloadedURL, item: item, scope: scope)
         } catch let error as FilesClientError {
             throw error
         } catch {
@@ -195,7 +210,7 @@ extension FilesService {
         item: FileItem,
         onProgress: @Sendable @escaping (TransferProgress) -> Void
     ) async throws -> URL {
-        if !item.isDirectory, let offline = OfflineCache.localURL(for: item) {
+        if !item.isDirectory, let offline = OfflineCache.localURL(for: item, scope: activeScope()) {
             let copy = FileManager.default.temporaryDirectory
                 .appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
             do {
@@ -353,16 +368,47 @@ extension FilesService {
     /// One subdirectory per item path, keyed by a SHA256 of the full `item.id`. A hash is
     /// injective in a way slash flattening was not (`a/b` and `a_b` both flattened to `a_b`
     /// and could serve each other's bytes on a matching size/mtime) and can never traverse.
-    static func previewCacheDirectory(for item: FileItem, namespace: String) -> URL {
-        let cachesDirectory = (try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
+    static func previewCacheDirectory(
+        for item: FileItem, namespace: String, scope: String = CacheAccountScope.current, in cachesRoot: URL? = nil
+    ) -> URL {
+        let cachesDirectory = cachesRoot
+            ?? (try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true))
             ?? FileManager.default.temporaryDirectory
-        // The active account is folded into the slot key so two accounts never serve each other's
+        // The account is folded into the slot key so two accounts never serve each other's
         // downloaded preview/raw bytes for a matching item id.
-        let digest = SHA256.hash(data: Data("\(CacheAccountScope.current)\n\(item.id)".utf8))
+        let digest = SHA256.hash(data: Data(CacheLayout.key(scope, item.id).utf8))
         let key = digest.map { String(format: "%02x", $0) }.joined()
         return cachesDirectory.appendingPathComponent(Self.previewCacheRootDirectory, isDirectory: true)
             .appendingPathComponent(namespace, isDirectory: true)
-            .appendingPathComponent(key, isDirectory: true)
+            .appendingPathComponent(CacheAccountScope.scopedFileName(key, scope: scope), isDirectory: true)
+    }
+
+    /// Removes one account's downloaded preview and raw bytes, leaving other accounts' slots.
+    /// Slot directories carry the account's filename prefix. Thumbnails are keyed by URL only and
+    /// are not account scoped, so they are not touched here.
+    static func clearPreviewCache(scope: String, in cachesDirectory: URL? = nil) {
+        let fileManager = FileManager.default
+        guard let cachesDirectory = cachesDirectory ?? (try? fileManager.url(
+            for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false
+        )) else { return }
+        let root = cachesDirectory.appendingPathComponent(previewCacheRootDirectory, isDirectory: true)
+        let prefix = CacheAccountScope.namePrefix(for: scope)
+        evictionLock.lock()
+        defer { evictionLock.unlock() }
+        for namespace in [previewCacheNamespace, rawDownloadCacheNamespace] {
+            let namespaceRoot = root.appendingPathComponent(namespace, isDirectory: true)
+            let slots = (try? fileManager.contentsOfDirectory(at: namespaceRoot, includingPropertiesForKeys: nil)) ?? []
+            for slot in slots where slot.lastPathComponent.hasPrefix(prefix) {
+                try? fileManager.removeItem(at: slot)
+            }
+        }
+        for flatDirectory in flatScopedCacheSubdirectories {
+            let directory = root.appendingPathComponent(flatDirectory, isDirectory: true)
+            let files = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
+            for file in files where file.lastPathComponent.hasPrefix(prefix) {
+                try? fileManager.removeItem(at: file)
+            }
+        }
     }
 
     private static func cacheMetaValue(for item: FileItem) -> String {

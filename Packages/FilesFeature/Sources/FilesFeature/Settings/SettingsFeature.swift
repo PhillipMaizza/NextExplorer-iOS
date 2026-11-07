@@ -82,7 +82,7 @@ public struct SettingsFeature {
         public var serverUsage: IdentifiedArrayOf<VolumeUsage> = []
 
         public var displayName: String {
-            user.displayName ?? user.username
+            user.displayLabel
         }
 
         public init(serverURL: URL, user: User) {

@@ -9,23 +9,27 @@ import Foundation
 enum DirectoryPrefetch {
     /// A folder cached more recently than this is left alone; the interactive fetch that
     /// happens when the user actually opens it is fresh enough.
-    static let freshnessWindow: TimeInterval = 15 * 60
+    static let freshnessWindow: TimeInterval = 15 * secondsPerMinute
     static let maxConcurrent = 3
+    private static let secondsPerMinute: TimeInterval = 60
 
+    /// `paths` arrive in priority order. The folders cached recently are dropped first and `limit`
+    /// then caps what is left, so fresh folders never spend the budget.
     static func run(
         paths: [String],
+        limit: Int,
         serverURL: URL,
         filesClient: FilesClient,
         directoryCacheStore: DirectoryCacheStore
     ) async {
-        // A background cache warm: an approximate freshness check against the wall clock is
-        // fine here, so this reads `Date()` directly rather than taking a date dependency.
-        let reference = Date()
-        let stale = paths.filter { path in
+        // A background cache warm: an approximate freshness check against the wall clock is fine
+        // here, so this reads `Date()` directly rather than taking a date dependency.
+        let now = Date()
+        let stale = Array(paths.filter { path in
             guard !path.isEmpty else { return false }
             guard let writtenAt = directoryCacheStore.lastWrittenAt(serverURL: serverURL, path: path) else { return true }
-            return reference.timeIntervalSince(writtenAt) >= freshnessWindow
-        }
+            return now.timeIntervalSince(writtenAt) >= freshnessWindow
+        }.prefix(limit))
         guard !stale.isEmpty else { return }
 
         await withTaskGroup(of: Void.self) { group in

@@ -462,6 +462,8 @@ userDetail.removeVolumeTitle	Volume verwijderen?
 userDetail.removeVolumeMessage	%@ wordt van deze gebruiker losgekoppeld. De map zelf blijft ongemoeid.
 userDetail.removeUserTitle	Gebruiker verwijderen?
 userDetail.removeUserMessage	%@ verliest onmiddellijk de toegang. Zijn bestanden op de server worden niet verwijderd.
+userDetail.grantAdminTitle	Beheerdersrechten verlenen?
+userDetail.grantAdminMessage	%@ wordt beheerder met volledige controle over bestanden, shares en gebruikers. Beheerders kunnen niet vanuit de app worden gedegradeerd.
 userDetail.volumeSheetLabelField	Label
 userDetail.volumeSheetLabelPlaceholder	Volumelabel
 userDetail.volumeSheetAccessMode	Toegangsmodus
@@ -604,6 +606,7 @@ offline.manageRow	Offline bestanden beheren
 offline.manageTitle	Offline bestanden
 offline.manageEmpty	Er is niets gedownload voor offline gebruik.
 offline.preferOfflineToggle	Gedownloade kopieën afspelen
+offline.pinRemoved	%@ bestaat niet meer op de server en is verwijderd uit de offlinebestanden
 offline.preferOfflineSubtitle	Een gedownloade video gebruiken in plaats van streamen wanneer die beschikbaar is.
 offline.tunnelSpeedNote	Toegang tot je server via een externe tunnel kan downloads vertragen. Verbind voor grote bestanden met hetzelfde netwerk en gebruik het lokale adres van je server.
 menu.about	Over NextExplorer
@@ -785,9 +788,25 @@ shareUpload.signedOut	Log eerst in bij NextExplorer en deel dan opnieuw.
 shareUpload.nothingToUpload	Er is hier niets dat NextExplorer kan uploaden.
 shareUpload.failed	De bestanden konden niet worden voorbereid voor upload.
 shareUpload.notificationDoneTitle	Upload voltooid
-shareUpload.notificationDoneBody	%lld bestanden geüpload naar ‘%@’.
 shareUpload.notificationFailedTitle	Sommige bestanden zijn niet geüpload
-shareUpload.notificationFailedBody	%lld van %lld bestanden konden niet worden geüpload. Deel ze opnieuw om het nog eens te proberen.
+shareUpload.notificationDoneBody#one	%lld bestand geüpload naar ‘%@’.
+shareUpload.notificationDoneBody#other	%lld bestanden geüpload naar ‘%@’.
+shareUpload.notificationAllFailedTitle	Upload mislukt
+shareUpload.failureUnauthorized#one	%lld bestand is niet geüpload. Log opnieuw in en probeer het nog eens.
+shareUpload.failureUnauthorized#other	%lld bestanden zijn niet geüpload. Log opnieuw in en probeer het nog eens.
+shareUpload.failureForbidden#one	%lld bestand is niet geüpload. Je hebt geen toestemming om bestanden aan die map toe te voegen.
+shareUpload.failureForbidden#other	%lld bestanden zijn niet geüpload. Je hebt geen toestemming om bestanden aan die map toe te voegen.
+shareUpload.failureServerFull#one	%lld bestand is niet geüpload. De server heeft geen opslagruimte meer.
+shareUpload.failureServerFull#other	%lld bestanden zijn niet geüpload. De server heeft geen opslagruimte meer.
+shareUpload.failureNetwork#one	%lld bestand is niet geüpload. De verbinding is mislukt. Probeer het opnieuw als je weer online bent.
+shareUpload.failureNetwork#other	%lld bestanden zijn niet geüpload. De verbinding is mislukt. Probeer het opnieuw als je weer online bent.
+shareUpload.failureOther#one	%lld bestand kon niet worden geüpload.
+shareUpload.failureOther#other	%lld bestanden konden niet worden geüpload.
+shareUpload.notificationRetry	Opnieuw proberen
+shareUpload.notificationHiddenPreview	Open NextExplorer om te zien hoe je upload is gegaan.
+shareUpload.retryFailedTitle	Opnieuw proberen lukte niet
+shareUpload.retryFailedBody	Open NextExplorer en deel de bestanden opnieuw.
+shareUpload.insufficientSpace	Er is niet genoeg vrije ruimte op dit apparaat om deze bestanden voor te bereiden voor upload.
 settings.uploadDefaultsRow	Gedeelde bestanden
 settings.uploadDefaultsFolder	Standaardmap
 settings.uploadDefaultsFolderNone	Elke keer vragen
@@ -795,3 +814,36 @@ settings.uploadDefaultsWithoutAsking	Uploaden zonder te vragen
 settings.uploadDefaultsFooter	Foto’s en bestanden die je vanuit andere apps met NextExplorer deelt, beginnen in deze map. Met Uploaden zonder te vragen aan gaan ze er direct naartoe.
 settings.uploadDefaultsClear	Elke keer vragen
 common.change	Wijzig
+shareUpload.sessionUnreadable	NextExplorer kon je aanmelding op dit apparaat niet lezen. Open NextExplorer één keer en deel daarna opnieuw.
+shareUpload.keepOpen	Houd dit open tot het voorbereiden klaar is.
+shareUpload.checking	Verbinding met %@ controleren…
+shareUpload.openApp	Open NextExplorer
+shareUpload.openAppInstructions	Open NextExplorer vanaf je beginscherm en deel daarna opnieuw.
+shareUpload.certificateRequired	Deze server heeft een clientcertificaat nodig. Open NextExplorer, voeg er een toe in Instellingen en deel daarna opnieuw.
+shareUpload.certificateRejected	De server heeft je clientcertificaat geweigerd. Open NextExplorer, vervang het in Instellingen en deel daarna opnieuw.
+shareUpload.defaultFolderUnavailable	Je standaardmap is niet meer beschikbaar. Kies een andere map.
+shareUpload.failedItemsHeader	Deze bestanden konden niet worden voorbereid:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	Klaar om te uploaden: %lld
+shareUpload.uploadReady	Klare bestanden uploaden
+shareUpload.retryFailed	Mislukte bestanden opnieuw proberen
+shareUpload.fallbackItemName	Bestand %lld
+shareUpload.causeCannotRead	Het kon niet worden gelezen.
+shareUpload.causeNotEnoughSpace	Er is niet genoeg vrije ruimte op dit apparaat.
+shareUpload.causeUnknown	Het kon niet worden voorbereid.
+shareUpload.folderHint	Opent de mapkiezer.
+shareUpload.accountHint	Kies welk account de bestanden ontvangt.
+error.timedOut	De server deed er te lang over om te antwoorden. De actie kan alsnog slagen.
+error.changedOnServer	Dit bestand is op de server gewijzigd nadat je het opende.
+textPreview.conflictTitle	“%@” is gewijzigd op de server
+textPreview.conflictMessage	Overschrijf het met jouw versie, of laad het bestand opnieuw en gooi je wijzigingen weg. De vervangen versie blijft in de versiegeschiedenis van het bestand.
+textPreview.conflictOverwrite	Overschrijven
+textPreview.conflictReload	Opnieuw laden
+offline.waitingForNetwork	Wordt gedownload zodra je weer online bent
+browse.bulkFavoriteFailed	%1$lld van %2$lld mislukt
+shareUpload.livePhotoNote	Live Photos worden met hun bewegingsvideo geüpload.
+shareUpload.retrySignInBody	Log in bij NextExplorer en tik daarna opnieuw op ‘Opnieuw proberen’.
+shareUpload.causeFolder	Mappen kunnen niet worden gedeeld. Deel in plaats daarvan de bestanden erin.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	nog %lld
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

@@ -112,7 +112,8 @@
     /// The trailing buttons of a Mac dialog: an optional spinner and extra button, Cancel (Esc)
     /// and the confirm button (Return), with any leading content such as a size estimate.
     public struct MacDialogButtons<Leading: View>: View {
-        let confirmTitle: String
+        /// `nil` hides the confirm button, for a state with nothing left to confirm.
+        let confirmTitle: String?
         var isConfirmEnabled = true
         var isWorking = false
         /// `nil` hides Cancel, for a dialog whose only way out is its confirm button.
@@ -124,7 +125,7 @@
         @ViewBuilder var leading: () -> Leading
 
         public init(
-            confirmTitle: String,
+            confirmTitle: String?,
             isConfirmEnabled: Bool = true,
             isWorking: Bool = false,
             cancelTitle: String? = L10n.Common.cancel,
@@ -159,16 +160,18 @@
                     Button(cancelTitle, action: onCancel)
                         .keyboardShortcut(.cancelAction)
                 }
-                Button(confirmTitle, action: onConfirm)
-                    .keyboardShortcut(.defaultAction)
-                    .disabled(!isConfirmEnabled || isWorking)
+                if let confirmTitle {
+                    Button(confirmTitle, action: onConfirm)
+                        .keyboardShortcut(.defaultAction)
+                        .disabled(!isConfirmEnabled || isWorking)
+                }
             }
         }
     }
 
     public extension MacDialogButtons where Leading == EmptyView {
         init(
-            confirmTitle: String,
+            confirmTitle: String?,
             isConfirmEnabled: Bool = true,
             isWorking: Bool = false,
             cancelTitle: String? = L10n.Common.cancel,

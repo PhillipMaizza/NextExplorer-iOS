@@ -132,6 +132,7 @@
             }
             client.fetchStatus = { _ in AuthStatus(localEnabled: true, oidcEnabled: true) }
             client.listSessions = { sessions.all() }
+            client.listSessionsOrThrow = { sessions.all() }
             client.activeAccountID = { sessions.activeID() }
             client.switchAccount = { id in sessions.setActive(id) }
             client.removeAccount = { id in sessions.remove(id) }

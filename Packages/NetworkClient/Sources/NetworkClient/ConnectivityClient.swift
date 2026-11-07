@@ -11,17 +11,29 @@ public struct ConnectivityClient: Sendable {
     /// A stream that yields `true`/`false` each time reachability flips. Multiple subscribers are
     /// supported; each gets the current value immediately, then every subsequent change.
     public var events: @Sendable () -> AsyncStream<Bool>
+    /// True on a cellular or Low Data Mode connection, where optional background work such as
+    /// prefetching should not spend the user's data.
+    public var isMetered: @Sendable () -> Bool
 
-    public init(isOnline: @escaping @Sendable () -> Bool, events: @escaping @Sendable () -> AsyncStream<Bool>) {
+    public init(
+        isOnline: @escaping @Sendable () -> Bool,
+        events: @escaping @Sendable () -> AsyncStream<Bool>,
+        isMetered: @escaping @Sendable () -> Bool = { false }
+    ) {
         self.isOnline = isOnline
         self.events = events
+        self.isMetered = isMetered
     }
 }
 
 extension ConnectivityClient: DependencyKey {
     public static let liveValue: ConnectivityClient = {
         let monitor = Monitor()
-        return ConnectivityClient(isOnline: { monitor.currentIsOnline }, events: { monitor.stream() })
+        return ConnectivityClient(
+            isOnline: { monitor.currentIsOnline },
+            events: { monitor.stream() },
+            isMetered: { monitor.isCurrentlyMetered }
+        )
     }()
 
     /// Always online, no events: matches the existing "assume connected" behavior in tests.
@@ -37,6 +49,7 @@ extension ConnectivityClient: DependencyKey {
         private let monitor = NWPathMonitor()
         private let queue = DispatchQueue(label: "com.nextexplorer.connectivity")
         private var isOnline = true
+        private var isMetered = false
         private var continuations: [UUID: AsyncStream<Bool>.Continuation] = [:]
 
         init() {
@@ -46,6 +59,7 @@ extension ConnectivityClient: DependencyKey {
                 lock.lock()
                 let changed = online != isOnline
                 isOnline = online
+                isMetered = path.isExpensive || path.isConstrained
                 let sinks = changed ? Array(continuations.values) : []
                 lock.unlock()
                 for sink in sinks {
@@ -58,6 +72,11 @@ extension ConnectivityClient: DependencyKey {
         var currentIsOnline: Bool {
             lock.lock(); defer { lock.unlock() }
             return isOnline
+        }
+
+        var isCurrentlyMetered: Bool {
+            lock.lock(); defer { lock.unlock() }
+            return isMetered
         }
 
         func stream() -> AsyncStream<Bool> {

@@ -16,7 +16,7 @@ extension FilesService {
     /// `mode` matching `/^[0-7]{3}$/`; `recursive` only does anything on a directory.
     func changePermissions(serverURL: URL, path: String, mode: String, recursive: Bool) async throws {
         let url = serverURL.appendingPathComponent(APIPath.permissionsChmod)
-        var request = Self.makeRequest(url: url, method: .post)
+        var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(ChmodBody(path: path, mode: mode, recursive: recursive))
         let (data, response) = try await performSend(request)
@@ -27,7 +27,7 @@ extension FilesService {
     /// the server rejects a body carrying neither.
     func changeOwnership(serverURL: URL, path: String, owner: String?, group: String?) async throws {
         let url = serverURL.appendingPathComponent(APIPath.permissionsChown)
-        var request = Self.makeRequest(url: url, method: .post)
+        var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(ChownBody(path: path, owner: owner, group: group))
         let (data, response) = try await performSend(request)

@@ -164,6 +164,33 @@ struct BrowsePreviewRouter: View {
                 onDismiss: { store.send(.previewDismissed) },
                 startsEditing: store.newlyCreatedFileID == item.id
             )
+            .dsAlert(isPresented: Binding(get: { store.isTextSaveConflictPresented }, set: { _ in })) {
+                DSAlertSheet(
+                    icon: IconKit.warning,
+                    title: L10n.TextPreview.conflictTitle(item.name),
+                    message: L10n.TextPreview.conflictMessage,
+                    confirmTitle: L10n.TextPreview.conflictOverwrite,
+                    dismissTitle: L10n.Common.cancel,
+                    neutralTitle: L10n.TextPreview.conflictReload,
+                    role: .destructive,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.textSaveOverwriteTapped) },
+                    onNeutral: { store.send(.textSaveReloadTapped) },
+                    onDismiss: { store.send(.textSaveConflictDismissed) }
+                )
+            }
         }
     }
+}
+
+#Preview("Text save conflict alert") {
+    let item = FileItem(name: "notes.txt", path: "Docs", dateModified: .distantPast, size: 12, kind: "txt")
+    var state = BrowseFeature.State(
+        serverURL: URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/"), directoryPath: "Docs", title: "Docs"
+    )
+    state.previewItem = item
+    state.textContent = "Hello"
+    state.textPhase = .loaded
+    state.textSaveConflict = BrowseFeature.State.TextSaveConflict(pendingText: "Hello, edited")
+    return BrowsePreviewRouter(store: Store(initialState: state) { BrowseFeature() }, item: item, onShareTarget: { _ in })
 }

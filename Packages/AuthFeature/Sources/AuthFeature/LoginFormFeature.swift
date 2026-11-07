@@ -305,9 +305,12 @@ public struct LoginFormFeature {
                 // in the redirect (and would travel unencrypted first).
                 if status.redirectsToHTTPS {
                     state.scheme = .https
+                    if let host = Self.hostText(state.host, port: status.redirectedPort) {
+                        state.host = host
+                    }
                 }
                 let clock = clock
-                guard status.localEnabled || status.oidcEnabled else {
+                guard status.isLocalEnabled || status.isOIDCEnabled else {
                     state.connectionPhase = .failure
                     state.errorMessage = Self.message(for: .noAuthMethodsEnabled)
                     return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock))
@@ -347,7 +350,7 @@ public struct LoginFormFeature {
                 return .none
 
             case .continueButtonTapped:
-                guard state.authStatus?.localEnabled == true,
+                guard state.authStatus?.isLocalEnabled == true,
                       let url = Self.normalizedURL(scheme: state.scheme, host: state.host)
                 else {
                     return .none
@@ -400,7 +403,7 @@ public struct LoginFormFeature {
                 return .merge(Self.scheduleSubmitRevert(clock), Self.scheduleErrorDismiss(clock))
 
             case .ssoButtonTapped:
-                guard state.authStatus?.oidcEnabled == true,
+                guard state.authStatus?.isOIDCEnabled == true,
                       state.oidcPhase == .idle,
                       let url = Self.normalizedURL(scheme: state.scheme, host: state.host)
                 else {
@@ -633,6 +636,18 @@ public struct LoginFormFeature {
         components.port = portPart.flatMap { Int($0) }
         guard let url = components.url else { return nil }
         return url
+    }
+
+    /// `host` with its port replaced by `port` (dropped when `nil`), so the address saved after an
+    /// http to https redirect points where the server answered. `nil` when `host` isn't a valid
+    /// server address.
+    static func hostText(_ host: String, port: Int?) -> String? {
+        guard let url = normalizedURL(scheme: .https, host: host),
+              let name = url.host(percentEncoded: false), !name.isEmpty
+        else { return nil }
+        let bare = name.contains(":") ? "[\(name.trimmingCharacters(in: CharacterSet(charactersIn: "[]")))]" : name
+        guard let port else { return bare }
+        return "\(bare):\(port)"
     }
 
     /// A hostname, IPv4 address, or (bracket-stripped) IPv6 literal. Rejects spaces, punctuation

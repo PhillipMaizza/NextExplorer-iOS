@@ -31,16 +31,18 @@ enum ListCache {
         "\(namespace)|\(serverURL.absoluteString)"
     }
 
-    static func load<T: Decodable>(_ store: JSONCacheStore, _ namespace: String, serverURL: URL, as _: T.Type) -> (value: T, fetchedAt: Date)? {
+    static func load<T: Decodable>(
+        _ store: JSONCacheStore, _ namespace: String, serverURL: URL, scope: String, as _: T.Type
+    ) -> (value: T, fetchedAt: Date)? {
         guard
-            let payload = store.read(key: key(namespace, serverURL: serverURL)),
+            let payload = store.bound(to: scope).read(key: key(namespace, serverURL: serverURL)),
             let value = try? JSONDecoder().decode(T.self, from: payload.data)
         else { return nil }
         return (value, payload.fetchedAt)
     }
 
-    static func save(_ store: JSONCacheStore, _ namespace: String, serverURL: URL, value: some Encodable) {
+    static func save(_ store: JSONCacheStore, _ namespace: String, serverURL: URL, scope: String, value: some Encodable) {
         guard let data = try? JSONEncoder().encode(value) else { return }
-        store.write(key: key(namespace, serverURL: serverURL), data: data)
+        store.bound(to: scope).write(key: key(namespace, serverURL: serverURL), data: data)
     }
 }
