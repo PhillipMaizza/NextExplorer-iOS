@@ -62,6 +62,11 @@ public struct AppFeature {
             guard case let .authenticated(authenticated) = destination else { return nil }
             return authenticated.accountID
         }
+
+        var currentServerURL: URL? {
+            guard case let .authenticated(authenticated) = destination else { return nil }
+            return authenticated.serverURL
+        }
     }
 
     public enum Action {
@@ -69,6 +74,9 @@ public struct AppFeature {
         case sessionRestoreResponse(SessionCredentials?)
         case sessionValidationResponse(Result<User, AuthClientError>, SessionCredentials)
         case sessionExpiryDetected
+        /// The server confirmed the session of this account is rejected, so it is torn down unless
+        /// the active account changed in the meantime.
+        case sessionExpiryConfirmed(accountID: String)
         case activeAccountTornDown(SessionCredentials?)
         case activateAccount(SessionCredentials)
         case accountsRefreshed([AccountSummary])
@@ -114,7 +122,41 @@ public struct AppFeature {
     /// The second pass of an account wipe, run once the account's screens are gone.
     private var finishAccountWipes: Effect<Action> {
         let accountCacheWipe = accountCacheWipe
-        return .run { _ in accountCacheWipe.finishPending() }
+        let authClient = authClient
+        return .run { _ in await accountCacheWipe.finishPending(authClient: authClient) }
+    }
+
+    /// Stops the offline sync and download of the account the app is leaving, so it neither keeps
+    /// running behind the next account nor shows its progress there.
+    private func stopOfflineWork(leaving accountID: String?) -> Effect<Action> {
+        guard let accountID else { return .none }
+        return .send(.destination(.authenticated(.mainTab(.offline(.accountDeactivated(scope: accountID))))))
+    }
+
+    /// Drops the active account whose session the server rejected and wipes its caches. It is
+    /// listed as pending before its session goes, so a kill in between cannot orphan its files.
+    private func tearDownExpired(accountID: String) -> Effect<Action> {
+        let authClient = authClient
+        let accountCacheWipe = accountCacheWipe
+        return .run { send in
+            accountCacheWipe.markPending(accountID)
+            let next = await authClient.clearActiveSession()
+            accountCacheWipe.wipe(accountID)
+            await send(.activeAccountTornDown(next))
+        }
+    }
+
+    private static func isSessionRejection(_ error: AuthClientError) -> Bool {
+        switch error {
+        case .sessionExpired, .sessionCookieMissing, .invalidCredentials, .server(statusCode: Constants.unauthorizedStatusCode):
+            true
+        default:
+            false
+        }
+    }
+
+    private enum Constants {
+        static let unauthorizedStatusCode = 401
     }
 
     public var body: some ReducerOf<Self> {
@@ -143,6 +185,7 @@ public struct AppFeature {
                 // mounts, so its first cache read hits this account's entries, not the previous
                 // one's.
                 CacheAccountScope.set(credentials.accountID)
+                pendingAccountWipes.remove(credentials.accountID)
 
                 // Optimistic: trust the stored cookie and show the app straight away, with a
                 // placeholder user filled in from the confirmed `me` response. The splash
@@ -173,6 +216,9 @@ public struct AppFeature {
                 )
 
             case let .sessionValidationResponse(.success(user), credentials):
+                // An answer for an account that is no longer the active one must not touch the one
+                // that is.
+                guard credentials.accountID == state.currentAccountID else { return .none }
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
@@ -193,35 +239,32 @@ public struct AppFeature {
                 // Only a real auth rejection tears down the optimistic session; a network
                 // hiccup or a non-auth server error leaves it in place for the next request
                 // to sort out.
-                switch error {
-                case .sessionExpired, .sessionCookieMissing, .invalidCredentials, .server(statusCode: 401):
-                    break
-                default:
+                guard credentials.accountID == state.currentAccountID, Self.isSessionRejection(error) else {
                     return .none
                 }
                 // The active account is invalid: drop it and fall through to whatever account
                 // remains (or the login screen when it was the last one).
-                let authClient = authClient
-                let accountCacheWipe = accountCacheWipe
-                let expiredAccountID = state.currentAccountID ?? credentials.accountID
-                return .run { send in
-                    let next = await authClient.clearActiveSession()
-                    accountCacheWipe(expiredAccountID)
-                    await send(.activeAccountTornDown(next))
-                }
+                return tearDownExpired(accountID: credentials.accountID)
 
             case .sessionExpiryDetected:
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
-                guard let expiredAccountID = state.currentAccountID else { return .none }
+                guard let accountID = state.currentAccountID, let serverURL = state.currentServerURL else { return .none }
+                // Any request that answers 401 raises this flag, including late ones from an account
+                // that was already left, so the server is asked about the current account first.
                 let authClient = authClient
-                let accountCacheWipe = accountCacheWipe
                 return .run { send in
-                    let next = await authClient.clearActiveSession()
-                    accountCacheWipe(expiredAccountID)
-                    await send(.activeAccountTornDown(next))
+                    do {
+                        _ = try await authClient.me(serverURL)
+                    } catch let error as AuthClientError where Self.isSessionRejection(error) {
+                        await send(.sessionExpiryConfirmed(accountID: accountID))
+                    } catch {}
                 }
+
+            case let .sessionExpiryConfirmed(accountID):
+                guard accountID == state.currentAccountID else { return .none }
+                return tearDownExpired(accountID: accountID)
 
             case let .activeAccountTornDown(next):
                 state.$fileClipboard.withLock { $0 = nil }
@@ -237,9 +280,14 @@ public struct AppFeature {
                 return teardownToLogin(&state, removesClientCertificates: false)
 
             case let .activateAccount(credentials):
+                let leavingAccountID = state.currentAccountID
                 state.$fileClipboard.withLock { $0 = nil }
                 state.$fileUndoStack.withLock { $0 = [] }
+                if state.sessionDidExpire {
+                    state.$sessionDidExpire.withLock { $0 = false }
+                }
                 CacheAccountScope.set(credentials.accountID)
+                pendingAccountWipes.remove(credentials.accountID)
                 // Finalized once `me` confirms the user id; empty in the meantime.
                 state.$downloadScope.withLock { $0 = "" }
                 state.didAuthenticateFromLogin = false
@@ -253,7 +301,9 @@ public struct AppFeature {
                 }
                 let authClient = authClient
                 return .merge(
+                    stopOfflineWork(leaving: leavingAccountID),
                     refreshAccounts,
+                    finishAccountWipes,
                     .run { send in
                         do {
                             let user = try await authClient.me(credentials.serverBaseURL)
@@ -273,8 +323,9 @@ public struct AppFeature {
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
-                let accountID = serverURL.absoluteString + "|" + user.username
+                let accountID = AuthenticatedFeature.State.accountID(serverURL: serverURL, username: user.username)
                 CacheAccountScope.set(accountID)
+                pendingAccountWipes.remove(accountID)
                 state.$downloadScope.withLock {
                     $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id)
                 }
@@ -354,8 +405,10 @@ public struct AppFeature {
                 let serverURL = added.serverURL
                 state.$fileClipboard.withLock { $0 = nil }
                 state.$fileUndoStack.withLock { $0 = [] }
-                let accountID = serverURL.absoluteString + "|" + user.username
+                let accountID = AuthenticatedFeature.State.accountID(serverURL: serverURL, username: user.username)
+                let leavingAccountID = state.currentAccountID
                 CacheAccountScope.set(accountID)
+                pendingAccountWipes.remove(accountID)
                 state.$downloadScope.withLock {
                     $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id)
                 }
@@ -365,7 +418,12 @@ public struct AppFeature {
                         AuthenticatedFeature.State(serverURL: serverURL, user: user)
                     )
                 }
-                return .merge(refreshAccounts, pruneClientCertificates(keeping: serverURL))
+                return .merge(
+                    stopOfflineWork(leaving: leavingAccountID),
+                    refreshAccounts,
+                    finishAccountWipes,
+                    pruneClientCertificates(keeping: serverURL)
+                )
 
             case .addAccount:
                 return .none
@@ -386,7 +444,8 @@ public struct AppFeature {
         let uploadDefaults = uploadDefaults
         let shareUploads = shareUploads
         return .run { _ in
-            let sessions = await authClient.listSessions()
+            // An unreadable keychain is not "nobody is signed in": prune nothing then.
+            guard let sessions = try? await authClient.listSessionsOrThrow() else { return }
             var keep = Set(sessions.compactMap { ClientCertificateOrigin(url: $0.serverBaseURL) })
             if let serverURL, let origin = ClientCertificateOrigin(url: serverURL) {
                 keep.insert(origin)

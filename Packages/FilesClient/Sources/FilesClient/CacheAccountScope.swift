@@ -13,9 +13,22 @@ import Foundation
 public enum CacheAccountScope {
     private static let lock = NSLock()
     private nonisolated(unsafe) static var _value = ""
+    @TaskLocal private static var pinnedScope: String?
 
+    /// The scope pinned to the running task by `withPinned`, else the process wide one.
     public static var current: String {
-        lock.withLock { _value }
+        pinnedScope ?? lock.withLock { _value }
+    }
+
+    /// Synchronous variant of `withPinned`.
+    public static func withPinned<T>(_ scope: String, operation: () throws -> T) rethrows -> T {
+        try $pinnedScope.withValue(scope, operation: operation)
+    }
+
+    /// Runs `operation` (and every child task it starts) under `scope`, so work that began for one
+    /// account keeps reading and writing that account's caches after the active account changes.
+    public static func withPinned<T>(_ scope: String, operation: () async throws -> T) async rethrows -> T {
+        try await $pinnedScope.withValue(scope, operation: operation)
     }
 
     public static func set(_ value: String) {
@@ -31,10 +44,15 @@ public enum CacheAccountScope {
     static let hexDigitsPerByte = 2
     static let prefixSeparator: Character = "-"
 
+    /// The leading part of every file name written for `scope`, for removing just that account's.
+    public static func namePrefix(for scope: String) -> String {
+        "\(filePrefix(for: scope))\(prefixSeparator)"
+    }
+
     /// `name` carrying the active account's prefix, for cache files that are not keyed by account
     /// themselves (thumbnails), so `clearPreviewCache(scope:)` can remove just that account's.
     public static func scopedFileName(_ name: String, scope: String = CacheAccountScope.current) -> String {
-        "\(filePrefix(for: scope))\(prefixSeparator)\(name)"
+        "\(namePrefix(for: scope))\(name)"
     }
 
     /// Stable filename prefix for one account's cache files, so a single account's entries can be

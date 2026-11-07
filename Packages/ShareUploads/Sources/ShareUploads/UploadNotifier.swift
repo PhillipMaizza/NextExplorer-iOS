@@ -11,7 +11,6 @@ struct UploadNotification: Equatable {
     var batchID: String
     var accountID: String
     var failedNames: [String]
-    var primaryCause: UploadFailureCause?
 
     var hasFailures: Bool {
         !failedNames.isEmpty
@@ -45,7 +44,6 @@ extension UploadNotification {
         accountID = outcome.accountID
         subtitle = outcome.host
         failedNames = outcome.failedNames
-        primaryCause = Self.primaryCause(of: outcome.failures)
         if outcome.failures.isEmpty {
             title = L10n.ShareUpload.notificationDoneTitle
             body = L10n.ShareUpload.notificationDoneBody(outcome.uploaded, folder)
@@ -55,26 +53,24 @@ extension UploadNotification {
         }
     }
 
-    /// The cause most of the failed files share; on a tie the one the user can fix soonest wins.
-    static func primaryCause(of failures: [FailedUpload]) -> UploadFailureCause? {
-        let counts = Dictionary(grouping: failures, by: \.cause).mapValues(\.count)
-        return UploadFailureCause.allCases
-            .filter { counts[$0] != nil }
-            .max { (counts[$0] ?? 0) < (counts[$1] ?? 0) }
-    }
-
     private static func failureBody(_ failures: [FailedUpload]) -> String {
         var lines: [String] = UploadFailureCause.allCases.compactMap { cause in
             let count = failures.filter { $0.cause == cause }.count
             return count == 0 ? nil : causeText(cause, count: count)
         }
-        let names = failures.map(\.name)
-        var listed = names.prefix(listedNames).joined(separator: ", ")
-        if names.count > listedNames {
-            listed += " " + L10n.ShareUpload.notificationMoreNames(names.count - listedNames)
-        }
-        lines.append(listed)
+        lines.append(namesLine(failures.map(\.name)))
         return lines.joined(separator: "\n")
+    }
+
+    /// The first names, then how many more there are, joined the way the language writes a list.
+    static func namesLine(_ names: [String]) -> String {
+        var items = Array(names.prefix(listedNames))
+        if names.count > listedNames {
+            items.append(L10n.ShareUpload.notificationMoreNames(names.count - listedNames))
+        }
+        let formatter = ListFormatter()
+        formatter.locale = LocalizationOverride.locale
+        return formatter.string(from: items) ?? items.joined()
     }
 
     static func causeText(_ cause: UploadFailureCause, count: Int) -> String {
@@ -99,25 +95,45 @@ struct NotificationAuthorization: Sendable {
     )
 }
 
+/// The system notification center, reduced to what uploads use, so tests never touch the real one.
+struct NotificationCenterClient: Sendable {
+    var add: @Sendable (UNNotificationRequest) -> Void
+    /// Removes the delivered and the pending notifications with these identifiers.
+    var remove: @Sendable ([String]) -> Void
+    var setCategories: @Sendable (Set<UNNotificationCategory>) -> Void
+
+    static let live = NotificationCenterClient(
+        add: { UNUserNotificationCenter.current().add($0) },
+        remove: { identifiers in
+            UNUserNotificationCenter.current().removeDeliveredNotifications(withIdentifiers: identifiers)
+            UNUserNotificationCenter.current().removePendingNotificationRequests(withIdentifiers: identifiers)
+        },
+        setCategories: { UNUserNotificationCenter.current().setNotificationCategories($0) }
+    )
+}
+
 /// Tells the user how a background batch went, once for the whole batch.
 struct UploadNotifier: Sendable {
     var batchFinished: @Sendable (BatchOutcome) -> Void
 
-    static let live = UploadNotifier { outcome in
-        let notification = UploadNotification(outcome: outcome)
-        let content = UNMutableNotificationContent()
-        content.title = notification.title
-        content.subtitle = notification.subtitle
-        content.body = notification.body
-        content.userInfo = notification.userInfo
-        content.threadIdentifier = notification.accountID
-        registerCategories()
-        content.categoryIdentifier = notification.hasFailures
-            ? UploadNotificationIdentifier.failedCategory
-            : UploadNotificationIdentifier.doneCategory
-        // One notification per batch: a retry's result replaces the earlier one.
-        let request = UNNotificationRequest(identifier: notification.batchID, content: content, trigger: nil)
-        UNUserNotificationCenter.current().add(request)
+    static let live = posting(to: .live)
+
+    static func posting(to center: NotificationCenterClient) -> UploadNotifier {
+        UploadNotifier { outcome in
+            let notification = UploadNotification(outcome: outcome)
+            let content = UNMutableNotificationContent()
+            content.title = notification.title
+            content.subtitle = notification.subtitle
+            content.body = notification.body
+            content.userInfo = notification.userInfo
+            content.threadIdentifier = notification.accountID
+            registerCategories(using: center)
+            content.categoryIdentifier = notification.hasFailures
+                ? UploadNotificationIdentifier.failedCategory
+                : UploadNotificationIdentifier.doneCategory
+            // One notification per batch: a retry's result replaces the earlier one.
+            center.add(UNNotificationRequest(identifier: notification.batchID, content: content, trigger: nil))
+        }
     }
 
     /// The failure category carries the Retry button. Both categories replace the body with a
@@ -147,19 +163,21 @@ struct UploadNotifier: Sendable {
         ]
     }
 
-    static func registerCategories() {
-        UNUserNotificationCenter.current().setNotificationCategories(Set(categories()))
+    static func registerCategories(using center: NotificationCenterClient = .live) {
+        center.setCategories(Set(categories()))
     }
 
     /// Said when Retry could not start anything, so the user is never left with silence.
-    static func postRetryFailed() {
+    static func postRetryFailed(_ reason: UploadNotifications.RetryFailure, using center: NotificationCenterClient = .live) {
         let content = UNMutableNotificationContent()
         content.title = L10n.ShareUpload.retryFailedTitle
-        content.body = L10n.ShareUpload.retryFailedBody
-        let request = UNNotificationRequest(
+        switch reason {
+        case .nothingToSend: content.body = L10n.ShareUpload.retryFailedBody
+        case .needsSignIn: content.body = L10n.ShareUpload.retrySignInBody
+        }
+        center.add(UNNotificationRequest(
             identifier: UploadNotificationIdentifier.retryFailureNotification, content: content, trigger: nil
-        )
-        UNUserNotificationCenter.current().add(request)
+        ))
     }
 
     enum PermissionRequest: Equatable {
@@ -190,8 +208,16 @@ public enum UploadNotifications {
         await UploadNotifier.requestPermission()
     }
 
-    public static func notifyRetryFailed() {
-        UploadNotifier.postRetryFailed()
+    /// Why a Retry could not send anything.
+    public enum RetryFailure: Sendable {
+        /// The files are gone, or the batch is: they have to be shared again.
+        case nothingToSend
+        /// The batch's account has no valid session: signing in and tapping Retry again works.
+        case needsSignIn
+    }
+
+    public static func notifyRetryFailed(_ reason: RetryFailure) {
+        UploadNotifier.postRetryFailed(reason)
     }
 
     /// Makes the app the notification center's delegate (banners while it is frontmost, the Retry

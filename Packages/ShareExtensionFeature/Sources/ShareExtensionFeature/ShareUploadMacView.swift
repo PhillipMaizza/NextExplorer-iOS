@@ -31,28 +31,19 @@
         var body: some View {
             VStack(alignment: .leading, spacing: .space16) {
                 header
-                if store.credentials != nil, store.canChooseAccount || Self.detailPhases.contains(store.phase) {
+                if store.credentials != nil, store.canChooseAccount || store.shouldShowDetails {
                     details
                 }
                 if let notice {
                     ShareUploadMacNotice(notice: notice)
                 }
-                if store.phase == .preparing {
+                if store.phase == .preparing || store.phase == .handingOff {
                     preparingProgress
                 }
                 if !store.failures.isEmpty, store.phase == .partiallyPrepared || store.phase == .failed {
                     failureList
                 }
-                MacDialogButtons(
-                    confirmTitle: confirmTitle,
-                    isConfirmEnabled: isConfirmEnabled,
-                    isWorking: store.phase == .preparing || store.phase == .checking,
-                    cancelTitle: store.phase == .started ? L10n.Common.close : L10n.Common.cancel,
-                    secondaryTitle: secondaryTitle,
-                    onSecondary: { store.send(.retryTapped) },
-                    onCancel: { store.send(.cancelTapped) },
-                    onConfirm: confirm
-                )
+                buttons
             }
             .padding(.space24)
             .frame(width: Metrics.width)
@@ -60,7 +51,28 @@
             .fixedSize(horizontal: false, vertical: true)
         }
 
-        private static let detailPhases: [ShareUploadFeature.Phase] = [.checking, .ready, .preparing, .started]
+        private var buttons: some View {
+            let primary = store.state.primaryAction(canOpenApp: openApp.isAvailable)
+            let secondary = store.state.secondaryAction(canOpenApp: openApp.isAvailable)
+            return MacDialogButtons(
+                confirmTitle: primary?.title,
+                isConfirmEnabled: primary != .upload || store.canUpload,
+                isWorking: store.isWorking,
+                cancelTitle: store.phase == .started ? L10n.Common.close : L10n.Common.cancel,
+                secondaryTitle: secondary?.title,
+                onSecondary: {
+                    if let secondary {
+                        store.send(secondary.action)
+                    }
+                },
+                onCancel: { store.send(.cancelTapped) },
+                onConfirm: {
+                    if let primary {
+                        store.send(primary.action)
+                    }
+                }
+            )
+        }
 
         private var header: some View {
             HStack(spacing: .space12) {
@@ -82,7 +94,7 @@
             switch store.phase {
             case .ready: L10n.ShareUpload.itemCount(store.itemCount)
             case .checking: L10n.ShareUpload.checking(store.serverName)
-            case .preparing: L10n.ShareUpload.preparing(min(store.progress.completed + 1, store.preparingTotal), store.preparingTotal)
+            case .preparing, .handingOff: L10n.ShareUpload.preparing(store.preparingStep, store.preparingTotal)
             case .partiallyPrepared: L10n.ShareUpload.readyCount(store.stagedCount)
             case .loading, .started, .signedOut, .sessionUnreadable, .nothingToUpload, .failed, .certificateRequired, .certificateRejected: nil
             }
@@ -116,39 +128,6 @@
             .accessibilityElement(children: .contain)
         }
 
-        private var confirmTitle: String {
-            switch store.phase {
-            case .partiallyPrepared: L10n.ShareUpload.uploadReady
-            case .signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected:
-                openApp.isAvailable ? L10n.ShareUpload.openApp : L10n.ShareUpload.upload
-            default: L10n.ShareUpload.upload
-            }
-        }
-
-        private var isConfirmEnabled: Bool {
-            switch store.phase {
-            case .partiallyPrepared: true
-            case .signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected: openApp.isAvailable
-            default: store.canUpload
-            }
-        }
-
-        private var secondaryTitle: String? {
-            switch store.phase {
-            case .partiallyPrepared: L10n.ShareUpload.retryFailed
-            case .failed, .signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected: L10n.Common.retry
-            default: nil
-            }
-        }
-
-        private func confirm() {
-            switch store.phase {
-            case .partiallyPrepared: store.send(.uploadReadyTapped)
-            case .signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected: store.send(.openAppTapped)
-            default: store.send(.uploadTapped)
-            }
-        }
-
         private var details: some View {
             VStack(spacing: 0) {
                 ShareUploadMacRow(icon: IconKit.account, label: L10n.ShareUpload.accountLabel) {
@@ -176,7 +155,7 @@
                             .accessibilityValue(store.accountName)
                     }
                 }
-                if Self.detailPhases.contains(store.phase) {
+                if store.shouldShowDetails {
                     Divider().padding(.leading, Metrics.rowPadding + Metrics.iconWidth + .space8)
                     ShareUploadMacRow(icon: IconKit.folderFill, label: L10n.ShareUpload.folderLabel) {
                         HStack(spacing: .space8) {
@@ -211,7 +190,7 @@
             case .certificateRequired: .problem(L10n.ShareUpload.certificateRequired)
             case .certificateRejected: .problem(L10n.ShareUpload.certificateRejected)
             case .ready where store.notice == .defaultFolderUnavailable: .problem(L10n.ShareUpload.defaultFolderUnavailable)
-            case .loading, .checking, .ready, .preparing, .partiallyPrepared: nil
+            case .loading, .checking, .ready, .preparing, .handingOff, .partiallyPrepared: nil
             }
         }
     }
@@ -284,6 +263,7 @@
     #Preview("Default folder gone") { ShareUploadMacView(store: .preview(.ready, destination: "", notice: .defaultFolderUnavailable)) }
     #Preview("Checking") { ShareUploadMacView(store: .preview(.checking)) }
     #Preview("Preparing") { ShareUploadMacView(store: .preview(.preparing)) }
+    #Preview("Handing off") { ShareUploadMacView(store: .preview(.handingOff)) }
     #Preview("Partly prepared") { ShareUploadMacView(store: .preview(.partiallyPrepared)) }
     #Preview("Failed") { ShareUploadMacView(store: .preview(.failed)) }
     #Preview("Started") { ShareUploadMacView(store: .preview(.started)) }

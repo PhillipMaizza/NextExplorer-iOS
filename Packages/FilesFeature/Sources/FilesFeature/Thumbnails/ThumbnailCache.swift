@@ -54,16 +54,16 @@ extension ThumbnailCache: DependencyKey {
 
     private static func previewCacheSubdirectory(_ name: String) throws -> URL {
         let cachesDirectory = try FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        return cachesDirectory.appendingPathComponent("PreviewCache", isDirectory: true)
+        return cachesDirectory.appendingPathComponent(CacheLayout.previewCacheName, isDirectory: true)
             .appendingPathComponent(name, isDirectory: true)
     }
 
     private static func cacheFileURL(for url: URL) throws -> URL {
-        try previewCacheSubdirectory("thumbnails").appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: url.absoluteString)))
+        try previewCacheSubdirectory(CacheLayout.thumbnailsDirectoryName).appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: url.absoluteString)))
     }
 
     private static func resolutionRecordURL(for path: String) throws -> URL {
-        try previewCacheSubdirectory("thumbnail-urls").appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: path)))
+        try previewCacheSubdirectory(CacheLayout.thumbnailURLsDirectoryName).appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: path)))
     }
 
     private static let resolutionRecordSeparator = "\u{0}"

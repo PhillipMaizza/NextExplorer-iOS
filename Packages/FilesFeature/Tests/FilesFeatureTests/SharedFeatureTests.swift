@@ -63,6 +63,7 @@ struct SharedFeatureTests {
 
         await store.send(.onAppear)
         await store.receive(\.sharesResponse)
+        await store.receive(\.offlineSharesResolved)
 
         #expect(store.state.byMe.map(\.id) == ["s1"])
         #expect(store.state.phases[.byMe] == .loaded)

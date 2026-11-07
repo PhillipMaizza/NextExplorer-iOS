@@ -86,8 +86,7 @@ extension BrowseFeature {
     func confirmTextSave(_ state: inout State, newContent: String) -> Effect<Action> {
         guard let item = state.previewItem, state.savingTexts[item.id] == nil else { return .none }
         if state.textSaveConflict != nil {
-            state.textSaveConflict = newContent
-            state.isTextSaveConflictPresented = true
+            state.textSaveConflict = State.TextSaveConflict(pendingText: newContent)
             return .none
         }
         state.savingTexts[item.id] = newContent

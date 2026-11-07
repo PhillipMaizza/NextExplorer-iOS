@@ -1,4 +1,5 @@
 @testable import AppFeature
+import AuthClient
 import ComposableArchitecture
 import CoreModels
 import FilesClient
@@ -84,7 +85,7 @@ struct AccountCacheWipeTests {
         directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
         #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
 
-        wipe.finishPending()
+        wipe.finishPending(liveAccountIDs: [])
 
         #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) == nil)
         #expect(pending.accounts().isEmpty)
@@ -101,7 +102,7 @@ struct AccountCacheWipeTests {
 
         let relaunched = PendingAccountWipes.persisted(in: defaults)
         #expect(relaunched.accounts() == [Fixture.account])
-        makeWipe(directory: directory, pending: relaunched).finishPending()
+        makeWipe(directory: directory, pending: relaunched).finishPending(liveAccountIDs: [])
 
         #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) == nil)
         #expect(PendingAccountWipes.persisted(in: defaults).accounts().isEmpty)
@@ -115,5 +116,92 @@ struct AccountCacheWipeTests {
         pending.add(Fixture.otherAccount)
 
         #expect(pending.accounts() == [Fixture.account, Fixture.otherAccount])
+    }
+
+    @Test("a pending account that has a stored session again is unlisted and never wiped")
+    func liveAccountIsUnlistedWithoutAWipe() {
+        let directory = DirectoryCacheStore.inMemory()
+        directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+        directory.bound(to: Fixture.otherAccount).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+        let pending = PendingAccountWipes.inMemory()
+        pending.add(Fixture.account)
+        pending.add(Fixture.otherAccount)
+        let counters = Counters()
+
+        makeWipe(directory: directory, pending: pending, counters: counters).finishPending(liveAccountIDs: [Fixture.account])
+
+        #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
+        #expect(directory.bound(to: Fixture.otherAccount).read(serverURL: Fixture.server, path: Fixture.path) == nil)
+        #expect(counters.offlineRemovals.value == [Fixture.otherAccount])
+        #expect(pending.accounts().isEmpty)
+    }
+
+    @Test("the second pass reads the stored sessions and spares the accounts in them")
+    func secondPassReadsTheStoredSessions() async {
+        let directory = DirectoryCacheStore.inMemory()
+        directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+        let pending = PendingAccountWipes.inMemory()
+        pending.add(Fixture.account)
+        var authClient = AuthClient.previewValue
+        authClient.listSessionsOrThrow = { [Self.session(Fixture.account)] }
+
+        await makeWipe(directory: directory, pending: pending).finishPending(authClient: authClient)
+
+        #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
+        #expect(pending.accounts().isEmpty)
+    }
+
+    @Test("an unreadable keychain leaves the pending list and every cache untouched")
+    func unreadableKeychainWipesNothing() async {
+        struct KeychainFailure: Error {}
+        let directory = DirectoryCacheStore.inMemory()
+        directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+        let pending = PendingAccountWipes.inMemory()
+        pending.add(Fixture.account)
+        var authClient = AuthClient.previewValue
+        authClient.listSessionsOrThrow = { throw AuthClientError.keychain(String(describing: KeychainFailure())) }
+
+        await makeWipe(directory: directory, pending: pending).finishPending(authClient: authClient)
+
+        #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
+        #expect(pending.accounts() == [Fixture.account])
+    }
+
+    @Test("the launch pass wipes a signed out account's leftovers but never a re added live account")
+    func launchRecoverySparesLiveAccounts() async {
+        let directory = DirectoryCacheStore.inMemory()
+        for account in [Fixture.account, Fixture.otherAccount] {
+            directory.bound(to: account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
+        }
+        let pending = PendingAccountWipes.inMemory()
+        pending.add(Fixture.account)
+        pending.add(Fixture.otherAccount)
+
+        await withDependencies {
+            $0.directoryCacheStore = directory
+            $0.pendingAccountWipes = pending
+            $0.authClient.listSessionsOrThrow = { [Self.session(Fixture.account)] }
+        } operation: {
+            await PendingAccountWipeRecovery.runAtLaunch()
+        }
+
+        #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
+        #expect(directory.bound(to: Fixture.otherAccount).read(serverURL: Fixture.server, path: Fixture.path) == nil)
+        #expect(pending.accounts().isEmpty)
+    }
+
+    private static func session(_ accountID: String) -> SessionCredentials {
+        let parts = accountID.components(separatedBy: "|")
+        return SessionCredentials(
+            serverBaseURL: URL(string: parts[0]) ?? Fixture.server,
+            authMode: .local,
+            cookieName: "connect.sid",
+            cookieValue: "v",
+            cookieDomain: "files.example.com",
+            cookiePath: "/",
+            cookieIsSecure: true,
+            expiresAt: nil,
+            username: parts.last
+        )
     }
 }

@@ -108,6 +108,10 @@ public struct FavoritesFeature {
         case onAppear
         case refreshButtonTapped
         case favoritesResponse(Result<[Favorite], FilesClientError>)
+        /// The saved list read off the main actor after an offline failure, `nil` when none is stored.
+        case offlineFavoritesResolved(cached: [Favorite]?, fetchedAt: Date?, error: FilesClientError)
+        /// The saved list read off the main actor to paint a first load.
+        case cachedFavoritesPainted([Favorite])
         /// Recompute which favorites are available offline (a pinned root, or under one).
         case computeOfflineAvailability
         case offlineAvailabilityComputed(Set<Favorite.ID>)
@@ -225,22 +229,26 @@ public struct FavoritesFeature {
 
             case let .favoritesResponse(.failure(error)):
                 // Offline with a saved copy: show it under a banner rather than an error screen.
-                if error == .offline,
-                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, scope: state.cacheScope, as: [Favorite].self)
-                {
-                    state.phase = .loaded
-                    state.favorites = IdentifiedArray(cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
-                    state.dataSource = .cached(fetchedAt: cached.fetchedAt)
-                    return computeOfflineAvailability(&state)
+                guard error == .offline else { return failLoad(&state, error) }
+                let jsonCacheStore = jsonCacheStore
+                let serverURL = state.serverURL
+                let cacheScope = state.cacheScope
+                return .run { send in
+                    let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: serverURL, scope: cacheScope, as: [Favorite].self)
+                    await send(.offlineFavoritesResolved(cached: cached?.value, fetchedAt: cached?.fetchedAt, error: error))
                 }
-                // A full screen error only when there's nothing to blank; a failure over an
-                // already populated list stays `.loaded` and toasts instead.
-                if state.favorites.isEmpty {
-                    state.phase = .failed(error.userMessage)
-                } else {
-                    state.phase = .loaded
-                    state.actionErrorMessage = error.userMessage
-                }
+                .cancellable(id: CancelID.load)
+
+            case let .offlineFavoritesResolved(cached, fetchedAt, error):
+                guard let cached, let fetchedAt else { return failLoad(&state, error) }
+                state.phase = .loaded
+                state.favorites = IdentifiedArray(cached.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+                state.dataSource = .cached(fetchedAt: fetchedAt)
+                return computeOfflineAvailability(&state)
+
+            case let .cachedFavoritesPainted(cached):
+                guard state.phase == .loading, state.favorites.isEmpty else { return .none }
+                state.favorites = IdentifiedArray(cached.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
                 return .none
 
             case let .rowTapped(favorite):
@@ -493,22 +501,44 @@ public struct FavoritesFeature {
         }
     }
 
+    /// A full screen error only when there's nothing to blank; a failure over an already populated
+    /// list stays `.loaded` and toasts instead.
+    private func failLoad(_ state: inout State, _ error: FilesClientError) -> Effect<Action> {
+        if state.favorites.isEmpty {
+            state.phase = .failed(error.userMessage)
+        } else {
+            state.phase = .loaded
+            state.actionErrorMessage = error.userMessage
+        }
+        return .none
+    }
+
     private func load(_ state: inout State) -> Effect<Action> {
-        // Paint the last saved copy immediately on a first load so there's no skeleton flash
-        // while the fetch runs (stale-while-revalidate). A successful fetch silently replaces it;
-        // only a failed one (offline) surfaces the "saved copy" banner, so `dataSource` stays
-        // `.live` here.
-        if !state.phase.hasLoaded, state.favorites.isEmpty,
-           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, scope: state.cacheScope, as: [Favorite].self)
-        {
-            state.favorites = IdentifiedArray(cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
+        // Paint the last saved copy on a first load so there's no skeleton flash while the fetch runs
+        // (stale while revalidate). A successful fetch silently replaces it; only a failed one
+        // (offline) surfaces the "saved copy" banner, so `dataSource` stays `.live` here. The disk
+        // read runs beside the fetch, off the main actor, and is dropped if the fetch won.
+        let paint: Effect<Action>
+        if !state.phase.hasLoaded, state.favorites.isEmpty {
+            let jsonCacheStore = jsonCacheStore
+            let serverURL = state.serverURL
+            let cacheScope = state.cacheScope
+            paint = .run { send in
+                guard let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: serverURL, scope: cacheScope, as: [Favorite].self) else { return }
+                await send(.cachedFavoritesPainted(cached.value))
+            }
+        } else {
+            paint = .none
         }
         state.phase = .loading
         let serverURL = state.serverURL
         let filesClient = filesClient
-        return .run { send in
-            try await send(.favoritesResponse(apiResult { try await filesClient.favorites(serverURL) }))
-        }
+        return .merge(
+            paint,
+            .run { send in
+                try await send(.favoritesResponse(apiResult { try await filesClient.favorites(serverURL) }))
+            }
+        )
         .cancellable(id: CancelID.load, cancelInFlight: true)
     }
 

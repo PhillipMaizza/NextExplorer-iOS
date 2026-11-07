@@ -25,8 +25,9 @@
         /// A row dragged from this app that carried its item, when the drag started in `receiver`'s
         /// server and account.
         func item(for receiver: DragOrigin) -> FileItem? {
-            guard case let .item(reference) = self, reference.origin == receiver else { return nil }
-            return reference.item
+            guard case let .item(reference) = self, reference.origin == receiver,
+                  let item = reference.item, DropPathValidation.isSafe(item) else { return nil }
+            return item
         }
     }
 
@@ -34,13 +35,14 @@
     struct MacFileDrag: ViewModifier {
         let item: FileItem
         let serverURL: URL
+        let scope: String
         let isEnabled: Bool
 
         @Dependency(\.filesClient) private var filesClient
 
         func body(content: Content) -> some View {
             if isEnabled {
-                content.draggable(DraggedServerItem(item: item, serverURL: serverURL, filesClient: filesClient))
+                content.draggable(DraggedServerItem(item: item, serverURL: serverURL, scope: scope, filesClient: filesClient))
             } else {
                 content
             }
@@ -51,6 +53,7 @@
     struct MacFolderDropTarget: ViewModifier {
         let folder: FileItem
         let serverURL: URL
+        let scope: String
         let isEnabled: Bool
         let onDrop: ([FileItem.ID]) -> Void
 
@@ -60,7 +63,7 @@
             if isEnabled, folder.isDirectory {
                 content
                     .dropDestination(for: ServerItemReference.self) { references, _ in
-                        let receiver = DragOrigin.current(serverURL: serverURL)
+                        let receiver = DragOrigin.current(serverURL: serverURL, scope: scope)
                         let ids = references.filter { $0.origin == receiver }.map(\.id).filter { $0 != folder.id }
                         guard !ids.isEmpty else { return false }
                         onDrop(ids)
@@ -83,14 +86,15 @@
     struct MacRowDragDrop: ViewModifier {
         let item: FileItem
         let serverURL: URL
+        let scope: String
         let canDrag: Bool
         let canDropHere: Bool
         let onDrop: ([FileItem.ID]) -> Void
 
         func body(content: Content) -> some View {
             content
-                .modifier(MacFileDrag(item: item, serverURL: serverURL, isEnabled: canDrag))
-                .modifier(MacFolderDropTarget(folder: item, serverURL: serverURL, isEnabled: canDropHere, onDrop: onDrop))
+                .modifier(MacFileDrag(item: item, serverURL: serverURL, scope: scope, isEnabled: canDrag))
+                .modifier(MacFolderDropTarget(folder: item, serverURL: serverURL, scope: scope, isEnabled: canDropHere, onDrop: onDrop))
         }
     }
 
@@ -99,6 +103,7 @@
     /// hovers over it.
     struct MacFinderDrop: ViewModifier {
         let serverURL: URL
+        let scope: String
         let isEnabled: Bool
         let onDrop: ([URL]) -> Void
         var onDropItems: ([FileItem]) -> Void = { _ in }
@@ -109,7 +114,7 @@
             content
                 .dropDestination(for: MacRowDrop.self) { drops, _ in
                     let files = drops.compactMap(\.fileURL)
-                    let receiver = DragOrigin.current(serverURL: serverURL)
+                    let receiver = DragOrigin.current(serverURL: serverURL, scope: scope)
                     let items = drops.compactMap { $0.item(for: receiver) }
                     guard isEnabled, !files.isEmpty || !items.isEmpty else { return false }
                     if !files.isEmpty {
@@ -142,9 +147,9 @@
         let file = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 1_024, kind: "pdf")
         return List {
             Label { Text(folder.name) } icon: { IconKit.folderFill }
-                .modifier(MacFolderDropTarget(folder: folder, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), isEnabled: true) { _ in })
+                .modifier(MacFolderDropTarget(folder: folder, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), scope: "preview", isEnabled: true) { _ in })
             Label { Text(file.name) } icon: { IconKit.document }
-                .modifier(MacFileDrag(item: file, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), isEnabled: true))
+                .modifier(MacFileDrag(item: file, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), scope: "preview", isEnabled: true))
         }
         .previewCanvas(.control)
     }

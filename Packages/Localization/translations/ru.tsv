@@ -606,6 +606,7 @@ offline.manageRow	Управление офлайн-файлами
 offline.manageTitle	Офлайн-файлы
 offline.manageEmpty	Ничего не загружено для офлайн-доступа.
 offline.preferOfflineToggle	Воспроизводить загруженные копии
+offline.pinRemoved	%@ больше не существует на сервере и удалено из офлайн-файлов
 offline.preferOfflineSubtitle	Использовать загруженное видео вместо потоковой передачи, когда оно доступно.
 offline.tunnelSpeedNote	Доступ к серверу через удалённый туннель может замедлить загрузки. Для больших файлов подключитесь к той же сети и используйте локальный адрес сервера.
 menu.about	О программе NextExplorer
@@ -813,7 +814,6 @@ shareUpload.failureOther#one	%lld файл не удалось загрузит�
 shareUpload.failureOther#few	%lld файла не удалось загрузить.
 shareUpload.failureOther#many	%lld файлов не удалось загрузить.
 shareUpload.failureOther#other	%lld файла не удалось загрузить.
-shareUpload.notificationMoreNames	и ещё %lld
 shareUpload.notificationRetry	Повторить
 shareUpload.notificationHiddenPreview	Откройте NextExplorer, чтобы узнать результат загрузки.
 shareUpload.retryFailedTitle	Не удалось повторить
@@ -854,3 +854,8 @@ textPreview.conflictReload	Перезагрузить
 offline.waitingForNetwork	Будет загружено, когда вы снова будете в сети
 browse.bulkFavoriteFailed	Не удалось: %1$lld из %2$lld
 shareUpload.livePhotoNote	Live Photos загружаются вместе с видео движения.
+shareUpload.retrySignInBody	Войдите в NextExplorer, затем снова нажмите «Повторить».
+shareUpload.causeFolder	Папки нельзя отправлять. Поделитесь файлами внутри них.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	ещё %lld
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

@@ -131,10 +131,10 @@ extension JSONCacheStore: DependencyKey {
             guard let directory else { return nil }
             // The caller's key (favorites, shares.byMe, ...) carries no server, so fold the active
             // account in: two servers' Favorites/Shared lists must not share one cache entry.
-            let digest = SHA256.hash(data: Data("\(scope)\n\(key)".utf8))
+            let digest = SHA256.hash(data: Data(CacheLayout.key(scope, key).utf8))
             let name = digest.map { String(format: "%02x", $0) }.joined()
             return directory
-                .appendingPathComponent("\(CacheAccountScope.filePrefix(for: scope))-\(name)")
+                .appendingPathComponent(CacheAccountScope.scopedFileName(name, scope: scope))
                 .appendingPathExtension(Constants.fileExtension)
         }
 
@@ -183,7 +183,7 @@ extension JSONCacheStore: DependencyKey {
         func clear(scope: String) {
             lock.lock()
             defer { lock.unlock() }
-            let prefix = "\(CacheAccountScope.filePrefix(for: scope))-"
+            let prefix = CacheAccountScope.namePrefix(for: scope)
             for entry in entriesByAge() where entry.url.lastPathComponent.hasPrefix(prefix) {
                 try? fileManager.removeItem(at: entry.url)
             }
@@ -245,7 +245,7 @@ extension JSONCacheStore: DependencyKey {
         }
     }
 
-    /// A real on-disk store rooted under `rootDirectory` instead of Application Support, so tests
+    /// A real on disk store rooted under `rootDirectory` instead of Application Support, so tests
     /// can exercise persistence and eviction in a temp directory.
     static func onDisk(rootDirectory: URL? = nil, maxEntries: Int = Constants.maxEntries, maxTotalBytes: Int64 = Constants.maxTotalBytes) -> JSONCacheStore {
         Storage(rootOverride: rootDirectory, maxEntries: maxEntries, maxTotalBytes: maxTotalBytes).asStore()
@@ -263,7 +263,7 @@ extension JSONCacheStore: DependencyKey {
         totalSizeBytes: { 0 }
     )
 
-    /// An in-memory store for tests: reads see prior writes. Unbound calls use `scope`, not the process
+    /// An in memory store for tests: reads see prior writes. Unbound calls use `scope`, not the process
     /// wide scope, so parallel tests never see each other's entries. `FilesClient.live` binds its
     /// `activeScope()`, so a store seeded directly is visible to a live client whose scope source returns
     /// the same value (the default `""` matches a test that never sets a scope).
@@ -288,7 +288,7 @@ extension JSONCacheStore: DependencyKey {
         private var entries: [String: CachedPayload] = [:]
 
         private func entryKey(_ scope: String, _ key: String) -> String {
-            "\(scope)\n\(key)"
+            CacheLayout.key(scope, key)
         }
 
         func read(scope: String, key: String) -> CachedPayload? {
@@ -308,7 +308,7 @@ extension JSONCacheStore: DependencyKey {
 
         func clear(scope: String) {
             lock.lock(); defer { lock.unlock() }
-            let prefix = "\(scope)\n"
+            let prefix = CacheLayout.keyPrefix(for: scope)
             entries = entries.filter { !$0.key.hasPrefix(prefix) }
         }
 

@@ -15564,7 +15564,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この証明書は期限切れです。サーバに拒否される可能性があります。"
+            "value": "この証明書は期限切れです。サーバーに拒否される可能性があります。"
           }
         },
         "ko": {
@@ -16099,7 +16099,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "クライアント証明書 (mTLS) を提示したデバイスだけを受け入れるサーバがあります。このサーバ用に受け取った .p12 または .pfx ファイルを選択してください。"
+            "value": "クライアント証明書 (mTLS) を提示したデバイスだけを受け入れるサーバーがあります。このサーバー用に受け取った .p12 または .pfx ファイルを選択してください。"
           }
         },
         "ko": {
@@ -16848,7 +16848,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "NextExplorer は %@ にこの証明書を提示しなくなります。サーバが証明書を必要とする場合、証明書を再度追加するまでアプリは接続できません。"
+            "value": "NextExplorer は %@ にこの証明書を提示しなくなります。サーバーが証明書を必要とする場合、証明書を再度追加するまでアプリは接続できません。"
           }
         },
         "ko": {
@@ -17169,7 +17169,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバ"
+            "value": "サーバー"
           }
         },
         "ko": {
@@ -25622,7 +25622,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ローカルコピーのみを削除します。ファイルはサーバに残ります。"
+            "value": "ローカルコピーのみを削除します。ファイルはサーバーに残ります。"
           }
         },
         "ko": {
@@ -26050,7 +26050,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ローカルコピーのみを削除します。ファイルはサーバに残ります。"
+            "value": "ローカルコピーのみを削除します。ファイルはサーバーに残ります。"
           }
         },
         "ko": {
@@ -27334,7 +27334,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバに接続できませんでした。"
+            "value": "サーバーに接続できませんでした。"
           }
         },
         "ko": {
@@ -27655,7 +27655,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバがクライアント証明書を拒否しました。"
+            "value": "サーバーがクライアント証明書を拒否しました。"
           }
         },
         "ko": {
@@ -27762,7 +27762,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このサーバにはクライアント証明書が必要です。設定で追加してください。"
+            "value": "このサーバーにはクライアント証明書が必要です。設定で追加してください。"
           }
         },
         "ko": {
@@ -27869,7 +27869,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバから予期しない応答がありました。"
+            "value": "サーバーから予期しない応答がありました。"
           }
         },
         "ko": {
@@ -28083,7 +28083,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバに接続できませんでした。"
+            "value": "サーバーに接続できませんでした。"
           }
         },
         "ko": {
@@ -28404,7 +28404,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバエラー (%lld)。"
+            "value": "サーバーエラー (%lld)。"
           }
         },
         "ko": {
@@ -33754,7 +33754,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバディスク"
+            "value": "サーバーディスク"
           }
         },
         "ko": {
@@ -37713,7 +37713,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバがこのクライアント証明書を拒否しました。"
+            "value": "サーバーがこのクライアント証明書を拒否しました。"
           }
         },
         "ko": {
@@ -37820,7 +37820,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このサーバはクライアント証明書を要求しています。"
+            "value": "このサーバーはクライアント証明書を要求しています。"
           }
         },
         "ko": {
@@ -37927,7 +37927,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバから予期しない応答がありました。アドレスを確認して再試行してください。"
+            "value": "サーバーから予期しない応答がありました。アドレスを確認して再試行してください。"
           }
         },
         "ko": {
@@ -38355,7 +38355,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "有効なサーバアドレスを入力してください。"
+            "value": "有効なサーバーアドレスを入力してください。"
           }
         },
         "ko": {
@@ -38676,7 +38676,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このサーバではユーザ名/パスワードによるサインインが有効になっていません。"
+            "value": "このサーバーではユーザ名/パスワードによるサインインが有効になっていません。"
           }
         },
         "ko": {
@@ -38890,7 +38890,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバで問題が発生しました（エラー %lld）。後で再試行してください。"
+            "value": "サーバーで問題が発生しました（エラー %lld）。後で再試行してください。"
           }
         },
         "ko": {
@@ -39211,7 +39211,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバから予期しない応答がありました。"
+            "value": "サーバーから予期しない応答がありました。"
           }
         },
         "ko": {
@@ -39318,7 +39318,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "そのサーバに接続できませんでした。アドレスを確認して再試行してください。"
+            "value": "そのサーバーに接続できませんでした。アドレスを確認して再試行してください。"
           }
         },
         "ko": {
@@ -39960,7 +39960,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ポートを追加してください（例: :3000）。ほとんどのホームラボサーバは通常のポート 80 で待ち受けていません。"
+            "value": "ポートを追加してください（例: :3000）。ほとんどのホームラボサーバーは通常のポート 80 で待ち受けていません。"
           }
         },
         "ko": {
@@ -43170,7 +43170,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "クライアント証明書を要求するサーバからは、この形式をストリーミング再生できません。ファイルをダウンロードして再生してください。"
+            "value": "クライアント証明書を要求するサーバーからは、この形式をストリーミング再生できません。ファイルをダウンロードして再生してください。"
           }
         },
         "ko": {
@@ -47081,6 +47081,113 @@
         }
       }
     },
+    "offline.pinRemoved": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ no longer exists on the server and was removed from offline files"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لم يعد %@ موجودًا على الخادم وتمت إزالته من الملفات دون اتصال"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ existiert auf dem Server nicht mehr und wurde aus den Offline-Dateien entfernt"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ ya no existe en el servidor y se quitó de los archivos sin conexión"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ n’existe plus sur le serveur et a été retiré des fichiers hors ligne"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ अब सर्वर पर मौजूद नहीं है और ऑफ़लाइन फ़ाइलों से हटा दिया गया है"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ non esiste più sul server ed è stato rimosso dai file offline"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ はサーバー上に存在しなくなったため、オフラインファイルから削除されました"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 항목이 서버에 더 이상 없어 오프라인 파일에서 제거되었습니다"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ bestaat niet meer op de server en is verwijderd uit de offlinebestanden"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ już nie istnieje na serwerze i został usunięty z plików offline"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ não existe mais no servidor e foi removido dos arquivos offline"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ nu mai există pe server și a fost eliminat din fișierele offline"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ больше не существует на сервере и удалено из офлайн-файлов"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ finns inte längre på servern och har tagits bort från offlinefiler"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 在服务器上已不存在，已从离线文件中移除"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ 在伺服器上已不存在，已從離線檔案中移除"
+          }
+        }
+      }
+    },
     "offline.preferOfflineSubtitle": {
       "extractionState": "manual",
       "localizations": {
@@ -50339,7 +50446,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "所有権の変更には通常、サーバ上の root または管理者権限が必要です。"
+            "value": "所有権の変更には通常、サーバー上の root または管理者権限が必要です。"
           }
         },
         "ko": {
@@ -53228,7 +53335,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバ名は空にできません。"
+            "value": "サーバー名は空にできません。"
           }
         },
         "ko": {
@@ -53335,7 +53442,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバ名"
+            "value": "サーバー名"
           }
         },
         "ko": {
@@ -53549,7 +53656,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバ"
+            "value": "サーバー"
           }
         },
         "ko": {
@@ -53656,7 +53763,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバの詳細を更新しました。"
+            "value": "サーバーの詳細を更新しました。"
           }
         },
         "ko": {
@@ -53870,7 +53977,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバを更新"
+            "value": "サーバーを更新"
           }
         },
         "ko": {
@@ -53977,7 +54084,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "NextExplorer インスタンスがインストールされているアドレスです。変更するには、サインアウトしてサーバを再度追加してください。"
+            "value": "NextExplorer インスタンスがインストールされているアドレスです。変更するには、サインアウトしてサーバーを再度追加してください。"
           }
         },
         "ko": {
@@ -54084,7 +54191,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバ URL"
+            "value": "サーバー URL"
           }
         },
         "ko": {
@@ -55154,7 +55261,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "オフラインで使用するキャッシュ済みのプレビュー、サムネール、保存済みフォルダリストを消去します。サーバ上のものには影響しません。"
+            "value": "オフラインで使用するキャッシュ済みのプレビュー、サムネール、保存済みフォルダリストを消去します。サーバー上のものには影響しません。"
           }
         },
         "ko": {
@@ -56545,7 +56652,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このデバイスからすべてのダウンロード済みファイルを削除します。サーバには残ります。"
+            "value": "このデバイスからすべてのダウンロード済みファイルを削除します。サーバーには残ります。"
           }
         },
         "ko": {
@@ -57829,7 +57936,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバ"
+            "value": "サーバー"
           }
         },
         "ko": {
@@ -59220,7 +59327,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバストレージ"
+            "value": "サーバーストレージ"
           }
         },
         "ko": {
@@ -60183,7 +60290,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "フォルダは ZIP としてダウンロードされ、サーバには何も残りません。ダウンロードの削除やキャッシュの消去はこのデバイスにのみ影響し、サーバ上のものには影響しません。"
+            "value": "フォルダは ZIP としてダウンロードされ、サーバーには何も残りません。ダウンロードの削除やキャッシュの消去はこのデバイスにのみ影響し、サーバー上のものには影響しません。"
           }
         },
         "ko": {
@@ -60290,7 +60397,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "キャッシュの消去はこの Mac にのみ影響し、サーバ上のものには影響しません。"
+            "value": "キャッシュの消去はこの Mac にのみ影響し、サーバー上のものには影響しません。"
           }
         },
         "ko": {
@@ -62382,6 +62489,113 @@
         }
       }
     },
+    "shareUpload.accountSummary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@"
+          }
+        }
+      }
+    },
     "shareUpload.causeCannotRead": {
       "extractionState": "manual",
       "localizations": {
@@ -62412,7 +62626,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il n'a pas pu être lu."
+            "value": "Il n’a pas pu être lu."
           }
         },
         "hi": {
@@ -62489,6 +62703,113 @@
         }
       }
     },
+    "shareUpload.causeFolder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folders can't be shared. Share the files inside instead."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "لا يمكن مشاركة المجلدات. شارك الملفات الموجودة بداخلها بدلًا من ذلك."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordner können nicht geteilt werden. Teile stattdessen die Dateien darin."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No se pueden compartir carpetas. Comparte los archivos que contienen."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les dossiers ne peuvent pas être partagés. Partagez plutôt les fichiers qu’ils contiennent."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "फ़ोल्डर शेयर नहीं किए जा सकते। इसके बजाय उनके अंदर की फ़ाइलें शेयर करें।"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le cartelle non possono essere condivise. Condividi invece i file al loro interno."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "フォルダは共有できません。代わりに中のファイルを共有してください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "폴더는 공유할 수 없습니다. 대신 폴더 안의 파일을 공유하세요."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mappen kunnen niet worden gedeeld. Deel in plaats daarvan de bestanden erin."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folderów nie można udostępniać. Udostępnij zamiast tego znajdujące się w nich pliki."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pastas não podem ser compartilhadas. Compartilhe os arquivos dentro delas."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folderele nu pot fi partajate. Partajează în schimb fișierele din interior."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Папки нельзя отправлять. Поделитесь файлами внутри них."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mappar kan inte delas. Dela filerna i dem i stället."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "无法共享文件夹。请改为共享其中的文件。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "無法分享資料夾。請改為分享其中的檔案。"
+          }
+        }
+      }
+    },
     "shareUpload.causeNotEnoughSpace": {
       "extractionState": "manual",
       "localizations": {
@@ -62519,7 +62840,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il n'y a pas assez d'espace libre sur cet appareil."
+            "value": "Il n’y a pas assez d’espace libre sur cet appareil."
           }
         },
         "hi": {
@@ -62626,7 +62947,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Il n'a pas pu être préparé."
+            "value": "Il n’a pas pu être préparé."
           }
         },
         "hi": {
@@ -62751,7 +63072,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバがクライアント証明書を拒否しました。NextExplorerを開き、設定で置き換えてから、もう一度共有してください。"
+            "value": "サーバーがクライアント証明書を拒否しました。NextExplorerを開き、設定で置き換えてから、もう一度共有してください。"
           }
         },
         "ko": {
@@ -62858,7 +63179,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "このサーバにはクライアント証明書が必要です。NextExplorerを開き、設定で追加してから、もう一度共有してください。"
+            "value": "このサーバーにはクライアント証明書が必要です。NextExplorerを開き、設定で追加してから、もう一度共有してください。"
           }
         },
         "ko": {
@@ -63054,7 +63375,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Votre dossier par défaut n'est plus disponible. Choisissez un autre dossier."
+            "value": "Votre dossier par défaut n’est plus disponible. Choisissez un autre dossier."
           }
         },
         "hi": {
@@ -63375,7 +63696,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ces fichiers n'ont pas pu être préparés :"
+            "value": "Ces fichiers n’ont pas pu être préparés :"
           }
         },
         "hi": {
@@ -64353,7 +64674,7 @@
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld pliku nie mogło zostać przesłanych."
+                  "value": "%lld pliku nie mogło zostać przesłane."
                 }
               }
             }
@@ -65829,7 +66150,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gardez cette fenêtre ouverte jusqu'à la fin de la préparation."
+            "value": "Gardez cette fenêtre ouverte jusqu’à la fin de la préparation."
           }
         },
         "hi": {
@@ -66254,37 +66575,37 @@
               "zero": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "تم رفع %lld ملف إلى ”%@“."
+                  "value": "تم رفع %lld ملف إلى «%@»."
                 }
               },
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "تم رفع %lld ملف إلى ”%@“."
+                  "value": "تم رفع %lld ملف إلى «%@»."
                 }
               },
               "two": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "تم رفع %lld ملفين إلى ”%@“."
+                  "value": "تم رفع %lld ملفين إلى «%@»."
                 }
               },
               "few": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "تم رفع %lld ملفات إلى ”%@“."
+                  "value": "تم رفع %lld ملفات إلى «%@»."
                 }
               },
               "many": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "تم رفع %lld ملفًا إلى ”%@“."
+                  "value": "تم رفع %lld ملفًا إلى «%@»."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "تم رفع %lld ملف إلى ”%@“."
+                  "value": "تم رفع %lld ملف إلى «%@»."
                 }
               }
             }
@@ -66895,43 +67216,43 @@
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "and %lld more"
+            "value": "%lld more"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "و%lld أخرى"
+            "value": "%lld أخرى"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "und %lld weitere"
+            "value": "%lld weitere"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "y %lld más"
+            "value": "%lld más"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "et %lld de plus"
+            "value": "%lld de plus"
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "और %lld"
+            "value": "%lld अन्य"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "e altri %lld"
+            "value": "altri %lld"
           }
         },
         "ja": {
@@ -66949,37 +67270,37 @@
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "en nog %lld"
+            "value": "nog %lld"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "i %lld więcej"
+            "value": "%lld więcej"
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "e mais %lld"
+            "value": "mais %lld"
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "și încă %lld"
+            "value": "încă %lld"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "и ещё %lld"
+            "value": "ещё %lld"
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "och %lld till"
+            "value": "%lld till"
           }
         },
         "zh-CN": {
@@ -67240,7 +67561,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ouvrez NextExplorer depuis l'écran d'accueil, puis partagez à nouveau."
+            "value": "Ouvrez NextExplorer depuis l’écran d’accueil, puis partagez à nouveau."
           }
         },
         "hi": {
@@ -67852,6 +68173,113 @@
         }
       }
     },
+    "shareUpload.retrySignInBody": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign in to NextExplorer, then tap Retry again."
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "سجّل الدخول إلى NextExplorer، ثم اضغط على «إعادة المحاولة» مرة أخرى."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Melde dich in NextExplorer an und tippe dann erneut auf „Erneut versuchen“."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inicia sesión en NextExplorer y vuelve a pulsar «Reintentar»."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connectez-vous à NextExplorer, puis touchez à nouveau « Réessayer »."
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NextExplorer में साइन इन करें, फिर दोबारा “पुनः प्रयास करें” पर टैप करें।"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accedi a NextExplorer, poi tocca di nuovo “Riprova”."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NextExplorerにサインインしてから、もう一度「再試行」をタップしてください。"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NextExplorer에 로그인한 다음 “재시도”를 다시 탭하세요."
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log in bij NextExplorer en tik daarna opnieuw op ‘Opnieuw proberen’."
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zaloguj się w NextExplorer, a potem ponownie dotknij „Ponów”."
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entre no NextExplorer e toque em “Tentar de novo” novamente."
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conectează-te în NextExplorer, apoi atinge din nou „Reîncearcă”."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Войдите в NextExplorer, затем снова нажмите «Повторить»."
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logga in i NextExplorer och tryck sedan på ”Försök igen” en gång till."
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "请先登录 NextExplorer，然后再次点按“重试”。"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "請先登入 NextExplorer，然後再次點一下「重試」。"
+          }
+        }
+      }
+    },
     "shareUpload.sessionUnreadable": {
       "extractionState": "manual",
       "localizations": {
@@ -67882,7 +68310,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "NextExplorer n'a pas pu lire votre connexion sur cet appareil. Ouvrez NextExplorer une fois, puis partagez à nouveau."
+            "value": "NextExplorer n’a pas pu lire votre connexion sur cet appareil. Ouvrez NextExplorer une fois, puis partagez à nouveau."
           }
         },
         "hi": {
@@ -73999,7 +74427,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバが一度に生成するサムネールの数。"
+            "value": "サーバーが一度に生成するサムネールの数。"
           }
         },
         "ko": {
@@ -74962,7 +75390,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバがすべてのクライアント向けに画像サムネールを生成する方法を制御します。"
+            "value": "サーバーがすべてのクライアント向けに画像サムネールを生成する方法を制御します。"
           }
         },
         "ko": {
@@ -76301,6 +76729,113 @@
           "stringUnit": {
             "state": "translated",
             "value": "檔案"
+          }
+        }
+      }
+    },
+    "unsupportedPreview.macDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "ar": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "hi": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "it": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "pl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "pt": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "ro": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "sv": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "zh-CN": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
+          }
+        },
+        "zh-TW": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@\n%3$@"
           }
         }
       }
@@ -79349,7 +79884,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "http で接続しています。このサーバがホームネットワークのみにある場合、そのネットワークから離れるとアップロードは機能しません。"
+            "value": "http で接続しています。このサーバーがホームネットワークのみにある場合、そのネットワークから離れるとアップロードは機能しません。"
           }
         },
         "ko": {
@@ -80847,7 +81382,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "ユーザを削除すると、そのアクセス権はすぐに取り消されます。サーバ上でそのユーザが所有するファイルは削除されません。"
+            "value": "ユーザを削除すると、そのアクセス権はすぐに取り消されます。サーバー上でそのユーザが所有するファイルは削除されません。"
           }
         },
         "ko": {
@@ -81578,13 +82113,13 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ deviendra administrateur avec un contrôle total sur les fichiers, les partages et les utilisateurs. Un administrateur ne peut pas être rétrogradé depuis l'app."
+            "value": "%@ deviendra administrateur avec un contrôle total sur les fichiers, les partages et les utilisateurs. Un administrateur ne peut pas être rétrogradé depuis l’app."
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ फ़ाइलों, शेयर और उपयोगकर्ताओं पर पूर्ण नियंत्रण के साथ एडमिन बन जाएगा। ऐप से एडमिन को हटाया नहीं जा सकता।"
+            "value": "%@ फ़ाइलों, शेयर और उपयोगकर्ताओं पर पूर्ण नियंत्रण के साथ एडमिन बन जाएगा। ऐप से किसी एडमिन की भूमिका घटाई नहीं जा सकती।"
           }
         },
         "it": {
@@ -81685,7 +82220,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Accorder les droits d'administrateur ?"
+            "value": "Accorder les droits d’administrateur ?"
           }
         },
         "hi": {
@@ -82987,7 +83522,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ はすぐにアクセス権を失います。サーバ上のファイルは削除されません。"
+            "value": "%@ はすぐにアクセス権を失います。サーバー上のファイルは削除されません。"
           }
         },
         "ko": {
@@ -88123,7 +88658,7 @@
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "サーバに接続できませんでした。"
+            "value": "サーバーに接続できませんでした。"
           }
         },
         "ko": {

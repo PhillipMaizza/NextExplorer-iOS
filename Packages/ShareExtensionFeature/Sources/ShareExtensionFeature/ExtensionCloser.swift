@@ -6,7 +6,7 @@ import Foundation
 public final class ExtensionCloser {
     private let complete: @MainActor () -> Void
     private let cancel: @MainActor () -> Void
-    public private(set) var isClosed = false
+    private var isClosed = false
 
     public init(complete: @escaping @MainActor () -> Void, cancel: @escaping @MainActor () -> Void) {
         self.complete = complete

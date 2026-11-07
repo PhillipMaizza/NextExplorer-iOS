@@ -310,7 +310,7 @@ public struct LoginFormFeature {
                     }
                 }
                 let clock = clock
-                guard status.localEnabled || status.oidcEnabled else {
+                guard status.isLocalEnabled || status.isOIDCEnabled else {
                     state.connectionPhase = .failure
                     state.errorMessage = Self.message(for: .noAuthMethodsEnabled)
                     return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock))
@@ -350,7 +350,7 @@ public struct LoginFormFeature {
                 return .none
 
             case .continueButtonTapped:
-                guard state.authStatus?.localEnabled == true,
+                guard state.authStatus?.isLocalEnabled == true,
                       let url = Self.normalizedURL(scheme: state.scheme, host: state.host)
                 else {
                     return .none
@@ -403,7 +403,7 @@ public struct LoginFormFeature {
                 return .merge(Self.scheduleSubmitRevert(clock), Self.scheduleErrorDismiss(clock))
 
             case .ssoButtonTapped:
-                guard state.authStatus?.oidcEnabled == true,
+                guard state.authStatus?.isOIDCEnabled == true,
                       state.oidcPhase == .idle,
                       let url = Self.normalizedURL(scheme: state.scheme, host: state.host)
                 else {

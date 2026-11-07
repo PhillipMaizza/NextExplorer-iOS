@@ -50,9 +50,9 @@ struct FilesService: Sendable {
         }
     }
 
-    func performSend(_ request: URLRequest, lowPriority: Bool = false) async throws -> (Data, HTTPURLResponse) {
+    func performSend(_ request: URLRequest, isLowPriority: Bool = false) async throws -> (Data, HTTPURLResponse) {
         do {
-            return lowPriority
+            return isLowPriority
                 ? try await networkClient.lowPrioritySend(request)
                 : try await networkClient.send(request)
         } catch {

@@ -11,6 +11,7 @@
         static let rowSpacing: CGFloat = .space12
         static let rowPadding: CGFloat = .space8
         static let actionIconSize: CGFloat = .iconSmall
+        static let signOutHitSize: CGFloat = .size32
         static let inactiveOpacity: Double = 0.5
         static let hoverOpacity: Double = 0.08
         static let shownOpacity: Double = 1
@@ -112,6 +113,8 @@
         let account: AccountSummary
         let onSwitch: () -> Void
         let onSignOut: () -> Void
+        /// Keeps Sign Out showing without a hover or focus, for the previews of that state.
+        var isSignOutPinnedShown = false
 
         private enum FocusTarget: Hashable {
             case row, signOut
@@ -124,7 +127,7 @@
         /// button itself. Hidden, it is not focusable and not in the accessibility tree: VoiceOver
         /// reaches it through the row's Sign Out action instead.
         private var isSignOutShown: Bool {
-            isHovered || focusedTarget != nil
+            isSignOutPinnedShown || isHovered || focusedTarget != nil
         }
 
         var body: some View {
@@ -147,6 +150,8 @@
                     Button(action: onSignOut) {
                         IconKit.signOut
                             .foregroundStyle(Color.negativeText)
+                            .frame(width: Metrics.signOutHitSize, height: Metrics.signOutHitSize)
+                            .contentShape(Rectangle())
                     }
                     .buttonStyle(.plain)
                     .focusable(isSignOutShown)
@@ -163,8 +168,8 @@
             .onHover { isHovered = $0 }
             .focusable(!account.isActive)
             .focused($focusedTarget, equals: .row)
-            .onKeyPress(.return) {
-                // Return on the focused Sign Out button belongs to the button, not to the row.
+            .onKeyPress(keys: [.return, .space]) { _ in
+                // Return and Space on the focused Sign Out button belong to the button, not to the row.
                 guard !account.isActive, focusedTarget != .signOut else { return .ignored }
                 onSwitch()
                 return .handled
@@ -260,5 +265,21 @@
             dismissThen: { $0() },
             onChangePassword: {}
         )
+    }
+
+    private enum PreviewFixture {
+        static let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
+        static let inactive = AccountSummary(id: "preview-inactive", username: "Sam Rivers", serverURL: serverURL, isActive: false)
+        static let active = AccountSummary(id: "preview-active", username: "Jane Doe", serverURL: serverURL, isActive: true)
+    }
+
+    #Preview("Account row, hovered or focused") {
+        VStack {
+            MacAccountRow(account: PreviewFixture.inactive, onSwitch: {}, onSignOut: {}, isSignOutPinnedShown: true)
+            MacAccountRow(account: PreviewFixture.inactive, onSwitch: {}, onSignOut: {})
+            MacAccountRow(account: PreviewFixture.active, onSwitch: {}, onSignOut: {})
+        }
+        .padding(.space8)
+        .frame(width: Metrics.width)
     }
 #endif

@@ -417,6 +417,7 @@ struct BrowseContentView: View {
         #if os(macOS)
         .modifier(MacFinderDrop(
             serverURL: store.serverURL,
+            scope: store.cacheScope,
             isEnabled: canUploadHere && !store.isSelecting,
             onDrop: { urls in store.send(.beginUpload(.documents(urls))) },
             onDropItems: { items in
@@ -425,10 +426,7 @@ struct BrowseContentView: View {
             }
         ))
         #else
-        .modifier(IOSFolderBackgroundDrop(
-            isEnabled: !store.isSelecting,
-            onDrop: { handleDrop($0, onto: nil) }
-        ))
+        .modifier(IOSBrowseBackgroundDragDrop(store: store))
         #endif
         .hapticFeedback(.selection, trigger: viewModeRaw)
         .hapticFeedback(.selection, trigger: store.isSelecting)
@@ -463,6 +461,7 @@ struct BrowseContentView: View {
                         ) {
                             store.send(.bulkFavoriteTapped)
                         }
+                        .disabled(!store.hasLoadedFavorites)
                     }
                 }
                 if isTransferActionVisible {
@@ -736,6 +735,7 @@ struct BrowseContentView: View {
                 onOpen: handleTap,
                 keyboardActions: tableKeyboardActions,
                 serverURL: store.serverURL,
+                scope: store.cacheScope,
                 canDropOnFolders: store.access?.canDelete ?? false,
                 onDropOnFolder: { ids, folder in store.send(.itemsDroppedOnFolder(ids: ids, folder: folder)) },
                 onDropForeignItemsOnFolder: { items, folder in
@@ -762,53 +762,13 @@ struct BrowseContentView: View {
         #endif
     }
 
-    #if os(iOS)
-        /// Drag a row (the whole selection when it is part of one) onto a folder here, or out to
-        /// the Files app, and let folder rows take drops.
-        private func iosRowDragDrop(for item: FileItem) -> IOSRowDragDrop {
-            IOSRowDragDrop(
-                item: item,
-                serverURL: store.serverURL,
-                canDropHere: !store.isSelecting,
-                selection: { store.isSelecting ? selectedBrowseItems : [] },
-                onDrop: { handleDrop($0, onto: item) }
-            )
-        }
-
-        private var selectedBrowseItems: [FileItem] {
-            store.items.filter { store.selectedItemIDs.contains($0.id) }
-        }
-
-        /// A drop on a folder row (`folder`) or on the folder on screen (`nil`) goes through the
-        /// same reducer actions as the Mac table, which refuse the folder itself and its
-        /// descendants and send name clashes through the transfer conflict prompt.
-        private func handleDrop(_ drops: [BrowseDrop], onto folder: FileItem?) -> Bool {
-            let plan = BrowseDropPlan(
-                drops: drops,
-                listed: store.items.map(\.id),
-                destination: folder?.id ?? store.directoryPath,
-                receiver: .current(serverURL: store.serverURL)
-            )
-            let actions = BrowseDropRouter.actions(
-                for: plan,
-                folder: folder,
-                directoryPath: store.directoryPath,
-                canMove: store.access?.canDelete ?? false,
-                canUpload: canUploadHere
-            )
-            for action in actions {
-                store.send(action)
-            }
-            return !actions.isEmpty
-        }
-    #endif
-
     #if os(macOS)
         /// Drag a row out (Finder, or onto a folder here) and let folder rows take drops.
         private func macRowDragDrop(for item: FileItem) -> MacRowDragDrop {
             MacRowDragDrop(
                 item: item,
                 serverURL: store.serverURL,
+                scope: store.cacheScope,
                 canDrag: !store.isSelecting,
                 canDropHere: !store.isSelecting && (store.access?.canDelete ?? false),
                 onDrop: { ids in store.send(.itemsDroppedOnFolder(ids: ids, folder: item)) }
@@ -911,6 +871,7 @@ struct BrowseContentView: View {
                         }
                     }
                     .tint(.primaryDS)
+                    .disabled(!store.hasLoadedFavorites)
                 }
                 if store.access?.canDelete ?? false {
                     Button(role: .destructive) {
@@ -1650,7 +1611,7 @@ struct BrowseContentView: View {
                 #if os(macOS)
                     .modifier(macRowDragDrop(for: item))
                 #else
-                    .modifier(iosRowDragDrop(for: item))
+                    .modifier(IOSBrowseItemDragDrop(store: store, item: item))
                 #endif
                     .overlay(alignment: .topLeading) {
                         if store.isSelecting {
@@ -1693,7 +1654,7 @@ struct BrowseContentView: View {
                 // On the label, not the row chain: that chain is at the type checker's limit.
                 .modifier(macRowDragDrop(for: item))
                 #else
-                .modifier(iosRowDragDrop(for: item))
+                .modifier(IOSBrowseItemDragDrop(store: store, item: item))
                 #endif
             }
             .buttonStyle(DSHapticButtonStyle())
@@ -1724,6 +1685,7 @@ struct BrowseContentView: View {
                             store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
                         }
                         .tint(.accent)
+                        .disabled(!store.hasLoadedFavorites)
                         .accessibilityLabel(store.favoritePaths.contains(item.id) ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites)
                     }
                     if store.access?.canWrite ?? false {

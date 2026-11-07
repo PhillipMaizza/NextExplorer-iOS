@@ -86,34 +86,127 @@ struct SharedItemLoaderStagingTests {
         #expect(!text.contains("file:///"), "the URL's text is not what is uploaded")
     }
 
-    @Test("The compatibility stage also reads the file behind a file URL")
-    func singleStageReadsTheFile() async throws {
-        let root = try temporaryDirectory()
-        defer { try? FileManager.default.removeItem(at: root) }
-        let source = root.appendingPathComponent("Notes.txt")
-        try Data("note bytes".utf8).write(to: source)
+    private func fileURLProvider(_ url: URL) -> NSItemProvider {
         let provider = NSItemProvider()
         provider.registerItem(forTypeIdentifier: UTType.fileURL.identifier) { completion, _, _ in
-            completion?(source as NSURL, nil)
+            completion?(url as NSURL, nil)
         }
-
-        let staged = try await SharedItemLoader.stage(provider, in: batch(in: root))
-
-        #expect(try envelopeText(#require(staged)).contains("note bytes"))
+        return provider
     }
 
-    @Test("A file URL that points at a folder or at nothing stages nothing")
-    func folderAndMissing() async throws {
+    private func envelopes(in batch: UploadBatch) throws -> [String] {
+        try FileManager.default.contentsOfDirectory(atPath: batch.directory.path).filter { $0.hasSuffix(".multipart") }
+    }
+
+    @Test("A folder is reported as a folder, never silently skipped, and leaves no envelope")
+    func folderIsAFailure() async throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        for url in [root, root.appendingPathComponent("missing.txt")] {
-            let provider = NSItemProvider()
-            provider.registerItem(forTypeIdentifier: UTType.fileURL.identifier) { completion, _, _ in
-                completion?(url as NSURL, nil)
-            }
-            let staged = try await SharedItemLoader.stageAll(provider, in: batch(in: root))
-            #expect(staged.isEmpty)
+        let batch = try batch(in: root)
+
+        await #expect(throws: ShareUploadError.isFolder) {
+            try await SharedItemLoader.stageAll(fileURLProvider(root), in: batch)
         }
+        #expect(try envelopes(in: batch).isEmpty)
+    }
+
+    @Test("A file URL with nothing behind it is a read failure, not a skipped item")
+    func missingFileIsAFailure() async throws {
+        let root = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let batch = try batch(in: root)
+
+        await #expect(throws: CocoaError(.fileNoSuchFile)) {
+            try await SharedItemLoader.stageAll(fileURLProvider(root.appendingPathComponent("missing.txt")), in: batch)
+        }
+        #expect(try envelopes(in: batch).isEmpty)
+    }
+
+    // MARK: Progress and cancellation of a representation read
+
+    /// What a fake provider handed the loader, so a test can drive the read by hand.
+    private final class FakeRead: @unchecked Sendable {
+        private let lock = NSLock()
+        private var storedCompletion: (@Sendable (URL?, Bool, (any Error)?) -> Void)?
+        let progress = Progress(totalUnitCount: 100)
+
+        var completion: (@Sendable (URL?, Bool, (any Error)?) -> Void)? {
+            get { lock.withLock { storedCompletion } }
+            set { lock.withLock { storedCompletion = newValue } }
+        }
+    }
+
+    @Test("A representation read reports the provider's progress in whole percents, then stages the file")
+    func representationReportsProgress() async throws {
+        let root = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let source = root.appendingPathComponent("Doc.pdf")
+        try Data("pdf bytes".utf8).write(to: source)
+        let batch = try batch(in: root)
+        let read = FakeRead()
+        read.progress.completedUnitCount = 50
+        let (fractions, report) = AsyncStream<Double>.makeStream()
+
+        let staging = Task {
+            try await SharedItemLoader.stageRepresentation(
+                type: .pdf, suggestedName: nil, pairedWith: nil, in: batch,
+                load: { _, completion in
+                    read.completion = completion
+                    return read.progress
+                },
+                onFraction: { report.yield($0) }
+            )
+        }
+        var iterator = fractions.makeAsyncIterator()
+        #expect(await iterator.next() == 0.5, "what was read before the observer existed is reported")
+        read.progress.completedUnitCount = 75
+        #expect(await iterator.next() == 0.75)
+        let completion = try #require(read.completion)
+        completion(source, false, nil)
+
+        let file = try await staging.value
+        #expect(file.fileName == "Doc.pdf")
+        #expect(try envelopeText(file).contains("pdf bytes"))
+    }
+
+    @Test("Cancelling a representation read cancels the provider's progress and stages nothing, even if the copy still finishes")
+    func representationCancellationStopsTheCopy() async throws {
+        let root = try temporaryDirectory()
+        defer { try? FileManager.default.removeItem(at: root) }
+        let source = root.appendingPathComponent("Big.mov")
+        try Data("movie".utf8).write(to: source)
+        let batch = try batch(in: root)
+        let read = FakeRead()
+        let (loaded, signalLoaded) = AsyncStream<Void>.makeStream()
+
+        let staging = Task {
+            try await SharedItemLoader.stageRepresentation(
+                type: .quickTimeMovie, suggestedName: nil, pairedWith: nil, in: batch,
+                load: { _, completion in
+                    read.completion = completion
+                    signalLoaded.yield()
+                    return read.progress
+                },
+                onFraction: { _ in }
+            )
+        }
+        var iterator = loaded.makeAsyncIterator()
+        await iterator.next()
+        staging.cancel()
+
+        await #expect(throws: CancellationError.self) { try await staging.value }
+        #expect(read.progress.isCancelled, "the provider is told to stop copying")
+        let completion = try #require(read.completion)
+        completion(source, false, nil)
+        #expect(try envelopes(in: batch).isEmpty, "a copy that finishes late is not staged")
+    }
+
+    @Test("Several files of one item share the item's progress")
+    func overallFractionSpansTheFiles() {
+        #expect(SharedItemLoader.overallFraction(position: 0, count: 2, fraction: 0.5) == 0.25)
+        #expect(SharedItemLoader.overallFraction(position: 1, count: 2, fraction: 0.5) == 0.75)
+        #expect(SharedItemLoader.overallFraction(position: 1, count: 2, fraction: 1) == 1)
+        #expect(SharedItemLoader.overallFraction(position: 0, count: 0, fraction: 0.5) == 0)
     }
 
     @Test("A Live Photo provider stages the still and the paired movie under one name")
@@ -228,8 +321,8 @@ struct SharedItemLoaderStagingTests {
         let staged = try await SharedItemLoader.stageFile(at: file, in: batch(in: root), access: access)
 
         #expect(downloads.items == [file])
-        #expect(try envelopeText(#require(staged)).contains("cloud bytes"))
-        #expect(staged?.fileName == "Cloud.pdf")
+        #expect(try envelopeText(staged).contains("cloud bytes"))
+        #expect(staged.fileName == "Cloud.pdf")
     }
 }
 

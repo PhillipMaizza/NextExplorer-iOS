@@ -606,6 +606,7 @@ offline.manageRow	Gestionează fișierele offline
 offline.manageTitle	Fișiere offline
 offline.manageEmpty	Nu este nimic descărcat pentru utilizare offline.
 offline.preferOfflineToggle	Redă copiile descărcate
+offline.pinRemoved	%@ nu mai există pe server și a fost eliminat din fișierele offline
 offline.preferOfflineSubtitle	Folosește un videoclip descărcat în loc de streaming când este disponibil.
 offline.tunnelSpeedNote	Accesarea serverului printr-un tunel la distanță poate încetini descărcările. Pentru fișiere mari, conectează-te la aceeași rețea și folosește adresa locală a serverului.
 menu.about	Despre NextExplorer
@@ -807,7 +808,6 @@ shareUpload.failureNetwork#other	%lld de fișiere nu au fost încărcate. Conexi
 shareUpload.failureOther#one	%lld fișier nu a putut fi încărcat.
 shareUpload.failureOther#few	%lld fișiere nu au putut fi încărcate.
 shareUpload.failureOther#other	%lld de fișiere nu au putut fi încărcate.
-shareUpload.notificationMoreNames	și încă %lld
 shareUpload.notificationRetry	Reîncearcă
 shareUpload.notificationHiddenPreview	Deschide NextExplorer pentru a vedea cum a decurs încărcarea.
 shareUpload.retryFailedTitle	Reîncercarea nu a reușit
@@ -848,3 +848,8 @@ textPreview.conflictReload	Reîncarcă
 offline.waitingForNetwork	Se va descărca când revii online
 browse.bulkFavoriteFailed	%1$lld din %2$lld au eșuat
 shareUpload.livePhotoNote	Live Photos se încarcă împreună cu videoclipul lor în mișcare.
+shareUpload.retrySignInBody	Conectează-te în NextExplorer, apoi atinge din nou „Reîncearcă”.
+shareUpload.causeFolder	Folderele nu pot fi partajate. Partajează în schimb fișierele din interior.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	încă %lld
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

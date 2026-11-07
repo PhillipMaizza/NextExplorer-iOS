@@ -61,67 +61,98 @@ public enum SharedItemLoader {
         return "\(base).\(fileExtension)"
     }
 
-    /// Stages one shared item into `batch` and returns its main file, or `nil` for an item with no
-    /// file. This leaves a Live Photo's paired movie behind: use `stageAll` to keep both.
-    public static func stage(_ provider: NSItemProvider, in batch: UploadBatch) async throws -> UploadBatch.StagedFile? {
-        guard let type = preferredType(registered: provider.registeredTypeIdentifiers) else { return nil }
-        return try await stage(provider, type: type, in: batch, pairedWith: nil)
-    }
+    /// How a provider hands over one type's file: `NSItemProvider.loadFileRepresentation` in
+    /// production, a stand in in tests.
+    typealias RepresentationLoader = (
+        _ type: UTType, _ completion: @escaping @Sendable (URL?, Bool, (any Error)?) -> Void
+    ) -> Progress?
 
     /// Stages every file one shared item stands for: the file itself, plus a Live Photo's paired
     /// movie under the still's name. Empty for an item with no file (a link, plain text).
-    public static func stageAll(_ provider: NSItemProvider, in batch: UploadBatch) async throws -> [UploadBatch.StagedFile] {
+    /// `onFraction` reports how much of the item has been read, 0 to 1, across all its files.
+    public static func stageAll(
+        _ provider: NSItemProvider,
+        in batch: UploadBatch,
+        onFraction: @escaping @Sendable (Double) -> Void = { _ in }
+    ) async throws -> [UploadBatch.StagedFile] {
+        let types = stagingTypes(registered: provider.registeredTypeIdentifiers)
+        let suggestedName = provider.suggestedName
         var staged: [UploadBatch.StagedFile] = []
         do {
-            for type in stagingTypes(registered: provider.registeredTypeIdentifiers) {
+            for (position, type) in types.enumerated() {
                 let stillName = type.conforms(to: .movie) ? staged.first?.fileName : nil
-                if let file = try await stage(provider, type: type, in: batch, pairedWith: stillName) {
+                let file: UploadBatch.StagedFile? = if stagingMode(for: type) == .fileURL {
+                    try await stageFileURL(provider, in: batch)
+                } else {
+                    try await stageRepresentation(
+                        type: type, suggestedName: suggestedName, pairedWith: stillName, in: batch,
+                        load: { provider.loadFileRepresentation(for: $0, openInPlace: false, completionHandler: $1) },
+                        onFraction: { onFraction(overallFraction(position: position, count: types.count, fraction: $0)) }
+                    )
+                }
+                if let file {
                     staged.append(file)
                 }
             }
         } catch {
             // A Live Photo is all or nothing: a still without its movie would not be the photo.
             for file in staged {
-                try? FileManager.default.removeItem(at: file.envelopeURL)
+                file.removeEnvelope()
             }
             throw error
         }
         return staged
     }
 
+    /// Where one file of an item's `count` files being at `fraction` puts the whole item.
+    static func overallFraction(position: Int, count: Int, fraction: Double) -> Double {
+        guard count > 0 else { return 0 }
+        return (Double(position) + fraction) / Double(count)
+    }
+
     /// The provider's temporary copy only lives for its callback, so the envelope is written there.
-    private static func stage(
-        _ provider: NSItemProvider, type: UTType, in batch: UploadBatch, pairedWith stillName: String?
-    ) async throws -> UploadBatch.StagedFile? {
-        if stagingMode(for: type) == .fileURL {
-            return try await stageFileURL(provider, in: batch)
-        }
-        let suggestedName = provider.suggestedName
-        let flag = CancelFlag()
+    /// Cancelling stops the copy itself, not just the wait for it.
+    static func stageRepresentation(
+        type: UTType,
+        suggestedName: String?,
+        pairedWith stillName: String?,
+        in batch: UploadBatch,
+        load: RepresentationLoader,
+        onFraction: @escaping @Sendable (Double) -> Void
+    ) async throws -> UploadBatch.StagedFile {
+        let loading = CancellableLoad()
         let file: UploadBatch.StagedFile = try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { continuation in
-                _ = provider.loadFileRepresentation(for: type, openInPlace: false) { url, _, error in
+                guard loading.install(continuation) else { return }
+                let progress = load(type) { url, _, error in
                     guard let url else {
-                        continuation.resume(throwing: error ?? CocoaError(.fileReadUnknown))
+                        loading.finish(.failure(error ?? CocoaError(.fileReadUnknown)))
                         return
                     }
-                    continuation.resume(with: Result {
+                    guard loading.isActive else { return }
+                    loading.finish(Result {
                         let name = stillName.map { pairedMovieName(stillName: $0, movieType: type) }
                             ?? fileName(fileURL: url, suggestedName: suggestedName, type: type)
-                        return try writeEnvelope(for: url, fileName: name, in: batch, flag: flag)
+                        let file = try batch.envelope(for: url, fileName: name)
+                        guard loading.isActive, batch.exists else {
+                            file.removeEnvelope()
+                            throw CancellationError()
+                        }
+                        return file
                     })
                 }
+                loading.attach(progress, onFraction: onFraction)
             }
         } onCancel: {
-            flag.cancel()
+            loading.cancel()
         }
         return try discardingIfCancelled(file)
     }
 
     /// A cancellation that lands just as the envelope was finished still takes it back out.
-    private static func discardingIfCancelled(_ file: UploadBatch.StagedFile?) throws -> UploadBatch.StagedFile? {
-        guard let file, Task.isCancelled else { return file }
-        try? FileManager.default.removeItem(at: file.envelopeURL)
+    private static func discardingIfCancelled(_ file: UploadBatch.StagedFile) throws -> UploadBatch.StagedFile {
+        guard Task.isCancelled else { return file }
+        file.removeEnvelope()
         throw CancellationError()
     }
 
@@ -149,13 +180,15 @@ public enum SharedItemLoader {
         try flag.throwIfCancelled()
         let file = try batch.envelope(for: url, fileName: fileName)
         if flag.isCancelled || !batch.exists {
-            try? FileManager.default.removeItem(at: file.envelopeURL)
+            file.removeEnvelope()
             throw CancellationError()
         }
         return file
     }
 
-    static func stageFile(at url: URL, in batch: UploadBatch, access: FileAccess) async throws -> UploadBatch.StagedFile? {
+    /// Throws `ShareUploadError.isFolder` for a folder and `fileNoSuchFile` for a path with nothing
+    /// behind it: an item is never dropped without the user being told.
+    static func stageFile(at url: URL, in batch: UploadBatch, access: FileAccess) async throws -> UploadBatch.StagedFile {
         let isScoped = url.startAccessingSecurityScopedResource()
         defer {
             if isScoped {
@@ -163,9 +196,10 @@ public enum SharedItemLoader {
             }
         }
         var isDirectory: ObjCBool = false
-        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), !isDirectory.boolValue else {
-            return nil
+        guard FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory) else {
+            throw CocoaError(.fileNoSuchFile)
         }
+        guard !isDirectory.boolValue else { throw ShareUploadError.isFolder }
         try Task.checkCancellation()
         let flag = CancelFlag()
         let file: UploadBatch.StagedFile = try await withTaskCancellationHandler {

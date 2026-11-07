@@ -5,6 +5,15 @@ import NetworkClient
 /// The file history endpoints, `backend/src/routes/versions.js`. Every route names the file
 /// by its path (in the query for reads, in the body for writes) and the version by its id.
 extension FilesService {
+    private enum VersionRoute {
+        static let restore = "restore"
+        static let content = "content"
+        static let copy = "copy"
+        static let delete = "delete"
+        static let pathQueryName = "path"
+        static let urlFailureMessage = "Could not build versions URL."
+    }
+
     /// `GET /api/versions?path=`.
     func fetchVersions(serverURL: URL, path: String) async throws -> FileVersionHistory {
         let request = try Self.makeRequest(url: Self.versionsURL(serverURL, query: path), method: .get)
@@ -13,12 +22,12 @@ extension FilesService {
 
     /// `POST /api/versions/:id/restore` with `{ path }`.
     func restoreVersion(serverURL: URL, path: String, versionID: String) async throws {
-        try await sendVersionWrite(serverURL, versionID, "restore", method: .post, body: VersionPathBody(path: path))
+        try await sendVersionWrite(serverURL, versionID, VersionRoute.restore, method: .post, body: VersionPathBody(path: path))
     }
 
     /// `GET /api/versions/:id/content?path=`, streamed to disk and moved to `destination`.
     func downloadVersion(serverURL: URL, path: String, versionID: String, to destination: URL) async throws {
-        let base = serverURL.appendingPathComponent(APIPath.versions).appendingPathComponent(versionID).appendingPathComponent("content")
+        let base = serverURL.appendingPathComponent(APIPath.versions).appendingPathComponent(versionID).appendingPathComponent(VersionRoute.content)
         let request = try Self.makeRequest(url: Self.versionsURL(base, query: path, appendingAPIPath: false), method: .get)
         let downloadedURL: URL
         let response: HTTPURLResponse
@@ -40,7 +49,7 @@ extension FilesService {
     /// `POST /api/versions/:id/copy` with `{ path, destination }`: a new file in `destination`,
     /// named after the version. Returns the new file's path.
     func copyVersion(serverURL: URL, path: String, versionID: String, destination: String) async throws -> String {
-        var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, "copy"), method: .post, isMutation: true)
+        var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, VersionRoute.copy), method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(VersionCopyBody(path: path, destination: destination))
         return try await sendReportingMessage(request, decoding: VersionCopyResponse.self).path
@@ -56,7 +65,8 @@ extension FilesService {
 
     /// `POST /api/versions/delete` with `{ path, ids }` or `{ path, all: true }`.
     func deleteVersions(serverURL: URL, path: String, ids: [String]?, all: Bool) async throws {
-        var request = Self.makeRequest(url: serverURL.appendingPathComponent(APIPath.versions).appendingPathComponent("delete"), method: .post)
+        let url = serverURL.appendingPathComponent(APIPath.versions).appendingPathComponent(VersionRoute.delete)
+        var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(VersionDeleteBody(path: path, ids: all ? nil : ids, isAll: all))
         let (data, response) = try await performSend(request)
@@ -81,8 +91,8 @@ extension FilesService {
     private static func versionsURL(_ base: URL, query path: String, appendingAPIPath: Bool = true) throws -> URL {
         let url = appendingAPIPath ? base.appendingPathComponent(APIPath.versions) : base
         var components = URLComponents(url: url, resolvingAgainstBaseURL: false)
-        components?.queryItems = [URLQueryItem(name: "path", value: path)]
-        guard let built = components?.url else { throw FilesClientError.decoding("Could not build versions URL.") }
+        components?.queryItems = [URLQueryItem(name: VersionRoute.pathQueryName, value: path)]
+        guard let built = components?.url else { throw FilesClientError.decoding(VersionRoute.urlFailureMessage) }
         return built
     }
 }

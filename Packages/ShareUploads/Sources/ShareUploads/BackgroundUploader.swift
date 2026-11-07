@@ -38,45 +38,53 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     static let signInFlagPrefix = "shareUploads.needsSignIn."
 
     private enum Constants {
-        static let maxReplyBytes = 64 * 1024
         static let removingPrefix = ".removing-"
         static let cookieHeader = "Cookie"
+        static let successStatusCodes = 200 ..< 300
     }
 
     let root: URL
     let notifier: UploadNotifier
+    let notifications: NotificationCenterClient
     let defaults: UserDefaults
     let now: @Sendable () -> Date
     private let availableCapacity: @Sendable (URL) -> Int64?
     private let startTasks: (@Sendable (_ sessionIdentifier: String, _ specs: [UploadTaskSpec]) -> Void)?
+    private let queryTasks: (@Sendable (_ sessionIdentifier: String, _ completion: @escaping @Sendable (LiveTasks) -> Void) -> Void)?
+    private let removeEnvelope: @Sendable (URL) -> Void
     private let certificates: ClientCertificateChallengeHandler
     private let trustEvaluator: any ServerTrustEvaluating
     private let events: EventsEnvironment
     private let lock = NSLock()
     private var sessions: [String: URLSession] = [:]
     private var eventsRegistrations: [String: EventsRegistration] = [:]
-    private var bodies: [String: [Int: Data]] = [:]
 
     init(
         root: URL = BackgroundUploader.defaultRoot,
         notifier: UploadNotifier = .live,
+        notifications: NotificationCenterClient = .live,
         certificates: ClientCertificateChallengeHandler = .shared,
         trustEvaluator: any ServerTrustEvaluating = DefaultServerTrustEvaluator(),
         defaults: UserDefaults = AppGroup.defaults,
         now: @escaping @Sendable () -> Date = { Date() },
         availableCapacity: @escaping @Sendable (URL) -> Int64? = DiskSpace.availableCapacity,
         events: EventsEnvironment = .live,
-        startTasks: (@Sendable (_ sessionIdentifier: String, _ specs: [UploadTaskSpec]) -> Void)? = nil
+        startTasks: (@Sendable (_ sessionIdentifier: String, _ specs: [UploadTaskSpec]) -> Void)? = nil,
+        queryTasks: (@Sendable (_ sessionIdentifier: String, _ completion: @escaping @Sendable (LiveTasks) -> Void) -> Void)? = nil,
+        removeEnvelope: @escaping @Sendable (URL) -> Void = { try? FileManager.default.removeItem(at: $0) }
     ) {
         self.events = events
         self.root = root
         self.notifier = notifier
+        self.notifications = notifications
         self.certificates = certificates
         self.trustEvaluator = trustEvaluator
         self.defaults = defaults
         self.now = now
         self.availableCapacity = availableCapacity
         self.startTasks = startTasks
+        self.queryTasks = queryTasks
+        self.removeEnvelope = removeEnvelope
     }
 
     static var defaultRoot: URL {
@@ -166,13 +174,28 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     /// cookie, and returns how many went out. A later finish reports the batch once more.
     @discardableResult
     public func retryFailed(batchID: String, credentials: SessionCredentials) -> Int {
+        retryFailed(batchID: batchID, credentials: credentials, causes: nil)
+    }
+
+    /// Once `credentials` is valid again: sends the files of this account's reported batches that
+    /// the server refused as signed out, and returns how many went out.
+    @discardableResult
+    public func retryRefused(credentials: SessionCredentials) -> Int {
+        pendingBatchIDs().reduce(0) { total, id in
+            Manifest.claimedAt(directory(of: id)) == nil
+                ? total
+                : total + retryFailed(batchID: id, credentials: credentials, causes: [.unauthorized])
+        }
+    }
+
+    private func retryFailed(batchID: String, credentials: SessionCredentials, causes: Set<UploadFailureCause>?) -> Int {
         guard UUID(uuidString: batchID) != nil else { return 0 }
         let directory = directory(of: batchID)
         guard var manifest = Manifest.load(from: directory), manifest.accountID == credentials.accountID else { return 0 }
         let results = Manifest.results(in: directory)
         let failed = manifest.fileNames.indices.filter {
-            results[$0]?.cause != nil
-                && FileManager.default.fileExists(atPath: directory.appendingPathComponent(manifest.envelopes[$0]).path)
+            guard let cause = results[$0]?.cause, causes?.contains(cause) ?? true else { return false }
+            return FileManager.default.fileExists(atPath: directory.appendingPathComponent(manifest.envelopes[$0]).path)
         }
         guard !failed.isEmpty else { return 0 }
         manifest.startedAt = now()
@@ -180,6 +203,7 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         Manifest.clearResults(failed, in: directory)
         Manifest.releaseClaim(directory)
         clearNeedsSignIn(accountID: credentials.accountID)
+        notifications.remove([batchID])
         submit(failed, of: manifest, in: directory, credentials: credentials, batchID: batchID)
         return failed.count
     }
@@ -215,10 +239,10 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     public func handleEvents(forSession identifier: String, completion: @escaping @Sendable () -> Void) {
         let token = registerEvents(forSession: identifier, completion: completion)
         let directory = directory(of: String(identifier.dropFirst(Self.identifierPrefix.count)))
-        session(for: identifier).getAllTasks { [self] tasks in
+        liveTasks(of: identifier) { [self] live in
             let hasManifest = Manifest.load(from: directory) != nil
             let isClaimed = Manifest.claimedAt(directory) != nil
-            if Self.shouldCompleteEventsImmediately(liveTaskCount: tasks.count, hasManifest: hasManifest, isClaimed: isClaimed) {
+            if Self.shouldCompleteEventsImmediately(liveTaskCount: live.count, hasManifest: hasManifest, isClaimed: isClaimed) {
                 completeEvents(identifier: identifier, token: token)
             }
         }
@@ -253,6 +277,22 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     private func pendingBatchIDs() -> [String] {
         let names = (try? FileManager.default.contentsOfDirectory(atPath: root.path)) ?? []
         return names.filter { UUID(uuidString: $0) != nil }
+    }
+
+    /// Whether any batch is on disk, so a periodic check can skip everything else when idle.
+    public func hasPendingBatches() -> Bool {
+        !pendingBatchIDs().isEmpty
+    }
+
+    /// Folders renamed away by `removeFinished` that a crash kept from being deleted.
+    private func sweepTombstones() {
+        let names = (try? FileManager.default.contentsOfDirectory(atPath: root.path)) ?? []
+        for name in names where name.hasPrefix(Constants.removingPrefix) {
+            let url = root.appendingPathComponent(name, isDirectory: true)
+            if Self.isStale(url, now: now()) {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
     }
 
     enum PendingAction: Equatable {
@@ -294,7 +334,12 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     /// arrive here, reports and cleans up batches that ended while nobody listened (the Mac never
     /// wakes the app for them), and drops leftovers. Safe to call repeatedly: finishing a batch is
     /// claimed once, and batches the extension may still own are left alone.
-    public func reconnectPending() {
+    ///
+    /// `sessions` are the signed in accounts: a file that was never handed to the system (the
+    /// extension was killed mid start) is sent again for an account in it.
+    public func reconnectPending(sessions: [SessionCredentials] = []) {
+        sweepTombstones()
+        let sessionsByAccount = Dictionary(sessions.map { ($0.accountID, $0) }, uniquingKeysWith: { first, _ in first })
         for id in pendingBatchIDs() {
             let directory = directory(of: id)
             guard let manifest = Manifest.load(from: directory) else {
@@ -318,25 +363,56 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
                 continue
             case .expire:
                 try? FileManager.default.removeItem(at: directory)
+                notifications.remove([id])
             case .finish:
                 finishBatch(id: id, manifest: manifest)
             case .reconnect:
-                reconnect(batchID: id, manifest: manifest)
+                reconnect(batchID: id, manifest: manifest, credentials: sessionsByAccount[manifest.accountID])
             }
         }
     }
 
-    private func reconnect(batchID: String, manifest: Manifest) {
-        let session = session(for: Self.identifierPrefix + batchID)
-        session.getAllTasks { [self] tasks in
-            guard Self.isAbandoned(liveTaskCount: tasks.count, startedAt: manifest.startedAt, now: now()) else { return }
-            DispatchQueue.global().asyncAfter(deadline: .now() + Self.abandonGrace) { [self] in
-                session.getAllTasks { [self] tasks in
-                    if tasks.isEmpty {
+    private func reconnect(batchID: String, manifest: Manifest, credentials: SessionCredentials?) {
+        let identifier = Self.identifierPrefix + batchID
+        liveTasks(of: identifier) { [self] live in
+            let directory = directory(of: batchID)
+            let unsent = Self.unsubmittedIndexes(
+                manifest: manifest,
+                results: Manifest.results(in: directory),
+                liveIndexes: live.indexes,
+                envelopeExists: { FileManager.default.fileExists(atPath: directory.appendingPathComponent($0).path) }
+            )
+            if !unsent.isEmpty, let credentials {
+                submit(unsent, of: manifest, in: directory, credentials: credentials, batchID: batchID)
+                return
+            }
+            guard Self.isAbandoned(liveTaskCount: live.count, startedAt: manifest.startedAt, now: now()) else { return }
+            _ = events.schedule(Self.abandonGrace) { [self] in
+                liveTasks(of: identifier) { [self] live in
+                    if live.count == 0 {
                         abandonOutstanding(batchID: batchID)
                     }
                 }
             }
+        }
+    }
+
+    /// Files with no result, no running task and an envelope still on disk: they never reached the system.
+    static func unsubmittedIndexes(
+        manifest: Manifest, results: [Int: UploadResult], liveIndexes: Set<Int>, envelopeExists: (String) -> Bool
+    ) -> [Int] {
+        manifest.fileNames.indices.filter {
+            results[$0] == nil && !liveIndexes.contains($0) && envelopeExists(manifest.envelopes[$0])
+        }
+    }
+
+    private func liveTasks(of identifier: String, completion: @escaping @Sendable (LiveTasks) -> Void) {
+        if let queryTasks {
+            queryTasks(identifier, completion)
+            return
+        }
+        session(for: identifier).getAllTasks { tasks in
+            completion(LiveTasks(count: tasks.count, indexes: Set(tasks.compactMap { $0.taskDescription.flatMap(Int.init) })))
         }
     }
 
@@ -371,6 +447,8 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
     /// the last sign out) and deletes what was staged, so nothing keeps sending as an account that
     /// left. The batch folder goes first so the cancelled tasks' callbacks find nothing to report.
     public func cancel(keepingAccounts accountIDs: Set<String>) {
+        sweepTombstones()
+        var cancelled: [String] = []
         for id in pendingBatchIDs() {
             let directory = directory(of: id)
             if let manifest = Manifest.load(from: directory) {
@@ -382,12 +460,15 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
                 continue
             }
             try? FileManager.default.removeItem(at: directory)
+            cancelled.append(id)
             let identifier = Self.identifierPrefix + id
             session(for: identifier).invalidateAndCancel()
             lock.withLock {
                 sessions[identifier] = nil
-                bodies[id] = nil
             }
+        }
+        if !cancelled.isEmpty {
+            notifications.remove(cancelled)
         }
         for accountID in accountsNeedingSignIn().subtracting(accountIDs) {
             clearNeedsSignIn(accountID: accountID)
@@ -422,8 +503,10 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
 
     // MARK: Finishing
 
-    static func result(response: HTTPURLResponse?, body: Data, error: (any Error)?) -> UploadResult {
-        if error == nil, let response, (try? UploadRequest.decodeResponse(body, response)) != nil {
+    /// Any 2xx means the server stored the file, whatever the reply body says: treating an
+    /// undecodable reply as a failure would let Retry upload the same file twice.
+    static func result(response: HTTPURLResponse?, error: (any Error)?) -> UploadResult {
+        if error == nil, let response, Constants.successStatusCodes.contains(response.statusCode) {
             return .success
         }
         return .failure(.classify(statusCode: response?.statusCode, error: error))
@@ -439,15 +522,13 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
         let isCorrection = result == .success
             && Manifest.claimedAt(directory) != nil
             && Manifest.results(in: directory)[index]?.cause != nil
-        switch result {
-        case .success:
-            try? FileManager.default.removeItem(at: directory.appendingPathComponent(manifest.envelopes[index]))
-        case .failure(.unauthorized):
+        if result == .failure(.unauthorized) {
             flagNeedsSignIn(accountID: manifest.accountID)
-        case .failure, .abandoned:
-            break
         }
         let results = Manifest.record(index: index, result: result, in: directory)
+        if result == .success {
+            removeEnvelope(directory.appendingPathComponent(manifest.envelopes[index]))
+        }
         if isCorrection {
             report(id: batchID, manifest: manifest)
             return
@@ -480,15 +561,12 @@ public final class BackgroundUploader: NSObject, @unchecked Sendable {
             Self.removeFinished(directory)
         }
         let identifier = Self.identifierPrefix + id
-        let session = lock.withLock { () -> URLSession? in
-            bodies[id] = nil
-            return sessions.removeValue(forKey: identifier)
-        }
+        let session = lock.withLock { sessions.removeValue(forKey: identifier) }
         session?.finishTasksAndInvalidate()
     }
 }
 
-extension BackgroundUploader: URLSessionDataDelegate {
+extension BackgroundUploader: URLSessionTaskDelegate {
     public func urlSession(
         _: URLSession, didReceive challenge: URLAuthenticationChallenge
     ) async -> (URLSession.AuthChallengeDisposition, URLCredential?) {
@@ -513,20 +591,9 @@ extension BackgroundUploader: URLSessionDataDelegate {
         completionHandler(nil)
     }
 
-    public func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
-        guard let batchID = batchID(of: session) else { return }
-        lock.withLock {
-            // The reply is the stored file as a small JSON array; anything bigger is not it.
-            let current = bodies[batchID]?[dataTask.taskIdentifier] ?? Data()
-            guard current.count < Constants.maxReplyBytes else { return }
-            bodies[batchID, default: [:]][dataTask.taskIdentifier] = current + data
-        }
-    }
-
     public func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: (any Error)?) {
         guard let batchID = batchID(of: session), let index = task.taskDescription.flatMap(Int.init) else { return }
-        let body = lock.withLock { bodies[batchID]?.removeValue(forKey: task.taskIdentifier) } ?? Data()
-        let result = Self.result(response: task.response as? HTTPURLResponse, body: body, error: error)
+        let result = Self.result(response: task.response as? HTTPURLResponse, error: error)
         complete(batchID: batchID, index: index, result: result)
     }
 
@@ -579,6 +646,12 @@ struct EventsEnvironment: Sendable {
         },
         deliver: { work in DispatchQueue.main.async(execute: work) }
     )
+}
+
+/// What a background session is still running: how many tasks, and which files of the batch they carry.
+struct LiveTasks: Equatable, Sendable {
+    var count: Int
+    var indexes: Set<Int>
 }
 
 /// One upload to hand to a session: the file's index in its batch, the request and its envelope.

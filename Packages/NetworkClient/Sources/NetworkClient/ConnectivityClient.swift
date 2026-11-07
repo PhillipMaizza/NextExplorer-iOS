@@ -32,7 +32,7 @@ extension ConnectivityClient: DependencyKey {
         return ConnectivityClient(
             isOnline: { monitor.currentIsOnline },
             events: { monitor.stream() },
-            isMetered: { monitor.currentIsMetered }
+            isMetered: { monitor.isCurrentlyMetered }
         )
     }()
 
@@ -74,7 +74,7 @@ extension ConnectivityClient: DependencyKey {
             return isOnline
         }
 
-        var currentIsMetered: Bool {
+        var isCurrentlyMetered: Bool {
             lock.lock(); defer { lock.unlock() }
             return isMetered
         }

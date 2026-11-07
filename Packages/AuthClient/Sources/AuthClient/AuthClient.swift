@@ -21,6 +21,10 @@ public struct AuthClient: Sendable {
     public var loadSession: @Sendable () async throws -> SessionCredentials?
     /// Every signed-in account, active first is not guaranteed; callers match `activeAccountID`.
     public var listSessions: @Sendable () async -> [SessionCredentials] = { [] }
+    /// Like `listSessions`, but a keychain that can't be read throws `AuthClientError.keychain`
+    /// instead of looking like "no accounts". Callers that delete data for every account not in the
+    /// list use this one, so an unreadable keychain never reads as "nobody is signed in".
+    public var listSessionsOrThrow: @Sendable () async throws -> [SessionCredentials] = { [] }
     /// The `accountID` of the active account, or `nil` when none.
     public var activeAccountID: @Sendable () async -> String?
     /// Switches the active account and installs its cookie (no re-authentication). Returns the

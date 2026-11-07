@@ -204,10 +204,10 @@ struct UploadStagingFailureTests {
 
     private final class TaskBox: @unchecked Sendable {
         private let lock = NSLock()
-        private var task: Task<UploadBatch.StagedFile?, any Error>?
+        private var task: Task<UploadBatch.StagedFile, any Error>?
         let isSet = DispatchSemaphore(value: 0)
 
-        func set(_ task: Task<UploadBatch.StagedFile?, any Error>) {
+        func set(_ task: Task<UploadBatch.StagedFile, any Error>) {
             lock.withLock { self.task = task }
             isSet.signal()
         }

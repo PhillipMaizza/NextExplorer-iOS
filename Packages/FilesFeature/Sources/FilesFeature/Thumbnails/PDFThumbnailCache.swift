@@ -9,8 +9,8 @@ import PDFKit
 #endif
 
 private enum Constants {
-    static let cacheRootDirectory = "PreviewCache"
-    static let renderCacheDirectory = "pdf-thumbnails"
+    static let cacheRootDirectory = CacheLayout.previewCacheName
+    static let renderCacheDirectory = CacheLayout.pdfThumbnailsDirectoryName
     static let renderCacheFileExtension = "jpg"
     /// Thumbnails don't need lossless; JPEG is far cheaper to encode and decode and a
     /// fraction of the disk footprint.

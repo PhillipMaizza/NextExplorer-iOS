@@ -21,7 +21,11 @@ public struct AuthenticatedFeature {
 
         /// This account's stable identity, matching `SessionCredentials.accountID`.
         var accountID: String {
-            serverURL.absoluteString + "|" + user.username
+            Self.accountID(serverURL: serverURL, username: user.username)
+        }
+
+        static func accountID(serverURL: URL, username: String) -> String {
+            [serverURL.absoluteString, username].joined(separator: Constants.accountIDSeparator)
         }
     }
 
@@ -63,6 +67,10 @@ public struct AuthenticatedFeature {
         )
     }
 
+    private enum Constants {
+        static let accountIDSeparator = "|"
+    }
+
     public init() {}
 
     public var body: some ReducerOf<Self> {
@@ -81,8 +89,9 @@ public struct AuthenticatedFeature {
                 let authClient = authClient
                 let accountCacheWipe = accountCacheWipe
                 return .run { send in
+                    accountCacheWipe.markPending(accountID)
                     let next = await authClient.removeAccount(accountID)
-                    accountCacheWipe(accountID)
+                    accountCacheWipe.wipe(accountID)
                     await send(.accountChangeResolved(next))
                 }
 
@@ -97,8 +106,9 @@ public struct AuthenticatedFeature {
                 let authClient = authClient
                 let accountCacheWipe = accountCacheWipe
                 return .run { send in
+                    accountCacheWipe.markPending(accountID)
                     let next = await authClient.removeAccount(accountID)
-                    accountCacheWipe(accountID)
+                    accountCacheWipe.wipe(accountID)
                     await send(.accountChangeResolved(next))
                 }
 

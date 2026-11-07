@@ -7,10 +7,13 @@ import Localization
 public enum ShareUploadError: Error, Equatable, LocalizedError {
     /// The device cannot hold the staged copy of a file (the envelope doubles its size on disk).
     case insufficientSpace
+    /// A folder was shared: the upload takes files only.
+    case isFolder
 
     public var errorDescription: String? {
         switch self {
         case .insufficientSpace: L10n.ShareUpload.insufficientSpace
+        case .isFolder: L10n.ShareUpload.causeFolder
         }
     }
 

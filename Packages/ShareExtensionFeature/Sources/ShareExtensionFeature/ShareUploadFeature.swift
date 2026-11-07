@@ -32,6 +32,9 @@ public struct ShareUploadFeature {
         case nothingToUpload
         case ready
         case preparing
+        /// Everything is staged and being handed to the system. Closing no longer discards: the
+        /// uploads may already be running.
+        case handingOff
         /// Some files staged and some did not. The staged batch waits for the user to upload it or
         /// retry the others.
         case partiallyPrepared
@@ -97,21 +100,66 @@ public struct ShareUploadFeature {
             return min(1, (Double(progress.completed) + progress.fraction) / Double(preparingTotal))
         }
 
-        /// The state can be tried again from where it stands.
-        public var canRetry: Bool {
-            [.signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected, .failed, .partiallyPrepared].contains(phase)
+        /// Whether the account and folder rows are shown: while uploading, and read only after a
+        /// failed or partial pass, so the user still sees where the files were going.
+        public var shouldShowDetails: Bool {
+            [.checking, .ready, .preparing, .handingOff, .started, .partiallyPrepared, .failed].contains(phase)
         }
 
-        /// Fixed in the app, not in the extension: offer to open it.
-        public var shouldOfferOpeningTheApp: Bool {
-            [.signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected].contains(phase)
+        /// Work is in flight and the main button shows a spinner instead of accepting taps.
+        public var isWorking: Bool {
+            [.checking, .preparing, .handingOff].contains(phase)
+        }
+
+        /// The item the running preparation pass is reading, counting from 1.
+        public var preparingStep: Int {
+            min(progress.completed + 1, preparingTotal)
+        }
+
+        /// What the footer's main button does in this phase, or `nil` when it has none. Return and
+        /// the prominent button follow it. A state only the app can fix offers opening it where
+        /// that is possible (the Mac) and nothing but the instruction where it is not.
+        public func primaryAction(canOpenApp: Bool) -> Control? {
+            switch phase {
+            case .checking, .ready, .preparing, .handingOff: .upload
+            case .partiallyPrepared: .uploadReady
+            case .failed: .retry
+            case .signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected: canOpenApp ? .openApp : nil
+            case .loading, .nothingToUpload, .started: nil
+            }
+        }
+
+        public func secondaryAction(canOpenApp: Bool) -> Control? {
+            switch phase {
+            case .partiallyPrepared: .retryFailed
+            case .signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected: canOpenApp ? .retry : nil
+            case .loading, .checking, .nothingToUpload, .ready, .preparing, .handingOff, .started, .failed: nil
+            }
         }
 
         /// "phillip · files.example.com".
         public static func name(for credentials: SessionCredentials) -> String {
             let host = credentials.serverBaseURL.host() ?? credentials.serverBaseURL.absoluteString
             guard let username = credentials.username, !username.isEmpty else { return host }
-            return "\(username) · \(host)"
+            return L10n.ShareUpload.accountSummary(username, host)
+        }
+    }
+
+    /// A button the footer can offer.
+    public enum Control: Equatable, Sendable {
+        case upload
+        case uploadReady
+        case retryFailed
+        case retry
+        case openApp
+
+        var action: Action {
+            switch self {
+            case .upload: .uploadTapped
+            case .uploadReady: .uploadReadyTapped
+            case .retryFailed, .retry: .retryTapped
+            case .openApp: .openAppTapped
+            }
         }
     }
 
@@ -121,7 +169,7 @@ public struct ShareUploadFeature {
         case sessionUnreadable
         case accountsLoaded([SessionCredentials])
         case accountSelected(String)
-        case connectionChecked(ConnectionCheck)
+        case connectionChecked(accountID: String, ConnectionCheck)
         case defaultFolderChecked(accountID: String, DefaultFolderCheck)
         case chooseFolderTapped
         case folderPicker(PresentationAction<DestinationPickerFeature.Action>)
@@ -208,7 +256,7 @@ public struct ShareUploadFeature {
             } catch {
                 check = .usable
             }
-            await send(.connectionChecked(check))
+            await send(.connectionChecked(accountID: credentials.accountID, check))
         }
         .cancellable(id: CancelID.connection, cancelInFlight: true)
     }
@@ -222,7 +270,10 @@ public struct ShareUploadFeature {
             do {
                 let listing = try await filesClient.browse(credentials.serverBaseURL, path)
                 check = listing.access.canUpload ? .usable : .unavailable
-            } catch FilesClientError.server(statusCode: Constants.notFoundStatusCode) {
+            } catch FilesClientError.server(statusCode: Constants.notFoundStatusCode),
+                FilesClientError.serverMessage(statusCode: Constants.notFoundStatusCode, _),
+                FilesClientError.forbidden
+            {
                 check = .unavailable
             } catch FilesClientError.sessionExpired {
                 check = .signedOut
@@ -254,9 +305,9 @@ public struct ShareUploadFeature {
                     Task { await send(.progressed(progress)) }
                 }
                 await send(.preparationFinished(.success(report)))
-            } catch is CancellationError {
-                return
             } catch {
+                // A cancellation nobody asked for (the pass gave up on its own) is a failure; one
+                // the store asked for (closing the sheet) is not.
                 if Task.isCancelled {
                     return
                 }
@@ -336,8 +387,8 @@ public struct ShareUploadFeature {
                 state.phase = .sessionUnreadable
                 return announce(L10n.ShareUpload.sessionUnreadable)
 
-            case let .connectionChecked(check):
-                guard state.phase == .checking else { return .none }
+            case let .connectionChecked(accountID, check):
+                guard state.phase == .checking, state.credentials?.accountID == accountID else { return .none }
                 switch check {
                 case .usable:
                     guard state.shouldUploadWithoutAsking, let credentials = state.credentials else {
@@ -423,6 +474,7 @@ public struct ShareUploadFeature {
                     state.phase = .nothingToUpload
                     return discardBatch()
                 }
+                state.phase = .handingOff
                 return startBatch()
 
             case .preparationFinished(.failure):
@@ -434,9 +486,12 @@ public struct ShareUploadFeature {
             case .uploadReadyTapped:
                 guard state.phase == .partiallyPrepared else { return .none }
                 // The hand off is quick but not instant: no second tap may start it twice.
-                state.phase = .preparing
+                state.phase = .handingOff
                 state.progress = PreparationProgress(completed: state.preparingTotal)
                 return startBatch()
+
+            case .uploadResponse where state.phase != .handingOff:
+                return .none
 
             case .uploadResponse(.success(0)):
                 state.phase = .nothingToUpload
@@ -475,12 +530,13 @@ public struct ShareUploadFeature {
                 case .failed, .partiallyPrepared:
                     guard let credentials = state.credentials else { return .none }
                     let indexes = state.failures.isEmpty ? nil : state.failures.map(\.index)
-                    // Without named failures the whole pass failed: start over on a clean batch.
-                    return .merge(
+                    // Without named failures the whole pass failed: start over on a clean batch, once
+                    // the old one is gone.
+                    return .concatenate(
                         indexes == nil ? discardBatch() : .none,
                         prepare(&state, credentials: credentials, indexes: indexes)
                     )
-                case .loading, .checking, .nothingToUpload, .ready, .preparing, .started:
+                case .loading, .checking, .nothingToUpload, .ready, .preparing, .handingOff, .started:
                     return .none
                 }
 
@@ -489,6 +545,9 @@ public struct ShareUploadFeature {
                 return .run { _ in openApp.open() }
 
             case .cancelTapped:
+                // The hand off finishes within moments and the sheet closes itself after it: a
+                // close now would race the start and could cut it short.
+                guard state.phase != .handingOff else { return .none }
                 // Once started the uploads belong to the system: closing never stops them.
                 return .merge(
                     .cancel(id: CancelID.upload),

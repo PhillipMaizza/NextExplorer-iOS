@@ -11,7 +11,7 @@ import Testing
 @Suite(.dependencies)
 @MainActor
 struct BrowseQAFixesTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private let serverURL = URL(string: "https://example.com") ?? URL(fileURLWithPath: "/")
     private let fixedDate = Date(timeIntervalSince1970: 1_000)
 
     private nonisolated static let access = FileAccess(
@@ -35,6 +35,7 @@ struct BrowseQAFixesTests {
         state.items = IdentifiedArray(uniqueElements: items)
         state.access = Self.access
         state.phase = .loaded
+        state.hasLoadedFavorites = true
         return state
     }
 
@@ -424,7 +425,7 @@ struct BrowseQAFixesTests {
         await store.receive(\.textSaveResponse)
 
         #expect(store.state.isTextSaveConflictPresented)
-        #expect(store.state.textSaveConflict == "mine")
+        #expect(store.state.textSaveConflict?.pendingText == "mine")
         #expect(store.state.textContent == "old")
         #expect(store.state.textSaveError == FilesClientError.changedOnServer.userMessage)
     }
@@ -478,11 +479,12 @@ struct BrowseQAFixesTests {
         await store.receive(\.textSaveResponse)
         await store.send(.textSaveConflictDismissed)
         #expect(store.state.isTextSaveConflictPresented == false)
+        #expect(store.state.textSaveConflict?.pendingText == "mine")
         #expect(store.state.textSaveError == nil)
 
         await store.send(.textSaveTapped("mine again"))
         #expect(store.state.isTextSaveConflictPresented)
-        #expect(store.state.textSaveConflict == "mine again")
+        #expect(store.state.textSaveConflict?.pendingText == "mine again")
         #expect(attempts.value == 1)
     }
 

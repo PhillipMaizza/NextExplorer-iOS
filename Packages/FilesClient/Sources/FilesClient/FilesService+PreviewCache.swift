@@ -11,15 +11,15 @@ extension FilesService {
     /// (`GET /api/preview`) and `downloadRawFile` (`POST /api/download`) from ever sharing a
     /// cache entry for the same item: two different endpoints, nothing guarantees identical
     /// bytes for every kind that uses both (RAW images already diverge one direction).
-    static let previewCacheNamespace = "preview"
-    static let rawDownloadCacheNamespace = "download"
+    static let previewCacheNamespace = CacheLayout.previewNamespaceName
+    static let rawDownloadCacheNamespace = CacheLayout.rawDownloadNamespaceName
     /// Flat subdirectory of thumbnail image bytes written by `FilesFeature`'s `ThumbnailCache`
     /// under this same `PreviewCache` root. Kept in sync with `ThumbnailCache`'s own
     /// `previewCacheSubdirectory("thumbnails")`; the two live in different packages, so the name
     /// is duplicated deliberately. Included in eviction so thumbnails (each up to the 32 MB
     /// response cap when `thumbnailURL` falls back to a full preview) can't grow the cache
     /// without bound.
-    static let thumbnailCacheSubdirectory = "thumbnails"
+    static let thumbnailCacheSubdirectory = CacheLayout.thumbnailsDirectoryName
     /// Flat subdirectories written by `FilesFeature` whose file names start with the account prefix
     /// (`CacheAccountScope.scopedFileName`): thumbnail bytes, remembered thumbnail URLs and
     /// rendered PDF first pages.
@@ -376,11 +376,11 @@ extension FilesService {
             ?? FileManager.default.temporaryDirectory
         // The account is folded into the slot key so two accounts never serve each other's
         // downloaded preview/raw bytes for a matching item id.
-        let digest = SHA256.hash(data: Data("\(scope)\n\(item.id)".utf8))
+        let digest = SHA256.hash(data: Data(CacheLayout.key(scope, item.id).utf8))
         let key = digest.map { String(format: "%02x", $0) }.joined()
         return cachesDirectory.appendingPathComponent(Self.previewCacheRootDirectory, isDirectory: true)
             .appendingPathComponent(namespace, isDirectory: true)
-            .appendingPathComponent("\(CacheAccountScope.filePrefix(for: scope))-\(key)", isDirectory: true)
+            .appendingPathComponent(CacheAccountScope.scopedFileName(key, scope: scope), isDirectory: true)
     }
 
     /// Removes one account's downloaded preview and raw bytes, leaving other accounts' slots.
@@ -392,7 +392,7 @@ extension FilesService {
             for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: false
         )) else { return }
         let root = cachesDirectory.appendingPathComponent(previewCacheRootDirectory, isDirectory: true)
-        let prefix = "\(CacheAccountScope.filePrefix(for: scope))-"
+        let prefix = CacheAccountScope.namePrefix(for: scope)
         evictionLock.lock()
         defer { evictionLock.unlock() }
         for namespace in [previewCacheNamespace, rawDownloadCacheNamespace] {

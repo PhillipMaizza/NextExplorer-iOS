@@ -159,14 +159,14 @@ extension DirectoryCacheStore: DependencyKey {
 
         private func fileURL(scope: String, serverURL: URL, path: String) -> URL? {
             guard let directory else { return nil }
-            let normalizedPath = path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
+            let normalizedPath = path.trimmingCharacters(in: CacheLayout.pathTrimCharacters)
             // The active account is folded into the key so several signed-in accounts keep
             // separate entries and a switch reads the right account's cache without a wipe.
-            let key = "\(scope)\n\(serverURL.absoluteString)\n\(normalizedPath)"
+            let key = CacheLayout.key(scope, serverURL.absoluteString, normalizedPath)
             let digest = SHA256.hash(data: Data(key.utf8))
             let name = digest.map { String(format: "%02x", $0) }.joined()
             return directory
-                .appendingPathComponent("\(CacheAccountScope.filePrefix(for: scope))-\(name)")
+                .appendingPathComponent(CacheAccountScope.scopedFileName(name, scope: scope))
                 .appendingPathExtension(Constants.fileExtension)
         }
 
@@ -259,7 +259,7 @@ extension DirectoryCacheStore: DependencyKey {
         func clear(scope: String) {
             lock.lock()
             defer { lock.unlock() }
-            let prefix = "\(CacheAccountScope.filePrefix(for: scope))-"
+            let prefix = CacheAccountScope.namePrefix(for: scope)
             for entry in entriesByAge() where entry.url.lastPathComponent.hasPrefix(prefix) {
                 try? fileManager.removeItem(at: entry.url)
             }
@@ -325,7 +325,7 @@ extension DirectoryCacheStore: DependencyKey {
         }
     }
 
-    /// A real on-disk store rooted under `rootDirectory` instead of Application Support, so
+    /// A real on disk store rooted under `rootDirectory` instead of Application Support, so
     /// tests can exercise persistence and eviction in a temp directory.
     static func onDisk(
         rootDirectory: URL? = nil,
@@ -354,7 +354,7 @@ extension DirectoryCacheStore: DependencyKey {
         totalSizeBytes: { 0 }
     )
 
-    /// An in-memory store for tests: reads see prior writes. Unbound calls use `scope`, not the process
+    /// An in memory store for tests: reads see prior writes. Unbound calls use `scope`, not the process
     /// wide scope, so parallel tests never see each other's entries. `FilesClient.live` binds its
     /// `activeScope()`, so a store seeded directly is visible to a live client whose scope source returns
     /// the same value (the default `""` matches a test that never sets a scope).
@@ -381,7 +381,7 @@ extension DirectoryCacheStore: DependencyKey {
         private var entries: [String: CachedDirectory] = [:]
 
         private func key(_ scope: String, _ serverURL: URL, _ path: String) -> String {
-            "\(scope)\n\(serverURL.absoluteString)\n\(path.trimmingCharacters(in: CharacterSet(charactersIn: "/")))"
+            CacheLayout.key(scope, serverURL.absoluteString, path.trimmingCharacters(in: CacheLayout.pathTrimCharacters))
         }
 
         func read(scope: String, serverURL: URL, path: String) -> CachedDirectory? {
@@ -412,7 +412,7 @@ extension DirectoryCacheStore: DependencyKey {
 
         func clear(scope: String) {
             lock.lock(); defer { lock.unlock() }
-            let prefix = "\(scope)\n"
+            let prefix = CacheLayout.keyPrefix(for: scope)
             entries = entries.filter { !$0.key.hasPrefix(prefix) }
         }
 

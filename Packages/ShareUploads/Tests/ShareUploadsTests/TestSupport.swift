@@ -1,6 +1,7 @@
 import CoreModels
 import Foundation
 @testable import ShareUploads
+import UserNotifications
 
 enum TestClock {
     /// A fixed moment; tests move the clock with offsets from it.
@@ -17,6 +18,50 @@ final class RecordingNotifier: @unchecked Sendable {
 
     var notifier: UploadNotifier {
         UploadNotifier { [self] outcome in lock.withLock { recorded.append(outcome) } }
+    }
+}
+
+/// The notification center as a test sees it: what was posted and which identifiers were removed.
+final class RecordingCenter: @unchecked Sendable {
+    private let lock = NSLock()
+    private var added: [UNNotificationRequest] = []
+    private var removals: [[String]] = []
+    private var registered: [Set<UNNotificationCategory>] = []
+
+    var requests: [UNNotificationRequest] {
+        lock.withLock { added }
+    }
+
+    var removedIdentifiers: [[String]] {
+        lock.withLock { removals }
+    }
+
+    var categorySets: [Set<UNNotificationCategory>] {
+        lock.withLock { registered }
+    }
+
+    var center: NotificationCenterClient {
+        NotificationCenterClient(
+            add: { [self] request in lock.withLock { added.append(request) } },
+            remove: { [self] identifiers in lock.withLock { removals.append(identifiers) } },
+            setCategories: { [self] categories in lock.withLock { registered.append(categories) } }
+        )
+    }
+}
+
+/// What each batch's background session is "still running", answered at once.
+final class FakeTasks: @unchecked Sendable {
+    private let lock = NSLock()
+    private var live: [String: LiveTasks] = [:]
+
+    func set(_ tasks: LiveTasks, forBatch batchID: String) {
+        lock.withLock { live[BackgroundUploader.identifierPrefix + batchID] = tasks }
+    }
+
+    var query: @Sendable (String, @escaping @Sendable (LiveTasks) -> Void) -> Void {
+        { [self] identifier, completion in
+            completion(lock.withLock { live[identifier] } ?? LiveTasks(count: 0, indexes: []))
+        }
     }
 }
 
@@ -112,9 +157,14 @@ struct Harness {
     let starter = RecordingStarter()
     let clock = Clock()
     let events = FakeEvents()
+    let center = RecordingCenter()
+    let tasks = FakeTasks()
     let uploader: BackgroundUploader
 
-    init(availableCapacity: @escaping @Sendable (URL) -> Int64? = { _ in nil }) throws {
+    init(
+        availableCapacity: @escaping @Sendable (URL) -> Int64? = { _ in nil },
+        removeEnvelope: @escaping @Sendable (URL) -> Void = { try? FileManager.default.removeItem(at: $0) }
+    ) throws {
         root = FileManager.default.temporaryDirectory.appendingPathComponent("ShareUploadsHarness-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         suite = "ShareUploadsHarness-\(UUID().uuidString)"
@@ -124,11 +174,14 @@ struct Harness {
         uploader = BackgroundUploader(
             root: root,
             notifier: recorder.notifier,
+            notifications: center.center,
             defaults: suiteDefaults,
             now: { clock.now },
             availableCapacity: availableCapacity,
             events: events.environment,
-            startTasks: starter.start
+            startTasks: starter.start,
+            queryTasks: tasks.query,
+            removeEnvelope: removeEnvelope
         )
     }
 

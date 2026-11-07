@@ -498,6 +498,7 @@ public enum L10n {
         public static var manageEmpty: String { tr("offline.manageEmpty") }  // "Nothing is downloaded for offline use."
         public static var manageRow: String { tr("offline.manageRow") }  // "Manage Offline Files"
         public static var manageTitle: String { tr("offline.manageTitle") }  // "Offline Files"
+        public static func pinRemoved(_ a0: CVarArg) -> String { tr("offline.pinRemoved", a0) }
         public static var preferOfflineSubtitle: String { tr("offline.preferOfflineSubtitle") }
         public static var preferOfflineToggle: String { tr("offline.preferOfflineToggle") }  // "Play Downloaded Copies"
         public static var preparing: String { tr("offline.preparing") }  // "Preparing…"
@@ -657,7 +658,9 @@ public enum L10n {
     public enum ShareUpload {
         public static var accountHint: String { tr("shareUpload.accountHint") }  // "Choose which account receives the files."
         public static var accountLabel: String { tr("shareUpload.accountLabel") }  // "Account"
+        public static func accountSummary(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.accountSummary", a0, a1) }
         public static var causeCannotRead: String { tr("shareUpload.causeCannotRead") }  // "It couldn't be read."
+        public static var causeFolder: String { tr("shareUpload.causeFolder") }  // "Folders can't be shared. Share the files inside instead."
         public static var causeNotEnoughSpace: String { tr("shareUpload.causeNotEnoughSpace") }  // "There isn't enough free space on this device."
         public static var causeUnknown: String { tr("shareUpload.causeUnknown") }  // "It couldn't be prepared."
         public static var certificateRejected: String { tr("shareUpload.certificateRejected") }
@@ -695,6 +698,7 @@ public enum L10n {
         public static var retryFailed: String { tr("shareUpload.retryFailed") }  // "Retry Failed Files"
         public static var retryFailedBody: String { tr("shareUpload.retryFailedBody") }  // "Open NextExplorer and share the files again."
         public static var retryFailedTitle: String { tr("shareUpload.retryFailedTitle") }  // "Couldn't retry"
+        public static var retrySignInBody: String { tr("shareUpload.retrySignInBody") }  // "Sign in to NextExplorer, then tap Retry again."
         public static var sessionUnreadable: String { tr("shareUpload.sessionUnreadable") }
         public static var signedOut: String { tr("shareUpload.signedOut") }  // "Sign in to NextExplorer first, then share again."
         public static var started: String { tr("shareUpload.started") }
@@ -790,6 +794,7 @@ public enum L10n {
     public enum UnsupportedPreview {
         public static var cannotOpen: String { tr("unsupportedPreview.cannotOpen") }  // "This app can't open this type of file."
         public static var genericType: String { tr("unsupportedPreview.genericType") }  // "File"
+        public static func macDescription(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("unsupportedPreview.macDescription", a0, a1, a2) }
     }
     public enum Uploads {
         public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo or Video"

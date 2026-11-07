@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CoreModels
 import Foundation
+import Localization
 @testable import ShareExtensionFeature
 import ShareUploads
 import Testing
@@ -114,7 +115,7 @@ struct SharedItemsClientLiveTests {
 
     @Test("an item with no file, such as a link, is skipped quietly")
     func aLinkIsNotAFailure() async throws {
-        let link = NSItemProvider(object: URL(string: "https://example.com")! as NSURL)
+        let link = try NSItemProvider(object: #require(URL(string: "https://example.com")) as NSURL)
         let client = client([link])
 
         let report = try await client.prepare(credentials, "Photos", nil) { _ in }
@@ -138,50 +139,84 @@ struct SharedItemsClientLiveTests {
         client.discard()
     }
 
-    @Test("the Progress the provider returns drives the reported fraction")
+    /// Changes the provider's `Progress` over and over on another thread until stopped: the
+    /// provider hooks the progress it was handed into its own only once the read has started, so
+    /// a change has to come after that for anyone to see it.
+    private final class ProgressPump: @unchecked Sendable {
+        fileprivate enum Constants {
+            static let nearlyDone: Int64 = 90
+            static let done: Int64 = 100
+            /// The provider counts its own work too, so the fraction it reports for a nearly
+            /// finished read is well past this.
+            static let reportedAtLeast = 0.5
+        }
+
+        private let lock = NSLock()
+        private var isStopped = false
+        private let progress: Progress
+
+        init(_ progress: Progress) {
+            self.progress = progress
+        }
+
+        func start() {
+            DispatchQueue.global().async { [self] in
+                var completed = Constants.nearlyDone
+                while !lock.withLock({ isStopped }) {
+                    progress.completedUnitCount = completed
+                    completed = completed == Constants.nearlyDone ? Constants.done : Constants.nearlyDone
+                }
+            }
+        }
+
+        func stop() {
+            lock.withLock { isStopped = true }
+        }
+    }
+
+    @Test("the Progress the provider returns drives the reported fraction", .timeLimit(.minutes(1)))
     func theProvidersProgressIsReported() async throws {
         let file = try temporaryFile(named: "video.pdf")
         let progress = Progress(totalUnitCount: 100)
+        let pump = ProgressPump(progress)
+        defer { pump.stop() }
         let release = LockIsolated<(@Sendable () -> Void)?>(nil)
         let provider = NSItemProvider()
         provider.registerFileRepresentation(for: .pdf, visibility: .all, openInPlace: false) { completion in
             nonisolated(unsafe) let finish = completion
             release.setValue { finish(file, false, nil) }
+            pump.start()
             return progress
         }
-        let seen = LockIsolated<[Double]>([])
+        let (fractions, report) = AsyncStream<Double>.makeStream()
         let client = client([provider])
 
         let task = Task {
             try await client.prepare(credentials, "Photos", nil) { reported in
-                seen.withValue { $0.append(reported.fraction) }
+                report.yield(reported.fraction)
             }
         }
-        while release.value == nil {
-            await Task.yield()
+        var reached: Double?
+        for await fraction in fractions where fraction >= ProgressPump.Constants.reportedAtLeast {
+            reached = fraction
+            break
         }
-        // The observation attaches just after the load starts, so keep changing the value until it has been seen.
-        var attempts = 0
-        while !seen.value.contains(where: { $0 >= 0.5 }), attempts < 200 {
-            attempts += 1
-            progress.completedUnitCount = attempts.isMultiple(of: 2) ? 50 : 51
-            try await Task.sleep(for: .milliseconds(10))
-        }
+        pump.stop()
         release.value?()
-        let report = try await task.value
+        let preparation = try await task.value
 
-        #expect(seen.value.contains { $0 >= 0.5 }, "the fraction of the file being read reaches the caller")
-        #expect(report.stagedCount == 1)
+        #expect(reached.map { $0 >= ProgressPump.Constants.reportedAtLeast && $0 <= 1 } == true, "the fraction of the file being read reaches the caller")
+        #expect(preparation.stagedCount == 1)
         client.discard()
     }
 
-    @Test("cancelling cancels the provider's Progress, drops the batch, and throws")
+    @Test("cancelling cancels the provider's Progress, drops the batch, and throws", .timeLimit(.minutes(1)))
     func cancellingStopsTheLoadAndDiscardsTheBatch() async throws {
         let progress = Progress(totalUnitCount: 100)
-        let started = LockIsolated(false)
+        let (started, signalStarted) = AsyncStream.makeStream(of: Void.self)
         let provider = NSItemProvider()
         provider.registerFileRepresentation(for: .pdf, visibility: .all, openInPlace: false) { _ in
-            started.setValue(true)
+            signalStarted.yield()
             return progress
         }
         let client = client([provider])
@@ -189,9 +224,8 @@ struct SharedItemsClientLiveTests {
         let task = Task {
             try await client.prepare(credentials, "Photos", nil) { _ in }
         }
-        while !started.value {
-            await Task.yield()
-        }
+        var iterator = started.makeAsyncIterator()
+        await iterator.next()
         task.cancel()
 
         await #expect(throws: CancellationError.self) {
@@ -199,6 +233,41 @@ struct SharedItemsClientLiveTests {
         }
         #expect(progress.isCancelled, "the copy itself is stopped, not just ignored")
         #expect(throws: (any Error).self) { try client.start() }
+    }
+
+    @Test("a folder shared next to a file is named as a folder and the file still stages")
+    func aFolderIsReportedNotSkipped() async throws {
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        let folderProvider = NSItemProvider()
+        folderProvider.suggestedName = "Holiday"
+        folderProvider.registerItem(forTypeIdentifier: UTType.fileURL.identifier) { completion, _, _ in
+            completion?(folder as NSURL, nil)
+        }
+        let client = try client([readableProvider(named: "a.pdf"), folderProvider])
+
+        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+
+        #expect(report.stagedCount == 1)
+        #expect(report.failures == [ItemFailure(index: 1, name: "Holiday", cause: .folder)])
+        client.discard()
+    }
+
+    @Test("a file URL with nothing behind it is a read failure, not a silent skip")
+    func aMissingFileIsReported() async throws {
+        let missing = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+        let provider = NSItemProvider()
+        provider.suggestedName = "gone.txt"
+        provider.registerItem(forTypeIdentifier: UTType.fileURL.identifier) { completion, _, _ in
+            completion?(missing as NSURL, nil)
+        }
+        let client = client([provider])
+
+        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+
+        #expect(report.stagedCount == 0)
+        #expect(report.failures == [ItemFailure(index: 0, name: "gone.txt", cause: .cannotRead)])
+        client.discard()
     }
 
     @Test("a provider carrying a Live Photo is counted as one")
@@ -221,9 +290,29 @@ struct SharedItemsClientLiveTests {
         #expect(throws: (any Error).self) { try client.start() }
     }
 
-    @Test("discarding with nothing staged is harmless")
-    func discardWithoutABatch() {
-        client([]).discard()
+    @Test("discarding drops the staged batch once, and a second discard changes nothing")
+    func discardDropsTheBatchOnce() async throws {
+        let client = try client([readableProvider(named: "a.pdf")])
+        let report = try await client.prepare(credentials, "Photos", nil) { _ in }
+        #expect(report.stagedCount == 1)
+
+        client.discard()
+        client.discard()
+
+        #expect(throws: (any Error).self) { try client.start() }
+        #expect(client.count() == 1, "the shared items themselves are untouched")
+    }
+
+    @Test("a batch is handed to exactly one taker, so a start and a discard never both act on it")
+    func aBatchIsTakenOnce() throws {
+        let pending = PendingBatch()
+        let batch = try BackgroundUploader.shared.makeBatch(credentials: credentials, destination: "Photos")
+        pending.batch = batch
+
+        #expect(pending.take()?.id == batch.id)
+        #expect(pending.take() == nil, "once start has taken it a discard finds nothing to delete")
+        #expect(pending.batch == nil)
+        BackgroundUploader.shared.discard(batch)
     }
 }
 
@@ -255,6 +344,11 @@ struct ProviderStagerTests {
         #expect(ProviderStager.cause(of: ShareUploadError.insufficientSpace) == .notEnoughSpace)
     }
 
+    @Test("a shared folder maps to the folder cause")
+    func folderCause() {
+        #expect(ProviderStager.cause(of: ShareUploadError.isFolder) == .folder)
+    }
+
     @Test("an unknown error is reported as other, never with its raw description")
     func unknownErrorIsOther() {
         struct Odd: Error {}
@@ -263,8 +357,14 @@ struct ProviderStagerTests {
 
     @Test("every cause has a message")
     func everyCauseHasAMessage() {
-        for cause in [ItemFailureCause.cannotRead, .notEnoughSpace, .other] {
-            #expect(!cause.message.isEmpty)
+        let expected: [ItemFailureCause: String] = [
+            .cannotRead: L10n.ShareUpload.causeCannotRead,
+            .notEnoughSpace: L10n.ShareUpload.causeNotEnoughSpace,
+            .folder: L10n.ShareUpload.causeFolder,
+            .other: L10n.ShareUpload.causeUnknown,
+        ]
+        for (cause, message) in expected {
+            #expect(cause.message == message)
         }
     }
 

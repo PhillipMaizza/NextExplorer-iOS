@@ -606,6 +606,7 @@ offline.manageRow	Offline-Dateien verwalten
 offline.manageTitle	Offline-Dateien
 offline.manageEmpty	Nichts ist für die Offline-Nutzung heruntergeladen.
 offline.preferOfflineToggle	Heruntergeladene Kopien abspielen
+offline.pinRemoved	%@ existiert auf dem Server nicht mehr und wurde aus den Offline-Dateien entfernt
 offline.preferOfflineSubtitle	Ein heruntergeladenes Video abspielen statt zu streamen, wenn es verfügbar ist.
 offline.tunnelSpeedNote	Der Zugriff auf deinen Server über einen entfernten Tunnel kann Downloads verlangsamen. Verbinde dich für große Dateien mit demselben Netzwerk und verwende die lokale Adresse deines Servers.
 menu.about	Über NextExplorer
@@ -801,7 +802,6 @@ shareUpload.failureNetwork#one	%lld Datei wurde nicht hochgeladen. Die Verbindun
 shareUpload.failureNetwork#other	%lld Dateien wurden nicht hochgeladen. Die Verbindung ist fehlgeschlagen. Versuche es erneut, wenn du wieder online bist.
 shareUpload.failureOther#one	%lld Datei konnte nicht hochgeladen werden.
 shareUpload.failureOther#other	%lld Dateien konnten nicht hochgeladen werden.
-shareUpload.notificationMoreNames	und %lld weitere
 shareUpload.notificationRetry	Erneut versuchen
 shareUpload.notificationHiddenPreview	Öffne NextExplorer, um das Ergebnis deines Uploads zu sehen.
 shareUpload.retryFailedTitle	Erneuter Versuch nicht möglich
@@ -842,3 +842,8 @@ textPreview.conflictReload	Neu laden
 offline.waitingForNetwork	Wird geladen, sobald du wieder online bist
 browse.bulkFavoriteFailed	%1$lld von %2$lld fehlgeschlagen
 shareUpload.livePhotoNote	Live Photos werden mit ihrem Bewegungsvideo hochgeladen.
+shareUpload.retrySignInBody	Melde dich in NextExplorer an und tippe dann erneut auf „Erneut versuchen“.
+shareUpload.causeFolder	Ordner können nicht geteilt werden. Teile stattdessen die Dateien darin.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	%lld weitere
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

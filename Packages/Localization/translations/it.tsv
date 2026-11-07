@@ -606,6 +606,7 @@ offline.manageRow	Gestisci file offline
 offline.manageTitle	File offline
 offline.manageEmpty	Nessun elemento è scaricato per l'uso offline.
 offline.preferOfflineToggle	Riproduci le copie scaricate
+offline.pinRemoved	%@ non esiste più sul server ed è stato rimosso dai file offline
 offline.preferOfflineSubtitle	Usa un video scaricato invece dello streaming quando è disponibile.
 offline.tunnelSpeedNote	Raggiungere il server tramite un tunnel remoto può rallentare i download. Per i file di grandi dimensioni, collegati alla stessa rete e usa l'indirizzo locale del server.
 menu.about	Informazioni su NextExplorer
@@ -801,7 +802,6 @@ shareUpload.failureNetwork#one	%lld file non è stato caricato. Connessione non 
 shareUpload.failureNetwork#other	%lld file non sono stati caricati. Connessione non riuscita. Riprova quando sei di nuovo online.
 shareUpload.failureOther#one	%lld file non ha potuto essere caricato.
 shareUpload.failureOther#other	%lld file non hanno potuto essere caricati.
-shareUpload.notificationMoreNames	e altri %lld
 shareUpload.notificationRetry	Riprova
 shareUpload.notificationHiddenPreview	Apri NextExplorer per vedere com'è andato il caricamento.
 shareUpload.retryFailedTitle	Impossibile riprovare
@@ -842,3 +842,8 @@ textPreview.conflictReload	Ricarica
 offline.waitingForNetwork	Verrà scaricato quando tornerai online
 browse.bulkFavoriteFailed	%1$lld di %2$lld non riusciti
 shareUpload.livePhotoNote	Le Live Photo vengono caricate con il loro video in movimento.
+shareUpload.retrySignInBody	Accedi a NextExplorer, poi tocca di nuovo “Riprova”.
+shareUpload.causeFolder	Le cartelle non possono essere condivise. Condividi invece i file al loro interno.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	altri %lld
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

@@ -31,6 +31,17 @@ extension View {
                 .contentShape(Rectangle())
                 .padding(.horizontal, -expansion.width)
                 .padding(.vertical, -expansion.height)
+                .preference(key: DSHitTargetAppliedKey.self, value: true)
+        }
+    }
+
+    /// Reports that a control went through `dsMinimumHitTarget`, so a test can tell a control that
+    /// has the hit target from one that lost it (the modifier is otherwise invisible).
+    struct DSHitTargetAppliedKey: PreferenceKey {
+        static let defaultValue = false
+
+        static func reduce(value: inout Bool, nextValue: () -> Bool) {
+            value = value || nextValue()
         }
     }
 #endif

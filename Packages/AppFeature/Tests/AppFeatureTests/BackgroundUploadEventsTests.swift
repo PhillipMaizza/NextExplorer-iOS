@@ -27,11 +27,19 @@ struct BackgroundUploadEventsTests {
         return client
     }
 
-    private func shareUploads(flagged: Set<String>, cleared: LockIsolated<[String]>) -> ShareUploadsClient {
+    private func shareUploads(
+        flagged: Set<String>,
+        cleared: LockIsolated<[String]>,
+        retried: LockIsolated<[SessionCredentials]> = LockIsolated([])
+    ) -> ShareUploadsClient {
         ShareUploadsClient(
             cancel: { _ in },
             accountsNeedingSignIn: { flagged },
-            clearNeedsSignIn: { id in cleared.withValue { $0.append(id) } }
+            clearNeedsSignIn: { id in cleared.withValue { $0.append(id) } },
+            retryRefused: { credentials in
+                retried.withValue { $0.append(credentials) }
+                return 1
+            }
         )
     }
 
@@ -53,6 +61,22 @@ struct BackgroundUploadEventsTests {
         #expect(cleared.value == [account.accountID])
     }
 
+    @Test("A session the server still rejects, or cannot answer for, retries nothing")
+    func noRetryWithoutAWorkingSession() async {
+        let account = credentials(username: "phillip")
+        for failure in [AuthClientError.sessionExpired, .network("offline")] {
+            let retried = LockIsolated<[SessionCredentials]>([])
+
+            await BackgroundUploadEvents.checkRefusedSessions(
+                shareUploads: shareUploads(flagged: [account.accountID], cleared: LockIsolated([]), retried: retried),
+                authClient: authClient(active: account.accountID, sessions: [account], me: { _ in throw failure }),
+                expireSession: {}
+            )
+
+            #expect(retried.value.isEmpty, "\(failure)")
+        }
+    }
+
     @Test("A 401 from the server counts as a rejected session too")
     func serverFourOhOneExpires() async {
         let account = credentials(username: "phillip")
@@ -71,17 +95,19 @@ struct BackgroundUploadEventsTests {
     func staleFlagIsCleared() async {
         let account = credentials(username: "phillip")
         let cleared = LockIsolated<[String]>([])
+        let retried = LockIsolated<[SessionCredentials]>([])
         let expired = LockIsolated(0)
         let signedIn = user
 
         await BackgroundUploadEvents.checkRefusedSessions(
-            shareUploads: shareUploads(flagged: [account.accountID], cleared: cleared),
+            shareUploads: shareUploads(flagged: [account.accountID], cleared: cleared, retried: retried),
             authClient: authClient(active: account.accountID, sessions: [account], me: { _ in signedIn }),
             expireSession: { expired.withValue { $0 += 1 } }
         )
 
         #expect(expired.value == 0)
         #expect(cleared.value == [account.accountID])
+        #expect(retried.value == [account], "the files the server refused go out again now that the session works")
     }
 
     @Test("A server that cannot be reached neither signs out nor forgets the flag")
@@ -128,7 +154,8 @@ struct BackgroundUploadEventsTests {
 
     private func retry(
         accountID: String?, sessions: [SessionCredentials], retried: Int,
-        received: LockIsolated<[(String, SessionCredentials)]> = LockIsolated([]), notices: LockIsolated<Int>
+        received: LockIsolated<[(String, SessionCredentials)]> = LockIsolated([]),
+        notices: LockIsolated<[UploadNotifications.RetryFailure]>
     ) async {
         let signedIn = user
         await BackgroundUploadEvents.retry(
@@ -139,7 +166,7 @@ struct BackgroundUploadEventsTests {
                 received.withValue { $0.append((batchID, credentials)) }
                 return retried
             },
-            notifyFailure: { notices.withValue { $0 += 1 } }
+            notifyFailure: { reason in notices.withValue { $0.append(reason) } }
         )
     }
 
@@ -147,46 +174,142 @@ struct BackgroundUploadEventsTests {
     func retryUsesCurrentCredentials() async {
         let account = credentials(username: "phillip")
         let received = LockIsolated<[(String, SessionCredentials)]>([])
-        let notices = LockIsolated(0)
+        let notices = LockIsolated<[UploadNotifications.RetryFailure]>([])
 
         await retry(accountID: account.accountID, sessions: [account], retried: 1, received: received, notices: notices)
 
         #expect(received.value.count == 1)
         #expect(received.value.first?.0 == "BATCH")
         #expect(received.value.first?.1 == account)
-        #expect(notices.value == 0)
+        #expect(notices.value.isEmpty)
     }
 
     @Test("Retry tells the user when the account is no longer signed in")
     func retryNeedsASession() async {
         let received = LockIsolated<[(String, SessionCredentials)]>([])
-        let notices = LockIsolated(0)
+        let notices = LockIsolated<[UploadNotifications.RetryFailure]>([])
 
         await retry(accountID: "gone|nobody", sessions: [], retried: 0, received: received, notices: notices)
 
         #expect(received.value.isEmpty)
-        #expect(notices.value == 1)
+        #expect(notices.value == [.needsSignIn], "the files are still on disk: sign in and tap Retry again, not share again")
     }
 
     @Test("Retry tells the user when the batch is gone, so no account can be found for it")
     func retryWithoutABatch() async {
         let account = credentials(username: "phillip")
         let received = LockIsolated<[(String, SessionCredentials)]>([])
-        let notices = LockIsolated(0)
+        let notices = LockIsolated<[UploadNotifications.RetryFailure]>([])
 
         await retry(accountID: nil, sessions: [account], retried: 1, received: received, notices: notices)
 
         #expect(received.value.isEmpty)
-        #expect(notices.value == 1)
+        #expect(notices.value == [.nothingToSend])
     }
 
     @Test("Retry tells the user when no failed file was left to send")
     func retrySendingNothing() async {
         let account = credentials(username: "phillip")
-        let notices = LockIsolated(0)
+        let notices = LockIsolated<[UploadNotifications.RetryFailure]>([])
 
         await retry(accountID: account.accountID, sessions: [account], retried: 0, notices: notices)
 
-        #expect(notices.value == 1)
+        #expect(notices.value == [.nothingToSend])
+    }
+
+    // MARK: Reconnecting
+
+    @Test("Nothing is read from the keychain while no batch is pending")
+    func idleReconnectReadsNoSessions() async {
+        let loaded = LockIsolated(0)
+        let reconnected = LockIsolated(0)
+
+        await BackgroundUploadEvents.reconnectPending(
+            hasPending: { false },
+            sessions: {
+                loaded.withValue { $0 += 1 }
+                return []
+            },
+            reconnect: { _ in reconnected.withValue { $0 += 1 } }
+        )
+
+        #expect(loaded.value == 0)
+        #expect(reconnected.value == 0)
+    }
+
+    @Test("A pending batch is reconnected with the signed in sessions")
+    func pendingReconnectsWithSessions() async {
+        let account = credentials(username: "phillip")
+        let received = LockIsolated<[[SessionCredentials]]>([])
+
+        await BackgroundUploadEvents.reconnectPending(
+            hasPending: { true },
+            sessions: { [account] },
+            reconnect: { sessions in received.withValue { $0.append(sessions) } }
+        )
+
+        #expect(received.value == [[account]])
+    }
+
+    // MARK: The periodic reconnect
+
+    private let interval: Duration = .seconds(30)
+
+    @Test("The periodic task fires once per interval, and only after the interval has passed", .timeLimit(.minutes(1)))
+    func periodicFiresEachInterval() async {
+        let clock = TestClock()
+        let task = PeriodicTask()
+        let fires = LockIsolated(0)
+        let (fired, report) = AsyncStream.makeStream(of: Void.self)
+        task.start(every: interval, clock: clock) {
+            fires.withValue { $0 += 1 }
+            report.yield()
+        }
+        var iterator = fired.makeAsyncIterator()
+
+        await clock.advance(by: interval - .seconds(1))
+        #expect(fires.value == 0, "nothing before the interval")
+        await clock.advance(by: .seconds(1))
+        await iterator.next()
+        #expect(fires.value == 1)
+        await clock.advance(by: interval)
+        await iterator.next()
+        #expect(fires.value == 2)
+        task.stop()
+    }
+
+    @Test("Starting twice keeps the one timer, so a batch is never reconnected twice per interval")
+    func periodicIsIdempotent() async {
+        let clock = TestClock()
+        let task = PeriodicTask()
+        let (fired, report) = AsyncStream.makeStream(of: Int.self)
+
+        #expect(task.start(every: interval, clock: clock) { report.yield(1) })
+        #expect(!task.start(every: interval, clock: clock) { report.yield(2) })
+        #expect(task.isRunning)
+        await clock.advance(by: interval)
+        var iterator = fired.makeAsyncIterator()
+        #expect(await iterator.next() == 1, "only the first timer exists")
+        task.stop()
+    }
+
+    @Test("Stopping cancels the timer: nothing fires afterwards, and it can be started again")
+    func periodicStops() async {
+        let clock = TestClock()
+        let task = PeriodicTask()
+        let fires = LockIsolated(0)
+        task.start(every: interval, clock: clock) { fires.withValue { $0 += 1 } }
+
+        task.stop()
+        #expect(!task.isRunning)
+        await clock.advance(by: interval * 3)
+        #expect(fires.value == 0)
+
+        let (fired, report) = AsyncStream.makeStream(of: Void.self)
+        #expect(task.start(every: interval, clock: clock) { report.yield() })
+        await clock.advance(by: interval)
+        var iterator = fired.makeAsyncIterator()
+        await iterator.next()
+        task.stop()
     }
 }

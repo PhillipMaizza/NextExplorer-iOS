@@ -50,7 +50,7 @@ struct UserDetailView: View {
             }
         }
         .backgroundGradient()
-        .navigationTitle(store.detailUser?.displayName ?? store.detailUser?.username ?? L10n.UserDetail.fallbackName)
+        .navigationTitle(store.detailUser?.displayLabel ?? L10n.UserDetail.fallbackName)
         .navigationBarTitleDisplayMode(.inline)
         .dsSheet(isPresented: volumeSheetPresented) {
             VolumeAssignSheet(store: store)
@@ -72,9 +72,10 @@ struct UserDetailView: View {
             DSAlertSheet(
                 icon: IconKit.shield,
                 title: L10n.UserDetail.grantAdminTitle,
-                message: store.userToGrantAdmin.map { L10n.UserDetail.grantAdminMessage($0.displayName ?? $0.username) },
+                message: store.userToGrantAdmin.map { L10n.UserDetail.grantAdminMessage($0.displayLabel) },
                 confirmTitle: L10n.UserDetail.roleGrantAdmin,
                 dismissTitle: L10n.Common.cancel,
+                role: .destructive,
                 closeAccessibilityLabel: L10n.Common.close,
                 onConfirm: { store.send(.grantAdminConfirmed) },
                 onDismiss: { store.send(.grantAdminCancelled) }
@@ -84,7 +85,7 @@ struct UserDetailView: View {
             DSAlertSheet(
                 icon: IconKit.delete,
                 title: L10n.UserDetail.removeUserTitle,
-                message: store.userToDelete.map { L10n.UserDetail.removeUserMessage($0.displayName ?? $0.username) },
+                message: store.userToDelete.map { L10n.UserDetail.removeUserMessage($0.displayLabel) },
                 confirmTitle: L10n.Common.remove,
                 dismissTitle: L10n.Common.cancel,
                 role: .destructive,
@@ -97,10 +98,10 @@ struct UserDetailView: View {
 
     private func header(_ user: User) -> some View {
         HStack(spacing: Metrics.cardSpacing) {
-            AvatarView(displayName: user.displayName ?? user.username, size: Metrics.avatarSize)
+            AvatarView(displayName: user.displayLabel, size: Metrics.avatarSize)
             VStack(alignment: .leading, spacing: .space2) {
                 HStack(spacing: .space8) {
-                    Text(user.displayName ?? user.username)
+                    Text(user.displayLabel)
                         .type(.headline3, style: .primaryOnSurface)
                         .lineLimit(1)
                     if user.isAdmin {

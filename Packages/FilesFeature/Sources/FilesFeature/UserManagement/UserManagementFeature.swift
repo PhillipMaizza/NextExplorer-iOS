@@ -176,6 +176,10 @@ public struct UserManagementFeature {
         /// volumes from hitting the endpoint again on every tab switch.
         public var volumesPhase: DataPhase = .idle
         public var volumeToRemove: UserVolume?
+        /// Volumes whose DELETE is in flight. A second confirm for one of them is ignored: cancelling
+        /// the first request only stops listening for it, so the server could apply it and then 404 the
+        /// second.
+        public var removingVolumeIDs: Set<String> = []
 
         /// Confirmations and sheets.
         public var userToDelete: User?
@@ -606,7 +610,7 @@ public struct UserManagementFeature {
                 guard let user = state.detailUser else { return .none }
                 state.passwordSheet = PasswordSheetState(
                     userID: user.id,
-                    userLabel: user.displayName ?? user.username,
+                    userLabel: user.displayLabel,
                     hasExistingPassword: user.hasLocalPassword
                 )
                 return .none
@@ -724,6 +728,7 @@ public struct UserManagementFeature {
             case .removeVolumeConfirmed:
                 guard let volume = state.volumeToRemove else { return .none }
                 state.volumeToRemove = nil
+                guard state.removingVolumeIDs.insert(volume.id).inserted else { return .none }
                 let serverURL = state.serverURL
                 let filesClient = filesClient
                 return .run { send in
@@ -732,14 +737,16 @@ public struct UserManagementFeature {
                         return true
                     }))
                 }
-                .cancellable(id: CancelID.volumeRemoval(volume.id), cancelInFlight: true)
+                .cancellable(id: CancelID.volumeRemoval(volume.id))
 
             case let .removeVolumeResponse(id, .success):
+                state.removingVolumeIDs.remove(id)
                 state.volumes.remove(id: id)
                 state.toast = L10n.UserManagement.toastVolumeRemoved
                 return .none
 
-            case let .removeVolumeResponse(_, .failure(error)):
+            case let .removeVolumeResponse(id, .failure(error)):
+                state.removingVolumeIDs.remove(id)
                 state.detailErrorMessage = error.userMessage
                 return .none
 
@@ -810,5 +817,5 @@ private extension String {
 /// The name the list sorts and groups by: the display name if the server has one, else the
 /// username, which is always present.
 private func sortName(_ user: User) -> String {
-    user.displayName ?? user.username
+    user.displayLabel
 }

@@ -68,9 +68,29 @@ struct TextDecodingTests {
     }
 
     @Test
-    func bytesUndefinedInWindows1252FallBackToLatin1LastInsteadOfFailing() {
+    func bytesUndefinedInWindows1252ThatLatin1TurnsIntoControlsAreRejectedAsNotText() {
         let data = bytes([0x61, 0x81, 0x62])
-        #expect(FilesService.decodeText(data) == "a\u{81}b")
+        #expect(FilesService.decodeText(data) == nil)
+    }
+
+    @Test
+    func aMarkThenALoneSurrogateIsNotTextBecauseItsLegacyReadingHoldsANul() {
+        #expect(FilesService.decodeText(bytes([0xFF, 0xFE, 0x00, 0xD8])) == nil)
+    }
+
+    @Test
+    func utf8WithANulIsBinaryNotText() {
+        #expect(FilesService.decodeText(Data("hello world, this is text\0\0 and more text after it".utf8)) == nil)
+    }
+
+    @Test
+    func aPNGHeaderIsBinaryNotText() {
+        #expect(FilesService.decodeText(bytes([0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A])) == nil)
+    }
+
+    @Test
+    func tabsAndLineBreaksAreStillPlainText() {
+        #expect(FilesService.decodeText(Data("a\tb\r\nc\n".utf8)) == "a\tb\r\nc\n")
     }
 
     @Test
@@ -84,11 +104,9 @@ struct TextDecodingTests {
     }
 
     @Test
-    func aMarkFollowedByInvalidBytesFallsThroughToWindows1252InsteadOfNil() {
+    func aMarkFollowedByInvalidBytesFallsThroughToWindows1252() {
         let utf8Mark = bytes([0xEF, 0xBB, 0xBF, 0x63, 0x61, 0x66, 0xE9])
-        let utf16MarkThenLoneSurrogate = bytes([0xFF, 0xFE, 0x00, 0xD8])
         #expect(FilesService.decodeText(utf8Mark) == "café")
-        #expect(FilesService.decodeText(utf16MarkThenLoneSurrogate) == "ÿþ\u{0}Ø")
     }
 
     @Test
@@ -121,7 +139,8 @@ struct TextDecodingTests {
             let data = Data((0 ..< length).map { _ in UInt8(truncatingIfNeeded: generator.next()) })
             guard String(data: data, encoding: .utf8) == nil, !data.contains(0) else { continue }
             let legacy = String(data: data, encoding: .windowsCP1252) ?? String(data: data, encoding: .isoLatin1)
-            #expect(FilesService.decodeText(data) == legacy)
+            let decoded = FilesService.decodeText(data)
+            #expect(decoded == nil || decoded == legacy)
         }
     }
 }

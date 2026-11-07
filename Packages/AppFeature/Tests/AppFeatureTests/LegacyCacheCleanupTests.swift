@@ -6,7 +6,8 @@ import Testing
 @Suite("Legacy cache cleanup")
 struct LegacyCacheCleanupTests {
     private enum Fixture {
-        static let scopedName = "0123456789abcdef-payload.json"
+        static let account = "https://files.example.com|alice"
+        static let scopedName = CacheAccountScope.scopedFileName("payload.json", scope: account)
         static let legacyName = "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef.json"
         static let rootPrefix = "legacy-cleanup-"
         static let suitePrefix = "legacy-cleanup-defaults-"
@@ -107,12 +108,13 @@ struct LegacyCacheCleanupTests {
         #expect(sandbox.exists(Fixture.legacyName).allSatisfy { $0 })
     }
 
-    @Test("a name needs sixteen hex digits and a dash to count as account prefixed")
+    @Test("the names the stores write count as account prefixed, and older unprefixed ones do not")
     func prefixRecognition() {
+        let prefix = CacheAccountScope.namePrefix(for: Fixture.account)
         #expect(CacheAccountScope.hasAccountPrefix(Fixture.scopedName))
         #expect(!CacheAccountScope.hasAccountPrefix(Fixture.legacyName))
-        #expect(!CacheAccountScope.hasAccountPrefix("0123456789abcdeg-x"))
-        #expect(!CacheAccountScope.hasAccountPrefix("0123456789abcdef"))
+        #expect(!CacheAccountScope.hasAccountPrefix(String(prefix.replacingOccurrences(of: "a", with: "g")) + "x"))
+        #expect(!CacheAccountScope.hasAccountPrefix(String(prefix.dropLast())))
         #expect(!CacheAccountScope.hasAccountPrefix(""))
     }
 }

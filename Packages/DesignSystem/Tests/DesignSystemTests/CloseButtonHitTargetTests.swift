@@ -3,9 +3,44 @@ import SwiftUI
 import Testing
 
 #if !os(macOS)
+    private final class AppliedBox: @unchecked Sendable {
+        var isApplied = false
+    }
+
     @MainActor
     @Suite("Close button hit target")
     struct CloseButtonHitTargetTests {
+        /// Lays the view out in a window and reads whether `dsMinimumHitTarget` is in its body.
+        private func appliesHitTarget(_ view: some View) -> Bool {
+            let box = AppliedBox()
+            let host = UIHostingController(rootView: view.onPreferenceChange(DSHitTargetAppliedKey.self) { box.isApplied = $0 })
+            let window = UIWindow(frame: CGRect(x: 0, y: 0, width: 320, height: 200))
+            window.rootViewController = host
+            window.makeKeyAndVisible()
+            host.view.layoutIfNeeded()
+            return box.isApplied
+        }
+
+        @Test("a control without the modifier is reported as not having the hit target")
+        func probeSeesAControlWithoutIt() {
+            #expect(!appliesHitTarget(Color.red.frame(width: 28, height: 28)))
+        }
+
+        @Test("a control with the modifier is reported as having the hit target")
+        func probeSeesAControlWithIt() {
+            #expect(appliesHitTarget(Color.red.frame(width: 28, height: 28).dsMinimumHitTarget()))
+        }
+
+        @Test("DSCloseButton applies the hit target")
+        func closeButtonAppliesIt() {
+            #expect(appliesHitTarget(DSCloseButton(action: {})))
+        }
+
+        @Test("DSSheetHeader applies the hit target to its close button")
+        func sheetHeaderAppliesIt() {
+            #expect(appliesHitTarget(DSSheetHeader(icon: IconKit.close, title: nil, closeAccessibilityLabel: "Close", onClose: {})))
+        }
+
         private func renderedSize(_ view: some View) -> CGSize? {
             let renderer = ImageRenderer(content: view)
             renderer.scale = 1

@@ -21,7 +21,6 @@ struct ExtensionCloserTests {
         closer.close(completed: false)
         #expect(calls.completed == 1)
         #expect(calls.cancelled == 0)
-        #expect(closer.isClosed)
     }
 
     @Test("Whichever close comes first wins, a cancel included")
@@ -37,7 +36,7 @@ struct ExtensionCloserTests {
     @Test("A closer that was never closed has done nothing")
     func startsOpen() {
         let calls = Calls()
-        #expect(!closer(calls).isClosed)
+        _ = closer(calls)
         #expect(calls.completed == 0 && calls.cancelled == 0)
     }
 }

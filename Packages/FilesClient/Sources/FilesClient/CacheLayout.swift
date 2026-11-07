@@ -9,13 +9,29 @@ public enum CacheLayout {
     /// Under Caches.
     public static let previewCacheName = "PreviewCache"
     /// Per item slot directories inside `previewCacheName`.
-    public static let previewSlotNamespaces = ["preview", "download"]
+    public static let previewNamespaceName = "preview"
+    public static let rawDownloadNamespaceName = "download"
+    public static let previewSlotNamespaces = [previewNamespaceName, rawDownloadNamespaceName]
     /// Flat directories of account prefixed files inside `previewCacheName`.
-    public static let flatScopedDirectories = ["thumbnails", "thumbnail-urls", "pdf-thumbnails"]
+    public static let thumbnailsDirectoryName = "thumbnails"
+    public static let thumbnailURLsDirectoryName = "thumbnail-urls"
+    public static let pdfThumbnailsDirectoryName = "pdf-thumbnails"
+    public static let flatScopedDirectories = [thumbnailsDirectoryName, thumbnailURLsDirectoryName, pdfThumbnailsDirectoryName]
+    /// Joins the parts of an in memory or hashed cache key (scope, server, path).
+    public static let keySeparator = "\n"
+    public static let pathTrimCharacters = CharacterSet(charactersIn: "/")
+
+    static func key(_ parts: String...) -> String {
+        parts.joined(separator: keySeparator)
+    }
+
+    static func keyPrefix(for scope: String) -> String {
+        scope + keySeparator
+    }
 }
 
 public extension CacheAccountScope {
-    /// Whether `name` starts with an account prefix (`<16 hex>-`), as every entry written since the
+    /// Whether `name` starts with an account prefix (16 hex digits then the separator), as every entry written since the
     /// caches became account scoped does.
     static func hasAccountPrefix(_ name: String) -> Bool {
         let digits = prefixByteCount * hexDigitsPerByte

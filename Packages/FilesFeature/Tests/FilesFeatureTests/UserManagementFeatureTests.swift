@@ -489,22 +489,26 @@ struct UserManagementFeatureTests {
     }
 
     @Test
-    func confirmingTheSameVolumeRemovalTwiceRunsASingleDelete() async {
+    func confirmingTheSameVolumeRemovalTwiceRunsASingleDeleteThatIsNeverCancelled() async {
         let volume = UserVolume(id: "v1", userId: "2", label: "A", path: "/a", accessMode: .readwrite)
-        let completedDeletes = LockIsolated(0)
+        let startedDeletes = LockIsolated(0)
+        let cancelledDeletes = LockIsolated(0)
         let gate = AsyncStream<Void>.makeStream()
         let store = await bootedStore(users: [makeUser(id: "2")], volumesEnabled: true) {
             $0.filesClient.userVolumes = { _, _ in [volume] }
             $0.filesClient.removeUserVolume = { _, _, _ in
-                for await _ in gate.stream {
-                    break
-                }
-                try Task.checkCancellation()
-                // A real server answers 404 to a second DELETE of a volume that is already gone.
-                let isFirst = completedDeletes.withValue {
+                let isFirst = startedDeletes.withValue {
                     $0 += 1
                     return $0 == 1
                 }
+                for await _ in gate.stream {
+                    break
+                }
+                if Task.isCancelled {
+                    cancelledDeletes.withValue { $0 += 1 }
+                    throw CancellationError()
+                }
+                // A real server answers 404 to a second DELETE of a volume that is already gone.
                 if !isFirst {
                     throw FilesClientError.server(statusCode: 404)
                 }
@@ -516,16 +520,18 @@ struct UserManagementFeatureTests {
 
         await store.send(.removeVolumeTapped(volume))
         await store.send(.removeVolumeConfirmed)
+        #expect(store.state.removingVolumeIDs == ["v1"])
         await store.send(.removeVolumeTapped(volume))
         await store.send(.removeVolumeConfirmed)
-        gate.continuation.yield(())
         gate.continuation.yield(())
         await store.receive(\.removeVolumeResponse)
         await store.finish()
 
         #expect(store.state.volumes.isEmpty)
+        #expect(store.state.removingVolumeIDs.isEmpty)
         #expect(store.state.detailErrorMessage == nil)
-        #expect(completedDeletes.value == 1)
+        #expect(startedDeletes.value == 1)
+        #expect(cancelledDeletes.value == 0)
     }
 
     @Test

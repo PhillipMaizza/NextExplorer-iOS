@@ -84,7 +84,7 @@ struct NextExplorerApp: App {
         DesignSystemFonts.registerAll()
         DesignSystemFonts.applyGlobalAppearance()
         BackgroundUploadEvents.installNotificationHandling()
-        BackgroundUploadEvents.reconnectPending()
+        Task.detached { await BackgroundUploadEvents.reconnectPending() }
     }
 
     var body: some Scene {
@@ -94,7 +94,8 @@ struct NextExplorerApp: App {
                 // get cleaned up and reported each time the app comes to the front.
                 .onChange(of: scenePhase, initial: true) { _, phase in
                     guard phase == .active else { return }
-                    Task { await BackgroundUploadEvents.sceneDidBecomeActive() }
+                    BackgroundUploadEvents.startPeriodicReconnect()
+                    Task.detached { await BackgroundUploadEvents.sceneDidBecomeActive() }
                 }
                 .tint(Color.accent)
                 .appAppearance(appearanceMode)

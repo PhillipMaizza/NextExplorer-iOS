@@ -606,6 +606,7 @@ offline.manageRow	管理離線檔案
 offline.manageTitle	離線檔案
 offline.manageEmpty	沒有為離線使用下載任何內容。
 offline.preferOfflineToggle	播放已下載的副本
+offline.pinRemoved	%@ 在伺服器上已不存在，已從離線檔案中移除
 offline.preferOfflineSubtitle	可用時使用已下載的影片而非串流播放。
 offline.tunnelSpeedNote	透過遠端通道存取伺服器可能會拖慢下載速度。下載大型檔案時，請連線到相同網路並使用伺服器的本機位址。
 menu.about	關於 NextExplorer
@@ -795,7 +796,6 @@ shareUpload.failureForbidden#other	%lld 個檔案未能上傳。你沒有在此�
 shareUpload.failureServerFull#other	%lld 個檔案未能上傳。伺服器儲存空間已滿。
 shareUpload.failureNetwork#other	%lld 個檔案未能上傳。連線失敗。恢復上線後請重試。
 shareUpload.failureOther#other	%lld 個檔案無法上傳。
-shareUpload.notificationMoreNames	另外 %lld 個
 shareUpload.notificationRetry	重試
 shareUpload.notificationHiddenPreview	開啟 NextExplorer 查看上傳結果。
 shareUpload.retryFailedTitle	無法重試
@@ -836,3 +836,8 @@ textPreview.conflictReload	重新載入
 offline.waitingForNetwork	恢復連線後將下載
 browse.bulkFavoriteFailed	%2$lld 項中有 %1$lld 項失敗
 shareUpload.livePhotoNote	原況照片會連同其動態影片一起上傳。
+shareUpload.retrySignInBody	請先登入 NextExplorer，然後再次點一下「重試」。
+shareUpload.causeFolder	無法分享資料夾。請改為分享其中的檔案。
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	另外 %lld 個
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

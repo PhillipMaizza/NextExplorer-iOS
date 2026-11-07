@@ -229,6 +229,10 @@ public struct SharedFeature {
         case sortOptionChanged(SortOption)
         case sortDirectionChanged(BrowseFeature.SortDirection)
         case sharesResponse(Segment, Result<[Share], FilesClientError>)
+        /// A segment's saved list read off the main actor after an offline failure, `nil` when none is stored.
+        case offlineSharesResolved(Segment, cached: [Share]?, fetchedAt: Date?, error: FilesClientError)
+        /// A segment's saved list read off the main actor to paint a first load.
+        case cachedSharesPainted(Segment, [Share])
         case usersResponse([User])
         case deleteTapped(Share)
         case deleteConfirmed
@@ -316,27 +320,36 @@ public struct SharedFeature {
 
             case let .sharesResponse(segment, .failure(error)):
                 // Offline with a saved copy of this segment: show it under a banner.
-                if error == .offline,
-                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, scope: state.cacheScope, as: [Share].self)
-                {
-                    let identified = IdentifiedArray(cached.value, id: \.id, uniquingIDsWith: { first, _ in first })
-                    if segment == .byMe {
-                        state.byMe = identified
-                    } else {
-                        state.withMe = identified
-                    }
-                    state.phases[segment] = .loaded
-                    state.dataSources[segment] = .cached(fetchedAt: cached.fetchedAt)
-                    return .none
+                guard error == .offline else { return failLoad(&state, segment: segment, error) }
+                let jsonCacheStore = jsonCacheStore
+                let serverURL = state.serverURL
+                let cacheScope = state.cacheScope
+                return .run { send in
+                    let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: serverURL, scope: cacheScope, as: [Share].self)
+                    await send(.offlineSharesResolved(segment, cached: cached?.value, fetchedAt: cached?.fetchedAt, error: error))
                 }
-                // Full screen error only when that segment has nothing to blank; a refresh
-                // failure over a populated segment stays `.loaded` and toasts.
-                let segmentEmpty = (segment == .byMe ? state.byMe : state.withMe).isEmpty
-                if segmentEmpty {
-                    state.phases[segment] = .failed(error.userMessage)
+                .cancellable(id: CancelID.load(segment))
+
+            case let .offlineSharesResolved(segment, cached, fetchedAt, error):
+                guard let cached, let fetchedAt else { return failLoad(&state, segment: segment, error) }
+                let identified = IdentifiedArray(cached, id: \.id, uniquingIDsWith: { first, _ in first })
+                if segment == .byMe {
+                    state.byMe = identified
                 } else {
-                    state.phases[segment] = .loaded
-                    state.actionErrorMessage = error.userMessage
+                    state.withMe = identified
+                }
+                state.phases[segment] = .loaded
+                state.dataSources[segment] = .cached(fetchedAt: fetchedAt)
+                return .none
+
+            case let .cachedSharesPainted(segment, cached):
+                let isEmpty = (segment == .byMe ? state.byMe : state.withMe).isEmpty
+                guard state.phases[segment] == .loading, isEmpty else { return .none }
+                let identified = IdentifiedArray(cached, id: \.id, uniquingIDsWith: { first, _ in first })
+                if segment == .byMe {
+                    state.byMe = identified
+                } else {
+                    state.withMe = identified
                 }
                 return .none
 
@@ -397,30 +410,49 @@ public struct SharedFeature {
         }
     }
 
+    /// Full screen error only when that segment has nothing to blank; a refresh failure over a
+    /// populated segment stays `.loaded` and toasts.
+    private func failLoad(_ state: inout State, segment: Segment, _ error: FilesClientError) -> Effect<Action> {
+        let segmentEmpty = (segment == .byMe ? state.byMe : state.withMe).isEmpty
+        if segmentEmpty {
+            state.phases[segment] = .failed(error.userMessage)
+        } else {
+            state.phases[segment] = .loaded
+            state.actionErrorMessage = error.userMessage
+        }
+        return .none
+    }
+
     private func load(_ state: inout State, segment: Segment) -> Effect<Action> {
-        // Paint the saved copy immediately on a first load (stale-while-revalidate); a
-        // successful fetch replaces it, only a failed one surfaces the offline banner.
+        // Paint the saved copy on a first load (stale while revalidate); a successful fetch replaces
+        // it, only a failed one surfaces the offline banner. The disk read runs beside the fetch, off
+        // the main actor, and is dropped if the fetch won.
         let current = segment == .byMe ? state.byMe : state.withMe
-        if !(state.phases[segment]?.hasLoaded ?? false), current.isEmpty,
-           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, scope: state.cacheScope, as: [Share].self)
-        {
-            let identified = IdentifiedArray(cached.value, id: \.id, uniquingIDsWith: { first, _ in first })
-            if segment == .byMe {
-                state.byMe = identified
-            } else {
-                state.withMe = identified
+        let paint: Effect<Action>
+        if !(state.phases[segment]?.hasLoaded ?? false), current.isEmpty {
+            let jsonCacheStore = jsonCacheStore
+            let serverURL = state.serverURL
+            let cacheScope = state.cacheScope
+            paint = .run { send in
+                guard let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: serverURL, scope: cacheScope, as: [Share].self) else { return }
+                await send(.cachedSharesPainted(segment, cached.value))
             }
+        } else {
+            paint = .none
         }
         state.phases[segment] = .loading
         let serverURL = state.serverURL
         let filesClient = filesClient
-        return .run { send in
-            try await send(.sharesResponse(segment, apiResult {
-                try segment == .byMe
-                    ? await filesClient.mySharedLinks(serverURL)
-                    : await filesClient.sharedWithMeLinks(serverURL)
-            }))
-        }
+        return .merge(
+            paint,
+            .run { send in
+                try await send(.sharesResponse(segment, apiResult {
+                    try segment == .byMe
+                        ? await filesClient.mySharedLinks(serverURL)
+                        : await filesClient.sharedWithMeLinks(serverURL)
+                }))
+            }
+        )
         .cancellable(id: CancelID.load(segment), cancelInFlight: true)
     }
 

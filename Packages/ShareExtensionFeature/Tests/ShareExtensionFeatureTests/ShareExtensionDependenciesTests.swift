@@ -7,7 +7,7 @@ import NetworkClient
 import Testing
 
 struct ShareExtensionDependenciesTests {
-    private let serverURL = URL(string: "https://files.example.com")!
+    private let serverURL = URL(string: "https://files.example.com") ?? URL(fileURLWithPath: "/")
 
     private let listingJSON = Data(#"""
     {"items":[],

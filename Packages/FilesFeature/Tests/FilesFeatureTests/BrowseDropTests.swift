@@ -6,7 +6,7 @@ import FilesClient
 import Foundation
 import Testing
 
-private let serverURL = URL(string: "https://example.com")!
+private let serverURL = URL(string: "https://example.com") ?? URL(fileURLWithPath: "/")
 private let fixedDate = Date(timeIntervalSince1970: 100)
 private let receiver = DragOrigin(serverURL: serverURL.absoluteString, scope: "scope-a")
 
@@ -421,14 +421,19 @@ struct BrowseDropReducerTests {
     }
 
     @Test
-    func droppedFilesWithoutUploadRightsAreIgnored() async {
+    func droppedFilesWithoutUploadRightsAreIgnoredAndTheirStagedCopiesDeleted() async throws {
         let archive = entry("Archive", isFolder: true)
         let readOnly = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
+        let staged = try StagedDropFixture.make()
+        defer { StagedDropFixture.remove(staged) }
         let store = TestStore(initialState: state(items: [archive], access: readOnly)) {
             BrowseFeature()
         }
 
-        await store.send(.filesDroppedOnFolder([URL(fileURLWithPath: "/tmp/a.jpg")], folder: archive))
+        await store.send(.filesDroppedOnFolder([staged], folder: archive))
+        await store.finish()
+
+        #expect(!FileManager.default.fileExists(atPath: staged.path))
     }
 
     @Test
@@ -502,7 +507,7 @@ struct BrowseDropIdentityTests {
     func theDragPayloadIsNotBuiltUntilTheDragStarts() {
         let calls = LockIsolated(0)
         let builder = DraggedServerItemBuilder(
-            item: entry("a.pdf"), serverURL: serverURL, filesClient: .previewValue,
+            item: entry("a.pdf"), serverURL: serverURL, scope: receiver.scope, filesClient: .previewValue,
             selection: {
                 calls.withValue { $0 += 1 }
                 return []
@@ -513,7 +518,7 @@ struct BrowseDropIdentityTests {
         let payload = builder.build()
 
         #expect(calls.value == 1)
-        #expect(payload.reference.origin == DragOrigin.current(serverURL: serverURL))
+        #expect(payload.reference.origin == receiver)
     }
 
     @Test
@@ -557,5 +562,265 @@ struct BrowseDropIdentityTests {
 
         #expect(!FileManager.default.fileExists(atPath: old.path))
         #expect(FileManager.default.fileExists(atPath: fresh.path))
+    }
+}
+
+private enum StagedDropFixture {
+    /// A real staged drop copy, created the way a drop stages one.
+    static func make(name: String = "dropped.txt") throws -> URL {
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("drop-src-\(UUID().uuidString)-\(name)")
+        try Data("x".utf8).write(to: source)
+        defer { try? FileManager.default.removeItem(at: source) }
+        let staged = try DroppedFileStaging.stage(source, isOriginal: true)
+        let renamed = staged.deletingLastPathComponent().appendingPathComponent(name)
+        try FileManager.default.moveItem(at: staged, to: renamed)
+        return renamed
+    }
+
+    static func remove(_ url: URL) {
+        DroppedFileStaging.discardCopy(at: url)
+    }
+}
+
+struct BrowseDropStagingTests {
+    @Test
+    func aTemporarySystemCopyIsMovedNotCopied() throws {
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("system-\(UUID().uuidString).txt")
+        try Data("x".utf8).write(to: source)
+
+        let staged = try DroppedFileStaging.stage(source, isOriginal: false)
+        defer { DroppedFileStaging.discardCopy(at: staged) }
+
+        #expect(FileManager.default.fileExists(atPath: staged.path))
+        #expect(!FileManager.default.fileExists(atPath: source.path))
+    }
+
+    @Test
+    func anOriginalFileIsCopiedAndLeftWhereItWas() throws {
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("original-\(UUID().uuidString).txt")
+        try Data("x".utf8).write(to: source)
+        defer { try? FileManager.default.removeItem(at: source) }
+
+        let staged = try DroppedFileStaging.stage(source, isOriginal: true)
+        defer { DroppedFileStaging.discardCopy(at: staged) }
+
+        #expect(FileManager.default.fileExists(atPath: staged.path))
+        #expect(FileManager.default.fileExists(atPath: source.path))
+    }
+
+    @Test
+    func aFailedStageLeavesNoEmptyFolderBehind() throws {
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("stage-root-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: root) }
+        let isolated = IsolatedTemporaryFileManager(root: root)
+        let missing = root.appendingPathComponent("missing.txt")
+
+        #expect(throws: (any Error).self) { try DroppedFileStaging.stage(missing, isOriginal: false, fileManager: isolated) }
+
+        let staging = DroppedFileStaging.directory(in: root)
+        let leftovers = (try? FileManager.default.contentsOfDirectory(atPath: staging.path)) ?? []
+        #expect(leftovers.isEmpty)
+    }
+}
+
+/// A file manager whose temporary directory is a folder of the test's own, so staging tests running
+/// in parallel never see each other's folders.
+private final class IsolatedTemporaryFileManager: FileManager, @unchecked Sendable {
+    private let root: URL
+
+    init(root: URL) {
+        self.root = root
+        super.init()
+    }
+
+    override var temporaryDirectory: URL {
+        root
+    }
+}
+
+struct BrowseDropHandlerTests {
+    private let folder = entry("Archive", isFolder: true)
+
+    private func resolve(
+        folder: FileItem?, files: [URL], canMove: Bool = true, canUpload: Bool
+    ) -> BrowseDropHandler.Resolution {
+        BrowseDropHandler.resolve(
+            drops: files.map(BrowseDrop.file),
+            folder: folder,
+            listed: [],
+            directoryPath: "Docs",
+            receiver: receiver,
+            canMove: canMove,
+            canUpload: canUpload
+        )
+    }
+
+    @Test
+    func aRefusedDropLeavesNoStagedCopy() throws {
+        let staged = try StagedDropFixture.make()
+        defer { StagedDropFixture.remove(staged) }
+
+        let resolution = resolve(folder: folder, files: [staged], canUpload: false)
+        #expect(resolution.actions.isEmpty)
+        BrowseDropHandler.discard(resolution.discardedFiles)
+
+        #expect(!FileManager.default.fileExists(atPath: staged.path))
+    }
+
+    @Test
+    func aDropOnAFileRowLeavesNoStagedCopy() throws {
+        let staged = try StagedDropFixture.make()
+        defer { StagedDropFixture.remove(staged) }
+
+        let resolution = resolve(folder: entry("report.pdf"), files: [staged], canUpload: true)
+        BrowseDropHandler.discard(resolution.discardedFiles)
+
+        #expect(resolution.actions.isEmpty)
+        #expect(!FileManager.default.fileExists(atPath: staged.path))
+    }
+
+    @Test
+    func anAcceptedDropKeepsTheStagedCopyForTheUpload() throws {
+        let staged = try StagedDropFixture.make()
+        defer { StagedDropFixture.remove(staged) }
+
+        let resolution = resolve(folder: folder, files: [staged], canUpload: true)
+        BrowseDropHandler.discard(resolution.discardedFiles)
+
+        #expect(resolution.actions == [.filesDroppedOnFolder([staged], folder: folder)])
+        #expect(resolution.discardedFiles.isEmpty)
+        #expect(FileManager.default.fileExists(atPath: staged.path))
+    }
+
+    @Test
+    func aBackgroundDropWithoutUploadRightsDiscardsTheCopy() throws {
+        let staged = try StagedDropFixture.make()
+        defer { StagedDropFixture.remove(staged) }
+
+        let resolution = resolve(folder: nil, files: [staged], canUpload: false)
+
+        #expect(resolution.actions.isEmpty)
+        #expect(resolution.discardedFiles == [staged])
+    }
+
+    @Test
+    func onlyTheFilesNoActionTookOverAreDiscarded() throws {
+        let staged = try StagedDropFixture.make()
+        defer { StagedDropFixture.remove(staged) }
+        let foreign = entry("z.pdf", in: "Other")
+
+        let resolution = BrowseDropHandler.resolve(
+            drops: [.items([foreign], origin: receiver), .file(staged)],
+            folder: folder, listed: [], directoryPath: "Docs", receiver: receiver, canMove: true, canUpload: false
+        )
+
+        #expect(resolution.actions == [.itemsDroppedFromOtherWindow([foreign], destination: folder.id)])
+        #expect(resolution.discardedFiles == [staged])
+    }
+}
+
+struct BrowseDropAcceptanceTests {
+    private let folder = entry("Archive", isFolder: true)
+
+    private func canAccept(
+        destination: String? = nil, isFolder: Bool = true, dragged: [FileItem] = [], canMove: Bool = true, canUpload: Bool = true
+    ) -> Bool {
+        BrowseDropAcceptance.canAccept(
+            destination: destination ?? folder.id, isFolder: isFolder, draggedRows: dragged, canMove: canMove, canUpload: canUpload
+        )
+    }
+
+    @Test
+    func anExternalDragIsAcceptedWithUploadRights() {
+        #expect(canAccept(canMove: false, canUpload: true))
+    }
+
+    @Test
+    func anExternalDragIsAcceptedWithMoveRightsAloneOnANonRootDestination() {
+        #expect(canAccept(canMove: true, canUpload: false))
+        #expect(!canAccept(destination: "", canMove: true, canUpload: false))
+    }
+
+    @Test
+    func noRightsMeansNoOutline() {
+        #expect(!canAccept(canMove: false, canUpload: false))
+    }
+
+    @Test
+    func aFileRowIsNotATarget() {
+        #expect(!canAccept(isFolder: false))
+    }
+
+    @Test
+    func aFolderDraggedOverItselfIsRefused() {
+        #expect(!canAccept(dragged: [folder]))
+    }
+
+    @Test
+    func aFolderDraggedOverItsOwnDescendantIsRefused() {
+        let inside = entry("2024", in: folder.id, isFolder: true)
+        #expect(!canAccept(destination: inside.id, dragged: [folder]))
+    }
+
+    @Test
+    func rowsAlreadyInsideTheDestinationAreRefused() {
+        #expect(!canAccept(dragged: [entry("a.pdf", in: folder.id)]))
+    }
+
+    @Test
+    func ownRowsNeedMoveRightsEvenWhenUploadsAreAllowed() {
+        #expect(!canAccept(dragged: [entry("a.pdf")], canMove: false, canUpload: true))
+        #expect(canAccept(dragged: [entry("a.pdf")], canMove: true, canUpload: false))
+    }
+
+    @Test
+    func aSelectionWithOneMovableRowIsAccepted() {
+        #expect(canAccept(dragged: [folder, entry("a.pdf")]))
+    }
+}
+
+struct BrowseDropUntrustedPayloadTests {
+    private func plan(_ item: FileItem) -> BrowseDropPlan {
+        BrowseDropPlan(drops: [.items([item], origin: receiver)], listed: [], destination: "Docs/Archive", receiver: receiver)
+    }
+
+    @Test
+    func aWellFormedForeignRowIsMoved() {
+        #expect(plan(entry("a.pdf", in: "Other/Deep")).foreignItems.count == 1)
+        #expect(plan(entry("a.pdf", in: "")).foreignItems.count == 1)
+    }
+
+    @Test(arguments: ["../secret", "Docs/../../etc", "/absolute", "a//b", "Docs/./x", "a\u{0}b", ".."])
+    func aForeignRowWithAnUnsafePathIsRejected(path: String) {
+        #expect(plan(entry("a.pdf", in: path)).isEmpty)
+    }
+
+    @Test(arguments: ["", ".", "..", "a/b", "a\u{0}b"])
+    func aForeignRowWithAnUnsafeNameIsRejected(name: String) {
+        #expect(plan(entry(name, in: "Other")).isEmpty)
+    }
+
+    @Test
+    func anUnsafeRowIsRejectedButItsSafeNeighbourStillMoves() {
+        let drop = BrowseDropPlan(
+            drops: [.items([entry("a.pdf", in: "../x"), entry("b.pdf", in: "Other")], origin: receiver)],
+            listed: [], destination: "Docs/Archive", receiver: receiver
+        )
+        #expect(drop.foreignItems.map(\.name) == ["b.pdf"])
+    }
+
+    @Test
+    func aRowCarryingAnotherAccountsOriginIsStillRefused() {
+        let other = DragOrigin(serverURL: serverURL.absoluteString, scope: "scope-b")
+        let drop = BrowseDropPlan(drops: [.items([entry("a.pdf", in: "Other")], origin: other)], listed: [], destination: "Docs", receiver: receiver)
+        #expect(drop.isEmpty)
+    }
+
+    @Test
+    func theDragOriginUsesTheScopeItIsGivenNotTheProcessWideOne() {
+        let origin = DragOrigin.current(serverURL: serverURL, scope: "captured-scope")
+        #expect(origin.scope == "captured-scope")
+        #expect(origin.serverURL == serverURL.absoluteString)
     }
 }

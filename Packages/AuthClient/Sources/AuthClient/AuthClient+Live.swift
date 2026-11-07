@@ -142,6 +142,15 @@ public extension AuthClient {
             listSessions: {
                 await onCookieQueue { cookieStore.allSessions() }
             },
+            listSessionsOrThrow: {
+                try await onCookieQueue {
+                    do {
+                        return try cookieStore.loadStoredOrThrow().sessions
+                    } catch {
+                        throw AuthClientError.keychain(String(describing: error))
+                    }
+                }
+            },
             activeAccountID: {
                 await onCookieQueue { cookieStore.activeCredentials()?.accountID }
             },

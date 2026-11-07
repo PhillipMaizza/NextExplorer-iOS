@@ -264,20 +264,39 @@ struct BackgroundUploaderTests {
         #expect(!BackgroundUploader.shouldCompleteEventsImmediately(liveTaskCount: 3, hasManifest: false, isClaimed: false))
     }
 
-    @Test("Waking up for a session with no batch calls the system completion right away")
+    @Test("Waking up for a session with no batch calls the system completion once, at once, with no timer left")
     func unknownSessionCompletesAtOnce() async throws {
         let harness = try Harness()
         defer { harness.tearDown() }
         let identifier = BackgroundUploader.identifierPrefix + UUID().uuidString
-        let clock = ContinuousClock()
+        let fired = Counter()
 
-        let elapsed = await clock.measure {
-            await withCheckedContinuation { continuation in
-                harness.uploader.handleEvents(forSession: identifier) { continuation.resume() }
+        await withCheckedContinuation { continuation in
+            harness.uploader.handleEvents(forSession: identifier) {
+                fired.call()
+                continuation.resume()
             }
         }
 
-        #expect(elapsed < .seconds(BackgroundUploader.eventsTimeout), "not left for the safety timeout")
+        #expect(fired.count == 1)
+        #expect(harness.events.scheduledDelays == [BackgroundUploader.eventsTimeout], "the safety timer was armed")
+        #expect(harness.events.pendingTimers == 0, "and cancelled once the completion had run")
+    }
+
+    @Test("Waking up for a batch with live tasks holds the completion until the safety timer or the events finish")
+    func liveTasksHoldTheCompletion() throws {
+        let harness = try Harness()
+        defer { harness.tearDown() }
+        let batch = try harness.makeBatch()
+        harness.tasks.set(LiveTasks(count: 2, indexes: [0, 1]), forBatch: batch.id)
+        let fired = Counter()
+
+        harness.uploader.handleEvents(forSession: BackgroundUploader.identifierPrefix + batch.id, completion: fired.call)
+        #expect(fired.count == 0)
+        #expect(harness.events.pendingTimers == 1)
+
+        harness.events.fireTimers()
+        #expect(fired.count == 1, "the timer completes it before the system's deadline")
     }
 
     // MARK: Starting and retrying

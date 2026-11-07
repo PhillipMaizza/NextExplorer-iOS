@@ -188,6 +188,7 @@ downloads.errorGeneric	Couldn't complete that action.
 # ---- unsupported file preview ----
 unsupportedPreview.genericType	File
 unsupportedPreview.cannotOpen	This app can't open this type of file.
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
 
 # ---- uploads ----
 uploads.navigationTitle	Uploads
@@ -687,6 +688,7 @@ offline.manageRow	Manage Offline Files
 offline.manageTitle	Offline Files
 offline.manageEmpty	Nothing is downloaded for offline use.
 offline.preferOfflineToggle	Play Downloaded Copies
+offline.pinRemoved	%@ no longer exists on the server and was removed from offline files
 offline.preferOfflineSubtitle	Use a downloaded video instead of streaming when it's available.
 offline.tunnelSpeedNote	Reaching your server through a remote tunnel can slow downloads. For large files, connect to the same network and use your server's local address.
 menu.about	About NextExplorer
@@ -878,7 +880,6 @@ shareUpload.failureNetwork#one	%lld file wasn't uploaded. The connection failed.
 shareUpload.failureNetwork#other	%lld files weren't uploaded. The connection failed. Retry when you're back online.
 shareUpload.failureOther#one	%lld file couldn't be uploaded.
 shareUpload.failureOther#other	%lld files couldn't be uploaded.
-shareUpload.notificationMoreNames	and %lld more
 shareUpload.notificationRetry	Retry
 shareUpload.notificationHiddenPreview	Open NextExplorer to see how your upload went.
 shareUpload.retryFailedTitle	Couldn't retry
@@ -919,3 +920,7 @@ textPreview.conflictReload	Reload
 offline.waitingForNetwork	Will download when you're back online
 browse.bulkFavoriteFailed	%1$lld of %2$lld failed
 shareUpload.livePhotoNote	Live Photos upload with their motion video.
+shareUpload.retrySignInBody	Sign in to NextExplorer, then tap Retry again.
+shareUpload.causeFolder	Folders can't be shared. Share the files inside instead.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	%lld more

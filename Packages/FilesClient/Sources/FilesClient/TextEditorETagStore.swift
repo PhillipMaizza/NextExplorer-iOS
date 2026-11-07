@@ -28,10 +28,6 @@ public final class TextEditorETagStore: @unchecked Sendable {
         lock.withLock { etags[key] = etag }
     }
 
-    public var isEmpty: Bool {
-        lock.withLock { etags.isEmpty }
-    }
-
     public func clearAll() {
         lock.withLock { etags.removeAll() }
     }
@@ -47,10 +43,6 @@ public final class TextEditorETagStore: @unchecked Sendable {
         let exact = Self.key(scope: scope, serverURL: serverURL, path: path)
         let beneath = exact + Constants.pathSeparator
         lock.withLock { etags = etags.filter { $0.key != exact && !$0.key.hasPrefix(beneath) } }
-    }
-
-    func hasEntry(scope: String, serverURL: URL, path: String) -> Bool {
-        etag(for: Self.key(scope: scope, serverURL: serverURL, path: path)) != nil
     }
 }
 

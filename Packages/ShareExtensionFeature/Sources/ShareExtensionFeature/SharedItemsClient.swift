@@ -7,9 +7,11 @@ import ShareUploads
 import UniformTypeIdentifiers
 
 /// Why one shared item could not be staged.
-public enum ItemFailureCause: Equatable, Sendable {
+public enum ItemFailureCause: Hashable, Sendable {
     case cannotRead
     case notEnoughSpace
+    /// A folder was shared: only files can be uploaded.
+    case folder
     case other
 }
 
@@ -77,7 +79,8 @@ public struct SharedItemsClient: Sendable {
     ) async throws -> PreparationReport
     /// Hands the pending batch to the background uploader. Returns how many files went out.
     public var start: @Sendable () throws -> Int
-    /// Drops the pending batch and everything staged for it.
+    /// Drops the pending batch and everything staged for it. Once `start` has taken the batch there
+    /// is nothing left to drop: the uploads belong to the system and closing never stops them.
     public var discard: @Sendable () -> Void
 }
 
@@ -115,7 +118,7 @@ public extension SharedItemsClient {
                         onProgress(PreparationProgress(completed: position))
                         let provider = box.providers[index]
                         do {
-                            let staged = try await ProviderStager.stage(provider, in: batch) { fraction in
+                            let staged = try await SharedItemLoader.stageAll(provider, in: batch) { fraction in
                                 onProgress(PreparationProgress(completed: position, fraction: fraction))
                             }
                             for file in staged {
@@ -142,8 +145,7 @@ public extension SharedItemsClient {
                 }
             },
             start: {
-                guard let batch = pending.batch else { throw CocoaError(.fileNoSuchFile) }
-                pending.batch = nil
+                guard let batch = pending.take() else { throw CocoaError(.fileNoSuchFile) }
                 do {
                     try BackgroundUploader.shared.start(batch)
                 } catch {
@@ -153,8 +155,7 @@ public extension SharedItemsClient {
                 return batch.count
             },
             discard: {
-                guard let batch = pending.batch else { return }
-                pending.batch = nil
+                guard let batch = pending.take() else { return }
                 BackgroundUploader.shared.discard(batch)
             }
         )
@@ -171,13 +172,21 @@ private final class ProviderBox: @unchecked Sendable {
 }
 
 /// The batch being staged, shared between a preparation pass and the actions that start or drop it.
-private final class PendingBatch: @unchecked Sendable {
+final class PendingBatch: @unchecked Sendable {
     private let lock = NSLock()
     private var storage: UploadBatch?
 
     var batch: UploadBatch? {
         get { lock.withLock { storage } }
         set { lock.withLock { storage = newValue } }
+    }
+
+    /// Hands the batch to exactly one caller, so a start and a discard can never both act on it.
+    func take() -> UploadBatch? {
+        lock.withLock {
+            defer { storage = nil }
+            return storage
+        }
     }
 }
 

@@ -4,7 +4,7 @@ import Localization
 import Testing
 import UserNotifications
 
-@Suite("Upload notifications", .serialized)
+@Suite("Upload notifications")
 struct UploadNotificationTests {
     private func outcome(uploaded: Int, failures: [FailedUpload] = [], destination: String = "Photos/2026") -> BatchOutcome {
         BatchOutcome(
@@ -14,9 +14,7 @@ struct UploadNotificationTests {
     }
 
     private func english<T>(_ body: () -> T) -> T {
-        LocalizationOverride.apply("en")
-        defer { LocalizationOverride.apply(nil) }
-        return body()
+        LocalizationOverride.withLanguage("en", operation: body)
     }
 
     @Test("A clean batch says where the files went and counts them")
@@ -67,15 +65,48 @@ struct UploadNotificationTests {
         #expect(lines.count == 3)
         #expect(lines[0].hasPrefix("1 file wasn't uploaded. Sign in again"))
         #expect(lines[1].hasPrefix("4 files weren't uploaded."))
-        #expect(lines[2] == "a.jpg, b.jpg, c.jpg and 2 more")
-        #expect(notification.primaryCause == .network)
+        #expect(lines[2] == "a.jpg, b.jpg, c.jpg, and 2 more")
     }
 
-    @Test("On a tie the cause the user can fix soonest is primary")
-    func primaryCauseTie() {
-        let failures = [FailedUpload(name: "a", cause: .network), FailedUpload(name: "b", cause: .unauthorized)]
-        #expect(UploadNotification.primaryCause(of: failures) == .unauthorized)
-        #expect(UploadNotification.primaryCause(of: []) == nil)
+    private func names(_ count: Int) -> [String] {
+        (1 ... count).map { "f\($0).jpg" }
+    }
+
+    @Test("The names are joined and the rest counted the way each language writes a list")
+    func namesFollowTheLanguage() {
+        func line(_ language: String, _ count: Int) -> String {
+            LocalizationOverride.withLanguage(language) { UploadNotification.namesLine(names(count)) }
+        }
+        #expect(line("en", 1) == "f1.jpg")
+        #expect(line("en", 2) == "f1.jpg and f2.jpg")
+        #expect(line("en", 3) == "f1.jpg, f2.jpg, and f3.jpg")
+        #expect(line("en", 6) == "f1.jpg, f2.jpg, f3.jpg, and 3 more")
+        #expect(line("ja", 3) == "f1.jpg、f2.jpg、f3.jpg")
+        #expect(line("ja", 6) == "f1.jpg、f2.jpg、f3.jpg、ほか 3 件")
+        #expect(line("ru", 3) == "f1.jpg, f2.jpg и f3.jpg")
+        #expect(line("ru", 6) == "f1.jpg, f2.jpg, f3.jpg и ещё 3")
+        #expect(line("ar", 2) == "\u{2068}f1.jpg\u{2069} و\u{2068}f2.jpg\u{2069}")
+        #expect(line("ar", 5) == "\u{2068}f1.jpg\u{2069} و\u{2068}f2.jpg\u{2069} و\u{2068}f3.jpg\u{2069} و2 أخرى")
+    }
+
+    @Test("The count of further names is translated in every language, with the number in it")
+    func moreNamesTranslated() {
+        let english = english { L10n.ShareUpload.notificationMoreNames(7) }
+        #expect(english == "7 more")
+        for language in LocalizationOverride.supportedLanguages where language != "en" {
+            let text = LocalizationOverride.withLanguage(language) { L10n.ShareUpload.notificationMoreNames(7) }
+            #expect(text != english, "\(language) still reads English")
+            #expect(!text.hasPrefix("shareUpload."), "\(language) fell back to its key")
+        }
+    }
+
+    @Test("Arabic quotes the folder with guillemets, as the other Arabic strings do")
+    func arabicQuotes() {
+        for count in [0, 1, 2, 3, 11, 100] {
+            let text = LocalizationOverride.withLanguage("ar") { L10n.ShareUpload.notificationDoneBody(count, "Photos") }
+            #expect(text.contains("«") && text.contains("»") && text.contains("Photos"), Comment(rawValue: text))
+            #expect(!text.contains("”") && !text.contains("“"), Comment(rawValue: text))
+        }
     }
 
     @Test("The user info carries only the batch id, nothing about the files or the server")
@@ -106,9 +137,7 @@ struct UploadNotificationTests {
     @Test("The hidden preview text is translated in every language")
     func hiddenPreviewTranslated() {
         for language in LocalizationOverride.supportedLanguages {
-            LocalizationOverride.apply(language)
-            defer { LocalizationOverride.apply(nil) }
-            let text = L10n.ShareUpload.notificationHiddenPreview
+            let text = LocalizationOverride.withLanguage(language) { L10n.ShareUpload.notificationHiddenPreview }
             #expect(!text.isEmpty && !text.hasPrefix("shareUpload."), "\(language)")
         }
     }
@@ -116,14 +145,51 @@ struct UploadNotificationTests {
     @Test("Every cause has text in the other languages too, with the count in it")
     func translated() {
         for language in LocalizationOverride.supportedLanguages {
-            LocalizationOverride.apply(language)
-            defer { LocalizationOverride.apply(nil) }
             for cause in UploadFailureCause.allCases {
-                let text = UploadNotification.causeText(cause, count: 3)
+                let text = LocalizationOverride.withLanguage(language) { UploadNotification.causeText(cause, count: 3) }
                 #expect(text.contains("3"), "\(language) \(cause)")
                 #expect(!text.hasPrefix("shareUpload."), "\(language) \(cause) fell back to its key")
             }
         }
+    }
+
+    // MARK: Posting
+
+    @Test("A finished batch is posted under its batch id, so a retry's result replaces the earlier notification")
+    func postsOneRequestPerBatch() {
+        let center = RecordingCenter()
+        let failures = [FailedUpload(name: "a.jpg", cause: .network)]
+
+        english { UploadNotifier.posting(to: center.center).batchFinished(outcome(uploaded: 1, failures: failures)) }
+        english { UploadNotifier.posting(to: center.center).batchFinished(outcome(uploaded: 2)) }
+
+        let requests = center.requests
+        #expect(requests.map(\.identifier) == ["BATCH", "BATCH"])
+        #expect(requests[0].content.title == "Some files didn't upload")
+        #expect(requests[0].content.categoryIdentifier == UploadNotificationIdentifier.failedCategory)
+        #expect(requests[0].content.subtitle == "files.example.com")
+        #expect(requests[0].content.threadIdentifier == "https://files.example.com|phillip")
+        #expect(requests[0].content.userInfo[UploadNotificationKey.batchID] as? String == "BATCH")
+        #expect(requests[1].content.title == "Upload finished")
+        #expect(requests[1].content.body == "2 files uploaded to “2026”.")
+        #expect(requests[1].content.categoryIdentifier == UploadNotificationIdentifier.doneCategory)
+        #expect(center.categorySets.count == 2, "the categories are registered before each post")
+    }
+
+    @Test("A retry that could not start says what to do, depending on why")
+    func postsTheRetryFailure() {
+        let center = RecordingCenter()
+
+        english { UploadNotifier.postRetryFailed(.nothingToSend, using: center.center) }
+        english { UploadNotifier.postRetryFailed(.needsSignIn, using: center.center) }
+
+        let requests = center.requests
+        #expect(requests.map(\.identifier) == Array(repeating: UploadNotificationIdentifier.retryFailureNotification, count: 2))
+        #expect(requests.map(\.content.title) == ["Couldn't retry", "Couldn't retry"])
+        #expect(requests.map(\.content.body) == [
+            "Open NextExplorer and share the files again.",
+            "Sign in to NextExplorer, then tap Retry again.",
+        ])
     }
 
     // MARK: Delegate

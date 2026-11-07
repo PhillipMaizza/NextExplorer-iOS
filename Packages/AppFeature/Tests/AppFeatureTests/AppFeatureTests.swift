@@ -312,12 +312,18 @@ struct AppFeatureTests {
             AppFeature()
         } withDependencies: {
             $0.authClient.clearActiveSession = { next }
-            $0.authClient.me = { _ in otherUser }
+            $0.authClient.me = { [serverURL] url in
+                if url == serverURL {
+                    throw AuthClientError.sessionExpired
+                }
+                return otherUser
+            }
         }
         store.exhaustivity = .off
         store.state.$sessionDidExpire.withLock { $0 = true }
 
         await store.send(.sessionExpiryDetected)
+        await store.receive(\.sessionExpiryConfirmed)
         await store.receive(\.activeAccountTornDown)
         await store.receive(\.activateAccount)
         await store.receive(\.sessionValidationResponse)
@@ -347,7 +353,12 @@ struct AppFeatureTests {
             AppFeature()
         } withDependencies: {
             $0.authClient.clearActiveSession = { next }
-            $0.authClient.me = { _ in otherUser }
+            $0.authClient.me = { [serverURL] url in
+                if url == serverURL {
+                    throw AuthClientError.sessionExpired
+                }
+                return otherUser
+            }
             $0.jsonCacheStore = json
             $0.previewCacheStore.clearAccount = { id in previewCleared.withValue { $0.append(id) } }
             $0.offlineFileStore.removeAccount = { id in offlineCleared.withValue { $0.append(id) } }
@@ -355,13 +366,14 @@ struct AppFeatureTests {
         store.exhaustivity = .off
 
         await store.send(.sessionExpiryDetected)
+        await store.receive(\.sessionExpiryConfirmed)
         await store.receive(\.activeAccountTornDown)
         await store.finish()
 
         #expect(json.bound(to: expiredID).read(key: "favorites") == nil)
         #expect(json.bound(to: next.accountID).read(key: "favorites") != nil)
-        #expect(previewCleared.value == [expiredID])
-        #expect(offlineCleared.value == [expiredID])
+        #expect(previewCleared.value == [expiredID, expiredID], "first pass, then the second pass")
+        #expect(offlineCleared.value == [expiredID, expiredID], "first pass, then the second pass")
     }
 
     @Test("edge case: a mid-session 401 with no other account drops to the login flow")
@@ -376,19 +388,23 @@ struct AppFeatureTests {
         ) {
             AppFeature()
         } withDependencies: {
+            $0.authClient.me = { _ in throw AuthClientError.sessionExpired }
             $0.authClient.clearActiveSession = { nil }
             $0.authClient.clearAllSessions = { clearAllSessionsCalled.setValue(true) }
+            $0.authClient.listSessions = { [] }
+            $0.authClient.activeAccountID = { nil }
             $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
         }
-        store.exhaustivity = .off
         store.state.$sessionDidExpire.withLock { $0 = true }
 
-        await store.send(.sessionExpiryDetected)
-        await store.receive(\.activeAccountTornDown)
-        store.assert {
-            $0.sessionDidExpire = false
+        await store.send(.sessionExpiryDetected) {
+            $0.$sessionDidExpire.withLock { $0 = false }
+        }
+        await store.receive(\.sessionExpiryConfirmed)
+        await store.receive(\.activeAccountTornDown) {
             $0.destination = .unauthenticated(.init())
         }
+        await store.receive(\.accountsRefreshed)
         await store.finish()
         #expect(clearAllSessionsCalled.value)
         #expect(cacheCleared.value)
@@ -405,5 +421,6 @@ struct AppFeatureTests {
         await store.send(.sessionExpiryDetected) {
             $0.sessionDidExpire = false
         }
+        await store.finish()
     }
 }

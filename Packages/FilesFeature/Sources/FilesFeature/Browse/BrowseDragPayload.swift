@@ -4,10 +4,18 @@ import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
 
+private enum DragConstants {
+    static let itemTypeIdentifier = "com.phillipmaizza.nextexplorer.item"
+    static let pathSeparator = "/"
+    static let currentDirectorySegment = "."
+    static let parentDirectorySegment = ".."
+    static let nulScalar: Unicode.Scalar = "\0"
+}
+
 extension UTType {
     /// In app drag payload: which server item is being dragged. Declared in the app's
     /// Info.plist so it never leaves the process as anything the system would try to keep.
-    static let nextExplorerItem = UTType(exportedAs: "com.phillipmaizza.nextexplorer.item")
+    static let nextExplorerItem = UTType(exportedAs: DragConstants.itemTypeIdentifier)
 }
 
 /// Which server and account a drag started in. A drop only moves rows when it names the account
@@ -16,7 +24,7 @@ struct DragOrigin: Codable, Equatable, Sendable {
     let serverURL: String
     let scope: String
 
-    static func current(serverURL: URL, scope: String = CacheAccountScope.current) -> DragOrigin {
+    static func current(serverURL: URL, scope: String) -> DragOrigin {
         DragOrigin(serverURL: serverURL.absoluteString, scope: scope)
     }
 }
@@ -57,6 +65,29 @@ struct ServerItemReference: Codable, Transferable {
     }
 }
 
+/// Any app can export the drag type, so a payload's rows are checked before they are moved. A
+/// well formed row of this server is a relative path with a plain name: no empty, `.` or `..`
+/// segments (which would reach outside the listing), no leading separator and no NUL.
+enum DropPathValidation {
+    static func isSafe(_ item: FileItem) -> Bool {
+        isSafeName(item.name) && (item.path.isEmpty || isSafeRelativePath(item.path))
+    }
+
+    static func isSafeRelativePath(_ path: String) -> Bool {
+        guard !path.isEmpty, !path.unicodeScalars.contains(DragConstants.nulScalar) else { return false }
+        return path.split(separator: Character(DragConstants.pathSeparator), omittingEmptySubsequences: false)
+            .allSatisfy { !$0.isEmpty && $0 != DragConstants.currentDirectorySegment && $0 != DragConstants.parentDirectorySegment }
+    }
+
+    private static func isSafeName(_ name: String) -> Bool {
+        !name.isEmpty
+            && name != DragConstants.currentDirectorySegment
+            && name != DragConstants.parentDirectorySegment
+            && !name.contains(DragConstants.pathSeparator)
+            && !name.unicodeScalars.contains(DragConstants.nulScalar)
+    }
+}
+
 /// A dragged row. Inside the app it is a reference (drop on a folder to move it); dragged out
 /// a file becomes a file promise: the download only starts once the drop lands, and the copy
 /// keeps its real name. Folders never export as a file.
@@ -77,9 +108,9 @@ struct DraggedServerItem: Transferable {
 }
 
 extension DraggedServerItem {
-    init(item: FileItem, selection: [FileItem] = [], serverURL: URL, filesClient: FilesClient) {
+    init(item: FileItem, selection: [FileItem] = [], serverURL: URL, scope: String, filesClient: FilesClient) {
         self.init(
-            reference: ServerItemReference(dragging: item, selection: selection, origin: .current(serverURL: serverURL)),
+            reference: ServerItemReference(dragging: item, selection: selection, origin: .current(serverURL: serverURL, scope: scope)),
             fileName: item.name,
             isDirectory: item.isDirectory
         ) {
@@ -93,11 +124,12 @@ extension DraggedServerItem {
 struct DraggedServerItemBuilder {
     let item: FileItem
     let serverURL: URL
+    let scope: String
     let filesClient: FilesClient
     let selection: () -> [FileItem]
 
     func build() -> DraggedServerItem {
-        DraggedServerItem(item: item, selection: selection(), serverURL: serverURL, filesClient: filesClient)
+        DraggedServerItem(item: item, selection: selection(), serverURL: serverURL, scope: scope, filesClient: filesClient)
     }
 }
 
@@ -112,24 +144,29 @@ enum BrowseDrop: Transferable {
             BrowseDrop.items(reference.items, origin: reference.origin)
         })
         FileRepresentation(importedContentType: .item) { received in
-            try BrowseDrop.file(DroppedFileStaging.copy(received.file))
+            try BrowseDrop.file(DroppedFileStaging.stage(received.file, isOriginal: received.isOriginalFile))
         }
     }
 }
 
-/// The system deletes a received file once the drop closure returns, so it is copied somewhere
-/// the upload staging can still read it. Upload staging then makes its own copy and deletes this
-/// one (`discardCopy`); a copy that never reaches staging is removed by the session purge and the
-/// stale sweep.
+/// The system deletes a received file once the drop closure returns, so it is staged somewhere
+/// the upload staging can still read it: moved when the system handed over its own temporary
+/// copy, copied only when it is the user's original. Upload staging then makes its own copy and
+/// deletes this one (`discardCopy`); a drop the browser refuses discards it at once, and a copy
+/// that never reaches staging is removed by the session purge and the stale sweep.
 enum DroppedFileStaging {
     static let directoryName = SessionScratchLocation.droppedFiles
-    private static let pathSeparator = "/"
+    private static let pathSeparator = DragConstants.pathSeparator
 
     static func directory(in temporaryDirectory: URL = FileManager.default.temporaryDirectory) -> URL {
         temporaryDirectory.appendingPathComponent(directoryName, isDirectory: true)
     }
 
     static func copy(_ source: URL, fileManager: FileManager = .default) throws -> URL {
+        try stage(source, isOriginal: true, fileManager: fileManager)
+    }
+
+    static func stage(_ source: URL, isOriginal: Bool, fileManager: FileManager = .default) throws -> URL {
         let didAccess = source.startAccessingSecurityScopedResource()
         defer {
             if didAccess {
@@ -140,7 +177,16 @@ enum DroppedFileStaging {
             .appendingPathComponent(UUID().uuidString, isDirectory: true)
         try fileManager.createDirectory(at: directory, withIntermediateDirectories: true)
         let destination = directory.appendingPathComponent(source.lastPathComponent)
-        try fileManager.copyItem(at: source, to: destination)
+        do {
+            if isOriginal {
+                try fileManager.copyItem(at: source, to: destination)
+            } else {
+                try fileManager.moveItem(at: source, to: destination)
+            }
+        } catch {
+            try? fileManager.removeItem(at: directory)
+            throw error
+        }
         return destination
     }
 
@@ -167,7 +213,8 @@ struct BrowseDropPlan: Equatable {
 
     /// `destination` is the folder the drop lands in. Rows that are that folder, one of its
     /// ancestors or already inside it are dropped from the plan, and so are rows whose drag did not
-    /// start in `receiver` (another server or account, or a payload with no identity).
+    /// start in `receiver` (another server or account, or a payload with no identity) and rows
+    /// this listing does not show whose path is not a plain relative one (the payload is untrusted).
     init(drops: [BrowseDrop], listed: [FileItem.ID], destination: String, receiver: DragOrigin) {
         let listedSet = Set(listed)
         var seen: Set<FileItem.ID> = []
@@ -177,7 +224,7 @@ struct BrowseDropPlan: Equatable {
                 for item in items where Self.canMove(item, into: destination) && seen.insert(item.id).inserted {
                     if listedSet.contains(item.id) {
                         listedIDs.append(item.id)
-                    } else {
+                    } else if DropPathValidation.isSafe(item) {
                         foreignItems.append(item)
                     }
                 }
@@ -190,6 +237,6 @@ struct BrowseDropPlan: Equatable {
     }
 
     static func canMove(_ item: FileItem, into destination: String) -> Bool {
-        item.id != destination && item.path != destination && !destination.hasPrefix(item.id + "/")
+        item.id != destination && item.path != destination && !destination.hasPrefix(item.id + DragConstants.pathSeparator)
     }
 }

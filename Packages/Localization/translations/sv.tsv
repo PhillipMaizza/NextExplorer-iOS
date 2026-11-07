@@ -606,6 +606,7 @@ offline.manageRow	Hantera offlinefiler
 offline.manageTitle	Offlinefiler
 offline.manageEmpty	Inget är hämtat för offlineanvändning.
 offline.preferOfflineToggle	Spela upp hämtade kopior
+offline.pinRemoved	%@ finns inte längre på servern och har tagits bort från offlinefiler
 offline.preferOfflineSubtitle	Använd en hämtad video i stället för att strömma när den finns.
 offline.tunnelSpeedNote	Att nå servern via en fjärrtunnel kan göra nedladdningar långsamma. Anslut till samma nätverk och använd serverns lokala adress för stora filer.
 menu.about	Om NextExplorer
@@ -801,7 +802,6 @@ shareUpload.failureNetwork#one	%lld fil laddades inte upp. Anslutningen misslyck
 shareUpload.failureNetwork#other	%lld filer laddades inte upp. Anslutningen misslyckades. Försök igen när du är online igen.
 shareUpload.failureOther#one	%lld fil kunde inte laddas upp.
 shareUpload.failureOther#other	%lld filer kunde inte laddas upp.
-shareUpload.notificationMoreNames	och %lld till
 shareUpload.notificationRetry	Försök igen
 shareUpload.notificationHiddenPreview	Öppna NextExplorer för att se hur uppladdningen gick.
 shareUpload.retryFailedTitle	Det gick inte att försöka igen
@@ -842,3 +842,8 @@ textPreview.conflictReload	Läs in igen
 offline.waitingForNetwork	Laddas ned när du är online igen
 browse.bulkFavoriteFailed	%1$lld av %2$lld misslyckades
 shareUpload.livePhotoNote	Live Photos laddas upp med sin rörelsevideo.
+shareUpload.retrySignInBody	Logga in i NextExplorer och tryck sedan på ”Försök igen” en gång till.
+shareUpload.causeFolder	Mappar kan inte delas. Dela filerna i dem i stället.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	%lld till
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

@@ -58,9 +58,9 @@ struct UnsupportedFilePreviewView: View {
                         .frame(width: Constants.iconSize, height: Constants.iconSize)
                 }
             } description: {
-                Text(verbatim: [typeText, FileSizeFormat.string(item.size)].joined(separator: " · "))
-                    + Text(verbatim: "\n")
-                    + Text(L10n.UnsupportedPreview.cannotOpen)
+                Text(verbatim: L10n.UnsupportedPreview.macDescription(
+                    typeText, FileSizeFormat.string(item.size), L10n.UnsupportedPreview.cannotOpen
+                ))
             } actions: {
                 MacOpenWithButtons(source: systemShare)
             }

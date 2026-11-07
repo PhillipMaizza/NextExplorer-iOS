@@ -24,7 +24,7 @@ public enum UploadFailureCause: String, Codable, CaseIterable, Sendable {
         .cannotLoadFromNetwork, .secureConnectionFailed,
     ]
 
-    /// An HTTP status wins over the transport error; a 2xx with no usable reply counts as `other`.
+    /// An HTTP status wins over the transport error.
     static func classify(statusCode: Int?, error: (any Error)?) -> UploadFailureCause {
         switch statusCode {
         case StatusCode.unauthorized: return .unauthorized

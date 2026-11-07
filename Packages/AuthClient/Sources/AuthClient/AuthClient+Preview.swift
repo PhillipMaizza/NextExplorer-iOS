@@ -11,6 +11,7 @@ public extension AuthClient {
         restoreSession: { nil },
         loadSession: { nil },
         listSessions: { [] },
+        listSessionsOrThrow: { [] },
         activeAccountID: { nil },
         switchAccount: { _ in nil },
         removeAccount: { _ in nil },

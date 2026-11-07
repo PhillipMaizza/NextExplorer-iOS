@@ -106,7 +106,8 @@ struct ShareUploadsTests {
     func cancelKeepsSignedInAccounts() throws {
         let root = try temporaryDirectory()
         defer { try? FileManager.default.removeItem(at: root) }
-        let uploader = BackgroundUploader(root: root, notifier: UploadNotifier { _ in })
+        let center = RecordingCenter()
+        let uploader = BackgroundUploader(root: root, notifier: UploadNotifier { _ in }, notifications: center.center)
         func pendingBatch(for accountID: String) throws -> URL {
             let id = UUID().uuidString
             let directory = root.appendingPathComponent(id, isDirectory: true)
@@ -128,5 +129,6 @@ struct ShareUploadsTests {
         #expect(FileManager.default.fileExists(atPath: staying.path))
         uploader.cancel(keepingAccounts: [])
         #expect(!FileManager.default.fileExists(atPath: staying.path), "the last sign out leaves nothing staged")
+        #expect(center.removedIdentifiers == [[leaving.lastPathComponent], [staying.lastPathComponent]])
     }
 }

@@ -9,7 +9,7 @@ import Testing
 @Suite(.dependencies)
 @MainActor
 struct BrowseReviewFixTests {
-    private let serverURL = URL(string: "https://example.com")!
+    private let serverURL = URL(string: "https://example.com") ?? URL(fileURLWithPath: "/")
 
     private nonisolated static let access = FileAccess(
         canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true
@@ -36,17 +36,25 @@ struct BrowseReviewFixTests {
     @Test(arguments: [404, 403, 500])
     func aServerErrorAfterTheCachePaintShowsTheErrorNotTheStaleList(statusCode: Int) async {
         let cached = file("Stale.txt")
+        let gate = AsyncStream<Void>.makeStream()
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "docs", title: "Docs")) {
             BrowseFeature()
         } withDependencies: {
-            $0.filesClient.browse = { _, _ in throw FilesClientError.server(statusCode: statusCode) }
+            $0.filesClient.browse = { _, _ in
+                for await _ in gate.stream {
+                    break
+                }
+                throw FilesClientError.server(statusCode: statusCode)
+            }
             $0.filesClient.favorites = { _ in [] }
             $0.directoryCacheStore.read = cachedDirectoryStore([cached])
         }
         store.exhaustivity = .off
 
         await store.send(.onAppear)
+        await store.receive(\.cachedListingPainted)
         #expect(store.state.items.count == 1)
+        gate.continuation.yield(())
         await store.receive(\.itemsResponse.failure)
 
         #expect(store.state.items.isEmpty)
@@ -58,17 +66,26 @@ struct BrowseReviewFixTests {
     @Test
     func anOfflineErrorAfterTheCachePaintStillShowsTheSavedCopy() async {
         let cached = file("Saved.txt")
+        let gate = AsyncStream<Void>.makeStream()
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "docs", title: "Docs")) {
             BrowseFeature()
         } withDependencies: {
-            $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
+            $0.filesClient.browse = { _, _ in
+                for await _ in gate.stream {
+                    break
+                }
+                throw FilesClientError.offline
+            }
             $0.filesClient.favorites = { _ in [] }
             $0.directoryCacheStore.read = cachedDirectoryStore([cached])
         }
         store.exhaustivity = .off
 
         await store.send(.onAppear)
+        await store.receive(\.cachedListingPainted)
+        gate.continuation.yield(())
         await store.receive(\.itemsResponse.failure)
+        await store.receive(\.offlineListingResolved)
 
         #expect(store.state.items.count == 1)
         #expect(store.state.dataSource == .cached(fetchedAt: MockDates.reference))

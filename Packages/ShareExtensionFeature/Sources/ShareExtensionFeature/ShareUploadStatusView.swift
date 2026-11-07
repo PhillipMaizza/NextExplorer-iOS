@@ -16,6 +16,7 @@ extension ItemFailureCause {
         switch self {
         case .cannotRead: L10n.ShareUpload.causeCannotRead
         case .notEnoughSpace: L10n.ShareUpload.causeNotEnoughSpace
+        case .folder: L10n.ShareUpload.causeFolder
         case .other: L10n.ShareUpload.causeUnknown
         }
     }
@@ -62,7 +63,7 @@ struct ShareUploadStatus: View {
                 Text(L10n.ShareUpload.itemCount(store.itemCount)).type(.body2(.regular), style: .secondary)
                 livePhotoNote
                 HStack(spacing: Constants.progressSpacing) {
-                    DSSpinner(size: .small, accessibilityLabel: L10n.ShareUpload.checking(store.serverName))
+                    DSSpinner(size: .small).accessibilityHidden(true)
                     Text(L10n.ShareUpload.checking(store.serverName)).type(.body3(.regular), style: .secondary)
                 }
             case .ready:
@@ -71,11 +72,11 @@ struct ShareUploadStatus: View {
                 if store.notice == .defaultFolderUnavailable {
                     DSInfoCard(L10n.ShareUpload.defaultFolderUnavailable)
                 }
-            case .preparing:
+            case .preparing, .handingOff:
                 VStack(alignment: .leading, spacing: Constants.progressSpacing) {
                     ProgressView(value: store.preparationFraction)
                         .tint(Color.accent)
-                    Text(L10n.ShareUpload.preparing(min(store.progress.completed + 1, store.preparingTotal), store.preparingTotal))
+                    Text(L10n.ShareUpload.preparing(store.preparingStep, store.preparingTotal))
                         .type(.body2(.regular), style: .secondary)
                     Text(L10n.ShareUpload.keepOpen).type(.body3(.regular), style: .secondary)
                 }
@@ -125,36 +126,44 @@ struct ShareUploadFailureList: View {
     }
 }
 
-/// The buttons under the status (iPhone and iPad), by phase: Upload while there is something to
-/// send, the choice between the ready files and the failed ones, or Try Again for a state that
-/// can be retried.
+extension ShareUploadFeature.Control {
+    var title: String {
+        switch self {
+        case .upload: L10n.ShareUpload.upload
+        case .uploadReady: L10n.ShareUpload.uploadReady
+        case .retryFailed: L10n.ShareUpload.retryFailed
+        case .retry: L10n.Common.retry
+        case .openApp: L10n.ShareUpload.openApp
+        }
+    }
+}
+
+/// The buttons under the status (iPhone and iPad), read from the same mapping the Mac sheet uses.
+/// A state only the app can fix shows its instruction and no button: the extension cannot be
+/// repaired before it closes.
 struct ShareUploadActions: View {
     let store: StoreOf<ShareUploadFeature>
+    @Dependency(\.openApp) private var openApp
 
     var body: some View {
-        switch store.phase {
-        case .checking, .ready, .preparing:
-            DSButton(L10n.ShareUpload.upload, style: .primary, isLoading: store.phase == .preparing || store.phase == .checking) {
-                store.send(.uploadTapped)
+        VStack(spacing: .space8) {
+            if let primary = store.state.primaryAction(canOpenApp: openApp.isAvailable) {
+                DSButton(primary.title, style: .primary, isLoading: store.isWorking) {
+                    store.send(primary.action)
+                }
+                .disabled(primary == .upload && !store.canUpload)
             }
-            .disabled(!store.canUpload)
-        case .partiallyPrepared:
-            VStack(spacing: .space8) {
-                DSButton(L10n.ShareUpload.uploadReady, style: .primary) { store.send(.uploadReadyTapped) }
-                DSButton(L10n.ShareUpload.retryFailed, style: .secondary) { store.send(.retryTapped) }
+            if let secondary = store.state.secondaryAction(canOpenApp: openApp.isAvailable) {
+                DSButton(secondary.title, style: .secondary) { store.send(secondary.action) }
             }
-        case .signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected, .failed:
-            DSButton(L10n.Common.retry, style: .secondary) { store.send(.retryTapped) }
-        case .loading, .nothingToUpload, .started:
-            EmptyView()
         }
     }
 }
 
 extension ShareUploadFeature.State {
     /// Whether the footer has anything to show.
-    var hasActions: Bool {
-        ![.loading, .nothingToUpload, .started].contains(phase)
+    func hasActions(canOpenApp: Bool) -> Bool {
+        primaryAction(canOpenApp: canOpenApp) != nil || secondaryAction(canOpenApp: canOpenApp) != nil
     }
 }
 
@@ -200,7 +209,7 @@ extension ShareUploadFeature.State {
 
 extension ShareUploadFeature.Phase {
     static let previewCases: [ShareUploadFeature.Phase] = [
-        .loading, .checking, .ready, .preparing, .partiallyPrepared, .started, .signedOut, .sessionUnreadable,
+        .loading, .checking, .ready, .preparing, .handingOff, .partiallyPrepared, .started, .signedOut, .sessionUnreadable,
         .nothingToUpload, .failed, .certificateRequired, .certificateRejected,
     ]
 }

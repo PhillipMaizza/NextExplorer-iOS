@@ -31,6 +31,8 @@
         /// `nil` for a file: only folders can be favorites.
         var isFavorite: Bool?
         var onToggleFavorite: () -> Void = {}
+        /// False until the favorites list has loaded, so a toggle cannot re add an existing favorite.
+        var isFavoriteToggleEnabled = true
         /// This item's own share links; `nil` until the list has loaded.
         var shares: [Share]?
         /// Opens Create Share Link; `nil` without the right to share.
@@ -64,6 +66,7 @@
                             HStack {
                                 Spacer()
                                 Button(isFavorite ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites, action: onToggleFavorite)
+                                    .disabled(!isFavoriteToggleEnabled)
                             }
                         }
                     }
@@ -282,6 +285,7 @@
                         onEditPermissions: { screen.send(.permissionsTapped(item)) },
                         isFavorite: item.isDirectory ? screen.favoritePaths.contains(item.id) : nil,
                         onToggleFavorite: { screen.send(.favoriteToggleButtonTapped(item)) },
+                        isFavoriteToggleEnabled: screen.hasLoadedFavorites,
                         shares: shares(for: item),
                         onShare: (screen.access?.canShare ?? false) ? { onShare(item) } : nil,
                         onRestored: { screen.send(.refreshButtonTapped) },

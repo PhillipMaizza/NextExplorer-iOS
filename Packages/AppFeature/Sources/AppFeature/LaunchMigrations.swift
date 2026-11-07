@@ -25,7 +25,7 @@ public enum LaunchMigrations {
         _ = start(steps: .live)
         Task.detached(priority: .utility) {
             LegacyCacheCleanup.runIfNeeded()
-            PendingAccountWipeRecovery.runAtLaunch()
+            await PendingAccountWipeRecovery.runAtLaunch()
         }
     }
 

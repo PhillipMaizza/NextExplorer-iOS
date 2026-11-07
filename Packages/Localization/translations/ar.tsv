@@ -606,6 +606,7 @@ offline.manageRow	إدارة الملفات دون اتصال
 offline.manageTitle	الملفات دون اتصال
 offline.manageEmpty	لا يوجد شيء تم تنزيله للاستخدام دون اتصال.
 offline.preferOfflineToggle	تشغيل النسخ التي جرى تنزيلها
+offline.pinRemoved	لم يعد %@ موجودًا على الخادم وتمت إزالته من الملفات دون اتصال
 offline.preferOfflineSubtitle	استخدم مقطع فيديو تم تنزيله بدلاً من البث عندما يكون متاحًا.
 offline.tunnelSpeedNote	قد يؤدي الوصول إلى خادمك عبر نفق بعيد إلى إبطاء التنزيلات. للملفات الكبيرة، اتصل بالشبكة نفسها واستخدم العنوان المحلي لخادمك.
 menu.about	حول NextExplorer
@@ -788,12 +789,12 @@ shareUpload.nothingToUpload	لا يوجد هنا ما يمكن لـ NextExplorer
 shareUpload.failed	تعذّر تجهيز الملفات للرفع.
 shareUpload.notificationDoneTitle	اكتمل الرفع
 shareUpload.notificationFailedTitle	لم يتم رفع بعض الملفات
-shareUpload.notificationDoneBody#zero	تم رفع %lld ملف إلى ”%@“.
-shareUpload.notificationDoneBody#one	تم رفع %lld ملف إلى ”%@“.
-shareUpload.notificationDoneBody#two	تم رفع %lld ملفين إلى ”%@“.
-shareUpload.notificationDoneBody#few	تم رفع %lld ملفات إلى ”%@“.
-shareUpload.notificationDoneBody#many	تم رفع %lld ملفًا إلى ”%@“.
-shareUpload.notificationDoneBody#other	تم رفع %lld ملف إلى ”%@“.
+shareUpload.notificationDoneBody#zero	تم رفع %lld ملف إلى «%@».
+shareUpload.notificationDoneBody#one	تم رفع %lld ملف إلى «%@».
+shareUpload.notificationDoneBody#two	تم رفع %lld ملفين إلى «%@».
+shareUpload.notificationDoneBody#few	تم رفع %lld ملفات إلى «%@».
+shareUpload.notificationDoneBody#many	تم رفع %lld ملفًا إلى «%@».
+shareUpload.notificationDoneBody#other	تم رفع %lld ملف إلى «%@».
 shareUpload.notificationAllFailedTitle	فشل الرفع
 shareUpload.failureUnauthorized#zero	لم يتم رفع %lld ملف. سجّل الدخول مرة أخرى ثم أعد المحاولة.
 shareUpload.failureUnauthorized#one	لم يتم رفع %lld ملف. سجّل الدخول مرة أخرى ثم أعد المحاولة.
@@ -825,7 +826,6 @@ shareUpload.failureOther#two	تعذّر رفع %lld ملفين.
 shareUpload.failureOther#few	تعذّر رفع %lld ملفات.
 shareUpload.failureOther#many	تعذّر رفع %lld ملفًا.
 shareUpload.failureOther#other	تعذّر رفع %lld ملف.
-shareUpload.notificationMoreNames	و%lld أخرى
 shareUpload.notificationRetry	إعادة المحاولة
 shareUpload.notificationHiddenPreview	افتح NextExplorer لمعرفة نتيجة الرفع.
 shareUpload.retryFailedTitle	تعذّرت إعادة المحاولة
@@ -866,3 +866,8 @@ textPreview.conflictReload	إعادة التحميل
 offline.waitingForNetwork	سيتم التنزيل عند عودتك إلى الاتصال
 browse.bulkFavoriteFailed	فشل %1$lld من %2$lld
 shareUpload.livePhotoNote	تُرفع صور Live Photos مع مقطع الفيديو المتحرك الخاص بها.
+shareUpload.retrySignInBody	سجّل الدخول إلى NextExplorer، ثم اضغط على «إعادة المحاولة» مرة أخرى.
+shareUpload.causeFolder	لا يمكن مشاركة المجلدات. شارك الملفات الموجودة بداخلها بدلًا من ذلك.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	%lld أخرى
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

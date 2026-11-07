@@ -68,7 +68,7 @@ struct SessionCookieStore: Sendable {
                 unreadable = error
             }
         }
-        // Migration: fold a pre-multi-server single session into the new shape. An unreadable
+        // Migration: fold a legacy single session into the new shape. An unreadable
         // stored blob is only replaced by a valid legacy session, and that is logged; the old key
         // goes only once the new set is safely saved.
         if let legacyData = try keychainClient.load(Self.legacyStorageKey),

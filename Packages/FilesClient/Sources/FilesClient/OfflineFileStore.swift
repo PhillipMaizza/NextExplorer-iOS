@@ -22,6 +22,10 @@ enum OfflineCache {
     static let pathSidecarName = ".path"
     static let interruptedFileName = ".interrupted"
     static let lastSyncFileName = ".lastsync"
+    /// How many syncs in a row the server answered "not found" for a pinned folder, by path.
+    static let missingRootsFileName = ".missing"
+    private static let missingRootsLock = NSLock()
+    private static let pathSeparator = "/"
 
     private static func applicationSupport() -> URL? {
         try? FileManager.default.url(
@@ -214,7 +218,7 @@ enum OfflineCache {
     }
 
     private static func isCovered(_ path: String, byRootPaths roots: [String]) -> Bool {
-        roots.contains { $0 == path || path.hasPrefix($0 + "/") }
+        roots.contains { $0 == path || path.hasPrefix($0 + pathSeparator) }
     }
 
     /// Total offline bytes for each pinned root, for the manage screen.
@@ -223,7 +227,7 @@ enum OfflineCache {
         let entries = slotEntries()
         return roots.map { root in
             let size = entries
-                .filter { $0.path == root.path || $0.path.hasPrefix(root.path + "/") }
+                .filter { $0.path == root.path || $0.path.hasPrefix(root.path + pathSeparator) }
                 .reduce(Int64(0)) { $0 + $1.size }
             return OfflinePinnedRootUsage(root: root, sizeBytes: size)
         }
@@ -238,7 +242,51 @@ enum OfflineCache {
     /// remaining root (freeing that root's disk unless another pin still covers those files).
     static func removeRoot(path rootPath: String) {
         setPinnedRoots(pinnedRoots().filter { $0.path != rootPath })
+        clearMissingRoot(path: rootPath)
         reconcile(currentPaths: nil)
+    }
+
+    private static func missingRootCounts() -> [String: Int] {
+        guard let scope = scopeDirectory(create: false),
+              let data = try? Data(contentsOf: scope.appendingPathComponent(missingRootsFileName))
+        else { return [:] }
+        return (try? JSONDecoder().decode([String: Int].self, from: data)) ?? [:]
+    }
+
+    private static func saveMissingRootCounts(_ counts: [String: Int]) {
+        guard let url = flagURL(missingRootsFileName) else { return }
+        if counts.isEmpty {
+            try? FileManager.default.removeItem(at: url)
+        } else if let data = try? JSONEncoder().encode(counts) {
+            try? data.write(to: url, options: .atomic)
+        }
+    }
+
+    /// Counts one more sync in a row that found `path` missing and returns the new count.
+    static func recordMissingRoot(path: String) -> Int {
+        missingRootsLock.withLock {
+            var counts = missingRootCounts()
+            let count = (counts[path] ?? 0) + 1
+            counts[path] = count
+            saveMissingRootCounts(counts)
+            return count
+        }
+    }
+
+    static func clearMissingRoot(path: String) {
+        missingRootsLock.withLock {
+            var counts = missingRootCounts()
+            guard counts.removeValue(forKey: path) != nil else { return }
+            saveMissingRootCounts(counts)
+        }
+    }
+
+    /// Size of the pinned copy for `path` regardless of freshness, or nil when none is stored.
+    static func localFileSize(forPath path: String) -> Int64? {
+        guard let url = localURL(forPath: path),
+              let size = try? url.resourceValues(forKeys: [.fileSizeKey]).fileSize
+        else { return nil }
+        return Int64(size)
     }
 
     /// Prunes stale slots: any not covered by a pinned root (an orphan from an unpinned root), and,
@@ -349,6 +397,13 @@ public struct OfflineFileStore: Sendable {
     /// When the last auto-sync ran, so foreground syncs can be throttled.
     public var lastAutoSyncAt: @Sendable () -> Date?
     public var setLastAutoSyncAt: @Sendable (_ date: Date) -> Void
+    /// Counts one more sync in a row that found a pinned folder missing on the server, and returns
+    /// the count. A folder is only treated as gone once this is confirmed, never on a single 404.
+    public var recordMissingRoot: @Sendable (_ path: String) -> Int
+    public var clearMissingRoot: @Sendable (_ path: String) -> Void
+    /// Size in bytes of the pinned copy for a path, or nil when none is stored. Lets the editor
+    /// refuse an offline copy larger than its own cap before reading it.
+    public var localFileSize: @Sendable (_ path: String) -> Int64?
 
     public init(
         localURL: @escaping @Sendable (FileItem) -> URL?,
@@ -365,7 +420,10 @@ public struct OfflineFileStore: Sendable {
         setInterrupted: @escaping @Sendable (Bool) -> Void,
         wasInterrupted: @escaping @Sendable () -> Bool,
         lastAutoSyncAt: @escaping @Sendable () -> Date?,
-        setLastAutoSyncAt: @escaping @Sendable (Date) -> Void
+        setLastAutoSyncAt: @escaping @Sendable (Date) -> Void,
+        recordMissingRoot: @escaping @Sendable (String) -> Int = { _ in .zero },
+        clearMissingRoot: @escaping @Sendable (String) -> Void = { _ in },
+        localFileSize: @escaping @Sendable (String) -> Int64? = { _ in nil }
     ) {
         self.localURL = localURL
         self.localURLIgnoringStaleness = localURLIgnoringStaleness
@@ -382,6 +440,37 @@ public struct OfflineFileStore: Sendable {
         self.wasInterrupted = wasInterrupted
         self.lastAutoSyncAt = lastAutoSyncAt
         self.setLastAutoSyncAt = setLastAutoSyncAt
+        self.recordMissingRoot = recordMissingRoot
+        self.clearMissingRoot = clearMissingRoot
+        self.localFileSize = localFileSize
+    }
+}
+
+public extension OfflineFileStore {
+    /// This store with every call made under `scope`, so work that started for one account keeps
+    /// reading and writing that account's offline files after the active account changes.
+    func pinned(to scope: String) -> OfflineFileStore {
+        let store = self
+        return OfflineFileStore(
+            localURL: { item in CacheAccountScope.withPinned(scope) { store.localURL(item) } },
+            localURLIgnoringStaleness: { item in CacheAccountScope.withPinned(scope) { store.localURLIgnoringStaleness(item) } },
+            pinnedRoots: { CacheAccountScope.withPinned(scope) { store.pinnedRoots() } },
+            setPinnedRoots: { roots in CacheAccountScope.withPinned(scope) { store.setPinnedRoots(roots) } },
+            totalSizeBytes: { CacheAccountScope.withPinned(scope) { store.totalSizeBytes() } },
+            pinnedRootUsages: { CacheAccountScope.withPinned(scope) { store.pinnedRootUsages() } },
+            removeRoot: { path in CacheAccountScope.withPinned(scope) { store.removeRoot(path) } },
+            reconcile: { paths in CacheAccountScope.withPinned(scope) { store.reconcile(paths) } },
+            removeAll: store.removeAll,
+            removeCurrentAccount: { CacheAccountScope.withPinned(scope) { store.removeCurrentAccount() } },
+            removeAccount: store.removeAccount,
+            setInterrupted: { value in CacheAccountScope.withPinned(scope) { store.setInterrupted(value) } },
+            wasInterrupted: { CacheAccountScope.withPinned(scope) { store.wasInterrupted() } },
+            lastAutoSyncAt: { CacheAccountScope.withPinned(scope) { store.lastAutoSyncAt() } },
+            setLastAutoSyncAt: { date in CacheAccountScope.withPinned(scope) { store.setLastAutoSyncAt(date) } },
+            recordMissingRoot: { path in CacheAccountScope.withPinned(scope) { store.recordMissingRoot(path) } },
+            clearMissingRoot: { path in CacheAccountScope.withPinned(scope) { store.clearMissingRoot(path) } },
+            localFileSize: { path in CacheAccountScope.withPinned(scope) { store.localFileSize(path) } }
+        )
     }
 }
 
@@ -401,7 +490,10 @@ extension OfflineFileStore: DependencyKey {
         setInterrupted: { OfflineCache.setInterrupted($0) },
         wasInterrupted: { OfflineCache.wasInterrupted() },
         lastAutoSyncAt: { OfflineCache.lastAutoSyncAt() },
-        setLastAutoSyncAt: { OfflineCache.setLastAutoSyncAt($0) }
+        setLastAutoSyncAt: { OfflineCache.setLastAutoSyncAt($0) },
+        recordMissingRoot: { OfflineCache.recordMissingRoot(path: $0) },
+        clearMissingRoot: { OfflineCache.clearMissingRoot(path: $0) },
+        localFileSize: { OfflineCache.localFileSize(forPath: $0) }
     )
 
     /// No pinned files, no manifest: tests that exercise the offline read path inject a seeded
@@ -443,7 +535,9 @@ extension OfflineFileStore: DependencyKey {
             setInterrupted: { box.setInterrupted($0) },
             wasInterrupted: { box.wasInterrupted() },
             lastAutoSyncAt: { box.lastAutoSyncAt() },
-            setLastAutoSyncAt: { box.setLastAutoSyncAt($0) }
+            setLastAutoSyncAt: { box.setLastAutoSyncAt($0) },
+            recordMissingRoot: { box.recordMissingRoot($0) },
+            clearMissingRoot: { box.clearMissingRoot($0) }
         )
     }
 
@@ -452,6 +546,7 @@ extension OfflineFileStore: DependencyKey {
         private var roots: [OfflinePinnedRoot] = []
         private var interrupted = false
         private var lastSync: Date?
+        private var missing: [String: Int] = [:]
         private let localURLs: [String: URL]
 
         init(localURLs: [String: URL]) {
@@ -476,6 +571,19 @@ extension OfflineFileStore: DependencyKey {
         func removeRoot(path: String) {
             lock.lock(); defer { lock.unlock() }
             roots.removeAll { $0.path == path }
+            missing[path] = nil
+        }
+
+        func recordMissingRoot(_ path: String) -> Int {
+            lock.lock(); defer { lock.unlock() }
+            let count = (missing[path] ?? 0) + 1
+            missing[path] = count
+            return count
+        }
+
+        func clearMissingRoot(_ path: String) {
+            lock.lock(); defer { lock.unlock() }
+            missing[path] = nil
         }
 
         func removeAll() {

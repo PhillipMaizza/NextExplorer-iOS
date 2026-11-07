@@ -45,14 +45,12 @@ extension FilesService {
     /// files. The server itself enforces a size cap (1MB default) and sniffs for binary
     /// content, surfacing either as a plain validation error this maps to `.server(statusCode:)`.
     func fetchTextContent(serverURL: URL, path: String) async throws -> String {
+        let scope = activeScope()
         do {
             return try await fetchTextContentFromServer(serverURL: serverURL, path: path)
         } catch let error as FilesClientError where error == .offline {
-            // Offline: read the pinned copy if this file was downloaded for offline use, otherwise
-            // surface the offline error so the editor shows its offline state.
-            if let offlineURL = OfflineCache.localURL(forPath: path),
-               let bytes = try? Data(contentsOf: offlineURL),
-               let text = Self.decodeText(bytes)
+            if let offlineURL = OfflineCache.localURL(forPath: path, scope: scope),
+               let text = Self.offlineEditorText(at: offlineURL)
             {
                 return text
             }
@@ -60,25 +58,52 @@ extension FilesService {
         }
     }
 
-    /// Decodes a pinned text file's bytes: a byte order mark decides first, then markless UTF-16 (only
-    /// when its zero byte pattern gives it away, since any even length data decodes as UTF-16, and
-    /// it must precede UTF-8 because zero bytes are valid UTF-8), then strict UTF-8, then Windows
-    /// 1252, and Latin-1 last because it accepts every byte.
+    /// The pinned copy as editor text, refused above the backend editor cap (so the offline editor
+    /// never opens what the server would not) and when the bytes are not plain text.
+    static func offlineEditorText(at url: URL) -> String? {
+        guard let attributes = try? FileManager.default.attributesOfItem(atPath: url.path),
+              let size = (attributes[.size] as? NSNumber)?.intValue,
+              size <= EditorLimits.maxFileSizeBytes,
+              let bytes = try? Data(contentsOf: url)
+        else { return nil }
+        return decodeText(bytes)
+    }
+
+    enum EditorLimits {
+        /// `MAX_EDITOR_FILE_SIZE` in `backend/src/services/textEditorService.js` (its default, which
+        /// `config.editor.maxFileSizeBytes` can raise).
+        static let maxFileSizeBytes = 1 * bytesPerKibibyte * bytesPerKibibyte
+        static let bytesPerKibibyte = 1024
+    }
+
+    /// Decodes a pinned text file's bytes, or nil when they are not plain text (a NUL or another
+    /// control character in the decoded result is the tell of binary data).
     static func decodeText(_ data: Data) -> String? {
+        guard let text = decodeCandidate(data), !text.unicodeScalars.contains(where: TextDecoding.isBinaryTell) else {
+            return nil
+        }
+        return text
+    }
+
+    /// A byte order mark decides first, then markless UTF 16 (only when its zero byte pattern gives it
+    /// away, since any even length data decodes as UTF 16, and it must precede UTF 8 because zero bytes
+    /// are valid UTF 8), then strict UTF 8, then Windows 1252, and Latin 1 last because it accepts
+    /// every byte.
+    private static func decodeCandidate(_ data: Data) -> String? {
         for mark in ByteOrderMark.all where data.starts(with: mark.bytes) {
             let body = data.dropFirst(mark.bytes.count)
             if let text = String(data: body, encoding: mark.encoding) {
                 return text
             }
             // A mark in front of bytes that do not decode as that encoding was a coincidence of a
-            // legacy encoded file, so the legacy decoding below gets the bytes instead of nil.
+            // legacy encoded file, so the legacy decoding gets the bytes instead of nil.
             return legacyDecode(mark.encoding == .utf8 ? Data(body) : data)
         }
         if let encoding = marklessUTF16Encoding(of: data), let text = String(data: data, encoding: encoding) {
             return text
         }
         let utf8Text = String(data: data, encoding: .utf8)
-        // Cyrillic, Greek or Hebrew UTF-16 is also valid UTF-8, made of control characters, so UTF-8
+        // Cyrillic, Greek or Hebrew UTF 16 is also valid UTF 8, made of control characters, so UTF 8
         // only wins when it reads like text.
         if let utf8Text, !utf8Text.unicodeScalars.contains(where: TextDecoding.isUnexpectedControl) {
             return utf8Text
@@ -93,7 +118,7 @@ extension FilesService {
         String(data: data, encoding: .windowsCP1252) ?? String(data: data, encoding: .isoLatin1)
     }
 
-    /// Markless UTF-16 of CJK, Cyrillic or other non Latin text has no zero bytes to give it away.
+    /// Markless UTF 16 of CJK, Cyrillic or other non Latin text has no zero bytes to give it away.
     /// Accepted only when one byte order decodes cleanly, almost every code unit is a character of a
     /// known script (or plain ASCII), and the text is not the byte pair pattern of ASCII shaped
     /// legacy text read two bytes at a time, which also lands in the CJK block.
@@ -140,7 +165,7 @@ extension FilesService {
         let bytes: [UInt8]
         let encoding: String.Encoding
 
-        /// UTF-32 little endian first: its mark begins with the whole UTF-16 little endian mark.
+        /// UTF 32 little endian first: its mark begins with the whole UTF 16 little endian mark.
         static let all = [
             ByteOrderMark(bytes: [0xFF, 0xFE, 0x00, 0x00], encoding: .utf32LittleEndian),
             ByteOrderMark(bytes: [0x00, 0x00, 0xFE, 0xFF], encoding: .utf32BigEndian),
@@ -150,8 +175,8 @@ extension FilesService {
         ]
     }
 
-    /// Text in UTF-16 without a mark has a zero byte beside most characters, always at the same
-    /// parity. Real Latin-1 or Windows 1252 text has no zero bytes at all.
+    /// Text in UTF 16 without a mark has a zero byte beside most characters, always at the same
+    /// parity. Real Latin 1 or Windows 1252 text has no zero bytes at all.
     private static func marklessUTF16Encoding(of data: Data) -> String.Encoding? {
         let evenCount = min(data.count, TextDecoding.sampleBytes) / 2 * 2
         guard evenCount >= 2 else { return nil }
@@ -177,15 +202,15 @@ extension FilesService {
 
     private enum TextDecoding {
         static let sampleBytes = 512
-        /// A zero byte beside at least a quarter of the sampled bytes marks UTF-16 text.
+        /// A zero byte beside at least a quarter of the sampled bytes marks UTF 16 text.
         static let minimumZeroShareDivisor = 4
         static let utf16UnitBytes = 2
-        /// Sixteen code units: shorter data is too little evidence to call it UTF-16, since random bytes
+        /// Sixteen code units: shorter data is too little evidence to call it UTF 16, since random bytes
         /// pass the per unit checks often enough at four.
         static let minimumUTF16Bytes = 32
         static let minimumPlausibleShare = 0.95
         /// Half of real CJK units have both bytes in the printable ASCII range; ASCII shaped legacy
-        /// text read as UTF-16 has nearly all of them there.
+        /// text read as UTF 16 has nearly all of them there.
         static let maximumASCIIPairShare = 0.6
         static let printableASCIIBytes: ClosedRange<UInt8> = 0x20 ... 0x7E
 
@@ -195,6 +220,15 @@ extension FilesService {
 
         static func isUnexpectedControl(_ scalar: Unicode.Scalar) -> Bool {
             scalar.value < firstPrintableScalar && !textControlScalars.contains(scalar)
+        }
+
+        /// C0 controls other than tab, line feed and carriage return, plus DEL and the C1 controls
+        /// (which is what Latin 1 turns the bytes Windows 1252 leaves undefined into).
+        static let deleteScalar: UInt32 = 0x7F
+        static let lastC1ControlScalar: UInt32 = 0x9F
+
+        static func isBinaryTell(_ scalar: Unicode.Scalar) -> Bool {
+            isUnexpectedControl(scalar) || (deleteScalar ... lastC1ControlScalar).contains(scalar.value)
         }
 
         static let plausibleScalarRanges: [ClosedRange<UInt32>] = [
@@ -210,6 +244,15 @@ extension FilesService {
         /// Everything outside the unreserved characters and the path separator is percent encoded, so
         /// `+`, `&`, `#`, `%` and spaces survive: `URLQueryItem` leaves `+` and `&` as they are.
         static let allowedPathCharacters = CharacterSet.alphanumerics.union(CharacterSet(charactersIn: "-._~/"))
+    }
+
+    private enum EditorPreflight {
+        static let notModifiedStatus = 304
+        static let notFoundStatus = 404
+        static let clientErrorStatuses = 400 ..< 500
+        static let successStatuses = 200 ..< 300
+        /// Answers the shared validation turns into their own errors instead of a conflict prompt.
+        static let reportedStatuses: Set<Int> = [401, 403, 429]
     }
 
     private func fetchTextContentFromServer(serverURL: URL, path: String) async throws -> String {
@@ -230,14 +273,15 @@ extension FilesService {
         return envelope.content
     }
 
-    /// `PUT /api/editor` has no `If-Match` precondition (`backend/src/routes/editor.js` writes
+    /// `PUT /api/editor` has no `If Match` precondition (`backend/src/routes/editor.js` writes
     /// whatever it is given, keeping the replaced state as a version). The read, by POST or GET, carries
     /// the same ETag (`textFileEtag` through `sendTextFile`) and a GET or HEAD answers 304 to
-    /// `If-None-Match`, so just before the write a HEAD revalidates the file against the ETag the editor
-    /// opened it with, without downloading the body. A change throws `.changedOnServer` once and forgets
-    /// the ETag, so the next save of the same text is the user's deliberate overwrite. A successful save
-    /// stores the ETag the PUT answers with (only present when the file at the path is the one just
-    /// written), which protects the following save; without one the next save is unprotected.
+    /// `If None Match`, so just before the write a HEAD revalidates the file against the ETag the editor
+    /// opened it with, without downloading the body. A change, a missing file or an answer that cannot
+    /// confirm the file is unchanged throws `.changedOnServer` once and forgets the ETag, so the next
+    /// save of the same text is the user's deliberate overwrite. A successful save stores the ETag the
+    /// PUT answers with (only present when the file at the path is the one just written), which
+    /// protects the following save; without one the next save is unprotected.
     func saveTextContent(serverURL: URL, path: String, content: String) async throws {
         let key = Self.editorKey(activeScope(), serverURL, path)
         if let knownETag = textEditorETags.etag(for: key),
@@ -247,7 +291,7 @@ extension FilesService {
             throw FilesClientError.changedOnServer
         }
         let url = serverURL.appendingPathComponent(APIPath.editor)
-        var request = Self.makeRequest(url: url, method: .put)
+        var request = Self.makeRequest(url: url, method: .put, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(EditorSaveBody(path: path, content: content))
         let (data, response) = try await performSend(request)
@@ -255,8 +299,11 @@ extension FilesService {
         textEditorETags.set(response.value(forHTTPHeaderField: HTTPHeaderField.etag), for: key)
     }
 
-    /// True only when the server answers the conditional HEAD with 200 (the file differs). A missing
-    /// file or any other answer is not a conflict: the write that follows reports the real problem.
+    /// Whether the file may no longer be the one the editor opened. The conditional HEAD answers 304
+    /// for an unchanged file; 200 means it differs, 404 that it was deleted or renamed, and any other
+    /// 4xx (the backend runs `readTextFile` on a HEAD, so a file that grew past the editor cap or turned
+    /// binary answers 4xx) cannot confirm anything, so none of them may be overwritten blindly. Auth,
+    /// rate limit and server errors surface as themselves.
     private func hasChangedOnServer(serverURL: URL, path: String, knownETag: String) async throws -> Bool {
         guard var components = URLComponents(
             url: serverURL.appendingPathComponent(APIPath.editor), resolvingAgainstBaseURL: false
@@ -267,7 +314,18 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .head)
         request.setValue(knownETag, forHTTPHeaderField: HTTPHeaderField.ifNoneMatch)
         let (_, response) = try await performSend(request)
-        return response.statusCode == 200
+        let status = response.statusCode
+        if status == EditorPreflight.notModifiedStatus {
+            return false
+        }
+        if EditorPreflight.successStatuses.contains(status) {
+            return true
+        }
+        if EditorPreflight.clientErrorStatuses.contains(status), !EditorPreflight.reportedStatuses.contains(status) {
+            return true
+        }
+        try Self.validate(response)
+        return true
     }
 
     private static func editorKey(_ scope: String, _ serverURL: URL, _ path: String) -> String {
@@ -276,8 +334,8 @@ extension FilesService {
 
     /// `POST /api/files/zip/extract`, confirmed against `backend/src/routes/zip.js`: unpacks
     /// the archive into a *new* sibling folder (named after the zip, deduped if taken) and
-    /// returns that folder as an item: there's no listing-only/peek-inside endpoint, and only
-    /// `.zip` is supported server-side (`.rar`/`.7z`/etc. 415 with "Only .zip archives...").
+    /// returns that folder as an item: there's no listing only or peek inside endpoint, and only
+    /// `.zip` is supported server side (`.rar`/`.7z`/etc. 415 with "Only .zip archives...").
     func extractZip(serverURL: URL, item: FileItem) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.zipExtract)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
@@ -289,7 +347,7 @@ extension FilesService {
 
     /// `POST /api/files/zip/compress`, confirmed against `backend/src/routes/zip.js`: zips a
     /// single item (file or directory) into a new sibling archive in its own parent folder,
-    /// auto-naming it from the source (`defaultZipNameForItems`) when `name` is omitted.
+    /// auto naming it from the source (`defaultZipNameForItems`) when `name` is omitted.
     func compressItem(serverURL: URL, item: FileItem) async throws -> FileItem {
         let url = serverURL.appendingPathComponent(APIPath.zipCompress)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
@@ -323,7 +381,7 @@ extension FilesService {
 
     /// `DELETE /api/files`, confirmed against `backend/src/routes/files/delete.js` and
     /// `fileTransferService.resolveDeleteTargets`: each item is `{path, name}`; again exactly
-    /// `FileItem`'s own fields, `kind` included as the server's fallback for already-missing items.
+    /// `FileItem`'s own fields, `kind` included as the server's fallback for already missing items.
     func deleteItems(serverURL: URL, items: [FileItem]) async throws {
         let scope = activeScope()
         let url = serverURL.appendingPathComponent(APIPath.files)
@@ -352,7 +410,7 @@ extension FilesService {
         serverURL: URL, items: [FileItem], destination: String, operation: TransferOperation
     ) async throws -> TransferResult {
         let scope = activeScope()
-        let endpoint = operation == .copy ? "api/files/copy" : "api/files/move"
+        let endpoint = operation == .copy ? APIPath.filesCopy : APIPath.filesMove
         let url = serverURL.appendingPathComponent(endpoint)
         var request = Self.makeRequest(url: url, method: .post, isMutation: true)
         request.setJSONContentType()

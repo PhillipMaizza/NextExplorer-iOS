@@ -42,29 +42,29 @@ struct UploadFailureTests {
 
     @Test("A transport error is a failure even when a response arrived")
     func errorWins() throws {
-        let result = try BackgroundUploader.result(response: response(200), body: Data(), error: URLError(.networkConnectionLost))
+        let result = try BackgroundUploader.result(response: response(200), error: URLError(.networkConnectionLost))
         #expect(result == .failure(.network))
     }
 
     @Test("Failing statuses become their causes")
     func failingStatuses() throws {
-        #expect(try BackgroundUploader.result(response: response(401), body: Data(), error: nil) == .failure(.unauthorized))
-        #expect(try BackgroundUploader.result(response: response(507), body: Data(), error: nil) == .failure(.serverFull))
-        #expect(try BackgroundUploader.result(response: response(403), body: Data(), error: nil) == .failure(.forbidden))
+        #expect(try BackgroundUploader.result(response: response(401), error: nil) == .failure(.unauthorized))
+        #expect(try BackgroundUploader.result(response: response(507), error: nil) == .failure(.serverFull))
+        #expect(try BackgroundUploader.result(response: response(403), error: nil) == .failure(.forbidden))
     }
 
-    @Test("A 200 with no usable reply is not a success")
-    func emptyReply() throws {
-        #expect(try BackgroundUploader.result(response: response(200), body: Data(), error: nil) == .failure(.other))
-        #expect(try BackgroundUploader.result(response: response(200), body: Data("not json".utf8), error: nil) == .failure(.other))
-        #expect(BackgroundUploader.result(response: nil, body: Data(), error: nil) == .failure(.other))
+    @Test("Any 2xx is a success, whatever the reply body says: a retry must never upload the file twice", arguments: [200, 201, 204, 299])
+    func anyTwoHundredIsASuccess(status: Int) throws {
+        #expect(try BackgroundUploader.result(response: response(status), error: nil) == .success)
     }
 
-    @Test("A 200 carrying the stored file is a success")
-    func storedFileReply() throws {
-        let body = Data("""
-        [{"name":"a.jpg","path":"Photos","dateModified":"2026-01-01T00:00:00.000Z","size":3,"kind":"jpg","supportsThumbnail":true}]
-        """.utf8)
-        #expect(try BackgroundUploader.result(response: response(200), body: body, error: nil) == .success)
+    @Test("Statuses outside 2xx and a missing response are failures", arguments: [199, 300, 302, 404, 500])
+    func otherStatusesFail(status: Int) throws {
+        #expect(try BackgroundUploader.result(response: response(status), error: nil) == .failure(.other))
+    }
+
+    @Test("No response at all is a failure")
+    func noResponse() {
+        #expect(BackgroundUploader.result(response: nil, error: nil) == .failure(.other))
     }
 }

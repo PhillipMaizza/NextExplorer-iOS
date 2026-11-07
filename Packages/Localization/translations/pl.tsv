@@ -606,6 +606,7 @@ offline.manageRow	Zarządzaj plikami offline
 offline.manageTitle	Pliki offline
 offline.manageEmpty	Nic nie zostało pobrane do użytku offline.
 offline.preferOfflineToggle	Odtwarzaj pobrane kopie
+offline.pinRemoved	%@ już nie istnieje na serwerze i został usunięty z plików offline
 offline.preferOfflineSubtitle	Używaj pobranego wideo zamiast strumieniowania, gdy jest dostępne.
 offline.tunnelSpeedNote	Łączenie się z serwerem przez zdalny tunel może spowalniać pobieranie. W przypadku dużych plików połącz się z tą samą siecią i użyj lokalnego adresu serwera.
 menu.about	O programie NextExplorer
@@ -812,8 +813,7 @@ shareUpload.failureNetwork#other	%lld pliku nie zostało przesłanych. Połącze
 shareUpload.failureOther#one	%lld plik nie mógł zostać przesłany.
 shareUpload.failureOther#few	%lld pliki nie mogły zostać przesłane.
 shareUpload.failureOther#many	%lld plików nie mogło zostać przesłanych.
-shareUpload.failureOther#other	%lld pliku nie mogło zostać przesłanych.
-shareUpload.notificationMoreNames	i %lld więcej
+shareUpload.failureOther#other	%lld pliku nie mogło zostać przesłane.
 shareUpload.notificationRetry	Ponów
 shareUpload.notificationHiddenPreview	Otwórz NextExplorer, aby zobaczyć wynik przesyłania.
 shareUpload.retryFailedTitle	Nie udało się ponowić próby
@@ -854,3 +854,8 @@ textPreview.conflictReload	Wczytaj ponownie
 offline.waitingForNetwork	Zostanie pobrane po powrocie do trybu online
 browse.bulkFavoriteFailed	Nie powiodło się: %1$lld z %2$lld
 shareUpload.livePhotoNote	Live Photos są przesyłane razem z filmem ruchu.
+shareUpload.retrySignInBody	Zaloguj się w NextExplorer, a potem ponownie dotknij „Ponów”.
+shareUpload.causeFolder	Folderów nie można udostępniać. Udostępnij zamiast tego znajdujące się w nich pliki.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	%lld więcej
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

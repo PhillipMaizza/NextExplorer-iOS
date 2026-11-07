@@ -606,6 +606,7 @@ offline.manageRow	Gerenciar arquivos offline
 offline.manageTitle	Arquivos offline
 offline.manageEmpty	Nada foi baixado para uso offline.
 offline.preferOfflineToggle	Reproduzir cópias baixadas
+offline.pinRemoved	%@ não existe mais no servidor e foi removido dos arquivos offline
 offline.preferOfflineSubtitle	Usar um vídeo baixado em vez de transmitir quando estiver disponível.
 offline.tunnelSpeedNote	Aceder ao teu servidor através de um túnel remoto pode tornar as transferências lentas. Para ficheiros grandes, liga-te à mesma rede e usa o endereço local do servidor.
 menu.about	Sobre o NextExplorer
@@ -801,7 +802,6 @@ shareUpload.failureNetwork#one	%lld arquivo não foi enviado. A conexão falhou.
 shareUpload.failureNetwork#other	%lld arquivos não foram enviados. A conexão falhou. Tente de novo quando voltar a ficar on-line.
 shareUpload.failureOther#one	%lld arquivo não pôde ser enviado.
 shareUpload.failureOther#other	%lld arquivos não puderam ser enviados.
-shareUpload.notificationMoreNames	e mais %lld
 shareUpload.notificationRetry	Tentar de novo
 shareUpload.notificationHiddenPreview	Abra o NextExplorer para ver como foi o envio.
 shareUpload.retryFailedTitle	Não foi possível tentar novamente
@@ -842,3 +842,8 @@ textPreview.conflictReload	Recarregar
 offline.waitingForNetwork	Será baixado quando você voltar a ficar online
 browse.bulkFavoriteFailed	%1$lld de %2$lld falharam
 shareUpload.livePhotoNote	As Live Photos são enviadas com o respetivo vídeo de movimento.
+shareUpload.retrySignInBody	Entre no NextExplorer e toque em “Tentar de novo” novamente.
+shareUpload.causeFolder	Pastas não podem ser compartilhadas. Compartilhe os arquivos dentro delas.
+shareUpload.accountSummary	%1$@ · %2$@
+shareUpload.notificationMoreNames	mais %lld
+unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@

@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CoreModels
+import Dependencies
 import DesignSystem
 import FolderPickerFeature
 import Localization
@@ -15,6 +16,7 @@ private enum Metrics {
 /// The Share Extension's screen. A design system card on iPhone and iPad, a native form on the Mac.
 public struct ShareUploadView: View {
     @Bindable var store: StoreOf<ShareUploadFeature>
+    @Dependency(\.openApp) private var openApp
 
     public init(store: StoreOf<ShareUploadFeature>) {
         self.store = store
@@ -36,8 +38,6 @@ public struct ShareUploadView: View {
         #endif
     }
 
-    private static let detailPhases: [ShareUploadFeature.Phase] = [.checking, .ready, .preparing, .started]
-
     private var phoneBody: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -49,12 +49,12 @@ public struct ShareUploadView: View {
                         onClose: { store.send(.cancelTapped) }
                     )
                     ShareUploadStatus(store: store)
-                    if store.credentials != nil, store.canChooseAccount || Self.detailPhases.contains(store.phase) {
+                    if store.credentials != nil, store.canChooseAccount || store.shouldShowDetails {
                         section(L10n.ShareUpload.accountLabel) {
                             ShareUploadAccountMenu(store: store)
                         }
                     }
-                    if store.credentials != nil, Self.detailPhases.contains(store.phase) {
+                    if store.credentials != nil, store.shouldShowDetails {
                         section(L10n.ShareUpload.folderLabel) {
                             ShareUploadFolderButton(store: store)
                         }
@@ -62,7 +62,7 @@ public struct ShareUploadView: View {
                 }
                 .padding(Metrics.padding)
             }
-            if store.hasActions {
+            if store.state.hasActions(canOpenApp: openApp.isAvailable) {
                 DSSheetFooter {
                     ShareUploadActions(store: store)
                 }
@@ -179,36 +179,38 @@ extension StoreOf<ShareUploadFeature> {
     }
 }
 
-extension SessionCredentials {
-    static let previewSecond = SessionCredentials(
-        serverBaseURL: URL(string: "https://home.example.org")!,
-        authMode: .local,
-        cookieName: "connect.sid",
-        cookieValue: "preview",
-        cookieDomain: "home.example.org",
-        cookiePath: "/",
-        cookieIsSecure: true,
-        expiresAt: nil,
-        username: "family"
-    )
+private enum PreviewConstants {
+    static let firstHost = "files.example.com"
+    static let secondHost = "home.example.org"
+    static let cookieName = "connect.sid"
+    static let cookieValue = "preview"
+    static let cookiePath = "/"
+}
 
-    static let preview = SessionCredentials(
-        serverBaseURL: URL(string: "https://files.example.com")!,
-        authMode: .local,
-        cookieName: "connect.sid",
-        cookieValue: "preview",
-        cookieDomain: "files.example.com",
-        cookiePath: "/",
-        cookieIsSecure: true,
-        expiresAt: nil,
-        username: "phillip"
-    )
+extension SessionCredentials {
+    private static func previewAccount(host: String, username: String) -> SessionCredentials {
+        SessionCredentials(
+            serverBaseURL: URL(string: "https://\(host)") ?? URL(fileURLWithPath: PreviewConstants.cookiePath),
+            authMode: .local,
+            cookieName: PreviewConstants.cookieName,
+            cookieValue: PreviewConstants.cookieValue,
+            cookieDomain: host,
+            cookiePath: PreviewConstants.cookiePath,
+            cookieIsSecure: true,
+            expiresAt: nil,
+            username: username
+        )
+    }
+
+    static let previewSecond = previewAccount(host: PreviewConstants.secondHost, username: "family")
+    static let preview = previewAccount(host: PreviewConstants.firstHost, username: "phillip")
 }
 
 #Preview("Ready") { ShareUploadView(store: .preview(.ready)) }
 #Preview("Two accounts") { ShareUploadView(store: .preview(.ready, accounts: 2)) }
 #Preview("No folder yet") { ShareUploadView(store: .preview(.ready, destination: "")) }
 #Preview("Preparing") { ShareUploadView(store: .preview(.preparing)) }
+#Preview("Handing off") { ShareUploadView(store: .preview(.handingOff)) }
 #Preview("Started") { ShareUploadView(store: .preview(.started)) }
 #Preview("Loading") { ShareUploadView(store: .preview(.loading)) }
 #Preview("Checking the server") { ShareUploadView(store: .preview(.checking)) }
