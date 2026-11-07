@@ -16,6 +16,14 @@ import SwiftUI
     typealias PlatformHostingController = NSHostingController
 #endif
 
+#if os(macOS)
+    private enum Metrics {
+        /// The share sheet opens at this size before SwiftUI reports the form's own; a zero size
+        /// showed nothing at all.
+        static let initialSize = NSSize(width: 480, height: 300)
+    }
+#endif
+
 /// The Share Extension's entry point: reads what the other app shared, then hosts
 /// `ShareUploadView`, which hands the files to the background uploader.
 final class ShareViewController: PlatformViewController {
@@ -23,7 +31,8 @@ final class ShareViewController: PlatformViewController {
 
     #if os(macOS)
         override func loadView() {
-            view = NSView()
+            view = NSView(frame: NSRect(origin: .zero, size: Metrics.initialSize))
+            preferredContentSize = Metrics.initialSize
         }
     #endif
 
@@ -39,6 +48,10 @@ final class ShareViewController: PlatformViewController {
         }
         self.store = store
         let host = PlatformHostingController(rootView: ShareUploadView(store: store))
+        #if os(macOS)
+            // The sheet follows the form's height as rows and messages come and go.
+            host.sizingOptions = [.preferredContentSize]
+        #endif
         addChild(host)
         host.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(host.view)
@@ -48,10 +61,17 @@ final class ShareViewController: PlatformViewController {
             host.view.topAnchor.constraint(equalTo: view.topAnchor),
             host.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
         ])
-        #if os(macOS)
-            preferredContentSize = host.view.fittingSize
-        #endif
     }
+
+    #if os(macOS)
+        override func preferredContentSizeDidChange(for viewController: NSViewController) {
+            super.preferredContentSizeDidChange(for: viewController)
+            let size = viewController.preferredContentSize
+            if size.width > 0, size.height > 0 {
+                preferredContentSize = size
+            }
+        }
+    #endif
 
     private func close(completed: Bool) {
         if completed {
