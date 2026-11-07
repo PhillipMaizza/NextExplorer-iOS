@@ -43,6 +43,21 @@ enum UploadStagingLocation {
         return files
     }
 
+    /// Removes every entry of `directories` last modified before `cutoff`.
+    static func sweepStale(in directories: [URL], olderThan cutoff: Date) {
+        for directory in directories {
+            let entries = (try? FileManager.default.contentsOfDirectory(
+                at: directory, includingPropertiesForKeys: [.contentModificationDateKey], options: []
+            )) ?? []
+            for url in entries {
+                let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
+                if let modified, modified < cutoff {
+                    try? FileManager.default.removeItem(at: url)
+                }
+            }
+        }
+    }
+
     private static func copy(_ source: URL, named name: String, into directory: URL) -> PickedFile? {
         let temp = directory.appendingPathComponent("\(UUID().uuidString)-\(source.lastPathComponent)")
         try? FileManager.default.removeItem(at: temp)
@@ -69,19 +84,23 @@ public struct UploadStagingClient: Sendable {
     /// Deletes staged files old enough that no queue or review sheet can still need them:
     /// the catch all for a temp file orphaned by a staging run cancelled mid copy.
     public var sweepStale: @Sendable () async -> Void
+    /// Whether a staged file is still on disk, so a retry never requeues a deleted source.
+    public var sourceExists: @Sendable (_ url: URL) -> Bool
 
     public init(
         stageDocuments: @escaping @Sendable (_ urls: [URL]) -> AsyncStream<PickedFile>,
         stagePhotos: @escaping @Sendable (_ items: [PhotosPickerItem]) -> AsyncStream<PickedFile>,
         stageCameraCapture: @escaping @Sendable (_ url: URL) async -> PickedFile?,
         discard: @escaping @Sendable (_ urls: [URL]) async -> Void,
-        sweepStale: @escaping @Sendable () async -> Void
+        sweepStale: @escaping @Sendable () async -> Void,
+        sourceExists: @escaping @Sendable (_ url: URL) -> Bool = { _ in true }
     ) {
         self.stageDocuments = stageDocuments
         self.stagePhotos = stagePhotos
         self.stageCameraCapture = stageCameraCapture
         self.discard = discard
         self.sweepStale = sweepStale
+        self.sourceExists = sourceExists
     }
 }
 
@@ -100,6 +119,7 @@ extension UploadStagingClient: DependencyKey {
                                         url.stopAccessingSecurityScopedResource()
                                     }
                                 }
+                                defer { DroppedFileStaging.discardCopy(at: url) }
                                 return UploadStagingLocation.stage(url, into: directory)
                             }
                         }
@@ -166,18 +186,12 @@ extension UploadStagingClient: DependencyKey {
             }
         },
         sweepStale: {
-            let cutoff = Date().addingTimeInterval(-staleStagingAge)
-            let directory = UploadStagingLocation.directory
-            let entries = (try? FileManager.default.contentsOfDirectory(
-                at: directory, includingPropertiesForKeys: [.contentModificationDateKey], options: []
-            )) ?? []
-            for url in entries {
-                let modified = (try? url.resourceValues(forKeys: [.contentModificationDateKey]))?.contentModificationDate
-                if let modified, modified < cutoff {
-                    try? FileManager.default.removeItem(at: url)
-                }
-            }
-        }
+            UploadStagingLocation.sweepStale(
+                in: [UploadStagingLocation.directory, DroppedFileStaging.directory()],
+                olderThan: Date().addingTimeInterval(-staleStagingAge)
+            )
+        },
+        sourceExists: { FileManager.default.fileExists(atPath: $0.path) }
     )
 
     /// Files older than this in `UploadStagingLocation` cannot belong to a live upload or an

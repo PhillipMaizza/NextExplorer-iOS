@@ -164,6 +164,20 @@ struct BrowsePreviewRouter: View {
                 onDismiss: { store.send(.previewDismissed) },
                 startsEditing: store.newlyCreatedFileID == item.id
             )
+            .dsAlert(isPresented: Binding(get: { store.isTextSaveConflictPresented }, set: { _ in })) {
+                DSAlertSheet(
+                    icon: IconKit.rename,
+                    title: L10n.TextPreview.conflictTitle(item.name),
+                    message: L10n.TextPreview.conflictMessage,
+                    confirmTitle: L10n.TextPreview.conflictOverwrite,
+                    dismissTitle: L10n.Common.cancel,
+                    neutralTitle: L10n.TextPreview.conflictReload,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.textSaveOverwriteTapped) },
+                    onNeutral: { store.send(.textSaveReloadTapped) },
+                    onDismiss: { store.send(.textSaveConflictDismissed) }
+                )
+            }
         }
     }
 }

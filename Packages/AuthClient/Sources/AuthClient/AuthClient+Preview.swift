@@ -9,6 +9,7 @@ public extension AuthClient {
         me: { _ in User.preview },
         logout: { _ in },
         restoreSession: { nil },
+        loadSession: { nil },
         listSessions: { [] },
         activeAccountID: { nil },
         switchAccount: { _ in nil },

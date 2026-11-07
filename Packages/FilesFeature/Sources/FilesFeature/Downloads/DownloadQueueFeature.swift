@@ -227,17 +227,26 @@ public struct DownloadQueueFeature {
                 return .concatenate(saved, .send(.delegate(.queueFinished(state.finishSummary))))
 
             case let .cancelJobTapped(id):
+                let wasPending = state.jobs[id: id].map { !$0.status.isTerminal } ?? false
                 state.jobs.remove(id: id)
                 if state.jobs.isEmpty {
                     state.isSheetPresented = false
                 }
-                return .merge(.cancel(id: CancelID.job(id)), .send(.startNextIfIdle))
+                // Cancelling the last pending job means no download response will announce the
+                // drain, so items that already landed still need their confirmation and refresh.
+                let finished: Effect<Action> = wasPending && !state.isActive && state.savedCount > 0
+                    ? .send(.delegate(.queueFinished(state.finishSummary)))
+                    : .none
+                return .merge(.cancel(id: CancelID.job(id)), .send(.startNextIfIdle), finished)
 
             case .cancelAllTapped:
                 let cancels = state.jobs.map { Effect<Action>.cancel(id: CancelID.job($0.id)) }
+                let finished: Effect<Action> = state.isActive && state.savedCount > 0
+                    ? .send(.delegate(.queueFinished(state.finishSummary)))
+                    : .none
                 state.jobs.removeAll()
                 state.isSheetPresented = false
-                return .merge(cancels)
+                return .merge(cancels + [finished])
 
             case let .retryTapped(id):
                 guard state.jobs[id: id]?.status.isFailed == true else { return .none }

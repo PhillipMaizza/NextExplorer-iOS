@@ -15,6 +15,10 @@ final class StubURLProtocol: URLProtocol {
     nonisolated(unsafe) static var stub: Stub?
     /// Per URL path answers that win over `stub`, for flows that make more than one request.
     nonisolated(unsafe) static var pathStubs: [String: Stub] = [:]
+    /// Per `"METHOD /path"` answers that win over `pathStubs`, for flows that read and write one URL.
+    nonisolated(unsafe) static var methodStubs: [String: Stub] = [:]
+    /// Every intercepted request in order, for tests asserting on a multi request flow.
+    nonisolated(unsafe) static var requests: [URLRequest] = []
     nonisolated(unsafe) static var failure: URLError?
     /// Last intercepted request, for tests asserting on URL/method/body construction.
     nonisolated(unsafe) static var capturedRequest: URLRequest?
@@ -30,6 +34,7 @@ final class StubURLProtocol: URLProtocol {
 
     override func startLoading() {
         Self.capturedRequest = request
+        Self.requests.append(request)
         Self.capturedRequestBody = request.httpBody ?? request.httpBodyStream.map { stream -> Data in
             stream.open()
             defer { stream.close() }
@@ -49,7 +54,8 @@ final class StubURLProtocol: URLProtocol {
             client?.urlProtocol(self, didFailWithError: failure)
             return
         }
-        guard let url = request.url, let stub = Self.pathStubs[url.path] ?? Self.stub else {
+        let methodKey = "\(request.httpMethod ?? "GET") \(request.url?.path ?? "")"
+        guard let url = request.url, let stub = Self.methodStubs[methodKey] ?? Self.pathStubs[url.path] ?? Self.stub else {
             client?.urlProtocol(self, didFailWithError: URLError(.badURL))
             return
         }

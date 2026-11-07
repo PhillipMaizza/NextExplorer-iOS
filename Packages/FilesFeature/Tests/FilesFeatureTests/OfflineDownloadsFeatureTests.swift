@@ -3,8 +3,11 @@ import CoreModels
 import FilesClient
 @testable import FilesFeature
 import Foundation
+import NetworkClient
 import Testing
 
+// Serialized: every store shares the sync effect's cancel id, so parallel tests would cancel each other.
+@Suite(.serialized)
 @MainActor
 struct OfflineDownloadsFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
@@ -261,5 +264,230 @@ struct OfflineDownloadsFeatureTests {
 
         #expect(store.state.progress.phase == .completed)
         #expect(downloaded.value == ["A/a.txt"])
+    }
+
+    private func storeWithSlots(_ paths: Set<String>) -> (store: OfflineFileStore, slots: LockIsolated<Set<String>>) {
+        let slots = LockIsolated(paths)
+        var offline = OfflineFileStore.inMemory(
+            localURLs: Dictionary(uniqueKeysWithValues: paths.map { ($0, URL(fileURLWithPath: "/tmp/\($0)")) })
+        )
+        offline.setPinnedRoots([OfflinePinnedRoot(path: "A", isDirectory: true)])
+        offline.reconcile = { current in
+            guard let current else { return }
+            slots.withValue { $0 = $0.intersection(current) }
+        }
+        return (offline, slots)
+    }
+
+    @Test
+    func aSyncWithOneFailedSubfolderNeverPrunesOfflineSlots() async {
+        let (offline, slots) = storeWithSlots(["A/a.txt", "A/Slow/b.txt"])
+        let store = TestStore(initialState: OfflineDownloadsFeature.State(serverURL: serverURL)) {
+            OfflineDownloadsFeature()
+        } withDependencies: {
+            $0.date = .constant(Date(timeIntervalSince1970: 0))
+            $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
+            $0.filesClient.browse = { _, path in
+                switch path {
+                case "A":
+                    BrowseResult(items: [file("a.txt", path: "A"), folder("Slow", path: "A")], access: access(), path: path)
+                default:
+                    throw FilesClientError.offline
+                }
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.resyncTapped)
+        await store.receive(\.waitingForNetwork)
+        #expect(slots.value == ["A/a.txt", "A/Slow/b.txt"])
+    }
+
+    @Test
+    func aSyncWhereEveryFolderFailsKeepsEverySlotAndShowsWaiting() async {
+        let (offline, slots) = storeWithSlots(["A/a.txt", "A/Sub/b.txt"])
+        let store = TestStore(initialState: OfflineDownloadsFeature.State(serverURL: serverURL)) {
+            OfflineDownloadsFeature()
+        } withDependencies: {
+            $0.date = .constant(Date(timeIntervalSince1970: 0))
+            $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
+            $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.resyncTapped)
+        await store.receive(\.waitingForNetwork)
+        #expect(slots.value == ["A/a.txt", "A/Sub/b.txt"])
+        #expect(store.state.progress.phase == .waitingForNetwork)
+    }
+
+    @Test
+    func aCompleteWalkStillPrunesFilesTheServerNoLongerLists() async {
+        let (offline, slots) = storeWithSlots(["A/a.txt", "A/gone.txt"])
+        let store = TestStore(initialState: OfflineDownloadsFeature.State(serverURL: serverURL)) {
+            OfflineDownloadsFeature()
+        } withDependencies: {
+            $0.date = .constant(Date(timeIntervalSince1970: 0))
+            $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
+            $0.filesClient.browse = { _, path in
+                BrowseResult(items: [file("a.txt", path: "A")], access: access(), path: path)
+            }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.resyncTapped)
+        await store.receive(\.completed)
+        #expect(slots.value == ["A/a.txt"])
+    }
+
+    private func syncStore(
+        offline: OfflineFileStore, error: FilesClientError
+    ) -> TestStoreOf<OfflineDownloadsFeature> {
+        let store = TestStore(initialState: OfflineDownloadsFeature.State(serverURL: serverURL)) {
+            OfflineDownloadsFeature()
+        } withDependencies: {
+            $0.date = .constant(Date(timeIntervalSince1970: 0))
+            $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
+            $0.filesClient.browse = { _, _ in throw error }
+        }
+        store.exhaustivity = .off
+        return store
+    }
+
+    @Test
+    func aPinnedFolderDeletedOnTheServerIsUnpinnedAndTheSyncFinishesNormally() async {
+        let offline = OfflineFileStore.inMemory()
+        offline.setPinnedRoots([OfflinePinnedRoot(path: "A", isDirectory: true), OfflinePinnedRoot(path: "B", isDirectory: true)])
+        let store = syncStore(offline: offline, error: .server(statusCode: 404))
+
+        await store.send(.resyncTapped)
+        await store.receive(\.completed)
+
+        #expect(offline.pinnedRoots().isEmpty)
+        #expect(store.state.progress.phase == .completed)
+    }
+
+    @Test
+    func aForbiddenPinnedFolderKeepsItsPinAndReportsAnAccessMessage() async {
+        let offline = OfflineFileStore.inMemory()
+        offline.setPinnedRoots([OfflinePinnedRoot(path: "A", isDirectory: true)])
+        let store = syncStore(offline: offline, error: .forbidden(message: nil))
+
+        await store.send(.resyncTapped)
+        await store.receive(\.failed)
+
+        #expect(offline.pinnedRoots().map(\.path) == ["A"])
+        #expect(store.state.progress.phase != .waitingForNetwork)
+    }
+
+    @Test(arguments: [FilesClientError.offline, .timedOut, .server(statusCode: 500), .server(statusCode: 503)])
+    func offlineTimeoutAndServerErrorsStayIncompleteAndKeepThePin(error: FilesClientError) async {
+        let offline = OfflineFileStore.inMemory()
+        offline.setPinnedRoots([OfflinePinnedRoot(path: "A", isDirectory: true)])
+        let store = syncStore(offline: offline, error: error)
+
+        await store.send(.resyncTapped)
+        await store.receive(\.waitingForNetwork)
+
+        #expect(offline.pinnedRoots().map(\.path) == ["A"])
+        #expect(store.state.progress.phase == .waitingForNetwork)
+    }
+
+    @Test
+    func walkClassifiesEachFailureOfAFolderListing() async throws {
+        let result = try await OfflineDownloadsFeature.walk(
+            roots: [folder("A")], serverURL: serverURL,
+            filesClient: withDependencies {
+                $0.filesClient.browse = { _, path in
+                    switch path {
+                    case "A":
+                        BrowseResult(
+                            items: [folder("Gone", path: "A"), folder("Locked", path: "A"), folder("Down", path: "A"), file("a.txt", path: "A")],
+                            access: access(), path: path
+                        )
+                    case "A/Gone": throw FilesClientError.server(statusCode: 404)
+                    case "A/Locked": throw FilesClientError.forbidden(message: nil)
+                    default: throw FilesClientError.server(statusCode: 502)
+                    }
+                }
+            } operation: {
+                @Dependency(\.filesClient) var client
+                return client
+            }
+        )
+        #expect(result.goneFolders == ["A/Gone"])
+        #expect(result.forbiddenFolders == ["A/Locked"])
+        #expect(result.failedFolders == ["A/Down"])
+        #expect(result.hasIncompleteWalk)
+        #expect(result.hasForbiddenFolders)
+    }
+
+    @Test
+    func walkReportsTheFoldersThatFailedToList() async throws {
+        let result = try await OfflineDownloadsFeature.walk(
+            roots: [folder("A")], serverURL: serverURL,
+            filesClient: withDependencies {
+                $0.filesClient.browse = { _, path in
+                    switch path {
+                    case "A":
+                        BrowseResult(items: [file("a.txt", path: "A"), folder("Bad", path: "A")], access: access(), path: path)
+                    default:
+                        throw FilesClientError.offline
+                    }
+                }
+            } operation: {
+                @Dependency(\.filesClient) var client
+                return client
+            }
+        )
+        #expect(result.files.map(\.id) == ["A/a.txt"])
+        #expect(result.failedFolders == ["A/Bad"])
+        #expect(result.hasIncompleteWalk)
+    }
+
+    @Test
+    func autoSyncDoesNothingWhileOffline() async {
+        let offline = OfflineFileStore.inMemory()
+        offline.setPinnedRoots([OfflinePinnedRoot(path: "A", isDirectory: true)])
+        let browseCalls = LockIsolated(0)
+        let store = TestStore(initialState: OfflineDownloadsFeature.State(serverURL: serverURL)) {
+            OfflineDownloadsFeature()
+        } withDependencies: {
+            $0.connectivity = ConnectivityClient(isOnline: { false }, events: { AsyncStream { _ in } })
+            $0.date = .constant(Date(timeIntervalSince1970: 0))
+            $0.offlineFileStore = offline
+            $0.filesClient.browse = { _, path in
+                browseCalls.withValue { $0 += 1 }
+                return BrowseResult(items: [], access: access(), path: path)
+            }
+        }
+
+        await store.send(.autoSync(force: true))
+        #expect(browseCalls.value == 0)
+        #expect(store.state.progress.phase == .idle)
+    }
+
+    @Test
+    func aPinnedRootThatCannotBeListedWaitsForNetworkInsteadOfCompleting() async {
+        let offline = OfflineFileStore.inMemory()
+        let store = TestStore(initialState: OfflineDownloadsFeature.State(serverURL: serverURL)) {
+            OfflineDownloadsFeature()
+        } withDependencies: {
+            $0.offlineFileStore = offline
+            $0.filesClient.flushDownloadConnections = {}
+            $0.filesClient.browse = { _, _ in throw FilesClientError.offline }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.startDownload([folder("A")]))
+        await store.receive(\.waitingForNetwork)
+
+        #expect(store.state.progress.phase == .waitingForNetwork)
+        #expect(offline.pinnedRoots().map(\.path) == ["A"])
+        #expect(offline.wasInterrupted() == false)
     }
 }

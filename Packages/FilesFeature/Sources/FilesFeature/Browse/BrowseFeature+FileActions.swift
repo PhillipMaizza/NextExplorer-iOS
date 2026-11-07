@@ -161,19 +161,26 @@ extension BrowseFeature {
         return .run { send in
             var added: [String] = []
             var removed: [String] = []
+            var failedCount = 0
             for item in targets {
                 let isCurrentlyFavorite = favoritePaths.contains(item.id)
                 if isCurrentlyFavorite {
                     if await (try? filesClient.removeFavorite(serverURL, item.id)) != nil {
                         removed.append(item.id)
+                    } else {
+                        failedCount += 1
                     }
                 } else {
                     if await (try? filesClient.addFavorite(serverURL, item.id)) != nil {
                         added.append(item.id)
+                    } else {
+                        failedCount += 1
                     }
                 }
             }
-            await send(.bulkFavoriteResponse(BulkFavoriteToggleResult(added: added, removed: removed)))
+            await send(.bulkFavoriteResponse(BulkFavoriteToggleResult(
+                added: added, removed: removed, failedCount: failedCount, totalCount: targets.count
+            )))
         }
     }
 }

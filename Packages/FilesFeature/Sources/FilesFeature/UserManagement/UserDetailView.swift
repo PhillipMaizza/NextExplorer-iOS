@@ -68,6 +68,18 @@ struct UserDetailView: View {
                 onDismiss: { store.send(.removeVolumeCancelled) }
             )
         }
+        .dsAlert(isPresented: grantAdminAlertPresented) {
+            DSAlertSheet(
+                icon: IconKit.shield,
+                title: L10n.UserDetail.grantAdminTitle,
+                message: store.userToGrantAdmin.map { L10n.UserDetail.grantAdminMessage($0.displayName ?? $0.username) },
+                confirmTitle: L10n.UserDetail.roleGrantAdmin,
+                dismissTitle: L10n.Common.cancel,
+                closeAccessibilityLabel: L10n.Common.close,
+                onConfirm: { store.send(.grantAdminConfirmed) },
+                onDismiss: { store.send(.grantAdminCancelled) }
+            )
+        }
         .dsAlert(isPresented: deleteAlertPresented) {
             DSAlertSheet(
                 icon: IconKit.delete,
@@ -117,6 +129,10 @@ struct UserDetailView: View {
     /// of `DSAlertSheet`'s own buttons, which drive the reducer directly.
     private var removeVolumeAlertPresented: Binding<Bool> {
         Binding(get: { store.volumeToRemove != nil }, set: { _ in })
+    }
+
+    private var grantAdminAlertPresented: Binding<Bool> {
+        Binding(get: { store.userToGrantAdmin != nil }, set: { _ in })
     }
 
     /// Lives here, not on the list view: the "Remove User" button is in this screen's Danger
@@ -188,6 +204,14 @@ private func previewDetailState(
         UserDetailView(store: Store(initialState: previewDetailState(userID: "u1", volumesEnabled: false)) {
             UserManagementFeature()
         } withDependencies: { $0.filesClient = .previewValue })
+    }
+}
+
+#Preview("Detail: grant admin confirmation") {
+    NavigationStack {
+        UserDetailView(store: Store(initialState: previewDetailState(userID: "u2") {
+            $0.userToGrantAdmin = $0.users[id: "u2"]
+        }) { UserManagementFeature() } withDependencies: { $0.filesClient = .previewValue })
     }
 }
 

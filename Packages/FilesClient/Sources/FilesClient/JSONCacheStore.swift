@@ -27,14 +27,22 @@ public struct JSONCacheStore: Sendable {
     public var remove: @Sendable (_ key: String) -> Void
     public var clearAll: @Sendable () -> Void
     public var totalSizeBytes: @Sendable () -> Int64
+    /// Drops only the entries of one account scope, for removing a single account while others
+    /// stay signed in.
+    public var clearScope: @Sendable (_ scope: String) -> Void
+    var bindToScope: (@Sendable (_ scope: String) -> JSONCacheStore)?
 
     public init(
         read: @escaping @Sendable (String) -> CachedPayload?,
         write: @escaping @Sendable (String, Data) -> Void,
         remove: @escaping @Sendable (String) -> Void,
         clearAll: @escaping @Sendable () -> Void,
-        totalSizeBytes: @escaping @Sendable () -> Int64
+        totalSizeBytes: @escaping @Sendable () -> Int64,
+        clearScope: @escaping @Sendable (String) -> Void = { _ in },
+        bindToScope: (@Sendable (String) -> JSONCacheStore)? = nil
     ) {
+        self.clearScope = clearScope
+        self.bindToScope = bindToScope
         self.read = read
         self.write = write
         self.remove = remove
@@ -53,6 +61,16 @@ public struct JSONCacheStore: Sendable {
     public func remove(key: String) {
         remove(key)
     }
+
+    public func clear(scope: String) {
+        clearScope(scope)
+    }
+
+    /// A view of this store pinned to `scope`, so an async request can write the namespace that
+    /// was active when it started even if the active account changes meanwhile.
+    public func bound(to scope: String) -> JSONCacheStore {
+        bindToScope?(scope) ?? self
+    }
 }
 
 extension JSONCacheStore: DependencyKey {
@@ -62,7 +80,7 @@ extension JSONCacheStore: DependencyKey {
     }
 
     private enum Constants {
-        static let directoryName = "ListCache"
+        static let directoryName = CacheLayout.listCacheName
         static let fileExtension = "json"
         static let maxEntries = 200
         static let maxTotalBytes: Int64 = 8 * 1024 * 1024
@@ -109,30 +127,32 @@ extension JSONCacheStore: DependencyKey {
             return url
         }()
 
-        private func fileURL(key: String) -> URL? {
+        private func fileURL(scope: String, key: String) -> URL? {
             guard let directory else { return nil }
             // The caller's key (favorites, shares.byMe, ...) carries no server, so fold the active
             // account in: two servers' Favorites/Shared lists must not share one cache entry.
-            let digest = SHA256.hash(data: Data("\(CacheAccountScope.current)\n\(key)".utf8))
+            let digest = SHA256.hash(data: Data("\(scope)\n\(key)".utf8))
             let name = digest.map { String(format: "%02x", $0) }.joined()
-            return directory.appendingPathComponent(name).appendingPathExtension(Constants.fileExtension)
+            return directory
+                .appendingPathComponent("\(CacheAccountScope.filePrefix(for: scope))-\(name)")
+                .appendingPathExtension(Constants.fileExtension)
         }
 
-        func read(key: String) -> CachedPayload? {
+        func read(scope: String, key: String) -> CachedPayload? {
             lock.lock()
             defer { lock.unlock() }
             guard
-                let fileURL = fileURL(key: key),
+                let fileURL = fileURL(scope: scope, key: key),
                 let data = try? Data(contentsOf: fileURL),
                 let envelope = try? JSONDecoder().decode(Envelope.self, from: data)
             else { return nil }
             return CachedPayload(data: envelope.payload, fetchedAt: Date(timeIntervalSince1970: envelope.fetchedAt))
         }
 
-        func write(key: String, data: Data) {
+        func write(scope: String, key: String, data: Data) {
             lock.lock()
             defer { lock.unlock() }
-            guard let fileURL = fileURL(key: key) else { return }
+            guard let fileURL = fileURL(scope: scope, key: key) else { return }
             let envelope = Envelope(fetchedAt: Date().timeIntervalSince1970, payload: data)
             guard let encoded = try? JSONEncoder().encode(envelope) else { return }
             guard encoded.count <= Constants.maxEntryBytes else {
@@ -143,10 +163,10 @@ extension JSONCacheStore: DependencyKey {
             evictIfNeeded()
         }
 
-        func remove(key: String) {
+        func remove(scope: String, key: String) {
             lock.lock()
             defer { lock.unlock() }
-            guard let fileURL = fileURL(key: key) else { return }
+            guard let fileURL = fileURL(scope: scope, key: key) else { return }
             try? fileManager.removeItem(at: fileURL)
         }
 
@@ -157,6 +177,15 @@ extension JSONCacheStore: DependencyKey {
             let entries = (try? fileManager.contentsOfDirectory(at: directory, includingPropertiesForKeys: nil)) ?? []
             for entry in entries {
                 try? fileManager.removeItem(at: entry)
+            }
+        }
+
+        func clear(scope: String) {
+            lock.lock()
+            defer { lock.unlock() }
+            let prefix = "\(CacheAccountScope.filePrefix(for: scope))-"
+            for entry in entriesByAge() where entry.url.lastPathComponent.hasPrefix(prefix) {
+                try? fileManager.removeItem(at: entry.url)
             }
         }
 
@@ -200,13 +229,18 @@ extension JSONCacheStore: DependencyKey {
             }
         }
 
-        func asStore() -> JSONCacheStore {
-            JSONCacheStore(
-                read: { self.read(key: $0) },
-                write: { self.write(key: $0, data: $1) },
-                remove: { self.remove(key: $0) },
+        func asStore(scope pinnedScope: String? = nil) -> JSONCacheStore {
+            @Sendable func resolved() -> String {
+                pinnedScope ?? CacheAccountScope.current
+            }
+            return JSONCacheStore(
+                read: { self.read(scope: resolved(), key: $0) },
+                write: { self.write(scope: resolved(), key: $0, data: $1) },
+                remove: { self.remove(scope: resolved(), key: $0) },
                 clearAll: { self.clearAll() },
-                totalSizeBytes: { self.totalSizeBytes() }
+                totalSizeBytes: { self.totalSizeBytes() },
+                clearScope: { self.clear(scope: $0) },
+                bindToScope: { self.asStore(scope: $0) }
             )
         }
     }
@@ -229,15 +263,23 @@ extension JSONCacheStore: DependencyKey {
         totalSizeBytes: { 0 }
     )
 
-    /// An in-memory store for tests: reads see prior writes.
-    public static func inMemory() -> JSONCacheStore {
-        let box = InMemoryBox()
-        return JSONCacheStore(
-            read: { box.read(key: $0) },
-            write: { box.write(key: $0, data: $1) },
-            remove: { box.remove(key: $0) },
+    /// An in-memory store for tests: reads see prior writes. Unbound calls use `scope`, not the process
+    /// wide scope, so parallel tests never see each other's entries. `FilesClient.live` binds its
+    /// `activeScope()`, so a store seeded directly is visible to a live client whose scope source returns
+    /// the same value (the default `""` matches a test that never sets a scope).
+    public static func inMemory(scope: String = "") -> JSONCacheStore {
+        inMemory(box: InMemoryBox(), scope: scope)
+    }
+
+    private static func inMemory(box: InMemoryBox, scope: String) -> JSONCacheStore {
+        JSONCacheStore(
+            read: { box.read(scope: scope, key: $0) },
+            write: { box.write(scope: scope, key: $0, data: $1) },
+            remove: { box.remove(scope: scope, key: $0) },
             clearAll: { box.clearAll() },
-            totalSizeBytes: { 0 }
+            totalSizeBytes: { 0 },
+            clearScope: { box.clear(scope: $0) },
+            bindToScope: { inMemory(box: box, scope: $0) }
         )
     }
 
@@ -245,19 +287,29 @@ extension JSONCacheStore: DependencyKey {
         private let lock = NSLock()
         private var entries: [String: CachedPayload] = [:]
 
-        func read(key: String) -> CachedPayload? {
-            lock.lock(); defer { lock.unlock() }
-            return entries[key]
+        private func entryKey(_ scope: String, _ key: String) -> String {
+            "\(scope)\n\(key)"
         }
 
-        func write(key: String, data: Data) {
+        func read(scope: String, key: String) -> CachedPayload? {
             lock.lock(); defer { lock.unlock() }
-            entries[key] = CachedPayload(data: data, fetchedAt: Date())
+            return entries[entryKey(scope, key)]
         }
 
-        func remove(key: String) {
+        func write(scope: String, key: String, data: Data) {
             lock.lock(); defer { lock.unlock() }
-            entries[key] = nil
+            entries[entryKey(scope, key)] = CachedPayload(data: data, fetchedAt: Date())
+        }
+
+        func remove(scope: String, key: String) {
+            lock.lock(); defer { lock.unlock() }
+            entries[entryKey(scope, key)] = nil
+        }
+
+        func clear(scope: String) {
+            lock.lock(); defer { lock.unlock() }
+            let prefix = "\(scope)\n"
+            entries = entries.filter { !$0.key.hasPrefix(prefix) }
         }
 
         func clearAll() {

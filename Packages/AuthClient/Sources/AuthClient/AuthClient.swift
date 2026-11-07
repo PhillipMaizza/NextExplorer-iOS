@@ -15,6 +15,10 @@ public struct AuthClient: Sendable {
     /// Restores the active account's session (installs its cookie), or `nil` if no account is
     /// stored.
     public var restoreSession: @Sendable () async -> SessionCredentials?
+    /// Like `restoreSession`, but a keychain that can't be read throws `AuthClientError.keychain`
+    /// instead of looking like "no account", so the Share Extension can tell a signed out user
+    /// from a session it can't reach. `nil` still means nothing is stored.
+    public var loadSession: @Sendable () async throws -> SessionCredentials?
     /// Every signed-in account, active first is not guaranteed; callers match `activeAccountID`.
     public var listSessions: @Sendable () async -> [SessionCredentials] = { [] }
     /// The `accountID` of the active account, or `nil` when none.

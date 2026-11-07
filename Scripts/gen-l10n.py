@@ -23,6 +23,9 @@ TRANSLATIONS = PKG / "translations"
 # The web app ships de/es/fr/hi/it/ko/pl/ro/ru/sv/zh-CN/zh-TW; nl, pt, ja and ar are added beyond
 # that set (Portuguese + main European per request, plus Japanese and Arabic as major world
 # languages: Arabic is right to left and exercises the RTL layout path).
+PLURAL_CATEGORIES = ("zero", "one", "two", "few", "many", "other")
+PLURAL_KEY = re.compile(r"^(?P<base>.+)#(?P<category>" + "|".join(PLURAL_CATEGORIES) + ")$")
+
 LANGUAGES = ["ar", "de", "es", "fr", "hi", "it", "ja", "ko", "nl", "pl", "pt", "ro", "ru", "sv", "zh-CN", "zh-TW"]
 
 
@@ -50,6 +53,22 @@ def parse():
     return _parse_tsv(TSV)
 
 
+def split_plurals(entries):
+    """Plural strings are written as `base#category<TAB>value` lines (CLDR categories). Returns the
+    plain entries and `{base: {category: value}}`; every plural needs at least `other`."""
+    plain, plurals = [], {}
+    for key, value in entries:
+        match = PLURAL_KEY.match(key)
+        if match:
+            plurals.setdefault(match["base"], {})[match["category"]] = value
+        else:
+            plain.append((key, value))
+    for base, forms in plurals.items():
+        if "other" not in forms:
+            raise SystemExit(f"{base}: plural needs an #other form")
+    return plain, plurals
+
+
 def _format_tokens(value):
     """The multiset of printf specifiers in a string, e.g. %@ %lld %1$@, order insensitive so a
     language may reorder arguments (positional %n$@) but must keep the same set."""
@@ -69,18 +88,37 @@ def parse_translations(en_map):
             continue
         mapping = {}
         for key, value in _parse_tsv(path):
-            if key not in en_map:
+            match = PLURAL_KEY.match(key)
+            source = f"{match['base']}#other" if match else key
+            if source not in en_map:
                 continue
-            if _format_tokens(value) != _format_tokens(en_map[key]):
-                problems.append(f"{lang}/{key}: placeholders {_format_tokens(value)} != en {_format_tokens(en_map[key])}")
+            if _format_tokens(value) != _format_tokens(en_map[source]):
+                problems.append(f"{lang}/{key}: placeholders {_format_tokens(value)} != en {_format_tokens(en_map[source])}")
             mapping[key] = value
         result[lang] = mapping
     if problems:
         raise SystemExit("placeholder mismatch:\n  " + "\n  ".join(problems))
+    missing_other = missing_other_forms(result)
+    if missing_other:
+        raise SystemExit("plural translation needs an #other form:\n  " + "\n  ".join(missing_other))
     return result
 
 
-def write_catalog(entries, translations):
+def missing_other_forms(translations):
+    """`lang/base` for every language that translates some plural forms of a key but not `#other`.
+    Such a language would otherwise be dropped from the catalog without a word."""
+    problems = []
+    for lang, mapping in translations.items():
+        bases = {}
+        for key in mapping:
+            match = PLURAL_KEY.match(key)
+            if match:
+                bases.setdefault(match["base"], set()).add(match["category"])
+        problems += [f"{lang}/{base}" for base, forms in sorted(bases.items()) if "other" not in forms]
+    return problems
+
+
+def write_catalog(entries, plurals, translations):
     def localizations(key, en_value):
         locs = {"en": {"stringUnit": {"state": "translated", "value": en_value}}}
         for lang in LANGUAGES:
@@ -93,6 +131,20 @@ def write_catalog(entries, translations):
         key: {"extractionState": "manual", "localizations": localizations(key, value)}
         for key, value in entries
     }
+    def plural_localizations(base, forms):
+        def variations(values):
+            return {"plural": {c: {"stringUnit": {"state": "translated", "value": values[c]}} for c in PLURAL_CATEGORIES if c in values}}
+
+        locs = {"en": {"variations": variations(forms)}}
+        for lang in LANGUAGES:
+            values = {c: translations.get(lang, {}).get(f"{base}#{c}") for c in PLURAL_CATEGORIES}
+            values = {c: v for c, v in values.items() if v is not None}
+            if "other" in values:
+                locs[lang] = {"variations": variations(values)}
+        return locs
+
+    for base, forms in plurals.items():
+        strings[base] = {"extractionState": "manual", "localizations": plural_localizations(base, forms)}
     catalog = {"sourceLanguage": "en", "strings": dict(sorted(strings.items())), "version": "1.0"}
     CATALOG.write_text(json.dumps(catalog, indent=2, ensure_ascii=False) + "\n")
 
@@ -152,13 +204,14 @@ def write_l10n(entries):
 
 
 def main():
-    entries = parse()
-    en_map = dict(entries)
+    raw = parse()
+    en_map = dict(raw)
+    entries, plurals = split_plurals(raw)
     translations = parse_translations(en_map)
-    write_catalog(entries, translations)
-    write_l10n(entries)
+    write_catalog(entries, plurals, translations)
+    write_l10n(entries + [(base, forms["other"]) for base, forms in plurals.items()])
     counts = ", ".join(f"{lang}:{len(translations.get(lang, {}))}" for lang in LANGUAGES)
-    print(f"{len(entries)} keys (en) -> {CATALOG.name}, {L10N.name}")
+    print(f"{len(entries) + len(plurals)} keys (en) -> {CATALOG.name}, {L10N.name}")
     print(f"translations: {counts}")
 
 

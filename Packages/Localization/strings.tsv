@@ -545,6 +545,8 @@ userDetail.removeVolumeTitle	Remove Volume?
 userDetail.removeVolumeMessage	%@ is unassigned from this user. The directory itself is untouched.
 userDetail.removeUserTitle	Remove User?
 userDetail.removeUserMessage	%@ loses access immediately. Their files on the server are not deleted.
+userDetail.grantAdminTitle	Grant Admin?
+userDetail.grantAdminMessage	%@ becomes an administrator with full control over files, shares and users. Administrators can't be demoted from the app.
 userDetail.volumeSheetLabelField	Label
 userDetail.volumeSheetLabelPlaceholder	Volume label
 userDetail.volumeSheetAccessMode	Access Mode
@@ -862,9 +864,26 @@ shareUpload.signedOut	Sign in to NextExplorer first, then share again.
 shareUpload.nothingToUpload	There's nothing here NextExplorer can upload.
 shareUpload.failed	The files couldn't be prepared for upload.
 shareUpload.notificationDoneTitle	Upload finished
-shareUpload.notificationDoneBody	%lld files uploaded to “%@”.
 shareUpload.notificationFailedTitle	Some files didn't upload
-shareUpload.notificationFailedBody	%lld of %lld files couldn't be uploaded. Share them again to retry.
+shareUpload.notificationDoneBody#one	%lld file uploaded to “%@”.
+shareUpload.notificationDoneBody#other	%lld files uploaded to “%@”.
+shareUpload.notificationAllFailedTitle	Upload failed
+shareUpload.failureUnauthorized#one	%lld file wasn't uploaded. Sign in again, then retry.
+shareUpload.failureUnauthorized#other	%lld files weren't uploaded. Sign in again, then retry.
+shareUpload.failureForbidden#one	%lld file wasn't uploaded. You don't have permission to add files to that folder.
+shareUpload.failureForbidden#other	%lld files weren't uploaded. You don't have permission to add files to that folder.
+shareUpload.failureServerFull#one	%lld file wasn't uploaded. The server is out of storage space.
+shareUpload.failureServerFull#other	%lld files weren't uploaded. The server is out of storage space.
+shareUpload.failureNetwork#one	%lld file wasn't uploaded. The connection failed. Retry when you're back online.
+shareUpload.failureNetwork#other	%lld files weren't uploaded. The connection failed. Retry when you're back online.
+shareUpload.failureOther#one	%lld file couldn't be uploaded.
+shareUpload.failureOther#other	%lld files couldn't be uploaded.
+shareUpload.notificationMoreNames	and %lld more
+shareUpload.notificationRetry	Retry
+shareUpload.notificationHiddenPreview	Open NextExplorer to see how your upload went.
+shareUpload.retryFailedTitle	Couldn't retry
+shareUpload.retryFailedBody	Open NextExplorer and share the files again.
+shareUpload.insufficientSpace	There isn't enough free space on this device to prepare these files for upload.
 settings.uploadDefaultsRow	Shared Files
 settings.uploadDefaultsFolder	Default Folder
 settings.uploadDefaultsFolderNone	Ask Each Time
@@ -872,3 +891,31 @@ settings.uploadDefaultsWithoutAsking	Upload Without Asking
 settings.uploadDefaultsFooter	Photos and files you share to NextExplorer from other apps start in this folder. With Upload Without Asking on, they upload straight there.
 settings.uploadDefaultsClear	Ask Each Time
 common.change	Change
+shareUpload.sessionUnreadable	NextExplorer couldn't read your sign in on this device. Open NextExplorer once, then share again.
+shareUpload.keepOpen	Keep this open until preparing finishes.
+shareUpload.checking	Checking connection to %@…
+shareUpload.openApp	Open NextExplorer
+shareUpload.openAppInstructions	Open NextExplorer from your Home Screen, then share again.
+shareUpload.certificateRequired	This server needs a client certificate. Open NextExplorer and add one in Settings, then share again.
+shareUpload.certificateRejected	The server refused your client certificate. Open NextExplorer and replace it in Settings, then share again.
+shareUpload.defaultFolderUnavailable	Your default folder is no longer available. Choose another folder.
+shareUpload.failedItemsHeader	These files couldn't be prepared:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	Ready to upload: %lld
+shareUpload.uploadReady	Upload Ready Files
+shareUpload.retryFailed	Retry Failed Files
+shareUpload.fallbackItemName	File %lld
+shareUpload.causeCannotRead	It couldn't be read.
+shareUpload.causeNotEnoughSpace	There isn't enough free space on this device.
+shareUpload.causeUnknown	It couldn't be prepared.
+shareUpload.folderHint	Opens the folder picker.
+shareUpload.accountHint	Choose which account receives the files.
+error.timedOut	The server took too long to respond. The action may still complete.
+error.changedOnServer	This file was changed on the server after you opened it.
+textPreview.conflictTitle	“%@” changed on the server
+textPreview.conflictMessage	Overwrite it with your version, or reload the file and discard your edits. The replaced version stays in the file's version history.
+textPreview.conflictOverwrite	Overwrite
+textPreview.conflictReload	Reload
+offline.waitingForNetwork	Will download when you're back online
+browse.bulkFavoriteFailed	%1$lld of %2$lld failed
+shareUpload.livePhotoNote	Live Photos upload with their motion video.

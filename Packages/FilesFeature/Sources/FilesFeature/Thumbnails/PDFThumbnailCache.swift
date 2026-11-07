@@ -1,6 +1,7 @@
 import ComposableArchitecture
 import CryptoKit
 import DesignSystem
+import FilesClient
 import Foundation
 import PDFKit
 #if os(iOS)
@@ -82,7 +83,7 @@ extension PDFThumbnailCache {
 
     static func renderCacheFileURL(in directory: URL, for key: String) -> URL {
         directory
-            .appendingPathComponent(hexDigest(of: key))
+            .appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: key)))
             .appendingPathExtension(Constants.renderCacheFileExtension)
     }
 

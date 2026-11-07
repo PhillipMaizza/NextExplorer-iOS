@@ -462,6 +462,8 @@ userDetail.removeVolumeTitle	移除卷？
 userDetail.removeVolumeMessage	%@ 已从此用户取消分配。目录本身不受影响。
 userDetail.removeUserTitle	移除用户？
 userDetail.removeUserMessage	%@ 会立即失去访问权限。其在服务器上的文件不会被删除。
+userDetail.grantAdminTitle	授予管理员权限？
+userDetail.grantAdminMessage	%@ 将成为管理员，可完全控制文件、共享和用户。无法在应用中撤销管理员权限。
 userDetail.volumeSheetLabelField	标签
 userDetail.volumeSheetLabelPlaceholder	卷标签
 userDetail.volumeSheetAccessMode	访问模式
@@ -785,9 +787,20 @@ shareUpload.signedOut	请先登录 NextExplorer，然后再次共享。
 shareUpload.nothingToUpload	这里没有 NextExplorer 可以上传的内容。
 shareUpload.failed	无法准备要上传的文件。
 shareUpload.notificationDoneTitle	上传完成
-shareUpload.notificationDoneBody	已将 %lld 个文件上传到“%@”。
 shareUpload.notificationFailedTitle	部分文件未上传
-shareUpload.notificationFailedBody	%lld 个文件（共 %lld 个）无法上传。请再次共享以重试。
+shareUpload.notificationDoneBody#other	已将 %lld 个文件上传到“%@”。
+shareUpload.notificationAllFailedTitle	上传失败
+shareUpload.failureUnauthorized#other	%lld 个文件未能上传。请重新登录后再试。
+shareUpload.failureForbidden#other	%lld 个文件未能上传。你没有向该文件夹添加文件的权限。
+shareUpload.failureServerFull#other	%lld 个文件未能上传。服务器存储空间已满。
+shareUpload.failureNetwork#other	%lld 个文件未能上传。连接失败。恢复联网后请重试。
+shareUpload.failureOther#other	%lld 个文件无法上传。
+shareUpload.notificationMoreNames	另外 %lld 个
+shareUpload.notificationRetry	重试
+shareUpload.notificationHiddenPreview	打开 NextExplorer 查看上传结果。
+shareUpload.retryFailedTitle	无法重试
+shareUpload.retryFailedBody	请打开 NextExplorer 并重新分享文件。
+shareUpload.insufficientSpace	此设备的可用空间不足，无法准备这些文件以供上传。
 settings.uploadDefaultsRow	共享的文件
 settings.uploadDefaultsFolder	默认文件夹
 settings.uploadDefaultsFolderNone	每次询问
@@ -795,3 +808,31 @@ settings.uploadDefaultsWithoutAsking	上传时不询问
 settings.uploadDefaultsFooter	你从其他 App 共享到 NextExplorer 的照片和文件会从这个文件夹开始。打开“上传时不询问”后，它们会直接上传到这里。
 settings.uploadDefaultsClear	每次询问
 common.change	更改
+shareUpload.sessionUnreadable	NextExplorer 无法读取此设备上的登录信息。请先打开一次 NextExplorer,然后再次分享。
+shareUpload.keepOpen	准备完成前请保持此窗口打开。
+shareUpload.checking	正在检查与 %@ 的连接…
+shareUpload.openApp	打开 NextExplorer
+shareUpload.openAppInstructions	请从主屏幕打开 NextExplorer,然后再次分享。
+shareUpload.certificateRequired	此服务器需要客户端证书。请打开 NextExplorer,在“设置”中添加一个,然后再次分享。
+shareUpload.certificateRejected	服务器拒绝了你的客户端证书。请打开 NextExplorer,在“设置”中替换它,然后再次分享。
+shareUpload.defaultFolderUnavailable	你的默认文件夹已不可用。请选择其他文件夹。
+shareUpload.failedItemsHeader	以下文件无法准备:
+shareUpload.failedItemLine	%1$@:%2$@
+shareUpload.readyCount	可上传:%lld
+shareUpload.uploadReady	上传已就绪的文件
+shareUpload.retryFailed	重试失败的文件
+shareUpload.fallbackItemName	文件 %lld
+shareUpload.causeCannotRead	无法读取。
+shareUpload.causeNotEnoughSpace	此设备的可用空间不足。
+shareUpload.causeUnknown	无法准备。
+shareUpload.folderHint	打开文件夹选择器。
+shareUpload.accountHint	选择接收文件的账户。
+error.timedOut	服务器响应时间过长。该操作仍可能完成。
+error.changedOnServer	此文件在你打开后已在服务器上被更改。
+textPreview.conflictTitle	“%@”已在服务器上更改
+textPreview.conflictMessage	用你的版本覆盖，或重新载入文件并放弃你的编辑。被替换的版本会保留在文件的版本历史中。
+textPreview.conflictOverwrite	覆盖
+textPreview.conflictReload	重新载入
+offline.waitingForNetwork	恢复联网后将下载
+browse.bulkFavoriteFailed	%2$lld 项中有 %1$lld 项失败
+shareUpload.livePhotoNote	实况照片会连同其动态视频一起上传。

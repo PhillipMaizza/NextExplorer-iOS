@@ -416,12 +416,18 @@ struct BrowseContentView: View {
         ))
         #if os(macOS)
         .modifier(MacFinderDrop(
+            serverURL: store.serverURL,
             isEnabled: canUploadHere && !store.isSelecting,
             onDrop: { urls in store.send(.beginUpload(.documents(urls))) },
             onDropItems: { items in
                 guard !store.directoryPath.isEmpty else { return }
                 store.send(.itemsDroppedFromOtherWindow(items, destination: store.directoryPath))
             }
+        ))
+        #else
+        .modifier(IOSFolderBackgroundDrop(
+            isEnabled: !store.isSelecting,
+            onDrop: { handleDrop($0, onto: nil) }
         ))
         #endif
         .hapticFeedback(.selection, trigger: viewModeRaw)
@@ -755,6 +761,47 @@ struct BrowseContentView: View {
             listContent
         #endif
     }
+
+    #if os(iOS)
+        /// Drag a row (the whole selection when it is part of one) onto a folder here, or out to
+        /// the Files app, and let folder rows take drops.
+        private func iosRowDragDrop(for item: FileItem) -> IOSRowDragDrop {
+            IOSRowDragDrop(
+                item: item,
+                serverURL: store.serverURL,
+                canDropHere: !store.isSelecting,
+                selection: { store.isSelecting ? selectedBrowseItems : [] },
+                onDrop: { handleDrop($0, onto: item) }
+            )
+        }
+
+        private var selectedBrowseItems: [FileItem] {
+            store.items.filter { store.selectedItemIDs.contains($0.id) }
+        }
+
+        /// A drop on a folder row (`folder`) or on the folder on screen (`nil`) goes through the
+        /// same reducer actions as the Mac table, which refuse the folder itself and its
+        /// descendants and send name clashes through the transfer conflict prompt.
+        private func handleDrop(_ drops: [BrowseDrop], onto folder: FileItem?) -> Bool {
+            let plan = BrowseDropPlan(
+                drops: drops,
+                listed: store.items.map(\.id),
+                destination: folder?.id ?? store.directoryPath,
+                receiver: .current(serverURL: store.serverURL)
+            )
+            let actions = BrowseDropRouter.actions(
+                for: plan,
+                folder: folder,
+                directoryPath: store.directoryPath,
+                canMove: store.access?.canDelete ?? false,
+                canUpload: canUploadHere
+            )
+            for action in actions {
+                store.send(action)
+            }
+            return !actions.isEmpty
+        }
+    #endif
 
     #if os(macOS)
         /// Drag a row out (Finder, or onto a folder here) and let folder rows take drops.
@@ -1602,6 +1649,8 @@ struct BrowseContentView: View {
                     .dsCard(padding: Constants.gridCellPadding)
                 #if os(macOS)
                     .modifier(macRowDragDrop(for: item))
+                #else
+                    .modifier(iosRowDragDrop(for: item))
                 #endif
                     .overlay(alignment: .topLeading) {
                         if store.isSelecting {
@@ -1643,6 +1692,8 @@ struct BrowseContentView: View {
                 #if os(macOS)
                 // On the label, not the row chain: that chain is at the type checker's limit.
                 .modifier(macRowDragDrop(for: item))
+                #else
+                .modifier(iosRowDragDrop(for: item))
                 #endif
             }
             .buttonStyle(DSHapticButtonStyle())

@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CryptoKit
+import FilesClient
 @testable import FilesFeature
 import Foundation
 import NetworkClient
@@ -29,7 +30,7 @@ struct ThumbnailCacheTests {
 
         // Same digest scheme `ThumbnailCache.liveValue` uses internally, so this pre-seeds
         // the exact cache slot `data(_:)` will look for.
-        let key = sha256Hex(of: url.absoluteString)
+        let key = CacheAccountScope.scopedFileName(sha256Hex(of: url.absoluteString))
         let fileURL = directory.appendingPathComponent(key)
         let expectedBytes = Data("fake-thumbnail-bytes".utf8)
         try expectedBytes.write(to: fileURL)
@@ -80,7 +81,7 @@ struct ThumbnailCacheTests {
         return cachesDirectory
             .appendingPathComponent("PreviewCache", isDirectory: true)
             .appendingPathComponent("thumbnail-urls", isDirectory: true)
-            .appendingPathComponent(sha256Hex(of: path))
+            .appendingPathComponent(CacheAccountScope.scopedFileName(sha256Hex(of: path)))
     }
 
     @Test

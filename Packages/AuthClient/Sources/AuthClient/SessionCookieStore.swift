@@ -1,6 +1,7 @@
 import CoreModels
 import Foundation
 import Keychain
+import OSLog
 
 /// Bridges NextExplorer's session cookies between three places: the Keychain (durable, read at
 /// cold launch), `HTTPCookieStorage` (what `URLSessionConfiguration.default` actually attaches to
@@ -14,6 +15,12 @@ struct SessionCookieStore: Sendable {
     let keychainClient: KeychainClient
     let cookieStorage: HTTPCookieStorage
 
+    private enum Constants {
+        static let logSubsystem = "app.nextplorer.authclient"
+        static let logCategory = "SessionCookieStore"
+    }
+
+    private static let logger = Logger(subsystem: Constants.logSubsystem, category: Constants.logCategory)
     private static let storageKey = "storedSessions"
     /// The single-session key used before multi-server. Migrated into `storageKey` on first read.
     private static let legacyStorageKey = "currentSession"
@@ -44,23 +51,41 @@ struct SessionCookieStore: Sendable {
     // MARK: Stored set
 
     /// Loads the persisted account set, migrating a legacy single-session blob on the way if that
-    /// is all that exists.
+    /// is all that exists. A keychain that can't be read looks like no accounts here; use
+    /// `loadStoredOrThrow` where the difference matters.
     func loadStored() -> StoredSessions {
-        if let data = try? keychainClient.load(Self.storageKey),
-           let stored = try? JSONDecoder().decode(StoredSessions.self, from: data)
-        {
-            return stored
+        (try? loadStoredOrThrow()) ?? StoredSessions()
+    }
+
+    /// Like `loadStored`, but an unreadable keychain or an unreadable stored blob throws, while an
+    /// empty keychain still returns no accounts.
+    func loadStoredOrThrow() throws -> StoredSessions {
+        var unreadable: (any Error)?
+        if let data = try keychainClient.load(Self.storageKey) {
+            do {
+                return try JSONDecoder().decode(StoredSessions.self, from: data)
+            } catch {
+                unreadable = error
+            }
         }
-        // Migration: fold a pre-multi-server single session into the new shape, then drop the old
-        // key so this only happens once.
-        if let legacyData = try? keychainClient.load(Self.legacyStorageKey),
+        // Migration: fold a pre-multi-server single session into the new shape. An unreadable
+        // stored blob is only replaced by a valid legacy session, and that is logged; the old key
+        // goes only once the new set is safely saved.
+        if let legacyData = try keychainClient.load(Self.legacyStorageKey),
            let legacy = try? JSONDecoder().decode(SessionCredentials.self, from: legacyData)
         {
             var migrated = StoredSessions()
             migrated.upsert(legacy)
-            try? saveStored(migrated)
-            try? keychainClient.delete(Self.legacyStorageKey)
+            if unreadable != nil {
+                Self.logger.notice("Replaced an unreadable stored session set with the legacy session")
+            }
+            if (try? saveStored(migrated)) != nil {
+                try? keychainClient.delete(Self.legacyStorageKey)
+            }
             return migrated
+        }
+        if let unreadable {
+            throw unreadable
         }
         return StoredSessions()
     }

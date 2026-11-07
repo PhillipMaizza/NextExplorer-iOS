@@ -69,9 +69,9 @@ extension StoreKitTipClient: DependencyKey {
             }
             switch try await product.purchase() {
             case let .success(verification):
-                guard case let .verified(transaction) = verification else { throw TipError.unverified }
-                // Consumable: nothing to unlock, so finish right away.
-                await transaction.finish()
+                // Consumable: nothing to unlock, so finish right away, verified or not, so an
+                // unverified transaction is not redelivered on every launch.
+                guard await TipTransactionSettler.settle(verification) else { throw TipError.unverified }
                 return .success
             case .userCancelled:
                 return .userCancelled

@@ -462,6 +462,8 @@ userDetail.removeVolumeTitle	Retirer le volume ?
 userDetail.removeVolumeMessage	%@ est retiré de cet utilisateur. Le répertoire lui-même n'est pas touché.
 userDetail.removeUserTitle	Supprimer l'utilisateur ?
 userDetail.removeUserMessage	%@ perd immédiatement l'accès. Ses fichiers sur le serveur ne sont pas supprimés.
+userDetail.grantAdminTitle	Accorder les droits d'administrateur ?
+userDetail.grantAdminMessage	%@ deviendra administrateur avec un contrôle total sur les fichiers, les partages et les utilisateurs. Un administrateur ne peut pas être rétrogradé depuis l'app.
 userDetail.volumeSheetLabelField	Libellé
 userDetail.volumeSheetLabelPlaceholder	Libellé du volume
 userDetail.volumeSheetAccessMode	Mode d'accès
@@ -785,9 +787,26 @@ shareUpload.signedOut	Connectez-vous d’abord à NextExplorer, puis partagez à
 shareUpload.nothingToUpload	Rien ici ne peut être envoyé par NextExplorer.
 shareUpload.failed	Les fichiers n’ont pas pu être préparés pour l’envoi.
 shareUpload.notificationDoneTitle	Envoi terminé
-shareUpload.notificationDoneBody	%lld fichiers envoyés dans « %@ ».
 shareUpload.notificationFailedTitle	Certains fichiers n’ont pas été envoyés
-shareUpload.notificationFailedBody	%lld fichiers sur %lld n’ont pas pu être envoyés. Partagez-les à nouveau pour réessayer.
+shareUpload.notificationDoneBody#one	%lld fichier envoyé dans « %@ ».
+shareUpload.notificationDoneBody#other	%lld fichiers envoyés dans « %@ ».
+shareUpload.notificationAllFailedTitle	Échec de l’envoi
+shareUpload.failureUnauthorized#one	%lld fichier n’a pas été envoyé. Reconnectez-vous, puis réessayez.
+shareUpload.failureUnauthorized#other	%lld fichiers n’ont pas été envoyés. Reconnectez-vous, puis réessayez.
+shareUpload.failureForbidden#one	%lld fichier n’a pas été envoyé. Vous n’avez pas l’autorisation d’ajouter des fichiers à ce dossier.
+shareUpload.failureForbidden#other	%lld fichiers n’ont pas été envoyés. Vous n’avez pas l’autorisation d’ajouter des fichiers à ce dossier.
+shareUpload.failureServerFull#one	%lld fichier n’a pas été envoyé. Le serveur n’a plus d’espace de stockage.
+shareUpload.failureServerFull#other	%lld fichiers n’ont pas été envoyés. Le serveur n’a plus d’espace de stockage.
+shareUpload.failureNetwork#one	%lld fichier n’a pas été envoyé. La connexion a échoué. Réessayez une fois de nouveau en ligne.
+shareUpload.failureNetwork#other	%lld fichiers n’ont pas été envoyés. La connexion a échoué. Réessayez une fois de nouveau en ligne.
+shareUpload.failureOther#one	%lld fichier n’a pas pu être envoyé.
+shareUpload.failureOther#other	%lld fichiers n’ont pas pu être envoyés.
+shareUpload.notificationMoreNames	et %lld de plus
+shareUpload.notificationRetry	Réessayer
+shareUpload.notificationHiddenPreview	Ouvrez NextExplorer pour voir le résultat de votre envoi.
+shareUpload.retryFailedTitle	Impossible de réessayer
+shareUpload.retryFailedBody	Ouvrez NextExplorer et partagez de nouveau les fichiers.
+shareUpload.insufficientSpace	Il n’y a pas assez d’espace libre sur cet appareil pour préparer ces fichiers à l’envoi.
 settings.uploadDefaultsRow	Fichiers partagés
 settings.uploadDefaultsFolder	Dossier par défaut
 settings.uploadDefaultsFolderNone	Demander à chaque fois
@@ -795,3 +814,31 @@ settings.uploadDefaultsWithoutAsking	Envoyer sans demander
 settings.uploadDefaultsFooter	Les photos et fichiers que vous partagez avec NextExplorer depuis d’autres apps commencent dans ce dossier. Avec Envoyer sans demander, ils y sont envoyés directement.
 settings.uploadDefaultsClear	Demander à chaque fois
 common.change	Modifier
+shareUpload.sessionUnreadable	NextExplorer n'a pas pu lire votre connexion sur cet appareil. Ouvrez NextExplorer une fois, puis partagez à nouveau.
+shareUpload.keepOpen	Gardez cette fenêtre ouverte jusqu'à la fin de la préparation.
+shareUpload.checking	Vérification de la connexion à %@…
+shareUpload.openApp	Ouvrir NextExplorer
+shareUpload.openAppInstructions	Ouvrez NextExplorer depuis l'écran d'accueil, puis partagez à nouveau.
+shareUpload.certificateRequired	Ce serveur exige un certificat client. Ouvrez NextExplorer, ajoutez-en un dans les Réglages, puis partagez à nouveau.
+shareUpload.certificateRejected	Le serveur a refusé votre certificat client. Ouvrez NextExplorer, remplacez-le dans les Réglages, puis partagez à nouveau.
+shareUpload.defaultFolderUnavailable	Votre dossier par défaut n'est plus disponible. Choisissez un autre dossier.
+shareUpload.failedItemsHeader	Ces fichiers n'ont pas pu être préparés :
+shareUpload.failedItemLine	%1$@ : %2$@
+shareUpload.readyCount	Prêts à envoyer : %lld
+shareUpload.uploadReady	Envoyer les fichiers prêts
+shareUpload.retryFailed	Réessayer les fichiers en échec
+shareUpload.fallbackItemName	Fichier %lld
+shareUpload.causeCannotRead	Il n'a pas pu être lu.
+shareUpload.causeNotEnoughSpace	Il n'y a pas assez d'espace libre sur cet appareil.
+shareUpload.causeUnknown	Il n'a pas pu être préparé.
+shareUpload.folderHint	Ouvre le sélecteur de dossier.
+shareUpload.accountHint	Choisissez le compte qui reçoit les fichiers.
+error.timedOut	Le serveur a mis trop de temps à répondre. L’action peut encore aboutir.
+error.changedOnServer	Ce fichier a été modifié sur le serveur après son ouverture.
+textPreview.conflictTitle	« %@ » a changé sur le serveur
+textPreview.conflictMessage	Écrasez-le avec votre version, ou rechargez le fichier et abandonnez vos modifications. La version remplacée reste dans l’historique des versions du fichier.
+textPreview.conflictOverwrite	Écraser
+textPreview.conflictReload	Recharger
+offline.waitingForNetwork	Sera téléchargé au retour de la connexion
+browse.bulkFavoriteFailed	%1$lld sur %2$lld ont échoué
+shareUpload.livePhotoNote	Les Live Photos sont envoyées avec leur vidéo animée.

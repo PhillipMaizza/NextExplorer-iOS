@@ -59,6 +59,7 @@ public enum L10n {
         public static var actionRename: String { tr("browse.actionRename") }  // "Rename"
         public static var actionShare: String { tr("browse.actionShare") }  // "Create share link"
         public static var breadcrumbHint: String { tr("browse.breadcrumbHint") }  // "Opens this folder"
+        public static func bulkFavoriteFailed(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("browse.bulkFavoriteFailed", a0, a1) }
         public static func clipboardCopiedMany(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedMany", a0) }
         public static func clipboardCopiedOne(_ a0: CVarArg) -> String { tr("browse.clipboardCopiedOne", a0) }
         public static func clipboardCopyCount(_ a0: CVarArg) -> String { tr("browse.clipboardCopyCount", a0) }
@@ -292,6 +293,7 @@ public enum L10n {
         public static func noSearchMatches(_ a0: CVarArg) -> String { tr("emptyState.noSearchMatches", a0) }
     }
     public enum Error {
+        public static var changedOnServer: String { tr("error.changedOnServer") }  // "This file was changed on the server after you opened it."
         public static var clientCertificateRejected: String { tr("error.clientCertificateRejected") }  // "The server refused your client certificate."
         public static var clientCertificateRequired: String { tr("error.clientCertificateRequired") }  // "This server needs a client certificate. Add one in Settings."
         public static var decoding: String { tr("error.decoding") }  // "Server responded unexpectedly."
@@ -301,6 +303,7 @@ public enum L10n {
         public static var rateLimited: String { tr("error.rateLimited") }  // "Too many requests. Try again shortly."
         public static func server(_ a0: CVarArg) -> String { tr("error.server", a0) }
         public static var sessionExpired: String { tr("error.sessionExpired") }  // "Your session expired. Sign in again."
+        public static var timedOut: String { tr("error.timedOut") }
     }
     public enum Favorites {
         public static var accessibilityBadge: String { tr("favorites.accessibilityBadge") }  // "Favorite"
@@ -513,6 +516,7 @@ public enum L10n {
         public static var selectionTitle: String { tr("offline.selectionTitle") }  // "Download for Offline"
         public static var settingsRow: String { tr("offline.settingsRow") }  // "Download Files for Offline Use"
         public static var tunnelSpeedNote: String { tr("offline.tunnelSpeedNote") }
+        public static var waitingForNetwork: String { tr("offline.waitingForNetwork") }  // "Will download when you're back online"
     }
     public enum OpenWith {
         public static var failed: String { tr("openWith.failed") }  // "Couldn't open this file."
@@ -651,21 +655,52 @@ public enum L10n {
         public static var users: String { tr("shareTarget.users") }  // "Specific users"
     }
     public enum ShareUpload {
+        public static var accountHint: String { tr("shareUpload.accountHint") }  // "Choose which account receives the files."
         public static var accountLabel: String { tr("shareUpload.accountLabel") }  // "Account"
+        public static var causeCannotRead: String { tr("shareUpload.causeCannotRead") }  // "It couldn't be read."
+        public static var causeNotEnoughSpace: String { tr("shareUpload.causeNotEnoughSpace") }  // "There isn't enough free space on this device."
+        public static var causeUnknown: String { tr("shareUpload.causeUnknown") }  // "It couldn't be prepared."
+        public static var certificateRejected: String { tr("shareUpload.certificateRejected") }
+        public static var certificateRequired: String { tr("shareUpload.certificateRequired") }
+        public static func checking(_ a0: CVarArg) -> String { tr("shareUpload.checking", a0) }
+        public static var defaultFolderUnavailable: String { tr("shareUpload.defaultFolderUnavailable") }
         public static var failed: String { tr("shareUpload.failed") }  // "The files couldn't be prepared for upload."
+        public static func failedItemLine(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.failedItemLine", a0, a1) }
+        public static var failedItemsHeader: String { tr("shareUpload.failedItemsHeader") }  // "These files couldn't be prepared:"
+        public static func failureForbidden(_ a0: CVarArg) -> String { tr("shareUpload.failureForbidden", a0) }
+        public static func failureNetwork(_ a0: CVarArg) -> String { tr("shareUpload.failureNetwork", a0) }
+        public static func failureOther(_ a0: CVarArg) -> String { tr("shareUpload.failureOther", a0) }
+        public static func failureServerFull(_ a0: CVarArg) -> String { tr("shareUpload.failureServerFull", a0) }
+        public static func failureUnauthorized(_ a0: CVarArg) -> String { tr("shareUpload.failureUnauthorized", a0) }
+        public static func fallbackItemName(_ a0: CVarArg) -> String { tr("shareUpload.fallbackItemName", a0) }
         public static var folderChoose: String { tr("shareUpload.folderChoose") }  // "Choose a Folder"
+        public static var folderHint: String { tr("shareUpload.folderHint") }  // "Opens the folder picker."
         public static var folderLabel: String { tr("shareUpload.folderLabel") }  // "Folder"
+        public static var insufficientSpace: String { tr("shareUpload.insufficientSpace") }
         public static func itemCount(_ a0: CVarArg) -> String { tr("shareUpload.itemCount", a0) }
+        public static var keepOpen: String { tr("shareUpload.keepOpen") }  // "Keep this open until preparing finishes."
+        public static var livePhotoNote: String { tr("shareUpload.livePhotoNote") }  // "Live Photos upload with their motion video."
         public static var nothingToUpload: String { tr("shareUpload.nothingToUpload") }  // "There's nothing here NextExplorer can upload."
+        public static var notificationAllFailedTitle: String { tr("shareUpload.notificationAllFailedTitle") }  // "Upload failed"
         public static func notificationDoneBody(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.notificationDoneBody", a0, a1) }
         public static var notificationDoneTitle: String { tr("shareUpload.notificationDoneTitle") }  // "Upload finished"
-        public static func notificationFailedBody(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.notificationFailedBody", a0, a1) }
         public static var notificationFailedTitle: String { tr("shareUpload.notificationFailedTitle") }  // "Some files didn't upload"
+        public static var notificationHiddenPreview: String { tr("shareUpload.notificationHiddenPreview") }  // "Open NextExplorer to see how your upload went."
+        public static func notificationMoreNames(_ a0: CVarArg) -> String { tr("shareUpload.notificationMoreNames", a0) }
+        public static var notificationRetry: String { tr("shareUpload.notificationRetry") }  // "Retry"
+        public static var openApp: String { tr("shareUpload.openApp") }  // "Open NextExplorer"
+        public static var openAppInstructions: String { tr("shareUpload.openAppInstructions") }  // "Open NextExplorer from your Home Screen, then share again."
         public static func preparing(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("shareUpload.preparing", a0, a1) }
+        public static func readyCount(_ a0: CVarArg) -> String { tr("shareUpload.readyCount", a0) }
+        public static var retryFailed: String { tr("shareUpload.retryFailed") }  // "Retry Failed Files"
+        public static var retryFailedBody: String { tr("shareUpload.retryFailedBody") }  // "Open NextExplorer and share the files again."
+        public static var retryFailedTitle: String { tr("shareUpload.retryFailedTitle") }  // "Couldn't retry"
+        public static var sessionUnreadable: String { tr("shareUpload.sessionUnreadable") }
         public static var signedOut: String { tr("shareUpload.signedOut") }  // "Sign in to NextExplorer first, then share again."
         public static var started: String { tr("shareUpload.started") }
         public static var title: String { tr("shareUpload.title") }  // "Upload to NextExplorer"
         public static var upload: String { tr("shareUpload.upload") }  // "Upload"
+        public static var uploadReady: String { tr("shareUpload.uploadReady") }  // "Upload Ready Files"
     }
     public enum Shared {
         public static var actionFileLink: String { tr("shared.actionFileLink") }  // "File link"
@@ -715,6 +750,10 @@ public enum L10n {
         public static var shared: String { tr("tab.shared") }  // "Shared"
     }
     public enum TextPreview {
+        public static var conflictMessage: String { tr("textPreview.conflictMessage") }
+        public static var conflictOverwrite: String { tr("textPreview.conflictOverwrite") }  // "Overwrite"
+        public static var conflictReload: String { tr("textPreview.conflictReload") }  // "Reload"
+        public static func conflictTitle(_ a0: CVarArg) -> String { tr("textPreview.conflictTitle", a0) }
         public static var dontSave: String { tr("textPreview.dontSave") }  // "Don't Save"
         public static var loadFailed: String { tr("textPreview.loadFailed") }
         public static var saved: String { tr("textPreview.saved") }  // "Saved"
@@ -804,6 +843,8 @@ public enum L10n {
         public static func directoryPickerOpen(_ a0: CVarArg) -> String { tr("userDetail.directoryPickerOpen", a0) }
         public static var directoryPickerUseThis: String { tr("userDetail.directoryPickerUseThis") }  // "Use This Directory"
         public static var fallbackName: String { tr("userDetail.fallbackName") }  // "User"
+        public static func grantAdminMessage(_ a0: CVarArg) -> String { tr("userDetail.grantAdminMessage", a0) }
+        public static var grantAdminTitle: String { tr("userDetail.grantAdminTitle") }  // "Grant Admin?"
         public static var passwordHasLocal: String { tr("userDetail.passwordHasLocal") }  // "This user signs in with an email and password."
         public static var passwordReset: String { tr("userDetail.passwordReset") }  // "Reset Password"
         public static var passwordSSOOnly: String { tr("userDetail.passwordSSOOnly") }  // "This user has no local password and signs in with SSO only."

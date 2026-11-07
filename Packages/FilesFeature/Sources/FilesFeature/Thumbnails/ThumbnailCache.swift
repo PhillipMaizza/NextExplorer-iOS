@@ -1,5 +1,6 @@
 import ComposableArchitecture
 import CryptoKit
+import FilesClient
 import Foundation
 import NetworkClient
 
@@ -58,11 +59,11 @@ extension ThumbnailCache: DependencyKey {
     }
 
     private static func cacheFileURL(for url: URL) throws -> URL {
-        try previewCacheSubdirectory("thumbnails").appendingPathComponent(hexDigest(of: url.absoluteString))
+        try previewCacheSubdirectory("thumbnails").appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: url.absoluteString)))
     }
 
     private static func resolutionRecordURL(for path: String) throws -> URL {
-        try previewCacheSubdirectory("thumbnail-urls").appendingPathComponent(hexDigest(of: path))
+        try previewCacheSubdirectory("thumbnail-urls").appendingPathComponent(CacheAccountScope.scopedFileName(hexDigest(of: path)))
     }
 
     private static let resolutionRecordSeparator = "\u{0}"

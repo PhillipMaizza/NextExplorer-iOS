@@ -462,6 +462,8 @@ userDetail.removeVolumeTitle	Usunąć wolumin?
 userDetail.removeVolumeMessage	%@ zostaje odpięty od tego użytkownika. Sam katalog nie zostaje naruszony.
 userDetail.removeUserTitle	Usunąć użytkownika?
 userDetail.removeUserMessage	%@ natychmiast traci dostęp. Jego pliki na serwerze nie są usuwane.
+userDetail.grantAdminTitle	Nadać uprawnienia administratora?
+userDetail.grantAdminMessage	%@ zostanie administratorem z pełną kontrolą nad plikami, udostępnieniami i użytkownikami. Administratora nie można zdegradować z poziomu aplikacji.
 userDetail.volumeSheetLabelField	Etykieta
 userDetail.volumeSheetLabelPlaceholder	Etykieta woluminu
 userDetail.volumeSheetAccessMode	Tryb dostępu
@@ -785,9 +787,38 @@ shareUpload.signedOut	Najpierw zaloguj się w NextExplorer, a potem udostępnij 
 shareUpload.nothingToUpload	Nie ma tu nic, co NextExplorer mógłby przesłać.
 shareUpload.failed	Nie udało się przygotować plików do przesłania.
 shareUpload.notificationDoneTitle	Przesyłanie zakończone
-shareUpload.notificationDoneBody	Przesłano plików: %lld do „%@”.
 shareUpload.notificationFailedTitle	Niektóre pliki nie zostały przesłane
-shareUpload.notificationFailedBody	Nie udało się przesłać %lld z %lld plików. Udostępnij je ponownie, aby spróbować jeszcze raz.
+shareUpload.notificationDoneBody#one	Przesłano %lld plik do „%@”.
+shareUpload.notificationDoneBody#few	Przesłano %lld pliki do „%@”.
+shareUpload.notificationDoneBody#many	Przesłano %lld plików do „%@”.
+shareUpload.notificationDoneBody#other	Przesłano %lld pliku do „%@”.
+shareUpload.notificationAllFailedTitle	Przesyłanie nie powiodło się
+shareUpload.failureUnauthorized#one	%lld plik nie został przesłany. Zaloguj się ponownie i spróbuj jeszcze raz.
+shareUpload.failureUnauthorized#few	%lld pliki nie zostały przesłane. Zaloguj się ponownie i spróbuj jeszcze raz.
+shareUpload.failureUnauthorized#many	%lld plików nie zostało przesłanych. Zaloguj się ponownie i spróbuj jeszcze raz.
+shareUpload.failureUnauthorized#other	%lld pliku nie zostało przesłanych. Zaloguj się ponownie i spróbuj jeszcze raz.
+shareUpload.failureForbidden#one	%lld plik nie został przesłany. Nie masz uprawnień do dodawania plików do tego folderu.
+shareUpload.failureForbidden#few	%lld pliki nie zostały przesłane. Nie masz uprawnień do dodawania plików do tego folderu.
+shareUpload.failureForbidden#many	%lld plików nie zostało przesłanych. Nie masz uprawnień do dodawania plików do tego folderu.
+shareUpload.failureForbidden#other	%lld pliku nie zostało przesłanych. Nie masz uprawnień do dodawania plików do tego folderu.
+shareUpload.failureServerFull#one	%lld plik nie został przesłany. Na serwerze zabrakło miejsca.
+shareUpload.failureServerFull#few	%lld pliki nie zostały przesłane. Na serwerze zabrakło miejsca.
+shareUpload.failureServerFull#many	%lld plików nie zostało przesłanych. Na serwerze zabrakło miejsca.
+shareUpload.failureServerFull#other	%lld pliku nie zostało przesłanych. Na serwerze zabrakło miejsca.
+shareUpload.failureNetwork#one	%lld plik nie został przesłany. Połączenie nie powiodło się. Spróbuj ponownie, gdy wrócisz online.
+shareUpload.failureNetwork#few	%lld pliki nie zostały przesłane. Połączenie nie powiodło się. Spróbuj ponownie, gdy wrócisz online.
+shareUpload.failureNetwork#many	%lld plików nie zostało przesłanych. Połączenie nie powiodło się. Spróbuj ponownie, gdy wrócisz online.
+shareUpload.failureNetwork#other	%lld pliku nie zostało przesłanych. Połączenie nie powiodło się. Spróbuj ponownie, gdy wrócisz online.
+shareUpload.failureOther#one	%lld plik nie mógł zostać przesłany.
+shareUpload.failureOther#few	%lld pliki nie mogły zostać przesłane.
+shareUpload.failureOther#many	%lld plików nie mogło zostać przesłanych.
+shareUpload.failureOther#other	%lld pliku nie mogło zostać przesłanych.
+shareUpload.notificationMoreNames	i %lld więcej
+shareUpload.notificationRetry	Ponów
+shareUpload.notificationHiddenPreview	Otwórz NextExplorer, aby zobaczyć wynik przesyłania.
+shareUpload.retryFailedTitle	Nie udało się ponowić próby
+shareUpload.retryFailedBody	Otwórz NextExplorer i udostępnij pliki ponownie.
+shareUpload.insufficientSpace	Na tym urządzeniu nie ma wystarczająco dużo wolnego miejsca, aby przygotować te pliki do przesłania.
 settings.uploadDefaultsRow	Udostępnione pliki
 settings.uploadDefaultsFolder	Folder domyślny
 settings.uploadDefaultsFolderNone	Pytaj za każdym razem
@@ -795,3 +826,31 @@ settings.uploadDefaultsWithoutAsking	Przesyłaj bez pytania
 settings.uploadDefaultsFooter	Zdjęcia i pliki udostępniane do NextExplorer z innych aplikacji trafiają najpierw do tego folderu. Gdy włączysz Przesyłaj bez pytania, zostaną przesłane prosto tam.
 settings.uploadDefaultsClear	Pytaj za każdym razem
 common.change	Zmień
+shareUpload.sessionUnreadable	NextExplorer nie mógł odczytać Twojego logowania na tym urządzeniu. Otwórz NextExplorer raz, a potem udostępnij ponownie.
+shareUpload.keepOpen	Nie zamykaj tego okna, dopóki przygotowywanie się nie zakończy.
+shareUpload.checking	Sprawdzanie połączenia z %@…
+shareUpload.openApp	Otwórz NextExplorer
+shareUpload.openAppInstructions	Otwórz NextExplorer z ekranu początkowego, a potem udostępnij ponownie.
+shareUpload.certificateRequired	Ten serwer wymaga certyfikatu klienta. Otwórz NextExplorer, dodaj go w Ustawieniach, a potem udostępnij ponownie.
+shareUpload.certificateRejected	Serwer odrzucił Twój certyfikat klienta. Otwórz NextExplorer, wymień go w Ustawieniach, a potem udostępnij ponownie.
+shareUpload.defaultFolderUnavailable	Twój domyślny folder nie jest już dostępny. Wybierz inny folder.
+shareUpload.failedItemsHeader	Nie udało się przygotować tych plików:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	Gotowe do przesłania: %lld
+shareUpload.uploadReady	Prześlij gotowe pliki
+shareUpload.retryFailed	Ponów nieudane pliki
+shareUpload.fallbackItemName	Plik %lld
+shareUpload.causeCannotRead	Nie udało się go odczytać.
+shareUpload.causeNotEnoughSpace	Na tym urządzeniu brakuje wolnego miejsca.
+shareUpload.causeUnknown	Nie udało się go przygotować.
+shareUpload.folderHint	Otwiera wybór folderu.
+shareUpload.accountHint	Wybierz konto, które otrzyma pliki.
+error.timedOut	Serwer zbyt długo nie odpowiadał. Akcja może się jeszcze zakończyć.
+error.changedOnServer	Ten plik został zmieniony na serwerze po jego otwarciu.
+textPreview.conflictTitle	„%@” zmieniono na serwerze
+textPreview.conflictMessage	Nadpisz go swoją wersją albo wczytaj plik ponownie i odrzuć swoje zmiany. Zastąpiona wersja pozostaje w historii wersji pliku.
+textPreview.conflictOverwrite	Nadpisz
+textPreview.conflictReload	Wczytaj ponownie
+offline.waitingForNetwork	Zostanie pobrane po powrocie do trybu online
+browse.bulkFavoriteFailed	Nie powiodło się: %1$lld z %2$lld
+shareUpload.livePhotoNote	Live Photos są przesyłane razem z filmem ruchu.

@@ -13,6 +13,8 @@
         static let actionIconSize: CGFloat = .iconSmall
         static let inactiveOpacity: Double = 0.5
         static let hoverOpacity: Double = 0.08
+        static let shownOpacity: Double = 1
+        static let hiddenOpacity: Double = 0
         static let serverMinimumScale: CGFloat = 0.7
     }
 
@@ -111,7 +113,19 @@
         let onSwitch: () -> Void
         let onSignOut: () -> Void
 
+        private enum FocusTarget: Hashable {
+            case row, signOut
+        }
+
         @State private var isHovered = false
+        @FocusState private var focusedTarget: FocusTarget?
+
+        /// Sign Out shows while the pointer is over the row or the keyboard is on the row or on the
+        /// button itself. Hidden, it is not focusable and not in the accessibility tree: VoiceOver
+        /// reaches it through the row's Sign Out action instead.
+        private var isSignOutShown: Bool {
+            isHovered || focusedTarget != nil
+        }
 
         var body: some View {
             HStack(spacing: Metrics.rowSpacing) {
@@ -129,12 +143,17 @@
                         .truncationMode(.middle)
                 }
                 Spacer(minLength: 0)
-                if !account.isActive, isHovered {
+                if !account.isActive {
                     Button(action: onSignOut) {
                         IconKit.signOut
                             .foregroundStyle(Color.negativeText)
                     }
                     .buttonStyle(.plain)
+                    .focusable(isSignOutShown)
+                    .focused($focusedTarget, equals: .signOut)
+                    .opacity(isSignOutShown ? Metrics.shownOpacity : Metrics.hiddenOpacity)
+                    .allowsHitTesting(isSignOutShown)
+                    .accessibilityHidden(true)
                     .accessibilityLabelWithTooltip(L10n.Settings.accountSignOut)
                 }
             }
@@ -142,6 +161,14 @@
             .background(MacPopoverHoverFill(isShown: !account.isActive && isHovered))
             .contentShape(Rectangle())
             .onHover { isHovered = $0 }
+            .focusable(!account.isActive)
+            .focused($focusedTarget, equals: .row)
+            .onKeyPress(.return) {
+                // Return on the focused Sign Out button belongs to the button, not to the row.
+                guard !account.isActive, focusedTarget != .signOut else { return .ignored }
+                onSwitch()
+                return .handled
+            }
             .onTapGesture {
                 if !account.isActive {
                     onSwitch()

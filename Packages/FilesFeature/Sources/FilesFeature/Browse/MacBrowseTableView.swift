@@ -132,9 +132,10 @@
                             var ids: [FileItem.ID] = []
                             var foreign: [FileItem] = []
                             var files: [URL] = []
+                            let receiver = DragOrigin.current(serverURL: serverURL)
                             for drop in drops {
                                 switch drop {
-                                case let .item(reference) where reference.id != item.id:
+                                case let .item(reference) where reference.id != item.id && reference.origin == receiver:
                                     if items[id: reference.id] != nil {
                                         ids.append(reference.id)
                                     } else if let dragged = reference.item {

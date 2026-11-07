@@ -54,6 +54,8 @@ public struct SharedFeature {
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
+        /// The account scope the saved lists are filed under, captured when this state was created.
+        let cacheScope: String
         public var segment: Segment = .byMe
         public var byMe: IdentifiedArrayOf<Share> = []
         public var withMe: IdentifiedArrayOf<Share> = []
@@ -85,6 +87,8 @@ public struct SharedFeature {
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
+            @Dependency(\.cacheScope) var cacheScopeSource
+            cacheScope = cacheScopeSource.current()
         }
 
         /// The current segment's load state.
@@ -237,7 +241,7 @@ public struct SharedFeature {
     @Dependency(\.filesClient) var filesClient
     @Dependency(\.jsonCacheStore) var jsonCacheStore
 
-    private static func cacheNamespace(_ segment: Segment) -> String {
+    static func cacheNamespace(_ segment: Segment) -> String {
         "shares.\(segment.rawValue)"
     }
 
@@ -313,7 +317,7 @@ public struct SharedFeature {
             case let .sharesResponse(segment, .failure(error)):
                 // Offline with a saved copy of this segment: show it under a banner.
                 if error == .offline,
-                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, as: [Share].self)
+                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, scope: state.cacheScope, as: [Share].self)
                 {
                     let identified = IdentifiedArray(cached.value, id: \.id, uniquingIDsWith: { first, _ in first })
                     if segment == .byMe {
@@ -398,7 +402,7 @@ public struct SharedFeature {
         // successful fetch replaces it, only a failed one surfaces the offline banner.
         let current = segment == .byMe ? state.byMe : state.withMe
         if !(state.phases[segment]?.hasLoaded ?? false), current.isEmpty,
-           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, as: [Share].self)
+           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, scope: state.cacheScope, as: [Share].self)
         {
             let identified = IdentifiedArray(cached.value, id: \.id, uniquingIDsWith: { first, _ in first })
             if segment == .byMe {
@@ -423,7 +427,7 @@ public struct SharedFeature {
     /// Persists a segment's current list as its offline copy.
     private func syncCache(_ state: State, segment: Segment) {
         let shares = segment == .byMe ? state.byMe : state.withMe
-        ListCache.save(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, value: Array(shares))
+        ListCache.save(jsonCacheStore, Self.cacheNamespace(segment), serverURL: state.serverURL, scope: state.cacheScope, value: Array(shares))
     }
 
     /// Best-effort: recipient names are a nicety, not worth surfacing an error for.

@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 /// Process-wide identifier of the account whose cached data the disk stores read and write, so
@@ -19,5 +20,26 @@ public enum CacheAccountScope {
 
     public static func set(_ value: String) {
         lock.withLock { _value = value }
+    }
+
+    /// Removes one account's preview and raw download slots from `Library/Caches/PreviewCache`.
+    public static func clearPreviewCache(scope: String) {
+        FilesService.clearPreviewCache(scope: scope)
+    }
+
+    static let prefixByteCount = 8
+    static let hexDigitsPerByte = 2
+    static let prefixSeparator: Character = "-"
+
+    /// `name` carrying the active account's prefix, for cache files that are not keyed by account
+    /// themselves (thumbnails), so `clearPreviewCache(scope:)` can remove just that account's.
+    public static func scopedFileName(_ name: String, scope: String = CacheAccountScope.current) -> String {
+        "\(filePrefix(for: scope))\(prefixSeparator)\(name)"
+    }
+
+    /// Stable filename prefix for one account's cache files, so a single account's entries can be
+    /// removed without touching another's.
+    static func filePrefix(for scope: String) -> String {
+        SHA256.hash(data: Data(scope.utf8)).prefix(prefixByteCount).map { String(format: "%02x", $0) }.joined()
     }
 }

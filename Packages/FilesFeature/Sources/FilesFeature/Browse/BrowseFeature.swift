@@ -5,6 +5,7 @@ import FilesClient
 import FolderPickerFeature
 import Foundation
 import Localization
+import NetworkClient
 import ShareUploads
 import SwiftUI
 
@@ -35,6 +36,11 @@ public struct BrowseFeature {
         static let previewActionSettleDelay: Duration = .milliseconds(350)
         /// How long the Mac inspector waits on a newly selected row before loading it.
         static let inspectorFollowDelay: Duration = .milliseconds(200)
+        /// Most folders warmed into the offline cache per prefetch pass, so opening a folder with
+        /// hundreds of subfolders doesn't fan out hundreds of listings.
+        static let maxPrefetchedFolders = 20
+        /// Favorites are warmed on their own budget so subfolders never use it up.
+        static let maxPrefetchedFavorites = 40
     }
 
     /// Where `.searchable`'s scope bar points the search request. "This Folder" is
@@ -128,6 +134,15 @@ public struct BrowseFeature {
     public struct BulkFavoriteToggleResult: Equatable, Sendable {
         public let added: [String]
         public let removed: [String]
+        public let failedCount: Int
+        public let totalCount: Int
+
+        public init(added: [String], removed: [String], failedCount: Int = 0, totalCount: Int? = nil) {
+            self.added = added
+            self.removed = removed
+            self.failedCount = failedCount
+            self.totalCount = totalCount ?? added.count + removed.count + failedCount
+        }
     }
 
     /// The result of a `copy`/`move` transfer, plus whether this transfer should empty the
@@ -185,6 +200,9 @@ public struct BrowseFeature {
     @ObservableState
     public struct State: Equatable, Sendable {
         public var serverURL: URL
+        /// The account scope the saved listings and lists are filed under, captured when this state
+        /// was created, so a response landing after an account switch is saved to the account that asked.
+        let cacheScope: String
         public var directoryPath: String
         public var title: String
         public var items: IdentifiedArrayOf<FileItem> = []
@@ -204,6 +222,9 @@ public struct BrowseFeature {
         /// `.cached` while the listing on screen is an offline copy; back to `.live` as soon as
         /// a fresh fetch lands. Drives the "showing saved copy" banner.
         public var dataSource: DataSource = .live
+        /// The items on screen are the cache first paint of a load that has not answered yet, not
+        /// something a live load confirmed: a real server error must not keep them (rule #11).
+        public var isShowingCachePaint = false
         public var searchQuery = ""
         public var searchScope: SearchScope = .thisFolder
         public var searchResults: IdentifiedArrayOf<SearchResultItem>?
@@ -328,7 +349,18 @@ public struct BrowseFeature {
         /// The `/api/editor` read lifecycle. A save is a separate mutation (`isSavingTextContent`
         /// + `textSaveError`), so it never rewinds a loaded editor back to a load phase.
         public var textPhase: DataPhase = .idle
-        public var isSavingTextContent = false
+        /// The text of every save in flight, by the path it writes: keyed per file so a response
+        /// landing after the preview closed or moved on never touches another file's editor, a second
+        /// file can be saved while the first is still answering, and the conflict prompt can resend
+        /// the text on Overwrite.
+        var savingTexts: [String: String] = [:]
+        public var isSavingTextContent: Bool {
+            previewItem.map { savingTexts[$0.id] != nil } ?? false
+        }
+        /// Set while a save found the file changed on the server and the user has not chosen between
+        /// Overwrite and Reload: a further save asks again instead of silently replacing the changes.
+        var textSaveConflict: String?
+        public var isTextSaveConflictPresented = false
         public var textSaveError: String?
         public var isLoadingTextContent: Bool { textPhase == .loading }
         /// A load failure (from `textPhase`) or a save failure (`textSaveError`): they never
@@ -396,12 +428,14 @@ public struct BrowseFeature {
             self.serverURL = serverURL
             self.directoryPath = directoryPath
             self.title = title
+            @Dependency(\.cacheScope) var cacheScopeSource
+            cacheScope = cacheScopeSource.current()
             // The last known answer paints with the first frame, so the entry never pops in above
             // the volumes (shifting them under the user's finger) once the features call returns.
             if directoryPath.isEmpty {
                 @Dependency(\.jsonCacheStore) var jsonCacheStore
                 isPersonalSpaceEnabled = ListCache.load(
-                    jsonCacheStore, BrowseFeature.personalSpaceCacheNamespace, serverURL: serverURL, as: Bool.self
+                    jsonCacheStore, BrowseFeature.personalSpaceCacheNamespace, serverURL: serverURL, scope: cacheScope, as: Bool.self
                 )?.value ?? false
             }
         }
@@ -467,13 +501,13 @@ public struct BrowseFeature {
         #if os(macOS)
             /// Files opened from Finder name no folder, so they always go through the review sheet.
             case reviewUpload(UploadReviewFeature.PickSource)
-            /// Finder files dropped on a folder row of the Mac table.
-            case filesDroppedOnFolder([URL], folder: FileItem)
             /// A search result's Show in Enclosing Folder: ends the search and opens its folder.
             case searchResultEnclosingFolderTapped(SearchResultItem)
-            /// Rows dragged in from another Browse window, moved into `destination`.
-            case itemsDroppedFromOtherWindow([FileItem], destination: String)
         #endif
+        /// Files dropped on a folder row (Finder on a Mac, the Files app on an iPad).
+        case filesDroppedOnFolder([URL], folder: FileItem)
+        /// Rows dragged in from another Browse window, moved into `destination`.
+        case itemsDroppedFromOtherWindow([FileItem], destination: String)
         case selectModeToggled
         case itemSelectionToggled(FileItem.ID)
         case selectAllTapped
@@ -530,7 +564,10 @@ public struct BrowseFeature {
         case googleDocsPointerResponse(item: FileItem, Result<URL, FilesClientError>)
         case textSaveTapped(String)
         case textContentRetryTapped
-        case textSaveResponse(Result<String, FilesClientError>)
+        case textSaveResponse(path: String, result: Result<String, FilesClientError>)
+        case textSaveOverwriteTapped
+        case textSaveReloadTapped
+        case textSaveConflictDismissed
         case delegate(Delegate)
 
         public enum Delegate: Equatable, Sendable {
@@ -567,6 +604,7 @@ public struct BrowseFeature {
     @Dependency(\.uploadDefaults) var uploadDefaults
     @Dependency(\.openURL) var openURL
     @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.connectivity) var connectivity
     @Dependency(\.saveLocationPicker) var saveLocationPicker
     // Internal (not private) so the effect helpers extracted into `BrowseFeature+*.swift`
     // can reference these cancel ids across files.
@@ -603,6 +641,7 @@ public struct BrowseFeature {
             case let .itemsResponse(.success(result)):
                 state.phase = .loaded
                 state.dataSource = .live
+                state.isShowingCachePaint = false
                 state.items = IdentifiedArray(Self.sortedAlphabetically(result.items), id: \.id, uniquingIDsWith: { first, _ in first })
                 state.access = result.access
                 return .merge(
@@ -612,6 +651,10 @@ public struct BrowseFeature {
                     prefetch(
                         serverURL: state.serverURL,
                         paths: result.items.filter(\.isDirectory).map(\.id),
+                        scope: state.cacheScope,
+                        preferred: state.favoritePaths,
+                        includesPinnedRoots: true,
+                        limit: Constants.maxPrefetchedFolders,
                         cancelID: CancelID.prefetchChildren
                     )
                 )
@@ -623,7 +666,8 @@ public struct BrowseFeature {
                 // (or a prior load this session) already put in `state.items`. Only a real
                 // server error, or offline with nothing cached, falls through to the error path.
                 if error == .offline {
-                    if let cached = directoryCacheStore.read(serverURL: state.serverURL, path: state.directoryPath) {
+                    state.isShowingCachePaint = false
+                    if let cached = directoryCacheStore.bound(to: state.cacheScope).read(serverURL: state.serverURL, path: state.directoryPath) {
                         state.phase = .loaded
                         state.items = IdentifiedArray(Self.sortedAlphabetically(cached.items), id: \.id, uniquingIDsWith: { first, _ in first })
                         state.access = cached.access
@@ -635,6 +679,23 @@ public struct BrowseFeature {
                         return .merge(search(&state), computeOfflineAvailability(&state))
                     }
                 }
+                // Items still on screen from the cache first paint, or from an earlier offline fallback,
+                // were never confirmed by the server, and a real error (404, 403, 500) says they may be wrong: show the error instead.
+                if state.isShowingCachePaint || state.dataSource != .live {
+                    state.isShowingCachePaint = false
+                    state.dataSource = .live
+                    state.items = []
+                    state.access = nil
+                    state.phase = .failed(error.userMessage)
+                    return .none
+                }
+                // A refresh that fails on a folder already showing items keeps them and reports the
+                // error as a toast, like the Favorites and Shares tabs, rather than blanking the list.
+                if !state.items.isEmpty {
+                    state.phase = .loaded
+                    state.fileActionErrorMessage = error.userMessage
+                    return .merge(search(&state), computeOfflineAvailability(&state))
+                }
                 state.phase = .failed(error.userMessage)
                 return .none
 
@@ -642,8 +703,9 @@ public struct BrowseFeature {
                 state.isPersonalSpaceEnabled = features.isPersonalEnabled
                 let jsonCacheStore = jsonCacheStore
                 let serverURL = state.serverURL
+                let cacheScope = state.cacheScope
                 return .run { _ in
-                    ListCache.save(jsonCacheStore, Self.personalSpaceCacheNamespace, serverURL: serverURL, value: features.isPersonalEnabled)
+                    ListCache.save(jsonCacheStore, Self.personalSpaceCacheNamespace, serverURL: serverURL, scope: cacheScope, value: features.isPersonalEnabled)
                 }
 
             case .personalSpaceTapped:
@@ -656,6 +718,8 @@ public struct BrowseFeature {
                 return prefetch(
                     serverURL: state.serverURL,
                     paths: favorites.map(\.path),
+                    scope: state.cacheScope,
+                    limit: Constants.maxPrefetchedFavorites,
                     cancelID: CancelID.prefetchFavorites
                 )
 
@@ -853,7 +917,7 @@ public struct BrowseFeature {
             case let .renameResponse(.failure(error)):
                 state.isPerformingFileAction = false
                 state.fileActionErrorMessage = error.userMessage
-                return .none
+                return refetchAfterTimeout(&state, error)
 
             case .newFolderTapped:
                 // The menu hides it where the folder refuses new folders; a keyboard shortcut
@@ -961,7 +1025,7 @@ public struct BrowseFeature {
             case let .deleteResponse(.failure(error)):
                 state.isPerformingFileAction = false
                 state.fileActionErrorMessage = error.userMessage
-                return .none
+                return refetchAfterTimeout(&state, error)
 
             case let .extractZipTapped(item):
                 guard !state.isPerformingFileAction else { return .none }
@@ -984,7 +1048,7 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
                 state.fileActionErrorMessage = error.userMessage
-                return .none
+                return refetchAfterTimeout(&state, error)
 
             case let .compressTapped(item):
                 guard !state.isPerformingFileAction else { return .none }
@@ -1009,7 +1073,7 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
                 state.fileActionErrorMessage = error.userMessage
-                return .none
+                return refetchAfterTimeout(&state, error)
 
             case let .downloadTapped(item):
                 #if os(macOS)
@@ -1077,7 +1141,7 @@ public struct BrowseFeature {
             case let .bulkDeleteResponse(.failure(error)):
                 state.isBulkActionInFlight = false
                 state.fileActionErrorMessage = error.userMessage
-                return .none
+                return refetchAfterTimeout(&state, error)
 
             case .bulkFavoriteTapped:
                 return startBulkFavorite(&state)
@@ -1088,6 +1152,9 @@ public struct BrowseFeature {
                 state.favoritePaths.subtract(result.removed)
                 state.isSelecting = false
                 state.selectedItemIDs = []
+                if result.failedCount > 0 {
+                    state.fileActionErrorMessage = L10n.Browse.bulkFavoriteFailed(result.failedCount, result.totalCount)
+                }
                 let didChangeAnything = !result.added.isEmpty || !result.removed.isEmpty
                 return didChangeAnything ? .send(.delegate(.favoritesChanged)) : .none
 
@@ -1122,25 +1189,25 @@ public struct BrowseFeature {
                         .send(.delegate(.openPath(path: result.path, title: title)))
                     )
 
-                case let .itemsDroppedFromOtherWindow(dropped, destination):
-                    guard state.access?.canWrite ?? false else { return .none }
-                    // Not where they already are, and never into themselves or their own subfolders.
-                    let items = dropped.filter { item in
-                        item.path != destination && item.id != destination && !destination.hasPrefix(item.id + "/")
-                    }
-                    return runTransfer(&state, retry: TransferRetry(
-                        items: items, destination: destination, operation: .move, clearClipboard: false
-                    ))
-
-                case let .filesDroppedOnFolder(urls, folder):
-                    // Finder files dropped on a folder row go into that folder, as in Finder.
-                    guard folder.isDirectory, !urls.isEmpty, state.access?.canUpload ?? false else { return .none }
-                    return stageDirectUpload(urls, destination: folder.id)
-
                 case let .reviewUpload(source):
                     return openUploadReview(source, state: &state)
 
             #endif
+
+            case let .itemsDroppedFromOtherWindow(dropped, destination):
+                guard state.access?.canWrite ?? false else { return .none }
+                // Not where they already are, and never into themselves or their own subfolders.
+                let items = dropped.filter { item in
+                    item.path != destination && item.id != destination && !destination.hasPrefix(item.id + "/")
+                }
+                return runTransfer(&state, retry: TransferRetry(
+                    items: items, destination: destination, operation: .move, clearClipboard: false
+                ))
+
+            case let .filesDroppedOnFolder(urls, folder):
+                // Finder files dropped on a folder row go into that folder, as in Finder.
+                guard folder.isDirectory, !urls.isEmpty, state.access?.canUpload ?? false else { return .none }
+                return stageDirectUpload(urls, destination: folder.id)
 
             case let .directUploadStaged(files, destination, _):
                 guard !files.isEmpty else {
@@ -1363,7 +1430,7 @@ public struct BrowseFeature {
                 state.isPerformingFileAction = false
                 state.fileActionProgressMessage = nil
                 state.transferErrorMessage = error.userMessage
-                return .none
+                return refetchAfterTimeout(&state, error)
 
             case let .infoTapped(item):
                 return loadInfo(&state, item: item)
@@ -1407,8 +1474,9 @@ public struct BrowseFeature {
                 state.previewPhase = .idle
                 state.textContent = nil
                 state.textPhase = .idle
-                state.isSavingTextContent = false
                 state.textSaveError = nil
+                state.textSaveConflict = nil
+                state.isTextSaveConflictPresented = false
                 return .merge(.cancel(id: CancelID.preview), .cancel(id: CancelID.googleDocsPointer))
 
             case let .previewFileResponse(.success(fileURL)):
@@ -1451,14 +1519,43 @@ public struct BrowseFeature {
             case let .textSaveTapped(newContent):
                 return confirmTextSave(&state, newContent: newContent)
 
-            case let .textSaveResponse(.success(savedContent)):
-                state.isSavingTextContent = false
-                state.textContent = savedContent
+            case let .textSaveResponse(path, .success(savedContent)):
+                let isStillOpen = path == state.previewItem?.id
+                state.savingTexts[path] = nil
+                if isStillOpen {
+                    state.textContent = savedContent
+                }
                 return .none
 
-            case let .textSaveResponse(.failure(error)):
-                state.isSavingTextContent = false
-                state.textSaveError = error.userMessage
+            case let .textSaveResponse(path, .failure(error)):
+                let isStillOpen = path == state.previewItem?.id
+                let pendingText = state.savingTexts.removeValue(forKey: path)
+                if isStillOpen, error == .changedOnServer {
+                    state.textSaveConflict = pendingText
+                    state.isTextSaveConflictPresented = true
+                    state.textSaveError = error.userMessage
+                } else if isStillOpen {
+                    state.textSaveError = error.userMessage
+                } else {
+                    state.fileActionErrorMessage = error.userMessage
+                }
+                return .none
+
+            case .textSaveOverwriteTapped:
+                guard let content = state.textSaveConflict else { return .none }
+                state.textSaveConflict = nil
+                state.isTextSaveConflictPresented = false
+                state.textSaveError = nil
+                return confirmTextSave(&state, newContent: content)
+
+            case .textSaveReloadTapped:
+                state.isTextSaveConflictPresented = false
+                guard let item = state.previewItem else { return .none }
+                return loadTextContent(&state, item: item)
+
+            case .textSaveConflictDismissed:
+                state.isTextSaveConflictPresented = false
+                state.textSaveError = nil
                 return .none
 
             case .delegate:

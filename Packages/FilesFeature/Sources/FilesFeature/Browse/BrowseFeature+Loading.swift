@@ -8,21 +8,42 @@ extension BrowseFeature {
     /// Fires a background prefetch of `paths` into the offline cache (subfolders of the folder
     /// just loaded, or favorited folders). Best effort and low priority; skips anything cached
     /// recently. `cancelID` scopes it so a later prefetch of the same kind supersedes it while
-    /// a different kind runs alongside.
-    func prefetch(serverURL: URL, paths: [String], cancelID: CancelID) -> Effect<Action> {
+    /// a different kind runs alongside. The pinned roots are read inside the effect, never on the
+    /// reducer's main actor, and `limit` caps this kind on its own budget.
+    func prefetch(
+        serverURL: URL,
+        paths: [String],
+        scope: String,
+        preferred: Set<String> = [],
+        includesPinnedRoots: Bool = false,
+        limit: Int,
+        cancelID: CancelID
+    ) -> Effect<Action> {
+        guard !connectivity.isMetered() else { return .none }
         let paths = paths.filter { !$0.isEmpty }
         guard !paths.isEmpty else { return .none }
         let filesClient = filesClient
-        let directoryCacheStore = directoryCacheStore
+        let directoryCacheStore = directoryCacheStore.bound(to: scope)
+        let offlineFileStore = offlineFileStore
         return .run(priority: .background) { _ in
+            var preferred = preferred
+            if includesPinnedRoots {
+                preferred.formUnion(offlineFileStore.pinnedRoots().map(\.path))
+            }
             await DirectoryPrefetch.run(
-                paths: paths,
+                paths: Array(BrowseFeature.prefetchOrder(paths, preferred: preferred).prefix(limit)),
                 serverURL: serverURL,
                 filesClient: filesClient,
                 directoryCacheStore: directoryCacheStore
             )
         }
         .cancellable(id: cancelID, cancelInFlight: true)
+    }
+
+    /// Puts favorited and pinned folders first, keeping the listing order (nearest first) within each
+    /// group, so the prefetch cap spends its budget on the folders the user is likeliest to open.
+    static func prefetchOrder(_ paths: [String], preferred: Set<String>) -> [String] {
+        paths.filter { preferred.contains($0) } + paths.filter { !preferred.contains($0) }
     }
 
     /// Recomputes which of the current items are available offline, off the main actor (a per item
@@ -64,6 +85,12 @@ extension BrowseFeature {
         .cancellable(id: CancelID.offlineAvailability, cancelInFlight: true)
     }
 
+    /// A mutation that timed out may still have finished on the server, so the folder is refetched to
+    /// show what really happened instead of trusting the failure.
+    func refetchAfterTimeout(_ state: inout State, _ error: FilesClientError) -> Effect<Action> {
+        error == .timedOut ? load(&state) : .none
+    }
+
     func load(_ state: inout State) -> Effect<Action> {
         let hadLoaded = state.phase.hasLoaded
         state.phase = .loading
@@ -76,10 +103,11 @@ extension BrowseFeature {
         // `dataSource` stays `.live` here.
         if !hadLoaded,
            state.items.isEmpty,
-           let cached = directoryCacheStore.read(serverURL: serverURL, path: directoryPath)
+           let cached = directoryCacheStore.bound(to: state.cacheScope).read(serverURL: serverURL, path: directoryPath)
         {
             state.items = IdentifiedArray(uniqueElements: Self.sortedAlphabetically(cached.items))
             state.access = cached.access
+            state.isShowingCachePaint = true
         }
         let features: Effect<Action> = directoryPath.isEmpty
             ? .run { send in
@@ -94,8 +122,10 @@ extension BrowseFeature {
                     try await send(.itemsResponse(apiResult { try await filesClient.browse(serverURL, directoryPath) }))
                 },
                 .run { send in
-                    let favorites = try? await filesClient.favorites(serverURL)
-                    await send(.favoritesResponse(favorites ?? []))
+                    // A failed fetch sends nothing: an empty answer would turn every star off and make
+                    // the next tap add a favorite that already exists instead of removing it.
+                    guard let favorites = try? await filesClient.favorites(serverURL) else { return }
+                    await send(.favoritesResponse(favorites))
                 }
             ),
             features
@@ -111,7 +141,7 @@ extension BrowseFeature {
     /// upload instead trigger a full refetch, which keeps their listings in sync on its own.
     func syncListingCache(_ state: State) {
         guard let access = state.access else { return }
-        directoryCacheStore.write(
+        directoryCacheStore.bound(to: state.cacheScope).write(
             serverURL: state.serverURL,
             path: state.directoryPath,
             result: BrowseResult(items: Array(state.items), access: access, path: state.directoryPath),

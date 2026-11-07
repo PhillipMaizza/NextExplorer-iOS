@@ -72,6 +72,18 @@
                     onDismiss: { store.send(.removeVolumeCancelled) }
                 )
             }
+            .dsAlert(isPresented: Binding(get: { store.userToGrantAdmin != nil }, set: { _ in })) {
+                DSAlertSheet(
+                    icon: IconKit.shield,
+                    title: L10n.UserDetail.grantAdminTitle,
+                    message: store.userToGrantAdmin.map { L10n.UserDetail.grantAdminMessage($0.displayName ?? $0.username) },
+                    confirmTitle: L10n.UserDetail.roleGrantAdmin,
+                    dismissTitle: L10n.Common.cancel,
+                    closeAccessibilityLabel: L10n.Common.close,
+                    onConfirm: { store.send(.grantAdminConfirmed) },
+                    onDismiss: { store.send(.grantAdminCancelled) }
+                )
+            }
             .dsAlert(isPresented: Binding(get: { store.userToDelete != nil }, set: { _ in })) {
                 DSAlertSheet(
                     icon: IconKit.delete,

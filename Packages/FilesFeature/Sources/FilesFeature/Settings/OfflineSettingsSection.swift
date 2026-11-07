@@ -53,6 +53,11 @@ struct OfflineSettingsSection: View {
                         .type(.body3(.regular), style: .error)
                 }
 
+                if progress.phase == .waitingForNetwork {
+                    Text(L10n.Offline.waitingForNetwork)
+                        .type(.body3(.regular), style: .secondary)
+                }
+
                 if !progress.isActive, store.offlineSize > 0 {
                     if filter.matches(L10n.Offline.manageRow) {
                         DSNavigationRow(

@@ -461,6 +461,8 @@ userDetail.removeVolumeTitle	Rimuovere il volume?
 userDetail.removeVolumeMessage	%@ viene rimosso da questo utente. La directory non viene toccata.
 userDetail.removeUserTitle	Rimuovere l'utente?
 userDetail.removeUserMessage	%@ perde subito l'accesso. I suoi file sul server non vengono eliminati.
+userDetail.grantAdminTitle	Concedere i permessi di amministratore?
+userDetail.grantAdminMessage	%@ diventerà amministratore con pieno controllo su file, condivisioni e utenti. Gli amministratori non possono essere declassati dall'app.
 userDetail.volumeSheetLabelField	Etichetta
 userDetail.volumeSheetLabelPlaceholder	Etichetta del volume
 userDetail.volumeSheetAccessMode	Modalità di accesso
@@ -785,9 +787,26 @@ shareUpload.signedOut	Accedi prima a NextExplorer, poi condividi di nuovo.
 shareUpload.nothingToUpload	Qui non c’è niente che NextExplorer possa caricare.
 shareUpload.failed	Non è stato possibile preparare i file per il caricamento.
 shareUpload.notificationDoneTitle	Caricamento completato
-shareUpload.notificationDoneBody	%lld file caricati in “%@”.
 shareUpload.notificationFailedTitle	Alcuni file non sono stati caricati
-shareUpload.notificationFailedBody	Non è stato possibile caricare %lld file su %lld. Condividili di nuovo per riprovare.
+shareUpload.notificationDoneBody#one	%lld file caricato in “%@”.
+shareUpload.notificationDoneBody#other	%lld file caricati in “%@”.
+shareUpload.notificationAllFailedTitle	Caricamento non riuscito
+shareUpload.failureUnauthorized#one	%lld file non è stato caricato. Accedi di nuovo, poi riprova.
+shareUpload.failureUnauthorized#other	%lld file non sono stati caricati. Accedi di nuovo, poi riprova.
+shareUpload.failureForbidden#one	%lld file non è stato caricato. Non hai il permesso di aggiungere file a quella cartella.
+shareUpload.failureForbidden#other	%lld file non sono stati caricati. Non hai il permesso di aggiungere file a quella cartella.
+shareUpload.failureServerFull#one	%lld file non è stato caricato. Il server ha esaurito lo spazio di archiviazione.
+shareUpload.failureServerFull#other	%lld file non sono stati caricati. Il server ha esaurito lo spazio di archiviazione.
+shareUpload.failureNetwork#one	%lld file non è stato caricato. Connessione non riuscita. Riprova quando sei di nuovo online.
+shareUpload.failureNetwork#other	%lld file non sono stati caricati. Connessione non riuscita. Riprova quando sei di nuovo online.
+shareUpload.failureOther#one	%lld file non ha potuto essere caricato.
+shareUpload.failureOther#other	%lld file non hanno potuto essere caricati.
+shareUpload.notificationMoreNames	e altri %lld
+shareUpload.notificationRetry	Riprova
+shareUpload.notificationHiddenPreview	Apri NextExplorer per vedere com'è andato il caricamento.
+shareUpload.retryFailedTitle	Impossibile riprovare
+shareUpload.retryFailedBody	Apri NextExplorer e condividi di nuovo i file.
+shareUpload.insufficientSpace	Su questo dispositivo non c’è abbastanza spazio libero per preparare questi file al caricamento.
 settings.uploadDefaultsRow	File condivisi
 settings.uploadDefaultsFolder	Cartella predefinita
 settings.uploadDefaultsFolderNone	Chiedi ogni volta
@@ -795,3 +814,31 @@ settings.uploadDefaultsWithoutAsking	Carica senza chiedere
 settings.uploadDefaultsFooter	Le foto e i file che condividi con NextExplorer da altre app partono da questa cartella. Con Carica senza chiedere attivo, vengono caricati direttamente lì.
 settings.uploadDefaultsClear	Chiedi ogni volta
 common.change	Cambia
+shareUpload.sessionUnreadable	NextExplorer non è riuscito a leggere il tuo accesso su questo dispositivo. Apri NextExplorer una volta, poi condividi di nuovo.
+shareUpload.keepOpen	Tieni aperta questa schermata finché la preparazione non è terminata.
+shareUpload.checking	Verifica della connessione a %@…
+shareUpload.openApp	Apri NextExplorer
+shareUpload.openAppInstructions	Apri NextExplorer dalla schermata Home, poi condividi di nuovo.
+shareUpload.certificateRequired	Questo server richiede un certificato client. Apri NextExplorer, aggiungine uno in Impostazioni, poi condividi di nuovo.
+shareUpload.certificateRejected	Il server ha rifiutato il tuo certificato client. Apri NextExplorer, sostituiscilo in Impostazioni, poi condividi di nuovo.
+shareUpload.defaultFolderUnavailable	La tua cartella predefinita non è più disponibile. Scegli un'altra cartella.
+shareUpload.failedItemsHeader	Questi file non sono stati preparati:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	Pronti per il caricamento: %lld
+shareUpload.uploadReady	Carica i file pronti
+shareUpload.retryFailed	Riprova i file non riusciti
+shareUpload.fallbackItemName	File %lld
+shareUpload.causeCannotRead	Non è stato possibile leggerlo.
+shareUpload.causeNotEnoughSpace	Non c'è abbastanza spazio libero su questo dispositivo.
+shareUpload.causeUnknown	Non è stato possibile prepararlo.
+shareUpload.folderHint	Apre il selettore di cartelle.
+shareUpload.accountHint	Scegli quale account riceve i file.
+error.timedOut	Il server ha impiegato troppo tempo a rispondere. L’azione potrebbe comunque completarsi.
+error.changedOnServer	Questo file è stato modificato sul server dopo che lo hai aperto.
+textPreview.conflictTitle	“%@” è cambiato sul server
+textPreview.conflictMessage	Sovrascrivilo con la tua versione oppure ricarica il file e scarta le modifiche. La versione sostituita resta nella cronologia delle versioni del file.
+textPreview.conflictOverwrite	Sovrascrivi
+textPreview.conflictReload	Ricarica
+offline.waitingForNetwork	Verrà scaricato quando tornerai online
+browse.bulkFavoriteFailed	%1$lld di %2$lld non riusciti
+shareUpload.livePhotoNote	Le Live Photo vengono caricate con il loro video in movimento.

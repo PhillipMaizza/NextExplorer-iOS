@@ -7,13 +7,20 @@ public extension FilesClient {
     static func live(
         networkClient: NetworkClient,
         directoryCacheStore: DirectoryCacheStore = .liveValue,
-        now: @escaping @Sendable () -> Date = { Date() }
+        textEditorETags: TextEditorETagStore = TextEditorETagStore(),
+        now: @escaping @Sendable () -> Date = { Date() },
+        activeScope: @escaping @Sendable () -> String = { CacheAccountScope.current }
     ) -> FilesClient {
-        let service = FilesService(networkClient: networkClient)
+        let service = FilesService(networkClient: networkClient, textEditorETags: textEditorETags, activeScope: activeScope)
 
         @Sendable func resolveBrowse(serverURL: URL, path: String, lowPriority: Bool) async throws -> BrowseResult {
+            // Pinned at request start so a late response lands in the account that asked for it,
+            // even if the active account switched while it was in flight.
+            let directoryCacheStore = directoryCacheStore.bound(to: activeScope())
             do {
-                return try await resolveDirectory(serverURL: serverURL, path: path, lowPriority: lowPriority)
+                return try await resolveDirectory(
+                    serverURL: serverURL, path: path, lowPriority: lowPriority, cache: directoryCacheStore
+                )
             } catch FilesClientError.server(statusCode: 404) where path.isEmpty {
                 // USER_VOLUMES refuses a non admin the root itself; the volumes list is the root then.
                 let result = try await service.volumeRoot(serverURL: serverURL)
@@ -22,7 +29,9 @@ public extension FilesClient {
             }
         }
 
-        @Sendable func resolveDirectory(serverURL: URL, path: String, lowPriority: Bool) async throws -> BrowseResult {
+        @Sendable func resolveDirectory(
+            serverURL: URL, path: String, lowPriority: Bool, cache directoryCacheStore: DirectoryCacheStore
+        ) async throws -> BrowseResult {
             let cached = directoryCacheStore.read(serverURL: serverURL, path: path)
             let outcome = try await service.browse(
                 serverURL: serverURL, path: path, ifNoneMatch: cached?.etag, lowPriority: lowPriority
@@ -271,7 +280,8 @@ extension FilesClient: DependencyKey {
     public static var liveValue: FilesClient {
         @Dependency(\.networkClient) var networkClient
         @Dependency(\.directoryCacheStore) var directoryCacheStore
-        return .live(networkClient: networkClient, directoryCacheStore: directoryCacheStore)
+        @Dependency(\.textEditorETagStore) var textEditorETags
+        return .live(networkClient: networkClient, directoryCacheStore: directoryCacheStore, textEditorETags: textEditorETags)
     }
 }
 

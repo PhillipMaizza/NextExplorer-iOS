@@ -10,6 +10,8 @@ public struct FavoritesFeature {
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
+        /// The account scope the saved list is filed under, captured when this state was created.
+        let cacheScope: String
         public var favorites: IdentifiedArrayOf<Favorite> = []
         /// The load lifecycle: `.idle` → `.loading` → `.loaded` / `.failed`. Drives the
         /// skeleton (`.loading` with no data) and the full screen error (`.failed`).
@@ -56,6 +58,8 @@ public struct FavoritesFeature {
 
         public init(serverURL: URL) {
             self.serverURL = serverURL
+            @Dependency(\.cacheScope) var cacheScopeSource
+            cacheScope = cacheScopeSource.current()
             // Paint the last saved copy synchronously at construction, so the very first frame of
             // the Favorites tab already shows the cached list instead of a skeleton. Without this
             // the cache is only painted from `onAppear` (a `.task`, so it runs after the first
@@ -64,7 +68,7 @@ public struct FavoritesFeature {
             // `onAppear` still refetches (stale-while-revalidate); `dataSource` stays `.live` so an
             // online refetch doesn't flash a "saved copy" banner.
             @Dependency(\.jsonCacheStore) var jsonCacheStore
-            if let cached = ListCache.load(jsonCacheStore, FavoritesFeature.cacheNamespace, serverURL: serverURL, as: [Favorite].self) {
+            if let cached = ListCache.load(jsonCacheStore, FavoritesFeature.cacheNamespace, serverURL: serverURL, scope: cacheScope, as: [Favorite].self) {
                 favorites = IdentifiedArray(
                     cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first }
                 )
@@ -165,7 +169,7 @@ public struct FavoritesFeature {
     @Dependency(\.date) var date
 
     /// Cache namespace for this tab's saved offline copy.
-    private static let cacheNamespace = "favorites"
+    static let cacheNamespace = "favorites"
 
     private enum CancelID: Hashable { case reorder, load, remove(Favorite.ID), search, offlineAvailability }
 
@@ -222,7 +226,7 @@ public struct FavoritesFeature {
             case let .favoritesResponse(.failure(error)):
                 // Offline with a saved copy: show it under a banner rather than an error screen.
                 if error == .offline,
-                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, as: [Favorite].self)
+                   let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, scope: state.cacheScope, as: [Favorite].self)
                 {
                     state.phase = .loaded
                     state.favorites = IdentifiedArray(cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
@@ -495,7 +499,7 @@ public struct FavoritesFeature {
         // only a failed one (offline) surfaces the "saved copy" banner, so `dataSource` stays
         // `.live` here.
         if !state.phase.hasLoaded, state.favorites.isEmpty,
-           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, as: [Favorite].self)
+           let cached = ListCache.load(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, scope: state.cacheScope, as: [Favorite].self)
         {
             state.favorites = IdentifiedArray(cached.value.sorted { $0.position < $1.position }, id: \.id, uniquingIDsWith: { first, _ in first })
         }
@@ -594,7 +598,7 @@ public struct FavoritesFeature {
     /// Persists the current list as this tab's offline copy, keeping it in sync after a load or
     /// an in-place mutation.
     private func syncCache(_ state: State) {
-        ListCache.save(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, value: Array(state.favorites))
+        ListCache.save(jsonCacheStore, Self.cacheNamespace, serverURL: state.serverURL, scope: state.cacheScope, value: Array(state.favorites))
     }
 
     /// Best-effort, matching the sign-out flow's philosophy: one failure shouldn't block

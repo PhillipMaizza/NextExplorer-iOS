@@ -6,22 +6,6 @@
     import SwiftUI
     import UniformTypeIdentifiers
 
-    extension UTType {
-        /// In app drag payload: which server item is being dragged. Declared in the app's
-        /// Info.plist so it never leaves the process as anything Finder would try to keep.
-        static let nextExplorerItem = UTType(exportedAs: "com.phillipmaizza.nextexplorer.item")
-    }
-
-    struct ServerItemReference: Codable, Transferable {
-        let id: String
-        /// The dragged row itself, so another Browse window, which does not list it, can move it.
-        var item: FileItem?
-
-        static var transferRepresentation: some TransferRepresentation {
-            CodableRepresentation(contentType: .nextExplorerItem)
-        }
-    }
-
     /// What a folder row of the table takes: rows of this app (moved inside it) or files from
     /// Finder (uploaded into it).
     enum MacRowDrop: Transferable {
@@ -38,41 +22,11 @@
             return url
         }
 
-        /// A row dragged from this app that carried its item.
-        var item: FileItem? {
-            guard case let .item(reference) = self else { return nil }
+        /// A row dragged from this app that carried its item, when the drag started in `receiver`'s
+        /// server and account.
+        func item(for receiver: DragOrigin) -> FileItem? {
+            guard case let .item(reference) = self, reference.origin == receiver else { return nil }
             return reference.item
-        }
-    }
-
-    /// A dragged row. Inside the app it is a reference (drop on a folder to move it); dragged to
-    /// Finder a file becomes a file promise: the download only starts once the drop lands, and
-    /// the copy keeps its real name. Folders never export as a file.
-    struct DraggedServerItem: Transferable {
-        let reference: ServerItemReference
-        let fileName: String
-        let isDirectory: Bool
-        let fetch: @Sendable () async throws -> URL
-
-        static var transferRepresentation: some TransferRepresentation {
-            ProxyRepresentation(exporting: \.reference)
-            FileRepresentation(exportedContentType: .data) { item in
-                try await SentTransferredFile(item.fetch())
-            }
-            .exportingCondition { !$0.isDirectory }
-            .suggestedFileName { $0.fileName }
-        }
-    }
-
-    extension DraggedServerItem {
-        init(item: FileItem, serverURL: URL, filesClient: FilesClient) {
-            self.init(
-                reference: ServerItemReference(id: item.id, item: item),
-                fileName: item.name,
-                isDirectory: item.isDirectory
-            ) {
-                try await filesClient.downloadRawFile(serverURL, item)
-            }
         }
     }
 
@@ -96,6 +50,7 @@
     /// A folder row that accepts other rows dropped onto it, moving them inside.
     struct MacFolderDropTarget: ViewModifier {
         let folder: FileItem
+        let serverURL: URL
         let isEnabled: Bool
         let onDrop: ([FileItem.ID]) -> Void
 
@@ -105,7 +60,8 @@
             if isEnabled, folder.isDirectory {
                 content
                     .dropDestination(for: ServerItemReference.self) { references, _ in
-                        let ids = references.map(\.id).filter { $0 != folder.id }
+                        let receiver = DragOrigin.current(serverURL: serverURL)
+                        let ids = references.filter { $0.origin == receiver }.map(\.id).filter { $0 != folder.id }
                         guard !ids.isEmpty else { return false }
                         onDrop(ids)
                         return true
@@ -134,7 +90,7 @@
         func body(content: Content) -> some View {
             content
                 .modifier(MacFileDrag(item: item, serverURL: serverURL, isEnabled: canDrag))
-                .modifier(MacFolderDropTarget(folder: item, isEnabled: canDropHere, onDrop: onDrop))
+                .modifier(MacFolderDropTarget(folder: item, serverURL: serverURL, isEnabled: canDropHere, onDrop: onDrop))
         }
     }
 
@@ -142,6 +98,7 @@
     /// dragged in from another Browse window, which move here. Outlines the folder while a drop
     /// hovers over it.
     struct MacFinderDrop: ViewModifier {
+        let serverURL: URL
         let isEnabled: Bool
         let onDrop: ([URL]) -> Void
         var onDropItems: ([FileItem]) -> Void = { _ in }
@@ -152,7 +109,8 @@
             content
                 .dropDestination(for: MacRowDrop.self) { drops, _ in
                     let files = drops.compactMap(\.fileURL)
-                    let items = drops.compactMap(\.item)
+                    let receiver = DragOrigin.current(serverURL: serverURL)
+                    let items = drops.compactMap { $0.item(for: receiver) }
                     guard isEnabled, !files.isEmpty || !items.isEmpty else { return false }
                     if !files.isEmpty {
                         onDrop(files)
@@ -184,7 +142,7 @@
         let file = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 1_024, kind: "pdf")
         return List {
             Label { Text(folder.name) } icon: { IconKit.folderFill }
-                .modifier(MacFolderDropTarget(folder: folder, isEnabled: true) { _ in })
+                .modifier(MacFolderDropTarget(folder: folder, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), isEnabled: true) { _ in })
             Label { Text(file.name) } icon: { IconKit.document }
                 .modifier(MacFileDrag(item: file, serverURL: URL(string: "https://cloud.example.com") ?? URL(fileURLWithPath: "/"), isEnabled: true))
         }

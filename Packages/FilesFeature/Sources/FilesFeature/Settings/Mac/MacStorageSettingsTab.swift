@@ -82,6 +82,9 @@
             if case let .failed(message) = progress.phase {
                 Text(message).foregroundStyle(Color.negativeText)
             }
+            if progress.phase == .waitingForNetwork {
+                Text(L10n.Offline.waitingForNetwork).foregroundStyle(.secondary)
+            }
             if !progress.isActive, store.offlineSize > 0 {
                 Toggle(isOn: $shouldPreferOfflineMedia) {
                     MacRowTitle(title: L10n.Offline.preferOfflineToggle, subtitle: L10n.Offline.preferOfflineSubtitle)

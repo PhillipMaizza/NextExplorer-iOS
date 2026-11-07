@@ -7,11 +7,16 @@ public struct AuthStatus: Codable, Equatable, Sendable {
     /// go to https directly: a redirected sign in loses its body, and the password would have
     /// crossed the network unencrypted first. Not part of the server's JSON.
     public var redirectsToHTTPS = false
+    /// The port the https address answered on when it is not the default one, so the saved
+    /// address matches where the server answered. `nil` is the default https port. Not part of the
+    /// server's JSON.
+    public var redirectedPort: Int?
 
-    public init(localEnabled: Bool, oidcEnabled: Bool, redirectsToHTTPS: Bool = false) {
+    public init(localEnabled: Bool, oidcEnabled: Bool, redirectsToHTTPS: Bool = false, redirectedPort: Int? = nil) {
         self.localEnabled = localEnabled
         self.oidcEnabled = oidcEnabled
         self.redirectsToHTTPS = redirectsToHTTPS
+        self.redirectedPort = redirectedPort
     }
 
     private enum CodingKeys: String, CodingKey {

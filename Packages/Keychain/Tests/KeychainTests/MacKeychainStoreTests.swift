@@ -41,6 +41,11 @@ struct MacKeychainStoreTests {
             try check()
             lock.withLock { items[key] = nil }
         }
+
+        func allKeys() throws -> [String] {
+            try check()
+            return lock.withLock { Array(items.keys) }
+        }
     }
 
     private let session = Data("session".utf8)
@@ -98,5 +103,46 @@ struct MacKeychainStoreTests {
         let store = MacKeychainStore(modern: modern, legacy: legacy)
 
         #expect(try store.load(key: "session") == session)
+    }
+
+    @Test("eager migration moves every legacy item without a read, and is safe to repeat")
+    func migrateAllMovesEverything() {
+        let modern = FakeStore()
+        let legacy = FakeStore(items: ["storedSessions": session, "currentSession": Data("old".utf8)])
+        let store = MacKeychainStore(modern: modern, legacy: legacy)
+
+        #expect(store.migrateAll() == 2)
+        #expect(store.migrateAll() == 0)
+
+        #expect(modern.contents["storedSessions"] == session)
+        #expect(modern.contents["currentSession"] == Data("old".utf8))
+        #expect(legacy.contents.isEmpty)
+    }
+
+    @Test("eager migration never overwrites a newer data protection item")
+    func migrateAllKeepsNewerItem() {
+        let newer = Data("newer".utf8)
+        let modern = FakeStore(items: ["storedSessions": newer])
+        let legacy = FakeStore(items: ["storedSessions": session])
+
+        #expect(MacKeychainStore(modern: modern, legacy: legacy).migrateAll() == 0)
+
+        #expect(modern.contents["storedSessions"] == newer)
+        #expect(legacy.contents.isEmpty)
+    }
+
+    @Test("eager migration in a build without the entitlement leaves the legacy items alone")
+    func migrateAllWithoutEntitlement() {
+        let legacy = FakeStore(items: ["storedSessions": session])
+        let store = MacKeychainStore(modern: FakeStore(isMissingEntitlement: true), legacy: legacy)
+
+        #expect(store.migrateAll() == 0)
+        #expect(legacy.contents["storedSessions"] == session)
+    }
+
+    @Test("a legacy keychain that cannot be listed is not an error")
+    func migrateAllWithUnreadableLegacy() {
+        let store = MacKeychainStore(modern: FakeStore(), legacy: FakeStore(isMissingEntitlement: true))
+        #expect(store.migrateAll() == 0)
     }
 }

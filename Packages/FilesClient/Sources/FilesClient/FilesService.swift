@@ -16,6 +16,21 @@ struct FilesService: Sendable {
     /// background thumbnail fetch and a tap-to-open of the same file. Without it both would
     /// download the bytes and then race on the `moveItem` into the shared slot.
     let downloadCoordinator = PreviewDownloadCoordinator()
+    /// The ETag each text file had when the editor last read or saved it, so a save can tell that
+    /// someone else changed the file in between.
+    let textEditorETags: TextEditorETagStore
+    /// The account scope text editor ETags are filed under, read when an operation starts.
+    let activeScope: @Sendable () -> String
+
+    init(
+        networkClient: NetworkClient,
+        textEditorETags: TextEditorETagStore = TextEditorETagStore(),
+        activeScope: @escaping @Sendable () -> String = { CacheAccountScope.current }
+    ) {
+        self.networkClient = networkClient
+        self.textEditorETags = textEditorETags
+        self.activeScope = activeScope
+    }
 
     static func encode(_ body: some Encodable) throws -> Data {
         do {
@@ -108,6 +123,7 @@ struct FilesService: Sendable {
     static func mapTransportError(_ error: Error) -> FilesClientError {
         switch error as? NetworkError {
         case .offline: .offline
+        case .timedOut: .timedOut
         case .clientCertificateRequired: .clientCertificateRequired
         case .clientCertificateRejected: .clientCertificateRejected
         default: .network(String(describing: error))
@@ -129,10 +145,12 @@ struct FilesService: Sendable {
         }
     }
 
-    static func makeRequest(url: URL, method: HTTPMethod) -> URLRequest {
+    /// `isMutation` gives a server side operation that sends nothing until it finishes (transfer,
+    /// delete, compress, extract, rename) the long budget and the `.timedOut` mapping.
+    static func makeRequest(url: URL, method: HTTPMethod, isMutation: Bool = false) -> URLRequest {
         var request = URLRequest(url: url, method: method)
         request.setValue(MIMEType.json, forHTTPHeaderField: HTTPHeaderField.accept)
-        return request
+        return isMutation ? NetworkClient.markingAsMutation(request) : request
     }
 
     static func validateReportingMessage(_ data: Data, _ response: HTTPURLResponse) throws {

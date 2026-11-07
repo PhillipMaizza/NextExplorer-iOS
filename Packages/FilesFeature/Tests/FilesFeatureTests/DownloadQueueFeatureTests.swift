@@ -214,6 +214,64 @@ struct DownloadQueueFeatureTests {
     }
 
     @Test
+    func cancellingTheLastPendingDownloadAfterSomeSavedStillReportsTheSavedItems() async {
+        var state = DownloadQueueFeature.State(serverURL: serverURL)
+        state.jobs = [
+            DownloadQueueFeature.DownloadJob(id: UUID(0), item: file("a.mkv"), status: .completed),
+            DownloadQueueFeature.DownloadJob(id: UUID(1), item: file("b.mkv"), status: .downloading),
+        ]
+        let store = TestStore(initialState: state) { DownloadQueueFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.cancelJobTapped(id: UUID(1)))
+        await store.receive(.delegate(.queueFinished(DownloadQueueFeature.FinishSummary(savedCount: 1, failedCount: 0))))
+    }
+
+    @Test
+    func cancellingADownloadWhileOthersAreStillQueuedDoesNotAnnounceTheQueueFinished() async {
+        var state = DownloadQueueFeature.State(serverURL: serverURL)
+        state.jobs = [
+            DownloadQueueFeature.DownloadJob(id: UUID(0), item: file("a.mkv"), status: .completed),
+            DownloadQueueFeature.DownloadJob(id: UUID(1), item: file("b.mkv"), status: .downloading),
+            DownloadQueueFeature.DownloadJob(id: UUID(2), item: file("c.mkv"), status: .queued),
+        ]
+        let store = TestStore(initialState: state) {
+            DownloadQueueFeature()
+        } withDependencies: {
+            $0.date = .constant(Date(timeIntervalSince1970: 0))
+            $0.filesClient.flushDownloadConnections = {}
+            $0.filesClient.downloadItem = { _, _, _ in try await Task.never() }
+        }
+        store.exhaustivity = .off
+
+        await store.send(.cancelJobTapped(id: UUID(1)))
+        await store.receive(\.startNextIfIdle)
+        await store.send(.cancelAllTapped)
+        await store.skipReceivedActions()
+    }
+
+    @Test
+    func cancelAllAfterSomeSavedReportsThemButClearingAFinishedQueueDoesNot() async {
+        var state = DownloadQueueFeature.State(serverURL: serverURL)
+        state.jobs = [
+            DownloadQueueFeature.DownloadJob(id: UUID(0), item: file("a.mkv"), status: .completed),
+            DownloadQueueFeature.DownloadJob(id: UUID(1), item: file("b.mkv"), status: .downloading),
+        ]
+        let store = TestStore(initialState: state) { DownloadQueueFeature() }
+        store.exhaustivity = .off
+        await store.send(.cancelAllTapped)
+        await store.receive(.delegate(.queueFinished(DownloadQueueFeature.FinishSummary(savedCount: 1, failedCount: 0))))
+
+        var finished = DownloadQueueFeature.State(serverURL: serverURL)
+        finished.jobs = [DownloadQueueFeature.DownloadJob(id: UUID(2), item: file("c.mkv"), status: .completed)]
+        let finishedStore = TestStore(initialState: finished) { DownloadQueueFeature() }
+        await finishedStore.send(.cancelAllTapped) {
+            $0.jobs = []
+            $0.isSheetPresented = false
+        }
+    }
+
+    @Test
     func aFolderIsSavedAsAZipNamedAfterIt() {
         let job = DownloadQueueFeature.DownloadJob(id: UUID(0), item: folder("Holiday 2026"), status: .queued)
         #expect(job.fileName == "Holiday 2026.zip")

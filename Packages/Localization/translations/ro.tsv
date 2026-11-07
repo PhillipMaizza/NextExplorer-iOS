@@ -462,6 +462,8 @@ userDetail.removeVolumeTitle	Elimini volumul?
 userDetail.removeVolumeMessage	%@ este dezatribuit de la acest utilizator. Directorul în sine nu este afectat.
 userDetail.removeUserTitle	Elimini utilizatorul?
 userDetail.removeUserMessage	%@ pierde accesul imediat. Fișierele sale de pe server nu sunt șterse.
+userDetail.grantAdminTitle	Acorzi drepturi de administrator?
+userDetail.grantAdminMessage	%@ devine administrator, cu control deplin asupra fișierelor, partajărilor și utilizatorilor. Administratorii nu pot fi retrogradați din aplicație.
 userDetail.volumeSheetLabelField	Etichetă
 userDetail.volumeSheetLabelPlaceholder	Eticheta volumului
 userDetail.volumeSheetAccessMode	Mod de acces
@@ -785,9 +787,32 @@ shareUpload.signedOut	Conectează-te mai întâi în NextExplorer, apoi partajea
 shareUpload.nothingToUpload	Nu există nimic aici pe care NextExplorer să-l poată încărca.
 shareUpload.failed	Fișierele nu au putut fi pregătite pentru încărcare.
 shareUpload.notificationDoneTitle	Încărcare finalizată
-shareUpload.notificationDoneBody	%lld fișiere încărcate în „%@”.
 shareUpload.notificationFailedTitle	Unele fișiere nu s-au încărcat
-shareUpload.notificationFailedBody	%lld din %lld fișiere nu au putut fi încărcate. Partajează-le din nou pentru a reîncerca.
+shareUpload.notificationDoneBody#one	%lld fișier încărcat în „%@”.
+shareUpload.notificationDoneBody#few	%lld fișiere încărcate în „%@”.
+shareUpload.notificationDoneBody#other	%lld de fișiere încărcate în „%@”.
+shareUpload.notificationAllFailedTitle	Încărcarea a eșuat
+shareUpload.failureUnauthorized#one	%lld fișier nu a fost încărcat. Conectează-te din nou, apoi încearcă iar.
+shareUpload.failureUnauthorized#few	%lld fișiere nu au fost încărcate. Conectează-te din nou, apoi încearcă iar.
+shareUpload.failureUnauthorized#other	%lld de fișiere nu au fost încărcate. Conectează-te din nou, apoi încearcă iar.
+shareUpload.failureForbidden#one	%lld fișier nu a fost încărcat. Nu ai permisiunea de a adăuga fișiere în acel dosar.
+shareUpload.failureForbidden#few	%lld fișiere nu au fost încărcate. Nu ai permisiunea de a adăuga fișiere în acel dosar.
+shareUpload.failureForbidden#other	%lld de fișiere nu au fost încărcate. Nu ai permisiunea de a adăuga fișiere în acel dosar.
+shareUpload.failureServerFull#one	%lld fișier nu a fost încărcat. Serverul nu mai are spațiu de stocare.
+shareUpload.failureServerFull#few	%lld fișiere nu au fost încărcate. Serverul nu mai are spațiu de stocare.
+shareUpload.failureServerFull#other	%lld de fișiere nu au fost încărcate. Serverul nu mai are spațiu de stocare.
+shareUpload.failureNetwork#one	%lld fișier nu a fost încărcat. Conexiunea a eșuat. Încearcă din nou când ești online.
+shareUpload.failureNetwork#few	%lld fișiere nu au fost încărcate. Conexiunea a eșuat. Încearcă din nou când ești online.
+shareUpload.failureNetwork#other	%lld de fișiere nu au fost încărcate. Conexiunea a eșuat. Încearcă din nou când ești online.
+shareUpload.failureOther#one	%lld fișier nu a putut fi încărcat.
+shareUpload.failureOther#few	%lld fișiere nu au putut fi încărcate.
+shareUpload.failureOther#other	%lld de fișiere nu au putut fi încărcate.
+shareUpload.notificationMoreNames	și încă %lld
+shareUpload.notificationRetry	Reîncearcă
+shareUpload.notificationHiddenPreview	Deschide NextExplorer pentru a vedea cum a decurs încărcarea.
+shareUpload.retryFailedTitle	Reîncercarea nu a reușit
+shareUpload.retryFailedBody	Deschide NextExplorer și partajează din nou fișierele.
+shareUpload.insufficientSpace	Nu există suficient spațiu liber pe acest dispozitiv pentru a pregăti aceste fișiere pentru încărcare.
 settings.uploadDefaultsRow	Fișiere partajate
 settings.uploadDefaultsFolder	Dosar implicit
 settings.uploadDefaultsFolderNone	Întreabă de fiecare dată
@@ -795,3 +820,31 @@ settings.uploadDefaultsWithoutAsking	Încarcă fără să întrebe
 settings.uploadDefaultsFooter	Fotografiile și fișierele pe care le partajezi cu NextExplorer din alte aplicații pornesc din acest dosar. Cu Încarcă fără să întrebe activat, ajung direct acolo.
 settings.uploadDefaultsClear	Întreabă de fiecare dată
 common.change	Schimbă
+shareUpload.sessionUnreadable	NextExplorer nu a putut citi autentificarea ta pe acest dispozitiv. Deschide NextExplorer o dată, apoi distribuie din nou.
+shareUpload.keepOpen	Ține această fereastră deschisă până se termină pregătirea.
+shareUpload.checking	Se verifică conexiunea la %@…
+shareUpload.openApp	Deschide NextExplorer
+shareUpload.openAppInstructions	Deschide NextExplorer din ecranul principal, apoi distribuie din nou.
+shareUpload.certificateRequired	Acest server necesită un certificat de client. Deschide NextExplorer, adaugă unul în Setări, apoi distribuie din nou.
+shareUpload.certificateRejected	Serverul a refuzat certificatul tău de client. Deschide NextExplorer, înlocuiește-l în Setări, apoi distribuie din nou.
+shareUpload.defaultFolderUnavailable	Folderul tău implicit nu mai este disponibil. Alege alt folder.
+shareUpload.failedItemsHeader	Aceste fișiere nu au putut fi pregătite:
+shareUpload.failedItemLine	%1$@: %2$@
+shareUpload.readyCount	Gata de încărcare: %lld
+shareUpload.uploadReady	Încarcă fișierele pregătite
+shareUpload.retryFailed	Reîncearcă fișierele eșuate
+shareUpload.fallbackItemName	Fișierul %lld
+shareUpload.causeCannotRead	Nu a putut fi citit.
+shareUpload.causeNotEnoughSpace	Nu există suficient spațiu liber pe acest dispozitiv.
+shareUpload.causeUnknown	Nu a putut fi pregătit.
+shareUpload.folderHint	Deschide selectorul de foldere.
+shareUpload.accountHint	Alege ce cont primește fișierele.
+error.timedOut	Serverul a răspuns prea greu. Acțiunea se poate totuși finaliza.
+error.changedOnServer	Acest fișier a fost modificat pe server după ce l-ai deschis.
+textPreview.conflictTitle	„%@” a fost modificat pe server
+textPreview.conflictMessage	Suprascrie-l cu versiunea ta sau reîncarcă fișierul și renunță la modificări. Versiunea înlocuită rămâne în istoricul versiunilor fișierului.
+textPreview.conflictOverwrite	Suprascrie
+textPreview.conflictReload	Reîncarcă
+offline.waitingForNetwork	Se va descărca când revii online
+browse.bulkFavoriteFailed	%1$lld din %2$lld au eșuat
+shareUpload.livePhotoNote	Live Photos se încarcă împreună cu videoclipul lor în mișcare.

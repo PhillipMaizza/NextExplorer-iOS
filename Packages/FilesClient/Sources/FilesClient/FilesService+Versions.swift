@@ -40,7 +40,7 @@ extension FilesService {
     /// `POST /api/versions/:id/copy` with `{ path, destination }`: a new file in `destination`,
     /// named after the version. Returns the new file's path.
     func copyVersion(serverURL: URL, path: String, versionID: String, destination: String) async throws -> String {
-        var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, "copy"), method: .post)
+        var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, "copy"), method: .post, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(VersionCopyBody(path: path, destination: destination))
         return try await sendReportingMessage(request, decoding: VersionCopyResponse.self).path
@@ -66,7 +66,7 @@ extension FilesService {
     private func sendVersionWrite(
         _ serverURL: URL, _ versionID: String, _ action: String?, method: HTTPMethod, body: some Encodable
     ) async throws {
-        var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, action), method: method)
+        var request = Self.makeRequest(url: Self.versionURL(serverURL, versionID, action), method: method, isMutation: true)
         request.setJSONContentType()
         request.httpBody = try Self.encode(body)
         let (data, response) = try await performSend(request)

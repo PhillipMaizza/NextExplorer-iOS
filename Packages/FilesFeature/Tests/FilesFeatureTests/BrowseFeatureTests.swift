@@ -432,10 +432,10 @@ struct BrowseFeatureTests {
         }
 
         await store.send(.textSaveTapped("hello world")) {
-            $0.isSavingTextContent = true
+            $0.savingTexts = ["notes.txt": "hello world"]
         }
-        await store.receive(\.textSaveResponse.success) {
-            $0.isSavingTextContent = false
+        await store.receive(\.textSaveResponse) {
+            $0.savingTexts = [:]
             $0.textContent = "hello world"
         }
     }
@@ -455,10 +455,10 @@ struct BrowseFeatureTests {
         }
 
         await store.send(.textSaveTapped("hello world")) {
-            $0.isSavingTextContent = true
+            $0.savingTexts = ["notes.txt": "hello world"]
         }
-        await store.receive(\.textSaveResponse.failure) {
-            $0.isSavingTextContent = false
+        await store.receive(\.textSaveResponse) {
+            $0.savingTexts = [:]
             $0.textSaveError = FilesClientError.server(statusCode: 500).userMessage
         }
     }
@@ -3172,10 +3172,12 @@ struct BrowseFeatureTransferTests {
             $0.phase = .loading
             $0.items = [cachedItem]
             $0.access = Self.offlineAccess
+            $0.isShowingCachePaint = true
         }
         await store.receive(\.itemsResponse.failure) {
             $0.phase = .loaded
             $0.dataSource = .cached(fetchedAt: fetchedAt)
+            $0.isShowingCachePaint = false
         }
         await store.receive(\.favoritesResponse)
         await store.receive(\.offlineAvailabilityComputed)
@@ -3227,12 +3229,14 @@ struct BrowseFeatureTransferTests {
             $0.phase = .loading
             $0.items = [cachedItem]
             $0.access = Self.offlineAccess
+            $0.isShowingCachePaint = true
         }
         #expect(store.state.dataSource == .live)
 
         await store.receive(\.itemsResponse.success) {
             $0.phase = .loaded
             $0.items = [freshItem]
+            $0.isShowingCachePaint = false
         }
         await store.receive(\.favoritesResponse)
         await store.receive(\.offlineAvailabilityComputed)

@@ -126,6 +126,19 @@ public extension AuthClient {
                     return credentials
                 }
             },
+            loadSession: {
+                try await onCookieQueue {
+                    let stored: StoredSessions
+                    do {
+                        stored = try cookieStore.loadStoredOrThrow()
+                    } catch {
+                        throw AuthClientError.keychain(String(describing: error))
+                    }
+                    guard let credentials = stored.active else { return nil }
+                    cookieStore.install(credentials)
+                    return credentials
+                }
+            },
             listSessions: {
                 await onCookieQueue { cookieStore.allSessions() }
             },
@@ -152,6 +165,37 @@ public extension AuthClient {
                 await onCookieQueue { cookieStore.clearAll() }
             }
         )
+    }
+}
+
+public extension AuthClient {
+    /// Moves the stored sessions and client certificates an older release left in the app's own
+    /// keychain group into the group the Share Extension reads. Call it once, early at launch,
+    /// so the extension never finds an empty keychain for a user who is signed in.
+    static func migrateKeychainIfNeeded() {
+        KeychainMigration.sharedGroup()
+        KeychainMigration.legacyMac()
+    }
+}
+
+/// The launch keychain migrations as separate steps, with the gate that holds keychain reads
+/// back while they run, for a caller that runs them off the main thread.
+public enum KeychainMigration {
+    /// Reads wait from now until `finish()`.
+    public static func begin() {
+        KeychainMigrationGate.shared.begin()
+    }
+
+    public static func finish() {
+        KeychainMigrationGate.shared.finish()
+    }
+
+    public static func sharedGroup() {
+        KeychainClient.migrateToSharedGroupIfNeeded()
+    }
+
+    public static func legacyMac() {
+        KeychainClient.migrateLegacyMacItemsIfNeeded()
     }
 }
 

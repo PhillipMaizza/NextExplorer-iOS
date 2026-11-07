@@ -152,12 +152,54 @@ struct UserManagementFeatureTests {
             $0.filesClient.updateUser = { _, _, _ in promoted }
         }
         await store.send(.userTapped("2"))
-        await store.send(.grantAdminTapped) { $0.isUpdatingRoles = true }
+        await store.send(.grantAdminTapped) { $0.userToGrantAdmin = user }
+        await store.send(.grantAdminConfirmed) {
+            $0.userToGrantAdmin = nil
+            $0.isUpdatingRoles = true
+        }
         await store.receive(\.rolesResponse) {
             $0.isUpdatingRoles = false
             $0.users[id: "2"] = promoted
             $0.toast = L10n.UserManagement.toastAdminGranted
         }
+    }
+
+    @Test
+    func grantAdminAsksForConfirmationAndNeverCallsTheServerUntilConfirmed() async {
+        let calls = LockIsolated(0)
+        let user = makeUser(id: "2")
+        let store = await bootedStore(users: [user]) {
+            $0.filesClient.updateUser = { _, _, _ in
+                calls.withValue { $0 += 1 }
+                throw FilesClientError.network("x")
+            }
+        }
+        await store.send(.userTapped("2"))
+        await store.send(.grantAdminTapped) { $0.userToGrantAdmin = user }
+        #expect(store.state.isUpdatingRoles == false)
+        #expect(calls.value == 0)
+    }
+
+    @Test
+    func cancellingTheGrantAdminConfirmationLeavesTheUserUntouched() async {
+        let user = makeUser(id: "2")
+        let store = await bootedStore(users: [user]) {
+            $0.filesClient.updateUser = { _, _, _ in Issue.record("must not call the server"); throw FilesClientError.network("x") }
+        }
+        await store.send(.userTapped("2"))
+        await store.send(.grantAdminTapped) { $0.userToGrantAdmin = user }
+        await store.send(.grantAdminCancelled) { $0.userToGrantAdmin = nil }
+        await store.send(.grantAdminConfirmed) // nothing pending, ignored
+        #expect(store.state.isUpdatingRoles == false)
+    }
+
+    @Test
+    func dismissingTheDetailDropsAPendingGrantAdminConfirmation() async {
+        let user = makeUser(id: "2")
+        let store = await bootedStore(users: [user])
+        await store.send(.userTapped("2"))
+        await store.send(.grantAdminTapped) { $0.userToGrantAdmin = user }
+        await store.send(.detailDismissed) { $0.userToGrantAdmin = nil }
     }
 
     @Test
@@ -178,7 +220,8 @@ struct UserManagementFeatureTests {
             }
         }
         await store.send(.userTapped("2"))
-        await store.send(.grantAdminTapped) { $0.isUpdatingRoles = true }
+        await store.send(.grantAdminTapped)
+        await store.send(.grantAdminConfirmed) { $0.isUpdatingRoles = true }
         await store.receive(\.rolesResponse) {
             $0.isUpdatingRoles = false
             $0.detailErrorMessage = "Admin access required."
@@ -375,6 +418,114 @@ struct UserManagementFeatureTests {
             $0.volumes[id: "v9"] = created
             $0.toast = L10n.UserManagement.toastVolumeSaved
         }
+    }
+
+    @Test
+    func removingAVolumeWhileASaveIsInFlightDoesNotCancelTheSave() async {
+        let created = UserVolume(id: "v9", userId: "2", label: "Media", path: "/srv/media", accessMode: .readonly)
+        let existing = UserVolume(id: "v1", userId: "2", label: "Projects", path: "/srv/projects", accessMode: .readwrite)
+        let gate = AsyncStream<Void>.makeStream()
+        let store = await bootedStore(users: [makeUser(id: "2")], volumesEnabled: true) {
+            $0.filesClient.userVolumes = { _, _ in [existing] }
+            $0.filesClient.addUserVolume = { _, _, _ in
+                for await _ in gate.stream {
+                    break
+                }
+                return created
+            }
+            $0.filesClient.removeUserVolume = { _, _, _ in }
+        }
+        await store.send(.userTapped("2"))
+        await store.receive(\.volumesResponse)
+        await store.send(.addVolumeTapped)
+        await store.send(.volumePathSelected("/srv/media"))
+        await store.send(.volumeLabelChanged("Media"))
+        await store.send(.volumeSubmitTapped)
+        #expect(store.state.volumeSheet?.isSubmitting == true)
+
+        await store.send(.removeVolumeTapped(existing))
+        await store.send(.removeVolumeConfirmed)
+        await store.receive(\.removeVolumeResponse)
+        gate.continuation.yield()
+
+        await store.receive(\.volumeResponse)
+        #expect(store.state.volumeSheet == nil)
+        #expect(store.state.volumes[id: "v9"] == created)
+        #expect(store.state.volumes[id: "v1"] == nil)
+    }
+
+    @Test
+    func aVolumeSaveFailureResetsTheSubmittingFlag() async {
+        let store = await bootedStore(users: [makeUser(id: "2")], volumesEnabled: true) {
+            $0.filesClient.addUserVolume = { _, _, _ in throw FilesClientError.network("down") }
+        }
+        await store.send(.userTapped("2"))
+        await store.receive(\.volumesResponse)
+        await store.send(.addVolumeTapped)
+        await store.send(.volumePathSelected("/srv/media"))
+        await store.send(.volumeLabelChanged("Media"))
+        await store.send(.volumeSubmitTapped)
+        await store.receive(\.volumeResponse)
+        #expect(store.state.volumeSheet?.isSubmitting == false)
+        #expect(store.state.volumeSheet?.errorMessage != nil)
+    }
+
+    @Test
+    func twoQuickVolumeRemovalsBothComplete() async {
+        let first = UserVolume(id: "v1", userId: "2", label: "A", path: "/a", accessMode: .readwrite)
+        let second = UserVolume(id: "v2", userId: "2", label: "B", path: "/b", accessMode: .readwrite)
+        let store = await bootedStore(users: [makeUser(id: "2")], volumesEnabled: true) {
+            $0.filesClient.userVolumes = { _, _ in [first, second] }
+            $0.filesClient.removeUserVolume = { _, _, _ in }
+        }
+        await store.send(.userTapped("2"))
+        await store.receive(\.volumesResponse)
+        await store.send(.removeVolumeTapped(first))
+        await store.send(.removeVolumeConfirmed)
+        await store.send(.removeVolumeTapped(second))
+        await store.send(.removeVolumeConfirmed)
+        await store.receive(\.removeVolumeResponse)
+        #expect(store.state.volumes.isEmpty)
+    }
+
+    @Test
+    func confirmingTheSameVolumeRemovalTwiceRunsASingleDelete() async {
+        let volume = UserVolume(id: "v1", userId: "2", label: "A", path: "/a", accessMode: .readwrite)
+        let completedDeletes = LockIsolated(0)
+        let gate = AsyncStream<Void>.makeStream()
+        let store = await bootedStore(users: [makeUser(id: "2")], volumesEnabled: true) {
+            $0.filesClient.userVolumes = { _, _ in [volume] }
+            $0.filesClient.removeUserVolume = { _, _, _ in
+                for await _ in gate.stream {
+                    break
+                }
+                try Task.checkCancellation()
+                // A real server answers 404 to a second DELETE of a volume that is already gone.
+                let isFirst = completedDeletes.withValue {
+                    $0 += 1
+                    return $0 == 1
+                }
+                if !isFirst {
+                    throw FilesClientError.server(statusCode: 404)
+                }
+            }
+        }
+        store.exhaustivity = .off
+        await store.send(.userTapped("2"))
+        await store.receive(\.volumesResponse)
+
+        await store.send(.removeVolumeTapped(volume))
+        await store.send(.removeVolumeConfirmed)
+        await store.send(.removeVolumeTapped(volume))
+        await store.send(.removeVolumeConfirmed)
+        gate.continuation.yield(())
+        gate.continuation.yield(())
+        await store.receive(\.removeVolumeResponse)
+        await store.finish()
+
+        #expect(store.state.volumes.isEmpty)
+        #expect(store.state.detailErrorMessage == nil)
+        #expect(completedDeletes.value == 1)
     }
 
     @Test

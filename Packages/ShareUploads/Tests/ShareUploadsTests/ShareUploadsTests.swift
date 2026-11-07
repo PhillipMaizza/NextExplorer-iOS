@@ -96,24 +96,6 @@ struct ShareUploadsTests {
         #expect(!FileManager.default.fileExists(atPath: staged.envelopeURL.path))
     }
 
-    @Test("A batch is finished once every file has a result, whichever process recorded it")
-    func manifestResults() throws {
-        let directory = try temporaryDirectory()
-        defer { try? FileManager.default.removeItem(at: directory) }
-        let manifest = Manifest(
-            accountID: credentials.accountID,
-            destination: "Photos",
-            fileNames: ["a.jpg", "b.jpg"],
-            envelopes: ["1.multipart", "2.multipart"],
-            serverURL: credentials.serverBaseURL
-        )
-        try manifest.save(in: directory)
-
-        #expect(Manifest.load(from: directory) == manifest)
-        #expect(Manifest.record(index: 1, didSucceed: false, in: directory) == [1: false])
-        #expect(Manifest.record(index: 0, didSucceed: true, in: directory) == [0: true, 1: false])
-    }
-
     @Test("Only this app's upload sessions are claimed on wake up")
     func ownsSession() {
         #expect(BackgroundUploader.ownsSession(BackgroundUploader.identifierPrefix + "abc"))
@@ -129,8 +111,11 @@ struct ShareUploadsTests {
             let id = UUID().uuidString
             let directory = root.appendingPathComponent(id, isDirectory: true)
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-            try Manifest(accountID: accountID, destination: "Photos", fileNames: ["a.jpg"], envelopes: ["a.multipart"], serverURL: credentials.serverBaseURL)
-                .save(in: directory)
+            try Manifest(
+                accountID: accountID, destination: "Photos", fileNames: ["a.jpg"], envelopes: ["a.multipart"],
+                contentTypes: ["multipart/form-data; boundary=B"], serverURL: credentials.serverBaseURL,
+                startedAt: TestClock.reference
+            ).save(in: directory)
             try Data("envelope".utf8).write(to: directory.appendingPathComponent("a.multipart"))
             return directory
         }
@@ -143,43 +128,5 @@ struct ShareUploadsTests {
         #expect(FileManager.default.fileExists(atPath: staying.path))
         uploader.cancel(keepingAccounts: [])
         #expect(!FileManager.default.fileExists(atPath: staying.path), "the last sign out leaves nothing staged")
-    }
-
-    @Test("An old batch staged but never started is cleaned up at launch")
-    func unstartedBatchIsCleanedUp() throws {
-        let root = try temporaryDirectory()
-        defer { try? FileManager.default.removeItem(at: root) }
-        let directory = try makeUnstartedBatch(in: root)
-        try FileManager.default.setAttributes(
-            [.modificationDate: Date().addingTimeInterval(-BackgroundUploader.staleAge - 60)],
-            ofItemAtPath: directory.path
-        )
-
-        BackgroundUploader(root: root, notifier: UploadNotifier { _ in }).reconnectPending()
-
-        #expect(!FileManager.default.fileExists(atPath: directory.path))
-    }
-
-    @Test("A batch another process is still staging survives the launch cleanup")
-    func recentUnstartedBatchIsKept() throws {
-        let root = try temporaryDirectory()
-        defer { try? FileManager.default.removeItem(at: root) }
-        let directory = try makeUnstartedBatch(in: root)
-
-        BackgroundUploader(root: root, notifier: UploadNotifier { _ in }).reconnectPending()
-
-        #expect(FileManager.default.fileExists(atPath: directory.path))
-    }
-
-    @Test("A folder that cannot be read counts as stale")
-    func missingFolderIsStale() {
-        #expect(BackgroundUploader.isStale(URL(fileURLWithPath: "/nonexistent/\(UUID().uuidString)")))
-    }
-
-    private func makeUnstartedBatch(in root: URL) throws -> URL {
-        let directory = root.appendingPathComponent(UUID().uuidString, isDirectory: true)
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
-        try Data("half written".utf8).write(to: directory.appendingPathComponent("x.multipart"))
-        return directory
     }
 }

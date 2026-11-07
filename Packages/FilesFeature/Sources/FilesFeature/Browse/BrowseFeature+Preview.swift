@@ -54,6 +54,7 @@ extension BrowseFeature {
     func loadTextContent(_ state: inout State, item: FileItem) -> Effect<Action> {
         state.textContent = nil
         state.textSaveError = nil
+        state.textSaveConflict = nil
         state.textPhase = .loading
         let serverURL = state.serverURL
         let filesClient = filesClient
@@ -83,14 +84,21 @@ extension BrowseFeature {
     }
 
     func confirmTextSave(_ state: inout State, newContent: String) -> Effect<Action> {
-        guard !state.isSavingTextContent, let item = state.previewItem else { return .none }
-        state.isSavingTextContent = true
+        guard let item = state.previewItem, state.savingTexts[item.id] == nil else { return .none }
+        if state.textSaveConflict != nil {
+            state.textSaveConflict = newContent
+            state.isTextSaveConflictPresented = true
+            return .none
+        }
+        state.savingTexts[item.id] = newContent
         state.textSaveError = nil
         let serverURL = state.serverURL
         let filesClient = filesClient
         let path = item.id
+        // Never cancelled: once the PUT is sent the server may apply it, so dropping the answer would
+        // leave the save state unresolved. Closing or switching the preview only stops showing it.
         return .run { send in
-            try await send(.textSaveResponse(apiResult {
+            try await send(.textSaveResponse(path: path, result: apiResult {
                 try await filesClient.saveTextContent(serverURL, path, newContent)
                 return newContent
             }))

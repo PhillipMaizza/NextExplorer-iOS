@@ -90,12 +90,32 @@ public struct AppFeature {
     @Dependency(\.previewCacheStore) var previewCacheStore
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.offlineFileStore) var offlineFileStore
+    @Dependency(\.textEditorETagStore) var textEditorETagStore
+    @Dependency(\.pendingAccountWipes) var pendingAccountWipes
     @Dependency(\.sessionScratchStore) var sessionScratchStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
     @Dependency(\.uploadDefaults) var uploadDefaults
     @Dependency(\.shareUploads) var shareUploads
 
     public init() {}
+
+    private var accountCacheWipe: AccountCacheWipe {
+        AccountCacheWipe(
+            directoryCacheStore: directoryCacheStore,
+            jsonCacheStore: jsonCacheStore,
+            previewCacheStore: previewCacheStore,
+            offlineFileStore: offlineFileStore,
+            thumbnailCache: thumbnailCache,
+            textEditorETagStore: textEditorETagStore,
+            pendingWipes: pendingAccountWipes
+        )
+    }
+
+    /// The second pass of an account wipe, run once the account's screens are gone.
+    private var finishAccountWipes: Effect<Action> {
+        let accountCacheWipe = accountCacheWipe
+        return .run { _ in accountCacheWipe.finishPending() }
+    }
 
     public var body: some ReducerOf<Self> {
         Scope(state: \.destination, action: \.destination) {
@@ -140,6 +160,7 @@ public struct AppFeature {
                 let authClient = authClient
                 return .merge(
                     refreshAccounts,
+                    finishAccountWipes,
                     .run { send in
                         do {
                             let user = try await authClient.me(credentials.serverBaseURL)
@@ -168,7 +189,7 @@ public struct AppFeature {
                 }
                 return refreshAccounts
 
-            case let .sessionValidationResponse(.failure(error), _):
+            case let .sessionValidationResponse(.failure(error), credentials):
                 // Only a real auth rejection tears down the optimistic session; a network
                 // hiccup or a non-auth server error leaves it in place for the next request
                 // to sort out.
@@ -181,18 +202,25 @@ public struct AppFeature {
                 // The active account is invalid: drop it and fall through to whatever account
                 // remains (or the login screen when it was the last one).
                 let authClient = authClient
+                let accountCacheWipe = accountCacheWipe
+                let expiredAccountID = state.currentAccountID ?? credentials.accountID
                 return .run { send in
-                    await send(.activeAccountTornDown(authClient.clearActiveSession()))
+                    let next = await authClient.clearActiveSession()
+                    accountCacheWipe(expiredAccountID)
+                    await send(.activeAccountTornDown(next))
                 }
 
             case .sessionExpiryDetected:
                 if state.sessionDidExpire {
                     state.$sessionDidExpire.withLock { $0 = false }
                 }
-                guard case .authenticated = state.destination else { return .none }
+                guard let expiredAccountID = state.currentAccountID else { return .none }
                 let authClient = authClient
+                let accountCacheWipe = accountCacheWipe
                 return .run { send in
-                    await send(.activeAccountTornDown(authClient.clearActiveSession()))
+                    let next = await authClient.clearActiveSession()
+                    accountCacheWipe(expiredAccountID)
+                    await send(.activeAccountTornDown(next))
                 }
 
             case let .activeAccountTornDown(next):
@@ -256,6 +284,7 @@ public struct AppFeature {
                 directoryCacheStore.clearAll()
                 jsonCacheStore.clearAll()
                 thumbnailCache.clearMemory()
+                textEditorETagStore.clearAll()
                 state.didAuthenticateFromLogin = true
                 state.destination = .authenticated(
                     AuthenticatedFeature.State(serverURL: serverURL, user: user)
@@ -290,7 +319,7 @@ public struct AppFeature {
                 // waits for the sheet (`addAccountSheetDismissed`).
                 let prune = state.addAccount == nil ? pruneClientCertificates() : .none
                 if credentials.accountID == state.currentAccountID {
-                    return .merge(refreshAccounts, prune)
+                    return .merge(refreshAccounts, prune, finishAccountWipes)
                 }
                 // Switched accounts (or signed the active one out and fell through to the next):
                 // mount the new account without clearing caches, so both accounts' caches survive.
@@ -411,6 +440,8 @@ public struct AppFeature {
         let thumbnailCache = thumbnailCache
         let offlineFileStore = offlineFileStore
         let sessionScratchStore = sessionScratchStore
+        let textEditorETagStore = textEditorETagStore
+        let pendingAccountWipes = pendingAccountWipes
         let clientCertificateClient = clientCertificateClient
         let uploadDefaults = uploadDefaults
         let shareUploads = shareUploads
@@ -423,8 +454,12 @@ public struct AppFeature {
                 jsonCacheStore.clearAll()
                 try? previewCacheStore.clear()
                 thumbnailCache.clearMemory()
+                textEditorETagStore.clearAll()
                 offlineFileStore.removeAll()
                 sessionScratchStore.purge(.everything)
+                for accountID in pendingAccountWipes.accounts() {
+                    pendingAccountWipes.remove(accountID)
+                }
                 if removesClientCertificates {
                     await clientCertificateClient.removeAll([])
                     uploadDefaults.retain([])
