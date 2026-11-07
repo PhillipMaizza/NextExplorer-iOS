@@ -4,6 +4,7 @@ import CoreModels
 import FilesClient
 import FolderPickerFeature
 import Foundation
+import NetworkClient
 import ShareUploads
 
 /// The Share Extension's one screen: what is being uploaded, to which account and folder, and the
@@ -39,6 +40,8 @@ public struct ShareUploadFeature {
         public var itemCount = 0
         public var preparedCount = 0
         public var credentials: SessionCredentials?
+        /// Every signed in account, to pick which one receives the files.
+        public var accounts: [SessionCredentials] = []
         /// `""` until a folder is chosen: the server refuses uploads to the root.
         public var destination = ""
         /// Settings' "Upload Without Asking" for this account: uploads once the connection checks out.
@@ -51,9 +54,17 @@ public struct ShareUploadFeature {
             phase == .ready && credentials != nil && !destination.isEmpty
         }
 
-        /// "phillip on files.example.com".
         public var accountName: String {
-            guard let credentials else { return "" }
+            credentials.map(Self.name(for:)) ?? ""
+        }
+
+        /// Several accounts are signed in: the account row becomes a picker.
+        public var canChooseAccount: Bool {
+            accounts.count > 1 && [.checking, .ready, .signedOut, .certificateRequired, .certificateRejected].contains(phase)
+        }
+
+        /// "phillip · files.example.com".
+        public static func name(for credentials: SessionCredentials) -> String {
             let host = credentials.serverBaseURL.host() ?? credentials.serverBaseURL.absoluteString
             guard let username = credentials.username, !username.isEmpty else { return host }
             return "\(username) · \(host)"
@@ -63,6 +74,8 @@ public struct ShareUploadFeature {
     public enum Action: Equatable {
         case onAppear
         case sessionLoaded(SessionCredentials?, UploadDefaults)
+        case accountsLoaded([SessionCredentials])
+        case accountSelected(String)
         case connectionChecked(ConnectionCheck)
         case chooseFolderTapped
         case folderPicker(PresentationAction<DestinationPickerFeature.Action>)
@@ -93,10 +106,34 @@ public struct ShareUploadFeature {
     @Dependency(\.uploadDefaults) var uploadDefaults
     @Dependency(\.sharedItems) var sharedItems
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.cookieStorage) var cookieStorage
 
     public init() {}
 
-    private enum CancelID { case upload }
+    private enum CancelID { case upload, connection }
+
+    /// Checked before anything is staged, the one tap path included: an expired session or a
+    /// certificate problem would otherwise leave the uploads failing in the background.
+    private func checkConnection(_ credentials: SessionCredentials) -> Effect<Action> {
+        let authClient = authClient
+        return .run { send in
+            let check: ConnectionCheck
+            do {
+                _ = try await authClient.me(credentials.serverBaseURL)
+                check = .usable
+            } catch AuthClientError.sessionExpired {
+                check = .signedOut
+            } catch AuthClientError.clientCertificateRequired {
+                check = .certificateRequired
+            } catch AuthClientError.clientCertificateRejected {
+                check = .certificateRejected
+            } catch {
+                check = .usable
+            }
+            await send(.connectionChecked(check))
+        }
+        .cancellable(id: CancelID.connection, cancelInFlight: true)
+    }
 
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
@@ -113,8 +150,29 @@ public struct ShareUploadFeature {
                 return .run { send in
                     let credentials = await authClient.restoreSession()
                     let defaults = credentials.map { uploadDefaults.load($0.accountID) } ?? UploadDefaults()
+                    await send(.accountsLoaded(authClient.listSessions()))
                     await send(.sessionLoaded(credentials, defaults))
                 }
+
+            case let .accountsLoaded(accounts):
+                state.accounts = accounts
+                return .none
+
+            case let .accountSelected(accountID):
+                guard state.canChooseAccount, accountID != state.credentials?.accountID,
+                      let credentials = state.accounts.first(where: { $0.accountID == accountID })
+                else { return .none }
+                let defaults = uploadDefaults.load(accountID)
+                state.credentials = credentials
+                state.destination = defaults.folderPath ?? ""
+                // Picking an account is a choice in itself: it never uploads on its own.
+                state.shouldUploadWithoutAsking = false
+                state.phase = .checking
+                // This extension's own cookie jar only: the app's active account stays as it is.
+                if let cookie = credentials.httpCookie {
+                    cookieStorage.setCookie(cookie)
+                }
+                return checkConnection(credentials)
 
             case let .sessionLoaded(credentials, defaults):
                 guard let credentials else {
@@ -125,25 +183,7 @@ public struct ShareUploadFeature {
                 state.destination = defaults.folderPath ?? ""
                 state.shouldUploadWithoutAsking = defaults.directFolder != nil
                 state.phase = .checking
-                // Checked before anything is staged, the one tap path included: an expired session
-                // or a certificate problem would otherwise leave the uploads failing in the background.
-                let authClient = authClient
-                return .run { send in
-                    let check: ConnectionCheck
-                    do {
-                        _ = try await authClient.me(credentials.serverBaseURL)
-                        check = .usable
-                    } catch AuthClientError.sessionExpired {
-                        check = .signedOut
-                    } catch AuthClientError.clientCertificateRequired {
-                        check = .certificateRequired
-                    } catch AuthClientError.clientCertificateRejected {
-                        check = .certificateRejected
-                    } catch {
-                        check = .usable
-                    }
-                    await send(.connectionChecked(check))
-                }
+                return checkConnection(credentials)
 
             case let .connectionChecked(check):
                 guard state.phase == .checking else { return .none }

@@ -29,7 +29,7 @@ public struct ShareUploadView: View {
 
     private var content: some View {
         #if os(macOS)
-            ShareUploadMacForm(store: store)
+            ShareUploadMacView(store: store)
         #else
             phoneBody
         #endif
@@ -46,10 +46,12 @@ public struct ShareUploadView: View {
                         onClose: { store.send(.cancelTapped) }
                     )
                     ShareUploadStatus(store: store)
-                    if store.credentials != nil, [.checking, .ready, .preparing, .started].contains(store.phase) {
+                    if store.credentials != nil, store.canChooseAccount || [.checking, .ready, .preparing, .started].contains(store.phase) {
                         section(L10n.ShareUpload.accountLabel) {
-                            Text(store.accountName).type(.body2(.regular)).dsCard()
+                            ShareUploadAccountMenu(store: store)
                         }
+                    }
+                    if store.credentials != nil, [.checking, .ready, .preparing, .started].contains(store.phase) {
                         section(L10n.ShareUpload.folderLabel) {
                             ShareUploadFolderButton(store: store)
                         }
@@ -111,6 +113,43 @@ struct ShareUploadStatus: View {
     }
 }
 
+/// The account receiving the files: a menu of every signed in account when there are several.
+struct ShareUploadAccountMenu: View {
+    let store: StoreOf<ShareUploadFeature>
+
+    var body: some View {
+        if store.canChooseAccount {
+            Menu {
+                ForEach(store.accounts, id: \.accountID) { account in
+                    Button {
+                        store.send(.accountSelected(account.accountID))
+                    } label: {
+                        if account.accountID == store.credentials?.accountID {
+                            Label {
+                                Text(ShareUploadFeature.State.name(for: account))
+                            } icon: {
+                                IconKit.checkmark
+                            }
+                        } else {
+                            Text(ShareUploadFeature.State.name(for: account))
+                        }
+                    }
+                }
+            } label: {
+                HStack(spacing: .space8) {
+                    Text(store.accountName).type(.body2(.regular)).lineLimit(1).truncationMode(.middle)
+                    Spacer()
+                    IconKit.chevronUpDown.foregroundStyle(Color.secondaryDS)
+                }
+                .dsCard()
+            }
+            .buttonStyle(DSHapticButtonStyle())
+        } else {
+            Text(store.accountName).type(.body2(.regular)).frame(maxWidth: .infinity, alignment: .leading).dsCard()
+        }
+    }
+}
+
 /// The chosen folder, tapping it opens the folder picker.
 struct ShareUploadFolderButton: View {
     let store: StoreOf<ShareUploadFeature>
@@ -135,62 +174,10 @@ struct ShareUploadFolderButton: View {
     }
 }
 
-#if os(macOS)
-    /// The Mac's form: the same rows as the phone card, Return uploads, Esc closes.
-    struct ShareUploadMacForm: View {
-        let store: StoreOf<ShareUploadFeature>
-
-        var body: some View {
-            MacFormSheet(
-                title: L10n.ShareUpload.title,
-                message: message,
-                confirmTitle: L10n.ShareUpload.upload,
-                isConfirmEnabled: store.canUpload,
-                isWorking: store.phase == .preparing,
-                errorMessage: errorMessage,
-                cancelTitle: store.phase == .started ? L10n.Common.close : L10n.Common.cancel,
-                onCancel: { store.send(.cancelTapped) },
-                onConfirm: { store.send(.uploadTapped) }
-            ) {
-                if store.credentials != nil, store.phase != .signedOut {
-                    LabeledContent(L10n.ShareUpload.accountLabel) { Text(store.accountName) }
-                        .padding(.bottom, .space12)
-                    LabeledContent(L10n.ShareUpload.folderLabel) {
-                        HStack {
-                            Text(store.destination.isEmpty ? "" : store.destination).lineLimit(1).truncationMode(.head)
-                            Button(L10n.ShareUpload.folderChoose) { store.send(.chooseFolderTapped) }
-                                .disabled(store.phase != .ready)
-                        }
-                    }
-                }
-            }
-        }
-
-        private var message: String? {
-            switch store.phase {
-            case .checking, .ready: L10n.ShareUpload.itemCount(store.itemCount)
-            case .preparing: L10n.ShareUpload.preparing(min(store.preparedCount + 1, store.itemCount), store.itemCount)
-            case .started: L10n.ShareUpload.started
-            case .loading, .signedOut, .nothingToUpload, .failed, .certificateRequired, .certificateRejected: nil
-            }
-        }
-
-        private var errorMessage: String? {
-            switch store.phase {
-            case .signedOut: L10n.ShareUpload.signedOut
-            case .nothingToUpload: L10n.ShareUpload.nothingToUpload
-            case .failed: L10n.ShareUpload.failed
-            case .certificateRequired: L10n.Error.clientCertificateRequired
-            case .certificateRejected: L10n.Error.clientCertificateRejected
-            case .loading, .checking, .ready, .preparing, .started: nil
-            }
-        }
-    }
-#endif
-
 extension StoreOf<ShareUploadFeature> {
-    static func preview(_ phase: ShareUploadFeature.Phase, destination: String = "Photos/2026") -> StoreOf<ShareUploadFeature> {
+    static func preview(_ phase: ShareUploadFeature.Phase, destination: String = "Photos/2026", accounts: Int = 1) -> StoreOf<ShareUploadFeature> {
         var state = ShareUploadFeature.State()
+        state.accounts = Array([SessionCredentials.preview, .previewSecond].prefix(accounts))
         state.phase = phase
         state.itemCount = 12
         state.preparedCount = 4
@@ -203,6 +190,18 @@ extension StoreOf<ShareUploadFeature> {
 }
 
 extension SessionCredentials {
+    static let previewSecond = SessionCredentials(
+        serverBaseURL: URL(string: "https://home.example.org")!,
+        authMode: .local,
+        cookieName: "connect.sid",
+        cookieValue: "preview",
+        cookieDomain: "home.example.org",
+        cookiePath: "/",
+        cookieIsSecure: true,
+        expiresAt: nil,
+        username: "family"
+    )
+
     static let preview = SessionCredentials(
         serverBaseURL: URL(string: "https://files.example.com")!,
         authMode: .local,
@@ -217,6 +216,7 @@ extension SessionCredentials {
 }
 
 #Preview("Ready") { ShareUploadView(store: .preview(.ready)) }
+#Preview("Two accounts") { ShareUploadView(store: .preview(.ready, accounts: 2)) }
 #Preview("No folder yet") { ShareUploadView(store: .preview(.ready, destination: "")) }
 #Preview("Preparing") { ShareUploadView(store: .preview(.preparing)) }
 #Preview("Started") { ShareUploadView(store: .preview(.started)) }
@@ -236,6 +236,14 @@ extension SessionCredentials {
         ) { phase in
             ShareUploadStatus(store: .preview(phase))
         }
+    }
+    .padding(.space24)
+}
+
+#Preview("Account menu") {
+    VStack(spacing: .space16) {
+        ShareUploadAccountMenu(store: .preview(.ready, accounts: 2))
+        ShareUploadAccountMenu(store: .preview(.ready))
     }
     .padding(.space24)
 }

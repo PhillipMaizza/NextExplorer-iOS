@@ -18,9 +18,9 @@ import SwiftUI
 
 #if os(macOS)
     private enum Metrics {
-        /// The share sheet opens at this size before SwiftUI reports the form's own; a zero size
-        /// showed nothing at all.
-        static let initialSize = NSSize(width: 480, height: 300)
+        /// The share sheet's fixed size (a zero size showed nothing at all). The form fills it:
+        /// header at the top, buttons at the bottom.
+        static let initialSize = NSSize(width: 460, height: 320)
     }
 #endif
 
@@ -48,10 +48,6 @@ final class ShareViewController: PlatformViewController {
         }
         self.store = store
         let host = PlatformHostingController(rootView: ShareUploadView(store: store))
-        #if os(macOS)
-            // The sheet follows the form's height as rows and messages come and go.
-            host.sizingOptions = [.preferredContentSize]
-        #endif
         addChild(host)
         host.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(host.view)
@@ -64,13 +60,6 @@ final class ShareViewController: PlatformViewController {
     }
 
     #if os(macOS)
-        override func preferredContentSizeDidChange(for viewController: NSViewController) {
-            super.preferredContentSizeDidChange(for: viewController)
-            let size = viewController.preferredContentSize
-            if size.width > 0, size.height > 0 {
-                preferredContentSize = size
-            }
-        }
     #endif
 
     private func close(completed: Bool) {

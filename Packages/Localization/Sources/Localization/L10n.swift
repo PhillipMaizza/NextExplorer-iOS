@@ -181,6 +181,7 @@ public enum L10n {
     public enum Common {
         public static var back: String { tr("common.back") }  // "Back"
         public static var cancel: String { tr("common.cancel") }  // "Cancel"
+        public static var change: String { tr("common.change") }  // "Change"
         public static var clear: String { tr("common.clear") }  // "Clear"
         public static var close: String { tr("common.close") }  // "Close"
         public static var copied: String { tr("common.copied") }  // "Copied"

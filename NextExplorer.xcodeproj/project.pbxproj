@@ -61,13 +61,9 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				NextExplorer.entitlements,
-				"NextExplorer-macOS.entitlements",
 			);
 			platformFiltersByRelativePath = {
-				LaunchScreen.storyboard = (
-					ios,
-				);
+				LaunchScreen.storyboard = (ios, );
 			};
 			target = 292E4697303C3E8F003CDCA4 /* NextExplorer */;
 		};
@@ -75,8 +71,6 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
-				NextExplorerShare.entitlements,
-				"NextExplorerShare-macOS.entitlements",
 			);
 			target = 9C0FCA8E0E50BCE24FF9B56A /* NextExplorerShare */;
 		};
@@ -101,8 +95,6 @@
 		};
 		AA57C0DE0000000000000102 /* NextExplorerUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-			);
 			path = NextExplorerUITests;
 			sourceTree = "<group>";
 		};
@@ -289,16 +281,16 @@
 			mainGroup = 292E468F303C3E8F003CDCA4;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				974951B43C4BA4F4EB913E77 /* XCLocalSwiftPackageReference "CoreModels" */,
-				4CB0BCF0DA0D9B06379E20D7 /* XCLocalSwiftPackageReference "Keychain" */,
-				328B4D9CFDCDDEF5EA68C834 /* XCLocalSwiftPackageReference "NetworkClient" */,
-				2262B3C431D1F80C73A29A8A /* XCLocalSwiftPackageReference "AuthClient" */,
-				122B8DE38658B12B0855A82A /* XCLocalSwiftPackageReference "AuthFeature" */,
-				90FCD94F32F3B857A85228E6 /* XCLocalSwiftPackageReference "AppFeature" */,
-				35246AB1105AFACBA9A20B9E /* XCLocalSwiftPackageReference "DesignSystem" */,
-				AA57C0DE0000000000000001 /* XCLocalSwiftPackageReference "AppStorageKeys" */,
-				AA57C0DE000000000000010D /* XCLocalSwiftPackageReference "Localization" */,
-				5042917505AB8B1D53CD5298 /* XCLocalSwiftPackageReference "ShareExtensionFeature" */,
+				974951B43C4BA4F4EB913E77 /* XCLocalSwiftPackageReference "Packages/CoreModels" */,
+				4CB0BCF0DA0D9B06379E20D7 /* XCLocalSwiftPackageReference "Packages/Keychain" */,
+				328B4D9CFDCDDEF5EA68C834 /* XCLocalSwiftPackageReference "Packages/NetworkClient" */,
+				2262B3C431D1F80C73A29A8A /* XCLocalSwiftPackageReference "Packages/AuthClient" */,
+				122B8DE38658B12B0855A82A /* XCLocalSwiftPackageReference "Packages/AuthFeature" */,
+				90FCD94F32F3B857A85228E6 /* XCLocalSwiftPackageReference "Packages/AppFeature" */,
+				35246AB1105AFACBA9A20B9E /* XCLocalSwiftPackageReference "Packages/DesignSystem" */,
+				AA57C0DE0000000000000001 /* XCLocalSwiftPackageReference "Packages/AppStorageKeys" */,
+				AA57C0DE000000000000010D /* XCLocalSwiftPackageReference "Packages/Localization" */,
+				5042917505AB8B1D53CD5298 /* XCLocalSwiftPackageReference "Packages/ShareExtensionFeature" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 292E4699303C3E8F003CDCA4 /* Products */;
@@ -394,7 +386,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Stamp CFBundleVersion with the git commit count so every build gets a\n# unique, monotonically increasing build number without editing the project.\nbuild_number=$(git -C \"$SRCROOT\" rev-list --count HEAD 2>/dev/null)\nif [ -z \"$build_number\" ]; then\n  echo \"warning: not a git checkout, keeping CURRENT_PROJECT_VERSION=$CURRENT_PROJECT_VERSION\"\n  exit 0\nfi\nplist=\"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nif [ -f \"$plist\" ]; then\n  /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\n  echo \"Set build number to $build_number\"\nfi\n";
+			shellScript = "# Stamp CFBundleVersion with the git commit count so every build gets a\n# unique, monotonically increasing build number without editing the project.\nbuild_number=$(git -C \"$SRCROOT\" rev-list --count HEAD 2>/dev/null)\nif [ -z \"$build_number\" ]; then\n  echo \"warning: not a git checkout, keeping CURRENT_PROJECT_VERSION=$CURRENT_PROJECT_VERSION\"\n  exit 0\nfi\nplist=\"$TARGET_BUILD_DIR/$INFOPLIST_PATH\"\nif [ -f \"$plist\" ]; then\n  /usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $build_number\" \"$plist\"\n  echo \"Set build number to $build_number\"\n  # The app copies this bundle only when the bundle itself looks changed; editing a file inside\n  # it does not count, which left the app with the previous build number embedded.\n  touch \"$TARGET_BUILD_DIR/$WRAPPER_NAME\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -823,43 +815,43 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		122B8DE38658B12B0855A82A /* XCLocalSwiftPackageReference "AuthFeature" */ = {
+		122B8DE38658B12B0855A82A /* XCLocalSwiftPackageReference "Packages/AuthFeature" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/AuthFeature;
 		};
-		2262B3C431D1F80C73A29A8A /* XCLocalSwiftPackageReference "AuthClient" */ = {
+		2262B3C431D1F80C73A29A8A /* XCLocalSwiftPackageReference "Packages/AuthClient" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/AuthClient;
 		};
-		328B4D9CFDCDDEF5EA68C834 /* XCLocalSwiftPackageReference "NetworkClient" */ = {
+		328B4D9CFDCDDEF5EA68C834 /* XCLocalSwiftPackageReference "Packages/NetworkClient" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/NetworkClient;
 		};
-		35246AB1105AFACBA9A20B9E /* XCLocalSwiftPackageReference "DesignSystem" */ = {
+		35246AB1105AFACBA9A20B9E /* XCLocalSwiftPackageReference "Packages/DesignSystem" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/DesignSystem;
 		};
-		4CB0BCF0DA0D9B06379E20D7 /* XCLocalSwiftPackageReference "Keychain" */ = {
+		4CB0BCF0DA0D9B06379E20D7 /* XCLocalSwiftPackageReference "Packages/Keychain" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/Keychain;
 		};
-		5042917505AB8B1D53CD5298 /* XCLocalSwiftPackageReference "ShareExtensionFeature" */ = {
+		5042917505AB8B1D53CD5298 /* XCLocalSwiftPackageReference "Packages/ShareExtensionFeature" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/ShareExtensionFeature;
 		};
-		90FCD94F32F3B857A85228E6 /* XCLocalSwiftPackageReference "AppFeature" */ = {
+		90FCD94F32F3B857A85228E6 /* XCLocalSwiftPackageReference "Packages/AppFeature" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/AppFeature;
 		};
-		974951B43C4BA4F4EB913E77 /* XCLocalSwiftPackageReference "CoreModels" */ = {
+		974951B43C4BA4F4EB913E77 /* XCLocalSwiftPackageReference "Packages/CoreModels" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/CoreModels;
 		};
-		AA57C0DE0000000000000001 /* XCLocalSwiftPackageReference "AppStorageKeys" */ = {
+		AA57C0DE0000000000000001 /* XCLocalSwiftPackageReference "Packages/AppStorageKeys" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/AppStorageKeys;
 		};
-		AA57C0DE000000000000010D /* XCLocalSwiftPackageReference "Localization" */ = {
+		AA57C0DE000000000000010D /* XCLocalSwiftPackageReference "Packages/Localization" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = Packages/Localization;
 		};
@@ -868,37 +860,37 @@
 /* Begin XCSwiftPackageProductDependency section */
 		97E4FE95F00CF38552CBEFCC /* ShareExtensionFeature */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 5042917505AB8B1D53CD5298 /* XCLocalSwiftPackageReference "ShareExtensionFeature" */;
+			package = 5042917505AB8B1D53CD5298 /* XCLocalSwiftPackageReference "Packages/ShareExtensionFeature" */;
 			productName = ShareExtensionFeature;
 		};
 		A67BD154B7CFF0B05EB44CD5 /* AppFeature */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 90FCD94F32F3B857A85228E6 /* XCLocalSwiftPackageReference "AppFeature" */;
+			package = 90FCD94F32F3B857A85228E6 /* XCLocalSwiftPackageReference "Packages/AppFeature" */;
 			productName = AppFeature;
 		};
 		AA57C0DE0000000000000002 /* AppStorageKeys */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = AA57C0DE0000000000000001 /* XCLocalSwiftPackageReference "AppStorageKeys" */;
+			package = AA57C0DE0000000000000001 /* XCLocalSwiftPackageReference "Packages/AppStorageKeys" */;
 			productName = AppStorageKeys;
 		};
 		AA57C0DE000000000000010B /* CoreModels */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 974951B43C4BA4F4EB913E77 /* XCLocalSwiftPackageReference "CoreModels" */;
+			package = 974951B43C4BA4F4EB913E77 /* XCLocalSwiftPackageReference "Packages/CoreModels" */;
 			productName = CoreModels;
 		};
 		AA57C0DE000000000000010E /* Localization */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = AA57C0DE000000000000010D /* XCLocalSwiftPackageReference "Localization" */;
+			package = AA57C0DE000000000000010D /* XCLocalSwiftPackageReference "Packages/Localization" */;
 			productName = Localization;
 		};
 		EFD970C42E1F1E6EDE43FC98 /* DesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 35246AB1105AFACBA9A20B9E /* XCLocalSwiftPackageReference "DesignSystem" */;
+			package = 35246AB1105AFACBA9A20B9E /* XCLocalSwiftPackageReference "Packages/DesignSystem" */;
 			productName = DesignSystem;
 		};
 		F63A0536B54B5F10147AD6AF /* DesignSystem */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 35246AB1105AFACBA9A20B9E /* XCLocalSwiftPackageReference "DesignSystem" */;
+			package = 35246AB1105AFACBA9A20B9E /* XCLocalSwiftPackageReference "Packages/DesignSystem" */;
 			productName = DesignSystem;
 		};
 /* End XCSwiftPackageProductDependency section */

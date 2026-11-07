@@ -14,6 +14,7 @@ let package = Package(
         .package(path: "../FilesClient"),
         .package(path: "../FolderPickerFeature"),
         .package(path: "../Localization"),
+        .package(path: "../NetworkClient"),
         .package(path: "../ShareUploads"),
         .package(url: "https://github.com/pointfreeco/swift-composable-architecture", from: "1.17.0"),
     ],
@@ -27,6 +28,7 @@ let package = Package(
                 "FilesClient",
                 "FolderPickerFeature",
                 "Localization",
+                "NetworkClient",
                 "ShareUploads",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
@@ -36,6 +38,7 @@ let package = Package(
             name: "ShareExtensionFeatureTests",
             dependencies: [
                 "ShareExtensionFeature",
+                .product(name: "NetworkClient", package: "NetworkClient"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]

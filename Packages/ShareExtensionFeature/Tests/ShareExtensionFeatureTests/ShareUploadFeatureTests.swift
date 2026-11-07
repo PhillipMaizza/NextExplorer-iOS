@@ -2,6 +2,7 @@ import AuthClient
 import ComposableArchitecture
 import CoreModels
 import Foundation
+import NetworkClient
 @testable import ShareExtensionFeature
 import ShareUploads
 import Testing
@@ -27,6 +28,7 @@ struct ShareUploadFeatureTests {
                 return count
             }
             $0.authClient.restoreSession = { credentials }
+            $0.authClient.listSessions = { credentials.map { [$0] } ?? [] }
             $0.authClient.me = { _ in User(id: "1", username: "phillip", email: nil, roles: []) }
             $0.uploadDefaults = .inMemory(credentials.map { [$0.accountID: defaults] } ?? [:])
             $0.continuousClock = clock
@@ -111,6 +113,7 @@ struct ShareUploadFeatureTests {
         } withDependencies: {
             $0.sharedItems.count = { 1 }
             $0.authClient.restoreSession = { .preview }
+            $0.authClient.listSessions = { [.preview] }
             $0.authClient.me = { _ in throw AuthClientError.sessionExpired }
             $0.uploadDefaults = .inMemory()
         }
@@ -138,6 +141,7 @@ struct ShareUploadFeatureTests {
             $0.sharedItems.count = { 2 }
             $0.sharedItems.upload = { _, _, _ in throw CocoaError(.fileReadUnknown) }
             $0.authClient.restoreSession = { .preview }
+            $0.authClient.listSessions = { [.preview] }
             $0.authClient.me = { _ in User(id: "1", username: "phillip", email: nil, roles: []) }
             $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos")])
         }
@@ -179,6 +183,7 @@ struct ShareUploadFeatureTests {
                 return 1
             }
             $0.authClient.restoreSession = { .preview }
+            $0.authClient.listSessions = { [.preview] }
             $0.authClient.me = { _ in throw error }
             $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true)])
         }
@@ -204,6 +209,7 @@ struct ShareUploadFeatureTests {
                 return 1
             }
             $0.authClient.restoreSession = { .preview }
+            $0.authClient.listSessions = { [.preview] }
             $0.authClient.me = { _ in throw AuthClientError.network("offline") }
             $0.uploadDefaults = .inMemory([SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos", shouldUploadWithoutAsking: true)])
             $0.continuousClock = ImmediateClock()
@@ -230,6 +236,7 @@ struct ShareUploadFeatureTests {
                 return 1
             }
             $0.authClient.restoreSession = { .preview }
+            $0.authClient.listSessions = { [.preview] }
             $0.authClient.me = { _ in
                 try await serverClock.sleep(for: .seconds(1))
                 throw AuthClientError.clientCertificateRequired
@@ -246,5 +253,52 @@ struct ShareUploadFeatureTests {
             $0.phase = .certificateRequired
         }
         #expect(uploaded.value == nil)
+    }
+
+    @Test
+    func anotherAccountCanBeChosenWithItsOwnFolder() async {
+        let cookies = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(UUID().uuidString)")
+        cookies.cookieAcceptPolicy = .always
+        let store = TestStore(initialState: ShareUploadFeature.State()) {
+            ShareUploadFeature()
+        } withDependencies: {
+            $0.sharedItems.count = { 1 }
+            $0.authClient.restoreSession = { .preview }
+            $0.authClient.listSessions = { [.preview, .previewSecond] }
+            $0.authClient.me = { _ in User(id: "1", username: "phillip", email: nil, roles: []) }
+            $0.uploadDefaults = .inMemory([
+                SessionCredentials.preview.accountID: UploadDefaults(folderPath: "Photos"),
+                SessionCredentials.previewSecond.accountID: UploadDefaults(folderPath: "Family", shouldUploadWithoutAsking: true),
+            ])
+            $0.cookieStorage = cookies
+        }
+        store.exhaustivity = .off
+        await store.send(.onAppear)
+        await store.receive(\.accountsLoaded)
+        await store.receive(\.sessionLoaded)
+        await store.receive(\.connectionChecked)
+        #expect(store.state.canChooseAccount)
+
+        await store.send(.accountSelected(SessionCredentials.previewSecond.accountID)) {
+            $0.credentials = .previewSecond
+            $0.destination = "Family"
+            $0.phase = .checking
+        }
+        await store.receive(\.connectionChecked) {
+            $0.phase = .ready
+        }
+        #expect(!store.state.shouldUploadWithoutAsking, "choosing an account never uploads on its own")
+        #expect(cookies.cookies(for: SessionCredentials.previewSecond.serverBaseURL)?.first?.value == "preview")
+    }
+
+    @Test
+    func oneAccountHasNoPicker() async {
+        let store = store()
+        await store.send(.onAppear)
+        await store.receive(\.accountsLoaded)
+        await store.receive(\.sessionLoaded)
+        #expect(!store.state.canChooseAccount)
+        await store.send(.accountSelected("someone else"))
+        #expect(store.state.credentials == .preview)
     }
 }

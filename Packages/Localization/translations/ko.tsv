@@ -794,3 +794,4 @@ settings.uploadDefaultsFolderNone	매번 묻기
 settings.uploadDefaultsWithoutAsking	묻지 않고 업로드
 settings.uploadDefaultsFooter	다른 앱에서 NextExplorer로 공유한 사진과 파일은 이 폴더에서 시작합니다. 묻지 않고 업로드를 켜면 바로 이곳에 업로드됩니다.
 settings.uploadDefaultsClear	매번 묻기
+common.change	변경

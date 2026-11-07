@@ -794,3 +794,4 @@ settings.uploadDefaultsFolderNone	毎回確認
 settings.uploadDefaultsWithoutAsking	確認せずにアップロード
 settings.uploadDefaultsFooter	ほかのアプリからNextExplorerに共有した写真やファイルは、このフォルダから始まります。「確認せずにアップロード」をオンにすると、そのままここにアップロードされます。
 settings.uploadDefaultsClear	毎回確認
+common.change	変更

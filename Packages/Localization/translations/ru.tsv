@@ -794,3 +794,4 @@ settings.uploadDefaultsFolderNone	Спрашивать каждый раз
 settings.uploadDefaultsWithoutAsking	Загружать без вопросов
 settings.uploadDefaultsFooter	Фото и файлы, которыми вы делитесь с NextExplorer из других приложений, начинают с этой папки. Если включено «Загружать без вопросов», они сразу загружаются туда.
 settings.uploadDefaultsClear	Спрашивать каждый раз
+common.change	Изменить

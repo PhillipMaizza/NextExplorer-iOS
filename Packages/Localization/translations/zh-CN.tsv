@@ -794,3 +794,4 @@ settings.uploadDefaultsFolderNone	每次询问
 settings.uploadDefaultsWithoutAsking	上传时不询问
 settings.uploadDefaultsFooter	你从其他 App 共享到 NextExplorer 的照片和文件会从这个文件夹开始。打开“上传时不询问”后，它们会直接上传到这里。
 settings.uploadDefaultsClear	每次询问
+common.change	更改
