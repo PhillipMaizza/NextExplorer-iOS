@@ -9,7 +9,7 @@ import NetworkClient
 import Testing
 
 @MainActor
-@Suite("LoginFormFeature client certificates")
+@Suite("LoginFormFeature client certificates", .serialized)
 struct LoginClientCertificateTests {
     private let origin = ClientCertificateOrigin(host: "files.example.com", port: 8443)
 
