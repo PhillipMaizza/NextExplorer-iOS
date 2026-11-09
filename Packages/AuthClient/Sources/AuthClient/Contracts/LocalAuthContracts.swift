@@ -4,14 +4,18 @@ import Foundation
 /// Wire types for the local session-cookie auth endpoints (`/api/auth/*`).
 /// See `LocalAuthService.swift`.
 extension LocalAuthService {
-    /// The server's `/api/auth/login` route destructures `{ email, password, username }` from
-    /// the body and only ever looks the user up by the `email` column: confirmed against
-    /// `backend/src/routes/auth.js` and `backend/src/services/users/localAuth.js`. A `username`
-    /// field is accepted as a fallback source for the value but is never queried on its own,
-    /// so this must be sent as `email` regardless of which the user actually typed.
+    /// The server's `/api/auth/login` route takes `identifier || email || username` and matches
+    /// it against either the email or the username (`attemptLocalLogin` in
+    /// `backend/src/services/users/localAuth.js`). `email` is the oldest field name and works on
+    /// every server version, so the typed value is sent under it whether it is an email or not.
     struct LoginRequestBody: Encodable {
-        let email: String
+        let emailOrUsername: String
         let password: String
+
+        private enum CodingKeys: String, CodingKey {
+            case emailOrUsername = "email"
+            case password
+        }
     }
 
     /// The body of `POST /api/auth/oidc/exchange`: the one time code from the mobile bridge

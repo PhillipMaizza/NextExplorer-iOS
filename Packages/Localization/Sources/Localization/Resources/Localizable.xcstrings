@@ -37558,109 +37558,109 @@
         }
       }
     },
-    "login.emailField": {
+    "login.identifierField": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Email"
+            "value": "Email or username"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "البريد الإلكتروني"
+            "value": "البريد الإلكتروني أو اسم المستخدم"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-Mail"
+            "value": "E-Mail oder Benutzername"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Correo"
+            "value": "Correo o usuario"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail ou nom d’utilisateur"
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "ईमेल"
+            "value": "ईमेल या उपयोगकर्ता नाम"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Email"
+            "value": "Email o nome utente"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "メール"
+            "value": "メールまたはユーザー名"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이메일"
+            "value": "이메일 또는 사용자 이름"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail of gebruikersnaam"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail lub nazwa użytkownika"
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail ou nome de utilizador"
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail sau nume de utilizator"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Эл. почта"
+            "value": "Эл. почта или имя пользователя"
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-post"
+            "value": "E-post eller användarnamn"
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "电子邮件"
+            "value": "电子邮件或用户名"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "電子郵件"
+            "value": "電子郵件或使用者名稱"
           }
         }
       }
@@ -38196,113 +38196,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "使用者名稱或密碼不正確。"
-          }
-        }
-      }
-    },
-    "login.errorInvalidEmail": {
-      "extractionState": "manual",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Enter a valid email address."
-          }
-        },
-        "ar": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "أدخل عنوان بريد إلكتروني صالحًا."
-          }
-        },
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Gib eine gültige E-Mail-Adresse ein."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Introduce una dirección de correo válida."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Saisissez une adresse e-mail valide."
-          }
-        },
-        "hi": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "एक मान्य ईमेल पता दर्ज करें।"
-          }
-        },
-        "it": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inserisci un indirizzo email valido."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "有効なメールアドレスを入力してください。"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "유효한 이메일 주소를 입력하세요."
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Voer een geldig e-mailadres in."
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Wprowadź prawidłowy adres e-mail."
-          }
-        },
-        "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Introduza um endereço de e-mail válido."
-          }
-        },
-        "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Introdu o adresă de e-mail validă."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Введите действительный адрес эл. почты."
-          }
-        },
-        "sv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ange en giltig e-postadress."
-          }
-        },
-        "zh-CN": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "请输入有效的电子邮件地址。"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "請輸入有效的電子郵件位址。"
           }
         }
       }

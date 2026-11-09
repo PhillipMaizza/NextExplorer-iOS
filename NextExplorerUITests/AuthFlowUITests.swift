@@ -28,8 +28,8 @@
 
             login.testConnectionButton.tap()
 
-            XCTAssertTrue(login.emailField.waitToAppear(), "Test connection should advance to the credentials page")
-            login.emailField.clearAndType("phillip@example.com")
+            XCTAssertTrue(login.identifierField.waitToAppear(), "Test connection should advance to the credentials page")
+            login.identifierField.clearAndType("phillip@example.com")
 
             XCTAssertTrue(login.passwordField.waitToAppear())
             login.passwordField.clearAndType("hunter2")
