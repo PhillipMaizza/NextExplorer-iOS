@@ -32,7 +32,7 @@ SKIP = re.compile(r"^(bump version|update package\.resolved)|^initial commit$", 
 GENERIC_NOTE = "Bug fixes and improvements"
 TECHNICAL = re.compile(
     r"\b(tests?|ui ?tests?|xcuitests?|ci|lint|linting|swiftformat|swiftlint|flakes?|flaky|de-?flake|"
-    r"fastlane|lanes?|changelog|releases?|refactor\w*|dedup\w*|state machines?|import sort|"
+    r"testflight|fastlane|lanes?|changelog|releases?|refactor\w*|dedup\w*|state machines?|import sort|"
     r"package\.resolved|pins?|dependenc(y|ies)|swiftpm|node \d+ actions|readme|contributing|license|workflows?|"
     r"build[- ]phase|instrument\w*|warnings?|docs?|dto|dataphase|domain split|reorg|"
     r"main[- ]thread|bool clusters?|typography rename)\b",
@@ -49,7 +49,12 @@ FIX_TITLE = re.compile(r"^(fix\w*|bugs?|bugfix\w*)\b|\b(qa pass|audit\w*)\b", re
 MERGE_PR = re.compile(r"^Merge pull request #(\d+)")
 TRAILING_PR = re.compile(r"\s*\(#(\d+)\)\s*$")
 TICKET = re.compile(r"^NXTIOS-\d+(?:/\d+)*:\s*")
-VERSION_MENTION = re.compile(r",?\s*\b(?:version\s+)?v?\d+(?:\.\d+)+\b", re.IGNORECASE)
+# An app version in a title: "version 1.1.2" or "v1.0.5" anywhere, or a bare number as the last
+# comma separated clause ("..., 1.0.1"). A bare number elsewhere ("iOS 18.2") is real text.
+VERSION_MENTION = re.compile(
+    r",?\s*\b(?:version\s+v?\d+(?:\.\d+)+|v\d+(?:\.\d+)+)\b|,\s*\d+(?:\.\d+)+\s*$",
+    re.IGNORECASE,
+)
 MARKETING_VERSION = re.compile(r"MARKETING_VERSION = ([0-9.]+);")
 RELEASE_TAG = re.compile(r"^v(\d+(?:\.\d+)+)$")
 UPCOMING = "Unreleased"
@@ -144,7 +149,7 @@ def user_facing(title):
 def releases(ref, upcoming=UPCOMING):
     """[(version, date, [(text, [pr])])], newest first; untagged commits first under `upcoming`.
 
-    Each version ends with GENERIC_NOTE, carrying the PRs folded into it, when any were."""
+    A version made only of folded PRs gets GENERIC_NOTE, carrying those PRs, so it still has a note."""
     log = git("log", "--first-parent", "--format=%H%x1f%cs%x1f%s%x1f%b%x1e", ref)
     tags = release_tags()
     oldest = min(tags, key=lambda commit: version_key(tags[commit])) if tags else None
@@ -174,7 +179,7 @@ def releases(ref, upcoming=UPCOMING):
     for version in order:
         group = groups[version]
         entries = list(group["entries"])
-        if group["folded"]:
+        if group["folded"] and not entries:
             entries.append((GENERIC_NOTE, [pr for pr in group["folded"] if pr]))
         history.append((version, group["date"], entries))
     return history
@@ -203,7 +208,9 @@ def notes(history, version, links=False):
                 f"- {text}" + (f" ({', '.join(f'#{pr}' for pr in prs)})" if links and prs else "")
                 for text, prs in entries
             )
-            return text[:NOTES_LIMIT]
+            if len(text) > NOTES_LIMIT:
+                text = text[:NOTES_LIMIT].rsplit("\n", 1)[0]
+            return text
     return ""
 
 

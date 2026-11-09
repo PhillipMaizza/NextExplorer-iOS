@@ -1,4 +1,5 @@
 require "shellwords"
+require "tmpdir"
 
 default_platform(:ios)
 
@@ -190,7 +191,8 @@ platform :ios do
   desc "Submit uploaded, processed builds for review, then tag v<version> and publish the GitHub"
   desc "Release. `release` ends with this; run it alone to resume a release that stopped after upload."
   desc "Options: version, build, commit (to tag; default the release/<version> branch), platforms"
-  desc "(ios,mac by default), manual_release, phased"
+  desc "(ios,mac by default), manual_release, phased. Then commits the next patch's"
+  desc "MARKETING_VERSION to main, so main already carries the upcoming version."
   lane :submit do |options|
     version = options[:version] || UI.user_error!("Pass version:")
     build_number = options[:build] || UI.user_error!("Pass build:")
@@ -233,6 +235,7 @@ platform :ios do
          "--notes", release_notes(version, links: true))
     end
     UI.success("#{version} (#{build_number}) for #{platforms.join(' and ')} submitted for review and tagged #{tag}")
+    bump_project_version(version)
   end
 
   # The target builds for iOS and the Mac, so gym needs the sdk to know which package to export.
@@ -401,6 +404,36 @@ def ci_passed?(sha)
     conclusions = `gh api "repos/{owner}/{repo}/commits/#{sha}/check-runs" --jq '.check_runs[] | select(.name == "Build and test") | .conclusion' 2>/dev/null`
     $?.success? && conclusions.split.include?("success")
   end
+end
+
+# The project's MARKETING_VERSION follows each release: once `version` is submitted and tagged, main
+# gets a commit moving it to the next patch, so it already carries the upcoming version. Committed in
+# a throwaway worktree off origin/main, because the release runs from a release branch. Never fails
+# the release: by now the version is submitted and tagged, so a problem here is a warning.
+def bump_project_version(version)
+  upcoming = next_version(version, "patch")
+  Fastlane::Actions.sh("git", "fetch", "--quiet", "origin", "main")
+  pbxproj = Fastlane::Actions.sh("git", "show", "origin/main:#{PBXPROJ}", log: false)
+  current = pbxproj.scan(/MARKETING_VERSION = ([0-9.]+);/).flatten.max_by { |found| Gem::Version.new(found) }
+  if Gem::Version.new(current) >= Gem::Version.new(upcoming)
+    UI.message("main already carries #{current}; no version bump needed")
+    return
+  end
+
+  dir = Dir.mktmpdir("nextexplorer-bump")
+  begin
+    Fastlane::Actions.sh("git", "worktree", "add", "-q", "--detach", dir, "origin/main")
+    path = File.join(dir, PBXPROJ)
+    File.write(path, File.read(path).gsub("MARKETING_VERSION = #{current};", "MARKETING_VERSION = #{upcoming};"))
+    Fastlane::Actions.sh("git", "-C", dir, "add", PBXPROJ)
+    Fastlane::Actions.sh("git", "-C", dir, "commit", "-q", "-m", "Bump version to #{upcoming}")
+    Fastlane::Actions.sh("git", "-C", dir, "push", "-q", "origin", "HEAD:main")
+    UI.success("main now carries #{upcoming}")
+  ensure
+    Fastlane::Actions.sh("git", "worktree", "remove", "--force", dir)
+  end
+rescue StandardError => e
+  UI.important("#{version} is released, but bumping main to #{upcoming || 'the next version'} failed: #{e.message}")
 end
 
 # Runs the block with GH_TOKEN for GH_USER when set, so gh acts as the repo owner.
