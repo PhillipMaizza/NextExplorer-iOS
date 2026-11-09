@@ -32,7 +32,7 @@ SKIP = re.compile(r"^(bump version|update package\.resolved)|^initial commit$", 
 GENERIC_NOTE = "Bug fixes and improvements"
 TECHNICAL = re.compile(
     r"\b(tests?|ui ?tests?|xcuitests?|ci|lint|linting|swiftformat|swiftlint|flakes?|flaky|de-?flake|"
-    r"fastlane|lanes?|changelog|releases?|refactor\w*|dedup\w*|state machines?|import sort|"
+    r"testflight|fastlane|lanes?|changelog|releases?|refactor\w*|dedup\w*|state machines?|import sort|"
     r"package\.resolved|pins?|dependenc(y|ies)|swiftpm|node \d+ actions|readme|contributing|license|workflows?|"
     r"build[- ]phase|instrument\w*|warnings?|docs?|dto|dataphase|domain split|reorg|"
     r"main[- ]thread|bool clusters?|typography rename)\b",
@@ -144,7 +144,7 @@ def user_facing(title):
 def releases(ref, upcoming=UPCOMING):
     """[(version, date, [(text, [pr])])], newest first; untagged commits first under `upcoming`.
 
-    Each version ends with GENERIC_NOTE, carrying the PRs folded into it, when any were."""
+    A version made only of folded PRs gets GENERIC_NOTE, carrying those PRs, so it still has a note."""
     log = git("log", "--first-parent", "--format=%H%x1f%cs%x1f%s%x1f%b%x1e", ref)
     tags = release_tags()
     oldest = min(tags, key=lambda commit: version_key(tags[commit])) if tags else None
@@ -174,7 +174,7 @@ def releases(ref, upcoming=UPCOMING):
     for version in order:
         group = groups[version]
         entries = list(group["entries"])
-        if group["folded"]:
+        if group["folded"] and not entries:
             entries.append((GENERIC_NOTE, [pr for pr in group["folded"] if pr]))
         history.append((version, group["date"], entries))
     return history
