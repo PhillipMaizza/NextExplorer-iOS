@@ -129,6 +129,9 @@ jobs:
       - name: Dependency pins match the app
         run: python3 Scripts/sync-package-pins.py --check
 
+      - name: Changelog script self check
+        run: python3 Scripts/test_gen_changelog.py
+
       - name: Restore SwiftPM checkouts
         uses: actions/cache/restore@v6
         with:
