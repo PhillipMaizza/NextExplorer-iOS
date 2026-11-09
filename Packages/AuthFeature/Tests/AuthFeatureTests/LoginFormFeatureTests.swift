@@ -7,7 +7,10 @@ import Localization
 import Testing
 
 @MainActor
-@Suite("LoginFormFeature")
+// Serialized: every TestStore.receive keeps yielding while it waits, so dozens of these running at
+// once starve the executor that has to deliver the effect they wait for. On a loaded runner one
+// test's effect arrived after its timeout. One at a time, each test finishes in milliseconds.
+@Suite("LoginFormFeature", .serialized)
 struct LoginFormFeatureTests {
     /// CI's shared macOS runners can take well over TCA's default 1 second to deliver an effect's
     /// action, which failed tests that pass locally. A real hang still fails, just later.
