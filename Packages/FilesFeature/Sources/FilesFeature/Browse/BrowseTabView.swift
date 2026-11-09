@@ -8,7 +8,6 @@ import SwiftUI
 
 private enum Constants {
     static let breadcrumbContentSpacing: CGFloat = .space8
-    static let breadcrumbVisibilityAnimationDuration: Double = 0.25
 }
 
 struct BrowseTabView: View {
@@ -46,7 +45,6 @@ struct BrowseTabView: View {
                     .safeAreaInset(edge: .bottom, spacing: Constants.breadcrumbContentSpacing) { breadcrumbBar }
             }
         }
-        .animation(.easeInOut(duration: Constants.breadcrumbVisibilityAnimationDuration), value: isTopScreenSelecting)
         .platformAccentTint()
     }
 
@@ -79,7 +77,6 @@ struct BrowseTabView: View {
             BrowseBreadcrumbBar(directoryPath: currentDirectoryPath) { path, title in
                 store.send(.navigateToDirectory(path: path, title: title))
             }
-            .transition(.move(edge: .bottom).combined(with: .opacity))
         }
     }
 }
