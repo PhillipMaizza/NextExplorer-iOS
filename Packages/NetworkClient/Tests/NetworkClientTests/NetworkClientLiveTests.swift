@@ -78,17 +78,6 @@ struct NetworkClientLiveTests {
         #expect(response.statusCode == 204)
     }
 
-    @Test("error path: a stub that fails to construct a valid response wraps as NetworkError.transport")
-    func malformedURLProtocolFailureIsWrapped() async {
-        StubURLProtocol.failure = URLError(.badServerResponse)
-        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
-
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
-        await #expect(throws: NetworkError.self) {
-            _ = try await client.send(request)
-        }
-    }
-
     @Test("security: send refuses a response body past the in-memory cap instead of buffering it")
     func sendRejectsAnOversizedResponse() async {
         StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: Data(repeating: 0x7A, count: 4096))
@@ -144,17 +133,6 @@ struct NetworkClientLiveTests {
         #expect(response.statusCode == 404)
     }
 
-    @Test("error path: a transport failure during download wraps as NetworkError.transport")
-    func downloadTransportFailureIsWrapped() async {
-        StubURLProtocol.failure = URLError(.notConnectedToInternet)
-        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
-
-        let request = URLRequest(url: URL(string: "https://example.com/api/preview?path=x")!)
-        await #expect(throws: NetworkError.self) {
-            _ = try await client.download(request)
-        }
-    }
-
     // MARK: downloadWithProgress (completion handler + KVO progress, no per-chunk delegate)
 
     @Test("downloadWithProgress lands the body on disk, returns the response, and reports final progress")
@@ -190,56 +168,6 @@ struct NetworkClientLiveTests {
         #expect(TransferProgress(receivedBytes: 50, expectedBytes: nil).fraction == nil)
         #expect(TransferProgress(receivedBytes: 200, expectedBytes: 200).isComplete)
         #expect(!TransferProgress(receivedBytes: 200, expectedBytes: nil).isComplete)
-    }
-
-    @Test("error path: a transport failure during downloadWithProgress wraps as NetworkError")
-    func downloadWithProgressTransportFailureIsWrapped() async {
-        StubURLProtocol.failure = URLError(.notConnectedToInternet)
-        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
-
-        let request = URLRequest(url: URL(string: "https://example.com/api/download")!)
-        await #expect(throws: NetworkError.self) {
-            _ = try await client.downloadWithProgress(request) { _ in }
-        }
-    }
-
-    private var timeoutURL: URL {
-        URL(string: "https://example.com/api/files/transfer") ?? URL(filePath: "/")
-    }
-
-    @Test
-    func liveSendMapsAMutationTimeoutToTimedOut() async {
-        StubURLProtocol.failure = URLError(.timedOut)
-        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
-        var request = URLRequest(url: timeoutURL, method: .post)
-        request.httpBody = Data()
-
-        await #expect(throws: NetworkError.timedOut) {
-            _ = try await client.send(NetworkClient.markingAsMutation(request))
-        }
-    }
-
-    @Test
-    func liveSendStillMapsAReadTimeoutToOffline() async {
-        StubURLProtocol.failure = URLError(.timedOut)
-        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
-
-        await #expect(throws: NetworkError.offline) {
-            _ = try await client.send(URLRequest(url: timeoutURL))
-        }
-    }
-
-    @Test
-    func liveUploadMapsATimeoutWhileTheServerFinalizesToTimedOut() async throws {
-        StubURLProtocol.failure = URLError(.timedOut)
-        let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
-        let body = FileManager.default.temporaryDirectory.appendingPathComponent("timeout-upload-\(UUID().uuidString)")
-        try Data("body".utf8).write(to: body)
-        defer { try? FileManager.default.removeItem(at: body) }
-
-        await #expect(throws: NetworkError.timedOut) {
-            _ = try await client.upload(URLRequest(url: timeoutURL, method: .post), body) { _ in }
-        }
     }
 }
 

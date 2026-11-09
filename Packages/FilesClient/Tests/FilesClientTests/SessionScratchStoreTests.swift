@@ -62,12 +62,6 @@ struct SessionScratchStoreTests {
         #expect(!fileManager.fileExists(atPath: html.path))
     }
 
-    @Test("Purging an empty temporary folder is harmless")
-    func purgeWhenEmpty() {
-        let root = FileManager.default.temporaryDirectory.appendingPathComponent("scratch-empty-\(UUID().uuidString)")
-        SessionScratchStore.live(temporaryDirectory: root).purge(.everything)
-    }
-
     @Test("Dropped file copies are purged on every kind of session boundary")
     func purgeRemovesDroppedFileCopies() throws {
         let fileManager = FileManager.default

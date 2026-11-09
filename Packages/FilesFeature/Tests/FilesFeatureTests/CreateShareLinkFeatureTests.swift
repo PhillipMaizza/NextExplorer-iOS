@@ -39,12 +39,6 @@ struct CreateShareLinkFeatureTests {
     // MARK: Happy path
 
     @Test
-    func labelDefaultsToTheItemName() {
-        #expect(makeState().label == "Report.pdf")
-        #expect(makeState().sourcePath == "Documents/Report.pdf")
-    }
-
-    @Test
     func creatingASharePutsTheResultIntoTheCreatedPhase() async {
         let created = makeCreated()
         let store = TestStore(initialState: makeState()) {

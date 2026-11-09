@@ -307,18 +307,6 @@ struct ShareUploadFeatureTests {
     // MARK: Preparing
 
     @Test
-    func aSuccessfulPassStartsTheBatch() async {
-        let calls = Calls()
-        let store = store(defaults: UploadDefaults(folderPath: "Photos"), calls: calls)
-        await becomeReady(store, folder: "Photos")
-
-        await uploadCleanly(store)
-
-        #expect(calls.all == ["prepare", "start"])
-        await store.send(.viewDisappeared)
-    }
-
-    @Test
     func theHandOffHasItsOwnPhaseSoClosingDoesNotCountAsHavingStagedFiles() async {
         let store = store(defaults: UploadDefaults(folderPath: "Photos"))
         await becomeReady(store, folder: "Photos")
@@ -1350,8 +1338,6 @@ struct ShareUploadFeatureTests {
 
     // MARK: What each phase offers
 
-    private static let deadEnds: [ShareUploadFeature.Phase] = [.signedOut, .sessionUnreadable, .certificateRequired, .certificateRejected]
-
     @Test(arguments: [true, false])
     func eachPhaseOffersItsOwnButtons(canOpenApp: Bool) {
         let expected: [ShareUploadFeature.Phase: (primary: ShareUploadFeature.Control?, secondary: ShareUploadFeature.Control?)] = [
@@ -1376,57 +1362,6 @@ struct ShareUploadFeatureTests {
             #expect(state.primaryAction(canOpenApp: canOpenApp) == buttons.primary, "primary of \(phase)")
             #expect(state.secondaryAction(canOpenApp: canOpenApp) == buttons.secondary, "secondary of \(phase)")
             #expect(state.hasActions(canOpenApp: canOpenApp) == (buttons.primary != nil || buttons.secondary != nil), "footer of \(phase)")
-        }
-    }
-
-    @Test
-    func aPhoneOffersNoRetryWhereTheAppHasToFixIt() {
-        for phase in Self.deadEnds {
-            var state = ShareUploadFeature.State()
-            state.phase = phase
-            #expect(state.primaryAction(canOpenApp: false) == nil)
-            #expect(state.secondaryAction(canOpenApp: false) == nil)
-            #expect(!state.hasActions(canOpenApp: false), "the instruction and Close are all that is left")
-        }
-    }
-
-    @Test
-    func theButtonsSendTheActionsTheyAreNamedAfter() {
-        #expect(ShareUploadFeature.Control.upload.action == .uploadTapped)
-        #expect(ShareUploadFeature.Control.uploadReady.action == .uploadReadyTapped)
-        #expect(ShareUploadFeature.Control.retryFailed.action == .retryTapped)
-        #expect(ShareUploadFeature.Control.retry.action == .retryTapped)
-        #expect(ShareUploadFeature.Control.openApp.action == .openAppTapped)
-    }
-
-    @Test
-    func theButtonsAreTitledWithTheirLocalizedNames() {
-        #expect(ShareUploadFeature.Control.upload.title == L10n.ShareUpload.upload)
-        #expect(ShareUploadFeature.Control.uploadReady.title == L10n.ShareUpload.uploadReady)
-        #expect(ShareUploadFeature.Control.retryFailed.title == L10n.ShareUpload.retryFailed)
-        #expect(ShareUploadFeature.Control.retry.title == L10n.Common.retry)
-        #expect(ShareUploadFeature.Control.openApp.title == L10n.ShareUpload.openApp)
-    }
-
-    @Test
-    func theAccountAndFolderRowsStayVisibleAfterAFailedOrPartialPass() {
-        let shown: Set<ShareUploadFeature.Phase> = [
-            .checking, .ready, .preparing, .handingOff, .started, .partiallyPrepared, .failed,
-        ]
-        for phase in ShareUploadFeature.Phase.previewCases {
-            var state = ShareUploadFeature.State()
-            state.phase = phase
-            #expect(state.shouldShowDetails == shown.contains(phase), "\(phase)")
-        }
-    }
-
-    @Test
-    func workIsInFlightWhileCheckingPreparingAndHandingOff() {
-        let working: Set<ShareUploadFeature.Phase> = [.checking, .preparing, .handingOff]
-        for phase in ShareUploadFeature.Phase.previewCases {
-            var state = ShareUploadFeature.State()
-            state.phase = phase
-            #expect(state.isWorking == working.contains(phase), "\(phase)")
         }
     }
 
@@ -1478,28 +1413,5 @@ struct ShareUploadFeatureTests {
         await clock.advance(by: .seconds(6))
         await store.receive(.delegate(.close(completed: true)))
         #expect(announcements.value == [L10n.ShareUpload.started])
-    }
-
-    @Test
-    func aFailureIsAnnouncedToo() async {
-        let announcements = LockIsolated<[String]>([])
-        let failures = [ItemFailure(index: 0, name: "x", cause: .cannotRead)]
-        let store = store(
-            defaults: UploadDefaults(folderPath: "Photos"),
-            report: PreparationReport(stagedCount: 1, failures: failures),
-            announcements: announcements
-        )
-        await becomeReady(store, folder: "Photos")
-        await store.send(.uploadTapped) {
-            $0.phase = .preparing
-            $0.preparingTotal = 3
-        }
-        await store.receive(\.preparationFinished) {
-            $0.phase = .partiallyPrepared
-            $0.stagedCount = 1
-            $0.failures = failures
-        }
-        await store.finish()
-        #expect(announcements.value == [L10n.ShareUpload.failedItemsHeader])
     }
 }

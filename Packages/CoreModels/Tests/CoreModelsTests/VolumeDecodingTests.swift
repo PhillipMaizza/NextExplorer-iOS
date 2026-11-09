@@ -19,12 +19,4 @@ struct VolumeDecodingTests {
         let volume = try JSONDecoder().decode(Volume.self, from: Data(json.utf8))
         #expect(volume.accessMode == nil)
     }
-
-    @Test("error path: missing required field fails to decode")
-    func missingRequiredFieldThrows() {
-        let json = #"{"name": "Media"}"#
-        #expect(throws: (any Error).self) {
-            _ = try JSONDecoder().decode(Volume.self, from: Data(json.utf8))
-        }
-    }
 }

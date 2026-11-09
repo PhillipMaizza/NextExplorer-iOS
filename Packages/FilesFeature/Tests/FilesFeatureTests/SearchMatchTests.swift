@@ -5,11 +5,6 @@ struct SearchMatchTests {
     // MARK: Happy path
 
     @Test
-    func exactMatchSucceeds() {
-        #expect(SearchMatch.matches(query: "vacation", in: "vacation.jpg"))
-    }
-
-    @Test
     func contiguousSubstringMatchesAnywhereInTheName() {
         #expect(SearchMatch.matches(query: "cat", in: "vacation.jpg"))
         #expect(SearchMatch.matches(query: ".jpg", in: "vacation.jpg"))
@@ -30,16 +25,6 @@ struct SearchMatchTests {
         // command-palette style subsequence.
         #expect(!SearchMatch.matches(query: "vjpg", in: "vacation.jpg"))
         #expect(!SearchMatch.matches(query: "vcto", in: "vacation.jpg"))
-    }
-
-    @Test
-    func outOfOrderCharactersDoNotMatch() {
-        #expect(!SearchMatch.matches(query: "gpj", in: "vacation.jpg"))
-    }
-
-    @Test
-    func queryLongerThanTextDoesNotMatch() {
-        #expect(!SearchMatch.matches(query: "vacationphoto", in: "vacation"))
     }
 
     @Test

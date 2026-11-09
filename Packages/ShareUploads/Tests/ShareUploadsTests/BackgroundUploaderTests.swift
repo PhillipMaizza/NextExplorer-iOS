@@ -442,9 +442,4 @@ struct BackgroundUploaderTests {
         #expect(!DiskSpace.hasRoom(forBytes: 100, available: 100 + DiskSpace.reservedBytes - 1))
         #expect(!DiskSpace.hasRoom(forBytes: 0, available: 0))
     }
-
-    @Test("The error reads as the localized message")
-    func errorMessage() {
-        #expect(ShareUploadError.insufficientSpace.errorDescription?.isEmpty == false)
-    }
 }

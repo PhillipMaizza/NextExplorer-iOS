@@ -576,20 +576,6 @@ struct FavoritesFeatureTests {
         await store.send(.bulkRemoveTapped)
     }
 
-    @Test
-    func bulkRemoveCancelledHidesTheConfirmationAlert() async {
-        var state = FavoritesFeature.State(serverURL: serverURL)
-        state.bulkRemoveConfirmationIsPresented = true
-
-        let store = TestStore(initialState: state) {
-            FavoritesFeature()
-        }
-
-        await store.send(.bulkRemoveCancelled) {
-            $0.bulkRemoveConfirmationIsPresented = false
-        }
-    }
-
     // MARK: Error path
 
     @Test

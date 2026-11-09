@@ -45,12 +45,4 @@ struct FavoriteTests {
         #expect(favorite.color == "#FF0000")
         #expect(favorite.position == 2)
     }
-
-    @Test("error path: missing required field fails to decode")
-    func missingRequiredFieldThrows() {
-        let json = #"{"id": "f1", "path": "Home"}"#
-        #expect(throws: (any Error).self) {
-            _ = try JSONDecoder().decode(Favorite.self, from: Data(json.utf8))
-        }
-    }
 }

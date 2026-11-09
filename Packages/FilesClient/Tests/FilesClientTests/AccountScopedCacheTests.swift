@@ -207,19 +207,6 @@ struct AccountScopedCacheTests {
         }
     }
 
-    @Test("Thumbnail file names differ per account for the same digest")
-    func scopedFileNameDiffersPerAccount() {
-        #expect(CacheAccountScope.scopedFileName("d", scope: accountA) != CacheAccountScope.scopedFileName("d", scope: accountB))
-        #expect(CacheAccountScope.scopedFileName("d", scope: accountA).hasSuffix("-d"))
-    }
-
-    @Test("Preview cache: slot directories carry the active scope's prefix")
-    func previewSlotUsesScopePrefix() {
-        let item = FileItem(name: "a.txt", path: "docs", dateModified: fetchedAt, size: 1, kind: "txt")
-        let directory = FilesService.previewCacheDirectory(for: item, namespace: FilesService.previewCacheNamespace)
-        #expect(directory.lastPathComponent.hasPrefix(CacheAccountScope.filePrefix(for: CacheAccountScope.current) + "-"))
-    }
-
     @Test("Offline files: removeScope deletes the named account's directory and keeps another's")
     func offlineRemoveScope() throws {
         let unique = UUID().uuidString

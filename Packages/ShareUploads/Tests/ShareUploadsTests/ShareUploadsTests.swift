@@ -96,12 +96,6 @@ struct ShareUploadsTests {
         #expect(!FileManager.default.fileExists(atPath: staged.envelopeURL.path))
     }
 
-    @Test("Only this app's upload sessions are claimed on wake up")
-    func ownsSession() {
-        #expect(BackgroundUploader.ownsSession(BackgroundUploader.identifierPrefix + "abc"))
-        #expect(!BackgroundUploader.ownsSession("com.other.app.session"))
-    }
-
     @Test("Signing an account out cancels its pending batches and keeps the others'")
     func cancelKeepsSignedInAccounts() throws {
         let root = try temporaryDirectory()

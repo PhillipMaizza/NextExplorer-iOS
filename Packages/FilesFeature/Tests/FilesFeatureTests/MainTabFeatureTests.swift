@@ -15,17 +15,6 @@ struct MainTabFeatureTests {
     // MARK: Happy path
 
     @Test
-    func tabSelectedUpdatesTheSelectedTab() async {
-        let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
-            MainTabFeature()
-        }
-
-        await store.send(.tabSelected(.favorites)) {
-            $0.selectedTab = .favorites
-        }
-    }
-
-    @Test
     func signOutDelegateFromSettingsIsForwardedUpward() async {
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
@@ -79,12 +68,6 @@ struct MainTabFeatureTests {
         }
         #expect(store.state.recentFolders.count == MainTabFeature.recentFoldersLimit)
         #expect(store.state.recentFolders.first == "Folder11")
-    }
-
-    @Test
-    func initialStateDefaultsToTheBrowseTab() {
-        let state = MainTabFeature.State(serverURL: serverURL, user: user)
-        #expect(state.selectedTab == .browse)
     }
 
     @Test

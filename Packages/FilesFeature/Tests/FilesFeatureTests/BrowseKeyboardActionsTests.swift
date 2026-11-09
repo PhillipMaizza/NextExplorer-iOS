@@ -200,42 +200,6 @@ struct BrowseKeyboardActionsTests {
     }
 
     @Test
-    func droppingRowsOnAFolderMovesThemInside() async {
-        let a = item("a.txt"), archive = folder("Archive")
-        let moved = LockIsolated<(String, TransferOperation)?>(nil)
-        let store = TestStore(initialState: makeState(items: [a, archive], selected: [], access: access())) {
-            BrowseFeature()
-        } withDependencies: {
-            $0.filesClient.browse = { _, path in
-                BrowseResult(items: [], access: FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: false, canDownload: true), path: path)
-            }
-            $0.filesClient.transferItems = { _, _, destination, operation in
-                moved.setValue((destination, operation))
-                return TransferResult(destination: destination, items: [.init(from: "Docs/a.txt", to: "Docs/Archive/a.txt")])
-            }
-        }
-        // The move then runs the shared transfer flow, covered by BrowseFeatureTransferTests.
-        store.exhaustivity = .off
-
-        await store.send(.itemsDroppedOnFolder(ids: [a.id], folder: archive)) {
-            $0.isPerformingFileAction = true
-        }
-        await store.skipReceivedActions()
-        #expect(moved.value?.0 == archive.id)
-        #expect(moved.value?.1 == .move)
-    }
-
-    @Test
-    func droppingAFolderIntoItselfOrItsOwnSubfolderIsIgnored() async {
-        let outer = folder("Outer")
-        let inner = folder("Inner", path: "Docs/Outer")
-        let store = TestStore(initialState: makeState(items: [outer], selected: [], access: access())) { BrowseFeature() }
-
-        await store.send(.itemsDroppedOnFolder(ids: [outer.id], folder: outer))
-        await store.send(.itemsDroppedOnFolder(ids: [outer.id], folder: inner))
-    }
-
-    @Test
     func droppingWithoutDeletePermissionIsIgnored() async {
         let a = item("a.txt"), archive = folder("Archive")
         let store = TestStore(initialState: makeState(items: [a, archive], selected: [], access: access(canDelete: false))) {

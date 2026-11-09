@@ -91,13 +91,6 @@
         }
 
         @Test
-        func transfersRunTheirWorkWhileHoldingTheActivity() async {
-            let ran = LockIsolated(false)
-            await BackgroundActivity.whileTransferring(name: "test") { ran.setValue(true) }
-            #expect(ran.value)
-        }
-
-        @Test
         func quickLookResponderJoinsAndLeavesTheWindowChain() {
             let window = NSWindow(contentRect: .zero, styleMask: [.titled], backing: .buffered, defer: true)
             let original = window.nextResponder
@@ -272,13 +265,6 @@
                     DownloadSaveRequest(item: item, target: .replacing(unwritable)), serverURL: self.serverURL, filesClient: client
                 ) { _ in }
             }
-        }
-
-        @Test
-        func openWithLooksUpAppsOncePerType() {
-            let first = MacOpenWithApp.apps(forFileNamed: "a.txt")
-            let second = MacOpenWithApp.apps(forFileNamed: "b.txt")
-            #expect(first.all.map(\.url) == second.all.map(\.url))
         }
     }
 

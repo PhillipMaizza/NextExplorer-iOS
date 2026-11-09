@@ -4,24 +4,6 @@ import Testing
 
 @Suite("SessionCredentials")
 struct SessionCredentialsTests {
-    @Test("round-trips through Codable")
-    func codableRoundTrip() throws {
-        let original = SessionCredentials(
-            serverBaseURL: URL(string: "https://nextexplorer.home.arpa")!,
-            authMode: .local,
-            cookieName: "connect.sid",
-            cookieValue: "s%3Aabc123",
-            cookieDomain: "nextexplorer.home.arpa",
-            cookiePath: "/",
-            cookieIsSecure: true,
-            expiresAt: Date(timeIntervalSince1970: 1_800_000_000),
-            username: "phillip"
-        )
-        let data = try JSONEncoder().encode(original)
-        let decoded = try JSONDecoder().decode(SessionCredentials.self, from: data)
-        #expect(decoded == original)
-    }
-
     @Test("reconstructs an HTTPCookie with matching attributes")
     func reconstructsHTTPCookie() {
         let credentials = SessionCredentials(

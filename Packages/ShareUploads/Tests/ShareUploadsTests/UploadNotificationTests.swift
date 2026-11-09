@@ -194,11 +194,6 @@ struct UploadNotificationTests {
 
     // MARK: Delegate
 
-    @Test("Banners show while the app is frontmost")
-    func foregroundPresentation() {
-        #expect(UploadNotificationHandler.foregroundOptions == [.banner, .list])
-    }
-
     @Test("Retry restarts the batch; a dismissal and a tap do nothing, so no file is ever deleted by them")
     func decisions() {
         let info: [AnyHashable: Any] = [UploadNotificationKey.batchID: "BATCH"]

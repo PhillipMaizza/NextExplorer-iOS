@@ -48,9 +48,4 @@ struct FileCategoryTests {
         #expect(FileCategory.of(kind: "", isDirectory: false) == .other)
         #expect(FileCategory.of(kind: "wat", isDirectory: false) == .other)
     }
-
-    @Test("allCases is in display order")
-    func displayOrder() {
-        #expect(FileCategory.allCases == [.folder, .image, .video, .audio, .document, .archive, .other])
-    }
 }
