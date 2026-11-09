@@ -37558,109 +37558,109 @@
         }
       }
     },
-    "login.emailField": {
+    "login.identifierField": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Email"
+            "value": "Email or username"
           }
         },
         "ar": {
           "stringUnit": {
             "state": "translated",
-            "value": "البريد الإلكتروني"
+            "value": "البريد الإلكتروني أو اسم المستخدم"
           }
         },
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-Mail"
+            "value": "E-Mail oder Benutzername"
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Correo"
+            "value": "Correo o usuario"
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail ou nom d’utilisateur"
           }
         },
         "hi": {
           "stringUnit": {
             "state": "translated",
-            "value": "ईमेल"
+            "value": "ईमेल या उपयोगकर्ता नाम"
           }
         },
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Email"
+            "value": "Email o nome utente"
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "メール"
+            "value": "メールまたはユーザー名"
           }
         },
         "ko": {
           "stringUnit": {
             "state": "translated",
-            "value": "이메일"
+            "value": "이메일 또는 사용자 이름"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail of gebruikersnaam"
           }
         },
         "pl": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail lub nazwa użytkownika"
           }
         },
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail ou nome de utilizador"
           }
         },
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail"
+            "value": "E-mail sau nume de utilizator"
           }
         },
         "ru": {
           "stringUnit": {
             "state": "translated",
-            "value": "Эл. почта"
+            "value": "Эл. почта или имя пользователя"
           }
         },
         "sv": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-post"
+            "value": "E-post eller användarnamn"
           }
         },
         "zh-CN": {
           "stringUnit": {
             "state": "translated",
-            "value": "电子邮件"
+            "value": "电子邮件或用户名"
           }
         },
         "zh-TW": {
           "stringUnit": {
             "state": "translated",
-            "value": "電子郵件"
+            "value": "電子郵件或使用者名稱"
           }
         }
       }

@@ -401,7 +401,7 @@ public enum L10n {
     public enum Login {
         public static var addClientCertificate: String { tr("login.addClientCertificate") }  // "Add Certificate"
         public static var changeClientCertificate: String { tr("login.changeClientCertificate") }  // "Change"
-        public static var emailField: String { tr("login.emailField") }  // "Email"
+        public static var identifierField: String { tr("login.identifierField") }  // "Email or username"
         public static var errorClientCertificateRejected: String { tr("login.errorClientCertificateRejected") }  // "The server refused this client certificate."
         public static var errorClientCertificateRequired: String { tr("login.errorClientCertificateRequired") }  // "This server asks for a client certificate."
         public static var errorDecoding: String { tr("login.errorDecoding") }

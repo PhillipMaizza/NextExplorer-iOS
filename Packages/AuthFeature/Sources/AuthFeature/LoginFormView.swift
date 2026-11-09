@@ -647,7 +647,7 @@ public struct LoginFormView: View {
     }
 
     private var identifierField: some View {
-        DSFieldContainer(label: L10n.Login.emailField, icon: IconKit.person, shakeTrigger: identifierShakeTrigger, isInvalid: isIdentifierFieldInvalid) {
+        DSFieldContainer(label: L10n.Login.identifierField, icon: IconKit.person, shakeTrigger: identifierShakeTrigger, isInvalid: isIdentifierFieldInvalid) {
             // Native `prompt:` rather than a ZStack placeholder overlay: a sibling view stacked
             // on the field is a documented AutoFill target-resolution hazard.
             TextField(
