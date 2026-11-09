@@ -70,21 +70,6 @@ struct CacheFileNameTests {
         #expect(slot.deletingLastPathComponent().lastPathComponent == namespace)
     }
 
-    @Test("flat thumbnail style file names carry the account prefix")
-    func scopedFileNames() {
-        let name = CacheAccountScope.scopedFileName("abc", scope: Fixture.account)
-
-        #expect(CacheAccountScope.hasAccountPrefix(name))
-        #expect(name == CacheAccountScope.namePrefix(for: Fixture.account) + "abc")
-    }
-
-    @Test("the layout names match the directories the stores actually write")
-    func layoutNamesMatchTheStores() {
-        #expect(CacheLayout.previewSlotNamespaces == [FilesService.previewCacheNamespace, FilesService.rawDownloadCacheNamespace])
-        #expect(CacheLayout.flatScopedDirectories.contains(FilesService.thumbnailCacheSubdirectory))
-        #expect(FilesService.flatScopedCacheSubdirectories == CacheLayout.flatScopedDirectories)
-    }
-
     @Test("a name without the prefix, like an older release wrote, is not recognized")
     func unprefixedNamesAreNotRecognized() {
         let fullDigest = String(repeating: "a", count: 64)

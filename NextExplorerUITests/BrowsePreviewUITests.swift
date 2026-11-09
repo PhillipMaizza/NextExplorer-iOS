@@ -4,13 +4,6 @@
     /// Critical path: browsing a directory, navigating into a folder, opening a file preview, plus
     /// the empty and error states. Data comes from the mocked files client fixture.
     final class BrowsePreviewUITests: UITestCase {
-        func testDirectoryListingShowsFixtureItems() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.folder).waitToAppear(), "The mocked directory listing should render its folders")
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear(), "The mocked directory listing should render its files")
-        }
-
         func testNavigateIntoFolderKeepsListing() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)

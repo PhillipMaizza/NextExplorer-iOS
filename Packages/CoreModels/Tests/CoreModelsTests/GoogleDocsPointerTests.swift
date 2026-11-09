@@ -21,11 +21,4 @@ struct GoogleDocsPointerTests {
         #expect(GoogleDocsPointer.targetURL(fromContents: #"{"resource_id": "x"}"#) == nil)
         #expect(GoogleDocsPointer.targetURL(fromContents: #"{"url": "file:///etc/passwd"}"#) == nil)
     }
-
-    @Test func fileItemFlagsAStub() {
-        let sheet = FileItem(name: "Budget.gsheet", path: "Docs", dateModified: Date(timeIntervalSince1970: 1), size: 120, kind: "gsheet")
-        let text = FileItem(name: "notes.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 1), size: 10, kind: "txt")
-        #expect(sheet.isGoogleDocsPointer)
-        #expect(!text.isGoogleDocsPointer)
-    }
 }

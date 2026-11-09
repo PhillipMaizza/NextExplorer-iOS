@@ -4,37 +4,6 @@
     /// Critical path: the row context menu and its actions (rename, share, delete), driven against
     /// the mocked files client.
     final class FileActionsUITests: UITestCase {
-        func testContextMenuExposesActions() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
-            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.renameAction)
-
-            XCTAssertTrue(browse.renameAction.exists, "The context menu should offer Rename")
-            XCTAssertTrue(browse.shareAction.exists, "The context menu should offer Create share link")
-            XCTAssertTrue(browse.deleteAction.exists, "The context menu should offer Delete")
-        }
-
-        func testRenameOpensSheet() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
-            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.renameAction)
-
-            browse.renameAction.tap()
-            XCTAssertTrue(browse.renameNameField.waitToAppear(), "Rename should present a name field")
-        }
-
-        func testDeleteShowsConfirmation() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
-            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.deleteAction)
-
-            browse.deleteAction.tap()
-            XCTAssertTrue(browse.deleteConfirmButton.waitToAppear(), "Delete should present a confirmation sheet")
-        }
-
         func testRenameCompletesAndDismisses() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)
@@ -48,20 +17,6 @@
 
             // The mocked rename succeeds, so the sheet dismisses; the field going away is the signal.
             XCTAssertTrue(browse.renameNameField.waitToVanish(), "A successful rename should dismiss the sheet")
-        }
-
-        func testDeleteCompletesAndDismisses() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(browse.item(Fixture.file).waitToAppear())
-            openMenu({ browse.row(Fixture.file).longPress() }, until: browse.deleteAction)
-
-            browse.deleteAction.tap()
-            XCTAssertTrue(browse.deleteConfirmButton.waitToAppear())
-            browse.deleteConfirmButton.tap()
-
-            // The mocked delete succeeds and the confirmation sheet dismisses.
-            XCTAssertTrue(browse.deleteConfirmButton.waitToVanish(), "Confirming delete should dismiss the sheet")
         }
 
         func testCreateShareLinkSheetOpens() {

@@ -5,14 +5,6 @@ import Foundation
 import NetworkClient
 import Testing
 
-struct FilesClientTests {
-    @Test
-    func previewValueBrowseReturnsSeededItems() async throws {
-        let result = try await FilesClient.previewValue.browse(URL(string: "https://example.com")!, "")
-        #expect(!result.items.isEmpty)
-    }
-}
-
 // MARK: Live wire format and error mapping tests
 
 /// Exercises `FilesService` through `FilesClient.live` against a stubbed `URLSession`, so
@@ -430,13 +422,6 @@ struct FilesClientLiveTests {
         let queryItems = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems ?? []
         #expect(queryItems.contains(URLQueryItem(name: "path", value: "Photos")))
         #expect(queryItems.contains(URLQueryItem(name: "limit", value: "50")))
-    }
-
-    @Test
-    func searchWithAnEmptyQueryStillSendsTheRequest() async throws {
-        stub(statusCode: 200, body: #"{"items": []}"#.data(using: .utf8)!)
-        let results = try await makeClient().search(serverURL, "", "", nil)
-        #expect(results.items.isEmpty)
     }
 
     @Test

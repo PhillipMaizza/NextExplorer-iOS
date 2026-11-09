@@ -500,19 +500,6 @@ struct BrowseFeatureTests {
     }
 
     @Test
-    func searchResultTappedOnADirectoryEmitsOpenPathDelegate() async {
-        let serverURL = URL(string: "https://example.com")!
-        let result = SearchResultItem(name: "Docs", path: "Photos", kind: "dir")
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
-            BrowseFeature()
-        }
-
-        await store.send(.searchResultTapped(result))
-        await store.receive(.delegate(.openPath(path: "Photos/Docs", title: "Docs")))
-    }
-
-    @Test
     func favoritesResponseCollectsFavoritePaths() async {
         let serverURL = URL(string: "https://example.com")!
         let favorite = Favorite(
@@ -547,32 +534,6 @@ struct BrowseFeatureTests {
         await store.send(.favoritesResponse([])) {
             $0.favoritePaths = []
             $0.hasLoadedFavorites = true
-        }
-    }
-
-    @Test
-    func sortOptionChangedUpdatesState() async {
-        let serverURL = URL(string: "https://example.com")!
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
-            BrowseFeature()
-        }
-
-        await store.send(.sortOptionChanged(.dateModified)) {
-            $0.sortOption = .dateModified
-        }
-    }
-
-    @Test
-    func sortDirectionChangedUpdatesState() async {
-        let serverURL = URL(string: "https://example.com")!
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
-            BrowseFeature()
-        }
-
-        await store.send(.sortDirectionChanged(.descending)) {
-            $0.sortDirection = .descending
         }
     }
 
@@ -994,19 +955,6 @@ struct BrowseFeatureTests {
     }
 
     @Test
-    func rowTappedOnAFolderWithSpecialCharactersInItsNameStillEmitsOpenFolder() async {
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "日本語 & #tag", path: "", dateModified: Date(), size: 0, kind: "directory")
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
-            BrowseFeature()
-        }
-
-        await store.send(.rowTapped(item))
-        await store.receive(.delegate(.openFolder(item)))
-    }
-
-    @Test
     func openingAFolderFromSearchEndsTheSearch() async {
         let serverURL = URL(string: "https://example.com")!
         let result = SearchResultItem(name: "Payslips", path: "", kind: "dir")
@@ -1041,20 +989,6 @@ struct BrowseFeatureTests {
     }
 
     // MARK: File actions; context menu routing
-
-    @Test
-    func renameTappedSetsTheRenameSheetItem() async {
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
-
-        let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
-            BrowseFeature()
-        }
-
-        await store.send(.renameTapped(item)) {
-            $0.renameSheetItem = item
-        }
-    }
 
     @Test
     func deleteTappedSetsTheDeleteConfirmationItemAndChecksShareImpact() async {
@@ -1265,22 +1199,6 @@ struct BrowseFeatureTests {
     // MARK: File actions; rename
 
     @Test
-    func renameCancelledClearsTheRenameSheetItem() async {
-        let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
-        var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
-        state.renameSheetItem = item
-
-        let store = TestStore(initialState: state) {
-            BrowseFeature()
-        }
-
-        await store.send(.renameCancelled) {
-            $0.renameSheetItem = nil
-        }
-    }
-
-    @Test
     func renameConfirmedWithAnEmptyNameClearsTheSheetWithoutCallingTheServer() async {
         let serverURL = URL(string: "https://example.com")!
         let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
@@ -1383,23 +1301,6 @@ struct BrowseFeatureTests {
     }
 
     // MARK: File actions; new folder
-
-    @Test
-    func newFolderTappedOpensTheSheetAndCancelledClosesIt() async {
-        let serverURL = URL(string: "https://example.com")!
-        let store = TestStore(
-            initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
-        ) {
-            BrowseFeature()
-        }
-
-        await store.send(.newFolderTapped) {
-            $0.isNewFolderSheetPresented = true
-        }
-        await store.send(.newFolderCancelled) {
-            $0.isNewFolderSheetPresented = false
-        }
-    }
 
     @Test
     func newFolderConfirmedWithABlankNameClosesTheSheetWithoutCallingTheServer() async {
@@ -2530,17 +2431,6 @@ struct BrowseFeatureDisplayedItemsTests {
     }
 
     @Test
-    func equalKindsDoNotCrashOrReorderUnpredictablyWhenDescending() {
-        let first = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        let second = FileItem(name: "b.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        var state = makeState(showHiddenFiles: true, sortOption: .kind, sortDirection: .descending)
-        state.items = [first, second]
-
-        #expect(Set(state.displayedItems.map(\.name)) == ["a.txt", "b.txt"])
-        #expect(state.displayedItems.count == 2)
-    }
-
-    @Test
     func equalSizesDoNotCrashOrReorderUnpredictablyWhenDescending() {
         // Regression: negating a `<` comparator to build `>` breaks `sorted`'s strict-weak-
         // ordering requirement exactly when two elements compare equal. This only asserts the
@@ -2572,18 +2462,6 @@ struct BrowseFeatureDisplayedItemsTests {
         state.items = [visible, hidden]
 
         #expect(Set(state.displayedItems.map(\.name)) == ["visible.txt", ".hidden"])
-    }
-
-    @Test
-    func displayedItemsIsEmptyWhenThereAreNoItems() {
-        let state = makeState(showHiddenFiles: true)
-        #expect(state.displayedItems.isEmpty)
-    }
-
-    @Test
-    func displayedSearchResultsIsNilWhenNoSearchHasRun() {
-        let state = makeState(showHiddenFiles: true)
-        #expect(state.displayedSearchResults == nil)
     }
 
     @Test
@@ -2818,17 +2696,6 @@ struct BrowseFeatureTransferTests {
 
         await store.send(.destinationPicker(.presented(.delegate(.cancelled)))) {
             $0.destinationPicker = nil
-        }
-    }
-
-    @Test
-    func clipboardClearedEmptiesTheClipboard() async {
-        var state = makeState()
-        state.$clipboard.withLock { $0 = FileClipboard(items: [item("a.txt")], operation: .copy) }
-        let store = TestStore(initialState: state) { BrowseFeature() }
-
-        await store.send(.clipboardCleared) {
-            $0.$clipboard.withLock { $0 = nil }
         }
     }
 

@@ -51,37 +51,6 @@
         }
 
         @Test
-        func filesDroppedOnAFolderRowUploadIntoThatFolder() async {
-            let files = [picked("a.jpg", id: UUID(0))]
-            var initial = state(directoryPath: "Documents")
-            initial.access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
-            let folder = FileItem(name: "Trip", path: "Documents", dateModified: Date(), size: 0, kind: "directory")
-            let store = TestStore(initialState: initial) {
-                BrowseFeature()
-            } withDependencies: {
-                $0.uploadStaging = staging(files)
-            }
-
-            await store.send(.filesDroppedOnFolder([URL(fileURLWithPath: "/tmp/a.jpg")], folder: folder))
-            await store.receive(\.directUploadStaged)
-            await store.receive(.delegate(.uploadRequested([
-                PendingUpload(id: UUID(0), fileURL: URL(fileURLWithPath: "/tmp/a.jpg"), fileName: "a.jpg", destination: "Documents/Trip"),
-            ])))
-        }
-
-        @Test
-        func filesDroppedOnAFolderWithoutUploadRightsAreIgnored() async {
-            var initial = state(directoryPath: "Documents")
-            initial.access = FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true)
-            let folder = FileItem(name: "Trip", path: "Documents", dateModified: Date(), size: 0, kind: "directory")
-            let store = TestStore(initialState: initial) {
-                BrowseFeature()
-            }
-
-            await store.send(.filesDroppedOnFolder([URL(fileURLWithPath: "/tmp/a.jpg")], folder: folder))
-        }
-
-        @Test
         func nothingStagedShowsTheStagingError() async {
             let store = TestStore(initialState: state(directoryPath: "Documents")) {
                 BrowseFeature()

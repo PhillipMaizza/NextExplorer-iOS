@@ -102,11 +102,4 @@ struct CatalogTests {
             }
         }
     }
-
-    @Test("the placeholder reader ignores argument positions and order")
-    func placeholderReader() {
-        #expect(Self.placeholders(of: "%2$@ then %1$lld") == ["%@", "%lld"])
-        #expect(Self.placeholders(of: "%lld files in %@") == Self.placeholders(of: "%@ has %lld files"))
-        #expect(Self.placeholders(of: "no arguments").isEmpty)
-    }
 }

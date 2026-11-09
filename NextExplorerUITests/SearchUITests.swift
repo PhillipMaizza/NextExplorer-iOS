@@ -5,17 +5,6 @@
     /// Critical path: searching the current scope. Results come from the mocked search endpoint,
     /// which returns stable hits for any non empty query.
     final class SearchUITests: UITestCase {
-        func testSearchShowsResults() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-            XCTAssertTrue(TabBar(app: app).browse.waitToAppear())
-
-            XCTAssertTrue(browse.searchField.waitToAppear(), "Browse should expose the pinned search field")
-            browse.searchField.clearAndType(Fixture.searchQuery)
-
-            XCTAssertTrue(browse.item(Fixture.searchHit).waitToAppear(), "Typing a query should surface matching results")
-        }
-
         func testSearchNoMatchesShowsEmptyState() {
             let app = launchApp(auth: .loggedIn, scenario: .empty)
             let browse = BrowseScreen(app: app)

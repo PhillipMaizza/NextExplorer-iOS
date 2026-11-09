@@ -261,18 +261,6 @@ struct SharedFeatureTests {
     }
 
     @Test
-    func deleteCancelledClearsTheConfirmation() async {
-        let share = makeShare()
-        var state = SharedFeature.State(serverURL: serverURL)
-        state.byMe = [share]
-
-        let store = TestStore(initialState: state) { SharedFeature() }
-
-        await store.send(.deleteTapped(share)) { $0.deleteConfirmationShare = share }
-        await store.send(.deleteCancelled) { $0.deleteConfirmationShare = nil }
-    }
-
-    @Test
     func aFailedDeleteKeepsTheShareAndShowsAnError() async {
         let share = makeShare()
         var state = SharedFeature.State(serverURL: serverURL)

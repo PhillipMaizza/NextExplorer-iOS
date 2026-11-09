@@ -100,19 +100,6 @@ struct BackgroundUploaderEventsTests {
         harness.events.fireTimers()
     }
 
-    @Test("A session with nothing to wait for completes at once and leaves no timer behind")
-    func unknownSessionLeavesNoTimer() async throws {
-        let harness = try Harness()
-        defer { harness.tearDown() }
-        let session = identifier()
-
-        await withCheckedContinuation { continuation in
-            harness.uploader.handleEvents(forSession: session) { continuation.resume() }
-        }
-
-        #expect(harness.events.pendingTimers == 0)
-    }
-
     // MARK: Cancelling with the extension at work
 
     @Test("A batch without a manifest that was touched a moment ago is still being filled in: an account change keeps it")

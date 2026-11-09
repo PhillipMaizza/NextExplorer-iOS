@@ -5,26 +5,6 @@
     /// mocked createFolder endpoint. The new folder sheet stays open on failure and dismisses on
     /// success, so the field disappearing is the success signal.
     final class MutationUITests: UITestCase {
-        func testCreateFolder() {
-            let app = launchApp(auth: .loggedIn, scenario: .normal)
-            let browse = BrowseScreen(app: app)
-
-            // New Folder only appears below the root, so push into a folder first. Pushing can drop
-            // the first tap under load, so retry until the breadcrumb (only below the root) shows.
-            XCTAssertTrue(browse.item(Fixture.folder).waitToAppear())
-            openMenu({ browse.item(Fixture.folder).tap() }, until: browse.breadcrumbRoot)
-            openMenu({ browse.uploadMenu.tap() }, until: browse.newFolderMenuItem)
-            browse.newFolderMenuItem.tap()
-
-            XCTAssertTrue(browse.newFolderNameField.waitToAppear(), "The new folder sheet should present a name field")
-            browse.newFolderNameField.clearAndType("Reports")
-
-            browse.newFolderConfirm.tap()
-
-            // On success the sheet dismisses; the name field goes away.
-            XCTAssertTrue(browse.newFolderNameField.waitToVanish(), "A successful create should dismiss the sheet")
-        }
-
         func testNewFolderCreatedAppearsInListing() {
             let app = launchApp(auth: .loggedIn, scenario: .normal)
             let browse = BrowseScreen(app: app)

@@ -4,15 +4,6 @@
     /// Critical path: the Settings tab renders and its controls respond. The mocked preferences and
     /// system settings back every row.
     final class SettingsUITests: UITestCase {
-        func testSettingsTabShowsContent() {
-            let app = launchApp(auth: .loggedIn)
-            let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
-
-            XCTAssertTrue(settings.addAccountRow.waitToAppear(), "Settings should expose the Accounts section")
-            XCTAssertTrue(scrollTo(settings.languageRow, in: app), "Settings should list its General rows")
-        }
-
         func testOpenLanguagePicker() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)

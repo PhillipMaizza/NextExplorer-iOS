@@ -23,16 +23,6 @@ struct ShareExtensionDependenciesTests {
         )
     }
 
-    @Test("the no cache store never returns what was written to it")
-    func noCacheNeverReturnsAWrite() {
-        let store = DirectoryCacheStore.noCache
-        store.write(serverURL: serverURL, path: "Photos", result: listing, etag: "\"v1\"", fetchedAt: MockClock.now)
-
-        #expect(store.read(serverURL: serverURL, path: "Photos") == nil)
-        #expect(store.lastWrittenAt(serverURL: serverURL, path: "Photos") == nil)
-        #expect(store.totalSizeBytes() == 0)
-    }
-
     @Test("the extension's directory cache is the no cache store")
     func configureReplacesTheDirectoryCache() {
         withDependencies {

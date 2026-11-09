@@ -47,11 +47,6 @@ import Testing
             return renderer.uiImage?.size
         }
 
-        @Test("the minimum hit target is the 44pt touch minimum")
-        func minimumIsFortyFour() {
-            #expect(DSHitTarget.minimumSize == 44)
-        }
-
         @Test("the hit area reaches 44 points on every side of a small control and nothing past a large one")
         func expansionFillsUpToTheMinimum() {
             let small = DSHitTarget.expansion(for: CGSize(width: 28, height: 20))

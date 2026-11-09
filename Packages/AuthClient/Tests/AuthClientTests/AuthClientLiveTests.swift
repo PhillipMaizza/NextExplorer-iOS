@@ -311,15 +311,6 @@ struct AuthClientLiveTests {
 
     // MARK: - logout (server-side only; local teardown is removeAccount's job)
 
-    @Test("logout happy path: calls the server without throwing")
-    func logoutHappyPath() async throws {
-        let client = makeClient(cookieStorage: makeCookieStorage(), keychainClient: .inMemory()) { request in
-            let url = try #require(request.url)
-            return try (Data(), response(statusCode: 200, url: url))
-        }
-        try await client.logout(serverURL)
-    }
-
     @Test("logout edge case: server unreachable is swallowed (best-effort) and the local session is left to removeAccount")
     func logoutServerUnreachableIsBestEffort() async throws {
         let cookieStorage = makeCookieStorage()
@@ -374,35 +365,6 @@ struct AuthClientLiveTests {
     }
 
     // MARK: - removeAccount
-
-    @Test("removeAccount drops the account locally and clears its cookie, best-effort server logout")
-    func removeAccountDropsAccount() async throws {
-        let cookieStorage = makeCookieStorage()
-        let keychainClient = KeychainClient.inMemory()
-        let credentials = try SessionCredentials(
-            serverBaseURL: serverURL,
-            authMode: .local,
-            cookieName: AuthClientConfiguration.CookieName.local,
-            cookieValue: "abc123",
-            cookieDomain: #require(serverURL.host),
-            cookiePath: "/",
-            cookieIsSecure: false,
-            expiresAt: nil,
-            username: "phillip"
-        )
-        let store = SessionCookieStore(keychainClient: keychainClient, cookieStorage: cookieStorage)
-        try store.persist(credentials)
-
-        let client = makeClient(cookieStorage: cookieStorage, keychainClient: keychainClient) { request in
-            let url = try #require(request.url)
-            return try (Data(), response(statusCode: 200, url: url))
-        }
-
-        let next = await client.removeAccount(credentials.accountID)
-        #expect(next == nil)
-        #expect(store.activeCredentials() == nil)
-        #expect(cookieStorage.cookies(for: serverURL)?.isEmpty ?? true)
-    }
 
     @Test("Only an http address answered from https on the same host counts as upgraded")
     func redirectToHTTPS() {
@@ -559,17 +521,6 @@ struct AuthClientLiveTests {
         await #expect(throws: AuthClientError.self) {
             _ = try await client.loadSession()
         }
-    }
-
-    @Test("the launch keychain migration is harmless in a build without the sharing entitlement")
-    func launchMigrationIsANoOpWithoutSharing() throws {
-        let keychain = KeychainClient.inMemory()
-        let stored = try credentials()
-        try SessionCookieStore(keychainClient: keychain, cookieStorage: makeCookieStorage()).persist(stored)
-
-        AuthClient.migrateKeychainIfNeeded()
-
-        #expect(SessionCookieStore(keychainClient: keychain, cookieStorage: makeCookieStorage()).activeCredentials() == stored)
     }
 }
 

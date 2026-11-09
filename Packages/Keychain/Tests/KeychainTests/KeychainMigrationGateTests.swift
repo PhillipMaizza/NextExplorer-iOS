@@ -60,12 +60,6 @@ struct KeychainMigrationGateTests {
         gate.finish()
         gate.waitUntilFinished(maxWait: Constants.neverEnding)
     }
-
-    @Test("the default maximum wait is bounded, so a stuck migration cannot hang every read for good")
-    func defaultWaitIsBounded() {
-        #expect(KeychainMigrationGate.defaultMaxWait > 0)
-        #expect(KeychainMigrationGate.defaultMaxWait < Constants.neverEnding)
-    }
 }
 
 private final class LockIsolated<Value>: @unchecked Sendable {

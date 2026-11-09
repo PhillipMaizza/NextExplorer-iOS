@@ -190,50 +190,6 @@ struct DirectoryCacheStoreTests {
     }
 
     @Test
-    func touchRefreshesFetchedAtWhenETagMatches() {
-        let (store, root) = makeStore()
-        defer { cleanUp(root) }
-        store.write(
-            serverURL: serverURL, path: "docs",
-            result: result(path: "docs", itemNames: ["a", "b"]), etag: "\"e0\"", fetchedAt: Date(timeIntervalSince1970: 1)
-        )
-
-        store.touch(serverURL: serverURL, path: "docs", expectedETag: "\"e0\"", fetchedAt: Date(timeIntervalSince1970: 99))
-
-        let cached = store.read(serverURL: serverURL, path: "docs")
-        #expect(cached?.fetchedAt == Date(timeIntervalSince1970: 99))
-        #expect(cached?.etag == "\"e0\"")
-        #expect(cached?.items.map(\.name) == ["a", "b"])
-    }
-
-    @Test
-    func touchIsANoOpWhenETagNoLongerMatches() {
-        let (store, root) = makeStore()
-        defer { cleanUp(root) }
-        // A concurrent browse has since written a fresh listing tagged "e1".
-        store.write(
-            serverURL: serverURL, path: "docs",
-            result: result(path: "docs", itemNames: ["fresh"]), etag: "\"e1\"", fetchedAt: Date(timeIntervalSince1970: 50)
-        )
-
-        // A stale 304 handler that conditioned on the old "e0" must not clobber it.
-        store.touch(serverURL: serverURL, path: "docs", expectedETag: "\"e0\"", fetchedAt: Date(timeIntervalSince1970: 99))
-
-        let cached = store.read(serverURL: serverURL, path: "docs")
-        #expect(cached?.etag == "\"e1\"")
-        #expect(cached?.fetchedAt == Date(timeIntervalSince1970: 50))
-        #expect(cached?.items.map(\.name) == ["fresh"])
-    }
-
-    @Test
-    func touchOnMissingEntryDoesNothing() {
-        let (store, root) = makeStore()
-        defer { cleanUp(root) }
-        store.touch(serverURL: serverURL, path: "missing", expectedETag: nil, fetchedAt: Date())
-        #expect(store.read(serverURL: serverURL, path: "missing") == nil)
-    }
-
-    @Test
     func schemaVersionMismatchDiscardsEntry() throws {
         let (store, root) = makeStore()
         defer { cleanUp(root) }

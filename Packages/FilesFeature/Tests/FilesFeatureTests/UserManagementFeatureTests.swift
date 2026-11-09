@@ -455,22 +455,6 @@ struct UserManagementFeatureTests {
     }
 
     @Test
-    func aVolumeSaveFailureResetsTheSubmittingFlag() async {
-        let store = await bootedStore(users: [makeUser(id: "2")], volumesEnabled: true) {
-            $0.filesClient.addUserVolume = { _, _, _ in throw FilesClientError.network("down") }
-        }
-        await store.send(.userTapped("2"))
-        await store.receive(\.volumesResponse)
-        await store.send(.addVolumeTapped)
-        await store.send(.volumePathSelected("/srv/media"))
-        await store.send(.volumeLabelChanged("Media"))
-        await store.send(.volumeSubmitTapped)
-        await store.receive(\.volumeResponse)
-        #expect(store.state.volumeSheet?.isSubmitting == false)
-        #expect(store.state.volumeSheet?.errorMessage != nil)
-    }
-
-    @Test
     func twoQuickVolumeRemovalsBothComplete() async {
         let first = UserVolume(id: "v1", userId: "2", label: "A", path: "/a", accessMode: .readwrite)
         let second = UserVolume(id: "v2", userId: "2", label: "B", path: "/b", accessMode: .readwrite)

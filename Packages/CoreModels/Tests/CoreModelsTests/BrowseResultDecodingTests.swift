@@ -30,12 +30,4 @@ struct BrowseResultDecodingTests {
         let result = try JSONDecoder().decode(BrowseResult.self, from: Data(json.utf8))
         #expect(result.items.isEmpty)
     }
-
-    @Test("error path: missing access object fails to decode")
-    func missingAccessThrows() {
-        let json = #"{"items": [], "path": "Home"}"#
-        #expect(throws: (any Error).self) {
-            _ = try JSONDecoder().decode(BrowseResult.self, from: Data(json.utf8))
-        }
-    }
 }

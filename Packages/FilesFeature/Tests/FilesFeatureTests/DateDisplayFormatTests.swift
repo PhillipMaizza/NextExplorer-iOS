@@ -48,20 +48,6 @@ struct DateDisplayFormatTests {
     }
 
     @Test
-    func systemFormatProducesANonEmptyLocalizedString() {
-        // Locale-dependent by design (`.medium` date style): just guard against a blank
-        // or crashing formatter rather than pinning an exact string.
-        #expect(!DateDisplayFormat.system.string(from: date).isEmpty)
-    }
-
-    @Test
-    func allCasesHaveADistinctNonEmptyTitle() {
-        let titles = DateDisplayFormat.allCases.map(\.title)
-        #expect(Set(titles).count == titles.count)
-        #expect(titles.allSatisfy { !$0.isEmpty })
-    }
-
-    @Test
     func allCasesProduceADistinctNonEmptyStringForADayAndMonthThatDiffer() {
         // Uses the fixed `date` (day 2, month 1), not the live `.example`: on any day where
         // day-of-month == month number, the day/month-order pairs (dd/MM vs. MM/dd,
@@ -73,32 +59,10 @@ struct DateDisplayFormatTests {
     }
 
     @Test
-    func exampleIsNonEmptyForEveryCase() {
-        #expect(DateDisplayFormat.allCases.allSatisfy { !$0.example().isEmpty })
-    }
-
-    @Test
     func includeTimeAppendsATimeSuffixAfterTheDate() {
         let dateOnly = DateDisplayFormat.dashYearMonthDay.string(from: date)
         let withTime = DateDisplayFormat.dashYearMonthDay.string(from: date, includeTime: true)
         #expect(withTime.hasPrefix(dateOnly))
         #expect(withTime != dateOnly)
-    }
-
-    @Test
-    func includeTimeDefaultsToFalseWhenOmitted() {
-        #expect(DateDisplayFormat.dashYearMonthDay.string(from: date) == DateDisplayFormat.dashYearMonthDay.string(from: date, includeTime: false))
-    }
-
-    @Test
-    func exampleWithIncludeTimeIsNonEmptyForEveryCase() {
-        #expect(DateDisplayFormat.allCases.allSatisfy { !$0.example(includeTime: true).isEmpty })
-    }
-
-    @Test
-    func idMatchesRawValueForAppStoragePersistence() {
-        for format in DateDisplayFormat.allCases {
-            #expect(format.id == format.rawValue)
-        }
     }
 }

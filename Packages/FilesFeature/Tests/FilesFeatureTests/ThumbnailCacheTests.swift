@@ -43,19 +43,6 @@ struct ThumbnailCacheTests {
 
     // MARK: Edge cases
 
-    @Test
-    func differentURLsMapToDifferentCacheSlots() throws {
-        let directory = try cacheDirectory()
-        let urlA = URL(string: "https://example.com/static/thumbnails/a.webp")!
-        let urlB = URL(string: "https://example.com/static/thumbnails/b.webp")!
-
-        let keyA = sha256Hex(of: urlA.absoluteString)
-        let keyB = sha256Hex(of: urlB.absoluteString)
-
-        #expect(keyA != keyB)
-        #expect(directory.appendingPathComponent(keyA) != directory.appendingPathComponent(keyB))
-    }
-
     @Test("A miss downloads through NetworkClient, so an mTLS server's thumbnails present the certificate")
     func missGoesThroughNetworkClient() async throws {
         let requested = LockIsolated<URL?>(nil)

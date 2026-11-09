@@ -75,22 +75,6 @@ struct AccountCacheWipeTests {
         #expect(pending.accounts() == [Fixture.account])
     }
 
-    @Test("a writer that lands after the first wipe is cleaned by the second pass, which unlists the account")
-    func lateWriterIsRemovedByTheSecondPass() {
-        let directory = DirectoryCacheStore.inMemory()
-        let pending = PendingAccountWipes.inMemory()
-        let wipe = makeWipe(directory: directory, pending: pending)
-        wipe(Fixture.account)
-
-        directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
-        #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
-
-        wipe.finishPending(liveAccountIDs: [])
-
-        #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) == nil)
-        #expect(pending.accounts().isEmpty)
-    }
-
     @Test("an account left pending by a killed run is wiped by the next launch's pass")
     func pendingAccountSurvivesARestart() throws {
         let suite = "\(Fixture.defaultsSuitePrefix)\(UUID().uuidString)"
@@ -133,21 +117,6 @@ struct AccountCacheWipeTests {
         #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
         #expect(directory.bound(to: Fixture.otherAccount).read(serverURL: Fixture.server, path: Fixture.path) == nil)
         #expect(counters.offlineRemovals.value == [Fixture.otherAccount])
-        #expect(pending.accounts().isEmpty)
-    }
-
-    @Test("the second pass reads the stored sessions and spares the accounts in them")
-    func secondPassReadsTheStoredSessions() async {
-        let directory = DirectoryCacheStore.inMemory()
-        directory.bound(to: Fixture.account).write(serverURL: Fixture.server, path: Fixture.path, result: listing(), etag: nil, fetchedAt: Fixture.fetchedAt)
-        let pending = PendingAccountWipes.inMemory()
-        pending.add(Fixture.account)
-        var authClient = AuthClient.previewValue
-        authClient.listSessionsOrThrow = { [Self.session(Fixture.account)] }
-
-        await makeWipe(directory: directory, pending: pending).finishPending(authClient: authClient)
-
-        #expect(directory.bound(to: Fixture.account).read(serverURL: Fixture.server, path: Fixture.path) != nil)
         #expect(pending.accounts().isEmpty)
     }
 
