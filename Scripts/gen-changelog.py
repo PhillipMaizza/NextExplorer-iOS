@@ -49,7 +49,12 @@ FIX_TITLE = re.compile(r"^(fix\w*|bugs?|bugfix\w*)\b|\b(qa pass|audit\w*)\b", re
 MERGE_PR = re.compile(r"^Merge pull request #(\d+)")
 TRAILING_PR = re.compile(r"\s*\(#(\d+)\)\s*$")
 TICKET = re.compile(r"^NXTIOS-\d+(?:/\d+)*:\s*")
-VERSION_MENTION = re.compile(r",?\s*\b(?:version\s+)?v?\d+(?:\.\d+)+\b", re.IGNORECASE)
+# An app version in a title: "version 1.1.2" or "v1.0.5" anywhere, or a bare number as the last
+# comma separated clause ("..., 1.0.1"). A bare number elsewhere ("iOS 18.2") is real text.
+VERSION_MENTION = re.compile(
+    r",?\s*\b(?:version\s+v?\d+(?:\.\d+)+|v\d+(?:\.\d+)+)\b|,\s*\d+(?:\.\d+)+\s*$",
+    re.IGNORECASE,
+)
 MARKETING_VERSION = re.compile(r"MARKETING_VERSION = ([0-9.]+);")
 RELEASE_TAG = re.compile(r"^v(\d+(?:\.\d+)+)$")
 UPCOMING = "Unreleased"
@@ -203,7 +208,9 @@ def notes(history, version, links=False):
                 f"- {text}" + (f" ({', '.join(f'#{pr}' for pr in prs)})" if links and prs else "")
                 for text, prs in entries
             )
-            return text[:NOTES_LIMIT]
+            if len(text) > NOTES_LIMIT:
+                text = text[:NOTES_LIMIT].rsplit("\n", 1)[0]
+            return text
     return ""
 
 
