@@ -111,7 +111,7 @@ final class DSToastPresenter {
 
     private(set) var visibleID: String?
     private var requests: [(owner: UUID, id: String)] = []
-    private var swapTask: Task<Void, Never>?
+    private(set) var swapTask: Task<Void, Never>?
 
     func set(_ message: DSToastMessage?, owner: UUID) {
         requests.removeAll { $0.owner == owner }

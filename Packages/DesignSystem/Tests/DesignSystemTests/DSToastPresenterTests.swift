@@ -5,8 +5,6 @@ import Testing
 @MainActor
 @Suite("DSToastPresenter")
 struct DSToastPresenterTests {
-    private let settle: Duration = .milliseconds(500)
-
     @Test("the first toast shows at once")
     func firstShowsImmediately() {
         let presenter = DSToastPresenter()
@@ -16,7 +14,7 @@ struct DSToastPresenterTests {
     }
 
     @Test("a new toast waits for the current one to leave")
-    func newToastWaitsForCurrent() async throws {
+    func newToastWaitsForCurrent() async {
         let presenter = DSToastPresenter()
         let owner = UUID()
         let first = DSToastMessage.success("Copied")
@@ -24,24 +22,24 @@ struct DSToastPresenterTests {
         presenter.set(first, owner: owner)
         presenter.set(second, owner: owner)
         #expect(presenter.visibleID == nil)
-        try await Task.sleep(for: settle)
+        await presenter.swapTask?.value
         #expect(presenter.visibleID == second.id)
     }
 
     @Test("toasts from different screens never show together")
-    func differentOwnersSwap() async throws {
+    func differentOwnersSwap() async {
         let presenter = DSToastPresenter()
         let first = DSToastMessage.success("Sync completed")
         let second = DSToastMessage.failure("Could not copy")
         presenter.set(first, owner: UUID())
         presenter.set(second, owner: UUID())
         #expect(presenter.visibleID == nil)
-        try await Task.sleep(for: settle)
+        await presenter.swapTask?.value
         #expect(presenter.visibleID == second.id)
     }
 
     @Test("a toast still set underneath returns once the newer one clears")
-    func pendingToastReturns() async throws {
+    func pendingToastReturns() async {
         let presenter = DSToastPresenter()
         let progressOwner = UUID()
         let otherOwner = UUID()
@@ -49,11 +47,11 @@ struct DSToastPresenterTests {
         let success = DSToastMessage.success("Copied")
         presenter.set(progress, owner: progressOwner)
         presenter.set(success, owner: otherOwner)
-        try await Task.sleep(for: settle)
+        await presenter.swapTask?.value
         #expect(presenter.visibleID == success.id)
         presenter.set(nil, owner: otherOwner)
         #expect(presenter.visibleID == nil)
-        try await Task.sleep(for: settle)
+        await presenter.swapTask?.value
         #expect(presenter.visibleID == progress.id)
     }
 
