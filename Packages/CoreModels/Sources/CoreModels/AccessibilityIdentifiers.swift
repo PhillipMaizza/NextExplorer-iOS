@@ -14,7 +14,7 @@ public enum AccessibilityIdentifiers {
         public static let hostField = "login.hostField"
         public static let testConnectionButton = "login.testConnectionButton"
         public static let clientCertificateButton = "login.clientCertificateButton"
-        public static let emailField = "login.emailField"
+        public static let identifierField = "login.identifierField"
         public static let passwordField = "login.passwordField"
         public static let passwordFieldVisible = "login.passwordFieldVisible"
         public static let submitButton = "login.submitButton"

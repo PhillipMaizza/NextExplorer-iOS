@@ -47,8 +47,8 @@ struct LoginScreen {
         app.buttons[AccessibilityIdentifiers.Login.testConnectionButton]
     }
 
-    var emailField: XCUIElement {
-        app.textFields[AccessibilityIdentifiers.Login.emailField]
+    var identifierField: XCUIElement {
+        app.textFields[AccessibilityIdentifiers.Login.identifierField]
     }
 
     var passwordField: XCUIElement {

@@ -664,7 +664,7 @@ public struct LoginFormView: View {
             .textContentType(.username)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
-            .accessibilityIdentifier(AccessibilityIdentifiers.Login.emailField)
+            .accessibilityIdentifier(AccessibilityIdentifiers.Login.identifierField)
             .focused($focusedField, equals: .identifier)
             .task {
                 try? await Task.sleep(for: Constants.identifierAutoFocusDelay)
