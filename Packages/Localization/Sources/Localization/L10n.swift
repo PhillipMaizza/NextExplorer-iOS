@@ -407,7 +407,6 @@ public enum L10n {
         public static var errorDecoding: String { tr("login.errorDecoding") }
         public static var errorIncomplete: String { tr("login.errorIncomplete") }  // "Sign-in didn't complete. Please try again."
         public static var errorInvalidCredentials: String { tr("login.errorInvalidCredentials") }  // "Incorrect username or password."
-        public static var errorInvalidEmail: String { tr("login.errorInvalidEmail") }  // "Enter a valid email address."
         public static var errorInvalidServer: String { tr("login.errorInvalidServer") }  // "Enter a valid server address."
         public static var errorKeychain: String { tr("login.errorKeychain") }  // "Could not save your session on this device."
         public static var errorNoAuthMethods: String { tr("login.errorNoAuthMethods") }  // "This server has no sign-in methods enabled."
