@@ -9,8 +9,13 @@ extension LocalAuthService {
     /// `backend/src/services/users/localAuth.js`). `email` is the oldest field name and works on
     /// every server version, so the typed value is sent under it whether it is an email or not.
     struct LoginRequestBody: Encodable {
-        let email: String
+        let emailOrUsername: String
         let password: String
+
+        private enum CodingKeys: String, CodingKey {
+            case emailOrUsername = "email"
+            case password
+        }
     }
 
     /// The body of `POST /api/auth/oidc/exchange`: the one time code from the mobile bridge
