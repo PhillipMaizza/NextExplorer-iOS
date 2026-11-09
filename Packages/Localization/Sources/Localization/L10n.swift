@@ -401,13 +401,12 @@ public enum L10n {
     public enum Login {
         public static var addClientCertificate: String { tr("login.addClientCertificate") }  // "Add Certificate"
         public static var changeClientCertificate: String { tr("login.changeClientCertificate") }  // "Change"
-        public static var emailField: String { tr("login.emailField") }  // "Email"
+        public static var identifierField: String { tr("login.identifierField") }  // "Email or username"
         public static var errorClientCertificateRejected: String { tr("login.errorClientCertificateRejected") }  // "The server refused this client certificate."
         public static var errorClientCertificateRequired: String { tr("login.errorClientCertificateRequired") }  // "This server asks for a client certificate."
         public static var errorDecoding: String { tr("login.errorDecoding") }
         public static var errorIncomplete: String { tr("login.errorIncomplete") }  // "Sign-in didn't complete. Please try again."
         public static var errorInvalidCredentials: String { tr("login.errorInvalidCredentials") }  // "Incorrect username or password."
-        public static var errorInvalidEmail: String { tr("login.errorInvalidEmail") }  // "Enter a valid email address."
         public static var errorInvalidServer: String { tr("login.errorInvalidServer") }  // "Enter a valid server address."
         public static var errorKeychain: String { tr("login.errorKeychain") }  // "Could not save your session on this device."
         public static var errorNoAuthMethods: String { tr("login.errorNoAuthMethods") }  // "This server has no sign-in methods enabled."

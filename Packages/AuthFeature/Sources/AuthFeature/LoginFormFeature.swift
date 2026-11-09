@@ -22,7 +22,7 @@ private enum Constants {
     /// the final host is bounded to 253 (DNS max) by `normalizedURL` itself. Email follows
     /// RFC 5321's 254; the password cap is a sane ceiling well above any real passphrase.
     static let maxHostInputLength = 2048
-    static let maxEmailLength = 254
+    static let maxIdentifierLength = 254
     static let maxPasswordLength = 256
 }
 
@@ -101,10 +101,9 @@ public struct LoginFormFeature {
     }
 
     /// Which credential field(s) should shake/red-border for the current `errorMessage`: a
-    /// locally-rejected non-email only implicates the email field, while a server-rejected
-    /// email/password implicates both (the server never says which one was actually wrong).
+    /// server-rejected email or username and password implicates both (the server never says
+    /// which one was actually wrong).
     public enum InvalidFieldScope: Equatable, Sendable {
-        case identifier
         case identifierAndPassword
     }
 
@@ -263,7 +262,7 @@ public struct LoginFormFeature {
                 return Self.cancelInFlightWork()
 
             case let .identifierChanged(text):
-                state.identifier = String(text.prefix(Constants.maxEmailLength))
+                state.identifier = String(text.prefix(Constants.maxIdentifierLength))
                 return .none
 
             case let .passwordChanged(text):
@@ -356,11 +355,6 @@ public struct LoginFormFeature {
                     return .none
                 }
                 let identifier = state.identifier.trimmingCharacters(in: .whitespacesAndNewlines)
-                guard Self.isValidEmail(identifier) else {
-                    state.errorMessage = L10n.Login.errorInvalidEmail
-                    state.invalidFieldsScope = .identifier
-                    return Self.scheduleErrorDismiss(self.clock)
-                }
                 state.submitPhase = .submitting
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
@@ -569,13 +563,6 @@ public struct LoginFormFeature {
             return String(trimmed.dropFirst(prefix.count))
         }
         return host
-    }
-
-    /// Basic shape check (`x@y.z`): the server is the real source of truth on whether the
-    /// address exists, this only catches "clearly not an email" before spending a network call.
-    /// Shares the one regex in `CredentialRules` so login and user management stay in lockstep.
-    static func isValidEmail(_ text: String) -> Bool {
-        CredentialRules.isEmailShaped(text)
     }
 
     /// Reduces whatever the user typed or pasted to a bare `host[:port]` and rejects anything

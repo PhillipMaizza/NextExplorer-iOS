@@ -27,8 +27,8 @@
             login.hostField.clearAndType("nextexplorer.example.com")
             login.testConnectionButton.click()
 
-            XCTAssertTrue(login.emailField.waitToAppear(), "Test connection should advance to the credentials page")
-            login.emailField.clearAndType("phillip@example.com")
+            XCTAssertTrue(login.identifierField.waitToAppear(), "Test connection should advance to the credentials page")
+            login.identifierField.clearAndType("phillip@example.com")
             login.passwordField.clearAndType("hunter2")
             login.submitButton.click()
 
