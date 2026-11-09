@@ -356,11 +356,6 @@ public struct LoginFormFeature {
                     return .none
                 }
                 let identifier = state.identifier.trimmingCharacters(in: .whitespacesAndNewlines)
-                guard Self.isValidEmail(identifier) else {
-                    state.errorMessage = L10n.Login.errorInvalidEmail
-                    state.invalidFieldsScope = .identifier
-                    return Self.scheduleErrorDismiss(self.clock)
-                }
                 state.submitPhase = .submitting
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
@@ -569,13 +564,6 @@ public struct LoginFormFeature {
             return String(trimmed.dropFirst(prefix.count))
         }
         return host
-    }
-
-    /// Basic shape check (`x@y.z`): the server is the real source of truth on whether the
-    /// address exists, this only catches "clearly not an email" before spending a network call.
-    /// Shares the one regex in `CredentialRules` so login and user management stay in lockstep.
-    static func isValidEmail(_ text: String) -> Bool {
-        CredentialRules.isEmailShaped(text)
     }
 
     /// Reduces whatever the user typed or pasted to a bare `host[:port]` and rejects anything

@@ -553,8 +553,8 @@ struct LoginFormFeatureTests {
         await store.send(.continueButtonTapped)
     }
 
-    @Test("edge case: a non-email identifier is rejected locally, without calling the network")
-    func nonEmailIdentifierRejectedLocally() async {
+    @Test("happy path: a username that is not an email is sent to the server as typed")
+    func usernameIdentifierIsSentToServer() async {
         let store = TestStore(
             initialState: LoginFormFeature.State(
                 host: "nextexplorer.example.com",
@@ -565,22 +565,21 @@ struct LoginFormFeatureTests {
         ) {
             LoginFormFeature()
         } withDependencies: {
-            $0.authClient.login = { _, _, _ in
-                Issue.record("login should not be called for a non-email identifier")
-                throw AuthClientError.invalidCredentials
+            $0.authClient.login = { [user] _, identifier, _ in
+                #expect(identifier == "phillip")
+                return user
             }
             $0.continuousClock = ImmediateClock()
         }
         store.timeout = Self.receiveTimeout
 
         await store.send(.continueButtonTapped) {
-            $0.errorMessage = L10n.Login.errorInvalidEmail
-            $0.invalidFieldsScope = .identifier
+            $0.submitPhase = .submitting
         }
-        await store.receive(\.clearErrorMessage) {
-            $0.errorMessage = nil
-            $0.invalidFieldsScope = nil
+        await store.receive(\.submitSucceeded) {
+            $0.submitPhase = .success
         }
+        await store.receive(\.delegate)
     }
 
     @Test("unexpected error: invalid credentials surfaces a readable message")
