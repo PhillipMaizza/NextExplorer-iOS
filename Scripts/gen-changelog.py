@@ -41,7 +41,7 @@ TECHNICAL = re.compile(
 # Maintenance users only notice as "it works better": folded into GENERIC_NOTE.
 MAINTENANCE = re.compile(
     r"\b(fix\w*|bugs?|bugfix\w*|crash\w*|regressions?|qa pass|audit\w*|harden\w*|stabili\w*|"
-    r"reliab\w*|leaks?|polish\w*|clean ?up|optimi[sz]\w*|performance|tweaks?|again|no longer)\b",
+    r"reliab\w*|leaks?|polish\w*|clean ?up|optimi[sz]\w*|performance|tweaks?|again)\b",
     re.IGNORECASE,
 )
 # A first clause like this means the rest of the title only lists what was fixed.

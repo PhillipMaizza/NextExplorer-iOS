@@ -30,6 +30,10 @@ class UserFacingTests(unittest.TestCase):
         self.assertEqual(text_of("NXTIOS-0087: sign in with a username, not only an email (#118)"),
                          "Sign in with a username, not only an email")
 
+    def test_no_longer_describes_a_change_users_notice(self):
+        self.assertEqual(text_of("NXTIOS-0088: Back no longer waits on the breadcrumb bar animation (#119)"),
+                         "Back no longer waits on the breadcrumb bar animation")
+
     def test_technical_titles_fold_into_the_generic_note(self):
         made = gen.entry("NXTIOS-0089: the release lane commits the next MARKETING_VERSION to main (#120)", "")
         self.assertEqual(made, ("", "120", True))
