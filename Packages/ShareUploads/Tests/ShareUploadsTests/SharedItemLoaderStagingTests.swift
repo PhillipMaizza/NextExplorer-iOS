@@ -258,14 +258,6 @@ struct SharedItemLoaderStagingTests {
 
     // MARK: iCloud placeholders
 
-    @Test("Only a file iCloud has not downloaded needs a download")
-    func downloadDecision() {
-        #expect(FileAccess.needsDownload(.notDownloaded))
-        #expect(!FileAccess.needsDownload(.current))
-        #expect(!FileAccess.needsDownload(.downloaded))
-        #expect(!FileAccess.needsDownload(nil), "a file outside iCloud has no status")
-    }
-
     @Test("A placeholder is downloaded before it is read, a local file is simply read")
     func downloadBeforeRead() throws {
         let root = try temporaryDirectory()

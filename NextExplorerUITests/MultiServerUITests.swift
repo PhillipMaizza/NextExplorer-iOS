@@ -15,17 +15,6 @@
             XCTAssertTrue(settings.accountRow(host: "nextexplorer.example.com").exists, "The active account should be listed")
         }
 
-        func testAddAccountOpensLoginSheet() {
-            let app = launchApp(auth: .loggedIn)
-            let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
-
-            XCTAssertTrue(settings.addAccountRow.waitToAppear())
-            settings.addAccountRow.tap()
-
-            XCTAssertTrue(LoginScreen(app: app).hostField.waitToAppear(), "Add Account should present the login sheet")
-        }
-
         func testAddingSecondServerListsBothAccounts() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)

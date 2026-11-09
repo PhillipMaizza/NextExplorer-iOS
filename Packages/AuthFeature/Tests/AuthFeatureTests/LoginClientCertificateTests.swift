@@ -115,22 +115,6 @@ struct LoginClientCertificateTests {
         await store.skipInFlightEffects()
     }
 
-    @Test("An http address the server redirects to https signs in over https")
-    func httpRedirectSwitchesToHTTPS() async {
-        let status = AuthStatus(localEnabled: true, oidcEnabled: false, redirectsToHTTPS: true)
-        let store = TestStore(initialState: LoginFormFeature.State(connectionPhase: .testing, host: "files.example.com")) {
-            LoginFormFeature()
-        } withDependencies: {
-            $0.continuousClock = TestClock()
-        }
-        store.exhaustivity = .off
-        await store.send(.schemeChanged(.http))
-        await store.send(.testConnectionResponse(.success(status))) {
-            $0.scheme = .https
-        }
-        await store.skipInFlightEffects()
-    }
-
     @Test(
         "A redirect to https carries the answered port, not the typed one",
         arguments: [

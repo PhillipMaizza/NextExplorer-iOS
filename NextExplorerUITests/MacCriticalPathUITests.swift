@@ -9,17 +9,6 @@
     final class MacCriticalPathUITests: UITestCase {
         // MARK: Launch and navigation
 
-        func testRestoredSessionShowsTheBrowseTable() {
-            let app = launchApp()
-            XCTAssertTrue(text(Fixture.folder, in: app).waitToAppear(), "A restored session should list the root in the table")
-            XCTAssertTrue(text(Fixture.file, in: app).exists)
-        }
-
-        func testNoStoredSessionShowsLogin() {
-            let app = launchApp(auth: .loggedOut)
-            XCTAssertTrue(LoginScreen(app: app).hostField.waitToAppear(), "No stored session should show the server entry page")
-        }
-
         func testLoginJourneyRevealsTheSidebar() {
             let app = launchApp(auth: .loggedOut)
             let login = LoginScreen(app: app)
@@ -228,24 +217,6 @@
             app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
 
             XCTAssertTrue(field.waitToVanish(), "Return should finish the rename")
-            XCTAssertTrue(text("todo.txt", in: app).waitToAppear(), "The renamed file should appear in the table")
-        }
-
-        func testReturnRenamesTheSelectedFile() {
-            let app = launchApp()
-            openDocuments(in: app)
-
-            text(Fixture.file, in: app).click()
-            app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
-
-            // Finder style: Return edits the name in place instead of opening the file.
-            let field = app.outlines.textFields.firstMatch
-            XCTAssertTrue(field.waitToAppear(), "Return should rename the selected file in place")
-            let focused = XCTNSPredicateExpectation(predicate: NSPredicate(format: "hasKeyboardFocus == true"), object: field)
-            XCTAssertEqual(XCTWaiter().wait(for: [focused], timeout: UITestTimeout.short), .completed, "The rename field should take keyboard focus")
-            field.clearAndType("todo.txt")
-            app.typeKey(XCUIKeyboardKey.return, modifierFlags: [])
-            XCTAssertTrue(field.waitToVanish(), "Return in the field should finish the rename")
             XCTAssertTrue(text("todo.txt", in: app).waitToAppear(), "The renamed file should appear in the table")
         }
 

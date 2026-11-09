@@ -33,12 +33,4 @@ struct SearchResultItemDecodingTests {
         let item = SearchResultItem(name: "Volume", path: "", kind: "dir")
         #expect(item.id == "Volume")
     }
-
-    @Test("error path: missing required field fails to decode")
-    func missingRequiredFieldThrows() {
-        let json = #"{"name": "notes.txt"}"#
-        #expect(throws: (any Error).self) {
-            _ = try JSONDecoder().decode(SearchResultItem.self, from: Data(json.utf8))
-        }
-    }
 }

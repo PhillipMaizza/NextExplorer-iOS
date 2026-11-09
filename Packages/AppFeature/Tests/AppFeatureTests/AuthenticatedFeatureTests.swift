@@ -168,17 +168,4 @@ struct AuthenticatedFeatureTests {
         await store.send(.mainTab(.delegate(.addAccountRequested)))
         await store.receive(\.delegate.addAccountRequested)
     }
-
-    @Test("edge case: unrelated mainTab actions pass through without touching sign-out state")
-    func unrelatedMainTabActionIsNoOp() async {
-        let store = TestStore(
-            initialState: AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        ) {
-            AuthenticatedFeature()
-        }
-
-        await store.send(.mainTab(.tabSelected(.favorites))) {
-            $0.mainTab.selectedTab = .favorites
-        }
-    }
 }

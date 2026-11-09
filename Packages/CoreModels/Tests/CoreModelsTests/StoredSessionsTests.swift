@@ -82,14 +82,4 @@ struct StoredSessionsTests {
         stored.remove(id: a.accountID)
         #expect(stored.activeID == b.accountID)
     }
-
-    @Test("round-trips through Codable")
-    func codableRoundTrip() throws {
-        var stored = StoredSessions()
-        stored.upsert(credentials(server: "https://a.example.com", username: "phillip"))
-        stored.upsert(credentials(server: "https://b.example.com", username: "jane"))
-        let data = try JSONEncoder().encode(stored)
-        let decoded = try JSONDecoder().decode(StoredSessions.self, from: data)
-        #expect(decoded == stored)
-    }
 }

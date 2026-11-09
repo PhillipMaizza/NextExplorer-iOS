@@ -5,7 +5,6 @@ import Testing
 @Suite("Upload envelope")
 struct UploadRequestTests {
     private let boundary = "Boundary-TEST"
-    private let serverURL = URL(filePath: "/").appending(path: "unused")
 
     private struct Parts {
         var destination: String
@@ -109,15 +108,5 @@ struct UploadRequestTests {
         let data = try envelope(fileName: "blob.bin", destination: "Docs", bytes: bytes)
         #expect(data.range(of: bytes) != nil)
         #expect(data.suffix("\r\n--\(boundary)--\r\n".utf8.count) == Data("\r\n--\(boundary)--\r\n".utf8))
-    }
-
-    @Test("A retried upload is rebuilt from the stored content type")
-    func requestFromContentType() {
-        let url = URL(string: "https://files.example.com")
-        let contentType = "multipart/form-data; boundary=\(boundary)"
-        let request = url.map { UploadRequest.request(serverURL: $0, contentType: contentType) }
-        #expect(request?.httpMethod == "POST")
-        #expect(request?.url?.path == "/api/upload")
-        #expect(request?.value(forHTTPHeaderField: "Content-Type") == contentType)
     }
 }

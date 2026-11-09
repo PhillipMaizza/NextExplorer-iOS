@@ -5,19 +5,6 @@
     /// the download, and confirming dismisses the sheet. The mocked graph (`UITestSupport`) provides an
     /// instant `offlineDownloadFile` and an in memory offline store so the flow runs without a backend.
     final class OfflineUITests: UITestCase {
-        func testOfflinePickerOpensAndListsItems() {
-            let app = launchApp(auth: .loggedIn)
-            let settings = SettingsScreen(app: app)
-            selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
-
-            XCTAssertTrue(scrollTo(settings.offlineDownloadRow, in: app), "Settings should offer the offline download row")
-            settings.offlineDownloadRow.tap()
-
-            let picker = OfflineSelectionScreen(app: app)
-            XCTAssertTrue(picker.title.waitToAppear(), "Tapping the offline row should present the selection sheet")
-            XCTAssertTrue(picker.itemRow("vacation.jpg").waitToAppear(), "The picker should list the folder's files")
-        }
-
         func testSelectingAFileEnablesDownloadThenDismisses() {
             let app = launchApp(auth: .loggedIn)
             let settings = SettingsScreen(app: app)

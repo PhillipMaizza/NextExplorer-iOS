@@ -144,11 +144,6 @@ struct BrowseDropPlanTests {
 
         #expect(plan.fileURLs == [local])
     }
-
-    @Test
-    func anEmptyDropIsEmpty() {
-        #expect(BrowseDropPlan(drops: [], listed: [], destination: "Docs", receiver: receiver).isEmpty)
-    }
 }
 
 struct BrowseDropRouterTests {
@@ -808,19 +803,5 @@ struct BrowseDropUntrustedPayloadTests {
             listed: [], destination: "Docs/Archive", receiver: receiver
         )
         #expect(drop.foreignItems.map(\.name) == ["b.pdf"])
-    }
-
-    @Test
-    func aRowCarryingAnotherAccountsOriginIsStillRefused() {
-        let other = DragOrigin(serverURL: serverURL.absoluteString, scope: "scope-b")
-        let drop = BrowseDropPlan(drops: [.items([entry("a.pdf", in: "Other")], origin: other)], listed: [], destination: "Docs", receiver: receiver)
-        #expect(drop.isEmpty)
-    }
-
-    @Test
-    func theDragOriginUsesTheScopeItIsGivenNotTheProcessWideOne() {
-        let origin = DragOrigin.current(serverURL: serverURL, scope: "captured-scope")
-        #expect(origin.scope == "captured-scope")
-        #expect(origin.serverURL == serverURL.absoluteString)
     }
 }

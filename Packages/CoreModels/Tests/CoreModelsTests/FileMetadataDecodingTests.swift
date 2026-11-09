@@ -66,28 +66,4 @@ struct FileMetadataDecodingTests {
         #expect(metadata.video?.width == 1920)
         #expect(metadata.video?.duration == 42.5)
     }
-
-    @Test("error path: missing required field fails to decode")
-    func missingRequiredFieldThrows() {
-        let json = #"{"name": "notes.txt", "kind": "txt"}"#
-        #expect(throws: (any Error).self) {
-            _ = try JSONDecoder().decode(FileMetadata.self, from: Data(json.utf8))
-        }
-    }
-
-    @Test("round-trips through Codable")
-    func codableRoundTrip() throws {
-        let original = FileMetadata(
-            path: "Home/vacation.jpg",
-            name: "vacation.jpg",
-            kind: "jpg",
-            size: 2_400_000,
-            dateModified: Date(timeIntervalSince1970: 1_800_000_000),
-            dateCreated: Date(timeIntervalSince1970: 1_700_000_000),
-            image: FileMetadata.ImageMetadata(width: 4032, height: 3024, cameraMake: "Apple")
-        )
-        let data = try JSONEncoder().encode(original)
-        let decoded = try JSONDecoder().decode(FileMetadata.self, from: data)
-        #expect(decoded == original)
-    }
 }

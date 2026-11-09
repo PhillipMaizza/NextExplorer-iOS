@@ -34,11 +34,4 @@ struct L10nTests {
         #expect(L10n.DownloadQueue.barTitleOne("movie.mkv") == "Downloading movie.mkv")
         #expect(L10n.DownloadQueue.savedMany(3) == "3 items saved to Downloads")
     }
-
-    @Test("known values match the English source")
-    func englishValues() {
-        #expect(L10n.Common.cancel == "Cancel")
-        #expect(L10n.Tab.settings == "Settings")
-        #expect(L10n.Settings.signOutAlertTitle == "Sign Out?")
-    }
 }

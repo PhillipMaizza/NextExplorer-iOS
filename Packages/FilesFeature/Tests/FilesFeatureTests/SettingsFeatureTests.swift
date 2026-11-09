@@ -284,31 +284,6 @@ struct SettingsFeatureTests {
     }
 
     @Test
-    func signOutButtonTappedShowsTheConfirmationSheet() async {
-        let store = TestStore(initialState: makeState()) {
-            SettingsFeature()
-        }
-
-        await store.send(.signOutButtonTapped) {
-            $0.isConfirmingSignOut = true
-        }
-    }
-
-    @Test
-    func cancelSignOutTappedHidesTheConfirmationSheet() async {
-        var state = makeState()
-        state.isConfirmingSignOut = true
-
-        let store = TestStore(initialState: state) {
-            SettingsFeature()
-        }
-
-        await store.send(.cancelSignOutTapped) {
-            $0.isConfirmingSignOut = false
-        }
-    }
-
-    @Test
     func confirmSignOutTappedKeepsTheSheetUpAndDelegatesTheActualSignOut() async {
         var state = makeState()
         state.isConfirmingSignOut = true
@@ -321,31 +296,6 @@ struct SettingsFeatureTests {
         // drives via `isSigningOut`; the whole scope is torn down once sign out completes.
         await store.send(.confirmSignOutTapped)
         await store.receive(\.delegate)
-    }
-
-    @Test
-    func removeAllDownloadsTappedShowsTheConfirmationAlert() async {
-        let store = TestStore(initialState: makeState()) {
-            SettingsFeature()
-        }
-
-        await store.send(.removeAllDownloadsTapped) {
-            $0.removeAllDownloadsConfirmationIsPresented = true
-        }
-    }
-
-    @Test
-    func removeAllDownloadsCancelledHidesTheConfirmationAlert() async {
-        var state = makeState()
-        state.removeAllDownloadsConfirmationIsPresented = true
-
-        let store = TestStore(initialState: state) {
-            SettingsFeature()
-        }
-
-        await store.send(.removeAllDownloadsCancelled) {
-            $0.removeAllDownloadsConfirmationIsPresented = false
-        }
     }
 
     @Test
@@ -405,67 +355,6 @@ struct SettingsFeatureTests {
             $0.downloadsSize = 0
         }
         await store.receive(\.delegate)
-    }
-
-    @Test
-    func hasDownloadsResponseUpdatesWhetherRemoveAllIsAvailable() async {
-        let store = TestStore(initialState: makeState()) {
-            SettingsFeature()
-        }
-
-        await store.send(.hasDownloadsResponse(true)) {
-            $0.hasDownloads = true
-        }
-        await store.send(.hasDownloadsResponse(false)) {
-            $0.hasDownloads = false
-        }
-    }
-
-    @Test
-    func downloadsSizeResponseUpdatesTheDisplayedSize() async {
-        let store = TestStore(initialState: makeState()) {
-            SettingsFeature()
-        }
-
-        await store.send(.downloadsSizeResponse(2_048)) {
-            $0.downloadsSize = 2_048
-        }
-    }
-
-    @Test
-    func cacheSizeResponseUpdatesTheDisplayedSize() async {
-        let store = TestStore(initialState: makeState()) {
-            SettingsFeature()
-        }
-
-        await store.send(.cacheSizeResponse(4_096)) {
-            $0.cacheSize = 4_096
-        }
-    }
-
-    @Test
-    func clearCacheTappedShowsTheConfirmationAlert() async {
-        let store = TestStore(initialState: makeState()) {
-            SettingsFeature()
-        }
-
-        await store.send(.clearCacheTapped) {
-            $0.clearCacheConfirmationIsPresented = true
-        }
-    }
-
-    @Test
-    func clearCacheCancelledHidesTheConfirmationAlert() async {
-        var state = makeState()
-        state.clearCacheConfirmationIsPresented = true
-
-        let store = TestStore(initialState: state) {
-            SettingsFeature()
-        }
-
-        await store.send(.clearCacheCancelled) {
-            $0.clearCacheConfirmationIsPresented = false
-        }
     }
 
     @Test

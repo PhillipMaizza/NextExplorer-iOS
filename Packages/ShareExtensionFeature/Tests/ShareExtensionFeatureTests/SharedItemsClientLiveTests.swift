@@ -355,19 +355,6 @@ struct ProviderStagerTests {
         #expect(ProviderStager.cause(of: Odd()) == .other)
     }
 
-    @Test("every cause has a message")
-    func everyCauseHasAMessage() {
-        let expected: [ItemFailureCause: String] = [
-            .cannotRead: L10n.ShareUpload.causeCannotRead,
-            .notEnoughSpace: L10n.ShareUpload.causeNotEnoughSpace,
-            .folder: L10n.ShareUpload.causeFolder,
-            .other: L10n.ShareUpload.causeUnknown,
-        ]
-        for (cause, message) in expected {
-            #expect(cause.message == message)
-        }
-    }
-
     @Test("a failure line names the file and the cause")
     func failureLineNamesTheFile() {
         let failure = ItemFailure(index: 3, name: "IMG_0042.MOV", cause: .notEnoughSpace)

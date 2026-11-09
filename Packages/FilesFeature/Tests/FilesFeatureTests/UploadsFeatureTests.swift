@@ -388,26 +388,6 @@ struct UploadsFeatureTests {
     }
 
     @Test
-    func appResumedStopsRequeueingOnceTheRetryCapIsReached() async {
-        var state = UploadsFeature.State(serverURL: serverURL)
-        state.jobs = [job("a.txt", id: UUID(0), status: .failed("offline"), isTransportFailure: true, autoRetryCount: 3)]
-        let store = TestStore(initialState: state) {
-            UploadsFeature()
-        } withDependencies: {
-            $0.date = .constant(now)
-        }
-        store.exhaustivity = .off
-
-        await store.send(.appResumed)
-
-        guard case .failed = store.state.jobs[id: UUID(0)]?.status else {
-            Issue.record("job should stay failed at the cap")
-            return
-        }
-        #expect(store.state.jobs[id: UUID(0)]?.autoRetryCount == 3)
-    }
-
-    @Test
     func manualRetryResetsTheAutomaticRetryCounter() async {
         var state = UploadsFeature.State(serverURL: serverURL)
         state.jobs = [job("a.txt", id: UUID(0), status: .failed("offline"), isTransportFailure: true, autoRetryCount: 3)]

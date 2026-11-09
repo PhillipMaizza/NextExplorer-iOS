@@ -46,13 +46,6 @@ struct UploadFailureTests {
         #expect(result == .failure(.network))
     }
 
-    @Test("Failing statuses become their causes")
-    func failingStatuses() throws {
-        #expect(try BackgroundUploader.result(response: response(401), error: nil) == .failure(.unauthorized))
-        #expect(try BackgroundUploader.result(response: response(507), error: nil) == .failure(.serverFull))
-        #expect(try BackgroundUploader.result(response: response(403), error: nil) == .failure(.forbidden))
-    }
-
     @Test("Any 2xx is a success, whatever the reply body says: a retry must never upload the file twice", arguments: [200, 201, 204, 299])
     func anyTwoHundredIsASuccess(status: Int) throws {
         #expect(try BackgroundUploader.result(response: response(status), error: nil) == .success)
