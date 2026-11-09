@@ -9,7 +9,10 @@ import NetworkClient
 import ShareUploads
 import Testing
 
+/// Serialized for the same reason as the login suites: ninety TestStore tests waiting at once starve
+/// the executor that has to deliver the effect, and TCA's one second default timeout runs out.
 @MainActor
+@Suite(.serialized)
 struct ShareUploadFeatureTests {
     private let credentials = SessionCredentials.preview
     private typealias Store = TestStoreOf<ShareUploadFeature>
