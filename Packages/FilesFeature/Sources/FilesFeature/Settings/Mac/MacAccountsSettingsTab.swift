@@ -142,6 +142,13 @@
                 if account.isActive {
                     MacUploadDefaultsSection(store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults))
                 }
+                if account.isActive {
+                    Section {
+                        LabeledContent(L10n.TwoFactor.navigationTitle) {
+                            Button(L10n.TwoFactor.manageButton) { store.send(.twoFactorButtonTapped) }
+                        }
+                    }
+                }
                 Section {
                     HStack {
                         if account.isActive {

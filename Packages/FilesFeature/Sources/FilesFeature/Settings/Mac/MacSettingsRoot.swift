@@ -13,6 +13,7 @@
         case accounts
         case general
         case storage
+        case apiTokens
         case server
         case users
         case thumbnails
@@ -23,7 +24,7 @@
             rawValue
         }
 
-        static let everyone: [Self] = [.accounts, .general, .storage]
+        static let everyone: [Self] = [.accounts, .general, .storage, .apiTokens]
         static let admin: [Self] = [.server, .users, .thumbnails, .accessRules]
         static let app: [Self] = [.about]
 
@@ -32,6 +33,7 @@
             case .accounts: L10n.Settings.sectionAccounts
             case .general: L10n.Settings.sectionGeneral
             case .storage: L10n.Settings.sectionStorage
+            case .apiTokens: L10n.ApiTokens.navigationTitle
             case .server: L10n.Settings.rowServer
             case .users: L10n.Settings.sectionUsers
             case .thumbnails: L10n.Settings.rowThumbnails
@@ -45,6 +47,7 @@
             case .accounts: IconKit.account
             case .general: IconKit.gearshape
             case .storage: IconKit.storage
+            case .apiTokens: IconKit.key
             case .server: IconKit.serverRack
             case .users: IconKit.people
             case .thumbnails: IconKit.photo
@@ -110,6 +113,9 @@
             case .users: store.send(.adminPaneLeft(.users))
             case .thumbnails: store.send(.adminPaneLeft(.thumbnails))
             case .accessRules: store.send(.adminPaneLeft(.accessRules))
+            case .apiTokens: if store.apiTokens != nil {
+                    store.send(.apiTokens(.dismiss))
+                }
             case .accounts, .general, .storage, .about: break
             }
         }
@@ -133,6 +139,12 @@
                 MacGeneralSettingsTab(store: store)
             case .storage:
                 MacStorageSettingsTab(store: store)
+            case .apiTokens:
+                if let tokensStore = store.scope(state: \.apiTokens, action: \.apiTokens.presented) {
+                    APITokensView(store: tokensStore)
+                } else {
+                    Color.clear.onAppear { store.send(.apiTokensButtonTapped) }
+                }
             case .server:
                 if let detailStore = store.scope(state: \.serverDetails, action: \.serverDetails.presented) {
                     MacServerSettingsPane(store: detailStore)

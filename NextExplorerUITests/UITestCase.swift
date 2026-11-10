@@ -31,6 +31,9 @@ class UITestCase: XCTestCase {
         static let validCode = "123456"
         static let wrongCode = "000000"
         static let validRecoveryCode = "AAAAA-BBBBB"
+        /// The password the mocked account routes accept (mirrors `UITestSupport.accountPassword`).
+        static let accountPassword = "hunter2"
+        static let wrongPassword = "not-the-password"
     }
 
     enum Auth: String {

@@ -14,7 +14,7 @@ extension FilesService {
         request.httpBody = try Self.encode(ChangeOwnPasswordBody(
             currentPassword: currentPassword, newPassword: newPassword
         ))
-        try await sendPasswordRequest(request)
+        _ = try await sendAccountRequest(request)
     }
 
     /// `POST /api/auth/password/add`, verified against `backend/src/routes/auth.js` and
@@ -26,7 +26,7 @@ extension FilesService {
         var request = Self.makeRequest(url: url, method: .post)
         request.setJSONContentType()
         request.httpBody = try Self.encode(AddOwnPasswordBody(password: password))
-        try await sendPasswordRequest(request)
+        _ = try await sendAccountRequest(request)
     }
 
     /// `GET /api/auth/methods`: how this account can sign in.
@@ -36,13 +36,14 @@ extension FilesService {
         return try await send(request, decoding: SignInMethodsEnvelope.self).methods
     }
 
-    /// Unlike every other call, a 401 on the password routes is "current password is incorrect",
-    /// not a dead session, so it must reach the user as its message, not as `.sessionExpired`.
-    private func sendPasswordRequest(_ request: URLRequest) async throws {
+    /// Unlike every other call, a 401 on the account routes (passwords, two factor) is "that
+    /// password or code is not right", not a dead session, so it must reach the user as its
+    /// message, not as `.sessionExpired`. Returns the body of a successful answer.
+    func sendAccountRequest(_ request: URLRequest) async throws -> Data {
         let (data, response) = try await performSend(request)
         switch response.statusCode {
         case 200 ..< 300:
-            return
+            return data
         case 429:
             throw FilesClientError.rateLimited
         default:
