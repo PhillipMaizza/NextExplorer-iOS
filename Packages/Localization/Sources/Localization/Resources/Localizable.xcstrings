@@ -76558,6 +76558,17 @@
         }
       }
     },
+    "twoFactor.manageButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manage…"
+          }
+        }
+      }
+    },
     "twoFactor.navigationTitle": {
       "extractionState": "manual",
       "localizations": {

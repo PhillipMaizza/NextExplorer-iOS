@@ -12,9 +12,7 @@
             let screen = TwoFactorScreen(app: app)
             selectTab(TabBar(app: app).settings, until: settings.addAccountRow)
 
-            XCTAssertTrue(settings.activeAccountRow.waitToAppear(), "Settings should show the active account")
-            settings.activeAccountRow.tap()
-            XCTAssertTrue(screen.row.waitToAppear(), "Expanding the account should reveal the Two-Factor row")
+            XCTAssertTrue(screen.row.waitToAppear(), "The Two-Factor row should be visible without expanding the account")
             screen.row.tap()
             XCTAssertTrue(screen.offTitle.waitToAppear(), "An account without a second factor should open on the off screen")
             return (app, screen)

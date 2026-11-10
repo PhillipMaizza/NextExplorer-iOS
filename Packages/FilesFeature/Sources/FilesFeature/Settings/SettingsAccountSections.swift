@@ -40,9 +40,11 @@ struct SettingsAccountsSection: View {
     var body: some View {
         Section {
             activeAccountRow(activeAccount)
+            // Outside the disclosure: the second factor protects the account, so it is not
+            // something to find by expanding it.
+            twoFactorRow
             if isActiveAccountExpanded {
                 changePasswordRow
-                twoFactorRow
                 signOutRow
             }
             ForEach(store.accounts.filter { !$0.isActive }) { account in

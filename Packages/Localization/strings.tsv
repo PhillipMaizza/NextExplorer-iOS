@@ -635,6 +635,7 @@ twoFactor.passwordNewCodesIntro	Enter your password to replace your recovery cod
 twoFactor.passwordTurnOffIntro	Enter your password to turn off two-factor authentication.
 twoFactor.passwordField	Password
 twoFactor.passwordConfirmButton	Confirm
+twoFactor.manageButton	Manage…
 login.portHint	Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80.
 login.errorInvalidServer	Enter a valid server address.
 login.errorInvalidCredentials	Incorrect username or password.

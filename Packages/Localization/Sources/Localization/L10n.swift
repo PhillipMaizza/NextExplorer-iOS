@@ -813,6 +813,7 @@ public enum L10n {
         public static var copyKeyAccessibilityLabel: String { tr("twoFactor.copyKeyAccessibilityLabel") }  // "Copy setup key"
         public static var enrollIntro: String { tr("twoFactor.enrollIntro") }
         public static var keyLabel: String { tr("twoFactor.keyLabel") }  // "Setup Key"
+        public static var manageButton: String { tr("twoFactor.manageButton") }  // "Manage…"
         public static var navigationTitle: String { tr("twoFactor.navigationTitle") }  // "Two-Factor Authentication"
         public static var newCodesButton: String { tr("twoFactor.newCodesButton") }  // "Get New Recovery Codes"
         public static var offIntro: String { tr("twoFactor.offIntro") }
