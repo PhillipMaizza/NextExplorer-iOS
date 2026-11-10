@@ -182,6 +182,7 @@
             var client = FilesClient.previewValue
             switch scenario {
             case .normal:
+                installAccountMocks(into: &client)
                 // A mutable in memory directory so writes (create folder, rename, delete, compress)
                 // are reflected by the next browse, letting a UI test assert the listing changed.
                 let store = MockFileStore(items: rootItems)

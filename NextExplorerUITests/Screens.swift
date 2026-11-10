@@ -298,6 +298,68 @@ struct TextPreviewScreen {
     }
 }
 
+/// The Two-Factor Authentication screen, reached from the active account's section in Settings.
+struct TwoFactorScreen {
+    let app: XCUIApplication
+
+    var row: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Settings.twoFactorRow].firstMatch
+    }
+
+    var offTitle: XCUIElement {
+        app.staticTexts[L10n.TwoFactor.offTitle]
+    }
+
+    var onTitle: XCUIElement {
+        app.staticTexts[L10n.TwoFactor.onTitle]
+    }
+
+    var turnOnButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.turnOnButton].firstMatch
+    }
+
+    var codeField: XCUIElement {
+        app.textFields[AccessibilityIdentifiers.Settings.twoFactorCodeField].firstMatch
+    }
+
+    var setupKey: XCUIElement {
+        app.staticTexts["JBSWY3DPEHPK3PXP"]
+    }
+
+    var recoveryTitle: XCUIElement {
+        app.staticTexts[L10n.TwoFactor.recoveryTitle]
+    }
+
+    var recoveryDoneButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.recoveryDoneButton].firstMatch
+    }
+
+    var newCodesButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.newCodesButton].firstMatch
+    }
+
+    var turnOffButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.turnOffButton].firstMatch
+    }
+
+    var passwordField: XCUIElement {
+        app.secureTextFields[L10n.TwoFactor.passwordField].firstMatch
+    }
+
+    var passwordConfirmButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.passwordConfirmButton].firstMatch
+    }
+
+    /// Either of the two mocked refusals, shown in the error card.
+    var wrongCodeMessage: XCUIElement {
+        app.staticTexts["Invalid code"]
+    }
+
+    var wrongPasswordMessage: XCUIElement {
+        app.staticTexts["That password is not right."]
+    }
+}
+
 struct SettingsScreen {
     let app: XCUIApplication
     var languageRow: XCUIElement {
