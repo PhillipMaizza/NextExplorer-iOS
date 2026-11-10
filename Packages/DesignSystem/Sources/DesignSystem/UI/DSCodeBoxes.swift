@@ -1,16 +1,31 @@
-import CoreModels
-import DesignSystem
-import Localization
 import SwiftUI
 
 /// One box per digit of an authenticator code. A real text field sits invisibly over the boxes, so
 /// typing, pasting, AutoFill from Messages and the one time code suggestion all work as they do in
 /// any text field, and a tap anywhere on the boxes focuses it.
-struct LoginCodeBoxes: View {
-    @Binding var code: String
-    var isFocused: FocusState<Bool>.Binding
-    let length: Int
-    let isInvalid: Bool
+public struct DSCodeBoxes: View {
+    @Binding private var code: String
+    private var isFocused: FocusState<Bool>.Binding
+    private let length: Int
+    private let isInvalid: Bool
+    private let accessibilityLabel: String
+    private let accessibilityIdentifier: String
+
+    public init(
+        code: Binding<String>,
+        isFocused: FocusState<Bool>.Binding,
+        length: Int,
+        isInvalid: Bool,
+        accessibilityLabel: String,
+        accessibilityIdentifier: String
+    ) {
+        _code = code
+        self.isFocused = isFocused
+        self.length = length
+        self.isInvalid = isInvalid
+        self.accessibilityLabel = accessibilityLabel
+        self.accessibilityIdentifier = accessibilityIdentifier
+    }
 
     private enum Constants {
         static let boxWidth: CGFloat = .size48
@@ -25,7 +40,7 @@ struct LoginCodeBoxes: View {
         min(code.count, length - 1)
     }
 
-    var body: some View {
+    public var body: some View {
         HStack(spacing: .space8) {
             ForEach(0 ..< length, id: \.self) { index in
                 box(at: index)
@@ -41,7 +56,7 @@ struct LoginCodeBoxes: View {
                 EmptyView()
             }
             .textFieldStyle(.plain)
-            .accessibilityLabel(L10n.Login.codeField)
+            .accessibilityLabel(accessibilityLabel)
             .foregroundStyle(Color.clear)
             .tint(Color.clear)
             .textContentType(.oneTimeCode)
@@ -51,7 +66,7 @@ struct LoginCodeBoxes: View {
                 .keyboardType(.numberPad)
             #endif
                 .focused(isFocused)
-                .accessibilityIdentifier(AccessibilityIdentifiers.Login.codeField)
+                .accessibilityIdentifier(accessibilityIdentifier)
         }
         .animation(.easeInOut(duration: Constants.focusAnimationDuration), value: code)
         .animation(.easeInOut(duration: Constants.focusAnimationDuration), value: isFocused.wrappedValue)
@@ -93,10 +108,17 @@ struct LoginCodeBoxes: View {
         @FocusState private var isFocused: Bool
 
         var body: some View {
-            LoginCodeBoxes(code: $code, isFocused: $isFocused, length: PreviewConstants.length, isInvalid: isInvalid)
-                .padding(.space16)
-                .background(Color.backgroundPrimary)
-                .task { isFocused = true }
+            DSCodeBoxes(
+                code: $code,
+                isFocused: $isFocused,
+                length: PreviewConstants.length,
+                isInvalid: isInvalid,
+                accessibilityLabel: "Code",
+                accessibilityIdentifier: "preview.code"
+            )
+            .padding(.space16)
+            .background(Color.backgroundPrimary)
+            .task { isFocused = true }
         }
     }
 

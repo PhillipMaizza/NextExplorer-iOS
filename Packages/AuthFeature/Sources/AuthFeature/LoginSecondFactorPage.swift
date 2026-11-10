@@ -120,11 +120,13 @@ struct LoginSecondFactorPage: View {
     private var codeInput: some View {
         switch store.codeMode {
         case .authenticator:
-            LoginCodeBoxes(
+            DSCodeBoxes(
                 code: codeBinding,
                 isFocused: $isCodeFocused,
                 length: LoginFormFeature.authenticatorCodeLength,
-                isInvalid: store.errorMessage != nil
+                isInvalid: store.errorMessage != nil,
+                accessibilityLabel: L10n.Login.codeField,
+                accessibilityIdentifier: AccessibilityIdentifiers.Login.codeField
             )
         case .recovery:
             DSFieldContainer(label: L10n.Login.codeField, icon: IconKit.key) {
