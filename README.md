@@ -70,6 +70,7 @@ And on the Mac, a real Mac app: sidebar, Finder style tables, Quick Look, drag a
 - **Sign in your way.** Username and password, or single sign-on and passkeys through your own identity provider.
 - **Uploads & downloads.** Queued uploads and downloads with progress, retry and cancel; send files to NextExplorer from any other app's share sheet.
 - **Works offline.** Keep chosen folders on the device to open with no connection, and a saved-copy view keeps your recent folders readable when the connection drops, then refreshes when you are back.
+- **Account security.** Turn two-factor authentication on or off from Settings, with a QR code, recovery codes and a password check, and create, rename and revoke API tokens for your scripts.
 - **Several accounts.** Sign in to more than one server and switch between them; each account's files and caches stay separate. Your own private My Files space when the server offers one.
 - **Everyone's app.** 17 languages with full right-to-left support, plus complete VoiceOver and Dynamic Type accessibility.
 - **iPhone and iPad.** Universal layout with a split-view sidebar on larger screens.
