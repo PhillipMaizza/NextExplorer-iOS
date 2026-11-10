@@ -6,8 +6,11 @@ import FilesClient
 import Foundation
 import Testing
 
+// Serialized: every TestStore.receive keeps yielding while it waits, so tests running at once starve
+// the executor that has to deliver the effect they wait for. On a loaded runner all three sign out
+// tests stalled for 15 seconds and one of them timed out. One at a time, each finishes in milliseconds.
 @MainActor
-@Suite("AuthenticatedFeature")
+@Suite("AuthenticatedFeature", .serialized)
 struct AuthenticatedFeatureTests {
     private let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
     private let user = User(id: "1", username: "phillip", email: nil, roles: [])
