@@ -1416,6 +1416,7 @@ struct BrowseContentView: View {
                                     .dsCard(padding: Constants.gridCellPadding)
                             }
                             .buttonStyle(DSHapticButtonStyle())
+                            .dsTapFlash()
                         }
                     } else {
                         if showsPersonalSpace {
@@ -1620,6 +1621,7 @@ struct BrowseContentView: View {
                     }
             }
             .buttonStyle(DSHapticButtonStyle())
+            .dsTapFlash()
             .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
             .contextMenu {
                 if !store.isSelecting {
@@ -1637,70 +1639,71 @@ struct BrowseContentView: View {
         let firstItemID = items.first?.id
         let lastItemID = items.last?.id
         ForEach(items) { item in
-            Button {
-                if store.isSelecting {
-                    store.send(.itemSelectionToggled(item.id))
-                } else {
-                    handleTap(item)
-                }
-            } label: {
-                HStack(spacing: .space12) {
+            DSFlashingListRow {
+                Button {
                     if store.isSelecting {
-                        DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                        store.send(.itemSelectionToggled(item.id))
+                    } else {
+                        handleTap(item)
                     }
-                    listRowCell(for: item)
+                } label: {
+                    HStack(spacing: .space12) {
+                        if store.isSelecting {
+                            DSSelectionIndicator(isSelected: store.selectedItemIDs.contains(item.id))
+                        }
+                        listRowCell(for: item)
+                    }
+                    #if os(macOS)
+                    // On the label, not the row chain: that chain is at the type checker's limit.
+                    .modifier(macRowDragDrop(for: item))
+                    #else
+                    .modifier(IOSBrowseItemDragDrop(store: store, item: item))
+                    #endif
                 }
-                #if os(macOS)
-                // On the label, not the row chain: that chain is at the type checker's limit.
-                .modifier(macRowDragDrop(for: item))
-                #else
-                .modifier(IOSBrowseItemDragDrop(store: store, item: item))
-                #endif
-            }
-            .buttonStyle(DSHapticButtonStyle())
-            .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
-            .accessibilityAddTraits(store.isSelecting && store.selectedItemIDs.contains(item.id) ? [.isSelected] : [])
-            .contextMenu {
-                if !store.isSelecting {
-                    fileActionsMenu(for: item)
-                }
-            }
-            .listRowBackground(Color.backgroundSecondary)
-            .swipeActions(edge: .trailing) {
-                if !store.isSelecting {
-                    if store.access?.canDelete ?? false {
-                        Button {
-                            store.send(.deleteTapped(item))
-                        } label: {
-                            IconKit.delete
-                        }
-                        .tint(.negative)
-                        .accessibilityLabel(L10n.Common.delete)
-                    }
-                    // Only folders can be favorited: the server 400s on anything else.
-                    if item.isDirectory {
-                        Button {
-                            store.send(.favoriteToggleButtonTapped(item))
-                        } label: {
-                            store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
-                        }
-                        .tint(.accent)
-                        .disabled(!store.hasLoadedFavorites)
-                        .accessibilityLabel(store.favoritePaths.contains(item.id) ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites)
-                    }
-                    if store.access?.canWrite ?? false {
-                        Button {
-                            store.send(.renameTapped(item))
-                        } label: {
-                            IconKit.rename
-                        }
-                        .tint(.positive)
-                        .accessibilityLabel(L10n.Browse.actionRename)
+                .buttonStyle(DSHapticButtonStyle())
+                .hapticFeedback(.selection, trigger: store.selectedItemIDs.contains(item.id))
+                .accessibilityAddTraits(store.isSelecting && store.selectedItemIDs.contains(item.id) ? [.isSelected] : [])
+                .contextMenu {
+                    if !store.isSelecting {
+                        fileActionsMenu(for: item)
                     }
                 }
+                .swipeActions(edge: .trailing) {
+                    if !store.isSelecting {
+                        if store.access?.canDelete ?? false {
+                            Button {
+                                store.send(.deleteTapped(item))
+                            } label: {
+                                IconKit.delete
+                            }
+                            .tint(.negative)
+                            .accessibilityLabel(L10n.Common.delete)
+                        }
+                        // Only folders can be favorited: the server 400s on anything else.
+                        if item.isDirectory {
+                            Button {
+                                store.send(.favoriteToggleButtonTapped(item))
+                            } label: {
+                                store.favoritePaths.contains(item.id) ? IconKit.starFill : IconKit.star
+                            }
+                            .tint(.accent)
+                            .disabled(!store.hasLoadedFavorites)
+                            .accessibilityLabel(store.favoritePaths.contains(item.id) ? L10n.Browse.actionRemoveFromFavorites : L10n.Browse.actionAddToFavorites)
+                        }
+                        if store.access?.canWrite ?? false {
+                            Button {
+                                store.send(.renameTapped(item))
+                            } label: {
+                                IconKit.rename
+                            }
+                            .tint(.positive)
+                            .accessibilityLabel(L10n.Browse.actionRename)
+                        }
+                    }
+                }
+                .listRowSeparator(item.id == firstItemID ? .hidden : .visible, edges: .top)
+                .listRowSeparator(item.id == lastItemID ? .hidden : .visible, edges: .bottom)
             }
-            .listRowSeparator(item.id == firstItemID ? .hidden : .visible, edges: .top)
-            .listRowSeparator(item.id == lastItemID ? .hidden : .visible, edges: .bottom)
         }
     }
 
@@ -1708,15 +1711,16 @@ struct BrowseContentView: View {
     private var searchResultRows: some View {
         let results = store.displayedSearchResults ?? []
         ForEach(results) { result in
-            Button {
-                store.send(.searchResultTapped(result))
-            } label: {
-                searchResultCell(row: result, grid: false)
+            DSFlashingListRow {
+                Button {
+                    store.send(.searchResultTapped(result))
+                } label: {
+                    searchResultCell(row: result, grid: false)
+                }
+                .buttonStyle(DSHapticButtonStyle())
+                .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
+                .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)
             }
-            .buttonStyle(DSHapticButtonStyle())
-            .listRowBackground(Color.backgroundSecondary)
-            .listRowSeparator(result.id == results.first?.id ? .hidden : .visible, edges: .top)
-            .listRowSeparator(result.id == results.last?.id ? .hidden : .visible, edges: .bottom)
         }
     }
 
