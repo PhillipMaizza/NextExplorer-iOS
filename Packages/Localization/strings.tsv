@@ -359,6 +359,7 @@ settings.rowPrivacyPolicy	Privacy Policy
 settings.rowTermsOfUse	Terms of Use
 settings.rowUserManagement	User Management
 settings.rowChangePassword	Change Password
+settings.rowAddPassword	Add Password
 settings.rowServer	Server
 settings.storageFootnote	Folders download as a zip, with nothing left behind on the server. Removing downloads or clearing the cache only affects this device; nothing on the server is touched.
 settings.storageFootnoteMac	Clearing the cache only affects this Mac; nothing on the server is touched.
@@ -604,6 +605,9 @@ changePassword.fieldConfirmPassword	Re-enter new password
 changePassword.fieldNewPasswordPrompt	At least %lld characters
 changePassword.submitButton	Update Password
 changePassword.success	Your password has been updated.
+changePassword.addNavigationTitle	Add Password
+changePassword.addIntro	This account signs in with single sign-on and has no password yet. Add one to also sign in with your email address or username.
+changePassword.addSubmitButton	Add Password
 changePassword.errorMinLength	Use at least %lld characters.
 changePassword.errorMismatch	Passwords don't match.
 login.portHint	Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80.

@@ -13269,6 +13269,39 @@
         }
       }
     },
+    "changePassword.addIntro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This account signs in with single sign-on and has no password yet. Add one to also sign in with your email address or username."
+          }
+        }
+      }
+    },
+    "changePassword.addNavigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Password"
+          }
+        }
+      }
+    },
+    "changePassword.addSubmitButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Password"
+          }
+        }
+      }
+    },
     "changePassword.errorMinLength": {
       "extractionState": "manual",
       "localizations": {
@@ -56850,6 +56883,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "檔案夾取用規則"
+          }
+        }
+      }
+    },
+    "settings.rowAddPassword": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add Password"
           }
         }
       }

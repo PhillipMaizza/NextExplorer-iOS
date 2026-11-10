@@ -198,6 +198,8 @@ public extension FilesClient {
             ShareInfo(shareToken: token, label: "Q3 Report", isDirectory: true, sharingType: .anyone)
         },
         changeOwnPassword: { _, _, _ in },
+        addOwnPassword: { _, _ in },
+        fetchAuthMethods: { _ in [SignInMethod(id: "preview-password", type: SignInMethod.localPasswordType, provider: "Password")] },
         serverFeatures: { _ in ServerFeatures(isUserVolumesEnabled: true, isVolumeUsageEnabled: true) },
         fetchSystemSettings: { _ in
             SystemSettings(

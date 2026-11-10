@@ -180,6 +180,13 @@ public struct FilesClient: Sendable {
         _ serverURL: URL, _ currentPassword: String, _ newPassword: String
     ) async throws -> Void
 
+    /// `POST /api/auth/password/add`: an account that signs in through single sign on adds a
+    /// password, so it can also use the sign in form.
+    public var addOwnPassword: @Sendable (_ serverURL: URL, _ password: String) async throws -> Void
+
+    /// `GET /api/auth/methods`: how the signed in account can sign in.
+    public var fetchAuthMethods: @Sendable (_ serverURL: URL) async throws -> [SignInMethod]
+
     // MARK: Admin user management (all require the caller to have the `admin` role)
 
     /// `GET /api/features`: the server's feature flags (currently just user volumes).

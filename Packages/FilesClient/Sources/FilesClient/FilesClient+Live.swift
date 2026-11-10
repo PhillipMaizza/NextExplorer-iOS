@@ -228,6 +228,12 @@ public extension FilesClient {
                     serverURL: serverURL, currentPassword: currentPassword, newPassword: newPassword
                 )
             },
+            addOwnPassword: { serverURL, password in
+                try await service.addOwnPassword(serverURL: serverURL, password: password)
+            },
+            fetchAuthMethods: { serverURL in
+                try await service.authMethods(serverURL: serverURL)
+            },
             serverFeatures: { serverURL in
                 try await service.serverFeatures(serverURL: serverURL)
             },
