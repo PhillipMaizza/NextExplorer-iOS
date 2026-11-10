@@ -6,6 +6,9 @@ import Foundation
 public struct AuthClient: Sendable {
     public var fetchStatus: @Sendable (_ serverURL: URL) async throws -> AuthStatus
     public var login: @Sendable (_ serverURL: URL, _ identifier: String, _ password: String) async throws -> User
+    /// The second step of a password sign in, after `login` threw `secondFactorRequired`: sends the
+    /// authenticator code (or a recovery code) and persists the session the same way `login` does.
+    public var loginTOTP: @Sendable (_ serverURL: URL, _ code: String) async throws -> User
     /// Runs the passkey capable OIDC bridge (ASWebAuthenticationSession + PKCE code exchange)
     /// and, on success, persists the resulting session the same way `login` does. Throws
     /// `AuthClientError.oidcCancelled` when the user dismisses the web sheet.

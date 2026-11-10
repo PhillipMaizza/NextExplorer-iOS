@@ -53,13 +53,19 @@ private enum Constants {
     static let macButtonPopBounce: Double = 0.35
     /// Named coordinate space the submit button's rect is measured in, so the flood circle
     /// positions against the same origin regardless of scroll offset.
-    static let rootSpace = "loginRoot"
+    static let rootSpace = LoginCoordinateSpace.root
     /// How long the collapsed submit button's accent circle takes to flood the screen.
     static let submitFloodDuration: Double = 0.34
     /// Scale that circle reaches: a `.size48` button circle blown up past the far corner of
     /// any phone from wherever the button sits.
     static let submitFloodScale: CGFloat = 34
     static let dividerOpacity: Double = 0.35
+}
+
+/// The named space the sign in flood is positioned in, shared so each page's submit button can
+/// report its rect in the space the overlay draws in.
+enum LoginCoordinateSpace {
+    static let root = "loginRoot"
 }
 
 public struct LoginFormView: View {
@@ -349,8 +355,14 @@ public struct LoginFormView: View {
                         insertion: .move(edge: .leading).combined(with: .opacity),
                         removal: .move(edge: .leading).combined(with: .opacity)
                     ))
-            } else {
+            } else if store.currentPage == .credentials {
                 credentialsPage
+                    .transition(.asymmetric(
+                        insertion: .move(edge: .trailing).combined(with: .opacity),
+                        removal: .move(edge: .trailing).combined(with: .opacity)
+                    ))
+            } else {
+                LoginSecondFactorPage(store: store, horizontalSizeClass: horizontalSizeClass, submitButtonRect: $submitButtonRect)
                     .transition(.asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
                         removal: .move(edge: .trailing).combined(with: .opacity)
@@ -485,6 +497,8 @@ public struct LoginFormView: View {
                             .transition(.opacity.combined(with: .move(edge: .bottom)))
                     }
                 #endif
+
+                LoginDiagnosticsButton(diagnostics: store.diagnostics)
 
                 Spacer(minLength: .space48)
             }
@@ -628,6 +642,8 @@ public struct LoginFormView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .transition(.opacity)
                     }
+
+                    LoginDiagnosticsButton(diagnostics: store.diagnostics)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.horizontal, .space16)

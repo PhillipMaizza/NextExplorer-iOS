@@ -70,6 +70,16 @@ public extension AuthClient {
                 )
                 return user
             },
+            loginTOTP: { serverURL, code in
+                let user = try await localAuthService.loginTOTP(serverURL: serverURL, code: code)
+                try await captureAndPersist(
+                    serverURL: serverURL,
+                    authMode: .local,
+                    cookieName: AuthClientConfiguration.CookieName.local,
+                    username: user.username
+                )
+                return user
+            },
             loginOIDC: { serverURL in
                 let pkce = PKCE.generate()
                 var components = URLComponents(

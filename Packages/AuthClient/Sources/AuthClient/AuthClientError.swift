@@ -13,6 +13,13 @@ public enum AuthClientError: Error, Equatable, Sendable {
     /// The OIDC bridge flow failed (the web session errored, the callback carried an
     /// `error`, or the exchange could not complete). Carries a short reason for logging.
     case oidcFailed(String)
+    /// The password was right and the account asks for a code as well: the login route answered
+    /// `{"totpRequired": true}` with no user. The caller asks for the code and calls `loginTOTP`.
+    case secondFactorRequired
+    /// The code (or recovery code) was refused by `POST /api/auth/login/totp`.
+    case invalidCode
+    /// The server no longer has a sign in waiting for a code, so the password step starts over.
+    case secondFactorExpired
     /// 429 from the login route: covers both the login-attempt rate limiter and an
     /// account lockout (the server converts a 423 lockout into a 429 RateLimitError
     /// before it ever reaches the client; confirmed against `backend/src/routes/auth.js`).

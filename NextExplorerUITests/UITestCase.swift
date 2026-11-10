@@ -22,6 +22,15 @@ class UITestCase: XCTestCase {
         static let failingFolderName = "__uitest_fail__"
         /// A folder used as a long pressable favorite target (folders only can be favorited).
         static let folderAlt = "Photos"
+        /// A sign in name the mocked login answers with "send a code" (mirrors
+        /// `UITestSupport.secondFactorIdentifier`), the code and recovery code it then accepts.
+        static let secondFactorIdentifier = "phillip.2fa"
+        /// A sign in name the mocked login refuses as wrong credentials (mirrors
+        /// `UITestSupport.rejectedIdentifier`).
+        static let rejectedIdentifier = "phillip.rejected"
+        static let validCode = "123456"
+        static let wrongCode = "000000"
+        static let validRecoveryCode = "AAAAA-BBBBB"
     }
 
     enum Auth: String {

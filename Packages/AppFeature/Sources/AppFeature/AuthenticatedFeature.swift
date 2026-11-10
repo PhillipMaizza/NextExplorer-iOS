@@ -54,6 +54,7 @@ public struct AuthenticatedFeature {
     @Dependency(\.thumbnailCache) var thumbnailCache
     @Dependency(\.textEditorETagStore) var textEditorETagStore
     @Dependency(\.pendingAccountWipes) var pendingAccountWipes
+    @Dependency(\.continuousClock) var clock
 
     private var accountCacheWipe: AccountCacheWipe {
         AccountCacheWipe(
@@ -69,6 +70,9 @@ public struct AuthenticatedFeature {
 
     private enum Constants {
         static let accountIDSeparator = "|"
+        /// How long the sign out confirmation takes to slide away, so the login screen is not
+        /// revealed underneath it.
+        static let promptDismissDuration: Duration = .seconds(0.4)
     }
 
     public init() {}
@@ -116,8 +120,20 @@ public struct AuthenticatedFeature {
                 return .send(.delegate(.addAccountRequested))
 
             case let .accountChangeResolved(credentials):
-                state.mainTab.settings.isSigningOut = false
-                return .send(.delegate(.activeAccountChanged(credentials)))
+                guard credentials == nil else {
+                    state.mainTab.settings.isSigningOut = false
+                    return .send(.delegate(.activeAccountChanged(credentials)))
+                }
+                // The last account is gone and `AppFeature` is about to swap in the login screen.
+                // Close the confirmation first and let it finish sliding away: swapping at once
+                // leaves it hanging over the login screen until UIKit gets round to dismissing it.
+                state.mainTab.settings.isConfirmingSignOut = false
+                state.mainTab.settings.accountPendingRemoval = nil
+                let clock = clock
+                return .run { send in
+                    try await clock.sleep(for: Constants.promptDismissDuration)
+                    await send(.delegate(.activeAccountChanged(nil)))
+                }
 
             case .mainTab, .delegate:
                 return .none
