@@ -32,6 +32,7 @@ enum APIPath {
     static let twoFactorStart = "api/auth/totp/start"
     static let twoFactorConfirm = "api/auth/totp/confirm"
     static let twoFactorRecoveryCodes = "api/auth/totp/recovery-codes"
+    static let apiTokens = "api/auth/tokens"
 
     static let shares = "api/shares"
     static let sharesSharedWithMe = "api/shares/shared-with-me"

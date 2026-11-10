@@ -64,6 +64,37 @@ struct SettingsFeatureTests {
         }
     }
 
+    @Test
+    func tappingAPITokensPresentsItAndDismissingClearsIt() async {
+        let store = TestStore(initialState: makeState()) { SettingsFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.apiTokensButtonTapped)
+        #expect(store.state.apiTokens?.serverURL == serverURL)
+        await store.send(.apiTokens(.dismiss)) { $0.apiTokens = nil }
+    }
+
+    @Test
+    func aSingleSignOnAccountIsNotAskedForAPasswordToMakeATokenButOthersAre() async {
+        let sso = methodsStore { [SignInMethod(id: "m2", type: "oidc", provider: "PocketID")] }
+        await sso.send(.onAppear)
+        await sso.skipReceivedActions()
+        await sso.send(.apiTokensButtonTapped)
+        #expect(sso.state.apiTokens?.requiresPassword == false)
+
+        let local = methodsStore { [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")] }
+        await local.send(.onAppear)
+        await local.skipReceivedActions()
+        await local.send(.apiTokensButtonTapped)
+        #expect(local.state.apiTokens?.requiresPassword == true)
+
+        let unknown = methodsStore { throw FilesClientError.server(statusCode: 500) }
+        await unknown.send(.onAppear)
+        await unknown.skipReceivedActions()
+        await unknown.send(.apiTokensButtonTapped)
+        #expect(unknown.state.apiTokens?.requiresPassword == true)
+    }
+
     // MARK: Password rows (`GET /api/auth/methods`)
 
     private func methodsStore(
