@@ -18,6 +18,10 @@ public enum AccessibilityIdentifiers {
         public static let passwordField = "login.passwordField"
         public static let passwordFieldVisible = "login.passwordFieldVisible"
         public static let submitButton = "login.submitButton"
+        public static let codeField = "login.codeField"
+        public static let codeSubmitButton = "login.codeSubmitButton"
+        public static let codeModeButton = "login.codeModeButton"
+        public static let diagnosticsButton = "login.diagnosticsButton"
     }
 
     public enum Search {

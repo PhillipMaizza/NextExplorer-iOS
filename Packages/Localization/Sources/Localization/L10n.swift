@@ -401,23 +401,35 @@ public enum L10n {
     public enum Login {
         public static var addClientCertificate: String { tr("login.addClientCertificate") }  // "Add Certificate"
         public static var changeClientCertificate: String { tr("login.changeClientCertificate") }  // "Change"
-        public static var identifierField: String { tr("login.identifierField") }  // "Email or username"
+        public static var codeField: String { tr("login.codeField") }  // "Code"
+        public static var codeIntroAuthenticator: String { tr("login.codeIntroAuthenticator") }
+        public static var codeIntroRecovery: String { tr("login.codeIntroRecovery") }  // "Enter one of your recovery codes. Each one works only once."
+        public static var codeSubmit: String { tr("login.codeSubmit") }  // "Verify"
+        public static var codeTitle: String { tr("login.codeTitle") }  // "Enter your code"
+        public static var codeUseAuthenticator: String { tr("login.codeUseAuthenticator") }  // "Use the authenticator code instead"
+        public static var codeUseRecovery: String { tr("login.codeUseRecovery") }  // "Use a recovery code instead"
+        public static var diagnosticsButton: String { tr("login.diagnosticsButton") }  // "Share sign in log"
+        public static var diagnosticsIntro: String { tr("login.diagnosticsIntro") }
+        public static var diagnosticsTitle: String { tr("login.diagnosticsTitle") }  // "Sign in log"
         public static var errorClientCertificateRejected: String { tr("login.errorClientCertificateRejected") }  // "The server refused this client certificate."
         public static var errorClientCertificateRequired: String { tr("login.errorClientCertificateRequired") }  // "This server asks for a client certificate."
         public static var errorDecoding: String { tr("login.errorDecoding") }
         public static var errorIncomplete: String { tr("login.errorIncomplete") }  // "Sign-in didn't complete. Please try again."
+        public static var errorInvalidCode: String { tr("login.errorInvalidCode") }  // "That code is not right."
         public static var errorInvalidCredentials: String { tr("login.errorInvalidCredentials") }  // "Incorrect username or password."
         public static var errorInvalidServer: String { tr("login.errorInvalidServer") }  // "Enter a valid server address."
         public static var errorKeychain: String { tr("login.errorKeychain") }  // "Could not save your session on this device."
         public static var errorNoAuthMethods: String { tr("login.errorNoAuthMethods") }  // "This server has no sign-in methods enabled."
         public static var errorNoLocalAuth: String { tr("login.errorNoLocalAuth") }  // "This server doesn't have username/password sign-in enabled."
         public static var errorRateLimited: String { tr("login.errorRateLimited") }  // "Too many attempts. Please wait a few minutes and try again."
+        public static var errorSecondFactorExpired: String { tr("login.errorSecondFactorExpired") }  // "That sign in expired. Enter your password again."
         public static func errorServer(_ a0: CVarArg) -> String { tr("login.errorServer", a0) }
         public static var errorSessionExpired: String { tr("login.errorSessionExpired") }  // "Your session expired. Please sign in again."
         public static var errorSso: String { tr("login.errorSso") }  // "Single sign-on didn't complete. Please try again."
         public static var errorUnexpectedResponse: String { tr("login.errorUnexpectedResponse") }  // "Unexpected response from server."
         public static var errorUnreachable: String { tr("login.errorUnreachable") }
         public static var hidePassword: String { tr("login.hidePassword") }  // "Hide Password"
+        public static var identifierField: String { tr("login.identifierField") }  // "Email or username"
         public static var manageClientCertificate: String { tr("login.manageClientCertificate") }  // "Manage Certificate"
         public static var orDivider: String { tr("login.orDivider") }  // "or"
         public static var passwordField: String { tr("login.passwordField") }  // "Password"

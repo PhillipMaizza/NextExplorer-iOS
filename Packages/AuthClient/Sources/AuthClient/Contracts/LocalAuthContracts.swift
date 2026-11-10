@@ -31,5 +31,27 @@ extension LocalAuthService {
     /// rather than a 401: confirmed against `backend/src/routes/auth.js`.
     struct UserEnvelope: Decodable {
         let user: User?
+        /// `true` when the password was right and the account also asks for a code: the login
+        /// route then answers 200 with this flag and no user (`twoFactorRequired` in
+        /// `backend/src/routes/auth.js`).
+        let totpRequired: Bool?
     }
+
+    /// The body of `POST /api/auth/login/totp`: the six digit code, or a recovery code.
+    struct TOTPRequestBody: Encodable {
+        let code: String
+    }
+
+    /// The error body the backend sends on a refusal, `{"error": {"code": "..."}}`.
+    struct ErrorEnvelope: Decodable {
+        struct Detail: Decodable {
+            let code: String?
+        }
+
+        let error: Detail?
+    }
+
+    /// `ErrorCodes.AUTH_INVALID_TOTP_CODE` in the backend: the code was wrong, as opposed to the
+    /// sign in no longer waiting for one.
+    static let invalidTOTPCode = "AUTH_INVALID_TOTP_CODE"
 }

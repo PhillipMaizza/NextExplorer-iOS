@@ -58,6 +58,22 @@ struct LoginScreen {
     var submitButton: XCUIElement {
         app.buttons[AccessibilityIdentifiers.Login.submitButton]
     }
+
+    var codeField: XCUIElement {
+        app.textFields[AccessibilityIdentifiers.Login.codeField]
+    }
+
+    var codeSubmitButton: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Login.codeSubmitButton]
+    }
+
+    var codeModeButton: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Login.codeModeButton]
+    }
+
+    var diagnosticsButton: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Login.diagnosticsButton]
+    }
 }
 
 struct BrowseScreen {

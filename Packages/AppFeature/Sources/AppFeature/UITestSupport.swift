@@ -86,6 +86,16 @@
         /// A folder name the mocked `createFolder` rejects, so a UI test can drive the failure path
         /// (the new folder sheet stays open on error). Mirrored by `Fixture.failingFolderName`.
         static let failingFolderName = "__uitest_fail__"
+        /// Signing in as this name answers "the password is right, now send a code", so a UI test
+        /// can drive the second factor page. Mirrored by `Fixture.secondFactorIdentifier`.
+        static let secondFactorIdentifier = "phillip.2fa"
+        /// Signing in as this name is refused as wrong credentials, so a UI test can drive the
+        /// failure path. Mirrored by `Fixture.rejectedIdentifier`.
+        static let rejectedIdentifier = "phillip.rejected"
+        /// The authenticator code the mocked `loginTOTP` accepts. Mirrored by `Fixture.validCode`.
+        static let validCode = "123456"
+        /// The recovery code the mocked `loginTOTP` accepts. Mirrored by `Fixture.validRecoveryCode`.
+        static let validRecoveryCode = "AAAAA-BBBBB"
         public static let user = User(id: "uitest-user", username: "phillip", email: "phillip@example.com", roles: ["admin"])
 
         enum Auth: String {
@@ -128,7 +138,20 @@
                 return user
             }
             client.login = { serverURL, identifier, _ in
+                if identifier == secondFactorIdentifier {
+                    throw AuthClientError.secondFactorRequired
+                }
+                if identifier == rejectedIdentifier {
+                    throw AuthClientError.invalidCredentials
+                }
                 sessions.upsert(credentials(serverURL: serverURL, username: identifier))
+                return user
+            }
+            client.loginTOTP = { serverURL, code in
+                guard code == validCode || code == validRecoveryCode else {
+                    throw AuthClientError.invalidCode
+                }
+                sessions.upsert(credentials(serverURL: serverURL, username: secondFactorIdentifier))
                 return user
             }
             client.loginOIDC = { serverURL in
