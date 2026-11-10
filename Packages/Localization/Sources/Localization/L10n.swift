@@ -138,6 +138,9 @@ public enum L10n {
         public static var unsupportedFileType: String { tr("browse.unsupportedFileType") }  // "Unsupported file type"
     }
     public enum ChangePassword {
+        public static var addIntro: String { tr("changePassword.addIntro") }
+        public static var addNavigationTitle: String { tr("changePassword.addNavigationTitle") }  // "Add Password"
+        public static var addSubmitButton: String { tr("changePassword.addSubmitButton") }  // "Add Password"
         public static func errorMinLength(_ a0: CVarArg) -> String { tr("changePassword.errorMinLength", a0) }
         public static var errorMismatch: String { tr("changePassword.errorMismatch") }  // "Passwords don't match."
         public static var fieldConfirmPassword: String { tr("changePassword.fieldConfirmPassword") }  // "Re-enter new password"
@@ -613,6 +616,7 @@ public enum L10n {
         public static var removeAllDownloadsMessage: String { tr("settings.removeAllDownloadsMessage") }
         public static var removeAllDownloadsTitle: String { tr("settings.removeAllDownloadsTitle") }  // "Remove All Downloads?"
         public static var rowAccessRules: String { tr("settings.rowAccessRules") }  // "Folder Access Rules"
+        public static var rowAddPassword: String { tr("settings.rowAddPassword") }  // "Add Password"
         public static var rowAppearance: String { tr("settings.rowAppearance") }  // "Appearance"
         public static var rowChangePassword: String { tr("settings.rowChangePassword") }  // "Change Password"
         public static var rowClearCache: String { tr("settings.rowClearCache") }  // "Clear Cache"

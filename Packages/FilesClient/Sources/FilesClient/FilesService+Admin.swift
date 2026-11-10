@@ -14,9 +14,32 @@ extension FilesService {
         request.httpBody = try Self.encode(ChangeOwnPasswordBody(
             currentPassword: currentPassword, newPassword: newPassword
         ))
+        try await sendPasswordRequest(request)
+    }
+
+    /// `POST /api/auth/password/add`, verified against `backend/src/routes/auth.js` and
+    /// `services/users/localAuth.js` `addLocalPassword`: `{ password }` for an account that signs
+    /// in through single sign on and has no password yet. A password under the minimum length is
+    /// a 400, an account that already has one a 409; both carry a message.
+    func addOwnPassword(serverURL: URL, password: String) async throws {
+        let url = serverURL.appendingPathComponent(APIPath.addOwnPassword)
+        var request = Self.makeRequest(url: url, method: .post)
+        request.setJSONContentType()
+        request.httpBody = try Self.encode(AddOwnPasswordBody(password: password))
+        try await sendPasswordRequest(request)
+    }
+
+    /// `GET /api/auth/methods`: how this account can sign in.
+    func authMethods(serverURL: URL) async throws -> [SignInMethod] {
+        let url = serverURL.appendingPathComponent(APIPath.authMethods)
+        let request = Self.makeRequest(url: url, method: .get)
+        return try await send(request, decoding: SignInMethodsEnvelope.self).methods
+    }
+
+    /// Unlike every other call, a 401 on the password routes is "current password is incorrect",
+    /// not a dead session, so it must reach the user as its message, not as `.sessionExpired`.
+    private func sendPasswordRequest(_ request: URLRequest) async throws {
         let (data, response) = try await performSend(request)
-        // Unlike every other call, a 401 here is "current password is incorrect", not a dead
-        // session, so it must reach the user as its message, not as `.sessionExpired`.
         switch response.statusCode {
         case 200 ..< 300:
             return

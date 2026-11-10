@@ -96,8 +96,8 @@
 
         var body: some View {
             MacFormSheet(
-                title: L10n.ChangePassword.navigationTitle,
-                confirmTitle: L10n.ChangePassword.submitButton,
+                title: store.mode == .add ? L10n.ChangePassword.addNavigationTitle : L10n.ChangePassword.navigationTitle,
+                confirmTitle: store.mode == .add ? L10n.ChangePassword.addSubmitButton : L10n.ChangePassword.submitButton,
                 isConfirmEnabled: store.isSubmitEnabled,
                 isWorking: store.isSubmitting,
                 errorMessage: store.errorMessage,
@@ -105,12 +105,14 @@
                 onCancel: onClose,
                 onConfirm: { store.send(.submitTapped) }
             ) {
-                MacSettingsNote(L10n.ChangePassword.intro)
+                MacSettingsNote(store.mode == .add ? L10n.ChangePassword.addIntro : L10n.ChangePassword.intro)
                     .padding(.bottom, .space8)
-                MacSettingsRow(L10n.ChangePassword.fieldCurrentPassword) {
-                    SecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
-                        .labelsHidden()
-                        .textContentType(.password)
+                if store.mode == .change {
+                    MacSettingsRow(L10n.ChangePassword.fieldCurrentPassword) {
+                        SecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
+                            .labelsHidden()
+                            .textContentType(.password)
+                    }
                 }
                 MacSettingsRow(L10n.ChangePassword.fieldNewPasswordLabel) {
                     SecureField(L10n.ChangePassword.fieldNewPasswordLabel, text: $store.newPassword.sending(\.newPasswordChanged), prompt: Text(L10n.ChangePassword.fieldNewPasswordPrompt(CredentialRules.minimumPasswordLength)))

@@ -26,6 +26,8 @@ enum APIPath {
     static let upload = "api/upload"
     static let editor = "api/editor"
     static let changeOwnPassword = "api/auth/password"
+    static let addOwnPassword = "api/auth/password/add"
+    static let authMethods = "api/auth/methods"
 
     static let shares = "api/shares"
     static let sharesSharedWithMe = "api/shares/shared-with-me"

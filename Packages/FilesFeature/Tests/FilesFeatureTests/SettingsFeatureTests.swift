@@ -51,11 +51,93 @@ struct SettingsFeatureTests {
         }
     }
 
+    // MARK: Password rows (`GET /api/auth/methods`)
+
+    private func methodsStore(
+        state: SettingsFeature.State? = nil,
+        methods: @escaping @Sendable () throws -> [SignInMethod]
+    ) -> TestStoreOf<SettingsFeature> {
+        let store = TestStore(initialState: state ?? makeState()) {
+            SettingsFeature()
+        } withDependencies: {
+            $0.filesClient.fetchAuthMethods = { _ in try methods() }
+            $0.filesClient.fetchPreferences = { _ in UserPreferences() }
+            $0.filesClient.fetchBranding = { _ in Branding() }
+            $0.filesClient.serverFeatures = { _ in ServerFeatures() }
+            $0.localDownloadStore.list = { _ in [] }
+            $0.previewCacheStore.size = { 0 }
+        }
+        store.exhaustivity = .off
+        return store
+    }
+
+    @Test
+    func anAccountWithAPasswordKeepsTheChangePasswordRow() async {
+        let store = methodsStore { [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")] }
+
+        await store.send(.onAppear)
+        await store.skipReceivedActions()
+        #expect(store.state.passwordStatus == .present)
+
+        await store.send(.changePasswordButtonTapped)
+        #expect(store.state.changePassword?.mode == .change)
+    }
+
+    @Test
+    func aSingleSignOnAccountIsOfferedAddPassword() async {
+        let store = methodsStore { [SignInMethod(id: "m2", type: "oidc", provider: "PocketID")] }
+
+        await store.send(.onAppear)
+        await store.skipReceivedActions()
+        #expect(store.state.passwordStatus == .absent)
+
+        await store.send(.changePasswordButtonTapped)
+        #expect(store.state.changePassword?.mode == .add)
+    }
+
+    @Test
+    func whenTheMethodsCannotBeFetchedTheRowStaysChangePassword() async {
+        let store = methodsStore { throw FilesClientError.server(statusCode: 500) }
+
+        await store.send(.onAppear)
+        await store.skipReceivedActions()
+        #expect(store.state.passwordStatus == .unknown)
+
+        await store.send(.changePasswordButtonTapped)
+        #expect(store.state.changePassword?.mode == .change)
+    }
+
+    @Test
+    func addingAPasswordClosesTheScreenAndTurnsTheRowIntoChangePassword() async {
+        var state = makeState()
+        state.passwordStatus = .absent
+        state.changePassword = ChangePasswordFeature.State(serverURL: serverURL, mode: .add)
+        let store = methodsStore(state: state) { [] }
+
+        await store.send(.changePassword(.presented(.delegate(.passwordAdded))))
+
+        #expect(store.state.passwordStatus == .present)
+        #expect(store.state.changePassword == nil)
+    }
+
+    @Test
+    func openingSettingsAgainRefreshesTheStatus() async {
+        var state = makeState()
+        state.passwordStatus = .absent
+        let store = methodsStore(state: state) { [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")] }
+
+        await store.send(.onAppear)
+        await store.skipReceivedActions()
+
+        #expect(store.state.passwordStatus == .present)
+    }
+
     @Test
     func onAppearFetchesPreferencesSuccessfully() async {
         let store = TestStore(initialState: makeState()) {
             SettingsFeature()
         } withDependencies: {
+            $0.filesClient.fetchAuthMethods = { _ in [] }
             $0.filesClient.fetchPreferences = { _ in UserPreferences(showHiddenFiles: true, showThumbnails: false) }
             $0.filesClient.fetchBranding = { _ in Branding() }
             $0.filesClient.serverFeatures = { _ in ServerFeatures() }
@@ -82,6 +164,7 @@ struct SettingsFeatureTests {
         let store = TestStore(initialState: makeState()) {
             SettingsFeature()
         } withDependencies: {
+            $0.filesClient.fetchAuthMethods = { _ in [] }
             $0.filesClient.fetchPreferences = { _ in throw FilesClientError.sessionExpired }
             $0.filesClient.fetchBranding = { _ in Branding() }
             $0.filesClient.serverFeatures = { _ in ServerFeatures() }
