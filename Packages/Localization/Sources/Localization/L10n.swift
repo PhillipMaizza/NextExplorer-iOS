@@ -64,6 +64,7 @@ public enum L10n {
         public static var revokeTitle: String { tr("apiTokens.revokeTitle") }  // "Revoke Token?"
         public static var scopeRead: String { tr("apiTokens.scopeRead") }  // "Read only"
         public static var scopeWrite: String { tr("apiTokens.scopeWrite") }  // "Read and write"
+        public static var sectionHeader: String { tr("apiTokens.sectionHeader") }  // "Developers"
     }
     public enum Appearance {
         public static var dark: String { tr("appearance.dark") }  // "Dark"

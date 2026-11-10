@@ -639,6 +639,7 @@ twoFactor.manageButton	Manage…
 
 # ---- apiTokens ----
 apiTokens.navigationTitle	API Tokens
+apiTokens.sectionHeader	Developers
 apiTokens.intro	API tokens let scripts and other tools use your account without your password. A token only does what its access allows, and you can revoke it at any time.
 apiTokens.emptyTitle	No API tokens
 apiTokens.emptyMessage	Create one to let a script use your account.

@@ -71,6 +71,10 @@ struct SettingsView: View {
         AccountConfirmations.isHostedByWindow ? .constant(nil) : $store.scope(state: \.twoFactor, action: \.twoFactor)
     }
 
+    private var apiTokensDestination: Binding<StoreOf<APITokensFeature>?> {
+        $store.scope(state: \.apiTokens, action: \.apiTokens)
+    }
+
     var body: some View {
         root
         #if os(iOS)
@@ -89,11 +93,12 @@ struct SettingsView: View {
         #else
             NavigationStack {
                 windowChrome(
-                    adminDestinations(offlineDestination(serverDetailsDestination(twoFactorDestinationView(changePasswordDestinationView(
+                    adminDestinations(offlineDestination(serverDetailsDestination(apiTokensDestinationView(twoFactorDestinationView(changePasswordDestinationView(
                         settingsList {
                             if !filter.isActive {
                                 SettingsAccountsSection(store: store)
                                 SettingsProfileSection(store: store)
+                                SettingsAPITokensSection(store: store)
                             }
 
                             GeneralSettingsSection(store: store, filter: filter)
@@ -115,7 +120,7 @@ struct SettingsView: View {
                             LegalSettingsSection(filter: filter)
                             LicensesSettingsSection(store: store, filter: filter)
                         }
-                    )))))
+                    ))))))
                 )
             }
         #endif
@@ -152,6 +157,12 @@ struct SettingsView: View {
     private func serverDetailsDestination(_ content: some View) -> some View {
         content.navigationDestination(item: $store.scope(state: \.serverDetails, action: \.serverDetails)) { serverDetailsStore in
             ServerDetailsView(store: serverDetailsStore)
+        }
+    }
+
+    private func apiTokensDestinationView(_ content: some View) -> some View {
+        content.navigationDestination(item: apiTokensDestination) { apiTokensStore in
+            APITokensView(store: apiTokensStore)
         }
     }
 

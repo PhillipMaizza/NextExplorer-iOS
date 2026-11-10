@@ -2153,6 +2153,17 @@
         }
       }
     },
+    "apiTokens.sectionHeader": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Developers"
+          }
+        }
+      }
+    },
     "appearance.dark": {
       "extractionState": "manual",
       "localizations": {

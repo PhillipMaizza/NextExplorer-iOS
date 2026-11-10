@@ -38,6 +38,7 @@ public struct SettingsFeature {
         @Presents public var userManagement: UserManagementFeature.State?
         @Presents public var changePassword: ChangePasswordFeature.State?
         @Presents public var twoFactor: TwoFactorFeature.State?
+        @Presents public var apiTokens: APITokensFeature.State?
         @Presents public var serverDetails: ServerDetailsFeature.State?
         @Presents public var thumbnailSettings: ThumbnailSettingsFeature.State?
         @Presents public var accessRules: AccessRulesFeature.State?
@@ -127,9 +128,11 @@ public struct SettingsFeature {
         case userManagement(PresentationAction<UserManagementFeature.Action>)
         case changePasswordButtonTapped
         case twoFactorButtonTapped
+        case apiTokensButtonTapped
         case authMethodsResponse(Result<[SignInMethod], FilesClientError>)
         case changePassword(PresentationAction<ChangePasswordFeature.Action>)
         case twoFactor(PresentationAction<TwoFactorFeature.Action>)
+        case apiTokens(PresentationAction<APITokensFeature.Action>)
         case serverDetailsButtonTapped
         case serverDetails(PresentationAction<ServerDetailsFeature.Action>)
         case thumbnailSettingsButtonTapped
@@ -257,6 +260,13 @@ public struct SettingsFeature {
             return .none
 
         case .twoFactor:
+            return .none
+
+        case .apiTokensButtonTapped:
+            state.apiTokens = APITokensFeature.State(serverURL: state.serverURL, requiresPassword: state.passwordStatus != .absent)
+            return .none
+
+        case .apiTokens:
             return .none
 
         case .serverDetailsButtonTapped:
@@ -627,6 +637,9 @@ public struct SettingsFeature {
             }
             .ifLet(\.$twoFactor, action: \.twoFactor) {
                 TwoFactorFeature()
+            }
+            .ifLet(\.$apiTokens, action: \.apiTokens) {
+                APITokensFeature()
             }
             .ifLet(\.$serverDetails, action: \.serverDetails) {
                 ServerDetailsFeature()
