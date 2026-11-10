@@ -357,21 +357,22 @@ struct FavoritesView: View {
                 skeletonRows
             } else {
                 ForEach(results) { result in
-                    Button {
-                        store.send(.searchResultTapped(result))
-                    } label: {
-                        FileRowView(
-                            name: result.name,
-                            isDirectory: result.isDirectory,
-                            subtitle: searchResultSnippet(result),
-                            lineLabel: searchResultLineLabel(result),
-                            kind: searchResultKind(result)
-                        )
+                    DSFlashingListRow {
+                        Button {
+                            store.send(.searchResultTapped(result))
+                        } label: {
+                            FileRowView(
+                                name: result.name,
+                                isDirectory: result.isDirectory,
+                                subtitle: searchResultSnippet(result),
+                                lineLabel: searchResultLineLabel(result),
+                                kind: searchResultKind(result)
+                            )
+                        }
+                        .buttonStyle(DSHapticButtonStyle())
+                        .listRowSeparator(result.id == firstID ? .hidden : .visible, edges: .top)
+                        .listRowSeparator(result.id == lastID ? .hidden : .visible, edges: .bottom)
                     }
-                    .buttonStyle(DSHapticButtonStyle())
-                    .listRowBackground(Color.backgroundSecondary)
-                    .listRowSeparator(result.id == firstID ? .hidden : .visible, edges: .top)
-                    .listRowSeparator(result.id == lastID ? .hidden : .visible, edges: .bottom)
                 }
             }
         }
