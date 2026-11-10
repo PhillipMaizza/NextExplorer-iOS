@@ -23,6 +23,48 @@ public enum L10n {
         public static var subtitle: String { tr("accessRules.subtitle") }  // "Override read and write access for specific paths."
         public static var unavailable: String { tr("accessRules.unavailable") }  // "Access rules are only available to administrators."
     }
+    public enum ApiTokens {
+        public static var copiedToken: String { tr("apiTokens.copiedToken") }  // "Copied"
+        public static var copyToken: String { tr("apiTokens.copyToken") }  // "Copy Token"
+        public static var createSubmit: String { tr("apiTokens.createSubmit") }  // "Create Token"
+        public static func created(_ a0: CVarArg) -> String { tr("apiTokens.created", a0) }
+        public static var emptyMessage: String { tr("apiTokens.emptyMessage") }  // "Create one to let a script use your account."
+        public static var emptyTitle: String { tr("apiTokens.emptyTitle") }  // "No API tokens"
+        public static func expired(_ a0: CVarArg) -> String { tr("apiTokens.expired", a0) }
+        public static func expires(_ a0: CVarArg) -> String { tr("apiTokens.expires", a0) }
+        public static var expiry30: String { tr("apiTokens.expiry30") }  // "In 30 days"
+        public static var expiry90: String { tr("apiTokens.expiry90") }  // "In 90 days"
+        public static var expiryNever: String { tr("apiTokens.expiryNever") }  // "Never"
+        public static var expiryYear: String { tr("apiTokens.expiryYear") }  // "In 1 year"
+        public static var fieldAccess: String { tr("apiTokens.fieldAccess") }  // "Access"
+        public static var fieldExpiry: String { tr("apiTokens.fieldExpiry") }  // "Expires"
+        public static var fieldName: String { tr("apiTokens.fieldName") }  // "Name"
+        public static var fieldPassword: String { tr("apiTokens.fieldPassword") }  // "Your password"
+        public static var formTitle: String { tr("apiTokens.formTitle") }  // "New API Token"
+        public static var intro: String { tr("apiTokens.intro") }
+        public static var issuedDone: String { tr("apiTokens.issuedDone") }  // "I've Copied It"
+        public static var issuedIntro: String { tr("apiTokens.issuedIntro") }
+        public static var issuedTitle: String { tr("apiTokens.issuedTitle") }  // "Copy your token"
+        public static func lastUsed(_ a0: CVarArg) -> String { tr("apiTokens.lastUsed", a0) }
+        public static func lastUsedFrom(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("apiTokens.lastUsedFrom", a0, a1) }
+        public static func limitReached(_ a0: CVarArg) -> String { tr("apiTokens.limitReached", a0) }
+        public static func menuAccessibilityLabel(_ a0: CVarArg) -> String { tr("apiTokens.menuAccessibilityLabel", a0) }
+        public static var namePlaceholder: String { tr("apiTokens.namePlaceholder") }  // "For example, backup script"
+        public static var navigationTitle: String { tr("apiTokens.navigationTitle") }  // "API Tokens"
+        public static var neverExpires: String { tr("apiTokens.neverExpires") }  // "Never expires"
+        public static var neverUsed: String { tr("apiTokens.neverUsed") }  // "Never used"
+        public static var newButton: String { tr("apiTokens.newButton") }  // "New Token"
+        public static var passwordHint: String { tr("apiTokens.passwordHint") }  // "Enter your password to create a token."
+        public static var renameAction: String { tr("apiTokens.renameAction") }  // "Rename"
+        public static var renameSave: String { tr("apiTokens.renameSave") }  // "Save"
+        public static var renameTitle: String { tr("apiTokens.renameTitle") }  // "Rename Token"
+        public static var revokeAction: String { tr("apiTokens.revokeAction") }  // "Revoke"
+        public static var revokeConfirm: String { tr("apiTokens.revokeConfirm") }  // "Revoke"
+        public static func revokeMessage(_ a0: CVarArg) -> String { tr("apiTokens.revokeMessage", a0) }
+        public static var revokeTitle: String { tr("apiTokens.revokeTitle") }  // "Revoke Token?"
+        public static var scopeRead: String { tr("apiTokens.scopeRead") }  // "Read only"
+        public static var scopeWrite: String { tr("apiTokens.scopeWrite") }  // "Read and write"
+    }
     public enum Appearance {
         public static var dark: String { tr("appearance.dark") }  // "Dark"
         public static var light: String { tr("appearance.light") }  // "Light"

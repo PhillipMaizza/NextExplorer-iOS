@@ -44,4 +44,11 @@ struct APITokenTests {
         #expect(issued.secret == "nxt_abc.def")
         #expect(issued.token.id == "t1")
     }
+
+    @Test("an issued token is identified by its token, so a sheet can be driven by it")
+    func issuedIsIdentifiedByItsToken() throws {
+        let data = Data(#"{"token":\#(json),"secret":"s"}"#.utf8)
+        let issued = try JSONDecoder().decode(IssuedAPIToken.self, from: data)
+        #expect(issued.id == "t1")
+    }
 }

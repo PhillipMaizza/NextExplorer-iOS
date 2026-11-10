@@ -636,6 +636,48 @@ twoFactor.passwordTurnOffIntro	Enter your password to turn off two-factor authen
 twoFactor.passwordField	Password
 twoFactor.passwordConfirmButton	Confirm
 twoFactor.manageButton	Manage…
+
+# ---- apiTokens ----
+apiTokens.navigationTitle	API Tokens
+apiTokens.intro	API tokens let scripts and other tools use your account without your password. A token only does what its access allows, and you can revoke it at any time.
+apiTokens.emptyTitle	No API tokens
+apiTokens.emptyMessage	Create one to let a script use your account.
+apiTokens.newButton	New Token
+apiTokens.limitReached	You have reached the limit of %lld tokens. Revoke one to create another.
+apiTokens.scopeRead	Read only
+apiTokens.scopeWrite	Read and write
+apiTokens.created	Created %@
+apiTokens.lastUsed	Last used %@
+apiTokens.lastUsedFrom	Last used %1$@ from %2$@
+apiTokens.neverUsed	Never used
+apiTokens.expires	Expires %@
+apiTokens.expired	Expired %@
+apiTokens.neverExpires	Never expires
+apiTokens.renameAction	Rename
+apiTokens.revokeAction	Revoke
+apiTokens.menuAccessibilityLabel	Actions for %@
+apiTokens.formTitle	New API Token
+apiTokens.fieldName	Name
+apiTokens.namePlaceholder	For example, backup script
+apiTokens.fieldAccess	Access
+apiTokens.fieldExpiry	Expires
+apiTokens.expiry30	In 30 days
+apiTokens.expiry90	In 90 days
+apiTokens.expiryYear	In 1 year
+apiTokens.expiryNever	Never
+apiTokens.fieldPassword	Your password
+apiTokens.passwordHint	Enter your password to create a token.
+apiTokens.createSubmit	Create Token
+apiTokens.issuedTitle	Copy your token
+apiTokens.issuedIntro	This is the only time it is shown. Store it somewhere safe. If you lose it, revoke it and create a new one.
+apiTokens.copyToken	Copy Token
+apiTokens.copiedToken	Copied
+apiTokens.issuedDone	I've Copied It
+apiTokens.renameTitle	Rename Token
+apiTokens.renameSave	Save
+apiTokens.revokeTitle	Revoke Token?
+apiTokens.revokeMessage	Anything using "%@" will stop working right away. This can't be undone.
+apiTokens.revokeConfirm	Revoke
 login.portHint	Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80.
 login.errorInvalidServer	Enter a valid server address.
 login.errorInvalidCredentials	Incorrect username or password.

@@ -40,9 +40,18 @@ public struct APIToken: Codable, Equatable, Sendable, Identifiable {
 
 /// The only reply that carries a token's value. It is not stored in readable form and no route
 /// answers with it again, so losing it costs a new token.
-public struct IssuedAPIToken: Codable, Equatable, Sendable {
+public struct IssuedAPIToken: Codable, Equatable, Sendable, Identifiable {
+    public var id: String {
+        token.id
+    }
+
     public let token: APIToken
     public let secret: String
+
+    private enum CodingKeys: String, CodingKey {
+        case token
+        case secret
+    }
 
     public init(token: APIToken, secret: String) {
         self.token = token
