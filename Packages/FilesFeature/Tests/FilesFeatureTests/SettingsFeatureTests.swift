@@ -51,6 +51,19 @@ struct SettingsFeatureTests {
         }
     }
 
+    @Test
+    func tappingTwoFactorPresentsItAndDismissingClearsIt() async {
+        let store = TestStore(initialState: makeState()) { SettingsFeature() }
+        store.exhaustivity = .off
+
+        await store.send(.twoFactorButtonTapped) {
+            $0.twoFactor = TwoFactorFeature.State(serverURL: serverURL)
+        }
+        await store.send(.twoFactor(.dismiss)) {
+            $0.twoFactor = nil
+        }
+    }
+
     // MARK: Password rows (`GET /api/auth/methods`)
 
     private func methodsStore(

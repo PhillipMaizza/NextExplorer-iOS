@@ -610,6 +610,31 @@ changePassword.addIntro	This account signs in with single sign-on and has no pas
 changePassword.addSubmitButton	Add Password
 changePassword.errorMinLength	Use at least %lld characters.
 changePassword.errorMismatch	Passwords don't match.
+
+# ---- twoFactor ----
+twoFactor.navigationTitle	Two-Factor Authentication
+twoFactor.offTitle	Two-factor authentication is off
+twoFactor.offIntro	Add a second step to signing in. After your password you will enter a code from an authenticator app.
+twoFactor.turnOnButton	Turn On
+twoFactor.enrollIntro	Scan this QR code with your authenticator app, or type the key in by hand. Then enter the 6-digit code the app shows.
+twoFactor.qrAccessibilityLabel	QR code for your authenticator app
+twoFactor.keyLabel	Setup Key
+twoFactor.copyKeyAccessibilityLabel	Copy setup key
+twoFactor.codeAccessibilityLabel	Authenticator code
+twoFactor.confirmButton	Verify and Turn On
+twoFactor.recoveryTitle	Save your recovery codes
+twoFactor.recoveryIntro	Each code works once if you lose your authenticator app. They won't be shown again, so store them somewhere safe.
+twoFactor.copyCodesButton	Copy Codes
+twoFactor.shareCodesButton	Share Codes
+twoFactor.recoveryDoneButton	I've Saved Them
+twoFactor.onTitle	Two-factor authentication is on
+twoFactor.recoveryCodesLeft	Recovery codes left: %lld
+twoFactor.newCodesButton	Get New Recovery Codes
+twoFactor.turnOffButton	Turn Off
+twoFactor.passwordNewCodesIntro	Enter your password to replace your recovery codes. The old ones stop working.
+twoFactor.passwordTurnOffIntro	Enter your password to turn off two-factor authentication.
+twoFactor.passwordField	Password
+twoFactor.passwordConfirmButton	Confirm
 login.portHint	Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80.
 login.errorInvalidServer	Enter a valid server address.
 login.errorInvalidCredentials	Incorrect username or password.

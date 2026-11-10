@@ -38,5 +38,7 @@ public enum AccessibilityIdentifiers {
         public static let activeAccount = "settings.activeAccount"
         /// The app language picker in the Mac Settings window.
         public static let languagePicker = "settings.languagePicker"
+        public static let twoFactorRow = "settings.twoFactorRow"
+        public static let twoFactorCodeField = "settings.twoFactorCodeField"
     }
 }

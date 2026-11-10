@@ -806,6 +806,31 @@ public enum L10n {
         public static var title: String { tr("tipJar.title") }  // "Buy me a coffee"
         public static var toastThanks: String { tr("tipJar.toastThanks") }  // "Thank you for supporting the project! 🙏"
     }
+    public enum TwoFactor {
+        public static var codeAccessibilityLabel: String { tr("twoFactor.codeAccessibilityLabel") }  // "Authenticator code"
+        public static var confirmButton: String { tr("twoFactor.confirmButton") }  // "Verify and Turn On"
+        public static var copyCodesButton: String { tr("twoFactor.copyCodesButton") }  // "Copy Codes"
+        public static var copyKeyAccessibilityLabel: String { tr("twoFactor.copyKeyAccessibilityLabel") }  // "Copy setup key"
+        public static var enrollIntro: String { tr("twoFactor.enrollIntro") }
+        public static var keyLabel: String { tr("twoFactor.keyLabel") }  // "Setup Key"
+        public static var navigationTitle: String { tr("twoFactor.navigationTitle") }  // "Two-Factor Authentication"
+        public static var newCodesButton: String { tr("twoFactor.newCodesButton") }  // "Get New Recovery Codes"
+        public static var offIntro: String { tr("twoFactor.offIntro") }
+        public static var offTitle: String { tr("twoFactor.offTitle") }  // "Two-factor authentication is off"
+        public static var onTitle: String { tr("twoFactor.onTitle") }  // "Two-factor authentication is on"
+        public static var passwordConfirmButton: String { tr("twoFactor.passwordConfirmButton") }  // "Confirm"
+        public static var passwordField: String { tr("twoFactor.passwordField") }  // "Password"
+        public static var passwordNewCodesIntro: String { tr("twoFactor.passwordNewCodesIntro") }
+        public static var passwordTurnOffIntro: String { tr("twoFactor.passwordTurnOffIntro") }  // "Enter your password to turn off two-factor authentication."
+        public static var qrAccessibilityLabel: String { tr("twoFactor.qrAccessibilityLabel") }  // "QR code for your authenticator app"
+        public static func recoveryCodesLeft(_ a0: CVarArg) -> String { tr("twoFactor.recoveryCodesLeft", a0) }
+        public static var recoveryDoneButton: String { tr("twoFactor.recoveryDoneButton") }  // "I've Saved Them"
+        public static var recoveryIntro: String { tr("twoFactor.recoveryIntro") }
+        public static var recoveryTitle: String { tr("twoFactor.recoveryTitle") }  // "Save your recovery codes"
+        public static var shareCodesButton: String { tr("twoFactor.shareCodesButton") }  // "Share Codes"
+        public static var turnOffButton: String { tr("twoFactor.turnOffButton") }  // "Turn Off"
+        public static var turnOnButton: String { tr("twoFactor.turnOnButton") }  // "Turn On"
+    }
     public enum UnsupportedPreview {
         public static var cannotOpen: String { tr("unsupportedPreview.cannotOpen") }  // "This app can't open this type of file."
         public static var genericType: String { tr("unsupportedPreview.genericType") }  // "File"

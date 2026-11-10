@@ -76492,6 +76492,259 @@
         }
       }
     },
+    "twoFactor.codeAccessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Authenticator code"
+          }
+        }
+      }
+    },
+    "twoFactor.confirmButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verify and Turn On"
+          }
+        }
+      }
+    },
+    "twoFactor.copyCodesButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy Codes"
+          }
+        }
+      }
+    },
+    "twoFactor.copyKeyAccessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy setup key"
+          }
+        }
+      }
+    },
+    "twoFactor.enrollIntro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Scan this QR code with your authenticator app, or type the key in by hand. Then enter the 6-digit code the app shows."
+          }
+        }
+      }
+    },
+    "twoFactor.keyLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Setup Key"
+          }
+        }
+      }
+    },
+    "twoFactor.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two-Factor Authentication"
+          }
+        }
+      }
+    },
+    "twoFactor.newCodesButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get New Recovery Codes"
+          }
+        }
+      }
+    },
+    "twoFactor.offIntro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a second step to signing in. After your password you will enter a code from an authenticator app."
+          }
+        }
+      }
+    },
+    "twoFactor.offTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two-factor authentication is off"
+          }
+        }
+      }
+    },
+    "twoFactor.onTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Two-factor authentication is on"
+          }
+        }
+      }
+    },
+    "twoFactor.passwordConfirmButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Confirm"
+          }
+        }
+      }
+    },
+    "twoFactor.passwordField": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password"
+          }
+        }
+      }
+    },
+    "twoFactor.passwordNewCodesIntro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your password to replace your recovery codes. The old ones stop working."
+          }
+        }
+      }
+    },
+    "twoFactor.passwordTurnOffIntro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter your password to turn off two-factor authentication."
+          }
+        }
+      }
+    },
+    "twoFactor.qrAccessibilityLabel": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "QR code for your authenticator app"
+          }
+        }
+      }
+    },
+    "twoFactor.recoveryCodesLeft": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recovery codes left: %lld"
+          }
+        }
+      }
+    },
+    "twoFactor.recoveryDoneButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "I've Saved Them"
+          }
+        }
+      }
+    },
+    "twoFactor.recoveryIntro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each code works once if you lose your authenticator app. They won't be shown again, so store them somewhere safe."
+          }
+        }
+      }
+    },
+    "twoFactor.recoveryTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save your recovery codes"
+          }
+        }
+      }
+    },
+    "twoFactor.shareCodesButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share Codes"
+          }
+        }
+      }
+    },
+    "twoFactor.turnOffButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn Off"
+          }
+        }
+      }
+    },
+    "twoFactor.turnOnButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn On"
+          }
+        }
+      }
+    },
     "unsupportedPreview.cannotOpen": {
       "extractionState": "manual",
       "localizations": {

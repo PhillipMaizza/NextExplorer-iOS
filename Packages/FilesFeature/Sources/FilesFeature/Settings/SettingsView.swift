@@ -67,6 +67,10 @@ struct SettingsView: View {
         AccountConfirmations.isHostedByWindow ? .constant(nil) : $store.scope(state: \.changePassword, action: \.changePassword)
     }
 
+    private var twoFactorDestination: Binding<StoreOf<TwoFactorFeature>?> {
+        AccountConfirmations.isHostedByWindow ? .constant(nil) : $store.scope(state: \.twoFactor, action: \.twoFactor)
+    }
+
     var body: some View {
         root
         #if os(iOS)
@@ -85,7 +89,7 @@ struct SettingsView: View {
         #else
             NavigationStack {
                 windowChrome(
-                    adminDestinations(offlineDestination(serverDetailsDestination(changePasswordDestinationView(
+                    adminDestinations(offlineDestination(serverDetailsDestination(twoFactorDestinationView(changePasswordDestinationView(
                         settingsList {
                             if !filter.isActive {
                                 SettingsAccountsSection(store: store)
@@ -111,7 +115,7 @@ struct SettingsView: View {
                             LegalSettingsSection(filter: filter)
                             LicensesSettingsSection(store: store, filter: filter)
                         }
-                    ))))
+                    )))))
                 )
             }
         #endif
@@ -148,6 +152,12 @@ struct SettingsView: View {
     private func serverDetailsDestination(_ content: some View) -> some View {
         content.navigationDestination(item: $store.scope(state: \.serverDetails, action: \.serverDetails)) { serverDetailsStore in
             ServerDetailsView(store: serverDetailsStore)
+        }
+    }
+
+    private func twoFactorDestinationView(_ content: some View) -> some View {
+        content.navigationDestination(item: twoFactorDestination) { twoFactorStore in
+            TwoFactorView(store: twoFactorStore)
         }
     }
 

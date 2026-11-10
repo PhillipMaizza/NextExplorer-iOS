@@ -146,6 +146,7 @@
                     HStack {
                         if account.isActive {
                             Button(L10n.MacSettings.changePassword) { store.send(.changePasswordButtonTapped) }
+                            Button(L10n.TwoFactor.navigationTitle) { store.send(.twoFactorButtonTapped) }
                         } else {
                             Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
                         }

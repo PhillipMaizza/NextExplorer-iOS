@@ -42,6 +42,7 @@ struct SettingsAccountsSection: View {
             activeAccountRow(activeAccount)
             if isActiveAccountExpanded {
                 changePasswordRow
+                twoFactorRow
                 signOutRow
             }
             ForEach(store.accounts.filter { !$0.isActive }) { account in
@@ -148,6 +149,14 @@ struct SettingsAccountsSection: View {
         ) {
             store.send(.changePasswordButtonTapped)
         }
+        .disabled(store.isSigningOut)
+    }
+
+    private var twoFactorRow: some View {
+        DSNavigationRow(title: L10n.TwoFactor.navigationTitle, icon: IconKit.shield) {
+            store.send(.twoFactorButtonTapped)
+        }
+        .accessibilityIdentifier(AccessibilityIdentifiers.Settings.twoFactorRow)
         .disabled(store.isSigningOut)
     }
 
