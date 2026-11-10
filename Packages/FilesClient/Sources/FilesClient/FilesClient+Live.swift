@@ -234,6 +234,21 @@ public extension FilesClient {
             fetchAuthMethods: { serverURL in
                 try await service.authMethods(serverURL: serverURL)
             },
+            fetchTwoFactorStatus: { serverURL in
+                try await service.twoFactorStatus(serverURL: serverURL)
+            },
+            beginTwoFactorSetup: { serverURL in
+                try await service.beginTwoFactorSetup(serverURL: serverURL)
+            },
+            confirmTwoFactorSetup: { serverURL, code in
+                try await service.confirmTwoFactorSetup(serverURL: serverURL, code: code)
+            },
+            replaceRecoveryCodes: { serverURL, password in
+                try await service.replaceRecoveryCodes(serverURL: serverURL, password: password)
+            },
+            disableTwoFactor: { serverURL, password in
+                try await service.disableTwoFactor(serverURL: serverURL, password: password)
+            },
             serverFeatures: { serverURL in
                 try await service.serverFeatures(serverURL: serverURL)
             },

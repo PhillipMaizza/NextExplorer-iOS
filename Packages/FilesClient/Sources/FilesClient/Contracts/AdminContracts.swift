@@ -36,6 +36,21 @@ extension FilesService {
         let password: String
     }
 
+    struct TwoFactorCodeBody: Encodable {
+        let code: String
+    }
+
+    /// The body of the two factor routes that ask for the account password.
+    struct PasswordBody: Encodable {
+        let password: String
+    }
+
+    /// `POST /api/auth/totp/confirm` and `POST /api/auth/totp/recovery-codes` answer
+    /// `{ "recoveryCodes": [...] }`.
+    struct RecoveryCodesEnvelope: Decodable {
+        let recoveryCodes: [String]
+    }
+
     /// `GET /api/auth/methods` answers `{ "methods": [...] }`.
     struct SignInMethodsEnvelope: Decodable {
         let methods: [SignInMethod]

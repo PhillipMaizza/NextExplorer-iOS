@@ -200,6 +200,13 @@ public extension FilesClient {
         changeOwnPassword: { _, _, _ in },
         addOwnPassword: { _, _ in },
         fetchAuthMethods: { _ in [SignInMethod(id: "preview-password", type: SignInMethod.localPasswordType, provider: "Password")] },
+        fetchTwoFactorStatus: { _ in TwoFactorStatus(isEnabled: false) },
+        beginTwoFactorSetup: { _ in
+            TwoFactorSetup(secret: "JBSWY3DPEHPK3PXP", uri: "otpauth://totp/NextExplorer:preview?secret=JBSWY3DPEHPK3PXP&issuer=NextExplorer")
+        },
+        confirmTwoFactorSetup: { _, _ in ["AAAAA-BBBBB", "CCCCC-DDDDD"] },
+        replaceRecoveryCodes: { _, _ in ["EEEEE-FFFFF", "GGGGG-HHHHH"] },
+        disableTwoFactor: { _, _ in },
         serverFeatures: { _ in ServerFeatures(isUserVolumesEnabled: true, isVolumeUsageEnabled: true) },
         fetchSystemSettings: { _ in
             SystemSettings(
