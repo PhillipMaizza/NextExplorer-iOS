@@ -142,7 +142,10 @@ struct SettingsAccountsSection: View {
     /// No profile editing here: the backend has no self-service profile endpoint, so an admin
     /// changes that from User Management instead.
     private var changePasswordRow: some View {
-        DSNavigationRow(title: L10n.Settings.rowChangePassword, icon: IconKit.key) {
+        DSNavigationRow(
+            title: store.passwordStatus == .absent ? L10n.Settings.rowAddPassword : L10n.Settings.rowChangePassword,
+            icon: IconKit.key
+        ) {
             store.send(.changePasswordButtonTapped)
         }
         .disabled(store.isSigningOut)

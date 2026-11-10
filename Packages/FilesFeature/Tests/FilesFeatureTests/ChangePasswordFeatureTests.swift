@@ -18,6 +18,94 @@ struct ChangePasswordFeatureTests {
         return store
     }
 
+    private func addStore(
+        configure: (inout DependencyValues) -> Void = { _ in }
+    ) -> TestStoreOf<ChangePasswordFeature> {
+        let store = TestStore(initialState: ChangePasswordFeature.State(serverURL: serverURL, mode: .add)) {
+            ChangePasswordFeature()
+        } withDependencies: { configure(&$0) }
+        store.exhaustivity = .off
+        return store
+    }
+
+    // MARK: Add mode (an account with no password yet)
+
+    @Test
+    func addModeNeedsNoCurrentPassword() async {
+        let store = addStore()
+        #expect(store.state.isSubmitEnabled == false)
+
+        await store.send(.newPasswordChanged("brand-new"))
+        await store.send(.confirmPasswordChanged("brand-new"))
+
+        #expect(store.state.currentPassword.isEmpty)
+        #expect(store.state.isSubmitEnabled == true)
+    }
+
+    @Test
+    func addModeStillChecksLengthAndMatch() async {
+        let store = addStore()
+
+        await store.send(.newPasswordChanged("short"))
+        await store.send(.confirmPasswordChanged("short"))
+        #expect(store.state.isSubmitEnabled == false)
+
+        await store.send(.newPasswordChanged("brand-new"))
+        #expect(store.state.confirmError == .mismatch)
+        #expect(store.state.isSubmitEnabled == false)
+    }
+
+    @Test
+    func addModeSendsOnlyTheNewPasswordToTheAddRouteAndReportsIt() async {
+        let sent = LockIsolated<String?>(nil)
+        let store = addStore {
+            $0.filesClient.addOwnPassword = { _, password in sent.setValue(password) }
+            $0.filesClient.changeOwnPassword = { _, _, _ in Issue.record("add mode must not call the change route") }
+        }
+        await store.send(.newPasswordChanged("brand-new"))
+        await store.send(.confirmPasswordChanged("brand-new"))
+
+        await store.send(.submitTapped)
+        await store.receive(\.response)
+        await store.receive(\.delegate)
+
+        #expect(sent.value == "brand-new")
+        #expect(store.state.newPassword.isEmpty)
+        #expect(store.state.isSubmitting == false)
+    }
+
+    @Test
+    func addModeSurfacesAnAlreadyHasPasswordError() async {
+        let store = addStore {
+            $0.filesClient.addOwnPassword = { _, _ in
+                throw FilesClientError.serverMessage(statusCode: 409, message: "You already have password authentication.")
+            }
+        }
+        await store.send(.newPasswordChanged("brand-new"))
+        await store.send(.confirmPasswordChanged("brand-new"))
+
+        await store.send(.submitTapped)
+        await store.receive(\.response)
+
+        #expect(store.state.errorMessage == "You already have password authentication.")
+        #expect(store.state.didSucceed == false)
+    }
+
+    @Test
+    func changeModeNeverReportsAnAddedPassword() async {
+        let store = store {
+            $0.filesClient.changeOwnPassword = { _, _, _ in }
+        }
+        await store.send(.currentPasswordChanged("old-pass"))
+        await store.send(.newPasswordChanged("brand-new"))
+        await store.send(.confirmPasswordChanged("brand-new"))
+
+        await store.send(.submitTapped)
+        await store.receive(\.response)
+
+        #expect(store.state.didSucceed == true)
+    }
+
     // MARK: Validation
 
     @Test

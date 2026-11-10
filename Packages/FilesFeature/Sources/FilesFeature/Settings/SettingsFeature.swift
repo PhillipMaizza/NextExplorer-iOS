@@ -14,12 +14,23 @@ import NetworkClient
 /// displays whatever `isSigningOut` the parent drives back down.
 @Reducer
 public struct SettingsFeature {
+    /// Whether the account can use the password rows: a single sign on account has no password
+    /// until it adds one.
+    public enum PasswordStatus: Equatable, Sendable {
+        case unknown
+        case present
+        case absent
+    }
+
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
         public var user: User
         public var isSigningOut = false
         public var isConfirmingSignOut = false
+        /// Whether the account has a password, from `GET /api/auth/methods`. `unknown` until the
+        /// answer arrives and when it can't be fetched, which keeps today's Change Password row.
+        public var passwordStatus: PasswordStatus = .unknown
         /// Held by the feature, not created inline in the view: a `Store` built in a
         /// `NavigationLink`'s destination builder is torn down and rebuilt empty on any
         /// parent re render, such as returning from the background, which is what left the
@@ -114,6 +125,7 @@ public struct SettingsFeature {
         case userManagementButtonTapped
         case userManagement(PresentationAction<UserManagementFeature.Action>)
         case changePasswordButtonTapped
+        case authMethodsResponse(Result<[SignInMethod], FilesClientError>)
         case changePassword(PresentationAction<ChangePasswordFeature.Action>)
         case serverDetailsButtonTapped
         case serverDetails(PresentationAction<ServerDetailsFeature.Action>)
@@ -199,7 +211,7 @@ public struct SettingsFeature {
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
-    private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize }
+    private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize, authMethods }
 
     public init() {}
 
@@ -216,7 +228,22 @@ public struct SettingsFeature {
             return .none
 
         case .changePasswordButtonTapped:
-            state.changePassword = ChangePasswordFeature.State(serverURL: state.serverURL)
+            state.changePassword = ChangePasswordFeature.State(
+                serverURL: state.serverURL,
+                mode: state.passwordStatus == .absent ? .add : .change
+            )
+            return .none
+
+        case let .authMethodsResponse(.success(methods)):
+            state.passwordStatus = methods.hasPassword ? .present : .absent
+            return .none
+
+        case .authMethodsResponse(.failure):
+            return .none
+
+        case .changePassword(.presented(.delegate(.passwordAdded))):
+            state.passwordStatus = .present
+            state.changePassword = nil
             return .none
 
         case .changePassword:
@@ -423,7 +450,12 @@ public struct SettingsFeature {
             state.isLoadingPreferences = true
             let serverURL = state.serverURL
             let filesClient = filesClient
+            let loadAuthMethods = Effect<Action>.run { send in
+                try await send(.authMethodsResponse(apiResult { try await filesClient.fetchAuthMethods(serverURL) }))
+            }
+            .cancellable(id: CancelID.authMethods, cancelInFlight: true)
             return .merge(
+                loadAuthMethods,
                 checkDownloads,
                 checkCacheSize,
                 checkOfflineSize,

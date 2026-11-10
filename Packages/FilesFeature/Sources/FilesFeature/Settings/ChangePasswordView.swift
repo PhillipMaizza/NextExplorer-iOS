@@ -30,7 +30,7 @@ struct ChangePasswordView: View {
                             .foregroundStyle(Color.secondaryDS)
                             .frame(width: Metrics.rowIconSize, height: Metrics.rowIconSize)
                             .padding(.top, .space2)
-                        Text(L10n.ChangePassword.intro)
+                        Text(store.mode == .add ? L10n.ChangePassword.addIntro : L10n.ChangePassword.intro)
                             .type(.body3(.regular), style: .secondary)
                     }
                 }
@@ -42,9 +42,11 @@ struct ChangePasswordView: View {
                     successBanner(L10n.ChangePassword.success)
                 }
 
-                LabeledField(L10n.ChangePassword.fieldCurrentPassword, uppercased: false) {
-                    DSSecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
-                        .textContentType(.password)
+                if store.mode == .change {
+                    LabeledField(L10n.ChangePassword.fieldCurrentPassword, uppercased: false) {
+                        DSSecureField(L10n.ChangePassword.fieldCurrentPassword, text: $store.currentPassword.sending(\.currentPasswordChanged))
+                            .textContentType(.password)
+                    }
                 }
 
                 VStack(alignment: .leading, spacing: Metrics.contentSpacing) {
@@ -58,7 +60,7 @@ struct ChangePasswordView: View {
                     }
                 }
 
-                DSButton(L10n.ChangePassword.submitButton, style: .primary, isLoading: store.isSubmitting) {
+                DSButton(store.mode == .add ? L10n.ChangePassword.addSubmitButton : L10n.ChangePassword.submitButton, style: .primary, isLoading: store.isSubmitting) {
                     store.send(.submitTapped)
                 }
                 .disabled(!store.isSubmitEnabled)
@@ -69,7 +71,7 @@ struct ChangePasswordView: View {
             .padding(.vertical, Metrics.contentSpacing)
         }
         .backgroundGradient()
-        .navigationTitle(L10n.ChangePassword.navigationTitle)
+        .navigationTitle(store.mode == .add ? L10n.ChangePassword.addNavigationTitle : L10n.ChangePassword.navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .scrollDismissesKeyboard(.interactively)
     }
@@ -118,6 +120,35 @@ struct ChangePasswordView: View {
                 state.newPassword = "abcdef"
                 state.confirmPassword = "abcdef"
                 state.errorMessage = "Current password is incorrect."
+                return state
+            }()) {
+                ChangePasswordFeature()
+            }
+        )
+    }
+}
+
+#Preview("Add password") {
+    NavigationStack {
+        ChangePasswordView(
+            store: Store(initialState: ChangePasswordFeature.State(
+                serverURL: URL(string: "https://nextexplorer.example.com")!,
+                mode: .add
+            )) {
+                ChangePasswordFeature()
+            }
+        )
+    }
+}
+
+#Preview("Add password, error") {
+    NavigationStack {
+        ChangePasswordView(
+            store: Store(initialState: {
+                var state = ChangePasswordFeature.State(serverURL: URL(string: "https://x.example.com")!, mode: .add)
+                state.newPassword = "abcdef"
+                state.confirmPassword = "abcdef"
+                state.errorMessage = "You already have password authentication."
                 return state
             }()) {
                 ChangePasswordFeature()

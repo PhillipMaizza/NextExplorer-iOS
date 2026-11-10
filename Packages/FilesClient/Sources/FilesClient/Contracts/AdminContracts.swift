@@ -32,6 +32,15 @@ extension FilesService {
         let newPassword: String
     }
 
+    struct AddOwnPasswordBody: Encodable {
+        let password: String
+    }
+
+    /// `GET /api/auth/methods` answers `{ "methods": [...] }`.
+    struct SignInMethodsEnvelope: Decodable {
+        let methods: [SignInMethod]
+    }
+
     struct AddUserVolumeBody: Encodable {
         let label: String
         let path: String
