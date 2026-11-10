@@ -24,6 +24,8 @@ private enum Constants {
     static let maxHostInputLength = 2048
     static let maxIdentifierLength = 254
     static let maxPasswordLength = 256
+    /// A recovery code is ten characters with a dash; the cap only stops a pathological paste.
+    static let maxRecoveryCodeLength = 32
 }
 
 @Reducer
@@ -58,6 +60,7 @@ public struct LoginFormFeature {
     public enum Page: Equatable, Sendable {
         case server
         case credentials
+        case secondFactor
     }
 
     public enum ConnectionPhase: Equatable, Sendable {
@@ -71,6 +74,13 @@ public struct LoginFormFeature {
     /// spinner (`submitting`), collapsed checkmark (`success`, held briefly so it reads before
     /// the app zooms in), collapsed X (`failure`, then re-expands to `idle`). Mirrors
     /// `ConnectionPhase`'s role for the server-page button.
+    /// What the second factor page asks for: the six digits from an authenticator app, or one of
+    /// the recovery codes the account was given when it turned the second factor on.
+    public enum CodeMode: Equatable, Sendable {
+        case authenticator
+        case recovery
+    }
+
     public enum SubmitPhase: Equatable, Sendable {
         case idle
         case submitting
@@ -118,6 +128,10 @@ public struct LoginFormFeature {
         var schemeWasSetByUser: Bool = false
         public var identifier: String
         public var password: String
+        /// The authenticator code or recovery code typed on the second factor page.
+        public var code: String
+        public var codeMode: CodeMode
+        @ObservationStateIgnored var diagnostics = LoginDiagnostics()
         public var isPasswordVisible: Bool
         public var submitPhase: SubmitPhase
         /// The SSO button's lifecycle (idle / authenticating / success). A phase, not a bool
@@ -142,6 +156,8 @@ public struct LoginFormFeature {
             host: String = "",
             identifier: String = "",
             password: String = "",
+            code: String = "",
+            codeMode: CodeMode = .authenticator,
             isPasswordVisible: Bool = false,
             submitPhase: SubmitPhase = .idle,
             oidcPhase: OIDCPhase = .idle,
@@ -158,6 +174,8 @@ public struct LoginFormFeature {
             self.host = host
             self.identifier = identifier
             self.password = password
+            self.code = code
+            self.codeMode = codeMode
             self.isPasswordVisible = isPasswordVisible
             self.submitPhase = submitPhase
             self.oidcPhase = oidcPhase
@@ -173,11 +191,26 @@ public struct LoginFormFeature {
             submitPhase == .submitting
         }
 
+        /// The server's host, only so a network error in the sign in log can have it blanked out.
+        var serverHost: String? {
+            LoginFormFeature.normalizedURL(scheme: scheme, host: host)?.host(percentEncoded: false)
+        }
+
+        mutating func logError(_ step: String, _ error: AuthClientError, at timestamp: Date) {
+            diagnostics.record(
+                "\(step): \(LoginDiagnostics.describe(error, host: serverHost))",
+                isProblem: LoginDiagnostics.isProblem(error),
+                at: timestamp
+            )
+        }
+
         /// Any edit to the server URL, or pressing back, invalidates whatever the last
         /// Test Connection call found: the whole handshake starts over.
         mutating func resetConnection() {
             currentPage = .server
             connectionPhase = .idle
+            code = ""
+            codeMode = .authenticator
             submitPhase = .idle
             oidcPhase = .idle
             authStatus = nil
@@ -193,6 +226,8 @@ public struct LoginFormFeature {
         case hostChanged(String)
         case identifierChanged(String)
         case passwordChanged(String)
+        case codeChanged(String)
+        case toggleCodeModeTapped
         case togglePasswordVisibility
         case testConnectionButtonTapped
         case testConnectionResponse(Result<AuthStatus, AuthClientError>)
@@ -202,6 +237,9 @@ public struct LoginFormFeature {
         case clearErrorMessage
         case backButtonTapped
         case continueButtonTapped
+        case secondFactorRequested
+        case secondFactorBackButtonTapped
+        case codeSubmitButtonTapped
         case submitSucceeded(User, URL)
         case submitFailed(AuthClientError)
         case ssoButtonTapped
@@ -219,9 +257,18 @@ public struct LoginFormFeature {
 
     @Dependency(\.authClient) var authClient
     @Dependency(\.continuousClock) var clock
+    @Dependency(\.loginLogDate) var logDate
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
     public init() {}
+
+    /// The length of an authenticator app code, which the six boxes and the auto submit follow.
+    static let authenticatorCodeLength = 6
+    private static let asciiDigits: Set<Character> = Set("0123456789")
+
+    private var now: Date {
+        logDate()
+    }
 
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
@@ -269,9 +316,36 @@ public struct LoginFormFeature {
                 state.password = String(text.prefix(Constants.maxPasswordLength))
                 return .none
 
+            case let .codeChanged(text):
+                switch state.codeMode {
+                case .recovery:
+                    state.code = String(text.prefix(Constants.maxRecoveryCodeLength))
+                    return .none
+                case .authenticator:
+                    // Pasting "123 456" or "123-456" still lands as six digits.
+                    state.code = String(text.filter { Self.asciiDigits.contains($0) }.prefix(Self.authenticatorCodeLength))
+                    guard state.code.count == Self.authenticatorCodeLength, state.submitPhase == .idle else { return .none }
+                    return .send(.codeSubmitButtonTapped)
+                }
+
+            case .toggleCodeModeTapped:
+                state.codeMode = state.codeMode == .authenticator ? .recovery : .authenticator
+                state.code = ""
+                state.errorMessage = nil
+                return .cancel(id: CancelID.errorDismiss)
+
             case .togglePasswordVisibility:
                 state.isPasswordVisible.toggle()
                 return .none
+
+            case .secondFactorBackButtonTapped:
+                state.currentPage = .credentials
+                state.code = ""
+                state.codeMode = .authenticator
+                state.submitPhase = .idle
+                state.errorMessage = nil
+                state.invalidFieldsScope = nil
+                return .merge(.cancel(id: CancelID.submit), .cancel(id: CancelID.submitRevert), .cancel(id: CancelID.errorDismiss))
 
             case .backButtonTapped:
                 state.resetConnection()
@@ -285,6 +359,7 @@ public struct LoginFormFeature {
                 }
                 state.connectionPhase = .testing
                 state.errorMessage = nil
+                state.diagnostics.record("connecting: \(LoginDiagnostics.describe(server: url))", at: now)
                 let authClient = authClient
                 let clock = clock
                 return .merge(
@@ -299,6 +374,10 @@ public struct LoginFormFeature {
 
             case let .testConnectionResponse(.success(status)):
                 state.authStatus = status
+                state.diagnostics.record(
+                    "server status: password sign in \(status.isLocalEnabled ? "on" : "off"), single sign on \(status.isOIDCEnabled ? "on" : "off"), redirected to https \(status.redirectsToHTTPS)",
+                    at: now
+                )
                 state.certificatePrompt = nil
                 // The server sent http to https: sign in there directly, or the password is lost
                 // in the redirect (and would travel unencrypted first).
@@ -327,6 +406,7 @@ public struct LoginFormFeature {
             case let .testConnectionResponse(.failure(error)):
                 state.connectionPhase = .failure
                 state.authStatus = nil
+                state.logError("server status", error, at: now)
                 state.errorMessage = Self.message(for: error)
                 state.certificatePrompt = Self.certificatePrompt(for: error, scheme: state.scheme, host: state.host)
                 return .merge(Self.scheduleRevertToIdle(clock), Self.scheduleErrorDismiss(clock), lookUpCertificateInUse(state))
@@ -359,11 +439,49 @@ public struct LoginFormFeature {
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
                 let password = state.password
+                state.diagnostics.record(
+                    "sign in: sending, name \(LoginDiagnostics.describe(identifier: state.identifier)), password \(LoginDiagnostics.describe(password: password))",
+                    at: now
+                )
                 let authClient = authClient
                 let clock = clock
                 return .run { send in
                     async let result = Self.loginResult(authClient, url, identifier, password)
                     // Hold the spinner up briefly so it reads even when the call resolves fast.
+                    try? await clock.sleep(for: Constants.minimumSpinnerDuration)
+                    switch await result {
+                    case let .success(user): await send(.submitSucceeded(user, url))
+                    case .failure(.secondFactorRequired): await send(.secondFactorRequested)
+                    case let .failure(error): await send(.submitFailed(error))
+                    }
+                }
+                .cancellable(id: CancelID.submit, cancelInFlight: true)
+
+            case .secondFactorRequested:
+                state.logError("sign in", .secondFactorRequired, at: now)
+                state.submitPhase = .idle
+                state.code = ""
+                state.codeMode = .authenticator
+                state.currentPage = .secondFactor
+                return .none
+
+            case .codeSubmitButtonTapped:
+                let code = state.code.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard state.currentPage == .secondFactor,
+                      state.submitPhase == .idle,
+                      !code.isEmpty,
+                      let url = Self.normalizedURL(scheme: state.scheme, host: state.host)
+                else {
+                    return .none
+                }
+                state.submitPhase = .submitting
+                state.errorMessage = nil
+                state.invalidFieldsScope = nil
+                state.diagnostics.record("code: sending, \(LoginDiagnostics.describe(code: code))", at: now)
+                let authClient = authClient
+                let clock = clock
+                return .run { send in
+                    async let result = Self.loginTOTPResult(authClient, url, code)
                     try? await clock.sleep(for: Constants.minimumSpinnerDuration)
                     switch await result {
                     case let .success(user): await send(.submitSucceeded(user, url))
@@ -373,6 +491,7 @@ public struct LoginFormFeature {
                 .cancellable(id: CancelID.submit, cancelInFlight: true)
 
             case let .submitSucceeded(user, url):
+                state.diagnostics.record("sign in: signed in", at: now)
                 state.submitPhase = .success
                 let clock = clock
                 // Hold the checkmark a beat before handing off, so the button's success state
@@ -384,7 +503,17 @@ public struct LoginFormFeature {
                 .cancellable(id: CancelID.successAdvance, cancelInFlight: true)
 
             case let .submitFailed(error):
+                state.logError(state.currentPage == .secondFactor ? "code" : "sign in", error, at: now)
                 state.submitPhase = .failure
+                if error == .secondFactorExpired {
+                    state.currentPage = .credentials
+                    state.code = ""
+                    state.codeMode = .authenticator
+                }
+                // Six boxes full of a wrong code would have to be erased one by one.
+                if error == .invalidCode, state.codeMode == .authenticator {
+                    state.code = ""
+                }
                 state.errorMessage = Self.message(for: error)
                 state.invalidFieldsScope = (error == .invalidCredentials) ? .identifierAndPassword : nil
                 // `.sessionCookieMissing` means the sign-in itself completed but the app
@@ -404,6 +533,7 @@ public struct LoginFormFeature {
                     return .none
                 }
                 state.oidcPhase = .authenticating
+                state.diagnostics.record("single sign on: started", at: now)
                 state.errorMessage = nil
                 state.invalidFieldsScope = nil
                 let authClient = authClient
@@ -427,6 +557,7 @@ public struct LoginFormFeature {
                 state.oidcPhase = .idle
                 // A user dismissing the web sheet is a cancellation, not a failure: leave the
                 // screen as it was with no error banner.
+                state.logError("single sign on", error, at: now)
                 guard error != .oidcCancelled else { return .none }
                 state.errorMessage = Self.message(for: error)
                 return Self.scheduleErrorDismiss(clock)
@@ -670,6 +801,14 @@ public struct LoginFormFeature {
         }
     }
 
+    static func loginTOTPResult(_ authClient: AuthClient, _ url: URL, _ code: String) async -> Result<User, AuthClientError> {
+        do {
+            return try await .success(authClient.loginTOTP(url, code))
+        } catch {
+            return .failure(mapError(error))
+        }
+    }
+
     static func loginOIDCResult(_ authClient: AuthClient, _ url: URL) async -> Result<User, AuthClientError> {
         do {
             return try await .success(authClient.loginOIDC(url))
@@ -695,6 +834,9 @@ public struct LoginFormFeature {
         case .rateLimited: L10n.Login.errorRateLimited
         case .clientCertificateRequired: L10n.Login.errorClientCertificateRequired
         case .clientCertificateRejected: L10n.Login.errorClientCertificateRejected
+        case .secondFactorRequired: L10n.Login.errorIncomplete
+        case .invalidCode: L10n.Login.errorInvalidCode
+        case .secondFactorExpired: L10n.Login.errorSecondFactorExpired
         case .oidcCancelled: L10n.Login.errorSso
         case .oidcFailed: L10n.Login.errorSso
         }

@@ -56,5 +56,22 @@
 
             XCTAssertTrue(LoginScreen(app: app).hostField.waitToAppear(), "Signing out should return to login")
         }
+
+        func testSignInLogIsOfferedOnlyAfterAFailedSignIn() {
+            let app = launchApp(auth: .loggedOut)
+            let login = LoginScreen(app: app)
+            XCTAssertTrue(login.hostField.waitToAppear())
+            login.hostField.clearAndType("nextexplorer.example.com")
+            login.testConnectionButton.tap()
+
+            XCTAssertTrue(login.identifierField.waitToAppear())
+            XCTAssertFalse(login.diagnosticsButton.appears(), "The sign in log stays hidden until something fails")
+
+            login.identifierField.clearAndType(Fixture.rejectedIdentifier)
+            login.passwordField.clearAndType("wrong")
+            login.submitButton.tap()
+
+            XCTAssertTrue(login.diagnosticsButton.waitToAppear(), "A refused sign in should offer the sign in log at the bottom of the page")
+        }
     }
 #endif

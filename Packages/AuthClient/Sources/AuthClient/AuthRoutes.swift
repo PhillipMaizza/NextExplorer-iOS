@@ -5,6 +5,7 @@ import Foundation
 enum AuthPath {
     static let status = "api/auth/status"
     static let login = "api/auth/login"
+    static let loginTOTP = "api/auth/login/totp"
     static let me = "api/auth/me"
     static let logout = "api/auth/logout"
     static let oidcMobileLogin = "api/auth/oidc/mobile/login"

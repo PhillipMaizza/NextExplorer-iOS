@@ -37558,109 +37558,112 @@
         }
       }
     },
-    "login.identifierField": {
+    "login.codeField": {
       "extractionState": "manual",
       "localizations": {
         "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Email or username"
+            "value": "Code"
           }
-        },
-        "ar": {
+        }
+      }
+    },
+    "login.codeIntroAuthenticator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "البريد الإلكتروني أو اسم المستخدم"
+            "value": "This account asks for a second step. Enter the 6 digit code from your authenticator app."
           }
-        },
-        "de": {
+        }
+      }
+    },
+    "login.codeIntroRecovery": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-Mail oder Benutzername"
+            "value": "Enter one of your recovery codes. Each one works only once."
           }
-        },
-        "es": {
+        }
+      }
+    },
+    "login.codeSubmit": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Correo o usuario"
+            "value": "Verify"
           }
-        },
-        "fr": {
+        }
+      }
+    },
+    "login.codeTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail ou nom d’utilisateur"
+            "value": "Enter your code"
           }
-        },
-        "hi": {
+        }
+      }
+    },
+    "login.codeUseAuthenticator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "ईमेल या उपयोगकर्ता नाम"
+            "value": "Use the authenticator code instead"
           }
-        },
-        "it": {
+        }
+      }
+    },
+    "login.codeUseRecovery": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "Email o nome utente"
+            "value": "Use a recovery code instead"
           }
-        },
-        "ja": {
+        }
+      }
+    },
+    "login.diagnosticsButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "メールまたはユーザー名"
+            "value": "Share sign in log"
           }
-        },
-        "ko": {
+        }
+      }
+    },
+    "login.diagnosticsIntro": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "이메일 또는 사용자 이름"
+            "value": "This log shows what the server answered at each step, to help find why signing in fails. It never contains your password, the address you typed or your username. Send it to the developer."
           }
-        },
-        "nl": {
+        }
+      }
+    },
+    "login.diagnosticsTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
           "stringUnit": {
             "state": "translated",
-            "value": "E-mail of gebruikersnaam"
-          }
-        },
-        "pl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "E-mail lub nazwa użytkownika"
-          }
-        },
-        "pt": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "E-mail ou nome de utilizador"
-          }
-        },
-        "ro": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "E-mail sau nume de utilizator"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Эл. почта или имя пользователя"
-          }
-        },
-        "sv": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "E-post eller användarnamn"
-          }
-        },
-        "zh-CN": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "电子邮件或用户名"
-          }
-        },
-        "zh-TW": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "電子郵件或使用者名稱"
+            "value": "Sign in log"
           }
         }
       }
@@ -38089,6 +38092,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "登入未完成。請重試。"
+          }
+        }
+      }
+    },
+    "login.errorInvalidCode": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That code is not right."
           }
         }
       }
@@ -38735,6 +38749,17 @@
         }
       }
     },
+    "login.errorSecondFactorExpired": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "That sign in expired. Enter your password again."
+          }
+        }
+      }
+    },
     "login.errorServer": {
       "extractionState": "manual",
       "localizations": {
@@ -39373,6 +39398,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "隱藏密碼"
+          }
+        }
+      }
+    },
+    "login.identifierField": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Email or username"
           }
         }
       }

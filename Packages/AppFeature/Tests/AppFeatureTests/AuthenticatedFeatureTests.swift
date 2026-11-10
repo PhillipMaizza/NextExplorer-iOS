@@ -35,17 +35,87 @@ struct AuthenticatedFeatureTests {
             AuthenticatedFeature()
         } withDependencies: {
             $0.authClient.removeAccount = { id in removedID.setValue(id); return nil }
+            $0.continuousClock = ImmediateClock()
         }
+        store.exhaustivity = .off
+        store.timeout = .seconds(10)
 
-        await store.send(.mainTab(.delegate(.signOutButtonTapped))) {
-            $0.mainTab.settings.isSigningOut = true
-        }
-        await store.receive(\.accountChangeResolved) {
-            $0.mainTab.settings.isSigningOut = false
-        }
-        await store.receive(\.delegate)
+        await store.send(.mainTab(.delegate(.signOutButtonTapped)))
+        await store.receive(\.accountChangeResolved)
+        await store.receive(\.delegate.activeAccountChanged)
 
         #expect(removedID.value == serverURL.absoluteString + "|phillip")
+    }
+
+    @Test("regression: the sign out confirmation closes first, and the login screen is only requested once it has slid away")
+    func lastAccountSignOutDismissesThePromptBeforeHandingOff() async {
+        let clock = TestClock()
+        var state = AuthenticatedFeature.State(serverURL: serverURL, user: user)
+        state.mainTab.settings.isConfirmingSignOut = true
+        let store = TestStore(initialState: state) {
+            AuthenticatedFeature()
+        } withDependencies: {
+            $0.authClient.removeAccount = { _ in nil }
+            $0.continuousClock = clock
+        }
+        store.exhaustivity = .off
+        store.timeout = .seconds(10)
+
+        await store.send(.mainTab(.delegate(.signOutButtonTapped)))
+        await store.receive(\.accountChangeResolved)
+
+        // The TestClock has not moved, so the hand off cannot have been sent yet: the prompt is
+        // already closed while the authenticated screen is still the one on show.
+        #expect(store.state.mainTab.settings.isConfirmingSignOut == false)
+        #expect(store.state.mainTab.settings.isSigningOut == true)
+
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.delegate.activeAccountChanged)
+    }
+
+    @Test("removing the last account closes its removal prompt before the login screen is requested")
+    func lastAccountRemovalDismissesItsPromptBeforeHandingOff() async {
+        let clock = TestClock()
+        var state = AuthenticatedFeature.State(serverURL: serverURL, user: user)
+        state.mainTab.settings.accountPendingRemoval = AccountSummary(
+            id: serverURL.absoluteString + "|phillip", username: "phillip", serverURL: serverURL, isActive: true
+        )
+        let store = TestStore(initialState: state) {
+            AuthenticatedFeature()
+        } withDependencies: {
+            $0.authClient.removeAccount = { _ in nil }
+            $0.continuousClock = clock
+        }
+        store.exhaustivity = .off
+        store.timeout = .seconds(10)
+
+        await store.send(.mainTab(.delegate(.removeAccount(serverURL.absoluteString + "|phillip"))))
+        await store.receive(\.accountChangeResolved)
+
+        #expect(store.state.mainTab.settings.accountPendingRemoval == nil)
+
+        await clock.advance(by: .seconds(1))
+        await store.receive(\.delegate.activeAccountChanged)
+    }
+
+    @Test("signing out with another account left hands off at once, with no wait for a prompt to close")
+    func signOutWithAnotherAccountDoesNotWait() async {
+        let otherServer = URL(string: "https://other.example.com") ?? URL(fileURLWithPath: "/")
+        let next = credentials(serverURL: otherServer, username: "jane")
+        let store = TestStore(
+            initialState: AuthenticatedFeature.State(serverURL: serverURL, user: user)
+        ) {
+            AuthenticatedFeature()
+        } withDependencies: {
+            $0.authClient.removeAccount = { _ in next }
+            $0.continuousClock = TestClock()
+        }
+        store.exhaustivity = .off
+        store.timeout = .seconds(10)
+
+        await store.send(.mainTab(.delegate(.signOutButtonTapped)))
+        await store.receive(\.accountChangeResolved)
+        await store.receive(\.delegate.activeAccountChanged)
     }
 
     @Test("signing out with another account left: switches to the next account")

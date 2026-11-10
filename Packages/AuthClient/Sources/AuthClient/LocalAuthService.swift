@@ -48,8 +48,37 @@ struct LocalAuthService: Sendable {
             throw AuthClientError.decoding(error.localizedDescription)
         }
         let envelope = try await send(request, decoding: UserEnvelope.self, unauthorizedError: .invalidCredentials)
+        if envelope.totpRequired == true {
+            throw AuthClientError.secondFactorRequired
+        }
         guard let user = envelope.user else {
-            throw AuthClientError.invalidCredentials
+            throw AuthClientError.decoding("sign in response had no user")
+        }
+        return user
+    }
+
+    func loginTOTP(serverURL: URL, code: String) async throws -> User {
+        var request = try Self.makeRequest(serverURL: serverURL, path: AuthPath.loginTOTP, method: .post)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(TOTPRequestBody(code: code))
+        } catch {
+            throw AuthClientError.decoding(error.localizedDescription)
+        }
+        let (data, response) = try await performSend(request)
+        if response.statusCode == 401 {
+            let errorCode = (try? JSONDecoder().decode(ErrorEnvelope.self, from: data))?.error?.code
+            throw errorCode == Self.invalidTOTPCode ? AuthClientError.invalidCode : AuthClientError.secondFactorExpired
+        }
+        try Self.validate(response, unauthorizedError: .secondFactorExpired)
+        let envelope: UserEnvelope
+        do {
+            envelope = try JSONDecoder().decode(UserEnvelope.self, from: data)
+        } catch {
+            throw AuthClientError.decoding(error.localizedDescription)
+        }
+        guard let user = envelope.user else {
+            throw AuthClientError.decoding("code response had no user")
         }
         return user
     }

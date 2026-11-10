@@ -221,8 +221,10 @@ struct AccountBoundaryTests {
         } withDependencies: {
             $0.pendingAccountWipes = recordingPending(log)
             $0.authClient.removeAccount = { _ in log.record("removeAccount"); return nil }
+            $0.continuousClock = ImmediateClock()
         }
         store.exhaustivity = .off
+        store.timeout = .seconds(10)
 
         await store.send(.mainTab(.delegate(.signOutButtonTapped)))
         await store.receive(\.accountChangeResolved)
@@ -242,8 +244,10 @@ struct AccountBoundaryTests {
         } withDependencies: {
             $0.pendingAccountWipes = recordingPending(log)
             $0.authClient.removeAccount = { _ in log.record("removeAccount"); return nil }
+            $0.continuousClock = ImmediateClock()
         }
         store.exhaustivity = .off
+        store.timeout = .seconds(10)
 
         await store.send(.mainTab(.delegate(.removeAccount(removedID))))
         await store.receive(\.accountChangeResolved)

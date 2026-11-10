@@ -576,7 +576,7 @@ login.serverInfoTitle	What is a server?
 login.serverInfoBody	NextExplorer connects to your own NextExplorer server. An administrator runs the server, creates accounts, and shares its web address with you. Enter that address to sign in.\n\nNo server yet? The setup guide shows you how to host one.
 login.serverInfoGuide	Open setup guide
 login.testConnection	Test connection
-login.emailField	Email
+login.identifierField	Email or username
 login.passwordField	Password
 login.showPassword	Show Password
 login.hidePassword	Hide Password
@@ -608,7 +608,6 @@ changePassword.errorMinLength	Use at least %lld characters.
 changePassword.errorMismatch	Passwords don't match.
 login.portHint	Add a port (e.g. :3000). Most homelab servers don't listen on plain port 80.
 login.errorInvalidServer	Enter a valid server address.
-login.errorInvalidEmail	Enter a valid email address.
 login.errorInvalidCredentials	Incorrect username or password.
 login.errorSessionExpired	Your session expired. Please sign in again.
 login.errorIncomplete	Sign-in didn't complete. Please try again.
@@ -624,6 +623,18 @@ login.errorSso	Single sign-on didn't complete. Please try again.
 login.errorNoAuthMethods	This server has no sign-in methods enabled.
 login.errorClientCertificateRequired	This server asks for a client certificate.
 login.errorClientCertificateRejected	The server refused this client certificate.
+login.codeTitle	Enter your code
+login.codeIntroAuthenticator	This account asks for a second step. Enter the 6 digit code from your authenticator app.
+login.codeIntroRecovery	Enter one of your recovery codes. Each one works only once.
+login.codeUseRecovery	Use a recovery code instead
+login.codeUseAuthenticator	Use the authenticator code instead
+login.codeField	Code
+login.codeSubmit	Verify
+login.errorInvalidCode	That code is not right.
+login.errorSecondFactorExpired	That sign in expired. Enter your password again.
+login.diagnosticsButton	Share sign in log
+login.diagnosticsTitle	Sign in log
+login.diagnosticsIntro	This log shows what the server answered at each step, to help find why signing in fails. It never contains your password, the address you typed or your username. Send it to the developer.
 
 # ---- restored keys (were present in generated catalog but missing from tsv) ----
 browse.nameErrorReserved	That name isn't allowed.
