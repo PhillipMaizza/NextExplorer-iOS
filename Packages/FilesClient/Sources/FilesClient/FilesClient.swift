@@ -187,6 +187,26 @@ public struct FilesClient: Sendable {
     /// `GET /api/auth/methods`: how the signed in account can sign in.
     public var fetchAuthMethods: @Sendable (_ serverURL: URL) async throws -> [SignInMethod]
 
+    /// `GET /api/auth/totp`: whether the account asks for a code at sign in.
+    public var fetchTwoFactorStatus: @Sendable (_ serverURL: URL) async throws -> TwoFactorStatus
+    /// `POST /api/auth/totp/start`: draws the secret to put in an authenticator app. Turns nothing on.
+    public var beginTwoFactorSetup: @Sendable (_ serverURL: URL) async throws -> TwoFactorSetup
+    /// `POST /api/auth/totp/confirm`: turns it on with a code from the app; answers the recovery codes.
+    public var confirmTwoFactorSetup: @Sendable (_ serverURL: URL, _ code: String) async throws -> [String]
+    /// `POST /api/auth/totp/recovery-codes`: new recovery codes, with the password.
+    public var replaceRecoveryCodes: @Sendable (_ serverURL: URL, _ password: String) async throws -> [String]
+    /// `DELETE /api/auth/totp`: turns it off, with the password.
+    public var disableTwoFactor: @Sendable (_ serverURL: URL, _ password: String) async throws -> Void
+    /// `GET /api/auth/tokens`: the account's API tokens, never their secrets.
+    public var fetchAPITokens: @Sendable (_ serverURL: URL) async throws -> [APIToken]
+    /// `POST /api/auth/tokens`: makes one. `password` is sent only when the account has one.
+    /// The secret in the reply is shown once.
+    public var createAPIToken: @Sendable (_ serverURL: URL, _ name: String, _ scope: APIToken.Scope, _ expiresInDays: Int?, _ password: String?) async throws -> IssuedAPIToken
+    /// `PATCH /api/auth/tokens/:id`: a new name, so two tokens can be told apart.
+    public var renameAPIToken: @Sendable (_ serverURL: URL, _ id: String, _ name: String) async throws -> APIToken
+    /// `DELETE /api/auth/tokens/:id`: no password, revoking is the safe direction.
+    public var revokeAPIToken: @Sendable (_ serverURL: URL, _ id: String) async throws -> Void
+
     // MARK: Admin user management (all require the caller to have the `admin` role)
 
     /// `GET /api/features`: the server's feature flags (currently just user volumes).

@@ -40,6 +40,9 @@ struct SettingsAccountsSection: View {
     var body: some View {
         Section {
             activeAccountRow(activeAccount)
+            // Outside the disclosure: the second factor protects the account, so it is not
+            // something to find by expanding it.
+            twoFactorRow
             if isActiveAccountExpanded {
                 changePasswordRow
                 signOutRow
@@ -151,6 +154,14 @@ struct SettingsAccountsSection: View {
         .disabled(store.isSigningOut)
     }
 
+    private var twoFactorRow: some View {
+        DSNavigationRow(title: L10n.TwoFactor.navigationTitle, icon: IconKit.shield) {
+            store.send(.twoFactorButtonTapped)
+        }
+        .accessibilityIdentifier(AccessibilityIdentifiers.Settings.twoFactorRow)
+        .disabled(store.isSigningOut)
+    }
+
     private var signOutRow: some View {
         DSNavigationRow(
             title: store.isSigningOut ? L10n.Settings.signingOut : L10n.Settings.signOutButton,
@@ -230,6 +241,26 @@ struct SettingsUsersSection: View {
             }
             .listRowBackground(Color.backgroundSecondary)
         }
+    }
+}
+
+// MARK: API tokens
+
+/// Its own entry rather than a row inside the account: a token is a credential for a script, issued
+/// from the signed in account, and managed like one.
+struct SettingsAPITokensSection: View {
+    let store: StoreOf<SettingsFeature>
+
+    var body: some View {
+        Section {
+            DSNavigationRow(title: L10n.ApiTokens.navigationTitle, icon: IconKit.key) {
+                store.send(.apiTokensButtonTapped)
+            }
+            .accessibilityIdentifier(AccessibilityIdentifiers.Settings.apiTokensRow)
+        } header: {
+            sectionHeader(L10n.ApiTokens.sectionHeader)
+        }
+        .listRowBackground(Color.backgroundSecondary)
     }
 }
 

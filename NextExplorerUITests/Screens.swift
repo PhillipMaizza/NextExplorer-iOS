@@ -298,6 +298,142 @@ struct TextPreviewScreen {
     }
 }
 
+/// The Two-Factor Authentication screen, reached from the active account's section in Settings.
+struct TwoFactorScreen {
+    let app: XCUIApplication
+
+    var row: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Settings.twoFactorRow].firstMatch
+    }
+
+    var offTitle: XCUIElement {
+        app.staticTexts[L10n.TwoFactor.offTitle]
+    }
+
+    var onTitle: XCUIElement {
+        app.staticTexts[L10n.TwoFactor.onTitle]
+    }
+
+    var turnOnButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.turnOnButton].firstMatch
+    }
+
+    var codeField: XCUIElement {
+        app.textFields[AccessibilityIdentifiers.Settings.twoFactorCodeField].firstMatch
+    }
+
+    var setupKey: XCUIElement {
+        app.staticTexts["JBSWY3DPEHPK3PXP"]
+    }
+
+    var recoveryTitle: XCUIElement {
+        app.staticTexts[L10n.TwoFactor.recoveryTitle]
+    }
+
+    var recoveryDoneButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.recoveryDoneButton].firstMatch
+    }
+
+    var newCodesButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.newCodesButton].firstMatch
+    }
+
+    var turnOffButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.turnOffButton].firstMatch
+    }
+
+    var passwordField: XCUIElement {
+        app.secureTextFields[L10n.TwoFactor.passwordField].firstMatch
+    }
+
+    var passwordConfirmButton: XCUIElement {
+        app.buttons[L10n.TwoFactor.passwordConfirmButton].firstMatch
+    }
+
+    /// Either of the two mocked refusals, shown in the error card.
+    var wrongCodeMessage: XCUIElement {
+        app.staticTexts["Invalid code"]
+    }
+
+    var wrongPasswordMessage: XCUIElement {
+        app.staticTexts["That password is not right."]
+    }
+}
+
+/// The API Tokens screen, reached from the active account's section in Settings.
+struct APITokensScreen {
+    let app: XCUIApplication
+
+    var row: XCUIElement {
+        app.buttons[AccessibilityIdentifiers.Settings.apiTokensRow].firstMatch
+    }
+
+    var emptyTitle: XCUIElement {
+        app.staticTexts[L10n.ApiTokens.emptyTitle]
+    }
+
+    var newButton: XCUIElement {
+        app.buttons[L10n.ApiTokens.newButton].firstMatch
+    }
+
+    var nameField: XCUIElement {
+        app.textFields[AccessibilityIdentifiers.Settings.apiTokenNameField].firstMatch
+    }
+
+    var passwordField: XCUIElement {
+        app.secureTextFields[L10n.ApiTokens.fieldPassword].firstMatch
+    }
+
+    var createButton: XCUIElement {
+        app.buttons[L10n.ApiTokens.createSubmit].firstMatch
+    }
+
+    var issuedTitle: XCUIElement {
+        app.navigationBars[L10n.ApiTokens.issuedTitle]
+    }
+
+    var copyButton: XCUIElement {
+        app.buttons[L10n.ApiTokens.copyToken].firstMatch
+    }
+
+    var issuedDoneButton: XCUIElement {
+        app.buttons[L10n.ApiTokens.issuedDone].firstMatch
+    }
+
+    func token(named name: String) -> XCUIElement {
+        app.staticTexts[name].firstMatch
+    }
+
+    /// The overflow menu of a token row, found by its accessibility label.
+    func menu(for name: String) -> XCUIElement {
+        app.buttons[L10n.ApiTokens.menuAccessibilityLabel(name)].firstMatch
+    }
+
+    var renameAction: XCUIElement {
+        app.buttons[L10n.ApiTokens.renameAction].firstMatch
+    }
+
+    var revokeAction: XCUIElement {
+        app.buttons[L10n.ApiTokens.revokeAction].firstMatch
+    }
+
+    var renameField: XCUIElement {
+        app.alerts.textFields.firstMatch
+    }
+
+    var renameSaveButton: XCUIElement {
+        app.alerts.buttons[L10n.ApiTokens.renameSave].firstMatch
+    }
+
+    var revokeConfirmButton: XCUIElement {
+        app.buttons[L10n.ApiTokens.revokeConfirm].firstMatch
+    }
+
+    var wrongPasswordMessage: XCUIElement {
+        app.staticTexts["That password is not right."]
+    }
+}
+
 struct SettingsScreen {
     let app: XCUIApplication
     var languageRow: XCUIElement {

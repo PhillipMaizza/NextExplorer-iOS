@@ -26,7 +26,7 @@ struct AccountConfirmations: ViewModifier {
     #endif
 
     private var isPromptPending: Bool {
-        store.isConfirmingSignOut || store.accountPendingRemoval != nil || store.changePassword != nil
+        store.isConfirmingSignOut || store.accountPendingRemoval != nil || store.changePassword != nil || store.twoFactor != nil
     }
 
     private var shouldShowPrompts: Bool {
@@ -60,8 +60,33 @@ struct AccountConfirmations: ViewModifier {
         )
     }
 
+    private var twoFactorSheet: Binding<StoreOf<TwoFactorFeature>?> {
+        Binding(
+            get: {
+                guard shouldShowPrompts, Self.isHostedByWindow else { return nil }
+                return store.scope(state: \.twoFactor, action: \.twoFactor.presented)
+            },
+            set: { newValue in
+                if newValue == nil, store.twoFactor != nil {
+                    store.send(.twoFactor(.dismiss))
+                }
+            }
+        )
+    }
+
     func body(content: Content) -> some View {
         content
+            .sheet(item: twoFactorSheet) { twoFactorStore in
+                NavigationStack {
+                    TwoFactorView(store: twoFactorStore)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button(L10n.Common.done) { store.send(.twoFactor(.dismiss)) }
+                            }
+                        }
+                }
+                .frame(minWidth: Metrics.sheetMinWidth, minHeight: Metrics.sheetMinHeight)
+            }
             .sheet(item: changePasswordSheet) { passwordStore in
                 #if os(macOS)
                     MacChangePasswordSheet(store: passwordStore) { store.send(.changePassword(.dismiss)) }

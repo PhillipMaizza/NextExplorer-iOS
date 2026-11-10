@@ -36,6 +36,44 @@ extension FilesService {
         let password: String
     }
 
+    struct TwoFactorCodeBody: Encodable {
+        let code: String
+    }
+
+    /// The body of the two factor routes that ask for the account password.
+    struct PasswordBody: Encodable {
+        let password: String
+    }
+
+    /// `POST /api/auth/totp/confirm` and `POST /api/auth/totp/recovery-codes` answer
+    /// `{ "recoveryCodes": [...] }`.
+    struct RecoveryCodesEnvelope: Decodable {
+        let recoveryCodes: [String]
+    }
+
+    /// `GET /api/auth/tokens` answers `{ "tokens": [...] }`.
+    struct APITokensEnvelope: Decodable {
+        let tokens: [APIToken]
+    }
+
+    /// `PATCH /api/auth/tokens/:id` answers `{ "token": {...} }`.
+    struct APITokenEnvelope: Decodable {
+        let token: APIToken
+    }
+
+    /// `password` is left out for an account with no password, and `expiresInDays` for a token that
+    /// never expires.
+    struct NewAPITokenBody: Encodable {
+        let name: String
+        let scope: APIToken.Scope
+        let expiresInDays: Int?
+        let password: String?
+    }
+
+    struct NameBody: Encodable {
+        let name: String
+    }
+
     /// `GET /api/auth/methods` answers `{ "methods": [...] }`.
     struct SignInMethodsEnvelope: Decodable {
         let methods: [SignInMethod]
