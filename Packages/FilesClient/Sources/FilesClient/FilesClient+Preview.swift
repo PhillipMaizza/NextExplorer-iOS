@@ -207,6 +207,15 @@ public extension FilesClient {
         confirmTwoFactorSetup: { _, _ in ["AAAAA-BBBBB", "CCCCC-DDDDD"] },
         replaceRecoveryCodes: { _, _ in ["EEEEE-FFFFF", "GGGGG-HHHHH"] },
         disableTwoFactor: { _, _ in },
+        fetchAPITokens: { _ in [] },
+        createAPIToken: { _, name, scope, _, _ in
+            IssuedAPIToken(
+                token: APIToken(id: "preview", name: name, scope: scope, createdAt: "2026-11-10T07:00:00.000Z"),
+                secret: "nx_preview_0123456789abcdef"
+            )
+        },
+        renameAPIToken: { _, id, name in APIToken(id: id, name: name, scope: .read, createdAt: "2026-11-10T07:00:00.000Z") },
+        revokeAPIToken: { _, _ in },
         serverFeatures: { _ in ServerFeatures(isUserVolumesEnabled: true, isVolumeUsageEnabled: true) },
         fetchSystemSettings: { _ in
             SystemSettings(

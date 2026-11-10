@@ -197,6 +197,15 @@ public struct FilesClient: Sendable {
     public var replaceRecoveryCodes: @Sendable (_ serverURL: URL, _ password: String) async throws -> [String]
     /// `DELETE /api/auth/totp`: turns it off, with the password.
     public var disableTwoFactor: @Sendable (_ serverURL: URL, _ password: String) async throws -> Void
+    /// `GET /api/auth/tokens`: the account's API tokens, never their secrets.
+    public var fetchAPITokens: @Sendable (_ serverURL: URL) async throws -> [APIToken]
+    /// `POST /api/auth/tokens`: makes one. `password` is sent only when the account has one.
+    /// The secret in the reply is shown once.
+    public var createAPIToken: @Sendable (_ serverURL: URL, _ name: String, _ scope: APIToken.Scope, _ expiresInDays: Int?, _ password: String?) async throws -> IssuedAPIToken
+    /// `PATCH /api/auth/tokens/:id`: a new name, so two tokens can be told apart.
+    public var renameAPIToken: @Sendable (_ serverURL: URL, _ id: String, _ name: String) async throws -> APIToken
+    /// `DELETE /api/auth/tokens/:id`: no password, revoking is the safe direction.
+    public var revokeAPIToken: @Sendable (_ serverURL: URL, _ id: String) async throws -> Void
 
     // MARK: Admin user management (all require the caller to have the `admin` role)
 

@@ -49,7 +49,7 @@ extension FilesService {
         _ = try await sendAccountRequest(request)
     }
 
-    private func decodeAccountResponse<Response: Decodable>(_ data: Data, as _: Response.Type) throws -> Response {
+    func decodeAccountResponse<Response: Decodable>(_ data: Data, as _: Response.Type) throws -> Response {
         do {
             return try JSONDecoder().decode(Response.self, from: data)
         } catch {
