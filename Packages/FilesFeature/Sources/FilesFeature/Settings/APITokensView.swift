@@ -225,6 +225,7 @@ private struct APITokenCreateSheet: View {
                             prompt: Text(L10n.ApiTokens.namePlaceholder),
                             focused: $isNameFocused
                         )
+                        .accessibilityIdentifier(AccessibilityIdentifiers.Settings.apiTokenNameField)
                     }
                     LabeledField(L10n.ApiTokens.fieldAccess, uppercased: false) {
                         Picker(L10n.ApiTokens.fieldAccess, selection: Binding(get: { store.createForm?.scope ?? .read }, set: { store.send(.scopeChanged($0)) })) {

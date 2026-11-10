@@ -40,6 +40,7 @@ public enum AccessibilityIdentifiers {
         public static let languagePicker = "settings.languagePicker"
         public static let twoFactorRow = "settings.twoFactorRow"
         public static let apiTokensRow = "settings.apiTokensRow"
+        public static let apiTokenNameField = "settings.apiTokenNameField"
         public static let twoFactorCodeField = "settings.twoFactorCodeField"
     }
 }
