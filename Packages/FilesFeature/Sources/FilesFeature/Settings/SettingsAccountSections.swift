@@ -42,9 +42,13 @@ struct SettingsAccountsSection: View {
             activeAccountRow(activeAccount)
             // Outside the disclosure: the second factor protects the account, so it is not
             // something to find by expanding it.
-            twoFactorRow
+            if store.showsTwoFactorRow {
+                twoFactorRow
+            }
             if isActiveAccountExpanded {
-                changePasswordRow
+                if store.showsPasswordRow {
+                    changePasswordRow
+                }
                 signOutRow
             }
             ForEach(store.accounts.filter { !$0.isActive }) { account in
@@ -147,7 +151,7 @@ struct SettingsAccountsSection: View {
     private var changePasswordRow: some View {
         DSNavigationRow(
             title: store.passwordStatus == .absent ? L10n.Settings.rowAddPassword : L10n.Settings.rowChangePassword,
-            icon: IconKit.key
+            icon: IconKit.lock
         ) {
             store.send(.changePasswordButtonTapped)
         }

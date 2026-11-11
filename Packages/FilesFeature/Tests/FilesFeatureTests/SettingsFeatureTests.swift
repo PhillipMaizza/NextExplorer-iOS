@@ -99,12 +99,14 @@ struct SettingsFeatureTests {
 
     private func methodsStore(
         state: SettingsFeature.State? = nil,
+        status: @escaping @Sendable () throws -> AuthStatus = { AuthStatus(localEnabled: true, oidcEnabled: false) },
         methods: @escaping @Sendable () throws -> [SignInMethod]
     ) -> TestStoreOf<SettingsFeature> {
         let store = TestStore(initialState: state ?? makeState()) {
             SettingsFeature()
         } withDependencies: {
             $0.filesClient.fetchAuthMethods = { _ in try methods() }
+            $0.filesClient.fetchAuthStatus = { _ in try status() }
             $0.filesClient.fetchPreferences = { _ in UserPreferences() }
             $0.filesClient.fetchBranding = { _ in Branding() }
             $0.filesClient.serverFeatures = { _ in ServerFeatures() }
@@ -151,6 +153,72 @@ struct SettingsFeatureTests {
         #expect(store.state.changePassword?.mode == .change)
     }
 
+    // MARK: Password and two factor rows on a server with password sign in off (`GET /api/auth/status`)
+
+    @Test
+    func aServerWithPasswordSignInOffHidesTheRows() async {
+        let store = methodsStore(status: { AuthStatus(localEnabled: false, oidcEnabled: true) }) {
+            [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")]
+        }
+
+        await store.send(.onAppear)
+        await store.skipReceivedActions()
+
+        #expect(store.state.localSignInStatus == .disabled)
+        #expect(!store.state.showsPasswordRow)
+        #expect(!store.state.showsTwoFactorRow)
+    }
+
+    @Test
+    func aServerWithPasswordSignInOnKeepsBothRowsForAnAccountWithAPassword() async {
+        let store = methodsStore {
+            [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")]
+        }
+
+        await store.send(.onAppear)
+        await store.skipReceivedActions()
+
+        #expect(store.state.localSignInStatus == .enabled)
+        #expect(store.state.showsPasswordRow)
+        #expect(store.state.showsTwoFactorRow)
+    }
+
+    @Test
+    func aSingleSignOnAccountOnAServerWithPasswordSignInOnIsOfferedAddPasswordButNoTwoFactor() async {
+        let store = methodsStore {
+            [SignInMethod(id: "m2", type: "oidc", provider: "PocketID")]
+        }
+
+        await store.send(.onAppear)
+        await store.skipReceivedActions()
+
+        #expect(store.state.showsPasswordRow)
+        #expect(!store.state.showsTwoFactorRow)
+    }
+
+    @Test
+    func whenTheStatusCannotBeFetchedTheRowsStayVisible() async {
+        let store = methodsStore(status: { throw FilesClientError.server(statusCode: 500) }) {
+            [SignInMethod(id: "m1", type: SignInMethod.localPasswordType, provider: "Password")]
+        }
+
+        await store.send(.onAppear)
+        await store.skipReceivedActions()
+
+        #expect(store.state.localSignInStatus == .unknown)
+        #expect(store.state.showsPasswordRow)
+        #expect(store.state.showsTwoFactorRow)
+    }
+
+    @Test
+    func theRowsStayVisibleUntilTheStatusArrives() {
+        let state = makeState()
+
+        #expect(state.localSignInStatus == .unknown)
+        #expect(state.showsPasswordRow)
+        #expect(state.showsTwoFactorRow)
+    }
+
     @Test
     func addingAPasswordClosesTheScreenAndTurnsTheRowIntoChangePassword() async {
         var state = makeState()
@@ -182,6 +250,7 @@ struct SettingsFeatureTests {
             SettingsFeature()
         } withDependencies: {
             $0.filesClient.fetchAuthMethods = { _ in [] }
+            $0.filesClient.fetchAuthStatus = { _ in AuthStatus(localEnabled: true, oidcEnabled: false) }
             $0.filesClient.fetchPreferences = { _ in UserPreferences(showHiddenFiles: true, showThumbnails: false) }
             $0.filesClient.fetchBranding = { _ in Branding() }
             $0.filesClient.serverFeatures = { _ in ServerFeatures() }
@@ -209,6 +278,7 @@ struct SettingsFeatureTests {
             SettingsFeature()
         } withDependencies: {
             $0.filesClient.fetchAuthMethods = { _ in [] }
+            $0.filesClient.fetchAuthStatus = { _ in AuthStatus(localEnabled: true, oidcEnabled: false) }
             $0.filesClient.fetchPreferences = { _ in throw FilesClientError.sessionExpired }
             $0.filesClient.fetchBranding = { _ in Branding() }
             $0.filesClient.serverFeatures = { _ in ServerFeatures() }

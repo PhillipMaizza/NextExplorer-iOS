@@ -22,6 +22,13 @@ public struct SettingsFeature {
         case absent
     }
 
+    /// Whether the server lets accounts sign in with a password, from `GET /api/auth/status`.
+    public enum LocalSignInStatus: Equatable, Sendable {
+        case unknown
+        case enabled
+        case disabled
+    }
+
     @ObservableState
     public struct State: Equatable {
         public var serverURL: URL
@@ -31,6 +38,20 @@ public struct SettingsFeature {
         /// Whether the account has a password, from `GET /api/auth/methods`. `unknown` until the
         /// answer arrives and when it can't be fetched, which keeps today's Change Password row.
         public var passwordStatus: PasswordStatus = .unknown
+        /// `unknown` until the answer arrives and when it can't be fetched, which keeps the rows.
+        public var localSignInStatus: LocalSignInStatus = .unknown
+
+        /// A password does nothing on a server that has password sign in off (`AUTH_MODE=oidc`).
+        public var showsPasswordRow: Bool {
+            localSignInStatus != .disabled
+        }
+
+        /// The second factor guards the password sign in, so it needs both the server to allow
+        /// that sign in and the account to have a password. The web app hides it the same way.
+        public var showsTwoFactorRow: Bool {
+            showsPasswordRow && passwordStatus != .absent
+        }
+
         /// Held by the feature, not created inline in the view: a `Store` built in a
         /// `NavigationLink`'s destination builder is torn down and rebuilt empty on any
         /// parent re render, such as returning from the background, which is what left the
@@ -130,6 +151,7 @@ public struct SettingsFeature {
         case twoFactorButtonTapped
         case apiTokensButtonTapped
         case authMethodsResponse(Result<[SignInMethod], FilesClientError>)
+        case authStatusResponse(Result<AuthStatus, FilesClientError>)
         case changePassword(PresentationAction<ChangePasswordFeature.Action>)
         case twoFactor(PresentationAction<TwoFactorFeature.Action>)
         case apiTokens(PresentationAction<APITokensFeature.Action>)
@@ -217,7 +239,7 @@ public struct SettingsFeature {
     @Dependency(\.offlineFileStore) var offlineFileStore
     @Dependency(\.clientCertificateClient) var clientCertificateClient
 
-    private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize, authMethods }
+    private enum CancelID: Hashable { case serverUsage, volumeUsage, preference(UserPreferenceKey), offlineSize, authMethods, authStatus }
 
     public init() {}
 
@@ -245,6 +267,13 @@ public struct SettingsFeature {
             return .none
 
         case .authMethodsResponse(.failure):
+            return .none
+
+        case let .authStatusResponse(.success(status)):
+            state.localSignInStatus = status.isLocalEnabled ? .enabled : .disabled
+            return .none
+
+        case .authStatusResponse(.failure):
             return .none
 
         case .changePassword(.presented(.delegate(.passwordAdded))):
@@ -474,8 +503,13 @@ public struct SettingsFeature {
                 try await send(.authMethodsResponse(apiResult { try await filesClient.fetchAuthMethods(serverURL) }))
             }
             .cancellable(id: CancelID.authMethods, cancelInFlight: true)
+            let loadAuthStatus = Effect<Action>.run { send in
+                try await send(.authStatusResponse(apiResult { try await filesClient.fetchAuthStatus(serverURL) }))
+            }
+            .cancellable(id: CancelID.authStatus, cancelInFlight: true)
             return .merge(
                 loadAuthMethods,
+                loadAuthStatus,
                 checkDownloads,
                 checkCacheSize,
                 checkOfflineSize,
