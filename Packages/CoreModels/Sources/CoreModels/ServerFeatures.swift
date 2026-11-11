@@ -12,17 +12,35 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
     /// `editor.extensions` (`EDITOR_EXTENSIONS`): extra file types the server lets the text editor
     /// open, on top of `EditableTextFiles.defaultExtensions`. Lowercased, without the dot.
     public let editorExtensions: [String]
+    /// `uploads.maxChunkSizeBytes` (`MAX_CHUNK_SIZE_MIB`): the ceiling for the chunk size an admin can set.
+    public let maxUploadChunkSizeBytes: Int?
+    /// `search.index.enabled`, and `search.index.lockedBy` when `SEARCH_INDEX` decided it.
+    public let isSearchIndexEnabled: Bool
+    public let searchIndexLockedBy: String?
+    /// `folderSize.mode`, and `folderSize.lockedBy` when `FOLDER_SIZE_MODE` decided it.
+    public let folderSizeMode: FolderSizeMode
+    public let folderSizeLockedBy: String?
 
     public init(
         isUserVolumesEnabled: Bool = false,
         isVolumeUsageEnabled: Bool = false,
         isPersonalEnabled: Bool = false,
-        editorExtensions: [String] = []
+        editorExtensions: [String] = [],
+        maxUploadChunkSizeBytes: Int? = nil,
+        isSearchIndexEnabled: Bool = false,
+        searchIndexLockedBy: String? = nil,
+        folderSizeMode: FolderSizeMode = .off,
+        folderSizeLockedBy: String? = nil
     ) {
         self.isUserVolumesEnabled = isUserVolumesEnabled
         self.isVolumeUsageEnabled = isVolumeUsageEnabled
         self.isPersonalEnabled = isPersonalEnabled
         self.editorExtensions = editorExtensions
+        self.maxUploadChunkSizeBytes = maxUploadChunkSizeBytes
+        self.isSearchIndexEnabled = isSearchIndexEnabled
+        self.searchIndexLockedBy = searchIndexLockedBy
+        self.folderSizeMode = folderSizeMode
+        self.folderSizeLockedBy = folderSizeLockedBy
     }
 
     private enum CodingKeys: String, CodingKey {
@@ -30,6 +48,9 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         case volumeUsage
         case personal
         case editor
+        case uploads
+        case search
+        case folderSize
     }
 
     private struct FlagSection: Decodable {
@@ -38,6 +59,24 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
 
     private struct EditorSection: Decodable {
         let extensions: [String]?
+    }
+
+    private struct UploadsSection: Decodable {
+        let maxChunkSizeBytes: Int?
+    }
+
+    private struct SearchSection: Decodable {
+        struct Index: Decodable {
+            let enabled: Bool?
+            let lockedBy: String?
+        }
+
+        let index: Index?
+    }
+
+    private struct FolderSizeSection: Decodable {
+        let mode: String?
+        let lockedBy: String?
     }
 
     public init(from decoder: Decoder) throws {
@@ -49,5 +88,12 @@ public struct ServerFeatures: Equatable, Sendable, Decodable {
         isPersonalEnabled = try container.decodeIfPresent(FlagSection.self, forKey: .personal)?.enabled ?? false
         let editor = try? container.decodeIfPresent(EditorSection.self, forKey: .editor)
         editorExtensions = (editor?.extensions ?? []).map { $0.lowercased() }
+        maxUploadChunkSizeBytes = (try? container.decodeIfPresent(UploadsSection.self, forKey: .uploads))?.maxChunkSizeBytes
+        let searchIndex = (try? container.decodeIfPresent(SearchSection.self, forKey: .search))?.index
+        isSearchIndexEnabled = searchIndex?.enabled ?? false
+        searchIndexLockedBy = searchIndex?.lockedBy
+        let folderSize = try? container.decodeIfPresent(FolderSizeSection.self, forKey: .folderSize)
+        folderSizeMode = folderSize?.mode.flatMap(FolderSizeMode.init(rawValue:)) ?? .off
+        folderSizeLockedBy = folderSize?.lockedBy
     }
 }
