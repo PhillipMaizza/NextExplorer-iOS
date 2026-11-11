@@ -62,6 +62,13 @@ public struct SettingsFeature {
         @Presents public var apiTokens: APITokensFeature.State?
         @Presents public var serverDetails: ServerDetailsFeature.State?
         @Presents public var thumbnailSettings: ThumbnailSettingsFeature.State?
+        @Presents public var uploadSettings: UploadSettingsFeature.State?
+        @Presents public var ffmpegSettings: FFmpegSettingsFeature.State?
+        @Presents public var searchIndexSettings: SearchIndexSettingsFeature.State?
+        @Presents public var folderSizeSettings: FolderSizeSettingsFeature.State?
+        @Presents public var activityLog: ActivityLogFeature.State?
+        @Presents public var trashSettings: TrashSettingsFeature.State?
+        @Presents public var versionedFiles: VersionedFilesFeature.State?
         @Presents public var accessRules: AccessRulesFeature.State?
         @Presents public var offlineSelection: OfflineSelectionFeature.State?
         @Presents public var offlineManage: OfflineManageFeature.State?
@@ -141,6 +148,7 @@ public struct SettingsFeature {
     /// The admin pages the Mac Settings window shows as panes of their own.
     public enum AdminPane: Equatable, Sendable {
         case server, users, thumbnails, accessRules
+        case uploads, searchIndex, folderSize, ffmpeg, activity, trash, versions
     }
 
     public enum Action: Sendable {
@@ -159,6 +167,20 @@ public struct SettingsFeature {
         case serverDetails(PresentationAction<ServerDetailsFeature.Action>)
         case thumbnailSettingsButtonTapped
         case thumbnailSettings(PresentationAction<ThumbnailSettingsFeature.Action>)
+        case uploadSettingsButtonTapped
+        case uploadSettings(PresentationAction<UploadSettingsFeature.Action>)
+        case ffmpegSettingsButtonTapped
+        case ffmpegSettings(PresentationAction<FFmpegSettingsFeature.Action>)
+        case searchIndexSettingsButtonTapped
+        case searchIndexSettings(PresentationAction<SearchIndexSettingsFeature.Action>)
+        case folderSizeSettingsButtonTapped
+        case folderSizeSettings(PresentationAction<FolderSizeSettingsFeature.Action>)
+        case activityLogButtonTapped
+        case activityLog(PresentationAction<ActivityLogFeature.Action>)
+        case trashSettingsButtonTapped
+        case trashSettings(PresentationAction<TrashSettingsFeature.Action>)
+        case versionedFilesButtonTapped
+        case versionedFiles(PresentationAction<VersionedFilesFeature.Action>)
         case accessRulesButtonTapped
         case accessRules(PresentationAction<AccessRulesFeature.Action>)
         /// The Mac Settings window left an admin pane (another category, or the window closed):
@@ -325,12 +347,75 @@ public struct SettingsFeature {
         case .accessRules:
             return .none
 
+        case .uploadSettingsButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.uploadSettings = UploadSettingsFeature.State(serverURL: state.serverURL)
+            return .none
+
+        case .uploadSettings:
+            return .none
+
+        case .ffmpegSettingsButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.ffmpegSettings = FFmpegSettingsFeature.State(serverURL: state.serverURL)
+            return .none
+
+        case .ffmpegSettings:
+            return .none
+
+        case .searchIndexSettingsButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.searchIndexSettings = SearchIndexSettingsFeature.State(serverURL: state.serverURL)
+            return .none
+
+        case .searchIndexSettings:
+            return .none
+
+        case .folderSizeSettingsButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.folderSizeSettings = FolderSizeSettingsFeature.State(serverURL: state.serverURL)
+            return .none
+
+        case .folderSizeSettings:
+            return .none
+
+        case .activityLogButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.activityLog = ActivityLogFeature.State(serverURL: state.serverURL)
+            return .none
+
+        case .activityLog:
+            return .none
+
+        case .trashSettingsButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.trashSettings = TrashSettingsFeature.State(serverURL: state.serverURL)
+            return .none
+
+        case .trashSettings:
+            return .none
+
+        case .versionedFilesButtonTapped:
+            guard state.user.isAdmin else { return .none }
+            state.versionedFiles = VersionedFilesFeature.State(serverURL: state.serverURL)
+            return .none
+
+        case .versionedFiles:
+            return .none
+
         case let .adminPaneLeft(pane):
             switch pane {
             case .server: state.serverDetails = nil
             case .users: state.userManagement = nil
             case .thumbnails: state.thumbnailSettings = nil
             case .accessRules: state.accessRules = nil
+            case .uploads: state.uploadSettings = nil
+            case .searchIndex: state.searchIndexSettings = nil
+            case .folderSize: state.folderSizeSettings = nil
+            case .ffmpeg: state.ffmpegSettings = nil
+            case .activity: state.activityLog = nil
+            case .trash: state.trashSettings = nil
+            case .versions: state.versionedFiles = nil
             }
             return .none
 
@@ -695,6 +780,30 @@ public struct SettingsFeature {
             }
             .ifLet(\.$tipJar, action: \.tipJar) {
                 TipJarFeature()
+            }
+        // Its own chain: one more `ifLet` on the one above is too much for the type checker.
+        EmptyReducer()
+            .ifLet(\.$uploadSettings, action: \.uploadSettings) {
+                UploadSettingsFeature()
+            }
+            .ifLet(\.$ffmpegSettings, action: \.ffmpegSettings) {
+                FFmpegSettingsFeature()
+            }
+            .ifLet(\.$searchIndexSettings, action: \.searchIndexSettings) {
+                SearchIndexSettingsFeature()
+            }
+            .ifLet(\.$folderSizeSettings, action: \.folderSizeSettings) {
+                FolderSizeSettingsFeature()
+            }
+        EmptyReducer()
+            .ifLet(\.$activityLog, action: \.activityLog) {
+                ActivityLogFeature()
+            }
+            .ifLet(\.$trashSettings, action: \.trashSettings) {
+                TrashSettingsFeature()
+            }
+            .ifLet(\.$versionedFiles, action: \.versionedFiles) {
+                VersionedFilesFeature()
             }
     }
 

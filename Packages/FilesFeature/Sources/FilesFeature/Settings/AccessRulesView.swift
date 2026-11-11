@@ -5,9 +5,9 @@ import Localization
 import SwiftUI
 
 private enum Metrics {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = ServerSettingsMetrics.contentSpacing
     static let horizontalPadding: CGFloat = .space16
-    static let ruleSpacing: CGFloat = .space12
+    static let ruleSpacing: CGFloat = .space24
     static let emptyPadding: CGFloat = .space32
 }
 
@@ -98,13 +98,11 @@ struct AccessRulesView: View {
                 )
             )
 
-            DSSegmentedControl(
-                options: AccessRule.Permission.allCases,
-                selection: Binding(
-                    get: { store.drafts[id: rule.id]?.permission ?? .readWrite },
-                    set: { store.send(.permissionChanged(id: rule.id, $0)) }
-                ),
-                label: Self.permissionLabel
+            ChoiceRowList(
+                items: AccessRule.Permission.allCases,
+                title: Self.permissionLabel,
+                isSelected: { (store.drafts[id: rule.id]?.permission ?? .readWrite) == $0 },
+                onSelect: { store.send(.permissionChanged(id: rule.id, $0)) }
             )
 
             HStack {

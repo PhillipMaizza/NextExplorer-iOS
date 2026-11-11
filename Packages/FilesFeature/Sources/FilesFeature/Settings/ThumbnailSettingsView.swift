@@ -5,7 +5,7 @@ import Localization
 import SwiftUI
 
 private enum Metrics {
-    static let contentSpacing: CGFloat = .space16
+    static let contentSpacing: CGFloat = ServerSettingsMetrics.contentSpacing
     static let horizontalPadding: CGFloat = .space16
     static let rowSpacing: CGFloat = .space8
     static let rowIconSpacing: CGFloat = .space12

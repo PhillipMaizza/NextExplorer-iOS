@@ -82,3 +82,6 @@ fastlane/test_output/
 
 # direnv
 .envrc
+
+# Python bytecode
+__pycache__/
