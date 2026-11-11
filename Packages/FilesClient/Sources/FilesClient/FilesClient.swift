@@ -224,6 +224,35 @@ public struct FilesClient: Sendable {
     public var updateThumbnailSettings: @Sendable (
         _ serverURL: URL, _ settings: ThumbnailSettings
     ) async throws -> ThumbnailSettings
+    /// `GET /api/activity` (admin only): a page of the log, narrowed by the filter and continuing
+    /// from `before`, the previous page's `nextBefore`.
+    public var fetchActivity: @Sendable (
+        _ serverURL: URL, _ filter: ActivityFilter, _ before: String?
+    ) async throws -> ActivityPage
+    /// `DELETE /api/activity` (admin only): empties the log.
+    public var clearActivity: @Sendable (_ serverURL: URL) async throws -> Void
+    /// `GET /api/versions/admin/files` (admin only): a page of every file that has a history.
+    public var fetchVersionedFiles: @Sendable (
+        _ serverURL: URL, _ filter: VersionedFilesFilter, _ offset: Int, _ limit: Int
+    ) async throws -> VersionedFilesPage
+    /// `GET /api/versions/admin/files/:id` (admin only): one history and its versions.
+    public var fetchVersionedFile: @Sendable (_ serverURL: URL, _ id: String) async throws -> VersionedFileDetail
+    /// `POST /api/versions/admin/files/:id/delete` (admin only): the named versions, or every one
+    /// when `ids` is nil.
+    public var deleteVersionsOfFile: @Sendable (
+        _ serverURL: URL, _ id: String, _ ids: [String]?
+    ) async throws -> VersionsDeletion
+    /// `GET /api/trash/zones` (admin only): each volume's trash and versions space.
+    public var fetchTrashZones: @Sendable (_ serverURL: URL) async throws -> [TrashZone]
+    /// `POST /api/trash/verify` (admin only): checks every volume against its invariants.
+    public var verifyTrash: @Sendable (_ serverURL: URL) async throws -> [TrashVerification]
+    /// `POST /api/trash/maintenance` (admin only): runs the maintenance pass now.
+    public var runTrashMaintenance: @Sendable (_ serverURL: URL) async throws -> Void
+    /// `PATCH /api/settings` with only the sections set on the patch (admin only). The server merges
+    /// each one and echoes the settings back, which is returned so the caller keeps what it saved.
+    public var updateSystemSettings: @Sendable (
+        _ serverURL: URL, _ patch: SystemSettingsPatch
+    ) async throws -> SystemSettings
     /// `PATCH /api/settings` with `{ access: { rules: [...] } }` (admin only). The array
     /// replaces the stored rules wholesale; the echo carries the server-normalised result.
     public var updateAccessRules: @Sendable (

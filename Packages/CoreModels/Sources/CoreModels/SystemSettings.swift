@@ -87,14 +87,38 @@ public struct AccessRule: Equatable, Sendable, Codable, Identifiable {
 public struct SystemSettings: Equatable, Sendable, Decodable {
     public var thumbnails: ThumbnailSettings?
     public var accessRules: [AccessRule]
+    public var uploads: UploadSettings?
+    public var ffmpeg: FFmpegSettings?
+    public var searchIndex: SearchIndexSettings?
+    public var folderSize: FolderSizeSettings?
+    public var activity: ActivitySettings?
+    public var trash: TrashSettings?
+    public var versions: VersionsSettings?
 
-    public init(thumbnails: ThumbnailSettings? = nil, accessRules: [AccessRule] = []) {
+    public init(
+        thumbnails: ThumbnailSettings? = nil,
+        accessRules: [AccessRule] = [],
+        uploads: UploadSettings? = nil,
+        ffmpeg: FFmpegSettings? = nil,
+        searchIndex: SearchIndexSettings? = nil,
+        folderSize: FolderSizeSettings? = nil,
+        activity: ActivitySettings? = nil,
+        trash: TrashSettings? = nil,
+        versions: VersionsSettings? = nil
+    ) {
         self.thumbnails = thumbnails
         self.accessRules = accessRules
+        self.uploads = uploads
+        self.ffmpeg = ffmpeg
+        self.searchIndex = searchIndex
+        self.folderSize = folderSize
+        self.activity = activity
+        self.trash = trash
+        self.versions = versions
     }
 
     private enum CodingKeys: String, CodingKey {
-        case thumbnails, access
+        case thumbnails, access, uploads, ffmpeg, searchIndex, folderSize, activity, trash, versions
     }
 
     private struct AccessContainer: Decodable {
@@ -106,5 +130,12 @@ public struct SystemSettings: Equatable, Sendable, Decodable {
         thumbnails = try container.decodeIfPresent(ThumbnailSettings.self, forKey: .thumbnails)
         let access = try container.decodeIfPresent(AccessContainer.self, forKey: .access)
         accessRules = access?.rules ?? []
+        uploads = try container.decodeIfPresent(UploadSettings.self, forKey: .uploads)
+        ffmpeg = try container.decodeIfPresent(FFmpegSettings.self, forKey: .ffmpeg)
+        searchIndex = try container.decodeIfPresent(SearchIndexSettings.self, forKey: .searchIndex)
+        folderSize = try container.decodeIfPresent(FolderSizeSettings.self, forKey: .folderSize)
+        activity = try container.decodeIfPresent(ActivitySettings.self, forKey: .activity)
+        trash = try container.decodeIfPresent(TrashSettings.self, forKey: .trash)
+        versions = try container.decodeIfPresent(VersionsSettings.self, forKey: .versions)
     }
 }

@@ -228,6 +228,15 @@ public extension FilesClient {
             )
         },
         updateThumbnailSettings: { _, settings in settings },
+        fetchActivity: { _, _, _ in ActivityPage(isEnabled: true) },
+        clearActivity: { _ in },
+        fetchVersionedFiles: { _, _, _, _ in VersionedFilesPage() },
+        fetchVersionedFile: { _, _ in VersionedFileDetail() },
+        deleteVersionsOfFile: { _, _, _ in VersionsDeletion() },
+        fetchTrashZones: { _ in [] },
+        verifyTrash: { _ in [] },
+        runTrashMaintenance: { _ in },
+        updateSystemSettings: { _, _ in SystemSettings() },
         updateAccessRules: { _, rules in rules },
         listUsers: { _ in User.previewManagedUsers },
         createUser: { _, request in
