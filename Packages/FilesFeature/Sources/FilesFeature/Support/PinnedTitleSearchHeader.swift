@@ -7,7 +7,7 @@ private enum Constants {
     /// Cross fade for the clear button appearing with text.
     static let fieldAnimationDuration: Double = 0.15
     /// Height of the fade tail under the header.
-    static let fadeHeight: CGFloat = .space16
+    static let fadeHeight: CGFloat = .space8
 }
 
 /// A large title and an always-visible search field pinned ABOVE the scrolling list, instead of
@@ -71,7 +71,7 @@ struct PinnedTitleSearchHeader<Accessory: View>: View {
         }
         .padding(.horizontal, .space16)
         .padding(.top, .space8 + extraTopPadding)
-        .padding(.bottom, .space12)
+        .padding(.bottom, .space4)
         // Solid top color behind the title/search (matches the `backgroundGradient()` top stop,
         // so it reads seamless) so scrolled rows never bleed through the header. A short fade
         // tail sits just below the header edge to melt into the list gradient instead of ending

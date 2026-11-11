@@ -46,6 +46,19 @@ struct L10nTests {
         #expect(unresolved.isEmpty, "Unresolved: \(unresolved.sorted().prefix(20)) (\(unresolved.count) in all)")
     }
 
+    @Test("layout direction follows the chosen language, else the system language")
+    func layoutDirectionFollowsLanguage() {
+        let rtl = LocalizationOverride.usesRightToLeftLayout
+        #expect(rtl("ar", "en"))
+        #expect(rtl("he", nil))
+        #expect(!rtl("de", "ar"), "a language picked in the app wins over the system language")
+        #expect(rtl(nil, "ar"), "an Arabic system with no in-app choice lays out right to left")
+        #expect(rtl(nil, "he"))
+        #expect(!rtl(nil, "en"))
+        #expect(!rtl(nil, "pt-BR"))
+        #expect(!rtl(nil, nil))
+    }
+
     @Test("format accessors interpolate their arguments")
     func formatAccessors() {
         #expect(L10n.ChangePassword.errorMinLength(6) == "Use at least 6 characters.")
