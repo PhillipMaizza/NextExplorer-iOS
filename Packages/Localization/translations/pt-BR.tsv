@@ -1041,3 +1041,90 @@ serverSettings.featureOffHowTo	Para ativá-lo, defina %@ e reinicie o contêiner
 trashSettings.environmentNote	Os valores padrão vêm de TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT e TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Os valores padrão vêm de VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE e VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Atualizar
+apiTokens.copiedToken	Copiado
+apiTokens.copyToken	Copiar token
+apiTokens.createSubmit	Criar token
+apiTokens.created	Criado em %@
+apiTokens.emptyMessage	Crie um para permitir que um script use sua conta.
+apiTokens.emptyTitle	Nenhum token de API
+apiTokens.expired	Expirou em %@
+apiTokens.expires	Expira em %@
+apiTokens.expiry30	Em 30 dias
+apiTokens.expiry90	Em 90 dias
+apiTokens.expiryNever	Nunca
+apiTokens.expiryYear	Em 1 ano
+apiTokens.fieldAccess	Acesso
+apiTokens.fieldExpiry	Expira
+apiTokens.fieldName	Nome
+apiTokens.fieldPassword	Sua senha
+apiTokens.formTitle	Novo token de API
+apiTokens.intro	Tokens de API permitem que scripts e outras ferramentas usem sua conta sem a sua senha. Um token só faz o que o acesso dele permite, e você pode revogá-lo a qualquer momento.
+apiTokens.issuedDone	Já copiei
+apiTokens.issuedIntro	Esta é a única vez que ele é exibido. Guarde-o em um lugar seguro. Se você o perder, revogue-o e crie um novo.
+apiTokens.issuedTitle	Copie seu token
+apiTokens.lastUsed	Último uso: %@
+apiTokens.lastUsedFrom	Último uso: %1$@, de %2$@
+apiTokens.limitReached	Você atingiu o limite de %lld tokens. Revogue um para criar outro.
+apiTokens.menuAccessibilityLabel	Ações para %@
+apiTokens.namePlaceholder	Por exemplo, script de backup
+apiTokens.navigationTitle	Tokens de API
+apiTokens.neverExpires	Nunca expira
+apiTokens.neverUsed	Nunca usado
+apiTokens.newButton	Novo token
+apiTokens.passwordHint	Digite sua senha para criar um token.
+apiTokens.renameAction	Renomear
+apiTokens.renameSave	Salvar
+apiTokens.renameTitle	Renomear token
+apiTokens.revokeAction	Revogar
+apiTokens.revokeConfirm	Revogar
+apiTokens.revokeMessage	Tudo o que usa “%@” vai parar de funcionar imediatamente. Isso não pode ser desfeito.
+apiTokens.revokeTitle	Revogar token?
+apiTokens.scopeRead	Somente leitura
+apiTokens.scopeWrite	Leitura e gravação
+apiTokens.sectionHeader	Desenvolvedores
+changePassword.addIntro	Esta conta entra com login único (SSO) e ainda não tem senha. Adicione uma para também entrar com seu e-mail ou nome de usuário.
+changePassword.addNavigationTitle	Adicionar senha
+changePassword.addSubmitButton	Adicionar senha
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Código
+login.codeIntroAuthenticator	Esta conta pede uma segunda etapa. Digite o código de 6 dígitos do seu app autenticador.
+login.codeIntroRecovery	Digite um dos seus códigos de recuperação. Cada um funciona apenas uma vez.
+login.codeSubmit	Verificar
+login.codeTitle	Digite seu código
+login.codeUseAuthenticator	Usar o código do autenticador
+login.codeUseRecovery	Usar um código de recuperação
+login.diagnosticsButton	Compartilhar log de login
+login.diagnosticsIntro	Este log mostra o que o servidor respondeu em cada etapa, para ajudar a descobrir por que o login falha. Ele nunca contém sua senha, o endereço que você digitou nem seu nome de usuário. Envie-o ao desenvolvedor.
+login.diagnosticsTitle	Log de login
+login.errorInvalidCode	Esse código não está correto.
+login.errorSecondFactorExpired	Esse login expirou. Digite sua senha novamente.
+login.identifierField	E-mail ou nome de usuário
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Adicionar senha
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Código do autenticador
+twoFactor.confirmButton	Verificar e ativar
+twoFactor.copyCodesButton	Copiar códigos
+twoFactor.copyKeyAccessibilityLabel	Copiar chave de configuração
+twoFactor.enrollIntro	Escaneie este código QR com seu app autenticador ou digite a chave manualmente. Depois, digite o código de 6 dígitos que o app mostra.
+twoFactor.keyLabel	Chave de configuração
+twoFactor.manageButton	Gerenciar…
+twoFactor.navigationTitle	Autenticação de dois fatores
+twoFactor.newCodesButton	Gerar novos códigos de recuperação
+twoFactor.offIntro	Adicione uma segunda etapa ao login. Depois da senha, você digitará um código de um app autenticador.
+twoFactor.offTitle	A autenticação de dois fatores está desativada
+twoFactor.onTitle	A autenticação de dois fatores está ativada
+twoFactor.passwordConfirmButton	Confirmar
+twoFactor.passwordField	Senha
+twoFactor.passwordNewCodesIntro	Digite sua senha para substituir seus códigos de recuperação. Os antigos deixam de funcionar.
+twoFactor.passwordTurnOffIntro	Digite sua senha para desativar a autenticação de dois fatores.
+twoFactor.qrAccessibilityLabel	Código QR do seu app autenticador
+twoFactor.recoveryCodesLeft	Códigos de recuperação restantes: %lld
+twoFactor.recoveryDoneButton	Já salvei
+twoFactor.recoveryIntro	Cada código funciona uma vez se você perder seu app autenticador. Eles não serão exibidos novamente, então guarde-os em um lugar seguro.
+twoFactor.recoveryTitle	Salve seus códigos de recuperação
+twoFactor.shareCodesButton	Compartilhar códigos
+twoFactor.turnOffButton	Desativar
+twoFactor.turnOnButton	Ativar

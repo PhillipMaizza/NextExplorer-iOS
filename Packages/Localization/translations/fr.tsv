@@ -1046,3 +1046,90 @@ serverSettings.featureOffHowTo	Pour l’activer, définissez %@ et redémarrez l
 trashSettings.environmentNote	Les valeurs par défaut proviennent de TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT et TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Les valeurs par défaut proviennent de VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE et VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Actualiser
+apiTokens.copiedToken	Copié
+apiTokens.copyToken	Copier le jeton
+apiTokens.createSubmit	Créer le jeton
+apiTokens.created	Créé le %@
+apiTokens.emptyMessage	Créez-en un pour permettre à un script d'utiliser votre compte.
+apiTokens.emptyTitle	Aucun jeton d'API
+apiTokens.expired	Expiré le %@
+apiTokens.expires	Expire le %@
+apiTokens.expiry30	Dans 30 jours
+apiTokens.expiry90	Dans 90 jours
+apiTokens.expiryNever	Jamais
+apiTokens.expiryYear	Dans 1 an
+apiTokens.fieldAccess	Accès
+apiTokens.fieldExpiry	Expire
+apiTokens.fieldName	Nom
+apiTokens.fieldPassword	Votre mot de passe
+apiTokens.formTitle	Nouveau jeton d'API
+apiTokens.intro	Les jetons d'API permettent à des scripts et à d'autres outils d'utiliser votre compte sans votre mot de passe. Un jeton ne peut faire que ce que son accès autorise, et vous pouvez le révoquer à tout moment.
+apiTokens.issuedDone	Je l'ai copié
+apiTokens.issuedIntro	Il n'est affiché qu'une seule fois. Conservez-le en lieu sûr. Si vous le perdez, révoquez-le et créez-en un nouveau.
+apiTokens.issuedTitle	Copiez votre jeton
+apiTokens.lastUsed	Dernière utilisation : %@
+apiTokens.lastUsedFrom	Dernière utilisation : %1$@ depuis %2$@
+apiTokens.limitReached	Vous avez atteint la limite de %lld jetons. Révoquez-en un pour en créer un autre.
+apiTokens.menuAccessibilityLabel	Actions pour %@
+apiTokens.namePlaceholder	Par exemple, script de sauvegarde
+apiTokens.navigationTitle	Jetons d'API
+apiTokens.neverExpires	N'expire jamais
+apiTokens.neverUsed	Jamais utilisé
+apiTokens.newButton	Nouveau jeton
+apiTokens.passwordHint	Saisissez votre mot de passe pour créer un jeton.
+apiTokens.renameAction	Renommer
+apiTokens.renameSave	Enregistrer
+apiTokens.renameTitle	Renommer le jeton
+apiTokens.revokeAction	Révoquer
+apiTokens.revokeConfirm	Révoquer
+apiTokens.revokeMessage	Tout ce qui utilise « %@ » cessera de fonctionner immédiatement. Cette action est irréversible.
+apiTokens.revokeTitle	Révoquer le jeton ?
+apiTokens.scopeRead	Lecture seule
+apiTokens.scopeWrite	Lecture et écriture
+apiTokens.sectionHeader	Développeurs
+changePassword.addIntro	Ce compte se connecte avec l'authentification unique et n'a pas encore de mot de passe. Ajoutez-en un pour vous connecter aussi avec votre adresse e-mail ou votre nom d'utilisateur.
+changePassword.addNavigationTitle	Ajouter un mot de passe
+changePassword.addSubmitButton	Ajouter un mot de passe
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Code
+login.codeIntroAuthenticator	Ce compte demande une seconde étape. Saisissez le code à 6 chiffres de votre app d'authentification.
+login.codeIntroRecovery	Saisissez l'un de vos codes de récupération. Chacun ne fonctionne qu'une seule fois.
+login.codeSubmit	Vérifier
+login.codeTitle	Saisissez votre code
+login.codeUseAuthenticator	Utiliser plutôt le code de l'app d'authentification
+login.codeUseRecovery	Utiliser plutôt un code de récupération
+login.diagnosticsButton	Partager le journal de connexion
+login.diagnosticsIntro	Ce journal indique ce que le serveur a répondu à chaque étape, pour aider à trouver pourquoi la connexion échoue. Il ne contient jamais votre mot de passe, l'adresse saisie ni votre nom d'utilisateur. Envoyez-le au développeur.
+login.diagnosticsTitle	Journal de connexion
+login.errorInvalidCode	Ce code n'est pas correct.
+login.errorSecondFactorExpired	Cette connexion a expiré. Saisissez à nouveau votre mot de passe.
+login.identifierField	E-mail ou nom d'utilisateur
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Ajouter un mot de passe
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Code d'authentification
+twoFactor.confirmButton	Vérifier et activer
+twoFactor.copyCodesButton	Copier les codes
+twoFactor.copyKeyAccessibilityLabel	Copier la clé de configuration
+twoFactor.enrollIntro	Scannez ce code QR avec votre app d'authentification, ou saisissez la clé à la main. Saisissez ensuite le code à 6 chiffres affiché par l'app.
+twoFactor.keyLabel	Clé de configuration
+twoFactor.manageButton	Gérer…
+twoFactor.navigationTitle	Authentification à deux facteurs
+twoFactor.newCodesButton	Obtenir de nouveaux codes de récupération
+twoFactor.offIntro	Ajoutez une seconde étape à la connexion. Après votre mot de passe, vous saisirez un code issu d'une app d'authentification.
+twoFactor.offTitle	L'authentification à deux facteurs est désactivée
+twoFactor.onTitle	L'authentification à deux facteurs est activée
+twoFactor.passwordConfirmButton	Confirmer
+twoFactor.passwordField	Mot de passe
+twoFactor.passwordNewCodesIntro	Saisissez votre mot de passe pour remplacer vos codes de récupération. Les anciens cessent de fonctionner.
+twoFactor.passwordTurnOffIntro	Saisissez votre mot de passe pour désactiver l'authentification à deux facteurs.
+twoFactor.qrAccessibilityLabel	Code QR pour votre app d'authentification
+twoFactor.recoveryCodesLeft	Codes de récupération restants : %lld
+twoFactor.recoveryDoneButton	Je les ai enregistrés
+twoFactor.recoveryIntro	Chaque code ne fonctionne qu'une fois si vous perdez votre app d'authentification. Ils ne seront plus affichés, conservez-les donc en lieu sûr.
+twoFactor.recoveryTitle	Enregistrez vos codes de récupération
+twoFactor.shareCodesButton	Partager les codes
+twoFactor.turnOffButton	Désactiver
+twoFactor.turnOnButton	Activer

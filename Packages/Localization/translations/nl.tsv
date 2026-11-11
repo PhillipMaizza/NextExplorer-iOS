@@ -1046,3 +1046,90 @@ serverSettings.featureOffHowTo	Stel %@ in en herstart de container om dit in te 
 trashSettings.environmentNote	Standaardwaarden komen uit TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT en TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Standaardwaarden komen uit VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE en VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Vernieuwen
+apiTokens.copiedToken	Gekopieerd
+apiTokens.copyToken	Token kopiëren
+apiTokens.createSubmit	Token maken
+apiTokens.created	Aangemaakt op %@
+apiTokens.emptyMessage	Maak er een zodat een script je account kan gebruiken.
+apiTokens.emptyTitle	Geen API-tokens
+apiTokens.expired	Verlopen op %@
+apiTokens.expires	Verloopt op %@
+apiTokens.expiry30	Over 30 dagen
+apiTokens.expiry90	Over 90 dagen
+apiTokens.expiryNever	Nooit
+apiTokens.expiryYear	Over 1 jaar
+apiTokens.fieldAccess	Toegang
+apiTokens.fieldExpiry	Verloopt
+apiTokens.fieldName	Naam
+apiTokens.fieldPassword	Je wachtwoord
+apiTokens.formTitle	Nieuw API-token
+apiTokens.intro	Met API-tokens kunnen scripts en andere tools je account gebruiken zonder je wachtwoord. Een token kan alleen doen wat zijn toegang toestaat en je kunt het op elk moment intrekken.
+apiTokens.issuedDone	Ik heb het gekopieerd
+apiTokens.issuedIntro	Dit wordt maar één keer getoond. Bewaar het op een veilige plek. Als je het kwijtraakt, trek je het in en maak je een nieuw token.
+apiTokens.issuedTitle	Kopieer je token
+apiTokens.lastUsed	Laatst gebruikt: %@
+apiTokens.lastUsedFrom	Laatst gebruikt: %1$@ vanaf %2$@
+apiTokens.limitReached	Je hebt de limiet van %lld tokens bereikt. Trek er een in om een nieuw token te maken.
+apiTokens.menuAccessibilityLabel	Acties voor %@
+apiTokens.namePlaceholder	Bijvoorbeeld back-upscript
+apiTokens.navigationTitle	API-tokens
+apiTokens.neverExpires	Verloopt nooit
+apiTokens.neverUsed	Nooit gebruikt
+apiTokens.newButton	Nieuw token
+apiTokens.passwordHint	Voer je wachtwoord in om een token te maken.
+apiTokens.renameAction	Naam wijzigen
+apiTokens.renameSave	Bewaren
+apiTokens.renameTitle	Naam van token wijzigen
+apiTokens.revokeAction	Intrekken
+apiTokens.revokeConfirm	Intrekken
+apiTokens.revokeMessage	Alles wat “%@” gebruikt, werkt meteen niet meer. Dit kan niet ongedaan worden gemaakt.
+apiTokens.revokeTitle	Token intrekken?
+apiTokens.scopeRead	Alleen lezen
+apiTokens.scopeWrite	Lezen en schrijven
+apiTokens.sectionHeader	Ontwikkelaars
+changePassword.addIntro	Dit account logt in met single sign-on en heeft nog geen wachtwoord. Voeg er een toe om ook in te loggen met je e-mailadres of gebruikersnaam.
+changePassword.addNavigationTitle	Wachtwoord toevoegen
+changePassword.addSubmitButton	Wachtwoord toevoegen
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Code
+login.codeIntroAuthenticator	Voor dit account is een tweede stap nodig. Voer de 6-cijferige code uit je authenticatie-app in.
+login.codeIntroRecovery	Voer een van je herstelcodes in. Elke code werkt maar één keer.
+login.codeSubmit	Verifiëren
+login.codeTitle	Voer je code in
+login.codeUseAuthenticator	Gebruik in plaats daarvan de code van de authenticatie-app
+login.codeUseRecovery	Gebruik in plaats daarvan een herstelcode
+login.diagnosticsButton	Inloglogboek delen
+login.diagnosticsIntro	Dit logboek laat zien wat de server bij elke stap antwoordde, om te achterhalen waarom inloggen mislukt. Het bevat nooit je wachtwoord, het adres dat je hebt getypt of je gebruikersnaam. Stuur het naar de ontwikkelaar.
+login.diagnosticsTitle	Inloglogboek
+login.errorInvalidCode	Die code klopt niet.
+login.errorSecondFactorExpired	Die inlogpoging is verlopen. Voer je wachtwoord opnieuw in.
+login.identifierField	E-mail of gebruikersnaam
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Wachtwoord toevoegen
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Code van authenticatie-app
+twoFactor.confirmButton	Verifiëren en inschakelen
+twoFactor.copyCodesButton	Codes kopiëren
+twoFactor.copyKeyAccessibilityLabel	Installatiesleutel kopiëren
+twoFactor.enrollIntro	Scan deze QR-code met je authenticatie-app of typ de sleutel handmatig in. Voer daarna de 6-cijferige code in die de app toont.
+twoFactor.keyLabel	Installatiesleutel
+twoFactor.manageButton	Beheren…
+twoFactor.navigationTitle	Tweestapsverificatie
+twoFactor.newCodesButton	Nieuwe herstelcodes ophalen
+twoFactor.offIntro	Voeg een tweede stap toe aan het inloggen. Na je wachtwoord voer je een code uit een authenticatie-app in.
+twoFactor.offTitle	Tweestapsverificatie is uitgeschakeld
+twoFactor.onTitle	Tweestapsverificatie is ingeschakeld
+twoFactor.passwordConfirmButton	Bevestigen
+twoFactor.passwordField	Wachtwoord
+twoFactor.passwordNewCodesIntro	Voer je wachtwoord in om je herstelcodes te vervangen. De oude werken dan niet meer.
+twoFactor.passwordTurnOffIntro	Voer je wachtwoord in om tweestapsverificatie uit te schakelen.
+twoFactor.qrAccessibilityLabel	QR-code voor je authenticatie-app
+twoFactor.recoveryCodesLeft	Resterende herstelcodes: %lld
+twoFactor.recoveryDoneButton	Ik heb ze bewaard
+twoFactor.recoveryIntro	Elke code werkt één keer als je je authenticatie-app kwijtraakt. Ze worden niet opnieuw getoond, dus bewaar ze op een veilige plek.
+twoFactor.recoveryTitle	Sla je herstelcodes op
+twoFactor.shareCodesButton	Codes delen
+twoFactor.turnOffButton	Uitschakelen
+twoFactor.turnOnButton	Inschakelen

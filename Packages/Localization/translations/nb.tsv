@@ -293,7 +293,7 @@ searchIndexSettings.running	Hold en søkeindeks ved like
 searchIndexSettings.runningHelp	Leser dokumentene på volumet i bakgrunnen, slik at et søk i dem svarer med en gang.
 searchIndexSettings.locked	Satt av %@ i miljøet, så det avgjøres der og ikke her.
 searchIndexSettings.environment	Utelatelser definert av miljøet
-searchIndexSettings.additional	Ytterligere utelatelser
+searchIndexSettings.additional	Ytterligere unntak
 searchIndexSettings.none	Ingen sti er konfigurert
 searchIndexSettings.addButton	Legg til
 searchIndexSettings.unavailable	Innstillinger for søkeindeks er bare tilgjengelige for administratorer.
@@ -308,7 +308,7 @@ folderSizeSettings.modeShallow	Bare deres egne filer
 folderSizeSettings.modeFull	Alt innenfor
 folderSizeSettings.locked	Satt av %@ i miljøet, så det avgjøres der og ikke her.
 folderSizeSettings.environment	Utelatelser definert av miljøet
-folderSizeSettings.additional	Ytterligere utelatelser
+folderSizeSettings.additional	Ytterligere unntak
 folderSizeSettings.none	Ingen stier er konfigurert
 folderSizeSettings.addButton	Legg til
 folderSizeSettings.unavailable	Innstillinger for mappestørrelser er bare tilgjengelige for administratorer.

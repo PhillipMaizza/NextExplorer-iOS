@@ -81,4 +81,14 @@ public enum LocalizationOverride {
     public static func isRTL(_ language: String) -> Bool {
         Locale.Language(identifier: language).characterDirection == .rightToLeft
     }
+
+    /// Whether the UI lays out right to left: the language picked inside the app, else the language
+    /// the system resolved for the app. Without the system fallback an Arabic or Hebrew phone with
+    /// no in-app choice would come out left to right.
+    public static func usesRightToLeftLayout(selectedLanguage: String?, systemLanguage: String? = Bundle.main.preferredLocalizations.first) -> Bool {
+        guard let language = selectedLanguage ?? systemLanguage else {
+            return false
+        }
+        return isRTL(language)
+    }
 }

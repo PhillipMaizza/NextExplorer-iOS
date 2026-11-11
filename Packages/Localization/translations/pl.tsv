@@ -1058,3 +1058,90 @@ serverSettings.featureOffHowTo	Aby ją włączyć, ustaw %@ i uruchom ponownie k
 trashSettings.environmentNote	Wartości domyślne pochodzą z TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT i TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Wartości domyślne pochodzą z VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE i VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Odśwież
+apiTokens.copiedToken	Skopiowano
+apiTokens.copyToken	Kopiuj token
+apiTokens.createSubmit	Utwórz token
+apiTokens.created	Utworzono %@
+apiTokens.emptyMessage	Utwórz token, aby skrypt mógł korzystać z Twojego konta.
+apiTokens.emptyTitle	Brak tokenów API
+apiTokens.expired	Wygasł %@
+apiTokens.expires	Wygasa %@
+apiTokens.expiry30	Za 30 dni
+apiTokens.expiry90	Za 90 dni
+apiTokens.expiryNever	Nigdy
+apiTokens.expiryYear	Za rok
+apiTokens.fieldAccess	Dostęp
+apiTokens.fieldExpiry	Wygasa
+apiTokens.fieldName	Nazwa
+apiTokens.fieldPassword	Twoje hasło
+apiTokens.formTitle	Nowy token API
+apiTokens.intro	Tokeny API pozwalają skryptom i innym narzędziom korzystać z Twojego konta bez podawania hasła. Token umożliwia tylko to, na co pozwala jego dostęp, i możesz go unieważnić w dowolnej chwili.
+apiTokens.issuedDone	Skopiowałem go
+apiTokens.issuedIntro	Token jest wyświetlany tylko ten jeden raz. Zapisz go w bezpiecznym miejscu. Jeśli go zgubisz, unieważnij go i utwórz nowy.
+apiTokens.issuedTitle	Skopiuj swój token
+apiTokens.lastUsed	Ostatnio użyty %@
+apiTokens.lastUsedFrom	Ostatnio użyty %1$@ z %2$@
+apiTokens.limitReached	Osiągnięto limit tokenów: %lld. Unieważnij jeden, aby utworzyć kolejny.
+apiTokens.menuAccessibilityLabel	Działania dla: %@
+apiTokens.namePlaceholder	Na przykład skrypt kopii zapasowej
+apiTokens.navigationTitle	Tokeny API
+apiTokens.neverExpires	Nigdy nie wygasa
+apiTokens.neverUsed	Nigdy nie użyty
+apiTokens.newButton	Nowy token
+apiTokens.passwordHint	Wpisz hasło, aby utworzyć token.
+apiTokens.renameAction	Zmień nazwę
+apiTokens.renameSave	Zapisz
+apiTokens.renameTitle	Zmień nazwę tokenu
+apiTokens.revokeAction	Unieważnij
+apiTokens.revokeConfirm	Unieważnij
+apiTokens.revokeMessage	Wszystko, co używa „%@”, natychmiast przestanie działać. Tej operacji nie można cofnąć.
+apiTokens.revokeTitle	Unieważnić token?
+apiTokens.scopeRead	Tylko odczyt
+apiTokens.scopeWrite	Odczyt i zapis
+apiTokens.sectionHeader	Deweloperzy
+changePassword.addIntro	To konto loguje się przez jednokrotne logowanie (SSO) i nie ma jeszcze hasła. Dodaj je, aby móc logować się także adresem e-mail lub nazwą użytkownika.
+changePassword.addNavigationTitle	Dodaj hasło
+changePassword.addSubmitButton	Dodaj hasło
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Kod
+login.codeIntroAuthenticator	To konto wymaga dodatkowego kroku. Wpisz 6-cyfrowy kod z aplikacji uwierzytelniającej.
+login.codeIntroRecovery	Wpisz jeden ze swoich kodów odzyskiwania. Każdy działa tylko raz.
+login.codeSubmit	Zweryfikuj
+login.codeTitle	Wpisz kod
+login.codeUseAuthenticator	Użyj zamiast tego kodu z aplikacji uwierzytelniającej
+login.codeUseRecovery	Użyj zamiast tego kodu odzyskiwania
+login.diagnosticsButton	Udostępnij dziennik logowania
+login.diagnosticsIntro	Ten dziennik pokazuje, co serwer odpowiedział na każdym etapie, aby pomóc ustalić, dlaczego logowanie się nie udaje. Nigdy nie zawiera Twojego hasła, wpisanego adresu ani nazwy użytkownika. Wyślij go deweloperowi.
+login.diagnosticsTitle	Dziennik logowania
+login.errorInvalidCode	Ten kod jest nieprawidłowy.
+login.errorSecondFactorExpired	To logowanie wygasło. Wpisz hasło ponownie.
+login.identifierField	E-mail lub nazwa użytkownika
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Dodaj hasło
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Kod z aplikacji uwierzytelniającej
+twoFactor.confirmButton	Zweryfikuj i włącz
+twoFactor.copyCodesButton	Kopiuj kody
+twoFactor.copyKeyAccessibilityLabel	Kopiuj klucz konfiguracji
+twoFactor.enrollIntro	Zeskanuj ten kod QR aplikacją uwierzytelniającą lub wpisz klucz ręcznie. Następnie wpisz 6-cyfrowy kod pokazany w aplikacji.
+twoFactor.keyLabel	Klucz konfiguracji
+twoFactor.manageButton	Zarządzaj…
+twoFactor.navigationTitle	Uwierzytelnianie dwuskładnikowe
+twoFactor.newCodesButton	Pobierz nowe kody odzyskiwania
+twoFactor.offIntro	Dodaj drugi krok do logowania. Po wpisaniu hasła podasz kod z aplikacji uwierzytelniającej.
+twoFactor.offTitle	Uwierzytelnianie dwuskładnikowe jest wyłączone
+twoFactor.onTitle	Uwierzytelnianie dwuskładnikowe jest włączone
+twoFactor.passwordConfirmButton	Potwierdź
+twoFactor.passwordField	Hasło
+twoFactor.passwordNewCodesIntro	Wpisz hasło, aby wymienić kody odzyskiwania. Stare przestaną działać.
+twoFactor.passwordTurnOffIntro	Wpisz hasło, aby wyłączyć uwierzytelnianie dwuskładnikowe.
+twoFactor.qrAccessibilityLabel	Kod QR dla aplikacji uwierzytelniającej
+twoFactor.recoveryCodesLeft	Pozostałe kody odzyskiwania: %lld
+twoFactor.recoveryDoneButton	Zapisałem je
+twoFactor.recoveryIntro	Każdy kod działa raz, jeśli utracisz aplikację uwierzytelniającą. Nie będą wyświetlane ponownie, więc zapisz je w bezpiecznym miejscu.
+twoFactor.recoveryTitle	Zapisz kody odzyskiwania
+twoFactor.shareCodesButton	Udostępnij kody
+twoFactor.turnOffButton	Wyłącz
+twoFactor.turnOnButton	Włącz

@@ -1046,3 +1046,90 @@ serverSettings.featureOffHowTo	Zum Aktivieren setze %@ und starte den Container 
 trashSettings.environmentNote	Die Standardwerte stammen aus TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT und TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Die Standardwerte stammen aus VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE und VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Aktualisieren
+apiTokens.copiedToken	Kopiert
+apiTokens.copyToken	Token kopieren
+apiTokens.createSubmit	Token erstellen
+apiTokens.created	Erstellt %@
+apiTokens.emptyMessage	Erstelle einen, damit ein Skript dein Konto nutzen kann.
+apiTokens.emptyTitle	Keine API-Tokens
+apiTokens.expired	Abgelaufen %@
+apiTokens.expires	Läuft ab %@
+apiTokens.expiry30	In 30 Tagen
+apiTokens.expiry90	In 90 Tagen
+apiTokens.expiryNever	Nie
+apiTokens.expiryYear	In 1 Jahr
+apiTokens.fieldAccess	Zugriff
+apiTokens.fieldExpiry	Läuft ab
+apiTokens.fieldName	Name
+apiTokens.fieldPassword	Dein Passwort
+apiTokens.formTitle	Neuer API-Token
+apiTokens.intro	Mit API-Tokens können Skripte und andere Werkzeuge dein Konto ohne dein Passwort nutzen. Ein Token darf nur das, was sein Zugriff erlaubt, und du kannst ihn jederzeit widerrufen.
+apiTokens.issuedDone	Ich habe ihn kopiert
+apiTokens.issuedIntro	Er wird nur dieses eine Mal angezeigt. Bewahre ihn an einem sicheren Ort auf. Wenn du ihn verlierst, widerrufe ihn und erstelle einen neuen.
+apiTokens.issuedTitle	Token kopieren
+apiTokens.lastUsed	Zuletzt verwendet %@
+apiTokens.lastUsedFrom	Zuletzt verwendet %1$@ von %2$@
+apiTokens.limitReached	Du hast das Limit von %lld Tokens erreicht. Widerrufe einen, um einen weiteren zu erstellen.
+apiTokens.menuAccessibilityLabel	Aktionen für %@
+apiTokens.namePlaceholder	Zum Beispiel Backup-Skript
+apiTokens.navigationTitle	API-Tokens
+apiTokens.neverExpires	Läuft nie ab
+apiTokens.neverUsed	Nie verwendet
+apiTokens.newButton	Neuer Token
+apiTokens.passwordHint	Gib dein Passwort ein, um einen Token zu erstellen.
+apiTokens.renameAction	Umbenennen
+apiTokens.renameSave	Sichern
+apiTokens.renameTitle	Token umbenennen
+apiTokens.revokeAction	Widerrufen
+apiTokens.revokeConfirm	Widerrufen
+apiTokens.revokeMessage	Alles, was „%@“ verwendet, funktioniert sofort nicht mehr. Dies kann nicht rückgängig gemacht werden.
+apiTokens.revokeTitle	Token widerrufen?
+apiTokens.scopeRead	Nur Lesen
+apiTokens.scopeWrite	Lesen und Schreiben
+apiTokens.sectionHeader	Entwickler
+changePassword.addIntro	Dieses Konto meldet sich per Single Sign-on an und hat noch kein Passwort. Lege eines an, um dich auch mit deiner E-Mail-Adresse oder deinem Benutzernamen anzumelden.
+changePassword.addNavigationTitle	Passwort hinzufügen
+changePassword.addSubmitButton	Passwort hinzufügen
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Code
+login.codeIntroAuthenticator	Dieses Konto verlangt einen zweiten Schritt. Gib den 6-stelligen Code aus deiner Authenticator-App ein.
+login.codeIntroRecovery	Gib einen deiner Wiederherstellungscodes ein. Jeder funktioniert nur einmal.
+login.codeSubmit	Bestätigen
+login.codeTitle	Code eingeben
+login.codeUseAuthenticator	Stattdessen den Authenticator-Code verwenden
+login.codeUseRecovery	Stattdessen einen Wiederherstellungscode verwenden
+login.diagnosticsButton	Anmeldeprotokoll teilen
+login.diagnosticsIntro	Dieses Protokoll zeigt, was der Server bei jedem Schritt geantwortet hat, um herauszufinden, warum die Anmeldung fehlschlägt. Es enthält nie dein Passwort, die eingegebene Adresse oder deinen Benutzernamen. Sende es an den Entwickler.
+login.diagnosticsTitle	Anmeldeprotokoll
+login.errorInvalidCode	Dieser Code ist nicht richtig.
+login.errorSecondFactorExpired	Diese Anmeldung ist abgelaufen. Gib dein Passwort erneut ein.
+login.identifierField	E-Mail oder Benutzername
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Passwort hinzufügen
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Authenticator-Code
+twoFactor.confirmButton	Bestätigen und aktivieren
+twoFactor.copyCodesButton	Codes kopieren
+twoFactor.copyKeyAccessibilityLabel	Einrichtungsschlüssel kopieren
+twoFactor.enrollIntro	Scanne diesen QR-Code mit deiner Authenticator-App oder tippe den Schlüssel von Hand ein. Gib dann den 6-stelligen Code ein, den die App anzeigt.
+twoFactor.keyLabel	Einrichtungsschlüssel
+twoFactor.manageButton	Verwalten…
+twoFactor.navigationTitle	Zwei-Faktor-Authentifizierung
+twoFactor.newCodesButton	Neue Wiederherstellungscodes erhalten
+twoFactor.offIntro	Füge der Anmeldung einen zweiten Schritt hinzu. Nach deinem Passwort gibst du einen Code aus einer Authenticator-App ein.
+twoFactor.offTitle	Zwei-Faktor-Authentifizierung ist aus
+twoFactor.onTitle	Zwei-Faktor-Authentifizierung ist an
+twoFactor.passwordConfirmButton	Bestätigen
+twoFactor.passwordField	Passwort
+twoFactor.passwordNewCodesIntro	Gib dein Passwort ein, um deine Wiederherstellungscodes zu ersetzen. Die alten funktionieren dann nicht mehr.
+twoFactor.passwordTurnOffIntro	Gib dein Passwort ein, um die Zwei-Faktor-Authentifizierung auszuschalten.
+twoFactor.qrAccessibilityLabel	QR-Code für deine Authenticator-App
+twoFactor.recoveryCodesLeft	Verbleibende Wiederherstellungscodes: %lld
+twoFactor.recoveryDoneButton	Ich habe sie gesichert
+twoFactor.recoveryIntro	Jeder Code funktioniert einmal, falls du deine Authenticator-App verlierst. Sie werden nicht noch einmal angezeigt, bewahre sie also an einem sicheren Ort auf.
+twoFactor.recoveryTitle	Wiederherstellungscodes sichern
+twoFactor.shareCodesButton	Codes teilen
+twoFactor.turnOffButton	Ausschalten
+twoFactor.turnOnButton	Einschalten
