@@ -24,6 +24,7 @@ struct SettingsClientCertificateTests {
         } withDependencies: { [origin, summary] in
             $0.clientCertificateClient = .inMemory([origin: summary])
             $0.filesClient.fetchAuthMethods = { _ in [] }
+            $0.filesClient.fetchAuthStatus = { _ in AuthStatus(localEnabled: true, oidcEnabled: false) }
             $0.filesClient.fetchPreferences = { _ in UserPreferences() }
             $0.filesClient.fetchBranding = { _ in Branding() }
             $0.filesClient.serverFeatures = { _ in ServerFeatures() }

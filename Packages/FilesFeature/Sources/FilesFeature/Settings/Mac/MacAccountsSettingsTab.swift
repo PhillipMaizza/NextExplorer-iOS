@@ -142,7 +142,7 @@
                 if account.isActive {
                     MacUploadDefaultsSection(store: store.scope(state: \.uploadDefaults, action: \.uploadDefaults))
                 }
-                if account.isActive {
+                if account.isActive, store.showsTwoFactorRow {
                     Section {
                         LabeledContent(L10n.TwoFactor.navigationTitle) {
                             Button(L10n.TwoFactor.manageButton) { store.send(.twoFactorButtonTapped) }
@@ -152,7 +152,9 @@
                 Section {
                     HStack {
                         if account.isActive {
-                            Button(L10n.MacSettings.changePassword) { store.send(.changePasswordButtonTapped) }
+                            if store.showsPasswordRow {
+                                Button(L10n.MacSettings.changePassword) { store.send(.changePasswordButtonTapped) }
+                            }
                         } else {
                             Button(L10n.MacSettings.switchAccount) { store.send(.switchAccountTapped(account.id)) }
                         }

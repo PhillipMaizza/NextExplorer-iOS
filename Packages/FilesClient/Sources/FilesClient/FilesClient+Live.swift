@@ -234,6 +234,9 @@ public extension FilesClient {
             fetchAuthMethods: { serverURL in
                 try await service.authMethods(serverURL: serverURL)
             },
+            fetchAuthStatus: { serverURL in
+                try await service.authStatus(serverURL: serverURL)
+            },
             fetchTwoFactorStatus: { serverURL in
                 try await service.twoFactorStatus(serverURL: serverURL)
             },

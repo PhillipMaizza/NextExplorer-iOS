@@ -36,6 +36,13 @@ extension FilesService {
         return try await send(request, decoding: SignInMethodsEnvelope.self).methods
     }
 
+    /// `GET /api/auth/status`: which sign in strategies the server has switched on.
+    func authStatus(serverURL: URL) async throws -> AuthStatus {
+        let url = serverURL.appendingPathComponent(APIPath.authStatus)
+        let request = Self.makeRequest(url: url, method: .get)
+        return try await send(request, decoding: AuthStatus.self)
+    }
+
     /// Unlike every other call, a 401 on the account routes (passwords, two factor) is "that
     /// password or code is not right", not a dead session, so it must reach the user as its
     /// message, not as `.sessionExpired`. Returns the body of a successful answer.
