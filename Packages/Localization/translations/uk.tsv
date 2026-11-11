@@ -1,0 +1,1120 @@
+# NextExplorer: Українська (uk). key<TAB>value.
+common.cancel	Скасувати
+common.save	Зберегти
+common.edit	Змінити
+common.retry	Спробувати ще раз
+common.syncCompleted	Синхронізацію завершено
+common.delete	Видалити
+common.remove	Вилучити
+common.clear	Очистити
+common.done	Готово
+common.ok	OK
+common.openSettings	Відкрити налаштування
+common.logOut	Вийти
+common.close	Закрити
+common.back	Назад
+common.share	Поділитися
+common.copy	Копіювати
+common.copied	Скопійовано
+common.download	Завантажити
+common.sort	Сортувати
+common.select	Вибрати
+common.deselect	Скасувати вибір
+common.search	Пошук
+common.password	Пароль
+common.never	Ніколи
+common.selectedCount	Вибрано: %lld
+tab.browse	Огляд
+tab.favorites	Обране
+tab.shared	Спільні
+tab.downloads	Завантаження
+tab.settings	Налаштування
+sort.sheetTitle	Сортувати за
+sort.name	Ім’я
+sort.size	Розмір
+sort.kind	Тип
+sort.dateModified	Дата зміни
+sort.dateAdded	Дата додавання
+sort.dateShared	Дата надання доступу
+sort.expiration	Термін дії
+sort.email	Електронна пошта
+sort.type	Тип
+sort.ascending	За зростанням
+sort.descending	За спаданням
+select.selectAll	Вибрати все
+select.deselectAll	Скасувати вибір усіх
+select.listView	Список
+select.gridView	Сітка
+emptyState.folderEmpty	Ця папка порожня.
+emptyState.loadFailed	Не вдалося зв’язатися із сервером.
+emptyState.noSearchMatches	Немає збігів для “%@”.
+accessMode.readonly	Лише читання
+accessMode.readwrite	Читання й запис
+shareTarget.anyone	Будь-хто з посиланням
+shareTarget.users	Окремі користувачі
+directLinkMode.auto	Авто
+directLinkMode.inline	Перегляд
+directLinkMode.raw	Вихідний
+directLinkMode.download	Завантажити
+thumbnailSize.small	Малий
+thumbnailSize.medium	Середній
+thumbnailSize.large	Великий
+downloadLocation.documents	Документи
+downloadLocation.cache	Кеш
+dateFormat.automatic	Автоматично
+browse.navigationTitle	Огляд
+browse.scopeThisFolder	Ця папка
+browse.scopeEverywhere	Усюди
+browse.searchScopeInFolder	Ця папка
+browse.searchScopeEverywhere	Усюди
+browse.locations	Розташування
+browse.breadcrumbHint	Відкриває цю папку
+browse.open	Відкрити
+browse.unsupportedFileType	Непідтримуваний тип файлу
+browse.actionGetInfo	Інформація
+browse.actionPermissions	Дозволи
+browse.actionRename	Перейменувати
+browse.actionExtract	Розпакувати
+browse.actionCompress	Стиснути
+browse.actionDownload	Завантажити
+browse.actionAddToFavorites	Додати до обраного
+browse.actionRemoveFromFavorites	Вилучити з обраного
+browse.actionShare	Створити посилання для спільного доступу
+browse.actionDelete	Видалити
+browse.actionDuplicate	Дублювати
+browse.renameTitle	Перейменувати
+browse.renameNamePlaceholder	Ім’я
+browse.actionNewFolder	Створити папку
+browse.newFolderTitle	Нова папка
+browse.newFolderPlaceholder	Назва папки
+browse.newFolderConfirm	Створити
+browse.actionNewFile	Створити файл
+browse.newFileTitle	Новий файл
+browse.newFileTypeHint	Використайте тип файлу, який може відкрити редактор, наприклад .txt, .md або .js.
+browse.deleteConfirmTitle	Видалити?
+browse.deleteConfirmOne	Видалити “%@”?
+browse.deleteConfirmMany	Видалити елементи (%lld)?
+browse.deleteMessage	Цю дію не можна скасувати.
+browse.deleteLinkedSharesOne	Також буде вилучено 1 посилання для спільного доступу, що веде сюди.
+browse.deleteLinkedSharesMany	Також буде вилучено посилання для спільного доступу, що ведуть сюди (%lld).
+browse.deleteLinkedSharesUnavailable	Не вдалося перевірити посилання для спільного доступу, що ведуть сюди. Наявні посилання перестануть працювати.
+browse.searchNoMatchesInFolder	Немає збігів для “%@”.
+browse.searchEverywhere	Шукати всюди
+browse.searchFailed	Не вдалося виконати пошук. Перевірте з’єднання й спробуйте ще раз.
+browse.progressExtracting	Розпакування…
+browse.progressCompressing	Стиснення…
+browse.offlineBannerTitle	Офлайн
+browse.offlineBannerDetail	Показано збережену копію від %@
+browse.actionCopy	Копіювати
+browse.destinationPickerMoveTitle	Перемістити до…
+browse.destinationPickerConfirmMove	Перемістити сюди
+browse.destinationPickerNoFolders	Тут немає папок
+browse.destinationPickerLoadFailed	Не вдалося завантажити папки.
+browse.actionMove	Перемістити
+browse.actionPaste	Вставити
+browse.actionPasteCount	Вставити елементи (%lld)
+browse.actionPasteHere	Вставити сюди
+browse.actionClearClipboard	Очистити буфер обміну
+browse.clipboardMoveCount	Перемістити: %lld
+browse.clipboardCopyCount	Копіювати: %lld
+browse.clipboardCopiedOne	Скопійовано: %@
+browse.clipboardCopiedMany	Скопійовано елементів: %lld
+browse.progressMoving	Переміщення…
+browse.progressCopying	Копіювання…
+browse.transferMoved	Переміщено елементів: %lld
+browse.transferCopied	Скопійовано елементів: %lld
+browse.transferMovedWithSkipped	Переміщено елементів: %1$lld, пропущено: %2$lld
+browse.transferCopiedWithSkipped	Скопійовано елементів: %1$lld, пропущено: %2$lld
+browse.transferConflictTitle	Замінити елементи?
+browse.transferConflictMessageOne	"%@" уже є в цій папці.
+browse.transferConflictMessageMany	Елементів, що вже є в цій папці: %lld.
+browse.transferConflictReplace	Замінити
+browse.transferConflictKeepBoth	Залишити обидва
+browse.actionOpenInBrowser	Відкрити в браузері
+favorites.navigationTitle	Обране
+favorites.emptyList	Позначайте папки зірочкою в Огляді, щоб бачити їх тут.
+favorites.actionRemoveFromFavorites	Вилучити з обраного
+favorites.accessibilityBadge	Обране
+favorites.actionEdit	Змінити
+favorites.editTitle	Змінити обране
+favorites.editNameLabel	Ім’я
+favorites.editNameErrorEmpty	Ім’я не може бути порожнім.
+favorites.editIconLabel	Значок
+favorites.editIconOutline	Контур
+favorites.editIconSolid	Заповнений
+favorites.editColorLabel	Колір
+favorites.editColorDefault	За замовчуванням
+favorites.editSave	Зберегти
+favorites.reorderFailed	Не вдалося зберегти новий порядок.
+favorites.removeConfirm	Вилучити з обраного (%lld)?
+favorites.removeMessage	Це лише вилучить їх з обраного.
+favorites.removeFailedOne	Не вдалося вилучити цей елемент обраного.
+favorites.removeFailedMany	Не вдалося вилучити ці елементи обраного.
+favorites.removePartial	Вилучено %1$lld з %2$lld.
+downloads.navigationTitle	Завантаження
+downloads.actionOpenInFiles	Відкрити у «Файлах»
+downloads.emptyList	Файли, які ви завантажуєте в Огляді, з’являються тут.
+downloads.deleteConfirmTitle	Видалити?
+downloads.deleteConfirmOne	Видалити “%@”?
+downloads.deleteConfirmMany	Видалити файли (%lld)?
+downloads.deleteSingleMessage	Це лише видалить локальну копію. Файл залишиться на сервері.
+downloads.deleteBulkMessage	Це лише видалить локальні копії. Файли залишаться на сервері.
+downloads.errorNameExists	Файл із такою назвою вже існує.
+downloads.errorInvalidName	Така назва недопустима.
+downloads.errorMissing	Цей файл більше не вдалося знайти.
+downloads.errorGeneric	Не вдалося виконати цю дію.
+unsupportedPreview.genericType	Файл
+unsupportedPreview.cannotOpen	Цей застосунок не може відкрити файл такого типу.
+uploads.navigationTitle	Вивантаження
+uploads.menuTitle	Вивантажити
+uploads.actionUploadFromFiles	Вивантажити з «Файлів»
+uploads.actionUploadFromPhotos	Вивантажити з галереї
+uploads.actionTakePhoto	Зробити фото чи відео
+uploads.cameraDeniedTitle	Потрібен доступ до камери
+uploads.cameraDeniedMessage	Дозвольте доступ до камери в Налаштуваннях, щоб зробити фото чи відео.
+uploads.destinationTitle	Вивантажити до…
+uploads.destinationConfirm	Вивантажити сюди
+uploads.reviewTitleOne	Вивантажити 1 файл
+uploads.reviewTitleMany	Вивантажити файли (%lld)
+uploads.reviewSectionFiles	Файли
+uploads.reviewSectionPath	Шлях
+uploads.reviewSectionSize	Загальний розмір
+uploads.reviewChooseFolder	Виберіть папку
+uploads.reviewUploadButton	Вивантажити
+uploads.reviewPreparing	Підготовка: %lld…
+uploads.reviewAddMore	Додати ще файли
+uploads.reviewPreviewFile	Попередній перегляд %@
+uploads.reviewInsecureNetworkNotice	З’єднання через http. Якщо цей сервер є лише у вашій домашній мережі, вивантаження не працюватиме, коли ви поза нею.
+uploads.stagingFailed	Не вдалося додати ці файли. Спробуйте ще раз.
+uploads.stagingSkipped	Не вдалося підготувати елементи (%lld), їх пропущено.
+uploads.discardTitle	Скасувати вивантаження?
+uploads.discardMessage	Додані файли не буде вивантажено.
+uploads.discardConfirm	Скасувати
+uploads.statusWaiting	Очікування
+uploads.statusFailed	Не вдалося вивантажити
+uploads.barTitleOne	Вивантаження %@
+uploads.barTitleMany	Вивантаження файлів: %lld
+uploads.barFailedOne	1 вивантаження не вдалося
+uploads.barFailedMany	Невдалих вивантажень: %lld
+uploads.retryAll	Повторити всі
+uploads.complete	Вивантаження завершено
+uploads.completeMany	Вивантажено файлів: %lld
+uploads.completeWithFailures	Вивантажено: %1$lld, не вдалося: %2$lld
+uploads.failedGeneric	Не вдалося вивантажити цей файл.
+uploads.clear	Очистити
+uploads.emptyList	Вивантажень ще немає.
+uploads.cancelAll	Скасувати всі вивантаження
+shared.navigationTitle	Спільні
+shared.segmentByMe	Мої
+shared.segmentWithMe	Зі мною
+shared.sectionExpired	Термін дії минув
+shared.badgeExpired	термін дії минув
+shared.emptyByMe	Поділіться файлом або папкою, щоб побачити тут посилання.
+shared.emptyWithMe	Посилання, якими з вами діляться інші, з’являються тут.
+shared.noSearchMatches	Немає спільного доступу, що відповідав би “%@”.
+shared.deleteTitle	Видалити посилання для спільного доступу?
+shared.deleteMessage	Посилання одразу перестане працювати. Сам файл чи папка не змінюються.
+shared.sharedByUnknown	Хтось
+shared.metaAccess	Доступ
+shared.metaExpiration	Термін дії
+shared.metaSharedBy	Від кого
+shared.metaSharedWith	Кому
+shared.anyoneWithLink	Будь-хто з посиланням
+shared.linkMode	Режим посилання
+shared.actionShareLink	Посилання для спільного доступу
+shared.actionFolderLink	Посилання на папку
+shared.actionFileLink	Посилання на файл
+shared.copiedShareLink	Посилання для спільного доступу скопійовано
+shared.copiedFolderZip	Посилання на ZIP папки скопійовано
+shared.copiedDirectFile	Пряме посилання на файл скопійовано
+createShare.title	Створити посилання для спільного доступу
+createShare.titleCreated	Спільний доступ створено
+createShare.sectionLabel	Мітка
+createShare.sectionAccessMode	Режим доступу
+createShare.sectionWhoCanAccess	Хто має доступ
+createShare.sectionShareLink	Посилання для спільного доступу
+createShare.fieldPassword	Пароль
+createShare.togglePasswordProtect	Захист паролем
+createShare.toggleSetExpiration	Встановити термін дії
+createShare.fieldExpires	Спливає
+createShare.submit	Створити посилання для спільного доступу
+createShare.loadingUsers	Завантаження користувачів…
+createShare.noOtherUsers	Немає інших користувачів, з якими можна поділитися.
+createShare.sharingPrefix	Спільний доступ:
+createShare.createdBanner	Посилання для спільного доступу успішно створено!
+createShare.viewInShared	Переглянути в «Спільних»
+createShare.directLinkMode	Режим прямого посилання
+createShare.directFolderLink	Пряме посилання на ZIP папки
+createShare.directFileLink	Пряме посилання на файл
+createShare.summaryAccess	Доступ
+createShare.summarySharedWith	Кому
+createShare.summaryPassword	Пароль
+createShare.summaryPasswordProtected	Захищено
+createShare.summaryExpires	Спливає
+createShare.summarySpecificPeople	Окремі люди
+createShare.errorPastExpiration	Виберіть дату завершення в майбутньому.
+editShare.title	Змінити посилання для спільного доступу
+editShare.save	Зберегти зміни
+editShare.passwordKeepHint	Залиште порожнім, щоб зберегти поточний пароль
+editShare.savedToast	Посилання для спільного доступу оновлено
+thumbnailSettings.navigationTitle	Мініатюри
+thumbnailSettings.subtitle	Керуйте тим, як сервер створює мініатюри зображень для всіх клієнтів.
+thumbnailSettings.enable	Створювати мініатюри
+thumbnailSettings.enableHelp	Вимкніть, щоб натомість усюди показувати повні зображення.
+thumbnailSettings.quality	Якість
+thumbnailSettings.qualityHelp	Вища якість виглядає краще й займає більше місця.
+thumbnailSettings.maxDimension	Макс. розмір
+thumbnailSettings.maxDimensionHelp	Найдовша сторона створеної мініатюри в пікселях.
+thumbnailSettings.concurrency	Паралельність
+thumbnailSettings.concurrencyHelp	Скільки мініатюр сервер створює одночасно.
+thumbnailSettings.unavailable	Налаштування мініатюр доступні лише адміністраторам.
+thumbnailSettings.saveButton	Зберегти зміни
+uploadSettings.navigationTitle	Вивантаження
+uploadSettings.subtitle	Налаштуйте, як файли надсилаються на сервер.
+uploadSettings.chunkedEnable	Увімкнути вивантаження частинами
+uploadSettings.chunkedEnableHelp	Використовує TUS для надсилання великих файлів кількома меншими запитами.
+uploadSettings.chunkSize	Розмір частини
+uploadSettings.chunkSizeHelp	Максимальний розмір кожного запиту вивантаження. Тримайте його нижче за ліміт вашого зворотного проксі. Менші частини дають плавніший прогрес.
+uploadSettings.autoFallback	Автоперехід на частини
+uploadSettings.autoFallbackHelp	Якщо пряме вивантаження не вдалося, бо зворотний проксі відхиляє розмір тіла запиту, автоматично перемикатися на вивантаження частинами.
+uploadSettings.unavailable	Налаштування вивантаження доступні лише адміністраторам.
+uploadSettings.saveButton	Зберегти зміни
+ffmpegSettings.subtitle	Виберіть виконувані файли FFmpeg і FFprobe, що використовуються для попереднього перегляду й метаданих медіа.
+ffmpegSettings.containerPathHelp	Вкажіть абсолютні шляхи, видимі всередині контейнера застосунку. Щоб використати бінарні файли хоста, спершу змонтуйте їх у контейнер.
+ffmpegSettings.ffmpegPath	Шлях до виконуваного файлу FFmpeg
+ffmpegSettings.ffprobePath	Шлях до виконуваного файлу FFprobe
+ffmpegSettings.invalid	Обидва шляхи мають бути абсолютними шляхами в контейнері, що починаються з /.
+ffmpegSettings.defaultHelp	Залиште шлях порожнім, щоб використати FFMPEG_PATH або FFPROBE_PATH із середовища, а потім вбудований виконуваний файл. Зміни застосовуються одразу.
+ffmpegSettings.unavailable	Налаштування FFmpeg доступні лише адміністраторам.
+ffmpegSettings.saveButton	Зберегти зміни
+searchIndexSettings.navigationTitle	Пошуковий індекс
+searchIndexSettings.subtitle	Виключіть шляхи з індексації вмісту.
+searchIndexSettings.running	Вести пошуковий індекс
+searchIndexSettings.runningHelp	Читає документи на томі у фоновому режимі, щоб пошук у них відповідав одразу.
+searchIndexSettings.locked	Задано змінною %@ у середовищі, тому це вирішується там, а не тут.
+searchIndexSettings.environment	Виключення, задані середовищем
+searchIndexSettings.additional	Додаткові виключення
+searchIndexSettings.none	Шляхи не налаштовано
+searchIndexSettings.addButton	Додати
+searchIndexSettings.unavailable	Налаштування пошукового індексу доступні лише адміністраторам.
+searchIndexSettings.saveButton	Зберегти зміни
+searchIndexSettings.discardButton	Відхилити
+folderSizeSettings.navigationTitle	Розміри папок
+folderSizeSettings.subtitle	Виключіть шляхи з обчислення й індексації розмірів папок.
+folderSizeSettings.running	Вимірювати розміри папок
+folderSizeSettings.runningHelp	Вимірює папки у фоновому режимі, щоб їхній розмір показувався в списку.
+folderSizeSettings.modeOff	Вимкнено
+folderSizeSettings.modeShallow	Лише власні файли
+folderSizeSettings.modeFull	Усе всередині
+folderSizeSettings.locked	Задано змінною %@ у середовищі, тому це вирішується там, а не тут.
+folderSizeSettings.environment	Виключення, задані середовищем
+folderSizeSettings.additional	Додаткові виключення
+folderSizeSettings.none	Шляхи не налаштовано
+folderSizeSettings.addButton	Додати
+folderSizeSettings.unavailable	Налаштування розмірів папок доступні лише адміністраторам.
+folderSizeSettings.saveButton	Зберегти зміни
+folderSizeSettings.discardButton	Відхилити
+activityLog.navigationTitle	Журнал дій
+activityLog.subtitle	Хто що зробив, коли і звідки. Вимкнено, доки ви не ввімкнете.
+activityLog.enabled	Записувати дії
+activityLog.enabledHelp	Входи, завантаження, вивантаження, видалення, відновлення, посилання для спільного доступу та зміни облікових записів записуються, доки це ввімкнено. Того, що було до ввімкнення, тут немає.
+activityLog.retention	Зберігати (днів)
+activityLog.retentionInvalid	Від 1 до 3650 днів.
+activityLog.saveButton	Зберегти зміни
+activityLog.off	Журнал вимкнено, тому нічого не записується.
+activityLog.none	Поки що нічого не записано.
+activityLog.filterAction	Тип
+activityLog.anyAction	Будь-який тип
+activityLog.filterOutcome	Результат
+activityLog.anyOutcome	Будь-який результат
+activityLog.outcomeOk	Успішно
+activityLog.outcomeRefused	Відхилено
+activityLog.searchPlaceholder	Ім’я або шлях
+activityLog.searchButton	Знайти
+activityLog.refresh	Оновити
+activityLog.clear	Очистити журнал
+activityLog.clearTitle	Очистити журнал?
+activityLog.clearMessage	Кожен записаний рядок буде видалено. Цю дію не можна скасувати.
+activityLog.clearConfirm	Очистити журнал
+activityLog.more	Показати більше
+activityLog.refusedSuffix	Відхилено
+activityLog.fromAddress	З %@
+activityLog.unavailable	Журнал дій доступний лише адміністраторам.
+activityLog.action.signIn	Вхід виконано
+activityLog.action.signOut	Вихід виконано
+activityLog.action.accountPassword	Пароль змінено
+activityLog.action.accountTwoFactor	Другий фактор змінено
+activityLog.action.accountPasskey	Ключ доступу змінено
+activityLog.action.accountToken	Токен API змінено
+activityLog.action.adminUser	Обліковий запис змінено
+activityLog.action.adminSettings	Налаштування змінено
+activityLog.action.adminActivityClear	Журнал очищено
+activityLog.action.shareCreate	Спільний доступ створено
+activityLog.action.shareDelete	Спільний доступ видалено
+activityLog.action.shareDownload	Завантажено за посиланням
+activityLog.action.shareUpload	Вивантажено за посиланням
+activityLog.action.fileDownload	Завантажено
+activityLog.action.fileUpload	Вивантажено
+activityLog.action.fileDelete	Переміщено до кошика
+activityLog.action.fileRestore	Відновлено
+activityLog.action.filePurge	Видалено остаточно
+activityLog.action.versionsPurge	Версії видалено
+trashSettings.navigationTitle	Кошик і версії
+trashSettings.subtitle	Видалені елементи та попередні версії файлів зберігаються в зарезервованому місці на власному томі й вилучаються після завершення терміну зберігання або коли це місце потрібне.
+trashSettings.trashHeader	Кошик
+trashSettings.enabled	Надсилати видалені елементи до кошика
+trashSettings.enabledHelp	Коли вимкнено, видалення стирає елементи назавжди. Елементи, що вже лежать у кошику, все одно втрачають чинність.
+trashSettings.retention	Термін зберігання (днів)
+trashSettings.retentionHelp	Від 1 до 3650 днів.
+trashSettings.maxPercent	Частка кожного тому (%)
+trashSettings.maxPercentHelp	Максимум, який кошик може займати на томі, від 1 до 90%.
+trashSettings.maxSize	Обмеження розміру на том (ГіБ)
+trashSettings.maxSizeHelp	Необов’язково. Діє менше зі значень частки й обмеження.
+trashSettings.maxSizeNone	Без обмеження
+trashSettings.trashInvalid	Перевірте значення: термін зберігання від 1 до 3650 днів, частка від 1 до 90%, додатний розмір або без нього.
+trashSettings.versionsHeader	Версії файлів
+trashSettings.versionsSubtitle	Кожне збереження зберігає те, що замінює, без копіювання, у тому самому зарезервованому місці, що й кошик. Старіші версії з часом проріджуються.
+trashSettings.versionsEnabled	Зберігати попередні версії файлів
+trashSettings.versionsEnabledHelp	Не залежить від кошика. Коли вимкнено, збереження нічого нового не залишають; наявні версії лишаються, доки не втратять чинність або не будуть видалені.
+trashSettings.keepAllHours	Зберігати кожну версію (годин)
+trashSettings.hourlyDays	Потім по одній на годину (днів)
+trashSettings.dailyDays	Потім по одній на день (днів)
+trashSettings.maxPerFile	Найбільше версій на файл
+trashSettings.checkpointMinutes	Контрольна точка Office (хвилин)
+trashSettings.tiersHelp	Після цих ступенів зберігається одна версія на тиждень. Сеанс редагування в Office залишає одну версію, плюс контрольну точку не частіше ніж зазначено. Закріплені версії не проріджуються й не враховуються в обмеженні на файл.
+trashSettings.versionsInvalid	Перевірте значення: від 1 до 720 годин, від 1 до 365 днів на годину, від 1 до 3650 днів на день, від 1 до 1000 версій на файл, контрольна точка від 1 до 1440 хвилин.
+trashSettings.sharedSpace	Версії й кошик ділять зарезервоване місце кожного тому. Коли його не вистачає, першими йдуть старіші версії, потім елементи кошика, потім остання версія кожного файлу, а наостанок закріплені версії.
+trashSettings.saveButton	Зберегти зміни
+trashSettings.discardButton	Відхилити
+trashSettings.unavailable	Налаштування кошика й версій доступні лише адміністраторам.
+trashSettings.zonesHeader	Кошик за томами
+trashSettings.zonesSubtitle	Кожен том зберігає свій кошик у прихованій папці .nextexplorer у корені, тож видалення нічого не копіює.
+trashSettings.zonesEmpty	До кошика поки що нічого не видалено.
+trashSettings.zoneKindPersonal	Особиста папка користувача %@
+trashSettings.zoneKindUserVolume	Призначений том %@
+trashSettings.available	Доступний
+trashSettings.unavailableMissing	Не змонтовано або вилучено
+trashSettings.unavailableReplaced	Інший диск на його місці
+trashSettings.unavailableUnreadable	Не читається
+trashSettings.usage	%1$@ із %2$@
+trashSettings.noBudget	без обмеження
+trashSettings.zoneItems	Елементів: %1$lld · %2$@
+trashSettings.zoneVersions	Версій: %1$lld · %2$@
+trashSettings.lastPass	Останнє обслуговування: %@
+trashSettings.lastPassPurged	%1$@ · вилучено: %2$lld
+trashSettings.never	ще не було
+trashSettings.verify	Перевірити
+trashSettings.runMaintenance	Запустити обслуговування зараз
+trashSettings.verifyOk	Кошик кожного тому узгоджений.
+trashSettings.verifyIssues	Знайдено проблем: %lld
+trashSettings.zoneProblems	Проблем: %lld
+trashSettings.journalHeader	Журнал подій
+trashSettings.eventEvicted	"%@" вилучено до завершення терміну зберігання, щоб звільнити місце
+trashSettings.eventAdopted	"%@" відновлено після перерви
+trashSettings.eventLost	У "%@" бракувало вмісту
+trashSettings.eventFailed	Не вдалося вилучити "%@"
+trashSettings.eventBreaker	Забагато елементів відсутні одночасно: нічого не змінено
+trashSettings.eventForgotten	"%@" забуто адміністратором
+trashSettings.eventVersionEvicted	Версію "%@" вилучено, щоб звільнити місце
+trashSettings.eventVersionFailed	Не вдалося вилучити версію
+trashSettings.eventVersionLost	У версії бракувало вмісту
+trashSettings.eventVersionTooLarge	"%@" більший за весь простір: те, що він замінив, не збережено
+trashSettings.eventVersionsBreaker	Забагато версій відсутні одночасно: нічого не змінено
+versionedFiles.navigationTitle	Версії файлів
+versionedFiles.subtitle	Кожен файл, що має історію, де б він не був. Показує шляхи з усіх просторів, зокрема з особистих папок, тому доступно лише адміністраторам.
+versionedFiles.summary	Файлів: %1$lld · Версій: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Ім’я або шлях
+versionedFiles.zone	Том
+versionedFiles.anyZone	Будь-який том
+versionedFiles.stateHeader	Стан
+versionedFiles.anyState	Будь-який стан
+versionedFiles.stateLive	Файл на місці
+versionedFiles.stateTrashed	У кошику
+versionedFiles.stateOrphaned	Файл зник
+versionedFiles.sortHeader	Сортувати за
+versionedFiles.sortBytes	Зайняте місце
+versionedFiles.sortVersions	Кількість версій
+versionedFiles.sortNewest	Найновіші
+versionedFiles.sortPath	Шлях
+versionedFiles.none	Жоден файл не має попередніх версій.
+versionedFiles.unavailable	Версії файлів доступні лише адміністраторам.
+versionedFiles.zoneUnknown	Невідомий том
+versionedFiles.zoneKindPersonal	Особиста папка користувача %@
+versionedFiles.zoneKindUserVolume	Призначений том %@
+versionedFiles.rowSummary	Версій: %1$lld · %2$@
+versionedFiles.newest	Остання: %@
+versionedFiles.versionPinned	Закріплено
+versionedFiles.versionUnavailable	Недоступно
+versionedFiles.versionBy	Автор: %@
+versionedFiles.detailFailed	Не вдалося прочитати цю історію.
+versionedFiles.deleteSelectedNone	Позначте версії для видалення
+versionedFiles.deleteSelected	Видалити вибрані (%lld)
+versionedFiles.deleteAll	Видалити всі версії
+versionedFiles.confirmAllTitle	Видалити всі версії "%@"?
+versionedFiles.confirmSomeTitle	Видалити вибрані версії (%lld)?
+versionedFiles.confirmMessage	Видалені версії відновити не можна.
+versionedFiles.confirmDelete	Видалити
+versionedFiles.previous	Назад
+versionedFiles.next	Далі
+versionedFiles.pageRange	%1$lld до %2$lld із %3$lld
+accessRules.navigationTitle	Правила доступу до папок
+accessRules.subtitle	Перевизначте доступ на читання й запис для певних шляхів.
+accessRules.addRule	Додати правило
+accessRules.empty	Правил доступу не налаштовано.
+accessRules.emptyHint	Додайте правило, щоб перевизначити доступ до шляху.
+accessRules.pathLabel	Шлях
+accessRules.recursive	Застосувати до вкладених папок
+accessRules.permissionReadWrite	Читання й запис
+accessRules.permissionReadOnly	Лише читання
+accessRules.permissionHidden	Приховано
+accessRules.remove	Вилучити
+accessRules.unavailable	Правила доступу доступні лише адміністраторам.
+accessRules.saveButton	Зберегти зміни
+settings.rowThumbnails	Мініатюри
+settings.rowAccessRules	Правила доступу до папок
+settings.navigationTitle	Налаштування
+settings.sectionGeneral	Загальні
+settings.sectionDisplay	Вигляд
+settings.sectionStorage	Сховище
+settings.sectionServerStorage	Сховище сервера
+settings.serverStorageUsed	%1$@ із %2$@
+settings.sectionLicenses	Ліцензії
+settings.sectionLegal	Правова інформація
+settings.sectionUsers	Користувачі
+settings.sectionAdmin	Адміністрування
+settings.sectionInfo	Інформація
+settings.toggleShowHiddenFiles	Показувати приховані файли
+settings.toggleRenderHTML	Відображати сторінки HTML
+settings.toggleRenderMarkdown	Відображати файли Markdown
+settings.toggleHaptics	Тактильний відгук
+settings.toggleShowThumbnails	Показувати мініатюри
+settings.toggleShowExtensions	Показувати розширення файлів
+settings.toggleShowTabLabels	Показувати підписи вкладок
+settings.toggleKeepClipboard	Зберігати елементи після вставлення
+settings.toggleKeepClipboardSubtitle	Скопійовані елементи залишаються готовими до вставлення в іншу папку. Переміщені елементи завжди очищаються.
+settings.rowDateFormat	Формат дати
+settings.rowLanguage	Мова
+settings.rowThumbnailSize	Розмір мініатюр
+settings.rowRemoveAllDownloads	Вилучити всі завантаження
+settings.rowClearCache	Очистити кеш
+settings.rowOpenSourceLicenses	Ліцензії відкритого коду
+settings.rowPrivacyPolicy	Політика конфіденційності
+settings.rowTermsOfUse	Умови використання
+settings.rowUserManagement	Керування користувачами
+settings.rowChangePassword	Змінити пароль
+settings.rowAddPassword	Додати пароль
+settings.rowServer	Сервер
+settings.storageFootnote	Папки завантажуються як zip, нічого не лишаючи на сервері. Вилучення завантажень чи очищення кешу стосується лише цього пристрою; на сервері нічого не змінюється.
+settings.storageFootnoteMac	Очищення кешу стосується лише цього Mac; на сервері нічого не змінюється.
+settings.removeAllDownloadsTitle	Вилучити всі завантаження?
+settings.removeAllDownloadsConfirm	Вилучити все
+settings.removeAllDownloadsMessage	Це видалить усі завантажені файли з цього пристрою. Вони залишаться на сервері.
+settings.clearCacheTitle	Очистити кеш?
+settings.clearCacheConfirm	Очистити
+settings.clearCacheMessage	Це очистить кешовані попередні перегляди, мініатюри та збережені списки папок для офлайн-використання. Нічого на сервері не зміниться.
+settings.signOutAlertTitle	Вийти?
+settings.signOutMessage	Щоб отримати доступ до файлів, потрібно буде ввійти знову. Кешовані попередні перегляди, мініатюри та збережені списки папок на цьому пристрої буде очищено.
+settings.signOutButton	Вийти
+settings.signingOut	Вихід…
+settings.sectionAccounts	Облікові записи
+settings.addAccount	Додати обліковий запис
+settings.accountSignOut	Вийти
+settings.accountSignOutTitle	Вийти?
+settings.accountSignOutMessage	Вийти з облікового запису %@ на цьому пристрої? Щоб користуватися ним, потрібно буде ввійти знову.
+settings.accountActiveLabel	%1$@, %2$@, активний обліковий запис
+settings.badgeActive	Активний
+settings.dateFormatNavigationTitle	Формат дати
+settings.dateFormatShowTime	Показувати час
+language.navigationTitle	Мова
+language.systemDefault	Системна
+language.systemDefaultSubtitle	Відповідно до мови пристрою
+serverDetails.navigationTitle	Сервер
+serverDetails.changeLogo	Змінити значок
+serverDetails.takePhoto	Зробити фото
+serverDetails.chooseFromGallery	Вивантажити з галереї
+serverDetails.nameLabel	Назва сервера
+serverDetails.nameErrorEmpty	Назва сервера не може бути порожньою.
+serverDetails.urlLabel	URL сервера
+serverDetails.urlFootnote	Адреса, за якою встановлено ваш екземпляр NextExplorer. Щоб її змінити, вийдіть і додайте сервер знову.
+serverDetails.updateButton	Оновити сервер
+serverDetails.savedMessage	Дані сервера оновлено.
+serverDetails.logoErrorTooLarge	Це зображення завелике. Виберіть менше за 2 МБ.
+serverDetails.cameraDeniedTitle	Доступ до камери вимкнено
+serverDetails.cameraDeniedMessage	Увімкніть доступ до камери в Налаштуваннях, щоб зробити фото.
+licenses.navigationTitle	Ліцензії відкритого коду
+licenses.sectionSoftware	Програмне забезпечення
+licenses.sectionFontSoftware	Програмне забезпечення шрифтів
+licenses.labelAuthor	Автор
+licenses.labelOriginalVersion	Оригінальна версія
+licenses.labelModifiedVersion	Змінена версія
+licenses.labelReservedFontName	Зарезервована назва шрифту
+fileInfo.navigationTitleFolder	Папка
+fileInfo.rowKind	Тип
+fileInfo.rowSize	Розмір
+fileInfo.rowLocation	Розташування
+fileInfo.rowDateModified	Дата зміни
+fileInfo.rowDateCreated	Дата створення
+fileInfo.rowFiles	Файли
+fileInfo.rowFolders	Папки
+fileInfo.rowTotalSize	Загальний розмір
+fileInfo.sectionServerDisk	Диск сервера
+fileInfo.diskFreeOf	Вільно %1$@ із %2$@
+fileInfo.rowDimensions	Розміри
+fileInfo.rowCamera	Камера
+fileInfo.rowLens	Об’єктив
+fileInfo.rowDateTaken	Дата зйомки
+fileInfo.rowDuration	Тривалість
+fileInfo.partialScan	Підраховано частково: ця папка дуже велика.
+permissions.title	Дозволи
+permissions.sectionMode	Режим
+permissions.numericLabel	Числовий
+permissions.applyToEnclosed	Застосувати до вкладених елементів
+permissions.applyPermissions	Застосувати дозволи
+permissions.sectionOwnership	Власність
+permissions.fieldOwner	Власник
+permissions.fieldGroup	Група
+permissions.ownershipNote	Для зміни власника зазвичай потрібні права root або адміністратора на сервері.
+permissions.applyOwnership	Застосувати власника
+permissions.scopeOwner	Власник
+permissions.scopeGroup	Група
+permissions.scopeOthers	Інші
+permissions.rightRead	Читання
+permissions.rightWrite	Запис
+permissions.rightExecute	Виконання
+archive.emptyFolder	Ця папка порожня.
+archive.openFailed	Не вдалося відкрити цей файл.
+archive.openArchiveFailed	Не вдалося відкрити цей архів.
+archive.entryTooLarge	Цей елемент завеликий для відкриття.
+gallery.loadFailed	Не вдалося завантажити це зображення.
+textPreview.saved	Збережено
+textPreview.loadFailed	Не вдалося завантажити цей файл. Перевірте з’єднання й спробуйте ще раз.
+textPreview.unsavedTitle	Зберегти зміни в “%@”?
+textPreview.unsavedMessage	Якщо не зберегти, зміни буде втрачено.
+textPreview.dontSave	Не зберігати
+userManagement.navigationTitle	Керування користувачами
+userManagement.searchPrompt	Пошук користувачів
+userManagement.createUser	Створити користувача
+userManagement.badgeAdmin	Адмін
+userManagement.emptyList	Користувачів ще немає.
+userManagement.noSearchMatches	Немає користувачів, що відповідають “%@”.
+userManagement.loadFailed	Не вдалося зв’язатися із сервером.
+userManagement.sortType	Тип
+userManagement.sortName	Ім’я
+userManagement.sortEmail	Електронна пошта
+userManagement.tabProfile	Профіль
+userManagement.tabSecurity	Безпека
+userManagement.tabVolumes	Томи
+userManagement.createNavigationTitle	Створити користувача
+userManagement.createEmailField	Електронна пошта
+userManagement.createUsernameField	Ім’я користувача (необов’язково)
+userManagement.createUsernamePlaceholder	Походить з електронної пошти
+userManagement.createPasswordField	Пароль
+userManagement.createPasswordPlaceholder	Щонайменше символів: %lld
+userManagement.createGrantAdminToggle	Надати доступ адміністратора
+userManagement.createGrantAdminSubtitle	Повний контроль над файлами, спільним доступом і користувачами.
+userManagement.createSubmit	Створити користувача
+userManagement.setPasswordNavigationTitle	Пароль
+userManagement.setPasswordNewField	Новий пароль
+userManagement.setPasswordPlaceholder	Щонайменше символів: %lld
+userManagement.setPasswordResetTitle	Скинути пароль
+userManagement.setPasswordSetTitle	Установити пароль
+userManagement.setPasswordResetIntro	Установіть новий локальний пароль для %@. Поточний пароль перестане працювати.
+userManagement.setPasswordSetIntro	Дайте користувачеві %@ локальний пароль, щоб він міг входити без SSO.
+userManagement.toastProfileUpdated	Профіль оновлено
+userManagement.toastAdminGranted	Адміністратора призначено
+userManagement.toastUserRemoved	Користувача вилучено
+userManagement.toastUserCreated	Користувача створено
+userManagement.toastPasswordUpdated	Пароль оновлено
+userManagement.toastVolumeSaved	Том збережено
+userManagement.toastVolumeRemoved	Том вилучено
+userManagement.errorEmailRequired	Потрібна електронна пошта.
+userManagement.errorEmailInvalid	Введіть дійсну адресу електронної пошти.
+userManagement.errorUsernameRequired	Потрібне ім’я користувача.
+userManagement.errorEmailInUse	Ця адреса електронної пошти вже використовується.
+userManagement.errorPasswordTooShort	Використайте щонайменше символів: %lld.
+userDetail.fallbackName	Користувач
+userDetail.sectionGeneralInfo	Загальні відомості
+userDetail.sectionRoles	Ролі та дозволи
+userDetail.sectionLocalPassword	Локальний пароль
+userDetail.sectionSSO	Єдиний вхід
+userDetail.sectionAssignedVolumes	Призначені томи
+userDetail.profileDisplayNameField	Відображуване ім’я
+userDetail.profileDisplayNamePlaceholder	Відображуване ім’я
+userDetail.profileUsernameField	Ім’я користувача
+userDetail.profileUsernamePlaceholder	Ім’я користувача
+userDetail.profileEmailField	Електронна пошта
+userDetail.profileSave	Зберегти зміни
+userDetail.roleAdmin	Адміністратор
+userDetail.roleAdminSubtitle	Повний контроль над файлами, спільним доступом і користувачами.
+userDetail.roleAdminLocked	Адміністраторів не можна понизити в застосунку.
+userDetail.roleGrantAdmin	Призначити адміністратором
+userDetail.passwordHasLocal	Цей користувач входить за електронною поштою та паролем.
+userDetail.passwordSSOOnly	Цей користувач не має локального пароля й входить лише через SSO.
+userDetail.passwordReset	Скинути пароль
+userDetail.passwordSet	Установити пароль
+userDetail.ssoNone	Немає пов’язаних провайдерів SSO.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Пов’язано
+userDetail.dangerZoneTitle	Небезпечна зона
+userDetail.dangerZoneSubtitle	Вилучення користувача негайно скасовує його доступ. Файли, якими він володіє на сервері, не видаляються.
+userDetail.dangerZoneRemoveUser	Вилучити користувача
+userDetail.volumesNone	Томи не призначено.
+userDetail.volumesNoneSubtitle	Цей користувач бачить лише типовий спільний простір.
+userDetail.volumesAssign	Призначити том
+userDetail.volumesFootnote	Томи надають користувачеві доступ до каталогу поза типовим спільним простором. Вилучення тому ніколи не видаляє файли.
+userDetail.volumeEditAccessibility	Змінити %@
+userDetail.volumeRemoveAccessibility	Вилучити %@
+userDetail.removeVolumeTitle	Вилучити том?
+userDetail.removeVolumeMessage	%@ більше не призначено цьому користувачеві. Сам каталог не змінюється.
+userDetail.removeUserTitle	Вилучити користувача?
+userDetail.removeUserMessage	%@ негайно втрачає доступ. Його файли на сервері не видаляються.
+userDetail.grantAdminTitle	Призначити адміністратором?
+userDetail.grantAdminMessage	%@ стане адміністратором із повним контролем над файлами, спільним доступом і користувачами. Адміністраторів не можна понизити в застосунку.
+userDetail.volumeSheetLabelField	Мітка
+userDetail.volumeSheetLabelPlaceholder	Мітка тому
+userDetail.volumeSheetAccessMode	Режим доступу
+userDetail.volumeSheetDirectory	Каталог
+userDetail.volumeSheetSaveEdit	Зберегти том
+userDetail.volumeSheetSaveNew	Призначити том
+userDetail.volumeSheetTitleEdit	Змінити том
+userDetail.volumeSheetTitleNew	Призначити том
+userDetail.directoryPickerGoUp	Піднятися на один каталог угору
+userDetail.directoryPickerUseThis	Використати цей каталог
+userDetail.directoryPickerOpen	Відкрити %@
+userDetail.directoryPickerFailed	Не вдалося показати список каталогів.
+previewToolbar.close	Закрити
+previewToolbar.createShareLink	Створити посилання для спільного доступу
+previewToolbar.download	Завантажити
+previewToolbar.delete	Видалити
+previewToolbar.share	Поділитися
+previewToolbar.rename	Перейменувати
+login.serverQuestion	Де ваш екземпляр NextExplorer?
+login.serverInfoAccessibility	Про підключення до сервера
+login.serverInfoTitle	Що таке сервер?
+login.serverInfoBody	NextExplorer підключається до вашого власного сервера NextExplorer. Адміністратор запускає сервер, створює облікові записи й ділиться з вами його вебадресою. Введіть цю адресу, щоб увійти.\n\nЩе немає сервера? Посібник із налаштування покаже, як його розгорнути.
+login.serverInfoGuide	Відкрити посібник із налаштування
+login.testConnection	Перевірити з’єднання
+login.identifierField	Електронна пошта або ім’я користувача
+login.passwordField	Пароль
+login.showPassword	Показати пароль
+login.hidePassword	Сховати пароль
+login.submit	Увійти
+login.plaintextWarning	Це з’єднання не зашифроване. Ваш пароль і сеанс передаються відкритим текстом локальною мережею.
+error.sessionExpired	Ваш сеанс завершився. Увійдіть знову.
+error.rateLimited	Забагато запитів. Спробуйте ще раз трохи згодом.
+error.network	Не вдалося зв’язатися із сервером.
+error.offline	Ви офлайн. Підключіться до інтернету й спробуйте ще раз.
+error.decoding	Сервер відповів несподівано.
+error.server	Помилка сервера (%lld).
+error.forbidden	У вас немає дозволу на цю дію.
+error.clientCertificateRequired	Цьому серверу потрібен клієнтський сертифікат. Додайте його в Налаштуваннях.
+error.clientCertificateRejected	Сервер відхилив ваш клієнтський сертифікат.
+changePassword.navigationTitle	Змінити пароль
+changePassword.intro	Змініть пароль, яким ви входите за адресою електронної пошти. Ви залишитеся в системі на цьому пристрої.
+changePassword.fieldCurrentPassword	Поточний пароль
+changePassword.fieldNewPasswordLabel	Новий пароль
+changePassword.fieldConfirmPasswordLabel	Підтвердьте новий пароль
+changePassword.fieldConfirmPassword	Введіть новий пароль ще раз
+changePassword.fieldNewPasswordPrompt	Щонайменше символів: %lld
+changePassword.submitButton	Оновити пароль
+changePassword.success	Ваш пароль оновлено.
+changePassword.addNavigationTitle	Додати пароль
+changePassword.addIntro	Цей обліковий запис входить через єдиний вхід і ще не має пароля. Додайте його, щоб також входити за адресою електронної пошти чи іменем користувача.
+changePassword.addSubmitButton	Додати пароль
+changePassword.errorMinLength	Використайте щонайменше символів: %lld.
+changePassword.errorMismatch	Паролі не збігаються.
+twoFactor.navigationTitle	Двофакторна автентифікація
+twoFactor.offTitle	Двофакторну автентифікацію вимкнено
+twoFactor.offIntro	Додайте другий крок до входу. Після пароля ви вводитимете код із застосунку-автентифікатора.
+twoFactor.turnOnButton	Увімкнути
+twoFactor.enrollIntro	Скануйте цей QR-код застосунком-автентифікатором або введіть ключ уручну. Потім введіть 6-значний код, який показує застосунок.
+twoFactor.qrAccessibilityLabel	QR-код для вашого застосунку-автентифікатора
+twoFactor.keyLabel	Ключ налаштування
+twoFactor.copyKeyAccessibilityLabel	Копіювати ключ налаштування
+twoFactor.codeAccessibilityLabel	Код автентифікатора
+twoFactor.confirmButton	Перевірити й увімкнути
+twoFactor.recoveryTitle	Збережіть коди відновлення
+twoFactor.recoveryIntro	Кожен код спрацьовує один раз, якщо ви втратите застосунок-автентифікатор. Їх більше не буде показано, тож збережіть у надійному місці.
+twoFactor.copyCodesButton	Копіювати коди
+twoFactor.shareCodesButton	Поділитися кодами
+twoFactor.recoveryDoneButton	Коди збережено
+twoFactor.onTitle	Двофакторну автентифікацію ввімкнено
+twoFactor.recoveryCodesLeft	Залишилося кодів відновлення: %lld
+twoFactor.newCodesButton	Отримати нові коди відновлення
+twoFactor.turnOffButton	Вимкнути
+twoFactor.passwordNewCodesIntro	Введіть пароль, щоб замінити коди відновлення. Старі перестануть працювати.
+twoFactor.passwordTurnOffIntro	Введіть пароль, щоб вимкнути двофакторну автентифікацію.
+twoFactor.passwordField	Пароль
+twoFactor.passwordConfirmButton	Підтвердити
+twoFactor.manageButton	Керувати…
+apiTokens.navigationTitle	Токени API
+apiTokens.sectionHeader	Розробникам
+apiTokens.intro	Токени API дають змогу скриптам та іншим інструментам використовувати ваш обліковий запис без пароля. Токен виконує лише те, що дозволяє його доступ, і ви можете відкликати його будь-коли.
+apiTokens.emptyTitle	Немає токенів API
+apiTokens.emptyMessage	Створіть токен, щоб скрипт міг використовувати ваш обліковий запис.
+apiTokens.newButton	Новий токен
+apiTokens.limitReached	Ви досягли ліміту токенів: %lld. Відкличте один, щоб створити інший.
+apiTokens.scopeRead	Лише читання
+apiTokens.scopeWrite	Читання й запис
+apiTokens.created	Створено: %@
+apiTokens.lastUsed	Останнє використання: %@
+apiTokens.lastUsedFrom	Останнє використання: %1$@ з %2$@
+apiTokens.neverUsed	Ніколи не використовувався
+apiTokens.expires	Спливає: %@
+apiTokens.expired	Сплив: %@
+apiTokens.neverExpires	Не спливає
+apiTokens.renameAction	Перейменувати
+apiTokens.revokeAction	Відкликати
+apiTokens.menuAccessibilityLabel	Дії для %@
+apiTokens.formTitle	Новий токен API
+apiTokens.fieldName	Назва
+apiTokens.namePlaceholder	Наприклад, скрипт резервного копіювання
+apiTokens.fieldAccess	Доступ
+apiTokens.fieldExpiry	Спливає
+apiTokens.expiry30	Через 30 днів
+apiTokens.expiry90	Через 90 днів
+apiTokens.expiryYear	Через 1 рік
+apiTokens.expiryNever	Ніколи
+apiTokens.fieldPassword	Ваш пароль
+apiTokens.passwordHint	Введіть пароль, щоб створити токен.
+apiTokens.createSubmit	Створити токен
+apiTokens.issuedTitle	Скопіюйте токен
+apiTokens.issuedIntro	Його показано лише один раз. Збережіть у надійному місці. Якщо ви його втратите, відкличте його й створіть новий.
+apiTokens.copyToken	Копіювати токен
+apiTokens.copiedToken	Скопійовано
+apiTokens.issuedDone	Токен скопійовано
+apiTokens.renameTitle	Перейменувати токен
+apiTokens.renameSave	Зберегти
+apiTokens.revokeTitle	Відкликати токен?
+apiTokens.revokeMessage	Усе, що використовує "%@", одразу перестане працювати. Цю дію не можна скасувати.
+apiTokens.revokeConfirm	Відкликати
+login.portHint	Додайте порт (наприклад, :3000). Більшість домашніх серверів не слухають звичайний порт 80.
+login.errorInvalidServer	Введіть дійсну адресу сервера.
+login.errorInvalidCredentials	Неправильне ім’я користувача або пароль.
+login.errorSessionExpired	Ваш сеанс завершився. Увійдіть знову.
+login.errorIncomplete	Вхід не завершено. Спробуйте ще раз.
+login.errorUnreachable	Не вдалося зв’язатися із цим сервером. Перевірте адресу й спробуйте ще раз.
+login.errorUnexpectedResponse	Несподівана відповідь сервера.
+login.errorKeychain	Не вдалося зберегти ваш сеанс на цьому пристрої.
+login.errorDecoding	Сервер відповів несподівано. Перевірте адресу й спробуйте ще раз.
+login.errorNoLocalAuth	На цьому сервері не ввімкнено вхід за іменем користувача й паролем.
+login.errorRateLimited	Забагато спроб. Зачекайте кілька хвилин і спробуйте ще раз.
+login.ssoButton	Увійти через SSO
+login.orDivider	або
+login.errorSso	Єдиний вхід не завершено. Спробуйте ще раз.
+login.errorNoAuthMethods	На цьому сервері не ввімкнено жодного способу входу.
+login.errorClientCertificateRequired	Цей сервер запитує клієнтський сертифікат.
+login.errorClientCertificateRejected	Сервер відхилив цей клієнтський сертифікат.
+login.codeTitle	Введіть код
+login.codeIntroAuthenticator	Цей обліковий запис вимагає другого кроку. Введіть 6-значний код із вашого застосунку-автентифікатора.
+login.codeIntroRecovery	Введіть один із ваших кодів відновлення. Кожен спрацьовує лише один раз.
+login.codeUseRecovery	Використати натомість код відновлення
+login.codeUseAuthenticator	Використати натомість код автентифікатора
+login.codeField	Код
+login.codeSubmit	Перевірити
+login.errorInvalidCode	Цей код неправильний.
+login.errorSecondFactorExpired	Цей вхід застарів. Введіть пароль ще раз.
+login.diagnosticsButton	Поділитися журналом входу
+login.diagnosticsTitle	Журнал входу
+login.diagnosticsIntro	Цей журнал показує, що відповів сервер на кожному кроці, щоб допомогти знайти причину збою входу. Він ніколи не містить вашого пароля, введеної адреси чи імені користувача. Надішліть його розробнику.
+browse.nameErrorReserved	Така назва недопустима.
+browse.nameErrorSeparators	Назва не може містити / або \.
+browse.searchMatchLine	Рядок %1$lld: %2$@
+browse.searchMatchLineLabel	Рядок %lld
+browse.searchTooShort	Введіть щонайменше символів: %lld, щоб шукати в підпапках і вмісті файлів.
+browse.searchStoppedEarly	Пошук зупинився через обмеження часу. Це результати, знайдені на цей момент.
+browse.searchFirstOnly	Перші результати: %lld. Звузьте пошук, щоб побачити більше.
+browse.searchShowMore	Показати більше
+browse.searchMatchColumn	Збіг
+browse.searchMatchedByName	Ім’я
+browse.searchMatchedByContent	Вміст
+browse.searchMatchedByBoth	Ім’я та вміст
+createShare.errorPasswordRequired	Введіть пароль або вимкніть захист паролем.
+login.errorServer	На сервері сталася проблема (помилка %lld). Спробуйте пізніше.
+filter.sheetTitle	Фільтр за типом
+filter.button	Фільтр
+filter.all	Усі типи
+filter.folders	Папки
+filter.images	Зображення
+filter.videos	Відео
+filter.audio	Аудіо
+filter.documents	Документи
+filter.archives	Архіви
+filter.other	Інше
+settings.creditsMadeBy	Зроблено з ❤️ Phillip Maizza
+settings.creditsLikeApp	Подобається застосунок?
+settings.creditsBuyCoffee	Пригостіть мене кавою ☕️
+tipJar.title	Пригостіть мене кавою
+tipJar.explanation	NextExplorer безкоштовний і з відкритим кодом. Якщо він вам корисний, невеликі чайові допоможуть його підтримувати. Дякуємо!
+tipJar.toastThanks	Дякуємо за підтримку проєкту! 🙏
+tipJar.errorLoad	Не вдалося завантажити варіанти чайових. Спробуйте ще раз.
+tipJar.errorPurchase	Покупку не завершено. Спробуйте ще раз.
+tipJar.pending	Очікується схвалення. Кошти буде списано після схвалення.
+offline.sectionTitle	Офлайн
+offline.settingsRow	Завантажувати файли для офлайн-використання
+offline.footnote	Завантажені файли відкриваються навіть без з’єднання.
+offline.available	Доступно офлайн: %@
+offline.removeRow	Вилучити офлайн-файли
+offline.removeConfirmTitle	Вилучити офлайн-файли?
+offline.removeConfirmMessage	Це видалить файли, збережені для офлайн-використання на цьому пристрої. Ваші файли на сервері не зачіпаються.
+offline.removeConfirm	Вилучити
+offline.preparing	Підготовка…
+offline.downloadingName	Завантаження %@
+offline.progressCount	%lld із %lld файлів
+offline.downloadFailed	Не вдалося завершити офлайн-завантаження.
+offline.selectionTitle	Завантажити для офлайн-доступу
+offline.selectionEmpty	Ця папка порожня.
+offline.selectionLoadFailed	Не вдалося завантажити цю папку.
+offline.selectionEstimate	Орієнтовний обсяг завантаження
+offline.selectionDownload	Завантажити
+offline.selectionInsufficientSpace	Недостатньо вільного місця на цьому пристрої
+offline.resyncRow	Оновити офлайн-файли
+offline.badgeAvailable	Доступно офлайн
+offline.manageRow	Керувати офлайн-файлами
+offline.manageTitle	Офлайн-файли
+offline.manageEmpty	Нічого не завантажено для офлайн-використання.
+offline.preferOfflineToggle	Відтворювати завантажені копії
+offline.pinRemoved	%@ більше немає на сервері, його вилучено з офлайн-файлів
+offline.preferOfflineSubtitle	Використовувати завантажене відео замість потокової передачі, коли воно доступне.
+offline.tunnelSpeedNote	Доступ до сервера через віддалений тунель може уповільнювати завантаження. Для великих файлів підключіться до тієї самої мережі й скористайтеся локальною адресою сервера.
+menu.about	Про NextExplorer
+menu.rateApp	Оцінити NextExplorer…
+menu.support	Підтримка NextExplorer
+menu.redo	Повторити
+menu.undo	Скасувати
+settings.sectionSupport	Підтримка
+settings.rowRateApp	Оцінити NextExplorer
+settings.rowSupport	Довідка й підтримка
+menu.refresh	Оновити
+select.tableView	Таблиця
+browse.progressDownloading	Завантаження…
+browse.progressDownloadingIndexed	Завантаження %1$lld із %2$lld…
+browse.downloadSavedTo	Збережено в %@
+browse.downloadSavedCountTo	Збережено %1$lld із %2$lld елементів у %3$@
+browse.downloadSavedAllTo	Збережено елементів: %1$lld у %2$@
+browse.downloadBulkFailed	Не вдалося зберегти ці елементи на ваш пристрій.
+openWith.openIn	Відкрити в %@
+openWith.openWith	Відкрити за допомогою
+openWith.viewAsText	Переглянути як текст
+openWith.failed	Не вдалося відкрити цей файл.
+browse.showInFinder	Показати у Finder
+browse.showInEnclosingFolder	Показати в батьківській папці
+browse.actionCut	Вирізати
+browse.clipboardCutOne	%@ готово до переміщення
+browse.clipboardCutMany	Елементів, готових до переміщення: %lld
+menu.enclosingFolder	Батьківська папка
+common.more	Більше
+openWith.print	Друк…
+menu.newWindow	Нове вікно
+menu.newTab	Нова вкладка
+browse.actionOpenInNewWindow	Відкрити в новому вікні
+browse.actionOpenInNewTab	Відкрити в новій вкладці
+select.viewAs	Вигляд
+settings.rowAppearance	Вигляд
+appearance.system	Системний
+appearance.light	Світлий
+appearance.dark	Темний
+browse.myFiles	Мої файли
+browse.myFilesSubtitle	Видно лише вам
+downloadQueue.navigationTitle	Черга завантажень
+downloadQueue.openDownloads	Показати завантаження
+downloadQueue.emptyList	Немає завантажень у процесі.
+downloadQueue.statusSaved	Збережено
+downloadQueue.cancelAll	Скасувати всі завантаження
+downloadQueue.barFailedOne	1 завантаження не вдалося
+downloadQueue.barFailedMany	Невдалих завантажень: %lld
+downloadQueue.barTitleOne	Завантаження %@
+downloadQueue.barTitleMany	Завантаження елементів: %lld
+downloadQueue.savedOne	Збережено в «Завантаженнях»
+downloadQueue.savedMany	Елементів, збережених у «Завантаженнях»: %lld
+downloadQueue.bytesOf	%1$@ із %2$@
+downloadQueue.timeLeft	Залишилося: %@
+browse.sectionPersonal	Особисте
+macSettings.addAccount	Додати обліковий запис…
+macSettings.changePassword	Змінити пароль…
+macSettings.signOut	Вийти…
+macSettings.switchAccount	Перемкнутися на цей обліковий запис
+macSettings.username	Ім’я користувача
+macSettings.email	Електронна пошта
+macSettings.role	Роль
+macSettings.roleAdmin	Адміністратор
+macSettings.roleUser	Користувач
+macSettings.status	Стан
+macSettings.statusSignedIn	Вхід виконано
+macSettings.manage	Керувати…
+macSettings.cache	Кеш
+macSettings.support	Довідка й підтримка…
+macSettings.permission	Дозвіл
+macSettings.icon	Значок
+menu.go	Перейти
+menu.activity	Передавання
+menu.showAll	Показати все
+uploads.notifyDone	Вивантаження завершено
+uploads.notifyBody	Вивантажено файлів: %lld
+downloadQueue.notifyDone	Завантаження завершено
+fileInfo.rowSoftware	Програмне забезпечення
+fileInfo.sectionVersions	Версії
+fileInfo.versionsNone	Немає попередніх версій
+fileInfo.versionRestore	Відновити…
+fileInfo.restoreTitle	Відновити цю версію?
+fileInfo.restoreMessage	Файл повернеться до стану на %@. Те, що в ньому зараз, буде збережено як версію.
+fileInfo.restoreConfirm	Відновити
+fileInfo.sectionSharing	Спільний доступ
+fileInfo.notShared	Немає посилань для спільного доступу
+fileInfo.versionActions	Дії з версією
+fileInfo.versionDownload	Завантажити…
+fileInfo.versionSaveCopy	Зберегти як копію
+fileInfo.versionRename	Перейменувати…
+fileInfo.renameTitle	Перейменувати версію
+fileInfo.renamePlaceholder	Назва версії
+fileInfo.versionPin	Зберегти цю версію
+fileInfo.versionUnpin	Припинити зберігати цю версію
+fileInfo.versionKept	Збережена
+fileInfo.versionDelete	Видалити…
+fileInfo.deleteTitle	Видалити цю версію?
+fileInfo.deleteAll	Видалити всі версії…
+fileInfo.deleteAllTitle	Видалити всі версії?
+fileInfo.deleteMessage	Видалені версії зникають назавжди. Сам файл залишається як є.
+macSettings.choose	Вибрати…
+menu.forward	Вперед
+menu.goToFolder	Перейти до папки…
+menu.goToFolderTitle	Перейти до папки:
+menu.copyPath	Копіювати шлях
+menu.recentFolders	Нещодавні папки
+menu.clearRecent	Очистити меню
+common.loading	Завантаження…
+browse.quickLookUnavailable	Швидкий перегляд недоступний для цього типу файлів.
+browse.quickLookTooLarge	Цей файл завеликий для швидкого перегляду.
+menu.zoomIn	Збільшити
+menu.zoomOut	Зменшити
+menu.zoomToFit	Вмістити у вікно
+menu.quitTransfersTitle	Вийти з NextExplorer?
+menu.quitTransfersMessage	Вивантаження або завантаження ще тривають. Вихід зараз їх зупинить.
+menu.quitTransfersConfirm	Вийти
+media.play	Відтворити
+media.pause	Пауза
+media.position	Позиція відтворення
+media.positionValue	%1$@ із %2$@
+media.clientCertificateUnsupported	Цей формат не можна передавати потоком із сервера, що запитує клієнтський сертифікат. Завантажте файл, щоб відтворити його.
+clientCertificate.title	Клієнтський сертифікат
+clientCertificate.intro	Деякі сервери пускають лише пристрої, що пред’являють клієнтський сертифікат (mTLS). Виберіть файл .p12 або .pfx, наданий для цього сервера.
+clientCertificate.certificateLabel	Сертифікат
+clientCertificate.none	Сертифікат не встановлено
+clientCertificate.issuedBy	Видав: %@
+clientCertificate.expires	Спливає: %@
+clientCertificate.expired	Сплив: %@
+clientCertificate.chooseFile	Вибрати файл
+clientCertificate.replace	Замінити сертифікат
+clientCertificate.remove	Вилучити сертифікат
+clientCertificate.install	Установити
+clientCertificate.passwordLabel	Пароль файлу
+clientCertificate.passwordPrompt	Пароль, з яким експортовано файл
+clientCertificate.chooseAnother	Вибрати інший файл
+clientCertificate.errorWrongPassword	Цей пароль не відкриває цей файл.
+clientCertificate.errorInvalidFile	Це не дійсний файл сертифіката .p12 або .pfx.
+clientCertificate.errorNoIdentity	У цьому файлі немає приватного ключа. Експортуйте сертифікат разом із ключем.
+clientCertificate.errorStorage	Не вдалося зберегти сертифікат на цьому пристрої.
+clientCertificate.errorUnreadable	Не вдалося прочитати цей файл.
+clientCertificate.errorRemove	Не вдалося вилучити сертифікат із цього пристрою.
+clientCertificate.removeTitle	Вилучити сертифікат?
+clientCertificate.removeMessage	NextExplorer більше не пред’являтиме його серверу %@. Якщо цей сервер вимагає сертифікат, застосунок не зможе підключитися, доки ви знову не додасте сертифікат.
+clientCertificate.removeConfirm	Вилучити
+clientCertificate.expiredWarning	Термін дії цього сертифіката минув. Сервер, імовірно, відхилить його.
+login.addClientCertificate	Додати сертифікат
+login.manageClientCertificate	Керувати сертифікатом
+settings.clientCertificate	Клієнтський сертифікат
+settings.clientCertificateNone	Немає
+login.usingClientCertificate	Використовується клієнтський сертифікат %@
+login.changeClientCertificate	Змінити
+login.ssoClientCertificateNote	Єдиний вхід відкривається в Safari, який не може використовувати клієнтський сертифікат цього застосунку. Увійдіть із паролем або встановіть сертифікат на цьому пристрої, щоб користуватися єдиним входом.
+settings.clientCertificateExpired	Термін дії минув
+settings.clientCertificateExpiresSoon	Невдовзі спливає
+clientCertificate.expiringSoonWarning	Термін дії цього сертифіката спливає %@. Попросіть новий до цього часу.
+shareUpload.title	Вивантажити до NextExplorer
+shareUpload.itemCount	Файлів для вивантаження: %lld
+shareUpload.accountLabel	Обліковий запис
+shareUpload.folderLabel	Папка
+shareUpload.folderChoose	Виберіть папку
+shareUpload.upload	Вивантажити
+shareUpload.preparing	Підготовка %lld із %lld…
+shareUpload.started	Вивантаження у фоновому режимі. Ви отримаєте сповіщення, коли воно завершиться.
+shareUpload.signedOut	Спершу увійдіть у NextExplorer, потім поділіться знову.
+shareUpload.nothingToUpload	Тут немає нічого, що NextExplorer може вивантажити.
+shareUpload.failed	Не вдалося підготувати файли до вивантаження.
+shareUpload.notificationDoneTitle	Вивантаження завершено
+shareUpload.notificationFailedTitle	Деякі файли не вивантажено
+shareUpload.notificationDoneBody#one	%lld файл вивантажено до “%@”.
+shareUpload.notificationDoneBody#other	%lld файлу вивантажено до “%@”.
+shareUpload.notificationDoneBody#few	%lld файли вивантажено до “%@”.
+shareUpload.notificationDoneBody#many	%lld файлів вивантажено до “%@”.
+shareUpload.notificationAllFailedTitle	Не вдалося вивантажити
+shareUpload.failureUnauthorized#one	%lld файл не вивантажено. Увійдіть знову й повторіть спробу.
+shareUpload.failureUnauthorized#other	%lld файлу не вивантажено. Увійдіть знову й повторіть спробу.
+shareUpload.failureUnauthorized#few	%lld файли не вивантажено. Увійдіть знову й повторіть спробу.
+shareUpload.failureUnauthorized#many	%lld файлів не вивантажено. Увійдіть знову й повторіть спробу.
+shareUpload.failureForbidden#one	%lld файл не вивантажено. У вас немає дозволу додавати файли до цієї папки.
+shareUpload.failureForbidden#other	%lld файлу не вивантажено. У вас немає дозволу додавати файли до цієї папки.
+shareUpload.failureForbidden#few	%lld файли не вивантажено. У вас немає дозволу додавати файли до цієї папки.
+shareUpload.failureForbidden#many	%lld файлів не вивантажено. У вас немає дозволу додавати файли до цієї папки.
+shareUpload.failureServerFull#one	%lld файл не вивантажено. На сервері закінчилося місце для зберігання.
+shareUpload.failureServerFull#other	%lld файлу не вивантажено. На сервері закінчилося місце для зберігання.
+shareUpload.failureServerFull#few	%lld файли не вивантажено. На сервері закінчилося місце для зберігання.
+shareUpload.failureServerFull#many	%lld файлів не вивантажено. На сервері закінчилося місце для зберігання.
+shareUpload.failureNetwork#one	%lld файл не вивантажено. З’єднання перервалося. Повторіть спробу, коли знову будете онлайн.
+shareUpload.failureNetwork#other	%lld файлу не вивантажено. З’єднання перервалося. Повторіть спробу, коли знову будете онлайн.
+shareUpload.failureNetwork#few	%lld файли не вивантажено. З’єднання перервалося. Повторіть спробу, коли знову будете онлайн.
+shareUpload.failureNetwork#many	%lld файлів не вивантажено. З’єднання перервалося. Повторіть спробу, коли знову будете онлайн.
+shareUpload.failureOther#one	%lld файл не вдалося вивантажити.
+shareUpload.failureOther#other	%lld файлу не вдалося вивантажити.
+shareUpload.failureOther#few	%lld файли не вдалося вивантажити.
+shareUpload.failureOther#many	%lld файлів не вдалося вивантажити.
+shareUpload.notificationRetry	Повторити
+shareUpload.notificationHiddenPreview	Відкрийте NextExplorer, щоб побачити, як минуло вивантаження.
+shareUpload.retryFailedTitle	Не вдалося повторити
+shareUpload.retryFailedBody	Відкрийте NextExplorer і поділіться файлами знову.
+shareUpload.insufficientSpace	На цьому пристрої недостатньо вільного місця, щоб підготувати ці файли до вивантаження.
+settings.uploadDefaultsRow	Спільні файли
+settings.uploadDefaultsFolder	Типова папка
+settings.uploadDefaultsFolderNone	Питати щоразу
+settings.uploadDefaultsWithoutAsking	Вивантажувати без запитання
+settings.uploadDefaultsFooter	Фото й файли, якими ви ділитеся з NextExplorer з інших застосунків, починаються в цій папці. Коли ввімкнено «Вивантажувати без запитання», вони вивантажуються прямо туди.
+settings.uploadDefaultsClear	Питати щоразу
+common.change	Змінити
+shareUpload.sessionUnreadable	NextExplorer не зміг прочитати ваш вхід на цьому пристрої. Відкрийте NextExplorer один раз, потім поділіться знову.
+shareUpload.keepOpen	Залишайте це відкритим, доки не завершиться підготовка.
+shareUpload.checking	Перевірка з’єднання з %@…
+shareUpload.openApp	Відкрити NextExplorer
+shareUpload.openAppInstructions	Відкрийте NextExplorer з Початкового екрана, потім поділіться знову.
+shareUpload.certificateRequired	Цьому серверу потрібен клієнтський сертифікат. Відкрийте NextExplorer і додайте його в Налаштуваннях, потім поділіться знову.
+shareUpload.certificateRejected	Сервер відхилив ваш клієнтський сертифікат. Відкрийте NextExplorer і замініть його в Налаштуваннях, потім поділіться знову.
+shareUpload.defaultFolderUnavailable	Ваша типова папка більше недоступна. Виберіть іншу папку.
+shareUpload.failedItemsHeader	Не вдалося підготувати ці файли:
+shareUpload.readyCount	Готово до вивантаження: %lld
+shareUpload.uploadReady	Вивантажити готові файли
+shareUpload.retryFailed	Повторити для невдалих файлів
+shareUpload.fallbackItemName	Файл %lld
+shareUpload.causeCannotRead	Не вдалося прочитати.
+shareUpload.causeNotEnoughSpace	На цьому пристрої недостатньо вільного місця.
+shareUpload.causeUnknown	Не вдалося підготувати.
+shareUpload.folderHint	Відкриває вибір папки.
+shareUpload.accountHint	Виберіть, який обліковий запис отримує файли.
+error.timedOut	Сервер надто довго відповідав. Дія все ще може завершитися.
+error.changedOnServer	Цей файл було змінено на сервері після того, як ви його відкрили.
+textPreview.conflictTitle	“%@” змінено на сервері
+textPreview.conflictMessage	Перезапишіть його своєю версією або перезавантажте файл і відхиліть свої правки. Замінена версія залишається в історії версій файлу.
+textPreview.conflictOverwrite	Перезаписати
+textPreview.conflictReload	Перезавантажити
+offline.waitingForNetwork	Буде завантажено, коли ви знову будете онлайн
+browse.bulkFavoriteFailed	Не вдалося: %1$lld із %2$lld
+shareUpload.livePhotoNote	Live Photos вивантажуються разом зі своїм відео руху.
+shareUpload.retrySignInBody	Увійдіть у NextExplorer, потім знову торкніться «Повторити».
+shareUpload.causeFolder	Папками не можна ділитися. Поділіться файлами всередині.
+shareUpload.notificationMoreNames	Ще: %lld
+versionedFiles.deleteFailed	Не вдалося видалити деякі версії. Перевірте їх і спробуйте ще раз.
+serverSettings.featureOffTitle	Цю функцію не ввімкнено
+serverSettings.featureOffKept	Усе, що ви налаштуєте тут, зберігається й почне діяти, щойно функцію буде ввімкнено.
+serverSettings.featureOffUseSwitch	Увімкніть її перемикачем угорі.
+serverSettings.featureOffHowTo	Щоб увімкнути її, задайте %@ і перезапустіть контейнер.
+trashSettings.environmentNote	Типові значення беруться з TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT та TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Типові значення беруться з VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE та VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Оновити

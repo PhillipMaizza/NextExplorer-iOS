@@ -1,0 +1,1108 @@
+# NextExplorer: Magyar (hu). key<TAB>value.
+common.cancel	Mégse
+common.save	Mentés
+common.edit	Szerkesztés
+common.retry	Próbálja újra
+common.syncCompleted	A szinkronizálás befejeződött
+common.delete	Törlés
+common.remove	Eltávolítás
+common.clear	Ürítés
+common.done	Kész
+common.ok	OK
+common.openSettings	Beállítások megnyitása
+common.logOut	Kijelentkezés
+common.close	Bezárás
+common.back	Vissza
+common.share	Megosztás
+common.copy	Másolás
+common.copied	Másolva
+common.download	Letöltés
+common.sort	Rendezés
+common.select	Kijelölés
+common.deselect	Kijelölés megszüntetése
+common.search	Keresés
+common.password	Jelszó
+common.never	Soha
+common.selectedCount	%lld kijelölve
+tab.browse	Böngészés
+tab.favorites	Kedvencek
+tab.shared	Megosztott
+tab.downloads	Letöltések
+tab.settings	Beállítások
+sort.sheetTitle	Rendezés alapja
+sort.name	Név
+sort.size	Méret
+sort.kind	Fajta
+sort.dateModified	Módosítás dátuma
+sort.dateAdded	Hozzáadás dátuma
+sort.dateShared	Megosztás dátuma
+sort.expiration	Lejárat
+sort.email	E-mail
+sort.type	Típus
+sort.ascending	Növekvő
+sort.descending	Csökkenő
+select.selectAll	Összes kijelölése
+select.deselectAll	Kijelölések megszüntetése
+select.listView	Listanézet
+select.gridView	Rácsnézet
+emptyState.folderEmpty	Ez a mappa üres.
+emptyState.loadFailed	A kiszolgáló nem érhető el.
+emptyState.noSearchMatches	Nincs találat a következőre: „%@”.
+accessMode.readonly	Csak olvasható
+accessMode.readwrite	Olvasás és írás
+shareTarget.anyone	Bárki, aki rendelkezik a hivatkozással
+shareTarget.users	Meghatározott felhasználók
+directLinkMode.auto	Automatikus
+directLinkMode.inline	Nézet
+directLinkMode.raw	Nyers
+directLinkMode.download	Letöltés
+thumbnailSize.small	Kicsi
+thumbnailSize.medium	Közepes
+thumbnailSize.large	Nagy
+downloadLocation.documents	Dokumentumok
+downloadLocation.cache	Gyorsítótár
+dateFormat.automatic	Automatikus
+browse.navigationTitle	Böngészés
+browse.scopeThisFolder	Ez a mappa
+browse.scopeEverywhere	Mindenhol
+browse.searchScopeInFolder	Ez a mappa
+browse.searchScopeEverywhere	Mindenhol
+browse.locations	Helyek
+browse.breadcrumbHint	Megnyitja ezt a mappát
+browse.open	Megnyitás
+browse.unsupportedFileType	Nem támogatott fájltípus
+browse.actionGetInfo	Információk
+browse.actionPermissions	Engedélyek
+browse.actionRename	Átnevezés
+browse.actionExtract	Kicsomagolás
+browse.actionCompress	Tömörítés
+browse.actionDownload	Letöltés
+browse.actionAddToFavorites	Hozzáadás a kedvencekhez
+browse.actionRemoveFromFavorites	Eltávolítás a kedvencek közül
+browse.actionShare	Megosztási hivatkozás létrehozása
+browse.actionDelete	Törlés
+browse.actionDuplicate	Duplikálás
+browse.renameTitle	Átnevezés
+browse.renameNamePlaceholder	Név
+browse.actionNewFolder	Mappa létrehozása
+browse.newFolderTitle	Új mappa
+browse.newFolderPlaceholder	Mappa neve
+browse.newFolderConfirm	Létrehozás
+browse.actionNewFile	Fájl létrehozása
+browse.newFileTitle	Új fájl
+browse.newFileTypeHint	Használjon olyan fájltípust, amelyet a szerkesztő meg tud nyitni, például .txt, .md vagy .js.
+browse.deleteConfirmTitle	Törli?
+browse.deleteConfirmOne	Törli a következőt: „%@”?
+browse.deleteConfirmMany	%lld elem törlése?
+browse.deleteMessage	Ez nem vonható vissza.
+browse.deleteLinkedSharesOne	Ez eltávolít 1 ide mutató megosztási hivatkozást is.
+browse.deleteLinkedSharesMany	Ez eltávolít %lld ide mutató megosztási hivatkozást is.
+browse.deleteLinkedSharesUnavailable	Az ide mutató megosztási hivatkozásokat nem sikerült ellenőrizni. A meglévők megszűnnek működni.
+browse.searchNoMatchesInFolder	Nincs találat a következőre: „%@”.
+browse.searchEverywhere	Keresés mindenhol
+browse.searchFailed	A keresés nem sikerült. Ellenőrizze a kapcsolatot, és próbálja újra.
+browse.progressExtracting	Kicsomagolás…
+browse.progressCompressing	Tömörítés…
+browse.offlineBannerTitle	Offline
+browse.offlineBannerDetail	Mentett másolat megjelenítése innen: %@
+browse.actionCopy	Másolás
+browse.destinationPickerMoveTitle	Áthelyezés ide…
+browse.destinationPickerConfirmMove	Áthelyezés ide
+browse.destinationPickerNoFolders	Itt nincsenek mappák
+browse.destinationPickerLoadFailed	A mappákat nem sikerült betölteni.
+browse.actionMove	Áthelyezés
+browse.actionPaste	Beillesztés
+browse.actionPasteCount	%lld elem beillesztése
+browse.actionPasteHere	Beillesztés ide
+browse.actionClearClipboard	Vágólap ürítése
+browse.clipboardMoveCount	%lld áthelyezésre vár
+browse.clipboardCopyCount	%lld másolásra vár
+browse.clipboardCopiedOne	%@ másolva
+browse.clipboardCopiedMany	%lld elem másolva
+browse.progressMoving	Áthelyezés…
+browse.progressCopying	Másolás…
+browse.transferMoved	%lld elem áthelyezve
+browse.transferCopied	%lld elem másolva
+browse.transferMovedWithSkipped	%1$lld elem áthelyezve, %2$lld kihagyva
+browse.transferCopiedWithSkipped	%1$lld elem másolva, %2$lld kihagyva
+browse.transferConflictTitle	Lecseréli az elemeket?
+browse.transferConflictMessageOne	A(z) "%@" már létezik ebben a mappában.
+browse.transferConflictMessageMany	%lld elem már létezik ebben a mappában.
+browse.transferConflictReplace	Csere
+browse.transferConflictKeepBoth	Mindkettő megtartása
+browse.actionOpenInBrowser	Megnyitás böngészőben
+favorites.navigationTitle	Kedvencek
+favorites.emptyList	Jelöljön meg mappákat csillaggal a Böngészésben, hogy itt lássa őket.
+favorites.actionRemoveFromFavorites	Eltávolítás a kedvencek közül
+favorites.accessibilityBadge	Kedvenc
+favorites.actionEdit	Szerkesztés
+favorites.editTitle	Kedvenc szerkesztése
+favorites.editNameLabel	Név
+favorites.editNameErrorEmpty	A név nem lehet üres.
+favorites.editIconLabel	Ikon
+favorites.editIconOutline	Körvonal
+favorites.editIconSolid	Kitöltött
+favorites.editColorLabel	Szín
+favorites.editColorDefault	Alapértelmezett
+favorites.editSave	Mentés
+favorites.reorderFailed	Az új sorrendet nem sikerült menteni.
+favorites.removeConfirm	%lld kedvenc eltávolítása?
+favorites.removeMessage	Ez csak a Kedvencek közül távolítja el őket.
+favorites.removeFailedOne	Ezt a kedvencet nem sikerült eltávolítani.
+favorites.removeFailedMany	Ezeket a kedvenceket nem sikerült eltávolítani.
+favorites.removePartial	Eltávolítva: %1$lld / %2$lld.
+downloads.navigationTitle	Letöltések
+downloads.actionOpenInFiles	Megnyitás a Fájlokban
+downloads.emptyList	A Böngészésből letöltött fájlok itt jelennek meg.
+downloads.deleteConfirmTitle	Törli?
+downloads.deleteConfirmOne	Törli a következőt: „%@”?
+downloads.deleteConfirmMany	%lld fájl törlése?
+downloads.deleteSingleMessage	Ez csak a helyi másolatot távolítja el. A fájl a kiszolgálón marad.
+downloads.deleteBulkMessage	Ez csak a helyi másolatokat távolítja el. A fájlok a kiszolgálón maradnak.
+downloads.errorNameExists	Már létezik ilyen nevű fájl.
+downloads.errorInvalidName	Ez a név nem engedélyezett.
+downloads.errorMissing	A fájlt már nem sikerült megtalálni.
+downloads.errorGeneric	A műveletet nem sikerült befejezni.
+unsupportedPreview.genericType	Fájl
+unsupportedPreview.cannotOpen	Ez az alkalmazás nem tudja megnyitni ezt a fájltípust.
+uploads.navigationTitle	Feltöltések
+uploads.menuTitle	Feltöltés
+uploads.actionUploadFromFiles	Feltöltés a Fájlokból
+uploads.actionUploadFromPhotos	Feltöltés a Galériából
+uploads.actionTakePhoto	Fénykép vagy videó készítése
+uploads.cameraDeniedTitle	Kamerahozzáférés szükséges
+uploads.cameraDeniedMessage	Engedélyezze a kamerahozzáférést a Beállításokban fénykép vagy videó készítéséhez.
+uploads.destinationTitle	Feltöltés ide…
+uploads.destinationConfirm	Feltöltés ide
+uploads.reviewTitleOne	1 fájl feltöltése
+uploads.reviewTitleMany	%lld fájl feltöltése
+uploads.reviewSectionFiles	Fájlok
+uploads.reviewSectionPath	Elérési út
+uploads.reviewSectionSize	Teljes méret
+uploads.reviewChooseFolder	Válasszon mappát
+uploads.reviewUploadButton	Feltöltés
+uploads.reviewPreparing	Előkészítés: %lld…
+uploads.reviewAddMore	További fájlok hozzáadása
+uploads.reviewPreviewFile	%@ előnézete
+uploads.reviewInsecureNetworkNotice	Kapcsolat http-n keresztül. Ha ez a kiszolgáló csak az otthoni hálózaton érhető el, a feltöltések nem működnek, amikor távol van.
+uploads.stagingFailed	A fájlokat nem sikerült hozzáadni. Próbálja újra.
+uploads.stagingSkipped	%lld elemet nem sikerült előkészíteni, ezért kimaradt.
+uploads.discardTitle	Elveti a feltöltést?
+uploads.discardMessage	A hozzáadott fájlok nem lesznek feltöltve.
+uploads.discardConfirm	Elvetés
+uploads.statusWaiting	Várakozik
+uploads.statusFailed	A feltöltés sikertelen
+uploads.barTitleOne	Feltöltés: %@
+uploads.barTitleMany	%lld fájl feltöltése folyamatban
+uploads.barFailedOne	1 feltöltés sikertelen
+uploads.barFailedMany	%lld feltöltés sikertelen
+uploads.retryAll	Összes újrapróbálása
+uploads.complete	A feltöltés befejeződött
+uploads.completeMany	%lld fájl feltöltve
+uploads.completeWithFailures	%1$lld feltöltve, %2$lld sikertelen
+uploads.failedGeneric	Ezt a fájlt nem sikerült feltölteni.
+uploads.clear	Ürítés
+uploads.emptyList	Még nincsenek feltöltések.
+uploads.cancelAll	Az összes feltöltés megszakítása
+shared.navigationTitle	Megosztott
+shared.segmentByMe	Általam
+shared.segmentWithMe	Velem
+shared.sectionExpired	Lejárt
+shared.badgeExpired	lejárt
+shared.emptyByMe	Ossza meg egy fájlt vagy mappát, hogy itt lássa a hivatkozását.
+shared.emptyWithMe	A mások által Önnel megosztott hivatkozások itt jelennek meg.
+shared.noSearchMatches	Egy megosztás sem felel meg a következőnek: „%@”.
+shared.deleteTitle	Törli a megosztási hivatkozást?
+shared.deleteMessage	A hivatkozás azonnal megszűnik működni. Magához a fájlhoz vagy mappához nem nyúlunk.
+shared.sharedByUnknown	Valaki
+shared.metaAccess	Hozzáférés
+shared.metaExpiration	Lejárat
+shared.metaSharedBy	Megosztotta
+shared.metaSharedWith	Megosztva vele
+shared.anyoneWithLink	Bárki, aki rendelkezik a hivatkozással
+shared.linkMode	Hivatkozás módja
+shared.actionShareLink	Megosztási hivatkozás
+shared.actionFolderLink	Mappahivatkozás
+shared.actionFileLink	Fájlhivatkozás
+shared.copiedShareLink	A megosztási hivatkozás másolva
+shared.copiedFolderZip	A mappa ZIP-hivatkozása másolva
+shared.copiedDirectFile	A fájl közvetlen hivatkozása másolva
+createShare.title	Megosztási hivatkozás létrehozása
+createShare.titleCreated	A megosztás létrejött
+createShare.sectionLabel	Címke
+createShare.sectionAccessMode	Hozzáférési mód
+createShare.sectionWhoCanAccess	Ki férhet hozzá
+createShare.sectionShareLink	Megosztási hivatkozás
+createShare.fieldPassword	Jelszó
+createShare.togglePasswordProtect	Védelem jelszóval
+createShare.toggleSetExpiration	Lejárati dátum megadása
+createShare.fieldExpires	Lejár
+createShare.submit	Megosztási hivatkozás létrehozása
+createShare.loadingUsers	Felhasználók betöltése…
+createShare.noOtherUsers	Nincs több felhasználó, akivel megoszthatna.
+createShare.sharingPrefix	Megosztás:
+createShare.createdBanner	A megosztási hivatkozás sikeresen létrejött!
+createShare.viewInShared	Megtekintés a Megosztottak között
+createShare.directLinkMode	Közvetlen hivatkozás módja
+createShare.directFolderLink	Közvetlen ZIP-hivatkozás a mappához
+createShare.directFileLink	Közvetlen fájlhivatkozás
+createShare.summaryAccess	Hozzáférés
+createShare.summarySharedWith	Megosztva vele
+createShare.summaryPassword	Jelszó
+createShare.summaryPasswordProtected	Védett
+createShare.summaryExpires	Lejár
+createShare.summarySpecificPeople	Meghatározott személyek
+createShare.errorPastExpiration	Válasszon lejárati dátumot a jövőben.
+editShare.title	Megosztási hivatkozás szerkesztése
+editShare.save	Módosítások mentése
+editShare.passwordKeepHint	Hagyja üresen a jelenlegi jelszó megtartásához
+editShare.savedToast	A megosztási hivatkozás frissítve
+thumbnailSettings.navigationTitle	Miniatűrök
+thumbnailSettings.subtitle	Szabályozza, hogyan hozza létre a kiszolgáló a képek miniatűrjeit az összes kliens számára.
+thumbnailSettings.enable	Miniatűrök létrehozása
+thumbnailSettings.enableHelp	Kapcsolja ki, hogy ehelyett mindenhol teljes méretű képek legyenek.
+thumbnailSettings.quality	Minőség
+thumbnailSettings.qualityHelp	A magasabb szebben néz ki, és több helyet foglal.
+thumbnailSettings.maxDimension	Legnagyobb méret
+thumbnailSettings.maxDimensionHelp	A létrehozott miniatűr leghosszabb éle pixelben.
+thumbnailSettings.concurrency	Párhuzamosság
+thumbnailSettings.concurrencyHelp	Hány miniatűrt készít a kiszolgáló egyszerre.
+thumbnailSettings.unavailable	A miniatűrbeállítások csak rendszergazdák számára érhetők el.
+thumbnailSettings.saveButton	Módosítások mentése
+uploadSettings.navigationTitle	Feltöltések
+uploadSettings.subtitle	Adja meg, hogyan kerüljenek a fájlok a kiszolgálóra.
+uploadSettings.chunkedEnable	Darabolt feltöltés engedélyezése
+uploadSettings.chunkedEnableHelp	A TUS használatával a nagy fájlokat több kisebb kérésben küldi el.
+uploadSettings.chunkSize	Darabméret
+uploadSettings.chunkSizeHelp	Az egyes feltöltési kérések legnagyobb mérete. Tartsa a fordított proxy korlátja alatt. A kisebb darabok egyenletesebb haladást adnak.
+uploadSettings.autoFallback	Automatikus váltás daraboltra
+uploadSettings.autoFallbackHelp	Ha egy közvetlen feltöltés azért hiúsul meg, mert a fordított proxy elutasítja a méretet, automatikusan darabolt feltöltésre vált.
+uploadSettings.unavailable	A feltöltési beállítások csak rendszergazdák számára érhetők el.
+uploadSettings.saveButton	Módosítások mentése
+ffmpegSettings.subtitle	Válassza ki az előnézetekhez és a médiametaadatokhoz használt FFmpeg és FFprobe futtatható fájlokat.
+ffmpegSettings.containerPathHelp	Adjon meg abszolút elérési utakat, amelyek az alkalmazás konténerében láthatók. A gazdagép bináris fájljainak használatához előbb csatolja azokat a konténerhez.
+ffmpegSettings.ffmpegPath	Az FFmpeg futtatható fájl elérési útja
+ffmpegSettings.ffprobePath	Az FFprobe futtatható fájl elérési útja
+ffmpegSettings.invalid	Mindkét elérési útnak abszolút konténerútnak kell lennie, amely /-jellel kezdődik.
+ffmpegSettings.defaultHelp	Hagyjon üresen egy elérési utat, hogy a környezet FFMPEG_PATH vagy FFPROBE_PATH értékét, majd a mellékelt futtatható fájlt használja. A módosítások azonnal érvénybe lépnek.
+ffmpegSettings.unavailable	Az FFmpeg-beállítások csak rendszergazdák számára érhetők el.
+ffmpegSettings.saveButton	Módosítások mentése
+searchIndexSettings.navigationTitle	Keresési index
+searchIndexSettings.subtitle	Elérési utak kizárása a tartalom indexeléséből.
+searchIndexSettings.running	Keresési index fenntartása
+searchIndexSettings.runningHelp	Háttérben beolvassa a kötet dokumentumait, így a bennük való keresés azonnal válaszol.
+searchIndexSettings.locked	A környezetben a(z) %@ állítja be, ezért ott dől el, nem itt.
+searchIndexSettings.environment	A környezet által meghatározott kizárások
+searchIndexSettings.additional	További kizárások
+searchIndexSettings.none	Nincs beállított elérési út
+searchIndexSettings.addButton	Hozzáadás
+searchIndexSettings.unavailable	A keresési index beállításai csak rendszergazdák számára érhetők el.
+searchIndexSettings.saveButton	Módosítások mentése
+searchIndexSettings.discardButton	Elvetés
+folderSizeSettings.navigationTitle	Mappaméretek
+folderSizeSettings.subtitle	Elérési utak kizárása a mappaméretek számításából és indexeléséből.
+folderSizeSettings.running	Mappaméretek mérése
+folderSizeSettings.runningHelp	Háttérben méri a mappákat, így a méretük megjelenik a listában.
+folderSizeSettings.modeOff	Ki
+folderSizeSettings.modeShallow	Csak a saját fájljaik
+folderSizeSettings.modeFull	Minden, ami bennük van
+folderSizeSettings.locked	A környezetben a(z) %@ állítja be, ezért ott dől el, nem itt.
+folderSizeSettings.environment	A környezet által meghatározott kizárások
+folderSizeSettings.additional	További kizárások
+folderSizeSettings.none	Nincsenek beállított elérési utak
+folderSizeSettings.addButton	Hozzáadás
+folderSizeSettings.unavailable	A mappaméret-beállítások csak rendszergazdák számára érhetők el.
+folderSizeSettings.saveButton	Módosítások mentése
+folderSizeSettings.discardButton	Elvetés
+activityLog.navigationTitle	Tevékenységnapló
+activityLog.subtitle	Ki mit csinált, mikor és honnan. Ki van kapcsolva, amíg be nem kapcsolja.
+activityLog.enabled	Tevékenység naplózása
+activityLog.enabledHelp	A bejelentkezések, letöltések, feltöltések, törlések, visszaállítások, megosztási hivatkozások és fiókmódosítások rögzítésre kerülnek, amíg ez be van kapcsolva. A bekapcsolás előtt történtek nem szerepelnek benne.
+activityLog.retention	Megőrzés (nap)
+activityLog.retentionInvalid	1 és 3650 nap között.
+activityLog.saveButton	Módosítások mentése
+activityLog.off	A napló ki van kapcsolva, ezért semmi sincs rögzítve.
+activityLog.none	Még nincs semmi rögzítve.
+activityLog.filterAction	Fajta
+activityLog.anyAction	Bármilyen fajta
+activityLog.filterOutcome	Eredmény
+activityLog.anyOutcome	Bármilyen eredmény
+activityLog.outcomeOk	Sikeres
+activityLog.outcomeRefused	Elutasítva
+activityLog.searchPlaceholder	Egy név vagy elérési út
+activityLog.searchButton	Keresés
+activityLog.refresh	Frissítés
+activityLog.clear	Napló ürítése
+activityLog.clearTitle	Üríti a naplót?
+activityLog.clearMessage	Minden rögzített sor törlődik. Ez nem vonható vissza.
+activityLog.clearConfirm	Napló ürítése
+activityLog.more	Továbbiak megjelenítése
+activityLog.refusedSuffix	Elutasítva
+activityLog.fromAddress	Innen: %@
+activityLog.unavailable	A tevékenységnapló csak rendszergazdák számára érhető el.
+activityLog.action.signIn	Bejelentkezett
+activityLog.action.signOut	Kijelentkezett
+activityLog.action.accountPassword	Jelszó módosítva
+activityLog.action.accountTwoFactor	Második tényező módosítva
+activityLog.action.accountPasskey	Hozzáférési kulcs módosítva
+activityLog.action.accountToken	API-token módosítva
+activityLog.action.adminUser	Fiók módosítva
+activityLog.action.adminSettings	Beállítások módosítva
+activityLog.action.adminActivityClear	Napló kiürítve
+activityLog.action.shareCreate	Megosztás létrehozva
+activityLog.action.shareDelete	Megosztás törölve
+activityLog.action.shareDownload	Letöltve hivatkozáson keresztül
+activityLog.action.shareUpload	Feltöltve hivatkozáson keresztül
+activityLog.action.fileDownload	Letöltve
+activityLog.action.fileUpload	Feltöltve
+activityLog.action.fileDelete	Kukába helyezve
+activityLog.action.fileRestore	Visszaállítva
+activityLog.action.filePurge	Véglegesen eltávolítva
+activityLog.action.versionsPurge	Verziók törölve
+trashSettings.navigationTitle	Kuka és verziók
+trashSettings.subtitle	A törölt elemek és a fájlok korábbi verziói a saját kötetükön lévő fenntartott helyen vannak tárolva, és a megőrzési idő letelte után vagy akkor törlődnek, amikor a helyre szükség van.
+trashSettings.trashHeader	Kuka
+trashSettings.enabled	Törölt elemek küldése a kukába
+trashSettings.enabledHelp	Kikapcsolt állapotban a törlés véglegesen eltávolítja az elemeket. A már a kukában lévő elemek továbbra is lejárnak.
+trashSettings.retention	Megőrzési idő (nap)
+trashSettings.retentionHelp	1 és 3650 nap között.
+trashSettings.maxPercent	Az egyes kötetek aránya (%)
+trashSettings.maxPercentHelp	A legtöbb, amit a kuka egy köteten elfoglalhat, 1 és 90% között.
+trashSettings.maxSize	Méretkorlát kötetenként (GiB)
+trashSettings.maxSizeHelp	Nem kötelező. Az arány és a korlát közül a kisebb érvényes.
+trashSettings.maxSizeNone	Nincs korlát
+trashSettings.trashInvalid	Ellenőrizze az értékeket: megőrzés 1 és 3650 nap között, arány 1 és 90% között, pozitív méret vagy semmi.
+trashSettings.versionsHeader	Fájlverziók
+trashSettings.versionsSubtitle	Minden mentés megtartja azt, amit lecserél, másolás nélkül, ugyanabban a fenntartott helyen, mint a kuka. A régebbi verziók idővel ritkulnak.
+trashSettings.versionsEnabled	A fájlok korábbi verzióinak megtartása
+trashSettings.versionsEnabledHelp	A kukától független. Kikapcsolt állapotban a mentések nem őriznek meg semmi újat; a meglévő verziók addig maradnak, amíg le nem járnak vagy nem törlik őket.
+trashSettings.keepAllHours	Minden verzió megtartása (óra)
+trashSettings.hourlyDays	Utána óránként egy (nap)
+trashSettings.dailyDays	Utána naponta egy (nap)
+trashSettings.maxPerFile	Legfeljebb ennyi verzió fájlonként
+trashSettings.checkpointMinutes	Office-ellenőrzőpont (perc)
+trashSettings.tiersHelp	Ezek a szintek után hetente egy verzió marad meg. Egy Office-szerkesztési munkamenet egy verziót hagy hátra, plusz egy ellenőrzőpontot legfeljebb ilyen gyakran. A kitűzött verziókra nem vonatkozik a ritkítás és a fájlonkénti korlát.
+trashSettings.versionsInvalid	Ellenőrizze az értékeket: 1–720 óra, 1–365 nap óránként, 1–3650 nap naponta, 1–1000 verzió fájlonként, ellenőrzőpont 1–1440 perc.
+trashSettings.sharedSpace	A verziók és a kuka osztoznak az egyes kötetek fenntartott helyén. Ha fogy a hely, először a régebbi verziók mennek, majd a kuka elemei, majd az egyes fájlok legutóbbi verziója, végül a kitűzött verziók.
+trashSettings.saveButton	Módosítások mentése
+trashSettings.discardButton	Elvetés
+trashSettings.unavailable	A kuka- és verzióbeállítások csak rendszergazdák számára érhetők el.
+trashSettings.zonesHeader	Kuka kötetenként
+trashSettings.zonesSubtitle	Minden kötet a saját kukáját a gyökerében lévő rejtett .nextexplorer mappában tartja, így a törlés soha nem másol semmit.
+trashSettings.zonesEmpty	Még semmi sem került törlésre kukába.
+trashSettings.zoneKindPersonal	%@ személyes mappája
+trashSettings.zoneKindUserVolume	Hozzárendelt kötet: %@
+trashSettings.available	Elérhető
+trashSettings.unavailableMissing	Nincs csatolva vagy eltávolították
+trashSettings.unavailableReplaced	Másik lemez van a helyén
+trashSettings.unavailableUnreadable	Nem olvasható
+trashSettings.usage	%1$@ / %2$@
+trashSettings.noBudget	nincs korlát
+trashSettings.zoneItems	Elemek: %1$lld · %2$@
+trashSettings.zoneVersions	Verziók: %1$lld · %2$@
+trashSettings.lastPass	Utolsó karbantartás: %@
+trashSettings.lastPassPurged	%1$@ · eltávolítva: %2$lld
+trashSettings.never	még nem
+trashSettings.verify	Ellenőrzés
+trashSettings.runMaintenance	Karbantartás futtatása most
+trashSettings.verifyOk	Minden kötet kukája konzisztens.
+trashSettings.verifyIssues	Talált problémák: %lld
+trashSettings.zoneProblems	Problémák: %lld
+trashSettings.journalHeader	Eseménynapló
+trashSettings.eventEvicted	A(z) "%@" a megőrzési idő lejárta előtt el lett távolítva a hely felszabadítása érdekében
+trashSettings.eventAdopted	A(z) "%@" helyreállt egy megszakadás után
+trashSettings.eventLost	A(z) "%@" tartalma hiányzott
+trashSettings.eventFailed	A(z) "%@" nem távolítható el
+trashSettings.eventBreaker	Egyszerre túl sok elem hiányzik: semmi sem változott
+trashSettings.eventForgotten	A(z) "%@" elemet elfelejtette egy rendszergazda
+trashSettings.eventVersionEvicted	A(z) "%@" egy verziója el lett távolítva a hely felszabadítása érdekében
+trashSettings.eventVersionFailed	Egy verziót nem sikerült eltávolítani
+trashSettings.eventVersionLost	Egy verzió tartalma hiányzott
+trashSettings.eventVersionTooLarge	A(z) "%@" nagyobb, mint a teljes hely: amit lecserélt, az nem maradt meg
+trashSettings.eventVersionsBreaker	Egyszerre túl sok verzió hiányzik: semmi sem változott
+versionedFiles.navigationTitle	Fájlverziók
+versionedFiles.subtitle	Minden fájl, amelynek van előzménye, bárhol is legyen. Az összes térből megjeleníti az elérési utakat, a személyes mappákat is beleértve, ezért csak rendszergazdáknak szól.
+versionedFiles.summary	Fájlok: %1$lld · Verziók: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Egy név vagy elérési út
+versionedFiles.zone	Kötet
+versionedFiles.anyZone	Bármelyik kötet
+versionedFiles.stateHeader	Állapot
+versionedFiles.anyState	Bármilyen állapot
+versionedFiles.stateLive	A fájl még megvan
+versionedFiles.stateTrashed	A kukában
+versionedFiles.stateOrphaned	A fájl eltűnt
+versionedFiles.sortHeader	Rendezés alapja
+versionedFiles.sortBytes	Használt hely
+versionedFiles.sortVersions	Verziók száma
+versionedFiles.sortNewest	Legfrissebb
+versionedFiles.sortPath	Elérési út
+versionedFiles.none	Egyik fájlnak sincs korábbi verziója.
+versionedFiles.unavailable	A fájlverziók csak rendszergazdák számára érhetők el.
+versionedFiles.zoneUnknown	Ismeretlen kötet
+versionedFiles.zoneKindPersonal	%@ személyes mappája
+versionedFiles.zoneKindUserVolume	Hozzárendelt kötet: %@
+versionedFiles.rowSummary	Verziók: %1$lld · %2$@
+versionedFiles.newest	Legutóbbi: %@
+versionedFiles.versionPinned	Kitűzve
+versionedFiles.versionUnavailable	Nem érhető el
+versionedFiles.versionBy	Készítette: %@
+versionedFiles.detailFailed	Ezt az előzményt nem sikerült beolvasni.
+versionedFiles.deleteSelectedNone	Jelölje be a törlendő verziókat
+versionedFiles.deleteSelected	Kijelöltek törlése (%lld)
+versionedFiles.deleteAll	Az összes verzió törlése
+versionedFiles.confirmAllTitle	Törli a(z) "%@" minden verzióját?
+versionedFiles.confirmSomeTitle	Törli a kijelölt verziókat (%lld)?
+versionedFiles.confirmMessage	A törölt verziók nem állíthatók vissza.
+versionedFiles.confirmDelete	Törlés
+versionedFiles.previous	Előző
+versionedFiles.next	Következő
+versionedFiles.pageRange	%1$lld–%2$lld / %3$lld
+accessRules.navigationTitle	Mappahozzáférési szabályok
+accessRules.subtitle	Az olvasási és írási hozzáférés felülbírálása meghatározott elérési utakhoz.
+accessRules.addRule	Szabály hozzáadása
+accessRules.empty	Nincsenek beállított hozzáférési szabályok.
+accessRules.emptyHint	Adjon hozzá egy szabályt egy elérési út hozzáférésének felülbírálásához.
+accessRules.pathLabel	Elérési út
+accessRules.recursive	Alkalmazás az almappákra
+accessRules.permissionReadWrite	Olvasás és írás
+accessRules.permissionReadOnly	Csak olvasható
+accessRules.permissionHidden	Rejtett
+accessRules.remove	Eltávolítás
+accessRules.unavailable	A hozzáférési szabályok csak rendszergazdák számára érhetők el.
+accessRules.saveButton	Módosítások mentése
+settings.rowThumbnails	Miniatűrök
+settings.rowAccessRules	Mappahozzáférési szabályok
+settings.navigationTitle	Beállítások
+settings.sectionGeneral	Általános
+settings.sectionDisplay	Megjelenítés
+settings.sectionStorage	Tárhely
+settings.sectionServerStorage	Kiszolgáló tárhelye
+settings.serverStorageUsed	%1$@ / %2$@
+settings.sectionLicenses	Licencek
+settings.sectionLegal	Jogi információk
+settings.sectionUsers	Felhasználók
+settings.sectionAdmin	Adminisztráció
+settings.sectionInfo	Információk
+settings.toggleShowHiddenFiles	Rejtett fájlok megjelenítése
+settings.toggleRenderHTML	HTML-oldalak megjelenítése
+settings.toggleRenderMarkdown	Markdown-fájlok megjelenítése
+settings.toggleHaptics	Haptikus visszajelzés
+settings.toggleShowThumbnails	Miniatűrök megjelenítése
+settings.toggleShowExtensions	Fájlnévkiterjesztések megjelenítése
+settings.toggleShowTabLabels	Lapcímkék megjelenítése
+settings.toggleKeepClipboard	Elemek megtartása beillesztés után
+settings.toggleKeepClipboardSubtitle	A másolt elemek készen maradnak a másik mappába való beillesztésre. Az áthelyezett elemek mindig törlődnek.
+settings.rowDateFormat	Dátumformátum
+settings.rowLanguage	Nyelv
+settings.rowThumbnailSize	Miniatűrméret
+settings.rowRemoveAllDownloads	Az összes letöltés eltávolítása
+settings.rowClearCache	Gyorsítótár ürítése
+settings.rowOpenSourceLicenses	Nyílt forráskódú licencek
+settings.rowPrivacyPolicy	Adatvédelmi irányelvek
+settings.rowTermsOfUse	Felhasználási feltételek
+settings.rowUserManagement	Felhasználókezelés
+settings.rowChangePassword	Jelszó módosítása
+settings.rowAddPassword	Jelszó hozzáadása
+settings.rowServer	Kiszolgáló
+settings.storageFootnote	A mappák zip-ként töltődnek le, és semmi sem marad a kiszolgálón. A letöltések eltávolítása vagy a gyorsítótár ürítése csak ezt az eszközt érinti; a kiszolgálón semmihez sem nyúlunk.
+settings.storageFootnoteMac	A gyorsítótár ürítése csak ezt a Mac-et érinti; a kiszolgálón semmihez sem nyúlunk.
+settings.removeAllDownloadsTitle	Eltávolítja az összes letöltést?
+settings.removeAllDownloadsConfirm	Összes eltávolítása
+settings.removeAllDownloadsMessage	Ez minden letöltött fájlt töröl erről az eszközről. A kiszolgálón megmaradnak.
+settings.clearCacheTitle	Üríti a gyorsítótárat?
+settings.clearCacheConfirm	Ürítés
+settings.clearCacheMessage	Ez törli a gyorsítótárazott előnézeteket, miniatűröket és az offline használt mentett mappalistákat. A kiszolgálón semmi sem változik.
+settings.signOutAlertTitle	Kijelentkezik?
+settings.signOutMessage	A fájlok eléréséhez újra be kell jelentkeznie. A gyorsítótárazott előnézetek, miniatűrök és mentett mappalisták ezen az eszközön törlődnek.
+settings.signOutButton	Kijelentkezés
+settings.signingOut	Kijelentkezés…
+settings.sectionAccounts	Fiókok
+settings.addAccount	Fiók hozzáadása
+settings.accountSignOut	Kijelentkezés
+settings.accountSignOutTitle	Kijelentkezik?
+settings.accountSignOutMessage	Kijelentkezteti a(z) %@ fiókot ezen az eszközön? A fiók használatához újra be kell jelentkeznie.
+settings.accountActiveLabel	%1$@, %2$@, aktív fiók
+settings.badgeActive	Aktív
+settings.dateFormatNavigationTitle	Dátumformátum
+settings.dateFormatShowTime	Idő megjelenítése
+language.navigationTitle	Nyelv
+language.systemDefault	Rendszer alapértelmezése
+language.systemDefaultSubtitle	Az eszköz nyelvének követése
+serverDetails.navigationTitle	Kiszolgáló
+serverDetails.changeLogo	Ikon módosítása
+serverDetails.takePhoto	Fénykép készítése
+serverDetails.chooseFromGallery	Feltöltés a Galériából
+serverDetails.nameLabel	Kiszolgáló neve
+serverDetails.nameErrorEmpty	A kiszolgáló neve nem lehet üres.
+serverDetails.urlLabel	Kiszolgáló URL-je
+serverDetails.urlFootnote	Az a cím, ahol a NextExplorer példánya telepítve van. A módosításhoz jelentkezzen ki, és adja hozzá újra a kiszolgálót.
+serverDetails.updateButton	Kiszolgáló frissítése
+serverDetails.savedMessage	A kiszolgáló adatai frissítve.
+serverDetails.logoErrorTooLarge	Ez a kép túl nagy. Válasszon egy 2 MB-nál kisebbet.
+serverDetails.cameraDeniedTitle	A kamerahozzáférés ki van kapcsolva
+serverDetails.cameraDeniedMessage	Kapcsolja be a kamerahozzáférést a Beállításokban fénykép készítéséhez.
+licenses.navigationTitle	Nyílt forráskódú licencek
+licenses.sectionSoftware	Szoftver
+licenses.sectionFontSoftware	Betűtípus-szoftver
+licenses.labelAuthor	Szerző
+licenses.labelOriginalVersion	Eredeti verzió
+licenses.labelModifiedVersion	Módosított verzió
+licenses.labelReservedFontName	Fenntartott betűtípusnév
+fileInfo.navigationTitleFolder	Mappa
+fileInfo.rowKind	Fajta
+fileInfo.rowSize	Méret
+fileInfo.rowLocation	Hely
+fileInfo.rowDateModified	Módosítás dátuma
+fileInfo.rowDateCreated	Létrehozás dátuma
+fileInfo.rowFiles	Fájlok
+fileInfo.rowFolders	Mappák
+fileInfo.rowTotalSize	Teljes méret
+fileInfo.sectionServerDisk	Kiszolgálólemez
+fileInfo.diskFreeOf	%1$@ szabad / %2$@
+fileInfo.rowDimensions	Méretek
+fileInfo.rowCamera	Kamera
+fileInfo.rowLens	Objektív
+fileInfo.rowDateTaken	Készítés dátuma
+fileInfo.rowDuration	Időtartam
+fileInfo.partialScan	Részleges vizsgálat alapján számolva: ez a mappa nagyon nagy.
+permissions.title	Engedélyek
+permissions.sectionMode	Mód
+permissions.numericLabel	Numerikus
+permissions.applyToEnclosed	Alkalmazás a benne lévő elemekre
+permissions.applyPermissions	Engedélyek alkalmazása
+permissions.sectionOwnership	Tulajdonjog
+permissions.fieldOwner	Tulajdonos
+permissions.fieldGroup	Csoport
+permissions.ownershipNote	A tulajdonjog módosításához általában root vagy rendszergazdai jogosultság kell a kiszolgálón.
+permissions.applyOwnership	Tulajdonjog alkalmazása
+permissions.scopeOwner	Tulajdonos
+permissions.scopeGroup	Csoport
+permissions.scopeOthers	Mások
+permissions.rightRead	Olvasás
+permissions.rightWrite	Írás
+permissions.rightExecute	Végrehajtás
+archive.emptyFolder	Ez a mappa üres.
+archive.openFailed	Ezt a fájlt nem sikerült megnyitni.
+archive.openArchiveFailed	Ezt az archívumot nem sikerült megnyitni.
+archive.entryTooLarge	Ez az elem túl nagy a megnyitáshoz.
+gallery.loadFailed	Ezt a képet nem sikerült betölteni.
+textPreview.saved	Mentve
+textPreview.loadFailed	Ezt a fájlt nem sikerült betölteni. Ellenőrizze a kapcsolatot, és próbálja újra.
+textPreview.unsavedTitle	Menti a módosításokat a(z) „%@” fájlban?
+textPreview.unsavedMessage	A módosítások elvesznek, ha nem menti őket.
+textPreview.dontSave	Ne mentse
+userManagement.navigationTitle	Felhasználókezelés
+userManagement.searchPrompt	Felhasználók keresése
+userManagement.createUser	Felhasználó létrehozása
+userManagement.badgeAdmin	Rendszergazda
+userManagement.emptyList	Még nincsenek felhasználók.
+userManagement.noSearchMatches	Egy felhasználó sem felel meg a következőnek: „%@”.
+userManagement.loadFailed	A kiszolgáló nem érhető el.
+userManagement.sortType	Típus
+userManagement.sortName	Név
+userManagement.sortEmail	E-mail
+userManagement.tabProfile	Profil
+userManagement.tabSecurity	Biztonság
+userManagement.tabVolumes	Kötetek
+userManagement.createNavigationTitle	Felhasználó létrehozása
+userManagement.createEmailField	E-mail
+userManagement.createUsernameField	Felhasználónév (nem kötelező)
+userManagement.createUsernamePlaceholder	Az e-mailből származtatva
+userManagement.createPasswordField	Jelszó
+userManagement.createPasswordPlaceholder	Legalább %lld karakter
+userManagement.createGrantAdminToggle	Rendszergazdai hozzáférés megadása
+userManagement.createGrantAdminSubtitle	Teljes irányítás a fájlok, megosztások és felhasználók felett.
+userManagement.createSubmit	Felhasználó létrehozása
+userManagement.setPasswordNavigationTitle	Jelszó
+userManagement.setPasswordNewField	Új jelszó
+userManagement.setPasswordPlaceholder	Legalább %lld karakter
+userManagement.setPasswordResetTitle	Jelszó visszaállítása
+userManagement.setPasswordSetTitle	Jelszó beállítása
+userManagement.setPasswordResetIntro	Állítson be új helyi jelszót a következőhöz: %@. A jelenlegi jelszava megszűnik működni.
+userManagement.setPasswordSetIntro	Adjon a(z) %@ felhasználónak helyi jelszót, hogy SSO nélkül is be tudjon jelentkezni.
+userManagement.toastProfileUpdated	Profil frissítve
+userManagement.toastAdminGranted	Rendszergazdai hozzáférés megadva
+userManagement.toastUserRemoved	Felhasználó eltávolítva
+userManagement.toastUserCreated	Felhasználó létrehozva
+userManagement.toastPasswordUpdated	Jelszó frissítve
+userManagement.toastVolumeSaved	Kötet mentve
+userManagement.toastVolumeRemoved	Kötet eltávolítva
+userManagement.errorEmailRequired	Az e-mail megadása kötelező.
+userManagement.errorEmailInvalid	Adjon meg érvényes e-mail-címet.
+userManagement.errorUsernameRequired	A felhasználónév megadása kötelező.
+userManagement.errorEmailInUse	Az e-mail már használatban van.
+userManagement.errorPasswordTooShort	Használjon legalább %lld karaktert.
+userDetail.fallbackName	Felhasználó
+userDetail.sectionGeneralInfo	Általános információk
+userDetail.sectionRoles	Szerepkörök és engedélyek
+userDetail.sectionLocalPassword	Helyi jelszó
+userDetail.sectionSSO	Egyszeri bejelentkezés
+userDetail.sectionAssignedVolumes	Hozzárendelt kötetek
+userDetail.profileDisplayNameField	Megjelenített név
+userDetail.profileDisplayNamePlaceholder	Megjelenített név
+userDetail.profileUsernameField	Felhasználónév
+userDetail.profileUsernamePlaceholder	Felhasználónév
+userDetail.profileEmailField	E-mail
+userDetail.profileSave	Módosítások mentése
+userDetail.roleAdmin	Rendszergazda
+userDetail.roleAdminSubtitle	Teljes irányítás a fájlok, megosztások és felhasználók felett.
+userDetail.roleAdminLocked	A rendszergazdák nem fokozhatók le az alkalmazásból.
+userDetail.roleGrantAdmin	Rendszergazdai jog megadása
+userDetail.passwordHasLocal	Ez a felhasználó e-maillel és jelszóval jelentkezik be.
+userDetail.passwordSSOOnly	Ennek a felhasználónak nincs helyi jelszava, és csak SSO-val jelentkezik be.
+userDetail.passwordReset	Jelszó visszaállítása
+userDetail.passwordSet	Jelszó beállítása
+userDetail.ssoNone	Nincsenek társított SSO-szolgáltatók.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Társítva
+userDetail.dangerZoneTitle	Veszélyzóna
+userDetail.dangerZoneSubtitle	A felhasználó eltávolítása azonnal visszavonja a hozzáférését. A kiszolgálón lévő fájljai nem törlődnek.
+userDetail.dangerZoneRemoveUser	Felhasználó eltávolítása
+userDetail.volumesNone	Nincsenek hozzárendelt kötetek.
+userDetail.volumesNoneSubtitle	Ez a felhasználó csak az alapértelmezett megosztott területet látja.
+userDetail.volumesAssign	Kötet hozzárendelése
+userDetail.volumesFootnote	A kötetek hozzáférést adnak a felhasználónak az alapértelmezett megosztott területen kívüli könyvtárhoz. Egy kötet eltávolítása soha nem töröl fájlokat.
+userDetail.volumeEditAccessibility	%@ szerkesztése
+userDetail.volumeRemoveAccessibility	%@ eltávolítása
+userDetail.removeVolumeTitle	Eltávolítja a kötetet?
+userDetail.removeVolumeMessage	A(z) %@ hozzárendelése megszűnt ennél a felhasználónál. Magát a könyvtárat nem érinti.
+userDetail.removeUserTitle	Eltávolítja a felhasználót?
+userDetail.removeUserMessage	%@ azonnal elveszíti a hozzáférését. A kiszolgálón lévő fájljai nem törlődnek.
+userDetail.grantAdminTitle	Megadja a rendszergazdai jogot?
+userDetail.grantAdminMessage	%@ rendszergazda lesz, teljes irányítással a fájlok, megosztások és felhasználók felett. A rendszergazdák nem fokozhatók le az alkalmazásból.
+userDetail.volumeSheetLabelField	Címke
+userDetail.volumeSheetLabelPlaceholder	Kötetcímke
+userDetail.volumeSheetAccessMode	Hozzáférési mód
+userDetail.volumeSheetDirectory	Könyvtár
+userDetail.volumeSheetSaveEdit	Kötet mentése
+userDetail.volumeSheetSaveNew	Kötet hozzárendelése
+userDetail.volumeSheetTitleEdit	Kötet szerkesztése
+userDetail.volumeSheetTitleNew	Kötet hozzárendelése
+userDetail.directoryPickerGoUp	Egy könyvtárral feljebb
+userDetail.directoryPickerUseThis	E könyvtár használata
+userDetail.directoryPickerOpen	%@ megnyitása
+userDetail.directoryPickerFailed	A könyvtárakat nem sikerült listázni.
+previewToolbar.close	Bezárás
+previewToolbar.createShareLink	Megosztási hivatkozás létrehozása
+previewToolbar.download	Letöltés
+previewToolbar.delete	Törlés
+previewToolbar.share	Megosztás
+previewToolbar.rename	Átnevezés
+login.serverQuestion	Hol van a NextExplorer példánya?
+login.serverInfoAccessibility	A kiszolgálóhoz való csatlakozásról
+login.serverInfoTitle	Mi az a kiszolgáló?
+login.serverInfoBody	A NextExplorer a saját NextExplorer-kiszolgálójához csatlakozik. Egy rendszergazda üzemelteti a kiszolgálót, létrehozza a fiókokat, és megosztja Önnel a webcímét. Adja meg ezt a címet a bejelentkezéshez.\n\nMég nincs kiszolgálója? A beállítási útmutató megmutatja, hogyan üzemeltethet egyet.
+login.serverInfoGuide	Beállítási útmutató megnyitása
+login.testConnection	Kapcsolat tesztelése
+login.identifierField	E-mail vagy felhasználónév
+login.passwordField	Jelszó
+login.showPassword	Jelszó megjelenítése
+login.hidePassword	Jelszó elrejtése
+login.submit	Bejelentkezés
+login.plaintextWarning	Ez a kapcsolat nincs titkosítva. A jelszava és a munkamenete egyszerű szövegként kerül elküldésre a helyi hálózaton.
+error.sessionExpired	A munkamenet lejárt. Jelentkezzen be újra.
+error.rateLimited	Túl sok kérés. Próbálja újra egy kicsit később.
+error.network	A kiszolgáló nem érhető el.
+error.offline	Offline van. Csatlakozzon az internethez, és próbálja újra.
+error.decoding	A kiszolgáló váratlan választ adott.
+error.server	Kiszolgálóhiba (%lld).
+error.forbidden	Nincs jogosultsága ehhez.
+error.clientCertificateRequired	Ehhez a kiszolgálóhoz kliens tanúsítvány szükséges. Adjon hozzá egyet a Beállításokban.
+error.clientCertificateRejected	A kiszolgáló elutasította a kliens tanúsítványát.
+changePassword.navigationTitle	Jelszó módosítása
+changePassword.intro	Módosítsa az e-mail-címével való bejelentkezéshez használt jelszót. Ezen az eszközön bejelentkezve marad.
+changePassword.fieldCurrentPassword	Jelenlegi jelszó
+changePassword.fieldNewPasswordLabel	Új jelszó
+changePassword.fieldConfirmPasswordLabel	Új jelszó megerősítése
+changePassword.fieldConfirmPassword	Adja meg újra az új jelszót
+changePassword.fieldNewPasswordPrompt	Legalább %lld karakter
+changePassword.submitButton	Jelszó frissítése
+changePassword.success	A jelszava frissítve lett.
+changePassword.addNavigationTitle	Jelszó hozzáadása
+changePassword.addIntro	Ez a fiók egyszeri bejelentkezéssel jelentkezik be, és még nincs jelszava. Adjon hozzá egyet, hogy e-mail-címével vagy felhasználónevével is be tudjon jelentkezni.
+changePassword.addSubmitButton	Jelszó hozzáadása
+changePassword.errorMinLength	Használjon legalább %lld karaktert.
+changePassword.errorMismatch	A jelszavak nem egyeznek.
+twoFactor.navigationTitle	Kétlépcsős hitelesítés
+twoFactor.offTitle	A kétlépcsős hitelesítés ki van kapcsolva
+twoFactor.offIntro	Adjon egy második lépést a bejelentkezéshez. A jelszó után egy hitelesítő alkalmazásból kapott kódot kell megadnia.
+twoFactor.turnOnButton	Bekapcsolás
+twoFactor.enrollIntro	Olvassa be ezt a QR-kódot a hitelesítő alkalmazással, vagy írja be kézzel a kulcsot. Ezután adja meg az alkalmazás által mutatott 6 számjegyű kódot.
+twoFactor.qrAccessibilityLabel	QR-kód a hitelesítő alkalmazáshoz
+twoFactor.keyLabel	Beállítókulcs
+twoFactor.copyKeyAccessibilityLabel	Beállítókulcs másolása
+twoFactor.codeAccessibilityLabel	Hitelesítő kód
+twoFactor.confirmButton	Ellenőrzés és bekapcsolás
+twoFactor.recoveryTitle	Mentse el a helyreállítási kódokat
+twoFactor.recoveryIntro	Minden kód egyszer használható, ha elveszíti a hitelesítő alkalmazást. Nem jelennek meg újra, ezért őrizze meg őket biztonságos helyen.
+twoFactor.copyCodesButton	Kódok másolása
+twoFactor.shareCodesButton	Kódok megosztása
+twoFactor.recoveryDoneButton	Elmentettem őket
+twoFactor.onTitle	A kétlépcsős hitelesítés be van kapcsolva
+twoFactor.recoveryCodesLeft	Fennmaradó helyreállítási kódok: %lld
+twoFactor.newCodesButton	Új helyreállítási kódok kérése
+twoFactor.turnOffButton	Kikapcsolás
+twoFactor.passwordNewCodesIntro	Adja meg a jelszavát a helyreállítási kódok cseréjéhez. A régiek megszűnnek működni.
+twoFactor.passwordTurnOffIntro	Adja meg a jelszavát a kétlépcsős hitelesítés kikapcsolásához.
+twoFactor.passwordField	Jelszó
+twoFactor.passwordConfirmButton	Megerősítés
+twoFactor.manageButton	Kezelés…
+apiTokens.navigationTitle	API-tokenek
+apiTokens.sectionHeader	Fejlesztők
+apiTokens.intro	Az API-tokenek lehetővé teszik, hogy szkriptek és más eszközök a jelszava nélkül használják a fiókját. A token csak azt teheti, amit a hozzáférése megenged, és bármikor visszavonhatja.
+apiTokens.emptyTitle	Nincsenek API-tokenek
+apiTokens.emptyMessage	Hozzon létre egyet, hogy egy szkript használhassa a fiókját.
+apiTokens.newButton	Új token
+apiTokens.limitReached	Elérte a(z) %lld tokenes korlátot. Vonjon vissza egyet egy újabb létrehozásához.
+apiTokens.scopeRead	Csak olvasható
+apiTokens.scopeWrite	Olvasás és írás
+apiTokens.created	Létrehozva: %@
+apiTokens.lastUsed	Utoljára használva: %@
+apiTokens.lastUsedFrom	Utoljára használva: %1$@, innen: %2$@
+apiTokens.neverUsed	Még soha nem használták
+apiTokens.expires	Lejár: %@
+apiTokens.expired	Lejárt: %@
+apiTokens.neverExpires	Soha nem jár le
+apiTokens.renameAction	Átnevezés
+apiTokens.revokeAction	Visszavonás
+apiTokens.menuAccessibilityLabel	Műveletek: %@
+apiTokens.formTitle	Új API-token
+apiTokens.fieldName	Név
+apiTokens.namePlaceholder	Például biztonsági mentési szkript
+apiTokens.fieldAccess	Hozzáférés
+apiTokens.fieldExpiry	Lejár
+apiTokens.expiry30	30 nap múlva
+apiTokens.expiry90	90 nap múlva
+apiTokens.expiryYear	1 év múlva
+apiTokens.expiryNever	Soha
+apiTokens.fieldPassword	Az Ön jelszava
+apiTokens.passwordHint	Adja meg a jelszavát a token létrehozásához.
+apiTokens.createSubmit	Token létrehozása
+apiTokens.issuedTitle	Másolja ki a tokent
+apiTokens.issuedIntro	Ez az egyetlen alkalom, amikor megjelenik. Őrizze meg biztonságos helyen. Ha elveszíti, vonja vissza, és hozzon létre újat.
+apiTokens.copyToken	Token másolása
+apiTokens.copiedToken	Másolva
+apiTokens.issuedDone	Kimásoltam
+apiTokens.renameTitle	Token átnevezése
+apiTokens.renameSave	Mentés
+apiTokens.revokeTitle	Visszavonja a tokent?
+apiTokens.revokeMessage	Minden, ami a(z) "%@" tokent használja, azonnal leáll. Ez nem vonható vissza.
+apiTokens.revokeConfirm	Visszavonás
+login.portHint	Adjon meg egy portot (pl. :3000). A legtöbb homelab-kiszolgáló nem a szokásos 80-as porton figyel.
+login.errorInvalidServer	Adjon meg érvényes kiszolgálócímet.
+login.errorInvalidCredentials	Helytelen felhasználónév vagy jelszó.
+login.errorSessionExpired	A munkamenet lejárt. Jelentkezzen be újra.
+login.errorIncomplete	A bejelentkezés nem fejeződött be. Próbálja újra.
+login.errorUnreachable	Ezt a kiszolgálót nem sikerült elérni. Ellenőrizze a címet, és próbálja újra.
+login.errorUnexpectedResponse	Váratlan válasz a kiszolgálótól.
+login.errorKeychain	A munkamenetet nem sikerült elmenteni ezen az eszközön.
+login.errorDecoding	A kiszolgáló váratlan választ adott. Ellenőrizze a címet, és próbálja újra.
+login.errorNoLocalAuth	Ezen a kiszolgálón nincs engedélyezve a felhasználónévvel és jelszóval való bejelentkezés.
+login.errorRateLimited	Túl sok próbálkozás. Várjon néhány percet, és próbálja újra.
+login.ssoButton	Bejelentkezés SSO-val
+login.orDivider	vagy
+login.errorSso	Az egyszeri bejelentkezés nem fejeződött be. Próbálja újra.
+login.errorNoAuthMethods	Ezen a kiszolgálón nincs engedélyezett bejelentkezési mód.
+login.errorClientCertificateRequired	Ez a kiszolgáló kliens tanúsítványt kér.
+login.errorClientCertificateRejected	A kiszolgáló elutasította ezt a kliens tanúsítványt.
+login.codeTitle	Adja meg a kódját
+login.codeIntroAuthenticator	Ez a fiók második lépést kér. Adja meg a hitelesítő alkalmazás 6 számjegyű kódját.
+login.codeIntroRecovery	Adja meg az egyik helyreállítási kódját. Mindegyik csak egyszer használható.
+login.codeUseRecovery	Használjon helyette helyreállítási kódot
+login.codeUseAuthenticator	Használja helyette a hitelesítő alkalmazás kódját
+login.codeField	Kód
+login.codeSubmit	Ellenőrzés
+login.errorInvalidCode	A kód nem megfelelő.
+login.errorSecondFactorExpired	Ez a bejelentkezés lejárt. Adja meg újra a jelszavát.
+login.diagnosticsButton	Bejelentkezési napló megosztása
+login.diagnosticsTitle	Bejelentkezési napló
+login.diagnosticsIntro	Ez a napló azt mutatja, mit válaszolt a kiszolgáló az egyes lépéseknél, hogy segítsen kideríteni, miért hiúsul meg a bejelentkezés. Soha nem tartalmazza a jelszavát, a beírt címet vagy a felhasználónevét. Küldje el a fejlesztőnek.
+browse.nameErrorReserved	Ez a név nem engedélyezett.
+browse.nameErrorSeparators	A név nem tartalmazhat / vagy \ jelet.
+browse.searchMatchLine	%1$lld. sor: %2$@
+browse.searchMatchLineLabel	%lld. sor
+browse.searchTooShort	Írjon be legalább %lld karaktert az almappákban és a fájlok tartalmában való kereséshez.
+browse.searchStoppedEarly	A keresés elérte az időkorlátját. Ezek az eddig talált eredmények.
+browse.searchFirstOnly	Első %lld találat. Szűkítse a keresést, hogy többet lásson.
+browse.searchShowMore	Továbbiak megjelenítése
+browse.searchMatchColumn	Egyezés
+browse.searchMatchedByName	Név
+browse.searchMatchedByContent	Tartalom
+browse.searchMatchedByBoth	Név és tartalom
+createShare.errorPasswordRequired	Adjon meg jelszót, vagy kapcsolja ki a jelszavas védelmet.
+login.errorServer	A kiszolgáló problémába ütközött (%lld. hiba). Próbálja újra később.
+filter.sheetTitle	Szűrés típus szerint
+filter.button	Szűrő
+filter.all	Minden típus
+filter.folders	Mappák
+filter.images	Képek
+filter.videos	Videók
+filter.audio	Hang
+filter.documents	Dokumentumok
+filter.archives	Archívumok
+filter.other	Egyéb
+settings.creditsMadeBy	Készítette ❤️-rel: Phillip Maizza
+settings.creditsLikeApp	Tetszik az alkalmazás?
+settings.creditsBuyCoffee	Hívjon meg egy kávéra ☕️
+tipJar.title	Hívjon meg egy kávéra
+tipJar.explanation	A NextExplorer ingyenes és nyílt forráskódú. Ha hasznosnak találja, egy kis borravaló segít a működésben tartásában. Köszönjük!
+tipJar.toastThanks	Köszönjük, hogy támogatja a projektet! 🙏
+tipJar.errorLoad	A borravaló-lehetőségeket nem sikerült betölteni. Próbálja újra.
+tipJar.errorPurchase	A vásárlás nem sikerült. Próbálja újra.
+tipJar.pending	Jóváhagyásra vár. A jóváhagyás után kerül levonásra az összeg.
+offline.sectionTitle	Offline
+offline.settingsRow	Fájlok letöltése offline használatra
+offline.footnote	A letöltött fájlok kapcsolat nélkül is megnyílnak.
+offline.available	%@ elérhető offline
+offline.removeRow	Offline fájlok eltávolítása
+offline.removeConfirmTitle	Eltávolítja az offline fájlokat?
+offline.removeConfirmMessage	Ez törli az offline használatra mentett fájlokat ezen az eszközön. A kiszolgálón lévő fájljait nem érinti.
+offline.removeConfirm	Eltávolítás
+offline.preparing	Előkészítés…
+offline.downloadingName	Letöltés: %@
+offline.progressCount	%lld / %lld fájl
+offline.downloadFailed	Az offline letöltést nem sikerült befejezni.
+offline.selectionTitle	Letöltés offline használatra
+offline.selectionEmpty	Ez a mappa üres.
+offline.selectionLoadFailed	Ezt a mappát nem sikerült betölteni.
+offline.selectionEstimate	Becsült letöltés
+offline.selectionDownload	Letöltés
+offline.selectionInsufficientSpace	Nincs elég szabad hely ezen az eszközön
+offline.resyncRow	Offline fájlok frissítése
+offline.badgeAvailable	Elérhető offline
+offline.manageRow	Offline fájlok kezelése
+offline.manageTitle	Offline fájlok
+offline.manageEmpty	Semmi sincs letöltve offline használatra.
+offline.preferOfflineToggle	Letöltött másolatok lejátszása
+offline.pinRemoved	A(z) %@ már nem létezik a kiszolgálón, ezért el lett távolítva az offline fájlokból
+offline.preferOfflineSubtitle	Használja a letöltött videót a streamelés helyett, ha elérhető.
+offline.tunnelSpeedNote	A kiszolgáló távoli alagúton keresztüli elérése lassíthatja a letöltéseket. Nagy fájlok esetén csatlakozzon ugyanahhoz a hálózathoz, és használja a kiszolgáló helyi címét.
+menu.about	A NextExplorerről
+menu.rateApp	A NextExplorer értékelése…
+menu.support	NextExplorer-támogatás
+menu.redo	Ismétlés
+menu.undo	Visszavonás
+settings.sectionSupport	Támogatás
+settings.rowRateApp	A NextExplorer értékelése
+settings.rowSupport	Súgó és támogatás
+menu.refresh	Frissítés
+select.tableView	Táblázatnézet
+browse.progressDownloading	Letöltés…
+browse.progressDownloadingIndexed	Letöltés: %1$lld / %2$lld…
+browse.downloadSavedTo	Mentve ide: %@
+browse.downloadSavedCountTo	Mentve %1$lld / %2$lld elem ide: %3$@
+browse.downloadSavedAllTo	Mentve %1$lld elem ide: %2$@
+browse.downloadBulkFailed	Ezeket az elemeket nem sikerült az eszközére menteni.
+openWith.openIn	Megnyitás ebben: %@
+openWith.openWith	Megnyitás ezzel
+openWith.viewAsText	Megtekintés szövegként
+openWith.failed	Ezt a fájlt nem sikerült megnyitni.
+browse.showInFinder	Megjelenítés a Finderben
+browse.showInEnclosingFolder	Megjelenítés a tartalmazó mappában
+browse.actionCut	Kivágás
+browse.clipboardCutOne	A(z) %@ készen áll az áthelyezésre
+browse.clipboardCutMany	%lld elem készen áll az áthelyezésre
+menu.enclosingFolder	Tartalmazó mappa
+common.more	Továbbiak
+openWith.print	Nyomtatás…
+menu.newWindow	Új ablak
+menu.newTab	Új lap
+browse.actionOpenInNewWindow	Megnyitás új ablakban
+browse.actionOpenInNewTab	Megnyitás új lapon
+select.viewAs	Nézet
+settings.rowAppearance	Megjelenés
+appearance.system	Rendszer
+appearance.light	Világos
+appearance.dark	Sötét
+browse.myFiles	Fájljaim
+browse.myFilesSubtitle	Csak Ön látja
+downloadQueue.navigationTitle	Letöltési sor
+downloadQueue.openDownloads	Letöltések megjelenítése
+downloadQueue.emptyList	Nincs folyamatban lévő letöltés.
+downloadQueue.statusSaved	Mentve
+downloadQueue.cancelAll	Az összes letöltés megszakítása
+downloadQueue.barFailedOne	1 letöltés sikertelen
+downloadQueue.barFailedMany	%lld letöltés sikertelen
+downloadQueue.barTitleOne	Letöltés: %@
+downloadQueue.barTitleMany	%lld elem letöltése folyamatban
+downloadQueue.savedOne	Mentve a Letöltésekbe
+downloadQueue.savedMany	%lld elem mentve a Letöltésekbe
+downloadQueue.bytesOf	%1$@ / %2$@
+downloadQueue.timeLeft	%@ van hátra
+browse.sectionPersonal	Személyes
+macSettings.addAccount	Fiók hozzáadása…
+macSettings.changePassword	Jelszó módosítása…
+macSettings.signOut	Kijelentkezés…
+macSettings.switchAccount	Váltás erre a fiókra
+macSettings.username	Felhasználónév
+macSettings.email	E-mail
+macSettings.role	Szerepkör
+macSettings.roleAdmin	Rendszergazda
+macSettings.roleUser	Felhasználó
+macSettings.status	Állapot
+macSettings.statusSignedIn	Bejelentkezve
+macSettings.manage	Kezelés…
+macSettings.cache	Gyorsítótár
+macSettings.support	Súgó és támogatás…
+macSettings.permission	Engedély
+macSettings.icon	Ikon
+menu.go	Ugrás
+menu.activity	Átvitelek
+menu.showAll	Összes megjelenítése
+uploads.notifyDone	A feltöltések befejeződtek
+uploads.notifyBody	%lld fájl feltöltve
+downloadQueue.notifyDone	A letöltések befejeződtek
+fileInfo.rowSoftware	Szoftver
+fileInfo.sectionVersions	Verziók
+fileInfo.versionsNone	Nincsenek korábbi verziók
+fileInfo.versionRestore	Visszaállítás…
+fileInfo.restoreTitle	Visszaállítja ezt a verziót?
+fileInfo.restoreMessage	A fájl visszaáll arra az állapotra, amilyen ekkor volt: %@. Ami most benne van, az verzióként megmarad.
+fileInfo.restoreConfirm	Visszaállítás
+fileInfo.sectionSharing	Megosztás
+fileInfo.notShared	Nincsenek megosztási hivatkozások
+fileInfo.versionActions	Verzióműveletek
+fileInfo.versionDownload	Letöltés…
+fileInfo.versionSaveCopy	Mentés másolatként
+fileInfo.versionRename	Átnevezés…
+fileInfo.renameTitle	Verzió átnevezése
+fileInfo.renamePlaceholder	Verzió neve
+fileInfo.versionPin	Verzió megtartása
+fileInfo.versionUnpin	Verzió megtartásának leállítása
+fileInfo.versionKept	Megtartva
+fileInfo.versionDelete	Törlés…
+fileInfo.deleteTitle	Törli ezt a verziót?
+fileInfo.deleteAll	Az összes verzió törlése…
+fileInfo.deleteAllTitle	Törli az összes verziót?
+fileInfo.deleteMessage	A törölt verziók végleg elvesznek. Maga a fájl változatlan marad.
+macSettings.choose	Kiválasztás…
+menu.forward	Előre
+menu.goToFolder	Ugrás mappához…
+menu.goToFolderTitle	Ugrás a mappához:
+menu.copyPath	Elérési út másolása
+menu.recentFolders	Legutóbbi mappák
+menu.clearRecent	Menü törlése
+common.loading	Betöltés…
+browse.quickLookUnavailable	A Gyors megtekintés nem érhető el ehhez a fájltípushoz.
+browse.quickLookTooLarge	Ez a fájl túl nagy a Gyors megtekintéshez.
+menu.zoomIn	Nagyítás
+menu.zoomOut	Kicsinyítés
+menu.zoomToFit	Ablakhoz igazítás
+menu.quitTransfersTitle	Kilép a NextExplorerből?
+menu.quitTransfersMessage	Feltöltések vagy letöltések még folyamatban vannak. Ha most kilép, leállnak.
+menu.quitTransfersConfirm	Kilépés
+media.play	Lejátszás
+media.pause	Szünet
+media.position	Lejátszási pozíció
+media.positionValue	%1$@ / %2$@
+media.clientCertificateUnsupported	Ez a formátum nem streamelhető olyan kiszolgálóról, amely kliens tanúsítványt kér. Töltse le a fájlt a lejátszáshoz.
+clientCertificate.title	Kliens tanúsítvány
+clientCertificate.intro	Egyes kiszolgálók csak azokat az eszközöket engedik be, amelyek kliens tanúsítványt mutatnak (mTLS). Válassza ki a .p12 vagy .pfx fájlt, amelyet ehhez a kiszolgálóhoz kapott.
+clientCertificate.certificateLabel	Tanúsítvány
+clientCertificate.none	Nincs telepített tanúsítvány
+clientCertificate.issuedBy	Kiállította: %@
+clientCertificate.expires	Lejár: %@
+clientCertificate.expired	Lejárt: %@
+clientCertificate.chooseFile	Fájl kiválasztása
+clientCertificate.replace	Tanúsítvány cseréje
+clientCertificate.remove	Tanúsítvány eltávolítása
+clientCertificate.install	Telepítés
+clientCertificate.passwordLabel	Fájljelszó
+clientCertificate.passwordPrompt	A jelszó, amellyel a fájlt exportálták
+clientCertificate.chooseAnother	Másik fájl kiválasztása
+clientCertificate.errorWrongPassword	Ez a jelszó nem nyitja meg ezt a fájlt.
+clientCertificate.errorInvalidFile	Ez nem érvényes .p12 vagy .pfx tanúsítványfájl.
+clientCertificate.errorNoIdentity	Ebben a fájlban nincs privát kulcs. Exportálja a tanúsítványt a kulcsával együtt.
+clientCertificate.errorStorage	A tanúsítványt nem sikerült elmenteni ezen az eszközön.
+clientCertificate.errorUnreadable	Ezt a fájlt nem sikerült beolvasni.
+clientCertificate.errorRemove	A tanúsítványt nem sikerült eltávolítani erről az eszközről.
+clientCertificate.removeTitle	Eltávolítja a tanúsítványt?
+clientCertificate.removeMessage	A NextExplorer nem mutatja be többé a(z) %@ kiszolgálónak. Ha az a kiszolgáló megköveteli, az alkalmazás nem tud csatlakozni, amíg újra hozzá nem ad egy tanúsítványt.
+clientCertificate.removeConfirm	Eltávolítás
+clientCertificate.expiredWarning	Ez a tanúsítvány lejárt. A kiszolgáló valószínűleg elutasítja.
+login.addClientCertificate	Tanúsítvány hozzáadása
+login.manageClientCertificate	Tanúsítvány kezelése
+settings.clientCertificate	Kliens tanúsítvány
+settings.clientCertificateNone	Nincs
+login.usingClientCertificate	Kliens tanúsítvány használatban: %@
+login.changeClientCertificate	Módosítás
+login.ssoClientCertificateNote	Az egyszeri bejelentkezés Safariban nyílik meg, amely nem tudja használni az alkalmazás kliens tanúsítványát. Jelentkezzen be jelszóval, vagy telepítse a tanúsítványt ezen az eszközön az egyszeri bejelentkezés használatához.
+settings.clientCertificateExpired	Lejárt
+settings.clientCertificateExpiresSoon	Hamarosan lejár
+clientCertificate.expiringSoonWarning	Ez a tanúsítvány ekkor jár le: %@. Kérjen újat előtte.
+shareUpload.title	Feltöltés a NextExplorerbe
+shareUpload.itemCount	Feltöltendő fájlok: %lld
+shareUpload.accountLabel	Fiók
+shareUpload.folderLabel	Mappa
+shareUpload.folderChoose	Mappa kiválasztása
+shareUpload.upload	Feltöltés
+shareUpload.preparing	Előkészítés: %lld / %lld…
+shareUpload.started	Feltöltés a háttérben. Értesítést kap, amikor kész.
+shareUpload.signedOut	Előbb jelentkezzen be a NextExplorerbe, majd ossza meg újra.
+shareUpload.nothingToUpload	Itt nincs semmi, amit a NextExplorer fel tudna tölteni.
+shareUpload.failed	A fájlokat nem sikerült előkészíteni a feltöltéshez.
+shareUpload.notificationDoneTitle	A feltöltés kész
+shareUpload.notificationFailedTitle	Néhány fájl nem lett feltöltve
+shareUpload.notificationDoneBody#one	%lld fájl feltöltve ide: „%@”.
+shareUpload.notificationDoneBody#other	%lld fájl feltöltve ide: „%@”.
+shareUpload.notificationAllFailedTitle	A feltöltés sikertelen
+shareUpload.failureUnauthorized#one	%lld fájl nem lett feltöltve. Jelentkezzen be újra, majd próbálja újra.
+shareUpload.failureUnauthorized#other	%lld fájl nem lett feltöltve. Jelentkezzen be újra, majd próbálja újra.
+shareUpload.failureForbidden#one	%lld fájl nem lett feltöltve. Nincs jogosultsága fájlok hozzáadására ebbe a mappába.
+shareUpload.failureForbidden#other	%lld fájl nem lett feltöltve. Nincs jogosultsága fájlok hozzáadására ebbe a mappába.
+shareUpload.failureServerFull#one	%lld fájl nem lett feltöltve. A kiszolgálón elfogyott a tárhely.
+shareUpload.failureServerFull#other	%lld fájl nem lett feltöltve. A kiszolgálón elfogyott a tárhely.
+shareUpload.failureNetwork#one	%lld fájl nem lett feltöltve. A kapcsolat megszakadt. Próbálja újra, ha újra online lesz.
+shareUpload.failureNetwork#other	%lld fájl nem lett feltöltve. A kapcsolat megszakadt. Próbálja újra, ha újra online lesz.
+shareUpload.failureOther#one	%lld fájlt nem sikerült feltölteni.
+shareUpload.failureOther#other	%lld fájlt nem sikerült feltölteni.
+shareUpload.notificationRetry	Újra
+shareUpload.notificationHiddenPreview	Nyissa meg a NextExplorert, hogy lássa, hogyan sikerült a feltöltés.
+shareUpload.retryFailedTitle	Az újrapróbálás nem sikerült
+shareUpload.retryFailedBody	Nyissa meg a NextExplorert, és ossza meg újra a fájlokat.
+shareUpload.insufficientSpace	Nincs elég szabad hely ezen az eszközön a fájlok feltöltésre való előkészítéséhez.
+settings.uploadDefaultsRow	Megosztott fájlok
+settings.uploadDefaultsFolder	Alapértelmezett mappa
+settings.uploadDefaultsFolderNone	Rákérdezés minden alkalommal
+settings.uploadDefaultsWithoutAsking	Feltöltés rákérdezés nélkül
+settings.uploadDefaultsFooter	A más alkalmazásokból a NextExplorerbe megosztott fényképek és fájlok ebben a mappában kezdődnek. Ha a „Feltöltés rákérdezés nélkül” be van kapcsolva, közvetlenül ide kerülnek feltöltésre.
+settings.uploadDefaultsClear	Rákérdezés minden alkalommal
+common.change	Módosítás
+shareUpload.sessionUnreadable	A NextExplorer nem tudta beolvasni a bejelentkezését ezen az eszközön. Nyissa meg egyszer a NextExplorert, majd ossza meg újra.
+shareUpload.keepOpen	Tartsa nyitva, amíg az előkészítés be nem fejeződik.
+shareUpload.checking	Kapcsolat ellenőrzése: %@…
+shareUpload.openApp	NextExplorer megnyitása
+shareUpload.openAppInstructions	Nyissa meg a NextExplorert a Főképernyőről, majd ossza meg újra.
+shareUpload.certificateRequired	Ehhez a kiszolgálóhoz kliens tanúsítvány szükséges. Nyissa meg a NextExplorert, és adjon hozzá egyet a Beállításokban, majd ossza meg újra.
+shareUpload.certificateRejected	A kiszolgáló elutasította a kliens tanúsítványát. Nyissa meg a NextExplorert, és cserélje le a Beállításokban, majd ossza meg újra.
+shareUpload.defaultFolderUnavailable	Az alapértelmezett mappa már nem érhető el. Válasszon másik mappát.
+shareUpload.failedItemsHeader	Ezeket a fájlokat nem sikerült előkészíteni:
+shareUpload.readyCount	Feltöltésre kész: %lld
+shareUpload.uploadReady	Kész fájlok feltöltése
+shareUpload.retryFailed	Sikertelen fájlok újrapróbálása
+shareUpload.fallbackItemName	%lld. fájl
+shareUpload.causeCannotRead	Nem sikerült beolvasni.
+shareUpload.causeNotEnoughSpace	Nincs elég szabad hely ezen az eszközön.
+shareUpload.causeUnknown	Nem sikerült előkészíteni.
+shareUpload.folderHint	Megnyitja a mappaválasztót.
+shareUpload.accountHint	Válassza ki, melyik fiók kapja a fájlokat.
+error.timedOut	A kiszolgáló túl sokáig válaszolt. A művelet még befejeződhet.
+error.changedOnServer	Ezt a fájlt módosították a kiszolgálón, miután megnyitotta.
+textPreview.conflictTitle	A(z) „%@” megváltozott a kiszolgálón
+textPreview.conflictMessage	Írja felül a saját verziójával, vagy töltse újra a fájlt, és dobja el a módosításait. A lecserélt verzió a fájl verzióelőzményeiben marad.
+textPreview.conflictOverwrite	Felülírás
+textPreview.conflictReload	Újratöltés
+offline.waitingForNetwork	Letöltésre kerül, ha újra online lesz
+browse.bulkFavoriteFailed	%1$lld / %2$lld sikertelen
+shareUpload.livePhotoNote	A Live Photos fényképek a mozgóvideójukkal együtt kerülnek feltöltésre.
+shareUpload.retrySignInBody	Jelentkezzen be a NextExplorerbe, majd koppintson újra az Újra gombra.
+shareUpload.causeFolder	A mappák nem oszthatók meg. Ossza meg helyette a bennük lévő fájlokat.
+shareUpload.notificationMoreNames	még %lld
+versionedFiles.deleteFailed	Néhány verziót nem sikerült törölni. Ellenőrizze őket, és próbálja újra.
+serverSettings.featureOffTitle	Ez a funkció nincs bekapcsolva
+serverSettings.featureOffKept	Amit itt beállít, az mentésre kerül, és a funkció bekapcsolásakor azonnal érvénybe lép.
+serverSettings.featureOffUseSwitch	Kapcsolja be a fenti kapcsolóval.
+serverSettings.featureOffHowTo	A bekapcsoláshoz állítsa be a(z) %@ értékét, és indítsa újra a konténert.
+trashSettings.environmentNote	Az alapértékek a következőkből származnak: TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT és TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Az alapértékek a következőkből származnak: VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE és VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Frissítés

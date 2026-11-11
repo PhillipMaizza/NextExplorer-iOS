@@ -847,3 +847,202 @@ shareUpload.causeFolder	Le cartelle non possono essere condivise. Condividi inve
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	altri %lld
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	Caricamenti
+uploadSettings.subtitle	Configura come i file vengono inviati al server.
+uploadSettings.chunkedEnable	Abilita caricamenti a blocchi
+uploadSettings.chunkedEnableHelp	Usa TUS per inviare file di grandi dimensioni tramite più richieste più piccole.
+uploadSettings.chunkSize	Dimensione dei blocchi
+uploadSettings.chunkSizeHelp	Dimensione massima di ogni richiesta di caricamento. Tienila sotto il limite del tuo reverse proxy. Blocchi più piccoli danno un avanzamento più fluido.
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	Passaggio automatico ai blocchi
+uploadSettings.autoFallbackHelp	Se un caricamento diretto fallisce perché un reverse proxy rifiuta la dimensione, passa automaticamente ai caricamenti a blocchi.
+uploadSettings.unavailable	Le impostazioni di caricamento sono disponibili solo per gli amministratori.
+uploadSettings.saveButton	Salva modifiche
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	Scegliere gli eseguibili FFmpeg e FFprobe usati per le anteprime e i metadati dei media.
+ffmpegSettings.containerPathHelp	Indicare percorsi assoluti visibili all'interno del container dell'applicazione. Per usare i binari dell'host, montarli prima nel container.
+ffmpegSettings.ffmpegPath	Percorso dell'eseguibile FFmpeg
+ffmpegSettings.ffprobePath	Percorso dell'eseguibile FFprobe
+ffmpegSettings.invalid	Entrambi i percorsi devono essere percorsi assoluti del container e iniziare con /.
+ffmpegSettings.defaultHelp	Lasciare un percorso vuoto per usare FFMPEG_PATH o FFPROBE_PATH dall'ambiente e poi l'eseguibile incluso. Le modifiche hanno effetto immediato.
+ffmpegSettings.unavailable	Le impostazioni di FFmpeg sono disponibili solo per gli amministratori.
+ffmpegSettings.saveButton	Salva modifiche
+searchIndexSettings.navigationTitle	Indice di ricerca
+searchIndexSettings.subtitle	Escludere percorsi dall'indicizzazione dei contenuti.
+searchIndexSettings.running	Mantieni un indice di ricerca
+searchIndexSettings.runningHelp	Legge i documenti del volume in background, così una ricerca nel loro contenuto risponde subito.
+searchIndexSettings.locked	Impostato da %@ nell'ambiente: si decide lì, non qui.
+searchIndexSettings.environment	Esclusioni definite dall'ambiente
+searchIndexSettings.additional	Esclusioni aggiuntive
+searchIndexSettings.none	Nessun percorso configurato
+searchIndexSettings.addButton	Aggiungi
+searchIndexSettings.unavailable	Le impostazioni dell'indice di ricerca sono disponibili solo per gli amministratori.
+searchIndexSettings.saveButton	Salva modifiche
+searchIndexSettings.discardButton	Scarta
+folderSizeSettings.navigationTitle	Dimensioni cartelle
+folderSizeSettings.subtitle	Escludi percorsi dal calcolo e dall'indicizzazione delle dimensioni delle cartelle.
+folderSizeSettings.running	Misura la dimensione delle cartelle
+folderSizeSettings.runningHelp	Misura le cartelle in background, così la loro dimensione compare nell'elenco.
+folderSizeSettings.modeOff	Disattivato
+folderSizeSettings.modeShallow	Solo i loro file
+folderSizeSettings.modeFull	Tutto ciò che contengono
+folderSizeSettings.locked	Impostato da %@ nell'ambiente: si decide lì, non qui.
+folderSizeSettings.environment	Esclusioni definite dall'ambiente
+folderSizeSettings.additional	Esclusioni aggiuntive
+folderSizeSettings.none	Nessun percorso configurato
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Aggiungi
+folderSizeSettings.unavailable	Le impostazioni delle dimensioni delle cartelle sono disponibili solo per gli amministratori.
+folderSizeSettings.saveButton	Salva modifiche
+folderSizeSettings.discardButton	Scarta
+activityLog.navigationTitle	Registro attività
+activityLog.subtitle	Chi ha fatto cosa, quando e da dove. Spento finché non lo chiedi.
+activityLog.enabled	Registra l’attività
+activityLog.enabledHelp	Accessi, download, caricamenti, eliminazioni, ripristini, link di condivisione e modifiche all’account vengono annotati finché è attivo. Quello che è successo prima non c’è.
+activityLog.retention	Conserva (giorni)
+activityLog.retentionInvalid	Tra 1 e 3650 giorni.
+activityLog.saveButton	Salva modifiche
+activityLog.off	Il registro è spento: non viene annotato nulla.
+activityLog.none	Ancora nulla di registrato.
+activityLog.filterAction	Tipo
+activityLog.anyAction	Qualsiasi tipo
+activityLog.filterOutcome	Esito
+activityLog.anyOutcome	Qualsiasi esito
+activityLog.outcomeOk	Riuscito
+activityLog.outcomeRefused	Rifiutato
+activityLog.searchPlaceholder	Un nome o un percorso
+activityLog.searchButton	Cerca
+activityLog.refresh	Aggiorna
+activityLog.clear	Svuota il registro
+activityLog.clearTitle	Svuotare il registro?
+activityLog.clearMessage	Ogni riga registrata viene eliminata. L'operazione non può essere annullata.
+activityLog.clearConfirm	Svuota il registro
+activityLog.more	Mostra altro
+activityLog.refusedSuffix	Rifiutato
+activityLog.fromAddress	Da %@
+activityLog.unavailable	Il registro attività è disponibile solo per gli amministratori.
+activityLog.action.signIn	Accesso
+activityLog.action.signOut	Disconnessione
+activityLog.action.accountPassword	Password cambiata
+activityLog.action.accountTwoFactor	Secondo fattore cambiato
+activityLog.action.accountPasskey	Passkey cambiata
+activityLog.action.accountToken	Token API modificato
+activityLog.action.adminUser	Account modificato
+activityLog.action.adminSettings	Impostazioni cambiate
+activityLog.action.adminActivityClear	Registro svuotato
+activityLog.action.shareCreate	Condivisione creata
+activityLog.action.shareDelete	Condivisione eliminata
+activityLog.action.shareDownload	Scaricato da un link
+activityLog.action.shareUpload	Caricato da un link
+activityLog.action.fileDownload	Scaricato
+activityLog.action.fileUpload	Caricato
+activityLog.action.fileDelete	Spostato nel cestino
+activityLog.action.fileRestore	Ripristinato
+activityLog.action.filePurge	Eliminato definitivamente
+activityLog.action.versionsPurge	Versioni eliminate
+trashSettings.navigationTitle	Cestino e versioni
+trashSettings.subtitle	Gli elementi eliminati e le versioni precedenti dei file sono conservati in uno spazio riservato sul loro volume e rimossi alla fine della conservazione o quando serve spazio.
+trashSettings.trashHeader	Cestino
+trashSettings.enabled	Sposta gli elementi eliminati nel cestino
+trashSettings.enabledHelp	Se disattivato, eliminare cancella definitivamente. Gli elementi già nel cestino scadono comunque.
+trashSettings.retention	Conservazione (giorni)
+trashSettings.retentionHelp	Da 1 a 3650 giorni.
+trashSettings.maxPercent	Quota di ogni volume (%)
+trashSettings.maxPercentHelp	Il massimo che il cestino può occupare su un volume, da 1 a 90 %.
+trashSettings.maxSize	Limite di dimensione per volume (GiB)
+trashSettings.maxSizeHelp	Facoltativo. Si applica il minore tra quota e limite.
+trashSettings.maxSizeNone	Nessun limite
+trashSettings.trashInvalid	Controlla i valori: conservazione da 1 a 3650 giorni, quota da 1 a 90 %, una dimensione positiva o nessuna.
+trashSettings.versionsHeader	Versioni dei file
+trashSettings.versionsSubtitle	Ogni salvataggio conserva ciò che sostituisce, senza copiarlo, nello stesso spazio riservato del cestino. Le versioni più vecchie vengono diradate nel tempo.
+trashSettings.versionsEnabled	Conserva le versioni precedenti dei file
+trashSettings.versionsEnabledHelp	Indipendente dal cestino. Se disattivato, i salvataggi non conservano nulla di nuovo; le versioni esistenti restano fino alla scadenza o all'eliminazione.
+trashSettings.keepAllHours	Conserva tutte le versioni (ore)
+trashSettings.hourlyDays	Poi una all'ora (giorni)
+trashSettings.dailyDays	Poi una al giorno (giorni)
+trashSettings.maxPerFile	Versioni per file al massimo
+trashSettings.checkpointMinutes	Punto di controllo Office (minuti)
+trashSettings.tiersHelp	Dopo queste fasce si conserva una versione a settimana. Una sessione di modifica office lascia una versione, più un punto di controllo al massimo con questa frequenza. Le versioni fissate sfuggono al diradamento e al limite per file.
+trashSettings.versionsInvalid	Controlla i valori: da 1 a 720 ore, da 1 a 365 giorni orari, da 1 a 3650 giorni giornalieri, da 1 a 1000 versioni per file, un punto di controllo da 1 a 1440 minuti.
+trashSettings.sharedSpace	Le versioni e il cestino condividono lo spazio riservato di ogni volume. Quando scarseggia, se ne vanno prima le versioni vecchie, poi gli elementi del cestino, poi l'ultima versione di ogni file e infine le versioni fissate.
+trashSettings.saveButton	Salva modifiche
+trashSettings.discardButton	Scarta
+trashSettings.unavailable	Le impostazioni di cestino e versioni sono disponibili solo per gli amministratori.
+trashSettings.zonesHeader	Cestino per volume
+trashSettings.zonesSubtitle	Ogni volume tiene il suo cestino in una cartella nascosta .nextexplorer nella sua radice, quindi eliminare non copia mai nulla.
+trashSettings.zonesEmpty	Non è ancora stato eliminato nulla in un cestino.
+trashSettings.zoneKindPersonal	Cartella personale di %@
+trashSettings.zoneKindUserVolume	Volume assegnato %@
+trashSettings.available	Disponibile
+trashSettings.unavailableMissing	Non montato o rimosso
+trashSettings.unavailableReplaced	Un altro disco al suo posto
+trashSettings.unavailableUnreadable	Illeggibile
+trashSettings.usage	%1$@ su %2$@
+trashSettings.noBudget	nessun limite
+trashSettings.zoneItems	Elementi: %1$lld · %2$@
+trashSettings.zoneVersions	Versioni: %1$lld · %2$@
+trashSettings.lastPass	Ultima manutenzione: %@
+trashSettings.lastPassPurged	%1$@ · rimossi: %2$lld
+trashSettings.never	non ancora
+trashSettings.verify	Verifica
+trashSettings.runMaintenance	Esegui la manutenzione ora
+trashSettings.verifyOk	Il cestino di ogni volume è coerente.
+trashSettings.verifyIssues	Problemi trovati: %lld
+trashSettings.zoneProblems	Problemi: %lld
+trashSettings.journalHeader	Registro
+trashSettings.eventEvicted	"%@" eliminato prima della fine della conservazione per liberare spazio
+trashSettings.eventAdopted	"%@" recuperato dopo un'interruzione
+trashSettings.eventLost	Il contenuto di "%@" mancava
+trashSettings.eventFailed	"%@" non è stato eliminato
+trashSettings.eventBreaker	Troppi elementi mancanti in una volta: nulla è stato modificato
+trashSettings.eventForgotten	"%@" dimenticato da un amministratore
+trashSettings.eventVersionEvicted	Una versione di «%@» rimossa per liberare spazio
+trashSettings.eventVersionFailed	Impossibile rimuovere una versione
+trashSettings.eventVersionLost	Mancava il contenuto di una versione
+trashSettings.eventVersionTooLarge	«%@» supera l'intero spazio: ciò che sostituiva non è stato conservato
+trashSettings.eventVersionsBreaker	Troppe versioni mancanti insieme: non è stato modificato nulla
+versionedFiles.navigationTitle	Versioni dei file
+versionedFiles.subtitle	Ogni file che ha una cronologia, ovunque si trovi. Mostra i percorsi di tutti gli spazi, comprese le cartelle personali, quindi è solo per gli amministratori.
+versionedFiles.summary	File: %1$lld · Versioni: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Un nome o un percorso
+versionedFiles.zone	Volume
+versionedFiles.anyZone	Qualsiasi volume
+versionedFiles.stateHeader	Stato
+versionedFiles.anyState	Qualsiasi stato
+versionedFiles.stateLive	File ancora presente
+versionedFiles.stateTrashed	Nel cestino
+versionedFiles.stateOrphaned	File scomparso
+versionedFiles.sortHeader	Ordina per
+versionedFiles.sortBytes	Spazio occupato
+versionedFiles.sortVersions	Numero di versioni
+versionedFiles.sortNewest	Più recente
+versionedFiles.sortPath	Percorso
+versionedFiles.none	Nessun file ha versioni precedenti.
+versionedFiles.unavailable	Le versioni dei file sono disponibili solo per gli amministratori.
+versionedFiles.zoneUnknown	Volume sconosciuto
+versionedFiles.zoneKindPersonal	Cartella personale di %@
+versionedFiles.zoneKindUserVolume	Volume assegnato %@
+versionedFiles.rowSummary	Versioni: %1$lld · %2$@
+versionedFiles.newest	Ultima: %@
+versionedFiles.versionPinned	Fissata
+versionedFiles.versionUnavailable	Non disponibile
+versionedFiles.versionBy	Di %@
+versionedFiles.detailFailed	Non è stato possibile leggere questa cronologia.
+versionedFiles.deleteSelectedNone	Spunta le versioni da eliminare
+versionedFiles.deleteSelected	Elimina selezionate (%lld)
+versionedFiles.deleteAll	Elimina tutte le versioni
+versionedFiles.confirmAllTitle	Eliminare ogni versione di «%@»?
+versionedFiles.confirmSomeTitle	Eliminare le versioni selezionate (%lld)?
+versionedFiles.confirmMessage	Le versioni eliminate non possono essere recuperate.
+versionedFiles.confirmDelete	Elimina
+versionedFiles.previous	Precedente
+versionedFiles.next	Successivo
+versionedFiles.pageRange	da %1$lld a %2$lld di %3$lld
+versionedFiles.deleteFailed	Non è stato possibile eliminare alcune versioni. Controllale e riprova.
+serverSettings.featureOffTitle	Questa funzione non è attiva
+serverSettings.featureOffKept	Ciò che configuri qui viene salvato e si applica non appena la funzione viene attivata.
+serverSettings.featureOffUseSwitch	Attivala con l’interruttore qui sopra.
+serverSettings.featureOffHowTo	Per attivarla, imposta %@ e riavvia il container.
+trashSettings.environmentNote	I valori predefiniti provengono da TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT e TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	I valori predefiniti provengono da VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE e VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Aggiorna

@@ -7,15 +7,15 @@ import os
 /// `L10n.swift` reads `bundle`/`locale` here.
 public enum LocalizationOverride {
     /// The app's UI languages, mirroring the web app's set. `en` is the source language.
-    public static let supportedLanguages = ["en", "ar", "de", "es", "fr", "hi", "it", "ja", "ko", "nl", "pl", "pt", "ro", "ru", "sv", "zh-CN", "zh-TW"]
+    public static let supportedLanguages = ["en", "ar", "cs", "da", "de", "el", "es", "fi", "fr", "he", "hi", "hu", "id", "it", "ja", "ko", "nb", "nl", "pl", "pt", "pt-BR", "ro", "ru", "sv", "th", "tr", "uk", "vi", "zh-CN", "zh-TW"]
 
     /// Each language's own name (endonym), shown in the picker so a speaker recognizes their
     /// language regardless of the current UI language.
     public static let displayNames: [String: String] = [
-        "en": "English", "ar": "العربية", "de": "Deutsch", "es": "Español", "fr": "Français",
-        "hi": "हिन्दी", "it": "Italiano", "ja": "日本語", "ko": "한국어", "nl": "Nederlands",
-        "pl": "Polski", "pt": "Português", "ro": "Română", "ru": "Русский",
-        "sv": "Svenska", "zh-CN": "简体中文", "zh-TW": "繁體中文",
+        "en": "English", "ar": "العربية", "cs": "Čeština", "da": "Dansk", "de": "Deutsch", "el": "Ελληνικά", "es": "Español", "fi": "Suomi", "fr": "Français",
+        "he": "עברית", "hi": "हिन्दी", "hu": "Magyar", "id": "Bahasa Indonesia", "it": "Italiano", "ja": "日本語", "ko": "한국어", "nb": "Norsk bokmål", "nl": "Nederlands",
+        "pl": "Polski", "pt": "Português (Portugal)", "pt-BR": "Português (Brasil)", "ro": "Română", "ru": "Русский",
+        "sv": "Svenska", "th": "ไทย", "tr": "Türkçe", "uk": "Українська", "vi": "Tiếng Việt", "zh-CN": "简体中文", "zh-TW": "繁體中文",
     ]
 
     public static func displayName(for code: String) -> String {

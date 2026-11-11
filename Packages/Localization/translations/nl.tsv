@@ -847,3 +847,202 @@ shareUpload.causeFolder	Mappen kunnen niet worden gedeeld. Deel in plaats daarva
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	nog %lld
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	Uploads
+uploadSettings.subtitle	Stel in hoe bestanden naar de server worden verzonden.
+uploadSettings.chunkedEnable	Uploads in delen inschakelen
+uploadSettings.chunkedEnableHelp	Gebruik TUS om grote bestanden in meerdere kleinere verzoeken te verzenden.
+uploadSettings.chunkSize	Deelgrootte
+uploadSettings.chunkSizeHelp	Maximale grootte van elk uploadverzoek. Houd dit onder de limiet van je reverse proxy. Kleinere delen geven een vloeiendere voortgang.
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	Automatisch terugvallen op uploads in delen
+uploadSettings.autoFallbackHelp	Als een directe upload mislukt omdat een reverse proxy de grootte weigert, wordt automatisch overgeschakeld naar uploads in delen.
+uploadSettings.unavailable	Uploadinstellingen zijn alleen beschikbaar voor beheerders.
+uploadSettings.saveButton	Wijzigingen bewaren
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	Kies de FFmpeg- en FFprobe-programma's voor mediavoorbeelden en metagegevens.
+ffmpegSettings.containerPathHelp	Geef absolute paden op die binnen de container van de toepassing zichtbaar zijn. Koppel programma's van de host eerst in de container om ze te gebruiken.
+ffmpegSettings.ffmpegPath	Pad naar het FFmpeg-programma
+ffmpegSettings.ffprobePath	Pad naar het FFprobe-programma
+ffmpegSettings.invalid	Beide paden moeten absolute containerpaden zijn en met / beginnen.
+ffmpegSettings.defaultHelp	Laat een pad leeg om FFMPEG_PATH of FFPROBE_PATH uit de omgeving te gebruiken en daarna het meegeleverde programma. Wijzigingen zijn direct actief.
+ffmpegSettings.unavailable	FFmpeg-instellingen zijn alleen beschikbaar voor beheerders.
+ffmpegSettings.saveButton	Wijzigingen bewaren
+searchIndexSettings.navigationTitle	Zoekindex
+searchIndexSettings.subtitle	Paden uitsluiten van het indexeren van inhoud.
+searchIndexSettings.running	Een zoekindex bijhouden
+searchIndexSettings.runningHelp	Leest de documenten van het volume op de achtergrond, zodat zoeken in hun inhoud meteen antwoordt.
+searchIndexSettings.locked	Ingesteld door %@ in de omgeving: dat wordt daar beslist, niet hier.
+searchIndexSettings.environment	Uitsluitingen uit de omgevingsvariabelen
+searchIndexSettings.additional	Extra uitsluitingen
+searchIndexSettings.none	Geen pad ingesteld
+searchIndexSettings.addButton	Toevoegen
+searchIndexSettings.unavailable	Instellingen voor de zoekindex zijn alleen beschikbaar voor beheerders.
+searchIndexSettings.saveButton	Wijzigingen bewaren
+searchIndexSettings.discardButton	Negeren
+folderSizeSettings.navigationTitle	Mapgroottes
+folderSizeSettings.subtitle	Paden uitsluiten van het berekenen en indexeren van mapgroottes.
+folderSizeSettings.running	Mapgroottes meten
+folderSizeSettings.runningHelp	Meet mappen op de achtergrond, zodat hun grootte in de lijst verschijnt.
+folderSizeSettings.modeOff	Uit
+folderSizeSettings.modeShallow	Alleen hun eigen bestanden
+folderSizeSettings.modeFull	Alles wat erin zit
+folderSizeSettings.locked	Ingesteld door %@ in de omgeving: dat wordt daar beslist, niet hier.
+folderSizeSettings.environment	Uitsluitingen uit de omgevingsvariabelen
+folderSizeSettings.additional	Extra uitsluitingen
+folderSizeSettings.none	Geen paden ingesteld
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Toevoegen
+folderSizeSettings.unavailable	Instellingen voor mapgroottes zijn alleen beschikbaar voor beheerders.
+folderSizeSettings.saveButton	Wijzigingen bewaren
+folderSizeSettings.discardButton	Negeren
+activityLog.navigationTitle	Activiteitenlogboek
+activityLog.subtitle	Wie wat deed, wanneer en vanwaar. Uit tot je erom vraagt.
+activityLog.enabled	Activiteit vastleggen
+activityLog.enabledHelp	Aanmeldingen, downloads, uploads, verwijderingen, terugzettingen, deellinks en accountwijzigingen worden vastgelegd zolang dit aanstaat. Wat daarvoor gebeurde staat er niet in.
+activityLog.retention	Bewaren (dagen)
+activityLog.retentionInvalid	Tussen 1 en 3650 dagen.
+activityLog.saveButton	Wijzigingen bewaren
+activityLog.off	Het logboek staat uit, er wordt niets vastgelegd.
+activityLog.none	Nog niets vastgelegd.
+activityLog.filterAction	Soort
+activityLog.anyAction	Alle soorten
+activityLog.filterOutcome	Resultaat
+activityLog.anyOutcome	Elk resultaat
+activityLog.outcomeOk	Geslaagd
+activityLog.outcomeRefused	Geweigerd
+activityLog.searchPlaceholder	Een naam of een pad
+activityLog.searchButton	Zoeken
+activityLog.refresh	Vernieuwen
+activityLog.clear	Logboek legen
+activityLog.clearTitle	Logboek legen?
+activityLog.clearMessage	Elke vastgelegde regel wordt verwijderd. Dit kan niet ongedaan worden gemaakt.
+activityLog.clearConfirm	Logboek legen
+activityLog.more	Meer tonen
+activityLog.refusedSuffix	Geweigerd
+activityLog.fromAddress	Van %@
+activityLog.unavailable	Het activiteitenlogboek is alleen beschikbaar voor beheerders.
+activityLog.action.signIn	Aangemeld
+activityLog.action.signOut	Afgemeld
+activityLog.action.accountPassword	Wachtwoord gewijzigd
+activityLog.action.accountTwoFactor	Tweede factor gewijzigd
+activityLog.action.accountPasskey	Passkey gewijzigd
+activityLog.action.accountToken	API-token gewijzigd
+activityLog.action.adminUser	Account gewijzigd
+activityLog.action.adminSettings	Instellingen gewijzigd
+activityLog.action.adminActivityClear	Logboek geleegd
+activityLog.action.shareCreate	Deellink gemaakt
+activityLog.action.shareDelete	Deellink verwijderd
+activityLog.action.shareDownload	Via een link gedownload
+activityLog.action.shareUpload	Via een link geüpload
+activityLog.action.fileDownload	Gedownload
+activityLog.action.fileUpload	Geüpload
+activityLog.action.fileDelete	Naar de prullenbak
+activityLog.action.fileRestore	Teruggezet
+activityLog.action.filePurge	Definitief verwijderd
+activityLog.action.versionsPurge	Versies verwijderd
+trashSettings.navigationTitle	Prullenbak en versies
+trashSettings.subtitle	Verwijderde items en eerdere versies van bestanden worden bewaard in een gereserveerde ruimte op hun eigen volume, en gewist na hun bewaartermijn of wanneer die ruimte nodig is.
+trashSettings.trashHeader	Prullenbak
+trashSettings.enabled	Verwijderde items naar de prullenbak sturen
+trashSettings.enabledHelp	Indien uitgeschakeld, wist verwijderen items definitief. Items die al in de prullenbak liggen, verlopen nog steeds.
+trashSettings.retention	Bewaartermijn (dagen)
+trashSettings.retentionHelp	Van 1 tot 3650 dagen.
+trashSettings.maxPercent	Aandeel van elk volume (%)
+trashSettings.maxPercentHelp	Het maximum dat de prullenbak op een volume mag innemen, van 1 tot 90%.
+trashSettings.maxSize	Maximale grootte per volume (GiB)
+trashSettings.maxSizeHelp	Optioneel. De kleinste van het aandeel en het maximum geldt.
+trashSettings.maxSizeNone	Geen maximum
+trashSettings.trashInvalid	Controleer de waarden: bewaartermijn van 1 tot 3650 dagen, aandeel van 1 tot 90%, een positieve grootte of geen.
+trashSettings.versionsHeader	Bestandsversies
+trashSettings.versionsSubtitle	Elke opslag bewaart wat hij vervangt, zonder het te kopiëren, in dezelfde gereserveerde ruimte als de prullenbak. Oudere versies worden in de loop van de tijd uitgedund.
+trashSettings.versionsEnabled	Eerdere versies van bestanden bewaren
+trashSettings.versionsEnabledHelp	Los van de prullenbak. Indien uitgeschakeld, bewaart opslaan niets nieuws; bestaande versies blijven tot ze verlopen of worden verwijderd.
+trashSettings.keepAllHours	Elke versie bewaren (uren)
+trashSettings.hourlyDays	Daarna één per uur (dagen)
+trashSettings.dailyDays	Daarna één per dag (dagen)
+trashSettings.maxPerFile	Maximaal aantal versies per bestand
+trashSettings.checkpointMinutes	Office-tussenstand (minuten)
+trashSettings.tiersHelp	Na deze stappen wordt één versie per week bewaard. Een Office-bewerksessie laat één versie achter, plus hooguit zo vaak een tussenstand. Vastgezette versies ontsnappen aan het uitdunnen en aan de limiet per bestand.
+trashSettings.versionsInvalid	Controleer de waarden: 1 tot 720 uur, 1 tot 365 dagen per uur, 1 tot 3650 dagen per dag, 1 tot 1000 versies per bestand, een tussenstand van 1 tot 1440 minuten.
+trashSettings.sharedSpace	Versies en de prullenbak delen de gereserveerde ruimte van elk volume. Wordt die krap, dan gaan eerst oudere versies, daarna items uit de prullenbak, dan de laatste versie van elk bestand en als laatste vastgezette versies.
+trashSettings.saveButton	Wijzigingen bewaren
+trashSettings.discardButton	Negeren
+trashSettings.unavailable	Instellingen voor prullenbak en versies zijn alleen beschikbaar voor beheerders.
+trashSettings.zonesHeader	Prullenbak per volume
+trashSettings.zonesSubtitle	Elk volume bewaart zijn prullenbak in een verborgen .nextexplorer-map in de hoofdmap, zodat verwijderen nooit iets kopieert.
+trashSettings.zonesEmpty	Er is nog niets naar een prullenbak verwijderd.
+trashSettings.zoneKindPersonal	Persoonlijke map van %@
+trashSettings.zoneKindUserVolume	Toegewezen volume %@
+trashSettings.available	Beschikbaar
+trashSettings.unavailableMissing	Niet gekoppeld of verwijderd
+trashSettings.unavailableReplaced	Een andere schijf op die plek
+trashSettings.unavailableUnreadable	Onleesbaar
+trashSettings.usage	%1$@ van %2$@
+trashSettings.noBudget	geen limiet
+trashSettings.zoneItems	Items: %1$lld · %2$@
+trashSettings.zoneVersions	Versies: %1$lld · %2$@
+trashSettings.lastPass	Laatste onderhoud: %@
+trashSettings.lastPassPurged	%1$@ · verwijderd: %2$lld
+trashSettings.never	nog niet
+trashSettings.verify	Controleren
+trashSettings.runMaintenance	Onderhoud nu uitvoeren
+trashSettings.verifyOk	De prullenbak van elk volume is consistent.
+trashSettings.verifyIssues	Gevonden problemen: %lld
+trashSettings.zoneProblems	Problemen: %lld
+trashSettings.journalHeader	Logboek
+trashSettings.eventEvicted	"%@" vóór het einde van de bewaartermijn gewist om ruimte vrij te maken
+trashSettings.eventAdopted	"%@" hersteld na een onderbreking
+trashSettings.eventLost	Van "%@" ontbrak de inhoud
+trashSettings.eventFailed	"%@" kon niet worden gewist
+trashSettings.eventBreaker	Te veel items tegelijk verdwenen: er is niets gewijzigd
+trashSettings.eventForgotten	"%@" vergeten door een beheerder
+trashSettings.eventVersionEvicted	Een versie van "%@" gewist om ruimte vrij te maken
+trashSettings.eventVersionFailed	Een versie kon niet worden gewist
+trashSettings.eventVersionLost	Van een versie ontbrak de inhoud
+trashSettings.eventVersionTooLarge	"%@" is groter dan de volledige ruimte: wat het verving, is niet bewaard
+trashSettings.eventVersionsBreaker	Te veel versies tegelijk verdwenen: er is niets gewijzigd
+versionedFiles.navigationTitle	Bestandsversies
+versionedFiles.subtitle	Elk bestand met een geschiedenis, waar het ook staat. Het toont paden uit alle ruimtes, inclusief persoonlijke mappen, dus het is alleen voor beheerders.
+versionedFiles.summary	Bestanden: %1$lld · Versies: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Een naam of een pad
+versionedFiles.zone	Volume
+versionedFiles.anyZone	Elk volume
+versionedFiles.stateHeader	Status
+versionedFiles.anyState	Elke status
+versionedFiles.stateLive	Bestand nog aanwezig
+versionedFiles.stateTrashed	In de prullenbak
+versionedFiles.stateOrphaned	Bestand verdwenen
+versionedFiles.sortHeader	Sorteren op
+versionedFiles.sortBytes	Gebruikte ruimte
+versionedFiles.sortVersions	Aantal versies
+versionedFiles.sortNewest	Nieuwste
+versionedFiles.sortPath	Pad
+versionedFiles.none	Geen enkel bestand heeft eerdere versies.
+versionedFiles.unavailable	Bestandsversies zijn alleen beschikbaar voor beheerders.
+versionedFiles.zoneUnknown	Onbekend volume
+versionedFiles.zoneKindPersonal	Persoonlijke map van %@
+versionedFiles.zoneKindUserVolume	Toegewezen volume %@
+versionedFiles.rowSummary	Versies: %1$lld · %2$@
+versionedFiles.newest	Laatste: %@
+versionedFiles.versionPinned	Vastgezet
+versionedFiles.versionUnavailable	Niet beschikbaar
+versionedFiles.versionBy	Door %@
+versionedFiles.detailFailed	Deze geschiedenis kon niet worden gelezen.
+versionedFiles.deleteSelectedNone	Vink versies aan om te verwijderen
+versionedFiles.deleteSelected	Selectie verwijderen (%lld)
+versionedFiles.deleteAll	Alle versies verwijderen
+versionedFiles.confirmAllTitle	Elke versie van „%@” verwijderen?
+versionedFiles.confirmSomeTitle	De geselecteerde versies verwijderen (%lld)?
+versionedFiles.confirmMessage	Verwijderde versies kunnen niet worden hersteld.
+versionedFiles.confirmDelete	Verwijderen
+versionedFiles.previous	Vorige
+versionedFiles.next	Volgende
+versionedFiles.pageRange	%1$lld tot %2$lld van %3$lld
+versionedFiles.deleteFailed	Sommige versies konden niet worden verwijderd. Controleer ze en probeer het opnieuw.
+serverSettings.featureOffTitle	Deze functie is niet ingeschakeld
+serverSettings.featureOffKept	Wat je hier instelt, wordt opgeslagen en geldt zodra de functie is ingeschakeld.
+serverSettings.featureOffUseSwitch	Schakel de functie in met de schakelaar hierboven.
+serverSettings.featureOffHowTo	Stel %@ in en herstart de container om dit in te schakelen.
+trashSettings.environmentNote	Standaardwaarden komen uit TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT en TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Standaardwaarden komen uit VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE en VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Vernieuwen

@@ -1,0 +1,1107 @@
+# NextExplorer: Türkçe (tr). key<TAB>value.
+common.cancel	İptal
+common.save	Kaydet
+common.edit	Düzenle
+common.retry	Tekrar Dene
+common.syncCompleted	Eşitleme tamamlandı
+common.delete	Sil
+common.remove	Kaldır
+common.clear	Temizle
+common.done	Bitti
+common.ok	Tamam
+common.openSettings	Ayarları Aç
+common.logOut	Oturumu Kapat
+common.close	Kapat
+common.back	Geri
+common.share	Paylaş
+common.copy	Kopyala
+common.copied	Kopyalandı
+common.download	İndir
+common.sort	Sırala
+common.select	Seç
+common.deselect	Seçimi Kaldır
+common.search	Ara
+common.password	Parola
+common.never	Asla
+common.selectedCount	%lld Seçili
+tab.browse	Gözat
+tab.favorites	Favoriler
+tab.shared	Paylaşılanlar
+tab.downloads	İndirilenler
+tab.settings	Ayarlar
+sort.sheetTitle	Sıralama Ölçütü
+sort.name	Ad
+sort.size	Boyut
+sort.kind	Tür
+sort.dateModified	Değiştirilme Tarihi
+sort.dateAdded	Eklenme Tarihi
+sort.dateShared	Paylaşılma Tarihi
+sort.expiration	Son Kullanma
+sort.email	E-posta
+sort.type	Tür
+sort.ascending	Artan
+sort.descending	Azalan
+select.selectAll	Tümünü Seç
+select.deselectAll	Tüm Seçimi Kaldır
+select.listView	Liste Görünümü
+select.gridView	Izgara Görünümü
+emptyState.folderEmpty	Bu klasör boş.
+emptyState.loadFailed	Sunucuya ulaşılamadı.
+emptyState.noSearchMatches	“%@” için eşleşme yok.
+accessMode.readonly	Salt Okunur
+accessMode.readwrite	Okuma ve Yazma
+shareTarget.anyone	Bağlantıya sahip herkes
+shareTarget.users	Belirli kullanıcılar
+directLinkMode.auto	Otomatik
+directLinkMode.inline	Görüntüle
+directLinkMode.raw	Ham
+directLinkMode.download	İndir
+thumbnailSize.small	Küçük
+thumbnailSize.medium	Orta
+thumbnailSize.large	Büyük
+downloadLocation.documents	Belgeler
+downloadLocation.cache	Önbellek
+dateFormat.automatic	Otomatik
+browse.navigationTitle	Gözat
+browse.scopeThisFolder	Bu Klasör
+browse.scopeEverywhere	Her Yerde
+browse.searchScopeInFolder	Bu Klasör
+browse.searchScopeEverywhere	Her Yerde
+browse.locations	Konumlar
+browse.breadcrumbHint	Bu klasörü açar
+browse.open	Aç
+browse.unsupportedFileType	Desteklenmeyen dosya türü
+browse.actionGetInfo	Bilgi Al
+browse.actionPermissions	İzinler
+browse.actionRename	Yeniden Adlandır
+browse.actionExtract	Arşivden Çıkar
+browse.actionCompress	Sıkıştır
+browse.actionDownload	İndir
+browse.actionAddToFavorites	Favorilere Ekle
+browse.actionRemoveFromFavorites	Favorilerden Kaldır
+browse.actionShare	Paylaşım bağlantısı oluştur
+browse.actionDelete	Sil
+browse.actionDuplicate	Çoğalt
+browse.renameTitle	Yeniden Adlandır
+browse.renameNamePlaceholder	Ad
+browse.actionNewFolder	Klasör Oluştur
+browse.newFolderTitle	Yeni Klasör
+browse.newFolderPlaceholder	Klasör adı
+browse.newFolderConfirm	Oluştur
+browse.actionNewFile	Dosya Oluştur
+browse.newFileTitle	Yeni Dosya
+browse.newFileTypeHint	Düzenleyicinin açabileceği bir dosya türü kullanın, örneğin .txt, .md veya .js.
+browse.deleteConfirmTitle	Silinsin mi?
+browse.deleteConfirmOne	“%@” silinsin mi?
+browse.deleteConfirmMany	%lld öğe silinsin mi?
+browse.deleteMessage	Bu işlem geri alınamaz.
+browse.deleteLinkedSharesOne	Bu işlem ayrıca buraya işaret eden 1 paylaşım bağlantısını da kaldırır.
+browse.deleteLinkedSharesMany	Bu işlem ayrıca buraya işaret eden %lld paylaşım bağlantısını da kaldırır.
+browse.deleteLinkedSharesUnavailable	Buraya işaret eden paylaşım bağlantıları denetlenemedi. Var olanlar çalışmayı durduracak.
+browse.searchNoMatchesInFolder	“%@” için eşleşme yok.
+browse.searchEverywhere	Her yerde ara
+browse.searchFailed	Arama yapılamadı. Bağlantınızı kontrol edip tekrar deneyin.
+browse.progressExtracting	Arşivden çıkarılıyor…
+browse.progressCompressing	Sıkıştırılıyor…
+browse.offlineBannerTitle	Çevrimdışı
+browse.offlineBannerDetail	%@ tarihli kayıtlı bir kopya gösteriliyor
+browse.actionCopy	Kopyala
+browse.destinationPickerMoveTitle	Şuraya taşı…
+browse.destinationPickerConfirmMove	Buraya Taşı
+browse.destinationPickerNoFolders	Burada klasör yok
+browse.destinationPickerLoadFailed	Klasörler yüklenemedi.
+browse.actionMove	Taşı
+browse.actionPaste	Yapıştır
+browse.actionPasteCount	%lld öğeyi yapıştır
+browse.actionPasteHere	Buraya yapıştır
+browse.actionClearClipboard	Panoyu temizle
+browse.clipboardMoveCount	%lld taşınacak
+browse.clipboardCopyCount	%lld kopyalanacak
+browse.clipboardCopiedOne	%@ kopyalandı
+browse.clipboardCopiedMany	%lld öğe kopyalandı
+browse.progressMoving	Taşınıyor…
+browse.progressCopying	Kopyalanıyor…
+browse.transferMoved	%lld öğe taşındı
+browse.transferCopied	%lld öğe kopyalandı
+browse.transferMovedWithSkipped	%1$lld öğe taşındı, %2$lld atlandı
+browse.transferCopiedWithSkipped	%1$lld öğe kopyalandı, %2$lld atlandı
+browse.transferConflictTitle	Öğeler değiştirilsin mi?
+browse.transferConflictMessageOne	"%@" bu klasörde zaten var.
+browse.transferConflictMessageMany	%lld öğe bu klasörde zaten var.
+browse.transferConflictReplace	Değiştir
+browse.transferConflictKeepBoth	İkisini de Tut
+browse.actionOpenInBrowser	Tarayıcıda Aç
+favorites.navigationTitle	Favoriler
+favorites.emptyList	Burada görmek için Gözat'ta klasörleri yıldızlayın.
+favorites.actionRemoveFromFavorites	Favorilerden Kaldır
+favorites.accessibilityBadge	Favori
+favorites.actionEdit	Düzenle
+favorites.editTitle	Favoriyi Düzenle
+favorites.editNameLabel	Ad
+favorites.editNameErrorEmpty	Ad boş olamaz.
+favorites.editIconLabel	Simge
+favorites.editIconOutline	Anahat
+favorites.editIconSolid	Dolu
+favorites.editColorLabel	Renk
+favorites.editColorDefault	Varsayılan
+favorites.editSave	Kaydet
+favorites.reorderFailed	Yeni sıra kaydedilemedi.
+favorites.removeConfirm	%lld Favori Kaldırılsın mı?
+favorites.removeMessage	Bu yalnızca onları Favoriler'den kaldırır.
+favorites.removeFailedOne	Bu favori kaldırılamadı.
+favorites.removeFailedMany	Bu favoriler kaldırılamadı.
+favorites.removePartial	%2$lld öğeden %1$lld tanesi kaldırıldı.
+downloads.navigationTitle	İndirilenler
+downloads.actionOpenInFiles	Dosyalar'da Aç
+downloads.emptyList	Gözat'tan indirdiğiniz dosyalar burada görünür.
+downloads.deleteConfirmTitle	Silinsin mi?
+downloads.deleteConfirmOne	“%@” silinsin mi?
+downloads.deleteConfirmMany	%lld dosya silinsin mi?
+downloads.deleteSingleMessage	Bu yalnızca yerel kopyayı kaldırır. Dosya sunucuda kalır.
+downloads.deleteBulkMessage	Bu yalnızca yerel kopyaları kaldırır. Dosyalar sunucuda kalır.
+downloads.errorNameExists	Bu ada sahip bir dosya zaten var.
+downloads.errorInvalidName	Bu ada izin verilmiyor.
+downloads.errorMissing	Bu dosya artık bulunamıyor.
+downloads.errorGeneric	Bu işlem tamamlanamadı.
+unsupportedPreview.genericType	Dosya
+unsupportedPreview.cannotOpen	Bu uygulama bu dosya türünü açamıyor.
+uploads.navigationTitle	Yüklemeler
+uploads.menuTitle	Yükle
+uploads.actionUploadFromFiles	Dosyalar'dan Yükle
+uploads.actionUploadFromPhotos	Galeriden Yükle
+uploads.actionTakePhoto	Fotoğraf veya Video Çek
+uploads.cameraDeniedTitle	Kamera erişimi gerekli
+uploads.cameraDeniedMessage	Fotoğraf veya video çekmek için Ayarlar'da kamera erişimine izin verin.
+uploads.destinationTitle	Şuraya yükle…
+uploads.destinationConfirm	Buraya yükle
+uploads.reviewTitleOne	1 dosya yükle
+uploads.reviewTitleMany	%lld dosya yükle
+uploads.reviewSectionFiles	Dosyalar
+uploads.reviewSectionPath	Yol
+uploads.reviewSectionSize	Toplam boyut
+uploads.reviewChooseFolder	Bir klasör seçin
+uploads.reviewUploadButton	Yükle
+uploads.reviewPreparing	%lld hazırlanıyor…
+uploads.reviewAddMore	Daha fazla dosya ekle
+uploads.reviewPreviewFile	%@ önizle
+uploads.reviewInsecureNetworkNotice	http üzerinden bağlısınız. Bu sunucu yalnızca ev ağınızdaysa, ağdan uzakken yüklemeler çalışmaz.
+uploads.stagingFailed	Bu dosyalar eklenemedi. Tekrar deneyin.
+uploads.stagingSkipped	%lld öğe hazırlanamadı ve dışarıda bırakıldı.
+uploads.discardTitle	Yükleme iptal edilsin mi?
+uploads.discardMessage	Eklediğiniz dosyalar yüklenmeyecek.
+uploads.discardConfirm	Vazgeç
+uploads.statusWaiting	Bekliyor
+uploads.statusFailed	Yükleme başarısız
+uploads.barTitleOne	%@ yükleniyor
+uploads.barTitleMany	%lld dosya yükleniyor
+uploads.barFailedOne	1 yükleme başarısız
+uploads.barFailedMany	%lld yükleme başarısız
+uploads.retryAll	Tümünü yeniden dene
+uploads.complete	Yükleme tamamlandı
+uploads.completeMany	%lld dosya yüklendi
+uploads.completeWithFailures	%1$lld yüklendi, %2$lld başarısız
+uploads.failedGeneric	Bu dosya yüklenemedi.
+uploads.clear	Temizle
+uploads.emptyList	Henüz yükleme yok.
+uploads.cancelAll	Tüm yüklemeleri iptal et
+shared.navigationTitle	Paylaşılanlar
+shared.segmentByMe	Benim paylaştıklarım
+shared.segmentWithMe	Benimle paylaşılanlar
+shared.sectionExpired	Süresi doldu
+shared.badgeExpired	süresi doldu
+shared.emptyByMe	Bağlantısını burada görmek için bir dosya veya klasör paylaşın.
+shared.emptyWithMe	Başkalarının sizinle paylaştığı bağlantılar burada görünür.
+shared.noSearchMatches	“%@” ile eşleşen paylaşım yok.
+shared.deleteTitle	Paylaşım Bağlantısı Silinsin mi?
+shared.deleteMessage	Bağlantı hemen çalışmayı durdurur. Dosya veya klasörün kendisine dokunulmaz.
+shared.sharedByUnknown	Biri
+shared.metaAccess	Erişim
+shared.metaExpiration	Son Kullanma
+shared.metaSharedBy	Paylaşan
+shared.metaSharedWith	Paylaşılan kişi
+shared.anyoneWithLink	Bağlantıya sahip herkes
+shared.linkMode	Bağlantı modu
+shared.actionShareLink	Paylaşım bağlantısı
+shared.actionFolderLink	Klasör bağlantısı
+shared.actionFileLink	Dosya bağlantısı
+shared.copiedShareLink	Paylaşım bağlantısı kopyalandı
+shared.copiedFolderZip	Klasör ZIP bağlantısı kopyalandı
+shared.copiedDirectFile	Doğrudan dosya bağlantısı kopyalandı
+createShare.title	Paylaşım Bağlantısı Oluştur
+createShare.titleCreated	Paylaşım Oluşturuldu
+createShare.sectionLabel	Etiket
+createShare.sectionAccessMode	Erişim Modu
+createShare.sectionWhoCanAccess	Kimler erişebilir
+createShare.sectionShareLink	Paylaşım Bağlantısı
+createShare.fieldPassword	Parola
+createShare.togglePasswordProtect	Parolayla koru
+createShare.toggleSetExpiration	Son kullanma tarihi belirle
+createShare.fieldExpires	Son kullanma
+createShare.submit	Paylaşım Bağlantısı Oluştur
+createShare.loadingUsers	Kullanıcılar yükleniyor…
+createShare.noOtherUsers	Paylaşılacak başka kullanıcı yok.
+createShare.sharingPrefix	Paylaşılan:
+createShare.createdBanner	Paylaşım bağlantısı başarıyla oluşturuldu!
+createShare.viewInShared	Paylaşılanlar'da Görüntüle
+createShare.directLinkMode	Doğrudan bağlantı modu
+createShare.directFolderLink	Doğrudan klasör ZIP bağlantısı
+createShare.directFileLink	Doğrudan dosya bağlantısı
+createShare.summaryAccess	Erişim
+createShare.summarySharedWith	Paylaşılan kişi
+createShare.summaryPassword	Parola
+createShare.summaryPasswordProtected	Korumalı
+createShare.summaryExpires	Son kullanma
+createShare.summarySpecificPeople	Belirli kişiler
+createShare.errorPastExpiration	Gelecekte bir son kullanma tarihi seçin.
+editShare.title	Paylaşım Bağlantısını Düzenle
+editShare.save	Değişiklikleri Kaydet
+editShare.passwordKeepHint	Mevcut parolayı korumak için boş bırakın
+editShare.savedToast	Paylaşım bağlantısı güncellendi
+thumbnailSettings.navigationTitle	Küçük Resimler
+thumbnailSettings.subtitle	Sunucunun her istemci için küçük resimleri nasıl oluşturacağını denetleyin.
+thumbnailSettings.enable	Küçük Resim Oluştur
+thumbnailSettings.enableHelp	Bunun yerine her yerde tam boyutlu görselleri sunmak için kapatın.
+thumbnailSettings.quality	Kalite
+thumbnailSettings.qualityHelp	Yüksek değer daha iyi görünür ve daha fazla yer kullanır.
+thumbnailSettings.maxDimension	En Büyük Boyut
+thumbnailSettings.maxDimensionHelp	Oluşturulan küçük resmin piksel cinsinden en uzun kenarı.
+thumbnailSettings.concurrency	Eşzamanlılık
+thumbnailSettings.concurrencyHelp	Sunucunun aynı anda kaç küçük resim oluşturacağı.
+thumbnailSettings.unavailable	Küçük resim ayarları yalnızca yöneticiler tarafından kullanılabilir.
+thumbnailSettings.saveButton	Değişiklikleri Kaydet
+uploadSettings.navigationTitle	Yüklemeler
+uploadSettings.subtitle	Dosyaların sunucuya nasıl gönderileceğini yapılandırın.
+uploadSettings.chunkedEnable	Parçalı yüklemeyi etkinleştir
+uploadSettings.chunkedEnableHelp	Büyük dosyaları birden çok küçük istekle göndermek için TUS kullanır.
+uploadSettings.chunkSize	Parça boyutu
+uploadSettings.chunkSizeHelp	Her yükleme isteğinin en büyük boyutu. Bunu ters proxy sınırınızın altında tutun. Daha küçük parçalar daha akıcı ilerleme sağlar.
+uploadSettings.autoFallback	Parçalıya otomatik geçiş
+uploadSettings.autoFallbackHelp	Ters proxy gövde boyutunu reddettiği için doğrudan yükleme başarısız olursa, otomatik olarak parçalı yüklemeye geçilir.
+uploadSettings.unavailable	Yükleme ayarları yalnızca yöneticiler tarafından kullanılabilir.
+uploadSettings.saveButton	Değişiklikleri Kaydet
+ffmpegSettings.subtitle	Ortam önizlemeleri ve meta veriler için kullanılan FFmpeg ve FFprobe çalıştırılabilir dosyalarını seçin.
+ffmpegSettings.containerPathHelp	Uygulama kapsayıcısının içinde görünen mutlak yolları girin. Ana makinedeki ikili dosyaları kullanmak için önce bunları kapsayıcıya bağlayın.
+ffmpegSettings.ffmpegPath	FFmpeg çalıştırılabilir dosya yolu
+ffmpegSettings.ffprobePath	FFprobe çalıştırılabilir dosya yolu
+ffmpegSettings.invalid	Her iki yol da / ile başlayan mutlak kapsayıcı yolları olmalıdır.
+ffmpegSettings.defaultHelp	Ortamdaki FFMPEG_PATH veya FFPROBE_PATH'i, ardından paketlenmiş çalıştırılabilir dosyayı kullanmak için yolu boş bırakın. Değişiklikler hemen uygulanır.
+ffmpegSettings.unavailable	FFmpeg ayarları yalnızca yöneticiler tarafından kullanılabilir.
+ffmpegSettings.saveButton	Değişiklikleri Kaydet
+searchIndexSettings.navigationTitle	Arama Dizini
+searchIndexSettings.subtitle	Yolları içerik dizinlemesinin dışında tutun.
+searchIndexSettings.running	Arama dizini tut
+searchIndexSettings.runningHelp	Birimdeki belgeleri arka planda okur, böylece içlerinde yapılan arama anında yanıt verir.
+searchIndexSettings.locked	Ortamda %@ tarafından ayarlandı, bu yüzden burada değil orada belirlenir.
+searchIndexSettings.environment	Ortam tarafından tanımlanan hariç tutmalar
+searchIndexSettings.additional	Ek hariç tutmalar
+searchIndexSettings.none	Yapılandırılmış yol yok
+searchIndexSettings.addButton	Ekle
+searchIndexSettings.unavailable	Arama dizini ayarları yalnızca yöneticiler tarafından kullanılabilir.
+searchIndexSettings.saveButton	Değişiklikleri Kaydet
+searchIndexSettings.discardButton	Vazgeç
+folderSizeSettings.navigationTitle	Klasör Boyutları
+folderSizeSettings.subtitle	Yolları klasör boyutu hesaplamasının ve dizinlemesinin dışında tutun.
+folderSizeSettings.running	Klasör boyutlarını ölç
+folderSizeSettings.runningHelp	Klasörleri arka planda ölçer, böylece boyutları listede görünür.
+folderSizeSettings.modeOff	Kapalı
+folderSizeSettings.modeShallow	Yalnızca kendi dosyaları
+folderSizeSettings.modeFull	İçindeki her şey
+folderSizeSettings.locked	Ortamda %@ tarafından ayarlandı, bu yüzden burada değil orada belirlenir.
+folderSizeSettings.environment	Ortam tarafından tanımlanan hariç tutmalar
+folderSizeSettings.additional	Ek hariç tutmalar
+folderSizeSettings.none	Yapılandırılmış yol yok
+folderSizeSettings.addButton	Ekle
+folderSizeSettings.unavailable	Klasör boyutu ayarları yalnızca yöneticiler tarafından kullanılabilir.
+folderSizeSettings.saveButton	Değişiklikleri Kaydet
+folderSizeSettings.discardButton	Vazgeç
+activityLog.navigationTitle	Etkinlik Günlüğü
+activityLog.subtitle	Kim ne yaptı, ne zaman ve nereden. Siz istemedikçe kapalıdır.
+activityLog.enabled	Etkinliği kaydet
+activityLog.enabledHelp	Bu açıkken oturum açmalar, indirmeler, yüklemeler, silmeler, geri yüklemeler, paylaşım bağlantıları ve hesap değişiklikleri yazılır. Açılmadan önceki hiçbir şey burada yer almaz.
+activityLog.retention	Saklama süresi (gün)
+activityLog.retentionInvalid	1 ile 3650 gün arasında.
+activityLog.saveButton	Değişiklikleri Kaydet
+activityLog.off	Günlük kapalı, bu yüzden hiçbir şey kaydedilmiyor.
+activityLog.none	Henüz kaydedilen bir şey yok.
+activityLog.filterAction	Tür
+activityLog.anyAction	Herhangi bir tür
+activityLog.filterOutcome	Sonuç
+activityLog.anyOutcome	Herhangi bir sonuç
+activityLog.outcomeOk	Başarılı
+activityLog.outcomeRefused	Reddedildi
+activityLog.searchPlaceholder	Bir ad veya yol
+activityLog.searchButton	Ara
+activityLog.refresh	Yenile
+activityLog.clear	Günlüğü Boşalt
+activityLog.clearTitle	Günlük boşaltılsın mı?
+activityLog.clearMessage	Kaydedilen her satır silinir. Bu işlem geri alınamaz.
+activityLog.clearConfirm	Günlüğü Boşalt
+activityLog.more	Daha Fazla Göster
+activityLog.refusedSuffix	Reddedildi
+activityLog.fromAddress	%@ adresinden
+activityLog.unavailable	Etkinlik günlüğü yalnızca yöneticiler tarafından kullanılabilir.
+activityLog.action.signIn	Oturum açıldı
+activityLog.action.signOut	Oturum kapatıldı
+activityLog.action.accountPassword	Parola değiştirildi
+activityLog.action.accountTwoFactor	İkinci adım değiştirildi
+activityLog.action.accountPasskey	Geçiş anahtarı değiştirildi
+activityLog.action.accountToken	API belirteci değiştirildi
+activityLog.action.adminUser	Hesap değiştirildi
+activityLog.action.adminSettings	Ayarlar değiştirildi
+activityLog.action.adminActivityClear	Günlük temizlendi
+activityLog.action.shareCreate	Paylaşım oluşturuldu
+activityLog.action.shareDelete	Paylaşım silindi
+activityLog.action.shareDownload	Bağlantı üzerinden indirildi
+activityLog.action.shareUpload	Bağlantı üzerinden yüklendi
+activityLog.action.fileDownload	İndirildi
+activityLog.action.fileUpload	Yüklendi
+activityLog.action.fileDelete	Çöp kutusuna gönderildi
+activityLog.action.fileRestore	Geri yüklendi
+activityLog.action.filePurge	Kalıcı olarak kaldırıldı
+activityLog.action.versionsPurge	Sürümler silindi
+trashSettings.navigationTitle	Çöp Kutusu ve Sürümler
+trashSettings.subtitle	Silinen öğeler ve dosyaların önceki sürümleri, kendi birimlerinde ayrılmış bir alanda tutulur; saklama süresinden sonra veya bu alana ihtiyaç duyulduğunda kaldırılır.
+trashSettings.trashHeader	Çöp Kutusu
+trashSettings.enabled	Silinen öğeleri çöp kutusuna gönder
+trashSettings.enabledHelp	Kapalıyken silme, öğeleri kalıcı olarak kaldırır. Çöp kutusundaki öğelerin süresi yine de dolar.
+trashSettings.retention	Saklama süresi (gün)
+trashSettings.retentionHelp	1 ile 3650 gün arası.
+trashSettings.maxPercent	Her birimin payı (%)
+trashSettings.maxPercentHelp	Çöp kutusunun bir birimde tutabileceği en fazla miktar, 1 ile 90% arası.
+trashSettings.maxSize	Birim başına boyut sınırı (GiB)
+trashSettings.maxSizeHelp	İsteğe bağlı. Pay ile sınırdan küçük olanı geçerlidir.
+trashSettings.maxSizeNone	Sınır yok
+trashSettings.trashInvalid	Değerleri kontrol edin: saklama süresi 1 ile 3650 gün, pay 1 ile 90%, pozitif bir boyut veya boş.
+trashSettings.versionsHeader	Dosya Sürümleri
+trashSettings.versionsSubtitle	Her kaydetme, değiştirdiğini kopyalamadan, çöp kutusuyla aynı ayrılmış alanda tutar. Eski sürümler zamanla seyreltilir.
+trashSettings.versionsEnabled	Dosyaların önceki sürümlerini tut
+trashSettings.versionsEnabledHelp	Çöp kutusundan bağımsızdır. Kapalıyken kaydetmeler yeni bir şey tutmaz; mevcut sürümler süresi dolana veya silinene kadar kalır.
+trashSettings.keepAllHours	Her sürümü tut (saat)
+trashSettings.hourlyDays	Sonra saatte bir (gün)
+trashSettings.dailyDays	Sonra günde bir (gün)
+trashSettings.maxPerFile	Dosya başına en fazla sürüm
+trashSettings.checkpointMinutes	Office kontrol noktası (dakika)
+trashSettings.tiersHelp	Bu kademelerden sonra haftada bir sürüm tutulur. Bir Office düzenleme oturumu bir sürüm bırakır, ayrıca en fazla bu sıklıkta bir kontrol noktası. Sabitlenmiş sürümler seyreltmeden ve dosya başına sınırdan muaftır.
+trashSettings.versionsInvalid	Değerleri kontrol edin: 1 ile 720 saat, saat başına 1 ile 365 gün, gün başına 1 ile 3650 gün, dosya başına 1 ile 1000 sürüm, 1 ile 1440 dakika arası bir kontrol noktası.
+trashSettings.sharedSpace	Sürümler ve çöp kutusu, her birimin ayrılmış alanını paylaşır. Alan azaldığında önce eski sürümler, sonra çöp kutusu öğeleri, sonra her dosyanın en son sürümü, en sonda da sabitlenmiş sürümler gider.
+trashSettings.saveButton	Değişiklikleri Kaydet
+trashSettings.discardButton	Vazgeç
+trashSettings.unavailable	Çöp kutusu ve sürüm ayarları yalnızca yöneticiler tarafından kullanılabilir.
+trashSettings.zonesHeader	Birime Göre Çöp Kutusu
+trashSettings.zonesSubtitle	Her birim çöp kutusunu kök dizinindeki gizli bir .nextexplorer klasöründe tutar, bu yüzden silme hiçbir şeyi kopyalamaz.
+trashSettings.zonesEmpty	Henüz çöp kutusuna hiçbir şey silinmedi.
+trashSettings.zoneKindPersonal	%@ kullanıcısının kişisel klasörü
+trashSettings.zoneKindUserVolume	Atanmış birim %@
+trashSettings.available	Kullanılabilir
+trashSettings.unavailableMissing	Bağlı değil veya kaldırıldı
+trashSettings.unavailableReplaced	Yerinde başka bir disk var
+trashSettings.unavailableUnreadable	Okunamıyor
+trashSettings.usage	%1$@ / %2$@
+trashSettings.noBudget	sınırsız
+trashSettings.zoneItems	Öğe: %1$lld · %2$@
+trashSettings.zoneVersions	Sürüm: %1$lld · %2$@
+trashSettings.lastPass	Son bakım: %@
+trashSettings.lastPassPurged	%1$@ · kaldırılan: %2$lld
+trashSettings.never	henüz değil
+trashSettings.verify	Doğrula
+trashSettings.runMaintenance	Bakımı Şimdi Çalıştır
+trashSettings.verifyOk	Her birimin çöp kutusu tutarlı.
+trashSettings.verifyIssues	Bulunan sorunlar: %lld
+trashSettings.zoneProblems	Sorunlar: %lld
+trashSettings.journalHeader	Günlük
+trashSettings.eventEvicted	"%@" yer açmak için saklama süresi dolmadan kaldırıldı
+trashSettings.eventAdopted	"%@" bir kesintiden sonra kurtarıldı
+trashSettings.eventLost	"%@" içeriği eksikti
+trashSettings.eventFailed	"%@" kaldırılamadı
+trashSettings.eventBreaker	Aynı anda çok fazla öğe eksik: hiçbir şey değiştirilmedi
+trashSettings.eventForgotten	"%@" bir yönetici tarafından unutuldu
+trashSettings.eventVersionEvicted	"%@" öğesinin bir sürümü yer açmak için kaldırıldı
+trashSettings.eventVersionFailed	Bir sürüm kaldırılamadı
+trashSettings.eventVersionLost	Bir sürümün içeriği eksikti
+trashSettings.eventVersionTooLarge	"%@" tüm alandan büyük: değiştirdiği içerik korunmadı
+trashSettings.eventVersionsBreaker	Aynı anda çok fazla sürüm eksik: hiçbir şey değiştirilmedi
+versionedFiles.navigationTitle	Dosya Sürümleri
+versionedFiles.subtitle	Geçmişi olan her dosya, nerede olursa olsun. Kişisel klasörler dahil her alandaki yolları gösterir, bu yüzden yalnızca yöneticilere yöneliktir.
+versionedFiles.summary	Dosya: %1$lld · Sürüm: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Bir ad veya yol
+versionedFiles.zone	Birim
+versionedFiles.anyZone	Herhangi bir birim
+versionedFiles.stateHeader	Durum
+versionedFiles.anyState	Herhangi bir durum
+versionedFiles.stateLive	Dosya hâlâ yerinde
+versionedFiles.stateTrashed	Çöp kutusunda
+versionedFiles.stateOrphaned	Dosya yok
+versionedFiles.sortHeader	Sıralama
+versionedFiles.sortBytes	Kullanılan alan
+versionedFiles.sortVersions	Sürüm sayısı
+versionedFiles.sortNewest	En yeni
+versionedFiles.sortPath	Yol
+versionedFiles.none	Önceki sürümü olan dosya yok.
+versionedFiles.unavailable	Dosya sürümleri yalnızca yöneticiler tarafından kullanılabilir.
+versionedFiles.zoneUnknown	Bilinmeyen birim
+versionedFiles.zoneKindPersonal	%@ kullanıcısının kişisel klasörü
+versionedFiles.zoneKindUserVolume	Atanmış birim %@
+versionedFiles.rowSummary	Sürüm: %1$lld · %2$@
+versionedFiles.newest	En son: %@
+versionedFiles.versionPinned	Sabitlendi
+versionedFiles.versionUnavailable	Kullanılamıyor
+versionedFiles.versionBy	Ekleyen: %@
+versionedFiles.detailFailed	Bu geçmiş okunamadı.
+versionedFiles.deleteSelectedNone	Silinecek sürümleri işaretleyin
+versionedFiles.deleteSelected	Seçilenleri Sil (%lld)
+versionedFiles.deleteAll	Tüm Sürümleri Sil
+versionedFiles.confirmAllTitle	"%@" öğesinin her sürümü silinsin mi?
+versionedFiles.confirmSomeTitle	Seçilen sürümler (%lld) silinsin mi?
+versionedFiles.confirmMessage	Silinen sürümler geri getirilemez.
+versionedFiles.confirmDelete	Sil
+versionedFiles.previous	Önceki
+versionedFiles.next	Sonraki
+versionedFiles.pageRange	%1$lld ile %2$lld arası, toplam %3$lld
+accessRules.navigationTitle	Klasör Erişim Kuralları
+accessRules.subtitle	Belirli yollar için okuma ve yazma erişimini geçersiz kılın.
+accessRules.addRule	Kural Ekle
+accessRules.empty	Yapılandırılmış erişim kuralı yok.
+accessRules.emptyHint	Bir yol için erişimi geçersiz kılmak üzere kural ekleyin.
+accessRules.pathLabel	Yol
+accessRules.recursive	Alt Klasörlere Uygula
+accessRules.permissionReadWrite	Okuma ve Yazma
+accessRules.permissionReadOnly	Salt Okunur
+accessRules.permissionHidden	Gizli
+accessRules.remove	Kaldır
+accessRules.unavailable	Erişim kuralları yalnızca yöneticiler tarafından kullanılabilir.
+accessRules.saveButton	Değişiklikleri Kaydet
+settings.rowThumbnails	Küçük Resimler
+settings.rowAccessRules	Klasör Erişim Kuralları
+settings.navigationTitle	Ayarlar
+settings.sectionGeneral	Genel
+settings.sectionDisplay	Görünüm
+settings.sectionStorage	Depolama
+settings.sectionServerStorage	Sunucu Depolaması
+settings.serverStorageUsed	%1$@ / %2$@
+settings.sectionLicenses	Lisanslar
+settings.sectionLegal	Yasal
+settings.sectionUsers	Kullanıcılar
+settings.sectionAdmin	Yönetim
+settings.sectionInfo	Bilgi
+settings.toggleShowHiddenFiles	Gizli Dosyaları Göster
+settings.toggleRenderHTML	HTML Sayfalarını Görüntüle
+settings.toggleRenderMarkdown	Markdown Dosyalarını Görüntüle
+settings.toggleHaptics	Dokunsal Geri Bildirim
+settings.toggleShowThumbnails	Küçük Resimleri Göster
+settings.toggleShowExtensions	Dosya Uzantılarını Göster
+settings.toggleShowTabLabels	Sekme Etiketlerini Göster
+settings.toggleKeepClipboard	Yapıştırdıktan Sonra Öğeleri Tut
+settings.toggleKeepClipboardSubtitle	Kopyalanan öğeler başka bir klasöre yapıştırılmaya hazır kalır. Taşınan öğeler her zaman temizlenir.
+settings.rowDateFormat	Tarih Biçimi
+settings.rowLanguage	Dil
+settings.rowThumbnailSize	Küçük Resim Boyutu
+settings.rowRemoveAllDownloads	Tüm İndirilenleri Kaldır
+settings.rowClearCache	Önbelleği Temizle
+settings.rowOpenSourceLicenses	Açık Kaynak Lisansları
+settings.rowPrivacyPolicy	Gizlilik Politikası
+settings.rowTermsOfUse	Kullanım Koşulları
+settings.rowUserManagement	Kullanıcı Yönetimi
+settings.rowChangePassword	Parolayı Değiştir
+settings.rowAddPassword	Parola Ekle
+settings.rowServer	Sunucu
+settings.storageFootnote	Klasörler zip olarak indirilir, sunucuda hiçbir şey bırakılmaz. İndirilenleri kaldırmak veya önbelleği temizlemek yalnızca bu cihazı etkiler; sunucudaki hiçbir şeye dokunulmaz.
+settings.storageFootnoteMac	Önbelleği temizlemek yalnızca bu Mac'i etkiler; sunucudaki hiçbir şeye dokunulmaz.
+settings.removeAllDownloadsTitle	Tüm İndirilenler Kaldırılsın mı?
+settings.removeAllDownloadsConfirm	Tümünü Kaldır
+settings.removeAllDownloadsMessage	Bu işlem indirilen her dosyayı bu cihazdan siler. Dosyalar sunucuda kalır.
+settings.clearCacheTitle	Önbellek Temizlensin mi?
+settings.clearCacheConfirm	Temizle
+settings.clearCacheMessage	Bu işlem, çevrimdışı kullanılan önbelleğe alınmış önizlemeleri, küçük resimleri ve kayıtlı klasör listelerini temizler. Sunucudaki hiçbir şey etkilenmez.
+settings.signOutAlertTitle	Oturum Kapatılsın mı?
+settings.signOutMessage	Dosyalarınıza erişmek için yeniden oturum açmanız gerekir. Bu cihazdaki önbelleğe alınmış önizlemeler, küçük resimler ve kayıtlı klasör listeleri temizlenir.
+settings.signOutButton	Oturumu Kapat
+settings.signingOut	Oturum Kapatılıyor…
+settings.sectionAccounts	Hesaplar
+settings.addAccount	Hesap Ekle
+settings.accountSignOut	Oturumu Kapat
+settings.accountSignOutTitle	Oturum Kapatılsın mı?
+settings.accountSignOutMessage	%@ hesabının bu cihazdaki oturumu kapatılsın mı? Bu hesabı kullanmak için yeniden oturum açmanız gerekir.
+settings.accountActiveLabel	%1$@, %2$@, etkin hesap
+settings.badgeActive	Etkin
+settings.dateFormatNavigationTitle	Tarih Biçimi
+settings.dateFormatShowTime	Saati Göster
+language.navigationTitle	Dil
+language.systemDefault	Sistem Varsayılanı
+language.systemDefaultSubtitle	Cihaz dilini izle
+serverDetails.navigationTitle	Sunucu
+serverDetails.changeLogo	Simgeyi Değiştir
+serverDetails.takePhoto	Fotoğraf Çek
+serverDetails.chooseFromGallery	Galeriden Yükle
+serverDetails.nameLabel	Sunucu Adı
+serverDetails.nameErrorEmpty	Sunucu adı boş olamaz.
+serverDetails.urlLabel	Sunucu URL'si
+serverDetails.urlFootnote	NextExplorer örneğinizin kurulu olduğu adres. Değiştirmek için oturumu kapatıp sunucuyu yeniden ekleyin.
+serverDetails.updateButton	Sunucuyu Güncelle
+serverDetails.savedMessage	Sunucu ayrıntıları güncellendi.
+serverDetails.logoErrorTooLarge	Bu görsel çok büyük. 2 MB'tan küçük bir görsel seçin.
+serverDetails.cameraDeniedTitle	Kamera Erişimi Kapalı
+serverDetails.cameraDeniedMessage	Fotoğraf çekmek için Ayarlar'da kamera erişimini açın.
+licenses.navigationTitle	Açık Kaynak Lisansları
+licenses.sectionSoftware	Yazılım
+licenses.sectionFontSoftware	Yazı Tipi Yazılımı
+licenses.labelAuthor	Yazar
+licenses.labelOriginalVersion	Özgün Sürüm
+licenses.labelModifiedVersion	Değiştirilmiş Sürüm
+licenses.labelReservedFontName	Ayrılmış Yazı Tipi Adı
+fileInfo.navigationTitleFolder	Klasör
+fileInfo.rowKind	Tür
+fileInfo.rowSize	Boyut
+fileInfo.rowLocation	Konum
+fileInfo.rowDateModified	Değiştirilme Tarihi
+fileInfo.rowDateCreated	Oluşturulma Tarihi
+fileInfo.rowFiles	Dosyalar
+fileInfo.rowFolders	Klasörler
+fileInfo.rowTotalSize	Toplam Boyut
+fileInfo.sectionServerDisk	Sunucu Diski
+fileInfo.diskFreeOf	%2$@ içinde %1$@ boş
+fileInfo.rowDimensions	Boyutlar
+fileInfo.rowCamera	Kamera
+fileInfo.rowLens	Lens
+fileInfo.rowDateTaken	Çekim Tarihi
+fileInfo.rowDuration	Süre
+fileInfo.partialScan	Kısmi tarama sayıldı: bu klasör çok büyük.
+permissions.title	İzinler
+permissions.sectionMode	Mod
+permissions.numericLabel	Sayısal
+permissions.applyToEnclosed	İçindeki öğelere uygula
+permissions.applyPermissions	İzinleri Uygula
+permissions.sectionOwnership	Sahiplik
+permissions.fieldOwner	Sahip
+permissions.fieldGroup	Grup
+permissions.ownershipNote	Sahipliği değiştirmek genellikle sunucuda root veya yönetici ayrıcalıkları gerektirir.
+permissions.applyOwnership	Sahipliği Uygula
+permissions.scopeOwner	Sahip
+permissions.scopeGroup	Grup
+permissions.scopeOthers	Diğerleri
+permissions.rightRead	Okuma
+permissions.rightWrite	Yazma
+permissions.rightExecute	Çalıştırma
+archive.emptyFolder	Bu klasör boş.
+archive.openFailed	Bu dosya açılamadı.
+archive.openArchiveFailed	Bu arşiv açılamadı.
+archive.entryTooLarge	Bu öğe açmak için çok büyük.
+gallery.loadFailed	Bu görsel yüklenemedi.
+textPreview.saved	Kaydedildi
+textPreview.loadFailed	Bu dosya yüklenemedi. Bağlantınızı kontrol edip tekrar deneyin.
+textPreview.unsavedTitle	“%@” içindeki değişiklikler kaydedilsin mi?
+textPreview.unsavedMessage	Kaydetmezseniz değişiklikleriniz kaybolur.
+textPreview.dontSave	Kaydetme
+userManagement.navigationTitle	Kullanıcı Yönetimi
+userManagement.searchPrompt	Kullanıcı ara
+userManagement.createUser	Kullanıcı Oluştur
+userManagement.badgeAdmin	Yönetici
+userManagement.emptyList	Henüz kullanıcı yok.
+userManagement.noSearchMatches	“%@” ile eşleşen kullanıcı yok.
+userManagement.loadFailed	Sunucuya ulaşılamadı.
+userManagement.sortType	Tür
+userManagement.sortName	Ad
+userManagement.sortEmail	E-posta
+userManagement.tabProfile	Profil
+userManagement.tabSecurity	Güvenlik
+userManagement.tabVolumes	Birimler
+userManagement.createNavigationTitle	Kullanıcı Oluştur
+userManagement.createEmailField	E-posta
+userManagement.createUsernameField	Kullanıcı adı (isteğe bağlı)
+userManagement.createUsernamePlaceholder	E-postadan türetilir
+userManagement.createPasswordField	Parola
+userManagement.createPasswordPlaceholder	En az %lld karakter
+userManagement.createGrantAdminToggle	Yönetici Erişimi Ver
+userManagement.createGrantAdminSubtitle	Dosyalar, paylaşımlar ve kullanıcılar üzerinde tam denetim.
+userManagement.createSubmit	Kullanıcı Oluştur
+userManagement.setPasswordNavigationTitle	Parola
+userManagement.setPasswordNewField	Yeni Parola
+userManagement.setPasswordPlaceholder	En az %lld karakter
+userManagement.setPasswordResetTitle	Parolayı Sıfırla
+userManagement.setPasswordSetTitle	Parola Belirle
+userManagement.setPasswordResetIntro	%@ için yeni bir yerel parola belirleyin. Mevcut parolası çalışmayı durdurur.
+userManagement.setPasswordSetIntro	%@ kullanıcısına SSO olmadan oturum açabilmesi için yerel bir parola verin.
+userManagement.toastProfileUpdated	Profil güncellendi
+userManagement.toastAdminGranted	Yönetici yetkisi verildi
+userManagement.toastUserRemoved	Kullanıcı kaldırıldı
+userManagement.toastUserCreated	Kullanıcı oluşturuldu
+userManagement.toastPasswordUpdated	Parola güncellendi
+userManagement.toastVolumeSaved	Birim kaydedildi
+userManagement.toastVolumeRemoved	Birim kaldırıldı
+userManagement.errorEmailRequired	E-posta gerekli.
+userManagement.errorEmailInvalid	Geçerli bir e-posta adresi girin.
+userManagement.errorUsernameRequired	Kullanıcı adı gerekli.
+userManagement.errorEmailInUse	E-posta zaten kullanımda.
+userManagement.errorPasswordTooShort	En az %lld karakter kullanın.
+userDetail.fallbackName	Kullanıcı
+userDetail.sectionGeneralInfo	Genel Bilgiler
+userDetail.sectionRoles	Roller ve İzinler
+userDetail.sectionLocalPassword	Yerel Parola
+userDetail.sectionSSO	Tek Oturum Açma
+userDetail.sectionAssignedVolumes	Atanmış Birimler
+userDetail.profileDisplayNameField	Görünen Ad
+userDetail.profileDisplayNamePlaceholder	Görünen ad
+userDetail.profileUsernameField	Kullanıcı adı
+userDetail.profileUsernamePlaceholder	Kullanıcı adı
+userDetail.profileEmailField	E-posta
+userDetail.profileSave	Değişiklikleri Kaydet
+userDetail.roleAdmin	Yönetici
+userDetail.roleAdminSubtitle	Dosyalar, paylaşımlar ve kullanıcılar üzerinde tam denetim.
+userDetail.roleAdminLocked	Yöneticilerin yetkisi uygulamadan alınamaz.
+userDetail.roleGrantAdmin	Yönetici Yap
+userDetail.passwordHasLocal	Bu kullanıcı e-posta ve parolayla oturum açar.
+userDetail.passwordSSOOnly	Bu kullanıcının yerel parolası yok ve yalnızca SSO ile oturum açar.
+userDetail.passwordReset	Parolayı Sıfırla
+userDetail.passwordSet	Parola Belirle
+userDetail.ssoNone	Bağlı SSO sağlayıcısı yok.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Bağlı
+userDetail.dangerZoneTitle	Tehlikeli Bölge
+userDetail.dangerZoneSubtitle	Bir kullanıcıyı kaldırmak erişimini hemen iptal eder. Sunucuda sahip olduğu dosyalar silinmez.
+userDetail.dangerZoneRemoveUser	Kullanıcıyı Kaldır
+userDetail.volumesNone	Atanmış birim yok.
+userDetail.volumesNoneSubtitle	Bu kullanıcı yalnızca varsayılan paylaşılan alanı görür.
+userDetail.volumesAssign	Birim Ata
+userDetail.volumesFootnote	Birimler, kullanıcıya varsayılan paylaşılan alanın dışındaki bir dizine erişim verir. Bir birimi kaldırmak dosyaları asla silmez.
+userDetail.volumeEditAccessibility	%@ öğesini düzenle
+userDetail.volumeRemoveAccessibility	%@ öğesini kaldır
+userDetail.removeVolumeTitle	Birim Kaldırılsın mı?
+userDetail.removeVolumeMessage	%@ bu kullanıcıdan çıkarıldı. Dizinin kendisine dokunulmaz.
+userDetail.removeUserTitle	Kullanıcı Kaldırılsın mı?
+userDetail.removeUserMessage	%@ erişimini hemen kaybeder. Sunucudaki dosyaları silinmez.
+userDetail.grantAdminTitle	Yönetici Yetkisi Verilsin mi?
+userDetail.grantAdminMessage	%@, dosyalar, paylaşımlar ve kullanıcılar üzerinde tam denetime sahip bir yönetici olur. Yöneticilerin yetkisi uygulamadan alınamaz.
+userDetail.volumeSheetLabelField	Etiket
+userDetail.volumeSheetLabelPlaceholder	Birim etiketi
+userDetail.volumeSheetAccessMode	Erişim Modu
+userDetail.volumeSheetDirectory	Dizin
+userDetail.volumeSheetSaveEdit	Birimi Kaydet
+userDetail.volumeSheetSaveNew	Birim Ata
+userDetail.volumeSheetTitleEdit	Birimi Düzenle
+userDetail.volumeSheetTitleNew	Birim Ata
+userDetail.directoryPickerGoUp	Bir üst dizine git
+userDetail.directoryPickerUseThis	Bu Dizini Kullan
+userDetail.directoryPickerOpen	%@ öğesini aç
+userDetail.directoryPickerFailed	Dizinler listelenemedi.
+previewToolbar.close	Kapat
+previewToolbar.createShareLink	Paylaşım bağlantısı oluştur
+previewToolbar.download	İndir
+previewToolbar.delete	Sil
+previewToolbar.share	Paylaş
+previewToolbar.rename	Yeniden Adlandır
+login.serverQuestion	NextExplorer örneğiniz nerede?
+login.serverInfoAccessibility	Bir sunucuya bağlanma hakkında
+login.serverInfoTitle	Sunucu nedir?
+login.serverInfoBody	NextExplorer kendi NextExplorer sunucunuza bağlanır. Sunucuyu bir yönetici çalıştırır, hesapları oluşturur ve web adresini sizinle paylaşır. Oturum açmak için bu adresi girin.\n\nHenüz sunucunuz yok mu? Kurulum kılavuzu nasıl barındıracağınızı gösterir.
+login.serverInfoGuide	Kurulum kılavuzunu aç
+login.testConnection	Bağlantıyı sına
+login.identifierField	E-posta veya kullanıcı adı
+login.passwordField	Parola
+login.showPassword	Parolayı Göster
+login.hidePassword	Parolayı Gizle
+login.submit	Oturum Aç
+login.plaintextWarning	Bu bağlantı şifrelenmemiş. Parolanız ve oturumunuz yerel ağ üzerinden düz metin olarak gönderilir.
+error.sessionExpired	Oturumunuzun süresi doldu. Yeniden oturum açın.
+error.rateLimited	Çok fazla istek. Kısa süre sonra tekrar deneyin.
+error.network	Sunucuya ulaşılamadı.
+error.offline	Çevrimdışısınız. İnternete bağlanıp tekrar deneyin.
+error.decoding	Sunucu beklenmedik şekilde yanıt verdi.
+error.server	Sunucu hatası (%lld).
+error.forbidden	Bunu yapmaya izniniz yok.
+error.clientCertificateRequired	Bu sunucu bir istemci sertifikası gerektiriyor. Ayarlar'dan bir tane ekleyin.
+error.clientCertificateRejected	Sunucu istemci sertifikanızı reddetti.
+changePassword.navigationTitle	Parolayı Değiştir
+changePassword.intro	E-posta adresinizle oturum açmak için kullandığınız parolayı değiştirin. Bu cihazda oturumunuz açık kalır.
+changePassword.fieldCurrentPassword	Mevcut Parola
+changePassword.fieldNewPasswordLabel	Yeni Parola
+changePassword.fieldConfirmPasswordLabel	Yeni Parolayı Onayla
+changePassword.fieldConfirmPassword	Yeni parolayı yeniden girin
+changePassword.fieldNewPasswordPrompt	En az %lld karakter
+changePassword.submitButton	Parolayı Güncelle
+changePassword.success	Parolanız güncellendi.
+changePassword.addNavigationTitle	Parola Ekle
+changePassword.addIntro	Bu hesap tek oturum açma ile oturum açar ve henüz parolası yok. E-posta adresiniz veya kullanıcı adınızla da oturum açmak için bir parola ekleyin.
+changePassword.addSubmitButton	Parola Ekle
+changePassword.errorMinLength	En az %lld karakter kullanın.
+changePassword.errorMismatch	Parolalar eşleşmiyor.
+twoFactor.navigationTitle	İki Faktörlü Kimlik Doğrulama
+twoFactor.offTitle	İki faktörlü kimlik doğrulama kapalı
+twoFactor.offIntro	Oturum açmaya ikinci bir adım ekleyin. Parolanızdan sonra bir kimlik doğrulayıcı uygulamadan kod gireceksiniz.
+twoFactor.turnOnButton	Aç
+twoFactor.enrollIntro	Bu QR kodunu kimlik doğrulayıcı uygulamanızla tarayın veya anahtarı elle yazın. Ardından uygulamanın gösterdiği 6 haneli kodu girin.
+twoFactor.qrAccessibilityLabel	Kimlik doğrulayıcı uygulamanız için QR kodu
+twoFactor.keyLabel	Kurulum Anahtarı
+twoFactor.copyKeyAccessibilityLabel	Kurulum anahtarını kopyala
+twoFactor.codeAccessibilityLabel	Doğrulayıcı kodu
+twoFactor.confirmButton	Doğrula ve Aç
+twoFactor.recoveryTitle	Kurtarma kodlarınızı kaydedin
+twoFactor.recoveryIntro	Kimlik doğrulayıcı uygulamanızı kaybederseniz her kod yalnızca bir kez işe yarar. Bir daha gösterilmeyecekler, bu yüzden güvenli bir yerde saklayın.
+twoFactor.copyCodesButton	Kodları Kopyala
+twoFactor.shareCodesButton	Kodları Paylaş
+twoFactor.recoveryDoneButton	Kaydettim
+twoFactor.onTitle	İki faktörlü kimlik doğrulama açık
+twoFactor.recoveryCodesLeft	Kalan kurtarma kodları: %lld
+twoFactor.newCodesButton	Yeni Kurtarma Kodları Al
+twoFactor.turnOffButton	Kapat
+twoFactor.passwordNewCodesIntro	Kurtarma kodlarınızı değiştirmek için parolanızı girin. Eskileri çalışmayı durdurur.
+twoFactor.passwordTurnOffIntro	İki faktörlü kimlik doğrulamayı kapatmak için parolanızı girin.
+twoFactor.passwordField	Parola
+twoFactor.passwordConfirmButton	Onayla
+twoFactor.manageButton	Yönet…
+apiTokens.navigationTitle	API Belirteçleri
+apiTokens.sectionHeader	Geliştiriciler
+apiTokens.intro	API belirteçleri, betiklerin ve diğer araçların parolanız olmadan hesabınızı kullanmasına izin verir. Bir belirteç yalnızca erişiminin izin verdiğini yapar ve istediğiniz zaman geçersiz kılabilirsiniz.
+apiTokens.emptyTitle	API belirteci yok
+apiTokens.emptyMessage	Bir betiğin hesabınızı kullanmasına izin vermek için bir tane oluşturun.
+apiTokens.newButton	Yeni Belirteç
+apiTokens.limitReached	%lld belirteç sınırına ulaştınız. Başka birini oluşturmak için bir tanesini geçersiz kılın.
+apiTokens.scopeRead	Salt okunur
+apiTokens.scopeWrite	Okuma ve yazma
+apiTokens.created	Oluşturulma: %@
+apiTokens.lastUsed	Son kullanım: %@
+apiTokens.lastUsedFrom	Son kullanım: %1$@, %2$@ adresinden
+apiTokens.neverUsed	Hiç kullanılmadı
+apiTokens.expires	Son kullanma: %@
+apiTokens.expired	Süresi doldu: %@
+apiTokens.neverExpires	Süresi dolmaz
+apiTokens.renameAction	Yeniden Adlandır
+apiTokens.revokeAction	Geçersiz Kıl
+apiTokens.menuAccessibilityLabel	%@ için eylemler
+apiTokens.formTitle	Yeni API Belirteci
+apiTokens.fieldName	Ad
+apiTokens.namePlaceholder	Örneğin yedekleme betiği
+apiTokens.fieldAccess	Erişim
+apiTokens.fieldExpiry	Son kullanma
+apiTokens.expiry30	30 gün sonra
+apiTokens.expiry90	90 gün sonra
+apiTokens.expiryYear	1 yıl sonra
+apiTokens.expiryNever	Asla
+apiTokens.fieldPassword	Parolanız
+apiTokens.passwordHint	Belirteç oluşturmak için parolanızı girin.
+apiTokens.createSubmit	Belirteç Oluştur
+apiTokens.issuedTitle	Belirtecinizi kopyalayın
+apiTokens.issuedIntro	Yalnızca bu kez gösterilir. Güvenli bir yerde saklayın. Kaybederseniz geçersiz kılıp yenisini oluşturun.
+apiTokens.copyToken	Belirteci Kopyala
+apiTokens.copiedToken	Kopyalandı
+apiTokens.issuedDone	Kopyaladım
+apiTokens.renameTitle	Belirteci Yeniden Adlandır
+apiTokens.renameSave	Kaydet
+apiTokens.revokeTitle	Belirteç Geçersiz Kılınsın mı?
+apiTokens.revokeMessage	"%@" kullanan her şey hemen çalışmayı durdurur. Bu işlem geri alınamaz.
+apiTokens.revokeConfirm	Geçersiz Kıl
+login.portHint	Bir bağlantı noktası ekleyin (ör. :3000). Çoğu ev laboratuvarı sunucusu düz 80 numaralı bağlantı noktasını dinlemez.
+login.errorInvalidServer	Geçerli bir sunucu adresi girin.
+login.errorInvalidCredentials	Kullanıcı adı veya parola yanlış.
+login.errorSessionExpired	Oturumunuzun süresi doldu. Lütfen yeniden oturum açın.
+login.errorIncomplete	Oturum açma tamamlanamadı. Lütfen tekrar deneyin.
+login.errorUnreachable	Bu sunucuya ulaşılamadı. Adresi kontrol edip tekrar deneyin.
+login.errorUnexpectedResponse	Sunucudan beklenmedik yanıt.
+login.errorKeychain	Oturumunuz bu cihaza kaydedilemedi.
+login.errorDecoding	Sunucu beklenmedik şekilde yanıt verdi. Adresi kontrol edip tekrar deneyin.
+login.errorNoLocalAuth	Bu sunucuda kullanıcı adı/parola ile oturum açma etkin değil.
+login.errorRateLimited	Çok fazla deneme. Lütfen birkaç dakika bekleyip tekrar deneyin.
+login.ssoButton	SSO ile oturum aç
+login.orDivider	veya
+login.errorSso	Tek oturum açma tamamlanamadı. Lütfen tekrar deneyin.
+login.errorNoAuthMethods	Bu sunucuda etkin oturum açma yöntemi yok.
+login.errorClientCertificateRequired	Bu sunucu bir istemci sertifikası istiyor.
+login.errorClientCertificateRejected	Sunucu bu istemci sertifikasını reddetti.
+login.codeTitle	Kodunuzu girin
+login.codeIntroAuthenticator	Bu hesap ikinci bir adım istiyor. Kimlik doğrulayıcı uygulamanızdaki 6 haneli kodu girin.
+login.codeIntroRecovery	Kurtarma kodlarınızdan birini girin. Her biri yalnızca bir kez işe yarar.
+login.codeUseRecovery	Bunun yerine bir kurtarma kodu kullan
+login.codeUseAuthenticator	Bunun yerine doğrulayıcı kodunu kullan
+login.codeField	Kod
+login.codeSubmit	Doğrula
+login.errorInvalidCode	Bu kod doğru değil.
+login.errorSecondFactorExpired	Bu oturum açma işleminin süresi doldu. Parolanızı yeniden girin.
+login.diagnosticsButton	Oturum açma günlüğünü paylaş
+login.diagnosticsTitle	Oturum açma günlüğü
+login.diagnosticsIntro	Bu günlük, oturum açmanın neden başarısız olduğunu bulmaya yardımcı olmak için sunucunun her adımda ne yanıt verdiğini gösterir. Parolanızı, yazdığınız adresi veya kullanıcı adınızı asla içermez. Geliştiriciye gönderin.
+browse.nameErrorReserved	Bu ada izin verilmiyor.
+browse.nameErrorSeparators	Bir ad / veya \ içeremez.
+browse.searchMatchLine	Satır %1$lld: %2$@
+browse.searchMatchLineLabel	Satır %lld
+browse.searchTooShort	Alt klasörlerde ve dosya içeriklerinde aramak için en az %lld karakter yazın.
+browse.searchStoppedEarly	Arama zaman sınırında durdu. Şimdiye kadar bulunan sonuçlar bunlar.
+browse.searchFirstOnly	İlk %lld sonuç. Daha fazlasını görmek için aramayı daraltın.
+browse.searchShowMore	Daha Fazla Göster
+browse.searchMatchColumn	Eşleşme
+browse.searchMatchedByName	Ad
+browse.searchMatchedByContent	İçerik
+browse.searchMatchedByBoth	Ad ve İçerik
+createShare.errorPasswordRequired	Bir parola girin veya parola korumasını kapatın.
+login.errorServer	Sunucuda bir sorun oluştu (hata %lld). Lütfen daha sonra tekrar deneyin.
+filter.sheetTitle	Türe Göre Filtrele
+filter.button	Filtrele
+filter.all	Tüm Türler
+filter.folders	Klasörler
+filter.images	Görseller
+filter.videos	Videolar
+filter.audio	Ses
+filter.documents	Belgeler
+filter.archives	Arşivler
+filter.other	Diğer
+settings.creditsMadeBy	Phillip Maizza tarafından ❤️ ile yapıldı
+settings.creditsLikeApp	Uygulamayı beğendiniz mi?
+settings.creditsBuyCoffee	Bana bir kahve ısmarlayın ☕️
+tipJar.title	Bana bir kahve ısmarlayın
+tipJar.explanation	NextExplorer ücretsiz ve açık kaynaklıdır. Size yararlıysa küçük bir bahşiş devam etmesine yardımcı olur. Teşekkürler!
+tipJar.toastThanks	Projeyi desteklediğiniz için teşekkürler! 🙏
+tipJar.errorLoad	Bahşiş seçenekleri yüklenemedi. Lütfen tekrar deneyin.
+tipJar.errorPurchase	Satın alma tamamlanmadı. Lütfen tekrar deneyin.
+tipJar.pending	Onay bekleniyor. Onaylandığında ücretlendirileceksiniz.
+offline.sectionTitle	Çevrimdışı
+offline.settingsRow	Dosyaları Çevrimdışı Kullanım İçin İndir
+offline.footnote	İndirilen dosyalar bağlantı olmasa bile açılır.
+offline.available	%@ çevrimdışı kullanılabilir
+offline.removeRow	Çevrimdışı Dosyaları Kaldır
+offline.removeConfirmTitle	Çevrimdışı Dosyalar Kaldırılsın mı?
+offline.removeConfirmMessage	Bu işlem, bu cihazda çevrimdışı kullanım için kaydedilen dosyaları siler. Sunucudaki dosyalarınız etkilenmez.
+offline.removeConfirm	Kaldır
+offline.preparing	Hazırlanıyor…
+offline.downloadingName	%@ indiriliyor
+offline.progressCount	%lld / %lld dosya
+offline.downloadFailed	Çevrimdışı indirme tamamlanamadı.
+offline.selectionTitle	Çevrimdışı İçin İndir
+offline.selectionEmpty	Bu klasör boş.
+offline.selectionLoadFailed	Bu klasör yüklenemedi.
+offline.selectionEstimate	Tahmini İndirme
+offline.selectionDownload	İndir
+offline.selectionInsufficientSpace	Bu cihazda yeterli boş alan yok
+offline.resyncRow	Çevrimdışı Dosyaları Güncelle
+offline.badgeAvailable	Çevrimdışı kullanılabilir
+offline.manageRow	Çevrimdışı Dosyaları Yönet
+offline.manageTitle	Çevrimdışı Dosyalar
+offline.manageEmpty	Çevrimdışı kullanım için indirilen bir şey yok.
+offline.preferOfflineToggle	İndirilen Kopyaları Oynat
+offline.pinRemoved	%@ artık sunucuda yok ve çevrimdışı dosyalardan kaldırıldı
+offline.preferOfflineSubtitle	İndirilmiş bir video varsa akış yerine onu kullan.
+offline.tunnelSpeedNote	Sunucunuza uzak bir tünel üzerinden ulaşmak indirmeleri yavaşlatabilir. Büyük dosyalar için aynı ağa bağlanın ve sunucunuzun yerel adresini kullanın.
+menu.about	NextExplorer Hakkında
+menu.rateApp	NextExplorer'ı Değerlendir…
+menu.support	NextExplorer Desteği
+menu.redo	Yinele
+menu.undo	Geri Al
+settings.sectionSupport	Destek
+settings.rowRateApp	NextExplorer'ı Değerlendir
+settings.rowSupport	Yardım ve Destek
+menu.refresh	Yenile
+select.tableView	Tablo Görünümü
+browse.progressDownloading	İndiriliyor…
+browse.progressDownloadingIndexed	%2$lld öğeden %1$lld tanesi indiriliyor…
+browse.downloadSavedTo	%@ konumuna kaydedildi
+browse.downloadSavedCountTo	%2$lld öğeden %1$lld tanesi %3$@ konumuna kaydedildi
+browse.downloadSavedAllTo	%1$lld öğe %2$@ konumuna kaydedildi
+browse.downloadBulkFailed	Bu öğeler cihazınıza kaydedilemedi.
+openWith.openIn	%@ ile aç
+openWith.openWith	Birlikte Aç
+openWith.viewAsText	Metin Olarak Görüntüle
+openWith.failed	Bu dosya açılamadı.
+browse.showInFinder	Finder'da Göster
+browse.showInEnclosingFolder	Bulunduğu Klasörde Göster
+browse.actionCut	Kes
+browse.clipboardCutOne	%@ taşımaya hazır
+browse.clipboardCutMany	%lld öğe taşımaya hazır
+menu.enclosingFolder	Üst Klasör
+common.more	Daha Fazla
+openWith.print	Yazdır…
+menu.newWindow	Yeni Pencere
+menu.newTab	Yeni Sekme
+browse.actionOpenInNewWindow	Yeni Pencerede Aç
+browse.actionOpenInNewTab	Yeni Sekmede Aç
+select.viewAs	Görünüm
+settings.rowAppearance	Görünüm
+appearance.system	Sistem
+appearance.light	Açık
+appearance.dark	Koyu
+browse.myFiles	Dosyalarım
+browse.myFilesSubtitle	Yalnızca size görünür
+downloadQueue.navigationTitle	İndirme Kuyruğu
+downloadQueue.openDownloads	İndirilenleri Göster
+downloadQueue.emptyList	Devam eden indirme yok.
+downloadQueue.statusSaved	Kaydedildi
+downloadQueue.cancelAll	Tüm indirmeleri iptal et
+downloadQueue.barFailedOne	1 indirme başarısız
+downloadQueue.barFailedMany	%lld indirme başarısız
+downloadQueue.barTitleOne	%@ indiriliyor
+downloadQueue.barTitleMany	%lld öğe indiriliyor
+downloadQueue.savedOne	İndirilenler'e kaydedildi
+downloadQueue.savedMany	%lld öğe İndirilenler'e kaydedildi
+downloadQueue.bytesOf	%1$@ / %2$@
+downloadQueue.timeLeft	%@ kaldı
+browse.sectionPersonal	Kişisel
+macSettings.addAccount	Hesap Ekle…
+macSettings.changePassword	Parolayı Değiştir…
+macSettings.signOut	Oturumu Kapat…
+macSettings.switchAccount	Bu Hesaba Geç
+macSettings.username	Kullanıcı adı
+macSettings.email	E-posta
+macSettings.role	Rol
+macSettings.roleAdmin	Yönetici
+macSettings.roleUser	Kullanıcı
+macSettings.status	Durum
+macSettings.statusSignedIn	Oturum Açık
+macSettings.manage	Yönet…
+macSettings.cache	Önbellek
+macSettings.support	Yardım ve Destek…
+macSettings.permission	İzin
+macSettings.icon	Simge
+menu.go	Git
+menu.activity	Aktarımlar
+menu.showAll	Tümünü Göster
+uploads.notifyDone	Yüklemeler tamamlandı
+uploads.notifyBody	%lld dosya yüklendi
+downloadQueue.notifyDone	İndirmeler tamamlandı
+fileInfo.rowSoftware	Yazılım
+fileInfo.sectionVersions	Sürümler
+fileInfo.versionsNone	Önceki sürüm yok
+fileInfo.versionRestore	Geri Yükle…
+fileInfo.restoreTitle	Bu sürüm geri yüklensin mi?
+fileInfo.restoreMessage	Dosya, %@ tarihindeki haline döner. Şu anda içerdiği ise bir sürüm olarak saklanır.
+fileInfo.restoreConfirm	Geri Yükle
+fileInfo.sectionSharing	Paylaşım
+fileInfo.notShared	Paylaşım bağlantısı yok
+fileInfo.versionActions	Sürüm eylemleri
+fileInfo.versionDownload	İndir…
+fileInfo.versionSaveCopy	Kopya Olarak Kaydet
+fileInfo.versionRename	Yeniden Adlandır…
+fileInfo.renameTitle	Sürümü Yeniden Adlandır
+fileInfo.renamePlaceholder	Sürüm adı
+fileInfo.versionPin	Bu Sürümü Sakla
+fileInfo.versionUnpin	Bu Sürümü Saklamayı Bırak
+fileInfo.versionKept	Saklanıyor
+fileInfo.versionDelete	Sil…
+fileInfo.deleteTitle	Bu sürüm silinsin mi?
+fileInfo.deleteAll	Tüm Sürümleri Sil…
+fileInfo.deleteAllTitle	Tüm sürümler silinsin mi?
+fileInfo.deleteMessage	Silinen sürümler kalıcı olarak gider. Dosyanın kendisi olduğu gibi kalır.
+macSettings.choose	Seç…
+menu.forward	İleri
+menu.goToFolder	Klasöre Git…
+menu.goToFolderTitle	Klasöre git:
+menu.copyPath	Yolu Kopyala
+menu.recentFolders	Son Klasörler
+menu.clearRecent	Menüyü Temizle
+common.loading	Yükleniyor…
+browse.quickLookUnavailable	Bu dosya türü için Hızlı Bakış kullanılamıyor.
+browse.quickLookTooLarge	Bu dosya Hızlı Bakış için çok büyük.
+menu.zoomIn	Yakınlaştır
+menu.zoomOut	Uzaklaştır
+menu.zoomToFit	Sığacak Şekilde Yakınlaştır
+menu.quitTransfersTitle	NextExplorer'dan çıkılsın mı?
+menu.quitTransfersMessage	Yüklemeler veya indirmeler hâlâ sürüyor. Şimdi çıkmak bunları durdurur.
+menu.quitTransfersConfirm	Çık
+media.play	Oynat
+media.pause	Duraklat
+media.position	Oynatma Konumu
+media.positionValue	%1$@ / %2$@
+media.clientCertificateUnsupported	Bu biçim, istemci sertifikası isteyen bir sunucudan akış olarak oynatılamaz. Oynatmak için dosyayı indirin.
+clientCertificate.title	İstemci Sertifikası
+clientCertificate.intro	Bazı sunucular yalnızca istemci sertifikası (mTLS) sunan cihazlara izin verir. Bu sunucu için size verilen .p12 veya .pfx dosyasını seçin.
+clientCertificate.certificateLabel	Sertifika
+clientCertificate.none	Yüklü sertifika yok
+clientCertificate.issuedBy	Veren: %@
+clientCertificate.expires	Son kullanma: %@
+clientCertificate.expired	Süresi doldu: %@
+clientCertificate.chooseFile	Dosya Seç
+clientCertificate.replace	Sertifikayı Değiştir
+clientCertificate.remove	Sertifikayı Kaldır
+clientCertificate.install	Yükle
+clientCertificate.passwordLabel	Dosya Parolası
+clientCertificate.passwordPrompt	Dosyanın dışa aktarıldığı parola
+clientCertificate.chooseAnother	Başka Dosya Seç
+clientCertificate.errorWrongPassword	Bu parola bu dosyanın kilidini açmıyor.
+clientCertificate.errorInvalidFile	Bu geçerli bir .p12 veya .pfx sertifika dosyası değil.
+clientCertificate.errorNoIdentity	Bu dosyada özel anahtar yok. Sertifikayı anahtarıyla birlikte dışa aktarın.
+clientCertificate.errorStorage	Sertifika bu cihaza kaydedilemedi.
+clientCertificate.errorUnreadable	Bu dosya okunamadı.
+clientCertificate.errorRemove	Sertifika bu cihazdan kaldırılamadı.
+clientCertificate.removeTitle	Sertifika kaldırılsın mı?
+clientCertificate.removeMessage	NextExplorer bunu artık %@ sunucusuna sunmayacak. O sunucu bir sertifika gerektiriyorsa, yeniden sertifika ekleyene kadar uygulama bağlanamaz.
+clientCertificate.removeConfirm	Kaldır
+clientCertificate.expiredWarning	Bu sertifikanın süresi doldu. Sunucu büyük olasılıkla reddedecek.
+login.addClientCertificate	Sertifika Ekle
+login.manageClientCertificate	Sertifikayı Yönet
+settings.clientCertificate	İstemci Sertifikası
+login.usingClientCertificate	İstemci sertifikası kullanılıyor: %@
+login.changeClientCertificate	Değiştir
+login.ssoClientCertificateNote	Tek oturum açma, bu uygulamanın istemci sertifikasını kullanamayan Safari'de açılır. Parolanızla oturum açın veya tek oturum açmayı kullanmak için sertifikayı bu cihaza yükleyin.
+settings.clientCertificateExpired	Süresi doldu
+settings.clientCertificateExpiresSoon	Yakında sona erecek
+clientCertificate.expiringSoonWarning	Bu sertifikanın süresi %@ tarihinde doluyor. Öncesinde yenisini isteyin.
+shareUpload.title	NextExplorer'a Yükle
+shareUpload.itemCount	Yüklenecek dosyalar: %lld
+shareUpload.accountLabel	Hesap
+shareUpload.folderLabel	Klasör
+shareUpload.folderChoose	Klasör Seç
+shareUpload.upload	Yükle
+shareUpload.preparing	%lld / %lld hazırlanıyor…
+shareUpload.started	Arka planda yükleniyor. Bittiğinde bildirim alacaksınız.
+shareUpload.signedOut	Önce NextExplorer'da oturum açın, sonra tekrar paylaşın.
+shareUpload.nothingToUpload	Burada NextExplorer'ın yükleyebileceği bir şey yok.
+shareUpload.failed	Dosyalar yükleme için hazırlanamadı.
+shareUpload.notificationDoneTitle	Yükleme tamamlandı
+shareUpload.notificationFailedTitle	Bazı dosyalar yüklenmedi
+shareUpload.notificationDoneBody#one	%lld dosya “%@” klasörüne yüklendi.
+shareUpload.notificationDoneBody#other	%lld dosya “%@” klasörüne yüklendi.
+shareUpload.notificationAllFailedTitle	Yükleme başarısız
+shareUpload.failureUnauthorized#one	%lld dosya yüklenemedi. Yeniden oturum açıp tekrar deneyin.
+shareUpload.failureUnauthorized#other	%lld dosya yüklenemedi. Yeniden oturum açıp tekrar deneyin.
+shareUpload.failureForbidden#one	%lld dosya yüklenemedi. O klasöre dosya ekleme izniniz yok.
+shareUpload.failureForbidden#other	%lld dosya yüklenemedi. O klasöre dosya ekleme izniniz yok.
+shareUpload.failureServerFull#one	%lld dosya yüklenemedi. Sunucunun depolama alanı doldu.
+shareUpload.failureServerFull#other	%lld dosya yüklenemedi. Sunucunun depolama alanı doldu.
+shareUpload.failureNetwork#one	%lld dosya yüklenemedi. Bağlantı başarısız oldu. Yeniden çevrimiçi olduğunuzda tekrar deneyin.
+shareUpload.failureNetwork#other	%lld dosya yüklenemedi. Bağlantı başarısız oldu. Yeniden çevrimiçi olduğunuzda tekrar deneyin.
+shareUpload.failureOther#one	%lld dosya yüklenemedi.
+shareUpload.failureOther#other	%lld dosya yüklenemedi.
+shareUpload.notificationRetry	Tekrar Dene
+shareUpload.notificationHiddenPreview	Yüklemenizin nasıl geçtiğini görmek için NextExplorer'ı açın.
+shareUpload.retryFailedTitle	Tekrar denenemedi
+shareUpload.retryFailedBody	NextExplorer'ı açın ve dosyaları tekrar paylaşın.
+shareUpload.insufficientSpace	Bu cihazda bu dosyaları yüklemeye hazırlamak için yeterli boş alan yok.
+settings.uploadDefaultsRow	Paylaşılan Dosyalar
+settings.uploadDefaultsFolder	Varsayılan Klasör
+settings.uploadDefaultsFolderNone	Her Seferinde Sor
+settings.uploadDefaultsWithoutAsking	Sormadan Yükle
+settings.uploadDefaultsFooter	Diğer uygulamalardan NextExplorer'a paylaştığınız fotoğraflar ve dosyalar bu klasörde başlar. Sormadan Yükle açıkken doğrudan buraya yüklenir.
+settings.uploadDefaultsClear	Her Seferinde Sor
+common.change	Değiştir
+shareUpload.sessionUnreadable	NextExplorer bu cihazdaki oturumunuzu okuyamadı. NextExplorer'ı bir kez açın, sonra tekrar paylaşın.
+shareUpload.keepOpen	Hazırlama bitene kadar bunu açık tutun.
+shareUpload.checking	%@ bağlantısı denetleniyor…
+shareUpload.openApp	NextExplorer'ı Aç
+shareUpload.openAppInstructions	NextExplorer'ı Ana Ekran'dan açın, sonra tekrar paylaşın.
+shareUpload.certificateRequired	Bu sunucu bir istemci sertifikası gerektiriyor. NextExplorer'ı açıp Ayarlar'dan bir tane ekleyin, sonra tekrar paylaşın.
+shareUpload.certificateRejected	Sunucu istemci sertifikanızı reddetti. NextExplorer'ı açıp Ayarlar'dan değiştirin, sonra tekrar paylaşın.
+shareUpload.defaultFolderUnavailable	Varsayılan klasörünüz artık kullanılamıyor. Başka bir klasör seçin.
+shareUpload.failedItemsHeader	Bu dosyalar hazırlanamadı:
+shareUpload.readyCount	Yüklemeye hazır: %lld
+shareUpload.uploadReady	Hazır Dosyaları Yükle
+shareUpload.retryFailed	Başarısız Dosyaları Tekrar Dene
+shareUpload.fallbackItemName	Dosya %lld
+shareUpload.causeCannotRead	Okunamadı.
+shareUpload.causeNotEnoughSpace	Bu cihazda yeterli boş alan yok.
+shareUpload.causeUnknown	Hazırlanamadı.
+shareUpload.folderHint	Klasör seçiciyi açar.
+shareUpload.accountHint	Dosyaları hangi hesabın alacağını seçin.
+error.timedOut	Sunucu yanıt vermekte çok gecikti. İşlem yine de tamamlanabilir.
+error.changedOnServer	Bu dosya, siz açtıktan sonra sunucuda değiştirildi.
+textPreview.conflictTitle	“%@” sunucuda değişti
+textPreview.conflictMessage	Kendi sürümünüzle üzerine yazın veya dosyayı yeniden yükleyip düzenlemelerinizi atın. Değiştirilen sürüm dosyanın sürüm geçmişinde kalır.
+textPreview.conflictOverwrite	Üzerine Yaz
+textPreview.conflictReload	Yeniden Yükle
+offline.waitingForNetwork	Yeniden çevrimiçi olduğunuzda indirilecek
+browse.bulkFavoriteFailed	%2$lld öğeden %1$lld tanesi başarısız oldu
+shareUpload.livePhotoNote	Live Photos, hareketli videolarıyla yüklenir.
+shareUpload.retrySignInBody	NextExplorer'da oturum açın, sonra Tekrar Dene'ye yeniden dokunun.
+shareUpload.causeFolder	Klasörler paylaşılamaz. Bunun yerine içindeki dosyaları paylaşın.
+shareUpload.notificationMoreNames	%lld tane daha
+versionedFiles.deleteFailed	Bazı sürümler silinemedi. Bunları kontrol edip tekrar deneyin.
+serverSettings.featureOffTitle	Bu özellik etkin değil
+serverSettings.featureOffKept	Burada yapılandırdığınız her şey kaydedilir ve özellik etkinleştirilir etkinleştirilmez uygulanır.
+serverSettings.featureOffUseSwitch	Yukarıdaki anahtarla açın.
+serverSettings.featureOffHowTo	Açmak için %@ değerini ayarlayıp kapsayıcıyı yeniden başlatın.
+trashSettings.environmentNote	Varsayılan değerler TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT ve TRASH_MAX_SIZE değişkenlerinden gelir.
+trashSettings.versionsEnvironmentNote	Varsayılan değerler VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE ve VERSIONS_SESSION_CHECKPOINT_MINUTES değişkenlerinden gelir.
+versionedFiles.refresh	Yenile

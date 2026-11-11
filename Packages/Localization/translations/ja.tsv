@@ -841,3 +841,202 @@ shareUpload.causeFolder	フォルダは共有できません。代わりに中�
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	ほか %lld 件
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	アップロード
+uploadSettings.subtitle	ファイルをサーバーへ送る方法を設定します。
+uploadSettings.chunkedEnable	分割アップロードを有効にする
+uploadSettings.chunkedEnableHelp	TUSを使い、大きなファイルを複数の小さなリクエストに分けて送信します。
+uploadSettings.chunkSize	分割サイズ
+uploadSettings.chunkSizeHelp	各アップロードリクエストの最大サイズです。リバースプロキシの上限より小さくしてください。小さく分けるほど進行状況が滑らかになります。
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	分割へ自動で切り替える
+uploadSettings.autoFallbackHelp	リバースプロキシがサイズを拒否して直接アップロードに失敗した場合、自動的に分割アップロードに切り替えます。
+uploadSettings.unavailable	アップロード設定は管理者のみ利用できます。
+uploadSettings.saveButton	変更を保存
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	メディアのプレビューとメタデータに使うFFmpegとFFprobeの実行ファイルを選びます。
+ffmpegSettings.containerPathHelp	アプリケーションのコンテナ内から見える絶対パスを入力してください。ホストのバイナリを使うには、先にコンテナへマウントしてください。
+ffmpegSettings.ffmpegPath	FFmpeg実行ファイルのパス
+ffmpegSettings.ffprobePath	FFprobe実行ファイルのパス
+ffmpegSettings.invalid	どちらのパスも / で始まるコンテナ内の絶対パスにしてください。
+ffmpegSettings.defaultHelp	パスを空にすると、環境のFFMPEG_PATHまたはFFPROBE_PATH、次に同梱の実行ファイルを使います。変更はすぐに反映されます。
+ffmpegSettings.unavailable	FFmpeg設定は管理者のみ利用できます。
+ffmpegSettings.saveButton	変更を保存
+searchIndexSettings.navigationTitle	検索インデックス
+searchIndexSettings.subtitle	コンテンツのインデックス作成から除外するパスを指定します。
+searchIndexSettings.running	検索インデックスを保持する
+searchIndexSettings.runningHelp	ボリューム内のドキュメントをバックグラウンドで読み取り、その中の検索がすぐに返るようにします。
+searchIndexSettings.locked	環境の%@で設定されているため、ここではなくそちらで決まります。
+searchIndexSettings.environment	環境で定義された除外
+searchIndexSettings.additional	追加の除外
+searchIndexSettings.none	パスが設定されていません
+searchIndexSettings.addButton	追加
+searchIndexSettings.unavailable	検索インデックス設定は管理者のみ利用できます。
+searchIndexSettings.saveButton	変更を保存
+searchIndexSettings.discardButton	破棄
+folderSizeSettings.navigationTitle	フォルダのサイズ
+folderSizeSettings.subtitle	フォルダサイズの計算とインデックス作成から除外するパスを指定します。
+folderSizeSettings.running	フォルダのサイズを測定する
+folderSizeSettings.runningHelp	バックグラウンドでフォルダを測定し、サイズを一覧に表示します。
+folderSizeSettings.modeOff	オフ
+folderSizeSettings.modeShallow	直下のファイルのみ
+folderSizeSettings.modeFull	中身すべて
+folderSizeSettings.locked	環境の%@で設定されているため、ここではなくそちらで決まります。
+folderSizeSettings.environment	環境で定義された除外
+folderSizeSettings.additional	追加の除外
+folderSizeSettings.none	パスが設定されていません
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	追加
+folderSizeSettings.unavailable	フォルダサイズ設定は管理者のみ利用できます。
+folderSizeSettings.saveButton	変更を保存
+folderSizeSettings.discardButton	破棄
+activityLog.navigationTitle	アクティビティログ
+activityLog.subtitle	誰がいつどこから何をしたかを記録します。オンにしない限りオフです。
+activityLog.enabled	アクティビティを記録する
+activityLog.enabledHelp	オンの間、サインイン、ダウンロード、アップロード、削除、復元、共有リンク、アカウントの変更が記録されます。オンにする前の操作は含まれません。
+activityLog.retention	保存期間（日）
+activityLog.retentionInvalid	1〜3650日の間で指定してください。
+activityLog.saveButton	変更を保存
+activityLog.off	ログがオフのため、何も記録されていません。
+activityLog.none	まだ何も記録されていません。
+activityLog.filterAction	種類
+activityLog.anyAction	すべての種類
+activityLog.filterOutcome	結果
+activityLog.anyOutcome	すべての結果
+activityLog.outcomeOk	成功
+activityLog.outcomeRefused	拒否
+activityLog.searchPlaceholder	名前またはパス
+activityLog.searchButton	検索
+activityLog.refresh	更新
+activityLog.clear	ログを空にする
+activityLog.clearTitle	ログを空にしますか？
+activityLog.clearMessage	記録されたすべての行が削除されます。この操作は取り消せません。
+activityLog.clearConfirm	ログを空にする
+activityLog.more	さらに表示
+activityLog.refusedSuffix	拒否
+activityLog.fromAddress	送信元: %@
+activityLog.unavailable	アクティビティログは管理者のみ利用できます。
+activityLog.action.signIn	サインイン
+activityLog.action.signOut	サインアウト
+activityLog.action.accountPassword	パスワードを変更
+activityLog.action.accountTwoFactor	2段階認証を変更
+activityLog.action.accountPasskey	パスキーを変更
+activityLog.action.accountToken	APIトークンを変更
+activityLog.action.adminUser	アカウントを変更
+activityLog.action.adminSettings	設定を変更
+activityLog.action.adminActivityClear	ログを消去
+activityLog.action.shareCreate	共有を作成
+activityLog.action.shareDelete	共有を削除
+activityLog.action.shareDownload	リンク経由でダウンロード
+activityLog.action.shareUpload	リンク経由でアップロード
+activityLog.action.fileDownload	ダウンロード
+activityLog.action.fileUpload	アップロード
+activityLog.action.fileDelete	ゴミ箱へ移動
+activityLog.action.fileRestore	復元
+activityLog.action.filePurge	完全に削除
+activityLog.action.versionsPurge	バージョンを削除
+trashSettings.navigationTitle	ゴミ箱とバージョン
+trashSettings.subtitle	削除した項目とファイルの以前のバージョンは、各ボリューム上の予約領域に保存され、保存期間が過ぎるか、その領域が必要になると削除されます。
+trashSettings.trashHeader	ゴミ箱
+trashSettings.enabled	削除した項目をゴミ箱に送る
+trashSettings.enabledHelp	オフにすると、削除した項目は完全に削除されます。すでにゴミ箱にある項目は引き続き期限が切れます。
+trashSettings.retention	保存期間（日）
+trashSettings.retentionHelp	1〜3650日。
+trashSettings.maxPercent	各ボリュームの割合（%）
+trashSettings.maxPercentHelp	ゴミ箱がボリューム上で使える最大の割合です（1〜90%）。
+trashSettings.maxSize	ボリュームごとのサイズ上限（GiB）
+trashSettings.maxSizeHelp	任意。割合と上限のうち小さいほうが適用されます。
+trashSettings.maxSizeNone	上限なし
+trashSettings.trashInvalid	値を確認してください。保存期間は1〜3650日、割合は1〜90%、サイズは正の値または空です。
+trashSettings.versionsHeader	ファイルのバージョン
+trashSettings.versionsSubtitle	保存のたびに、置き換えられる内容をコピーせずにゴミ箱と同じ予約領域に保持します。古いバージョンは時間とともに間引かれます。
+trashSettings.versionsEnabled	ファイルの以前のバージョンを保持する
+trashSettings.versionsEnabledHelp	ゴミ箱とは独立しています。オフにすると新しい保持は行われず、既存のバージョンは期限切れか削除されるまで残ります。
+trashSettings.keepAllHours	すべてのバージョンを保持（時間）
+trashSettings.hourlyDays	その後は1時間に1つ（日）
+trashSettings.dailyDays	その後は1日に1つ（日）
+trashSettings.maxPerFile	ファイルあたりの最大バージョン数
+trashSettings.checkpointMinutes	Officeのチェックポイント（分）
+trashSettings.tiersHelp	これらの段階の後は週に1バージョンが保持されます。Officeの編集セッションは1バージョンを残し、さらにこの間隔以上の頻度でチェックポイントを残します。ピン留めしたバージョンは間引きとファイルごとの上限の対象外です。
+trashSettings.versionsInvalid	値を確認してください。1〜720時間、1時間あたり1〜365日、1日あたり1〜3650日、ファイルあたり1〜1000バージョン、チェックポイントは1〜1440分です。
+trashSettings.sharedSpace	バージョンとゴミ箱は各ボリュームの予約領域を共有します。足りなくなると、古いバージョン、ゴミ箱の項目、各ファイルの最新バージョン、最後にピン留めしたバージョンの順に削除されます。
+trashSettings.saveButton	変更を保存
+trashSettings.discardButton	破棄
+trashSettings.unavailable	ゴミ箱とバージョンの設定は管理者のみ利用できます。
+trashSettings.zonesHeader	ボリュームごとのゴミ箱
+trashSettings.zonesSubtitle	各ボリュームは、ルートの隠しフォルダ .nextexplorer にゴミ箱を保持するため、削除時に何もコピーされません。
+trashSettings.zonesEmpty	まだゴミ箱に削除されたものはありません。
+trashSettings.zoneKindPersonal	%@の個人フォルダ
+trashSettings.zoneKindUserVolume	割り当てられたボリューム %@
+trashSettings.available	利用可能
+trashSettings.unavailableMissing	マウントされていないか、取り外されています
+trashSettings.unavailableReplaced	別のディスクに置き換わっています
+trashSettings.unavailableUnreadable	読み取れません
+trashSettings.usage	%1$@ / %2$@
+trashSettings.noBudget	上限なし
+trashSettings.zoneItems	項目: %1$lld · %2$@
+trashSettings.zoneVersions	バージョン: %1$lld · %2$@
+trashSettings.lastPass	前回のメンテナンス: %@
+trashSettings.lastPassPurged	%1$@ · 削除: %2$lld
+trashSettings.never	まだありません
+trashSettings.verify	検証
+trashSettings.runMaintenance	今すぐメンテナンスを実行
+trashSettings.verifyOk	すべてのボリュームのゴミ箱は整合しています。
+trashSettings.verifyIssues	見つかった問題: %lld
+trashSettings.zoneProblems	問題: %lld
+trashSettings.journalHeader	ジャーナル
+trashSettings.eventEvicted	領域を空けるため、保存期間前に「%@」を削除しました
+trashSettings.eventAdopted	中断後に「%@」を回復しました
+trashSettings.eventLost	「%@」の内容が見つかりませんでした
+trashSettings.eventFailed	「%@」を削除できませんでした
+trashSettings.eventBreaker	一度に多くの項目が欠落しています: 何も変更していません
+trashSettings.eventForgotten	「%@」は管理者によって破棄されました
+trashSettings.eventVersionEvicted	領域を空けるため、「%@」のバージョンを削除しました
+trashSettings.eventVersionFailed	バージョンを削除できませんでした
+trashSettings.eventVersionLost	バージョンの内容が見つかりませんでした
+trashSettings.eventVersionTooLarge	「%@」は領域全体より大きいため、置き換えられた内容は保持されませんでした
+trashSettings.eventVersionsBreaker	一度に多くのバージョンが欠落しています: 何も変更していません
+versionedFiles.navigationTitle	ファイルのバージョン
+versionedFiles.subtitle	履歴のあるすべてのファイルを場所を問わず表示します。個人フォルダを含むすべての領域のパスが見えるため、管理者専用です。
+versionedFiles.summary	ファイル: %1$lld · バージョン: %2$lld · %3$@
+versionedFiles.searchPlaceholder	名前またはパス
+versionedFiles.zone	ボリューム
+versionedFiles.anyZone	すべてのボリューム
+versionedFiles.stateHeader	状態
+versionedFiles.anyState	すべての状態
+versionedFiles.stateLive	ファイルは存在する
+versionedFiles.stateTrashed	ゴミ箱の中
+versionedFiles.stateOrphaned	ファイルが消えた
+versionedFiles.sortHeader	並べ替え
+versionedFiles.sortBytes	使用容量
+versionedFiles.sortVersions	バージョン数
+versionedFiles.sortNewest	新しい順
+versionedFiles.sortPath	パス
+versionedFiles.none	以前のバージョンを持つファイルはありません。
+versionedFiles.unavailable	ファイルのバージョンは管理者のみ利用できます。
+versionedFiles.zoneUnknown	不明なボリューム
+versionedFiles.zoneKindPersonal	%@の個人フォルダ
+versionedFiles.zoneKindUserVolume	割り当てられたボリューム %@
+versionedFiles.rowSummary	バージョン: %1$lld · %2$@
+versionedFiles.newest	最新: %@
+versionedFiles.versionPinned	ピン留め
+versionedFiles.versionUnavailable	利用不可
+versionedFiles.versionBy	作成者: %@
+versionedFiles.detailFailed	この履歴を読み取れませんでした。
+versionedFiles.deleteSelectedNone	削除するバージョンを選択
+versionedFiles.deleteSelected	選択したものを削除（%lld）
+versionedFiles.deleteAll	すべてのバージョンを削除
+versionedFiles.confirmAllTitle	「%@」のすべてのバージョンを削除しますか？
+versionedFiles.confirmSomeTitle	選択したバージョン（%lld）を削除しますか？
+versionedFiles.confirmMessage	削除したバージョンは元に戻せません。
+versionedFiles.confirmDelete	削除
+versionedFiles.previous	前へ
+versionedFiles.next	次へ
+versionedFiles.pageRange	%1$lld〜%2$lld / %3$lld
+versionedFiles.deleteFailed	一部のバージョンを削除できませんでした。確認してもう一度お試しください。
+serverSettings.featureOffTitle	この機能は有効になっていません
+serverSettings.featureOffKept	ここで設定した内容は保存され、有効にするとすぐに適用されます。
+serverSettings.featureOffUseSwitch	上のスイッチでオンにしてください。
+serverSettings.featureOffHowTo	オンにするには、%@ を設定してコンテナを再起動してください。
+trashSettings.environmentNote	既定値は TRASH_ENABLED、TRASH_RETENTION_DAYS、TRASH_MAX_PERCENT、TRASH_MAX_SIZE から取得されます。
+trashSettings.versionsEnvironmentNote	既定値は VERSIONS_ENABLED、VERSIONS_KEEP_ALL_HOURS、VERSIONS_HOURLY_DAYS、VERSIONS_DAILY_DAYS、VERSIONS_MAX_PER_FILE、VERSIONS_SESSION_CHECKPOINT_MINUTES から取得されます。
+versionedFiles.refresh	更新

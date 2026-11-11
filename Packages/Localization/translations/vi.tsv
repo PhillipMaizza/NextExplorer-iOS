@@ -1,0 +1,1102 @@
+# NextExplorer: Tiếng Việt (vi). key<TAB>value.
+common.cancel	Hủy
+common.save	Lưu
+common.edit	Sửa
+common.retry	Thử lại
+common.syncCompleted	Đã đồng bộ xong
+common.delete	Xóa
+common.remove	Gỡ
+common.clear	Xóa sạch
+common.done	Xong
+common.ok	OK
+common.openSettings	Mở Cài đặt
+common.logOut	Đăng xuất
+common.close	Đóng
+common.back	Quay lại
+common.share	Chia sẻ
+common.copy	Sao chép
+common.copied	Đã sao chép
+common.download	Tải xuống
+common.sort	Sắp xếp
+common.select	Chọn
+common.deselect	Bỏ chọn
+common.search	Tìm kiếm
+common.password	Mật khẩu
+common.never	Không bao giờ
+common.selectedCount	Đã chọn %lld
+tab.browse	Duyệt
+tab.favorites	Yêu thích
+tab.shared	Đã chia sẻ
+tab.downloads	Tải xuống
+tab.settings	Cài đặt
+sort.sheetTitle	Sắp xếp theo
+sort.name	Tên
+sort.size	Kích thước
+sort.kind	Loại
+sort.dateModified	Ngày sửa đổi
+sort.dateAdded	Ngày thêm
+sort.dateShared	Ngày chia sẻ
+sort.expiration	Hết hạn
+sort.email	Email
+sort.type	Loại
+sort.ascending	Tăng dần
+sort.descending	Giảm dần
+select.selectAll	Chọn tất cả
+select.deselectAll	Bỏ chọn tất cả
+select.listView	Dạng danh sách
+select.gridView	Dạng lưới
+emptyState.folderEmpty	Thư mục này trống.
+emptyState.loadFailed	Không thể kết nối đến máy chủ.
+emptyState.noSearchMatches	Không có kết quả cho “%@”.
+accessMode.readonly	Chỉ đọc
+accessMode.readwrite	Đọc và ghi
+shareTarget.anyone	Bất kỳ ai có liên kết
+shareTarget.users	Người dùng cụ thể
+directLinkMode.auto	Tự động
+directLinkMode.inline	Xem
+directLinkMode.raw	Thô
+directLinkMode.download	Tải xuống
+thumbnailSize.small	Nhỏ
+thumbnailSize.medium	Vừa
+thumbnailSize.large	Lớn
+downloadLocation.documents	Tài liệu
+downloadLocation.cache	Bộ nhớ đệm
+dateFormat.automatic	Tự động
+browse.navigationTitle	Duyệt
+browse.scopeThisFolder	Thư mục này
+browse.scopeEverywhere	Mọi nơi
+browse.searchScopeInFolder	Thư mục này
+browse.searchScopeEverywhere	Mọi nơi
+browse.locations	Vị trí
+browse.breadcrumbHint	Mở thư mục này
+browse.open	Mở
+browse.unsupportedFileType	Loại tệp không được hỗ trợ
+browse.actionGetInfo	Xem thông tin
+browse.actionPermissions	Quyền
+browse.actionRename	Đổi tên
+browse.actionExtract	Giải nén
+browse.actionCompress	Nén
+browse.actionDownload	Tải xuống
+browse.actionAddToFavorites	Thêm vào Yêu thích
+browse.actionRemoveFromFavorites	Xóa khỏi Yêu thích
+browse.actionShare	Tạo liên kết chia sẻ
+browse.actionDelete	Xóa
+browse.actionDuplicate	Nhân bản
+browse.renameTitle	Đổi tên
+browse.renameNamePlaceholder	Tên
+browse.actionNewFolder	Tạo thư mục
+browse.newFolderTitle	Thư mục mới
+browse.newFolderPlaceholder	Tên thư mục
+browse.newFolderConfirm	Tạo
+browse.actionNewFile	Tạo tệp
+browse.newFileTitle	Tệp mới
+browse.newFileTypeHint	Hãy dùng loại tệp mà trình soạn thảo có thể mở, như .txt, .md hoặc .js.
+browse.deleteConfirmTitle	Xóa?
+browse.deleteConfirmOne	Xóa “%@”?
+browse.deleteConfirmMany	Xóa %lld mục?
+browse.deleteMessage	Không thể hoàn tác thao tác này.
+browse.deleteLinkedSharesOne	Thao tác này cũng xóa 1 liên kết chia sẻ trỏ đến đây.
+browse.deleteLinkedSharesMany	Thao tác này cũng xóa %lld liên kết chia sẻ trỏ đến đây.
+browse.deleteLinkedSharesUnavailable	Không thể kiểm tra các liên kết chia sẻ trỏ đến đây. Những liên kết hiện có sẽ ngừng hoạt động.
+browse.searchNoMatchesInFolder	Không có kết quả cho “%@”.
+browse.searchEverywhere	Tìm kiếm ở mọi nơi
+browse.searchFailed	Không thể tìm kiếm. Hãy kiểm tra kết nối và thử lại.
+browse.progressExtracting	Đang giải nén…
+browse.progressCompressing	Đang nén…
+browse.offlineBannerTitle	Ngoại tuyến
+browse.offlineBannerDetail	Đang hiển thị bản sao đã lưu từ %@
+browse.actionCopy	Sao chép
+browse.destinationPickerMoveTitle	Di chuyển đến…
+browse.destinationPickerConfirmMove	Di chuyển vào đây
+browse.destinationPickerNoFolders	Không có thư mục nào ở đây
+browse.destinationPickerLoadFailed	Không thể tải các thư mục.
+browse.actionMove	Di chuyển
+browse.actionPaste	Dán
+browse.actionPasteCount	Dán %lld mục
+browse.actionPasteHere	Dán vào đây
+browse.actionClearClipboard	Xóa bộ nhớ tạm
+browse.clipboardMoveCount	%lld để di chuyển
+browse.clipboardCopyCount	%lld để sao chép
+browse.clipboardCopiedOne	Đã sao chép %@
+browse.clipboardCopiedMany	Đã sao chép %lld mục
+browse.progressMoving	Đang di chuyển…
+browse.progressCopying	Đang sao chép…
+browse.transferMoved	Đã di chuyển %lld mục
+browse.transferCopied	Đã sao chép %lld mục
+browse.transferMovedWithSkipped	Đã di chuyển %1$lld mục, bỏ qua %2$lld
+browse.transferCopiedWithSkipped	Đã sao chép %1$lld mục, bỏ qua %2$lld
+browse.transferConflictTitle	Thay thế các mục?
+browse.transferConflictMessageOne	"%@" đã có trong thư mục này.
+browse.transferConflictMessageMany	%lld mục đã có trong thư mục này.
+browse.transferConflictReplace	Thay thế
+browse.transferConflictKeepBoth	Giữ cả hai
+browse.actionOpenInBrowser	Mở trong trình duyệt
+favorites.navigationTitle	Yêu thích
+favorites.emptyList	Gắn dấu sao thư mục trong Duyệt để xem chúng ở đây.
+favorites.actionRemoveFromFavorites	Xóa khỏi Yêu thích
+favorites.accessibilityBadge	Yêu thích
+favorites.actionEdit	Sửa
+favorites.editTitle	Sửa mục yêu thích
+favorites.editNameLabel	Tên
+favorites.editNameErrorEmpty	Tên không được để trống.
+favorites.editIconLabel	Biểu tượng
+favorites.editIconOutline	Viền
+favorites.editIconSolid	Đặc
+favorites.editColorLabel	Màu
+favorites.editColorDefault	Mặc định
+favorites.editSave	Lưu
+favorites.reorderFailed	Không thể lưu thứ tự mới.
+favorites.removeConfirm	Xóa %lld mục yêu thích?
+favorites.removeMessage	Thao tác này chỉ xóa chúng khỏi Yêu thích.
+favorites.removeFailedOne	Không thể xóa mục yêu thích đó.
+favorites.removeFailedMany	Không thể xóa các mục yêu thích đó.
+favorites.removePartial	Đã xóa %1$lld trong %2$lld.
+downloads.navigationTitle	Tải xuống
+downloads.actionOpenInFiles	Mở trong Tệp
+downloads.emptyList	Các tệp bạn tải xuống từ Duyệt sẽ hiển thị ở đây.
+downloads.deleteConfirmTitle	Xóa?
+downloads.deleteConfirmOne	Xóa “%@”?
+downloads.deleteConfirmMany	Xóa %lld tệp?
+downloads.deleteSingleMessage	Thao tác này chỉ xóa bản sao trên thiết bị. Tệp vẫn còn trên máy chủ.
+downloads.deleteBulkMessage	Thao tác này chỉ xóa các bản sao trên thiết bị. Các tệp vẫn còn trên máy chủ.
+downloads.errorNameExists	Đã có tệp với tên đó.
+downloads.errorInvalidName	Tên đó không được phép.
+downloads.errorMissing	Không còn tìm thấy tệp đó.
+downloads.errorGeneric	Không thể hoàn tất thao tác đó.
+unsupportedPreview.genericType	Tệp
+unsupportedPreview.cannotOpen	Ứng dụng này không thể mở loại tệp này.
+uploads.navigationTitle	Tải lên
+uploads.menuTitle	Tải lên
+uploads.actionUploadFromFiles	Tải lên từ Tệp
+uploads.actionUploadFromPhotos	Tải lên từ Thư viện
+uploads.actionTakePhoto	Chụp ảnh hoặc quay video
+uploads.cameraDeniedTitle	Cần quyền truy cập camera
+uploads.cameraDeniedMessage	Hãy cho phép truy cập camera trong Cài đặt để chụp ảnh hoặc quay video.
+uploads.destinationTitle	Tải lên vào…
+uploads.destinationConfirm	Tải lên đây
+uploads.reviewTitleOne	Tải lên 1 tệp
+uploads.reviewTitleMany	Tải lên %lld tệp
+uploads.reviewSectionFiles	Tệp
+uploads.reviewSectionPath	Đường dẫn
+uploads.reviewSectionSize	Tổng kích thước
+uploads.reviewChooseFolder	Chọn một thư mục
+uploads.reviewUploadButton	Tải lên
+uploads.reviewPreparing	Đang chuẩn bị %lld…
+uploads.reviewAddMore	Thêm tệp
+uploads.reviewPreviewFile	Xem trước %@
+uploads.reviewInsecureNetworkNotice	Đã kết nối qua http. Nếu máy chủ này chỉ có trong mạng gia đình của bạn, việc tải lên sẽ không hoạt động khi bạn ở xa.
+uploads.stagingFailed	Không thể thêm các tệp đó. Hãy thử lại.
+uploads.stagingSkipped	Không thể chuẩn bị %lld mục nên đã bỏ qua.
+uploads.discardTitle	Hủy tải lên?
+uploads.discardMessage	Các tệp bạn đã thêm sẽ không được tải lên.
+uploads.discardConfirm	Hủy bỏ
+uploads.statusWaiting	Đang chờ
+uploads.statusFailed	Tải lên thất bại
+uploads.barTitleOne	Đang tải lên %@
+uploads.barTitleMany	Đang tải lên %lld tệp
+uploads.barFailedOne	1 lượt tải lên thất bại
+uploads.barFailedMany	%lld lượt tải lên thất bại
+uploads.retryAll	Thử lại tất cả
+uploads.complete	Tải lên hoàn tất
+uploads.completeMany	Đã tải lên %lld tệp
+uploads.completeWithFailures	Đã tải lên %1$lld, thất bại %2$lld
+uploads.failedGeneric	Không thể tải tệp này lên.
+uploads.clear	Xóa
+uploads.emptyList	Chưa có lượt tải lên nào.
+uploads.cancelAll	Hủy tất cả lượt tải lên
+shared.navigationTitle	Đã chia sẻ
+shared.segmentByMe	Bởi tôi
+shared.segmentWithMe	Với tôi
+shared.sectionExpired	Đã hết hạn
+shared.badgeExpired	đã hết hạn
+shared.emptyByMe	Hãy chia sẻ một tệp hoặc thư mục để xem liên kết của nó ở đây.
+shared.emptyWithMe	Các liên kết người khác chia sẻ với bạn sẽ hiển thị ở đây.
+shared.noSearchMatches	Không có mục chia sẻ nào khớp với “%@”.
+shared.deleteTitle	Xóa liên kết chia sẻ?
+shared.deleteMessage	Liên kết sẽ ngừng hoạt động ngay lập tức. Bản thân tệp hoặc thư mục không bị ảnh hưởng.
+shared.sharedByUnknown	Ai đó
+shared.metaAccess	Quyền truy cập
+shared.metaExpiration	Hết hạn
+shared.metaSharedBy	Chia sẻ bởi
+shared.metaSharedWith	Chia sẻ với
+shared.anyoneWithLink	Bất kỳ ai có liên kết
+shared.linkMode	Chế độ liên kết
+shared.actionShareLink	Liên kết chia sẻ
+shared.actionFolderLink	Liên kết thư mục
+shared.actionFileLink	Liên kết tệp
+shared.copiedShareLink	Đã sao chép liên kết chia sẻ
+shared.copiedFolderZip	Đã sao chép liên kết ZIP của thư mục
+shared.copiedDirectFile	Đã sao chép liên kết trực tiếp của tệp
+createShare.title	Tạo liên kết chia sẻ
+createShare.titleCreated	Đã tạo chia sẻ
+createShare.sectionLabel	Nhãn
+createShare.sectionAccessMode	Chế độ truy cập
+createShare.sectionWhoCanAccess	Ai có thể truy cập
+createShare.sectionShareLink	Liên kết chia sẻ
+createShare.fieldPassword	Mật khẩu
+createShare.togglePasswordProtect	Bảo vệ bằng mật khẩu
+createShare.toggleSetExpiration	Đặt ngày hết hạn
+createShare.fieldExpires	Hết hạn
+createShare.submit	Tạo liên kết chia sẻ
+createShare.loadingUsers	Đang tải người dùng…
+createShare.noOtherUsers	Không còn người dùng nào khác để chia sẻ.
+createShare.sharingPrefix	Đang chia sẻ:
+createShare.createdBanner	Đã tạo liên kết chia sẻ thành công!
+createShare.viewInShared	Xem trong Đã chia sẻ
+createShare.directLinkMode	Chế độ liên kết trực tiếp
+createShare.directFolderLink	Liên kết ZIP trực tiếp của thư mục
+createShare.directFileLink	Liên kết trực tiếp của tệp
+createShare.summaryAccess	Quyền truy cập
+createShare.summarySharedWith	Chia sẻ với
+createShare.summaryPassword	Mật khẩu
+createShare.summaryPasswordProtected	Được bảo vệ
+createShare.summaryExpires	Hết hạn
+createShare.summarySpecificPeople	Những người cụ thể
+createShare.errorPastExpiration	Hãy chọn một ngày hết hạn trong tương lai.
+editShare.title	Sửa liên kết chia sẻ
+editShare.save	Lưu thay đổi
+editShare.passwordKeepHint	Để trống để giữ mật khẩu hiện tại
+editShare.savedToast	Đã cập nhật liên kết chia sẻ
+thumbnailSettings.navigationTitle	Ảnh thu nhỏ
+thumbnailSettings.subtitle	Kiểm soát cách máy chủ tạo ảnh thu nhỏ cho mọi máy khách.
+thumbnailSettings.enable	Tạo ảnh thu nhỏ
+thumbnailSettings.enableHelp	Tắt để phục vụ ảnh gốc đầy đủ ở mọi nơi.
+thumbnailSettings.quality	Chất lượng
+thumbnailSettings.qualityHelp	Cao hơn trông đẹp hơn nhưng tốn nhiều dung lượng hơn.
+thumbnailSettings.maxDimension	Kích thước tối đa
+thumbnailSettings.maxDimensionHelp	Cạnh dài nhất của ảnh thu nhỏ được tạo, tính bằng pixel.
+thumbnailSettings.concurrency	Đồng thời
+thumbnailSettings.concurrencyHelp	Số ảnh thu nhỏ máy chủ tạo cùng lúc.
+thumbnailSettings.unavailable	Cài đặt ảnh thu nhỏ chỉ dành cho quản trị viên.
+thumbnailSettings.saveButton	Lưu thay đổi
+uploadSettings.navigationTitle	Tải lên
+uploadSettings.subtitle	Cấu hình cách tệp được gửi đến máy chủ.
+uploadSettings.chunkedEnable	Bật tải lên theo từng phần
+uploadSettings.chunkedEnableHelp	Dùng TUS để gửi tệp lớn qua nhiều yêu cầu nhỏ hơn.
+uploadSettings.chunkSize	Kích thước phần
+uploadSettings.chunkSizeHelp	Kích thước tối đa của mỗi yêu cầu tải lên. Hãy giữ dưới giới hạn của reverse proxy. Phần nhỏ hơn cho tiến trình mượt hơn.
+uploadSettings.autoFallback	Tự động chuyển sang theo từng phần
+uploadSettings.autoFallbackHelp	Nếu tải lên trực tiếp thất bại vì reverse proxy từ chối kích thước nội dung, tự động chuyển sang tải lên theo từng phần.
+uploadSettings.unavailable	Cài đặt tải lên chỉ dành cho quản trị viên.
+uploadSettings.saveButton	Lưu thay đổi
+ffmpegSettings.subtitle	Chọn các tệp thực thi FFmpeg và FFprobe dùng cho bản xem trước và siêu dữ liệu phương tiện.
+ffmpegSettings.containerPathHelp	Nhập đường dẫn tuyệt đối nhìn thấy bên trong container của ứng dụng. Để dùng tệp nhị phân của máy chủ, hãy bind-mount chúng vào container trước.
+ffmpegSettings.ffmpegPath	Đường dẫn tệp thực thi FFmpeg
+ffmpegSettings.ffprobePath	Đường dẫn tệp thực thi FFprobe
+ffmpegSettings.invalid	Cả hai đường dẫn phải là đường dẫn tuyệt đối trong container, bắt đầu bằng /.
+ffmpegSettings.defaultHelp	Để trống đường dẫn để dùng FFMPEG_PATH hoặc FFPROBE_PATH từ môi trường, sau đó đến tệp thực thi đi kèm. Thay đổi có hiệu lực ngay.
+ffmpegSettings.unavailable	Cài đặt FFmpeg chỉ dành cho quản trị viên.
+ffmpegSettings.saveButton	Lưu thay đổi
+searchIndexSettings.navigationTitle	Chỉ mục tìm kiếm
+searchIndexSettings.subtitle	Loại trừ các đường dẫn khỏi việc lập chỉ mục nội dung.
+searchIndexSettings.running	Duy trì chỉ mục tìm kiếm
+searchIndexSettings.runningHelp	Đọc các tài liệu trong volume ở nền để tìm kiếm trong đó phản hồi ngay.
+searchIndexSettings.locked	Được đặt bởi %@ trong môi trường, nên được quyết định ở đó chứ không phải ở đây.
+searchIndexSettings.environment	Loại trừ do môi trường xác định
+searchIndexSettings.additional	Loại trừ bổ sung
+searchIndexSettings.none	Chưa cấu hình đường dẫn nào
+searchIndexSettings.addButton	Thêm
+searchIndexSettings.unavailable	Cài đặt chỉ mục tìm kiếm chỉ dành cho quản trị viên.
+searchIndexSettings.saveButton	Lưu thay đổi
+searchIndexSettings.discardButton	Hủy bỏ
+folderSizeSettings.navigationTitle	Kích thước thư mục
+folderSizeSettings.subtitle	Loại trừ các đường dẫn khỏi việc tính và lập chỉ mục kích thước thư mục.
+folderSizeSettings.running	Đo kích thước thư mục
+folderSizeSettings.runningHelp	Đo thư mục ở nền để kích thước của chúng hiển thị trong danh sách.
+folderSizeSettings.modeOff	Tắt
+folderSizeSettings.modeShallow	Chỉ các tệp trực tiếp bên trong
+folderSizeSettings.modeFull	Mọi thứ bên trong
+folderSizeSettings.locked	Được đặt bởi %@ trong môi trường, nên được quyết định ở đó chứ không phải ở đây.
+folderSizeSettings.environment	Loại trừ do môi trường xác định
+folderSizeSettings.additional	Loại trừ bổ sung
+folderSizeSettings.none	Chưa cấu hình đường dẫn nào
+folderSizeSettings.addButton	Thêm
+folderSizeSettings.unavailable	Cài đặt kích thước thư mục chỉ dành cho quản trị viên.
+folderSizeSettings.saveButton	Lưu thay đổi
+folderSizeSettings.discardButton	Hủy bỏ
+activityLog.navigationTitle	Nhật ký hoạt động
+activityLog.subtitle	Ai đã làm gì, khi nào và từ đâu. Tắt trừ khi bạn bật.
+activityLog.enabled	Ghi lại hoạt động
+activityLog.enabledHelp	Đăng nhập, tải xuống, tải lên, xóa, khôi phục, liên kết chia sẻ và thay đổi tài khoản được ghi lại khi bật. Những gì xảy ra trước khi bật sẽ không có ở đây.
+activityLog.retention	Giữ trong (ngày)
+activityLog.retentionInvalid	Từ 1 đến 3650 ngày.
+activityLog.saveButton	Lưu thay đổi
+activityLog.off	Nhật ký đang tắt nên không có gì được ghi lại.
+activityLog.none	Chưa ghi lại gì.
+activityLog.filterAction	Loại
+activityLog.anyAction	Mọi loại
+activityLog.filterOutcome	Kết quả
+activityLog.anyOutcome	Mọi kết quả
+activityLog.outcomeOk	Thành công
+activityLog.outcomeRefused	Bị từ chối
+activityLog.searchPlaceholder	Tên hoặc đường dẫn
+activityLog.searchButton	Tìm
+activityLog.refresh	Làm mới
+activityLog.clear	Xóa sạch nhật ký
+activityLog.clearTitle	Xóa sạch nhật ký?
+activityLog.clearMessage	Mọi dòng đã ghi sẽ bị xóa. Không thể hoàn tác.
+activityLog.clearConfirm	Xóa sạch nhật ký
+activityLog.more	Xem thêm
+activityLog.refusedSuffix	Bị từ chối
+activityLog.fromAddress	Từ %@
+activityLog.unavailable	Nhật ký hoạt động chỉ dành cho quản trị viên.
+activityLog.action.signIn	Đã đăng nhập
+activityLog.action.signOut	Đã đăng xuất
+activityLog.action.accountPassword	Đã đổi mật khẩu
+activityLog.action.accountTwoFactor	Đã đổi yếu tố thứ hai
+activityLog.action.accountPasskey	Đã đổi passkey
+activityLog.action.accountToken	Đã đổi token API
+activityLog.action.adminUser	Đã đổi tài khoản
+activityLog.action.adminSettings	Đã đổi cài đặt
+activityLog.action.adminActivityClear	Đã xóa nhật ký
+activityLog.action.shareCreate	Đã tạo chia sẻ
+activityLog.action.shareDelete	Đã xóa chia sẻ
+activityLog.action.shareDownload	Đã tải xuống qua liên kết
+activityLog.action.shareUpload	Đã tải lên qua liên kết
+activityLog.action.fileDownload	Đã tải xuống
+activityLog.action.fileUpload	Đã tải lên
+activityLog.action.fileDelete	Đã chuyển vào thùng rác
+activityLog.action.fileRestore	Đã khôi phục
+activityLog.action.filePurge	Đã xóa vĩnh viễn
+activityLog.action.versionsPurge	Đã xóa các phiên bản
+trashSettings.navigationTitle	Thùng rác và phiên bản
+trashSettings.subtitle	Các mục đã xóa và phiên bản trước của tệp được giữ trong một vùng dành riêng trên volume của chúng, và bị loại bỏ sau thời gian lưu giữ hoặc khi cần vùng đó.
+trashSettings.trashHeader	Thùng rác
+trashSettings.enabled	Chuyển các mục đã xóa vào thùng rác
+trashSettings.enabledHelp	Khi tắt, việc xóa sẽ loại bỏ mục vĩnh viễn. Các mục đã có trong thùng rác vẫn hết hạn.
+trashSettings.retention	Thời gian lưu giữ (ngày)
+trashSettings.retentionHelp	Từ 1 đến 3650 ngày.
+trashSettings.maxPercent	Phần của mỗi volume (%)
+trashSettings.maxPercentHelp	Mức tối đa thùng rác được chiếm trên một volume, từ 1 đến 90%.
+trashSettings.maxSize	Giới hạn dung lượng mỗi volume (GiB)
+trashSettings.maxSizeHelp	Tùy chọn. Áp dụng giá trị nhỏ hơn giữa phần và giới hạn.
+trashSettings.maxSizeNone	Không giới hạn
+trashSettings.trashInvalid	Hãy kiểm tra các giá trị: thời gian lưu giữ từ 1 đến 3650 ngày, phần từ 1 đến 90%, dung lượng dương hoặc để trống.
+trashSettings.versionsHeader	Phiên bản tệp
+trashSettings.versionsSubtitle	Mỗi lần lưu giữ lại nội dung bị thay thế, không sao chép, trong cùng vùng dành riêng với thùng rác. Các phiên bản cũ được thưa dần theo thời gian.
+trashSettings.versionsEnabled	Giữ các phiên bản trước của tệp
+trashSettings.versionsEnabledHelp	Độc lập với thùng rác. Khi tắt, việc lưu không giữ thêm gì mới; các phiên bản hiện có vẫn còn đến khi hết hạn hoặc bị xóa.
+trashSettings.keepAllHours	Giữ mọi phiên bản (giờ)
+trashSettings.hourlyDays	Sau đó mỗi giờ một bản (ngày)
+trashSettings.dailyDays	Sau đó mỗi ngày một bản (ngày)
+trashSettings.maxPerFile	Tối đa số phiên bản mỗi tệp
+trashSettings.checkpointMinutes	Điểm kiểm tra Office (phút)
+trashSettings.tiersHelp	Sau các mức này, mỗi tuần giữ một phiên bản. Một phiên chỉnh sửa Office để lại một phiên bản, cộng một điểm kiểm tra với tần suất tối đa như vậy. Các phiên bản được ghim không bị thưa dần và không tính vào giới hạn mỗi tệp.
+trashSettings.versionsInvalid	Hãy kiểm tra các giá trị: 1 đến 720 giờ, 1 đến 365 ngày mỗi giờ, 1 đến 3650 ngày mỗi ngày, 1 đến 1000 phiên bản mỗi tệp, điểm kiểm tra từ 1 đến 1440 phút.
+trashSettings.sharedSpace	Phiên bản và thùng rác dùng chung vùng dành riêng của mỗi volume. Khi thiếu chỗ, phiên bản cũ đi trước, rồi đến mục thùng rác, rồi phiên bản mới nhất của mỗi tệp, và cuối cùng là các phiên bản được ghim.
+trashSettings.saveButton	Lưu thay đổi
+trashSettings.discardButton	Hủy bỏ
+trashSettings.unavailable	Cài đặt thùng rác và phiên bản chỉ dành cho quản trị viên.
+trashSettings.zonesHeader	Thùng rác theo volume
+trashSettings.zonesSubtitle	Mỗi volume giữ thùng rác của mình trong thư mục ẩn .nextexplorer ở gốc, nên việc xóa không sao chép gì cả.
+trashSettings.zonesEmpty	Chưa có gì được xóa vào thùng rác.
+trashSettings.zoneKindPersonal	Thư mục cá nhân của %@
+trashSettings.zoneKindUserVolume	Volume được gán %@
+trashSettings.available	Khả dụng
+trashSettings.unavailableMissing	Chưa gắn hoặc đã gỡ
+trashSettings.unavailableReplaced	Có ổ đĩa khác ở vị trí của nó
+trashSettings.unavailableUnreadable	Không đọc được
+trashSettings.usage	%1$@ trên %2$@
+trashSettings.noBudget	không giới hạn
+trashSettings.zoneItems	Mục: %1$lld · %2$@
+trashSettings.zoneVersions	Phiên bản: %1$lld · %2$@
+trashSettings.lastPass	Bảo trì lần cuối: %@
+trashSettings.lastPassPurged	%1$@ · đã loại bỏ: %2$lld
+trashSettings.never	chưa có
+trashSettings.verify	Xác minh
+trashSettings.runMaintenance	Chạy bảo trì ngay
+trashSettings.verifyOk	Thùng rác của mọi volume đều nhất quán.
+trashSettings.verifyIssues	Số vấn đề tìm thấy: %lld
+trashSettings.zoneProblems	Số vấn đề: %lld
+trashSettings.journalHeader	Nhật ký sự kiện
+trashSettings.eventEvicted	"%@" bị loại bỏ trước khi hết thời gian lưu giữ để giải phóng dung lượng
+trashSettings.eventAdopted	"%@" đã được khôi phục sau một gián đoạn
+trashSettings.eventLost	"%@" bị thiếu nội dung
+trashSettings.eventFailed	Không thể loại bỏ "%@"
+trashSettings.eventBreaker	Quá nhiều mục bị thiếu cùng lúc: không có gì bị thay đổi
+trashSettings.eventForgotten	"%@" bị quản trị viên quên
+trashSettings.eventVersionEvicted	Một phiên bản của "%@" đã bị loại bỏ để giải phóng dung lượng
+trashSettings.eventVersionFailed	Không thể loại bỏ một phiên bản
+trashSettings.eventVersionLost	Một phiên bản bị thiếu nội dung
+trashSettings.eventVersionTooLarge	"%@" lớn hơn toàn bộ dung lượng: nội dung bị nó thay thế không được giữ lại
+trashSettings.eventVersionsBreaker	Quá nhiều phiên bản bị thiếu cùng lúc: không có gì bị thay đổi
+versionedFiles.navigationTitle	Phiên bản tệp
+versionedFiles.subtitle	Mọi tệp có lịch sử, ở bất cứ đâu. Hiển thị đường dẫn từ mọi không gian, kể cả thư mục cá nhân, nên chỉ dành cho quản trị viên.
+versionedFiles.summary	Tệp: %1$lld · Phiên bản: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Tên hoặc đường dẫn
+versionedFiles.zone	Volume
+versionedFiles.anyZone	Mọi volume
+versionedFiles.stateHeader	Trạng thái
+versionedFiles.anyState	Mọi trạng thái
+versionedFiles.stateLive	Tệp vẫn còn
+versionedFiles.stateTrashed	Trong thùng rác
+versionedFiles.stateOrphaned	Tệp đã mất
+versionedFiles.sortHeader	Sắp xếp theo
+versionedFiles.sortBytes	Dung lượng đã dùng
+versionedFiles.sortVersions	Số phiên bản
+versionedFiles.sortNewest	Mới nhất
+versionedFiles.sortPath	Đường dẫn
+versionedFiles.none	Không có tệp nào có phiên bản trước.
+versionedFiles.unavailable	Phiên bản tệp chỉ dành cho quản trị viên.
+versionedFiles.zoneUnknown	Volume không xác định
+versionedFiles.zoneKindPersonal	Thư mục cá nhân của %@
+versionedFiles.zoneKindUserVolume	Volume được gán %@
+versionedFiles.rowSummary	Phiên bản: %1$lld · %2$@
+versionedFiles.newest	Mới nhất: %@
+versionedFiles.versionPinned	Đã ghim
+versionedFiles.versionUnavailable	Không khả dụng
+versionedFiles.versionBy	Bởi %@
+versionedFiles.detailFailed	Không thể đọc lịch sử này.
+versionedFiles.deleteSelectedNone	Đánh dấu các phiên bản cần xóa
+versionedFiles.deleteSelected	Xóa mục đã chọn (%lld)
+versionedFiles.deleteAll	Xóa tất cả phiên bản
+versionedFiles.confirmAllTitle	Xóa mọi phiên bản của "%@"?
+versionedFiles.confirmSomeTitle	Xóa các phiên bản đã chọn (%lld)?
+versionedFiles.confirmMessage	Không thể khôi phục các phiên bản đã xóa.
+versionedFiles.confirmDelete	Xóa
+versionedFiles.previous	Trước
+versionedFiles.next	Tiếp
+versionedFiles.pageRange	%1$lld đến %2$lld trong %3$lld
+accessRules.navigationTitle	Quy tắc truy cập thư mục
+accessRules.subtitle	Ghi đè quyền đọc và ghi cho các đường dẫn cụ thể.
+accessRules.addRule	Thêm quy tắc
+accessRules.empty	Chưa cấu hình quy tắc truy cập nào.
+accessRules.emptyHint	Thêm quy tắc để ghi đè quyền truy cập cho một đường dẫn.
+accessRules.pathLabel	Đường dẫn
+accessRules.recursive	Áp dụng cho thư mục con
+accessRules.permissionReadWrite	Đọc và ghi
+accessRules.permissionReadOnly	Chỉ đọc
+accessRules.permissionHidden	Ẩn
+accessRules.remove	Gỡ
+accessRules.unavailable	Quy tắc truy cập chỉ dành cho quản trị viên.
+accessRules.saveButton	Lưu thay đổi
+settings.rowThumbnails	Ảnh thu nhỏ
+settings.rowAccessRules	Quy tắc truy cập thư mục
+settings.navigationTitle	Cài đặt
+settings.sectionGeneral	Chung
+settings.sectionDisplay	Hiển thị
+settings.sectionStorage	Lưu trữ
+settings.sectionServerStorage	Lưu trữ máy chủ
+settings.serverStorageUsed	%1$@ trên %2$@
+settings.sectionLicenses	Giấy phép
+settings.sectionLegal	Pháp lý
+settings.sectionUsers	Người dùng
+settings.sectionAdmin	Quản trị
+settings.sectionInfo	Thông tin
+settings.toggleShowHiddenFiles	Hiện tệp ẩn
+settings.toggleRenderHTML	Hiển thị trang HTML
+settings.toggleRenderMarkdown	Hiển thị tệp Markdown
+settings.toggleHaptics	Phản hồi xúc giác
+settings.toggleShowThumbnails	Hiện ảnh thu nhỏ
+settings.toggleShowExtensions	Hiện phần mở rộng tên tệp
+settings.toggleShowTabLabels	Hiện nhãn tab
+settings.toggleKeepClipboard	Giữ các mục sau khi dán
+settings.toggleKeepClipboardSubtitle	Các mục đã sao chép vẫn sẵn sàng để dán vào thư mục khác. Các mục đã di chuyển luôn bị xóa.
+settings.rowDateFormat	Định dạng ngày
+settings.rowLanguage	Ngôn ngữ
+settings.rowThumbnailSize	Kích thước ảnh thu nhỏ
+settings.rowRemoveAllDownloads	Xóa tất cả tệp đã tải xuống
+settings.rowClearCache	Xóa bộ nhớ đệm
+settings.rowOpenSourceLicenses	Giấy phép mã nguồn mở
+settings.rowPrivacyPolicy	Chính sách quyền riêng tư
+settings.rowTermsOfUse	Điều khoản sử dụng
+settings.rowUserManagement	Quản lý người dùng
+settings.rowChangePassword	Đổi mật khẩu
+settings.rowAddPassword	Thêm mật khẩu
+settings.rowServer	Máy chủ
+settings.storageFootnote	Thư mục được tải xuống dưới dạng zip, không để lại gì trên máy chủ. Xóa tệp đã tải xuống hoặc bộ nhớ đệm chỉ ảnh hưởng đến thiết bị này; không có gì trên máy chủ bị thay đổi.
+settings.storageFootnoteMac	Xóa bộ nhớ đệm chỉ ảnh hưởng đến Mac này; không có gì trên máy chủ bị thay đổi.
+settings.removeAllDownloadsTitle	Xóa tất cả tệp đã tải xuống?
+settings.removeAllDownloadsConfirm	Xóa tất cả
+settings.removeAllDownloadsMessage	Thao tác này xóa mọi tệp đã tải xuống khỏi thiết bị này. Chúng vẫn còn trên máy chủ.
+settings.clearCacheTitle	Xóa bộ nhớ đệm?
+settings.clearCacheConfirm	Xóa sạch
+settings.clearCacheMessage	Thao tác này xóa bản xem trước, ảnh thu nhỏ và danh sách thư mục đã lưu dùng khi ngoại tuyến. Không ảnh hưởng đến máy chủ.
+settings.signOutAlertTitle	Đăng xuất?
+settings.signOutMessage	Bạn sẽ cần đăng nhập lại để truy cập tệp. Bản xem trước, ảnh thu nhỏ và danh sách thư mục đã lưu trên thiết bị này sẽ bị xóa.
+settings.signOutButton	Đăng xuất
+settings.signingOut	Đang đăng xuất…
+settings.sectionAccounts	Tài khoản
+settings.addAccount	Thêm tài khoản
+settings.accountSignOut	Đăng xuất
+settings.accountSignOutTitle	Đăng xuất?
+settings.accountSignOutMessage	Đăng xuất %@ trên thiết bị này? Bạn sẽ cần đăng nhập lại để dùng tài khoản này.
+settings.accountActiveLabel	%1$@, %2$@, tài khoản đang dùng
+settings.badgeActive	Đang dùng
+settings.dateFormatNavigationTitle	Định dạng ngày
+settings.dateFormatShowTime	Hiện giờ
+language.navigationTitle	Ngôn ngữ
+language.systemDefault	Mặc định hệ thống
+language.systemDefaultSubtitle	Theo ngôn ngữ thiết bị
+serverDetails.navigationTitle	Máy chủ
+serverDetails.changeLogo	Đổi biểu tượng
+serverDetails.takePhoto	Chụp ảnh
+serverDetails.chooseFromGallery	Tải lên từ Thư viện
+serverDetails.nameLabel	Tên máy chủ
+serverDetails.nameErrorEmpty	Tên máy chủ không được để trống.
+serverDetails.urlLabel	URL máy chủ
+serverDetails.urlFootnote	Địa chỉ nơi phiên bản NextExplorer của bạn được cài đặt. Để thay đổi, hãy đăng xuất và thêm lại máy chủ.
+serverDetails.updateButton	Cập nhật máy chủ
+serverDetails.savedMessage	Đã cập nhật thông tin máy chủ.
+serverDetails.logoErrorTooLarge	Ảnh đó quá lớn. Hãy chọn ảnh dưới 2 MB.
+serverDetails.cameraDeniedTitle	Truy cập camera đang tắt
+serverDetails.cameraDeniedMessage	Bật quyền truy cập camera trong Cài đặt để chụp ảnh.
+licenses.navigationTitle	Giấy phép mã nguồn mở
+licenses.sectionSoftware	Phần mềm
+licenses.sectionFontSoftware	Phần mềm phông chữ
+licenses.labelAuthor	Tác giả
+licenses.labelOriginalVersion	Phiên bản gốc
+licenses.labelModifiedVersion	Phiên bản đã sửa đổi
+licenses.labelReservedFontName	Tên phông chữ được bảo lưu
+fileInfo.navigationTitleFolder	Thư mục
+fileInfo.rowKind	Loại
+fileInfo.rowSize	Kích thước
+fileInfo.rowLocation	Vị trí
+fileInfo.rowDateModified	Ngày sửa đổi
+fileInfo.rowDateCreated	Ngày tạo
+fileInfo.rowFiles	Tệp
+fileInfo.rowFolders	Thư mục
+fileInfo.rowTotalSize	Tổng kích thước
+fileInfo.sectionServerDisk	Ổ đĩa máy chủ
+fileInfo.diskFreeOf	Còn trống %1$@ trên %2$@
+fileInfo.rowDimensions	Kích thước ảnh
+fileInfo.rowCamera	Máy ảnh
+fileInfo.rowLens	Ống kính
+fileInfo.rowDateTaken	Ngày chụp
+fileInfo.rowDuration	Thời lượng
+fileInfo.partialScan	Đếm theo quét một phần: thư mục này rất lớn.
+permissions.title	Quyền
+permissions.sectionMode	Chế độ
+permissions.numericLabel	Dạng số
+permissions.applyToEnclosed	Áp dụng cho các mục bên trong
+permissions.applyPermissions	Áp dụng quyền
+permissions.sectionOwnership	Quyền sở hữu
+permissions.fieldOwner	Chủ sở hữu
+permissions.fieldGroup	Nhóm
+permissions.ownershipNote	Đổi quyền sở hữu thường cần quyền root hoặc quản trị trên máy chủ.
+permissions.applyOwnership	Áp dụng quyền sở hữu
+permissions.scopeOwner	Chủ sở hữu
+permissions.scopeGroup	Nhóm
+permissions.scopeOthers	Người khác
+permissions.rightRead	Đọc
+permissions.rightWrite	Ghi
+permissions.rightExecute	Thực thi
+archive.emptyFolder	Thư mục này trống.
+archive.openFailed	Không thể mở tệp này.
+archive.openArchiveFailed	Không thể mở tệp lưu trữ này.
+archive.entryTooLarge	Mục này quá lớn để mở.
+gallery.loadFailed	Không thể tải ảnh này.
+textPreview.saved	Đã lưu
+textPreview.loadFailed	Không thể tải tệp này. Hãy kiểm tra kết nối và thử lại.
+textPreview.unsavedTitle	Lưu thay đổi cho “%@”?
+textPreview.unsavedMessage	Các thay đổi sẽ mất nếu bạn không lưu.
+textPreview.dontSave	Không lưu
+userManagement.navigationTitle	Quản lý người dùng
+userManagement.searchPrompt	Tìm người dùng
+userManagement.createUser	Tạo người dùng
+userManagement.badgeAdmin	Quản trị viên
+userManagement.emptyList	Chưa có người dùng nào.
+userManagement.noSearchMatches	Không có người dùng nào khớp với “%@”.
+userManagement.loadFailed	Không thể kết nối đến máy chủ.
+userManagement.sortType	Loại
+userManagement.sortName	Tên
+userManagement.sortEmail	Email
+userManagement.tabProfile	Hồ sơ
+userManagement.tabSecurity	Bảo mật
+userManagement.tabVolumes	Volume
+userManagement.createNavigationTitle	Tạo người dùng
+userManagement.createEmailField	Email
+userManagement.createUsernameField	Tên người dùng (không bắt buộc)
+userManagement.createUsernamePlaceholder	Lấy từ email
+userManagement.createPasswordField	Mật khẩu
+userManagement.createPasswordPlaceholder	Ít nhất %lld ký tự
+userManagement.createGrantAdminToggle	Cấp quyền quản trị
+userManagement.createGrantAdminSubtitle	Toàn quyền kiểm soát tệp, chia sẻ và người dùng.
+userManagement.createSubmit	Tạo người dùng
+userManagement.setPasswordNavigationTitle	Mật khẩu
+userManagement.setPasswordNewField	Mật khẩu mới
+userManagement.setPasswordPlaceholder	Ít nhất %lld ký tự
+userManagement.setPasswordResetTitle	Đặt lại mật khẩu
+userManagement.setPasswordSetTitle	Đặt mật khẩu
+userManagement.setPasswordResetIntro	Đặt mật khẩu cục bộ mới cho %@. Mật khẩu hiện tại sẽ ngừng hoạt động.
+userManagement.setPasswordSetIntro	Cấp cho %@ một mật khẩu cục bộ để họ có thể đăng nhập mà không cần SSO.
+userManagement.toastProfileUpdated	Đã cập nhật hồ sơ
+userManagement.toastAdminGranted	Đã cấp quyền quản trị
+userManagement.toastUserRemoved	Đã xóa người dùng
+userManagement.toastUserCreated	Đã tạo người dùng
+userManagement.toastPasswordUpdated	Đã cập nhật mật khẩu
+userManagement.toastVolumeSaved	Đã lưu volume
+userManagement.toastVolumeRemoved	Đã xóa volume
+userManagement.errorEmailRequired	Cần có email.
+userManagement.errorEmailInvalid	Hãy nhập địa chỉ email hợp lệ.
+userManagement.errorUsernameRequired	Cần có tên người dùng.
+userManagement.errorEmailInUse	Email đã được sử dụng.
+userManagement.errorPasswordTooShort	Hãy dùng ít nhất %lld ký tự.
+userDetail.fallbackName	Người dùng
+userDetail.sectionGeneralInfo	Thông tin chung
+userDetail.sectionRoles	Vai trò và quyền
+userDetail.sectionLocalPassword	Mật khẩu cục bộ
+userDetail.sectionSSO	Đăng nhập một lần
+userDetail.sectionAssignedVolumes	Volume được gán
+userDetail.profileDisplayNameField	Tên hiển thị
+userDetail.profileDisplayNamePlaceholder	Tên hiển thị
+userDetail.profileUsernameField	Tên người dùng
+userDetail.profileUsernamePlaceholder	Tên người dùng
+userDetail.profileEmailField	Email
+userDetail.profileSave	Lưu thay đổi
+userDetail.roleAdmin	Quản trị viên
+userDetail.roleAdminSubtitle	Toàn quyền kiểm soát tệp, chia sẻ và người dùng.
+userDetail.roleAdminLocked	Không thể hạ quyền quản trị viên từ ứng dụng.
+userDetail.roleGrantAdmin	Cấp quyền quản trị
+userDetail.passwordHasLocal	Người dùng này đăng nhập bằng email và mật khẩu.
+userDetail.passwordSSOOnly	Người dùng này không có mật khẩu cục bộ và chỉ đăng nhập bằng SSO.
+userDetail.passwordReset	Đặt lại mật khẩu
+userDetail.passwordSet	Đặt mật khẩu
+userDetail.ssoNone	Không có nhà cung cấp SSO nào được liên kết.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Đã liên kết
+userDetail.dangerZoneTitle	Vùng nguy hiểm
+userDetail.dangerZoneSubtitle	Xóa người dùng sẽ thu hồi quyền truy cập của họ ngay lập tức. Các tệp họ sở hữu trên máy chủ không bị xóa.
+userDetail.dangerZoneRemoveUser	Xóa người dùng
+userDetail.volumesNone	Chưa gán volume nào.
+userDetail.volumesNoneSubtitle	Người dùng này chỉ thấy không gian chia sẻ mặc định.
+userDetail.volumesAssign	Gán volume
+userDetail.volumesFootnote	Volume cho phép người dùng truy cập một thư mục nằm ngoài không gian chia sẻ mặc định. Xóa volume không bao giờ xóa tệp.
+userDetail.volumeEditAccessibility	Sửa %@
+userDetail.volumeRemoveAccessibility	Xóa %@
+userDetail.removeVolumeTitle	Xóa volume?
+userDetail.removeVolumeMessage	%@ không còn được gán cho người dùng này. Bản thân thư mục không bị ảnh hưởng.
+userDetail.removeUserTitle	Xóa người dùng?
+userDetail.removeUserMessage	%@ mất quyền truy cập ngay lập tức. Các tệp của họ trên máy chủ không bị xóa.
+userDetail.grantAdminTitle	Cấp quyền quản trị?
+userDetail.grantAdminMessage	%@ sẽ trở thành quản trị viên với toàn quyền kiểm soát tệp, chia sẻ và người dùng. Không thể hạ quyền quản trị viên từ ứng dụng.
+userDetail.volumeSheetLabelField	Nhãn
+userDetail.volumeSheetLabelPlaceholder	Nhãn volume
+userDetail.volumeSheetAccessMode	Chế độ truy cập
+userDetail.volumeSheetDirectory	Thư mục
+userDetail.volumeSheetSaveEdit	Lưu volume
+userDetail.volumeSheetSaveNew	Gán volume
+userDetail.volumeSheetTitleEdit	Sửa volume
+userDetail.volumeSheetTitleNew	Gán volume
+userDetail.directoryPickerGoUp	Lên một thư mục
+userDetail.directoryPickerUseThis	Dùng thư mục này
+userDetail.directoryPickerOpen	Mở %@
+userDetail.directoryPickerFailed	Không thể liệt kê các thư mục.
+previewToolbar.close	Đóng
+previewToolbar.createShareLink	Tạo liên kết chia sẻ
+previewToolbar.download	Tải xuống
+previewToolbar.delete	Xóa
+previewToolbar.share	Chia sẻ
+previewToolbar.rename	Đổi tên
+login.serverQuestion	Phiên bản NextExplorer của bạn ở đâu?
+login.serverInfoAccessibility	Về việc kết nối với máy chủ
+login.serverInfoTitle	Máy chủ là gì?
+login.serverInfoBody	NextExplorer kết nối với máy chủ NextExplorer của chính bạn. Quản trị viên vận hành máy chủ, tạo tài khoản và chia sẻ địa chỉ web của máy chủ với bạn. Hãy nhập địa chỉ đó để đăng nhập.\n\nChưa có máy chủ? Hướng dẫn thiết lập chỉ cách tự lưu trữ một máy chủ.
+login.serverInfoGuide	Mở hướng dẫn thiết lập
+login.testConnection	Kiểm tra kết nối
+login.identifierField	Email hoặc tên người dùng
+login.passwordField	Mật khẩu
+login.showPassword	Hiện mật khẩu
+login.hidePassword	Ẩn mật khẩu
+login.submit	Đăng nhập
+login.plaintextWarning	Kết nối này không được mã hóa. Mật khẩu và phiên của bạn được gửi dạng văn bản thuần qua mạng nội bộ.
+error.sessionExpired	Phiên của bạn đã hết hạn. Hãy đăng nhập lại.
+error.rateLimited	Quá nhiều yêu cầu. Hãy thử lại sau ít phút.
+error.network	Không thể kết nối đến máy chủ.
+error.offline	Bạn đang ngoại tuyến. Hãy kết nối internet và thử lại.
+error.decoding	Máy chủ phản hồi bất ngờ.
+error.server	Lỗi máy chủ (%lld).
+error.forbidden	Bạn không có quyền thực hiện thao tác đó.
+error.clientCertificateRequired	Máy chủ này cần chứng chỉ máy khách. Hãy thêm một chứng chỉ trong Cài đặt.
+error.clientCertificateRejected	Máy chủ đã từ chối chứng chỉ máy khách của bạn.
+changePassword.navigationTitle	Đổi mật khẩu
+changePassword.intro	Đổi mật khẩu bạn dùng để đăng nhập bằng địa chỉ email. Bạn vẫn đăng nhập trên thiết bị này.
+changePassword.fieldCurrentPassword	Mật khẩu hiện tại
+changePassword.fieldNewPasswordLabel	Mật khẩu mới
+changePassword.fieldConfirmPasswordLabel	Xác nhận mật khẩu mới
+changePassword.fieldConfirmPassword	Nhập lại mật khẩu mới
+changePassword.fieldNewPasswordPrompt	Ít nhất %lld ký tự
+changePassword.submitButton	Cập nhật mật khẩu
+changePassword.success	Mật khẩu của bạn đã được cập nhật.
+changePassword.addNavigationTitle	Thêm mật khẩu
+changePassword.addIntro	Tài khoản này đăng nhập bằng đăng nhập một lần và chưa có mật khẩu. Hãy thêm mật khẩu để cũng có thể đăng nhập bằng địa chỉ email hoặc tên người dùng.
+changePassword.addSubmitButton	Thêm mật khẩu
+changePassword.errorMinLength	Hãy dùng ít nhất %lld ký tự.
+changePassword.errorMismatch	Mật khẩu không khớp.
+twoFactor.navigationTitle	Xác thực hai yếu tố
+twoFactor.offTitle	Xác thực hai yếu tố đang tắt
+twoFactor.offIntro	Thêm bước thứ hai khi đăng nhập. Sau mật khẩu, bạn sẽ nhập mã từ ứng dụng xác thực.
+twoFactor.turnOnButton	Bật
+twoFactor.enrollIntro	Quét mã QR này bằng ứng dụng xác thực của bạn, hoặc nhập khóa bằng tay. Sau đó nhập mã 6 chữ số mà ứng dụng hiển thị.
+twoFactor.qrAccessibilityLabel	Mã QR cho ứng dụng xác thực của bạn
+twoFactor.keyLabel	Khóa thiết lập
+twoFactor.copyKeyAccessibilityLabel	Sao chép khóa thiết lập
+twoFactor.codeAccessibilityLabel	Mã xác thực
+twoFactor.confirmButton	Xác minh và bật
+twoFactor.recoveryTitle	Lưu mã khôi phục của bạn
+twoFactor.recoveryIntro	Mỗi mã chỉ dùng được một lần nếu bạn mất ứng dụng xác thực. Mã sẽ không hiển thị lại, nên hãy lưu ở nơi an toàn.
+twoFactor.copyCodesButton	Sao chép mã
+twoFactor.shareCodesButton	Chia sẻ mã
+twoFactor.recoveryDoneButton	Tôi đã lưu
+twoFactor.onTitle	Xác thực hai yếu tố đang bật
+twoFactor.recoveryCodesLeft	Mã khôi phục còn lại: %lld
+twoFactor.newCodesButton	Lấy mã khôi phục mới
+twoFactor.turnOffButton	Tắt
+twoFactor.passwordNewCodesIntro	Nhập mật khẩu để thay mã khôi phục. Các mã cũ sẽ ngừng hoạt động.
+twoFactor.passwordTurnOffIntro	Nhập mật khẩu để tắt xác thực hai yếu tố.
+twoFactor.passwordField	Mật khẩu
+twoFactor.passwordConfirmButton	Xác nhận
+twoFactor.manageButton	Quản lý…
+apiTokens.navigationTitle	Token API
+apiTokens.sectionHeader	Nhà phát triển
+apiTokens.intro	Token API cho phép các tập lệnh và công cụ khác dùng tài khoản của bạn mà không cần mật khẩu. Token chỉ làm những gì quyền truy cập của nó cho phép, và bạn có thể thu hồi bất cứ lúc nào.
+apiTokens.emptyTitle	Không có token API
+apiTokens.emptyMessage	Hãy tạo một token để tập lệnh có thể dùng tài khoản của bạn.
+apiTokens.newButton	Token mới
+apiTokens.limitReached	Bạn đã đạt giới hạn %lld token. Hãy thu hồi một token để tạo token khác.
+apiTokens.scopeRead	Chỉ đọc
+apiTokens.scopeWrite	Đọc và ghi
+apiTokens.created	Đã tạo %@
+apiTokens.lastUsed	Dùng lần cuối %@
+apiTokens.lastUsedFrom	Dùng lần cuối %1$@ từ %2$@
+apiTokens.neverUsed	Chưa từng dùng
+apiTokens.expires	Hết hạn %@
+apiTokens.expired	Đã hết hạn %@
+apiTokens.neverExpires	Không bao giờ hết hạn
+apiTokens.renameAction	Đổi tên
+apiTokens.revokeAction	Thu hồi
+apiTokens.menuAccessibilityLabel	Thao tác cho %@
+apiTokens.formTitle	Token API mới
+apiTokens.fieldName	Tên
+apiTokens.namePlaceholder	Ví dụ: tập lệnh sao lưu
+apiTokens.fieldAccess	Quyền truy cập
+apiTokens.fieldExpiry	Hết hạn
+apiTokens.expiry30	Sau 30 ngày
+apiTokens.expiry90	Sau 90 ngày
+apiTokens.expiryYear	Sau 1 năm
+apiTokens.expiryNever	Không bao giờ
+apiTokens.fieldPassword	Mật khẩu của bạn
+apiTokens.passwordHint	Nhập mật khẩu để tạo token.
+apiTokens.createSubmit	Tạo token
+apiTokens.issuedTitle	Sao chép token của bạn
+apiTokens.issuedIntro	Token chỉ hiển thị một lần này. Hãy lưu ở nơi an toàn. Nếu mất, hãy thu hồi và tạo token mới.
+apiTokens.copyToken	Sao chép token
+apiTokens.copiedToken	Đã sao chép
+apiTokens.issuedDone	Tôi đã sao chép
+apiTokens.renameTitle	Đổi tên token
+apiTokens.renameSave	Lưu
+apiTokens.revokeTitle	Thu hồi token?
+apiTokens.revokeMessage	Mọi thứ đang dùng "%@" sẽ ngừng hoạt động ngay. Không thể hoàn tác.
+apiTokens.revokeConfirm	Thu hồi
+login.portHint	Thêm một cổng (ví dụ :3000). Hầu hết máy chủ homelab không lắng nghe ở cổng 80 thông thường.
+login.errorInvalidServer	Hãy nhập địa chỉ máy chủ hợp lệ.
+login.errorInvalidCredentials	Tên người dùng hoặc mật khẩu không đúng.
+login.errorSessionExpired	Phiên của bạn đã hết hạn. Vui lòng đăng nhập lại.
+login.errorIncomplete	Đăng nhập chưa hoàn tất. Vui lòng thử lại.
+login.errorUnreachable	Không thể kết nối đến máy chủ đó. Hãy kiểm tra địa chỉ và thử lại.
+login.errorUnexpectedResponse	Phản hồi bất ngờ từ máy chủ.
+login.errorKeychain	Không thể lưu phiên của bạn trên thiết bị này.
+login.errorDecoding	Máy chủ phản hồi bất ngờ. Hãy kiểm tra địa chỉ và thử lại.
+login.errorNoLocalAuth	Máy chủ này chưa bật đăng nhập bằng tên người dùng/mật khẩu.
+login.errorRateLimited	Quá nhiều lần thử. Vui lòng đợi vài phút rồi thử lại.
+login.ssoButton	Đăng nhập bằng SSO
+login.orDivider	hoặc
+login.errorSso	Đăng nhập một lần chưa hoàn tất. Vui lòng thử lại.
+login.errorNoAuthMethods	Máy chủ này chưa bật phương thức đăng nhập nào.
+login.errorClientCertificateRequired	Máy chủ này yêu cầu chứng chỉ máy khách.
+login.errorClientCertificateRejected	Máy chủ đã từ chối chứng chỉ máy khách này.
+login.codeTitle	Nhập mã của bạn
+login.codeIntroAuthenticator	Tài khoản này yêu cầu bước thứ hai. Hãy nhập mã 6 chữ số từ ứng dụng xác thực của bạn.
+login.codeIntroRecovery	Nhập một trong các mã khôi phục của bạn. Mỗi mã chỉ dùng được một lần.
+login.codeUseRecovery	Dùng mã khôi phục thay thế
+login.codeUseAuthenticator	Dùng mã xác thực thay thế
+login.codeField	Mã
+login.codeSubmit	Xác minh
+login.errorInvalidCode	Mã đó không đúng.
+login.errorSecondFactorExpired	Lần đăng nhập đó đã hết hạn. Hãy nhập lại mật khẩu.
+login.diagnosticsButton	Chia sẻ nhật ký đăng nhập
+login.diagnosticsTitle	Nhật ký đăng nhập
+login.diagnosticsIntro	Nhật ký này cho thấy máy chủ đã trả lời gì ở mỗi bước, để giúp tìm lý do đăng nhập thất bại. Nó không bao giờ chứa mật khẩu, địa chỉ bạn đã nhập hay tên người dùng của bạn. Hãy gửi nó cho nhà phát triển.
+browse.nameErrorReserved	Tên đó không được phép.
+browse.nameErrorSeparators	Tên không được chứa / hoặc \.
+browse.searchMatchLine	Dòng %1$lld: %2$@
+browse.searchMatchLineLabel	Dòng %lld
+browse.searchTooShort	Nhập ít nhất %lld ký tự để tìm trong thư mục con và nội dung tệp.
+browse.searchStoppedEarly	Tìm kiếm đã dừng ở giới hạn thời gian. Đây là các kết quả tìm được cho đến nay.
+browse.searchFirstOnly	%lld kết quả đầu tiên. Hãy thu hẹp tìm kiếm để xem thêm.
+browse.searchShowMore	Xem thêm
+browse.searchMatchColumn	Khớp
+browse.searchMatchedByName	Tên
+browse.searchMatchedByContent	Nội dung
+browse.searchMatchedByBoth	Tên và nội dung
+createShare.errorPasswordRequired	Nhập mật khẩu hoặc tắt bảo vệ bằng mật khẩu.
+login.errorServer	Máy chủ gặp sự cố (lỗi %lld). Vui lòng thử lại sau.
+filter.sheetTitle	Lọc theo loại
+filter.button	Lọc
+filter.all	Mọi loại
+filter.folders	Thư mục
+filter.images	Hình ảnh
+filter.videos	Video
+filter.audio	Âm thanh
+filter.documents	Tài liệu
+filter.archives	Lưu trữ
+filter.other	Khác
+settings.creditsMadeBy	Được làm với ❤️ bởi Phillip Maizza
+settings.creditsLikeApp	Thích ứng dụng này?
+settings.creditsBuyCoffee	Mời tôi một ly cà phê ☕️
+tipJar.title	Mời tôi một ly cà phê
+tipJar.explanation	NextExplorer miễn phí và mã nguồn mở. Nếu thấy hữu ích, một khoản ủng hộ nhỏ giúp dự án tiếp tục. Cảm ơn bạn!
+tipJar.toastThanks	Cảm ơn bạn đã ủng hộ dự án! 🙏
+tipJar.errorLoad	Không thể tải các tùy chọn ủng hộ. Vui lòng thử lại.
+tipJar.errorPurchase	Giao dịch không thành công. Vui lòng thử lại.
+tipJar.pending	Đang chờ phê duyệt. Bạn sẽ bị tính phí sau khi được phê duyệt.
+offline.sectionTitle	Ngoại tuyến
+offline.settingsRow	Tải tệp để dùng ngoại tuyến
+offline.footnote	Các tệp đã tải xuống vẫn mở được khi không có kết nối.
+offline.available	%@ có sẵn ngoại tuyến
+offline.removeRow	Xóa tệp ngoại tuyến
+offline.removeConfirmTitle	Xóa tệp ngoại tuyến?
+offline.removeConfirmMessage	Thao tác này xóa các tệp đã lưu để dùng ngoại tuyến trên thiết bị này. Các tệp của bạn trên máy chủ không bị ảnh hưởng.
+offline.removeConfirm	Xóa
+offline.preparing	Đang chuẩn bị…
+offline.downloadingName	Đang tải xuống %@
+offline.progressCount	%lld trong %lld tệp
+offline.downloadFailed	Không thể hoàn tất việc tải xuống ngoại tuyến.
+offline.selectionTitle	Tải xuống để dùng ngoại tuyến
+offline.selectionEmpty	Thư mục này trống.
+offline.selectionLoadFailed	Không thể tải thư mục này.
+offline.selectionEstimate	Dung lượng tải xuống ước tính
+offline.selectionDownload	Tải xuống
+offline.selectionInsufficientSpace	Không đủ dung lượng trống trên thiết bị này
+offline.resyncRow	Cập nhật tệp ngoại tuyến
+offline.badgeAvailable	Có sẵn ngoại tuyến
+offline.manageRow	Quản lý tệp ngoại tuyến
+offline.manageTitle	Tệp ngoại tuyến
+offline.manageEmpty	Chưa tải gì để dùng ngoại tuyến.
+offline.preferOfflineToggle	Phát bản sao đã tải xuống
+offline.pinRemoved	%@ không còn trên máy chủ và đã bị xóa khỏi tệp ngoại tuyến
+offline.preferOfflineSubtitle	Dùng video đã tải xuống thay vì phát trực tuyến khi có sẵn.
+offline.tunnelSpeedNote	Truy cập máy chủ qua đường hầm từ xa có thể làm chậm việc tải xuống. Với tệp lớn, hãy kết nối cùng mạng và dùng địa chỉ cục bộ của máy chủ.
+menu.about	Giới thiệu NextExplorer
+menu.rateApp	Đánh giá NextExplorer…
+menu.support	Hỗ trợ NextExplorer
+menu.redo	Làm lại
+menu.undo	Hoàn tác
+settings.sectionSupport	Hỗ trợ
+settings.rowRateApp	Đánh giá NextExplorer
+settings.rowSupport	Trợ giúp và hỗ trợ
+menu.refresh	Làm mới
+select.tableView	Dạng bảng
+browse.progressDownloading	Đang tải xuống…
+browse.progressDownloadingIndexed	Đang tải xuống %1$lld trong %2$lld…
+browse.downloadSavedTo	Đã lưu vào %@
+browse.downloadSavedCountTo	Đã lưu %1$lld trong %2$lld mục vào %3$@
+browse.downloadSavedAllTo	Đã lưu %1$lld mục vào %2$@
+browse.downloadBulkFailed	Không thể lưu các mục này vào thiết bị của bạn.
+openWith.openIn	Mở trong %@
+openWith.openWith	Mở bằng
+openWith.viewAsText	Xem dạng văn bản
+openWith.failed	Không thể mở tệp này.
+browse.showInFinder	Hiện trong Finder
+browse.showInEnclosingFolder	Hiện trong thư mục chứa
+browse.actionCut	Cắt
+browse.clipboardCutOne	%@ sẵn sàng để di chuyển
+browse.clipboardCutMany	%lld mục sẵn sàng để di chuyển
+menu.enclosingFolder	Thư mục chứa
+common.more	Thêm
+openWith.print	In…
+menu.newWindow	Cửa sổ mới
+menu.newTab	Tab mới
+browse.actionOpenInNewWindow	Mở trong cửa sổ mới
+browse.actionOpenInNewTab	Mở trong tab mới
+select.viewAs	Xem
+settings.rowAppearance	Giao diện
+appearance.system	Hệ thống
+appearance.light	Sáng
+appearance.dark	Tối
+browse.myFiles	Tệp của tôi
+browse.myFilesSubtitle	Chỉ mình bạn thấy
+downloadQueue.navigationTitle	Hàng đợi tải xuống
+downloadQueue.openDownloads	Hiện mục tải xuống
+downloadQueue.emptyList	Không có tệp nào đang tải xuống.
+downloadQueue.statusSaved	Đã lưu
+downloadQueue.cancelAll	Hủy tất cả lượt tải xuống
+downloadQueue.barFailedOne	1 lượt tải xuống thất bại
+downloadQueue.barFailedMany	%lld lượt tải xuống thất bại
+downloadQueue.barTitleOne	Đang tải xuống %@
+downloadQueue.barTitleMany	Đang tải xuống %lld mục
+downloadQueue.savedOne	Đã lưu vào Tải xuống
+downloadQueue.savedMany	Đã lưu %lld mục vào Tải xuống
+downloadQueue.bytesOf	%1$@ trên %2$@
+downloadQueue.timeLeft	Còn %@
+browse.sectionPersonal	Cá nhân
+macSettings.addAccount	Thêm tài khoản…
+macSettings.changePassword	Đổi mật khẩu…
+macSettings.signOut	Đăng xuất…
+macSettings.switchAccount	Chuyển sang tài khoản này
+macSettings.username	Tên người dùng
+macSettings.email	Email
+macSettings.role	Vai trò
+macSettings.roleAdmin	Quản trị viên
+macSettings.roleUser	Người dùng
+macSettings.status	Trạng thái
+macSettings.statusSignedIn	Đã đăng nhập
+macSettings.manage	Quản lý…
+macSettings.cache	Bộ nhớ đệm
+macSettings.support	Trợ giúp và hỗ trợ…
+macSettings.permission	Quyền
+macSettings.icon	Biểu tượng
+menu.go	Đi tới
+menu.activity	Chuyển tệp
+menu.showAll	Hiện tất cả
+uploads.notifyDone	Tải lên hoàn tất
+uploads.notifyBody	Đã tải lên %lld tệp
+downloadQueue.notifyDone	Tải xuống hoàn tất
+fileInfo.rowSoftware	Phần mềm
+fileInfo.sectionVersions	Phiên bản
+fileInfo.versionsNone	Không có phiên bản trước
+fileInfo.versionRestore	Khôi phục…
+fileInfo.restoreTitle	Khôi phục phiên bản này?
+fileInfo.restoreMessage	Tệp sẽ quay về như lúc %@. Nội dung hiện tại được giữ lại thành một phiên bản.
+fileInfo.restoreConfirm	Khôi phục
+fileInfo.sectionSharing	Chia sẻ
+fileInfo.notShared	Không có liên kết chia sẻ
+fileInfo.versionActions	Thao tác phiên bản
+fileInfo.versionDownload	Tải xuống…
+fileInfo.versionSaveCopy	Lưu thành bản sao
+fileInfo.versionRename	Đổi tên…
+fileInfo.renameTitle	Đổi tên phiên bản
+fileInfo.renamePlaceholder	Tên phiên bản
+fileInfo.versionPin	Giữ phiên bản này
+fileInfo.versionUnpin	Ngừng giữ phiên bản này
+fileInfo.versionKept	Đã giữ
+fileInfo.versionDelete	Xóa…
+fileInfo.deleteTitle	Xóa phiên bản này?
+fileInfo.deleteAll	Xóa tất cả phiên bản…
+fileInfo.deleteAllTitle	Xóa tất cả phiên bản?
+fileInfo.deleteMessage	Các phiên bản đã xóa sẽ mất vĩnh viễn. Bản thân tệp vẫn giữ nguyên.
+macSettings.choose	Chọn…
+menu.forward	Tiến
+menu.goToFolder	Đi tới thư mục…
+menu.goToFolderTitle	Đi tới thư mục:
+menu.copyPath	Sao chép đường dẫn
+menu.recentFolders	Thư mục gần đây
+menu.clearRecent	Xóa menu
+common.loading	Đang tải…
+browse.quickLookUnavailable	Quick Look không khả dụng cho loại tệp này.
+browse.quickLookTooLarge	Tệp này quá lớn đối với Quick Look.
+menu.zoomIn	Phóng to
+menu.zoomOut	Thu nhỏ
+menu.zoomToFit	Vừa khít
+menu.quitTransfersTitle	Thoát NextExplorer?
+menu.quitTransfersMessage	Các lượt tải lên hoặc tải xuống vẫn đang diễn ra. Thoát bây giờ sẽ dừng chúng.
+menu.quitTransfersConfirm	Thoát
+media.play	Phát
+media.pause	Tạm dừng
+media.position	Vị trí phát
+media.positionValue	%1$@ trên %2$@
+media.clientCertificateUnsupported	Định dạng này không thể phát trực tuyến từ máy chủ yêu cầu chứng chỉ máy khách. Hãy tải tệp xuống để phát.
+clientCertificate.title	Chứng chỉ máy khách
+clientCertificate.intro	Một số máy chủ chỉ cho phép các thiết bị xuất trình chứng chỉ máy khách (mTLS). Hãy chọn tệp .p12 hoặc .pfx bạn được cấp cho máy chủ này.
+clientCertificate.certificateLabel	Chứng chỉ
+clientCertificate.none	Chưa cài chứng chỉ nào
+clientCertificate.issuedBy	Cấp bởi %@
+clientCertificate.expires	Hết hạn %@
+clientCertificate.expired	Đã hết hạn %@
+clientCertificate.chooseFile	Chọn tệp
+clientCertificate.replace	Thay chứng chỉ
+clientCertificate.remove	Xóa chứng chỉ
+clientCertificate.install	Cài đặt
+clientCertificate.passwordLabel	Mật khẩu tệp
+clientCertificate.passwordPrompt	Mật khẩu dùng khi xuất tệp
+clientCertificate.chooseAnother	Chọn tệp khác
+clientCertificate.errorWrongPassword	Mật khẩu đó không mở được tệp này.
+clientCertificate.errorInvalidFile	Đây không phải là tệp chứng chỉ .p12 hoặc .pfx hợp lệ.
+clientCertificate.errorNoIdentity	Tệp này không có khóa riêng. Hãy xuất chứng chỉ cùng với khóa của nó.
+clientCertificate.errorStorage	Không thể lưu chứng chỉ trên thiết bị này.
+clientCertificate.errorUnreadable	Không thể đọc tệp đó.
+clientCertificate.errorRemove	Không thể xóa chứng chỉ khỏi thiết bị này.
+clientCertificate.removeTitle	Xóa chứng chỉ?
+clientCertificate.removeMessage	NextExplorer sẽ ngừng xuất trình chứng chỉ này cho %@. Nếu máy chủ đó yêu cầu, ứng dụng sẽ không kết nối được cho đến khi bạn thêm lại chứng chỉ.
+clientCertificate.removeConfirm	Xóa
+clientCertificate.expiredWarning	Chứng chỉ này đã hết hạn. Máy chủ nhiều khả năng sẽ từ chối.
+login.addClientCertificate	Thêm chứng chỉ
+login.manageClientCertificate	Quản lý chứng chỉ
+settings.clientCertificate	Chứng chỉ máy khách
+settings.clientCertificateNone	Không có
+login.usingClientCertificate	Đang dùng chứng chỉ máy khách %@
+login.changeClientCertificate	Thay đổi
+login.ssoClientCertificateNote	Đăng nhập một lần mở trong Safari, vốn không dùng được chứng chỉ máy khách của ứng dụng này. Hãy đăng nhập bằng mật khẩu, hoặc cài chứng chỉ trên thiết bị này để dùng đăng nhập một lần.
+settings.clientCertificateExpired	Đã hết hạn
+settings.clientCertificateExpiresSoon	Sắp hết hạn
+clientCertificate.expiringSoonWarning	Chứng chỉ này hết hạn vào %@. Hãy yêu cầu chứng chỉ mới trước thời điểm đó.
+shareUpload.title	Tải lên NextExplorer
+shareUpload.itemCount	Số tệp cần tải lên: %lld
+shareUpload.accountLabel	Tài khoản
+shareUpload.folderLabel	Thư mục
+shareUpload.folderChoose	Chọn thư mục
+shareUpload.upload	Tải lên
+shareUpload.preparing	Đang chuẩn bị %lld trong %lld…
+shareUpload.started	Đang tải lên ở nền. Bạn sẽ nhận được thông báo khi xong.
+shareUpload.signedOut	Hãy đăng nhập NextExplorer trước, rồi chia sẻ lại.
+shareUpload.nothingToUpload	Không có gì ở đây để NextExplorer tải lên.
+shareUpload.failed	Không thể chuẩn bị tệp để tải lên.
+shareUpload.notificationDoneTitle	Tải lên hoàn tất
+shareUpload.notificationFailedTitle	Một số tệp chưa được tải lên
+shareUpload.notificationDoneBody#other	Đã tải %lld tệp lên “%@”.
+shareUpload.notificationAllFailedTitle	Tải lên thất bại
+shareUpload.failureUnauthorized#other	%lld tệp chưa được tải lên. Hãy đăng nhập lại rồi thử lại.
+shareUpload.failureForbidden#other	%lld tệp chưa được tải lên. Bạn không có quyền thêm tệp vào thư mục đó.
+shareUpload.failureServerFull#other	%lld tệp chưa được tải lên. Máy chủ hết dung lượng lưu trữ.
+shareUpload.failureNetwork#other	%lld tệp chưa được tải lên. Kết nối thất bại. Hãy thử lại khi bạn trực tuyến trở lại.
+shareUpload.failureOther#other	Không thể tải %lld tệp lên.
+shareUpload.notificationRetry	Thử lại
+shareUpload.notificationHiddenPreview	Hãy mở NextExplorer để xem lượt tải lên diễn ra thế nào.
+shareUpload.retryFailedTitle	Không thể thử lại
+shareUpload.retryFailedBody	Hãy mở NextExplorer và chia sẻ lại các tệp.
+shareUpload.insufficientSpace	Thiết bị này không đủ dung lượng trống để chuẩn bị các tệp này tải lên.
+settings.uploadDefaultsRow	Tệp được chia sẻ
+settings.uploadDefaultsFolder	Thư mục mặc định
+settings.uploadDefaultsFolderNone	Hỏi mỗi lần
+settings.uploadDefaultsWithoutAsking	Tải lên không cần hỏi
+settings.uploadDefaultsFooter	Ảnh và tệp bạn chia sẻ đến NextExplorer từ ứng dụng khác sẽ bắt đầu ở thư mục này. Khi bật Tải lên không cần hỏi, chúng được tải thẳng lên đó.
+settings.uploadDefaultsClear	Hỏi mỗi lần
+common.change	Thay đổi
+shareUpload.sessionUnreadable	NextExplorer không đọc được thông tin đăng nhập của bạn trên thiết bị này. Hãy mở NextExplorer một lần, rồi chia sẻ lại.
+shareUpload.keepOpen	Hãy giữ mở cho đến khi chuẩn bị xong.
+shareUpload.checking	Đang kiểm tra kết nối đến %@…
+shareUpload.openApp	Mở NextExplorer
+shareUpload.openAppInstructions	Hãy mở NextExplorer từ Màn hình chính, rồi chia sẻ lại.
+shareUpload.certificateRequired	Máy chủ này cần chứng chỉ máy khách. Hãy mở NextExplorer và thêm một chứng chỉ trong Cài đặt, rồi chia sẻ lại.
+shareUpload.certificateRejected	Máy chủ đã từ chối chứng chỉ máy khách của bạn. Hãy mở NextExplorer và thay chứng chỉ trong Cài đặt, rồi chia sẻ lại.
+shareUpload.defaultFolderUnavailable	Thư mục mặc định của bạn không còn khả dụng. Hãy chọn thư mục khác.
+shareUpload.failedItemsHeader	Không thể chuẩn bị các tệp này:
+shareUpload.readyCount	Sẵn sàng tải lên: %lld
+shareUpload.uploadReady	Tải lên các tệp đã sẵn sàng
+shareUpload.retryFailed	Thử lại các tệp thất bại
+shareUpload.fallbackItemName	Tệp %lld
+shareUpload.causeCannotRead	Không thể đọc được.
+shareUpload.causeNotEnoughSpace	Thiết bị này không đủ dung lượng trống.
+shareUpload.causeUnknown	Không thể chuẩn bị.
+shareUpload.folderHint	Mở trình chọn thư mục.
+shareUpload.accountHint	Chọn tài khoản nhận các tệp.
+error.timedOut	Máy chủ phản hồi quá lâu. Thao tác vẫn có thể hoàn tất.
+error.changedOnServer	Tệp này đã bị thay đổi trên máy chủ sau khi bạn mở.
+textPreview.conflictTitle	“%@” đã thay đổi trên máy chủ
+textPreview.conflictMessage	Ghi đè bằng phiên bản của bạn, hoặc tải lại tệp và bỏ các chỉnh sửa của bạn. Phiên bản bị thay thế vẫn nằm trong lịch sử phiên bản của tệp.
+textPreview.conflictOverwrite	Ghi đè
+textPreview.conflictReload	Tải lại
+offline.waitingForNetwork	Sẽ tải xuống khi bạn trực tuyến trở lại
+browse.bulkFavoriteFailed	Thất bại %1$lld trong %2$lld
+shareUpload.livePhotoNote	Live Photos được tải lên cùng video chuyển động của chúng.
+shareUpload.retrySignInBody	Hãy đăng nhập NextExplorer, rồi chạm Thử lại một lần nữa.
+shareUpload.causeFolder	Không thể chia sẻ thư mục. Hãy chia sẻ các tệp bên trong.
+shareUpload.notificationMoreNames	Thêm %lld
+versionedFiles.deleteFailed	Không thể xóa một số phiên bản. Hãy kiểm tra và thử lại.
+serverSettings.featureOffTitle	Tính năng này chưa được bật
+serverSettings.featureOffKept	Những gì bạn cấu hình ở đây được lưu và áp dụng ngay khi tính năng được bật.
+serverSettings.featureOffUseSwitch	Hãy bật bằng công tắc ở trên.
+serverSettings.featureOffHowTo	Để bật, hãy đặt %@ và khởi động lại container.
+trashSettings.environmentNote	Giá trị mặc định lấy từ TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT và TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Giá trị mặc định lấy từ VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE và VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Làm mới
