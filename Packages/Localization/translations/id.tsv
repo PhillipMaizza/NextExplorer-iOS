@@ -1,0 +1,1102 @@
+# NextExplorer: Bahasa Indonesia (id). key<TAB>value.
+common.cancel	Batal
+common.save	Simpan
+common.edit	Ubah
+common.retry	Coba Lagi
+common.syncCompleted	Sinkronisasi selesai
+common.delete	Hapus
+common.remove	Buang
+common.clear	Bersihkan
+common.done	Selesai
+common.ok	OK
+common.openSettings	Buka Pengaturan
+common.logOut	Keluar
+common.close	Tutup
+common.back	Kembali
+common.share	Bagikan
+common.copy	Salin
+common.copied	Disalin
+common.download	Unduh
+common.sort	Urutkan
+common.select	Pilih
+common.deselect	Batal Pilih
+common.search	Cari
+common.password	Kata Sandi
+common.never	Tidak pernah
+common.selectedCount	%lld Dipilih
+tab.browse	Jelajahi
+tab.favorites	Favorit
+tab.shared	Dibagikan
+tab.downloads	Unduhan
+tab.settings	Pengaturan
+sort.sheetTitle	Urutkan Menurut
+sort.name	Nama
+sort.size	Ukuran
+sort.kind	Jenis
+sort.dateModified	Tanggal Diubah
+sort.dateAdded	Tanggal Ditambahkan
+sort.dateShared	Tanggal Dibagikan
+sort.expiration	Kedaluwarsa
+sort.email	Email
+sort.type	Tipe
+sort.ascending	Naik
+sort.descending	Turun
+select.selectAll	Pilih Semua
+select.deselectAll	Batal Pilih Semua
+select.listView	Tampilan Daftar
+select.gridView	Tampilan Kisi
+emptyState.folderEmpty	Folder ini kosong.
+emptyState.loadFailed	Tidak dapat menjangkau server.
+emptyState.noSearchMatches	Tidak ada hasil untuk “%@”.
+accessMode.readonly	Hanya Baca
+accessMode.readwrite	Baca & Tulis
+shareTarget.anyone	Siapa saja dengan tautan
+shareTarget.users	Pengguna tertentu
+directLinkMode.auto	Otomatis
+directLinkMode.inline	Tampilan
+directLinkMode.raw	Mentah
+directLinkMode.download	Unduh
+thumbnailSize.small	Kecil
+thumbnailSize.medium	Sedang
+thumbnailSize.large	Besar
+downloadLocation.documents	Dokumen
+downloadLocation.cache	Cache
+dateFormat.automatic	Otomatis
+browse.navigationTitle	Jelajahi
+browse.scopeThisFolder	Folder Ini
+browse.scopeEverywhere	Di Mana Saja
+browse.searchScopeInFolder	Folder Ini
+browse.searchScopeEverywhere	Di Mana Saja
+browse.locations	Lokasi
+browse.breadcrumbHint	Membuka folder ini
+browse.open	Buka
+browse.unsupportedFileType	Jenis file tidak didukung
+browse.actionGetInfo	Info
+browse.actionPermissions	Izin
+browse.actionRename	Ganti Nama
+browse.actionExtract	Ekstrak
+browse.actionCompress	Kompres
+browse.actionDownload	Unduh
+browse.actionAddToFavorites	Tambahkan ke Favorit
+browse.actionRemoveFromFavorites	Hapus dari Favorit
+browse.actionShare	Buat tautan berbagi
+browse.actionDelete	Hapus
+browse.actionDuplicate	Duplikat
+browse.renameTitle	Ganti Nama
+browse.renameNamePlaceholder	Nama
+browse.actionNewFolder	Buat Folder
+browse.newFolderTitle	Folder Baru
+browse.newFolderPlaceholder	Nama folder
+browse.newFolderConfirm	Buat
+browse.actionNewFile	Buat File
+browse.newFileTitle	File Baru
+browse.newFileTypeHint	Gunakan jenis file yang dapat dibuka editor, seperti .txt, .md, atau .js.
+browse.deleteConfirmTitle	Hapus?
+browse.deleteConfirmOne	Hapus “%@”?
+browse.deleteConfirmMany	Hapus %lld item?
+browse.deleteMessage	Tindakan ini tidak dapat dibatalkan.
+browse.deleteLinkedSharesOne	Ini juga menghapus 1 tautan berbagi yang mengarah ke sini.
+browse.deleteLinkedSharesMany	Ini juga menghapus %lld tautan berbagi yang mengarah ke sini.
+browse.deleteLinkedSharesUnavailable	Tidak dapat memeriksa tautan berbagi yang mengarah ke sini. Tautan yang ada akan berhenti berfungsi.
+browse.searchNoMatchesInFolder	Tidak ada hasil untuk “%@”.
+browse.searchEverywhere	Cari di mana saja
+browse.searchFailed	Tidak dapat mencari. Periksa koneksi Anda dan coba lagi.
+browse.progressExtracting	Mengekstrak…
+browse.progressCompressing	Mengompres…
+browse.offlineBannerTitle	Offline
+browse.offlineBannerDetail	Menampilkan salinan tersimpan dari %@
+browse.actionCopy	Salin
+browse.destinationPickerMoveTitle	Pindahkan ke…
+browse.destinationPickerConfirmMove	Pindahkan ke Sini
+browse.destinationPickerNoFolders	Tidak ada folder di sini
+browse.destinationPickerLoadFailed	Tidak dapat memuat folder.
+browse.actionMove	Pindahkan
+browse.actionPaste	Tempel
+browse.actionPasteCount	Tempel %lld item
+browse.actionPasteHere	Tempel di sini
+browse.actionClearClipboard	Kosongkan papan klip
+browse.clipboardMoveCount	%lld untuk dipindahkan
+browse.clipboardCopyCount	%lld untuk disalin
+browse.clipboardCopiedOne	%@ disalin
+browse.clipboardCopiedMany	%lld item disalin
+browse.progressMoving	Memindahkan…
+browse.progressCopying	Menyalin…
+browse.transferMoved	%lld item dipindahkan
+browse.transferCopied	%lld item disalin
+browse.transferMovedWithSkipped	%1$lld item dipindahkan, %2$lld dilewati
+browse.transferCopiedWithSkipped	%1$lld item disalin, %2$lld dilewati
+browse.transferConflictTitle	Ganti item?
+browse.transferConflictMessageOne	"%@" sudah ada di folder ini.
+browse.transferConflictMessageMany	%lld item sudah ada di folder ini.
+browse.transferConflictReplace	Ganti
+browse.transferConflictKeepBoth	Simpan Keduanya
+browse.actionOpenInBrowser	Buka di Browser
+favorites.navigationTitle	Favorit
+favorites.emptyList	Beri bintang pada folder di Jelajahi untuk melihatnya di sini.
+favorites.actionRemoveFromFavorites	Hapus dari Favorit
+favorites.accessibilityBadge	Favorit
+favorites.actionEdit	Ubah
+favorites.editTitle	Ubah Favorit
+favorites.editNameLabel	Nama
+favorites.editNameErrorEmpty	Nama tidak boleh kosong.
+favorites.editIconLabel	Ikon
+favorites.editIconOutline	Garis Tepi
+favorites.editIconSolid	Solid
+favorites.editColorLabel	Warna
+favorites.editColorDefault	Default
+favorites.editSave	Simpan
+favorites.reorderFailed	Tidak dapat menyimpan urutan baru.
+favorites.removeConfirm	Hapus %lld Favorit?
+favorites.removeMessage	Ini hanya menghapusnya dari Favorit.
+favorites.removeFailedOne	Tidak dapat menghapus favorit itu.
+favorites.removeFailedMany	Tidak dapat menghapus favorit tersebut.
+favorites.removePartial	%1$lld dari %2$lld dihapus.
+downloads.navigationTitle	Unduhan
+downloads.actionOpenInFiles	Buka di File
+downloads.emptyList	File yang Anda unduh dari Jelajahi muncul di sini.
+downloads.deleteConfirmTitle	Hapus?
+downloads.deleteConfirmOne	Hapus “%@”?
+downloads.deleteConfirmMany	Hapus %lld file?
+downloads.deleteSingleMessage	Ini hanya menghapus salinan lokal. File tetap ada di server.
+downloads.deleteBulkMessage	Ini hanya menghapus salinan lokal. File tetap ada di server.
+downloads.errorNameExists	File dengan nama itu sudah ada.
+downloads.errorInvalidName	Nama itu tidak diizinkan.
+downloads.errorMissing	File itu tidak dapat ditemukan lagi.
+downloads.errorGeneric	Tidak dapat menyelesaikan tindakan itu.
+unsupportedPreview.genericType	File
+unsupportedPreview.cannotOpen	Aplikasi ini tidak dapat membuka jenis file ini.
+uploads.navigationTitle	Unggahan
+uploads.menuTitle	Unggah
+uploads.actionUploadFromFiles	Unggah dari File
+uploads.actionUploadFromPhotos	Unggah dari Galeri
+uploads.actionTakePhoto	Ambil Foto atau Video
+uploads.cameraDeniedTitle	Akses kamera diperlukan
+uploads.cameraDeniedMessage	Izinkan akses kamera di Pengaturan untuk mengambil foto atau video.
+uploads.destinationTitle	Unggah ke…
+uploads.destinationConfirm	Unggah di sini
+uploads.reviewTitleOne	Unggah 1 file
+uploads.reviewTitleMany	Unggah %lld file
+uploads.reviewSectionFiles	File
+uploads.reviewSectionPath	Jalur
+uploads.reviewSectionSize	Ukuran total
+uploads.reviewChooseFolder	Pilih folder
+uploads.reviewUploadButton	Unggah
+uploads.reviewPreparing	Menyiapkan %lld…
+uploads.reviewAddMore	Tambah file lagi
+uploads.reviewPreviewFile	Pratinjau %@
+uploads.reviewInsecureNetworkNotice	Terhubung melalui http. Jika server ini hanya ada di jaringan rumah Anda, unggahan tidak akan berfungsi saat Anda jauh darinya.
+uploads.stagingFailed	Tidak dapat menambahkan file tersebut. Coba lagi.
+uploads.stagingSkipped	%lld item tidak dapat disiapkan dan dilewati.
+uploads.discardTitle	Buang unggahan?
+uploads.discardMessage	File yang Anda tambahkan tidak akan diunggah.
+uploads.discardConfirm	Buang
+uploads.statusWaiting	Menunggu
+uploads.statusFailed	Unggahan gagal
+uploads.barTitleOne	Mengunggah %@
+uploads.barTitleMany	Mengunggah %lld file
+uploads.barFailedOne	1 unggahan gagal
+uploads.barFailedMany	%lld unggahan gagal
+uploads.retryAll	Coba lagi semua
+uploads.complete	Unggahan selesai
+uploads.completeMany	%lld file diunggah
+uploads.completeWithFailures	%1$lld diunggah, %2$lld gagal
+uploads.failedGeneric	Tidak dapat mengunggah file ini.
+uploads.clear	Bersihkan
+uploads.emptyList	Belum ada unggahan.
+uploads.cancelAll	Batalkan semua unggahan
+shared.navigationTitle	Dibagikan
+shared.segmentByMe	Oleh saya
+shared.segmentWithMe	Dengan saya
+shared.sectionExpired	Kedaluwarsa
+shared.badgeExpired	kedaluwarsa
+shared.emptyByMe	Bagikan file atau folder untuk melihat tautannya di sini.
+shared.emptyWithMe	Tautan yang dibagikan orang lain kepada Anda muncul di sini.
+shared.noSearchMatches	Tidak ada berbagi yang cocok dengan “%@”.
+shared.deleteTitle	Hapus Tautan Berbagi?
+shared.deleteMessage	Tautan langsung berhenti berfungsi. File atau folder itu sendiri tidak terpengaruh.
+shared.sharedByUnknown	Seseorang
+shared.metaAccess	Akses
+shared.metaExpiration	Kedaluwarsa
+shared.metaSharedBy	Dibagikan oleh
+shared.metaSharedWith	Dibagikan kepada
+shared.anyoneWithLink	Siapa saja dengan tautan
+shared.linkMode	Mode tautan
+shared.actionShareLink	Tautan berbagi
+shared.actionFolderLink	Tautan folder
+shared.actionFileLink	Tautan file
+shared.copiedShareLink	Tautan berbagi disalin
+shared.copiedFolderZip	Tautan ZIP folder disalin
+shared.copiedDirectFile	Tautan langsung file disalin
+createShare.title	Buat Tautan Berbagi
+createShare.titleCreated	Berbagi Dibuat
+createShare.sectionLabel	Label
+createShare.sectionAccessMode	Mode Akses
+createShare.sectionWhoCanAccess	Siapa yang dapat mengakses
+createShare.sectionShareLink	Tautan Berbagi
+createShare.fieldPassword	Kata Sandi
+createShare.togglePasswordProtect	Lindungi dengan kata sandi
+createShare.toggleSetExpiration	Atur tanggal kedaluwarsa
+createShare.fieldExpires	Kedaluwarsa
+createShare.submit	Buat Tautan Berbagi
+createShare.loadingUsers	Memuat pengguna…
+createShare.noOtherUsers	Tidak ada pengguna lain untuk diajak berbagi.
+createShare.sharingPrefix	Berbagi:
+createShare.createdBanner	Tautan berbagi berhasil dibuat!
+createShare.viewInShared	Lihat di Dibagikan
+createShare.directLinkMode	Mode tautan langsung
+createShare.directFolderLink	Tautan ZIP folder langsung
+createShare.directFileLink	Tautan file langsung
+createShare.summaryAccess	Akses
+createShare.summarySharedWith	Dibagikan kepada
+createShare.summaryPassword	Kata Sandi
+createShare.summaryPasswordProtected	Dilindungi
+createShare.summaryExpires	Kedaluwarsa
+createShare.summarySpecificPeople	Orang tertentu
+createShare.errorPastExpiration	Pilih tanggal kedaluwarsa di masa depan.
+editShare.title	Ubah Tautan Berbagi
+editShare.save	Simpan Perubahan
+editShare.passwordKeepHint	Biarkan kosong untuk mempertahankan kata sandi saat ini
+editShare.savedToast	Tautan berbagi diperbarui
+thumbnailSettings.navigationTitle	Gambar Mini
+thumbnailSettings.subtitle	Atur cara server membuat gambar mini untuk setiap klien.
+thumbnailSettings.enable	Buat Gambar Mini
+thumbnailSettings.enableHelp	Matikan untuk menyajikan gambar penuh di mana saja.
+thumbnailSettings.quality	Kualitas
+thumbnailSettings.qualityHelp	Lebih tinggi terlihat lebih baik dan memakai lebih banyak ruang.
+thumbnailSettings.maxDimension	Dimensi Maks
+thumbnailSettings.maxDimensionHelp	Sisi terpanjang gambar mini yang dibuat, dalam piksel.
+thumbnailSettings.concurrency	Konkurensi
+thumbnailSettings.concurrencyHelp	Berapa banyak gambar mini yang dibuat server sekaligus.
+thumbnailSettings.unavailable	Pengaturan gambar mini hanya tersedia untuk administrator.
+thumbnailSettings.saveButton	Simpan Perubahan
+uploadSettings.navigationTitle	Unggahan
+uploadSettings.subtitle	Atur cara file dikirim ke server.
+uploadSettings.chunkedEnable	Aktifkan unggahan bertahap
+uploadSettings.chunkedEnableHelp	Menggunakan TUS untuk mengirim file besar melalui beberapa permintaan yang lebih kecil.
+uploadSettings.chunkSize	Ukuran potongan
+uploadSettings.chunkSizeHelp	Ukuran maksimum setiap permintaan unggah. Jaga agar tetap di bawah batas reverse proxy Anda. Potongan lebih kecil memberi kemajuan yang lebih mulus.
+uploadSettings.autoFallback	Otomatis beralih ke bertahap
+uploadSettings.autoFallbackHelp	Jika unggahan langsung gagal karena reverse proxy menolak ukuran isi, beralih ke unggahan bertahap secara otomatis.
+uploadSettings.unavailable	Pengaturan unggahan hanya tersedia untuk administrator.
+uploadSettings.saveButton	Simpan Perubahan
+ffmpegSettings.subtitle	Pilih file eksekusi FFmpeg dan FFprobe yang digunakan untuk pratinjau dan metadata media.
+ffmpegSettings.containerPathHelp	Masukkan jalur absolut yang terlihat di dalam kontainer aplikasi. Untuk menggunakan biner host, pasang (bind-mount) ke kontainer terlebih dahulu.
+ffmpegSettings.ffmpegPath	Jalur file eksekusi FFmpeg
+ffmpegSettings.ffprobePath	Jalur file eksekusi FFprobe
+ffmpegSettings.invalid	Kedua jalur harus berupa jalur absolut kontainer yang diawali dengan /.
+ffmpegSettings.defaultHelp	Biarkan jalur kosong untuk memakai FFMPEG_PATH atau FFPROBE_PATH dari lingkungan, lalu file eksekusi bawaan. Perubahan langsung berlaku.
+ffmpegSettings.unavailable	Pengaturan FFmpeg hanya tersedia untuk administrator.
+ffmpegSettings.saveButton	Simpan Perubahan
+searchIndexSettings.navigationTitle	Indeks Pencarian
+searchIndexSettings.subtitle	Kecualikan jalur dari pengindeksan konten.
+searchIndexSettings.running	Pertahankan indeks pencarian
+searchIndexSettings.runningHelp	Membaca dokumen di volume di latar belakang agar pencarian di dalamnya langsung menjawab.
+searchIndexSettings.locked	Ditetapkan oleh %@ di lingkungan, jadi diputuskan di sana, bukan di sini.
+searchIndexSettings.environment	Pengecualian yang ditentukan lingkungan
+searchIndexSettings.additional	Pengecualian tambahan
+searchIndexSettings.none	Tidak ada jalur yang dikonfigurasi
+searchIndexSettings.addButton	Tambah
+searchIndexSettings.unavailable	Pengaturan indeks pencarian hanya tersedia untuk administrator.
+searchIndexSettings.saveButton	Simpan Perubahan
+searchIndexSettings.discardButton	Buang
+folderSizeSettings.navigationTitle	Ukuran Folder
+folderSizeSettings.subtitle	Kecualikan jalur dari penghitungan dan pengindeksan ukuran folder.
+folderSizeSettings.running	Ukur ukuran folder
+folderSizeSettings.runningHelp	Mengukur folder di latar belakang agar ukurannya muncul di daftar.
+folderSizeSettings.modeOff	Mati
+folderSizeSettings.modeShallow	Hanya file langsung di dalamnya
+folderSizeSettings.modeFull	Semua yang ada di dalamnya
+folderSizeSettings.locked	Ditetapkan oleh %@ di lingkungan, jadi diputuskan di sana, bukan di sini.
+folderSizeSettings.environment	Pengecualian yang ditentukan lingkungan
+folderSizeSettings.additional	Pengecualian tambahan
+folderSizeSettings.none	Tidak ada jalur yang dikonfigurasi
+folderSizeSettings.addButton	Tambah
+folderSizeSettings.unavailable	Pengaturan ukuran folder hanya tersedia untuk administrator.
+folderSizeSettings.saveButton	Simpan Perubahan
+folderSizeSettings.discardButton	Buang
+activityLog.navigationTitle	Log Aktivitas
+activityLog.subtitle	Siapa melakukan apa, kapan, dan dari mana. Mati kecuali Anda mengaktifkannya.
+activityLog.enabled	Catat aktivitas
+activityLog.enabledHelp	Login, unduhan, unggahan, penghapusan, pemulihan, tautan berbagi, dan perubahan akun dicatat selama ini aktif. Apa yang terjadi sebelum diaktifkan tidak ada di sini.
+activityLog.retention	Simpan selama (hari)
+activityLog.retentionInvalid	Antara 1 dan 3650 hari.
+activityLog.saveButton	Simpan Perubahan
+activityLog.off	Log mati, jadi tidak ada yang dicatat.
+activityLog.none	Belum ada yang dicatat.
+activityLog.filterAction	Jenis
+activityLog.anyAction	Jenis apa saja
+activityLog.filterOutcome	Hasil
+activityLog.anyOutcome	Hasil apa saja
+activityLog.outcomeOk	Berhasil
+activityLog.outcomeRefused	Ditolak
+activityLog.searchPlaceholder	Nama atau jalur
+activityLog.searchButton	Cari
+activityLog.refresh	Segarkan
+activityLog.clear	Kosongkan Log
+activityLog.clearTitle	Kosongkan log?
+activityLog.clearMessage	Setiap baris yang tercatat dihapus. Tindakan ini tidak dapat dibatalkan.
+activityLog.clearConfirm	Kosongkan Log
+activityLog.more	Tampilkan Lebih Banyak
+activityLog.refusedSuffix	Ditolak
+activityLog.fromAddress	Dari %@
+activityLog.unavailable	Log aktivitas hanya tersedia untuk administrator.
+activityLog.action.signIn	Masuk
+activityLog.action.signOut	Keluar
+activityLog.action.accountPassword	Kata sandi diubah
+activityLog.action.accountTwoFactor	Faktor kedua diubah
+activityLog.action.accountPasskey	Passkey diubah
+activityLog.action.accountToken	Token API diubah
+activityLog.action.adminUser	Akun diubah
+activityLog.action.adminSettings	Pengaturan diubah
+activityLog.action.adminActivityClear	Log dibersihkan
+activityLog.action.shareCreate	Berbagi dibuat
+activityLog.action.shareDelete	Berbagi dihapus
+activityLog.action.shareDownload	Diunduh lewat tautan
+activityLog.action.shareUpload	Diunggah lewat tautan
+activityLog.action.fileDownload	Diunduh
+activityLog.action.fileUpload	Diunggah
+activityLog.action.fileDelete	Dipindahkan ke sampah
+activityLog.action.fileRestore	Dipulihkan
+activityLog.action.filePurge	Dihapus permanen
+activityLog.action.versionsPurge	Versi dihapus
+trashSettings.navigationTitle	Sampah dan Versi
+trashSettings.subtitle	Item yang dihapus dan versi file sebelumnya disimpan di ruang khusus pada volume masing-masing, lalu dihapus setelah masa simpan berakhir atau saat ruang itu dibutuhkan.
+trashSettings.trashHeader	Sampah
+trashSettings.enabled	Kirim item yang dihapus ke sampah
+trashSettings.enabledHelp	Jika mati, penghapusan menghapus item secara permanen. Item yang sudah ada di sampah tetap kedaluwarsa.
+trashSettings.retention	Masa simpan (hari)
+trashSettings.retentionHelp	Dari 1 sampai 3650 hari.
+trashSettings.maxPercent	Bagian setiap volume (%)
+trashSettings.maxPercentHelp	Paling banyak yang boleh dipakai sampah di sebuah volume, dari 1 sampai 90%.
+trashSettings.maxSize	Batas ukuran per volume (GiB)
+trashSettings.maxSizeHelp	Opsional. Yang lebih kecil antara bagian dan batas yang berlaku.
+trashSettings.maxSizeNone	Tanpa batas
+trashSettings.trashInvalid	Periksa nilainya: masa simpan 1 sampai 3650 hari, bagian 1 sampai 90%, ukuran positif atau kosong.
+trashSettings.versionsHeader	Versi File
+trashSettings.versionsSubtitle	Setiap penyimpanan mempertahankan apa yang digantikannya, tanpa menyalin, di ruang khusus yang sama dengan sampah. Versi lama dikurangi seiring waktu.
+trashSettings.versionsEnabled	Pertahankan versi file sebelumnya
+trashSettings.versionsEnabledHelp	Terpisah dari sampah. Jika mati, penyimpanan tidak mempertahankan yang baru; versi yang ada tetap sampai kedaluwarsa atau dihapus.
+trashSettings.keepAllHours	Pertahankan setiap versi (jam)
+trashSettings.hourlyDays	Lalu satu per jam (hari)
+trashSettings.dailyDays	Lalu satu per hari (hari)
+trashSettings.maxPerFile	Versi per file paling banyak
+trashSettings.checkpointMinutes	Titik pemeriksaan Office (menit)
+trashSettings.tiersHelp	Setelah tingkatan ini, satu versi per minggu dipertahankan. Satu sesi pengeditan Office meninggalkan satu versi, ditambah titik pemeriksaan paling sering sekian. Versi yang disematkan lolos dari pengurangan dan batas per file.
+trashSettings.versionsInvalid	Periksa nilainya: 1 sampai 720 jam, 1 sampai 365 hari per jam, 1 sampai 3650 hari per hari, 1 sampai 1000 versi per file, titik pemeriksaan 1 sampai 1440 menit.
+trashSettings.sharedSpace	Versi dan sampah berbagi ruang khusus setiap volume. Saat ruang menipis, versi lama dihapus lebih dulu, lalu item sampah, lalu versi terbaru tiap file, dan versi yang disematkan paling akhir.
+trashSettings.saveButton	Simpan Perubahan
+trashSettings.discardButton	Buang
+trashSettings.unavailable	Pengaturan sampah dan versi hanya tersedia untuk administrator.
+trashSettings.zonesHeader	Sampah per Volume
+trashSettings.zonesSubtitle	Setiap volume menyimpan sampahnya di folder tersembunyi .nextexplorer di root-nya, sehingga penghapusan tidak menyalin apa pun.
+trashSettings.zonesEmpty	Belum ada yang dihapus ke sampah.
+trashSettings.zoneKindPersonal	Folder pribadi %@
+trashSettings.zoneKindUserVolume	Volume yang ditetapkan %@
+trashSettings.available	Tersedia
+trashSettings.unavailableMissing	Tidak terpasang atau dihapus
+trashSettings.unavailableReplaced	Disk lain di tempatnya
+trashSettings.unavailableUnreadable	Tidak terbaca
+trashSettings.usage	%1$@ dari %2$@
+trashSettings.noBudget	tanpa batas
+trashSettings.zoneItems	Item: %1$lld · %2$@
+trashSettings.zoneVersions	Versi: %1$lld · %2$@
+trashSettings.lastPass	Pemeliharaan terakhir: %@
+trashSettings.lastPassPurged	%1$@ · dihapus: %2$lld
+trashSettings.never	belum
+trashSettings.verify	Verifikasi
+trashSettings.runMaintenance	Jalankan Pemeliharaan Sekarang
+trashSettings.verifyOk	Sampah setiap volume konsisten.
+trashSettings.verifyIssues	Masalah ditemukan: %lld
+trashSettings.zoneProblems	Masalah: %lld
+trashSettings.journalHeader	Jurnal
+trashSettings.eventEvicted	"%@" dihapus sebelum masa simpannya berakhir untuk mengosongkan ruang
+trashSettings.eventAdopted	"%@" dipulihkan setelah gangguan
+trashSettings.eventLost	Konten "%@" hilang
+trashSettings.eventFailed	"%@" tidak dapat dihapus
+trashSettings.eventBreaker	Terlalu banyak item hilang sekaligus: tidak ada yang diubah
+trashSettings.eventForgotten	"%@" dilupakan oleh administrator
+trashSettings.eventVersionEvicted	Satu versi "%@" dihapus untuk mengosongkan ruang
+trashSettings.eventVersionFailed	Satu versi tidak dapat dihapus
+trashSettings.eventVersionLost	Konten satu versi hilang
+trashSettings.eventVersionTooLarge	"%@" lebih besar dari seluruh ruang: yang digantikannya tidak dipertahankan
+trashSettings.eventVersionsBreaker	Terlalu banyak versi hilang sekaligus: tidak ada yang diubah
+versionedFiles.navigationTitle	Versi File
+versionedFiles.subtitle	Setiap file yang punya riwayat, di mana pun berada. Menampilkan jalur dari semua ruang, termasuk folder pribadi, sehingga hanya untuk administrator.
+versionedFiles.summary	File: %1$lld · Versi: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Nama atau jalur
+versionedFiles.zone	Volume
+versionedFiles.anyZone	Volume apa saja
+versionedFiles.stateHeader	Status
+versionedFiles.anyState	Status apa saja
+versionedFiles.stateLive	File masih ada
+versionedFiles.stateTrashed	Di sampah
+versionedFiles.stateOrphaned	File hilang
+versionedFiles.sortHeader	Urutkan menurut
+versionedFiles.sortBytes	Ruang terpakai
+versionedFiles.sortVersions	Jumlah versi
+versionedFiles.sortNewest	Terbaru
+versionedFiles.sortPath	Jalur
+versionedFiles.none	Tidak ada file yang memiliki versi sebelumnya.
+versionedFiles.unavailable	Versi file hanya tersedia untuk administrator.
+versionedFiles.zoneUnknown	Volume tidak dikenal
+versionedFiles.zoneKindPersonal	Folder pribadi %@
+versionedFiles.zoneKindUserVolume	Volume yang ditetapkan %@
+versionedFiles.rowSummary	Versi: %1$lld · %2$@
+versionedFiles.newest	Terbaru: %@
+versionedFiles.versionPinned	Disematkan
+versionedFiles.versionUnavailable	Tidak tersedia
+versionedFiles.versionBy	Oleh %@
+versionedFiles.detailFailed	Riwayat ini tidak dapat dibaca.
+versionedFiles.deleteSelectedNone	Centang versi yang akan dihapus
+versionedFiles.deleteSelected	Hapus yang Dipilih (%lld)
+versionedFiles.deleteAll	Hapus Semua Versi
+versionedFiles.confirmAllTitle	Hapus semua versi "%@"?
+versionedFiles.confirmSomeTitle	Hapus versi yang dipilih (%lld)?
+versionedFiles.confirmMessage	Versi yang dihapus tidak dapat dipulihkan.
+versionedFiles.confirmDelete	Hapus
+versionedFiles.previous	Sebelumnya
+versionedFiles.next	Berikutnya
+versionedFiles.pageRange	%1$lld sampai %2$lld dari %3$lld
+accessRules.navigationTitle	Aturan Akses Folder
+accessRules.subtitle	Timpa akses baca dan tulis untuk jalur tertentu.
+accessRules.addRule	Tambah Aturan
+accessRules.empty	Belum ada aturan akses yang dikonfigurasi.
+accessRules.emptyHint	Tambahkan aturan untuk menimpa akses suatu jalur.
+accessRules.pathLabel	Jalur
+accessRules.recursive	Terapkan ke Subfolder
+accessRules.permissionReadWrite	Baca & Tulis
+accessRules.permissionReadOnly	Hanya Baca
+accessRules.permissionHidden	Tersembunyi
+accessRules.remove	Hapus
+accessRules.unavailable	Aturan akses hanya tersedia untuk administrator.
+accessRules.saveButton	Simpan Perubahan
+settings.rowThumbnails	Gambar Mini
+settings.rowAccessRules	Aturan Akses Folder
+settings.navigationTitle	Pengaturan
+settings.sectionGeneral	Umum
+settings.sectionDisplay	Tampilan
+settings.sectionStorage	Penyimpanan
+settings.sectionServerStorage	Penyimpanan Server
+settings.serverStorageUsed	%1$@ dari %2$@
+settings.sectionLicenses	Lisensi
+settings.sectionLegal	Hukum
+settings.sectionUsers	Pengguna
+settings.sectionAdmin	Admin
+settings.sectionInfo	Info
+settings.toggleShowHiddenFiles	Tampilkan File Tersembunyi
+settings.toggleRenderHTML	Render Halaman HTML
+settings.toggleRenderMarkdown	Render File Markdown
+settings.toggleHaptics	Haptik
+settings.toggleShowThumbnails	Tampilkan Gambar Mini
+settings.toggleShowExtensions	Tampilkan Ekstensi Nama File
+settings.toggleShowTabLabels	Tampilkan Label Tab
+settings.toggleKeepClipboard	Pertahankan Item Setelah Ditempel
+settings.toggleKeepClipboardSubtitle	Item yang disalin tetap siap ditempel ke folder lain. Item yang dipindahkan selalu dikosongkan.
+settings.rowDateFormat	Format Tanggal
+settings.rowLanguage	Bahasa
+settings.rowThumbnailSize	Ukuran Gambar Mini
+settings.rowRemoveAllDownloads	Hapus Semua Unduhan
+settings.rowClearCache	Hapus Cache
+settings.rowOpenSourceLicenses	Lisensi Sumber Terbuka
+settings.rowPrivacyPolicy	Kebijakan Privasi
+settings.rowTermsOfUse	Ketentuan Penggunaan
+settings.rowUserManagement	Manajemen Pengguna
+settings.rowChangePassword	Ubah Kata Sandi
+settings.rowAddPassword	Tambah Kata Sandi
+settings.rowServer	Server
+settings.storageFootnote	Folder diunduh sebagai zip, tanpa meninggalkan apa pun di server. Menghapus unduhan atau cache hanya memengaruhi perangkat ini; tidak ada yang berubah di server.
+settings.storageFootnoteMac	Menghapus cache hanya memengaruhi Mac ini; tidak ada yang berubah di server.
+settings.removeAllDownloadsTitle	Hapus Semua Unduhan?
+settings.removeAllDownloadsConfirm	Hapus Semua
+settings.removeAllDownloadsMessage	Ini menghapus semua file yang diunduh dari perangkat ini. File tetap ada di server.
+settings.clearCacheTitle	Hapus Cache?
+settings.clearCacheConfirm	Bersihkan
+settings.clearCacheMessage	Ini membersihkan pratinjau, gambar mini, dan daftar folder tersimpan yang dipakai secara offline. Tidak ada yang terpengaruh di server.
+settings.signOutAlertTitle	Keluar?
+settings.signOutMessage	Anda perlu masuk lagi untuk mengakses file. Pratinjau, gambar mini, dan daftar folder tersimpan di perangkat ini akan dibersihkan.
+settings.signOutButton	Keluar
+settings.signingOut	Sedang Keluar…
+settings.sectionAccounts	Akun
+settings.addAccount	Tambah Akun
+settings.accountSignOut	Keluar
+settings.accountSignOutTitle	Keluar?
+settings.accountSignOutMessage	Keluarkan %@ di perangkat ini? Anda perlu masuk lagi untuk memakai akun ini.
+settings.accountActiveLabel	%1$@, %2$@, akun aktif
+settings.badgeActive	Aktif
+settings.dateFormatNavigationTitle	Format Tanggal
+settings.dateFormatShowTime	Tampilkan Waktu
+language.navigationTitle	Bahasa
+language.systemDefault	Default Sistem
+language.systemDefaultSubtitle	Ikuti bahasa perangkat
+serverDetails.navigationTitle	Server
+serverDetails.changeLogo	Ganti Ikon
+serverDetails.takePhoto	Ambil Foto
+serverDetails.chooseFromGallery	Unggah dari Galeri
+serverDetails.nameLabel	Nama Server
+serverDetails.nameErrorEmpty	Nama server tidak boleh kosong.
+serverDetails.urlLabel	URL Server
+serverDetails.urlFootnote	Alamat tempat instans NextExplorer Anda terpasang. Untuk mengubahnya, keluar lalu tambahkan server lagi.
+serverDetails.updateButton	Perbarui Server
+serverDetails.savedMessage	Detail server diperbarui.
+serverDetails.logoErrorTooLarge	Gambar itu terlalu besar. Pilih yang kurang dari 2 MB.
+serverDetails.cameraDeniedTitle	Akses Kamera Mati
+serverDetails.cameraDeniedMessage	Aktifkan akses kamera di Pengaturan untuk mengambil foto.
+licenses.navigationTitle	Lisensi Sumber Terbuka
+licenses.sectionSoftware	Perangkat Lunak
+licenses.sectionFontSoftware	Perangkat Lunak Font
+licenses.labelAuthor	Penulis
+licenses.labelOriginalVersion	Versi Asli
+licenses.labelModifiedVersion	Versi yang Dimodifikasi
+licenses.labelReservedFontName	Nama Font yang Dicadangkan
+fileInfo.navigationTitleFolder	Folder
+fileInfo.rowKind	Jenis
+fileInfo.rowSize	Ukuran
+fileInfo.rowLocation	Lokasi
+fileInfo.rowDateModified	Tanggal Diubah
+fileInfo.rowDateCreated	Tanggal Dibuat
+fileInfo.rowFiles	File
+fileInfo.rowFolders	Folder
+fileInfo.rowTotalSize	Ukuran Total
+fileInfo.sectionServerDisk	Disk Server
+fileInfo.diskFreeOf	%1$@ kosong dari %2$@
+fileInfo.rowDimensions	Dimensi
+fileInfo.rowCamera	Kamera
+fileInfo.rowLens	Lensa
+fileInfo.rowDateTaken	Tanggal Pengambilan
+fileInfo.rowDuration	Durasi
+fileInfo.partialScan	Dihitung dari pemindaian parsial: folder ini sangat besar.
+permissions.title	Izin
+permissions.sectionMode	Mode
+permissions.numericLabel	Numerik
+permissions.applyToEnclosed	Terapkan ke item di dalamnya
+permissions.applyPermissions	Terapkan Izin
+permissions.sectionOwnership	Kepemilikan
+permissions.fieldOwner	Pemilik
+permissions.fieldGroup	Grup
+permissions.ownershipNote	Mengubah kepemilikan biasanya memerlukan hak akses root atau admin di server.
+permissions.applyOwnership	Terapkan Kepemilikan
+permissions.scopeOwner	Pemilik
+permissions.scopeGroup	Grup
+permissions.scopeOthers	Lainnya
+permissions.rightRead	Baca
+permissions.rightWrite	Tulis
+permissions.rightExecute	Eksekusi
+archive.emptyFolder	Folder ini kosong.
+archive.openFailed	Tidak dapat membuka file ini.
+archive.openArchiveFailed	Tidak dapat membuka arsip ini.
+archive.entryTooLarge	Item ini terlalu besar untuk dibuka.
+gallery.loadFailed	Tidak dapat memuat gambar ini.
+textPreview.saved	Tersimpan
+textPreview.loadFailed	Tidak dapat memuat file ini. Periksa koneksi Anda dan coba lagi.
+textPreview.unsavedTitle	Simpan perubahan pada “%@”?
+textPreview.unsavedMessage	Perubahan Anda hilang jika tidak disimpan.
+textPreview.dontSave	Jangan Simpan
+userManagement.navigationTitle	Manajemen Pengguna
+userManagement.searchPrompt	Cari pengguna
+userManagement.createUser	Buat Pengguna
+userManagement.badgeAdmin	Admin
+userManagement.emptyList	Belum ada pengguna.
+userManagement.noSearchMatches	Tidak ada pengguna yang cocok dengan “%@”.
+userManagement.loadFailed	Tidak dapat menjangkau server.
+userManagement.sortType	Tipe
+userManagement.sortName	Nama
+userManagement.sortEmail	Email
+userManagement.tabProfile	Profil
+userManagement.tabSecurity	Keamanan
+userManagement.tabVolumes	Volume
+userManagement.createNavigationTitle	Buat Pengguna
+userManagement.createEmailField	Email
+userManagement.createUsernameField	Nama pengguna (opsional)
+userManagement.createUsernamePlaceholder	Diturunkan dari email
+userManagement.createPasswordField	Kata Sandi
+userManagement.createPasswordPlaceholder	Minimal %lld karakter
+userManagement.createGrantAdminToggle	Berikan Akses Admin
+userManagement.createGrantAdminSubtitle	Kendali penuh atas file, berbagi, dan pengguna.
+userManagement.createSubmit	Buat Pengguna
+userManagement.setPasswordNavigationTitle	Kata Sandi
+userManagement.setPasswordNewField	Kata Sandi Baru
+userManagement.setPasswordPlaceholder	Minimal %lld karakter
+userManagement.setPasswordResetTitle	Atur Ulang Kata Sandi
+userManagement.setPasswordSetTitle	Setel Kata Sandi
+userManagement.setPasswordResetIntro	Setel kata sandi lokal baru untuk %@. Kata sandi saat ini berhenti berfungsi.
+userManagement.setPasswordSetIntro	Berikan kata sandi lokal kepada %@ agar dapat masuk tanpa SSO.
+userManagement.toastProfileUpdated	Profil diperbarui
+userManagement.toastAdminGranted	Akses admin diberikan
+userManagement.toastUserRemoved	Pengguna dihapus
+userManagement.toastUserCreated	Pengguna dibuat
+userManagement.toastPasswordUpdated	Kata sandi diperbarui
+userManagement.toastVolumeSaved	Volume disimpan
+userManagement.toastVolumeRemoved	Volume dihapus
+userManagement.errorEmailRequired	Email wajib diisi.
+userManagement.errorEmailInvalid	Masukkan alamat email yang valid.
+userManagement.errorUsernameRequired	Nama pengguna wajib diisi.
+userManagement.errorEmailInUse	Email sudah digunakan.
+userManagement.errorPasswordTooShort	Gunakan setidaknya %lld karakter.
+userDetail.fallbackName	Pengguna
+userDetail.sectionGeneralInfo	Info Umum
+userDetail.sectionRoles	Peran & Izin
+userDetail.sectionLocalPassword	Kata Sandi Lokal
+userDetail.sectionSSO	Single Sign-On
+userDetail.sectionAssignedVolumes	Volume yang Ditetapkan
+userDetail.profileDisplayNameField	Nama Tampilan
+userDetail.profileDisplayNamePlaceholder	Nama tampilan
+userDetail.profileUsernameField	Nama pengguna
+userDetail.profileUsernamePlaceholder	Nama pengguna
+userDetail.profileEmailField	Email
+userDetail.profileSave	Simpan Perubahan
+userDetail.roleAdmin	Administrator
+userDetail.roleAdminSubtitle	Kendali penuh atas file, berbagi, dan pengguna.
+userDetail.roleAdminLocked	Administrator tidak dapat diturunkan dari aplikasi.
+userDetail.roleGrantAdmin	Jadikan Admin
+userDetail.passwordHasLocal	Pengguna ini masuk dengan email dan kata sandi.
+userDetail.passwordSSOOnly	Pengguna ini tidak punya kata sandi lokal dan hanya masuk lewat SSO.
+userDetail.passwordReset	Atur Ulang Kata Sandi
+userDetail.passwordSet	Setel Kata Sandi
+userDetail.ssoNone	Tidak ada penyedia SSO yang tertaut.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Tertaut
+userDetail.dangerZoneTitle	Zona Bahaya
+userDetail.dangerZoneSubtitle	Menghapus pengguna langsung mencabut aksesnya. File miliknya di server tidak dihapus.
+userDetail.dangerZoneRemoveUser	Hapus Pengguna
+userDetail.volumesNone	Tidak ada volume yang ditetapkan.
+userDetail.volumesNoneSubtitle	Pengguna ini hanya melihat ruang bersama default.
+userDetail.volumesAssign	Tetapkan Volume
+userDetail.volumesFootnote	Volume memberi pengguna akses ke direktori di luar ruang bersama default. Menghapus volume tidak pernah menghapus file.
+userDetail.volumeEditAccessibility	Ubah %@
+userDetail.volumeRemoveAccessibility	Hapus %@
+userDetail.removeVolumeTitle	Hapus Volume?
+userDetail.removeVolumeMessage	%@ tidak lagi ditetapkan untuk pengguna ini. Direktori itu sendiri tidak terpengaruh.
+userDetail.removeUserTitle	Hapus Pengguna?
+userDetail.removeUserMessage	%@ langsung kehilangan akses. File miliknya di server tidak dihapus.
+userDetail.grantAdminTitle	Jadikan Admin?
+userDetail.grantAdminMessage	%@ menjadi administrator dengan kendali penuh atas file, berbagi, dan pengguna. Administrator tidak dapat diturunkan dari aplikasi.
+userDetail.volumeSheetLabelField	Label
+userDetail.volumeSheetLabelPlaceholder	Label volume
+userDetail.volumeSheetAccessMode	Mode Akses
+userDetail.volumeSheetDirectory	Direktori
+userDetail.volumeSheetSaveEdit	Simpan Volume
+userDetail.volumeSheetSaveNew	Tetapkan Volume
+userDetail.volumeSheetTitleEdit	Ubah Volume
+userDetail.volumeSheetTitleNew	Tetapkan Volume
+userDetail.directoryPickerGoUp	Naik satu direktori
+userDetail.directoryPickerUseThis	Gunakan Direktori Ini
+userDetail.directoryPickerOpen	Buka %@
+userDetail.directoryPickerFailed	Tidak dapat menampilkan daftar direktori.
+previewToolbar.close	Tutup
+previewToolbar.createShareLink	Buat tautan berbagi
+previewToolbar.download	Unduh
+previewToolbar.delete	Hapus
+previewToolbar.share	Bagikan
+previewToolbar.rename	Ganti Nama
+login.serverQuestion	Di mana instans NextExplorer Anda?
+login.serverInfoAccessibility	Tentang menghubungkan ke server
+login.serverInfoTitle	Apa itu server?
+login.serverInfoBody	NextExplorer terhubung ke server NextExplorer milik Anda sendiri. Administrator menjalankan server, membuat akun, dan membagikan alamat webnya kepada Anda. Masukkan alamat itu untuk masuk.\n\nBelum punya server? Panduan penyiapan menunjukkan cara menghostingnya.
+login.serverInfoGuide	Buka panduan penyiapan
+login.testConnection	Uji koneksi
+login.identifierField	Email atau nama pengguna
+login.passwordField	Kata Sandi
+login.showPassword	Tampilkan Kata Sandi
+login.hidePassword	Sembunyikan Kata Sandi
+login.submit	Masuk
+login.plaintextWarning	Koneksi ini tidak terenkripsi. Kata sandi dan sesi Anda dikirim apa adanya melalui jaringan lokal.
+error.sessionExpired	Sesi Anda berakhir. Masuk lagi.
+error.rateLimited	Terlalu banyak permintaan. Coba lagi sebentar lagi.
+error.network	Tidak dapat menjangkau server.
+error.offline	Anda sedang offline. Hubungkan ke internet dan coba lagi.
+error.decoding	Server merespons secara tak terduga.
+error.server	Kesalahan server (%lld).
+error.forbidden	Anda tidak memiliki izin untuk melakukannya.
+error.clientCertificateRequired	Server ini memerlukan sertifikat klien. Tambahkan di Pengaturan.
+error.clientCertificateRejected	Server menolak sertifikat klien Anda.
+changePassword.navigationTitle	Ubah Kata Sandi
+changePassword.intro	Ubah kata sandi yang Anda gunakan untuk masuk dengan alamat email. Anda tetap masuk di perangkat ini.
+changePassword.fieldCurrentPassword	Kata Sandi Saat Ini
+changePassword.fieldNewPasswordLabel	Kata Sandi Baru
+changePassword.fieldConfirmPasswordLabel	Konfirmasi Kata Sandi Baru
+changePassword.fieldConfirmPassword	Masukkan ulang kata sandi baru
+changePassword.fieldNewPasswordPrompt	Minimal %lld karakter
+changePassword.submitButton	Perbarui Kata Sandi
+changePassword.success	Kata sandi Anda telah diperbarui.
+changePassword.addNavigationTitle	Tambah Kata Sandi
+changePassword.addIntro	Akun ini masuk dengan single sign-on dan belum punya kata sandi. Tambahkan satu agar juga bisa masuk dengan alamat email atau nama pengguna.
+changePassword.addSubmitButton	Tambah Kata Sandi
+changePassword.errorMinLength	Gunakan setidaknya %lld karakter.
+changePassword.errorMismatch	Kata sandi tidak cocok.
+twoFactor.navigationTitle	Autentikasi Dua Faktor
+twoFactor.offTitle	Autentikasi dua faktor mati
+twoFactor.offIntro	Tambahkan langkah kedua saat masuk. Setelah kata sandi, Anda akan memasukkan kode dari aplikasi autentikator.
+twoFactor.turnOnButton	Aktifkan
+twoFactor.enrollIntro	Pindai kode QR ini dengan aplikasi autentikator Anda, atau ketik kuncinya secara manual. Lalu masukkan kode 6 digit yang ditampilkan aplikasi.
+twoFactor.qrAccessibilityLabel	Kode QR untuk aplikasi autentikator Anda
+twoFactor.keyLabel	Kunci Penyiapan
+twoFactor.copyKeyAccessibilityLabel	Salin kunci penyiapan
+twoFactor.codeAccessibilityLabel	Kode autentikator
+twoFactor.confirmButton	Verifikasi dan Aktifkan
+twoFactor.recoveryTitle	Simpan kode pemulihan Anda
+twoFactor.recoveryIntro	Setiap kode hanya berfungsi sekali jika Anda kehilangan aplikasi autentikator. Kode tidak akan ditampilkan lagi, jadi simpan di tempat aman.
+twoFactor.copyCodesButton	Salin Kode
+twoFactor.shareCodesButton	Bagikan Kode
+twoFactor.recoveryDoneButton	Sudah Saya Simpan
+twoFactor.onTitle	Autentikasi dua faktor aktif
+twoFactor.recoveryCodesLeft	Kode pemulihan tersisa: %lld
+twoFactor.newCodesButton	Dapatkan Kode Pemulihan Baru
+twoFactor.turnOffButton	Matikan
+twoFactor.passwordNewCodesIntro	Masukkan kata sandi Anda untuk mengganti kode pemulihan. Kode lama berhenti berfungsi.
+twoFactor.passwordTurnOffIntro	Masukkan kata sandi Anda untuk mematikan autentikasi dua faktor.
+twoFactor.passwordField	Kata Sandi
+twoFactor.passwordConfirmButton	Konfirmasi
+twoFactor.manageButton	Kelola…
+apiTokens.navigationTitle	Token API
+apiTokens.sectionHeader	Pengembang
+apiTokens.intro	Token API memungkinkan skrip dan alat lain memakai akun Anda tanpa kata sandi. Token hanya melakukan apa yang diizinkan aksesnya, dan Anda dapat mencabutnya kapan saja.
+apiTokens.emptyTitle	Tidak ada token API
+apiTokens.emptyMessage	Buat satu agar skrip dapat memakai akun Anda.
+apiTokens.newButton	Token Baru
+apiTokens.limitReached	Anda telah mencapai batas %lld token. Cabut satu untuk membuat yang lain.
+apiTokens.scopeRead	Hanya baca
+apiTokens.scopeWrite	Baca dan tulis
+apiTokens.created	Dibuat %@
+apiTokens.lastUsed	Terakhir dipakai %@
+apiTokens.lastUsedFrom	Terakhir dipakai %1$@ dari %2$@
+apiTokens.neverUsed	Belum pernah dipakai
+apiTokens.expires	Kedaluwarsa %@
+apiTokens.expired	Kedaluwarsa pada %@
+apiTokens.neverExpires	Tidak pernah kedaluwarsa
+apiTokens.renameAction	Ganti Nama
+apiTokens.revokeAction	Cabut
+apiTokens.menuAccessibilityLabel	Tindakan untuk %@
+apiTokens.formTitle	Token API Baru
+apiTokens.fieldName	Nama
+apiTokens.namePlaceholder	Misalnya, skrip pencadangan
+apiTokens.fieldAccess	Akses
+apiTokens.fieldExpiry	Kedaluwarsa
+apiTokens.expiry30	Dalam 30 hari
+apiTokens.expiry90	Dalam 90 hari
+apiTokens.expiryYear	Dalam 1 tahun
+apiTokens.expiryNever	Tidak pernah
+apiTokens.fieldPassword	Kata sandi Anda
+apiTokens.passwordHint	Masukkan kata sandi Anda untuk membuat token.
+apiTokens.createSubmit	Buat Token
+apiTokens.issuedTitle	Salin token Anda
+apiTokens.issuedIntro	Ini hanya ditampilkan sekali. Simpan di tempat aman. Jika hilang, cabut lalu buat yang baru.
+apiTokens.copyToken	Salin Token
+apiTokens.copiedToken	Disalin
+apiTokens.issuedDone	Sudah Saya Salin
+apiTokens.renameTitle	Ganti Nama Token
+apiTokens.renameSave	Simpan
+apiTokens.revokeTitle	Cabut Token?
+apiTokens.revokeMessage	Apa pun yang memakai "%@" akan langsung berhenti berfungsi. Tindakan ini tidak dapat dibatalkan.
+apiTokens.revokeConfirm	Cabut
+login.portHint	Tambahkan port (mis. :3000). Sebagian besar server homelab tidak mendengarkan di port 80 biasa.
+login.errorInvalidServer	Masukkan alamat server yang valid.
+login.errorInvalidCredentials	Nama pengguna atau kata sandi salah.
+login.errorSessionExpired	Sesi Anda berakhir. Silakan masuk lagi.
+login.errorIncomplete	Proses masuk tidak selesai. Silakan coba lagi.
+login.errorUnreachable	Tidak dapat menjangkau server itu. Periksa alamat dan coba lagi.
+login.errorUnexpectedResponse	Respons tak terduga dari server.
+login.errorKeychain	Tidak dapat menyimpan sesi Anda di perangkat ini.
+login.errorDecoding	Server merespons secara tak terduga. Periksa alamat dan coba lagi.
+login.errorNoLocalAuth	Server ini tidak mengaktifkan masuk dengan nama pengguna/kata sandi.
+login.errorRateLimited	Terlalu banyak percobaan. Harap tunggu beberapa menit dan coba lagi.
+login.ssoButton	Masuk dengan SSO
+login.orDivider	atau
+login.errorSso	Single sign-on tidak selesai. Silakan coba lagi.
+login.errorNoAuthMethods	Server ini tidak mengaktifkan metode masuk apa pun.
+login.errorClientCertificateRequired	Server ini meminta sertifikat klien.
+login.errorClientCertificateRejected	Server menolak sertifikat klien ini.
+login.codeTitle	Masukkan kode Anda
+login.codeIntroAuthenticator	Akun ini meminta langkah kedua. Masukkan kode 6 digit dari aplikasi autentikator Anda.
+login.codeIntroRecovery	Masukkan salah satu kode pemulihan Anda. Masing-masing hanya berfungsi sekali.
+login.codeUseRecovery	Gunakan kode pemulihan sebagai gantinya
+login.codeUseAuthenticator	Gunakan kode autentikator sebagai gantinya
+login.codeField	Kode
+login.codeSubmit	Verifikasi
+login.errorInvalidCode	Kode itu tidak benar.
+login.errorSecondFactorExpired	Proses masuk itu kedaluwarsa. Masukkan kata sandi Anda lagi.
+login.diagnosticsButton	Bagikan log masuk
+login.diagnosticsTitle	Log masuk
+login.diagnosticsIntro	Log ini menunjukkan jawaban server pada setiap langkah, untuk membantu mencari alasan masuk gagal. Log tidak pernah berisi kata sandi, alamat yang Anda ketik, atau nama pengguna Anda. Kirimkan ke pengembang.
+browse.nameErrorReserved	Nama itu tidak diizinkan.
+browse.nameErrorSeparators	Nama tidak boleh berisi / atau \.
+browse.searchMatchLine	Baris %1$lld: %2$@
+browse.searchMatchLineLabel	Baris %lld
+browse.searchTooShort	Ketik minimal %lld karakter untuk mencari di subfolder dan isi file.
+browse.searchStoppedEarly	Pencarian berhenti pada batas waktunya. Ini hasil yang ditemukan sejauh ini.
+browse.searchFirstOnly	%lld hasil pertama. Persempit pencarian untuk melihat lebih banyak.
+browse.searchShowMore	Tampilkan Lebih Banyak
+browse.searchMatchColumn	Kecocokan
+browse.searchMatchedByName	Nama
+browse.searchMatchedByContent	Isi
+browse.searchMatchedByBoth	Nama dan Isi
+createShare.errorPasswordRequired	Masukkan kata sandi atau matikan perlindungan kata sandi.
+login.errorServer	Server mengalami masalah (kesalahan %lld). Silakan coba lagi nanti.
+filter.sheetTitle	Filter menurut Jenis
+filter.button	Filter
+filter.all	Semua Jenis
+filter.folders	Folder
+filter.images	Gambar
+filter.videos	Video
+filter.audio	Audio
+filter.documents	Dokumen
+filter.archives	Arsip
+filter.other	Lainnya
+settings.creditsMadeBy	Dibuat dengan ❤️ oleh Phillip Maizza
+settings.creditsLikeApp	Suka dengan aplikasinya?
+settings.creditsBuyCoffee	Traktir saya kopi ☕️
+tipJar.title	Traktir saya kopi
+tipJar.explanation	NextExplorer gratis dan open source. Jika bermanfaat bagi Anda, tip kecil membantu proyek ini terus berjalan. Terima kasih!
+tipJar.toastThanks	Terima kasih telah mendukung proyek ini! 🙏
+tipJar.errorLoad	Tidak dapat memuat opsi tip. Silakan coba lagi.
+tipJar.errorPurchase	Pembelian tidak berhasil. Silakan coba lagi.
+tipJar.pending	Menunggu persetujuan. Anda akan ditagih setelah disetujui.
+offline.sectionTitle	Offline
+offline.settingsRow	Unduh File untuk Penggunaan Offline
+offline.footnote	File yang diunduh terbuka walau tanpa koneksi.
+offline.available	%@ tersedia offline
+offline.removeRow	Hapus File Offline
+offline.removeConfirmTitle	Hapus File Offline?
+offline.removeConfirmMessage	Ini menghapus file yang disimpan untuk penggunaan offline di perangkat ini. File Anda di server tidak terpengaruh.
+offline.removeConfirm	Hapus
+offline.preparing	Menyiapkan…
+offline.downloadingName	Mengunduh %@
+offline.progressCount	%lld dari %lld file
+offline.downloadFailed	Unduhan offline tidak dapat diselesaikan.
+offline.selectionTitle	Unduh untuk Offline
+offline.selectionEmpty	Folder ini kosong.
+offline.selectionLoadFailed	Folder ini tidak dapat dimuat.
+offline.selectionEstimate	Perkiraan Unduhan
+offline.selectionDownload	Unduh
+offline.selectionInsufficientSpace	Ruang kosong di perangkat ini tidak cukup
+offline.resyncRow	Perbarui File Offline
+offline.badgeAvailable	Tersedia offline
+offline.manageRow	Kelola File Offline
+offline.manageTitle	File Offline
+offline.manageEmpty	Tidak ada yang diunduh untuk penggunaan offline.
+offline.preferOfflineToggle	Putar Salinan yang Diunduh
+offline.pinRemoved	%@ tidak ada lagi di server dan dihapus dari file offline
+offline.preferOfflineSubtitle	Gunakan video yang diunduh alih-alih streaming bila tersedia.
+offline.tunnelSpeedNote	Menjangkau server melalui terowongan jarak jauh dapat memperlambat unduhan. Untuk file besar, hubungkan ke jaringan yang sama dan gunakan alamat lokal server Anda.
+menu.about	Tentang NextExplorer
+menu.rateApp	Beri Peringkat NextExplorer…
+menu.support	Dukungan NextExplorer
+menu.redo	Ulangi
+menu.undo	Urungkan
+settings.sectionSupport	Dukungan
+settings.rowRateApp	Beri Peringkat NextExplorer
+settings.rowSupport	Bantuan & Dukungan
+menu.refresh	Segarkan
+select.tableView	Tampilan Tabel
+browse.progressDownloading	Mengunduh…
+browse.progressDownloadingIndexed	Mengunduh %1$lld dari %2$lld…
+browse.downloadSavedTo	Disimpan ke %@
+browse.downloadSavedCountTo	%1$lld dari %2$lld item disimpan ke %3$@
+browse.downloadSavedAllTo	%1$lld item disimpan ke %2$@
+browse.downloadBulkFailed	Tidak dapat menyimpan item ini ke perangkat Anda.
+openWith.openIn	Buka di %@
+openWith.openWith	Buka Dengan
+openWith.viewAsText	Lihat sebagai Teks
+openWith.failed	Tidak dapat membuka file ini.
+browse.showInFinder	Tampilkan di Finder
+browse.showInEnclosingFolder	Tampilkan di Folder Induk
+browse.actionCut	Potong
+browse.clipboardCutOne	%@ siap dipindahkan
+browse.clipboardCutMany	%lld item siap dipindahkan
+menu.enclosingFolder	Folder Induk
+common.more	Lainnya
+openWith.print	Cetak…
+menu.newWindow	Jendela Baru
+menu.newTab	Tab Baru
+browse.actionOpenInNewWindow	Buka di Jendela Baru
+browse.actionOpenInNewTab	Buka di Tab Baru
+select.viewAs	Tampilan
+settings.rowAppearance	Tampilan
+appearance.system	Sistem
+appearance.light	Terang
+appearance.dark	Gelap
+browse.myFiles	File Saya
+browse.myFilesSubtitle	Hanya terlihat oleh Anda
+downloadQueue.navigationTitle	Antrean Unduhan
+downloadQueue.openDownloads	Tampilkan Unduhan
+downloadQueue.emptyList	Tidak ada unduhan yang sedang berlangsung.
+downloadQueue.statusSaved	Tersimpan
+downloadQueue.cancelAll	Batalkan semua unduhan
+downloadQueue.barFailedOne	1 unduhan gagal
+downloadQueue.barFailedMany	%lld unduhan gagal
+downloadQueue.barTitleOne	Mengunduh %@
+downloadQueue.barTitleMany	Mengunduh %lld item
+downloadQueue.savedOne	Disimpan ke Unduhan
+downloadQueue.savedMany	%lld item disimpan ke Unduhan
+downloadQueue.bytesOf	%1$@ dari %2$@
+downloadQueue.timeLeft	%@ lagi
+browse.sectionPersonal	Pribadi
+macSettings.addAccount	Tambah Akun…
+macSettings.changePassword	Ubah Kata Sandi…
+macSettings.signOut	Keluar…
+macSettings.switchAccount	Beralih ke Akun Ini
+macSettings.username	Nama pengguna
+macSettings.email	Email
+macSettings.role	Peran
+macSettings.roleAdmin	Administrator
+macSettings.roleUser	Pengguna
+macSettings.status	Status
+macSettings.statusSignedIn	Sudah Masuk
+macSettings.manage	Kelola…
+macSettings.cache	Cache
+macSettings.support	Bantuan & Dukungan…
+macSettings.permission	Izin
+macSettings.icon	Ikon
+menu.go	Pergi
+menu.activity	Transfer
+menu.showAll	Tampilkan Semua
+uploads.notifyDone	Unggahan selesai
+uploads.notifyBody	%lld file diunggah
+downloadQueue.notifyDone	Unduhan selesai
+fileInfo.rowSoftware	Perangkat Lunak
+fileInfo.sectionVersions	Versi
+fileInfo.versionsNone	Tidak ada versi sebelumnya
+fileInfo.versionRestore	Pulihkan…
+fileInfo.restoreTitle	Pulihkan versi ini?
+fileInfo.restoreMessage	File kembali seperti pada %@. Isinya saat ini disimpan sebagai versi.
+fileInfo.restoreConfirm	Pulihkan
+fileInfo.sectionSharing	Berbagi
+fileInfo.notShared	Tidak ada tautan berbagi
+fileInfo.versionActions	Tindakan versi
+fileInfo.versionDownload	Unduh…
+fileInfo.versionSaveCopy	Simpan sebagai Salinan
+fileInfo.versionRename	Ganti Nama…
+fileInfo.renameTitle	Ganti Nama Versi
+fileInfo.renamePlaceholder	Nama versi
+fileInfo.versionPin	Pertahankan Versi Ini
+fileInfo.versionUnpin	Berhenti Mempertahankan Versi Ini
+fileInfo.versionKept	Dipertahankan
+fileInfo.versionDelete	Hapus…
+fileInfo.deleteTitle	Hapus versi ini?
+fileInfo.deleteAll	Hapus Semua Versi…
+fileInfo.deleteAllTitle	Hapus semua versi?
+fileInfo.deleteMessage	Versi yang dihapus hilang selamanya. File itu sendiri tetap seperti adanya.
+macSettings.choose	Pilih…
+menu.forward	Maju
+menu.goToFolder	Pergi ke Folder…
+menu.goToFolderTitle	Pergi ke folder:
+menu.copyPath	Salin Jalur
+menu.recentFolders	Folder Terbaru
+menu.clearRecent	Hapus Menu
+common.loading	Memuat…
+browse.quickLookUnavailable	Quick Look tidak tersedia untuk jenis file ini.
+browse.quickLookTooLarge	File ini terlalu besar untuk Quick Look.
+menu.zoomIn	Perbesar
+menu.zoomOut	Perkecil
+menu.zoomToFit	Sesuaikan Ukuran
+menu.quitTransfersTitle	Keluar dari NextExplorer?
+menu.quitTransfersMessage	Unggahan atau unduhan masih berlangsung. Keluar sekarang akan menghentikannya.
+menu.quitTransfersConfirm	Keluar
+media.play	Putar
+media.pause	Jeda
+media.position	Posisi Pemutaran
+media.positionValue	%1$@ dari %2$@
+media.clientCertificateUnsupported	Format ini tidak dapat di-streaming dari server yang meminta sertifikat klien. Unduh file untuk memutarnya.
+clientCertificate.title	Sertifikat Klien
+clientCertificate.intro	Beberapa server hanya mengizinkan perangkat yang menunjukkan sertifikat klien (mTLS). Pilih file .p12 atau .pfx yang diberikan untuk server ini.
+clientCertificate.certificateLabel	Sertifikat
+clientCertificate.none	Belum ada sertifikat terpasang
+clientCertificate.issuedBy	Diterbitkan oleh %@
+clientCertificate.expires	Kedaluwarsa %@
+clientCertificate.expired	Kedaluwarsa pada %@
+clientCertificate.chooseFile	Pilih File
+clientCertificate.replace	Ganti Sertifikat
+clientCertificate.remove	Hapus Sertifikat
+clientCertificate.install	Pasang
+clientCertificate.passwordLabel	Kata Sandi File
+clientCertificate.passwordPrompt	Kata sandi yang digunakan saat file diekspor
+clientCertificate.chooseAnother	Pilih File Lain
+clientCertificate.errorWrongPassword	Kata sandi itu tidak membuka file ini.
+clientCertificate.errorInvalidFile	Ini bukan file sertifikat .p12 atau .pfx yang valid.
+clientCertificate.errorNoIdentity	File ini tidak memiliki kunci privat. Ekspor sertifikat bersama kuncinya.
+clientCertificate.errorStorage	Tidak dapat menyimpan sertifikat di perangkat ini.
+clientCertificate.errorUnreadable	Tidak dapat membaca file itu.
+clientCertificate.errorRemove	Tidak dapat menghapus sertifikat dari perangkat ini.
+clientCertificate.removeTitle	Hapus sertifikat?
+clientCertificate.removeMessage	NextExplorer akan berhenti menyajikannya ke %@. Jika server itu memerlukannya, aplikasi tidak dapat terhubung sampai Anda menambahkan sertifikat lagi.
+clientCertificate.removeConfirm	Hapus
+clientCertificate.expiredWarning	Sertifikat ini telah kedaluwarsa. Server kemungkinan akan menolaknya.
+login.addClientCertificate	Tambah Sertifikat
+login.manageClientCertificate	Kelola Sertifikat
+settings.clientCertificate	Sertifikat Klien
+settings.clientCertificateNone	Tidak ada
+login.usingClientCertificate	Menggunakan sertifikat klien %@
+login.changeClientCertificate	Ubah
+login.ssoClientCertificateNote	Single sign-on terbuka di Safari, yang tidak dapat memakai sertifikat klien aplikasi ini. Masuk dengan kata sandi, atau pasang sertifikat di perangkat ini untuk memakai single sign-on.
+settings.clientCertificateExpired	Kedaluwarsa
+settings.clientCertificateExpiresSoon	Segera kedaluwarsa
+clientCertificate.expiringSoonWarning	Sertifikat ini kedaluwarsa pada %@. Minta yang baru sebelum itu.
+shareUpload.title	Unggah ke NextExplorer
+shareUpload.itemCount	File yang akan diunggah: %lld
+shareUpload.accountLabel	Akun
+shareUpload.folderLabel	Folder
+shareUpload.folderChoose	Pilih Folder
+shareUpload.upload	Unggah
+shareUpload.preparing	Menyiapkan %lld dari %lld…
+shareUpload.started	Mengunggah di latar belakang. Anda akan mendapat notifikasi saat selesai.
+shareUpload.signedOut	Masuk ke NextExplorer terlebih dahulu, lalu bagikan lagi.
+shareUpload.nothingToUpload	Tidak ada yang dapat diunggah NextExplorer di sini.
+shareUpload.failed	File tidak dapat disiapkan untuk diunggah.
+shareUpload.notificationDoneTitle	Unggahan selesai
+shareUpload.notificationFailedTitle	Beberapa file tidak terunggah
+shareUpload.notificationDoneBody#other	%lld file diunggah ke “%@”.
+shareUpload.notificationAllFailedTitle	Unggahan gagal
+shareUpload.failureUnauthorized#other	%lld file tidak diunggah. Masuk lagi, lalu coba lagi.
+shareUpload.failureForbidden#other	%lld file tidak diunggah. Anda tidak punya izin menambahkan file ke folder itu.
+shareUpload.failureServerFull#other	%lld file tidak diunggah. Ruang penyimpanan server penuh.
+shareUpload.failureNetwork#other	%lld file tidak diunggah. Koneksi gagal. Coba lagi saat Anda kembali online.
+shareUpload.failureOther#other	%lld file tidak dapat diunggah.
+shareUpload.notificationRetry	Coba Lagi
+shareUpload.notificationHiddenPreview	Buka NextExplorer untuk melihat hasil unggahan Anda.
+shareUpload.retryFailedTitle	Tidak dapat mencoba lagi
+shareUpload.retryFailedBody	Buka NextExplorer dan bagikan file lagi.
+shareUpload.insufficientSpace	Ruang kosong di perangkat ini tidak cukup untuk menyiapkan file ini agar bisa diunggah.
+settings.uploadDefaultsRow	File yang Dibagikan
+settings.uploadDefaultsFolder	Folder Default
+settings.uploadDefaultsFolderNone	Tanya Setiap Kali
+settings.uploadDefaultsWithoutAsking	Unggah Tanpa Bertanya
+settings.uploadDefaultsFooter	Foto dan file yang Anda bagikan ke NextExplorer dari aplikasi lain dimulai di folder ini. Dengan Unggah Tanpa Bertanya aktif, file langsung diunggah ke sana.
+settings.uploadDefaultsClear	Tanya Setiap Kali
+common.change	Ubah
+shareUpload.sessionUnreadable	NextExplorer tidak dapat membaca info masuk Anda di perangkat ini. Buka NextExplorer sekali, lalu bagikan lagi.
+shareUpload.keepOpen	Biarkan ini terbuka sampai persiapan selesai.
+shareUpload.checking	Memeriksa koneksi ke %@…
+shareUpload.openApp	Buka NextExplorer
+shareUpload.openAppInstructions	Buka NextExplorer dari Layar Utama, lalu bagikan lagi.
+shareUpload.certificateRequired	Server ini memerlukan sertifikat klien. Buka NextExplorer dan tambahkan di Pengaturan, lalu bagikan lagi.
+shareUpload.certificateRejected	Server menolak sertifikat klien Anda. Buka NextExplorer dan gantilah di Pengaturan, lalu bagikan lagi.
+shareUpload.defaultFolderUnavailable	Folder default Anda tidak tersedia lagi. Pilih folder lain.
+shareUpload.failedItemsHeader	File ini tidak dapat disiapkan:
+shareUpload.readyCount	Siap diunggah: %lld
+shareUpload.uploadReady	Unggah File yang Siap
+shareUpload.retryFailed	Coba Lagi File yang Gagal
+shareUpload.fallbackItemName	File %lld
+shareUpload.causeCannotRead	Tidak dapat dibaca.
+shareUpload.causeNotEnoughSpace	Ruang kosong di perangkat ini tidak cukup.
+shareUpload.causeUnknown	Tidak dapat disiapkan.
+shareUpload.folderHint	Membuka pemilih folder.
+shareUpload.accountHint	Pilih akun yang menerima file.
+error.timedOut	Server terlalu lama merespons. Tindakan mungkin tetap selesai.
+error.changedOnServer	File ini diubah di server setelah Anda membukanya.
+textPreview.conflictTitle	“%@” berubah di server
+textPreview.conflictMessage	Timpa dengan versi Anda, atau muat ulang file dan buang suntingan Anda. Versi yang diganti tetap ada di riwayat versi file.
+textPreview.conflictOverwrite	Timpa
+textPreview.conflictReload	Muat Ulang
+offline.waitingForNetwork	Akan diunduh saat Anda kembali online
+browse.bulkFavoriteFailed	%1$lld dari %2$lld gagal
+shareUpload.livePhotoNote	Live Photos diunggah bersama video gerakannya.
+shareUpload.retrySignInBody	Masuk ke NextExplorer, lalu ketuk Coba Lagi sekali lagi.
+shareUpload.causeFolder	Folder tidak dapat dibagikan. Bagikan file di dalamnya sebagai gantinya.
+shareUpload.notificationMoreNames	%lld lagi
+versionedFiles.deleteFailed	Beberapa versi tidak dapat dihapus. Periksa dan coba lagi.
+serverSettings.featureOffTitle	Fitur ini tidak diaktifkan
+serverSettings.featureOffKept	Apa yang Anda konfigurasikan di sini disimpan dan berlaku segera setelah fitur diaktifkan.
+serverSettings.featureOffUseSwitch	Aktifkan dengan sakelar di atas.
+serverSettings.featureOffHowTo	Untuk mengaktifkannya, setel %@ lalu mulai ulang kontainer.
+trashSettings.environmentNote	Nilai default berasal dari TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT dan TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Nilai default berasal dari VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE dan VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Segarkan

@@ -1,0 +1,1114 @@
+# NextExplorer: עברית (he). key<TAB>value.
+common.cancel	ביטול
+common.save	שמירה
+common.edit	עריכה
+common.retry	נסה שוב
+common.syncCompleted	הסנכרון הושלם
+common.delete	מחיקה
+common.remove	הסרה
+common.clear	ניקוי
+common.done	סיום
+common.ok	אישור
+common.openSettings	פתיחת הגדרות
+common.logOut	התנתקות
+common.close	סגירה
+common.back	חזרה
+common.share	שיתוף
+common.copy	העתקה
+common.copied	הועתק
+common.download	הורדה
+common.sort	מיון
+common.select	בחירה
+common.deselect	ביטול בחירה
+common.search	חיפוש
+common.password	סיסמה
+common.never	אף פעם
+common.selectedCount	%lld נבחרו
+tab.browse	עיון
+tab.favorites	מועדפים
+tab.shared	משותפים
+tab.downloads	הורדות
+tab.settings	הגדרות
+sort.sheetTitle	מיון לפי
+sort.name	שם
+sort.size	גודל
+sort.kind	סוג
+sort.dateModified	תאריך שינוי
+sort.dateAdded	תאריך הוספה
+sort.dateShared	תאריך שיתוף
+sort.expiration	תפוגה
+sort.email	אימייל
+sort.type	סוג
+sort.ascending	עולה
+sort.descending	יורד
+select.selectAll	בחירת הכול
+select.deselectAll	ביטול בחירת הכול
+select.listView	תצוגת רשימה
+select.gridView	תצוגת רשת
+emptyState.folderEmpty	התיקייה הזו ריקה.
+emptyState.loadFailed	לא ניתן להגיע לשרת.
+emptyState.noSearchMatches	אין תוצאות עבור “%@”.
+accessMode.readonly	קריאה בלבד
+accessMode.readwrite	קריאה וכתיבה
+shareTarget.anyone	כל מי שיש לו את הקישור
+shareTarget.users	משתמשים מסוימים
+directLinkMode.auto	אוטומטי
+directLinkMode.inline	תצוגה
+directLinkMode.raw	גולמי
+directLinkMode.download	הורדה
+thumbnailSize.small	קטן
+thumbnailSize.medium	בינוני
+thumbnailSize.large	גדול
+downloadLocation.documents	מסמכים
+downloadLocation.cache	מטמון
+dateFormat.automatic	אוטומטי
+browse.navigationTitle	עיון
+browse.scopeThisFolder	התיקייה הזו
+browse.scopeEverywhere	בכל מקום
+browse.searchScopeInFolder	התיקייה הזו
+browse.searchScopeEverywhere	בכל מקום
+browse.locations	מיקומים
+browse.breadcrumbHint	פותח את התיקייה הזו
+browse.open	פתיחה
+browse.unsupportedFileType	סוג קובץ לא נתמך
+browse.actionGetInfo	מידע
+browse.actionPermissions	הרשאות
+browse.actionRename	שינוי שם
+browse.actionExtract	חילוץ
+browse.actionCompress	דחיסה
+browse.actionDownload	הורדה
+browse.actionAddToFavorites	הוספה למועדפים
+browse.actionRemoveFromFavorites	הסרה מהמועדפים
+browse.actionShare	יצירת קישור שיתוף
+browse.actionDelete	מחיקה
+browse.actionDuplicate	שכפול
+browse.renameTitle	שינוי שם
+browse.renameNamePlaceholder	שם
+browse.actionNewFolder	יצירת תיקייה
+browse.newFolderTitle	תיקייה חדשה
+browse.newFolderPlaceholder	שם התיקייה
+browse.newFolderConfirm	יצירה
+browse.actionNewFile	יצירת קובץ
+browse.newFileTitle	קובץ חדש
+browse.newFileTypeHint	השתמשו בסוג קובץ שהעורך יכול לפתוח, כמו txt‎ ,md‎ או js‎.
+browse.deleteConfirmTitle	למחוק?
+browse.deleteConfirmOne	למחוק את “%@”?
+browse.deleteConfirmMany	למחוק %lld פריטים?
+browse.deleteMessage	לא ניתן לבטל פעולה זו.
+browse.deleteLinkedSharesOne	פעולה זו תסיר גם קישור שיתוף אחד שמצביע לכאן.
+browse.deleteLinkedSharesMany	פעולה זו תסיר גם %lld קישורי שיתוף שמצביעים לכאן.
+browse.deleteLinkedSharesUnavailable	לא ניתן היה לבדוק קישורי שיתוף שמצביעים לכאן. קישורים קיימים יפסיקו לעבוד.
+browse.searchNoMatchesInFolder	אין תוצאות עבור “%@”.
+browse.searchEverywhere	חיפוש בכל מקום
+browse.searchFailed	לא ניתן היה לחפש. בדקו את החיבור ונסו שוב.
+browse.progressExtracting	מחלץ…
+browse.progressCompressing	דוחס…
+browse.offlineBannerTitle	לא מקוון
+browse.offlineBannerDetail	מוצג עותק שמור מ-%@
+browse.actionCopy	העתקה
+browse.destinationPickerMoveTitle	העברה אל…
+browse.destinationPickerConfirmMove	העבר לכאן
+browse.destinationPickerNoFolders	אין כאן תיקיות
+browse.destinationPickerLoadFailed	לא ניתן היה לטעון את התיקיות.
+browse.actionMove	העברה
+browse.actionPaste	הדבקה
+browse.actionPasteCount	הדבקת %lld פריטים
+browse.actionPasteHere	הדבקה כאן
+browse.actionClearClipboard	ניקוי הלוח
+browse.clipboardMoveCount	%lld להעברה
+browse.clipboardCopyCount	%lld להעתקה
+browse.clipboardCopiedOne	%@ הועתק
+browse.clipboardCopiedMany	%lld פריטים הועתקו
+browse.progressMoving	מעביר…
+browse.progressCopying	מעתיק…
+browse.transferMoved	%lld פריטים הועברו
+browse.transferCopied	%lld פריטים הועתקו
+browse.transferMovedWithSkipped	%1$lld פריטים הועברו, %2$lld דולגו
+browse.transferCopiedWithSkipped	%1$lld פריטים הועתקו, %2$lld דולגו
+browse.transferConflictTitle	להחליף פריטים?
+browse.transferConflictMessageOne	"%@" כבר קיים בתיקייה הזו.
+browse.transferConflictMessageMany	%lld פריטים כבר קיימים בתיקייה הזו.
+browse.transferConflictReplace	החלפה
+browse.transferConflictKeepBoth	שמירת שניהם
+browse.actionOpenInBrowser	פתיחה בדפדפן
+favorites.navigationTitle	מועדפים
+favorites.emptyList	סמנו תיקיות בכוכב ב"עיון" כדי לראות אותן כאן.
+favorites.actionRemoveFromFavorites	הסרה מהמועדפים
+favorites.accessibilityBadge	מועדף
+favorites.actionEdit	עריכה
+favorites.editTitle	עריכת מועדף
+favorites.editNameLabel	שם
+favorites.editNameErrorEmpty	השם לא יכול להיות ריק.
+favorites.editIconLabel	סמל
+favorites.editIconOutline	מתאר
+favorites.editIconSolid	מלא
+favorites.editColorLabel	צבע
+favorites.editColorDefault	ברירת מחדל
+favorites.editSave	שמירה
+favorites.reorderFailed	לא ניתן היה לשמור את הסדר החדש.
+favorites.removeConfirm	להסיר %lld מועדפים?
+favorites.removeMessage	פעולה זו רק מסירה אותם מהמועדפים.
+favorites.removeFailedOne	לא ניתן היה להסיר את המועדף הזה.
+favorites.removeFailedMany	לא ניתן היה להסיר את המועדפים האלה.
+favorites.removePartial	הוסרו %1$lld מתוך %2$lld.
+downloads.navigationTitle	הורדות
+downloads.actionOpenInFiles	פתיחה ב"קבצים"
+downloads.emptyList	קבצים שתורידו מ"עיון" יופיעו כאן.
+downloads.deleteConfirmTitle	למחוק?
+downloads.deleteConfirmOne	למחוק את “%@”?
+downloads.deleteConfirmMany	למחוק %lld קבצים?
+downloads.deleteSingleMessage	פעולה זו מסירה רק את העותק המקומי. הקובץ נשאר בשרת.
+downloads.deleteBulkMessage	פעולה זו מסירה רק את העותקים המקומיים. הקבצים נשארים בשרת.
+downloads.errorNameExists	כבר קיים קובץ בשם הזה.
+downloads.errorInvalidName	השם הזה אינו מותר.
+downloads.errorMissing	לא ניתן היה למצוא את הקובץ הזה יותר.
+downloads.errorGeneric	לא ניתן היה להשלים את הפעולה.
+unsupportedPreview.genericType	קובץ
+unsupportedPreview.cannotOpen	האפליקציה הזו לא יכולה לפתוח סוג קובץ זה.
+uploads.navigationTitle	העלאות
+uploads.menuTitle	העלאה
+uploads.actionUploadFromFiles	העלאה מ"קבצים"
+uploads.actionUploadFromPhotos	העלאה מהגלריה
+uploads.actionTakePhoto	צילום תמונה או וידאו
+uploads.cameraDeniedTitle	נדרשת גישה למצלמה
+uploads.cameraDeniedMessage	אפשרו גישה למצלמה בהגדרות כדי לצלם תמונה או וידאו.
+uploads.destinationTitle	העלאה אל…
+uploads.destinationConfirm	העלאה לכאן
+uploads.reviewTitleOne	העלאת קובץ אחד
+uploads.reviewTitleMany	העלאת %lld קבצים
+uploads.reviewSectionFiles	קבצים
+uploads.reviewSectionPath	נתיב
+uploads.reviewSectionSize	גודל כולל
+uploads.reviewChooseFolder	בחירת תיקייה
+uploads.reviewUploadButton	העלאה
+uploads.reviewPreparing	מכין %lld…
+uploads.reviewAddMore	הוספת קבצים נוספים
+uploads.reviewPreviewFile	תצוגה מקדימה של %@
+uploads.reviewInsecureNetworkNotice	מחובר באמצעות http. אם השרת הזה נמצא רק ברשת הביתית שלכם, ההעלאות לא יעבדו כשאתם מחוץ לרשת.
+uploads.stagingFailed	לא ניתן היה להוסיף את הקבצים האלה. נסו שוב.
+uploads.stagingSkipped	לא ניתן היה להכין %lld פריטים והם הושמטו.
+uploads.discardTitle	לבטל את ההעלאה?
+uploads.discardMessage	הקבצים שהוספתם לא יועלו.
+uploads.discardConfirm	ביטול
+uploads.statusWaiting	ממתין
+uploads.statusFailed	ההעלאה נכשלה
+uploads.barTitleOne	מעלה את %@
+uploads.barTitleMany	מעלה %lld קבצים
+uploads.barFailedOne	העלאה אחת נכשלה
+uploads.barFailedMany	%lld העלאות נכשלו
+uploads.retryAll	ניסיון חוזר לכולם
+uploads.complete	ההעלאה הושלמה
+uploads.completeMany	%lld קבצים הועלו
+uploads.completeWithFailures	%1$lld הועלו, %2$lld נכשלו
+uploads.failedGeneric	לא ניתן היה להעלות את הקובץ הזה.
+uploads.clear	ניקוי
+uploads.emptyList	עדיין אין העלאות.
+uploads.cancelAll	ביטול כל ההעלאות
+shared.navigationTitle	משותפים
+shared.segmentByMe	ששיתפתי
+shared.segmentWithMe	ששותפו איתי
+shared.sectionExpired	פג תוקף
+shared.badgeExpired	פג תוקף
+shared.emptyByMe	שתפו קובץ או תיקייה כדי לראות כאן את הקישור שלהם.
+shared.emptyWithMe	קישורים שאחרים משתפים איתכם יופיעו כאן.
+shared.noSearchMatches	אין שיתופים התואמים ל-“%@”.
+shared.deleteTitle	למחוק את קישור השיתוף?
+shared.deleteMessage	הקישור מפסיק לעבוד מיד. הקובץ או התיקייה עצמם לא ייפגעו.
+shared.sharedByUnknown	מישהו
+shared.metaAccess	גישה
+shared.metaExpiration	תפוגה
+shared.metaSharedBy	שותף על ידי
+shared.metaSharedWith	שותף עם
+shared.anyoneWithLink	כל מי שיש לו את הקישור
+shared.linkMode	מצב קישור
+shared.actionShareLink	קישור שיתוף
+shared.actionFolderLink	קישור לתיקייה
+shared.actionFileLink	קישור לקובץ
+shared.copiedShareLink	קישור השיתוף הועתק
+shared.copiedFolderZip	קישור ה-ZIP של התיקייה הועתק
+shared.copiedDirectFile	הקישור הישיר לקובץ הועתק
+createShare.title	יצירת קישור שיתוף
+createShare.titleCreated	השיתוף נוצר
+createShare.sectionLabel	תווית
+createShare.sectionAccessMode	מצב גישה
+createShare.sectionWhoCanAccess	מי יכול לגשת
+createShare.sectionShareLink	קישור שיתוף
+createShare.fieldPassword	סיסמה
+createShare.togglePasswordProtect	הגנה באמצעות סיסמה
+createShare.toggleSetExpiration	הגדרת תאריך תפוגה
+createShare.fieldExpires	תפוגה
+createShare.submit	יצירת קישור שיתוף
+createShare.loadingUsers	טוען משתמשים…
+createShare.noOtherUsers	אין משתמשים נוספים לשתף איתם.
+createShare.sharingPrefix	משתף:
+createShare.createdBanner	קישור השיתוף נוצר בהצלחה!
+createShare.viewInShared	הצגה ב"משותפים"
+createShare.directLinkMode	מצב קישור ישיר
+createShare.directFolderLink	קישור ZIP ישיר לתיקייה
+createShare.directFileLink	קישור ישיר לקובץ
+createShare.summaryAccess	גישה
+createShare.summarySharedWith	שותף עם
+createShare.summaryPassword	סיסמה
+createShare.summaryPasswordProtected	מוגן
+createShare.summaryExpires	תפוגה
+createShare.summarySpecificPeople	אנשים מסוימים
+createShare.errorPastExpiration	בחרו תאריך תפוגה בעתיד.
+editShare.title	עריכת קישור שיתוף
+editShare.save	שמירת שינויים
+editShare.passwordKeepHint	השאירו ריק כדי לשמור את הסיסמה הנוכחית
+editShare.savedToast	קישור השיתוף עודכן
+thumbnailSettings.navigationTitle	תמונות ממוזערות
+thumbnailSettings.subtitle	שליטה באופן שבו השרת יוצר תמונות ממוזערות לכל הלקוחות.
+thumbnailSettings.enable	יצירת תמונות ממוזערות
+thumbnailSettings.enableHelp	כבו כדי להציג תמונות מלאות בכל מקום במקום זאת.
+thumbnailSettings.quality	איכות
+thumbnailSettings.qualityHelp	ערך גבוה נראה טוב יותר ותופס יותר מקום.
+thumbnailSettings.maxDimension	מידה מרבית
+thumbnailSettings.maxDimensionHelp	הצלע הארוכה ביותר של תמונה ממוזערת שנוצרה, בפיקסלים.
+thumbnailSettings.concurrency	מקביליות
+thumbnailSettings.concurrencyHelp	כמה תמונות ממוזערות השרת יוצר בו-זמנית.
+thumbnailSettings.unavailable	הגדרות התמונות הממוזערות זמינות למנהלי מערכת בלבד.
+thumbnailSettings.saveButton	שמירת שינויים
+uploadSettings.navigationTitle	העלאות
+uploadSettings.subtitle	הגדרת האופן שבו קבצים נשלחים לשרת.
+uploadSettings.chunkedEnable	הפעלת העלאה בחלקים
+uploadSettings.chunkedEnableHelp	משתמש ב-TUS כדי לשלוח קבצים גדולים בכמה בקשות קטנות יותר.
+uploadSettings.chunkSize	גודל חלק
+uploadSettings.chunkSizeHelp	הגודל המרבי של כל בקשת העלאה. שמרו אותו מתחת למגבלה של פרוקסי הפוך שלכם. חלקים קטנים יותר נותנים התקדמות חלקה יותר.
+uploadSettings.autoFallback	מעבר אוטומטי להעלאה בחלקים
+uploadSettings.autoFallbackHelp	אם העלאה ישירה נכשלת כי פרוקסי הפוך דוחה את גודל הגוף, עוברים אוטומטית להעלאה בחלקים.
+uploadSettings.unavailable	הגדרות ההעלאה זמינות למנהלי מערכת בלבד.
+uploadSettings.saveButton	שמירת שינויים
+ffmpegSettings.subtitle	בחרו את קובצי ההרצה FFmpeg ו-FFprobe המשמשים לתצוגות מקדימות ולמטא-נתונים של מדיה.
+ffmpegSettings.containerPathHelp	הזינו נתיבים מוחלטים הנראים בתוך קונטיינר היישום. כדי להשתמש בקבצים בינאריים של המארח, חברו אותם תחילה לקונטיינר.
+ffmpegSettings.ffmpegPath	נתיב קובץ ההרצה של FFmpeg
+ffmpegSettings.ffprobePath	נתיב קובץ ההרצה של FFprobe
+ffmpegSettings.invalid	שני הנתיבים חייבים להיות נתיבים מוחלטים בקונטיינר המתחילים ב-/.
+ffmpegSettings.defaultHelp	השאירו נתיב ריק כדי להשתמש ב-FFMPEG_PATH או ב-FFPROBE_PATH מהסביבה, ואז בקובץ ההרצה המצורף. שינויים חלים מיד.
+ffmpegSettings.unavailable	הגדרות FFmpeg זמינות למנהלי מערכת בלבד.
+ffmpegSettings.saveButton	שמירת שינויים
+searchIndexSettings.navigationTitle	אינדקס חיפוש
+searchIndexSettings.subtitle	החרגת נתיבים מאינדוקס התוכן.
+searchIndexSettings.running	שמירה על אינדקס חיפוש
+searchIndexSettings.runningHelp	קורא את המסמכים בכרך ברקע, כך שחיפוש בהם מחזיר תשובה מיד.
+searchIndexSettings.locked	מוגדר על ידי %@ בסביבה, ולכן ההחלטה מתקבלת שם ולא כאן.
+searchIndexSettings.environment	החרגות שהוגדרו על ידי הסביבה
+searchIndexSettings.additional	החרגות נוספות
+searchIndexSettings.none	לא הוגדר נתיב
+searchIndexSettings.addButton	הוספה
+searchIndexSettings.unavailable	הגדרות אינדקס החיפוש זמינות למנהלי מערכת בלבד.
+searchIndexSettings.saveButton	שמירת שינויים
+searchIndexSettings.discardButton	ביטול
+folderSizeSettings.navigationTitle	גדלי תיקיות
+folderSizeSettings.subtitle	החרגת נתיבים מחישוב גדלי תיקיות ומאינדוקס שלהם.
+folderSizeSettings.running	מדידת גדלי תיקיות
+folderSizeSettings.runningHelp	מודד תיקיות ברקע, כך שהגודל שלהן מוצג ברשימה.
+folderSizeSettings.modeOff	כבוי
+folderSizeSettings.modeShallow	רק הקבצים הישירים שלהן
+folderSizeSettings.modeFull	כל מה שבתוכן
+folderSizeSettings.locked	מוגדר על ידי %@ בסביבה, ולכן ההחלטה מתקבלת שם ולא כאן.
+folderSizeSettings.environment	החרגות שהוגדרו על ידי הסביבה
+folderSizeSettings.additional	החרגות נוספות
+folderSizeSettings.none	לא הוגדרו נתיבים
+folderSizeSettings.addButton	הוספה
+folderSizeSettings.unavailable	הגדרות גדלי התיקיות זמינות למנהלי מערכת בלבד.
+folderSizeSettings.saveButton	שמירת שינויים
+folderSizeSettings.discardButton	ביטול
+activityLog.navigationTitle	יומן פעילות
+activityLog.subtitle	מי עשה מה, מתי ומאיפה. כבוי אלא אם תפעילו אותו.
+activityLog.enabled	תיעוד פעילות
+activityLog.enabledHelp	התחברויות, הורדות, העלאות, מחיקות, שחזורים, קישורי שיתוף ושינויים בחשבון נרשמים כל עוד האפשרות מופעלת. מה שקרה לפני ההפעלה לא מופיע כאן.
+activityLog.retention	שמירה למשך (ימים)
+activityLog.retentionInvalid	בין 1 ל-3650 ימים.
+activityLog.saveButton	שמירת שינויים
+activityLog.off	היומן כבוי, ולכן דבר אינו מתועד.
+activityLog.none	עדיין לא תועד דבר.
+activityLog.filterAction	סוג
+activityLog.anyAction	כל סוג
+activityLog.filterOutcome	תוצאה
+activityLog.anyOutcome	כל תוצאה
+activityLog.outcomeOk	הצליח
+activityLog.outcomeRefused	נדחה
+activityLog.searchPlaceholder	שם או נתיב
+activityLog.searchButton	חיפוש
+activityLog.refresh	רענון
+activityLog.clear	ריקון היומן
+activityLog.clearTitle	לרוקן את היומן?
+activityLog.clearMessage	כל שורה שנרשמה תימחק. לא ניתן לבטל פעולה זו.
+activityLog.clearConfirm	ריקון היומן
+activityLog.more	הצגת עוד
+activityLog.refusedSuffix	נדחה
+activityLog.fromAddress	מ-%@
+activityLog.unavailable	יומן הפעילות זמין למנהלי מערכת בלבד.
+activityLog.action.signIn	התחברות
+activityLog.action.signOut	התנתקות
+activityLog.action.accountPassword	הסיסמה שונתה
+activityLog.action.accountTwoFactor	הגורם השני שונה
+activityLog.action.accountPasskey	מפתח הגישה שונה
+activityLog.action.accountToken	אסימון ה-API שונה
+activityLog.action.adminUser	החשבון שונה
+activityLog.action.adminSettings	ההגדרות שונו
+activityLog.action.adminActivityClear	היומן נוקה
+activityLog.action.shareCreate	שיתוף נוצר
+activityLog.action.shareDelete	שיתוף נמחק
+activityLog.action.shareDownload	הורדה דרך קישור
+activityLog.action.shareUpload	העלאה דרך קישור
+activityLog.action.fileDownload	הורדה
+activityLog.action.fileUpload	העלאה
+activityLog.action.fileDelete	נשלח לפח האשפה
+activityLog.action.fileRestore	שוחזר
+activityLog.action.filePurge	הוסר לצמיתות
+activityLog.action.versionsPurge	גרסאות נמחקו
+trashSettings.navigationTitle	פח אשפה וגרסאות
+trashSettings.subtitle	פריטים שנמחקו וגרסאות קודמות של קבצים נשמרים במקום שמור בכרך שלהם, ומוסרים לאחר תקופת השמירה או כשנדרש המקום.
+trashSettings.trashHeader	פח אשפה
+trashSettings.enabled	שליחת פריטים שנמחקו לפח האשפה
+trashSettings.enabledHelp	כשהאפשרות כבויה, מחיקה מסירה פריטים לצמיתות. פריטים שכבר בפח האשפה ממשיכים לפוג.
+trashSettings.retention	תקופת שמירה (ימים)
+trashSettings.retentionHelp	מ-1 עד 3650 ימים.
+trashSettings.maxPercent	חלק מכל כרך (%)
+trashSettings.maxPercentHelp	המקסימום שפח האשפה רשאי לתפוס בכרך, מ-1 עד 90%.
+trashSettings.maxSize	מגבלת גודל לכל כרך (GiB)
+trashSettings.maxSizeHelp	אופציונלי. חל הקטן מבין החלק והמגבלה.
+trashSettings.maxSizeNone	ללא מגבלה
+trashSettings.trashInvalid	בדקו את הערכים: תקופת שמירה מ-1 עד 3650 ימים, חלק מ-1 עד 90%, גודל חיובי או ללא.
+trashSettings.versionsHeader	גרסאות קבצים
+trashSettings.versionsSubtitle	כל שמירה שומרת את מה שהיא מחליפה, ללא העתקה, באותו מקום שמור כמו פח האשפה. גרסאות ישנות יותר מדוללות עם הזמן.
+trashSettings.versionsEnabled	שמירת גרסאות קודמות של קבצים
+trashSettings.versionsEnabledHelp	בלתי תלוי בפח האשפה. כשהאפשרות כבויה, שמירות אינן שומרות דבר חדש; גרסאות קיימות נשארות עד שתפוג תקופתן או יימחקו.
+trashSettings.keepAllHours	שמירת כל גרסה (שעות)
+trashSettings.hourlyDays	לאחר מכן אחת לשעה (ימים)
+trashSettings.dailyDays	לאחר מכן אחת ליום (ימים)
+trashSettings.maxPerFile	מספר גרסאות מרבי לקובץ
+trashSettings.checkpointMinutes	נקודת ביקורת של Office (דקות)
+trashSettings.tiersHelp	אחרי השלבים האלה נשמרת גרסה אחת בשבוע. מפגש עריכה ב-Office משאיר גרסה אחת, ובנוסף נקודת ביקורת לכל היותר בתדירות הזו. גרסאות מוצמדות פטורות מהדילול ומהמגבלה לכל קובץ.
+trashSettings.versionsInvalid	בדקו את הערכים: 1 עד 720 שעות, 1 עד 365 ימים לשעה, 1 עד 3650 ימים ליום, 1 עד 1000 גרסאות לקובץ, נקודת ביקורת מ-1 עד 1440 דקות.
+trashSettings.sharedSpace	גרסאות ופח האשפה חולקים את המקום השמור של כל כרך. כשהוא אוזל, הגרסאות הישנות יוצאות ראשונות, אחריהן פריטי הפח, אחריהן הגרסה האחרונה של כל קובץ, ולבסוף הגרסאות המוצמדות.
+trashSettings.saveButton	שמירת שינויים
+trashSettings.discardButton	ביטול
+trashSettings.unavailable	הגדרות פח האשפה והגרסאות זמינות למנהלי מערכת בלבד.
+trashSettings.zonesHeader	פח אשפה לפי כרך
+trashSettings.zonesSubtitle	כל כרך שומר את פח האשפה שלו בתיקייה מוסתרת בשם ‎.nextexplorer‎ בשורש שלו, כך שמחיקה אינה מעתיקה דבר.
+trashSettings.zonesEmpty	עדיין לא נמחק דבר אל פח אשפה.
+trashSettings.zoneKindPersonal	התיקייה האישית של %@
+trashSettings.zoneKindUserVolume	כרך שהוקצה %@
+trashSettings.available	זמין
+trashSettings.unavailableMissing	לא מחובר או הוסר
+trashSettings.unavailableReplaced	דיסק אחר במקומו
+trashSettings.unavailableUnreadable	לא ניתן לקריאה
+trashSettings.usage	%1$@ מתוך %2$@
+trashSettings.noBudget	ללא מגבלה
+trashSettings.zoneItems	פריטים: %1$lld · %2$@
+trashSettings.zoneVersions	גרסאות: %1$lld · %2$@
+trashSettings.lastPass	תחזוקה אחרונה: %@
+trashSettings.lastPassPurged	%1$@ · הוסרו: %2$lld
+trashSettings.never	עדיין לא
+trashSettings.verify	אימות
+trashSettings.runMaintenance	הרצת תחזוקה עכשיו
+trashSettings.verifyOk	פח האשפה של כל כרך עקבי.
+trashSettings.verifyIssues	בעיות שנמצאו: %lld
+trashSettings.zoneProblems	בעיות: %lld
+trashSettings.journalHeader	יומן אירועים
+trashSettings.eventEvicted	"%@" הוסר לפני תום תקופת השמירה כדי לפנות מקום
+trashSettings.eventAdopted	"%@" שוחזר לאחר הפרעה
+trashSettings.eventLost	ל-"%@" חסר תוכן
+trashSettings.eventFailed	לא ניתן היה להסיר את "%@"
+trashSettings.eventBreaker	יותר מדי פריטים חסרים בבת אחת: דבר לא שונה
+trashSettings.eventForgotten	"%@" נשכח על ידי מנהל מערכת
+trashSettings.eventVersionEvicted	גרסה של "%@" הוסרה כדי לפנות מקום
+trashSettings.eventVersionFailed	לא ניתן היה להסיר גרסה
+trashSettings.eventVersionLost	לגרסה חסר תוכן
+trashSettings.eventVersionTooLarge	"%@" גדול מכל המקום: מה שהוא החליף לא נשמר
+trashSettings.eventVersionsBreaker	יותר מדי גרסאות חסרות בבת אחת: דבר לא שונה
+versionedFiles.navigationTitle	גרסאות קבצים
+versionedFiles.subtitle	כל קובץ שיש לו היסטוריה, בכל מקום שהוא נמצא. מציג נתיבים מכל המרחבים, כולל תיקיות אישיות, ולכן מיועד למנהלי מערכת בלבד.
+versionedFiles.summary	קבצים: %1$lld · גרסאות: %2$lld · %3$@
+versionedFiles.searchPlaceholder	שם או נתיב
+versionedFiles.zone	כרך
+versionedFiles.anyZone	כל כרך
+versionedFiles.stateHeader	מצב
+versionedFiles.anyState	כל מצב
+versionedFiles.stateLive	הקובץ עדיין קיים
+versionedFiles.stateTrashed	בפח האשפה
+versionedFiles.stateOrphaned	הקובץ נעלם
+versionedFiles.sortHeader	מיון לפי
+versionedFiles.sortBytes	מקום בשימוש
+versionedFiles.sortVersions	מספר גרסאות
+versionedFiles.sortNewest	החדשים ביותר
+versionedFiles.sortPath	נתיב
+versionedFiles.none	לאף קובץ אין גרסאות קודמות.
+versionedFiles.unavailable	גרסאות הקבצים זמינות למנהלי מערכת בלבד.
+versionedFiles.zoneUnknown	כרך לא ידוע
+versionedFiles.zoneKindPersonal	התיקייה האישית של %@
+versionedFiles.zoneKindUserVolume	כרך שהוקצה %@
+versionedFiles.rowSummary	גרסאות: %1$lld · %2$@
+versionedFiles.newest	אחרונה: %@
+versionedFiles.versionPinned	מוצמדת
+versionedFiles.versionUnavailable	לא זמינה
+versionedFiles.versionBy	מאת %@
+versionedFiles.detailFailed	לא ניתן היה לקרוא את ההיסטוריה הזו.
+versionedFiles.deleteSelectedNone	סמנו גרסאות למחיקה
+versionedFiles.deleteSelected	מחיקת הנבחרות (%lld)
+versionedFiles.deleteAll	מחיקת כל הגרסאות
+versionedFiles.confirmAllTitle	למחוק כל גרסה של "%@"?
+versionedFiles.confirmSomeTitle	למחוק את הגרסאות שנבחרו (%lld)?
+versionedFiles.confirmMessage	גרסאות שנמחקו לא ניתנות לשחזור.
+versionedFiles.confirmDelete	מחיקה
+versionedFiles.previous	הקודם
+versionedFiles.next	הבא
+versionedFiles.pageRange	%1$lld עד %2$lld מתוך %3$lld
+accessRules.navigationTitle	כללי גישה לתיקיות
+accessRules.subtitle	עקיפת הרשאות הקריאה והכתיבה עבור נתיבים מסוימים.
+accessRules.addRule	הוספת כלל
+accessRules.empty	לא הוגדרו כללי גישה.
+accessRules.emptyHint	הוסיפו כלל כדי לעקוף את הגישה לנתיב.
+accessRules.pathLabel	נתיב
+accessRules.recursive	החלה על תיקיות משנה
+accessRules.permissionReadWrite	קריאה וכתיבה
+accessRules.permissionReadOnly	קריאה בלבד
+accessRules.permissionHidden	מוסתר
+accessRules.remove	הסרה
+accessRules.unavailable	כללי הגישה זמינים למנהלי מערכת בלבד.
+accessRules.saveButton	שמירת שינויים
+settings.rowThumbnails	תמונות ממוזערות
+settings.rowAccessRules	כללי גישה לתיקיות
+settings.navigationTitle	הגדרות
+settings.sectionGeneral	כללי
+settings.sectionDisplay	תצוגה
+settings.sectionStorage	אחסון
+settings.sectionServerStorage	אחסון השרת
+settings.serverStorageUsed	%1$@ מתוך %2$@
+settings.sectionLicenses	רישיונות
+settings.sectionLegal	משפטי
+settings.sectionUsers	משתמשים
+settings.sectionAdmin	ניהול
+settings.sectionInfo	מידע
+settings.toggleShowHiddenFiles	הצגת קבצים מוסתרים
+settings.toggleRenderHTML	הצגת דפי HTML
+settings.toggleRenderMarkdown	הצגת קובצי Markdown
+settings.toggleHaptics	משוב רטט
+settings.toggleShowThumbnails	הצגת תמונות ממוזערות
+settings.toggleShowExtensions	הצגת סיומות קבצים
+settings.toggleShowTabLabels	הצגת תוויות כרטיסיות
+settings.toggleKeepClipboard	שמירת פריטים לאחר הדבקה
+settings.toggleKeepClipboardSubtitle	פריטים שהועתקו נשארים מוכנים להדבקה בתיקייה אחרת. פריטים שהועברו תמיד מתנקים.
+settings.rowDateFormat	פורמט תאריך
+settings.rowLanguage	שפה
+settings.rowThumbnailSize	גודל תמונה ממוזערת
+settings.rowRemoveAllDownloads	הסרת כל ההורדות
+settings.rowClearCache	ניקוי המטמון
+settings.rowOpenSourceLicenses	רישיונות קוד פתוח
+settings.rowPrivacyPolicy	מדיניות פרטיות
+settings.rowTermsOfUse	תנאי שימוש
+settings.rowUserManagement	ניהול משתמשים
+settings.rowChangePassword	שינוי סיסמה
+settings.rowAddPassword	הוספת סיסמה
+settings.rowServer	שרת
+settings.storageFootnote	תיקיות מורדות כקובץ ZIP, בלי להשאיר דבר בשרת. הסרת הורדות או ניקוי המטמון משפיעים רק על מכשיר זה; דבר לא משתנה בשרת.
+settings.storageFootnoteMac	ניקוי המטמון משפיע רק על ה-Mac הזה; דבר לא משתנה בשרת.
+settings.removeAllDownloadsTitle	להסיר את כל ההורדות?
+settings.removeAllDownloadsConfirm	הסרת הכול
+settings.removeAllDownloadsMessage	פעולה זו מוחקת כל קובץ שהורד ממכשיר זה. הקבצים נשארים בשרת.
+settings.clearCacheTitle	לנקות את המטמון?
+settings.clearCacheConfirm	ניקוי
+settings.clearCacheMessage	פעולה זו מנקה תצוגות מקדימות, תמונות ממוזערות ורשימות תיקיות שמורות המשמשות במצב לא מקוון. דבר בשרת לא מושפע.
+settings.signOutAlertTitle	להתנתק?
+settings.signOutMessage	תצטרכו להתחבר שוב כדי לגשת לקבצים. תצוגות מקדימות, תמונות ממוזערות ורשימות תיקיות שמורות במכשיר זה יימחקו.
+settings.signOutButton	התנתקות
+settings.signingOut	מתנתק…
+settings.sectionAccounts	חשבונות
+settings.addAccount	הוספת חשבון
+settings.accountSignOut	התנתקות
+settings.accountSignOutTitle	להתנתק?
+settings.accountSignOutMessage	להתנתק מהחשבון של %@ במכשיר זה? תצטרכו להתחבר שוב כדי להשתמש בחשבון הזה.
+settings.accountActiveLabel	%1$@, %2$@, חשבון פעיל
+settings.badgeActive	פעיל
+settings.dateFormatNavigationTitle	פורמט תאריך
+settings.dateFormatShowTime	הצגת שעה
+language.navigationTitle	שפה
+language.systemDefault	ברירת מחדל של המערכת
+language.systemDefaultSubtitle	לפי שפת המכשיר
+serverDetails.navigationTitle	שרת
+serverDetails.changeLogo	שינוי סמל
+serverDetails.takePhoto	צילום תמונה
+serverDetails.chooseFromGallery	העלאה מהגלריה
+serverDetails.nameLabel	שם השרת
+serverDetails.nameErrorEmpty	שם השרת לא יכול להיות ריק.
+serverDetails.urlLabel	כתובת השרת
+serverDetails.urlFootnote	הכתובת שבה מותקן מופע ה-NextExplorer שלכם. כדי לשנות אותה, התנתקו והוסיפו את השרת מחדש.
+serverDetails.updateButton	עדכון השרת
+serverDetails.savedMessage	פרטי השרת עודכנו.
+serverDetails.logoErrorTooLarge	התמונה הזו גדולה מדי. בחרו תמונה קטנה מ-2 MB.
+serverDetails.cameraDeniedTitle	הגישה למצלמה כבויה
+serverDetails.cameraDeniedMessage	הפעילו גישה למצלמה בהגדרות כדי לצלם תמונה.
+licenses.navigationTitle	רישיונות קוד פתוח
+licenses.sectionSoftware	תוכנה
+licenses.sectionFontSoftware	תוכנת גופנים
+licenses.labelAuthor	מחבר
+licenses.labelOriginalVersion	גרסה מקורית
+licenses.labelModifiedVersion	גרסה ששונתה
+licenses.labelReservedFontName	שם גופן שמור
+fileInfo.navigationTitleFolder	תיקייה
+fileInfo.rowKind	סוג
+fileInfo.rowSize	גודל
+fileInfo.rowLocation	מיקום
+fileInfo.rowDateModified	תאריך שינוי
+fileInfo.rowDateCreated	תאריך יצירה
+fileInfo.rowFiles	קבצים
+fileInfo.rowFolders	תיקיות
+fileInfo.rowTotalSize	גודל כולל
+fileInfo.sectionServerDisk	דיסק השרת
+fileInfo.diskFreeOf	%1$@ פנויים מתוך %2$@
+fileInfo.rowDimensions	מידות
+fileInfo.rowCamera	מצלמה
+fileInfo.rowLens	עדשה
+fileInfo.rowDateTaken	תאריך צילום
+fileInfo.rowDuration	משך
+fileInfo.partialScan	נספרה סריקה חלקית: התיקייה הזו גדולה מאוד.
+permissions.title	הרשאות
+permissions.sectionMode	מצב
+permissions.numericLabel	מספרי
+permissions.applyToEnclosed	החלה על פריטים בתוכה
+permissions.applyPermissions	החלת הרשאות
+permissions.sectionOwnership	בעלות
+permissions.fieldOwner	בעלים
+permissions.fieldGroup	קבוצה
+permissions.ownershipNote	שינוי בעלות דורש בדרך כלל הרשאות root או מנהל מערכת בשרת.
+permissions.applyOwnership	החלת בעלות
+permissions.scopeOwner	בעלים
+permissions.scopeGroup	קבוצה
+permissions.scopeOthers	אחרים
+permissions.rightRead	קריאה
+permissions.rightWrite	כתיבה
+permissions.rightExecute	הרצה
+archive.emptyFolder	התיקייה הזו ריקה.
+archive.openFailed	לא ניתן היה לפתוח את הקובץ הזה.
+archive.openArchiveFailed	לא ניתן היה לפתוח את הארכיון הזה.
+archive.entryTooLarge	הפריט הזה גדול מדי לפתיחה.
+gallery.loadFailed	לא ניתן היה לטעון את התמונה הזו.
+textPreview.saved	נשמר
+textPreview.loadFailed	לא ניתן היה לטעון את הקובץ הזה. בדקו את החיבור ונסו שוב.
+textPreview.unsavedTitle	לשמור את השינויים ב-“%@”?
+textPreview.unsavedMessage	השינויים שלכם יאבדו אם לא תשמרו אותם.
+textPreview.dontSave	לא לשמור
+userManagement.navigationTitle	ניהול משתמשים
+userManagement.searchPrompt	חיפוש משתמשים
+userManagement.createUser	יצירת משתמש
+userManagement.badgeAdmin	מנהל
+userManagement.emptyList	עדיין אין משתמשים.
+userManagement.noSearchMatches	אין משתמשים התואמים ל-“%@”.
+userManagement.loadFailed	לא ניתן להגיע לשרת.
+userManagement.sortType	סוג
+userManagement.sortName	שם
+userManagement.sortEmail	אימייל
+userManagement.tabProfile	פרופיל
+userManagement.tabSecurity	אבטחה
+userManagement.tabVolumes	כרכים
+userManagement.createNavigationTitle	יצירת משתמש
+userManagement.createEmailField	אימייל
+userManagement.createUsernameField	שם משתמש (אופציונלי)
+userManagement.createUsernamePlaceholder	נגזר מהאימייל
+userManagement.createPasswordField	סיסמה
+userManagement.createPasswordPlaceholder	לפחות %lld תווים
+userManagement.createGrantAdminToggle	הענקת גישת מנהל
+userManagement.createGrantAdminSubtitle	שליטה מלאה בקבצים, בשיתופים ובמשתמשים.
+userManagement.createSubmit	יצירת משתמש
+userManagement.setPasswordNavigationTitle	סיסמה
+userManagement.setPasswordNewField	סיסמה חדשה
+userManagement.setPasswordPlaceholder	לפחות %lld תווים
+userManagement.setPasswordResetTitle	איפוס סיסמה
+userManagement.setPasswordSetTitle	הגדרת סיסמה
+userManagement.setPasswordResetIntro	הגדירו סיסמה מקומית חדשה עבור %@. הסיסמה הנוכחית שלו מפסיקה לעבוד.
+userManagement.setPasswordSetIntro	תנו ל-%@ סיסמה מקומית כדי שיוכל להתחבר בלי SSO.
+userManagement.toastProfileUpdated	הפרופיל עודכן
+userManagement.toastAdminGranted	גישת המנהל הוענקה
+userManagement.toastUserRemoved	המשתמש הוסר
+userManagement.toastUserCreated	המשתמש נוצר
+userManagement.toastPasswordUpdated	הסיסמה עודכנה
+userManagement.toastVolumeSaved	הכרך נשמר
+userManagement.toastVolumeRemoved	הכרך הוסר
+userManagement.errorEmailRequired	נדרש אימייל.
+userManagement.errorEmailInvalid	הזינו כתובת אימייל תקינה.
+userManagement.errorUsernameRequired	נדרש שם משתמש.
+userManagement.errorEmailInUse	האימייל כבר בשימוש.
+userManagement.errorPasswordTooShort	השתמשו בלפחות %lld תווים.
+userDetail.fallbackName	משתמש
+userDetail.sectionGeneralInfo	מידע כללי
+userDetail.sectionRoles	תפקידים והרשאות
+userDetail.sectionLocalPassword	סיסמה מקומית
+userDetail.sectionSSO	כניסה יחידה
+userDetail.sectionAssignedVolumes	כרכים שהוקצו
+userDetail.profileDisplayNameField	שם תצוגה
+userDetail.profileDisplayNamePlaceholder	שם תצוגה
+userDetail.profileUsernameField	שם משתמש
+userDetail.profileUsernamePlaceholder	שם משתמש
+userDetail.profileEmailField	אימייל
+userDetail.profileSave	שמירת שינויים
+userDetail.roleAdmin	מנהל מערכת
+userDetail.roleAdminSubtitle	שליטה מלאה בקבצים, בשיתופים ובמשתמשים.
+userDetail.roleAdminLocked	לא ניתן להסיר הרשאת מנהל מתוך האפליקציה.
+userDetail.roleGrantAdmin	הענקת הרשאת מנהל
+userDetail.passwordHasLocal	המשתמש הזה מתחבר באמצעות אימייל וסיסמה.
+userDetail.passwordSSOOnly	למשתמש הזה אין סיסמה מקומית והוא מתחבר באמצעות SSO בלבד.
+userDetail.passwordReset	איפוס סיסמה
+userDetail.passwordSet	הגדרת סיסמה
+userDetail.ssoNone	אין ספקי SSO מקושרים.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	מקושר
+userDetail.dangerZoneTitle	אזור מסוכן
+userDetail.dangerZoneSubtitle	הסרת משתמש מבטלת את הגישה שלו מיד. קבצים שבבעלותו בשרת אינם נמחקים.
+userDetail.dangerZoneRemoveUser	הסרת משתמש
+userDetail.volumesNone	לא הוקצו כרכים.
+userDetail.volumesNoneSubtitle	המשתמש הזה רואה רק את המרחב המשותף שמוגדר כברירת מחדל.
+userDetail.volumesAssign	הקצאת כרך
+userDetail.volumesFootnote	כרכים מעניקים למשתמש גישה לספרייה מחוץ למרחב המשותף שמוגדר כברירת מחדל. הסרת כרך לעולם אינה מוחקת קבצים.
+userDetail.volumeEditAccessibility	עריכת %@
+userDetail.volumeRemoveAccessibility	הסרת %@
+userDetail.removeVolumeTitle	להסיר את הכרך?
+userDetail.removeVolumeMessage	%@ אינו מוקצה עוד למשתמש הזה. הספרייה עצמה לא נפגעת.
+userDetail.removeUserTitle	להסיר את המשתמש?
+userDetail.removeUserMessage	%@ מאבד גישה מיד. הקבצים שלו בשרת אינם נמחקים.
+userDetail.grantAdminTitle	להעניק הרשאת מנהל?
+userDetail.grantAdminMessage	%@ הופך למנהל מערכת עם שליטה מלאה בקבצים, בשיתופים ובמשתמשים. לא ניתן להסיר הרשאת מנהל מתוך האפליקציה.
+userDetail.volumeSheetLabelField	תווית
+userDetail.volumeSheetLabelPlaceholder	תווית הכרך
+userDetail.volumeSheetAccessMode	מצב גישה
+userDetail.volumeSheetDirectory	ספרייה
+userDetail.volumeSheetSaveEdit	שמירת הכרך
+userDetail.volumeSheetSaveNew	הקצאת כרך
+userDetail.volumeSheetTitleEdit	עריכת כרך
+userDetail.volumeSheetTitleNew	הקצאת כרך
+userDetail.directoryPickerGoUp	מעבר לספרייה אחת למעלה
+userDetail.directoryPickerUseThis	שימוש בספרייה הזו
+userDetail.directoryPickerOpen	פתיחת %@
+userDetail.directoryPickerFailed	לא ניתן היה להציג את רשימת הספריות.
+previewToolbar.close	סגירה
+previewToolbar.createShareLink	יצירת קישור שיתוף
+previewToolbar.download	הורדה
+previewToolbar.delete	מחיקה
+previewToolbar.share	שיתוף
+previewToolbar.rename	שינוי שם
+login.serverQuestion	איפה נמצא מופע ה-NextExplorer שלכם?
+login.serverInfoAccessibility	על חיבור לשרת
+login.serverInfoTitle	מהו שרת?
+login.serverInfoBody	NextExplorer מתחבר לשרת ה-NextExplorer שלכם. מנהל מערכת מפעיל את השרת, יוצר חשבונות ומשתף איתכם את כתובת האינטרנט שלו. הזינו את הכתובת הזו כדי להתחבר.\n\nעדיין אין לכם שרת? מדריך ההגדרה מראה איך לארח אחד.
+login.serverInfoGuide	פתיחת מדריך ההגדרה
+login.testConnection	בדיקת חיבור
+login.identifierField	אימייל או שם משתמש
+login.passwordField	סיסמה
+login.showPassword	הצגת סיסמה
+login.hidePassword	הסתרת סיסמה
+login.submit	התחברות
+login.plaintextWarning	החיבור הזה אינו מוצפן. הסיסמה והסשן שלכם נשלחים כטקסט גלוי ברשת המקומית.
+error.sessionExpired	תוקף הסשן שלכם פג. התחברו שוב.
+error.rateLimited	יותר מדי בקשות. נסו שוב בעוד רגע.
+error.network	לא ניתן להגיע לשרת.
+error.offline	אתם במצב לא מקוון. התחברו לאינטרנט ונסו שוב.
+error.decoding	השרת השיב באופן בלתי צפוי.
+error.server	שגיאת שרת (%lld).
+error.forbidden	אין לכם הרשאה לבצע זאת.
+error.clientCertificateRequired	השרת הזה דורש אישור לקוח. הוסיפו אחד בהגדרות.
+error.clientCertificateRejected	השרת דחה את אישור הלקוח שלכם.
+changePassword.navigationTitle	שינוי סיסמה
+changePassword.intro	שנו את הסיסמה שבה אתם משתמשים כדי להתחבר עם כתובת האימייל. תישארו מחוברים במכשיר הזה.
+changePassword.fieldCurrentPassword	סיסמה נוכחית
+changePassword.fieldNewPasswordLabel	סיסמה חדשה
+changePassword.fieldConfirmPasswordLabel	אימות סיסמה חדשה
+changePassword.fieldConfirmPassword	הזינו שוב את הסיסמה החדשה
+changePassword.fieldNewPasswordPrompt	לפחות %lld תווים
+changePassword.submitButton	עדכון סיסמה
+changePassword.success	הסיסמה שלכם עודכנה.
+changePassword.addNavigationTitle	הוספת סיסמה
+changePassword.addIntro	החשבון הזה מתחבר באמצעות כניסה יחידה ועדיין אין לו סיסמה. הוסיפו אחת כדי להתחבר גם עם כתובת האימייל או שם המשתמש.
+changePassword.addSubmitButton	הוספת סיסמה
+changePassword.errorMinLength	השתמשו בלפחות %lld תווים.
+changePassword.errorMismatch	הסיסמאות אינן תואמות.
+twoFactor.navigationTitle	אימות דו-שלבי
+twoFactor.offTitle	האימות הדו-שלבי כבוי
+twoFactor.offIntro	הוסיפו שלב שני להתחברות. אחרי הסיסמה תזינו קוד מאפליקציית אימות.
+twoFactor.turnOnButton	הפעלה
+twoFactor.enrollIntro	סרקו את קוד ה-QR הזה באפליקציית האימות שלכם, או הקלידו את המפתח ידנית. לאחר מכן הזינו את הקוד בן 6 הספרות שהאפליקציה מציגה.
+twoFactor.qrAccessibilityLabel	קוד QR לאפליקציית האימות שלכם
+twoFactor.keyLabel	מפתח הגדרה
+twoFactor.copyKeyAccessibilityLabel	העתקת מפתח ההגדרה
+twoFactor.codeAccessibilityLabel	קוד אפליקציית אימות
+twoFactor.confirmButton	אימות והפעלה
+twoFactor.recoveryTitle	שמרו את קודי השחזור שלכם
+twoFactor.recoveryIntro	כל קוד פועל פעם אחת אם תאבדו את אפליקציית האימות. הם לא יוצגו שוב, לכן שמרו אותם במקום בטוח.
+twoFactor.copyCodesButton	העתקת הקודים
+twoFactor.shareCodesButton	שיתוף הקודים
+twoFactor.recoveryDoneButton	שמרתי אותם
+twoFactor.onTitle	האימות הדו-שלבי פעיל
+twoFactor.recoveryCodesLeft	קודי שחזור שנותרו: %lld
+twoFactor.newCodesButton	קבלת קודי שחזור חדשים
+twoFactor.turnOffButton	כיבוי
+twoFactor.passwordNewCodesIntro	הזינו את הסיסמה כדי להחליף את קודי השחזור. הישנים מפסיקים לעבוד.
+twoFactor.passwordTurnOffIntro	הזינו את הסיסמה כדי לכבות את האימות הדו-שלבי.
+twoFactor.passwordField	סיסמה
+twoFactor.passwordConfirmButton	אישור
+twoFactor.manageButton	ניהול…
+apiTokens.navigationTitle	אסימוני API
+apiTokens.sectionHeader	מפתחים
+apiTokens.intro	אסימוני API מאפשרים לסקריפטים ולכלים אחרים להשתמש בחשבון שלכם בלי הסיסמה. אסימון עושה רק את מה שהגישה שלו מתירה, ואפשר לבטל אותו בכל עת.
+apiTokens.emptyTitle	אין אסימוני API
+apiTokens.emptyMessage	צרו אסימון כדי לאפשר לסקריפט להשתמש בחשבון שלכם.
+apiTokens.newButton	אסימון חדש
+apiTokens.limitReached	הגעתם למגבלה של %lld אסימונים. בטלו אחד כדי ליצור אחר.
+apiTokens.scopeRead	קריאה בלבד
+apiTokens.scopeWrite	קריאה וכתיבה
+apiTokens.created	נוצר %@
+apiTokens.lastUsed	שימוש אחרון %@
+apiTokens.lastUsedFrom	שימוש אחרון %1$@ מ-%2$@
+apiTokens.neverUsed	מעולם לא נעשה בו שימוש
+apiTokens.expires	פג תוקף ב-%@
+apiTokens.expired	פג תוקף ב-%@
+apiTokens.neverExpires	לעולם לא פג תוקף
+apiTokens.renameAction	שינוי שם
+apiTokens.revokeAction	ביטול אסימון
+apiTokens.menuAccessibilityLabel	פעולות עבור %@
+apiTokens.formTitle	אסימון API חדש
+apiTokens.fieldName	שם
+apiTokens.namePlaceholder	לדוגמה, סקריפט גיבוי
+apiTokens.fieldAccess	גישה
+apiTokens.fieldExpiry	תפוגה
+apiTokens.expiry30	בעוד 30 יום
+apiTokens.expiry90	בעוד 90 יום
+apiTokens.expiryYear	בעוד שנה
+apiTokens.expiryNever	לעולם לא
+apiTokens.fieldPassword	הסיסמה שלכם
+apiTokens.passwordHint	הזינו את הסיסמה כדי ליצור אסימון.
+apiTokens.createSubmit	יצירת אסימון
+apiTokens.issuedTitle	העתיקו את האסימון שלכם
+apiTokens.issuedIntro	זו הפעם היחידה שהוא מוצג. שמרו אותו במקום בטוח. אם תאבדו אותו, בטלו אותו וצרו חדש.
+apiTokens.copyToken	העתקת האסימון
+apiTokens.copiedToken	הועתק
+apiTokens.issuedDone	העתקתי אותו
+apiTokens.renameTitle	שינוי שם האסימון
+apiTokens.renameSave	שמירה
+apiTokens.revokeTitle	לבטל את האסימון?
+apiTokens.revokeMessage	כל מה שמשתמש ב-"%@" יפסיק לעבוד מיד. לא ניתן לבטל פעולה זו.
+apiTokens.revokeConfirm	ביטול אסימון
+login.portHint	הוסיפו פורט (למשל ‎:3000‎). רוב שרתי ה-homelab אינם מאזינים לפורט 80 הרגיל.
+login.errorInvalidServer	הזינו כתובת שרת תקינה.
+login.errorInvalidCredentials	שם המשתמש או הסיסמה שגויים.
+login.errorSessionExpired	תוקף הסשן שלכם פג. אנא התחברו שוב.
+login.errorIncomplete	ההתחברות לא הושלמה. אנא נסו שוב.
+login.errorUnreachable	לא ניתן היה להגיע לשרת הזה. בדקו את הכתובת ונסו שוב.
+login.errorUnexpectedResponse	תגובה בלתי צפויה מהשרת.
+login.errorKeychain	לא ניתן היה לשמור את הסשן שלכם במכשיר הזה.
+login.errorDecoding	השרת השיב באופן בלתי צפוי. בדקו את הכתובת ונסו שוב.
+login.errorNoLocalAuth	בשרת הזה לא מופעלת התחברות באמצעות שם משתמש וסיסמה.
+login.errorRateLimited	יותר מדי ניסיונות. אנא המתינו כמה דקות ונסו שוב.
+login.ssoButton	התחברות באמצעות SSO
+login.orDivider	או
+login.errorSso	הכניסה היחידה לא הושלמה. אנא נסו שוב.
+login.errorNoAuthMethods	בשרת הזה לא מופעלות שיטות התחברות.
+login.errorClientCertificateRequired	השרת הזה מבקש אישור לקוח.
+login.errorClientCertificateRejected	השרת דחה את אישור הלקוח הזה.
+login.codeTitle	הזינו את הקוד שלכם
+login.codeIntroAuthenticator	החשבון הזה מבקש שלב שני. הזינו את הקוד בן 6 הספרות מאפליקציית האימות שלכם.
+login.codeIntroRecovery	הזינו אחד מקודי השחזור שלכם. כל אחד פועל פעם אחת בלבד.
+login.codeUseRecovery	שימוש בקוד שחזור במקום זאת
+login.codeUseAuthenticator	שימוש בקוד אפליקציית האימות במקום זאת
+login.codeField	קוד
+login.codeSubmit	אימות
+login.errorInvalidCode	הקוד הזה אינו נכון.
+login.errorSecondFactorExpired	תוקף ההתחברות הזו פג. הזינו שוב את הסיסמה.
+login.diagnosticsButton	שיתוף יומן התחברות
+login.diagnosticsTitle	יומן התחברות
+login.diagnosticsIntro	היומן הזה מראה מה השרת השיב בכל שלב, כדי לעזור למצוא מדוע ההתחברות נכשלת. הוא לעולם אינו כולל את הסיסמה שלכם, את הכתובת שהקלדתם או את שם המשתמש שלכם. שלחו אותו למפתח.
+browse.nameErrorReserved	השם הזה אינו מותר.
+browse.nameErrorSeparators	שם לא יכול להכיל / או \.
+browse.searchMatchLine	שורה %1$lld: %2$@
+browse.searchMatchLineLabel	שורה %lld
+browse.searchTooShort	הקלידו לפחות %lld תווים כדי לחפש בתיקיות משנה ובתוכן קבצים.
+browse.searchStoppedEarly	החיפוש נעצר במגבלת הזמן שלו. אלה התוצאות שנמצאו עד כה.
+browse.searchFirstOnly	%lld התוצאות הראשונות. צמצמו את החיפוש כדי לראות עוד.
+browse.searchShowMore	הצגת עוד
+browse.searchMatchColumn	התאמה
+browse.searchMatchedByName	שם
+browse.searchMatchedByContent	תוכן
+browse.searchMatchedByBoth	שם ותוכן
+createShare.errorPasswordRequired	הזינו סיסמה או כבו את ההגנה בסיסמה.
+login.errorServer	השרת נתקל בבעיה (שגיאה %lld). אנא נסו שוב מאוחר יותר.
+filter.sheetTitle	סינון לפי סוג
+filter.button	סינון
+filter.all	כל הסוגים
+filter.folders	תיקיות
+filter.images	תמונות
+filter.videos	סרטונים
+filter.audio	שמע
+filter.documents	מסמכים
+filter.archives	ארכיונים
+filter.other	אחר
+settings.creditsMadeBy	נוצר באהבה ❤️ על ידי Phillip Maizza
+settings.creditsLikeApp	אוהבים את האפליקציה?
+settings.creditsBuyCoffee	קנו לי קפה ☕️
+tipJar.title	קנו לי קפה
+tipJar.explanation	NextExplorer הוא חינמי ובקוד פתוח. אם הוא שימושי עבורכם, טיפ קטן עוזר להמשיך לפתח אותו. תודה!
+tipJar.toastThanks	תודה על התמיכה בפרויקט! 🙏
+tipJar.errorLoad	לא ניתן היה לטעון את אפשרויות הטיפ. נסו שוב.
+tipJar.errorPurchase	הרכישה לא הושלמה. נסו שוב.
+tipJar.pending	ממתין לאישור. תחויבו לאחר האישור.
+offline.sectionTitle	לא מקוון
+offline.settingsRow	הורדת קבצים לשימוש לא מקוון
+offline.footnote	קבצים שהורדו נפתחים גם ללא חיבור.
+offline.available	%@ זמינים במצב לא מקוון
+offline.removeRow	הסרת קבצים לא מקוונים
+offline.removeConfirmTitle	להסיר קבצים לא מקוונים?
+offline.removeConfirmMessage	פעולה זו מוחקת את הקבצים ששמורים לשימוש לא מקוון במכשיר זה. הקבצים שלכם בשרת לא מושפעים.
+offline.removeConfirm	הסרה
+offline.preparing	מכין…
+offline.downloadingName	מוריד את %@
+offline.progressCount	%lld מתוך %lld קבצים
+offline.downloadFailed	לא ניתן היה להשלים את ההורדה למצב לא מקוון.
+offline.selectionTitle	הורדה לשימוש לא מקוון
+offline.selectionEmpty	התיקייה הזו ריקה.
+offline.selectionLoadFailed	לא ניתן היה לטעון את התיקייה הזו.
+offline.selectionEstimate	הורדה משוערת
+offline.selectionDownload	הורדה
+offline.selectionInsufficientSpace	אין מספיק מקום פנוי במכשיר זה
+offline.resyncRow	עדכון קבצים לא מקוונים
+offline.badgeAvailable	זמין במצב לא מקוון
+offline.manageRow	ניהול קבצים לא מקוונים
+offline.manageTitle	קבצים לא מקוונים
+offline.manageEmpty	לא הורד דבר לשימוש לא מקוון.
+offline.preferOfflineToggle	הפעלת עותקים שהורדו
+offline.pinRemoved	%@ כבר אינו קיים בשרת והוסר מהקבצים הלא מקוונים
+offline.preferOfflineSubtitle	שימוש בסרטון שהורד במקום סטרימינג כשהוא זמין.
+offline.tunnelSpeedNote	גישה לשרת דרך מנהרה מרוחקת עלולה להאט הורדות. לקבצים גדולים, התחברו לאותה רשת והשתמשו בכתובת המקומית של השרת.
+menu.about	אודות NextExplorer
+menu.rateApp	דירוג NextExplorer…
+menu.support	תמיכה ב-NextExplorer
+menu.redo	ביצוע חוזר
+menu.undo	ביטול פעולה
+settings.sectionSupport	תמיכה
+settings.rowRateApp	דירוג NextExplorer
+settings.rowSupport	עזרה ותמיכה
+menu.refresh	רענון
+select.tableView	תצוגת טבלה
+browse.progressDownloading	מוריד…
+browse.progressDownloadingIndexed	מוריד %1$lld מתוך %2$lld…
+browse.downloadSavedTo	נשמר ב-%@
+browse.downloadSavedCountTo	נשמרו %1$lld מתוך %2$lld פריטים ב-%3$@
+browse.downloadSavedAllTo	נשמרו %1$lld פריטים ב-%2$@
+browse.downloadBulkFailed	לא ניתן היה לשמור את הפריטים האלה במכשיר שלכם.
+openWith.openIn	פתיחה ב-%@
+openWith.openWith	פתיחה באמצעות
+openWith.viewAsText	הצגה כטקסט
+openWith.failed	לא ניתן היה לפתוח את הקובץ הזה.
+browse.showInFinder	הצגה ב-Finder
+browse.showInEnclosingFolder	הצגה בתיקייה המכילה
+browse.actionCut	גזירה
+browse.clipboardCutOne	%@ מוכן להעברה
+browse.clipboardCutMany	%lld פריטים מוכנים להעברה
+menu.enclosingFolder	תיקייה מכילה
+common.more	עוד
+openWith.print	הדפסה…
+menu.newWindow	חלון חדש
+menu.newTab	לשונית חדשה
+browse.actionOpenInNewWindow	פתיחה בחלון חדש
+browse.actionOpenInNewTab	פתיחה בלשונית חדשה
+select.viewAs	תצוגה
+settings.rowAppearance	מראה
+appearance.system	מערכת
+appearance.light	בהיר
+appearance.dark	כהה
+browse.myFiles	הקבצים שלי
+browse.myFilesSubtitle	גלוי רק לכם
+downloadQueue.navigationTitle	תור הורדות
+downloadQueue.openDownloads	הצגת הורדות
+downloadQueue.emptyList	אין הורדות בתהליך.
+downloadQueue.statusSaved	נשמר
+downloadQueue.cancelAll	ביטול כל ההורדות
+downloadQueue.barFailedOne	הורדה אחת נכשלה
+downloadQueue.barFailedMany	%lld הורדות נכשלו
+downloadQueue.barTitleOne	מוריד את %@
+downloadQueue.barTitleMany	מוריד %lld פריטים
+downloadQueue.savedOne	נשמר בהורדות
+downloadQueue.savedMany	%lld פריטים נשמרו בהורדות
+downloadQueue.bytesOf	%1$@ מתוך %2$@
+downloadQueue.timeLeft	נותרו %@
+browse.sectionPersonal	אישי
+macSettings.addAccount	הוספת חשבון…
+macSettings.changePassword	שינוי סיסמה…
+macSettings.signOut	התנתקות…
+macSettings.switchAccount	מעבר לחשבון הזה
+macSettings.username	שם משתמש
+macSettings.email	אימייל
+macSettings.role	תפקיד
+macSettings.roleAdmin	מנהל מערכת
+macSettings.roleUser	משתמש
+macSettings.status	מצב
+macSettings.statusSignedIn	מחובר
+macSettings.manage	ניהול…
+macSettings.cache	מטמון
+macSettings.support	עזרה ותמיכה…
+macSettings.permission	הרשאה
+macSettings.icon	סמל
+menu.go	מעבר
+menu.activity	העברות
+menu.showAll	הצגת הכול
+uploads.notifyDone	ההעלאות הסתיימו
+uploads.notifyBody	%lld קבצים הועלו
+downloadQueue.notifyDone	ההורדות הסתיימו
+fileInfo.rowSoftware	תוכנה
+fileInfo.sectionVersions	גרסאות
+fileInfo.versionsNone	אין גרסאות קודמות
+fileInfo.versionRestore	שחזור…
+fileInfo.restoreTitle	לשחזר את הגרסה הזו?
+fileInfo.restoreMessage	הקובץ חוזר למצבו ב-%@. מה שהוא מכיל עכשיו נשמר כגרסה.
+fileInfo.restoreConfirm	שחזור
+fileInfo.sectionSharing	שיתוף
+fileInfo.notShared	אין קישורי שיתוף
+fileInfo.versionActions	פעולות גרסה
+fileInfo.versionDownload	הורדה…
+fileInfo.versionSaveCopy	שמירה כעותק
+fileInfo.versionRename	שינוי שם…
+fileInfo.renameTitle	שינוי שם הגרסה
+fileInfo.renamePlaceholder	שם הגרסה
+fileInfo.versionPin	שמירת הגרסה הזו
+fileInfo.versionUnpin	הפסקת שמירת הגרסה הזו
+fileInfo.versionKept	נשמרת
+fileInfo.versionDelete	מחיקה…
+fileInfo.deleteTitle	למחוק את הגרסה הזו?
+fileInfo.deleteAll	מחיקת כל הגרסאות…
+fileInfo.deleteAllTitle	למחוק את כל הגרסאות?
+fileInfo.deleteMessage	גרסאות שנמחקו נעלמות לצמיתות. הקובץ עצמו נשאר כפי שהוא.
+macSettings.choose	בחירה…
+menu.forward	קדימה
+menu.goToFolder	מעבר לתיקייה…
+menu.goToFolderTitle	מעבר לתיקייה:
+menu.copyPath	העתקת נתיב
+menu.recentFolders	תיקיות אחרונות
+menu.clearRecent	ניקוי התפריט
+common.loading	טוען…
+browse.quickLookUnavailable	Quick Look אינו זמין לסוג קובץ זה.
+browse.quickLookTooLarge	הקובץ הזה גדול מדי עבור Quick Look.
+menu.zoomIn	הגדלה
+menu.zoomOut	הקטנה
+menu.zoomToFit	התאמה לחלון
+menu.quitTransfersTitle	לצאת מ-NextExplorer?
+menu.quitTransfersMessage	העלאות או הורדות עדיין מתבצעות. יציאה עכשיו תעצור אותן.
+menu.quitTransfersConfirm	יציאה
+media.play	הפעלה
+media.pause	השהיה
+media.position	מיקום ההפעלה
+media.positionValue	%1$@ מתוך %2$@
+media.clientCertificateUnsupported	לא ניתן להזרים פורמט זה משרת שמבקש אישור לקוח. הורידו את הקובץ כדי להפעיל אותו.
+clientCertificate.title	אישור לקוח
+clientCertificate.intro	שרתים מסוימים מאפשרים כניסה רק למכשירים שמציגים אישור לקוח (mTLS). בחרו את קובץ ה-p12 או ה-pfx שקיבלתם עבור השרת הזה.
+clientCertificate.certificateLabel	אישור
+clientCertificate.none	לא הותקן אישור
+clientCertificate.issuedBy	הונפק על ידי %@
+clientCertificate.expires	פג תוקף ב-%@
+clientCertificate.expired	פג תוקף ב-%@
+clientCertificate.chooseFile	בחירת קובץ
+clientCertificate.replace	החלפת אישור
+clientCertificate.remove	הסרת אישור
+clientCertificate.install	התקנה
+clientCertificate.passwordLabel	סיסמת הקובץ
+clientCertificate.passwordPrompt	הסיסמה שבה יוצא הקובץ
+clientCertificate.chooseAnother	בחירת קובץ אחר
+clientCertificate.errorWrongPassword	הסיסמה הזו אינה פותחת את הקובץ הזה.
+clientCertificate.errorInvalidFile	זה אינו קובץ אישור p12 או pfx תקין.
+clientCertificate.errorNoIdentity	בקובץ הזה אין מפתח פרטי. ייצאו את האישור יחד עם המפתח שלו.
+clientCertificate.errorStorage	לא ניתן היה לשמור את האישור במכשיר הזה.
+clientCertificate.errorUnreadable	לא ניתן היה לקרוא את הקובץ הזה.
+clientCertificate.errorRemove	לא ניתן היה להסיר את האישור מהמכשיר הזה.
+clientCertificate.removeTitle	להסיר את האישור?
+clientCertificate.removeMessage	NextExplorer יפסיק להציג אותו ל-%@. אם השרת הזה דורש אישור, האפליקציה לא תוכל להתחבר עד שתוסיפו אישור שוב.
+clientCertificate.removeConfirm	הסרה
+clientCertificate.expiredWarning	פג תוקפו של האישור הזה. סביר שהשרת ידחה אותו.
+login.addClientCertificate	הוספת אישור
+login.manageClientCertificate	ניהול אישור
+settings.clientCertificate	אישור לקוח
+settings.clientCertificateNone	ללא
+login.usingClientCertificate	משתמש באישור הלקוח %@
+login.changeClientCertificate	שינוי
+login.ssoClientCertificateNote	כניסה יחידה נפתחת ב-Safari, שאינו יכול להשתמש באישור הלקוח של האפליקציה הזו. התחברו עם הסיסמה שלכם, או התקינו את האישור במכשיר הזה כדי להשתמש בכניסה יחידה.
+settings.clientCertificateExpired	פג תוקף
+settings.clientCertificateExpiresSoon	עומד לפוג
+clientCertificate.expiringSoonWarning	תוקף האישור הזה פג ב-%@. בקשו חדש לפני כן.
+shareUpload.title	העלאה ל-NextExplorer
+shareUpload.itemCount	קבצים להעלאה: %lld
+shareUpload.accountLabel	חשבון
+shareUpload.folderLabel	תיקייה
+shareUpload.folderChoose	בחירת תיקייה
+shareUpload.upload	העלאה
+shareUpload.preparing	מכין %lld מתוך %lld…
+shareUpload.started	מעלה ברקע. תקבלו התראה כשזה יסתיים.
+shareUpload.signedOut	התחברו תחילה ל-NextExplorer, ואז שתפו שוב.
+shareUpload.nothingToUpload	אין כאן דבר ש-NextExplorer יכול להעלות.
+shareUpload.failed	לא ניתן היה להכין את הקבצים להעלאה.
+shareUpload.notificationDoneTitle	ההעלאה הסתיימה
+shareUpload.notificationFailedTitle	חלק מהקבצים לא הועלו
+shareUpload.notificationDoneBody#one	קובץ %lld הועלה אל “%@”.
+shareUpload.notificationDoneBody#other	%lld קבצים הועלו אל “%@”.
+shareUpload.notificationDoneBody#two	%lld קבצים הועלו אל “%@”.
+shareUpload.notificationAllFailedTitle	ההעלאה נכשלה
+shareUpload.failureUnauthorized#one	קובץ %lld לא הועלה. התחברו שוב ונסו שוב.
+shareUpload.failureUnauthorized#other	%lld קבצים לא הועלו. התחברו שוב ונסו שוב.
+shareUpload.failureUnauthorized#two	%lld קבצים לא הועלו. התחברו שוב ונסו שוב.
+shareUpload.failureForbidden#one	קובץ %lld לא הועלה. אין לכם הרשאה להוסיף קבצים לתיקייה הזו.
+shareUpload.failureForbidden#other	%lld קבצים לא הועלו. אין לכם הרשאה להוסיף קבצים לתיקייה הזו.
+shareUpload.failureForbidden#two	%lld קבצים לא הועלו. אין לכם הרשאה להוסיף קבצים לתיקייה הזו.
+shareUpload.failureServerFull#one	קובץ %lld לא הועלה. אזל מקום האחסון בשרת.
+shareUpload.failureServerFull#other	%lld קבצים לא הועלו. אזל מקום האחסון בשרת.
+shareUpload.failureServerFull#two	%lld קבצים לא הועלו. אזל מקום האחסון בשרת.
+shareUpload.failureNetwork#one	קובץ %lld לא הועלה. החיבור נכשל. נסו שוב כשתחזרו להיות מחוברים.
+shareUpload.failureNetwork#other	%lld קבצים לא הועלו. החיבור נכשל. נסו שוב כשתחזרו להיות מחוברים.
+shareUpload.failureNetwork#two	%lld קבצים לא הועלו. החיבור נכשל. נסו שוב כשתחזרו להיות מחוברים.
+shareUpload.failureOther#one	לא ניתן היה להעלות קובץ %lld.
+shareUpload.failureOther#other	לא ניתן היה להעלות %lld קבצים.
+shareUpload.failureOther#two	לא ניתן היה להעלות %lld קבצים.
+shareUpload.notificationRetry	ניסיון חוזר
+shareUpload.notificationHiddenPreview	פתחו את NextExplorer כדי לראות איך עברה ההעלאה.
+shareUpload.retryFailedTitle	לא ניתן היה לנסות שוב
+shareUpload.retryFailedBody	פתחו את NextExplorer ושתפו את הקבצים שוב.
+shareUpload.insufficientSpace	אין מספיק מקום פנוי במכשיר הזה כדי להכין את הקבצים להעלאה.
+settings.uploadDefaultsRow	קבצים משותפים
+settings.uploadDefaultsFolder	תיקיית ברירת מחדל
+settings.uploadDefaultsFolderNone	לשאול בכל פעם
+settings.uploadDefaultsWithoutAsking	העלאה ללא שאלה
+settings.uploadDefaultsFooter	תמונות וקבצים שאתם משתפים ל-NextExplorer מאפליקציות אחרות מתחילים בתיקייה הזו. כשהאפשרות "העלאה ללא שאלה" פועלת, הם מועלים ישירות אליה.
+settings.uploadDefaultsClear	לשאול בכל פעם
+common.change	שינוי
+shareUpload.sessionUnreadable	NextExplorer לא הצליח לקרוא את ההתחברות שלכם במכשיר הזה. פתחו את NextExplorer פעם אחת, ואז שתפו שוב.
+shareUpload.keepOpen	השאירו את זה פתוח עד שההכנה תסתיים.
+shareUpload.checking	בודק חיבור אל %@…
+shareUpload.openApp	פתיחת NextExplorer
+shareUpload.openAppInstructions	פתחו את NextExplorer ממסך הבית, ואז שתפו שוב.
+shareUpload.certificateRequired	השרת הזה דורש אישור לקוח. פתחו את NextExplorer והוסיפו אחד בהגדרות, ואז שתפו שוב.
+shareUpload.certificateRejected	השרת דחה את אישור הלקוח שלכם. פתחו את NextExplorer והחליפו אותו בהגדרות, ואז שתפו שוב.
+shareUpload.defaultFolderUnavailable	תיקיית ברירת המחדל שלכם אינה זמינה עוד. בחרו תיקייה אחרת.
+shareUpload.failedItemsHeader	לא ניתן היה להכין את הקבצים האלה:
+shareUpload.readyCount	מוכנים להעלאה: %lld
+shareUpload.uploadReady	העלאת קבצים מוכנים
+shareUpload.retryFailed	ניסיון חוזר לקבצים שנכשלו
+shareUpload.fallbackItemName	קובץ %lld
+shareUpload.causeCannotRead	לא ניתן היה לקרוא אותו.
+shareUpload.causeNotEnoughSpace	אין מספיק מקום פנוי במכשיר הזה.
+shareUpload.causeUnknown	לא ניתן היה להכין אותו.
+shareUpload.folderHint	פותח את בוחר התיקיות.
+shareUpload.accountHint	בחרו איזה חשבון מקבל את הקבצים.
+error.timedOut	השרת התעכב יותר מדי בתגובה. ייתכן שהפעולה עדיין תושלם.
+error.changedOnServer	הקובץ הזה שונה בשרת אחרי שפתחתם אותו.
+textPreview.conflictTitle	“%@” השתנה בשרת
+textPreview.conflictMessage	החליפו אותו בגרסה שלכם, או טענו מחדש את הקובץ וזרקו את העריכות שלכם. הגרסה שהוחלפה נשארת בהיסטוריית הגרסאות של הקובץ.
+textPreview.conflictOverwrite	דריסה
+textPreview.conflictReload	טעינה מחדש
+offline.waitingForNetwork	יורד כשתחזרו להיות מחוברים
+browse.bulkFavoriteFailed	%1$lld מתוך %2$lld נכשלו
+shareUpload.livePhotoNote	תמונות Live Photo מועלות יחד עם סרטון התנועה שלהן.
+shareUpload.retrySignInBody	התחברו ל-NextExplorer, ואז הקישו שוב על "ניסיון חוזר".
+shareUpload.causeFolder	לא ניתן לשתף תיקיות. שתפו במקום זאת את הקבצים שבתוכן.
+shareUpload.notificationMoreNames	עוד %lld
+versionedFiles.deleteFailed	לא ניתן היה למחוק חלק מהגרסאות. בדקו אותן ונסו שוב.
+serverSettings.featureOffTitle	התכונה הזו אינה מופעלת
+serverSettings.featureOffKept	מה שתגדירו כאן נשמר ויחול מיד כשהתכונה תופעל.
+serverSettings.featureOffUseSwitch	הפעילו אותה באמצעות המתג שלמעלה.
+serverSettings.featureOffHowTo	כדי להפעיל אותה, הגדירו את %@ והפעילו מחדש את הקונטיינר.
+trashSettings.environmentNote	ערכי ברירת המחדל מגיעים מ-TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT ו-TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	ערכי ברירת המחדל מגיעים מ-VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE ו-VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	רענון

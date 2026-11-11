@@ -26,7 +26,7 @@ TRANSLATIONS = PKG / "translations"
 PLURAL_CATEGORIES = ("zero", "one", "two", "few", "many", "other")
 PLURAL_KEY = re.compile(r"^(?P<base>.+)#(?P<category>" + "|".join(PLURAL_CATEGORIES) + ")$")
 
-LANGUAGES = ["ar", "de", "es", "fr", "hi", "it", "ja", "ko", "nl", "pl", "pt", "ro", "ru", "sv", "zh-CN", "zh-TW"]
+LANGUAGES = ["ar", "cs", "da", "de", "el", "es", "fi", "fr", "he", "hi", "hu", "id", "it", "ja", "ko", "nb", "nl", "pl", "pt", "pt-BR", "ro", "ru", "sv", "th", "tr", "uk", "vi", "zh-CN", "zh-TW"]
 
 
 def _parse_tsv(path):

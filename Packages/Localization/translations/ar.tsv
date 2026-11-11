@@ -871,3 +871,202 @@ shareUpload.causeFolder	لا يمكن مشاركة المجلدات. شارك ا
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld أخرى
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	الرفع
+uploadSettings.subtitle	اضبط طريقة إرسال الملفات إلى الخادم.
+uploadSettings.chunkedEnable	تفعيل الرفع على أجزاء
+uploadSettings.chunkedEnableHelp	يستخدم TUS لإرسال الملفات الكبيرة عبر عدة طلبات أصغر.
+uploadSettings.chunkSize	حجم الجزء
+uploadSettings.chunkSizeHelp	الحجم الأقصى لكل طلب رفع. أبقِه أقل من حد الوكيل العكسي لديك. الأجزاء الأصغر تعطي تقدمًا أكثر سلاسة.
+uploadSettings.chunkSizeValue	%lld ميبي بايت
+uploadSettings.autoFallback	التحويل التلقائي إلى الأجزاء
+uploadSettings.autoFallbackHelp	إذا فشل الرفع المباشر لأن وكيلًا عكسيًا يرفض الحجم، يتم التحويل تلقائيًا إلى الرفع على أجزاء.
+uploadSettings.unavailable	إعدادات الرفع متاحة للمشرفين فقط.
+uploadSettings.saveButton	حفظ التغييرات
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	اختر الملفين التنفيذيين FFmpeg وFFprobe المستخدمين لمعاينة الوسائط وبياناتها الوصفية.
+ffmpegSettings.containerPathHelp	أدخل مسارات مطلقة ظاهرة داخل حاوية التطبيق. لاستخدام ملفات تنفيذية من المضيف، اربطها بالحاوية أولًا.
+ffmpegSettings.ffmpegPath	مسار الملف التنفيذي FFmpeg
+ffmpegSettings.ffprobePath	مسار الملف التنفيذي FFprobe
+ffmpegSettings.invalid	يجب أن يكون المساران مسارين مطلقين داخل الحاوية يبدآن بـ /.
+ffmpegSettings.defaultHelp	اترك المسار فارغًا لاستخدام FFMPEG_PATH أو FFPROBE_PATH من البيئة، ثم الملف التنفيذي المضمّن. تُطبَّق التغييرات فورًا.
+ffmpegSettings.unavailable	إعدادات FFmpeg متاحة للمشرفين فقط.
+ffmpegSettings.saveButton	حفظ التغييرات
+searchIndexSettings.navigationTitle	فهرس البحث
+searchIndexSettings.subtitle	استبعد مسارات من فهرسة المحتوى.
+searchIndexSettings.running	صيانة فهرس بحث
+searchIndexSettings.runningHelp	يقرأ المستندات في وحدة التخزين في الخلفية، فيستجيب البحث داخلها فورًا.
+searchIndexSettings.locked	تم تحديده بواسطة %@ في البيئة، لذا يُقرَّر هناك وليس هنا.
+searchIndexSettings.environment	استثناءات تحددها البيئة
+searchIndexSettings.additional	استثناءات إضافية
+searchIndexSettings.none	لا يوجد مسار مضبوط
+searchIndexSettings.addButton	إضافة
+searchIndexSettings.unavailable	إعدادات فهرس البحث متاحة للمشرفين فقط.
+searchIndexSettings.saveButton	حفظ التغييرات
+searchIndexSettings.discardButton	تجاهل
+folderSizeSettings.navigationTitle	أحجام المجلدات
+folderSizeSettings.subtitle	استبعد مسارات من حساب أحجام المجلدات وفهرستها.
+folderSizeSettings.running	قياس أحجام المجلدات
+folderSizeSettings.runningHelp	يقيس المجلدات في الخلفية ليظهر حجمها في القائمة.
+folderSizeSettings.modeOff	إيقاف
+folderSizeSettings.modeShallow	ملفاتها المباشرة فقط
+folderSizeSettings.modeFull	كل ما بداخلها
+folderSizeSettings.locked	تم تحديده بواسطة %@ في البيئة، لذا يُقرَّر هناك وليس هنا.
+folderSizeSettings.environment	استثناءات تحددها البيئة
+folderSizeSettings.additional	استثناءات إضافية
+folderSizeSettings.none	لا توجد مسارات مضبوطة
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	إضافة
+folderSizeSettings.unavailable	إعدادات أحجام المجلدات متاحة للمشرفين فقط.
+folderSizeSettings.saveButton	حفظ التغييرات
+folderSizeSettings.discardButton	تجاهل
+activityLog.navigationTitle	سجل النشاط
+activityLog.subtitle	من فعل ماذا، ومتى، ومن أين. متوقف ما لم تُشغّله.
+activityLog.enabled	تسجيل النشاط
+activityLog.enabledHelp	تُدوَّن عمليات تسجيل الدخول والتنزيل والرفع والحذف والاستعادة وروابط المشاركة وتغييرات الحساب ما دام هذا الخيار مفعّلًا. ما حدث قبل تفعيله غير موجود.
+activityLog.retention	مدة الاحتفاظ (بالأيام)
+activityLog.retentionInvalid	بين 1 و3650 يومًا.
+activityLog.saveButton	حفظ التغييرات
+activityLog.off	السجل متوقف، لذا لا يُسجَّل شيء.
+activityLog.none	لم يُسجَّل شيء بعد.
+activityLog.filterAction	النوع
+activityLog.anyAction	أي نوع
+activityLog.filterOutcome	النتيجة
+activityLog.anyOutcome	أي نتيجة
+activityLog.outcomeOk	ناجح
+activityLog.outcomeRefused	مرفوض
+activityLog.searchPlaceholder	اسم أو مسار
+activityLog.searchButton	بحث
+activityLog.refresh	تحديث
+activityLog.clear	إفراغ السجل
+activityLog.clearTitle	هل تريد إفراغ السجل؟
+activityLog.clearMessage	سيتم حذف كل سطر مسجَّل. لا يمكن التراجع عن ذلك.
+activityLog.clearConfirm	إفراغ السجل
+activityLog.more	عرض المزيد
+activityLog.refusedSuffix	مرفوض
+activityLog.fromAddress	من %@
+activityLog.unavailable	سجل النشاط متاح للمشرفين فقط.
+activityLog.action.signIn	تسجيل الدخول
+activityLog.action.signOut	تسجيل الخروج
+activityLog.action.accountPassword	تغيير كلمة المرور
+activityLog.action.accountTwoFactor	تغيير العامل الثاني
+activityLog.action.accountPasskey	تغيير مفتاح المرور
+activityLog.action.accountToken	تغيير رمز API
+activityLog.action.adminUser	تغيير الحساب
+activityLog.action.adminSettings	تغيير الإعدادات
+activityLog.action.adminActivityClear	إفراغ السجل
+activityLog.action.shareCreate	إنشاء مشاركة
+activityLog.action.shareDelete	حذف مشاركة
+activityLog.action.shareDownload	تنزيل عبر رابط
+activityLog.action.shareUpload	رفع عبر رابط
+activityLog.action.fileDownload	تنزيل
+activityLog.action.fileUpload	رفع
+activityLog.action.fileDelete	نقل إلى سلة المحذوفات
+activityLog.action.fileRestore	استعادة
+activityLog.action.filePurge	حذف نهائي
+activityLog.action.versionsPurge	حذف إصدارات
+trashSettings.navigationTitle	سلة المحذوفات والإصدارات
+trashSettings.subtitle	تُحفظ العناصر المحذوفة والإصدارات السابقة للملفات في مساحة محجوزة على وحدة التخزين الخاصة بها، وتُزال بعد انتهاء مدة الاحتفاظ أو عند الحاجة إلى تلك المساحة.
+trashSettings.trashHeader	سلة المحذوفات
+trashSettings.enabled	إرسال العناصر المحذوفة إلى سلة المحذوفات
+trashSettings.enabledHelp	عند الإيقاف، يزيل الحذف العناصر نهائيًا. أما العناصر الموجودة في السلة فتنتهي صلاحيتها كالمعتاد.
+trashSettings.retention	مدة الاحتفاظ (بالأيام)
+trashSettings.retentionHelp	من 1 إلى 3650 يومًا.
+trashSettings.maxPercent	حصة كل وحدة تخزين (%)
+trashSettings.maxPercentHelp	أقصى ما يمكن أن تشغله السلة على وحدة التخزين، من 1 إلى 90%.
+trashSettings.maxSize	حد الحجم لكل وحدة تخزين (جيبي بايت)
+trashSettings.maxSizeHelp	اختياري. يُطبَّق الأصغر بين الحصة والحد.
+trashSettings.maxSizeNone	بلا حد
+trashSettings.trashInvalid	تحقق من القيم: مدة الاحتفاظ من 1 إلى 3650 يومًا، والحصة من 1 إلى 90%، وحجم موجب أو بلا حجم.
+trashSettings.versionsHeader	إصدارات الملفات
+trashSettings.versionsSubtitle	يحتفظ كل حفظ بما يستبدله، دون نسخه، في المساحة المحجوزة نفسها للسلة. تُخفَّف الإصدارات الأقدم مع الوقت.
+trashSettings.versionsEnabled	الاحتفاظ بالإصدارات السابقة للملفات
+trashSettings.versionsEnabledHelp	مستقل عن السلة. عند الإيقاف لا يحتفظ الحفظ بأي جديد؛ وتبقى الإصدارات الموجودة حتى تنتهي صلاحيتها أو تُحذف.
+trashSettings.keepAllHours	الاحتفاظ بكل إصدار (بالساعات)
+trashSettings.hourlyDays	ثم إصدار واحد كل ساعة (بالأيام)
+trashSettings.dailyDays	ثم إصدار واحد كل يوم (بالأيام)
+trashSettings.maxPerFile	أقصى عدد من الإصدارات لكل ملف
+trashSettings.checkpointMinutes	نقطة تحقق Office (بالدقائق)
+trashSettings.tiersHelp	بعد هذه المراحل يُحتفظ بإصدار واحد كل أسبوع. تترك جلسة تحرير Office إصدارًا واحدًا، إضافة إلى نقطة تحقق بهذه الوتيرة على الأكثر. الإصدارات المثبّتة لا تخضع للتخفيف ولا لحد الملف الواحد.
+trashSettings.versionsInvalid	تحقق من القيم: من 1 إلى 720 ساعة، ومن 1 إلى 365 يومًا لكل ساعة، ومن 1 إلى 3650 يومًا لكل يوم، ومن 1 إلى 1000 إصدار لكل ملف، ونقطة تحقق من 1 إلى 1440 دقيقة.
+trashSettings.sharedSpace	تتشارك الإصدارات والسلة المساحة المحجوزة لكل وحدة تخزين. عند نفادها تُزال الإصدارات الأقدم أولًا، ثم عناصر السلة، ثم أحدث إصدار لكل ملف، وأخيرًا الإصدارات المثبّتة.
+trashSettings.saveButton	حفظ التغييرات
+trashSettings.discardButton	تجاهل
+trashSettings.unavailable	إعدادات سلة المحذوفات والإصدارات متاحة للمشرفين فقط.
+trashSettings.zonesHeader	السلة حسب وحدة التخزين
+trashSettings.zonesSubtitle	تحتفظ كل وحدة تخزين بسلتها في مجلد مخفي باسم .nextexplorer في جذرها، لذا لا ينسخ الحذف أي شيء.
+trashSettings.zonesEmpty	لم يُنقل أي شيء إلى سلة المحذوفات بعد.
+trashSettings.zoneKindPersonal	المجلد الشخصي لـ %@
+trashSettings.zoneKindUserVolume	وحدة التخزين المخصصة %@
+trashSettings.available	متاحة
+trashSettings.unavailableMissing	غير موصولة أو أُزيلت
+trashSettings.unavailableReplaced	قرص آخر في مكانها
+trashSettings.unavailableUnreadable	غير قابلة للقراءة
+trashSettings.usage	%1$@ من %2$@
+trashSettings.noBudget	بلا حد
+trashSettings.zoneItems	العناصر: %1$lld · %2$@
+trashSettings.zoneVersions	الإصدارات: %1$lld · %2$@
+trashSettings.lastPass	آخر صيانة: %@
+trashSettings.lastPassPurged	%1$@ · أُزيل: %2$lld
+trashSettings.never	لم تحدث بعد
+trashSettings.verify	تحقق
+trashSettings.runMaintenance	تشغيل الصيانة الآن
+trashSettings.verifyOk	سلة كل وحدة تخزين متسقة.
+trashSettings.verifyIssues	المشكلات المكتشفة: %lld
+trashSettings.zoneProblems	المشكلات: %lld
+trashSettings.journalHeader	سجل الأحداث
+trashSettings.eventEvicted	أُزيل «%@» قبل انتهاء مدة الاحتفاظ لتحرير مساحة
+trashSettings.eventAdopted	استُعيد «%@» بعد انقطاع
+trashSettings.eventLost	كان محتوى «%@» مفقودًا
+trashSettings.eventFailed	تعذّرت إزالة «%@»
+trashSettings.eventBreaker	عدد كبير من العناصر مفقود دفعة واحدة: لم يتغير شيء
+trashSettings.eventForgotten	نسي أحد المشرفين «%@»
+trashSettings.eventVersionEvicted	أُزيل إصدار من «%@» لتحرير مساحة
+trashSettings.eventVersionFailed	تعذّرت إزالة إصدار
+trashSettings.eventVersionLost	كان محتوى أحد الإصدارات مفقودًا
+trashSettings.eventVersionTooLarge	«%@» أكبر من المساحة كلها: لم يُحتفظ بما استبدله
+trashSettings.eventVersionsBreaker	عدد كبير من الإصدارات مفقود دفعة واحدة: لم يتغير شيء
+versionedFiles.navigationTitle	إصدارات الملفات
+versionedFiles.subtitle	كل ملف له سجل، أينما كان. يعرض مسارات من جميع المساحات، بما فيها المجلدات الشخصية، لذا فهو للمشرفين فقط.
+versionedFiles.summary	الملفات: %1$lld · الإصدارات: %2$lld · %3$@
+versionedFiles.searchPlaceholder	اسم أو مسار
+versionedFiles.zone	وحدة التخزين
+versionedFiles.anyZone	أي وحدة تخزين
+versionedFiles.stateHeader	الحالة
+versionedFiles.anyState	أي حالة
+versionedFiles.stateLive	الملف ما زال موجودًا
+versionedFiles.stateTrashed	في سلة المحذوفات
+versionedFiles.stateOrphaned	الملف مفقود
+versionedFiles.sortHeader	الترتيب حسب
+versionedFiles.sortBytes	المساحة المستخدمة
+versionedFiles.sortVersions	عدد الإصدارات
+versionedFiles.sortNewest	الأحدث
+versionedFiles.sortPath	المسار
+versionedFiles.none	لا يوجد ملف له إصدارات سابقة.
+versionedFiles.unavailable	إصدارات الملفات متاحة للمشرفين فقط.
+versionedFiles.zoneUnknown	وحدة تخزين غير معروفة
+versionedFiles.zoneKindPersonal	المجلد الشخصي لـ %@
+versionedFiles.zoneKindUserVolume	وحدة التخزين المخصصة %@
+versionedFiles.rowSummary	الإصدارات: %1$lld · %2$@
+versionedFiles.newest	الأحدث: %@
+versionedFiles.versionPinned	مثبّت
+versionedFiles.versionUnavailable	غير متاح
+versionedFiles.versionBy	بواسطة %@
+versionedFiles.detailFailed	تعذّرت قراءة هذا السجل.
+versionedFiles.deleteSelectedNone	حدّد الإصدارات المراد حذفها
+versionedFiles.deleteSelected	حذف المحدد (%lld)
+versionedFiles.deleteAll	حذف كل الإصدارات
+versionedFiles.confirmAllTitle	هل تريد حذف كل إصدارات «%@»؟
+versionedFiles.confirmSomeTitle	هل تريد حذف الإصدارات المحددة (%lld)؟
+versionedFiles.confirmMessage	لا يمكن استرداد الإصدارات المحذوفة.
+versionedFiles.confirmDelete	حذف
+versionedFiles.previous	السابق
+versionedFiles.next	التالي
+versionedFiles.pageRange	من %1$lld إلى %2$lld من %3$lld
+versionedFiles.deleteFailed	تعذّر حذف بعض الإصدارات. تحقق منها وحاول مرة أخرى.
+serverSettings.featureOffTitle	هذه الميزة غير مفعّلة
+serverSettings.featureOffKept	ما تضبطه هنا يُحفظ ويُطبَّق بمجرد تفعيلها.
+serverSettings.featureOffUseSwitch	فعّلها بالمفتاح أعلاه.
+serverSettings.featureOffHowTo	لتفعيلها، اضبط %@ وأعد تشغيل الحاوية.
+trashSettings.environmentNote	تأتي القيم الافتراضية من TRASH_ENABLED، TRASH_RETENTION_DAYS، TRASH_MAX_PERCENT وTRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	تأتي القيم الافتراضية من VERSIONS_ENABLED، VERSIONS_KEEP_ALL_HOURS، VERSIONS_HOURLY_DAYS، VERSIONS_DAILY_DAYS، VERSIONS_MAX_PER_FILE وVERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	تحديث

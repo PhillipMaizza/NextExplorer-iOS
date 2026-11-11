@@ -1,0 +1,1102 @@
+# NextExplorer: ไทย (th). key<TAB>value.
+common.cancel	ยกเลิก
+common.save	บันทึก
+common.edit	แก้ไข
+common.retry	ลองอีกครั้ง
+common.syncCompleted	ซิงค์เสร็จสิ้น
+common.delete	ลบ
+common.remove	นำออก
+common.clear	ล้าง
+common.done	เสร็จสิ้น
+common.ok	ตกลง
+common.openSettings	เปิดการตั้งค่า
+common.logOut	ออกจากระบบ
+common.close	ปิด
+common.back	กลับ
+common.share	แชร์
+common.copy	คัดลอก
+common.copied	คัดลอกแล้ว
+common.download	ดาวน์โหลด
+common.sort	เรียงลำดับ
+common.select	เลือก
+common.deselect	ยกเลิกการเลือก
+common.search	ค้นหา
+common.password	รหัสผ่าน
+common.never	ไม่เคย
+common.selectedCount	เลือกแล้ว %lld
+tab.browse	เรียกดู
+tab.favorites	รายการโปรด
+tab.shared	ที่แชร์
+tab.downloads	ดาวน์โหลด
+tab.settings	การตั้งค่า
+sort.sheetTitle	เรียงตาม
+sort.name	ชื่อ
+sort.size	ขนาด
+sort.kind	ชนิด
+sort.dateModified	วันที่แก้ไข
+sort.dateAdded	วันที่เพิ่ม
+sort.dateShared	วันที่แชร์
+sort.expiration	วันหมดอายุ
+sort.email	อีเมล
+sort.type	ประเภท
+sort.ascending	จากน้อยไปมาก
+sort.descending	จากมากไปน้อย
+select.selectAll	เลือกทั้งหมด
+select.deselectAll	ยกเลิกการเลือกทั้งหมด
+select.listView	มุมมองรายการ
+select.gridView	มุมมองตาราง
+emptyState.folderEmpty	โฟลเดอร์นี้ว่างเปล่า
+emptyState.loadFailed	ไม่สามารถติดต่อเซิร์ฟเวอร์ได้
+emptyState.noSearchMatches	ไม่พบผลลัพธ์สำหรับ “%@”
+accessMode.readonly	อ่านอย่างเดียว
+accessMode.readwrite	อ่านและเขียน
+shareTarget.anyone	ทุกคนที่มีลิงก์
+shareTarget.users	ผู้ใช้ที่ระบุ
+directLinkMode.auto	อัตโนมัติ
+directLinkMode.inline	มุมมอง
+directLinkMode.raw	ดิบ
+directLinkMode.download	ดาวน์โหลด
+thumbnailSize.small	เล็ก
+thumbnailSize.medium	กลาง
+thumbnailSize.large	ใหญ่
+downloadLocation.documents	เอกสาร
+downloadLocation.cache	แคช
+dateFormat.automatic	อัตโนมัติ
+browse.navigationTitle	เรียกดู
+browse.scopeThisFolder	โฟลเดอร์นี้
+browse.scopeEverywhere	ทุกที่
+browse.searchScopeInFolder	โฟลเดอร์นี้
+browse.searchScopeEverywhere	ทุกที่
+browse.locations	ตำแหน่งที่ตั้ง
+browse.breadcrumbHint	เปิดโฟลเดอร์นี้
+browse.open	เปิด
+browse.unsupportedFileType	ไม่รองรับชนิดไฟล์นี้
+browse.actionGetInfo	แสดงข้อมูล
+browse.actionPermissions	สิทธิ์
+browse.actionRename	เปลี่ยนชื่อ
+browse.actionExtract	แตกไฟล์
+browse.actionCompress	บีบอัด
+browse.actionDownload	ดาวน์โหลด
+browse.actionAddToFavorites	เพิ่มในรายการโปรด
+browse.actionRemoveFromFavorites	นำออกจากรายการโปรด
+browse.actionShare	สร้างลิงก์แชร์
+browse.actionDelete	ลบ
+browse.actionDuplicate	ทำสำเนา
+browse.renameTitle	เปลี่ยนชื่อ
+browse.renameNamePlaceholder	ชื่อ
+browse.actionNewFolder	สร้างโฟลเดอร์
+browse.newFolderTitle	โฟลเดอร์ใหม่
+browse.newFolderPlaceholder	ชื่อโฟลเดอร์
+browse.newFolderConfirm	สร้าง
+browse.actionNewFile	สร้างไฟล์
+browse.newFileTitle	ไฟล์ใหม่
+browse.newFileTypeHint	ใช้ชนิดไฟล์ที่ตัวแก้ไขเปิดได้ เช่น .txt, .md หรือ .js
+browse.deleteConfirmTitle	ลบหรือไม่
+browse.deleteConfirmOne	ลบ “%@” หรือไม่
+browse.deleteConfirmMany	ลบ %lld รายการหรือไม่
+browse.deleteMessage	ไม่สามารถเลิกทำได้
+browse.deleteLinkedSharesOne	การดำเนินการนี้จะนำลิงก์แชร์ 1 รายการที่ชี้มาที่นี่ออกด้วย
+browse.deleteLinkedSharesMany	การดำเนินการนี้จะนำลิงก์แชร์ %lld รายการที่ชี้มาที่นี่ออกด้วย
+browse.deleteLinkedSharesUnavailable	ไม่สามารถตรวจสอบลิงก์แชร์ที่ชี้มาที่นี่ได้ ลิงก์ที่มีอยู่จะหยุดทำงาน
+browse.searchNoMatchesInFolder	ไม่พบผลลัพธ์สำหรับ “%@”
+browse.searchEverywhere	ค้นหาทุกที่
+browse.searchFailed	ค้นหาไม่สำเร็จ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
+browse.progressExtracting	กำลังแตกไฟล์…
+browse.progressCompressing	กำลังบีบอัด…
+browse.offlineBannerTitle	ออฟไลน์
+browse.offlineBannerDetail	กำลังแสดงสำเนาที่บันทึกไว้จาก %@
+browse.actionCopy	คัดลอก
+browse.destinationPickerMoveTitle	ย้ายไปที่…
+browse.destinationPickerConfirmMove	ย้ายมาที่นี่
+browse.destinationPickerNoFolders	ไม่มีโฟลเดอร์ที่นี่
+browse.destinationPickerLoadFailed	ไม่สามารถโหลดโฟลเดอร์ได้
+browse.actionMove	ย้าย
+browse.actionPaste	วาง
+browse.actionPasteCount	วาง %lld รายการ
+browse.actionPasteHere	วางที่นี่
+browse.actionClearClipboard	ล้างคลิปบอร์ด
+browse.clipboardMoveCount	%lld รายการที่จะย้าย
+browse.clipboardCopyCount	%lld รายการที่จะคัดลอก
+browse.clipboardCopiedOne	คัดลอก %@ แล้ว
+browse.clipboardCopiedMany	คัดลอก %lld รายการแล้ว
+browse.progressMoving	กำลังย้าย…
+browse.progressCopying	กำลังคัดลอก…
+browse.transferMoved	ย้าย %lld รายการแล้ว
+browse.transferCopied	คัดลอก %lld รายการแล้ว
+browse.transferMovedWithSkipped	ย้าย %1$lld รายการแล้ว ข้าม %2$lld รายการ
+browse.transferCopiedWithSkipped	คัดลอก %1$lld รายการแล้ว ข้าม %2$lld รายการ
+browse.transferConflictTitle	แทนที่รายการหรือไม่
+browse.transferConflictMessageOne	มี "%@" อยู่ในโฟลเดอร์นี้แล้ว
+browse.transferConflictMessageMany	มี %lld รายการอยู่ในโฟลเดอร์นี้แล้ว
+browse.transferConflictReplace	แทนที่
+browse.transferConflictKeepBoth	เก็บไว้ทั้งสอง
+browse.actionOpenInBrowser	เปิดในเบราว์เซอร์
+favorites.navigationTitle	รายการโปรด
+favorites.emptyList	ติดดาวโฟลเดอร์ในเรียกดูเพื่อดูที่นี่
+favorites.actionRemoveFromFavorites	นำออกจากรายการโปรด
+favorites.accessibilityBadge	รายการโปรด
+favorites.actionEdit	แก้ไข
+favorites.editTitle	แก้ไขรายการโปรด
+favorites.editNameLabel	ชื่อ
+favorites.editNameErrorEmpty	ชื่อต้องไม่ว่างเปล่า
+favorites.editIconLabel	ไอคอน
+favorites.editIconOutline	เส้นขอบ
+favorites.editIconSolid	ทึบ
+favorites.editColorLabel	สี
+favorites.editColorDefault	ค่าเริ่มต้น
+favorites.editSave	บันทึก
+favorites.reorderFailed	ไม่สามารถบันทึกลำดับใหม่ได้
+favorites.removeConfirm	นำรายการโปรดออก %lld รายการหรือไม่
+favorites.removeMessage	การดำเนินการนี้จะนำออกจากรายการโปรดเท่านั้น
+favorites.removeFailedOne	ไม่สามารถนำรายการโปรดนั้นออกได้
+favorites.removeFailedMany	ไม่สามารถนำรายการโปรดเหล่านั้นออกได้
+favorites.removePartial	นำออกแล้ว %1$lld จาก %2$lld
+downloads.navigationTitle	ดาวน์โหลด
+downloads.actionOpenInFiles	เปิดในแอปไฟล์
+downloads.emptyList	ไฟล์ที่คุณดาวน์โหลดจากเรียกดูจะแสดงที่นี่
+downloads.deleteConfirmTitle	ลบหรือไม่
+downloads.deleteConfirmOne	ลบ “%@” หรือไม่
+downloads.deleteConfirmMany	ลบ %lld ไฟล์หรือไม่
+downloads.deleteSingleMessage	การดำเนินการนี้จะนำออกเฉพาะสำเนาในเครื่อง ไฟล์ยังอยู่บนเซิร์ฟเวอร์
+downloads.deleteBulkMessage	การดำเนินการนี้จะนำออกเฉพาะสำเนาในเครื่อง ไฟล์ยังอยู่บนเซิร์ฟเวอร์
+downloads.errorNameExists	มีไฟล์ชื่อนี้อยู่แล้ว
+downloads.errorInvalidName	ไม่อนุญาตให้ใช้ชื่อนั้น
+downloads.errorMissing	ไม่พบไฟล์นั้นอีกต่อไป
+downloads.errorGeneric	ไม่สามารถดำเนินการนั้นให้เสร็จสิ้นได้
+unsupportedPreview.genericType	ไฟล์
+unsupportedPreview.cannotOpen	แอปนี้ไม่สามารถเปิดไฟล์ชนิดนี้ได้
+uploads.navigationTitle	การอัปโหลด
+uploads.menuTitle	อัปโหลด
+uploads.actionUploadFromFiles	อัปโหลดจากไฟล์
+uploads.actionUploadFromPhotos	อัปโหลดจากคลังภาพ
+uploads.actionTakePhoto	ถ่ายภาพหรือวิดีโอ
+uploads.cameraDeniedTitle	ต้องใช้สิทธิ์เข้าถึงกล้อง
+uploads.cameraDeniedMessage	อนุญาตการเข้าถึงกล้องในการตั้งค่าเพื่อถ่ายภาพหรือวิดีโอ
+uploads.destinationTitle	อัปโหลดไปที่…
+uploads.destinationConfirm	อัปโหลดที่นี่
+uploads.reviewTitleOne	อัปโหลด 1 ไฟล์
+uploads.reviewTitleMany	อัปโหลด %lld ไฟล์
+uploads.reviewSectionFiles	ไฟล์
+uploads.reviewSectionPath	พาธ
+uploads.reviewSectionSize	ขนาดรวม
+uploads.reviewChooseFolder	เลือกโฟลเดอร์
+uploads.reviewUploadButton	อัปโหลด
+uploads.reviewPreparing	กำลังเตรียม %lld…
+uploads.reviewAddMore	เพิ่มไฟล์อีก
+uploads.reviewPreviewFile	ดูตัวอย่าง %@
+uploads.reviewInsecureNetworkNotice	เชื่อมต่อผ่าน http หากเซิร์ฟเวอร์นี้อยู่ในเครือข่ายบ้านของคุณเท่านั้น การอัปโหลดจะใช้ไม่ได้เมื่อคุณอยู่นอกเครือข่าย
+uploads.stagingFailed	ไม่สามารถเพิ่มไฟล์เหล่านั้นได้ ลองอีกครั้ง
+uploads.stagingSkipped	ไม่สามารถเตรียม %lld รายการได้ และถูกข้ามไป
+uploads.discardTitle	ละทิ้งการอัปโหลดหรือไม่
+uploads.discardMessage	ไฟล์ที่คุณเพิ่มจะไม่ถูกอัปโหลด
+uploads.discardConfirm	ละทิ้ง
+uploads.statusWaiting	กำลังรอ
+uploads.statusFailed	อัปโหลดไม่สำเร็จ
+uploads.barTitleOne	กำลังอัปโหลด %@
+uploads.barTitleMany	กำลังอัปโหลด %lld ไฟล์
+uploads.barFailedOne	อัปโหลดไม่สำเร็จ 1 รายการ
+uploads.barFailedMany	อัปโหลดไม่สำเร็จ %lld รายการ
+uploads.retryAll	ลองทั้งหมดอีกครั้ง
+uploads.complete	อัปโหลดเสร็จสิ้น
+uploads.completeMany	อัปโหลดแล้ว %lld ไฟล์
+uploads.completeWithFailures	อัปโหลดแล้ว %1$lld ไม่สำเร็จ %2$lld
+uploads.failedGeneric	ไม่สามารถอัปโหลดไฟล์นี้ได้
+uploads.clear	ล้าง
+uploads.emptyList	ยังไม่มีการอัปโหลด
+uploads.cancelAll	ยกเลิกการอัปโหลดทั้งหมด
+shared.navigationTitle	ที่แชร์
+shared.segmentByMe	โดยฉัน
+shared.segmentWithMe	กับฉัน
+shared.sectionExpired	หมดอายุแล้ว
+shared.badgeExpired	หมดอายุแล้ว
+shared.emptyByMe	แชร์ไฟล์หรือโฟลเดอร์เพื่อดูลิงก์ที่นี่
+shared.emptyWithMe	ลิงก์ที่ผู้อื่นแชร์ให้คุณจะแสดงที่นี่
+shared.noSearchMatches	ไม่มีการแชร์ที่ตรงกับ “%@”
+shared.deleteTitle	ลบลิงก์แชร์หรือไม่
+shared.deleteMessage	ลิงก์จะหยุดทำงานทันที ตัวไฟล์หรือโฟลเดอร์จะไม่ได้รับผลกระทบ
+shared.sharedByUnknown	บางคน
+shared.metaAccess	การเข้าถึง
+shared.metaExpiration	วันหมดอายุ
+shared.metaSharedBy	แชร์โดย
+shared.metaSharedWith	แชร์กับ
+shared.anyoneWithLink	ทุกคนที่มีลิงก์
+shared.linkMode	โหมดลิงก์
+shared.actionShareLink	ลิงก์แชร์
+shared.actionFolderLink	ลิงก์โฟลเดอร์
+shared.actionFileLink	ลิงก์ไฟล์
+shared.copiedShareLink	คัดลอกลิงก์แชร์แล้ว
+shared.copiedFolderZip	คัดลอกลิงก์ ZIP ของโฟลเดอร์แล้ว
+shared.copiedDirectFile	คัดลอกลิงก์โดยตรงของไฟล์แล้ว
+createShare.title	สร้างลิงก์แชร์
+createShare.titleCreated	สร้างการแชร์แล้ว
+createShare.sectionLabel	ป้ายกำกับ
+createShare.sectionAccessMode	โหมดการเข้าถึง
+createShare.sectionWhoCanAccess	ใครเข้าถึงได้
+createShare.sectionShareLink	ลิงก์แชร์
+createShare.fieldPassword	รหัสผ่าน
+createShare.togglePasswordProtect	ป้องกันด้วยรหัสผ่าน
+createShare.toggleSetExpiration	ตั้งวันหมดอายุ
+createShare.fieldExpires	หมดอายุ
+createShare.submit	สร้างลิงก์แชร์
+createShare.loadingUsers	กำลังโหลดผู้ใช้…
+createShare.noOtherUsers	ไม่มีผู้ใช้อื่นให้แชร์ด้วย
+createShare.sharingPrefix	กำลังแชร์:
+createShare.createdBanner	สร้างลิงก์แชร์สำเร็จแล้ว
+createShare.viewInShared	ดูในที่แชร์
+createShare.directLinkMode	โหมดลิงก์โดยตรง
+createShare.directFolderLink	ลิงก์ ZIP โดยตรงของโฟลเดอร์
+createShare.directFileLink	ลิงก์โดยตรงของไฟล์
+createShare.summaryAccess	การเข้าถึง
+createShare.summarySharedWith	แชร์กับ
+createShare.summaryPassword	รหัสผ่าน
+createShare.summaryPasswordProtected	ป้องกันแล้ว
+createShare.summaryExpires	หมดอายุ
+createShare.summarySpecificPeople	บุคคลที่ระบุ
+createShare.errorPastExpiration	เลือกวันหมดอายุในอนาคต
+editShare.title	แก้ไขลิงก์แชร์
+editShare.save	บันทึกการเปลี่ยนแปลง
+editShare.passwordKeepHint	เว้นว่างไว้เพื่อใช้รหัสผ่านปัจจุบันต่อ
+editShare.savedToast	อัปเดตลิงก์แชร์แล้ว
+thumbnailSettings.navigationTitle	ภาพขนาดย่อ
+thumbnailSettings.subtitle	ควบคุมวิธีที่เซิร์ฟเวอร์สร้างภาพขนาดย่อสำหรับไคลเอนต์ทั้งหมด
+thumbnailSettings.enable	สร้างภาพขนาดย่อ
+thumbnailSettings.enableHelp	ปิดเพื่อแสดงภาพขนาดเต็มทุกที่แทน
+thumbnailSettings.quality	คุณภาพ
+thumbnailSettings.qualityHelp	ค่าสูงขึ้นดูดีกว่าแต่ใช้พื้นที่มากกว่า
+thumbnailSettings.maxDimension	ขนาดสูงสุด
+thumbnailSettings.maxDimensionHelp	ด้านที่ยาวที่สุดของภาพขนาดย่อที่สร้าง หน่วยเป็นพิกเซล
+thumbnailSettings.concurrency	การทำงานพร้อมกัน
+thumbnailSettings.concurrencyHelp	จำนวนภาพขนาดย่อที่เซิร์ฟเวอร์สร้างพร้อมกัน
+thumbnailSettings.unavailable	การตั้งค่าภาพขนาดย่อใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+thumbnailSettings.saveButton	บันทึกการเปลี่ยนแปลง
+uploadSettings.navigationTitle	การอัปโหลด
+uploadSettings.subtitle	กำหนดวิธีส่งไฟล์ไปยังเซิร์ฟเวอร์
+uploadSettings.chunkedEnable	เปิดใช้การอัปโหลดแบบแบ่งส่วน
+uploadSettings.chunkedEnableHelp	ใช้ TUS เพื่อส่งไฟล์ขนาดใหญ่ผ่านคำขอที่เล็กลงหลายคำขอ
+uploadSettings.chunkSize	ขนาดส่วน
+uploadSettings.chunkSizeHelp	ขนาดสูงสุดของแต่ละคำขออัปโหลด ควรตั้งให้ต่ำกว่าขีดจำกัดของรีเวิร์สพร็อกซีของคุณ ส่วนที่เล็กลงให้ความคืบหน้าที่ราบรื่นกว่า
+uploadSettings.autoFallback	สลับเป็นแบบแบ่งส่วนอัตโนมัติ
+uploadSettings.autoFallbackHelp	หากการอัปโหลดโดยตรงล้มเหลวเพราะรีเวิร์สพร็อกซีปฏิเสธขนาด ระบบจะสลับเป็นการอัปโหลดแบบแบ่งส่วนโดยอัตโนมัติ
+uploadSettings.unavailable	การตั้งค่าการอัปโหลดใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+uploadSettings.saveButton	บันทึกการเปลี่ยนแปลง
+ffmpegSettings.subtitle	เลือกไฟล์ที่เรียกใช้งานของ FFmpeg และ FFprobe ที่ใช้สำหรับตัวอย่างและข้อมูลเมทาของสื่อ
+ffmpegSettings.containerPathHelp	ป้อนพาธสัมบูรณ์ที่มองเห็นได้ภายในคอนเทนเนอร์ของแอป หากต้องการใช้ไฟล์ไบนารีของโฮสต์ ให้เมานต์เข้าไปในคอนเทนเนอร์ก่อน
+ffmpegSettings.ffmpegPath	พาธไฟล์ที่เรียกใช้งานของ FFmpeg
+ffmpegSettings.ffprobePath	พาธไฟล์ที่เรียกใช้งานของ FFprobe
+ffmpegSettings.invalid	พาธทั้งสองต้องเป็นพาธสัมบูรณ์ในคอนเทนเนอร์ที่ขึ้นต้นด้วย /
+ffmpegSettings.defaultHelp	เว้นพาธว่างไว้เพื่อใช้ FFMPEG_PATH หรือ FFPROBE_PATH จากสภาพแวดล้อม แล้วจึงใช้ไฟล์ที่มาพร้อมแอป การเปลี่ยนแปลงมีผลทันที
+ffmpegSettings.unavailable	การตั้งค่า FFmpeg ใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+ffmpegSettings.saveButton	บันทึกการเปลี่ยนแปลง
+searchIndexSettings.navigationTitle	ดัชนีการค้นหา
+searchIndexSettings.subtitle	ยกเว้นพาธจากการสร้างดัชนีเนื้อหา
+searchIndexSettings.running	รักษาดัชนีการค้นหา
+searchIndexSettings.runningHelp	อ่านเอกสารในวอลุ่มเบื้องหลัง เพื่อให้การค้นหาในเอกสารตอบกลับทันที
+searchIndexSettings.locked	กำหนดโดย %@ ในสภาพแวดล้อม จึงตัดสินที่นั่นไม่ใช่ที่นี่
+searchIndexSettings.environment	รายการยกเว้นที่สภาพแวดล้อมกำหนด
+searchIndexSettings.additional	รายการยกเว้นเพิ่มเติม
+searchIndexSettings.none	ไม่ได้กำหนดพาธ
+searchIndexSettings.addButton	เพิ่ม
+searchIndexSettings.unavailable	การตั้งค่าดัชนีการค้นหาใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+searchIndexSettings.saveButton	บันทึกการเปลี่ยนแปลง
+searchIndexSettings.discardButton	ละทิ้ง
+folderSizeSettings.navigationTitle	ขนาดโฟลเดอร์
+folderSizeSettings.subtitle	ยกเว้นพาธจากการคำนวณและการสร้างดัชนีขนาดโฟลเดอร์
+folderSizeSettings.running	วัดขนาดโฟลเดอร์
+folderSizeSettings.runningHelp	วัดโฟลเดอร์เบื้องหลัง เพื่อให้ขนาดแสดงในรายการ
+folderSizeSettings.modeOff	ปิด
+folderSizeSettings.modeShallow	เฉพาะไฟล์ของโฟลเดอร์นั้นเอง
+folderSizeSettings.modeFull	ทุกอย่างข้างใน
+folderSizeSettings.locked	กำหนดโดย %@ ในสภาพแวดล้อม จึงตัดสินที่นั่นไม่ใช่ที่นี่
+folderSizeSettings.environment	รายการยกเว้นที่สภาพแวดล้อมกำหนด
+folderSizeSettings.additional	รายการยกเว้นเพิ่มเติม
+folderSizeSettings.none	ไม่ได้กำหนดพาธ
+folderSizeSettings.addButton	เพิ่ม
+folderSizeSettings.unavailable	การตั้งค่าขนาดโฟลเดอร์ใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+folderSizeSettings.saveButton	บันทึกการเปลี่ยนแปลง
+folderSizeSettings.discardButton	ละทิ้ง
+activityLog.navigationTitle	บันทึกกิจกรรม
+activityLog.subtitle	ใครทำอะไร เมื่อใด และจากที่ไหน ปิดอยู่เว้นแต่คุณจะเปิด
+activityLog.enabled	บันทึกกิจกรรม
+activityLog.enabledHelp	การเข้าสู่ระบบ ดาวน์โหลด อัปโหลด ลบ กู้คืน ลิงก์แชร์ และการเปลี่ยนแปลงบัญชีจะถูกบันทึกขณะที่เปิดอยู่ สิ่งที่เกิดขึ้นก่อนเปิดจะไม่อยู่ที่นี่
+activityLog.retention	เก็บไว้เป็นเวลา (วัน)
+activityLog.retentionInvalid	ระหว่าง 1 ถึง 3650 วัน
+activityLog.saveButton	บันทึกการเปลี่ยนแปลง
+activityLog.off	บันทึกปิดอยู่ จึงไม่มีการบันทึกอะไร
+activityLog.none	ยังไม่มีการบันทึก
+activityLog.filterAction	ชนิด
+activityLog.anyAction	ชนิดใดก็ได้
+activityLog.filterOutcome	ผลลัพธ์
+activityLog.anyOutcome	ผลลัพธ์ใดก็ได้
+activityLog.outcomeOk	สำเร็จ
+activityLog.outcomeRefused	ถูกปฏิเสธ
+activityLog.searchPlaceholder	ชื่อหรือพาธ
+activityLog.searchButton	ค้นหา
+activityLog.refresh	รีเฟรช
+activityLog.clear	ล้างบันทึก
+activityLog.clearTitle	ล้างบันทึกหรือไม่
+activityLog.clearMessage	ทุกบรรทัดที่บันทึกไว้จะถูกลบ ไม่สามารถเลิกทำได้
+activityLog.clearConfirm	ล้างบันทึก
+activityLog.more	แสดงเพิ่มเติม
+activityLog.refusedSuffix	ถูกปฏิเสธ
+activityLog.fromAddress	จาก %@
+activityLog.unavailable	บันทึกกิจกรรมใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+activityLog.action.signIn	เข้าสู่ระบบแล้ว
+activityLog.action.signOut	ออกจากระบบแล้ว
+activityLog.action.accountPassword	เปลี่ยนรหัสผ่านแล้ว
+activityLog.action.accountTwoFactor	เปลี่ยนปัจจัยที่สองแล้ว
+activityLog.action.accountPasskey	เปลี่ยนพาสคีย์แล้ว
+activityLog.action.accountToken	เปลี่ยนโทเคน API แล้ว
+activityLog.action.adminUser	เปลี่ยนบัญชีแล้ว
+activityLog.action.adminSettings	เปลี่ยนการตั้งค่าแล้ว
+activityLog.action.adminActivityClear	ล้างบันทึกแล้ว
+activityLog.action.shareCreate	สร้างการแชร์แล้ว
+activityLog.action.shareDelete	ลบการแชร์แล้ว
+activityLog.action.shareDownload	ดาวน์โหลดผ่านลิงก์
+activityLog.action.shareUpload	อัปโหลดผ่านลิงก์
+activityLog.action.fileDownload	ดาวน์โหลดแล้ว
+activityLog.action.fileUpload	อัปโหลดแล้ว
+activityLog.action.fileDelete	ส่งไปที่ถังขยะแล้ว
+activityLog.action.fileRestore	กู้คืนแล้ว
+activityLog.action.filePurge	นำออกถาวรแล้ว
+activityLog.action.versionsPurge	ลบเวอร์ชันแล้ว
+trashSettings.navigationTitle	ถังขยะและเวอร์ชัน
+trashSettings.subtitle	รายการที่ลบและไฟล์เวอร์ชันก่อนหน้าจะเก็บไว้ในพื้นที่สำรองบนวอลุ่มของตัวเอง และจะถูกนำออกหลังพ้นระยะเวลาเก็บรักษาหรือเมื่อต้องการพื้นที่
+trashSettings.trashHeader	ถังขยะ
+trashSettings.enabled	ส่งรายการที่ลบไปที่ถังขยะ
+trashSettings.enabledHelp	เมื่อปิด การลบจะนำรายการออกถาวร รายการที่อยู่ในถังขยะแล้วยังคงหมดอายุตามปกติ
+trashSettings.retention	ระยะเวลาเก็บรักษา (วัน)
+trashSettings.retentionHelp	ตั้งแต่ 1 ถึง 3650 วัน
+trashSettings.maxPercent	สัดส่วนของแต่ละวอลุ่ม (%)
+trashSettings.maxPercentHelp	ปริมาณสูงสุดที่ถังขยะใช้ได้บนวอลุ่ม ตั้งแต่ 1 ถึง 90%
+trashSettings.maxSize	ขีดจำกัดขนาดต่อวอลุ่ม (GiB)
+trashSettings.maxSizeHelp	ไม่บังคับ ใช้ค่าที่น้อยกว่าระหว่างสัดส่วนและขีดจำกัด
+trashSettings.maxSizeNone	ไม่จำกัด
+trashSettings.trashInvalid	ตรวจสอบค่า: ระยะเวลาเก็บรักษา 1 ถึง 3650 วัน สัดส่วน 1 ถึง 90% ขนาดเป็นบวกหรือไม่ระบุ
+trashSettings.versionsHeader	เวอร์ชันไฟล์
+trashSettings.versionsSubtitle	ทุกครั้งที่บันทึกจะเก็บสิ่งที่ถูกแทนที่ไว้โดยไม่คัดลอก ในพื้นที่สำรองเดียวกับถังขยะ เวอร์ชันเก่าจะถูกลดทอนลงเมื่อเวลาผ่านไป
+trashSettings.versionsEnabled	เก็บเวอร์ชันก่อนหน้าของไฟล์
+trashSettings.versionsEnabledHelp	แยกจากถังขยะ เมื่อปิด การบันทึกจะไม่เก็บสิ่งใหม่ เวอร์ชันที่มีอยู่จะคงอยู่จนกว่าจะหมดอายุหรือถูกลบ
+trashSettings.keepAllHours	เก็บทุกเวอร์ชัน (ชั่วโมง)
+trashSettings.hourlyDays	จากนั้นหนึ่งเวอร์ชันต่อชั่วโมง (วัน)
+trashSettings.dailyDays	จากนั้นหนึ่งเวอร์ชันต่อวัน (วัน)
+trashSettings.maxPerFile	จำนวนเวอร์ชันสูงสุดต่อไฟล์
+trashSettings.checkpointMinutes	จุดตรวจสอบของ Office (นาที)
+trashSettings.tiersHelp	หลังจากขั้นเหล่านี้ จะเก็บหนึ่งเวอร์ชันต่อสัปดาห์ เซสชันแก้ไขของ Office จะทิ้งหนึ่งเวอร์ชัน บวกจุดตรวจสอบอย่างถี่ที่สุดเท่านี้ เวอร์ชันที่ปักหมุดไว้จะไม่ถูกลดทอนและไม่นับรวมในขีดจำกัดต่อไฟล์
+trashSettings.versionsInvalid	ตรวจสอบค่า: 1 ถึง 720 ชั่วโมง 1 ถึง 365 วันต่อชั่วโมง 1 ถึง 3650 วันต่อวัน 1 ถึง 1000 เวอร์ชันต่อไฟล์ จุดตรวจสอบ 1 ถึง 1440 นาที
+trashSettings.sharedSpace	เวอร์ชันและถังขยะใช้พื้นที่สำรองของแต่ละวอลุ่มร่วมกัน เมื่อพื้นที่ใกล้หมด เวอร์ชันเก่าจะถูกนำออกก่อน ตามด้วยรายการในถังขยะ จากนั้นเวอร์ชันล่าสุดของแต่ละไฟล์ และเวอร์ชันที่ปักหมุดเป็นอันดับสุดท้าย
+trashSettings.saveButton	บันทึกการเปลี่ยนแปลง
+trashSettings.discardButton	ละทิ้ง
+trashSettings.unavailable	การตั้งค่าถังขยะและเวอร์ชันใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+trashSettings.zonesHeader	ถังขยะแยกตามวอลุ่ม
+trashSettings.zonesSubtitle	แต่ละวอลุ่มเก็บถังขยะของตัวเองไว้ในโฟลเดอร์ซ่อน .nextexplorer ที่รากของวอลุ่ม ดังนั้นการลบจึงไม่คัดลอกอะไรเลย
+trashSettings.zonesEmpty	ยังไม่มีสิ่งใดถูกลบลงถังขยะ
+trashSettings.zoneKindPersonal	โฟลเดอร์ส่วนตัวของ %@
+trashSettings.zoneKindUserVolume	วอลุ่มที่กำหนดให้ %@
+trashSettings.available	พร้อมใช้งาน
+trashSettings.unavailableMissing	ไม่ได้เมานต์หรือถูกนำออก
+trashSettings.unavailableReplaced	มีดิสก์อื่นอยู่แทน
+trashSettings.unavailableUnreadable	อ่านไม่ได้
+trashSettings.usage	%1$@ จาก %2$@
+trashSettings.noBudget	ไม่จำกัด
+trashSettings.zoneItems	รายการ: %1$lld · %2$@
+trashSettings.zoneVersions	เวอร์ชัน: %1$lld · %2$@
+trashSettings.lastPass	การบำรุงรักษาล่าสุด: %@
+trashSettings.lastPassPurged	%1$@ · นำออก: %2$lld
+trashSettings.never	ยังไม่เคย
+trashSettings.verify	ตรวจสอบ
+trashSettings.runMaintenance	เรียกใช้การบำรุงรักษาตอนนี้
+trashSettings.verifyOk	ถังขยะของทุกวอลุ่มสอดคล้องกัน
+trashSettings.verifyIssues	พบปัญหา: %lld
+trashSettings.zoneProblems	ปัญหา: %lld
+trashSettings.journalHeader	บันทึกเหตุการณ์
+trashSettings.eventEvicted	"%@" ถูกนำออกก่อนหมดระยะเวลาเก็บรักษาเพื่อเพิ่มพื้นที่ว่าง
+trashSettings.eventAdopted	กู้คืน "%@" แล้วหลังจากการหยุดชะงัก
+trashSettings.eventLost	"%@" ขาดเนื้อหา
+trashSettings.eventFailed	ไม่สามารถนำ "%@" ออกได้
+trashSettings.eventBreaker	มีรายการหายไปพร้อมกันมากเกินไป: ไม่มีการเปลี่ยนแปลงใดๆ
+trashSettings.eventForgotten	ผู้ดูแลระบบลืม "%@"
+trashSettings.eventVersionEvicted	นำเวอร์ชันหนึ่งของ "%@" ออกเพื่อเพิ่มพื้นที่ว่าง
+trashSettings.eventVersionFailed	ไม่สามารถนำเวอร์ชันหนึ่งออกได้
+trashSettings.eventVersionLost	เวอร์ชันหนึ่งขาดเนื้อหา
+trashSettings.eventVersionTooLarge	"%@" ใหญ่กว่าพื้นที่ทั้งหมด: สิ่งที่ถูกแทนที่ไม่ได้ถูกเก็บไว้
+trashSettings.eventVersionsBreaker	มีเวอร์ชันหายไปพร้อมกันมากเกินไป: ไม่มีการเปลี่ยนแปลงใดๆ
+versionedFiles.navigationTitle	เวอร์ชันไฟล์
+versionedFiles.subtitle	ทุกไฟล์ที่มีประวัติ ไม่ว่าจะอยู่ที่ใด แสดงพาธจากทุกพื้นที่ รวมถึงโฟลเดอร์ส่วนตัว จึงใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+versionedFiles.summary	ไฟล์: %1$lld · เวอร์ชัน: %2$lld · %3$@
+versionedFiles.searchPlaceholder	ชื่อหรือพาธ
+versionedFiles.zone	วอลุ่ม
+versionedFiles.anyZone	วอลุ่มใดก็ได้
+versionedFiles.stateHeader	สถานะ
+versionedFiles.anyState	สถานะใดก็ได้
+versionedFiles.stateLive	ไฟล์ยังอยู่
+versionedFiles.stateTrashed	อยู่ในถังขยะ
+versionedFiles.stateOrphaned	ไฟล์หายไป
+versionedFiles.sortHeader	เรียงตาม
+versionedFiles.sortBytes	พื้นที่ที่ใช้
+versionedFiles.sortVersions	จำนวนเวอร์ชัน
+versionedFiles.sortNewest	ล่าสุด
+versionedFiles.sortPath	พาธ
+versionedFiles.none	ไม่มีไฟล์ใดที่มีเวอร์ชันก่อนหน้า
+versionedFiles.unavailable	เวอร์ชันไฟล์ใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+versionedFiles.zoneUnknown	วอลุ่มที่ไม่รู้จัก
+versionedFiles.zoneKindPersonal	โฟลเดอร์ส่วนตัวของ %@
+versionedFiles.zoneKindUserVolume	วอลุ่มที่กำหนดให้ %@
+versionedFiles.rowSummary	เวอร์ชัน: %1$lld · %2$@
+versionedFiles.newest	ล่าสุด: %@
+versionedFiles.versionPinned	ปักหมุดแล้ว
+versionedFiles.versionUnavailable	ไม่พร้อมใช้งาน
+versionedFiles.versionBy	โดย %@
+versionedFiles.detailFailed	ไม่สามารถอ่านประวัตินี้ได้
+versionedFiles.deleteSelectedNone	ทำเครื่องหมายเวอร์ชันที่จะลบ
+versionedFiles.deleteSelected	ลบที่เลือก (%lld)
+versionedFiles.deleteAll	ลบทุกเวอร์ชัน
+versionedFiles.confirmAllTitle	ลบทุกเวอร์ชันของ "%@" หรือไม่
+versionedFiles.confirmSomeTitle	ลบเวอร์ชันที่เลือก (%lld) หรือไม่
+versionedFiles.confirmMessage	ไม่สามารถกู้คืนเวอร์ชันที่ลบแล้วได้
+versionedFiles.confirmDelete	ลบ
+versionedFiles.previous	ก่อนหน้า
+versionedFiles.next	ถัดไป
+versionedFiles.pageRange	%1$lld ถึง %2$lld จาก %3$lld
+accessRules.navigationTitle	กฎการเข้าถึงโฟลเดอร์
+accessRules.subtitle	แทนที่สิทธิ์การอ่านและเขียนสำหรับพาธที่ระบุ
+accessRules.addRule	เพิ่มกฎ
+accessRules.empty	ยังไม่ได้กำหนดกฎการเข้าถึง
+accessRules.emptyHint	เพิ่มกฎเพื่อแทนที่การเข้าถึงสำหรับพาธ
+accessRules.pathLabel	พาธ
+accessRules.recursive	ใช้กับโฟลเดอร์ย่อย
+accessRules.permissionReadWrite	อ่านและเขียน
+accessRules.permissionReadOnly	อ่านอย่างเดียว
+accessRules.permissionHidden	ซ่อน
+accessRules.remove	นำออก
+accessRules.unavailable	กฎการเข้าถึงใช้ได้สำหรับผู้ดูแลระบบเท่านั้น
+accessRules.saveButton	บันทึกการเปลี่ยนแปลง
+settings.rowThumbnails	ภาพขนาดย่อ
+settings.rowAccessRules	กฎการเข้าถึงโฟลเดอร์
+settings.navigationTitle	การตั้งค่า
+settings.sectionGeneral	ทั่วไป
+settings.sectionDisplay	การแสดงผล
+settings.sectionStorage	พื้นที่จัดเก็บ
+settings.sectionServerStorage	พื้นที่จัดเก็บของเซิร์ฟเวอร์
+settings.serverStorageUsed	%1$@ จาก %2$@
+settings.sectionLicenses	ใบอนุญาต
+settings.sectionLegal	ข้อมูลทางกฎหมาย
+settings.sectionUsers	ผู้ใช้
+settings.sectionAdmin	การดูแลระบบ
+settings.sectionInfo	ข้อมูล
+settings.toggleShowHiddenFiles	แสดงไฟล์ที่ซ่อน
+settings.toggleRenderHTML	แสดงผลหน้า HTML
+settings.toggleRenderMarkdown	แสดงผลไฟล์ Markdown
+settings.toggleHaptics	การตอบสนองแบบสัมผัส
+settings.toggleShowThumbnails	แสดงภาพขนาดย่อ
+settings.toggleShowExtensions	แสดงนามสกุลไฟล์
+settings.toggleShowTabLabels	แสดงป้ายกำกับแท็บ
+settings.toggleKeepClipboard	เก็บรายการไว้หลังวาง
+settings.toggleKeepClipboardSubtitle	รายการที่คัดลอกจะพร้อมวางในโฟลเดอร์อื่น ส่วนรายการที่ย้ายจะถูกล้างทุกครั้ง
+settings.rowDateFormat	รูปแบบวันที่
+settings.rowLanguage	ภาษา
+settings.rowThumbnailSize	ขนาดภาพขนาดย่อ
+settings.rowRemoveAllDownloads	นำการดาวน์โหลดทั้งหมดออก
+settings.rowClearCache	ล้างแคช
+settings.rowOpenSourceLicenses	ใบอนุญาตโอเพนซอร์ส
+settings.rowPrivacyPolicy	นโยบายความเป็นส่วนตัว
+settings.rowTermsOfUse	ข้อกำหนดการใช้งาน
+settings.rowUserManagement	การจัดการผู้ใช้
+settings.rowChangePassword	เปลี่ยนรหัสผ่าน
+settings.rowAddPassword	เพิ่มรหัสผ่าน
+settings.rowServer	เซิร์ฟเวอร์
+settings.storageFootnote	โฟลเดอร์จะดาวน์โหลดเป็นไฟล์ zip โดยไม่ทิ้งสิ่งใดไว้บนเซิร์ฟเวอร์ การนำการดาวน์โหลดออกหรือล้างแคชมีผลเฉพาะอุปกรณ์เครื่องนี้ ไม่มีสิ่งใดบนเซิร์ฟเวอร์ถูกแตะต้อง
+settings.storageFootnoteMac	การล้างแคชมีผลเฉพาะ Mac เครื่องนี้ ไม่มีสิ่งใดบนเซิร์ฟเวอร์ถูกแตะต้อง
+settings.removeAllDownloadsTitle	นำการดาวน์โหลดทั้งหมดออกหรือไม่
+settings.removeAllDownloadsConfirm	นำออกทั้งหมด
+settings.removeAllDownloadsMessage	การดำเนินการนี้จะลบไฟล์ที่ดาวน์โหลดทุกไฟล์ออกจากอุปกรณ์เครื่องนี้ ไฟล์ยังอยู่บนเซิร์ฟเวอร์
+settings.clearCacheTitle	ล้างแคชหรือไม่
+settings.clearCacheConfirm	ล้าง
+settings.clearCacheMessage	การดำเนินการนี้จะล้างตัวอย่าง ภาพขนาดย่อ และรายการโฟลเดอร์ที่บันทึกไว้ซึ่งใช้ในโหมดออฟไลน์ ไม่มีสิ่งใดบนเซิร์ฟเวอร์ได้รับผลกระทบ
+settings.signOutAlertTitle	ออกจากระบบหรือไม่
+settings.signOutMessage	คุณจะต้องเข้าสู่ระบบอีกครั้งเพื่อเข้าถึงไฟล์ของคุณ ตัวอย่าง ภาพขนาดย่อ และรายการโฟลเดอร์ที่บันทึกไว้ในอุปกรณ์เครื่องนี้จะถูกล้าง
+settings.signOutButton	ออกจากระบบ
+settings.signingOut	กำลังออกจากระบบ…
+settings.sectionAccounts	บัญชี
+settings.addAccount	เพิ่มบัญชี
+settings.accountSignOut	ออกจากระบบ
+settings.accountSignOutTitle	ออกจากระบบหรือไม่
+settings.accountSignOutMessage	ออกจากระบบ %@ บนอุปกรณ์เครื่องนี้หรือไม่ คุณจะต้องเข้าสู่ระบบอีกครั้งเพื่อใช้บัญชีนี้
+settings.accountActiveLabel	%1$@, %2$@, บัญชีที่ใช้งานอยู่
+settings.badgeActive	ใช้งานอยู่
+settings.dateFormatNavigationTitle	รูปแบบวันที่
+settings.dateFormatShowTime	แสดงเวลา
+language.navigationTitle	ภาษา
+language.systemDefault	ค่าเริ่มต้นของระบบ
+language.systemDefaultSubtitle	ใช้ภาษาของอุปกรณ์
+serverDetails.navigationTitle	เซิร์ฟเวอร์
+serverDetails.changeLogo	เปลี่ยนไอคอน
+serverDetails.takePhoto	ถ่ายภาพ
+serverDetails.chooseFromGallery	อัปโหลดจากคลังภาพ
+serverDetails.nameLabel	ชื่อเซิร์ฟเวอร์
+serverDetails.nameErrorEmpty	ชื่อเซิร์ฟเวอร์ต้องไม่ว่างเปล่า
+serverDetails.urlLabel	URL ของเซิร์ฟเวอร์
+serverDetails.urlFootnote	ที่อยู่ที่ติดตั้ง NextExplorer ของคุณ หากต้องการเปลี่ยน ให้ออกจากระบบแล้วเพิ่มเซิร์ฟเวอร์ใหม่อีกครั้ง
+serverDetails.updateButton	อัปเดตเซิร์ฟเวอร์
+serverDetails.savedMessage	อัปเดตรายละเอียดเซิร์ฟเวอร์แล้ว
+serverDetails.logoErrorTooLarge	รูปภาพนั้นใหญ่เกินไป เลือกรูปที่เล็กกว่า 2 MB
+serverDetails.cameraDeniedTitle	การเข้าถึงกล้องปิดอยู่
+serverDetails.cameraDeniedMessage	เปิดการเข้าถึงกล้องในการตั้งค่าเพื่อถ่ายภาพ
+licenses.navigationTitle	ใบอนุญาตโอเพนซอร์ส
+licenses.sectionSoftware	ซอฟต์แวร์
+licenses.sectionFontSoftware	ซอฟต์แวร์ฟอนต์
+licenses.labelAuthor	ผู้เขียน
+licenses.labelOriginalVersion	เวอร์ชันต้นฉบับ
+licenses.labelModifiedVersion	เวอร์ชันที่แก้ไข
+licenses.labelReservedFontName	ชื่อฟอนต์ที่สงวนไว้
+fileInfo.navigationTitleFolder	โฟลเดอร์
+fileInfo.rowKind	ชนิด
+fileInfo.rowSize	ขนาด
+fileInfo.rowLocation	ตำแหน่งที่ตั้ง
+fileInfo.rowDateModified	วันที่แก้ไข
+fileInfo.rowDateCreated	วันที่สร้าง
+fileInfo.rowFiles	ไฟล์
+fileInfo.rowFolders	โฟลเดอร์
+fileInfo.rowTotalSize	ขนาดรวม
+fileInfo.sectionServerDisk	ดิสก์ของเซิร์ฟเวอร์
+fileInfo.diskFreeOf	ว่าง %1$@ จาก %2$@
+fileInfo.rowDimensions	ขนาดภาพ
+fileInfo.rowCamera	กล้อง
+fileInfo.rowLens	เลนส์
+fileInfo.rowDateTaken	วันที่ถ่าย
+fileInfo.rowDuration	ระยะเวลา
+fileInfo.partialScan	นับจากการสแกนบางส่วน: โฟลเดอร์นี้ใหญ่มาก
+permissions.title	สิทธิ์
+permissions.sectionMode	โหมด
+permissions.numericLabel	ตัวเลข
+permissions.applyToEnclosed	ใช้กับรายการที่อยู่ข้างใน
+permissions.applyPermissions	ใช้สิทธิ์
+permissions.sectionOwnership	ความเป็นเจ้าของ
+permissions.fieldOwner	เจ้าของ
+permissions.fieldGroup	กลุ่ม
+permissions.ownershipNote	การเปลี่ยนความเป็นเจ้าของมักต้องใช้สิทธิ์ root หรือผู้ดูแลระบบบนเซิร์ฟเวอร์
+permissions.applyOwnership	ใช้ความเป็นเจ้าของ
+permissions.scopeOwner	เจ้าของ
+permissions.scopeGroup	กลุ่ม
+permissions.scopeOthers	อื่นๆ
+permissions.rightRead	อ่าน
+permissions.rightWrite	เขียน
+permissions.rightExecute	เรียกใช้
+archive.emptyFolder	โฟลเดอร์นี้ว่างเปล่า
+archive.openFailed	ไม่สามารถเปิดไฟล์นี้ได้
+archive.openArchiveFailed	ไม่สามารถเปิดไฟล์เก็บถาวรนี้ได้
+archive.entryTooLarge	รายการนี้ใหญ่เกินไปที่จะเปิด
+gallery.loadFailed	ไม่สามารถโหลดรูปภาพนี้ได้
+textPreview.saved	บันทึกแล้ว
+textPreview.loadFailed	ไม่สามารถโหลดไฟล์นี้ได้ ตรวจสอบการเชื่อมต่อแล้วลองอีกครั้ง
+textPreview.unsavedTitle	บันทึกการเปลี่ยนแปลงใน “%@” หรือไม่
+textPreview.unsavedMessage	การเปลี่ยนแปลงของคุณจะสูญหายหากไม่บันทึก
+textPreview.dontSave	ไม่บันทึก
+userManagement.navigationTitle	การจัดการผู้ใช้
+userManagement.searchPrompt	ค้นหาผู้ใช้
+userManagement.createUser	สร้างผู้ใช้
+userManagement.badgeAdmin	ผู้ดูแลระบบ
+userManagement.emptyList	ยังไม่มีผู้ใช้
+userManagement.noSearchMatches	ไม่มีผู้ใช้ที่ตรงกับ “%@”
+userManagement.loadFailed	ไม่สามารถติดต่อเซิร์ฟเวอร์ได้
+userManagement.sortType	ประเภท
+userManagement.sortName	ชื่อ
+userManagement.sortEmail	อีเมล
+userManagement.tabProfile	โปรไฟล์
+userManagement.tabSecurity	ความปลอดภัย
+userManagement.tabVolumes	วอลุ่ม
+userManagement.createNavigationTitle	สร้างผู้ใช้
+userManagement.createEmailField	อีเมล
+userManagement.createUsernameField	ชื่อผู้ใช้ (ไม่บังคับ)
+userManagement.createUsernamePlaceholder	สร้างจากอีเมล
+userManagement.createPasswordField	รหัสผ่าน
+userManagement.createPasswordPlaceholder	อย่างน้อย %lld อักขระ
+userManagement.createGrantAdminToggle	ให้สิทธิ์ผู้ดูแลระบบ
+userManagement.createGrantAdminSubtitle	ควบคุมไฟล์ การแชร์ และผู้ใช้ได้อย่างเต็มที่
+userManagement.createSubmit	สร้างผู้ใช้
+userManagement.setPasswordNavigationTitle	รหัสผ่าน
+userManagement.setPasswordNewField	รหัสผ่านใหม่
+userManagement.setPasswordPlaceholder	อย่างน้อย %lld อักขระ
+userManagement.setPasswordResetTitle	รีเซ็ตรหัสผ่าน
+userManagement.setPasswordSetTitle	ตั้งรหัสผ่าน
+userManagement.setPasswordResetIntro	ตั้งรหัสผ่านภายในใหม่สำหรับ %@ รหัสผ่านปัจจุบันจะหยุดทำงาน
+userManagement.setPasswordSetIntro	ให้รหัสผ่านภายในแก่ %@ เพื่อให้เข้าสู่ระบบได้โดยไม่ต้องใช้ SSO
+userManagement.toastProfileUpdated	อัปเดตโปรไฟล์แล้ว
+userManagement.toastAdminGranted	ให้สิทธิ์ผู้ดูแลระบบแล้ว
+userManagement.toastUserRemoved	นำผู้ใช้ออกแล้ว
+userManagement.toastUserCreated	สร้างผู้ใช้แล้ว
+userManagement.toastPasswordUpdated	อัปเดตรหัสผ่านแล้ว
+userManagement.toastVolumeSaved	บันทึกวอลุ่มแล้ว
+userManagement.toastVolumeRemoved	นำวอลุ่มออกแล้ว
+userManagement.errorEmailRequired	ต้องระบุอีเมล
+userManagement.errorEmailInvalid	ป้อนที่อยู่อีเมลที่ถูกต้อง
+userManagement.errorUsernameRequired	ต้องระบุชื่อผู้ใช้
+userManagement.errorEmailInUse	อีเมลนี้ถูกใช้แล้ว
+userManagement.errorPasswordTooShort	ใช้อย่างน้อย %lld อักขระ
+userDetail.fallbackName	ผู้ใช้
+userDetail.sectionGeneralInfo	ข้อมูลทั่วไป
+userDetail.sectionRoles	บทบาทและสิทธิ์
+userDetail.sectionLocalPassword	รหัสผ่านภายใน
+userDetail.sectionSSO	การลงชื่อเข้าใช้ครั้งเดียว
+userDetail.sectionAssignedVolumes	วอลุ่มที่กำหนดให้
+userDetail.profileDisplayNameField	ชื่อที่แสดง
+userDetail.profileDisplayNamePlaceholder	ชื่อที่แสดง
+userDetail.profileUsernameField	ชื่อผู้ใช้
+userDetail.profileUsernamePlaceholder	ชื่อผู้ใช้
+userDetail.profileEmailField	อีเมล
+userDetail.profileSave	บันทึกการเปลี่ยนแปลง
+userDetail.roleAdmin	ผู้ดูแลระบบ
+userDetail.roleAdminSubtitle	ควบคุมไฟล์ การแชร์ และผู้ใช้ได้อย่างเต็มที่
+userDetail.roleAdminLocked	ไม่สามารถลดสิทธิ์ผู้ดูแลระบบจากในแอปได้
+userDetail.roleGrantAdmin	ให้สิทธิ์ผู้ดูแลระบบ
+userDetail.passwordHasLocal	ผู้ใช้นี้เข้าสู่ระบบด้วยอีเมลและรหัสผ่าน
+userDetail.passwordSSOOnly	ผู้ใช้นี้ไม่มีรหัสผ่านภายในและเข้าสู่ระบบด้วย SSO เท่านั้น
+userDetail.passwordReset	รีเซ็ตรหัสผ่าน
+userDetail.passwordSet	ตั้งรหัสผ่าน
+userDetail.ssoNone	ไม่มีผู้ให้บริการ SSO ที่เชื่อมโยง
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	เชื่อมโยงแล้ว
+userDetail.dangerZoneTitle	โซนอันตราย
+userDetail.dangerZoneSubtitle	การนำผู้ใช้ออกจะเพิกถอนสิทธิ์การเข้าถึงของผู้ใช้ทันที ไฟล์ที่ผู้ใช้เป็นเจ้าของบนเซิร์ฟเวอร์จะไม่ถูกลบ
+userDetail.dangerZoneRemoveUser	นำผู้ใช้ออก
+userDetail.volumesNone	ยังไม่ได้กำหนดวอลุ่ม
+userDetail.volumesNoneSubtitle	ผู้ใช้นี้เห็นเฉพาะพื้นที่ใช้ร่วมกันเริ่มต้น
+userDetail.volumesAssign	กำหนดวอลุ่ม
+userDetail.volumesFootnote	วอลุ่มให้ผู้ใช้เข้าถึงไดเรกทอรีนอกพื้นที่ใช้ร่วมกันเริ่มต้น การนำวอลุ่มออกจะไม่ลบไฟล์เลย
+userDetail.volumeEditAccessibility	แก้ไข %@
+userDetail.volumeRemoveAccessibility	นำ %@ ออก
+userDetail.removeVolumeTitle	นำวอลุ่มออกหรือไม่
+userDetail.removeVolumeMessage	%@ ไม่ได้ถูกกำหนดให้ผู้ใช้นี้อีกต่อไป ตัวไดเรกทอรีเองไม่ได้รับผลกระทบ
+userDetail.removeUserTitle	นำผู้ใช้ออกหรือไม่
+userDetail.removeUserMessage	%@ สูญเสียสิทธิ์การเข้าถึงทันที ไฟล์ของผู้ใช้บนเซิร์ฟเวอร์จะไม่ถูกลบ
+userDetail.grantAdminTitle	ให้สิทธิ์ผู้ดูแลระบบหรือไม่
+userDetail.grantAdminMessage	%@ จะเป็นผู้ดูแลระบบที่ควบคุมไฟล์ การแชร์ และผู้ใช้ได้อย่างเต็มที่ ไม่สามารถลดสิทธิ์ผู้ดูแลระบบจากในแอปได้
+userDetail.volumeSheetLabelField	ป้ายกำกับ
+userDetail.volumeSheetLabelPlaceholder	ป้ายกำกับวอลุ่ม
+userDetail.volumeSheetAccessMode	โหมดการเข้าถึง
+userDetail.volumeSheetDirectory	ไดเรกทอรี
+userDetail.volumeSheetSaveEdit	บันทึกวอลุ่ม
+userDetail.volumeSheetSaveNew	กำหนดวอลุ่ม
+userDetail.volumeSheetTitleEdit	แก้ไขวอลุ่ม
+userDetail.volumeSheetTitleNew	กำหนดวอลุ่ม
+userDetail.directoryPickerGoUp	ขึ้นไปหนึ่งไดเรกทอรี
+userDetail.directoryPickerUseThis	ใช้ไดเรกทอรีนี้
+userDetail.directoryPickerOpen	เปิด %@
+userDetail.directoryPickerFailed	ไม่สามารถแสดงรายการไดเรกทอรีได้
+previewToolbar.close	ปิด
+previewToolbar.createShareLink	สร้างลิงก์แชร์
+previewToolbar.download	ดาวน์โหลด
+previewToolbar.delete	ลบ
+previewToolbar.share	แชร์
+previewToolbar.rename	เปลี่ยนชื่อ
+login.serverQuestion	อินสแตนซ์ NextExplorer ของคุณอยู่ที่ไหน
+login.serverInfoAccessibility	เกี่ยวกับการเชื่อมต่อกับเซิร์ฟเวอร์
+login.serverInfoTitle	เซิร์ฟเวอร์คืออะไร
+login.serverInfoBody	NextExplorer เชื่อมต่อกับเซิร์ฟเวอร์ NextExplorer ของคุณเอง ผู้ดูแลระบบเป็นผู้เรียกใช้เซิร์ฟเวอร์ สร้างบัญชี และแชร์ที่อยู่เว็บของเซิร์ฟเวอร์ให้คุณ ป้อนที่อยู่นั้นเพื่อเข้าสู่ระบบ\n\nยังไม่มีเซิร์ฟเวอร์ใช่ไหม คู่มือการตั้งค่าจะแสดงวิธีโฮสต์เซิร์ฟเวอร์
+login.serverInfoGuide	เปิดคู่มือการตั้งค่า
+login.testConnection	ทดสอบการเชื่อมต่อ
+login.identifierField	อีเมลหรือชื่อผู้ใช้
+login.passwordField	รหัสผ่าน
+login.showPassword	แสดงรหัสผ่าน
+login.hidePassword	ซ่อนรหัสผ่าน
+login.submit	เข้าสู่ระบบ
+login.plaintextWarning	การเชื่อมต่อนี้ไม่ได้เข้ารหัส รหัสผ่านและเซสชันของคุณจะถูกส่งเป็นข้อความธรรมดาผ่านเครือข่ายภายใน
+error.sessionExpired	เซสชันของคุณหมดอายุ เข้าสู่ระบบอีกครั้ง
+error.rateLimited	คำขอมากเกินไป ลองอีกครั้งในอีกสักครู่
+error.network	ไม่สามารถติดต่อเซิร์ฟเวอร์ได้
+error.offline	คุณออฟไลน์อยู่ เชื่อมต่ออินเทอร์เน็ตแล้วลองอีกครั้ง
+error.decoding	เซิร์ฟเวอร์ตอบกลับโดยไม่คาดคิด
+error.server	ข้อผิดพลาดของเซิร์ฟเวอร์ (%lld)
+error.forbidden	คุณไม่มีสิทธิ์ดำเนินการนั้น
+error.clientCertificateRequired	เซิร์ฟเวอร์นี้ต้องใช้ใบรับรองไคลเอนต์ เพิ่มหนึ่งใบในการตั้งค่า
+error.clientCertificateRejected	เซิร์ฟเวอร์ปฏิเสธใบรับรองไคลเอนต์ของคุณ
+changePassword.navigationTitle	เปลี่ยนรหัสผ่าน
+changePassword.intro	เปลี่ยนรหัสผ่านที่คุณใช้เข้าสู่ระบบด้วยที่อยู่อีเมล คุณจะยังคงเข้าสู่ระบบอยู่บนอุปกรณ์เครื่องนี้
+changePassword.fieldCurrentPassword	รหัสผ่านปัจจุบัน
+changePassword.fieldNewPasswordLabel	รหัสผ่านใหม่
+changePassword.fieldConfirmPasswordLabel	ยืนยันรหัสผ่านใหม่
+changePassword.fieldConfirmPassword	ป้อนรหัสผ่านใหม่อีกครั้ง
+changePassword.fieldNewPasswordPrompt	อย่างน้อย %lld อักขระ
+changePassword.submitButton	อัปเดตรหัสผ่าน
+changePassword.success	อัปเดตรหัสผ่านของคุณแล้ว
+changePassword.addNavigationTitle	เพิ่มรหัสผ่าน
+changePassword.addIntro	บัญชีนี้เข้าสู่ระบบด้วยการลงชื่อเข้าใช้ครั้งเดียวและยังไม่มีรหัสผ่าน เพิ่มรหัสผ่านเพื่อให้เข้าสู่ระบบด้วยที่อยู่อีเมลหรือชื่อผู้ใช้ได้ด้วย
+changePassword.addSubmitButton	เพิ่มรหัสผ่าน
+changePassword.errorMinLength	ใช้อย่างน้อย %lld อักขระ
+changePassword.errorMismatch	รหัสผ่านไม่ตรงกัน
+twoFactor.navigationTitle	การยืนยันตัวตนสองขั้นตอน
+twoFactor.offTitle	การยืนยันตัวตนสองขั้นตอนปิดอยู่
+twoFactor.offIntro	เพิ่มขั้นตอนที่สองในการเข้าสู่ระบบ หลังจากรหัสผ่าน คุณจะป้อนรหัสจากแอปยืนยันตัวตน
+twoFactor.turnOnButton	เปิด
+twoFactor.enrollIntro	สแกนคิวอาร์โค้ดนี้ด้วยแอปยืนยันตัวตนของคุณ หรือพิมพ์คีย์ด้วยตนเอง จากนั้นป้อนรหัส 6 หลักที่แอปแสดง
+twoFactor.qrAccessibilityLabel	คิวอาร์โค้ดสำหรับแอปยืนยันตัวตนของคุณ
+twoFactor.keyLabel	คีย์การตั้งค่า
+twoFactor.copyKeyAccessibilityLabel	คัดลอกคีย์การตั้งค่า
+twoFactor.codeAccessibilityLabel	รหัสจากแอปยืนยันตัวตน
+twoFactor.confirmButton	ยืนยันและเปิด
+twoFactor.recoveryTitle	บันทึกรหัสกู้คืนของคุณ
+twoFactor.recoveryIntro	แต่ละรหัสใช้ได้ครั้งเดียวหากคุณทำแอปยืนยันตัวตนหาย รหัสจะไม่แสดงอีก ดังนั้นโปรดเก็บไว้ในที่ปลอดภัย
+twoFactor.copyCodesButton	คัดลอกรหัส
+twoFactor.shareCodesButton	แชร์รหัส
+twoFactor.recoveryDoneButton	ฉันบันทึกแล้ว
+twoFactor.onTitle	การยืนยันตัวตนสองขั้นตอนเปิดอยู่
+twoFactor.recoveryCodesLeft	รหัสกู้คืนที่เหลือ: %lld
+twoFactor.newCodesButton	รับรหัสกู้คืนใหม่
+twoFactor.turnOffButton	ปิด
+twoFactor.passwordNewCodesIntro	ป้อนรหัสผ่านของคุณเพื่อแทนที่รหัสกู้คืน รหัสเก่าจะหยุดทำงาน
+twoFactor.passwordTurnOffIntro	ป้อนรหัสผ่านของคุณเพื่อปิดการยืนยันตัวตนสองขั้นตอน
+twoFactor.passwordField	รหัสผ่าน
+twoFactor.passwordConfirmButton	ยืนยัน
+twoFactor.manageButton	จัดการ…
+apiTokens.navigationTitle	โทเคน API
+apiTokens.sectionHeader	นักพัฒนา
+apiTokens.intro	โทเคน API ช่วยให้สคริปต์และเครื่องมืออื่นใช้บัญชีของคุณได้โดยไม่ต้องใช้รหัสผ่าน โทเคนทำได้เฉพาะสิ่งที่สิทธิ์การเข้าถึงอนุญาต และคุณเพิกถอนได้ทุกเมื่อ
+apiTokens.emptyTitle	ไม่มีโทเคน API
+apiTokens.emptyMessage	สร้างหนึ่งโทเคนเพื่อให้สคริปต์ใช้บัญชีของคุณได้
+apiTokens.newButton	โทเคนใหม่
+apiTokens.limitReached	คุณถึงขีดจำกัด %lld โทเคนแล้ว เพิกถอนหนึ่งโทเคนเพื่อสร้างโทเคนอื่น
+apiTokens.scopeRead	อ่านอย่างเดียว
+apiTokens.scopeWrite	อ่านและเขียน
+apiTokens.created	สร้างเมื่อ %@
+apiTokens.lastUsed	ใช้ล่าสุด %@
+apiTokens.lastUsedFrom	ใช้ล่าสุด %1$@ จาก %2$@
+apiTokens.neverUsed	ยังไม่เคยใช้
+apiTokens.expires	หมดอายุ %@
+apiTokens.expired	หมดอายุเมื่อ %@
+apiTokens.neverExpires	ไม่หมดอายุ
+apiTokens.renameAction	เปลี่ยนชื่อ
+apiTokens.revokeAction	เพิกถอน
+apiTokens.menuAccessibilityLabel	การดำเนินการสำหรับ %@
+apiTokens.formTitle	โทเคน API ใหม่
+apiTokens.fieldName	ชื่อ
+apiTokens.namePlaceholder	เช่น สคริปต์สำรองข้อมูล
+apiTokens.fieldAccess	การเข้าถึง
+apiTokens.fieldExpiry	หมดอายุ
+apiTokens.expiry30	ใน 30 วัน
+apiTokens.expiry90	ใน 90 วัน
+apiTokens.expiryYear	ใน 1 ปี
+apiTokens.expiryNever	ไม่เคย
+apiTokens.fieldPassword	รหัสผ่านของคุณ
+apiTokens.passwordHint	ป้อนรหัสผ่านของคุณเพื่อสร้างโทเคน
+apiTokens.createSubmit	สร้างโทเคน
+apiTokens.issuedTitle	คัดลอกโทเคนของคุณ
+apiTokens.issuedIntro	นี่เป็นครั้งเดียวที่โทเคนจะแสดง เก็บไว้ในที่ปลอดภัย หากทำหาย ให้เพิกถอนแล้วสร้างใหม่
+apiTokens.copyToken	คัดลอกโทเคน
+apiTokens.copiedToken	คัดลอกแล้ว
+apiTokens.issuedDone	ฉันคัดลอกแล้ว
+apiTokens.renameTitle	เปลี่ยนชื่อโทเคน
+apiTokens.renameSave	บันทึก
+apiTokens.revokeTitle	เพิกถอนโทเคนหรือไม่
+apiTokens.revokeMessage	ทุกสิ่งที่ใช้ "%@" จะหยุดทำงานทันที ไม่สามารถเลิกทำได้
+apiTokens.revokeConfirm	เพิกถอน
+login.portHint	เพิ่มพอร์ต (เช่น :3000) เซิร์ฟเวอร์ homelab ส่วนใหญ่ไม่รับฟังที่พอร์ต 80 ปกติ
+login.errorInvalidServer	ป้อนที่อยู่เซิร์ฟเวอร์ที่ถูกต้อง
+login.errorInvalidCredentials	ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง
+login.errorSessionExpired	เซสชันของคุณหมดอายุ โปรดเข้าสู่ระบบอีกครั้ง
+login.errorIncomplete	การเข้าสู่ระบบไม่เสร็จสมบูรณ์ โปรดลองอีกครั้ง
+login.errorUnreachable	ไม่สามารถติดต่อเซิร์ฟเวอร์นั้นได้ ตรวจสอบที่อยู่แล้วลองอีกครั้ง
+login.errorUnexpectedResponse	การตอบกลับจากเซิร์ฟเวอร์ที่ไม่คาดคิด
+login.errorKeychain	ไม่สามารถบันทึกเซสชันของคุณบนอุปกรณ์เครื่องนี้ได้
+login.errorDecoding	เซิร์ฟเวอร์ตอบกลับโดยไม่คาดคิด ตรวจสอบที่อยู่แล้วลองอีกครั้ง
+login.errorNoLocalAuth	เซิร์ฟเวอร์นี้ไม่ได้เปิดใช้การเข้าสู่ระบบด้วยชื่อผู้ใช้และรหัสผ่าน
+login.errorRateLimited	ลองหลายครั้งเกินไป โปรดรอสักครู่แล้วลองอีกครั้ง
+login.ssoButton	เข้าสู่ระบบด้วย SSO
+login.orDivider	หรือ
+login.errorSso	การลงชื่อเข้าใช้ครั้งเดียวไม่เสร็จสมบูรณ์ โปรดลองอีกครั้ง
+login.errorNoAuthMethods	เซิร์ฟเวอร์นี้ไม่ได้เปิดใช้วิธีการเข้าสู่ระบบใดๆ
+login.errorClientCertificateRequired	เซิร์ฟเวอร์นี้ขอใบรับรองไคลเอนต์
+login.errorClientCertificateRejected	เซิร์ฟเวอร์ปฏิเสธใบรับรองไคลเอนต์นี้
+login.codeTitle	ป้อนรหัสของคุณ
+login.codeIntroAuthenticator	บัญชีนี้ขอขั้นตอนที่สอง ป้อนรหัส 6 หลักจากแอปยืนยันตัวตนของคุณ
+login.codeIntroRecovery	ป้อนรหัสกู้คืนของคุณหนึ่งรหัส แต่ละรหัสใช้ได้เพียงครั้งเดียว
+login.codeUseRecovery	ใช้รหัสกู้คืนแทน
+login.codeUseAuthenticator	ใช้รหัสจากแอปยืนยันตัวตนแทน
+login.codeField	รหัส
+login.codeSubmit	ยืนยัน
+login.errorInvalidCode	รหัสนั้นไม่ถูกต้อง
+login.errorSecondFactorExpired	การเข้าสู่ระบบนั้นหมดอายุ ป้อนรหัสผ่านของคุณอีกครั้ง
+login.diagnosticsButton	แชร์บันทึกการเข้าสู่ระบบ
+login.diagnosticsTitle	บันทึกการเข้าสู่ระบบ
+login.diagnosticsIntro	บันทึกนี้แสดงสิ่งที่เซิร์ฟเวอร์ตอบกลับในแต่ละขั้นตอน เพื่อช่วยหาสาเหตุที่เข้าสู่ระบบไม่ได้ บันทึกนี้ไม่เคยมีรหัสผ่าน ที่อยู่ที่คุณพิมพ์ หรือชื่อผู้ใช้ของคุณ ส่งให้นักพัฒนา
+browse.nameErrorReserved	ไม่อนุญาตให้ใช้ชื่อนั้น
+browse.nameErrorSeparators	ชื่อต้องไม่มี / หรือ \
+browse.searchMatchLine	บรรทัด %1$lld: %2$@
+browse.searchMatchLineLabel	บรรทัด %lld
+browse.searchTooShort	พิมพ์อย่างน้อย %lld อักขระเพื่อค้นหาในโฟลเดอร์ย่อยและเนื้อหาไฟล์
+browse.searchStoppedEarly	การค้นหาหยุดที่ขีดจำกัดเวลา นี่คือผลลัพธ์ที่พบจนถึงตอนนี้
+browse.searchFirstOnly	%lld ผลลัพธ์แรก จำกัดการค้นหาให้แคบลงเพื่อดูเพิ่มเติม
+browse.searchShowMore	แสดงเพิ่มเติม
+browse.searchMatchColumn	ตรงกัน
+browse.searchMatchedByName	ชื่อ
+browse.searchMatchedByContent	เนื้อหา
+browse.searchMatchedByBoth	ชื่อและเนื้อหา
+createShare.errorPasswordRequired	ป้อนรหัสผ่านหรือปิดการป้องกันด้วยรหัสผ่าน
+login.errorServer	เซิร์ฟเวอร์พบปัญหา (ข้อผิดพลาด %lld) โปรดลองอีกครั้งในภายหลัง
+filter.sheetTitle	กรองตามชนิด
+filter.button	กรอง
+filter.all	ทุกชนิด
+filter.folders	โฟลเดอร์
+filter.images	รูปภาพ
+filter.videos	วิดีโอ
+filter.audio	เสียง
+filter.documents	เอกสาร
+filter.archives	ไฟล์เก็บถาวร
+filter.other	อื่นๆ
+settings.creditsMadeBy	สร้างด้วย ❤️ โดย Phillip Maizza
+settings.creditsLikeApp	ชอบแอปนี้ไหม
+settings.creditsBuyCoffee	เลี้ยงกาแฟฉันสักแก้ว ☕️
+tipJar.title	เลี้ยงกาแฟฉันสักแก้ว
+tipJar.explanation	NextExplorer ใช้งานได้ฟรีและเป็นโอเพนซอร์ส หากเป็นประโยชน์กับคุณ ทิปเล็กน้อยช่วยให้โครงการดำเนินต่อไปได้ ขอบคุณ
+tipJar.toastThanks	ขอบคุณที่สนับสนุนโครงการ 🙏
+tipJar.errorLoad	ไม่สามารถโหลดตัวเลือกทิปได้ โปรดลองอีกครั้ง
+tipJar.errorPurchase	การซื้อไม่สำเร็จ โปรดลองอีกครั้ง
+tipJar.pending	กำลังรอการอนุมัติ คุณจะถูกเรียกเก็บเงินเมื่ออนุมัติแล้ว
+offline.sectionTitle	ออฟไลน์
+offline.settingsRow	ดาวน์โหลดไฟล์เพื่อใช้แบบออฟไลน์
+offline.footnote	ไฟล์ที่ดาวน์โหลดแล้วเปิดได้แม้ไม่มีการเชื่อมต่อ
+offline.available	%@ ใช้งานแบบออฟไลน์ได้
+offline.removeRow	นำไฟล์ออฟไลน์ออก
+offline.removeConfirmTitle	นำไฟล์ออฟไลน์ออกหรือไม่
+offline.removeConfirmMessage	การดำเนินการนี้จะลบไฟล์ที่บันทึกไว้สำหรับใช้แบบออฟไลน์บนอุปกรณ์เครื่องนี้ ไฟล์ของคุณบนเซิร์ฟเวอร์ไม่ได้รับผลกระทบ
+offline.removeConfirm	นำออก
+offline.preparing	กำลังเตรียม…
+offline.downloadingName	กำลังดาวน์โหลด %@
+offline.progressCount	%lld จาก %lld ไฟล์
+offline.downloadFailed	ไม่สามารถดาวน์โหลดแบบออฟไลน์ให้เสร็จสิ้นได้
+offline.selectionTitle	ดาวน์โหลดเพื่อใช้แบบออฟไลน์
+offline.selectionEmpty	โฟลเดอร์นี้ว่างเปล่า
+offline.selectionLoadFailed	ไม่สามารถโหลดโฟลเดอร์นี้ได้
+offline.selectionEstimate	ขนาดดาวน์โหลดโดยประมาณ
+offline.selectionDownload	ดาวน์โหลด
+offline.selectionInsufficientSpace	พื้นที่ว่างบนอุปกรณ์เครื่องนี้ไม่เพียงพอ
+offline.resyncRow	อัปเดตไฟล์ออฟไลน์
+offline.badgeAvailable	ใช้งานแบบออฟไลน์ได้
+offline.manageRow	จัดการไฟล์ออฟไลน์
+offline.manageTitle	ไฟล์ออฟไลน์
+offline.manageEmpty	ยังไม่ได้ดาวน์โหลดสิ่งใดไว้ใช้แบบออฟไลน์
+offline.preferOfflineToggle	เล่นสำเนาที่ดาวน์โหลด
+offline.pinRemoved	%@ ไม่มีอยู่บนเซิร์ฟเวอร์อีกต่อไปและถูกนำออกจากไฟล์ออฟไลน์แล้ว
+offline.preferOfflineSubtitle	ใช้วิดีโอที่ดาวน์โหลดแทนการสตรีมเมื่อมีให้ใช้
+offline.tunnelSpeedNote	การเข้าถึงเซิร์ฟเวอร์ผ่านอุโมงค์ระยะไกลอาจทำให้การดาวน์โหลดช้าลง สำหรับไฟล์ขนาดใหญ่ ให้เชื่อมต่อเครือข่ายเดียวกันและใช้ที่อยู่ภายในของเซิร์ฟเวอร์
+menu.about	เกี่ยวกับ NextExplorer
+menu.rateApp	ให้คะแนน NextExplorer…
+menu.support	การสนับสนุน NextExplorer
+menu.redo	ทำซ้ำ
+menu.undo	เลิกทำ
+settings.sectionSupport	การสนับสนุน
+settings.rowRateApp	ให้คะแนน NextExplorer
+settings.rowSupport	ความช่วยเหลือและการสนับสนุน
+menu.refresh	รีเฟรช
+select.tableView	มุมมองตาราง
+browse.progressDownloading	กำลังดาวน์โหลด…
+browse.progressDownloadingIndexed	กำลังดาวน์โหลด %1$lld จาก %2$lld…
+browse.downloadSavedTo	บันทึกไปที่ %@ แล้ว
+browse.downloadSavedCountTo	บันทึก %1$lld จาก %2$lld รายการไปที่ %3$@ แล้ว
+browse.downloadSavedAllTo	บันทึก %1$lld รายการไปที่ %2$@ แล้ว
+browse.downloadBulkFailed	ไม่สามารถบันทึกรายการเหล่านี้ลงในอุปกรณ์ของคุณได้
+openWith.openIn	เปิดใน %@
+openWith.openWith	เปิดด้วย
+openWith.viewAsText	ดูเป็นข้อความ
+openWith.failed	ไม่สามารถเปิดไฟล์นี้ได้
+browse.showInFinder	แสดงใน Finder
+browse.showInEnclosingFolder	แสดงในโฟลเดอร์ที่บรรจุ
+browse.actionCut	ตัด
+browse.clipboardCutOne	%@ พร้อมย้าย
+browse.clipboardCutMany	%lld รายการพร้อมย้าย
+menu.enclosingFolder	โฟลเดอร์ที่บรรจุ
+common.more	เพิ่มเติม
+openWith.print	พิมพ์…
+menu.newWindow	หน้าต่างใหม่
+menu.newTab	แท็บใหม่
+browse.actionOpenInNewWindow	เปิดในหน้าต่างใหม่
+browse.actionOpenInNewTab	เปิดในแท็บใหม่
+select.viewAs	มุมมอง
+settings.rowAppearance	รูปลักษณ์
+appearance.system	ระบบ
+appearance.light	สว่าง
+appearance.dark	มืด
+browse.myFiles	ไฟล์ของฉัน
+browse.myFilesSubtitle	มองเห็นได้เฉพาะคุณ
+downloadQueue.navigationTitle	คิวดาวน์โหลด
+downloadQueue.openDownloads	แสดงการดาวน์โหลด
+downloadQueue.emptyList	ไม่มีการดาวน์โหลดที่กำลังดำเนินการ
+downloadQueue.statusSaved	บันทึกแล้ว
+downloadQueue.cancelAll	ยกเลิกการดาวน์โหลดทั้งหมด
+downloadQueue.barFailedOne	ดาวน์โหลดไม่สำเร็จ 1 รายการ
+downloadQueue.barFailedMany	ดาวน์โหลดไม่สำเร็จ %lld รายการ
+downloadQueue.barTitleOne	กำลังดาวน์โหลด %@
+downloadQueue.barTitleMany	กำลังดาวน์โหลด %lld รายการ
+downloadQueue.savedOne	บันทึกไปที่ดาวน์โหลดแล้ว
+downloadQueue.savedMany	บันทึก %lld รายการไปที่ดาวน์โหลดแล้ว
+downloadQueue.bytesOf	%1$@ จาก %2$@
+downloadQueue.timeLeft	เหลืออีก %@
+browse.sectionPersonal	ส่วนตัว
+macSettings.addAccount	เพิ่มบัญชี…
+macSettings.changePassword	เปลี่ยนรหัสผ่าน…
+macSettings.signOut	ออกจากระบบ…
+macSettings.switchAccount	สลับไปใช้บัญชีนี้
+macSettings.username	ชื่อผู้ใช้
+macSettings.email	อีเมล
+macSettings.role	บทบาท
+macSettings.roleAdmin	ผู้ดูแลระบบ
+macSettings.roleUser	ผู้ใช้
+macSettings.status	สถานะ
+macSettings.statusSignedIn	เข้าสู่ระบบแล้ว
+macSettings.manage	จัดการ…
+macSettings.cache	แคช
+macSettings.support	ความช่วยเหลือและการสนับสนุน…
+macSettings.permission	สิทธิ์
+macSettings.icon	ไอคอน
+menu.go	ไป
+menu.activity	การถ่ายโอน
+menu.showAll	แสดงทั้งหมด
+uploads.notifyDone	อัปโหลดเสร็จสิ้น
+uploads.notifyBody	อัปโหลดแล้ว %lld ไฟล์
+downloadQueue.notifyDone	ดาวน์โหลดเสร็จสิ้น
+fileInfo.rowSoftware	ซอฟต์แวร์
+fileInfo.sectionVersions	เวอร์ชัน
+fileInfo.versionsNone	ไม่มีเวอร์ชันก่อนหน้า
+fileInfo.versionRestore	กู้คืน…
+fileInfo.restoreTitle	กู้คืนเวอร์ชันนี้หรือไม่
+fileInfo.restoreMessage	ไฟล์จะกลับไปเป็นเหมือนเมื่อ %@ สิ่งที่ไฟล์มีอยู่ตอนนี้จะถูกเก็บไว้เป็นเวอร์ชันหนึ่ง
+fileInfo.restoreConfirm	กู้คืน
+fileInfo.sectionSharing	การแชร์
+fileInfo.notShared	ไม่มีลิงก์แชร์
+fileInfo.versionActions	การดำเนินการของเวอร์ชัน
+fileInfo.versionDownload	ดาวน์โหลด…
+fileInfo.versionSaveCopy	บันทึกเป็นสำเนา
+fileInfo.versionRename	เปลี่ยนชื่อ…
+fileInfo.renameTitle	เปลี่ยนชื่อเวอร์ชัน
+fileInfo.renamePlaceholder	ชื่อเวอร์ชัน
+fileInfo.versionPin	เก็บเวอร์ชันนี้ไว้
+fileInfo.versionUnpin	เลิกเก็บเวอร์ชันนี้
+fileInfo.versionKept	เก็บไว้แล้ว
+fileInfo.versionDelete	ลบ…
+fileInfo.deleteTitle	ลบเวอร์ชันนี้หรือไม่
+fileInfo.deleteAll	ลบทุกเวอร์ชัน…
+fileInfo.deleteAllTitle	ลบทุกเวอร์ชันหรือไม่
+fileInfo.deleteMessage	เวอร์ชันที่ลบแล้วจะหายไปถาวร ตัวไฟล์ยังคงเหมือนเดิม
+macSettings.choose	เลือก…
+menu.forward	ไปข้างหน้า
+menu.goToFolder	ไปที่โฟลเดอร์…
+menu.goToFolderTitle	ไปที่โฟลเดอร์:
+menu.copyPath	คัดลอกพาธ
+menu.recentFolders	โฟลเดอร์ล่าสุด
+menu.clearRecent	ล้างเมนู
+common.loading	กำลังโหลด…
+browse.quickLookUnavailable	ไม่มี Quick Look สำหรับไฟล์ชนิดนี้
+browse.quickLookTooLarge	ไฟล์นี้ใหญ่เกินไปสำหรับ Quick Look
+menu.zoomIn	ซูมเข้า
+menu.zoomOut	ซูมออก
+menu.zoomToFit	ซูมให้พอดี
+menu.quitTransfersTitle	ออกจาก NextExplorer หรือไม่
+menu.quitTransfersMessage	การอัปโหลดหรือการดาวน์โหลดยังดำเนินอยู่ การออกตอนนี้จะหยุดการทำงานเหล่านั้น
+menu.quitTransfersConfirm	ออก
+media.play	เล่น
+media.pause	หยุดชั่วคราว
+media.position	ตำแหน่งการเล่น
+media.positionValue	%1$@ จาก %2$@
+media.clientCertificateUnsupported	ไม่สามารถสตรีมรูปแบบนี้จากเซิร์ฟเวอร์ที่ขอใบรับรองไคลเอนต์ ดาวน์โหลดไฟล์เพื่อเล่น
+clientCertificate.title	ใบรับรองไคลเอนต์
+clientCertificate.intro	เซิร์ฟเวอร์บางแห่งอนุญาตเฉพาะอุปกรณ์ที่แสดงใบรับรองไคลเอนต์ (mTLS) เลือกไฟล์ .p12 หรือ .pfx ที่คุณได้รับสำหรับเซิร์ฟเวอร์นี้
+clientCertificate.certificateLabel	ใบรับรอง
+clientCertificate.none	ไม่ได้ติดตั้งใบรับรอง
+clientCertificate.issuedBy	ออกโดย %@
+clientCertificate.expires	หมดอายุ %@
+clientCertificate.expired	หมดอายุเมื่อ %@
+clientCertificate.chooseFile	เลือกไฟล์
+clientCertificate.replace	แทนที่ใบรับรอง
+clientCertificate.remove	นำใบรับรองออก
+clientCertificate.install	ติดตั้ง
+clientCertificate.passwordLabel	รหัสผ่านของไฟล์
+clientCertificate.passwordPrompt	รหัสผ่านที่ใช้ส่งออกไฟล์
+clientCertificate.chooseAnother	เลือกไฟล์อื่น
+clientCertificate.errorWrongPassword	รหัสผ่านนั้นไม่สามารถปลดล็อกไฟล์นี้ได้
+clientCertificate.errorInvalidFile	นี่ไม่ใช่ไฟล์ใบรับรอง .p12 หรือ .pfx ที่ถูกต้อง
+clientCertificate.errorNoIdentity	ไฟล์นี้ไม่มีคีย์ส่วนตัว ส่งออกใบรับรองพร้อมกับคีย์ของใบรับรอง
+clientCertificate.errorStorage	ไม่สามารถบันทึกใบรับรองบนอุปกรณ์เครื่องนี้ได้
+clientCertificate.errorUnreadable	ไม่สามารถอ่านไฟล์นั้นได้
+clientCertificate.errorRemove	ไม่สามารถนำใบรับรองออกจากอุปกรณ์เครื่องนี้ได้
+clientCertificate.removeTitle	นำใบรับรองออกหรือไม่
+clientCertificate.removeMessage	NextExplorer จะหยุดแสดงใบรับรองนี้ให้ %@ หากเซิร์ฟเวอร์นั้นต้องการ แอปจะเชื่อมต่อไม่ได้จนกว่าคุณจะเพิ่มใบรับรองอีกครั้ง
+clientCertificate.removeConfirm	นำออก
+clientCertificate.expiredWarning	ใบรับรองนี้หมดอายุแล้ว เซิร์ฟเวอร์น่าจะปฏิเสธ
+login.addClientCertificate	เพิ่มใบรับรอง
+login.manageClientCertificate	จัดการใบรับรอง
+settings.clientCertificate	ใบรับรองไคลเอนต์
+settings.clientCertificateNone	ไม่มี
+login.usingClientCertificate	กำลังใช้ใบรับรองไคลเอนต์ %@
+login.changeClientCertificate	เปลี่ยน
+login.ssoClientCertificateNote	การลงชื่อเข้าใช้ครั้งเดียวเปิดใน Safari ซึ่งใช้ใบรับรองไคลเอนต์ของแอปนี้ไม่ได้ เข้าสู่ระบบด้วยรหัสผ่านของคุณ หรือติดตั้งใบรับรองบนอุปกรณ์เครื่องนี้เพื่อใช้การลงชื่อเข้าใช้ครั้งเดียว
+settings.clientCertificateExpired	หมดอายุแล้ว
+settings.clientCertificateExpiresSoon	ใกล้หมดอายุ
+clientCertificate.expiringSoonWarning	ใบรับรองนี้จะหมดอายุเมื่อ %@ ขอใบรับรองใหม่ก่อนถึงวันนั้น
+shareUpload.title	อัปโหลดไปยัง NextExplorer
+shareUpload.itemCount	ไฟล์ที่จะอัปโหลด: %lld
+shareUpload.accountLabel	บัญชี
+shareUpload.folderLabel	โฟลเดอร์
+shareUpload.folderChoose	เลือกโฟลเดอร์
+shareUpload.upload	อัปโหลด
+shareUpload.preparing	กำลังเตรียม %lld จาก %lld…
+shareUpload.started	กำลังอัปโหลดในเบื้องหลัง คุณจะได้รับการแจ้งเตือนเมื่อเสร็จสิ้น
+shareUpload.signedOut	เข้าสู่ระบบ NextExplorer ก่อน แล้วแชร์อีกครั้ง
+shareUpload.nothingToUpload	ไม่มีสิ่งใดที่ NextExplorer อัปโหลดได้ที่นี่
+shareUpload.failed	ไม่สามารถเตรียมไฟล์สำหรับอัปโหลดได้
+shareUpload.notificationDoneTitle	อัปโหลดเสร็จสิ้น
+shareUpload.notificationFailedTitle	บางไฟล์ไม่ได้อัปโหลด
+shareUpload.notificationDoneBody#other	อัปโหลด %lld ไฟล์ไปที่ “%@” แล้ว
+shareUpload.notificationAllFailedTitle	อัปโหลดไม่สำเร็จ
+shareUpload.failureUnauthorized#other	ไม่ได้อัปโหลด %lld ไฟล์ เข้าสู่ระบบอีกครั้งแล้วลองใหม่
+shareUpload.failureForbidden#other	ไม่ได้อัปโหลด %lld ไฟล์ คุณไม่มีสิทธิ์เพิ่มไฟล์ลงในโฟลเดอร์นั้น
+shareUpload.failureServerFull#other	ไม่ได้อัปโหลด %lld ไฟล์ พื้นที่จัดเก็บของเซิร์ฟเวอร์เต็ม
+shareUpload.failureNetwork#other	ไม่ได้อัปโหลด %lld ไฟล์ การเชื่อมต่อล้มเหลว ลองอีกครั้งเมื่อกลับมาออนไลน์
+shareUpload.failureOther#other	ไม่สามารถอัปโหลด %lld ไฟล์ได้
+shareUpload.notificationRetry	ลองอีกครั้ง
+shareUpload.notificationHiddenPreview	เปิด NextExplorer เพื่อดูผลการอัปโหลดของคุณ
+shareUpload.retryFailedTitle	ไม่สามารถลองอีกครั้งได้
+shareUpload.retryFailedBody	เปิด NextExplorer แล้วแชร์ไฟล์อีกครั้ง
+shareUpload.insufficientSpace	พื้นที่ว่างบนอุปกรณ์เครื่องนี้ไม่เพียงพอสำหรับเตรียมไฟล์เหล่านี้เพื่ออัปโหลด
+settings.uploadDefaultsRow	ไฟล์ที่แชร์
+settings.uploadDefaultsFolder	โฟลเดอร์เริ่มต้น
+settings.uploadDefaultsFolderNone	ถามทุกครั้ง
+settings.uploadDefaultsWithoutAsking	อัปโหลดโดยไม่ถาม
+settings.uploadDefaultsFooter	รูปภาพและไฟล์ที่คุณแชร์ไปยัง NextExplorer จากแอปอื่นจะเริ่มต้นในโฟลเดอร์นี้ เมื่อเปิด “อัปโหลดโดยไม่ถาม” ไฟล์จะถูกอัปโหลดไปที่นั่นโดยตรง
+settings.uploadDefaultsClear	ถามทุกครั้ง
+common.change	เปลี่ยน
+shareUpload.sessionUnreadable	NextExplorer ไม่สามารถอ่านการเข้าสู่ระบบของคุณบนอุปกรณ์เครื่องนี้ได้ เปิด NextExplorer หนึ่งครั้ง แล้วแชร์อีกครั้ง
+shareUpload.keepOpen	เปิดหน้านี้ไว้จนกว่าการเตรียมจะเสร็จสิ้น
+shareUpload.checking	กำลังตรวจสอบการเชื่อมต่อกับ %@…
+shareUpload.openApp	เปิด NextExplorer
+shareUpload.openAppInstructions	เปิด NextExplorer จากหน้าจอโฮม แล้วแชร์อีกครั้ง
+shareUpload.certificateRequired	เซิร์ฟเวอร์นี้ต้องใช้ใบรับรองไคลเอนต์ เปิด NextExplorer แล้วเพิ่มหนึ่งใบในการตั้งค่า จากนั้นแชร์อีกครั้ง
+shareUpload.certificateRejected	เซิร์ฟเวอร์ปฏิเสธใบรับรองไคลเอนต์ของคุณ เปิด NextExplorer แล้วแทนที่ในการตั้งค่า จากนั้นแชร์อีกครั้ง
+shareUpload.defaultFolderUnavailable	โฟลเดอร์เริ่มต้นของคุณไม่พร้อมใช้งานอีกต่อไป เลือกโฟลเดอร์อื่น
+shareUpload.failedItemsHeader	ไม่สามารถเตรียมไฟล์เหล่านี้ได้:
+shareUpload.readyCount	พร้อมอัปโหลด: %lld
+shareUpload.uploadReady	อัปโหลดไฟล์ที่พร้อม
+shareUpload.retryFailed	ลองไฟล์ที่ไม่สำเร็จอีกครั้ง
+shareUpload.fallbackItemName	ไฟล์ %lld
+shareUpload.causeCannotRead	ไม่สามารถอ่านได้
+shareUpload.causeNotEnoughSpace	พื้นที่ว่างบนอุปกรณ์เครื่องนี้ไม่เพียงพอ
+shareUpload.causeUnknown	ไม่สามารถเตรียมได้
+shareUpload.folderHint	เปิดตัวเลือกโฟลเดอร์
+shareUpload.accountHint	เลือกบัญชีที่จะรับไฟล์
+error.timedOut	เซิร์ฟเวอร์ตอบกลับช้าเกินไป การดำเนินการอาจยังสำเร็จได้
+error.changedOnServer	ไฟล์นี้ถูกเปลี่ยนแปลงบนเซิร์ฟเวอร์หลังจากที่คุณเปิด
+textPreview.conflictTitle	“%@” เปลี่ยนแปลงบนเซิร์ฟเวอร์
+textPreview.conflictMessage	เขียนทับด้วยเวอร์ชันของคุณ หรือโหลดไฟล์ใหม่และทิ้งการแก้ไขของคุณ เวอร์ชันที่ถูกแทนที่จะยังอยู่ในประวัติเวอร์ชันของไฟล์
+textPreview.conflictOverwrite	เขียนทับ
+textPreview.conflictReload	โหลดใหม่
+offline.waitingForNetwork	จะดาวน์โหลดเมื่อคุณกลับมาออนไลน์
+browse.bulkFavoriteFailed	ไม่สำเร็จ %1$lld จาก %2$lld
+shareUpload.livePhotoNote	Live Photos จะอัปโหลดพร้อมวิดีโอการเคลื่อนไหว
+shareUpload.retrySignInBody	เข้าสู่ระบบ NextExplorer แล้วแตะ “ลองอีกครั้ง” อีกครั้ง
+shareUpload.causeFolder	ไม่สามารถแชร์โฟลเดอร์ได้ แชร์ไฟล์ข้างในแทน
+shareUpload.notificationMoreNames	อีก %lld
+versionedFiles.deleteFailed	ไม่สามารถลบบางเวอร์ชันได้ ตรวจสอบแล้วลองอีกครั้ง
+serverSettings.featureOffTitle	ไม่ได้เปิดใช้ฟีเจอร์นี้
+serverSettings.featureOffKept	สิ่งที่คุณกำหนดค่าที่นี่จะถูกบันทึกและมีผลทันทีเมื่อเปิดใช้
+serverSettings.featureOffUseSwitch	เปิดด้วยสวิตช์ด้านบน
+serverSettings.featureOffHowTo	หากต้องการเปิด ให้ตั้งค่า %@ แล้วรีสตาร์ตคอนเทนเนอร์
+trashSettings.environmentNote	ค่าเริ่มต้นมาจาก TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT และ TRASH_MAX_SIZE
+trashSettings.versionsEnvironmentNote	ค่าเริ่มต้นมาจาก VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE และ VERSIONS_SESSION_CHECKPOINT_MINUTES
+versionedFiles.refresh	รีเฟรช

@@ -859,3 +859,202 @@ shareUpload.causeFolder	Folderów nie można udostępniać. Udostępnij zamiast 
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld więcej
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	Przesyłanie
+uploadSettings.subtitle	Skonfiguruj sposób wysyłania plików na serwer.
+uploadSettings.chunkedEnable	Włącz przesyłanie fragmentaryczne
+uploadSettings.chunkedEnableHelp	Wykorzystuje protokół TUS, aby wysyłać duże pliki w wielu mniejszych żądaniach.
+uploadSettings.chunkSize	Rozmiar fragmentu
+uploadSettings.chunkSizeHelp	Maksymalny rozmiar każdego żądania przesyłania. Utrzymaj go poniżej limitu swojego reverse proxy. Mniejsze części dają płynniejszy postęp.
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	Automatyczne przełączenie na fragmenty
+uploadSettings.autoFallbackHelp	Jeśli bezpośrednie przesyłanie się nie powiedzie, bo reverse proxy odrzuca rozmiar, automatycznie przechodzi na przesyłanie w częściach.
+uploadSettings.unavailable	Ustawienia przesyłania są dostępne tylko dla administratorów.
+uploadSettings.saveButton	Zapisz zmiany
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	Wybierz pliki wykonywalne FFmpeg i FFprobe używane do miniatur i metadanych multimediów.
+ffmpegSettings.containerPathHelp	Podaj ścieżki bezwzględne widoczne wewnątrz kontenera aplikacji. Aby użyć plików z hosta, najpierw zamontuj je w kontenerze.
+ffmpegSettings.ffmpegPath	Ścieżka do pliku wykonywalnego FFmpeg
+ffmpegSettings.ffprobePath	Ścieżka do pliku wykonywalnego FFprobe
+ffmpegSettings.invalid	Obie ścieżki muszą być bezwzględnymi ścieżkami kontenera i zaczynać się od /.
+ffmpegSettings.defaultHelp	Pozostaw ścieżkę pustą, aby użyć FFMPEG_PATH lub FFPROBE_PATH ze środowiska, a następnie dołączonego pliku wykonywalnego. Zmiany działają natychmiast.
+ffmpegSettings.unavailable	Ustawienia FFmpeg są dostępne tylko dla administratorów.
+ffmpegSettings.saveButton	Zapisz zmiany
+searchIndexSettings.navigationTitle	Indeks wyszukiwania
+searchIndexSettings.subtitle	Wyklucz ścieżki z indeksowania treści.
+searchIndexSettings.running	Prowadź indeks wyszukiwania
+searchIndexSettings.runningHelp	Czyta dokumenty woluminu w tle, aby wyszukiwanie w ich treści odpowiadało od razu.
+searchIndexSettings.locked	Ustawione przez %@ w środowisku — decyduje się o tym tam, a nie tutaj.
+searchIndexSettings.environment	Wykluczenia zdefiniowane w środowisku
+searchIndexSettings.additional	Dodatkowe wykluczenia
+searchIndexSettings.none	Nie skonfigurowano ścieżki
+searchIndexSettings.addButton	Dodaj
+searchIndexSettings.unavailable	Ustawienia indeksu wyszukiwania są dostępne tylko dla administratorów.
+searchIndexSettings.saveButton	Zapisz zmiany
+searchIndexSettings.discardButton	Odrzuć
+folderSizeSettings.navigationTitle	Rozmiary folderów
+folderSizeSettings.subtitle	Wyklucz ścieżki z obliczania i indeksowania rozmiaru folderów.
+folderSizeSettings.running	Mierz rozmiar folderów
+folderSizeSettings.runningHelp	Mierzy foldery w tle, aby ich rozmiar pojawiał się na liście.
+folderSizeSettings.modeOff	Wyłączone
+folderSizeSettings.modeShallow	Tylko ich własne pliki
+folderSizeSettings.modeFull	Wszystko, co zawierają
+folderSizeSettings.locked	Ustawione przez %@ w środowisku — decyduje się o tym tam, a nie tutaj.
+folderSizeSettings.environment	Wykluczenia zdefiniowane w środowisku
+folderSizeSettings.additional	Dodatkowe wykluczenia
+folderSizeSettings.none	Nie skonfigurowano żadnych ścieżek
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Dodaj
+folderSizeSettings.unavailable	Ustawienia rozmiarów folderów są dostępne tylko dla administratorów.
+folderSizeSettings.saveButton	Zapisz zmiany
+folderSizeSettings.discardButton	Odrzuć
+activityLog.navigationTitle	Dziennik aktywności
+activityLog.subtitle	Kto co zrobił, kiedy i skąd. Wyłączony, dopóki go nie włączysz.
+activityLog.enabled	Rejestruj aktywność
+activityLog.enabledHelp	Logowania, pobrania, wysyłki, usunięcia, przywrócenia, udostępnienia i zmiany konta są zapisywane, gdy to działa. Tego, co było wcześniej, tu nie ma.
+activityLog.retention	Przechowuj (dni)
+activityLog.retentionInvalid	Od 1 do 3650 dni.
+activityLog.saveButton	Zapisz zmiany
+activityLog.off	Dziennik jest wyłączony, nic nie jest zapisywane.
+activityLog.none	Jeszcze nic nie zapisano.
+activityLog.filterAction	Rodzaj
+activityLog.anyAction	Dowolny rodzaj
+activityLog.filterOutcome	Wynik
+activityLog.anyOutcome	Dowolny wynik
+activityLog.outcomeOk	Udane
+activityLog.outcomeRefused	odmowa
+activityLog.searchPlaceholder	Nazwa lub ścieżka
+activityLog.searchButton	Szukaj
+activityLog.refresh	Odśwież
+activityLog.clear	Wyczyść dziennik
+activityLog.clearTitle	Opróżnić dziennik?
+activityLog.clearMessage	Każdy zarejestrowany wiersz zostanie usunięty. Tej operacji nie można cofnąć.
+activityLog.clearConfirm	Wyczyść dziennik
+activityLog.more	Pokaż więcej
+activityLog.refusedSuffix	odmowa
+activityLog.fromAddress	Z %@
+activityLog.unavailable	Dziennik aktywności jest dostępny tylko dla administratorów.
+activityLog.action.signIn	Zalogowano
+activityLog.action.signOut	Wylogowano
+activityLog.action.accountPassword	Zmiana hasła
+activityLog.action.accountTwoFactor	Zmiana drugiego składnika
+activityLog.action.accountPasskey	Zmiana klucza dostępu
+activityLog.action.accountToken	Zmiana tokenu API
+activityLog.action.adminUser	Zmiana konta
+activityLog.action.adminSettings	Zmiana ustawień
+activityLog.action.adminActivityClear	Wyczyszczono dziennik
+activityLog.action.shareCreate	Utworzono udostępnienie
+activityLog.action.shareDelete	Usunięto udostępnienie
+activityLog.action.shareDownload	Pobrano przez link
+activityLog.action.shareUpload	Wysłano przez link
+activityLog.action.fileDownload	Pobrano
+activityLog.action.fileUpload	Wysłano
+activityLog.action.fileDelete	Przeniesiono do kosza
+activityLog.action.fileRestore	Przywrócono
+activityLog.action.filePurge	Usunięto trwale
+activityLog.action.versionsPurge	Usunięto wersje
+trashSettings.navigationTitle	Kosz i wersje
+trashSettings.subtitle	Usunięte elementy i wcześniejsze wersje plików są przechowywane w zarezerwowanej przestrzeni na ich własnym woluminie i usuwane po okresie przechowywania lub gdy ta przestrzeń jest potrzebna.
+trashSettings.trashHeader	Kosz
+trashSettings.enabled	Przenoś usunięte elementy do kosza
+trashSettings.enabledHelp	Po wyłączeniu usuwanie jest trwałe. Elementy już w koszu nadal wygasają.
+trashSettings.retention	Przechowywanie (dni)
+trashSettings.retentionHelp	Od 1 do 3650 dni.
+trashSettings.maxPercent	Udział każdego woluminu (%)
+trashSettings.maxPercentHelp	Najwięcej, ile kosz może zająć na woluminie, od 1 do 90 %.
+trashSettings.maxSize	Limit rozmiaru na wolumin (GiB)
+trashSettings.maxSizeHelp	Opcjonalnie. Obowiązuje mniejsza z wartości: udział lub limit.
+trashSettings.maxSizeNone	Bez limitu
+trashSettings.trashInvalid	Sprawdź wartości: przechowywanie od 1 do 3650 dni, udział od 1 do 90 %, dodatni rozmiar lub brak.
+trashSettings.versionsHeader	Wersje plików
+trashSettings.versionsSubtitle	Każdy zapis zachowuje to, co zastępuje, bez kopiowania, w tej samej zarezerwowanej przestrzeni co kosz. Starsze wersje są z czasem przerzedzane.
+trashSettings.versionsEnabled	Zachowuj wcześniejsze wersje plików
+trashSettings.versionsEnabledHelp	Niezależne od kosza. Po wyłączeniu zapisy nie zachowują nic nowego; istniejące wersje pozostają do wygaśnięcia lub usunięcia.
+trashSettings.keepAllHours	Zachowuj wszystkie wersje (godziny)
+trashSettings.hourlyDays	Potem jedna na godzinę (dni)
+trashSettings.dailyDays	Potem jedna na dzień (dni)
+trashSettings.maxPerFile	Maksimum wersji na plik
+trashSettings.checkpointMinutes	Punkt kontrolny biurowy (minuty)
+trashSettings.tiersHelp	Po tych progach zachowywana jest jedna wersja na tydzień. Sesja edycji biurowej zostawia jedną wersję i najwyżej jeden punkt kontrolny w tym odstępie. Przypięte wersje nie podlegają przerzedzaniu ani limitowi na plik.
+trashSettings.versionsInvalid	Sprawdź wartości: 1–720 godzin, 1–365 dni godzinowych, 1–3650 dni dziennych, 1–1000 wersji na plik, punkt kontrolny 1–1440 minut.
+trashSettings.sharedSpace	Wersje i kosz dzielą zarezerwowaną przestrzeń każdego woluminu. Gdy jej brakuje, najpierw znikają starsze wersje, potem elementy kosza, potem ostatnia wersja każdego pliku, a na końcu przypięte wersje.
+trashSettings.saveButton	Zapisz zmiany
+trashSettings.discardButton	Odrzuć
+trashSettings.unavailable	Ustawienia kosza i wersji są dostępne tylko dla administratorów.
+trashSettings.zonesHeader	Kosz według woluminu
+trashSettings.zonesSubtitle	Każdy wolumin trzyma swój kosz w ukrytym folderze .nextexplorer w katalogu głównym, więc usuwanie nigdy niczego nie kopiuje.
+trashSettings.zonesEmpty	Nic jeszcze nie trafiło do kosza.
+trashSettings.zoneKindPersonal	Folder osobisty użytkownika %@
+trashSettings.zoneKindUserVolume	Przypisany wolumin %@
+trashSettings.available	Dostępny
+trashSettings.unavailableMissing	Niezamontowany lub usunięty
+trashSettings.unavailableReplaced	Inny dysk w jego miejscu
+trashSettings.unavailableUnreadable	Nieczytelny
+trashSettings.usage	%1$@ z %2$@
+trashSettings.noBudget	bez limitu
+trashSettings.zoneItems	Elementy: %1$lld · %2$@
+trashSettings.zoneVersions	Wersje: %1$lld · %2$@
+trashSettings.lastPass	Ostatnia konserwacja: %@
+trashSettings.lastPassPurged	%1$@ · usunięto: %2$lld
+trashSettings.never	jeszcze nie
+trashSettings.verify	Sprawdź
+trashSettings.runMaintenance	Uruchom konserwację teraz
+trashSettings.verifyOk	Kosz każdego woluminu jest spójny.
+trashSettings.verifyIssues	Znalezione problemy: %lld
+trashSettings.zoneProblems	Problemy: %lld
+trashSettings.journalHeader	Dziennik
+trashSettings.eventEvicted	"%@" usunięto przed końcem przechowywania, aby zwolnić miejsce
+trashSettings.eventAdopted	"%@" odzyskano po przerwaniu
+trashSettings.eventLost	Brakowało zawartości "%@"
+trashSettings.eventFailed	Nie udało się usunąć "%@"
+trashSettings.eventBreaker	Zbyt wiele elementów zniknęło naraz: niczego nie zmieniono
+trashSettings.eventForgotten	"%@" zapomniany przez administratora
+trashSettings.eventVersionEvicted	Usunięto wersję „%@”, aby zwolnić miejsce
+trashSettings.eventVersionFailed	Nie udało się usunąć wersji
+trashSettings.eventVersionLost	Brakowało zawartości wersji
+trashSettings.eventVersionTooLarge	„%@” jest większy niż cała przestrzeń: to, co zastąpił, nie zostało zachowane
+trashSettings.eventVersionsBreaker	Brakuje naraz zbyt wielu wersji: nic nie zmieniono
+versionedFiles.navigationTitle	Wersje plików
+versionedFiles.subtitle	Każdy plik, który ma historię, gdziekolwiek się znajduje. Pokazuje ścieżki ze wszystkich przestrzeni, także foldery osobiste, więc jest tylko dla administratorów.
+versionedFiles.summary	Pliki: %1$lld · Wersje: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Nazwa lub ścieżka
+versionedFiles.zone	Wolumin
+versionedFiles.anyZone	Dowolny wolumin
+versionedFiles.stateHeader	Stan
+versionedFiles.anyState	Dowolny stan
+versionedFiles.stateLive	Plik nadal istnieje
+versionedFiles.stateTrashed	W koszu
+versionedFiles.stateOrphaned	Plik zniknął
+versionedFiles.sortHeader	Sortuj według
+versionedFiles.sortBytes	Zajęte miejsce
+versionedFiles.sortVersions	Liczba wersji
+versionedFiles.sortNewest	Najnowsza
+versionedFiles.sortPath	Ścieżka
+versionedFiles.none	Żaden plik nie ma wcześniejszych wersji.
+versionedFiles.unavailable	Wersje plików są dostępne tylko dla administratorów.
+versionedFiles.zoneUnknown	Nieznany wolumin
+versionedFiles.zoneKindPersonal	Folder osobisty użytkownika %@
+versionedFiles.zoneKindUserVolume	Przypisany wolumin %@
+versionedFiles.rowSummary	Wersje: %1$lld · %2$@
+versionedFiles.newest	Ostatnia: %@
+versionedFiles.versionPinned	Przypięta
+versionedFiles.versionUnavailable	Niedostępna
+versionedFiles.versionBy	Przez %@
+versionedFiles.detailFailed	Nie udało się odczytać tej historii.
+versionedFiles.deleteSelectedNone	Zaznacz wersje do usunięcia
+versionedFiles.deleteSelected	Usuń zaznaczone (%lld)
+versionedFiles.deleteAll	Usuń wszystkie wersje
+versionedFiles.confirmAllTitle	Usunąć każdą wersję „%@”?
+versionedFiles.confirmSomeTitle	Usunąć zaznaczone wersje (%lld)?
+versionedFiles.confirmMessage	Usuniętych wersji nie można odzyskać.
+versionedFiles.confirmDelete	Usuń
+versionedFiles.previous	Poprzednie
+versionedFiles.next	Następne
+versionedFiles.pageRange	Od %1$lld do %2$lld z %3$lld
+versionedFiles.deleteFailed	Nie udało się usunąć niektórych wersji. Sprawdź je i spróbuj ponownie.
+serverSettings.featureOffTitle	Ta funkcja nie jest włączona
+serverSettings.featureOffKept	To, co tutaj skonfigurujesz, zostanie zapisane i zacznie obowiązywać po włączeniu funkcji.
+serverSettings.featureOffUseSwitch	Włącz ją przełącznikiem powyżej.
+serverSettings.featureOffHowTo	Aby ją włączyć, ustaw %@ i uruchom ponownie kontener.
+trashSettings.environmentNote	Wartości domyślne pochodzą z TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT i TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Wartości domyślne pochodzą z VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE i VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Odśwież

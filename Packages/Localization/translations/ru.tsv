@@ -859,3 +859,202 @@ shareUpload.causeFolder	Папки нельзя отправлять. Подел
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	ещё %lld
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	Отправки
+uploadSettings.subtitle	Настройте способ отправки файлов на сервер.
+uploadSettings.chunkedEnable	Включить загрузку по частям
+uploadSettings.chunkedEnableHelp	Использует TUS для отправки больших файлов несколькими меньшими запросами.
+uploadSettings.chunkSize	Размер части
+uploadSettings.chunkSizeHelp	Максимальный размер каждого запроса загрузки. Держите его ниже лимита вашего обратного прокси. Меньшие части дают более плавный прогресс.
+uploadSettings.chunkSizeValue	%lld МиБ
+uploadSettings.autoFallback	Автопереключение на загрузку по частям
+uploadSettings.autoFallbackHelp	Если прямая загрузка не удалась, потому что обратный прокси отклоняет размер, автоматически переключается на загрузку по частям.
+uploadSettings.unavailable	Настройки загрузки доступны только администраторам.
+uploadSettings.saveButton	Сохранить изменения
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	Выберите исполняемые файлы FFmpeg и FFprobe для предпросмотра и метаданных медиафайлов.
+ffmpegSettings.containerPathHelp	Укажите абсолютные пути, видимые внутри контейнера приложения. Чтобы использовать файлы хоста, сначала смонтируйте их в контейнер.
+ffmpegSettings.ffmpegPath	Путь к исполняемому файлу FFmpeg
+ffmpegSettings.ffprobePath	Путь к исполняемому файлу FFprobe
+ffmpegSettings.invalid	Оба пути должны быть абсолютными путями контейнера и начинаться с /.
+ffmpegSettings.defaultHelp	Оставьте путь пустым, чтобы использовать FFMPEG_PATH или FFPROBE_PATH из окружения, а затем встроенный файл. Изменения применяются сразу.
+ffmpegSettings.unavailable	Настройки FFmpeg доступны только администраторам.
+ffmpegSettings.saveButton	Сохранить изменения
+searchIndexSettings.navigationTitle	Поисковый индекс
+searchIndexSettings.subtitle	Исключить пути из индексации содержимого.
+searchIndexSettings.running	Вести поисковый индекс
+searchIndexSettings.runningHelp	Читает документы тома в фоне, чтобы поиск по их содержимому отвечал сразу.
+searchIndexSettings.locked	Задано переменной %@ в окружении — это решается там, а не здесь.
+searchIndexSettings.environment	Исключения, заданные окружением
+searchIndexSettings.additional	Дополнительные исключения
+searchIndexSettings.none	Пути не настроены
+searchIndexSettings.addButton	Добавить
+searchIndexSettings.unavailable	Настройки поискового индекса доступны только администраторам.
+searchIndexSettings.saveButton	Сохранить изменения
+searchIndexSettings.discardButton	Очистить
+folderSizeSettings.navigationTitle	Размеры папок
+folderSizeSettings.subtitle	Исключите пути из расчета и индексации размеров папок.
+folderSizeSettings.running	Измерять размер папок
+folderSizeSettings.runningHelp	Измеряет папки в фоне, чтобы их размер отображался в списке.
+folderSizeSettings.modeOff	Выключено
+folderSizeSettings.modeShallow	Только их собственные файлы
+folderSizeSettings.modeFull	Всё, что в них находится
+folderSizeSettings.locked	Задано переменной %@ в окружении — это решается там, а не здесь.
+folderSizeSettings.environment	Исключения, заданные окружением
+folderSizeSettings.additional	Дополнительные исключения
+folderSizeSettings.none	Пути не настроены
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Добавить
+folderSizeSettings.unavailable	Настройки размеров папок доступны только администраторам.
+folderSizeSettings.saveButton	Сохранить изменения
+folderSizeSettings.discardButton	Очистить
+activityLog.navigationTitle	Журнал действий
+activityLog.subtitle	Кто что сделал, когда и откуда. Выключен, пока вы не попросите.
+activityLog.enabled	Записывать действия
+activityLog.enabledHelp	Входы, загрузки, отправки, удаления, восстановления, ссылки и изменения учётной записи записываются, пока это включено. Того, что было раньше, здесь нет.
+activityLog.retention	Хранить (дней)
+activityLog.retentionInvalid	От 1 до 3650 дней.
+activityLog.saveButton	Сохранить изменения
+activityLog.off	Журнал выключен, ничего не записывается.
+activityLog.none	Пока ничего не записано.
+activityLog.filterAction	Тип
+activityLog.anyAction	Любой тип
+activityLog.filterOutcome	Результат
+activityLog.anyOutcome	Любой результат
+activityLog.outcomeOk	Успешно
+activityLog.outcomeRefused	отказано
+activityLog.searchPlaceholder	Имя или путь
+activityLog.searchButton	Поиск
+activityLog.refresh	Обновить
+activityLog.clear	Очистить журнал
+activityLog.clearTitle	Очистить журнал?
+activityLog.clearMessage	Каждая записанная строка будет удалена. Это нельзя отменить.
+activityLog.clearConfirm	Очистить журнал
+activityLog.more	Показать ещё
+activityLog.refusedSuffix	отказано
+activityLog.fromAddress	С %@
+activityLog.unavailable	Журнал действий доступен только администраторам.
+activityLog.action.signIn	Вход
+activityLog.action.signOut	Выход
+activityLog.action.accountPassword	Пароль изменён
+activityLog.action.accountTwoFactor	Второй фактор изменён
+activityLog.action.accountPasskey	Ключ доступа изменён
+activityLog.action.accountToken	API-токен изменён
+activityLog.action.adminUser	Учётная запись изменена
+activityLog.action.adminSettings	Настройки изменены
+activityLog.action.adminActivityClear	Журнал очищен
+activityLog.action.shareCreate	Ссылка доступа создана
+activityLog.action.shareDelete	Ссылка доступа удалена
+activityLog.action.shareDownload	Скачано по ссылке
+activityLog.action.shareUpload	Загружено по ссылке
+activityLog.action.fileDownload	Скачано
+activityLog.action.fileUpload	Загружено
+activityLog.action.fileDelete	В корзину
+activityLog.action.fileRestore	Восстановлено
+activityLog.action.filePurge	Удалено навсегда
+activityLog.action.versionsPurge	Версии удалены
+trashSettings.navigationTitle	Корзина и версии
+trashSettings.subtitle	Удалённые элементы и предыдущие версии файлов хранятся в зарезервированном месте на своём томе и удаляются по истечении срока хранения или когда это место нужно.
+trashSettings.trashHeader	Корзина
+trashSettings.enabled	Перемещать удалённые элементы в корзину
+trashSettings.enabledHelp	Если отключено, удаление происходит навсегда. Элементы, уже находящиеся в корзине, по-прежнему истекают.
+trashSettings.retention	Срок хранения (дней)
+trashSettings.retentionHelp	От 1 до 3650 дней.
+trashSettings.maxPercent	Доля каждого тома (%)
+trashSettings.maxPercentHelp	Максимум, который корзина может занимать на томе, от 1 до 90 %.
+trashSettings.maxSize	Предел размера на том (ГиБ)
+trashSettings.maxSizeHelp	Необязательно. Применяется меньшее из доли и предела.
+trashSettings.maxSizeNone	Без предела
+trashSettings.trashInvalid	Проверьте значения: срок хранения от 1 до 3650 дней, доля от 1 до 90 %, положительный размер или пусто.
+trashSettings.versionsHeader	Версии файлов
+trashSettings.versionsSubtitle	Каждое сохранение оставляет то, что заменяет, без копирования, в том же зарезервированном месте, что и корзина. Старые версии со временем прореживаются.
+trashSettings.versionsEnabled	Хранить предыдущие версии файлов
+trashSettings.versionsEnabledHelp	Не зависит от корзины. Если выключено, сохранения ничего нового не оставляют; существующие версии хранятся до истечения срока или удаления.
+trashSettings.keepAllHours	Хранить все версии (часы)
+trashSettings.hourlyDays	Затем одну в час (дни)
+trashSettings.dailyDays	Затем одну в день (дни)
+trashSettings.maxPerFile	Не больше версий на файл
+trashSettings.checkpointMinutes	Контрольная точка офиса (минуты)
+trashSettings.tiersHelp	После этих ступеней хранится одна версия в неделю. Сеанс редактирования в офисном редакторе оставляет одну версию и не чаще этого интервала контрольную точку. Закреплённые версии не прореживаются и не учитываются в лимите на файл.
+trashSettings.versionsInvalid	Проверьте значения: 1–720 часов, 1–365 дней по часу, 1–3650 дней по дню, 1–1000 версий на файл, контрольная точка 1–1440 минут.
+trashSettings.sharedSpace	Версии и корзина делят зарезервированное место каждого тома. Когда его не хватает, сначала удаляются старые версии, затем элементы корзины, затем последняя версия каждого файла и в последнюю очередь закреплённые версии.
+trashSettings.saveButton	Сохранить изменения
+trashSettings.discardButton	Очистить
+trashSettings.unavailable	Настройки корзины и версий доступны только администраторам.
+trashSettings.zonesHeader	Корзина по томам
+trashSettings.zonesSubtitle	Каждый том хранит свою корзину в скрытой папке .nextexplorer в корне, поэтому удаление никогда ничего не копирует.
+trashSettings.zonesEmpty	В корзину пока ничего не удалялось.
+trashSettings.zoneKindPersonal	Личная папка %@
+trashSettings.zoneKindUserVolume	Назначенный том %@
+trashSettings.available	Доступен
+trashSettings.unavailableMissing	Не смонтирован или удалён
+trashSettings.unavailableReplaced	На его месте другой диск
+trashSettings.unavailableUnreadable	Не читается
+trashSettings.usage	%1$@ из %2$@
+trashSettings.noBudget	без предела
+trashSettings.zoneItems	Элементов: %1$lld · %2$@
+trashSettings.zoneVersions	Версий: %1$lld · %2$@
+trashSettings.lastPass	Последнее обслуживание: %@
+trashSettings.lastPassPurged	%1$@ · удалено: %2$lld
+trashSettings.never	ещё не было
+trashSettings.verify	Проверить
+trashSettings.runMaintenance	Запустить обслуживание сейчас
+trashSettings.verifyOk	Корзина каждого тома согласована.
+trashSettings.verifyIssues	Найдено проблем: %lld
+trashSettings.zoneProblems	Проблем: %lld
+trashSettings.journalHeader	Журнал
+trashSettings.eventEvicted	"%@" удалён до окончания срока хранения, чтобы освободить место
+trashSettings.eventAdopted	"%@" восстановлен после прерывания
+trashSettings.eventLost	Содержимое "%@" отсутствовало
+trashSettings.eventFailed	Не удалось удалить "%@"
+trashSettings.eventBreaker	Слишком много элементов пропало сразу: ничего не изменено
+trashSettings.eventForgotten	"%@" забыт администратором
+trashSettings.eventVersionEvicted	Версия «%@» удалена, чтобы освободить место
+trashSettings.eventVersionFailed	Не удалось удалить версию
+trashSettings.eventVersionLost	Отсутствовало содержимое версии
+trashSettings.eventVersionTooLarge	«%@» больше всего места: заменённое содержимое не сохранено
+trashSettings.eventVersionsBreaker	Слишком много версий пропало сразу: ничего не изменено
+versionedFiles.navigationTitle	Версии файлов
+versionedFiles.subtitle	Каждый файл, у которого есть история, где бы он ни находился. Здесь показаны пути из всех пространств, включая личные папки, поэтому раздел только для администраторов.
+versionedFiles.summary	Файлов: %1$lld · Версий: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Имя или путь
+versionedFiles.zone	Том
+versionedFiles.anyZone	Любой том
+versionedFiles.stateHeader	Состояние
+versionedFiles.anyState	Любое состояние
+versionedFiles.stateLive	Файл на месте
+versionedFiles.stateTrashed	В корзине
+versionedFiles.stateOrphaned	Файл пропал
+versionedFiles.sortHeader	Сортировать по
+versionedFiles.sortBytes	Занятое место
+versionedFiles.sortVersions	Число версий
+versionedFiles.sortNewest	Самая новая
+versionedFiles.sortPath	Путь
+versionedFiles.none	Ни у одного файла нет предыдущих версий.
+versionedFiles.unavailable	Версии файлов доступны только администраторам.
+versionedFiles.zoneUnknown	Неизвестный том
+versionedFiles.zoneKindPersonal	Личная папка %@
+versionedFiles.zoneKindUserVolume	Назначенный том %@
+versionedFiles.rowSummary	Версий: %1$lld · %2$@
+versionedFiles.newest	Последняя: %@
+versionedFiles.versionPinned	Закреплена
+versionedFiles.versionUnavailable	Недоступна
+versionedFiles.versionBy	Автор: %@
+versionedFiles.detailFailed	Не удалось прочитать эту историю.
+versionedFiles.deleteSelectedNone	Отметьте версии для удаления
+versionedFiles.deleteSelected	Удалить выбранные (%lld)
+versionedFiles.deleteAll	Удалить все версии
+versionedFiles.confirmAllTitle	Удалить все версии «%@»?
+versionedFiles.confirmSomeTitle	Удалить выбранные версии (%lld)?
+versionedFiles.confirmMessage	Удалённые версии нельзя восстановить.
+versionedFiles.confirmDelete	Удалить
+versionedFiles.previous	Назад
+versionedFiles.next	Вперёд
+versionedFiles.pageRange	с %1$lld по %2$lld из %3$lld
+versionedFiles.deleteFailed	Не удалось удалить некоторые версии. Проверьте их и повторите попытку.
+serverSettings.featureOffTitle	Эта функция не включена
+serverSettings.featureOffKept	Всё, что вы настроите здесь, сохраняется и начнёт действовать, как только функция будет включена.
+serverSettings.featureOffUseSwitch	Включите её переключателем выше.
+serverSettings.featureOffHowTo	Чтобы включить её, задайте %@ и перезапустите контейнер.
+trashSettings.environmentNote	Значения по умолчанию берутся из TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT и TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Значения по умолчанию берутся из VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE и VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Обновить

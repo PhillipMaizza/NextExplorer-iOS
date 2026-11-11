@@ -847,3 +847,202 @@ shareUpload.causeFolder	Les dossiers ne peuvent pas être partagés. Partagez pl
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld de plus
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	Envois
+uploadSettings.subtitle	Configurez le transport utilisé pour envoyer les fichiers vers le serveur.
+uploadSettings.chunkedEnable	Activer les téléversements par chunks
+uploadSettings.chunkedEnableHelp	Utilise TUS pour envoyer les gros fichiers en plusieurs requêtes plus petites.
+uploadSettings.chunkSize	Taille des chunks
+uploadSettings.chunkSizeHelp	Taille maximale de chaque requête d’envoi. Gardez-la sous la limite de votre proxy inverse. Des morceaux plus petits donnent une progression plus fluide.
+uploadSettings.chunkSizeValue	%lld Mio
+uploadSettings.autoFallback	Bascule automatique en chunks
+uploadSettings.autoFallbackHelp	Si un envoi direct échoue parce qu’un proxy inverse refuse la taille, bascule automatiquement vers des envois par morceaux.
+uploadSettings.unavailable	Les réglages d’envoi sont réservés aux administrateurs.
+uploadSettings.saveButton	Enregistrer les modifications
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	Choisissez les exécutables FFmpeg et FFprobe utilisés pour les aperçus et les métadonnées des médias.
+ffmpegSettings.containerPathHelp	Indiquez des chemins absolus visibles à l'intérieur du conteneur de l'application. Pour utiliser les binaires de l'hôte, montez-les d'abord dans le conteneur.
+ffmpegSettings.ffmpegPath	Chemin de l'exécutable FFmpeg
+ffmpegSettings.ffprobePath	Chemin de l'exécutable FFprobe
+ffmpegSettings.invalid	Les deux chemins doivent être des chemins absolus du conteneur, commençant par /.
+ffmpegSettings.defaultHelp	Laissez un chemin vide pour utiliser FFMPEG_PATH ou FFPROBE_PATH de l'environnement, puis l'exécutable fourni. Les changements s'appliquent immédiatement.
+ffmpegSettings.unavailable	Les réglages FFmpeg sont réservés aux administrateurs.
+ffmpegSettings.saveButton	Enregistrer les modifications
+searchIndexSettings.navigationTitle	Index de recherche
+searchIndexSettings.subtitle	Exclure des chemins de l'indexation du contenu.
+searchIndexSettings.running	Tenir un index de recherche
+searchIndexSettings.runningHelp	Lit les documents du volume en arrière-plan, pour qu'une recherche dans leur contenu réponde aussitôt.
+searchIndexSettings.locked	Défini par %@ dans l'environnement : c'est là que cela se décide, pas ici.
+searchIndexSettings.environment	Exclusions définies par l’environnement
+searchIndexSettings.additional	Exclusions supplémentaires
+searchIndexSettings.none	Aucun chemin configuré
+searchIndexSettings.addButton	Ajouter
+searchIndexSettings.unavailable	Les réglages de l’index de recherche sont réservés aux administrateurs.
+searchIndexSettings.saveButton	Enregistrer les modifications
+searchIndexSettings.discardButton	Ignorer
+folderSizeSettings.navigationTitle	Taille des dossiers
+folderSizeSettings.subtitle	Exclure des chemins du calcul et de l’indexation des tailles.
+folderSizeSettings.running	Mesurer la taille des dossiers
+folderSizeSettings.runningHelp	Mesure les dossiers en arrière-plan, pour que leur taille s'affiche dans la liste.
+folderSizeSettings.modeOff	Désactivé
+folderSizeSettings.modeShallow	Leurs propres fichiers seulement
+folderSizeSettings.modeFull	Tout ce qu'ils contiennent
+folderSizeSettings.locked	Défini par %@ dans l'environnement : c'est là que cela se décide, pas ici.
+folderSizeSettings.environment	Exclusions définies par l’environnement
+folderSizeSettings.additional	Exclusions supplémentaires
+folderSizeSettings.none	Aucun chemin configuré
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Ajouter
+folderSizeSettings.unavailable	Les réglages des tailles de dossiers sont réservés aux administrateurs.
+folderSizeSettings.saveButton	Enregistrer les modifications
+folderSizeSettings.discardButton	Ignorer
+activityLog.navigationTitle	Journal d’activité
+activityLog.subtitle	Qui a fait quoi, quand, et depuis où. Désactivé tant que vous ne le demandez pas.
+activityLog.enabled	Consigner l’activité
+activityLog.enabledHelp	Connexions, téléchargements, envois, suppressions, restaurations, liens de partage et modifications de compte sont consignés tant que c’est actif. Rien de ce qui précède l’activation n’y figure.
+activityLog.retention	Conserver (jours)
+activityLog.retentionInvalid	Entre 1 et 3650 jours.
+activityLog.saveButton	Enregistrer les modifications
+activityLog.off	Le journal est désactivé : rien n’est enregistré.
+activityLog.none	Rien d’enregistré pour l’instant.
+activityLog.filterAction	Type
+activityLog.anyAction	Tous les types
+activityLog.filterOutcome	Résultat
+activityLog.anyOutcome	Tous les résultats
+activityLog.outcomeOk	Réussi
+activityLog.outcomeRefused	Refusé
+activityLog.searchPlaceholder	Un nom ou un chemin
+activityLog.searchButton	Rechercher
+activityLog.refresh	Actualiser
+activityLog.clear	Vider le journal
+activityLog.clearTitle	Vider le journal ?
+activityLog.clearMessage	Chaque ligne enregistrée est supprimée. Cette action est irréversible.
+activityLog.clearConfirm	Vider le journal
+activityLog.more	Afficher plus
+activityLog.refusedSuffix	Refusé
+activityLog.fromAddress	Depuis %@
+activityLog.unavailable	Le journal d’activité est réservé aux administrateurs.
+activityLog.action.signIn	Connexion
+activityLog.action.signOut	Déconnexion
+activityLog.action.accountPassword	Mot de passe modifié
+activityLog.action.accountTwoFactor	Double facteur modifié
+activityLog.action.accountPasskey	Clé d’accès modifiée
+activityLog.action.accountToken	Jeton d’API modifié
+activityLog.action.adminUser	Compte modifié
+activityLog.action.adminSettings	Réglages modifiés
+activityLog.action.adminActivityClear	Journal vidé
+activityLog.action.shareCreate	Partage créé
+activityLog.action.shareDelete	Partage supprimé
+activityLog.action.shareDownload	Téléchargé par un lien
+activityLog.action.shareUpload	Déposé par un lien
+activityLog.action.fileDownload	Téléchargé
+activityLog.action.fileUpload	Envoyé
+activityLog.action.fileDelete	Mis à la corbeille
+activityLog.action.fileRestore	Restauré
+activityLog.action.filePurge	Supprimé définitivement
+activityLog.action.versionsPurge	Versions supprimées
+trashSettings.navigationTitle	Corbeille et versions
+trashSettings.subtitle	Les éléments supprimés et les versions antérieures des fichiers sont conservés dans un espace réservé sur leur propre volume, puis supprimés à la fin de leur rétention ou lorsque cet espace est nécessaire.
+trashSettings.trashHeader	Corbeille
+trashSettings.enabled	Envoyer les éléments supprimés à la corbeille
+trashSettings.enabledHelp	Désactivée, la suppression efface définitivement. Les éléments déjà dans la corbeille expirent toujours.
+trashSettings.retention	Rétention (jours)
+trashSettings.retentionHelp	De 1 à 3650 jours.
+trashSettings.maxPercent	Part de chaque volume (%)
+trashSettings.maxPercentHelp	Le maximum que la corbeille peut occuper sur un volume, de 1 à 90 %.
+trashSettings.maxSize	Taille maximale par volume (Gio)
+trashSettings.maxSizeHelp	Facultatif. La plus petite des deux limites s'applique.
+trashSettings.maxSizeNone	Aucune limite
+trashSettings.trashInvalid	Vérifiez les valeurs : rétention de 1 à 3650 jours, part de 1 à 90 %, une taille positive ou aucune.
+trashSettings.versionsHeader	Versions de fichiers
+trashSettings.versionsSubtitle	Chaque enregistrement garde ce qu'il remplace, sans le copier, dans le même espace réservé que la corbeille. Les versions anciennes sont espacées avec le temps.
+trashSettings.versionsEnabled	Garder les versions antérieures des fichiers
+trashSettings.versionsEnabledHelp	Indépendant de la corbeille. Désactivé, les enregistrements ne gardent plus rien ; les versions existantes restent jusqu'à leur expiration ou leur suppression.
+trashSettings.keepAllHours	Garder toutes les versions (heures)
+trashSettings.hourlyDays	Puis une par heure (jours)
+trashSettings.dailyDays	Puis une par jour (jours)
+trashSettings.maxPerFile	Versions par fichier au plus
+trashSettings.checkpointMinutes	Point d'étape bureautique (minutes)
+trashSettings.tiersHelp	Au-delà de ces paliers, une version par semaine est gardée. Une session d'édition bureautique laisse une version, plus un point d'étape au plus à cette fréquence. Les versions épinglées échappent à l'espacement et à la limite par fichier.
+trashSettings.versionsInvalid	Vérifiez les valeurs : 1 à 720 heures, 1 à 365 jours par heure, 1 à 3650 jours par jour, 1 à 1000 versions par fichier, un point d'étape de 1 à 1440 minutes.
+trashSettings.sharedSpace	Les versions et la corbeille partagent l'espace réservé de chaque volume. Quand il manque, les versions anciennes partent d'abord, puis les éléments de la corbeille, puis la dernière version de chaque fichier, et les versions épinglées en dernier.
+trashSettings.saveButton	Enregistrer les modifications
+trashSettings.discardButton	Ignorer
+trashSettings.unavailable	Les réglages de la corbeille et des versions sont réservés aux administrateurs.
+trashSettings.zonesHeader	Corbeille par volume
+trashSettings.zonesSubtitle	Chaque volume garde sa corbeille dans un dossier caché .nextexplorer à sa racine : supprimer ne copie jamais rien.
+trashSettings.zonesEmpty	Rien n'a encore été supprimé vers une corbeille.
+trashSettings.zoneKindPersonal	Dossier personnel de %@
+trashSettings.zoneKindUserVolume	Volume attribué %@
+trashSettings.available	Disponible
+trashSettings.unavailableMissing	Non monté ou supprimé
+trashSettings.unavailableReplaced	Un autre disque à sa place
+trashSettings.unavailableUnreadable	Illisible
+trashSettings.usage	%1$@ sur %2$@
+trashSettings.noBudget	sans limite
+trashSettings.zoneItems	Éléments : %1$lld · %2$@
+trashSettings.zoneVersions	Versions : %1$lld · %2$@
+trashSettings.lastPass	Dernier entretien : %@
+trashSettings.lastPassPurged	%1$@ · supprimés : %2$lld
+trashSettings.never	pas encore
+trashSettings.verify	Vérifier
+trashSettings.runMaintenance	Lancer l'entretien maintenant
+trashSettings.verifyOk	La corbeille de chaque volume est cohérente.
+trashSettings.verifyIssues	Problèmes détectés : %lld
+trashSettings.zoneProblems	Problèmes : %lld
+trashSettings.journalHeader	Journal
+trashSettings.eventEvicted	"%@" supprimé avant la fin de sa rétention pour libérer de l'espace
+trashSettings.eventAdopted	"%@" récupéré après une interruption
+trashSettings.eventLost	Le contenu de "%@" avait disparu
+trashSettings.eventFailed	"%@" n'a pas pu être supprimé
+trashSettings.eventBreaker	Trop d'éléments manquants d'un coup : rien n'a été modifié
+trashSettings.eventForgotten	"%@" oublié par un administrateur
+trashSettings.eventVersionEvicted	Une version de « %@ » supprimée pour libérer de l'espace
+trashSettings.eventVersionFailed	Une version n'a pas pu être supprimée
+trashSettings.eventVersionLost	Le contenu d'une version était introuvable
+trashSettings.eventVersionTooLarge	« %@ » dépasse tout l'espace : ce qu'il remplaçait n'a pas été gardé
+trashSettings.eventVersionsBreaker	Trop de versions introuvables d'un coup : rien n'a été modifié
+versionedFiles.navigationTitle	Versions de fichiers
+versionedFiles.subtitle	Chaque fichier qui a un historique, où qu’il soit. Cette liste montre les chemins de tous les espaces, dossiers personnels compris, elle est donc réservée aux administrateurs.
+versionedFiles.summary	Fichiers : %1$lld · Versions : %2$lld · %3$@
+versionedFiles.searchPlaceholder	Un nom ou un chemin
+versionedFiles.zone	Volume
+versionedFiles.anyZone	Tous les volumes
+versionedFiles.stateHeader	État
+versionedFiles.anyState	Tous les états
+versionedFiles.stateLive	Fichier toujours présent
+versionedFiles.stateTrashed	À la corbeille
+versionedFiles.stateOrphaned	Fichier disparu
+versionedFiles.sortHeader	Trier par
+versionedFiles.sortBytes	Place occupée
+versionedFiles.sortVersions	Nombre de versions
+versionedFiles.sortNewest	La plus récente
+versionedFiles.sortPath	Chemin
+versionedFiles.none	Aucun fichier n’a de version antérieure.
+versionedFiles.unavailable	Les versions des fichiers sont réservées aux administrateurs.
+versionedFiles.zoneUnknown	Volume inconnu
+versionedFiles.zoneKindPersonal	Dossier personnel de %@
+versionedFiles.zoneKindUserVolume	Volume attribué %@
+versionedFiles.rowSummary	Versions : %1$lld · %2$@
+versionedFiles.newest	Dernière : %@
+versionedFiles.versionPinned	Épinglée
+versionedFiles.versionUnavailable	Indisponible
+versionedFiles.versionBy	Par %@
+versionedFiles.detailFailed	Cet historique n’a pas pu être lu.
+versionedFiles.deleteSelectedNone	Cochez les versions à supprimer
+versionedFiles.deleteSelected	Supprimer la sélection (%lld)
+versionedFiles.deleteAll	Supprimer toutes les versions
+versionedFiles.confirmAllTitle	Supprimer toutes les versions de « %@ » ?
+versionedFiles.confirmSomeTitle	Supprimer les versions sélectionnées (%lld) ?
+versionedFiles.confirmMessage	Les versions supprimées ne peuvent pas être récupérées.
+versionedFiles.confirmDelete	Supprimer
+versionedFiles.previous	Précédent
+versionedFiles.next	Suivant
+versionedFiles.pageRange	%1$lld à %2$lld sur %3$lld
+versionedFiles.deleteFailed	Certaines versions n’ont pas pu être supprimées. Vérifiez-les et réessayez.
+serverSettings.featureOffTitle	Cette fonctionnalité n’est pas activée
+serverSettings.featureOffKept	Ce que vous configurez ici est enregistré et s’applique dès l’activation.
+serverSettings.featureOffUseSwitch	Activez-la avec l’interrupteur ci-dessus.
+serverSettings.featureOffHowTo	Pour l’activer, définissez %@ et redémarrez le conteneur.
+trashSettings.environmentNote	Les valeurs par défaut proviennent de TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT et TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Les valeurs par défaut proviennent de VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE et VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Actualiser

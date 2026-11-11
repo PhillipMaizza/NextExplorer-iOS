@@ -16,7 +16,7 @@ Browse, preview, search and share. Your files stay between your devices and the 
 ![macOS](https://img.shields.io/badge/macOS-15%2B-black?logo=apple)
 ![Swift](https://img.shields.io/badge/Swift-6-orange?logo=swift&logoColor=white)
 ![Architecture](https://img.shields.io/badge/architecture-SwiftUI%20%2B%20TCA-purple)
-![Languages](https://img.shields.io/badge/localized-17%20languages-green)
+![Languages](https://img.shields.io/badge/localized-30%20languages-green)
 ![Accessibility](https://img.shields.io/badge/a11y-VoiceOver%20%2B%20Dynamic%20Type-teal)
 ![Tracking](https://img.shields.io/badge/tracking-none-brightgreen)
 ![License](https://img.shields.io/badge/license-MIT-lightgrey)
@@ -73,7 +73,7 @@ And on the Mac, a real Mac app: sidebar, Finder style tables, Quick Look, drag a
 - **Account security.** Turn two-factor authentication on or off from Settings, with a QR code, recovery codes and a password check, and create, rename and revoke API tokens for your scripts.
 - **Server settings for admins.** If you administer the server, the same settings the web app offers are here: uploads (chunked, with automatic fallback), FFmpeg paths, the search index, folder size measuring, the activity log, the trash and file versions (with a per-volume view and a version browser), thumbnails and folder access rules. Each page shows when the server has the feature switched off, and none of it appears for non-admin accounts.
 - **Several accounts.** Sign in to more than one server and switch between them; each account's files and caches stay separate. Your own private My Files space when the server offers one.
-- **Everyone's app.** 17 languages with full right-to-left support, plus complete VoiceOver and Dynamic Type accessibility.
+- **Everyone's app.** 30 languages, with full right-to-left support for Arabic and Hebrew, plus complete VoiceOver and Dynamic Type accessibility.
 - **iPhone and iPad.** Universal layout with a split-view sidebar on larger screens.
 - **A real Mac app.** Sortable tables, Quick Look, Get Info with version history, drag and drop with Finder and between windows, menus, shortcuts, tabs and windows that stay in sync, and downloads saved anywhere you choose in Finder.
 
@@ -93,7 +93,7 @@ Native iOS 18+ and macOS 15+, SwiftUI, and [The Composable Architecture](https:/
 | `NetworkClient` | HTTP layer, ETag revalidation, connectivity |
 | `CoreModels` | Shared domain models |
 | `DesignSystem` | Colors, typography, reusable components |
-| `Localization` | 17-language string catalog and live in-app language switch |
+| `Localization` | 30-language string catalog and live in-app language switch |
 | `Keychain` / `AppStorageKeys` | Credential storage and device preferences |
 
 Some choices worth calling out:

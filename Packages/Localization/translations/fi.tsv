@@ -1,0 +1,1108 @@
+# NextExplorer: Suomi (fi). key<TAB>value.
+common.cancel	Peruuta
+common.save	Tallenna
+common.edit	Muokkaa
+common.retry	Yritä uudelleen
+common.syncCompleted	Synkronointi valmis
+common.delete	Poista
+common.remove	Poista
+common.clear	Tyhjennä
+common.done	Valmis
+common.ok	OK
+common.openSettings	Avaa asetukset
+common.logOut	Kirjaudu ulos
+common.close	Sulje
+common.back	Takaisin
+common.share	Jaa
+common.copy	Kopioi
+common.copied	Kopioitu
+common.download	Lataa
+common.sort	Lajittele
+common.select	Valitse
+common.deselect	Poista valinta
+common.search	Hae
+common.password	Salasana
+common.never	Ei koskaan
+common.selectedCount	%lld valittu
+tab.browse	Selaa
+tab.favorites	Suosikit
+tab.shared	Jaetut
+tab.downloads	Lataukset
+tab.settings	Asetukset
+sort.sheetTitle	Lajitteluperuste
+sort.name	Nimi
+sort.size	Koko
+sort.kind	Laji
+sort.dateModified	Muokkauspäivä
+sort.dateAdded	Lisäyspäivä
+sort.dateShared	Jakopäivä
+sort.expiration	Vanheneminen
+sort.email	Sähköposti
+sort.type	Tyyppi
+sort.ascending	Nouseva
+sort.descending	Laskeva
+select.selectAll	Valitse kaikki
+select.deselectAll	Poista kaikkien valinta
+select.listView	Luettelonäkymä
+select.gridView	Ruudukkonäkymä
+emptyState.folderEmpty	Tämä kansio on tyhjä.
+emptyState.loadFailed	Palvelimeen ei saatu yhteyttä.
+emptyState.noSearchMatches	Ei tuloksia haulle “%@”.
+accessMode.readonly	Vain luku
+accessMode.readwrite	Luku ja kirjoitus
+shareTarget.anyone	Kuka tahansa, jolla on linkki
+shareTarget.users	Tietyt käyttäjät
+directLinkMode.auto	Automaattinen
+directLinkMode.inline	Näytä
+directLinkMode.raw	Raaka
+directLinkMode.download	Lataa
+thumbnailSize.small	Pieni
+thumbnailSize.medium	Keskikokoinen
+thumbnailSize.large	Suuri
+downloadLocation.documents	Asiakirjat
+downloadLocation.cache	Välimuisti
+dateFormat.automatic	Automaattinen
+browse.navigationTitle	Selaa
+browse.scopeThisFolder	Tämä kansio
+browse.scopeEverywhere	Kaikkialla
+browse.searchScopeInFolder	Tämä kansio
+browse.searchScopeEverywhere	Kaikkialla
+browse.locations	Sijainnit
+browse.breadcrumbHint	Avaa tämän kansion
+browse.open	Avaa
+browse.unsupportedFileType	Tiedostotyyppiä ei tueta
+browse.actionGetInfo	Näytä tiedot
+browse.actionPermissions	Käyttöoikeudet
+browse.actionRename	Nimeä uudelleen
+browse.actionExtract	Pura
+browse.actionCompress	Pakkaa
+browse.actionDownload	Lataa
+browse.actionAddToFavorites	Lisää suosikkeihin
+browse.actionRemoveFromFavorites	Poista suosikeista
+browse.actionShare	Luo jakolinkki
+browse.actionDelete	Poista
+browse.actionDuplicate	Kahdenna
+browse.renameTitle	Nimeä uudelleen
+browse.renameNamePlaceholder	Nimi
+browse.actionNewFolder	Luo kansio
+browse.newFolderTitle	Uusi kansio
+browse.newFolderPlaceholder	Kansion nimi
+browse.newFolderConfirm	Luo
+browse.actionNewFile	Luo tiedosto
+browse.newFileTitle	Uusi tiedosto
+browse.newFileTypeHint	Käytä tiedostotyyppiä, jonka editori osaa avata, esimerkiksi .txt, .md tai .js.
+browse.deleteConfirmTitle	Poistetaanko?
+browse.deleteConfirmOne	Poistetaanko “%@”?
+browse.deleteConfirmMany	Poistetaanko %lld kohdetta?
+browse.deleteMessage	Tätä ei voi kumota.
+browse.deleteLinkedSharesOne	Tämä poistaa myös 1 tänne osoittavan jakolinkin.
+browse.deleteLinkedSharesMany	Tämä poistaa myös %lld tänne osoittavaa jakolinkkiä.
+browse.deleteLinkedSharesUnavailable	Tänne osoittavia jakolinkkejä ei voitu tarkistaa. Mahdolliset olemassa olevat linkit lakkaavat toimimasta.
+browse.searchNoMatchesInFolder	Ei tuloksia haulle “%@”.
+browse.searchEverywhere	Hae kaikkialta
+browse.searchFailed	Hakua ei voitu tehdä. Tarkista yhteytesi ja yritä uudelleen.
+browse.progressExtracting	Puretaan…
+browse.progressCompressing	Pakataan…
+browse.offlineBannerTitle	Offline
+browse.offlineBannerDetail	Näytetään tallennettu kopio ajalta %@
+browse.actionCopy	Kopioi
+browse.destinationPickerMoveTitle	Siirrä kohteeseen…
+browse.destinationPickerConfirmMove	Siirrä tänne
+browse.destinationPickerNoFolders	Ei kansioita täällä
+browse.destinationPickerLoadFailed	Kansioita ei voitu ladata.
+browse.actionMove	Siirrä
+browse.actionPaste	Liitä
+browse.actionPasteCount	Liitä %lld kohdetta
+browse.actionPasteHere	Liitä tähän
+browse.actionClearClipboard	Tyhjennä leikepöytä
+browse.clipboardMoveCount	%lld siirrettävää
+browse.clipboardCopyCount	%lld kopioitavaa
+browse.clipboardCopiedOne	%@ kopioitu
+browse.clipboardCopiedMany	%lld kohdetta kopioitu
+browse.progressMoving	Siirretään…
+browse.progressCopying	Kopioidaan…
+browse.transferMoved	%lld kohdetta siirretty
+browse.transferCopied	%lld kohdetta kopioitu
+browse.transferMovedWithSkipped	%1$lld kohdetta siirretty, %2$lld ohitettu
+browse.transferCopiedWithSkipped	%1$lld kohdetta kopioitu, %2$lld ohitettu
+browse.transferConflictTitle	Korvataanko kohteet?
+browse.transferConflictMessageOne	"%@" on jo tässä kansiossa.
+browse.transferConflictMessageMany	%lld kohdetta on jo tässä kansiossa.
+browse.transferConflictReplace	Korvaa
+browse.transferConflictKeepBoth	Säilytä molemmat
+browse.actionOpenInBrowser	Avaa selaimessa
+favorites.navigationTitle	Suosikit
+favorites.emptyList	Merkitse kansioita tähdellä Selaa-näkymässä nähdäksesi ne täällä.
+favorites.actionRemoveFromFavorites	Poista suosikeista
+favorites.accessibilityBadge	Suosikki
+favorites.actionEdit	Muokkaa
+favorites.editTitle	Muokkaa suosikkia
+favorites.editNameLabel	Nimi
+favorites.editNameErrorEmpty	Nimi ei voi olla tyhjä.
+favorites.editIconLabel	Kuvake
+favorites.editIconOutline	Ääriviiva
+favorites.editIconSolid	Täytetty
+favorites.editColorLabel	Väri
+favorites.editColorDefault	Oletus
+favorites.editSave	Tallenna
+favorites.reorderFailed	Uutta järjestystä ei voitu tallentaa.
+favorites.removeConfirm	Poistetaanko %lld suosikkia?
+favorites.removeMessage	Tämä poistaa ne vain suosikeista.
+favorites.removeFailedOne	Tuota suosikkia ei voitu poistaa.
+favorites.removeFailedMany	Noita suosikkeja ei voitu poistaa.
+favorites.removePartial	Poistettu %1$lld / %2$lld.
+downloads.navigationTitle	Lataukset
+downloads.actionOpenInFiles	Avaa Tiedostoissa
+downloads.emptyList	Selaa-näkymästä lataamasi tiedostot näkyvät täällä.
+downloads.deleteConfirmTitle	Poistetaanko?
+downloads.deleteConfirmOne	Poistetaanko “%@”?
+downloads.deleteConfirmMany	Poistetaanko %lld tiedostoa?
+downloads.deleteSingleMessage	Tämä poistaa vain paikallisen kopion. Tiedosto säilyy palvelimella.
+downloads.deleteBulkMessage	Tämä poistaa vain paikalliset kopiot. Tiedostot säilyvät palvelimella.
+downloads.errorNameExists	Tämänniminen tiedosto on jo olemassa.
+downloads.errorInvalidName	Tuo nimi ei ole sallittu.
+downloads.errorMissing	Tiedostoa ei enää löytynyt.
+downloads.errorGeneric	Toimintoa ei voitu suorittaa loppuun.
+unsupportedPreview.genericType	Tiedosto
+unsupportedPreview.cannotOpen	Tämä sovellus ei voi avata tämäntyyppistä tiedostoa.
+uploads.navigationTitle	Lähetykset
+uploads.menuTitle	Lähetä
+uploads.actionUploadFromFiles	Lähetä Tiedostoista
+uploads.actionUploadFromPhotos	Lähetä Galleriasta
+uploads.actionTakePhoto	Ota kuva tai video
+uploads.cameraDeniedTitle	Kameran käyttöoikeus vaaditaan
+uploads.cameraDeniedMessage	Salli kameran käyttö Asetuksissa ottaaksesi kuvan tai videon.
+uploads.destinationTitle	Lähetä kohteeseen…
+uploads.destinationConfirm	Lähetä tänne
+uploads.reviewTitleOne	Lähetä 1 tiedosto
+uploads.reviewTitleMany	Lähetä %lld tiedostoa
+uploads.reviewSectionFiles	Tiedostot
+uploads.reviewSectionPath	Polku
+uploads.reviewSectionSize	Kokonaiskoko
+uploads.reviewChooseFolder	Valitse kansio
+uploads.reviewUploadButton	Lähetä
+uploads.reviewPreparing	Valmistellaan %lld…
+uploads.reviewAddMore	Lisää tiedostoja
+uploads.reviewPreviewFile	Esikatsele: %@
+uploads.reviewInsecureNetworkNotice	Yhdistetty http-yhteydellä. Jos tämä palvelin on vain kotiverkossasi, lähetykset eivät toimi, kun olet poissa sieltä.
+uploads.stagingFailed	Tiedostoja ei voitu lisätä. Yritä uudelleen.
+uploads.stagingSkipped	%lld kohdetta ei voitu valmistella, ja ne jätettiin pois.
+uploads.discardTitle	Hylätäänkö lähetys?
+uploads.discardMessage	Lisäämiäsi tiedostoja ei lähetetä.
+uploads.discardConfirm	Hylkää
+uploads.statusWaiting	Odottaa
+uploads.statusFailed	Lähetys epäonnistui
+uploads.barTitleOne	Lähetetään: %@
+uploads.barTitleMany	Lähetetään %lld tiedostoa
+uploads.barFailedOne	1 lähetys epäonnistui
+uploads.barFailedMany	%lld lähetystä epäonnistui
+uploads.retryAll	Yritä kaikkia uudelleen
+uploads.complete	Lähetys valmis
+uploads.completeMany	%lld tiedostoa lähetetty
+uploads.completeWithFailures	%1$lld lähetetty, %2$lld epäonnistui
+uploads.failedGeneric	Tätä tiedostoa ei voitu lähettää.
+uploads.clear	Tyhjennä
+uploads.emptyList	Ei vielä lähetyksiä.
+uploads.cancelAll	Peruuta kaikki lähetykset
+shared.navigationTitle	Jaetut
+shared.segmentByMe	Minun
+shared.segmentWithMe	Minulle jaetut
+shared.sectionExpired	Vanhentunut
+shared.badgeExpired	vanhentunut
+shared.emptyByMe	Jaa tiedosto tai kansio nähdäksesi sen linkin täällä.
+shared.emptyWithMe	Muiden kanssasi jakamat linkit näkyvät täällä.
+shared.noSearchMatches	Mikään jako ei vastaa hakua “%@”.
+shared.deleteTitle	Poistetaanko jakolinkki?
+shared.deleteMessage	Linkki lakkaa toimimasta heti. Itse tiedostoon tai kansioon ei kosketa.
+shared.sharedByUnknown	Joku
+shared.metaAccess	Käyttöoikeus
+shared.metaExpiration	Vanheneminen
+shared.metaSharedBy	Jakaja
+shared.metaSharedWith	Jaettu henkilölle
+shared.anyoneWithLink	Kuka tahansa, jolla on linkki
+shared.linkMode	Linkin tila
+shared.actionShareLink	Jakolinkki
+shared.actionFolderLink	Kansiolinkki
+shared.actionFileLink	Tiedostolinkki
+shared.copiedShareLink	Jakolinkki kopioitu
+shared.copiedFolderZip	Kansion ZIP-linkki kopioitu
+shared.copiedDirectFile	Suora tiedostolinkki kopioitu
+createShare.title	Luo jakolinkki
+createShare.titleCreated	Jako luotu
+createShare.sectionLabel	Nimike
+createShare.sectionAccessMode	Käyttötila
+createShare.sectionWhoCanAccess	Kenellä on pääsy
+createShare.sectionShareLink	Jakolinkki
+createShare.fieldPassword	Salasana
+createShare.togglePasswordProtect	Suojaa salasanalla
+createShare.toggleSetExpiration	Aseta vanhenemispäivä
+createShare.fieldExpires	Vanhenee
+createShare.submit	Luo jakolinkki
+createShare.loadingUsers	Ladataan käyttäjiä…
+createShare.noOtherUsers	Ei muita käyttäjiä, joille jakaa.
+createShare.sharingPrefix	Jaetaan:
+createShare.createdBanner	Jakolinkki luotu onnistuneesti!
+createShare.viewInShared	Näytä Jaetuissa
+createShare.directLinkMode	Suoran linkin tila
+createShare.directFolderLink	Suora kansion ZIP-linkki
+createShare.directFileLink	Suora tiedostolinkki
+createShare.summaryAccess	Käyttöoikeus
+createShare.summarySharedWith	Jaettu henkilölle
+createShare.summaryPassword	Salasana
+createShare.summaryPasswordProtected	Suojattu
+createShare.summaryExpires	Vanhenee
+createShare.summarySpecificPeople	Tietyt henkilöt
+createShare.errorPastExpiration	Valitse vanhenemispäivä tulevaisuudesta.
+editShare.title	Muokkaa jakolinkkiä
+editShare.save	Tallenna muutokset
+editShare.passwordKeepHint	Jätä tyhjäksi säilyttääksesi nykyisen salasanan
+editShare.savedToast	Jakolinkki päivitetty
+thumbnailSettings.navigationTitle	Pikkukuvat
+thumbnailSettings.subtitle	Määritä, miten palvelin luo kuvien pikkukuvat kaikille asiakkaille.
+thumbnailSettings.enable	Luo pikkukuvat
+thumbnailSettings.enableHelp	Poista käytöstä, jos haluat tarjota täysikokoiset kuvat kaikkialla.
+thumbnailSettings.quality	Laatu
+thumbnailSettings.qualityHelp	Korkeampi näyttää paremmalta ja vie enemmän tilaa.
+thumbnailSettings.maxDimension	Enimmäiskoko
+thumbnailSettings.maxDimensionHelp	Luodun pikkukuvan pisin sivu kuvapisteinä.
+thumbnailSettings.concurrency	Rinnakkaisuus
+thumbnailSettings.concurrencyHelp	Kuinka monta pikkukuvaa palvelin luo kerrallaan.
+thumbnailSettings.unavailable	Pikkukuva-asetukset ovat vain ylläpitäjien käytettävissä.
+thumbnailSettings.saveButton	Tallenna muutokset
+uploadSettings.navigationTitle	Lähetykset
+uploadSettings.subtitle	Määritä, miten tiedostot lähetetään palvelimelle.
+uploadSettings.chunkedEnable	Ota käyttöön osissa lähettäminen
+uploadSettings.chunkedEnableHelp	Käyttää TUS:ia suurten tiedostojen lähettämiseen useissa pienemmissä pyynnöissä.
+uploadSettings.chunkSize	Osan koko
+uploadSettings.chunkSizeHelp	Kunkin lähetyspyynnön enimmäiskoko. Pidä se käänteisen välityspalvelimesi rajan alapuolella. Pienemmät osat antavat tasaisemman edistymisen.
+uploadSettings.autoFallback	Automaattinen siirtyminen osiin
+uploadSettings.autoFallbackHelp	Jos suora lähetys epäonnistuu, koska käänteinen välityspalvelin hylkää sisällön koon, siirrytään automaattisesti osissa lähettämiseen.
+uploadSettings.unavailable	Lähetysasetukset ovat vain ylläpitäjien käytettävissä.
+uploadSettings.saveButton	Tallenna muutokset
+ffmpegSettings.subtitle	Valitse FFmpeg- ja FFprobe-ohjelmat, joita käytetään median esikatseluihin ja metatietoihin.
+ffmpegSettings.containerPathHelp	Anna absoluuttiset polut, jotka näkyvät sovelluksen säiliön sisällä. Jos haluat käyttää isännän ohjelmia, liitä ne ensin säiliöön.
+ffmpegSettings.ffmpegPath	FFmpeg-ohjelman polku
+ffmpegSettings.ffprobePath	FFprobe-ohjelman polku
+ffmpegSettings.invalid	Molempien polkujen on oltava absoluuttisia säiliön polkuja, jotka alkavat merkillä /.
+ffmpegSettings.defaultHelp	Jätä polku tyhjäksi, jos haluat käyttää ympäristön muuttujaa FFMPEG_PATH tai FFPROBE_PATH ja sen jälkeen mukana tulevaa ohjelmaa. Muutokset tulevat voimaan heti.
+ffmpegSettings.unavailable	FFmpeg-asetukset ovat vain ylläpitäjien käytettävissä.
+ffmpegSettings.saveButton	Tallenna muutokset
+searchIndexSettings.navigationTitle	Hakuindeksi
+searchIndexSettings.subtitle	Rajaa polkuja pois sisällön indeksoinnista.
+searchIndexSettings.running	Ylläpidä hakuindeksiä
+searchIndexSettings.runningHelp	Lukee taltion asiakirjat taustalla, jotta niistä haku vastaa heti.
+searchIndexSettings.locked	Asetettu ympäristössä muuttujalla %@, joten asia päätetään siellä eikä täällä.
+searchIndexSettings.environment	Ympäristön määrittämät poikkeukset
+searchIndexSettings.additional	Lisäpoikkeukset
+searchIndexSettings.none	Polkua ei ole määritetty
+searchIndexSettings.addButton	Lisää
+searchIndexSettings.unavailable	Hakuindeksin asetukset ovat vain ylläpitäjien käytettävissä.
+searchIndexSettings.saveButton	Tallenna muutokset
+searchIndexSettings.discardButton	Hylkää
+folderSizeSettings.navigationTitle	Kansioiden koot
+folderSizeSettings.subtitle	Rajaa polkuja pois kansioiden kokojen laskennasta ja indeksoinnista.
+folderSizeSettings.running	Mittaa kansioiden koot
+folderSizeSettings.runningHelp	Mittaa kansiot taustalla, jotta niiden koko näkyy luettelossa.
+folderSizeSettings.modeOff	Pois
+folderSizeSettings.modeShallow	Vain niiden omat tiedostot
+folderSizeSettings.modeFull	Kaikki niiden sisällä
+folderSizeSettings.locked	Asetettu ympäristössä muuttujalla %@, joten asia päätetään siellä eikä täällä.
+folderSizeSettings.environment	Ympäristön määrittämät poikkeukset
+folderSizeSettings.additional	Lisäpoikkeukset
+folderSizeSettings.none	Polkuja ei ole määritetty
+folderSizeSettings.addButton	Lisää
+folderSizeSettings.unavailable	Kansioiden kokojen asetukset ovat vain ylläpitäjien käytettävissä.
+folderSizeSettings.saveButton	Tallenna muutokset
+folderSizeSettings.discardButton	Hylkää
+activityLog.navigationTitle	Toimintaloki
+activityLog.subtitle	Kuka teki mitä, milloin ja mistä. Pois käytöstä, ellet ota sitä käyttöön.
+activityLog.enabled	Kirjaa toiminta
+activityLog.enabledHelp	Kirjautumiset, lataukset, lähetykset, poistot, palautukset, jakolinkit ja tilimuutokset kirjataan, kun tämä on päällä. Ennen käyttöönottoa tapahtunutta ei ole mukana.
+activityLog.retention	Säilytä (päivää)
+activityLog.retentionInvalid	1–3650 päivää.
+activityLog.saveButton	Tallenna muutokset
+activityLog.off	Loki on pois päältä, joten mitään ei kirjata.
+activityLog.none	Mitään ei ole vielä kirjattu.
+activityLog.filterAction	Laji
+activityLog.anyAction	Mikä tahansa laji
+activityLog.filterOutcome	Tulos
+activityLog.anyOutcome	Mikä tahansa tulos
+activityLog.outcomeOk	Onnistui
+activityLog.outcomeRefused	Evätty
+activityLog.searchPlaceholder	Nimi tai polku
+activityLog.searchButton	Hae
+activityLog.refresh	Päivitä
+activityLog.clear	Tyhjennä loki
+activityLog.clearTitle	Tyhjennetäänkö loki?
+activityLog.clearMessage	Jokainen kirjattu rivi poistetaan. Tätä ei voi kumota.
+activityLog.clearConfirm	Tyhjennä loki
+activityLog.more	Näytä lisää
+activityLog.refusedSuffix	Evätty
+activityLog.fromAddress	Osoitteesta %@
+activityLog.unavailable	Toimintaloki on vain ylläpitäjien käytettävissä.
+activityLog.action.signIn	Kirjauduttu sisään
+activityLog.action.signOut	Kirjauduttu ulos
+activityLog.action.accountPassword	Salasana vaihdettu
+activityLog.action.accountTwoFactor	Toinen vaihe muutettu
+activityLog.action.accountPasskey	Pääsyavain muutettu
+activityLog.action.accountToken	API-tunnus muutettu
+activityLog.action.adminUser	Tili muutettu
+activityLog.action.adminSettings	Asetukset muutettu
+activityLog.action.adminActivityClear	Loki tyhjennetty
+activityLog.action.shareCreate	Jako luotu
+activityLog.action.shareDelete	Jako poistettu
+activityLog.action.shareDownload	Ladattu linkin kautta
+activityLog.action.shareUpload	Lähetetty linkin kautta
+activityLog.action.fileDownload	Ladattu
+activityLog.action.fileUpload	Lähetetty
+activityLog.action.fileDelete	Siirretty roskakoriin
+activityLog.action.fileRestore	Palautettu
+activityLog.action.filePurge	Poistettu pysyvästi
+activityLog.action.versionsPurge	Versiot poistettu
+trashSettings.navigationTitle	Roskakori ja versiot
+trashSettings.subtitle	Poistetut kohteet ja tiedostojen aiemmat versiot säilytetään varatussa tilassa omalla taltiollaan, ja ne poistetaan säilytysajan jälkeen tai kun tilaa tarvitaan.
+trashSettings.trashHeader	Roskakori
+trashSettings.enabled	Siirrä poistetut kohteet roskakoriin
+trashSettings.enabledHelp	Kun tämä on pois päältä, poistaminen poistaa kohteet pysyvästi. Jo roskakorissa olevat kohteet vanhenevat edelleen.
+trashSettings.retention	Säilytysaika (päivää)
+trashSettings.retentionHelp	1–3650 päivää.
+trashSettings.maxPercent	Kunkin taltion osuus (%)
+trashSettings.maxPercentHelp	Enimmäismäärä, jonka roskakori saa viedä taltiolla, 1–90 %.
+trashSettings.maxSize	Kokoraja taltiota kohti (GiB)
+trashSettings.maxSizeHelp	Valinnainen. Osuuden ja rajan pienempi on voimassa.
+trashSettings.maxSizeNone	Ei rajaa
+trashSettings.trashInvalid	Tarkista arvot: säilytysaika 1–3650 päivää, osuus 1–90 %, positiivinen koko tai ei mitään.
+trashSettings.versionsHeader	Tiedostoversiot
+trashSettings.versionsSubtitle	Jokainen tallennus säilyttää korvaamansa sisällön kopioimatta sitä samassa varatussa tilassa kuin roskakori. Vanhempia versioita harvennetaan ajan myötä.
+trashSettings.versionsEnabled	Säilytä tiedostojen aiemmat versiot
+trashSettings.versionsEnabledHelp	Riippumaton roskakorista. Kun tämä on pois päältä, tallennukset eivät säilytä mitään uutta; olemassa olevat versiot säilyvät, kunnes ne vanhenevat tai poistetaan.
+trashSettings.keepAllHours	Säilytä jokainen versio (tuntia)
+trashSettings.hourlyDays	Sen jälkeen yksi tunnissa (päivää)
+trashSettings.dailyDays	Sen jälkeen yksi päivässä (päivää)
+trashSettings.maxPerFile	Versioita tiedostoa kohti enintään
+trashSettings.checkpointMinutes	Officen tarkistuspiste (minuuttia)
+trashSettings.tiersHelp	Näiden portaiden jälkeen säilytetään yksi versio viikossa. Officen muokkausistunto jättää yhden version sekä tarkistuspisteen enintään tällä tiheydellä. Kiinnitetyt versiot välttävät harvennuksen ja tiedostokohtaisen rajan.
+trashSettings.versionsInvalid	Tarkista arvot: 1–720 tuntia, 1–365 päivää tunnissa, 1–3650 päivää päivässä, 1–1000 versiota tiedostoa kohti, tarkistuspiste 1–1440 minuuttia.
+trashSettings.sharedSpace	Versiot ja roskakori jakavat kunkin taltion varatun tilan. Kun tila käy vähiin, vanhemmat versiot poistuvat ensin, sitten roskakorin kohteet, sitten kunkin tiedoston uusin versio ja viimeisenä kiinnitetyt versiot.
+trashSettings.saveButton	Tallenna muutokset
+trashSettings.discardButton	Hylkää
+trashSettings.unavailable	Roskakorin ja versioiden asetukset ovat vain ylläpitäjien käytettävissä.
+trashSettings.zonesHeader	Roskakori taltioittain
+trashSettings.zonesSubtitle	Jokainen taltio pitää roskakorinsa piilotetussa .nextexplorer-kansiossa juuressaan, joten poistaminen ei koskaan kopioi mitään.
+trashSettings.zonesEmpty	Roskakoriin ei ole vielä poistettu mitään.
+trashSettings.zoneKindPersonal	Käyttäjän %@ henkilökohtainen kansio
+trashSettings.zoneKindUserVolume	Määritetty taltio %@
+trashSettings.available	Käytettävissä
+trashSettings.unavailableMissing	Ei liitetty tai poistettu
+trashSettings.unavailableReplaced	Toinen levy sen paikalla
+trashSettings.unavailableUnreadable	Ei luettavissa
+trashSettings.usage	%1$@ / %2$@
+trashSettings.noBudget	ei rajaa
+trashSettings.zoneItems	Kohteet: %1$lld · %2$@
+trashSettings.zoneVersions	Versiot: %1$lld · %2$@
+trashSettings.lastPass	Viimeisin huolto: %@
+trashSettings.lastPassPurged	%1$@ · poistettu: %2$lld
+trashSettings.never	ei vielä
+trashSettings.verify	Tarkista
+trashSettings.runMaintenance	Suorita huolto nyt
+trashSettings.verifyOk	Jokaisen taltion roskakori on yhdenmukainen.
+trashSettings.verifyIssues	Löydetyt ongelmat: %lld
+trashSettings.zoneProblems	Ongelmat: %lld
+trashSettings.journalHeader	Tapahtumaloki
+trashSettings.eventEvicted	"%@" poistettiin ennen säilytysajan päättymistä tilan vapauttamiseksi
+trashSettings.eventAdopted	"%@" palautettiin keskeytyksen jälkeen
+trashSettings.eventLost	Kohteelta "%@" puuttui sisältö
+trashSettings.eventFailed	Kohdetta "%@" ei voitu poistaa
+trashSettings.eventBreaker	Liian monta kohdetta puuttuu kerralla: mitään ei muutettu
+trashSettings.eventForgotten	Ylläpitäjä unohti kohteen "%@"
+trashSettings.eventVersionEvicted	Kohteen "%@" versio poistettiin tilan vapauttamiseksi
+trashSettings.eventVersionFailed	Versiota ei voitu poistaa
+trashSettings.eventVersionLost	Versiolta puuttui sisältö
+trashSettings.eventVersionTooLarge	"%@" on suurempi kuin koko tila: sen korvaamaa sisältöä ei säilytetty
+trashSettings.eventVersionsBreaker	Liian monta versiota puuttuu kerralla: mitään ei muutettu
+versionedFiles.navigationTitle	Tiedostoversiot
+versionedFiles.subtitle	Jokainen tiedosto, jolla on historia, missä tahansa se onkin. Näyttää polut kaikista tiloista, myös henkilökohtaisista kansioista, joten se on vain ylläpitäjille.
+versionedFiles.summary	Tiedostot: %1$lld · Versiot: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Nimi tai polku
+versionedFiles.zone	Taltio
+versionedFiles.anyZone	Mikä tahansa taltio
+versionedFiles.stateHeader	Tila
+versionedFiles.anyState	Mikä tahansa tila
+versionedFiles.stateLive	Tiedosto on yhä olemassa
+versionedFiles.stateTrashed	Roskakorissa
+versionedFiles.stateOrphaned	Tiedosto on poissa
+versionedFiles.sortHeader	Lajitteluperuste
+versionedFiles.sortBytes	Käytetty tila
+versionedFiles.sortVersions	Versioiden määrä
+versionedFiles.sortNewest	Uusin
+versionedFiles.sortPath	Polku
+versionedFiles.none	Millään tiedostolla ei ole aiempia versioita.
+versionedFiles.unavailable	Tiedostoversiot ovat vain ylläpitäjien käytettävissä.
+versionedFiles.zoneUnknown	Tuntematon taltio
+versionedFiles.zoneKindPersonal	Käyttäjän %@ henkilökohtainen kansio
+versionedFiles.zoneKindUserVolume	Määritetty taltio %@
+versionedFiles.rowSummary	Versiot: %1$lld · %2$@
+versionedFiles.newest	Viimeisin: %@
+versionedFiles.versionPinned	Kiinnitetty
+versionedFiles.versionUnavailable	Ei saatavilla
+versionedFiles.versionBy	Tekijä: %@
+versionedFiles.detailFailed	Tätä historiaa ei voitu lukea.
+versionedFiles.deleteSelectedNone	Rastita poistettavat versiot
+versionedFiles.deleteSelected	Poista valitut (%lld)
+versionedFiles.deleteAll	Poista kaikki versiot
+versionedFiles.confirmAllTitle	Poistetaanko kaikki kohteen "%@" versiot?
+versionedFiles.confirmSomeTitle	Poistetaanko valitut versiot (%lld)?
+versionedFiles.confirmMessage	Poistettuja versioita ei voi palauttaa.
+versionedFiles.confirmDelete	Poista
+versionedFiles.previous	Edellinen
+versionedFiles.next	Seuraava
+versionedFiles.pageRange	%1$lld–%2$lld / %3$lld
+accessRules.navigationTitle	Kansioiden käyttösäännöt
+accessRules.subtitle	Ohita luku- ja kirjoitusoikeudet tietyille poluille.
+accessRules.addRule	Lisää sääntö
+accessRules.empty	Käyttösääntöjä ei ole määritetty.
+accessRules.emptyHint	Lisää sääntö ohittaaksesi polun käyttöoikeudet.
+accessRules.pathLabel	Polku
+accessRules.recursive	Käytä alikansioihin
+accessRules.permissionReadWrite	Luku ja kirjoitus
+accessRules.permissionReadOnly	Vain luku
+accessRules.permissionHidden	Piilotettu
+accessRules.remove	Poista
+accessRules.unavailable	Käyttösäännöt ovat vain ylläpitäjien käytettävissä.
+accessRules.saveButton	Tallenna muutokset
+settings.rowThumbnails	Pikkukuvat
+settings.rowAccessRules	Kansioiden käyttösäännöt
+settings.navigationTitle	Asetukset
+settings.sectionGeneral	Yleiset
+settings.sectionDisplay	Näyttö
+settings.sectionStorage	Tallennustila
+settings.sectionServerStorage	Palvelimen tallennustila
+settings.serverStorageUsed	%1$@ / %2$@
+settings.sectionLicenses	Lisenssit
+settings.sectionLegal	Oikeudelliset tiedot
+settings.sectionUsers	Käyttäjät
+settings.sectionAdmin	Ylläpito
+settings.sectionInfo	Tiedot
+settings.toggleShowHiddenFiles	Näytä piilotetut tiedostot
+settings.toggleRenderHTML	Hahmonna HTML-sivut
+settings.toggleRenderMarkdown	Hahmonna Markdown-tiedostot
+settings.toggleHaptics	Haptinen palaute
+settings.toggleShowThumbnails	Näytä pikkukuvat
+settings.toggleShowExtensions	Näytä tiedostopäätteet
+settings.toggleShowTabLabels	Näytä välilehtien nimet
+settings.toggleKeepClipboard	Säilytä kohteet liittämisen jälkeen
+settings.toggleKeepClipboardSubtitle	Kopioidut kohteet pysyvät valmiina liitettäväksi toiseen kansioon. Siirretyt kohteet tyhjennetään aina.
+settings.rowDateFormat	Päivämäärämuoto
+settings.rowLanguage	Kieli
+settings.rowThumbnailSize	Pikkukuvan koko
+settings.rowRemoveAllDownloads	Poista kaikki lataukset
+settings.rowClearCache	Tyhjennä välimuisti
+settings.rowOpenSourceLicenses	Avoimen lähdekoodin lisenssit
+settings.rowPrivacyPolicy	Tietosuojakäytäntö
+settings.rowTermsOfUse	Käyttöehdot
+settings.rowUserManagement	Käyttäjähallinta
+settings.rowChangePassword	Vaihda salasana
+settings.rowAddPassword	Lisää salasana
+settings.rowServer	Palvelin
+settings.storageFootnote	Kansiot ladataan zip-tiedostoina jättämättä mitään palvelimelle. Latausten poistaminen tai välimuistin tyhjentäminen vaikuttaa vain tähän laitteeseen; palvelimella ei muuteta mitään.
+settings.storageFootnoteMac	Välimuistin tyhjentäminen vaikuttaa vain tähän Maciin; palvelimella ei muuteta mitään.
+settings.removeAllDownloadsTitle	Poistetaanko kaikki lataukset?
+settings.removeAllDownloadsConfirm	Poista kaikki
+settings.removeAllDownloadsMessage	Tämä poistaa kaikki ladatut tiedostot tästä laitteesta. Ne säilyvät palvelimella.
+settings.clearCacheTitle	Tyhjennetäänkö välimuisti?
+settings.clearCacheConfirm	Tyhjennä
+settings.clearCacheMessage	Tämä tyhjentää offline-käytössä olevat välimuistissa olevat esikatselut, pikkukuvat ja tallennetut kansioluettelot. Palvelimeen ei vaikuteta.
+settings.signOutAlertTitle	Kirjaudutaanko ulos?
+settings.signOutMessage	Sinun on kirjauduttava uudelleen sisään päästäksesi tiedostoihisi. Tämän laitteen välimuistissa olevat esikatselut, pikkukuvat ja tallennetut kansioluettelot tyhjennetään.
+settings.signOutButton	Kirjaudu ulos
+settings.signingOut	Kirjaudutaan ulos…
+settings.sectionAccounts	Tilit
+settings.addAccount	Lisää tili
+settings.accountSignOut	Kirjaudu ulos
+settings.accountSignOutTitle	Kirjaudutaanko ulos?
+settings.accountSignOutMessage	Kirjataanko %@ ulos tässä laitteessa? Sinun on kirjauduttava uudelleen sisään käyttääksesi tätä tiliä.
+settings.accountActiveLabel	%1$@, %2$@, aktiivinen tili
+settings.badgeActive	Aktiivinen
+settings.dateFormatNavigationTitle	Päivämäärämuoto
+settings.dateFormatShowTime	Näytä aika
+language.navigationTitle	Kieli
+language.systemDefault	Järjestelmän oletus
+language.systemDefaultSubtitle	Seuraa laitteen kieltä
+serverDetails.navigationTitle	Palvelin
+serverDetails.changeLogo	Vaihda kuvake
+serverDetails.takePhoto	Ota kuva
+serverDetails.chooseFromGallery	Lähetä Galleriasta
+serverDetails.nameLabel	Palvelimen nimi
+serverDetails.nameErrorEmpty	Palvelimen nimi ei voi olla tyhjä.
+serverDetails.urlLabel	Palvelimen URL
+serverDetails.urlFootnote	Osoite, jossa NextExplorer-instanssisi on asennettuna. Jos haluat muuttaa sitä, kirjaudu ulos ja lisää palvelin uudelleen.
+serverDetails.updateButton	Päivitä palvelin
+serverDetails.savedMessage	Palvelimen tiedot päivitetty.
+serverDetails.logoErrorTooLarge	Tuo kuva on liian suuri. Valitse alle 2 Mt:n kuva.
+serverDetails.cameraDeniedTitle	Kameran käyttö pois päältä
+serverDetails.cameraDeniedMessage	Salli kameran käyttö Asetuksissa ottaaksesi kuvan.
+licenses.navigationTitle	Avoimen lähdekoodin lisenssit
+licenses.sectionSoftware	Ohjelmisto
+licenses.sectionFontSoftware	Fonttiohjelmisto
+licenses.labelAuthor	Tekijä
+licenses.labelOriginalVersion	Alkuperäinen versio
+licenses.labelModifiedVersion	Muokattu versio
+licenses.labelReservedFontName	Varattu fontin nimi
+fileInfo.navigationTitleFolder	Kansio
+fileInfo.rowKind	Laji
+fileInfo.rowSize	Koko
+fileInfo.rowLocation	Sijainti
+fileInfo.rowDateModified	Muokkauspäivä
+fileInfo.rowDateCreated	Luontipäivä
+fileInfo.rowFiles	Tiedostot
+fileInfo.rowFolders	Kansiot
+fileInfo.rowTotalSize	Kokonaiskoko
+fileInfo.sectionServerDisk	Palvelimen levy
+fileInfo.diskFreeOf	%1$@ vapaana / %2$@
+fileInfo.rowDimensions	Mitat
+fileInfo.rowCamera	Kamera
+fileInfo.rowLens	Objektiivi
+fileInfo.rowDateTaken	Kuvauspäivä
+fileInfo.rowDuration	Kesto
+fileInfo.partialScan	Laskettu osittaisella skannauksella: tämä kansio on hyvin suuri.
+permissions.title	Käyttöoikeudet
+permissions.sectionMode	Tila
+permissions.numericLabel	Numeerinen
+permissions.applyToEnclosed	Käytä sisällä oleviin kohteisiin
+permissions.applyPermissions	Käytä käyttöoikeudet
+permissions.sectionOwnership	Omistajuus
+permissions.fieldOwner	Omistaja
+permissions.fieldGroup	Ryhmä
+permissions.ownershipNote	Omistajuuden muuttaminen vaatii yleensä root- tai ylläpitäjän oikeudet palvelimella.
+permissions.applyOwnership	Käytä omistajuus
+permissions.scopeOwner	Omistaja
+permissions.scopeGroup	Ryhmä
+permissions.scopeOthers	Muut
+permissions.rightRead	Luku
+permissions.rightWrite	Kirjoitus
+permissions.rightExecute	Suoritus
+archive.emptyFolder	Tämä kansio on tyhjä.
+archive.openFailed	Tiedostoa ei voitu avata.
+archive.openArchiveFailed	Arkistoa ei voitu avata.
+archive.entryTooLarge	Tämä kohde on liian suuri avattavaksi.
+gallery.loadFailed	Kuvaa ei voitu ladata.
+textPreview.saved	Tallennettu
+textPreview.loadFailed	Tiedostoa ei voitu ladata. Tarkista yhteytesi ja yritä uudelleen.
+textPreview.unsavedTitle	Tallennetaanko muutokset kohteeseen “%@”?
+textPreview.unsavedMessage	Muutoksesi menetetään, ellet tallenna niitä.
+textPreview.dontSave	Älä tallenna
+userManagement.navigationTitle	Käyttäjähallinta
+userManagement.searchPrompt	Hae käyttäjiä
+userManagement.createUser	Luo käyttäjä
+userManagement.badgeAdmin	Ylläpitäjä
+userManagement.emptyList	Ei vielä käyttäjiä.
+userManagement.noSearchMatches	Mikään käyttäjä ei vastaa hakua “%@”.
+userManagement.loadFailed	Palvelimeen ei saatu yhteyttä.
+userManagement.sortType	Tyyppi
+userManagement.sortName	Nimi
+userManagement.sortEmail	Sähköposti
+userManagement.tabProfile	Profiili
+userManagement.tabSecurity	Suojaus
+userManagement.tabVolumes	Taltiot
+userManagement.createNavigationTitle	Luo käyttäjä
+userManagement.createEmailField	Sähköposti
+userManagement.createUsernameField	Käyttäjänimi (valinnainen)
+userManagement.createUsernamePlaceholder	Johdettu sähköpostista
+userManagement.createPasswordField	Salasana
+userManagement.createPasswordPlaceholder	Vähintään %lld merkkiä
+userManagement.createGrantAdminToggle	Anna ylläpitäjän käyttöoikeus
+userManagement.createGrantAdminSubtitle	Täysi hallinta tiedostoihin, jakoihin ja käyttäjiin.
+userManagement.createSubmit	Luo käyttäjä
+userManagement.setPasswordNavigationTitle	Salasana
+userManagement.setPasswordNewField	Uusi salasana
+userManagement.setPasswordPlaceholder	Vähintään %lld merkkiä
+userManagement.setPasswordResetTitle	Nollaa salasana
+userManagement.setPasswordSetTitle	Aseta salasana
+userManagement.setPasswordResetIntro	Aseta uusi paikallinen salasana käyttäjälle %@. Nykyinen salasana lakkaa toimimasta.
+userManagement.setPasswordSetIntro	Anna käyttäjälle %@ paikallinen salasana, jotta hän voi kirjautua ilman SSO:ta.
+userManagement.toastProfileUpdated	Profiili päivitetty
+userManagement.toastAdminGranted	Ylläpitäjän käyttöoikeus annettu
+userManagement.toastUserRemoved	Käyttäjä poistettu
+userManagement.toastUserCreated	Käyttäjä luotu
+userManagement.toastPasswordUpdated	Salasana päivitetty
+userManagement.toastVolumeSaved	Taltio tallennettu
+userManagement.toastVolumeRemoved	Taltio poistettu
+userManagement.errorEmailRequired	Sähköposti vaaditaan.
+userManagement.errorEmailInvalid	Anna kelvollinen sähköpostiosoite.
+userManagement.errorUsernameRequired	Käyttäjänimi vaaditaan.
+userManagement.errorEmailInUse	Sähköposti on jo käytössä.
+userManagement.errorPasswordTooShort	Käytä vähintään %lld merkkiä.
+userDetail.fallbackName	Käyttäjä
+userDetail.sectionGeneralInfo	Yleistiedot
+userDetail.sectionRoles	Roolit ja käyttöoikeudet
+userDetail.sectionLocalPassword	Paikallinen salasana
+userDetail.sectionSSO	Kertakirjautuminen
+userDetail.sectionAssignedVolumes	Määritetyt taltiot
+userDetail.profileDisplayNameField	Näyttönimi
+userDetail.profileDisplayNamePlaceholder	Näyttönimi
+userDetail.profileUsernameField	Käyttäjänimi
+userDetail.profileUsernamePlaceholder	Käyttäjänimi
+userDetail.profileEmailField	Sähköposti
+userDetail.profileSave	Tallenna muutokset
+userDetail.roleAdmin	Ylläpitäjä
+userDetail.roleAdminSubtitle	Täysi hallinta tiedostoihin, jakoihin ja käyttäjiin.
+userDetail.roleAdminLocked	Ylläpitäjiltä ei voi poistaa oikeuksia sovelluksessa.
+userDetail.roleGrantAdmin	Tee ylläpitäjäksi
+userDetail.passwordHasLocal	Tämä käyttäjä kirjautuu sähköpostilla ja salasanalla.
+userDetail.passwordSSOOnly	Tällä käyttäjällä ei ole paikallista salasanaa, ja hän kirjautuu vain SSO:lla.
+userDetail.passwordReset	Nollaa salasana
+userDetail.passwordSet	Aseta salasana
+userDetail.ssoNone	Ei linkitettyjä SSO-palveluntarjoajia.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Linkitetty
+userDetail.dangerZoneTitle	Vaaravyöhyke
+userDetail.dangerZoneSubtitle	Käyttäjän poistaminen peruu hänen käyttöoikeutensa heti. Hänen palvelimella omistamiaan tiedostoja ei poisteta.
+userDetail.dangerZoneRemoveUser	Poista käyttäjä
+userDetail.volumesNone	Taltioita ei ole määritetty.
+userDetail.volumesNoneSubtitle	Tämä käyttäjä näkee vain oletusarvoisen jaetun tilan.
+userDetail.volumesAssign	Määritä taltio
+userDetail.volumesFootnote	Taltiot antavat käyttäjälle pääsyn oletusarvoisen jaetun tilan ulkopuolella olevaan hakemistoon. Taltion poistaminen ei koskaan poista tiedostoja.
+userDetail.volumeEditAccessibility	Muokkaa: %@
+userDetail.volumeRemoveAccessibility	Poista: %@
+userDetail.removeVolumeTitle	Poistetaanko taltio?
+userDetail.removeVolumeMessage	%@ ei ole enää määritetty tälle käyttäjälle. Itse hakemistoon ei kosketa.
+userDetail.removeUserTitle	Poistetaanko käyttäjä?
+userDetail.removeUserMessage	%@ menettää käyttöoikeutensa heti. Hänen palvelimella olevia tiedostojaan ei poisteta.
+userDetail.grantAdminTitle	Annetaanko ylläpitäjän oikeudet?
+userDetail.grantAdminMessage	%@:sta tulee ylläpitäjä, jolla on täysi hallinta tiedostoihin, jakoihin ja käyttäjiin. Ylläpitäjiltä ei voi poistaa oikeuksia sovelluksessa.
+userDetail.volumeSheetLabelField	Nimike
+userDetail.volumeSheetLabelPlaceholder	Taltion nimike
+userDetail.volumeSheetAccessMode	Käyttötila
+userDetail.volumeSheetDirectory	Hakemisto
+userDetail.volumeSheetSaveEdit	Tallenna taltio
+userDetail.volumeSheetSaveNew	Määritä taltio
+userDetail.volumeSheetTitleEdit	Muokkaa taltiota
+userDetail.volumeSheetTitleNew	Määritä taltio
+userDetail.directoryPickerGoUp	Siirry yksi hakemisto ylös
+userDetail.directoryPickerUseThis	Käytä tätä hakemistoa
+userDetail.directoryPickerOpen	Avaa %@
+userDetail.directoryPickerFailed	Hakemistoja ei voitu luetteloida.
+previewToolbar.close	Sulje
+previewToolbar.createShareLink	Luo jakolinkki
+previewToolbar.download	Lataa
+previewToolbar.delete	Poista
+previewToolbar.share	Jaa
+previewToolbar.rename	Nimeä uudelleen
+login.serverQuestion	Missä NextExplorer-instanssisi on?
+login.serverInfoAccessibility	Palvelimeen yhdistämisestä
+login.serverInfoTitle	Mikä palvelin on?
+login.serverInfoBody	NextExplorer yhdistää omaan NextExplorer-palvelimeesi. Ylläpitäjä ylläpitää palvelinta, luo tilit ja jakaa sen verkko-osoitteen kanssasi. Kirjoita osoite kirjautuaksesi sisään.\n\nEikö palvelinta vielä ole? Asennusopas näyttää, miten sellaisen isännöidään.
+login.serverInfoGuide	Avaa asennusopas
+login.testConnection	Testaa yhteys
+login.identifierField	Sähköposti tai käyttäjänimi
+login.passwordField	Salasana
+login.showPassword	Näytä salasana
+login.hidePassword	Piilota salasana
+login.submit	Kirjaudu sisään
+login.plaintextWarning	Tämä yhteys ei ole salattu. Salasanasi ja istuntosi lähetetään selkokielisenä paikallisen verkon kautta.
+error.sessionExpired	Istuntosi on vanhentunut. Kirjaudu uudelleen sisään.
+error.rateLimited	Liian monta pyyntöä. Yritä hetken kuluttua uudelleen.
+error.network	Palvelimeen ei saatu yhteyttä.
+error.offline	Olet offline-tilassa. Yhdistä internetiin ja yritä uudelleen.
+error.decoding	Palvelin vastasi odottamattomasti.
+error.server	Palvelinvirhe (%lld).
+error.forbidden	Sinulla ei ole lupaa tehdä sitä.
+error.clientCertificateRequired	Tämä palvelin vaatii asiakasvarmenteen. Lisää sellainen Asetuksissa.
+error.clientCertificateRejected	Palvelin hylkäsi asiakasvarmenteesi.
+changePassword.navigationTitle	Vaihda salasana
+changePassword.intro	Vaihda salasana, jolla kirjaudut sisään sähköpostiosoitteellasi. Pysyt kirjautuneena tässä laitteessa.
+changePassword.fieldCurrentPassword	Nykyinen salasana
+changePassword.fieldNewPasswordLabel	Uusi salasana
+changePassword.fieldConfirmPasswordLabel	Vahvista uusi salasana
+changePassword.fieldConfirmPassword	Kirjoita uusi salasana uudelleen
+changePassword.fieldNewPasswordPrompt	Vähintään %lld merkkiä
+changePassword.submitButton	Päivitä salasana
+changePassword.success	Salasanasi on päivitetty.
+changePassword.addNavigationTitle	Lisää salasana
+changePassword.addIntro	Tämä tili kirjautuu kertakirjautumisella eikä sillä ole vielä salasanaa. Lisää sellainen, jotta voit kirjautua myös sähköpostiosoitteellasi tai käyttäjänimelläsi.
+changePassword.addSubmitButton	Lisää salasana
+changePassword.errorMinLength	Käytä vähintään %lld merkkiä.
+changePassword.errorMismatch	Salasanat eivät täsmää.
+twoFactor.navigationTitle	Kaksivaiheinen tunnistautuminen
+twoFactor.offTitle	Kaksivaiheinen tunnistautuminen on pois päältä
+twoFactor.offIntro	Lisää kirjautumiseen toinen vaihe. Salasanan jälkeen syötät koodin todennussovelluksesta.
+twoFactor.turnOnButton	Ota käyttöön
+twoFactor.enrollIntro	Skannaa tämä QR-koodi todennussovelluksellasi tai kirjoita avain käsin. Syötä sitten sovelluksen näyttämä 6-numeroinen koodi.
+twoFactor.qrAccessibilityLabel	QR-koodi todennussovellustasi varten
+twoFactor.keyLabel	Asetusavain
+twoFactor.copyKeyAccessibilityLabel	Kopioi asetusavain
+twoFactor.codeAccessibilityLabel	Todennuskoodi
+twoFactor.confirmButton	Vahvista ja ota käyttöön
+twoFactor.recoveryTitle	Tallenna palautuskoodisi
+twoFactor.recoveryIntro	Jokainen koodi toimii kerran, jos menetät todennussovelluksesi. Niitä ei näytetä uudelleen, joten säilytä ne turvallisessa paikassa.
+twoFactor.copyCodesButton	Kopioi koodit
+twoFactor.shareCodesButton	Jaa koodit
+twoFactor.recoveryDoneButton	Olen tallentanut ne
+twoFactor.onTitle	Kaksivaiheinen tunnistautuminen on päällä
+twoFactor.recoveryCodesLeft	Palautuskoodeja jäljellä: %lld
+twoFactor.newCodesButton	Hanki uudet palautuskoodit
+twoFactor.turnOffButton	Poista käytöstä
+twoFactor.passwordNewCodesIntro	Syötä salasanasi korvataksesi palautuskoodisi. Vanhat lakkaavat toimimasta.
+twoFactor.passwordTurnOffIntro	Syötä salasanasi poistaaksesi kaksivaiheisen tunnistautumisen käytöstä.
+twoFactor.passwordField	Salasana
+twoFactor.passwordConfirmButton	Vahvista
+twoFactor.manageButton	Hallinnoi…
+apiTokens.navigationTitle	API-tunnukset
+apiTokens.sectionHeader	Kehittäjät
+apiTokens.intro	API-tunnusten avulla komentosarjat ja muut työkalut voivat käyttää tiliäsi ilman salasanaasi. Tunnus tekee vain sen, minkä sen käyttöoikeus sallii, ja voit perua sen milloin tahansa.
+apiTokens.emptyTitle	Ei API-tunnuksia
+apiTokens.emptyMessage	Luo tunnus, jotta komentosarja voi käyttää tiliäsi.
+apiTokens.newButton	Uusi tunnus
+apiTokens.limitReached	Olet saavuttanut %lld tunnuksen rajan. Peru yksi luodaksesi toisen.
+apiTokens.scopeRead	Vain luku
+apiTokens.scopeWrite	Luku ja kirjoitus
+apiTokens.created	Luotu %@
+apiTokens.lastUsed	Viimeksi käytetty %@
+apiTokens.lastUsedFrom	Viimeksi käytetty %1$@, osoitteesta %2$@
+apiTokens.neverUsed	Ei koskaan käytetty
+apiTokens.expires	Vanhenee %@
+apiTokens.expired	Vanheni %@
+apiTokens.neverExpires	Ei vanhene koskaan
+apiTokens.renameAction	Nimeä uudelleen
+apiTokens.revokeAction	Peru
+apiTokens.menuAccessibilityLabel	Toiminnot: %@
+apiTokens.formTitle	Uusi API-tunnus
+apiTokens.fieldName	Nimi
+apiTokens.namePlaceholder	Esimerkiksi varmuuskopiointikomentosarja
+apiTokens.fieldAccess	Käyttöoikeus
+apiTokens.fieldExpiry	Vanhenee
+apiTokens.expiry30	30 päivän kuluttua
+apiTokens.expiry90	90 päivän kuluttua
+apiTokens.expiryYear	1 vuoden kuluttua
+apiTokens.expiryNever	Ei koskaan
+apiTokens.fieldPassword	Salasanasi
+apiTokens.passwordHint	Syötä salasanasi luodaksesi tunnuksen.
+apiTokens.createSubmit	Luo tunnus
+apiTokens.issuedTitle	Kopioi tunnuksesi
+apiTokens.issuedIntro	Tämä näytetään vain kerran. Säilytä se turvallisessa paikassa. Jos menetät sen, peru se ja luo uusi.
+apiTokens.copyToken	Kopioi tunnus
+apiTokens.copiedToken	Kopioitu
+apiTokens.issuedDone	Olen kopioinut sen
+apiTokens.renameTitle	Nimeä tunnus uudelleen
+apiTokens.renameSave	Tallenna
+apiTokens.revokeTitle	Perutaanko tunnus?
+apiTokens.revokeMessage	Kaikki, mikä käyttää tunnusta "%@", lakkaa toimimasta heti. Tätä ei voi kumota.
+apiTokens.revokeConfirm	Peru
+login.portHint	Lisää portti (esim. :3000). Useimmat kotilaboratoriopalvelimet eivät kuuntele tavallista porttia 80.
+login.errorInvalidServer	Anna kelvollinen palvelimen osoite.
+login.errorInvalidCredentials	Virheellinen käyttäjänimi tai salasana.
+login.errorSessionExpired	Istuntosi on vanhentunut. Kirjaudu uudelleen sisään.
+login.errorIncomplete	Sisäänkirjautuminen ei onnistunut. Yritä uudelleen.
+login.errorUnreachable	Tähän palvelimeen ei saatu yhteyttä. Tarkista osoite ja yritä uudelleen.
+login.errorUnexpectedResponse	Odottamaton vastaus palvelimelta.
+login.errorKeychain	Istuntoasi ei voitu tallentaa tälle laitteelle.
+login.errorDecoding	Palvelin vastasi odottamattomasti. Tarkista osoite ja yritä uudelleen.
+login.errorNoLocalAuth	Tällä palvelimella ei ole käyttäjänimi- ja salasanakirjautumista käytössä.
+login.errorRateLimited	Liian monta yritystä. Odota muutama minuutti ja yritä uudelleen.
+login.ssoButton	Kirjaudu sisään SSO:lla
+login.orDivider	tai
+login.errorSso	Kertakirjautuminen ei onnistunut. Yritä uudelleen.
+login.errorNoAuthMethods	Tällä palvelimella ei ole käytössä mitään kirjautumistapaa.
+login.errorClientCertificateRequired	Tämä palvelin pyytää asiakasvarmennetta.
+login.errorClientCertificateRejected	Palvelin hylkäsi tämän asiakasvarmenteen.
+login.codeTitle	Syötä koodisi
+login.codeIntroAuthenticator	Tämä tili pyytää toista vaihetta. Syötä 6-numeroinen koodi todennussovelluksestasi.
+login.codeIntroRecovery	Syötä jokin palautuskoodeistasi. Jokainen toimii vain kerran.
+login.codeUseRecovery	Käytä sen sijaan palautuskoodia
+login.codeUseAuthenticator	Käytä sen sijaan todennussovelluksen koodia
+login.codeField	Koodi
+login.codeSubmit	Vahvista
+login.errorInvalidCode	Tuo koodi ei ole oikea.
+login.errorSecondFactorExpired	Tuo kirjautuminen vanheni. Syötä salasanasi uudelleen.
+login.diagnosticsButton	Jaa kirjautumisloki
+login.diagnosticsTitle	Kirjautumisloki
+login.diagnosticsIntro	Tämä loki näyttää, mitä palvelin vastasi kussakin vaiheessa, jotta voi selvittää, miksi kirjautuminen epäonnistuu. Se ei koskaan sisällä salasanaasi, kirjoittamaasi osoitetta tai käyttäjänimeäsi. Lähetä se kehittäjälle.
+browse.nameErrorReserved	Tuo nimi ei ole sallittu.
+browse.nameErrorSeparators	Nimi ei voi sisältää merkkiä / tai \.
+browse.searchMatchLine	Rivi %1$lld: %2$@
+browse.searchMatchLineLabel	Rivi %lld
+browse.searchTooShort	Kirjoita vähintään %lld merkkiä hakeaksesi alikansioista ja tiedostojen sisällöstä.
+browse.searchStoppedEarly	Haku pysähtyi aikarajaansa. Nämä ovat toistaiseksi löydetyt tulokset.
+browse.searchFirstOnly	Ensimmäiset %lld tulosta. Rajaa hakua nähdäksesi lisää.
+browse.searchShowMore	Näytä lisää
+browse.searchMatchColumn	Osuma
+browse.searchMatchedByName	Nimi
+browse.searchMatchedByContent	Sisältö
+browse.searchMatchedByBoth	Nimi ja sisältö
+createShare.errorPasswordRequired	Anna salasana tai poista salasanasuojaus käytöstä.
+login.errorServer	Palvelimella oli ongelma (virhe %lld). Yritä myöhemmin uudelleen.
+filter.sheetTitle	Suodata tyypin mukaan
+filter.button	Suodata
+filter.all	Kaikki tyypit
+filter.folders	Kansiot
+filter.images	Kuvat
+filter.videos	Videot
+filter.audio	Äänet
+filter.documents	Asiakirjat
+filter.archives	Arkistot
+filter.other	Muut
+settings.creditsMadeBy	Tehty rakkaudella ❤️ Phillip Maizza
+settings.creditsLikeApp	Pidätkö sovelluksesta?
+settings.creditsBuyCoffee	Tarjoa minulle kahvit ☕️
+tipJar.title	Tarjoa minulle kahvit
+tipJar.explanation	NextExplorer on ilmainen ja avoimen lähdekoodin. Jos siitä on sinulle hyötyä, pieni juomaraha auttaa pitämään sen käynnissä. Kiitos!
+tipJar.toastThanks	Kiitos projektin tukemisesta! 🙏
+tipJar.errorLoad	Juomarahavaihtoehtoja ei voitu ladata. Yritä uudelleen.
+tipJar.errorPurchase	Osto ei onnistunut. Yritä uudelleen.
+tipJar.pending	Odotetaan hyväksyntää. Veloitus tehdään hyväksynnän jälkeen.
+offline.sectionTitle	Offline
+offline.settingsRow	Lataa tiedostot offline-käyttöön
+offline.footnote	Ladatut tiedostot aukeavat myös ilman yhteyttä.
+offline.available	%@ saatavilla offline-tilassa
+offline.removeRow	Poista offline-tiedostot
+offline.removeConfirmTitle	Poistetaanko offline-tiedostot?
+offline.removeConfirmMessage	Tämä poistaa tähän laitteeseen offline-käyttöön tallennetut tiedostot. Palvelimella olevia tiedostojasi ei kosketa.
+offline.removeConfirm	Poista
+offline.preparing	Valmistellaan…
+offline.downloadingName	Ladataan: %@
+offline.progressCount	%lld / %lld tiedostoa
+offline.downloadFailed	Offline-latausta ei voitu suorittaa loppuun.
+offline.selectionTitle	Lataa offline-käyttöön
+offline.selectionEmpty	Tämä kansio on tyhjä.
+offline.selectionLoadFailed	Tätä kansiota ei voitu ladata.
+offline.selectionEstimate	Arvioitu lataus
+offline.selectionDownload	Lataa
+offline.selectionInsufficientSpace	Tässä laitteessa ei ole tarpeeksi vapaata tilaa
+offline.resyncRow	Päivitä offline-tiedostot
+offline.badgeAvailable	Saatavilla offline-tilassa
+offline.manageRow	Hallinnoi offline-tiedostoja
+offline.manageTitle	Offline-tiedostot
+offline.manageEmpty	Mitään ei ole ladattu offline-käyttöön.
+offline.preferOfflineToggle	Toista ladatut kopiot
+offline.pinRemoved	%@ ei ole enää palvelimella, ja se poistettiin offline-tiedostoista
+offline.preferOfflineSubtitle	Käytä ladattua videota suoratoiston sijaan, kun se on saatavilla.
+offline.tunnelSpeedNote	Palvelimeen pääsy etätunnelin kautta voi hidastaa latauksia. Suurille tiedostoille yhdistä samaan verkkoon ja käytä palvelimen paikallista osoitetta.
+menu.about	Tietoja: NextExplorer
+menu.rateApp	Arvioi NextExplorer…
+menu.support	NextExplorerin tuki
+menu.redo	Tee uudelleen
+menu.undo	Kumoa
+settings.sectionSupport	Tuki
+settings.rowRateApp	Arvioi NextExplorer
+settings.rowSupport	Ohje ja tuki
+menu.refresh	Päivitä
+select.tableView	Taulukkonäkymä
+browse.progressDownloading	Ladataan…
+browse.progressDownloadingIndexed	Ladataan %1$lld / %2$lld…
+browse.downloadSavedTo	Tallennettu kohteeseen %@
+browse.downloadSavedCountTo	Tallennettu %1$lld / %2$lld kohdetta kohteeseen %3$@
+browse.downloadSavedAllTo	Tallennettu %1$lld kohdetta kohteeseen %2$@
+browse.downloadBulkFailed	Näitä kohteita ei voitu tallentaa laitteellesi.
+openWith.openIn	Avaa sovelluksessa %@
+openWith.openWith	Avaa sovelluksella
+openWith.viewAsText	Näytä tekstinä
+openWith.failed	Tiedostoa ei voitu avata.
+browse.showInFinder	Näytä Finderissa
+browse.showInEnclosingFolder	Näytä sisältävässä kansiossa
+browse.actionCut	Leikkaa
+browse.clipboardCutOne	%@ on valmis siirrettäväksi
+browse.clipboardCutMany	%lld kohdetta on valmiina siirrettäväksi
+menu.enclosingFolder	Sisältävä kansio
+common.more	Lisää
+openWith.print	Tulosta…
+menu.newWindow	Uusi ikkuna
+menu.newTab	Uusi välilehti
+browse.actionOpenInNewWindow	Avaa uudessa ikkunassa
+browse.actionOpenInNewTab	Avaa uudessa välilehdessä
+select.viewAs	Näytä
+settings.rowAppearance	Ulkoasu
+appearance.system	Järjestelmä
+appearance.light	Vaalea
+appearance.dark	Tumma
+browse.myFiles	Omat tiedostot
+browse.myFilesSubtitle	Näkyy vain sinulle
+downloadQueue.navigationTitle	Latausjono
+downloadQueue.openDownloads	Näytä lataukset
+downloadQueue.emptyList	Ei käynnissä olevia latauksia.
+downloadQueue.statusSaved	Tallennettu
+downloadQueue.cancelAll	Peruuta kaikki lataukset
+downloadQueue.barFailedOne	1 lataus epäonnistui
+downloadQueue.barFailedMany	%lld latausta epäonnistui
+downloadQueue.barTitleOne	Ladataan: %@
+downloadQueue.barTitleMany	Ladataan %lld kohdetta
+downloadQueue.savedOne	Tallennettu Latauksiin
+downloadQueue.savedMany	%lld kohdetta tallennettu Latauksiin
+downloadQueue.bytesOf	%1$@ / %2$@
+downloadQueue.timeLeft	%@ jäljellä
+browse.sectionPersonal	Henkilökohtainen
+macSettings.addAccount	Lisää tili…
+macSettings.changePassword	Vaihda salasana…
+macSettings.signOut	Kirjaudu ulos…
+macSettings.switchAccount	Vaihda tähän tiliin
+macSettings.username	Käyttäjänimi
+macSettings.email	Sähköposti
+macSettings.role	Rooli
+macSettings.roleAdmin	Ylläpitäjä
+macSettings.roleUser	Käyttäjä
+macSettings.status	Tila
+macSettings.statusSignedIn	Kirjauduttu sisään
+macSettings.manage	Hallinnoi…
+macSettings.cache	Välimuisti
+macSettings.support	Ohje ja tuki…
+macSettings.permission	Käyttöoikeus
+macSettings.icon	Kuvake
+menu.go	Siirry
+menu.activity	Siirrot
+menu.showAll	Näytä kaikki
+uploads.notifyDone	Lähetykset valmiit
+uploads.notifyBody	%lld tiedostoa lähetetty
+downloadQueue.notifyDone	Lataukset valmiit
+fileInfo.rowSoftware	Ohjelmisto
+fileInfo.sectionVersions	Versiot
+fileInfo.versionsNone	Ei aiempia versioita
+fileInfo.versionRestore	Palauta…
+fileInfo.restoreTitle	Palautetaanko tämä versio?
+fileInfo.restoreMessage	Tiedosto palautuu sellaiseksi kuin se oli %@. Sen nykyinen sisältö säilytetään versiona.
+fileInfo.restoreConfirm	Palauta
+fileInfo.sectionSharing	Jakaminen
+fileInfo.notShared	Ei jakolinkkejä
+fileInfo.versionActions	Version toiminnot
+fileInfo.versionDownload	Lataa…
+fileInfo.versionSaveCopy	Tallenna kopiona
+fileInfo.versionRename	Nimeä uudelleen…
+fileInfo.renameTitle	Nimeä versio uudelleen
+fileInfo.renamePlaceholder	Version nimi
+fileInfo.versionPin	Säilytä tämä versio
+fileInfo.versionUnpin	Lopeta tämän version säilyttäminen
+fileInfo.versionKept	Säilytetty
+fileInfo.versionDelete	Poista…
+fileInfo.deleteTitle	Poistetaanko tämä versio?
+fileInfo.deleteAll	Poista kaikki versiot…
+fileInfo.deleteAllTitle	Poistetaanko kaikki versiot?
+fileInfo.deleteMessage	Poistetut versiot ovat poissa lopullisesti. Itse tiedosto säilyy sellaisenaan.
+macSettings.choose	Valitse…
+menu.forward	Eteenpäin
+menu.goToFolder	Siirry kansioon…
+menu.goToFolderTitle	Siirry kansioon:
+menu.copyPath	Kopioi polku
+menu.recentFolders	Viimeisimmät kansiot
+menu.clearRecent	Tyhjennä valikko
+common.loading	Ladataan…
+browse.quickLookUnavailable	Pikakatselu ei ole käytettävissä tälle tiedostotyypille.
+browse.quickLookTooLarge	Tämä tiedosto on liian suuri pikakatseluun.
+menu.zoomIn	Lähennä
+menu.zoomOut	Loitonna
+menu.zoomToFit	Sovita ikkunaan
+menu.quitTransfersTitle	Lopetetaanko NextExplorer?
+menu.quitTransfersMessage	Lähetyksiä tai latauksia on yhä kesken. Lopettaminen nyt pysäyttää ne.
+menu.quitTransfersConfirm	Lopeta
+media.play	Toista
+media.pause	Tauko
+media.position	Toiston kohta
+media.positionValue	%1$@ / %2$@
+media.clientCertificateUnsupported	Tätä muotoa ei voi suoratoistaa palvelimelta, joka pyytää asiakasvarmennetta. Lataa tiedosto toistaaksesi sen.
+clientCertificate.title	Asiakasvarmenne
+clientCertificate.intro	Jotkin palvelimet päästävät sisään vain laitteet, jotka esittävät asiakasvarmenteen (mTLS). Valitse .p12- tai .pfx-tiedosto, jonka sait tälle palvelimelle.
+clientCertificate.certificateLabel	Varmenne
+clientCertificate.none	Varmennetta ei ole asennettu
+clientCertificate.issuedBy	Myöntäjä: %@
+clientCertificate.expires	Vanhenee %@
+clientCertificate.expired	Vanheni %@
+clientCertificate.chooseFile	Valitse tiedosto
+clientCertificate.replace	Korvaa varmenne
+clientCertificate.remove	Poista varmenne
+clientCertificate.install	Asenna
+clientCertificate.passwordLabel	Tiedoston salasana
+clientCertificate.passwordPrompt	Salasana, jolla tiedosto vietiin
+clientCertificate.chooseAnother	Valitse toinen tiedosto
+clientCertificate.errorWrongPassword	Tuo salasana ei avaa tätä tiedostoa.
+clientCertificate.errorInvalidFile	Tämä ei ole kelvollinen .p12- tai .pfx-varmennetiedosto.
+clientCertificate.errorNoIdentity	Tässä tiedostossa ei ole yksityistä avainta. Vie varmenne yhdessä sen avaimen kanssa.
+clientCertificate.errorStorage	Varmennetta ei voitu tallentaa tälle laitteelle.
+clientCertificate.errorUnreadable	Tuota tiedostoa ei voitu lukea.
+clientCertificate.errorRemove	Varmennetta ei voitu poistaa tältä laitteelta.
+clientCertificate.removeTitle	Poistetaanko varmenne?
+clientCertificate.removeMessage	NextExplorer lakkaa esittämästä sitä palvelimelle %@. Jos kyseinen palvelin vaatii varmenteen, sovellus ei voi yhdistää, ennen kuin lisäät varmenteen uudelleen.
+clientCertificate.removeConfirm	Poista
+clientCertificate.expiredWarning	Tämä varmenne on vanhentunut. Palvelin todennäköisesti hylkää sen.
+login.addClientCertificate	Lisää varmenne
+login.manageClientCertificate	Hallinnoi varmennetta
+settings.clientCertificate	Asiakasvarmenne
+settings.clientCertificateNone	Ei mitään
+login.usingClientCertificate	Käytetään asiakasvarmennetta %@
+login.changeClientCertificate	Vaihda
+login.ssoClientCertificateNote	Kertakirjautuminen avautuu Safarissa, joka ei voi käyttää tämän sovelluksen asiakasvarmennetta. Kirjaudu salasanallasi tai asenna varmenne tälle laitteelle käyttääksesi kertakirjautumista.
+settings.clientCertificateExpired	Vanhentunut
+settings.clientCertificateExpiresSoon	Vanhenee pian
+clientCertificate.expiringSoonWarning	Tämä varmenne vanhenee %@. Pyydä uusi ennen sitä.
+shareUpload.title	Lähetä NextExploreriin
+shareUpload.itemCount	Lähetettäviä tiedostoja: %lld
+shareUpload.accountLabel	Tili
+shareUpload.folderLabel	Kansio
+shareUpload.folderChoose	Valitse kansio
+shareUpload.upload	Lähetä
+shareUpload.preparing	Valmistellaan %lld / %lld…
+shareUpload.started	Lähetetään taustalla. Saat ilmoituksen, kun se on valmis.
+shareUpload.signedOut	Kirjaudu ensin sisään NextExploreriin ja jaa sitten uudelleen.
+shareUpload.nothingToUpload	Täällä ei ole mitään, mitä NextExplorer voisi lähettää.
+shareUpload.failed	Tiedostoja ei voitu valmistella lähetystä varten.
+shareUpload.notificationDoneTitle	Lähetys valmis
+shareUpload.notificationFailedTitle	Joitakin tiedostoja ei lähetetty
+shareUpload.notificationDoneBody#one	%lld tiedosto lähetetty kohteeseen “%@”.
+shareUpload.notificationDoneBody#other	%lld tiedostoa lähetetty kohteeseen “%@”.
+shareUpload.notificationAllFailedTitle	Lähetys epäonnistui
+shareUpload.failureUnauthorized#one	%lld tiedostoa ei lähetetty. Kirjaudu uudelleen sisään ja yritä sitten uudelleen.
+shareUpload.failureUnauthorized#other	%lld tiedostoa ei lähetetty. Kirjaudu uudelleen sisään ja yritä sitten uudelleen.
+shareUpload.failureForbidden#one	%lld tiedostoa ei lähetetty. Sinulla ei ole oikeutta lisätä tiedostoja tuohon kansioon.
+shareUpload.failureForbidden#other	%lld tiedostoa ei lähetetty. Sinulla ei ole oikeutta lisätä tiedostoja tuohon kansioon.
+shareUpload.failureServerFull#one	%lld tiedostoa ei lähetetty. Palvelimen tallennustila on loppu.
+shareUpload.failureServerFull#other	%lld tiedostoa ei lähetetty. Palvelimen tallennustila on loppu.
+shareUpload.failureNetwork#one	%lld tiedostoa ei lähetetty. Yhteys epäonnistui. Yritä uudelleen, kun olet taas verkossa.
+shareUpload.failureNetwork#other	%lld tiedostoa ei lähetetty. Yhteys epäonnistui. Yritä uudelleen, kun olet taas verkossa.
+shareUpload.failureOther#one	%lld tiedostoa ei voitu lähettää.
+shareUpload.failureOther#other	%lld tiedostoa ei voitu lähettää.
+shareUpload.notificationRetry	Yritä uudelleen
+shareUpload.notificationHiddenPreview	Avaa NextExplorer nähdäksesi, miten lähetys sujui.
+shareUpload.retryFailedTitle	Uudelleenyritys ei onnistunut
+shareUpload.retryFailedBody	Avaa NextExplorer ja jaa tiedostot uudelleen.
+shareUpload.insufficientSpace	Tässä laitteessa ei ole tarpeeksi vapaata tilaa näiden tiedostojen valmistelemiseksi lähetystä varten.
+settings.uploadDefaultsRow	Jaetut tiedostot
+settings.uploadDefaultsFolder	Oletuskansio
+settings.uploadDefaultsFolderNone	Kysy joka kerta
+settings.uploadDefaultsWithoutAsking	Lähetä kysymättä
+settings.uploadDefaultsFooter	Valokuvat ja tiedostot, joita jaat NextExploreriin muista sovelluksista, alkavat tästä kansiosta. Kun Lähetä kysymättä on päällä, ne lähetetään suoraan sinne.
+settings.uploadDefaultsClear	Kysy joka kerta
+common.change	Vaihda
+shareUpload.sessionUnreadable	NextExplorer ei voinut lukea kirjautumistasi tällä laitteella. Avaa NextExplorer kerran ja jaa sitten uudelleen.
+shareUpload.keepOpen	Pidä tämä auki, kunnes valmistelu on valmis.
+shareUpload.checking	Tarkistetaan yhteyttä palvelimeen %@…
+shareUpload.openApp	Avaa NextExplorer
+shareUpload.openAppInstructions	Avaa NextExplorer Koti-valikosta ja jaa sitten uudelleen.
+shareUpload.certificateRequired	Tämä palvelin vaatii asiakasvarmenteen. Avaa NextExplorer ja lisää sellainen Asetuksissa, ja jaa sitten uudelleen.
+shareUpload.certificateRejected	Palvelin hylkäsi asiakasvarmenteesi. Avaa NextExplorer ja korvaa se Asetuksissa, ja jaa sitten uudelleen.
+shareUpload.defaultFolderUnavailable	Oletuskansiosi ei ole enää käytettävissä. Valitse toinen kansio.
+shareUpload.failedItemsHeader	Näitä tiedostoja ei voitu valmistella:
+shareUpload.readyCount	Valmiina lähetettäväksi: %lld
+shareUpload.uploadReady	Lähetä valmiit tiedostot
+shareUpload.retryFailed	Yritä epäonnistuneita tiedostoja uudelleen
+shareUpload.fallbackItemName	Tiedosto %lld
+shareUpload.causeCannotRead	Sitä ei voitu lukea.
+shareUpload.causeNotEnoughSpace	Tässä laitteessa ei ole tarpeeksi vapaata tilaa.
+shareUpload.causeUnknown	Sitä ei voitu valmistella.
+shareUpload.folderHint	Avaa kansionvalitsimen.
+shareUpload.accountHint	Valitse, mikä tili vastaanottaa tiedostot.
+error.timedOut	Palvelin vastasi liian hitaasti. Toiminto voi silti onnistua.
+error.changedOnServer	Tätä tiedostoa muutettiin palvelimella sen jälkeen, kun avasit sen.
+textPreview.conflictTitle	“%@” muuttui palvelimella
+textPreview.conflictMessage	Korvaa se omalla versiollasi tai lataa tiedosto uudelleen ja hylkää muokkauksesi. Korvattu versio säilyy tiedoston versiohistoriassa.
+textPreview.conflictOverwrite	Korvaa
+textPreview.conflictReload	Lataa uudelleen
+offline.waitingForNetwork	Ladataan, kun olet taas verkossa
+browse.bulkFavoriteFailed	%1$lld / %2$lld epäonnistui
+shareUpload.livePhotoNote	Live Photos -kuvat lähetetään liikevideoineen.
+shareUpload.retrySignInBody	Kirjaudu sisään NextExploreriin ja napauta sitten Yritä uudelleen.
+shareUpload.causeFolder	Kansioita ei voi jakaa. Jaa sen sijaan niiden sisällä olevat tiedostot.
+shareUpload.notificationMoreNames	%lld lisää
+versionedFiles.deleteFailed	Joitakin versioita ei voitu poistaa. Tarkista ne ja yritä uudelleen.
+serverSettings.featureOffTitle	Tämä ominaisuus ei ole käytössä
+serverSettings.featureOffKept	Täällä määrittämäsi asiat tallennetaan, ja ne tulevat voimaan heti, kun ominaisuus otetaan käyttöön.
+serverSettings.featureOffUseSwitch	Ota se käyttöön yllä olevalla kytkimellä.
+serverSettings.featureOffHowTo	Ota se käyttöön asettamalla %@ ja käynnistämällä säiliö uudelleen.
+trashSettings.environmentNote	Oletusarvot tulevat muuttujista TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT ja TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Oletusarvot tulevat muuttujista VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE ja VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Päivitä
