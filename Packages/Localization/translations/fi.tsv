@@ -569,7 +569,7 @@ permissions.title	Käyttöoikeudet
 permissions.sectionMode	Tila
 permissions.numericLabel	Numeerinen
 permissions.applyToEnclosed	Käytä sisällä oleviin kohteisiin
-permissions.applyPermissions	Käytä käyttöoikeudet
+permissions.applyPermissions	Aseta käyttöoikeudet
 permissions.sectionOwnership	Omistajuus
 permissions.fieldOwner	Omistaja
 permissions.fieldGroup	Ryhmä

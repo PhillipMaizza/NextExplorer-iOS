@@ -24727,7 +24727,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Meus arquivos"
+            "value": "Os meus ficheiros"
           }
         },
         "pt-BR": {
@@ -24912,7 +24912,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Visível apenas para você"
+            "value": "Visível apenas para si"
           }
         },
         "pt-BR": {
@@ -28355,7 +28355,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este arquivo é grande demais para a Visualização Rápida."
+            "value": "Este ficheiro é demasiado grande para a Visualização Rápida."
           }
         },
         "pt-BR": {
@@ -28540,7 +28540,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "A Visualização Rápida não está disponível para este tipo de arquivo."
+            "value": "A Visualização Rápida não está disponível para este tipo de ficheiro."
           }
         },
         "pt-BR": {
@@ -32055,7 +32055,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Digite pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos arquivos."
+            "value": "Escreva pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos ficheiros."
           }
         },
         "pt-BR": {
@@ -44000,7 +44000,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Carregando…"
+            "value": "A carregar…"
           }
         },
         "pt-BR": {
@@ -50857,7 +50857,7 @@
         "ro": {
           "stringUnit": {
             "state": "translated",
-            "value": "Persoane anumite"
+            "value": "Anumite persoane"
           }
         },
         "ru": {
@@ -53620,7 +53620,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Baixando %lld itens"
+            "value": "A transferir %lld itens"
           }
         },
         "pt-BR": {
@@ -53805,7 +53805,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Baixando %@"
+            "value": "A transferir %@"
           }
         },
         "pt-BR": {
@@ -55100,7 +55100,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld itens salvos em Downloads"
+            "value": "%lld itens guardados em Transferências"
           }
         },
         "pt-BR": {
@@ -55285,7 +55285,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Salvo em Downloads"
+            "value": "Guardado em Transferências"
           }
         },
         "pt-BR": {
@@ -55470,7 +55470,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Salvo"
+            "value": "Guardado"
           }
         },
         "pt-BR": {
@@ -59355,7 +59355,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Este arquivo foi alterado no servidor depois de você abri-lo."
+            "value": "Este ficheiro foi alterado no servidor depois de o ter aberto."
           }
         },
         "pt-BR": {
@@ -67075,7 +67075,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "As versões apagadas somem para sempre. O arquivo em si continua como está."
+            "value": "As versões eliminadas desaparecem para sempre. O ficheiro em si fica como está."
           }
         },
         "pt-BR": {
@@ -67815,7 +67815,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nenhum link compartilhado"
+            "value": "Nenhuma ligação de partilha"
           }
         },
         "pt-BR": {
@@ -68740,7 +68740,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "O arquivo volta a como estava em %@. O conteúdo atual é mantido como uma versão."
+            "value": "O ficheiro volta a ficar como estava em %@. O conteúdo atual é mantido como uma versão."
           }
         },
         "pt-BR": {
@@ -71879,7 +71879,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Compartilhamento"
+            "value": "Partilha"
           }
         },
         "pt-BR": {
@@ -72619,7 +72619,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Baixar…"
+            "value": "Transferir…"
           }
         },
         "pt-BR": {
@@ -73544,7 +73544,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Salvar como cópia"
+            "value": "Guardar como cópia"
           }
         },
         "pt-BR": {
@@ -76116,7 +76116,7 @@
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ytterligere utelatelser"
+            "value": "Ytterligere unntak"
           }
         },
         "nl": {
@@ -89458,7 +89458,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gerenciar…"
+            "value": "Gerir…"
           }
         },
         "pt-BR": {
@@ -90198,7 +90198,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Usuário"
+            "value": "Utilizador"
           }
         },
         "pt-BR": {
@@ -91308,7 +91308,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nome de usuário"
+            "value": "Nome de utilizador"
           }
         },
         "pt-BR": {
@@ -97413,7 +97413,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Baixando %@"
+            "value": "A transferir %@"
           }
         },
         "pt-BR": {
@@ -97598,7 +97598,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Os arquivos baixados abrem mesmo sem conexão."
+            "value": "Os ficheiros transferidos abrem mesmo sem ligação."
           }
         },
         "pt-BR": {
@@ -97783,7 +97783,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nada foi baixado para uso offline."
+            "value": "Nada foi transferido para utilização offline."
           }
         },
         "pt-BR": {
@@ -97968,7 +97968,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Gerenciar arquivos offline"
+            "value": "Gerir ficheiros offline"
           }
         },
         "pt-BR": {
@@ -98153,7 +98153,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arquivos offline"
+            "value": "Ficheiros offline"
           }
         },
         "pt-BR": {
@@ -98338,7 +98338,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "%@ não existe mais no servidor e foi removido dos arquivos offline"
+            "value": "%@ já não existe no servidor e foi removido dos ficheiros offline"
           }
         },
         "pt-BR": {
@@ -98523,7 +98523,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Usar um vídeo baixado em vez de transmitir quando estiver disponível."
+            "value": "Usar um vídeo transferido em vez de o transmitir, quando estiver disponível."
           }
         },
         "pt-BR": {
@@ -98708,7 +98708,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Reproduzir cópias baixadas"
+            "value": "Reproduzir cópias transferidas"
           }
         },
         "pt-BR": {
@@ -98893,7 +98893,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Preparando…"
+            "value": "A preparar…"
           }
         },
         "pt-BR": {
@@ -99078,7 +99078,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld de %lld arquivos"
+            "value": "%lld de %lld ficheiros"
           }
         },
         "pt-BR": {
@@ -99448,7 +99448,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Isso exclui os arquivos salvos para uso offline neste dispositivo. Seus arquivos no servidor não são afetados."
+            "value": "Isto elimina os ficheiros guardados para utilização offline neste dispositivo. Os seus ficheiros no servidor não são afetados."
           }
         },
         "pt-BR": {
@@ -99633,7 +99633,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remover arquivos offline?"
+            "value": "Remover ficheiros offline?"
           }
         },
         "pt-BR": {
@@ -99818,7 +99818,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remover arquivos offline"
+            "value": "Remover ficheiros offline"
           }
         },
         "pt-BR": {
@@ -100003,7 +100003,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Atualizar arquivos offline"
+            "value": "Atualizar ficheiros offline"
           }
         },
         "pt-BR": {
@@ -100373,7 +100373,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Baixar"
+            "value": "Transferir"
           }
         },
         "pt-BR": {
@@ -101298,7 +101298,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Baixar para offline"
+            "value": "Transferir para offline"
           }
         },
         "pt-BR": {
@@ -101483,7 +101483,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Baixar arquivos para uso offline"
+            "value": "Transferir ficheiros para utilização offline"
           }
         },
         "pt-BR": {
@@ -101853,7 +101853,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Será baixado quando você voltar a ficar online"
+            "value": "Será transferido quando voltar a estar online"
           }
         },
         "pt-BR": {
@@ -102038,7 +102038,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não foi possível abrir este arquivo."
+            "value": "Não foi possível abrir este ficheiro."
           }
         },
         "pt-BR": {
@@ -103076,7 +103076,7 @@
         "fi": {
           "stringUnit": {
             "state": "translated",
-            "value": "Käytä käyttöoikeudet"
+            "value": "Aseta käyttöoikeudet"
           }
         },
         "fr": {
@@ -107200,7 +107200,7 @@
         "nb": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ytterligere utelatelser"
+            "value": "Ytterligere unntak"
           }
         },
         "nl": {
@@ -123936,7 +123936,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "As pastas são baixadas como ZIP, sem deixar nada no servidor. Remover downloads ou limpar o cache afeta apenas este dispositivo; nada no servidor é alterado."
+            "value": "As pastas são transferidas em formato ZIP, sem deixar nada no servidor. Remover transferências ou limpar a cache afeta apenas este dispositivo; nada no servidor é alterado."
           }
         },
         "pt-BR": {
@@ -126526,7 +126526,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Fotos e arquivos que você compartilha com o NextExplorer a partir de outros apps começam nesta pasta. Com Enviar sem perguntar ativado, eles vão direto para lá."
+            "value": "As fotos e os ficheiros que partilha com o NextExplorer a partir de outras apps começam nesta pasta. Com Enviar sem perguntar ativado, são enviados diretamente para lá."
           }
         },
         "pt-BR": {
@@ -126711,7 +126711,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arquivos compartilhados"
+            "value": "Ficheiros partilhados"
           }
         },
         "pt-BR": {
@@ -128119,7 +128119,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pastas não podem ser compartilhadas. Compartilhe os arquivos dentro delas."
+            "value": "As pastas não podem ser partilhadas. Partilhe os ficheiros que estão dentro delas."
           }
         },
         "pt-BR": {
@@ -129414,7 +129414,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não foi possível preparar os arquivos para envio."
+            "value": "Não foi possível preparar os ficheiros para envio."
           }
         },
         "pt-BR": {
@@ -130164,13 +130164,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivo não foi enviado. Você não tem permissão para adicionar arquivos a essa pasta."
+                  "value": "%lld ficheiro não foi enviado. Não tem permissão para adicionar ficheiros a essa pasta."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivos não foram enviados. Você não tem permissão para adicionar arquivos a essa pasta."
+                  "value": "%lld ficheiros não foram enviados. Não tem permissão para adicionar ficheiros a essa pasta."
                 }
               }
             }
@@ -130751,13 +130751,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivo não foi enviado. A conexão falhou. Tente de novo quando voltar a ficar on-line."
+                  "value": "%lld ficheiro não foi enviado. A ligação falhou. Tente novamente quando voltar a estar online."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivos não foram enviados. A conexão falhou. Tente de novo quando voltar a ficar on-line."
+                  "value": "%lld ficheiros não foram enviados. A ligação falhou. Tente novamente quando voltar a estar online."
                 }
               }
             }
@@ -131338,13 +131338,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivo não pôde ser enviado."
+                  "value": "%lld ficheiro não pôde ser enviado."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivos não puderam ser enviados."
+                  "value": "%lld ficheiros não puderam ser enviados."
                 }
               }
             }
@@ -131925,13 +131925,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivo não foi enviado. O servidor ficou sem espaço de armazenamento."
+                  "value": "%lld ficheiro não foi enviado. O servidor ficou sem espaço de armazenamento."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivos não foram enviados. O servidor ficou sem espaço de armazenamento."
+                  "value": "%lld ficheiros não foram enviados. O servidor ficou sem espaço de armazenamento."
                 }
               }
             }
@@ -132512,13 +132512,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivo não foi enviado. Entre de novo e tente outra vez."
+                  "value": "%lld ficheiro não foi enviado. Inicie sessão novamente e tente outra vez."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivos não foram enviados. Entre de novo e tente outra vez."
+                  "value": "%lld ficheiros não foram enviados. Inicie sessão novamente e tente outra vez."
                 }
               }
             }
@@ -133572,7 +133572,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não há espaço livre suficiente neste dispositivo para preparar estes arquivos para envio."
+            "value": "Não há espaço livre suficiente neste dispositivo para preparar estes ficheiros para envio."
           }
         },
         "pt-BR": {
@@ -133757,7 +133757,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Arquivos para enviar: %lld"
+            "value": "Ficheiros a enviar: %lld"
           }
         },
         "pt-BR": {
@@ -134949,13 +134949,13 @@
               "one": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivo enviado para “%@”."
+                  "value": "%lld ficheiro enviado para “%@”."
                 }
               },
               "other": {
                 "stringUnit": {
                   "state": "translated",
-                  "value": "%lld arquivos enviados para “%@”."
+                  "value": "%lld ficheiros enviados para “%@”."
                 }
               }
             }
@@ -135454,7 +135454,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alguns arquivos não foram enviados"
+            "value": "Alguns ficheiros não foram enviados"
           }
         },
         "pt-BR": {
@@ -136564,7 +136564,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Preparando %lld de %lld…"
+            "value": "A preparar %lld de %lld…"
           }
         },
         "pt-BR": {
@@ -137119,7 +137119,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abra o NextExplorer e compartilhe os arquivos novamente."
+            "value": "Abra o NextExplorer e partilhe os ficheiros novamente."
           }
         },
         "pt-BR": {
@@ -137489,7 +137489,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Entre no NextExplorer e toque em “Tentar de novo” novamente."
+            "value": "Inicie sessão no NextExplorer e toque em “Tentar novamente”."
           }
         },
         "pt-BR": {
@@ -137859,7 +137859,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Entre no NextExplorer primeiro e compartilhe de novo."
+            "value": "Inicie sessão no NextExplorer primeiro e partilhe novamente."
           }
         },
         "pt-BR": {
@@ -138044,7 +138044,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enviando em segundo plano. Você receberá uma notificação quando terminar."
+            "value": "A enviar em segundo plano. Receberá uma notificação quando terminar."
           }
         },
         "pt-BR": {
@@ -146297,7 +146297,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Substitua-o pela sua versão ou recarregue o arquivo e descarte suas edições. A versão substituída permanece no histórico de versões do arquivo."
+            "value": "Substitua-o pela sua versão ou volte a carregar o ficheiro e descarte as suas edições. A versão substituída permanece no histórico de versões do ficheiro."
           }
         },
         "pt-BR": {
@@ -147037,7 +147037,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Não Salvar"
+            "value": "Não guardar"
           }
         },
         "pt-BR": {
@@ -147592,7 +147592,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Suas alterações serão perdidas se você não salvá-las."
+            "value": "As suas alterações perdem-se se não as guardar."
           }
         },
         "pt-BR": {
@@ -147777,7 +147777,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Salvar alterações em “%@”?"
+            "value": "Guardar as alterações a “%@”?"
           }
         },
         "pt-BR": {
@@ -151107,7 +151107,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "O NextExplorer é gratuito e de código aberto. Se for útil para você, uma pequena gorjeta ajuda a mantê-lo. Obrigado!"
+            "value": "O NextExplorer é gratuito e de código aberto. Se lhe for útil, uma pequena gorjeta ajuda a mantê-lo. Obrigado!"
           }
         },
         "pt-BR": {
@@ -151292,7 +151292,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aguardando aprovação. A cobrança será feita após a aprovação."
+            "value": "A aguardar aprovação. O valor será cobrado após a aprovação."
           }
         },
         "pt-BR": {
@@ -153780,7 +153780,7 @@
         "cs": {
           "stringUnit": {
             "state": "translated",
-            "value": "„%@“ zapomněl správce"
+            "value": "„%@“ byl správcem zapomenut"
           }
         },
         "da": {
@@ -156066,7 +156066,7 @@
         "it": {
           "stringUnit": {
             "state": "translated",
-            "value": "Versioni per file al massimo"
+            "value": "Numero massimo di versioni per file"
           }
         },
         "ja": {
@@ -172206,7 +172206,7 @@
         "pt": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld arquivos enviados"
+            "value": "%lld ficheiros enviados"
           }
         },
         "pt-BR": {

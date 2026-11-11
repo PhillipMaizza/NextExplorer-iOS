@@ -243,7 +243,7 @@ createShare.summarySharedWith	Partajat cu
 createShare.summaryPassword	Parolă
 createShare.summaryPasswordProtected	Protejat
 createShare.summaryExpires	Expiră
-createShare.summarySpecificPeople	Persoane anumite
+createShare.summarySpecificPeople	Anumite persoane
 createShare.errorPastExpiration	Alege o dată de expirare în viitor.
 editShare.title	Editează linkul de partajare
 editShare.save	Salvează modificările
