@@ -847,3 +847,202 @@ shareUpload.causeFolder	Ordner können nicht geteilt werden. Teile stattdessen d
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld weitere
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	Uploads
+uploadSettings.subtitle	Lege fest, wie Dateien an den Server gesendet werden.
+uploadSettings.chunkedEnable	Segmentierte Uploads aktivieren
+uploadSettings.chunkedEnableHelp	Verwendet TUS, um große Dateien über mehrere kleinere Anfragen zu senden.
+uploadSettings.chunkSize	Segmentgröße
+uploadSettings.chunkSizeHelp	Maximale Größe jeder Upload-Anfrage. Halte sie unter dem Limit deines Reverse-Proxys. Kleinere Teile ergeben einen gleichmäßigeren Fortschritt.
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	Automatisch auf Segmente umschalten
+uploadSettings.autoFallbackHelp	Wenn ein direkter Upload scheitert, weil ein Reverse-Proxy die Größe ablehnt, wird automatisch auf Uploads in Teilen umgeschaltet.
+uploadSettings.unavailable	Upload-Einstellungen sind nur für Administratoren verfügbar.
+uploadSettings.saveButton	Änderungen speichern
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	FFmpeg- und FFprobe-Programme für Medienvorschauen und Metadaten auswählen.
+ffmpegSettings.containerPathHelp	Gib absolute Pfade an, die im Anwendungscontainer sichtbar sind. Um Programme des Hosts zu verwenden, binde sie zuerst in den Container ein.
+ffmpegSettings.ffmpegPath	Pfad zum FFmpeg-Programm
+ffmpegSettings.ffprobePath	Pfad zum FFprobe-Programm
+ffmpegSettings.invalid	Beide Pfade müssen absolute Container-Pfade sein und mit / beginnen.
+ffmpegSettings.defaultHelp	Lass einen Pfad leer, um FFMPEG_PATH oder FFPROBE_PATH aus der Umgebung zu verwenden, danach das mitgelieferte Programm. Änderungen gelten sofort.
+ffmpegSettings.unavailable	FFmpeg-Einstellungen sind nur für Administratoren verfügbar.
+ffmpegSettings.saveButton	Änderungen speichern
+searchIndexSettings.navigationTitle	Suchindex
+searchIndexSettings.subtitle	Pfade von der Inhaltsindizierung ausschließen.
+searchIndexSettings.running	Suchindex führen
+searchIndexSettings.runningHelp	Liest die Dokumente des Volumes im Hintergrund, damit eine Suche in ihrem Inhalt sofort antwortet.
+searchIndexSettings.locked	Durch %@ in der Umgebung festgelegt – das wird dort entschieden, nicht hier.
+searchIndexSettings.environment	Von der Umgebung definierte Ausschlüsse
+searchIndexSettings.additional	Zusätzliche Ausschlüsse
+searchIndexSettings.none	Kein Pfad konfiguriert
+searchIndexSettings.addButton	Hinzufügen
+searchIndexSettings.unavailable	Einstellungen für den Suchindex sind nur für Administratoren verfügbar.
+searchIndexSettings.saveButton	Änderungen speichern
+searchIndexSettings.discardButton	Verwerfen
+folderSizeSettings.navigationTitle	Ordnergrößen
+folderSizeSettings.subtitle	Pfade von der Berechnung und Indizierung der Ordnergrößen ausschließen.
+folderSizeSettings.running	Ordnergrößen messen
+folderSizeSettings.runningHelp	Misst Ordner im Hintergrund, damit ihre Größe in der Liste erscheint.
+folderSizeSettings.modeOff	Aus
+folderSizeSettings.modeShallow	Nur ihre eigenen Dateien
+folderSizeSettings.modeFull	Alles darin
+folderSizeSettings.locked	Durch %@ in der Umgebung festgelegt – das wird dort entschieden, nicht hier.
+folderSizeSettings.environment	Von der Umgebung definierte Ausschlüsse
+folderSizeSettings.additional	Zusätzliche Ausschlüsse
+folderSizeSettings.none	Keine Pfade konfiguriert
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Hinzufügen
+folderSizeSettings.unavailable	Einstellungen für Ordnergrößen sind nur für Administratoren verfügbar.
+folderSizeSettings.saveButton	Änderungen speichern
+folderSizeSettings.discardButton	Verwerfen
+activityLog.navigationTitle	Aktivitätsprotokoll
+activityLog.subtitle	Wer was wann und von wo getan hat. Aus, solange du es nicht einschaltest.
+activityLog.enabled	Aktivität aufzeichnen
+activityLog.enabledHelp	Anmeldungen, Downloads, Uploads, Löschungen, Wiederherstellungen, Freigabelinks und Kontoänderungen werden aufgezeichnet, solange dies aktiv ist. Was davor geschah, steht nicht darin.
+activityLog.retention	Aufbewahren (Tage)
+activityLog.retentionInvalid	Zwischen 1 und 3650 Tagen.
+activityLog.saveButton	Änderungen speichern
+activityLog.off	Das Protokoll ist aus, es wird nichts aufgezeichnet.
+activityLog.none	Noch nichts aufgezeichnet.
+activityLog.filterAction	Art
+activityLog.anyAction	Alle Arten
+activityLog.filterOutcome	Ergebnis
+activityLog.anyOutcome	Jedes Ergebnis
+activityLog.outcomeOk	Erfolgreich
+activityLog.outcomeRefused	Abgelehnt
+activityLog.searchPlaceholder	Ein Name oder ein Pfad
+activityLog.searchButton	Suchen
+activityLog.refresh	Aktualisieren
+activityLog.clear	Protokoll leeren
+activityLog.clearTitle	Protokoll leeren?
+activityLog.clearMessage	Jeder aufgezeichnete Eintrag wird gelöscht. Das lässt sich nicht rückgängig machen.
+activityLog.clearConfirm	Protokoll leeren
+activityLog.more	Mehr anzeigen
+activityLog.refusedSuffix	Abgelehnt
+activityLog.fromAddress	Von %@
+activityLog.unavailable	Das Aktivitätsprotokoll ist nur für Administratoren verfügbar.
+activityLog.action.signIn	Angemeldet
+activityLog.action.signOut	Abgemeldet
+activityLog.action.accountPassword	Passwort geändert
+activityLog.action.accountTwoFactor	Zweiter Faktor geändert
+activityLog.action.accountPasskey	Passkey geändert
+activityLog.action.accountToken	API-Token geändert
+activityLog.action.adminUser	Konto geändert
+activityLog.action.adminSettings	Einstellungen geändert
+activityLog.action.adminActivityClear	Protokoll geleert
+activityLog.action.shareCreate	Freigabe erstellt
+activityLog.action.shareDelete	Freigabe gelöscht
+activityLog.action.shareDownload	Über einen Link heruntergeladen
+activityLog.action.shareUpload	Über einen Link hochgeladen
+activityLog.action.fileDownload	Heruntergeladen
+activityLog.action.fileUpload	Hochgeladen
+activityLog.action.fileDelete	In den Papierkorb verschoben
+activityLog.action.fileRestore	Wiederhergestellt
+activityLog.action.filePurge	Endgültig gelöscht
+activityLog.action.versionsPurge	Versionen gelöscht
+trashSettings.navigationTitle	Papierkorb und Versionen
+trashSettings.subtitle	Gelöschte Elemente und frühere Dateiversionen werden in einem reservierten Bereich auf ihrem eigenen Volume aufbewahrt und nach ihrer Aufbewahrungsfrist oder bei Platzbedarf entfernt.
+trashSettings.trashHeader	Papierkorb
+trashSettings.enabled	Gelöschte Elemente in den Papierkorb verschieben
+trashSettings.enabledHelp	Ausgeschaltet entfernt Löschen Elemente endgültig. Elemente im Papierkorb laufen trotzdem ab.
+trashSettings.retention	Aufbewahrung (Tage)
+trashSettings.retentionHelp	Von 1 bis 3650 Tage.
+trashSettings.maxPercent	Anteil je Volume (%)
+trashSettings.maxPercentHelp	Höchstens so viel darf der Papierkorb auf einem Volume belegen, von 1 bis 90 %.
+trashSettings.maxSize	Größenlimit je Volume (GiB)
+trashSettings.maxSizeHelp	Optional. Es gilt der kleinere Wert von Anteil und Limit.
+trashSettings.maxSizeNone	Kein Limit
+trashSettings.trashInvalid	Prüfe die Werte: Aufbewahrung von 1 bis 3650 Tagen, Anteil von 1 bis 90 %, eine positive Größe oder keine.
+trashSettings.versionsHeader	Dateiversionen
+trashSettings.versionsSubtitle	Jedes Speichern behält, was es ersetzt, ohne es zu kopieren, im selben reservierten Bereich wie der Papierkorb. Ältere Versionen werden mit der Zeit ausgedünnt.
+trashSettings.versionsEnabled	Frühere Versionen von Dateien behalten
+trashSettings.versionsEnabledHelp	Unabhängig vom Papierkorb. Ausgeschaltet wird beim Speichern nichts Neues behalten; vorhandene Versionen bleiben bis zu ihrem Ablauf oder ihrer Löschung.
+trashSettings.keepAllHours	Alle Versionen behalten (Stunden)
+trashSettings.hourlyDays	Dann eine pro Stunde (Tage)
+trashSettings.dailyDays	Dann eine pro Tag (Tage)
+trashSettings.maxPerFile	Höchstens Versionen pro Datei
+trashSettings.checkpointMinutes	Office-Zwischenstand (Minuten)
+trashSettings.tiersHelp	Nach diesen Stufen wird eine Version pro Woche behalten. Eine Office-Bearbeitungssitzung hinterlässt eine Version, dazu höchstens in diesem Abstand einen Zwischenstand. Angeheftete Versionen sind von der Ausdünnung und der Grenze pro Datei ausgenommen.
+trashSettings.versionsInvalid	Prüfe die Werte: 1 bis 720 Stunden, 1 bis 365 Tage pro Stunde, 1 bis 3650 Tage pro Tag, 1 bis 1000 Versionen pro Datei, ein Zwischenstand von 1 bis 1440 Minuten.
+trashSettings.sharedSpace	Versionen und Papierkorb teilen sich den reservierten Bereich jedes Volumes. Wird er knapp, gehen zuerst ältere Versionen, dann Papierkorbelemente, dann die letzte Version jeder Datei und zuletzt angeheftete Versionen.
+trashSettings.saveButton	Änderungen speichern
+trashSettings.discardButton	Verwerfen
+trashSettings.unavailable	Einstellungen für Papierkorb und Versionen sind nur für Administratoren verfügbar.
+trashSettings.zonesHeader	Papierkorb je Volume
+trashSettings.zonesSubtitle	Jedes Volume bewahrt seinen Papierkorb in einem versteckten Ordner .nextexplorer an seiner Wurzel auf, daher kopiert Löschen nie etwas.
+trashSettings.zonesEmpty	Noch wurde nichts in einen Papierkorb gelöscht.
+trashSettings.zoneKindPersonal	Persönlicher Ordner von %@
+trashSettings.zoneKindUserVolume	Zugewiesenes Volume %@
+trashSettings.available	Verfügbar
+trashSettings.unavailableMissing	Nicht eingehängt oder entfernt
+trashSettings.unavailableReplaced	Ein anderer Datenträger an seiner Stelle
+trashSettings.unavailableUnreadable	Nicht lesbar
+trashSettings.usage	%1$@ von %2$@
+trashSettings.noBudget	ohne Limit
+trashSettings.zoneItems	Objekte: %1$lld · %2$@
+trashSettings.zoneVersions	Versionen: %1$lld · %2$@
+trashSettings.lastPass	Letzte Wartung: %@
+trashSettings.lastPassPurged	%1$@ · entfernt: %2$lld
+trashSettings.never	noch nicht
+trashSettings.verify	Prüfen
+trashSettings.runMaintenance	Wartung jetzt ausführen
+trashSettings.verifyOk	Der Papierkorb jedes Volumes ist konsistent.
+trashSettings.verifyIssues	Gefundene Probleme: %lld
+trashSettings.zoneProblems	Probleme: %lld
+trashSettings.journalHeader	Protokoll
+trashSettings.eventEvicted	"%@" vor Ablauf der Aufbewahrung entfernt, um Platz zu schaffen
+trashSettings.eventAdopted	"%@" nach einer Unterbrechung wiederhergestellt
+trashSettings.eventLost	Der Inhalt von "%@" fehlte
+trashSettings.eventFailed	"%@" konnte nicht entfernt werden
+trashSettings.eventBreaker	Zu viele Elemente fehlten auf einmal: nichts wurde geändert
+trashSettings.eventForgotten	"%@" von einem Administrator vergessen
+trashSettings.eventVersionEvicted	Eine Version von „%@“ entfernt, um Platz zu schaffen
+trashSettings.eventVersionFailed	Eine Version konnte nicht entfernt werden
+trashSettings.eventVersionLost	Einer Version fehlte ihr Inhalt
+trashSettings.eventVersionTooLarge	„%@“ ist größer als der ganze Bereich: Was es ersetzte, wurde nicht behalten
+trashSettings.eventVersionsBreaker	Zu viele Versionen fehlen auf einmal: Nichts wurde geändert
+versionedFiles.navigationTitle	Dateiversionen
+versionedFiles.subtitle	Jede Datei mit einem Verlauf, wo auch immer sie liegt. Sie zeigt Pfade aus allen Bereichen, auch aus persönlichen Ordnern, und ist deshalb nur für Administratoren gedacht.
+versionedFiles.summary	Dateien: %1$lld · Versionen: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Ein Name oder ein Pfad
+versionedFiles.zone	Volume
+versionedFiles.anyZone	Alle Volumes
+versionedFiles.stateHeader	Status
+versionedFiles.anyState	Jeder Status
+versionedFiles.stateLive	Datei noch vorhanden
+versionedFiles.stateTrashed	Im Papierkorb
+versionedFiles.stateOrphaned	Datei fehlt
+versionedFiles.sortHeader	Sortieren nach
+versionedFiles.sortBytes	Belegter Platz
+versionedFiles.sortVersions	Anzahl der Versionen
+versionedFiles.sortNewest	Neueste
+versionedFiles.sortPath	Pfad
+versionedFiles.none	Keine Datei hat frühere Versionen.
+versionedFiles.unavailable	Dateiversionen sind nur für Administratoren verfügbar.
+versionedFiles.zoneUnknown	Unbekanntes Volume
+versionedFiles.zoneKindPersonal	Persönlicher Ordner von %@
+versionedFiles.zoneKindUserVolume	Zugewiesenes Volume %@
+versionedFiles.rowSummary	Versionen: %1$lld · %2$@
+versionedFiles.newest	Neueste: %@
+versionedFiles.versionPinned	Angeheftet
+versionedFiles.versionUnavailable	Nicht verfügbar
+versionedFiles.versionBy	Von %@
+versionedFiles.detailFailed	Dieser Verlauf konnte nicht gelesen werden.
+versionedFiles.deleteSelectedNone	Zu löschende Versionen auswählen
+versionedFiles.deleteSelected	Auswahl löschen (%lld)
+versionedFiles.deleteAll	Alle Versionen löschen
+versionedFiles.confirmAllTitle	Jede Version von „%@“ löschen?
+versionedFiles.confirmSomeTitle	Die ausgewählten Versionen löschen (%lld)?
+versionedFiles.confirmMessage	Gelöschte Versionen lassen sich nicht wiederherstellen.
+versionedFiles.confirmDelete	Löschen
+versionedFiles.previous	Zurück
+versionedFiles.next	Weiter
+versionedFiles.pageRange	%1$lld bis %2$lld von %3$lld
+versionedFiles.deleteFailed	Einige Versionen konnten nicht gelöscht werden. Prüfe sie und versuche es erneut.
+serverSettings.featureOffTitle	Diese Funktion ist nicht aktiviert
+serverSettings.featureOffKept	Was du hier einstellst, wird gespeichert und gilt, sobald die Funktion aktiviert ist.
+serverSettings.featureOffUseSwitch	Aktiviere sie mit dem Schalter oben.
+serverSettings.featureOffHowTo	Zum Aktivieren setze %@ und starte den Container neu.
+trashSettings.environmentNote	Die Standardwerte stammen aus TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT und TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Die Standardwerte stammen aus VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE und VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Aktualisieren

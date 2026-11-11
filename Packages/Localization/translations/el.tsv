@@ -1,0 +1,1108 @@
+# NextExplorer: Ελληνικά (el). key<TAB>value.
+common.cancel	Ακύρωση
+common.save	Αποθήκευση
+common.edit	Επεξεργασία
+common.retry	Δοκιμάστε ξανά
+common.syncCompleted	Ο συγχρονισμός ολοκληρώθηκε
+common.delete	Διαγραφή
+common.remove	Αφαίρεση
+common.clear	Εκκαθάριση
+common.done	Τέλος
+common.ok	OK
+common.openSettings	Άνοιγμα Ρυθμίσεων
+common.logOut	Αποσύνδεση
+common.close	Κλείσιμο
+common.back	Πίσω
+common.share	Κοινοποίηση
+common.copy	Αντιγραφή
+common.copied	Αντιγράφηκε
+common.download	Λήψη
+common.sort	Ταξινόμηση
+common.select	Επιλογή
+common.deselect	Αποεπιλογή
+common.search	Αναζήτηση
+common.password	Κωδικός πρόσβασης
+common.never	Ποτέ
+common.selectedCount	%lld επιλεγμένα
+tab.browse	Περιήγηση
+tab.favorites	Αγαπημένα
+tab.shared	Κοινόχρηστα
+tab.downloads	Λήψεις
+tab.settings	Ρυθμίσεις
+sort.sheetTitle	Ταξινόμηση κατά
+sort.name	Όνομα
+sort.size	Μέγεθος
+sort.kind	Είδος
+sort.dateModified	Ημερομηνία τροποποίησης
+sort.dateAdded	Ημερομηνία προσθήκης
+sort.dateShared	Ημερομηνία κοινοποίησης
+sort.expiration	Λήξη
+sort.email	Email
+sort.type	Τύπος
+sort.ascending	Αύξουσα
+sort.descending	Φθίνουσα
+select.selectAll	Επιλογή όλων
+select.deselectAll	Αποεπιλογή όλων
+select.listView	Προβολή λίστας
+select.gridView	Προβολή πλέγματος
+emptyState.folderEmpty	Αυτός ο φάκελος είναι κενός.
+emptyState.loadFailed	Δεν ήταν δυνατή η επικοινωνία με τον διακομιστή.
+emptyState.noSearchMatches	Κανένα αποτέλεσμα για «%@».
+accessMode.readonly	Μόνο ανάγνωση
+accessMode.readwrite	Ανάγνωση και εγγραφή
+shareTarget.anyone	Όποιος έχει τον σύνδεσμο
+shareTarget.users	Συγκεκριμένοι χρήστες
+directLinkMode.auto	Αυτόματο
+directLinkMode.inline	Προβολή
+directLinkMode.raw	Ακατέργαστο
+directLinkMode.download	Λήψη
+thumbnailSize.small	Μικρό
+thumbnailSize.medium	Μεσαίο
+thumbnailSize.large	Μεγάλο
+downloadLocation.documents	Έγγραφα
+downloadLocation.cache	Προσωρινή μνήμη
+dateFormat.automatic	Αυτόματα
+browse.navigationTitle	Περιήγηση
+browse.scopeThisFolder	Αυτός ο φάκελος
+browse.scopeEverywhere	Παντού
+browse.searchScopeInFolder	Αυτός ο φάκελος
+browse.searchScopeEverywhere	Παντού
+browse.locations	Τοποθεσίες
+browse.breadcrumbHint	Ανοίγει αυτόν τον φάκελο
+browse.open	Άνοιγμα
+browse.unsupportedFileType	Μη υποστηριζόμενος τύπος αρχείου
+browse.actionGetInfo	Λήψη πληροφοριών
+browse.actionPermissions	Δικαιώματα
+browse.actionRename	Μετονομασία
+browse.actionExtract	Εξαγωγή
+browse.actionCompress	Συμπίεση
+browse.actionDownload	Λήψη
+browse.actionAddToFavorites	Προσθήκη στα Αγαπημένα
+browse.actionRemoveFromFavorites	Αφαίρεση από τα Αγαπημένα
+browse.actionShare	Δημιουργία συνδέσμου κοινοποίησης
+browse.actionDelete	Διαγραφή
+browse.actionDuplicate	Δημιουργία διπλότυπου
+browse.renameTitle	Μετονομασία
+browse.renameNamePlaceholder	Όνομα
+browse.actionNewFolder	Δημιουργία φακέλου
+browse.newFolderTitle	Νέος φάκελος
+browse.newFolderPlaceholder	Όνομα φακέλου
+browse.newFolderConfirm	Δημιουργία
+browse.actionNewFile	Δημιουργία αρχείου
+browse.newFileTitle	Νέο αρχείο
+browse.newFileTypeHint	Χρησιμοποιήστε έναν τύπο αρχείου που μπορεί να ανοίξει ο επεξεργαστής, όπως .txt, .md ή .js.
+browse.deleteConfirmTitle	Διαγραφή;
+browse.deleteConfirmOne	Διαγραφή του «%@»;
+browse.deleteConfirmMany	Διαγραφή %lld στοιχείων;
+browse.deleteMessage	Αυτό δεν μπορεί να αναιρεθεί.
+browse.deleteLinkedSharesOne	Αυτό αφαιρεί επίσης 1 σύνδεσμο κοινοποίησης που οδηγεί εδώ.
+browse.deleteLinkedSharesMany	Αυτό αφαιρεί επίσης %lld συνδέσμους κοινοποίησης που οδηγούν εδώ.
+browse.deleteLinkedSharesUnavailable	Δεν ήταν δυνατός ο έλεγχος των συνδέσμων κοινοποίησης που οδηγούν εδώ. Όσοι υπάρχουν θα σταματήσουν να λειτουργούν.
+browse.searchNoMatchesInFolder	Κανένα αποτέλεσμα για «%@».
+browse.searchEverywhere	Αναζήτηση παντού
+browse.searchFailed	Η αναζήτηση απέτυχε. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.
+browse.progressExtracting	Εξαγωγή…
+browse.progressCompressing	Συμπίεση…
+browse.offlineBannerTitle	Εκτός σύνδεσης
+browse.offlineBannerDetail	Εμφάνιση αποθηκευμένου αντιγράφου από %@
+browse.actionCopy	Αντιγραφή
+browse.destinationPickerMoveTitle	Μετακίνηση σε…
+browse.destinationPickerConfirmMove	Μετακίνηση εδώ
+browse.destinationPickerNoFolders	Δεν υπάρχουν φάκελοι εδώ
+browse.destinationPickerLoadFailed	Δεν ήταν δυνατή η φόρτωση των φακέλων.
+browse.actionMove	Μετακίνηση
+browse.actionPaste	Επικόλληση
+browse.actionPasteCount	Επικόλληση %lld στοιχείων
+browse.actionPasteHere	Επικόλληση εδώ
+browse.actionClearClipboard	Εκκαθάριση προχείρου
+browse.clipboardMoveCount	%lld προς μετακίνηση
+browse.clipboardCopyCount	%lld προς αντιγραφή
+browse.clipboardCopiedOne	Αντιγράφηκε το %@
+browse.clipboardCopiedMany	Αντιγράφηκαν %lld στοιχεία
+browse.progressMoving	Μετακίνηση…
+browse.progressCopying	Αντιγραφή…
+browse.transferMoved	Μετακινήθηκαν %lld στοιχεία
+browse.transferCopied	Αντιγράφηκαν %lld στοιχεία
+browse.transferMovedWithSkipped	Μετακινήθηκαν %1$lld στοιχεία, παραλείφθηκαν %2$lld
+browse.transferCopiedWithSkipped	Αντιγράφηκαν %1$lld στοιχεία, παραλείφθηκαν %2$lld
+browse.transferConflictTitle	Αντικατάσταση στοιχείων;
+browse.transferConflictMessageOne	Το "%@" υπάρχει ήδη σε αυτόν τον φάκελο.
+browse.transferConflictMessageMany	%lld στοιχεία υπάρχουν ήδη σε αυτόν τον φάκελο.
+browse.transferConflictReplace	Αντικατάσταση
+browse.transferConflictKeepBoth	Διατήρηση και των δύο
+browse.actionOpenInBrowser	Άνοιγμα στο πρόγραμμα περιήγησης
+favorites.navigationTitle	Αγαπημένα
+favorites.emptyList	Προσθέστε αστέρι σε φακέλους στην Περιήγηση για να τους δείτε εδώ.
+favorites.actionRemoveFromFavorites	Αφαίρεση από τα Αγαπημένα
+favorites.accessibilityBadge	Αγαπημένο
+favorites.actionEdit	Επεξεργασία
+favorites.editTitle	Επεξεργασία αγαπημένου
+favorites.editNameLabel	Όνομα
+favorites.editNameErrorEmpty	Το όνομα δεν μπορεί να είναι κενό.
+favorites.editIconLabel	Εικονίδιο
+favorites.editIconOutline	Περίγραμμα
+favorites.editIconSolid	Γεμάτο
+favorites.editColorLabel	Χρώμα
+favorites.editColorDefault	Προεπιλογή
+favorites.editSave	Αποθήκευση
+favorites.reorderFailed	Δεν ήταν δυνατή η αποθήκευση της νέας σειράς.
+favorites.removeConfirm	Αφαίρεση %lld αγαπημένων;
+favorites.removeMessage	Αυτό τα αφαιρεί μόνο από τα Αγαπημένα.
+favorites.removeFailedOne	Δεν ήταν δυνατή η αφαίρεση αυτού του αγαπημένου.
+favorites.removeFailedMany	Δεν ήταν δυνατή η αφαίρεση αυτών των αγαπημένων.
+favorites.removePartial	Αφαιρέθηκαν %1$lld από %2$lld.
+downloads.navigationTitle	Λήψεις
+downloads.actionOpenInFiles	Άνοιγμα στα Αρχεία
+downloads.emptyList	Τα αρχεία που κατεβάζετε από την Περιήγηση εμφανίζονται εδώ.
+downloads.deleteConfirmTitle	Διαγραφή;
+downloads.deleteConfirmOne	Διαγραφή του «%@»;
+downloads.deleteConfirmMany	Διαγραφή %lld αρχείων;
+downloads.deleteSingleMessage	Αυτό αφαιρεί μόνο το τοπικό αντίγραφο. Το αρχείο παραμένει στον διακομιστή.
+downloads.deleteBulkMessage	Αυτό αφαιρεί μόνο τα τοπικά αντίγραφα. Τα αρχεία παραμένουν στον διακομιστή.
+downloads.errorNameExists	Υπάρχει ήδη αρχείο με αυτό το όνομα.
+downloads.errorInvalidName	Αυτό το όνομα δεν επιτρέπεται.
+downloads.errorMissing	Το αρχείο δεν βρέθηκε πλέον.
+downloads.errorGeneric	Δεν ήταν δυνατή η ολοκλήρωση της ενέργειας.
+unsupportedPreview.genericType	Αρχείο
+unsupportedPreview.cannotOpen	Αυτή η εφαρμογή δεν μπορεί να ανοίξει αυτόν τον τύπο αρχείου.
+uploads.navigationTitle	Μεταφορτώσεις
+uploads.menuTitle	Μεταφόρτωση
+uploads.actionUploadFromFiles	Μεταφόρτωση από τα Αρχεία
+uploads.actionUploadFromPhotos	Μεταφόρτωση από τη Συλλογή
+uploads.actionTakePhoto	Λήψη φωτογραφίας ή βίντεο
+uploads.cameraDeniedTitle	Απαιτείται πρόσβαση στην κάμερα
+uploads.cameraDeniedMessage	Επιτρέψτε την πρόσβαση στην κάμερα στις Ρυθμίσεις για να τραβήξετε φωτογραφία ή βίντεο.
+uploads.destinationTitle	Μεταφόρτωση σε…
+uploads.destinationConfirm	Μεταφόρτωση εδώ
+uploads.reviewTitleOne	Μεταφόρτωση 1 αρχείου
+uploads.reviewTitleMany	Μεταφόρτωση %lld αρχείων
+uploads.reviewSectionFiles	Αρχεία
+uploads.reviewSectionPath	Διαδρομή
+uploads.reviewSectionSize	Συνολικό μέγεθος
+uploads.reviewChooseFolder	Επιλέξτε φάκελο
+uploads.reviewUploadButton	Μεταφόρτωση
+uploads.reviewPreparing	Προετοιμασία %lld…
+uploads.reviewAddMore	Προσθήκη περισσότερων αρχείων
+uploads.reviewPreviewFile	Προεπισκόπηση του %@
+uploads.reviewInsecureNetworkNotice	Συνδεδεμένοι μέσω http. Αν αυτός ο διακομιστής βρίσκεται μόνο στο οικιακό σας δίκτυο, οι μεταφορτώσεις δεν θα λειτουργούν όταν είστε μακριά από αυτό.
+uploads.stagingFailed	Δεν ήταν δυνατή η προσθήκη αυτών των αρχείων. Δοκιμάστε ξανά.
+uploads.stagingSkipped	%lld στοιχεία δεν ήταν δυνατό να προετοιμαστούν και παραλείφθηκαν.
+uploads.discardTitle	Απόρριψη μεταφόρτωσης;
+uploads.discardMessage	Τα αρχεία που προσθέσατε δεν θα μεταφορτωθούν.
+uploads.discardConfirm	Απόρριψη
+uploads.statusWaiting	Σε αναμονή
+uploads.statusFailed	Η μεταφόρτωση απέτυχε
+uploads.barTitleOne	Μεταφόρτωση του %@
+uploads.barTitleMany	Μεταφόρτωση %lld αρχείων
+uploads.barFailedOne	1 μεταφόρτωση απέτυχε
+uploads.barFailedMany	%lld μεταφορτώσεις απέτυχαν
+uploads.retryAll	Επανάληψη όλων
+uploads.complete	Η μεταφόρτωση ολοκληρώθηκε
+uploads.completeMany	Μεταφορτώθηκαν %lld αρχεία
+uploads.completeWithFailures	Μεταφορτώθηκαν %1$lld, απέτυχαν %2$lld
+uploads.failedGeneric	Δεν ήταν δυνατή η μεταφόρτωση αυτού του αρχείου.
+uploads.clear	Εκκαθάριση
+uploads.emptyList	Δεν υπάρχουν ακόμη μεταφορτώσεις.
+uploads.cancelAll	Ακύρωση όλων των μεταφορτώσεων
+shared.navigationTitle	Κοινόχρηστα
+shared.segmentByMe	Από εμένα
+shared.segmentWithMe	Με εμένα
+shared.sectionExpired	Έληξε
+shared.badgeExpired	έληξε
+shared.emptyByMe	Κοινοποιήστε ένα αρχείο ή φάκελο για να δείτε εδώ τον σύνδεσμό του.
+shared.emptyWithMe	Οι σύνδεσμοι που κοινοποιούν σε εσάς άλλοι εμφανίζονται εδώ.
+shared.noSearchMatches	Καμία κοινοποίηση δεν ταιριάζει με «%@».
+shared.deleteTitle	Διαγραφή συνδέσμου κοινοποίησης;
+shared.deleteMessage	Ο σύνδεσμος σταματά να λειτουργεί αμέσως. Το ίδιο το αρχείο ή ο φάκελος δεν επηρεάζεται.
+shared.sharedByUnknown	Κάποιος
+shared.metaAccess	Πρόσβαση
+shared.metaExpiration	Λήξη
+shared.metaSharedBy	Κοινοποιήθηκε από
+shared.metaSharedWith	Κοινοποιήθηκε σε
+shared.anyoneWithLink	Όποιος έχει τον σύνδεσμο
+shared.linkMode	Λειτουργία συνδέσμου
+shared.actionShareLink	Σύνδεσμος κοινοποίησης
+shared.actionFolderLink	Σύνδεσμος φακέλου
+shared.actionFileLink	Σύνδεσμος αρχείου
+shared.copiedShareLink	Ο σύνδεσμος κοινοποίησης αντιγράφηκε
+shared.copiedFolderZip	Ο σύνδεσμος ZIP του φακέλου αντιγράφηκε
+shared.copiedDirectFile	Ο άμεσος σύνδεσμος αρχείου αντιγράφηκε
+createShare.title	Δημιουργία συνδέσμου κοινοποίησης
+createShare.titleCreated	Η κοινοποίηση δημιουργήθηκε
+createShare.sectionLabel	Ετικέτα
+createShare.sectionAccessMode	Λειτουργία πρόσβασης
+createShare.sectionWhoCanAccess	Ποιος έχει πρόσβαση
+createShare.sectionShareLink	Σύνδεσμος κοινοποίησης
+createShare.fieldPassword	Κωδικός πρόσβασης
+createShare.togglePasswordProtect	Προστασία με κωδικό πρόσβασης
+createShare.toggleSetExpiration	Ορισμός ημερομηνίας λήξης
+createShare.fieldExpires	Λήγει
+createShare.submit	Δημιουργία συνδέσμου κοινοποίησης
+createShare.loadingUsers	Φόρτωση χρηστών…
+createShare.noOtherUsers	Δεν υπάρχουν άλλοι χρήστες για κοινοποίηση.
+createShare.sharingPrefix	Κοινοποίηση σε:
+createShare.createdBanner	Ο σύνδεσμος κοινοποίησης δημιουργήθηκε με επιτυχία!
+createShare.viewInShared	Προβολή στα Κοινόχρηστα
+createShare.directLinkMode	Λειτουργία άμεσου συνδέσμου
+createShare.directFolderLink	Άμεσος σύνδεσμος ZIP φακέλου
+createShare.directFileLink	Άμεσος σύνδεσμος αρχείου
+createShare.summaryAccess	Πρόσβαση
+createShare.summarySharedWith	Κοινοποιήθηκε σε
+createShare.summaryPassword	Κωδικός πρόσβασης
+createShare.summaryPasswordProtected	Προστατευμένο
+createShare.summaryExpires	Λήγει
+createShare.summarySpecificPeople	Συγκεκριμένα άτομα
+createShare.errorPastExpiration	Επιλέξτε ημερομηνία λήξης στο μέλλον.
+editShare.title	Επεξεργασία συνδέσμου κοινοποίησης
+editShare.save	Αποθήκευση αλλαγών
+editShare.passwordKeepHint	Αφήστε το κενό για να διατηρηθεί ο τρέχων κωδικός πρόσβασης
+editShare.savedToast	Ο σύνδεσμος κοινοποίησης ενημερώθηκε
+thumbnailSettings.navigationTitle	Μικρογραφίες
+thumbnailSettings.subtitle	Ελέγξτε πώς ο διακομιστής δημιουργεί μικρογραφίες εικόνων για όλους τους πελάτες.
+thumbnailSettings.enable	Δημιουργία μικρογραφιών
+thumbnailSettings.enableHelp	Απενεργοποιήστε το για να παρέχονται παντού οι εικόνες πλήρους μεγέθους.
+thumbnailSettings.quality	Ποιότητα
+thumbnailSettings.qualityHelp	Μεγαλύτερη τιμή φαίνεται καλύτερη και καταλαμβάνει περισσότερο χώρο.
+thumbnailSettings.maxDimension	Μέγιστη διάσταση
+thumbnailSettings.maxDimensionHelp	Η μεγαλύτερη πλευρά μιας μικρογραφίας που δημιουργείται, σε pixel.
+thumbnailSettings.concurrency	Ταυτόχρονες εργασίες
+thumbnailSettings.concurrencyHelp	Πόσες μικρογραφίες δημιουργεί ο διακομιστής ταυτόχρονα.
+thumbnailSettings.unavailable	Οι ρυθμίσεις μικρογραφιών είναι διαθέσιμες μόνο στους διαχειριστές.
+thumbnailSettings.saveButton	Αποθήκευση αλλαγών
+uploadSettings.navigationTitle	Μεταφορτώσεις
+uploadSettings.subtitle	Ορίστε πώς αποστέλλονται τα αρχεία στον διακομιστή.
+uploadSettings.chunkedEnable	Ενεργοποίηση τμηματικών μεταφορτώσεων
+uploadSettings.chunkedEnableHelp	Χρησιμοποιεί το TUS για την αποστολή μεγάλων αρχείων με πολλά μικρότερα αιτήματα.
+uploadSettings.chunkSize	Μέγεθος τμήματος
+uploadSettings.chunkSizeHelp	Το μέγιστο μέγεθος κάθε αιτήματος μεταφόρτωσης. Κρατήστε το κάτω από το όριο του αντίστροφου διακομιστή μεσολάβησης. Τα μικρότερα τμήματα δίνουν πιο ομαλή πρόοδο.
+uploadSettings.autoFallback	Αυτόματη εναλλαγή σε τμηματική
+uploadSettings.autoFallbackHelp	Αν μια άμεση μεταφόρτωση αποτύχει επειδή ένας αντίστροφος διακομιστής μεσολάβησης απορρίπτει το μέγεθος, γίνεται αυτόματη εναλλαγή σε τμηματική μεταφόρτωση.
+uploadSettings.unavailable	Οι ρυθμίσεις μεταφόρτωσης είναι διαθέσιμες μόνο στους διαχειριστές.
+uploadSettings.saveButton	Αποθήκευση αλλαγών
+ffmpegSettings.subtitle	Επιλέξτε τα εκτελέσιμα FFmpeg και FFprobe που χρησιμοποιούνται για προεπισκοπήσεις και μεταδεδομένα πολυμέσων.
+ffmpegSettings.containerPathHelp	Εισαγάγετε απόλυτες διαδρομές ορατές μέσα στο κοντέινερ της εφαρμογής. Για να χρησιμοποιήσετε εκτελέσιμα του κεντρικού υπολογιστή, προσαρτήστε τα πρώτα στο κοντέινερ.
+ffmpegSettings.ffmpegPath	Διαδρομή εκτελέσιμου FFmpeg
+ffmpegSettings.ffprobePath	Διαδρομή εκτελέσιμου FFprobe
+ffmpegSettings.invalid	Και οι δύο διαδρομές πρέπει να είναι απόλυτες διαδρομές κοντέινερ που ξεκινούν με /.
+ffmpegSettings.defaultHelp	Αφήστε μια διαδρομή κενή για να χρησιμοποιηθεί το FFMPEG_PATH ή το FFPROBE_PATH από το περιβάλλον και μετά το ενσωματωμένο εκτελέσιμο. Οι αλλαγές ισχύουν άμεσα.
+ffmpegSettings.unavailable	Οι ρυθμίσεις FFmpeg είναι διαθέσιμες μόνο στους διαχειριστές.
+ffmpegSettings.saveButton	Αποθήκευση αλλαγών
+searchIndexSettings.navigationTitle	Ευρετήριο αναζήτησης
+searchIndexSettings.subtitle	Εξαίρεση διαδρομών από την ευρετηρίαση περιεχομένου.
+searchIndexSettings.running	Διατήρηση ευρετηρίου αναζήτησης
+searchIndexSettings.runningHelp	Διαβάζει τα έγγραφα του τόμου στο παρασκήνιο, ώστε η αναζήτηση σε αυτά να απαντά αμέσως.
+searchIndexSettings.locked	Ορίζεται από το %@ στο περιβάλλον, επομένως αποφασίζεται εκεί και όχι εδώ.
+searchIndexSettings.environment	Εξαιρέσεις που ορίζονται από το περιβάλλον
+searchIndexSettings.additional	Πρόσθετες εξαιρέσεις
+searchIndexSettings.none	Δεν έχει ρυθμιστεί διαδρομή
+searchIndexSettings.addButton	Προσθήκη
+searchIndexSettings.unavailable	Οι ρυθμίσεις ευρετηρίου αναζήτησης είναι διαθέσιμες μόνο στους διαχειριστές.
+searchIndexSettings.saveButton	Αποθήκευση αλλαγών
+searchIndexSettings.discardButton	Απόρριψη
+folderSizeSettings.navigationTitle	Μεγέθη φακέλων
+folderSizeSettings.subtitle	Εξαίρεση διαδρομών από τον υπολογισμό και την ευρετηρίαση μεγεθών φακέλων.
+folderSizeSettings.running	Μέτρηση μεγεθών φακέλων
+folderSizeSettings.runningHelp	Μετρά τους φακέλους στο παρασκήνιο, ώστε το μέγεθός τους να εμφανίζεται στη λίστα.
+folderSizeSettings.modeOff	Ανενεργό
+folderSizeSettings.modeShallow	Μόνο τα δικά τους αρχεία
+folderSizeSettings.modeFull	Τα πάντα μέσα σε αυτούς
+folderSizeSettings.locked	Ορίζεται από το %@ στο περιβάλλον, επομένως αποφασίζεται εκεί και όχι εδώ.
+folderSizeSettings.environment	Εξαιρέσεις που ορίζονται από το περιβάλλον
+folderSizeSettings.additional	Πρόσθετες εξαιρέσεις
+folderSizeSettings.none	Δεν έχουν ρυθμιστεί διαδρομές
+folderSizeSettings.addButton	Προσθήκη
+folderSizeSettings.unavailable	Οι ρυθμίσεις μεγεθών φακέλων είναι διαθέσιμες μόνο στους διαχειριστές.
+folderSizeSettings.saveButton	Αποθήκευση αλλαγών
+folderSizeSettings.discardButton	Απόρριψη
+activityLog.navigationTitle	Αρχείο καταγραφής δραστηριότητας
+activityLog.subtitle	Ποιος έκανε τι, πότε και από πού. Απενεργοποιημένο, εκτός αν το ενεργοποιήσετε.
+activityLog.enabled	Καταγραφή δραστηριότητας
+activityLog.enabledHelp	Οι συνδέσεις, οι λήψεις, οι μεταφορτώσεις, οι διαγραφές, οι επαναφορές, οι σύνδεσμοι κοινοποίησης και οι αλλαγές λογαριασμών καταγράφονται όσο αυτό είναι ενεργό. Ό,τι έγινε πριν δεν περιλαμβάνεται.
+activityLog.retention	Διατήρηση για (ημέρες)
+activityLog.retentionInvalid	Από 1 έως 3650 ημέρες.
+activityLog.saveButton	Αποθήκευση αλλαγών
+activityLog.off	Η καταγραφή είναι απενεργοποιημένη, επομένως δεν καταγράφεται τίποτα.
+activityLog.none	Δεν έχει καταγραφεί ακόμη τίποτα.
+activityLog.filterAction	Είδος
+activityLog.anyAction	Οποιοδήποτε είδος
+activityLog.filterOutcome	Αποτέλεσμα
+activityLog.anyOutcome	Οποιοδήποτε αποτέλεσμα
+activityLog.outcomeOk	Επιτυχία
+activityLog.outcomeRefused	Απορρίφθηκε
+activityLog.searchPlaceholder	Ένα όνομα ή μια διαδρομή
+activityLog.searchButton	Αναζήτηση
+activityLog.refresh	Ανανέωση
+activityLog.clear	Εκκαθάριση αρχείου καταγραφής
+activityLog.clearTitle	Εκκαθάριση του αρχείου καταγραφής;
+activityLog.clearMessage	Κάθε καταγεγραμμένη γραμμή διαγράφεται. Αυτό δεν μπορεί να αναιρεθεί.
+activityLog.clearConfirm	Εκκαθάριση αρχείου καταγραφής
+activityLog.more	Εμφάνιση περισσότερων
+activityLog.refusedSuffix	Απορρίφθηκε
+activityLog.fromAddress	Από %@
+activityLog.unavailable	Το αρχείο καταγραφής δραστηριότητας είναι διαθέσιμο μόνο στους διαχειριστές.
+activityLog.action.signIn	Σύνδεση
+activityLog.action.signOut	Αποσύνδεση
+activityLog.action.accountPassword	Ο κωδικός πρόσβασης άλλαξε
+activityLog.action.accountTwoFactor	Ο δεύτερος παράγοντας άλλαξε
+activityLog.action.accountPasskey	Το κλειδί πρόσβασης άλλαξε
+activityLog.action.accountToken	Το διακριτικό API άλλαξε
+activityLog.action.adminUser	Ο λογαριασμός άλλαξε
+activityLog.action.adminSettings	Οι ρυθμίσεις άλλαξαν
+activityLog.action.adminActivityClear	Το αρχείο καταγραφής εκκαθαρίστηκε
+activityLog.action.shareCreate	Η κοινοποίηση δημιουργήθηκε
+activityLog.action.shareDelete	Η κοινοποίηση διαγράφηκε
+activityLog.action.shareDownload	Λήψη μέσω συνδέσμου
+activityLog.action.shareUpload	Μεταφόρτωση μέσω συνδέσμου
+activityLog.action.fileDownload	Λήψη
+activityLog.action.fileUpload	Μεταφόρτωση
+activityLog.action.fileDelete	Στάλθηκε στον κάδο απορριμμάτων
+activityLog.action.fileRestore	Επαναφέρθηκε
+activityLog.action.filePurge	Αφαιρέθηκε οριστικά
+activityLog.action.versionsPurge	Οι εκδόσεις διαγράφηκαν
+trashSettings.navigationTitle	Κάδος απορριμμάτων και εκδόσεις
+trashSettings.subtitle	Τα διαγραμμένα στοιχεία και οι προηγούμενες εκδόσεις αρχείων φυλάσσονται σε δεσμευμένο χώρο στον δικό τους τόμο και αφαιρούνται μετά την περίοδο διατήρησής τους ή όταν χρειάζεται ο χώρος.
+trashSettings.trashHeader	Κάδος απορριμμάτων
+trashSettings.enabled	Αποστολή διαγραμμένων στοιχείων στον κάδο απορριμμάτων
+trashSettings.enabledHelp	Όταν είναι απενεργοποιημένο, η διαγραφή αφαιρεί τα στοιχεία οριστικά. Τα στοιχεία που βρίσκονται ήδη στον κάδο εξακολουθούν να λήγουν.
+trashSettings.retention	Περίοδος διατήρησης (ημέρες)
+trashSettings.retentionHelp	Από 1 έως 3650 ημέρες.
+trashSettings.maxPercent	Μερίδιο κάθε τόμου (%)
+trashSettings.maxPercentHelp	Το μέγιστο που μπορεί να καταλαμβάνει ο κάδος σε έναν τόμο, από 1 έως 90%.
+trashSettings.maxSize	Όριο μεγέθους ανά τόμο (GiB)
+trashSettings.maxSizeHelp	Προαιρετικό. Ισχύει το μικρότερο μεταξύ του μεριδίου και του ορίου.
+trashSettings.maxSizeNone	Χωρίς όριο
+trashSettings.trashInvalid	Ελέγξτε τις τιμές: διατήρηση από 1 έως 3650 ημέρες, μερίδιο από 1 έως 90%, θετικό μέγεθος ή κανένα.
+trashSettings.versionsHeader	Εκδόσεις αρχείων
+trashSettings.versionsSubtitle	Κάθε αποθήκευση διατηρεί αυτό που αντικαθιστά, χωρίς αντιγραφή, στον ίδιο δεσμευμένο χώρο με τον κάδο. Οι παλαιότερες εκδόσεις αραιώνουν με τον χρόνο.
+trashSettings.versionsEnabled	Διατήρηση προηγούμενων εκδόσεων αρχείων
+trashSettings.versionsEnabledHelp	Ανεξάρτητο από τον κάδο. Όταν είναι απενεργοποιημένο, οι αποθηκεύσεις δεν διατηρούν τίποτα νέο· οι υπάρχουσες εκδόσεις παραμένουν μέχρι να λήξουν ή να διαγραφούν.
+trashSettings.keepAllHours	Διατήρηση κάθε έκδοσης (ώρες)
+trashSettings.hourlyDays	Έπειτα μία ανά ώρα (ημέρες)
+trashSettings.dailyDays	Έπειτα μία ανά ημέρα (ημέρες)
+trashSettings.maxPerFile	Μέγιστος αριθμός εκδόσεων ανά αρχείο
+trashSettings.checkpointMinutes	Σημείο ελέγχου Office (λεπτά)
+trashSettings.tiersHelp	Μετά από αυτά τα επίπεδα, διατηρείται μία έκδοση ανά εβδομάδα. Μια συνεδρία επεξεργασίας Office αφήνει μία έκδοση, συν ένα σημείο ελέγχου το πολύ τόσο συχνά. Οι καρφιτσωμένες εκδόσεις ξεφεύγουν από την αραίωση και το όριο ανά αρχείο.
+trashSettings.versionsInvalid	Ελέγξτε τις τιμές: 1 έως 720 ώρες, 1 έως 365 ημέρες ανά ώρα, 1 έως 3650 ημέρες ανά ημέρα, 1 έως 1000 εκδόσεις ανά αρχείο, σημείο ελέγχου από 1 έως 1440 λεπτά.
+trashSettings.sharedSpace	Οι εκδόσεις και ο κάδος μοιράζονται τον δεσμευμένο χώρο κάθε τόμου. Όταν αυτός λιγοστεύει, φεύγουν πρώτα οι παλαιότερες εκδόσεις, μετά τα στοιχεία του κάδου, μετά η τελευταία έκδοση κάθε αρχείου και τέλος οι καρφιτσωμένες εκδόσεις.
+trashSettings.saveButton	Αποθήκευση αλλαγών
+trashSettings.discardButton	Απόρριψη
+trashSettings.unavailable	Οι ρυθμίσεις κάδου και εκδόσεων είναι διαθέσιμες μόνο στους διαχειριστές.
+trashSettings.zonesHeader	Κάδος ανά τόμο
+trashSettings.zonesSubtitle	Κάθε τόμος κρατά τον κάδο του σε έναν κρυφό φάκελο .nextexplorer στη ρίζα του, επομένως η διαγραφή δεν αντιγράφει ποτέ τίποτα.
+trashSettings.zonesEmpty	Δεν έχει διαγραφεί ακόμη τίποτα σε κάδο.
+trashSettings.zoneKindPersonal	Προσωπικός φάκελος του %@
+trashSettings.zoneKindUserVolume	Εκχωρημένος τόμος %@
+trashSettings.available	Διαθέσιμο
+trashSettings.unavailableMissing	Δεν έχει προσαρτηθεί ή αφαιρέθηκε
+trashSettings.unavailableReplaced	Άλλος δίσκος στη θέση του
+trashSettings.unavailableUnreadable	Μη αναγνώσιμο
+trashSettings.usage	%1$@ από %2$@
+trashSettings.noBudget	χωρίς όριο
+trashSettings.zoneItems	Στοιχεία: %1$lld · %2$@
+trashSettings.zoneVersions	Εκδόσεις: %1$lld · %2$@
+trashSettings.lastPass	Τελευταία συντήρηση: %@
+trashSettings.lastPassPurged	%1$@ · αφαιρέθηκαν: %2$lld
+trashSettings.never	όχι ακόμη
+trashSettings.verify	Επαλήθευση
+trashSettings.runMaintenance	Εκτέλεση συντήρησης τώρα
+trashSettings.verifyOk	Ο κάδος κάθε τόμου είναι συνεπής.
+trashSettings.verifyIssues	Προβλήματα που βρέθηκαν: %lld
+trashSettings.zoneProblems	Προβλήματα: %lld
+trashSettings.journalHeader	Ημερολόγιο
+trashSettings.eventEvicted	Το "%@" αφαιρέθηκε πριν από τη λήξη της διατήρησής του για να ελευθερωθεί χώρος
+trashSettings.eventAdopted	Το "%@" ανακτήθηκε μετά από διακοπή
+trashSettings.eventLost	Στο "%@" έλειπε το περιεχόμενο
+trashSettings.eventFailed	Δεν ήταν δυνατή η αφαίρεση του "%@"
+trashSettings.eventBreaker	Λείπουν πάρα πολλά στοιχεία ταυτόχρονα: δεν άλλαξε τίποτα
+trashSettings.eventForgotten	Το "%@" ξεχάστηκε από διαχειριστή
+trashSettings.eventVersionEvicted	Μια έκδοση του "%@" αφαιρέθηκε για να ελευθερωθεί χώρος
+trashSettings.eventVersionFailed	Δεν ήταν δυνατή η αφαίρεση μιας έκδοσης
+trashSettings.eventVersionLost	Σε μια έκδοση έλειπε το περιεχόμενο
+trashSettings.eventVersionTooLarge	Το "%@" είναι μεγαλύτερο από ολόκληρο τον χώρο: αυτό που αντικατέστησε δεν διατηρήθηκε
+trashSettings.eventVersionsBreaker	Λείπουν πάρα πολλές εκδόσεις ταυτόχρονα: δεν άλλαξε τίποτα
+versionedFiles.navigationTitle	Εκδόσεις αρχείων
+versionedFiles.subtitle	Κάθε αρχείο που έχει ιστορικό, οπουδήποτε κι αν βρίσκεται. Εμφανίζει διαδρομές από όλους τους χώρους, συμπεριλαμβανομένων των προσωπικών φακέλων, γι' αυτό είναι μόνο για διαχειριστές.
+versionedFiles.summary	Αρχεία: %1$lld · Εκδόσεις: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Ένα όνομα ή μια διαδρομή
+versionedFiles.zone	Τόμος
+versionedFiles.anyZone	Οποιοσδήποτε τόμος
+versionedFiles.stateHeader	Κατάσταση
+versionedFiles.anyState	Οποιαδήποτε κατάσταση
+versionedFiles.stateLive	Το αρχείο υπάρχει ακόμη
+versionedFiles.stateTrashed	Στον κάδο
+versionedFiles.stateOrphaned	Το αρχείο χάθηκε
+versionedFiles.sortHeader	Ταξινόμηση κατά
+versionedFiles.sortBytes	Χώρος που χρησιμοποιείται
+versionedFiles.sortVersions	Αριθμός εκδόσεων
+versionedFiles.sortNewest	Πιο πρόσφατα
+versionedFiles.sortPath	Διαδρομή
+versionedFiles.none	Κανένα αρχείο δεν έχει προηγούμενες εκδόσεις.
+versionedFiles.unavailable	Οι εκδόσεις αρχείων είναι διαθέσιμες μόνο στους διαχειριστές.
+versionedFiles.zoneUnknown	Άγνωστος τόμος
+versionedFiles.zoneKindPersonal	Προσωπικός φάκελος του %@
+versionedFiles.zoneKindUserVolume	Εκχωρημένος τόμος %@
+versionedFiles.rowSummary	Εκδόσεις: %1$lld · %2$@
+versionedFiles.newest	Τελευταία: %@
+versionedFiles.versionPinned	Καρφιτσωμένη
+versionedFiles.versionUnavailable	Μη διαθέσιμη
+versionedFiles.versionBy	Από %@
+versionedFiles.detailFailed	Δεν ήταν δυνατή η ανάγνωση αυτού του ιστορικού.
+versionedFiles.deleteSelectedNone	Επιλέξτε τις εκδόσεις προς διαγραφή
+versionedFiles.deleteSelected	Διαγραφή επιλεγμένων (%lld)
+versionedFiles.deleteAll	Διαγραφή όλων των εκδόσεων
+versionedFiles.confirmAllTitle	Διαγραφή κάθε έκδοσης του "%@";
+versionedFiles.confirmSomeTitle	Διαγραφή των επιλεγμένων εκδόσεων (%lld);
+versionedFiles.confirmMessage	Οι διαγραμμένες εκδόσεις δεν μπορούν να ανακτηθούν.
+versionedFiles.confirmDelete	Διαγραφή
+versionedFiles.previous	Προηγούμενο
+versionedFiles.next	Επόμενο
+versionedFiles.pageRange	%1$lld έως %2$lld από %3$lld
+accessRules.navigationTitle	Κανόνες πρόσβασης φακέλων
+accessRules.subtitle	Παράκαμψη πρόσβασης ανάγνωσης και εγγραφής για συγκεκριμένες διαδρομές.
+accessRules.addRule	Προσθήκη κανόνα
+accessRules.empty	Δεν έχουν ρυθμιστεί κανόνες πρόσβασης.
+accessRules.emptyHint	Προσθέστε έναν κανόνα για να παρακάμψετε την πρόσβαση σε μια διαδρομή.
+accessRules.pathLabel	Διαδρομή
+accessRules.recursive	Εφαρμογή σε υποφακέλους
+accessRules.permissionReadWrite	Ανάγνωση και εγγραφή
+accessRules.permissionReadOnly	Μόνο ανάγνωση
+accessRules.permissionHidden	Κρυφό
+accessRules.remove	Αφαίρεση
+accessRules.unavailable	Οι κανόνες πρόσβασης είναι διαθέσιμοι μόνο στους διαχειριστές.
+accessRules.saveButton	Αποθήκευση αλλαγών
+settings.rowThumbnails	Μικρογραφίες
+settings.rowAccessRules	Κανόνες πρόσβασης φακέλων
+settings.navigationTitle	Ρυθμίσεις
+settings.sectionGeneral	Γενικά
+settings.sectionDisplay	Προβολή
+settings.sectionStorage	Αποθηκευτικός χώρος
+settings.sectionServerStorage	Αποθηκευτικός χώρος διακομιστή
+settings.serverStorageUsed	%1$@ από %2$@
+settings.sectionLicenses	Άδειες χρήσης
+settings.sectionLegal	Νομικά
+settings.sectionUsers	Χρήστες
+settings.sectionAdmin	Διαχείριση
+settings.sectionInfo	Πληροφορίες
+settings.toggleShowHiddenFiles	Εμφάνιση κρυφών αρχείων
+settings.toggleRenderHTML	Απόδοση σελίδων HTML
+settings.toggleRenderMarkdown	Απόδοση αρχείων Markdown
+settings.toggleHaptics	Απτική ανάδραση
+settings.toggleShowThumbnails	Εμφάνιση μικρογραφιών
+settings.toggleShowExtensions	Εμφάνιση επεκτάσεων ονομάτων αρχείων
+settings.toggleShowTabLabels	Εμφάνιση ετικετών καρτελών
+settings.toggleKeepClipboard	Διατήρηση στοιχείων μετά την επικόλληση
+settings.toggleKeepClipboardSubtitle	Τα αντιγραμμένα στοιχεία παραμένουν έτοιμα για επικόλληση σε άλλον φάκελο. Τα μετακινημένα στοιχεία εκκαθαρίζονται πάντα.
+settings.rowDateFormat	Μορφή ημερομηνίας
+settings.rowLanguage	Γλώσσα
+settings.rowThumbnailSize	Μέγεθος μικρογραφιών
+settings.rowRemoveAllDownloads	Αφαίρεση όλων των λήψεων
+settings.rowClearCache	Εκκαθάριση προσωρινής μνήμης
+settings.rowOpenSourceLicenses	Άδειες χρήσης ανοικτού κώδικα
+settings.rowPrivacyPolicy	Πολιτική απορρήτου
+settings.rowTermsOfUse	Όροι χρήσης
+settings.rowUserManagement	Διαχείριση χρηστών
+settings.rowChangePassword	Αλλαγή κωδικού πρόσβασης
+settings.rowAddPassword	Προσθήκη κωδικού πρόσβασης
+settings.rowServer	Διακομιστής
+settings.storageFootnote	Οι φάκελοι κατεβαίνουν ως zip, χωρίς να μένει τίποτα στον διακομιστή. Η αφαίρεση λήψεων ή η εκκαθάριση της προσωρινής μνήμης επηρεάζει μόνο αυτήν τη συσκευή· τίποτα στον διακομιστή δεν αγγίζεται.
+settings.storageFootnoteMac	Η εκκαθάριση της προσωρινής μνήμης επηρεάζει μόνο αυτό το Mac· τίποτα στον διακομιστή δεν αγγίζεται.
+settings.removeAllDownloadsTitle	Αφαίρεση όλων των λήψεων;
+settings.removeAllDownloadsConfirm	Αφαίρεση όλων
+settings.removeAllDownloadsMessage	Αυτό διαγράφει κάθε αρχείο που έχει ληφθεί από αυτήν τη συσκευή. Παραμένουν στον διακομιστή.
+settings.clearCacheTitle	Εκκαθάριση προσωρινής μνήμης;
+settings.clearCacheConfirm	Εκκαθάριση
+settings.clearCacheMessage	Αυτό εκκαθαρίζει τις προεπισκοπήσεις, τις μικρογραφίες και τις αποθηκευμένες λίστες φακέλων που χρησιμοποιούνται εκτός σύνδεσης. Τίποτα στον διακομιστή δεν επηρεάζεται.
+settings.signOutAlertTitle	Αποσύνδεση;
+settings.signOutMessage	Θα χρειαστεί να συνδεθείτε ξανά για να αποκτήσετε πρόσβαση στα αρχεία σας. Οι προεπισκοπήσεις, οι μικρογραφίες και οι αποθηκευμένες λίστες φακέλων σε αυτήν τη συσκευή θα εκκαθαριστούν.
+settings.signOutButton	Αποσύνδεση
+settings.signingOut	Αποσύνδεση…
+settings.sectionAccounts	Λογαριασμοί
+settings.addAccount	Προσθήκη λογαριασμού
+settings.accountSignOut	Αποσύνδεση
+settings.accountSignOutTitle	Αποσύνδεση;
+settings.accountSignOutMessage	Αποσύνδεση του %@ σε αυτήν τη συσκευή; Θα χρειαστεί να συνδεθείτε ξανά για να χρησιμοποιήσετε αυτόν τον λογαριασμό.
+settings.accountActiveLabel	%1$@, %2$@, ενεργός λογαριασμός
+settings.badgeActive	Ενεργός
+settings.dateFormatNavigationTitle	Μορφή ημερομηνίας
+settings.dateFormatShowTime	Εμφάνιση ώρας
+language.navigationTitle	Γλώσσα
+language.systemDefault	Προεπιλογή συστήματος
+language.systemDefaultSubtitle	Ακολούθηση της γλώσσας της συσκευής
+serverDetails.navigationTitle	Διακομιστής
+serverDetails.changeLogo	Αλλαγή εικονιδίου
+serverDetails.takePhoto	Λήψη φωτογραφίας
+serverDetails.chooseFromGallery	Μεταφόρτωση από τη Συλλογή
+serverDetails.nameLabel	Όνομα διακομιστή
+serverDetails.nameErrorEmpty	Το όνομα του διακομιστή δεν μπορεί να είναι κενό.
+serverDetails.urlLabel	URL διακομιστή
+serverDetails.urlFootnote	Η διεύθυνση όπου είναι εγκατεστημένο το NextExplorer σας. Για να την αλλάξετε, αποσυνδεθείτε και προσθέστε ξανά τον διακομιστή.
+serverDetails.updateButton	Ενημέρωση διακομιστή
+serverDetails.savedMessage	Τα στοιχεία του διακομιστή ενημερώθηκαν.
+serverDetails.logoErrorTooLarge	Αυτή η εικόνα είναι πολύ μεγάλη. Επιλέξτε μία κάτω από 2 MB.
+serverDetails.cameraDeniedTitle	Η πρόσβαση στην κάμερα είναι ανενεργή
+serverDetails.cameraDeniedMessage	Ενεργοποιήστε την πρόσβαση στην κάμερα στις Ρυθμίσεις για να τραβήξετε φωτογραφία.
+licenses.navigationTitle	Άδειες χρήσης ανοικτού κώδικα
+licenses.sectionSoftware	Λογισμικό
+licenses.sectionFontSoftware	Λογισμικό γραμματοσειρών
+licenses.labelAuthor	Δημιουργός
+licenses.labelOriginalVersion	Αρχική έκδοση
+licenses.labelModifiedVersion	Τροποποιημένη έκδοση
+licenses.labelReservedFontName	Δεσμευμένο όνομα γραμματοσειράς
+fileInfo.navigationTitleFolder	Φάκελος
+fileInfo.rowKind	Είδος
+fileInfo.rowSize	Μέγεθος
+fileInfo.rowLocation	Θέση
+fileInfo.rowDateModified	Ημερομηνία τροποποίησης
+fileInfo.rowDateCreated	Ημερομηνία δημιουργίας
+fileInfo.rowFiles	Αρχεία
+fileInfo.rowFolders	Φάκελοι
+fileInfo.rowTotalSize	Συνολικό μέγεθος
+fileInfo.sectionServerDisk	Δίσκος διακομιστή
+fileInfo.diskFreeOf	%1$@ ελεύθερα από %2$@
+fileInfo.rowDimensions	Διαστάσεις
+fileInfo.rowCamera	Κάμερα
+fileInfo.rowLens	Φακός
+fileInfo.rowDateTaken	Ημερομηνία λήψης
+fileInfo.rowDuration	Διάρκεια
+fileInfo.partialScan	Μετρήθηκε με μερική σάρωση: αυτός ο φάκελος είναι πολύ μεγάλος.
+permissions.title	Δικαιώματα
+permissions.sectionMode	Λειτουργία
+permissions.numericLabel	Αριθμητικό
+permissions.applyToEnclosed	Εφαρμογή στα περιεχόμενα στοιχεία
+permissions.applyPermissions	Εφαρμογή δικαιωμάτων
+permissions.sectionOwnership	Ιδιοκτησία
+permissions.fieldOwner	Ιδιοκτήτης
+permissions.fieldGroup	Ομάδα
+permissions.ownershipNote	Η αλλαγή ιδιοκτησίας απαιτεί συνήθως δικαιώματα root ή διαχειριστή στον διακομιστή.
+permissions.applyOwnership	Εφαρμογή ιδιοκτησίας
+permissions.scopeOwner	Ιδιοκτήτης
+permissions.scopeGroup	Ομάδα
+permissions.scopeOthers	Άλλοι
+permissions.rightRead	Ανάγνωση
+permissions.rightWrite	Εγγραφή
+permissions.rightExecute	Εκτέλεση
+archive.emptyFolder	Αυτός ο φάκελος είναι κενός.
+archive.openFailed	Δεν ήταν δυνατό το άνοιγμα αυτού του αρχείου.
+archive.openArchiveFailed	Δεν ήταν δυνατό το άνοιγμα αυτού του αρχείου συμπίεσης.
+archive.entryTooLarge	Αυτό το στοιχείο είναι πολύ μεγάλο για άνοιγμα.
+gallery.loadFailed	Δεν ήταν δυνατή η φόρτωση αυτής της εικόνας.
+textPreview.saved	Αποθηκεύτηκε
+textPreview.loadFailed	Δεν ήταν δυνατή η φόρτωση αυτού του αρχείου. Ελέγξτε τη σύνδεσή σας και δοκιμάστε ξανά.
+textPreview.unsavedTitle	Αποθήκευση αλλαγών στο «%@»;
+textPreview.unsavedMessage	Οι αλλαγές σας χάνονται αν δεν τις αποθηκεύσετε.
+textPreview.dontSave	Να μην γίνει αποθήκευση
+userManagement.navigationTitle	Διαχείριση χρηστών
+userManagement.searchPrompt	Αναζήτηση χρηστών
+userManagement.createUser	Δημιουργία χρήστη
+userManagement.badgeAdmin	Διαχειριστής
+userManagement.emptyList	Δεν υπάρχουν ακόμη χρήστες.
+userManagement.noSearchMatches	Κανένας χρήστης δεν ταιριάζει με «%@».
+userManagement.loadFailed	Δεν ήταν δυνατή η επικοινωνία με τον διακομιστή.
+userManagement.sortType	Τύπος
+userManagement.sortName	Όνομα
+userManagement.sortEmail	Email
+userManagement.tabProfile	Προφίλ
+userManagement.tabSecurity	Ασφάλεια
+userManagement.tabVolumes	Τόμοι
+userManagement.createNavigationTitle	Δημιουργία χρήστη
+userManagement.createEmailField	Email
+userManagement.createUsernameField	Όνομα χρήστη (προαιρετικό)
+userManagement.createUsernamePlaceholder	Προκύπτει από το email
+userManagement.createPasswordField	Κωδικός πρόσβασης
+userManagement.createPasswordPlaceholder	Τουλάχιστον %lld χαρακτήρες
+userManagement.createGrantAdminToggle	Παροχή πρόσβασης διαχειριστή
+userManagement.createGrantAdminSubtitle	Πλήρης έλεγχος αρχείων, κοινοποιήσεων και χρηστών.
+userManagement.createSubmit	Δημιουργία χρήστη
+userManagement.setPasswordNavigationTitle	Κωδικός πρόσβασης
+userManagement.setPasswordNewField	Νέος κωδικός πρόσβασης
+userManagement.setPasswordPlaceholder	Τουλάχιστον %lld χαρακτήρες
+userManagement.setPasswordResetTitle	Επαναφορά κωδικού πρόσβασης
+userManagement.setPasswordSetTitle	Ορισμός κωδικού πρόσβασης
+userManagement.setPasswordResetIntro	Ορίστε έναν νέο τοπικό κωδικό πρόσβασης για τον χρήστη %@. Ο τρέχων κωδικός του σταματά να λειτουργεί.
+userManagement.setPasswordSetIntro	Δώστε στον χρήστη %@ έναν τοπικό κωδικό πρόσβασης ώστε να μπορεί να συνδεθεί χωρίς SSO.
+userManagement.toastProfileUpdated	Το προφίλ ενημερώθηκε
+userManagement.toastAdminGranted	Η πρόσβαση διαχειριστή δόθηκε
+userManagement.toastUserRemoved	Ο χρήστης αφαιρέθηκε
+userManagement.toastUserCreated	Ο χρήστης δημιουργήθηκε
+userManagement.toastPasswordUpdated	Ο κωδικός πρόσβασης ενημερώθηκε
+userManagement.toastVolumeSaved	Ο τόμος αποθηκεύτηκε
+userManagement.toastVolumeRemoved	Ο τόμος αφαιρέθηκε
+userManagement.errorEmailRequired	Απαιτείται email.
+userManagement.errorEmailInvalid	Εισαγάγετε μια έγκυρη διεύθυνση email.
+userManagement.errorUsernameRequired	Απαιτείται όνομα χρήστη.
+userManagement.errorEmailInUse	Το email χρησιμοποιείται ήδη.
+userManagement.errorPasswordTooShort	Χρησιμοποιήστε τουλάχιστον %lld χαρακτήρες.
+userDetail.fallbackName	Χρήστης
+userDetail.sectionGeneralInfo	Γενικές πληροφορίες
+userDetail.sectionRoles	Ρόλοι και δικαιώματα
+userDetail.sectionLocalPassword	Τοπικός κωδικός πρόσβασης
+userDetail.sectionSSO	Single sign-on
+userDetail.sectionAssignedVolumes	Εκχωρημένοι τόμοι
+userDetail.profileDisplayNameField	Εμφανιζόμενο όνομα
+userDetail.profileDisplayNamePlaceholder	Εμφανιζόμενο όνομα
+userDetail.profileUsernameField	Όνομα χρήστη
+userDetail.profileUsernamePlaceholder	Όνομα χρήστη
+userDetail.profileEmailField	Email
+userDetail.profileSave	Αποθήκευση αλλαγών
+userDetail.roleAdmin	Διαχειριστής
+userDetail.roleAdminSubtitle	Πλήρης έλεγχος αρχείων, κοινοποιήσεων και χρηστών.
+userDetail.roleAdminLocked	Οι διαχειριστές δεν μπορούν να υποβαθμιστούν μέσα από την εφαρμογή.
+userDetail.roleGrantAdmin	Ορισμός ως διαχειριστή
+userDetail.passwordHasLocal	Αυτός ο χρήστης συνδέεται με email και κωδικό πρόσβασης.
+userDetail.passwordSSOOnly	Αυτός ο χρήστης δεν έχει τοπικό κωδικό πρόσβασης και συνδέεται μόνο με SSO.
+userDetail.passwordReset	Επαναφορά κωδικού πρόσβασης
+userDetail.passwordSet	Ορισμός κωδικού πρόσβασης
+userDetail.ssoNone	Δεν υπάρχουν συνδεδεμένοι πάροχοι SSO.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Συνδεδεμένο
+userDetail.dangerZoneTitle	Επικίνδυνη ζώνη
+userDetail.dangerZoneSubtitle	Η αφαίρεση ενός χρήστη ανακαλεί αμέσως την πρόσβασή του. Τα αρχεία που κατέχει στον διακομιστή δεν διαγράφονται.
+userDetail.dangerZoneRemoveUser	Αφαίρεση χρήστη
+userDetail.volumesNone	Δεν έχουν εκχωρηθεί τόμοι.
+userDetail.volumesNoneSubtitle	Αυτός ο χρήστης βλέπει μόνο τον προεπιλεγμένο κοινόχρηστο χώρο.
+userDetail.volumesAssign	Εκχώρηση τόμου
+userDetail.volumesFootnote	Οι τόμοι δίνουν στον χρήστη πρόσβαση σε έναν κατάλογο εκτός του προεπιλεγμένου κοινόχρηστου χώρου. Η αφαίρεση ενός τόμου δεν διαγράφει ποτέ αρχεία.
+userDetail.volumeEditAccessibility	Επεξεργασία του %@
+userDetail.volumeRemoveAccessibility	Αφαίρεση του %@
+userDetail.removeVolumeTitle	Αφαίρεση τόμου;
+userDetail.removeVolumeMessage	Η εκχώρηση του %@ σε αυτόν τον χρήστη καταργείται. Ο ίδιος ο κατάλογος δεν επηρεάζεται.
+userDetail.removeUserTitle	Αφαίρεση χρήστη;
+userDetail.removeUserMessage	Ο χρήστης %@ χάνει αμέσως την πρόσβαση. Τα αρχεία του στον διακομιστή δεν διαγράφονται.
+userDetail.grantAdminTitle	Παροχή δικαιωμάτων διαχειριστή;
+userDetail.grantAdminMessage	Ο χρήστης %@ γίνεται διαχειριστής με πλήρη έλεγχο αρχείων, κοινοποιήσεων και χρηστών. Οι διαχειριστές δεν μπορούν να υποβαθμιστούν μέσα από την εφαρμογή.
+userDetail.volumeSheetLabelField	Ετικέτα
+userDetail.volumeSheetLabelPlaceholder	Ετικέτα τόμου
+userDetail.volumeSheetAccessMode	Λειτουργία πρόσβασης
+userDetail.volumeSheetDirectory	Κατάλογος
+userDetail.volumeSheetSaveEdit	Αποθήκευση τόμου
+userDetail.volumeSheetSaveNew	Εκχώρηση τόμου
+userDetail.volumeSheetTitleEdit	Επεξεργασία τόμου
+userDetail.volumeSheetTitleNew	Εκχώρηση τόμου
+userDetail.directoryPickerGoUp	Μετάβαση έναν κατάλογο πάνω
+userDetail.directoryPickerUseThis	Χρήση αυτού του καταλόγου
+userDetail.directoryPickerOpen	Άνοιγμα του %@
+userDetail.directoryPickerFailed	Δεν ήταν δυνατή η εμφάνιση των καταλόγων.
+previewToolbar.close	Κλείσιμο
+previewToolbar.createShareLink	Δημιουργία συνδέσμου κοινοποίησης
+previewToolbar.download	Λήψη
+previewToolbar.delete	Διαγραφή
+previewToolbar.share	Κοινοποίηση
+previewToolbar.rename	Μετονομασία
+login.serverQuestion	Πού βρίσκεται το NextExplorer σας;
+login.serverInfoAccessibility	Σχετικά με τη σύνδεση σε διακομιστή
+login.serverInfoTitle	Τι είναι ο διακομιστής;
+login.serverInfoBody	Το NextExplorer συνδέεται στον δικό σας διακομιστή NextExplorer. Ένας διαχειριστής εκτελεί τον διακομιστή, δημιουργεί λογαριασμούς και μοιράζεται μαζί σας τη διεύθυνση ιστού του. Εισαγάγετε αυτήν τη διεύθυνση για να συνδεθείτε.\n\nΔεν έχετε ακόμη διακομιστή; Ο οδηγός ρύθμισης δείχνει πώς να φιλοξενήσετε έναν.
+login.serverInfoGuide	Άνοιγμα οδηγού ρύθμισης
+login.testConnection	Δοκιμή σύνδεσης
+login.identifierField	Email ή όνομα χρήστη
+login.passwordField	Κωδικός πρόσβασης
+login.showPassword	Εμφάνιση κωδικού πρόσβασης
+login.hidePassword	Απόκρυψη κωδικού πρόσβασης
+login.submit	Σύνδεση
+login.plaintextWarning	Αυτή η σύνδεση δεν είναι κρυπτογραφημένη. Ο κωδικός πρόσβασης και η συνεδρία σας αποστέλλονται σε απλό κείμενο μέσω του τοπικού δικτύου.
+error.sessionExpired	Η συνεδρία σας έληξε. Συνδεθείτε ξανά.
+error.rateLimited	Πάρα πολλά αιτήματα. Δοκιμάστε ξανά σε λίγο.
+error.network	Δεν ήταν δυνατή η επικοινωνία με τον διακομιστή.
+error.offline	Είστε εκτός σύνδεσης. Συνδεθείτε στο διαδίκτυο και δοκιμάστε ξανά.
+error.decoding	Ο διακομιστής απάντησε απροσδόκητα.
+error.server	Σφάλμα διακομιστή (%lld).
+error.forbidden	Δεν έχετε δικαίωμα να το κάνετε αυτό.
+error.clientCertificateRequired	Αυτός ο διακομιστής απαιτεί πιστοποιητικό πελάτη. Προσθέστε ένα στις Ρυθμίσεις.
+error.clientCertificateRejected	Ο διακομιστής απέρριψε το πιστοποιητικό πελάτη σας.
+changePassword.navigationTitle	Αλλαγή κωδικού πρόσβασης
+changePassword.intro	Αλλάξτε τον κωδικό πρόσβασης που χρησιμοποιείτε για να συνδέεστε με τη διεύθυνση email σας. Θα παραμείνετε συνδεδεμένοι σε αυτήν τη συσκευή.
+changePassword.fieldCurrentPassword	Τρέχων κωδικός πρόσβασης
+changePassword.fieldNewPasswordLabel	Νέος κωδικός πρόσβασης
+changePassword.fieldConfirmPasswordLabel	Επιβεβαίωση νέου κωδικού πρόσβασης
+changePassword.fieldConfirmPassword	Εισαγάγετε ξανά τον νέο κωδικό πρόσβασης
+changePassword.fieldNewPasswordPrompt	Τουλάχιστον %lld χαρακτήρες
+changePassword.submitButton	Ενημέρωση κωδικού πρόσβασης
+changePassword.success	Ο κωδικός πρόσβασής σας ενημερώθηκε.
+changePassword.addNavigationTitle	Προσθήκη κωδικού πρόσβασης
+changePassword.addIntro	Αυτός ο λογαριασμός συνδέεται με single sign-on και δεν έχει ακόμη κωδικό πρόσβασης. Προσθέστε έναν για να συνδέεστε και με τη διεύθυνση email ή το όνομα χρήστη σας.
+changePassword.addSubmitButton	Προσθήκη κωδικού πρόσβασης
+changePassword.errorMinLength	Χρησιμοποιήστε τουλάχιστον %lld χαρακτήρες.
+changePassword.errorMismatch	Οι κωδικοί πρόσβασης δεν ταιριάζουν.
+twoFactor.navigationTitle	Έλεγχος ταυτότητας δύο παραγόντων
+twoFactor.offTitle	Ο έλεγχος ταυτότητας δύο παραγόντων είναι ανενεργός
+twoFactor.offIntro	Προσθέστε ένα δεύτερο βήμα στη σύνδεση. Μετά τον κωδικό πρόσβασης θα εισαγάγετε έναν κωδικό από μια εφαρμογή ελέγχου ταυτότητας.
+twoFactor.turnOnButton	Ενεργοποίηση
+twoFactor.enrollIntro	Σαρώστε αυτόν τον κωδικό QR με την εφαρμογή ελέγχου ταυτότητας ή πληκτρολογήστε το κλειδί με το χέρι. Έπειτα εισαγάγετε τον 6ψήφιο κωδικό που εμφανίζει η εφαρμογή.
+twoFactor.qrAccessibilityLabel	Κωδικός QR για την εφαρμογή ελέγχου ταυτότητας
+twoFactor.keyLabel	Κλειδί ρύθμισης
+twoFactor.copyKeyAccessibilityLabel	Αντιγραφή κλειδιού ρύθμισης
+twoFactor.codeAccessibilityLabel	Κωδικός εφαρμογής ελέγχου ταυτότητας
+twoFactor.confirmButton	Επαλήθευση και ενεργοποίηση
+twoFactor.recoveryTitle	Αποθηκεύστε τους κωδικούς ανάκτησής σας
+twoFactor.recoveryIntro	Κάθε κωδικός λειτουργεί μία φορά αν χάσετε την εφαρμογή ελέγχου ταυτότητας. Δεν θα εμφανιστούν ξανά, γι' αυτό φυλάξτε τους σε ασφαλές μέρος.
+twoFactor.copyCodesButton	Αντιγραφή κωδικών
+twoFactor.shareCodesButton	Κοινοποίηση κωδικών
+twoFactor.recoveryDoneButton	Τους αποθήκευσα
+twoFactor.onTitle	Ο έλεγχος ταυτότητας δύο παραγόντων είναι ενεργός
+twoFactor.recoveryCodesLeft	Εναπομείναντες κωδικοί ανάκτησης: %lld
+twoFactor.newCodesButton	Λήψη νέων κωδικών ανάκτησης
+twoFactor.turnOffButton	Απενεργοποίηση
+twoFactor.passwordNewCodesIntro	Εισαγάγετε τον κωδικό πρόσβασής σας για να αντικαταστήσετε τους κωδικούς ανάκτησης. Οι παλιοί σταματούν να λειτουργούν.
+twoFactor.passwordTurnOffIntro	Εισαγάγετε τον κωδικό πρόσβασής σας για να απενεργοποιήσετε τον έλεγχο ταυτότητας δύο παραγόντων.
+twoFactor.passwordField	Κωδικός πρόσβασης
+twoFactor.passwordConfirmButton	Επιβεβαίωση
+twoFactor.manageButton	Διαχείριση…
+apiTokens.navigationTitle	Διακριτικά API
+apiTokens.sectionHeader	Προγραμματιστές
+apiTokens.intro	Τα διακριτικά API επιτρέπουν σε σενάρια και άλλα εργαλεία να χρησιμοποιούν τον λογαριασμό σας χωρίς τον κωδικό πρόσβασής σας. Ένα διακριτικό κάνει μόνο ό,τι επιτρέπει η πρόσβασή του και μπορείτε να το ανακαλέσετε οποιαδήποτε στιγμή.
+apiTokens.emptyTitle	Κανένα διακριτικό API
+apiTokens.emptyMessage	Δημιουργήστε ένα για να επιτρέψετε σε ένα σενάριο να χρησιμοποιεί τον λογαριασμό σας.
+apiTokens.newButton	Νέο διακριτικό
+apiTokens.limitReached	Έχετε φτάσει το όριο των %lld διακριτικών. Ανακαλέστε ένα για να δημιουργήσετε άλλο.
+apiTokens.scopeRead	Μόνο ανάγνωση
+apiTokens.scopeWrite	Ανάγνωση και εγγραφή
+apiTokens.created	Δημιουργήθηκε %@
+apiTokens.lastUsed	Τελευταία χρήση %@
+apiTokens.lastUsedFrom	Τελευταία χρήση %1$@ από %2$@
+apiTokens.neverUsed	Δεν έχει χρησιμοποιηθεί ποτέ
+apiTokens.expires	Λήγει %@
+apiTokens.expired	Έληξε %@
+apiTokens.neverExpires	Δεν λήγει ποτέ
+apiTokens.renameAction	Μετονομασία
+apiTokens.revokeAction	Ανάκληση
+apiTokens.menuAccessibilityLabel	Ενέργειες για το %@
+apiTokens.formTitle	Νέο διακριτικό API
+apiTokens.fieldName	Όνομα
+apiTokens.namePlaceholder	Για παράδειγμα, σενάριο δημιουργίας αντιγράφων ασφαλείας
+apiTokens.fieldAccess	Πρόσβαση
+apiTokens.fieldExpiry	Λήγει
+apiTokens.expiry30	Σε 30 ημέρες
+apiTokens.expiry90	Σε 90 ημέρες
+apiTokens.expiryYear	Σε 1 έτος
+apiTokens.expiryNever	Ποτέ
+apiTokens.fieldPassword	Ο κωδικός πρόσβασής σας
+apiTokens.passwordHint	Εισαγάγετε τον κωδικό πρόσβασής σας για να δημιουργήσετε διακριτικό.
+apiTokens.createSubmit	Δημιουργία διακριτικού
+apiTokens.issuedTitle	Αντιγράψτε το διακριτικό σας
+apiTokens.issuedIntro	Αυτή είναι η μόνη φορά που εμφανίζεται. Φυλάξτε το σε ασφαλές μέρος. Αν το χάσετε, ανακαλέστε το και δημιουργήστε νέο.
+apiTokens.copyToken	Αντιγραφή διακριτικού
+apiTokens.copiedToken	Αντιγράφηκε
+apiTokens.issuedDone	Το αντέγραψα
+apiTokens.renameTitle	Μετονομασία διακριτικού
+apiTokens.renameSave	Αποθήκευση
+apiTokens.revokeTitle	Ανάκληση διακριτικού;
+apiTokens.revokeMessage	Ό,τι χρησιμοποιεί το "%@" θα σταματήσει να λειτουργεί αμέσως. Αυτό δεν μπορεί να αναιρεθεί.
+apiTokens.revokeConfirm	Ανάκληση
+login.portHint	Προσθέστε μια θύρα (π.χ. :3000). Οι περισσότεροι διακομιστές homelab δεν ακούν στην απλή θύρα 80.
+login.errorInvalidServer	Εισαγάγετε μια έγκυρη διεύθυνση διακομιστή.
+login.errorInvalidCredentials	Λανθασμένο όνομα χρήστη ή κωδικός πρόσβασης.
+login.errorSessionExpired	Η συνεδρία σας έληξε. Συνδεθείτε ξανά.
+login.errorIncomplete	Η σύνδεση δεν ολοκληρώθηκε. Δοκιμάστε ξανά.
+login.errorUnreachable	Δεν ήταν δυνατή η επικοινωνία με αυτόν τον διακομιστή. Ελέγξτε τη διεύθυνση και δοκιμάστε ξανά.
+login.errorUnexpectedResponse	Απροσδόκητη απάντηση από τον διακομιστή.
+login.errorKeychain	Δεν ήταν δυνατή η αποθήκευση της συνεδρίας σας σε αυτήν τη συσκευή.
+login.errorDecoding	Ο διακομιστής απάντησε απροσδόκητα. Ελέγξτε τη διεύθυνση και δοκιμάστε ξανά.
+login.errorNoLocalAuth	Αυτός ο διακομιστής δεν έχει ενεργοποιημένη τη σύνδεση με όνομα χρήστη και κωδικό πρόσβασης.
+login.errorRateLimited	Πάρα πολλές προσπάθειες. Περιμένετε λίγα λεπτά και δοκιμάστε ξανά.
+login.ssoButton	Σύνδεση με SSO
+login.orDivider	ή
+login.errorSso	Το single sign-on δεν ολοκληρώθηκε. Δοκιμάστε ξανά.
+login.errorNoAuthMethods	Αυτός ο διακομιστής δεν έχει ενεργοποιημένες μεθόδους σύνδεσης.
+login.errorClientCertificateRequired	Αυτός ο διακομιστής ζητά πιστοποιητικό πελάτη.
+login.errorClientCertificateRejected	Ο διακομιστής απέρριψε αυτό το πιστοποιητικό πελάτη.
+login.codeTitle	Εισαγάγετε τον κωδικό σας
+login.codeIntroAuthenticator	Αυτός ο λογαριασμός ζητά δεύτερο βήμα. Εισαγάγετε τον 6ψήφιο κωδικό από την εφαρμογή ελέγχου ταυτότητας.
+login.codeIntroRecovery	Εισαγάγετε έναν από τους κωδικούς ανάκτησής σας. Καθένας λειτουργεί μόνο μία φορά.
+login.codeUseRecovery	Χρήση κωδικού ανάκτησης αντί αυτού
+login.codeUseAuthenticator	Χρήση κωδικού εφαρμογής ελέγχου ταυτότητας αντί αυτού
+login.codeField	Κωδικός
+login.codeSubmit	Επαλήθευση
+login.errorInvalidCode	Ο κωδικός δεν είναι σωστός.
+login.errorSecondFactorExpired	Αυτή η σύνδεση έληξε. Εισαγάγετε ξανά τον κωδικό πρόσβασής σας.
+login.diagnosticsButton	Κοινοποίηση αρχείου καταγραφής σύνδεσης
+login.diagnosticsTitle	Αρχείο καταγραφής σύνδεσης
+login.diagnosticsIntro	Αυτό το αρχείο καταγραφής δείχνει τι απάντησε ο διακομιστής σε κάθε βήμα, για να βοηθήσει στον εντοπισμό του γιατί αποτυγχάνει η σύνδεση. Δεν περιέχει ποτέ τον κωδικό πρόσβασής σας, τη διεύθυνση που πληκτρολογήσατε ή το όνομα χρήστη σας. Στείλτε το στον προγραμματιστή.
+browse.nameErrorReserved	Αυτό το όνομα δεν επιτρέπεται.
+browse.nameErrorSeparators	Ένα όνομα δεν μπορεί να περιέχει / ή \.
+browse.searchMatchLine	Γραμμή %1$lld: %2$@
+browse.searchMatchLineLabel	Γραμμή %lld
+browse.searchTooShort	Πληκτρολογήστε τουλάχιστον %lld χαρακτήρες για αναζήτηση σε υποφακέλους και περιεχόμενο αρχείων.
+browse.searchStoppedEarly	Η αναζήτηση σταμάτησε στο χρονικό της όριο. Αυτά είναι τα αποτελέσματα που βρέθηκαν μέχρι τώρα.
+browse.searchFirstOnly	Πρώτα %lld αποτελέσματα. Περιορίστε την αναζήτηση για να δείτε περισσότερα.
+browse.searchShowMore	Εμφάνιση περισσότερων
+browse.searchMatchColumn	Αντιστοιχία
+browse.searchMatchedByName	Όνομα
+browse.searchMatchedByContent	Περιεχόμενο
+browse.searchMatchedByBoth	Όνομα και περιεχόμενο
+createShare.errorPasswordRequired	Εισαγάγετε έναν κωδικό πρόσβασης ή απενεργοποιήστε την προστασία με κωδικό.
+login.errorServer	Ο διακομιστής αντιμετώπισε πρόβλημα (σφάλμα %lld). Δοκιμάστε ξανά αργότερα.
+filter.sheetTitle	Φίλτρο ανά τύπο
+filter.button	Φίλτρο
+filter.all	Όλοι οι τύποι
+filter.folders	Φάκελοι
+filter.images	Εικόνες
+filter.videos	Βίντεο
+filter.audio	Ήχος
+filter.documents	Έγγραφα
+filter.archives	Αρχεία συμπίεσης
+filter.other	Άλλο
+settings.creditsMadeBy	Φτιαγμένο με ❤️ από τον Phillip Maizza
+settings.creditsLikeApp	Σας αρέσει η εφαρμογή;
+settings.creditsBuyCoffee	Κεράστε μου έναν καφέ ☕️
+tipJar.title	Κεράστε μου έναν καφέ
+tipJar.explanation	Το NextExplorer είναι δωρεάν και ανοικτού κώδικα. Αν σας φανεί χρήσιμο, ένα μικρό φιλοδώρημα βοηθά να συνεχίσει. Ευχαριστούμε!
+tipJar.toastThanks	Ευχαριστούμε που στηρίζετε το έργο! 🙏
+tipJar.errorLoad	Δεν ήταν δυνατή η φόρτωση των επιλογών φιλοδωρήματος. Δοκιμάστε ξανά.
+tipJar.errorPurchase	Η αγορά δεν ολοκληρώθηκε. Δοκιμάστε ξανά.
+tipJar.pending	Αναμονή έγκρισης. Θα χρεωθείτε μόλις εγκριθεί.
+offline.sectionTitle	Εκτός σύνδεσης
+offline.settingsRow	Λήψη αρχείων για χρήση εκτός σύνδεσης
+offline.footnote	Τα αρχεία που έχουν ληφθεί ανοίγουν ακόμη και χωρίς σύνδεση.
+offline.available	%@ διαθέσιμα εκτός σύνδεσης
+offline.removeRow	Αφαίρεση αρχείων εκτός σύνδεσης
+offline.removeConfirmTitle	Αφαίρεση αρχείων εκτός σύνδεσης;
+offline.removeConfirmMessage	Αυτό διαγράφει τα αρχεία που έχουν αποθηκευτεί για χρήση εκτός σύνδεσης σε αυτήν τη συσκευή. Τα αρχεία σας στον διακομιστή δεν επηρεάζονται.
+offline.removeConfirm	Αφαίρεση
+offline.preparing	Προετοιμασία…
+offline.downloadingName	Λήψη του %@
+offline.progressCount	%lld από %lld αρχεία
+offline.downloadFailed	Δεν ήταν δυνατή η ολοκλήρωση της λήψης για χρήση εκτός σύνδεσης.
+offline.selectionTitle	Λήψη για χρήση εκτός σύνδεσης
+offline.selectionEmpty	Αυτός ο φάκελος είναι κενός.
+offline.selectionLoadFailed	Δεν ήταν δυνατή η φόρτωση αυτού του φακέλου.
+offline.selectionEstimate	Εκτιμώμενη λήψη
+offline.selectionDownload	Λήψη
+offline.selectionInsufficientSpace	Δεν υπάρχει αρκετός ελεύθερος χώρος σε αυτήν τη συσκευή
+offline.resyncRow	Ενημέρωση αρχείων εκτός σύνδεσης
+offline.badgeAvailable	Διαθέσιμο εκτός σύνδεσης
+offline.manageRow	Διαχείριση αρχείων εκτός σύνδεσης
+offline.manageTitle	Αρχεία εκτός σύνδεσης
+offline.manageEmpty	Δεν έχει ληφθεί τίποτα για χρήση εκτός σύνδεσης.
+offline.preferOfflineToggle	Αναπαραγωγή ληφθέντων αντιγράφων
+offline.pinRemoved	Το %@ δεν υπάρχει πλέον στον διακομιστή και αφαιρέθηκε από τα αρχεία εκτός σύνδεσης
+offline.preferOfflineSubtitle	Χρήση ληφθέντος βίντεο αντί ροής όταν είναι διαθέσιμο.
+offline.tunnelSpeedNote	Η πρόσβαση στον διακομιστή μέσω απομακρυσμένης σήραγγας μπορεί να επιβραδύνει τις λήψεις. Για μεγάλα αρχεία, συνδεθείτε στο ίδιο δίκτυο και χρησιμοποιήστε την τοπική διεύθυνση του διακομιστή.
+menu.about	Σχετικά με το NextExplorer
+menu.rateApp	Αξιολόγηση του NextExplorer…
+menu.support	Υποστήριξη NextExplorer
+menu.redo	Επανάληψη
+menu.undo	Αναίρεση
+settings.sectionSupport	Υποστήριξη
+settings.rowRateApp	Αξιολόγηση του NextExplorer
+settings.rowSupport	Βοήθεια και υποστήριξη
+menu.refresh	Ανανέωση
+select.tableView	Προβολή πίνακα
+browse.progressDownloading	Λήψη…
+browse.progressDownloadingIndexed	Λήψη %1$lld από %2$lld…
+browse.downloadSavedTo	Αποθηκεύτηκε στο %@
+browse.downloadSavedCountTo	Αποθηκεύτηκαν %1$lld από %2$lld στοιχεία στο %3$@
+browse.downloadSavedAllTo	Αποθηκεύτηκαν %1$lld στοιχεία στο %2$@
+browse.downloadBulkFailed	Δεν ήταν δυνατή η αποθήκευση αυτών των στοιχείων στη συσκευή σας.
+openWith.openIn	Άνοιγμα στο %@
+openWith.openWith	Άνοιγμα με
+openWith.viewAsText	Προβολή ως κείμενο
+openWith.failed	Δεν ήταν δυνατό το άνοιγμα αυτού του αρχείου.
+browse.showInFinder	Εμφάνιση στο Finder
+browse.showInEnclosingFolder	Εμφάνιση στον περιέχοντα φάκελο
+browse.actionCut	Αποκοπή
+browse.clipboardCutOne	Το %@ είναι έτοιμο για μετακίνηση
+browse.clipboardCutMany	%lld στοιχεία έτοιμα για μετακίνηση
+menu.enclosingFolder	Περιέχων φάκελος
+common.more	Περισσότερα
+openWith.print	Εκτύπωση…
+menu.newWindow	Νέο παράθυρο
+menu.newTab	Νέα καρτέλα
+browse.actionOpenInNewWindow	Άνοιγμα σε νέο παράθυρο
+browse.actionOpenInNewTab	Άνοιγμα σε νέα καρτέλα
+select.viewAs	Προβολή
+settings.rowAppearance	Εμφάνιση
+appearance.system	Σύστημα
+appearance.light	Φωτεινή
+appearance.dark	Σκοτεινή
+browse.myFiles	Τα αρχεία μου
+browse.myFilesSubtitle	Ορατό μόνο σε εσάς
+downloadQueue.navigationTitle	Ουρά λήψεων
+downloadQueue.openDownloads	Εμφάνιση λήψεων
+downloadQueue.emptyList	Δεν υπάρχουν λήψεις σε εξέλιξη.
+downloadQueue.statusSaved	Αποθηκεύτηκε
+downloadQueue.cancelAll	Ακύρωση όλων των λήψεων
+downloadQueue.barFailedOne	1 λήψη απέτυχε
+downloadQueue.barFailedMany	%lld λήψεις απέτυχαν
+downloadQueue.barTitleOne	Λήψη του %@
+downloadQueue.barTitleMany	Λήψη %lld στοιχείων
+downloadQueue.savedOne	Αποθηκεύτηκε στις Λήψεις
+downloadQueue.savedMany	%lld στοιχεία αποθηκεύτηκαν στις Λήψεις
+downloadQueue.bytesOf	%1$@ από %2$@
+downloadQueue.timeLeft	Απομένουν %@
+browse.sectionPersonal	Προσωπικά
+macSettings.addAccount	Προσθήκη λογαριασμού…
+macSettings.changePassword	Αλλαγή κωδικού πρόσβασης…
+macSettings.signOut	Αποσύνδεση…
+macSettings.switchAccount	Εναλλαγή σε αυτόν τον λογαριασμό
+macSettings.username	Όνομα χρήστη
+macSettings.email	Email
+macSettings.role	Ρόλος
+macSettings.roleAdmin	Διαχειριστής
+macSettings.roleUser	Χρήστης
+macSettings.status	Κατάσταση
+macSettings.statusSignedIn	Συνδεδεμένος
+macSettings.manage	Διαχείριση…
+macSettings.cache	Προσωρινή μνήμη
+macSettings.support	Βοήθεια και υποστήριξη…
+macSettings.permission	Δικαίωμα
+macSettings.icon	Εικονίδιο
+menu.go	Μετάβαση
+menu.activity	Μεταφορές
+menu.showAll	Εμφάνιση όλων
+uploads.notifyDone	Οι μεταφορτώσεις ολοκληρώθηκαν
+uploads.notifyBody	Μεταφορτώθηκαν %lld αρχεία
+downloadQueue.notifyDone	Οι λήψεις ολοκληρώθηκαν
+fileInfo.rowSoftware	Λογισμικό
+fileInfo.sectionVersions	Εκδόσεις
+fileInfo.versionsNone	Δεν υπάρχουν προηγούμενες εκδόσεις
+fileInfo.versionRestore	Επαναφορά…
+fileInfo.restoreTitle	Επαναφορά αυτής της έκδοσης;
+fileInfo.restoreMessage	Το αρχείο επιστρέφει στην κατάσταση που είχε στις %@. Ό,τι περιέχει τώρα διατηρείται ως έκδοση.
+fileInfo.restoreConfirm	Επαναφορά
+fileInfo.sectionSharing	Κοινοποίηση
+fileInfo.notShared	Κανένας σύνδεσμος κοινοποίησης
+fileInfo.versionActions	Ενέργειες έκδοσης
+fileInfo.versionDownload	Λήψη…
+fileInfo.versionSaveCopy	Αποθήκευση ως αντίγραφο
+fileInfo.versionRename	Μετονομασία…
+fileInfo.renameTitle	Μετονομασία έκδοσης
+fileInfo.renamePlaceholder	Όνομα έκδοσης
+fileInfo.versionPin	Διατήρηση αυτής της έκδοσης
+fileInfo.versionUnpin	Διακοπή διατήρησης αυτής της έκδοσης
+fileInfo.versionKept	Διατηρείται
+fileInfo.versionDelete	Διαγραφή…
+fileInfo.deleteTitle	Διαγραφή αυτής της έκδοσης;
+fileInfo.deleteAll	Διαγραφή όλων των εκδόσεων…
+fileInfo.deleteAllTitle	Διαγραφή όλων των εκδόσεων;
+fileInfo.deleteMessage	Οι διαγραμμένες εκδόσεις χάνονται για πάντα. Το ίδιο το αρχείο μένει όπως είναι.
+macSettings.choose	Επιλογή…
+menu.forward	Μπροστά
+menu.goToFolder	Μετάβαση σε φάκελο…
+menu.goToFolderTitle	Μετάβαση στον φάκελο:
+menu.copyPath	Αντιγραφή διαδρομής
+menu.recentFolders	Πρόσφατοι φάκελοι
+menu.clearRecent	Εκκαθάριση μενού
+common.loading	Φόρτωση…
+browse.quickLookUnavailable	Η Γρήγορη προβολή δεν είναι διαθέσιμη για αυτόν τον τύπο αρχείου.
+browse.quickLookTooLarge	Αυτό το αρχείο είναι πολύ μεγάλο για τη Γρήγορη προβολή.
+menu.zoomIn	Μεγέθυνση
+menu.zoomOut	Σμίκρυνση
+menu.zoomToFit	Προσαρμογή στο παράθυρο
+menu.quitTransfersTitle	Έξοδος από το NextExplorer;
+menu.quitTransfersMessage	Μεταφορτώσεις ή λήψεις βρίσκονται ακόμη σε εξέλιξη. Αν βγείτε τώρα, θα σταματήσουν.
+menu.quitTransfersConfirm	Έξοδος
+media.play	Αναπαραγωγή
+media.pause	Παύση
+media.position	Θέση αναπαραγωγής
+media.positionValue	%1$@ από %2$@
+media.clientCertificateUnsupported	Αυτή η μορφή δεν μπορεί να αναπαραχθεί ως ροή από διακομιστή που ζητά πιστοποιητικό πελάτη. Κάντε λήψη του αρχείου για να το αναπαραγάγετε.
+clientCertificate.title	Πιστοποιητικό πελάτη
+clientCertificate.intro	Ορισμένοι διακομιστές δέχονται μόνο συσκευές που παρουσιάζουν πιστοποιητικό πελάτη (mTLS). Επιλέξτε το αρχείο .p12 ή .pfx που σας δόθηκε για αυτόν τον διακομιστή.
+clientCertificate.certificateLabel	Πιστοποιητικό
+clientCertificate.none	Δεν έχει εγκατασταθεί πιστοποιητικό
+clientCertificate.issuedBy	Εκδόθηκε από %@
+clientCertificate.expires	Λήγει %@
+clientCertificate.expired	Έληξε %@
+clientCertificate.chooseFile	Επιλογή αρχείου
+clientCertificate.replace	Αντικατάσταση πιστοποιητικού
+clientCertificate.remove	Αφαίρεση πιστοποιητικού
+clientCertificate.install	Εγκατάσταση
+clientCertificate.passwordLabel	Κωδικός πρόσβασης αρχείου
+clientCertificate.passwordPrompt	Ο κωδικός πρόσβασης με τον οποίο εξήχθη το αρχείο
+clientCertificate.chooseAnother	Επιλογή άλλου αρχείου
+clientCertificate.errorWrongPassword	Αυτός ο κωδικός πρόσβασης δεν ξεκλειδώνει αυτό το αρχείο.
+clientCertificate.errorInvalidFile	Αυτό δεν είναι έγκυρο αρχείο πιστοποιητικού .p12 ή .pfx.
+clientCertificate.errorNoIdentity	Αυτό το αρχείο δεν έχει ιδιωτικό κλειδί. Εξαγάγετε το πιστοποιητικό μαζί με το κλειδί του.
+clientCertificate.errorStorage	Δεν ήταν δυνατή η αποθήκευση του πιστοποιητικού σε αυτήν τη συσκευή.
+clientCertificate.errorUnreadable	Δεν ήταν δυνατή η ανάγνωση αυτού του αρχείου.
+clientCertificate.errorRemove	Δεν ήταν δυνατή η αφαίρεση του πιστοποιητικού από αυτήν τη συσκευή.
+clientCertificate.removeTitle	Αφαίρεση πιστοποιητικού;
+clientCertificate.removeMessage	Το NextExplorer θα σταματήσει να το παρουσιάζει στο %@. Αν αυτός ο διακομιστής απαιτεί πιστοποιητικό, η εφαρμογή δεν μπορεί να συνδεθεί μέχρι να προσθέσετε ξανά πιστοποιητικό.
+clientCertificate.removeConfirm	Αφαίρεση
+clientCertificate.expiredWarning	Αυτό το πιστοποιητικό έχει λήξει. Ο διακομιστής πιθανότατα θα το απορρίψει.
+login.addClientCertificate	Προσθήκη πιστοποιητικού
+login.manageClientCertificate	Διαχείριση πιστοποιητικού
+settings.clientCertificate	Πιστοποιητικό πελάτη
+settings.clientCertificateNone	Κανένα
+login.usingClientCertificate	Χρήση πιστοποιητικού πελάτη %@
+login.changeClientCertificate	Αλλαγή
+login.ssoClientCertificateNote	Το single sign-on ανοίγει στο Safari, το οποίο δεν μπορεί να χρησιμοποιήσει το πιστοποιητικό πελάτη αυτής της εφαρμογής. Συνδεθείτε με τον κωδικό πρόσβασής σας ή εγκαταστήστε το πιστοποιητικό σε αυτήν τη συσκευή για να χρησιμοποιήσετε το single sign-on.
+settings.clientCertificateExpired	Έληξε
+settings.clientCertificateExpiresSoon	Λήγει σύντομα
+clientCertificate.expiringSoonWarning	Αυτό το πιστοποιητικό λήγει στις %@. Ζητήστε νέο πριν από τότε.
+shareUpload.title	Μεταφόρτωση στο NextExplorer
+shareUpload.itemCount	Αρχεία προς μεταφόρτωση: %lld
+shareUpload.accountLabel	Λογαριασμός
+shareUpload.folderLabel	Φάκελος
+shareUpload.folderChoose	Επιλογή φακέλου
+shareUpload.upload	Μεταφόρτωση
+shareUpload.preparing	Προετοιμασία %lld από %lld…
+shareUpload.started	Μεταφόρτωση στο παρασκήνιο. Θα λάβετε ειδοποίηση όταν ολοκληρωθεί.
+shareUpload.signedOut	Συνδεθείτε πρώτα στο NextExplorer και μετά κοινοποιήστε ξανά.
+shareUpload.nothingToUpload	Δεν υπάρχει εδώ τίποτα που να μπορεί να μεταφορτώσει το NextExplorer.
+shareUpload.failed	Δεν ήταν δυνατή η προετοιμασία των αρχείων για μεταφόρτωση.
+shareUpload.notificationDoneTitle	Η μεταφόρτωση ολοκληρώθηκε
+shareUpload.notificationFailedTitle	Ορισμένα αρχεία δεν μεταφορτώθηκαν
+shareUpload.notificationDoneBody#one	Μεταφορτώθηκε %lld αρχείο στο «%@».
+shareUpload.notificationDoneBody#other	Μεταφορτώθηκαν %lld αρχεία στο «%@».
+shareUpload.notificationAllFailedTitle	Η μεταφόρτωση απέτυχε
+shareUpload.failureUnauthorized#one	Το %lld αρχείο δεν μεταφορτώθηκε. Συνδεθείτε ξανά και δοκιμάστε πάλι.
+shareUpload.failureUnauthorized#other	Τα %lld αρχεία δεν μεταφορτώθηκαν. Συνδεθείτε ξανά και δοκιμάστε πάλι.
+shareUpload.failureForbidden#one	Το %lld αρχείο δεν μεταφορτώθηκε. Δεν έχετε δικαίωμα προσθήκης αρχείων σε αυτόν τον φάκελο.
+shareUpload.failureForbidden#other	Τα %lld αρχεία δεν μεταφορτώθηκαν. Δεν έχετε δικαίωμα προσθήκης αρχείων σε αυτόν τον φάκελο.
+shareUpload.failureServerFull#one	Το %lld αρχείο δεν μεταφορτώθηκε. Ο διακομιστής έχει εξαντλήσει τον αποθηκευτικό χώρο.
+shareUpload.failureServerFull#other	Τα %lld αρχεία δεν μεταφορτώθηκαν. Ο διακομιστής έχει εξαντλήσει τον αποθηκευτικό χώρο.
+shareUpload.failureNetwork#one	Το %lld αρχείο δεν μεταφορτώθηκε. Η σύνδεση απέτυχε. Δοκιμάστε ξανά όταν επανέλθετε σε σύνδεση.
+shareUpload.failureNetwork#other	Τα %lld αρχεία δεν μεταφορτώθηκαν. Η σύνδεση απέτυχε. Δοκιμάστε ξανά όταν επανέλθετε σε σύνδεση.
+shareUpload.failureOther#one	Δεν ήταν δυνατή η μεταφόρτωση του %lld αρχείου.
+shareUpload.failureOther#other	Δεν ήταν δυνατή η μεταφόρτωση των %lld αρχείων.
+shareUpload.notificationRetry	Δοκιμή ξανά
+shareUpload.notificationHiddenPreview	Ανοίξτε το NextExplorer για να δείτε πώς πήγε η μεταφόρτωση.
+shareUpload.retryFailedTitle	Δεν ήταν δυνατή η επανάληψη
+shareUpload.retryFailedBody	Ανοίξτε το NextExplorer και κοινοποιήστε ξανά τα αρχεία.
+shareUpload.insufficientSpace	Δεν υπάρχει αρκετός ελεύθερος χώρος σε αυτήν τη συσκευή για την προετοιμασία αυτών των αρχείων προς μεταφόρτωση.
+settings.uploadDefaultsRow	Κοινόχρηστα αρχεία
+settings.uploadDefaultsFolder	Προεπιλεγμένος φάκελος
+settings.uploadDefaultsFolderNone	Ερώτηση κάθε φορά
+settings.uploadDefaultsWithoutAsking	Μεταφόρτωση χωρίς ερώτηση
+settings.uploadDefaultsFooter	Οι φωτογραφίες και τα αρχεία που κοινοποιείτε στο NextExplorer από άλλες εφαρμογές ξεκινούν σε αυτόν τον φάκελο. Όταν η «Μεταφόρτωση χωρίς ερώτηση» είναι ενεργή, μεταφορτώνονται απευθείας εκεί.
+settings.uploadDefaultsClear	Ερώτηση κάθε φορά
+common.change	Αλλαγή
+shareUpload.sessionUnreadable	Το NextExplorer δεν μπόρεσε να διαβάσει τη σύνδεσή σας σε αυτήν τη συσκευή. Ανοίξτε μία φορά το NextExplorer και μετά κοινοποιήστε ξανά.
+shareUpload.keepOpen	Κρατήστε το ανοιχτό μέχρι να ολοκληρωθεί η προετοιμασία.
+shareUpload.checking	Έλεγχος σύνδεσης με το %@…
+shareUpload.openApp	Άνοιγμα του NextExplorer
+shareUpload.openAppInstructions	Ανοίξτε το NextExplorer από την Αρχική οθόνη και μετά κοινοποιήστε ξανά.
+shareUpload.certificateRequired	Αυτός ο διακομιστής απαιτεί πιστοποιητικό πελάτη. Ανοίξτε το NextExplorer και προσθέστε ένα στις Ρυθμίσεις και μετά κοινοποιήστε ξανά.
+shareUpload.certificateRejected	Ο διακομιστής απέρριψε το πιστοποιητικό πελάτη σας. Ανοίξτε το NextExplorer και αντικαταστήστε το στις Ρυθμίσεις και μετά κοινοποιήστε ξανά.
+shareUpload.defaultFolderUnavailable	Ο προεπιλεγμένος φάκελός σας δεν είναι πλέον διαθέσιμος. Επιλέξτε άλλον φάκελο.
+shareUpload.failedItemsHeader	Δεν ήταν δυνατή η προετοιμασία αυτών των αρχείων:
+shareUpload.readyCount	Έτοιμα για μεταφόρτωση: %lld
+shareUpload.uploadReady	Μεταφόρτωση έτοιμων αρχείων
+shareUpload.retryFailed	Επανάληψη για τα αρχεία που απέτυχαν
+shareUpload.fallbackItemName	Αρχείο %lld
+shareUpload.causeCannotRead	Δεν ήταν δυνατή η ανάγνωσή του.
+shareUpload.causeNotEnoughSpace	Δεν υπάρχει αρκετός ελεύθερος χώρος σε αυτήν τη συσκευή.
+shareUpload.causeUnknown	Δεν ήταν δυνατή η προετοιμασία του.
+shareUpload.folderHint	Ανοίγει τον επιλογέα φακέλων.
+shareUpload.accountHint	Επιλέξτε ποιος λογαριασμός λαμβάνει τα αρχεία.
+error.timedOut	Ο διακομιστής άργησε πολύ να απαντήσει. Η ενέργεια μπορεί να ολοκληρωθεί ακόμη.
+error.changedOnServer	Αυτό το αρχείο άλλαξε στον διακομιστή αφού το ανοίξατε.
+textPreview.conflictTitle	Το «%@» άλλαξε στον διακομιστή
+textPreview.conflictMessage	Αντικαταστήστε το με την έκδοσή σας ή φορτώστε ξανά το αρχείο και απορρίψτε τις αλλαγές σας. Η έκδοση που αντικαταστάθηκε παραμένει στο ιστορικό εκδόσεων του αρχείου.
+textPreview.conflictOverwrite	Αντικατάσταση
+textPreview.conflictReload	Επαναφόρτωση
+offline.waitingForNetwork	Θα ληφθεί όταν επανέλθετε σε σύνδεση
+browse.bulkFavoriteFailed	Απέτυχαν %1$lld από %2$lld
+shareUpload.livePhotoNote	Τα Live Photos μεταφορτώνονται μαζί με το βίντεο κίνησής τους.
+shareUpload.retrySignInBody	Συνδεθείτε στο NextExplorer και μετά πατήστε ξανά «Δοκιμή ξανά».
+shareUpload.causeFolder	Οι φάκελοι δεν μπορούν να κοινοποιηθούν. Κοινοποιήστε αντί αυτού τα αρχεία που περιέχουν.
+shareUpload.notificationMoreNames	Ακόμη %lld
+versionedFiles.deleteFailed	Δεν ήταν δυνατή η διαγραφή ορισμένων εκδόσεων. Ελέγξτε τες και δοκιμάστε ξανά.
+serverSettings.featureOffTitle	Αυτή η δυνατότητα δεν είναι ενεργοποιημένη
+serverSettings.featureOffKept	Ό,τι ρυθμίσετε εδώ αποθηκεύεται και ισχύει μόλις ενεργοποιηθεί.
+serverSettings.featureOffUseSwitch	Ενεργοποιήστε την με τον διακόπτη παραπάνω.
+serverSettings.featureOffHowTo	Για να την ενεργοποιήσετε, ορίστε το %@ και κάντε επανεκκίνηση του κοντέινερ.
+trashSettings.environmentNote	Οι προεπιλογές προέρχονται από τα TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT και TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Οι προεπιλογές προέρχονται από τα VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE και VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Ανανέωση

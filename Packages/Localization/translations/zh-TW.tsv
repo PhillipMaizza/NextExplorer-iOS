@@ -841,3 +841,202 @@ shareUpload.causeFolder	無法分享資料夾。請改為分享其中的檔案�
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	另外 %lld 個
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	上傳
+uploadSettings.subtitle	設定檔案傳送到伺服器的方式。
+uploadSettings.chunkedEnable	啟用分塊上傳
+uploadSettings.chunkedEnableHelp	使用 TUS 透過多個較小的請求傳送大型檔案。
+uploadSettings.chunkSize	分塊大小
+uploadSettings.chunkSizeHelp	每個上傳請求的大小上限。請保持在反向代理的限制以下。分塊越小，進度越平順。
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	自動切換為分塊上傳
+uploadSettings.autoFallbackHelp	如果直接上傳因反向代理拒絕該大小而失敗，則自動切換為分塊上傳。
+uploadSettings.unavailable	上傳設定僅限管理員使用。
+uploadSettings.saveButton	儲存變更
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	選擇用於媒體預覽與中介資料的 FFmpeg 與 FFprobe 執行檔。
+ffmpegSettings.containerPathHelp	請填寫在應用程式容器內可見的絕對路徑。若要使用主機上的程式，請先將其掛載到容器中。
+ffmpegSettings.ffmpegPath	FFmpeg 執行檔路徑
+ffmpegSettings.ffprobePath	FFprobe 執行檔路徑
+ffmpegSettings.invalid	兩個路徑都必須是以 / 開頭的容器絕對路徑。
+ffmpegSettings.defaultHelp	留空則先使用環境中的 FFMPEG_PATH 或 FFPROBE_PATH，再使用內建的執行檔。變更立即生效。
+ffmpegSettings.unavailable	FFmpeg 設定僅限管理員使用。
+ffmpegSettings.saveButton	儲存變更
+searchIndexSettings.navigationTitle	搜尋索引
+searchIndexSettings.subtitle	將路徑排除在內容索引之外。
+searchIndexSettings.running	維護搜尋索引
+searchIndexSettings.runningHelp	在背景讀取卷宗中的文件，讓對其內容的搜尋能立即回應。
+searchIndexSettings.locked	由環境中的 %@ 設定，因此在那裡決定，而不是在這裡。
+searchIndexSettings.environment	由環境定義的排除項目
+searchIndexSettings.additional	額外的排除項目
+searchIndexSettings.none	未設定任何路徑
+searchIndexSettings.addButton	新增
+searchIndexSettings.unavailable	搜尋索引設定僅限管理員使用。
+searchIndexSettings.saveButton	儲存變更
+searchIndexSettings.discardButton	放棄
+folderSizeSettings.navigationTitle	資料夾大小
+folderSizeSettings.subtitle	將路徑排除在資料夾大小計算與索引之外。
+folderSizeSettings.running	測量資料夾大小
+folderSizeSettings.runningHelp	在背景測量資料夾，讓其大小顯示在清單中。
+folderSizeSettings.modeOff	關閉
+folderSizeSettings.modeShallow	僅其自身的檔案
+folderSizeSettings.modeFull	其中的所有內容
+folderSizeSettings.locked	由環境中的 %@ 設定，因此在那裡決定，而不是在這裡。
+folderSizeSettings.environment	由環境定義的排除項目
+folderSizeSettings.additional	額外的排除項目
+folderSizeSettings.none	未設定任何路徑
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	新增
+folderSizeSettings.unavailable	資料夾大小設定僅限管理員使用。
+folderSizeSettings.saveButton	儲存變更
+folderSizeSettings.discardButton	放棄
+activityLog.navigationTitle	活動記錄
+activityLog.subtitle	誰在何時、從何處做了什麼。除非你開啟，否則不記錄。
+activityLog.enabled	記錄活動
+activityLog.enabledHelp	開啟期間，登入、下載、上傳、刪除、還原、分享與帳戶變更都會被記錄。開啟之前發生的事不在其中。
+activityLog.retention	保留（天）
+activityLog.retentionInvalid	1 到 3650 天之間。
+activityLog.saveButton	儲存變更
+activityLog.off	記錄已關閉，沒有記錄任何內容。
+activityLog.none	尚未記錄任何內容。
+activityLog.filterAction	類型
+activityLog.anyAction	所有類型
+activityLog.filterOutcome	結果
+activityLog.anyOutcome	任何結果
+activityLog.outcomeOk	成功
+activityLog.outcomeRefused	遭拒
+activityLog.searchPlaceholder	名稱或路徑
+activityLog.searchButton	搜尋
+activityLog.refresh	重新整理
+activityLog.clear	清空記錄
+activityLog.clearTitle	要清空記錄嗎？
+activityLog.clearMessage	所有已記錄的內容都將被刪除，此操作無法復原。
+activityLog.clearConfirm	清空記錄
+activityLog.more	顯示更多
+activityLog.refusedSuffix	遭拒
+activityLog.fromAddress	來自 %@
+activityLog.unavailable	活動記錄僅限管理員使用。
+activityLog.action.signIn	登入
+activityLog.action.signOut	登出
+activityLog.action.accountPassword	變更密碼
+activityLog.action.accountTwoFactor	變更兩步驗證
+activityLog.action.accountPasskey	變更通行金鑰
+activityLog.action.accountToken	修改 API 權杖
+activityLog.action.adminUser	變更帳戶
+activityLog.action.adminSettings	變更設定
+activityLog.action.adminActivityClear	清空日誌
+activityLog.action.shareCreate	已建立共享連結
+activityLog.action.shareDelete	已刪除共享連結
+activityLog.action.shareDownload	透過連結下載
+activityLog.action.shareUpload	透過連結上傳
+activityLog.action.fileDownload	下載
+activityLog.action.fileUpload	上傳
+activityLog.action.fileDelete	移至回收桶
+activityLog.action.fileRestore	還原
+activityLog.action.filePurge	永久刪除
+activityLog.action.versionsPurge	版本已刪除
+trashSettings.navigationTitle	資源回收筒和版本
+trashSettings.subtitle	已刪除的項目和檔案的先前版本保存在其所在卷宗的保留空間中，在保留期結束或需要該空間時移除。
+trashSettings.trashHeader	資源回收筒
+trashSettings.enabled	將刪除的項目移至資源回收筒
+trashSettings.enabledHelp	關閉後，刪除會永久移除項目。資源回收筒中已有的項目仍會到期。
+trashSettings.retention	保留期（天）
+trashSettings.retentionHelp	1 至 3650 天。
+trashSettings.maxPercent	每個卷宗的比例（%）
+trashSettings.maxPercentHelp	資源回收筒在一個卷宗上最多可佔用的比例，1 至 90%。
+trashSettings.maxSize	每個卷宗的大小上限（GiB）
+trashSettings.maxSizeHelp	選填。比例與上限取較小者。
+trashSettings.maxSizeNone	無上限
+trashSettings.trashInvalid	請檢查數值：保留期 1 至 3650 天，比例 1 至 90%，正數大小或留空。
+trashSettings.versionsHeader	檔案版本
+trashSettings.versionsSubtitle	每次儲存都會保留被取代的內容，不複製，存放在與資源回收筒相同的保留空間中。舊版本會隨時間逐步稀疏。
+trashSettings.versionsEnabled	保留檔案的先前版本
+trashSettings.versionsEnabledHelp	獨立於資源回收筒。關閉後儲存不再保留新內容；現有版本保留到過期或被刪除。
+trashSettings.keepAllHours	保留所有版本（小時）
+trashSettings.hourlyDays	之後每小時一個（天）
+trashSettings.dailyDays	之後每天一個（天）
+trashSettings.maxPerFile	每個檔案最多版本數
+trashSettings.checkpointMinutes	Office 檢查點（分鐘）
+trashSettings.tiersHelp	超過這些階段後，每週保留一個版本。一次 Office 編輯工作階段保留一個版本，檢查點不會比此間隔更頻繁。已釘選的版本不受稀疏與每檔案上限影響。
+trashSettings.versionsInvalid	請檢查數值：1–720 小時、每小時 1–365 天、每天 1–3650 天、每個檔案 1–1000 個版本、檢查點 1–1440 分鐘。
+trashSettings.sharedSpace	版本與資源回收筒共用每個卷宗的保留空間。空間不足時，依序移除舊版本、資源回收筒項目、每個檔案的最新版本，最後才是已釘選的版本。
+trashSettings.saveButton	儲存變更
+trashSettings.discardButton	放棄
+trashSettings.unavailable	垃圾桶與版本設定僅限管理員使用。
+trashSettings.zonesHeader	各卷宗的資源回收筒
+trashSettings.zonesSubtitle	每個卷宗把資源回收筒放在根目錄的隱藏資料夾 .nextexplorer 中，因此刪除從不複製任何內容。
+trashSettings.zonesEmpty	尚未有任何內容被刪除到資源回收筒。
+trashSettings.zoneKindPersonal	%@ 的個人資料夾
+trashSettings.zoneKindUserVolume	指派的卷宗 %@
+trashSettings.available	可用
+trashSettings.unavailableMissing	未掛載或已移除
+trashSettings.unavailableReplaced	已被另一顆磁碟取代
+trashSettings.unavailableUnreadable	無法讀取
+trashSettings.usage	%1$@ / %2$@
+trashSettings.noBudget	無上限
+trashSettings.zoneItems	項目：%1$lld · %2$@
+trashSettings.zoneVersions	版本：%1$lld · %2$@
+trashSettings.lastPass	上次維護： %@
+trashSettings.lastPassPurged	%1$@ · 已清除：%2$lld
+trashSettings.never	尚未進行
+trashSettings.verify	檢查
+trashSettings.runMaintenance	立即執行維護
+trashSettings.verifyOk	每個卷宗的資源回收筒皆一致。
+trashSettings.verifyIssues	發現的問題：%lld
+trashSettings.zoneProblems	問題：%lld
+trashSettings.journalHeader	紀錄
+trashSettings.eventEvicted	為釋放空間，"%@" 在保留期結束前被刪除
+trashSettings.eventAdopted	中斷後已復原 "%@"
+trashSettings.eventLost	"%@" 的內容遺失
+trashSettings.eventFailed	無法刪除 "%@"
+trashSettings.eventBreaker	同時遺失的項目過多：未做任何變更
+trashSettings.eventForgotten	管理員已忘記 "%@"
+trashSettings.eventVersionEvicted	為釋放空間移除了「%@」的一個版本
+trashSettings.eventVersionFailed	無法移除一個版本
+trashSettings.eventVersionLost	一個版本的內容遺失
+trashSettings.eventVersionTooLarge	「%@」大於整個空間：被取代的內容未保留
+trashSettings.eventVersionsBreaker	同時遺失的版本過多：未做任何變更
+versionedFiles.navigationTitle	檔案版本
+versionedFiles.subtitle	所有有歷史記錄的檔案，無論在何處。這裡會顯示所有空間的路徑，包括個人資料夾，因此僅限管理員使用。
+versionedFiles.summary	檔案：%1$lld · 版本：%2$lld · %3$@
+versionedFiles.searchPlaceholder	名稱或路徑
+versionedFiles.zone	卷宗
+versionedFiles.anyZone	任何卷宗
+versionedFiles.stateHeader	狀態
+versionedFiles.anyState	任何狀態
+versionedFiles.stateLive	檔案仍在
+versionedFiles.stateTrashed	在回收筒
+versionedFiles.stateOrphaned	檔案已遺失
+versionedFiles.sortHeader	排序方式
+versionedFiles.sortBytes	佔用空間
+versionedFiles.sortVersions	版本數量
+versionedFiles.sortNewest	最新
+versionedFiles.sortPath	路徑
+versionedFiles.none	沒有檔案存在舊版本。
+versionedFiles.unavailable	檔案版本僅限管理員使用。
+versionedFiles.zoneUnknown	未知的卷宗
+versionedFiles.zoneKindPersonal	%@ 的個人資料夾
+versionedFiles.zoneKindUserVolume	指派的卷宗 %@
+versionedFiles.rowSummary	版本：%1$lld · %2$@
+versionedFiles.newest	最新：%@
+versionedFiles.versionPinned	已釘選
+versionedFiles.versionUnavailable	無法使用
+versionedFiles.versionBy	作者：%@
+versionedFiles.detailFailed	無法讀取此歷程記錄。
+versionedFiles.deleteSelectedNone	勾選要刪除的版本
+versionedFiles.deleteSelected	刪除所選（%lld）
+versionedFiles.deleteAll	刪除所有版本
+versionedFiles.confirmAllTitle	要刪除「%@」的所有版本嗎？
+versionedFiles.confirmSomeTitle	要刪除所選版本（%lld）嗎？
+versionedFiles.confirmMessage	刪除的版本無法復原。
+versionedFiles.confirmDelete	刪除
+versionedFiles.previous	上一頁
+versionedFiles.next	下一頁
+versionedFiles.pageRange	第 %1$lld–%2$lld 項，共 %3$lld 項
+versionedFiles.deleteFailed	部分版本無法刪除。請檢查後再試一次。
+serverSettings.featureOffTitle	此功能未啟用
+serverSettings.featureOffKept	你在此處設定的內容會被儲存，並在啟用後立即生效。
+serverSettings.featureOffUseSwitch	請使用上方的開關將其開啟。
+serverSettings.featureOffHowTo	若要啟用，請設定 %@ 並重新啟動容器。
+trashSettings.environmentNote	預設值來自 TRASH_ENABLED、TRASH_RETENTION_DAYS、TRASH_MAX_PERCENT和TRASH_MAX_SIZE。
+trashSettings.versionsEnvironmentNote	預設值來自 VERSIONS_ENABLED、VERSIONS_KEEP_ALL_HOURS、VERSIONS_HOURLY_DAYS、VERSIONS_DAILY_DAYS、VERSIONS_MAX_PER_FILE和VERSIONS_SESSION_CHECKPOINT_MINUTES。
+versionedFiles.refresh	重新整理

@@ -847,3 +847,202 @@ shareUpload.causeFolder	Mappar kan inte delas. Dela filerna i dem i stället.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld till
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	Uppladdningar
+uploadSettings.subtitle	Konfigurera hur filer skickas till servern.
+uploadSettings.chunkedEnable	Aktivera uppladdning i delar
+uploadSettings.chunkedEnableHelp	Använd TUS för att skicka stora filer via flera mindre förfrågningar.
+uploadSettings.chunkSize	Delstorlek
+uploadSettings.chunkSizeHelp	Största storlek för varje uppladdningsförfrågan. Håll den under gränsen för din reverse proxy. Mindre delar ger jämnare framsteg.
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	Automatisk växling till delar
+uploadSettings.autoFallbackHelp	Om en direkt uppladdning misslyckas eftersom en reverse proxy avvisar storleken växlar den automatiskt till uppladdning i delar.
+uploadSettings.unavailable	Uppladdningsinställningar är bara tillgängliga för administratörer.
+uploadSettings.saveButton	Spara ändringar
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	Välj de FFmpeg- och FFprobe-program som används för förhandsvisningar och metadata.
+ffmpegSettings.containerPathHelp	Ange absoluta sökvägar som syns inuti programmets container. Montera värdens program i containern först om du vill använda dem.
+ffmpegSettings.ffmpegPath	Sökväg till FFmpeg-programmet
+ffmpegSettings.ffprobePath	Sökväg till FFprobe-programmet
+ffmpegSettings.invalid	Båda sökvägarna måste vara absoluta sökvägar i containern och börja med /.
+ffmpegSettings.defaultHelp	Lämna en sökväg tom för att använda FFMPEG_PATH eller FFPROBE_PATH från miljön och därefter det medföljande programmet. Ändringar gäller direkt.
+ffmpegSettings.unavailable	FFmpeg-inställningar är bara tillgängliga för administratörer.
+ffmpegSettings.saveButton	Spara ändringar
+searchIndexSettings.navigationTitle	Sökindex
+searchIndexSettings.subtitle	Uteslut sökvägar från innehållsindexering.
+searchIndexSettings.running	Håll ett sökindex
+searchIndexSettings.runningHelp	Läser volymens dokument i bakgrunden, så att en sökning i innehållet svarar direkt.
+searchIndexSettings.locked	Satt av %@ i miljön – det avgörs där, inte här.
+searchIndexSettings.environment	Undantag definierade av miljön
+searchIndexSettings.additional	Ytterligare undantag
+searchIndexSettings.none	Ingen sökväg konfigurerad
+searchIndexSettings.addButton	Lägg till
+searchIndexSettings.unavailable	Inställningar för sökindexet är bara tillgängliga för administratörer.
+searchIndexSettings.saveButton	Spara ändringar
+searchIndexSettings.discardButton	Förkasta
+folderSizeSettings.navigationTitle	Mappstorlekar
+folderSizeSettings.subtitle	Undanta sökvägar från beräkning och indexering av mappstorlekar.
+folderSizeSettings.running	Mät mappstorlekar
+folderSizeSettings.runningHelp	Mäter mappar i bakgrunden, så att deras storlek visas i listan.
+folderSizeSettings.modeOff	Av
+folderSizeSettings.modeShallow	Bara deras egna filer
+folderSizeSettings.modeFull	Allt de innehåller
+folderSizeSettings.locked	Satt av %@ i miljön – det avgörs där, inte här.
+folderSizeSettings.environment	Undantag definierade av miljön
+folderSizeSettings.additional	Ytterligare undantag
+folderSizeSettings.none	Inga sökvägar konfigurerade
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Lägg till
+folderSizeSettings.unavailable	Inställningar för mappstorlekar är bara tillgängliga för administratörer.
+folderSizeSettings.saveButton	Spara ändringar
+folderSizeSettings.discardButton	Förkasta
+activityLog.navigationTitle	Aktivitetslogg
+activityLog.subtitle	Vem som gjorde vad, när och varifrån. Av tills du ber om den.
+activityLog.enabled	Registrera aktivitet
+activityLog.enabledHelp	Inloggningar, nedladdningar, uppladdningar, borttagningar, återställningar, delningar och kontoändringar skrivs ned så länge detta är på. Det som hände innan finns inte med.
+activityLog.retention	Behåll (dagar)
+activityLog.retentionInvalid	Mellan 1 och 3650 dagar.
+activityLog.saveButton	Spara ändringar
+activityLog.off	Loggen är av, ingenting registreras.
+activityLog.none	Ingenting registrerat ännu.
+activityLog.filterAction	Sort
+activityLog.anyAction	Alla sorter
+activityLog.filterOutcome	Resultat
+activityLog.anyOutcome	Alla resultat
+activityLog.outcomeOk	Lyckad
+activityLog.outcomeRefused	Nekad
+activityLog.searchPlaceholder	Ett namn eller en sökväg
+activityLog.searchButton	Sök
+activityLog.refresh	Uppdatera
+activityLog.clear	Töm loggen
+activityLog.clearTitle	Tömma loggen?
+activityLog.clearMessage	Varje loggad rad raderas. Detta kan inte ångras.
+activityLog.clearConfirm	Töm loggen
+activityLog.more	Visa fler
+activityLog.refusedSuffix	Nekad
+activityLog.fromAddress	Från %@
+activityLog.unavailable	Aktivitetsloggen är bara tillgänglig för administratörer.
+activityLog.action.signIn	Inloggad
+activityLog.action.signOut	Utloggad
+activityLog.action.accountPassword	Lösenord ändrat
+activityLog.action.accountTwoFactor	Andra faktorn ändrad
+activityLog.action.accountPasskey	Nyckel ändrad
+activityLog.action.accountToken	API-nyckel ändrad
+activityLog.action.adminUser	Konto ändrat
+activityLog.action.adminSettings	Inställningar ändrade
+activityLog.action.adminActivityClear	Loggen tömd
+activityLog.action.shareCreate	Delning skapad
+activityLog.action.shareDelete	Delning borttagen
+activityLog.action.shareDownload	Hämtad via en länk
+activityLog.action.shareUpload	Uppladdad via en länk
+activityLog.action.fileDownload	Hämtad
+activityLog.action.fileUpload	Uppladdad
+activityLog.action.fileDelete	Till papperskorgen
+activityLog.action.fileRestore	Återställd
+activityLog.action.filePurge	Borttagen för gott
+activityLog.action.versionsPurge	Versioner borttagna
+trashSettings.navigationTitle	Papperskorg och versioner
+trashSettings.subtitle	Borttagna objekt och tidigare versioner av filer sparas i ett reserverat utrymme på sin egen volym och tas bort efter lagringstiden eller när utrymmet behövs.
+trashSettings.trashHeader	Papperskorg
+trashSettings.enabled	Flytta raderade objekt till papperskorgen
+trashSettings.enabledHelp	Avstängd tar radering bort permanent. Objekt som redan ligger i papperskorgen löper fortfarande ut.
+trashSettings.retention	Lagringstid (dagar)
+trashSettings.retentionHelp	Från 1 till 3650 dagar.
+trashSettings.maxPercent	Andel av varje volym (%)
+trashSettings.maxPercentHelp	Det mesta papperskorgen får ta på en volym, från 1 till 90 %.
+trashSettings.maxSize	Storleksgräns per volym (GiB)
+trashSettings.maxSizeHelp	Valfritt. Det minsta av andelen och gränsen gäller.
+trashSettings.maxSizeNone	Ingen gräns
+trashSettings.trashInvalid	Kontrollera värdena: lagringstid 1 till 3650 dagar, andel 1 till 90 %, en positiv storlek eller ingen.
+trashSettings.versionsHeader	Filversioner
+trashSettings.versionsSubtitle	Varje sparning behåller det den ersätter, utan att kopiera, i samma reserverade utrymme som papperskorgen. Äldre versioner glesas ut med tiden.
+trashSettings.versionsEnabled	Behåll tidigare versioner av filer
+trashSettings.versionsEnabledHelp	Oberoende av papperskorgen. Avstängt behåller sparningar inget nytt; befintliga versioner finns kvar tills de löper ut eller tas bort.
+trashSettings.keepAllHours	Behåll alla versioner (timmar)
+trashSettings.hourlyDays	Sedan en per timme (dagar)
+trashSettings.dailyDays	Sedan en per dag (dagar)
+trashSettings.maxPerFile	Högst antal versioner per fil
+trashSettings.checkpointMinutes	Kontrollpunkt för Office (minuter)
+trashSettings.tiersHelp	Efter dessa nivåer behålls en version per vecka. En redigeringssession i Office lämnar en version, plus högst en kontrollpunkt med detta intervall. Fästa versioner undantas från utglesningen och gränsen per fil.
+trashSettings.versionsInvalid	Kontrollera värdena: 1–720 timmar, 1–365 dagar per timme, 1–3650 dagar per dag, 1–1000 versioner per fil, en kontrollpunkt på 1–1440 minuter.
+trashSettings.sharedSpace	Versioner och papperskorgen delar varje volyms reserverade utrymme. När det inte räcker försvinner först äldre versioner, sedan objekt i papperskorgen, sedan varje fils senaste version och sist fästa versioner.
+trashSettings.saveButton	Spara ändringar
+trashSettings.discardButton	Förkasta
+trashSettings.unavailable	Inställningar för papperskorg och versioner är bara tillgängliga för administratörer.
+trashSettings.zonesHeader	Papperskorg per volym
+trashSettings.zonesSubtitle	Varje volym har sin papperskorg i en dold mapp .nextexplorer i roten, så radering kopierar aldrig något.
+trashSettings.zonesEmpty	Inget har raderats till en papperskorg ännu.
+trashSettings.zoneKindPersonal	Personlig mapp för %@
+trashSettings.zoneKindUserVolume	Tilldelad volym %@
+trashSettings.available	Tillgänglig
+trashSettings.unavailableMissing	Inte monterad eller borttagen
+trashSettings.unavailableReplaced	En annan disk på dess plats
+trashSettings.unavailableUnreadable	Oläsbar
+trashSettings.usage	%1$@ av %2$@
+trashSettings.noBudget	ingen gräns
+trashSettings.zoneItems	Objekt: %1$lld · %2$@
+trashSettings.zoneVersions	Versioner: %1$lld · %2$@
+trashSettings.lastPass	Senaste underhåll: %@
+trashSettings.lastPassPurged	%1$@ · borttagna: %2$lld
+trashSettings.never	inte ännu
+trashSettings.verify	Kontrollera
+trashSettings.runMaintenance	Kör underhåll nu
+trashSettings.verifyOk	Varje volyms papperskorg är konsekvent.
+trashSettings.verifyIssues	Hittade problem: %lld
+trashSettings.zoneProblems	Problem: %lld
+trashSettings.journalHeader	Logg
+trashSettings.eventEvicted	"%@" togs bort före lagringstidens slut för att frigöra utrymme
+trashSettings.eventAdopted	"%@" återhämtades efter ett avbrott
+trashSettings.eventLost	Innehållet i "%@" saknades
+trashSettings.eventFailed	"%@" kunde inte tas bort
+trashSettings.eventBreaker	För många objekt saknades på en gång: inget ändrades
+trashSettings.eventForgotten	"%@" glömdes av en administratör
+trashSettings.eventVersionEvicted	En version av ”%@” togs bort för att frigöra utrymme
+trashSettings.eventVersionFailed	En version kunde inte tas bort
+trashSettings.eventVersionLost	En version saknade sitt innehåll
+trashSettings.eventVersionTooLarge	”%@” är större än hela utrymmet: det den ersatte behölls inte
+trashSettings.eventVersionsBreaker	För många versioner saknas samtidigt: inget ändrades
+versionedFiles.navigationTitle	Filversioner
+versionedFiles.subtitle	Varje fil som har en historik, var den än finns. Den visar sökvägar från alla utrymmen, även personliga mappar, så den är bara för administratörer.
+versionedFiles.summary	Filer: %1$lld · Versioner: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Ett namn eller en sökväg
+versionedFiles.zone	Volym
+versionedFiles.anyZone	Alla volymer
+versionedFiles.stateHeader	Tillstånd
+versionedFiles.anyState	Alla tillstånd
+versionedFiles.stateLive	Filen finns kvar
+versionedFiles.stateTrashed	I papperskorgen
+versionedFiles.stateOrphaned	Filen är borta
+versionedFiles.sortHeader	Sortera efter
+versionedFiles.sortBytes	Upptaget utrymme
+versionedFiles.sortVersions	Antal versioner
+versionedFiles.sortNewest	Senaste
+versionedFiles.sortPath	Sökväg
+versionedFiles.none	Ingen fil har tidigare versioner.
+versionedFiles.unavailable	Filversioner är bara tillgängliga för administratörer.
+versionedFiles.zoneUnknown	Okänd volym
+versionedFiles.zoneKindPersonal	Personlig mapp för %@
+versionedFiles.zoneKindUserVolume	Tilldelad volym %@
+versionedFiles.rowSummary	Versioner: %1$lld · %2$@
+versionedFiles.newest	Senaste: %@
+versionedFiles.versionPinned	Fäst
+versionedFiles.versionUnavailable	Inte tillgänglig
+versionedFiles.versionBy	Av %@
+versionedFiles.detailFailed	Den här historiken kunde inte läsas.
+versionedFiles.deleteSelectedNone	Markera versioner att ta bort
+versionedFiles.deleteSelected	Ta bort markerade (%lld)
+versionedFiles.deleteAll	Radera alla versioner
+versionedFiles.confirmAllTitle	Radera varje version av ”%@”?
+versionedFiles.confirmSomeTitle	Radera de markerade versionerna (%lld)?
+versionedFiles.confirmMessage	Borttagna versioner kan inte återställas.
+versionedFiles.confirmDelete	Radera
+versionedFiles.previous	Föregående
+versionedFiles.next	Nästa
+versionedFiles.pageRange	%1$lld till %2$lld av %3$lld
+versionedFiles.deleteFailed	Vissa versioner kunde inte raderas. Kontrollera dem och försök igen.
+serverSettings.featureOffTitle	Den här funktionen är inte aktiverad
+serverSettings.featureOffKept	Det du ställer in här sparas och gäller så snart funktionen aktiveras.
+serverSettings.featureOffUseSwitch	Aktivera den med reglaget ovan.
+serverSettings.featureOffHowTo	För att aktivera den, ställ in %@ och starta om containern.
+trashSettings.environmentNote	Standardvärdena kommer från TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT och TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Standardvärdena kommer från VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE och VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Uppdatera

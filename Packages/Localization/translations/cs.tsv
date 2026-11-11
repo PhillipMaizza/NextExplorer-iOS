@@ -1,0 +1,1118 @@
+# NextExplorer: Čeština (cs). key<TAB>value.
+common.cancel	Zrušit
+common.save	Uložit
+common.edit	Upravit
+common.retry	Zkusit znovu
+common.syncCompleted	Synchronizace dokončena
+common.delete	Smazat
+common.remove	Odebrat
+common.clear	Vymazat
+common.done	Hotovo
+common.ok	OK
+common.openSettings	Otevřít Nastavení
+common.logOut	Odhlásit se
+common.close	Zavřít
+common.back	Zpět
+common.share	Sdílet
+common.copy	Kopírovat
+common.copied	Zkopírováno
+common.download	Stáhnout
+common.sort	Seřadit
+common.select	Vybrat
+common.deselect	Zrušit výběr
+common.search	Hledat
+common.password	Heslo
+common.never	Nikdy
+common.selectedCount	Vybráno: %lld
+tab.browse	Procházet
+tab.favorites	Oblíbené
+tab.shared	Sdílené
+tab.downloads	Stažené
+tab.settings	Nastavení
+sort.sheetTitle	Řadit podle
+sort.name	Název
+sort.size	Velikost
+sort.kind	Druh
+sort.dateModified	Datum změny
+sort.dateAdded	Datum přidání
+sort.dateShared	Datum sdílení
+sort.expiration	Vypršení platnosti
+sort.email	E-mail
+sort.type	Typ
+sort.ascending	Vzestupně
+sort.descending	Sestupně
+select.selectAll	Vybrat vše
+select.deselectAll	Zrušit výběr všeho
+select.listView	Zobrazení seznamu
+select.gridView	Zobrazení mřížky
+emptyState.folderEmpty	Tato složka je prázdná.
+emptyState.loadFailed	Server není dostupný.
+emptyState.noSearchMatches	Žádné shody pro „%@“.
+accessMode.readonly	Pouze pro čtení
+accessMode.readwrite	Čtení a zápis
+shareTarget.anyone	Kdokoli s odkazem
+shareTarget.users	Vybraní uživatelé
+directLinkMode.auto	Auto
+directLinkMode.inline	Zobrazit
+directLinkMode.raw	Nezpracovaný
+directLinkMode.download	Stáhnout
+thumbnailSize.small	Malé
+thumbnailSize.medium	Střední
+thumbnailSize.large	Velké
+downloadLocation.documents	Dokumenty
+downloadLocation.cache	Mezipaměť
+dateFormat.automatic	Automaticky
+browse.navigationTitle	Procházet
+browse.scopeThisFolder	Tato složka
+browse.scopeEverywhere	Všude
+browse.searchScopeInFolder	Tato složka
+browse.searchScopeEverywhere	Všude
+browse.locations	Umístění
+browse.breadcrumbHint	Otevře tuto složku
+browse.open	Otevřít
+browse.unsupportedFileType	Nepodporovaný typ souboru
+browse.actionGetInfo	Informace
+browse.actionPermissions	Oprávnění
+browse.actionRename	Přejmenovat
+browse.actionExtract	Rozbalit
+browse.actionCompress	Komprimovat
+browse.actionDownload	Stáhnout
+browse.actionAddToFavorites	Přidat do oblíbených
+browse.actionRemoveFromFavorites	Odebrat z oblíbených
+browse.actionShare	Vytvořit odkaz ke sdílení
+browse.actionDelete	Smazat
+browse.actionDuplicate	Duplikovat
+browse.renameTitle	Přejmenovat
+browse.renameNamePlaceholder	Název
+browse.actionNewFolder	Vytvořit složku
+browse.newFolderTitle	Nová složka
+browse.newFolderPlaceholder	Název složky
+browse.newFolderConfirm	Vytvořit
+browse.actionNewFile	Vytvořit soubor
+browse.newFileTitle	Nový soubor
+browse.newFileTypeHint	Použijte typ souboru, který editor otevře, například .txt, .md nebo .js.
+browse.deleteConfirmTitle	Smazat?
+browse.deleteConfirmOne	Smazat „%@“?
+browse.deleteConfirmMany	Smazat položky (%lld)?
+browse.deleteMessage	Tuto akci nelze vrátit zpět.
+browse.deleteLinkedSharesOne	Tím se odebere také 1 odkaz ke sdílení, který sem vede.
+browse.deleteLinkedSharesMany	Tím se odeberou také odkazy ke sdílení, které sem vedou (%lld).
+browse.deleteLinkedSharesUnavailable	Nepodařilo se zkontrolovat odkazy ke sdílení, které sem vedou. Případné stávající přestanou fungovat.
+browse.searchNoMatchesInFolder	Žádné shody pro „%@“.
+browse.searchEverywhere	Hledat všude
+browse.searchFailed	Hledání se nezdařilo. Zkontrolujte připojení a zkuste to znovu.
+browse.progressExtracting	Rozbalování…
+browse.progressCompressing	Komprimace…
+browse.offlineBannerTitle	Offline
+browse.offlineBannerDetail	Zobrazuje se uložená kopie z %@
+browse.actionCopy	Kopírovat
+browse.destinationPickerMoveTitle	Přesunout do…
+browse.destinationPickerConfirmMove	Přesunout sem
+browse.destinationPickerNoFolders	Žádné složky
+browse.destinationPickerLoadFailed	Složky se nepodařilo načíst.
+browse.actionMove	Přesunout
+browse.actionPaste	Vložit
+browse.actionPasteCount	Vložit položky (%lld)
+browse.actionPasteHere	Vložit sem
+browse.actionClearClipboard	Vymazat schránku
+browse.clipboardMoveCount	K přesunutí: %lld
+browse.clipboardCopyCount	Ke kopírování: %lld
+browse.clipboardCopiedOne	Zkopírováno: %@
+browse.clipboardCopiedMany	Zkopírováno položek: %lld
+browse.progressMoving	Přesouvání…
+browse.progressCopying	Kopírování…
+browse.transferMoved	Přesunuto položek: %lld
+browse.transferCopied	Zkopírováno položek: %lld
+browse.transferMovedWithSkipped	Přesunuto položek: %1$lld, přeskočeno: %2$lld
+browse.transferCopiedWithSkipped	Zkopírováno položek: %1$lld, přeskočeno: %2$lld
+browse.transferConflictTitle	Nahradit položky?
+browse.transferConflictMessageOne	"%@" v této složce již existuje.
+browse.transferConflictMessageMany	Položky, které již v této složce existují: %lld.
+browse.transferConflictReplace	Nahradit
+browse.transferConflictKeepBoth	Ponechat obě
+browse.actionOpenInBrowser	Otevřít v prohlížeči
+favorites.navigationTitle	Oblíbené
+favorites.emptyList	Označte složky hvězdičkou v Procházení a uvidíte je zde.
+favorites.actionRemoveFromFavorites	Odebrat z oblíbených
+favorites.accessibilityBadge	Oblíbená
+favorites.actionEdit	Upravit
+favorites.editTitle	Upravit oblíbenou
+favorites.editNameLabel	Název
+favorites.editNameErrorEmpty	Název nesmí být prázdný.
+favorites.editIconLabel	Ikona
+favorites.editIconOutline	Obrys
+favorites.editIconSolid	Plná
+favorites.editColorLabel	Barva
+favorites.editColorDefault	Výchozí
+favorites.editSave	Uložit
+favorites.reorderFailed	Nové pořadí se nepodařilo uložit.
+favorites.removeConfirm	Odebrat oblíbené (%lld)?
+favorites.removeMessage	Tím se pouze odeberou z Oblíbených.
+favorites.removeFailedOne	Tuto oblíbenou položku se nepodařilo odebrat.
+favorites.removeFailedMany	Tyto oblíbené položky se nepodařilo odebrat.
+favorites.removePartial	Odebráno %1$lld z %2$lld.
+downloads.navigationTitle	Stažené
+downloads.actionOpenInFiles	Otevřít v Souborech
+downloads.emptyList	Soubory, které stáhnete z Procházení, se zobrazí zde.
+downloads.deleteConfirmTitle	Smazat?
+downloads.deleteConfirmOne	Smazat „%@“?
+downloads.deleteConfirmMany	Smazat soubory (%lld)?
+downloads.deleteSingleMessage	Tím se odebere pouze místní kopie. Soubor zůstane na serveru.
+downloads.deleteBulkMessage	Tím se odeberou pouze místní kopie. Soubory zůstanou na serveru.
+downloads.errorNameExists	Soubor s tímto názvem již existuje.
+downloads.errorInvalidName	Tento název není povolen.
+downloads.errorMissing	Tento soubor již nebylo možné najít.
+downloads.errorGeneric	Tuto akci se nepodařilo dokončit.
+unsupportedPreview.genericType	Soubor
+unsupportedPreview.cannotOpen	Tato aplikace tento typ souboru neotevře.
+uploads.navigationTitle	Nahrávání
+uploads.menuTitle	Nahrát
+uploads.actionUploadFromFiles	Nahrát ze Souborů
+uploads.actionUploadFromPhotos	Nahrát z galerie
+uploads.actionTakePhoto	Pořídit fotku nebo video
+uploads.cameraDeniedTitle	Je potřeba přístup k fotoaparátu
+uploads.cameraDeniedMessage	Povolte v Nastavení přístup k fotoaparátu, abyste mohli pořídit fotku nebo video.
+uploads.destinationTitle	Nahrát do…
+uploads.destinationConfirm	Nahrát sem
+uploads.reviewTitleOne	Nahrát 1 soubor
+uploads.reviewTitleMany	Nahrát soubory (%lld)
+uploads.reviewSectionFiles	Soubory
+uploads.reviewSectionPath	Cesta
+uploads.reviewSectionSize	Celková velikost
+uploads.reviewChooseFolder	Vyberte složku
+uploads.reviewUploadButton	Nahrát
+uploads.reviewPreparing	Příprava: %lld…
+uploads.reviewAddMore	Přidat další soubory
+uploads.reviewPreviewFile	Náhled %@
+uploads.reviewInsecureNetworkNotice	Připojeno přes http. Pokud je tento server jen ve vaší domácí síti, nahrávání nebude mimo ni fungovat.
+uploads.stagingFailed	Tyto soubory se nepodařilo přidat. Zkuste to znovu.
+uploads.stagingSkipped	Položky (%lld) se nepodařilo připravit a byly vynechány.
+uploads.discardTitle	Zahodit nahrávání?
+uploads.discardMessage	Přidané soubory nebudou nahrány.
+uploads.discardConfirm	Zahodit
+uploads.statusWaiting	Čeká
+uploads.statusFailed	Nahrávání se nezdařilo
+uploads.barTitleOne	Nahrávání: %@
+uploads.barTitleMany	Nahrávání souborů: %lld
+uploads.barFailedOne	1 nahrávání se nezdařilo
+uploads.barFailedMany	Nezdařená nahrávání: %lld
+uploads.retryAll	Zkusit vše znovu
+uploads.complete	Nahrávání dokončeno
+uploads.completeMany	Nahráno souborů: %lld
+uploads.completeWithFailures	Nahráno: %1$lld, nezdařilo se: %2$lld
+uploads.failedGeneric	Tento soubor se nepodařilo nahrát.
+uploads.clear	Vymazat
+uploads.emptyList	Zatím žádná nahrávání.
+uploads.cancelAll	Zrušit všechna nahrávání
+shared.navigationTitle	Sdílené
+shared.segmentByMe	Mnou
+shared.segmentWithMe	Se mnou
+shared.sectionExpired	Platnost vypršela
+shared.badgeExpired	platnost vypršela
+shared.emptyByMe	Nasdílejte soubor nebo složku a uvidíte zde jeho odkaz.
+shared.emptyWithMe	Odkazy, které s vámi sdílejí ostatní, se zobrazí zde.
+shared.noSearchMatches	Žádné sdílení neodpovídá „%@“.
+shared.deleteTitle	Smazat odkaz ke sdílení?
+shared.deleteMessage	Odkaz okamžitě přestane fungovat. Samotného souboru ani složky se to netýká.
+shared.sharedByUnknown	Někdo
+shared.metaAccess	Přístup
+shared.metaExpiration	Vypršení platnosti
+shared.metaSharedBy	Sdílí
+shared.metaSharedWith	Sdíleno s
+shared.anyoneWithLink	Kdokoli s odkazem
+shared.linkMode	Režim odkazu
+shared.actionShareLink	Odkaz ke sdílení
+shared.actionFolderLink	Odkaz na složku
+shared.actionFileLink	Odkaz na soubor
+shared.copiedShareLink	Odkaz ke sdílení zkopírován
+shared.copiedFolderZip	Odkaz na ZIP složky zkopírován
+shared.copiedDirectFile	Přímý odkaz na soubor zkopírován
+createShare.title	Vytvořit odkaz ke sdílení
+createShare.titleCreated	Sdílení vytvořeno
+createShare.sectionLabel	Popisek
+createShare.sectionAccessMode	Režim přístupu
+createShare.sectionWhoCanAccess	Kdo má přístup
+createShare.sectionShareLink	Odkaz ke sdílení
+createShare.fieldPassword	Heslo
+createShare.togglePasswordProtect	Chránit heslem
+createShare.toggleSetExpiration	Nastavit datum vypršení
+createShare.fieldExpires	Vyprší
+createShare.submit	Vytvořit odkaz ke sdílení
+createShare.loadingUsers	Načítání uživatelů…
+createShare.noOtherUsers	Nejsou další uživatelé, se kterými lze sdílet.
+createShare.sharingPrefix	Sdílení:
+createShare.createdBanner	Odkaz ke sdílení byl úspěšně vytvořen!
+createShare.viewInShared	Zobrazit ve Sdílených
+createShare.directLinkMode	Režim přímého odkazu
+createShare.directFolderLink	Přímý odkaz na ZIP složky
+createShare.directFileLink	Přímý odkaz na soubor
+createShare.summaryAccess	Přístup
+createShare.summarySharedWith	Sdíleno s
+createShare.summaryPassword	Heslo
+createShare.summaryPasswordProtected	Chráněno
+createShare.summaryExpires	Vyprší
+createShare.summarySpecificPeople	Konkrétní lidé
+createShare.errorPastExpiration	Vyberte datum vypršení v budoucnosti.
+editShare.title	Upravit odkaz ke sdílení
+editShare.save	Uložit změny
+editShare.passwordKeepHint	Nechte prázdné, aby zůstalo stávající heslo
+editShare.savedToast	Odkaz ke sdílení aktualizován
+thumbnailSettings.navigationTitle	Miniatury
+thumbnailSettings.subtitle	Určete, jak server vytváří miniatury obrázků pro všechny klienty.
+thumbnailSettings.enable	Vytvářet miniatury
+thumbnailSettings.enableHelp	Vypněte, aby se místo toho všude zobrazovaly plné obrázky.
+thumbnailSettings.quality	Kvalita
+thumbnailSettings.qualityHelp	Vyšší kvalita vypadá lépe a zabírá více místa.
+thumbnailSettings.maxDimension	Maximální rozměr
+thumbnailSettings.maxDimensionHelp	Nejdelší strana vytvořené miniatury v pixelech.
+thumbnailSettings.concurrency	Souběžnost
+thumbnailSettings.concurrencyHelp	Kolik miniatur server vytváří najednou.
+thumbnailSettings.unavailable	Nastavení miniatur je dostupné pouze správcům.
+thumbnailSettings.saveButton	Uložit změny
+uploadSettings.navigationTitle	Nahrávání
+uploadSettings.subtitle	Nastavte, jak se soubory odesílají na server.
+uploadSettings.chunkedEnable	Povolit nahrávání po částech
+uploadSettings.chunkedEnableHelp	Používá TUS k odesílání velkých souborů několika menšími požadavky.
+uploadSettings.chunkSize	Velikost části
+uploadSettings.chunkSizeHelp	Maximální velikost každého požadavku na nahrání. Držte ji pod limitem vašeho reverzního proxy. Menší části dávají plynulejší průběh.
+uploadSettings.autoFallback	Automatický přechod na části
+uploadSettings.autoFallbackHelp	Pokud přímé nahrání selže, protože reverzní proxy odmítne velikost těla požadavku, automaticky se přepne na nahrávání po částech.
+uploadSettings.unavailable	Nastavení nahrávání je dostupné pouze správcům.
+uploadSettings.saveButton	Uložit změny
+ffmpegSettings.subtitle	Vyberte spustitelné soubory FFmpeg a FFprobe používané pro náhledy médií a metadata.
+ffmpegSettings.containerPathHelp	Zadejte absolutní cesty viditelné uvnitř kontejneru aplikace. Chcete-li použít binárky hostitele, nejprve je připojte do kontejneru.
+ffmpegSettings.ffmpegPath	Cesta ke spustitelnému souboru FFmpeg
+ffmpegSettings.ffprobePath	Cesta ke spustitelnému souboru FFprobe
+ffmpegSettings.invalid	Obě cesty musí být absolutní cesty v kontejneru začínající znakem /.
+ffmpegSettings.defaultHelp	Nechte cestu prázdnou, aby se použila proměnná FFMPEG_PATH nebo FFPROBE_PATH z prostředí a poté přibalený spustitelný soubor. Změny se projeví okamžitě.
+ffmpegSettings.unavailable	Nastavení FFmpeg je dostupné pouze správcům.
+ffmpegSettings.saveButton	Uložit změny
+searchIndexSettings.navigationTitle	Vyhledávací index
+searchIndexSettings.subtitle	Vyloučit cesty z indexování obsahu.
+searchIndexSettings.running	Udržovat vyhledávací index
+searchIndexSettings.runningHelp	Čte dokumenty na svazku na pozadí, aby vyhledávání v nich odpovídalo okamžitě.
+searchIndexSettings.locked	Nastaveno proměnnou %@ v prostředí, takže se rozhoduje tam, ne tady.
+searchIndexSettings.environment	Vyloučení definovaná prostředím
+searchIndexSettings.additional	Další vyloučení
+searchIndexSettings.none	Není nastavena žádná cesta
+searchIndexSettings.addButton	Přidat
+searchIndexSettings.unavailable	Nastavení vyhledávacího indexu je dostupné pouze správcům.
+searchIndexSettings.saveButton	Uložit změny
+searchIndexSettings.discardButton	Zahodit
+folderSizeSettings.navigationTitle	Velikosti složek
+folderSizeSettings.subtitle	Vyloučit cesty z výpočtu a indexování velikostí složek.
+folderSizeSettings.running	Měřit velikosti složek
+folderSizeSettings.runningHelp	Měří složky na pozadí, aby se jejich velikost zobrazila v seznamu.
+folderSizeSettings.modeOff	Vypnuto
+folderSizeSettings.modeShallow	Jen jejich vlastní soubory
+folderSizeSettings.modeFull	Vše uvnitř
+folderSizeSettings.locked	Nastaveno proměnnou %@ v prostředí, takže se rozhoduje tam, ne tady.
+folderSizeSettings.environment	Vyloučení definovaná prostředím
+folderSizeSettings.additional	Další vyloučení
+folderSizeSettings.none	Nejsou nastaveny žádné cesty
+folderSizeSettings.addButton	Přidat
+folderSizeSettings.unavailable	Nastavení velikostí složek je dostupné pouze správcům.
+folderSizeSettings.saveButton	Uložit změny
+folderSizeSettings.discardButton	Zahodit
+activityLog.navigationTitle	Protokol aktivity
+activityLog.subtitle	Kdo co udělal, kdy a odkud. Vypnuto, dokud to nezapnete.
+activityLog.enabled	Zaznamenávat aktivitu
+activityLog.enabledHelp	Přihlášení, stahování, nahrávání, mazání, obnovení, odkazy ke sdílení a změny účtů se zapisují, dokud je to zapnuté. Co se stalo před zapnutím, tu není.
+activityLog.retention	Uchovávat (dnů)
+activityLog.retentionInvalid	Od 1 do 3650 dnů.
+activityLog.saveButton	Uložit změny
+activityLog.off	Protokol je vypnutý, takže se nic nezaznamenává.
+activityLog.none	Zatím nic nezaznamenáno.
+activityLog.filterAction	Druh
+activityLog.anyAction	Libovolný druh
+activityLog.filterOutcome	Výsledek
+activityLog.anyOutcome	Libovolný výsledek
+activityLog.outcomeOk	Úspěšné
+activityLog.outcomeRefused	Odmítnuto
+activityLog.searchPlaceholder	Název nebo cesta
+activityLog.searchButton	Hledat
+activityLog.refresh	Obnovit
+activityLog.clear	Vyprázdnit protokol
+activityLog.clearTitle	Vyprázdnit protokol?
+activityLog.clearMessage	Každý zaznamenaný řádek bude smazán. Tuto akci nelze vrátit zpět.
+activityLog.clearConfirm	Vyprázdnit protokol
+activityLog.more	Zobrazit další
+activityLog.refusedSuffix	Odmítnuto
+activityLog.fromAddress	Z adresy %@
+activityLog.unavailable	Protokol aktivity je dostupný pouze správcům.
+activityLog.action.signIn	Přihlášeno
+activityLog.action.signOut	Odhlášeno
+activityLog.action.accountPassword	Heslo změněno
+activityLog.action.accountTwoFactor	Druhý faktor změněn
+activityLog.action.accountPasskey	Přístupový klíč změněn
+activityLog.action.accountToken	Token API změněn
+activityLog.action.adminUser	Účet změněn
+activityLog.action.adminSettings	Nastavení změněno
+activityLog.action.adminActivityClear	Protokol vymazán
+activityLog.action.shareCreate	Sdílení vytvořeno
+activityLog.action.shareDelete	Sdílení smazáno
+activityLog.action.shareDownload	Staženo přes odkaz
+activityLog.action.shareUpload	Nahráno přes odkaz
+activityLog.action.fileDownload	Staženo
+activityLog.action.fileUpload	Nahráno
+activityLog.action.fileDelete	Přesunuto do koše
+activityLog.action.fileRestore	Obnoveno
+activityLog.action.filePurge	Trvale odstraněno
+activityLog.action.versionsPurge	Verze smazány
+trashSettings.navigationTitle	Koš a verze
+trashSettings.subtitle	Smazané položky a dřívější verze souborů se uchovávají ve vyhrazeném místě na vlastním svazku a odstraňují se po uplynutí doby uchování nebo když je toto místo potřeba.
+trashSettings.trashHeader	Koš
+trashSettings.enabled	Posílat smazané položky do koše
+trashSettings.enabledHelp	Když je vypnuto, smazání položky odstraní trvale. Položky, které už v koši jsou, stále vyprší.
+trashSettings.retention	Doba uchování (dnů)
+trashSettings.retentionHelp	Od 1 do 3650 dnů.
+trashSettings.maxPercent	Podíl každého svazku (%)
+trashSettings.maxPercentHelp	Nejvíce, co může koš na svazku zabírat, od 1 do 90 %.
+trashSettings.maxSize	Limit velikosti na svazek (GiB)
+trashSettings.maxSizeHelp	Volitelné. Platí menší z podílu a limitu.
+trashSettings.maxSizeNone	Bez limitu
+trashSettings.trashInvalid	Zkontrolujte hodnoty: doba uchování od 1 do 3650 dnů, podíl od 1 do 90 %, kladná velikost nebo žádná.
+trashSettings.versionsHeader	Verze souborů
+trashSettings.versionsSubtitle	Každé uložení zachová to, co nahrazuje, bez kopírování, ve stejném vyhrazeném místě jako koš. Starší verze se časem prořeďují.
+trashSettings.versionsEnabled	Uchovávat dřívější verze souborů
+trashSettings.versionsEnabledHelp	Nezávisí na koši. Když je vypnuto, ukládání nic nového nezachová; stávající verze zůstanou, dokud nevyprší nebo nejsou smazány.
+trashSettings.keepAllHours	Uchovávat každou verzi (hodin)
+trashSettings.hourlyDays	Poté jednu za hodinu (dnů)
+trashSettings.dailyDays	Poté jednu za den (dnů)
+trashSettings.maxPerFile	Nejvýše verzí na soubor
+trashSettings.checkpointMinutes	Kontrolní bod Office (minut)
+trashSettings.tiersHelp	Po těchto stupních se uchovává jedna verze týdně. Editační relace v Office zanechá jednu verzi a kontrolní bod nejvýše takto často. Připnuté verze se neprořeďují a nepočítají se do limitu na soubor.
+trashSettings.versionsInvalid	Zkontrolujte hodnoty: 1 až 720 hodin, 1 až 365 dnů na hodinu, 1 až 3650 dnů na den, 1 až 1000 verzí na soubor, kontrolní bod od 1 do 1440 minut.
+trashSettings.sharedSpace	Verze a koš sdílejí vyhrazené místo každého svazku. Když ho dochází, odcházejí nejdřív starší verze, pak položky koše, pak poslední verze každého souboru a nakonec připnuté verze.
+trashSettings.saveButton	Uložit změny
+trashSettings.discardButton	Zahodit
+trashSettings.unavailable	Nastavení koše a verzí je dostupné pouze správcům.
+trashSettings.zonesHeader	Koš podle svazku
+trashSettings.zonesSubtitle	Každý svazek uchovává svůj koš ve skryté složce .nextexplorer v kořeni, takže smazání nic nekopíruje.
+trashSettings.zonesEmpty	Do koše zatím nebylo nic smazáno.
+trashSettings.zoneKindPersonal	Osobní složka uživatele %@
+trashSettings.zoneKindUserVolume	Přiřazený svazek %@
+trashSettings.available	Dostupný
+trashSettings.unavailableMissing	Nepřipojeno nebo odebráno
+trashSettings.unavailableReplaced	Na jeho místě je jiný disk
+trashSettings.unavailableUnreadable	Nečitelný
+trashSettings.usage	%1$@ z %2$@
+trashSettings.noBudget	bez limitu
+trashSettings.zoneItems	Položky: %1$lld · %2$@
+trashSettings.zoneVersions	Verze: %1$lld · %2$@
+trashSettings.lastPass	Poslední údržba: %@
+trashSettings.lastPassPurged	%1$@ · odstraněno: %2$lld
+trashSettings.never	zatím ne
+trashSettings.verify	Ověřit
+trashSettings.runMaintenance	Spustit údržbu nyní
+trashSettings.verifyOk	Koš každého svazku je konzistentní.
+trashSettings.verifyIssues	Nalezené problémy: %lld
+trashSettings.zoneProblems	Problémy: %lld
+trashSettings.journalHeader	Deník
+trashSettings.eventEvicted	"%@" odstraněno před koncem doby uchování, aby se uvolnilo místo
+trashSettings.eventAdopted	„%@“ bylo obnoveno po přerušení
+trashSettings.eventLost	U „%@“ chyběl obsah
+trashSettings.eventFailed	„%@“ se nepodařilo odebrat
+trashSettings.eventBreaker	Najednou chybí příliš mnoho položek: nic se nezměnilo
+trashSettings.eventForgotten	„%@“ zapomněl správce
+trashSettings.eventVersionEvicted	Verze „%@“ byla odebrána, aby se uvolnilo místo
+trashSettings.eventVersionFailed	Verzi se nepodařilo odebrat
+trashSettings.eventVersionLost	U verze chyběl obsah
+trashSettings.eventVersionTooLarge	„%@“ je větší než celý prostor: to, co nahradilo, nebylo zachováno
+trashSettings.eventVersionsBreaker	Najednou chybí příliš mnoho verzí: nic se nezměnilo
+versionedFiles.navigationTitle	Verze souborů
+versionedFiles.subtitle	Každý soubor, který má historii, ať je kdekoli. Zobrazuje cesty ze všech prostorů včetně osobních složek, proto je jen pro správce.
+versionedFiles.summary	Soubory: %1$lld · Verze: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Název nebo cesta
+versionedFiles.zone	Svazek
+versionedFiles.anyZone	Libovolný svazek
+versionedFiles.stateHeader	Stav
+versionedFiles.anyState	Libovolný stav
+versionedFiles.stateLive	Soubor stále existuje
+versionedFiles.stateTrashed	V koši
+versionedFiles.stateOrphaned	Soubor zmizel
+versionedFiles.sortHeader	Řadit podle
+versionedFiles.sortBytes	Využité místo
+versionedFiles.sortVersions	Počet verzí
+versionedFiles.sortNewest	Nejnovější
+versionedFiles.sortPath	Cesta
+versionedFiles.none	Žádný soubor nemá dřívější verze.
+versionedFiles.unavailable	Verze souborů jsou dostupné pouze správcům.
+versionedFiles.zoneUnknown	Neznámý svazek
+versionedFiles.zoneKindPersonal	Osobní složka uživatele %@
+versionedFiles.zoneKindUserVolume	Přiřazený svazek %@
+versionedFiles.rowSummary	Verze: %1$lld · %2$@
+versionedFiles.newest	Poslední: %@
+versionedFiles.versionPinned	Připnuto
+versionedFiles.versionUnavailable	Nedostupné
+versionedFiles.versionBy	Autor: %@
+versionedFiles.detailFailed	Tuto historii se nepodařilo přečíst.
+versionedFiles.deleteSelectedNone	Zaškrtněte verze ke smazání
+versionedFiles.deleteSelected	Smazat vybrané (%lld)
+versionedFiles.deleteAll	Smazat všechny verze
+versionedFiles.confirmAllTitle	Smazat všechny verze „%@“?
+versionedFiles.confirmSomeTitle	Smazat vybrané verze (%lld)?
+versionedFiles.confirmMessage	Smazané verze nelze obnovit.
+versionedFiles.confirmDelete	Smazat
+versionedFiles.previous	Předchozí
+versionedFiles.next	Další
+versionedFiles.pageRange	%1$lld až %2$lld z %3$lld
+accessRules.navigationTitle	Pravidla přístupu ke složkám
+accessRules.subtitle	Přepište přístup pro čtení a zápis u konkrétních cest.
+accessRules.addRule	Přidat pravidlo
+accessRules.empty	Nejsou nastavena žádná pravidla přístupu.
+accessRules.emptyHint	Přidejte pravidlo, které přepíše přístup k cestě.
+accessRules.pathLabel	Cesta
+accessRules.recursive	Použít na podsložky
+accessRules.permissionReadWrite	Čtení a zápis
+accessRules.permissionReadOnly	Pouze pro čtení
+accessRules.permissionHidden	Skryté
+accessRules.remove	Odebrat
+accessRules.unavailable	Pravidla přístupu jsou dostupná pouze správcům.
+accessRules.saveButton	Uložit změny
+settings.rowThumbnails	Miniatury
+settings.rowAccessRules	Pravidla přístupu ke složkám
+settings.navigationTitle	Nastavení
+settings.sectionGeneral	Obecné
+settings.sectionDisplay	Zobrazení
+settings.sectionStorage	Úložiště
+settings.sectionServerStorage	Úložiště serveru
+settings.serverStorageUsed	%1$@ z %2$@
+settings.sectionLicenses	Licence
+settings.sectionLegal	Právní informace
+settings.sectionUsers	Uživatelé
+settings.sectionAdmin	Správa
+settings.sectionInfo	Informace
+settings.toggleShowHiddenFiles	Zobrazit skryté soubory
+settings.toggleRenderHTML	Vykreslovat stránky HTML
+settings.toggleRenderMarkdown	Vykreslovat soubory Markdown
+settings.toggleHaptics	Haptická odezva
+settings.toggleShowThumbnails	Zobrazit miniatury
+settings.toggleShowExtensions	Zobrazit přípony souborů
+settings.toggleShowTabLabels	Zobrazit popisky karet
+settings.toggleKeepClipboard	Ponechat položky po vložení
+settings.toggleKeepClipboardSubtitle	Zkopírované položky zůstanou připravené k vložení do jiné složky. Přesunuté položky se vždy vymažou.
+settings.rowDateFormat	Formát data
+settings.rowLanguage	Jazyk
+settings.rowThumbnailSize	Velikost miniatur
+settings.rowRemoveAllDownloads	Odebrat všechna stažení
+settings.rowClearCache	Vymazat mezipaměť
+settings.rowOpenSourceLicenses	Licence open source
+settings.rowPrivacyPolicy	Zásady ochrany osobních údajů
+settings.rowTermsOfUse	Podmínky použití
+settings.rowUserManagement	Správa uživatelů
+settings.rowChangePassword	Změnit heslo
+settings.rowAddPassword	Přidat heslo
+settings.rowServer	Server
+settings.storageFootnote	Složky se stahují jako zip, na serveru nezůstane nic. Odebrání stažených souborů nebo vymazání mezipaměti se týká jen tohoto zařízení; na serveru se nic nemění.
+settings.storageFootnoteMac	Vymazání mezipaměti se týká jen tohoto Macu; na serveru se nic nemění.
+settings.removeAllDownloadsTitle	Odebrat všechna stažení?
+settings.removeAllDownloadsConfirm	Odebrat vše
+settings.removeAllDownloadsMessage	Tím se z tohoto zařízení smažou všechny stažené soubory. Na serveru zůstanou.
+settings.clearCacheTitle	Vymazat mezipaměť?
+settings.clearCacheConfirm	Vymazat
+settings.clearCacheMessage	Tím se vymažou uložené náhledy, miniatury a uložené výpisy složek používané offline. Na serveru se nic nemění.
+settings.signOutAlertTitle	Odhlásit se?
+settings.signOutMessage	Pro přístup k souborům se budete muset znovu přihlásit. Uložené náhledy, miniatury a výpisy složek na tomto zařízení budou vymazány.
+settings.signOutButton	Odhlásit se
+settings.signingOut	Odhlašování…
+settings.sectionAccounts	Účty
+settings.addAccount	Přidat účet
+settings.accountSignOut	Odhlásit se
+settings.accountSignOutTitle	Odhlásit se?
+settings.accountSignOutMessage	Odhlásit účet %@ na tomto zařízení? Pro jeho použití se budete muset znovu přihlásit.
+settings.accountActiveLabel	%1$@, %2$@, aktivní účet
+settings.badgeActive	Aktivní
+settings.dateFormatNavigationTitle	Formát data
+settings.dateFormatShowTime	Zobrazit čas
+language.navigationTitle	Jazyk
+language.systemDefault	Výchozí systémový
+language.systemDefaultSubtitle	Podle jazyka zařízení
+serverDetails.navigationTitle	Server
+serverDetails.changeLogo	Změnit ikonu
+serverDetails.takePhoto	Pořídit fotku
+serverDetails.chooseFromGallery	Nahrát z galerie
+serverDetails.nameLabel	Název serveru
+serverDetails.nameErrorEmpty	Název serveru nesmí být prázdný.
+serverDetails.urlLabel	URL serveru
+serverDetails.urlFootnote	Adresa, na které je nainstalována vaše instance NextExploreru. Chcete-li ji změnit, odhlaste se a přidejte server znovu.
+serverDetails.updateButton	Aktualizovat server
+serverDetails.savedMessage	Údaje o serveru byly aktualizovány.
+serverDetails.logoErrorTooLarge	Tento obrázek je příliš velký. Vyberte obrázek menší než 2 MB.
+serverDetails.cameraDeniedTitle	Přístup k fotoaparátu je vypnutý
+serverDetails.cameraDeniedMessage	Zapněte v Nastavení přístup k fotoaparátu, abyste mohli pořídit fotku.
+licenses.navigationTitle	Licence open source
+licenses.sectionFontSoftware	Software písem
+licenses.labelAuthor	Autor
+licenses.labelOriginalVersion	Původní verze
+licenses.labelModifiedVersion	Upravená verze
+licenses.labelReservedFontName	Vyhrazený název písma
+fileInfo.navigationTitleFolder	Složka
+fileInfo.rowKind	Druh
+fileInfo.rowSize	Velikost
+fileInfo.rowLocation	Umístění
+fileInfo.rowDateModified	Datum změny
+fileInfo.rowDateCreated	Datum vytvoření
+fileInfo.rowFiles	Soubory
+fileInfo.rowFolders	Složky
+fileInfo.rowTotalSize	Celková velikost
+fileInfo.sectionServerDisk	Disk serveru
+fileInfo.diskFreeOf	Volné %1$@ z %2$@
+fileInfo.rowDimensions	Rozměry
+fileInfo.rowCamera	Fotoaparát
+fileInfo.rowLens	Objektiv
+fileInfo.rowDateTaken	Datum pořízení
+fileInfo.rowDuration	Doba trvání
+fileInfo.partialScan	Spočítáno částečným skenováním: tato složka je velmi velká.
+permissions.title	Oprávnění
+permissions.sectionMode	Režim
+permissions.numericLabel	Číselný
+permissions.applyToEnclosed	Použít na obsažené položky
+permissions.applyPermissions	Použít oprávnění
+permissions.sectionOwnership	Vlastnictví
+permissions.fieldOwner	Vlastník
+permissions.fieldGroup	Skupina
+permissions.ownershipNote	Změna vlastnictví obvykle vyžaduje na serveru práva roota nebo správce.
+permissions.applyOwnership	Použít vlastnictví
+permissions.scopeOwner	Vlastník
+permissions.scopeGroup	Skupina
+permissions.scopeOthers	Ostatní
+permissions.rightRead	Čtení
+permissions.rightWrite	Zápis
+permissions.rightExecute	Spuštění
+archive.emptyFolder	Tato složka je prázdná.
+archive.openFailed	Tento soubor se nepodařilo otevřít.
+archive.openArchiveFailed	Tento archiv se nepodařilo otevřít.
+archive.entryTooLarge	Tato položka je příliš velká na otevření.
+gallery.loadFailed	Tento obrázek se nepodařilo načíst.
+textPreview.saved	Uloženo
+textPreview.loadFailed	Tento soubor se nepodařilo načíst. Zkontrolujte připojení a zkuste to znovu.
+textPreview.unsavedTitle	Uložit změny v „%@“?
+textPreview.unsavedMessage	Pokud je neuložíte, změny se ztratí.
+textPreview.dontSave	Neukládat
+userManagement.navigationTitle	Správa uživatelů
+userManagement.searchPrompt	Hledat uživatele
+userManagement.createUser	Vytvořit uživatele
+userManagement.badgeAdmin	Správce
+userManagement.emptyList	Zatím žádní uživatelé.
+userManagement.noSearchMatches	Žádní uživatelé neodpovídají „%@“.
+userManagement.loadFailed	Server není dostupný.
+userManagement.sortType	Typ
+userManagement.sortName	Název
+userManagement.sortEmail	E-mail
+userManagement.tabProfile	Profil
+userManagement.tabSecurity	Zabezpečení
+userManagement.tabVolumes	Svazky
+userManagement.createNavigationTitle	Vytvořit uživatele
+userManagement.createEmailField	E-mail
+userManagement.createUsernameField	Uživatelské jméno (volitelné)
+userManagement.createUsernamePlaceholder	Odvozeno z e-mailu
+userManagement.createPasswordField	Heslo
+userManagement.createPasswordPlaceholder	Alespoň znaků: %lld
+userManagement.createGrantAdminToggle	Udělit přístup správce
+userManagement.createGrantAdminSubtitle	Plná kontrola nad soubory, sdíleními a uživateli.
+userManagement.createSubmit	Vytvořit uživatele
+userManagement.setPasswordNavigationTitle	Heslo
+userManagement.setPasswordNewField	Nové heslo
+userManagement.setPasswordPlaceholder	Alespoň znaků: %lld
+userManagement.setPasswordResetTitle	Obnovit heslo
+userManagement.setPasswordSetTitle	Nastavit heslo
+userManagement.setPasswordResetIntro	Nastavte pro uživatele %@ nové místní heslo. Jeho stávající heslo přestane fungovat.
+userManagement.setPasswordSetIntro	Dejte uživateli %@ místní heslo, aby se mohl přihlašovat bez SSO.
+userManagement.toastProfileUpdated	Profil aktualizován
+userManagement.toastAdminGranted	Práva správce udělena
+userManagement.toastUserRemoved	Uživatel odebrán
+userManagement.toastUserCreated	Uživatel vytvořen
+userManagement.toastPasswordUpdated	Heslo aktualizováno
+userManagement.toastVolumeSaved	Svazek uložen
+userManagement.toastVolumeRemoved	Svazek odebrán
+userManagement.errorEmailRequired	E-mail je povinný.
+userManagement.errorEmailInvalid	Zadejte platnou e-mailovou adresu.
+userManagement.errorUsernameRequired	Uživatelské jméno je povinné.
+userManagement.errorEmailInUse	E-mail se již používá.
+userManagement.errorPasswordTooShort	Použijte alespoň znaků: %lld.
+userDetail.fallbackName	Uživatel
+userDetail.sectionGeneralInfo	Obecné informace
+userDetail.sectionRoles	Role a oprávnění
+userDetail.sectionLocalPassword	Místní heslo
+userDetail.sectionSSO	Jednotné přihlášení
+userDetail.sectionAssignedVolumes	Přiřazené svazky
+userDetail.profileDisplayNameField	Zobrazované jméno
+userDetail.profileDisplayNamePlaceholder	Zobrazované jméno
+userDetail.profileUsernameField	Uživatelské jméno
+userDetail.profileUsernamePlaceholder	Uživatelské jméno
+userDetail.profileEmailField	E-mail
+userDetail.profileSave	Uložit změny
+userDetail.roleAdmin	Správce
+userDetail.roleAdminSubtitle	Plná kontrola nad soubory, sdíleními a uživateli.
+userDetail.roleAdminLocked	Správce nelze v aplikaci degradovat.
+userDetail.roleGrantAdmin	Udělit práva správce
+userDetail.passwordHasLocal	Tento uživatel se přihlašuje e-mailem a heslem.
+userDetail.passwordSSOOnly	Tento uživatel nemá místní heslo a přihlašuje se pouze přes SSO.
+userDetail.passwordReset	Obnovit heslo
+userDetail.passwordSet	Nastavit heslo
+userDetail.ssoNone	Žádní propojení poskytovatelé SSO.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Propojeno
+userDetail.dangerZoneTitle	Nebezpečná zóna
+userDetail.dangerZoneSubtitle	Odebrání uživatele okamžitě zruší jeho přístup. Soubory, které na serveru vlastní, se nesmažou.
+userDetail.dangerZoneRemoveUser	Odebrat uživatele
+userDetail.volumesNone	Nejsou přiřazeny žádné svazky.
+userDetail.volumesNoneSubtitle	Tento uživatel vidí pouze výchozí sdílený prostor.
+userDetail.volumesAssign	Přiřadit svazek
+userDetail.volumesFootnote	Svazky dávají uživateli přístup k adresáři mimo výchozí sdílený prostor. Odebráním svazku se nikdy nesmažou soubory.
+userDetail.volumeEditAccessibility	Upravit %@
+userDetail.volumeRemoveAccessibility	Odebrat %@
+userDetail.removeVolumeTitle	Odebrat svazek?
+userDetail.removeVolumeMessage	%@ již není tomuto uživateli přiřazen. Samotný adresář se nemění.
+userDetail.removeUserTitle	Odebrat uživatele?
+userDetail.removeUserMessage	%@ okamžitě ztrácí přístup. Jeho soubory na serveru se nemažou.
+userDetail.grantAdminTitle	Udělit práva správce?
+userDetail.grantAdminMessage	%@ se stane správcem s plnou kontrolou nad soubory, sdíleními a uživateli. Správce nelze v aplikaci degradovat.
+userDetail.volumeSheetLabelField	Popisek
+userDetail.volumeSheetLabelPlaceholder	Popisek svazku
+userDetail.volumeSheetAccessMode	Režim přístupu
+userDetail.volumeSheetDirectory	Adresář
+userDetail.volumeSheetSaveEdit	Uložit svazek
+userDetail.volumeSheetSaveNew	Přiřadit svazek
+userDetail.volumeSheetTitleEdit	Upravit svazek
+userDetail.volumeSheetTitleNew	Přiřadit svazek
+userDetail.directoryPickerGoUp	O adresář výš
+userDetail.directoryPickerUseThis	Použít tento adresář
+userDetail.directoryPickerOpen	Otevřít %@
+userDetail.directoryPickerFailed	Adresáře se nepodařilo vypsat.
+previewToolbar.close	Zavřít
+previewToolbar.createShareLink	Vytvořit odkaz ke sdílení
+previewToolbar.download	Stáhnout
+previewToolbar.delete	Smazat
+previewToolbar.share	Sdílet
+previewToolbar.rename	Přejmenovat
+login.serverQuestion	Kde je vaše instance NextExploreru?
+login.serverInfoAccessibility	O připojení k serveru
+login.serverInfoTitle	Co je server?
+login.serverInfoBody	NextExplorer se připojuje k vašemu vlastnímu serveru NextExplorer. Správce server provozuje, vytváří účty a sdílí s vámi jeho webovou adresu. Zadejte tuto adresu a přihlaste se.\n\nZatím nemáte server? Průvodce nastavením ukáže, jak si ho zřídit.
+login.serverInfoGuide	Otevřít průvodce nastavením
+login.testConnection	Otestovat připojení
+login.identifierField	E-mail nebo uživatelské jméno
+login.passwordField	Heslo
+login.showPassword	Zobrazit heslo
+login.hidePassword	Skrýt heslo
+login.submit	Přihlásit se
+login.plaintextWarning	Toto připojení není šifrované. Vaše heslo a relace se přenášejí v čitelné podobě přes místní síť.
+error.sessionExpired	Platnost vaší relace vypršela. Přihlaste se znovu.
+error.rateLimited	Příliš mnoho požadavků. Zkuste to za chvíli znovu.
+error.network	Server není dostupný.
+error.offline	Jste offline. Připojte se k internetu a zkuste to znovu.
+error.decoding	Server odpověděl neočekávaně.
+error.server	Chyba serveru (%lld).
+error.forbidden	K tomu nemáte oprávnění.
+error.clientCertificateRequired	Tento server vyžaduje klientský certifikát. Přidejte ho v Nastavení.
+error.clientCertificateRejected	Server odmítl váš klientský certifikát.
+changePassword.navigationTitle	Změnit heslo
+changePassword.intro	Změňte heslo, kterým se přihlašujete pomocí e-mailové adresy. Na tomto zařízení zůstanete přihlášeni.
+changePassword.fieldCurrentPassword	Současné heslo
+changePassword.fieldNewPasswordLabel	Nové heslo
+changePassword.fieldConfirmPasswordLabel	Potvrdit nové heslo
+changePassword.fieldConfirmPassword	Zadejte nové heslo znovu
+changePassword.fieldNewPasswordPrompt	Alespoň znaků: %lld
+changePassword.submitButton	Aktualizovat heslo
+changePassword.success	Vaše heslo bylo aktualizováno.
+changePassword.addNavigationTitle	Přidat heslo
+changePassword.addIntro	Tento účet se přihlašuje jednotným přihlášením a zatím nemá heslo. Přidejte ho, abyste se mohli přihlašovat také e-mailovou adresou nebo uživatelským jménem.
+changePassword.addSubmitButton	Přidat heslo
+changePassword.errorMinLength	Použijte alespoň znaků: %lld.
+changePassword.errorMismatch	Hesla se neshodují.
+twoFactor.navigationTitle	Dvoufázové ověření
+twoFactor.offTitle	Dvoufázové ověření je vypnuto
+twoFactor.offIntro	Přidejte při přihlášení druhý krok. Po zadání hesla zadáte kód z ověřovací aplikace.
+twoFactor.turnOnButton	Zapnout
+twoFactor.enrollIntro	Naskenujte tento QR kód ověřovací aplikací nebo zadejte klíč ručně. Pak zadejte 6místný kód, který aplikace zobrazí.
+twoFactor.qrAccessibilityLabel	QR kód pro vaši ověřovací aplikaci
+twoFactor.keyLabel	Klíč pro nastavení
+twoFactor.copyKeyAccessibilityLabel	Kopírovat klíč pro nastavení
+twoFactor.codeAccessibilityLabel	Kód z ověřovací aplikace
+twoFactor.confirmButton	Ověřit a zapnout
+twoFactor.recoveryTitle	Uložte si záložní kódy
+twoFactor.recoveryIntro	Každý kód funguje jednou, pokud ztratíte ověřovací aplikaci. Znovu se nezobrazí, proto je uložte na bezpečné místo.
+twoFactor.copyCodesButton	Kopírovat kódy
+twoFactor.shareCodesButton	Sdílet kódy
+twoFactor.recoveryDoneButton	Uloženo
+twoFactor.onTitle	Dvoufázové ověření je zapnuto
+twoFactor.recoveryCodesLeft	Zbývající záložní kódy: %lld
+twoFactor.newCodesButton	Získat nové záložní kódy
+twoFactor.turnOffButton	Vypnout
+twoFactor.passwordNewCodesIntro	Zadejte heslo, abyste nahradili záložní kódy. Staré přestanou fungovat.
+twoFactor.passwordTurnOffIntro	Zadejte heslo, abyste vypnuli dvoufázové ověření.
+twoFactor.passwordField	Heslo
+twoFactor.passwordConfirmButton	Potvrdit
+twoFactor.manageButton	Spravovat…
+apiTokens.navigationTitle	Tokeny API
+apiTokens.sectionHeader	Vývojáři
+apiTokens.intro	Tokeny API umožňují skriptům a dalším nástrojům používat váš účet bez hesla. Token dělá jen to, co povoluje jeho přístup, a můžete ho kdykoli odvolat.
+apiTokens.emptyTitle	Žádné tokeny API
+apiTokens.emptyMessage	Vytvořte token, aby skript mohl používat váš účet.
+apiTokens.newButton	Nový token
+apiTokens.limitReached	Dosáhli jste limitu tokenů: %lld. Odvolejte jeden, abyste mohli vytvořit další.
+apiTokens.scopeRead	Pouze pro čtení
+apiTokens.scopeWrite	Čtení a zápis
+apiTokens.created	Vytvořeno: %@
+apiTokens.lastUsed	Naposledy použito: %@
+apiTokens.lastUsedFrom	Naposledy použito: %1$@ z %2$@
+apiTokens.neverUsed	Nikdy nepoužito
+apiTokens.expires	Vyprší: %@
+apiTokens.expired	Vypršelo: %@
+apiTokens.neverExpires	Nevyprší
+apiTokens.renameAction	Přejmenovat
+apiTokens.revokeAction	Odvolat
+apiTokens.menuAccessibilityLabel	Akce pro %@
+apiTokens.formTitle	Nový token API
+apiTokens.fieldName	Název
+apiTokens.namePlaceholder	Například záložní skript
+apiTokens.fieldAccess	Přístup
+apiTokens.fieldExpiry	Vyprší
+apiTokens.expiry30	Za 30 dní
+apiTokens.expiry90	Za 90 dní
+apiTokens.expiryYear	Za 1 rok
+apiTokens.expiryNever	Nikdy
+apiTokens.fieldPassword	Vaše heslo
+apiTokens.passwordHint	Zadejte heslo, abyste vytvořili token.
+apiTokens.createSubmit	Vytvořit token
+apiTokens.issuedTitle	Zkopírujte svůj token
+apiTokens.issuedIntro	Zobrazuje se pouze jednou. Uložte ho na bezpečné místo. Pokud ho ztratíte, odvolejte ho a vytvořte nový.
+apiTokens.copyToken	Kopírovat token
+apiTokens.copiedToken	Zkopírováno
+apiTokens.issuedDone	Token zkopírován
+apiTokens.renameTitle	Přejmenovat token
+apiTokens.renameSave	Uložit
+apiTokens.revokeTitle	Odvolat token?
+apiTokens.revokeMessage	Vše, co používá "%@", okamžitě přestane fungovat. Tuto akci nelze vrátit zpět.
+apiTokens.revokeConfirm	Odvolat
+login.portHint	Přidejte port (např. :3000). Většina domácích serverů neposlouchá na běžném portu 80.
+login.errorInvalidServer	Zadejte platnou adresu serveru.
+login.errorInvalidCredentials	Nesprávné uživatelské jméno nebo heslo.
+login.errorSessionExpired	Platnost vaší relace vypršela. Přihlaste se prosím znovu.
+login.errorIncomplete	Přihlášení nebylo dokončeno. Zkuste to prosím znovu.
+login.errorUnreachable	K tomuto serveru se nepodařilo připojit. Zkontrolujte adresu a zkuste to znovu.
+login.errorUnexpectedResponse	Neočekávaná odpověď serveru.
+login.errorKeychain	Relaci se nepodařilo uložit na tomto zařízení.
+login.errorDecoding	Server odpověděl neočekávaně. Zkontrolujte adresu a zkuste to znovu.
+login.errorNoLocalAuth	Na tomto serveru není povoleno přihlášení uživatelským jménem a heslem.
+login.errorRateLimited	Příliš mnoho pokusů. Počkejte prosím několik minut a zkuste to znovu.
+login.ssoButton	Přihlásit se přes SSO
+login.orDivider	nebo
+login.errorSso	Jednotné přihlášení nebylo dokončeno. Zkuste to prosím znovu.
+login.errorNoAuthMethods	Na tomto serveru není povolen žádný způsob přihlášení.
+login.errorClientCertificateRequired	Tento server vyžaduje klientský certifikát.
+login.errorClientCertificateRejected	Server odmítl tento klientský certifikát.
+login.codeTitle	Zadejte kód
+login.codeIntroAuthenticator	Tento účet vyžaduje druhý krok. Zadejte 6místný kód z ověřovací aplikace.
+login.codeIntroRecovery	Zadejte jeden ze svých záložních kódů. Každý funguje jen jednou.
+login.codeUseRecovery	Místo toho použít záložní kód
+login.codeUseAuthenticator	Místo toho použít kód z ověřovací aplikace
+login.codeField	Kód
+login.codeSubmit	Ověřit
+login.errorInvalidCode	Tento kód není správný.
+login.errorSecondFactorExpired	Toto přihlášení vypršelo. Zadejte heslo znovu.
+login.diagnosticsButton	Sdílet protokol přihlášení
+login.diagnosticsTitle	Protokol přihlášení
+login.diagnosticsIntro	Tento protokol ukazuje, co server odpověděl v každém kroku, aby bylo možné zjistit, proč se přihlášení nedaří. Nikdy neobsahuje vaše heslo, zadanou adresu ani uživatelské jméno. Pošlete ho vývojáři.
+browse.nameErrorReserved	Tento název není povolen.
+browse.nameErrorSeparators	Název nesmí obsahovat / ani \.
+browse.searchMatchLine	Řádek %1$lld: %2$@
+browse.searchMatchLineLabel	Řádek %lld
+browse.searchTooShort	Pro hledání v podsložkách a obsahu souborů zadejte alespoň znaků: %lld.
+browse.searchStoppedEarly	Hledání se zastavilo na časovém limitu. Toto jsou dosud nalezené výsledky.
+browse.searchFirstOnly	Prvních výsledků: %lld. Zúžte hledání, abyste viděli další.
+browse.searchShowMore	Zobrazit další
+browse.searchMatchColumn	Shoda
+browse.searchMatchedByName	Název
+browse.searchMatchedByContent	Obsah
+browse.searchMatchedByBoth	Název a obsah
+createShare.errorPasswordRequired	Zadejte heslo nebo vypněte ochranu heslem.
+login.errorServer	Na serveru došlo k problému (chyba %lld). Zkuste to prosím později.
+filter.sheetTitle	Filtrovat podle typu
+filter.button	Filtr
+filter.all	Všechny typy
+filter.folders	Složky
+filter.images	Obrázky
+filter.videos	Videa
+filter.audio	Zvuk
+filter.documents	Dokumenty
+filter.archives	Archivy
+filter.other	Ostatní
+settings.creditsMadeBy	Vytvořil s ❤️ Phillip Maizza
+settings.creditsLikeApp	Líbí se vám aplikace?
+settings.creditsBuyCoffee	Pozvěte mě na kávu ☕️
+tipJar.title	Pozvěte mě na kávu
+tipJar.explanation	NextExplorer je zdarma a open source. Pokud vám je užitečný, malé spropitné pomáhá udržet ho při životě. Děkujeme!
+tipJar.toastThanks	Děkujeme za podporu projektu! 🙏
+tipJar.errorLoad	Možnosti spropitného se nepodařilo načíst. Zkuste to prosím znovu.
+tipJar.errorPurchase	Nákup se nezdařil. Zkuste to prosím znovu.
+tipJar.pending	Čeká se na schválení. Platba proběhne po schválení.
+offline.sectionTitle	Offline
+offline.settingsRow	Stáhnout soubory pro offline použití
+offline.footnote	Stažené soubory se otevřou i bez připojení.
+offline.available	Offline dostupné: %@
+offline.removeRow	Odebrat offline soubory
+offline.removeConfirmTitle	Odebrat offline soubory?
+offline.removeConfirmMessage	Tím se smažou soubory uložené pro offline použití na tomto zařízení. Vaše soubory na serveru se nezmění.
+offline.removeConfirm	Odebrat
+offline.preparing	Příprava…
+offline.downloadingName	Stahování: %@
+offline.progressCount	%lld z %lld souborů
+offline.downloadFailed	Offline stahování se nepodařilo dokončit.
+offline.selectionTitle	Stáhnout pro offline
+offline.selectionEmpty	Tato složka je prázdná.
+offline.selectionLoadFailed	Tuto složku se nepodařilo načíst.
+offline.selectionEstimate	Odhadovaná velikost stažení
+offline.selectionDownload	Stáhnout
+offline.selectionInsufficientSpace	Na tomto zařízení není dost volného místa
+offline.resyncRow	Aktualizovat offline soubory
+offline.badgeAvailable	Dostupné offline
+offline.manageRow	Spravovat offline soubory
+offline.manageTitle	Offline soubory
+offline.manageEmpty	Nic není staženo pro offline použití.
+offline.preferOfflineToggle	Přehrávat stažené kopie
+offline.pinRemoved	%@ již na serveru neexistuje a byl odebrán z offline souborů
+offline.preferOfflineSubtitle	Použít stažené video místo streamování, když je k dispozici.
+offline.tunnelSpeedNote	Připojení k serveru přes vzdálený tunel může stahování zpomalit. U velkých souborů se připojte ke stejné síti a použijte místní adresu serveru.
+menu.about	O aplikaci NextExplorer
+menu.rateApp	Ohodnotit NextExplorer…
+menu.support	Podpora NextExploreru
+menu.redo	Znovu
+menu.undo	Zpět
+settings.sectionSupport	Podpora
+settings.rowRateApp	Ohodnotit NextExplorer
+settings.rowSupport	Nápověda a podpora
+menu.refresh	Obnovit
+select.tableView	Zobrazení tabulky
+browse.progressDownloading	Stahování…
+browse.progressDownloadingIndexed	Stahování %1$lld z %2$lld…
+browse.downloadSavedTo	Uloženo do: %@
+browse.downloadSavedCountTo	Uloženo %1$lld z %2$lld položek do: %3$@
+browse.downloadSavedAllTo	Uloženo položek: %1$lld do: %2$@
+browse.downloadBulkFailed	Tyto položky se nepodařilo uložit do zařízení.
+openWith.openIn	Otevřít v %@
+openWith.openWith	Otevřít v aplikaci
+openWith.viewAsText	Zobrazit jako text
+openWith.failed	Tento soubor se nepodařilo otevřít.
+browse.showInFinder	Zobrazit ve Finderu
+browse.showInEnclosingFolder	Zobrazit v nadřazené složce
+browse.actionCut	Vyjmout
+browse.clipboardCutOne	%@ je připraveno k přesunu
+browse.clipboardCutMany	Položky připravené k přesunu: %lld
+menu.enclosingFolder	Nadřazená složka
+common.more	Více
+openWith.print	Tisk…
+menu.newWindow	Nové okno
+menu.newTab	Nová karta
+browse.actionOpenInNewWindow	Otevřít v novém okně
+browse.actionOpenInNewTab	Otevřít v nové kartě
+select.viewAs	Zobrazení
+settings.rowAppearance	Vzhled
+appearance.system	Systém
+appearance.light	Světlý
+appearance.dark	Tmavý
+browse.myFiles	Moje soubory
+browse.myFilesSubtitle	Viditelné jen pro vás
+downloadQueue.navigationTitle	Fronta stahování
+downloadQueue.openDownloads	Zobrazit stažené
+downloadQueue.emptyList	Nic se právě nestahuje.
+downloadQueue.statusSaved	Uloženo
+downloadQueue.cancelAll	Zrušit všechna stahování
+downloadQueue.barFailedOne	1 stahování se nezdařilo
+downloadQueue.barFailedMany	Nezdařená stahování: %lld
+downloadQueue.barTitleOne	Stahování: %@
+downloadQueue.barTitleMany	Stahování položek: %lld
+downloadQueue.savedOne	Uloženo do Stažených
+downloadQueue.savedMany	Položky uložené do Stažených: %lld
+downloadQueue.bytesOf	%1$@ z %2$@
+downloadQueue.timeLeft	Zbývá: %@
+browse.sectionPersonal	Osobní
+macSettings.addAccount	Přidat účet…
+macSettings.changePassword	Změnit heslo…
+macSettings.signOut	Odhlásit se…
+macSettings.switchAccount	Přepnout na tento účet
+macSettings.username	Uživatelské jméno
+macSettings.email	E-mail
+macSettings.role	Role
+macSettings.roleAdmin	Správce
+macSettings.roleUser	Uživatel
+macSettings.status	Stav
+macSettings.statusSignedIn	Přihlášeno
+macSettings.manage	Spravovat…
+macSettings.cache	Mezipaměť
+macSettings.support	Nápověda a podpora…
+macSettings.permission	Oprávnění
+macSettings.icon	Ikona
+menu.go	Přejít
+menu.activity	Přenosy
+menu.showAll	Zobrazit vše
+uploads.notifyDone	Nahrávání dokončeno
+uploads.notifyBody	Nahráno souborů: %lld
+downloadQueue.notifyDone	Stahování dokončeno
+fileInfo.sectionVersions	Verze
+fileInfo.versionsNone	Žádné dřívější verze
+fileInfo.versionRestore	Obnovit…
+fileInfo.restoreTitle	Obnovit tuto verzi?
+fileInfo.restoreMessage	Soubor se vrátí do stavu z %@. To, co obsahuje nyní, se uchová jako verze.
+fileInfo.restoreConfirm	Obnovit
+fileInfo.sectionSharing	Sdílení
+fileInfo.notShared	Žádné odkazy ke sdílení
+fileInfo.versionActions	Akce s verzí
+fileInfo.versionDownload	Stáhnout…
+fileInfo.versionSaveCopy	Uložit jako kopii
+fileInfo.versionRename	Přejmenovat…
+fileInfo.renameTitle	Přejmenovat verzi
+fileInfo.renamePlaceholder	Název verze
+fileInfo.versionPin	Ponechat tuto verzi
+fileInfo.versionUnpin	Přestat ponechávat tuto verzi
+fileInfo.versionKept	Ponechána
+fileInfo.versionDelete	Smazat…
+fileInfo.deleteTitle	Smazat tuto verzi?
+fileInfo.deleteAll	Smazat všechny verze…
+fileInfo.deleteAllTitle	Smazat všechny verze?
+fileInfo.deleteMessage	Smazané verze jsou nenávratně pryč. Samotný soubor zůstane, jak je.
+macSettings.choose	Vybrat…
+menu.forward	Vpřed
+menu.goToFolder	Přejít do složky…
+menu.goToFolderTitle	Přejít do složky:
+menu.copyPath	Kopírovat cestu
+menu.recentFolders	Nedávné složky
+menu.clearRecent	Vymazat nabídku
+common.loading	Načítání…
+browse.quickLookUnavailable	Rychlý náhled není pro tento typ souboru k dispozici.
+browse.quickLookTooLarge	Tento soubor je pro Rychlý náhled příliš velký.
+menu.zoomIn	Přiblížit
+menu.zoomOut	Oddálit
+menu.zoomToFit	Přizpůsobit velikosti
+menu.quitTransfersTitle	Ukončit NextExplorer?
+menu.quitTransfersMessage	Nahrávání nebo stahování stále probíhá. Ukončením ho zastavíte.
+menu.quitTransfersConfirm	Ukončit
+media.play	Přehrát
+media.pause	Pozastavit
+media.position	Pozice přehrávání
+media.positionValue	%1$@ z %2$@
+media.clientCertificateUnsupported	Tento formát nelze streamovat ze serveru, který vyžaduje klientský certifikát. Stáhněte soubor a přehrajte ho.
+clientCertificate.title	Klientský certifikát
+clientCertificate.intro	Některé servery pouštějí jen zařízení, která předloží klientský certifikát (mTLS). Vyberte soubor .p12 nebo .pfx, který jste pro tento server dostali.
+clientCertificate.certificateLabel	Certifikát
+clientCertificate.none	Není nainstalován žádný certifikát
+clientCertificate.issuedBy	Vystavil: %@
+clientCertificate.expires	Vyprší: %@
+clientCertificate.expired	Vypršelo: %@
+clientCertificate.chooseFile	Vybrat soubor
+clientCertificate.replace	Nahradit certifikát
+clientCertificate.remove	Odebrat certifikát
+clientCertificate.install	Nainstalovat
+clientCertificate.passwordLabel	Heslo souboru
+clientCertificate.passwordPrompt	Heslo, se kterým byl soubor exportován
+clientCertificate.chooseAnother	Vybrat jiný soubor
+clientCertificate.errorWrongPassword	Toto heslo tento soubor neodemkne.
+clientCertificate.errorInvalidFile	Toto není platný soubor certifikátu .p12 nebo .pfx.
+clientCertificate.errorNoIdentity	Tento soubor neobsahuje soukromý klíč. Exportujte certifikát spolu s jeho klíčem.
+clientCertificate.errorStorage	Certifikát se nepodařilo uložit na tomto zařízení.
+clientCertificate.errorUnreadable	Tento soubor se nepodařilo přečíst.
+clientCertificate.errorRemove	Certifikát se nepodařilo odebrat z tohoto zařízení.
+clientCertificate.removeTitle	Odebrat certifikát?
+clientCertificate.removeMessage	NextExplorer ho přestane předkládat serveru %@. Pokud tento server certifikát vyžaduje, aplikace se nepřipojí, dokud certifikát znovu nepřidáte.
+clientCertificate.removeConfirm	Odebrat
+clientCertificate.expiredWarning	Platnost tohoto certifikátu vypršela. Server ho pravděpodobně odmítne.
+login.addClientCertificate	Přidat certifikát
+login.manageClientCertificate	Spravovat certifikát
+settings.clientCertificate	Klientský certifikát
+settings.clientCertificateNone	Žádný
+login.usingClientCertificate	Používá se klientský certifikát %@
+login.changeClientCertificate	Změnit
+login.ssoClientCertificateNote	Jednotné přihlášení se otevírá v Safari, který klientský certifikát této aplikace použít nemůže. Přihlaste se heslem nebo nainstalujte certifikát do tohoto zařízení, abyste mohli jednotné přihlášení používat.
+settings.clientCertificateExpired	Vypršelo
+settings.clientCertificateExpiresSoon	Brzy vyprší
+clientCertificate.expiringSoonWarning	Platnost tohoto certifikátu vyprší %@. Požádejte o nový před tímto datem.
+shareUpload.title	Nahrát do NextExploreru
+shareUpload.itemCount	Soubory k nahrání: %lld
+shareUpload.accountLabel	Účet
+shareUpload.folderLabel	Složka
+shareUpload.folderChoose	Vyberte složku
+shareUpload.upload	Nahrát
+shareUpload.preparing	Příprava %lld z %lld…
+shareUpload.started	Nahrává se na pozadí. Až bude hotovo, dostanete oznámení.
+shareUpload.signedOut	Nejprve se přihlaste do NextExploreru a pak sdílejte znovu.
+shareUpload.nothingToUpload	Není tu nic, co by NextExplorer mohl nahrát.
+shareUpload.failed	Soubory se nepodařilo připravit k nahrání.
+shareUpload.notificationDoneTitle	Nahrávání dokončeno
+shareUpload.notificationFailedTitle	Některé soubory se nenahrály
+shareUpload.notificationDoneBody#one	Nahrán %lld soubor do „%@“.
+shareUpload.notificationDoneBody#other	Nahráno %lld souborů do „%@“.
+shareUpload.notificationDoneBody#few	Nahrány %lld soubory do „%@“.
+shareUpload.notificationDoneBody#many	Nahráno %lld souboru do „%@“.
+shareUpload.notificationAllFailedTitle	Nahrávání se nezdařilo
+shareUpload.failureUnauthorized#one	%lld soubor se nenahrál. Přihlaste se znovu a zkuste to znovu.
+shareUpload.failureUnauthorized#other	%lld souborů se nenahrálo. Přihlaste se znovu a zkuste to znovu.
+shareUpload.failureUnauthorized#few	%lld soubory se nenahrály. Přihlaste se znovu a zkuste to znovu.
+shareUpload.failureUnauthorized#many	%lld souboru se nenahrálo. Přihlaste se znovu a zkuste to znovu.
+shareUpload.failureForbidden#one	%lld soubor se nenahrál. Nemáte oprávnění přidávat soubory do této složky.
+shareUpload.failureForbidden#other	%lld souborů se nenahrálo. Nemáte oprávnění přidávat soubory do této složky.
+shareUpload.failureForbidden#few	%lld soubory se nenahrály. Nemáte oprávnění přidávat soubory do této složky.
+shareUpload.failureForbidden#many	%lld souboru se nenahrálo. Nemáte oprávnění přidávat soubory do této složky.
+shareUpload.failureServerFull#one	%lld soubor se nenahrál. Na serveru došlo úložné místo.
+shareUpload.failureServerFull#other	%lld souborů se nenahrálo. Na serveru došlo úložné místo.
+shareUpload.failureServerFull#few	%lld soubory se nenahrály. Na serveru došlo úložné místo.
+shareUpload.failureServerFull#many	%lld souboru se nenahrálo. Na serveru došlo úložné místo.
+shareUpload.failureNetwork#one	%lld soubor se nenahrál. Připojení selhalo. Zkuste to znovu, až budete zpět online.
+shareUpload.failureNetwork#other	%lld souborů se nenahrálo. Připojení selhalo. Zkuste to znovu, až budete zpět online.
+shareUpload.failureNetwork#few	%lld soubory se nenahrály. Připojení selhalo. Zkuste to znovu, až budete zpět online.
+shareUpload.failureNetwork#many	%lld souboru se nenahrálo. Připojení selhalo. Zkuste to znovu, až budete zpět online.
+shareUpload.failureOther#one	%lld soubor se nepodařilo nahrát.
+shareUpload.failureOther#other	%lld souborů se nepodařilo nahrát.
+shareUpload.failureOther#few	%lld soubory se nepodařilo nahrát.
+shareUpload.failureOther#many	%lld souboru se nepodařilo nahrát.
+shareUpload.notificationRetry	Zkusit znovu
+shareUpload.notificationHiddenPreview	Otevřete NextExplorer a zjistěte, jak nahrávání dopadlo.
+shareUpload.retryFailedTitle	Nepodařilo se zkusit znovu
+shareUpload.retryFailedBody	Otevřete NextExplorer a sdílejte soubory znovu.
+shareUpload.insufficientSpace	Na tomto zařízení není dost volného místa, aby se tyto soubory připravily k nahrání.
+settings.uploadDefaultsRow	Sdílené soubory
+settings.uploadDefaultsFolder	Výchozí složka
+settings.uploadDefaultsFolderNone	Vždy se zeptat
+settings.uploadDefaultsWithoutAsking	Nahrát bez ptaní
+settings.uploadDefaultsFooter	Fotky a soubory, které sdílíte do NextExploreru z jiných aplikací, začínají v této složce. Když je zapnuto Nahrát bez ptaní, nahrají se přímo sem.
+settings.uploadDefaultsClear	Vždy se zeptat
+common.change	Změnit
+shareUpload.sessionUnreadable	NextExplorer nedokázal přečíst vaše přihlášení na tomto zařízení. Jednou otevřete NextExplorer a pak sdílejte znovu.
+shareUpload.keepOpen	Nechte to otevřené, dokud se příprava nedokončí.
+shareUpload.checking	Kontrola připojení k %@…
+shareUpload.openApp	Otevřít NextExplorer
+shareUpload.openAppInstructions	Otevřete NextExplorer z plochy a pak sdílejte znovu.
+shareUpload.certificateRequired	Tento server vyžaduje klientský certifikát. Otevřete NextExplorer, přidejte ho v Nastavení a pak sdílejte znovu.
+shareUpload.certificateRejected	Server odmítl váš klientský certifikát. Otevřete NextExplorer, nahraďte ho v Nastavení a pak sdílejte znovu.
+shareUpload.defaultFolderUnavailable	Vaše výchozí složka už není k dispozici. Vyberte jinou složku.
+shareUpload.failedItemsHeader	Tyto soubory se nepodařilo připravit:
+shareUpload.readyCount	Připraveno k nahrání: %lld
+shareUpload.uploadReady	Nahrát připravené soubory
+shareUpload.retryFailed	Zkusit znovu neúspěšné soubory
+shareUpload.fallbackItemName	Soubor %lld
+shareUpload.causeCannotRead	Nepodařilo se ho přečíst.
+shareUpload.causeNotEnoughSpace	Na tomto zařízení není dost volného místa.
+shareUpload.causeUnknown	Nepodařilo se ho připravit.
+shareUpload.folderHint	Otevře výběr složky.
+shareUpload.accountHint	Vyberte, který účet soubory přijme.
+error.timedOut	Server odpovídal příliš dlouho. Akce se přesto může dokončit.
+error.changedOnServer	Tento soubor byl na serveru změněn poté, co jste ho otevřeli.
+textPreview.conflictTitle	„%@“ se na serveru změnil
+textPreview.conflictMessage	Přepište ho svou verzí, nebo soubor znovu načtěte a zahoďte své úpravy. Nahrazená verze zůstane v historii verzí souboru.
+textPreview.conflictOverwrite	Přepsat
+textPreview.conflictReload	Znovu načíst
+offline.waitingForNetwork	Stáhne se, až budete zpět online
+browse.bulkFavoriteFailed	Selhalo %1$lld z %2$lld
+shareUpload.livePhotoNote	Živé fotky se nahrávají spolu s pohyblivým videem.
+shareUpload.retrySignInBody	Přihlaste se do NextExploreru a pak klepněte na Zkusit znovu.
+shareUpload.causeFolder	Složky nelze sdílet. Sdílejte místo toho soubory uvnitř.
+shareUpload.notificationMoreNames	Dalších: %lld
+versionedFiles.deleteFailed	Některé verze se nepodařilo smazat. Zkontrolujte je a zkuste to znovu.
+serverSettings.featureOffTitle	Tato funkce není zapnutá
+serverSettings.featureOffKept	Co zde nastavíte, se uloží a použije se, jakmile funkci zapnete.
+serverSettings.featureOffUseSwitch	Zapněte ji přepínačem výše.
+serverSettings.featureOffHowTo	Chcete-li ji zapnout, nastavte %@ a restartujte kontejner.
+trashSettings.environmentNote	Výchozí hodnoty pocházejí z TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT a TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Výchozí hodnoty pocházejí z VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE a VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Obnovit

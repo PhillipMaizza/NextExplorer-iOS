@@ -853,3 +853,202 @@ shareUpload.causeFolder	Folderele nu pot fi partajate. Partajează în schimb fi
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	încă %lld
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	Încărcări
+uploadSettings.subtitle	Configurează modul în care fișierele sunt trimise către server.
+uploadSettings.chunkedEnable	Activează încărcările fragmentate
+uploadSettings.chunkedEnableHelp	Folosește TUS pentru a trimite fișierele mari prin mai multe cereri mai mici.
+uploadSettings.chunkSize	Dimensiunea fragmentelor
+uploadSettings.chunkSizeHelp	Dimensiunea maximă a fiecărei cereri de încărcare. Păstrează-o sub limita reverse proxy-ului tău. Bucățile mai mici dau un progres mai fluid.
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	Comutare automată la fragmentare
+uploadSettings.autoFallbackHelp	Dacă o încărcare directă eșuează pentru că un reverse proxy refuză dimensiunea, trece automat la încărcări pe bucăți.
+uploadSettings.unavailable	Setările de încărcare sunt disponibile doar administratorilor.
+uploadSettings.saveButton	Salvează modificările
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	Alegeți executabilele FFmpeg și FFprobe folosite pentru previzualizările și metadatele media.
+ffmpegSettings.containerPathHelp	Introduceți căi absolute, vizibile în interiorul containerului aplicației. Pentru a folosi binarele gazdei, montați-le mai întâi în container.
+ffmpegSettings.ffmpegPath	Calea executabilului FFmpeg
+ffmpegSettings.ffprobePath	Calea executabilului FFprobe
+ffmpegSettings.invalid	Ambele căi trebuie să fie căi absolute din container și să înceapă cu /.
+ffmpegSettings.defaultHelp	Lăsați o cale goală pentru a folosi FFMPEG_PATH sau FFPROBE_PATH din mediu, apoi executabilul inclus. Modificările se aplică imediat.
+ffmpegSettings.unavailable	Setările FFmpeg sunt disponibile doar administratorilor.
+ffmpegSettings.saveButton	Salvează modificările
+searchIndexSettings.navigationTitle	Index de căutare
+searchIndexSettings.subtitle	Excludeți căi din indexarea conținutului.
+searchIndexSettings.running	Păstrează un index de căutare
+searchIndexSettings.runningHelp	Citește documentele volumului în fundal, astfel încât o căutare în conținutul lor să răspundă imediat.
+searchIndexSettings.locked	Setat de %@ în mediu: se decide acolo, nu aici.
+searchIndexSettings.environment	Excluderi definite de mediu
+searchIndexSettings.additional	Excluderi suplimentare
+searchIndexSettings.none	Nicio cale configurată
+searchIndexSettings.addButton	Adaugă
+searchIndexSettings.unavailable	Setările indexului de căutare sunt disponibile doar administratorilor.
+searchIndexSettings.saveButton	Salvează modificările
+searchIndexSettings.discardButton	Renunță
+folderSizeSettings.navigationTitle	Dimensiunea dosarelor
+folderSizeSettings.subtitle	Exclude căi din calculul și indexarea dimensiunii dosarelor.
+folderSizeSettings.running	Măsoară dimensiunea dosarelor
+folderSizeSettings.runningHelp	Măsoară dosarele în fundal, astfel încât dimensiunea lor să apară în listă.
+folderSizeSettings.modeOff	Dezactivat
+folderSizeSettings.modeShallow	Doar fișierele proprii
+folderSizeSettings.modeFull	Tot ce conțin
+folderSizeSettings.locked	Setat de %@ în mediu: se decide acolo, nu aici.
+folderSizeSettings.environment	Excluderi definite de mediu
+folderSizeSettings.additional	Excluderi suplimentare
+folderSizeSettings.none	Nicio cale configurată
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Adaugă
+folderSizeSettings.unavailable	Setările dimensiunilor dosarelor sunt disponibile doar administratorilor.
+folderSizeSettings.saveButton	Salvează modificările
+folderSizeSettings.discardButton	Renunță
+activityLog.navigationTitle	Jurnal de activitate
+activityLog.subtitle	Cine ce a făcut, când și de unde. Oprit până îl cereți.
+activityLog.enabled	Înregistrează activitatea
+activityLog.enabledHelp	Conectările, descărcările, încărcările, ștergerile, restaurările, partajările și schimbările de cont sunt notate cât timp este pornit. Ce a fost înainte nu apare.
+activityLog.retention	Păstrează (zile)
+activityLog.retentionInvalid	Între 1 și 3650 de zile.
+activityLog.saveButton	Salvează modificările
+activityLog.off	Jurnalul este oprit: nu se înregistrează nimic.
+activityLog.none	Încă nu s-a înregistrat nimic.
+activityLog.filterAction	Tip
+activityLog.anyAction	Orice tip
+activityLog.filterOutcome	Rezultat
+activityLog.anyOutcome	Orice rezultat
+activityLog.outcomeOk	Reușit
+activityLog.outcomeRefused	Refuzat
+activityLog.searchPlaceholder	Un nume sau o cale
+activityLog.searchButton	Caută
+activityLog.refresh	Reîmprospătează
+activityLog.clear	Golește jurnalul
+activityLog.clearTitle	Golești jurnalul?
+activityLog.clearMessage	Fiecare linie înregistrată este ștearsă. Acțiunea nu poate fi anulată.
+activityLog.clearConfirm	Golește jurnalul
+activityLog.more	Arată mai multe
+activityLog.refusedSuffix	Refuzat
+activityLog.fromAddress	De la %@
+activityLog.unavailable	Jurnalul de activitate este disponibil doar administratorilor.
+activityLog.action.signIn	Conectare
+activityLog.action.signOut	Deconectare
+activityLog.action.accountPassword	Parolă schimbată
+activityLog.action.accountTwoFactor	Al doilea factor schimbat
+activityLog.action.accountPasskey	Cheie de acces schimbată
+activityLog.action.accountToken	Jeton API schimbat
+activityLog.action.adminUser	Cont modificat
+activityLog.action.adminSettings	Setări modificate
+activityLog.action.adminActivityClear	Jurnal golit
+activityLog.action.shareCreate	Partajare creată
+activityLog.action.shareDelete	Partajare ștearsă
+activityLog.action.shareDownload	Descărcat printr-un link
+activityLog.action.shareUpload	Încărcat printr-un link
+activityLog.action.fileDownload	Descărcat
+activityLog.action.fileUpload	Încărcat
+activityLog.action.fileDelete	Trimis la coșul de gunoi
+activityLog.action.fileRestore	Restaurat
+activityLog.action.filePurge	Șters definitiv
+activityLog.action.versionsPurge	Versiuni șterse
+trashSettings.navigationTitle	Coș de gunoi și versiuni
+trashSettings.subtitle	Elementele șterse și versiunile anterioare ale fișierelor sunt păstrate într-un spațiu rezervat pe propriul volum și eliminate la finalul retenției sau când este nevoie de acel spațiu.
+trashSettings.trashHeader	Coș de gunoi
+trashSettings.enabled	Trimite elementele șterse în coșul de gunoi
+trashSettings.enabledHelp	Dezactivat, ștergerea elimină definitiv. Elementele aflate deja în coș expiră în continuare.
+trashSettings.retention	Păstrare (zile)
+trashSettings.retentionHelp	Între 1 și 3650 de zile.
+trashSettings.maxPercent	Cota din fiecare volum (%)
+trashSettings.maxPercentHelp	Cel mult cât poate ocupa coșul de gunoi pe un volum, între 1 și 90 %.
+trashSettings.maxSize	Limită de dimensiune per volum (GiB)
+trashSettings.maxSizeHelp	Opțional. Se aplică cea mai mică dintre cotă și limită.
+trashSettings.maxSizeNone	Fără limită
+trashSettings.trashInvalid	Verificați valorile: păstrare între 1 și 3650 de zile, cotă între 1 și 90 %, o dimensiune pozitivă sau niciuna.
+trashSettings.versionsHeader	Versiuni de fișiere
+trashSettings.versionsSubtitle	Fiecare salvare păstrează ce înlocuiește, fără a copia, în același spațiu rezervat ca și coșul de gunoi. Versiunile vechi sunt rărite în timp.
+trashSettings.versionsEnabled	Păstrați versiunile anterioare ale fișierelor
+trashSettings.versionsEnabledHelp	Independent de coșul de gunoi. Dezactivat, salvările nu mai păstrează nimic nou; versiunile existente rămân până expiră sau sunt șterse.
+trashSettings.keepAllHours	Păstrați toate versiunile (ore)
+trashSettings.hourlyDays	Apoi una pe oră (zile)
+trashSettings.dailyDays	Apoi una pe zi (zile)
+trashSettings.maxPerFile	Cel mult versiuni per fișier
+trashSettings.checkpointMinutes	Punct de control Office (minute)
+trashSettings.tiersHelp	După aceste trepte se păstrează o versiune pe săptămână. O sesiune de editare office lasă o versiune, plus un punct de control cel mult la acest interval. Versiunile fixate scapă de rărire și de limita per fișier.
+trashSettings.versionsInvalid	Verificați valorile: 1–720 ore, 1–365 zile orare, 1–3650 zile zilnice, 1–1000 versiuni per fișier, un punct de control de 1–1440 minute.
+trashSettings.sharedSpace	Versiunile și coșul de gunoi împart spațiul rezervat al fiecărui volum. Când nu ajunge, pleacă întâi versiunile vechi, apoi elementele din coș, apoi ultima versiune a fiecărui fișier și, la final, versiunile fixate.
+trashSettings.saveButton	Salvează modificările
+trashSettings.discardButton	Renunță
+trashSettings.unavailable	Setările pentru coșul de gunoi și versiuni sunt disponibile doar administratorilor.
+trashSettings.zonesHeader	Coș de gunoi pe volum
+trashSettings.zonesSubtitle	Fiecare volum își păstrează coșul de gunoi într-un folder ascuns .nextexplorer la rădăcina sa, așa că ștergerea nu copiază niciodată nimic.
+trashSettings.zonesEmpty	Încă nu s-a șters nimic într-un coș de gunoi.
+trashSettings.zoneKindPersonal	Folderul personal al lui %@
+trashSettings.zoneKindUserVolume	Volum atribuit %@
+trashSettings.available	Disponibil
+trashSettings.unavailableMissing	Nemontat sau eliminat
+trashSettings.unavailableReplaced	Alt disc în locul lui
+trashSettings.unavailableUnreadable	Ilizibil
+trashSettings.usage	%1$@ din %2$@
+trashSettings.noBudget	fără limită
+trashSettings.zoneItems	Elemente: %1$lld · %2$@
+trashSettings.zoneVersions	Versiuni: %1$lld · %2$@
+trashSettings.lastPass	Ultima întreținere: %@
+trashSettings.lastPassPurged	%1$@ · eliminate: %2$lld
+trashSettings.never	încă nu
+trashSettings.verify	Verifică
+trashSettings.runMaintenance	Rulează întreținerea acum
+trashSettings.verifyOk	Coșul de gunoi al fiecărui volum este consecvent.
+trashSettings.verifyIssues	Probleme găsite: %lld
+trashSettings.zoneProblems	Probleme: %lld
+trashSettings.journalHeader	Jurnal
+trashSettings.eventEvicted	"%@" eliminat înainte de sfârșitul păstrării pentru a elibera spațiu
+trashSettings.eventAdopted	"%@" recuperat după o întrerupere
+trashSettings.eventLost	Conținutul lui "%@" lipsea
+trashSettings.eventFailed	"%@" nu a putut fi eliminat
+trashSettings.eventBreaker	Prea multe elemente lipseau deodată: nu s-a modificat nimic
+trashSettings.eventForgotten	"%@" uitat de un administrator
+trashSettings.eventVersionEvicted	O versiune a „%@” eliminată pentru a elibera spațiu
+trashSettings.eventVersionFailed	O versiune nu a putut fi eliminată
+trashSettings.eventVersionLost	Conținutul unei versiuni lipsea
+trashSettings.eventVersionTooLarge	„%@” depășește tot spațiul: ce înlocuia nu a fost păstrat
+trashSettings.eventVersionsBreaker	Prea multe versiuni lipsesc deodată: nu s-a modificat nimic
+versionedFiles.navigationTitle	Versiuni de fișiere
+versionedFiles.subtitle	Fiecare fișier care are un istoric, oriunde s-ar afla. Arată căi din toate spațiile, inclusiv dosarele personale, deci este doar pentru administratori.
+versionedFiles.summary	Fișiere: %1$lld · Versiuni: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Un nume sau o cale
+versionedFiles.zone	Volum
+versionedFiles.anyZone	Orice volum
+versionedFiles.stateHeader	Stare
+versionedFiles.anyState	Orice stare
+versionedFiles.stateLive	Fișierul este încă acolo
+versionedFiles.stateTrashed	La coșul de gunoi
+versionedFiles.stateOrphaned	Fișier dispărut
+versionedFiles.sortHeader	Sortează după
+versionedFiles.sortBytes	Spațiu ocupat
+versionedFiles.sortVersions	Numărul de versiuni
+versionedFiles.sortNewest	Cea mai recentă
+versionedFiles.sortPath	Cale
+versionedFiles.none	Niciun fișier nu are versiuni anterioare.
+versionedFiles.unavailable	Versiunile fișierelor sunt disponibile doar administratorilor.
+versionedFiles.zoneUnknown	Volum necunoscut
+versionedFiles.zoneKindPersonal	Folderul personal al lui %@
+versionedFiles.zoneKindUserVolume	Volum atribuit %@
+versionedFiles.rowSummary	Versiuni: %1$lld · %2$@
+versionedFiles.newest	Ultima: %@
+versionedFiles.versionPinned	Fixată
+versionedFiles.versionUnavailable	Indisponibilă
+versionedFiles.versionBy	De %@
+versionedFiles.detailFailed	Acest istoric nu a putut fi citit.
+versionedFiles.deleteSelectedNone	Bifează versiunile de șters
+versionedFiles.deleteSelected	Ștergeți selecția (%lld)
+versionedFiles.deleteAll	Șterge toate versiunile
+versionedFiles.confirmAllTitle	Ștergi fiecare versiune a lui „%@”?
+versionedFiles.confirmSomeTitle	Ștergi versiunile selectate (%lld)?
+versionedFiles.confirmMessage	Versiunile șterse nu pot fi recuperate.
+versionedFiles.confirmDelete	Șterge
+versionedFiles.previous	Anterior
+versionedFiles.next	Următor
+versionedFiles.pageRange	De la %1$lld la %2$lld din %3$lld
+versionedFiles.deleteFailed	Unele versiuni nu au putut fi șterse. Verifică-le și încearcă din nou.
+serverSettings.featureOffTitle	Această funcție nu este activată
+serverSettings.featureOffKept	Ce configurezi aici este salvat și se aplică imediat ce funcția este activată.
+serverSettings.featureOffUseSwitch	Activeaz-o cu comutatorul de mai sus.
+serverSettings.featureOffHowTo	Pentru a o activa, setează %@ și repornește containerul.
+trashSettings.environmentNote	Valorile implicite provin din TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT și TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Valorile implicite provin din VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE și VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Reîmprospătează

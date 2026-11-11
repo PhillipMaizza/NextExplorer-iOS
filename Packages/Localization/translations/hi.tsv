@@ -847,3 +847,202 @@ shareUpload.causeFolder	फ़ोल्डर शेयर नहीं कि�
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld अन्य
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	अपलोड
+uploadSettings.subtitle	कॉन्फ़िगर करें कि फ़ाइलें सर्वर पर कैसे भेजी जाती हैं।.
+uploadSettings.chunkedEnable	चंक्ड अपलोड सक्षम करें
+uploadSettings.chunkedEnableHelp	बड़ी फ़ाइलों को कई छोटे अनुरोधों के माध्यम से भेजने के लिए TUS का उपयोग करें।.
+uploadSettings.chunkSize	चंक आकार
+uploadSettings.chunkSizeHelp	हर अपलोड अनुरोध का अधिकतम आकार। इसे अपने रिवर्स प्रॉक्सी की सीमा से कम रखें। छोटे हिस्सों से प्रगति अधिक सहज दिखती है।
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	चंक्ड पर स्वतः फ़ॉलबैक
+uploadSettings.autoFallbackHelp	अगर रिवर्स प्रॉक्सी आकार को अस्वीकार करने से सीधा अपलोड विफल हो जाए, तो अपने-आप हिस्सों में अपलोड पर स्विच हो जाता है।
+uploadSettings.unavailable	अपलोड सेटिंग केवल एडमिनिस्ट्रेटर के लिए उपलब्ध हैं।
+uploadSettings.saveButton	बदलाव सहेजें
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	मीडिया पूर्वावलोकन और मेटाडेटा के लिए उपयोग होने वाले FFmpeg और FFprobe निष्पादनीय चुनें।.
+ffmpegSettings.containerPathHelp	एप्लिकेशन कंटेनर के भीतर दिखने वाले पूर्ण पथ दर्ज करें। होस्ट के बाइनरी उपयोग करने के लिए उन्हें पहले कंटेनर में माउंट करें।.
+ffmpegSettings.ffmpegPath	FFmpeg निष्पादनीय का पथ
+ffmpegSettings.ffprobePath	FFprobe निष्पादनीय का पथ
+ffmpegSettings.invalid	दोनों पथ कंटेनर के पूर्ण पथ होने चाहिए और / से शुरू होने चाहिए।.
+ffmpegSettings.defaultHelp	पथ खाली छोड़ें ताकि परिवेश से FFMPEG_PATH या FFPROBE_PATH और फिर साथ दिया गया निष्पादनीय उपयोग हो। बदलाव तुरंत लागू होते हैं।.
+ffmpegSettings.unavailable	FFmpeg सेटिंग केवल एडमिनिस्ट्रेटर के लिए उपलब्ध हैं।
+ffmpegSettings.saveButton	बदलाव सहेजें
+searchIndexSettings.navigationTitle	खोज सूचकांक
+searchIndexSettings.subtitle	सामग्री अनुक्रमण से पथ बाहर रखें।.
+searchIndexSettings.running	खोज अनुक्रमणिका बनाए रखें
+searchIndexSettings.runningHelp	वॉल्यूम के दस्तावेज़ पृष्ठभूमि में पढ़ता है, ताकि उनकी सामग्री में खोज तुरंत उत्तर दे।.
+searchIndexSettings.locked	पर्यावरण में %@ द्वारा सेट है — इसका निर्णय वहीं होता है, यहाँ नहीं।.
+searchIndexSettings.environment	एनवायरनमेंट द्वारा परिभाषित बहिष्करण
+searchIndexSettings.additional	अतिरिक्त बहिष्करण
+searchIndexSettings.none	कोई पथ कॉन्फ़िगर नहीं
+searchIndexSettings.addButton	जोड़ें
+searchIndexSettings.unavailable	खोज इंडेक्स सेटिंग केवल एडमिनिस्ट्रेटर के लिए उपलब्ध हैं।
+searchIndexSettings.saveButton	बदलाव सहेजें
+searchIndexSettings.discardButton	रद्द करें
+folderSizeSettings.navigationTitle	फ़ोल्डर आकार
+folderSizeSettings.subtitle	फ़ोल्डर आकार की गणना और अनुक्रमण से पथ बाहर रखें।.
+folderSizeSettings.running	फ़ोल्डर का आकार मापें
+folderSizeSettings.runningHelp	फ़ोल्डरों को पृष्ठभूमि में मापता है, ताकि उनका आकार सूची में दिखे।
+folderSizeSettings.modeOff	बंद
+folderSizeSettings.modeShallow	केवल उनकी अपनी फ़ाइलें
+folderSizeSettings.modeFull	उनके अंदर का सब कुछ
+folderSizeSettings.locked	पर्यावरण में %@ द्वारा सेट है — इसका निर्णय वहीं होता है, यहाँ नहीं।.
+folderSizeSettings.environment	एनवायरनमेंट द्वारा परिभाषित बहिष्करण
+folderSizeSettings.additional	अतिरिक्त बहिष्करण
+folderSizeSettings.none	कोई पथ कॉन्फ़िगर नहीं किया गया
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	जोड़ें
+folderSizeSettings.unavailable	फ़ोल्डर आकार सेटिंग केवल एडमिनिस्ट्रेटर के लिए उपलब्ध हैं।
+folderSizeSettings.saveButton	बदलाव सहेजें
+folderSizeSettings.discardButton	रद्द करें
+activityLog.navigationTitle	गतिविधि लॉग
+activityLog.subtitle	किसने क्या किया, कब और कहाँ से। जब तक आप न कहें, बंद रहता है।.
+activityLog.enabled	गतिविधि दर्ज करें
+activityLog.enabledHelp	जब तक यह चालू है, साइन-इन, डाउनलोड, अपलोड, विलोपन, पुनर्स्थापन, साझा लिंक और खाते के बदलाव दर्ज होते हैं। इससे पहले जो हुआ, वह इसमें नहीं है।.
+activityLog.retention	कितने दिन रखें
+activityLog.retentionInvalid	1 से 3650 दिनों के बीच।
+activityLog.saveButton	बदलाव सहेजें
+activityLog.off	लॉग बंद है, कुछ भी दर्ज नहीं हो रहा।.
+activityLog.none	अभी तक कुछ दर्ज नहीं हुआ।.
+activityLog.filterAction	प्रकार
+activityLog.anyAction	कोई भी प्रकार
+activityLog.filterOutcome	परिणाम
+activityLog.anyOutcome	कोई भी परिणाम
+activityLog.outcomeOk	सफल
+activityLog.outcomeRefused	अस्वीकृत
+activityLog.searchPlaceholder	नाम या पथ
+activityLog.searchButton	खोजें
+activityLog.refresh	ताज़ा करें
+activityLog.clear	लॉग खाली करें
+activityLog.clearTitle	लॉग खाली करें?
+activityLog.clearMessage	दर्ज की गई हर पंक्ति हटा दी जाएगी। इसे पूर्ववत नहीं किया जा सकता।
+activityLog.clearConfirm	लॉग खाली करें
+activityLog.more	और दिखाएँ
+activityLog.refusedSuffix	अस्वीकृत
+activityLog.fromAddress	%@ से
+activityLog.unavailable	गतिविधि लॉग केवल एडमिनिस्ट्रेटर के लिए उपलब्ध है।
+activityLog.action.signIn	साइन इन
+activityLog.action.signOut	साइन आउट
+activityLog.action.accountPassword	पासवर्ड बदला
+activityLog.action.accountTwoFactor	दूसरा कारक बदला
+activityLog.action.accountPasskey	पासकी बदली
+activityLog.action.accountToken	API टोकन बदला
+activityLog.action.adminUser	खाता बदला
+activityLog.action.adminSettings	सेटिंग्स बदलीं
+activityLog.action.adminActivityClear	लॉग साफ़ किया
+activityLog.action.shareCreate	साझा लिंक बना
+activityLog.action.shareDelete	साझा लिंक हटाया
+activityLog.action.shareDownload	लिंक से डाउनलोड
+activityLog.action.shareUpload	लिंक से अपलोड
+activityLog.action.fileDownload	डाउनलोड
+activityLog.action.fileUpload	अपलोड
+activityLog.action.fileDelete	ट्रैश में भेजा
+activityLog.action.fileRestore	पुनर्स्थापित
+activityLog.action.filePurge	स्थायी रूप से हटाया
+activityLog.action.versionsPurge	संस्करण हटाए गए
+trashSettings.navigationTitle	रीसायकल बिन और संस्करण
+trashSettings.subtitle	हटाए गए आइटम और फ़ाइलों के पिछले संस्करण उनके अपने वॉल्यूम पर एक आरक्षित स्थान में रखे जाते हैं, और अवधि पूरी होने पर या उस स्थान की ज़रूरत पड़ने पर हटा दिए जाते हैं।.
+trashSettings.trashHeader	रीसायकल बिन
+trashSettings.enabled	हटाए गए आइटम रीसायकल बिन में भेजें
+trashSettings.enabledHelp	बंद होने पर हटाने से आइटम स्थायी रूप से हट जाते हैं। रीसायकल बिन में पहले से मौजूद आइटम फिर भी समाप्त होते हैं।.
+trashSettings.retention	रखने की अवधि (दिन)
+trashSettings.retentionHelp	1 से 3650 दिन।
+trashSettings.maxPercent	प्रत्येक वॉल्यूम का हिस्सा (%)
+trashSettings.maxPercentHelp	किसी वॉल्यूम पर रीसायकल बिन अधिकतम कितना ले सकता है, 1 से 90 %।.
+trashSettings.maxSize	प्रति वॉल्यूम आकार सीमा (GiB)
+trashSettings.maxSizeHelp	वैकल्पिक। हिस्से और सीमा में से छोटा लागू होता है।.
+trashSettings.maxSizeNone	कोई सीमा नहीं
+trashSettings.trashInvalid	मान जाँचें: अवधि 1 से 3650 दिन, हिस्सा 1 से 90 %, सकारात्मक आकार या कोई नहीं।.
+trashSettings.versionsHeader	फ़ाइल संस्करण
+trashSettings.versionsSubtitle	हर बार सहेजने पर जो बदला जाता है, वह बिना प्रतिलिपि बनाए, रीसायकल बिन वाले ही आरक्षित स्थान में रखा जाता है। पुराने संस्करण समय के साथ कम किए जाते हैं।.
+trashSettings.versionsEnabled	फ़ाइलों के पिछले संस्करण रखें
+trashSettings.versionsEnabledHelp	रीसायकल बिन से स्वतंत्र। बंद होने पर सहेजने से कुछ नया नहीं रखा जाता; मौजूदा संस्करण अवधि पूरी होने या हटाए जाने तक रहते हैं।.
+trashSettings.keepAllHours	सभी संस्करण रखें (घंटे)
+trashSettings.hourlyDays	फिर हर घंटे एक (दिन)
+trashSettings.dailyDays	फिर हर दिन एक (दिन)
+trashSettings.maxPerFile	प्रति फ़ाइल अधिकतम संस्करण
+trashSettings.checkpointMinutes	ऑफ़िस चेकपॉइंट (मिनट)
+trashSettings.tiersHelp	इन स्तरों के बाद हर सप्ताह एक संस्करण रखा जाता है। ऑफ़िस संपादन का एक सत्र एक संस्करण छोड़ता है, और इस अंतराल से अधिक बार नहीं एक चेकपॉइंट। पिन किए गए संस्करण छँटाई और प्रति फ़ाइल सीमा से मुक्त रहते हैं।.
+trashSettings.versionsInvalid	मान जाँचें: 1 से 720 घंटे, प्रति घंटा 1 से 365 दिन, प्रति दिन 1 से 3650 दिन, प्रति फ़ाइल 1 से 1000 संस्करण, 1 से 1440 मिनट का चेकपॉइंट।.
+trashSettings.sharedSpace	संस्करण और रीसायकल बिन हर वॉल्यूम का आरक्षित स्थान साझा करते हैं। जगह कम पड़ने पर पहले पुराने संस्करण हटते हैं, फिर रीसायकल बिन के आइटम, फिर हर फ़ाइल का नवीनतम संस्करण, और अंत में पिन किए गए संस्करण।.
+trashSettings.saveButton	बदलाव सहेजें
+trashSettings.discardButton	रद्द करें
+trashSettings.unavailable	ट्रैश और संस्करण सेटिंग केवल एडमिनिस्ट्रेटर के लिए उपलब्ध हैं।
+trashSettings.zonesHeader	वॉल्यूम के अनुसार रीसायकल बिन
+trashSettings.zonesSubtitle	हर वॉल्यूम अपना रीसायकल बिन अपनी जड़ में छिपे फ़ोल्डर .nextexplorer में रखता है, इसलिए हटाना कभी कुछ कॉपी नहीं करता।.
+trashSettings.zonesEmpty	अभी तक किसी रीसायकल बिन में कुछ नहीं हटाया गया।.
+trashSettings.zoneKindPersonal	%@ का निजी फ़ोल्डर
+trashSettings.zoneKindUserVolume	सौंपा गया वॉल्यूम %@
+trashSettings.available	उपलब्ध
+trashSettings.unavailableMissing	माउंट नहीं या हटाया गया
+trashSettings.unavailableReplaced	उसकी जगह कोई दूसरी डिस्क
+trashSettings.unavailableUnreadable	पढ़ा नहीं जा सकता
+trashSettings.usage	%2$@ में से %1$@
+trashSettings.noBudget	कोई सीमा नहीं
+trashSettings.zoneItems	आइटम: %1$lld · %2$@
+trashSettings.zoneVersions	संस्करण: %1$lld · %2$@
+trashSettings.lastPass	पिछला रखरखाव: %@
+trashSettings.lastPassPurged	%1$@ · हटाए गए: %2$lld
+trashSettings.never	अभी नहीं
+trashSettings.verify	जाँचें
+trashSettings.runMaintenance	अभी रखरखाव चलाएँ
+trashSettings.verifyOk	हर वॉल्यूम का रीसायकल बिन सुसंगत है।.
+trashSettings.verifyIssues	मिली समस्याएँ: %lld
+trashSettings.zoneProblems	समस्याएँ: %lld
+trashSettings.journalHeader	लॉग
+trashSettings.eventEvicted	जगह खाली करने के लिए "%@" अवधि पूरी होने से पहले हटाया गया
+trashSettings.eventAdopted	रुकावट के बाद "%@" वापस पाया गया
+trashSettings.eventLost	"%@" की सामग्री गायब थी
+trashSettings.eventFailed	"%@" हटाया नहीं जा सका
+trashSettings.eventBreaker	एक साथ बहुत सारे आइटम गायब थे: कुछ नहीं बदला गया
+trashSettings.eventForgotten	"%@" को एक व्यवस्थापक ने भुला दिया
+trashSettings.eventVersionEvicted	जगह खाली करने के लिए "%@" का एक संस्करण हटाया गया
+trashSettings.eventVersionFailed	एक संस्करण हटाया नहीं जा सका
+trashSettings.eventVersionLost	एक संस्करण की सामग्री नहीं मिली
+trashSettings.eventVersionTooLarge	"%@" पूरे स्थान से बड़ी है: जो उसने बदला, वह नहीं रखा गया
+trashSettings.eventVersionsBreaker	एक साथ बहुत सारे संस्करण गायब हैं: कुछ नहीं बदला गया
+versionedFiles.navigationTitle	फ़ाइल संस्करण
+versionedFiles.subtitle	हर वह फ़ाइल जिसका इतिहास है, चाहे वह कहीं भी हो। यह सभी जगहों के पाथ दिखाता है, निजी फ़ोल्डर समेत, इसलिए यह केवल एडमिनिस्ट्रेटर के लिए है।
+versionedFiles.summary	फ़ाइलें: %1$lld · संस्करण: %2$lld · %3$@
+versionedFiles.searchPlaceholder	नाम या पथ
+versionedFiles.zone	वॉल्यूम
+versionedFiles.anyZone	कोई भी वॉल्यूम
+versionedFiles.stateHeader	स्थिति
+versionedFiles.anyState	कोई भी स्थिति
+versionedFiles.stateLive	फ़ाइल अब भी मौजूद है
+versionedFiles.stateTrashed	रद्दी में
+versionedFiles.stateOrphaned	फ़ाइल गायब है
+versionedFiles.sortHeader	क्रमबद्ध करें
+versionedFiles.sortBytes	घेरी गई जगह
+versionedFiles.sortVersions	संस्करणों की संख्या
+versionedFiles.sortNewest	सबसे नया
+versionedFiles.sortPath	पथ
+versionedFiles.none	किसी फ़ाइल का पुराना संस्करण नहीं है।.
+versionedFiles.unavailable	फ़ाइल संस्करण केवल एडमिनिस्ट्रेटर के लिए उपलब्ध हैं।
+versionedFiles.zoneUnknown	अज्ञात वॉल्यूम
+versionedFiles.zoneKindPersonal	%@ का निजी फ़ोल्डर
+versionedFiles.zoneKindUserVolume	सौंपा गया वॉल्यूम %@
+versionedFiles.rowSummary	संस्करण: %1$lld · %2$@
+versionedFiles.newest	नवीनतम: %@
+versionedFiles.versionPinned	पिन किया
+versionedFiles.versionUnavailable	उपलब्ध नहीं
+versionedFiles.versionBy	%@ द्वारा
+versionedFiles.detailFailed	यह इतिहास पढ़ा नहीं जा सका।
+versionedFiles.deleteSelectedNone	हटाने के लिए संस्करण चुनें
+versionedFiles.deleteSelected	चुने हुए हटाएँ (%lld)
+versionedFiles.deleteAll	सभी संस्करण हटाएँ
+versionedFiles.confirmAllTitle	"%@" के सभी संस्करण हटाएँ?
+versionedFiles.confirmSomeTitle	चुने हुए संस्करण (%lld) हटाएँ?
+versionedFiles.confirmMessage	हटाए गए संस्करण वापस नहीं पाए जा सकते।
+versionedFiles.confirmDelete	हटाएँ
+versionedFiles.previous	पिछला
+versionedFiles.next	अगला
+versionedFiles.pageRange	%3$lld में से %1$lld से %2$lld
+versionedFiles.deleteFailed	कुछ संस्करण हटाए नहीं जा सके। उन्हें जाँचें और फिर से कोशिश करें।
+serverSettings.featureOffTitle	यह सुविधा चालू नहीं है
+serverSettings.featureOffKept	यहाँ आप जो भी कॉन्फ़िगर करते हैं वह सहेजा जाता है और चालू होते ही लागू हो जाता है।
+serverSettings.featureOffUseSwitch	ऊपर दिए स्विच से इसे चालू करें।
+serverSettings.featureOffHowTo	इसे चालू करने के लिए %@ सेट करें और कंटेनर को रीस्टार्ट करें।
+trashSettings.environmentNote	डिफ़ॉल्ट मान TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT और TRASH_MAX_SIZE से आते हैं।
+trashSettings.versionsEnvironmentNote	डिफ़ॉल्ट मान VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE और VERSIONS_SESSION_CHECKPOINT_MINUTES से आते हैं।
+versionedFiles.refresh	ताज़ा करें

@@ -1,0 +1,1108 @@
+# NextExplorer: Norsk bokmål (nb). key<TAB>value.
+common.cancel	Avbryt
+common.save	Lagre
+common.edit	Rediger
+common.retry	Prøv igjen
+common.syncCompleted	Synkroniseringen er fullført
+common.delete	Slett
+common.remove	Fjern
+common.clear	Tøm
+common.done	Ferdig
+common.ok	OK
+common.openSettings	Åpne Innstillinger
+common.logOut	Logg ut
+common.close	Lukk
+common.back	Tilbake
+common.share	Del
+common.copy	Kopier
+common.copied	Kopiert
+common.download	Last ned
+common.sort	Sorter
+common.select	Velg
+common.deselect	Fjern valg
+common.search	Søk
+common.password	Passord
+common.never	Aldri
+common.selectedCount	%lld valgt
+tab.browse	Utforsk
+tab.favorites	Favoritter
+tab.shared	Delt
+tab.downloads	Nedlastinger
+tab.settings	Innstillinger
+sort.sheetTitle	Sorter etter
+sort.name	Navn
+sort.size	Størrelse
+sort.kind	Art
+sort.dateModified	Endringsdato
+sort.dateAdded	Dato lagt til
+sort.dateShared	Delingsdato
+sort.expiration	Utløp
+sort.email	E-post
+sort.type	Type
+sort.ascending	Stigende
+sort.descending	Synkende
+select.selectAll	Velg alle
+select.deselectAll	Fjern alle valg
+select.listView	Listevisning
+select.gridView	Rutenettvisning
+emptyState.folderEmpty	Denne mappen er tom.
+emptyState.loadFailed	Fikk ikke kontakt med serveren.
+emptyState.noSearchMatches	Ingen treff for «%@».
+accessMode.readonly	Skrivebeskyttet
+accessMode.readwrite	Lese og skrive
+shareTarget.anyone	Alle med lenken
+shareTarget.users	Bestemte brukere
+directLinkMode.auto	Auto
+directLinkMode.inline	Vis
+directLinkMode.raw	Rå
+directLinkMode.download	Last ned
+thumbnailSize.small	Liten
+thumbnailSize.medium	Middels
+thumbnailSize.large	Stor
+downloadLocation.documents	Dokumenter
+downloadLocation.cache	Hurtigbuffer
+dateFormat.automatic	Automatisk
+browse.navigationTitle	Utforsk
+browse.scopeThisFolder	Denne mappen
+browse.scopeEverywhere	Overalt
+browse.searchScopeInFolder	Denne mappen
+browse.searchScopeEverywhere	Overalt
+browse.locations	Steder
+browse.breadcrumbHint	Åpner denne mappen
+browse.open	Åpne
+browse.unsupportedFileType	Filtypen støttes ikke
+browse.actionGetInfo	Vis info
+browse.actionPermissions	Tillatelser
+browse.actionRename	Gi nytt navn
+browse.actionExtract	Pakk ut
+browse.actionCompress	Komprimer
+browse.actionDownload	Last ned
+browse.actionAddToFavorites	Legg til i favoritter
+browse.actionRemoveFromFavorites	Fjern fra favoritter
+browse.actionShare	Opprett delingslenke
+browse.actionDelete	Slett
+browse.actionDuplicate	Dupliser
+browse.renameTitle	Gi nytt navn
+browse.renameNamePlaceholder	Navn
+browse.actionNewFolder	Opprett mappe
+browse.newFolderTitle	Ny mappe
+browse.newFolderPlaceholder	Mappenavn
+browse.newFolderConfirm	Opprett
+browse.actionNewFile	Opprett fil
+browse.newFileTitle	Ny fil
+browse.newFileTypeHint	Bruk en filtype som redigeringsprogrammet kan åpne, for eksempel .txt, .md eller .js.
+browse.deleteConfirmTitle	Slette?
+browse.deleteConfirmOne	Slette «%@»?
+browse.deleteConfirmMany	Slette %lld elementer?
+browse.deleteMessage	Dette kan ikke angres.
+browse.deleteLinkedSharesOne	Dette fjerner også 1 delingslenke som peker hit.
+browse.deleteLinkedSharesMany	Dette fjerner også %lld delingslenker som peker hit.
+browse.deleteLinkedSharesUnavailable	Kunne ikke sjekke delingslenker som peker hit. Eventuelle eksisterende lenker slutter å virke.
+browse.searchNoMatchesInFolder	Ingen treff for «%@».
+browse.searchEverywhere	Søk overalt
+browse.searchFailed	Kunne ikke søke. Sjekk tilkoblingen og prøv igjen.
+browse.progressExtracting	Pakker ut…
+browse.progressCompressing	Komprimerer…
+browse.offlineBannerTitle	Frakoblet
+browse.offlineBannerDetail	Viser en lagret kopi fra %@
+browse.actionCopy	Kopier
+browse.destinationPickerMoveTitle	Flytt til…
+browse.destinationPickerConfirmMove	Flytt hit
+browse.destinationPickerNoFolders	Ingen mapper her
+browse.destinationPickerLoadFailed	Kunne ikke laste mappene.
+browse.actionMove	Flytt
+browse.actionPaste	Lim inn
+browse.actionPasteCount	Lim inn %lld elementer
+browse.actionPasteHere	Lim inn her
+browse.actionClearClipboard	Tøm utklippstavlen
+browse.clipboardMoveCount	%lld som skal flyttes
+browse.clipboardCopyCount	%lld som skal kopieres
+browse.clipboardCopiedOne	%@ kopiert
+browse.clipboardCopiedMany	%lld elementer kopiert
+browse.progressMoving	Flytter…
+browse.progressCopying	Kopierer…
+browse.transferMoved	%lld elementer flyttet
+browse.transferCopied	%lld elementer kopiert
+browse.transferMovedWithSkipped	%1$lld elementer flyttet, %2$lld hoppet over
+browse.transferCopiedWithSkipped	%1$lld elementer kopiert, %2$lld hoppet over
+browse.transferConflictTitle	Erstatte elementer?
+browse.transferConflictMessageOne	"%@" finnes allerede i denne mappen.
+browse.transferConflictMessageMany	%lld elementer finnes allerede i denne mappen.
+browse.transferConflictReplace	Erstatt
+browse.transferConflictKeepBoth	Behold begge
+browse.actionOpenInBrowser	Åpne i nettleser
+favorites.navigationTitle	Favoritter
+favorites.emptyList	Merk mapper med stjerne i Utforsk for å se dem her.
+favorites.actionRemoveFromFavorites	Fjern fra favoritter
+favorites.accessibilityBadge	Favoritt
+favorites.actionEdit	Rediger
+favorites.editTitle	Rediger favoritt
+favorites.editNameLabel	Navn
+favorites.editNameErrorEmpty	Navnet kan ikke være tomt.
+favorites.editIconLabel	Symbol
+favorites.editIconOutline	Omriss
+favorites.editIconSolid	Fylt
+favorites.editColorLabel	Farge
+favorites.editColorDefault	Standard
+favorites.editSave	Lagre
+favorites.reorderFailed	Kunne ikke lagre den nye rekkefølgen.
+favorites.removeConfirm	Fjerne %lld favoritter?
+favorites.removeMessage	Dette fjerner dem bare fra Favoritter.
+favorites.removeFailedOne	Kunne ikke fjerne den favoritten.
+favorites.removeFailedMany	Kunne ikke fjerne de favorittene.
+favorites.removePartial	Fjernet %1$lld av %2$lld.
+downloads.navigationTitle	Nedlastinger
+downloads.actionOpenInFiles	Åpne i Filer
+downloads.emptyList	Filer du laster ned fra Utforsk, vises her.
+downloads.deleteConfirmTitle	Slette?
+downloads.deleteConfirmOne	Slette «%@»?
+downloads.deleteConfirmMany	Slette %lld filer?
+downloads.deleteSingleMessage	Dette fjerner bare den lokale kopien. Filen blir liggende på serveren.
+downloads.deleteBulkMessage	Dette fjerner bare de lokale kopiene. Filene blir liggende på serveren.
+downloads.errorNameExists	Det finnes allerede en fil med det navnet.
+downloads.errorInvalidName	Det navnet er ikke tillatt.
+downloads.errorMissing	Fant ikke filen lenger.
+downloads.errorGeneric	Kunne ikke fullføre handlingen.
+unsupportedPreview.genericType	Fil
+unsupportedPreview.cannotOpen	Denne appen kan ikke åpne denne filtypen.
+uploads.navigationTitle	Opplastinger
+uploads.menuTitle	Last opp
+uploads.actionUploadFromFiles	Last opp fra Filer
+uploads.actionUploadFromPhotos	Last opp fra Galleri
+uploads.actionTakePhoto	Ta bilde eller video
+uploads.cameraDeniedTitle	Kameratilgang kreves
+uploads.cameraDeniedMessage	Gi tilgang til kameraet i Innstillinger for å ta et bilde eller en video.
+uploads.destinationTitle	Last opp til…
+uploads.destinationConfirm	Last opp hit
+uploads.reviewTitleOne	Last opp 1 fil
+uploads.reviewTitleMany	Last opp %lld filer
+uploads.reviewSectionFiles	Filer
+uploads.reviewSectionPath	Sti
+uploads.reviewSectionSize	Total størrelse
+uploads.reviewChooseFolder	Velg en mappe
+uploads.reviewUploadButton	Last opp
+uploads.reviewPreparing	Klargjør %lld…
+uploads.reviewAddMore	Legg til flere filer
+uploads.reviewPreviewFile	Forhåndsvis %@
+uploads.reviewInsecureNetworkNotice	Koblet til via http. Hvis denne serveren bare finnes på hjemmenettverket ditt, fungerer ikke opplastinger når du er borte fra det.
+uploads.stagingFailed	Kunne ikke legge til filene. Prøv igjen.
+uploads.stagingSkipped	%lld elementer kunne ikke klargjøres og ble utelatt.
+uploads.discardTitle	Forkaste opplastingen?
+uploads.discardMessage	Filene du la til, blir ikke lastet opp.
+uploads.discardConfirm	Forkast
+uploads.statusWaiting	Venter
+uploads.statusFailed	Opplastingen mislyktes
+uploads.barTitleOne	Laster opp %@
+uploads.barTitleMany	Laster opp %lld filer
+uploads.barFailedOne	1 opplasting mislyktes
+uploads.barFailedMany	%lld opplastinger mislyktes
+uploads.retryAll	Prøv alle på nytt
+uploads.complete	Opplastingen er fullført
+uploads.completeMany	%lld filer lastet opp
+uploads.completeWithFailures	%1$lld lastet opp, %2$lld mislyktes
+uploads.failedGeneric	Kunne ikke laste opp denne filen.
+uploads.clear	Tøm
+uploads.emptyList	Ingen opplastinger ennå.
+uploads.cancelAll	Avbryt alle opplastinger
+shared.navigationTitle	Delt
+shared.segmentByMe	Av meg
+shared.segmentWithMe	Med meg
+shared.sectionExpired	Utløpt
+shared.badgeExpired	utløpt
+shared.emptyByMe	Del en fil eller mappe for å se lenken her.
+shared.emptyWithMe	Lenker andre deler med deg, vises her.
+shared.noSearchMatches	Ingen delinger samsvarer med «%@».
+shared.deleteTitle	Slette delingslenken?
+shared.deleteMessage	Lenken slutter å virke umiddelbart. Selve filen eller mappen berøres ikke.
+shared.sharedByUnknown	Noen
+shared.metaAccess	Tilgang
+shared.metaExpiration	Utløp
+shared.metaSharedBy	Delt av
+shared.metaSharedWith	Delt med
+shared.anyoneWithLink	Alle med lenken
+shared.linkMode	Lenkemodus
+shared.actionShareLink	Delingslenke
+shared.actionFolderLink	Mappelenke
+shared.actionFileLink	Fillenke
+shared.copiedShareLink	Delingslenken er kopiert
+shared.copiedFolderZip	ZIP-lenken til mappen er kopiert
+shared.copiedDirectFile	Direkte fillenke er kopiert
+createShare.title	Opprett delingslenke
+createShare.titleCreated	Deling opprettet
+createShare.sectionLabel	Etikett
+createShare.sectionAccessMode	Tilgangsmodus
+createShare.sectionWhoCanAccess	Hvem har tilgang
+createShare.sectionShareLink	Delingslenke
+createShare.fieldPassword	Passord
+createShare.togglePasswordProtect	Passordbeskytt
+createShare.toggleSetExpiration	Angi utløpsdato
+createShare.fieldExpires	Utløper
+createShare.submit	Opprett delingslenke
+createShare.loadingUsers	Laster inn brukere…
+createShare.noOtherUsers	Ingen andre brukere å dele med.
+createShare.sharingPrefix	Deler:
+createShare.createdBanner	Delingslenken ble opprettet!
+createShare.viewInShared	Vis i Delt
+createShare.directLinkMode	Direkte lenkemodus
+createShare.directFolderLink	Direkte ZIP-lenke til mappe
+createShare.directFileLink	Direkte fillenke
+createShare.summaryAccess	Tilgang
+createShare.summarySharedWith	Delt med
+createShare.summaryPassword	Passord
+createShare.summaryPasswordProtected	Beskyttet
+createShare.summaryExpires	Utløper
+createShare.summarySpecificPeople	Bestemte personer
+createShare.errorPastExpiration	Velg en utløpsdato i fremtiden.
+editShare.title	Rediger delingslenke
+editShare.save	Lagre endringer
+editShare.passwordKeepHint	La feltet stå tomt for å beholde gjeldende passord
+editShare.savedToast	Delingslenken er oppdatert
+thumbnailSettings.navigationTitle	Miniatyrbilder
+thumbnailSettings.subtitle	Styr hvordan serveren lager miniatyrbilder av bilder for alle klienter.
+thumbnailSettings.enable	Lag miniatyrbilder
+thumbnailSettings.enableHelp	Slå av for å vise bilder i full størrelse overalt i stedet.
+thumbnailSettings.quality	Kvalitet
+thumbnailSettings.qualityHelp	Høyere ser bedre ut og bruker mer plass.
+thumbnailSettings.maxDimension	Maks. størrelse
+thumbnailSettings.maxDimensionHelp	Lengste side på et generert miniatyrbilde, i piksler.
+thumbnailSettings.concurrency	Samtidighet
+thumbnailSettings.concurrencyHelp	Hvor mange miniatyrbilder serveren lager samtidig.
+thumbnailSettings.unavailable	Innstillinger for miniatyrbilder er bare tilgjengelige for administratorer.
+thumbnailSettings.saveButton	Lagre endringer
+uploadSettings.navigationTitle	Opplastinger
+uploadSettings.subtitle	Angi hvordan filer sendes til serveren.
+uploadSettings.chunkedEnable	Slå på oppdelte opplastinger
+uploadSettings.chunkedEnableHelp	Bruker TUS til å sende store filer i flere mindre forespørsler.
+uploadSettings.chunkSize	Delstørrelse
+uploadSettings.chunkSizeHelp	Maksimal størrelse på hver opplastingsforespørsel. Hold den under grensen til reverse proxy-en din. Mindre deler gir jevnere fremdrift.
+uploadSettings.autoFallback	Automatisk bytte til oppdelt
+uploadSettings.autoFallbackHelp	Hvis en direkte opplasting mislykkes fordi en reverse proxy avviser størrelsen, byttes det automatisk til oppdelte opplastinger.
+uploadSettings.unavailable	Innstillinger for opplasting er bare tilgjengelige for administratorer.
+uploadSettings.saveButton	Lagre endringer
+ffmpegSettings.subtitle	Velg de kjørbare filene for FFmpeg og FFprobe som brukes til forhåndsvisninger og metadata for medier.
+ffmpegSettings.containerPathHelp	Skriv inn absolutte stier som er synlige inne i programmets container. For å bruke vertens kjørbare filer må du først montere dem i containeren.
+ffmpegSettings.ffmpegPath	Sti til FFmpeg-programmet
+ffmpegSettings.ffprobePath	Sti til FFprobe-programmet
+ffmpegSettings.invalid	Begge stiene må være absolutte containerstier som begynner med /.
+ffmpegSettings.defaultHelp	La en sti stå tom for å bruke FFMPEG_PATH eller FFPROBE_PATH fra miljøet, og deretter den medfølgende kjørbare filen. Endringer gjelder umiddelbart.
+ffmpegSettings.unavailable	Innstillinger for FFmpeg er bare tilgjengelige for administratorer.
+ffmpegSettings.saveButton	Lagre endringer
+searchIndexSettings.navigationTitle	Søkeindeks
+searchIndexSettings.subtitle	Utelat stier fra indeksering av innhold.
+searchIndexSettings.running	Hold en søkeindeks ved like
+searchIndexSettings.runningHelp	Leser dokumentene på volumet i bakgrunnen, slik at et søk i dem svarer med en gang.
+searchIndexSettings.locked	Satt av %@ i miljøet, så det avgjøres der og ikke her.
+searchIndexSettings.environment	Utelatelser definert av miljøet
+searchIndexSettings.additional	Ytterligere utelatelser
+searchIndexSettings.none	Ingen sti er konfigurert
+searchIndexSettings.addButton	Legg til
+searchIndexSettings.unavailable	Innstillinger for søkeindeks er bare tilgjengelige for administratorer.
+searchIndexSettings.saveButton	Lagre endringer
+searchIndexSettings.discardButton	Forkast
+folderSizeSettings.navigationTitle	Mappestørrelser
+folderSizeSettings.subtitle	Utelat stier fra beregning og indeksering av mappestørrelser.
+folderSizeSettings.running	Mål mappestørrelser
+folderSizeSettings.runningHelp	Måler mapper i bakgrunnen, slik at størrelsen vises i listen.
+folderSizeSettings.modeOff	Av
+folderSizeSettings.modeShallow	Bare deres egne filer
+folderSizeSettings.modeFull	Alt innenfor
+folderSizeSettings.locked	Satt av %@ i miljøet, så det avgjøres der og ikke her.
+folderSizeSettings.environment	Utelatelser definert av miljøet
+folderSizeSettings.additional	Ytterligere utelatelser
+folderSizeSettings.none	Ingen stier er konfigurert
+folderSizeSettings.addButton	Legg til
+folderSizeSettings.unavailable	Innstillinger for mappestørrelser er bare tilgjengelige for administratorer.
+folderSizeSettings.saveButton	Lagre endringer
+folderSizeSettings.discardButton	Forkast
+activityLog.navigationTitle	Aktivitetslogg
+activityLog.subtitle	Hvem som gjorde hva, når og hvorfra. Av med mindre du slår den på.
+activityLog.enabled	Logg aktivitet
+activityLog.enabledHelp	Innlogginger, nedlastinger, opplastinger, slettinger, gjenopprettinger, delingslenker og kontoendringer registreres så lenge dette er på. Det som skjedde før, er ikke med.
+activityLog.retention	Behold i (dager)
+activityLog.retentionInvalid	Mellom 1 og 3650 dager.
+activityLog.saveButton	Lagre endringer
+activityLog.off	Loggen er av, så ingenting registreres.
+activityLog.none	Ingenting registrert ennå.
+activityLog.filterAction	Art
+activityLog.anyAction	Alle arter
+activityLog.filterOutcome	Utfall
+activityLog.anyOutcome	Alle utfall
+activityLog.outcomeOk	Vellykket
+activityLog.outcomeRefused	Avvist
+activityLog.searchPlaceholder	Et navn eller en sti
+activityLog.searchButton	Søk
+activityLog.refresh	Oppdater
+activityLog.clear	Tøm loggen
+activityLog.clearTitle	Tømme loggen?
+activityLog.clearMessage	Hver registrerte linje slettes. Dette kan ikke angres.
+activityLog.clearConfirm	Tøm loggen
+activityLog.more	Vis mer
+activityLog.refusedSuffix	Avvist
+activityLog.fromAddress	Fra %@
+activityLog.unavailable	Aktivitetsloggen er bare tilgjengelig for administratorer.
+activityLog.action.signIn	Logget inn
+activityLog.action.signOut	Logget ut
+activityLog.action.accountPassword	Passord endret
+activityLog.action.accountTwoFactor	Andre faktor endret
+activityLog.action.accountPasskey	Tilgangsnøkkel endret
+activityLog.action.accountToken	API-token endret
+activityLog.action.adminUser	Konto endret
+activityLog.action.adminSettings	Innstillinger endret
+activityLog.action.adminActivityClear	Loggen er tømt
+activityLog.action.shareCreate	Deling opprettet
+activityLog.action.shareDelete	Deling slettet
+activityLog.action.shareDownload	Lastet ned via en lenke
+activityLog.action.shareUpload	Lastet opp via en lenke
+activityLog.action.fileDownload	Lastet ned
+activityLog.action.fileUpload	Lastet opp
+activityLog.action.fileDelete	Sendt til papirkurven
+activityLog.action.fileRestore	Gjenopprettet
+activityLog.action.filePurge	Fjernet for godt
+activityLog.action.versionsPurge	Versjoner slettet
+trashSettings.navigationTitle	Papirkurv og versjoner
+trashSettings.subtitle	Slettede elementer og tidligere versjoner av filer oppbevares i en reservert plass på sitt eget volum, og fjernes etter oppbevaringstiden eller når plassen trengs.
+trashSettings.trashHeader	Papirkurv
+trashSettings.enabled	Send slettede elementer til papirkurven
+trashSettings.enabledHelp	Når dette er av, fjerner sletting elementer for godt. Elementer som allerede er i papirkurven, utløper fortsatt.
+trashSettings.retention	Oppbevaringstid (dager)
+trashSettings.retentionHelp	Fra 1 til 3650 dager.
+trashSettings.maxPercent	Andel av hvert volum (%)
+trashSettings.maxPercentHelp	Det meste papirkurven kan oppta på et volum, fra 1 til 90 %.
+trashSettings.maxSize	Størrelsesgrense per volum (GiB)
+trashSettings.maxSizeHelp	Valgfritt. Den minste av andelen og grensen gjelder.
+trashSettings.maxSizeNone	Ingen grense
+trashSettings.trashInvalid	Sjekk verdiene: oppbevaringstid fra 1 til 3650 dager, andel fra 1 til 90 %, en positiv størrelse eller ingen.
+trashSettings.versionsHeader	Filversjoner
+trashSettings.versionsSubtitle	Hver lagring beholder det den erstatter, uten å kopiere det, i den samme reserverte plassen som papirkurven. Eldre versjoner tynnes ut over tid.
+trashSettings.versionsEnabled	Behold tidligere versjoner av filer
+trashSettings.versionsEnabledHelp	Uavhengig av papirkurven. Når dette er av, beholder lagringer ingenting nytt; eksisterende versjoner blir værende til de utløper eller slettes.
+trashSettings.keepAllHours	Behold hver versjon (timer)
+trashSettings.hourlyDays	Deretter én per time (dager)
+trashSettings.dailyDays	Deretter én per dag (dager)
+trashSettings.maxPerFile	Maks. antall versjoner per fil
+trashSettings.checkpointMinutes	Office-sjekkpunkt (minutter)
+trashSettings.tiersHelp	Etter disse trinnene beholdes én versjon per uke. En redigeringsøkt i Office etterlater én versjon, pluss et sjekkpunkt høyst så ofte. Festede versjoner unngår uttynningen og grensen per fil.
+trashSettings.versionsInvalid	Sjekk verdiene: 1 til 720 timer, 1 til 365 dager per time, 1 til 3650 dager per dag, 1 til 1000 versjoner per fil, et sjekkpunkt fra 1 til 1440 minutter.
+trashSettings.sharedSpace	Versjoner og papirkurven deler hvert volums reserverte plass. Når den blir knapp, går eldre versjoner først, deretter elementer i papirkurven, deretter hver fils siste versjon, og festede versjoner til slutt.
+trashSettings.saveButton	Lagre endringer
+trashSettings.discardButton	Forkast
+trashSettings.unavailable	Innstillinger for papirkurv og versjoner er bare tilgjengelige for administratorer.
+trashSettings.zonesHeader	Papirkurv per volum
+trashSettings.zonesSubtitle	Hvert volum har papirkurven sin i en skjult .nextexplorer-mappe i roten, så sletting kopierer aldri noe.
+trashSettings.zonesEmpty	Ingenting er slettet til en papirkurv ennå.
+trashSettings.zoneKindPersonal	Personlig mappe for %@
+trashSettings.zoneKindUserVolume	Tildelt volum %@
+trashSettings.available	Tilgjengelig
+trashSettings.unavailableMissing	Ikke montert eller fjernet
+trashSettings.unavailableReplaced	En annen disk på plassen
+trashSettings.unavailableUnreadable	Uleselig
+trashSettings.usage	%1$@ av %2$@
+trashSettings.noBudget	ingen grense
+trashSettings.zoneItems	Elementer: %1$lld · %2$@
+trashSettings.zoneVersions	Versjoner: %1$lld · %2$@
+trashSettings.lastPass	Siste vedlikehold: %@
+trashSettings.lastPassPurged	%1$@ · fjernet: %2$lld
+trashSettings.never	ikke ennå
+trashSettings.verify	Bekreft
+trashSettings.runMaintenance	Kjør vedlikehold nå
+trashSettings.verifyOk	Papirkurven til hvert volum er konsistent.
+trashSettings.verifyIssues	Problemer funnet: %lld
+trashSettings.zoneProblems	Problemer: %lld
+trashSettings.journalHeader	Journal
+trashSettings.eventEvicted	«%@» ble fjernet før oppbevaringstiden gikk ut for å frigjøre plass
+trashSettings.eventAdopted	«%@» ble gjenopprettet etter et avbrudd
+trashSettings.eventLost	«%@» manglet innhold
+trashSettings.eventFailed	Kunne ikke fjerne «%@»
+trashSettings.eventBreaker	For mange elementer mangler samtidig: ingenting ble endret
+trashSettings.eventForgotten	«%@» ble glemt av en administrator
+trashSettings.eventVersionEvicted	En versjon av «%@» ble fjernet for å frigjøre plass
+trashSettings.eventVersionFailed	Kunne ikke fjerne en versjon
+trashSettings.eventVersionLost	En versjon manglet innhold
+trashSettings.eventVersionTooLarge	«%@» er større enn hele plassen: det den erstattet, ble ikke beholdt
+trashSettings.eventVersionsBreaker	For mange versjoner mangler samtidig: ingenting ble endret
+versionedFiles.navigationTitle	Filversjoner
+versionedFiles.subtitle	Alle filer som har en historikk, uansett hvor de er. Viser stier fra alle områder, også personlige mapper, og er derfor bare for administratorer.
+versionedFiles.summary	Filer: %1$lld · Versjoner: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Et navn eller en sti
+versionedFiles.zone	Volum
+versionedFiles.anyZone	Alle volumer
+versionedFiles.stateHeader	Tilstand
+versionedFiles.anyState	Alle tilstander
+versionedFiles.stateLive	Filen finnes fortsatt
+versionedFiles.stateTrashed	I papirkurven
+versionedFiles.stateOrphaned	Filen er borte
+versionedFiles.sortHeader	Sorter etter
+versionedFiles.sortBytes	Brukt plass
+versionedFiles.sortVersions	Antall versjoner
+versionedFiles.sortNewest	Nyeste
+versionedFiles.sortPath	Sti
+versionedFiles.none	Ingen filer har tidligere versjoner.
+versionedFiles.unavailable	Filversjoner er bare tilgjengelige for administratorer.
+versionedFiles.zoneUnknown	Ukjent volum
+versionedFiles.zoneKindPersonal	Personlig mappe for %@
+versionedFiles.zoneKindUserVolume	Tildelt volum %@
+versionedFiles.rowSummary	Versjoner: %1$lld · %2$@
+versionedFiles.newest	Siste: %@
+versionedFiles.versionPinned	Festet
+versionedFiles.versionUnavailable	Utilgjengelig
+versionedFiles.versionBy	Av %@
+versionedFiles.detailFailed	Kunne ikke lese denne historikken.
+versionedFiles.deleteSelectedNone	Merk versjoner som skal slettes
+versionedFiles.deleteSelected	Slett valgte (%lld)
+versionedFiles.deleteAll	Slett alle versjoner
+versionedFiles.confirmAllTitle	Slette alle versjoner av «%@»?
+versionedFiles.confirmSomeTitle	Slette de valgte versjonene (%lld)?
+versionedFiles.confirmMessage	Slettede versjoner kan ikke gjenopprettes.
+versionedFiles.confirmDelete	Slett
+versionedFiles.previous	Forrige
+versionedFiles.next	Neste
+versionedFiles.pageRange	%1$lld til %2$lld av %3$lld
+accessRules.navigationTitle	Tilgangsregler for mapper
+accessRules.subtitle	Overstyr lese- og skrivetilgang for bestemte stier.
+accessRules.addRule	Legg til regel
+accessRules.empty	Ingen tilgangsregler er konfigurert.
+accessRules.emptyHint	Legg til en regel for å overstyre tilgangen til en sti.
+accessRules.pathLabel	Sti
+accessRules.recursive	Bruk på undermapper
+accessRules.permissionReadWrite	Lese og skrive
+accessRules.permissionReadOnly	Skrivebeskyttet
+accessRules.permissionHidden	Skjult
+accessRules.remove	Fjern
+accessRules.unavailable	Tilgangsregler er bare tilgjengelige for administratorer.
+accessRules.saveButton	Lagre endringer
+settings.rowThumbnails	Miniatyrbilder
+settings.rowAccessRules	Tilgangsregler for mapper
+settings.navigationTitle	Innstillinger
+settings.sectionGeneral	Generelt
+settings.sectionDisplay	Visning
+settings.sectionStorage	Lagring
+settings.sectionServerStorage	Serverlagring
+settings.serverStorageUsed	%1$@ av %2$@
+settings.sectionLicenses	Lisenser
+settings.sectionLegal	Juridisk
+settings.sectionUsers	Brukere
+settings.sectionAdmin	Administrasjon
+settings.sectionInfo	Info
+settings.toggleShowHiddenFiles	Vis skjulte filer
+settings.toggleRenderHTML	Gjengi HTML-sider
+settings.toggleRenderMarkdown	Gjengi Markdown-filer
+settings.toggleHaptics	Haptikk
+settings.toggleShowThumbnails	Vis miniatyrbilder
+settings.toggleShowExtensions	Vis filtyper
+settings.toggleShowTabLabels	Vis fanenavn
+settings.toggleKeepClipboard	Behold elementer etter innliming
+settings.toggleKeepClipboardSubtitle	Kopierte elementer blir stående klare til å limes inn i en annen mappe. Flyttede elementer tømmes alltid.
+settings.rowDateFormat	Datoformat
+settings.rowLanguage	Språk
+settings.rowThumbnailSize	Miniatyrbildestørrelse
+settings.rowRemoveAllDownloads	Fjern alle nedlastinger
+settings.rowClearCache	Tøm hurtigbuffer
+settings.rowOpenSourceLicenses	Åpen kildekode-lisenser
+settings.rowPrivacyPolicy	Personvernerklæring
+settings.rowTermsOfUse	Bruksvilkår
+settings.rowUserManagement	Brukeradministrasjon
+settings.rowChangePassword	Endre passord
+settings.rowAddPassword	Legg til passord
+settings.rowServer	Server
+settings.storageFootnote	Mapper lastes ned som zip, uten at noe blir liggende igjen på serveren. Å fjerne nedlastinger eller tømme hurtigbufferen påvirker bare denne enheten; ingenting på serveren berøres.
+settings.storageFootnoteMac	Å tømme hurtigbufferen påvirker bare denne Macen; ingenting på serveren berøres.
+settings.removeAllDownloadsTitle	Fjerne alle nedlastinger?
+settings.removeAllDownloadsConfirm	Fjern alle
+settings.removeAllDownloadsMessage	Dette sletter alle nedlastede filer fra denne enheten. De blir liggende på serveren.
+settings.clearCacheTitle	Tømme hurtigbufferen?
+settings.clearCacheConfirm	Tøm
+settings.clearCacheMessage	Dette tømmer bufrede forhåndsvisninger, miniatyrbilder og lagrede mappelister som brukes frakoblet. Ingenting på serveren påvirkes.
+settings.signOutAlertTitle	Logge ut?
+settings.signOutMessage	Du må logge inn igjen for å få tilgang til filene dine. Bufrede forhåndsvisninger, miniatyrbilder og lagrede mappelister på denne enheten tømmes.
+settings.signOutButton	Logg ut
+settings.signingOut	Logger ut…
+settings.sectionAccounts	Kontoer
+settings.addAccount	Legg til konto
+settings.accountSignOut	Logg ut
+settings.accountSignOutTitle	Logge ut?
+settings.accountSignOutMessage	Logge %@ ut på denne enheten? Du må logge inn igjen for å bruke denne kontoen.
+settings.accountActiveLabel	%1$@, %2$@, aktiv konto
+settings.badgeActive	Aktiv
+settings.dateFormatNavigationTitle	Datoformat
+settings.dateFormatShowTime	Vis tid
+language.navigationTitle	Språk
+language.systemDefault	Systemstandard
+language.systemDefaultSubtitle	Følg enhetens språk
+serverDetails.navigationTitle	Server
+serverDetails.changeLogo	Endre symbol
+serverDetails.takePhoto	Ta bilde
+serverDetails.chooseFromGallery	Last opp fra Galleri
+serverDetails.nameLabel	Servernavn
+serverDetails.nameErrorEmpty	Servernavnet kan ikke være tomt.
+serverDetails.urlLabel	Server-URL
+serverDetails.urlFootnote	Adressen der NextExplorer-instansen din er installert. For å endre den må du logge ut og legge til serveren på nytt.
+serverDetails.updateButton	Oppdater server
+serverDetails.savedMessage	Serverdetaljer er oppdatert.
+serverDetails.logoErrorTooLarge	Det bildet er for stort. Velg et under 2 MB.
+serverDetails.cameraDeniedTitle	Kameratilgang er av
+serverDetails.cameraDeniedMessage	Slå på kameratilgang i Innstillinger for å ta et bilde.
+licenses.navigationTitle	Åpen kildekode-lisenser
+licenses.sectionSoftware	Programvare
+licenses.sectionFontSoftware	Skriftprogramvare
+licenses.labelAuthor	Forfatter
+licenses.labelOriginalVersion	Opprinnelig versjon
+licenses.labelModifiedVersion	Endret versjon
+licenses.labelReservedFontName	Reservert skriftnavn
+fileInfo.navigationTitleFolder	Mappe
+fileInfo.rowKind	Art
+fileInfo.rowSize	Størrelse
+fileInfo.rowLocation	Plassering
+fileInfo.rowDateModified	Endringsdato
+fileInfo.rowDateCreated	Opprettelsesdato
+fileInfo.rowFiles	Filer
+fileInfo.rowFolders	Mapper
+fileInfo.rowTotalSize	Total størrelse
+fileInfo.sectionServerDisk	Serverdisk
+fileInfo.diskFreeOf	%1$@ ledig av %2$@
+fileInfo.rowDimensions	Dimensjoner
+fileInfo.rowCamera	Kamera
+fileInfo.rowLens	Objektiv
+fileInfo.rowDateTaken	Opptaksdato
+fileInfo.rowDuration	Varighet
+fileInfo.partialScan	Telt ved en delvis skanning: denne mappen er svært stor.
+permissions.title	Tillatelser
+permissions.sectionMode	Modus
+permissions.numericLabel	Numerisk
+permissions.applyToEnclosed	Bruk på elementer innenfor
+permissions.applyPermissions	Bruk tillatelser
+permissions.sectionOwnership	Eierskap
+permissions.fieldOwner	Eier
+permissions.fieldGroup	Gruppe
+permissions.ownershipNote	Å endre eierskap krever vanligvis root- eller administratorrettigheter på serveren.
+permissions.applyOwnership	Bruk eierskap
+permissions.scopeOwner	Eier
+permissions.scopeGroup	Gruppe
+permissions.scopeOthers	Andre
+permissions.rightRead	Lese
+permissions.rightWrite	Skrive
+permissions.rightExecute	Kjøre
+archive.emptyFolder	Denne mappen er tom.
+archive.openFailed	Kunne ikke åpne denne filen.
+archive.openArchiveFailed	Kunne ikke åpne dette arkivet.
+archive.entryTooLarge	Dette elementet er for stort til å åpnes.
+gallery.loadFailed	Kunne ikke laste dette bildet.
+textPreview.saved	Lagret
+textPreview.loadFailed	Kunne ikke laste denne filen. Sjekk tilkoblingen og prøv igjen.
+textPreview.unsavedTitle	Lagre endringer i «%@»?
+textPreview.unsavedMessage	Endringene dine går tapt hvis du ikke lagrer dem.
+textPreview.dontSave	Ikke lagre
+userManagement.navigationTitle	Brukeradministrasjon
+userManagement.searchPrompt	Søk etter brukere
+userManagement.createUser	Opprett bruker
+userManagement.badgeAdmin	Administrator
+userManagement.emptyList	Ingen brukere ennå.
+userManagement.noSearchMatches	Ingen brukere samsvarer med «%@».
+userManagement.loadFailed	Fikk ikke kontakt med serveren.
+userManagement.sortType	Type
+userManagement.sortName	Navn
+userManagement.sortEmail	E-post
+userManagement.tabProfile	Profil
+userManagement.tabSecurity	Sikkerhet
+userManagement.tabVolumes	Volumer
+userManagement.createNavigationTitle	Opprett bruker
+userManagement.createEmailField	E-post
+userManagement.createUsernameField	Brukernavn (valgfritt)
+userManagement.createUsernamePlaceholder	Utledet fra e-post
+userManagement.createPasswordField	Passord
+userManagement.createPasswordPlaceholder	Minst %lld tegn
+userManagement.createGrantAdminToggle	Gi administratortilgang
+userManagement.createGrantAdminSubtitle	Full kontroll over filer, delinger og brukere.
+userManagement.createSubmit	Opprett bruker
+userManagement.setPasswordNavigationTitle	Passord
+userManagement.setPasswordNewField	Nytt passord
+userManagement.setPasswordPlaceholder	Minst %lld tegn
+userManagement.setPasswordResetTitle	Tilbakestill passord
+userManagement.setPasswordSetTitle	Angi passord
+userManagement.setPasswordResetIntro	Angi et nytt lokalt passord for %@. Det nåværende passordet slutter å virke.
+userManagement.setPasswordSetIntro	Gi %@ et lokalt passord slik at vedkommende kan logge inn uten SSO.
+userManagement.toastProfileUpdated	Profil oppdatert
+userManagement.toastAdminGranted	Administratortilgang gitt
+userManagement.toastUserRemoved	Bruker fjernet
+userManagement.toastUserCreated	Bruker opprettet
+userManagement.toastPasswordUpdated	Passord oppdatert
+userManagement.toastVolumeSaved	Volum lagret
+userManagement.toastVolumeRemoved	Volum fjernet
+userManagement.errorEmailRequired	E-post er påkrevd.
+userManagement.errorEmailInvalid	Skriv inn en gyldig e-postadresse.
+userManagement.errorUsernameRequired	Brukernavn er påkrevd.
+userManagement.errorEmailInUse	E-posten er allerede i bruk.
+userManagement.errorPasswordTooShort	Bruk minst %lld tegn.
+userDetail.fallbackName	Bruker
+userDetail.sectionGeneralInfo	Generell informasjon
+userDetail.sectionRoles	Roller og tillatelser
+userDetail.sectionLocalPassword	Lokalt passord
+userDetail.sectionSSO	Single sign-on
+userDetail.sectionAssignedVolumes	Tildelte volumer
+userDetail.profileDisplayNameField	Visningsnavn
+userDetail.profileDisplayNamePlaceholder	Visningsnavn
+userDetail.profileUsernameField	Brukernavn
+userDetail.profileUsernamePlaceholder	Brukernavn
+userDetail.profileEmailField	E-post
+userDetail.profileSave	Lagre endringer
+userDetail.roleAdmin	Administrator
+userDetail.roleAdminSubtitle	Full kontroll over filer, delinger og brukere.
+userDetail.roleAdminLocked	Administratorer kan ikke nedgraderes fra appen.
+userDetail.roleGrantAdmin	Gjør til administrator
+userDetail.passwordHasLocal	Denne brukeren logger inn med e-post og passord.
+userDetail.passwordSSOOnly	Denne brukeren har ikke noe lokalt passord og logger bare inn med SSO.
+userDetail.passwordReset	Tilbakestill passord
+userDetail.passwordSet	Angi passord
+userDetail.ssoNone	Ingen tilknyttede SSO-leverandører.
+userDetail.ssoBadge	SSO
+userDetail.ssoLinked	Tilknyttet
+userDetail.dangerZoneTitle	Faresone
+userDetail.dangerZoneSubtitle	Å fjerne en bruker trekker tilbake tilgangen umiddelbart. Filer brukeren eier på serveren, slettes ikke.
+userDetail.dangerZoneRemoveUser	Fjern bruker
+userDetail.volumesNone	Ingen volumer er tildelt.
+userDetail.volumesNoneSubtitle	Denne brukeren ser bare standard delt område.
+userDetail.volumesAssign	Tildel volum
+userDetail.volumesFootnote	Volumer gir en bruker tilgang til en mappe utenfor standard delt område. Å fjerne et volum sletter aldri filer.
+userDetail.volumeEditAccessibility	Rediger %@
+userDetail.volumeRemoveAccessibility	Fjern %@
+userDetail.removeVolumeTitle	Fjerne volumet?
+userDetail.removeVolumeMessage	%@ er ikke lenger tildelt denne brukeren. Selve mappen berøres ikke.
+userDetail.removeUserTitle	Fjerne brukeren?
+userDetail.removeUserMessage	%@ mister tilgangen umiddelbart. Filene på serveren slettes ikke.
+userDetail.grantAdminTitle	Gi administratortilgang?
+userDetail.grantAdminMessage	%@ blir administrator med full kontroll over filer, delinger og brukere. Administratorer kan ikke nedgraderes fra appen.
+userDetail.volumeSheetLabelField	Etikett
+userDetail.volumeSheetLabelPlaceholder	Volumetikett
+userDetail.volumeSheetAccessMode	Tilgangsmodus
+userDetail.volumeSheetDirectory	Mappe
+userDetail.volumeSheetSaveEdit	Lagre volum
+userDetail.volumeSheetSaveNew	Tildel volum
+userDetail.volumeSheetTitleEdit	Rediger volum
+userDetail.volumeSheetTitleNew	Tildel volum
+userDetail.directoryPickerGoUp	Gå én mappe opp
+userDetail.directoryPickerUseThis	Bruk denne mappen
+userDetail.directoryPickerOpen	Åpne %@
+userDetail.directoryPickerFailed	Kunne ikke vise mappene.
+previewToolbar.close	Lukk
+previewToolbar.createShareLink	Opprett delingslenke
+previewToolbar.download	Last ned
+previewToolbar.delete	Slett
+previewToolbar.share	Del
+previewToolbar.rename	Gi nytt navn
+login.serverQuestion	Hvor er NextExplorer-instansen din?
+login.serverInfoAccessibility	Om tilkobling til en server
+login.serverInfoTitle	Hva er en server?
+login.serverInfoBody	NextExplorer kobler til din egen NextExplorer-server. En administrator driver serveren, oppretter kontoer og deler nettadressen med deg. Skriv inn adressen for å logge inn.\n\nHar du ingen server ennå? Oppsettveiledningen viser hvordan du setter opp en.
+login.serverInfoGuide	Åpne oppsettveiledningen
+login.testConnection	Test tilkoblingen
+login.identifierField	E-post eller brukernavn
+login.passwordField	Passord
+login.showPassword	Vis passord
+login.hidePassword	Skjul passord
+login.submit	Logg inn
+login.plaintextWarning	Denne tilkoblingen er ikke kryptert. Passordet og økten din sendes i klartekst over det lokale nettverket.
+error.sessionExpired	Økten din har utløpt. Logg inn igjen.
+error.rateLimited	For mange forespørsler. Prøv igjen om litt.
+error.network	Fikk ikke kontakt med serveren.
+error.offline	Du er frakoblet. Koble til internett og prøv igjen.
+error.decoding	Serveren svarte uventet.
+error.server	Serverfeil (%lld).
+error.forbidden	Du har ikke tillatelse til å gjøre det.
+error.clientCertificateRequired	Denne serveren krever et klientsertifikat. Legg til ett i Innstillinger.
+error.clientCertificateRejected	Serveren avviste klientsertifikatet ditt.
+changePassword.navigationTitle	Endre passord
+changePassword.intro	Endre passordet du bruker for å logge inn med e-postadressen din. Du forblir innlogget på denne enheten.
+changePassword.fieldCurrentPassword	Nåværende passord
+changePassword.fieldNewPasswordLabel	Nytt passord
+changePassword.fieldConfirmPasswordLabel	Bekreft nytt passord
+changePassword.fieldConfirmPassword	Skriv inn det nye passordet på nytt
+changePassword.fieldNewPasswordPrompt	Minst %lld tegn
+changePassword.submitButton	Oppdater passord
+changePassword.success	Passordet ditt er oppdatert.
+changePassword.addNavigationTitle	Legg til passord
+changePassword.addIntro	Denne kontoen logger inn med single sign-on og har ikke passord ennå. Legg til ett for også å kunne logge inn med e-postadressen eller brukernavnet ditt.
+changePassword.addSubmitButton	Legg til passord
+changePassword.errorMinLength	Bruk minst %lld tegn.
+changePassword.errorMismatch	Passordene er ikke like.
+twoFactor.navigationTitle	Tofaktorautentisering
+twoFactor.offTitle	Tofaktorautentisering er av
+twoFactor.offIntro	Legg til et ekstra trinn ved innlogging. Etter passordet skriver du inn en kode fra en autentiseringsapp.
+twoFactor.turnOnButton	Slå på
+twoFactor.enrollIntro	Skann denne QR-koden med autentiseringsappen din, eller skriv inn nøkkelen manuelt. Skriv deretter inn den sekssifrede koden appen viser.
+twoFactor.qrAccessibilityLabel	QR-kode for autentiseringsappen din
+twoFactor.keyLabel	Oppsettnøkkel
+twoFactor.copyKeyAccessibilityLabel	Kopier oppsettnøkkel
+twoFactor.codeAccessibilityLabel	Autentiseringskode
+twoFactor.confirmButton	Bekreft og slå på
+twoFactor.recoveryTitle	Lagre gjenopprettingskodene dine
+twoFactor.recoveryIntro	Hver kode fungerer én gang hvis du mister autentiseringsappen. De vises ikke igjen, så oppbevar dem på et trygt sted.
+twoFactor.copyCodesButton	Kopier koder
+twoFactor.shareCodesButton	Del koder
+twoFactor.recoveryDoneButton	Jeg har lagret dem
+twoFactor.onTitle	Tofaktorautentisering er på
+twoFactor.recoveryCodesLeft	Gjenopprettingskoder igjen: %lld
+twoFactor.newCodesButton	Få nye gjenopprettingskoder
+twoFactor.turnOffButton	Slå av
+twoFactor.passwordNewCodesIntro	Skriv inn passordet ditt for å erstatte gjenopprettingskodene. De gamle slutter å virke.
+twoFactor.passwordTurnOffIntro	Skriv inn passordet ditt for å slå av tofaktorautentisering.
+twoFactor.passwordField	Passord
+twoFactor.passwordConfirmButton	Bekreft
+twoFactor.manageButton	Administrer…
+apiTokens.navigationTitle	API-tokens
+apiTokens.sectionHeader	Utviklere
+apiTokens.intro	API-tokens lar skript og andre verktøy bruke kontoen din uten passordet ditt. Et token gjør bare det tilgangen tillater, og du kan trekke det tilbake når som helst.
+apiTokens.emptyTitle	Ingen API-tokens
+apiTokens.emptyMessage	Opprett ett slik at et skript kan bruke kontoen din.
+apiTokens.newButton	Nytt token
+apiTokens.limitReached	Du har nådd grensen på %lld tokens. Trekk tilbake ett for å opprette et nytt.
+apiTokens.scopeRead	Skrivebeskyttet
+apiTokens.scopeWrite	Lese og skrive
+apiTokens.created	Opprettet %@
+apiTokens.lastUsed	Sist brukt %@
+apiTokens.lastUsedFrom	Sist brukt %1$@ fra %2$@
+apiTokens.neverUsed	Aldri brukt
+apiTokens.expires	Utløper %@
+apiTokens.expired	Utløp %@
+apiTokens.neverExpires	Utløper aldri
+apiTokens.renameAction	Gi nytt navn
+apiTokens.revokeAction	Trekk tilbake
+apiTokens.menuAccessibilityLabel	Handlinger for %@
+apiTokens.formTitle	Nytt API-token
+apiTokens.fieldName	Navn
+apiTokens.namePlaceholder	For eksempel sikkerhetskopieringsskript
+apiTokens.fieldAccess	Tilgang
+apiTokens.fieldExpiry	Utløper
+apiTokens.expiry30	Om 30 dager
+apiTokens.expiry90	Om 90 dager
+apiTokens.expiryYear	Om 1 år
+apiTokens.expiryNever	Aldri
+apiTokens.fieldPassword	Passordet ditt
+apiTokens.passwordHint	Skriv inn passordet ditt for å opprette et token.
+apiTokens.createSubmit	Opprett token
+apiTokens.issuedTitle	Kopier tokenet ditt
+apiTokens.issuedIntro	Dette er den eneste gangen det vises. Oppbevar det på et trygt sted. Hvis du mister det, må du trekke det tilbake og opprette et nytt.
+apiTokens.copyToken	Kopier token
+apiTokens.copiedToken	Kopiert
+apiTokens.issuedDone	Jeg har kopiert det
+apiTokens.renameTitle	Gi token nytt navn
+apiTokens.renameSave	Lagre
+apiTokens.revokeTitle	Trekke tilbake tokenet?
+apiTokens.revokeMessage	Alt som bruker «%@», slutter å virke med en gang. Dette kan ikke angres.
+apiTokens.revokeConfirm	Trekk tilbake
+login.portHint	Legg til en port (f.eks. :3000). De fleste homelab-servere lytter ikke på vanlig port 80.
+login.errorInvalidServer	Skriv inn en gyldig serveradresse.
+login.errorInvalidCredentials	Feil brukernavn eller passord.
+login.errorSessionExpired	Økten din har utløpt. Logg inn igjen.
+login.errorIncomplete	Innloggingen ble ikke fullført. Prøv igjen.
+login.errorUnreachable	Fikk ikke kontakt med serveren. Sjekk adressen og prøv igjen.
+login.errorUnexpectedResponse	Uventet svar fra serveren.
+login.errorKeychain	Kunne ikke lagre økten din på denne enheten.
+login.errorDecoding	Serveren svarte uventet. Sjekk adressen og prøv igjen.
+login.errorNoLocalAuth	Denne serveren har ikke innlogging med brukernavn og passord slått på.
+login.errorRateLimited	For mange forsøk. Vent noen minutter og prøv igjen.
+login.ssoButton	Logg inn med SSO
+login.orDivider	eller
+login.errorSso	Single sign-on ble ikke fullført. Prøv igjen.
+login.errorNoAuthMethods	Denne serveren har ingen innloggingsmåter slått på.
+login.errorClientCertificateRequired	Denne serveren ber om et klientsertifikat.
+login.errorClientCertificateRejected	Serveren avviste dette klientsertifikatet.
+login.codeTitle	Skriv inn koden din
+login.codeIntroAuthenticator	Denne kontoen krever et ekstra trinn. Skriv inn den sekssifrede koden fra autentiseringsappen din.
+login.codeIntroRecovery	Skriv inn en av gjenopprettingskodene dine. Hver av dem fungerer bare én gang.
+login.codeUseRecovery	Bruk en gjenopprettingskode i stedet
+login.codeUseAuthenticator	Bruk autentiseringskoden i stedet
+login.codeField	Kode
+login.codeSubmit	Bekreft
+login.errorInvalidCode	Den koden er ikke riktig.
+login.errorSecondFactorExpired	Den innloggingen har utløpt. Skriv inn passordet ditt på nytt.
+login.diagnosticsButton	Del innloggingslogg
+login.diagnosticsTitle	Innloggingslogg
+login.diagnosticsIntro	Denne loggen viser hva serveren svarte i hvert trinn, for å hjelpe deg å finne ut hvorfor innloggingen mislykkes. Den inneholder aldri passordet ditt, adressen du skrev inn eller brukernavnet ditt. Send den til utvikleren.
+browse.nameErrorReserved	Det navnet er ikke tillatt.
+browse.nameErrorSeparators	Et navn kan ikke inneholde / eller \.
+browse.searchMatchLine	Linje %1$lld: %2$@
+browse.searchMatchLineLabel	Linje %lld
+browse.searchTooShort	Skriv minst %lld tegn for å søke i undermapper og filinnhold.
+browse.searchStoppedEarly	Søket stoppet ved tidsgrensen. Dette er resultatene som er funnet så langt.
+browse.searchFirstOnly	De første %lld resultatene. Begrens søket for å se flere.
+browse.searchShowMore	Vis mer
+browse.searchMatchColumn	Treff
+browse.searchMatchedByName	Navn
+browse.searchMatchedByContent	Innhold
+browse.searchMatchedByBoth	Navn og innhold
+createShare.errorPasswordRequired	Skriv inn et passord eller slå av passordbeskyttelsen.
+login.errorServer	Serveren støtte på et problem (feil %lld). Prøv igjen senere.
+filter.sheetTitle	Filtrer etter type
+filter.button	Filtrer
+filter.all	Alle typer
+filter.folders	Mapper
+filter.images	Bilder
+filter.videos	Videoer
+filter.audio	Lyd
+filter.documents	Dokumenter
+filter.archives	Arkiver
+filter.other	Annet
+settings.creditsMadeBy	Laget med ❤️ av Phillip Maizza
+settings.creditsLikeApp	Liker du appen?
+settings.creditsBuyCoffee	Spander en kaffe på meg ☕️
+tipJar.title	Spander en kaffe på meg
+tipJar.explanation	NextExplorer er gratis og har åpen kildekode. Hvis den er nyttig for deg, bidrar et lite tips til å holde den i gang. Takk!
+tipJar.toastThanks	Takk for at du støtter prosjektet! 🙏
+tipJar.errorLoad	Kunne ikke laste tipsalternativene. Prøv igjen.
+tipJar.errorPurchase	Kjøpet gikk ikke gjennom. Prøv igjen.
+tipJar.pending	Venter på godkjenning. Du blir belastet når det er godkjent.
+offline.sectionTitle	Frakoblet
+offline.settingsRow	Last ned filer for frakoblet bruk
+offline.footnote	Nedlastede filer kan åpnes selv uten tilkobling.
+offline.available	%@ tilgjengelig frakoblet
+offline.removeRow	Fjern frakoblede filer
+offline.removeConfirmTitle	Fjerne frakoblede filer?
+offline.removeConfirmMessage	Dette sletter filene som er lagret for frakoblet bruk på denne enheten. Filene dine på serveren påvirkes ikke.
+offline.removeConfirm	Fjern
+offline.preparing	Klargjør…
+offline.downloadingName	Laster ned %@
+offline.progressCount	%lld av %lld filer
+offline.downloadFailed	Kunne ikke fullføre nedlastingen for frakoblet bruk.
+offline.selectionTitle	Last ned for frakoblet bruk
+offline.selectionEmpty	Denne mappen er tom.
+offline.selectionLoadFailed	Kunne ikke laste denne mappen.
+offline.selectionEstimate	Beregnet nedlasting
+offline.selectionDownload	Last ned
+offline.selectionInsufficientSpace	Ikke nok ledig plass på denne enheten
+offline.resyncRow	Oppdater frakoblede filer
+offline.badgeAvailable	Tilgjengelig frakoblet
+offline.manageRow	Administrer frakoblede filer
+offline.manageTitle	Frakoblede filer
+offline.manageEmpty	Ingenting er lastet ned for frakoblet bruk.
+offline.preferOfflineToggle	Spill av nedlastede kopier
+offline.pinRemoved	%@ finnes ikke lenger på serveren og ble fjernet fra frakoblede filer
+offline.preferOfflineSubtitle	Bruk en nedlastet video i stedet for strømming når den er tilgjengelig.
+offline.tunnelSpeedNote	Å nå serveren din via en ekstern tunnel kan gjøre nedlastinger tregere. For store filer bør du koble til samme nettverk og bruke serverens lokale adresse.
+menu.about	Om NextExplorer
+menu.rateApp	Vurder NextExplorer…
+menu.support	NextExplorer-støtte
+menu.redo	Gjør om
+menu.undo	Angre
+settings.sectionSupport	Støtte
+settings.rowRateApp	Vurder NextExplorer
+settings.rowSupport	Hjelp og støtte
+menu.refresh	Oppdater
+select.tableView	Tabellvisning
+browse.progressDownloading	Laster ned…
+browse.progressDownloadingIndexed	Laster ned %1$lld av %2$lld…
+browse.downloadSavedTo	Lagret i %@
+browse.downloadSavedCountTo	Lagret %1$lld av %2$lld elementer i %3$@
+browse.downloadSavedAllTo	Lagret %1$lld elementer i %2$@
+browse.downloadBulkFailed	Kunne ikke lagre disse elementene på enheten din.
+openWith.openIn	Åpne i %@
+openWith.openWith	Åpne med
+openWith.viewAsText	Vis som tekst
+openWith.failed	Kunne ikke åpne denne filen.
+browse.showInFinder	Vis i Finder
+browse.showInEnclosingFolder	Vis i overordnet mappe
+browse.actionCut	Klipp ut
+browse.clipboardCutOne	%@ er klar til å flyttes
+browse.clipboardCutMany	%lld elementer er klare til å flyttes
+menu.enclosingFolder	Overordnet mappe
+common.more	Mer
+openWith.print	Skriv ut…
+menu.newWindow	Nytt vindu
+menu.newTab	Ny fane
+browse.actionOpenInNewWindow	Åpne i nytt vindu
+browse.actionOpenInNewTab	Åpne i ny fane
+select.viewAs	Vis
+settings.rowAppearance	Utseende
+appearance.system	System
+appearance.light	Lys
+appearance.dark	Mørk
+browse.myFiles	Mine filer
+browse.myFilesSubtitle	Bare synlig for deg
+downloadQueue.navigationTitle	Nedlastingskø
+downloadQueue.openDownloads	Vis nedlastinger
+downloadQueue.emptyList	Ingen nedlastinger pågår.
+downloadQueue.statusSaved	Lagret
+downloadQueue.cancelAll	Avbryt alle nedlastinger
+downloadQueue.barFailedOne	1 nedlasting mislyktes
+downloadQueue.barFailedMany	%lld nedlastinger mislyktes
+downloadQueue.barTitleOne	Laster ned %@
+downloadQueue.barTitleMany	Laster ned %lld elementer
+downloadQueue.savedOne	Lagret i Nedlastinger
+downloadQueue.savedMany	%lld elementer lagret i Nedlastinger
+downloadQueue.bytesOf	%1$@ av %2$@
+downloadQueue.timeLeft	%@ igjen
+browse.sectionPersonal	Personlig
+macSettings.addAccount	Legg til konto…
+macSettings.changePassword	Endre passord…
+macSettings.signOut	Logg ut…
+macSettings.switchAccount	Bytt til denne kontoen
+macSettings.username	Brukernavn
+macSettings.email	E-post
+macSettings.role	Rolle
+macSettings.roleAdmin	Administrator
+macSettings.roleUser	Bruker
+macSettings.status	Status
+macSettings.statusSignedIn	Logget inn
+macSettings.manage	Administrer…
+macSettings.cache	Hurtigbuffer
+macSettings.support	Hjelp og støtte…
+macSettings.permission	Tillatelse
+macSettings.icon	Symbol
+menu.go	Gå
+menu.activity	Overføringer
+menu.showAll	Vis alle
+uploads.notifyDone	Opplastinger ferdig
+uploads.notifyBody	%lld filer lastet opp
+downloadQueue.notifyDone	Nedlastinger ferdig
+fileInfo.rowSoftware	Programvare
+fileInfo.sectionVersions	Versjoner
+fileInfo.versionsNone	Ingen tidligere versjoner
+fileInfo.versionRestore	Gjenopprett…
+fileInfo.restoreTitle	Gjenopprette denne versjonen?
+fileInfo.restoreMessage	Filen går tilbake til slik den var %@. Det den inneholder nå, beholdes som en versjon.
+fileInfo.restoreConfirm	Gjenopprett
+fileInfo.sectionSharing	Deling
+fileInfo.notShared	Ingen delingslenker
+fileInfo.versionActions	Versjonshandlinger
+fileInfo.versionDownload	Last ned…
+fileInfo.versionSaveCopy	Lagre som kopi
+fileInfo.versionRename	Gi nytt navn…
+fileInfo.renameTitle	Gi versjonen nytt navn
+fileInfo.renamePlaceholder	Versjonsnavn
+fileInfo.versionPin	Behold denne versjonen
+fileInfo.versionUnpin	Slutt å beholde denne versjonen
+fileInfo.versionKept	Beholdt
+fileInfo.versionDelete	Slett…
+fileInfo.deleteTitle	Slette denne versjonen?
+fileInfo.deleteAll	Slett alle versjoner…
+fileInfo.deleteAllTitle	Slette alle versjoner?
+fileInfo.deleteMessage	Slettede versjoner er borte for godt. Selve filen forblir som den er.
+macSettings.choose	Velg…
+menu.forward	Frem
+menu.goToFolder	Gå til mappe…
+menu.goToFolderTitle	Gå til mappen:
+menu.copyPath	Kopier sti
+menu.recentFolders	Nylige mapper
+menu.clearRecent	Tøm meny
+common.loading	Laster inn…
+browse.quickLookUnavailable	Quick Look er ikke tilgjengelig for denne filtypen.
+browse.quickLookTooLarge	Denne filen er for stor for Quick Look.
+menu.zoomIn	Zoom inn
+menu.zoomOut	Zoom ut
+menu.zoomToFit	Tilpass til vindu
+menu.quitTransfersTitle	Avslutte NextExplorer?
+menu.quitTransfersMessage	Opplastinger eller nedlastinger pågår fortsatt. Hvis du avslutter nå, stoppes de.
+menu.quitTransfersConfirm	Avslutt
+media.play	Spill av
+media.pause	Pause
+media.position	Avspillingsposisjon
+media.positionValue	%1$@ av %2$@
+media.clientCertificateUnsupported	Dette formatet kan ikke strømmes fra en server som ber om et klientsertifikat. Last ned filen for å spille den av.
+clientCertificate.title	Klientsertifikat
+clientCertificate.intro	Noen servere slipper bare inn enheter som viser frem et klientsertifikat (mTLS). Velg .p12- eller .pfx-filen du fikk for denne serveren.
+clientCertificate.certificateLabel	Sertifikat
+clientCertificate.none	Ingen sertifikater er installert
+clientCertificate.issuedBy	Utstedt av %@
+clientCertificate.expires	Utløper %@
+clientCertificate.expired	Utløp %@
+clientCertificate.chooseFile	Velg fil
+clientCertificate.replace	Erstatt sertifikat
+clientCertificate.remove	Fjern sertifikat
+clientCertificate.install	Installer
+clientCertificate.passwordLabel	Filpassord
+clientCertificate.passwordPrompt	Passordet filen ble eksportert med
+clientCertificate.chooseAnother	Velg en annen fil
+clientCertificate.errorWrongPassword	Det passordet låser ikke opp denne filen.
+clientCertificate.errorInvalidFile	Dette er ikke en gyldig .p12- eller .pfx-sertifikatfil.
+clientCertificate.errorNoIdentity	Denne filen har ingen privatnøkkel. Eksporter sertifikatet sammen med nøkkelen.
+clientCertificate.errorStorage	Kunne ikke lagre sertifikatet på denne enheten.
+clientCertificate.errorUnreadable	Kunne ikke lese den filen.
+clientCertificate.errorRemove	Kunne ikke fjerne sertifikatet fra denne enheten.
+clientCertificate.removeTitle	Fjerne sertifikatet?
+clientCertificate.removeMessage	NextExplorer slutter å vise det frem for %@. Hvis serveren krever ett, kan ikke appen koble til før du legger til et sertifikat igjen.
+clientCertificate.removeConfirm	Fjern
+clientCertificate.expiredWarning	Dette sertifikatet har utløpt. Serveren vil sannsynligvis avvise det.
+login.addClientCertificate	Legg til sertifikat
+login.manageClientCertificate	Administrer sertifikat
+settings.clientCertificate	Klientsertifikat
+settings.clientCertificateNone	Ingen
+login.usingClientCertificate	Bruker klientsertifikatet %@
+login.changeClientCertificate	Endre
+login.ssoClientCertificateNote	Single sign-on åpnes i Safari, som ikke kan bruke denne appens klientsertifikat. Logg inn med passordet ditt, eller installer sertifikatet på denne enheten for å bruke single sign-on.
+settings.clientCertificateExpired	Utløpt
+settings.clientCertificateExpiresSoon	Utløper snart
+clientCertificate.expiringSoonWarning	Dette sertifikatet utløper %@. Be om et nytt før det.
+shareUpload.title	Last opp til NextExplorer
+shareUpload.itemCount	Filer som skal lastes opp: %lld
+shareUpload.accountLabel	Konto
+shareUpload.folderLabel	Mappe
+shareUpload.folderChoose	Velg en mappe
+shareUpload.upload	Last opp
+shareUpload.preparing	Klargjør %lld av %lld…
+shareUpload.started	Laster opp i bakgrunnen. Du får et varsel når det er ferdig.
+shareUpload.signedOut	Logg først inn i NextExplorer, og del deretter på nytt.
+shareUpload.nothingToUpload	Det er ingenting her NextExplorer kan laste opp.
+shareUpload.failed	Filene kunne ikke klargjøres for opplasting.
+shareUpload.notificationDoneTitle	Opplastingen er ferdig
+shareUpload.notificationFailedTitle	Noen filer ble ikke lastet opp
+shareUpload.notificationDoneBody#one	%lld fil lastet opp til «%@».
+shareUpload.notificationDoneBody#other	%lld filer lastet opp til «%@».
+shareUpload.notificationAllFailedTitle	Opplastingen mislyktes
+shareUpload.failureUnauthorized#one	%lld fil ble ikke lastet opp. Logg inn igjen og prøv på nytt.
+shareUpload.failureUnauthorized#other	%lld filer ble ikke lastet opp. Logg inn igjen og prøv på nytt.
+shareUpload.failureForbidden#one	%lld fil ble ikke lastet opp. Du har ikke tillatelse til å legge til filer i den mappen.
+shareUpload.failureForbidden#other	%lld filer ble ikke lastet opp. Du har ikke tillatelse til å legge til filer i den mappen.
+shareUpload.failureServerFull#one	%lld fil ble ikke lastet opp. Serveren har ikke mer lagringsplass.
+shareUpload.failureServerFull#other	%lld filer ble ikke lastet opp. Serveren har ikke mer lagringsplass.
+shareUpload.failureNetwork#one	%lld fil ble ikke lastet opp. Tilkoblingen sviktet. Prøv igjen når du er tilbake på nett.
+shareUpload.failureNetwork#other	%lld filer ble ikke lastet opp. Tilkoblingen sviktet. Prøv igjen når du er tilbake på nett.
+shareUpload.failureOther#one	%lld fil kunne ikke lastes opp.
+shareUpload.failureOther#other	%lld filer kunne ikke lastes opp.
+shareUpload.notificationRetry	Prøv igjen
+shareUpload.notificationHiddenPreview	Åpne NextExplorer for å se hvordan opplastingen gikk.
+shareUpload.retryFailedTitle	Kunne ikke prøve på nytt
+shareUpload.retryFailedBody	Åpne NextExplorer og del filene på nytt.
+shareUpload.insufficientSpace	Det er ikke nok ledig plass på denne enheten til å klargjøre disse filene for opplasting.
+settings.uploadDefaultsRow	Delte filer
+settings.uploadDefaultsFolder	Standardmappe
+settings.uploadDefaultsFolderNone	Spør hver gang
+settings.uploadDefaultsWithoutAsking	Last opp uten å spørre
+settings.uploadDefaultsFooter	Bilder og filer du deler til NextExplorer fra andre apper, starter i denne mappen. Når Last opp uten å spørre er på, lastes de opp direkte dit.
+settings.uploadDefaultsClear	Spør hver gang
+common.change	Endre
+shareUpload.sessionUnreadable	NextExplorer kunne ikke lese innloggingen din på denne enheten. Åpne NextExplorer én gang, og del deretter på nytt.
+shareUpload.keepOpen	Hold denne åpen til klargjøringen er ferdig.
+shareUpload.checking	Sjekker tilkoblingen til %@…
+shareUpload.openApp	Åpne NextExplorer
+shareUpload.openAppInstructions	Åpne NextExplorer fra Hjem-skjermen, og del deretter på nytt.
+shareUpload.certificateRequired	Denne serveren krever et klientsertifikat. Åpne NextExplorer og legg til ett i Innstillinger, og del deretter på nytt.
+shareUpload.certificateRejected	Serveren avviste klientsertifikatet ditt. Åpne NextExplorer og bytt det ut i Innstillinger, og del deretter på nytt.
+shareUpload.defaultFolderUnavailable	Standardmappen din er ikke lenger tilgjengelig. Velg en annen mappe.
+shareUpload.failedItemsHeader	Disse filene kunne ikke klargjøres:
+shareUpload.readyCount	Klare til opplasting: %lld
+shareUpload.uploadReady	Last opp klare filer
+shareUpload.retryFailed	Prøv mislykkede filer på nytt
+shareUpload.fallbackItemName	Fil %lld
+shareUpload.causeCannotRead	Den kunne ikke leses.
+shareUpload.causeNotEnoughSpace	Det er ikke nok ledig plass på denne enheten.
+shareUpload.causeUnknown	Den kunne ikke klargjøres.
+shareUpload.folderHint	Åpner mappevelgeren.
+shareUpload.accountHint	Velg hvilken konto som mottar filene.
+error.timedOut	Serveren brukte for lang tid på å svare. Handlingen kan likevel bli fullført.
+error.changedOnServer	Denne filen ble endret på serveren etter at du åpnet den.
+textPreview.conflictTitle	«%@» ble endret på serveren
+textPreview.conflictMessage	Overskriv den med versjonen din, eller last filen på nytt og forkast endringene dine. Den erstattede versjonen blir værende i filens versjonshistorikk.
+textPreview.conflictOverwrite	Overskriv
+textPreview.conflictReload	Last inn på nytt
+offline.waitingForNetwork	Lastes ned når du er tilbake på nett
+browse.bulkFavoriteFailed	%1$lld av %2$lld mislyktes
+shareUpload.livePhotoNote	Live Photos lastes opp sammen med bevegelsesvideoen sin.
+shareUpload.retrySignInBody	Logg inn i NextExplorer, og trykk deretter på Prøv igjen.
+shareUpload.causeFolder	Mapper kan ikke deles. Del filene inni i stedet.
+shareUpload.notificationMoreNames	%lld til
+versionedFiles.deleteFailed	Noen versjoner kunne ikke slettes. Sjekk dem og prøv igjen.
+serverSettings.featureOffTitle	Denne funksjonen er ikke slått på
+serverSettings.featureOffKept	Det du konfigurerer her, lagres og gjelder så snart den slås på.
+serverSettings.featureOffUseSwitch	Slå den på med bryteren ovenfor.
+serverSettings.featureOffHowTo	For å slå den på må du angi %@ og starte containeren på nytt.
+trashSettings.environmentNote	Standardverdiene kommer fra TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT og TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Standardverdiene kommer fra VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE og VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Oppdater

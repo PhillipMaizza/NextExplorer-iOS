@@ -847,3 +847,202 @@ shareUpload.causeFolder	No se pueden compartir carpetas. Comparte los archivos q
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld más
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
+uploadSettings.navigationTitle	Subidas
+uploadSettings.subtitle	Configura cómo se envían los archivos al servidor.
+uploadSettings.chunkedEnable	Activar subidas por fragmentos
+uploadSettings.chunkedEnableHelp	Usa TUS para enviar archivos grandes en varias solicitudes más pequeñas.
+uploadSettings.chunkSize	Tamaño de fragmento
+uploadSettings.chunkSizeHelp	Tamaño máximo de cada solicitud de subida. Mantenlo por debajo del límite de tu proxy inverso. Las partes más pequeñas dan un progreso más fluido.
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	Cambio automático a fragmentos
+uploadSettings.autoFallbackHelp	Si una subida directa falla porque un proxy inverso rechaza el tamaño, cambia automáticamente a subidas por partes.
+uploadSettings.unavailable	Los ajustes de subida solo están disponibles para administradores.
+uploadSettings.saveButton	Guardar cambios
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	Elija los ejecutables de FFmpeg y FFprobe usados para las miniaturas y los metadatos de los medios.
+ffmpegSettings.containerPathHelp	Indique rutas absolutas visibles dentro del contenedor de la aplicación. Para usar los binarios del anfitrión, móntelos antes en el contenedor.
+ffmpegSettings.ffmpegPath	Ruta del ejecutable FFmpeg
+ffmpegSettings.ffprobePath	Ruta del ejecutable FFprobe
+ffmpegSettings.invalid	Ambas rutas deben ser rutas absolutas del contenedor y empezar por /.
+ffmpegSettings.defaultHelp	Deje una ruta vacía para usar FFMPEG_PATH o FFPROBE_PATH del entorno y después el ejecutable incluido. Los cambios se aplican de inmediato.
+ffmpegSettings.unavailable	Los ajustes de FFmpeg solo están disponibles para administradores.
+ffmpegSettings.saveButton	Guardar cambios
+searchIndexSettings.navigationTitle	Índice de búsqueda
+searchIndexSettings.subtitle	Excluir rutas de la indexación de contenido.
+searchIndexSettings.running	Mantener un índice de búsqueda
+searchIndexSettings.runningHelp	Lee los documentos del volumen en segundo plano, para que una búsqueda en su contenido responda al instante.
+searchIndexSettings.locked	Definido por %@ en el entorno: se decide allí, no aquí.
+searchIndexSettings.environment	Exclusiones definidas por el entorno
+searchIndexSettings.additional	Exclusiones adicionales
+searchIndexSettings.none	Ninguna ruta configurada
+searchIndexSettings.addButton	Añadir
+searchIndexSettings.unavailable	Los ajustes del índice de búsqueda solo están disponibles para administradores.
+searchIndexSettings.saveButton	Guardar cambios
+searchIndexSettings.discardButton	Descartar
+folderSizeSettings.navigationTitle	Tamaño de carpetas
+folderSizeSettings.subtitle	Excluye rutas del cálculo y la indexación del tamaño de las carpetas.
+folderSizeSettings.running	Medir el tamaño de las carpetas
+folderSizeSettings.runningHelp	Mide las carpetas en segundo plano, para que su tamaño aparezca en la lista.
+folderSizeSettings.modeOff	Desactivado
+folderSizeSettings.modeShallow	Solo sus propios archivos
+folderSizeSettings.modeFull	Todo lo que contienen
+folderSizeSettings.locked	Definido por %@ en el entorno: se decide allí, no aquí.
+folderSizeSettings.environment	Exclusiones definidas por el entorno
+folderSizeSettings.additional	Exclusiones adicionales
+folderSizeSettings.none	No hay rutas configuradas
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Añadir
+folderSizeSettings.unavailable	Los ajustes de tamaños de carpetas solo están disponibles para administradores.
+folderSizeSettings.saveButton	Guardar cambios
+folderSizeSettings.discardButton	Descartar
+activityLog.navigationTitle	Registro de actividad
+activityLog.subtitle	Quién hizo qué, cuándo y desde dónde. Desactivado mientras no lo pidas.
+activityLog.enabled	Registrar la actividad
+activityLog.enabledHelp	Inicios de sesión, descargas, subidas, eliminaciones, restauraciones, enlaces y cambios de cuenta se anotan mientras esté activo. Lo anterior a activarlo no aparece.
+activityLog.retention	Conservar (días)
+activityLog.retentionInvalid	Entre 1 y 3650 días.
+activityLog.saveButton	Guardar cambios
+activityLog.off	El registro está desactivado: no se anota nada.
+activityLog.none	Todavía no hay nada registrado.
+activityLog.filterAction	Tipo
+activityLog.anyAction	Cualquier tipo
+activityLog.filterOutcome	Resultado
+activityLog.anyOutcome	Cualquier resultado
+activityLog.outcomeOk	Correcto
+activityLog.outcomeRefused	Rechazado
+activityLog.searchPlaceholder	Un nombre o una ruta
+activityLog.searchButton	Buscar
+activityLog.refresh	Actualizar
+activityLog.clear	Vaciar el registro
+activityLog.clearTitle	¿Vaciar el registro?
+activityLog.clearMessage	Se elimina cada línea registrada. No se puede deshacer.
+activityLog.clearConfirm	Vaciar el registro
+activityLog.more	Mostrar más
+activityLog.refusedSuffix	Rechazado
+activityLog.fromAddress	Desde %@
+activityLog.unavailable	El registro de actividad solo está disponible para administradores.
+activityLog.action.signIn	Inicio de sesión
+activityLog.action.signOut	Cierre de sesión
+activityLog.action.accountPassword	Contraseña cambiada
+activityLog.action.accountTwoFactor	Segundo factor cambiado
+activityLog.action.accountPasskey	Clave de acceso cambiada
+activityLog.action.accountToken	Token de API modificado
+activityLog.action.adminUser	Cuenta modificada
+activityLog.action.adminSettings	Ajustes cambiados
+activityLog.action.adminActivityClear	Registro vaciado
+activityLog.action.shareCreate	Enlace creado
+activityLog.action.shareDelete	Enlace eliminado
+activityLog.action.shareDownload	Descargado con un enlace
+activityLog.action.shareUpload	Subido con un enlace
+activityLog.action.fileDownload	Descargado
+activityLog.action.fileUpload	Subido
+activityLog.action.fileDelete	Enviado a la papelera
+activityLog.action.fileRestore	Restaurado
+activityLog.action.filePurge	Eliminado definitivamente
+activityLog.action.versionsPurge	Versiones eliminadas
+trashSettings.navigationTitle	Papelera y versiones
+trashSettings.subtitle	Los elementos eliminados y las versiones anteriores de los archivos se guardan en un espacio reservado de su propio volumen y se eliminan al terminar su retención o cuando se necesita ese espacio.
+trashSettings.trashHeader	Papelera
+trashSettings.enabled	Enviar los elementos eliminados a la papelera
+trashSettings.enabledHelp	Desactivada, eliminar borra definitivamente. Los elementos que ya están en la papelera siguen caducando.
+trashSettings.retention	Retención (días)
+trashSettings.retentionHelp	De 1 a 3650 días.
+trashSettings.maxPercent	Parte de cada volumen (%)
+trashSettings.maxPercentHelp	Lo máximo que la papelera puede ocupar en un volumen, de 1 a 90 %.
+trashSettings.maxSize	Tamaño máximo por volumen (GiB)
+trashSettings.maxSizeHelp	Opcional. Se aplica el menor entre la parte y el límite.
+trashSettings.maxSizeNone	Sin límite
+trashSettings.trashInvalid	Revisa los valores: retención de 1 a 3650 días, parte de 1 a 90 %, un tamaño positivo o ninguno.
+trashSettings.versionsHeader	Versiones de archivos
+trashSettings.versionsSubtitle	Cada guardado conserva lo que reemplaza, sin copiarlo, en el mismo espacio reservado que la papelera. Las versiones antiguas se espacian con el tiempo.
+trashSettings.versionsEnabled	Conservar las versiones anteriores de los archivos
+trashSettings.versionsEnabledHelp	Independiente de la papelera. Desactivado, los guardados no conservan nada nuevo; las versiones existentes permanecen hasta que caducan o se eliminan.
+trashSettings.keepAllHours	Conservar todas las versiones (horas)
+trashSettings.hourlyDays	Después una por hora (días)
+trashSettings.dailyDays	Después una por día (días)
+trashSettings.maxPerFile	Máximo de versiones por archivo
+trashSettings.checkpointMinutes	Punto de control de ofimática (minutos)
+trashSettings.tiersHelp	Tras estos niveles se conserva una versión por semana. Una sesión de edición de ofimática deja una versión, más un punto de control como mucho con esta frecuencia. Las versiones fijadas escapan al espaciado y al límite por archivo.
+trashSettings.versionsInvalid	Revisa los valores: de 1 a 720 horas, de 1 a 365 días por hora, de 1 a 3650 días por día, de 1 a 1000 versiones por archivo, un punto de control de 1 a 1440 minutos.
+trashSettings.sharedSpace	Las versiones y la papelera comparten el espacio reservado de cada volumen. Cuando falta, primero se van las versiones antiguas, luego los elementos de la papelera, luego la última versión de cada archivo y, por último, las versiones fijadas.
+trashSettings.saveButton	Guardar cambios
+trashSettings.discardButton	Descartar
+trashSettings.unavailable	Los ajustes de la papelera y las versiones solo están disponibles para administradores.
+trashSettings.zonesHeader	Papelera por volumen
+trashSettings.zonesSubtitle	Cada volumen guarda su papelera en una carpeta oculta .nextexplorer en su raíz, así que eliminar nunca copia nada.
+trashSettings.zonesEmpty	Todavía no se ha eliminado nada a una papelera.
+trashSettings.zoneKindPersonal	Carpeta personal de %@
+trashSettings.zoneKindUserVolume	Volumen asignado %@
+trashSettings.available	Disponible
+trashSettings.unavailableMissing	No montado o eliminado
+trashSettings.unavailableReplaced	Otro disco en su lugar
+trashSettings.unavailableUnreadable	Ilegible
+trashSettings.usage	%1$@ de %2$@
+trashSettings.noBudget	sin límite
+trashSettings.zoneItems	Elementos: %1$lld · %2$@
+trashSettings.zoneVersions	Versiones: %1$lld · %2$@
+trashSettings.lastPass	Último mantenimiento: %@
+trashSettings.lastPassPurged	%1$@ · eliminados: %2$lld
+trashSettings.never	todavía no
+trashSettings.verify	Verificar
+trashSettings.runMaintenance	Ejecutar mantenimiento ahora
+trashSettings.verifyOk	La papelera de cada volumen es coherente.
+trashSettings.verifyIssues	Problemas encontrados: %lld
+trashSettings.zoneProblems	Problemas: %lld
+trashSettings.journalHeader	Registro
+trashSettings.eventEvicted	"%@" eliminado antes de su retención para liberar espacio
+trashSettings.eventAdopted	"%@" recuperado tras una interrupción
+trashSettings.eventLost	Faltaba el contenido de "%@"
+trashSettings.eventFailed	"%@" no se pudo eliminar
+trashSettings.eventBreaker	Faltaban demasiados elementos a la vez: no se cambió nada
+trashSettings.eventForgotten	"%@" olvidado por un administrador
+trashSettings.eventVersionEvicted	Una versión de «%@» eliminada para liberar espacio
+trashSettings.eventVersionFailed	No se pudo eliminar una versión
+trashSettings.eventVersionLost	Faltaba el contenido de una versión
+trashSettings.eventVersionTooLarge	«%@» supera todo el espacio: lo que reemplazaba no se conservó
+trashSettings.eventVersionsBreaker	Demasiadas versiones faltan a la vez: no se cambió nada
+versionedFiles.navigationTitle	Versiones de archivos
+versionedFiles.subtitle	Cada archivo que tiene un historial, esté donde esté. Muestra rutas de todos los espacios, incluidas las carpetas personales, así que es solo para administradores.
+versionedFiles.summary	Archivos: %1$lld · Versiones: %2$lld · %3$@
+versionedFiles.searchPlaceholder	Un nombre o una ruta
+versionedFiles.zone	Volumen
+versionedFiles.anyZone	Cualquier volumen
+versionedFiles.stateHeader	Estado
+versionedFiles.anyState	Cualquier estado
+versionedFiles.stateLive	El archivo sigue ahí
+versionedFiles.stateTrashed	En la papelera
+versionedFiles.stateOrphaned	Archivo desaparecido
+versionedFiles.sortHeader	Ordenar por
+versionedFiles.sortBytes	Espacio ocupado
+versionedFiles.sortVersions	Número de versiones
+versionedFiles.sortNewest	Más reciente
+versionedFiles.sortPath	Ruta
+versionedFiles.none	Ningún archivo tiene versiones anteriores.
+versionedFiles.unavailable	Las versiones de archivos solo están disponibles para administradores.
+versionedFiles.zoneUnknown	Volumen desconocido
+versionedFiles.zoneKindPersonal	Carpeta personal de %@
+versionedFiles.zoneKindUserVolume	Volumen asignado %@
+versionedFiles.rowSummary	Versiones: %1$lld · %2$@
+versionedFiles.newest	Última: %@
+versionedFiles.versionPinned	Fijada
+versionedFiles.versionUnavailable	No disponible
+versionedFiles.versionBy	Por %@
+versionedFiles.detailFailed	No se pudo leer este historial.
+versionedFiles.deleteSelectedNone	Marca las versiones que quieras eliminar
+versionedFiles.deleteSelected	Eliminar la selección (%lld)
+versionedFiles.deleteAll	Eliminar todas las versiones
+versionedFiles.confirmAllTitle	¿Eliminar todas las versiones de «%@»?
+versionedFiles.confirmSomeTitle	¿Eliminar las versiones seleccionadas (%lld)?
+versionedFiles.confirmMessage	Las versiones eliminadas no se pueden recuperar.
+versionedFiles.confirmDelete	Eliminar
+versionedFiles.previous	Anterior
+versionedFiles.next	Siguiente
+versionedFiles.pageRange	%1$lld a %2$lld de %3$lld
+versionedFiles.deleteFailed	No se pudieron eliminar algunas versiones. Revísalas e inténtalo de nuevo.
+serverSettings.featureOffTitle	Esta función no está activada
+serverSettings.featureOffKept	Lo que configures aquí se guarda y se aplica en cuanto se active.
+serverSettings.featureOffUseSwitch	Actívala con el interruptor de arriba.
+serverSettings.featureOffHowTo	Para activarla, define %@ y reinicia el contenedor.
+trashSettings.environmentNote	Los valores predeterminados provienen de TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT y TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Los valores predeterminados provienen de VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE y VERSIONS_SESSION_CHECKPOINT_MINUTES.
+versionedFiles.refresh	Actualizar

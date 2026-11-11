@@ -51,7 +51,7 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 ## Localization
 
 - Every user-facing string goes through `L10n.<key>`. No hard-coded display text.
-- The app ships 17 languages. A new key is added to the string catalog for every language, with placeholder validation intact.
+- The app ships 30 languages. A new key is added to the string catalog for every language, with placeholder validation intact.
 - Do not hand-edit the generated catalog. Edit the source and regenerate with the scripts below.
 
 ## Scripts
