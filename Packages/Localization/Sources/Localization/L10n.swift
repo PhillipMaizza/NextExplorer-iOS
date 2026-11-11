@@ -23,6 +23,53 @@ public enum L10n {
         public static var subtitle: String { tr("accessRules.subtitle") }  // "Override read and write access for specific paths."
         public static var unavailable: String { tr("accessRules.unavailable") }  // "Access rules are only available to administrators."
     }
+    public enum ActivityLog {
+        public static var actionAccountPasskey: String { tr("activityLog.action.accountPasskey") }  // "Passkey changed"
+        public static var actionAccountPassword: String { tr("activityLog.action.accountPassword") }  // "Password changed"
+        public static var actionAccountToken: String { tr("activityLog.action.accountToken") }  // "API token changed"
+        public static var actionAccountTwoFactor: String { tr("activityLog.action.accountTwoFactor") }  // "Second factor changed"
+        public static var actionAdminActivityClear: String { tr("activityLog.action.adminActivityClear") }  // "Log cleared"
+        public static var actionAdminSettings: String { tr("activityLog.action.adminSettings") }  // "Settings changed"
+        public static var actionAdminUser: String { tr("activityLog.action.adminUser") }  // "Account changed"
+        public static var actionFileDelete: String { tr("activityLog.action.fileDelete") }  // "Sent to the trash"
+        public static var actionFileDownload: String { tr("activityLog.action.fileDownload") }  // "Downloaded"
+        public static var actionFilePurge: String { tr("activityLog.action.filePurge") }  // "Removed for good"
+        public static var actionFileRestore: String { tr("activityLog.action.fileRestore") }  // "Restored"
+        public static var actionFileUpload: String { tr("activityLog.action.fileUpload") }  // "Uploaded"
+        public static var actionShareCreate: String { tr("activityLog.action.shareCreate") }  // "Share created"
+        public static var actionShareDelete: String { tr("activityLog.action.shareDelete") }  // "Share deleted"
+        public static var actionShareDownload: String { tr("activityLog.action.shareDownload") }  // "Downloaded through a link"
+        public static var actionShareUpload: String { tr("activityLog.action.shareUpload") }  // "Uploaded through a link"
+        public static var actionSignIn: String { tr("activityLog.action.signIn") }  // "Signed in"
+        public static var actionSignOut: String { tr("activityLog.action.signOut") }  // "Signed out"
+        public static var actionVersionsPurge: String { tr("activityLog.action.versionsPurge") }  // "Versions deleted"
+        public static var anyAction: String { tr("activityLog.anyAction") }  // "Any kind"
+        public static var anyOutcome: String { tr("activityLog.anyOutcome") }  // "Any outcome"
+        public static var clear: String { tr("activityLog.clear") }  // "Empty the Log"
+        public static var clearConfirm: String { tr("activityLog.clearConfirm") }  // "Empty the Log"
+        public static var clearMessage: String { tr("activityLog.clearMessage") }  // "Every recorded line is deleted. This cannot be undone."
+        public static var clearTitle: String { tr("activityLog.clearTitle") }  // "Empty the log?"
+        public static var enabled: String { tr("activityLog.enabled") }  // "Record activity"
+        public static var enabledHelp: String { tr("activityLog.enabledHelp") }
+        public static var filterAction: String { tr("activityLog.filterAction") }  // "Kind"
+        public static var filterOutcome: String { tr("activityLog.filterOutcome") }  // "Outcome"
+        public static func fromAddress(_ a0: CVarArg) -> String { tr("activityLog.fromAddress", a0) }
+        public static var more: String { tr("activityLog.more") }  // "Show More"
+        public static var navigationTitle: String { tr("activityLog.navigationTitle") }  // "Activity Log"
+        public static var none: String { tr("activityLog.none") }  // "Nothing recorded yet."
+        public static var off: String { tr("activityLog.off") }  // "The log is off, so nothing is being recorded."
+        public static var outcomeOk: String { tr("activityLog.outcomeOk") }  // "Succeeded"
+        public static var outcomeRefused: String { tr("activityLog.outcomeRefused") }  // "Refused"
+        public static var refresh: String { tr("activityLog.refresh") }  // "Refresh"
+        public static var refusedSuffix: String { tr("activityLog.refusedSuffix") }  // "Refused"
+        public static var retention: String { tr("activityLog.retention") }  // "Keep for (days)"
+        public static var retentionInvalid: String { tr("activityLog.retentionInvalid") }  // "Between 1 and 3650 days."
+        public static var saveButton: String { tr("activityLog.saveButton") }  // "Save Changes"
+        public static var searchButton: String { tr("activityLog.searchButton") }  // "Search"
+        public static var searchPlaceholder: String { tr("activityLog.searchPlaceholder") }  // "A name or a path"
+        public static var subtitle: String { tr("activityLog.subtitle") }
+        public static var unavailable: String { tr("activityLog.unavailable") }  // "The activity log is only available to administrators."
+    }
     public enum ApiTokens {
         public static var copiedToken: String { tr("apiTokens.copiedToken") }  // "Copied"
         public static var copyToken: String { tr("apiTokens.copyToken") }  // "Copy Token"
@@ -373,6 +420,19 @@ public enum L10n {
         public static func removePartial(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("favorites.removePartial", a0, a1) }
         public static var reorderFailed: String { tr("favorites.reorderFailed") }  // "Couldn't save the new order."
     }
+    public enum FfmpegSettings {
+        public static var containerPathHelp: String { tr("ffmpegSettings.containerPathHelp") }
+        public static var defaultHelp: String { tr("ffmpegSettings.defaultHelp") }
+        public static var ffmpegPath: String { tr("ffmpegSettings.ffmpegPath") }  // "FFmpeg executable path"
+        public static var ffmpegPlaceholder: String { tr("ffmpegSettings.ffmpegPlaceholder") }  // "/usr/local/bin/ffmpeg"
+        public static var ffprobePath: String { tr("ffmpegSettings.ffprobePath") }  // "FFprobe executable path"
+        public static var ffprobePlaceholder: String { tr("ffmpegSettings.ffprobePlaceholder") }  // "/usr/local/bin/ffprobe"
+        public static var invalid: String { tr("ffmpegSettings.invalid") }
+        public static var navigationTitle: String { tr("ffmpegSettings.navigationTitle") }  // "FFmpeg"
+        public static var saveButton: String { tr("ffmpegSettings.saveButton") }  // "Save Changes"
+        public static var subtitle: String { tr("ffmpegSettings.subtitle") }
+        public static var unavailable: String { tr("ffmpegSettings.unavailable") }  // "FFmpeg settings are only available to administrators."
+    }
     public enum FileInfo {
         public static var deleteAll: String { tr("fileInfo.deleteAll") }  // "Delete All Versions…"
         public static var deleteAllTitle: String { tr("fileInfo.deleteAllTitle") }  // "Delete all versions?"
@@ -426,6 +486,24 @@ public enum L10n {
         public static var other: String { tr("filter.other") }  // "Other"
         public static var sheetTitle: String { tr("filter.sheetTitle") }  // "Filter by Type"
         public static var videos: String { tr("filter.videos") }  // "Videos"
+    }
+    public enum FolderSizeSettings {
+        public static var addButton: String { tr("folderSizeSettings.addButton") }  // "Add"
+        public static var additional: String { tr("folderSizeSettings.additional") }  // "Additional exclusions"
+        public static var discardButton: String { tr("folderSizeSettings.discardButton") }  // "Discard"
+        public static var environment: String { tr("folderSizeSettings.environment") }  // "Environment-defined exclusions"
+        public static func locked(_ a0: CVarArg) -> String { tr("folderSizeSettings.locked", a0) }
+        public static var modeFull: String { tr("folderSizeSettings.modeFull") }  // "Everything inside them"
+        public static var modeOff: String { tr("folderSizeSettings.modeOff") }  // "Off"
+        public static var modeShallow: String { tr("folderSizeSettings.modeShallow") }  // "Their own files only"
+        public static var navigationTitle: String { tr("folderSizeSettings.navigationTitle") }  // "Folder Sizes"
+        public static var none: String { tr("folderSizeSettings.none") }  // "No paths configured"
+        public static var placeholder: String { tr("folderSizeSettings.placeholder") }  // "Stacks/docker/overlay2"
+        public static var running: String { tr("folderSizeSettings.running") }  // "Measure folder sizes"
+        public static var runningHelp: String { tr("folderSizeSettings.runningHelp") }
+        public static var saveButton: String { tr("folderSizeSettings.saveButton") }  // "Save Changes"
+        public static var subtitle: String { tr("folderSizeSettings.subtitle") }  // "Exclude paths from folder size calculation and indexing."
+        public static var unavailable: String { tr("folderSizeSettings.unavailable") }  // "Folder size settings are only available to administrators."
     }
     public enum Gallery {
         public static var loadFailed: String { tr("gallery.loadFailed") }  // "Couldn't load this image."
@@ -609,6 +687,21 @@ public enum L10n {
         public static var rename: String { tr("previewToolbar.rename") }  // "Rename"
         public static var share: String { tr("previewToolbar.share") }  // "Share"
     }
+    public enum SearchIndexSettings {
+        public static var addButton: String { tr("searchIndexSettings.addButton") }  // "Add"
+        public static var additional: String { tr("searchIndexSettings.additional") }  // "Additional exclusions"
+        public static var discardButton: String { tr("searchIndexSettings.discardButton") }  // "Discard"
+        public static var environment: String { tr("searchIndexSettings.environment") }  // "Environment-defined exclusions"
+        public static func locked(_ a0: CVarArg) -> String { tr("searchIndexSettings.locked", a0) }
+        public static var navigationTitle: String { tr("searchIndexSettings.navigationTitle") }  // "Search Index"
+        public static var none: String { tr("searchIndexSettings.none") }  // "No path configured"
+        public static var placeholder: String { tr("searchIndexSettings.placeholder") }  // "Backups/2024"
+        public static var running: String { tr("searchIndexSettings.running") }  // "Keep a search index"
+        public static var runningHelp: String { tr("searchIndexSettings.runningHelp") }
+        public static var saveButton: String { tr("searchIndexSettings.saveButton") }  // "Save Changes"
+        public static var subtitle: String { tr("searchIndexSettings.subtitle") }  // "Exclude paths from content indexing."
+        public static var unavailable: String { tr("searchIndexSettings.unavailable") }  // "Search index settings are only available to administrators."
+    }
     public enum Select {
         public static var deselectAll: String { tr("select.deselectAll") }  // "Deselect All"
         public static var gridView: String { tr("select.gridView") }  // "Grid View"
@@ -632,6 +725,13 @@ public enum L10n {
         public static var updateButton: String { tr("serverDetails.updateButton") }  // "Update Server"
         public static var urlFootnote: String { tr("serverDetails.urlFootnote") }
         public static var urlLabel: String { tr("serverDetails.urlLabel") }  // "Server URL"
+    }
+    public enum ServerSettings {
+        public static var detailSeparator: String { tr("serverSettings.detailSeparator") }  // " · "
+        public static func featureOffHowTo(_ a0: CVarArg) -> String { tr("serverSettings.featureOffHowTo", a0) }
+        public static var featureOffKept: String { tr("serverSettings.featureOffKept") }
+        public static var featureOffTitle: String { tr("serverSettings.featureOffTitle") }  // "This feature is not enabled"
+        public static var featureOffUseSwitch: String { tr("serverSettings.featureOffUseSwitch") }  // "Turn it on with the switch above."
     }
     public enum Settings {
         public static func accountActiveLabel(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("settings.accountActiveLabel", a0, a1) }
@@ -849,6 +949,72 @@ public enum L10n {
         public static var title: String { tr("tipJar.title") }  // "Buy me a coffee"
         public static var toastThanks: String { tr("tipJar.toastThanks") }  // "Thank you for supporting the project! 🙏"
     }
+    public enum TrashSettings {
+        public static var available: String { tr("trashSettings.available") }  // "Available"
+        public static var checkpointMinutes: String { tr("trashSettings.checkpointMinutes") }  // "Office checkpoint (minutes)"
+        public static var dailyDays: String { tr("trashSettings.dailyDays") }  // "Then one per day (days)"
+        public static var discardButton: String { tr("trashSettings.discardButton") }  // "Discard"
+        public static var enabled: String { tr("trashSettings.enabled") }  // "Send deleted items to the trash"
+        public static var enabledHelp: String { tr("trashSettings.enabledHelp") }
+        public static var environmentNote: String { tr("trashSettings.environmentNote") }
+        public static func eventAdopted(_ a0: CVarArg) -> String { tr("trashSettings.eventAdopted", a0) }
+        public static var eventBreaker: String { tr("trashSettings.eventBreaker") }  // "Too many items missing at once: nothing was changed"
+        public static func eventEvicted(_ a0: CVarArg) -> String { tr("trashSettings.eventEvicted", a0) }
+        public static func eventFailed(_ a0: CVarArg) -> String { tr("trashSettings.eventFailed", a0) }
+        public static func eventForgotten(_ a0: CVarArg) -> String { tr("trashSettings.eventForgotten", a0) }
+        public static func eventLost(_ a0: CVarArg) -> String { tr("trashSettings.eventLost", a0) }
+        public static func eventVersionEvicted(_ a0: CVarArg) -> String { tr("trashSettings.eventVersionEvicted", a0) }
+        public static var eventVersionFailed: String { tr("trashSettings.eventVersionFailed") }  // "A version could not be removed"
+        public static var eventVersionLost: String { tr("trashSettings.eventVersionLost") }  // "A version was missing its content"
+        public static func eventVersionTooLarge(_ a0: CVarArg) -> String { tr("trashSettings.eventVersionTooLarge", a0) }
+        public static var eventVersionsBreaker: String { tr("trashSettings.eventVersionsBreaker") }  // "Too many versions missing at once: nothing was changed"
+        public static var hourlyDays: String { tr("trashSettings.hourlyDays") }  // "Then one per hour (days)"
+        public static var journalHeader: String { tr("trashSettings.journalHeader") }  // "Journal"
+        public static var keepAllHours: String { tr("trashSettings.keepAllHours") }  // "Keep every version (hours)"
+        public static func lastPass(_ a0: CVarArg) -> String { tr("trashSettings.lastPass", a0) }
+        public static func lastPassPurged(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("trashSettings.lastPassPurged", a0, a1) }
+        public static var maxPerFile: String { tr("trashSettings.maxPerFile") }  // "Versions per file at most"
+        public static var maxPercent: String { tr("trashSettings.maxPercent") }  // "Share of each volume (%)"
+        public static var maxPercentHelp: String { tr("trashSettings.maxPercentHelp") }  // "The most the trash may hold on a volume, from 1 to 90%."
+        public static var maxSize: String { tr("trashSettings.maxSize") }  // "Size cap per volume (GiB)"
+        public static var maxSizeHelp: String { tr("trashSettings.maxSizeHelp") }  // "Optional. The smaller of the share and the cap applies."
+        public static var maxSizeNone: String { tr("trashSettings.maxSizeNone") }  // "No cap"
+        public static var navigationTitle: String { tr("trashSettings.navigationTitle") }  // "Trash and Versions"
+        public static var never: String { tr("trashSettings.never") }  // "not yet"
+        public static var noBudget: String { tr("trashSettings.noBudget") }  // "no limit"
+        public static var retention: String { tr("trashSettings.retention") }  // "Retention (days)"
+        public static var retentionHelp: String { tr("trashSettings.retentionHelp") }  // "From 1 to 3650 days."
+        public static var runMaintenance: String { tr("trashSettings.runMaintenance") }  // "Run Maintenance Now"
+        public static var saveButton: String { tr("trashSettings.saveButton") }  // "Save Changes"
+        public static var sharedSpace: String { tr("trashSettings.sharedSpace") }
+        public static var subtitle: String { tr("trashSettings.subtitle") }
+        public static var tiersHelp: String { tr("trashSettings.tiersHelp") }
+        public static var trashHeader: String { tr("trashSettings.trashHeader") }  // "Trash"
+        public static var trashInvalid: String { tr("trashSettings.trashInvalid") }
+        public static var unavailable: String { tr("trashSettings.unavailable") }
+        public static var unavailableMissing: String { tr("trashSettings.unavailableMissing") }  // "Not mounted or removed"
+        public static var unavailableReplaced: String { tr("trashSettings.unavailableReplaced") }  // "Another disk in its place"
+        public static var unavailableUnreadable: String { tr("trashSettings.unavailableUnreadable") }  // "Unreadable"
+        public static func usage(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("trashSettings.usage", a0, a1) }
+        public static var verify: String { tr("trashSettings.verify") }  // "Verify"
+        public static func verifyIssues(_ a0: CVarArg) -> String { tr("trashSettings.verifyIssues", a0) }
+        public static var verifyOk: String { tr("trashSettings.verifyOk") }  // "Every volume's trash is consistent."
+        public static var versionsEnabled: String { tr("trashSettings.versionsEnabled") }  // "Keep earlier versions of files"
+        public static var versionsEnabledHelp: String { tr("trashSettings.versionsEnabledHelp") }
+        public static var versionsEnvironmentNote: String { tr("trashSettings.versionsEnvironmentNote") }
+        public static var versionsHeader: String { tr("trashSettings.versionsHeader") }  // "File Versions"
+        public static var versionsInvalid: String { tr("trashSettings.versionsInvalid") }
+        public static var versionsSubtitle: String { tr("trashSettings.versionsSubtitle") }
+        public static func violation(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("trashSettings.violation", a0, a1) }
+        public static func zoneItems(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("trashSettings.zoneItems", a0, a1) }
+        public static func zoneKindPersonal(_ a0: CVarArg) -> String { tr("trashSettings.zoneKindPersonal", a0) }
+        public static func zoneKindUserVolume(_ a0: CVarArg) -> String { tr("trashSettings.zoneKindUserVolume", a0) }
+        public static func zoneProblems(_ a0: CVarArg) -> String { tr("trashSettings.zoneProblems", a0) }
+        public static func zoneVersions(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("trashSettings.zoneVersions", a0, a1) }
+        public static var zonesEmpty: String { tr("trashSettings.zonesEmpty") }  // "Nothing has been deleted into a trash yet."
+        public static var zonesHeader: String { tr("trashSettings.zonesHeader") }  // "Trash by Volume"
+        public static var zonesSubtitle: String { tr("trashSettings.zonesSubtitle") }
+    }
     public enum TwoFactor {
         public static var codeAccessibilityLabel: String { tr("twoFactor.codeAccessibilityLabel") }  // "Authenticator code"
         public static var confirmButton: String { tr("twoFactor.confirmButton") }  // "Verify and Turn On"
@@ -879,6 +1045,19 @@ public enum L10n {
         public static var cannotOpen: String { tr("unsupportedPreview.cannotOpen") }  // "This app can't open this type of file."
         public static var genericType: String { tr("unsupportedPreview.genericType") }  // "File"
         public static func macDescription(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("unsupportedPreview.macDescription", a0, a1, a2) }
+    }
+    public enum UploadSettings {
+        public static var autoFallback: String { tr("uploadSettings.autoFallback") }  // "Auto-fallback to chunked"
+        public static var autoFallbackHelp: String { tr("uploadSettings.autoFallbackHelp") }
+        public static var chunkSize: String { tr("uploadSettings.chunkSize") }  // "Chunk size"
+        public static var chunkSizeHelp: String { tr("uploadSettings.chunkSizeHelp") }
+        public static func chunkSizeValue(_ a0: CVarArg) -> String { tr("uploadSettings.chunkSizeValue", a0) }
+        public static var chunkedEnable: String { tr("uploadSettings.chunkedEnable") }  // "Enable chunked uploads"
+        public static var chunkedEnableHelp: String { tr("uploadSettings.chunkedEnableHelp") }
+        public static var navigationTitle: String { tr("uploadSettings.navigationTitle") }  // "Uploads"
+        public static var saveButton: String { tr("uploadSettings.saveButton") }  // "Save Changes"
+        public static var subtitle: String { tr("uploadSettings.subtitle") }  // "Configure how files are sent to the server."
+        public static var unavailable: String { tr("uploadSettings.unavailable") }  // "Upload settings are only available to administrators."
     }
     public enum Uploads {
         public static var actionTakePhoto: String { tr("uploads.actionTakePhoto") }  // "Take Photo or Video"
@@ -1019,6 +1198,47 @@ public enum L10n {
         public static var toastUserRemoved: String { tr("userManagement.toastUserRemoved") }  // "User removed"
         public static var toastVolumeRemoved: String { tr("userManagement.toastVolumeRemoved") }  // "Volume removed"
         public static var toastVolumeSaved: String { tr("userManagement.toastVolumeSaved") }  // "Volume saved"
+    }
+    public enum VersionedFiles {
+        public static var anyState: String { tr("versionedFiles.anyState") }  // "Any state"
+        public static var anyZone: String { tr("versionedFiles.anyZone") }  // "Any volume"
+        public static func confirmAllTitle(_ a0: CVarArg) -> String { tr("versionedFiles.confirmAllTitle", a0) }
+        public static var confirmDelete: String { tr("versionedFiles.confirmDelete") }  // "Delete"
+        public static var confirmMessage: String { tr("versionedFiles.confirmMessage") }  // "Deleted versions cannot be recovered."
+        public static func confirmSomeTitle(_ a0: CVarArg) -> String { tr("versionedFiles.confirmSomeTitle", a0) }
+        public static var deleteAll: String { tr("versionedFiles.deleteAll") }  // "Delete All Versions"
+        public static var deleteFailed: String { tr("versionedFiles.deleteFailed") }
+        public static func deleteSelected(_ a0: CVarArg) -> String { tr("versionedFiles.deleteSelected", a0) }
+        public static var deleteSelectedNone: String { tr("versionedFiles.deleteSelectedNone") }  // "Tick versions to delete"
+        public static var detailFailed: String { tr("versionedFiles.detailFailed") }  // "This history could not be read."
+        public static var navigationTitle: String { tr("versionedFiles.navigationTitle") }  // "File Versions"
+        public static func newest(_ a0: CVarArg) -> String { tr("versionedFiles.newest", a0) }
+        public static var next: String { tr("versionedFiles.next") }  // "Next"
+        public static var none: String { tr("versionedFiles.none") }  // "No file has earlier versions."
+        public static func pageRange(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("versionedFiles.pageRange", a0, a1, a2) }
+        public static var previous: String { tr("versionedFiles.previous") }  // "Previous"
+        public static var refresh: String { tr("versionedFiles.refresh") }  // "Refresh"
+        public static func rowSummary(_ a0: CVarArg, _ a1: CVarArg) -> String { tr("versionedFiles.rowSummary", a0, a1) }
+        public static var searchPlaceholder: String { tr("versionedFiles.searchPlaceholder") }  // "A name or a path"
+        public static var sortBytes: String { tr("versionedFiles.sortBytes") }  // "Space used"
+        public static var sortHeader: String { tr("versionedFiles.sortHeader") }  // "Order by"
+        public static var sortNewest: String { tr("versionedFiles.sortNewest") }  // "Most recent"
+        public static var sortPath: String { tr("versionedFiles.sortPath") }  // "Path"
+        public static var sortVersions: String { tr("versionedFiles.sortVersions") }  // "Number of versions"
+        public static var stateHeader: String { tr("versionedFiles.stateHeader") }  // "State"
+        public static var stateLive: String { tr("versionedFiles.stateLive") }  // "File still there"
+        public static var stateOrphaned: String { tr("versionedFiles.stateOrphaned") }  // "File gone"
+        public static var stateTrashed: String { tr("versionedFiles.stateTrashed") }  // "In the trash"
+        public static var subtitle: String { tr("versionedFiles.subtitle") }
+        public static func summary(_ a0: CVarArg, _ a1: CVarArg, _ a2: CVarArg) -> String { tr("versionedFiles.summary", a0, a1, a2) }
+        public static var unavailable: String { tr("versionedFiles.unavailable") }  // "File versions are only available to administrators."
+        public static func versionBy(_ a0: CVarArg) -> String { tr("versionedFiles.versionBy", a0) }
+        public static var versionPinned: String { tr("versionedFiles.versionPinned") }  // "Pinned"
+        public static var versionUnavailable: String { tr("versionedFiles.versionUnavailable") }  // "Unavailable"
+        public static var zone: String { tr("versionedFiles.zone") }  // "Volume"
+        public static func zoneKindPersonal(_ a0: CVarArg) -> String { tr("versionedFiles.zoneKindPersonal", a0) }
+        public static func zoneKindUserVolume(_ a0: CVarArg) -> String { tr("versionedFiles.zoneKindUserVolume", a0) }
+        public static var zoneUnknown: String { tr("versionedFiles.zoneUnknown") }  // "Unknown volume"
     }
 }
 

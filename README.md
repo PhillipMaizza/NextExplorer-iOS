@@ -71,6 +71,7 @@ And on the Mac, a real Mac app: sidebar, Finder style tables, Quick Look, drag a
 - **Uploads & downloads.** Queued uploads and downloads with progress, retry and cancel; send files to NextExplorer from any other app's share sheet.
 - **Works offline.** Keep chosen folders on the device to open with no connection, and a saved-copy view keeps your recent folders readable when the connection drops, then refreshes when you are back.
 - **Account security.** Turn two-factor authentication on or off from Settings, with a QR code, recovery codes and a password check, and create, rename and revoke API tokens for your scripts.
+- **Server settings for admins.** If you administer the server, the same settings the web app offers are here: uploads (chunked, with automatic fallback), FFmpeg paths, the search index, folder size measuring, the activity log, the trash and file versions (with a per-volume view and a version browser), thumbnails and folder access rules. Each page shows when the server has the feature switched off, and none of it appears for non-admin accounts.
 - **Several accounts.** Sign in to more than one server and switch between them; each account's files and caches stay separate. Your own private My Files space when the server offers one.
 - **Everyone's app.** 17 languages with full right-to-left support, plus complete VoiceOver and Dynamic Type accessibility.
 - **iPhone and iPad.** Universal layout with a split-view sidebar on larger screens.
@@ -88,7 +89,7 @@ Native iOS 18+ and macOS 15+, SwiftUI, and [The Composable Architecture](https:/
 |---|---|
 | `AppFeature` | App root, tab and window composition, session lifecycle |
 | `AuthFeature` / `AuthClient` | Login, SSO, passkeys, session state |
-| `FilesFeature` / `FilesClient` | Browse, preview, search, favorites, sharing, offline cache |
+| `FilesFeature` / `FilesClient` | Browse, preview, search, favorites, sharing, offline cache, admin server settings |
 | `NetworkClient` | HTTP layer, ETag revalidation, connectivity |
 | `CoreModels` | Shared domain models |
 | `DesignSystem` | Colors, typography, reusable components |

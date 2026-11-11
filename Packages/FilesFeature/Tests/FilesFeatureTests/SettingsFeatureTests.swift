@@ -219,6 +219,42 @@ struct SettingsFeatureTests {
         #expect(state.showsTwoFactorRow)
     }
 
+    // MARK: Admin settings pages stay admin only
+
+    @Test
+    func aNonAdminCannotOpenAnyAdminSettingsPage() async {
+        let store = TestStore(initialState: makeState()) { SettingsFeature() }
+
+        await store.send(.uploadSettingsButtonTapped)
+        await store.send(.ffmpegSettingsButtonTapped)
+        await store.send(.searchIndexSettingsButtonTapped)
+        await store.send(.folderSizeSettingsButtonTapped)
+        await store.send(.activityLogButtonTapped)
+        await store.send(.trashSettingsButtonTapped)
+        await store.send(.versionedFilesButtonTapped)
+
+        #expect(store.state.activityLog == nil)
+        #expect(store.state.trashSettings == nil)
+        #expect(store.state.versionedFiles == nil)
+        #expect(store.state.uploadSettings == nil)
+        #expect(store.state.ffmpegSettings == nil)
+        #expect(store.state.searchIndexSettings == nil)
+        #expect(store.state.folderSizeSettings == nil)
+    }
+
+    @Test
+    func anAdminOpensEachAdminSettingsPage() async {
+        let admin = User(id: "admin-1", username: "boss", email: "boss@example.com", roles: [UserRole.admin])
+        var state = makeState()
+        state.user = admin
+        let store = TestStore(initialState: state) { SettingsFeature() }
+
+        await store.send(.uploadSettingsButtonTapped) { $0.uploadSettings = UploadSettingsFeature.State(serverURL: serverURL) }
+        await store.send(.ffmpegSettingsButtonTapped) { $0.ffmpegSettings = FFmpegSettingsFeature.State(serverURL: serverURL) }
+        await store.send(.searchIndexSettingsButtonTapped) { $0.searchIndexSettings = SearchIndexSettingsFeature.State(serverURL: serverURL) }
+        await store.send(.folderSizeSettingsButtonTapped) { $0.folderSizeSettings = FolderSizeSettingsFeature.State(serverURL: serverURL) }
+    }
+
     @Test
     func addingAPasswordClosesTheScreenAndTurnsTheRowIntoChangePassword() async {
         var state = makeState()

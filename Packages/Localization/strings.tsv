@@ -307,6 +307,214 @@ thumbnailSettings.concurrencyHelp	How many thumbnails the server builds at once.
 thumbnailSettings.unavailable	Thumbnail settings are only available to administrators.
 thumbnailSettings.saveButton	Save Changes
 
+# ---- admin: uploads ----
+uploadSettings.navigationTitle	Uploads
+uploadSettings.subtitle	Configure how files are sent to the server.
+uploadSettings.chunkedEnable	Enable chunked uploads
+uploadSettings.chunkedEnableHelp	Use TUS to send large files through multiple smaller requests.
+uploadSettings.chunkSize	Chunk size
+uploadSettings.chunkSizeHelp	Maximum size of each upload request. Keep this below your reverse proxy limit. Smaller chunks give smoother progress.
+uploadSettings.chunkSizeValue	%lld MiB
+uploadSettings.autoFallback	Auto-fallback to chunked
+uploadSettings.autoFallbackHelp	If a direct upload fails because a reverse proxy rejects the body size, switch to chunked uploads automatically.
+uploadSettings.unavailable	Upload settings are only available to administrators.
+uploadSettings.saveButton	Save Changes
+
+# ---- admin: ffmpeg ----
+ffmpegSettings.navigationTitle	FFmpeg
+ffmpegSettings.subtitle	Choose the FFmpeg and FFprobe executables used for media previews and metadata.
+ffmpegSettings.containerPathHelp	Enter absolute paths visible inside the application container. To use host binaries, bind-mount them into the container first.
+ffmpegSettings.ffmpegPath	FFmpeg executable path
+ffmpegSettings.ffprobePath	FFprobe executable path
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+ffmpegSettings.invalid	Both paths must be absolute container paths beginning with /.
+ffmpegSettings.defaultHelp	Leave a path empty to use FFMPEG_PATH or FFPROBE_PATH from the environment, then the bundled executable. Changes apply immediately.
+ffmpegSettings.unavailable	FFmpeg settings are only available to administrators.
+ffmpegSettings.saveButton	Save Changes
+
+# ---- admin: search index ----
+searchIndexSettings.navigationTitle	Search Index
+searchIndexSettings.subtitle	Exclude paths from content indexing.
+searchIndexSettings.running	Keep a search index
+searchIndexSettings.runningHelp	Reads the documents in the volume in the background, so a search inside them answers at once.
+searchIndexSettings.locked	Set by %@ in the environment, so it is decided there and not here.
+searchIndexSettings.environment	Environment-defined exclusions
+searchIndexSettings.additional	Additional exclusions
+searchIndexSettings.none	No path configured
+searchIndexSettings.placeholder	Backups/2024
+searchIndexSettings.addButton	Add
+searchIndexSettings.unavailable	Search index settings are only available to administrators.
+searchIndexSettings.saveButton	Save Changes
+searchIndexSettings.discardButton	Discard
+
+# ---- admin: folder sizes ----
+folderSizeSettings.navigationTitle	Folder Sizes
+folderSizeSettings.subtitle	Exclude paths from folder size calculation and indexing.
+folderSizeSettings.running	Measure folder sizes
+folderSizeSettings.runningHelp	Measures folders in the background, so their size shows in the list.
+folderSizeSettings.modeOff	Off
+folderSizeSettings.modeShallow	Their own files only
+folderSizeSettings.modeFull	Everything inside them
+folderSizeSettings.locked	Set by %@ in the environment, so it is decided there and not here.
+folderSizeSettings.environment	Environment-defined exclusions
+folderSizeSettings.additional	Additional exclusions
+folderSizeSettings.none	No paths configured
+folderSizeSettings.placeholder	Stacks/docker/overlay2
+folderSizeSettings.addButton	Add
+folderSizeSettings.unavailable	Folder size settings are only available to administrators.
+folderSizeSettings.saveButton	Save Changes
+folderSizeSettings.discardButton	Discard
+
+# ---- admin: activity log ----
+activityLog.navigationTitle	Activity Log
+activityLog.subtitle	Who did what, when, and from where. Off unless you ask for it.
+activityLog.enabled	Record activity
+activityLog.enabledHelp	Sign-ins, downloads, uploads, deletions, restores, share links and account changes are written down while this is on. Nothing before it was switched on is there.
+activityLog.retention	Keep for (days)
+activityLog.retentionInvalid	Between 1 and 3650 days.
+activityLog.saveButton	Save Changes
+activityLog.off	The log is off, so nothing is being recorded.
+activityLog.none	Nothing recorded yet.
+activityLog.filterAction	Kind
+activityLog.anyAction	Any kind
+activityLog.filterOutcome	Outcome
+activityLog.anyOutcome	Any outcome
+activityLog.outcomeOk	Succeeded
+activityLog.outcomeRefused	Refused
+activityLog.searchPlaceholder	A name or a path
+activityLog.searchButton	Search
+activityLog.refresh	Refresh
+activityLog.clear	Empty the Log
+activityLog.clearTitle	Empty the log?
+activityLog.clearMessage	Every recorded line is deleted. This cannot be undone.
+activityLog.clearConfirm	Empty the Log
+activityLog.more	Show More
+activityLog.refusedSuffix	Refused
+activityLog.fromAddress	From %@
+activityLog.unavailable	The activity log is only available to administrators.
+activityLog.action.signIn	Signed in
+activityLog.action.signOut	Signed out
+activityLog.action.accountPassword	Password changed
+activityLog.action.accountTwoFactor	Second factor changed
+activityLog.action.accountPasskey	Passkey changed
+activityLog.action.accountToken	API token changed
+activityLog.action.adminUser	Account changed
+activityLog.action.adminSettings	Settings changed
+activityLog.action.adminActivityClear	Log cleared
+activityLog.action.shareCreate	Share created
+activityLog.action.shareDelete	Share deleted
+activityLog.action.shareDownload	Downloaded through a link
+activityLog.action.shareUpload	Uploaded through a link
+activityLog.action.fileDownload	Downloaded
+activityLog.action.fileUpload	Uploaded
+activityLog.action.fileDelete	Sent to the trash
+activityLog.action.fileRestore	Restored
+activityLog.action.filePurge	Removed for good
+activityLog.action.versionsPurge	Versions deleted
+
+# ---- admin: trash and versions ----
+trashSettings.navigationTitle	Trash and Versions
+trashSettings.subtitle	Deleted items and earlier versions of files are kept in a reserved space on their own volume, and removed after their retention or when that space is needed.
+trashSettings.trashHeader	Trash
+trashSettings.enabled	Send deleted items to the trash
+trashSettings.enabledHelp	When off, deleting removes items for good. Items already in the trash still expire.
+trashSettings.retention	Retention (days)
+trashSettings.retentionHelp	From 1 to 3650 days.
+trashSettings.maxPercent	Share of each volume (%)
+trashSettings.maxPercentHelp	The most the trash may hold on a volume, from 1 to 90%.
+trashSettings.maxSize	Size cap per volume (GiB)
+trashSettings.maxSizeHelp	Optional. The smaller of the share and the cap applies.
+trashSettings.maxSizeNone	No cap
+trashSettings.trashInvalid	Check the values: retention from 1 to 3650 days, share from 1 to 90%, a positive size or none.
+trashSettings.versionsHeader	File Versions
+trashSettings.versionsSubtitle	Each save keeps what it replaces, without copying it, in the same reserved space as the trash. Older versions are thinned out over time.
+trashSettings.versionsEnabled	Keep earlier versions of files
+trashSettings.versionsEnabledHelp	Independent of the trash. When off, saves keep nothing new; existing versions stay until they expire or are deleted.
+trashSettings.keepAllHours	Keep every version (hours)
+trashSettings.hourlyDays	Then one per hour (days)
+trashSettings.dailyDays	Then one per day (days)
+trashSettings.maxPerFile	Versions per file at most
+trashSettings.checkpointMinutes	Office checkpoint (minutes)
+trashSettings.tiersHelp	After these tiers, one version per week is kept. An office editing session leaves one version, plus a checkpoint at most this often. Pinned versions escape the thinning and the per-file limit.
+trashSettings.versionsInvalid	Check the values: 1 to 720 hours, 1 to 365 days per hour, 1 to 3650 days per day, 1 to 1000 versions per file, a checkpoint from 1 to 1440 minutes.
+trashSettings.sharedSpace	Versions and the trash share each volume's reserved space. When it runs short, older versions go first, then trash items, then each file's latest version, and pinned versions last.
+trashSettings.saveButton	Save Changes
+trashSettings.discardButton	Discard
+trashSettings.unavailable	Trash and version settings are only available to administrators.
+trashSettings.zonesHeader	Trash by Volume
+trashSettings.zonesSubtitle	Each volume keeps its trash in a hidden .nextexplorer folder at its root, so deleting never copies anything.
+trashSettings.zonesEmpty	Nothing has been deleted into a trash yet.
+trashSettings.zoneKindPersonal	Personal folder of %@
+trashSettings.zoneKindUserVolume	Assigned volume %@
+trashSettings.available	Available
+trashSettings.unavailableMissing	Not mounted or removed
+trashSettings.unavailableReplaced	Another disk in its place
+trashSettings.unavailableUnreadable	Unreadable
+trashSettings.usage	%1$@ of %2$@
+trashSettings.noBudget	no limit
+trashSettings.zoneItems	Items: %1$lld · %2$@
+trashSettings.zoneVersions	Versions: %1$lld · %2$@
+trashSettings.lastPass	Last maintenance: %@
+trashSettings.lastPassPurged	%1$@ · removed: %2$lld
+trashSettings.never	not yet
+trashSettings.verify	Verify
+trashSettings.runMaintenance	Run Maintenance Now
+trashSettings.verifyOk	Every volume's trash is consistent.
+trashSettings.verifyIssues	Problems found: %lld
+trashSettings.zoneProblems	Problems: %lld
+trashSettings.journalHeader	Journal
+trashSettings.eventEvicted	"%@" removed before its retention to free space
+trashSettings.eventAdopted	"%@" recovered after an interruption
+trashSettings.eventLost	"%@" was missing its content
+trashSettings.eventFailed	"%@" could not be removed
+trashSettings.eventBreaker	Too many items missing at once: nothing was changed
+trashSettings.eventForgotten	"%@" forgotten by an administrator
+trashSettings.eventVersionEvicted	A version of "%@" removed to free space
+trashSettings.eventVersionFailed	A version could not be removed
+trashSettings.eventVersionLost	A version was missing its content
+trashSettings.eventVersionTooLarge	"%@" is larger than the whole space: what it replaced was not kept
+trashSettings.eventVersionsBreaker	Too many versions missing at once: nothing was changed
+
+# ---- admin: file versions ----
+versionedFiles.navigationTitle	File Versions
+versionedFiles.subtitle	Every file that has a history, wherever it is. It shows paths from every space, personal folders included, so it is for administrators only.
+versionedFiles.summary	Files: %1$lld · Versions: %2$lld · %3$@
+versionedFiles.searchPlaceholder	A name or a path
+versionedFiles.zone	Volume
+versionedFiles.anyZone	Any volume
+versionedFiles.stateHeader	State
+versionedFiles.anyState	Any state
+versionedFiles.stateLive	File still there
+versionedFiles.stateTrashed	In the trash
+versionedFiles.stateOrphaned	File gone
+versionedFiles.sortHeader	Order by
+versionedFiles.sortBytes	Space used
+versionedFiles.sortVersions	Number of versions
+versionedFiles.sortNewest	Most recent
+versionedFiles.sortPath	Path
+versionedFiles.none	No file has earlier versions.
+versionedFiles.unavailable	File versions are only available to administrators.
+versionedFiles.zoneUnknown	Unknown volume
+versionedFiles.zoneKindPersonal	Personal folder of %@
+versionedFiles.zoneKindUserVolume	Assigned volume %@
+versionedFiles.rowSummary	Versions: %1$lld · %2$@
+versionedFiles.newest	Latest: %@
+versionedFiles.versionPinned	Pinned
+versionedFiles.versionUnavailable	Unavailable
+versionedFiles.versionBy	By %@
+versionedFiles.detailFailed	This history could not be read.
+versionedFiles.deleteSelectedNone	Tick versions to delete
+versionedFiles.deleteSelected	Delete Selected (%lld)
+versionedFiles.deleteAll	Delete All Versions
+versionedFiles.confirmAllTitle	Delete every version of "%@"?
+versionedFiles.confirmSomeTitle	Delete the selected versions (%lld)?
+versionedFiles.confirmMessage	Deleted versions cannot be recovered.
+versionedFiles.confirmDelete	Delete
+versionedFiles.previous	Previous
+versionedFiles.next	Next
+versionedFiles.pageRange	%1$lld to %2$lld of %3$lld
+
 # ---- admin: access rules ----
 accessRules.navigationTitle	Folder Access Rules
 accessRules.subtitle	Override read and write access for specific paths.
@@ -1008,3 +1216,15 @@ shareUpload.retrySignInBody	Sign in to NextExplorer, then tap Retry again.
 shareUpload.causeFolder	Folders can't be shared. Share the files inside instead.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	%lld more
+
+# ---- admin: shared ----
+serverSettings.detailSeparator	 · 
+versionedFiles.deleteFailed	Some versions could not be deleted. Check them and try again.
+serverSettings.featureOffTitle	This feature is not enabled
+serverSettings.featureOffKept	What you configure here is saved and applies as soon as it is enabled.
+serverSettings.featureOffUseSwitch	Turn it on with the switch above.
+serverSettings.featureOffHowTo	To turn it on, set %@ and restart the container.
+trashSettings.environmentNote	Defaults come from TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT and TRASH_MAX_SIZE.
+trashSettings.versionsEnvironmentNote	Defaults come from VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE and VERSIONS_SESSION_CHECKPOINT_MINUTES.
+trashSettings.violation	%1$@: %2$@
+versionedFiles.refresh	Refresh

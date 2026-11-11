@@ -284,6 +284,27 @@ struct SettingsServerAdminSection: View {
                 DSNavigationRow(title: L10n.Settings.rowAccessRules, icon: IconKit.shield) {
                     store.send(.accessRulesButtonTapped)
                 }
+                DSNavigationRow(title: L10n.UploadSettings.navigationTitle, icon: IconKit.upload) {
+                    store.send(.uploadSettingsButtonTapped)
+                }
+                DSNavigationRow(title: L10n.SearchIndexSettings.navigationTitle, icon: IconKit.search) {
+                    store.send(.searchIndexSettingsButtonTapped)
+                }
+                DSNavigationRow(title: L10n.FolderSizeSettings.navigationTitle, icon: IconKit.folder) {
+                    store.send(.folderSizeSettingsButtonTapped)
+                }
+                DSNavigationRow(title: L10n.FfmpegSettings.navigationTitle, icon: IconKit.film) {
+                    store.send(.ffmpegSettingsButtonTapped)
+                }
+                DSNavigationRow(title: L10n.TrashSettings.navigationTitle, icon: IconKit.delete) {
+                    store.send(.trashSettingsButtonTapped)
+                }
+                DSNavigationRow(title: L10n.VersionedFiles.navigationTitle, icon: IconKit.archiveDocument) {
+                    store.send(.versionedFilesButtonTapped)
+                }
+                DSNavigationRow(title: L10n.ActivityLog.navigationTitle, icon: IconKit.time) {
+                    store.send(.activityLogButtonTapped)
+                }
             } header: {
                 sectionHeader(L10n.Settings.sectionAdmin)
             }
