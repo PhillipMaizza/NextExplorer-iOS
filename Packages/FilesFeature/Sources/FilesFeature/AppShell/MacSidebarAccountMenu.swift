@@ -76,7 +76,9 @@
                 MacPopoverActionRow(title: L10n.Settings.addAccount, icon: IconKit.plus, tone: .accent) {
                     dismissThen { store.send(.addAccountTapped) }
                 }
-                MacPopoverActionRow(title: L10n.Settings.rowChangePassword, icon: IconKit.key, action: onChangePassword)
+                if store.showsPasswordRow {
+                    MacPopoverActionRow(title: L10n.Settings.rowChangePassword, icon: IconKit.key, action: onChangePassword)
+                }
                 MacPopoverActionRow(title: L10n.Settings.signOutButton, icon: IconKit.signOut, tone: .danger) {
                     dismissThen { store.send(.signOutButtonTapped) }
                 }

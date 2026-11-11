@@ -200,6 +200,7 @@ public extension FilesClient {
         changeOwnPassword: { _, _, _ in },
         addOwnPassword: { _, _ in },
         fetchAuthMethods: { _ in [SignInMethod(id: "preview-password", type: SignInMethod.localPasswordType, provider: "Password")] },
+        fetchAuthStatus: { _ in AuthStatus(localEnabled: true, oidcEnabled: false) },
         fetchTwoFactorStatus: { _ in TwoFactorStatus(isEnabled: false) },
         beginTwoFactorSetup: { _ in
             TwoFactorSetup(secret: "JBSWY3DPEHPK3PXP", uri: "otpauth://totp/NextExplorer:preview?secret=JBSWY3DPEHPK3PXP&issuer=NextExplorer")

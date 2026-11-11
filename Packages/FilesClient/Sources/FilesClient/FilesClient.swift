@@ -187,6 +187,10 @@ public struct FilesClient: Sendable {
     /// `GET /api/auth/methods`: how the signed in account can sign in.
     public var fetchAuthMethods: @Sendable (_ serverURL: URL) async throws -> [SignInMethod]
 
+    /// `GET /api/auth/status`: whether the server lets accounts sign in with a password. Off on an
+    /// `AUTH_MODE=oidc` server, where a password or a second factor on the account does nothing.
+    public var fetchAuthStatus: @Sendable (_ serverURL: URL) async throws -> AuthStatus
+
     /// `GET /api/auth/totp`: whether the account asks for a code at sign in.
     public var fetchTwoFactorStatus: @Sendable (_ serverURL: URL) async throws -> TwoFactorStatus
     /// `POST /api/auth/totp/start`: draws the secret to put in an authenticator app. Turns nothing on.

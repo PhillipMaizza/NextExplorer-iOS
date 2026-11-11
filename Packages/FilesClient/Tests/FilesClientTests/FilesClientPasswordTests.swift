@@ -117,6 +117,37 @@ extension FilesClientLiveTests {
             #expect(try await makeClient().fetchAuthMethods(serverURL).isEmpty)
         }
 
+        // MARK: authStatus
+
+        @Test
+        func authStatusReadsWhetherPasswordSignInIsOn() async throws {
+            stub(statusCode: 200, body: #"{"strategies":{"local":false,"oidc":true,"passkey":false},"authMode":"oidc"}"#)
+
+            let status = try await makeClient().fetchAuthStatus(serverURL)
+
+            #expect(!status.isLocalEnabled)
+            #expect(status.isOIDCEnabled)
+            let request = try #require(StubURLProtocol.capturedRequest)
+            #expect(request.httpMethod == "GET")
+            #expect(request.url?.path == "/api/auth/status")
+        }
+
+        @Test
+        func authStatusWithPasswordSignInOnIsLocalEnabled() async throws {
+            stub(statusCode: 200, body: #"{"strategies":{"local":true,"oidc":true}}"#)
+
+            #expect(try await makeClient().fetchAuthStatus(serverURL).isLocalEnabled)
+        }
+
+        @Test
+        func authStatusWithAMalformedBodyIsADecodingError() async throws {
+            stub(statusCode: 200, body: #"{"nope":true}"#)
+
+            await #expect(throws: FilesClientError.self) {
+                _ = try await makeClient().fetchAuthStatus(serverURL)
+            }
+        }
+
         @Test
         func authMethodsOfADeadSessionIsSessionExpired() async throws {
             stub(statusCode: 401)
