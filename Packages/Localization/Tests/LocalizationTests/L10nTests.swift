@@ -27,6 +27,25 @@ struct L10nTests {
         }
     }
 
+    @Test("every string resolves to real text, not its own key, in every language the app ships")
+    func everyKeyResolvesInEveryLanguage() throws {
+        let url = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+            .appendingPathComponent("Sources/Localization/Resources/Localizable.xcstrings")
+        let catalog = try JSONSerialization.jsonObject(with: Data(contentsOf: url)) as? [String: Any]
+        let strings = (catalog?["strings"] as? [String: Any]) ?? [:]
+        #expect(strings.count > 1000)
+        var unresolved: [String] = []
+        for language in LocalizationOverride.supportedLanguages {
+            LocalizationOverride.withLanguage(language) {
+                for key in strings.keys where LocalizationOverride.bundle.localizedString(forKey: key, value: key, table: "Localizable") == key {
+                    unresolved.append("\(language)/\(key)")
+                }
+            }
+        }
+        #expect(unresolved.isEmpty, "Unresolved: \(unresolved.sorted().prefix(20)) (\(unresolved.count) in all)")
+    }
+
     @Test("format accessors interpolate their arguments")
     func formatAccessors() {
         #expect(L10n.ChangePassword.errorMinLength(6) == "Use at least 6 characters.")

@@ -1046,3 +1046,90 @@ serverSettings.featureOffHowTo	इसे चालू करने के लि
 trashSettings.environmentNote	डिफ़ॉल्ट मान TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT और TRASH_MAX_SIZE से आते हैं।
 trashSettings.versionsEnvironmentNote	डिफ़ॉल्ट मान VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE और VERSIONS_SESSION_CHECKPOINT_MINUTES से आते हैं।
 versionedFiles.refresh	ताज़ा करें
+apiTokens.copiedToken	कॉपी हो गया
+apiTokens.copyToken	टोकन कॉपी करें
+apiTokens.createSubmit	टोकन बनाएं
+apiTokens.created	%@ को बनाया गया
+apiTokens.emptyMessage	किसी स्क्रिप्ट को अपना खाता इस्तेमाल करने देने के लिए एक बनाएं।
+apiTokens.emptyTitle	कोई API टोकन नहीं
+apiTokens.expired	%@ को समाप्त हो गया
+apiTokens.expires	%@ को समाप्त होगा
+apiTokens.expiry30	30 दिन में
+apiTokens.expiry90	90 दिन में
+apiTokens.expiryNever	कभी नहीं
+apiTokens.expiryYear	1 साल में
+apiTokens.fieldAccess	पहुंच
+apiTokens.fieldExpiry	समाप्ति
+apiTokens.fieldName	नाम
+apiTokens.fieldPassword	आपका पासवर्ड
+apiTokens.formTitle	नया API टोकन
+apiTokens.intro	API टोकन स्क्रिप्ट और अन्य टूल को आपके पासवर्ड के बिना आपका खाता इस्तेमाल करने देते हैं। टोकन केवल वही कर सकता है जो उसकी पहुंच अनुमति देती है, और आप उसे कभी भी रद्द कर सकते हैं।
+apiTokens.issuedDone	मैंने कॉपी कर लिया
+apiTokens.issuedIntro	यह केवल एक बार दिखाया जाता है। इसे किसी सुरक्षित जगह रखें। अगर आप इसे खो दें, तो इसे रद्द करके नया बनाएं।
+apiTokens.issuedTitle	अपना टोकन कॉपी करें
+apiTokens.lastUsed	अंतिम उपयोग %@
+apiTokens.lastUsedFrom	अंतिम उपयोग %1$@, %2$@ से
+apiTokens.limitReached	आप %lld टोकन की सीमा तक पहुंच गए हैं। दूसरा बनाने के लिए एक को रद्द करें।
+apiTokens.menuAccessibilityLabel	%@ के लिए कार्रवाइयां
+apiTokens.namePlaceholder	उदाहरण के लिए, बैकअप स्क्रिप्ट
+apiTokens.navigationTitle	API टोकन
+apiTokens.neverExpires	कभी समाप्त नहीं होता
+apiTokens.neverUsed	कभी उपयोग नहीं किया गया
+apiTokens.newButton	नया टोकन
+apiTokens.passwordHint	टोकन बनाने के लिए अपना पासवर्ड दर्ज करें।
+apiTokens.renameAction	नाम बदलें
+apiTokens.renameSave	सहेजें
+apiTokens.renameTitle	टोकन का नाम बदलें
+apiTokens.revokeAction	रद्द करें
+apiTokens.revokeConfirm	रद्द करें
+apiTokens.revokeMessage	“%@” का इस्तेमाल करने वाली हर चीज़ तुरंत काम करना बंद कर देगी। इसे पूर्ववत नहीं किया जा सकता।
+apiTokens.revokeTitle	टोकन रद्द करें?
+apiTokens.scopeRead	केवल पढ़ने के लिए
+apiTokens.scopeWrite	पढ़ें और लिखें
+apiTokens.sectionHeader	डेवलपर
+changePassword.addIntro	यह खाता सिंगल साइन-ऑन से साइन इन करता है और इसमें अभी तक पासवर्ड नहीं है। अपने ईमेल पते या उपयोगकर्ता नाम से भी साइन इन करने के लिए एक जोड़ें।
+changePassword.addNavigationTitle	पासवर्ड जोड़ें
+changePassword.addSubmitButton	पासवर्ड जोड़ें
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	कोड
+login.codeIntroAuthenticator	यह खाता दूसरा चरण मांगता है। अपने ऑथेंटिकेटर ऐप से 6 अंकों का कोड दर्ज करें।
+login.codeIntroRecovery	अपने रिकवरी कोड में से कोई एक दर्ज करें। हर कोड केवल एक बार काम करता है।
+login.codeSubmit	सत्यापित करें
+login.codeTitle	अपना कोड दर्ज करें
+login.codeUseAuthenticator	इसके बजाय ऑथेंटिकेटर कोड इस्तेमाल करें
+login.codeUseRecovery	इसके बजाय रिकवरी कोड इस्तेमाल करें
+login.diagnosticsButton	साइन इन लॉग साझा करें
+login.diagnosticsIntro	यह लॉग दिखाता है कि सर्वर ने हर चरण पर क्या जवाब दिया, ताकि साइन इन विफल होने का कारण खोजने में मदद मिले। इसमें आपका पासवर्ड, आपका दर्ज किया गया पता या आपका उपयोगकर्ता नाम कभी शामिल नहीं होता। इसे डेवलपर को भेजें।
+login.diagnosticsTitle	साइन इन लॉग
+login.errorInvalidCode	यह कोड सही नहीं है।
+login.errorSecondFactorExpired	वह साइन इन समाप्त हो गया। अपना पासवर्ड फिर से दर्ज करें।
+login.identifierField	ईमेल या उपयोगकर्ता नाम
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	पासवर्ड जोड़ें
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	ऑथेंटिकेटर कोड
+twoFactor.confirmButton	सत्यापित करें और चालू करें
+twoFactor.copyCodesButton	कोड कॉपी करें
+twoFactor.copyKeyAccessibilityLabel	सेटअप कुंजी कॉपी करें
+twoFactor.enrollIntro	इस QR कोड को अपने ऑथेंटिकेटर ऐप से स्कैन करें, या कुंजी हाथ से टाइप करें। फिर ऐप में दिखने वाला 6 अंकों का कोड दर्ज करें।
+twoFactor.keyLabel	सेटअप कुंजी
+twoFactor.manageButton	प्रबंधित करें…
+twoFactor.navigationTitle	दो-चरणीय प्रमाणीकरण
+twoFactor.newCodesButton	नए रिकवरी कोड पाएं
+twoFactor.offIntro	साइन इन में दूसरा चरण जोड़ें। पासवर्ड के बाद आप ऑथेंटिकेटर ऐप से एक कोड दर्ज करेंगे।
+twoFactor.offTitle	दो-चरणीय प्रमाणीकरण बंद है
+twoFactor.onTitle	दो-चरणीय प्रमाणीकरण चालू है
+twoFactor.passwordConfirmButton	पुष्टि करें
+twoFactor.passwordField	पासवर्ड
+twoFactor.passwordNewCodesIntro	अपने रिकवरी कोड बदलने के लिए अपना पासवर्ड दर्ज करें। पुराने कोड काम करना बंद कर देंगे।
+twoFactor.passwordTurnOffIntro	दो-चरणीय प्रमाणीकरण बंद करने के लिए अपना पासवर्ड दर्ज करें।
+twoFactor.qrAccessibilityLabel	आपके ऑथेंटिकेटर ऐप के लिए QR कोड
+twoFactor.recoveryCodesLeft	बचे हुए रिकवरी कोड: %lld
+twoFactor.recoveryDoneButton	मैंने सहेज लिए
+twoFactor.recoveryIntro	अगर आपका ऑथेंटिकेटर ऐप खो जाए तो हर कोड एक बार काम करता है। ये दोबारा नहीं दिखाए जाएंगे, इसलिए इन्हें किसी सुरक्षित जगह रखें।
+twoFactor.recoveryTitle	अपने रिकवरी कोड सहेजें
+twoFactor.shareCodesButton	कोड साझा करें
+twoFactor.turnOffButton	बंद करें
+twoFactor.turnOnButton	चालू करें

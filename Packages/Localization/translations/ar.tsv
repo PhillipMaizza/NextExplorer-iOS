@@ -1070,3 +1070,90 @@ serverSettings.featureOffHowTo	لتفعيلها، اضبط %@ وأعد تشغي�
 trashSettings.environmentNote	تأتي القيم الافتراضية من TRASH_ENABLED، TRASH_RETENTION_DAYS، TRASH_MAX_PERCENT وTRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	تأتي القيم الافتراضية من VERSIONS_ENABLED، VERSIONS_KEEP_ALL_HOURS، VERSIONS_HOURLY_DAYS، VERSIONS_DAILY_DAYS، VERSIONS_MAX_PER_FILE وVERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	تحديث
+apiTokens.copiedToken	تم النسخ
+apiTokens.copyToken	نسخ الرمز
+apiTokens.createSubmit	إنشاء رمز
+apiTokens.created	أُنشئ %@
+apiTokens.emptyMessage	أنشئ رمزًا لتسمح لسكربت باستخدام حسابك.
+apiTokens.emptyTitle	لا توجد رموز API
+apiTokens.expired	انتهت صلاحيته %@
+apiTokens.expires	تنتهي صلاحيته %@
+apiTokens.expiry30	بعد 30 يومًا
+apiTokens.expiry90	بعد 90 يومًا
+apiTokens.expiryNever	أبدًا
+apiTokens.expiryYear	بعد سنة واحدة
+apiTokens.fieldAccess	الوصول
+apiTokens.fieldExpiry	تنتهي الصلاحية
+apiTokens.fieldName	الاسم
+apiTokens.fieldPassword	كلمة السر الخاصة بك
+apiTokens.formTitle	رمز API جديد
+apiTokens.intro	تتيح رموز API للسكربتات والأدوات الأخرى استخدام حسابك دون كلمة السر. يقتصر الرمز على ما يسمح به وصوله، ويمكنك إبطاله في أي وقت.
+apiTokens.issuedDone	نسختُه
+apiTokens.issuedIntro	هذه هي المرة الوحيدة التي يظهر فيها. احفظه في مكان آمن. إذا فقدته، فأبطله وأنشئ رمزًا جديدًا.
+apiTokens.issuedTitle	انسخ رمزك
+apiTokens.lastUsed	آخر استخدام %@
+apiTokens.lastUsedFrom	آخر استخدام %1$@ من %2$@
+apiTokens.limitReached	وصلت إلى الحد الأقصى وهو %lld رمز. أبطل رمزًا لإنشاء آخر.
+apiTokens.menuAccessibilityLabel	إجراءات «%@»
+apiTokens.namePlaceholder	مثلًا: سكربت النسخ الاحتياطي
+apiTokens.navigationTitle	رموز API
+apiTokens.neverExpires	لا تنتهي صلاحيته
+apiTokens.neverUsed	لم يُستخدم قط
+apiTokens.newButton	رمز جديد
+apiTokens.passwordHint	أدخل كلمة السر لإنشاء رمز.
+apiTokens.renameAction	إعادة تسمية
+apiTokens.renameSave	حفظ
+apiTokens.renameTitle	إعادة تسمية الرمز
+apiTokens.revokeAction	إبطال
+apiTokens.revokeConfirm	إبطال
+apiTokens.revokeMessage	سيتوقف كل ما يستخدم ‏«%@» عن العمل فورًا. لا يمكن التراجع عن هذا الإجراء.
+apiTokens.revokeTitle	إبطال الرمز؟
+apiTokens.scopeRead	قراءة فقط
+apiTokens.scopeWrite	قراءة وكتابة
+apiTokens.sectionHeader	المطورون
+changePassword.addIntro	يسجّل هذا الحساب الدخول عبر تسجيل الدخول الموحّد وليس له كلمة سر بعد. أضف واحدة لتسجيل الدخول أيضًا باستخدام بريدك الإلكتروني أو اسم المستخدم.
+changePassword.addNavigationTitle	إضافة كلمة سر
+changePassword.addSubmitButton	إضافة كلمة سر
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	الرمز
+login.codeIntroAuthenticator	يطلب هذا الحساب خطوة ثانية. أدخل الرمز المكوّن من 6 أرقام من تطبيق المصادقة.
+login.codeIntroRecovery	أدخل أحد رموز الاسترداد. يعمل كل رمز مرة واحدة فقط.
+login.codeSubmit	تحقق
+login.codeTitle	أدخل الرمز
+login.codeUseAuthenticator	استخدم رمز تطبيق المصادقة بدلًا من ذلك
+login.codeUseRecovery	استخدم رمز استرداد بدلًا من ذلك
+login.diagnosticsButton	مشاركة سجل تسجيل الدخول
+login.diagnosticsIntro	يعرض هذا السجل ما ردّ به الخادم في كل خطوة، لمساعدتك في معرفة سبب فشل تسجيل الدخول. لا يحتوي أبدًا على كلمة السر أو العنوان الذي كتبته أو اسم المستخدم. أرسله إلى المطوّر.
+login.diagnosticsTitle	سجل تسجيل الدخول
+login.errorInvalidCode	هذا الرمز غير صحيح.
+login.errorSecondFactorExpired	انتهت صلاحية عملية تسجيل الدخول هذه. أدخل كلمة السر مرة أخرى.
+login.identifierField	البريد الإلكتروني أو اسم المستخدم
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	إضافة كلمة سر
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	رمز تطبيق المصادقة
+twoFactor.confirmButton	تحقق وتشغيل
+twoFactor.copyCodesButton	نسخ الرموز
+twoFactor.copyKeyAccessibilityLabel	نسخ مفتاح الإعداد
+twoFactor.enrollIntro	امسح رمز QR هذا بتطبيق المصادقة، أو اكتب المفتاح يدويًا. ثم أدخل الرمز المكوّن من 6 أرقام الذي يعرضه التطبيق.
+twoFactor.keyLabel	مفتاح الإعداد
+twoFactor.manageButton	إدارة…
+twoFactor.navigationTitle	المصادقة الثنائية
+twoFactor.newCodesButton	الحصول على رموز استرداد جديدة
+twoFactor.offIntro	أضف خطوة ثانية لتسجيل الدخول. بعد كلمة السر ستدخل رمزًا من تطبيق المصادقة.
+twoFactor.offTitle	المصادقة الثنائية متوقفة
+twoFactor.onTitle	المصادقة الثنائية قيد التشغيل
+twoFactor.passwordConfirmButton	تأكيد
+twoFactor.passwordField	كلمة السر
+twoFactor.passwordNewCodesIntro	أدخل كلمة السر لاستبدال رموز الاسترداد. ستتوقف الرموز القديمة عن العمل.
+twoFactor.passwordTurnOffIntro	أدخل كلمة السر لإيقاف المصادقة الثنائية.
+twoFactor.qrAccessibilityLabel	رمز QR لتطبيق المصادقة
+twoFactor.recoveryCodesLeft	رموز الاسترداد المتبقية: %lld
+twoFactor.recoveryDoneButton	حفظتها
+twoFactor.recoveryIntro	يعمل كل رمز مرة واحدة إذا فقدت تطبيق المصادقة. لن تُعرض مرة أخرى، لذا احفظها في مكان آمن.
+twoFactor.recoveryTitle	احفظ رموز الاسترداد
+twoFactor.shareCodesButton	مشاركة الرموز
+twoFactor.turnOffButton	إيقاف
+twoFactor.turnOnButton	تشغيل

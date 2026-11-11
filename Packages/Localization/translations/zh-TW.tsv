@@ -1040,3 +1040,90 @@ serverSettings.featureOffHowTo	若要啟用，請設定 %@ 並重新啟動容器
 trashSettings.environmentNote	預設值來自 TRASH_ENABLED、TRASH_RETENTION_DAYS、TRASH_MAX_PERCENT和TRASH_MAX_SIZE。
 trashSettings.versionsEnvironmentNote	預設值來自 VERSIONS_ENABLED、VERSIONS_KEEP_ALL_HOURS、VERSIONS_HOURLY_DAYS、VERSIONS_DAILY_DAYS、VERSIONS_MAX_PER_FILE和VERSIONS_SESSION_CHECKPOINT_MINUTES。
 versionedFiles.refresh	重新整理
+apiTokens.copiedToken	已拷貝
+apiTokens.copyToken	拷貝權杖
+apiTokens.createSubmit	建立權杖
+apiTokens.created	建立於 %@
+apiTokens.emptyMessage	建立一個，讓指令碼使用您的帳號。
+apiTokens.emptyTitle	沒有 API 權杖
+apiTokens.expired	已於 %@ 過期
+apiTokens.expires	將於 %@ 過期
+apiTokens.expiry30	30 天後
+apiTokens.expiry90	90 天後
+apiTokens.expiryNever	永不
+apiTokens.expiryYear	1 年後
+apiTokens.fieldAccess	取用權限
+apiTokens.fieldExpiry	到期
+apiTokens.fieldName	名稱
+apiTokens.fieldPassword	您的密碼
+apiTokens.formTitle	新增 API 權杖
+apiTokens.intro	API 權杖可讓指令碼和其他工具在不需要您密碼的情況下使用您的帳號。權杖只能執行其取用權限允許的操作，您可隨時撤銷。
+apiTokens.issuedDone	我已拷貝
+apiTokens.issuedIntro	此權杖只會顯示這一次。請妥善保存。如果遺失，請撤銷它並建立新的權杖。
+apiTokens.issuedTitle	拷貝您的權杖
+apiTokens.lastUsed	上次使用：%@
+apiTokens.lastUsedFrom	上次使用：%1$@，來自 %2$@
+apiTokens.limitReached	您已達到 %lld 個權杖的上限。請撤銷一個後再建立。
+apiTokens.menuAccessibilityLabel	「%@」的操作
+apiTokens.namePlaceholder	例如：備份指令碼
+apiTokens.navigationTitle	API 權杖
+apiTokens.neverExpires	永不過期
+apiTokens.neverUsed	從未使用
+apiTokens.newButton	新增權杖
+apiTokens.passwordHint	輸入您的密碼以建立權杖。
+apiTokens.renameAction	重新命名
+apiTokens.renameSave	儲存
+apiTokens.renameTitle	重新命名權杖
+apiTokens.revokeAction	撤銷
+apiTokens.revokeConfirm	撤銷
+apiTokens.revokeMessage	所有使用「%@」的項目將立即停止運作。此操作無法還原。
+apiTokens.revokeTitle	撤銷權杖？
+apiTokens.scopeRead	唯讀
+apiTokens.scopeWrite	讀取和寫入
+apiTokens.sectionHeader	開發者
+changePassword.addIntro	此帳號使用單一登入，尚未設定密碼。新增密碼後，您也可以使用電子郵件地址或使用者名稱登入。
+changePassword.addNavigationTitle	新增密碼
+changePassword.addSubmitButton	新增密碼
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	驗證碼
+login.codeIntroAuthenticator	此帳號需要進行第二步驗證。請輸入驗證器 App 中的 6 位數驗證碼。
+login.codeIntroRecovery	輸入您的其中一組復原碼。每組復原碼只能使用一次。
+login.codeSubmit	驗證
+login.codeTitle	輸入驗證碼
+login.codeUseAuthenticator	改用驗證器驗證碼
+login.codeUseRecovery	改用復原碼
+login.diagnosticsButton	共享登入記錄
+login.diagnosticsIntro	此記錄會顯示伺服器在每一步的回應，以協助找出登入失敗的原因。其中絕不包含您的密碼、您輸入的位址或使用者名稱。請將其傳送給開發者。
+login.diagnosticsTitle	登入記錄
+login.errorInvalidCode	驗證碼不正確。
+login.errorSecondFactorExpired	該次登入已過期。請重新輸入密碼。
+login.identifierField	電子郵件或使用者名稱
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	新增密碼
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	驗證器驗證碼
+twoFactor.confirmButton	驗證並開啟
+twoFactor.copyCodesButton	拷貝復原碼
+twoFactor.copyKeyAccessibilityLabel	拷貝設定密鑰
+twoFactor.enrollIntro	使用驗證器 App 掃描此 QR Code，或手動輸入密鑰。然後輸入 App 顯示的 6 位數驗證碼。
+twoFactor.keyLabel	設定密鑰
+twoFactor.manageButton	管理…
+twoFactor.navigationTitle	雙重認證
+twoFactor.newCodesButton	取得新的復原碼
+twoFactor.offIntro	為登入加入第二步驗證。輸入密碼後，您還需要輸入驗證器 App 中的驗證碼。
+twoFactor.offTitle	雙重認證已關閉
+twoFactor.onTitle	雙重認證已開啟
+twoFactor.passwordConfirmButton	確認
+twoFactor.passwordField	密碼
+twoFactor.passwordNewCodesIntro	輸入您的密碼以取代復原碼。舊的復原碼將失效。
+twoFactor.passwordTurnOffIntro	輸入您的密碼以關閉雙重認證。
+twoFactor.qrAccessibilityLabel	驗證器 App 的 QR Code
+twoFactor.recoveryCodesLeft	剩餘復原碼：%lld
+twoFactor.recoveryDoneButton	我已儲存
+twoFactor.recoveryIntro	如果您遺失驗證器 App，每組復原碼可使用一次。它們不會再次顯示，請妥善保存。
+twoFactor.recoveryTitle	儲存您的復原碼
+twoFactor.shareCodesButton	共享復原碼
+twoFactor.turnOffButton	關閉
+twoFactor.turnOnButton	開啟

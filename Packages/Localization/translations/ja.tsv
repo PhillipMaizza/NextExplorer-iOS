@@ -1040,3 +1040,90 @@ serverSettings.featureOffHowTo	オンにするには、%@ を設定してコン�
 trashSettings.environmentNote	既定値は TRASH_ENABLED、TRASH_RETENTION_DAYS、TRASH_MAX_PERCENT、TRASH_MAX_SIZE から取得されます。
 trashSettings.versionsEnvironmentNote	既定値は VERSIONS_ENABLED、VERSIONS_KEEP_ALL_HOURS、VERSIONS_HOURLY_DAYS、VERSIONS_DAILY_DAYS、VERSIONS_MAX_PER_FILE、VERSIONS_SESSION_CHECKPOINT_MINUTES から取得されます。
 versionedFiles.refresh	更新
+apiTokens.copiedToken	コピーしました
+apiTokens.copyToken	トークンをコピー
+apiTokens.createSubmit	トークンを作成
+apiTokens.created	作成日: %@
+apiTokens.emptyMessage	スクリプトからあなたのアカウントを使えるようにするには、トークンを作成してください。
+apiTokens.emptyTitle	API トークンはありません
+apiTokens.expired	期限切れ: %@
+apiTokens.expires	有効期限: %@
+apiTokens.expiry30	30 日後
+apiTokens.expiry90	90 日後
+apiTokens.expiryNever	なし
+apiTokens.expiryYear	1 年後
+apiTokens.fieldAccess	アクセス
+apiTokens.fieldExpiry	有効期限
+apiTokens.fieldName	名前
+apiTokens.fieldPassword	あなたのパスワード
+apiTokens.formTitle	新規 API トークン
+apiTokens.intro	API トークンを使うと、パスワードなしでスクリプトなどのツールからアカウントを利用できます。トークンはアクセス権で許可された操作のみ行え、いつでも失効させられます。
+apiTokens.issuedDone	コピーしました
+apiTokens.issuedIntro	表示されるのはこの1回だけです。安全な場所に保管してください。紛失した場合は、失効させて新しく作成してください。
+apiTokens.issuedTitle	トークンをコピー
+apiTokens.lastUsed	最終使用: %@
+apiTokens.lastUsedFrom	最終使用: %1$@(%2$@ から)
+apiTokens.limitReached	トークンの上限 %lld 個に達しました。別のトークンを作成するには、どれかを失効させてください。
+apiTokens.menuAccessibilityLabel	%@ の操作
+apiTokens.namePlaceholder	例: バックアップスクリプト
+apiTokens.navigationTitle	API トークン
+apiTokens.neverExpires	無期限
+apiTokens.neverUsed	未使用
+apiTokens.newButton	新規トークン
+apiTokens.passwordHint	トークンを作成するにはパスワードを入力してください。
+apiTokens.renameAction	名称変更
+apiTokens.renameSave	保存
+apiTokens.renameTitle	トークンの名称変更
+apiTokens.revokeAction	失効
+apiTokens.revokeConfirm	失効
+apiTokens.revokeMessage	「%@」を使っているものはすべてすぐに動作しなくなります。この操作は取り消せません。
+apiTokens.revokeTitle	トークンを失効させますか？
+apiTokens.scopeRead	読み取り専用
+apiTokens.scopeWrite	読み取りと書き込み
+apiTokens.sectionHeader	開発者
+changePassword.addIntro	このアカウントはシングルサインオンでサインインしており、まだパスワードがありません。パスワードを追加すると、メールアドレスまたはユーザ名でもサインインできます。
+changePassword.addNavigationTitle	パスワードを追加
+changePassword.addSubmitButton	パスワードを追加
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	コード
+login.codeIntroAuthenticator	このアカウントでは2段階目の認証が必要です。認証アプリに表示される 6 桁のコードを入力してください。
+login.codeIntroRecovery	リカバリーコードを1つ入力してください。各コードは1回のみ使えます。
+login.codeSubmit	確認
+login.codeTitle	コードを入力
+login.codeUseAuthenticator	代わりに認証アプリのコードを使う
+login.codeUseRecovery	代わりにリカバリーコードを使う
+login.diagnosticsButton	サインインログを共有
+login.diagnosticsIntro	このログには、サインインの各段階でサーバーが返した内容が記録され、サインインに失敗する原因の特定に役立ちます。パスワード、入力したアドレス、ユーザ名は含まれません。開発者に送信してください。
+login.diagnosticsTitle	サインインログ
+login.errorInvalidCode	コードが正しくありません。
+login.errorSecondFactorExpired	サインインの有効期限が切れました。パスワードをもう一度入力してください。
+login.identifierField	メールまたはユーザ名
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	パスワードを追加
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	認証アプリのコード
+twoFactor.confirmButton	確認してオンにする
+twoFactor.copyCodesButton	コードをコピー
+twoFactor.copyKeyAccessibilityLabel	セットアップキーをコピー
+twoFactor.enrollIntro	認証アプリでこの QR コードをスキャンするか、キーを手動で入力してください。その後、アプリに表示される 6 桁のコードを入力します。
+twoFactor.keyLabel	セットアップキー
+twoFactor.manageButton	管理…
+twoFactor.navigationTitle	2 要素認証
+twoFactor.newCodesButton	新しいリカバリーコードを取得
+twoFactor.offIntro	サインインに2段階目を追加します。パスワードの後に、認証アプリのコードを入力します。
+twoFactor.offTitle	2 要素認証はオフです
+twoFactor.onTitle	2 要素認証はオンです
+twoFactor.passwordConfirmButton	確認
+twoFactor.passwordField	パスワード
+twoFactor.passwordNewCodesIntro	リカバリーコードを置き換えるにはパスワードを入力してください。古いコードは使えなくなります。
+twoFactor.passwordTurnOffIntro	2 要素認証をオフにするにはパスワードを入力してください。
+twoFactor.qrAccessibilityLabel	認証アプリ用の QR コード
+twoFactor.recoveryCodesLeft	残りのリカバリーコード: %lld
+twoFactor.recoveryDoneButton	保存しました
+twoFactor.recoveryIntro	認証アプリを紛失した場合に、各コードを1回ずつ使えます。再表示されないため、安全な場所に保管してください。
+twoFactor.recoveryTitle	リカバリーコードを保存
+twoFactor.shareCodesButton	コードを共有
+twoFactor.turnOffButton	オフにする
+twoFactor.turnOnButton	オンにする

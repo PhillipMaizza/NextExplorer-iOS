@@ -18,8 +18,8 @@ L10N = PKG / "Sources" / "Localization" / "L10n.swift"
 TRANSLATIONS = PKG / "translations"
 
 # Non-English languages, mirroring the web app's set (frontend/src/i18n). `en` is the source in
-# strings.tsv; each of these has an optional translations/<code>.tsv (key<TAB>value). Missing keys
-# fall back to the English source automatically at lookup time.
+# strings.tsv; each of these has an optional translations/<code>.tsv (key<TAB>value). A key a
+# language does not translate is written into the catalog with the English text.
 # The web app ships de/es/fr/hi/it/ko/pl/ro/ru/sv/zh-CN/zh-TW; nl, pt, ja and ar are added beyond
 # that set (Portuguese + main European per request, plus Japanese and Arabic as major world
 # languages: Arabic is right to left and exercises the RTL layout path).
@@ -122,9 +122,10 @@ def write_catalog(entries, plurals, translations):
     def localizations(key, en_value):
         locs = {"en": {"stringUnit": {"state": "translated", "value": en_value}}}
         for lang in LANGUAGES:
+            # A language without its own text gets the English text: `tr()` returns the raw key when
+            # a language has no entry, and the catalog only fills the source language itself.
             value = translations.get(lang, {}).get(key)
-            if value is not None:
-                locs[lang] = {"stringUnit": {"state": "translated", "value": value}}
+            locs[lang] = {"stringUnit": {"state": "translated", "value": en_value if value is None else value}}
         return locs
 
     strings = {
@@ -139,8 +140,8 @@ def write_catalog(entries, plurals, translations):
         for lang in LANGUAGES:
             values = {c: translations.get(lang, {}).get(f"{base}#{c}") for c in PLURAL_CATEGORIES}
             values = {c: v for c, v in values.items() if v is not None}
-            if "other" in values:
-                locs[lang] = {"variations": variations(values)}
+            # No translated forms at all: the English forms, for the same raw key reason as above.
+            locs[lang] = {"variations": variations(values if "other" in values else forms)}
         return locs
 
     for base, forms in plurals.items():

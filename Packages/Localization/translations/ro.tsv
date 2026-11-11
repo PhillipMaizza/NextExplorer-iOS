@@ -1052,3 +1052,90 @@ serverSettings.featureOffHowTo	Pentru a o activa, setează %@ și repornește co
 trashSettings.environmentNote	Valorile implicite provin din TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT și TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Valorile implicite provin din VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE și VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Reîmprospătează
+apiTokens.copiedToken	Copiat
+apiTokens.copyToken	Copiază tokenul
+apiTokens.createSubmit	Creează token
+apiTokens.created	Creat %@
+apiTokens.emptyMessage	Creează unul pentru ca un script să-ți poată folosi contul.
+apiTokens.emptyTitle	Niciun token API
+apiTokens.expired	Expirat %@
+apiTokens.expires	Expiră %@
+apiTokens.expiry30	În 30 de zile
+apiTokens.expiry90	În 90 de zile
+apiTokens.expiryNever	Niciodată
+apiTokens.expiryYear	Într-un an
+apiTokens.fieldAccess	Acces
+apiTokens.fieldExpiry	Expiră
+apiTokens.fieldName	Nume
+apiTokens.fieldPassword	Parola ta
+apiTokens.formTitle	Token API nou
+apiTokens.intro	Tokenurile API permit scripturilor și altor instrumente să-ți folosească contul fără parola ta. Un token face doar ce permite accesul său, iar îl poți revoca oricând.
+apiTokens.issuedDone	L-am copiat
+apiTokens.issuedIntro	Acesta este singurul moment în care este afișat. Păstrează-l într-un loc sigur. Dacă îl pierzi, revocă-l și creează unul nou.
+apiTokens.issuedTitle	Copiază tokenul
+apiTokens.lastUsed	Folosit ultima dată %@
+apiTokens.lastUsedFrom	Folosit ultima dată %1$@ de pe %2$@
+apiTokens.limitReached	Ai atins limita de %lld tokenuri. Revocă unul pentru a crea altul.
+apiTokens.menuAccessibilityLabel	Acțiuni pentru %@
+apiTokens.namePlaceholder	De exemplu, script de backup
+apiTokens.navigationTitle	Tokenuri API
+apiTokens.neverExpires	Nu expiră niciodată
+apiTokens.neverUsed	Niciodată folosit
+apiTokens.newButton	Token nou
+apiTokens.passwordHint	Introdu parola pentru a crea un token.
+apiTokens.renameAction	Redenumește
+apiTokens.renameSave	Salvează
+apiTokens.renameTitle	Redenumește tokenul
+apiTokens.revokeAction	Revocă
+apiTokens.revokeConfirm	Revocă
+apiTokens.revokeMessage	Tot ce folosește „%@” va înceta să funcționeze imediat. Acțiunea nu poate fi anulată.
+apiTokens.revokeTitle	Revoci tokenul?
+apiTokens.scopeRead	Doar citire
+apiTokens.scopeWrite	Citire și scriere
+apiTokens.sectionHeader	Dezvoltatori
+changePassword.addIntro	Acest cont se conectează prin autentificare unică și nu are încă o parolă. Adaugă-o pentru a te conecta și cu adresa de e-mail sau cu numele de utilizator.
+changePassword.addNavigationTitle	Adaugă parola
+changePassword.addSubmitButton	Adaugă parola
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Cod
+login.codeIntroAuthenticator	Acest cont cere un al doilea pas. Introdu codul din 6 cifre din aplicația ta de autentificare.
+login.codeIntroRecovery	Introdu unul dintre codurile tale de recuperare. Fiecare funcționează o singură dată.
+login.codeSubmit	Verifică
+login.codeTitle	Introdu codul
+login.codeUseAuthenticator	Folosește în schimb codul din aplicația de autentificare
+login.codeUseRecovery	Folosește în schimb un cod de recuperare
+login.diagnosticsButton	Partajează jurnalul de conectare
+login.diagnosticsIntro	Acest jurnal arată ce a răspuns serverul la fiecare pas, ca să ajute la aflarea motivului pentru care conectarea eșuează. Nu conține niciodată parola ta, adresa pe care ai introdus-o sau numele tău de utilizator. Trimite-l dezvoltatorului.
+login.diagnosticsTitle	Jurnal de conectare
+login.errorInvalidCode	Codul nu este corect.
+login.errorSecondFactorExpired	Conectarea a expirat. Introdu din nou parola.
+login.identifierField	E-mail sau nume de utilizator
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Adaugă parola
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Cod de autentificare
+twoFactor.confirmButton	Verifică și activează
+twoFactor.copyCodesButton	Copiază codurile
+twoFactor.copyKeyAccessibilityLabel	Copiază cheia de configurare
+twoFactor.enrollIntro	Scanează acest cod QR cu aplicația ta de autentificare sau introdu cheia manual. Apoi introdu codul din 6 cifre afișat de aplicație.
+twoFactor.keyLabel	Cheie de configurare
+twoFactor.manageButton	Gestionează…
+twoFactor.navigationTitle	Autentificare în doi pași
+twoFactor.newCodesButton	Obține coduri de recuperare noi
+twoFactor.offIntro	Adaugă un al doilea pas la conectare. După parolă, vei introduce un cod dintr-o aplicație de autentificare.
+twoFactor.offTitle	Autentificarea în doi pași este dezactivată
+twoFactor.onTitle	Autentificarea în doi pași este activată
+twoFactor.passwordConfirmButton	Confirmă
+twoFactor.passwordField	Parolă
+twoFactor.passwordNewCodesIntro	Introdu parola pentru a-ți înlocui codurile de recuperare. Cele vechi nu vor mai funcționa.
+twoFactor.passwordTurnOffIntro	Introdu parola pentru a dezactiva autentificarea în doi pași.
+twoFactor.qrAccessibilityLabel	Cod QR pentru aplicația ta de autentificare
+twoFactor.recoveryCodesLeft	Coduri de recuperare rămase: %lld
+twoFactor.recoveryDoneButton	Le-am salvat
+twoFactor.recoveryIntro	Fiecare cod funcționează o singură dată dacă pierzi aplicația de autentificare. Nu vor mai fi afișate, așa că păstrează-le într-un loc sigur.
+twoFactor.recoveryTitle	Salvează codurile de recuperare
+twoFactor.shareCodesButton	Partajează codurile
+twoFactor.turnOffButton	Dezactivează
+twoFactor.turnOnButton	Activează

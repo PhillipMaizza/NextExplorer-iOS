@@ -1046,3 +1046,90 @@ serverSettings.featureOffHowTo	Para activarla, define %@ y reinicia el contenedo
 trashSettings.environmentNote	Los valores predeterminados provienen de TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT y TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Los valores predeterminados provienen de VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE y VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Actualizar
+apiTokens.copiedToken	Copiado
+apiTokens.copyToken	Copiar token
+apiTokens.createSubmit	Crear token
+apiTokens.created	Creado %@
+apiTokens.emptyMessage	Crea uno para que un script use tu cuenta.
+apiTokens.emptyTitle	Sin tokens de API
+apiTokens.expired	Caducó %@
+apiTokens.expires	Caduca %@
+apiTokens.expiry30	En 30 días
+apiTokens.expiry90	En 90 días
+apiTokens.expiryNever	Nunca
+apiTokens.expiryYear	En 1 año
+apiTokens.fieldAccess	Acceso
+apiTokens.fieldExpiry	Caduca
+apiTokens.fieldName	Nombre
+apiTokens.fieldPassword	Tu contraseña
+apiTokens.formTitle	Nuevo token de API
+apiTokens.intro	Los tokens de API permiten que scripts y otras herramientas usen tu cuenta sin tu contraseña. Un token solo hace lo que permite su acceso, y puedes revocarlo en cualquier momento.
+apiTokens.issuedDone	Ya lo he copiado
+apiTokens.issuedIntro	Solo se muestra esta vez. Guárdalo en un lugar seguro. Si lo pierdes, revócalo y crea uno nuevo.
+apiTokens.issuedTitle	Copia tu token
+apiTokens.lastUsed	Último uso %@
+apiTokens.lastUsedFrom	Último uso %1$@ desde %2$@
+apiTokens.limitReached	Has alcanzado el límite de %lld tokens. Revoca uno para crear otro.
+apiTokens.menuAccessibilityLabel	Acciones para %@
+apiTokens.namePlaceholder	Por ejemplo, script de copia de seguridad
+apiTokens.navigationTitle	Tokens de API
+apiTokens.neverExpires	No caduca nunca
+apiTokens.neverUsed	Nunca usado
+apiTokens.newButton	Nuevo token
+apiTokens.passwordHint	Introduce tu contraseña para crear un token.
+apiTokens.renameAction	Renombrar
+apiTokens.renameSave	Guardar
+apiTokens.renameTitle	Renombrar token
+apiTokens.revokeAction	Revocar
+apiTokens.revokeConfirm	Revocar
+apiTokens.revokeMessage	Todo lo que use “%@” dejará de funcionar de inmediato. Esta acción no se puede deshacer.
+apiTokens.revokeTitle	¿Revocar el token?
+apiTokens.scopeRead	Solo lectura
+apiTokens.scopeWrite	Lectura y escritura
+apiTokens.sectionHeader	Desarrolladores
+changePassword.addIntro	Esta cuenta inicia sesión con inicio de sesión único y aún no tiene contraseña. Añade una para iniciar sesión también con tu correo electrónico o nombre de usuario.
+changePassword.addNavigationTitle	Añadir contraseña
+changePassword.addSubmitButton	Añadir contraseña
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Código
+login.codeIntroAuthenticator	Esta cuenta pide un segundo paso. Introduce el código de 6 dígitos de tu app de autenticación.
+login.codeIntroRecovery	Introduce uno de tus códigos de recuperación. Cada uno funciona solo una vez.
+login.codeSubmit	Verificar
+login.codeTitle	Introduce tu código
+login.codeUseAuthenticator	Usar en su lugar el código de autenticación
+login.codeUseRecovery	Usar en su lugar un código de recuperación
+login.diagnosticsButton	Compartir registro de inicio de sesión
+login.diagnosticsIntro	Este registro muestra lo que respondió el servidor en cada paso, para ayudar a encontrar por qué falla el inicio de sesión. Nunca contiene tu contraseña, la dirección que escribiste ni tu nombre de usuario. Envíalo al desarrollador.
+login.diagnosticsTitle	Registro de inicio de sesión
+login.errorInvalidCode	Ese código no es correcto.
+login.errorSecondFactorExpired	Ese inicio de sesión caducó. Introduce tu contraseña de nuevo.
+login.identifierField	Correo electrónico o nombre de usuario
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Añadir contraseña
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Código de autenticación
+twoFactor.confirmButton	Verificar y activar
+twoFactor.copyCodesButton	Copiar códigos
+twoFactor.copyKeyAccessibilityLabel	Copiar clave de configuración
+twoFactor.enrollIntro	Escanea este código QR con tu app de autenticación, o escribe la clave a mano. Después introduce el código de 6 dígitos que muestra la app.
+twoFactor.keyLabel	Clave de configuración
+twoFactor.manageButton	Gestionar…
+twoFactor.navigationTitle	Autenticación en dos pasos
+twoFactor.newCodesButton	Obtener nuevos códigos de recuperación
+twoFactor.offIntro	Añade un segundo paso al inicio de sesión. Después de tu contraseña, introducirás un código de una app de autenticación.
+twoFactor.offTitle	La autenticación en dos pasos está desactivada
+twoFactor.onTitle	La autenticación en dos pasos está activada
+twoFactor.passwordConfirmButton	Confirmar
+twoFactor.passwordField	Contraseña
+twoFactor.passwordNewCodesIntro	Introduce tu contraseña para reemplazar tus códigos de recuperación. Los antiguos dejarán de funcionar.
+twoFactor.passwordTurnOffIntro	Introduce tu contraseña para desactivar la autenticación en dos pasos.
+twoFactor.qrAccessibilityLabel	Código QR para tu app de autenticación
+twoFactor.recoveryCodesLeft	Códigos de recuperación restantes: %lld
+twoFactor.recoveryDoneButton	Los he guardado
+twoFactor.recoveryIntro	Cada código funciona una vez si pierdes tu app de autenticación. No se volverán a mostrar, así que guárdalos en un lugar seguro.
+twoFactor.recoveryTitle	Guarda tus códigos de recuperación
+twoFactor.shareCodesButton	Compartir códigos
+twoFactor.turnOffButton	Desactivar
+twoFactor.turnOnButton	Activar
