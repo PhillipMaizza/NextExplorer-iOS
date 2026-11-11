@@ -1040,3 +1040,90 @@ serverSettings.featureOffHowTo	要启用它，请设置 %@ 并重启容器。
 trashSettings.environmentNote	默认值来自 TRASH_ENABLED、TRASH_RETENTION_DAYS、TRASH_MAX_PERCENT和TRASH_MAX_SIZE。
 trashSettings.versionsEnvironmentNote	默认值来自 VERSIONS_ENABLED、VERSIONS_KEEP_ALL_HOURS、VERSIONS_HOURLY_DAYS、VERSIONS_DAILY_DAYS、VERSIONS_MAX_PER_FILE和VERSIONS_SESSION_CHECKPOINT_MINUTES。
 versionedFiles.refresh	刷新
+apiTokens.copiedToken	已拷贝
+apiTokens.copyToken	拷贝令牌
+apiTokens.createSubmit	创建令牌
+apiTokens.created	创建于 %@
+apiTokens.emptyMessage	创建一个，让脚本使用您的账户。
+apiTokens.emptyTitle	没有 API 令牌
+apiTokens.expired	已于 %@ 过期
+apiTokens.expires	将于 %@ 过期
+apiTokens.expiry30	30 天后
+apiTokens.expiry90	90 天后
+apiTokens.expiryNever	永不
+apiTokens.expiryYear	1 年后
+apiTokens.fieldAccess	访问权限
+apiTokens.fieldExpiry	到期
+apiTokens.fieldName	名称
+apiTokens.fieldPassword	您的密码
+apiTokens.formTitle	新建 API 令牌
+apiTokens.intro	API 令牌可让脚本和其他工具在无需您密码的情况下使用您的账户。令牌只能执行其访问权限允许的操作，您可随时撤销。
+apiTokens.issuedDone	我已拷贝
+apiTokens.issuedIntro	此令牌仅显示这一次。请妥善保存。如果丢失，请撤销它并创建新的令牌。
+apiTokens.issuedTitle	拷贝您的令牌
+apiTokens.lastUsed	上次使用：%@
+apiTokens.lastUsedFrom	上次使用：%1$@，来自 %2$@
+apiTokens.limitReached	您已达到 %lld 个令牌的上限。请撤销一个后再创建。
+apiTokens.menuAccessibilityLabel	“%@”的操作
+apiTokens.namePlaceholder	例如：备份脚本
+apiTokens.navigationTitle	API 令牌
+apiTokens.neverExpires	永不过期
+apiTokens.neverUsed	从未使用
+apiTokens.newButton	新建令牌
+apiTokens.passwordHint	输入您的密码以创建令牌。
+apiTokens.renameAction	重命名
+apiTokens.renameSave	保存
+apiTokens.renameTitle	重命名令牌
+apiTokens.revokeAction	撤销
+apiTokens.revokeConfirm	撤销
+apiTokens.revokeMessage	所有使用“%@”的内容将立即停止工作。此操作无法撤销。
+apiTokens.revokeTitle	撤销令牌？
+apiTokens.scopeRead	只读
+apiTokens.scopeWrite	读取和写入
+apiTokens.sectionHeader	开发者
+changePassword.addIntro	此账户使用单点登录，尚未设置密码。添加密码后，您还可以使用电子邮件地址或用户名登录。
+changePassword.addNavigationTitle	添加密码
+changePassword.addSubmitButton	添加密码
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	验证码
+login.codeIntroAuthenticator	此账户需要进行第二步验证。请输入验证器 App 中的 6 位验证码。
+login.codeIntroRecovery	输入您的一个恢复码。每个恢复码只能使用一次。
+login.codeSubmit	验证
+login.codeTitle	输入验证码
+login.codeUseAuthenticator	改用验证器验证码
+login.codeUseRecovery	改用恢复码
+login.diagnosticsButton	共享登录日志
+login.diagnosticsIntro	此日志显示服务器在每一步的响应，以帮助查明登录失败的原因。其中绝不包含您的密码、您输入的地址或用户名。请将其发送给开发者。
+login.diagnosticsTitle	登录日志
+login.errorInvalidCode	验证码不正确。
+login.errorSecondFactorExpired	该登录已过期。请重新输入密码。
+login.identifierField	电子邮件或用户名
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	添加密码
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	验证器验证码
+twoFactor.confirmButton	验证并开启
+twoFactor.copyCodesButton	拷贝恢复码
+twoFactor.copyKeyAccessibilityLabel	拷贝设置密钥
+twoFactor.enrollIntro	使用验证器 App 扫描此二维码，或手动输入密钥。然后输入 App 显示的 6 位验证码。
+twoFactor.keyLabel	设置密钥
+twoFactor.manageButton	管理…
+twoFactor.navigationTitle	双重认证
+twoFactor.newCodesButton	获取新的恢复码
+twoFactor.offIntro	为登录添加第二步验证。输入密码后，您还需要输入验证器 App 中的验证码。
+twoFactor.offTitle	双重认证已关闭
+twoFactor.onTitle	双重认证已开启
+twoFactor.passwordConfirmButton	确认
+twoFactor.passwordField	密码
+twoFactor.passwordNewCodesIntro	输入您的密码以替换恢复码。旧的恢复码将失效。
+twoFactor.passwordTurnOffIntro	输入您的密码以关闭双重认证。
+twoFactor.qrAccessibilityLabel	验证器 App 的二维码
+twoFactor.recoveryCodesLeft	剩余恢复码：%lld
+twoFactor.recoveryDoneButton	我已保存
+twoFactor.recoveryIntro	如果您丢失验证器 App，每个恢复码可使用一次。它们不会再次显示，请妥善保存。
+twoFactor.recoveryTitle	保存您的恢复码
+twoFactor.shareCodesButton	共享恢复码
+twoFactor.turnOffButton	关闭
+twoFactor.turnOnButton	开启

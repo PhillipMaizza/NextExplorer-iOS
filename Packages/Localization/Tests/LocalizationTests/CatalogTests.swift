@@ -56,6 +56,19 @@ struct CatalogTests {
         return value.matches(of: placeholder).map { String($0.output.replacing(/\d+\$/, with: "")) }.sorted()
     }
 
+    @Test("every string has an entry in every language, so a lookup never falls back to the raw key")
+    func everyLanguageHasEveryKey() throws {
+        let catalog = try Self.catalog()
+        var missing: [String] = []
+        for (key, entry) in catalog.strings {
+            let languages = Set((entry.localizations ?? [:]).keys)
+            for language in Self.requiredCategories.keys where !languages.contains(language) {
+                missing.append("\(language)/\(key)")
+            }
+        }
+        #expect(missing.isEmpty, "Missing entries: \(missing.sorted().prefix(20))")
+    }
+
     @Test("the table covers every language the app ships")
     func tableCoversEveryLanguage() {
         #expect(Set(Self.requiredCategories.keys) == Set(LocalizationOverride.supportedLanguages))

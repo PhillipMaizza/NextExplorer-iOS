@@ -52,10 +52,7 @@ public struct AppView: View {
     }
 
     private var layoutDirection: LayoutDirection {
-        if let language = selectedLanguage, LocalizationOverride.isRTL(language) {
-            return .rightToLeft
-        }
-        return .leftToRight
+        LocalizationOverride.usesRightToLeftLayout(selectedLanguage: selectedLanguage) ? .rightToLeft : .leftToRight
     }
 
     /// A gentle zoom-and-fade used when the whole content is swapped out from under the user: an

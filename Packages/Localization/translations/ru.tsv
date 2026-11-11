@@ -1058,3 +1058,90 @@ serverSettings.featureOffHowTo	Чтобы включить её, задайте 
 trashSettings.environmentNote	Значения по умолчанию берутся из TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT и TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Значения по умолчанию берутся из VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE и VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Обновить
+apiTokens.copiedToken	Скопировано
+apiTokens.copyToken	Скопировать токен
+apiTokens.createSubmit	Создать токен
+apiTokens.created	Создан %@
+apiTokens.emptyMessage	Создайте токен, чтобы скрипт мог использовать вашу учётную запись.
+apiTokens.emptyTitle	Нет API-токенов
+apiTokens.expired	Истёк %@
+apiTokens.expires	Истекает %@
+apiTokens.expiry30	Через 30 дней
+apiTokens.expiry90	Через 90 дней
+apiTokens.expiryNever	Никогда
+apiTokens.expiryYear	Через 1 год
+apiTokens.fieldAccess	Доступ
+apiTokens.fieldExpiry	Срок действия
+apiTokens.fieldName	Имя
+apiTokens.fieldPassword	Ваш пароль
+apiTokens.formTitle	Новый API-токен
+apiTokens.intro	API-токены позволяют скриптам и другим инструментам использовать вашу учётную запись без пароля. Токен делает только то, что разрешает его доступ, и вы можете отозвать его в любой момент.
+apiTokens.issuedDone	Я скопировал
+apiTokens.issuedIntro	Токен показывается только один раз. Сохраните его в надёжном месте. Если вы его потеряете, отзовите его и создайте новый.
+apiTokens.issuedTitle	Скопируйте токен
+apiTokens.lastUsed	Использован %@
+apiTokens.lastUsedFrom	Использован %1$@ с устройства %2$@
+apiTokens.limitReached	Достигнут лимит в %lld токенов. Отзовите один, чтобы создать новый.
+apiTokens.menuAccessibilityLabel	Действия для %@
+apiTokens.namePlaceholder	Например, скрипт резервного копирования
+apiTokens.navigationTitle	API-токены
+apiTokens.neverExpires	Бессрочный
+apiTokens.neverUsed	Не использовался
+apiTokens.newButton	Новый токен
+apiTokens.passwordHint	Введите пароль, чтобы создать токен.
+apiTokens.renameAction	Переименовать
+apiTokens.renameSave	Сохранить
+apiTokens.renameTitle	Переименовать токен
+apiTokens.revokeAction	Отозвать
+apiTokens.revokeConfirm	Отозвать
+apiTokens.revokeMessage	Всё, что использует «%@», сразу перестанет работать. Это действие нельзя отменить.
+apiTokens.revokeTitle	Отозвать токен?
+apiTokens.scopeRead	Только чтение
+apiTokens.scopeWrite	Чтение и запись
+apiTokens.sectionHeader	Разработчикам
+changePassword.addIntro	Эта учётная запись входит через единый вход и пока не имеет пароля. Добавьте его, чтобы также входить с помощью адреса эл. почты или имени пользователя.
+changePassword.addNavigationTitle	Добавить пароль
+changePassword.addSubmitButton	Добавить пароль
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Код
+login.codeIntroAuthenticator	Для этой учётной записи нужен второй шаг. Введите 6-значный код из приложения-аутентификатора.
+login.codeIntroRecovery	Введите один из резервных кодов. Каждый работает только один раз.
+login.codeSubmit	Подтвердить
+login.codeTitle	Введите код
+login.codeUseAuthenticator	Использовать код из приложения-аутентификатора
+login.codeUseRecovery	Использовать резервный код
+login.diagnosticsButton	Поделиться журналом входа
+login.diagnosticsIntro	Этот журнал показывает, что ответил сервер на каждом шаге, и помогает найти причину сбоя входа. В нём никогда нет вашего пароля, введённого адреса и имени пользователя. Отправьте его разработчику.
+login.diagnosticsTitle	Журнал входа
+login.errorInvalidCode	Неверный код.
+login.errorSecondFactorExpired	Время входа истекло. Введите пароль ещё раз.
+login.identifierField	Эл. почта или имя пользователя
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Добавить пароль
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Код аутентификатора
+twoFactor.confirmButton	Подтвердить и включить
+twoFactor.copyCodesButton	Скопировать коды
+twoFactor.copyKeyAccessibilityLabel	Скопировать ключ настройки
+twoFactor.enrollIntro	Отсканируйте этот QR-код в приложении-аутентификаторе или введите ключ вручную. Затем введите 6-значный код, который покажет приложение.
+twoFactor.keyLabel	Ключ настройки
+twoFactor.manageButton	Управление…
+twoFactor.navigationTitle	Двухфакторная аутентификация
+twoFactor.newCodesButton	Получить новые резервные коды
+twoFactor.offIntro	Добавьте второй шаг при входе. После пароля вы будете вводить код из приложения-аутентификатора.
+twoFactor.offTitle	Двухфакторная аутентификация выключена
+twoFactor.onTitle	Двухфакторная аутентификация включена
+twoFactor.passwordConfirmButton	Подтвердить
+twoFactor.passwordField	Пароль
+twoFactor.passwordNewCodesIntro	Введите пароль, чтобы заменить резервные коды. Старые перестанут работать.
+twoFactor.passwordTurnOffIntro	Введите пароль, чтобы выключить двухфакторную аутентификацию.
+twoFactor.qrAccessibilityLabel	QR-код для приложения-аутентификатора
+twoFactor.recoveryCodesLeft	Осталось резервных кодов: %lld
+twoFactor.recoveryDoneButton	Я сохранил
+twoFactor.recoveryIntro	Каждый код работает один раз, если вы потеряете приложение-аутентификатор. Они больше не будут показаны, поэтому сохраните их в надёжном месте.
+twoFactor.recoveryTitle	Сохраните резервные коды
+twoFactor.shareCodesButton	Поделиться кодами
+twoFactor.turnOffButton	Выключить
+twoFactor.turnOnButton	Включить

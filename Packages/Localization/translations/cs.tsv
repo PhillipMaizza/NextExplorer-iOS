@@ -414,7 +414,7 @@ trashSettings.eventAdopted	„%@“ bylo obnoveno po přerušení
 trashSettings.eventLost	U „%@“ chyběl obsah
 trashSettings.eventFailed	„%@“ se nepodařilo odebrat
 trashSettings.eventBreaker	Najednou chybí příliš mnoho položek: nic se nezměnilo
-trashSettings.eventForgotten	„%@“ zapomněl správce
+trashSettings.eventForgotten	„%@“ byl správcem zapomenut
 trashSettings.eventVersionEvicted	Verze „%@“ byla odebrána, aby se uvolnilo místo
 trashSettings.eventVersionFailed	Verzi se nepodařilo odebrat
 trashSettings.eventVersionLost	U verze chyběl obsah

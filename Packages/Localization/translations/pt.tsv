@@ -307,7 +307,7 @@ settings.rowTermsOfUse	Termos de utilização
 settings.rowUserManagement	Gestão de utilizadores
 settings.rowChangePassword	Alterar palavra-passe
 settings.rowServer	Servidor
-settings.storageFootnote	As pastas são baixadas como ZIP, sem deixar nada no servidor. Remover downloads ou limpar o cache afeta apenas este dispositivo; nada no servidor é alterado.
+settings.storageFootnote	As pastas são transferidas em formato ZIP, sem deixar nada no servidor. Remover transferências ou limpar a cache afeta apenas este dispositivo; nada no servidor é alterado.
 settings.storageFootnoteMac	Limpar o cache afeta apenas este Mac; nada no servidor é alterado.
 settings.removeAllDownloadsTitle	Remover todas as transferências?
 settings.removeAllDownloadsConfirm	Remover todas
@@ -522,7 +522,7 @@ browse.nameErrorReserved	Esse nome não é permitido.
 browse.nameErrorSeparators	Um nome não pode conter / ou \.
 browse.searchMatchLine	Linha %1$lld: %2$@
 browse.searchMatchLineLabel	Linha %lld
-browse.searchTooShort	Digite pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos arquivos.
+browse.searchTooShort	Escreva pelo menos %lld caracteres para pesquisar subpastas e o conteúdo dos ficheiros.
 browse.searchStoppedEarly	A pesquisa parou no limite de tempo. Estes são os resultados encontrados até agora.
 browse.searchFirstOnly	Primeiros %lld resultados. Refine a pesquisa para ver mais.
 browse.searchShowMore	Mostrar mais
@@ -566,11 +566,11 @@ settings.creditsMadeBy	Feito com ❤️ por Phillip Maizza
 settings.creditsLikeApp	Gosta do app?
 settings.creditsBuyCoffee	Pague-me um café ☕️
 tipJar.title	Pague-me um café
-tipJar.explanation	O NextExplorer é gratuito e de código aberto. Se for útil para você, uma pequena gorjeta ajuda a mantê-lo. Obrigado!
+tipJar.explanation	O NextExplorer é gratuito e de código aberto. Se lhe for útil, uma pequena gorjeta ajuda a mantê-lo. Obrigado!
 tipJar.toastThanks	Obrigado por apoiar o projeto! 🙏
 tipJar.errorLoad	Não foi possível carregar as opções de gorjeta. Tente novamente.
 tipJar.errorPurchase	A compra não foi concluída. Tente novamente.
-tipJar.pending	Aguardando aprovação. A cobrança será feita após a aprovação.
+tipJar.pending	A aguardar aprovação. O valor será cobrado após a aprovação.
 settings.sectionAccounts	Contas
 settings.addAccount	Adicionar conta
 settings.accountSignOut	Terminar sessão
@@ -583,31 +583,31 @@ settings.badgeActive	Ativa
 # ---- offline ----
 common.deselect	Desmarcar
 offline.sectionTitle	Offline
-offline.settingsRow	Baixar arquivos para uso offline
-offline.footnote	Os arquivos baixados abrem mesmo sem conexão.
+offline.settingsRow	Transferir ficheiros para utilização offline
+offline.footnote	Os ficheiros transferidos abrem mesmo sem ligação.
 offline.available	%@ disponíveis offline
-offline.removeRow	Remover arquivos offline
-offline.removeConfirmTitle	Remover arquivos offline?
-offline.removeConfirmMessage	Isso exclui os arquivos salvos para uso offline neste dispositivo. Seus arquivos no servidor não são afetados.
+offline.removeRow	Remover ficheiros offline
+offline.removeConfirmTitle	Remover ficheiros offline?
+offline.removeConfirmMessage	Isto elimina os ficheiros guardados para utilização offline neste dispositivo. Os seus ficheiros no servidor não são afetados.
 offline.removeConfirm	Remover
-offline.preparing	Preparando…
-offline.downloadingName	Baixando %@
-offline.progressCount	%lld de %lld arquivos
+offline.preparing	A preparar…
+offline.downloadingName	A transferir %@
+offline.progressCount	%lld de %lld ficheiros
 offline.downloadFailed	Não foi possível concluir o download offline.
-offline.selectionTitle	Baixar para offline
+offline.selectionTitle	Transferir para offline
 offline.selectionEmpty	Esta pasta está vazia.
 offline.selectionLoadFailed	Não foi possível carregar esta pasta.
 offline.selectionEstimate	Download estimado
-offline.selectionDownload	Baixar
+offline.selectionDownload	Transferir
 offline.selectionInsufficientSpace	Espaço livre insuficiente neste dispositivo
-offline.resyncRow	Atualizar arquivos offline
+offline.resyncRow	Atualizar ficheiros offline
 offline.badgeAvailable	Disponível offline
-offline.manageRow	Gerenciar arquivos offline
-offline.manageTitle	Arquivos offline
-offline.manageEmpty	Nada foi baixado para uso offline.
-offline.preferOfflineToggle	Reproduzir cópias baixadas
-offline.pinRemoved	%@ não existe mais no servidor e foi removido dos arquivos offline
-offline.preferOfflineSubtitle	Usar um vídeo baixado em vez de transmitir quando estiver disponível.
+offline.manageRow	Gerir ficheiros offline
+offline.manageTitle	Ficheiros offline
+offline.manageEmpty	Nada foi transferido para utilização offline.
+offline.preferOfflineToggle	Reproduzir cópias transferidas
+offline.pinRemoved	%@ já não existe no servidor e foi removido dos ficheiros offline
+offline.preferOfflineSubtitle	Usar um vídeo transferido em vez de o transmitir, quando estiver disponível.
 offline.tunnelSpeedNote	Aceder ao teu servidor através de um túnel remoto pode tornar as transferências lentas. Para ficheiros grandes, liga-te à mesma rede e usa o endereço local do servidor.
 menu.about	Sobre o NextExplorer
 menu.rateApp	Avaliar o NextExplorer…
@@ -622,7 +622,7 @@ select.tableView	Visualização em tabela
 openWith.openIn	Abrir no %@
 openWith.openWith	Abrir com
 openWith.viewAsText	Ver como texto
-openWith.failed	Não foi possível abrir este arquivo.
+openWith.failed	Não foi possível abrir este ficheiro.
 browse.showInFinder	Mostrar no Finder
 browse.actionCut	Recortar
 browse.clipboardCutOne	%@ pronto para mover
@@ -639,19 +639,19 @@ settings.rowAppearance	Aparência
 appearance.system	Sistema
 appearance.light	Claro
 appearance.dark	Escuro
-browse.myFiles	Meus arquivos
-browse.myFilesSubtitle	Visível apenas para você
+browse.myFiles	Os meus ficheiros
+browse.myFilesSubtitle	Visível apenas para si
 downloadQueue.navigationTitle	Fila de downloads
 downloadQueue.openDownloads	Mostrar downloads
 downloadQueue.emptyList	Nenhum download em andamento.
-downloadQueue.statusSaved	Salvo
+downloadQueue.statusSaved	Guardado
 downloadQueue.cancelAll	Cancelar todos os downloads
 downloadQueue.barFailedOne	1 download falhou
 downloadQueue.barFailedMany	%lld downloads falharam
-downloadQueue.barTitleOne	Baixando %@
-downloadQueue.barTitleMany	Baixando %lld itens
-downloadQueue.savedOne	Salvo em Downloads
-downloadQueue.savedMany	%lld itens salvos em Downloads
+downloadQueue.barTitleOne	A transferir %@
+downloadQueue.barTitleMany	A transferir %lld itens
+downloadQueue.savedOne	Guardado em Transferências
+downloadQueue.savedMany	%lld itens guardados em Transferências
 downloadQueue.bytesOf	%1$@ de %2$@
 downloadQueue.timeLeft	faltam %@
 browse.sectionPersonal	Pessoal
@@ -666,14 +666,14 @@ macSettings.addAccount	Adicionar conta…
 macSettings.changePassword	Alterar senha…
 macSettings.signOut	Sair…
 macSettings.switchAccount	Mudar para esta conta
-macSettings.username	Nome de usuário
+macSettings.username	Nome de utilizador
 macSettings.email	E-mail
 macSettings.role	Função
 macSettings.roleAdmin	Administrador
-macSettings.roleUser	Usuário
+macSettings.roleUser	Utilizador
 macSettings.status	Status
 macSettings.statusSignedIn	Conectado
-macSettings.manage	Gerenciar…
+macSettings.manage	Gerir…
 macSettings.cache	Cache
 macSettings.support	Ajuda e suporte…
 macSettings.permission	Permissão
@@ -682,20 +682,20 @@ menu.go	Ir
 menu.activity	Transferências
 menu.showAll	Mostrar tudo
 uploads.notifyDone	Envios concluídos
-uploads.notifyBody	%lld arquivos enviados
+uploads.notifyBody	%lld ficheiros enviados
 downloadQueue.notifyDone	Downloads concluídos
 fileInfo.rowSoftware	Software
 fileInfo.sectionVersions	Versões
 fileInfo.versionsNone	Nenhuma versão anterior
 fileInfo.versionRestore	Restaurar…
 fileInfo.restoreTitle	Restaurar esta versão?
-fileInfo.restoreMessage	O arquivo volta a como estava em %@. O conteúdo atual é mantido como uma versão.
+fileInfo.restoreMessage	O ficheiro volta a ficar como estava em %@. O conteúdo atual é mantido como uma versão.
 fileInfo.restoreConfirm	Restaurar
-fileInfo.sectionSharing	Compartilhamento
-fileInfo.notShared	Nenhum link compartilhado
+fileInfo.sectionSharing	Partilha
+fileInfo.notShared	Nenhuma ligação de partilha
 fileInfo.versionActions	Ações da versão
-fileInfo.versionDownload	Baixar…
-fileInfo.versionSaveCopy	Salvar como cópia
+fileInfo.versionDownload	Transferir…
+fileInfo.versionSaveCopy	Guardar como cópia
 fileInfo.versionRename	Renomear…
 fileInfo.renameTitle	Renomear versão
 fileInfo.renamePlaceholder	Nome da versão
@@ -706,7 +706,7 @@ fileInfo.versionDelete	Apagar…
 fileInfo.deleteTitle	Apagar esta versão?
 fileInfo.deleteAll	Apagar todas as versões…
 fileInfo.deleteAllTitle	Apagar todas as versões?
-fileInfo.deleteMessage	As versões apagadas somem para sempre. O arquivo em si continua como está.
+fileInfo.deleteMessage	As versões eliminadas desaparecem para sempre. O ficheiro em si fica como está.
 macSettings.choose	Escolher…
 menu.forward	Avançar
 menu.goToFolder	Ir para a pasta…
@@ -714,9 +714,9 @@ menu.goToFolderTitle	Ir para a pasta:
 menu.copyPath	Copiar caminho
 menu.recentFolders	Pastas recentes
 menu.clearRecent	Limpar menu
-common.loading	Carregando…
-browse.quickLookUnavailable	A Visualização Rápida não está disponível para este tipo de arquivo.
-browse.quickLookTooLarge	Este arquivo é grande demais para a Visualização Rápida.
+common.loading	A carregar…
+browse.quickLookUnavailable	A Visualização Rápida não está disponível para este tipo de ficheiro.
+browse.quickLookTooLarge	Este ficheiro é demasiado grande para a Visualização Rápida.
 menu.zoomIn	Ampliar
 menu.zoomOut	Reduzir
 menu.zoomToFit	Ajustar à janela
@@ -727,9 +727,9 @@ media.positionValue	%1$@ de %2$@
 menu.quitTransfersTitle	Encerrar o NextExplorer?
 menu.quitTransfersMessage	Ainda há envios ou downloads em andamento. Encerrar agora irá interrompê-los.
 menu.quitTransfersConfirm	Encerrar
-textPreview.unsavedTitle	Salvar alterações em “%@”?
-textPreview.unsavedMessage	Suas alterações serão perdidas se você não salvá-las.
-textPreview.dontSave	Não Salvar
+textPreview.unsavedTitle	Guardar as alterações a “%@”?
+textPreview.unsavedMessage	As suas alterações perdem-se se não as guardar.
+textPreview.dontSave	Não guardar
 browse.showInEnclosingFolder	Mostrar na Pasta Contentora
 error.clientCertificateRequired	Este servidor precisa de um certificado de cliente. Adicione um nas Definições.
 error.clientCertificateRejected	O servidor recusou o seu certificado de cliente.
@@ -777,41 +777,41 @@ browse.newFileTitle	Novo ficheiro
 browse.newFileTypeHint	Use um tipo de ficheiro que o editor consiga abrir, como .txt, .md ou .js.
 browse.newFilePlaceholder	notes.txt
 shareUpload.title	Enviar para o NextExplorer
-shareUpload.itemCount	Arquivos para enviar: %lld
+shareUpload.itemCount	Ficheiros a enviar: %lld
 shareUpload.accountLabel	Conta
 shareUpload.folderLabel	Pasta
 shareUpload.folderChoose	Escolher uma pasta
 shareUpload.upload	Enviar
-shareUpload.preparing	Preparando %lld de %lld…
-shareUpload.started	Enviando em segundo plano. Você receberá uma notificação quando terminar.
-shareUpload.signedOut	Entre no NextExplorer primeiro e compartilhe de novo.
+shareUpload.preparing	A preparar %lld de %lld…
+shareUpload.started	A enviar em segundo plano. Receberá uma notificação quando terminar.
+shareUpload.signedOut	Inicie sessão no NextExplorer primeiro e partilhe novamente.
 shareUpload.nothingToUpload	Não há nada aqui que o NextExplorer possa enviar.
-shareUpload.failed	Não foi possível preparar os arquivos para envio.
+shareUpload.failed	Não foi possível preparar os ficheiros para envio.
 shareUpload.notificationDoneTitle	Envio concluído
-shareUpload.notificationFailedTitle	Alguns arquivos não foram enviados
-shareUpload.notificationDoneBody#one	%lld arquivo enviado para “%@”.
-shareUpload.notificationDoneBody#other	%lld arquivos enviados para “%@”.
+shareUpload.notificationFailedTitle	Alguns ficheiros não foram enviados
+shareUpload.notificationDoneBody#one	%lld ficheiro enviado para “%@”.
+shareUpload.notificationDoneBody#other	%lld ficheiros enviados para “%@”.
 shareUpload.notificationAllFailedTitle	Falha no envio
-shareUpload.failureUnauthorized#one	%lld arquivo não foi enviado. Entre de novo e tente outra vez.
-shareUpload.failureUnauthorized#other	%lld arquivos não foram enviados. Entre de novo e tente outra vez.
-shareUpload.failureForbidden#one	%lld arquivo não foi enviado. Você não tem permissão para adicionar arquivos a essa pasta.
-shareUpload.failureForbidden#other	%lld arquivos não foram enviados. Você não tem permissão para adicionar arquivos a essa pasta.
-shareUpload.failureServerFull#one	%lld arquivo não foi enviado. O servidor ficou sem espaço de armazenamento.
-shareUpload.failureServerFull#other	%lld arquivos não foram enviados. O servidor ficou sem espaço de armazenamento.
-shareUpload.failureNetwork#one	%lld arquivo não foi enviado. A conexão falhou. Tente de novo quando voltar a ficar on-line.
-shareUpload.failureNetwork#other	%lld arquivos não foram enviados. A conexão falhou. Tente de novo quando voltar a ficar on-line.
-shareUpload.failureOther#one	%lld arquivo não pôde ser enviado.
-shareUpload.failureOther#other	%lld arquivos não puderam ser enviados.
+shareUpload.failureUnauthorized#one	%lld ficheiro não foi enviado. Inicie sessão novamente e tente outra vez.
+shareUpload.failureUnauthorized#other	%lld ficheiros não foram enviados. Inicie sessão novamente e tente outra vez.
+shareUpload.failureForbidden#one	%lld ficheiro não foi enviado. Não tem permissão para adicionar ficheiros a essa pasta.
+shareUpload.failureForbidden#other	%lld ficheiros não foram enviados. Não tem permissão para adicionar ficheiros a essa pasta.
+shareUpload.failureServerFull#one	%lld ficheiro não foi enviado. O servidor ficou sem espaço de armazenamento.
+shareUpload.failureServerFull#other	%lld ficheiros não foram enviados. O servidor ficou sem espaço de armazenamento.
+shareUpload.failureNetwork#one	%lld ficheiro não foi enviado. A ligação falhou. Tente novamente quando voltar a estar online.
+shareUpload.failureNetwork#other	%lld ficheiros não foram enviados. A ligação falhou. Tente novamente quando voltar a estar online.
+shareUpload.failureOther#one	%lld ficheiro não pôde ser enviado.
+shareUpload.failureOther#other	%lld ficheiros não puderam ser enviados.
 shareUpload.notificationRetry	Tentar de novo
 shareUpload.notificationHiddenPreview	Abra o NextExplorer para ver como foi o envio.
 shareUpload.retryFailedTitle	Não foi possível tentar novamente
-shareUpload.retryFailedBody	Abra o NextExplorer e compartilhe os arquivos novamente.
-shareUpload.insufficientSpace	Não há espaço livre suficiente neste dispositivo para preparar estes arquivos para envio.
-settings.uploadDefaultsRow	Arquivos compartilhados
+shareUpload.retryFailedBody	Abra o NextExplorer e partilhe os ficheiros novamente.
+shareUpload.insufficientSpace	Não há espaço livre suficiente neste dispositivo para preparar estes ficheiros para envio.
+settings.uploadDefaultsRow	Ficheiros partilhados
 settings.uploadDefaultsFolder	Pasta padrão
 settings.uploadDefaultsFolderNone	Perguntar sempre
 settings.uploadDefaultsWithoutAsking	Enviar sem perguntar
-settings.uploadDefaultsFooter	Fotos e arquivos que você compartilha com o NextExplorer a partir de outros apps começam nesta pasta. Com Enviar sem perguntar ativado, eles vão direto para lá.
+settings.uploadDefaultsFooter	As fotos e os ficheiros que partilha com o NextExplorer a partir de outras apps começam nesta pasta. Com Enviar sem perguntar ativado, são enviados diretamente para lá.
 settings.uploadDefaultsClear	Perguntar sempre
 common.change	Alterar
 shareUpload.sessionUnreadable	O NextExplorer não conseguiu ler o seu início de sessão neste dispositivo. Abra o NextExplorer uma vez e partilhe novamente.
@@ -834,16 +834,16 @@ shareUpload.causeUnknown	Não foi possível prepará-lo.
 shareUpload.folderHint	Abre o seletor de pastas.
 shareUpload.accountHint	Escolha qual conta recebe os ficheiros.
 error.timedOut	O servidor demorou demais a responder. A ação ainda pode ser concluída.
-error.changedOnServer	Este arquivo foi alterado no servidor depois de você abri-lo.
+error.changedOnServer	Este ficheiro foi alterado no servidor depois de o ter aberto.
 textPreview.conflictTitle	“%@” mudou no servidor
-textPreview.conflictMessage	Substitua-o pela sua versão ou recarregue o arquivo e descarte suas edições. A versão substituída permanece no histórico de versões do arquivo.
+textPreview.conflictMessage	Substitua-o pela sua versão ou volte a carregar o ficheiro e descarte as suas edições. A versão substituída permanece no histórico de versões do ficheiro.
 textPreview.conflictOverwrite	Substituir
 textPreview.conflictReload	Recarregar
-offline.waitingForNetwork	Será baixado quando você voltar a ficar online
+offline.waitingForNetwork	Será transferido quando voltar a estar online
 browse.bulkFavoriteFailed	%1$lld de %2$lld falharam
 shareUpload.livePhotoNote	As Live Photos são enviadas com o respetivo vídeo de movimento.
-shareUpload.retrySignInBody	Entre no NextExplorer e toque em “Tentar de novo” novamente.
-shareUpload.causeFolder	Pastas não podem ser compartilhadas. Compartilhe os arquivos dentro delas.
+shareUpload.retrySignInBody	Inicie sessão no NextExplorer e toque em “Tentar novamente”.
+shareUpload.causeFolder	As pastas não podem ser partilhadas. Partilhe os ficheiros que estão dentro delas.
 shareUpload.accountSummary	%1$@ · %2$@
 shareUpload.notificationMoreNames	mais %lld
 unsupportedPreview.macDescription	%1$@ · %2$@\n%3$@
@@ -1046,3 +1046,90 @@ serverSettings.featureOffHowTo	Para a ativar, defina %@ e reinicie o contentor.
 trashSettings.environmentNote	Os valores predefinidos vêm de TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT e TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Os valores predefinidos vêm de VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE e VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Atualizar
+apiTokens.copiedToken	Copiado
+apiTokens.copyToken	Copiar token
+apiTokens.createSubmit	Criar token
+apiTokens.created	Criado a %@
+apiTokens.emptyMessage	Crie um para permitir que um script utilize a sua conta.
+apiTokens.emptyTitle	Sem tokens de API
+apiTokens.expired	Expirou a %@
+apiTokens.expires	Expira a %@
+apiTokens.expiry30	Daqui a 30 dias
+apiTokens.expiry90	Daqui a 90 dias
+apiTokens.expiryNever	Nunca
+apiTokens.expiryYear	Daqui a 1 ano
+apiTokens.fieldAccess	Acesso
+apiTokens.fieldExpiry	Expira
+apiTokens.fieldName	Nome
+apiTokens.fieldPassword	A sua palavra-passe
+apiTokens.formTitle	Novo token de API
+apiTokens.intro	Os tokens de API permitem que scripts e outras ferramentas utilizem a sua conta sem a sua palavra-passe. Um token só faz o que o seu acesso permite, e pode revogá-lo em qualquer altura.
+apiTokens.issuedDone	Já o copiei
+apiTokens.issuedIntro	Esta é a única vez que é apresentado. Guarde-o num local seguro. Se o perder, revogue-o e crie um novo.
+apiTokens.issuedTitle	Copie o seu token
+apiTokens.lastUsed	Última utilização: %@
+apiTokens.lastUsedFrom	Última utilização: %1$@, a partir de %2$@
+apiTokens.limitReached	Atingiu o limite de %lld tokens. Revogue um para criar outro.
+apiTokens.menuAccessibilityLabel	Ações para %@
+apiTokens.namePlaceholder	Por exemplo, script de cópia de segurança
+apiTokens.navigationTitle	Tokens de API
+apiTokens.neverExpires	Nunca expira
+apiTokens.neverUsed	Nunca utilizado
+apiTokens.newButton	Novo token
+apiTokens.passwordHint	Introduza a sua palavra-passe para criar um token.
+apiTokens.renameAction	Mudar o nome
+apiTokens.renameSave	Guardar
+apiTokens.renameTitle	Mudar o nome do token
+apiTokens.revokeAction	Revogar
+apiTokens.revokeConfirm	Revogar
+apiTokens.revokeMessage	Tudo o que utilize “%@” deixará de funcionar de imediato. Esta ação não pode ser anulada.
+apiTokens.revokeTitle	Revogar token?
+apiTokens.scopeRead	Apenas leitura
+apiTokens.scopeWrite	Leitura e escrita
+apiTokens.sectionHeader	Programadores
+changePassword.addIntro	Esta conta inicia sessão com início de sessão único (SSO) e ainda não tem palavra-passe. Adicione uma para também iniciar sessão com o seu endereço de e-mail ou nome de utilizador.
+changePassword.addNavigationTitle	Adicionar palavra-passe
+changePassword.addSubmitButton	Adicionar palavra-passe
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Código
+login.codeIntroAuthenticator	Esta conta pede um segundo passo. Introduza o código de 6 dígitos da sua aplicação de autenticação.
+login.codeIntroRecovery	Introduza um dos seus códigos de recuperação. Cada um só funciona uma vez.
+login.codeSubmit	Verificar
+login.codeTitle	Introduza o seu código
+login.codeUseAuthenticator	Utilizar antes o código da aplicação de autenticação
+login.codeUseRecovery	Utilizar antes um código de recuperação
+login.diagnosticsButton	Partilhar registo de início de sessão
+login.diagnosticsIntro	Este registo mostra o que o servidor respondeu em cada passo, para ajudar a descobrir porque falha o início de sessão. Nunca contém a sua palavra-passe, o endereço que introduziu nem o seu nome de utilizador. Envie-o ao programador.
+login.diagnosticsTitle	Registo de início de sessão
+login.errorInvalidCode	Esse código não está correto.
+login.errorSecondFactorExpired	Esse início de sessão expirou. Introduza novamente a sua palavra-passe.
+login.identifierField	E-mail ou nome de utilizador
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Adicionar palavra-passe
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Código da aplicação de autenticação
+twoFactor.confirmButton	Verificar e ativar
+twoFactor.copyCodesButton	Copiar códigos
+twoFactor.copyKeyAccessibilityLabel	Copiar chave de configuração
+twoFactor.enrollIntro	Leia este código QR com a sua aplicação de autenticação ou introduza a chave manualmente. Depois, introduza o código de 6 dígitos que a aplicação mostra.
+twoFactor.keyLabel	Chave de configuração
+twoFactor.manageButton	Gerir…
+twoFactor.navigationTitle	Autenticação de dois fatores
+twoFactor.newCodesButton	Obter novos códigos de recuperação
+twoFactor.offIntro	Adicione um segundo passo ao início de sessão. Depois da palavra-passe, introduzirá um código de uma aplicação de autenticação.
+twoFactor.offTitle	A autenticação de dois fatores está desativada
+twoFactor.onTitle	A autenticação de dois fatores está ativada
+twoFactor.passwordConfirmButton	Confirmar
+twoFactor.passwordField	Palavra-passe
+twoFactor.passwordNewCodesIntro	Introduza a sua palavra-passe para substituir os códigos de recuperação. Os antigos deixam de funcionar.
+twoFactor.passwordTurnOffIntro	Introduza a sua palavra-passe para desativar a autenticação de dois fatores.
+twoFactor.qrAccessibilityLabel	Código QR da sua aplicação de autenticação
+twoFactor.recoveryCodesLeft	Códigos de recuperação restantes: %lld
+twoFactor.recoveryDoneButton	Já os guardei
+twoFactor.recoveryIntro	Cada código funciona uma vez se perder a sua aplicação de autenticação. Não voltarão a ser apresentados, por isso guarde-os num local seguro.
+twoFactor.recoveryTitle	Guarde os seus códigos de recuperação
+twoFactor.shareCodesButton	Partilhar códigos
+twoFactor.turnOffButton	Desativar
+twoFactor.turnOnButton	Ativar

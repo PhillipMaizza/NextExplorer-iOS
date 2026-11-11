@@ -1040,3 +1040,90 @@ serverSettings.featureOffHowTo	켜려면 %@ 값을 설정하고 컨테이너를 
 trashSettings.environmentNote	기본값은 TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT, TRASH_MAX_SIZE에서 가져옵니다.
 trashSettings.versionsEnvironmentNote	기본값은 VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE, VERSIONS_SESSION_CHECKPOINT_MINUTES에서 가져옵니다.
 versionedFiles.refresh	새로 고침
+apiTokens.copiedToken	복사됨
+apiTokens.copyToken	토큰 복사
+apiTokens.createSubmit	토큰 만들기
+apiTokens.created	생성일: %@
+apiTokens.emptyMessage	스크립트가 내 계정을 사용할 수 있도록 토큰을 만드세요.
+apiTokens.emptyTitle	API 토큰 없음
+apiTokens.expired	만료됨: %@
+apiTokens.expires	만료: %@
+apiTokens.expiry30	30일 후
+apiTokens.expiry90	90일 후
+apiTokens.expiryNever	안 함
+apiTokens.expiryYear	1년 후
+apiTokens.fieldAccess	접근
+apiTokens.fieldExpiry	만료
+apiTokens.fieldName	이름
+apiTokens.fieldPassword	내 비밀번호
+apiTokens.formTitle	새 API 토큰
+apiTokens.intro	API 토큰을 사용하면 비밀번호 없이 스크립트와 다른 도구가 내 계정을 사용할 수 있습니다. 토큰은 허용된 접근 권한 범위 안에서만 동작하며 언제든지 폐기할 수 있습니다.
+apiTokens.issuedDone	복사했습니다
+apiTokens.issuedIntro	이번에만 표시됩니다. 안전한 곳에 보관하세요. 잃어버렸다면 폐기하고 새로 만드세요.
+apiTokens.issuedTitle	토큰 복사
+apiTokens.lastUsed	마지막 사용: %@
+apiTokens.lastUsedFrom	마지막 사용: %1$@ (%2$@에서)
+apiTokens.limitReached	토큰 한도 %lld개에 도달했습니다. 다른 토큰을 만들려면 하나를 폐기하세요.
+apiTokens.menuAccessibilityLabel	%@ 동작
+apiTokens.namePlaceholder	예: 백업 스크립트
+apiTokens.navigationTitle	API 토큰
+apiTokens.neverExpires	만료 안 됨
+apiTokens.neverUsed	사용 안 함
+apiTokens.newButton	새 토큰
+apiTokens.passwordHint	토큰을 만들려면 비밀번호를 입력하세요.
+apiTokens.renameAction	이름 변경
+apiTokens.renameSave	저장
+apiTokens.renameTitle	토큰 이름 변경
+apiTokens.revokeAction	폐기
+apiTokens.revokeConfirm	폐기
+apiTokens.revokeMessage	“%@”을(를) 사용하는 모든 항목이 즉시 작동을 멈춥니다. 이 작업은 되돌릴 수 없습니다.
+apiTokens.revokeTitle	토큰을 폐기할까요?
+apiTokens.scopeRead	읽기 전용
+apiTokens.scopeWrite	읽기 및 쓰기
+apiTokens.sectionHeader	개발자
+changePassword.addIntro	이 계정은 싱글 사인온으로 로그인하며 아직 비밀번호가 없습니다. 비밀번호를 추가하면 이메일 주소나 사용자 이름으로도 로그인할 수 있습니다.
+changePassword.addNavigationTitle	비밀번호 추가
+changePassword.addSubmitButton	비밀번호 추가
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	코드
+login.codeIntroAuthenticator	이 계정은 두 번째 단계가 필요합니다. 인증 앱의 6자리 코드를 입력하세요.
+login.codeIntroRecovery	복구 코드 중 하나를 입력하세요. 각 코드는 한 번만 사용할 수 있습니다.
+login.codeSubmit	확인
+login.codeTitle	코드 입력
+login.codeUseAuthenticator	대신 인증 앱 코드 사용
+login.codeUseRecovery	대신 복구 코드 사용
+login.diagnosticsButton	로그인 로그 공유
+login.diagnosticsIntro	이 로그에는 로그인 각 단계에서 서버가 응답한 내용이 담겨 있어, 로그인이 실패하는 이유를 찾는 데 도움이 됩니다. 비밀번호, 입력한 주소, 사용자 이름은 포함되지 않습니다. 개발자에게 보내 주세요.
+login.diagnosticsTitle	로그인 로그
+login.errorInvalidCode	코드가 올바르지 않습니다.
+login.errorSecondFactorExpired	로그인이 만료되었습니다. 비밀번호를 다시 입력하세요.
+login.identifierField	이메일 또는 사용자 이름
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	비밀번호 추가
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	인증 앱 코드
+twoFactor.confirmButton	확인하고 켜기
+twoFactor.copyCodesButton	코드 복사
+twoFactor.copyKeyAccessibilityLabel	설정 키 복사
+twoFactor.enrollIntro	인증 앱으로 이 QR 코드를 스캔하거나 키를 직접 입력하세요. 그런 다음 앱에 표시되는 6자리 코드를 입력하세요.
+twoFactor.keyLabel	설정 키
+twoFactor.manageButton	관리…
+twoFactor.navigationTitle	2단계 인증
+twoFactor.newCodesButton	새 복구 코드 받기
+twoFactor.offIntro	로그인에 두 번째 단계를 추가합니다. 비밀번호 다음에 인증 앱의 코드를 입력하게 됩니다.
+twoFactor.offTitle	2단계 인증이 꺼져 있습니다
+twoFactor.onTitle	2단계 인증이 켜져 있습니다
+twoFactor.passwordConfirmButton	확인
+twoFactor.passwordField	비밀번호
+twoFactor.passwordNewCodesIntro	복구 코드를 교체하려면 비밀번호를 입력하세요. 기존 코드는 더 이상 작동하지 않습니다.
+twoFactor.passwordTurnOffIntro	2단계 인증을 끄려면 비밀번호를 입력하세요.
+twoFactor.qrAccessibilityLabel	인증 앱용 QR 코드
+twoFactor.recoveryCodesLeft	남은 복구 코드: %lld개
+twoFactor.recoveryDoneButton	저장했습니다
+twoFactor.recoveryIntro	인증 앱을 잃어버렸을 때 각 코드를 한 번씩 사용할 수 있습니다. 다시 표시되지 않으니 안전한 곳에 보관하세요.
+twoFactor.recoveryTitle	복구 코드 저장
+twoFactor.shareCodesButton	코드 공유
+twoFactor.turnOffButton	끄기
+twoFactor.turnOnButton	켜기

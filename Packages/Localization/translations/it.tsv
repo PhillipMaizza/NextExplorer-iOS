@@ -960,7 +960,7 @@ trashSettings.versionsEnabledHelp	Indipendente dal cestino. Se disattivato, i sa
 trashSettings.keepAllHours	Conserva tutte le versioni (ore)
 trashSettings.hourlyDays	Poi una all'ora (giorni)
 trashSettings.dailyDays	Poi una al giorno (giorni)
-trashSettings.maxPerFile	Versioni per file al massimo
+trashSettings.maxPerFile	Numero massimo di versioni per file
 trashSettings.checkpointMinutes	Punto di controllo Office (minuti)
 trashSettings.tiersHelp	Dopo queste fasce si conserva una versione a settimana. Una sessione di modifica office lascia una versione, più un punto di controllo al massimo con questa frequenza. Le versioni fissate sfuggono al diradamento e al limite per file.
 trashSettings.versionsInvalid	Controlla i valori: da 1 a 720 ore, da 1 a 365 giorni orari, da 1 a 3650 giorni giornalieri, da 1 a 1000 versioni per file, un punto di controllo da 1 a 1440 minuti.
@@ -1046,3 +1046,90 @@ serverSettings.featureOffHowTo	Per attivarla, imposta %@ e riavvia il container.
 trashSettings.environmentNote	I valori predefiniti provengono da TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT e TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	I valori predefiniti provengono da VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE e VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Aggiorna
+apiTokens.copiedToken	Copiato
+apiTokens.copyToken	Copia token
+apiTokens.createSubmit	Crea token
+apiTokens.created	Creato il %@
+apiTokens.emptyMessage	Creane uno per permettere a uno script di usare il tuo account.
+apiTokens.emptyTitle	Nessun token API
+apiTokens.expired	Scaduto il %@
+apiTokens.expires	Scade il %@
+apiTokens.expiry30	Tra 30 giorni
+apiTokens.expiry90	Tra 90 giorni
+apiTokens.expiryNever	Mai
+apiTokens.expiryYear	Tra 1 anno
+apiTokens.fieldAccess	Accesso
+apiTokens.fieldExpiry	Scade
+apiTokens.fieldName	Nome
+apiTokens.fieldPassword	La tua password
+apiTokens.formTitle	Nuovo token API
+apiTokens.intro	I token API permettono a script e altri strumenti di usare il tuo account senza la tua password. Un token fa solo ciò che il suo accesso consente e puoi revocarlo in qualsiasi momento.
+apiTokens.issuedDone	L'ho copiato
+apiTokens.issuedIntro	Viene mostrato solo questa volta. Conservalo in un posto sicuro. Se lo perdi, revocalo e creane uno nuovo.
+apiTokens.issuedTitle	Copia il tuo token
+apiTokens.lastUsed	Ultimo utilizzo: %@
+apiTokens.lastUsedFrom	Ultimo utilizzo: %1$@ da %2$@
+apiTokens.limitReached	Hai raggiunto il limite di %lld token. Revocane uno per crearne un altro.
+apiTokens.menuAccessibilityLabel	Azioni per %@
+apiTokens.namePlaceholder	Ad esempio, script di backup
+apiTokens.navigationTitle	Token API
+apiTokens.neverExpires	Non scade mai
+apiTokens.neverUsed	Mai usato
+apiTokens.newButton	Nuovo token
+apiTokens.passwordHint	Inserisci la tua password per creare un token.
+apiTokens.renameAction	Rinomina
+apiTokens.renameSave	Salva
+apiTokens.renameTitle	Rinomina token
+apiTokens.revokeAction	Revoca
+apiTokens.revokeConfirm	Revoca
+apiTokens.revokeMessage	Tutto ciò che usa “%@” smetterà di funzionare subito. Questa azione non può essere annullata.
+apiTokens.revokeTitle	Revocare il token?
+apiTokens.scopeRead	Sola lettura
+apiTokens.scopeWrite	Lettura e scrittura
+apiTokens.sectionHeader	Sviluppatori
+changePassword.addIntro	Questo account accede con il single sign-on e non ha ancora una password. Aggiungine una per accedere anche con il tuo indirizzo email o nome utente.
+changePassword.addNavigationTitle	Aggiungi password
+changePassword.addSubmitButton	Aggiungi password
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Codice
+login.codeIntroAuthenticator	Questo account richiede un secondo passaggio. Inserisci il codice a 6 cifre della tua app di autenticazione.
+login.codeIntroRecovery	Inserisci uno dei tuoi codici di recupero. Ognuno funziona una sola volta.
+login.codeSubmit	Verifica
+login.codeTitle	Inserisci il codice
+login.codeUseAuthenticator	Usa invece il codice dell'app di autenticazione
+login.codeUseRecovery	Usa invece un codice di recupero
+login.diagnosticsButton	Condividi log di accesso
+login.diagnosticsIntro	Questo log mostra cosa ha risposto il server a ogni passaggio, per aiutare a capire perché l'accesso non riesce. Non contiene mai la tua password, l'indirizzo che hai digitato o il tuo nome utente. Invialo allo sviluppatore.
+login.diagnosticsTitle	Log di accesso
+login.errorInvalidCode	Il codice non è corretto.
+login.errorSecondFactorExpired	Quell'accesso è scaduto. Inserisci di nuovo la password.
+login.identifierField	Email o nome utente
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Aggiungi password
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Codice di autenticazione
+twoFactor.confirmButton	Verifica e attiva
+twoFactor.copyCodesButton	Copia codici
+twoFactor.copyKeyAccessibilityLabel	Copia chiave di configurazione
+twoFactor.enrollIntro	Scansiona questo codice QR con la tua app di autenticazione, oppure digita la chiave a mano. Poi inserisci il codice a 6 cifre mostrato dall'app.
+twoFactor.keyLabel	Chiave di configurazione
+twoFactor.manageButton	Gestisci…
+twoFactor.navigationTitle	Autenticazione a due fattori
+twoFactor.newCodesButton	Ottieni nuovi codici di recupero
+twoFactor.offIntro	Aggiungi un secondo passaggio all'accesso. Dopo la password inserirai un codice da un'app di autenticazione.
+twoFactor.offTitle	L'autenticazione a due fattori è disattivata
+twoFactor.onTitle	L'autenticazione a due fattori è attiva
+twoFactor.passwordConfirmButton	Conferma
+twoFactor.passwordField	Password
+twoFactor.passwordNewCodesIntro	Inserisci la password per sostituire i codici di recupero. Quelli vecchi smettono di funzionare.
+twoFactor.passwordTurnOffIntro	Inserisci la password per disattivare l'autenticazione a due fattori.
+twoFactor.qrAccessibilityLabel	Codice QR per la tua app di autenticazione
+twoFactor.recoveryCodesLeft	Codici di recupero rimasti: %lld
+twoFactor.recoveryDoneButton	Li ho salvati
+twoFactor.recoveryIntro	Ogni codice funziona una sola volta se perdi la tua app di autenticazione. Non verranno mostrati di nuovo, quindi conservali in un posto sicuro.
+twoFactor.recoveryTitle	Salva i codici di recupero
+twoFactor.shareCodesButton	Condividi codici
+twoFactor.turnOffButton	Disattiva
+twoFactor.turnOnButton	Attiva

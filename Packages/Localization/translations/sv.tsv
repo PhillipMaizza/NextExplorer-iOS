@@ -1046,3 +1046,90 @@ serverSettings.featureOffHowTo	För att aktivera den, ställ in %@ och starta om
 trashSettings.environmentNote	Standardvärdena kommer från TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT och TRASH_MAX_SIZE.
 trashSettings.versionsEnvironmentNote	Standardvärdena kommer från VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE och VERSIONS_SESSION_CHECKPOINT_MINUTES.
 versionedFiles.refresh	Uppdatera
+apiTokens.copiedToken	Kopierad
+apiTokens.copyToken	Kopiera token
+apiTokens.createSubmit	Skapa token
+apiTokens.created	Skapad %@
+apiTokens.emptyMessage	Skapa en så att ett skript kan använda ditt konto.
+apiTokens.emptyTitle	Inga API-tokens
+apiTokens.expired	Gick ut %@
+apiTokens.expires	Går ut %@
+apiTokens.expiry30	Om 30 dagar
+apiTokens.expiry90	Om 90 dagar
+apiTokens.expiryNever	Aldrig
+apiTokens.expiryYear	Om 1 år
+apiTokens.fieldAccess	Åtkomst
+apiTokens.fieldExpiry	Går ut
+apiTokens.fieldName	Namn
+apiTokens.fieldPassword	Ditt lösenord
+apiTokens.formTitle	Ny API-token
+apiTokens.intro	Med API-tokens kan skript och andra verktyg använda ditt konto utan ditt lösenord. En token kan bara det som dess åtkomst tillåter, och du kan återkalla den när som helst.
+apiTokens.issuedDone	Jag har kopierat den
+apiTokens.issuedIntro	Detta är den enda gången den visas. Förvara den på ett säkert ställe. Om du förlorar den, återkalla den och skapa en ny.
+apiTokens.issuedTitle	Kopiera din token
+apiTokens.lastUsed	Senast använd %@
+apiTokens.lastUsedFrom	Senast använd %1$@ från %2$@
+apiTokens.limitReached	Du har nått gränsen på %lld tokens. Återkalla en för att skapa en ny.
+apiTokens.menuAccessibilityLabel	Åtgärder för %@
+apiTokens.namePlaceholder	Till exempel säkerhetskopieringsskript
+apiTokens.navigationTitle	API-tokens
+apiTokens.neverExpires	Går aldrig ut
+apiTokens.neverUsed	Aldrig använd
+apiTokens.newButton	Ny token
+apiTokens.passwordHint	Ange ditt lösenord för att skapa en token.
+apiTokens.renameAction	Byt namn
+apiTokens.renameSave	Spara
+apiTokens.renameTitle	Byt namn på token
+apiTokens.revokeAction	Återkalla
+apiTokens.revokeConfirm	Återkalla
+apiTokens.revokeMessage	Allt som använder ”%@” slutar fungera direkt. Det går inte att ångra.
+apiTokens.revokeTitle	Återkalla token?
+apiTokens.scopeRead	Endast läsning
+apiTokens.scopeWrite	Läsa och skriva
+apiTokens.sectionHeader	Utvecklare
+changePassword.addIntro	Det här kontot loggar in med enkel inloggning och har inget lösenord ännu. Lägg till ett för att också logga in med din e-postadress eller ditt användarnamn.
+changePassword.addNavigationTitle	Lägg till lösenord
+changePassword.addSubmitButton	Lägg till lösenord
+ffmpegSettings.ffmpegPlaceholder	/usr/local/bin/ffmpeg
+ffmpegSettings.ffprobePlaceholder	/usr/local/bin/ffprobe
+login.codeField	Kod
+login.codeIntroAuthenticator	Det här kontot kräver ett andra steg. Ange den sexsiffriga koden från din autentiseringsapp.
+login.codeIntroRecovery	Ange en av dina återställningskoder. Varje kod fungerar bara en gång.
+login.codeSubmit	Verifiera
+login.codeTitle	Ange din kod
+login.codeUseAuthenticator	Använd koden från autentiseringsappen i stället
+login.codeUseRecovery	Använd en återställningskod i stället
+login.diagnosticsButton	Dela inloggningslogg
+login.diagnosticsIntro	Den här loggen visar vad servern svarade i varje steg, för att hjälpa till att hitta varför inloggningen misslyckas. Den innehåller aldrig ditt lösenord, adressen du angav eller ditt användarnamn. Skicka den till utvecklaren.
+login.diagnosticsTitle	Inloggningslogg
+login.errorInvalidCode	Koden är inte rätt.
+login.errorSecondFactorExpired	Inloggningen gick ut. Ange ditt lösenord igen.
+login.identifierField	E-post eller användarnamn
+searchIndexSettings.placeholder	Backups/2024
+serverSettings.detailSeparator	 · 
+settings.rowAddPassword	Lägg till lösenord
+trashSettings.violation	%1$@: %2$@
+twoFactor.codeAccessibilityLabel	Autentiseringskod
+twoFactor.confirmButton	Verifiera och slå på
+twoFactor.copyCodesButton	Kopiera koder
+twoFactor.copyKeyAccessibilityLabel	Kopiera installationsnyckel
+twoFactor.enrollIntro	Skanna den här QR-koden med din autentiseringsapp eller skriv in nyckeln för hand. Ange sedan den sexsiffriga koden som appen visar.
+twoFactor.keyLabel	Installationsnyckel
+twoFactor.manageButton	Hantera…
+twoFactor.navigationTitle	Tvåfaktorsautentisering
+twoFactor.newCodesButton	Hämta nya återställningskoder
+twoFactor.offIntro	Lägg till ett andra steg vid inloggning. Efter lösenordet anger du en kod från en autentiseringsapp.
+twoFactor.offTitle	Tvåfaktorsautentisering är av
+twoFactor.onTitle	Tvåfaktorsautentisering är på
+twoFactor.passwordConfirmButton	Bekräfta
+twoFactor.passwordField	Lösenord
+twoFactor.passwordNewCodesIntro	Ange ditt lösenord för att ersätta dina återställningskoder. De gamla slutar fungera.
+twoFactor.passwordTurnOffIntro	Ange ditt lösenord för att slå av tvåfaktorsautentisering.
+twoFactor.qrAccessibilityLabel	QR-kod för din autentiseringsapp
+twoFactor.recoveryCodesLeft	Återställningskoder kvar: %lld
+twoFactor.recoveryDoneButton	Jag har sparat dem
+twoFactor.recoveryIntro	Varje kod fungerar en gång om du förlorar din autentiseringsapp. De visas inte igen, så förvara dem på ett säkert ställe.
+twoFactor.recoveryTitle	Spara dina återställningskoder
+twoFactor.shareCodesButton	Dela koder
+twoFactor.turnOffButton	Slå av
+twoFactor.turnOnButton	Slå på
