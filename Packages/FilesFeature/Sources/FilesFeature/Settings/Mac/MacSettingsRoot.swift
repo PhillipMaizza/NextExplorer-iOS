@@ -18,6 +18,13 @@
         case users
         case thumbnails
         case accessRules
+        case uploads
+        case searchIndex
+        case folderSize
+        case ffmpeg
+        case activity
+        case trash
+        case versions
         case about
 
         var id: String {
@@ -25,7 +32,7 @@
         }
 
         static let everyone: [Self] = [.accounts, .general, .storage, .apiTokens]
-        static let admin: [Self] = [.server, .users, .thumbnails, .accessRules]
+        static let admin: [Self] = [.server, .users, .thumbnails, .accessRules, .uploads, .searchIndex, .folderSize, .ffmpeg, .trash, .versions, .activity]
         static let app: [Self] = [.about]
 
         var title: String {
@@ -38,6 +45,13 @@
             case .users: L10n.Settings.sectionUsers
             case .thumbnails: L10n.Settings.rowThumbnails
             case .accessRules: L10n.Settings.rowAccessRules
+            case .uploads: L10n.UploadSettings.navigationTitle
+            case .searchIndex: L10n.SearchIndexSettings.navigationTitle
+            case .folderSize: L10n.FolderSizeSettings.navigationTitle
+            case .ffmpeg: L10n.FfmpegSettings.navigationTitle
+            case .activity: L10n.ActivityLog.navigationTitle
+            case .trash: L10n.TrashSettings.navigationTitle
+            case .versions: L10n.VersionedFiles.navigationTitle
             case .about: L10n.Settings.sectionInfo
             }
         }
@@ -52,6 +66,13 @@
             case .users: IconKit.people
             case .thumbnails: IconKit.photo
             case .accessRules: IconKit.accessRules
+            case .uploads: IconKit.upload
+            case .searchIndex: IconKit.search
+            case .folderSize: IconKit.folder
+            case .ffmpeg: IconKit.film
+            case .activity: IconKit.time
+            case .trash: IconKit.delete
+            case .versions: IconKit.archiveDocument
             case .about: IconKit.info
             }
         }
@@ -113,6 +134,13 @@
             case .users: store.send(.adminPaneLeft(.users))
             case .thumbnails: store.send(.adminPaneLeft(.thumbnails))
             case .accessRules: store.send(.adminPaneLeft(.accessRules))
+            case .uploads: store.send(.adminPaneLeft(.uploads))
+            case .searchIndex: store.send(.adminPaneLeft(.searchIndex))
+            case .folderSize: store.send(.adminPaneLeft(.folderSize))
+            case .ffmpeg: store.send(.adminPaneLeft(.ffmpeg))
+            case .activity: store.send(.adminPaneLeft(.activity))
+            case .trash: store.send(.adminPaneLeft(.trash))
+            case .versions: store.send(.adminPaneLeft(.versions))
             case .apiTokens: if store.apiTokens != nil {
                     store.send(.apiTokens(.dismiss))
                 }
@@ -172,6 +200,48 @@
                     MacAccessRulesPane(store: detailStore)
                 } else {
                     Color.clear.onAppear { store.send(.accessRulesButtonTapped) }
+                }
+            case .uploads:
+                if let detailStore = store.scope(state: \.uploadSettings, action: \.uploadSettings.presented) {
+                    MacUploadSettingsPane(store: detailStore)
+                } else {
+                    Color.clear.onAppear { store.send(.uploadSettingsButtonTapped) }
+                }
+            case .searchIndex:
+                if let detailStore = store.scope(state: \.searchIndexSettings, action: \.searchIndexSettings.presented) {
+                    MacSearchIndexSettingsPane(store: detailStore)
+                } else {
+                    Color.clear.onAppear { store.send(.searchIndexSettingsButtonTapped) }
+                }
+            case .folderSize:
+                if let detailStore = store.scope(state: \.folderSizeSettings, action: \.folderSizeSettings.presented) {
+                    MacFolderSizeSettingsPane(store: detailStore)
+                } else {
+                    Color.clear.onAppear { store.send(.folderSizeSettingsButtonTapped) }
+                }
+            case .ffmpeg:
+                if let detailStore = store.scope(state: \.ffmpegSettings, action: \.ffmpegSettings.presented) {
+                    MacFFmpegSettingsPane(store: detailStore)
+                } else {
+                    Color.clear.onAppear { store.send(.ffmpegSettingsButtonTapped) }
+                }
+            case .activity:
+                if let detailStore = store.scope(state: \.activityLog, action: \.activityLog.presented) {
+                    MacActivityLogPane(store: detailStore)
+                } else {
+                    Color.clear.onAppear { store.send(.activityLogButtonTapped) }
+                }
+            case .trash:
+                if let detailStore = store.scope(state: \.trashSettings, action: \.trashSettings.presented) {
+                    MacTrashSettingsPane(store: detailStore)
+                } else {
+                    Color.clear.onAppear { store.send(.trashSettingsButtonTapped) }
+                }
+            case .versions:
+                if let detailStore = store.scope(state: \.versionedFiles, action: \.versionedFiles.presented) {
+                    MacVersionedFilesPane(store: detailStore)
+                } else {
+                    Color.clear.onAppear { store.send(.versionedFilesButtonTapped) }
                 }
             }
         }

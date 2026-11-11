@@ -1713,6 +1713,501 @@
         }
       }
     },
+    "activityLog.action.accountPasskey": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passkey changed"
+          }
+        }
+      }
+    },
+    "activityLog.action.accountPassword": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Password changed"
+          }
+        }
+      }
+    },
+    "activityLog.action.accountToken": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "API token changed"
+          }
+        }
+      }
+    },
+    "activityLog.action.accountTwoFactor": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Second factor changed"
+          }
+        }
+      }
+    },
+    "activityLog.action.adminActivityClear": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Log cleared"
+          }
+        }
+      }
+    },
+    "activityLog.action.adminSettings": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings changed"
+          }
+        }
+      }
+    },
+    "activityLog.action.adminUser": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Account changed"
+          }
+        }
+      }
+    },
+    "activityLog.action.fileDelete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sent to the trash"
+          }
+        }
+      }
+    },
+    "activityLog.action.fileDownload": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloaded"
+          }
+        }
+      }
+    },
+    "activityLog.action.filePurge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removed for good"
+          }
+        }
+      }
+    },
+    "activityLog.action.fileRestore": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restored"
+          }
+        }
+      }
+    },
+    "activityLog.action.fileUpload": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploaded"
+          }
+        }
+      }
+    },
+    "activityLog.action.shareCreate": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share created"
+          }
+        }
+      }
+    },
+    "activityLog.action.shareDelete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share deleted"
+          }
+        }
+      }
+    },
+    "activityLog.action.shareDownload": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloaded through a link"
+          }
+        }
+      }
+    },
+    "activityLog.action.shareUpload": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploaded through a link"
+          }
+        }
+      }
+    },
+    "activityLog.action.signIn": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed in"
+          }
+        }
+      }
+    },
+    "activityLog.action.signOut": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signed out"
+          }
+        }
+      }
+    },
+    "activityLog.action.versionsPurge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versions deleted"
+          }
+        }
+      }
+    },
+    "activityLog.anyAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any kind"
+          }
+        }
+      }
+    },
+    "activityLog.anyOutcome": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any outcome"
+          }
+        }
+      }
+    },
+    "activityLog.clear": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty the Log"
+          }
+        }
+      }
+    },
+    "activityLog.clearConfirm": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty the Log"
+          }
+        }
+      }
+    },
+    "activityLog.clearMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every recorded line is deleted. This cannot be undone."
+          }
+        }
+      }
+    },
+    "activityLog.clearTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Empty the log?"
+          }
+        }
+      }
+    },
+    "activityLog.enabled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Record activity"
+          }
+        }
+      }
+    },
+    "activityLog.enabledHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sign-ins, downloads, uploads, deletions, restores, share links and account changes are written down while this is on. Nothing before it was switched on is there."
+          }
+        }
+      }
+    },
+    "activityLog.filterAction": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kind"
+          }
+        }
+      }
+    },
+    "activityLog.filterOutcome": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Outcome"
+          }
+        }
+      }
+    },
+    "activityLog.fromAddress": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From %@"
+          }
+        }
+      }
+    },
+    "activityLog.more": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Show More"
+          }
+        }
+      }
+    },
+    "activityLog.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Activity Log"
+          }
+        }
+      }
+    },
+    "activityLog.none": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing recorded yet."
+          }
+        }
+      }
+    },
+    "activityLog.off": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The log is off, so nothing is being recorded."
+          }
+        }
+      }
+    },
+    "activityLog.outcomeOk": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Succeeded"
+          }
+        }
+      }
+    },
+    "activityLog.outcomeRefused": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refused"
+          }
+        }
+      }
+    },
+    "activityLog.refresh": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh"
+          }
+        }
+      }
+    },
+    "activityLog.refusedSuffix": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refused"
+          }
+        }
+      }
+    },
+    "activityLog.retention": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep for (days)"
+          }
+        }
+      }
+    },
+    "activityLog.retentionInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Between 1 and 3650 days."
+          }
+        }
+      }
+    },
+    "activityLog.saveButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "activityLog.searchButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search"
+          }
+        }
+      }
+    },
+    "activityLog.searchPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A name or a path"
+          }
+        }
+      }
+    },
+    "activityLog.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Who did what, when, and from where. Off unless you ask for it."
+          }
+        }
+      }
+    },
+    "activityLog.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The activity log is only available to administrators."
+          }
+        }
+      }
+    },
     "apiTokens.copiedToken": {
       "extractionState": "manual",
       "localizations": {
@@ -31301,6 +31796,127 @@
         }
       }
     },
+    "ffmpegSettings.containerPathHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enter absolute paths visible inside the application container. To use host binaries, bind-mount them into the container first."
+          }
+        }
+      }
+    },
+    "ffmpegSettings.defaultHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Leave a path empty to use FFMPEG_PATH or FFPROBE_PATH from the environment, then the bundled executable. Changes apply immediately."
+          }
+        }
+      }
+    },
+    "ffmpegSettings.ffmpegPath": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FFmpeg executable path"
+          }
+        }
+      }
+    },
+    "ffmpegSettings.ffmpegPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/usr/local/bin/ffmpeg"
+          }
+        }
+      }
+    },
+    "ffmpegSettings.ffprobePath": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FFprobe executable path"
+          }
+        }
+      }
+    },
+    "ffmpegSettings.ffprobePlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "/usr/local/bin/ffprobe"
+          }
+        }
+      }
+    },
+    "ffmpegSettings.invalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Both paths must be absolute container paths beginning with /."
+          }
+        }
+      }
+    },
+    "ffmpegSettings.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FFmpeg"
+          }
+        }
+      }
+    },
+    "ffmpegSettings.saveButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "ffmpegSettings.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose the FFmpeg and FFprobe executables used for media previews and metadata."
+          }
+        }
+      }
+    },
+    "ffmpegSettings.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "FFmpeg settings are only available to administrators."
+          }
+        }
+      }
+    },
     "fileInfo.deleteAll": {
       "extractionState": "manual",
       "localizations": {
@@ -36647,6 +37263,182 @@
           "stringUnit": {
             "state": "translated",
             "value": "影片"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.addButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.additional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Additional exclusions"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.discardButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.environment": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Environment-defined exclusions"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.locked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set by %@ in the environment, so it is decided there and not here."
+          }
+        }
+      }
+    },
+    "folderSizeSettings.modeFull": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Everything inside them"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.modeOff": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Off"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.modeShallow": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Their own files only"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder Sizes"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.none": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No paths configured"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stacks/docker/overlay2"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.running": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Measure folder sizes"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.runningHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Measures folders in the background, so their size shows in the list."
+          }
+        }
+      }
+    },
+    "folderSizeSettings.saveButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "folderSizeSettings.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exclude paths from folder size calculation and indexing."
+          }
+        }
+      }
+    },
+    "folderSizeSettings.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Folder size settings are only available to administrators."
           }
         }
       }
@@ -52523,6 +53315,149 @@
         }
       }
     },
+    "searchIndexSettings.addButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add"
+          }
+        }
+      }
+    },
+    "searchIndexSettings.additional": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Additional exclusions"
+          }
+        }
+      }
+    },
+    "searchIndexSettings.discardButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        }
+      }
+    },
+    "searchIndexSettings.environment": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Environment-defined exclusions"
+          }
+        }
+      }
+    },
+    "searchIndexSettings.locked": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set by %@ in the environment, so it is decided there and not here."
+          }
+        }
+      }
+    },
+    "searchIndexSettings.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search Index"
+          }
+        }
+      }
+    },
+    "searchIndexSettings.none": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No path configured"
+          }
+        }
+      }
+    },
+    "searchIndexSettings.placeholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backups/2024"
+          }
+        }
+      }
+    },
+    "searchIndexSettings.running": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep a search index"
+          }
+        }
+      }
+    },
+    "searchIndexSettings.runningHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reads the documents in the volume in the background, so a search inside them answers at once."
+          }
+        }
+      }
+    },
+    "searchIndexSettings.saveButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "searchIndexSettings.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exclude paths from content indexing."
+          }
+        }
+      }
+    },
+    "searchIndexSettings.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search index settings are only available to administrators."
+          }
+        }
+      }
+    },
     "select.deselectAll": {
       "extractionState": "manual",
       "localizations": {
@@ -54659,6 +55594,61 @@
           "stringUnit": {
             "state": "translated",
             "value": "伺服器 URL"
+          }
+        }
+      }
+    },
+    "serverSettings.detailSeparator": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " · "
+          }
+        }
+      }
+    },
+    "serverSettings.featureOffHowTo": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "To turn it on, set %@ and restart the container."
+          }
+        }
+      }
+    },
+    "serverSettings.featureOffKept": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What you configure here is saved and applies as soon as it is enabled."
+          }
+        }
+      }
+    },
+    "serverSettings.featureOffTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This feature is not enabled"
+          }
+        }
+      }
+    },
+    "serverSettings.featureOffUseSwitch": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Turn it on with the switch above."
           }
         }
       }
@@ -76943,6 +77933,710 @@
         }
       }
     },
+    "trashSettings.available": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Available"
+          }
+        }
+      }
+    },
+    "trashSettings.checkpointMinutes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Office checkpoint (minutes)"
+          }
+        }
+      }
+    },
+    "trashSettings.dailyDays": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Then one per day (days)"
+          }
+        }
+      }
+    },
+    "trashSettings.discardButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Discard"
+          }
+        }
+      }
+    },
+    "trashSettings.enabled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send deleted items to the trash"
+          }
+        }
+      }
+    },
+    "trashSettings.enabledHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "When off, deleting removes items for good. Items already in the trash still expire."
+          }
+        }
+      }
+    },
+    "trashSettings.environmentNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Defaults come from TRASH_ENABLED, TRASH_RETENTION_DAYS, TRASH_MAX_PERCENT and TRASH_MAX_SIZE."
+          }
+        }
+      }
+    },
+    "trashSettings.eventAdopted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"%@\" recovered after an interruption"
+          }
+        }
+      }
+    },
+    "trashSettings.eventBreaker": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too many items missing at once: nothing was changed"
+          }
+        }
+      }
+    },
+    "trashSettings.eventEvicted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"%@\" removed before its retention to free space"
+          }
+        }
+      }
+    },
+    "trashSettings.eventFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"%@\" could not be removed"
+          }
+        }
+      }
+    },
+    "trashSettings.eventForgotten": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"%@\" forgotten by an administrator"
+          }
+        }
+      }
+    },
+    "trashSettings.eventLost": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"%@\" was missing its content"
+          }
+        }
+      }
+    },
+    "trashSettings.eventVersionEvicted": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A version of \"%@\" removed to free space"
+          }
+        }
+      }
+    },
+    "trashSettings.eventVersionFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A version could not be removed"
+          }
+        }
+      }
+    },
+    "trashSettings.eventVersionLost": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A version was missing its content"
+          }
+        }
+      }
+    },
+    "trashSettings.eventVersionTooLarge": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "\"%@\" is larger than the whole space: what it replaced was not kept"
+          }
+        }
+      }
+    },
+    "trashSettings.eventVersionsBreaker": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Too many versions missing at once: nothing was changed"
+          }
+        }
+      }
+    },
+    "trashSettings.hourlyDays": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Then one per hour (days)"
+          }
+        }
+      }
+    },
+    "trashSettings.journalHeader": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Journal"
+          }
+        }
+      }
+    },
+    "trashSettings.keepAllHours": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep every version (hours)"
+          }
+        }
+      }
+    },
+    "trashSettings.lastPass": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last maintenance: %@"
+          }
+        }
+      }
+    },
+    "trashSettings.lastPassPurged": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · removed: %2$lld"
+          }
+        }
+      }
+    },
+    "trashSettings.maxPerFile": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versions per file at most"
+          }
+        }
+      }
+    },
+    "trashSettings.maxPercent": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share of each volume (%)"
+          }
+        }
+      }
+    },
+    "trashSettings.maxPercentHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The most the trash may hold on a volume, from 1 to 90%."
+          }
+        }
+      }
+    },
+    "trashSettings.maxSize": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Size cap per volume (GiB)"
+          }
+        }
+      }
+    },
+    "trashSettings.maxSizeHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Optional. The smaller of the share and the cap applies."
+          }
+        }
+      }
+    },
+    "trashSettings.maxSizeNone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No cap"
+          }
+        }
+      }
+    },
+    "trashSettings.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trash and Versions"
+          }
+        }
+      }
+    },
+    "trashSettings.never": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "not yet"
+          }
+        }
+      }
+    },
+    "trashSettings.noBudget": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "no limit"
+          }
+        }
+      }
+    },
+    "trashSettings.retention": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retention (days)"
+          }
+        }
+      }
+    },
+    "trashSettings.retentionHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "From 1 to 3650 days."
+          }
+        }
+      }
+    },
+    "trashSettings.runMaintenance": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run Maintenance Now"
+          }
+        }
+      }
+    },
+    "trashSettings.saveButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "trashSettings.sharedSpace": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versions and the trash share each volume's reserved space. When it runs short, older versions go first, then trash items, then each file's latest version, and pinned versions last."
+          }
+        }
+      }
+    },
+    "trashSettings.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleted items and earlier versions of files are kept in a reserved space on their own volume, and removed after their retention or when that space is needed."
+          }
+        }
+      }
+    },
+    "trashSettings.tiersHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "After these tiers, one version per week is kept. An office editing session leaves one version, plus a checkpoint at most this often. Pinned versions escape the thinning and the per-file limit."
+          }
+        }
+      }
+    },
+    "trashSettings.trashHeader": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trash"
+          }
+        }
+      }
+    },
+    "trashSettings.trashInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the values: retention from 1 to 3650 days, share from 1 to 90%, a positive size or none."
+          }
+        }
+      }
+    },
+    "trashSettings.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trash and version settings are only available to administrators."
+          }
+        }
+      }
+    },
+    "trashSettings.unavailableMissing": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not mounted or removed"
+          }
+        }
+      }
+    },
+    "trashSettings.unavailableReplaced": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Another disk in its place"
+          }
+        }
+      }
+    },
+    "trashSettings.unavailableUnreadable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unreadable"
+          }
+        }
+      }
+    },
+    "trashSettings.usage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ of %2$@"
+          }
+        }
+      }
+    },
+    "trashSettings.verify": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Verify"
+          }
+        }
+      }
+    },
+    "trashSettings.verifyIssues": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problems found: %lld"
+          }
+        }
+      }
+    },
+    "trashSettings.verifyOk": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every volume's trash is consistent."
+          }
+        }
+      }
+    },
+    "trashSettings.versionsEnabled": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keep earlier versions of files"
+          }
+        }
+      }
+    },
+    "trashSettings.versionsEnabledHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Independent of the trash. When off, saves keep nothing new; existing versions stay until they expire or are deleted."
+          }
+        }
+      }
+    },
+    "trashSettings.versionsEnvironmentNote": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Defaults come from VERSIONS_ENABLED, VERSIONS_KEEP_ALL_HOURS, VERSIONS_HOURLY_DAYS, VERSIONS_DAILY_DAYS, VERSIONS_MAX_PER_FILE and VERSIONS_SESSION_CHECKPOINT_MINUTES."
+          }
+        }
+      }
+    },
+    "trashSettings.versionsHeader": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File Versions"
+          }
+        }
+      }
+    },
+    "trashSettings.versionsInvalid": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check the values: 1 to 720 hours, 1 to 365 days per hour, 1 to 3650 days per day, 1 to 1000 versions per file, a checkpoint from 1 to 1440 minutes."
+          }
+        }
+      }
+    },
+    "trashSettings.versionsSubtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each save keeps what it replaces, without copying it, in the same reserved space as the trash. Older versions are thinned out over time."
+          }
+        }
+      }
+    },
+    "trashSettings.violation": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@: %2$@"
+          }
+        }
+      }
+    },
+    "trashSettings.zoneItems": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Items: %1$lld · %2$@"
+          }
+        }
+      }
+    },
+    "trashSettings.zoneKindPersonal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personal folder of %@"
+          }
+        }
+      }
+    },
+    "trashSettings.zoneKindUserVolume": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assigned volume %@"
+          }
+        }
+      }
+    },
+    "trashSettings.zoneProblems": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problems: %lld"
+          }
+        }
+      }
+    },
+    "trashSettings.zoneVersions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versions: %1$lld · %2$@"
+          }
+        }
+      }
+    },
+    "trashSettings.zonesEmpty": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing has been deleted into a trash yet."
+          }
+        }
+      }
+    },
+    "trashSettings.zonesHeader": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trash by Volume"
+          }
+        }
+      }
+    },
+    "trashSettings.zonesSubtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Each volume keeps its trash in a hidden .nextexplorer folder at its root, so deleting never copies anything."
+          }
+        }
+      }
+    },
     "twoFactor.codeAccessibilityLabel": {
       "extractionState": "manual",
       "localizations": {
@@ -77524,6 +79218,127 @@
           "stringUnit": {
             "state": "translated",
             "value": "%1$@ · %2$@\n%3$@"
+          }
+        }
+      }
+    },
+    "uploadSettings.autoFallback": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-fallback to chunked"
+          }
+        }
+      }
+    },
+    "uploadSettings.autoFallbackHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "If a direct upload fails because a reverse proxy rejects the body size, switch to chunked uploads automatically."
+          }
+        }
+      }
+    },
+    "uploadSettings.chunkSize": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chunk size"
+          }
+        }
+      }
+    },
+    "uploadSettings.chunkSizeHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Maximum size of each upload request. Keep this below your reverse proxy limit. Smaller chunks give smoother progress."
+          }
+        }
+      }
+    },
+    "uploadSettings.chunkSizeValue": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld MiB"
+          }
+        }
+      }
+    },
+    "uploadSettings.chunkedEnable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable chunked uploads"
+          }
+        }
+      }
+    },
+    "uploadSettings.chunkedEnableHelp": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use TUS to send large files through multiple smaller requests."
+          }
+        }
+      }
+    },
+    "uploadSettings.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uploads"
+          }
+        }
+      }
+    },
+    "uploadSettings.saveButton": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Changes"
+          }
+        }
+      }
+    },
+    "uploadSettings.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Configure how files are sent to the server."
+          }
+        }
+      }
+    },
+    "uploadSettings.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload settings are only available to administrators."
           }
         }
       }
@@ -91862,6 +93677,435 @@
           "stringUnit": {
             "state": "translated",
             "value": "卷宗已儲存"
+          }
+        }
+      }
+    },
+    "versionedFiles.anyState": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any state"
+          }
+        }
+      }
+    },
+    "versionedFiles.anyZone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Any volume"
+          }
+        }
+      }
+    },
+    "versionedFiles.confirmAllTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete every version of \"%@\"?"
+          }
+        }
+      }
+    },
+    "versionedFiles.confirmDelete": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "versionedFiles.confirmMessage": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleted versions cannot be recovered."
+          }
+        }
+      }
+    },
+    "versionedFiles.confirmSomeTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete the selected versions (%lld)?"
+          }
+        }
+      }
+    },
+    "versionedFiles.deleteAll": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete All Versions"
+          }
+        }
+      }
+    },
+    "versionedFiles.deleteFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Some versions could not be deleted. Check them and try again."
+          }
+        }
+      }
+    },
+    "versionedFiles.deleteSelected": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Selected (%lld)"
+          }
+        }
+      }
+    },
+    "versionedFiles.deleteSelectedNone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tick versions to delete"
+          }
+        }
+      }
+    },
+    "versionedFiles.detailFailed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "This history could not be read."
+          }
+        }
+      }
+    },
+    "versionedFiles.navigationTitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File Versions"
+          }
+        }
+      }
+    },
+    "versionedFiles.newest": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Latest: %@"
+          }
+        }
+      }
+    },
+    "versionedFiles.next": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Next"
+          }
+        }
+      }
+    },
+    "versionedFiles.none": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No file has earlier versions."
+          }
+        }
+      }
+    },
+    "versionedFiles.pageRange": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld to %2$lld of %3$lld"
+          }
+        }
+      }
+    },
+    "versionedFiles.previous": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Previous"
+          }
+        }
+      }
+    },
+    "versionedFiles.refresh": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refresh"
+          }
+        }
+      }
+    },
+    "versionedFiles.rowSummary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Versions: %1$lld · %2$@"
+          }
+        }
+      }
+    },
+    "versionedFiles.searchPlaceholder": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A name or a path"
+          }
+        }
+      }
+    },
+    "versionedFiles.sortBytes": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Space used"
+          }
+        }
+      }
+    },
+    "versionedFiles.sortHeader": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Order by"
+          }
+        }
+      }
+    },
+    "versionedFiles.sortNewest": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Most recent"
+          }
+        }
+      }
+    },
+    "versionedFiles.sortPath": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Path"
+          }
+        }
+      }
+    },
+    "versionedFiles.sortVersions": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Number of versions"
+          }
+        }
+      }
+    },
+    "versionedFiles.stateHeader": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "State"
+          }
+        }
+      }
+    },
+    "versionedFiles.stateLive": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File still there"
+          }
+        }
+      }
+    },
+    "versionedFiles.stateOrphaned": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File gone"
+          }
+        }
+      }
+    },
+    "versionedFiles.stateTrashed": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "In the trash"
+          }
+        }
+      }
+    },
+    "versionedFiles.subtitle": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Every file that has a history, wherever it is. It shows paths from every space, personal folders included, so it is for administrators only."
+          }
+        }
+      }
+    },
+    "versionedFiles.summary": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Files: %1$lld · Versions: %2$lld · %3$@"
+          }
+        }
+      }
+    },
+    "versionedFiles.unavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File versions are only available to administrators."
+          }
+        }
+      }
+    },
+    "versionedFiles.versionBy": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "By %@"
+          }
+        }
+      }
+    },
+    "versionedFiles.versionPinned": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pinned"
+          }
+        }
+      }
+    },
+    "versionedFiles.versionUnavailable": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unavailable"
+          }
+        }
+      }
+    },
+    "versionedFiles.zone": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Volume"
+          }
+        }
+      }
+    },
+    "versionedFiles.zoneKindPersonal": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Personal folder of %@"
+          }
+        }
+      }
+    },
+    "versionedFiles.zoneKindUserVolume": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Assigned volume %@"
+          }
+        }
+      }
+    },
+    "versionedFiles.zoneUnknown": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown volume"
           }
         }
       }
