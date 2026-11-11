@@ -273,6 +273,33 @@ public extension FilesClient {
             updateThumbnailSettings: { serverURL, settings in
                 try await service.updateThumbnailSettings(serverURL: serverURL, settings: settings)
             },
+            fetchActivity: { serverURL, filter, before in
+                try await service.fetchActivity(serverURL: serverURL, filter: filter, before: before)
+            },
+            clearActivity: { serverURL in
+                try await service.clearActivity(serverURL: serverURL)
+            },
+            fetchVersionedFiles: { serverURL, filter, offset, limit in
+                try await service.fetchVersionedFiles(serverURL: serverURL, filter: filter, offset: offset, limit: limit)
+            },
+            fetchVersionedFile: { serverURL, id in
+                try await service.fetchVersionedFile(serverURL: serverURL, id: id)
+            },
+            deleteVersionsOfFile: { serverURL, id, ids in
+                try await service.deleteVersionsOfFile(serverURL: serverURL, id: id, ids: ids)
+            },
+            fetchTrashZones: { serverURL in
+                try await service.fetchTrashZones(serverURL: serverURL)
+            },
+            verifyTrash: { serverURL in
+                try await service.verifyTrash(serverURL: serverURL)
+            },
+            runTrashMaintenance: { serverURL in
+                try await service.runTrashMaintenance(serverURL: serverURL)
+            },
+            updateSystemSettings: { serverURL, patch in
+                try await service.updateSystemSettings(serverURL: serverURL, patch: patch)
+            },
             updateAccessRules: { serverURL, rules in
                 try await service.updateAccessRules(serverURL: serverURL, rules: rules)
             },

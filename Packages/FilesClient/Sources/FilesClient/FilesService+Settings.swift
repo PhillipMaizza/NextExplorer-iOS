@@ -53,6 +53,19 @@ extension FilesService {
         return thumbnails
     }
 
+    /// `PATCH /api/settings` with just the sections of the patch; the echo is the merged settings.
+    func updateSystemSettings(serverURL: URL, patch: SystemSettingsPatch) async throws -> SystemSettings {
+        let url = serverURL.appendingPathComponent(APIPath.settings)
+        var request = Self.makeRequest(url: url, method: .patch)
+        request.setJSONContentType()
+        do {
+            request.httpBody = try JSONEncoder().encode(patch)
+        } catch {
+            throw FilesClientError.decoding(error.localizedDescription)
+        }
+        return try await sendReportingMessage(request, decoding: SystemSettings.self)
+    }
+
     /// `PATCH /api/settings` with `{ access: { rules: [...] } }`; the whole array replaces the
     /// stored rules. The echo's `access.rules` is the server-normalised result.
     func updateAccessRules(serverURL: URL, rules: [AccessRule]) async throws -> [AccessRule] {
