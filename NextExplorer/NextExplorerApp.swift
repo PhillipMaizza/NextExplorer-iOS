@@ -106,6 +106,7 @@ struct NextExplorerApp: App {
                 .frame(minWidth: MacWindow.minWidth, minHeight: MacWindow.minHeight)
             #endif
             #if DEBUG
+            .disablesAnimationsUnderUITest()
             .onAppear {
                 // Under XCUITest, collapse animation durations once the window is attached.
                 DispatchQueue.main.async {

@@ -19,6 +19,10 @@ Tests must give the same result on every run, on any machine. Scans Packages/*/T
   a test file over 600 lines          split it into cohesive files, one suite per behavior area
   TestStore in a file without .isolatedDependencies   add @Suite(.isolatedDependencies) (TestUtils): fresh dependencies and @Shared in memory storage for every test
 
+UI tests (NextExplorerUITests) drive a real app, so they wait on a condition with a timeout
+(waitForExistence, waitUntil); only a fixed sleep (Task.sleep, clock.sleep, Thread.sleep, usleep,
+asyncAfter) is banned there. The git excluded QA harness folder is not scanned.
+
 Every use fails the check: there is no baseline and no allow list. When a test truly needs a banned
 pattern, it is the wrong test; fix it.
 
@@ -50,6 +54,11 @@ PATTERNS = {
     "inline JSON": r"Data\(#*\"{3}|Data\(#*\"+[\{\[]|#\"[\{\[]|\"[\{\[]\\\"",
 }
 
+# What a UI test may not do: wait for a fixed time instead of a condition.
+UI_PATTERNS = {name: PATTERNS[name] for name in ("Task.sleep", "clock.sleep", "Thread.sleep", "asyncAfter")}
+UI_TESTS = "NextExplorerUITests"
+UI_EXCLUDED = "QA"
+
 # A file that builds a TestStore must opt its suites into isolated dependencies and @Shared storage.
 ISOLATION = "TestStore without .isolatedDependencies"
 
@@ -58,14 +67,19 @@ MAX_LINES = 600
 TOO_LONG = f"lines over {MAX_LINES}"
 
 
-def count_in(text):
+def count_patterns(text, patterns):
     counts = {}
     for line in text.splitlines():
         code = line.split("//", 1)[0]
-        for name, pattern in PATTERNS.items():
+        for name, pattern in patterns.items():
             found = len(re.findall(pattern, code))
             if found:
                 counts[name] = counts.get(name, 0) + found
+    return counts
+
+
+def count_in(text):
+    counts = count_patterns(text, PATTERNS)
     lines = text.count("\n") + 1
     if lines > MAX_LINES:
         counts[TOO_LONG] = lines - MAX_LINES
@@ -78,6 +92,13 @@ def scan(root):
     result = {}
     for path in sorted(root.glob("Packages/*/Tests/**/*.swift")):
         counts = count_in(path.read_text())
+        if counts:
+            result[str(path.relative_to(root))] = counts
+    for path in sorted((root / UI_TESTS).glob("**/*.swift")):
+        relative = path.relative_to(root / UI_TESTS)
+        if relative.parts[0] == UI_EXCLUDED:
+            continue
+        counts = count_patterns(path.read_text(), UI_PATTERNS)
         if counts:
             result[str(path.relative_to(root))] = counts
     return result

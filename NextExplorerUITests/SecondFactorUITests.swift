@@ -15,16 +15,7 @@
         private func reachCodePage() -> (app: XCUIApplication, login: LoginScreen) {
             let app = launchApp(auth: .loggedOut)
             let login = LoginScreen(app: app)
-
-            XCTAssertTrue(login.hostField.waitToAppear())
-            login.hostField.clearAndType("nextexplorer.example.com")
-            login.testConnectionButton.tap()
-
-            XCTAssertTrue(login.identifierField.waitToAppear())
-            login.identifierField.clearAndType(Fixture.secondFactorIdentifier)
-            XCTAssertTrue(login.passwordField.waitToAppear())
-            login.passwordField.clearAndType("hunter2")
-            login.submitButton.tap()
+            login.signIn(identifier: Fixture.secondFactorIdentifier)
 
             XCTAssertTrue(login.codeField.waitToAppear(), "A right password on a 2FA account should open the code page, not an error")
             return (app, login)

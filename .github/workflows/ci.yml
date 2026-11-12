@@ -538,6 +538,9 @@ jobs:
           echo "Booting ${SIM_DEVICE} (${UDID})"
           xcrun simctl boot "${UDID}" || true
           xcrun simctl bootstatus "${UDID}" -b
+          # No "Save Password?" sheet after a sign in: inside the app it took the next tap, and on
+          # the 2FA code page the number pad covered its Not Now button.
+          xcrun simctl spawn "${UDID}" defaults write com.apple.WebUI AutoFillPasswords -bool NO
 
       - name: Run XCUITests
         # One simulator, no parallel clones: the scheme marks the UI tests parallelizable, which
@@ -550,7 +553,7 @@ jobs:
           SHARD_TESTS: ${{ matrix.shard.only }}
         run: |
           echo "UI test destination: platform=iOS Simulator,id=${SIM_UDID}"
-          python3 Scripts/ci-ui-tests.py --result TestResults --select "${SHARD_TESTS}" -- \
+          python3 Scripts/ci-ui-tests.py --result TestResults --select="${SHARD_TESTS}" -- \
             test-without-building \
             -xctestrun "${XCTESTRUN}" \
             -destination "platform=iOS Simulator,id=${SIM_UDID}" \
@@ -639,7 +642,7 @@ jobs:
         # build settings.
         run: |
           python3 Scripts/ci-ui-tests.py --result MacTestResults \
-            --select "-only-testing:NextExplorerUITests/MacCriticalPathUITests" -- \
+            --select="-only-testing:NextExplorerUITests" -- \
             test \
             -workspace PackageTests.xcworkspace \
             -scheme NextExplorer \

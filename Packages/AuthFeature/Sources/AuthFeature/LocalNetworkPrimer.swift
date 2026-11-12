@@ -1,3 +1,4 @@
+import DesignSystem
 import Foundation
 import Network
 import os
@@ -16,8 +17,7 @@ enum LocalNetworkPrimer {
         #if DEBUG
             // The mocked UI test graph never touches the network, and on a fresh Mac the system
             // alert would sit over the window and take every keystroke the tests type.
-            // `UITestSupport.mockFlag`, which this package cannot import.
-            if ProcessInfo.processInfo.environment["UITEST_MOCK"] == "1" {
+            if UITestEnvironment.isActive {
                 return
             }
         #endif
