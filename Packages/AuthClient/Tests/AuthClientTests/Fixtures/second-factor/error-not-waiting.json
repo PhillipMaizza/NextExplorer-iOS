@@ -1,0 +1,8 @@
+{
+  "success": false,
+  "error": {
+    "message": "That sign-in is no longer waiting for a code. Sign in again.",
+    "statusCode": 401,
+    "code": "AUTH_INVALID_CREDENTIALS"
+  }
+}

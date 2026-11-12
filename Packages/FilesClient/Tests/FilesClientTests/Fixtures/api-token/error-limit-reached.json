@@ -1,0 +1,7 @@
+{
+  "success": false,
+  "error": {
+    "message": "This account already holds 50 tokens. Revoke one before issuing another.",
+    "statusCode": 400
+  }
+}

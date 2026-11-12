@@ -1,0 +1,8 @@
+{
+  "volumeUsage": {
+    "enabled": true
+  },
+  "userVolumes": {
+    "enabled": false
+  }
+}

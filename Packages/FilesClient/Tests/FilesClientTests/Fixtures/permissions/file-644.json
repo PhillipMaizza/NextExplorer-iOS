@@ -1,0 +1,9 @@
+{
+  "path": "Docs/a.txt",
+  "mode": 33188,
+  "owner": "alice",
+  "group": "staff",
+  "uid": 501,
+  "gid": 20,
+  "isDirectory": false
+}

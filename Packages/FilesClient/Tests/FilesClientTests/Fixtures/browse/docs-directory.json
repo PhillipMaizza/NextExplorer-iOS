@@ -1,0 +1,21 @@
+{
+  "items": [
+    {
+      "name": "Docs",
+      "path": "",
+      "dateModified": "2024-01-01T00:00:00.000Z",
+      "size": 0,
+      "kind": "directory",
+      "supportsThumbnail": false
+    }
+  ],
+  "access": {
+    "canRead": true,
+    "canWrite": false,
+    "canUpload": false,
+    "canDelete": false,
+    "canShare": false,
+    "canDownload": true
+  },
+  "path": ""
+}

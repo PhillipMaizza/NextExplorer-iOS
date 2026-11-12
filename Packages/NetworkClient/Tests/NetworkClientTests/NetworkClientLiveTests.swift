@@ -12,14 +12,15 @@ struct NetworkClientLiveTests {
 
     @Test("returns the response body and HTTPURLResponse on success")
     func successReturnsBodyAndResponse() async throws {
-        StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: Data(#"{"ok":true}"#.utf8))
+        StubURLProtocol.stub = try .init(statusCode: 200, headers: [:], body: NetworkClientFixture.responseOkTrue.data())
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
+        let request = URLRequest(url: URL(string: Constants.statusURLString)!)
         let (data, response) = try await client.send(request)
 
         #expect(response.statusCode == 200)
-        #expect(String(decoding: data, as: UTF8.self) == #"{"ok":true}"#)
+        let expectedBody = try NetworkClientFixture.responseOkTrue.string()
+        #expect(String(decoding: data, as: UTF8.self) == expectedBody)
     }
 
     @Test("surfaces a 401 as a plain HTTPURLResponse, not a thrown error")
@@ -38,7 +39,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.failure = URLError(.cannotConnectToHost)
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
+        let request = URLRequest(url: URL(string: Constants.statusURLString)!)
         await #expect(throws: NetworkError.self) {
             _ = try await client.send(request)
         }
@@ -60,7 +61,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 500, headers: [:], body: Data())
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/auth/status")!)
+        let request = URLRequest(url: URL(string: Constants.statusURLString)!)
         let (_, response) = try await client.send(request)
 
         #expect(response.statusCode == 500)
@@ -83,7 +84,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: Data(repeating: 0x7A, count: 4096))
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self], maxInMemoryResponseBytes: 1024)
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/browse")!)
+        let request = URLRequest(url: URL(string: NetworkClientTestValue.browseURLString)!)
         await #expect(throws: NetworkError.responseTooLarge) {
             _ = try await client.send(request)
         }
@@ -95,7 +96,7 @@ struct NetworkClientLiveTests {
         StubURLProtocol.stub = .init(statusCode: 200, headers: [:], body: payload)
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self], maxInMemoryResponseBytes: 1024)
 
-        let request = URLRequest(url: URL(string: "https://example.com/api/browse")!)
+        let request = URLRequest(url: URL(string: NetworkClientTestValue.browseURLString)!)
         let (data, response) = try await client.send(request)
 
         #expect(data == payload)
@@ -171,22 +172,6 @@ struct NetworkClientLiveTests {
     }
 }
 
-/// Minimal lock box so the progress callback (invoked on the URLSession delegate queue) can collect
-/// values across threads in the test.
-private final class LockIsolatedBox<Value>: @unchecked Sendable {
-    private let lock = NSLock()
-    private var stored: Value
-    init(_ value: Value) {
-        stored = value
-    }
-
-    var value: Value {
-        lock.lock(); defer { lock.unlock() }
-        return stored
-    }
-
-    func withValue(_ mutate: (inout Value) -> Void) {
-        lock.lock(); defer { lock.unlock() }
-        mutate(&stored)
-    }
+private enum Constants {
+    static let statusURLString = "https://example.com/api/auth/status"
 }

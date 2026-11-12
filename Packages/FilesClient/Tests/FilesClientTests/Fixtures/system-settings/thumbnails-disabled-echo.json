@@ -1,0 +1,11 @@
+{
+  "branding": {
+    "appName": "X"
+  },
+  "thumbnails": {
+    "enabled": false,
+    "size": 128,
+    "quality": 50,
+    "concurrency": 2
+  }
+}

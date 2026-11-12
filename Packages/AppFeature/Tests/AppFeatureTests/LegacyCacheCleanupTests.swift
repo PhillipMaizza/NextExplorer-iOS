@@ -2,6 +2,7 @@
 import FilesClient
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Legacy cache cleanup")
 struct LegacyCacheCleanupTests {
@@ -55,8 +56,8 @@ struct LegacyCacheCleanupTests {
     }
 
     private func makeSandbox() throws -> Sandbox {
-        let root = FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(UUID().uuidString)")
-        let suite = "\(Fixture.suitePrefix)\(UUID().uuidString)"
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
+        let suite = "\(Fixture.suitePrefix)\(TestID.name())"
         return try Sandbox(
             root: root,
             applicationSupport: root.appendingPathComponent("support"),

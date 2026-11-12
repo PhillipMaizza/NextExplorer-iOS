@@ -1,0 +1,10 @@
+{
+  "canRead": true,
+  "canWrite": true,
+  "canUpload": true,
+  "canDelete": false,
+  "canShare": false,
+  "canDownload": true,
+  "canCreateFolder": true,
+  "canCreateFile": false
+}

@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "Keychain", targets: ["Keychain"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.5.0"),
     ],
     targets: [
@@ -19,6 +20,6 @@ let package = Package(
             ],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
-        .testTarget(name: "KeychainTests", dependencies: ["Keychain"], swiftSettings: [.swiftLanguageMode(.v6)]),
+        .testTarget(name: "KeychainTests", dependencies: ["TestUtils", "Keychain"], swiftSettings: [.swiftLanguageMode(.v6)]),
     ]
 )

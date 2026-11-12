@@ -76,6 +76,7 @@ final class PDFThumbnailStore {
         return entry
     }
 
+    @discardableResult
     func load(
         entry: Entry,
         key: String,
@@ -83,20 +84,20 @@ final class PDFThumbnailStore {
         serverURL: URL,
         filesClient: FilesClient,
         cache: PDFThumbnailCache
-    ) {
+    ) -> Task<Void, Never>? {
         switch entry.state {
-        case .ready, .unavailable: return
+        case .ready, .unavailable: return nil
         case .loading: break
         }
-        guard !inFlight.contains(key) else { return }
+        guard !inFlight.contains(key) else { return nil }
 
         guard item.size <= Constants.maxSourceBytes else {
             entry.state = .unavailable
-            return
+            return nil
         }
         inFlight.insert(key)
 
-        Task(priority: Constants.fetchPriority) { [weak self] in
+        return Task(priority: Constants.fetchPriority) { [weak self] in
             defer { self?.inFlight.remove(key) }
             guard let pdfURL = try? await filesClient.previewFileLowPriority(serverURL, item) else {
                 // Cancelled or a transient network failure: leave the entry in `loading` so

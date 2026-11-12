@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "FilesFeature", targets: ["FilesFeature"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../AppStorageKeys"),
         .package(path: "../ClientCertificateFeature"),
         .package(path: "../CoreModels"),
@@ -134,6 +135,7 @@ let package = Package(
         .testTarget(
             name: "FilesFeatureTests",
             dependencies: [
+                "TestUtils",
                 "FilesFeature",
                 .product(name: "ClientCertificateFeature", package: "ClientCertificateFeature"),
                 .product(name: "DesignSystem", package: "DesignSystem"),
@@ -144,7 +146,9 @@ let package = Package(
                 .product(name: "ShareUploads", package: "ShareUploads"),
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
                 .product(name: "DependenciesTestSupport", package: "swift-dependencies"),
+                .product(name: "ZIPFoundation", package: "ZIPFoundation"),
             ],
+            resources: [.copy("Fixtures")],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
     ]

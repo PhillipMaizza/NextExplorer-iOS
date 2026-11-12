@@ -2,7 +2,9 @@ import ComposableArchitecture
 @testable import FilesFeature
 import Localization
 import Testing
+import TestUtils
 
+@Suite(.isolatedDependencies)
 @MainActor
 struct TipJarFeatureTests {
     private let sample = [

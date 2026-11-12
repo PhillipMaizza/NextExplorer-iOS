@@ -1,0 +1,12 @@
+{
+  "items": [],
+  "access": {
+    "canRead": true,
+    "canWrite": true,
+    "canUpload": true,
+    "canDelete": true,
+    "canShare": true,
+    "canDownload": true
+  },
+  "path": "Photos"
+}

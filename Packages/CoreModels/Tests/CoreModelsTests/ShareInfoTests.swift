@@ -1,21 +1,12 @@
 @testable import CoreModels
 import Foundation
 import Testing
+import TestUtils
 
 struct ShareInfoTests {
     @Test
     func decodesTheInfoEndpointShape() throws {
-        let json = """
-        {
-            "shareToken": "AbC123xyz0",
-            "label": "Q3 Report",
-            "isDirectory": true,
-            "hasPassword": false,
-            "sharingType": "anyone",
-            "expiresAt": "2027-01-15T10:00:00.000Z",
-            "isExpired": false
-        }
-        """.data(using: .utf8)!
+        let json = try CoreModelsFixture.shareInfoInfoEndpointShape.data()
 
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { d in
@@ -37,9 +28,7 @@ struct ShareInfoTests {
 
     @Test
     func decodesAMinimalExpiredUsersShare() throws {
-        let json = """
-        { "shareToken": "x1y2z3", "isDirectory": false, "hasPassword": true, "sharingType": "users", "isExpired": true }
-        """.data(using: .utf8)!
+        let json = try CoreModelsFixture.shareInfoMinimalExpiredUsersShare.data()
 
         let info = try JSONDecoder().decode(ShareInfo.self, from: json)
         #expect(info.label == nil)

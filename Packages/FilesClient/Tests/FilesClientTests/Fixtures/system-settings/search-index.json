@@ -1,0 +1,9 @@
+{
+  "searchIndex": {
+    "enabled": true,
+    "excludedPaths": [
+      "a"
+    ],
+    "environmentExcludedPaths": []
+  }
+}

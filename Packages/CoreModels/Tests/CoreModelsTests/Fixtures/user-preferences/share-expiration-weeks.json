@@ -1,0 +1,6 @@
+{
+  "defaultShareExpiration": {
+    "value": 2,
+    "unit": "weeks"
+  }
+}
