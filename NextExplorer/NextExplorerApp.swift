@@ -33,7 +33,7 @@ import SwiftUI
 
     /// UIKit calls the background session completion handler on the main thread; it is not
     /// marked `Sendable`, so it travels in this box.
-    private struct UncheckedCompletion: @unchecked Sendable {
+    private nonisolated struct UncheckedCompletion: @unchecked Sendable {
         let run: () -> Void
 
         init(_ run: @escaping () -> Void) {

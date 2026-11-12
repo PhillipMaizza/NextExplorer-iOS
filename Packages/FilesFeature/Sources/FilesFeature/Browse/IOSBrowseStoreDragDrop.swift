@@ -48,6 +48,7 @@
     /// Resolves a drop against the store's folder, sends what it comes to, and deletes the staged
     /// copies of files nothing took over.
     enum IOSBrowseDropSender {
+        @MainActor
         static func send(_ drops: [BrowseDrop], onto folder: FileItem?, store: StoreOf<BrowseFeature>) -> Bool {
             let resolution = BrowseDropHandler.resolve(
                 drops: drops,
