@@ -4,423 +4,453 @@ import AuthFeature
 import ComposableArchitecture
 import CoreModels
 import FilesClient
+import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
-@MainActor
-// Serialized: these tests drive session-boundary transitions that write the process-wide
-// `@Shared(.inMemory)` download scope; running them in parallel lets one test's scope write
-// race into another's assertions.
-@Suite("AppFeature", .serialized)
-struct AppFeatureTests {
-    /// Runs before each test (swift-testing makes a fresh suite instance per test). The download
-    /// scope lives in process-wide `@Shared(.inMemory)`, so clear it so one test's session write
-    /// can't leak into the next test's baseline.
-    init() {
-        @Shared(.inMemory(DownloadAccountScope.sharedKey)) var downloadScope = ""
-        $downloadScope.withLock { $0 = "" }
-        @Shared(.inMemory(AccountSummary.sharedKey)) var accounts: [AccountSummary] = []
-        $accounts.withLock { $0 = [] }
-    }
+extension AppSuites {
+    @MainActor
+    @Suite("AppFeature routing")
+    struct AppFeatureTests {
+        private typealias Store = TestStore<AppFeature.State, AppFeature.Action>
 
-    private let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
+        private let credentialsA = AppFixtures.credentials(AppFixtures.serverA, "alice")
+        private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, "bob")
+        private let recorder = WipeRecorder()
 
-    private func credentials(serverURL: URL, username: String) -> SessionCredentials {
-        SessionCredentials(
-            serverBaseURL: serverURL,
-            authMode: .local,
-            cookieName: "connect.sid",
-            cookieValue: "abc",
-            cookieDomain: serverURL.host ?? "",
-            cookiePath: "/",
-            cookieIsSecure: true,
-            expiresAt: nil,
-            username: username
-        )
-    }
-
-    @Test("happy path: a valid restored session is confirmed with the server, then routes to authenticated")
-    func restoresSessionOnLaunch() async {
-        let credentials = credentials(serverURL: serverURL, username: "phillip")
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-        let store = TestStore(initialState: AppFeature.State()) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.restoreSession = { credentials }
-            $0.authClient.me = { _ in user }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.onAppear)
-        await store.receive(\.sessionValidationResponse)
-        store.assert {
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-        }
-    }
-
-    @Test("edge case: a restored session the server no longer honors, with no other account, falls back to login and clears it")
-    func restoredSessionRejectedFallsBackToLogin() async {
-        let credentials = credentials(serverURL: serverURL, username: "phillip")
-        let clearAllSessionsCalled = LockIsolated(false)
-        let cacheCleared = LockIsolated(false)
-        let store = TestStore(initialState: AppFeature.State()) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.restoreSession = { credentials }
-            $0.authClient.me = { _ in throw AuthClientError.sessionExpired }
-            $0.authClient.clearActiveSession = { nil }
-            $0.authClient.clearAllSessions = { clearAllSessionsCalled.setValue(true) }
-            $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.onAppear)
-        await store.receive(\.sessionValidationResponse)
-        await store.receive(\.activeAccountTornDown)
-        store.assert {
-            $0.destination = .unauthenticated(.init())
-        }
-        await store.finish()
-        #expect(clearAllSessionsCalled.value)
-        #expect(cacheCleared.value)
-    }
-
-    @Test("edge case: a network hiccup validating a restored session keeps the optimistic session")
-    func networkFailureValidatingKeepsOptimisticSession() async {
-        let credentials = credentials(serverURL: serverURL, username: "phillip")
-        let store = TestStore(initialState: AppFeature.State()) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.restoreSession = { credentials }
-            $0.authClient.me = { _ in throw AuthClientError.network("offline") }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.onAppear)
-        await store.receive(\.sessionValidationResponse)
-        store.assert {
-            $0.destination = .authenticated(
-                AuthenticatedFeature.State(serverURL: serverURL, user: User(id: "", username: "phillip", email: nil))
-            )
-        }
-    }
-
-    @Test("edge case: no stored session stays on the unauthenticated flow")
-    func noStoredSessionStaysUnauthenticated() async {
-        let store = TestStore(initialState: AppFeature.State()) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.restoreSession = { nil }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.onAppear)
-        await store.receive(\.sessionRestoreResponse) {
-            $0.destination = .unauthenticated(.init())
-        }
-    }
-
-    @Test("happy path: authenticating from the login flow switches to the authenticated destination")
-    func authenticatingSwitchesDestination() async {
-        let cacheCleared = LockIsolated(false)
-        let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.listSessions = { [] }
-            $0.authClient.activeAccountID = { nil }
-            $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
-        }
-        store.exhaustivity = .off
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-
-        await store.send(.destination(.unauthenticated(.delegate(.authenticated(user, serverURL))))) {
-            $0.$downloadScope.withLock { $0 = DownloadAccountScope.identifier(serverURL: serverURL, userID: user.id) }
-            $0.didAuthenticateFromLogin = true
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-        }
-        await store.finish()
-        #expect(cacheCleared.value)
-    }
-
-    @Test("happy path: signing the last account out switches back to the login flow and clears everything")
-    func signOutLastAccountSwitchesToLogin() async {
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-        let clearAllSessionsCalled = LockIsolated(false)
-        let cacheCleared = LockIsolated(false)
-        let store = TestStore(
-            initialState: AppFeature.State(
-                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-            )
-        ) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.clearAllSessions = { clearAllSessionsCalled.setValue(true) }
-            $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(nil))))) {
-            $0.destination = .unauthenticated(.init())
-        }
-        await store.finish()
-        #expect(clearAllSessionsCalled.value)
-        #expect(cacheCleared.value)
-    }
-
-    @Test("happy path: switching to another account remounts the authenticated UI without clearing caches")
-    func switchingAccountRemountsWithoutClearingCache() async {
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-        let otherServer = URL(string: "https://other.example.com") ?? URL(fileURLWithPath: "/")
-        let otherUser = User(id: "2", username: "jane", email: nil, roles: [])
-        let next = credentials(serverURL: otherServer, username: "jane")
-        let cacheCleared = LockIsolated(false)
-        let store = TestStore(
-            initialState: AppFeature.State(
-                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-            )
-        ) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.me = { _ in otherUser }
-            $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(next)))))
-        await store.receive(\.activateAccount)
-        await store.receive(\.sessionValidationResponse)
-        store.assert {
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: otherServer, user: otherUser))
-        }
-        await store.finish()
-        // Switching keeps both accounts' caches: no clear.
-        #expect(cacheCleared.value == false)
-    }
-
-    @Test("edge case: removing a non-active account leaves the current UI in place")
-    func removingNonActiveAccountKeepsUI() async {
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-        // The returned active account is the same one currently shown (a non-active account was
-        // removed), so the UI must not remount.
-        let sameActive = credentials(serverURL: serverURL, username: "phillip")
-        let store = TestStore(
-            initialState: AppFeature.State(
-                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-            )
-        ) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.listSessions = { [] }
-            $0.authClient.activeAccountID = { nil }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(sameActive)))))
-        await store.receive(\.accountsRefreshed)
-        store.assert {
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-        }
-    }
-
-    @Test("happy path: files shared in while signed out wait in the inbox")
-    func incomingFilesWhileSignedOutAreQueued() async {
-        let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
-        let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
-            AppFeature()
+        init() {
+            AppSuites.resetSharedState()
         }
 
-        await store.send(.incomingFiles([scan])) {
-            $0.$sharedFileInbox.withLock { $0 = [scan] }
-        }
-        store.state.$sharedFileInbox.withLock { $0 = [] }
-    }
-
-    @Test("happy path: files shared in while signed in go straight to the tab shell")
-    func incomingFilesWhileSignedInAreHandedOver() async {
-        let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-        let store = TestStore(
-            initialState: AppFeature.State(
-                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-            )
-        ) {
-            AppFeature()
-        }
-        store.exhaustivity = .off
-
-        await store.send(.incomingFiles([scan]))
-        await store.receive(\.destination.authenticated.mainTab.sharedFilesArrived)
-        #expect(store.state.sharedFileInbox.isEmpty)
-        await store.skipReceivedActions()
-        await store.skipInFlightEffects()
-    }
-
-    @Test("edge case: a non file URL is ignored")
-    func incomingNonFileURLIsIgnored() async {
-        let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
-            AppFeature()
-        }
-
-        await store.send(.incomingFiles([URL(string: "https://example.com/doc.pdf")!]))
-    }
-
-    @Test("happy path: adding an account adopts it without clearing existing caches")
-    func addAccountAdoptsWithoutClearingCache() async {
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-        let newServer = URL(string: "https://new.example.com") ?? URL(fileURLWithPath: "/")
-        let newUser = User(id: "2", username: "jane", email: nil, roles: [])
-        let cacheCleared = LockIsolated(false)
-        var initialState = AppFeature.State(
-            destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-        )
-        initialState.addAccount = LoginFormFeature.State()
-        let store = TestStore(initialState: initialState) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.listSessions = { [] }
-            $0.authClient.activeAccountID = { nil }
-            $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.addAccount(.presented(.delegate(.authenticated(newUser, newServer)))))
-        store.assert {
-            $0.addAccount = nil
-            $0.pendingAddedAccount = AppFeature.AddedAccount(user: newUser, serverURL: newServer)
-        }
-        // The new account is adopted only once the sheet has fully dismissed.
-        await store.send(.addAccountSheetDismissed)
-        store.assert {
-            $0.pendingAddedAccount = nil
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: newServer, user: newUser))
-        }
-        await store.finish()
-        #expect(cacheCleared.value == false)
-    }
-
-    @Test("edge case: a mid-session 401 with another account signed in switches to it")
-    func midSessionExpiryFallsThroughToNextAccount() async {
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-        let otherServer = URL(string: "https://other.example.com") ?? URL(fileURLWithPath: "/")
-        let otherUser = User(id: "2", username: "jane", email: nil, roles: [])
-        let next = credentials(serverURL: otherServer, username: "jane")
-        let store = TestStore(
-            initialState: AppFeature.State(
-                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-            )
-        ) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.clearActiveSession = { next }
-            $0.authClient.me = { [serverURL] url in
-                if url == serverURL {
-                    throw AuthClientError.sessionExpired
-                }
-                return otherUser
+        private func makeStore(
+            _ state: AppFeature.State = AppFeature.State(),
+            configure: (inout DependencyValues) -> Void = { _ in }
+        ) -> Store {
+            TestStore(initialState: state) {
+                AppFeature()
+            } withDependencies: {
+                recorder.install(into: &$0)
+                configure(&$0)
             }
         }
-        store.exhaustivity = .off
-        store.state.$sessionDidExpire.withLock { $0 = true }
 
-        await store.send(.sessionExpiryDetected)
-        await store.receive(\.sessionExpiryConfirmed)
-        await store.receive(\.activeAccountTornDown)
-        await store.receive(\.activateAccount)
-        await store.receive(\.sessionValidationResponse)
-        store.assert {
-            $0.sessionDidExpire = false
-            $0.destination = .authenticated(AuthenticatedFeature.State(serverURL: otherServer, user: otherUser))
+        private func authenticated(_ serverURL: URL, _ user: User) -> AppFeature.State {
+            AppFeature.State(destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user)))
         }
-    }
 
-    @Test("edge case: a mid-session 401 with another account signed in clears the expired account's caches and keeps the next one's")
-    func midSessionExpiryClearsOnlyTheExpiredAccountCaches() async {
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-        let otherServer = URL(string: "https://other.example.com") ?? URL(fileURLWithPath: "/")
-        let otherUser = User(id: "2", username: "jane", email: nil, roles: [])
-        let next = credentials(serverURL: otherServer, username: "jane")
-        let expiredID = serverURL.absoluteString + "|phillip"
-        let json = JSONCacheStore.inMemory()
-        json.bound(to: expiredID).write(key: "favorites", data: Data("a".utf8))
-        json.bound(to: next.accountID).write(key: "favorites", data: Data("b".utf8))
-        let previewCleared = LockIsolated<[String]>([])
-        let offlineCleared = LockIsolated<[String]>([])
-        let store = TestStore(
-            initialState: AppFeature.State(
-                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
-            )
-        ) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.clearActiveSession = { next }
-            $0.authClient.me = { [serverURL] url in
-                if url == serverURL {
+        /// The session shown straight after a launch or a switch, before `me` confirms the user.
+        private func optimistic(_ serverURL: URL, username: String) -> AppFeature.Destination.State {
+            .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: User(id: "", username: username, email: nil)))
+        }
+
+        private func confirmed(_ serverURL: URL, _ user: User) -> AppFeature.Destination.State {
+            .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
+        }
+
+        private func updateReview(_ state: inout AppFeature.State, _ update: (inout UploadReviewFeature.State?) -> Void) {
+            state.destination.modify(\.authenticated) { update(&$0.mainTab.browse.root.uploadReview) }
+        }
+
+        // MARK: Launch
+
+        @Test("A valid restored session is shown at once, then confirmed with the server and scoped to its downloads")
+        func restoresSessionOnLaunch() async {
+            let confirmation = AsyncGate()
+            let accountList = AsyncGate()
+            let store = makeStore {
+                $0.authClient.restoreSession = { [credentialsA] in credentialsA }
+                $0.authClient.me = { _ in
+                    try await confirmation.wait()
+                    return AppFixtures.userA
+                }
+                $0.authClient.listSessions = { [credentialsA] in
+                    try? await accountList.wait()
+                    return [credentialsA]
+                }
+                $0.authClient.activeAccountID = { AppFixtures.accountA }
+            }
+
+            await withMainSerialExecutor {
+                await store.send(.onAppear)
+                await store.receive(\.sessionRestoreResponse) {
+                    $0.destination = optimistic(AppFixtures.serverA, username: "alice")
+                }
+                accountList.open()
+                await store.receive(\.accountsRefreshed) {
+                    $0.$accounts.withLock { $0 = [AppFixtures.summaryA] }
+                }
+                confirmation.open()
+                await store.receive(\.sessionValidationResponse) {
+                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                    $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+                }
+                await store.receive(\.accountsRefreshed)
+            }
+
+            #expect(recorder.events.value.isEmpty, "a valid session wipes nothing")
+        }
+
+        @Test("A restored session the server rejects, with no other account, falls back to login and wipes the account then everything")
+        func restoredSessionRejectedFallsBackToLogin() async {
+            let confirmation = AsyncGate()
+            let store = makeStore {
+                $0.authClient.restoreSession = { [credentialsA] in credentialsA }
+                $0.authClient.me = { _ in
+                    try await confirmation.wait()
                     throw AuthClientError.sessionExpired
                 }
-                return otherUser
             }
-            $0.jsonCacheStore = json
-            $0.previewCacheStore.clearAccount = { id in previewCleared.withValue { $0.append(id) } }
-            $0.offlineFileStore.removeAccount = { id in offlineCleared.withValue { $0.append(id) } }
-        }
-        store.exhaustivity = .off
 
-        await store.send(.sessionExpiryDetected)
-        await store.receive(\.sessionExpiryConfirmed)
-        await store.receive(\.activeAccountTornDown)
-        await store.finish()
+            await withMainSerialExecutor {
+                await store.send(.onAppear)
+                await store.receive(\.sessionRestoreResponse) {
+                    $0.destination = optimistic(AppFixtures.serverA, username: "alice")
+                }
+                await store.receive(\.accountsRefreshed)
+                confirmation.open()
+                await store.receive(\.sessionValidationResponse)
+                await store.receive(\.activeAccountTornDown) {
+                    $0.destination = .unauthenticated(.init())
+                }
+                await store.receive(\.accountsRefreshed)
+            }
 
-        #expect(json.bound(to: expiredID).read(key: "favorites") == nil)
-        #expect(json.bound(to: next.accountID).read(key: "favorites") != nil)
-        #expect(previewCleared.value == [expiredID, expiredID], "first pass, then the second pass")
-        #expect(offlineCleared.value == [expiredID, expiredID], "first pass, then the second pass")
-    }
-
-    @Test("edge case: a mid-session 401 with no other account drops to the login flow")
-    func midSessionExpiryDropsToLogin() async {
-        let user = User(id: "1", username: "phillip", email: nil, roles: [])
-        let clearAllSessionsCalled = LockIsolated(false)
-        let cacheCleared = LockIsolated(false)
-        let store = TestStore(
-            initialState: AppFeature.State(
-                destination: .authenticated(AuthenticatedFeature.State(serverURL: serverURL, user: user))
+            #expect(
+                recorder.events.value == [.activeSessionCleared] + WipeRecorder.accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown
             )
-        ) {
-            AppFeature()
-        } withDependencies: {
-            $0.authClient.me = { _ in throw AuthClientError.sessionExpired }
-            $0.authClient.clearActiveSession = { nil }
-            $0.authClient.clearAllSessions = { clearAllSessionsCalled.setValue(true) }
-            $0.authClient.listSessions = { [] }
-            $0.authClient.activeAccountID = { nil }
-            $0.directoryCacheStore.clearAll = { cacheCleared.setValue(true) }
         }
-        store.state.$sessionDidExpire.withLock { $0 = true }
 
-        await store.send(.sessionExpiryDetected) {
-            $0.$sessionDidExpire.withLock { $0 = false }
-        }
-        await store.receive(\.sessionExpiryConfirmed)
-        await store.receive(\.activeAccountTornDown) {
-            $0.destination = .unauthenticated(.init())
-        }
-        await store.receive(\.accountsRefreshed)
-        await store.finish()
-        #expect(clearAllSessionsCalled.value)
-        #expect(cacheCleared.value)
-    }
+        @Test("A network failure validating a restored session keeps the optimistic session and wipes nothing")
+        func networkFailureValidatingKeepsOptimisticSession() async {
+            let confirmation = AsyncGate()
+            let store = makeStore {
+                $0.authClient.restoreSession = { [credentialsA] in credentialsA }
+                $0.authClient.me = { _ in
+                    try await confirmation.wait()
+                    throw AuthClientError.network("offline")
+                }
+                $0.authClient.clearActiveSession = {
+                    Issue.record("an unreachable server does not prove the session is gone")
+                    return nil
+                }
+            }
 
-    @Test("edge case: sessionExpiryDetected while already unauthenticated is a no-op")
-    func expiryWhileUnauthenticatedIsANoOp() async {
-        let store = TestStore(initialState: AppFeature.State(destination: .unauthenticated(.init()))) {
-            AppFeature()
-        }
-        store.exhaustivity = .off
-        store.state.$sessionDidExpire.withLock { $0 = true }
+            await withMainSerialExecutor {
+                await store.send(.onAppear)
+                await store.receive(\.sessionRestoreResponse) {
+                    $0.destination = optimistic(AppFixtures.serverA, username: "alice")
+                }
+                await store.receive(\.accountsRefreshed)
+                confirmation.open()
+                await store.receive(\.sessionValidationResponse)
+            }
 
-        await store.send(.sessionExpiryDetected) {
-            $0.sessionDidExpire = false
+            #expect(recorder.events.value.isEmpty)
         }
-        await store.finish()
+
+        @Test("No stored session stays on the login flow")
+        func noStoredSessionStaysUnauthenticated() async {
+            let store = makeStore {
+                $0.authClient.restoreSession = { nil }
+            }
+
+            await withMainSerialExecutor {
+                await store.send(.onAppear)
+                await store.receive(\.sessionRestoreResponse) {
+                    $0.destination = .unauthenticated(.init())
+                }
+                await store.receive(\.accountsRefreshed)
+            }
+
+            #expect(recorder.events.value.isEmpty)
+        }
+
+        // MARK: Signing in and out
+
+        @Test("Signing in from the login flow switches to the authenticated destination after wiping every cache")
+        func authenticatingSwitchesDestination() async {
+            let store = makeStore(AppFeature.State(destination: .unauthenticated(.init()))) {
+                $0.authClient.listSessionsOrThrow = { [credentialsA] in [credentialsA] }
+            }
+
+            await withMainSerialExecutor {
+                await store.send(.destination(.unauthenticated(.delegate(.authenticated(AppFixtures.userA, AppFixtures.serverA))))) {
+                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeA }
+                    $0.didAuthenticateFromLogin = true
+                    $0.destination = confirmed(AppFixtures.serverA, AppFixtures.userA)
+                }
+                await store.receive(\.accountsRefreshed)
+            }
+
+            #expect(recorder.events.value.prefix(3) == [.directoryCacheCleared, .jsonCacheCleared, .thumbnailMemoryCleared])
+            #expect(
+                WipeRecorder.areSame(
+                    Array(recorder.events.value.dropFirst(3)),
+                    [.previewCacheCleared, .offlineFilesCleared, .scratchPurged(.keepingActiveTransfers)]
+                        + WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA])
+                ),
+                "the effects that finish the wipe run in no fixed order"
+            )
+        }
+
+        @Test("Signing the last account out switches back to the login flow and wipes everything")
+        func signOutLastAccountSwitchesToLogin() async {
+            let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA))
+
+            await withMainSerialExecutor {
+                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(nil))))) {
+                    $0.destination = .unauthenticated(.init())
+                }
+                await store.receive(\.accountsRefreshed)
+            }
+
+            #expect(recorder.events.value == WipeRecorder.fullTeardown + WipeRecorder.lastSignOutCredentialWipe)
+        }
+
+        @Test("Switching to another account remounts the authenticated UI, stops the left account's offline work and wipes no cache")
+        func switchingAccountRemountsWithoutClearingCache() async {
+            let confirmation = AsyncGate()
+            let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA)) {
+                $0.authClient.me = { _ in
+                    try await confirmation.wait()
+                    return AppFixtures.userB
+                }
+                $0.authClient.listSessionsOrThrow = { [credentialsA, credentialsB] in [credentialsA, credentialsB] }
+            }
+
+            await withMainSerialExecutor {
+                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsB)))))
+                await store.receive(\.activateAccount) {
+                    $0.destination = optimistic(AppFixtures.serverB, username: "bob")
+                }
+                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+                await store.receive(\.accountsRefreshed)
+                confirmation.open()
+                await store.receive(\.sessionValidationResponse) {
+                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
+                    $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+                }
+                await store.receive(\.accountsRefreshed)
+            }
+
+            #expect(
+                recorder.events.value == WipeRecorder.prune(
+                    origins: [AppFixtures.originA, AppFixtures.originB], accounts: [AppFixtures.accountA, AppFixtures.accountB]
+                ),
+                "both accounts keep their caches, only what belongs to no remaining account is pruned"
+            )
+        }
+
+        @Test("Removing a non active account leaves the current UI in place and wipes no cache")
+        func removingNonActiveAccountKeepsUI() async {
+            let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA)) {
+                $0.authClient.listSessionsOrThrow = { [credentialsA] in [credentialsA] }
+            }
+
+            await withMainSerialExecutor {
+                await store.send(.destination(.authenticated(.delegate(.activeAccountChanged(credentialsA)))))
+                await store.receive(\.accountsRefreshed)
+            }
+
+            #expect(recorder.events.value == WipeRecorder.prune(origins: [AppFixtures.originA], accounts: [AppFixtures.accountA]))
+        }
+
+        // MARK: Shared files
+
+        @Test("Files shared in while signed out wait in the inbox")
+        func incomingFilesWhileSignedOutAreQueued() async {
+            let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
+            let store = makeStore(AppFeature.State(destination: .unauthenticated(.init())))
+
+            await store.send(.incomingFiles([scan])) {
+                $0.$sharedFileInbox.withLock { $0 = [scan] }
+            }
+        }
+
+        @Test("Files shared in while signed in go straight to the tab shell, which drains the inbox and stages them for review")
+        func incomingFilesWhileSignedInAreHandedOver() async {
+            let scan = URL(fileURLWithPath: "/tmp/Scan.pdf")
+            let prepared = PickedFile(id: TestID.uuid(), fileURL: scan, fileName: "Scan.pdf", size: 10)
+            let stagedURLs = LockIsolated<[URL]>([])
+            let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA)) {
+                $0.uploadStaging.stageDocuments = { urls in
+                    stagedURLs.setValue(urls)
+                    return AsyncStream { continuation in
+                        continuation.yield(prepared)
+                        continuation.finish()
+                    }
+                }
+            }
+
+            await withMainSerialExecutor {
+                // The tab shell drains the inbox before the store compares, so the append and the drain net to no change.
+                await store.send(.incomingFiles([scan])) {
+                    $0.$sharedFileInbox.withLock { $0 = [] }
+                }
+                await store.receive(\.destination.authenticated.mainTab.sharedFilesArrived)
+                await store.receive(\.destination.authenticated.mainTab.browse.receiveSharedFiles)
+                await store.receive(\.destination.authenticated.mainTab.browse.root.receiveSharedFiles)
+                await store.receive(\.destination.authenticated.mainTab.browse.root.reviewSharedFiles) {
+                    updateReview(&$0) {
+                        $0 = UploadReviewFeature.State(serverURL: AppFixtures.serverA, startingDestination: "")
+                    }
+                }
+                await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.stage) {
+                    updateReview(&$0) { $0?.preparingCount = 1 }
+                }
+                await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.filePrepared) {
+                    updateReview(&$0) {
+                        $0?.files = [prepared]
+                        $0?.preparingCount = 0
+                    }
+                }
+                await store.receive(\.destination.authenticated.mainTab.browse.root.uploadReview.presented.stagingBatchFinished)
+            }
+
+            #expect(stagedURLs.value == [scan])
+        }
+
+        @Test("A non file URL is ignored")
+        func incomingNonFileURLIsIgnored() async throws {
+            let web = try #require(URL(string: "https://example.com/doc.pdf"))
+            let store = makeStore(AppFeature.State(destination: .unauthenticated(.init())))
+
+            await store.send(.incomingFiles([web]))
+        }
+
+        // MARK: Adding an account
+
+        @Test("Adding an account adopts it once the sheet is dismissed, without wiping caches")
+        func addAccountAdoptsWithoutClearingCache() async {
+            var state = authenticated(AppFixtures.serverA, AppFixtures.userA)
+            state.addAccount = LoginFormFeature.State()
+            let store = makeStore(state) {
+                $0.authClient.listSessionsOrThrow = { [credentialsA, credentialsB] in [credentialsA, credentialsB] }
+            }
+
+            await withMainSerialExecutor {
+                await store.send(.addAccount(.presented(.delegate(.authenticated(AppFixtures.userB, AppFixtures.serverB))))) {
+                    $0.addAccount = nil
+                    $0.pendingAddedAccount = AppFeature.AddedAccount(user: AppFixtures.userB, serverURL: AppFixtures.serverB)
+                }
+                #expect(recorder.events.value.isEmpty, "nothing is adopted or wiped while the sheet is still dismissing")
+
+                await store.send(.addAccountSheetDismissed) {
+                    $0.pendingAddedAccount = nil
+                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
+                    $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+                }
+                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+                await store.receive(\.accountsRefreshed)
+            }
+
+            #expect(
+                recorder.events.value == WipeRecorder.prune(
+                    origins: [AppFixtures.originA, AppFixtures.originB], accounts: [AppFixtures.accountA, AppFixtures.accountB]
+                )
+            )
+        }
+
+        // MARK: Session expiry
+
+        @Test("A mid session 401 with another account signed in wipes only the expired account, twice, and switches to the next")
+        func midSessionExpiryFallsThroughToNextAccount() async {
+            let json = JSONCacheStore.inMemory()
+            json.bound(to: AppFixtures.accountA).write(key: "favorites", data: Data("a".utf8))
+            json.bound(to: AppFixtures.accountB).write(key: "favorites", data: Data("b".utf8))
+            let pending = PendingAccountWipes.inMemory()
+            let confirmation = AsyncGate()
+            let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA)) {
+                $0.pendingAccountWipes = pending
+                $0.authClient.clearActiveSession = { [recorder, credentialsB] in
+                    recorder.record(.activeSessionCleared)
+                    return credentialsB
+                }
+                $0.authClient.listSessionsOrThrow = { [credentialsB] in [credentialsB] }
+                $0.authClient.me = { url in
+                    if url == AppFixtures.serverA {
+                        throw AuthClientError.sessionExpired
+                    }
+                    try await confirmation.wait()
+                    return AppFixtures.userB
+                }
+                $0.jsonCacheStore = json
+            }
+            store.state.$sessionDidExpire.withLock { $0 = true }
+
+            await withMainSerialExecutor {
+                await store.send(.sessionExpiryDetected) {
+                    $0.$sessionDidExpire.withLock { $0 = false }
+                }
+                await store.receive(\.sessionExpiryConfirmed)
+                await store.receive(\.activeAccountTornDown)
+                await store.receive(\.activateAccount) {
+                    $0.destination = optimistic(AppFixtures.serverB, username: "bob")
+                }
+                await store.receive(\.destination.authenticated.mainTab.offline.accountDeactivated, AppFixtures.accountA)
+                await store.receive(\.accountsRefreshed)
+                confirmation.open()
+                await store.receive(\.sessionValidationResponse) {
+                    $0.$downloadScope.withLock { $0 = AppFixtures.downloadScopeB }
+                    $0.destination = confirmed(AppFixtures.serverB, AppFixtures.userB)
+                }
+                await store.receive(\.accountsRefreshed)
+            }
+
+            #expect(json.bound(to: AppFixtures.accountA).read(key: "favorites") == nil)
+            #expect(json.bound(to: AppFixtures.accountB).read(key: "favorites") != nil)
+            let expiredAccountWipe: [WipeRecorder.Event] = [
+                .directoryAccountCleared(AppFixtures.accountA),
+                .previewAccountCleared(AppFixtures.accountA),
+                .offlineAccountCleared(AppFixtures.accountA),
+                .thumbnailMemoryCleared,
+            ]
+            #expect(
+                recorder.events.value == [.activeSessionCleared] + expiredAccountWipe + expiredAccountWipe,
+                "the expired account is wiped on expiry and again by the second pass, the next account's caches stay"
+            )
+            #expect(pending.accounts().isEmpty)
+        }
+
+        @Test("A mid session 401 with no other account drops to the login flow and wipes the account then everything")
+        func midSessionExpiryDropsToLogin() async {
+            let store = makeStore(authenticated(AppFixtures.serverA, AppFixtures.userA)) {
+                $0.authClient.me = { _ in throw AuthClientError.sessionExpired }
+            }
+            store.state.$sessionDidExpire.withLock { $0 = true }
+
+            await withMainSerialExecutor {
+                await store.send(.sessionExpiryDetected) {
+                    $0.$sessionDidExpire.withLock { $0 = false }
+                }
+                await store.receive(\.sessionExpiryConfirmed)
+                await store.receive(\.activeAccountTornDown) {
+                    $0.destination = .unauthenticated(.init())
+                }
+                await store.receive(\.accountsRefreshed)
+            }
+
+            #expect(
+                recorder.events.value == [.activeSessionCleared] + WipeRecorder.accountWipe(AppFixtures.accountA) + WipeRecorder.fullTeardown
+            )
+        }
+
+        @Test("sessionExpiryDetected while already signed out only resets the flag and asks the server nothing")
+        func expiryWhileUnauthenticatedIsANoOp() async {
+            let store = makeStore(AppFeature.State(destination: .unauthenticated(.init()))) {
+                $0.authClient.me = { _ in
+                    Issue.record("there is no session to check")
+                    return AppFixtures.userA
+                }
+            }
+            store.state.$sessionDidExpire.withLock { $0 = true }
+
+            await store.send(.sessionExpiryDetected) {
+                $0.$sessionDidExpire.withLock { $0 = false }
+            }
+
+            #expect(recorder.events.value.isEmpty)
+        }
     }
 }

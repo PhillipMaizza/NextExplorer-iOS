@@ -5,240 +5,171 @@ import CoreModels
 import FilesClient
 import Foundation
 import Testing
+import TestUtils
 
-// Serialized: every TestStore.receive keeps yielding while it waits, so tests running at once starve
-// the executor that has to deliver the effect they wait for. On a loaded runner all three sign out
-// tests stalled for 15 seconds and one of them timed out. One at a time, each finishes in milliseconds.
-@MainActor
-@Suite("AuthenticatedFeature", .serialized)
-struct AuthenticatedFeatureTests {
-    private let serverURL = URL(string: "https://nextexplorer.example.com") ?? URL(fileURLWithPath: "/")
-    private let user = User(id: "1", username: "phillip", email: nil, roles: [])
+extension AppSuites {
+    @MainActor
+    @Suite("AuthenticatedFeature")
+    struct AuthenticatedFeatureTests {
+        private typealias Store = TestStore<AuthenticatedFeature.State, AuthenticatedFeature.Action>
 
-    private func credentials(serverURL: URL, username: String) -> SessionCredentials {
-        SessionCredentials(
-            serverBaseURL: serverURL,
-            authMode: .local,
-            cookieName: "connect.sid",
-            cookieValue: "v",
-            cookieDomain: serverURL.host ?? "",
-            cookiePath: "/",
-            cookieIsSecure: true,
-            expiresAt: nil,
-            username: username
-        )
-    }
-
-    @Test("signing out the last account: removes it and delegates activeAccountChanged(nil)")
-    func signOutLastAccount() async {
-        let removedID = LockIsolated<String?>(nil)
-        let store = TestStore(
-            initialState: AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        ) {
-            AuthenticatedFeature()
-        } withDependencies: {
-            $0.authClient.removeAccount = { id in removedID.setValue(id); return nil }
-            $0.continuousClock = ImmediateClock()
-        }
-        store.exhaustivity = .off
-        store.timeout = .seconds(10)
-
-        await store.send(.mainTab(.delegate(.signOutButtonTapped)))
-        await store.receive(\.accountChangeResolved)
-        await store.receive(\.delegate.activeAccountChanged)
-
-        #expect(removedID.value == serverURL.absoluteString + "|phillip")
-    }
-
-    @Test("regression: the sign out confirmation closes first, and the login screen is only requested once it has slid away")
-    func lastAccountSignOutDismissesThePromptBeforeHandingOff() async {
-        let clock = TestClock()
-        var state = AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        state.mainTab.settings.isConfirmingSignOut = true
-        let store = TestStore(initialState: state) {
-            AuthenticatedFeature()
-        } withDependencies: {
-            $0.authClient.removeAccount = { _ in nil }
-            $0.continuousClock = clock
-        }
-        store.exhaustivity = .off
-        store.timeout = .seconds(10)
-
-        await store.send(.mainTab(.delegate(.signOutButtonTapped)))
-        await store.receive(\.accountChangeResolved)
-
-        // The TestClock has not moved, so the hand off cannot have been sent yet: the prompt is
-        // already closed while the authenticated screen is still the one on show.
-        #expect(store.state.mainTab.settings.isConfirmingSignOut == false)
-        #expect(store.state.mainTab.settings.isSigningOut == true)
-
-        await clock.advance(by: .seconds(1))
-        await store.receive(\.delegate.activeAccountChanged)
-    }
-
-    @Test("removing the last account closes its removal prompt before the login screen is requested")
-    func lastAccountRemovalDismissesItsPromptBeforeHandingOff() async {
-        let clock = TestClock()
-        var state = AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        state.mainTab.settings.accountPendingRemoval = AccountSummary(
-            id: serverURL.absoluteString + "|phillip", username: "phillip", serverURL: serverURL, isActive: true
-        )
-        let store = TestStore(initialState: state) {
-            AuthenticatedFeature()
-        } withDependencies: {
-            $0.authClient.removeAccount = { _ in nil }
-            $0.continuousClock = clock
-        }
-        store.exhaustivity = .off
-        store.timeout = .seconds(10)
-
-        await store.send(.mainTab(.delegate(.removeAccount(serverURL.absoluteString + "|phillip"))))
-        await store.receive(\.accountChangeResolved)
-
-        #expect(store.state.mainTab.settings.accountPendingRemoval == nil)
-
-        await clock.advance(by: .seconds(1))
-        await store.receive(\.delegate.activeAccountChanged)
-    }
-
-    @Test("signing out with another account left hands off at once, with no wait for a prompt to close")
-    func signOutWithAnotherAccountDoesNotWait() async {
-        let otherServer = URL(string: "https://other.example.com") ?? URL(fileURLWithPath: "/")
-        let next = credentials(serverURL: otherServer, username: "jane")
-        let store = TestStore(
-            initialState: AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        ) {
-            AuthenticatedFeature()
-        } withDependencies: {
-            $0.authClient.removeAccount = { _ in next }
-            $0.continuousClock = TestClock()
-        }
-        store.exhaustivity = .off
-        store.timeout = .seconds(10)
-
-        await store.send(.mainTab(.delegate(.signOutButtonTapped)))
-        await store.receive(\.accountChangeResolved)
-        await store.receive(\.delegate.activeAccountChanged)
-    }
-
-    @Test("signing out with another account left: switches to the next account")
-    func signOutFallsThroughToNextAccount() async {
-        let otherServer = URL(string: "https://other.example.com") ?? URL(fileURLWithPath: "/")
-        let next = credentials(serverURL: otherServer, username: "jane")
-        let store = TestStore(
-            initialState: AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        ) {
-            AuthenticatedFeature()
-        } withDependencies: {
-            $0.authClient.removeAccount = { _ in next }
+        private enum Constants {
+            static let promptDismissDuration: Duration = .seconds(0.4)
         }
 
-        await store.send(.mainTab(.delegate(.signOutButtonTapped))) {
-            $0.mainTab.settings.isSigningOut = true
-        }
-        await store.receive(\.accountChangeResolved) {
-            $0.mainTab.settings.isSigningOut = false
-        }
-        await store.receive(\.delegate.activeAccountChanged)
-    }
+        private let credentialsB = AppFixtures.credentials(AppFixtures.serverB, "bob")
+        private let recorder = WipeRecorder()
 
-    @Test("removing account A with B still signed in clears A's caches and keeps B's")
-    func removeAccountClearsOnlyThatAccountsCaches() async {
-        let otherServer = URL(string: "https://other.example.com") ?? URL(fileURLWithPath: "/")
-        let next = credentials(serverURL: otherServer, username: "jane")
-        let removedID = serverURL.absoluteString + "|phillip"
-        let directory = DirectoryCacheStore.inMemory()
-        let json = JSONCacheStore.inMemory()
-        let browse = BrowseResult(items: [], access: FileAccess(
-            canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true
-        ), path: "")
-        let fetchedAt = Date(timeIntervalSince1970: 1)
-        for id in [removedID, next.accountID] {
-            directory.bound(to: id).write(serverURL: serverURL, path: "", result: browse, etag: nil, fetchedAt: fetchedAt)
-            json.bound(to: id).write(key: "favorites", data: Data(id.utf8))
-        }
-        let previewCleared = LockIsolated<[String]>([])
-        let offlineCleared = LockIsolated<[String]>([])
-        let store = TestStore(
-            initialState: AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        ) {
-            AuthenticatedFeature()
-        } withDependencies: {
-            $0.authClient.removeAccount = { _ in next }
-            $0.directoryCacheStore = directory
-            $0.jsonCacheStore = json
-            $0.previewCacheStore.clearAccount = { id in previewCleared.withValue { $0.append(id) } }
-            $0.offlineFileStore.removeAccount = { id in offlineCleared.withValue { $0.append(id) } }
-        }
-        store.exhaustivity = .off
-
-        await store.send(.mainTab(.delegate(.removeAccount(removedID))))
-        await store.receive(\.accountChangeResolved)
-        await store.finish()
-
-        #expect(directory.bound(to: removedID).read(serverURL: serverURL, path: "") == nil)
-        #expect(directory.bound(to: next.accountID).read(serverURL: serverURL, path: "") != nil)
-        #expect(json.bound(to: removedID).read(key: "favorites") == nil)
-        #expect(json.bound(to: next.accountID).read(key: "favorites") != nil)
-        #expect(previewCleared.value == [removedID])
-        #expect(offlineCleared.value == [removedID])
-    }
-
-    @Test("signing out the active account clears that account's caches before handing off")
-    func signOutClearsTheActiveAccountsCaches() async {
-        let otherServer = URL(string: "https://other.example.com") ?? URL(fileURLWithPath: "/")
-        let next = credentials(serverURL: otherServer, username: "jane")
-        let activeID = serverURL.absoluteString + "|phillip"
-        let json = JSONCacheStore.inMemory()
-        json.bound(to: activeID).write(key: "shares.byMe", data: Data("a".utf8))
-        json.bound(to: next.accountID).write(key: "shares.byMe", data: Data("b".utf8))
-        let store = TestStore(
-            initialState: AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        ) {
-            AuthenticatedFeature()
-        } withDependencies: {
-            $0.authClient.removeAccount = { _ in next }
-            $0.jsonCacheStore = json
-        }
-        store.exhaustivity = .off
-
-        await store.send(.mainTab(.delegate(.signOutButtonTapped)))
-        await store.receive(\.accountChangeResolved)
-        await store.finish()
-
-        #expect(json.bound(to: activeID).read(key: "shares.byMe") == nil)
-        #expect(json.bound(to: next.accountID).read(key: "shares.byMe") != nil)
-    }
-
-    @Test("switch account: performs the switch and delegates the new active account")
-    func switchAccount() async {
-        let otherServer = URL(string: "https://other.example.com") ?? URL(fileURLWithPath: "/")
-        let switched = credentials(serverURL: otherServer, username: "jane")
-        let requestedID = LockIsolated<String?>(nil)
-        let store = TestStore(
-            initialState: AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        ) {
-            AuthenticatedFeature()
-        } withDependencies: {
-            $0.authClient.switchAccount = { id in requestedID.setValue(id); return switched }
+        init() {
+            AppSuites.resetSharedState()
         }
 
-        await store.send(.mainTab(.delegate(.switchAccount(switched.accountID))))
-        await store.receive(\.accountChangeResolved)
-        await store.receive(\.delegate.activeAccountChanged)
-
-        #expect(requestedID.value == switched.accountID)
-    }
-
-    @Test("add account request bubbles straight up to the parent")
-    func addAccountRequestBubbles() async {
-        let store = TestStore(
-            initialState: AuthenticatedFeature.State(serverURL: serverURL, user: user)
-        ) {
-            AuthenticatedFeature()
+        private func makeStore(
+            _ state: AuthenticatedFeature.State = AuthenticatedFeature.State(serverURL: AppFixtures.serverA, user: AppFixtures.userA),
+            clock: TestClock<Duration> = TestClock(),
+            configure: (inout DependencyValues) -> Void = { _ in }
+        ) -> Store {
+            TestStore(initialState: state) {
+                AuthenticatedFeature()
+            } withDependencies: {
+                recorder.install(into: &$0)
+                $0.continuousClock = clock
+                configure(&$0)
+            }
         }
 
-        await store.send(.mainTab(.delegate(.addAccountRequested)))
-        await store.receive(\.delegate.addAccountRequested)
+        // MARK: Last account
+
+        @Test("The sign out confirmation closes first, and the login screen is only requested once it has slid away")
+        func lastAccountSignOutDismissesThePromptBeforeHandingOff() async {
+            let clock = TestClock()
+            var state = AuthenticatedFeature.State(serverURL: AppFixtures.serverA, user: AppFixtures.userA)
+            state.mainTab.settings.isConfirmingSignOut = true
+            let store = makeStore(state, clock: clock)
+
+            await store.send(.mainTab(.delegate(.signOutButtonTapped))) {
+                $0.mainTab.settings.isSigningOut = true
+            }
+            await store.receive(\.accountChangeResolved) {
+                $0.mainTab.settings.isConfirmingSignOut = false
+            }
+            await clock.advance(by: Constants.promptDismissDuration)
+            await store.receive(\.delegate.activeAccountChanged, nil)
+        }
+
+        @Test("Removing the last account closes its removal prompt before the login screen is requested")
+        func lastAccountRemovalDismissesItsPromptBeforeHandingOff() async {
+            let clock = TestClock()
+            var state = AuthenticatedFeature.State(serverURL: AppFixtures.serverA, user: AppFixtures.userA)
+            state.mainTab.settings.accountPendingRemoval = AppFixtures.summaryA
+            let store = makeStore(state, clock: clock)
+
+            await store.send(.mainTab(.delegate(.removeAccount(AppFixtures.accountA))))
+            await store.receive(\.accountChangeResolved) {
+                $0.mainTab.settings.accountPendingRemoval = nil
+            }
+            await clock.advance(by: Constants.promptDismissDuration)
+            await store.receive(\.delegate.activeAccountChanged, nil)
+        }
+
+        // MARK: Another account remains
+
+        @Test("Signing out with another account left hands off at once, with no wait for a prompt to close")
+        func signOutFallsThroughToNextAccountAtOnce() async {
+            let store = makeStore {
+                $0.authClient.removeAccount = { [credentialsB] _ in credentialsB }
+            }
+
+            await store.send(.mainTab(.delegate(.signOutButtonTapped))) {
+                $0.mainTab.settings.isSigningOut = true
+            }
+            await store.receive(\.accountChangeResolved, credentialsB) {
+                $0.mainTab.settings.isSigningOut = false
+            }
+            await store.receive(\.delegate.activeAccountChanged, credentialsB)
+        }
+
+        struct DropTrigger: Sendable {
+            let action: AuthenticatedFeature.Action
+            let isSignOut: Bool
+        }
+
+        nonisolated static let dropTriggers = [
+            DropTrigger(action: .mainTab(.delegate(.signOutButtonTapped)), isSignOut: true),
+            DropTrigger(action: .mainTab(.delegate(.removeAccount(AppFixtures.accountA))), isSignOut: false),
+        ]
+
+        @Test("Dropping the active account clears only that account's caches and keeps the next one's", arguments: dropTriggers)
+        func droppingTheActiveAccountClearsOnlyItsCaches(_ trigger: DropTrigger) async {
+            let directory = DirectoryCacheStore.inMemory()
+            let json = JSONCacheStore.inMemory()
+            let browse = BrowseResult(
+                items: [],
+                access: FileAccess(canRead: true, canWrite: false, canUpload: false, canDelete: false, canShare: false, canDownload: true),
+                path: ""
+            )
+            for id in [AppFixtures.accountA, AppFixtures.accountB] {
+                directory.bound(to: id).write(serverURL: AppFixtures.serverA, path: "", result: browse, etag: nil, fetchedAt: MockDate.date)
+                json.bound(to: id).write(key: "favorites", data: Data(id.utf8))
+            }
+            let store = makeStore {
+                $0.authClient.removeAccount = { [recorder, credentialsB] id in
+                    recorder.record(.accountRemoved(id))
+                    return credentialsB
+                }
+                $0.directoryCacheStore = directory
+                $0.jsonCacheStore = json
+            }
+            let markSigningOut: ((inout AuthenticatedFeature.State) -> Void)? = trigger.isSignOut
+                ? { $0.mainTab.settings.isSigningOut = true } : nil
+            let markSignedOut: ((inout AuthenticatedFeature.State) -> Void)? = trigger.isSignOut
+                ? { $0.mainTab.settings.isSigningOut = false } : nil
+
+            await store.send(trigger.action, assert: markSigningOut)
+            await store.receive(\.accountChangeResolved, credentialsB, assert: markSignedOut)
+            await store.receive(\.delegate.activeAccountChanged, credentialsB)
+
+            #expect(directory.bound(to: AppFixtures.accountA).read(serverURL: AppFixtures.serverA, path: "") == nil)
+            #expect(directory.bound(to: AppFixtures.accountB).read(serverURL: AppFixtures.serverA, path: "") != nil)
+            #expect(json.bound(to: AppFixtures.accountA).read(key: "favorites") == nil)
+            #expect(json.bound(to: AppFixtures.accountB).read(key: "favorites") != nil)
+            #expect(
+                recorder.events.value == [
+                    .accountRemoved(AppFixtures.accountA),
+                    .previewAccountCleared(AppFixtures.accountA),
+                    .offlineAccountCleared(AppFixtures.accountA),
+                    .thumbnailMemoryCleared,
+                ],
+                "the account is removed from the keychain before its caches go, and the next account's stay"
+            )
+        }
+
+        // MARK: Switching and adding
+
+        @Test("Switching account performs the switch and delegates the new active account")
+        func switchAccount() async {
+            let requestedID = LockIsolated<String?>(nil)
+            let store = makeStore {
+                $0.authClient.switchAccount = { [credentialsB] id in
+                    requestedID.setValue(id)
+                    return credentialsB
+                }
+            }
+
+            await store.send(.mainTab(.delegate(.switchAccount(AppFixtures.accountB))))
+            await store.receive(\.accountChangeResolved, credentialsB)
+            await store.receive(\.delegate.activeAccountChanged, credentialsB)
+
+            #expect(requestedID.value == "https://b.example.com|bob")
+            #expect(recorder.events.value.isEmpty, "switching wipes nothing")
+        }
+
+        @Test("An add account request bubbles straight up to the parent")
+        func addAccountRequestBubbles() async {
+            let store = makeStore()
+
+            await store.send(.mainTab(.delegate(.addAccountRequested)))
+            await store.receive(\.delegate.addAccountRequested)
+        }
     }
 }
