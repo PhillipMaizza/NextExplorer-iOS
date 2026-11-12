@@ -60,9 +60,10 @@ public enum BackgroundUploadEvents {
     /// At launch, before the app finishes launching: result notifications show as banners even while
     /// the app is frontmost, and their Retry button works when it starts the app in the background.
     public static func installNotificationHandling() {
-        UploadNotifications.install { batchID in
-            await retry(batchID: batchID)
-        }
+        UploadNotifications.install(
+            retry: { batchID in await retry(batchID: batchID) },
+            open: { accountID, folder in UploadNotificationTaps.send(.init(accountID: accountID, folder: folder)) }
+        )
     }
 
     /// Whenever the app becomes active: a Mac app that was already running, or an iPhone app

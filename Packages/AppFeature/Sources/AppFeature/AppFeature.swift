@@ -27,6 +27,8 @@ public struct AppFeature {
         /// An account the add account sheet just signed in, adopted once the sheet has fully
         /// dismissed (`addAccountSheetDismissed`).
         public var pendingAddedAccount: AddedAccount?
+        /// The folder of a tapped upload notification, waiting for its account's tabs to be up.
+        public var pendingUploadFolder: PendingUploadFolder?
         /// `true` only when the current authenticated session was reached by the user tapping
         /// the login button this launch: drives `AppView`'s zoom-from-the-button presentation.
         /// A restored/optimistic session (cold launch) leaves this `false` so the app just
@@ -84,6 +86,8 @@ public struct AppFeature {
         case addAccountSheetDismissed
         /// Files opened in the app from another app's share sheet.
         case incomingFiles([URL])
+        /// The user tapped an "upload finished" notification: open the folder the files went to.
+        case uploadNotificationTapped(UploadNotificationTaps.Tap)
         case destination(Destination.Action)
     }
 
@@ -376,6 +380,10 @@ public struct AppFeature {
                 // mount the new account without clearing caches, so both accounts' caches survive.
                 return .merge(.send(.activateAccount(credentials)), prune)
 
+            case .uploadNotificationTapped:
+                // UploadFolderRouting opens the folder.
+                return .none
+
             case .destination:
                 return .none
 
@@ -432,6 +440,8 @@ public struct AppFeature {
         .ifLet(\.$addAccount, action: \.addAccount) {
             LoginFormFeature()
         }
+
+        UploadFolderRouting()
     }
 
     /// Removes the client certificates of servers no remaining account is signed in to, so an
