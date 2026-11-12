@@ -4,11 +4,10 @@
     import Localization
     import SwiftUI
 
-    /// Finder's search bar above the results: where to search, and which kinds of file to show.
+    /// Finder's search bar above the results: which kinds of file to show.
     /// It lives in the window rather than in the toolbar's search field, so typing never loses
     /// the field's focus.
     struct MacSearchScopeBar: View {
-        @Binding var scope: BrowseFeature.SearchScope
         let availableCategories: [FileCategory]
         let selectedCategories: Set<FileCategory>
         let onToggle: (FileCategory) -> Void
@@ -16,14 +15,6 @@
 
         var body: some View {
             HStack(spacing: .space12) {
-                Picker(L10n.Common.search, selection: $scope) {
-                    ForEach(BrowseFeature.SearchScope.allCases, id: \.self) { scope in
-                        Text(scope.title).tag(scope)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
-                .fixedSize()
                 Spacer()
                 if !availableCategories.isEmpty {
                     kindMenu
@@ -61,10 +52,8 @@
         }
     }
 
-    #Preview("Scope and kinds") {
-        @Previewable @State var scope = BrowseFeature.SearchScope.thisFolder
+    #Preview("Kinds") {
         MacSearchScopeBar(
-            scope: $scope,
             availableCategories: [.folder, .image, .document],
             selectedCategories: [.image],
             onToggle: { _ in },

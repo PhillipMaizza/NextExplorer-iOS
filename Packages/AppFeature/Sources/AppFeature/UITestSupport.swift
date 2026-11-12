@@ -83,6 +83,9 @@
         /// An image hit the mocked search returns alongside the document hits, so a filter chip test
         /// can assert selecting Images hides the documents. Mirrored by `Fixture.imageSearchHit`.
         static let imageSearchHitName = "Beach.jpg"
+        /// A hit only a search from the root returns, so a UI test can tell a search widened to
+        /// everywhere from one inside a folder. Mirrored by `Fixture.widerSearchHit`.
+        static let widerSearchHitName = "Archive Notes.txt"
         /// A folder name the mocked `createFolder` rejects, so a UI test can drive the failure path
         /// (the new folder sheet stays open on error). Mirrored by `Fixture.failingFolderName`.
         static let failingFolderName = "__uitest_fail__"
@@ -217,9 +220,12 @@
                 // derived from the query so a UI test can assert on them.
                 // Stable result names (not echoed from the query) so a UI test asserting on them
                 // is immune to which debounced keystroke the search actually fired on.
-                client.search = { _, _, query, _ in
+                client.search = { _, scopePath, query, _ in
                     let trimmed = query.trimmingCharacters(in: .whitespacesAndNewlines)
                     guard !trimmed.isEmpty else { return [] }
+                    let widerHits = scopePath.isEmpty
+                        ? [SearchResultItem(name: widerSearchHitName, path: "Archive/\(widerSearchHitName)", kind: "txt")]
+                        : []
                     // Like the server, names in the folder that match come first, so a folder
                     // found by search stays in the results and can be opened from there.
                     let nameMatches = store.current()
@@ -233,7 +239,7 @@
                         SearchResultItem(name: "Meeting Notes.md", path: "Documents/Meeting Notes.md", kind: "md"),
                         // A mixed type hit so a filter chip test can prove it narrows the results.
                         SearchResultItem(name: imageSearchHitName, path: "Documents/\(imageSearchHitName)", kind: "jpg"),
-                    ])
+                    ] + widerHits)
                 }
             case .empty:
                 client.browse = { _, path in

@@ -17,6 +17,8 @@ class UITestCase: XCTestCase {
         static let searchHit = "Quarterly Report.txt"
         /// Image hit the mocked search returns (mirrors `UITestSupport.imageSearchHitName`).
         static let imageSearchHit = "Beach.jpg"
+        /// Hit only a search from the root returns (mirrors `UITestSupport.widerSearchHitName`).
+        static let widerSearchHit = "Archive Notes.txt"
         /// A folder the mocked backend rejects, driving the create failure path (mirrors
         /// `UITestSupport.failingFolderName`).
         static let failingFolderName = "__uitest_fail__"

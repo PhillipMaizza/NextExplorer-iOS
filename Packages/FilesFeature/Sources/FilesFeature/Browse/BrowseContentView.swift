@@ -318,20 +318,13 @@ struct BrowseContentView: View {
             ) {
                 // The Mac shows these natively, as a scope bar and search field tokens.
                 #if os(iOS)
-                    if store.isSearching {
-                        DSSegmentedControl(
-                            options: BrowseFeature.SearchScope.allCases,
-                            selection: $store.searchScope.sending(\.searchScopeChanged),
-                            label: { $0.title }
+                    if store.isSearching, !store.availableSearchCategories.isEmpty {
+                        SearchFilterChips(
+                            availableCategories: store.availableSearchCategories,
+                            selectedCategories: store.selectedSearchCategories,
+                            onToggle: { store.send(.searchCategoryToggled($0)) },
+                            onSelectAll: { store.send(.searchFilterCleared) }
                         )
-                        if !store.availableSearchCategories.isEmpty {
-                            SearchFilterChips(
-                                availableCategories: store.availableSearchCategories,
-                                selectedCategories: store.selectedSearchCategories,
-                                onToggle: { store.send(.searchCategoryToggled($0)) },
-                                onSelectAll: { store.send(.searchFilterCleared) }
-                            )
-                        }
                     }
                 #endif
             }
@@ -693,7 +686,6 @@ struct BrowseContentView: View {
         #if os(macOS)
             VStack(spacing: 0) {
                 MacSearchScopeBar(
-                    scope: $store.searchScope.sending(\.searchScopeChanged),
                     availableCategories: store.availableSearchCategories,
                     selectedCategories: store.selectedSearchCategories,
                     onToggle: { store.send(.searchCategoryToggled($0)) },
@@ -706,9 +698,9 @@ struct BrowseContentView: View {
                     onOpen: { store.send(.searchResultTapped($0)) },
                     onShowInFolder: { store.send(.searchResultEnclosingFolderTapped($0)) }
                 )
-                if let message = searchStatusMessage {
+                if hasSearchFooter {
                     Divider()
-                    searchStatusFooter(message)
+                    searchStatusFooter
                 }
             }
             .backgroundGradient()
@@ -1371,8 +1363,8 @@ struct BrowseContentView: View {
                         BrowseRootSectionHeader(title: L10n.Browse.locations)
                     }
                 }
-                if store.isSearching, let message = searchStatusMessage {
-                    searchStatusFooter(message)
+                if store.isSearching, hasSearchFooter {
+                    searchStatusFooter
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
                         .listRowSeparator(.hidden)
@@ -1446,8 +1438,8 @@ struct BrowseContentView: View {
                     .spring(response: Constants.listDiffSpringResponse, dampingFraction: Constants.listDiffSpringDamping),
                     value: store.displayedSearchResults
                 )
-                if store.isSearching, let message = searchStatusMessage {
-                    searchStatusFooter(message)
+                if store.isSearching, hasSearchFooter {
+                    searchStatusFooter
                 }
                 offlineFooter
                 pasteTargetArea
@@ -1482,11 +1474,22 @@ struct BrowseContentView: View {
         SearchStatusFooter.message(isTooShort: store.isSearchTermTooShort, shortfall: store.searchShortfall)
     }
 
-    private func searchStatusFooter(_ message: String) -> some View {
+    /// A search in a folder can be widened to everywhere, unless the term is too short for the
+    /// server to search at all.
+    private var canOfferWiderSearch: Bool {
+        store.canWidenSearch && !store.isSearchTermTooShort
+    }
+
+    private var hasSearchFooter: Bool {
+        searchStatusMessage != nil || canOfferWiderSearch
+    }
+
+    private var searchStatusFooter: some View {
         SearchStatusFooter(
-            message: message,
+            message: searchStatusMessage,
             canShowMore: store.canShowMoreSearchResults && !store.isSearchingRemotely,
-            onShowMore: { store.send(.searchShowMoreTapped) }
+            onShowMore: { store.send(.searchShowMoreTapped) },
+            onSearchEverywhere: canOfferWiderSearch ? { store.send(.searchScopeChanged(.everywhere)) } : nil
         )
     }
 
@@ -1733,7 +1736,7 @@ struct BrowseContentView: View {
                     Text(SearchStatusFooter.tooShortMessage)
                 }
             } actions: {
-                if store.searchScope == .thisFolder, !store.isSearchTermTooShort {
+                if store.canWidenSearch, !store.isSearchTermTooShort {
                     Button(L10n.Browse.searchEverywhere) { store.send(.searchScopeChanged(.everywhere)) }
                 }
             }
@@ -1755,7 +1758,7 @@ struct BrowseContentView: View {
                 Text(SearchStatusFooter.tooShortMessage)
                     .type(.body3(.regular), style: .secondary)
                     .multilineTextAlignment(.center)
-            } else if store.searchScope == .thisFolder {
+            } else if store.canWidenSearch {
                 DSButton(L10n.Browse.searchEverywhere,
                          icon: IconKit.search,
                          style: .secondary,
