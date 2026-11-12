@@ -297,10 +297,10 @@ struct BrowseContentView: View {
         .macToolbarRefresh(onRefresh: { await store.send(.refreshButtonTapped).finish() }) {
             didFinishRefreshing.toggle()
         }
+        .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: store.phase.errorMessage == nil, extraBottomInset: bottomChromeClearance)
         #endif
         .hapticFeedback(.success, trigger: didFinishRefreshing) { _, _ in store.phase.errorMessage == nil }
         .hapticFeedback(.error, trigger: store.phase.errorMessage) { _, newValue in newValue != nil }
-        .syncCompletedToast(trigger: didFinishRefreshing, isErrorFree: store.phase.errorMessage == nil, extraBottomInset: bottomChromeClearance)
         .overlay {
             overlayStateContent
                 .id(overlayState)
