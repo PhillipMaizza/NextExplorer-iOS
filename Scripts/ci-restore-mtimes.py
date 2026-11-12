@@ -7,6 +7,11 @@ package on every CI run. With the commit times, a file unchanged since the cache
 time that build recorded, and only what really changed recompiles. CI runs it right after the
 checkout, on main where the cache is saved as well as on pull requests where it is restored.
 
+A merge commit counts as touching every file it changes against its first parent. Without that,
+git log lists no files for a merge, so a file last changed by a merge (a conflict resolution, or
+the pull request merge CI checks out) kept an older commit's time, matched the cached build, and
+Xcode linked the stale object.
+
   python3 Scripts/ci-restore-mtimes.py
 """
 import os, pathlib, subprocess
@@ -14,15 +19,16 @@ import os, pathlib, subprocess
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 
 
-def main():
+def restore(root):
+    """Stamps each tracked file under `root` and returns how many were stamped and tracked."""
     log = subprocess.run(
-        ["git", "-C", str(ROOT), "log", "--format=%x00%ct", "--name-only", "--no-renames"],
+        ["git", "-C", str(root), "log", "--format=%x00%ct", "--name-only", "--no-renames", "--diff-merges=first-parent"],
         check=True,
         capture_output=True,
         text=True,
     ).stdout
     tracked = set(
-        subprocess.run(["git", "-C", str(ROOT), "ls-files"], check=True, capture_output=True, text=True).stdout.splitlines()
+        subprocess.run(["git", "-C", str(root), "ls-files"], check=True, capture_output=True, text=True).stdout.splitlines()
     )
     stamped = set()
     # Newest commit first, so the first time a path shows up is its last change.
@@ -34,8 +40,13 @@ def main():
         for path in lines[1:]:
             if path in tracked and path not in stamped:
                 stamped.add(path)
-                os.utime(ROOT / path, (time, time), follow_symlinks=False)
-    print(f"Set {len(stamped)} of {len(tracked)} tracked files to their last commit time")
+                os.utime(root / path, (time, time), follow_symlinks=False)
+    return len(stamped), len(tracked)
+
+
+def main():
+    stamped, tracked = restore(ROOT)
+    print(f"Set {stamped} of {tracked} tracked files to their last commit time")
 
 
 if __name__ == "__main__":

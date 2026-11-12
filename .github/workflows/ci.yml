@@ -53,6 +53,9 @@ jobs:
       - name: Self check the platform filter
         run: python3 Scripts/test_ci_platforms.py
 
+      - name: Self check the file times script
+        run: python3 Scripts/test_ci_restore_mtimes.py
+
       - name: Compare
         id: diff
         env:
