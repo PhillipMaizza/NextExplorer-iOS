@@ -15,7 +15,7 @@ The backend contract is authoritative. Never invent an API shape, a limit or a v
 
 ## Proposing a change
 
-1. Open an issue first for anything non-trivial, so the direction is agreed before code is written.
+1. Open an issue first for anything non-trivial, so the direction is agreed before code is written. Bug reports and feature requests use the issue forms, which ask for what a fix needs: steps to reproduce, expected and observed behavior, app, system and server versions, and how the app reaches the server.
 2. Branch from `main`. Branches are named `feature/NXTIOS-short-slug` (for example `feature/NXTIOS-grid-spacing`). No bare descriptive branch names.
 3. Keep the change on the one working branch and open a pull request against `main` when it is ready. Describe what changed and why, and reference the issue.
 

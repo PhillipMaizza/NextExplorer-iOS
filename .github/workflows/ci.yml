@@ -26,12 +26,13 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
-  # Whether anything that can change a build or a test changed, and for which platform. A change
-  # to docs, screenshots or the fastlane store text skips every macOS job; one made only of files
-  # wrapped in `#if os(macOS)` skips the iPhone jobs, and one only of `#if os(iOS)` files skips the
-  # Mac jobs (Scripts/ci-platforms.py). Pushes to main always run both. A job skipped by its
-  # condition reports success, so the required check still passes (a workflow level paths filter
-  # would leave it pending).
+  # Whether anything that can change a build or a test changed, and for which platform
+  # (Scripts/ci-platforms.py). A change to docs, screenshots, store text or issue templates skips
+  # every macOS job. On a pull request, scripts checked here in the Changes job build nothing, one
+  # made only of files wrapped in `#if os(macOS)` skips the iPhone jobs, and one only of
+  # `#if os(iOS)` files skips the Mac jobs. Pushes to main build everything but docs. A job skipped
+  # by its condition reports success, so the required check still passes (a workflow level paths
+  # filter would leave it pending).
   changes:
     name: Changes
     runs-on: ubuntu-latest
@@ -56,6 +57,12 @@ jobs:
       - name: Self check the file times script
         run: python3 Scripts/test_ci_restore_mtimes.py
 
+      # Their scripts never build, so a change to them alone skips the macOS jobs: check them here.
+      - name: Self check the changelog and localization scripts
+        run: |
+          python3 Scripts/test_gen_changelog.py
+          python3 Scripts/test_gen_l10n.py
+
       - name: Compare
         id: diff
         env:
@@ -77,20 +84,9 @@ jobs:
           CHANGED=$(git diff --name-only "${BASE}" "${GITHUB_SHA}")
           echo "Changed files:"
           echo "${CHANGED}"
-          CODE=$(echo "${CHANGED}" | grep -vE '\.md$|^LICENSE$|^Screenshots/|^fastlane/|^Gemfile|^\.ruby-version$' || true)
-          if [ -z "${CODE}" ]; then
-            echo "Only docs, screenshots or store text changed; skipping the macOS jobs"
-            printf 'code=false\nios=false\nmac=false\n' >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-          echo "code=true" >> "${GITHUB_OUTPUT}"
-          if [ "${EVENT}" != "pull_request" ]; then
-            printf 'ios=true\nmac=true\n' >> "${GITHUB_OUTPUT}"
-            exit 0
-          fi
-          PLATFORMS=$(echo "${CODE}" | python3 Scripts/ci-platforms.py --ref "${GITHUB_SHA}")
-          echo "${PLATFORMS}"
-          echo "${PLATFORMS}" >> "${GITHUB_OUTPUT}"
+          OUTPUTS=$(echo "${CHANGED}" | python3 Scripts/ci-platforms.py --ref "${GITHUB_SHA}" --event "${EVENT}")
+          echo "${OUTPUTS}"
+          echo "${OUTPUTS}" >> "${GITHUB_OUTPUT}"
 
   build-and-test:
     name: Build and test
@@ -153,9 +149,6 @@ jobs:
 
       - name: Dependency pins match the app
         run: python3 Scripts/sync-package-pins.py --check
-
-      - name: Changelog script self check
-        run: python3 Scripts/test_gen_changelog.py
 
       - name: Restore SwiftPM checkouts
         uses: actions/cache/restore@v6
