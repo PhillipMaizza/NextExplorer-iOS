@@ -3,6 +3,7 @@ import CoreModels
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 /// Ties the names the real stores write to `CacheAccountScope.hasAccountPrefix`, the check the one
 /// time cleanup of unscoped entries relies on. If the prefix length or separator changes in one place
@@ -20,7 +21,7 @@ struct CacheFileNameTests {
     }
 
     private func makeRoot() -> URL {
-        FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(UUID().uuidString)")
+        FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
     }
 
     private func names(in directory: URL) throws -> [String] {
@@ -94,8 +95,8 @@ struct CacheFileNameTests {
 
     @Test("an offline store pinned to one account never reads or writes another's manifest")
     func pinnedOfflineStoreStaysInItsAccount() {
-        let scopeA = "\(Fixture.pinnedScopePrefix)\(UUID().uuidString)"
-        let scopeB = "\(Fixture.pinnedScopePrefix)\(UUID().uuidString)"
+        let scopeA = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
+        let scopeB = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
         let store = OfflineFileStore.liveValue
         defer {
             store.removeAccount(scopeA)
@@ -111,8 +112,8 @@ struct CacheFileNameTests {
 
     @Test("missing root strikes count per root and per account, and reset when the root is unpinned")
     func missingRootStrikes() {
-        let scopeA = "\(Fixture.pinnedScopePrefix)\(UUID().uuidString)"
-        let scopeB = "\(Fixture.pinnedScopePrefix)\(UUID().uuidString)"
+        let scopeA = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
+        let scopeB = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
         let store = OfflineFileStore.liveValue
         defer {
             store.removeAccount(scopeA)
@@ -136,11 +137,11 @@ struct CacheFileNameTests {
 
     @Test("local file size reports the pinned copy's bytes and nil for a path that is not pinned")
     func localFileSize() throws {
-        let scope = "\(Fixture.pinnedScopePrefix)\(UUID().uuidString)"
+        let scope = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
         let store = OfflineFileStore.liveValue
         defer { store.removeAccount(scope) }
         let item = FileItem(name: "a.txt", path: Fixture.path, dateModified: Fixture.fetchedAt, size: 3, kind: "txt")
-        let downloaded = FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(UUID().uuidString)")
+        let downloaded = FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
         try Data("abc".utf8).write(to: downloaded)
         _ = try OfflineCache.store(downloadedURL: downloaded, item: item, scope: scope)
         let pinned = store.pinned(to: scope)
@@ -152,10 +153,10 @@ struct CacheFileNameTests {
 
     @Test("a live client serves the pinned copy of the account its task is pinned to, whatever the process wide scope is")
     func liveClientHonorsThePinnedScope() async throws {
-        let scope = "\(Fixture.pinnedScopePrefix)\(UUID().uuidString)"
+        let scope = "\(Fixture.pinnedScopePrefix)\(TestID.name())"
         defer { OfflineCache.removeScope(scope) }
         let item = FileItem(name: "a.bin", path: Fixture.path, dateModified: Fixture.fetchedAt, size: 1, kind: "bin")
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(UUID().uuidString)")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("\(Fixture.rootPrefix)\(TestID.name())")
         try Fixture.payload.write(to: source)
         let stored = try OfflineCache.store(downloadedURL: source, item: item, scope: scope)
         let client = FilesClient.live(networkClient: .live(protocolClasses: [StubURLProtocol.self]), directoryCacheStore: .testValue)

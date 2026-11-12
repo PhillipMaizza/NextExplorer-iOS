@@ -5,6 +5,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @MainActor
 @Suite(.dependencies)
@@ -22,8 +23,8 @@ struct InspectorFollowsItemTests {
 
     @Test
     func deletingTheInspectedItemClosesTheInspector() async {
-        let report = FileItem(name: "report.pdf", path: "Docs", dateModified: Date(), size: 1, kind: "pdf")
-        let notes = FileItem(name: "notes.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+        let report = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 1, kind: "pdf")
+        let notes = FileItem(name: "notes.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
         let store = TestStore(initialState: state(showing: report, among: [report, notes])) {
             BrowseFeature()
         }
@@ -37,8 +38,8 @@ struct InspectorFollowsItemTests {
 
     @Test
     func removingAnotherItemKeepsTheInspectorOpen() async {
-        let report = FileItem(name: "report.pdf", path: "Docs", dateModified: Date(), size: 1, kind: "pdf")
-        let notes = FileItem(name: "notes.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+        let report = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 1, kind: "pdf")
+        let notes = FileItem(name: "notes.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
         let store = TestStore(initialState: state(showing: report, among: [report, notes])) {
             BrowseFeature()
         }
@@ -50,8 +51,8 @@ struct InspectorFollowsItemTests {
 
     @Test
     func renamingTheInspectedItemRepointsTheInspector() async {
-        let report = FileItem(name: "report.pdf", path: "Docs", dateModified: Date(), size: 1, kind: "pdf")
-        let renamed = FileItem(name: "final.pdf", path: "Docs", dateModified: Date(), size: 1, kind: "pdf")
+        let report = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 1, kind: "pdf")
+        let renamed = FileItem(name: "final.pdf", path: "Docs", dateModified: MockDate.date, size: 1, kind: "pdf")
         let store = TestStore(initialState: state(showing: report, among: [report])) {
             BrowseFeature()
         } withDependencies: {

@@ -4,13 +4,14 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @MainActor
 struct PermissionsFeatureTests {
     private let serverURL = URL(string: "https://cloud.example.com")!
 
     private func file(_ name: String = "report.pdf", path: String = "Documents", kind: String = "pdf") -> FileItem {
-        FileItem(name: name, path: path, dateModified: Date(), size: 10, kind: kind)
+        FileItem(name: name, path: path, dateModified: MockDate.date, size: 10, kind: kind)
     }
 
     /// `stat` mode 33261 = `0o100755`: a regular file with `rwxr-xr-x`.

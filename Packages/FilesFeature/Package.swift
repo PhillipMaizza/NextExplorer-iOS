@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "FilesFeature", targets: ["FilesFeature"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../AppStorageKeys"),
         .package(path: "../ClientCertificateFeature"),
         .package(path: "../CoreModels"),
@@ -134,6 +135,7 @@ let package = Package(
         .testTarget(
             name: "FilesFeatureTests",
             dependencies: [
+                "TestUtils",
                 "FilesFeature",
                 .product(name: "ClientCertificateFeature", package: "ClientCertificateFeature"),
                 .product(name: "DesignSystem", package: "DesignSystem"),

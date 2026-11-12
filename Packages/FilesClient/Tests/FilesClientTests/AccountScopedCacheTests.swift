@@ -3,6 +3,7 @@ import CryptoKit
 @testable import FilesClient
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Account scoped cache clearing")
 struct AccountScopedCacheTests {
@@ -12,7 +13,7 @@ struct AccountScopedCacheTests {
     private let fetchedAt = Date(timeIntervalSince1970: 1_000)
 
     private func makeRoot() -> URL {
-        FileManager.default.temporaryDirectory.appendingPathComponent("scoped-cache-\(UUID().uuidString)")
+        FileManager.default.temporaryDirectory.appendingPathComponent("scoped-cache-\(TestID.name())")
     }
 
     private func listing(_ name: String) -> BrowseResult {
@@ -170,10 +171,10 @@ struct AccountScopedCacheTests {
 
     @Test("Offline cache: a slot is stored under the scope captured at start, not the current one")
     func offlineStoreUsesTheCapturedScope() throws {
-        let scope = "offline-captured-\(UUID().uuidString)"
+        let scope = "offline-captured-\(TestID.name())"
         let item = FileItem(name: "a.txt", path: "docs", dateModified: fetchedAt, size: 1, kind: "txt")
         defer { OfflineCache.removeScope(scope) }
-        let downloaded = FileManager.default.temporaryDirectory.appendingPathComponent("offline-src-\(UUID().uuidString)")
+        let downloaded = FileManager.default.temporaryDirectory.appendingPathComponent("offline-src-\(TestID.name())")
         try Data("x".utf8).write(to: downloaded)
 
         _ = try OfflineCache.store(downloadedURL: downloaded, item: item, scope: scope)
@@ -209,7 +210,7 @@ struct AccountScopedCacheTests {
 
     @Test("Offline files: removeScope deletes the named account's directory and keeps another's")
     func offlineRemoveScope() throws {
-        let unique = UUID().uuidString
+        let unique = TestID.name()
         let removed = "offline-test-removed-\(unique)"
         let kept = "offline-test-kept-\(unique)"
         func directory(for scope: String) throws -> URL {

@@ -8,6 +8,7 @@ import NetworkClient
 @testable import ShareExtensionFeature
 import ShareUploads
 import Testing
+import TestUtils
 
 /// Serialized for the same reason as the login suites: ninety TestStore tests waiting at once starve
 /// the executor that has to deliver the effect, and TCA's one second default timeout runs out.
@@ -1157,7 +1158,7 @@ struct ShareUploadFeatureTests {
 
     @Test
     func anotherAccountCanBeChosenWithItsOwnFolder() async {
-        let cookies = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(UUID().uuidString)")
+        let cookies = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(TestID.name())")
         cookies.cookieAcceptPolicy = .always
         let store = TestStore(initialState: ShareUploadFeature.State()) {
             ShareUploadFeature()
@@ -1215,7 +1216,7 @@ struct ShareUploadFeatureTests {
         calls: Calls = Calls(),
         browse: @escaping @Sendable (URL, String) async throws -> BrowseResult
     ) -> Store {
-        let cookies = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(UUID().uuidString)")
+        let cookies = HTTPCookieStorage.sharedCookieStorage(forGroupContainerIdentifier: "share-tests-\(TestID.name())")
         cookies.cookieAcceptPolicy = .always
         let store = TestStore(initialState: ShareUploadFeature.State()) {
             ShareUploadFeature()

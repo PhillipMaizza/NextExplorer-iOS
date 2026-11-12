@@ -3,6 +3,7 @@ import ComposableArchitecture
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 @MainActor
 @Suite("ClientCertificateFeature")
@@ -222,7 +223,7 @@ struct ClientCertificateFeatureTests {
 
     @Test("Reading a real file keeps its name and bytes, and a huge one is refused")
     func readFile() throws {
-        let directory = FileManager.default.temporaryDirectory.appending(path: UUID().uuidString)
+        let directory = FileManager.default.temporaryDirectory.appending(path: TestID.name())
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: directory) }
         let small = directory.appending(path: "dev.p12")

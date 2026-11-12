@@ -5,6 +5,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 private let serverURL = URL(string: "https://example.com") ?? URL(fileURLWithPath: "/")
 private let fixedDate = Date(timeIntervalSince1970: 100)
@@ -62,7 +63,7 @@ struct BrowseDragPayloadTests {
 
     @Test
     func stagingCopiesADroppedFileUnderItsOwnName() throws {
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("drop-\(UUID().uuidString).txt")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("drop-\(TestID.name()).txt")
         try Data("hello".utf8).write(to: source)
         defer { try? FileManager.default.removeItem(at: source) }
 
@@ -76,7 +77,7 @@ struct BrowseDragPayloadTests {
 
     @Test
     func stagingAMissingFileThrows() {
-        let missing = FileManager.default.temporaryDirectory.appendingPathComponent("missing-\(UUID().uuidString)")
+        let missing = FileManager.default.temporaryDirectory.appendingPathComponent("missing-\(TestID.name())")
 
         #expect(throws: (any Error).self) {
             _ = try DroppedFileStaging.copy(missing)
@@ -518,7 +519,7 @@ struct BrowseDropIdentityTests {
 
     @Test
     func aStagedDropCopyIsDeletedOnceUploadStagingTookItsOwn() throws {
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("drop-\(UUID().uuidString).txt")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("drop-\(TestID.name()).txt")
         try Data("x".utf8).write(to: source)
         defer { try? FileManager.default.removeItem(at: source) }
         let copy = try DroppedFileStaging.copy(source)
@@ -531,7 +532,7 @@ struct BrowseDropIdentityTests {
 
     @Test
     func discardingAFileOutsideTheDropDirectoryLeavesItAlone() throws {
-        let outside = FileManager.default.temporaryDirectory.appendingPathComponent("outside-\(UUID().uuidString).txt")
+        let outside = FileManager.default.temporaryDirectory.appendingPathComponent("outside-\(TestID.name()).txt")
         try Data("x".utf8).write(to: outside)
         defer { try? FileManager.default.removeItem(at: outside) }
 
@@ -542,7 +543,7 @@ struct BrowseDropIdentityTests {
 
     @Test
     func theStaleSweepRemovesOldDropCopiesAndKeepsFreshOnes() throws {
-        let root = FileManager.default.temporaryDirectory.appendingPathComponent("sweep-\(UUID().uuidString)", isDirectory: true)
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("sweep-\(TestID.name())", isDirectory: true)
         defer { try? FileManager.default.removeItem(at: root) }
         let old = root.appendingPathComponent("old", isDirectory: true)
         let fresh = root.appendingPathComponent("fresh", isDirectory: true)
@@ -563,7 +564,7 @@ struct BrowseDropIdentityTests {
 private enum StagedDropFixture {
     /// A real staged drop copy, created the way a drop stages one.
     static func make(name: String = "dropped.txt") throws -> URL {
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("drop-src-\(UUID().uuidString)-\(name)")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("drop-src-\(TestID.name())-\(name)")
         try Data("x".utf8).write(to: source)
         defer { try? FileManager.default.removeItem(at: source) }
         let staged = try DroppedFileStaging.stage(source, isOriginal: true)
@@ -580,7 +581,7 @@ private enum StagedDropFixture {
 struct BrowseDropStagingTests {
     @Test
     func aTemporarySystemCopyIsMovedNotCopied() throws {
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("system-\(UUID().uuidString).txt")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("system-\(TestID.name()).txt")
         try Data("x".utf8).write(to: source)
 
         let staged = try DroppedFileStaging.stage(source, isOriginal: false)
@@ -592,7 +593,7 @@ struct BrowseDropStagingTests {
 
     @Test
     func anOriginalFileIsCopiedAndLeftWhereItWas() throws {
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("original-\(UUID().uuidString).txt")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("original-\(TestID.name()).txt")
         try Data("x".utf8).write(to: source)
         defer { try? FileManager.default.removeItem(at: source) }
 
@@ -605,7 +606,7 @@ struct BrowseDropStagingTests {
 
     @Test
     func aFailedStageLeavesNoEmptyFolderBehind() throws {
-        let root = FileManager.default.temporaryDirectory.appendingPathComponent("stage-root-\(UUID().uuidString)", isDirectory: true)
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("stage-root-\(TestID.name())", isDirectory: true)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         defer { try? FileManager.default.removeItem(at: root) }
         let isolated = IsolatedTemporaryFileManager(root: root)

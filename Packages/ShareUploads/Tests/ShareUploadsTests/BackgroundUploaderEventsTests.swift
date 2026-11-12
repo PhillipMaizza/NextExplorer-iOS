@@ -2,6 +2,7 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import Testing
+import TestUtils
 
 @Suite("Background uploader wake ups, late events and races")
 struct BackgroundUploaderEventsTests {
@@ -13,7 +14,7 @@ struct BackgroundUploaderEventsTests {
     }
 
     private func identifier() -> String {
-        BackgroundUploader.identifierPrefix + UUID().uuidString
+        BackgroundUploader.identifierPrefix + TestID.uuid().uuidString
     }
 
     // MARK: Wake up completion handlers
@@ -106,7 +107,7 @@ struct BackgroundUploaderEventsTests {
     func freshManifestlessBatchSurvivesCancel() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let staging = harness.root.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let staging = harness.root.appendingPathComponent(TestID.uuid().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
         try Data("half".utf8).write(to: staging.appendingPathComponent("x.multipart"))
         try FileManager.default.setAttributes(
@@ -122,7 +123,7 @@ struct BackgroundUploaderEventsTests {
     func staleManifestlessBatchIsCancelled() throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let staging = harness.root.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let staging = harness.root.appendingPathComponent(TestID.uuid().uuidString, isDirectory: true)
         try FileManager.default.createDirectory(at: staging, withIntermediateDirectories: true)
         try FileManager.default.setAttributes(
             [.modificationDate: TestClock.reference.addingTimeInterval(-BackgroundUploader.staleAge - Constants.staleMargin)],

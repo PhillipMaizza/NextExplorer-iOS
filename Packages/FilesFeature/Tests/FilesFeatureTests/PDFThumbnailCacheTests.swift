@@ -3,6 +3,7 @@ import DesignSystem
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 /// Covers the two pieces of `PDFThumbnailCache` that run without a live server: rasterizing
 /// page one of a real PDF, and the short circuit that skips re-rendering on a hit.
@@ -11,14 +12,14 @@ struct PDFThumbnailCacheTests {
     /// `PreviewCache` root the `PreviewCacheStoreTests` size/clear assertions depend on.
     private func makeCacheDirectory() -> URL {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("pdf-thumb-cache-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("pdf-thumb-cache-\(TestID.name())", isDirectory: true)
         try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
 
     private func makePDF(pageSize: CGSize) -> URL {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("pdf-thumb-test-\(UUID().uuidString).pdf")
+            .appendingPathComponent("pdf-thumb-test-\(TestID.name()).pdf")
         PDFFixture.write(to: url, pageSize: pageSize, red: 0, green: 0.48, blue: 1)
         return url
     }
@@ -67,7 +68,7 @@ struct PDFThumbnailCacheTests {
 
     @Test
     func firstPageImageRendersOnceThenServesTheCachedResult() async throws {
-        let key = PDFThumbnailCache.cacheKey(id: "Documents/\(UUID().uuidString).pdf", signature: "1.0|2048")
+        let key = PDFThumbnailCache.cacheKey(id: "Documents/\(TestID.name()).pdf", signature: "1.0|2048")
         let cacheDirectory = makeCacheDirectory()
         defer { try? FileManager.default.removeItem(at: cacheDirectory) }
         let cache = PDFThumbnailCache.live(renderCacheDirectory: cacheDirectory)
@@ -89,7 +90,7 @@ struct PDFThumbnailCacheTests {
     @Test
     func renderFirstPageReturnsNilForBytesThatAreNotAPDF() {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("not-a-pdf-\(UUID().uuidString).pdf")
+            .appendingPathComponent("not-a-pdf-\(TestID.name()).pdf")
         try? Data("plain text".utf8).write(to: url)
         defer { try? FileManager.default.removeItem(at: url) }
 

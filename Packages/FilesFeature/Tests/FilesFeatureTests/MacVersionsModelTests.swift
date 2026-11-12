@@ -1,3 +1,4 @@
+import TestUtils
 #if os(macOS)
     import CoreModels
     import Dependencies
@@ -14,14 +15,14 @@
         private nonisolated static func history(for path: String) -> FileVersionHistory {
             FileVersionHistory(
                 isEnabled: true,
-                versions: [FileVersion(id: path, size: 1, modifiedAt: Date(), capturedAt: Date())],
+                versions: [FileVersion(id: path, size: 1, modifiedAt: MockDate.date, capturedAt: MockDate.date)],
                 totalBytes: 1,
                 rights: .init(canSee: true, canDownload: true, canRestore: true, canRemove: true)
             )
         }
 
         private static func file(_ name: String) -> FileItem {
-            FileItem(name: name, path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+            FileItem(name: name, path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
         }
 
         @Test

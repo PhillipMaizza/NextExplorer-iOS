@@ -4,6 +4,7 @@ import Dependencies
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 // MARK: Live wire format and error mapping tests
 
@@ -105,7 +106,7 @@ struct FilesClientLiveTests {
     @Test
     func previewFileLowPriorityFetchesFromPreviewThenSharesTheCacheSlotWithPreviewFile() async throws {
         let item = FileItem(
-            name: "\(UUID().uuidString).pdf", path: "Docs",
+            name: "\(TestID.name()).pdf", path: "Docs",
             dateModified: Date(timeIntervalSince1970: 1), size: 3, kind: "pdf"
         )
         stub(statusCode: 200, body: Data("PDF".utf8))
@@ -220,7 +221,7 @@ struct FilesClientLiveTests {
     @Test
     func lateResponseWritesTheScopeCapturedAtRequestStart() async throws {
         stub(statusCode: 200, body: browseResultJSON)
-        let root = FileManager.default.temporaryDirectory.appendingPathComponent("late-write-\(UUID().uuidString)")
+        let root = FileManager.default.temporaryDirectory.appendingPathComponent("late-write-\(TestID.name())")
         defer { try? FileManager.default.removeItem(at: root) }
         let store = DirectoryCacheStore.onDisk(rootDirectory: root)
         let activeScope = LockIsolated("account-a")
@@ -518,7 +519,7 @@ struct FilesClientLiveTests {
         """.data(using: .utf8)!
         stub(statusCode: 200, body: renameJSON)
         StubURLProtocol.capturedRequest = nil
-        let item = FileItem(name: "vacation.jpg", path: "Photos", dateModified: Date(), size: 1024, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "Photos", dateModified: MockDate.date, size: 1024, kind: "jpg")
         let renamed = try await makeClient().renameItem(serverURL, item, "vacation-2024.jpg")
         #expect(renamed.name == "vacation-2024.jpg")
         let request = try #require(StubURLProtocol.capturedRequest)
@@ -533,7 +534,7 @@ struct FilesClientLiveTests {
     @Test
     func renameItemMapsAConflictingNameToAServerError() async throws {
         stub(statusCode: 409, body: Data())
-        let item = FileItem(name: "vacation.jpg", path: "Photos", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "Photos", dateModified: MockDate.date, size: 0, kind: "jpg")
         await #expect(throws: FilesClientError.server(statusCode: 409)) {
             _ = try await makeClient().renameItem(serverURL, item, "taken.jpg")
         }
@@ -545,8 +546,8 @@ struct FilesClientLiveTests {
     func deleteItemsSendsPathNameAndKindForEveryItem() async throws {
         stub(statusCode: 200, body: #"{"success": true, "items": []}"#.data(using: .utf8)!)
         StubURLProtocol.capturedRequest = nil
-        let first = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 0, kind: "txt")
-        let second = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let first = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 0, kind: "txt")
+        let second = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         try await makeClient().deleteItems(serverURL, [first, second])
         let request = try #require(StubURLProtocol.capturedRequest)
         #expect(request.httpMethod == "DELETE")
@@ -561,7 +562,7 @@ struct FilesClientLiveTests {
     @Test
     func deleteItemsMapsAForbiddenResponseToAServerError() async throws {
         stub(statusCode: 403, body: Data())
-        let item = FileItem(name: "readonly.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let item = FileItem(name: "readonly.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         await #expect(throws: FilesClientError.forbidden(message: nil)) {
             try await makeClient().deleteItems(serverURL, [item])
         }
@@ -586,7 +587,7 @@ struct FilesClientLiveTests {
         """#.data(using: .utf8)!
         stub(statusCode: 200, body: json)
         StubURLProtocol.capturedRequest = nil
-        let item = FileItem(name: "a.txt", path: "Inbox", dateModified: Date(), size: 0, kind: "txt")
+        let item = FileItem(name: "a.txt", path: "Inbox", dateModified: MockDate.date, size: 0, kind: "txt")
         let result = try await makeClient().transferItems(serverURL, [item], "Documents", .copy)
         #expect(result.destination == "Documents")
         #expect(result.movedCount == 1)
@@ -605,7 +606,7 @@ struct FilesClientLiveTests {
     func transferItemsMovePostsToMoveEndpoint() async throws {
         stub(statusCode: 200, body: #"{"success": true, "destination": "Archive", "items": []}"#.data(using: .utf8)!)
         StubURLProtocol.capturedRequest = nil
-        let item = FileItem(name: "old", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "old", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         _ = try await makeClient().transferItems(serverURL, [item], "Archive", .move)
         #expect(StubURLProtocol.capturedRequest?.url?.path == "/api/files/move")
     }
@@ -616,7 +617,7 @@ struct FilesClientLiveTests {
             statusCode: 500,
             body: #"{"success": false, "error": {"message": "Cannot copy or move items to the root path."}}"#.data(using: .utf8)!
         )
-        let item = FileItem(name: "a.txt", path: "Inbox", dateModified: Date(), size: 0, kind: "txt")
+        let item = FileItem(name: "a.txt", path: "Inbox", dateModified: MockDate.date, size: 0, kind: "txt")
         await #expect(throws: FilesClientError.serverMessage(statusCode: 500, message: "Cannot copy or move items to the root path.")) {
             _ = try await makeClient().transferItems(serverURL, [item], "", .move)
         }
@@ -625,7 +626,7 @@ struct FilesClientLiveTests {
     @Test
     func transferItemsMapsA401ToSessionExpired() async throws {
         stub(statusCode: 401, body: Data())
-        let item = FileItem(name: "a.txt", path: "Inbox", dateModified: Date(), size: 0, kind: "txt")
+        let item = FileItem(name: "a.txt", path: "Inbox", dateModified: MockDate.date, size: 0, kind: "txt")
         await #expect(throws: FilesClientError.sessionExpired) {
             _ = try await makeClient().transferItems(serverURL, [item], "Documents", .copy)
         }
@@ -802,8 +803,8 @@ struct FilesClientLiveTests {
         stub(statusCode: 200, body: Data("payload".utf8))
         // A hostile directory listing returns a name that would climb out of the cache dir.
         let item = FileItem(
-            name: "../../../../\(UUID().uuidString)-escape.txt",
-            path: "Docs/\(UUID().uuidString)", dateModified: Date(), size: 0, kind: "txt"
+            name: "../../../../\(TestID.name())-escape.txt",
+            path: "Docs/\(TestID.name())", dateModified: MockDate.date, size: 0, kind: "txt"
         )
 
         let fileURL = try await makeClient().previewFile(serverURL, item).standardizedFileURL
@@ -821,8 +822,8 @@ struct FilesClientLiveTests {
     func downloadRawFileKeepsATraversingServerNameInsideThePreviewCache() async throws {
         stub(statusCode: 200, body: Data("payload".utf8))
         let item = FileItem(
-            name: "../../../../\(UUID().uuidString)-escape.bin",
-            path: "Docs/\(UUID().uuidString)", dateModified: Date(), size: 0, kind: "bin"
+            name: "../../../../\(TestID.name())-escape.bin",
+            path: "Docs/\(TestID.name())", dateModified: MockDate.date, size: 0, kind: "bin"
         )
 
         let fileURL = try await makeClient().downloadRawFile(serverURL, item).standardizedFileURL
@@ -839,8 +840,8 @@ struct FilesClientLiveTests {
     /// (`Library/Caches/PreviewCache/<item.id>`) isolated from every other test and from any
     /// prior run: the cache is real, persistent disk state, not reset between test runs.
     private func uniquePreviewItem(name: String, path: String = "", kind: String = "txt") -> FileItem {
-        let uniqueName = "\(UUID().uuidString)-\(name)"
-        return FileItem(name: uniqueName, path: path, dateModified: Date(), size: 0, kind: kind)
+        let uniqueName = "\(TestID.name())-\(name)"
+        return FileItem(name: uniqueName, path: path, dateModified: MockDate.date, size: 0, kind: kind)
     }
 
     // MARK: fetchTextContent / saveTextContent
@@ -921,7 +922,7 @@ struct FilesClientLiveTests {
         let json = #"{"success": true, "item": {"name": "bundle", "path": "", "dateModified": "2024-01-01T00:00:00.000Z", "size": 0, "kind": "directory"}}"#
         stub(statusCode: 201, body: json.data(using: .utf8)!)
         StubURLProtocol.capturedRequest = nil
-        let item = FileItem(name: "bundle.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
+        let item = FileItem(name: "bundle.zip", path: "", dateModified: MockDate.date, size: 0, kind: "zip")
 
         let extracted = try await makeClient().extractZip(serverURL, item)
 
@@ -937,7 +938,7 @@ struct FilesClientLiveTests {
     @Test
     func extractZipMapsUnsupportedFormatToAServerError() async throws {
         stub(statusCode: 415, body: Data())
-        let item = FileItem(name: "bundle.rar", path: "", dateModified: Date(), size: 0, kind: "rar")
+        let item = FileItem(name: "bundle.rar", path: "", dateModified: MockDate.date, size: 0, kind: "rar")
         await #expect(throws: FilesClientError.server(statusCode: 415)) {
             _ = try await makeClient().extractZip(serverURL, item)
         }
@@ -953,7 +954,7 @@ struct FilesClientLiveTests {
         // every zip/rar/doc/docx preview until caught by live testing, not this test suite).
         stub(statusCode: 200, body: "raw file bytes".data(using: .utf8)!)
         StubURLProtocol.capturedRequest = nil
-        let item = FileItem(name: "bundle.zip", path: "Archives", dateModified: Date(), size: 0, kind: "zip")
+        let item = FileItem(name: "bundle.zip", path: "Archives", dateModified: MockDate.date, size: 0, kind: "zip")
 
         _ = try await makeClient().downloadRawFile(serverURL, item)
 
@@ -968,7 +969,7 @@ struct FilesClientLiveTests {
     @Test
     func downloadRawFileMapsAccessDeniedToAServerError() async throws {
         stub(statusCode: 403, body: Data())
-        let item = FileItem(name: "secret.docx", path: "", dateModified: Date(), size: 0, kind: "docx")
+        let item = FileItem(name: "secret.docx", path: "", dateModified: MockDate.date, size: 0, kind: "docx")
         await #expect(throws: FilesClientError.forbidden(message: nil)) {
             _ = try await makeClient().downloadRawFile(serverURL, item)
         }
@@ -981,7 +982,7 @@ struct FilesClientLiveTests {
         let json = #"{"success": true, "item": {"name": "Documents.zip", "path": "", "dateModified": "2024-01-01T00:00:00.000Z", "size": 2048, "kind": "zip"}}"#
         stub(statusCode: 201, body: json.data(using: .utf8)!)
         StubURLProtocol.capturedRequest = nil
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let compressed = try await makeClient().compressItem(serverURL, item)
 
@@ -999,7 +1000,7 @@ struct FilesClientLiveTests {
     @Test
     func compressItemMapsReadOnlyDestinationToAServerError() async throws {
         stub(statusCode: 403, body: Data())
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         await #expect(throws: FilesClientError.forbidden(message: nil)) {
             _ = try await makeClient().compressItem(serverURL, item)
         }
@@ -1015,7 +1016,7 @@ struct FilesClientLiveTests {
 
         """
         stub(statusCode: 200, body: Data(ndjson.utf8), headers: ["Content-Type": "application/x-ndjson; charset=utf-8"])
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let compressed = try await makeClient().compressItem(serverURL, item)
 
@@ -1030,7 +1031,7 @@ struct FilesClientLiveTests {
         {"type":"error","message":"Disk full","code":"COMPRESS_FAILED"}
         """
         stub(statusCode: 200, body: Data(ndjson.utf8), headers: ["Content-Type": "application/x-ndjson"])
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         await #expect(throws: FilesClientError.serverMessage(statusCode: 500, message: "Disk full")) {
             _ = try await makeClient().compressItem(serverURL, item)
         }
@@ -1043,7 +1044,7 @@ struct FilesClientLiveTests {
         {"type":"done","success":true,"item":{"name":"photos","path":"Files","kind":"directory","size":64,"dateModified":"2026-09-23T15:52:27.993Z"},"items":[]}
         """
         stub(statusCode: 200, body: Data(ndjson.utf8), headers: ["Content-Type": "application/x-ndjson"])
-        let archive = FileItem(name: "photos.zip", path: "Files", dateModified: Date(), size: 10, kind: "zip")
+        let archive = FileItem(name: "photos.zip", path: "Files", dateModified: MockDate.date, size: 10, kind: "zip")
 
         let extracted = try await makeClient().extractZip(serverURL, archive)
 
@@ -1061,7 +1062,7 @@ struct FilesClientLiveTests {
 
     @Test
     func evictionNeverDeletesTheSlotItWasAskedToProtect() throws {
-        let item = FileItem(name: "huge-\(UUID().uuidString).mkv", path: "Evict", dateModified: Date(), size: 600_000_000, kind: "mkv")
+        let item = FileItem(name: "huge-\(TestID.name()).mkv", path: "Evict", dateModified: MockDate.date, size: 600_000_000, kind: "mkv")
         let slot = FilesService.previewCacheDirectory(for: item, namespace: FilesService.rawDownloadCacheNamespace)
         try FileManager.default.createDirectory(at: slot, withIntermediateDirectories: true)
         let fileURL = slot.appendingPathComponent(item.name)
@@ -1084,7 +1085,7 @@ struct FilesClientLiveTests {
     func downloadItemPostsTheFolderPathAndReturnsAFileTheCallerOwns() async throws {
         stub(statusCode: 200, body: Data("PK-zip-bytes".utf8), headers: ["Content-Type": "application/zip"])
         StubURLProtocol.capturedRequest = nil
-        let folder = FileItem(name: "Photos", path: "Files", dateModified: Date(), size: 0, kind: "directory")
+        let folder = FileItem(name: "Photos", path: "Files", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let url = try await makeClient().downloadItem(serverURL, folder) { _ in }
         defer { try? FileManager.default.removeItem(at: url) }
@@ -1101,7 +1102,7 @@ struct FilesClientLiveTests {
     @Test
     func downloadItemMapsAServerErrorAndLeavesNoFileBehind() async throws {
         stub(statusCode: 500, body: Data())
-        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 0, kind: "mkv")
+        let item = FileItem(name: "movie.mkv", path: "Files", dateModified: MockDate.date, size: 0, kind: "mkv")
         await #expect(throws: FilesClientError.server(statusCode: 500)) {
             _ = try await makeClient().downloadItem(serverURL, item) { _ in }
         }
@@ -1110,7 +1111,7 @@ struct FilesClientLiveTests {
     // MARK: uploadFile
 
     private func makeTempFile(_ name: String, contents: String) throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString)-\(name)")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(TestID.name())-\(name)")
         try Data(contents.utf8).write(to: url)
         return url
     }
@@ -1411,7 +1412,7 @@ struct FilesClientLiveTests {
     @Test
     func downloadVersionReadsTheContentRouteIntoTheDestination() async throws {
         stub(statusCode: 200, body: Data("old text".utf8))
-        let destination = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+        let destination = FileManager.default.temporaryDirectory.appendingPathComponent("\(TestID.name()).txt")
         defer { try? FileManager.default.removeItem(at: destination) }
         try await makeClient().downloadVersion(serverURL, "Docs/notes.txt", "v1", destination)
         let url = try #require(StubURLProtocol.capturedRequest?.url)
@@ -1621,11 +1622,11 @@ extension FilesClientLiveTests {
     @Test
     func aStalledDownloadFallsBackToThePinnedOfflineCopyBecauseItIsOfflineNotTimedOut() async throws {
         resetStubs()
-        let scope = "offline-fallback-\(UUID().uuidString)"
+        let scope = "offline-fallback-\(TestID.name())"
         defer { OfflineCache.removeScope(scope) }
         let pinned = FileItem(name: "n.bin", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 1, kind: "bin")
         let changedOnServer = FileItem(name: "n.bin", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: 2, kind: "bin")
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("pin-src-\(UUID().uuidString)")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("pin-src-\(TestID.name())")
         try Data("x".utf8).write(to: source)
         _ = try OfflineCache.store(downloadedURL: source, item: pinned, scope: scope)
         StubURLProtocol.failure = URLError(.timedOut)
@@ -1643,7 +1644,7 @@ extension FilesClientLiveTests {
 
     private func pinnedTextClient(scope: String, bytes: Data) throws -> FilesClient {
         let pinned = FileItem(name: "n.txt", path: "Docs", dateModified: Date(timeIntervalSince1970: 0), size: Int64(bytes.count), kind: "txt")
-        let source = FileManager.default.temporaryDirectory.appendingPathComponent("pin-text-\(UUID().uuidString)")
+        let source = FileManager.default.temporaryDirectory.appendingPathComponent("pin-text-\(TestID.name())")
         try bytes.write(to: source)
         _ = try OfflineCache.store(downloadedURL: source, item: pinned, scope: scope)
         StubURLProtocol.failure = URLError(.timedOut)
@@ -1657,7 +1658,7 @@ extension FilesClientLiveTests {
     @Test
     func anOfflineTextReadUsesThePinnedCopyOfTheCapturedScopeNotTheGlobalOne() async throws {
         resetStubs()
-        let scope = "offline-text-\(UUID().uuidString)"
+        let scope = "offline-text-\(TestID.name())"
         defer { OfflineCache.removeScope(scope) }
         let client = try pinnedTextClient(scope: scope, bytes: Data("pinned text".utf8))
 
@@ -1668,7 +1669,7 @@ extension FilesClientLiveTests {
     @Test
     func anOfflineTextReadRefusesAPinnedCopyAboveTheBackendEditorCap() async throws {
         resetStubs()
-        let scope = "offline-text-\(UUID().uuidString)"
+        let scope = "offline-text-\(TestID.name())"
         defer { OfflineCache.removeScope(scope) }
         let cap = FilesService.EditorLimits.maxFileSizeBytes
         let client = try pinnedTextClient(scope: scope, bytes: Data(repeating: UInt8(ascii: "a"), count: cap + 1))
@@ -1682,7 +1683,7 @@ extension FilesClientLiveTests {
     @Test
     func anOfflineTextReadAcceptsAPinnedCopyExactlyAtTheCap() async throws {
         resetStubs()
-        let scope = "offline-text-\(UUID().uuidString)"
+        let scope = "offline-text-\(TestID.name())"
         defer { OfflineCache.removeScope(scope) }
         let cap = FilesService.EditorLimits.maxFileSizeBytes
         let client = try pinnedTextClient(scope: scope, bytes: Data(repeating: UInt8(ascii: "a"), count: cap))
@@ -1694,7 +1695,7 @@ extension FilesClientLiveTests {
     @Test
     func anOfflineTextReadRefusesBinaryBytesWithNulInsteadOfOpeningGarbage() async throws {
         resetStubs()
-        let scope = "offline-text-\(UUID().uuidString)"
+        let scope = "offline-text-\(TestID.name())"
         defer { OfflineCache.removeScope(scope) }
         let client = try pinnedTextClient(scope: scope, bytes: Data([0x89, 0x50, 0x4E, 0x47, 0x00, 0x01, 0x02, 0x00, 0xFF]))
 

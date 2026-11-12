@@ -5,6 +5,7 @@ import FilesClient
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
 @MainActor
 struct UploadsFeatureTests {
@@ -524,13 +525,13 @@ struct UploadsFeatureTests {
         var state = UploadsFeature.State(serverURL: URL(string: "https://example.com")!)
         #expect(state.overallProgress == nil)
 
-        var inFlight = job("b.txt", id: UUID(), status: .uploading)
+        var inFlight = job("b.txt", id: TestID.uuid(), status: .uploading)
         inFlight.progress = 0.5
         state.jobs = [
-            job("a.txt", id: UUID(), status: .completed),
+            job("a.txt", id: TestID.uuid(), status: .completed),
             inFlight,
-            job("c.txt", id: UUID(), status: .queued),
-            job("d.txt", id: UUID(), status: .queued),
+            job("c.txt", id: TestID.uuid(), status: .queued),
+            job("d.txt", id: TestID.uuid(), status: .queued),
         ]
 
         #expect(state.overallProgress == 1.5 / 4)

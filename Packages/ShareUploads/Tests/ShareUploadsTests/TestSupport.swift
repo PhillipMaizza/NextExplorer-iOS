@@ -2,6 +2,7 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import UserNotifications
+import TestUtils
 
 enum TestClock {
     /// A fixed moment; tests move the clock with offsets from it.
@@ -165,9 +166,9 @@ struct Harness {
         availableCapacity: @escaping @Sendable (URL) -> Int64? = { _ in nil },
         removeEnvelope: @escaping @Sendable (URL) -> Void = { try? FileManager.default.removeItem(at: $0) }
     ) throws {
-        root = FileManager.default.temporaryDirectory.appendingPathComponent("ShareUploadsHarness-\(UUID().uuidString)")
+        root = FileManager.default.temporaryDirectory.appendingPathComponent("ShareUploadsHarness-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
-        suite = "ShareUploadsHarness-\(UUID().uuidString)"
+        suite = "ShareUploadsHarness-\(TestID.uuid().uuidString)"
         guard let suiteDefaults = UserDefaults(suiteName: suite) else { throw CocoaError(.fileReadUnknown) }
         defaults = suiteDefaults
         let clock = clock
@@ -209,7 +210,7 @@ struct Harness {
         accountID: String = Harness.credentials.accountID,
         startedAt: Date = TestClock.reference
     ) throws -> (id: String, directory: URL, manifest: Manifest) {
-        let id = UUID().uuidString
+        let id = TestID.uuid().uuidString
         let directory = root.appendingPathComponent(id, isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let envelopes = names.indices.map { "\($0).multipart" }

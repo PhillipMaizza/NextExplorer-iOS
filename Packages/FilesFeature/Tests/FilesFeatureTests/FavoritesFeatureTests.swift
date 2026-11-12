@@ -5,13 +5,14 @@ import FilesClient
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
 @MainActor
 struct FavoritesFeatureTests {
     private let serverURL = URL(string: "https://example.com")!
 
     private func makeFavorite(id: String = "1", path: String = "Documents", label: String? = nil, position: Int = 0) -> Favorite {
-        Favorite(id: id, path: path, label: label, icon: "folder", color: nil, position: position, createdAt: Date(), updatedAt: Date())
+        Favorite(id: id, path: path, label: label, icon: "folder", color: nil, position: position, createdAt: MockDate.date, updatedAt: MockDate.date)
     }
 
     // MARK: Happy path
@@ -203,7 +204,7 @@ struct FavoritesFeatureTests {
 
     @Test
     func openFolderDelegateFromAPushedScreenPushesAnotherLevel() async {
-        let subfolder = FileItem(name: "2020", path: "Photos", dateModified: Date(), size: 0, kind: "directory")
+        let subfolder = FileItem(name: "2020", path: "Photos", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = FavoritesFeature.State(serverURL: serverURL)
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
 
@@ -309,7 +310,7 @@ struct FavoritesFeatureTests {
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/2020", title: "2020"))
         let pathIDs = state.path.ids
-        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let store = TestStore(initialState: state) {
             FavoritesFeature()
@@ -396,7 +397,7 @@ struct FavoritesFeatureTests {
             $0.filesClient.reorderFavorites = { _, ids in
                 recorded.setValue(ids)
                 return ids.enumerated().map { index, id in
-                    Favorite(id: id, path: id, label: nil, icon: "folder", color: nil, position: index, createdAt: Date(), updatedAt: Date())
+                    Favorite(id: id, path: id, label: nil, icon: "folder", color: nil, position: index, createdAt: MockDate.date, updatedAt: MockDate.date)
                 }
             }
         }
@@ -460,7 +461,7 @@ struct FavoritesFeatureTests {
 
         let updated = Favorite(
             id: "f1", path: "Documents", label: "Projects", icon: "solid:BriefcaseIcon", color: "#009cff",
-            position: 0, createdAt: favorite.createdAt, updatedAt: Date()
+            position: 0, createdAt: favorite.createdAt, updatedAt: MockDate.date
         )
         await store.send(.editSheet(.presented(.delegate(.updated(updated))))) {
             $0.favorites[id: "f1"] = updated

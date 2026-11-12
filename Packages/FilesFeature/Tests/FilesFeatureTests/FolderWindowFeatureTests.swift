@@ -1,3 +1,4 @@
+import TestUtils
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
@@ -28,7 +29,7 @@
         @Test
         func aFinishedChangeHereIsHandedToTheMainWindow() async {
             let forwarded = LockIsolated<[FolderWindowFeature.Forwarded]>([])
-            let folder = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+            let folder = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
             let store = TestStore(initialState: FolderWindowFeature.State(serverURL: serverURL)) {
                 FolderWindowFeature { item in forwarded.withValue { $0.append(item) } }
             }

@@ -1,3 +1,4 @@
+import TestUtils
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
@@ -35,7 +36,7 @@
 
         @Test
         func aRenameInTheMainWindowIsBroadcastToTheOtherWindows() async {
-            let renamed = FileItem(name: "b.txt", path: "", dateModified: Date(), size: 1, kind: "txt")
+            let renamed = FileItem(name: "b.txt", path: "", dateModified: MockDate.date, size: 1, kind: "txt")
             let store = makeStore()
 
             await store.send(.browse(.root(.renameResponse(.success(BrowseFeature.RenameResult(originalID: "a.txt", renamed: renamed)))))) {
@@ -79,7 +80,7 @@
 
         @Test
         func savesGoToTheDownloadQueue() async {
-            let item = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+            let item = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
             let request = DownloadSaveRequest(item: item, target: .into(URL(fileURLWithPath: "/tmp")))
             let store = makeStore()
 

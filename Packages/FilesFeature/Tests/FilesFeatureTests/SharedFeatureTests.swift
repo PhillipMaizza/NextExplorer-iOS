@@ -4,6 +4,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @MainActor
 struct SharedFeatureTests {
@@ -20,8 +21,8 @@ struct SharedFeatureTests {
             accessMode: .readonly,
             sharingType: .anyone,
             hasPassword: false,
-            createdAt: Date(),
-            updatedAt: Date()
+            createdAt: MockDate.date,
+            updatedAt: MockDate.date
         )
     }
 
@@ -150,7 +151,7 @@ struct SharedFeatureTests {
             id: "s1", shareToken: share.shareToken, ownerId: "me",
             sourcePath: "Documents/Report.pdf", isDirectory: false,
             accessMode: .readwrite, sharingType: .anyone, hasPassword: true,
-            expiresAt: nil, label: "Q3 Report", createdAt: share.createdAt, updatedAt: Date()
+            expiresAt: nil, label: "Q3 Report", createdAt: share.createdAt, updatedAt: MockDate.date
         )
         await store.send(.editSheet(.presented(.delegate(.updated(updated)))))
         #expect(store.state.byMe[id: "s1"] == updated)
@@ -210,12 +211,12 @@ struct SharedFeatureTests {
         let alpha = Share(
             id: "a", shareToken: "a", ownerId: "me", sourcePath: "Alpha", sourceName: nil,
             isDirectory: true, accessMode: .readonly, sharingType: .anyone, hasPassword: false,
-            label: "Alpha", createdAt: Date(timeIntervalSince1970: 100), updatedAt: Date()
+            label: "Alpha", createdAt: Date(timeIntervalSince1970: 100), updatedAt: MockDate.date
         )
         let zulu = Share(
             id: "z", shareToken: "z", ownerId: "me", sourcePath: "Zulu", sourceName: nil,
             isDirectory: true, accessMode: .readonly, sharingType: .anyone, hasPassword: false,
-            label: "Zulu", createdAt: Date(timeIntervalSince1970: 200), updatedAt: Date()
+            label: "Zulu", createdAt: Date(timeIntervalSince1970: 200), updatedAt: MockDate.date
         )
         var state = SharedFeature.State(serverURL: serverURL)
         state.byMe = [alpha, zulu]

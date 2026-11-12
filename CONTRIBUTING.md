@@ -61,7 +61,7 @@ A test gives the same result on every run, on every machine, under any load. CI 
 | Instead of | Use |
 |---|---|
 | `Date()`, `Date.now` | `MockDate.date` from `TestUtils` (a fixed `Date(timeIntervalSince1970:)`), plus offsets such as `MockDate.date.addingTimeInterval(600)` |
-| `UUID()` | `UUID(0)`, `UUID(1)`, or the `.incrementing` dependency |
+| `UUID()` | `UUID(0)`, `UUID(1)`, the `.incrementing` dependency, or `TestID.uuid()` / `TestID.name()` for unique names |
 | `Task.sleep`, `Thread.sleep`, a real clock | inject `continuousClock`, drive a `TestClock` and `await clock.advance(by:)` (or `ImmediateClock`) |
 | polling with a time budget, `XCTWaiter` | `await store.receive(...)`, `await store.finish()`, or await the task |
 | `exhaustivity = .off`, `skipReceivedActions()` | assert every state change and receive every action |
@@ -70,6 +70,8 @@ A test gives the same result on every run, on every machine, under any load. CI 
 
 Also:
 
+- Tests take milliseconds: nothing waits on real time, and a whole package runs in a few seconds.
+- Unique temp folder names and store scopes come from `TestID.name()` / `TestID.uuid()` in `TestUtils`, never `UUID()`.
 - Expected values are literals, never computed from the code under test.
 - Work that must overlap is held and released with explicit gates, never a timing window.
 - Each test owns its state: a unique temporary directory or `UserDefaults` suite per test.

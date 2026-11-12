@@ -1,3 +1,4 @@
+import TestUtils
 #if os(macOS)
     import AppKit
     import ComposableArchitecture
@@ -18,7 +19,7 @@
 
         @Test
         func anInvalidNameFromAnInPlaceRenameSaysWhyAndAsksNothing() async {
-            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: Date(), size: 1, kind: "pdf")
+            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 1, kind: "pdf")
             var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
             state.renameSheetItem = item
             let store = TestStore(initialState: state) {
@@ -49,7 +50,7 @@
         @Test
         func renamingTheFileOfASearchPreviewRefreshesTheResults() async {
             var state = FavoritesFeature.State(serverURL: serverURL)
-            let renamed = FileItem(name: "b.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+            let renamed = FileItem(name: "b.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
             state.previewHost = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
             let store = TestStore(initialState: state) {
                 FavoritesFeature()
@@ -144,7 +145,7 @@
             let user = User(id: "1", username: "jdoe", email: nil, displayName: nil, roles: [])
             var state = MainTabFeature.State(serverURL: serverURL, user: user)
             #expect(!state.hasTransfersInFlight)
-            let item = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 1, kind: "txt")
+            let item = FileItem(name: "a.txt", path: "", dateModified: MockDate.date, size: 1, kind: "txt")
             state.downloadQueue.jobs.append(DownloadQueueFeature.DownloadJob(id: UUID(0), item: item, status: .downloading))
             #expect(state.hasTransfersInFlight)
             state.downloadQueue.jobs[id: UUID(0)]?.status = .completed
@@ -172,7 +173,7 @@
 
         @Test
         func savesFromAnyScreenReachTheAppShell() async {
-            let item = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+            let item = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
             let request = DownloadSaveRequest(item: item, target: .into(URL(fileURLWithPath: "/tmp")))
             let browse = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) { BrowseTabFeature() }
             await browse.send(.root(.delegate(.saveRequested([request]))))
@@ -191,7 +192,7 @@
             var state = MainTabFeature.State(serverURL: serverURL, user: user)
             state.favorites.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs"))
             let id = state.favorites.path.ids[0]
-            let folder = FileItem(name: "New", path: "Docs", dateModified: Date(), size: 0, kind: "directory")
+            let folder = FileItem(name: "New", path: "Docs", dateModified: MockDate.date, size: 0, kind: "directory")
             let store = TestStore(initialState: state) {
                 MainTabFeature()
             } withDependencies: {
@@ -224,8 +225,8 @@
 
         @Test
         func aSaveReportsByteProgressToItsQueueRow() async {
-            let item = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 4, kind: "txt")
-            let target = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            let item = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 4, kind: "txt")
+            let target = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name())
             let store = TestStore(initialState: DownloadQueueFeature.State(serverURL: serverURL)) {
                 DownloadQueueFeature()
             } withDependencies: {
@@ -234,7 +235,7 @@
                 $0.filesClient.flushDownloadConnections = {}
                 $0.filesClient.downloadItem = { _, _, onProgress in
                     onProgress(TransferProgress(receivedBytes: 4, expectedBytes: 4))
-                    let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+                    let file = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name())
                     try Data("data".utf8).write(to: file)
                     return file
                 }
@@ -251,11 +252,11 @@
 
         @Test
         func aDiskFailureDuringASaveReadsAsALocalProblem() async {
-            let item = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 4, kind: "txt")
+            let item = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 4, kind: "txt")
             let unwritable = URL(fileURLWithPath: "/System/NextExplorerAuditTest/a.txt")
             let client = FilesClient().with {
                 $0.downloadItem = { _, _, _ in
-                    let file = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+                    let file = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name())
                     try Data("data".utf8).write(to: file)
                     return file
                 }

@@ -4,6 +4,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @MainActor
 struct BrowseTabFeatureTests {
@@ -13,7 +14,7 @@ struct BrowseTabFeatureTests {
 
     @Test
     func openingAFolderFromTheRootPushesItOntoThePathStack() async {
-        let item = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
             BrowseTabFeature()
         }
@@ -25,10 +26,10 @@ struct BrowseTabFeatureTests {
 
     @Test
     func openingAFolderFromAPushedScreenPushesAnotherLevel() async {
-        let root = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let root = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = BrowseTabFeature.State(serverURL: serverURL)
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: root.id, title: root.name))
-        let nested = FileItem(name: "Vacation", path: "Photos", dateModified: Date(), size: 0, kind: "directory")
+        let nested = FileItem(name: "Vacation", path: "Photos", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let store = TestStore(initialState: state) {
             BrowseTabFeature()
@@ -173,7 +174,7 @@ struct BrowseTabFeatureTests {
 
     @Test
     func syncPathStackRefreshesOnlyTheRootWhenNoFolderIsPushed() async {
-        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         let store = TestStore(initialState: BrowseTabFeature.State(serverURL: serverURL)) {
             BrowseTabFeature()
         } withDependencies: {
@@ -195,7 +196,7 @@ struct BrowseTabFeatureTests {
         var state = BrowseTabFeature.State(serverURL: serverURL)
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos/Old", title: "Old"))
-        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let store = TestStore(initialState: state) {
             BrowseTabFeature()
@@ -224,7 +225,7 @@ struct BrowseTabFeatureTests {
     func directoryContentsChangedFromAPushedScreenReSyncsTheWholeStack() async {
         var state = BrowseTabFeature.State(serverURL: serverURL)
         state.path.append(BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos"))
-        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let store = TestStore(initialState: state) {
             BrowseTabFeature()

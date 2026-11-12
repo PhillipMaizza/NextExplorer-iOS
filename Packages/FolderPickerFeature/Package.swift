@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "FolderPickerFeature", targets: ["FolderPickerFeature"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../CoreModels"),
         .package(path: "../DesignSystem"),
         .package(path: "../FilesClient"),
@@ -29,6 +30,7 @@ let package = Package(
         .testTarget(
             name: "FolderPickerFeatureTests",
             dependencies: [
+                "TestUtils",
                 "FolderPickerFeature",
                 .product(name: "ComposableArchitecture", package: "swift-composable-architecture"),
             ],

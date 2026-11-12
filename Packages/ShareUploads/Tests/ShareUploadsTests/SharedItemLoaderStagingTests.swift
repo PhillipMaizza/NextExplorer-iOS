@@ -3,11 +3,12 @@ import Foundation
 @testable import ShareUploads
 import Testing
 import UniformTypeIdentifiers
+import TestUtils
 
 @Suite("Shared item staging")
 struct SharedItemLoaderStagingTests {
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingTests-\(UUID().uuidString)")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingTests-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
@@ -280,7 +281,7 @@ struct SharedItemLoaderStagingTests {
 
     @Test("A failed download request stops the read and the error is passed on")
     func downloadFailure() throws {
-        let file = FileManager.default.temporaryDirectory.appendingPathComponent("x-\(UUID().uuidString)")
+        let file = FileManager.default.temporaryDirectory.appendingPathComponent("x-\(TestID.uuid().uuidString)")
         let access = FileAccess(ubiquityStatus: { _ in .notDownloaded }, startDownload: { _ in throw CocoaError(.fileReadNoPermission) })
         #expect(throws: CocoaError.self) {
             try access.read(file) { $0 }

@@ -3,6 +3,7 @@ import Foundation
 @testable import ShareUploads
 import Testing
 import UniformTypeIdentifiers
+import TestUtils
 
 @Suite("Share uploads")
 struct ShareUploadsTests {
@@ -19,14 +20,14 @@ struct ShareUploadsTests {
     )
 
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("ShareUploadsTests-\(UUID().uuidString)")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("ShareUploadsTests-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }
 
     @Test("Upload defaults are kept per account and forgotten on removal")
     func defaultsPerAccount() throws {
-        let suite = "ShareUploadsTests-\(UUID().uuidString)"
+        let suite = "ShareUploadsTests-\(TestID.uuid().uuidString)"
         let defaults = try #require(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
         let client = UploadDefaultsClient.live(defaults: defaults)
@@ -103,7 +104,7 @@ struct ShareUploadsTests {
         let center = RecordingCenter()
         let uploader = BackgroundUploader(root: root, notifier: UploadNotifier { _ in }, notifications: center.center)
         func pendingBatch(for accountID: String) throws -> URL {
-            let id = UUID().uuidString
+            let id = TestID.uuid().uuidString
             let directory = root.appendingPathComponent(id, isDirectory: true)
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             try Manifest(

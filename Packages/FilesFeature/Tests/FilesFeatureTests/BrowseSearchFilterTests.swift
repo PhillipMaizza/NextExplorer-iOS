@@ -3,6 +3,7 @@ import CoreModels
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @MainActor
 struct BrowseSearchFilterTests {
@@ -91,7 +92,7 @@ struct BrowseSearchFilterTests {
         // it would wrongly clear a category the backend subtree contains but this folder doesn't.
         let videoHit = SearchResultItem(name: "clip.mp4", path: "Photos/Trips", kind: "file")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
-        state.items = [FileItem(name: "report.pdf", path: "Photos", dateModified: Date(), size: 0, kind: "pdf")]
+        state.items = [FileItem(name: "report.pdf", path: "Photos", dateModified: MockDate.date, size: 0, kind: "pdf")]
         state.searchResults = IdentifiedArray(uniqueElements: [videoHit])
         state.selectedSearchCategories = [.video]
         let clock = TestClock()

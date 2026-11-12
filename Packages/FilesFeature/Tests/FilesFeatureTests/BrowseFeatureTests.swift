@@ -7,6 +7,7 @@ import FolderPickerFeature
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
 @Suite(.dependencies)
 @MainActor
@@ -14,7 +15,7 @@ struct BrowseFeatureTests {
     @Test
     func onAppearLoadsRootItems() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Docs", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Docs", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -70,7 +71,7 @@ struct BrowseFeatureTests {
     @Test
     func onAppearIsANoOpWhenItemsAreAlreadyLoaded() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Docs", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Docs", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
         state.phase = .loaded
@@ -115,8 +116,8 @@ struct BrowseFeatureTests {
     @Test
     func refreshButtonTappedReloadsEvenWhenItemsAreAlreadyLoaded() async {
         let serverURL = URL(string: "https://example.com")!
-        let existing = FileItem(name: "Old", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let existing = FileItem(name: "Old", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [existing]
 
@@ -147,7 +148,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnDirectoryEmitsOpenFolderDelegate() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Docs", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Docs", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -160,7 +161,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnAKnownBinaryFormatPresentsTheUnsupportedPreviewAndFetchesNothing() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "installer.exe", path: "", dateModified: Date(), size: 10, kind: "exe")
+        let file = FileItem(name: "installer.exe", path: "", dateModified: MockDate.date, size: 10, kind: "exe")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -179,7 +180,7 @@ struct BrowseFeatureTests {
         // guarded on `isPreviewable || isBrowsableArchive` instead of
         // `!isUnsupportedForPreview`, letting this slip through to `StreamingPreviewView`
         // with a URL it can't actually play. It now lands on `UnsupportedFilePreviewView`.
-        let file = FileItem(name: "clip.webm", path: "", dateModified: Date(), size: 10, kind: "webm")
+        let file = FileItem(name: "clip.webm", path: "", dateModified: MockDate.date, size: 10, kind: "webm")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -193,7 +194,7 @@ struct BrowseFeatureTests {
         let serverURL = URL(string: "https://example.com")!
         // `.zip`/`.rar` are `isBrowsableArchive` (see the dedicated test for those): this
         // covers an archive kind neither `ZIPFoundation` nor `Unrar.swift` can list.
-        let file = FileItem(name: "bundle.7z", path: "", dateModified: Date(), size: 10, kind: "7z")
+        let file = FileItem(name: "bundle.7z", path: "", dateModified: MockDate.date, size: 10, kind: "7z")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -205,7 +206,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnATextFileFetchesItsContentAndEmitsNoDelegate() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+        let file = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 10, kind: "txt")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -230,7 +231,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnAGoogleDriveStubOpensItsLinkInsteadOfPreviewing() async {
         let serverURL = URL(string: "https://example.com")!
-        let stub = FileItem(name: "Budget.gsheet", path: "", dateModified: Date(), size: 120, kind: "gsheet")
+        let stub = FileItem(name: "Budget.gsheet", path: "", dateModified: MockDate.date, size: 120, kind: "gsheet")
         let opened = LockIsolated<URL?>(nil)
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
@@ -252,7 +253,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnAnUnreadableGoogleDriveStubFallsBackToTheTextViewer() async {
         let serverURL = URL(string: "https://example.com")!
-        let stub = FileItem(name: "broken.gdoc", path: "", dateModified: Date(), size: 5, kind: "gdoc")
+        let stub = FileItem(name: "broken.gdoc", path: "", dateModified: MockDate.date, size: 5, kind: "gdoc")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -273,7 +274,7 @@ struct BrowseFeatureTests {
     @Test
     func openInBrowserHandsTheRawFileURLToSafari() async {
         let serverURL = URL(string: "https://example.com")!
-        let page = FileItem(name: "index.html", path: "site", dateModified: Date(), size: 40, kind: "html")
+        let page = FileItem(name: "index.html", path: "site", dateModified: MockDate.date, size: 40, kind: "html")
         let opened = LockIsolated<URL?>(nil)
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "site", title: "Browse")) {
@@ -290,7 +291,7 @@ struct BrowseFeatureTests {
     @Test
     func openInBrowserIsIgnoredForNonHTMLFiles() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 4, kind: "txt")
+        let file = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 4, kind: "txt")
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
         }
@@ -301,7 +302,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnAStreamableMediaFileSetsPreviewItemWithoutDownloading() async {
         let serverURL = URL(string: "https://example.com")!
-        let video = FileItem(name: "clip.mp4", path: "", dateModified: Date(), size: 0, kind: "mp4")
+        let video = FileItem(name: "clip.mp4", path: "", dateModified: MockDate.date, size: 0, kind: "mp4")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -317,7 +318,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnABrowsableArchiveSetsPreviewItemWithoutDownloading() async {
         let serverURL = URL(string: "https://example.com")!
-        let archive = FileItem(name: "bundle.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
+        let archive = FileItem(name: "bundle.zip", path: "", dateModified: MockDate.date, size: 0, kind: "zip")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -333,7 +334,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnAnSVGDownloadsItForPreviewUnlikeOtherImages() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "logo.svg", path: "", dateModified: Date(), size: 0, kind: "svg")
+        let file = FileItem(name: "logo.svg", path: "", dateModified: MockDate.date, size: 0, kind: "svg")
         let fileURL = URL(fileURLWithPath: "/tmp/logo.svg")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
@@ -358,7 +359,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnATextFileFailingToFetchSurfacesAReadableErrorMessage() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+        let file = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 10, kind: "txt")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -378,7 +379,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnAPDFDownloadsItForPreviewAndEmitsNoDelegate() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "report.pdf", path: "", dateModified: Date(), size: 10, kind: "pdf")
+        let file = FileItem(name: "report.pdf", path: "", dateModified: MockDate.date, size: 10, kind: "pdf")
         let fileURL = URL(fileURLWithPath: "/tmp/report.pdf")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
@@ -401,7 +402,7 @@ struct BrowseFeatureTests {
     @Test
     func rowTappedOnAWordDocumentDownloadsViaTheUnrestrictedDownloadEndpoint() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "report.docx", path: "", dateModified: Date(), size: 10, kind: "docx")
+        let file = FileItem(name: "report.docx", path: "", dateModified: MockDate.date, size: 10, kind: "docx")
         let fileURL = URL(fileURLWithPath: "/tmp/report.docx")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
@@ -426,7 +427,7 @@ struct BrowseFeatureTests {
     @Test
     func textSaveTappedSavesContentAndUpdatesState() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+        let file = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 10, kind: "txt")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.previewItem = file
         state.textContent = "hello"
@@ -449,7 +450,7 @@ struct BrowseFeatureTests {
     @Test
     func textSaveTappedFailureSurfacesAReadableErrorMessage() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+        let file = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 10, kind: "txt")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.previewItem = file
         state.textContent = "hello"
@@ -482,7 +483,7 @@ struct BrowseFeatureTests {
     @Test
     func previewDismissedClearsAllPreviewState() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
+        let file = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 10, kind: "txt")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.previewItem = file
         state.previewFileURL = URL(fileURLWithPath: "/tmp/notes.txt")
@@ -504,7 +505,7 @@ struct BrowseFeatureTests {
         let serverURL = URL(string: "https://example.com")!
         let favorite = Favorite(
             id: "1", path: "Documents", label: nil, icon: "folder", color: nil,
-            position: 0, createdAt: Date(), updatedAt: Date()
+            position: 0, createdAt: MockDate.date, updatedAt: MockDate.date
         )
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
@@ -542,8 +543,8 @@ struct BrowseFeatureTests {
     @Test
     func thisFolderSearchPreFillsFromLoadedItemsThenHitsTheBackendScopedToTheCurrentDirectory() async {
         let serverURL = URL(string: "https://example.com")!
-        let loadedMatch = FileItem(name: "vacation.jpg", path: "Photos", dateModified: Date(), size: 0, kind: "jpg")
-        let loadedNonMatch = FileItem(name: "notes.txt", path: "Photos", dateModified: Date(), size: 0, kind: "txt")
+        let loadedMatch = FileItem(name: "vacation.jpg", path: "Photos", dateModified: MockDate.date, size: 0, kind: "jpg")
+        let loadedNonMatch = FileItem(name: "notes.txt", path: "Photos", dateModified: MockDate.date, size: 0, kind: "txt")
         let deepHit = SearchResultItem(name: "vacation-2.jpg", path: "Photos/Trips", kind: "file")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Photos", title: "Photos")
         state.items = [loadedMatch, loadedNonMatch]
@@ -575,7 +576,7 @@ struct BrowseFeatureTests {
     @Test
     func queriesShorterThanTheServerMinimumKeepTheInstantMatchesWithoutASearchRequest() async {
         let serverURL = URL(string: "https://example.com")!
-        let loaded = FileItem(name: "Payslips", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let loaded = FileItem(name: "Payslips", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Files")
         state.items = [loaded]
         let clock = TestClock()
@@ -718,7 +719,7 @@ struct BrowseFeatureTests {
     @Test
     func clearingTheSearchQueryCancelsAnInFlightSearchAndClearsResults() async {
         let serverURL = URL(string: "https://example.com")!
-        let match = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let match = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [match]
         let clock = TestClock()
@@ -747,7 +748,7 @@ struct BrowseFeatureTests {
         // Regression: `.cancellable(id: CancelID.search, cancelInFlight: true)` must cancel the
         // previous keystroke's debounced request, or a stale response could land last.
         let serverURL = URL(string: "https://example.com")!
-        let match = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let match = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         let result = SearchResultItem(name: "vacation.jpg", path: "", kind: "file")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [match]
@@ -993,7 +994,7 @@ struct BrowseFeatureTests {
     @Test
     func deleteTappedSetsTheDeleteConfirmationItemAndChecksShareImpact() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -1016,7 +1017,7 @@ struct BrowseFeatureTests {
     @Test
     func deleteTappedTreatsAFailedShareImpactCheckAsUnavailable() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -1036,8 +1037,8 @@ struct BrowseFeatureTests {
     @Test
     func bulkDeleteTappedChecksShareImpactForEverySelectedItem() async {
         let serverURL = URL(string: "https://example.com")!
-        let one = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        let two = FileItem(name: "b.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let one = FileItem(name: "a.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
+        let two = FileItem(name: "b.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [one, two]
         state.selectedItemIDs = [one.id, two.id]
@@ -1066,8 +1067,8 @@ struct BrowseFeatureTests {
     func anInPlaceMutationWritesTheCorrectedListingThroughToTheCache() async {
         let serverURL = URL(string: "https://example.com")!
         let cache = DirectoryCacheStore.inMemory()
-        let existing = FileItem(name: "Old", path: "Docs", dateModified: Date(), size: 0, kind: "txt")
-        let newFolder = FileItem(name: "Reports", path: "Docs", dateModified: Date(), size: 0, kind: "directory")
+        let existing = FileItem(name: "Old", path: "Docs", dateModified: MockDate.date, size: 0, kind: "txt")
+        let newFolder = FileItem(name: "Reports", path: "Docs", dateModified: MockDate.date, size: 0, kind: "directory")
 
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
         state.access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
@@ -1093,7 +1094,7 @@ struct BrowseFeatureTests {
     @Test
     func rapidFavoriteDoubleTapFiresASingleRequest() async {
         let serverURL = URL(string: "https://example.com")!
-        let dir = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let dir = FileItem(name: "Vacation", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         let clock = TestClock()
         let completions = LockIsolated(0)
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
@@ -1105,7 +1106,7 @@ struct BrowseFeatureTests {
             $0.filesClient.addFavorite = { _, path in
                 try await clock.sleep(for: .seconds(1))
                 completions.withValue { $0 += 1 }
-                return Favorite(id: "1", path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+                return Favorite(id: "1", path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: MockDate.date, updatedAt: MockDate.date)
             }
         }
         store.exhaustivity = .off
@@ -1125,7 +1126,7 @@ struct BrowseFeatureTests {
         // directory: this mirrors that restriction client-side rather than round-tripping
         // to discover it.
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let file = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -1137,7 +1138,7 @@ struct BrowseFeatureTests {
     @Test
     func favoriteToggleAddsAFavoriteWhenNotAlreadyFavorited() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Vacation", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.hasLoadedFavorites = true
@@ -1145,7 +1146,7 @@ struct BrowseFeatureTests {
             BrowseFeature()
         } withDependencies: {
             $0.filesClient.addFavorite = { _, path in
-                Favorite(id: "1", path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+                Favorite(id: "1", path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: MockDate.date, updatedAt: MockDate.date)
             }
         }
 
@@ -1159,7 +1160,7 @@ struct BrowseFeatureTests {
     @Test
     func favoriteToggleRemovesAnExistingFavorite() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Vacation", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.favoritePaths = ["Vacation"]
         state.hasLoadedFavorites = true
@@ -1180,7 +1181,7 @@ struct BrowseFeatureTests {
     @Test
     func favoriteToggleFailureSurfacesAReadableErrorMessage() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Vacation", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Vacation", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.hasLoadedFavorites = true
@@ -1201,7 +1202,7 @@ struct BrowseFeatureTests {
     @Test
     func renameConfirmedWithAnEmptyNameClearsTheSheetWithoutCallingTheServer() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.renameSheetItem = item
 
@@ -1217,7 +1218,7 @@ struct BrowseFeatureTests {
     @Test
     func renameConfirmedWithTheUnchangedNameClearsTheSheetWithoutCallingTheServer() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.renameSheetItem = item
 
@@ -1233,8 +1234,8 @@ struct BrowseFeatureTests {
     @Test
     func renameConfirmedReplacesTheRenamedItemInPlace() async {
         let serverURL = URL(string: "https://example.com")!
-        let original = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
-        let renamed = FileItem(name: "beach.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let original = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
+        let renamed = FileItem(name: "beach.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [original]
         state.renameSheetItem = original
@@ -1259,7 +1260,7 @@ struct BrowseFeatureTests {
     @Test
     func renameConfirmedFailureSurfacesAReadableErrorMessageAndLeavesTheItemUnchanged() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
         state.renameSheetItem = item
@@ -1320,8 +1321,8 @@ struct BrowseFeatureTests {
     @Test
     func newFolderConfirmedAppendsTheCreatedFolderOnSuccess() async {
         let serverURL = URL(string: "https://example.com")!
-        let existing = FileItem(name: "old.txt", path: "Docs", dateModified: Date(), size: 0, kind: "txt")
-        let created = FileItem(name: "Reports", path: "Docs", dateModified: Date(), size: 0, kind: "directory")
+        let existing = FileItem(name: "old.txt", path: "Docs", dateModified: MockDate.date, size: 0, kind: "txt")
+        let created = FileItem(name: "Reports", path: "Docs", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
         state.items = [existing]
         state.isNewFolderSheetPresented = true
@@ -1403,7 +1404,7 @@ struct BrowseFeatureTests {
     @Test
     func newFileConfirmedCreatesTheFileAndOpensIt() async {
         let serverURL = URL(string: "https://example.com")!
-        let created = FileItem(name: "notes.txt", path: "Docs", dateModified: Date(), size: 0, kind: "txt")
+        let created = FileItem(name: "notes.txt", path: "Docs", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
         state.isNewFileSheetPresented = true
         let requested = LockIsolated<(String, String)?>(nil)
@@ -1477,7 +1478,7 @@ struct BrowseFeatureTests {
     @Test
     func deleteCancelledClearsTheDeleteConfirmationItemAndShareImpactCheck() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.deleteConfirmationItem = item
         state.deleteImpactCheck = .loaded(DeleteImpact(shareCount: 1))
@@ -1495,7 +1496,7 @@ struct BrowseFeatureTests {
     @Test
     func deleteConfirmedRemovesTheItemAndItsFavoriteOnSuccess() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
         state.favoritePaths = [item.id]
@@ -1522,7 +1523,7 @@ struct BrowseFeatureTests {
     @Test
     func deleteConfirmedFromPreviewDismissesTheCoverThenDeletesAfterASettle() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
         state.previewItem = item
@@ -1555,8 +1556,8 @@ struct BrowseFeatureTests {
     @Test
     func renameConfirmedWhilePreviewingRepointsTheCoverAtTheRenamedItemWithoutDismissing() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
-        let renamed = FileItem(name: "beach.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
+        let renamed = FileItem(name: "beach.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
         state.previewItem = item
@@ -1583,7 +1584,7 @@ struct BrowseFeatureTests {
     @Test
     func openDownloadsFromPreviewDismissesTheCoverThenSwitchesTabsAfterASettle() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "archive.bin", path: "", dateModified: Date(), size: 0, kind: "bin")
+        let file = FileItem(name: "archive.bin", path: "", dateModified: MockDate.date, size: 0, kind: "bin")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.previewItem = file
 
@@ -1605,7 +1606,7 @@ struct BrowseFeatureTests {
     @Test
     func goToSharedTabFromPreviewDismissesTheCoverThenSwitchesTabsAfterASettle() async {
         let serverURL = URL(string: "https://example.com")!
-        let file = FileItem(name: "photo.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let file = FileItem(name: "photo.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.previewItem = file
 
@@ -1627,7 +1628,7 @@ struct BrowseFeatureTests {
     @Test
     func deleteConfirmedOfANonFavoritedItemDoesNotSignalTheFavoritesTabToRefresh() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "vacation.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
+        let item = FileItem(name: "vacation.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
         state.deleteConfirmationItem = item
@@ -1651,7 +1652,7 @@ struct BrowseFeatureTests {
     @Test
     func deleteConfirmedFailureSurfacesAReadableErrorMessageAndKeepsTheItem() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "readonly.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let item = FileItem(name: "readonly.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
         state.deleteConfirmationItem = item
@@ -1677,8 +1678,8 @@ struct BrowseFeatureTests {
     @Test
     func extractZipTappedAddsTheExtractedFolderOnSuccess() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "bundle.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
-        let extracted = FileItem(name: "bundle", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "bundle.zip", path: "", dateModified: MockDate.date, size: 0, kind: "zip")
+        let extracted = FileItem(name: "bundle", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
 
@@ -1702,7 +1703,7 @@ struct BrowseFeatureTests {
     @Test
     func extractZipTappedFailureSurfacesAReadableErrorMessage() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "bundle.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
+        let item = FileItem(name: "bundle.zip", path: "", dateModified: MockDate.date, size: 0, kind: "zip")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -1724,8 +1725,8 @@ struct BrowseFeatureTests {
     @Test
     func compressTappedAddsTheNewArchiveOnSuccess() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let compressed = FileItem(name: "Documents.zip", path: "", dateModified: Date(), size: 0, kind: "zip")
+        let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let compressed = FileItem(name: "Documents.zip", path: "", dateModified: MockDate.date, size: 0, kind: "zip")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.items = [item]
 
@@ -1763,7 +1764,7 @@ struct BrowseFeatureTests {
     @Test
     func compressTappedFailureSurfacesAReadableErrorMessage() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -1789,7 +1790,7 @@ struct BrowseFeatureTests {
         @Test
         func downloadTappedHandsTheItemToTheAppDownloadQueue() async {
             let serverURL = URL(string: "https://example.com")!
-            let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 1_600_000_000, kind: "mkv")
+            let item = FileItem(name: "movie.mkv", path: "Files", dateModified: MockDate.date, size: 1_600_000_000, kind: "mkv")
 
             let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")) {
                 BrowseFeature()
@@ -1802,7 +1803,7 @@ struct BrowseFeatureTests {
         @Test
         func downloadTappedFromAPreviewAlsoConfirmsWithAToast() async {
             let serverURL = URL(string: "https://example.com")!
-            let item = FileItem(name: "movie.mkv", path: "Files", dateModified: Date(), size: 0, kind: "mkv")
+            let item = FileItem(name: "movie.mkv", path: "Files", dateModified: MockDate.date, size: 0, kind: "mkv")
             var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
             state.previewItem = item
 
@@ -1819,9 +1820,9 @@ struct BrowseFeatureTests {
         @Test
         func bulkDownloadTappedQueuesTheSelectionInListingOrderAndLeavesSelectMode() async {
             let serverURL = URL(string: "https://example.com")!
-            let folder = FileItem(name: "Photos", path: "Files", dateModified: Date(), size: 0, kind: "directory")
-            let file = FileItem(name: "notes.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
-            let other = FileItem(name: "skip.txt", path: "Files", dateModified: Date(), size: 1, kind: "txt")
+            let folder = FileItem(name: "Photos", path: "Files", dateModified: MockDate.date, size: 0, kind: "directory")
+            let file = FileItem(name: "notes.txt", path: "Files", dateModified: MockDate.date, size: 1, kind: "txt")
+            let other = FileItem(name: "skip.txt", path: "Files", dateModified: MockDate.date, size: 1, kind: "txt")
             var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Files", title: "Files")
             state.items = [folder, file, other]
             state.isSelecting = true
@@ -1987,8 +1988,8 @@ struct BrowseFeatureTests {
 
     @Test
     func selectAllTappedSelectsEveryDisplayedItem() async {
-        let itemA = FileItem(name: "A", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let itemB = FileItem(name: "B", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let itemA = FileItem(name: "A", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let itemB = FileItem(name: "B", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
         state.items = [itemA, itemB]
         state.isSelecting = true
@@ -2019,8 +2020,8 @@ struct BrowseFeatureTests {
 
     @Test
     func bulkDeleteConfirmedDeletesEverySelectedItemInOneCall() async {
-        let itemA = FileItem(name: "A", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let itemB = FileItem(name: "B", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let itemA = FileItem(name: "A", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let itemB = FileItem(name: "B", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
         state.items = [itemA, itemB]
         state.isSelecting = true
@@ -2053,7 +2054,7 @@ struct BrowseFeatureTests {
 
     @Test
     func bulkDeleteConfirmedFailureSurfacesAReadableErrorMessage() async {
-        let item = FileItem(name: "A", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "A", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
         state.items = [item]
         state.isSelecting = true
@@ -2077,9 +2078,9 @@ struct BrowseFeatureTests {
 
     @Test
     func bulkFavoriteTappedTogglesEachSelectedDirectory() async {
-        let folder = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let alreadyFavorited = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let folder = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let alreadyFavorited = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let file = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
         state.items = [folder, alreadyFavorited, file]
         state.favoritePaths = [alreadyFavorited.id]
@@ -2094,7 +2095,7 @@ struct BrowseFeatureTests {
         } withDependencies: {
             $0.filesClient.addFavorite = { _, path in
                 addedPaths.withValue { $0.append(path) }
-                return Favorite(id: "1", path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+                return Favorite(id: "1", path: path, label: nil, icon: "star", color: nil, position: 0, createdAt: MockDate.date, updatedAt: MockDate.date)
             }
             $0.filesClient.removeFavorite = { _, path in
                 removedPaths.withValue { $0.append(path) }
@@ -2118,7 +2119,7 @@ struct BrowseFeatureTests {
 
     @Test
     func bulkFavoriteTappedWithNoDirectoriesSelectedDoesNothing() async {
-        let file = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let file = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = BrowseFeature.State(serverURL: URL(string: "https://example.com")!, directoryPath: "", title: "Browse")
         state.items = [file]
         state.isSelecting = true
@@ -2138,7 +2139,7 @@ struct BrowseFeatureTests {
     @Test
     func infoTappedOnAFolderFetchesMetadataAndServerDiskUsage() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         let metadata = FileMetadata(
             path: "Photos",
             name: "Photos",
@@ -2177,8 +2178,8 @@ struct BrowseFeatureTests {
     @Test
     func infoTappedOnAFileSkipsTheUsageFetch() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 12, kind: "txt")
-        let metadata = FileMetadata(path: "notes.txt", name: "notes.txt", kind: "txt", size: 12, dateModified: Date(), dateCreated: Date())
+        let item = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 12, kind: "txt")
+        let metadata = FileMetadata(path: "notes.txt", name: "notes.txt", kind: "txt", size: 12, dateModified: MockDate.date, dateCreated: MockDate.date)
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -2215,7 +2216,7 @@ struct BrowseFeatureTests {
     @Test
     func infoTappedFailureSurfacesAReadableErrorMessage() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let item = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
@@ -2235,8 +2236,8 @@ struct BrowseFeatureTests {
     @Test
     func infoTappedOnADifferentItemWhileOneIsAlreadyShowingReplacesIt() async {
         let serverURL = URL(string: "https://example.com")!
-        let first = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
-        let second = FileItem(name: "Documents", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let first = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+        let second = FileItem(name: "Documents", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         let fixedDate = Date(timeIntervalSince1970: 1_800_000_000)
         let secondMetadata = FileMetadata(path: "Documents", name: "Documents", kind: "directory", size: 0, dateModified: fixedDate, dateCreated: fixedDate)
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
@@ -2267,10 +2268,10 @@ struct BrowseFeatureTests {
     @Test
     func infoDismissedClearsAllInfoState() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "Photos", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let item = FileItem(name: "Photos", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
         state.infoItem = item
-        state.infoMetadata = FileMetadata(path: "Photos", name: "Photos", kind: "directory", size: 0, dateModified: Date(), dateCreated: Date())
+        state.infoMetadata = FileMetadata(path: "Photos", name: "Photos", kind: "directory", size: 0, dateModified: MockDate.date, dateCreated: MockDate.date)
         state.infoUsage = StorageUsage(path: "Photos", size: 1, free: 1, total: 2)
         state.infoPhase = .failed("some error")
 
@@ -2289,7 +2290,7 @@ struct BrowseFeatureTests {
     @Test
     func permissionsTappedPresentsTheSheetSeededFromTheItemAndDismissClearsIt() async {
         let serverURL = URL(string: "https://example.com")!
-        let item = FileItem(name: "report.pdf", path: "Documents", dateModified: Date(), size: 10, kind: "pdf")
+        let item = FileItem(name: "report.pdf", path: "Documents", dateModified: MockDate.date, size: 10, kind: "pdf")
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {
             BrowseFeature()
         }
@@ -2332,8 +2333,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func foldersAlwaysSortBeforeFilesRegardlessOfSortOption() {
-        let file = FileItem(name: "aaa.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        let folder = FileItem(name: "zzz", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let file = FileItem(name: "aaa.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
+        let folder = FileItem(name: "zzz", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = makeState(showHiddenFiles: true)
         state.items = [file, folder]
 
@@ -2342,8 +2343,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func foldersAlwaysSortBeforeFilesEvenWhenDescending() {
-        let file = FileItem(name: "aaa.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        let folder = FileItem(name: "zzz", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let file = FileItem(name: "aaa.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
+        let folder = FileItem(name: "zzz", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         var state = makeState(showHiddenFiles: true, sortDirection: .descending)
         state.items = [file, folder]
 
@@ -2352,8 +2353,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func nameSortAscendingOrdersAtoZWithinEachGroup() {
-        let fileB = FileItem(name: "b.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        let fileA = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let fileB = FileItem(name: "b.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
+        let fileA = FileItem(name: "a.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = makeState(showHiddenFiles: true, sortOption: .name, sortDirection: .ascending)
         state.items = [fileB, fileA]
 
@@ -2362,8 +2363,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func nameSortDescendingOrdersZtoAWithinEachGroup() {
-        let fileB = FileItem(name: "b.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        let fileA = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let fileB = FileItem(name: "b.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
+        let fileA = FileItem(name: "a.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = makeState(showHiddenFiles: true, sortOption: .name, sortDirection: .descending)
         state.items = [fileA, fileB]
 
@@ -2372,8 +2373,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func sizeSortAscendingOrdersSmallestFirstWithinEachGroup() {
-        let small = FileItem(name: "small.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
-        let large = FileItem(name: "large.txt", path: "", dateModified: Date(), size: 1_000, kind: "txt")
+        let small = FileItem(name: "small.txt", path: "", dateModified: MockDate.date, size: 10, kind: "txt")
+        let large = FileItem(name: "large.txt", path: "", dateModified: MockDate.date, size: 1_000, kind: "txt")
         var state = makeState(showHiddenFiles: true, sortOption: .size, sortDirection: .ascending)
         state.items = [large, small]
 
@@ -2382,8 +2383,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func sizeSortDescendingOrdersLargestFirstWithinEachGroup() {
-        let small = FileItem(name: "small.txt", path: "", dateModified: Date(), size: 10, kind: "txt")
-        let large = FileItem(name: "large.txt", path: "", dateModified: Date(), size: 1_000, kind: "txt")
+        let small = FileItem(name: "small.txt", path: "", dateModified: MockDate.date, size: 10, kind: "txt")
+        let large = FileItem(name: "large.txt", path: "", dateModified: MockDate.date, size: 1_000, kind: "txt")
         var state = makeState(showHiddenFiles: true, sortOption: .size, sortDirection: .descending)
         state.items = [small, large]
 
@@ -2412,8 +2413,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func kindSortAscendingOrdersAlphabeticallyByExtensionWithinEachGroup() {
-        let jpg = FileItem(name: "photo.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
-        let txt = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let jpg = FileItem(name: "photo.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
+        let txt = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = makeState(showHiddenFiles: true, sortOption: .kind, sortDirection: .ascending)
         state.items = [txt, jpg]
 
@@ -2422,8 +2423,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func kindSortDescendingOrdersReverseAlphabeticallyByExtensionWithinEachGroup() {
-        let jpg = FileItem(name: "photo.jpg", path: "", dateModified: Date(), size: 0, kind: "jpg")
-        let txt = FileItem(name: "notes.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let jpg = FileItem(name: "photo.jpg", path: "", dateModified: MockDate.date, size: 0, kind: "jpg")
+        let txt = FileItem(name: "notes.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = makeState(showHiddenFiles: true, sortOption: .kind, sortDirection: .descending)
         state.items = [jpg, txt]
 
@@ -2435,8 +2436,8 @@ struct BrowseFeatureDisplayedItemsTests {
         // Regression: negating a `<` comparator to build `>` breaks `sorted`'s strict-weak-
         // ordering requirement exactly when two elements compare equal. This only asserts the
         // membership is preserved (no crash, no duplication/loss), not a specific tie order.
-        let first = FileItem(name: "a.txt", path: "", dateModified: Date(), size: 100, kind: "txt")
-        let second = FileItem(name: "b.txt", path: "", dateModified: Date(), size: 100, kind: "txt")
+        let first = FileItem(name: "a.txt", path: "", dateModified: MockDate.date, size: 100, kind: "txt")
+        let second = FileItem(name: "b.txt", path: "", dateModified: MockDate.date, size: 100, kind: "txt")
         var state = makeState(showHiddenFiles: true, sortOption: .size, sortDirection: .descending)
         state.items = [first, second]
 
@@ -2446,8 +2447,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func hiddenFilesAreDroppedWhenThePreferenceIsOff() {
-        let visible = FileItem(name: "visible.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        let hidden = FileItem(name: ".hidden", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let visible = FileItem(name: "visible.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
+        let hidden = FileItem(name: ".hidden", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = makeState(showHiddenFiles: false)
         state.items = [visible, hidden]
 
@@ -2456,8 +2457,8 @@ struct BrowseFeatureDisplayedItemsTests {
 
     @Test
     func hiddenFilesAreKeptWhenThePreferenceIsOn() {
-        let visible = FileItem(name: "visible.txt", path: "", dateModified: Date(), size: 0, kind: "txt")
-        let hidden = FileItem(name: ".hidden", path: "", dateModified: Date(), size: 0, kind: "txt")
+        let visible = FileItem(name: "visible.txt", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
+        let hidden = FileItem(name: ".hidden", path: "", dateModified: MockDate.date, size: 0, kind: "txt")
         var state = makeState(showHiddenFiles: true)
         state.items = [visible, hidden]
 
@@ -3147,7 +3148,7 @@ struct BrowseFeatureTransferTests {
         let serverURL = URL(string: "https://example.com")!
         let prefetched = LockIsolated<[String]>([])
         let favorites = ["Work", "Trips"].enumerated().map { index, path in
-            Favorite(id: "\(index)", path: path, label: nil, icon: "folder", color: nil, position: index, createdAt: Date(), updatedAt: Date())
+            Favorite(id: "\(index)", path: path, label: nil, icon: "folder", color: nil, position: index, createdAt: MockDate.date, updatedAt: MockDate.date)
         }
 
         let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")) {

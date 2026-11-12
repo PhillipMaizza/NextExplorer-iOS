@@ -2,6 +2,7 @@ import CoreModels
 @testable import FilesClient
 import Foundation
 import Testing
+import TestUtils
 
 @Suite(.serialized)
 struct DirectoryCacheStoreTests {
@@ -9,7 +10,7 @@ struct DirectoryCacheStoreTests {
 
     private func makeStore() -> (DirectoryCacheStore, URL) {
         let root = FileManager.default.temporaryDirectory
-            .appendingPathComponent("dircache-test-\(UUID().uuidString)")
+            .appendingPathComponent("dircache-test-\(TestID.name())")
         return (DirectoryCacheStore.onDisk(rootDirectory: root), root)
     }
 
@@ -48,7 +49,7 @@ struct DirectoryCacheStoreTests {
     func etagAndWriteTimeRoundTrip() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        let before = Date()
+        let before = MockDate.date
 
         store.write(
             serverURL: serverURL, path: "docs",
@@ -73,8 +74,8 @@ struct DirectoryCacheStoreTests {
     func siblingPathsDoNotCollide() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: "a", result: result(path: "a", itemNames: ["one"]), etag: nil, fetchedAt: Date())
-        store.write(serverURL: serverURL, path: "b", result: result(path: "b", itemNames: ["two"]), etag: nil, fetchedAt: Date())
+        store.write(serverURL: serverURL, path: "a", result: result(path: "a", itemNames: ["one"]), etag: nil, fetchedAt: MockDate.date)
+        store.write(serverURL: serverURL, path: "b", result: result(path: "b", itemNames: ["two"]), etag: nil, fetchedAt: MockDate.date)
 
         #expect(store.read(serverURL: serverURL, path: "a")?.items.map(\.name) == ["one"])
         #expect(store.read(serverURL: serverURL, path: "b")?.items.map(\.name) == ["two"])
@@ -84,7 +85,7 @@ struct DirectoryCacheStoreTests {
     func leadingAndTrailingSlashesNormalizeToSameEntry() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: ["x"]), etag: nil, fetchedAt: Date())
+        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: ["x"]), etag: nil, fetchedAt: MockDate.date)
         #expect(store.read(serverURL: serverURL, path: "/docs/")?.items.map(\.name) == ["x"])
     }
 
@@ -92,7 +93,7 @@ struct DirectoryCacheStoreTests {
     func removeDropsEntry() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: ["x"]), etag: nil, fetchedAt: Date())
+        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: ["x"]), etag: nil, fetchedAt: MockDate.date)
         store.remove(serverURL: serverURL, path: "docs")
         #expect(store.read(serverURL: serverURL, path: "docs") == nil)
     }
@@ -101,8 +102,8 @@ struct DirectoryCacheStoreTests {
     func clearAllDropsEverything() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: "a", result: result(path: "a", itemNames: ["one"]), etag: nil, fetchedAt: Date())
-        store.write(serverURL: serverURL, path: "b", result: result(path: "b", itemNames: ["two"]), etag: nil, fetchedAt: Date())
+        store.write(serverURL: serverURL, path: "a", result: result(path: "a", itemNames: ["one"]), etag: nil, fetchedAt: MockDate.date)
+        store.write(serverURL: serverURL, path: "b", result: result(path: "b", itemNames: ["two"]), etag: nil, fetchedAt: MockDate.date)
         store.clearAll()
         #expect(store.read(serverURL: serverURL, path: "a") == nil)
         #expect(store.read(serverURL: serverURL, path: "b") == nil)
@@ -114,10 +115,10 @@ struct DirectoryCacheStoreTests {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
 
-        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: ["small"]), etag: nil, fetchedAt: Date())
+        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: ["small"]), etag: nil, fetchedAt: MockDate.date)
 
         let hugeNames = (0 ..< 60_000).map { "file-with-a-fairly-long-name-number-\($0).txt" }
-        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: hugeNames), etag: nil, fetchedAt: Date())
+        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: hugeNames), etag: nil, fetchedAt: MockDate.date)
 
         #expect(store.read(serverURL: serverURL, path: "docs") == nil)
     }
@@ -125,7 +126,7 @@ struct DirectoryCacheStoreTests {
     @Test
     func evictionDropsTheOldestEntriesOnceOverTheCount() {
         let root = FileManager.default.temporaryDirectory
-            .appendingPathComponent("dircache-test-\(UUID().uuidString)")
+            .appendingPathComponent("dircache-test-\(TestID.name())")
         defer { cleanUp(root) }
         let store = DirectoryCacheStore.onDisk(rootDirectory: root, maxEntries: 3)
 
@@ -185,7 +186,7 @@ struct DirectoryCacheStoreTests {
     func touchIsANoOpForAMissingEntry() {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.touch(serverURL: serverURL, path: "ghost", expectedETag: nil, fetchedAt: Date())
+        store.touch(serverURL: serverURL, path: "ghost", expectedETag: nil, fetchedAt: MockDate.date)
         #expect(store.read(serverURL: serverURL, path: "ghost") == nil)
     }
 
@@ -193,7 +194,7 @@ struct DirectoryCacheStoreTests {
     func schemaVersionMismatchDiscardsEntry() throws {
         let (store, root) = makeStore()
         defer { cleanUp(root) }
-        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: ["x"]), etag: nil, fetchedAt: Date())
+        store.write(serverURL: serverURL, path: "docs", result: result(path: "docs", itemNames: ["x"]), etag: nil, fetchedAt: MockDate.date)
 
         let cacheDirectory = root.appendingPathComponent("DirectoryCache")
         let file = try #require(

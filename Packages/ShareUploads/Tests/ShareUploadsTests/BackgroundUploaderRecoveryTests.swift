@@ -2,11 +2,12 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import Testing
+import TestUtils
 
 @Suite("Background uploader recovery")
 struct BackgroundUploaderRecoveryTests {
     private func tombstone(in harness: Harness, modifiedSecondsAgo: TimeInterval) throws -> URL {
-        let url = harness.root.appendingPathComponent(".removing-\(UUID().uuidString)", isDirectory: true)
+        let url = harness.root.appendingPathComponent(".removing-\(TestID.uuid().uuidString)", isDirectory: true)
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         try Data("leftover".utf8).write(to: url.appendingPathComponent("0.multipart"))
         try FileManager.default.setAttributes(

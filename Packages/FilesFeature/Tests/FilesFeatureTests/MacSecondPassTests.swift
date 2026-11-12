@@ -1,3 +1,4 @@
+import TestUtils
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
@@ -36,9 +37,9 @@
 
         @Test
         func rowsFromAnotherWindowMoveHereButNotOntoThemselves() async {
-            let elsewhere = FileItem(name: "a.txt", path: "Other", dateModified: Date(), size: 1, kind: "txt")
-            let alreadyHere = FileItem(name: "b.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
-            let parent = FileItem(name: "Docs", path: "", dateModified: Date(), size: 0, kind: "directory")
+            let elsewhere = FileItem(name: "a.txt", path: "Other", dateModified: MockDate.date, size: 1, kind: "txt")
+            let alreadyHere = FileItem(name: "b.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+            let parent = FileItem(name: "Docs", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
             let moved = LockIsolated<[String]>([])
             let access = access
             var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
@@ -92,23 +93,26 @@
 
         @Test
         func openWithCopiesOlderThanADayAreRemoved() throws {
-            let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+            let root = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)
             let fresh = root.appendingPathComponent("fresh", isDirectory: true)
             let stale = root.appendingPathComponent("stale", isDirectory: true)
             try FileManager.default.createDirectory(at: fresh, withIntermediateDirectories: true)
             try FileManager.default.createDirectory(at: stale, withIntermediateDirectories: true)
             defer { try? FileManager.default.removeItem(at: root) }
+            for directory in [fresh, stale] {
+                try FileManager.default.setAttributes([.modificationDate: MockDate.date, .creationDate: MockDate.date], ofItemAtPath: directory.path)
+            }
 
-            MacOpenWithCopy.removeStaleCopies(in: root, now: Date().addingTimeInterval(MacOpenWithCopy.staleCopyLifetime / 2))
+            MacOpenWithCopy.removeStaleCopies(in: root, now: MockDate.date.addingTimeInterval(MacOpenWithCopy.staleCopyLifetime / 2))
             #expect(FileManager.default.fileExists(atPath: stale.path))
-            MacOpenWithCopy.removeStaleCopies(in: root, now: Date().addingTimeInterval(MacOpenWithCopy.staleCopyLifetime + 60))
+            MacOpenWithCopy.removeStaleCopies(in: root, now: MockDate.date.addingTimeInterval(MacOpenWithCopy.staleCopyLifetime + 60))
             #expect(!FileManager.default.fileExists(atPath: stale.path))
             #expect(!FileManager.default.fileExists(atPath: fresh.path))
         }
 
         @Test
         func openWithCopiesAreLockedAndLeaveTheSourceAlone() async throws {
-            let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+            let folder = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
             let source = folder.appendingPathComponent("hash-named-blob")
             try Data("hello".utf8).write(to: source)

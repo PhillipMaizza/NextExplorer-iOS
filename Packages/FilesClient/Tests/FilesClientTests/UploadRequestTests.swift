@@ -1,6 +1,7 @@
 @testable import FilesClient
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Upload envelope")
 struct UploadRequestTests {
@@ -14,7 +15,7 @@ struct UploadRequestTests {
     }
 
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("UploadRequestTests-\(UUID().uuidString)")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("UploadRequestTests-\(TestID.name())")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }

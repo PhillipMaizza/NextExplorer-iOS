@@ -1,10 +1,11 @@
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 struct UploadStagingFolderTests {
     private func temporaryFolder() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }

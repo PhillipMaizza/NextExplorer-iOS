@@ -1,6 +1,7 @@
 import Foundation
 @testable import NetworkClient
 import Testing
+import TestUtils
 
 @Suite("NetworkClient timeout policy")
 struct NetworkClientTimeoutTests {
@@ -91,7 +92,7 @@ extension NetworkClientLiveTests {
     func anUploadAlwaysGetsTheLongBudgetAndATimeoutIsTimedOut() async throws {
         StubURLProtocol.failure = URLError(.timedOut)
         let client = NetworkClient.live(protocolClasses: [StubURLProtocol.self])
-        let body = FileManager.default.temporaryDirectory.appendingPathComponent("upload-body-\(UUID().uuidString)")
+        let body = FileManager.default.temporaryDirectory.appendingPathComponent("upload-body-\(TestID.name())")
         try Data("x".utf8).write(to: body)
         defer { try? FileManager.default.removeItem(at: body) }
 

@@ -4,6 +4,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @MainActor
 struct FavoriteEditFeatureTests {
@@ -14,7 +15,7 @@ struct FavoriteEditFeatureTests {
     ) -> Favorite {
         Favorite(
             id: "f1", path: "Documents", label: label, icon: icon, color: color,
-            position: 0, createdAt: Date(timeIntervalSince1970: 1_800_000_000), updatedAt: Date()
+            position: 0, createdAt: Date(timeIntervalSince1970: 1_800_000_000), updatedAt: MockDate.date
         )
     }
 
@@ -70,7 +71,7 @@ struct FavoriteEditFeatureTests {
 
         let updated = Favorite(
             id: "f1", path: "Documents", label: "Projects", icon: "BriefcaseIcon", color: "#0bd336",
-            position: 0, createdAt: initial.favorite.createdAt, updatedAt: Date()
+            position: 0, createdAt: initial.favorite.createdAt, updatedAt: MockDate.date
         )
         let store = TestStore(initialState: initial) {
             FavoriteEditFeature()

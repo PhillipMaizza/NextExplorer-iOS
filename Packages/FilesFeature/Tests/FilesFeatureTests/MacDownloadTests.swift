@@ -1,3 +1,4 @@
+import TestUtils
 #if os(macOS)
     import ComposableArchitecture
     import CoreModels
@@ -16,21 +17,21 @@
         private let access = FileAccess(canRead: true, canWrite: true, canUpload: true, canDelete: true, canShare: true, canDownload: true)
 
         private func temporaryFolder() throws -> URL {
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)
             try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
             return url
         }
 
         /// What `downloadItem` hands back: a fresh temporary file the caller moves away.
         private nonisolated static func downloadedFile(_ contents: String) throws -> URL {
-            let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+            let url = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name())
             try Data(contents.utf8).write(to: url)
             return url
         }
 
         @Test
         func cancellingTheSavePanelQueuesNothing() async {
-            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: Date(), size: 10, kind: "pdf")
+            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 10, kind: "pdf")
             let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")) {
                 BrowseFeature()
             } withDependencies: {
@@ -43,7 +44,7 @@
 
         @Test
         func aChosenPlaceGoesToTheDownloadQueueWithoutBlockingFileActions() async throws {
-            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: Date(), size: 10, kind: "pdf")
+            let item = FileItem(name: "report.pdf", path: "Docs", dateModified: MockDate.date, size: 10, kind: "pdf")
             let target = try temporaryFolder().appendingPathComponent("Saved report.pdf")
             let store = TestStore(initialState: BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")) {
                 BrowseFeature()
@@ -57,8 +58,8 @@
 
         @Test
         func severalItemsGoIntoThePickedFolder() async throws {
-            let first = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
-            let second = FileItem(name: "b.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+            let first = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+            let second = FileItem(name: "b.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
             let folder = try temporaryFolder()
             var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "Docs", title: "Docs")
             state.items = [first, second]
@@ -82,7 +83,7 @@
 
         @Test
         func aFileLandsAtTheChosenPlaceReplacingWhatWasThere() async throws {
-            let item = FileItem(name: "report.txt", path: "Docs", dateModified: Date(), size: 5, kind: "txt")
+            let item = FileItem(name: "report.txt", path: "Docs", dateModified: MockDate.date, size: 5, kind: "txt")
             let target = try temporaryFolder().appendingPathComponent("Saved report.txt")
             try Data("old".utf8).write(to: target)
             let client = FilesClient().with { $0.downloadItem = { _, _, _ in try Self.downloadedFile("hello") } }
@@ -99,8 +100,8 @@
         func intoAFolderNeverOverwritesAndNeverEscapesIt() async throws {
             let folder = try temporaryFolder()
             try Data("mine".utf8).write(to: folder.appendingPathComponent("a.txt"))
-            let clashing = FileItem(name: "a.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
-            let hostile = FileItem(name: "../../escape.txt", path: "Docs", dateModified: Date(), size: 1, kind: "txt")
+            let clashing = FileItem(name: "a.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
+            let hostile = FileItem(name: "../../escape.txt", path: "Docs", dateModified: MockDate.date, size: 1, kind: "txt")
             let client = FilesClient().with { $0.downloadItem = { _, _, _ in try Self.downloadedFile("new") } }
 
             let renamed = try await MacDownloadSaving.save(
@@ -118,10 +119,10 @@
 
         @Test
         func aFolderIsRecreatedAsARealFolderTreeWithByteProgress() async throws {
-            let folder = FileItem(name: "Trip", path: "", dateModified: Date(), size: 0, kind: "directory")
-            let photo = FileItem(name: "a.jpg", path: "Trip", dateModified: Date(), size: 6, kind: "jpg")
-            let nested = FileItem(name: "Day1", path: "Trip", dateModified: Date(), size: 0, kind: "directory")
-            let note = FileItem(name: "note.txt", path: "Trip/Day1", dateModified: Date(), size: 4, kind: "txt")
+            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            let photo = FileItem(name: "a.jpg", path: "Trip", dateModified: MockDate.date, size: 6, kind: "jpg")
+            let nested = FileItem(name: "Day1", path: "Trip", dateModified: MockDate.date, size: 0, kind: "directory")
+            let note = FileItem(name: "note.txt", path: "Trip/Day1", dateModified: MockDate.date, size: 4, kind: "txt")
             let target = try temporaryFolder().appendingPathComponent("Trip")
             let access = access
             let client = FilesClient().with {
@@ -147,8 +148,8 @@
 
         @Test
         func aFailedFolderSaveKeepsTheFolderAlreadyThere() async throws {
-            let folder = FileItem(name: "Trip", path: "", dateModified: Date(), size: 0, kind: "directory")
-            let photo = FileItem(name: "a.jpg", path: "Trip", dateModified: Date(), size: 1, kind: "jpg")
+            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            let photo = FileItem(name: "a.jpg", path: "Trip", dateModified: MockDate.date, size: 1, kind: "jpg")
             let target = try temporaryFolder().appendingPathComponent("Trip")
             try FileManager.default.createDirectory(at: target, withIntermediateDirectories: true)
             let kept = target.appendingPathComponent("keep.txt")
@@ -169,8 +170,8 @@
 
         @Test
         func anUnreadableSubfolderFailsTheSaveInsteadOfLeavingFilesOut() async throws {
-            let folder = FileItem(name: "Trip", path: "", dateModified: Date(), size: 0, kind: "directory")
-            let nested = FileItem(name: "Locked", path: "Trip", dateModified: Date(), size: 0, kind: "directory")
+            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
+            let nested = FileItem(name: "Locked", path: "Trip", dateModified: MockDate.date, size: 0, kind: "directory")
             let target = try temporaryFolder().appendingPathComponent("Trip")
             let access = access
             let client = FilesClient().with {
@@ -190,7 +191,7 @@
 
         @Test
         func theQueueSavesInFinderAndRemembersWhere() async throws {
-            let item = FileItem(name: "report.txt", path: "Docs", dateModified: Date(), size: 5, kind: "txt")
+            let item = FileItem(name: "report.txt", path: "Docs", dateModified: MockDate.date, size: 5, kind: "txt")
             let target = try temporaryFolder().appendingPathComponent("report.txt")
             let jobID = UUID(0)
             let store = TestStore(initialState: DownloadQueueFeature.State(serverURL: serverURL)) {
@@ -214,7 +215,7 @@
 
         @Test
         func aSavedFolderKeepsItsOwnNameInTheQueue() {
-            let folder = FileItem(name: "Trip", path: "", dateModified: Date(), size: 0, kind: "directory")
+            let folder = FileItem(name: "Trip", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
             let save = DownloadQueueFeature.DownloadJob(id: UUID(0), item: folder, status: .queued, saveTarget: .into(URL(fileURLWithPath: "/tmp")))
             let zip = DownloadQueueFeature.DownloadJob(id: UUID(1), item: folder, status: .queued)
 
@@ -224,9 +225,9 @@
 
         @Test
         func spaceRefusesArchivesAndLargeFilesUnlessSavedOffline() {
-            let archive = FileItem(name: "backup.7z", path: "", dateModified: Date(), size: 10, kind: "7z")
-            let movie = FileItem(name: "movie.mp4", path: "", dateModified: Date(), size: MacQuickLookPolicy.byteLimit + 1, kind: "mp4")
-            let photo = FileItem(name: "a.jpg", path: "", dateModified: Date(), size: 1_000, kind: "jpg")
+            let archive = FileItem(name: "backup.7z", path: "", dateModified: MockDate.date, size: 10, kind: "7z")
+            let movie = FileItem(name: "movie.mp4", path: "", dateModified: MockDate.date, size: MacQuickLookPolicy.byteLimit + 1, kind: "mp4")
+            let photo = FileItem(name: "a.jpg", path: "", dateModified: MockDate.date, size: 1_000, kind: "jpg")
 
             #expect(MacQuickLookPolicy.refusal(for: archive, isSavedOffline: false) == L10n.Browse.quickLookUnavailable)
             #expect(MacQuickLookPolicy.refusal(for: movie, isSavedOffline: false) == L10n.Browse.quickLookTooLarge)

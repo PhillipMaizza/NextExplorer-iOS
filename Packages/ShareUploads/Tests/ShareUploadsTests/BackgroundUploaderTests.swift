@@ -2,6 +2,7 @@ import CoreModels
 import Foundation
 @testable import ShareUploads
 import Testing
+import TestUtils
 
 @Suite("Background uploader lifecycle")
 struct BackgroundUploaderTests {
@@ -108,7 +109,7 @@ struct BackgroundUploaderTests {
         let batch = try harness.makeBatch(names: ["a.jpg"])
 
         harness.uploader.complete(batchID: batch.id, index: 5, result: .success)
-        harness.uploader.complete(batchID: UUID().uuidString, index: 0, result: .success)
+        harness.uploader.complete(batchID: TestID.uuid().uuidString, index: 0, result: .success)
 
         #expect(harness.recorder.outcomes.isEmpty)
         #expect(Manifest.results(in: batch.directory).isEmpty)
@@ -229,7 +230,7 @@ struct BackgroundUploaderTests {
         let harness = try Harness()
         defer { harness.tearDown() }
         func unstarted() throws -> URL {
-            let directory = harness.root.appendingPathComponent(UUID().uuidString, isDirectory: true)
+            let directory = harness.root.appendingPathComponent(TestID.uuid().uuidString, isDirectory: true)
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
             try Data("half written".utf8).write(to: directory.appendingPathComponent("x.multipart"))
             return directory
@@ -251,7 +252,7 @@ struct BackgroundUploaderTests {
 
     @Test("A folder that cannot be read counts as stale")
     func missingFolderIsStale() {
-        #expect(BackgroundUploader.isStale(URL(fileURLWithPath: "/nonexistent/\(UUID().uuidString)"), now: TestClock.reference))
+        #expect(BackgroundUploader.isStale(URL(fileURLWithPath: "/nonexistent/\(TestID.uuid().uuidString)"), now: TestClock.reference))
     }
 
     // MARK: Waking up
@@ -268,7 +269,7 @@ struct BackgroundUploaderTests {
     func unknownSessionCompletesAtOnce() async throws {
         let harness = try Harness()
         defer { harness.tearDown() }
-        let identifier = BackgroundUploader.identifierPrefix + UUID().uuidString
+        let identifier = BackgroundUploader.identifierPrefix + TestID.uuid().uuidString
         let fired = Counter()
 
         await withCheckedContinuation { continuation in
@@ -365,7 +366,7 @@ struct BackgroundUploaderTests {
         other.username = "someone else"
 
         #expect(harness.uploader.retryFailed(batchID: batch.id, credentials: other) == 0)
-        #expect(harness.uploader.retryFailed(batchID: UUID().uuidString, credentials: Harness.credentials) == 0)
+        #expect(harness.uploader.retryFailed(batchID: TestID.uuid().uuidString, credentials: Harness.credentials) == 0)
         #expect(harness.uploader.retryFailed(batchID: "../etc", credentials: Harness.credentials) == 0)
         #expect(harness.starter.started.isEmpty)
     }

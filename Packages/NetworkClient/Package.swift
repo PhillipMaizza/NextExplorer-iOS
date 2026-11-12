@@ -8,6 +8,7 @@ let package = Package(
         .library(name: "NetworkClient", targets: ["NetworkClient"]),
     ],
     dependencies: [
+        .package(path: "../TestUtils"),
         .package(path: "../Keychain"),
         .package(url: "https://github.com/pointfreeco/swift-dependencies", from: "1.5.0"),
     ],
@@ -23,7 +24,7 @@ let package = Package(
         ),
         .testTarget(
             name: "NetworkClientTests",
-            dependencies: ["NetworkClient", .product(name: "Keychain", package: "Keychain")],
+            dependencies: ["TestUtils", "NetworkClient", .product(name: "Keychain", package: "Keychain")],
             resources: [.copy("Fixtures")],
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),

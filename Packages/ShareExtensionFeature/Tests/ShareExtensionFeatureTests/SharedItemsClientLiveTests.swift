@@ -6,6 +6,7 @@ import Localization
 import ShareUploads
 import Testing
 import UniformTypeIdentifiers
+import TestUtils
 
 /// The live client against real `NSItemProvider`s, staged into a temporary batch that is never
 /// started, so nothing reaches a background session.
@@ -13,7 +14,7 @@ struct SharedItemsClientLiveTests {
     private let credentials = SessionCredentials.preview
 
     private func temporaryFile(named name: String, contents: String = "contents") throws -> URL {
-        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         let url = directory.appendingPathComponent(name)
         try Data(contents.utf8).write(to: url)
@@ -237,7 +238,7 @@ struct SharedItemsClientLiveTests {
 
     @Test("a folder shared next to a file is named as a folder and the file still stages")
     func aFolderIsReportedNotSkipped() async throws {
-        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
+        let folder = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name(), isDirectory: true)
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
         let folderProvider = NSItemProvider()
         folderProvider.suggestedName = "Holiday"
@@ -255,7 +256,7 @@ struct SharedItemsClientLiveTests {
 
     @Test("a file URL with nothing behind it is a read failure, not a silent skip")
     func aMissingFileIsReported() async throws {
-        let missing = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID().uuidString).txt")
+        let missing = FileManager.default.temporaryDirectory.appendingPathComponent("\(TestID.name()).txt")
         let provider = NSItemProvider()
         provider.suggestedName = "gone.txt"
         provider.registerItem(forTypeIdentifier: UTType.fileURL.identifier) { completion, _, _ in

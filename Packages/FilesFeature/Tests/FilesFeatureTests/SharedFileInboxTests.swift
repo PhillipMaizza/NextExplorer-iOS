@@ -5,6 +5,7 @@ import DependenciesTestSupport
 import Foundation
 import ShareUploads
 import Testing
+import TestUtils
 
 /// Files opened in the app from another app's share sheet: the inbox drains into an upload review
 /// on the Browse tab's topmost screen.
@@ -21,7 +22,7 @@ struct SharedFileInboxTests {
             stageDocuments: { _ in
                 AsyncStream<PickedFile> { continuation in
                     for name in names {
-                        continuation.yield(PickedFile(id: UUID(), fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: 10))
+                        continuation.yield(PickedFile(id: TestID.uuid(), fileURL: URL(fileURLWithPath: "/tmp/\(name)"), fileName: name, size: 10))
                     }
                     continuation.finish()
                 }
@@ -108,7 +109,7 @@ struct SharedFileInboxTests {
     @Test
     func anOpenPreviewClosesBeforeTheReviewOpens() async {
         var state = BrowseFeature.State(serverURL: serverURL, directoryPath: "", title: "Browse")
-        state.previewItem = FileItem(name: "Notes.txt", path: "", dateModified: Date(), size: 1, kind: "txt")
+        state.previewItem = FileItem(name: "Notes.txt", path: "", dateModified: MockDate.date, size: 1, kind: "txt")
         let store = TestStore(initialState: state) {
             BrowseFeature()
         } withDependencies: {

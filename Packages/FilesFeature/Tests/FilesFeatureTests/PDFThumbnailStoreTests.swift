@@ -5,6 +5,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @MainActor
 @Suite(.serialized)
@@ -12,21 +13,21 @@ struct PDFThumbnailStoreTests {
     /// Isolated render-cache dir so nothing lands in the shared `PreviewCache` root.
     private func isolatedCache() -> (cache: PDFThumbnailCache, directory: URL) {
         let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("pdf-thumb-store-cache-\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("pdf-thumb-store-cache-\(TestID.name())", isDirectory: true)
         try? FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
         return (.live(renderCacheDirectory: directory), directory)
     }
 
     private func makePDF() -> URL {
         let url = FileManager.default.temporaryDirectory
-            .appendingPathComponent("pdf-store-test-\(UUID().uuidString).pdf")
+            .appendingPathComponent("pdf-store-test-\(TestID.name()).pdf")
         PDFFixture.write(to: url, pageSize: CGSize(width: 120, height: 160), red: 0.19, green: 0.69, blue: 0.78)
         return url
     }
 
     private func item(size: Int64) -> FileItem {
         FileItem(
-            name: "\(UUID().uuidString).pdf", path: "Docs",
+            name: "\(TestID.name()).pdf", path: "Docs",
             dateModified: Date(timeIntervalSince1970: 2), size: size, kind: "pdf"
         )
     }
@@ -113,7 +114,7 @@ struct PDFThumbnailStoreTests {
     func loadFallsToUnavailableWhenTheDownloadIsNotAReadablePDF() async throws {
         let store = PDFThumbnailStore()
         let notPDF = FileManager.default.temporaryDirectory
-            .appendingPathComponent("not-a-pdf-\(UUID().uuidString)")
+            .appendingPathComponent("not-a-pdf-\(TestID.name())")
         try Data("nope".utf8).write(to: notPDF)
         defer { try? FileManager.default.removeItem(at: notPDF) }
 

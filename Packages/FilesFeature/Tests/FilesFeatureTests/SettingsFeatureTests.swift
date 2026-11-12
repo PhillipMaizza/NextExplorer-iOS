@@ -5,6 +5,7 @@ import FilesClient
 @testable import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @Suite(.dependencies)
 @MainActor
@@ -537,8 +538,8 @@ struct SettingsFeatureTests {
         state.removeAllDownloadsConfirmationIsPresented = true
         state.downloadsSize = 30
         let downloads = [
-            LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/a.pdf"), fileName: "a.pdf", location: .documents, size: 10, modifiedDate: Date()),
-            LocalDownload(url: URL(fileURLWithPath: "/tmp/Caches/Downloads/b.jpg"), fileName: "b.jpg", location: .cache, size: 20, modifiedDate: Date()),
+            LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/a.pdf"), fileName: "a.pdf", location: .documents, size: 10, modifiedDate: MockDate.date),
+            LocalDownload(url: URL(fileURLWithPath: "/tmp/Caches/Downloads/b.jpg"), fileName: "b.jpg", location: .cache, size: 20, modifiedDate: MockDate.date),
         ]
 
         let deletedURLs = LockIsolated<[URL]>([])
@@ -568,7 +569,7 @@ struct SettingsFeatureTests {
         var state = makeState()
         state.removeAllDownloadsConfirmationIsPresented = true
         let downloads = [
-            LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/a.pdf"), fileName: "a.pdf", location: .documents, size: 10, modifiedDate: Date()),
+            LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/a.pdf"), fileName: "a.pdf", location: .documents, size: 10, modifiedDate: MockDate.date),
         ]
 
         let store = TestStore(initialState: state) {

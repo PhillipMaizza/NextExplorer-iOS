@@ -5,6 +5,7 @@ import FilesClient
 import Foundation
 import Localization
 import Testing
+import TestUtils
 
 @MainActor
 struct MainTabFeatureTests {
@@ -72,7 +73,7 @@ struct MainTabFeatureTests {
 
     @Test
     func appBecameActiveSyncsTheBrowseTabsPathStack() async {
-        let refreshed = FileItem(name: "New", path: "", dateModified: Date(), size: 0, kind: "directory")
+        let refreshed = FileItem(name: "New", path: "", dateModified: MockDate.date, size: 0, kind: "directory")
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
         } withDependencies: {
@@ -119,7 +120,7 @@ struct MainTabFeatureTests {
 
     @Test
     func favoritesChangedFromBrowseRefreshesTheFavoritesTab() async {
-        let favorite = Favorite(id: "1", path: "Photos", label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+        let favorite = Favorite(id: "1", path: "Photos", label: nil, icon: "star", color: nil, position: 0, createdAt: MockDate.date, updatedAt: MockDate.date)
 
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
@@ -140,7 +141,7 @@ struct MainTabFeatureTests {
 
     @Test
     func openDownloadsTappedFromBrowseSwitchesToTheDownloadsTabAndRefreshesIt() async {
-        let download = LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: "report.pdf", location: .documents, size: 10, modifiedDate: Date())
+        let download = LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: "report.pdf", location: .documents, size: 10, modifiedDate: MockDate.date)
 
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
@@ -199,7 +200,7 @@ struct MainTabFeatureTests {
         // A favorite toggled from a pushed browse screen *inside* the Favorites tab bubbles
         // up through `FavoritesFeature`'s own delegate: this refreshes the same tab's root
         // list, not Browse's.
-        let favorite = Favorite(id: "1", path: "Photos", label: nil, icon: "star", color: nil, position: 0, createdAt: Date(), updatedAt: Date())
+        let favorite = Favorite(id: "1", path: "Photos", label: nil, icon: "star", color: nil, position: 0, createdAt: MockDate.date, updatedAt: MockDate.date)
 
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()
@@ -313,7 +314,7 @@ struct MainTabFeatureTests {
 
     @Test
     func openDownloadsTappedFromFavoritesSwitchesToTheDownloadsTabAndRefreshesIt() async {
-        let download = LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: "report.pdf", location: .documents, size: 10, modifiedDate: Date())
+        let download = LocalDownload(url: URL(fileURLWithPath: "/tmp/Documents/Downloads/report.pdf"), fileName: "report.pdf", location: .documents, size: 10, modifiedDate: MockDate.date)
 
         let store = TestStore(initialState: MainTabFeature.State(serverURL: serverURL, user: user)) {
             MainTabFeature()

@@ -6,6 +6,7 @@ import FilesClient
 import FilesFeature
 import Foundation
 import Testing
+import TestUtils
 
 @Suite("Account cache wipe")
 struct AccountCacheWipeTests {
@@ -77,7 +78,7 @@ struct AccountCacheWipeTests {
 
     @Test("an account left pending by a killed run is wiped by the next launch's pass")
     func pendingAccountSurvivesARestart() throws {
-        let suite = "\(Fixture.defaultsSuitePrefix)\(UUID().uuidString)"
+        let suite = "\(Fixture.defaultsSuitePrefix)\(TestID.name())"
         let defaults = try #require(UserDefaults(suiteName: suite))
         defer { defaults.removePersistentDomain(forName: suite) }
         let directory = DirectoryCacheStore.inMemory()

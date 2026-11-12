@@ -2,13 +2,14 @@
 import Foundation
 import NetworkClient
 import Testing
+import TestUtils
 
 @Suite("SessionScratchStore")
 struct SessionScratchStoreTests {
     @Test("Purging removes every scratch folder and stray download, and nothing else")
     func purgeRemovesScratchOnly() throws {
         let fileManager = FileManager.default
-        let root = fileManager.temporaryDirectory.appendingPathComponent("scratch-test-\(UUID().uuidString)", isDirectory: true)
+        let root = fileManager.temporaryDirectory.appendingPathComponent("scratch-test-\(TestID.name())", isDirectory: true)
         defer { try? fileManager.removeItem(at: root) }
         let archive = root.appendingPathComponent(SessionScratchLocation.archiveBrowser).appendingPathComponent("Files_a.zip")
         let uploads = root.appendingPathComponent(SessionScratchLocation.pendingUploads)
@@ -16,7 +17,7 @@ struct SessionScratchStoreTests {
         try fileManager.createDirectory(at: uploads, withIntermediateDirectories: true)
         try Data("secret".utf8).write(to: archive.appendingPathComponent("entry.txt"))
         try Data("secret".utf8).write(to: uploads.appendingPathComponent("photo.jpg"))
-        let strayDownload = root.appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(UUID().uuidString)")
+        let strayDownload = root.appendingPathComponent("\(NetworkClient.downloadTemporaryFilePrefix)\(TestID.name())")
         try Data("secret".utf8).write(to: strayDownload)
         let unrelated = root.appendingPathComponent("someone-else.tmp")
         try Data("keep".utf8).write(to: unrelated)
@@ -39,7 +40,7 @@ struct SessionScratchStoreTests {
     @Test("A fresh sign in keeps uploads staging and downloads streaming, and clears the rest")
     func purgeKeepsPendingUploads() throws {
         let fileManager = FileManager.default
-        let root = fileManager.temporaryDirectory.appendingPathComponent("scratch-keep-\(UUID().uuidString)", isDirectory: true)
+        let root = fileManager.temporaryDirectory.appendingPathComponent("scratch-keep-\(TestID.name())", isDirectory: true)
         defer { try? fileManager.removeItem(at: root) }
         let uploads = root.appendingPathComponent(SessionScratchLocation.pendingUploads)
         try fileManager.createDirectory(at: uploads, withIntermediateDirectories: true)
@@ -66,9 +67,9 @@ struct SessionScratchStoreTests {
     func purgeRemovesDroppedFileCopies() throws {
         let fileManager = FileManager.default
         for scope in [SessionScratchStore.Scope.everything, .keepingActiveTransfers] {
-            let root = fileManager.temporaryDirectory.appendingPathComponent("scratch-drop-\(UUID().uuidString)", isDirectory: true)
+            let root = fileManager.temporaryDirectory.appendingPathComponent("scratch-drop-\(TestID.name())", isDirectory: true)
             defer { try? fileManager.removeItem(at: root) }
-            let dropped = root.appendingPathComponent(SessionScratchLocation.droppedFiles).appendingPathComponent(UUID().uuidString)
+            let dropped = root.appendingPathComponent(SessionScratchLocation.droppedFiles).appendingPathComponent(TestID.name())
             try fileManager.createDirectory(at: dropped, withIntermediateDirectories: true)
             try Data("secret".utf8).write(to: dropped.appendingPathComponent("a.txt"))
 

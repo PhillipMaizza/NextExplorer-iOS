@@ -3,6 +3,7 @@ import Foundation
 @testable import ShareUploads
 import Testing
 import UniformTypeIdentifiers
+import TestUtils
 
 @Suite("Staging failures leave nothing behind")
 struct UploadStagingFailureTests {
@@ -16,7 +17,7 @@ struct UploadStagingFailureTests {
     }
 
     private func temporaryDirectory() throws -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingFailure-\(UUID().uuidString)")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("StagingFailure-\(TestID.uuid().uuidString)")
         try FileManager.default.createDirectory(at: url, withIntermediateDirectories: true)
         return url
     }

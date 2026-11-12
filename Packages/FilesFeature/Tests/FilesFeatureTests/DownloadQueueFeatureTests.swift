@@ -7,6 +7,7 @@ import Foundation
 import Localization
 import NetworkClient
 import Testing
+import TestUtils
 
 @MainActor
 @Suite(.dependencies)
@@ -22,7 +23,7 @@ struct DownloadQueueFeatureTests {
     }
 
     private nonisolated func temporaryFile() -> URL {
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent(TestID.name())
         FileManager.default.createFile(atPath: url.path, contents: Data("x".utf8))
         return url
     }
