@@ -1240,31 +1240,34 @@ struct ShareUploadFeatureTests {
             ])
             $0.cookieStorage = cookies
         }
-        // The first account's folder check is cancelled when the account changes, and whether a
-        // cancelled effect still delivers its last action is up to the runtime, so only the end
-        // result is asserted.
-        store.exhaustivity = .off
         return store
     }
 
     @Test
     func pickingAnotherAccountWhileTheFolderIsBeingCheckedNeverUploadsToIt() async {
         let calls = Calls()
-        let (gate, release) = AsyncStream.makeStream(of: Void.self)
+        let gate = AsyncGate()
         let store = twoAccountStore(calls: calls) { _, _ in
-            for await _ in gate {
-                break
-            }
+            try await gate.wait()
             return Self.listing()
         }
-        await store.send(.onAppear)
-        await store.receive(\.sessionLoaded)
+        await store.send(.onAppear) { $0.itemCount = 1 }
+        await store.receive(\.accountsLoaded) { $0.accounts = [.preview, .previewSecond] }
+        await store.receive(\.sessionLoaded) {
+            $0.credentials = .preview
+            $0.destination = "Photos"
+            $0.shouldUploadWithoutAsking = true
+            $0.phase = .checking
+        }
         await store.receive(\.connectionChecked)
 
-        await store.send(.accountSelected(SessionCredentials.previewSecond.accountID))
-        release.yield()
-        release.finish()
-        await store.receive(\.connectionChecked)
+        await store.send(.accountSelected(SessionCredentials.previewSecond.accountID)) {
+            $0.credentials = .previewSecond
+            $0.destination = "Family"
+            $0.shouldUploadWithoutAsking = false
+        }
+        gate.open()
+        await store.receive(\.connectionChecked) { $0.phase = .ready }
         await store.finish()
 
         #expect(calls.all.isEmpty, "the first account's folder result must not start an upload to the second")
