@@ -51,6 +51,49 @@ class KindTests(unittest.TestCase):
         self.assertEqual(ci.kind("A.swift", "\n\n"), ci.SHARED)
 
 
+class NoBuildKindTests(unittest.TestCase):
+    def test_docs_screenshots_and_store_text_are_docs(self):
+        for path in ["README.md", "docs/guide.md", "LICENSE", "Screenshots/a.png", "fastlane/metadata/en-US/name.txt", "Gemfile.lock", ".ruby-version", ".github/ISSUE_TEMPLATE/bug_report.yml"]:
+            self.assertEqual(ci.kind(path, "x"), ci.DOCS, path)
+
+    def test_scripts_checked_in_the_changes_job_are_checked(self):
+        for path in ["Scripts/check-test-determinism.py", "Scripts/ci-platforms.py", "Scripts/test_gen_changelog.py", "Scripts/mtls/make-ca.sh"]:
+            self.assertEqual(ci.kind(path, "x"), ci.CHECKED, path)
+
+    def test_scripts_the_build_jobs_run_still_build(self):
+        self.assertEqual(ci.kind("Scripts/ci-restore-mtimes.py", "x"), ci.SHARED)
+        self.assertEqual(ci.kind("Scripts/sync-package-pins.py", "x"), ci.SHARED)
+
+    def test_an_unknown_script_builds(self):
+        self.assertEqual(ci.kind("Scripts/new-tool.py", "x"), ci.SHARED)
+
+    def test_lint_config_and_test_fixtures_build(self):
+        self.assertEqual(ci.kind(".swiftlint.yml", "x"), ci.SHARED)
+        self.assertEqual(ci.kind(".swiftformat", "x"), ci.SHARED)
+        self.assertEqual(ci.kind("Packages/CoreModels/Tests/CoreModelsTests/Fixtures/user.json", "{}"), ci.SHARED)
+
+
+class OutputsTests(unittest.TestCase):
+    def test_docs_alone_build_nothing_on_a_pull_request_or_main(self):
+        self.assertEqual(ci.outputs([ci.DOCS], "pull_request"), (False, False, False))
+        self.assertEqual(ci.outputs([ci.DOCS], "push"), (False, False, False))
+
+    def test_checked_scripts_alone_build_nothing_on_a_pull_request(self):
+        self.assertEqual(ci.outputs([ci.CHECKED, ci.DOCS], "pull_request"), (True, False, False))
+
+    def test_checked_scripts_build_everything_on_main(self):
+        self.assertEqual(ci.outputs([ci.CHECKED], "push"), (True, True, True))
+
+    def test_a_checked_script_with_a_mac_file_builds_only_the_mac(self):
+        self.assertEqual(ci.outputs([ci.CHECKED, ci.MAC], "pull_request"), (True, False, True))
+
+    def test_any_shared_file_builds_both(self):
+        self.assertEqual(ci.outputs([ci.CHECKED, ci.SHARED], "pull_request"), (True, True, True))
+
+    def test_main_builds_both_for_a_platform_only_change(self):
+        self.assertEqual(ci.outputs([ci.MAC], "push"), (True, True, True))
+
+
 class PlatformsTests(unittest.TestCase):
     def test_no_code_runs_nothing(self):
         self.assertEqual(ci.platforms([]), (False, False))

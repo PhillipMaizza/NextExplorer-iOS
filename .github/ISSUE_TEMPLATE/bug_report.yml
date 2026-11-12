@@ -1,0 +1,169 @@
+name: Bug report
+description: Something in the app does not work as it should.
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting! The more precise the report, the faster it gets fixed: a bug we can reproduce is a bug we can fix.
+        Please remove anything private (server address, user names, file names) from text and screenshots.
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: One or two sentences on what goes wrong.
+      placeholder: Uploading a video from the Photos share sheet fails with "Upload failed" when the file is over 2 GB.
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Context
+      description: What were you trying to do, and from where (which tab, folder, screen, share sheet, widget)?
+      placeholder: I was sharing a video from the Photos app to a folder on my server, using one tap upload to my default folder.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The exact steps from a fresh start, one per line, so someone else can make it happen too.
+      placeholder: |
+        1. Open Photos and pick a video over 2 GB
+        2. Tap Share, then NextExplorer
+        3. Pick the folder "Videos" and tap Upload
+        4. Wait for the upload notification
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+      description: What you expected to happen.
+      placeholder: The video uploads and the notification says "Upload finished".
+    validations:
+      required: true
+
+  - type: textarea
+    id: observed
+    attributes:
+      label: Observed behavior
+      description: What happened instead. Copy any error message word for word.
+      placeholder: After about a minute the notification says "Upload failed" and the file is not on the server.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often does it happen?
+      options:
+        - Every time
+        - Often
+        - Sometimes
+        - Once so far
+    validations:
+      required: true
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or screen recording
+      description: Drag images or a short recording here. A recording is the best way to show a glitch, a lag or an animation problem.
+    validations:
+      required: false
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Where you see the problem. Pick every one you tried.
+      multiple: true
+      options:
+        - iPhone
+        - iPad
+        - Mac
+        - Share extension (sharing from another app)
+    validations:
+      required: true
+
+  - type: input
+    id: app-version
+    attributes:
+      label: App version
+      description: At the bottom of Settings on iPhone and iPad, or NextExplorer > About NextExplorer on the Mac.
+      placeholder: 1.1.2 (199)
+    validations:
+      required: true
+
+  - type: input
+    id: device
+    attributes:
+      label: Device and system version
+      description: Device model and iOS, iPadOS or macOS version (Settings > General > About on iPhone and iPad, Apple menu > About This Mac on the Mac).
+      placeholder: iPhone 16 Pro, iOS 27.2
+    validations:
+      required: true
+
+  - type: input
+    id: server-version
+    attributes:
+      label: NextExplorer server version
+      description: The version of the NextExplorer server you connect to (its web interface, or the Docker image tag).
+      placeholder: 2.4.0 (nxzai/nextexplorer:latest pulled on 2026-11-01)
+    validations:
+      required: true
+
+  - type: dropdown
+    id: connection
+    attributes:
+      label: How the app reaches the server
+      description: Many problems depend on the network path, so this matters.
+      multiple: true
+      options:
+        - Same local network (LAN)
+        - VPN (Tailscale, WireGuard, ...)
+        - Cloudflare Tunnel
+        - Reverse proxy (Nginx, Caddy, Traefik, ...)
+        - Directly over the internet
+        - Not sure
+    validations:
+      required: true
+
+  - type: dropdown
+    id: sign-in
+    attributes:
+      label: Sign in method
+      multiple: true
+      options:
+        - Username and password
+        - Two factor code
+        - Single sign on (OIDC)
+        - Client certificate (mTLS)
+        - Not sure
+    validations:
+      required: false
+
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: |
+        Anything else that could help: did it work in an earlier app version, does it happen in the web interface too, more than one account or server in the app, app language, Low Data or Low Power Mode, file types and sizes involved, server settings you changed (for example USER_VOLUMES).
+    validations:
+      required: false
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Before you submit
+      options:
+        - label: I searched the existing issues and this is not a duplicate.
+          required: true
+        - label: I removed private information (server address, user names, file names) from the text and screenshots.
+          required: true
