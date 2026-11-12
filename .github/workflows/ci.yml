@@ -5,15 +5,17 @@ name: CI
 # before anyone reviews the change.
 #
 # The XCUITest suites (iPhone on a simulator, and the Mac app) are heavier (they cold launch the
-# app per test) so they run on pushes to main, on demand, and on pull requests labelled `ui-tests`.
-# The iPhone suite is built once and split across three runners that only run it.
+# app per test) so they run on pushes to main, on demand ("Run workflow" on a branch), and on
+# pull requests labelled `ui-tests` (from the next push after labelling). The iPhone suite is
+# built once and split across three runners that only run it.
 
 on:
-  # No branch filter, so a pull request stacked on another branch gets its checks too. "edited"
-  # also fires when GitHub retargets a stacked pull request to main after its base was merged,
-  # which would otherwise leave the required check missing.
+  # No branch filter, so a pull request stacked on another branch gets its checks too, and still
+  # has them once retargeted to main. No "edited" or "labeled": editing a title or adding any label
+  # reran everything and cancelled the run in progress, and a run that skipped itself instead
+  # would report the required check as passed.
   pull_request:
-    types: [opened, synchronize, reopened, labeled, edited]
+    types: [opened, synchronize, reopened]
   push:
     branches: [main]
   # Manual trigger so the heavier UI test job can be run on any branch on demand.
@@ -54,10 +56,11 @@ jobs:
       - name: Self check the platform filter
         run: python3 Scripts/test_ci_platforms.py
 
-      - name: Self check the file times and dependency pin scripts
+      - name: Self check the file times, dependency pin and UI test scripts
         run: |
           python3 Scripts/test_ci_restore_mtimes.py
           python3 Scripts/test_sync_package_pins.py
+          python3 Scripts/test_ci_ui_tests.py
 
       # Their scripts never build, so a change to them alone skips the macOS jobs: check them here.
       - name: Self check the changelog and localization scripts
@@ -159,7 +162,7 @@ jobs:
           key: spm-${{ runner.os }}-${{ hashFiles('**/Package.resolved') }}
           restore-keys: spm-${{ runner.os }}-
 
-      # Same Xcode build as local development (27.1, 27A9275).
+      # CI stays on Xcode 27.1 (27A9275); 27.2 locally only adds device symbols for iOS 27.2.
       # Build output from the latest main run: only what changed recompiles. Keyed on the Xcode
       # build and the resolved dependencies; restore keys fall back to the closest older entry.
       - name: Restore DerivedData
@@ -479,6 +482,12 @@ jobs:
       SIM_DEVICE: iPhone 17
 
     steps:
+      # Only the scripts: the shard runs a prebuilt test bundle.
+      - name: Checkout scripts
+        uses: actions/checkout@v7
+        with:
+          sparse-checkout: Scripts
+
       - name: Select Xcode
         uses: maxim-lobanov/setup-xcode@v1
         with:
@@ -533,32 +542,26 @@ jobs:
       - name: Run XCUITests
         # One simulator, no parallel clones: the scheme marks the UI tests parallelizable, which
         # suits a laptop, but clones on a runner's few cores timed out evaluating UI queries. The
-        # shards are the parallelism here. A failing test runs once more in a fresh test runner,
-        # so a launch flake is retried on its own; a real failure fails both attempts.
-        # Output runs through xcbeautify so a failing test surfaces as a GitHub annotation instead
-        # of a raw xcodebuild dump, and the .xcresult is uploaded below for offline inspection.
+        # shards are the parallelism here. Scripts/ci-ui-tests.py reruns only the failed tests,
+        # once, in a fresh test runner, and reports any test that passed only on that rerun as
+        # flaky. Output runs through xcbeautify so a failing test surfaces as a GitHub annotation,
+        # and the .xcresult bundles are uploaded below for offline inspection.
         env:
           SHARD_TESTS: ${{ matrix.shard.only }}
         run: |
-          set -o pipefail
-          DEST="platform=iOS Simulator,id=${SIM_UDID}"
-          echo "UI test destination: ${DEST}"
-          # shellcheck disable=SC2086
-          xcodebuild test-without-building \
+          echo "UI test destination: platform=iOS Simulator,id=${SIM_UDID}"
+          python3 Scripts/ci-ui-tests.py --result TestResults --select "${SHARD_TESTS}" -- \
+            test-without-building \
             -xctestrun "${XCTESTRUN}" \
-            -destination "${DEST}" \
-            -resultBundlePath TestResults.xcresult \
-            -parallel-testing-enabled NO \
-            -retry-tests-on-failure -test-iterations 2 -test-repetition-relaunch-enabled YES \
-            ${SHARD_TESTS} \
-            | xcbeautify --renderer github-actions
+            -destination "platform=iOS Simulator,id=${SIM_UDID}" \
+            -parallel-testing-enabled NO
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: uitest-results-${{ strategy.job-index }}
-          path: TestResults.xcresult
+          path: TestResults*.xcresult
           if-no-files-found: ignore
 
   mac-ui-test:
@@ -627,14 +630,17 @@ jobs:
 
       - name: Run Mac XCUITests
         # Through the PackageTests workspace with strict pins, like the Mac package tests, so it
-        # reuses their Debug modules from the cache.
-        # Ad hoc signed: the app and its test runner only need to launch on this runner. A failing
-        # test runs once more on its own, as in the iPhone shards. No entitlements file: its App
-        # Group and keychain groups need a provisioning profile, and macOS refuses to launch an ad
-        # hoc app that claims them. The sandbox still comes from the build settings.
+        # reuses their Debug modules from the cache. Failed tests rerun once on their own, and
+        # flaky ones are reported, as in the iPhone shards (xcodebuild's own retry reran all 30
+        # tests after one failure).
+        # Ad hoc signed: the app and its test runner only need to launch on this runner. No
+        # entitlements file: its App Group and keychain groups need a provisioning profile, and
+        # macOS refuses to launch an ad hoc app that claims them. The sandbox still comes from the
+        # build settings.
         run: |
-          set -o pipefail
-          xcodebuild test \
+          python3 Scripts/ci-ui-tests.py --result MacTestResults \
+            --select "-only-testing:NextExplorerUITests/MacCriticalPathUITests" -- \
+            test \
             -workspace PackageTests.xcworkspace \
             -scheme NextExplorer \
             -destination 'platform=macOS' \
@@ -642,18 +648,14 @@ jobs:
             -clonedSourcePackagesDirPath "${SPM_CHECKOUTS}" \
             -onlyUsePackageVersionsFromResolvedFile \
             -enableCodeCoverage NO \
-            -resultBundlePath MacTestResults.xcresult \
             -parallel-testing-enabled NO \
-            -retry-tests-on-failure -test-iterations 2 -test-repetition-relaunch-enabled YES \
-            -only-testing:NextExplorerUITests/MacCriticalPathUITests \
             CODE_SIGN_IDENTITY=- CODE_SIGN_STYLE=Manual DEVELOPMENT_TEAM= PROVISIONING_PROFILE_SPECIFIER= \
-            CODE_SIGN_ENTITLEMENTS= \
-            | xcbeautify --renderer github-actions
+            CODE_SIGN_ENTITLEMENTS=
 
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: mac-uitest-results
-          path: MacTestResults.xcresult
+          path: MacTestResults*.xcresult
           if-no-files-found: ignore

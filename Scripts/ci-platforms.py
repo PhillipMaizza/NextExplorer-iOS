@@ -44,6 +44,7 @@ CHECKED_FILES = {
     "Scripts/test_ci_platforms.py",
     "Scripts/test_ci_restore_mtimes.py",
     "Scripts/test_sync_package_pins.py",
+    "Scripts/test_ci_ui_tests.py",
     "Scripts/gen-changelog.py",
     "Scripts/test_gen_changelog.py",
     "Scripts/gen-l10n.py",

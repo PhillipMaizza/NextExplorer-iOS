@@ -79,6 +79,7 @@ Also:
 - Work that must overlap is held and released with explicit gates, never a timing window.
 - Each test owns its state: a unique temporary directory or `UserDefaults` suite per test.
 - A test that fails only on CI has a race. Fix the race. Do not add a retry or a longer timeout.
+- UI tests in CI rerun a failed test once, on its own (`Scripts/ci-ui-tests.py`). A test that passes only on that rerun is flagged on the pull request as flaky: fix it like any other failure. UI tests run on `main`, from "Run workflow" on a branch, and on a pull request labelled `ui-tests` (from the next push after labelling).
 - When you edit a test file, remove its existing uses of the patterns above in the same change.
 
 ## Scripts
